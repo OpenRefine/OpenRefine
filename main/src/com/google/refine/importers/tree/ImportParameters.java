@@ -33,18 +33,22 @@ public class ImportParameters {
     protected boolean guessDataType;
     protected boolean includeFileSources;
     protected String fileSource;
-    
+    protected boolean includeArchiveFileName;
+    protected String archiveFileName;
+
     public ImportParameters(boolean trimStrings, boolean storeEmptyStrings, boolean guessCellValueTypes,
-            boolean includeFileSources, String fileSource) {
+            boolean includeFileSources, String fileSource, boolean includeArchiveFileName, String archiveFileName) {
         this.trimStrings = trimStrings;
         this.storeEmptyStrings = storeEmptyStrings;
         this.guessDataType = guessCellValueTypes;
         this.includeFileSources = includeFileSources;
         this.fileSource = fileSource;
+        this.includeArchiveFileName = includeArchiveFileName;
+        this.archiveFileName = archiveFileName;
     }
 
     public ImportParameters(boolean trimStrings, boolean storeEmptyStrings, boolean guessCellValueTypes) {
-        this(trimStrings, storeEmptyStrings, guessCellValueTypes, false, "");
+        this(trimStrings, storeEmptyStrings, guessCellValueTypes, false, "", false, "");
     }
     
 }

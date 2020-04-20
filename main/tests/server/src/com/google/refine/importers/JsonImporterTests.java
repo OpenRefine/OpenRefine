@@ -136,6 +136,7 @@ public class JsonImporterTests extends ImporterTest {
                 metadata,
                 job,
                 "file-source",
+                "archive-file",
                 inputStream,
                 rootColumnGroup,
                 -1,

@@ -83,6 +83,7 @@ abstract public class TabularImportingParserBase extends ImportingParserBase {
         ImportingJob job,
         TableDataReader reader,
         String fileSource,
+        String archiveFileName,
         int limit,
         ObjectNode options,
         List<Exception> exceptions
@@ -105,10 +106,14 @@ abstract public class TabularImportingParserBase extends ImportingParserBase {
         boolean storeBlankCellsAsNulls = JSONUtilities.getBoolean(options, "storeBlankCellsAsNulls", true);
         boolean includeFileSources = JSONUtilities.getBoolean(options, "includeFileSources", false);
         boolean trimStrings = JSONUtilities.getBoolean(options, "trimStrings", false);
+        boolean includeArchiveFileName = JSONUtilities.getBoolean(options, "includeArchiveFileName", false);
 
-        int filenameColumnIndex = -1;
+        int filenameColumnIndex = -1, archiveColumnIndex = -1;
+        if (includeArchiveFileName && archiveFileName != null) {
+            archiveColumnIndex = addArchiveColumn(project);
+        }
         if (includeFileSources) {
-            filenameColumnIndex = addFilenameColumn(project);
+            filenameColumnIndex = addFilenameColumn(project, archiveColumnIndex >=0);
         }
         
         List<String> columnNames = new ArrayList<String>();
@@ -186,10 +191,11 @@ abstract public class TabularImportingParserBase extends ImportingParserBase {
                         }
                         
                         if (rowHasData || storeBlankRows) {
-                            if (includeFileSources && filenameColumnIndex >= 0) {
-                                row.setCell(
-                                    filenameColumnIndex,
-                                    new Cell(fileSource, null));
+                            if (archiveColumnIndex >= 0) {
+                                row.setCell(archiveColumnIndex, new Cell(archiveFileName, null));
+                            }
+                            if (filenameColumnIndex >= 0) {
+                                row.setCell(filenameColumnIndex, new Cell(fileSource, null));
                             }
                             project.rows.add(row);
                         }
@@ -205,8 +211,8 @@ abstract public class TabularImportingParserBase extends ImportingParserBase {
         }
     }
 
-    public void parseOneFile(Project project, ProjectMetadata metadata, ImportingJob job, String fileSource,
+    public void parseOneFile(Project project, ProjectMetadata metadata, ImportingJob job, String fileSource, String archiveFileName,
             Reader dataReader, int limit, ObjectNode options, List<Exception> exceptions) {
-        super.parseOneFile(project, metadata, job, fileSource, dataReader, limit, options, exceptions);
+        super.parseOneFile(project, metadata, job, fileSource, archiveFileName, dataReader, limit, options, exceptions);
     }
 }

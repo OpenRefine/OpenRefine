@@ -117,6 +117,7 @@ Refine.SeparatorBasedParserUI.prototype.getOptions = function() {
 
   options.storeBlankCellsAsNulls = this._optionContainerElmts.storeBlankCellsAsNullsCheckbox[0].checked;
   options.includeFileSources = this._optionContainerElmts.includeFileSourcesCheckbox[0].checked;
+  options.includeArchiveFileName = this._optionContainerElmts.includeArchiveFileCheckbox[0].checked;
   options.trimStrings = this._optionContainerElmts.trimStringsCheckbox[0].checked;
   
   if (this._optionContainerElmts.columnNamesCheckbox[0].checked) {
@@ -164,6 +165,7 @@ Refine.SeparatorBasedParserUI.prototype._initialize = function() {
   $('#or-import-blank').text($.i18n('core-index-parser/store-blank'));
   $('#or-import-null').text($.i18n('core-index-parser/store-nulls'));
   $('#or-import-source').html($.i18n('core-index-parser/store-source'));
+  $('#or-import-archive').html($.i18n('core-index-parser/store-archive'));
 
   this._optionContainerElmts.encodingInput
     .attr('value', this._config.encoding || '')
@@ -237,6 +239,9 @@ Refine.SeparatorBasedParserUI.prototype._initialize = function() {
   }
   if (this._config.includeFileSources) {
     this._optionContainerElmts.includeFileSourcesCheckbox.prop("checked", true);
+  }
+  if (this._config.includeArchiveFileName) {
+    this._optionContainerElmts.includeArchiveFileCheckbox.prop("checked", true);
   }
   if (this._config.trimStrings) {
     this._optionContainerElmts.trimStringsCheckbox.attr("checked", "unchecked");

@@ -202,7 +202,7 @@ public class KeyValueColumnizeTests extends RefineTest {
 		+ "price,3.1\n";
 	prepareOptions(",", 20, 0, 0, 1, false, false);
         List<Exception> exceptions = new ArrayList<Exception>();
-        importer.parseOneFile(project, pm, job, "filesource", new StringReader(csv), -1, options, exceptions);
+        importer.parseOneFile(project, pm, job, "filesource", "archivefile", new StringReader(csv), -1, options, exceptions);
         project.update();
         ProjectManager.singleton.registerProject(project, pm);
 
