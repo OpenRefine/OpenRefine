@@ -76,17 +76,17 @@ public class Cross implements Function {
                 }
             }
         }
-        return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects a cell or cell value, a project name to look up, and a column name in that project");
+        return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects a cell or value, a project name to look up, and a column name in that project");
     }
 
     @Override
     public String getDescription() {
-        return "Looks up the given value in the target column of the target project, returns an array of matched rows, cell will be interpreted as cell.value";
+        return "Looks up the given value in the target column of the target project, returns an array of matched rows, cell will be interpreted as cell.value. Two values match if and only if they have the same string representation";
     }
 
     @Override
     public String getParams() {
-        return "cell c or object value, string projectName, string columnName";
+        return "cell or value, string projectName, string columnName";
     }
 
     @Override
