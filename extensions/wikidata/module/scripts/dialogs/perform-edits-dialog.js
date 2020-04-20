@@ -31,21 +31,16 @@ PerformEditsDialog.launch = function(logged_in_username, max_severity) {
     formCopy.submit();
 
     if(elmts.editSummary.val().length == 0) {
-        elmts.editSummary.focus();
+      elmts.editSummary.focus();
     } else {
-        Refine.postProcess(
+      Refine.postProcess(
         "wikidata",
         "perform-wikibase-edits",
         {},
-        {
-            summary: elmts.editSummary.val(),
-        },
+        { summary: elmts.editSummary.val(), },
         { includeEngine: true, cellsChanged: true, columnStatsChanged: true },
-        { onDone:
-            function() {
-            dismiss();
-            }
-        });
+        { onDone: function() { dismiss(); }
+      });
     }
   }
   
@@ -54,18 +49,18 @@ PerformEditsDialog.launch = function(logged_in_username, max_severity) {
    .attr('href','https://www.wikidata.org/wiki/User:'+logged_in_username);
   
   frame.find('.cancel-button').click(function() {
-     dismiss();
+    dismiss();
   });
 
   this._elmts.editSummary.keypress(function (evt) {
     if (evt.which === 13) {
-      evt.preventDefault();
       doFormSubmit();
+      evt.preventDefault();
     }
   });
 
   if (max_severity === 'CRITICAL') {
-      elmts.performEditsButton.prop("disabled",true).addClass("button-disabled");
+    elmts.performEditsButton.prop("disabled",true).addClass("button-disabled");
   } else {
     elmts.performEditsButton.click(function() {
       doFormSubmit();
