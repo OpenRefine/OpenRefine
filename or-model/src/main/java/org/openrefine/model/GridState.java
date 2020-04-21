@@ -27,6 +27,7 @@ import org.apache.spark.api.java.function.PairFlatMapFunction;
 import org.apache.spark.storage.StorageLevel;
 import scala.Tuple2;
 
+import org.openrefine.model.rdd.SortedRDD;
 import org.openrefine.overlay.OverlayModel;
 import org.openrefine.util.ParsingUtilities;
 
@@ -111,7 +112,9 @@ public class GridState {
             Map<String, OverlayModel> overlayModels,
             long cachedSize) {
         this.columnModel = columnModel;
-        this.grid = grid;
+        // Ensure that the grid has a partitioner
+        this.grid = SortedRDD.assumeSorted(grid);
+
         this.cachedCount = cachedSize;
         ImmutableList.Builder<Column> builder = ImmutableList.<Column> builder();
         int index = 0;
