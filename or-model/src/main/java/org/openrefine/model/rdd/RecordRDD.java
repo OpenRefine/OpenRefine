@@ -1,4 +1,4 @@
-package org.openrefine.model;
+package org.openrefine.model.rdd;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -6,16 +6,22 @@ import java.util.Collections;
 import java.util.List;
 
 import org.apache.spark.Partition;
+import org.apache.spark.Partitioner;
 import org.apache.spark.TaskContext;
 import org.apache.spark.api.java.JavaPairRDD;
 import org.apache.spark.rdd.RDD;
 import org.openrefine.expr.ExpressionUtils;
+import org.openrefine.model.Record;
+import org.openrefine.model.Row;
 
+import scala.Function1;
 import scala.Function2;
+import scala.Option;
 import scala.Tuple2;
 import scala.collection.Iterator;
 import scala.collection.JavaConverters;
 import scala.collection.Seq;
+import scala.reflect.ClassManifestFactory;
 import scala.reflect.ClassManifestFactory$;
 import scala.reflect.ClassTag;
 
@@ -29,10 +35,14 @@ import scala.reflect.ClassTag;
  * @author Antonin Delpeuch
  *
  */
-public class RecordRDD extends RDD<Record> implements Serializable {
+public class RecordRDD extends RDD<Tuple2<Long,Record>> implements Serializable {
     
     private static final long serialVersionUID = -159614854421148220L;
+    @SuppressWarnings("unchecked")
+    private static final ClassTag<Tuple2<Long,Record>> TUPLE2_TAG =
+            ClassManifestFactory.fromClass((Class<Tuple2<Long,Record>>) (Class<?>)Tuple2.class);
     private static final ClassTag<Record> RECORD_TAG = ClassManifestFactory$.MODULE$.fromClass(Record.class);
+    private static final ClassTag<Long> LONG_TAG = ClassManifestFactory$.MODULE$.fromClass(Long.class);
     private static final ClassTag<UnfinishedRecord> UNFINISHED_RECORD_TAG = ClassManifestFactory$.MODULE$.fromClass(UnfinishedRecord.class);
     
     /**
@@ -90,7 +100,7 @@ public class RecordRDD extends RDD<Record> implements Serializable {
      *     the column index used to determine record boundaries
      */
     public RecordRDD(JavaPairRDD<Long, Row> prev, int keyCellIndex) {
-        super(prev.rdd(), RECORD_TAG);
+        super(prev.rdd(), TUPLE2_TAG);
         classTag = prev.classTag();
         this.keyCellIndex = keyCellIndex;
         List<Object> partitionIds = new ArrayList<>(prev.getNumPartitions()-1);
@@ -100,12 +110,21 @@ public class RecordRDD extends RDD<Record> implements Serializable {
         Seq<Object> partitionIdObjs = JavaConverters.collectionAsScalaIterable(partitionIds).toSeq();
         firstRows = (UnfinishedRecord[])prev.context().runJob(prev.rdd(), new ExtractFirstRecord(keyCellIndex), partitionIdObjs, UNFINISHED_RECORD_TAG);
     }
+    
+    @Override
+    public Option<Partitioner> partitioner() {
+        return firstParent(classTag).partitioner();
+    }
+    
+    public JavaPairRDD<Long, Record> toJavaPairRDD() {
+        return new JavaPairRDD<Long, Record>(this, LONG_TAG, RECORD_TAG);
+    }
 
     @Override
-    public Iterator<Record> compute(Partition partition, TaskContext context) {
+    public Iterator<Tuple2<Long,Record>> compute(Partition partition, TaskContext context) {
         RecordRDDPartition recordPartition = (RecordRDDPartition)partition;
         Iterator<Tuple2<Long, Row>> parentIter = this.firstParent(classTag).iterator(recordPartition.prev, context);
-        return new Iterator<Record>() {
+        return new Iterator<Tuple2<Long,Record>>() {
             
             Tuple2<Long, Row> fetchedRowTuple = null;
             Record nextRecord = null;
@@ -124,8 +143,8 @@ public class RecordRDD extends RDD<Record> implements Serializable {
             }
 
             @Override
-            public Record next() {
-                return nextRecord;
+            public Tuple2<Long,Record> next() {
+                return new Tuple2<Long,Record>(nextRecord.getStartRowId(), nextRecord);
             }
             
             private void buildNextRecord() {
@@ -192,7 +211,7 @@ public class RecordRDD extends RDD<Record> implements Serializable {
      * @author Antonin Delpeuch
      *
      */
-    public static class ExtractFirstRecord implements Function2<TaskContext, Iterator<Tuple2<Long, Row>>, UnfinishedRecord>, Serializable {
+    protected static class ExtractFirstRecord implements Function2<TaskContext, Iterator<Tuple2<Long, Row>>, UnfinishedRecord>, Serializable {
 
         private static final long serialVersionUID = 8473670054764783718L;
         private final int keyCellIndex;
@@ -215,6 +234,17 @@ public class RecordRDD extends RDD<Record> implements Serializable {
             }
             return new UnfinishedRecord(currentRows, recordStartFound);
         }
+    }
+    
+    protected static class KeyByRecordId implements Function1<Record, Long>, Serializable {
+
+        private static final long serialVersionUID = -4999366478326415703L;
+
+        @Override
+        public Long apply(Record record) {
+            return record.getStartRowId();
+        }
+        
     }
     
 }

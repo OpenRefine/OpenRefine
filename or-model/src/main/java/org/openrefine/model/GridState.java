@@ -17,6 +17,7 @@ import org.apache.spark.api.java.function.Function;
 import org.apache.spark.api.java.function.Function2;
 import org.apache.spark.api.java.function.PairFlatMapFunction;
 import org.apache.spark.storage.StorageLevel;
+import org.openrefine.model.rdd.SortedRDD;
 import org.openrefine.overlay.OverlayModel;
 import org.openrefine.util.ParsingUtilities;
 
@@ -113,7 +114,9 @@ public class GridState {
             Map<String, OverlayModel> overlayModels,
             long cachedSize) {
         this.columnModel = columnModel;
-        this.grid = grid;
+        // Ensure that the grid has a partitioner
+        this.grid = SortedRDD.assumeSorted(grid);
+        
         this.cachedCount = cachedSize;
         ImmutableList.Builder<Column> builder = ImmutableList.<Column>builder();
         int index = 0;
@@ -286,14 +289,14 @@ public class GridState {
 		 */
 		JavaPairRDD<Long, Row> grid = context.textFile(gridFile.getAbsolutePath())
 		        .map(s -> parseIndexedRow(s.toString()))
-				.keyBy(p -> p._1)
-				.mapValues(p -> p._2)
-				.persist(StorageLevel.MEMORY_ONLY());
+		        .keyBy(p -> p._1)
+		        .mapValues(p -> p._2)
+		        .persist(StorageLevel.MEMORY_ONLY());
 
 		return new GridState(metadata.columnModel,
-				grid,
-				metadata.overlayModels,
-				metadata.size);
+		        grid,
+		        metadata.overlayModels,
+		        metadata.size);
 	}
 	
 	protected static TypeReference<Tuple2<Long,Row>> typeRef = new TypeReference<Tuple2<Long,Row>>() {};
