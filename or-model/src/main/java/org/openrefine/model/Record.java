@@ -33,18 +33,35 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package org.openrefine.model;
 
-public class Record {
-    final public long fromRowIndex;
-    final public long toRowIndex;
-    final public long recordIndex;
+import java.io.Serializable;
+import java.util.List;
+
+/**
+ * A list of consecutive rows where only the first row has a non-blank
+ * value in the record key column (normally, the first column).
+ * 
+ * @author Antonin Delpeuch
+ */
+public class Record implements Serializable {
+    
+    private static final long serialVersionUID = 1547689057610085206L;
+    
+    final private long startRowIndex;
+    final private List<Row> rows;
 
     public Record(
-            long fromRowIndex,
-            long toRowIndex,
-            long recordIndex
+            long startRowIndex,
+            List<Row> rows
     ) {
-        this.fromRowIndex = fromRowIndex;
-        this.toRowIndex = toRowIndex;
-        this.recordIndex = recordIndex;
+        this.startRowIndex = startRowIndex;
+        this.rows = rows;
+    }
+    
+    public long getStartRowId() {
+        return startRowIndex;
+    }
+    
+    public List<Row> getRows() {
+        return rows;
     }
 }
