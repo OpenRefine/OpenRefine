@@ -14,7 +14,6 @@ import org.openrefine.expr.ExpressionUtils;
 import org.openrefine.model.Record;
 import org.openrefine.model.Row;
 
-import scala.Function1;
 import scala.Function2;
 import scala.Option;
 import scala.Tuple2;
@@ -234,17 +233,6 @@ public class RecordRDD extends RDD<Tuple2<Long,Record>> implements Serializable 
             }
             return new UnfinishedRecord(currentRows, recordStartFound);
         }
-    }
-    
-    protected static class KeyByRecordId implements Function1<Record, Long>, Serializable {
-
-        private static final long serialVersionUID = -4999366478326415703L;
-
-        @Override
-        public Long apply(Record record) {
-            return record.getStartRowId();
-        }
-        
     }
     
 }
