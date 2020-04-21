@@ -71,9 +71,6 @@ public class RefineServlet extends Butterfly {
     static public String FULL_VERSION = "";
     static public String FULLNAME = "OpenRefine ";
 
-
-    static public final String AGENT_ID = "/en/google_refine"; // TODO: Unused?  Freebase ID
-    
     static final long serialVersionUID = 2386057901503517403L;
 
     static private final String JAVAX_SERVLET_CONTEXT_TEMPDIR = "javax.servlet.context.tempdir";
