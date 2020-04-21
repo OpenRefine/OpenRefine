@@ -56,7 +56,7 @@ const siteConfig = {
 
   // URL for editing docs, usage example: editUrl + 'en/doc1.md'.
   // If this field is omitted, there will be no "Edit this Doc" button for each document.
-  editUrl: 'https://github.com/OpenRefine/OpenRefine/master/docs/',
+  editUrl: 'https://github.com/OpenRefine/OpenRefine/edit/master/docs/src/',
   
   // On page navigation for the current documentation page.
   onPageNav: 'separate',
