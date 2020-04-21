@@ -21,6 +21,11 @@ import org.openrefine.model.Row;
 
 public class SortedRDDTests extends SparkBasedTest {
 
+    private static final ClassTag<Long> LONG_TAG = ClassManifestFactory.fromClass(Long.class);
+    @SuppressWarnings("unchecked")
+    private static final ClassTag<Tuple2<Long, String>> tupleTag = ClassManifestFactory
+            .fromClass((Class<Tuple2<Long, String>>) (Class<?>) Tuple2.class);
+
     @Test
     public void testPartitioner() {
         Partitioner partitioner = new SortedRDD.SortedPartitioner<Integer>(5, Arrays.asList(3, null, 8, 19));
@@ -32,6 +37,14 @@ public class SortedRDDTests extends SparkBasedTest {
         Assert.assertEquals(partitioner.getPartition(9), 3);
         Assert.assertEquals(partitioner.getPartition(9), 3);
         Assert.assertEquals(partitioner.getPartition(24), 4);
+        Assert.assertEquals(partitioner.numPartitions(), 5);
+    }
+
+    @Test
+    public void testEmptyPartitioner() {
+        Partitioner partitioner = new SortedRDD.SortedPartitioner<Integer>(1, null);
+        Assert.assertEquals(partitioner.getPartition(42), 0);
+        Assert.assertEquals(partitioner.numPartitions(), 1);
     }
 
     @Test
@@ -49,11 +62,8 @@ public class SortedRDDTests extends SparkBasedTest {
         // We parallelized a dataset which is already sorted by key, but Spark is anaware of it.
         Assert.assertFalse(rdd.partitioner().isPresent());
 
-        @SuppressWarnings("unchecked")
-        ClassTag<Tuple2<Long, String>> tupleTag = ClassManifestFactory.fromClass((Class<Tuple2<Long, String>>) (Class<?>) Tuple2.class);
-
         // We wrap it into a SortedRDD
-        SortedRDD<Long, String> sortedRDD = new SortedRDD<Long, String>(rdd.rdd(), tupleTag, ClassManifestFactory.fromClass(Long.class));
+        SortedRDD<Long, String> sortedRDD = new SortedRDD<Long, String>(rdd.rdd(), tupleTag, LONG_TAG);
 
         // Now it has got a partitioner
         Assert.assertTrue(sortedRDD.partitioner().get() instanceof SortedRDD.SortedPartitioner<?>);
@@ -67,6 +77,14 @@ public class SortedRDDTests extends SparkBasedTest {
         Assert.assertEquals(pairRDD.lookup(4L), Collections.singletonList("in"));
         Assert.assertEquals(pairRDD.lookup(5L), Collections.singletonList("the"));
         Assert.assertEquals(pairRDD.lookup(6L), Collections.singletonList("west"));
+    }
+
+    @Test
+    public void testEmptyRDD() {
+        List<Tuple2<Long, String>> data = new ArrayList<>();
+        JavaRDD<Tuple2<Long, String>> rdd = context().parallelize(data, 1);
+        SortedRDD<Long, String> sortedRDD = new SortedRDD<Long, String>(rdd.rdd(), tupleTag, LONG_TAG);
+        Assert.assertTrue(sortedRDD.partitioner().isDefined());
     }
 
     @Test
