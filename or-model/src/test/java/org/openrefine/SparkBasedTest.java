@@ -30,7 +30,7 @@ public class SparkBasedTest {
         return _context;
     }
 
-    protected JavaPairRDD<Long, Row> rowRDD(Cell[][] cells) {
+    protected JavaPairRDD<Long, Row> rowRDD(Cell[][] cells, int numPartitions) {
         List<Tuple2<Long, Row>> rdd = new ArrayList<>(cells.length);
         for (int i = 0; i != cells.length; i++) {
             List<Cell> currentCells = new ArrayList<>(cells[i].length);
@@ -39,9 +39,13 @@ public class SparkBasedTest {
             }
             rdd.add(new Tuple2<Long, Row>((long) i, new Row(currentCells)));
         }
-        return context().parallelize(rdd, 2)
+        return context().parallelize(rdd, numPartitions)
                 .keyBy(t -> (Long) t._1)
                 .mapValues(t -> t._2);
+    }
+
+    protected JavaPairRDD<Long, Row> rowRDD(Cell[][] cells) {
+        return rowRDD(cells, 2);
     }
 
     @AfterSuite

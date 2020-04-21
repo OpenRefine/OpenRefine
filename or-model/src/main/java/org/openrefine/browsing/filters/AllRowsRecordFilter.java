@@ -52,7 +52,7 @@ public class AllRowsRecordFilter implements RecordFilter {
     public boolean filterRecord(Record record, List<Row> rows) {
         for (int i = 0; i != rows.size(); i++) {
             Row row = rows.get(i);
-            long rowId = record.fromRowIndex + i;
+            long rowId = record.startRowIndex + i;
             if (!_rowFilter.filterRow(rowId, row)) {
                 return false;
             }
