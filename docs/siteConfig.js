@@ -56,7 +56,7 @@ const siteConfig = {
 
   // URL for editing docs, usage example: editUrl + 'en/doc1.md'.
   // If this field is omitted, there will be no "Edit this Doc" button for each document.
-  editUrl: 'https://github.com/OpenRefine/OpenRefine/edit/master/docs/src/',
+  editUrl: 'https://github.com/OpenRefine/OpenRefine/blob/master/docs/src/',
   
   // On page navigation for the current documentation page.
   onPageNav: 'separate',
@@ -69,6 +69,10 @@ const siteConfig = {
 
   // Expand/collapse the links and subcategories under categories.
   docsSideNavCollapsible: true,
+  // An option to enable the docs showing the author who last updated the doc.
+  enableUpdateTime: true,
+
+  enableUpdateBy: true,
 
   // Show documentation's last contributor's name.
   // enableUpdateBy: true,
