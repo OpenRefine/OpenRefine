@@ -69,9 +69,11 @@ const siteConfig = {
 
   // Expand/collapse the links and subcategories under categories.
   docsSideNavCollapsible: true,
-  // An option to enable the docs showing the author who last updated the doc.
+  
+  // An option to enable the docs showing the user when last updated the doc.
   enableUpdateTime: true,
 
+  // An option to enable the docs showing the author who last updated the doc.
   enableUpdateBy: true,
 
   // Show documentation's last contributor's name.
