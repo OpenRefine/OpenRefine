@@ -1,11 +1,9 @@
 
 package org.openrefine.model;
 
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-
 import java.io.File;
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -14,7 +12,6 @@ import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.apache.spark.api.java.JavaPairRDD;
-import org.mockito.Mockito;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -42,9 +39,9 @@ public class GridStateTests extends SparkBasedTest {
     @BeforeMethod
     public void createGrid() {
         // Create sample grid
-        JavaPairRDD<Long, Row> grid = rowRDD(new Cell[][] {
-                { new Cell(1, null), new Cell(2, null), new Cell("3", null) },
-                { new Cell(4, null), new Cell("5", null), new Cell(true, null) }
+        JavaPairRDD<Long, Row> grid = rowRDD(new Serializable[][] {
+                { 1, 2, "3" },
+                { 4, "5", true }
         });
         // and a column model
         ColumnModel cm = new ColumnModel(
@@ -143,19 +140,13 @@ public class GridStateTests extends SparkBasedTest {
     }
 
     @Test
-    @SuppressWarnings("unchecked")
     public void testGetRows() {
-        JavaPairRDD<Long, Row> rdd = mock(JavaPairRDD.class), filteredRdd = mock(JavaPairRDD.class);
-        List<Tuple2<Long, Row>> rows = mock(List.class), filteredRows = mock(List.class);
+        List<Tuple2<Long, Row>> rows = new ArrayList<>();
+        rows.add(new Tuple2<Long, Row>(0L, new Row(Arrays.asList(new Cell(1, null), new Cell(2, null), new Cell("3", null)))));
+        rows.add(new Tuple2<Long, Row>(1L, new Row(Arrays.asList(new Cell(4, null), new Cell("5", null), new Cell(true, null)))));
 
-        when(rdd.take(5)).thenReturn(rows);
-        when(rdd.filter(Mockito.any())).thenReturn(filteredRdd);
-        when(filteredRdd.take(5)).thenReturn(filteredRows);
-
-        ColumnModel model = new ColumnModel(Arrays.asList(new ColumnMetadata("some column")));
-        GridState gridState = new GridState(model, rdd, Collections.emptyMap());
-
-        Assert.assertEquals(gridState.getRows(0, 5), rows);
-        Assert.assertEquals(gridState.getRows(5, 5), filteredRows);
+        Assert.assertEquals(state.getRows(0, 2), rows);
+        Assert.assertEquals(state.getRows(1, 2), rows.subList(1, 2));
+        Assert.assertEquals(state.getRows(5, 5), Collections.emptyList());
     }
 }

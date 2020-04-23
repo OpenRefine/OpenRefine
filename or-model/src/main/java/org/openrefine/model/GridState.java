@@ -18,7 +18,6 @@ import com.google.common.collect.ImmutableMap.Builder;
 import org.apache.hadoop.io.compress.GzipCodec;
 import org.apache.spark.api.java.JavaPairRDD;
 import org.apache.spark.api.java.JavaSparkContext;
-import org.apache.spark.api.java.function.Function;
 import org.apache.spark.api.java.function.Function2;
 import org.apache.spark.api.java.function.PairFlatMapFunction;
 import org.apache.spark.storage.StorageLevel;
@@ -27,6 +26,7 @@ import scala.Tuple2;
 import org.openrefine.model.rdd.SortedRDD;
 import org.openrefine.overlay.OverlayModel;
 import org.openrefine.util.ParsingUtilities;
+import org.openrefine.util.RDDUtils;
 
 /**
  * Immutable object which represents the state of the project grid at a given point in a workflow. This might only
@@ -154,7 +154,7 @@ public class GridState {
         if (start == 0) {
             return grid.take(limit);
         } else {
-            return grid.filter(takeRows(start)).take(limit);
+            return RDDUtils.filterByRange(grid, start, Long.MAX_VALUE).take(limit);
         }
     }
 
@@ -262,19 +262,6 @@ public class GridState {
             builder.add(cell);
             next.contributeTo(builder);
         }
-    }
-
-    private static Function<Tuple2<Long, Row>, Boolean> takeRows(long start) {
-        return new Function<Tuple2<Long, Row>, Boolean>() {
-
-            private static final long serialVersionUID = 1L;
-
-            @Override
-            public Boolean call(Tuple2<Long, Row> v1) throws Exception {
-                return v1._1() >= start;
-            }
-
-        };
     }
 
     /**
