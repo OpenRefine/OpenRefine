@@ -14,7 +14,6 @@ import org.testng.annotations.Test;
 
 import org.openrefine.SparkBasedTest;
 import org.openrefine.model.Cell;
-import org.openrefine.model.Column;
 import org.openrefine.model.ColumnMetadata;
 import org.openrefine.model.ColumnModel;
 import org.openrefine.model.GridState;
@@ -33,9 +32,11 @@ public class HistoryEntryManagerTests extends SparkBasedTest {
         // Deletes the first column of the table
         @Override
         public GridState apply(GridState projectState) {
-            List<Column> columns = projectState.getColumns();
-            List<Column> newColumns = columns.subList(1, columns.size());
-            return new GridState(newColumns, projectState.getOverlayModels());
+            List<ColumnMetadata> columns = projectState.getColumnModel().getColumns();
+            int rowSize = columns.size();
+            JavaPairRDD<Long, Row> newGrid = projectState.getGrid().mapValues(r -> new Row(r.getCells().subList(1, rowSize)));
+            List<ColumnMetadata> newColumns = columns.subList(1, columns.size());
+            return new GridState(new ColumnModel(newColumns), newGrid, projectState.getOverlayModels());
         }
 
         @Override
@@ -72,7 +73,7 @@ public class HistoryEntryManagerTests extends SparkBasedTest {
         History recovered = sut.load(tempFile);
         Assert.assertEquals(recovered.getPosition(), 1);
         GridState state = recovered.getCurrentGridState();
-        Assert.assertEquals(state.getColumns().size(), 2);
+        Assert.assertEquals(state.getColumnModel().getColumns().size(), 2);
     }
 
 }

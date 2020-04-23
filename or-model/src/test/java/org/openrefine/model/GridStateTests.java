@@ -68,34 +68,6 @@ public class GridStateTests extends SparkBasedTest {
     }
 
     @Test
-    public void testGetColumns() {
-        Assert.assertEquals(state.getColumns().size(), 3);
-    }
-
-    @Test
-    public void testGetColumnByName() {
-        Column col = state.getColumnByName("b");
-        Assert.assertEquals(col.getCell(0L).getValue(), 2);
-        Assert.assertEquals(col.getMetadata().getName(), "b");
-    }
-
-    @Test(expectedExceptions = IllegalArgumentException.class)
-    public void testGetColumnByUnknownName() {
-        state.getColumnByName("unknown");
-    }
-
-    @Test
-    public void testConstructByColumns() {
-        Column a = state.getColumnByName("a");
-        Column c = state.getColumnByName("c");
-
-        GridState derived = new GridState(Arrays.asList(a, c), state.getOverlayModels());
-
-        Assert.assertEquals(derived.getColumns().size(), 2);
-        Assert.assertEquals(derived.size(), 2);
-    }
-
-    @Test
     public void testGetGrid() {
         JavaPairRDD<Long, Row> grid = state.getGrid();
         Row row1 = grid.lookup(0L).get(0);
