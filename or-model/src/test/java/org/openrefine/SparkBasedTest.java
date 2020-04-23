@@ -1,5 +1,6 @@
 package org.openrefine;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -44,6 +45,17 @@ public class SparkBasedTest {
     }
     
     protected JavaPairRDD<Long, Row> rowRDD(Cell[][] cells) {
+        return rowRDD(cells, 2);
+    }
+    
+    protected JavaPairRDD<Long, Row> rowRDD(Serializable[][] cellValues) {
+        Cell[][] cells = new Cell[cellValues.length][];
+        for(int i = 0; i != cellValues.length; i++) {
+            cells[i] = new Cell[cellValues[i].length];
+            for(int j = 0; j != cellValues[i].length; j++) {
+                cells[i][j] = new Cell(cellValues[i][j], null);
+            }
+        }
         return rowRDD(cells, 2);
     }
     
