@@ -21,6 +21,7 @@ import org.apache.spark.storage.StorageLevel;
 import org.openrefine.model.rdd.SortedRDD;
 import org.openrefine.overlay.OverlayModel;
 import org.openrefine.util.ParsingUtilities;
+import org.openrefine.util.RDDUtils;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -167,7 +168,7 @@ public class GridState {
         if (start == 0) {
             return grid.take(limit);
         } else {
-            return grid.filter(takeRows(start)).take(limit);
+            return RDDUtils.filterByRange(grid, start, Long.MAX_VALUE).take(limit);
         }
     }
     
@@ -277,18 +278,6 @@ public class GridState {
 			next.contributeTo(builder);
 		}
 	}
-	
-    private static Function<Tuple2<Long, Row>, Boolean> takeRows(long start) {
-        return new Function<Tuple2<Long, Row>, Boolean>() {
-            private static final long serialVersionUID = 1L;
-
-            @Override
-            public Boolean call(Tuple2<Long, Row> v1) throws Exception {
-                return v1._1() >= start;
-            }
-            
-        };
-    }
     
     /**
      * Like JavaPairRDD.mapValues in that it preserves partitioning of the underlying RDD,
