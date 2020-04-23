@@ -16,6 +16,7 @@ import org.apache.spark.api.java.JavaSparkContext;
 import org.apache.spark.api.java.function.Function;
 import org.apache.spark.api.java.function.Function2;
 import org.apache.spark.api.java.function.PairFlatMapFunction;
+import org.apache.spark.rdd.OrderedRDDFunctions;
 import org.apache.spark.storage.StorageLevel;
 import org.openrefine.model.rdd.SortedRDD;
 import org.openrefine.overlay.OverlayModel;
@@ -42,46 +43,10 @@ public class GridState {
 	final static protected String GRID_PATH = "grid";
     
     protected final Map<String, OverlayModel>  overlayModels;
-    protected final ImmutableList<Column> columns;
     protected final ColumnModel columnModel;
     protected final JavaPairRDD<Long, Row> grid;
     
     private transient long cachedCount;
-    
-    /**
-     * Creates a grid state from a list of columns.
-     * 
-     * @param columns
-     *     the columns are required to have the same indexing
-     *     set, but that is not checked for when constructing the grid state.
-     * @param overlayModels
-     *     the overlay models added by extensions to this grid state
-     *     (can be null)
-     */
-    public GridState(
-            List<Column> columns,
-            Map<String, OverlayModel> overlayModels) {
-        this.columns = ImmutableList.<Column>builder().addAll(columns).build();
-        this.columnModel = new ColumnModel(
-                columns.stream()
-                .map(c -> c.getMetadata())
-                .collect(Collectors.toList()));
-        List<Column> reversed = new ArrayList<>(columns.size());
-        Collections.reverse(reversed);
-        
-        JavaPairRDD<Long, CellNode> join = columns.get(0).getCells().mapValues(c -> CellNode.NIL);
-        for(Column column : columns) {
-            join = join.join(column.getCells()).mapValues(e -> new CellNode(e._2, e._1));
-        }
-        grid = join.mapValues(b -> new Row(b.toImmutableList(), false, false));
-        
-        Builder<String, OverlayModel> builder = ImmutableMap.<String,OverlayModel>builder();
-        if (overlayModels != null) {
-            builder.putAll(overlayModels);
-        }
-        this.overlayModels = builder.build();
-        this.cachedCount = -1;
-    }
     
     /**
      * Creates a grid state from a grid and a column model
@@ -118,15 +83,7 @@ public class GridState {
         this.grid = SortedRDD.assumeSorted(grid);
         
         this.cachedCount = cachedSize;
-        ImmutableList.Builder<Column> builder = ImmutableList.<Column>builder();
-        int index = 0;
-        for(ColumnMetadata meta : columnModel.getColumns()) {
-            final int currentIndex = index;
-            builder.add(new Column(meta, grid.mapValues(r -> r.getCells().get(currentIndex))));
-            index++;
-        }
-        this.columns = builder.build();
-        
+
         Builder<String, OverlayModel> overlayBuilder = ImmutableMap.<String,OverlayModel>builder();
         if (overlayModels != null) {
             overlayBuilder.putAll(overlayModels);
@@ -171,24 +128,6 @@ public class GridState {
     public JavaPairRDD<Long, Row> getGrid() {
         return grid;
     }
-
-    /**
-     * Convenience method to access a column by name.
-     * @param name
-     *    the name of the column to get. If this is not 
-     *    the name of any column in the table, {@class IllegalArgumentException}
-     *    will be thrown
-     * @return
-     *    the contents of the column.
-     */
-    public Column getColumnByName(String name) {
-        for(Column column : columns) {
-            if (column.getMetadata().getName().equals(name)) {
-                return column;
-            }
-        }
-        throw new IllegalArgumentException(String.format("Column %s not found", name));
-    }
     
     /**
      * Returns a row by index. Repeatedly calling this method to obtain multiple rows
@@ -231,16 +170,6 @@ public class GridState {
             return grid.filter(takeRows(start)).take(limit);
         }
     }
-
-    /**
-     * @return
-     *    the list of all columns in this table,
-     *    in order.
-     */
-    @JsonIgnore
-    public List<Column> getColumns() {
-        return columns;
-    }
     
     /**
      * @return
@@ -261,7 +190,7 @@ public class GridState {
     
     @Override
     public String toString() {
-        return String.format("[GridState, %d columns, %d rows]", columns.size(), size());
+        return String.format("[GridState, %d columns, %d rows]", columnModel.getColumns().size(), size());
     }
 
 	public void saveToFile(File file) throws IOException {

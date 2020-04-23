@@ -1,5 +1,8 @@
 package org.openrefine.model;
 
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -7,9 +10,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
-
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 import org.apache.spark.api.java.JavaPairRDD;
 import org.mockito.Mockito;
@@ -64,34 +64,6 @@ public class GridStateTests extends SparkBasedTest {
 	@Test
 	public void testToString() {
 		Assert.assertEquals(state.toString(), "[GridState, 3 columns, 2 rows]");
-	}
-	
-	@Test
-	public void testGetColumns() {
-		Assert.assertEquals(state.getColumns().size(), 3);
-	}
-	
-	@Test
-	public void testGetColumnByName() {
-		Column col = state.getColumnByName("b");
-		Assert.assertEquals(col.getCell(0L).getValue(), 2);
-		Assert.assertEquals(col.getMetadata().getName(), "b");
-	}
-	
-	@Test(expectedExceptions = IllegalArgumentException.class)
-	public void testGetColumnByUnknownName() {
-		state.getColumnByName("unknown");
-	}
-	
-	@Test
-	public void testConstructByColumns() {
-		Column a = state.getColumnByName("a");
-		Column c = state.getColumnByName("c");
-		
-		GridState derived = new GridState(Arrays.asList(a, c), state.getOverlayModels());
-		
-		Assert.assertEquals(derived.getColumns().size(), 2);
-		Assert.assertEquals(derived.size(), 2);
 	}
 	
 	@Test
