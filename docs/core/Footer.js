@@ -99,7 +99,7 @@ class Footer extends React.Component {
         </section>
 
         <section className="copyright">{this.props.config.copyright}</section>
-        <section className="copyright">Hosted by <a href="https://www.netlify.com/">Netlify</a></section>
+        <section className="copyright"><a href="https://www.netlify.com/"><img src="https://www.netlify.com/img/global/badges/netlify-dark.svg" alt="Deploys by Netlify"></img></a></section>
       </footer>
     );
   }
