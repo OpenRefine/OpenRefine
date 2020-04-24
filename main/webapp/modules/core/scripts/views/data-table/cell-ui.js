@@ -545,7 +545,7 @@ DataTableCellUI.prototype._startEdit = function(elmt) {
   elmts.or_views_esc.html($.i18n('core-buttons/esc'));
 
   var cellDataType = typeof originalContent === "string" ? "text" : typeof originalContent;
-  cellDataType = ("t" in this._cell && this._cell.t !=  null) ? this._cell.t : cellDataType;
+  cellDataType = (this._cell !== null && "t" in this._cell && this._cell.t !=  null) ? this._cell.t : cellDataType;
   elmts.typeSelect.val(cellDataType);
 
   MenuSystem.showMenu(menu, function(){});
