@@ -126,7 +126,7 @@ public class EngineTests extends SparkBasedTest {
         // when no facets are provided, grid states are not filtered
         GridState mockState = mock(GridState.class);
         SUT = new Engine(mockState, new EngineConfig(Collections.emptyList(), Mode.RowBased));
-        Assert.assertEquals(SUT.getMatchingRows(), mockState);
+        Assert.assertEquals(SUT.getMatchingRows(), SUT.getGridState().getGrid());
     }
 
 }

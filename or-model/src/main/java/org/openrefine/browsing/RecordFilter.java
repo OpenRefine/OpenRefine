@@ -34,6 +34,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package org.openrefine.browsing;
 
 import java.io.Serializable;
+import java.util.List;
 
 import org.openrefine.model.Record;
 
@@ -58,4 +59,23 @@ public interface RecordFilter extends Serializable {
         }
 
     };
+
+    /**
+     * A record filter which evaluates to true when all the supplied record filters do.
+     */
+    public static RecordFilter conjunction(List<RecordFilter> recordFilters) {
+        if (recordFilters.isEmpty()) {
+            return RecordFilter.ANY_RECORD;
+        } else {
+            return new RecordFilter() {
+
+                private static final long serialVersionUID = -7387688969915555389L;
+
+                @Override
+                public boolean filterRecord(Record record) {
+                    return recordFilters.stream().allMatch(f -> f.filterRecord(record));
+                }
+            };
+        }
+    }
 }

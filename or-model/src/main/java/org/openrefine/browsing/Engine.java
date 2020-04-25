@@ -160,41 +160,15 @@ public class Engine {
      */
     @JsonIgnore
     public RowFilter combinedRowFilters() {
-        List<RowFilter> rowFilters = facetRowFilters();
-        if (rowFilters.isEmpty()) {
-            return RowFilter.ANY_ROW;
-        } else {
-            return new RowFilter() {
-
-                private static final long serialVersionUID = -778029463533608671L;
-
-                @Override
-                public boolean filterRow(long rowIndex, Row row) {
-                    return rowFilters.stream().allMatch(f -> f.filterRow(rowIndex, row));
-                }
-
-            };
-        }
+        return RowFilter.conjunction(facetRowFilters());
     }
 
     /**
      * @return a record filter obtained from all applied facets
      */
+    @JsonIgnore
     public RecordFilter combinedRecordFilters() {
-        List<RecordFilter> recordFilters = facetRecordFilters();
-        if (recordFilters.isEmpty()) {
-            return RecordFilter.ANY_RECORD;
-        } else {
-            return new RecordFilter() {
-
-                private static final long serialVersionUID = -7387688969915555389L;
-
-                @Override
-                public boolean filterRecord(Record record) {
-                    return recordFilters.stream().allMatch(f -> f.filterRecord(record));
-                }
-            };
-        }
+        return RecordFilter.conjunction(facetRecordFilters());
     }
 
     @JsonIgnore

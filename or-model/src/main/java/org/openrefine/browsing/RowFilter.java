@@ -34,6 +34,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package org.openrefine.browsing;
 
 import java.io.Serializable;
+import java.util.List;
 
 import org.openrefine.model.Row;
 
@@ -58,4 +59,23 @@ public interface RowFilter extends Serializable {
         }
 
     };
+
+    /**
+     * A row filter which evaluates to true when all the supplied row filters do.
+     */
+    public static RowFilter conjunction(List<RowFilter> rowFilters) {
+        if (rowFilters.isEmpty()) {
+            return ANY_ROW;
+        } else {
+            return new RowFilter() {
+
+                private static final long serialVersionUID = -778029463533608671L;
+
+                @Override
+                public boolean filterRow(long rowIndex, Row row) {
+                    return rowFilters.stream().allMatch(f -> f.filterRow(rowIndex, row));
+                }
+            };
+        }
+    }
 }

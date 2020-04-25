@@ -49,14 +49,22 @@ public class SparkBasedTest {
         return rowRDD(cells, 2);
     }
 
-    protected JavaPairRDD<Long, Row> rowRDD(Serializable[][] cellValues) {
+    protected JavaPairRDD<Long, Row> rowRDD(Serializable[][] cellValues, int numPartitions) {
         Cell[][] cells = new Cell[cellValues.length][];
         for (int i = 0; i != cellValues.length; i++) {
             cells[i] = new Cell[cellValues[i].length];
             for (int j = 0; j != cellValues[i].length; j++) {
-                cells[i][j] = new Cell(cellValues[i][j], null);
+                if (cellValues[i][j] != null) {
+                    cells[i][j] = new Cell(cellValues[i][j], null);
+                } else {
+                    cells[i][j] = null;
+                }
             }
         }
+        return rowRDD(cells, numPartitions);
+    }
+
+    protected JavaPairRDD<Long, Row> rowRDD(Serializable[][] cells) {
         return rowRDD(cells, 2);
     }
 

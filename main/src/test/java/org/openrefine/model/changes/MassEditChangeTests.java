@@ -28,6 +28,7 @@ public class MassEditChangeTests extends RefineTest {
 
     private GridState initialState;
     private static EngineConfig engineConfig;
+    private ListFacetConfig facet;
     private static Evaluable eval = new Evaluable() {
 
         private static final long serialVersionUID = 1L;
@@ -62,11 +63,12 @@ public class MassEditChangeTests extends RefineTest {
                         { "v1", "a" },
                         { "v3", "a" },
                         { "", "a" },
+                        { "", "b" },
                         { new EvalError("error"), "a" },
                         { "v1", "b" }
                 });
         initialState = project.getCurrentGridState();
-        ListFacetConfig facet = new ListFacetConfig();
+        facet = new ListFacetConfig();
         facet.columnName = "bar";
         facet.setExpression("grel:value");
         facet.selection = Collections.singletonList(new DecoratedValue("a", "a"));
@@ -86,7 +88,32 @@ public class MassEditChangeTests extends RefineTest {
         Row row2 = applied.getRow(2);
         Assert.assertEquals(row2.getCellValue(0), "hey");
         Assert.assertEquals(row2.getCellValue(1), "a");
-        Row row4 = applied.getRow(4);
+        Row row3 = applied.getRow(3);
+        Assert.assertEquals(row3.getCellValue(0), "");
+        Assert.assertEquals(row3.getCellValue(1), "b");
+        Row row4 = applied.getRow(5);
+        Assert.assertEquals(row4.getCellValue(0), "v1");
+        Assert.assertEquals(row4.getCellValue(1), "b");
+    }
+
+    @Test
+    public void testRecordsMode() {
+        engineConfig = new EngineConfig(Arrays.asList(facet), Engine.Mode.RecordBased);
+        MassEditChange change = new MassEditChange(engineConfig, eval, "foo", Collections.singletonMap("v1", "v2"), "hey", null);
+        GridState applied = change.apply(initialState);
+        Row row0 = applied.getRow(0);
+        Assert.assertEquals(row0.getCellValue(0), "v2");
+        Assert.assertEquals(row0.getCellValue(1), "a");
+        Row row1 = applied.getRow(1);
+        Assert.assertEquals(row1.getCellValue(0), "v3");
+        Assert.assertEquals(row1.getCellValue(1), "a");
+        Row row2 = applied.getRow(2);
+        Assert.assertEquals(row2.getCellValue(0), "hey");
+        Assert.assertEquals(row2.getCellValue(1), "a");
+        Row row3 = applied.getRow(3);
+        Assert.assertEquals(row3.getCellValue(0), "hey");
+        Assert.assertEquals(row3.getCellValue(1), "b");
+        Row row4 = applied.getRow(5);
         Assert.assertEquals(row4.getCellValue(0), "v1");
         Assert.assertEquals(row4.getCellValue(1), "b");
     }

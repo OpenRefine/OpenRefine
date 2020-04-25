@@ -52,6 +52,8 @@ public class EngineConfig {
     protected final List<FacetConfig> _facets;
     protected final Mode _mode;
 
+    public static final EngineConfig ALL_ROWS = new EngineConfig(Collections.emptyList(), Mode.RowBased);
+
     /**
      * Creates a new EngineConfig from a list of facet configurations and an engine mode.
      * 

@@ -3,8 +3,10 @@ package org.openrefine.model.rdd;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.apache.spark.Partition;
 import org.apache.spark.Partitioner;
@@ -28,7 +30,9 @@ import org.openrefine.model.Row;
 /**
  * A RDD of Records which is efficiently computed from the corresponding RDD of indexed rows. Rows are grouped into
  * records, even when the records cross partition boundaries. This grouping is also stable: turning a RDD of records
- * into a RDD of rows and then grouping the rows into records again gives the same partitioning.
+ * into a RDD of rows with the same partitioner, and then grouping the rows into records again gives the same
+ * partitioner. This last property ensures that there is no drift of rows across partitions as the grid gets
+ * grouped/ungrouped into records repeatedly.
  * 
  * @author Antonin Delpeuch
  *
@@ -73,19 +77,20 @@ public class RecordRDD extends RDD<Tuple2<Long, Record>> implements Serializable
         private static final long serialVersionUID = -6940320543502333246L;
         // the last rows of the record
         protected List<Row> rows;
-        // whether the rows above were stopped by a new record key
-        // (if not, we reached the end of the partition)
-        protected boolean recordStartFound;
+        // the row id of the first row starting a new record
+        // (if null, we reached the end of the partition without finding one)
+        protected Long firstRecordStart;
 
-        protected UnfinishedRecord(List<Row> rows, boolean recordStartFound) {
+        protected UnfinishedRecord(List<Row> rows, Long firstRecordStart) {
             this.rows = rows;
-            this.recordStartFound = recordStartFound;
+            this.firstRecordStart = firstRecordStart;
         }
     }
 
     private final ClassTag<Tuple2<Long, Row>> classTag;
     private final int keyCellIndex;
     private final UnfinishedRecord[] firstRows;
+    private final Partitioner sortedPartitioner;
 
     /**
      * Creates a RDD of records from a RDD of rows.
@@ -106,15 +111,20 @@ public class RecordRDD extends RDD<Tuple2<Long, Record>> implements Serializable
         Seq<Object> partitionIdObjs = JavaConverters.collectionAsScalaIterable(partitionIds).toSeq();
         firstRows = (UnfinishedRecord[]) prev.context().runJob(prev.rdd(), new ExtractFirstRecord(keyCellIndex), partitionIdObjs,
                 UNFINISHED_RECORD_TAG);
+        sortedPartitioner = new SortedRDD.SortedPartitioner<Long>(prev.getNumPartitions(),
+                Arrays.asList(firstRows).stream().map(ur -> ur.firstRecordStart).collect(Collectors.toList()));
+    }
+
+    /**
+     * @return the same RDD with the Java API
+     */
+    public JavaPairRDD<Long, Record> toJavaPairRDD() {
+        return new JavaPairRDD<Long, Record>(this, LONG_TAG, RECORD_TAG);
     }
 
     @Override
     public Option<Partitioner> partitioner() {
-        return firstParent(classTag).partitioner();
-    }
-
-    public JavaPairRDD<Long, Record> toJavaPairRDD() {
-        return new JavaPairRDD<Long, Record>(this, LONG_TAG, RECORD_TAG);
+        return Option.apply(sortedPartitioner);
     }
 
     @Override
@@ -155,7 +165,7 @@ public class RecordRDD extends RDD<Tuple2<Long, Record>> implements Serializable
                 while (parentIter.hasNext()) {
                     fetchedRowTuple = parentIter.next();
                     Row row = fetchedRowTuple._2;
-                    if (ExpressionUtils.isNonBlankData(row.getCellValue(keyCellIndex))) {
+                    if (isRecordStart(row, keyCellIndex)) {
                         break;
                     }
                     rows.add(row);
@@ -179,7 +189,7 @@ public class RecordRDD extends RDD<Tuple2<Long, Record>> implements Serializable
         for (int i = 0; i != origPartitions.length; i++) {
             List<Row> additionalRows = Collections.emptyList();
             if (i < origPartitions.length - 1) {
-                if (firstRows[i].recordStartFound) {
+                if (firstRows[i].firstRecordStart != null) {
                     additionalRows = firstRows[i].rows;
                 } else {
                     // no record start was found in the entire partition,
@@ -187,7 +197,7 @@ public class RecordRDD extends RDD<Tuple2<Long, Record>> implements Serializable
                     additionalRows = new ArrayList<>();
                     for (int j = i; j < origPartitions.length - 1; j++) {
                         additionalRows.addAll(firstRows[j].rows);
-                        if (firstRows[j].recordStartFound) {
+                        if (firstRows[j].firstRecordStart != null) {
                             break;
                         }
                     }
@@ -221,17 +231,25 @@ public class RecordRDD extends RDD<Tuple2<Long, Record>> implements Serializable
         @Override
         public UnfinishedRecord apply(TaskContext v1, Iterator<Tuple2<Long, Row>> iterator) {
             List<Row> currentRows = new ArrayList<>();
-            boolean recordStartFound = false;
-            while (!recordStartFound && iterator.hasNext()) {
+            Long firstRecordStart = null;
+            while (firstRecordStart == null && iterator.hasNext()) {
                 Tuple2<Long, Row> tuple = iterator.next();
-                if (ExpressionUtils.isNonBlankData(tuple._2.getCellValue(keyCellIndex))) {
-                    recordStartFound = true;
+                if (isRecordStart(tuple._2, keyCellIndex)) {
+                    firstRecordStart = tuple._1;
                 } else {
                     currentRows.add(tuple._2);
                 }
             }
-            return new UnfinishedRecord(currentRows, recordStartFound);
+            return new UnfinishedRecord(currentRows, firstRecordStart);
         }
+    }
+
+    /**
+     * Determines when a row marks the start of a new record.
+     */
+    private static boolean isRecordStart(Row row, int keyCellIndex) {
+        return ExpressionUtils.isNonBlankData(row.getCellValue(keyCellIndex))
+                || row.getCells().stream().allMatch(c -> c == null || !ExpressionUtils.isNonBlankData(c.getValue()));
     }
 
 }

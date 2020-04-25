@@ -106,10 +106,10 @@ public class GetRowsCommandTest extends RefineTest {
         TestUtils.assertEqualAsJson(rowJson, writer.toString());
     }
 
-    @Test(groups = { "broken_by_spark" })
+    @Test
     public void testJsonOutputRecords() throws ServletException, IOException {
         String recordJson = "{\n" +
-                "       \"filtered\" : 2,\n" +
+                "       \"filtered\" : 1,\n" +
                 "       \"limit\" : 2,\n" +
                 "       \"mode\" : \"record-based\",\n" +
                 "       \"rows\" : [ {\n" +
