@@ -12,8 +12,6 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.openrefine.commands.Command;
-import org.openrefine.commands.GetCSRFTokenCommand;
 import org.openrefine.util.ParsingUtilities;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;

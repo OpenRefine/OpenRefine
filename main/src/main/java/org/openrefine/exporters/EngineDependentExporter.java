@@ -9,6 +9,7 @@ import java.util.Map;
 import java.util.Properties;
 
 import org.apache.spark.Partition;
+import org.apache.spark.api.java.JavaPairRDD;
 import org.openrefine.browsing.Engine;
 import org.openrefine.model.ColumnMetadata;
 import org.openrefine.model.ColumnModel;
@@ -107,7 +108,7 @@ public abstract class EngineDependentExporter implements WriterExporter {
 	    }
 	    
 	    
-	    GridState filtered = engine.getMatchingRows();
+	    JavaPairRDD<Long, Row> filtered = engine.getMatchingRows();
 	    ColumnModel columnModel = grid.getColumnModel();
 	    /*
 	     * Only load project data partition by partition to save memory.
@@ -115,7 +116,7 @@ public abstract class EngineDependentExporter implements WriterExporter {
 	     * row order and would run the exporter on the executors, where the
 	     * file to export might not be accessible.
 	     */
-	    List<Partition> partitions = filtered.getGrid().partitions();
+	    List<Partition> partitions = filtered.partitions();
 	    
 	    startFile(jsonOptions, options, columnModel, writer);
 	    if (outputColumnHeaders) {
@@ -128,7 +129,7 @@ public abstract class EngineDependentExporter implements WriterExporter {
 	    
 	    long rowCount = 0;
 	    for(Partition partition : partitions) {
-	    	List<Tuple2<Long, Row>> rows = filtered.getGrid().collectPartitions(new int[] { partition.index() })[0];
+	    	List<Tuple2<Long, Row>> rows = filtered.collectPartitions(new int[] { partition.index() })[0];
 	    	for(Tuple2<Long,Row> rowTuple : rows) {
 	    		Row row = rowTuple._2;
 	    		

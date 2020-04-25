@@ -43,7 +43,6 @@ import javax.servlet.http.HttpServletResponse;
 import org.openrefine.clustering.knn.DistanceFactory;
 import org.openrefine.clustering.knn.VicinoDistance;
 import org.openrefine.commands.Command;
-import org.openrefine.commands.browsing.GetClusteringFunctionsAndDistancesCommand;
 import org.openrefine.util.JSONUtilities;
 import org.openrefine.util.ParsingUtilities;
 import org.testng.annotations.BeforeMethod;

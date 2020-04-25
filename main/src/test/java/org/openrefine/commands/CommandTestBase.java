@@ -11,7 +11,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.openrefine.RefineTest;
-import org.openrefine.commands.Command;
 import org.openrefine.util.TestUtils;
 import org.testng.annotations.BeforeMethod;
 

@@ -30,7 +30,6 @@ import java.io.IOException;
 
 import javax.servlet.ServletException;
 
-import org.openrefine.commands.expr.GetExpressionLanguageInfoCommand;
 import org.openrefine.util.ParsingUtilities;
 import org.openrefine.util.TestUtils;
 import org.testng.annotations.BeforeMethod;

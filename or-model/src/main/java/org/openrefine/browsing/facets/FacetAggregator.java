@@ -3,6 +3,7 @@ package org.openrefine.browsing.facets;
 import java.io.Serializable;
 import java.util.List;
 
+import org.openrefine.browsing.RecordFilter;
 import org.openrefine.browsing.RowFilter;
 import org.openrefine.model.Record;
 import org.openrefine.model.Row;
@@ -59,10 +60,12 @@ public interface FacetAggregator<T extends FacetState> extends Serializable {
     public T withRecord(T state, Record record, List<Row> rows);
 
     /**
-     * Returns a row filter which determines if a row matches this facet.
-     * 
-     * @return
-     *     a row filter
+     * @return a row filter which determines if a row matches this facet.
      */
     public RowFilter getRowFilter();
+
+    /**
+     * @return a record filter which determines if a record matches this facet.
+     */
+    public RecordFilter getRecordFilter();
 }

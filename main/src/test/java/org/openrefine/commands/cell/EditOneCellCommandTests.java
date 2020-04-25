@@ -16,7 +16,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.openrefine.RefineTest;
 import org.openrefine.commands.Command;
-import org.openrefine.commands.cell.EditOneCellCommand;
 import org.openrefine.model.GridState;
 import org.openrefine.model.Project;
 import org.openrefine.model.Row;

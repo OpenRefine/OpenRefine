@@ -3,8 +3,6 @@ package org.openrefine.model;
 import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -13,11 +11,10 @@ import java.util.stream.Collectors;
 import org.apache.hadoop.io.compress.GzipCodec;
 import org.apache.spark.api.java.JavaPairRDD;
 import org.apache.spark.api.java.JavaSparkContext;
-import org.apache.spark.api.java.function.Function;
 import org.apache.spark.api.java.function.Function2;
 import org.apache.spark.api.java.function.PairFlatMapFunction;
-import org.apache.spark.rdd.OrderedRDDFunctions;
 import org.apache.spark.storage.StorageLevel;
+import org.openrefine.model.rdd.RecordRDD;
 import org.openrefine.model.rdd.SortedRDD;
 import org.openrefine.overlay.OverlayModel;
 import org.openrefine.util.ParsingUtilities;
@@ -46,8 +43,12 @@ public class GridState {
     protected final Map<String, OverlayModel>  overlayModels;
     protected final ColumnModel columnModel;
     protected final JavaPairRDD<Long, Row> grid;
+    // not final because it is initialized on demand, as creating
+    // it involves running a (smal) Spark job
+    protected JavaPairRDD<Long, Record> records = null;
     
-    private transient long cachedCount;
+    private transient long cachedRowCount;
+    private transient long cachedRecordCount;
     
     /**
      * Creates a grid state from a grid and a column model
@@ -61,7 +62,7 @@ public class GridState {
             ColumnModel columnModel,
             JavaPairRDD<Long, Row> grid,
             Map<String, OverlayModel> overlayModels) {
-        this(columnModel, grid, overlayModels, -1);
+        this(columnModel, grid, overlayModels, -1, -1);
     }
     
     /**
@@ -71,50 +72,39 @@ public class GridState {
      *     the header of the table
      * @param grid
      *     the state of the table
-     * @param cachedSize
+     * @param cachedRowCount
      *     the number of rows in the table, cached
      */
     protected GridState(
             ColumnModel columnModel,
             JavaPairRDD<Long, Row> grid,
             Map<String, OverlayModel> overlayModels,
-            long cachedSize) {
+            long cachedRowCount,
+            long cachedRecordCount) {
         this.columnModel = columnModel;
         // Ensure that the grid has a partitioner
         this.grid = SortedRDD.assumeSorted(grid);
         
-        this.cachedCount = cachedSize;
+        this.cachedRowCount = cachedRowCount;
+        this.cachedRecordCount = cachedRecordCount;
 
-        Builder<String, OverlayModel> overlayBuilder = ImmutableMap.<String,OverlayModel>builder();
-        if (overlayModels != null) {
-            overlayBuilder.putAll(overlayModels);
-        }
-        this.overlayModels = overlayBuilder.build();
+        this.overlayModels = immutableMap(overlayModels);
+        
     }
     
-    /**
-     * Construct a grid state which is the union
-     * of two other grid states. The column models
-     * of both grid states are required to be equal,
-     * and the GridStates must contain distinct row ids.
-     * The overlay models are taken from the current instance.
-     * 
-     * @param other
-     *    the other grid state to take the union with
-     * @return
-     *    the union of both grid states
-     */
-    public GridState union(GridState other) {
-    	if(!columnModel.equals(other.getColumnModel())) {
-    		throw new IllegalArgumentException("Trying to compute the union of incompatible grid states");
-    	}
-    	JavaPairRDD<Long,Row> unionRows = grid.union(other.getGrid());
-    	return new GridState(columnModel, unionRows, overlayModels);
+    private ImmutableMap<String, OverlayModel> immutableMap(Map<String, OverlayModel> map) {
+        if (map instanceof ImmutableMap<?,?>) {
+            return (ImmutableMap<String, OverlayModel>)map;
+        }
+        Builder<String, OverlayModel> overlayBuilder = ImmutableMap.<String,OverlayModel>builder();
+        if (map != null) {
+            overlayBuilder.putAll(map);
+        }
+        return overlayBuilder.build();
     }
 
     /**
-     * @return
-     *    the column metadata at this stage of the workflow
+     * @return the column metadata at this stage of the workflow
      */
     @JsonProperty("columnModel")
     public ColumnModel getColumnModel() {
@@ -122,12 +112,62 @@ public class GridState {
     }
 
     /**
-     * @return
-     *    the grid data at this stage of the workflow
+     * @return the grid data at this stage of the workflow
      */
     @JsonIgnore
     public JavaPairRDD<Long, Row> getGrid() {
         return grid;
+    }
+   
+    /** 
+     * @return the rows grouped into records, indexed by the first row id in the record
+     */
+    @JsonIgnore
+    public JavaPairRDD<Long, Record> getRecords() {
+        if (records == null) {
+            records = new RecordRDD(grid, columnModel.getKeyColumnIndex()).toJavaPairRDD();
+        }
+        return records;
+    }
+    
+    /**
+     * Returns a record obtained by its id. Repeatedly calling this method to obtain
+     * multiple records is inefficient, use the Spark API directly to filter on the RDD
+     * of records.
+     * 
+     * @param id the row id of the first row in the record
+     * @return the corresponding record
+     * @throws
+     *    IllegalArgumentException if record id could not be found
+     *    IllegalStateException if multiple records could be found
+     */
+    public Record getRecord(long id) {
+        List<Record> records = getRecords().lookup(id);
+        if (records.size() == 0) {
+            throw new IllegalArgumentException(String.format("Record id %d not found", id));
+        } else if (records.size() > 1) {
+            throw new IllegalStateException(String.format("Found %d records at index %d", records.size(), id));
+        } else {
+            return records.get(0);
+        }
+    }
+    
+    /**
+     * Returns a list of records, starting from a given index and defined by a maximum
+     * size. This is fetched in one Spark job.
+     * 
+     * @param start
+     *     the first record id to fetch (inclusive)
+     * @param limit
+     *     the maximum number of records to fetch
+     * @return
+     *     the list of records (if any)
+     */
+    public List<Record> getRecords(long start, int limit) {
+        return RDDUtils.paginate(getRecords(), start, limit)
+                .stream()
+                .map(tuple -> tuple._2)
+                .collect(Collectors.toList());
     }
     
     /**
@@ -165,23 +205,29 @@ public class GridState {
      *     the list of rows with their ids (if any)
      */
     public List<Tuple2<Long,Row>> getRows(long start, int limit) {
-        if (start == 0) {
-            return grid.take(limit);
-        } else {
-            return RDDUtils.filterByRange(grid, start, Long.MAX_VALUE).take(limit);
-        }
+        return RDDUtils.paginate(grid, start, limit);
     }
     
     /**
-     * @return
-     *    the number of rows in the table
+     * @return the number of rows in the table
      */
-    @JsonProperty("size")
-    public long size() {
-        if (cachedCount == -1) {
-            cachedCount = getGrid().count();
+    @JsonProperty("rowCount")
+    public long rowCount() {
+        if (cachedRowCount == -1) {
+            cachedRowCount = getGrid().count();
         }
-        return cachedCount;
+        return cachedRowCount;
+    }
+    
+    /**
+     * @return the number of records in the table
+     */
+    @JsonProperty("recordCount")
+    public long recordCount() {
+        if (cachedRecordCount == -1) {
+            cachedRecordCount = getRecords().count();
+        }
+        return cachedRecordCount;
     }
     
     @JsonProperty("overlayModels")
@@ -191,7 +237,7 @@ public class GridState {
     
     @Override
     public String toString() {
-        return String.format("[GridState, %d columns, %d rows]", columnModel.getColumns().size(), size());
+        return String.format("[GridState, %d columns, %d rows]", columnModel.getColumns().size(), rowCount());
     }
 
 	public void saveToFile(File file) throws IOException {
@@ -226,7 +272,8 @@ public class GridState {
 		return new GridState(metadata.columnModel,
 		        grid,
 		        metadata.overlayModels,
-		        metadata.size);
+		        metadata.rowCount,
+		        metadata.recordCount);
 	}
 	
 	protected static TypeReference<Tuple2<Long,Row>> typeRef = new TypeReference<Tuple2<Long,Row>>() {};
@@ -244,8 +291,10 @@ public class GridState {
 		protected ColumnModel columnModel;
 		@JsonProperty("overlayModels")
 		Map<String, OverlayModel> overlayModels;
-		@JsonProperty("size")
-		long size = -1;
+		@JsonProperty("rowCount")
+		long rowCount = -1;
+		@JsonProperty("recordCount")
+		long recordCount = -1;
 	}
 	
 	/**

@@ -6,7 +6,6 @@ import java.util.Collections;
 import java.util.Properties;
 import java.util.Set;
 
-import static org.mockito.Mockito.mock;
 import org.openrefine.RefineTest;
 import org.openrefine.browsing.DecoratedValue;
 import org.openrefine.browsing.Engine;

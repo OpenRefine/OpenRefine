@@ -9,14 +9,12 @@ import javax.servlet.ServletException;
 
 import org.openrefine.ProjectManager;
 import org.openrefine.commands.Command;
-import org.openrefine.commands.expr.LogExpressionCommand;
+import org.openrefine.commands.CommandTestBase;
 import org.openrefine.preference.PreferenceStore;
 import org.openrefine.preference.TopList;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
-
-import org.openrefine.commands.CommandTestBase;
 
 public class LogExpressionCommandTests extends CommandTestBase {
 	

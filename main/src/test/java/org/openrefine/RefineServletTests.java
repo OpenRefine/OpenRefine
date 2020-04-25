@@ -44,7 +44,6 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.openrefine.RefineTest;
 import org.openrefine.commands.Command;
 import org.slf4j.LoggerFactory;
 import org.testng.Assert;

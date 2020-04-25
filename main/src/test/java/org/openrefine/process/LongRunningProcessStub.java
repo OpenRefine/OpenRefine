@@ -1,8 +1,5 @@
 package org.openrefine.process;
 
-import org.openrefine.process.LongRunningProcess;
-import org.openrefine.process.Process;
-
 /**
  * A long running process that we can actually run in the main
  * thread of the test runner, because during tests it is actually

@@ -11,7 +11,7 @@ import java.io.IOException;
 import javax.servlet.ServletException;
 
 import org.openrefine.RefineServlet;
-import org.openrefine.commands.lang.LoadLanguageCommand;
+import org.openrefine.commands.CommandTestBase;
 import org.openrefine.util.ParsingUtilities;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -20,7 +20,6 @@ import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import org.openrefine.commands.CommandTestBase;
 
 import edu.mit.simile.butterfly.ButterflyModule;
 

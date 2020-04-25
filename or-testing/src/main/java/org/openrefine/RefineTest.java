@@ -260,7 +260,7 @@ public class RefineTest extends PowerMockTestCase {
         Assert.assertNotNull(model);
         Assert.assertEquals(model.getColumns().size(), numCols);
         Assert.assertNotNull(project.getHistory().getInitialGridState().getGrid());
-        Assert.assertEquals(project.getHistory().getInitialGridState().size(), numRows);
+        Assert.assertEquals(project.getHistory().getInitialGridState().rowCount(), numRows);
     }
 
     /**

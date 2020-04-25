@@ -26,14 +26,14 @@
  ******************************************************************************/
 package org.openrefine.importing;
 
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 import org.openrefine.ProjectMetadata;
 import org.openrefine.importers.ImporterTest;

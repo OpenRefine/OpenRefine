@@ -1,8 +1,5 @@
 package org.openrefine.model;
 
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-
 import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
@@ -13,7 +10,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.apache.spark.api.java.JavaPairRDD;
-import org.mockito.Mockito;
 import org.openrefine.SparkBasedTest;
 import org.openrefine.overlay.OverlayModel;
 import org.openrefine.overlay.OverlayModelResolver;
@@ -38,6 +34,7 @@ public class GridStateTests extends SparkBasedTest {
 	}
 	
 	protected GridState state;
+	protected List<Tuple2<Long,Row>> rows;
 	
 	@BeforeMethod
 	public void createGrid() {
@@ -55,11 +52,15 @@ public class GridStateTests extends SparkBasedTest {
 		
 		OverlayModelResolver.registerOverlayModel("mymodel", MyOverlayModel.class);
 		state = new GridState(cm, grid, Collections.singletonMap("mymodel", new MyOverlayModel()));
+		
+		rows = new ArrayList<>();
+		rows.add(new Tuple2<Long,Row>(0L, new Row(Arrays.asList(new Cell(1, null), new Cell(2, null), new Cell("3", null)))));
+        rows.add(new Tuple2<Long,Row>(1L, new Row(Arrays.asList(new Cell(4, null), new Cell("5", null), new Cell(true, null)))));
 	}
 	
 	@Test
 	public void testSize() {
-		Assert.assertEquals(state.size(), 2);
+		Assert.assertEquals(state.rowCount(), 2);
 	}
 	
 	@Test
@@ -92,37 +93,6 @@ public class GridStateTests extends SparkBasedTest {
 		List<Tuple2<Long, Row>> loadedGrid = loaded.getGrid().collect();
         Assert.assertEquals(loadedGrid, state.getGrid().collect());
 	}
-
-	@Test
-	public void testUnion() {
-		List<Tuple2<Long,Row>> list = Arrays.asList(
-				new Tuple2<Long,Row>(4L, new Row(
-						Arrays.asList(new Cell(134, null), new Cell(24, null), new Cell("34", null) ))));
-		JavaPairRDD<Long,Row> rdd = context().parallelize(list)
-				.keyBy(t -> (Long)t._1)
-				.mapValues(t -> t._2);
-		GridState other = new GridState(state.getColumnModel(), rdd, state.getOverlayModels());
-		
-		GridState union = state.union(other);
-		
-		Assert.assertEquals(union.size(), 3);
-	}
-	
-	@Test(expectedExceptions = IllegalArgumentException.class)
-	public void testUnionMismatchingColumnModels() {
-		List<Tuple2<Long,Row>> list = Arrays.asList(
-				new Tuple2<Long,Row>(4L, new Row(
-						Arrays.asList(new Cell(134, null)))));
-		JavaPairRDD<Long,Row> rdd = context().parallelize(list)
-				.keyBy(t -> (Long)t._1)
-				.mapValues(t -> t._2);
-		
-		ColumnModel otherModel = new ColumnModel(Arrays.asList(new ColumnMetadata("some column")));
-		
-		GridState other = new GridState(otherModel, rdd, state.getOverlayModels());
-		
-		state.union(other);
-	}
 	
 	@Test
 	public void testLimitPartitions() {
@@ -144,12 +114,36 @@ public class GridStateTests extends SparkBasedTest {
 	
 	@Test
 	public void testGetRows() {
-        List<Tuple2<Long,Row>> rows = new ArrayList<>();
-        rows.add(new Tuple2<Long,Row>(0L, new Row(Arrays.asList(new Cell(1, null), new Cell(2, null), new Cell("3", null)))));
-        rows.add(new Tuple2<Long,Row>(1L, new Row(Arrays.asList(new Cell(4, null), new Cell("5", null), new Cell(true, null)))));
-	    
 	    Assert.assertEquals(state.getRows(0, 2), rows);
 	    Assert.assertEquals(state.getRows(1, 2), rows.subList(1, 2));
 	    Assert.assertEquals(state.getRows(5, 5), Collections.emptyList());
 	}
+	
+    @Test
+    public void testGetAllRecords() {
+        JavaPairRDD<Long, Record> records = state.getRecords();
+        
+        Assert.assertEquals(records.count(), 2L);
+        // extracting records again returns the exact same RDD, as it is cached
+        Assert.assertEquals(state.getRecords(), records);
+    }
+    
+    @Test
+    public void testGetRecords() {
+        Assert.assertEquals(state.getRecords(1L, 10),
+                Collections.singletonList(new Record(1L, Collections.singletonList(rows.get(1)._2))));
+    }
+    
+    @Test
+    public void testGetRecord() {
+        Record firstRecord = state.getRecord(0L);
+        Assert.assertEquals(firstRecord.getStartRowId(), 0L);
+        Assert.assertEquals(firstRecord.getRows().size(), 1);
+        Assert.assertEquals(firstRecord.getRows().get(0), rows.get(0)._2);
+    }
+    
+    @Test(expectedExceptions = IllegalArgumentException.class)
+    public void testGetNoRecord() {
+        state.getRecord(3L);
+    }
 }

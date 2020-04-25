@@ -6,7 +6,6 @@ import static org.testng.Assert.assertTrue;
 
 import java.time.Instant;
 
-import org.openrefine.commands.CSRFTokenFactory;
 import org.testng.annotations.Test;
 
 public class CSRFTokenFactoryTests {

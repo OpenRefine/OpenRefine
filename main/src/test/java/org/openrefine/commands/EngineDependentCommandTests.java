@@ -6,7 +6,6 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 
 import org.openrefine.browsing.EngineConfig;
-import org.openrefine.commands.EngineDependentCommand;
 import org.openrefine.model.Project;
 import org.openrefine.operations.Operation;
 import org.testng.annotations.BeforeMethod;

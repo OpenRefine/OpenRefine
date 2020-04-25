@@ -42,5 +42,19 @@ import org.openrefine.model.Row;
  * particular criterion, such as a facet constraint.
  */
 public interface RowFilter extends Serializable {
+    
     public boolean filterRow(long rowIndex, Row row);
+    
+    /**
+     * Filter which accepts any row
+     */
+    public static RowFilter ANY_ROW = new RowFilter() {
+        private static final long serialVersionUID = 5496299113387243579L;
+
+        @Override
+        public boolean filterRow(long rowIndex, Row row) {
+            return true;
+        }
+        
+    };
 }

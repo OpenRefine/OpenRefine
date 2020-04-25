@@ -37,7 +37,6 @@ import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
 import org.openrefine.RefineTest;
-import org.openrefine.util.PatternSyntaxExceptionParser;
 import org.slf4j.LoggerFactory;
 import org.testng.Assert;
 import org.testng.annotations.BeforeTest;

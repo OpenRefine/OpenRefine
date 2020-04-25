@@ -30,7 +30,6 @@ import java.io.IOException;
 
 import javax.servlet.ServletException;
 
-import org.openrefine.commands.expr.GetStarredExpressionsCommand;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 

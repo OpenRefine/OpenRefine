@@ -38,7 +38,6 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.openrefine.browsing.Engine;
 import org.openrefine.browsing.EngineConfig;
-import org.openrefine.commands.Command;
 import org.openrefine.model.Project;
 
 /**

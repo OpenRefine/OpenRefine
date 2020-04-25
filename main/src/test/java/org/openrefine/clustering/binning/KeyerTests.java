@@ -32,9 +32,6 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package org.openrefine.clustering.binning;
 
 import org.openrefine.RefineTest;
-import org.openrefine.clustering.binning.FingerprintKeyer;
-import org.openrefine.clustering.binning.Keyer;
-import org.openrefine.clustering.binning.NGramFingerprintKeyer;
 import org.slf4j.LoggerFactory;
 import org.testng.Assert;
 import org.testng.annotations.AfterMethod;

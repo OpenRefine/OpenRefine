@@ -41,7 +41,6 @@ import java.util.TimeZone;
 
 import org.apache.commons.lang3.text.StrSubstitutor;
 import org.openrefine.RefineTest;
-import org.openrefine.util.ParsingUtilities;
 import org.slf4j.LoggerFactory;
 import org.testng.Assert;
 import org.testng.annotations.BeforeTest;
