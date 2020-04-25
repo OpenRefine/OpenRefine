@@ -9,8 +9,6 @@ import java.time.Instant;
 
 import org.testng.annotations.Test;
 
-import org.openrefine.commands.CSRFTokenFactory;
-
 public class CSRFTokenFactoryTests {
 
     static class CSRFTokenFactoryStub extends CSRFTokenFactory {

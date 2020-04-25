@@ -33,16 +33,11 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package org.openrefine.model;
 
-import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collections;
 
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.JsonMappingException;
 import org.testng.Assert;
 import org.testng.annotations.Test;
-import scala.Tuple2;
 
 import org.openrefine.util.ParsingUtilities;
 import org.openrefine.util.TestUtils;
@@ -68,26 +63,6 @@ public class RowTests {
                 row,
                 "{\"flagged\":false,\"starred\":false,\"cells\":[{\"v\":\"I'm not empty\"}]}",
                 ParsingUtilities.defaultWriter);
-    }
-
-    @Test
-    public void saveIndexedRow() {
-        Row row = new Row(Arrays.asList(new Cell("I'm not empty", null)));
-        Tuple2<Long, Row> tuple = new Tuple2<Long, Row>(1234L, row);
-        TestUtils.isSerializedTo(
-                tuple,
-                "{\"_1\":1234,\"_2\":{\"flagged\":false,\"starred\":false,\"cells\":[{\"v\":\"I'm not empty\"}]}}",
-                ParsingUtilities.defaultWriter);
-    }
-
-    @Test
-    public void readIndexedRow() throws JsonParseException, JsonMappingException, IOException {
-        TypeReference<Tuple2<Long, Row>> typeRef = new TypeReference<Tuple2<Long, Row>>() {
-        };
-        Tuple2<Long, Row> tuple = ParsingUtilities.mapper.readValue(
-                "{\"_1\":1234,\"_2\":{\"flagged\":false,\"starred\":false,\"cells\":[{\"v\":\"I'm not empty\"}]}}",
-                typeRef);
-        Assert.assertEquals((long) tuple._1, 1234L);
     }
 
     @Test

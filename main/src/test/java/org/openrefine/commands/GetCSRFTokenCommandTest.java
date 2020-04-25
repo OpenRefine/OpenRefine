@@ -19,8 +19,6 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-import org.openrefine.commands.Command;
-import org.openrefine.commands.GetCSRFTokenCommand;
 import org.openrefine.util.ParsingUtilities;
 
 public class GetCSRFTokenCommandTest {

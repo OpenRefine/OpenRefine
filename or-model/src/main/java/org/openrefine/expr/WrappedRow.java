@@ -33,8 +33,11 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package org.openrefine.expr;
 
+import java.util.List;
+
 import org.apache.commons.lang3.NotImplementedException;
 
+import org.openrefine.model.Cell;
 import org.openrefine.model.ColumnModel;
 import org.openrefine.model.Record;
 import org.openrefine.model.Row;
@@ -85,13 +88,14 @@ public class WrappedRow implements HasFields {
             if ("cells".equals(name)) {
                 return new RecordCells(_record);
             } else if ("index".equals(name)) {
-                return _record.recordIndex;
+                // TODO remove this field or reimplement it (which comes at performance costs)
+                return 0;
             } else if ("fromRowIndex".equals(name)) {
-                return _record.startRowIndex;
+                return _record.getStartRowId();
             } else if ("toRowIndex".equals(name)) {
-                return _record.toRowIndex;
+                return _record.getEndRowId();
             } else if ("rowCount".equals(name)) {
-                return _record.toRowIndex - _record.startRowIndex;
+                return _record.size();
             }
             return null;
         }
@@ -116,12 +120,14 @@ public class WrappedRow implements HasFields {
             if (columnIndex != -1) {
 
                 HasFieldsListImpl cells = new HasFieldsListImpl();
-                // TODO disabled for now, reimplement once the records mode is reinstated / replaced
-                /*
-                 * for (int r = _record.fromRowIndex; r < _record.toRowIndex; r++) { Row row = project.rows.get(r); Cell
-                 * cell = row.getCell(columnIndex); if (cell != null && ExpressionUtils.isNonBlankData(cell.value)) {
-                 * cells.add(new WrappedCell(project, name, cell)); } }
-                 */
+                List<Row> rows = _record.getRows();
+                for (int r = 0; r < rows.size(); r++) {
+                    Row row = rows.get(r);
+                    Cell cell = row.getCell(columnIndex);
+                    if (cell != null && ExpressionUtils.isNonBlankData(cell.value)) {
+                        cells.add(new WrappedCell(name, cell));
+                    }
+                }
 
                 return cells;
             }

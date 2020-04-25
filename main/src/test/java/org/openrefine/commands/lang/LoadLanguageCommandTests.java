@@ -21,7 +21,6 @@ import org.testng.annotations.Test;
 
 import org.openrefine.RefineServlet;
 import org.openrefine.commands.CommandTestBase;
-import org.openrefine.commands.lang.LoadLanguageCommand;
 import org.openrefine.util.ParsingUtilities;
 
 public class LoadLanguageCommandTests extends CommandTestBase {

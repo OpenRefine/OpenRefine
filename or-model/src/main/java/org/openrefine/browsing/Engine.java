@@ -49,6 +49,7 @@ import org.openrefine.browsing.facets.Facet;
 import org.openrefine.browsing.facets.FacetResult;
 import org.openrefine.browsing.facets.FacetState;
 import org.openrefine.model.GridState;
+import org.openrefine.model.Record;
 import org.openrefine.model.Row;
 
 /**
@@ -105,32 +106,34 @@ public class Engine {
     }
 
     /**
-     * Computes a grid state which only contains the rows matching the current facets.
-     * 
-     * @return
+     * Returns a RDD of rows matched by the current configuration, only available when the mode is RowBased.
      */
     @JsonIgnore
-    public GridState getMatchingRows() {
+    public JavaPairRDD<Long, Row> getMatchingRows() {
+        if (!Mode.RowBased.equals(getMode())) {
+            throw new IllegalArgumentException("Requesting matching rows while the engine is not in rows mode");
+        }
         List<RowFilter> facetRowFilters = facetRowFilters();
         if (facetRowFilters.isEmpty()) {
-            return _state;
+            return _state.getGrid();
         } else {
             Function<Tuple2<Long, Row>, Boolean> f = rowFilterConjuction(facetRowFilters);
-            JavaPairRDD<Long, Row> matchingRows = _state.getGrid().filter(f);
-            return new GridState(_state.getColumnModel(), matchingRows, _state.getOverlayModels());
+            return _state.getGrid().filter(f);
         }
     }
 
-    /**
-     * Computes a grid state which only contains all the rows not matched by the current facets
-     * 
-     * @return
-     */
     @JsonIgnore
-    public GridState getMismatchingRows() {
-        Function<Tuple2<Long, Row>, Boolean> f = negatedRowFilterConjuction(facetRowFilters());
-        JavaPairRDD<Long, Row> matchingRows = _state.getGrid().filter(f);
-        return new GridState(_state.getColumnModel(), matchingRows, _state.getOverlayModels());
+    public JavaPairRDD<Long, Record> getMatchingRecords() {
+        if (!Mode.RecordBased.equals(getMode())) {
+            throw new IllegalArgumentException("Requesting matching records while the engine is not in records mode");
+        }
+        List<RecordFilter> facetRecordFilters = facetRecordFilters();
+        if (facetRecordFilters.isEmpty()) {
+            return _state.getRecords();
+        } else {
+            Function<Tuple2<Long, Record>, Boolean> f = recordFilterConjuction(facetRecordFilters);
+            return _state.getRecords().filter(f);
+        }
     }
 
     @JsonProperty("facets")
@@ -148,12 +151,49 @@ public class Engine {
      */
     @JsonIgnore
     public List<FacetState> getFacetStates() {
-        if (_config.getMode().equals(Mode.RowBased)) {
-            AllFacetsAggregator aggregator = new AllFacetsAggregator(
-                    _facets.stream().map(f -> f.getAggregator()).collect(Collectors.toList()));
-            return _state.getGrid().aggregate(allFacetsInitialState(), rowSeqOp(aggregator), facetCombineOp(aggregator));
+        AllFacetsAggregator aggregator = new AllFacetsAggregator(_facets.stream().map(f -> f.getAggregator()).collect(Collectors.toList()));
+        return _state.getGrid().aggregate(allFacetsInitialState(), rowSeqOp(aggregator), facetCombineOp(aggregator));
+    }
+
+    /**
+     * @return a row filter obtained from all applied facets
+     */
+    @JsonIgnore
+    public RowFilter combinedRowFilters() {
+        List<RowFilter> rowFilters = facetRowFilters();
+        if (rowFilters.isEmpty()) {
+            return RowFilter.ANY_ROW;
         } else {
-            throw new IllegalStateException("not implemented");
+            return new RowFilter() {
+
+                private static final long serialVersionUID = -778029463533608671L;
+
+                @Override
+                public boolean filterRow(long rowIndex, Row row) {
+                    return rowFilters.stream().allMatch(f -> f.filterRow(rowIndex, row));
+                }
+
+            };
+        }
+    }
+
+    /**
+     * @return a record filter obtained from all applied facets
+     */
+    public RecordFilter combinedRecordFilters() {
+        List<RecordFilter> recordFilters = facetRecordFilters();
+        if (recordFilters.isEmpty()) {
+            return RecordFilter.ANY_RECORD;
+        } else {
+            return new RecordFilter() {
+
+                private static final long serialVersionUID = -7387688969915555389L;
+
+                @Override
+                public boolean filterRecord(Record record) {
+                    return recordFilters.stream().allMatch(f -> f.filterRecord(record));
+                }
+            };
         }
     }
 
@@ -162,6 +202,15 @@ public class Engine {
         return _facets.stream()
                 .map(facet -> facet.getAggregator())
                 .map(aggregator -> aggregator == null ? null : aggregator.getRowFilter())
+                .filter(filter -> filter != null)
+                .collect(Collectors.toList());
+    }
+
+    @JsonIgnore
+    private List<RecordFilter> facetRecordFilters() {
+        return _facets.stream()
+                .map(facet -> facet.getAggregator())
+                .map(aggregator -> aggregator == null ? null : aggregator.getRecordFilter())
                 .filter(filter -> filter != null)
                 .collect(Collectors.toList());
     }
@@ -228,6 +277,18 @@ public class Engine {
             @Override
             public Boolean call(Tuple2<Long, Row> v1) throws Exception {
                 return !rowFilters.stream().allMatch(f -> f.filterRow(v1._1, v1._2));
+            }
+        };
+    }
+
+    private static Function<Tuple2<Long, Record>, Boolean> recordFilterConjuction(List<RecordFilter> recordFilters) {
+        return new Function<Tuple2<Long, Record>, Boolean>() {
+
+            private static final long serialVersionUID = 1L;
+
+            @Override
+            public Boolean call(Tuple2<Long, Record> v1) throws Exception {
+                return recordFilters.stream().allMatch(f -> f.filterRecord(v1._2));
             }
         };
     }

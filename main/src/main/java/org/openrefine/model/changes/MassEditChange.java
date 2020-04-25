@@ -5,7 +5,6 @@ import java.io.Serializable;
 import java.util.Map;
 import java.util.Properties;
 
-import org.apache.spark.api.java.JavaPairRDD;
 import org.apache.spark.api.java.function.Function2;
 
 import org.openrefine.browsing.EngineConfig;
@@ -13,11 +12,10 @@ import org.openrefine.expr.Evaluable;
 import org.openrefine.expr.ExpressionUtils;
 import org.openrefine.model.Cell;
 import org.openrefine.model.ColumnModel;
-import org.openrefine.model.GridState;
 import org.openrefine.model.Row;
 import org.openrefine.util.StringUtils;
 
-public class MassEditChange extends EngineDependentChange {
+public class MassEditChange extends RowMapChange {
 
     protected final Evaluable _evaluable;
     protected final String _columnName;
@@ -41,17 +39,9 @@ public class MassEditChange extends EngineDependentChange {
     }
 
     @Override
-    public GridState applyToFilteredState(GridState filteredState) {
-
-        ColumnModel columnModel = filteredState.getColumnModel();
+    public Function2<Long, Row, Row> getRowMap(ColumnModel columnModel) {
         int columnIdx = columnModel.getColumnIndexByName(_columnName);
-        if (columnIdx == -1) {
-            throw new IllegalStateException(String.format("Column name %s not found in column model", _columnName));
-        }
-
-        Function2<Long, Row, Row> function = mapper(columnIdx, _evaluable, _columnName, _fromTo, _fromBlankTo, _fromErrorTo);
-        JavaPairRDD<Long, Row> newRdd = GridState.mapKeyValuesToValues(filteredState.getGrid(), function);
-        return new GridState(columnModel, newRdd, filteredState.getOverlayModels());
+        return mapper(columnIdx, _evaluable, _columnName, _fromTo, _fromBlankTo, _fromErrorTo);
     }
 
     private static Function2<Long, Row, Row> mapper(int columnIdx, Evaluable evaluable, String columnName,

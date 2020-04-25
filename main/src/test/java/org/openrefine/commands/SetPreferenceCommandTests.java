@@ -8,9 +8,6 @@ import javax.servlet.ServletException;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-import org.openrefine.commands.CommandTestBase;
-import org.openrefine.commands.SetPreferenceCommand;
-
 public class SetPreferenceCommandTests extends CommandTestBase {
 
     @BeforeMethod

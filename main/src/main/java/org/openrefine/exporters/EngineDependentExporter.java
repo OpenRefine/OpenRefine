@@ -12,6 +12,7 @@ import java.util.Properties;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import org.apache.spark.Partition;
+import org.apache.spark.api.java.JavaPairRDD;
 import scala.Tuple2;
 
 import org.openrefine.browsing.Engine;
@@ -102,14 +103,14 @@ public abstract class EngineDependentExporter implements WriterExporter {
             }
         }
 
-        GridState filtered = engine.getMatchingRows();
+        JavaPairRDD<Long, Row> filtered = engine.getMatchingRows();
         ColumnModel columnModel = grid.getColumnModel();
         /*
          * Only load project data partition by partition to save memory. We do not use Spark's foreach method here as it
          * would not preserve row order and would run the exporter on the executors, where the file to export might not
          * be accessible.
          */
-        List<Partition> partitions = filtered.getGrid().partitions();
+        List<Partition> partitions = filtered.partitions();
 
         startFile(jsonOptions, options, columnModel, writer);
         if (outputColumnHeaders) {
@@ -122,7 +123,7 @@ public abstract class EngineDependentExporter implements WriterExporter {
 
         long rowCount = 0;
         for (Partition partition : partitions) {
-            List<Tuple2<Long, Row>> rows = filtered.getGrid().collectPartitions(new int[] { partition.index() })[0];
+            List<Tuple2<Long, Row>> rows = filtered.collectPartitions(new int[] { partition.index() })[0];
             for (Tuple2<Long, Row> rowTuple : rows) {
                 Row row = rowTuple._2;
 

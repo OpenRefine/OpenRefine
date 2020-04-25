@@ -112,7 +112,7 @@ abstract public class ImportingParserBase implements ImportingParser {
             long fileLimit = limit < 0 ? limit : Math.max(limit - totalRows, 1L);
             GridState gridState = parseOneFile(metadata, job, fileRecord, fileLimit, options, progress);
             gridStates.add(gridState);
-            totalRows += gridState.size();
+            totalRows += gridState.rowCount();
 
             if (limit > 0 && totalRows >= limit) {
                 break;

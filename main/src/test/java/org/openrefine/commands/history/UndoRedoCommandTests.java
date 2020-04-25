@@ -9,7 +9,6 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import org.openrefine.commands.CommandTestBase;
-import org.openrefine.commands.history.UndoRedoCommand;
 
 public class UndoRedoCommandTests extends CommandTestBase {
 

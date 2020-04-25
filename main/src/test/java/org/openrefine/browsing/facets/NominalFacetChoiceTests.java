@@ -30,7 +30,6 @@ package org.openrefine.browsing.facets;
 import org.testng.annotations.Test;
 
 import org.openrefine.browsing.DecoratedValue;
-import org.openrefine.browsing.facets.NominalFacetChoice;
 import org.openrefine.util.ParsingUtilities;
 import org.openrefine.util.TestUtils;
 

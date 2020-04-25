@@ -44,7 +44,6 @@ import org.testng.annotations.Test;
 
 import org.openrefine.RefineTest;
 import org.openrefine.commands.Command;
-import org.openrefine.commands.row.GetRowsCommand;
 import org.openrefine.model.Project;
 import org.openrefine.util.TestUtils;
 
@@ -110,7 +109,7 @@ public class GetRowsCommandTest extends RefineTest {
     @Test(groups = { "broken_by_spark" })
     public void testJsonOutputRecords() throws ServletException, IOException {
         String recordJson = "{\n" +
-                "       \"filtered\" : 1,\n" +
+                "       \"filtered\" : 2,\n" +
                 "       \"limit\" : 2,\n" +
                 "       \"mode\" : \"record-based\",\n" +
                 "       \"rows\" : [ {\n" +

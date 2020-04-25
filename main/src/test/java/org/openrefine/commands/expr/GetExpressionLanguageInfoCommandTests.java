@@ -35,7 +35,6 @@ import com.fasterxml.jackson.databind.JsonNode;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-import org.openrefine.commands.expr.GetExpressionLanguageInfoCommand;
 import org.openrefine.util.ParsingUtilities;
 import org.openrefine.util.TestUtils;
 

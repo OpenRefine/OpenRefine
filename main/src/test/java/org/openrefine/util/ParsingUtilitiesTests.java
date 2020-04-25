@@ -46,7 +46,6 @@ import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
 import org.openrefine.RefineTest;
-import org.openrefine.util.ParsingUtilities;
 
 public class ParsingUtilitiesTests extends RefineTest {
 

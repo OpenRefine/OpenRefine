@@ -42,7 +42,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import org.openrefine.commands.Command;
 import org.openrefine.commands.HttpHeadersSupport;
@@ -52,9 +51,9 @@ import org.openrefine.expr.MetaParser.LanguageInfo;
 import org.openrefine.importing.ImportingJob;
 import org.openrefine.importing.ImportingManager;
 import org.openrefine.model.ColumnModel;
+import org.openrefine.model.GridState;
 import org.openrefine.model.Project;
 import org.openrefine.overlay.OverlayModel;
-import org.openrefine.util.ParsingUtilities;
 
 public class GetModelsCommand extends Command {
 
@@ -77,11 +76,8 @@ public class GetModelsCommand extends Command {
 
         @JsonProperty("columnModel")
         protected ColumnModel columnModel;
-        /*
-         * TODO reintroduce RecordModel
-         */
         @JsonProperty("recordModel")
-        protected ObjectNode recordModel;
+        protected RecordModel recordModel;
         @JsonProperty("overlayModels")
         protected Map<String, OverlayModel> overlayModels;
         @JsonProperty("scripting")
@@ -91,20 +87,25 @@ public class GetModelsCommand extends Command {
 
         protected ModelsResponse(
                 ColumnModel columns,
-                // RecordModel records,
+                RecordModel records,
                 Map<String, OverlayModel> overlays,
                 Map<String, LanguageInfo> languageInfos,
                 Map<String, HttpHeaderInfo> headers) {
             columnModel = columns;
-            // recordModel = records;
-            try {
-                recordModel = ParsingUtilities.mapper.readValue("{\"hasRecords\":false}", ObjectNode.class);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            recordModel = records;
             overlayModels = overlays;
             scripting = languageInfos;
             httpHeaders = headers;
+        }
+    }
+
+    protected static class RecordModel {
+
+        @JsonProperty("hasRecords")
+        protected final boolean hasRecords;
+
+        protected RecordModel(boolean hasRecords) {
+            this.hasRecords = hasRecords;
         }
     }
 
@@ -140,9 +141,12 @@ public class GetModelsCommand extends Command {
             headersMap.put(headerLabel, info);
         }
 
+        GridState gridState = project.getCurrentGridState();
+        RecordModel recordModel = new RecordModel(gridState.rowCount() > gridState.recordCount());
+
         respondJSON(response, new ModelsResponse(
                 project.getColumnModel(),
-                // project.recordModel,
+                recordModel,
                 project.getOverlayModels(),
                 prefixesMap,
                 headersMap));

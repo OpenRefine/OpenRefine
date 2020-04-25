@@ -60,7 +60,30 @@ public class Record implements Serializable {
         return startRowIndex;
     }
 
+    public long getEndRowId() {
+        return startRowIndex + rows.size();
+    }
+
     public List<Row> getRows() {
         return rows;
     }
+
+    public int size() {
+        return rows.size();
+    }
+
+    @Override
+    public boolean equals(Object other) {
+        if (!(other instanceof Record)) {
+            return false;
+        }
+        Record otherRecord = (Record) other;
+        return startRowIndex == otherRecord.getStartRowId() && rows.equals(otherRecord.getRows());
+    }
+
+    @Override
+    public int hashCode() {
+        return Long.hashCode(startRowIndex);
+    }
+
 }

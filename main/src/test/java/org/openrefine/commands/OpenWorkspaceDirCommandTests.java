@@ -8,9 +8,6 @@ import javax.servlet.ServletException;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-import org.openrefine.commands.CommandTestBase;
-import org.openrefine.commands.OpenWorkspaceDirCommand;
-
 public class OpenWorkspaceDirCommandTests extends CommandTestBase {
 
     @BeforeMethod

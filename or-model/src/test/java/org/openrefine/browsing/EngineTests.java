@@ -116,7 +116,7 @@ public class EngineTests extends SparkBasedTest {
 
     @Test
     public void testGetMachingRows() {
-        List<Tuple2<Long, Row>> rows = SUT.getMatchingRows().getGrid().collect();
+        List<Tuple2<Long, Row>> rows = SUT.getMatchingRows().collect();
         Assert.assertEquals(rows, Collections.singletonList(new Tuple2<Long, Row>(0L,
                 new Row(Arrays.asList(new Cell("a", null), new Cell("b", null))))));
     }
@@ -127,13 +127,6 @@ public class EngineTests extends SparkBasedTest {
         GridState mockState = mock(GridState.class);
         SUT = new Engine(mockState, new EngineConfig(Collections.emptyList(), Mode.RowBased));
         Assert.assertEquals(SUT.getMatchingRows(), mockState);
-    }
-
-    @Test
-    public void testGetMismachingRows() {
-        List<Tuple2<Long, Row>> rows = SUT.getMismatchingRows().getGrid().collect();
-        Assert.assertEquals(rows, Collections.singletonList(new Tuple2<Long, Row>(1L,
-                new Row(Arrays.asList(new Cell("c", null), new Cell("d", null))))));
     }
 
 }

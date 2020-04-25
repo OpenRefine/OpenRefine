@@ -7,8 +7,11 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 
+import org.openrefine.browsing.RecordFilter;
 import org.openrefine.browsing.RowFilter;
 import org.openrefine.browsing.facets.FacetAggregator;
+import org.openrefine.browsing.filters.AllRowsRecordFilter;
+import org.openrefine.browsing.filters.AnyRowRecordFilter;
 import org.openrefine.browsing.filters.ExpressionEqualRowFilter;
 import org.openrefine.expr.Evaluable;
 import org.openrefine.expr.ExpressionUtils;
@@ -121,6 +124,15 @@ public class StringValuesFacetAggregator implements FacetAggregator<StringValues
                                 _selectBlanks,
                                 _selectErrors,
                                 _invert);
+    }
+
+    @Override
+    public RecordFilter getRecordFilter() {
+        RowFilter rowFilter = getRowFilter();
+        if (rowFilter == null) {
+            return null;
+        }
+        return _invert ? new AllRowsRecordFilter(rowFilter) : new AnyRowRecordFilter(rowFilter);
     }
 
 }

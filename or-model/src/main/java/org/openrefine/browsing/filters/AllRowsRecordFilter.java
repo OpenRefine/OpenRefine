@@ -42,6 +42,7 @@ import org.openrefine.model.Row;
 
 public class AllRowsRecordFilter implements RecordFilter {
 
+    private static final long serialVersionUID = -5377544425165639423L;
     final protected RowFilter _rowFilter;
 
     public AllRowsRecordFilter(RowFilter rowFilter) {
@@ -49,10 +50,11 @@ public class AllRowsRecordFilter implements RecordFilter {
     }
 
     @Override
-    public boolean filterRecord(Record record, List<Row> rows) {
+    public boolean filterRecord(Record record) {
+        List<Row> rows = record.getRows();
         for (int i = 0; i != rows.size(); i++) {
             Row row = rows.get(i);
-            long rowId = record.startRowIndex + i;
+            long rowId = record.getStartRowId() + i;
             if (!_rowFilter.filterRow(rowId, row)) {
                 return false;
             }

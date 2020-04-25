@@ -1,6 +1,8 @@
 
 package org.openrefine.util;
 
+import java.util.List;
+
 import org.apache.spark.api.java.JavaPairRDD;
 import org.apache.spark.rdd.OrderedRDDFunctions;
 import scala.Tuple2;
@@ -14,6 +16,26 @@ import scala.reflect.ClassManifestFactory;
  *
  */
 public class RDDUtils {
+
+    /**
+     * Returns the first few records after a given index from an indexed RDD. If the RDD has a RangePartitioner (any
+     * sorted RDD), this will be achieved by only scanning the relevant partitions.
+     * 
+     * @param rdd
+     *            the RDD to extract the records from.
+     * @param start
+     *            the minimum index (inclusive) to return
+     * @param limit
+     *            the maximum number of records to return
+     * @return the list of records corresponding to the requested page
+     */
+    public static <T> List<Tuple2<Long, T>> paginate(JavaPairRDD<Long, T> rdd, long start, int limit) {
+        if (start == 0) {
+            return rdd.take(limit);
+        } else {
+            return filterByRange(rdd, start, Long.MAX_VALUE).take(limit);
+        }
+    }
 
     /**
      * Efficiently filters a RDD which has a RangePartitioner (any sorted RDD) by pruning partitions which cannot

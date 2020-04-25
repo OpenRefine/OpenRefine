@@ -34,8 +34,6 @@ import javax.servlet.ServletException;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-import org.openrefine.commands.expr.GetExpressionHistoryCommand;
-
 public class GetExpressionHistoryCommandTests extends ExpressionCommandTestBase {
 
     @BeforeMethod

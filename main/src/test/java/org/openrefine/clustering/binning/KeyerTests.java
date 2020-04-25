@@ -39,9 +39,6 @@ import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
 import org.openrefine.RefineTest;
-import org.openrefine.clustering.binning.FingerprintKeyer;
-import org.openrefine.clustering.binning.Keyer;
-import org.openrefine.clustering.binning.NGramFingerprintKeyer;
 
 public class KeyerTests extends RefineTest {
 

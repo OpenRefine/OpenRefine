@@ -3,7 +3,9 @@ package org.openrefine.browsing.facets;
 
 import java.util.List;
 
+import org.openrefine.browsing.RecordFilter;
 import org.openrefine.browsing.RowFilter;
+import org.openrefine.browsing.filters.AnyRowRecordFilter;
 import org.openrefine.model.Record;
 import org.openrefine.model.Row;
 
@@ -39,6 +41,11 @@ public class FacetAggregatorStub implements FacetAggregator<FacetStateStub> {
     @Override
     public RowFilter getRowFilter() {
         return rowFilter;
+    }
+
+    @Override
+    public RecordFilter getRecordFilter() {
+        return new AnyRowRecordFilter(rowFilter);
     }
 
 }

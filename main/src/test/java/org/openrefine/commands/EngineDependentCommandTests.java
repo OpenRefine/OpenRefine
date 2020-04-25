@@ -10,7 +10,6 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import org.openrefine.browsing.EngineConfig;
-import org.openrefine.commands.EngineDependentCommand;
 import org.openrefine.model.Project;
 import org.openrefine.operations.Operation;
 

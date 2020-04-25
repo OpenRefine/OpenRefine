@@ -34,10 +34,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package org.openrefine.browsing;
 
 import java.io.Serializable;
-import java.util.List;
 
 import org.openrefine.model.Record;
-import org.openrefine.model.Row;
 
 /**
  * Interface for judging if a particular record matches or doesn't match some particular criterion, such as a facet
@@ -45,5 +43,19 @@ import org.openrefine.model.Row;
  */
 public interface RecordFilter extends Serializable {
 
-    public boolean filterRecord(Record record, List<Row> rows);
+    public boolean filterRecord(Record record);
+
+    /**
+     * A filter which accepts all records.
+     */
+    public static RecordFilter ANY_RECORD = new RecordFilter() {
+
+        private static final long serialVersionUID = 1337763887735565917L;
+
+        @Override
+        public boolean filterRecord(Record record) {
+            return true;
+        }
+
+    };
 }

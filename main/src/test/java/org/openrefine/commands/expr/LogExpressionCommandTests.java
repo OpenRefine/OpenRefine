@@ -15,7 +15,6 @@ import org.testng.annotations.Test;
 import org.openrefine.ProjectManager;
 import org.openrefine.commands.Command;
 import org.openrefine.commands.CommandTestBase;
-import org.openrefine.commands.expr.LogExpressionCommand;
 import org.openrefine.preference.PreferenceStore;
 import org.openrefine.preference.TopList;
 

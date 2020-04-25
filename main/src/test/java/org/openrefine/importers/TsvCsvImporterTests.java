@@ -44,7 +44,6 @@ import org.testng.annotations.BeforeTest;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
-import org.openrefine.importers.SeparatorBasedImporter;
 import org.openrefine.model.GridState;
 import org.openrefine.model.Row;
 import org.openrefine.util.ParsingUtilities;
@@ -106,7 +105,7 @@ public class TsvCsvImporterTests extends ImporterTest {
         Assert.assertEquals(state.getColumnModel().getColumns().get(0).getName(), "col1");
         Assert.assertEquals(state.getColumnModel().getColumns().get(1).getName(), "col2");
         Assert.assertEquals(state.getColumnModel().getColumns().get(2).getName(), "col3");
-        Assert.assertEquals(state.size(), 1);
+        Assert.assertEquals(state.rowCount(), 1);
         Row row0 = state.getRow(0);
         Assert.assertEquals(row0.cells.size(), 3);
         Assert.assertEquals(row0.getCell(0).value, "data1");
@@ -128,7 +127,7 @@ public class TsvCsvImporterTests extends ImporterTest {
         Assert.assertEquals(state.getColumnModel().getColumns().get(0).getName(), "col1");
         Assert.assertEquals(state.getColumnModel().getColumns().get(1).getName(), "col2");
         Assert.assertEquals(state.getColumnModel().getColumns().get(2).getName(), "col3");
-        Assert.assertEquals(state.size(), 1);
+        Assert.assertEquals(state.rowCount(), 1);
         Row row0 = state.getRow(0);
         Assert.assertEquals(row0.cells.size(), 3);
         Assert.assertEquals(row0.getCell(0).value, "data1");
@@ -150,7 +149,7 @@ public class TsvCsvImporterTests extends ImporterTest {
         Assert.assertEquals(state.getColumnModel().getColumns().get(0).getName(), "Column 1");
         Assert.assertEquals(state.getColumnModel().getColumns().get(1).getName(), "Column 2");
         Assert.assertEquals(state.getColumnModel().getColumns().get(2).getName(), "Column 3");
-        Assert.assertEquals(state.size(), 1);
+        Assert.assertEquals(state.rowCount(), 1);
         Row row0 = state.getRow(0);
         Assert.assertEquals(row0.cells.size(), 3);
         Assert.assertEquals(row0.getCell(0).value, "data1");
@@ -168,7 +167,7 @@ public class TsvCsvImporterTests extends ImporterTest {
         GridState state = parseOneFile(SUT, new StringReader(input));
 
         Assert.assertEquals(state.getColumnModel().getColumns().size(), 3);
-        Assert.assertEquals(state.size(), 1);
+        Assert.assertEquals(state.rowCount(), 1);
         Row row0 = state.getRow(0);
         Assert.assertEquals(row0.cells.size(), 3);
         Assert.assertEquals(row0.getCell(0).value, " data1 ");
@@ -186,7 +185,7 @@ public class TsvCsvImporterTests extends ImporterTest {
         GridState state = parseOneFile(SUT, new StringReader(input));
 
         Assert.assertEquals(state.getColumnModel().getColumns().size(), 3);
-        Assert.assertEquals(state.size(), 1);
+        Assert.assertEquals(state.rowCount(), 1);
         Row row0 = state.getRow(0);
         Assert.assertEquals(row0.cells.size(), 3);
         Assert.assertEquals(row0.getCell(0).value, " data1");
@@ -204,7 +203,7 @@ public class TsvCsvImporterTests extends ImporterTest {
         GridState state = parseOneFile(SUT, new StringReader(input));
 
         Assert.assertEquals(state.getColumnModel().getColumns().size(), 3);
-        Assert.assertEquals(state.size(), 1);
+        Assert.assertEquals(state.rowCount(), 1);
         Row row0 = state.getRow(0);
         Assert.assertEquals(row0.cells.size(), 3);
         Assert.assertEquals(row0.getCell(0).value, " data1");
@@ -227,7 +226,7 @@ public class TsvCsvImporterTests extends ImporterTest {
         Assert.assertEquals(state.getColumnModel().getColumns().get(0).getName(), "col1 sub1");
         Assert.assertEquals(state.getColumnModel().getColumns().get(1).getName(), "col2 sub2");
         Assert.assertEquals(state.getColumnModel().getColumns().get(2).getName(), "col3 sub3");
-        Assert.assertEquals(state.size(), 1);
+        Assert.assertEquals(state.rowCount(), 1);
         Row row0 = state.getRow(0);
         Assert.assertEquals(row0.cells.size(), 3);
         Assert.assertEquals(row0.getCell(0).value, "data1");
@@ -253,7 +252,7 @@ public class TsvCsvImporterTests extends ImporterTest {
         Assert.assertEquals(state.getColumnModel().getColumns().get(3).getName(), "Column 4");
         Assert.assertEquals(state.getColumnModel().getColumns().get(4).getName(), "Column 5");
         Assert.assertEquals(state.getColumnModel().getColumns().get(5).getName(), "Column 6");
-        Assert.assertEquals(state.size(), 1);
+        Assert.assertEquals(state.rowCount(), 1);
         Row row0 = state.getRow(0);
         Assert.assertEquals(row0.cells.size(), 6);
         Assert.assertEquals(row0.getCell(0).value, "data1");
@@ -278,7 +277,7 @@ public class TsvCsvImporterTests extends ImporterTest {
         Assert.assertEquals(state.getColumnModel().getColumns().get(0).getName(), "col1");
         Assert.assertEquals(state.getColumnModel().getColumns().get(1).getName(), "col2");
         Assert.assertEquals(state.getColumnModel().getColumns().get(2).getName(), "col3");
-        Assert.assertEquals(state.size(), 1);
+        Assert.assertEquals(state.rowCount(), 1);
         Row row0 = state.getRow(0);
         Assert.assertEquals(row0.cells.size(), 2);
         Assert.assertEquals(row0.getCell(0).value, "\"To Be\" is often followed by \"or not To Be\"");
@@ -300,7 +299,7 @@ public class TsvCsvImporterTests extends ImporterTest {
         Assert.assertEquals(state.getColumnModel().getColumns().get(0).getName(), "col1");
         Assert.assertEquals(state.getColumnModel().getColumns().get(1).getName(), "col2");
         Assert.assertEquals(state.getColumnModel().getColumns().get(2).getName(), "col3");
-        Assert.assertEquals(state.size(), 1);
+        Assert.assertEquals(state.rowCount(), 1);
         Row row0 = state.getRow(0);
         Assert.assertEquals(row0.cells.size(), 3);
         Assert.assertEquals(row0.getCell(0).value, "data1");
@@ -323,7 +322,7 @@ public class TsvCsvImporterTests extends ImporterTest {
         Assert.assertEquals(state.getColumnModel().getColumns().get(0).getName(), "col1");
         Assert.assertEquals(state.getColumnModel().getColumns().get(1).getName(), "col2");
         Assert.assertEquals(state.getColumnModel().getColumns().get(2).getName(), "col3");
-        Assert.assertEquals(state.size(), 1);
+        Assert.assertEquals(state.rowCount(), 1);
         Row row0 = state.getRow(0);
         Assert.assertEquals(row0.cells.size(), 3);
         Assert.assertEquals(row0.getCell(0).value, "data1");
@@ -350,7 +349,7 @@ public class TsvCsvImporterTests extends ImporterTest {
         Assert.assertEquals(state.getColumnModel().getColumns().get(0).getName(), "col1 sub1");
         Assert.assertEquals(state.getColumnModel().getColumns().get(1).getName(), "col2 sub2");
         Assert.assertEquals(state.getColumnModel().getColumns().get(2).getName(), "col3 sub3");
-        Assert.assertEquals(state.size(), 1);
+        Assert.assertEquals(state.rowCount(), 1);
         Row row0 = state.getRow(0);
         Assert.assertEquals(row0.cells.size(), 3);
         Assert.assertEquals(row0.getCell(0).value, "data1");
@@ -382,7 +381,7 @@ public class TsvCsvImporterTests extends ImporterTest {
         Assert.assertEquals(state.getColumnModel().getColumns().get(0).getName(), "col1 sub1");
         Assert.assertEquals(state.getColumnModel().getColumns().get(1).getName(), "col2 sub2");
         Assert.assertEquals(state.getColumnModel().getColumns().get(2).getName(), "col3 sub3");
-        Assert.assertEquals(state.size(), 2);
+        Assert.assertEquals(state.rowCount(), 2);
         Row row0 = state.getRow(0);
         Assert.assertEquals(row0.cells.size(), 3);
         Assert.assertEquals(row0.getCell(0).value, "data-row1-cell1");
@@ -405,7 +404,7 @@ public class TsvCsvImporterTests extends ImporterTest {
         GridState state = parseOneFile(SUT, new StringReader(input));
 
         Assert.assertEquals(state.getColumnModel().getColumns().size(), 4);
-        Assert.assertEquals(state.size(), 1);
+        Assert.assertEquals(state.rowCount(), 1);
         Row row0 = state.getRow(0);
         Assert.assertEquals(row0.cells.size(), 4);
         Assert.assertEquals(row0.getCell(0).value, "data1");
@@ -427,7 +426,7 @@ public class TsvCsvImporterTests extends ImporterTest {
         Assert.assertEquals(state.getColumnModel().getColumns().get(0).getName(), "col1");
         Assert.assertEquals(state.getColumnModel().getColumns().get(1).getName(), "col2");
         Assert.assertEquals(state.getColumnModel().getColumns().get(2).getName(), "col3");
-        Assert.assertEquals(state.size(), 1);
+        Assert.assertEquals(state.rowCount(), 1);
         Row row0 = state.getRow(0);
         Assert.assertEquals(row0.cells.size(), 2);
         Assert.assertEquals(row0.getCell(0).value, "\"To\n Be\" is often followed by \"or not To\n Be\"");
@@ -448,7 +447,7 @@ public class TsvCsvImporterTests extends ImporterTest {
         Assert.assertEquals(state.getColumnModel().getColumns().get(0).getName(), "col1");
         Assert.assertEquals(state.getColumnModel().getColumns().get(1).getName(), "col2");
         Assert.assertEquals(state.getColumnModel().getColumns().get(2).getName(), "col3");
-        Assert.assertEquals(state.size(), 1);
+        Assert.assertEquals(state.rowCount(), 1);
         Row row0 = state.getRow(0);
         Assert.assertEquals(row0.cells.size(), 2);
         Assert.assertEquals(row0.getCell(0).value, "A line with many \n\n\n\n\n empty lines");
@@ -469,7 +468,7 @@ public class TsvCsvImporterTests extends ImporterTest {
         Assert.assertEquals(state.getColumnModel().getColumns().get(0).getName(), "col1");
         Assert.assertEquals(state.getColumnModel().getColumns().get(1).getName(), "col2");
         Assert.assertEquals(state.getColumnModel().getColumns().get(2).getName(), "col3");
-        Assert.assertEquals(state.size(), 1);
+        Assert.assertEquals(state.rowCount(), 1);
         Row row0 = state.getRow(0);
         Assert.assertEquals(row0.cells.size(), 3);
         Assert.assertEquals(row0.getCell(0).value, "data1");
@@ -505,7 +504,7 @@ public class TsvCsvImporterTests extends ImporterTest {
 
         GridState state = parseOneFile(SUT, reader);
 
-        Assert.assertEquals(state.size(), 1);
+        Assert.assertEquals(state.rowCount(), 1);
         Row row0 = state.getRow(0);
         Assert.assertEquals(row0.cells.size(), 3);
         Assert.assertEquals((String) row0.getCell(0).value, "NDB_No");
@@ -522,7 +521,7 @@ public class TsvCsvImporterTests extends ImporterTest {
 
         GridState state = parseOneFile(SUT, reader);
 
-        Assert.assertEquals(state.size(), 1);
+        Assert.assertEquals(state.rowCount(), 1);
         Row row0 = state.getRow(0);
         Assert.assertEquals(row0.cells.size(), 4);
         Assert.assertEquals((String) row0.getCell(0).value, "data1");

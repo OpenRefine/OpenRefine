@@ -37,6 +37,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -46,6 +47,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonUnwrapped;
+import org.apache.spark.api.java.JavaPairRDD;
 import scala.Tuple2;
 
 import org.openrefine.browsing.Engine;
@@ -55,8 +57,10 @@ import org.openrefine.importing.ImportingJob;
 import org.openrefine.importing.ImportingManager;
 import org.openrefine.model.GridState;
 import org.openrefine.model.Project;
+import org.openrefine.model.Record;
 import org.openrefine.model.Row;
 import org.openrefine.util.ParsingUtilities;
+import org.openrefine.util.RDDUtils;
 
 public class GetRowsCommand extends Command {
 
@@ -68,9 +72,9 @@ public class GetRowsCommand extends Command {
         protected final long rowIndex;
         @JsonProperty("j")
         @JsonInclude(Include.NON_NULL)
-        protected final Integer recordIndex;
+        protected final Long recordIndex;
 
-        protected WrappedRow(Row rowOrRecord, long rowIndex, Integer recordIndex) {
+        protected WrappedRow(Row rowOrRecord, long rowIndex, Long recordIndex) {
             this.row = rowOrRecord;
             this.rowIndex = rowIndex;
             this.recordIndex = recordIndex;
@@ -99,7 +103,7 @@ public class GetRowsCommand extends Command {
             this.filtered = filtered;
             this.totalCount = totalCount;
             this.start = start;
-            this.limit = limit > filtered ? (int) filtered : limit;
+            this.limit = Math.min(rows.size(), limit);
         }
     }
 
@@ -116,6 +120,13 @@ public class GetRowsCommand extends Command {
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         internalRespond(request, response);
+    }
+
+    protected static List<WrappedRow> recordToWrappedRows(Record record) {
+        List<Row> rows = record.getRows();
+        return IntStream.range(0, rows.size())
+                .mapToObj(i -> new WrappedRow(rows.get(i), record.getStartRowId() + i, i == 0 ? record.getStartRowId() : null))
+                .collect(Collectors.toList());
     }
 
     protected void internalRespond(HttpServletRequest request, HttpServletResponse response)
@@ -139,17 +150,10 @@ public class GetRowsCommand extends Command {
 
             Engine engine = getEngine(request, project);
             String callback = request.getParameter("callback");
-            GridState state = engine.getMatchingRows();
+            GridState entireGrid = project.getCurrentGridState();
 
             long start = getLongParameter(request, "start", 0);
             int limit = Math.max(0, getIntegerParameter(request, "limit", 20));
-            long totalCount = project.getCurrentGridState().size();
-
-            List<Tuple2<Long, Row>> rows = state.getRows(start, limit);
-
-            List<WrappedRow> wrappedRows = rows.stream()
-                    .map(tuple -> new WrappedRow(tuple._2(), tuple._1(), null))
-                    .collect(Collectors.toList());
 
             response.setCharacterEncoding("UTF-8");
             response.setHeader("Content-Type", callback == null ? "application/json" : "text/javascript");
@@ -167,12 +171,31 @@ public class GetRowsCommand extends Command {
              * { }
              */
 
-            if (engine.getMode() == Mode.RecordBased) {
-                throw new IllegalStateException("not implemented");
+            long filtered;
+            long totalCount;
+            List<WrappedRow> wrappedRows;
 
+            if (engine.getMode() == Mode.RowBased) {
+                totalCount = entireGrid.rowCount();
+                JavaPairRDD<Long, Row> matchingRows = engine.getMatchingRows();
+                List<Tuple2<Long, Row>> rows = RDDUtils.paginate(matchingRows, start, limit);
+
+                wrappedRows = rows.stream()
+                        .map(tuple -> new WrappedRow(tuple._2(), tuple._1(), null))
+                        .collect(Collectors.toList());
+
+                filtered = matchingRows.count();
+            } else {
+                totalCount = entireGrid.recordCount();
+                JavaPairRDD<Long, Record> matchingRecords = engine.getMatchingRecords();
+                List<Tuple2<Long, Record>> records = RDDUtils.paginate(matchingRecords, start, limit);
+
+                wrappedRows = records.stream()
+                        .flatMap(tuple -> recordToWrappedRows(tuple._2).stream())
+                        .collect(Collectors.toList());
+                filtered = matchingRecords.count();
             }
 
-            long filtered = state.size();
             JsonResult result = new JsonResult(engine.getMode(),
                     wrappedRows, filtered,
                     totalCount, start, limit);

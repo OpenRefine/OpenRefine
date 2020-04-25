@@ -37,7 +37,6 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import org.openrefine.commands.Command;
-import org.openrefine.commands.expr.ToggleStarredExpressionCommand;
 import org.openrefine.util.TestUtils;
 
 public class ToggleStarredExpressionCommandTests extends ExpressionCommandTestBase {

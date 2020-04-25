@@ -56,7 +56,6 @@ import org.testng.annotations.Test;
 import org.openrefine.ProjectManager;
 import org.openrefine.ProjectMetadata;
 import org.openrefine.commands.Command;
-import org.openrefine.commands.project.SetProjectMetadataCommand;
 import org.openrefine.model.Project;
 import org.openrefine.util.ParsingUtilities;
 

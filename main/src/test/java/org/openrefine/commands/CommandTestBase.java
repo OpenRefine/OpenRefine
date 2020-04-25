@@ -14,7 +14,6 @@ import javax.servlet.http.HttpServletResponse;
 import org.testng.annotations.BeforeMethod;
 
 import org.openrefine.RefineTest;
-import org.openrefine.commands.Command;
 import org.openrefine.util.TestUtils;
 
 public class CommandTestBase extends RefineTest {
