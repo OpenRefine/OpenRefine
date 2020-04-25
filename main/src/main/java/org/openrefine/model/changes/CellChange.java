@@ -35,21 +35,18 @@ package org.openrefine.model.changes;
 
 import java.util.Collections;
 
-import org.apache.spark.api.java.JavaPairRDD;
-import org.apache.spark.api.java.function.Function;
-import org.openrefine.history.Change;
+import org.apache.spark.api.java.function.Function2;
+import org.openrefine.browsing.EngineConfig;
 import org.openrefine.history.dag.DagSlice;
 import org.openrefine.history.dag.TransformationSlice;
 import org.openrefine.model.Cell;
-import org.openrefine.model.GridState;
+import org.openrefine.model.ColumnModel;
 import org.openrefine.model.Row;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import scala.Tuple2;
-
-public class CellChange implements Change {
+public class CellChange extends RowMapChange {
 	@JsonProperty("rowId")
     final public long     row;
 	@JsonProperty("cellIndex")
@@ -69,32 +66,29 @@ public class CellChange implements Change {
     		String columnName,
     		@JsonProperty("newCell")
     		Cell newCell) {
+    	super(EngineConfig.ALL_ROWS);
         this.row = row;
         this.cellIndex = cellIndex;
         this.columnName = columnName;
         this.newCell = newCell;
     }
     
-    @Override
-	public GridState apply(GridState projectState) {
-    	
-		JavaPairRDD<Long,Row> newRDD = projectState.getGrid()
-    			.map(mapFunction(cellIndex, row, newCell))
-    			.keyBy(t -> (Long)t._1)
-				.mapValues(t -> t._2);
-		return new GridState(projectState.getColumnModel(), newRDD, projectState.getOverlayModels());
+
+	@Override
+	public Function2<Long, Row, Row> getRowMap(ColumnModel columnModel) {
+		return mapFunction(cellIndex, row, newCell);
 	}
 	
-    static protected Function<Tuple2<Long,Row>,Tuple2<Long,Row>> mapFunction(int cellIndex, long row, Cell newCell) {
-    	return new Function<Tuple2<Long,Row>,Tuple2<Long,Row>>() {
-			private static final long serialVersionUID = 1L;
-	
+    static protected Function2<Long, Row, Row> mapFunction(int cellIndex, long rowId, Cell newCell) {
+    	return new Function2<Long, Row, Row>() {
+			private static final long serialVersionUID = 9024173133266468108L;
+
 			@Override
-			public Tuple2<Long, Row> call(Tuple2<Long, Row> tuple) throws Exception {
-				if (tuple._1() == row) {
-					return new Tuple2<Long, Row>(tuple._1(), tuple._2().withCell(cellIndex, newCell));
+			public Row call(Long currentRowId, Row row) throws Exception {
+				if (rowId == currentRowId) {
+					return row.withCell(cellIndex, newCell);
 				} else {
-					return tuple;
+					return row;
 				}
 			}
     	};

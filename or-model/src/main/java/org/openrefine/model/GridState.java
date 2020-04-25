@@ -340,8 +340,12 @@ public class GridState {
      *    a RDD with the same partitioning as the original one, with mapped values
      */
     public static JavaPairRDD<Long, Row> mapKeyValuesToValues(JavaPairRDD<Long, Row> pairRDD, Function2<Long, Row, Row> function) {
-
-        PairFlatMapFunction<Iterator<Tuple2<Long,Row>>, Long, Row> mapper = new PairFlatMapFunction<Iterator<Tuple2<Long,Row>>, Long, Row>() {
+        PairFlatMapFunction<Iterator<Tuple2<Long,Row>>, Long, Row> mapper = mapKeyValuesToValuesInternal(function);
+        return pairRDD.mapPartitionsToPair(mapper, true);
+    }
+    
+    private static PairFlatMapFunction<Iterator<Tuple2<Long,Row>>, Long, Row> mapKeyValuesToValuesInternal(Function2<Long, Row, Row> function) {
+        return new PairFlatMapFunction<Iterator<Tuple2<Long,Row>>, Long, Row>() {
             private static final long serialVersionUID = 1L;
 
             @Override
@@ -367,11 +371,6 @@ public class GridState {
             }
             
         };
-        return pairRDD.mapPartitionsToPair(mapper, true);
-    }
-    
-    public static class NotSerializable {
-        
     }
     
     /**

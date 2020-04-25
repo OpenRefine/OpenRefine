@@ -27,6 +27,9 @@ import scala.Tuple2;
  * and only those matched by facets.
  * In records mode, this change is applied on each row of the filtered records.
  * 
+ * This class can also be subclassed for changes which ignore the engine,
+ * by initializing the engine config with {@link EngineConfig.ALL_ROWS}.
+ * 
  * @author Antonin Delpeuch
  *
  */
@@ -72,8 +75,7 @@ public abstract class RowMapChange extends EngineDependentChange {
 		JavaPairRDD<Long, Row> rows;
 		if (Mode.RowBased.equals(engine.getMode())) {
 			RowFilter rowFilter = engine.combinedRowFilters();
-			rows = GridState.mapKeyValuesToValues(projectState.getGrid(),
-					(Long idx, Row row) -> rowFilter.filterRow(idx, row) ? operation.call(idx, row) : row);
+			rows = GridState.mapKeyValuesToValues(projectState.getGrid(), conditionalMap(rowFilter, operation));
 		} else {
 			// records mode
 			RecordFilter recordFilter = engine.combinedRecordFilters();
@@ -81,6 +83,18 @@ public abstract class RowMapChange extends EngineDependentChange {
 					recordToRows(operation, recordFilter)).values()));
 		}
 		return new GridState(getNewColumnModel(projectState), rows, getNewOverlayModels(projectState));
+	}
+	
+	private static Function2<Long, Row, Row> conditionalMap(RowFilter rowFilter, Function2<Long, Row, Row> operation) {
+		return new Function2<Long, Row, Row>() {
+			private static final long serialVersionUID = -6558022669046720439L;
+
+			@Override
+			public Row call(Long idx, Row row) throws Exception {
+				return rowFilter.filterRow(idx, row) ? operation.call(idx, row) : row;
+			}
+			
+		};
 	}
 	
 	private static Function<Record, Iterable<Tuple2<Long,Row>>> recordToRows(Function2<Long, Row, Row> operation, RecordFilter recordFilter) {
