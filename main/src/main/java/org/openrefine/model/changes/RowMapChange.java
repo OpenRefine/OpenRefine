@@ -21,6 +21,7 @@ import org.openrefine.model.ColumnModel;
 import org.openrefine.model.GridState;
 import org.openrefine.model.Record;
 import org.openrefine.model.Row;
+import org.openrefine.model.rdd.PartitionedRDD;
 import org.openrefine.overlay.OverlayModel;
 
 /**
@@ -86,8 +87,12 @@ public abstract class RowMapChange extends EngineDependentChange {
         } else {
             // records mode
             RecordFilter recordFilter = engine.combinedRecordFilters();
-            rows = JavaPairRDD.fromJavaRDD((projectState.getRecords().flatMapValues(
-                    recordToRows(operation, recordFilter)).values()));
+            JavaPairRDD<Long, Tuple2<Long, Row>> newRows = projectState.getRecords().flatMapValues(
+                    recordToRows(operation, recordFilter));
+            // reuse the partitioner for the records RDD to partition rows as well
+            rows = new PartitionedRDD<Long, Row>(JavaPairRDD.fromJavaRDD(newRows.values()),
+                    newRows.partitioner().get())
+                    .asPairRDD(newRows.kClassTag(), projectState.getGrid().vClassTag());
         }
         return new GridState(getNewColumnModel(projectState), rows, getNewOverlayModels(projectState));
     }

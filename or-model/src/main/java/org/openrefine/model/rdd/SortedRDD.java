@@ -4,13 +4,11 @@ package org.openrefine.model.rdd;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.spark.Partition;
 import org.apache.spark.Partitioner;
 import org.apache.spark.TaskContext;
 import org.apache.spark.api.java.JavaPairRDD;
 import org.apache.spark.rdd.RDD;
 import scala.Function2;
-import scala.Option;
 import scala.Serializable;
 import scala.Tuple2;
 import scala.collection.Iterator;
@@ -31,11 +29,10 @@ import scala.reflect.ClassTag;
  * @author Antonin Delpeuch
  *
  */
-public class SortedRDD<K extends Comparable<K>, V> extends RDD<Tuple2<K, V>> {
+public class SortedRDD<K extends Comparable<K>, V> extends PartitionedRDD<K, V> {
 
     private static final long serialVersionUID = -5438240253771415945L;
 
-    protected final Partitioner partitioner;
     protected final ClassTag<K> keyClassTag;
 
     public SortedRDD(JavaPairRDD<K, V> pairRDD) {
@@ -43,9 +40,11 @@ public class SortedRDD<K extends Comparable<K>, V> extends RDD<Tuple2<K, V>> {
     }
 
     public SortedRDD(RDD<Tuple2<K, V>> parent, ClassTag<Tuple2<K, V>> tupleClassTag, ClassTag<K> keyClassTag) {
-        super(parent, tupleClassTag);
+        super(parent, createPartitioner(parent, keyClassTag), tupleClassTag);
         this.keyClassTag = keyClassTag;
+    }
 
+    private static <K extends Comparable<K>, V> Partitioner createPartitioner(RDD<Tuple2<K, V>> parent, ClassTag<K> keyClassTag) {
         int numPartitions = parent.getNumPartitions();
         List<K> firstRowIds = null;
 
@@ -63,16 +62,11 @@ public class SortedRDD<K extends Comparable<K>, V> extends RDD<Tuple2<K, V>> {
                 firstRowIds.add((K) objects[i]);
             }
         }
-        partitioner = new SortedPartitioner<K>(numPartitions, firstRowIds);
-    }
-
-    @Override
-    public Option<Partitioner> partitioner() {
-        return Option.apply(partitioner);
+        return new SortedPartitioner<K>(numPartitions, firstRowIds);
     }
 
     public JavaPairRDD<K, V> asPairRDD(ClassTag<V> valueClassTag) {
-        return new JavaPairRDD<K, V>(this, keyClassTag, valueClassTag);
+        return asPairRDD(keyClassTag, valueClassTag);
     }
 
     public static <K extends Comparable<K>, V> JavaPairRDD<K, V> assumeSorted(JavaPairRDD<K, V> rdd) {
@@ -123,7 +117,7 @@ public class SortedRDD<K extends Comparable<K>, V> extends RDD<Tuple2<K, V>> {
     }
 
     /**
-     * Extracts the first key of a partition, or returns -1 if the partition is empty.
+     * Extracts the first key of a partition, or returns null if the partition is empty.
      */
     protected static class ExtractFirstRowId<K, V> implements Function2<TaskContext, Iterator<Tuple2<K, V>>, K>, Serializable {
 
@@ -137,15 +131,5 @@ public class SortedRDD<K extends Comparable<K>, V> extends RDD<Tuple2<K, V>> {
                 return null;
             }
         }
-    }
-
-    @Override
-    public Iterator<Tuple2<K, V>> compute(Partition partition, TaskContext context) {
-        return firstParent(elementClassTag()).compute(partition, context);
-    }
-
-    @Override
-    public Partition[] getPartitions() {
-        return firstParent(elementClassTag()).getPartitions();
     }
 }

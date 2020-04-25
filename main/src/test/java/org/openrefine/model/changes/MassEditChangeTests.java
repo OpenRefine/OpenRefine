@@ -98,7 +98,7 @@ public class MassEditChangeTests extends RefineTest {
 
     @Test
     public void testRecordsMode() {
-        engineConfig = new EngineConfig(Arrays.asList(facet), Engine.Mode.RecordBased);
+        EngineConfig engineConfig = new EngineConfig(Arrays.asList(facet), Engine.Mode.RecordBased);
         MassEditChange change = new MassEditChange(engineConfig, eval, "foo", Collections.singletonMap("v1", "v2"), "hey", null);
         GridState applied = change.apply(initialState);
         Row row0 = applied.getRow(0);
