@@ -45,6 +45,7 @@ import java.time.OffsetDateTime;
 import java.util.Properties;
 
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.SpreadsheetVersion;
 import org.slf4j.LoggerFactory;
 import org.testng.Assert;
 import org.testng.annotations.AfterMethod;
@@ -111,6 +112,12 @@ public class XlsExporterTests extends RefineTest {
     @Test
     public void getContentType(){
         Assert.assertEquals(SUT.getContentType(), "application/vnd.ms-excel");
+    }
+
+    @Test
+    public void getSpreadsheetVersion(){
+        XlsExporter exporter = (XlsExporter)SUT;
+        Assert.assertEquals(exporter.getSpreadsheetVersion(), SpreadsheetVersion.EXCEL97);
     }
 
     @Test

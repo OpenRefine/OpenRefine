@@ -34,6 +34,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package com.google.refine.exporters;
 
 import java.io.ByteArrayInputStream;
+
+import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFRow;
@@ -113,6 +115,12 @@ public class XlsxExporterTests extends RefineTest {
     @Test
     public void getContentType(){
         Assert.assertEquals(SUT.getContentType(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+    }
+
+    @Test
+    public void getSpreadsheetVersion(){
+        XlsExporter exporter = (XlsExporter)SUT;
+        Assert.assertEquals(exporter.getSpreadsheetVersion(), SpreadsheetVersion.EXCEL2007);
     }
 
     @Test
