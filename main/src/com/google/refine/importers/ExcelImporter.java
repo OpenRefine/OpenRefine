@@ -40,6 +40,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import org.apache.poi.ooxml.POIXMLException;
@@ -49,7 +50,6 @@ import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.apache.poi.poifs.filesystem.FileMagic;
 
 import org.slf4j.Logger;
@@ -57,6 +57,7 @@ import org.slf4j.LoggerFactory;
 
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.github.pjfanning.xlsx.StreamingReader;
 import com.google.refine.ProjectMetadata;
 import com.google.refine.importing.ImportingJob;
 import com.google.refine.importing.ImportingUtilities;
@@ -83,21 +84,16 @@ public class ExcelImporter extends TabularImportingParserBase {
             for (int index = 0;index < fileRecords.size();index++) {
                 ObjectNode fileRecord = fileRecords.get(index);
                 File file = ImportingUtilities.getFile(job, fileRecord);
-                InputStream is = new FileInputStream(file);
 
-                if (!is.markSupported()) {
-                  is = new BufferedInputStream(is);
-                }
-
+                Workbook wb = null;
                 try {
-                    Workbook wb = FileMagic.valueOf(is) == FileMagic.OOXML ?
-                            new XSSFWorkbook(is) :
-                                new HSSFWorkbook(new POIFSFileSystem(is));
+                    wb = FileMagic.valueOf(file) == FileMagic.OOXML ? createXlsxWorkbook(file) :
+                                new HSSFWorkbook(new POIFSFileSystem(file));
 
                             int sheetCount = wb.getNumberOfSheets();
                             for (int i = 0; i < sheetCount; i++) {
                                 Sheet sheet = wb.getSheetAt(i);
-                                int rows = sheet.getLastRowNum() - sheet.getFirstRowNum() + 1;
+                                int rows = countRows(sheet);
 
                                 ObjectNode sheetRecord = ParsingUtilities.mapper.createObjectNode();
                                 JSONUtilities.safePut(sheetRecord, "name",  file.getName() + "#" + sheet.getSheetName());
@@ -110,9 +106,10 @@ public class ExcelImporter extends TabularImportingParserBase {
                                 }
                                 JSONUtilities.append(sheetRecords, sheetRecord);
                             }
-                            wb.close();
                 } finally {
-                    is.close();
+                    if (wb != null) {
+                        wb.close();
+                    }
                 }
             }                
         } catch (IOException e) {
@@ -144,7 +141,7 @@ public class ExcelImporter extends TabularImportingParserBase {
         
         try {
             wb = FileMagic.valueOf(inputStream) == FileMagic.OOXML ?
-                new XSSFWorkbook(inputStream) :
+                createXlsxWorkbook(inputStream) :
                 new HSSFWorkbook(new POIFSFileSystem(inputStream));
         } catch (IOException e) {
             exceptions.add(new ImportException(
@@ -190,19 +187,18 @@ public class ExcelImporter extends TabularImportingParserBase {
                 continue;
             
             final Sheet sheet = wb.getSheetAt(Integer.parseInt(fileNameAndSheetIndex[1]));
-            final int lastRow = sheet.getLastRowNum();
             
             TableDataReader dataReader = new TableDataReader() {
-                int nextRow = 0;
+                Iterator<org.apache.poi.ss.usermodel.Row> rowIterator = sheet.rowIterator();
                 
                 @Override
                 public List<Object> getNextRowOfCells() throws IOException {
-                    if (nextRow > lastRow) {
+                    if (!rowIterator.hasNext()) {
                         return null;
                     }
                     
                     List<Object> cells = new ArrayList<Object>();
-                    org.apache.poi.ss.usermodel.Row row = sheet.getRow(nextRow++);
+                    org.apache.poi.ss.usermodel.Row row = rowIterator.next();
                     if (row != null) {
                         short lastCell = row.getLastCellNum();
                         for (short cellIndex = 0; cellIndex < lastCell; cellIndex++) {
@@ -233,7 +229,27 @@ public class ExcelImporter extends TabularImportingParserBase {
 
         super.parseOneFile(project, metadata, job, fileSource, inputStream, limit, options, exceptions);
     }
-    
+
+    private Workbook createXlsxWorkbook(File file) {
+        return StreamingReader.builder()
+                .rowCacheSize(100)
+                .bufferSize(4096)
+                .setUseSstTempFile(true)
+                .open(file);
+    }
+
+    private Workbook createXlsxWorkbook(InputStream is) {
+        return StreamingReader.builder()
+                .rowCacheSize(100)
+                .bufferSize(4096)
+                .setUseSstTempFile(true)
+                .open(is);
+    }
+
+    private int countRows(Sheet sheet) {
+        return sheet.getLastRowNum() - sheet.getFirstRowNum() + 1;
+    }
+
     static protected Cell extractCell(org.apache.poi.ss.usermodel.Cell cell) {
         CellType cellType = cell.getCellType();
         if (cellType.equals(CellType.FORMULA)) {
