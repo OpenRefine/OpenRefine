@@ -111,6 +111,11 @@ public class XlsxExporterTests extends RefineTest {
     }
 
     @Test
+    public void getContentType(){
+        Assert.assertEquals(SUT.getContentType(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+    }
+
+    @Test
     public void exportSimpleXlsx(){
         CreateGrid(2, 2);
 
