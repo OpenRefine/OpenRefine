@@ -58,7 +58,7 @@ public class ColumnRenameChange extends ColumnChange {
         synchronized (project) {
             ProjectManager.singleton.getInterProjectModel().flushJoinsInvolvingProjectColumn(project.id, _oldColumnName);
             Column newColumn = project.columnModel.getColumnByName(_oldColumnName)
-                    .withName(_newColumnName);
+            		.withName(_newColumnName);
             project.columnModel.update();
         }
     }

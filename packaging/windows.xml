@@ -18,6 +18,9 @@
       <outputDirectory>server/target/lib/native</outputDirectory>
       <includes>
 	<include>**/*.dll</include>
+	<include>**/*.exe</include>
+	<include>**/*.lib</include>
+	<include>**/*.cmd</include>
       </includes>
     </fileSet>
     <fileSet>
