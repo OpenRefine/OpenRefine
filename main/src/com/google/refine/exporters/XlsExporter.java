@@ -65,7 +65,7 @@ public class XlsExporter implements StreamExporter {
     
     @Override
     public String getContentType() {
-        return xml ? "application/xlsx" : "application/xls";
+        return xml ? "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" : "application/vnd.ms-excel";
     }
 
     @Override
