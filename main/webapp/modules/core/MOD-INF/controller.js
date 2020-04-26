@@ -223,8 +223,6 @@ function registerImporting() {
 
   IM.registerFormat("text/xml", "XML files", "XmlParserUI", new Packages.com.google.refine.importers.XmlImporter());
   IM.registerFormat("binary/text/xml/xls/xlsx", "Excel files", "ExcelParserUI", new Packages.com.google.refine.importers.ExcelImporter());
-  IM.registerFormat("application/vnd.ms-excel", "Excel files", "ExcelParserUI", new Packages.com.google.refine.importers.ExcelImporter());
-  IM.registerFormat("application/vnd.openxmlformats-officedocument.spreadsheetml.*", "Excel files", "ExcelParserUI", new Packages.com.google.refine.importers.ExcelImporter());
   IM.registerFormat("text/xml/ods", "Open Document Format spreadsheets (.ods)", "ExcelParserUI", new Packages.com.google.refine.importers.OdsImporter());
   IM.registerFormat("text/json", "JSON files", "JsonParserUI", new Packages.com.google.refine.importers.JsonImporter());
   IM.registerFormat("text/marc", "MARC files", "XmlParserUI", new Packages.com.google.refine.importers.MarcImporter());
@@ -247,8 +245,8 @@ function registerImporting() {
   IM.registerExtension(".json", "text/json");
   IM.registerExtension(".js", "text/json");
 
-  IM.registerExtension(".xls", "application/vnd.ms-excel");
-  IM.registerExtension(".xlsx", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+  IM.registerExtension(".xls", "binary/text/xml/xls/xlsx");
+  IM.registerExtension(".xlsx", "binary/text/xml/xls/xlsx");
 
   IM.registerExtension(".ods", "text/xml/ods");
   
@@ -293,7 +291,8 @@ function registerImporting() {
   IM.registerMimeType("application/x-excel", "binary/text/xml/xls/xlsx");
   IM.registerMimeType("application/xls", "binary/text/xml/xls/xlsx");
   IM.registerMimeType("application/x-xls", "binary/text/xml/xls/xlsx");
-  
+  IM.registerMimeType("application/vnd.openxmlformats-officedocument.spreadsheetml.*", "binary/text/xml/xls/xlsx");
+
   IM.registerMimeType("application/vnd.oasis.opendocument.spreadsheet","text/xml/ods");
 
   IM.registerMimeType("application/json", "text/json");
