@@ -132,6 +132,7 @@ public class RefineServlet extends Butterfly {
         		new SparkConf()
         		.setAppName("OpenRefine")
         		.setMaster(String.format("local[%d]", defaultParallelism)));
+        s_context.setLogLevel("WARN");
         s_context.hadoopConfiguration().set("fs.file.impl", OrderedLocalFileSystem.class.getName());
         VERSION = getInitParameter("refine.version");
         REVISION = getInitParameter("refine.revision");    
