@@ -4,8 +4,8 @@
 const siteConfig = {
   title: 'OpenRefine', // Title for your website.
   tagline: 'A power tool for working with messy data.',
-  url: 'https://openrefine.github.io/',
-  baseUrl: '/docs-prototype/',
+  url: 'https://docs.openrefine.org/',
+  baseUrl: '/',
 
   projectName: 'OpenRefine',
   organizationName: 'OpenRefine',
@@ -54,6 +54,10 @@ const siteConfig = {
   // Add custom scripts here that would be placed in <script> tags.
   scripts: ['https://buttons.github.io/buttons.js'],
 
+  // URL for editing docs, usage example: editUrl + 'en/doc1.md'.
+  // If this field is omitted, there will be no "Edit this Doc" button for each document.
+  editUrl: 'https://github.com/OpenRefine/OpenRefine/blob/master/docs/src/',
+  
   // On page navigation for the current documentation page.
   onPageNav: 'separate',
   // No .html extensions for paths.
@@ -65,6 +69,12 @@ const siteConfig = {
 
   // Expand/collapse the links and subcategories under categories.
   docsSideNavCollapsible: true,
+  
+  // An option to enable the docs showing the user when last updated the doc.
+  enableUpdateTime: true,
+
+  // An option to enable the docs showing the author who last updated the doc.
+  enableUpdateBy: true,
 
   // Show documentation's last contributor's name.
   // enableUpdateBy: true,

@@ -48,7 +48,7 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.util.WorkbookUtil;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.google.refine.ProjectManager;
@@ -65,14 +65,14 @@ public class XlsExporter implements StreamExporter {
     
     @Override
     public String getContentType() {
-        return xml ? "application/xlsx" : "application/xls";
+        return xml ? "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" : "application/vnd.ms-excel";
     }
 
     @Override
     public void export(final Project project, Properties params, Engine engine,
             OutputStream outputStream) throws IOException {
 
-        final Workbook wb = xml ? new XSSFWorkbook() : new HSSFWorkbook();
+        final Workbook wb = xml ? new SXSSFWorkbook() : new HSSFWorkbook();
         
         TabularSerializer serializer = new TabularSerializer() {
             Sheet s;

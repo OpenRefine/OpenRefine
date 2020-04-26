@@ -18,54 +18,60 @@ PerformEditsDialog.launch = function(logged_in_username, max_severity) {
   this._elmts.performEditsButton.text($.i18n('perform-wikidata-edits/perform-edits'));
   this._elmts.cancelButton.text($.i18n('perform-wikidata-edits/cancel'));
 
+  var hiddenIframe = $('#hiddenIframe').contents();
+
   var dismiss = function() {
     DialogSystem.dismissUntil(self._level - 1);
   };
 
+
+  var doFormSubmit = function() {
+    hiddenIframe.find('body').append(elmts.performEditsForm.clone());
+    var formCopy = hiddenIframe.find("#wikibase-perform-edits-form");
+    formCopy.submit();
+
+    if(elmts.editSummary.val().length == 0) {
+      elmts.editSummary.focus();
+    } else {
+      Refine.postProcess(
+        "wikidata",
+        "perform-wikibase-edits",
+        {},
+        { summary: elmts.editSummary.val(), },
+        { includeEngine: true, cellsChanged: true, columnStatsChanged: true },
+        { onDone: function() { dismiss(); } }
+      );
+    }
+  }
+  
   elmts.loggedInUsername
    .text(logged_in_username)
    .attr('href','https://www.wikidata.org/wiki/User:'+logged_in_username);
   
   frame.find('.cancel-button').click(function() {
-     dismiss();
+    dismiss();
   });
 
-  var hiddenIframe = $('#hiddenIframe').contents();
+  this._elmts.editSummary.keypress(function (evt) {
+    if (evt.which === 13) {
+      doFormSubmit();
+      evt.preventDefault();
+    }
+  });
 
   if (max_severity === 'CRITICAL') {
-      elmts.performEditsButton.prop("disabled",true).addClass("button-disabled");
+    elmts.performEditsButton.prop("disabled",true).addClass("button-disabled");
   } else {
     elmts.performEditsButton.click(function() {
-        hiddenIframe.find('body').append(
-                elmts.performEditsForm.clone());
-        var formCopy = hiddenIframe.find("#wikibase-perform-edits-form");
-        formCopy.submit();
-
-        if(elmts.editSummary.val().length == 0) {
-            elmts.editSummary.focus();
-        } else {
-            Refine.postProcess(
-            "wikidata",
-            "perform-wikibase-edits",
-            {},
-            {
-                summary: elmts.editSummary.val(),
-            },
-            { includeEngine: true, cellsChanged: true, columnStatsChanged: true },
-            { onDone:
-                function() {
-                dismiss();
-                }
-            });
-        }
+      doFormSubmit();
     });
   }
 };
 
 PerformEditsDialog.updateEditCount = function(edit_count) {
   this._elmts.reviewYourEdits.html(
-        $.i18n('perform-wikidata-edits/review-your-edits')
-                .replace('{nb_edits}', edit_count));
+    $.i18n('perform-wikidata-edits/review-your-edits')
+      .replace('{nb_edits}', edit_count));
 }
 
 PerformEditsDialog._updateWarnings = function(data) {

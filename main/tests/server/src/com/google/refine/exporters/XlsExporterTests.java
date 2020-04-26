@@ -107,6 +107,11 @@ public class XlsExporterTests extends RefineTest {
     }
 
     @Test
+    public void getContentType(){
+        Assert.assertEquals(SUT.getContentType(), "application/vnd.ms-excel");
+    }
+
+    @Test
     public void exportSimpleXls(){
         CreateGrid(2, 2);
 

@@ -543,7 +543,11 @@ DataTableCellUI.prototype._startEdit = function(elmt) {
   elmts.or_views_ctrlEnter.html($.i18n('core-views/ctrl-enter'));
   elmts.cancelButton.html($.i18n('core-buttons/cancel'));
   elmts.or_views_esc.html($.i18n('core-buttons/esc'));
-  
+
+  var cellDataType = typeof originalContent === "string" ? "text" : typeof originalContent;
+  cellDataType = (this._cell !== null && "t" in this._cell && this._cell.t !=  null) ? this._cell.t : cellDataType;
+  elmts.typeSelect.val(cellDataType);
+
   MenuSystem.showMenu(menu, function(){});
   MenuSystem.positionMenuLeftRight(menu, $(this._td));
 
