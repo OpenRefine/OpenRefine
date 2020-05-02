@@ -36,6 +36,7 @@ package com.google.refine.browsing.util;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -85,6 +86,8 @@ public class ExpressionNominalValueGrouper implements RowVisitor, RecordVisitor 
      */
     protected boolean hasBlank;
     protected boolean hasError;
+    protected boolean isVisitingRecord;
+    protected HashSet<String> uniqueNonBlankData;
 
     public ExpressionNominalValueGrouper(Evaluable evaluable, String columnName, int cellIndex) {
         _evaluable = evaluable;
@@ -109,6 +112,9 @@ public class ExpressionNominalValueGrouper implements RowVisitor, RecordVisitor 
 
         Properties bindings = ExpressionUtils.createBindings(project);
 
+        uniqueNonBlankData = new HashSet<>();
+        isVisitingRecord = false;
+
         visitRow(project, rowIndex, row, bindings, rowIndex);
 
         if (hasError) {
@@ -127,6 +133,9 @@ public class ExpressionNominalValueGrouper implements RowVisitor, RecordVisitor 
         hasBlank = false;
 
         Properties bindings = ExpressionUtils.createBindings(project);
+
+        uniqueNonBlankData = new HashSet<>();
+        isVisitingRecord = true;
 
         for (int r = record.fromRowIndex; r < record.toRowIndex; r++) {
             Row row = project.rows.get(r);
@@ -178,6 +187,10 @@ public class ExpressionNominalValueGrouper implements RowVisitor, RecordVisitor 
             String valueString = StringUtils.toString(value);
             IndexedNominalFacetChoice facetChoice = choices.get(valueString);
 
+            if (isVisitingRecord && uniqueNonBlankData.contains(valueString)) {
+                return;
+            }
+
             if (facetChoice != null) {
                 if (facetChoice._latestIndex < index) {
                     facetChoice._latestIndex = index;
@@ -192,6 +205,8 @@ public class ExpressionNominalValueGrouper implements RowVisitor, RecordVisitor 
                 choice.count = 1;
                 choices.put(valueString, choice);
             }
+
+            uniqueNonBlankData.add(valueString);
         } else {
             hasBlank = true;
         }
