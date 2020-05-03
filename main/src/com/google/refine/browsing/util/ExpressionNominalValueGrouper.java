@@ -86,7 +86,7 @@ public class ExpressionNominalValueGrouper implements RowVisitor, RecordVisitor 
      */
     protected boolean hasBlank;
     protected boolean hasError;
-    protected boolean isVisitingRecord;
+    protected boolean isRowPartOfRecord;
     protected HashSet<String> uniqueNonBlankData;
 
     public ExpressionNominalValueGrouper(Evaluable evaluable, String columnName, int cellIndex) {
@@ -112,8 +112,7 @@ public class ExpressionNominalValueGrouper implements RowVisitor, RecordVisitor 
 
         Properties bindings = ExpressionUtils.createBindings(project);
 
-        uniqueNonBlankData = new HashSet<>();
-        isVisitingRecord = false;
+        isRowPartOfRecord = false;
 
         visitRow(project, rowIndex, row, bindings, rowIndex);
 
@@ -134,8 +133,10 @@ public class ExpressionNominalValueGrouper implements RowVisitor, RecordVisitor 
 
         Properties bindings = ExpressionUtils.createBindings(project);
 
+        // track unique non blank data in a record to prevent double-counting
+        // data for rows within the same record
         uniqueNonBlankData = new HashSet<>();
-        isVisitingRecord = true;
+        isRowPartOfRecord = true;
 
         for (int r = record.fromRowIndex; r < record.toRowIndex; r++) {
             Row row = project.rows.get(r);
@@ -187,7 +188,9 @@ public class ExpressionNominalValueGrouper implements RowVisitor, RecordVisitor 
             String valueString = StringUtils.toString(value);
             IndexedNominalFacetChoice facetChoice = choices.get(valueString);
 
-            if (isVisitingRecord && uniqueNonBlankData.contains(valueString)) {
+            // do not count the current data instance if the current row belongs to a record
+            // and the same data value is found in some previously visited row within the same record
+            if (isRowPartOfRecord && uniqueNonBlankData.contains(valueString)) {
                 return;
             }
 
@@ -206,7 +209,10 @@ public class ExpressionNominalValueGrouper implements RowVisitor, RecordVisitor 
                 choices.put(valueString, choice);
             }
 
-            uniqueNonBlankData.add(valueString);
+            // update the hashset to track all unique non blank data in a record
+            if (isRowPartOfRecord) {
+                uniqueNonBlankData.add(valueString);
+            }
         } else {
             hasBlank = true;
         }
