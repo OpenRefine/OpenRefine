@@ -167,11 +167,12 @@ abstract public class TabularImportingParserBase extends ImportingParserBase {
                             } else if (ExpressionUtils.isNonBlankData(value)) {
                                 Serializable storedValue;
                                 if (value instanceof String) {
+                                	if(trimStrings) {
+                                        value = ((String) value).trim();
+                                    }
                                     storedValue = guessCellValueTypes ?
                                         ImporterUtilities.parseCellValue((String) value) : (String) value;
-                                    if(trimStrings) {
-                                        storedValue = ((String) storedValue).toString().trim();
-                                    }
+                                    
                                 } else {
                                     storedValue = ExpressionUtils.wrapStorable(value);
                                 }
