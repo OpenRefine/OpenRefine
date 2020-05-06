@@ -86,8 +86,6 @@ public class ExpressionNominalValueGrouper implements RowVisitor, RecordVisitor 
      */
     protected boolean hasBlank;
     protected boolean hasError;
-    protected boolean isRowPartOfRecord;
-    protected HashSet<String> uniqueNonBlankData;
 
     public ExpressionNominalValueGrouper(Evaluable evaluable, String columnName, int cellIndex) {
         _evaluable = evaluable;
@@ -112,8 +110,6 @@ public class ExpressionNominalValueGrouper implements RowVisitor, RecordVisitor 
 
         Properties bindings = ExpressionUtils.createBindings(project);
 
-        isRowPartOfRecord = false;
-
         visitRow(project, rowIndex, row, bindings, rowIndex);
 
         if (hasError) {
@@ -128,26 +124,21 @@ public class ExpressionNominalValueGrouper implements RowVisitor, RecordVisitor 
 
     @Override
     public boolean visit(Project project, Record record) {
-        hasError = false;
-        hasBlank = false;
-
         Properties bindings = ExpressionUtils.createBindings(project);
 
-        // track unique non blank data in a record to prevent double-counting
-        // data for rows within the same record
-        uniqueNonBlankData = new HashSet<>();
-        isRowPartOfRecord = true;
-
         for (int r = record.fromRowIndex; r < record.toRowIndex; r++) {
+            hasError = false;
+            hasBlank = false;
+
             Row row = project.rows.get(r);
             visitRow(project, r, row, bindings, record.recordIndex);
-        }
 
-        if (hasError) {
-            errorCount++;
-        }
-        if (hasBlank) {
-            blankCount++;
+            if (hasError) {
+                errorCount++;
+            }
+            if (hasBlank) {
+                blankCount++;
+            }
         }
 
         return false;
@@ -188,12 +179,6 @@ public class ExpressionNominalValueGrouper implements RowVisitor, RecordVisitor 
             String valueString = StringUtils.toString(value);
             IndexedNominalFacetChoice facetChoice = choices.get(valueString);
 
-            // do not count the current data instance if the current row belongs to a record
-            // and the same data value is found in some previously visited row within the same record
-            if (isRowPartOfRecord && uniqueNonBlankData.contains(valueString)) {
-                return;
-            }
-
             if (facetChoice != null) {
                 if (facetChoice._latestIndex < index) {
                     facetChoice._latestIndex = index;
@@ -207,11 +192,6 @@ public class ExpressionNominalValueGrouper implements RowVisitor, RecordVisitor 
 
                 choice.count = 1;
                 choices.put(valueString, choice);
-            }
-
-            // update the hashset to track all unique non blank data in a record
-            if (isRowPartOfRecord) {
-                uniqueNonBlankData.add(valueString);
             }
         } else {
             hasBlank = true;
