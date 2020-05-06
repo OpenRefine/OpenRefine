@@ -179,7 +179,7 @@ public class ExpressionNominalValueGrouperTests extends RefineTest {
         String completeProjectJson = "col1,col2,col3\n"
                 + "record1,1,a\n"
                 + ",,a\n"
-                + ",1,a\n"
+                + ",,a\n"
                 + "record2,,a\n"
                 + ",1,a\n";
 
@@ -199,7 +199,7 @@ public class ExpressionNominalValueGrouperTests extends RefineTest {
             grouper.end(project);
         }
 
-        Assert.assertEquals(grouper.blankCount, 2);
+        Assert.assertEquals(grouper.blankCount, 3);
         Assert.assertEquals(grouper.choices.size(), 1);
         Assert.assertTrue(grouper.choices.containsKey(integerStringValue));
         Assert.assertEquals(grouper.choices.get(integerStringValue).count, 2);
