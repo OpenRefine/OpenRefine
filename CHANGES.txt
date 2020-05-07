@@ -4,7 +4,7 @@ Features:
 
 - Issue 144: Use subdirectory for archives (tar, zip)
 - Issue 467: Provide feedback to user on JVM heap memory usage
-- Issue 524: Shorten name of anonymous JSON nodes in column names
+- Issue 524: Shorten the name of anonymous JSON nodes in column names
 
 Bugs fixed:
 
@@ -38,7 +38,7 @@ Bugs fixed:
 - Issue 596: JSON importer should not deserialize nulls as the string "null"
 - Issue 597: Deselect all button on Custom Tabular Exporter dialog doesn't work
 - Issue 599: RDF/XML parser preview not wired up
-- Issue 601: Allow selection of root element on JSON import
+- Issue 601: Allow selection of root element in JSON import
 - Issue 604: The common transform “Trim leading and trailing whitespace” doesn’t trim non-breaking spaces
 
 
