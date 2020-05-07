@@ -92,13 +92,13 @@ Bugs fixed:
 - Issue 435: refine sh script only checks for java 1.6, not > 1.6
 - Issue 440: Fetch URLs aborts while saving/loading/computing facets
 - Issue 441: onError - "keep-original" / "store-blank" working oddly for value.toDate()
-- Issue 442: Two column transforms to date on the same column turns the cells blank
+- Issue 442: Two columns transform to date on the same column turns the cells blank
 - Issue 449: Uncaught exception from Excel importer
 - Issue 450: Parse error uploading to Fusion Table
 - Issue 454: Reselect Files after Configuring Parsing Options does not allow Select
 - Issue 459: Undefined error with some CSV files (incorrectly detected as EXCEL) 
 - Issue 462: Don't trim whitespace in Excel importer
-- Issue 465: Data text file with extension .dta within a .ZIP is not automatically extracted
+- Issue 465: Text data file with extension .dta within a .ZIP is not automatically extracted
 - Issue 473: Cancel button doesn't work during project creation
 - Issue 474: XML importer ignores record limit
 - Issue 475: New Importer does not accept special separator characters completely such as Unicode chars
