@@ -256,6 +256,10 @@ public class ImportingManager {
     }
     
     static public String getFormatFromMimeType(String mimeType) {
+        if (mimeTypeToFormat.get(mimeType) == null){
+            int index = mimeType.lastIndexOf(".");
+            mimeType = mimeType.substring(0, index)+".*";
+        }
         return mimeTypeToFormat.get(mimeType);
     }
     
