@@ -3,6 +3,7 @@ package com.google.refine;
 import com.google.refine.expr.ExpressionUtils;
 import com.google.refine.expr.HasFieldsListImpl;
 import com.google.refine.expr.WrappedRow;
+import com.google.refine.expr.functions.Cross;
 import com.google.refine.model.Column;
 import com.google.refine.model.Project;
 import com.google.refine.model.Row;
@@ -74,6 +75,14 @@ public class LookupCacheManager {
         ProjectMetadata targetProjectMetadata = ProjectManager.singleton.getProjectMetadata(lookup.targetProjectID);
         if (targetProject == null) {
             return;
+        }
+
+        // if this is a lookup on the index column
+        if (lookup.targetColumnName.equals(Cross.INDEX_COLUMN_NAME)) {
+            for (int r = 0; r < targetProject.rows.size(); r++) {
+                lookup.valueToRowIndices.put(String.valueOf(r) , Collections.singletonList(r));
+            }
+            return; // return directly
         }
 
         Column targetColumn = targetProject.columnModel.getColumnByName(lookup.targetColumnName);
