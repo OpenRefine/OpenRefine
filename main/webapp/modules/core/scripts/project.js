@@ -66,6 +66,8 @@ function resize() {
   var width = $(window).width();
   var top = $("#header").outerHeight();
   var height = $(window).height() - top;
+  
+  if (ui.leftPanelDiv.css('display') == "none") { leftPanelWidth = 0; }
 
   var leftPanelPaddings = ui.leftPanelDiv.outerHeight(true) - ui.leftPanelDiv.height();
   ui.leftPanelDiv
