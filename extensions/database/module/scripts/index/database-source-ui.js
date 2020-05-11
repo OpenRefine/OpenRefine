@@ -91,38 +91,44 @@ Refine.DatabaseSourceUI.prototype.attachUI = function(body) {
   
   
   this._elmts.databaseTypeSelect.change(function(event) {
-      var type = $( "#databaseTypeSelect" ).val();
-      var databaseClass = "";
+    var type = $( "#databaseTypeSelect" ).val();
+    var databaseClass = "";
+  
+    if(type === "postgresql") { 
+        $( "#databaseUser" ).val("postgres");
+        $( "#databasePort" ).val("5432");
+        databaseClass = "psgsq"
       
-      if(type === "postgresql") { 
-          $( "#databaseUser" ).val("postgres");
-          $( "#databasePort" ).val("5432");
-          databaseClass = "psgsq"
-          
-      } else if(type === "mysql") {	  
-          $( "#databaseUser" ).val("root");
-          $( "#databasePort" ).val("3306");	  
-          databaseClass = "mysql"
-          
-      } else if(type === "mariadb") {
-          $( "#databaseUser" ).val("root");
-          $( "#databasePort" ).val("3306");
-          databaseClass = "mardb"
-          
-      } else if(type === "sqlite") {
-          $( "#databaseUser" ).val("na");
-          $( "#databasePort" ).val("0");
-          $( "#databaseHost" ).val("na");
-          databaseClass = "sqlit"
-          
-      } else {
-          $( "#databaseUser" ).val("root");
-          $( "#databasePort" ).val("3306");
-          databaseClass = "mysql"
-      }
+    } else if(type === "mysql") {	  
+        $( "#databaseUser" ).val("root");
+        $( "#databasePort" ).val("3306");	  
+        databaseClass = "mysql"
+      
+    } else if(type === "mariadb") {
+        $( "#databaseUser" ).val("root");
+        $( "#databasePort" ).val("3306");
+        databaseClass = "mardb"
+      
+    } else if(type === "sqlite") {
+        $( "#databaseUser" ).val("na");
+        $( "#databasePort" ).val("0");
+        $( "#databaseHost" ).val("na");
+        databaseClass = "sqlit"
+      
+    } else {
+        $( "#databaseUser" ).val("root");
+        $( "#databasePort" ).val("3306");
+        databaseClass = "mysql"
+    }
 
-      $("div.pure-control-group.options").hide();
-      $("div.pure-control-group."+databaseClass).show();
+    if (databaseClass == "sqlit"){
+      $('#databaseNameLabel').text($.i18n('database-source/databaseFileNameLabel'));
+    } else {
+      $('#databaseNameLabel').text($.i18n('database-source/databaseNameLabel'));
+    }
+
+    $("div.pure-control-group.options").hide();
+    $("div.pure-control-group."+databaseClass).show();
   });
   
   this._elmts.testDatabaseButton.click(function(evt) {

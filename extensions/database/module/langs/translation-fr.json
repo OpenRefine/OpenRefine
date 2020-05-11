@@ -21,6 +21,7 @@
     "database-source/databaseUserLabel": "Utilisateur :",
     "database-source/databasePasswordLabel": "Mot de passe :",
     "database-source/databaseNameLabel": "Base de données :",
+    "database-source/databaseFileNameLabel": "Fichier de base de données :",
     "database-source/databaseSchemaLabel": "Schéma :",
     "database-source/databaseTestButton": "Test",
     "database-source/databaseSaveButton": "Enregistrer",

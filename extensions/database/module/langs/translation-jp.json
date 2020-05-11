@@ -21,6 +21,7 @@
     "database-source/databaseUserLabel": "User:",
     "database-source/databasePasswordLabel": "Password:",
     "database-source/databaseNameLabel": "Database:",
+    "database-source/databaseFileNameLabel": "Database file:",
     "database-source/databaseSchemaLabel": "スキーマ :",
     "database-source/databaseTestButton": "テスト",
     "database-source/databaseSaveButton": "保存",

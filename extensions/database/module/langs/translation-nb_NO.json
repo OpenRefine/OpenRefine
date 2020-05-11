@@ -19,6 +19,7 @@
     "database-source/databaseUserLabel": "Bruker:",
     "database-source/databasePasswordLabel": "Passord:",
     "database-source/databaseNameLabel": "Database:",
+    "database-source/databaseFileNameLabel": "Database file:",
     "database-source/databaseSchemaLabel": "Skjema:",
     "database-source/databaseTestButton": "Test",
     "database-source/databaseSaveButton": "Lagre",
