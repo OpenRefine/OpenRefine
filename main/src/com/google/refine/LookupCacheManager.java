@@ -87,8 +87,9 @@ public class LookupCacheManager {
             Row targetRow = targetProject.rows.get(r);
             Object value = targetRow.getCellValue(targetColumn.getCellIndex());
             if (ExpressionUtils.isNonBlankData(value)) {
-                lookup.valueToRowIndices.putIfAbsent(value, new ArrayList<>());
-                lookup.valueToRowIndices.get(value).add(r);
+                String valueStr = value.toString();
+                lookup.valueToRowIndices.putIfAbsent(valueStr, new ArrayList<>());
+                lookup.valueToRowIndices.get(valueStr).add(r);
             }
         }
     }
@@ -106,11 +107,13 @@ public class LookupCacheManager {
         }
 
         public HasFieldsListImpl getRows(Object value) {
-            if (ExpressionUtils.isNonBlankData(value) && valueToRowIndices.containsKey(value)) {
+            if (!ExpressionUtils.isNonBlankData(value)) return null;
+            String valueStr = value.toString();
+            if (valueToRowIndices.containsKey(valueStr)) {
                 Project targetProject = ProjectManager.singleton.getProject(targetProjectID);
                 if (targetProject != null) {
                     HasFieldsListImpl rows = new HasFieldsListImpl();
-                    for (Integer r : valueToRowIndices.get(value)) {
+                    for (Integer r : valueToRowIndices.get(valueStr)) {
                         Row row = targetProject.rows.get(r);
                         rows.add(new WrappedRow(targetProject, r, row));
                     }

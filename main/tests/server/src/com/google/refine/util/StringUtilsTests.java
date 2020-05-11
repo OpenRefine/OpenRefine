@@ -4,7 +4,6 @@ import com.google.refine.RefineTest;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 import java.time.OffsetDateTime;
-import com.google.refine.util.StringUtils;
 
 public class StringUtilsTests extends RefineTest {
 

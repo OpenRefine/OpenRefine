@@ -38,11 +38,14 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.time.OffsetDateTime;
 import java.util.Properties;
 
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.SpreadsheetVersion;
 import org.slf4j.LoggerFactory;
 import org.testng.Assert;
 import org.testng.annotations.AfterMethod;
@@ -107,7 +110,18 @@ public class XlsExporterTests extends RefineTest {
     }
 
     @Test
-    public void exportSimpleXls(){
+    public void getContentType(){
+        Assert.assertEquals(SUT.getContentType(), "application/vnd.ms-excel");
+    }
+
+    @Test
+    public void getSpreadsheetVersion(){
+        XlsExporter exporter = (XlsExporter)SUT;
+        Assert.assertEquals(exporter.getSpreadsheetVersion(), SpreadsheetVersion.EXCEL97);
+    }
+
+    @Test
+    public void exportSimpleXls() throws IOException {
         CreateGrid(2, 2);
 
         try {
@@ -116,15 +130,19 @@ public class XlsExporterTests extends RefineTest {
             Assert.fail();
         }
 
-        // TODO: Not a very effective test! 
-        // (it didn't crash though, and it created output)
         Assert.assertEquals(stream.size(),4096);
 
+        try (HSSFWorkbook wb = new HSSFWorkbook(new ByteArrayInputStream(stream.toByteArray()))) {
+            org.apache.poi.ss.usermodel.Sheet ws = wb.getSheetAt(0);
+            org.apache.poi.ss.usermodel.Row row1 = ws.getRow(1);
+            org.apache.poi.ss.usermodel.Cell cell0 = row1.getCell(0);
+            Assert.assertEquals(cell0.toString(),"row0cell0");
+        }
     }
     
     @Test
     public void exportDateType() throws IOException{
-        OffsetDateTime odt = OffsetDateTime.now();
+        OffsetDateTime odt =  OffsetDateTime.parse("2019-04-09T12:00+00:00");
         createDateGrid(2, 2, odt);
 
         try {
@@ -132,8 +150,15 @@ public class XlsExporterTests extends RefineTest {
         } catch (IOException e) {
             Assert.fail();
         }
-        
+
         Assert.assertEquals(stream.size(),4096);
+
+        try (HSSFWorkbook wb = new HSSFWorkbook(new ByteArrayInputStream(stream.toByteArray()))) {
+            org.apache.poi.ss.usermodel.Sheet ws = wb.getSheetAt(0);
+            org.apache.poi.ss.usermodel.Row row1 = ws.getRow(1);
+            org.apache.poi.ss.usermodel.Cell cell0 = row1.getCell(0);
+            Assert.assertTrue(cell0.toString().contains("2019"));
+        }
     }
 
     @Test(enabled=false)

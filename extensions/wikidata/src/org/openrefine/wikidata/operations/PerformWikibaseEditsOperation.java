@@ -27,7 +27,6 @@ import java.io.IOException;
 import java.io.LineNumberReader;
 import java.io.Writer;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.Properties;
 import java.util.Random;
@@ -35,7 +34,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.commons.lang.Validate;
-import org.apache.log4j.spi.LoggerRepository;
 import org.openrefine.wikidata.editing.ConnectionManager;
 import org.openrefine.wikidata.editing.EditBatchProcessor;
 import org.openrefine.wikidata.editing.NewItemLibrary;
