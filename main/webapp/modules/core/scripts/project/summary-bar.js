@@ -41,6 +41,8 @@ SummaryBar.prototype._initializeUI = function() {
 };
 
 SummaryBar.prototype.updateResultCount = function() {
+  var self = this;
+
   var summaryText;
   var units = theProject.rowModel.mode == "row-based" ? $.i18n('core-views/rows') : $.i18n('core-views/records');
   if (theProject.rowModel.filtered == theProject.rowModel.total) {
@@ -48,6 +50,17 @@ SummaryBar.prototype.updateResultCount = function() {
   } else {
     summaryText = (theProject.rowModel.filtered) + ' matching ' + units + ' <span id="summary-total">(' + (theProject.rowModel.total) + ' total)</span>';
   }
+  
+  this._div.empty();
+  
+  var minimizeButton = $('<span id="hide-left-panel-button">');
+  minimizeButton.click(function() { self._hideShowLeftPanel(); });
+  minimizeButton.appendTo(this._div);
+  
+  $('<span>').html(summaryText).appendTo(this._div);
+};
 
-  $('<span>').html(summaryText).appendTo(this._div.empty());
+SummaryBar.prototype._hideShowLeftPanel = function() {
+  $('div#body').toggleClass("hide-left-panel");  
+  resize();
 };
