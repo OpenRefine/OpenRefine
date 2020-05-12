@@ -51,11 +51,9 @@ SummaryBar.prototype.updateResultCount = function() {
     summaryText = (theProject.rowModel.filtered) + ' matching ' + units + ' <span id="summary-total">(' + (theProject.rowModel.total) + ' total)</span>';
   }
   
-  this._div.empty();
-  
-  var minimizeButton = $('<span id="hide-left-panel-button">');
-  minimizeButton.click(function() { self._hideShowLeftPanel(); });
-  minimizeButton.appendTo(this._div);
+  $('<span id="hide-left-panel-button">')
+    .click(function() { self._hideShowLeftPanel(); })
+    .appendTo(this._div.empty());
   
   $('<span>').html(summaryText).appendTo(this._div);
 };
