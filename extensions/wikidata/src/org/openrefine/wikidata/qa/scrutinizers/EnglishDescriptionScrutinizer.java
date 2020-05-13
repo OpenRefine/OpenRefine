@@ -16,7 +16,9 @@ public class EnglishDescriptionScrutinizer extends DescriptionScrutinizer {
 
     @Override
     public void scrutinize(ItemUpdate update, String descText, String lang) {
-        if (!LANG.equalsIgnoreCase(lang)) return;
+        if (!LANG.equalsIgnoreCase(lang)) {
+            return;
+        }
 
         checkPunctuationSign(update, descText);
         checkUppercase(update, descText);
