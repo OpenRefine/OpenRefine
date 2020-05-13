@@ -72,6 +72,7 @@ Refine.DatabaseSourceUI.prototype.attachUI = function(body) {
   $('#databaseUserLabel').text($.i18n('database-source/databaseUserLabel'));
   $('#databasePasswordLabel').text($.i18n('database-source/databasePasswordLabel'));
   $('#databaseNameLabel').text($.i18n('database-source/databaseNameLabel'));
+  $('#databaseFileNameLabel').text($.i18n('database-source/databaseFileNameLabel'));
   $('#databaseSchemaLabel').text($.i18n('database-source/databaseSchemaLabel'));
   $('#databaseTestButton').text($.i18n('database-source/databaseTestButton'));
   $('#databaseSaveButton').text($.i18n('database-source/databaseSaveButton'));
@@ -79,7 +80,19 @@ Refine.DatabaseSourceUI.prototype.attachUI = function(body) {
   $('#newConnectionButtonDiv').text($.i18n('database-source/newConnectionButtonDiv'));
   $('#savedConnectionSpan').text($.i18n('database-source/savedConnectionSpan'));
  
-  
+  $('input#connectionName').attr('placeholder', $.i18n('database-source/connectionNamePlaceholder'));
+  $('input#databaseHost').attr('placeholder', $.i18n('database-source/databaseHostPlaceholder'));
+  $('input#databasePort').attr('placeholder', $.i18n('database-source/databasePortPlaceholder'));
+  $('input#databaseUser').attr('placeholder', $.i18n('database-source/databaseUserPlaceholder'));
+  $('input#databasePassword').attr('placeholder', $.i18n('database-source/databasePasswordPlaceholder'));
+  $('input#initialDatabase').attr('placeholder', $.i18n('database-source/databaseNamePlaceholder'));
+  $('input#initialDatabaseFile').attr('placeholder', $.i18n('database-source/databaseFileNamePlaceholder'));
+  $('input#initialSchema').attr('placeholder', $.i18n('database-source/databaseSchemaPlaceholder'));
+
+  var defaultDatabase = $( "#databaseTypeSelect" ).val();
+  $("div.pure-control-group.options").hide();
+  $("div.pure-control-group."+defaultDatabase.substring(0, 4)).show();
+
   this._elmts.newConnectionButton.click(function(evt) {
       self._resetDatabaseImportForm();
       $( "#newConnectionDiv" ).show();
@@ -115,15 +128,8 @@ Refine.DatabaseSourceUI.prototype.attachUI = function(body) {
         $( "#databasePort" ).val("3306");
         type = "mysql";
     }
-
-    if (type == "sqlite"){
-      $('#databaseNameLabel').text($.i18n('database-source/databaseFileNameLabel'));
-    } else {
-      $('#databaseNameLabel').text($.i18n('database-source/databaseNameLabel'));
-    }
-
     $("div.pure-control-group.options").hide();
-    $("div.pure-control-group."+type).show();
+    $("div.pure-control-group."+type.substring(0, 4)).show();
   });
   
   this._elmts.testDatabaseButton.click(function(evt) {
