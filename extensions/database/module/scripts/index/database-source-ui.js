@@ -87,6 +87,8 @@ Refine.DatabaseSourceUI.prototype.attachUI = function(body) {
   $('input#initialDatabase').attr('placeholder', $.i18n('database-source/databaseNamePlaceholder'));
   $('input#initialSchema').attr('placeholder', $.i18n('database-source/databaseSchemaPlaceholder'));
 
+  $('input#connectionName').attr('value', $.i18n('database-source/connectionNameDefaultValue'));
+
   this._elmts.newConnectionButton.click(function(evt) {
       self._resetDatabaseImportForm();
       $( "#newConnectionDiv" ).show();
@@ -250,14 +252,16 @@ Refine.DatabaseSourceUI.prototype._updateDatabaseType = function(databaseType) {
       databaseType = "mysql";
   }
   
-  $("div.pure-control-group.options").hide();
-  $("div.pure-control-group."+databaseType).show();
+  $("div.pure-control-group.dbtype-options").hide();
+  $("div.pure-control-group.dbtype-options.dbt-"+databaseType).show();
   
   if (databaseType == "sqlite") {
     $('#databaseNameLabel').text($.i18n('database-source/databaseFileNameLabel'));
+    $('input#initialDatabase').attr('placeholder', $.i18n('database-source/databaseFileNamePlaceholder'));
     
   } else {
     $('#databaseNameLabel').text($.i18n('database-source/databaseNameLabel'));
+    $('input#initialDatabase').attr('placeholder', $.i18n('database-source/databaseNamePlaceholder'));
   }
 };
   

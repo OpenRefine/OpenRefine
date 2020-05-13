@@ -29,7 +29,7 @@
                                   
                                       <div class="pure-control-group">
                                            <label id="connectionNameLabel" for="name">Name:</label>
-                                           <input bind="connectionNameInput" id="connectionName" type="text" placeholder="" value="127.0.0.1" class="pure-input-1-3" required>
+                                           <input bind="connectionNameInput" id="connectionName" type="text" placeholder="" value="" class="pure-input-1-3" required>
                                        </div>
                                
                                        <div class="pure-control-group">
@@ -42,27 +42,27 @@
                                             </select>
                                        </div>
 
-                                        <div class="pure-control-group options postgresql mysql mariadb">
+                                        <div class="pure-control-group dbtype-options dbt-postgresql dbt-mysql dbt-mariadb">
                                           <label id="databaseHostLabel" for="databaseHost">Database Host:</label> 
                                           <input bind="databaseHostInput" id="databaseHost" type="text" placeholder="" value="localhost" class="pure-input-1-3" required>
                                         </div>
-                                        <div class="pure-control-group options postgresql mysql mariadb">
+                                        <div class="pure-control-group dbtype-options dbt-postgresql dbt-mysql dbt-mariadb">
                                           <label id="databasePortLabel" for="databasePort">Database Port:</label> 
                                           <input bind="databasePortInput" id="databasePort" type="text" placeholder="" value="5432" class="pure-input-1-3" required>
                                         </div>
-                                        <div class="pure-control-group options postgresql mysql mariadb">
+                                        <div class="pure-control-group dbtype-options dbt-postgresql dbt-mysql dbt-mariadb">
                                           <label id="databaseUserLabel" for="databaseUser">Database User:</label> 
                                           <input bind="databaseUserInput" id="databaseUser" type="text" placeholder="" value="postgres" class="pure-input-1-3" required>
                                         </div>
-                                        <div class="pure-control-group options postgresql mysql mariadb">
+                                        <div class="pure-control-group dbtype-options dbt-postgresql dbt-mysql dbt-mariadb">
                                           <label id="databasePasswordLabel" for="databasePassword">Database Password:</label> 
                                           <input bind="databasePasswordInput" id="databasePassword" type="password" placeholder="" class="pure-input-1-3" required>
                                         </div>
-                                        <div class="pure-control-group options postgresql mysql mariadb sqlite">
+                                        <div class="pure-control-group dbtype-options dbt-postgresql dbt-mysql dbt-mariadb dbt-sqlite">
                                           <label id="databaseNameLabel" for="initialDatabase">Database Name:</label> 
                                           <input bind="initialDatabaseInput" id="initialDatabase" type="text" placeholder="" class="pure-input-1-3" required>
                                         </div>
-                                        <div class="pure-control-group options">
+                                        <div class="pure-control-group dbtype-options">
                                           <label id="databaseSchemaLabel" for="initialSchema">Schema Name:</label> 
                                           <input bind="initialSchemaInput" id="initialSchema" type="text" placeholder="" class="pure-input-1-3" required>
                                         </div>
