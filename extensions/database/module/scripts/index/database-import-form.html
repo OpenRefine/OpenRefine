@@ -38,27 +38,27 @@
                                             	  <option value="postgresql">PostgreSQL</option>  
                                                <option value="mysql">MySQL</option>
                                                <option value="mariadb">MariaDB</option>
-                                                <option value="sqlite">SQLite</option>
+                                                <option value="sqlite" selected="selected">SQLite</option>
                                             </select>
                                        </div>
 
-                                        <div class="pure-control-group options post mysq mari">
+                                        <div class="pure-control-group options postgresql mysql mariadb">
                                           <label id="databaseHostLabel" for="databaseHost">Database Host:</label> 
                                           <input bind="databaseHostInput" id="databaseHost" type="text" placeholder="" value="localhost" class="pure-input-1-3" required>
                                         </div>
-                                        <div class="pure-control-group options post mysq mari">
+                                        <div class="pure-control-group options postgresql mysql mariadb">
                                           <label id="databasePortLabel" for="databasePort">Database Port:</label> 
                                           <input bind="databasePortInput" id="databasePort" type="text" placeholder="" value="5432" class="pure-input-1-3" required>
                                         </div>
-                                        <div class="pure-control-group options post mysq mari">
+                                        <div class="pure-control-group options postgresql mysql mariadb">
                                           <label id="databaseUserLabel" for="databaseUser">Database User:</label> 
                                           <input bind="databaseUserInput" id="databaseUser" type="text" placeholder="" value="postgres" class="pure-input-1-3" required>
                                         </div>
-                                        <div class="pure-control-group options post mysq mari">
+                                        <div class="pure-control-group options postgresql mysql mariadb">
                                           <label id="databasePasswordLabel" for="databasePassword">Database Password:</label> 
                                           <input bind="databasePasswordInput" id="databasePassword" type="password" placeholder="" class="pure-input-1-3" required>
                                         </div>
-                                        <div class="pure-control-group options post mysq mari sqli">
+                                        <div class="pure-control-group options postgresql mysql mariadb sqlite">
                                           <label id="databaseNameLabel" for="initialDatabase">Database Name:</label> 
                                           <input bind="initialDatabaseInput" id="initialDatabase" type="text" placeholder="" class="pure-input-1-3" required>
                                         </div>

@@ -98,43 +98,8 @@ Refine.DatabaseSourceUI.prototype.attachUI = function(body) {
   this._elmts.databaseTypeSelect.change(function(event) {
     var type = $( "#databaseTypeSelect" ).val();
 
-    if(type === "postgresql") {
-        $( "#databaseUser" ).val("postgres");
-        $( "#databasePort" ).val("5432");
-      
-    } else if(type === "mysql") {
-        $( "#databaseUser" ).val("root");
-        $( "#databasePort" ).val("3306");
-      
-    } else if(type === "mariadb") {
-        $( "#databaseUser" ).val("root");
-        $( "#databasePort" ).val("3306");
-      
-    } else if(type === "sqlite") {
-        $( "#databaseUser" ).val("na");
-        $( "#databasePort" ).val("0");
-        $( "#databaseHost" ).val("na");
-      
-    } else {
-        $( "#databaseUser" ).val("root");
-        $( "#databasePort" ).val("3306");
-        type = "mysql";
-    }
-    
     self._updateDatabaseType(type);
   });
-  
-  self._updateDatabaseType = function(databaseType) {
-    $("div.pure-control-group.options").hide();
-    $("div.pure-control-group."+databaseType.substring(0, 4)).show();
-    
-    if (databaseType == "sqlite") {
-      $('#databaseNameLabel').text($.i18n('database-source/databaseFileNameLabel'));
-      
-    } else {
-      $('#databaseNameLabel').text($.i18n('database-source/databaseNameLabel'));
-    }
-  };
   
   var defaultDatabase = $( "#databaseTypeSelect" ).val();
   self._updateDatabaseType(defaultDatabase);
@@ -218,7 +183,6 @@ Refine.DatabaseSourceUI.prototype.attachUI = function(body) {
 Refine.DatabaseSourceUI.prototype.focus = function() {
 };
 
-
 Refine.DatabaseSourceUI.prototype.validateQuery = function(query) {
      //alert("query::" + query);
      if(!query || query.length <= 0 ) {
@@ -262,6 +226,41 @@ Refine.DatabaseSourceUI.prototype.validateQuery = function(query) {
      return true;
 };
 
+Refine.DatabaseSourceUI.prototype._updateDatabaseType = function(databaseType) {
+  if(databaseType === "postgresql") {
+      $( "#databaseUser" ).val("postgres");
+      $( "#databasePort" ).val("5432");
+    
+  } else if(databaseType === "mysql") {
+      $( "#databaseUser" ).val("root");
+      $( "#databasePort" ).val("3306");
+    
+  } else if(databaseType === "mariadb") {
+      $( "#databaseUser" ).val("root");
+      $( "#databasePort" ).val("3306");
+    
+  } else if(databaseType === "sqlite") {
+      $( "#databaseUser" ).val("na");
+      $( "#databasePort" ).val("0");
+      $( "#databaseHost" ).val("na");
+    
+  } else {
+      $( "#databaseUser" ).val("root");
+      $( "#databasePort" ).val("3306");
+      databaseType = "mysql";
+  }
+  
+  $("div.pure-control-group.options").hide();
+  $("div.pure-control-group."+databaseType).show();
+  
+  if (databaseType == "sqlite") {
+    $('#databaseNameLabel').text($.i18n('database-source/databaseFileNameLabel'));
+    
+  } else {
+    $('#databaseNameLabel').text($.i18n('database-source/databaseNameLabel'));
+  }
+};
+  
 Refine.DatabaseSourceUI.prototype._editConnection = function(connectionInfo) {	
     //alert("database user:" + connectionInfo.databaseUser);
     var self = this;
