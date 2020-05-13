@@ -21,7 +21,7 @@
     "database-source/databaseUserLabel": "Utilisateur :",
     "database-source/databasePasswordLabel": "Mot de passe :",
     "database-source/databaseNameLabel": "Base de données :",
-    "database-source/databaseFileNameLabel": "Fichier de base de données :",
+    "database-source/databaseFileNameLabel": "Fichier de données :",
     "database-source/databaseSchemaLabel": "Schéma :",
     "database-source/connectionNamePlaceholder": "Entrez le nom de la connexion",
     "database-source/databaseHostPlaceholder": "Entrez l’adresse de l’hôte de la base de données",
