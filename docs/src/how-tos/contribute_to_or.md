@@ -20,7 +20,7 @@ yarn; yarn build; yarn start
 
 This process is explained in more details at [Docusaurus Installation](/Docusaurus_Install.md).
 
-Once you have Docusaurus setup on your computer (you can install and run the Docusaurus server, and be able to see the modification as you make), you are ready to make your changes.
+Once you have Docusaurus setup on your computer (you can install and run the Docusaurus server, and be able to see the modification as you make them), you are ready to make your changes.
 
 To keep track of your work, create a pull request on GitHub OpenRefine/OpenRefine repository, and commit your changes there. Once you have achieved a substantial amount of work, you can now ask that your changes be reviewed. At this stage, members of the community may suggest changes to your work, in order to be better integrated with the overall of OpenRefine's documentation.
 
