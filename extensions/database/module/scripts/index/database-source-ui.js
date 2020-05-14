@@ -64,6 +64,10 @@ Refine.DatabaseSourceUI.prototype.attachUI = function(body) {
   this._elmts = DOM.bind(this._body);
   var self = this;
   
+  self._defaultDatabaseHost = "localhost";
+  self._defaultDatabaseType = $( "select#databaseTypeSelect" ).val();
+  if (self._defaultDatabaseType == "") { self._defaultDatabaseType = "mariadb"; }
+  
   $('#database-title').text($.i18n('database-import/title')); 
   $('#connectionNameLabel').html($.i18n('database-source/connectionNameLabel'));
   $('#databaseTypeLabel').html($.i18n('database-source/databaseTypeLabel'));
@@ -98,12 +102,12 @@ Refine.DatabaseSourceUI.prototype.attachUI = function(body) {
   });
   
   this._elmts.databaseTypeSelect.change(function(event) {
-    var type = $( "#databaseTypeSelect" ).val();
+    var type = $( "select#databaseTypeSelect" ).val();
 
     self._updateDatabaseType(type);
   });
   
-  var defaultDatabase = $( "#databaseTypeSelect" ).val();
+  var defaultDatabase = $( "select#databaseTypeSelect" ).val();
   self._updateDatabaseType(defaultDatabase);
 
   this._elmts.testDatabaseButton.click(function(evt) {
@@ -504,19 +508,19 @@ Refine.DatabaseSourceUI.prototype._validateNewConnectionForm = function() {
        return true;
 };	
 
-Refine.DatabaseSourceUI.prototype._resetDatabaseImportForm = function() {	
-    var self = this;
-    $( "#connectionName" ).val("127.0.0.1");
-    $( "#databaseTypeSelect" ).val("postgresql");
-    $( "#databaseHost" ).val("127.0.0.1");
-    $( "#databasePort" ).val("5432");
-    $( "#databaseUser" ).val("postgres");
-    $( "#databasePassword" ).val("");
-    $( "#initialDatabase" ).val("");
-    $( "#initialSchema" ).val("");
-    
-    $( "#editConnectionControlDiv" ).hide();
-    $( "#newConnectionControlDiv" ).show();
-    $('#connectionName').removeAttr('readonly');
-    
+Refine.DatabaseSourceUI.prototype._resetDatabaseImportForm = function() {
+  var self = this;
+  
+  $('input#connectionName').attr('value', $.i18n('database-source/connectionNameDefaultValue'));
+  $( "select#databaseTypeSelect" ).val(self._defaultDatabaseType);
+  self._updateDatabaseType(self._defaultDatabaseType);
+  
+  $( "#databaseHost" ).val(self._defaultDatabaseHost);
+  $( "#databasePassword" ).val("");
+  $( "#initialDatabase" ).val("");
+  $( "#initialSchema" ).val("");
+
+  $( "#editConnectionControlDiv" ).hide();
+  $( "#newConnectionControlDiv" ).show();
+  $('#connectionName').removeAttr('readonly');
 };
