@@ -8,20 +8,17 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
-import org.apache.spark.Partition;
-import org.apache.spark.api.java.JavaPairRDD;
 import org.openrefine.browsing.Engine;
 import org.openrefine.model.ColumnMetadata;
 import org.openrefine.model.ColumnModel;
 import org.openrefine.model.GridState;
+import org.openrefine.model.IndexedRow;
 import org.openrefine.model.Row;
 import org.openrefine.util.JSONUtilities;
 import org.openrefine.util.ParsingUtilities;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
-
-import scala.Tuple2;
 
 /**
  * Base class for a tabular exporter which respects the facets applied
@@ -108,16 +105,8 @@ public abstract class EngineDependentExporter implements WriterExporter {
 	    }
 	    
 	    
-	    JavaPairRDD<Long, Row> filtered = engine.getMatchingRows();
 	    ColumnModel columnModel = grid.getColumnModel();
-	    /*
-	     * Only load project data partition by partition to save memory.
-	     * We do not use Spark's foreach method here as it would not preserve
-	     * row order and would run the exporter on the executors, where the
-	     * file to export might not be accessible.
-	     */
-	    List<Partition> partitions = filtered.partitions();
-	    
+
 	    startFile(jsonOptions, options, columnModel, writer);
 	    if (outputColumnHeaders) {
             List<CellData> cells = new ArrayList<CellData>(columnNames.size());
@@ -128,35 +117,29 @@ public abstract class EngineDependentExporter implements WriterExporter {
         }
 	    
 	    long rowCount = 0;
-	    for(Partition partition : partitions) {
-	    	List<Tuple2<Long, Row>> rows = filtered.collectPartitions(new int[] { partition.index() })[0];
-	    	for(Tuple2<Long,Row> rowTuple : rows) {
-	    		Row row = rowTuple._2;
-	    		
-	            List<CellData> cells = new ArrayList<CellData>(columnNames.size());
-	            int nonNullCount = 0;
+	    for(IndexedRow indexedRow : engine.getMatchingRows()) {
+    		Row row = indexedRow.getRow();
+    		
+            List<CellData> cells = new ArrayList<CellData>(columnNames.size());
+            int nonNullCount = 0;
+            
+            for (int cellIndex = 0; cellIndex < columnModel.getColumns().size(); cellIndex++) {
+                ColumnMetadata column = columnModel.getColumns().get(cellIndex);
+                CustomizableTabularExporterUtilities.CellFormatter formatter = columnNameToFormatter.get(column.getName());
+                CellData cellData = formatter.format(
+                    column,
+                    row.getCell(cellIndex));
+                
+                cells.add(cellData);
+                if (cellData != null) {
+                    nonNullCount++;
+                }
+            }
 	            
-	            for (int cellIndex = 0; cellIndex < columnModel.getColumns().size(); cellIndex++) {
-	                ColumnMetadata column = columnModel.getColumns().get(cellIndex);
-	                CustomizableTabularExporterUtilities.CellFormatter formatter = columnNameToFormatter.get(column.getName());
-	                CellData cellData = formatter.format(
-	                    column,
-	                    row.getCell(cellIndex));
-	                
-	                cells.add(cellData);
-	                if (cellData != null) {
-	                    nonNullCount++;
-	                }
-	            }
-	            
-	            if (nonNullCount > 0 || outputEmptyRows) {
-	                addRow(cells, false);
-	                rowCount++;
-	            }
-	            if (limit > 0 && rowCount >= limit) {
-	            	break;
-	            }
-	    	}
+            if (nonNullCount > 0 || outputEmptyRows) {
+                addRow(cells, false);
+                rowCount++;
+            }
 	    	if (limit > 0 && rowCount >= limit) {
             	break;
             }

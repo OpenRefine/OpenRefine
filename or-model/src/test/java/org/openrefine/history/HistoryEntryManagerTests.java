@@ -1,19 +1,21 @@
 package org.openrefine.history;
 
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
-import org.apache.spark.api.java.JavaPairRDD;
-import org.openrefine.SparkBasedTest;
+import org.mockito.Mockito;
+import org.openrefine.browsing.RowFilter;
 import org.openrefine.history.dag.DagSlice;
-import org.openrefine.model.Cell;
 import org.openrefine.model.ColumnMetadata;
 import org.openrefine.model.ColumnModel;
+import org.openrefine.model.DatamodelRunner;
 import org.openrefine.model.GridState;
-import org.openrefine.model.Row;
+import org.openrefine.model.RowMapper;
 import org.openrefine.operations.Operation.NotImmediateOperationException;
 import org.openrefine.operations.UnknownOperation;
 import org.openrefine.util.TestUtils;
@@ -21,20 +23,22 @@ import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-public class HistoryEntryManagerTests extends SparkBasedTest {
-	
+public class HistoryEntryManagerTests {
+
 	HistoryEntryManager sut;
 	History history;
+	DatamodelRunner runner;
+	
+	static RowMapper mapper = mock(RowMapper.class);
 	
 	public static class MyChange implements Change  {
 		// Deletes the first column of the table
 		@Override
 		public GridState apply(GridState projectState) {
 		    List<ColumnMetadata> columns = projectState.getColumnModel().getColumns();
-            int rowSize = columns.size();
-		    JavaPairRDD<Long, Row> newGrid = projectState.getGrid().mapValues(r -> new Row(r.getCells().subList(1, rowSize)));
-			List<ColumnMetadata> newColumns = columns.subList(1, columns.size());
-			return new GridState(new ColumnModel(newColumns), newGrid, projectState.getOverlayModels());
+            List<ColumnMetadata> newColumns = columns.subList(1, columns.size());
+		    
+            return projectState.mapFilteredRows(RowFilter.ANY_ROW, mapper, new ColumnModel(newColumns));
 		}
 
         @Override
@@ -49,22 +53,24 @@ public class HistoryEntryManagerTests extends SparkBasedTest {
 	};
 
     @BeforeMethod
-    public void setUp() throws NotImmediateOperationException {
+    public void setUp() throws NotImmediateOperationException, IOException {
+        runner = mock(DatamodelRunner.class);
     	ColumnModel columnModel = new ColumnModel(Arrays.asList(
     			new ColumnMetadata("a"),
     			new ColumnMetadata("b"),
     			new ColumnMetadata("c")));
-    	JavaPairRDD<Long, Row> rows = rowRDD(new Cell[][] {
-    		{ new Cell(1, null), new Cell(2, null), new Cell("3", null) },
-    		{ new Cell(true, null), new Cell("b", null), new Cell(5, null) }
-    	});
-    	GridState gridState = new GridState(columnModel, rows, Collections.emptyMap());
+    	GridState gridState = mock(GridState.class);
+    	when(gridState.getColumnModel()).thenReturn(columnModel);
+    	when(runner.loadGridState(Mockito.any())).thenReturn(gridState);
+    	GridState secondState = mock(GridState.class);
+    	when(secondState.getColumnModel()).thenReturn(new ColumnModel(columnModel.getColumns().subList(1, 3)));
+    	when(gridState.mapFilteredRows(Mockito.any(), Mockito.any(), Mockito.any())).thenReturn(secondState);
     	Change change = new MyChange();
     	HistoryEntry entry = new HistoryEntry(1234L, "some description",
     			new UnknownOperation("my-op", "some desc"), change);
         history = new History(gridState);
         history.addEntry(entry);
-        sut = new HistoryEntryManager(context());
+        sut = new HistoryEntryManager(runner);
     }
     
 	@Test

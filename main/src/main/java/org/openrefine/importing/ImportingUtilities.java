@@ -39,19 +39,12 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.Reader;
-import java.io.UnsupportedEncodingException;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.text.NumberFormat;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Properties;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.ZipEntry;
@@ -81,9 +74,9 @@ import org.apache.tools.tar.TarInputStream;
 import org.openrefine.ProjectManager;
 import org.openrefine.ProjectMetadata;
 import org.openrefine.RefineServlet;
+import org.openrefine.importers.ImporterUtilities;
 import org.openrefine.importing.ImportingJob.ImportingJobConfig;
 import org.openrefine.importing.ImportingJob.RetrievalRecord;
-import org.openrefine.importing.ImportingManager.Format;
 import org.openrefine.model.GridState;
 import org.openrefine.model.Project;
 import org.openrefine.util.JSONUtilities;
@@ -498,22 +491,7 @@ public class ImportingUtilities {
     }
     
     static public Reader getFileReader(File file, ImportingFileRecord fileRecord, String commonEncoding) throws FileNotFoundException {
-        return getReaderFromStream(new FileInputStream(file), fileRecord, commonEncoding);
-    }
-    
-    static public Reader getReaderFromStream(InputStream inputStream, ImportingFileRecord fileRecord, String commonEncoding) {
-        String encoding = fileRecord.getDerivedEncoding();
-        if (encoding == null) {
-            encoding = commonEncoding;
-        }
-        if (encoding != null) {
-            try {
-                return new InputStreamReader(inputStream, encoding);
-            } catch (UnsupportedEncodingException e) {
-                // Ignore and fall through
-            }
-        }
-        return new InputStreamReader(inputStream);
+        return ImporterUtilities.getReaderFromStream(new FileInputStream(file), fileRecord, commonEncoding);
     }
     
     static private abstract class SavingUpdate {
@@ -594,7 +572,7 @@ public class ImportingUtilities {
     static public void postProcessSingleRetrievedFile(File file, ImportingFileRecord fileRecord) {
         if (fileRecord.getFormat() == null) {
             fileRecord.setFormat(
-            		ImportingManager.getFormat(
+            		FormatRegistry.getFormat(
                     file.getName(),
                     fileRecord.getDeclaredMimeType()));
         }
@@ -770,7 +748,7 @@ public class ImportingUtilities {
     }
     
     static public void previewParse(ImportingJob job, String format, ObjectNode optionObj, List<Exception> exceptions) {
-        Format record = ImportingManager.formatToRecord.get(format);
+        ImportingFormat record = FormatRegistry.getFormatToRecord().get(format);
         if (record == null || record.parser == null) {
             // TODO: what to do?
             return;
@@ -798,7 +776,7 @@ public class ImportingUtilities {
             final ObjectNode optionObj,
             final List<Exception> exceptions,
             boolean synchronous) {
-        final Format record = ImportingManager.formatToRecord.get(format);
+        final ImportingFormat record = FormatRegistry.getFormatToRecord().get(format);
         if (record == null || record.parser == null) {
             // TODO: what to do?
             return -1;
@@ -827,7 +805,7 @@ public class ImportingUtilities {
         final String format,
         final ObjectNode optionObj,
         final List<Exception> exceptions,
-        final Format record,
+        final ImportingFormat record,
         final long projectId
     ) {
         ProjectMetadata pm = createProjectMetadata(optionObj);
@@ -875,37 +853,4 @@ public class ImportingUtilities {
         pm.setEncoding(encoding);
         return pm;
     }
-
-	/**
-	 * Given a list of importing file records, return the most
-	 * common format in them, or null if none of the records contain a format.
-	 * 
-	 * @param records
-	 *     the importing file records to read formats from
-	 * @return
-	 *     the most common format, or null
-	 */
-	public static String mostCommonFormat(List<ImportingFileRecord> records) {
-		Map<String, Integer> formatToCount = new HashMap<>();
-		List<String> formats = new ArrayList<>();
-		for(ImportingFileRecord fileRecord : records) {
-	        String format = fileRecord.getFormat();
-	        if (format != null) {
-	            if (formatToCount.containsKey(format)) {
-	                formatToCount.put(format, formatToCount.get(format) + 1);
-	            } else {
-	                formatToCount.put(format, 1);
-	                formats.add(format);
-	            }
-	        }
-		}
-		Collections.sort(formats, new Comparator<String>() {
-		    @Override
-		    public int compare(String o1, String o2) {
-		        return formatToCount.get(o2) - formatToCount.get(o1);
-		    }
-		});
-		
-		return formats.size() > 0 ? formats.get(0) : null;
-	}
 }

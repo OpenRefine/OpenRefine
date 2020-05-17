@@ -44,20 +44,6 @@ public interface FacetAggregator<T extends FacetState> extends Serializable {
      *      the facet state updated with this row
      */
     public T withRow(T state, long rowId, Row row);
-    
-    /**
-     * Adds statistics obtained from a single record to the facet state.
-     * Given that facet states are expected to be immutable, this returns
-     * a new facet state object
-     * 
-     * @param record
-     *       the record to ingest
-     * @param rows
-     *       the rows in the record
-     * @return
-     *       the facet state updated with this record
-     */
-    public T withRecord(T state, Record record, List<Row> rows);
 
     /**
      * @return a row filter which determines if a row matches this facet.

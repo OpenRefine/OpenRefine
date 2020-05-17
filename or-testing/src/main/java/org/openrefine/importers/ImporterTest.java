@@ -26,6 +26,7 @@
  ******************************************************************************/
 package org.openrefine.importers;
 
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import java.io.InputStream;
@@ -33,12 +34,9 @@ import java.io.Reader;
 
 import org.mockito.Mockito;
 import org.openrefine.ProjectMetadata;
-import org.openrefine.RefineServlet;
-import org.openrefine.RefineServletStub;
 import org.openrefine.RefineTest;
 import org.openrefine.importing.ImportingJob;
 import org.openrefine.importing.ImportingJob.RetrievalRecord;
-import org.openrefine.importing.ImportingManager;
 import org.openrefine.model.GridState;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -47,18 +45,12 @@ public abstract class ImporterTest extends RefineTest {
     //mock dependencies
     protected ProjectMetadata metadata;
     protected ImportingJob job;
-    protected RefineServlet servlet;
     
     protected ObjectNode options;
     
     public void setUp(){
-        //FIXME - should we try and use mock(Project.class); - seems unnecessary complexity
-
-        servlet = new RefineServletStub();
-        ImportingManager.initialize(servlet);
         metadata = new ProjectMetadata();
-        ImportingJob spiedJob = ImportingManager.createJob();
-        job = Mockito.spy(spiedJob);
+        job = mock(ImportingJob.class);
         when(job.getRetrievalRecord()).thenReturn(new RetrievalRecord());
         
         options = Mockito.mock(ObjectNode.class);
@@ -66,10 +58,7 @@ public abstract class ImporterTest extends RefineTest {
     
     public void tearDown(){
         metadata = null;
-        
-        ImportingManager.disposeJob(job.id);
         job = null;
-        
         options = null;
     }
     

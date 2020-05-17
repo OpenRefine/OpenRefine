@@ -6,7 +6,6 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 
-import org.apache.spark.api.java.function.Function2;
 import org.openrefine.browsing.EngineConfig;
 import org.openrefine.expr.Evaluable;
 import org.openrefine.expr.ExpressionUtils;
@@ -15,6 +14,7 @@ import org.openrefine.history.dag.TransformationSlice;
 import org.openrefine.model.Cell;
 import org.openrefine.model.ColumnModel;
 import org.openrefine.model.Row;
+import org.openrefine.model.RowMapper;
 import org.openrefine.util.StringUtils;
 
 public class MassEditChange extends RowMapChange {
@@ -42,19 +42,19 @@ public class MassEditChange extends RowMapChange {
 	
 
 	@Override
-	public Function2<Long, Row, Row> getRowMap(ColumnModel columnModel) {
+	public RowMapper getRowMapper(ColumnModel columnModel) {
 		int columnIdx = columnModel.getColumnIndexByName(_columnName);
 		return mapper(columnIdx, _evaluable, _columnName, _fromTo, _fromBlankTo, _fromErrorTo);
 	}
 
-	private static Function2<Long, Row, Row> mapper(int columnIdx, Evaluable evaluable, String columnName,
+	private static RowMapper mapper(int columnIdx, Evaluable evaluable, String columnName,
 			Map<String,Serializable> fromTo, Serializable fromBlankTo, Serializable fromErrorTo) {
-		return new Function2<Long, Row, Row>() {
+		return new RowMapper() {
 
-			private static final long serialVersionUID = 1L;
+			private static final long serialVersionUID = 6383816657756293719L;
 
 			@Override
-			public Row call(Long rowIndex, Row row) throws Exception {
+			public Row call(long rowIndex, Row row) {
 				Cell cell = row.getCell(columnIdx);
                 Cell newCell = cell;
                 

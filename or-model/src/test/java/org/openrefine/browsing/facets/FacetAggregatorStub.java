@@ -1,11 +1,8 @@
 package org.openrefine.browsing.facets;
 
-import java.util.List;
-
 import org.openrefine.browsing.RecordFilter;
 import org.openrefine.browsing.RowFilter;
 import org.openrefine.browsing.filters.AnyRowRecordFilter;
-import org.openrefine.model.Record;
 import org.openrefine.model.Row;
 
 public class FacetAggregatorStub implements FacetAggregator<FacetStateStub> {
@@ -30,11 +27,6 @@ public class FacetAggregatorStub implements FacetAggregator<FacetStateStub> {
         } else {
             return new FacetStateStub(state.matching, state.mismatching + 1);
         }
-    }
-
-    @Override
-    public FacetStateStub withRecord(FacetStateStub state, Record record, List<Row> rows) {
-        throw new IllegalStateException("not implemented");
     }
 
     @Override

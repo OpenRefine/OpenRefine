@@ -36,6 +36,7 @@ package org.openrefine;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.InvocationTargetException;
 import java.net.HttpURLConnection;
 import java.net.URLConnection;
 import java.util.HashMap;
@@ -48,15 +49,10 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.spark.SparkConf;
-import org.apache.spark.api.java.JavaSparkContext;
-import org.apache.spark.util.ShutdownHookManager;
-import org.openrefine.ProjectManager;
-import org.openrefine.RefineModel;
 import org.openrefine.commands.Command;
 import org.openrefine.importing.ImportingManager;
 import org.openrefine.io.FileProjectManager;
-import org.openrefine.io.OrderedLocalFileSystem;
+import org.openrefine.model.DatamodelRunner;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -65,8 +61,6 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import edu.mit.simile.butterfly.Butterfly;
 import edu.mit.simile.butterfly.ButterflyModule;
-import scala.Function0;
-import scala.runtime.BoxedUnit;
 
 public class RefineServlet extends Butterfly {
     
@@ -85,7 +79,7 @@ public class RefineServlet extends Butterfly {
 
     static private RefineServlet s_singleton;
     static private File s_dataDir;
-    static private JavaSparkContext s_context;
+    static private DatamodelRunner s_runner;
     
     static final private Map<String, Command> commands = new HashMap<String, Command>();
 
@@ -109,31 +103,23 @@ public class RefineServlet extends Butterfly {
     public void init() throws ServletException {
         super.init();
         
-        Thread.currentThread().setContextClassLoader(JavaSparkContext.class.getClassLoader());
         int defaultParallelism = 4;
         try {
-        	String parallelism = getInitParameter("refine.defaultParallelism");
-        	defaultParallelism = Integer.parseInt(parallelism == null ? "" : parallelism);
+            String parallelism = getInitParameter("refine.defaultParallelism");
+            defaultParallelism = Integer.parseInt(parallelism == null ? "" : parallelism);
         } catch(NumberFormatException e) {
-        	;
+            ;
         }
         
-        // set up Hadoop on Windows
-        String os = System.getProperty("os.name").toLowerCase();
-        if (os.contains("windows")) {
-        	try {
-				System.setProperty("hadoop.home.dir", new File("server/target/lib/native/windows/hadoop").getCanonicalPath());
-			} catch (IOException e) {
-				logger.warn("unable to locate Windows Hadoop binaries, this will leave temporary files behind");
-			}
-        }
-        
-        s_context = new JavaSparkContext(
-        		new SparkConf()
-        		.setAppName("OpenRefine")
-        		.setMaster(String.format("local[%d]", defaultParallelism)));
-        s_context.setLogLevel("WARN");
-        s_context.hadoopConfiguration().set("fs.file.impl", OrderedLocalFileSystem.class.getName());
+        try {
+        	Class<?> runnerClass = this.getClass().getClassLoader().loadClass("org.openrefine.model.SparkDatamodelRunner");
+			s_runner = (DatamodelRunner)runnerClass.getConstructor(Integer.class).newInstance(Integer.valueOf(defaultParallelism));
+		} catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException
+				| NoSuchMethodException | SecurityException | ClassNotFoundException e1) {
+			e1.printStackTrace();
+			throw new ServletException("Unable to initialize the datamodel runner.");
+		}
+
         VERSION = getInitParameter("refine.version");
         REVISION = getInitParameter("refine.revision");    
         
@@ -169,12 +155,10 @@ public class RefineServlet extends Butterfly {
         logger.error("initializing FileProjectManager with dir");
         logger.error(data);
         s_dataDir = new File(data);
-        FileProjectManager.initialize(s_context, s_dataDir);
+        FileProjectManager.initialize(s_runner, s_dataDir);
         ImportingManager.initialize(this);
         
-        // Set up hook to save projects when spark shuts down
-        int priority = ShutdownHookManager.SPARK_CONTEXT_SHUTDOWN_PRIORITY() + 10;
-		ShutdownHookManager.addShutdownHook(priority, sparkShutdownHook());
+        
 
 	    long AUTOSAVE_PERIOD = Long.parseLong(getInitParameter("refine.autosave"));
 
@@ -369,23 +353,8 @@ public class RefineServlet extends Butterfly {
         return "OpenRefine/" + FULL_VERSION;
     }
     
-    static public JavaSparkContext getSparkContext() {
-    	return s_context;
+    static public DatamodelRunner getDatamodelRunner() {
+    	return s_runner;
     }
     
-    static private Function0<BoxedUnit> sparkShutdownHook() {
-    	return new Function0<BoxedUnit>() {
-
-			@Override
-			public BoxedUnit apply() {
-				if (ProjectManager.singleton != null) {
-		            ProjectManager.singleton.dispose();
-		            ProjectManager.singleton = null;
-		        }
-				return BoxedUnit.UNIT;
-			}
-    		
-    	};
- 
-    }
 }

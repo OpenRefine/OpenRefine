@@ -33,10 +33,6 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package org.openrefine.browsing.facets;
 
-import java.util.Map;
-import java.util.Set;
-
-
 /**
  * Interface of facets.
  */

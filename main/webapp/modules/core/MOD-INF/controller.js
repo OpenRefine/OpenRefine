@@ -35,6 +35,7 @@ var html = "text/html";
 var encoding = "UTF-8";
 var ClientSideResourceManager = Packages.org.openrefine.ClientSideResourceManager;
 var bundle = true;
+var runner = Packages.org.openrefine.RefineServlet.getDatamodelRunner();
 
 var templatedFiles = {
   // Requests with last path segments mentioned here 
@@ -195,7 +196,7 @@ function registerOperations() {
 }
 
 function registerImporting() {
-  var IM = Packages.org.openrefine.importing.ImportingManager;
+  var FR = Packages.org.openrefine.importing.FormatRegistry;
 
   /*
    *  Formats and their UI class names and parsers:
@@ -205,101 +206,101 @@ function registerImporting() {
    *    they also generate defaults for the client-side UIs to initialize.
    */
 
-  IM.registerFormat("text", "Text files"); // generic format, no parser to handle it
-  IM.registerFormat("text/line-based", "Line-based text files", "LineBasedParserUI",
+  FR.registerFormat("text", "Text files"); // generic format, no parser to handle it
+  FR.registerFormat("text/line-based", "Line-based text files", "LineBasedParserUI",
       new Packages.org.openrefine.importers.LineBasedImporter());
-  IM.registerFormat("text/line-based/*sv", "CSV / TSV / separator-based files", "SeparatorBasedParserUI",
-      new Packages.org.openrefine.importers.SeparatorBasedImporter());
-  IM.registerFormat("text/line-based/fixed-width", "Fixed-width field text files", "FixedWidthParserUI",
-      new Packages.org.openrefine.importers.FixedWidthImporter());
+  FR.registerFormat("text/line-based/*sv", "CSV / TSV / separator-based files", "SeparatorBasedParserUI",
+      new Packages.org.openrefine.importers.SeparatorBasedImporter(runner));
+  FR.registerFormat("text/line-based/fixed-width", "Fixed-width field text files", "FixedWidthParserUI",
+      new Packages.org.openrefine.importers.FixedWidthImporter(runner));
 
-  IM.registerFormat("text/rdf/nt", "RDF/N-Triples files", "RdfTriplesParserUI", 
-              new Packages.org.openrefine.importers.RdfTripleImporter(Packages.org.openrefine.importers.RdfTripleImporter.Mode.NT));
-  IM.registerFormat("text/rdf/n3", "RDF/N3 files", "RdfTriplesParserUI", 
-          new Packages.org.openrefine.importers.RdfTripleImporter(Packages.org.openrefine.importers.RdfTripleImporter.Mode.N3));
-  IM.registerFormat("text/rdf/ttl", "RDF/Turtle files", "RdfTriplesParserUI", 
-                  new Packages.org.openrefine.importers.RdfTripleImporter(Packages.org.openrefine.importers.RdfTripleImporter.Mode.TTL));
-  IM.registerFormat("text/rdf/xml", "RDF/XML files", "RdfTriplesParserUI", new Packages.org.openrefine.importers.RdfXmlTripleImporter());
-  IM.registerFormat("text/rdf/ld+json", "JSON-LD files", "RdfTriplesParserUI", new Packages.org.openrefine.importers.RdfJsonldTripleImporter());
+  FR.registerFormat("text/rdf/nt", "RDF/N-Triples files", "RdfTriplesParserUI", 
+              new Packages.org.openrefine.importers.RdfTripleImporter(runner, Packages.org.openrefine.importers.RdfTripleImporter.Mode.NT));
+  FR.registerFormat("text/rdf/n3", "RDF/N3 files", "RdfTriplesParserUI", 
+          new Packages.org.openrefine.importers.RdfTripleImporter(runner, Packages.org.openrefine.importers.RdfTripleImporter.Mode.N3));
+  FR.registerFormat("text/rdf/ttl", "RDF/Turtle files", "RdfTriplesParserUI", 
+                  new Packages.org.openrefine.importers.RdfTripleImporter(runner, Packages.org.openrefine.importers.RdfTripleImporter.Mode.TTL));
+  FR.registerFormat("text/rdf/xml", "RDF/XML files", "RdfTriplesParserUI", new Packages.org.openrefine.importers.RdfXmlTripleImporter(runner));
+  FR.registerFormat("text/rdf/ld+json", "JSON-LD files", "RdfTriplesParserUI", new Packages.org.openrefine.importers.RdfJsonldTripleImporter(runner));
 
-  IM.registerFormat("text/xml", "XML files", "XmlParserUI", new Packages.org.openrefine.importers.XmlImporter());
-  IM.registerFormat("binary/text/xml/xls/xlsx", "Excel files", "ExcelParserUI", new Packages.org.openrefine.importers.ExcelImporter());
-  IM.registerFormat("text/xml/ods", "Open Document Format spreadsheets (.ods)", "ExcelParserUI", new Packages.org.openrefine.importers.OdsImporter());
-  IM.registerFormat("text/json", "JSON files", "JsonParserUI", new Packages.org.openrefine.importers.JsonImporter());
-  IM.registerFormat("text/marc", "MARC files", "XmlParserUI", new Packages.org.openrefine.importers.MarcImporter());
-  IM.registerFormat("text/wiki", "Wikitext", "WikitextParserUI", new Packages.org.openrefine.importers.WikitextImporter());
+  FR.registerFormat("text/xml", "XML files", "XmlParserUI", new Packages.org.openrefine.importers.XmlImporter(runner));
+  FR.registerFormat("binary/text/xml/xls/xlsx", "Excel files", "ExcelParserUI", new Packages.org.openrefine.importers.ExcelImporter(runner));
+  FR.registerFormat("text/xml/ods", "Open Document Format spreadsheets (.ods)", "ExcelParserUI", new Packages.org.openrefine.importers.OdsImporter(runner));
+  FR.registerFormat("text/json", "JSON files", "JsonParserUI", new Packages.org.openrefine.importers.JsonImporter(runner));
+  FR.registerFormat("text/marc", "MARC files", "XmlParserUI", new Packages.org.openrefine.importers.MarcImporter(runner));
+  FR.registerFormat("text/wiki", "Wikitext", "WikitextParserUI", new Packages.org.openrefine.importers.WikitextImporter(runner));
 
-  IM.registerFormat("binary", "Binary files"); // generic format, no parser to handle it
+  FR.registerFormat("binary", "Binary files"); // generic format, no parser to handle it
 
-  IM.registerFormat("service", "Services"); // generic format, no parser to handle it
+  FR.registerFormat("service", "Services"); // generic format, no parser to handle it
 
   /*
    *  Extension to format mappings
    */
-  IM.registerExtension(".txt", "text/line-based");
-  IM.registerExtension(".csv", "text/line-based/*sv");
-  IM.registerExtension(".tsv", "text/line-based/*sv");
+  FR.registerExtension(".txt", "text/line-based");
+  FR.registerExtension(".csv", "text/line-based/*sv");
+  FR.registerExtension(".tsv", "text/line-based/*sv");
 
-  IM.registerExtension(".xml", "text/xml");
+  FR.registerExtension(".xml", "text/xml");
 
-  IM.registerExtension(".json", "text/json");
-  IM.registerExtension(".js", "text/json");
+  FR.registerExtension(".json", "text/json");
+  FR.registerExtension(".js", "text/json");
 
-  IM.registerExtension(".xls", "binary/text/xml/xls/xlsx");
-  IM.registerExtension(".xlsx", "binary/text/xml/xls/xlsx");
+  FR.registerExtension(".xls", "binary/text/xml/xls/xlsx");
+  FR.registerExtension(".xlsx", "binary/text/xml/xls/xlsx");
 
-  IM.registerExtension(".ods", "text/xml/ods");
+  FR.registerExtension(".ods", "text/xml/ods");
   
-  IM.registerExtension(".nt", "text/rdf/nt");
-  IM.registerExtension(".n3", "text/rdf/n3");
-  IM.registerExtension(".ttl", "text/rdf/ttl");
-  IM.registerExtension(".jsonld", "text/rdf/ld+json");
-  IM.registerExtension(".rdf", "text/rdf/xml");
+  FR.registerExtension(".nt", "text/rdf/nt");
+  FR.registerExtension(".n3", "text/rdf/n3");
+  FR.registerExtension(".ttl", "text/rdf/ttl");
+  FR.registerExtension(".jsonld", "text/rdf/ld+json");
+  FR.registerExtension(".rdf", "text/rdf/xml");
 
-  IM.registerExtension(".marc", "text/marc");
-  IM.registerExtension(".mrc", "text/marc");
+  FR.registerExtension(".marc", "text/marc");
+  FR.registerExtension(".mrc", "text/marc");
 
-  IM.registerExtension(".wiki", "text/wiki");
+  FR.registerExtension(".wiki", "text/wiki");
 
   /*
    *  Mime type to format mappings
    */
-  IM.registerMimeType("text/plain", "text/line-based");
-  IM.registerMimeType("text/csv", "text/line-based/*sv");
-  IM.registerMimeType("text/x-csv", "text/line-based/*sv");
-  IM.registerMimeType("text/tab-separated-value", "text/line-based/*sv");
+  FR.registerMimeType("text/plain", "text/line-based");
+  FR.registerMimeType("text/csv", "text/line-based/*sv");
+  FR.registerMimeType("text/x-csv", "text/line-based/*sv");
+  FR.registerMimeType("text/tab-separated-value", "text/line-based/*sv");
 
-  IM.registerMimeType("text/fixed-width", "text/line-based/fixed-width");
+  FR.registerMimeType("text/fixed-width", "text/line-based/fixed-width");
   
-  IM.registerMimeType("application/n-triples", "text/rdf/nt");
-  IM.registerMimeType("text/n3", "text/rdf/n3");
-  IM.registerMimeType("text/rdf+n3", "text/rdf/n3");
-  IM.registerMimeType("text/turtle", "text/rdf/ttl");
-  IM.registerMimeType("application/rdf+xml", "text/rdf/xml");
-  IM.registerMimeType("application/ld+json", "text/rdf/ld+json");
+  FR.registerMimeType("application/n-triples", "text/rdf/nt");
+  FR.registerMimeType("text/n3", "text/rdf/n3");
+  FR.registerMimeType("text/rdf+n3", "text/rdf/n3");
+  FR.registerMimeType("text/turtle", "text/rdf/ttl");
+  FR.registerMimeType("application/rdf+xml", "text/rdf/xml");
+  FR.registerMimeType("application/ld+json", "text/rdf/ld+json");
 
-  IM.registerMimeType("application/msexcel", "binary/text/xml/xls/xlsx");
-  IM.registerMimeType("application/x-msexcel", "binary/text/xml/xls/xlsx");
-  IM.registerMimeType("application/x-ms-excel", "binary/text/xml/xls/xlsx");
-  IM.registerMimeType("application/vnd.ms-excel", "binary/text/xml/xls/xlsx");
-  IM.registerMimeType("application/x-excel", "binary/text/xml/xls/xlsx");
-  IM.registerMimeType("application/xls", "binary/text/xml/xls/xlsx");
-  IM.registerMimeType("application/x-xls", "binary/text/xml/xls/xlsx");
+  FR.registerMimeType("application/msexcel", "binary/text/xml/xls/xlsx");
+  FR.registerMimeType("application/x-msexcel", "binary/text/xml/xls/xlsx");
+  FR.registerMimeType("application/x-ms-excel", "binary/text/xml/xls/xlsx");
+  FR.registerMimeType("application/vnd.ms-excel", "binary/text/xml/xls/xlsx");
+  FR.registerMimeType("application/x-excel", "binary/text/xml/xls/xlsx");
+  FR.registerMimeType("application/xls", "binary/text/xml/xls/xlsx");
+  FR.registerMimeType("application/x-xls", "binary/text/xml/xls/xlsx");
   
-  IM.registerMimeType("application/vnd.oasis.opendocument.spreadsheet","text/xml/ods");
+  FR.registerMimeType("application/vnd.oasis.opendocument.spreadsheet","text/xml/ods");
 
-  IM.registerMimeType("application/json", "text/json");
-  IM.registerMimeType("application/javascript", "text/json");
-  IM.registerMimeType("text/json", "text/json");
+  FR.registerMimeType("application/json", "text/json");
+  FR.registerMimeType("application/javascript", "text/json");
+  FR.registerMimeType("text/json", "text/json");
 
-  IM.registerMimeType("application/marc", "text/marc");
+  FR.registerMimeType("application/marc", "text/marc");
   
   /*
    *  Format guessers: these take a format derived from extensions or mime-types,
    *  look at the actual files' content, and try to guess a better format.
    */
-  IM.registerFormatGuesser("text", new Packages.org.openrefine.importers.TextFormatGuesser());
-  IM.registerFormatGuesser("text/line-based", new Packages.org.openrefine.importers.LineBasedFormatGuesser());
+  FR.registerFormatGuesser("text", new Packages.org.openrefine.importers.TextFormatGuesser());
+  FR.registerFormatGuesser("text/line-based", new Packages.org.openrefine.importers.LineBasedFormatGuesser());
 
   /*
    *  Controllers: these implement high-level UI flows for importing data. For example, the default
@@ -307,6 +308,7 @@ function registerImporting() {
    *  lets the user select which files to actually import in case any of the original file is an archive
    *  containing several files, and then lets the user configure parsing options.
    */
+  var IM = Packages.org.openrefine.importing.ImportingManager;
   IM.registerController(
     module,
     "default-importing-controller",

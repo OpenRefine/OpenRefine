@@ -44,7 +44,6 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.spark.api.java.JavaPairRDD;
 import org.openrefine.commands.Command;
 import org.openrefine.expr.EvalError;
 import org.openrefine.expr.Evaluable;
@@ -156,7 +155,6 @@ public class PreviewExpressionCommand extends Command {
             List<Integer> rowIndices = ParsingUtilities.mapper.readValue(rowIndicesString, new TypeReference<List<Integer>>() {});
             int length = rowIndices.size();
             GridState state = project.getCurrentGridState();
-            JavaPairRDD<Long, Row> rows = state.getGrid();
             
             try {
                 Evaluable eval = MetaParser.parse(expression);
