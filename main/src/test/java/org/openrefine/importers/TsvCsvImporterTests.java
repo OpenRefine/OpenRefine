@@ -35,7 +35,6 @@ package org.openrefine.importers;
 
 import java.io.StringReader;
 
-import org.apache.spark.api.java.JavaSparkContext;
 import org.slf4j.LoggerFactory;
 import org.testng.Assert;
 import org.testng.annotations.AfterMethod;
@@ -44,8 +43,10 @@ import org.testng.annotations.BeforeTest;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
+import org.openrefine.model.DatamodelRunner;
 import org.openrefine.model.GridState;
 import org.openrefine.model.Row;
+import org.openrefine.model.TestingDatamodelRunner;
 import org.openrefine.util.ParsingUtilities;
 
 public class TsvCsvImporterTests extends ImporterTest {
@@ -65,8 +66,8 @@ public class TsvCsvImporterTests extends ImporterTest {
     @BeforeMethod
     public void setUp() {
         super.setUp();
-        JavaSparkContext c = context();
-        SUT = new SeparatorBasedImporter(c);
+        DatamodelRunner runner = new TestingDatamodelRunner();
+        SUT = new SeparatorBasedImporter(runner);
     }
 
     @Override

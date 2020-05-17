@@ -50,13 +50,17 @@ import scala.Tuple2;
 import org.openrefine.ProjectMetadata;
 import org.openrefine.importing.ImportingFileRecord;
 import org.openrefine.importing.ImportingJob;
+import org.openrefine.model.SparkDatamodelRunner;
 import org.openrefine.util.JSONUtilities;
 import org.openrefine.util.ParsingUtilities;
 
 public class FixedWidthImporter extends SparkImportingParserBase {
 
-    public FixedWidthImporter(JavaSparkContext context) {
-        super(context);
+    private JavaSparkContext context;
+
+    public FixedWidthImporter(SparkDatamodelRunner datamodelRunner) {
+        super(datamodelRunner);
+        context = datamodelRunner.getContext();
     }
 
     @Override
@@ -90,7 +94,7 @@ public class FixedWidthImporter extends SparkImportingParserBase {
             String fileSource, String sparkURI, long limit, ObjectNode options) {
         final int[] columnWidths = JSONUtilities.getIntArray(options, "columnWidths");
 
-        JavaRDD<String> lines = sparkContext.textFile(sparkURI, 4);
+        JavaRDD<String> lines = context.textFile(sparkURI, 4);
         return lines.zipWithIndex().mapToPair(parseCells(columnWidths));
     }
 

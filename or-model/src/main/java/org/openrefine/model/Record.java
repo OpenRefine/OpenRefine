@@ -34,7 +34,12 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package org.openrefine.model;
 
 import java.io.Serializable;
+import java.util.Iterator;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+
+import org.openrefine.expr.ExpressionUtils;
 
 /**
  * A list of consecutive rows where only the first row has a non-blank value in the record key column (normally, the
@@ -68,6 +73,20 @@ public class Record implements Serializable {
         return rows;
     }
 
+    public Iterable<IndexedRow> getIndexedRows() {
+        return new Iterable<IndexedRow>() {
+
+            @Override
+            public Iterator<IndexedRow> iterator() {
+                return IntStream.range(0, rows.size())
+                        .mapToObj(i -> new IndexedRow(startRowIndex + i, rows.get(i)))
+                        .iterator();
+            }
+
+        };
+
+    }
+
     public int size() {
         return rows.size();
     }
@@ -84,6 +103,21 @@ public class Record implements Serializable {
     @Override
     public int hashCode() {
         return Long.hashCode(startRowIndex);
+    }
+
+    @Override
+    public String toString() {
+        return String.format("[Record, id %d, rows:\n%s\n]",
+                startRowIndex,
+                String.join("\n", rows.stream().map(r -> r.toString()).collect(Collectors.toList())));
+    }
+
+    /**
+     * Determines when a row marks the start of a new record.
+     */
+    public static boolean isRecordStart(Row row, int keyCellIndex) {
+        return ExpressionUtils.isNonBlankData(row.getCellValue(keyCellIndex))
+                || row.getCells().stream().allMatch(c -> c == null || !ExpressionUtils.isNonBlankData(c.getValue()));
     }
 
 }

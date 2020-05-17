@@ -41,11 +41,11 @@ import javax.servlet.http.HttpServletResponse;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import org.apache.commons.io.FileUtils;
-import org.apache.spark.api.java.JavaSparkContext;
 import org.testng.annotations.BeforeMethod;
 
 import org.openrefine.commands.Command;
 import org.openrefine.io.FileProjectManager;
+import org.openrefine.model.DatamodelRunner;
 import org.openrefine.util.TestUtils;
 
 public class ExpressionCommandTestBase {
@@ -83,7 +83,7 @@ public class ExpressionCommandTestBase {
             File workspaceDir = TestUtils.createTempDirectory("openrefine-test-workspace-dir");
             File jsonPath = new File(workspaceDir, "workspace.json");
             FileUtils.writeStringToFile(jsonPath, jsonData);
-            FileProjectManager.initialize(mock(JavaSparkContext.class), workspaceDir);
+            FileProjectManager.initialize(mock(DatamodelRunner.class), workspaceDir);
         } catch (IOException e) {
             e.printStackTrace();
         }

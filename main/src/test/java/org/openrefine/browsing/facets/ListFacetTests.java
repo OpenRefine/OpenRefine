@@ -148,15 +148,15 @@ public class ListFacetTests extends RefineTest {
                 "         \"c\" : 1,\n" +
                 "         \"s\" : false,\n" +
                 "         \"v\" : {\n" +
-                "           \"l\" : \"b\",\n" +
-                "           \"v\" : \"b\"\n" +
+                "           \"l\" : \"d\",\n" +
+                "           \"v\" : \"d\"\n" +
                 "         }\n" +
                 "       }, {\n" +
                 "         \"c\" : 1,\n" +
                 "         \"s\" : false,\n" +
                 "         \"v\" : {\n" +
-                "           \"l\" : \"d\",\n" +
-                "           \"v\" : \"d\"\n" +
+                "           \"l\" : \"b\",\n" +
+                "           \"v\" : \"b\"\n" +
                 "         }\n" +
                 "       } ],\n" +
                 "       \"columnName\" : \"bar\",\n" +

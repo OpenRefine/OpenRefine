@@ -47,20 +47,20 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonUnwrapped;
-import org.apache.spark.api.java.JavaPairRDD;
-import scala.Tuple2;
 
 import org.openrefine.browsing.Engine;
 import org.openrefine.browsing.Engine.Mode;
+import org.openrefine.browsing.RecordFilter;
+import org.openrefine.browsing.RowFilter;
 import org.openrefine.commands.Command;
 import org.openrefine.importing.ImportingJob;
 import org.openrefine.importing.ImportingManager;
 import org.openrefine.model.GridState;
+import org.openrefine.model.IndexedRow;
 import org.openrefine.model.Project;
 import org.openrefine.model.Record;
 import org.openrefine.model.Row;
 import org.openrefine.util.ParsingUtilities;
-import org.openrefine.util.RDDUtils;
 
 public class GetRowsCommand extends Command {
 
@@ -177,23 +177,23 @@ public class GetRowsCommand extends Command {
 
             if (engine.getMode() == Mode.RowBased) {
                 totalCount = entireGrid.rowCount();
-                JavaPairRDD<Long, Row> matchingRows = engine.getMatchingRows();
-                List<Tuple2<Long, Row>> rows = RDDUtils.paginate(matchingRows, start, limit);
+                RowFilter combinedRowFilters = engine.combinedRowFilters();
+                List<IndexedRow> rows = entireGrid.getRows(combinedRowFilters, start, limit);
 
                 wrappedRows = rows.stream()
-                        .map(tuple -> new WrappedRow(tuple._2(), tuple._1(), null))
+                        .map(tuple -> new WrappedRow(tuple.getRow(), tuple.getIndex(), null))
                         .collect(Collectors.toList());
 
-                filtered = matchingRows.count();
+                filtered = entireGrid.countMatchingRows(combinedRowFilters);
             } else {
                 totalCount = entireGrid.recordCount();
-                JavaPairRDD<Long, Record> matchingRecords = engine.getMatchingRecords();
-                List<Tuple2<Long, Record>> records = RDDUtils.paginate(matchingRecords, start, limit);
+                RecordFilter combinedRecordFilters = engine.combinedRecordFilters();
+                List<Record> records = entireGrid.getRecords(combinedRecordFilters, start, limit);
 
                 wrappedRows = records.stream()
-                        .flatMap(tuple -> recordToWrappedRows(tuple._2).stream())
+                        .flatMap(record -> recordToWrappedRows(record).stream())
                         .collect(Collectors.toList());
-                filtered = matchingRecords.count();
+                filtered = entireGrid.countMatchingRecords(combinedRecordFilters);
             }
 
             JsonResult result = new JsonResult(engine.getMode(),

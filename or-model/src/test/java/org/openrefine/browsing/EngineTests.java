@@ -31,23 +31,18 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
-import org.apache.spark.api.java.JavaPairRDD;
 import org.mockito.Matchers;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
-import scala.Tuple2;
 
-import org.openrefine.SparkBasedTest;
 import org.openrefine.browsing.Engine.Mode;
 import org.openrefine.browsing.facets.Facet;
 import org.openrefine.browsing.facets.FacetAggregator;
 import org.openrefine.browsing.facets.FacetAggregatorStub;
 import org.openrefine.browsing.facets.FacetConfig;
-import org.openrefine.browsing.facets.FacetState;
 import org.openrefine.browsing.facets.FacetStateStub;
 import org.openrefine.model.Cell;
 import org.openrefine.model.ColumnMetadata;
@@ -55,10 +50,11 @@ import org.openrefine.model.ColumnModel;
 import org.openrefine.model.GridState;
 import org.openrefine.model.Row;
 
-public class EngineTests extends SparkBasedTest {
+public class EngineTests {
 
     private Engine SUT;
     private GridState initialState;
+    private EngineConfig engineConfig;
     protected static RowFilter filterA = new RowFilter() {
 
         private static final long serialVersionUID = -609451600084843923L;
@@ -81,14 +77,14 @@ public class EngineTests extends SparkBasedTest {
     @SuppressWarnings("unchecked")
     @BeforeMethod
     public void createInitialGrid() {
-        JavaPairRDD<Long, Row> rdd = rowRDD(new Cell[][] {
-                { new Cell("a", null), new Cell("b", null) },
-                { new Cell("c", null), new Cell("d", null) }
-        });
+        List<Row> rdd = Arrays.asList(
+                new Row(Arrays.asList(new Cell("a", null), new Cell("b", null))),
+                new Row(Arrays.asList(new Cell("c", null), new Cell("d", null))));
         ColumnModel columnModel = new ColumnModel(Arrays.asList(
                 new ColumnMetadata("column1"),
                 new ColumnMetadata("column2")));
-        initialState = new GridState(columnModel, rdd, Collections.emptyMap());
+        initialState = mock(GridState.class);
+        when(initialState.getColumnModel()).thenReturn(columnModel);
         Facet facetA = mock(Facet.class);
         Facet facetAll = mock(Facet.class);
         FacetConfig facetConfigA = mock(FacetConfig.class);
@@ -103,30 +99,15 @@ public class EngineTests extends SparkBasedTest {
 
         List<FacetConfig> facetConfigs = Arrays.asList(
                 facetConfigA, facetConfigAll);
-        SUT = new Engine(initialState, new EngineConfig(facetConfigs, Mode.RowBased));
+        engineConfig = new EngineConfig(facetConfigs, Mode.RowBased);
+        SUT = new Engine(initialState, engineConfig);
     }
 
     @Test
-    public void testComputeFacets() {
-        List<FacetState> states = SUT.getFacetStates();
-        Assert.assertEquals(states, Arrays.asList(
-                new FacetStateStub(1, 1),
-                new FacetStateStub(1, 0)));
-    }
-
-    @Test
-    public void testGetMachingRows() {
-        List<Tuple2<Long, Row>> rows = SUT.getMatchingRows().collect();
-        Assert.assertEquals(rows, Collections.singletonList(new Tuple2<Long, Row>(0L,
-                new Row(Arrays.asList(new Cell("a", null), new Cell("b", null))))));
-    }
-
-    @Test
-    public void testGetMatchingRowsEmptyFacets() {
-        // when no facets are provided, grid states are not filtered
-        GridState mockState = mock(GridState.class);
-        SUT = new Engine(mockState, new EngineConfig(Collections.emptyList(), Mode.RowBased));
-        Assert.assertEquals(SUT.getMatchingRows(), SUT.getGridState().getGrid());
+    public void testAccessors() {
+        Assert.assertEquals(SUT.getMode(), Mode.RowBased);
+        Assert.assertEquals(SUT.getConfig(), engineConfig);
+        Assert.assertEquals(SUT.getGridState(), initialState);
     }
 
 }

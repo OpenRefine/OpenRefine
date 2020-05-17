@@ -39,14 +39,11 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import edu.mit.simile.butterfly.ButterflyModule;
 import org.apache.commons.io.FileUtils;
@@ -57,33 +54,6 @@ import org.openrefine.RefineServlet;
 
 public class ImportingManager {
 
-    static public class Format {
-
-        @JsonProperty("id")
-        final public String id;
-        @JsonProperty("label")
-        final public String label;
-        @JsonProperty("download")
-        final public boolean download;
-        @JsonProperty("uiClass")
-        final public String uiClass;
-        @JsonIgnore
-        final public ImportingParser parser;
-
-        private Format(
-                String id,
-                String label,
-                boolean download,
-                String uiClass,
-                ImportingParser parser) {
-            this.id = id;
-            this.label = label;
-            this.download = download;
-            this.uiClass = uiClass;
-            this.parser = parser;
-        }
-    }
-
     final static Logger logger = LoggerFactory.getLogger("importing");
 
     static private RefineServlet servlet;
@@ -92,18 +62,6 @@ public class ImportingManager {
     final static private Map<Long, ImportingJob> jobs = Collections.synchronizedMap(new HashMap<Long, ImportingJob>());
     static private long jobIdCounter = 0;
     final static private Object jobIdLock = new Object();
-
-    // Mapping from format to label, e.g., "text" to "Text files", "text/xml" to "XML files"
-    final static public Map<String, Format> formatToRecord = new HashMap<String, Format>();
-
-    // Mapping from format to guessers
-    final static public Map<String, List<FormatGuesser>> formatToGuessers = new HashMap<String, List<FormatGuesser>>();
-
-    // Mapping from file extension to format, e.g., ".xml" to "text/xml"
-    final static public Map<String, String> extensionToFormat = new HashMap<String, String>();
-
-    // Mapping from mime type to format, e.g., "application/json" to "text/json"
-    final static public Map<String, String> mimeTypeToFormat = new HashMap<String, String>();
 
     // Mapping from controller name to controller
     final static public Map<String, ImportingController> controllers = new HashMap<String, ImportingController>();
@@ -129,36 +87,6 @@ public class ImportingManager {
 
         service = Executors.newSingleThreadScheduledExecutor();
         service.scheduleWithFixedDelay(new CleaningTimerTask(), TIMER_PERIOD, TIMER_PERIOD, TimeUnit.MINUTES);
-    }
-
-    static public void registerFormat(String format, String label) {
-        registerFormat(format, label, null, null);
-    }
-
-    static public void registerFormat(String format, String label, String uiClass, ImportingParser parser) {
-        formatToRecord.put(format, new Format(format, label, true, uiClass, parser));
-    }
-
-    static public void registerFormat(
-            String format, String label, boolean download, String uiClass, ImportingParser parser) {
-        formatToRecord.put(format, new Format(format, label, download, uiClass, parser));
-    }
-
-    static public void registerFormatGuesser(String format, FormatGuesser guesser) {
-        List<FormatGuesser> guessers = formatToGuessers.get(format);
-        if (guessers == null) {
-            guessers = new LinkedList<FormatGuesser>();
-            formatToGuessers.put(format, guessers);
-        }
-        guessers.add(0, guesser); // prepend so that newer guessers take priority
-    }
-
-    static public void registerExtension(String extension, String format) {
-        extensionToFormat.put(extension.startsWith(".") ? extension : ("." + extension), format);
-    }
-
-    static public void registerMimeType(String mimeType, String format) {
-        mimeTypeToFormat.put(mimeType, format);
     }
 
     static public void registerController(ButterflyModule module, String name, ImportingController controller) {
@@ -222,59 +150,18 @@ public class ImportingManager {
     static public class ImportingConfiguration {
 
         @JsonProperty("formats")
-        public Map<String, Format> getFormats() {
-            return formatToRecord;
+        public Map<String, ImportingFormat> getFormats() {
+            return FormatRegistry.getFormatToRecord();
         }
 
         @JsonProperty("mimeTypeToFormat")
         public Map<String, String> getMimeTypeToFormat() {
-            return mimeTypeToFormat;
+            return FormatRegistry.getMimeTypeToFormat();
         }
 
         @JsonProperty("extensionToFormat")
         public Map<String, String> getExtensionToFormat() {
-            return extensionToFormat;
-        }
-    }
-
-    static public String getFormatFromFileName(String fileName) {
-        int start = 0;
-        while (true) {
-            int dot = fileName.indexOf('.', start);
-            if (dot < 0) {
-                break;
-            }
-
-            String extension = fileName.substring(dot);
-            String format = extensionToFormat.get(extension);
-            if (format != null) {
-                return format;
-            } else {
-                start = dot + 1;
-            }
-        }
-        return null;
-    }
-
-    static public String getFormatFromMimeType(String mimeType) {
-        return mimeTypeToFormat.get(mimeType);
-    }
-
-    static public String getFormat(String fileName, String mimeType) {
-        String fileNameFormat = getFormatFromFileName(fileName);
-        if (mimeType != null) {
-            mimeType = mimeType.split(";")[0];
-        }
-        String mimeTypeFormat = mimeType == null ? null : getFormatFromMimeType(mimeType);
-        if (mimeTypeFormat == null) {
-            return fileNameFormat;
-        } else if (fileNameFormat == null) {
-            return mimeTypeFormat;
-        } else if (mimeTypeFormat.startsWith(fileNameFormat)) {
-            // mime type-base format is more specific
-            return mimeTypeFormat;
-        } else {
-            return fileNameFormat;
+            return FormatRegistry.getExtensionToFormat();
         }
     }
 

@@ -49,7 +49,6 @@ import java.util.zip.GZIPOutputStream;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import org.apache.spark.api.java.JavaSparkContext;
 import org.apache.tools.tar.TarEntry;
 import org.apache.tools.tar.TarInputStream;
 import org.apache.tools.tar.TarOutputStream;
@@ -60,6 +59,7 @@ import org.openrefine.ProjectManager;
 import org.openrefine.ProjectMetadata;
 import org.openrefine.history.History;
 import org.openrefine.history.HistoryEntryManager;
+import org.openrefine.model.DatamodelRunner;
 import org.openrefine.model.Project;
 import org.openrefine.preference.PreferenceStore;
 import org.openrefine.preference.TopList;
@@ -70,26 +70,26 @@ public class FileProjectManager extends ProjectManager {
     final static protected String PROJECT_DIR_SUFFIX = ".project";
 
     protected File _workspaceDir;
-    protected JavaSparkContext _context;
+    protected DatamodelRunner _runner;
     protected HistoryEntryManager _historyEntryManager;
 
     final static Logger logger = LoggerFactory.getLogger("FileProjectManager");
 
-    static public synchronized void initialize(JavaSparkContext context, File dir) {
+    static public synchronized void initialize(DatamodelRunner runner, File dir) {
         if (singleton != null) {
             logger.warn("Overwriting singleton already set: " + singleton);
         }
         logger.info("Using workspace directory: {}", dir.getAbsolutePath());
-        singleton = new FileProjectManager(context, dir);
+        singleton = new FileProjectManager(runner, dir);
         // This needs our singleton set, thus the unconventional control flow
         ((FileProjectManager) singleton).recover();
     }
 
-    protected FileProjectManager(JavaSparkContext context, File dir) {
+    protected FileProjectManager(DatamodelRunner runner, File dir) {
         super();
-        _context = context;
+        _runner = runner;
         _workspaceDir = dir;
-        _historyEntryManager = new HistoryEntryManager(_context);
+        _historyEntryManager = new HistoryEntryManager(_runner);
         if (!_workspaceDir.exists() && !_workspaceDir.mkdirs()) {
             logger.error("Failed to create directory : " + _workspaceDir);
             return;

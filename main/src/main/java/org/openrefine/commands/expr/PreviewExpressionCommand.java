@@ -53,7 +53,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import org.apache.spark.api.java.JavaPairRDD;
 
 import org.openrefine.commands.Command;
 import org.openrefine.expr.EvalError;
@@ -164,7 +163,6 @@ public class PreviewExpressionCommand extends Command {
             });
             int length = rowIndices.size();
             GridState state = project.getCurrentGridState();
-            JavaPairRDD<Long, Row> rows = state.getGrid();
 
             try {
                 Evaluable eval = MetaParser.parse(expression);

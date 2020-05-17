@@ -38,8 +38,8 @@ import java.io.IOException;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import org.apache.spark.api.java.JavaSparkContext;
 
+import org.openrefine.model.DatamodelRunner;
 import org.openrefine.model.GridState;
 import org.openrefine.util.ParsingUtilities;
 
@@ -52,10 +52,10 @@ public class HistoryEntryManager {
     protected static final String INITIAL_GRID_SUBDIR = "initial";
     protected static final String METADATA_FILENAME = "history.json";
 
-    private final JavaSparkContext context;
+    private final DatamodelRunner runner;
 
-    public HistoryEntryManager(JavaSparkContext context) {
-        this.context = context;
+    public HistoryEntryManager(DatamodelRunner _runner) {
+        this.runner = _runner;
     }
 
     /**
@@ -85,7 +85,7 @@ public class HistoryEntryManager {
         // Load the metadata
         Metadata metadata = ParsingUtilities.mapper.readValue(metadataFile, Metadata.class);
         // Load the initial grid
-        GridState gridState = GridState.loadFromFile(context, gridFile);
+        GridState gridState = runner.loadGridState(gridFile);
         return new History(gridState, metadata.entries, metadata.position);
     }
 

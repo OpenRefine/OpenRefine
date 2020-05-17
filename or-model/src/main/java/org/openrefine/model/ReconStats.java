@@ -34,16 +34,18 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package org.openrefine.model;
 
 import java.io.Serializable;
+import java.util.Collections;
+import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import org.apache.spark.api.java.JavaRDD;
-import org.apache.spark.api.java.function.Function2;
 
-import org.openrefine.expr.ExpressionUtils;
-import org.openrefine.model.Recon.Judgment;
+import org.openrefine.browsing.facets.Facet;
+import org.openrefine.browsing.facets.FacetResult;
+import org.openrefine.browsing.facets.FacetState;
+import org.openrefine.model.recon.ReconStatusFacet;
 
-public class ReconStats implements Serializable {
+public class ReconStats implements FacetState, FacetResult, Serializable {
 
     private static final long serialVersionUID = -6321424927189309528L;
 
@@ -77,40 +79,16 @@ public class ReconStats implements Serializable {
     /**
      * Creates reconciliation statistics from a column of cells.
      * 
-     * @param cells
-     *            a RDD of cells
-     * @return the statistics of their reconciliation status
+     * @param state
+     *            the state of the grid
+     * @param columnName
+     *            the column for which we should gather reconciliation statistics
+     * @return the statistics of cell reconciliation in the column
      */
-    static public ReconStats create(JavaRDD<Cell> cells) {
-
-        ReconStats zero = new ReconStats(0, 0, 0);
-        Function2<ReconStats, Cell, ReconStats> incrementer = new Function2<ReconStats, Cell, ReconStats>() {
-
-            private static final long serialVersionUID = 2389723987L;
-
-            @Override
-            public ReconStats call(ReconStats stats, Cell cell) throws Exception {
-                int nonBlanks = 0;
-                int newTopics = 0;
-                int matchedTopics = 0;
-                if (cell != null && ExpressionUtils.isNonBlankData(cell.value)) {
-                    nonBlanks++;
-
-                    if (cell.recon != null) {
-                        if (cell.recon.judgment == Judgment.New) {
-                            newTopics++;
-                        } else if (cell.recon.judgment == Judgment.Matched) {
-                            matchedTopics++;
-                        }
-                    }
-                }
-                return new ReconStats(
-                        stats.nonBlanks + nonBlanks,
-                        stats.newTopics + newTopics,
-                        stats.matchedTopics + matchedTopics);
-            }
-        };
-        return cells.aggregate(zero, incrementer, (stateA, stateB) -> stateA.add(stateB));
+    static public ReconStats create(GridState state, String columnName) {
+        List<Facet> facets = Collections.singletonList(new ReconStatusFacet.Config(columnName).apply(state.getColumnModel()));
+        List<FacetResult> results = state.computeRowFacets(facets);
+        return (ReconStats) results.get(0);
     }
 
     /**

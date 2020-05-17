@@ -32,26 +32,21 @@ import java.util.Arrays;
 import java.util.List;
 
 import com.fasterxml.jackson.databind.node.ArrayNode;
-import org.slf4j.LoggerFactory;
 import org.testng.Assert;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
-import scala.Tuple2;
 
+import org.openrefine.SparkBasedTest;
+import org.openrefine.model.DatamodelRunner;
 import org.openrefine.model.GridState;
-import org.openrefine.model.Row;
+import org.openrefine.model.IndexedRow;
+import org.openrefine.model.SparkDatamodelRunner;
 import org.openrefine.util.JSONUtilities;
 import org.openrefine.util.ParsingUtilities;
 import org.openrefine.util.TestUtils;
 
 public class FixedWidthImporterTests extends ImporterTest {
-
-    @BeforeTest
-    public void initLogger() {
-        logger = LoggerFactory.getLogger(this.getClass());
-    }
 
     // constants
     String SAMPLE_ROW = "NDB_NoShrt_DescWater";
@@ -60,10 +55,15 @@ public class FixedWidthImporterTests extends ImporterTest {
     FixedWidthImporter SUT = null;
 
     @Override
+    public DatamodelRunner createDatamodelRunner() {
+        return new SparkDatamodelRunner(SparkBasedTest.context);
+    }
+
+    @Override
     @BeforeMethod
     public void setUp() {
         super.setUp();
-        SUT = new FixedWidthImporter(context());
+        SUT = new FixedWidthImporter((SparkDatamodelRunner) runner());
     }
 
     @Override
@@ -98,16 +98,16 @@ public class FixedWidthImporterTests extends ImporterTest {
 
         GridState result = parseOneFile(SUT, testFile.getAbsolutePath());
 
-        List<Tuple2<Long, Row>> rows = result.getGrid().collect();
+        List<IndexedRow> rows = result.collectRows();
         Assert.assertEquals(rows.size(), 2);
-        Assert.assertEquals(rows.get(0)._2.cells.size(), 3);
-        Assert.assertEquals((String) rows.get(0)._2.getCellValue(0), "NDB_No");
-        Assert.assertEquals((String) rows.get(0)._2.getCellValue(1), "Shrt_Desc");
-        Assert.assertEquals((String) rows.get(0)._2.getCellValue(2), "Water");
-        Assert.assertEquals(rows.get(0)._2.cells.size(), 3);
-        Assert.assertEquals((String) rows.get(1)._2.getCellValue(0), "TooSho");
-        Assert.assertEquals((String) rows.get(1)._2.getCellValue(1), "rt");
-        Assert.assertNull(rows.get(1)._2.getCellValue(2));
+        Assert.assertEquals(rows.get(0).getRow().cells.size(), 3);
+        Assert.assertEquals((String) rows.get(0).getRow().getCellValue(0), "NDB_No");
+        Assert.assertEquals((String) rows.get(0).getRow().getCellValue(1), "Shrt_Desc");
+        Assert.assertEquals((String) rows.get(0).getRow().getCellValue(2), "Water");
+        Assert.assertEquals(rows.get(0).getRow().cells.size(), 3);
+        Assert.assertEquals((String) rows.get(1).getRow().getCellValue(0), "TooSho");
+        Assert.assertEquals((String) rows.get(1).getRow().getCellValue(1), "rt");
+        Assert.assertNull(rows.get(1).getRow().getCellValue(2));
 
         Assert.assertEquals(result.getColumnModel().getColumnNames(), Arrays.asList("Col 1", "Col 2", "Col 3"));
     }
@@ -130,16 +130,16 @@ public class FixedWidthImporterTests extends ImporterTest {
 
         GridState result = parseOneFile(SUT, testFile.getAbsolutePath());
 
-        List<Tuple2<Long, Row>> rows = result.getGrid().collect();
+        List<IndexedRow> rows = result.collectRows();
         Assert.assertEquals(rows.size(), 2);
-        Assert.assertEquals(rows.get(0)._2.cells.size(), 3);
-        Assert.assertEquals((String) rows.get(0)._2.getCellValue(0), "NDB_No");
-        Assert.assertEquals((String) rows.get(0)._2.getCellValue(1), "Shrt_Desc");
-        Assert.assertEquals((String) rows.get(0)._2.getCellValue(2), "Water");
-        Assert.assertEquals(rows.get(0)._2.cells.size(), 3);
-        Assert.assertEquals((String) rows.get(1)._2.getCellValue(0), "TooSho");
-        Assert.assertEquals((String) rows.get(1)._2.getCellValue(1), "rt");
-        Assert.assertNull(rows.get(1)._2.getCellValue(2));
+        Assert.assertEquals(rows.get(0).getRow().cells.size(), 3);
+        Assert.assertEquals((String) rows.get(0).getRow().getCellValue(0), "NDB_No");
+        Assert.assertEquals((String) rows.get(0).getRow().getCellValue(1), "Shrt_Desc");
+        Assert.assertEquals((String) rows.get(0).getRow().getCellValue(2), "Water");
+        Assert.assertEquals(rows.get(0).getRow().cells.size(), 3);
+        Assert.assertEquals((String) rows.get(1).getRow().getCellValue(0), "TooSho");
+        Assert.assertEquals((String) rows.get(1).getRow().getCellValue(1), "rt");
+        Assert.assertNull(rows.get(1).getRow().getCellValue(2));
 
         Assert.assertEquals(result.getColumnModel().getColumnNames(), Arrays.asList("Column", "Column2", "Column3"));
     }
@@ -162,12 +162,12 @@ public class FixedWidthImporterTests extends ImporterTest {
 
         GridState result = parseOneFile(SUT, testFile.getAbsolutePath());
 
-        List<Tuple2<Long, Row>> rows = result.getGrid().collect();
+        List<IndexedRow> rows = result.collectRows();
         Assert.assertEquals(rows.size(), 1);
-        Assert.assertEquals(rows.get(0)._2.cells.size(), 3);
-        Assert.assertEquals((String) rows.get(0)._2.getCellValue(0), "012345");
-        Assert.assertEquals((String) rows.get(0)._2.getCellValue(1), "green....");
-        Assert.assertEquals((String) rows.get(0)._2.getCellValue(2), "00342");
+        Assert.assertEquals(rows.get(0).getRow().cells.size(), 3);
+        Assert.assertEquals((String) rows.get(0).getRow().getCellValue(0), "012345");
+        Assert.assertEquals((String) rows.get(0).getRow().getCellValue(1), "green....");
+        Assert.assertEquals((String) rows.get(0).getRow().getCellValue(2), "00342");
 
         Assert.assertEquals(result.getColumnModel().getColumnNames(), Arrays.asList("NDB_No", "Shrt_Desc", "Water"));
     }

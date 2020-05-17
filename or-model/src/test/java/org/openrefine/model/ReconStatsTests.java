@@ -27,18 +27,19 @@
 
 package org.openrefine.model;
 
-import java.util.Arrays;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
-import org.apache.spark.api.java.JavaRDD;
+import java.util.Collections;
+
+import org.mockito.Mockito;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
-import org.openrefine.SparkBasedTest;
-import org.openrefine.model.Recon.Judgment;
 import org.openrefine.util.ParsingUtilities;
 import org.openrefine.util.TestUtils;
 
-public class ReconStatsTests extends SparkBasedTest {
+public class ReconStatsTests {
 
     @Test
     public void serializeReconStats() {
@@ -48,18 +49,12 @@ public class ReconStatsTests extends SparkBasedTest {
 
     @Test
     public void testCreateFromColumn() {
-        Recon reconQ42 = new Recon(0, 0, Judgment.Matched, null, null, null, null, null, null, null, null, null);
-        Recon reconNew = new Recon(0, 0, Judgment.New, null, null, null, null, null, null, null, null, null);
-        JavaRDD<Cell> cells = context().parallelize(Arrays.asList(
-                new Cell(42, null),
-                new Cell("", null),
-                new Cell("Q42", reconQ42),
-                new Cell("new", reconNew)));
+        ReconStats rs = new ReconStats(3, 1, 2);
+        GridState state = mock(GridState.class);
+        when(state.computeRowFacets(Mockito.any())).thenReturn(Collections.singletonList(rs));
+        when(state.getColumnModel()).thenReturn(new ColumnModel(Collections.singletonList(new ColumnMetadata("some column"))));
 
-        ReconStats rs = ReconStats.create(cells);
-        Assert.assertEquals(rs.nonBlanks, 3);
-        Assert.assertEquals(rs.matchedTopics, 1);
-        Assert.assertEquals(rs.newTopics, 1);
+        Assert.assertEquals(ReconStats.create(state, "some column"), rs);
     }
 
     @Test

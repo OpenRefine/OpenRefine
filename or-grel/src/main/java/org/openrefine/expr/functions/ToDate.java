@@ -35,6 +35,7 @@ package org.openrefine.expr.functions;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.time.Instant;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
@@ -166,8 +167,10 @@ public class ToDate extends PureFunction {
             return date;
         } else {
             try {
-                return javax.xml.bind.DatatypeConverter.parseDateTime(o1).getTime().toInstant()
-                        .plusSeconds(ZonedDateTime.now().getOffset().getTotalSeconds())
+                Instant instant = javax.xml.bind.DatatypeConverter.parseDateTime(o1).getTime().toInstant();
+                long offset = ZonedDateTime.ofInstant(instant, ZonedDateTime.now().getZone()).getOffset().getTotalSeconds();
+                return instant
+                        .plusSeconds(offset)
                         .atOffset(ZoneOffset.of("Z"));
             } catch (IllegalArgumentException e2) {
                 return null;

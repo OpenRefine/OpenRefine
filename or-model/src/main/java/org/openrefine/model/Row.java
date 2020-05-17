@@ -220,7 +220,7 @@ public class Row implements HasFields, Serializable {
             return false;
         }
         Row otherRow = (Row) other;
-        return (otherRow.getCells().equals(cells) &&
+        return (otherRow.cells.equals(cells) &&
                 flagged == otherRow.flagged &&
                 starred == otherRow.starred);
     }

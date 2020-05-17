@@ -52,7 +52,7 @@ import org.apache.commons.io.FileUtils;
 
 import org.openrefine.ProjectManager;
 import org.openrefine.ProjectMetadata;
-import org.openrefine.importing.ImportingManager.Format;
+import org.openrefine.importers.ImporterUtilities;
 import org.openrefine.model.Project;
 import org.openrefine.util.JSONUtilities;
 import org.openrefine.util.ParsingUtilities;
@@ -139,7 +139,7 @@ public class ImportingJob {
 
     public void setError(List<Exception> exceptions) {
         synchronized (config) {
-            config.errors = DefaultImportingController.convertErrorsToJsonArray(exceptions);
+            config.errors = ImporterUtilities.convertErrorsToJsonArray(exceptions);
             config.state = "error";
         }
     }
@@ -259,7 +259,7 @@ public class ImportingJob {
                 .map(idx -> fileRecords.get(idx))
                 .collect(Collectors.toList());
 
-        return ImportingUtilities.mostCommonFormat(selectedFiles);
+        return ImporterUtilities.mostCommonFormat(selectedFiles);
     }
 
     /**
@@ -289,7 +289,7 @@ public class ImportingJob {
                 while (true) {
                     String betterFormat = null;
 
-                    List<FormatGuesser> guessers = ImportingManager.formatToGuessers.get(bestFormat);
+                    List<FormatGuesser> guessers = FormatRegistry.getFormatToGuessers().get(bestFormat);
                     if (guessers != null) {
                         for (FormatGuesser guesser : guessers) {
                             betterFormat = guesser.guess(file, encoding, bestFormat);
@@ -322,13 +322,13 @@ public class ImportingJob {
         final Map<String, String[]> formatToSegments = new HashMap<String, String[]>();
 
         boolean download = true;
-        if (bestFormat1 != null && ImportingManager.formatToRecord.get(bestFormat1) != null) {
-            download = ImportingManager.formatToRecord.get(bestFormat1).download;
+        if (bestFormat1 != null && FormatRegistry.getFormatToRecord().get(bestFormat1) != null) {
+            download = FormatRegistry.getFormatToRecord().get(bestFormat1).download;
         }
 
-        List<String> formats = new ArrayList<String>(ImportingManager.formatToRecord.keySet().size());
-        for (String format : ImportingManager.formatToRecord.keySet()) {
-            Format record = ImportingManager.formatToRecord.get(format);
+        List<String> formats = new ArrayList<String>(FormatRegistry.getFormatToRecord().keySet().size());
+        for (String format : FormatRegistry.getFormatToRecord().keySet()) {
+            ImportingFormat record = FormatRegistry.getFormatToRecord().get(format);
             if (record.uiClass != null && record.parser != null && record.download == download) {
                 formats.add(format);
                 formatToSegments.put(format, format.split("/"));
@@ -394,7 +394,7 @@ public class ImportingJob {
         int count = fileRecords.size();
 
         // Default to text/line-based to to avoid parsing as binary/excel.
-        String bestFormat = ImportingUtilities.mostCommonFormat(retrievalRecord.files);
+        String bestFormat = ImporterUtilities.mostCommonFormat(retrievalRecord.files);
         if (bestFormat == null) {
             bestFormat = "text/line-based";
         }

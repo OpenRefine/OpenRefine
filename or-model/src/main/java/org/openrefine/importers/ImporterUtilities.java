@@ -37,8 +37,15 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
+import java.io.Reader;
 import java.io.Serializable;
+import java.io.StringWriter;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -46,16 +53,17 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.stream.Collectors;
 
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.apache.hadoop.fs.FileSystem;
-import org.apache.spark.api.java.JavaPairRDD;
-import org.apache.spark.api.java.JavaSparkContext;
-import scala.Tuple2;
 
 import org.openrefine.importing.ImportingFileRecord;
 import org.openrefine.importing.ImportingJob;
 import org.openrefine.model.ColumnMetadata;
 import org.openrefine.model.ColumnModel;
 import org.openrefine.model.Row;
+import org.openrefine.util.JSONUtilities;
+import org.openrefine.util.ParsingUtilities;
 import org.openrefine.util.TrackingInputStream;
 
 public class ImporterUtilities {
@@ -251,22 +259,65 @@ public class ImporterUtilities {
         }
     }
 
-    /**
-     * Turns an array of rows into a Spark RDD suitable for a GridState.
-     * 
-     * @param context
-     *            the Spark context used to created the RDD
-     * @param cells
-     *            the list of rows to turn into a RDD
-     * @return a RDD indexed by row ids
-     */
-    public static JavaPairRDD<Long, Row> createRowRDD(JavaSparkContext context, List<Row> rows) {
-        List<Tuple2<Long, Row>> rdd = new ArrayList<>(rows.size());
-        for (int i = 0; i != rows.size(); i++) {
-            rdd.add(new Tuple2<Long, Row>((long) i, rows.get(i)));
+    static public Reader getReaderFromStream(InputStream inputStream, ImportingFileRecord fileRecord, String commonEncoding) {
+        String encoding = fileRecord.getDerivedEncoding();
+        if (encoding == null) {
+            encoding = commonEncoding;
         }
-        return context.parallelize(rdd)
-                .keyBy(t -> (Long) t._1)
-                .mapValues(t -> t._2);
+        if (encoding != null) {
+            try {
+                return new InputStreamReader(inputStream, encoding);
+            } catch (UnsupportedEncodingException e) {
+                // Ignore and fall through
+            }
+        }
+        return new InputStreamReader(inputStream);
+    }
+
+    /**
+     * Given a list of importing file records, return the most common format in them, or null if none of the records
+     * contain a format.
+     * 
+     * @param records
+     *            the importing file records to read formats from
+     * @return the most common format, or null
+     */
+    public static String mostCommonFormat(List<ImportingFileRecord> records) {
+        Map<String, Integer> formatToCount = new HashMap<>();
+        List<String> formats = new ArrayList<>();
+        for (ImportingFileRecord fileRecord : records) {
+            String format = fileRecord.getFormat();
+            if (format != null) {
+                if (formatToCount.containsKey(format)) {
+                    formatToCount.put(format, formatToCount.get(format) + 1);
+                } else {
+                    formatToCount.put(format, 1);
+                    formats.add(format);
+                }
+            }
+        }
+        Collections.sort(formats, new Comparator<String>() {
+
+            @Override
+            public int compare(String o1, String o2) {
+                return formatToCount.get(o2) - formatToCount.get(o1);
+            }
+        });
+
+        return formats.size() > 0 ? formats.get(0) : null;
+    }
+
+    static public ArrayNode convertErrorsToJsonArray(List<Exception> exceptions) {
+        ArrayNode a = ParsingUtilities.mapper.createArrayNode();
+        for (Exception e : exceptions) {
+            StringWriter sw = new StringWriter();
+            e.printStackTrace(new PrintWriter(sw));
+
+            ObjectNode o = ParsingUtilities.mapper.createObjectNode();
+            JSONUtilities.safePut(o, "message", e.getLocalizedMessage());
+            JSONUtilities.safePut(o, "stack", sw.toString());
+            JSONUtilities.append(a, o);
+        }
+        return a;
     }
 }

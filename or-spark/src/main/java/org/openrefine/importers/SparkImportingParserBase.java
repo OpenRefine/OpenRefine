@@ -9,7 +9,6 @@ import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.apache.spark.api.java.JavaPairRDD;
-import org.apache.spark.api.java.JavaSparkContext;
 import org.apache.spark.api.java.function.Function;
 import org.apache.spark.api.java.function.PairFunction;
 import scala.Tuple2;
@@ -20,12 +19,14 @@ import org.openrefine.model.Cell;
 import org.openrefine.model.ColumnModel;
 import org.openrefine.model.GridState;
 import org.openrefine.model.Row;
+import org.openrefine.model.SparkDatamodelRunner;
+import org.openrefine.model.SparkGridState;
 import org.openrefine.util.JSONUtilities;
 
 public abstract class SparkImportingParserBase extends ImportingParserBase {
 
-    protected SparkImportingParserBase(JavaSparkContext context) {
-        super(Mode.SparkURI, context);
+    protected SparkImportingParserBase(SparkDatamodelRunner runner) {
+        super(Mode.SparkURI, runner);
     }
 
     /**
@@ -95,7 +96,7 @@ public abstract class SparkImportingParserBase extends ImportingParserBase {
 
         JavaPairRDD<Long, Row> grid = tail(rawCells, ignoreLines + headerLines + skipDataLines)
                 .mapValues(toRow);
-        return new GridState(columnModel, grid, Collections.emptyMap());
+        return new SparkGridState(columnModel, grid, Collections.emptyMap());
     }
 
     /**

@@ -42,8 +42,6 @@ import java.util.LinkedList;
 import java.util.List;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import org.apache.spark.api.java.JavaPairRDD;
-import org.apache.spark.api.java.JavaSparkContext;
 
 import org.openrefine.ProjectMetadata;
 import org.openrefine.expr.ExpressionUtils;
@@ -51,6 +49,7 @@ import org.openrefine.importing.ImportingFileRecord;
 import org.openrefine.importing.ImportingJob;
 import org.openrefine.model.Cell;
 import org.openrefine.model.ColumnModel;
+import org.openrefine.model.DatamodelRunner;
 import org.openrefine.model.GridState;
 import org.openrefine.model.Row;
 import org.openrefine.util.JSONUtilities;
@@ -82,8 +81,8 @@ abstract public class TabularImportingParserBase extends ImportingParserBase {
      *            true if parser takes an InputStream, false if it takes a Reader.
      * 
      */
-    protected TabularImportingParserBase(Mode mode, JavaSparkContext sparkContext) {
-        super(mode, sparkContext);
+    protected TabularImportingParserBase(Mode mode, DatamodelRunner runner) {
+        super(mode, runner);
     }
 
     protected abstract TableDataReader createTableDataReader(ProjectMetadata metadata, ImportingJob job, Reader reader,
@@ -193,8 +192,7 @@ abstract public class TabularImportingParserBase extends ImportingParserBase {
             }
         }
 
-        JavaPairRDD<Long, Row> rdd = ImporterUtilities.createRowRDD(sparkContext, rows);
-        return new GridState(columnModel, rdd, Collections.emptyMap());
+        return runner.create(columnModel, rows, Collections.emptyMap());
     }
 
 }

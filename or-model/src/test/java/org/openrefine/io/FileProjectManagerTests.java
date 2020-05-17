@@ -32,12 +32,12 @@ import static org.mockito.Mockito.mock;
 import java.io.File;
 import java.io.IOException;
 
-import org.apache.spark.api.java.JavaSparkContext;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import org.openrefine.ProjectMetadata;
 import org.openrefine.io.FileProjectManager;
+import org.openrefine.model.DatamodelRunner;
 import org.openrefine.util.ParsingUtilities;
 import org.openrefine.util.TestUtils;
 
@@ -53,7 +53,7 @@ public class FileProjectManagerTests {
     protected class FileProjectManagerStub extends FileProjectManager {
 
         protected FileProjectManagerStub(File dir) {
-            super(mock(JavaSparkContext.class), dir);
+            super(mock(DatamodelRunner.class), dir);
             _projectsMetadata.put(1234L, mock(ProjectMetadata.class));
         }
     }

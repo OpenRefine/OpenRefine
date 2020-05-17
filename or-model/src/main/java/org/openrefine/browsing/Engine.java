@@ -33,24 +33,20 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package org.openrefine.browsing;
 
-import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import org.apache.spark.api.java.JavaPairRDD;
-import org.apache.spark.api.java.function.Function;
-import org.apache.spark.api.java.function.Function2;
-import scala.Tuple2;
 
 import org.openrefine.browsing.facets.AllFacetsAggregator;
 import org.openrefine.browsing.facets.Facet;
 import org.openrefine.browsing.facets.FacetResult;
 import org.openrefine.browsing.facets.FacetState;
 import org.openrefine.model.GridState;
+import org.openrefine.model.IndexedRow;
 import org.openrefine.model.Record;
-import org.openrefine.model.Row;
 
 /**
  * Faceted browsing engine. Given a GridState and facet configurations, it can be used to compute facet statistics and
@@ -105,54 +101,44 @@ public class Engine {
         return _config;
     }
 
-    /**
-     * Returns a RDD of rows matched by the current configuration, only available when the mode is RowBased.
-     */
-    @JsonIgnore
-    public JavaPairRDD<Long, Row> getMatchingRows() {
-        if (!Mode.RowBased.equals(getMode())) {
-            throw new IllegalArgumentException("Requesting matching rows while the engine is not in rows mode");
-        }
-        List<RowFilter> facetRowFilters = facetRowFilters();
-        if (facetRowFilters.isEmpty()) {
-            return _state.getGrid();
-        } else {
-            Function<Tuple2<Long, Row>, Boolean> f = rowFilterConjuction(facetRowFilters);
-            return _state.getGrid().filter(f);
-        }
-    }
-
-    @JsonIgnore
-    public JavaPairRDD<Long, Record> getMatchingRecords() {
-        if (!Mode.RecordBased.equals(getMode())) {
-            throw new IllegalArgumentException("Requesting matching records while the engine is not in records mode");
-        }
-        List<RecordFilter> facetRecordFilters = facetRecordFilters();
-        if (facetRecordFilters.isEmpty()) {
-            return _state.getRecords();
-        } else {
-            Function<Tuple2<Long, Record>, Boolean> f = recordFilterConjuction(facetRecordFilters);
-            return _state.getRecords().filter(f);
-        }
-    }
-
     @JsonProperty("facets")
     public List<FacetResult> getFacetResults() {
-        List<FacetState> states = getFacetStates();
-        List<FacetResult> facetResults = new ArrayList<>();
-        for (int i = 0; i != states.size(); i++) {
-            facetResults.add(_facets.get(i).getFacetResult(states.get(i)));
-        }
-        return facetResults;
+        return _state.computeRowFacets(_facets);
     }
 
-    /**
-     * Computes the facet states of the configured facets on the current grid
-     */
     @JsonIgnore
-    public List<FacetState> getFacetStates() {
-        AllFacetsAggregator aggregator = new AllFacetsAggregator(_facets.stream().map(f -> f.getAggregator()).collect(Collectors.toList()));
-        return _state.getGrid().aggregate(allFacetsInitialState(), rowSeqOp(aggregator), facetCombineOp(aggregator));
+    public Iterable<IndexedRow> getMatchingRows() {
+        if (Mode.RowBased.equals(getMode())) {
+            return _state.iterateRows(combinedRowFilters());
+        } else {
+            Iterable<Record> records = _state.iterateRecords(combinedRecordFilters());
+            return new Iterable<IndexedRow>() {
+
+                @Override
+                public Iterator<IndexedRow> iterator() {
+                    Iterator<Record> recordIterator = records.iterator();
+                    return new Iterator<IndexedRow>() {
+
+                        private Iterator<IndexedRow> currentRecord = null;
+
+                        @Override
+                        public boolean hasNext() {
+                            return (currentRecord != null && currentRecord.hasNext()) || recordIterator.hasNext();
+                        }
+
+                        @Override
+                        public IndexedRow next() {
+                            if (currentRecord == null || !currentRecord.hasNext()) {
+                                currentRecord = recordIterator.next().getIndexedRows().iterator();
+                            }
+                            return currentRecord.next();
+                        }
+
+                    };
+                }
+
+            };
+        }
     }
 
     /**
@@ -201,69 +187,5 @@ public class Engine {
         return new AllFacetsAggregator(_facets
                 .stream().map(facet -> facet.getAggregator())
                 .collect(Collectors.toList()));
-    }
-
-    /**
-     * Functions used to compute facet statistics
-     */
-
-    private static Function2<List<FacetState>, Tuple2<Long, Row>, List<FacetState>> rowSeqOp(AllFacetsAggregator aggregator) {
-        return new Function2<List<FacetState>, Tuple2<Long, Row>, List<FacetState>>() {
-
-            private static final long serialVersionUID = 1L;
-
-            @Override
-            public List<FacetState> call(List<FacetState> states, Tuple2<Long, Row> rowTuple) throws Exception {
-                return aggregator.increment(states, rowTuple._1, rowTuple._2);
-            }
-        };
-    }
-
-    private static Function2<List<FacetState>, List<FacetState>, List<FacetState>> facetCombineOp(AllFacetsAggregator aggregator) {
-        return new Function2<List<FacetState>, List<FacetState>, List<FacetState>>() {
-
-            private static final long serialVersionUID = 1L;
-
-            @Override
-            public List<FacetState> call(List<FacetState> statesA, List<FacetState> statesB) throws Exception {
-                return aggregator.sum(statesA, statesB);
-            }
-        };
-    }
-
-    private static Function<Tuple2<Long, Row>, Boolean> rowFilterConjuction(List<RowFilter> rowFilters) {
-        return new Function<Tuple2<Long, Row>, Boolean>() {
-
-            private static final long serialVersionUID = 1L;
-
-            @Override
-            public Boolean call(Tuple2<Long, Row> v1) throws Exception {
-                return rowFilters.stream().allMatch(f -> f.filterRow(v1._1, v1._2));
-            }
-        };
-    }
-
-    private static Function<Tuple2<Long, Row>, Boolean> negatedRowFilterConjuction(List<RowFilter> rowFilters) {
-        return new Function<Tuple2<Long, Row>, Boolean>() {
-
-            private static final long serialVersionUID = 1L;
-
-            @Override
-            public Boolean call(Tuple2<Long, Row> v1) throws Exception {
-                return !rowFilters.stream().allMatch(f -> f.filterRow(v1._1, v1._2));
-            }
-        };
-    }
-
-    private static Function<Tuple2<Long, Record>, Boolean> recordFilterConjuction(List<RecordFilter> recordFilters) {
-        return new Function<Tuple2<Long, Record>, Boolean>() {
-
-            private static final long serialVersionUID = 1L;
-
-            @Override
-            public Boolean call(Tuple2<Long, Record> v1) throws Exception {
-                return recordFilters.stream().allMatch(f -> f.filterRecord(v1._2));
-            }
-        };
     }
 }

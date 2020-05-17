@@ -48,14 +48,12 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import org.openrefine.RefineServlet;
 import org.openrefine.commands.Command;
 import org.openrefine.commands.HttpUtilities;
 import org.openrefine.importing.ImportingJob.ImportingJobConfig;
-import org.openrefine.importing.ImportingManager.Format;
 import org.openrefine.util.JSONUtilities;
 import org.openrefine.util.ParsingUtilities;
 
@@ -216,7 +214,7 @@ public class DefaultImportingController implements ImportingController {
         }
 
         String format = request.getParameter("format");
-        Format formatRecord = ImportingManager.formatToRecord.get(format);
+        ImportingFormat formatRecord = FormatRegistry.getFormatToRecord().get(format);
         if (formatRecord != null && formatRecord.parser != null) {
             ObjectNode options = formatRecord.parser.createParserUIInitializationData(
                     job, job.getSelectedFileRecords(), format);
@@ -301,20 +299,6 @@ public class DefaultImportingController implements ImportingController {
             writer.writeStringField("stack", sw.toString());
             writer.writeEndObject();
         }
-    }
-
-    static public ArrayNode convertErrorsToJsonArray(List<Exception> exceptions) {
-        ArrayNode a = ParsingUtilities.mapper.createArrayNode();
-        for (Exception e : exceptions) {
-            StringWriter sw = new StringWriter();
-            e.printStackTrace(new PrintWriter(sw));
-
-            ObjectNode o = ParsingUtilities.mapper.createObjectNode();
-            JSONUtilities.safePut(o, "message", e.getLocalizedMessage());
-            JSONUtilities.safePut(o, "stack", sw.toString());
-            JSONUtilities.append(a, o);
-        }
-        return a;
     }
 
 }

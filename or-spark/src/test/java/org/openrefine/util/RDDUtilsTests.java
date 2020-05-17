@@ -2,7 +2,10 @@
 package org.openrefine.util;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.apache.spark.api.java.JavaPairRDD;
 import org.testng.Assert;
@@ -10,6 +13,7 @@ import org.testng.annotations.Test;
 import scala.Tuple2;
 
 import org.openrefine.SparkBasedTest;
+import org.openrefine.model.Cell;
 import org.openrefine.model.Row;
 
 public class RDDUtilsTests extends SparkBasedTest {
@@ -27,5 +31,23 @@ public class RDDUtilsTests extends SparkBasedTest {
         Assert.assertEquals(rows.size(), 2);
         Assert.assertEquals(rows.get(0)._2.getCellValue(0), 5);
         Assert.assertEquals(rows.get(1)._2.getCellValue(1), 8);
+    }
+
+    @Test
+    public void testLimitPartitions() {
+        List<Tuple2<Long, Row>> list = new ArrayList<>();
+        for (int i = 0; i < 10; i++) {
+            list.add(new Tuple2<Long, Row>((long) i, new Row(
+                    Arrays.asList(new Cell(i, null)))));
+        }
+        JavaPairRDD<Long, Row> rdd = context().parallelize(list, 2)
+                .keyBy(t -> (Long) t._1)
+                .mapValues(t -> t._2);
+
+        JavaPairRDD<Long, Row> capped = RDDUtils.limitPartitions(rdd, 3);
+        List<Tuple2<Long, Row>> rows = capped.collect();
+        Assert.assertEquals(rows.size(), 6);
+        Assert.assertEquals(rows.stream().map(t -> t._1).collect(Collectors.toList()),
+                Arrays.asList(0L, 1L, 2L, 5L, 6L, 7L));
     }
 }

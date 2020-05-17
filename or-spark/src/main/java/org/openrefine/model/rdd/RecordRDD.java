@@ -23,7 +23,6 @@ import scala.reflect.ClassManifestFactory;
 import scala.reflect.ClassManifestFactory$;
 import scala.reflect.ClassTag;
 
-import org.openrefine.expr.ExpressionUtils;
 import org.openrefine.model.Record;
 import org.openrefine.model.Row;
 
@@ -165,7 +164,7 @@ public class RecordRDD extends RDD<Tuple2<Long, Record>> implements Serializable
                 while (parentIter.hasNext()) {
                     fetchedRowTuple = parentIter.next();
                     Row row = fetchedRowTuple._2;
-                    if (isRecordStart(row, keyCellIndex)) {
+                    if (Record.isRecordStart(row, keyCellIndex)) {
                         break;
                     }
                     rows.add(row);
@@ -234,7 +233,7 @@ public class RecordRDD extends RDD<Tuple2<Long, Record>> implements Serializable
             Long firstRecordStart = null;
             while (firstRecordStart == null && iterator.hasNext()) {
                 Tuple2<Long, Row> tuple = iterator.next();
-                if (isRecordStart(tuple._2, keyCellIndex)) {
+                if (Record.isRecordStart(tuple._2, keyCellIndex)) {
                     firstRecordStart = tuple._1;
                 } else {
                     currentRows.add(tuple._2);
@@ -242,14 +241,6 @@ public class RecordRDD extends RDD<Tuple2<Long, Record>> implements Serializable
             }
             return new UnfinishedRecord(currentRows, firstRecordStart);
         }
-    }
-
-    /**
-     * Determines when a row marks the start of a new record.
-     */
-    private static boolean isRecordStart(Row row, int keyCellIndex) {
-        return ExpressionUtils.isNonBlankData(row.getCellValue(keyCellIndex))
-                || row.getCells().stream().allMatch(c -> c == null || !ExpressionUtils.isNonBlankData(c.getValue()));
     }
 
 }

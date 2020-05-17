@@ -31,12 +31,12 @@ import static org.mockito.Mockito.mock;
 
 import java.io.IOException;
 
-import org.apache.spark.api.java.JavaSparkContext;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
 import org.openrefine.ProjectManager;
 import org.openrefine.ProjectManagerStub;
+import org.openrefine.model.DatamodelRunner;
 import org.openrefine.operations.OperationRegistry;
 import org.openrefine.util.ParsingUtilities;
 import org.openrefine.util.TestUtils;
@@ -71,7 +71,7 @@ public class HistoryEntryTests {
     @BeforeTest
     public void register() {
         OperationRegistry.registerOperation("core", "my-operation", OperationStub.class);
-        ProjectManager.singleton = new ProjectManagerStub(mock(JavaSparkContext.class));
+        ProjectManager.singleton = new ProjectManagerStub(mock(DatamodelRunner.class));
     }
 
     @Test

@@ -2,7 +2,6 @@
 package org.openrefine.browsing.util;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
@@ -16,7 +15,6 @@ import org.openrefine.browsing.filters.ExpressionEqualRowFilter;
 import org.openrefine.expr.Evaluable;
 import org.openrefine.expr.ExpressionUtils;
 import org.openrefine.model.ColumnModel;
-import org.openrefine.model.Record;
 import org.openrefine.model.Row;
 import org.openrefine.util.StringUtils;
 
@@ -99,11 +97,6 @@ public class StringValuesFacetAggregator implements FacetAggregator<StringValues
             return new StringValuesFacetState(
                     state.getCounts(), state.getErrorCount(), state.getBlankCount() + 1);
         }
-    }
-
-    @Override
-    public StringValuesFacetState withRecord(StringValuesFacetState state, Record record, List<Row> rows) {
-        throw new IllegalStateException("records mode not implemented");
     }
 
     protected Object evaluateOnRow(long rowId, Row row) {

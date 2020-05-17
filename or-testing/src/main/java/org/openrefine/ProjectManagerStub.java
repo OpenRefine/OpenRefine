@@ -36,10 +36,10 @@ package org.openrefine;
 import java.io.IOException;
 import java.io.InputStream;
 
-import org.apache.spark.api.java.JavaSparkContext;
 import org.apache.tools.tar.TarOutputStream;
 
 import org.openrefine.history.HistoryEntryManager;
+import org.openrefine.model.DatamodelRunner;
 import org.openrefine.model.Project;
 
 /**
@@ -48,10 +48,10 @@ import org.openrefine.model.Project;
  */
 public class ProjectManagerStub extends ProjectManager {
 
-    JavaSparkContext context;
+    DatamodelRunner runner;
 
-    public ProjectManagerStub(JavaSparkContext context) {
-        this.context = context;
+    public ProjectManagerStub(DatamodelRunner runner) {
+        this.runner = runner;
     }
 
     @Override
@@ -67,7 +67,7 @@ public class ProjectManagerStub extends ProjectManager {
 
     @Override
     public HistoryEntryManager getHistoryEntryManager() {
-        return new HistoryEntryManager(context);
+        return new HistoryEntryManager(runner);
     }
 
     @Override

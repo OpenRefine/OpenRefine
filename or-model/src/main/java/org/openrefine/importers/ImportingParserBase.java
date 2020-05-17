@@ -42,7 +42,6 @@ import java.util.List;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.apache.commons.lang3.NotImplementedException;
 import org.apache.hadoop.fs.FileSystem;
-import org.apache.spark.api.java.JavaSparkContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -51,7 +50,7 @@ import org.openrefine.importers.ImporterUtilities.MultiFileReadingProgress;
 import org.openrefine.importing.ImportingFileRecord;
 import org.openrefine.importing.ImportingJob;
 import org.openrefine.importing.ImportingParser;
-import org.openrefine.importing.ImportingUtilities;
+import org.openrefine.model.DatamodelRunner;
 import org.openrefine.model.GridState;
 import org.openrefine.util.JSONUtilities;
 import org.openrefine.util.ParsingUtilities;
@@ -64,7 +63,7 @@ abstract public class ImportingParserBase implements ImportingParser {
     final static Logger logger = LoggerFactory.getLogger("ImportingParserBase");
 
     final protected Mode mode;
-    final protected JavaSparkContext sparkContext;
+    final protected DatamodelRunner runner;
 
     /**
      * Determines how a file should be read by the subclass, which implements the corresponding method accordingly.
@@ -77,9 +76,9 @@ abstract public class ImportingParserBase implements ImportingParser {
      * @param mode
      *            true if parser takes an InputStream, false if it takes a Reader.
      */
-    protected ImportingParserBase(Mode mode, JavaSparkContext context) {
+    protected ImportingParserBase(Mode mode, DatamodelRunner runner) {
         this.mode = mode;
-        this.sparkContext = context;
+        this.runner = runner;
     }
 
     @Override
@@ -95,7 +94,7 @@ abstract public class ImportingParserBase implements ImportingParser {
     public GridState parse(ProjectMetadata metadata,
             final ImportingJob job, List<ImportingFileRecord> fileRecords, String format,
             long limit, ObjectNode options) throws Exception {
-        FileSystem hdfs = FileSystem.get(sparkContext.hadoopConfiguration());
+        FileSystem hdfs = runner.getFileSystem();
         MultiFileReadingProgress progress = ImporterUtilities.createMultiFileReadingProgress(job, fileRecords, hdfs);
         List<GridState> gridStates = new ArrayList<>(fileRecords.size());
 
@@ -167,7 +166,7 @@ abstract public class ImportingParserBase implements ImportingParser {
                             commonEncoding = null;
                         }
 
-                        Reader reader = ImportingUtilities.getReaderFromStream(
+                        Reader reader = ImporterUtilities.getReaderFromStream(
                                 inputStream, fileRecord, commonEncoding);
 
                         return parseOneFile(metadata, job, fileSource, reader, limit, options);

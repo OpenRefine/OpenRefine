@@ -8,7 +8,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.apache.spark.api.java.JavaPairRDD;
@@ -22,7 +21,7 @@ import org.openrefine.overlay.OverlayModel;
 import org.openrefine.overlay.OverlayModelResolver;
 import org.openrefine.util.TestUtils;
 
-public class GridStateTests extends SparkBasedTest {
+public class SparkGridStateTests extends SparkBasedTest {
 
     protected static class MyOverlayModel implements OverlayModel {
 
@@ -34,7 +33,7 @@ public class GridStateTests extends SparkBasedTest {
         }
     }
 
-    protected GridState state;
+    protected SparkGridState state;
     protected List<Tuple2<Long, Row>> rows;
 
     @BeforeMethod
@@ -52,7 +51,7 @@ public class GridStateTests extends SparkBasedTest {
                         new ColumnMetadata("c")));
 
         OverlayModelResolver.registerOverlayModel("mymodel", MyOverlayModel.class);
-        state = new GridState(cm, grid, Collections.singletonMap("mymodel", new MyOverlayModel()));
+        state = new SparkGridState(cm, grid, Collections.singletonMap("mymodel", new MyOverlayModel()));
 
         rows = new ArrayList<>();
         rows.add(new Tuple2<Long, Row>(0L, new Row(Arrays.asList(new Cell(1, null), new Cell(2, null), new Cell("3", null)))));
@@ -86,38 +85,12 @@ public class GridStateTests extends SparkBasedTest {
     public void testSaveAndLoad() throws IOException {
         File tempFile = TestUtils.createTempDirectory("testgrid");
         state.saveToFile(tempFile);
-        String tempFilePath = tempFile.getAbsolutePath();
 
-        GridState loaded = GridState.loadFromFile(context(), tempFile);
+        SparkGridState loaded = SparkGridState.loadFromFile(context(), tempFile);
 
         Assert.assertEquals(loaded.getOverlayModels(), state.getOverlayModels());
         List<Tuple2<Long, Row>> loadedGrid = loaded.getGrid().collect();
         Assert.assertEquals(loadedGrid, state.getGrid().collect());
-    }
-
-    @Test
-    public void testLimitPartitions() {
-        List<Tuple2<Long, Row>> list = new ArrayList<>();
-        for (int i = 0; i < 10; i++) {
-            list.add(new Tuple2<Long, Row>((long) i, new Row(
-                    Arrays.asList(new Cell(i, null)))));
-        }
-        JavaPairRDD<Long, Row> rdd = context().parallelize(list, 2)
-                .keyBy(t -> (Long) t._1)
-                .mapValues(t -> t._2);
-
-        JavaPairRDD<Long, Row> capped = GridState.limitPartitions(rdd, 3);
-        List<Tuple2<Long, Row>> rows = capped.collect();
-        Assert.assertEquals(rows.size(), 6);
-        Assert.assertEquals(rows.stream().map(t -> t._1).collect(Collectors.toList()),
-                Arrays.asList(0L, 1L, 2L, 5L, 6L, 7L));
-    }
-
-    @Test
-    public void testGetRows() {
-        Assert.assertEquals(state.getRows(0, 2), rows);
-        Assert.assertEquals(state.getRows(1, 2), rows.subList(1, 2));
-        Assert.assertEquals(state.getRows(5, 5), Collections.emptyList());
     }
 
     @Test

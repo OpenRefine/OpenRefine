@@ -52,17 +52,17 @@ import java.util.Map;
 import au.com.bytecode.opencsv.CSVParser;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.apache.commons.lang3.StringEscapeUtils;
-import org.apache.spark.api.java.JavaSparkContext;
 
 import org.openrefine.ProjectMetadata;
 import org.openrefine.importing.ImportingFileRecord;
 import org.openrefine.importing.ImportingJob;
+import org.openrefine.model.DatamodelRunner;
 import org.openrefine.util.JSONUtilities;
 
 public class SeparatorBasedImporter extends TabularImportingParserBase {
 
-    public SeparatorBasedImporter(JavaSparkContext context) {
-        super(Mode.Reader, context);
+    public SeparatorBasedImporter(DatamodelRunner runner) {
+        super(Mode.Reader, runner);
     }
 
     @Override

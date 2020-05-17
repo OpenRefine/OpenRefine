@@ -50,25 +50,22 @@ import com.fasterxml.jackson.databind.node.IntNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.databind.node.TextNode;
 import org.apache.commons.io.FileUtils;
-import org.apache.spark.SparkConf;
-import org.apache.spark.api.java.JavaPairRDD;
-import org.apache.spark.api.java.JavaSparkContext;
 import org.powermock.modules.testng.PowerMockTestCase;
 import org.slf4j.Logger;
 import org.testng.Assert;
 import org.testng.annotations.AfterMethod;
-import org.testng.annotations.AfterSuite;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.BeforeSuite;
-import scala.Tuple2;
 
 import org.openrefine.io.FileProjectManager;
 import org.openrefine.model.Cell;
 import org.openrefine.model.ColumnMetadata;
 import org.openrefine.model.ColumnModel;
+import org.openrefine.model.DatamodelRunner;
 import org.openrefine.model.GridState;
 import org.openrefine.model.Project;
 import org.openrefine.model.Row;
+import org.openrefine.model.TestingDatamodelRunner;
 import org.openrefine.util.TestUtils;
 
 /**
@@ -80,18 +77,28 @@ public class RefineTest extends PowerMockTestCase {
 
     boolean testFailed;
     protected File workspaceDir;
-    private List<Project> projects = new ArrayList<Project>();
 
-    protected static SparkConf sparkConf = new SparkConf().setAppName("SparkBasedTest").setMaster("local");
-    protected static JavaSparkContext _context;
+    private DatamodelRunner runner;
 
-    protected JavaSparkContext context() {
-        return _context;
+    /**
+     * Method that subclasses can override to change the datamodel runner used in the test.
+     */
+    protected DatamodelRunner createDatamodelRunner() {
+        return new TestingDatamodelRunner();
+    }
+
+    /**
+     * Method to access the runner easily from tests.
+     */
+    protected DatamodelRunner runner() {
+        if (runner == null) {
+            runner = createDatamodelRunner();
+        }
+        return runner;
     }
 
     @BeforeSuite
     public void init() {
-        _context = new JavaSparkContext(sparkConf);
         System.setProperty("log4j.configuration", "tests.log4j.properties");
         try {
             workspaceDir = TestUtils.createTempDirectory("openrefine-test-workspace-dir");
@@ -100,7 +107,7 @@ public class RefineTest extends PowerMockTestCase {
                     ",\"preferences\":{\"entries\":{\"scripting.starred-expressions\":" +
                     "{\"class\":\"org.openrefine.preference.TopList\",\"top\":2147483647," +
                     "\"list\":[]},\"scripting.expressions\":{\"class\":\"org.openrefine.preference.TopList\",\"top\":100,\"list\":[]}}}}");
-            FileProjectManager.initialize(_context, workspaceDir);
+            FileProjectManager.initialize(runner, workspaceDir);
 
         } catch (IOException e) {
             workspaceDir = null;
@@ -111,14 +118,9 @@ public class RefineTest extends PowerMockTestCase {
         testFailed = false;
     }
 
-    @AfterSuite
-    public void tearDownSpark() {
-        _context.close();
-    }
-
     @BeforeMethod
     protected void initProjectManager() {
-        ProjectManager.singleton = new ProjectManagerStub(context());
+        ProjectManager.singleton = new ProjectManagerStub(runner());
     }
 
     /**
@@ -167,7 +169,7 @@ public class RefineTest extends PowerMockTestCase {
             }
         }
 
-        GridState state = new GridState(model, rowRDD(cells), Collections.emptyMap());
+        GridState state = runner().create(model, toRows(cells), Collections.emptyMap());
         Project project = new Project(state);
         ProjectManager.singleton.registerProject(project, meta);
         return project;
@@ -185,18 +187,16 @@ public class RefineTest extends PowerMockTestCase {
         return createProject(projectName, columns, cells);
     }
 
-    protected JavaPairRDD<Long, Row> rowRDD(Cell[][] cells) {
-        List<Tuple2<Long, Row>> rdd = new ArrayList<>(cells.length);
+    protected List<Row> toRows(Cell[][] cells) {
+        List<Row> rows = new ArrayList<>(cells.length);
         for (int i = 0; i != cells.length; i++) {
             List<Cell> currentCells = new ArrayList<>(cells[i].length);
             for (int j = 0; j != cells[i].length; j++) {
                 currentCells.add(cells[i][j]);
             }
-            rdd.add(new Tuple2<Long, Row>((long) i, new Row(currentCells)));
+            rows.add(new Row(currentCells));
         }
-        return context().parallelize(rdd)
-                .keyBy(t -> (Long) t._1)
-                .mapValues(t -> t._2);
+        return rows;
     }
 
     /**
@@ -257,7 +257,6 @@ public class RefineTest extends PowerMockTestCase {
         ColumnModel model = project.getHistory().getInitialGridState().getColumnModel();
         Assert.assertNotNull(model);
         Assert.assertEquals(model.getColumns().size(), numCols);
-        Assert.assertNotNull(project.getHistory().getInitialGridState().getGrid());
         Assert.assertEquals(project.getHistory().getInitialGridState().rowCount(), numRows);
     }
 

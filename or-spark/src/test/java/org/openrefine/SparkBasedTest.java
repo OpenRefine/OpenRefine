@@ -9,7 +9,6 @@ import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaPairRDD;
 import org.apache.spark.api.java.JavaSparkContext;
 import org.testng.annotations.AfterSuite;
-import org.testng.annotations.BeforeSuite;
 import scala.Tuple2;
 
 import org.openrefine.io.OrderedLocalFileSystem;
@@ -19,16 +18,13 @@ import org.openrefine.model.Row;
 public class SparkBasedTest {
 
     protected static SparkConf sparkConf = new SparkConf().setAppName("SparkBasedTest").setMaster("local");
-    protected static JavaSparkContext _context;
-
-    @BeforeSuite
-    public void setUpSpark() {
-        _context = new JavaSparkContext(sparkConf);
-        _context.hadoopConfiguration().set("fs.file.impl", OrderedLocalFileSystem.class.getName());
+    public static JavaSparkContext context = new JavaSparkContext(sparkConf);
+    static {
+        context.hadoopConfiguration().set("fs.file.impl", OrderedLocalFileSystem.class.getName());
     }
 
     protected JavaSparkContext context() {
-        return _context;
+        return context;
     }
 
     protected JavaPairRDD<Long, Row> rowRDD(Cell[][] cells, int numPartitions) {
@@ -70,6 +66,6 @@ public class SparkBasedTest {
 
     @AfterSuite
     public void tearDownSpark() {
-        _context.close();
+        context.close();
     }
 }

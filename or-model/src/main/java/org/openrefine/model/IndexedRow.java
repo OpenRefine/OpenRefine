@@ -1,10 +1,10 @@
 
 package org.openrefine.model;
 
+import java.io.Serializable;
+
 import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import scala.Tuple2;
 
 /**
  * A row with its row index. Equivalent to Tuple2<long, Row> but serializable and deserializable with Jackson easily.
@@ -12,7 +12,9 @@ import scala.Tuple2;
  * 
  * @author Antonin Delpeuch
  */
-public class IndexedRow {
+public class IndexedRow implements Serializable {
+
+    private static final long serialVersionUID = -8959175171376953548L;
 
     private final long _id;
     private final Row _row;
@@ -35,12 +37,22 @@ public class IndexedRow {
         return _row;
     }
 
-    @JsonIgnore
-    public Tuple2<Long, Row> toTuple() {
-        return new Tuple2<Long, Row>(_id, _row);
+    @Override
+    public boolean equals(Object other) {
+        if (!(other instanceof IndexedRow)) {
+            return false;
+        }
+        IndexedRow otherRow = (IndexedRow) other;
+        return _id == otherRow._id && _row.equals(otherRow._row);
     }
 
-    public static IndexedRow fromTuple(Tuple2<Long, Row> tuple) {
-        return new IndexedRow(tuple._1, tuple._2);
+    @Override
+    public int hashCode() {
+        return (int) (_id % Integer.MAX_VALUE) + _row.hashCode();
+    }
+
+    @Override
+    public String toString() {
+        return String.format("IndexedRow %d: %s", _id, _row);
     }
 }

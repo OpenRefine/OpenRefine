@@ -1,16 +1,7 @@
 
 package org.openrefine.model.changes;
 
-import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
-import java.util.stream.Stream;
-
-import org.apache.spark.api.java.JavaPairRDD;
-import org.apache.spark.api.java.function.Function;
-import org.apache.spark.api.java.function.Function2;
-import scala.Tuple2;
 
 import org.openrefine.browsing.Engine;
 import org.openrefine.browsing.Engine.Mode;
@@ -19,9 +10,8 @@ import org.openrefine.browsing.RecordFilter;
 import org.openrefine.browsing.RowFilter;
 import org.openrefine.model.ColumnModel;
 import org.openrefine.model.GridState;
-import org.openrefine.model.Record;
-import org.openrefine.model.Row;
-import org.openrefine.model.rdd.PartitionedRDD;
+import org.openrefine.model.RecordMapper;
+import org.openrefine.model.RowMapper;
 import org.openrefine.overlay.OverlayModel;
 
 /**
@@ -52,7 +42,7 @@ public abstract class RowMapChange extends EngineDependentChange {
      * @param columnModel
      *            the initial column model
      */
-    public abstract Function2<Long, Row, Row> getRowMap(ColumnModel columnModel);
+    public abstract RowMapper getRowMapper(ColumnModel columnModel);
 
     /**
      * Subclasses can override this to change the column model when the change is applied
@@ -79,61 +69,18 @@ public abstract class RowMapChange extends EngineDependentChange {
     @Override
     public GridState apply(GridState projectState) {
         Engine engine = getEngine(projectState);
-        Function2<Long, Row, Row> operation = getRowMap(projectState.getColumnModel());
-        JavaPairRDD<Long, Row> rows;
+        RowMapper operation = getRowMapper(projectState.getColumnModel());
+        ColumnModel newColumnModel = getNewColumnModel(projectState);
+        Map<String, OverlayModel> newOverlayModels = getNewOverlayModels(projectState);
         if (Mode.RowBased.equals(engine.getMode())) {
             RowFilter rowFilter = engine.combinedRowFilters();
-            rows = GridState.mapKeyValuesToValues(projectState.getGrid(), conditionalMap(rowFilter, operation));
+            return projectState.mapFilteredRows(rowFilter, operation, newColumnModel)
+                    .withOverlayModels(newOverlayModels);
         } else {
-            // records mode
             RecordFilter recordFilter = engine.combinedRecordFilters();
-            JavaPairRDD<Long, Tuple2<Long, Row>> newRows = projectState.getRecords().flatMapValues(
-                    recordToRows(operation, recordFilter));
-            // reuse the partitioner for the records RDD to partition rows as well
-            rows = new PartitionedRDD<Long, Row>(JavaPairRDD.fromJavaRDD(newRows.values()),
-                    newRows.partitioner().get())
-                    .asPairRDD(newRows.kClassTag(), projectState.getGrid().vClassTag());
+            RecordMapper recordMapper = RecordMapper.rowWiseRecordMapper(operation);
+            return projectState.mapFilteredRecords(recordFilter, recordMapper, newColumnModel)
+                    .withOverlayModels(newOverlayModels);
         }
-        return new GridState(getNewColumnModel(projectState), rows, getNewOverlayModels(projectState));
     }
-
-    private static Function2<Long, Row, Row> conditionalMap(RowFilter rowFilter, Function2<Long, Row, Row> operation) {
-        return new Function2<Long, Row, Row>() {
-
-            private static final long serialVersionUID = -6558022669046720439L;
-
-            @Override
-            public Row call(Long idx, Row row) throws Exception {
-                return rowFilter.filterRow(idx, row) ? operation.call(idx, row) : row;
-            }
-
-        };
-    }
-
-    private static Function<Record, Iterable<Tuple2<Long, Row>>> recordToRows(Function2<Long, Row, Row> operation,
-            RecordFilter recordFilter) {
-        return new Function<Record, Iterable<Tuple2<Long, Row>>>() {
-
-            private static final long serialVersionUID = 1L;
-
-            @Override
-            public Iterable<Tuple2<Long, Row>> call(Record record) throws Exception {
-                List<Row> rows = record.getRows();
-                Stream<Tuple2<Long, Row>> stream = IntStream.range(0, rows.size())
-                        .mapToObj(idx -> new Tuple2<Long, Row>(record.getStartRowId() + idx, rows.get(idx)));
-                if (recordFilter.filterRecord(record)) {
-                    stream = stream.map(tuple -> {
-                        try {
-                            return new Tuple2<Long, Row>(tuple._1, operation.call(tuple._1, tuple._2));
-                        } catch (Exception e) {
-                            throw new RuntimeException(e);
-                        }
-                    });
-                }
-                return stream.collect(Collectors.toList());
-            }
-
-        };
-    }
-
 }

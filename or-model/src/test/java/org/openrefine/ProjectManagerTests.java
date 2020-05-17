@@ -44,7 +44,6 @@ import static org.mockito.Mockito.when;
 
 import java.time.LocalDateTime;
 
-import org.apache.spark.api.java.JavaSparkContext;
 import org.mockito.Mockito;
 import org.testng.Assert;
 import org.testng.annotations.AfterMethod;
@@ -52,6 +51,7 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import org.openrefine.ProjectMetadata;
+import org.openrefine.model.DatamodelRunner;
 import org.openrefine.model.Project;
 import org.openrefine.model.ProjectStub;
 import org.openrefine.process.ProcessManager;
@@ -66,7 +66,7 @@ public class ProjectManagerTests {
 
     @BeforeMethod
     public void SetUp() {
-        pm = new ProjectManagerStub(mock(JavaSparkContext.class));
+        pm = new ProjectManagerStub(mock(DatamodelRunner.class));
         SUT = spy(pm);
         project = mock(Project.class);
         metadata = mock(ProjectMetadata.class);

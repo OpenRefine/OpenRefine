@@ -35,12 +35,12 @@ package org.openrefine.model.changes;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import org.apache.spark.api.java.function.Function2;
 
 import org.openrefine.browsing.EngineConfig;
 import org.openrefine.model.Cell;
 import org.openrefine.model.ColumnModel;
 import org.openrefine.model.Row;
+import org.openrefine.model.RowMapper;
 
 public class CellChange extends RowMapChange {
 
@@ -67,17 +67,17 @@ public class CellChange extends RowMapChange {
     }
 
     @Override
-    public Function2<Long, Row, Row> getRowMap(ColumnModel columnModel) {
+    public RowMapper getRowMapper(ColumnModel columnModel) {
         return mapFunction(cellIndex, row, newCell);
     }
 
-    static protected Function2<Long, Row, Row> mapFunction(int cellIndex, long rowId, Cell newCell) {
-        return new Function2<Long, Row, Row>() {
+    static protected RowMapper mapFunction(int cellIndex, long rowId, Cell newCell) {
+        return new RowMapper() {
 
-            private static final long serialVersionUID = 9024173133266468108L;
+            private static final long serialVersionUID = -5983834950609157341L;
 
             @Override
-            public Row call(Long currentRowId, Row row) throws Exception {
+            public Row call(long currentRowId, Row row) {
                 if (rowId == currentRowId) {
                     return row.withCell(cellIndex, newCell);
                 } else {

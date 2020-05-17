@@ -49,10 +49,11 @@ import org.slf4j.LoggerFactory;
 import org.openrefine.ProjectManager;
 import org.openrefine.commands.Command;
 import org.openrefine.commands.HttpUtilities;
+import org.openrefine.importing.FormatRegistry;
+import org.openrefine.importing.ImportingFormat;
 import org.openrefine.importing.ImportingJob;
 import org.openrefine.importing.ImportingJob.ImportingJobConfig;
 import org.openrefine.importing.ImportingManager;
-import org.openrefine.importing.ImportingManager.Format;
 import org.openrefine.importing.ImportingUtilities;
 import org.openrefine.util.JSONUtilities;
 import org.openrefine.util.ParsingUtilities;
@@ -82,7 +83,7 @@ public class CreateProjectCommand extends Command {
             // If a format is specified, it might still be wrong, so we need
             // to check if we have a parser for it. If not, null it out.
             if (format != null && !format.isEmpty()) {
-                Format formatRecord = ImportingManager.formatToRecord.get(format);
+                ImportingFormat formatRecord = FormatRegistry.getFormatToRecord().get(format);
                 if (formatRecord == null || formatRecord.parser == null) {
                     format = null;
                 }
@@ -114,7 +115,7 @@ public class CreateProjectCommand extends Command {
             if (optionsString != null && !optionsString.isEmpty()) {
                 optionObj = ParsingUtilities.evaluateJsonStringToObjectNode(optionsString);
             } else {
-                Format formatRecord = ImportingManager.formatToRecord.get(format);
+                ImportingFormat formatRecord = FormatRegistry.getFormatToRecord().get(format);
                 optionObj = formatRecord.parser.createParserUIInitializationData(
                         job, job.getSelectedFileRecords(), format);
             }

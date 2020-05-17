@@ -5,7 +5,9 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.openrefine.browsing.RecordFilter;
 import org.openrefine.browsing.RowFilter;
+import org.openrefine.model.Record;
 import org.openrefine.model.Row;
 
 /**
@@ -20,12 +22,15 @@ public class AllFacetsAggregator implements Serializable {
 
     protected final List<FacetAggregator<?>> _facetAggregators;
     protected final List<RowFilter> _rowFilters;
+    protected final List<RecordFilter> _recordFilters;
 
     public AllFacetsAggregator(List<FacetAggregator<?>> facetAggregators) {
         _facetAggregators = facetAggregators;
         _rowFilters = new ArrayList<>(facetAggregators.size());
+        _recordFilters = new ArrayList<>(facetAggregators.size());
         for (FacetAggregator<?> aggregator : facetAggregators) {
             _rowFilters.add(aggregator == null ? null : aggregator.getRowFilter());
+            _recordFilters.add(aggregator == null ? null : aggregator.getRecordFilter());
         }
     }
 
@@ -56,6 +61,45 @@ public class AllFacetsAggregator implements Serializable {
             // Rows are only seen by facets if they are selected by all other facets
             if (allMatching || !matching[i]) {
                 newStates.add(incrementHelper(_facetAggregators.get(i), states.get(i), rowId, row));
+            } else {
+                newStates.add(states.get(i));
+            }
+        }
+        return newStates;
+    }
+
+    public List<FacetState> increment(List<FacetState> states, Record record) {
+        if (states.size() != _facetAggregators.size()) {
+            throw new IllegalArgumentException("Incompatible list of facet states and facet aggregators");
+        }
+        // Compute which whether each facet matches the record
+        boolean[] matching = new boolean[_facetAggregators.size()];
+        int numberOfMismatches = 0;
+        for (int i = 0; i != _facetAggregators.size(); i++) {
+            RecordFilter filter = _recordFilters.get(i);
+            matching[i] = filter == null || filter.filterRecord(record);
+            if (!matching[i]) {
+                numberOfMismatches++;
+            }
+            // No need to keep evaluating facets if we already found
+            // two mismatching facets: this row will not count towards any statistics.
+            if (numberOfMismatches > 1) {
+                return states;
+            }
+        }
+
+        // Compute the new list of facet states
+        boolean allMatching = numberOfMismatches == 0;
+        List<FacetState> newStates = new ArrayList<>(states.size());
+        List<Row> rows = record.getRows();
+        for (int i = 0; i != states.size(); i++) {
+            // Rows are only seen by facets if they are selected by all other facets
+            if (allMatching || !matching[i]) {
+                FacetState currentState = states.get(i);
+                for (int j = 0; j != rows.size(); j++) {
+                    currentState = incrementHelper(_facetAggregators.get(i), currentState, record.getStartRowId() + j, rows.get(j));
+                }
+                newStates.add(currentState);
             } else {
                 newStates.add(states.get(i));
             }

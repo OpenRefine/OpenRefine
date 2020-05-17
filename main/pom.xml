@@ -257,6 +257,12 @@
       <version>${project.version}</version>
     </dependency>
     <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>or-spark</artifactId>
+      <version>${project.version}</version>
+      <scope>runtime</scope> <!-- To ensure that we do not rely on any Spark-specific feature unless dynamically loaded -->
+    </dependency>
+    <dependency>
       <groupId>javax.servlet</groupId>
       <artifactId>javax.servlet-api</artifactId>
       <version>${servlet-api.version}</version>

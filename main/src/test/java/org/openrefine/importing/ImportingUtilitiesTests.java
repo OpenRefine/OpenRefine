@@ -43,6 +43,7 @@ import org.testng.annotations.Test;
 
 import org.openrefine.ProjectMetadata;
 import org.openrefine.importers.ImporterTest;
+import org.openrefine.importers.ImporterUtilities;
 import org.openrefine.util.ParsingUtilities;
 import org.openrefine.util.TestUtils;
 
@@ -74,7 +75,7 @@ public class ImportingUtilitiesTests extends ImporterTest {
 
     @Test
     public void testMostCommonFormatEmpty() {
-        Assert.assertNull(ImportingUtilities.mostCommonFormat(Collections.emptyList()));
+        Assert.assertNull(ImporterUtilities.mostCommonFormat(Collections.emptyList()));
     }
 
     @Test
@@ -89,7 +90,7 @@ public class ImportingUtilitiesTests extends ImporterTest {
         when(recD.getFormat()).thenReturn(null);
         List<ImportingFileRecord> records = Arrays.asList(recA, recB, recC, recD);
 
-        Assert.assertEquals(ImportingUtilities.mostCommonFormat(records), "foo");
+        Assert.assertEquals(ImporterUtilities.mostCommonFormat(records), "foo");
     }
 
     @Test

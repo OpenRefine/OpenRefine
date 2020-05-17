@@ -133,6 +133,13 @@ public class ToFromConversionTests extends FunctionTestBase {
     }
 
     @Test
+    public void testFailing() {
+        Object o = invoke("toDate", "2012-03-01", "XXX");
+        Object o3 = invoke("toDate", "2012-03-01");
+        Assert.assertEquals(o, o3);
+    }
+
+    @Test
     public void testEscape() {
         Assert.assertNull(invoke("escape"));
         Assert.assertEquals(invoke("escape", null, "xml"), "");

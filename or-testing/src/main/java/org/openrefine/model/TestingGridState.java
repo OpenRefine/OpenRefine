@@ -1,0 +1,339 @@
+
+package org.openrefine.model;
+
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+import java.util.zip.GZIPOutputStream;
+
+import org.testng.Assert;
+
+import org.openrefine.browsing.RecordFilter;
+import org.openrefine.browsing.RowFilter;
+import org.openrefine.browsing.facets.AllFacetsAggregator;
+import org.openrefine.browsing.facets.Facet;
+import org.openrefine.browsing.facets.FacetResult;
+import org.openrefine.browsing.facets.FacetState;
+import org.openrefine.overlay.OverlayModel;
+import org.openrefine.util.ParsingUtilities;
+
+/**
+ * A massively inefficient but very simple implementation of a GridState, for testing purposes.
+ * 
+ * @author Antonin Delpeuch
+ *
+ */
+public class TestingGridState implements GridState {
+
+    private ColumnModel columnModel;
+    private Map<String, OverlayModel> overlayModels;
+    private List<Row> rows;
+    private List<Record> records;
+
+    public TestingGridState(ColumnModel columnModel, List<Row> rows, Map<String, OverlayModel> overlayModels) {
+        this.columnModel = columnModel;
+        this.rows = rows;
+        this.overlayModels = overlayModels;
+        records = groupRowsIntoRecords(rows, 0);
+    }
+
+    public static List<Record> groupRowsIntoRecords(List<Row> rows, int keyCellIndex) {
+        List<Record> records = new ArrayList<>();
+        List<Row> currentRecord = new ArrayList<>();
+        int recordStart = 0;
+        for (int i = 0; i < rows.size(); i++) {
+            if (Record.isRecordStart(rows.get(i), keyCellIndex) && !currentRecord.isEmpty()) {
+                records.add(new Record(recordStart, currentRecord));
+                recordStart = i;
+                currentRecord = new ArrayList<>();
+            }
+            currentRecord.add(rows.get(i));
+        }
+        if (!currentRecord.isEmpty()) {
+            records.add(new Record(recordStart, currentRecord));
+        }
+        return records;
+    }
+
+    @Override
+    public ColumnModel getColumnModel() {
+        return columnModel;
+    }
+
+    @Override
+    public Row getRow(long id) {
+        return rows.get((int) id);
+    }
+
+    private List<IndexedRow> indexedRows() {
+        return IntStream.range(0, rows.size()).mapToObj(i -> new IndexedRow((long) i, rows.get(i))).collect(Collectors.toList());
+    }
+
+    @Override
+    public List<IndexedRow> getRows(long start, int limit) {
+        return indexedRows().subList(
+                Math.min((int) start, rows.size()),
+                Math.min((int) start + limit, rows.size()));
+    }
+
+    @Override
+    public List<IndexedRow> getRows(RowFilter filter, long start, int limit) {
+        // Check that the filter is serializable as it is required by the interface,
+        // even if this implementation does not rely on it.
+        TestingDatamodelRunner.ensureSerializable(filter);
+        return indexedRows()
+                .stream()
+                .filter(tuple -> tuple.getIndex() >= start && filter.filterRow(tuple.getIndex(), tuple.getRow()))
+                .limit(limit)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<IndexedRow> collectRows() {
+        return indexedRows();
+    }
+
+    @Override
+    public Record getRecord(long id) {
+        List<Record> matching = getRecords(id, 1);
+        if (matching.isEmpty() || matching.get(0).getStartRowId() != id) {
+            throw new IllegalArgumentException(String.format("No record with id %d", id));
+        }
+        return matching.get(0);
+    }
+
+    @Override
+    public List<Record> getRecords(long start, int limit) {
+        return records
+                .stream()
+                .filter(record -> record.getStartRowId() >= start)
+                .limit(limit)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<Record> getRecords(RecordFilter filter, long start, int limit) {
+        // Check that the filter is serializable as it is required by the interface,
+        // even if this implementation does not rely on it.
+        TestingDatamodelRunner.ensureSerializable(filter);
+        return records
+                .stream()
+                .filter(record -> record.getStartRowId() >= start && filter.filterRecord(record))
+                .limit(limit)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<Record> collectRecords() {
+        return records;
+    }
+
+    @Override
+    public long rowCount() {
+        return rows.size();
+    }
+
+    @Override
+    public long recordCount() {
+        return records.size();
+    }
+
+    @Override
+    public long countMatchingRows(RowFilter filter) {
+        return indexedRows()
+                .stream()
+                .filter(tuple -> filter.filterRow(tuple.getIndex(), tuple.getRow()))
+                .count();
+    }
+
+    @Override
+    public long countMatchingRecords(RecordFilter filter) {
+        return records
+                .stream()
+                .filter(record -> filter.filterRecord(record))
+                .count();
+    }
+
+    @Override
+    public Map<String, OverlayModel> getOverlayModels() {
+        return overlayModels;
+    }
+
+    @Override
+    public void saveToFile(File file) throws IOException {
+        File gridPath = new File(file, GridState.GRID_PATH);
+        File metadataPath = new File(file, GridState.METADATA_PATH);
+
+        gridPath.mkdirs();
+        File partFile = new File(gridPath, "part-00000.gz");
+        FileOutputStream fos = null;
+        GZIPOutputStream gos = null;
+        try {
+            fos = new FileOutputStream(partFile);
+            gos = new GZIPOutputStream(fos);
+            for (IndexedRow row : indexedRows()) {
+                ParsingUtilities.mapper.writeValue(gos, row);
+                gos.write('\n');
+            }
+        } finally {
+            if (gos != null) {
+                gos.close();
+            }
+            if (fos != null) {
+                fos.close();
+            }
+        }
+
+        ParsingUtilities.saveWriter.writeValue(metadataPath, this);
+    }
+
+    @Override
+    public List<FacetResult> computeRowFacets(List<Facet> facets) {
+        List<FacetState> initialStates = facets
+                .stream().map(facet -> facet.getInitialFacetState())
+                .collect(Collectors.toList());
+
+        AllFacetsAggregator aggregator = new AllFacetsAggregator(facets
+                .stream().map(facet -> facet.getAggregator())
+                .collect(Collectors.toList()));
+
+        // Artificially split the grid in two, in order to use the `sum` method
+        // of FacetAggregator.
+        long split = rowCount() / 2;
+        List<FacetState> statesA = initialStates;
+        List<FacetState> statesB = initialStates;
+        for (IndexedRow row : indexedRows()) {
+            if (row.getIndex() < split) {
+                statesA = aggregator.increment(statesA, row.getIndex(), row.getRow());
+            } else {
+                statesB = aggregator.increment(statesB, row.getIndex(), row.getRow());
+            }
+        }
+
+        List<FacetState> states = aggregator.sum(statesA, statesB);
+
+        List<FacetResult> facetResults = new ArrayList<>();
+        for (int i = 0; i != states.size(); i++) {
+            facetResults.add(facets.get(i).getFacetResult(states.get(i)));
+        }
+        return facetResults;
+    }
+
+    @Override
+    public List<FacetResult> computeRecordFacets(List<Facet> facets) {
+        List<FacetState> initialStates = facets
+                .stream().map(facet -> facet.getInitialFacetState())
+                .collect(Collectors.toList());
+
+        AllFacetsAggregator aggregator = new AllFacetsAggregator(facets
+                .stream().map(facet -> facet.getAggregator())
+                .collect(Collectors.toList()));
+
+        // Artificially split the grid in two, in order to use the `sum` method
+        // of FacetAggregator.
+        long split = rowCount() / 2;
+        List<FacetState> statesA = initialStates;
+        List<FacetState> statesB = initialStates;
+        for (Record record : records) {
+            if (record.getStartRowId() < split) {
+                statesA = aggregator.increment(statesA, record);
+            } else {
+                statesB = aggregator.increment(statesB, record);
+            }
+        }
+
+        List<FacetState> states = aggregator.sum(statesA, statesB);
+
+        List<FacetResult> facetResults = new ArrayList<>();
+        for (int i = 0; i != states.size(); i++) {
+            facetResults.add(facets.get(i).getFacetResult(states.get(i)));
+        }
+        return facetResults;
+    }
+
+    @Override
+    public GridState mapFilteredRows(RowFilter filter, RowMapper mapper, ColumnModel newColumnModel) {
+        // Check that the filter is serializable as it is required by the interface,
+        // even if this implementation does not rely on it.
+        TestingDatamodelRunner.ensureSerializable(filter);
+        TestingDatamodelRunner.ensureSerializable(mapper);
+        List<Row> rows = new ArrayList<>(this.rows.size());
+        for (IndexedRow indexedRow : indexedRows()) {
+            Row row = indexedRow.getRow();
+            if (filter.filterRow(indexedRow.getIndex(), row)) {
+                row = mapper.call(indexedRow.getIndex(), row);
+            }
+            if (row.getCells().size() != newColumnModel.getColumns().size()) {
+                Assert.fail("Row size inconsistent with supplied column model");
+            }
+            rows.add(row);
+        }
+        return new TestingGridState(newColumnModel, rows, overlayModels);
+    }
+
+    @Override
+    public GridState mapFilteredRecords(RecordFilter filter, RecordMapper mapper, ColumnModel newColumnModel) {
+        // Check that the filter is serializable as it is required by the interface,
+        // even if this implementation does not rely on it.
+        TestingDatamodelRunner.ensureSerializable(filter);
+        TestingDatamodelRunner.ensureSerializable(mapper);
+        List<Row> rows = new ArrayList<>(this.rows.size());
+        for (Record record : records) {
+            List<Row> addedRows = mapper.call(record);
+            if (filter.filterRecord(record)) {
+                addedRows = mapper.call(record);
+            } else {
+                addedRows = record.getRows();
+            }
+            for (Row row : addedRows) {
+                if (row.getCells().size() != newColumnModel.getColumns().size()) {
+                    Assert.fail("Row size inconsistent with supplied column model");
+                }
+            }
+            rows.addAll(addedRows);
+        }
+        return new TestingGridState(newColumnModel, rows, overlayModels);
+    }
+
+    @Override
+    public Iterable<IndexedRow> iterateRows(RowFilter filter) {
+        return new Iterable<IndexedRow>() {
+
+            @Override
+            public Iterator<IndexedRow> iterator() {
+                return indexedRows()
+                        .stream()
+                        .filter(ir -> filter.filterRow(ir.getIndex(), ir.getRow()))
+                        .iterator();
+            }
+
+        };
+    }
+
+    @Override
+    public Iterable<Record> iterateRecords(RecordFilter filter) {
+        return new Iterable<Record>() {
+
+            @Override
+            public Iterator<Record> iterator() {
+                return records
+                        .stream()
+                        .filter(r -> filter.filterRecord(r))
+                        .iterator();
+            }
+
+        };
+    }
+
+    @Override
+    public GridState withOverlayModels(Map<String, OverlayModel> overlayModel) {
+        return new TestingGridState(columnModel, rows, overlayModel);
+    }
+
+}
