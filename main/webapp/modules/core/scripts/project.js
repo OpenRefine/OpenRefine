@@ -32,6 +32,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 var theProject;
+var thePreferences;
 var ui = {};
 
 var lang = (navigator.language|| navigator.userLanguage).split("-")[0];
@@ -209,9 +210,9 @@ Refine.reinitializeProjectData = function(f, fError) {
                     }
                   } else {
                     if (preferences != null) {
-                      theProject.preferences = preferences;
+                      thePreferences = preferences;
                     }
-                    f();  // f(null);
+                    f();
                   }
                 },
                 'json'
