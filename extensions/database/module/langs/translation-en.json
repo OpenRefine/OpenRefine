@@ -30,7 +30,7 @@
     "database-source/databasePasswordPlaceholder": "Enter Database Password",
     "database-source/databaseNamePlaceholder": "Enter Database",
     "database-source/databaseFileNamePlaceholder": "Enter the full path to the Database file",
-    "database-source/databaseSchemaPlaceholder": "Enter Initial Schema",
+    "database-source/databaseSchemaPlaceholder": "Enter initial schema",
     "database-source/connectionNameDefaultValue": "New Connection Name",
     "database-source/databaseTestButton": "Test",
     "database-source/databaseSaveButton": "Save",
