@@ -255,7 +255,7 @@
     "core-dialogs/choose-export-destination": "Escolha o local onde salvar o projeto exportado",
     "core-dialogs/template-prefix": "Prefixo",
     "core-dialogs/nearest-neighbor": "vizinho mais próximo",
-    "core-dialogs/cell-fields": "A célula atual. Ela tem alguns campos: 'valor' e 'reconhecer'.",
+    "core-dialogs/cell-fields": "A célula atual. Ela tem alguns campos: 'value', 'recon' e 'errorMessage'.",
     "core-dialogs/idling": "Aguarde…",
     "core-dialogs/local-time": "Usar fuso horário local",
     "clustering-keyers/metaphone3": "metaphone3",

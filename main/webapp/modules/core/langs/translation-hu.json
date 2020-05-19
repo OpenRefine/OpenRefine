@@ -245,7 +245,7 @@
     "core-dialogs/csv": "Vesszővel tagolt értékek  (CSV)",
     "core-dialogs/template-prefix": "Előtag",
     "core-dialogs/nearest-neighbor": "legközelebbi szomszéd",
-    "core-dialogs/cell-fields": "Jelenlegi cella. Két mezője van: 'value' és 'recon'.",
+    "core-dialogs/cell-fields": "Jelenlegi cella. Két mezője van: 'value', 'recon' és 'errorMessage'.",
     "core-dialogs/idling": "Várakozás…",
     "core-dialogs/local-time": "Helyi időzóna használata",
     "core-dialogs/rotated-counter-clock": "45°-kal elforgatva óramutató járásával ellentétes irányban",

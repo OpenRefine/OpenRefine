@@ -251,7 +251,7 @@
     "core-dialogs/csv": "Mga halaga na pinaghiwalay ng komma (CSV)",
     "core-dialogs/template-prefix": "Prefix",
     "core-dialogs/nearest-neighbor": "pinakamalapit na kapitbahay",
-    "core-dialogs/cell-fields": "Ang kasalukuyang cell. Mayroon itong ilang mga patlang: 'halaga' at 'recon'.",
+    "core-dialogs/cell-fields": "Ang kasalukuyang cell. Mayroon itong ilang mga patlang: 'value', 'recon' at 'errorMessage'.",
     "core-dialogs/idling": "Pag ...",
     "core-dialogs/local-time": "Gumamit ng lokal na time zone",
     "core-dialogs/rotated-counter-clock": "Pinaikot 45 ° Counter-Clockwise",

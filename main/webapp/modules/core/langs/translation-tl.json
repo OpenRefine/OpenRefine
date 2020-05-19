@@ -251,7 +251,7 @@
     "core-dialogs/csv": "Ang comma-separated values (CSV)",
     "core-dialogs/template-prefix": "Unlapi",
     "core-dialogs/nearest-neighbor": "ang pinakamalapit na katabi",
-    "core-dialogs/cell-fields": "Ang kasalukuyang cell. Mayroon itong mga iilang mga field: 'value' at 'recon'.",
+    "core-dialogs/cell-fields": "Ang kasalukuyang cell. Mayroon itong mga iilang mga field: 'value', 'recon' at 'errorMessage'.",
     "core-dialogs/idling": "Pag-idling...",
     "core-dialogs/local-time": "Gamitin ang lokal na time zone",
     "core-dialogs/rotated-counter-clock": "Umiikot ng 45° Counter-Clockwise",

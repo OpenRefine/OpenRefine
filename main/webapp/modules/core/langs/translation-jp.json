@@ -263,7 +263,7 @@
     "core-dialogs/template-prefix": "ファイルの冒頭部",
     "core-dialogs/nearest-neighbor": "最近傍法",
     "core-dialogs/tableNameLabel": "テーブル名:",
-    "core-dialogs/cell-fields": "現在のcell: valueとreconのフィールドがあります.",
+    "core-dialogs/cell-fields": "現在のcell: value,reconとerrorMessageのフィールドがあります.",
     "core-dialogs/for-null-cell-value-to-empty-str-label": "null値をINSERT文でNULLに変換する",
     "core-dialogs/idling": "アイドリング中…",
     "core-dialogs/for-include-if-exist-drop-stmt-checkbox": "Drop文のIF EXISTSを含める",

@@ -174,7 +174,7 @@
     "core-dialogs/small-dot": "גודל הנקודה הקטנה",
     "core-dialogs/regular-dot": "גודל נקודה רגילה",
     "core-dialogs/big-dot": "גודל נקודה גדולה",
-    "core-dialogs/cell-fields": "בתא הנוכחי, יש כמה שדות: 'value' and 'recon'.",
+    "core-dialogs/cell-fields": "בתא הנוכחי, יש כמה שדות: 'value', 'recon' and 'errorMessage'.",
     "core-dialogs/cell-value": "ערך התא הנוכחי. זהו קיצור דרך עבור 'cell.value'.",
     "core-dialogs/row-fields": "בשורה הנוכחית, יש 5 שדות: 'flagged', 'starred', 'index', 'cells', 'record'.",
     "core-dialogs/cells-of-row": "התאים של השורה הנוכחית. זהו קיצור דרך ל-'row.cells'.תא מסויים יכול להיות מאוחזר עם 'cells.<column name>' אם <column name>  היא מילה בודדת, או עם 'cells[\"<column name>\"] .",
