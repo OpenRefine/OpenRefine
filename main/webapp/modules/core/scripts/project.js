@@ -230,11 +230,11 @@ Refine.reinitializeProjectData = function(f, fError) {
 Refine.getPreference = function(key, defaultValue) { 
   if(!thePreferences.hasOwnProperty(key)) { return defaultValue; }
   
-  return thePreferences.key;
+  return thePreferences["key"];
 }
 
 Refine.setPreference = function(key, newValue) { 
-  thePreferences.key = newValue;
+  thePreferences["key"] = newValue;
   
   Refine.wrapCSRF(function(token) {
     $.ajax({
