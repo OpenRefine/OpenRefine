@@ -46,12 +46,17 @@ import com.google.refine.model.Project;
 import com.google.refine.preference.PreferenceStore;
 
 public class GetAllPreferencesCommand extends Command {
-	/**
-	 * The command uses POST (not sure why?) but does not actually modify any state
-	 * so it does not require CSRF.
-	 */
+
     @Override
+    @Deprecated
     public void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        doGet(request, response);
+    }
+
+
+    @Override
+    public void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         
         Project project = request.getParameter("project") != null ? getProject(request) : null;
@@ -63,6 +68,7 @@ public class GetAllPreferencesCommand extends Command {
         
         for (String key : ps.getKeys()) {
             Object pref = ps.get(key);
+            // This skips prefs of type TopList. Not sure if that's intentional or an oversight
             if (pref == null || pref instanceof String || pref instanceof Number || pref instanceof Boolean) {
                 map.put(key, pref);
             }
