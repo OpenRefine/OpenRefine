@@ -23,15 +23,15 @@
  ******************************************************************************/
 package org.openrefine.wikidata.qa;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Set;
-import java.util.stream.Collectors;
-
 import org.wikidata.wdtk.datamodel.helpers.Datamodel;
 import org.wikidata.wdtk.datamodel.interfaces.ItemIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.PropertyIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.Value;
+
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 public class MockConstraintFetcher implements ConstraintFetcher {
 
@@ -113,6 +113,11 @@ public class MockConstraintFetcher implements ConstraintFetcher {
 
     @Override
     public boolean hasDistinctValues(PropertyIdValue pid) {
+        return true;
+    }
+
+    @Override
+    public boolean hasMultiValue(PropertyIdValue pid) {
         return true;
     }
 
