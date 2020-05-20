@@ -227,7 +227,31 @@ Refine.reinitializeProjectData = function(f, fError) {
   );
 };
 
-Refine._renameProject = function() {
+Refine.getPreference = function(key, defaultValue) { 
+  if(!thePreferences.hasOwnProperty(key)) { return defaultValue; }
+  
+  return thePreferences.key;
+}
+
+Refine.setPreference = function(key, newValue) { 
+  thePreferences.key = newValue;
+  
+  Refine.wrapCSRF(function(token) {
+    $.ajax({
+      async: false,
+      type: "POST",
+      url: "command/core/set-preference?" + $.param({ name: key }),
+      data: {
+        "value" : JSON.stringify(newValue), 
+        csrf_token: token
+      },
+      success: function(data) { },
+      dataType: "json"
+    });
+  });
+}
+
+Refine._renameProject = function() { 
   var name = window.prompt($.i18n('core-index/new-proj-name'), theProject.metadata.name);
   if (name === null) {
     return;
