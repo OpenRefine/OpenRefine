@@ -25,6 +25,7 @@ package org.openrefine.wikidata.qa;
 
 import org.openrefine.wikidata.utils.EntityCache;
 import org.wikidata.wdtk.datamodel.helpers.Datamodel;
+import org.wikidata.wdtk.datamodel.implementation.QuantityValueImpl;
 import org.wikidata.wdtk.datamodel.interfaces.*;
 
 import java.util.ArrayList;
@@ -78,6 +79,11 @@ public class WikidataConstraintFetcher implements ConstraintFetcher {
     public static String DISTINCT_VALUES_CONSTRAINT_QID = "Q21502410";
 
     public static String MULTI_VALUE_CONSTRAINT_QID = "Q21510857";
+
+    public static String DIFFERENCE_WITHIN_RANGE_CONSTRAINT_QID = "Q21510854";
+    public static String DIFFERENCE_WITHIN_RANGE_CONSTRAINT_PID = "P2306";
+    public static String MINIMUM_VALUE_PID = "P2313";
+    public static String MAXIMUM_VALUE_PID = "P2312";
 
     public static String NO_BOUNDS_CONSTRAINT_QID = "Q51723761";
     public static String INTEGER_VALUED_CONSTRAINT_QID = "Q52848401";
@@ -337,4 +343,84 @@ public class WikidataConstraintFetcher implements ConstraintFetcher {
         }
         return results;
     }
+
+    protected List<QuantityValue> getValues(List<SnakGroup> groups, String pid) {
+        List<QuantityValue> results = new ArrayList<>();
+        for (SnakGroup group : groups) {
+            if (group.getProperty().getId().equals(pid)) {
+                for (Snak snak : group.getSnaks())
+                    results.add((QuantityValueImpl) snak.getValue());
+            }
+        }
+        return results;
+    }
+
+    /**
+     * Is this property expected to have a value whose difference
+     * with its lower bound property should be in a range?
+     */
+    @Override
+    public boolean hasDiffWithinRange(PropertyIdValue pid) {
+        return getSingleConstraint(pid, DIFFERENCE_WITHIN_RANGE_CONSTRAINT_QID) != null;
+    }
+
+    /**
+     * Retrieves the lower value property for calculating the difference
+     * required in difference-within-range constraint
+     *
+     * @param pid:
+     *            the property to calculate difference with
+     * @return the pid of the lower bound property
+     */
+    @Override
+    public PropertyIdValue getLowerPropertyId(PropertyIdValue pid) {
+        List<SnakGroup> specs = getSingleConstraint(pid, DIFFERENCE_WITHIN_RANGE_CONSTRAINT_QID);
+        if (specs != null) {
+            List<Value> lowerValueProperty = findValues(specs, DIFFERENCE_WITHIN_RANGE_CONSTRAINT_PID);
+            if (!lowerValueProperty.isEmpty()) {
+                return (PropertyIdValue) lowerValueProperty.get(0);
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Retrieves the lower bound of the range
+     * required in difference-within-range constraint
+     *
+     * @param pid
+     * @return minimum value
+     */
+    @Override
+    public QuantityValue getMinimumValue(PropertyIdValue pid) {
+        List<SnakGroup> specs = getSingleConstraint(pid, DIFFERENCE_WITHIN_RANGE_CONSTRAINT_QID);
+        if (specs != null) {
+            List<QuantityValue> minValue = getValues(specs, MINIMUM_VALUE_PID);
+            if (!minValue.isEmpty()) {
+                return minValue.get(0);
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Retrieves the upper bound of the range
+     * required in difference-within-range constraint
+     *
+     * @param pid
+     * @return maximum value
+     */
+    @Override
+    public QuantityValue getMaximumValue(PropertyIdValue pid) {
+        List<SnakGroup> specs = getSingleConstraint(pid, DIFFERENCE_WITHIN_RANGE_CONSTRAINT_QID);
+        if (specs != null) {
+            List<QuantityValue> maxValue = getValues(specs, MAXIMUM_VALUE_PID);
+            if (!maxValue.isEmpty()) {
+                return maxValue.get(0);
+            }
+        }
+        return null;
+    }
+
 }
