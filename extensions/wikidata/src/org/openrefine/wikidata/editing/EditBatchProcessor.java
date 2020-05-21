@@ -70,7 +70,7 @@ public class EditBatchProcessor {
     private int globalCursor;
     private Map<String, EntityDocument> currentDocs;
     private int batchSize;
-    protected static final String MAX_LAG_KEY = "wikibase:upload:maxLag";
+    protected static final String MAX_LAG_KEY = "wikibase.upload.maxLag";
     protected static final int MAX_LAG_DEFAULT = 5;      // 5 second default maxLag
     protected PreferenceStore prefStore = ProjectManager.singleton.getPreferenceStore();
 
