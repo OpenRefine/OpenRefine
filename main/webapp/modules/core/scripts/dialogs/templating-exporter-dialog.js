@@ -59,27 +59,13 @@ TemplatingExporterDialog.prototype._createDialog = function() {
         self._updatePreview();
     });
     
-    this._getSavedTemplate(function(t) {
-        self._fillInTemplate(t || self._createDefaultTemplate());
-        self._updatePreview();
-    });
+    template = Refine.getPreference("exporters.templating.template", "") || self._createDefaultTemplate();
+    self._fillInTemplate(template);
+    self._updatePreview();
     
     this._level = DialogSystem.showDialog(dialog);
 };
 
-TemplatingExporterDialog.prototype._getSavedTemplate = function(f) {
-    $.getJSON(
-        "command/core/get-preference?" + $.param({ project: theProject.id, name: "exporters.templating.template" }),
-        null,
-        function(data) {
-            if (data.value !== null) {
-                f(JSON.parse(data.value));
-            } else {
-                f(null);
-            }
-        }
-    );
-};
 
 TemplatingExporterDialog.prototype._createDefaultTemplate = function() {
     return {

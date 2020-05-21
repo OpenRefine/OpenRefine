@@ -38,25 +38,14 @@ function DataTableCellUI(dataTableView, cell, rowIndex, cellIndex, td) {
   this._cellIndex = cellIndex;
   this._td = td;
 
+  if (DataTableCellUI.previewMatchedCells == null) {
+    DataTableCellUI.previewMatchedCells = Refine.getPreference("cell-ui.previewMatchedCells", true);
+  }
+
   this._render();
 }
 
-DataTableCellUI.previewMatchedCells = true;
-
-(function() {
-   
-   $.ajax({
-     url: "command/core/get-preference?" + $.param({
-        name: "cell-ui.previewMatchedCells"
-     }),
-    success: function(data) {
-      if (data.value && data.value == "false") {
-        DataTableCellUI.previewMatchedCells = false;
-     }
-   },
-   dataType: "json",
-  });
-})();
+DataTableCellUI.previewMatchedCells = null;
 
 DataTableCellUI.prototype._render = function() {
   var self = this;

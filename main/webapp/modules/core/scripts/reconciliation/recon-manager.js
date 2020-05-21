@@ -34,12 +34,13 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 var ReconciliationManager = {
   customServices : [],     // services registered by core and extensions
   standardServices : [],   // services registered by user
-  _urlMap : {}
+  _urlMap : {},
+  _initialized: false
 };
 
 ReconciliationManager._rebuildMap = function() {
   var map = {};
-  $.each(ReconciliationManager.getAllServices(), function(i, service) {
+  $.each(ReconciliationManager._getAllServices(), function(i, service) {
     if ("url" in service) {
       map[service.url] = service;
     }
@@ -48,10 +49,20 @@ ReconciliationManager._rebuildMap = function() {
 };
 
 ReconciliationManager.getServiceFromUrl = function(url) {
+  if (!ReconciliationManager._initialized) {
+    ReconciliationManager._initialize();
+  }
   return ReconciliationManager._urlMap[url];
 };
 
 ReconciliationManager.getAllServices = function() {
+  if (!ReconciliationManager._initialized) {
+    ReconciliationManager._initialize();
+  }
+  return ReconciliationManager._getAllServices();
+};
+
+ReconciliationManager._getAllServices = function() {
   return ReconciliationManager.customServices.concat(ReconciliationManager.standardServices);
 };
 
@@ -138,27 +149,15 @@ ReconciliationManager.unregisterService = function(service, f) {
 };
 
 ReconciliationManager.save = function(f) {
-  Refine.wrapCSRF(function(token) {
-    $.ajax({
-        async: false,
-        type: "POST",
-        url: "command/core/set-preference?" + $.param({ 
-        name: "reconciliation.standardServices" 
-        }),
-        data: {
-          "value" : JSON.stringify(ReconciliationManager.standardServices), 
-          csrf_token: token
-        },
-        success: function(data) {
-        if (f) { f(); }
-        },
-        dataType: "json"
-    });
-  });
+  Refine.setPreference("reconciliation.standardServices",
+      JSON.stringify(ReconciliationManager.standardServices));
 };
 
 ReconciliationManager.getOrRegisterServiceFromUrl = function(url, f, silent) {
-   var service = ReconciliationManager.getServiceFromUrl(url);
+   var service = null;
+   if (ReconciliationManager._initialized) {
+     service = ReconciliationManager.getServiceFromUrl(url);
+   }
    if (service == null) {
       ReconciliationManager.registerStandardService(url, function(idx) {
           ReconciliationManager.save(function() {
@@ -177,21 +176,13 @@ ReconciliationManager.ensureDefaultServicePresent = function() {
    return url;
 };
 
-(function() {
-
-  $.ajax({
-    async: false,
-    url: "command/core/get-preference?" + $.param({ 
-      name: "reconciliation.standardServices" 
-    }),
-    success: function(data) {
-      if (data.value && data.value != "null" && data.value != "[]") {
-        ReconciliationManager.standardServices = JSON.parse(data.value);
-        ReconciliationManager._rebuildMap();
-      } else {
-        ReconciliationManager.ensureDefaultServicePresent();
-      }
-    },
-    dataType: "json"
-  });
-})();
+ReconciliationManager._initialize = function() {
+  services = Refine.getPreference("reconciliation.standardServices", "[]");
+  if (services != "[]") {
+    ReconciliationManager.standardServices = JSON.parse(services);
+    ReconciliationManager._rebuildMap();
+  } else {
+    ReconciliationManager.ensureDefaultServicePresent();
+  }
+  ReconciliationManager._initialized = true;
+};
