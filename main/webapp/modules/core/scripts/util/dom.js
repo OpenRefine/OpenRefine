@@ -108,7 +108,7 @@ DOM.loadHTML = function(module, path) {
   var fullPath = (ModuleWirings[module] + path).substring(1);
   if (!(fullPath in DOM._loadedHTML)) {
     $.ajax({
-      async: false,
+      async: false, // FIXME: blocking
       url: fullPath,
       dataType: "html",
       success: function(html) {

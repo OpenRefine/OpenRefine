@@ -73,7 +73,7 @@ var dictionary = "";
 $.ajax({
 	url : "command/core/load-language?",
 	type : "POST",
-	async : false,
+	async : false, // FIXME: blocking
 	data : {
 	  module : "core",
 //		lang : lang
