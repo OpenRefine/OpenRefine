@@ -66,7 +66,7 @@ Refine.DatabaseSourceUI.prototype.attachUI = function(body) {
   
   self._defaultDatabaseHost = "localhost";
   self._defaultDatabaseType = $( "select#databaseTypeSelect" ).val();
-  if (self._defaultDatabaseType == "") { self._defaultDatabaseType = "mariadb"; }
+  if (self._defaultDatabaseType == "") { self._defaultDatabaseType = "mysql"; }
   
   $('#database-title').text($.i18n('database-import/title')); 
   $('#connectionNameLabel').html($.i18n('database-source/connectionNameLabel'));
