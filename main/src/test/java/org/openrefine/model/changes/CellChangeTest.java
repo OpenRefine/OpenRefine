@@ -5,6 +5,7 @@ import java.util.Arrays;
 
 import org.openrefine.RefineTest;
 import org.openrefine.history.Change;
+import org.openrefine.history.Change.DoesNotApplyException;
 import org.openrefine.model.Cell;
 import org.openrefine.model.GridState;
 import org.openrefine.model.Project;
@@ -47,7 +48,7 @@ public class CellChangeTest extends RefineTest {
 	}
 	
 	@Test
-	public void testCellChange() {
+	public void testCellChange() throws DoesNotApplyException {
 		Change change = new CellChange(0L, 0, "foo", new Cell("changed", null));
 		
 		GridState newGrid = change.apply(initialGrid);

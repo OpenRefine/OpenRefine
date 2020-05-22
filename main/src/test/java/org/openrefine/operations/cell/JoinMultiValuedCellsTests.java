@@ -88,44 +88,6 @@ public class JoinMultiValuedCellsTests extends RefineTest {
                 + "\"separator\":\",\"}";
         TestUtils.isSerializedTo(ParsingUtilities.mapper.readValue(json, MultiValuedCellJoinOperation.class), json, ParsingUtilities.defaultWriter);
     }
-    
-
-    /*
-     * Test to demonstrate the intended behaviour of the function
-     */
-
-    @Test
-    public void testJoinMultiValuedCells() throws Exception {
-        Operation op = new MultiValuedCellJoinOperation(
-            "Value",
-            "Key",
-            ",");
-        Process process = op.createProcess(project, new Properties());
-        process.performImmediate();
-
-        int keyCol = project.columnModel.getColumnByName("Key").getCellIndex();
-        int valueCol = project.columnModel.getColumnByName("Value").getCellIndex();
-        
-        Assert.assertEquals(project.rows.get(0).getCellValue(keyCol), "Record_1");
-        Assert.assertEquals(project.rows.get(0).getCellValue(valueCol), "one,two,three,four");
-    }
-
-    @Test
-    public void testJoinMultiValuedCellsMultipleSpaces() throws Exception {
-        Operation op = new MultiValuedCellJoinOperation(
-            "Value",
-            "Key",
-            ",     ,");
-        Process process = op.createProcess(project, new Properties());
-        process.performImmediate();
-
-        int keyCol = project.columnModel.getColumnByName("Key").getCellIndex();
-        int valueCol = project.columnModel.getColumnByName("Value").getCellIndex();
-        
-        Assert.assertEquals(project.rows.get(0).getCellValue(keyCol), "Record_1");
-        Assert.assertEquals(project.rows.get(0).getCellValue(valueCol), "one,     ,two,     ,three,     ,four");
-    }
-
 
 }
 

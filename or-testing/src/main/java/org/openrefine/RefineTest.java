@@ -162,23 +162,27 @@ public class RefineTest extends PowerMockTestCase {
     protected Project createProject(String projectName, String[] columns, Serializable[][] rows) {
     	ProjectMetadata meta = new ProjectMetadata();
     	meta.setName(projectName);
-    	List<ColumnMetadata> columnMeta = new ArrayList<>(columns.length);
-    	for(String column: columns) {
-    		columnMeta.add(new ColumnMetadata(column));
-    	}
-    	ColumnModel model = new ColumnModel(columnMeta);
-    	Cell[][] cells = new Cell[rows.length][];
-    	for(int i = 0; i != rows.length; i++) {
-    	    cells[i] = new Cell[columns.length];
-    		for(int j = 0; j != rows[i].length; j++) {
-    			cells[i][j] = new Cell(rows[i][j], null);
-    		}
-    	}
-    	
-    	GridState state = runner().create(model, toRows(cells), Collections.emptyMap());
+    	GridState state = createGrid(columns, rows);
     	Project project = new Project(state);
     	ProjectManager.singleton.registerProject(project, meta);
     	return project;
+    }
+    
+    protected GridState createGrid(String[] columns, Serializable[][] rows) {
+        List<ColumnMetadata> columnMeta = new ArrayList<>(columns.length);
+        for(String column: columns) {
+            columnMeta.add(new ColumnMetadata(column));
+        }
+        ColumnModel model = new ColumnModel(columnMeta);
+        Cell[][] cells = new Cell[rows.length][];
+        for(int i = 0; i != rows.length; i++) {
+            cells[i] = new Cell[columns.length];
+            for(int j = 0; j != rows[i].length; j++) {
+                cells[i][j] = new Cell(rows[i][j], null);
+            }
+        }
+        
+        return runner().create(model, toRows(cells), Collections.emptyMap());
     }
     
     @Deprecated

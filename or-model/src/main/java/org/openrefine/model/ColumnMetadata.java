@@ -78,7 +78,7 @@ public class ColumnMetadata implements Serializable {
     public ColumnMetadata(String name) {
         this(name, name, null, null);
     }
-    
+
     public ColumnMetadata withCellIndex(int cellIndex) {
         return new ColumnMetadata(_originalName, _name, _reconConfig, _reconStats);
     }

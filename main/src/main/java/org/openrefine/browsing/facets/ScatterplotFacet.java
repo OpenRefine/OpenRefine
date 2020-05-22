@@ -46,8 +46,6 @@ import javax.imageio.ImageIO;
 import org.apache.commons.codec.binary.Base64;
 import org.openrefine.browsing.FilteredRecords;
 import org.openrefine.browsing.FilteredRows;
-import org.openrefine.browsing.RecordFilter;
-import org.openrefine.browsing.RowFilter;
 import org.openrefine.browsing.facets.Facet;
 import org.openrefine.browsing.facets.FacetConfig;
 import org.openrefine.browsing.filters.AnyRowRecordFilter;
@@ -62,6 +60,8 @@ import org.openrefine.expr.ParsingException;
 import org.openrefine.model.ColumnMetadata;
 import org.openrefine.model.ColumnModel;
 import org.openrefine.model.Project;
+import org.openrefine.model.RecordFilter;
+import org.openrefine.model.RowFilter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

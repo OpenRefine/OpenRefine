@@ -37,8 +37,6 @@ import java.util.regex.Pattern;
 
 import org.openrefine.browsing.FilteredRecords;
 import org.openrefine.browsing.FilteredRows;
-import org.openrefine.browsing.RecordFilter;
-import org.openrefine.browsing.RowFilter;
 import org.openrefine.browsing.facets.Facet;
 import org.openrefine.browsing.facets.FacetConfig;
 import org.openrefine.browsing.filters.AnyRowRecordFilter;
@@ -48,6 +46,8 @@ import org.openrefine.grel.ast.VariableExpr;
 import org.openrefine.model.ColumnMetadata;
 import org.openrefine.model.ColumnModel;
 import org.openrefine.model.Project;
+import org.openrefine.model.RecordFilter;
+import org.openrefine.model.RowFilter;
 import org.openrefine.util.PatternSyntaxExceptionParser;
 
 import com.fasterxml.jackson.annotation.JsonProperty;

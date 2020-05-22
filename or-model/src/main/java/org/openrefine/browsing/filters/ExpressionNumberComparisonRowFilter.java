@@ -36,11 +36,11 @@ package org.openrefine.browsing.filters;
 import java.util.Collection;
 import java.util.Properties;
 
-import org.openrefine.browsing.RowFilter;
 import org.openrefine.browsing.util.RowEvaluable;
 import org.openrefine.expr.ExpressionUtils;
 import org.openrefine.expr.util.JsonValueConverter;
 import org.openrefine.model.Row;
+import org.openrefine.model.RowFilter;
 
 import com.fasterxml.jackson.databind.node.ArrayNode;
 

@@ -133,7 +133,7 @@ public class Row implements HasFields, Serializable {
         }
     }
     
-    public Object getCellValue(int cellIndex) {
+    public Serializable getCellValue(int cellIndex) {
         if (cellIndex >= 0 && cellIndex < cells.size()) {
             Cell cell = cells.get(cellIndex);
             if (cell != null) {
@@ -176,17 +176,57 @@ public class Row implements HasFields, Serializable {
      * Overwrite a cell at a given index. As rows are 
      * immutable this returns a new row.
      * 
-     * @param index
-     *     the position of the cell to overwrite
-     * @param cell
-     *     the cell value
-     * @return
-     *     the modified row
+     * @param index the position of the cell to overwrite
+     * @param cell the cell value
+     * @return the modified row
      */
     public Row withCell(int index, Cell cell) {
         List<Cell> newCells = new ArrayList<>(cells);
         newCells.set(index, cell);
-        return new Row(newCells);
+        return new Row(newCells, flagged, starred);
+    }
+    
+    /**
+     * Inserts a cell at a given index. As rows are
+     * immutable this returns a new row.
+     * 
+     * @param index the position where to insert the cell
+     * @param cell the cell to insert
+     * @return the new row
+     */
+    public Row insertCell(int index, Cell cell) {
+        List<Cell> newCells = new ArrayList<>(cells.size() + 1);
+        newCells.addAll(cells.subList(0, index));
+        newCells.add(cell);
+        newCells.addAll(cells.subList(index, cells.size()));
+        return new Row(newCells, flagged, starred);
+    }
+    
+    /**
+     * Insest multiple cells contiguously, starting at a given index
+     * @param index the index of the first inserted cell
+     * @param cells the cells to insert
+     * @return
+     */
+    public Row insertCells(int index, List<Cell> cells) {
+        List<Cell> newCells = new ArrayList<>(this.cells.size() + cells.size());
+        newCells.addAll(this.cells.subList(0, index));
+        newCells.addAll(cells);
+        newCells.addAll(this.cells.subList(index, this.cells.size()));
+        return new Row(newCells, flagged, starred);
+    }
+    
+    /**
+     * Removes a cell from the row (removing the corresponding column).
+     * 
+     * @param index the index of the cell to remove
+     * @return the new row without the cell
+     */
+    public Row removeCell(int index) {
+        List<Cell> newCells = new ArrayList<>(cells.size() - 1);
+        newCells.addAll(cells.subList(0, index));
+        newCells.addAll(cells.subList(index+1, cells.size()));
+        return new Row(newCells, flagged, starred);
     }
     
     public void save(Writer writer, Properties options) {
@@ -230,4 +270,6 @@ public class Row implements HasFields, Serializable {
     			flagged == otherRow.flagged &&
     			starred == otherRow.starred);
     }
+
+
 }

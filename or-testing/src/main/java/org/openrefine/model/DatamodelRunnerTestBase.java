@@ -11,10 +11,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import org.openrefine.browsing.RecordFilter;
-import org.openrefine.browsing.RowFilter;
+import org.openrefine.browsing.facets.AllFacetsAggregator;
 import org.openrefine.browsing.facets.Facet;
 import org.openrefine.browsing.facets.FacetResult;
+import org.openrefine.browsing.facets.FacetState;
 import org.openrefine.browsing.facets.StringFacet;
 import org.openrefine.browsing.facets.StringFacetState;
 import org.openrefine.util.TestUtils;
@@ -187,8 +187,22 @@ public abstract class DatamodelRunnerTestBase {
         Facet facetBar = new StringFacet.Config("bar", null).apply(simpleGrid.getColumnModel());
 
         List<Facet> facets = Arrays.asList(facetFoo, facetBar);
+        List<FacetState> initialStates = facets
+                .stream().map(facet -> facet.getInitialFacetState())
+                .collect(Collectors.toList());
         
-        List<FacetResult> results = simpleGrid.computeRowFacets(facets);
+        AllFacetsAggregator aggregator = new AllFacetsAggregator(facets
+                .stream().map(facet -> facet.getAggregator())
+                .collect(Collectors.toList()));
+        
+        List<FacetState> states = simpleGrid.aggregateRows(aggregator, initialStates);
+        
+        List<FacetResult> facetResults = new ArrayList<>();
+        for(int i = 0; i != states.size(); i++) {
+           facetResults.add(facets.get(i).getFacetResult(states.get(i))); 
+        }
+        
+        List<FacetResult> results = facetResults;
         
         Assert.assertEquals(results.size(), 2);
         Assert.assertTrue(results.get(0) instanceof StringFacetState);
@@ -211,8 +225,22 @@ public abstract class DatamodelRunnerTestBase {
         Facet facetBar = new StringFacet.Config("bar", null).apply(simpleGrid.getColumnModel());
 
         List<Facet> facets = Arrays.asList(facetFoo, facetBar);
+        List<FacetState> initialStates = facets
+                .stream().map(facet -> facet.getInitialFacetState())
+                .collect(Collectors.toList());
         
-        List<FacetResult> results = simpleGrid.computeRecordFacets(facets);
+        AllFacetsAggregator aggregator = new AllFacetsAggregator(facets
+                .stream().map(facet -> facet.getAggregator())
+                .collect(Collectors.toList()));
+        
+        List<FacetState> states = simpleGrid.aggregateRecords(aggregator, initialStates);
+        
+        List<FacetResult> facetResults = new ArrayList<>();
+        for(int i = 0; i != states.size(); i++) {
+           facetResults.add(facets.get(i).getFacetResult(states.get(i))); 
+        }
+        
+        List<FacetResult> results = facetResults;
         
         Assert.assertEquals(results.size(), 2);
         Assert.assertTrue(results.get(0) instanceof StringFacetState);
@@ -245,28 +273,24 @@ public abstract class DatamodelRunnerTestBase {
     
     @Test
     public void testMapFilteredRows() {
-        Facet facetFoo = new StringFacet.Config("foo", "a").apply(simpleGrid.getColumnModel());
-        
-        GridState mapped = simpleGrid.mapFilteredRows(facetFoo.getAggregator().getRowFilter(),
+        GridState mapped = simpleGrid.mapRows(
                 concatRowMapper, simpleGrid.getColumnModel());
         
         List<IndexedRow> rows = mapped.collectRows();
         Assert.assertEquals(rows.get(0).getRow().getCellValue(1), "b_concat");
-        Assert.assertEquals(rows.get(1).getRow().getCellValue(1), 1);
+        Assert.assertEquals(rows.get(1).getRow().getCellValue(1), "1_concat");
     }
     
     public static RecordMapper concatRecordMapper = RecordMapper.rowWiseRecordMapper(concatRowMapper);
     
     @Test
     public void testMapFilteredRecords() {
-        Facet facetFoo = new StringFacet.Config("foo", "a").apply(simpleGrid.getColumnModel());
-        
-        GridState mapped = simpleGrid.mapFilteredRecords(facetFoo.getAggregator().getRecordFilter(),
+        GridState mapped = simpleGrid.mapRecords(
                 concatRecordMapper, simpleGrid.getColumnModel());
         
         List<IndexedRow> rows = mapped.collectRows();
         Assert.assertEquals(rows.get(0).getRow().getCellValue(1), "b_concat");
         Assert.assertEquals(rows.get(1).getRow().getCellValue(1), "1_concat");
-        Assert.assertEquals(rows.get(2).getRow().getCellValue(1), true);
+        Assert.assertEquals(rows.get(2).getRow().getCellValue(1), "true_concat");
     }
 }

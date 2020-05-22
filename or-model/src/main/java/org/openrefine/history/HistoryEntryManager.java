@@ -37,6 +37,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
+import org.openrefine.history.Change.DoesNotApplyException;
 import org.openrefine.model.DatamodelRunner;
 import org.openrefine.model.GridState;
 import org.openrefine.util.ParsingUtilities;
@@ -78,7 +79,7 @@ public class HistoryEntryManager {
     	ParsingUtilities.saveWriter.writeValue(metadataFile, metadata);
     }
     
-    public History load(File dir) throws IOException {
+    public History load(File dir) throws IOException, DoesNotApplyException {
     	File gridFile = new File(dir, INITIAL_GRID_SUBDIR);
     	File metadataFile = new File(dir, METADATA_FILENAME);
     	// Load the metadata

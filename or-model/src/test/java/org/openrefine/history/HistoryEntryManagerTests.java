@@ -9,12 +9,13 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.mockito.Mockito;
-import org.openrefine.browsing.RowFilter;
+import org.openrefine.history.Change.DoesNotApplyException;
 import org.openrefine.history.dag.DagSlice;
 import org.openrefine.model.ColumnMetadata;
 import org.openrefine.model.ColumnModel;
 import org.openrefine.model.DatamodelRunner;
 import org.openrefine.model.GridState;
+import org.openrefine.model.RowFilter;
 import org.openrefine.model.RowMapper;
 import org.openrefine.operations.Operation.NotImmediateOperationException;
 import org.openrefine.operations.UnknownOperation;
@@ -38,7 +39,7 @@ public class HistoryEntryManagerTests {
 		    List<ColumnMetadata> columns = projectState.getColumnModel().getColumns();
             List<ColumnMetadata> newColumns = columns.subList(1, columns.size());
 		    
-            return projectState.mapFilteredRows(RowFilter.ANY_ROW, mapper, new ColumnModel(newColumns));
+            return projectState.mapRows(mapper, new ColumnModel(newColumns));
 		}
 
         @Override
@@ -53,7 +54,7 @@ public class HistoryEntryManagerTests {
 	};
 
     @BeforeMethod
-    public void setUp() throws NotImmediateOperationException, IOException {
+    public void setUp() throws NotImmediateOperationException, IOException, DoesNotApplyException {
         runner = mock(DatamodelRunner.class);
     	ColumnModel columnModel = new ColumnModel(Arrays.asList(
     			new ColumnMetadata("a"),
@@ -64,7 +65,7 @@ public class HistoryEntryManagerTests {
     	when(runner.loadGridState(Mockito.any())).thenReturn(gridState);
     	GridState secondState = mock(GridState.class);
     	when(secondState.getColumnModel()).thenReturn(new ColumnModel(columnModel.getColumns().subList(1, 3)));
-    	when(gridState.mapFilteredRows(Mockito.any(), Mockito.any(), Mockito.any())).thenReturn(secondState);
+    	when(gridState.mapRows(Mockito.any(), Mockito.any())).thenReturn(secondState);
     	Change change = new MyChange();
     	HistoryEntry entry = new HistoryEntry(1234L, "some description",
     			new UnknownOperation("my-op", "some desc"), change);
@@ -74,7 +75,7 @@ public class HistoryEntryManagerTests {
     }
     
 	@Test
-	public void testSaveAndLoadHistory() throws IOException {
+	public void testSaveAndLoadHistory() throws IOException, DoesNotApplyException {
 		File tempFile = TestUtils.createTempDirectory("testhistory");
 		sut.save(history, tempFile);
 		

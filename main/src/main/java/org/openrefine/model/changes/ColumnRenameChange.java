@@ -33,71 +33,67 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package org.openrefine.model.changes;
 
-import java.io.IOException;
-import java.io.LineNumberReader;
-import java.io.Writer;
-import java.util.Properties;
+import org.openrefine.browsing.EngineConfig;
+import org.openrefine.history.dag.DagSlice;
+import org.openrefine.model.ColumnModel;
+import org.openrefine.model.GridState;
+import org.openrefine.model.ModelException;
 
-import org.openrefine.ProjectManager;
-import org.openrefine.history.Change;
-import org.openrefine.model.Column;
-import org.openrefine.model.Project;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
-public class ColumnRenameChange extends ColumnChange {
+public class ColumnRenameChange extends RowMapChange {
     final protected String _oldColumnName;
     final protected String _newColumnName;
     
-    public ColumnRenameChange(String oldColumnName, String newColumnName) {
+    /**
+     * Creates a change.
+     * 
+     * @param oldColumnName the name of the column to rename
+     * @param newColumnName the new name of this column
+     */
+    @JsonCreator
+    public ColumnRenameChange(
+    		@JsonProperty("oldColumnName")
+    		String oldColumnName,
+    		@JsonProperty("newColumnName")
+    		String newColumnName) {
+    	super(EngineConfig.ALL_ROWS);
         _oldColumnName = oldColumnName;
         _newColumnName = newColumnName;
     }
     
-    @Override
-    public void apply(Project project) {
-        synchronized (project) {
-            ProjectManager.singleton.getInterProjectModel().flushJoinsInvolvingProjectColumn(project.id, _oldColumnName);
-            Column newColumn = project.columnModel.getColumnByName(_oldColumnName)
-            		.withName(_newColumnName);
-            project.columnModel.set
-            project.columnModel.update();
-        }
-    }
-
-    @Override
-    public void revert(Project project) {
-        synchronized (project) {
-            ProjectManager.singleton.getInterProjectModel().flushJoinsInvolvingProjectColumn(project.id, _newColumnName);
-            project.columnModel.getColumnByName(_newColumnName).setName(_oldColumnName);
-            project.columnModel.update();
-        }
-    }
-
-    @Override
-    public void save(Writer writer, Properties options) throws IOException {
-        writer.write("oldColumnName="); writer.write(_oldColumnName); writer.write('\n');
-        writer.write("newColumnName="); writer.write(_newColumnName); writer.write('\n');
-        writer.write("/ec/\n"); // end of change marker
+    @JsonProperty("oldColumnName")
+    public String getOldColumnName() {
+    	return _oldColumnName;
     }
     
-    static public Change load(LineNumberReader reader) throws Exception {
-        String oldColumnName = null;
-        String newColumnName = null;
-        
-        String line;
-        while ((line = reader.readLine()) != null && !"/ec/".equals(line)) {
-            int equal = line.indexOf('=');
-            CharSequence field = line.subSequence(0, equal);
-            String value = line.substring(equal + 1);
-            
-            if ("oldColumnName".equals(field)) {
-                oldColumnName = value;
-            } else if ("newColumnName".equals(field)) {
-                newColumnName = value;
-            }
-        }
-        
-        ColumnRenameChange change = new ColumnRenameChange(oldColumnName, newColumnName);
-        
-        return change;
+    @JsonProperty("newColumnName")
+    public String getNewColumnName() {
+    	return _newColumnName;
     }
+    
+    @Override
+    public ColumnModel getNewColumnModel(GridState state) throws DoesNotApplyException {
+    	ColumnModel model = state.getColumnModel();
+    	int index = columnIndex(model, _oldColumnName);
+    	try {
+			return model.renameColumn(index, _newColumnName);
+		} catch (ModelException e) {
+			throw new DoesNotApplyException(
+					String.format("Column '%s' already exists", _newColumnName));
+		}
+    }
+
+	@Override
+	public boolean isImmediate() {
+		return true;
+	}
+
+	@Override
+	public DagSlice getDagSlice() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }

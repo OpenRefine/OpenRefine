@@ -59,6 +59,15 @@ import com.fasterxml.jackson.databind.annotation.JsonTypeIdResolver;
 @JsonTypeIdResolver(ChangeResolver.class)
 public interface Change {
     
+    public static class DoesNotApplyException extends Exception {
+        public DoesNotApplyException(String message) {
+            super(message);
+        }
+
+        private static final long serialVersionUID = 1L;
+        
+    }
+    
     /**
      * Derives the new grid state from the current grid
      * state. Executing this method should be quick (even
@@ -71,8 +80,9 @@ public interface Change {
      * 
      * @param projectState
      * @return
+     * @throws DoesNotApplyException when the change cannot be applied to the given grid
      */
-    public GridState apply(GridState projectState);
+    public GridState apply(GridState projectState) throws DoesNotApplyException;
     
     /**
      * Returns true when the change is derived purely from the operation metadata

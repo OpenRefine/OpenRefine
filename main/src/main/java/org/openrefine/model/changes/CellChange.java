@@ -39,7 +39,7 @@ import org.openrefine.browsing.EngineConfig;
 import org.openrefine.history.dag.DagSlice;
 import org.openrefine.history.dag.TransformationSlice;
 import org.openrefine.model.Cell;
-import org.openrefine.model.ColumnModel;
+import org.openrefine.model.GridState;
 import org.openrefine.model.Row;
 import org.openrefine.model.RowMapper;
 
@@ -75,7 +75,7 @@ public class CellChange extends RowMapChange {
     
 
 	@Override
-	public RowMapper getRowMapper(ColumnModel columnModel) {
+	public RowMapper getPositiveRowMapper(GridState state) {
 		return mapFunction(cellIndex, row, newCell);
 	}
 	

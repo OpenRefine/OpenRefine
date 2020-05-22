@@ -37,12 +37,12 @@ import java.io.IOException;
 import java.io.Serializable;
 
 import org.openrefine.RefineTest;
-import org.openrefine.browsing.RowFilter;
 import org.openrefine.browsing.facets.FacetConfigResolver;
 import org.openrefine.browsing.facets.TextSearchFacet;
 import org.openrefine.browsing.facets.TextSearchFacet.TextSearchFacetConfig;
 import org.openrefine.model.ModelException;
 import org.openrefine.model.Project;
+import org.openrefine.model.RowFilter;
 import org.openrefine.util.ParsingUtilities;
 import org.openrefine.util.TestUtils;
 import org.slf4j.LoggerFactory;

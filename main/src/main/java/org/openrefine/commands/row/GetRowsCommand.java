@@ -45,8 +45,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.openrefine.browsing.Engine;
 import org.openrefine.browsing.Engine.Mode;
-import org.openrefine.browsing.RecordFilter;
-import org.openrefine.browsing.RowFilter;
 import org.openrefine.commands.Command;
 import org.openrefine.importing.ImportingJob;
 import org.openrefine.importing.ImportingManager;
@@ -54,7 +52,9 @@ import org.openrefine.model.GridState;
 import org.openrefine.model.IndexedRow;
 import org.openrefine.model.Project;
 import org.openrefine.model.Record;
+import org.openrefine.model.RecordFilter;
 import org.openrefine.model.Row;
+import org.openrefine.model.RowFilter;
 import org.openrefine.util.ParsingUtilities;
 
 import com.fasterxml.jackson.annotation.JsonInclude;

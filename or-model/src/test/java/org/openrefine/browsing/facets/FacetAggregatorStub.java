@@ -1,9 +1,9 @@
 package org.openrefine.browsing.facets;
 
-import org.openrefine.browsing.RecordFilter;
-import org.openrefine.browsing.RowFilter;
 import org.openrefine.browsing.filters.AnyRowRecordFilter;
+import org.openrefine.model.RecordFilter;
 import org.openrefine.model.Row;
+import org.openrefine.model.RowFilter;
 
 public class FacetAggregatorStub implements FacetAggregator<FacetStateStub> {
     
