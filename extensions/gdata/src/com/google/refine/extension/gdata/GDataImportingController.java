@@ -1,6 +1,7 @@
 /*
 
 Copyright 2011, Google Inc.
+          2013, 2020 OpenRefine contributors
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without

@@ -1,5 +1,6 @@
 /*
- * Copyright (c) 2010, Thomas F. Morris
+ * Copyright (c) 2010, 2013 Thomas F. Morris
+ *               2018, 2019 OpenRefine contributors
  *        All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
