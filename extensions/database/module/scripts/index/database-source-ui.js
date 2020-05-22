@@ -511,11 +511,12 @@ Refine.DatabaseSourceUI.prototype._validateNewConnectionForm = function() {
 Refine.DatabaseSourceUI.prototype._resetDatabaseImportForm = function() {
   var self = this;
   
+  $( "#databaseHost" ).val(self._defaultDatabaseHost);
+
   $('input#connectionName').attr('value', $.i18n('database-source/connectionNameDefaultValue'));
   $( "select#databaseTypeSelect" ).val(self._defaultDatabaseType);
   self._updateDatabaseType(self._defaultDatabaseType);
   
-  $( "#databaseHost" ).val(self._defaultDatabaseHost);
   $( "#databasePassword" ).val("");
   $( "#initialDatabase" ).val("");
   $( "#initialSchema" ).val("");
