@@ -76,7 +76,7 @@ public class TestingDatamodelRunner implements DatamodelRunner {
                     ln = new LineNumberReader(new InputStreamReader(gis));
                     Iterator<String> iterator = ln.lines().iterator();
                     while (iterator.hasNext()) {
-                        String line = iterator.next().strip();
+                        String line = iterator.next().trim();
                         if (line.isEmpty()) {
                             break;
                         }
