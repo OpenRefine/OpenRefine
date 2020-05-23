@@ -16,10 +16,10 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  * at a given point in a workflow.
  */
 public interface GridState {
-	
-	final static public String METADATA_PATH = "metadata.json";
-	final static public String GRID_PATH = "grid";
-	
+    
+    final static public String METADATA_PATH = "metadata.json";
+    final static public String GRID_PATH = "grid";
+    
     /**
      * @return the column metadata at this stage of the workflow
      */
@@ -162,21 +162,21 @@ public interface GridState {
      * @param file the directory where to save the grid state
      * @throws IOException
      */
-	public void saveToFile(File file) throws IOException;
-	
-	// Aggregations
+    public void saveToFile(File file) throws IOException;
+    
+    // Aggregations
 
-	/**
-	 * Computes the result of a row aggregator on the grid.
-	 */
-	public <T> T aggregateRows(RowAggregator<T> aggregator, T initialState);
+    /**
+     * Computes the result of a row aggregator on the grid.
+     */
+    public <T> T aggregateRows(RowAggregator<T> aggregator, T initialState);
     
     /**
      * Computes the result of a row aggregator on the grid.
      */
     public <T> T aggregateRecords(RecordAggregator<T> aggregator, T initialState);
 
-	// Transformations
+    // Transformations
     
     /**
      * Returns a new grid state where the overlay models have changed.
@@ -184,45 +184,45 @@ public interface GridState {
      * @return the changed grid state
      */
     public GridState withOverlayModels(Map<String, OverlayModel> overlayModel);
-	
-	/**
-	 * Returns a new grid state, where the rows have been mapped by the mapper.
-	 * 
-	 * @param mapper the function used to transform rows
-	 *               This object and its dependencies are required
+    
+    /**
+     * Returns a new grid state, where the rows have been mapped by the mapper.
+     * 
+     * @param mapper the function used to transform rows
+     *               This object and its dependencies are required
      *               to be serializable.
-	 * @param newColumnModel the column model of the resulting grid state
-	 * @return the resulting grid state
-	 */
-	public GridState mapRows(RowMapper mapper, ColumnModel newColumnModel);
-	
-	/**
-	 * Returns a new grid state, where the records have been mapped by the mapper
-	 * 
-	 * @param filter the subset of records to which the mapper should be applied.
-	 *               This object and its dependencies are required
+     * @param newColumnModel the column model of the resulting grid state
+     * @return the resulting grid state
+     */
+    public GridState mapRows(RowMapper mapper, ColumnModel newColumnModel);
+    
+    /**
+     * Returns a new grid state, where the records have been mapped by the mapper
+     * 
+     * @param filter the subset of records to which the mapper should be applied.
+     *               This object and its dependencies are required
      *               to be serializable.
-	 * @param mapper the function used to transform records
-	 *               This object and its dependencies are required
+     * @param mapper the function used to transform records
+     *               This object and its dependencies are required
      *               to be serializable.
-	 * @param newColumnModel the column model of the resulting grid state
-	 * @return the resulting grid state
-	 */
-	public GridState mapRecords(RecordMapper mapper, ColumnModel newColumnModel);
-	
-	/**
-	 * Utility class to help with deserialization of the metadata
-	 * without other attributes (such as number of rows)
-	 */
-	public static class Metadata {
-		@JsonProperty("columnModel")
-		protected ColumnModel columnModel;
-		@JsonProperty("overlayModels")
-		Map<String, OverlayModel> overlayModels;
-		@JsonProperty("rowCount")
-		long rowCount = -1;
-		@JsonProperty("recordCount")
-		long recordCount = -1;
-	}
+     * @param newColumnModel the column model of the resulting grid state
+     * @return the resulting grid state
+     */
+    public GridState mapRecords(RecordMapper mapper, ColumnModel newColumnModel);
+    
+    /**
+     * Utility class to help with deserialization of the metadata
+     * without other attributes (such as number of rows)
+     */
+    public static class Metadata {
+        @JsonProperty("columnModel")
+        protected ColumnModel columnModel;
+        @JsonProperty("overlayModels")
+        Map<String, OverlayModel> overlayModels;
+        @JsonProperty("rowCount")
+        long rowCount = -1;
+        @JsonProperty("recordCount")
+        long recordCount = -1;
+    }
 
 }
