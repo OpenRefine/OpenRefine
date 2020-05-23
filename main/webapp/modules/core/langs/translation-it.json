@@ -262,7 +262,7 @@
     "core-dialogs/template-prefix": "Prefisso",
     "core-dialogs/nearest-neighbor": "nearest neighbor",
     "core-dialogs/tableNameLabel": "Nome tabella:",
-    "core-dialogs/cell-fields": "La cella corrente. Ha alcuni campi: 'value' e 'recon'.",
+    "core-dialogs/cell-fields": "La cella corrente. Ha alcuni campi: 'value', 'recon' e 'errorMessage'.",
     "core-dialogs/for-null-cell-value-to-empty-str-label": "Convertire i valori null in NULL  nelle direttive di INSERT",
     "core-dialogs/idling": "Calcolando…",
     "core-dialogs/local-time": "Usa fuso orario locale",

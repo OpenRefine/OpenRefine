@@ -255,7 +255,7 @@
     "core-dialogs/csv": "Delimitado por comas (CSV)",
     "core-dialogs/template-prefix": "Prefijo",
     "core-dialogs/nearest-neighbor": "Vecino más cercano",
-    "core-dialogs/cell-fields": "La celda actual. Tiene pocos campos: 'value' y 'recon'.",
+    "core-dialogs/cell-fields": "La celda actual. Tiene pocos campos: 'value', 'recon' y 'errorMessage.",
     "core-dialogs/idling": "Idling ...",
     "core-dialogs/local-time": "Usar zona horaria local",
     "clustering-keyers/metaphone3": "metaphone3",

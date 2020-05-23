@@ -174,7 +174,7 @@
     "core-dialogs/small-dot": "小网点尺寸",
     "core-dialogs/regular-dot": "正常网点尺寸",
     "core-dialogs/big-dot": "大网点尺寸",
-    "core-dialogs/cell-fields": "当前的单元格. 它包含如下字段：'value'和'recon'。",
+    "core-dialogs/cell-fields": "当前的单元格. 它包含如下字段：'value', 'recon'和'errorMessage'。",
     "core-dialogs/cell-value": "当前单元格的值. 它是cell.value的简写.",
     "core-dialogs/row-fields": "当前的行. 它包含以下5个字段: 'flagged', 'starred', 'index', 'cells'和'record'.",
     "core-dialogs/cells-of-row": "当前行中的单元格们. 它是row.cells的简写. 如果<column name>是一个字的话，那么可以通过'cells.<column name>'来使用它，否则需要使用cells['<column name'>]",
