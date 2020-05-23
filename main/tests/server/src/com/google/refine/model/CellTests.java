@@ -101,7 +101,7 @@ public class CellTests {
         String errorMessage = "Sample error message";
         EvalError err = new EvalError(errorMessage);
         Cell c = new Cell(err, null);
-        assertEquals(c.getField("error", null), errorMessage);
+        assertEquals(c.getField("errorMessage", null), errorMessage);
         assertEquals(c.getField("value", null), err);
     }
 

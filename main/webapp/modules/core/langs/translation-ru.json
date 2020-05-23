@@ -290,7 +290,7 @@
     "core-dialogs/csv": "Значения разделенные запятыми (CSV)",
     "core-dialogs/template-prefix": "Префикс",
     "core-dialogs/nearest-neighbor": "k-ближайших соседей",
-    "core-dialogs/cell-fields": "Текущая ячейка. Имеет поля: 'value' и 'recon'.",
+    "core-dialogs/cell-fields": "Текущая ячейка. Имеет поля: 'value', 'recon' и 'errorMessage'.",
     "core-dialogs/idling": "Битьё баклуш...",
     "core-dialogs/local-time": "Использовать временные зоны",
     "core-dialogs/rotated-counter-clock": "Повернуть на 45° против часовой",
