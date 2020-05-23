@@ -32,6 +32,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 var theProject;
+var thePreferences;
 var ui = {};
 
 var lang = (navigator.language|| navigator.userLanguage).split("-")[0];
@@ -188,12 +189,35 @@ Refine.reinitializeProjectData = function(f, fError) {
         $.getJSON(
           "command/core/get-models?" + $.param({ project: theProject.id }), null,
           function(data) {
-            for (var n in data) {
-              if (data.hasOwnProperty(n)) {
-                theProject[n] = data[n];
+            if (data.status == "error") {
+              alert(data.message);
+              if (fError) {
+                fError();
               }
+            } else {
+              for (var n in data) {
+                if (data.hasOwnProperty(n)) {
+                  theProject[n] = data[n];
+                }
+              }
+              $.post(
+                "command/core/get-all-preferences", null,
+                function(preferences) {
+                  if (preferences.status == "error") {
+                    alert(preferences.message);
+                    if (fError) {
+                      fError();
+                    }
+                  } else {
+                    if (preferences != null) {
+                      thePreferences = preferences;
+                    }
+                    f();
+                  }
+                },
+                'json'
+              );
             }
-            f();
           },
           'json'
         );
@@ -202,6 +226,30 @@ Refine.reinitializeProjectData = function(f, fError) {
     'json'
   );
 };
+
+Refine.getPreference = function(key, defaultValue) { 
+  if(!thePreferences.hasOwnProperty(key)) { return defaultValue; }
+
+  return thePreferences[key];
+}
+
+Refine.setPreference = function(key, newValue) { 
+  thePreferences[key] = newValue;
+
+  Refine.wrapCSRF(function(token) {
+    $.ajax({
+      async: false,
+      type: "POST",
+      url: "command/core/set-preference?" + $.param({ name: key }),
+      data: {
+        "value" : JSON.stringify(newValue), 
+        csrf_token: token
+      },
+      success: function(data) { },
+      dataType: "json"
+    });
+  });
+}
 
 Refine._renameProject = function() {
   var name = window.prompt($.i18n('core-index/new-proj-name'), theProject.metadata.name);
