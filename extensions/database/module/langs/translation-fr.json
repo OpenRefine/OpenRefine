@@ -31,7 +31,7 @@
     "database-source/databaseNamePlaceholder": "Entrez le nom de la base de données",
     "database-source/databaseFileNamePlaceholder": "Entrez le chemin du fichier base de données",
     "database-source/databaseSchemaPlaceholder": "Entrez le schéma initial",
-    "database-source/connectionNameDefaultValue": "Nom de la nouvelle connexion",
+    "database-source/connectionNameDefaultValue": "Nom_nouvelle_connexion",
     "database-source/databaseTestButton": "Test",
     "database-source/databaseSaveButton": "Enregistrer",
     "database-source/databaseConnectButton": "Connexion",
