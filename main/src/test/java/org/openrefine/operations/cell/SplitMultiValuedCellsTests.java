@@ -35,18 +35,13 @@ package org.openrefine.operations.cell;
 
 
 import java.io.Serializable;
-import java.util.Properties;
 
 import org.openrefine.RefineTest;
 import org.openrefine.model.Project;
-import org.openrefine.operations.Operation;
 import org.openrefine.operations.OperationRegistry;
-import org.openrefine.operations.cell.MultiValuedCellSplitOperation;
-import org.openrefine.process.Process;
 import org.openrefine.util.ParsingUtilities;
 import org.openrefine.util.TestUtils;
 import org.slf4j.LoggerFactory;
-import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;

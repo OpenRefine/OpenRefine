@@ -72,7 +72,7 @@ public class SplitMultiValueCellsCommand extends Command {
                                                                          keyColumnName,
                                                                          separator, 
                                                                          regex);
-                Process process = op.createProcess(project, new Properties());
+                Process process = op.createProcess(project.getHistory());
                 
                 performProcessAndRespond(request, response, project, process);
             } else {
@@ -83,7 +83,7 @@ public class SplitMultiValueCellsCommand extends Command {
                 Operation op = new MultiValuedCellSplitOperation(columnName,
                                                                          keyColumnName,
                                                                          fieldLengths);
-                Process process = op.createProcess(project, new Properties());
+                Process process = op.createProcess(project.getHistory());
                 
                 performProcessAndRespond(request, response, project, process);
             }

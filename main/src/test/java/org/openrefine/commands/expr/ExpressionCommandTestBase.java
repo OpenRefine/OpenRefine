@@ -38,7 +38,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.spark.api.java.JavaSparkContext;
 import org.openrefine.commands.Command;
 import org.openrefine.io.FileProjectManager;
 import org.openrefine.model.DatamodelRunner;

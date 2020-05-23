@@ -16,7 +16,6 @@ import org.testng.annotations.Test;
 
 public class ColumnMoveChangeTests extends ColumnChangeTestBase {
 	
-	private GridState initialState;
 	private String serializedChange = "{\n" + 
 			"  \"columnName\" : \"foo\",\n" + 
 			"  \"dagSlice\" : null,\n" + 

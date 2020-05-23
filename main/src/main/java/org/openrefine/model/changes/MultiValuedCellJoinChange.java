@@ -9,7 +9,6 @@ import org.openrefine.history.dag.DagSlice;
 import org.openrefine.model.Cell;
 import org.openrefine.model.GridState;
 import org.openrefine.model.Record;
-import org.openrefine.model.RecordFilter;
 import org.openrefine.model.RecordMapper;
 import org.openrefine.model.Row;
 
@@ -44,8 +43,7 @@ public class MultiValuedCellJoinChange implements Change {
 			throw new DoesNotApplyException(
 					String.format("Column '%s' does not exist", columnName));
 		}
-		return projectState.mapFilteredRecords(
-				RecordFilter.ANY_RECORD,
+		return projectState.mapRecords(
 				recordMapper(columnIdx, separator),
 				projectState.getColumnModel());
 	}

@@ -60,7 +60,7 @@ public class MultiValuedCellSplitOperation extends ImmediateOperation {
             @JsonProperty("keyColumnName")
             String keyColumnName,
             @JsonProperty("mode")
-            String mode,
+            Mode mode,
             @JsonProperty("separator")
             String separator,
             @JsonProperty("regex")
