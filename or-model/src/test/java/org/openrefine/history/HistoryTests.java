@@ -53,38 +53,49 @@ public class HistoryTests {
     GridState initialState;
     GridState intermediateState;
     GridState finalState;
+    GridState newState;
 
     long firstChangeId = 1234L;
     long secondChangeId = 5678L;
+    long newChangeId = 9012L;
 
     Change firstChange;
     Change secondChange;
+    Change newChange;
 
     HistoryEntry firstEntry;
     HistoryEntry secondEntry;
+    HistoryEntry newEntry;
 
-    List<HistoryEntry> entries;
+    List<HistoryEntry> entries, newEntries;
 
     @BeforeMethod
     public void setUp() throws DoesNotApplyException {
         initialState = mock(GridState.class);
         intermediateState = mock(GridState.class);
+        newState = mock(GridState.class);
         finalState = mock(GridState.class);
         firstChange = mock(Change.class);
         secondChange = mock(Change.class);
+        newChange = mock(Change.class);
         firstEntry = mock(HistoryEntry.class);
         secondEntry = mock(HistoryEntry.class);
+        newEntry = mock(HistoryEntry.class);
 
         when(firstChange.apply(initialState)).thenReturn(intermediateState);
         when(secondChange.apply(intermediateState)).thenReturn(finalState);
+        when(newChange.apply(intermediateState)).thenReturn(newState);
 
         when(firstEntry.getId()).thenReturn(firstChangeId);
         when(secondEntry.getId()).thenReturn(secondChangeId);
+        when(newEntry.getId()).thenReturn(newChangeId);
 
         when(firstEntry.getChange()).thenReturn(firstChange);
         when(secondEntry.getChange()).thenReturn(secondChange);
+        when(newEntry.getChange()).thenReturn(newChange);
 
         entries = Arrays.asList(firstEntry, secondEntry);
+        newEntries = Arrays.asList(firstEntry, newEntry);
     }
 
     @Test
@@ -123,6 +134,22 @@ public class HistoryTests {
         History history = new History(initialState, entries, 1);
 
         history.undoRedo(34782L);
+    }
+
+    @Test
+    public void testEraseUndoneChanges() throws DoesNotApplyException {
+        History history = new History(initialState, entries, 1);
+
+        Assert.assertEquals(history.getPosition(), 1);
+        Assert.assertEquals(history.getCurrentGridState(), intermediateState);
+        Assert.assertEquals(history.getEntries(), entries);
+
+        // Adding an entry when there are undone changes erases those changes
+        history.addEntry(newEntry);
+
+        Assert.assertEquals(history.getPosition(), 2);
+        Assert.assertEquals(history.getCurrentGridState(), newState);
+        Assert.assertEquals(history.getEntries(), newEntries);
     }
 
 }

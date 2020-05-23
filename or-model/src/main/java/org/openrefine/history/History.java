@@ -57,7 +57,7 @@ public class History {
     protected int _position;
 
     @JsonIgnore
-    protected final List<GridState> _states;
+    protected List<GridState> _states;
 
     /**
      * Creates an empty on an initial grid state.
@@ -130,6 +130,7 @@ public class History {
         // Any new change will clear all future entries.
         if (_position != _entries.size()) {
             _entries = _entries.subList(0, _position);
+            _states = _states.subList(0, _position + 1);
         }
 
         GridState newState = entry.getChange().apply(getCurrentGridState());
