@@ -23,15 +23,15 @@
  ******************************************************************************/
 package org.openrefine.wikidata.qa.scrutinizers;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.regex.Pattern;
-
 import org.openrefine.wikidata.qa.QAWarning;
 import org.wikidata.wdtk.datamodel.interfaces.MonolingualTextValue;
 import org.wikidata.wdtk.datamodel.interfaces.StringValue;
 import org.wikidata.wdtk.datamodel.interfaces.Value;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.regex.Pattern;
 
 /**
  * Scrutinizes strings for trailing / leading whitespace, and others
@@ -57,9 +57,9 @@ public class WhitespaceScrutinizer extends ValueScrutinizer {
     @Override
     public void scrutinize(Value value) {
         String str = null;
-        if (MonolingualTextValue.class.isInstance(value)) {
+        if (value instanceof MonolingualTextValue) {
             str = ((MonolingualTextValue) value).getText();
-        } else if (StringValue.class.isInstance(value)) {
+        } else if (value instanceof StringValue) {
             str = ((StringValue) value).getString();
         }
 
