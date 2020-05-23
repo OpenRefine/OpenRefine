@@ -58,7 +58,7 @@ public class MultiValuedCellSplitOperation extends ImmediateOperation {
     public static MultiValuedCellSplitOperation deserialize(
             @JsonProperty("columnName") String columnName,
             @JsonProperty("keyColumnName") String keyColumnName,
-            @JsonProperty("mode") String mode,
+            @JsonProperty("mode") Mode mode,
             @JsonProperty("separator") String separator,
             @JsonProperty("regex") boolean regex,
             @JsonProperty("fieldLengths") int[] fieldLengths) {

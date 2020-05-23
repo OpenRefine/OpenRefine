@@ -18,7 +18,6 @@ import org.openrefine.util.TestUtils;
 
 public class ColumnMoveChangeTests extends ColumnChangeTestBase {
 
-    private GridState initialState;
     private String serializedChange = "{\n" +
             "  \"columnName\" : \"foo\",\n" +
             "  \"index\" : 1,\n" +

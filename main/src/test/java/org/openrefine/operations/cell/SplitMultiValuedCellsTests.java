@@ -43,7 +43,6 @@ import org.testng.annotations.Test;
 import org.openrefine.RefineTest;
 import org.openrefine.model.Project;
 import org.openrefine.operations.OperationRegistry;
-import org.openrefine.operations.cell.MultiValuedCellSplitOperation;
 import org.openrefine.util.ParsingUtilities;
 import org.openrefine.util.TestUtils;
 

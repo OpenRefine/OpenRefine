@@ -34,7 +34,6 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package org.openrefine.commands.cell;
 
 import java.io.IOException;
-import java.util.Properties;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -73,7 +72,7 @@ public class SplitMultiValueCellsCommand extends Command {
                         keyColumnName,
                         separator,
                         regex);
-                Process process = op.createProcess(project, new Properties());
+                Process process = op.createProcess(project.getHistory());
 
                 performProcessAndRespond(request, response, project, process);
             } else {
@@ -85,7 +84,7 @@ public class SplitMultiValueCellsCommand extends Command {
                 Operation op = new MultiValuedCellSplitOperation(columnName,
                         keyColumnName,
                         fieldLengths);
-                Process process = op.createProcess(project, new Properties());
+                Process process = op.createProcess(project.getHistory());
 
                 performProcessAndRespond(request, response, project, process);
             }
