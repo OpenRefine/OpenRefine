@@ -36,7 +36,7 @@ public class TestingGridState implements GridState {
         this.columnModel = columnModel;
         this.rows = rows;
         this.overlayModels = overlayModels;
-        records = groupRowsIntoRecords(rows, 0);
+        records = groupRowsIntoRecords(rows, columnModel.getKeyColumnIndex());
     }
 
     public static List<Record> groupRowsIntoRecords(List<Row> rows, int keyCellIndex) {
@@ -294,6 +294,11 @@ public class TestingGridState implements GridState {
     @Override
     public GridState withOverlayModels(Map<String, OverlayModel> overlayModel) {
         return new TestingGridState(columnModel, rows, overlayModel);
+    }
+
+    @Override
+    public GridState withColumnModel(ColumnModel newColumnModel) {
+        return new TestingGridState(newColumnModel, rows, overlayModels);
     }
 
 }

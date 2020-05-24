@@ -4,7 +4,8 @@ package org.openrefine.model;
 import java.io.Serializable;
 
 /**
- * A function applied to a row, returning a new row to replace it.
+ * A function applied to a row, returning a new row to replace it. Implementations should be stateless. If a state is
+ * required, use {@link StatefulRowMapper}.
  * 
  * @author Antonin Delpeuch
  *

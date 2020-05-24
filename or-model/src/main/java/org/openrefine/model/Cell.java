@@ -172,11 +172,17 @@ public class Cell implements HasFields, Serializable {
 
     @Override
     public boolean equals(Object other) {
+        if (other == null) {
+            return value == null;
+        }
         if (!(other instanceof Cell) || other == null) {
             return false;
         }
         Cell otherCell = (Cell) other;
-        return (((value == null && otherCell.value == null) || value.equals(otherCell.value))
+        if (value == null) {
+            return otherCell.value == null;
+        }
+        return (value.equals(otherCell.value)
                 && ((recon == null && otherCell.recon == null) || recon.equals(otherCell.recon)));
 
     }

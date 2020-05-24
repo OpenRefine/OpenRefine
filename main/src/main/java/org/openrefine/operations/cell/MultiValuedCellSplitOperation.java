@@ -144,7 +144,7 @@ public class MultiValuedCellSplitOperation extends ImmediateOperation {
 
     @Override
     public Change createChange() throws ParsingException {
-        return new MultiValuedCellSplitChange(_columnName, _mode, _separator, _regex, _fieldLengths);
+        return new MultiValuedCellSplitChange(_columnName, _keyColumnName, _mode, _separator, _regex, _fieldLengths);
     }
 
 }

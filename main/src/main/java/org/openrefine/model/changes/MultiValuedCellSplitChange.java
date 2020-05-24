@@ -14,6 +14,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import org.openrefine.history.Change;
 import org.openrefine.model.Cell;
+import org.openrefine.model.ColumnModel;
 import org.openrefine.model.GridState;
 import org.openrefine.model.Record;
 import org.openrefine.model.RecordMapper;
@@ -22,7 +23,9 @@ import org.openrefine.model.changes.ColumnSplitChange.CellValueSplitter;
 import org.openrefine.model.changes.ColumnSplitChange.Mode;
 
 /**
- * Splits the value of a cell and spreads the splits on the following rows, while respecting the record structure.
+ * Splits the value of a cell and spreads the splits on the following rows, while respecting the record structure. The
+ * keyColumnName can be used to specify which column should be treated as record key (although this parameter has never
+ * been exposed in the UI as of 2020-05).
  * 
  * @author Antonin Delpeuch
  *
@@ -30,6 +33,7 @@ import org.openrefine.model.changes.ColumnSplitChange.Mode;
 public class MultiValuedCellSplitChange implements Change {
 
     private final String columnName;
+    private final String keyColumnName;
     private final Mode mode;
     private final String separator;
     private final Boolean regex;
@@ -39,11 +43,13 @@ public class MultiValuedCellSplitChange implements Change {
     @JsonCreator
     public MultiValuedCellSplitChange(
             @JsonProperty("columnName") String columnName,
+            @JsonProperty("keyColumnName") String keyColumnName,
             @JsonProperty("mode") Mode mode,
             @JsonProperty("separator") String separator,
             @JsonProperty("regex") Boolean regex,
             @JsonProperty("fieldLengths") int[] fieldLengths) {
         this.columnName = columnName;
+        this.keyColumnName = keyColumnName;
         this.mode = mode;
         this.separator = separator;
         this.regex = regex;
@@ -54,6 +60,11 @@ public class MultiValuedCellSplitChange implements Change {
     @JsonProperty("columnName")
     public String getColumnName() {
         return columnName;
+    }
+
+    @JsonProperty("columnName")
+    public String getKeyColumnName() {
+        return keyColumnName;
     }
 
     @JsonProperty("mode")
@@ -81,12 +92,21 @@ public class MultiValuedCellSplitChange implements Change {
 
     @Override
     public GridState apply(GridState projectState) throws DoesNotApplyException {
-        int columnIdx = projectState.getColumnModel().getColumnIndexByName(columnName);
+        ColumnModel columnModel = projectState.getColumnModel();
+        int columnIdx = columnModel.getColumnIndexByName(columnName);
         if (columnIdx == -1) {
             throw new DoesNotApplyException(
                     String.format("Column '%s' does not exist", columnName));
         }
-        return projectState.mapRecords(recordMapper(columnIdx, splitter), projectState.getColumnModel());
+        int keyColumnIdx = keyColumnName == null ? 0 : columnModel.getColumnIndexByName(keyColumnName);
+        if (keyColumnIdx == -1) {
+            throw new DoesNotApplyException(
+                    String.format("Key column '%s' does not exist", keyColumnName));
+        }
+        if (keyColumnIdx != columnModel.getKeyColumnIndex()) {
+            projectState = projectState.withColumnModel(columnModel.withKeyColumnIndex(keyColumnIdx));
+        }
+        return projectState.mapRecords(recordMapper(columnIdx, splitter), columnModel);
     }
 
     @Override

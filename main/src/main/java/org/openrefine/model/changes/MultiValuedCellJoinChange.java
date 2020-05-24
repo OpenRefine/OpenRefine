@@ -4,18 +4,22 @@ package org.openrefine.model.changes;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import org.openrefine.expr.ExpressionUtils;
 import org.openrefine.history.Change;
 import org.openrefine.model.Cell;
+import org.openrefine.model.ColumnModel;
 import org.openrefine.model.GridState;
 import org.openrefine.model.Record;
 import org.openrefine.model.RecordMapper;
 import org.openrefine.model.Row;
 
 /**
- * Within a record, joins the non-blank cells of a column into the first cell, with the specified separator.
+ * Within a record, joins the non-blank cells of a column into the first cell, with the specified separator. The
+ * keyColumnName can be used to specify which column should be treated as record key (although this parameter has never
+ * been exposed in the UI as of 2020-05).
  * 
  * @author Antonin Delpeuch
  *
@@ -23,25 +27,53 @@ import org.openrefine.model.Row;
 public class MultiValuedCellJoinChange implements Change {
 
     private final String columnName;
+    private final String keyColumnName;
     private final String separator;
 
+    @JsonCreator
     public MultiValuedCellJoinChange(
             @JsonProperty("columnName") String columnName,
+            @JsonProperty("keyColumnName") String keyColumnName,
             @JsonProperty("separator") String separator) {
         this.columnName = columnName;
+        this.keyColumnName = keyColumnName;
         this.separator = separator;
+    }
+
+    @JsonProperty("columnName")
+    public String getColumnName() {
+        return columnName;
+    }
+
+    @JsonProperty("keyColumnName")
+    public String getKeyColumnName() {
+        return keyColumnName;
+    }
+
+    @JsonProperty("separator")
+    public String getSeparator() {
+        return separator;
     }
 
     @Override
     public GridState apply(GridState projectState) throws DoesNotApplyException {
-        int columnIdx = projectState.getColumnModel().getColumnIndexByName(columnName);
+        ColumnModel columnModel = projectState.getColumnModel();
+        int columnIdx = columnModel.getColumnIndexByName(columnName);
         if (columnIdx == -1) {
             throw new DoesNotApplyException(
                     String.format("Column '%s' does not exist", columnName));
         }
+        int keyColumnIdx = keyColumnName == null ? 0 : columnModel.getColumnIndexByName(keyColumnName);
+        if (keyColumnIdx == -1) {
+            throw new DoesNotApplyException(
+                    String.format("Key column '%s' does not exist", keyColumnName));
+        }
+        if (keyColumnIdx != columnModel.getKeyColumnIndex()) {
+            projectState = projectState.withColumnModel(columnModel.withKeyColumnIndex(keyColumnIdx));
+        }
         return projectState.mapRecords(
                 recordMapper(columnIdx, separator),
-                projectState.getColumnModel());
+                columnModel);
     }
 
     @Override

@@ -60,9 +60,10 @@ public class ColumnModel implements Serializable {
 
     @JsonCreator
     public ColumnModel(
-            @JsonProperty("columns") List<ColumnMetadata> columns) {
+            @JsonProperty("columns") List<ColumnMetadata> columns,
+            @JsonProperty("keyCellIndex") int keyColumnIndex) {
         this._columns = Collections.unmodifiableList(columns);
-        _keyColumnIndex = 0;
+        _keyColumnIndex = keyColumnIndex;
         _nameToPosition = new HashMap<>();
         _columnNames = new ArrayList<String>();
         int index = 0;
@@ -77,11 +78,40 @@ public class ColumnModel implements Serializable {
         }
     }
 
-    @JsonIgnore
+    public ColumnModel(List<ColumnMetadata> columns) {
+        this(columns, 0);
+    }
+
+    /**
+     * @return the index of the column used as key to group rows into records
+     */
+    @JsonIgnore // see getKeyCellIndex below
     public int getKeyColumnIndex() {
         return _keyColumnIndex;
     }
 
+    /**
+     * Returns a copy of this column model with a different key column.
+     * 
+     * @param keyColumnIndex
+     *            the index of the column to use as a key
+     * @return
+     */
+    public ColumnModel withKeyColumnIndex(int keyColumnIndex) {
+        return new ColumnModel(_columns, keyColumnIndex);
+    }
+
+    /**
+     * Replace a column metadata at the given index
+     * 
+     * @param index
+     *            the index of the column
+     * @param column
+     *            the new metadata
+     * @return
+     * @throws ModelException
+     *             if the new column name conflicts with another column
+     */
     public ColumnModel replaceColumn(int index, ColumnMetadata column) throws ModelException {
         String name = column.getName();
 
@@ -95,6 +125,17 @@ public class ColumnModel implements Serializable {
         return new ColumnModel(newColumns);
     }
 
+    /**
+     * Inserts a column at the given index
+     * 
+     * @param index
+     *            the index where to insert the column
+     * @param column
+     *            the column metadata
+     * @return
+     * @throws ModelException
+     *             if the name conflicts with another column
+     */
     public ColumnModel insertColumn(int index, ColumnMetadata column) throws ModelException {
         String name = column.getName();
 
@@ -108,6 +149,16 @@ public class ColumnModel implements Serializable {
         return new ColumnModel(newColumns);
     }
 
+    /**
+     * Inserts a column at the given index, possibly changing the name to ensure that it does not conflict with any
+     * other column
+     * 
+     * @param index
+     *            the place where to insert the column
+     * @param column
+     *            the column metadata
+     * @return
+     */
     public ColumnModel insertUnduplicatedColumn(int index, ColumnMetadata column) {
         String name = column.getName();
 
@@ -122,11 +173,29 @@ public class ColumnModel implements Serializable {
         return new ColumnModel(newColumns);
     }
 
+    /**
+     * Change the name of a column
+     * 
+     * @param index
+     *            the index of the column
+     * @param newName
+     *            the new name to give to the column
+     * @return
+     * @throws ModelException
+     *             if the new name conflicts with any other column
+     */
     public ColumnModel renameColumn(int index, String newName) throws ModelException {
         ColumnMetadata newColumn = _columns.get(index);
         return replaceColumn(index, newColumn.withName(newName));
     }
 
+    /**
+     * Removes a column at the given index
+     * 
+     * @param index
+     *            the index of the column to remove
+     * @return
+     */
     public ColumnModel removeColumn(int index) {
         List<ColumnMetadata> newColumns = new ArrayList<>();
         List<ColumnMetadata> columns = getColumns();

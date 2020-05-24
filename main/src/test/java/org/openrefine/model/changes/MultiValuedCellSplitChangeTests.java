@@ -44,13 +44,19 @@ public class MultiValuedCellSplitChangeTests extends RefineTest {
 
     @Test(expectedExceptions = DoesNotApplyException.class)
     public void testInvalidColumn() throws DoesNotApplyException {
-        Change SUT = new MultiValuedCellSplitChange("does_not_exist", Mode.Separator, ",", false, null);
+        Change SUT = new MultiValuedCellSplitChange("does_not_exist", "key", Mode.Separator, ",", false, null);
+        SUT.apply(initialState);
+    }
+
+    @Test(expectedExceptions = DoesNotApplyException.class)
+    public void testInvalidKeyColumn() throws DoesNotApplyException {
+        Change SUT = new MultiValuedCellSplitChange("foo", "does_not_exist", Mode.Separator, ",", false, null);
         SUT.apply(initialState);
     }
 
     @Test
     public void testSplit() throws DoesNotApplyException {
-        Change SUT = new MultiValuedCellSplitChange("foo", Mode.Separator, "|", false, null);
+        Change SUT = new MultiValuedCellSplitChange("foo", "key", Mode.Separator, "|", false, null);
         GridState applied = SUT.apply(initialState);
 
         GridState expectedState = createGrid(
@@ -73,6 +79,32 @@ public class MultiValuedCellSplitChangeTests extends RefineTest {
         Assert.assertEquals(rows, expectedState.collectRows());
     }
 
+    @Test
+    public void testSplitRespectsKeyColumn() throws DoesNotApplyException {
+        Change SUT = new MultiValuedCellSplitChange("foo", "bar", Mode.Separator, "|", false, null);
+        GridState applied = SUT.apply(initialState);
+
+        GridState expectedState = createGrid(
+                new String[] { "key", "foo", "bar" },
+                new Serializable[][] {
+                        { "record1", "a", "c" },
+                        { null, "", null },
+                        { null, "b", null },
+                        { null, "c", "e" },
+                        { null, "d", null },
+                        { null, 12, "f" },
+                        { "record2", "", "g" },
+                        { null, "h", "" },
+                        { null, "i", null },
+                        { null, null, "j" },
+                        { null, null, null }
+                });
+
+        Assert.assertEquals(applied.getColumnModel(), initialState.getColumnModel());
+        List<IndexedRow> rows = applied.collectRows();
+        Assert.assertEquals(rows, expectedState.collectRows());
+    }
+
     /**
      * Test to demonstrate the intended behaviour of the function, for issue #1268
      * https://github.com/OpenRefine/OpenRefine/issues/1268
@@ -82,6 +114,7 @@ public class MultiValuedCellSplitChangeTests extends RefineTest {
     public void testSplitMultiValuedCellsTextSeparator() throws Exception {
         Change change = new MultiValuedCellSplitChange(
                 "Value",
+                "Key",
                 Mode.Separator,
                 ":",
                 false,
@@ -100,6 +133,7 @@ public class MultiValuedCellSplitChangeTests extends RefineTest {
     public void testSplitMultiValuedCellsRegExSeparator() throws Exception {
         Change change = new MultiValuedCellSplitChange(
                 "Value",
+                "Key",
                 Mode.Separator,
                 "\\W",
                 true,
@@ -124,6 +158,7 @@ public class MultiValuedCellSplitChangeTests extends RefineTest {
 
         Change change = new MultiValuedCellSplitChange(
                 "Value",
+                "Key",
                 Mode.Lengths,
                 null,
                 false,

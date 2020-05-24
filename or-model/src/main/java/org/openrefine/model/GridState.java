@@ -27,6 +27,13 @@ public interface GridState {
     public ColumnModel getColumnModel();
 
     /**
+     * @param newColumnModel
+     *            the column model to apply to the grid
+     * @return a copy of this grid state with a modified column model.
+     */
+    public GridState withColumnModel(ColumnModel newColumnModel);
+
+    /**
      * Returns a row by index. Repeatedly calling this method to obtain multiple rows might be inefficient compared to
      * fetching them by batch, depending on the implementation.
      * 

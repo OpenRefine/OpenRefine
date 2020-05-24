@@ -154,7 +154,6 @@ public abstract class DatamodelRunnerTestBase {
     public void testAccessRecords() {
         GridState state = simpleGrid;
 
-        // records
         Assert.assertEquals(state.recordCount(), 2L);
 
         Assert.assertEquals(state.getRecord(0L), expectedRecords.get(0));
@@ -169,6 +168,23 @@ public abstract class DatamodelRunnerTestBase {
         Assert.assertEquals(state.getRecords(1L, 2), expectedRecords.subList(1, 2));
 
         Assert.assertEquals(state.getRecords(myRecordFilter, 0L, 3), Collections.singletonList(expectedRecords.get(1)));
+    }
+
+    @Test
+    public void testRecordsRespectKeyColumnIndex() {
+        GridState state = simpleGrid.withColumnModel(simpleGrid.getColumnModel().withKeyColumnIndex(1));
+
+        Assert.assertEquals(state.recordCount(), 4L);
+        List<Record> records = Arrays.asList(
+                new Record(0L, Arrays.asList(
+                        expectedRows.get(0))),
+                new Record(1L, Arrays.asList(
+                        expectedRows.get(1))),
+                new Record(2L, Arrays.asList(
+                        expectedRows.get(2))),
+                new Record(3L, Arrays.asList(
+                        expectedRows.get(3))));
+        Assert.assertEquals(state.collectRecords(), records);
     }
 
     @Test
@@ -277,7 +293,7 @@ public abstract class DatamodelRunnerTestBase {
     };
 
     @Test
-    public void testMapFilteredRows() {
+    public void testMapRows() {
         GridState mapped = simpleGrid.mapRows(
                 concatRowMapper, simpleGrid.getColumnModel());
 
@@ -289,7 +305,7 @@ public abstract class DatamodelRunnerTestBase {
     public static RecordMapper concatRecordMapper = RecordMapper.rowWiseRecordMapper(concatRowMapper);
 
     @Test
-    public void testMapFilteredRecords() {
+    public void testMapRecords() {
         GridState mapped = simpleGrid.mapRecords(
                 concatRecordMapper, simpleGrid.getColumnModel());
 

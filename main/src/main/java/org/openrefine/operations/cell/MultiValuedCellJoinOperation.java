@@ -79,7 +79,7 @@ public class MultiValuedCellJoinOperation extends ImmediateOperation {
 
     @Override
     public Change createChange() throws ParsingException {
-        return new MultiValuedCellJoinChange(_columnName, _separator);
+        return new MultiValuedCellJoinChange(_columnName, _keyColumnName, _separator);
     }
 
 }
