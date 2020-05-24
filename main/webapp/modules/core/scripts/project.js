@@ -117,8 +117,6 @@ function resizeAll() {
 }
 
 function initializeUI(uiState) {
-  var self = this;
-  
   $("#loading-message").hide();
   $("#notification-container").hide();
   $("#project-title").show();
