@@ -41,6 +41,7 @@ import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 
+import org.apache.commons.lang.Validate;
 import org.openrefine.expr.EvalError;
 import org.openrefine.expr.ExpressionUtils;
 import org.openrefine.expr.HasFields;
@@ -176,11 +177,17 @@ public class Cell implements HasFields, Serializable {
     
     @Override
     public boolean equals(Object other) {
+        if (other == null) {
+            return value == null;
+        }
     	if (!(other instanceof Cell) || other == null) {
     		return false;
     	}
     	Cell otherCell = (Cell)other;
-    	return (((value == null && otherCell.value == null) || value.equals(otherCell.value))
+    	if (value == null) {
+    	    return otherCell.value == null;
+    	}
+    	return (value.equals(otherCell.value)
     			&& ((recon == null && otherCell.recon == null) || recon.equals(otherCell.recon)));
     			
     }

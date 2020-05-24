@@ -25,6 +25,12 @@ public interface GridState {
      */
     @JsonProperty("columnModel")
     public ColumnModel getColumnModel();
+    
+    /**
+     * @param newColumnModel the column model to apply to the grid
+     * @return a copy of this grid state with a modified column model.
+     */
+    public GridState withColumnModel(ColumnModel newColumnModel);
  
     /**
      * Returns a row by index. Repeatedly calling this method to obtain multiple rows
@@ -81,7 +87,7 @@ public interface GridState {
      * memory.
      */
     public List<IndexedRow> collectRows();
-    
+
     /**
      * Returns a record obtained by its id. Repeatedly calling this method to obtain
      * multiple records might be inefficient depending on the implementation.

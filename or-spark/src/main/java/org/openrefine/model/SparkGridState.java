@@ -455,4 +455,9 @@ public class SparkGridState implements GridState {
         return new SparkGridState(columnModel, grid, newOverlayModels);
     }
 
+    @Override
+    public GridState withColumnModel(ColumnModel newColumnModel) {
+        return new SparkGridState(newColumnModel, grid, overlayModels);
+    }
+
 }
