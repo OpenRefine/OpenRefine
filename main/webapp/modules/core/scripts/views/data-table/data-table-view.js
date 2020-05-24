@@ -499,12 +499,25 @@ DataTableView.prototype._showRows = function(start, onDone) {
 
 DataTableView.prototype._onClickGotoPage = function(elmt, evt) {
   var lastPage = Math.floor((theProject.rowModel.filtered - 1) / this._pageSize);
-  var promptMessage = "You are currently at page "+ (this._currentPage) +".\n"+
-    "There is "+ (lastPage + 1) +" pages to this project.\n At what page do you want to go?";
+  var promptMessage = "You are currently at page "+ (this._currentPage) +".\n"
+  
+  if(lastPage > 1) {
+    promptMessage += "There are "+ (lastPage + 1) +" pages ";
+  } else {
+    promptMessage += "There is 1 page ";
+  }
+  promptMessage += "to this project.\n At what page would you like to go?";
+  
   var promptResponse = prompt(promptMessage, this._currentPage);
   if(promptResponse == null) return;
+
+  var pageToGoto = parseInt(promptResponse);
+  if(typeof pageToGoto != "number") { alert(promptResponse +" is not a number."); return; }
   
-  this._currentPage = parseInt(promptResponse);
+  if(pageToGoto < 1) { alert("Your page number must be greater than 0."); return; };
+  if(pageToGoto > lastPage) { alert("Your page number can't be greater than the last page."); return; };
+  
+  this._currentPage = pageToGoto;
   this._showRows((this._currentPage - 1) * this._pageSize);
 };
 
