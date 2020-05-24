@@ -51,16 +51,5 @@ SummaryBar.prototype.updateResultCount = function() {
     summaryText = (theProject.rowModel.filtered) + ' matching ' + units + ' <span id="summary-total">(' + (theProject.rowModel.total) + ' total)</span>';
   }
   
-  if($('a#hide-left-panel-button').length == 0) {
-    $('<a id="hide-left-panel-button">')
-      .click(function() { self._hideShowLeftPanel(); })
-      .prependTo(this._div.parent("div#tool-panel"));
-  }
-  
   $('<span>').html(summaryText).appendTo(this._div.empty());
-};
-
-SummaryBar.prototype._hideShowLeftPanel = function() {
-  $('div#body').toggleClass("hide-left-panel");  
-  resize();
 };
