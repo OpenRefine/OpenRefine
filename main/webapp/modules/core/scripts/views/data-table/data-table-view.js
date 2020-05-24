@@ -41,6 +41,7 @@ function DataTableView(div) {
   this._columnHeaderUIs = [];
   this._shownulls = false;
 
+  this._currentPage = 1;
   this._showRows(0);
 }
 
@@ -163,6 +164,9 @@ DataTableView.prototype._renderPagingControls = function(pageSizeControls, pagin
   var from = (theProject.rowModel.start + 1);
   var to = Math.min(theProject.rowModel.filtered, theProject.rowModel.start + theProject.rowModel.limit);
 
+  var gotoPage = $('<a href="javascript:{}">'+$.i18n('core-views/goto')+'</a>').appendTo(pagingControls);
+  gotoPage.addClass("action").click(function(evt) { self._onClickGotoPage(this, evt); });
+  
   var firstPage = $('<a href="javascript:{}">&laquo; '+$.i18n('core-views/first')+'</a>').appendTo(pagingControls);
   var previousPage = $('<a href="javascript:{}">&lsaquo; '+$.i18n('core-views/previous')+'</a>').appendTo(pagingControls);
   if (theProject.rowModel.start > 0) {
@@ -493,20 +497,36 @@ DataTableView.prototype._showRows = function(start, onDone) {
   }, this._sorting);
 };
 
+DataTableView.prototype._onClickGotoPage = function(elmt, evt) {
+  var lastPage = Math.floor((theProject.rowModel.filtered - 1) / this._pageSize);
+  var promptMessage = "You are currently at page "+ (this._currentPage) +".\n"+
+    "There is "+ (lastPage + 1) +" pages to this project.\n At what page do you want to go?";
+  var promptResponse = prompt(promptMessage, this._currentPage);
+  if(promptResponse == null) return;
+  
+  this._currentPage = parseInt(promptResponse);
+  this._showRows((this._currentPage - 1) * this._pageSize);
+};
+
 DataTableView.prototype._onClickPreviousPage = function(elmt, evt) {
+  this._currentPage--;
   this._showRows(theProject.rowModel.start - this._pageSize);
 };
 
 DataTableView.prototype._onClickNextPage = function(elmt, evt) {
+  this._currentPage++;
   this._showRows(theProject.rowModel.start + this._pageSize);
 };
 
 DataTableView.prototype._onClickFirstPage = function(elmt, evt) {
+  this._currentPage = 1;
   this._showRows(0);
 };
 
 DataTableView.prototype._onClickLastPage = function(elmt, evt) {
-  this._showRows(Math.floor((theProject.rowModel.filtered - 1) / this._pageSize) * this._pageSize);
+  var lastPage = Math.floor((theProject.rowModel.filtered - 1) / this._pageSize);
+  this._currentPage = lastPage + 1;
+  this._showRows(lastPage * this._pageSize);
 };
 
 DataTableView.prototype._getSortingCriteriaCount = function() {
