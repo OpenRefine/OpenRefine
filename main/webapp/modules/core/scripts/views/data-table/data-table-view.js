@@ -506,12 +506,11 @@ DataTableView.prototype._showRows = function(start, onDone) {
 };
 
 DataTableView.prototype._onChangeGotoPage = function(elmt, evt) {
-  var gotoPageNumber = $('input#viewpanel-paging-current').val(); //[0].value;
+  var gotoPageNumber = parseInt($('input#viewpanel-paging-current').val());
   
-  if(gotoPageNumber < 1 || gotoPageNumber > this._lastPageNumber) {
-    $('input#viewpanel-paging-current').val(this._currentPageNumber)
-    return;
-  }
+  if(typeof gotoPageNumber != "number") { $('input#viewpanel-paging-current').val(this._currentPageNumber); return; }
+  if(gotoPageNumber > this._lastPageNumber) gotoPageNumber = this._lastPageNumber;
+  if(gotoPageNumber < 1) gotoPageNumber = 1;
   
   this._currentPageNumber = gotoPageNumber;
   this._showRows((gotoPageNumber - 1) * this._pageSize);
