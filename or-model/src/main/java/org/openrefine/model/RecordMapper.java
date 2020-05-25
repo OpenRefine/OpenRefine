@@ -30,6 +30,20 @@ public interface RecordMapper extends Serializable {
     }
 
     /**
+     * Returns unchanged records.
+     */
+    public static final RecordMapper IDENTITY = new RecordMapper() {
+
+        private static final long serialVersionUID = -2563071845892818099L;
+
+        @Override
+        public List<Row> call(Record record) {
+            return record.getRows();
+        }
+
+    };
+
+    /**
      * Applies a row mapper on all rows in the record.
      */
     public static RecordMapper rowWiseRecordMapper(RowMapper mapper) {

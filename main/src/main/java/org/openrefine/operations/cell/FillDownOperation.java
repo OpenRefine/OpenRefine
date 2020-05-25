@@ -33,91 +33,35 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package org.openrefine.operations.cell;
 
-import java.util.List;
-
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import org.openrefine.browsing.Engine;
-import org.openrefine.browsing.Engine.Mode;
 import org.openrefine.browsing.EngineConfig;
-import org.openrefine.browsing.RowVisitor;
-import org.openrefine.expr.ExpressionUtils;
-import org.openrefine.model.Cell;
-import org.openrefine.model.ColumnMetadata;
-import org.openrefine.model.Project;
-import org.openrefine.model.Row;
-import org.openrefine.model.changes.CellChange;
-import org.openrefine.operations.EngineDependentMassCellOperation;
+import org.openrefine.history.Change;
+import org.openrefine.model.changes.FillDownChange;
+import org.openrefine.operations.EngineDependentOperation;
 
-public class FillDownOperation extends EngineDependentMassCellOperation {
+/**
+ * Transforms a table with a record structure to by spreading non-null values in the rows below, in a specific column.
+ */
+public class FillDownOperation extends EngineDependentOperation {
+
+    protected String _columnName;
 
     @JsonCreator
     public FillDownOperation(
             @JsonProperty("engineConfig") EngineConfig engineConfig,
             @JsonProperty("columnName") String columnName) {
-        super(engineConfig, columnName, true);
+        super(engineConfig);
+        _columnName = columnName;
     }
 
     @Override
-    protected String getDescription() {
+    public String getDescription() {
         return "Fill down cells in column " + _columnName;
     }
 
-    @Override
-    protected String createDescription(ColumnMetadata column,
-            List<CellChange> cellChanges) {
-
-        return "Fill down " + cellChanges.size() +
-                " cells in column " + column.getName();
-    }
-
-    @Override
-    protected RowVisitor createRowVisitor(Project project, List<CellChange> cellChanges, long historyEntryID) throws Exception {
-        ColumnMetadata column = project.columnModel.getColumnByName(_columnName);
-        Engine engine = createEngine(project);
-        Mode engineMode = engine.getMode();
-
-        return new RowVisitor() {
-
-            int cellIndex;
-            int keyCellIndex;
-            List<CellChange> cellChanges;
-            Cell previousCell;
-            Mode engineMode;
-
-            public RowVisitor init(int cellIndex, List<CellChange> cellChanges, Mode engineMode) {
-                this.cellIndex = cellIndex;
-                this.cellChanges = cellChanges;
-                this.engineMode = engineMode;
-                return this;
-            }
-
-            @Override
-            public void start(Project project) {
-                keyCellIndex = project.columnModel.getColumns().get(
-                        project.columnModel.getKeyColumnIndex()).getCellIndex();
-            }
-
-            @Override
-            public void end(Project project) {
-                // nothing to do
-            }
-
-            @Override
-            public boolean visit(Project project, int rowIndex, Row row) {
-                Object value = row.getCellValue(cellIndex);
-                if (engineMode.equals(Mode.RecordBased) && ExpressionUtils.isNonBlankData(row.getCellValue(keyCellIndex))) {
-                    previousCell = null;
-                }
-                if (ExpressionUtils.isNonBlankData(value)) {
-                    previousCell = row.getCell(cellIndex);
-                } else if (previousCell != null) {
-                    CellChange cellChange = new CellChange(rowIndex, cellIndex, row.getCell(cellIndex), previousCell);
-                    cellChanges.add(cellChange);
-                }
-                return false;
-            }
-        }.init(column.getCellIndex(), cellChanges, engineMode);
+    public Change createChange() {
+        return new FillDownChange(getEngineConfig(), _columnName);
     }
 }

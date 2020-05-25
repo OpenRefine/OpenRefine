@@ -33,93 +33,37 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package org.openrefine.operations.cell;
 
-import java.util.List;
-
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import org.openrefine.browsing.Engine.Mode;
 import org.openrefine.browsing.EngineConfig;
-import org.openrefine.browsing.RowVisitor;
-import org.openrefine.expr.ExpressionUtils;
-import org.openrefine.model.Cell;
-import org.openrefine.model.ColumnMetadata;
-import org.openrefine.model.Project;
-import org.openrefine.model.Row;
-import org.openrefine.model.changes.CellChange;
-import org.openrefine.operations.EngineDependentMassCellOperation;
+import org.openrefine.history.Change;
+import org.openrefine.model.changes.BlankDownChange;
+import org.openrefine.operations.EngineDependentOperation;
 
-public class BlankDownOperation extends EngineDependentMassCellOperation {
+/**
+ * Transforms a table without a record structure to blanking out values which are identical to those on the previous
+ * row, creating a record structure.
+ */
+public class BlankDownOperation extends EngineDependentOperation {
+
+    protected String _columnName;
 
     @JsonCreator
     public BlankDownOperation(
             @JsonProperty("engineConfig") EngineConfig engineConfig,
             @JsonProperty("columnName") String columnName) {
-        super(engineConfig, columnName, true);
+        super(engineConfig);
+        _columnName = columnName;
     }
 
     @Override
-    protected String getDescription() {
+    public String getDescription() {
         return "Blank down cells in column " + _columnName;
     }
 
     @Override
-    protected String createDescription(ColumnMetadata column,
-            List<CellChange> cellChanges) {
-
-        return "Blank down " + cellChanges.size() +
-                " cells in column " + column.getName();
-    }
-
-    @Override
-    protected RowVisitor createRowVisitor(Project project, List<CellChange> cellChanges, long historyEntryID) throws Exception {
-        ColumnMetadata column = project.columnModel.getColumnByName(_columnName);
-        Mode engineMode = createEngine(project).getMode();
-
-        return new RowVisitor() {
-
-            int cellIndex;
-            int keyCellIndex;
-            List<CellChange> cellChanges;
-            Cell previousCell;
-            Mode engineMode;
-
-            public RowVisitor init(int cellIndex, List<CellChange> cellChanges, Mode engineMode) {
-                this.cellIndex = cellIndex;
-                this.cellChanges = cellChanges;
-                this.engineMode = engineMode;
-                return this;
-            }
-
-            @Override
-            public void start(Project project) {
-                keyCellIndex = project.columnModel.getColumns().get(
-                        project.columnModel.getKeyColumnIndex()).getCellIndex();
-            }
-
-            @Override
-            public void end(Project project) {
-                // nothing to do
-            }
-
-            @Override
-            public boolean visit(Project project, int rowIndex, Row row) {
-                if (engineMode.equals(Mode.RecordBased) && ExpressionUtils.isNonBlankData(row.getCellValue(keyCellIndex))) {
-                    previousCell = null;
-                }
-                Object value = row.getCellValue(cellIndex);
-                if (ExpressionUtils.isNonBlankData(value)) {
-                    Cell cell = row.getCell(cellIndex);
-                    if (previousCell != null && cell.value.equals(previousCell.value)) {
-                        CellChange cellChange = new CellChange(rowIndex, cellIndex, cell, null);
-                        cellChanges.add(cellChange);
-                    }
-                    previousCell = cell;
-                } else {
-                    previousCell = null;
-                }
-                return false;
-            }
-        }.init(column.getCellIndex(), cellChanges, engineMode);
+    public Change createChange() {
+        return new BlankDownChange(getEngineConfig(), _columnName);
     }
 }

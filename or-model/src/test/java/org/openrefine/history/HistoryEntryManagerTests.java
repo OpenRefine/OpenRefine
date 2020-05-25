@@ -62,7 +62,7 @@ public class HistoryEntryManagerTests {
         when(runner.loadGridState(Mockito.any())).thenReturn(gridState);
         GridState secondState = mock(GridState.class);
         when(secondState.getColumnModel()).thenReturn(new ColumnModel(columnModel.getColumns().subList(1, 3)));
-        when(gridState.mapRows(Mockito.any(), Mockito.any())).thenReturn(secondState);
+        when(gridState.mapRows((RowMapper) Mockito.any(), Mockito.any())).thenReturn(secondState);
         Change change = new MyChange();
         HistoryEntry entry = new HistoryEntry(1234L, "some description",
                 new UnknownOperation("my-op", "some desc"), change);

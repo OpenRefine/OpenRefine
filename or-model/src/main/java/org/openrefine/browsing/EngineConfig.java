@@ -53,6 +53,7 @@ public class EngineConfig {
     protected final Mode _mode;
 
     public static final EngineConfig ALL_ROWS = new EngineConfig(Collections.emptyList(), Mode.RowBased);
+    public static final EngineConfig ALL_RECORDS = new EngineConfig(Collections.emptyList(), Mode.RecordBased);
 
     /**
      * Creates a new EngineConfig from a list of facet configurations and an engine mode.

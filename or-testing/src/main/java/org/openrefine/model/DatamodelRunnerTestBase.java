@@ -302,6 +302,43 @@ public abstract class DatamodelRunnerTestBase {
         Assert.assertEquals(rows.get(1).getRow().getCellValue(1), "1_concat");
     }
 
+    public static RowScanMapper<String> statefulRowMapper = new RowScanMapper<String>() {
+
+        private static final long serialVersionUID = -2411339705543951236L;
+
+        @Override
+        public String feed(long rowId, Row row) {
+            return row.getCellValue(1).toString();
+        }
+
+        @Override
+        public String combine(String left, String right) {
+            return left + right;
+        }
+
+        @Override
+        public String unit() {
+            return "";
+        }
+
+        @Override
+        public Row map(String state, long rowId, Row row) {
+            return row.withCell(1, new Cell(state + row.getCellValue(1).toString(), null));
+        }
+
+    };
+
+    @Test
+    public void testStatefullyMapRows() {
+        GridState mapped = simpleGrid.mapRows(
+                statefulRowMapper, simpleGrid.getColumnModel());
+
+        List<IndexedRow> rows = mapped.collectRows();
+        Assert.assertEquals(rows.get(0).getRow().getCellValue(1), "b");
+        Assert.assertEquals(rows.get(1).getRow().getCellValue(1), "b1");
+        Assert.assertEquals(rows.get(2).getRow().getCellValue(1), "b1true");
+    }
+
     public static RecordMapper concatRecordMapper = RecordMapper.rowWiseRecordMapper(concatRowMapper);
 
     @Test

@@ -12,7 +12,9 @@ import org.apache.spark.rdd.OrderedRDDFunctions;
 import scala.Tuple2;
 import scala.math.Ordering;
 import scala.reflect.ClassManifestFactory;
+import scala.reflect.ClassTag;
 
+import org.openrefine.model.Row;
 import org.openrefine.model.rdd.SortedRDD;
 import org.openrefine.model.rdd.ZippedWithIndexRDD;
 
@@ -23,6 +25,12 @@ import org.openrefine.model.rdd.ZippedWithIndexRDD;
  *
  */
 public class RDDUtils {
+
+    @SuppressWarnings("unchecked")
+    public static final ClassTag<Tuple2<Long, Row>> ROW_TUPLE2_TAG = ClassManifestFactory
+            .fromClass((Class<Tuple2<Long, Row>>) (Class<?>) Tuple2.class);
+    public static final ClassTag<Long> LONG_TAG = ClassManifestFactory.fromClass(Long.class);
+    public static final ClassTag<Row> ROW_TAG = ClassManifestFactory.fromClass(Row.class);
 
     /**
      * Returns the first few records after a given index from an indexed RDD. If the RDD has a RangePartitioner (any

@@ -3,6 +3,7 @@ package org.openrefine.model;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -21,14 +22,17 @@ import org.apache.spark.api.java.JavaSparkContext;
 import org.apache.spark.api.java.function.FlatMapFunction;
 import org.apache.spark.api.java.function.Function;
 import org.apache.spark.api.java.function.Function2;
+import org.apache.spark.rdd.RDD;
 import org.apache.spark.storage.StorageLevel;
 import scala.Tuple2;
+import scala.reflect.ClassManifestFactory;
 
 import org.openrefine.browsing.facets.Combiner;
 import org.openrefine.browsing.facets.RecordAggregator;
 import org.openrefine.browsing.facets.RowAggregator;
 import org.openrefine.model.rdd.PartitionedRDD;
 import org.openrefine.model.rdd.RecordRDD;
+import org.openrefine.model.rdd.ScanMapRDD;
 import org.openrefine.model.rdd.SortedRDD;
 import org.openrefine.overlay.OverlayModel;
 import org.openrefine.util.ParsingUtilities;
@@ -47,7 +51,7 @@ public class SparkGridState implements GridState {
     protected final ColumnModel columnModel;
     protected final JavaPairRDD<Long, Row> grid;
     // not final because it is initialized on demand, as creating
-    // it involves running a (smal) Spark job
+    // it involves running a (small) Spark job
     protected JavaPairRDD<Long, Record> records = null;
 
     private transient long cachedRowCount;
@@ -402,6 +406,64 @@ public class SparkGridState implements GridState {
             public Row call(Long id, Row row) throws Exception {
                 return mapper.call(id, row);
             }
+        };
+    }
+
+    @Override
+    public <S extends Serializable> GridState mapRows(RowScanMapper<S> mapper, ColumnModel newColumnModel) {
+        RDD<Tuple2<Long, Row>> rows = new ScanMapRDD<Serializable, Tuple2<Long, Row>, Tuple2<Long, Row>>(
+                grid.rdd(),
+                rowScanMapperToFeed(mapper),
+                rowScanMapperToCombine(mapper),
+                rowScanMapperToMap(mapper),
+                mapper.unit(),
+                RDDUtils.ROW_TUPLE2_TAG,
+                RDDUtils.ROW_TUPLE2_TAG,
+                ClassManifestFactory.fromClass(Serializable.class));
+
+        return new SparkGridState(newColumnModel, new JavaPairRDD<Long, Row>(rows, RDDUtils.LONG_TAG, RDDUtils.ROW_TAG), overlayModels);
+    }
+
+    private static <S extends Serializable> Function<Tuple2<Long, Row>, Serializable> rowScanMapperToFeed(RowScanMapper<S> mapper) {
+        return new Function<Tuple2<Long, Row>, Serializable>() {
+
+            private static final long serialVersionUID = -5264889389519072017L;
+
+            @Override
+            public Serializable call(Tuple2<Long, Row> tuple) throws Exception {
+                return mapper.feed(tuple._1, tuple._2);
+            }
+
+        };
+    }
+
+    private static <S extends Serializable> Function2<Serializable, Serializable, Serializable> rowScanMapperToCombine(
+            RowScanMapper<S> mapper) {
+        return new Function2<Serializable, Serializable, Serializable>() {
+
+            private static final long serialVersionUID = 2713407215238946726L;
+
+            @SuppressWarnings("unchecked")
+            @Override
+            public Serializable call(Serializable v1, Serializable v2) throws Exception {
+                return mapper.combine((S) v1, (S) v2);
+            }
+
+        };
+    }
+
+    private static <S extends Serializable> Function2<Serializable, Tuple2<Long, Row>, Tuple2<Long, Row>> rowScanMapperToMap(
+            RowScanMapper<S> mapper) {
+        return new Function2<Serializable, Tuple2<Long, Row>, Tuple2<Long, Row>>() {
+
+            private static final long serialVersionUID = -321428794497355320L;
+
+            @SuppressWarnings("unchecked")
+            @Override
+            public Tuple2<Long, Row> call(Serializable v1, Tuple2<Long, Row> v2) throws Exception {
+                return new Tuple2<Long, Row>(v2._1, mapper.map((S) v1, v2._1, v2._2));
+            }
+
         };
     }
 

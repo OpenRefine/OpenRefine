@@ -203,6 +203,13 @@ public class RefineTest extends PowerMockTestCase {
         return rows;
     }
 
+    // We do not use the equals method of GridState here because GridState does not check for equality
+    // with its grid contents (because this would require fetching all rows in memory)
+    protected void assertGridEquals(GridState actual, GridState expected) {
+        Assert.assertEquals(actual.getColumnModel(), expected.getColumnModel());
+        Assert.assertEquals(actual.collectRows(), expected.collectRows());
+    }
+
     /**
      * Initializes the importing options for the CSV importer.
      * 
