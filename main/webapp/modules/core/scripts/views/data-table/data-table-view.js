@@ -178,7 +178,7 @@ DataTableView.prototype._renderPagingControls = function(pageSizeControls, pagin
   }
 
   lastPageSpan = $('<span>').attr("id", "viewpanel-paging-last").text(self._lastPageNumber);
-  pageControlSpan = $('<span>').attr("id", "viewpanel-paging-current-input");
+  pageControlSpan = $('<span>').attr("id", "viewpanel-paging-current");
   
   currentPageInput = $('<input type="number">')
     .change(function(evt) { self._onChangeGotoPage(this, evt); })
