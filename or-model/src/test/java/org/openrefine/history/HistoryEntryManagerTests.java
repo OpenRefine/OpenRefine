@@ -15,7 +15,6 @@ import org.openrefine.model.ColumnMetadata;
 import org.openrefine.model.ColumnModel;
 import org.openrefine.model.DatamodelRunner;
 import org.openrefine.model.GridState;
-import org.openrefine.model.RowFilter;
 import org.openrefine.model.RowMapper;
 import org.openrefine.operations.Operation.NotImmediateOperationException;
 import org.openrefine.operations.UnknownOperation;
@@ -65,7 +64,7 @@ public class HistoryEntryManagerTests {
     	when(runner.loadGridState(Mockito.any())).thenReturn(gridState);
     	GridState secondState = mock(GridState.class);
     	when(secondState.getColumnModel()).thenReturn(new ColumnModel(columnModel.getColumns().subList(1, 3)));
-    	when(gridState.mapRows(Mockito.any(), Mockito.any())).thenReturn(secondState);
+    	when(gridState.mapRows((RowMapper)Mockito.any(), Mockito.any())).thenReturn(secondState);
     	Change change = new MyChange();
     	HistoryEntry entry = new HistoryEntry(1234L, "some description",
     			new UnknownOperation("my-op", "some desc"), change);

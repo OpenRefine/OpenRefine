@@ -3,6 +3,7 @@ package org.openrefine.model;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -13,6 +14,7 @@ import java.util.zip.GZIPOutputStream;
 
 import org.openrefine.browsing.facets.RecordAggregator;
 import org.openrefine.browsing.facets.RowAggregator;
+import org.openrefine.model.RowScanMapper.RowAndState;
 import org.openrefine.overlay.OverlayModel;
 import org.openrefine.util.ParsingUtilities;
 import org.testng.Assert;
@@ -244,6 +246,26 @@ public class TestingGridState implements GridState {
     }
 
     @Override
+    public <S extends Serializable> GridState mapRows(RowScanMapper<S> mapper, ColumnModel newColumnModel) {
+        // Check that the mapper is serializable as it is required by the interface,
+        // even if this implementation does not rely on it.
+        TestingDatamodelRunner.ensureSerializable(mapper);
+        S currentState = mapper.unit();
+        List<Row> rows = new ArrayList<>(this.rows.size());
+        for(IndexedRow indexedRow : indexedRows()) {
+            Row row = mapper.map(currentState, indexedRow.getIndex(), indexedRow.getRow());
+            currentState = mapper.combine(currentState, mapper.feed(indexedRow.getIndex(), indexedRow.getRow()));
+            if (row.getCells().size() != newColumnModel.getColumns().size()) {
+                Assert.fail(String.format("Row size (%d) inconsistent with supplied column model (%s)",
+                        row.getCells().size(), newColumnModel.getColumns()));
+            }
+            rows.add(row);
+        }
+        return new TestingGridState(newColumnModel, rows, overlayModels);
+    }
+
+
+    @Override
     public GridState mapRecords(RecordMapper mapper, ColumnModel newColumnModel) {
         // Check that the mapper is serializable as it is required by the interface,
         // even if this implementation does not rely on it.
@@ -300,6 +322,5 @@ public class TestingGridState implements GridState {
     public GridState withColumnModel(ColumnModel newColumnModel) {
         return new TestingGridState(newColumnModel, rows, overlayModels);
     }
-
 
 }
