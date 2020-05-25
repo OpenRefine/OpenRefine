@@ -165,6 +165,7 @@ DataTableView.prototype._renderPagingControls = function(pageSizeControls, pagin
   var to = Math.min(theProject.rowModel.filtered, theProject.rowModel.start + theProject.rowModel.limit);
 
   self._lastPageNumber = Math.floor((theProject.rowModel.filtered - 1) / this._pageSize) + 1;
+  var pageInputSize = 20 + (8 * ui.dataTableView._lastPageNumber.toString().length);
 
   var firstPage = $('<a href="javascript:{}">&laquo; '+$.i18n('core-views/first')+'</a>').appendTo(pagingControls);
   var previousPage = $('<a href="javascript:{}">&lsaquo; '+$.i18n('core-views/previous')+'</a>').appendTo(pagingControls);
@@ -177,15 +178,20 @@ DataTableView.prototype._renderPagingControls = function(pageSizeControls, pagin
   }
 
   lastPageSpan = $('<span>').attr("id", "viewpanel-paging-last").text(self._lastPageNumber);
+  pageControlSpan = $('<span>').attr("id", "viewpanel-paging-current-input");
+  
   currentPageInput = $('<input type="number">')
     .change(function(evt) { self._onChangeGotoPage(this, evt); })
-    .attr("id", "viewpanel-paging-current")
+    .attr("id", "viewpanel-paging-current-input")
     .val(self._currentPageNumber)
     .css("max", self._lastPageNumber)
-    .appendTo(pagingControls);
+    .css("width", pageInputSize +"px")
+    .appendTo(pageControlSpan);
 
-  pagingControls.append(' of ');
-  lastPageSpan.appendTo(pagingControls);
+  pageControlSpan.append(' of ');
+  lastPageSpan.appendTo(pageControlSpan);
+  pageControlSpan.append(' pages');
+  pagingControls.append(pageControlSpan);
 
   var nextPage = $('<a href="javascript:{}">'+$.i18n('core-views/next')+' &rsaquo;</a>').appendTo(pagingControls);
   var lastPage = $('<a href="javascript:{}">'+$.i18n('core-views/last')+' &raquo;</a>').appendTo(pagingControls);
@@ -506,9 +512,9 @@ DataTableView.prototype._showRows = function(start, onDone) {
 };
 
 DataTableView.prototype._onChangeGotoPage = function(elmt, evt) {
-  var gotoPageNumber = parseInt($('input#viewpanel-paging-current').val());
+  var gotoPageNumber = parseInt($('input#viewpanel-paging-current-input').val());
   
-  if(typeof gotoPageNumber != "number") { $('input#viewpanel-paging-current').val(this._currentPageNumber); return; }
+  if(typeof gotoPageNumber != "number") { $('input#viewpanel-paging-current-input').val(this._currentPageNumber); return; }
   if(gotoPageNumber > this._lastPageNumber) gotoPageNumber = this._lastPageNumber;
   if(gotoPageNumber < 1) gotoPageNumber = 1;
   
