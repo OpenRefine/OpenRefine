@@ -162,11 +162,10 @@ DataTableView.prototype._renderSortingControls = function(sortingControls) {
 DataTableView.prototype._renderPagingControls = function(pageSizeControls, pagingControls) {
   var self = this;
 
+  self._lastPageNumber = Math.floor((theProject.rowModel.filtered - 1) / this._pageSize) + 1;
+
   var from = (theProject.rowModel.start + 1);
   var to = Math.min(theProject.rowModel.filtered, theProject.rowModel.start + theProject.rowModel.limit);
-
-  self._lastPageNumber = Math.floor((theProject.rowModel.filtered - 1) / this._pageSize) + 1;
-  var pageInputSize = 20 + (8 * ui.dataTableView._lastPageNumber.toString().length);
 
   var firstPage = $('<a href="javascript:{}">&laquo; '+$.i18n('core-views/first')+'</a>').appendTo(pagingControls);
   var previousPage = $('<a href="javascript:{}">&lsaquo; '+$.i18n('core-views/previous')+'</a>').appendTo(pagingControls);
@@ -178,10 +177,10 @@ DataTableView.prototype._renderPagingControls = function(pageSizeControls, pagin
     previousPage.addClass("inaction");
   }
 
-  lastPageSpan = $('<span>').attr("id", "viewpanel-paging-last").text(self._lastPageNumber);
-  pageControlSpan = $('<span>').attr("id", "viewpanel-paging-current");
+  var pageControlsSpan = $('<span>').attr("id", "viewpanel-paging-current");
   
-  currentPageInput = $('<input type="number">')
+  var pageInputSize = 20 + (8 * ui.dataTableView._lastPageNumber.toString().length);
+  var currentPageInput = $('<input type="number">')
     .change(function(evt) { self._onChangeGotoPage(this, evt); })
     .keydown(function(evt) { self._onKeyDownGotoPage(this, evt); })
     .attr("id", "viewpanel-paging-current-input")
@@ -190,13 +189,15 @@ DataTableView.prototype._renderPagingControls = function(pageSizeControls, pagin
     .attr("required", "required")
     .val(self._currentPageNumber)
     .css("width", pageInputSize +"px")
-    .appendTo(pageControlSpan);
+    .appendTo(pageControlsSpan);
 
-  pageControlSpan.append(' of ');
-  lastPageSpan.appendTo(pageControlSpan);
-  pageControlSpan.append(' pages');
+  pageControlsSpan.append(' of ');
+  $('<span>').attr("id", "viewpanel-paging-last")
+    .text(self._lastPageNumber)
+    .appendTo(pageControlsSpan);
+  pageControlsSpan.append(' pages');
   
-  pagingControls.append(pageControlSpan);
+  pagingControls.append(pageControlsSpan);
 
   var nextPage = $('<a href="javascript:{}">'+$.i18n('core-views/next')+' &rsaquo;</a>').appendTo(pagingControls);
   var lastPage = $('<a href="javascript:{}">'+$.i18n('core-views/last')+' &raquo;</a>').appendTo(pagingControls);
