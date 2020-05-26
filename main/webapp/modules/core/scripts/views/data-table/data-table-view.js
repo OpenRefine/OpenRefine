@@ -182,10 +182,11 @@ DataTableView.prototype._renderPagingControls = function(pageSizeControls, pagin
   
   currentPageInput = $('<input type="number">')
     .change(function(evt) { self._onChangeGotoPage(this, evt); })
+    .keydown(function(evt) { self._onKeyDownGotoPage(this, evt); })
     .attr("id", "viewpanel-paging-current-input")
     .attr("min", 1)
     .attr("max", self._lastPageNumber)
-    .attr("id", "viewpanel-paging-current-input")
+    .attr("required", "required")
     .val(self._currentPageNumber)
     .css("width", pageInputSize +"px")
     .appendTo(pageControlSpan);
@@ -193,6 +194,7 @@ DataTableView.prototype._renderPagingControls = function(pageSizeControls, pagin
   pageControlSpan.append(' of ');
   lastPageSpan.appendTo(pageControlSpan);
   pageControlSpan.append(' pages');
+  
   pagingControls.append(pageControlSpan);
 
   var nextPage = $('<a href="javascript:{}">'+$.i18n('core-views/next')+' &rsaquo;</a>').appendTo(pagingControls);
@@ -522,6 +524,17 @@ DataTableView.prototype._onChangeGotoPage = function(elmt, evt) {
   
   this._currentPageNumber = gotoPageNumber;
   this._showRows((gotoPageNumber - 1) * this._pageSize);
+};
+
+DataTableView.prototype._onKeyDownGotoPage = function(elmt, evt) {
+  var keyDownCode = event.which;
+  
+  if([38, 40].indexOf(keyDownCode) == -1) return;
+
+  if(keyDownCode == 38) this._onClickPreviousPage(elmt, evt);
+  if(keyDownCode == 40) this._onClickNextPage(elmt, evt);
+  
+  window.setTimeout(function() { $('input#viewpanel-paging-current-input')[0].focus(); }, 200);
 };
 
 DataTableView.prototype._onClickPreviousPage = function(elmt, evt) {
