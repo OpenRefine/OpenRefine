@@ -549,7 +549,18 @@ DataTableView.prototype._onKeyDownGotoPage = function(elmt, evt) {
     this._onClickNextPage(elmt, evt);
   }
   
-  window.setTimeout(function() { $('input#viewpanel-paging-current-input')[0].focus(); }, 150);
+  var rehookDelay = 50;
+  var rehookCurrentPageInput = function() { 
+    var currentPageInput = $('input#viewpanel-paging-current-input')[0];
+
+    if(currentPageInput == null) {
+      window.setTimeout(rehookCurrentPageInput, rehookDelay);
+    } else {
+      currentPageInput.focus();
+    }
+  };
+
+  window.setTimeout(rehookCurrentPageInput, rehookDelay);
 };
 
 DataTableView.prototype._onClickPreviousPage = function(elmt, evt) {
