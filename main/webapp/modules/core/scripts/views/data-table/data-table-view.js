@@ -183,8 +183,10 @@ DataTableView.prototype._renderPagingControls = function(pageSizeControls, pagin
   currentPageInput = $('<input type="number">')
     .change(function(evt) { self._onChangeGotoPage(this, evt); })
     .attr("id", "viewpanel-paging-current-input")
+    .attr("min", 1)
+    .attr("max", self._lastPageNumber)
+    .attr("id", "viewpanel-paging-current-input")
     .val(self._currentPageNumber)
-    .css("max", self._lastPageNumber)
     .css("width", pageInputSize +"px")
     .appendTo(pageControlSpan);
 
