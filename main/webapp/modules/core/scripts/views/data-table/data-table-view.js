@@ -82,6 +82,7 @@ DataTableView.prototype.resize = function() {
 };
 
 DataTableView.prototype.update = function(onDone) {
+  this._currentPageNumber = 1;
   this._showRows(0, onDone);
 };
 
@@ -518,7 +519,11 @@ DataTableView.prototype._showRows = function(start, onDone) {
 DataTableView.prototype._onChangeGotoPage = function(elmt, evt) {
   var gotoPageNumber = parseInt($('input#viewpanel-paging-current-input').val());
   
-  if(typeof gotoPageNumber != "number") { $('input#viewpanel-paging-current-input').val(this._currentPageNumber); return; }
+  if(typeof gotoPageNumber != "number" || isNaN(gotoPageNumber) || gotoPageNumber == "") { 
+    $('input#viewpanel-paging-current-input').val(this._currentPageNumber); 
+    return;
+  }
+  
   if(gotoPageNumber > this._lastPageNumber) gotoPageNumber = this._lastPageNumber;
   if(gotoPageNumber < 1) gotoPageNumber = 1;
   
@@ -530,11 +535,21 @@ DataTableView.prototype._onKeyDownGotoPage = function(elmt, evt) {
   var keyDownCode = event.which;
   
   if([38, 40].indexOf(keyDownCode) == -1) return;
-
-  if(keyDownCode == 38) this._onClickPreviousPage(elmt, evt);
-  if(keyDownCode == 40) this._onClickNextPage(elmt, evt);
   
-  window.setTimeout(function() { $('input#viewpanel-paging-current-input')[0].focus(); }, 200);
+  evt.preventDefault();
+
+  var newPageValue = $('input#viewpanel-paging-current-input')[0].value;
+  if(keyDownCode == 38) {                            // Up arrow
+    if(newPageValue <= 1) return;
+    this._onClickPreviousPage(elmt, evt);
+  }
+    
+  if(keyDownCode == 40) {                            // Down arrow
+    if(newPageValue >= this._lastPageNumber) return;
+    this._onClickNextPage(elmt, evt);
+  }
+  
+  window.setTimeout(function() { $('input#viewpanel-paging-current-input')[0].focus(); }, 150);
 };
 
 DataTableView.prototype._onClickPreviousPage = function(elmt, evt) {
