@@ -540,12 +540,12 @@ DataTableView.prototype._onKeyDownGotoPage = function(elmt, evt) {
   evt.preventDefault();
 
   var newPageValue = $('input#viewpanel-paging-current-input')[0].value;
-  if(keyDownCode == 38) {                            // Up arrow
+  if(keyDownCode == 38) {  // Up arrow
     if(newPageValue <= 1) return;
     this._onClickPreviousPage(elmt, evt);
   }
     
-  if(keyDownCode == 40) {                            // Down arrow
+  if(keyDownCode == 40) {  // Down arrow
     if(newPageValue >= this._lastPageNumber) return;
     this._onClickNextPage(elmt, evt);
   }
@@ -556,8 +556,17 @@ DataTableView.prototype._onKeyDownGotoPage = function(elmt, evt) {
 
     if(currentPageInput == null) {
       window.setTimeout(rehookCurrentPageInput, rehookDelay);
+
     } else {
-      currentPageInput.focus();
+      try {
+        currentPageInput.focus();
+
+        if(!(currentPageInput.is(":focus"))) window.setTimeout(rehookCurrentPageInput, rehookDelay);
+      }
+      
+      catch(currentError) {
+        window.setTimeout(rehookCurrentPageInput, rehookDelay);
+      }
     }
   };
 
