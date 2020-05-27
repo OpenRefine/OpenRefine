@@ -561,7 +561,7 @@ DataTableView.prototype._onKeyDownGotoPage = function(elmt, evt) {
       try {
         currentPageInput.focus();
 
-        if(!(currentPageInput.is(":focus"))) window.setTimeout(rehookCurrentPageInput, rehookDelay);
+        if(currentPageInput != document.activeElement) window.setTimeout(rehookCurrentPageInput, rehookDelay);
       }
       
       catch(currentError) {
