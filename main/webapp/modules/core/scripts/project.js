@@ -178,7 +178,7 @@ function initializeUI(uiState) {
 
 Refine._showHideLeftPanel = function() {
   $('div#body').toggleClass("hide-left-panel");
-  resize();
+  resizeAll();
 };
 
 Refine.setTitle = function(status) {
