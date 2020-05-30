@@ -28,45 +28,44 @@
                                       <legend class="new-connection-legend pure-input-1-2">New Connection Editor</legend>
                                   
                                       <div class="pure-control-group">
-                                           <label id="connectionNameLabel" for="name">Name:</label>
-                                           <input bind="connectionNameInput" id="connectionName" type="text" placeholder="Enter Connection Name" value="127.0.0.1" class="pure-input-1-3" required>
+                                           <label id="connectionNameLabel" for="name"></label>
+                                           <input bind="connectionNameInput" id="connectionName" type="text" placeholder="" value="" class="pure-input-1-3" required>
                                        </div>
                                
                                        <div class="pure-control-group">
-                                           <label id="databaseTypeLabel" for="databaseType">Database Type:</label>
+                                           <label id="databaseTypeLabel" for="databaseType"></label>
                                             <select name="selection" id="databaseTypeSelect" bind="databaseTypeSelect" class="pure-input-1-3" required>
                                             	  <option value="postgresql">PostgreSQL</option>  
-                                               <option value="mysql">MySQL</option>
+                                               <option value="mysql" selected="selected">MySQL</option>
                                                <option value="mariadb">MariaDB</option>
                                                 <option value="sqlite">SQLite</option>
                                             </select>
                                        </div>
-                               
-                                       <div class="pure-control-group">
-                                           <label id="databaseHostLabel" for="databaseHost">Database Host:</label>
-                                           <input bind="databaseHostInput" id="databaseHost" type="text" placeholder="Enter Database Host Address" value="localhost" class="pure-input-1-3" required>
-                                       </div>
-                               
-                                       <div class="pure-control-group">
-                                           <label id="databasePortLabel" for="databasePort">Database Port:</label>
-                                           <input bind="databasePortInput" id="databasePort" type="text" placeholder="Enter Database Port e.g. 3306" value="5432" class="pure-input-1-3" required>
-                                       </div>
-                                        <div class="pure-control-group">
-                                           <label id="databaseUserLabel" for="databaseUser">Database User:</label>
-                                           <input bind="databaseUserInput" id="databaseUser" type="text" placeholder="Enter Database User" value="postgres" class="pure-input-1-3" required>
-                                       </div>
-                                        <div class="pure-control-group">
-                                           <label id="databasePasswordLabel" for="databasePassword">Database Password:</label>
-                                           <input bind="databasePasswordInput" id="databasePassword" type="password" placeholder="Enter Database Password" class="pure-input-1-3" required>
-                                       </div>
-                                        <div class="pure-control-group">
-                                           <label id="databaseNameLabel" for="initialDatabase">Database Name:</label>
-                                           <input bind="initialDatabaseInput" id="initialDatabase" type="text" placeholder="Enter Database" class="pure-input-1-3" required>
-                                       </div>
-                                       <div class="pure-control-group" style="display:none;">
-                                           <label id="databaseSchemaLabel" for="initialSchema">Schema Name:</label>
-                                           <input bind="initialSchemaInput" id="initialSchema" type="text" placeholder="Enter Initial Schema" class="pure-input-1-3" required>
-                                       </div>
+
+                                        <div class="pure-control-group dbtype-options dbt-postgresql dbt-mysql dbt-mariadb">
+                                          <label id="databaseHostLabel" for="databaseHost"></label> 
+                                          <input bind="databaseHostInput" id="databaseHost" type="text" placeholder="" value="localhost" class="pure-input-1-3" required>
+                                        </div>
+                                        <div class="pure-control-group dbtype-options dbt-postgresql dbt-mysql dbt-mariadb">
+                                          <label id="databasePortLabel" for="databasePort"></label> 
+                                          <input bind="databasePortInput" id="databasePort" type="text" placeholder="" value="5432" class="pure-input-1-3" required>
+                                        </div>
+                                        <div class="pure-control-group dbtype-options dbt-postgresql dbt-mysql dbt-mariadb">
+                                          <label id="databaseUserLabel" for="databaseUser"></label> 
+                                          <input bind="databaseUserInput" id="databaseUser" type="text" placeholder="" value="postgres" class="pure-input-1-3" required>
+                                        </div>
+                                        <div class="pure-control-group dbtype-options dbt-postgresql dbt-mysql dbt-mariadb">
+                                          <label id="databasePasswordLabel" for="databasePassword"></label> 
+                                          <input bind="databasePasswordInput" id="databasePassword" type="password" placeholder="" class="pure-input-1-3" required>
+                                        </div>
+                                        <div class="pure-control-group dbtype-options dbt-postgresql dbt-mysql dbt-mariadb dbt-sqlite">
+                                          <label id="databaseNameLabel" for="initialDatabase"></label> 
+                                          <input bind="initialDatabaseInput" id="initialDatabase" type="text" placeholder="" class="pure-input-1-3" required>
+                                        </div>
+                                        <div class="pure-control-group dbtype-options">
+                                          <label id="databaseSchemaLabel" for="initialSchema"></label> 
+                                          <input bind="initialSchemaInput" id="initialSchema" type="text" placeholder="" class="pure-input-1-3" required>
+                                        </div>
                                        
                                         <div class="pure-controls" id="newConnectionControlDiv">
                                            <button type="button" id="databaseTestButton" bind="testDatabaseButton" class="pure-button pure-button-primary"><span>Test</span></button>

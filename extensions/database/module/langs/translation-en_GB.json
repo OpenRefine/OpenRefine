@@ -28,6 +28,7 @@
     "database-source/databaseTestButton": "Test",
     "database-source/databaseSchemaLabel": "Schema:",
     "database-source/databaseNameLabel": "Database:",
+    "database-source/databaseFileNameLabel": "Database file:",
     "database-source/databasePasswordLabel": "Password:",
     "database-source/databaseUserLabel": "User:",
     "database-source/databasePortLabel": "Port:",
