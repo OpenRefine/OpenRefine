@@ -550,27 +550,33 @@ DataTableView.prototype._onKeyDownGotoPage = function(elmt, evt) {
     this._onClickNextPage(elmt, evt);
   }
   
-  var rehookDelay = 50;
-  var rehookCurrentPageInput = function() { 
-    var currentPageInput = $('input#viewpanel-paging-current-input')[0];
+  const refocusDelay = 50;
+  const refocusMaxNumberOfTimes = 20;
+  var   refocusNumberOfTimes = 0;
+  var   refocusCurrentPageInput = function() { 
+    try {
+      var currentPageInput = $('input#viewpanel-paging-current-input')[0];
 
-    if(currentPageInput == null) {
-      window.setTimeout(rehookCurrentPageInput, rehookDelay);
+      if(currentPageInput == null) {
+          throw new Error('Requesting a new window.setTimeout()');
 
-    } else {
-      try {
+      } else {
         currentPageInput.focus();
 
-        if(currentPageInput != document.activeElement) window.setTimeout(rehookCurrentPageInput, rehookDelay);
+        if(currentPageInput != document.activeElement) {
+          throw new Error('Requesting a new window.setTimeout()');
+        }
       }
-      
-      catch(currentError) {
-        window.setTimeout(rehookCurrentPageInput, rehookDelay);
-      }
+    }
+    
+    catch(currentError) {
+      refocusNumberOfTimes++;
+      if(refocusNumberOfTimes > refocusMaxNumberOfTimes) return;
+      window.setTimeout(refocusCurrentPageInput, refocusDelay);
     }
   };
 
-  window.setTimeout(rehookCurrentPageInput, rehookDelay);
+  window.setTimeout(refocusCurrentPageInput, refocusDelay);
 };
 
 DataTableView.prototype._onClickPreviousPage = function(elmt, evt) {
