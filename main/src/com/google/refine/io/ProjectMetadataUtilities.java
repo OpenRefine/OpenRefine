@@ -70,11 +70,15 @@ public class ProjectMetadataUtilities {
         File file = new File(projectDir, "metadata.json");
         File oldFile = new File(projectDir, "metadata.old.json");
 
-        if (file.exists() && file.length() > 0) {
-            if (oldFile.exists()) {
-                oldFile.delete();
-            }
+        if (file.exists()) {
+            if(file.length() > 0) {
+                if (oldFile.exists()) {
+                    oldFile.delete();
+                }
             file.renameTo(oldFile);
+            } else {
+                file.delete();
+            }
         }
 
         tempFile.renameTo(file);
