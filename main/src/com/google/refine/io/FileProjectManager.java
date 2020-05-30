@@ -40,6 +40,8 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map.Entry;
@@ -307,13 +309,14 @@ public class FileProjectManager extends ProjectManager  {
     }
 
     protected boolean saveToFile(File file) throws IOException {
-        FileWriter writer = new FileWriter(file);
+        OutputStream stream = new FileOutputStream(file);
         boolean saveWasNeeded = saveNeeded();
         try {
-            ParsingUtilities.defaultWriter.writeValue(writer, this);
+            // writeValue(OutputStream) is documented to use JsonEncoding.UTF8
+            ParsingUtilities.defaultWriter.writeValue(stream, this);
             saveProjectMetadata();
         } finally {
-            writer.close();
+            stream.close();
         }
         return saveWasNeeded;
     }
