@@ -107,6 +107,46 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   line-height: 1.3;
   }
 
+a.visibility-panel-button {
+  display: inline-block;
+  vertical-align: middle;
+  width: 17px;
+  height: 19px;
+  text-decoration: none;
+  background-image: url(../../images/leftpanel-showhide.png);
+  background-repeat: no-repeat;
+  background-position: 0px 0px;
+}
+
+div#body.hide-left-panel div#left-panel {
+  display: none;
+}
+
+div#body #show-left-panel-button {
+  margin: 0px 7px 0px 0px;
+  padding: 7px 0px 0px 0px;
+  display: none;
+}
+
+div#body.hide-left-panel a#show-left-panel-button {
+  background-position: -34px 0px;
+  display: inline-block;
+}
+
+div#body.hide-left-panel a#show-left-panel-button:hover {
+  background-position: -51px 0px;
+}
+
+div#body div#left-panel a#hide-left-panel-button {
+  float: right;
+  margin: 0px 7px 0 0;
+  padding: 0px 0px 0px 0px;
+}
+
+div#body div#left-panel a#hide-left-panel-button:hover {
+  background-position: -17px 0px;
+}
+
 @history_done_background: #fff;
 @history_undone_background: @chrome_secondary;
 @history_entry_index_width: 30px;
