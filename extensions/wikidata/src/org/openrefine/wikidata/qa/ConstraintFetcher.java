@@ -23,11 +23,11 @@
  ******************************************************************************/
 package org.openrefine.wikidata.qa;
 
-import java.util.Set;
-
 import org.wikidata.wdtk.datamodel.interfaces.ItemIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.PropertyIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.Value;
+
+import java.util.Set;
 
 /**
  * An object that fetches constraints about properties.
@@ -114,6 +114,11 @@ public interface ConstraintFetcher {
      * Is this property expected to have distinct values?
      */
     boolean hasDistinctValues(PropertyIdValue pid);
+
+    /**
+     * Is this property expected to have more than one value per item?
+     */
+    boolean hasMultiValue(PropertyIdValue pid);
 
     /**
      * Can statements using this property have uncertainty bounds?

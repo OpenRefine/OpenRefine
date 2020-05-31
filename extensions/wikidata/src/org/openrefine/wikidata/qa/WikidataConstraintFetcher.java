@@ -23,25 +23,15 @@
  ******************************************************************************/
 package org.openrefine.wikidata.qa;
 
+import org.openrefine.wikidata.utils.EntityCache;
+import org.wikidata.wdtk.datamodel.helpers.Datamodel;
+import org.wikidata.wdtk.datamodel.interfaces.*;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
-import org.openrefine.wikidata.utils.EntityCache;
-import org.wikidata.wdtk.datamodel.helpers.Datamodel;
-import org.wikidata.wdtk.datamodel.interfaces.EntityIdValue;
-import org.wikidata.wdtk.datamodel.interfaces.ItemIdValue;
-import org.wikidata.wdtk.datamodel.interfaces.PropertyDocument;
-import org.wikidata.wdtk.datamodel.interfaces.PropertyIdValue;
-import org.wikidata.wdtk.datamodel.interfaces.Snak;
-import org.wikidata.wdtk.datamodel.interfaces.SnakGroup;
-import org.wikidata.wdtk.datamodel.interfaces.Statement;
-import org.wikidata.wdtk.datamodel.interfaces.StatementGroup;
-import org.wikidata.wdtk.datamodel.interfaces.StatementRank;
-import org.wikidata.wdtk.datamodel.interfaces.StringValue;
-import org.wikidata.wdtk.datamodel.interfaces.Value;
 
 /**
  * This class provides an abstraction over the way constraint definitions are
@@ -86,7 +76,9 @@ public class WikidataConstraintFetcher implements ConstraintFetcher {
     public static String SINGLE_VALUE_CONSTRAINT_QID = "Q19474404";
     public static String SINGLE_BEST_VALUE_CONSTRAINT_QID = "Q52060874";
     public static String DISTINCT_VALUES_CONSTRAINT_QID = "Q21502410";
-    
+
+    public static String MULTI_VALUE_CONSTRAINT_QID = "Q21510857";
+
     public static String NO_BOUNDS_CONSTRAINT_QID = "Q51723761";
     public static String INTEGER_VALUED_CONSTRAINT_QID = "Q52848401";
     
@@ -208,7 +200,12 @@ public class WikidataConstraintFetcher implements ConstraintFetcher {
     public boolean hasDistinctValues(PropertyIdValue pid) {
         return getSingleConstraint(pid, DISTINCT_VALUES_CONSTRAINT_QID) != null;
     }
-    
+
+    @Override
+    public boolean hasMultiValue(PropertyIdValue pid) {
+        return getSingleConstraint(pid, MULTI_VALUE_CONSTRAINT_QID) != null;
+    }
+
     @Override
     public boolean isSymmetric(PropertyIdValue pid) {
         return getSingleConstraint(pid, SYMMETRIC_CONSTRAINT_QID) != null;
