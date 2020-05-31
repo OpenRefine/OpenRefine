@@ -189,14 +189,11 @@ DataTableView.prototype._renderPagingControls = function(pageSizeControls, pagin
     .attr("required", "required")
     .val(self._currentPageNumber)
     .css("width", pageInputSize +"px");
-  
-  var lastPageSpan = $('<span>').attr("id", "viewpanel-paging-last").text(self._lastPageNumber);
-  
-  pageControlsSpan.append($.i18n('core-views/goto-page', '<span id="currentPageInput" />', '<span id="lastPageSpan" />'))
+    
+  pageControlsSpan.append($.i18n('core-views/goto-page', '<span id="currentPageInput" />', self._lastPageNumber))
   pageControlsSpan.appendTo(pagingControls);
 
   $('span#currentPageInput').replaceWith($(currentPageInput));
-  $('span#lastPageSpan').replaceWith($(lastPageSpan));
 
   var nextPage = $('<a href="javascript:{}">'+$.i18n('core-views/next')+' &rsaquo;</a>').appendTo(pagingControls);
   var lastPage = $('<a href="javascript:{}">'+$.i18n('core-views/last')+' &raquo;</a>').appendTo(pagingControls);
@@ -558,16 +555,13 @@ DataTableView.prototype._onKeyDownGotoPage = function(elmt, evt) {
     try {
       var currentPageInput = $('input#viewpanel-paging-current-input')[0];
 
-      if(currentPageInput == null) {
-          throw new Error('Requesting a new refocusPageInput');
-
-      } else {
+      if(currentPageInput != null) {
         currentPageInput.focus();
 
-        if(currentPageInput != document.activeElement) {
-          throw new Error('Requesting a new refocusPageInput');
-        }
+        if(currentPageInput == document.activeElement) return;
       }
+
+      throw new Error('Requesting a new refocusPageInput');
     }
     
     catch(currentError) {
