@@ -532,7 +532,7 @@
     "core-views/view": "Aperçu",
     "core-views/extend-not-supported": "Ce service de réconciliation de supporte pas l'extension de données. Essayez de supprimer le service et de l'ajouter à nouveau. Si le problème persiste, contactez le fournisseur de service.",
     "core-views/to-text": "En texte",
-    "core-views/goto": "aller à la page…",
+    "core-views/goto-page": "$1 de $2 {{plural:$2|page|pages}}",
     "core-views/first": "première",
     "core-views/word-facet": "Facette par mot",
     "core-views/check-format": "Merci de vérifier le format du fichier.",

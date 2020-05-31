@@ -109,6 +109,7 @@ DataTableView.prototype.render = function() {
     '</div>'
   );
   var elmts = DOM.bind(html);
+  this._div.empty().append(html);
 
   ui.summaryBar.updateResultCount();
 
@@ -136,7 +137,6 @@ DataTableView.prototype.render = function() {
   }
 
   this._renderDataTables(elmts.table[0], elmts.headerTable[0]);
-  this._div.empty().append(html);
 
   // show/hide null values in cells
   $(".data-table-null").toggle(self._shownulls);
@@ -188,16 +188,15 @@ DataTableView.prototype._renderPagingControls = function(pageSizeControls, pagin
     .attr("max", self._lastPageNumber)
     .attr("required", "required")
     .val(self._currentPageNumber)
-    .css("width", pageInputSize +"px")
-    .appendTo(pageControlsSpan);
-
-  pageControlsSpan.append(' of ');
-  $('<span>').attr("id", "viewpanel-paging-last")
-    .text(self._lastPageNumber)
-    .appendTo(pageControlsSpan);
-  pageControlsSpan.append(' pages');
+    .css("width", pageInputSize +"px");
   
-  pagingControls.append(pageControlsSpan);
+  var lastPageSpan = $('<span>').attr("id", "viewpanel-paging-last").text(self._lastPageNumber);
+  
+  pageControlsSpan.append($.i18n('core-views/goto-page', '<span id="currentPageInput" />', '<span id="lastPageSpan" />'))
+  pageControlsSpan.appendTo(pagingControls);
+
+  $('span#currentPageInput').replaceWith($(currentPageInput));
+  $('span#lastPageSpan').replaceWith($(lastPageSpan));
 
   var nextPage = $('<a href="javascript:{}">'+$.i18n('core-views/next')+' &rsaquo;</a>').appendTo(pagingControls);
   var lastPage = $('<a href="javascript:{}">'+$.i18n('core-views/last')+' &raquo;</a>').appendTo(pagingControls);
@@ -550,6 +549,8 @@ DataTableView.prototype._onKeyDownGotoPage = function(elmt, evt) {
     this._onClickNextPage(elmt, evt);
   }
   
+  // For the arrow keys, in order to have a keyDownRepeat, we have to put the focus back on the « currentPageInput »
+  // The <input> seams to be deleted and recreated, so we wait with a few setTimeout() until it is there, unless 1 s. elapse, then we stop
   const refocusDelay = 50;
   const refocusMaxNumberOfTimes = 20;
   var   refocusNumberOfTimes = 0;
@@ -558,13 +559,13 @@ DataTableView.prototype._onKeyDownGotoPage = function(elmt, evt) {
       var currentPageInput = $('input#viewpanel-paging-current-input')[0];
 
       if(currentPageInput == null) {
-          throw new Error('Requesting a new window.setTimeout()');
+          throw new Error('Requesting a new refocusPageInput');
 
       } else {
         currentPageInput.focus();
 
         if(currentPageInput != document.activeElement) {
-          throw new Error('Requesting a new window.setTimeout()');
+          throw new Error('Requesting a new refocusPageInput');
         }
       }
     }
