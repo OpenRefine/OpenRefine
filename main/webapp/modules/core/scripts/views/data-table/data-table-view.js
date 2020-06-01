@@ -190,7 +190,7 @@ DataTableView.prototype._renderPagingControls = function(pageSizeControls, pagin
     .val(self._currentPageNumber)
     .css("width", pageInputSize +"px");
     
-  pageControlsSpan.append($.i18n('core-views/goto-page', '<span id="currentPageInput" />', self._lastPageNumber))
+  pageControlsSpan.append($.i18n('core-views/goto-page', '<span id="currentPageInput" />', self._lastPageNumber));
   pageControlsSpan.appendTo(pagingControls);
 
   $('span#currentPageInput').replaceWith($(currentPageInput));
