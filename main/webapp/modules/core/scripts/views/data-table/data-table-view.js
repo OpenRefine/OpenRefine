@@ -212,7 +212,7 @@ DataTableView.prototype._renderPagingControls = function(pageSizeControls, pagin
   $('<span>')
   .text(theProject.rowModel.mode == "record-based" ? ' '+$.i18n('core-views/records') : ' '+$.i18n('core-views/rows'))
   .appendTo(pageSizeControls);
-}
+};
 
 DataTableView.prototype._checkPaginationSize = function(gridPageSize, defaultGridPageSize) {
   var self = this;
