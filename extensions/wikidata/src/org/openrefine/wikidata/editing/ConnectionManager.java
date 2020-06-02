@@ -1,18 +1,18 @@
 /*******************************************************************************
  * MIT License
- * 
+ *
  * Copyright (c) 2018 Antonin Delpeuch
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be included in all
  * copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -24,12 +24,22 @@
 package org.openrefine.wikidata.editing;
 
 import java.io.IOException;
+import java.net.URLEncoder;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.ExecutionException;
 
+import com.github.scribejava.apis.MediaWikiApi;
+import com.github.scribejava.core.builder.ServiceBuilder;
+import com.github.scribejava.core.model.OAuth1AccessToken;
+import com.github.scribejava.core.model.OAuth1RequestToken;
+import com.github.scribejava.core.oauth.OAuth10aService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wikidata.wdtk.wikibaseapi.ApiConnection;
 import org.wikidata.wdtk.wikibaseapi.BasicApiConnection;
 import org.wikidata.wdtk.wikibaseapi.LoginFailedException;
+import org.wikidata.wdtk.wikibaseapi.OAuthApiConnection;
 import org.wikidata.wdtk.wikibaseapi.apierrors.MediaWikiApiErrorException;
 
 import com.fasterxml.jackson.databind.node.ArrayNode;
@@ -41,18 +51,18 @@ import com.google.refine.util.ParsingUtilities;
 /**
  * Manages a connection to Wikidata, with login credentials stored in the
  * preferences.
- * 
+ *
  * Ideally, we should store only the cookies and not the password. But
  * Wikidata-Toolkit does not allow for that as cookies are kept private.
- * 
+ *
  * This class is also hard-coded for Wikidata: generalization to other Wikibase
  * instances should be feasible though.
- * 
+ *
  * @author Antonin Delpeuch
  */
 
 public class ConnectionManager {
-    
+
     final static Logger logger = LoggerFactory.getLogger("connection_mananger");
 
     public static final String PREFERENCE_STORE_KEY = "wikidata_credentials";
@@ -60,12 +70,29 @@ public class ConnectionManager {
     public static final int READ_TIMEOUT = 10000;
 
     private PreferenceStore prefStore;
-    private BasicApiConnection connection;
+    private ApiConnection connection;
+
+    private static final String CLIENT_ID;
+    private static final String CLIENT_SECRET;
+    private static final OAuth10aService mediaWikiService;
+    private OAuth1RequestToken requestToken;
 
     private static final ConnectionManager instance = new ConnectionManager();
 
     public static ConnectionManager getInstance() {
         return instance;
+    }
+
+    static {
+        CLIENT_ID = System.getProperty("ext.wikidata.clientid", "");
+        CLIENT_SECRET = System.getProperty("ext.wikidata.clientsecret", "");
+        if (CLIENT_ID.equals("") || CLIENT_SECRET.equals("")) {
+            mediaWikiService = null;
+        } else {
+            mediaWikiService = new ServiceBuilder(CLIENT_ID)
+                    .apiSecret(CLIENT_SECRET)
+                    .build(MediaWikiApi.instance());
+        }
     }
 
     /**
@@ -80,7 +107,7 @@ public class ConnectionManager {
 
     /**
      * Logs in to the Wikibase instance, using login/password
-     * 
+     *
      * @param username
      *      the username to log in with
      * @param password
@@ -100,10 +127,18 @@ public class ConnectionManager {
 
         connection = createNewConnection();
         try {
-            connection.login(username, password);
+            ((BasicApiConnection) connection).login(username, password);
         } catch (LoginFailedException e) {
             connection = null;
         }
+    }
+
+    public void login(String verifier) throws InterruptedException, ExecutionException, IOException {
+        OAuth1AccessToken accessToken = mediaWikiService.getAccessToken(requestToken, verifier);
+        connection = new OAuthApiConnection(ApiConnection.URL_WIKIDATA_API,
+                mediaWikiService.getApiKey(), mediaWikiService.getApiSecret(),
+                accessToken.getToken(), accessToken.getTokenSecret());
+        System.out.println("Successfully logged as: " + connection.getCurrentUser());
     }
 
     /**
@@ -114,7 +149,7 @@ public class ConnectionManager {
         if (savedCredentials != null) {
             connection = createNewConnection();
             try {
-                connection.login(savedCredentials.get("username").asText(), savedCredentials.get("password").asText());
+                ((BasicApiConnection) connection).login(savedCredentials.get("username").asText(), savedCredentials.get("password").asText());
             } catch (LoginFailedException e) {
                 connection = null;
             }
@@ -122,10 +157,10 @@ public class ConnectionManager {
     }
 
     public ObjectNode getStoredCredentials() {
-        ArrayNode array = (ArrayNode) prefStore.get(PREFERENCE_STORE_KEY);
-        if (array != null && array.size() > 0 && array.get(0) instanceof ObjectNode) {
-            return (ObjectNode) array.get(0);
-        }
+        // ArrayNode array = (ArrayNode) prefStore.get(PREFERENCE_STORE_KEY);
+        // if (array != null && array.size() > 0 && array.get(0) instanceof ObjectNode) {
+        //     return (ObjectNode) array.get(0);
+        // }
         return null;
     }
 
@@ -156,7 +191,7 @@ public class ConnectionManager {
             return null;
         }
     }
-    
+
     /**
      * Creates a fresh connection object with our
      * prefered settings.
@@ -168,4 +203,12 @@ public class ConnectionManager {
         conn.setReadTimeout(READ_TIMEOUT);
         return conn;
     }
+
+    public String getAuthorizationUrl() throws InterruptedException, ExecutionException, IOException {
+        System.out.println("Fetching the Request Token...");
+        requestToken = mediaWikiService.getRequestToken();
+        System.out.println("Got the Request Token!");
+        return mediaWikiService.getAuthorizationUrl(requestToken);
+    }
+
 }

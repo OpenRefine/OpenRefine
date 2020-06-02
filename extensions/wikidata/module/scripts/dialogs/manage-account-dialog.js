@@ -13,9 +13,13 @@ ManageAccountDialog.launch = function(logged_in_username, callback) {
   );
 };
 
+/**
+ * If OAuth client id/secret have been configured, show the OAuth login dialog,
+ * otherwise, show the password login dialog.
+ */
 ManageAccountDialog.display = function(logged_in_username, saved_credentials, callback) {
   var self = this;
-  var frame = $(DOM.loadHTML("wikidata", "scripts/dialogs/manage-account-dialog.html"));
+  var frame = $(DOM.loadHTML("wikidata", "scripts/dialogs/manage-password-account-dialog.html"));
   var elmts = this._elmts = DOM.bind(frame);
 
   this._elmts.dialogHeader.text($.i18n('wikidata-account/dialog-header'));
@@ -60,19 +64,37 @@ ManageAccountDialog.display = function(logged_in_username, saved_credentials, ca
 
   elmts.loginForm.submit(function(e) {
       frame.hide();
-      Refine.postCSRF(
-        "command/wikidata/login",
-        elmts.loginForm.serialize(),
-        function(data) {
-          if (data.logged_in) {
-            dismiss();
-            callback(data.username);
-          }
-          else {
-              frame.show();
-              elmts.invalidCredentials.text("Invalid credentials.");
-          }
-      });
+      // Refine.postCSRF(
+      //   "command/wikidata/login",
+      //   elmts.loginForm.serialize(),
+      //   function(data) {
+      //     if (data.logged_in) {
+      //       dismiss();
+      //       callback(data.username);
+      //     }
+      //     else {
+      //         frame.show();
+      //         elmts.invalidCredentials.text("Invalid credentials.");
+      //     }
+      // });
+
+      ManageAccountDialog.oauth(
+          "command/wikidata/authorize",
+          function () {
+              $.get(
+                  "command/wikidata/login",
+                  function(data) {
+                      console.log(data);
+                      if (data.logged_in) {
+                          dismiss();
+                          callback(data.username);
+                      } else {
+                          frame.show();
+                          elmts.invalidCredentials.text("Invalid credentials.");
+                      }
+                  });
+          });
+
       e.preventDefault();
     }
   );
@@ -88,6 +110,17 @@ ManageAccountDialog.display = function(logged_in_username, saved_credentials, ca
          }
     });
   });
+};
+
+ManageAccountDialog.oauth = function(path, callback) {
+    var self = this;
+    self.oauthWindow = window.open(path);
+    self.oauthInterval = window.setInterval(function() {
+        if (self.oauthWindow.closed) {
+            window.clearInterval(self.oauthInterval);
+            callback();
+        }
+    }, 1000);
 };
 
 ManageAccountDialog.isLoggedIn = function(callback) {
