@@ -446,7 +446,7 @@ public class StandardReconConfig extends ReconConfig {
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
             {
                 connection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
-                connection.setConnectTimeout(30000);
+                connection.setConnectTimeout(30000); // TODO parameterize
                 connection.setDoOutput(true);
                 
                 DataOutputStream dos = new DataOutputStream(connection.getOutputStream());
@@ -473,36 +473,40 @@ public class StandardReconConfig extends ReconConfig {
                 try {
                     String s = ParsingUtilities.inputStreamToString(is);
                     ObjectNode o = ParsingUtilities.evaluateJsonStringToObjectNode(s);
+                    if (o == null) { // utility method returns null instead of throwing
+                        logger.error("Failed to parse string as JSON: " + s);
+                    } else {
+                        for (int i = 0; i < jobs.size(); i++) {
+                            StandardReconJob job = (StandardReconJob) jobs.get(i);
+                            Recon recon = null;
 
-                    for (int i = 0; i < jobs.size(); i++) {
-                        StandardReconJob job = (StandardReconJob) jobs.get(i);
-                        Recon recon = null;
+                            String text = job.text;
+                            String key = "q" + i;
+                            if (o.has(key) && o.get(key) instanceof ObjectNode) {
+                                ObjectNode o2 = (ObjectNode) o.get(key);
+                                if (o2.has("result") && o2.get("result") instanceof ArrayNode) {
+                                    ArrayNode results = (ArrayNode) o2.get("result");
 
-                        String text = job.text;
-                        String key = "q" + i;
-                        if (o.has(key) && o.get(key) instanceof ObjectNode) {
-                            ObjectNode o2 = (ObjectNode) o.get(key);
-                            if (o2.has("result") && o2.get("result") instanceof ArrayNode) {
-                                ArrayNode results = (ArrayNode) o2.get("result");
-
-                                recon = createReconServiceResults(text, results, historyEntryID);
+                                    recon = createReconServiceResults(text, results, historyEntryID);
+                                } else {
+                                    logger.warn("Service error for text: " + text + "\n  Job code: " + job.code + "\n  Response: " + o2.toString());
+                                }
                             } else {
-                                logger.warn("Service error for text: " + text + "\n  Job code: " + job.code + "\n  Response: " + o2.toString());
+                                // TODO: better error reporting
+                                logger.warn("Service error for text: " + text + "\n  Job code: " + job.code);
                             }
-                        } else {
-                            logger.warn("Service error for text: " + text + "\n  Job code: " + job.code);
-                        }
 
-                        if (recon != null) {
-                            recon.service = service;
+                            if (recon != null) {
+                                recon.service = service;
+                            }
+                            recons.add(recon);
                         }
-                        recons.add(recon);
                     }
                 } finally {
                     is.close();
                 }
             }
-        } catch (IOException e) {
+        } catch (Exception e) {
             logger.error("Failed to batch recon with load:\n" + queriesString, e);
         }
 
@@ -570,11 +574,12 @@ public class StandardReconConfig extends ReconConfig {
         if (recon.candidates != null && !recon.candidates.isEmpty() && text != null) {
             ReconCandidate candidate = recon.candidates.get(0);
             
-            recon.setFeature(Recon.Feature_nameMatch, text.equalsIgnoreCase(candidate.name));
-            recon.setFeature(Recon.Feature_nameLevenshtein, 
-                    StringUtils.getLevenshteinDistance(StringUtils.lowerCase(text), StringUtils.lowerCase(candidate.name)));
-            recon.setFeature(Recon.Feature_nameWordDistance, wordDistance(text, candidate.name));
-            
+            if (candidate.name != null) {
+                recon.setFeature(Recon.Feature_nameMatch, text.equalsIgnoreCase(candidate.name));
+                recon.setFeature(Recon.Feature_nameLevenshtein,
+                        StringUtils.getLevenshteinDistance(StringUtils.lowerCase(text), StringUtils.lowerCase(candidate.name)));
+                recon.setFeature(Recon.Feature_nameWordDistance, wordDistance(text, candidate.name));
+            }
             recon.setFeature(Recon.Feature_typeMatch, false);
             if (this.typeID != null) {
                 for (String typeID : candidate.types) {

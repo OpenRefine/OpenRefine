@@ -292,7 +292,9 @@ public class ReconOperation extends EngineDependentOperation {
                             logger.warn("Re-trying job including cell containing: " + entries.get(0).cell.value);
                             continue; // try again next time
                         }
-                        logger.warn("Failed after 3 trials for job including cell containing: " + entries.get(0).cell.value);
+                        String msg = "Failed after 3 trials for job including cell containing: " + entries.get(0).cell.value;
+                        logger.warn(msg);
+                        _project.processManager.onFailedProcess(this, new Exception(msg));
                     }
                     
                     jobToGroup.remove(job);
@@ -328,6 +330,7 @@ public class ReconOperation extends EngineDependentOperation {
                 }
             }
             
+            // TODO: Option to keep partial results after cancellation?
             if (!_canceled) {
                 Change reconChange = new ReconChange(
                     cellChanges, 
