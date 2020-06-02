@@ -312,6 +312,14 @@ public class StandardReconConfig extends ReconConfig {
         @JsonInclude(Include.NON_DEFAULT)
         protected int limit;
         
+        public ReconQuery() {
+            super();
+            this.query = "";
+            this.typeID = null;
+            this.properties = null;
+            this.limit = 0;
+        }
+
         public ReconQuery(
                 String query,
                 String typeID,
