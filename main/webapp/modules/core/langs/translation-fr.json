@@ -296,7 +296,7 @@
     "core-facets/reset": "réinitialiser",
     "core-facets/time": "Date",
     "core-facets/remove-facet": "Supprimer cette facette",
-    "core-facets/remove-facet": "Permuter la minimisation ou la maximisation de cette facette",
+    "core-facets/minimize-facet": "Permuter la minimisation ou la maximisation de cette facette",
     "core-facets/non-time": "Non-date",
     "core-facets/linear-plot-abbr": "lin",
     "core-facets/small-dot": "Point de petite taille",
