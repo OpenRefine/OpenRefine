@@ -16,7 +16,7 @@
 
   <properties>
     <powermock.version>2.0.2</powermock.version>
-    <wdtk.version>0.11.1</wdtk.version>
+    <wdtk.version>0.12.0</wdtk.version>
   </properties>
 
   <build>
@@ -147,6 +147,12 @@
       <version>1.7.18</version>
       <scope>provided</scope>
     </dependency>
+    <dependency>
+      <groupId>com.github.scribejava</groupId>
+      <artifactId>scribejava-apis</artifactId>
+      <version>6.9.0</version>
+    </dependency>
+
 
     <!-- testing dependencies -->
 
