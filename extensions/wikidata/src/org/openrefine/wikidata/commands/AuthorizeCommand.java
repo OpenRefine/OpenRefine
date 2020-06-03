@@ -7,38 +7,33 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
-import java.util.concurrent.ExecutionException;
+import java.io.Writer;
 
+/**
+ * Command for redirecting the user to the authorization page.
+ */
 public class AuthorizeCommand extends Command {
 
     @Override
-    public void doPost(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        if(!hasValidCSRFToken(request)) {
-            respondCSRFError(response);
-            return;
-        }
-        respond(request, response);
-    }
-
-    @Override
-    public void doGet(HttpServletRequest request, HttpServletResponse response) {
-        respond(request, response);
-    }
-
-    /**
-     * Redirect the user to authorization page to grant OpenRefine the essential rights.
-     */
-    protected void respond(HttpServletRequest request, HttpServletResponse response) {
+    public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
+        ConnectionManager manager = ConnectionManager.getInstance();
         try {
-            // TODO: respond error if the client id/secret are missing
-            String authorizationUrl = ConnectionManager.getInstance().getAuthorizationUrl();
-            response.sendRedirect(authorizationUrl);
-        } catch (InterruptedException | ExecutionException | IOException e) {
-            // TODO: respond error
-            e.printStackTrace();
+            if (manager.supportOAuth()) {
+                String remember = request.getParameter("remember-credentials");
+                manager.setRememberCredentials("on".equals(remember));
+                String authorizationUrl = manager.getAuthorizationUrl();
+                response.sendRedirect(authorizationUrl);
+            } else {
+                throw new IllegalStateException("You must configure Wikidata OAuth client id/secret in refine.ini " +
+                        "in order to use OAuth to login");
+            }
+        } catch (Exception e) {
+            // TODO: use respondWithErrorPage after fixing its relative path bug
+            response.setCharacterEncoding("UTF-8");
+            response.setContentType("text/html");
+            Writer writer = response.getWriter();
+            writer.write("<h1>" + e.getMessage() + "<h1>");
+            writer.close();
         }
     }
 }

@@ -50,6 +50,7 @@ function init() {
     RefineServlet.registerCommand(module, "login", new LoginCommand());
     RefineServlet.registerCommand(module, "authorize", new AuthorizeCommand());
     RefineServlet.registerCommand(module, "authorized", new AuthorizedCommand());
+    RefineServlet.registerCommand(module, "support-oauth", new SupportOAuthCommand());
      
     /*
      * Resources

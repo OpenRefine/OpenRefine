@@ -24,9 +24,6 @@
 package org.openrefine.wikidata.editing;
 
 import java.io.IOException;
-import java.net.URLEncoder;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
 import com.github.scribejava.apis.MediaWikiApi;
@@ -52,6 +49,8 @@ import com.google.refine.util.ParsingUtilities;
  * Manages a connection to Wikidata, with login credentials stored in the
  * preferences.
  *
+ * The user can choose to use OAuth or password to login.
+ *
  * Ideally, we should store only the cookies and not the password. But
  * Wikidata-Toolkit does not allow for that as cookies are kept private.
  *
@@ -59,23 +58,28 @@ import com.google.refine.util.ParsingUtilities;
  * instances should be feasible though.
  *
  * @author Antonin Delpeuch
+ * @author Lu Liu
  */
 
 public class ConnectionManager {
 
-    final static Logger logger = LoggerFactory.getLogger("connection_mananger");
+    final static Logger logger = LoggerFactory.getLogger("connection_manager");
 
     public static final String PREFERENCE_STORE_KEY = "wikidata_credentials";
+    public static final String WIKIDATA_CLIENT_ID_ENV_KEY = "ext.wikidata.clientid";
+    public static final String WIKIDATA_CLIENT_SECRET_ENV_KEY = "ext.wikidata.clientsecret";
     public static final int CONNECT_TIMEOUT = 5000;
     public static final int READ_TIMEOUT = 10000;
 
     private PreferenceStore prefStore;
     private ApiConnection connection;
 
-    private static final String CLIENT_ID;
-    private static final String CLIENT_SECRET;
-    private static final OAuth10aService mediaWikiService;
+    private String CLIENT_ID = System.getProperty(WIKIDATA_CLIENT_ID_ENV_KEY, "");
+    private String CLIENT_SECRET = System.getProperty(WIKIDATA_CLIENT_SECRET_ENV_KEY, "");
+    private OAuth10aService mediaWikiService;
     private OAuth1RequestToken requestToken;
+
+    private boolean rememberCredentials = false;
 
     private static final ConnectionManager instance = new ConnectionManager();
 
@@ -83,23 +87,20 @@ public class ConnectionManager {
         return instance;
     }
 
-    static {
-        CLIENT_ID = System.getProperty("ext.wikidata.clientid", "");
-        CLIENT_SECRET = System.getProperty("ext.wikidata.clientsecret", "");
-        if (CLIENT_ID.equals("") || CLIENT_SECRET.equals("")) {
-            mediaWikiService = null;
-        } else {
-            mediaWikiService = new ServiceBuilder(CLIENT_ID)
-                    .apiSecret(CLIENT_SECRET)
-                    .build(MediaWikiApi.instance());
-        }
-    }
-
     /**
      * Creates a connection manager, which attempts to restore any
      * previous connection (from the preferences).
      */
     private ConnectionManager() {
+        if (CLIENT_ID.equals("") || CLIENT_SECRET.equals("")) {
+            mediaWikiService = null;
+        } else {
+            ServiceBuilder serviceBuilder = new ServiceBuilder(CLIENT_ID);
+            mediaWikiService = serviceBuilder
+                    .apiSecret(CLIENT_SECRET)
+                    .build(MediaWikiApi.instance());
+        }
+
         prefStore = ProjectManager.singleton.getPreferenceStore();
         connection = null;
         restoreSavedConnection();
@@ -112,55 +113,94 @@ public class ConnectionManager {
      *      the username to log in with
      * @param password
      *      the password to log in with
-     * @param rememberCredentials
-     *      whether to store these credentials in the preferences (unencrypted!)
      */
-    public void login(String username, String password, boolean rememberCredentials) {
-        if (rememberCredentials) {
-            ArrayNode array = ParsingUtilities.mapper.createArrayNode();
-            ObjectNode obj = ParsingUtilities.mapper.createObjectNode();
-            obj.put("username", username);
-            obj.put("password", password);
-            array.add(obj);
-            prefStore.put(PREFERENCE_STORE_KEY, array);
-        }
-
-        connection = createNewConnection();
+    public void login(String username, String password) {
+        connection = BasicApiConnection.getWikidataApiConnection();
+        setupConnection(connection);
         try {
             ((BasicApiConnection) connection).login(username, password);
+            if (rememberCredentials) {
+                ArrayNode array = ParsingUtilities.mapper.createArrayNode();
+                ObjectNode obj = ParsingUtilities.mapper.createObjectNode();
+                obj.put("username", username);
+                obj.put("password", password);
+                array.add(obj);
+                prefStore.put(PREFERENCE_STORE_KEY, array);
+            }
         } catch (LoginFailedException e) {
             connection = null;
         }
     }
 
-    public void login(String verifier) throws InterruptedException, ExecutionException, IOException {
-        OAuth1AccessToken accessToken = mediaWikiService.getAccessToken(requestToken, verifier);
-        connection = new OAuthApiConnection(ApiConnection.URL_WIKIDATA_API,
-                mediaWikiService.getApiKey(), mediaWikiService.getApiSecret(),
-                accessToken.getToken(), accessToken.getTokenSecret());
-        System.out.println("Successfully logged as: " + connection.getCurrentUser());
+    /**
+     * Login with the OAuth verifier.
+     *
+     * The verifier is used to trade OAuth access token/secret.
+     */
+    public void login(String verifier) {
+        try {
+            OAuth1AccessToken accessToken = mediaWikiService.getAccessToken(requestToken, verifier);
+            connection = new OAuthApiConnection(ApiConnection.URL_WIKIDATA_API,
+                    mediaWikiService.getApiKey(), mediaWikiService.getApiSecret(),
+                    accessToken.getToken(), accessToken.getTokenSecret());
+            setupConnection(connection);
+            // check if the OAuth credentials are valid by fetching the username
+            String currentUser = connection.getCurrentUser();
+            if (currentUser == null || currentUser.equals("")) {
+                connection = null;
+            } else if (rememberCredentials) {
+                ArrayNode array = ParsingUtilities.mapper.createArrayNode();
+                ObjectNode obj = ParsingUtilities.mapper.createObjectNode();
+                obj.put("access_token", accessToken.getToken());
+                obj.put("access_secret", accessToken.getTokenSecret());
+                array.add(obj);
+                prefStore.put(PREFERENCE_STORE_KEY, array);
+            }
+        } catch (IOException | InterruptedException | ExecutionException e) {
+            logger.error(e.getMessage());
+            connection = null;
+        }
     }
 
     /**
      * Restore any previously saved connection, from the preferences.
      */
-    public void restoreSavedConnection() {
+    private void restoreSavedConnection() {
         ObjectNode savedCredentials = getStoredCredentials();
         if (savedCredentials != null) {
-            connection = createNewConnection();
-            try {
-                ((BasicApiConnection) connection).login(savedCredentials.get("username").asText(), savedCredentials.get("password").asText());
-            } catch (LoginFailedException e) {
-                connection = null;
+            if (savedCredentials.has("username") && savedCredentials.has("password")) {
+                connection = BasicApiConnection.getWikidataApiConnection();
+                setupConnection(connection);
+                try {
+                    String username = savedCredentials.get("username").asText();
+                    String password = savedCredentials.get("password").asText();
+                    ((BasicApiConnection) connection).login(username, password);
+                    logger.info("Successfully restored connection from saved Wikidata username/password");
+                } catch (LoginFailedException e) {
+                    connection = null;
+                }
+            } else if (savedCredentials.has("access_token") && savedCredentials.has("access_secret")) {
+                String accessToken = savedCredentials.get("access_token").asText();
+                String accessSecret = savedCredentials.get("access_secret").asText();
+                connection = new OAuthApiConnection(ApiConnection.URL_WIKIDATA_API,
+                        CLIENT_ID, CLIENT_SECRET,
+                        accessToken, accessSecret);
+                setupConnection(connection);
+                String currentUser = connection.getCurrentUser();
+                if (currentUser == null || currentUser.equals("")) {
+                    connection = null;
+                } else {
+                    logger.info("Successfully restored connection from saved Wikidata OAuth access token/secret");
+                }
             }
         }
     }
 
-    public ObjectNode getStoredCredentials() {
-        // ArrayNode array = (ArrayNode) prefStore.get(PREFERENCE_STORE_KEY);
-        // if (array != null && array.size() > 0 && array.get(0) instanceof ObjectNode) {
-        //     return (ObjectNode) array.get(0);
-        // }
+    private ObjectNode getStoredCredentials() {
+        ArrayNode array = (ArrayNode) prefStore.get(PREFERENCE_STORE_KEY);
+        if (array != null && array.size() > 0 && array.get(0) instanceof ObjectNode) {
+            return (ObjectNode) array.get(0);
+        }
         return null;
     }
 
@@ -193,22 +233,26 @@ public class ConnectionManager {
     }
 
     /**
-     * Creates a fresh connection object with our
-     * prefered settings.
-     * @return
+     * Set whether to store these credentials in the preferences (unencrypted!)
      */
-    protected BasicApiConnection createNewConnection() {
-        BasicApiConnection conn = BasicApiConnection.getWikidataApiConnection();
-        conn.setConnectTimeout(CONNECT_TIMEOUT);
-        conn.setReadTimeout(READ_TIMEOUT);
-        return conn;
+    public void setRememberCredentials(boolean rememberCredentials) {
+        this.rememberCredentials = rememberCredentials;
+    }
+
+
+    protected void setupConnection(ApiConnection connection) {
+        connection.setConnectTimeout(CONNECT_TIMEOUT);
+        connection.setReadTimeout(READ_TIMEOUT);
     }
 
     public String getAuthorizationUrl() throws InterruptedException, ExecutionException, IOException {
-        System.out.println("Fetching the Request Token...");
+        assert mediaWikiService != null;
         requestToken = mediaWikiService.getRequestToken();
-        System.out.println("Got the Request Token!");
         return mediaWikiService.getAuthorizationUrl(requestToken);
+    }
+
+    public boolean supportOAuth() {
+        return mediaWikiService != null;
     }
 
 }
