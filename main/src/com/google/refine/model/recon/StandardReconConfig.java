@@ -74,10 +74,10 @@ import com.google.refine.util.ParsingUtilities;
 
 public class StandardReconConfig extends ReconConfig {
     final static Logger logger = LoggerFactory.getLogger("refine-standard-recon");
-    
-	private static final String DEFAULT_SCHEMA_SPACE = "http://localhost/schema";
-	private static final String DEFAULT_IDENTIFIER_SPACE = "http://localhost/identifier";
-    
+
+    private static final String DEFAULT_SCHEMA_SPACE = "http://localhost/schema";
+    private static final String DEFAULT_IDENTIFIER_SPACE = "http://localhost/identifier";
+
     static public class ColumnDetail  {
         @JsonProperty("column")
         final public String columnName;
@@ -107,14 +107,14 @@ public class StandardReconConfig extends ReconConfig {
             this.propertyID = property == null ? propertyID : property.id;
         }
         
-    	@Override
-    	public String toString() {
-    		try {
-				return ParsingUtilities.mapper.writeValueAsString(this);
-			} catch (JsonProcessingException e) {
-				return super.toString();
-			}
-    	}
+        @Override
+        public String toString() {
+            try {
+                return ParsingUtilities.mapper.writeValueAsString(this);
+            } catch (JsonProcessingException e) {
+                return super.toString();
+            }
+        }
     }
     
     static public StandardReconConfig reconstruct(String json) throws IOException {
@@ -129,13 +129,13 @@ public class StandardReconConfig extends ReconConfig {
         public int getKey() {
             return code.hashCode();
         }
-        
+
         @Override
         public String toString() {
-        	return code;
+            return code;
         }
     }
-    
+
     @JsonProperty("service")
     final public String     service;
     @JsonProperty("identifierSpace")
@@ -171,11 +171,11 @@ public class StandardReconConfig extends ReconConfig {
             @JsonProperty("limit")
             int limit) {
         this(service, identifierSpace, schemaSpace,
-        		type != null ? type.id : null,
-        		type != null ? type.name : null,
-        		autoMatch, columnDetails, limit);
+                type != null ? type.id : null,
+                type != null ? type.name : null,
+                autoMatch, columnDetails, limit);
     }
-            
+
     public StandardReconConfig(
             String service,
             String identifierSpace,
@@ -275,14 +275,14 @@ public class StandardReconConfig extends ReconConfig {
             this.v = v;
         }
         
-    	@Override
-    	public String toString() {
-    		try {
-				return ParsingUtilities.mapper.writeValueAsString(this);
-			} catch (JsonProcessingException e) {
-				return super.toString();
-			}
-    	}
+        @Override
+        public String toString() {
+            try {
+                return ParsingUtilities.mapper.writeValueAsString(this);
+            } catch (JsonProcessingException e) {
+                return super.toString();
+            }
+        }
     }
     
     protected static class ReconQuery {
@@ -320,6 +320,7 @@ public class StandardReconConfig extends ReconConfig {
             this.limit = 0;
         }
 
+        @JsonCreator
         public ReconQuery(
                 String query,
                 String typeID,
@@ -331,52 +332,47 @@ public class StandardReconConfig extends ReconConfig {
             this.limit = limit;
         }
         
-    	@Override
-    	public String toString() {
-    		try {
-				return ParsingUtilities.mapper.writeValueAsString(this);
-			} catch (JsonProcessingException e) {
-				return super.toString();
-			}
-    	}
+        @Override
+        public String toString() {
+            try {
+                return ParsingUtilities.mapper.writeValueAsString(this);
+            } catch (JsonProcessingException e) {
+                return super.toString();
+            }
+        }
     }
     
     public static class ReconResult {
-    	@JsonProperty("name")
-    	public String name;
-    	@JsonProperty("id")
-    	public String id;
-    	@JsonProperty("type")
-		public List<ReconType> types = Collections.emptyList();
-    	@JsonProperty("score")
-    	public double score;
-    	@JsonProperty("match")
-    	public boolean match = false;
-    	
-    	@JsonIgnore
-		public ReconCandidate toCandidate() {
-    		String[] bareTypes = new String[types.size()];
-    		for(int i = 0; i != types.size(); i++) {
-    			bareTypes[i] = types.get(i).id;
-    		}
-       		ReconCandidate result = new ReconCandidate(
-		        id,
-		        name,
-		        bareTypes,
-		        score
-		    );
-       
-			return result;
-		}
-    	
-    	@Override
-    	public String toString() {
-    		try {
-				return ParsingUtilities.mapper.writeValueAsString(this);
-			} catch (JsonProcessingException e) {
-				return super.toString();
-			}
-    	}
+        @JsonProperty("name")
+        public String name;
+        @JsonProperty("id")
+        public String id;
+        @JsonProperty("type")
+        public List<ReconType> types = Collections.emptyList();
+        @JsonProperty("score")
+        public double score;
+        @JsonProperty("match")
+        public boolean match = false;
+
+        @JsonIgnore
+        public ReconCandidate toCandidate() {
+            String[] bareTypes = new String[types.size()];
+            for (int i = 0; i != types.size(); i++) {
+                bareTypes[i] = types.get(i).id;
+            }
+            ReconCandidate result = new ReconCandidate(id, name, bareTypes, score);
+
+            return result;
+        }
+
+        @Override
+        public String toString() {
+            try {
+                return ParsingUtilities.mapper.writeValueAsString(this);
+            } catch (JsonProcessingException e) {
+                return super.toString();
+            }
+        }
     }
 
     @Override
@@ -427,6 +423,7 @@ public class StandardReconConfig extends ReconConfig {
             job.code = ParsingUtilities.defaultWriter.writeValueAsString(query);
         } catch (JsonProcessingException e) {
             e.printStackTrace();
+            return null; // TODO: Throw exception instead?
         }
         return job;
     }
@@ -543,28 +540,26 @@ public class StandardReconConfig extends ReconConfig {
         
         // Sort results by decreasing score
         results.sort(new Comparator<ReconResult>() {
-        	@Override
-        	public int compare(ReconResult a, ReconResult b) {
-        		return Double.compare(b.score, a.score);
-        	}
+            @Override
+            public int compare(ReconResult a, ReconResult b) {
+                return Double.compare(b.score, a.score);
+            }
         });
         
         int length = results.size();
-        int count = 0;
         for (int i = 0; i < length; i++) {
             ReconResult result = results.get(i);
             
             ReconCandidate candidate = result.toCandidate();
-		    
-		    if (autoMatch && i == 0 && result.match) {
-		        recon.match = candidate;
-		        recon.matchRank = 0;
-		        recon.judgment = Judgment.Matched;
-		        recon.judgmentAction = "auto";
-		    }
+
+            if (autoMatch && i == 0 && result.match) {
+                recon.match = candidate;
+                recon.matchRank = 0;
+                recon.judgment = Judgment.Matched;
+                recon.judgmentAction = "auto";
+            }
             
             recon.addCandidate(candidate);
-            count++;
         }
           
         computeFeatures(recon, text);
@@ -575,8 +570,7 @@ public class StandardReconConfig extends ReconConfig {
      * Recomputes the features associated with this reconciliation
      * object (only if we have at least one candidate).
      * 
-     * @param text
-     * 	    the cell value to compare the reconciliation data to
+     * @param text the cell value to compare the reconciliation data to
      */
     public void computeFeatures(Recon recon, String text) {
         if (recon.candidates != null && !recon.candidates.isEmpty() && text != null) {
@@ -598,7 +592,7 @@ public class StandardReconConfig extends ReconConfig {
                 }
             }
         } else {
-        	recon.features = new Object[Recon.Feature_max];
+            recon.features = new Object[Recon.Feature_max];
         }
     }
     
