@@ -24,7 +24,8 @@
 package org.openrefine.wikidata.commands;
 
 import java.io.IOException;
-import java.io.Writer;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -32,9 +33,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.openrefine.wikidata.editing.ConnectionManager;
 
-import com.fasterxml.jackson.core.JsonGenerator;
 import com.google.refine.commands.Command;
-import com.google.refine.util.ParsingUtilities;
 
 public class LoginCommand extends Command {
 
@@ -55,24 +54,16 @@ public class LoginCommand extends Command {
         String remember = request.getParameter("remember-credentials");
         ConnectionManager manager = ConnectionManager.getInstance();
         if (username != null && password != null) {
-            manager.login(username, password, "on".equals(remember));
+            manager.setRememberCredentials("on".equals(remember));
+            manager.login(username, password);
         } else if ("true".equals(request.getParameter("logout"))) {
             manager.logout();
         }
-        response.setCharacterEncoding("UTF-8");
-        response.setHeader("Content-Type", "application/json");
 
-        Writer w = response.getWriter();
-        JsonGenerator writer = ParsingUtilities.mapper.getFactory().createGenerator(w);
-
-        writer.writeStartObject();
-        writer.writeBooleanField("logged_in", manager.isLoggedIn());
-        writer.writeStringField("username", manager.getUsername());
-        writer.writeEndObject();
-        writer.flush();
-        writer.close();
-        w.flush();
-        w.close();
+        Map<String, Object> jsonResponse = new HashMap<>();
+        jsonResponse.put("logged_in", manager.isLoggedIn());
+        jsonResponse.put("username", manager.getUsername());
+        respondJSON(response, jsonResponse);
     }
 
     @Override
