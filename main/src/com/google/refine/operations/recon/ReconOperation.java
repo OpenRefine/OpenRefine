@@ -294,16 +294,13 @@ public class ReconOperation extends EngineDependentOperation {
                         }
                         String msg = "Failed after 3 trials for job including cell containing: " + entries.get(0).cell.value;
                         logger.warn(msg);
-                        _project.processManager.onFailedProcess(this, new Exception(msg));
+                        recon = _reconConfig.createNewRecon(_historyEntryID);
                     }
-                    
+
                     jobToGroup.remove(job);
                     jobs.remove(j);
                     done++;
-                    
-                    if (recon == null) {
-                        recon = _reconConfig.createNewRecon(_historyEntryID);
-                    }
+
                     recon.judgmentBatchSize = entries.size();
                     
                     for (ReconEntry entry : entries) {
