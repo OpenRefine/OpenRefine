@@ -1,6 +1,9 @@
 ---
 name: Feature request
 about: Suggest an idea for OpenRefine
+title: ''
+labels: enhancement, triage needed
+assignees: ''
 
 ---
 

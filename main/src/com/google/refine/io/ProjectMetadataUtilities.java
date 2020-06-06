@@ -39,6 +39,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
+import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -60,25 +61,33 @@ public class ProjectMetadataUtilities {
     public static void save(ProjectMetadata projectMeta, File projectDir) throws IOException  {
         File tempFile = new File(projectDir, "metadata.temp.json");
         saveToFile(projectMeta, tempFile);
+        if (tempFile.length() == 0) {
+            throw new IOException("Failed to save project metadata - keeping backups");
+        }
+
+        // TODO Do we want to make sure we can successfully deserialize the file too?
 
         File file = new File(projectDir, "metadata.json");
         File oldFile = new File(projectDir, "metadata.old.json");
 
-        if (oldFile.exists()) {
-            oldFile.delete();
-        }
-        
         if (file.exists()) {
+            if(file.length() > 0) {
+                if (oldFile.exists()) {
+                    oldFile.delete();
+                }
             file.renameTo(oldFile);
+            } else {
+                file.delete();
+            }
         }
 
         tempFile.renameTo(file);
     }
     
     protected static void saveToFile(ProjectMetadata projectMeta, File metadataFile) throws IOException   {
-        Writer writer = new OutputStreamWriter(new FileOutputStream(metadataFile));
+        Writer writer = new OutputStreamWriter(new FileOutputStream(metadataFile), StandardCharsets.UTF_8);
         try {
-            ParsingUtilities.defaultWriter.writeValue(writer, projectMeta);
+            ParsingUtilities.saveWriter.writeValue(writer, projectMeta);
         } finally {
             writer.close();
         }
@@ -121,7 +130,7 @@ public class ProjectMetadataUtilities {
      * creation and modification times based on whatever files are available.
      * 
      * @param projectDir the project directory
-     * @param id the proejct id
+     * @param id the project id
      * @return
      */
     static public ProjectMetadata recover(File projectDir, long id) {

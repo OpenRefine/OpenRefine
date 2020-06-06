@@ -66,6 +66,8 @@ function resize() {
   var width = $(window).width();
   var top = $("#header").outerHeight();
   var height = $(window).height() - top;
+  
+  if (ui.leftPanelDiv.css('display') == "none") { leftPanelWidth = 0; }
 
   var leftPanelPaddings = ui.leftPanelDiv.outerHeight(true) - ui.leftPanelDiv.height();
   ui.leftPanelDiv
@@ -147,6 +149,16 @@ function initializeUI(uiState) {
   resize();
   resizeTabs();
 
+  $('<a>').attr("id", "hide-left-panel-button")
+    .addClass("visibility-panel-button")
+    .click(function() { Refine._showHideLeftPanel(); })
+    .prependTo(ui.leftPanelTabs);
+
+  $('<a>').attr("id", "show-left-panel-button")
+    .addClass("visibility-panel-button")
+    .click(function() { Refine._showHideLeftPanel(); })
+    .prependTo(ui.toolPanelDiv);
+  
   ui.summaryBar = new SummaryBar(ui.summaryBarDiv);
   ui.browsingEngine = new BrowsingEngine(ui.facetPanelDiv, uiState.facets || []);
   ui.processPanel = new ProcessPanel(ui.processPanelDiv);
@@ -163,6 +175,11 @@ function initializeUI(uiState) {
     Refine.update({ engineChanged: true });
   }
 }
+
+Refine._showHideLeftPanel = function() {
+  $('div#body').toggleClass("hide-left-panel");
+  resizeAll();
+};
 
 Refine.setTitle = function(status) {
   var title = theProject.metadata.name + " - OpenRefine";
