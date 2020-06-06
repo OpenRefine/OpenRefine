@@ -26,8 +26,10 @@ package org.openrefine.wikidata.qa;
 import org.wikidata.wdtk.datamodel.helpers.Datamodel;
 import org.wikidata.wdtk.datamodel.interfaces.ItemIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.PropertyIdValue;
+import org.wikidata.wdtk.datamodel.interfaces.QuantityValue;
 import org.wikidata.wdtk.datamodel.interfaces.Value;
 
+import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Set;
@@ -58,6 +60,11 @@ public class MockConstraintFetcher implements ConstraintFetcher {
     public static PropertyIdValue integerPid = Datamodel.makeWikidataPropertyIdValue("P389");
     
     public static PropertyIdValue propertyOnlyPid = Datamodel.makeWikidataPropertyIdValue("P372");
+
+    public static PropertyIdValue differenceWithinRangePid = Datamodel.makeWikidataPropertyIdValue("P570");
+    public static PropertyIdValue lowerBoundPid = Datamodel.makeWikidataPropertyIdValue("P569");
+    public static QuantityValue minValuePid = Datamodel.makeQuantityValue(new BigDecimal(0));
+    public static QuantityValue maxValuePid = Datamodel.makeQuantityValue(new BigDecimal(150));
 
     @Override
     public String getFormatRegex(PropertyIdValue pid) {
@@ -165,5 +172,34 @@ public class MockConstraintFetcher implements ConstraintFetcher {
     @Override
     public boolean usableOnItems(PropertyIdValue pid) {
         return !propertyOnlyPid.equals(pid);
+    }
+
+    @Override
+    public QuantityValue getMinimumValue(PropertyIdValue pid) {
+        if (differenceWithinRangePid.equals(pid)) {
+            return minValuePid;
+        }
+        return null;
+    }
+
+    @Override
+    public QuantityValue getMaximumValue(PropertyIdValue pid) {
+        if (differenceWithinRangePid.equals(pid)) {
+            return maxValuePid;
+        }
+        return null;
+    }
+
+    @Override
+    public PropertyIdValue getLowerPropertyId(PropertyIdValue pid) {
+        if (differenceWithinRangePid.equals(pid)){
+            return lowerBoundPid;
+        }
+        return null;
+    }
+
+    @Override
+    public boolean hasDiffWithinRange(PropertyIdValue pid) {
+        return true;
     }
 }

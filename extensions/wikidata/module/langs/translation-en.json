@@ -120,6 +120,8 @@
     "warnings-messages/disallowed-qualifiers/body": "Statements using {statement_property_entity} such as the one on {example_item_entity} should not have a {disallowed_property_entity} qualifier as they are incompatible.",
     "warnings-messages/single-valued-property-added-more-than-once/title": "{property_entity} added more than once on the same item.",
     "warnings-messages/single-valued-property-added-more-than-once/body": "This property is expected to be used at most once on each item but has been added multiple times on the same item, for instance on {example_entity}.",
+    "warnings-messages/difference-of-the-properties-is-not-within-the-specified-range/title": "Inconsistent {source_entity} and {target_entity}",
+    "warnings-messages/difference-of-the-properties-is-not-within-the-specified-range/body": "The difference between {source_entity} and {target_entity} is expected to be within the range [{min_value}, {max_value}], but this fails on items such as {example_entity}.",
     "warnings-messages/identical-values-for-distinct-valued-property/title": "Identical values for {property_entity}",
     "warnings-messages/identical-values-for-distinct-valued-property/body": "This property should have distinct values, but the same value was found on {item1_entity} and {item2_entity} for instance.",
     "warnings-messages/no-edit-generated/title": "No edit was generated.",
