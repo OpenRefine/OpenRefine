@@ -3,7 +3,7 @@
     "wikidata-extension/edit-wikidata-schema": "Wikidataスキーマを編集",
     "wikidata-extension/manage-wikidata-account": "Wikidataアカウントの管理",
     "wikidata-extension/perform-edits-on-wikidata": "Wikidata編集をアップロード",
-    "wikidata-extension/wikidata-edits": "Wikidata編集...",
+    "wikidata-extension/wikidata-edits": "Wikidata編集…",
     "wikidata-extension/export-to-qs": "クイックステートメントへ出力",
     "wikidata-extension/qs-file": "クイックステートメント・ファイル",
     "wikidata-extension/quickstatements-export-name": "クイックステートメント",
@@ -20,7 +20,7 @@
     "wikidata-schema/empty-statements": "ステートメントがありません",
     "wikidata-schema/empty-terms": "ラベルもdescriptions も別名もありません",
     "wikidata-schema/add-item-button": "項目追加",
-    "wikidata-schema/add-term": "Term追加",
+    "wikidata-schema/add-term": "Termの追加",
     "wikidata-schema/remove": "削除",
     "wikidata-schema/add-statement": "ステートメント追加",
     "wikidata-schema/add-value": "値の追加",
@@ -180,6 +180,12 @@
     "warnings-messages/item-description-end-by-punctuation-sign/title": "Descriptionが句読点で終わっています",
     "warnings-messages/item-description-identical-with-label/body": "{example_entity}のdescription ({lang})とラベル({label_lang})が<span class=\"wb-issue-preformat\">{description}</span>です。Descriptionは、ラベルよりも詳しい記述です。詳しくは<a href=\"https://www.wikidata.org/wiki/Help:Description\" target=\"_blank\">マニュアル</a>をご覧ください。",
     "warnings-messages/item-description-identical-with-label/title": "Descriptionがラベルと同一です",
-    "warnings-messages/item-description-too-long/title": "Descriptionが長過ぎます",
-    "wikidata-extension/wikidata-schema": "Wikidataスキーマ"
+    "warnings-messages/item-description-too-long/title": "Descriptionを短くしてください",
+    "wikidata-extension/wikidata-schema": "Wikidataスキーマ",
+    "warnings-messages/multi-valued-property-is-required-for-existing-item/body": "このプロパティは２つ以上のステートメントが期待されていますが、例えば {example_entity} には１つしかありません。もしアイテムがWikidataに他のステートメントが存在するなら、この警告は無視して構いません.",
+    "warnings-messages/multi-valued-property-is-required-for-existing-item/title": "{property_entity} は２つ以上のステートメントを持たなければなりません.",
+    "warnings-messages/multi-valued-property-is-required-for-new-item/body": "このプロパティは２つ以上のステートメントが期待されていますが、例えば {example_entity} には１つしかありません.",
+    "warnings-messages/multi-valued-property-is-required-for-new-item/title": "{property_entity} には一つ以上のステートメントが必要です.",
+    "warnings-messages/difference-of-the-properties-is-not-within-the-specified-range/body": "{source_entity} と {target_entity} の差は、範囲 [{min_value}, {max_value}]にあると期待されていますが、 {example_entity} などでは範囲内にありません。",
+    "warnings-messages/difference-of-the-properties-is-not-within-the-specified-range/title": "{source_entity}と{target_entity}が不正です"
 }
