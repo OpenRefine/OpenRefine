@@ -62,15 +62,19 @@ li.facet-container {
   border-bottom: 1px solid #ffc04d;
   }
 
-a.facet-title-remove {
+.facet-buttons-styles() {
   display: block;
   width: 12px;
   height: 12px;
   margin: 2px 0 0 0;
   text-decoration: none;
-  background-image: url(../../images/close-map.png);
   background-repeat: no-repeat;
   background-position: 0px 0px;
+  }
+
+a.facet-title-remove {
+  .facet-buttons-styles();
+  background-image: url(../../images/close-map.png);
   }
 
 a.facet-title-remove:hover {
@@ -83,14 +87,8 @@ li.facet-state-minimize {
 }
 
 a.facet-title-minimize {
-  display: block;
-  width: 12px;
-  height: 12px;
-  margin: 2px 0 0 0;
-  text-decoration: none;
+  .facet-buttons-styles();
   background-image: url(../../images/minimize-map.png);
-  background-repeat: no-repeat;
-  background-position: -0px 0px;
   }
 
 a.facet-title-minimize:hover {
@@ -103,6 +101,15 @@ li.facet-state-minimize a.facet-title-minimize {
 
 li.facet-state-minimize a.facet-title-minimize:hover {
   background-position: -36px 0px;
+  }
+
+a.facet-save-config {
+  .facet-buttons-styles();
+  background-image: url(../../images/save-facet-map.png);
+  }
+
+a.facet-save-config:hover {
+  background-position: -12px 0px;
   }
 
 .facet-expression {

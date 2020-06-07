@@ -468,6 +468,7 @@ function init() {
       "scripts/project/exporters.js",
       "scripts/project/scripting.js",
 
+      "scripts/facets/generic-facet.js",
       "scripts/facets/list-facet.js",
       "scripts/facets/range-facet.js",
       "scripts/facets/timerange-facet.js",
