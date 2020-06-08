@@ -161,6 +161,8 @@ class GenericFacet {
     var savedFacetConfigs = JSON.parse(localStorage.getItem('facets-'+ theProject.id));
     var resultFacetConfigs = [];
     
+    if(savedFacetConfigs == null) return resultFacetConfigs;
+    
     // @ToDo check the stored facet configurations, make sure they aren't corrupted
     var facetsIds = Object.keys(savedFacetConfigs);
     
