@@ -38,14 +38,6 @@ function BrowsingEngine(div, facetConfigs) {
   this._facets = [];
   this._initializeUI();
 
-  if (facetConfigs.length == 0) {
-    var savedFacetConfigs = JSON.parse(localStorage.getItem('facets-'+ theProject.id));
-    
-    // @ToDo check the stored facet configurations, make sure they aren't corrupted
-  
-    facetConfigs = savedFacetConfigs || [];
-  }
-  
   if (facetConfigs.length > 0) {
     for (var i = 0; i < facetConfigs.length; i++) {
       var facetConfig = facetConfigs[i];

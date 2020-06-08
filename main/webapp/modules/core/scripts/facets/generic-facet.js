@@ -39,7 +39,8 @@ class GenericFacet {
       this._config.invert = false;
     }
 
-    this.facetId = this._config.savedFacetId ? this._config.savedFacetId : Math.round(Math.random() * 1000000);
+    this.facetId = this._config.savedFacetId ? 
+      parseInt(this._config.savedFacetId) : Math.round(Math.random() * 1000000);
 
     this._options = options || {};
     if (!("sort" in this._options)) {
@@ -123,6 +124,12 @@ class GenericFacet {
   };
 
   _remove() {
+    var facetPersistance = JSON.parse(localStorage.getItem('facets-'+ theProject.id));
+    if(facetPersistance == null || typeof facetPersistance != "object") { facetPersistance = {}; }
+    
+    delete facetPersistance[this.facetId];
+    localStorage.setItem('facets-'+ theProject.id, JSON.stringify(facetPersistance));
+
     ui.browsingEngine.removeFacet(this);
 
     this._div = null;
@@ -140,15 +147,33 @@ class GenericFacet {
 
   _saveConfig() {
     var facetPersistance = JSON.parse(localStorage.getItem('facets-'+ theProject.id));
-    
     if(facetPersistance == null || typeof facetPersistance != "object") { facetPersistance = {}; }
     
-    facetPersistance[this.facetID] = { c: this._config, o: this._options };
-
+    facetPersistance[this.facetId] = { c: this._config, o: this._options, s: this._selection };
     localStorage.setItem('facets-'+ theProject.id, JSON.stringify(facetPersistance));
   };
 
   _updateRest() {
     Refine.update({ engineChanged: true });
   };
+  
+  static getFacetConfigs() {
+    var savedFacetConfigs = JSON.parse(localStorage.getItem('facets-'+ theProject.id));
+    var resultFacetConfigs = [];
+    
+    // @ToDo check the stored facet configurations, make sure they aren't corrupted
+    var facetsIds = Object.keys(savedFacetConfigs);
+    
+    for (var i = 0; i < facetsIds.length; i++) {
+      var loadedFacetConfig = {};
+      var savedFacetConfig = savedFacetConfigs[facetsIds[i]];
+      
+      loadedFacetConfig = savedFacetConfig;
+      loadedFacetConfig.c.savedFacetId = facetsIds[i];
+      
+      resultFacetConfigs.push(loadedFacetConfig);
+    }
+    
+    return resultFacetConfigs;
+  }
 }

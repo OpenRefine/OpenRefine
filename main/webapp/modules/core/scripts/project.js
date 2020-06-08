@@ -547,7 +547,11 @@ function onLoad() {
       } catch (e) {
       }
     }
-
+    
+    if (!uiState.hasOwnProperty("facets")) {
+      uiState.facets = GenericFacet.getFacetConfigs();
+    }
+    
     Refine.reinitializeProjectData(
       function() {
         initializeUI(uiState);
