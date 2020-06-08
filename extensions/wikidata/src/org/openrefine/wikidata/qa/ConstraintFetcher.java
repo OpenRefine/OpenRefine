@@ -25,6 +25,7 @@ package org.openrefine.wikidata.qa;
 
 import org.wikidata.wdtk.datamodel.interfaces.ItemIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.PropertyIdValue;
+import org.wikidata.wdtk.datamodel.interfaces.QuantityValue;
 import org.wikidata.wdtk.datamodel.interfaces.Value;
 
 import java.util.Set;
@@ -139,4 +140,38 @@ public interface ConstraintFetcher {
      * Can this property be used on items?
      */
     boolean usableOnItems(PropertyIdValue pid);
+
+    /**
+     * Retrieves the lower bound of the range
+     * required in difference-within-range constraint
+     *
+     * @param pid
+     * @return minimum value
+     */
+    QuantityValue getMinimumValue(PropertyIdValue pid);
+
+    /**
+     * Retrieves the upper bound of the range
+     * required in difference-within-range constraint
+     *
+     * @param pid
+     * @return maximum value
+     */
+    QuantityValue getMaximumValue(PropertyIdValue pid);
+
+    /**
+     * Retrieves the lower value property for calculating the difference
+     * required in difference-within-range constraint
+     *
+     * @param pid:
+     *            the property to calculate difference with
+     * @return the pid of the lower bound property
+     */
+    PropertyIdValue getLowerPropertyId(PropertyIdValue pid);
+
+    /**
+     * Is this property expected to have a value whose difference
+     * with its lower bound property should be in a range?
+     */
+    boolean hasDiffWithinRange(PropertyIdValue pid);
 }

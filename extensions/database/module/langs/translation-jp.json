@@ -20,7 +20,7 @@
     "database-source/databasePortLabel": "Port:",
     "database-source/databaseUserLabel": "User:",
     "database-source/databasePasswordLabel": "Password:",
-    "database-source/databaseNameLabel": "Database:",
+    "database-source/databaseNameLabel": "Database名:",
     "database-source/databaseFileNameLabel": "Database file:",
     "database-source/databaseSchemaLabel": "スキーマ :",
     "database-source/databaseTestButton": "テスト",
@@ -49,5 +49,14 @@
     "database-source/alert-conn-name-invalid-character": "接続名エラー（ [a-zA-Z0-9._-] のみ使用できます）",
     "database-source/alert-db-host-invalid-character": "データベースホスト名エラー（記号は使用できません）",
     "database-source/alert-db-user-invalid-character": "ユーザー名エラー（記号は使用できません）",
-    "database-source/alert-db-port-invalid-character": "ポート番号エラー（半角数字のみ使用）"
+    "database-source/alert-db-port-invalid-character": "ポート番号エラー（半角数字のみ使用）",
+    "database-source/connectionNameDefaultValue": "新規接続名",
+    "database-source/databaseSchemaPlaceholder": "データベースの初期スキーマを入力してください",
+    "database-source/databaseFileNamePlaceholder": "データベースファイルへのフルパスを入力してください",
+    "database-source/databaseNamePlaceholder": "データベース名を入力してください",
+    "database-source/databasePasswordPlaceholder": "パスワードを入力してください",
+    "database-source/databaseUserPlaceholder": "ユーザー名を入力してください",
+    "database-source/databasePortPlaceholder": "ポート番号を入力してください（例: 3306）",
+    "database-source/databaseHostPlaceholder": "データベースのドメイン名かIPアドレスを入力してください",
+    "database-source/connectionNamePlaceholder": "新規接続名を入力してください"
 }
