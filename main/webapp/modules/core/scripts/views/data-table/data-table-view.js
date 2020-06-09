@@ -218,7 +218,7 @@ DataTableView.prototype._checkPaginationSize = function(gridPageSize, defaultGri
   var self = this;
   var newGridPageSize = [];
   
-  if(typeof gridPageSize != "object") return defaultGridPageSize;
+  if(gridPageSize == null || typeof gridPageSize != "object") return defaultGridPageSize;
 
   for (var i = 0; i < gridPageSize.length; i++) {
     if(typeof gridPageSize[i] == "number" && gridPageSize[i] > 0 && gridPageSize[i] < 10000)
