@@ -71,6 +71,7 @@ public class EditInspector {
         register(new EnglishDescriptionScrutinizer());
         register(new MultiValueScrutinizer());
         register(new DifferenceWithinRangeScrutinizer());
+        register(new ConflictsWithScrutinizer());
     }
 
     /**

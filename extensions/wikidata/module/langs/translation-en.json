@@ -104,6 +104,8 @@
     "warnings-messages/remove-statements-with-invalid-format/body": "If these statements currently exist on Wikidata, this will solve constraint violations.",
     "warnings-messages/missing-inverse-statements/title": "Inverse statements missing for {added_property_entity}.",
     "warnings-messages/missing-inverse-statements/body": "Any {added_property_entity} statement such as the one from {source_entity} to {target_entity} should also be added in reverse with {inverse_property_entity}: in this case, {target_entity} {inverse_property_entity} {source_entity}.",
+    "warnings-messages/having-conflicts-with-statements/title": "{property_entity} conflicts with statement {added_property_entity}.",
+    "warnings-messages/having-conflicts-with-statements/body": "Remove the conflicting statements with {property_entity} such as item with property {example_entity}.",
     "warnings-messages/self-referential-statements/title": "Self-referential statements.",
     "warnings-messages/self-referential-statements/body": "While not forbidden, self-referential statements are generally suspicious. You have some on {example_entity}.",
     "warnings-messages/unsourced-statements/title": "Statements without references.",
