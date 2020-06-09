@@ -33,6 +33,9 @@ import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Set;
+import org.wikidata.wdtk.datamodel.interfaces.*;
+
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class MockConstraintFetcher implements ConstraintFetcher {
@@ -65,6 +68,11 @@ public class MockConstraintFetcher implements ConstraintFetcher {
     public static PropertyIdValue lowerBoundPid = Datamodel.makeWikidataPropertyIdValue("P569");
     public static QuantityValue minValuePid = Datamodel.makeQuantityValue(new BigDecimal(0));
     public static QuantityValue maxValuePid = Datamodel.makeQuantityValue(new BigDecimal(150));
+
+    public static PropertyIdValue conflictsWithPid = Datamodel.makeWikidataPropertyIdValue("P50");
+    public static PropertyIdValue pidConflictingStatement = Datamodel.makeWikidataPropertyIdValue("P31");
+    public static Value conflictingStatementValue = Datamodel.makeWikidataItemIdValue("Q5");
+    public static Value conflictsWithValue = Datamodel.makeWikidataItemIdValue("Q36322");
 
     @Override
     public String getFormatRegex(PropertyIdValue pid) {
@@ -201,5 +209,12 @@ public class MockConstraintFetcher implements ConstraintFetcher {
     @Override
     public boolean hasDiffWithinRange(PropertyIdValue pid) {
         return true;
+    }
+
+    public Map<PropertyIdValue, List<Value>> getParamConflictsWith(PropertyIdValue pid) {
+        Map<PropertyIdValue, List<Value>> propertyIdValueListMap = new HashMap<>();
+        List<Value> items = Arrays.asList(conflictingStatementValue, null);
+        propertyIdValueListMap.put(pidConflictingStatement, items);
+        return propertyIdValueListMap;
     }
 }

@@ -28,6 +28,8 @@ import org.wikidata.wdtk.datamodel.interfaces.PropertyIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.QuantityValue;
 import org.wikidata.wdtk.datamodel.interfaces.Value;
 
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -142,6 +144,7 @@ public interface ConstraintFetcher {
     boolean usableOnItems(PropertyIdValue pid);
 
     /**
+<<<<<<< HEAD
      * Retrieves the lower bound of the range
      * required in difference-within-range constraint
      *
@@ -174,4 +177,14 @@ public interface ConstraintFetcher {
      * with its lower bound property should be in a range?
      */
     boolean hasDiffWithinRange(PropertyIdValue pid);
+
+     /*
+     * Returns the Map of all the conflicting pid and their item values
+     *
+     * @param pid:
+     *            the property having conflicts-with constraint
+     * @return
+     */
+    Map<PropertyIdValue, List<Value>> getParamConflictsWith(PropertyIdValue pid);
+
 }
