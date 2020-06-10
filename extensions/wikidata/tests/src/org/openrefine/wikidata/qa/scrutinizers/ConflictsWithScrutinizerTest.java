@@ -20,9 +20,9 @@ public class ConflictsWithScrutinizerTest extends ScrutinizerTest {
         ItemIdValue idA = TestingData.existingId;
 
         PropertyIdValue conflictsWithPid = MockConstraintFetcher.conflictsWithPid;
-        Value conflictsWithValue = MockConstraintFetcher.conflictsWithValue;
+        Value conflictsWithValue = MockConstraintFetcher.conflictsWithStatementValue;
 
-        PropertyIdValue propertyWithConflictsPid = MockConstraintFetcher.pidConflictingStatement;
+        PropertyIdValue propertyWithConflictsPid = MockConstraintFetcher.conflictingStatementPid;
         Value conflictingValue  = MockConstraintFetcher.conflictingStatementValue;
 
         ValueSnak value1 = Datamodel.makeValueSnak(conflictsWithPid, conflictsWithValue);
@@ -42,7 +42,7 @@ public class ConflictsWithScrutinizerTest extends ScrutinizerTest {
         ItemIdValue idA = TestingData.existingId;
 
         PropertyIdValue conflictsWithPid = MockConstraintFetcher.conflictsWithPid;
-        Value conflictsWithValue = MockConstraintFetcher.conflictsWithValue;
+        Value conflictsWithValue = MockConstraintFetcher.conflictsWithStatementValue;
 
         ValueSnak value1 = Datamodel.makeValueSnak(conflictsWithPid, conflictsWithValue);
 
@@ -58,9 +58,9 @@ public class ConflictsWithScrutinizerTest extends ScrutinizerTest {
         ItemIdValue idA = TestingData.existingId;
 
         PropertyIdValue conflictsWithPid = MockConstraintFetcher.conflictsWithPid;
-        Value conflictsWithValue = MockConstraintFetcher.conflictsWithValue;
+        Value conflictsWithValue = MockConstraintFetcher.conflictsWithStatementValue;
 
-        PropertyIdValue propertyWithConflictsPid = MockConstraintFetcher.pidConflictingStatement;
+        PropertyIdValue propertyWithConflictsPid = MockConstraintFetcher.conflictingStatementPid;
 
         ValueSnak value1 = Datamodel.makeValueSnak(conflictsWithPid, conflictsWithValue);
         NoValueSnak value2 = Datamodel.makeNoValueSnak(propertyWithConflictsPid);
