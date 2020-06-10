@@ -35,8 +35,6 @@ package com.google.refine.util;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.Reader;
 import java.io.UnsupportedEncodingException;
 import java.time.Instant;
 import java.time.LocalDateTime;
@@ -54,6 +52,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.codec.DecoderException;
 import org.apache.commons.codec.net.URLCodec;
+import org.apache.commons.io.IOUtils;
 
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonGenerator;
@@ -135,32 +134,13 @@ public class ParsingUtilities {
     }
     
     static public String inputStreamToString(InputStream is, String encoding) throws IOException {
-        Reader reader;
-        if (encoding.equals("gzip")) {
-            InputStream inputStream = new GZIPInputStream(is);
-            reader = new InputStreamReader(inputStream);
-        } else {
-            reader = new InputStreamReader(is, encoding);
+        InputStream uncompressedStream = is;
+        // Historical special case only used by tests. Probably can be removed.
+        if ("gzip".equals(encoding)) {
+            uncompressedStream = new GZIPInputStream(is);
+            encoding = "UTF-8";
         }
-        
-        try {
-            return readerToString(reader);
-        } finally {
-            reader.close();
-        }
-    }
-
-    static public String readerToString(Reader reader) throws IOException {
-        StringBuffer sb = new StringBuffer();
-
-        char[] chars = new char[8192];
-        int c;
-
-        while ((c = reader.read(chars)) > 0) {
-            sb.insert(sb.length(), chars, 0, c);
-        }
-
-        return sb.toString();
+        return IOUtils.toString(uncompressedStream, encoding);
     }
 
     private static final URLCodec codec = new URLCodec();
