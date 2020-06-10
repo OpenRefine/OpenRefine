@@ -188,13 +188,16 @@ DataTableView.prototype._renderPagingControls = function(pageSizeControls, pagin
     .attr("max", self._lastPageNumber)
     .attr("required", "required")
     .val(self._currentPageNumber)
-    .css("width", pageInputSize +"px");
+    .css("width", pageInputSize +"px")
     
   pageControlsSpan.append($.i18n('core-views/goto-page', '<span id="currentPageInput" />', self._lastPageNumber));
   pageControlsSpan.appendTo(pagingControls);
 
   $('span#currentPageInput').replaceWith($(currentPageInput));
-
+  
+  var currentPageInput = $('input#viewpanel-paging-current-input');
+  currentPageInput.ready(function(evt) { currentPageInput.focus(); });
+  
   var nextPage = $('<a href="javascript:{}">'+$.i18n('core-views/next')+' &rsaquo;</a>').appendTo(pagingControls);
   var lastPage = $('<a href="javascript:{}">'+$.i18n('core-views/last')+' &raquo;</a>').appendTo(pagingControls);
   if (theProject.rowModel.start + theProject.rowModel.limit < theProject.rowModel.filtered) {
@@ -545,33 +548,6 @@ DataTableView.prototype._onKeyDownGotoPage = function(elmt, evt) {
     if(newPageValue >= this._lastPageNumber) return;
     this._onClickNextPage(elmt, evt);
   }
-  
-  // For the arrow keys, in order to have a keyDownRepeat, we have to put the focus back on the « currentPageInput »
-  // The <input> seams to be deleted and recreated, so we wait with a few setTimeout() until it is there, unless 1 s. elapse, then we stop
-  const refocusDelay = 50;
-  const refocusMaxNumberOfTimes = 20;
-  var   refocusNumberOfTimes = 0;
-  var   refocusCurrentPageInput = function() { 
-    try {
-      var currentPageInput = $('input#viewpanel-paging-current-input')[0];
-
-      if(currentPageInput != null) {
-        currentPageInput.focus();
-
-        if(currentPageInput == document.activeElement) return;
-      }
-
-      throw new Error('Requesting a new refocusPageInput');
-    }
-    
-    catch(currentError) {
-      refocusNumberOfTimes++;
-      if(refocusNumberOfTimes > refocusMaxNumberOfTimes) return;
-      window.setTimeout(refocusCurrentPageInput, refocusDelay);
-    }
-  };
-
-  window.setTimeout(refocusCurrentPageInput, refocusDelay);
 };
 
 DataTableView.prototype._onClickPreviousPage = function(elmt, evt) {
