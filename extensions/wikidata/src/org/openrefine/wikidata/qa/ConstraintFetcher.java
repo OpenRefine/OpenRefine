@@ -144,7 +144,6 @@ public interface ConstraintFetcher {
     boolean usableOnItems(PropertyIdValue pid);
 
     /**
-<<<<<<< HEAD
      * Retrieves the lower bound of the range
      * required in difference-within-range constraint
      *
