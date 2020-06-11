@@ -36,12 +36,9 @@ package com.google.refine.io;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map.Entry;
@@ -49,9 +46,10 @@ import java.util.Set;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
-import org.apache.tools.tar.TarEntry;
-import org.apache.tools.tar.TarInputStream;
-import org.apache.tools.tar.TarOutputStream;
+import org.apache.commons.compress.archivers.tar.TarArchiveEntry;
+import org.apache.commons.compress.archivers.tar.TarArchiveInputStream;
+import org.apache.commons.compress.archivers.tar.TarArchiveOutputStream;
+import org.apache.poi.util.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -162,10 +160,10 @@ public class FileProjectManager extends ProjectManager  {
     }
 
     protected void untar(File destDir, InputStream inputStream) throws IOException {
-        TarInputStream tin = new TarInputStream(inputStream);
-        TarEntry tarEntry = null;
+        TarArchiveInputStream tin = new TarArchiveInputStream(inputStream);
+        TarArchiveEntry tarEntry = null;
 
-        while ((tarEntry = tin.getNextEntry()) != null) {
+        while ((tarEntry = tin.getNextTarEntry()) != null) {
             File destEntry = new File(destDir, tarEntry.getName());
             File parent = destEntry.getParentFile();
 
@@ -178,7 +176,7 @@ public class FileProjectManager extends ProjectManager  {
             } else {
                 FileOutputStream fout = new FileOutputStream(destEntry);
                 try {
-                    tin.copyEntryContents(fout);
+                    IOUtils.copy(tin, fout);
                 } finally {
                     fout.close();
                 }
@@ -189,12 +187,12 @@ public class FileProjectManager extends ProjectManager  {
     }
 
     @Override
-    public void exportProject(long projectId, TarOutputStream tos) throws IOException {
+    public void exportProject(long projectId, TarArchiveOutputStream tos) throws IOException {
         File dir = this.getProjectDir(projectId);
         this.tarDir("", dir, tos);
     }
 
-    protected void tarDir(String relative, File dir, TarOutputStream tos) throws IOException{
+    protected void tarDir(String relative, File dir, TarArchiveOutputStream tos) throws IOException{
         File[] files = dir.listFiles();
         if (files == null) return;
         for (File file : files) {
@@ -205,17 +203,17 @@ public class FileProjectManager extends ProjectManager  {
                 if (file.isDirectory()) {
                     tarDir(path + File.separator, file, tos);
                 } else {
-                    TarEntry entry = new TarEntry(path);
+                    TarArchiveEntry entry = new TarArchiveEntry(path);
 
-                    entry.setMode(TarEntry.DEFAULT_FILE_MODE);
+                    entry.setMode(TarArchiveEntry.DEFAULT_FILE_MODE);
                     entry.setSize(file.length());
                     entry.setModTime(file.lastModified());
 
-                    tos.putNextEntry(entry);
+                    tos.putArchiveEntry(entry);
 
                     copyFile(file, tos);
 
-                    tos.closeEntry();
+                    tos.closeArchiveEntry();
                 }
             }
         }
@@ -427,7 +425,7 @@ public class FileProjectManager extends ProjectManager  {
     
     public static void gzipTarToOutputStream(Project project, OutputStream os) throws IOException {
         GZIPOutputStream gos = new GZIPOutputStream(os);
-        TarOutputStream tos = new TarOutputStream(gos);
+        TarArchiveOutputStream tos = new TarArchiveOutputStream(gos);
         try {
             ProjectManager.singleton.exportProject(project.id, tos);
         } finally {

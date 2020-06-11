@@ -236,9 +236,9 @@
       <version>2.4</version>
     </dependency>
     <dependency>
-      <groupId>org.apache.ant</groupId>
-      <artifactId>ant</artifactId> <!-- for org.apache.tools.bzip2 -->
-      <version>1.8.0</version>
+      <groupId>org.apache.commons</groupId>
+      <artifactId>commons-compress</artifactId>
+      <version>1.20</version>
     </dependency>
     <dependency>
       <groupId>org.jsoup</groupId>
