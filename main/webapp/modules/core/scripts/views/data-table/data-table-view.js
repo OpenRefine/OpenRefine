@@ -43,6 +43,8 @@ function DataTableView(div) {
 
   this._currentPageNumber = 1;
   this._showRows(0);
+  
+  this._refocusPageInput = false;
 }
 
 DataTableView._extenders = [];
@@ -195,8 +197,13 @@ DataTableView.prototype._renderPagingControls = function(pageSizeControls, pagin
 
   $('span#currentPageInput').replaceWith($(currentPageInput));
   
-  var currentPageInput = $('input#viewpanel-paging-current-input');
-  currentPageInput.ready(function(evt) { currentPageInput.focus(); });
+  if(self._refocusPageInput == true) { 
+    self._refocusPageInput = false;
+    var currentPageInput = $('input#viewpanel-paging-current-input');
+    currentPageInput.ready(function(evt) { 
+      (new Promise(resolve => setTimeout(resolve, 1000))).then(currentPageInput.focus()); 
+    });
+  }
   
   var nextPage = $('<a href="javascript:{}">'+$.i18n('core-views/next')+' &rsaquo;</a>').appendTo(pagingControls);
   var lastPage = $('<a href="javascript:{}">'+$.i18n('core-views/last')+' &raquo;</a>').appendTo(pagingControls);
@@ -537,7 +544,8 @@ DataTableView.prototype._onKeyDownGotoPage = function(elmt, evt) {
   if([38, 40].indexOf(keyDownCode) == -1) return;
   
   evt.preventDefault();
-
+  this._refocusPageInput = true;
+  
   var newPageValue = $('input#viewpanel-paging-current-input')[0].value;
   if(keyDownCode == 38) {  // Up arrow
     if(newPageValue <= 1) return;
