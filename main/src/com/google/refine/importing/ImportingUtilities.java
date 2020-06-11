@@ -60,6 +60,9 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.compress.archivers.tar.TarArchiveEntry;
+import org.apache.commons.compress.archivers.tar.TarArchiveInputStream;
+import org.apache.commons.compress.compressors.bzip2.BZip2CompressorInputStream;
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.ProgressListener;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
@@ -73,9 +76,6 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DecompressingHttpClient;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.util.EntityUtils;
-import org.apache.tools.bzip2.CBZip2InputStream;
-import org.apache.tools.tar.TarEntry;
-import org.apache.tools.tar.TarInputStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -592,11 +592,11 @@ public class ImportingUtilities {
         String fileName = file.getName();
         try {
             if (fileName.endsWith(".tar.gz") || fileName.endsWith(".tgz")) {
-                return new TarInputStream(new GZIPInputStream(new FileInputStream(file)));
+                return new TarArchiveInputStream(new GZIPInputStream(new FileInputStream(file)));
             } else if (fileName.endsWith(".tar.bz2")) {
-                return new TarInputStream(new CBZip2InputStream(new FileInputStream(file)));
+                return new TarArchiveInputStream(new BZip2CompressorInputStream(new FileInputStream(file)));
             } else if (fileName.endsWith(".tar") || "application/x-tar".equals(contentType)) {
-                return new TarInputStream(new FileInputStream(file));
+                return new TarArchiveInputStream(new FileInputStream(file));
             } else if (fileName.endsWith(".zip") 
                     || "application/x-zip-compressed".equals(contentType)
                     || "application/zip".equals(contentType) 
@@ -618,11 +618,11 @@ public class ImportingUtilities {
         ArrayNode fileRecords,
         final Progress progress
     ) {
-        if (archiveIS instanceof TarInputStream) {
-            TarInputStream tis = (TarInputStream) archiveIS;
+        if (archiveIS instanceof TarArchiveInputStream) {
+            TarArchiveInputStream tis = (TarArchiveInputStream) archiveIS;
             try {
-                TarEntry te;
-                while (!progress.isCanceled() && (te = tis.getNextEntry()) != null) {
+                TarArchiveEntry te;
+                while (!progress.isCanceled() && (te = tis.getNextTarEntry()) != null) {
                     if (!te.isDirectory()) {
                         String fileName2 = te.getName();
                         File file2 = allocateFile(rawDataDir, fileName2);
@@ -702,7 +702,7 @@ public class ImportingUtilities {
                     // No BZ prefix as appended by command line tools.  Reset and hope for the best
                     is.reset();
                 }
-                return new CBZip2InputStream(is);
+                return new BZip2CompressorInputStream(is);
             }
         } catch (IOException e) {
             logger.warn("Something that looked like a compressed file gave an error on open: "+file,e);
