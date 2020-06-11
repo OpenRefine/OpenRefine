@@ -179,7 +179,7 @@
     </dependency>
     <dependency>
       <groupId>org.mozilla</groupId>
-      <artifactId>rhino</artifactId>
+      <artifactId>rhino-runtime</artifactId>
       <version>1.7.12</version>
     </dependency>
     <dependency>
@@ -194,4 +194,3 @@
     </dependency>
   </dependencies>
 </project>
-
