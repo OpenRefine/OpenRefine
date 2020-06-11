@@ -188,7 +188,7 @@ DataTableView.prototype._renderPagingControls = function(pageSizeControls, pagin
     .attr("max", self._lastPageNumber)
     .attr("required", "required")
     .val(self._currentPageNumber)
-    .css("width", pageInputSize +"px")
+    .css("width", pageInputSize +"px");
     
   pageControlsSpan.append($.i18n('core-views/goto-page', '<span id="currentPageInput" />', self._lastPageNumber));
   pageControlsSpan.appendTo(pagingControls);
