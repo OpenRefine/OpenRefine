@@ -469,10 +469,10 @@ public class StandardReconConfig extends ReconConfig {
             
             if (connection.getResponseCode() >= 400) {
                 InputStream is = connection.getErrorStream();
-                logger.error("Failed  - code:" 
-                        + Integer.toString(connection.getResponseCode()) 
-                        + " message: " + is == null ? ""
-                                : ParsingUtilities.inputStreamToString(is));
+                String msg = is == null ? "" : ParsingUtilities.inputStreamToString(is);
+                logger.error("Failed  - code: "
+                        + Integer.toString(connection.getResponseCode())
+                        + " message: " + msg);
             } else {
                 InputStream is = connection.getInputStream();
                 try {
