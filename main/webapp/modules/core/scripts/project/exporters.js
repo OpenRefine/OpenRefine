@@ -126,7 +126,7 @@ ExporterManager.handlers.exportRows = function(format, ext) {
 };
 
 ExporterManager.prepareExportRowsForm = function(format, includeEngine, ext) {
-  var name = ExporterManager.stripNonFileChars(theProject.metadata.name);
+  var name = encodeURI(ExporterManager.stripNonFileChars(theProject.metadata.name));
   var form = document.createElement("form");
   $(form)
   .css("display", "none")
@@ -156,7 +156,7 @@ ExporterManager.prepareExportRowsForm = function(format, includeEngine, ext) {
 };
 
 ExporterManager.handlers.exportProjectToLocal = function() {
-  var name = ExporterManager.stripNonFileChars(theProject.metadata.name);
+  var name = encodeURI(ExporterManager.stripNonFileChars(theProject.metadata.name));
   var form = document.createElement("form");
   $(form)
   .css("display", "none")
