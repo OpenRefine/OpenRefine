@@ -285,7 +285,12 @@ public class ReconOperation extends EngineDependentOperation {
                     Recon    recon = j < recons.size() ? recons.get(j) : null;
                     JobGroup group = jobToGroup.get(job);
                     List<ReconEntry> entries = group.entries;
-                    
+
+                    /*
+                     * TODO: Not sure what this retry is meant to handle, but it's currently
+                     * non-functional due the code at the end of StandardReconConfig#batchRecon()
+                     * which tops up any missing entries.
+                     */
                     if (recon == null) {
                         group.trials++;
                         if (group.trials < 3) {
