@@ -58,11 +58,12 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 .data-table-header {
   width: 1px;
   position: relative;
-  background: #ebeef8
+  background: #ebeef8;
   }
   
 .data-table-container {
   overflow: auto;
+  border-top: 1px solid @chrome_primary;
   }
 
 .data-table-header, .data-table {
@@ -70,19 +71,18 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   padding: 0;
   font-size: 1.05em;
   border-collapse: collapse;
-  dispay: table;
   }
-
 
 .data-table td, .data-table-header td {
   padding: 2px 5px;
   }
+
 .data-table td {
   border-bottom: 1px dotted #ddd;
   border-right: 1px solid #ddd;
   }
+
 .data-table-header td {
-  border-top: 1px solid @chrome_primary;
   border-bottom: 1px dotted @chrome_primary;
   border-right: 1px solid @chrome_primary;
   }
