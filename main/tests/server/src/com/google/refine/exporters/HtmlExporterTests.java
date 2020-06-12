@@ -116,9 +116,12 @@ public class HtmlExporterTests extends RefineTest {
             Assert.fail();
         }
 
-        Assert.assertEquals(writer.toString(), "<html>\n" +
+        Assert.assertEquals(writer.toString(),
+                "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.1//EN\" " +
+                " \"http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd\">\n" +
+                "<html xmlns=\"http://www.w3.org/1999/xhtml\">\n" +
                 "<head>\n" + "<title>" + TEST_PROJECT_NAME + "</title>\n" + 
-                "<meta charset=\"utf-8\" />\n" + 
+                "<meta charset=\"UTF-8\" />\n" +
                 "</head>\n" +
                 "<body>\n" +
                 "<table>\n" +
@@ -143,9 +146,12 @@ public class HtmlExporterTests extends RefineTest {
             Assert.fail();
         }
 
-        Assert.assertEquals(writer.toString(), "<html>\n" +
+        Assert.assertEquals(writer.toString(),
+                "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.1//EN\" " +
+                " \"http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd\">\n" +
+                "<html xmlns=\"http://www.w3.org/1999/xhtml\">\n" +
                 "<head>\n" + "<title>" + TEST_PROJECT_NAME + "</title>\n" + 
-                "<meta charset=\"utf-8\" />\n" + 
+                "<meta charset=\"UTF-8\" />\n" +
                 "</head>\n" +
                 "<body>\n" +
                 "<table>\n" +
@@ -170,9 +176,12 @@ public class HtmlExporterTests extends RefineTest {
             Assert.fail();
         }
 
-        Assert.assertEquals(writer.toString(), "<html>\n" +
+        Assert.assertEquals(writer.toString(),
+                "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.1//EN\" " +
+                " \"http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd\">\n" +
+                "<html xmlns=\"http://www.w3.org/1999/xhtml\">\n" +
                 "<head>\n" + "<title>" + TEST_PROJECT_NAME + "</title>\n" + 
-                "<meta charset=\"utf-8\" />\n" +
+                "<meta charset=\"UTF-8\" />\n" +
                 "</head>\n" +
                 "<body>\n" +
                 "<table>\n" +
@@ -197,9 +206,12 @@ public class HtmlExporterTests extends RefineTest {
             Assert.fail();
         }
 
-        Assert.assertEquals(writer.toString(), "<html>\n" +
+        Assert.assertEquals(writer.toString(),
+                "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.1//EN\" " +
+                " \"http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd\">\n" +
+                "<html xmlns=\"http://www.w3.org/1999/xhtml\">\n" +
                 "<head>\n" + "<title>" + TEST_PROJECT_NAME + "</title>\n" + 
-                "<meta charset=\"utf-8\" />\n" +
+                "<meta charset=\"UTF-8\" />\n" +
                 "</head>\n" +
                 "<body>\n" +
                 "<table>\n" +
