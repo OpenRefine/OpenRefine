@@ -125,7 +125,7 @@ ExporterManager.handlers.exportRows = function(format, ext) {
 };
 
 ExporterManager.prepareExportRowsForm = function(format, includeEngine, ext) {
-  var name = $.trim(theProject.metadata.name.replace(/\W/g, ' ')).replace(/\s+/g, '-');
+  var name = ExporterManager.stripNonFileChars(theProject.metadata.name);
   var form = document.createElement("form");
   $(form)
   .css("display", "none")
