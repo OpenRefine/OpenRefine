@@ -188,11 +188,6 @@ if "%GDATA_CLIENT_SECRET%" == "" goto skipGDataCredentials
 set OPTS=%OPTS% -Dext.gdata.clientid=%GDATA_CLIENT_ID% -Dext.gdata.clientsecret=%GDATA_CLIENT_SECRET%
 :skipGDataCredentials
 
-if "%WIKIDATA_CLIENT_ID%" == "" goto skipWikidataCredentials
-if "%WIKIDATA_CLIENT_SECRET%" == "" goto skipWikidataCredentials
-set OPTS=%OPTS% -Dext.wikidata.clientid=%WIKIDATA_CLIENT_ID% -Dext.wikidata.clientsecret=%WIKIDATA_CLIENT_SECRET%
-:skipWikidataCredentials
-
 rem ----- Respond to the action ----------------------------------------------------------
 
 set ACTION=%1

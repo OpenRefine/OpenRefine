@@ -147,12 +147,6 @@
       <version>1.7.18</version>
       <scope>provided</scope>
     </dependency>
-    <dependency>
-      <groupId>com.github.scribejava</groupId>
-      <artifactId>scribejava-apis</artifactId>
-      <version>6.9.0</version>
-    </dependency>
-
 
     <!-- testing dependencies -->
 

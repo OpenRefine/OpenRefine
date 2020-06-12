@@ -925,12 +925,6 @@ if [ ! -z "$GDATA_CLIENT_ID" ] ; then
     fi
 fi
 
-if [ ! -z "$WIKIDATA_CLIENT_ID" ] ; then
-    if [ ! -z "$WIKIDATA_CLIENT_SECRET" ] ; then
-        add_option "-Dext.wikidata.clientid=$WIKIDATA_CLIENT_ID" "-Dext.wikidata.clientsecret=$WIKIDATA_CLIENT_SECRET"
-    fi
-fi
-
 # ----- Respond to the action given --------------------------------------------
 case "$ACTION" in
   build) build_prepare; mvn process-resources; mvn compile\ test-compile;;
