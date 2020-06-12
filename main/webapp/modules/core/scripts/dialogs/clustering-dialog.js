@@ -283,6 +283,7 @@ ClusteringDialog.prototype._renderTable = function(clusters) {
 };
 
 ClusteringDialog.prototype._cluster = function() {
+    $(".clustering-dialog-facet").css("display","none");
     var self = this;
 
     var container = this._elmts.tableContainer.html(
@@ -304,6 +305,7 @@ ClusteringDialog.prototype._cluster = function() {
         },
         function(data) {
             self._updateData(data);
+            $(".clustering-dialog-facet").css("display","block");
         },
         "json"
     );
