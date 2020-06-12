@@ -89,7 +89,6 @@ DataTableView.prototype.render = function() {
   var scrollLeft = (oldTableDiv.length > 0) ? oldTableDiv[0].scrollLeft : 0;
 
   var html = $(
-  	
     '<div class="viewpanel-header">' +
       '<div class="viewpanel-rowrecord" bind="rowRecordControls">'+$.i18n('core-views/show-as')+': ' +
         '<span bind="modeSelectors"></span>' + 
@@ -225,20 +224,20 @@ DataTableView.prototype._renderDataTables = function(table, tableHeader) {
   var renderColumnKeys = function(keys) {
     if (keys.length > 0) {
       var tr = tableHeader.insertRow(tableHeader.rows.length);
-      $(tr.insertCell(0)).attr('colspan', '3'); // star, flag, row index
+      $(tr.appendChild(document.createElement("th"))).attr('colspan', '3'); // star, flag, row index
 
       for (var c = 0; c < columns.length; c++) {
         var column = columns[c];
-        var td = tr.insertCell(tr.cells.length);
+        var th = tr.appendChild(document.createElement("th"));
         if (self._collapsedColumnNames.hasOwnProperty(column.name)) {
-          $(td).html('&nbsp;');
+          $(th).html('&nbsp;');
         } else {
           for (var k = 0; k < keys.length; k++) {
             // if a node is a key in the tree-based data (JSON/XML/etc), then also display a dropdown arrow (non-functional currently)
             // See https://github.com/OpenRefine/OpenRefine/blob/master/main/src/com/google/refine/model/ColumnGroup.java
             // and https://github.com/OpenRefine/OpenRefine/tree/master/main/src/com/google/refine/importers/tree
-            if (c == keys[k]) { 
-              $('<img />').attr("src", "../images/down-arrow.png").appendTo(td);
+            if (c == keys[k]) {
+              $('<img />').attr("src", "../images/down-arrow.png").appendTo(th);
               break;
             }
           }
@@ -252,6 +251,7 @@ DataTableView.prototype._renderDataTables = function(table, tableHeader) {
 
     if (groups.length > 0) {
       var tr = tableHeader.insertRow(tableHeader.rows.length);
+      $(tr.appendChild(document.createElement("th"))).attr('colspan', '3'); // star, flag, row index
 
       for (var c = 0; c < columns.length; c++) {
         var foundGroup = false;
@@ -265,10 +265,10 @@ DataTableView.prototype._renderDataTables = function(table, tableHeader) {
           }
         }
 
-        var td = tr.insertCell(tr.cells.length);
+        var th = tr.appendChild(document.createElement("th"));
         if (foundGroup) {
-          td.setAttribute("colspan", columnGroup.columnSpan);
-          td.style.background = "#FF6A00";
+          th.setAttribute("colspan", columnGroup.columnSpan);
+          th.style.background = "#FF6A00";
 
           if (columnGroup.keyColumnIndex >= 0) {
             keys.push(columnGroup.keyColumnIndex);
@@ -304,7 +304,7 @@ DataTableView.prototype._renderDataTables = function(table, tableHeader) {
 
   var trHead = tableHeader.insertRow(tableHeader.rows.length);
   DOM.bind(
-      $(trHead.insertCell(trHead.cells.length))
+      $(trHead.appendChild(document.createElement("th")))
       .attr("colspan", "3")
       .addClass("column-header")
       .html(
@@ -317,18 +317,19 @@ DataTableView.prototype._renderDataTables = function(table, tableHeader) {
   });
   this._columnHeaderUIs = [];
   var createColumnHeader = function(column, index) {
-    var td = trHead.insertCell(trHead.cells.length);
-    $(td).addClass("column-header").attr('title', column.name);
+    var th = trHead.appendChild(document.createElement("th"));
+    $(th).addClass("column-header").attr('title', column.name);
     if (self._collapsedColumnNames.hasOwnProperty(column.name)) {
-      $(td).html("&nbsp;").click(function(evt) {
+      $(th).html("&nbsp;").click(function(evt) {
         delete self._collapsedColumnNames[column.name];
         self.render();
       });
     } else {
-      var columnHeaderUI = new DataTableColumnHeaderUI(self, column, index, td);
+      var columnHeaderUI = new DataTableColumnHeaderUI(self, column, index, th);
       self._columnHeaderUIs.push(columnHeaderUI);
     }
   };
+
   for (var i = 0; i < columns.length; i++) {
     createColumnHeader(columns[i], i);
   }
@@ -362,6 +363,7 @@ DataTableView.prototype._renderDataTables = function(table, tableHeader) {
         "json"
       );
     });
+    
     var tdFlag = tr.insertCell(tr.cells.length);
     var flag = $('<a href="javascript:{}">&nbsp;</a>')
     .addClass(row.flagged ? "data-table-flag-on" : "data-table-flag-off")
