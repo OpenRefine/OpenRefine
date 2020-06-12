@@ -105,8 +105,9 @@ ExporterManager.prototype._initializeUI = function() {
 };
 
 ExporterManager.stripNonFileChars = function(name) {
-    //prohibited characters in file name of linux (/) and windows (\/:*?"<>|)
-    return $.trim(name.replace(/[\\*\/:?"<>|]/g, ' ')).replace(/\s+/g, '-');
+    // prohibited characters in file name of linux (/) and windows (\/:*?"<>|)
+    // and MacOS https://stackoverflow.com/a/47455094/167425
+    return $.trim(name.replace(/[\\*\/:;,?"<>|#]/g, ' ')).replace(/\s+/g, '-');
 };
 
 ExporterManager.handlers.exportRows = function(format, ext) {
@@ -125,7 +126,7 @@ ExporterManager.handlers.exportRows = function(format, ext) {
 };
 
 ExporterManager.prepareExportRowsForm = function(format, includeEngine, ext) {
-  var name = $.trim(theProject.metadata.name.replace(/\W/g, ' ')).replace(/\s+/g, '-');
+  var name = ExporterManager.stripNonFileChars(theProject.metadata.name);
   var form = document.createElement("form");
   $(form)
   .css("display", "none")
