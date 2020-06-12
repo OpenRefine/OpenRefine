@@ -61,8 +61,8 @@ public class HtmlTableExporter implements WriterExporter {
             public void startFile(JsonNode options) {
                 try {
                     writer.write("<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.1//EN\" " +
-                            " \"http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd\">");
-                    writer.write("<html xmlns=\"http://www.w3.org/1999/xhtml>\n");
+                            " \"http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd\">\n");
+                    writer.write("<html xmlns=\"http://www.w3.org/1999/xhtml\">\n");
                     writer.write("<head>\n");
                     writer.write("<title>"); 
                     writer.write(ProjectManager.singleton.getProjectMetadata(project.id).getName());
