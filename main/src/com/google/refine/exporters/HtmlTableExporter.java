@@ -60,14 +60,16 @@ public class HtmlTableExporter implements WriterExporter {
             @Override
             public void startFile(JsonNode options) {
                 try {
-                    writer.write("<html>\n");
+                    writer.write("<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.1//EN\" " +
+                            " \"http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd\">");
+                    writer.write("<html xmlns=\"http://www.w3.org/1999/xhtml>\n");
                     writer.write("<head>\n");
                     writer.write("<title>"); 
                     writer.write(ProjectManager.singleton.getProjectMetadata(project.id).getName());
                     writer.write("</title>\n");
-                    writer.write("<meta charset=\"utf-8\" />\n");
+                    writer.write("<meta charset=\"UTF-8\" />\n");
                     writer.write("</head>\n");
-    
+
                     writer.write("<body>\n");
                     writer.write("<table>\n");
                 } catch (IOException e) {
@@ -85,6 +87,7 @@ public class HtmlTableExporter implements WriterExporter {
                     // Ignore
                 }
             }
+
 
             @Override
             public void addRow(List<CellData> cells, boolean isHeader) {
@@ -106,7 +109,7 @@ public class HtmlTableExporter implements WriterExporter {
                                     writer.write(StringEscapeUtils.escapeHtml4(cellData.link));
                                     writer.write("\">");
                                 }
-                                writer.write(StringEscapeUtils.escapeXml10(cellData.text));
+                                writer.write(StringEscapeUtils.escapeXml11(cellData.text));
                                 if (cellData.link != null) {
                                     writer.write("</a>");
                                 }
@@ -120,7 +123,7 @@ public class HtmlTableExporter implements WriterExporter {
                 }
             }
         };
-        
+
         CustomizableTabularExporterUtilities.exportRows(
                 project, engine, params, serializer);
     }
