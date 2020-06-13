@@ -58,7 +58,6 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 .data-table-header {
   width: 1px;
   position: relative;
-  background: #ebeef8;
   }
   
 .data-table-container {
@@ -107,6 +106,10 @@ table > thead > tr > th {
 
 table.data-table > tbody > tr.odd > td {
   background: @fill_secondary;
+  }
+
+table.data-table > tbody > tr.even > td {
+  background: white;
   }
 
 table.data-table > tbody > tr.contextual > td > div {
