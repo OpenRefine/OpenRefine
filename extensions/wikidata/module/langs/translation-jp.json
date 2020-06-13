@@ -187,5 +187,7 @@
     "warnings-messages/multi-valued-property-is-required-for-new-item/body": "このプロパティは２つ以上のステートメントが期待されていますが、例えば {example_entity} には１つしかありません.",
     "warnings-messages/multi-valued-property-is-required-for-new-item/title": "{property_entity} には一つ以上のステートメントが必要です.",
     "warnings-messages/difference-of-the-properties-is-not-within-the-specified-range/body": "{source_entity} と {target_entity} の差は、範囲 [{min_value}, {max_value}]にあると期待されていますが、 {example_entity} などでは範囲内にありません。",
-    "warnings-messages/difference-of-the-properties-is-not-within-the-specified-range/title": "{source_entity}と{target_entity}が不正です"
+    "warnings-messages/difference-of-the-properties-is-not-within-the-specified-range/title": "{source_entity}と{target_entity}が不正です",
+    "warnings-messages/having-conflicts-with-statements/body": "{example_entity}のような項目で、競合するプロパティ {property_entity} を削除する.",
+    "warnings-messages/having-conflicts-with-statements/title": "{property_entity} はステートメント {added_property_entity} と競合します."
 }
