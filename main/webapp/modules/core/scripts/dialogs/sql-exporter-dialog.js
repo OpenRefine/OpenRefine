@@ -295,7 +295,7 @@ function SqlExporterDialog(options) {
 
   SqlExporterDialog.prototype._configureUIFromOptionCode = function(options) {
       
-      this._elmts.tableNameTextBox.val(theProject.metadata.name);
+      this._elmts.tableNameTextBox.val(theProject.metadata.name.replace(/\W/g, ' ').replace(/\s+/g, '_'));
       this._elmts.sqlExportOutputEmptyRowsCheckbox.attr('checked', 'checked');
       this._elmts.sqlExportTrimAllColumnsCheckbox.attr('checked', 'checked');
       this._elmts.nullCellValueToEmptyStringLabel.attr('checked', 'checked');
@@ -334,8 +334,8 @@ function SqlExporterDialog(options) {
         return false;
     }
     
-    var name = $.trim(theProject.metadata.name.replace(/\W/g, ' ')).replace(/\s+/g, '-');
-  
+    var name = ExporterManager.stripNonFileChars(theProject.metadata.name);
+
     var format = options.format;
     var encoding = options.encoding;
     
@@ -376,7 +376,7 @@ function SqlExporterDialog(options) {
   };
   
   SqlExporterDialog.prototype._prepareSqlExportRowsForm = function(format, includeEngine, ext) {
-      var name = $.trim(theProject.metadata.name.replace(/\W/g, ' ')).replace(/\s+/g, '-');
+      var name = ExporterManager.stripNonFileChars(theProject.metadata.name);
       var form = document.createElement("form");
       $(form)
       .css("display", "none")
@@ -456,6 +456,7 @@ function SqlExporterDialog(options) {
     var self = this;
     this._elmts.columnListTable.find('.sql-exporter-dialog-row').each(function() {
       if ($(this).find('input[type="checkbox"]')[0].checked) {
+        // TODO: Ideally we'd like to let the user preview the names in their cleaned SQL-legal form
         var name = this.getAttribute('column');
         var rowIndex = this.getAttribute('rowIndex');
         
