@@ -233,7 +233,10 @@ DataTableView.prototype._renderDataTables = function(table, headerTable) {
           $(td).html('&nbsp;');
         } else {
           for (var k = 0; k < keys.length; k++) {
-            if (c == keys[k]) {
+            // if a node is a key in the tree-based data (JSON/XML/etc), then also display a dropdown arrow (non-functional currently)
+            // See https://github.com/OpenRefine/OpenRefine/blob/master/main/src/com/google/refine/model/ColumnGroup.java
+            // and https://github.com/OpenRefine/OpenRefine/tree/master/main/src/com/google/refine/importers/tree
+            if (c == keys[k]) { 
               $('<img />').attr("src", "../images/down-arrow.png").appendTo(td);
               break;
             }
