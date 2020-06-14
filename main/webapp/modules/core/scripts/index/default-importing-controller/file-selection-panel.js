@@ -200,7 +200,7 @@ Refine.DefaultImportingController.prototype._renderFileSelectionPanelControlPane
   var renderExtension = function(extension) {
     var tr = table.insertRow(table.rows.length);
     $('<td>').text(extension.extension).appendTo(tr);
-    $('<td>').text(extension.count + (extension.count > 1 ? " files" : " file")).appendTo(tr);
+    $('<td>').text($.i18n('core-index-import/file-count'), extension.count).appendTo(tr);
     $('<button>')
     .text($.i18n('core-buttons/select'))
     .addClass("button")
@@ -260,7 +260,7 @@ Refine.DefaultImportingController.prototype._renderFileSelectionPanelControlPane
     } catch (e) {
       // Ignore
     }
-    self._fileSelectionPanelElmts.regexSummary.text(count + (count == 1 ? " match" : " matches"));
+      self._fileSelectionPanelElmts.regexSummary.text($.i18n('core-index-import/match-count'), count);
   });
   this._fileSelectionPanelElmts.selectRegexButton.unbind().click(function() {
     self._fileSelectionPanelElmts.filePanel
@@ -317,7 +317,7 @@ Refine.DefaultImportingController.prototype._updateFileSelectionSummary = functi
     }
   }
   this._job.config.fileSelection = fileSelection;
-  this._fileSelectionPanelElmts.summary.text(fileSelection.length + " of " + files.length + " files selected");
+  this._fileSelectionPanelElmts.summary.text($.i18n('core-index-import/files-selected', fileSelection.length, files.length));
 };
 
 Refine.DefaultImportingController.prototype._commitFileSelection = function() {
