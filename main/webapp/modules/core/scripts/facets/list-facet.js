@@ -293,7 +293,7 @@ ListFacet.prototype._update = function(resetScroll) {
       this._elmts.bodyInnerDiv.empty();
       
       var messageDiv = $('<div>')
-        .text(this._data.choiceCount + " "+$.i18n('core-facets/too-many-choices'))
+        .text($.i18n('core-facets/too-many-choices', this._data.choiceCount))
         .addClass("facet-body-message")
         .appendTo(this._elmts.bodyInnerDiv);
       $('<br>').appendTo(messageDiv);
@@ -348,7 +348,7 @@ ListFacet.prototype._update = function(resetScroll) {
   (this._blankChoice !== null && this._blankChoice.s ? 1 : 0) +
   (this._errorChoice !== null && this._errorChoice.s ? 1 : 0);
 
-  this._elmts.choiceCountContainer.text(choices.length + " choices");
+  this._elmts.choiceCountContainer.text($.i18n("core-facets/choice-count", choices.length));
   if (selectionCount > 0) {
     this._elmts.resetButton.show();
     this._elmts.invertButton.show();
