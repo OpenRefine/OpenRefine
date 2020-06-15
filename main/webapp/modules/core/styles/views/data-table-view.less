@@ -73,7 +73,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   border-collapse: separate;
   }
 
-.data-table td, .data-table-header th {
+.data-table td, .data-table-header td, .data-table-header th {
   padding: 2px 5px;
   }
 
@@ -82,7 +82,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   border-right: 0.02rem solid #ddd;
   }
 
-.data-table-header th {
+.data-table-header td, .data-table-header th {
   border-bottom: 0.02rem dotted @chrome_primary;
   border-right: 0.02rem solid @chrome_primary;
   }
@@ -103,6 +103,10 @@ th {
   text-align: left;
   }
 
+table.data-header-table > tbody > tr > td {
+  overflow: hidden !important;
+  }
+
 table > thead > tr > th {
   overflow: hidden !important;
   }
@@ -115,7 +119,8 @@ table.data-table > tbody > tr.contextual > td > div {
   opacity: 0.3;
   }
 
-table.data-table-header th.column-header, table.data-table th.column-header {
+table.data-table-header td.column-header, table.data-table-header th.column-header,
+table.data-table td.column-header, table.data-table th.column-header {
   vertical-align: top;
   white-space: nowrap;
   cursor: pointer;
@@ -125,7 +130,7 @@ table.data-table-header th.column-header, table.data-table th.column-header {
   }
 
 /* For the preview in the importing stage */
-table.data-table th.column-header {
+table.data-table td.column-header, table.data-table th.column-header {
   background: @fill_primary;
   border-bottom: 0.12rem solid @chrome_primary;
   }
