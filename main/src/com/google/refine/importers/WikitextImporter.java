@@ -737,7 +737,7 @@ public class WikitextImporter extends TabularImportingParserBase {
             String wikiUrl = JSONUtilities.getString(options, "wikiUrl", null);
             // Wikidata reconciliation endpoint, hardcoded because the user might not have it in its services
             String reconUrl = JSONUtilities.getString(options, "reconService",
-                  "https://tools.wmflabs.org/openrefine-wikidata/en/api");
+                  "https://wdreconcile.toolforge.org/en/api");
             StandardReconConfig cfg = getReconConfig(reconUrl);
 
             if (wikiUrl != null) {
