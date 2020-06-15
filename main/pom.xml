@@ -298,7 +298,7 @@
     <dependency>
       <groupId>org.sweble.wikitext</groupId>
       <artifactId>swc-parser-lazy</artifactId>
-      <version>3.1.7</version>
+      <version>3.1.9</version>
     </dependency>
     <dependency>
       <groupId>joda-time</groupId>
