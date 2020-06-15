@@ -24,14 +24,18 @@
 package org.openrefine.wikidata.commands;
 
 import com.google.refine.commands.Command;
-import org.openrefine.wikidata.editing.ConnectionManager;
+import org.wikidata.wdtk.wikibaseapi.ApiConnection;
+import org.wikidata.wdtk.wikibaseapi.BasicApiConnection;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.net.HttpCookie;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static org.apache.commons.lang.StringUtils.isBlank;
@@ -45,6 +49,10 @@ import static org.apache.commons.lang.StringUtils.isNotBlank;
  * This command also manages cookies of login credentials.
  */
 public class LoginCommand extends Command {
+
+    static final String WIKIDATA_COOKIE_PREFIX = "openrefine-wikidata-";
+
+    static final String WIKIBASE_USERNAME_COOKIE_KEY = "wikibase-username";
 
     static final String USERNAME = "wb-username";
     static final String PASSWORD = "wb-password";
@@ -66,46 +74,28 @@ public class LoginCommand extends Command {
 
         if ("true".equals(request.getParameter("logout"))) {
             manager.logout();
-            removeUsernamePasswordCookies(response);
-            removeOwnOnlyConsumerCookies(response);
+            removeUsernamePasswordCookies(request, response);
+            removeOwnerOnlyConsumerCookies(request, response);
             respond(request, response);
             return; // return directly
         }
 
         boolean remember = "on".equals(request.getParameter("remember-credentials"));
 
-        Cookie[] cookies = request.getCookies();
-
         // Credentials from parameters have higher priority than those from cookies.
         String username = request.getParameter(USERNAME);
         String password = request.getParameter(PASSWORD);
-
-        if (isBlank(username) || isBlank(password)) {
-            for (Cookie cookie : cookies) {
-                String value = cookie.getValue();
-                switch (cookie.getName()) {
-                    case USERNAME:
-                        username = value;
-                        break;
-                    case PASSWORD:
-                        password = value;
-                        break;
-                    default:
-                        break;
-                }
-            }
-            if (isNotBlank(username) && isNotBlank(password)) {
-                // If the credentials are read from cookies, we must remember it.
-                remember = true;
-            }
-        }
-
         String consumerToken = request.getParameter(CONSUMER_TOKEN);
         String consumerSecret = request.getParameter(CONSUMER_SECRET);
         String accessToken = request.getParameter(ACCESS_TOKEN);
         String accessSecret = request.getParameter(ACCESS_SECRET);
 
-        if (isBlank(consumerToken)|| isBlank(consumerSecret) || isBlank(accessToken) || isBlank(accessSecret)) {
+        if (isBlank(username) && isBlank(password) && isBlank(consumerToken) &&
+                isBlank(consumerSecret) && isBlank(accessToken) && isBlank(accessSecret)) {
+            // In this case, we use cookie to login, and we will always remember the credentials in cookies.
+            remember = true;
+            Cookie[] cookies = request.getCookies();
+
             for (Cookie cookie : cookies) {
                 String value = cookie.getValue();
                 switch (cookie.getName()) {
@@ -125,33 +115,61 @@ public class LoginCommand extends Command {
                         break;
                 }
             }
-            if (isNotBlank(consumerToken) && isNotBlank(consumerSecret) && isNotBlank(accessToken) && isNotBlank(accessSecret)) {
-                remember = true;
+
+            if (isBlank(consumerToken) && isBlank(consumerSecret) && isBlank(accessToken) && isBlank(accessSecret)) {
+                // Try logging in with the cookies of a password-based connection.
+                String username1 = null;
+                List<Cookie> cookieList = new ArrayList<>();
+                for (Cookie cookie : cookies) {
+                    if (cookie.getName().startsWith(WIKIDATA_COOKIE_PREFIX)) {
+                        String cookieName = cookie.getName().substring(WIKIDATA_COOKIE_PREFIX.length());
+                        Cookie newCookie = new Cookie(cookieName, cookie.getValue());
+                        cookieList.add(newCookie);
+                    } else if (cookie.getName().equals(WIKIBASE_USERNAME_COOKIE_KEY)) {
+                        username1 = cookie.getValue();
+                    }
+                }
+
+                if (cookieList.size() > 0 && username1 != null) {
+                    removeOwnerOnlyConsumerCookies(request, response);
+                    if (manager.login(username1, cookieList)) {
+                        respond(request, response);
+                        return;
+                    } else {
+                        removeUsernamePasswordCookies(request, response);
+                    }
+                }
             }
         }
 
         if (isNotBlank(username) && isNotBlank(password)) {
-            manager.login(username, password);
             // Once logged in with new credentials,
             // the old credentials in cookies should be cleared.
-            if (manager.getConnection() != null && remember) {
-                setCookie(response, USERNAME, username);
-                setCookie(response, PASSWORD, password);
+            if (manager.login(username, password) && remember) {
+                ApiConnection connection = manager.getConnection();
+                List<HttpCookie> cookies = ((BasicApiConnection) connection).getCookies();
+                for (HttpCookie cookie : cookies) {
+                    setCookie(response, WIKIDATA_COOKIE_PREFIX + cookie.getName(), cookie.getValue());
+                }
+
+                // Though the cookies from the connection contain some cookies of username,
+                // we cannot make sure that all Wikibase instances use the same cookie key
+                // to retrieve the username. So we choose to set the username cookie with our own cookie key.
+                setCookie(response, WIKIBASE_USERNAME_COOKIE_KEY, connection.getCurrentUser());
             } else {
-                removeUsernamePasswordCookies(response);
+                removeUsernamePasswordCookies(request, response);
             }
-            removeOwnOnlyConsumerCookies(response);
+            removeOwnerOnlyConsumerCookies(request, response);
         } else if (isNotBlank(consumerToken) && isNotBlank(consumerSecret) && isNotBlank(accessToken) && isNotBlank(accessSecret)) {
-            manager.login(consumerToken, consumerSecret, accessToken, accessSecret);
-            if (manager.getConnection() != null && remember) {
+            if (manager.login(consumerToken, consumerSecret, accessToken, accessSecret) && remember) {
                 setCookie(response, CONSUMER_TOKEN, consumerToken);
                 setCookie(response, CONSUMER_SECRET, consumerSecret);
                 setCookie(response, ACCESS_TOKEN, accessToken);
                 setCookie(response, ACCESS_SECRET, accessSecret);
             } else {
-                removeOwnOnlyConsumerCookies(response);
+                removeOwnerOnlyConsumerCookies(request, response);
             }
-            removeUsernamePasswordCookies(response);
+            removeUsernamePasswordCookies(request, response);
         }
 
         respond(request, response);
@@ -171,12 +189,17 @@ public class LoginCommand extends Command {
         respondJSON(response, jsonResponse);
     }
 
-    private static void removeUsernamePasswordCookies(HttpServletResponse response) {
-        removeCookie(response, USERNAME);
-        removeCookie(response, PASSWORD);
+    private static void removeUsernamePasswordCookies(HttpServletRequest request, HttpServletResponse response) {
+        Cookie[] cookies = request.getCookies();
+        for (Cookie cookie : cookies) {
+            if (cookie.getName().startsWith(WIKIDATA_COOKIE_PREFIX)) {
+                removeCookie(response, cookie.getName());
+            }
+        }
+        removeCookie(response, WIKIBASE_USERNAME_COOKIE_KEY);
     }
 
-    private static void removeOwnOnlyConsumerCookies(HttpServletResponse response) {
+    private static void removeOwnerOnlyConsumerCookies(HttpServletRequest request, HttpServletResponse response) {
         removeCookie(response, CONSUMER_TOKEN);
         removeCookie(response, CONSUMER_SECRET);
         removeCookie(response, ACCESS_TOKEN);

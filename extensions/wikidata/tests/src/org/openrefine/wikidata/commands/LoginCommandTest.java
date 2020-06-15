@@ -1,8 +1,10 @@
 package org.openrefine.wikidata.commands;
 
+import com.google.refine.ProjectManager;
 import com.google.refine.commands.Command;
+import com.google.refine.preference.PreferenceStore;
+import com.google.refine.util.ParsingUtilities;
 import org.mockito.ArgumentCaptor;
-import org.openrefine.wikidata.editing.ConnectionManager;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
@@ -19,11 +21,14 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.lang.reflect.Constructor;
+import java.net.HttpCookie;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import static com.google.refine.util.TestUtils.assertEqualAsJson;
+import static org.mockito.ArgumentMatchers.anyMap;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.verify;
 import static org.openrefine.wikidata.commands.LoginCommand.*;
@@ -41,9 +46,23 @@ public class LoginCommandTest extends CommandTest {
     private static final String accessToken = "my_access_token";
     private static final String accessSecret = "my_access_secret";
 
+    private static final Map<String, String> cookieMap = new HashMap<>();
+
+    static {
+        cookieMap.put("GeoIP", "TW:TXG:Taichung:24.15:120.68:v4");
+        cookieMap.put("WMF-Last-Access", "15-Jun-2020");
+        cookieMap.put("WMF-Last-Access-Global", "15-Jun-2020");
+        cookieMap.put("centralauth_Session", "centralauth_Session123");
+        cookieMap.put("centralauth_Token", "centralauth_Token123");
+        cookieMap.put("centralauth_User", username);
+        cookieMap.put("wikidatawikiSession", "wikidatawikiSession123");
+        cookieMap.put("wikidatawikiUserID", "123456");
+        cookieMap.put("wikidatawikiUserName", username);
+    }
+
     private static final int ONE_YEAR = 60 * 60 * 24 * 365;
 
-    private ArgumentCaptor<Cookie> captor;
+    private ArgumentCaptor<Cookie> cookieCaptor;
 
     // used for mocking singleton
     Constructor<ConnectionManager> constructor;
@@ -64,8 +83,19 @@ public class LoginCommandTest extends CommandTest {
         given(ConnectionManager.getInstance()).willReturn(manager);
 
         when(request.getCookies()).thenReturn(new Cookie[]{});
-        captor = ArgumentCaptor.forClass(Cookie.class);
-        doNothing().when(response).addCookie(captor.capture());
+        cookieCaptor = ArgumentCaptor.forClass(Cookie.class);
+        doNothing().when(response).addCookie(cookieCaptor.capture());
+    }
+
+    @Test
+    public void testClearCredentialsInPreferences() throws Exception {
+        PreferenceStore prefStore = new PreferenceStore();
+        ProjectManager.singleton = mock(ProjectManager.class);
+        when(ProjectManager.singleton.getPreferenceStore()).thenReturn(prefStore);
+        prefStore.put(ConnectionManager.PREFERENCE_STORE_KEY, ParsingUtilities.mapper.createArrayNode());
+        assertNotNull(prefStore.get(ConnectionManager.PREFERENCE_STORE_KEY));
+        constructor.newInstance();
+        assertNull(prefStore.get(ConnectionManager.PREFERENCE_STORE_KEY));
     }
 
     @Test
@@ -93,6 +123,8 @@ public class LoginCommandTest extends CommandTest {
         BasicApiConnection connection = mock(BasicApiConnection.class);
         whenNew(BasicApiConnection.class).withAnyArguments().thenReturn(connection);
         when(connection.getCurrentUser()).thenReturn(username);
+        when(connection.getCookies()).thenReturn(makeResponseCookies());
+        when(connection.getCookies()).thenReturn(makeResponseCookies());
 
         when(request.getParameter("csrf_token")).thenReturn(Command.csrfFactory.getFreshToken());
         when(request.getParameter(USERNAME)).thenReturn(username);
@@ -104,9 +136,9 @@ public class LoginCommandTest extends CommandTest {
         assertTrue(ConnectionManager.getInstance().isLoggedIn());
         assertEqualAsJson("{\"logged_in\":true,\"username\":\"" + username + "\"}", writer.toString());
 
-        Map<String, Cookie> cookies = getCookieMap(captor.getAllValues());
-        assertCookieEquals(cookies.get(USERNAME), "", 0);
-        assertCookieEquals(cookies.get(PASSWORD), "", 0);
+        Map<String, Cookie> cookies = getCookieMap(cookieCaptor.getAllValues());
+        assertEquals(cookies.size(), 5);
+        assertCookieEquals(cookies.get(WIKIBASE_USERNAME_COOKIE_KEY), "", 0);
         assertCookieEquals(cookies.get(CONSUMER_TOKEN), "", 0);
         assertCookieEquals(cookies.get(CONSUMER_SECRET), "", 0);
         assertCookieEquals(cookies.get(ACCESS_TOKEN), "", 0);
@@ -118,6 +150,7 @@ public class LoginCommandTest extends CommandTest {
         BasicApiConnection connection = mock(BasicApiConnection.class);
         whenNew(BasicApiConnection.class).withAnyArguments().thenReturn(connection);
         when(connection.getCurrentUser()).thenReturn(username);
+        when(connection.getCookies()).thenReturn(makeResponseCookies());
 
         when(request.getParameter("csrf_token")).thenReturn(Command.csrfFactory.getFreshToken());
         when(request.getParameter("remember-credentials")).thenReturn("on");
@@ -130,9 +163,9 @@ public class LoginCommandTest extends CommandTest {
         assertTrue(ConnectionManager.getInstance().isLoggedIn());
         assertEqualAsJson("{\"logged_in\":true,\"username\":\"" + username + "\"}", writer.toString());
 
-        Map<String, Cookie> cookies = getCookieMap(captor.getAllValues());
-        assertCookieEquals(cookies.get(USERNAME), username, ONE_YEAR);
-        assertCookieEquals(cookies.get(PASSWORD), password, ONE_YEAR);
+        Map<String, Cookie> cookies = getCookieMap(cookieCaptor.getAllValues());
+        cookieMap.forEach((key, value) -> assertCookieEquals(cookies.get(WIKIDATA_COOKIE_PREFIX + key), value, ONE_YEAR));
+        assertCookieEquals(cookies.get(WIKIBASE_USERNAME_COOKIE_KEY), username, ONE_YEAR);
         assertCookieEquals(cookies.get(CONSUMER_TOKEN), "", 0);
         assertCookieEquals(cookies.get(CONSUMER_SECRET), "", 0);
         assertCookieEquals(cookies.get(ACCESS_TOKEN), "", 0);
@@ -142,23 +175,21 @@ public class LoginCommandTest extends CommandTest {
     @Test
     public void testUsernamePasswordLoginWithCookies() throws Exception {
         BasicApiConnection connection = mock(BasicApiConnection.class);
-        whenNew(BasicApiConnection.class).withAnyArguments().thenReturn(connection);
+        given(ConnectionManager.convertToBasicApiConnection(anyMap())).willReturn(connection);
         when(connection.getCurrentUser()).thenReturn(username);
+        when(connection.getCookies()).thenReturn(makeResponseCookies());
 
         when(request.getParameter("csrf_token")).thenReturn(Command.csrfFactory.getFreshToken());
-        Cookie usernameCookie = new Cookie(USERNAME, username);
-        Cookie passwordCookie = new Cookie(PASSWORD, password);
-        when(request.getCookies()).thenReturn(new Cookie[]{usernameCookie, passwordCookie});
+        when(request.getCookies()).thenReturn(makeRequestCookies());
 
         command.doPost(request, response);
 
-        verify(connection).login(username, password);
+        verify(connection).checkCredentials();
         assertTrue(ConnectionManager.getInstance().isLoggedIn());
         assertEqualAsJson("{\"logged_in\":true,\"username\":\"" + username + "\"}", writer.toString());
 
-        Map<String, Cookie> cookies = getCookieMap(captor.getAllValues());
-        assertCookieEquals(cookies.get(USERNAME), username, ONE_YEAR);
-        assertCookieEquals(cookies.get(PASSWORD), password, ONE_YEAR);
+        Map<String, Cookie> cookies = getCookieMap(cookieCaptor.getAllValues());
+        assertEquals(cookies.size(), 4);
         assertCookieEquals(cookies.get(CONSUMER_TOKEN), "", 0);
         assertCookieEquals(cookies.get(CONSUMER_SECRET), "", 0);
         assertCookieEquals(cookies.get(ACCESS_TOKEN), "", 0);
@@ -182,9 +213,9 @@ public class LoginCommandTest extends CommandTest {
         assertTrue(ConnectionManager.getInstance().isLoggedIn());
         assertEqualAsJson("{\"logged_in\":true,\"username\":\"" + username + "\"}", writer.toString());
 
-        Map<String, Cookie> cookies = getCookieMap(captor.getAllValues());
-        assertCookieEquals(cookies.get(USERNAME), "", 0);
-        assertCookieEquals(cookies.get(PASSWORD), "", 0);
+        Map<String, Cookie> cookies = getCookieMap(cookieCaptor.getAllValues());
+        assertEquals(cookies.size(), 5);
+        assertCookieEquals(cookies.get(WIKIBASE_USERNAME_COOKIE_KEY), "", 0);
         assertCookieEquals(cookies.get(CONSUMER_TOKEN), "", 0);
         assertCookieEquals(cookies.get(CONSUMER_SECRET), "", 0);
         assertCookieEquals(cookies.get(ACCESS_TOKEN), "", 0);
@@ -203,14 +234,17 @@ public class LoginCommandTest extends CommandTest {
         when(request.getParameter(CONSUMER_SECRET)).thenReturn(consumerSecret);
         when(request.getParameter(ACCESS_TOKEN)).thenReturn(accessToken);
         when(request.getParameter(ACCESS_SECRET)).thenReturn(accessSecret);
+        when(request.getCookies()).thenReturn(makeRequestCookies());
 
         command.doPost(request, response);
 
         assertEqualAsJson("{\"logged_in\":true,\"username\":\"" + username + "\"}", writer.toString());
 
-        Map<String, Cookie> cookies = getCookieMap(captor.getAllValues());
-        assertCookieEquals(cookies.get(USERNAME), "", 0);
-        assertCookieEquals(cookies.get(PASSWORD), "", 0);
+        Map<String, Cookie> cookies = getCookieMap(cookieCaptor.getAllValues());
+        // If logging in with owner-only consumer,
+        // cookies for the username/password login should be cleared.
+        cookieMap.forEach((key, value) -> assertCookieEquals(cookies.get(WIKIDATA_COOKIE_PREFIX + key), "", 0));
+        assertCookieEquals(cookies.get(WIKIBASE_USERNAME_COOKIE_KEY), "", 0);
         assertCookieEquals(cookies.get(CONSUMER_TOKEN), consumerToken, ONE_YEAR);
         assertCookieEquals(cookies.get(CONSUMER_SECRET), consumerSecret, ONE_YEAR);
         assertCookieEquals(cookies.get(ACCESS_TOKEN), accessToken, ONE_YEAR);
@@ -234,9 +268,9 @@ public class LoginCommandTest extends CommandTest {
         assertTrue(ConnectionManager.getInstance().isLoggedIn());
         assertEqualAsJson("{\"logged_in\":true,\"username\":\"" + username + "\"}", writer.toString());
 
-        Map<String, Cookie> cookies = getCookieMap(captor.getAllValues());
-        assertCookieEquals(cookies.get(USERNAME), "", 0);
-        assertCookieEquals(cookies.get(PASSWORD), "", 0);
+        Map<String, Cookie> cookies = getCookieMap(cookieCaptor.getAllValues());
+        assertEquals(cookies.size(), 5);
+        assertCookieEquals(cookies.get(WIKIBASE_USERNAME_COOKIE_KEY), "", 0);
         assertCookieEquals(cookies.get(CONSUMER_TOKEN), consumerToken, ONE_YEAR);
         assertCookieEquals(cookies.get(CONSUMER_SECRET), consumerSecret, ONE_YEAR);
         assertCookieEquals(cookies.get(ACCESS_TOKEN), accessToken, ONE_YEAR);
@@ -248,6 +282,7 @@ public class LoginCommandTest extends CommandTest {
         BasicApiConnection connection = mock(BasicApiConnection.class);
         whenNew(BasicApiConnection.class).withAnyArguments().thenReturn(connection);
         when(connection.getCurrentUser()).thenReturn(username);
+        when(connection.getCookies()).thenReturn(makeResponseCookies());
 
         when(request.getParameter("csrf_token")).thenReturn(Command.csrfFactory.getFreshToken());
         when(request.getParameter(USERNAME)).thenReturn(username);
@@ -256,11 +291,14 @@ public class LoginCommandTest extends CommandTest {
         // login first
         command.doPost(request, response);
 
+        int loginCookiesSize = cookieCaptor.getAllValues().size();
+
         assertTrue(ConnectionManager.getInstance().isLoggedIn());
         assertEqualAsJson("{\"logged_in\":true,\"username\":\"" + username + "\"}", writer.toString());
 
         // logout
         when(request.getParameter("logout")).thenReturn("true");
+        when(request.getCookies()).thenReturn(makeRequestCookies()); // will be cleared
         StringWriter logoutWriter = new StringWriter();
         when(response.getWriter()).thenReturn(new PrintWriter(logoutWriter));
 
@@ -269,10 +307,9 @@ public class LoginCommandTest extends CommandTest {
         assertFalse(ConnectionManager.getInstance().isLoggedIn());
         assertEqualAsJson("{\"logged_in\":false,\"username\":null}", logoutWriter.toString());
 
-        // When logging in, 6 cookies are set.
-        Map<String, Cookie> cookies = getCookieMap(captor.getAllValues().subList(6, captor.getAllValues().size()));
-        assertCookieEquals(cookies.get(USERNAME), "", 0);
-        assertCookieEquals(cookies.get(PASSWORD), "", 0);
+        Map<String, Cookie> cookies = getCookieMap(cookieCaptor.getAllValues().subList(loginCookiesSize, cookieCaptor.getAllValues().size()));
+        cookieMap.forEach((key, value) -> assertCookieEquals(cookies.get(WIKIDATA_COOKIE_PREFIX + key), "", 0));
+        assertCookieEquals(cookies.get(WIKIBASE_USERNAME_COOKIE_KEY), "", 0);
         assertCookieEquals(cookies.get(CONSUMER_TOKEN), "", 0);
         assertCookieEquals(cookies.get(CONSUMER_SECRET), "", 0);
         assertCookieEquals(cookies.get(ACCESS_TOKEN), "", 0);
@@ -294,6 +331,23 @@ public class LoginCommandTest extends CommandTest {
         command.doPost(request, response);
 
         verify(connection).login(username, password);
+        assertFalse(ConnectionManager.getInstance().isLoggedIn());
+    }
+
+    @Test
+    public void testUsernamePasswordWithCookiesLoginFailed() throws Exception {
+        BasicApiConnection connection = mock(BasicApiConnection.class);
+        given(ConnectionManager.convertToBasicApiConnection(anyMap())).willReturn(connection);
+        doThrow(new AssertUserFailedException("assert user login failed")).when(connection).checkCredentials();
+
+        when(request.getParameter("csrf_token")).thenReturn(Command.csrfFactory.getFreshToken());
+        // we don't check the username/password here
+        when(request.getCookies()).thenReturn(makeRequestCookies());
+
+        // login first
+        command.doPost(request, response);
+
+        verify(connection).checkCredentials();
         assertFalse(ConnectionManager.getInstance().isLoggedIn());
     }
 
@@ -337,6 +391,19 @@ public class LoginCommandTest extends CommandTest {
 
         // still logged in
         assertTrue(ConnectionManager.getInstance().isLoggedIn());
+    }
+
+    private static Cookie[] makeRequestCookies() {
+        List<Cookie> cookies = new ArrayList<>();
+        cookieMap.forEach((key, value) -> cookies.add(new Cookie(WIKIDATA_COOKIE_PREFIX + key, value)));
+        cookies.add(new Cookie(WIKIBASE_USERNAME_COOKIE_KEY, username));
+        return cookies.toArray(new Cookie[0]);
+    }
+
+    private static List<HttpCookie> makeResponseCookies() {
+        List<HttpCookie> cookies = new ArrayList<>();
+        cookieMap.forEach((key, value) -> cookies.add(new HttpCookie(key, value)));
+        return cookies;
     }
 
     private static void assertCookieEquals(Cookie cookie, String expectedValue, int expectedMaxAge) {
