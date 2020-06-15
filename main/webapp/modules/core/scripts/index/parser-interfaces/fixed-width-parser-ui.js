@@ -109,6 +109,8 @@ Refine.FixedWidthParserUI.prototype.getOptions = function() {
   options.storeBlankRows = this._optionContainerElmts.storeBlankRowsCheckbox[0].checked;
   options.storeBlankCellsAsNulls = this._optionContainerElmts.storeBlankCellsAsNullsCheckbox[0].checked;
   options.includeFileSources = this._optionContainerElmts.includeFileSourcesCheckbox[0].checked;
+  options.includeArchiveFile = this._optionContainerElmts.includeFileSourcesCheckbox[0].checked;
+  options.includeArchiveFileName = this._optionContainerElmts.includeArchiveFileCheckbox[0].checked;
 
   return options;
 };
@@ -140,6 +142,8 @@ Refine.FixedWidthParserUI.prototype._initialize = function() {
   $('#or-import-blank').text($.i18n('core-index-parser/store-blank'));
   $('#or-import-null').text($.i18n('core-index-parser/store-nulls'));
   $('#or-import-source').html($.i18n('core-index-parser/store-source'));
+  $('#or-import-archive').html($.i18n('core-index-parser/store-archive'));
+
   
   this._optionContainerElmts.encodingInput
     .attr('value', this._config.encoding || '')
@@ -183,6 +187,9 @@ Refine.FixedWidthParserUI.prototype._initialize = function() {
   }
   if (this._config.includeFileSources) {
     this._optionContainerElmts.includeFileSourcesCheckbox.attr("checked", "checked");
+  }
+  if (this._config.includeArchiveFileName) {
+    this._optionContainerElmts.includeArchiveFileCheckbox.attr("checked", "checked");
   }
 
   var onChange = function() {

@@ -71,7 +71,8 @@ abstract public class ImportingParserBase implements ImportingParser {
             List<ObjectNode> fileRecords, String format) {
         ObjectNode options = ParsingUtilities.mapper.createObjectNode();
         JSONUtilities.safePut(options, "includeFileSources", fileRecords.size() > 1);
-        
+        JSONUtilities.safePut(options, "includeArchiveFileName", ImportingUtilities.hasArchiveFileField(fileRecords));
+
         return options;
     }
     
@@ -109,13 +110,14 @@ abstract public class ImportingParserBase implements ImportingParser {
     ) throws IOException {
         final File file = ImportingUtilities.getFile(job, fileRecord);
         final String fileSource = ImportingUtilities.getFileSource(fileRecord);
+        final String archiveFileName = ImportingUtilities.getArchiveFileName(fileRecord);
         
         progress.startFile(fileSource);
         try {
             InputStream inputStream = ImporterUtilities.openAndTrackFile(fileSource, file, progress);
             try {
                 if (useInputStream) {
-                    parseOneFile(project, metadata, job, fileSource, inputStream, limit, options, exceptions);
+                    parseOneFile(project, metadata, job, fileSource, archiveFileName, inputStream, limit, options, exceptions);
                 } else {
                     String commonEncoding = JSONUtilities.getString(options, "encoding", null);
                     if (commonEncoding != null && commonEncoding.isEmpty()) {
@@ -125,7 +127,7 @@ abstract public class ImportingParserBase implements ImportingParser {
                     Reader reader = ImportingUtilities.getReaderFromStream(
                         inputStream, fileRecord, commonEncoding);
                     
-                    parseOneFile(project, metadata, job, fileSource, reader, limit, options, exceptions);
+                    parseOneFile(project, metadata, job, fileSource, archiveFileName, reader, limit, options, exceptions);
                 }
             } finally {
                 inputStream.close();
@@ -140,16 +142,18 @@ abstract public class ImportingParserBase implements ImportingParser {
         ProjectMetadata metadata,
         ImportingJob job,
         String fileSource,
+        String archiveFileName,
         Reader reader,
         int limit,
         ObjectNode options,
         List<Exception> exceptions
     ) {
-        pushImportingOptions(metadata, fileSource, options);
+        pushImportingOptions(metadata, "fileSource", fileSource, options);
+        pushImportingOptions(metadata, "archiveFileName", archiveFileName, options);
     }
 
-    private void pushImportingOptions(ProjectMetadata metadata, String fileSource, ObjectNode options) {
-        options.put("fileSource", fileSource);
+    private void pushImportingOptions(ProjectMetadata metadata, String key, String value, ObjectNode options) {
+        options.put(key, value);
         // set the import options to metadata:
         metadata.appendImportOptionMetadata(options);
     }
@@ -159,21 +163,42 @@ abstract public class ImportingParserBase implements ImportingParser {
         ProjectMetadata metadata,
         ImportingJob job,
         String fileSource,
+        String archiveFileName,
         InputStream inputStream,
         int limit,
         ObjectNode options,
         List<Exception> exceptions
     ) {
-        pushImportingOptions(metadata, fileSource, options);
+        pushImportingOptions(metadata, "fileSource", fileSource, options);
+        pushImportingOptions(metadata, "archiveFileName", archiveFileName, options);
     }
     
     
-    protected static int addFilenameColumn(Project project) {
+    protected static int addFilenameColumn(Project project, boolean archiveColumnAdded) {
         String fileNameColumnName = "File";
+        int columnId = archiveColumnAdded? 1 : 0;
         if (project.columnModel.getColumnByName(fileNameColumnName) == null) {
             try {
                 project.columnModel.addColumn(
-                    0, new Column(project.columnModel.allocateNewCellIndex(), fileNameColumnName), false);
+                        columnId, new Column(project.columnModel.allocateNewCellIndex(), fileNameColumnName), false);
+
+                return columnId;
+            } catch (ModelException e) {
+                // Shouldn't happen: We already checked for duplicate name.
+                logger.error("ModelException adding Filename column",e);
+            }
+            return -1;
+        } else {
+            return columnId;
+        }
+    }
+
+    protected static int addArchiveColumn(Project project) {
+        String ArchiveColumnName = "Archive";
+        if (project.columnModel.getColumnByName(ArchiveColumnName) == null) {
+            try {
+                project.columnModel.addColumn(
+                        0, new Column(project.columnModel.allocateNewCellIndex(), ArchiveColumnName), false);
 
                 return 0;
             } catch (ModelException e) {
