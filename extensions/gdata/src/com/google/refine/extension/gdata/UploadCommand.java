@@ -1,11 +1,39 @@
+/*
+ * Copyright (c) 2010,2011,2015 Thomas F. Morris <tfmorris@gmail.com>
+ *               2018,2019 OpenRefine contributors
+ *        All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are met:
+ * - Redistributions of source code must retain the above copyright notice, this
+ *   list of conditions and the following disclaimer.
+ * - Redistributions in binary form must reproduce the above copyright notice,
+ *   this list of conditions and the following disclaimer in the documentation
+ *   and/or other materials provided with the distribution.
+ *
+ * Neither the name of Google nor the names of its contributors may be used to
+ * endorse or promote products derived from this software without specific
+ * prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR
+ * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+ * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
+ * OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+ * WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
+ * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+ * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
 package com.google.refine.extension.gdata;
 
-import java.io.ByteArrayOutputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Writer;
-import java.net.URL;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Properties;
@@ -14,7 +42,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,7 +67,7 @@ public class UploadCommand extends Command {
     static final Logger logger = LoggerFactory.getLogger("gdata_upload");
     
     private static final String METADATA_DESCRIPTION = "OpenRefine project dump";
-    private static final String METADATA_ICONLINK = "https://raw.githubusercontent.com/OpenRefine/OpenRefine/master/main/webapp/modules/core/images/logo-openrefine-550.png";
+    private static final String METADATA_ICON_FILE = "logo-openrefine-550.png";
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -102,7 +130,7 @@ public class UploadCommand extends Command {
         }
     }
 
-    static private String upload(
+    private String upload(
             Project project, Engine engine, Properties params,
             String token, String name, List<Exception> exceptions) {
         String format = params.getProperty("format");
@@ -113,23 +141,13 @@ public class UploadCommand extends Command {
         }
         return null;
     }
-    
-    private static byte[] getImageFromUrl(String urlText) throws IOException {
-        URL url = new URL(urlText);
-        ByteArrayOutputStream output = new ByteArrayOutputStream();
-         
-        try (InputStream inputStream = url.openStream()) {
-            int n = 0;
-            byte [] buffer = new byte[ 1024 ];
-            while (-1 != (n = inputStream.read(buffer))) {
-                output.write(buffer, 0, n);
-            }
-        }
-     
-        return output.toByteArray();
+
+    protected byte[] getIconImage() throws IOException {
+        InputStream is = getClass().getResourceAsStream(METADATA_ICON_FILE);
+        return IOUtils.toByteArray(is);
     }
 
-    private static String uploadOpenRefineProject(Project project, String token,
+    private String uploadOpenRefineProject(Project project, String token,
             String name, List<Exception> exceptions) {
         FileOutputStream fos = null;
         
@@ -139,15 +157,13 @@ public class UploadCommand extends Command {
             
             fos = new FileOutputStream(filePath);
             FileProjectManager.gzipTarToOutputStream(project, fos);
-            
-            File fileMetadata = new File();
-            String asB64 = Base64.encodeBase64URLSafeString(getImageFromUrl(METADATA_ICONLINK));
-            
+
             Thumbnail tn = new Thumbnail();
-            tn.setMimeType("image/x-icon").setImage(asB64);
+            tn.setMimeType("image/x-icon").encodeImage(getIconImage());
             ContentHints contentHints = new ContentHints();
             contentHints.setThumbnail(tn); 
-            
+
+            File fileMetadata = new File();
             fileMetadata.setName(name)
                 .setDescription(METADATA_DESCRIPTION)
                 .setContentHints(contentHints);

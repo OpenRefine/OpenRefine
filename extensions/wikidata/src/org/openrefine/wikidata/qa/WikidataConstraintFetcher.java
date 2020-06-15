@@ -23,25 +23,18 @@
  ******************************************************************************/
 package org.openrefine.wikidata.qa;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
 import org.openrefine.wikidata.utils.EntityCache;
 import org.wikidata.wdtk.datamodel.helpers.Datamodel;
-import org.wikidata.wdtk.datamodel.interfaces.EntityIdValue;
-import org.wikidata.wdtk.datamodel.interfaces.ItemIdValue;
-import org.wikidata.wdtk.datamodel.interfaces.PropertyDocument;
-import org.wikidata.wdtk.datamodel.interfaces.PropertyIdValue;
-import org.wikidata.wdtk.datamodel.interfaces.Snak;
-import org.wikidata.wdtk.datamodel.interfaces.SnakGroup;
-import org.wikidata.wdtk.datamodel.interfaces.Statement;
-import org.wikidata.wdtk.datamodel.interfaces.StatementGroup;
-import org.wikidata.wdtk.datamodel.interfaces.StatementRank;
-import org.wikidata.wdtk.datamodel.interfaces.StringValue;
-import org.wikidata.wdtk.datamodel.interfaces.Value;
+import org.wikidata.wdtk.datamodel.implementation.QuantityValueImpl;
+import org.wikidata.wdtk.datamodel.interfaces.*;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.HashMap;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * This class provides an abstraction over the way constraint definitions are
@@ -86,7 +79,14 @@ public class WikidataConstraintFetcher implements ConstraintFetcher {
     public static String SINGLE_VALUE_CONSTRAINT_QID = "Q19474404";
     public static String SINGLE_BEST_VALUE_CONSTRAINT_QID = "Q52060874";
     public static String DISTINCT_VALUES_CONSTRAINT_QID = "Q21502410";
-    
+
+    public static String MULTI_VALUE_CONSTRAINT_QID = "Q21510857";
+
+    public static String DIFFERENCE_WITHIN_RANGE_CONSTRAINT_QID = "Q21510854";
+    public static String DIFFERENCE_WITHIN_RANGE_CONSTRAINT_PID = "P2306";
+    public static String MINIMUM_VALUE_PID = "P2313";
+    public static String MAXIMUM_VALUE_PID = "P2312";
+
     public static String NO_BOUNDS_CONSTRAINT_QID = "Q51723761";
     public static String INTEGER_VALUED_CONSTRAINT_QID = "Q52848401";
     
@@ -96,7 +96,10 @@ public class WikidataConstraintFetcher implements ConstraintFetcher {
     public static String ALLOWED_ENTITY_TYPES_QID = "Q52004125";
     public static String ALLOWED_ITEM_TYPE_QID = "Q29934200";
     public static String ALLOWED_ENTITY_TYPES_PID = "P2305";
-    
+
+    public static String CONFLICTS_WITH_CONSTRAINT_QID = "Q21502838";
+    public static String CONFLICTS_WITH_PROPERTY_PID = "P2306";
+    public static String ITEM_OF_PROPERTY_CONSTRAINT_PID = "P2305";
 
     // The following constraints still need to be implemented:
 
@@ -208,7 +211,12 @@ public class WikidataConstraintFetcher implements ConstraintFetcher {
     public boolean hasDistinctValues(PropertyIdValue pid) {
         return getSingleConstraint(pid, DISTINCT_VALUES_CONSTRAINT_QID) != null;
     }
-    
+
+    @Override
+    public boolean hasMultiValue(PropertyIdValue pid) {
+        return getSingleConstraint(pid, MULTI_VALUE_CONSTRAINT_QID) != null;
+    }
+
     @Override
     public boolean isSymmetric(PropertyIdValue pid) {
         return getSingleConstraint(pid, SYMMETRIC_CONSTRAINT_QID) != null;
@@ -339,5 +347,117 @@ public class WikidataConstraintFetcher implements ConstraintFetcher {
             }
         }
         return results;
+    }
+
+    protected List<QuantityValue> getValues(List<SnakGroup> groups, String pid) {
+        List<QuantityValue> results = new ArrayList<>();
+        for (SnakGroup group : groups) {
+            if (group.getProperty().getId().equals(pid)) {
+                for (Snak snak : group.getSnaks())
+                    results.add((QuantityValueImpl) snak.getValue());
+            }
+        }
+        return results;
+    }
+
+    /**
+     * Is this property expected to have a value whose difference
+     * with its lower bound property should be in a range?
+     */
+    @Override
+    public boolean hasDiffWithinRange(PropertyIdValue pid) {
+        return getSingleConstraint(pid, DIFFERENCE_WITHIN_RANGE_CONSTRAINT_QID) != null;
+    }
+
+    /**
+     * Retrieves the lower value property for calculating the difference
+     * required in difference-within-range constraint
+     *
+     * @param pid:
+     *            the property to calculate difference with
+     * @return the pid of the lower bound property
+     */
+    @Override
+    public PropertyIdValue getLowerPropertyId(PropertyIdValue pid) {
+        List<SnakGroup> specs = getSingleConstraint(pid, DIFFERENCE_WITHIN_RANGE_CONSTRAINT_QID);
+        if (specs != null) {
+            List<Value> lowerValueProperty = findValues(specs, DIFFERENCE_WITHIN_RANGE_CONSTRAINT_PID);
+            if (!lowerValueProperty.isEmpty()) {
+                return (PropertyIdValue) lowerValueProperty.get(0);
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Retrieves the lower bound of the range
+     * required in difference-within-range constraint
+     *
+     * @param pid
+     * @return minimum value
+     */
+    @Override
+    public QuantityValue getMinimumValue(PropertyIdValue pid) {
+        List<SnakGroup> specs = getSingleConstraint(pid, DIFFERENCE_WITHIN_RANGE_CONSTRAINT_QID);
+        if (specs != null) {
+            List<QuantityValue> minValue = getValues(specs, MINIMUM_VALUE_PID);
+            if (!minValue.isEmpty()) {
+                return minValue.get(0);
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Retrieves the upper bound of the range
+     * required in difference-within-range constraint
+     *
+     * @param pid
+     * @return maximum value
+     */
+    @Override
+    public QuantityValue getMaximumValue(PropertyIdValue pid) {
+        List<SnakGroup> specs = getSingleConstraint(pid, DIFFERENCE_WITHIN_RANGE_CONSTRAINT_QID);
+        if (specs != null) {
+            List<QuantityValue> maxValue = getValues(specs, MAXIMUM_VALUE_PID);
+            if (!maxValue.isEmpty()) {
+                return maxValue.get(0);
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Returns the Map of all the conflicting pid and their item values
+     *
+     * @param pid:
+     *            the property having conflicts-with constraint
+     * @return
+     */
+    @Override
+    public Map<PropertyIdValue, List<Value>> getParamConflictsWith(PropertyIdValue pid) {
+        List<Statement> statementList = getConstraintsByType(pid, CONFLICTS_WITH_CONSTRAINT_QID).collect(Collectors.toList());
+        Map<PropertyIdValue, List<Value>> propertyIdValueListMap = new HashMap<>();
+        for (Statement statement : statementList) {
+            List<SnakGroup> specs = statement.getClaim().getQualifiers();
+            PropertyIdValue conflictingPid = null;
+            List<Value> items = new ArrayList<>();
+            for(SnakGroup group : specs) {
+                for (Snak snak : group.getSnaks()) {
+                    if (group.getProperty().getId().equals(CONFLICTS_WITH_PROPERTY_PID)){
+                        conflictingPid = (PropertyIdValue) snak.getValue();
+                    }
+                    if (group.getProperty().getId().equals(ITEM_OF_PROPERTY_CONSTRAINT_PID)){
+                        items.add(snak.getValue());
+                    }
+                }
+            }
+            if (conflictingPid != null) {
+                propertyIdValueListMap.put(conflictingPid, items);
+            }
+        }
+
+        return propertyIdValueListMap;
     }
 }

@@ -192,7 +192,7 @@
     "core-dialogs/cells-of-row": "Die Zellen der aktuellen Zeile. Dies ist eine Abkürzung für 'row.cells'. Eine bestimmte Zelle kann mit 'cells.<column name>' abgerufen werden, wenn der <column name> ein einzelnes Wort ist, oder andernfalls mit 'cells[\"<column name>\"].",
     "core-dialogs/for-include-drop-statement-checkbox": "Drop-Anweisung einbinden",
     "core-dialogs/ngram-radius": "Radius&nbsp;",
-    "core-dialogs/cell-fields": "Die aktuelle Zelle. Es hat einige Felder: 'value' und 'recon'.",
+    "core-dialogs/cell-fields": "Die aktuelle Zelle. Es hat einige Felder: 'value', 'recon' und 'errorMessage'.",
     "core-dialogs/processing": "Verarbeitung…",
     "core-dialogs/row-index": "Der Index der aktuellen Zeile. Dies ist eine Abkürzung für 'row.index'.",
     "core-dialogs/ignore-facets": "Facetten und Filter ignorieren und alle Zeilen exportieren",

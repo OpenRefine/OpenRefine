@@ -1,13 +1,9 @@
 package org.openrefine.wikidata.qa.scrutinizers;
 
-import java.util.Set;
-
 import org.openrefine.wikidata.qa.QAWarning;
-import org.wikidata.wdtk.datamodel.interfaces.EntityIdValue;
-import org.wikidata.wdtk.datamodel.interfaces.ItemIdValue;
-import org.wikidata.wdtk.datamodel.interfaces.PropertyIdValue;
-import org.wikidata.wdtk.datamodel.interfaces.QuantityValue;
-import org.wikidata.wdtk.datamodel.interfaces.Snak;
+import org.wikidata.wdtk.datamodel.interfaces.*;
+
+import java.util.Set;
 
 /**
  * Scrutinizer checking for units and bounds in quantities.
@@ -24,7 +20,7 @@ public class QuantityScrutinizer extends SnakScrutinizer {
 
     @Override
     public void scrutinize(Snak snak, EntityIdValue entityId, boolean added) {
-        if (QuantityValue.class.isInstance(snak.getValue()) && added) {
+        if (snak.getValue() instanceof QuantityValue && added) {
             PropertyIdValue pid = snak.getPropertyId();
             QuantityValue value = (QuantityValue)snak.getValue();
             

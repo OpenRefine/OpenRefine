@@ -45,7 +45,6 @@ import org.testng.annotations.Test;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.refine.commands.Command;
-import com.google.refine.commands.browsing.GetClusteringFunctionsAndDistancesCommand;
 import com.google.refine.util.JSONUtilities;
 import com.google.refine.util.ParsingUtilities;
 

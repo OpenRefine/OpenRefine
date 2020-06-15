@@ -252,7 +252,7 @@
     "core-dialogs/csv": "Gibuwag ang bili sa koma (CSV)",
     "core-dialogs/template-prefix": "Sa una",
     "core-dialogs/nearest-neighbor": "pinakaduol nga silingan",
-    "core-dialogs/cell-fields": "Ang kasamtangan nga cell. Naa cyay pipila ka mga field: 'value' ug 'recon'.",
+    "core-dialogs/cell-fields": "Ang kasamtangan nga cell. Naa cyay pipila ka mga field: 'value', 'recon' ug 'errorMessage'.",
     "core-dialogs/idling": "Idling…",
     "core-dialogs/local-time": "Gamita ang oras nga lokal zone",
     "core-dialogs/rotated-counter-clock": "Ituyok sa 45° kontra sa tuo",

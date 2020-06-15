@@ -3,6 +3,7 @@ package com.google.refine;
 import com.google.refine.expr.ExpressionUtils;
 import com.google.refine.expr.HasFieldsListImpl;
 import com.google.refine.expr.WrappedRow;
+import com.google.refine.expr.functions.Cross;
 import com.google.refine.model.Column;
 import com.google.refine.model.Project;
 import com.google.refine.model.Row;
@@ -76,6 +77,14 @@ public class LookupCacheManager {
             return;
         }
 
+        // if this is a lookup on the index column
+        if (lookup.targetColumnName.equals(Cross.INDEX_COLUMN_NAME)) {
+            for (int r = 0; r < targetProject.rows.size(); r++) {
+                lookup.valueToRowIndices.put(String.valueOf(r) , Collections.singletonList(r));
+            }
+            return; // return directly
+        }
+
         Column targetColumn = targetProject.columnModel.getColumnByName(lookup.targetColumnName);
         if (targetColumn == null) {
             throw new LookupException("Unable to find column " + lookup.targetColumnName + " in project " + targetProjectMetadata.getName());
@@ -87,8 +96,9 @@ public class LookupCacheManager {
             Row targetRow = targetProject.rows.get(r);
             Object value = targetRow.getCellValue(targetColumn.getCellIndex());
             if (ExpressionUtils.isNonBlankData(value)) {
-                lookup.valueToRowIndices.putIfAbsent(value, new ArrayList<>());
-                lookup.valueToRowIndices.get(value).add(r);
+                String valueStr = value.toString();
+                lookup.valueToRowIndices.putIfAbsent(valueStr, new ArrayList<>());
+                lookup.valueToRowIndices.get(valueStr).add(r);
             }
         }
     }
@@ -106,11 +116,13 @@ public class LookupCacheManager {
         }
 
         public HasFieldsListImpl getRows(Object value) {
-            if (ExpressionUtils.isNonBlankData(value) && valueToRowIndices.containsKey(value)) {
+            if (!ExpressionUtils.isNonBlankData(value)) return null;
+            String valueStr = value.toString();
+            if (valueToRowIndices.containsKey(valueStr)) {
                 Project targetProject = ProjectManager.singleton.getProject(targetProjectID);
                 if (targetProject != null) {
                     HasFieldsListImpl rows = new HasFieldsListImpl();
-                    for (Integer r : valueToRowIndices.get(value)) {
+                    for (Integer r : valueToRowIndices.get(valueStr)) {
                         Row row = targetProject.rows.get(r);
                         rows.add(new WrappedRow(targetProject, r, row));
                     }

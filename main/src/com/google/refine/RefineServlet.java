@@ -64,16 +64,13 @@ import edu.mit.simile.butterfly.Butterfly;
 import edu.mit.simile.butterfly.ButterflyModule;
 
 public class RefineServlet extends Butterfly {
-    static private String ASSIGNED_VERSION = "3.4-SNAPSHOT";
+    static private String ASSIGNED_VERSION = "3.5-beta";
     
     static public String VERSION = "";
     static public String REVISION = "";
     static public String FULL_VERSION = "";
     static public String FULLNAME = "OpenRefine ";
 
-
-    static public final String AGENT_ID = "/en/google_refine"; // TODO: Unused?  Freebase ID
-    
     static final long serialVersionUID = 2386057901503517403L;
 
     static private final String JAVAX_SERVLET_CONTEXT_TEMPDIR = "javax.servlet.context.tempdir";

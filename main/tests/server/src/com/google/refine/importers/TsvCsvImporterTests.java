@@ -266,6 +266,27 @@ public class TsvCsvImporterTests extends ImporterTest {
         Assert.assertEquals(project.rows.get(0).cells.get(1).value, " 3.4 ");
         Assert.assertEquals(project.rows.get(0).cells.get(2).value, " data3 ");
     }
+    
+    @Test(groups = {  }, dataProvider = "CSV-TSV-AutoDetermine")
+    public void trimAndAutodetectDatatype(String sep){
+        //create input to test with
+        String inputSeparator =  sep == null ? "\t" : sep;
+        String input = " data1 " + inputSeparator + " 3.4 " + inputSeparator + " data3 ";
+
+        try {
+            prepareOptions(sep, -1, 0, 0, 0, true, false, true);
+            parseOneFile(SUT, new StringReader(input));
+        } catch (Exception e) {
+            Assert.fail("Exception during file parse",e);
+        }
+        Assert.assertEquals(project.columnModel.columns.size(), 3);
+        Assert.assertEquals(project.rows.size(), 1);
+        Assert.assertEquals(project.rows.get(0).cells.size(), 3);
+        Assert.assertEquals(project.rows.get(0).cells.get(0).value, "data1");
+        Assert.assertEquals(project.rows.get(0).cells.get(1).value, Double.parseDouble("3.4"));
+        Assert.assertEquals(project.rows.get(0).cells.get(2).value, "data3");
+    }
+
 
     @Test(dataProvider = "CSV-TSV-AutoDetermine")
     public void readCanAddNull(String sep){

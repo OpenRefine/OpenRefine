@@ -291,7 +291,9 @@ function registerImporting() {
   IM.registerMimeType("application/x-excel", "binary/text/xml/xls/xlsx");
   IM.registerMimeType("application/xls", "binary/text/xml/xls/xlsx");
   IM.registerMimeType("application/x-xls", "binary/text/xml/xls/xlsx");
-  
+  IM.registerMimeType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "binary/text/xml/xls/xlsx");
+  IM.registerMimeType("application/vnd.openxmlformats-officedocument.spreadsheetml.template", "binary/text/xml/xls/xlsx");
+
   IM.registerMimeType("application/vnd.oasis.opendocument.spreadsheet","text/xml/ods");
 
   IM.registerMimeType("application/json", "text/json");
@@ -343,16 +345,22 @@ function init() {
       "externals/jquery.cookie.js",
       "externals/jquery-ui/jquery-ui-1.10.3.custom.js",
       "externals/date.js",
+
+      "externals/CLDRPluralRuleParser.js",
       "externals/jquery.i18n.js",
+      "externals/jquery.i18n.messagestore.js",
+      "externals/jquery.i18n.fallbacks.js",
+      "externals/jquery.i18n.parser.js",
+      "externals/jquery.i18n.emitter.js",
+      "externals/jquery.i18n.language.js",
+      "externals/languages/fi.js",
+      "externals/languages/ru.js",
+
       "externals/tablesorter/jquery.tablesorter.min.js",
       "externals/moment-with-locales.min.js",
       "externals/select2/select2.min.js",
       "externals/jquery.lavalamp.min.js",
-      "externals/jquery.i18n.messagestore.js",
-      "externals/jquery.i18n.emitter.js",
-      "externals/jquery.i18n.parser.js",
-      "externals/jquery.i18n.emitter.js",
-      "externals/jquery.i18n.language.js",
+
 
       "scripts/util/misc.js",
       "scripts/util/url.js",
@@ -548,11 +556,17 @@ function init() {
       "externals/jquery-ui/jquery-ui-1.10.3.custom.js",
       "externals/imgareaselect/jquery.imgareaselect.js",
       "externals/date.js",
+
+      "externals/CLDRPluralRuleParser.js",
       "externals/jquery.i18n.js",
       "externals/jquery.i18n.messagestore.js",
+      "externals/jquery.i18n.fallbacks.js",
       "externals/jquery.i18n.parser.js",
       "externals/jquery.i18n.emitter.js",
       "externals/jquery.i18n.language.js",
+      "externals/languages/fi.js",
+      "externals/languages/ru.js",
+
       "externals/underscore-min.js",
       "scripts/preferences.js",
     ]

@@ -69,7 +69,6 @@ import com.fasterxml.jackson.databind.ser.FilterProvider;
 import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
 
 import java.util.zip.GZIPInputStream;
-import java.util.zip.ZipException;
 
 public class ParsingUtilities {
     public static JsonFactory jsonFactory = new JsonFactory();

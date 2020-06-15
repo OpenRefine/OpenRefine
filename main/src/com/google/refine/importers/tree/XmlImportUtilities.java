@@ -47,8 +47,6 @@ import javax.servlet.ServletException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.fasterxml.jackson.core.JsonParseException;
-
 import com.google.refine.importers.tree.TreeReader.Token;
 import com.google.refine.model.Cell;
 import com.google.refine.model.Project;

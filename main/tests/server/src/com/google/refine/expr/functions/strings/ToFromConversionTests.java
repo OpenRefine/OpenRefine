@@ -35,7 +35,6 @@ package com.google.refine.expr.functions.strings;
 
 import java.time.OffsetDateTime;
 import java.util.Properties;
-import java.util.TimeZone;
 
 import org.slf4j.LoggerFactory;
 import org.testng.Assert;

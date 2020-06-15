@@ -41,24 +41,37 @@ import com.google.refine.expr.EvalError;
 import com.google.refine.expr.WrappedCell;
 import com.google.refine.grel.ControlFunctionRegistry;
 import com.google.refine.grel.Function;
+import com.google.refine.model.Project;
 import com.google.refine.util.GetProjectIDException;
 import com.google.refine.util.LookupException;
 
 public class Cross implements Function {
 
+    public static final String INDEX_COLUMN_NAME = "_OpenRefine_Index_Column_Name_";
+
     @Override
     public Object call(Properties bindings, Object[] args) {
-        if (args.length == 3) {
+        if (1 <= args.length && args.length <= 3) {
             // 1st argument can take either value or cell(for backward compatibility)
             Object v = args[0];
-            Object targetProjectName = args[1];
-            Object targetColumnName = args[2];
+            // if 2nd argument is omitted or set to "", use the current project name
+            Object targetProjectName = "";
+            boolean isCurrentProject = false;
+            if (args.length < 2 || args[1].equals("")) {
+                isCurrentProject = true;
+            } else {
+                targetProjectName = args[1];
+            }
+            // if 3rd argument is omitted or set to "", use the index column
+            Object targetColumnName = args.length < 3 || args[2].equals("") ? INDEX_COLUMN_NAME: args[2];
+
             long targetProjectID;
             ProjectLookup lookup;
 
             if (v != null && targetProjectName instanceof String && targetColumnName instanceof String) {
                 try {
-                    targetProjectID = ProjectManager.singleton.getProjectID((String) targetProjectName);
+                    targetProjectID = isCurrentProject ? ((Project) bindings.get("project")).id :
+                            ProjectManager.singleton.getProjectID((String) targetProjectName);
                 } catch (GetProjectIDException e) {
                     return new EvalError(e.getMessage());
                 }
@@ -76,17 +89,21 @@ public class Cross implements Function {
                 }
             }
         }
-        return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects a cell or cell value, a project name to look up, and a column name in that project");
+
+        return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects a cell or value, a project name to look up (optional), and a column name in that project (optional)");
     }
 
     @Override
     public String getDescription() {
-        return "Looks up the given value in the target column of the target project, returns an array of matched rows, cell will be interpreted as cell.value";
+        return "Looks up the given value in the target column of the target project, returns an array of matched rows. Two values match if and only if they have the same string representation. " +
+                "The first argument will be interpreted as cell.value if set to cell. " +
+                "The second argument will be interpreted as the current project name if omitted or set to \"\". " +
+                "The third argument will be interpreted as the index (starts from 0) column if omitted or set to \"\"";
     }
 
     @Override
     public String getParams() {
-        return "cell c or object value, string projectName, string columnName";
+        return "cell or value, string projectName (optional), string columnName (optional)";
     }
 
     @Override
