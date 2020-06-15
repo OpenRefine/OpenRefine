@@ -87,7 +87,7 @@ ManageAccountDialog.displayPasswordLogin = function (callback) {
   elmts.passwordLabel.text($.i18n('wikidata-account/password-label'));
   elmts.passwordInput.attr("placeholder", $.i18n('wikidata-account/password-placeholder'));
   elmts.rememberMe.text($.i18n('wikidata-account/remember-me'));
-  elmts.rememberMeTitle.attr("title", $.i18n('wikidata-account/remember-me-title'));
+  elmts.passwordRememberMeTitle.attr("title", $.i18n('wikidata-account/password-remember-me-title'));
   elmts.loginButton.text($.i18n('wikidata-account/log-in'));
   elmts.usernameInput.focus();
 
@@ -141,7 +141,7 @@ ManageAccountDialog.displayOwnerOnlyConsumerLogin = function (callback) {
   elmts.accessSecretLabel.text($.i18n('wikidata-account/access-secret-label'));
   elmts.accessSecretInput.attr("placeholder", $.i18n('wikidata-account/access-secret-placeholder'));
   elmts.rememberMe.text($.i18n('wikidata-account/remember-me'));
-  elmts.rememberMeTitle.attr("title", $.i18n('wikidata-account/remember-me-title'));
+  elmts.ownerOnlyConsumerRememberMeTitle.attr("title", $.i18n('wikidata-account/owner-only-consumer-remember-me-title'));
   elmts.loginButton.text($.i18n('wikidata-account/log-in'));
   elmts.consumerTokenInput.focus();
 
