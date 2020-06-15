@@ -132,7 +132,7 @@ public class SqlInsertBuilder {
                         
                         if(type.equals(SqlData.SQL_TYPE_NUMERIC)) {//test if number is numeric (decimal(p,s) number is valid)
                            
-                            if(!NumberUtils.isNumber(val.getText())){
+                            if(!NumberUtils.isCreatable(val.getText())){
                                 throw new SqlExporterException(
                                         val.getText() + " is not compatible with column type :" + type);
                             }
@@ -179,15 +179,14 @@ public class SqlInsertBuilder {
         }
 
         boolean trimColNames = options == null ? false : JSONUtilities.getBoolean(options, "trimColumnNames", false);
-        String colNamesWithSep = columns.stream().map(col -> col.replaceAll("\\s", "")).collect(Collectors.joining(","));;
+        String colNamesWithSep = columns.stream().map(col -> col.replaceAll("\\s", "")).collect(Collectors.joining(","));
         if(!trimColNames) {
            colNamesWithSep = columns.stream().collect(Collectors.joining(","));  
         }
-        
+
         String valuesString = values.toString();
-        valuesString = valuesString.substring(0, valuesString.length() - 1);
-        
-        
+        valuesString = valuesString.substring(0, Integer.max(0, valuesString.length() - 1));
+
         StringBuffer sql = new StringBuffer();
 
         sql.append("INSERT INTO ").append(table);
