@@ -312,7 +312,7 @@
     "core-facets/linear-plot": "線形プロット",
     "core-facets/rotated-clock": "時計回りに45度回転する",
     "core-facets/edit-facet-exp": "ファセットの式を編集",
-    "core-facets/too-many-choices": "選択肢が多すぎ、表示できません",
+    "core-facets/too-many-choices": "$1 件の選択があり、すべては表示できません",
     "core-facets/error": "エラー",
     "core-facets/export-plot": "プロットを出力",
     "core-facets/big-dot": "大きいドット",
@@ -744,5 +744,11 @@
     "core-views/add-id-column2": "項目を識別するカラムを追加する",
     "core-views/add-id-col": "$1 に項目識別カラムを追加",
     "core-dialogs/lb-formats-quotation": "常に引用符付き",
-    "core-facets/minimize-facet": "ファセットの最大最小切替"
+    "core-facets/minimize-facet": "ファセットの最大最小切替",
+    "core-index-import/file-count": "$1 個のファイル",
+    "core-index-import/match-count": "$1 件が合致",
+    "core-dialogs/clusters-filtered": "総計 <b>$2</b> から <b>$1</b> 件のクラスタがフィルタリングされました",
+    "core-facets/choice-count": "$1 件",
+    "core-dialogs/clusters-found": "<b>$1</b> {{plural:$1|cluster|clusters}} が見つかりました",
+    "core-index-import/files-selected": "$2 {{plural:$2|file|files}} の $1 が選択されました"
 }
