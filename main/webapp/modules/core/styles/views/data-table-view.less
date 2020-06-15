@@ -58,6 +58,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 .data-table-header {
   width: 1px;
   position: relative;
+  background: @fill_primary;
   }
   
 .data-table-container {
@@ -69,7 +70,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   margin: 0;
   padding: 0;
   font-size: 1.05em;
-  border-collapse: collapse;
+  border-collapse: separate;
   }
 
 .data-table td, .data-table-header th {
@@ -77,13 +78,13 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   }
 
 .data-table td {
-  border-bottom: 1px dotted #ddd;
-  border-right: 1px solid #ddd;
+  border-bottom: 0.02rem dotted #ddd;
+  border-right: 0.02rem solid #ddd;
   }
 
 .data-table-header th {
-  border-bottom: 1px dotted @chrome_primary;
-  border-right: 1px solid @chrome_primary;
+  border-bottom: 0.02rem dotted @chrome_primary;
+  border-right: 0.02rem solid @chrome_primary;
   }
 
 table {
@@ -91,9 +92,11 @@ table {
   }
 
 th.column-header {
+  position: -webkit-sticky; /* Safari */ 
   position: sticky;
   top: 0;
   z-index: 1;
+  will-change: transform;
   }
 
 th {
@@ -106,10 +109,6 @@ table > thead > tr > th {
 
 table.data-table > tbody > tr.odd > td {
   background: @fill_secondary;
-  }
-
-table.data-table > tbody > tr.even > td {
-  background: white;
   }
 
 table.data-table > tbody > tr.contextual > td > div {
@@ -128,8 +127,7 @@ table.data-table-header th.column-header, table.data-table th.column-header {
 /* For the preview in the importing stage */
 table.data-table th.column-header {
   background: @fill_primary;
-  border-bottom: 2px solid @chrome_primary;
-  background-clip: padding-box;
+  border-bottom: 0.12rem solid @chrome_primary;
   }
 
 .column-header-name {
