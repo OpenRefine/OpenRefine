@@ -34,7 +34,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.commons.lang.Validate;
-import org.openrefine.wikidata.editing.ConnectionManager;
+import org.openrefine.wikidata.commands.ConnectionManager;
 import org.openrefine.wikidata.editing.EditBatchProcessor;
 import org.openrefine.wikidata.editing.NewItemLibrary;
 import org.openrefine.wikidata.schema.WikibaseSchema;

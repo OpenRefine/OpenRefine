@@ -48,7 +48,7 @@ function init() {
     RefineServlet.registerCommand(module, "preview-wikibase-schema", new PreviewWikibaseSchemaCommand());
     RefineServlet.registerCommand(module, "perform-wikibase-edits", new PerformWikibaseEditsCommand());
     RefineServlet.registerCommand(module, "login", new LoginCommand());
-     
+
     /*
      * Resources
      */
