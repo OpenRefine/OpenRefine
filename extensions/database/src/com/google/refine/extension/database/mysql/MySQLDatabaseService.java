@@ -86,9 +86,6 @@ public class MySQLDatabaseService extends DatabaseService {
                 Statement statement = connection.createStatement();
                 ResultSet queryResult = statement.executeQuery(query);
                 java.sql.ResultSetMetaData metadata = queryResult.getMetaData();
-                if(metadata instanceof com.mysql.jdbc.ResultSetMetaData) {
-                    metadata = (com.mysql.jdbc.ResultSetMetaData)metadata;
-                }
                 int columnCount = metadata.getColumnCount();
                 ArrayList<DatabaseColumn> columns = new ArrayList<DatabaseColumn>(columnCount);
                 for (int i = 1; i <= columnCount; i++) {
@@ -163,9 +160,6 @@ public class MySQLDatabaseService extends DatabaseService {
             Statement statement = connection.createStatement();
             ResultSet queryResult = statement.executeQuery(query);
             java.sql.ResultSetMetaData metadata = queryResult.getMetaData();
-            if(metadata instanceof com.mysql.jdbc.ResultSetMetaData) {
-                metadata = (com.mysql.jdbc.ResultSetMetaData)metadata;
-            }
             int columnCount = metadata.getColumnCount();
             ArrayList<DatabaseColumn> columns = new ArrayList<DatabaseColumn>(columnCount);
             for (int i = 1; i <= columnCount; i++) {
@@ -189,9 +183,6 @@ public class MySQLDatabaseService extends DatabaseService {
                 statement.setFetchSize(10);
                 ResultSet queryResult = statement.executeQuery(query);
                 java.sql.ResultSetMetaData metadata = queryResult.getMetaData();
-                if(metadata instanceof com.mysql.jdbc.ResultSetMetaData) {
-                    metadata = (com.mysql.jdbc.ResultSetMetaData)metadata;
-                }
                 int columnCount = metadata.getColumnCount();
                 int index = 0; 
                 List<DatabaseRow> rows = new ArrayList<DatabaseRow>();
