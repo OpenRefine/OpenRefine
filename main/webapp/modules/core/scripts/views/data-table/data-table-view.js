@@ -78,7 +78,10 @@ DataTableView.prototype.getSorting = function() {
 };
 
 DataTableView.prototype.resize = function() {
-  this._adjustDataTables();
+  this._sizeRowFirst = $('tr:eq(1)').height();
+  this._sizeRowsTotal = this._sizeRowFirst * theProject.metadata.rowCount;
+
+  this._adjustNextSetClasses();
   
   var topHeight =
     this._div.find(".viewpanel-header").outerHeight(true);
@@ -503,24 +506,15 @@ DataTableView.prototype._renderDataTables = function(table, tableHeader) {
   });
 };
 
-DataTableView.prototype._adjustDataTables = function() {
-  console.log('_adjustDataTables');
-  var self = this;
+DataTableView.prototype._adjustNextSetClasses = function() {
+  var heightToAdd = this._sizeRowsTotal - ($('tr').length - 1) * this._sizeRowFirst;
 
-  this._sizeRowFirst = $('tr:eq(1)').height();
-  this._sizeRowsTotal = this._sizeRowFirst * theProject.metadata.rowCount;
-
-  window.adjustNextSetClasses = function() {
-    var heightToAdd = self._sizeRowsTotal - ($('tr').length - 1) * self._sizeRowFirst;
-    
-    if(self._totalSize < theProject.rowModel.total) {
-      document.querySelector('.data-table').insertRow(self._totalSize + 1);
-      $('tr:last').css('height', heightToAdd);
-      $('tr:last').addClass('last-row');
-    }
-    $('tr:nth-last-child(50)').addClass('load-next-set');
+  if(this._totalSize < theProject.rowModel.total) {
+    document.querySelector('.data-table').insertRow(this._totalSize + 1);
+    $('tr:last').css('height', heightToAdd);
+    $('tr:last').addClass('last-row');
   }
-  adjustNextSetClasses();
+  $('tr:nth-last-child(50)').addClass('load-next-set');
 };
 
 DataTableView.prototype._showRows = function(start, onDone) {
@@ -535,6 +529,8 @@ DataTableView.prototype._showRows = function(start, onDone) {
 };
 
 DataTableView.prototype._showRowsBottom = function(table, start, onDone) {
+  var self = this;
+
   this._totalSize += this._pageSize;
   $('tr.load-next-set').removeClass('load-next-set');
 
@@ -542,7 +538,7 @@ DataTableView.prototype._showRowsBottom = function(table, start, onDone) {
     table.deleteRow(table.rows.length - 1);
 
     loadRows();
-    adjustNextSetClasses();
+    self._adjustNextSetClasses();
 
     if (onDone) {
       onDone();
@@ -597,7 +593,9 @@ DataTableView.prototype._onClickNextPage = function(elmt, evt) {
 };
 
 DataTableView.prototype._onBottomTable = function(table, elmt, evt) {
-  this._showRowsBottom(table, theProject.rowModel.start + this._pageSize);
+  if(this._totalSize < theProject.rowModel.total) {
+    this._showRowsBottom(table, theProject.rowModel.start + this._pageSize);
+  }
 };
 
 DataTableView.prototype._onClickFirstPage = function(elmt, evt) {
