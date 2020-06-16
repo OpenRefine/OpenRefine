@@ -24,7 +24,7 @@ We provide these options because you may wish to reinstall a given extension man
 
 ### Find the right place to install
 
-If you want to install the extension into the program folder, go to `OpenRefine/webapp/extensions` (or create it if not does not exist). 
+If you want to install the extension into the program folder, go to `OpenRefine/webapp/extensions` (or create it if it does not exist). 
 
 If you want to install the extension into your workspace, you can:
 
