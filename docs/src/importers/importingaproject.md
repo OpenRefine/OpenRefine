@@ -26,7 +26,7 @@ In the left-hand menu, click “Import Project.” You will see the following sc
 
 
 
-![A screenshot of the Import Project screen.](../../static/img/import.jpg "image_tooltip")
+![A screenshot of the Import Project screen.](/img/import.jpg)
 
 
 Click “Browse…” and navigate to wherever you saved the file you were sent (for example, your Downloads folder). 

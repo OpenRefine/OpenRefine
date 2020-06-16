@@ -15,7 +15,7 @@ Project history gets saved when you export a project archive, and restored when 
 
 
 
-![The Undo/Redo tab in the sidebar.](../static/img/history.jpg "image_tooltip")
+![The Undo/Redo tab in the sidebar.](/img/history.jpg)
 
 
 
