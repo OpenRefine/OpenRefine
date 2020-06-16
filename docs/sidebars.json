@@ -2,14 +2,22 @@
   "docs": {
     "Getting Started": [
       "index",
-      "install",
+      {
+	      "type": "subcategory",
+	      "label": "Installing",
+	      "ids": [
+          "install"
+          ]
+      },
       "user_data",
-      "records_mode"
+      "records_mode",
+      "history"
     ],
     "Importing Data": [
        "importers/csv",
        "importers/json",
-       "importers/xml"
+       "importers/xml",
+       "importers/importingaproject"
     ],
     "Operations": [
         "operations/transform",
