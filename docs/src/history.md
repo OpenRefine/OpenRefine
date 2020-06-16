@@ -4,6 +4,8 @@ title: History (Undo/Redo)
 sidebar_label: History (Undo/Redo)
 ---
 
+_Path: docs/Workspace?/History (Undo/Redo)_
+
 
 ## History (Undo/Redo)
 
@@ -12,7 +14,11 @@ In OpenRefine, any activity that changes the data can be undone. Changes are tra
 Project history gets saved when you export a project archive, and restored when you import that archive to a new installation of OpenRefine. 
 
 
+
 ![The Undo/Redo tab in the sidebar.](../static/img/history.jpg "image_tooltip")
+
+
+
 
 ### Overview
 
@@ -35,6 +41,8 @@ In this example, changes #2 and #3 will now be grayed out. You can redo a change
 
 If you have moved back one or more states, and then you perform a new operation on your data, the later actions (everything that’s greyed out) will be erased and cannot be re-applied. 
 
+The Undo/Redo tab will show you which step you’re on, and if you’re about to risk erasing work - by saying something like “4/5" or “1/7” at the end.
+
 
 ### Reusing Operations
 
@@ -50,3 +58,6 @@ Not all operations can be extracted. Edits to a single cell can’t be replicate
 ### Known Issues
 
 If your project history is bigger than 100 MB (output file), Chrome will crash when you try to extract the JSON. Firefox can handle around 200 MB (output file). You may need to disable your spellchecker.
+
+
+
