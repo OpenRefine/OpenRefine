@@ -34,10 +34,10 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package com.google.refine.operations.column;
 
 import java.io.IOException;
-import java.net.InetAddress;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
+import java.util.Random;
 
 import org.slf4j.LoggerFactory;
 import org.testng.Assert;
@@ -45,7 +45,6 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.refine.RefineTest;
 import com.google.refine.browsing.EngineConfig;
 import com.google.refine.expr.ExpressionUtils;
@@ -64,11 +63,17 @@ import com.google.refine.process.ProcessManager;
 import com.google.refine.util.ParsingUtilities;
 import com.google.refine.util.TestUtils;
 
+import okhttp3.HttpUrl;
+import okhttp3.mockwebserver.MockResponse;
+import okhttp3.mockwebserver.MockWebServer;
+import okhttp3.mockwebserver.RecordedRequest;
+
 
 public class ColumnAdditionByFetchingURLsOperationTests extends RefineTest {
 
     static final String ENGINE_JSON_URLS = "{\"mode\":\"row-based\"}";
-    
+
+    // This is only used for serialization tests. The URL is never fetched.
     private String json = "{\"op\":\"core/column-addition-by-fetching-urls\","
             + "\"description\":\"Create column employments at index 2 by fetching URLs based on column orcid using expression grel:\\\"https://pub.orcid.org/\\\"+value+\\\"/employments\\\"\","
             + "\"engineConfig\":{\"mode\":\"row-based\",\"facets\":[]},"
@@ -111,18 +116,23 @@ public class ColumnAdditionByFetchingURLsOperationTests extends RefineTest {
         project = createProjectWithColumns("UrlFetchingTests", "fruits");       
     }
 
-    private boolean isHostReachable(String host, int timeout){
-        boolean state = false;
-
+    private void runAndWait(EngineDependentOperation op, int timeout) throws Exception {
+        ProcessManager pm = project.getProcessManager();
+        Process process = op.createProcess(project, options);
+        process.startPerforming(pm);
+        Assert.assertTrue(process.isRunning());
+        int time = 0;
         try {
-            state = InetAddress.getByName(host).isReachable(timeout);
-        } catch (IOException e) {
-//            e.printStackTrace();
+            while (process.isRunning() && time < timeout) {
+                Thread.sleep(200);
+                time += 200;
+            }
+        } catch (InterruptedException e) {
+            Assert.fail("Test interrupted");
         }
-
-        return state;
+        Assert.assertFalse(process.isRunning());
     }
-    
+
     @Test
     public void serializeColumnAdditionByFetchingURLsOperation() throws Exception {
         TestUtils.isSerializedTo(ParsingUtilities.mapper.readValue(json, ColumnAdditionByFetchingURLsOperation.class), json);
@@ -138,54 +148,45 @@ public class ColumnAdditionByFetchingURLsOperationTests extends RefineTest {
     /**
      * Test for caching
      */
-
     @Test
     public void testUrlCaching() throws Exception {
-        if (!isHostReachable("www.random.org", 5000))
-            return;
-        
-        for (int i = 0; i < 100; i++) {
-            Row row = new Row(2);
-            row.setCell(0, new Cell(i < 5 ? "apple":"orange", null));
-            project.rows.add(row);
-        }
+        try (MockWebServer server = new MockWebServer()) {
+            server.start();
+            HttpUrl url = server.url("/random");
 
-        EngineDependentOperation op = new ColumnAdditionByFetchingURLsOperation(engine_config,
-                "fruits",
-                "\"https://www.random.org/integers/?num=1&min=1&max=100&col=1&base=10&format=plain&rnd=new&city=\"+value",
-                OnError.StoreError,
-                "rand",
-                1,
-                500,
-                true,
-                null);
-        ProcessManager pm = project.getProcessManager();
-        Process process = op.createProcess(project, options);
-        process.startPerforming(pm);
-        Assert.assertTrue(process.isRunning());
-        try {
+            Random rand = new Random();
+            for (int i = 0; i < 100; i++) {
+                Row row = new Row(2);
+                row.setCell(0, new Cell(i < 5 ? "apple":"orange", null));
+                project.rows.add(row);
+                // We won't need them all, but queue 100 random responses
+                server.enqueue(new MockResponse().setBody(Integer.toString(rand.nextInt(100))));
+            }
+
+            EngineDependentOperation op = new ColumnAdditionByFetchingURLsOperation(engine_config,
+                    "fruits",
+                    "\"" + url + "?city=\"+value",
+                    OnError.StoreError,
+                    "rand",
+                    1,
+                    500,
+                    true,
+                    null);
+
             // We have 100 rows and 500 ms per row but only two distinct
-            // values so we should not wait more than ~2000 ms to get the
-            // results. Just to make sure the test passes with plenty of
-            // net latency we sleep for longer (but still less than
-            // 50,000ms).
-            Thread.sleep(5000);
-        } catch (InterruptedException e) {
-            Assert.fail("Test interrupted");
-        }
+            // values so we should not wait much more than ~1000 ms to get the
+            // results.
+            runAndWait(op, 1500);
 
-
-        // Inspect rows
-        String ref_val = (String)project.rows.get(0).getCellValue(1).toString();
-        if (ref_val.startsWith("HTTP error"))
-            return;
-        Assert.assertFalse(ref_val.equals("apple")); // just to make sure I picked the right column
-        for (int i = 1; i < 4; i++) {
-            System.out.println("value:" + project.rows.get(i).getCellValue(1));
-            // all random values should be equal due to caching
-            Assert.assertEquals(project.rows.get(i).getCellValue(1).toString(), ref_val);
+            // Inspect rows
+            String ref_val = (String)project.rows.get(0).getCellValue(1).toString();
+            Assert.assertFalse(ref_val.equals("apple")); // just to make sure I picked the right column
+            for (int i = 1; i < 4; i++) {
+                // all random values should be equal due to caching
+                Assert.assertEquals(project.rows.get(i).getCellValue(1).toString(), ref_val);
+            }
+            server.shutdown();
         }
-        Assert.assertFalse(process.isRunning());
     }
 
     
@@ -195,17 +196,64 @@ public class ColumnAdditionByFetchingURLsOperationTests extends RefineTest {
      */
     @Test
     public void testInvalidUrl() throws Exception {
-        Row row0 = new Row(2);
-        row0.setCell(0, new Cell("auinrestrsc", null)); // malformed -> null
-        project.rows.add(row0);
-        Row row1 = new Row(2);
-        row1.setCell(0, new Cell("https://www.random.org/integers/?num=1&min=1&max=100&col=1&base=10&format=plain", null)); // fine
-        project.rows.add(row1);
-        Row row2 = new Row(2);
-        row2.setCell(0, new Cell("http://anursiebcuiesldcresturce.detur/anusclbc", null)); // well-formed but invalid
-        project.rows.add(row2);
+        try (MockWebServer server = new MockWebServer()) {
+            server.start();
+            HttpUrl url = server.url("/random");
+            server.enqueue(new MockResponse());
 
-        EngineDependentOperation op = new ColumnAdditionByFetchingURLsOperation(engine_config,
+            Row row0 = new Row(2);
+            row0.setCell(0, new Cell("auinrestrsc", null)); // malformed -> null
+            project.rows.add(row0);
+            Row row1 = new Row(2);
+            row1.setCell(0, new Cell(url.toString(), null)); // fine
+            project.rows.add(row1);
+            Row row2 = new Row(2);
+            // well-formed but not resolvable.
+            row2.setCell(0, new Cell("http://domain.invalid/random", null));
+            project.rows.add(row2);
+
+            EngineDependentOperation op = new ColumnAdditionByFetchingURLsOperation(engine_config,
+                    "fruits",
+                    "value",
+                    OnError.StoreError,
+                    "junk",
+                    1,
+                    50,
+                    true,
+                    null);
+
+            runAndWait(op, 1000);
+
+            int newCol = project.columnModel.getColumnByName("junk").getCellIndex();
+            // Inspect rows
+            Assert.assertEquals(project.rows.get(0).getCellValue(newCol), null);
+            Assert.assertTrue(project.rows.get(1).getCellValue(newCol) != null);
+            Assert.assertTrue(ExpressionUtils.isError(project.rows.get(2).getCellValue(newCol)));
+        }
+    }
+
+    @Test
+    public void testHttpHeaders() throws Exception {
+        try (MockWebServer server = new MockWebServer()) {
+            server.start();
+            HttpUrl url = server.url("/checkheader");
+
+            Row row0 = new Row(2);
+            row0.setCell(0, new Cell(url.toString(), null));
+            project.rows.add(row0);
+
+            String userAgentValue =  "OpenRefine";
+            String authorizationValue = "Basic";
+            String acceptValue = "*/*";
+            List<HttpHeader> headers = new ArrayList<>();
+            headers.add(new HttpHeader("authorization", authorizationValue));
+            headers.add(new HttpHeader("user-agent", userAgentValue));
+            headers.add(new HttpHeader("accept", acceptValue));
+
+            server.enqueue(new MockResponse().setBody("first"));
+            server.enqueue(new MockResponse().setBody("second"));
+
+            EngineDependentOperation op = new ColumnAdditionByFetchingURLsOperation(engine_config,
                 "fruits",
                 "value",
                 OnError.StoreError,
@@ -213,89 +261,17 @@ public class ColumnAdditionByFetchingURLsOperationTests extends RefineTest {
                 1,
                 50,
                 true,
-                null);
+                headers);
 
-        ProcessManager pm = project.getProcessManager();
-        Process process = op.createProcess(project, options);
-        process.startPerforming(pm);
-        Assert.assertTrue(process.isRunning());
-        try {
-            Thread.sleep(5000);
-        } catch (InterruptedException e) {
-            Assert.fail("Test interrupted");
+            runAndWait(op, 1000);
+
+            RecordedRequest request = server.takeRequest();
+            Assert.assertEquals(request.getHeader("user-agent"), userAgentValue);
+            Assert.assertEquals(request.getHeader("authorization"), authorizationValue);
+            Assert.assertEquals(request.getHeader("accept"), acceptValue);
+
+            server.shutdown();
         }
-        Assert.assertFalse(process.isRunning());
-
-        int newCol = project.columnModel.getColumnByName("junk").getCellIndex();
-        // Inspect rows
-        Assert.assertEquals(project.rows.get(0).getCellValue(newCol), null);
-        Assert.assertTrue(project.rows.get(1).getCellValue(newCol) != null);
-        Assert.assertTrue(ExpressionUtils.isError(project.rows.get(2).getCellValue(newCol)));
-    }
-
-    @Test
-    public void testHttpHeaders() throws Exception {
-        Row row0 = new Row(2);
-        row0.setCell(0, new Cell("http://headers.jsontest.com", null));
-        /* 
-        http://headers.jsontest.com is a service which returns the HTTP request headers
-        as JSON. For example:
-        {
-           "X-Cloud-Trace-Context": "579a1a2ee5c778dfc0810a3bf131ba4e/11053223648711966807",
-           "Authorization": "Basic",
-           "Host": "headers.jsontest.com",
-           "User-Agent": "OpenRefine",
-           "Accept": "*"
-        }
-        */
-
-        project.rows.add(row0);
-
-        String userAgentValue =  "OpenRefine";
-        String authorizationValue = "Basic";
-        String acceptValue = "*/*";
-        List<HttpHeader> headers = new ArrayList<>();
-        headers.add(new HttpHeader("authorization", authorizationValue));
-        headers.add(new HttpHeader("user-agent", userAgentValue));
-        headers.add(new HttpHeader("accept", acceptValue));
-
-        EngineDependentOperation op = new ColumnAdditionByFetchingURLsOperation(engine_config,
-            "fruits",
-            "value",
-            OnError.StoreError,
-            "junk",
-            1,
-            50,
-            true,
-            headers);
-        ProcessManager pm = project.getProcessManager();
-        Process process = op.createProcess(project, options);
-        process.startPerforming(pm);
-        Assert.assertTrue(process.isRunning());
-        try {
-                Thread.sleep(5000);
-            } catch (InterruptedException e) {
-                Assert.fail("Test interrupted");
-            }
-        Assert.assertFalse(process.isRunning());
-
-        int newCol = project.columnModel.getColumnByName("junk").getCellIndex();
-        ObjectNode headersUsed = null;
-        
-        // sometime, we got response: 
-        // Error
-        // Over Quota
-        // This application is temporarily over its serving quota. Please try again later.
-        try { 
-            String response = project.rows.get(0).getCellValue(newCol).toString();
-            headersUsed = ParsingUtilities.mapper.readValue(response, ObjectNode.class);
-        } catch (IOException ex) {
-            return;
-        }
-        // Inspect the results we got from remote service
-        Assert.assertEquals(headersUsed.get("user-agent").asText(), userAgentValue);
-        Assert.assertEquals(headersUsed.get("authorization").asText(), authorizationValue);
-        Assert.assertEquals(headersUsed.get("accept").asText(), acceptValue);
     }
 
 }
