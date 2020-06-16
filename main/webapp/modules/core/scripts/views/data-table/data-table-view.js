@@ -508,15 +508,16 @@ DataTableView.prototype._adjustDataTables = function() {
   var self = this;
 
   this._sizeRowFirst = $('tr:eq(1)').height();
-  this._sizeRowsTotal = this._sizeRowFirst * theProject.rowModel.total;
+  this._sizeRowsTotal = this._sizeRowFirst * theProject.metadata.rowCount;
 
   window.adjustNextSetClasses = function() {
-    var heightToAdd = self._sizeRowsTotal - self._totalSize * self._sizeRowFirst;
-    console.log(self._sizeRowFirst + ' ' + self._sizeRowsTotal);
-    console.log(heightToAdd);
-    document.querySelector('.data-table').insertRow(self._totalSize + 1);
-    $('tr:last').css('height', heightToAdd);
-    $('tr:last').addClass('last-row');
+    var heightToAdd = self._sizeRowsTotal - ($('tr').length - 1) * self._sizeRowFirst;
+    
+    if(self._totalSize < theProject.rowModel.total) {
+      document.querySelector('.data-table').insertRow(self._totalSize + 1);
+      $('tr:last').css('height', heightToAdd);
+      $('tr:last').addClass('last-row');
+    }
     $('tr:nth-last-child(50)').addClass('load-next-set');
   }
   adjustNextSetClasses();
