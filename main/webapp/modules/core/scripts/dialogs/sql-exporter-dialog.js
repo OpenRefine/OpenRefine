@@ -357,14 +357,11 @@ function SqlExporterDialog(options) {
       .attr("value", encoding)
       .appendTo(form);
     }
-    if (!preview) {
-      $('<input />')
-      .attr("name", "contentType")
-      .attr("value", "application/x-unknown") // force download
-      .appendTo(form);
-    }
-    
-   // alert("form::" + form);
+    $('<input />')
+    .attr("name", "preview")
+    .attr("value", preview)
+    .appendTo(form);
+
     document.body.appendChild(form);
   
     window.open(" ", "refine-export");
