@@ -33,6 +33,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.operations.column;
 
+import static com.google.common.base.Strings.isNullOrEmpty;
+
 import java.io.IOException;
 import java.io.Serializable;
 import java.net.MalformedURLException;
@@ -155,7 +157,7 @@ public class ColumnAdditionByFetchingURLsOperation extends EngineDependentOperat
         List<Header> headers = new ArrayList<Header>();
         if (_httpHeadersJson != null) {
             for (HttpHeader header : _httpHeadersJson) {
-                if (header.name != null && header.name != "" && header.value != null && header.value != "") {
+                if (!isNullOrEmpty(header.name) && !isNullOrEmpty(header.value)) {
                     headers.add(new BasicHeader(header.name, header.value));
                 }
             }
@@ -167,6 +169,7 @@ public class ColumnAdditionByFetchingURLsOperation extends EngineDependentOperat
                 .setConnectionRequestTimeout(30 * 1000)
                 .setSocketTimeout(10 * 1000).build();
 
+        // TODO: Placeholder for future Basic Auth implementation
 //        CredentialsProvider credsProvider = new BasicCredentialsProvider();
 //        credsProvider.setCredentials(new AuthScope(host, 443),
 //                new UsernamePasswordCredentials(user, password));
@@ -175,15 +178,14 @@ public class ColumnAdditionByFetchingURLsOperation extends EngineDependentOperat
                 .setUserAgent(RefineServlet.getUserAgent())
                 .setDefaultRequestConfig(defaultRequestConfig);
 //               .setConnectionBackoffStrategy(ConnectionBackoffStrategy)
-//                .setDefaultCredentialsProvider(credsProvider);
-
+//               .setDefaultCredentialsProvider(credsProvider);
     }
 
     @JsonProperty("newColumnName")
     public String getNewColumnName() {
         return _newColumnName;
     }
-    
+
     @JsonProperty("columnInsertIndex")
     public int getColumnInsertIndex() {
         return _columnInsertIndex;
