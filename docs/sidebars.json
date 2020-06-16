@@ -6,7 +6,8 @@
 	      "type": "subcategory",
 	      "label": "Installing",
 	      "ids": [
-          "install"
+          "install",
+	  "installextensions"
           ]
       },
       "user_data",
