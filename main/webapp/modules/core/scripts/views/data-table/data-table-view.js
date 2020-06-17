@@ -199,10 +199,8 @@ DataTableView.prototype._renderPagingControls = function(pageSizeControls, pagin
   
   if(self._refocusPageInput == true) { 
     self._refocusPageInput = false;
-    var currentPageInput = $('input#viewpanel-paging-current-input');
-    currentPageInput.ready(function(evt) { 
-      (new Promise(resolve => setTimeout(resolve, 1000))).then(currentPageInput.focus()); 
-    });
+    var currentPageInputForFocus = $('input#viewpanel-paging-current-input');
+    currentPageInputForFocus.ready(function(evt) { setTimeout(() => { currentPageInputForFocus.focus(); }, 1000); });
   }
   
   var nextPage = $('<a href="javascript:{}">'+$.i18n('core-views/next')+' &rsaquo;</a>').appendTo(pagingControls);
@@ -545,7 +543,8 @@ DataTableView.prototype._onKeyDownGotoPage = function(elmt, evt) {
   var keyDownCode = event.which;
   
   if([38, 40].indexOf(keyDownCode) == -1) return;
-  
+  if(self._refocusPageInput == true) return; 
+
   evt.preventDefault();
   this._refocusPageInput = true;
   
