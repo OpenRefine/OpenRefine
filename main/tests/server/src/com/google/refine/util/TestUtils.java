@@ -26,7 +26,6 @@
  ******************************************************************************/
 package com.google.refine.util;
 
-import static org.testng.Assert.assertTrue;
 import static org.testng.Assert.fail;
 
 import java.io.File;
@@ -83,8 +82,8 @@ public class TestUtils {
             JsonNode jsonB = mapper.readValue(actual, JsonNode.class);
             if (!jsonA.equals(jsonB)) {
                 jsonDiff(expected, actual);
+                fail("Objects above are not equal as JSON strings.");
             }
-            assertTrue(jsonA.equals(jsonB));
         } catch(Exception e) {
             fail("\""+expected+"\" and \""+actual+"\" are not equal as JSON strings.");
         }
@@ -115,15 +114,11 @@ public class TestUtils {
                 writer = ParsingUtilities.defaultWriter;
             }
             String jacksonJson = writer.writeValueAsString(o);
-            if(!equalAsJson(targetJson, jacksonJson)) {
-                System.out.println("jackson, "+o.getClass().getName());
-                jsonDiff(targetJson, jacksonJson);
-            }
-    	    assertEqualAsJson(targetJson, jacksonJson);
-    	} catch (JsonProcessingException e) {
-    	    e.printStackTrace();
-    	    fail("jackson serialization failed");
-    	}
+            assertEqualAsJson(targetJson, jacksonJson);
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+            fail("jackson serialization failed");
+        }
     }
     
     /**
