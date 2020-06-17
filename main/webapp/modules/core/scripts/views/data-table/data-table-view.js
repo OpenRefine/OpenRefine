@@ -235,7 +235,7 @@ DataTableView.prototype._checkPaginationSize = function(gridPageSize, defaultGri
   return newGridPageSize;
 };
 
-DataTableView.prototype._renderDataTables = function(table, headerTable) {
+DataTableView.prototype._renderDataTables = function(table, tableHeader) {
   var self = this;
 
   var columns = theProject.columnModel.columns;
