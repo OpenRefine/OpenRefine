@@ -138,7 +138,7 @@ DataTableView.prototype.render = function() {
     this._renderSortingControls(elmts.sortingControls);
   }
 
-  this._renderDataTables(elmts.table[0], elmts.headerTable[0]);
+  this._renderDataTables(elmts.table[0], elmts.tableHeader[0]);
 
   // show/hide null values in cells
   $(".data-table-null").toggle(self._shownulls);
@@ -200,7 +200,7 @@ DataTableView.prototype._renderPagingControls = function(pageSizeControls, pagin
   if(self._refocusPageInput == true) { 
     self._refocusPageInput = false;
     var currentPageInputForFocus = $('input#viewpanel-paging-current-input');
-    currentPageInputForFocus.ready(function(evt) { setTimeout(() => { currentPageInputForFocus.focus(); }, 1000); });
+    currentPageInputForFocus.ready(function(evt) { setTimeout(() => { currentPageInputForFocus.focus(); }, 250); });
   }
   
   var nextPage = $('<a href="javascript:{}">'+$.i18n('core-views/next')+' &rsaquo;</a>').appendTo(pagingControls);
