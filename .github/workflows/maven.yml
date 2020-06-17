@@ -82,3 +82,12 @@ jobs:
         asset_path: ./packaging/target/openrefine-mac-${{ env.OR_VERSION }}.dmg
         asset_name: openrefine-mac-${{ env.OR_VERSION }}.dmg
         asset_content_type: application/x-apple-diskimage
+
+    - name: Delete older releases
+      uses: dev-drprasad/delete-older-releases@v0.1.0
+      with:
+        repo: OpenRefine/OpenRefine-nightly-releases
+        keep_latest: 10
+      env:
+        GITHUB_TOKEN: ${{ secrets.RELEASE_REPO_TOKEN }}
+
