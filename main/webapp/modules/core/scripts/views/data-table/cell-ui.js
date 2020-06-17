@@ -619,7 +619,6 @@ DataTableCellUI.prototype._startEdit = function(elmt) {
             self._cell = o.cell;
             self._dataTableView._updateCell(self._rowIndex, self._cellIndex, self._cell);
             self._render();
-            self._dataTableView._adjustDataTables();
           }
         }
       );

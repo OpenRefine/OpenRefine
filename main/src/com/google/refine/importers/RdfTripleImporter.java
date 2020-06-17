@@ -76,7 +76,7 @@ public class RdfTripleImporter extends ImportingParserBase {
         this.mode = mode;
     }
 
-    public void parseOneFile(Project project, ProjectMetadata metadata, ImportingJob job, String fileSource,
+    public void parseOneFile(Project project, ProjectMetadata metadata, ImportingJob job, String fileSource, String archiveFileName,
             InputStream input, int limit, ObjectNode options, List<Exception> exceptions) {
         // create an empty model
         Model model = ModelFactory.createDefaultModel();
@@ -84,6 +84,8 @@ public class RdfTripleImporter extends ImportingParserBase {
         try {
             switch (mode) {
             case NT:
+                // TODO: The standard lang name is "N-TRIPLE"
+                // we may need to switch if we change packagings
                 model.read(input, null, "NT");
                 break;
             case N3:
@@ -93,6 +95,7 @@ public class RdfTripleImporter extends ImportingParserBase {
                 model.read(input, null, "TTL");
                 break;
             case JSONLD:
+                // TODO: The standard lang name is "JSONLD"
                 model.read(input, null, "JSON-LD");
                 break;
             case RDFXML:
@@ -162,6 +165,6 @@ public class RdfTripleImporter extends ImportingParserBase {
           exceptions.add(e);
       } 
       
-      super.parseOneFile(project, metadata, job, fileSource, input, limit, options, exceptions);
+      super.parseOneFile(project, metadata, job, fileSource, archiveFileName, input, limit, options, exceptions);
     }
 }

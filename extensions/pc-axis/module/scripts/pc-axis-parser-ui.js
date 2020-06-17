@@ -89,6 +89,7 @@ Refine.PCAxisParserUI.prototype.getOptions = function() {
     options.skipDataLines = -1;
   }
   options.includeFileSources = this._optionContainerElmts.includeFileSourcesCheckbox[0].checked;
+  options.includeArchiveFileName = this._optionContainerElmts.includeArchiveFileCheckbox[0].checked;
 
   return options;
 };
@@ -119,6 +120,9 @@ Refine.PCAxisParserUI.prototype._initialize = function() {
   }
   if (this._config.includeFileSources) {
     this._optionContainerElmts.includeFileSourcesCheckbox.prop("checked", true);
+  }
+  if (this._config.includeArchiveFileName) {
+    this._optionContainerElmts.includeArchiveFileCheckbox.prop("checked", true);
   }
 
   var onChange = function() {

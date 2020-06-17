@@ -201,13 +201,13 @@ public class JsonImporter extends TreeImportingParserBase {
     
     @Override
     public void parseOneFile(Project project, ProjectMetadata metadata,
-            ImportingJob job, String fileSource, InputStream is,
+            ImportingJob job, String fileSource, String archiveFileName, InputStream is,
             ImportColumnGroup rootColumnGroup, int limit, ObjectNode options, List<Exception> exceptions) {
         
-        parseOneFile(project, metadata, job, fileSource,
+        parseOneFile(project, metadata, job, fileSource, archiveFileName,
             new JSONTreeReader(is), rootColumnGroup, limit, options, exceptions);
         
-        super.parseOneFile(project, metadata, job, fileSource, is, rootColumnGroup, limit, options, exceptions);
+        super.parseOneFile(project, metadata, job, fileSource, archiveFileName, is, rootColumnGroup, limit, options, exceptions);
     }
     
     static public class JSONTreeReader implements TreeReader {

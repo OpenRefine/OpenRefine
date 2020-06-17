@@ -33,23 +33,39 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.operations.column;
 
+import static com.google.common.base.Strings.isNullOrEmpty;
+
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.Serializable;
-import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
+import java.net.URISyntaxException;
 import java.net.URL;
-import java.net.URLConnection;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 import java.util.concurrent.TimeUnit;
+
+import org.apache.http.Header;
+import org.apache.http.HttpEntity;
+import org.apache.http.StatusLine;
+import org.apache.http.client.config.RequestConfig;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.entity.ContentType;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.http.impl.client.HttpClients;
+import org.apache.http.message.BasicHeader;
+import org.apache.http.util.EntityUtils;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
+
+import com.google.refine.RefineServlet;
 import com.google.refine.browsing.Engine;
 import com.google.refine.browsing.EngineConfig;
 import com.google.refine.browsing.FilteredRows;
@@ -100,6 +116,9 @@ public class ColumnAdditionByFetchingURLsOperation extends EngineDependentOperat
     final protected int        _delay;
     final protected boolean    _cacheResponses;
     final protected List<HttpHeader>  _httpHeadersJson;
+    private Header[] httpHeaders = new Header[0];
+    final private RequestConfig defaultRequestConfig;
+    private HttpClientBuilder httpClientBuilder;
 
     @JsonCreator
     public ColumnAdditionByFetchingURLsOperation(
@@ -134,13 +153,39 @@ public class ColumnAdditionByFetchingURLsOperation extends EngineDependentOperat
         _delay = delay;
         _cacheResponses = cacheResponses;
         _httpHeadersJson = httpHeadersJson;
+
+        List<Header> headers = new ArrayList<Header>();
+        if (_httpHeadersJson != null) {
+            for (HttpHeader header : _httpHeadersJson) {
+                if (!isNullOrEmpty(header.name) && !isNullOrEmpty(header.value)) {
+                    headers.add(new BasicHeader(header.name, header.value));
+                }
+            }
+        }
+        httpHeaders = headers.toArray(httpHeaders);
+
+        defaultRequestConfig = RequestConfig.custom()
+                .setConnectTimeout(30 * 1000)
+                .setConnectionRequestTimeout(30 * 1000)
+                .setSocketTimeout(10 * 1000).build();
+
+        // TODO: Placeholder for future Basic Auth implementation
+//        CredentialsProvider credsProvider = new BasicCredentialsProvider();
+//        credsProvider.setCredentials(new AuthScope(host, 443),
+//                new UsernamePasswordCredentials(user, password));
+
+        httpClientBuilder = HttpClients.custom()
+                .setUserAgent(RefineServlet.getUserAgent())
+                .setDefaultRequestConfig(defaultRequestConfig);
+//               .setConnectionBackoffStrategy(ConnectionBackoffStrategy)
+//               .setDefaultCredentialsProvider(credsProvider);
     }
-    
+
     @JsonProperty("newColumnName")
     public String getNewColumnName() {
         return _newColumnName;
     }
-    
+
     @JsonProperty("columnInsertIndex")
     public int getColumnInsertIndex() {
         return _columnInsertIndex;
@@ -282,14 +327,15 @@ public class ColumnAdditionByFetchingURLsOperation extends EngineDependentOperat
             FilteredRows filteredRows = _engine.getAllFilteredRows();
             filteredRows.accept(_project, createRowVisitor(urls));
 
-            List<CellAtRow> responseBodies = new ArrayList<CellAtRow>(urls.size());
-            for (int i = 0; i < urls.size(); i++) {
-                CellAtRow urlData = urls.get(i);
+            int count = urls.size();
+            List<CellAtRow> responseBodies = new ArrayList<CellAtRow>(count);
+            int i = 0;
+            for (CellAtRow urlData : urls) {
                 String urlString = urlData.cell.value.toString();
 
                 Serializable response = null;
                 if (_urlCache != null) {
-                    response = cachedFetch(urlString);
+                    response = cachedFetch(urlString); // TODO: Why does this need a separate method?
                 } else {
                     response = fetch(urlString);
                 }
@@ -302,7 +348,7 @@ public class ColumnAdditionByFetchingURLsOperation extends EngineDependentOperat
                     responseBodies.add(cellAtRow);
                 }
 
-                _progress = i * 100 / urls.size();
+                _progress = i++ * 100 / count;
 
                 if (_canceled) {
                     break;
@@ -335,68 +381,64 @@ public class ColumnAdditionByFetchingURLsOperation extends EngineDependentOperat
         }
 
         Serializable fetch(String urlString) {
-            URL url = null;
+            HttpGet httpGet;
+
             try {
-                url = new URL(urlString);
-            } catch (MalformedURLException e) {
+                // Use of URL constructor below is purely to get additional error checking to mimic
+                // previous behavior for the tests.
+                httpGet = new HttpGet(new URL(urlString).toURI());
+            } catch (IllegalArgumentException | MalformedURLException | URISyntaxException e) {
                 return null;
             }
 
             try {
-                URLConnection urlConnection = url.openConnection();
-                urlConnection.setRequestProperty("Accept-Encoding", "gzip");
-                if (_httpHeadersJson != null) {
-                    for (int i = 0; i < _httpHeadersJson.size(); i++) {
-                        String headerLabel = _httpHeadersJson.get(i).name;
-                        String headerValue = _httpHeadersJson.get(i).value;
-                        if (headerValue != null && !headerValue.isEmpty()) {
-                            urlConnection.setRequestProperty(headerLabel, headerValue);
-                        }
-                    }
-                }
+                httpGet.setHeaders(httpHeaders);
+                httpGet.setConfig(defaultRequestConfig);
 
+                CloseableHttpClient httpclient = httpClientBuilder.build();
 
+                CloseableHttpResponse response = null;
                 try {
-                    InputStream is = urlConnection.getInputStream();
-                    try {
-                        String encoding = urlConnection.getContentEncoding();
-                        if (encoding == null) {
-                            String contentType = urlConnection.getContentType();
-                            if (contentType != null) {
-                                final String charsetEqual = "charset=";
-                                int c = contentType.lastIndexOf(charsetEqual);
-                                if (c > 0) {
-                                    encoding = contentType.substring(c + charsetEqual.length());
-                                }
-                            }
-                        }
-                        return ParsingUtilities.inputStreamToString(
-                                                is, (encoding == null) || ( encoding.equalsIgnoreCase("\"UTF-8\"")) ? "UTF-8" : encoding);
+                    response = httpclient.execute(httpGet);
 
-                    } finally {
-                        is.close();
+                    HttpEntity entity = response.getEntity();
+                    if (entity == null) {
+                        throw new Exception("No content found in " + httpGet.getURI().toString());
                     }
+
+                    String encoding = null;
+
+                    if (entity.getContentEncoding() != null) {
+                        encoding = entity.getContentEncoding().getValue();
+                    } else {
+                        Charset charset = ContentType.getOrDefault(entity).getCharset();
+                        if (charset != null) {
+                            encoding = charset.name();
+                        }
+                    }
+
+                    String result =  ParsingUtilities.inputStreamToString(
+                            entity.getContent(), (encoding == null) || ( encoding.equalsIgnoreCase("\"UTF-8\"")) ? "UTF-8" : encoding);
+
+                    EntityUtils.consume(entity);
+                    return result;
+
                 } catch (IOException e) {
                     String message;
-                    if (urlConnection instanceof HttpURLConnection) {
-                        int status = ((HttpURLConnection)urlConnection).getResponseCode();
-                        String errorString = "";
-                        InputStream errorStream = ((HttpURLConnection)urlConnection).getErrorStream();
-                        if (errorStream != null) {
-                            errorString = ParsingUtilities.inputStreamToString(errorStream);
-                        }
-                        message = String.format("HTTP error %d : %s | %s",status,
-                                ((HttpURLConnection)urlConnection).getResponseMessage(),
-                                errorString);
+                    if (response == null) {
+                        message = "Unknown HTTP error " + e.getLocalizedMessage();
                     } else {
-                        message = e.toString();
+                        StatusLine status = response.getStatusLine();
+                        HttpEntity errorEntity = response.getEntity();
+                        String errorString = ParsingUtilities.inputStreamToString(errorEntity.getContent());
+                        message = String.format("HTTP error %d : %s | %s", status.getStatusCode(),
+                                status.getReasonPhrase(),
+                                errorString);
                     }
-                    return _onError == OnError.StoreError ?
-                            new EvalError(message) : null;
+                    return _onError == OnError.StoreError ? new EvalError(message) : null;
                 }
             } catch (Exception e) {
-                return _onError == OnError.StoreError ?
-                        new EvalError(e.getMessage()) : null;
+                return _onError == OnError.StoreError ? new EvalError(e.getMessage()) : null;
             }
         }
 
