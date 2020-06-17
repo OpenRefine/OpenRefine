@@ -531,6 +531,7 @@
     "core-views/judg-actions2": "acciones del parámetro",
     "core-views/to-text": "A texto",
     "core-views/reg-exp": "regex",
+    "core-views/goto-page": "$1 de $2 {{plural:$2|página|paginas}}",
     "core-views/word-facet": "Faceta por palabra",
     "core-views/collapse-left": "Contraer todas las columnas a la izquierda",
     "core-views/clear-recon": "Quitar la información de cotejo",
