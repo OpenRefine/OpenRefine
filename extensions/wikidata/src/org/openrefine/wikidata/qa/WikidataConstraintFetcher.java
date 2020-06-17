@@ -30,7 +30,9 @@ import org.wikidata.wdtk.datamodel.interfaces.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import java.util.HashMap;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -94,7 +96,10 @@ public class WikidataConstraintFetcher implements ConstraintFetcher {
     public static String ALLOWED_ENTITY_TYPES_QID = "Q52004125";
     public static String ALLOWED_ITEM_TYPE_QID = "Q29934200";
     public static String ALLOWED_ENTITY_TYPES_PID = "P2305";
-    
+
+    public static String CONFLICTS_WITH_CONSTRAINT_QID = "Q21502838";
+    public static String CONFLICTS_WITH_PROPERTY_PID = "P2306";
+    public static String ITEM_OF_PROPERTY_CONSTRAINT_PID = "P2305";
 
     // The following constraints still need to be implemented:
 
@@ -423,4 +428,36 @@ public class WikidataConstraintFetcher implements ConstraintFetcher {
         return null;
     }
 
+    /**
+     * Returns the Map of all the conflicting pid and their item values
+     *
+     * @param pid:
+     *            the property having conflicts-with constraint
+     * @return
+     */
+    @Override
+    public Map<PropertyIdValue, List<Value>> getParamConflictsWith(PropertyIdValue pid) {
+        List<Statement> statementList = getConstraintsByType(pid, CONFLICTS_WITH_CONSTRAINT_QID).collect(Collectors.toList());
+        Map<PropertyIdValue, List<Value>> propertyIdValueListMap = new HashMap<>();
+        for (Statement statement : statementList) {
+            List<SnakGroup> specs = statement.getClaim().getQualifiers();
+            PropertyIdValue conflictingPid = null;
+            List<Value> items = new ArrayList<>();
+            for(SnakGroup group : specs) {
+                for (Snak snak : group.getSnaks()) {
+                    if (group.getProperty().getId().equals(CONFLICTS_WITH_PROPERTY_PID)){
+                        conflictingPid = (PropertyIdValue) snak.getValue();
+                    }
+                    if (group.getProperty().getId().equals(ITEM_OF_PROPERTY_CONSTRAINT_PID)){
+                        items.add(snak.getValue());
+                    }
+                }
+            }
+            if (conflictingPid != null) {
+                propertyIdValueListMap.put(conflictingPid, items);
+            }
+        }
+
+        return propertyIdValueListMap;
+    }
 }

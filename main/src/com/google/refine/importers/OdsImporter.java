@@ -126,6 +126,7 @@ public class OdsImporter extends TabularImportingParserBase {
             ProjectMetadata metadata,
             ImportingJob job,
             String fileSource,
+            String archiveFileName,
             InputStream inputStream,
             int limit,
             ObjectNode options,
@@ -188,13 +189,14 @@ public class OdsImporter extends TabularImportingParserBase {
                     job,
                     dataReader,
                     fileSource + "#" + table.getTableName(),
+                    archiveFileName,
                     limit,
                     options,
                     exceptions
             );
         }
         
-        super.parseOneFile(project, metadata, job, fileSource, inputStream, limit, options, exceptions);
+        super.parseOneFile(project, metadata, job, fileSource, archiveFileName, inputStream, limit, options, exceptions);
     }
 
     static protected Serializable extractCell(OdfTableCell cell) {

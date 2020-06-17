@@ -111,10 +111,6 @@ ExporterManager.stripNonFileChars = function(name) {
 
 ExporterManager.handlers.exportRows = function(format, ext) {
   var form = ExporterManager.prepareExportRowsForm(format, true, ext);
-  $('<input />')
-  .attr("name", "contentType")
-  .attr("value", "application/x-unknown") // force download
-  .appendTo(form);
 
   document.body.appendChild(form);
 

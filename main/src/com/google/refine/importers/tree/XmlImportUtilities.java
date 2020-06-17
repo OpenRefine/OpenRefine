@@ -47,8 +47,6 @@ import javax.servlet.ServletException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.fasterxml.jackson.core.JsonParseException;
-
 import com.google.refine.importers.tree.TreeReader.Token;
 import com.google.refine.model.Cell;
 import com.google.refine.model.Project;
@@ -361,7 +359,7 @@ public class XmlImportUtilities extends TreeImportUtilities {
         ImportRecord record = new ImportRecord();
 
         processSubRecord(project, parser, rootColumnGroup, record, 0, parameter);
-        addImportRecordToProject(record, project, parameter.includeFileSources, parameter.fileSource);
+        addImportRecordToProject(record, project, parameter.includeFileSources, parameter.fileSource, parameter.includeArchiveFileName, parameter.archiveFileName);
     }
 
         
@@ -413,20 +411,29 @@ public class XmlImportUtilities extends TreeImportUtilities {
         }
         if (record != null) {
             addImportRecordToProject(record, project, 
-                    parameter.includeFileSources, parameter.fileSource);
+                    parameter.includeFileSources, parameter.fileSource, parameter.includeArchiveFileName, parameter.archiveFileName);
         }
     }
 
     static protected void addImportRecordToProject(ImportRecord record, Project project,
-            boolean includeFileSources, String fileSource) {
+            boolean includeFileSources, String fileSource, boolean includeArchiveFileName, String archiveFileName) {
+        int archiveColumnIndex = -1, fileSourceColumnIndex = -1;
+        if (includeArchiveFileName && archiveFileName != null) {
+            archiveColumnIndex = 0;
+        }
+        if (includeFileSources) {
+            fileSourceColumnIndex = archiveColumnIndex == 0? 1 : 0;
+        }
         for (List<Cell> row : record.rows) {
             if (row.size() > 0) {
                 Row realRow = new Row(row.size());
                 for (int c = 0; c < row.size(); c++) {
-                    if (c == 0 && includeFileSources)  {    // to add the file source:
-                        realRow.setCell(
-                                0,
-                            new Cell(fileSource, null));
+                    if (c == archiveColumnIndex)  {
+                        realRow.setCell(archiveColumnIndex, new Cell(archiveFileName, null));
+                        continue;
+                    }
+                    if (c == fileSourceColumnIndex) {
+                        realRow.setCell(fileSourceColumnIndex, new Cell(fileSource, null));
                         continue;
                     }
                     Cell cell = row.get(c);

@@ -691,6 +691,7 @@ public class WikitextImporter extends TabularImportingParserBase {
         ProjectMetadata metadata,
         ImportingJob job,
         String fileSource,
+        String archiveFileName,
         Reader reader,
         int limit,
         ObjectNode options,
@@ -736,7 +737,7 @@ public class WikitextImporter extends TabularImportingParserBase {
             String wikiUrl = JSONUtilities.getString(options, "wikiUrl", null);
             // Wikidata reconciliation endpoint, hardcoded because the user might not have it in its services
             String reconUrl = JSONUtilities.getString(options, "reconService",
-                  "https://tools.wmflabs.org/openrefine-wikidata/en/api");
+                  "https://wdreconcile.toolforge.org/en/api");
             StandardReconConfig cfg = getReconConfig(reconUrl);
 
             if (wikiUrl != null) {
@@ -749,7 +750,7 @@ public class WikitextImporter extends TabularImportingParserBase {
                 // TODO this does not seem to do anything - maybe we need to pass it to OpenRefine in some other way?
             }
 
-            TabularImportingParserBase.readTable(project, metadata, job, dataReader, fileSource, limit, options, exceptions);
+            TabularImportingParserBase.readTable(project, metadata, job, dataReader, fileSource, archiveFileName, limit, options, exceptions);
             
             // Add reconciliation statistics
             if (dataReader.columnReconciled != null) {
@@ -768,7 +769,7 @@ public class WikitextImporter extends TabularImportingParserBase {
             e1.printStackTrace();
         }
         
-        super.parseOneFile(project, metadata, job, fileSource, reader, limit, options, exceptions);
+        super.parseOneFile(project, metadata, job, fileSource, archiveFileName, reader, limit, options, exceptions);
     }
     
     private StandardReconConfig getReconConfig(String url) {
