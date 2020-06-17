@@ -114,7 +114,7 @@ public class ExcelImporterTests extends ImporterTest {
         whenGetIntegerOption("skipDataLines", options, 0);
         whenGetIntegerOption("limit", options, -1);
         whenGetBooleanOption("storeBlankCellsAsNulls",options,true);
-        
+
         InputStream stream = new FileInputStream(xlsFile);
         
         try {
@@ -139,6 +139,35 @@ public class ExcelImporterTests extends ImporterTest {
         verify(options, times(1)).get("skipDataLines");
         verify(options, times(1)).get("limit");
         verify(options, times(1)).get("storeBlankCellsAsNulls");
+    }
+
+    @Test
+    public void readXlsFromArchiveFile() throws FileNotFoundException, IOException{
+
+        ArrayNode sheets = ParsingUtilities.mapper.createArrayNode();
+        sheets.add(ParsingUtilities.mapper.readTree("{name: \"file-source#Test Sheet 0\", fileNameAndSheetIndex: \"file-source#0\", rows: 31, selected: true}"));
+        whenGetArrayOption("sheets", options, sheets);
+
+        whenGetIntegerOption("ignoreLines", options, 0);
+        whenGetIntegerOption("headerLines", options, 0);
+        whenGetIntegerOption("skipDataLines", options, 0);
+        whenGetIntegerOption("limit", options, -1);
+        whenGetBooleanOption("storeBlankCellsAsNulls",options,true);
+        whenGetBooleanOption("includeArchiveFileName", options, true);
+
+        InputStream stream = new FileInputStream(xlsFile);
+
+        try {
+            parseOneFile(SUT, stream);
+        } catch (Exception e) {
+            Assert.fail(e.getMessage());
+        }
+
+        Assert.assertEquals(project.rows.get(0).cells.size(), COLUMNS + 1);
+        Assert.assertEquals(project.columnModel.columns.get(0).getName(), "Archive");
+        Assert.assertEquals(project.rows.get(0).cells.get(0).value, "archive-file");
+
+        verify(options, times(1)).get("includeArchiveFileName");
     }
     
     @Test

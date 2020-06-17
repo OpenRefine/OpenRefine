@@ -90,7 +90,7 @@ public class FixedWidthImporterTests extends ImporterTest {
         whenGetIntegerOption("skipDataLines", options, 0);
         whenGetIntegerOption("limit", options, -1);
         whenGetBooleanOption("storeBlankCellsAsNulls",options,true);
-        
+
         try {
             parseOneFile(SUT, reader);
         } catch (Exception e) {
@@ -106,5 +106,39 @@ public class FixedWidthImporterTests extends ImporterTest {
         Assert.assertEquals((String)project.rows.get(2).getCellValue(0), "TooSho");
         Assert.assertEquals((String)project.rows.get(2).getCellValue(1), "rt");
         Assert.assertNull(project.rows.get(2).getCellValue(2));
+    }
+
+    @Test
+    public void readFixedWidthFromArchiveFile(){
+        StringReader reader = new StringReader(SAMPLE_ROW + "\nTooShort");
+
+        ArrayNode columnWidths = ParsingUtilities.mapper.createArrayNode();
+        JSONUtilities.append(columnWidths, 6);
+        JSONUtilities.append(columnWidths, 9);
+        JSONUtilities.append(columnWidths, 5);
+        whenGetArrayOption("columnWidths", options, columnWidths);
+
+        ArrayNode columnNames = ParsingUtilities.mapper.createArrayNode();
+        columnNames.add("Col 1");
+        columnNames.add("Col 2");
+        columnNames.add("Col 3");
+        whenGetArrayOption("columnNames", options, columnNames);
+
+        whenGetIntegerOption("ignoreLines", options, 0);
+        whenGetIntegerOption("headerLines", options, 0);
+        whenGetIntegerOption("skipDataLines", options, 0);
+        whenGetIntegerOption("limit", options, -1);
+        whenGetBooleanOption("storeBlankCellsAsNulls",options,true);
+        whenGetBooleanOption("includeArchiveFileName", options, true);
+
+        try {
+            parseOneFile(SUT, reader);
+        } catch (Exception e) {
+            Assert.fail(e.getMessage());
+        }
+
+        Assert.assertEquals(project.rows.get(0).cells.size(), 4);
+        Assert.assertEquals(project.columnModel.columns.get(0).getName(), "Archive");
+        Assert.assertEquals(project.rows.get(0).cells.get(0).value, "archive-file");
     }
 }

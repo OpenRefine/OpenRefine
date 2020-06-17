@@ -93,6 +93,7 @@ Refine.XmlParserUI.prototype.getOptions = function() {
   options.storeEmptyStrings = this._optionContainerElmts.storeEmptyStringsCheckbox[0].checked;
 
   options.includeFileSources = this._optionContainerElmts.includeFileSourcesCheckbox[0].checked;
+  options.includeArchiveFileName = this._optionContainerElmts.includeArchiveFileCheckbox[0].checked;
 
   return options;
 };
@@ -113,6 +114,7 @@ Refine.XmlParserUI.prototype._initialize = function() {
   $('#or-import-trim').html($.i18n('core-index-parser/trim'));
   $('#or-import-parseCell').html($.i18n('core-index-parser/parse-cell'));
   $('#or-import-store').html($.i18n('core-index-parser/store-source'));
+  $('#or-import-archive').html($.i18n('core-index-parser/store-archive'));
   
   if (this._config.limit > 0) {
     this._optionContainerElmts.limitCheckbox.prop("checked", true);
@@ -129,6 +131,9 @@ Refine.XmlParserUI.prototype._initialize = function() {
   }
   if (this._config.includeFileSources) {
     this._optionContainerElmts.includeFileSourcesCheckbox.prop("checked", true);
+  }
+  if (this._config.includeArchiveFileName) {
+    this._optionContainerElmts.includeArchiveFileCheckbox.prop("checked", true);
   }
   this._optionContainerElmts.pickRecordElementsButton.click(function() {
     self._config.recordPath = undefined;

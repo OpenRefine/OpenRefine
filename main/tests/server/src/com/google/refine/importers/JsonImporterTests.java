@@ -38,11 +38,13 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
+import java.lang.reflect.Method;
 import java.util.LinkedList;
 import java.util.List;
 
 import org.slf4j.LoggerFactory;
 import org.testng.Assert;
+import org.testng.ITestResult;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.BeforeTest;
@@ -75,16 +77,16 @@ public class JsonImporterTests extends ImporterTest {
     //System Under Test
     JsonImporter SUT = null;
 
-    @Override
     @BeforeMethod
-    public void setUp(){
+    public void setUp(Method method){
         super.setUp();
         SUT = new JsonImporter();
+        logger.info("About to run test method: " + method.getName());
     }
 
-    @Override
     @AfterMethod
-    public void tearDown() {
+    public void tearDown(ITestResult result) {
+//        logger.info("Finished test method: " + result.getMethod().getMethodName());
         SUT = null;
         if (inputStream != null) {
             try {
@@ -100,8 +102,6 @@ public class JsonImporterTests extends ImporterTest {
     @Test
     public void canParseSample(){
         RunTest(getSample());
-
-        log(project);
         assertProjectCreated(project, 4, 6);
 
         Row row = project.rows.get(0);
@@ -122,7 +122,6 @@ public class JsonImporterTests extends ImporterTest {
         JSONUtilities.safePut(options, "storeEmptyStrings", true);
         JSONUtilities.safePut(options, "guessCellValueTypes", false);
 
-        
         try {
             inputStream = new ByteArrayInputStream(errJSON.getBytes( "UTF-8" ) );
         } catch (UnsupportedEncodingException e1) {
@@ -136,6 +135,7 @@ public class JsonImporterTests extends ImporterTest {
                 metadata,
                 job,
                 "file-source",
+                "archive-file",
                 inputStream,
                 rootColumnGroup,
                 -1,
@@ -143,10 +143,10 @@ public class JsonImporterTests extends ImporterTest {
                 exceptions
         );
         Assert.assertFalse(exceptions.isEmpty());
-        Assert.assertEquals(exceptions.get(0).getMessage(), "Illegal unquoted " +
-                "character ((CTRL-CHAR, code 10)): has to be escaped using backslash to be included in string value");
+        Assert.assertEquals("Unexpected character (';' (code 59)): was expecting comma to separate Object entries",
+                exceptions.get(0).getMessage());
     }
-    
+
     @Test
     public void trimLeadingTrailingWhitespaceOnTrimStrings(){
         String ScraperwikiOutput = 
@@ -159,7 +159,6 @@ public class JsonImporterTests extends ImporterTest {
             "    }\n" +
             "]\n";
         RunTest(ScraperwikiOutput, true);
-        log(project);
         assertProjectCreated(project, 4, 1);
         Row row = project.rows.get(0);
         Assert.assertNotNull(row);
@@ -180,7 +179,6 @@ public class JsonImporterTests extends ImporterTest {
             "    }\n" +
             "]\n";
         RunTest(ScraperwikiOutput);
-        log(project);
         assertProjectCreated(project, 4, 1);
         Row row = project.rows.get(0);
         Assert.assertNotNull(row);
@@ -192,8 +190,6 @@ public class JsonImporterTests extends ImporterTest {
     @Test
     public void canParseSampleWithDuplicateNestedElements(){
         RunTest(getSampleWithDuplicateNestedElements());
-
-        log(project);
         assertProjectCreated(project, 4, 12);
 
         Row row = project.rows.get(0);
@@ -206,10 +202,7 @@ public class JsonImporterTests extends ImporterTest {
 
     @Test
     public void testCanParseLineBreak(){
-
         RunTest(getSampleWithLineBreak());
-
-        log(project);
         assertProjectCreated(project, 4, 6);
 
         Row row = project.rows.get(3);
@@ -222,8 +215,6 @@ public class JsonImporterTests extends ImporterTest {
     @Test
     public void testElementsWithVaryingStructure(){
         RunTest(getSampleWithVaryingStructure());
-
-        log(project);
         assertProjectCreated(project, 5, 6);
 
         Assert.assertEquals( project.columnModel.getColumnByCellIndex(4).getName(), JsonImporter.ANONYMOUS + " - genre");
@@ -240,7 +231,6 @@ public class JsonImporterTests extends ImporterTest {
     @Test
     public void testElementWithNestedTree(){
         RunTest(getSampleWithTreeStructure());
-        log(project);
         assertProjectCreated(project, 5, 6);
 
         Assert.assertEquals(project.columnModel.columnGroups.size(),1);
@@ -264,7 +254,6 @@ public class JsonImporterTests extends ImporterTest {
         JSONUtilities.safePut(options, "recordPath", path);
 
         RunTest(mqlOutput, options);
-        log(project);
         assertProjectCreated(project,3,16);
     }
     
@@ -298,7 +287,6 @@ public class JsonImporterTests extends ImporterTest {
             "    }\n" +
             "]\n";
         RunTest(ScraperwikiOutput);
-        log(project);
         assertProjectCreated(project,9,2);
     }
         
@@ -380,10 +368,35 @@ public class JsonImporterTests extends ImporterTest {
     }
 
     @Test
+    public void testCanParseTab() throws Exception {
+        // Use un-escaped tabs here.
+        String sampleJson = "{\"\tfield\":\t\"\tvalue\"}";
+
+        JSONTreeReader parser = new JSONTreeReader(new ByteArrayInputStream(sampleJson.getBytes("UTF-8")));
+        Token token = Token.Ignorable;
+        int i = 0;
+        try {
+            while (token != null) {
+                token = parser.next();
+                if (token == null) {
+                    break;
+                }
+                i++;
+                if (i == 3) {
+                    Assert.assertEquals(Token.Value, token);
+                    Assert.assertEquals("\tfield", parser.getFieldName());
+                    Assert.assertEquals("\tvalue", parser.getFieldValue());
+                }
+            }
+        }catch(Exception e){
+            Assert.fail();
+        }
+    }
+
+
+    @Test
     public void testJsonDatatypes(){
         RunTest(getSampleWithDataTypes());
-
-        log(project);
         assertProjectCreated(project, 2, 21,4);
 
         Assert.assertEquals( project.columnModel.getColumnByCellIndex(0).getName(), JsonImporter.ANONYMOUS + " - id");
@@ -454,15 +467,13 @@ public class JsonImporterTests extends ImporterTest {
         String fileName = "grid_small.json";
         RunComplexJSONTest(getComplexJSON(fileName));
 
-        log(project);
-        logger.info("************************ columnu number:" + project.columnModel.columns.size() + 
-                ". \tcolumn groups number:" + project.columnModel.columnGroups.size() + 
+        logger.debug("************************ columnu number:" + project.columnModel.columns.size() +
+                ". \tcolumn groups number:" + project.columnModel.columnGroups.size() +
                 ".\trow number:" + project.rows.size() + ".\trecord number:" + project.recordModel.getRecordCount()) ;
-        
-        
+
         assertProjectCreated(project, 63, 63, 8);
-    }   
-    
+    }
+
     //------------helper methods---------------
 
     private static String getTypicalElement(int id){

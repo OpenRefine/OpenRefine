@@ -271,8 +271,8 @@ ClusteringDialog.prototype._renderTable = function(clusters) {
 
         this._elmts.resultSummary.html(
             (clusters.length === this._clusters.length) ?
-                ("<b>" + this._clusters.length + "</b> cluster" + ((this._clusters.length != 1) ? "s" : "") + " "+$.i18n('core-dialogs/found')) :
-                ("<b>" + clusters.length + "</b> cluster" + ((clusters.length != 1) ? "s" : "") + " "+$.i18n('core-dialogs/filtered-from')+ this._clusters.length +$.i18n('core-dialogs/from-total') )
+                $.i18n('core-dialogs/clusters-found', this._clusters.length) :
+                $.i18n('core-dialogs/clusters-filtered', clusters.length, this._clusters.length)
         );
 
     } else {
@@ -283,6 +283,7 @@ ClusteringDialog.prototype._renderTable = function(clusters) {
 };
 
 ClusteringDialog.prototype._cluster = function() {
+    $(".clustering-dialog-facet").css("display","none");
     var self = this;
 
     var container = this._elmts.tableContainer.html(
@@ -304,6 +305,7 @@ ClusteringDialog.prototype._cluster = function() {
         },
         function(data) {
             self._updateData(data);
+            $(".clustering-dialog-facet").css("display","block");
         },
         "json"
     );

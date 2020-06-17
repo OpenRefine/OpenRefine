@@ -71,11 +71,9 @@ DataTableView.prototype.getSorting = function() {
 };
 
 DataTableView.prototype.resize = function() {
-  this._adjustDataTables();
   
   var topHeight =
-    this._div.find(".viewpanel-header").outerHeight(true) +
-    this._div.find(".data-header-table-container").outerHeight(true);
+    this._div.find(".viewpanel-header").outerHeight(true);
   var tableContainerIntendedHeight = this._div.innerHeight() - topHeight;
   
   var tableContainer = this._div.find(".data-table-container").css("display", "block");
@@ -102,11 +100,13 @@ DataTableView.prototype.render = function() {
       '<div class="viewpanel-sorting" bind="sortingControls"></div>' +
       '<div class="viewpanel-paging" bind="pagingControls"></div>' +
     '</div>' +
-    '<div bind="dataHeaderTableContainer" class="data-header-table-container">' +
-      '<table bind="headerTable" class="data-header-table"></table>' +
-    '</div>' +
     '<div bind="dataTableContainer" class="data-table-container">' +
-      '<table bind="table" class="data-table"></table>' +
+      '<table class="data-table">'+
+        '<thead bind="tableHeader" class="data-table-header">'+
+        '</thead>'+
+        '<tbody bind="table" class="data-table">'+
+        '</tbody>'+
+      '</table>' +
     '</div>'
   );
   var elmts = DOM.bind(html);
@@ -136,7 +136,7 @@ DataTableView.prototype.render = function() {
     this._renderSortingControls(elmts.sortingControls);
   }
 
-  this._renderDataTables(elmts.table[0], elmts.headerTable[0]);
+  this._renderDataTables(elmts.table[0], elmts.tableHeader[0]);
   this._div.empty().append(html);
 
   // show/hide null values in cells
@@ -248,18 +248,21 @@ DataTableView.prototype._renderDataTables = function(table, headerTable) {
 
   var renderColumnKeys = function(keys) {
     if (keys.length > 0) {
-      var tr = headerTable.insertRow(headerTable.rows.length);
-      $(tr.insertCell(0)).attr('colspan', '3'); // star, flag, row index
+      var tr = tableHeader.insertRow(tableHeader.rows.length);
+      $(tr.appendChild(document.createElement("th"))).attr('colspan', '3'); // star, flag, row index
 
       for (var c = 0; c < columns.length; c++) {
         var column = columns[c];
-        var td = tr.insertCell(tr.cells.length);
+        var th = tr.appendChild(document.createElement("th"));
         if (self._collapsedColumnNames.hasOwnProperty(column.name)) {
-          $(td).html('&nbsp;');
+          $(th).html('&nbsp;');
         } else {
           for (var k = 0; k < keys.length; k++) {
+            // if a node is a key in the tree-based data (JSON/XML/etc), then also display a dropdown arrow (non-functional currently)
+            // See https://github.com/OpenRefine/OpenRefine/blob/master/main/src/com/google/refine/model/ColumnGroup.java
+            // and https://github.com/OpenRefine/OpenRefine/tree/master/main/src/com/google/refine/importers/tree
             if (c == keys[k]) {
-              $('<img />').attr("src", "../images/down-arrow.png").appendTo(td);
+              $('<img />').attr("src", "../images/down-arrow.png").appendTo(th);
               break;
             }
           }
@@ -272,8 +275,8 @@ DataTableView.prototype._renderDataTables = function(table, headerTable) {
     var nextLayer = [];
 
     if (groups.length > 0) {
-      var tr = headerTable.insertRow(headerTable.rows.length);
-      $(tr.insertCell(0)).attr('colspan', '3'); // star, flag, row index
+      var tr = tableHeader.insertRow(tableHeader.rows.length);
+      $(tr.appendChild(document.createElement("th"))).attr('colspan', '3'); // star, flag, row index
 
       for (var c = 0; c < columns.length; c++) {
         var foundGroup = false;
@@ -287,10 +290,10 @@ DataTableView.prototype._renderDataTables = function(table, headerTable) {
           }
         }
 
-        var td = tr.insertCell(tr.cells.length);
+        var th = tr.appendChild(document.createElement("th"));
         if (foundGroup) {
-          td.setAttribute("colspan", columnGroup.columnSpan);
-          td.style.background = "#FF6A00";
+          th.setAttribute("colspan", columnGroup.columnSpan);
+          th.style.background = "#FF6A00";
 
           if (columnGroup.keyColumnIndex >= 0) {
             keys.push(columnGroup.keyColumnIndex);
@@ -324,9 +327,9 @@ DataTableView.prototype._renderDataTables = function(table, headerTable) {
    *------------------------------------------------------------
    */
 
-  var trHead = headerTable.insertRow(headerTable.rows.length);
+  var trHead = tableHeader.insertRow(tableHeader.rows.length);
   DOM.bind(
-      $(trHead.insertCell(trHead.cells.length))
+      $(trHead.appendChild(document.createElement("th")))
       .attr("colspan", "3")
       .addClass("column-header")
       .html(
@@ -339,15 +342,15 @@ DataTableView.prototype._renderDataTables = function(table, headerTable) {
   });
   this._columnHeaderUIs = [];
   var createColumnHeader = function(column, index) {
-    var td = trHead.insertCell(trHead.cells.length);
-    $(td).addClass("column-header").attr('title', column.name);
+    var th = trHead.appendChild(document.createElement("th"));
+    $(th).addClass("column-header").attr('title', column.name);
     if (self._collapsedColumnNames.hasOwnProperty(column.name)) {
-      $(td).html("&nbsp;").click(function(evt) {
+      $(th).html("&nbsp;").click(function(evt) {
         delete self._collapsedColumnNames[column.name];
         self.render();
       });
     } else {
-      var columnHeaderUI = new DataTableColumnHeaderUI(self, column, index, td);
+      var columnHeaderUI = new DataTableColumnHeaderUI(self, column, index, th);
       self._columnHeaderUIs.push(columnHeaderUI);
     }
   };
@@ -364,16 +367,13 @@ DataTableView.prototype._renderDataTables = function(table, headerTable) {
   var rows = theProject.rowModel.rows;
   var renderRow = function(tr, r, row, even) {
     $(tr).empty();
-
     var cells = row.cells;
-
     var tdStar = tr.insertCell(tr.cells.length);
     var star = $('<a href="javascript:{}">&nbsp;</a>')
     .addClass(row.starred ? "data-table-star-on" : "data-table-star-off")
     .appendTo(tdStar)
     .click(function() {
       var newStarred = !row.starred;
-
       Refine.postCoreProcess(
         "annotate-one-row",
         { row: row.i, starred: newStarred },
@@ -383,20 +383,18 @@ DataTableView.prototype._renderDataTables = function(table, headerTable) {
           onDone: function(o) {
             row.starred = newStarred;
             renderRow(tr, r, row, even);
-            self._adjustDataTables();
           }
         },
         "json"
       );
     });
-
+    
     var tdFlag = tr.insertCell(tr.cells.length);
     var flag = $('<a href="javascript:{}">&nbsp;</a>')
     .addClass(row.flagged ? "data-table-flag-on" : "data-table-flag-off")
     .appendTo(tdFlag)
     .click(function() {
       var newFlagged = !row.flagged;
-
       Refine.postCoreProcess(
         "annotate-one-row",
         { row: row.i, flagged: newFlagged },
@@ -406,7 +404,6 @@ DataTableView.prototype._renderDataTables = function(table, headerTable) {
           onDone: function(o) {
             row.flagged = newFlagged;
             renderRow(tr, r, row, even);
-            self._adjustDataTables();
           }
         },
         "json"
@@ -447,63 +444,6 @@ DataTableView.prototype._renderDataTables = function(table, headerTable) {
       even = !even;
     }
     renderRow(tr, r, row, even);
-  }
-  
-  $(table.parentNode).bind('scroll', function(evt) {
-    self._adjustDataTableScroll();
-  });
-};
-
-DataTableView.prototype._adjustDataTables = function() {
-  var dataTable = this._div.find('.data-table');
-  var headerTable = this._div.find('.data-header-table');
-  if (dataTable.length === 0 || headerTable.length === 0) {
-    return;
-  }
-  dataTable = dataTable[0];
-  headerTable = headerTable[0];
-  
-  if (dataTable.rows.length === 0) {
-    return;
-  }
-  
-  var dataTr = dataTable.rows[0];
-  var headerTr = headerTable.rows[headerTable.rows.length - 1];
-  
-  var marginColumnWidths =
-    $(dataTr.cells[0]).outerWidth(true) +
-    $(dataTr.cells[1]).outerWidth(true) +
-    $(dataTr.cells[2]).outerWidth(true) -
-    DOM.getHPaddings($(headerTr.cells[0])) + 1;
-  
-  $(headerTable)
-    .find('> tbody > tr > td:first-child')
-    .width('1%')
-    .children()
-      .first()
-      .width(marginColumnWidths);
-  
-  for (var i = 1; i < headerTr.cells.length; i++) {
-    var headerTd = $(headerTr.cells[i]);
-    var dataTd = $(dataTr.cells[i + 2]);
-    var commonWidth = Math.max(
-      Math.min(headerTd.width(), 100),
-      dataTd.width()
-    );
-    headerTd.width('1%').find('> div').width(commonWidth);
-    dataTd.children().first().width(commonWidth);
-  }
-  
-  this._adjustDataTableScroll();
-};
-
-DataTableView.prototype._adjustDataTableScroll = function() {
-  var dataTableContainer = this._div.find('.data-table-container');
-  var headerTableContainer = this._div.find('.data-header-table-container');
-  if (dataTableContainer.length > 0 && headerTableContainer.length > 0) {
-    headerTableContainer
-      .find('> .data-header-table')
-      .css('left', '-' + dataTableContainer[0].scrollLeft + 'px');
   }
 };
 
