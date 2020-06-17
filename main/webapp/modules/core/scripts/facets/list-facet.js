@@ -161,7 +161,7 @@ ListFacet.prototype._initializeUI = function() {
           '<a href="javascript:{}" class="facet-choice-link" bind="resetButton">'+$.i18n('core-facets/reset')+'</a>' +
           '<a href="javascript:{}" class="facet-choice-link" bind="invertButton">'+$.i18n('core-facets/invert')+'</a>' +
           '<a href="javascript:{}" class="facet-choice-link" bind="changeButton">'+$.i18n('core-facets/change')+'</a>' +
-          '<span class="facet-title-span" bind="titleSpan" title="Click here to edit the name of the facet"></span>' +
+          '<span bind="titleSpan"></span>' +
         '</td>' +
       '</tr></table></div>' +
     '</div>' +
@@ -188,13 +188,12 @@ ListFacet.prototype._initializeUI = function() {
       }
     });
   });
-  
+
   this._elmts.expressionDiv.text(this._config.expression).hide().click(function() { self._editExpression(); });
   this._elmts.removeButton.click(function() { self._remove(); });
   this._elmts.minimizeButton.click(function() { self._minimize(); });
   this._elmts.resetButton.click(function() { self._reset(); });
   this._elmts.invertButton.click(function() { self._invert(); });
-  this._elmts.titleSpan.click(function() { self._editTitle(); });
   
   this._elmts.choiceCountContainer.click(function() { self._copyChoices(); });
   this._elmts.sortByCountLink.click(function() {
@@ -524,18 +523,6 @@ ListFacet.prototype._getMetaExpression = function() {
 
 ListFacet.prototype._doEdit = function() {
   new ClusteringDialog(this._config.columnName, this._config.expression);
-};
-
-ListFacet.prototype._editTitle = function() {
-  var currentFacetTitle = this._config.name;
-  
-  var promptText = "The current name of the facet is: "+ currentFacetTitle +".\n What name do you want now?";
-  var newFacetTitle = prompt(promptText, currentFacetTitle);
-
-  if (newFacetTitle != null) {
-    this._config.name = newFacetTitle;
-    this._elmts.titleSpan.text(this._config.name);
-  }
 };
 
 ListFacet.prototype._editChoice = function(choice, choiceDiv) {
