@@ -233,7 +233,7 @@ DataTableView.prototype._checkPaginationSize = function(gridPageSize, defaultGri
   newGridPageSize.sort((a, b) => (a - b));
   
   return newGridPageSize;
-}
+};
 
 DataTableView.prototype._renderDataTables = function(table, headerTable) {
   var self = this;
