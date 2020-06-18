@@ -84,6 +84,8 @@ jobs:
         asset_content_type: application/x-apple-diskimage
 
     - name: Delete older releases
+      id: delete-older-releases
+      if: github.repository == 'OpenRefine/OpenRefine'
       uses: dev-drprasad/delete-older-releases@v0.1.0
       with:
         repo: OpenRefine/OpenRefine-nightly-releases
