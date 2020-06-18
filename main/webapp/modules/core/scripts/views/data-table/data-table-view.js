@@ -34,7 +34,10 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 function DataTableView(div) {
   this._div = div;
 
-  this._pageSize = 10;
+  this._gridPagesSizes = JSON.parse(Refine.getPreference("ui.gridPaginationSize", null));
+  this._gridPagesSizes = this._checkPaginationSize(this._gridPagesSizes, [ 5, 10, 25, 50 ]);
+  this._pageSize = ( this._gridPagesSizes[0] < 10 ) ? 10 : this._gridPagesSizes[0];
+
   this._showRecon = true;
   this._collapsedColumnNames = {};
   this._sorting = { criteria: [] };
@@ -214,9 +217,9 @@ DataTableView.prototype._renderPagingControls = function(pageSizeControls, pagin
   }
 
   $('<span>'+$.i18n('core-views/show')+': </span>').appendTo(pageSizeControls);
-  var sizes = [ 5, 10, 25, 50 ];
+  
   var renderPageSize = function(index) {
-    var pageSize = sizes[index];
+    var pageSize = self._gridPagesSizes[index];
     var a = $('<a href="javascript:{}"></a>')
     .addClass("viewPanel-pagingControls-page")
     .appendTo(pageSizeControls);
@@ -229,13 +232,35 @@ DataTableView.prototype._renderPagingControls = function(pageSizeControls, pagin
       });
     }
   };
-  for (var i = 0; i < sizes.length; i++) {
+  
+  for (var i = 0; i < self._gridPagesSizes.length; i++) {
     renderPageSize(i);
   }
-
+  
   $('<span>')
   .text(theProject.rowModel.mode == "record-based" ? ' '+$.i18n('core-views/records') : ' '+$.i18n('core-views/rows'))
   .appendTo(pageSizeControls);
+};
+
+DataTableView.prototype._checkPaginationSize = function(gridPageSize, defaultGridPageSize) {
+  var self = this;
+  var newGridPageSize = [];
+  
+  if(gridPageSize == null || typeof gridPageSize != "object") return defaultGridPageSize;
+
+  for (var i = 0; i < gridPageSize.length; i++) {
+    if(typeof gridPageSize[i] == "number" && gridPageSize[i] > 0 && gridPageSize[i] < 10000)
+      newGridPageSize.push(gridPageSize[i]);
+  }
+
+  if(newGridPageSize.length < 2) return defaultGridPageSize;
+  
+  var distinctValueFilter = (value, index, selfArray) => (selfArray.indexOf(value) == index);
+  newGridPageSize.filter(distinctValueFilter);
+  
+  newGridPageSize.sort((a, b) => (a - b));
+  
+  return newGridPageSize;
 };
 
 DataTableView.prototype._renderDataTables = function(table, tableHeader) {
