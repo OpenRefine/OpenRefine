@@ -32,11 +32,6 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 var SchemaAlignment = {};
-
-SchemaAlignment._cleanName = function(s) {
-  return s.replace(/\W/g, " ").replace(/\s+/g, " ").toLowerCase();
-};
-
 var SchemaAlignmentDialog = {};
 
 /**
