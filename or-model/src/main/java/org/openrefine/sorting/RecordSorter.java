@@ -33,50 +33,56 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package org.openrefine.sorting;
 
-import java.text.CollationKey;
-import java.text.Collator;
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import java.io.Serializable;
 
 import org.openrefine.expr.ExpressionUtils;
+import org.openrefine.model.GridState;
+import org.openrefine.model.IndexedRow;
+import org.openrefine.model.Record;
+import org.openrefine.sorting.Criterion.KeyMaker;
 
-public class StringCriterion extends Criterion {
+public class RecordSorter extends BaseSorter<Record> {
 
-    @JsonProperty("caseSensitive")
-    public boolean caseSensitive;
-    @JsonIgnore
-    Collator collator;
-
-    /**
-     * 
-     */
-    public StringCriterion() {
-        super();
-        collator = Collator.getInstance();
-        collator.setDecomposition(Collator.FULL_DECOMPOSITION);
-        collator.setStrength(Collator.SECONDARY);
+    public RecordSorter(GridState state, SortingConfig config) {
+        super(state, config);
     }
 
     @Override
-    public KeyMaker createKeyMaker() {
-        return new KeyMaker() {
+    protected Serializable makeKey(
+            KeyMaker keyMaker, Criterion c, Record o) {
 
-            @Override
-            protected Object makeKey(Object value) {
-                return collator.getCollationKey((ExpressionUtils.isNonBlankData(value)
-                        && !(value instanceof String)) ? value.toString() : (String) value);
+        Serializable error = null;
+        Serializable finalKey = null;
+
+        for (IndexedRow indexedRow : o.getIndexedRows()) {
+            Serializable key = keyMaker._columnIndex == -1 ? null
+                    : keyMaker.makeKey(indexedRow.getRow().getCellValue(keyMaker._columnIndex));
+            if (ExpressionUtils.isError(key)) {
+                error = key;
+            } else if (ExpressionUtils.isNonBlankData(key)) {
+                if (finalKey == null) {
+                    finalKey = key;
+                } else {
+                    int c1 = keyMaker.compareKeys(finalKey, key);
+                    if (c.reverse) {
+                        if (c1 < 0) { // key > finalKey
+                            finalKey = key;
+                        }
+                    } else {
+                        if (c1 > 0) { // key < finalKey
+                            finalKey = key;
+                        }
+                    }
+                }
             }
+        }
 
-            @Override
-            public int compareKeys(Object key1, Object key2) {
-                return ((CollationKey) key1).compareTo((CollationKey) key2);
-            }
-        };
-    }
-
-    @Override
-    public String getValueType() {
-        return "string";
+        if (finalKey != null) {
+            return finalKey;
+        } else if (error != null) {
+            return error;
+        } else {
+            return null;
+        }
     }
 }

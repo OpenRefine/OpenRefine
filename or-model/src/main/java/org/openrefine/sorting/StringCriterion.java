@@ -33,40 +33,37 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package org.openrefine.sorting;
 
-import org.openrefine.expr.EvalError;
+import java.io.Serializable;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import org.openrefine.expr.ExpressionUtils;
+import org.openrefine.model.ColumnModel;
 
-public class BooleanCriterion extends Criterion {
+public class StringCriterion extends Criterion {
 
-    final static protected EvalError s_error = new EvalError("Not a boolean");
+    @JsonProperty("caseSensitive")
+    public boolean caseSensitive;
 
     @Override
-    public KeyMaker createKeyMaker() {
-        return new KeyMaker() {
+    public KeyMaker createKeyMaker(ColumnModel columnModel) {
+        return new KeyMaker(columnModel, columnName) {
 
             @Override
-            protected Object makeKey(Object value) {
-                if (ExpressionUtils.isNonBlankData(value)) {
-                    if (value instanceof Boolean) {
-                        return value;
-                    } else if (value instanceof String) {
-                        return Boolean.parseBoolean((String) value);
-                    } else {
-                        return s_error;
-                    }
-                }
-                return null;
+            protected Serializable makeKey(Serializable value) {
+                return (ExpressionUtils.isNonBlankData(value)
+                        && !(value instanceof String)) ? value.toString() : (String) value;
             }
 
             @Override
-            public int compareKeys(Object key1, Object key2) {
-                return ((Boolean) key1).compareTo((Boolean) key2);
+            public int compareKeys(Serializable key1, Serializable key2) {
+                return ((String) key1).compareTo((String) key2);
             }
         };
     }
 
     @Override
     public String getValueType() {
-        return "boolean";
+        return "string";
     }
 }

@@ -12,6 +12,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import org.openrefine.browsing.facets.RecordAggregator;
 import org.openrefine.browsing.facets.RowAggregator;
 import org.openrefine.overlay.OverlayModel;
+import org.openrefine.sorting.SortingConfig;
 
 /**
  * Immutable object which represents the state of the project grid at a given point in a workflow.
@@ -64,13 +65,15 @@ public interface GridState {
      * @param filter
      *            the subset of rows to paginate through. This object and its dependencies are required to be
      *            serializable.
+     * @param sortingConfig
+     *            TODO
      * @param start
      *            the first row id to fetch (inclusive)
      * @param limit
      *            the maximum number of rows to fetch
      * @return the list of rows with their ids (if any)
      */
-    public List<IndexedRow> getRows(RowFilter filter, long start, int limit);
+    public List<IndexedRow> getRows(RowFilter filter, SortingConfig sortingConfig, long start, int limit);
 
     /**
      * Iterate over rows matched by a filter. This might not require loading all rows in memory at once, but might be
@@ -123,13 +126,15 @@ public interface GridState {
      * @param filter
      *            the filter which defines the subset of records to paginate through This object and its dependencies
      *            are required to be serializable.
+     * @param sortingConfig
+     *            TODO
      * @param start
      *            the first record id to fetch (inclusive)
      * @param limit
      *            the maximum number of records to fetch
      * @return the list of records (if any)
      */
-    public List<Record> getRecords(RecordFilter filter, long start, int limit);
+    public List<Record> getRecords(RecordFilter filter, SortingConfig sortingConfig, long start, int limit);
 
     /**
      * Iterate over records matched by a filter. This might not require loading all records in memory at once, but might
@@ -241,6 +246,24 @@ public interface GridState {
      * @return the resulting grid state
      */
     public GridState mapRecords(RecordMapper mapper, ColumnModel newColumnModel);
+
+    /**
+     * Returns a new grid state where rows have been reordered according to the configuration supplied.
+     * 
+     * @param sortingConfig
+     *            the criteria to sort rows
+     * @return the resulting grid state
+     */
+    public GridState reorderRows(SortingConfig sortingConfig);
+
+    /**
+     * Returns a new grid state where records have been reordered according to the configuration supplied.
+     * 
+     * @param sortingConfig
+     *            the criteria to sort records
+     * @return the resulting grid state
+     */
+    public GridState reorderRecords(SortingConfig sortingConfig);
 
     /**
      * Utility class to help with deserialization of the metadata without other attributes (such as number of rows)

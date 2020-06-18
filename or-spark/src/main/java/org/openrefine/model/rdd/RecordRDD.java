@@ -139,6 +139,9 @@ public class RecordRDD extends RDD<Tuple2<Long, Record>> implements Serializable
 
             @Override
             public boolean hasNext() {
+                if (nextRecord != null) {
+                    return true;
+                }
                 buildNextRecord();
                 if (firstRowsIgnored && nextRecord != null) {
                     return true;
@@ -150,7 +153,9 @@ public class RecordRDD extends RDD<Tuple2<Long, Record>> implements Serializable
 
             @Override
             public Tuple2<Long, Record> next() {
-                return new Tuple2<Long, Record>(nextRecord.getStartRowId(), nextRecord);
+                Tuple2<Long, Record> tuple = new Tuple2<Long, Record>(nextRecord.getStartRowId(), nextRecord);
+                nextRecord = null;
+                return tuple;
             }
 
             private void buildNextRecord() {

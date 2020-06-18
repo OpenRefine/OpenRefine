@@ -33,46 +33,59 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package org.openrefine.sorting;
 
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 import org.openrefine.expr.EvalError;
-import org.openrefine.model.Project;
+import org.openrefine.model.GridState;
 import org.openrefine.sorting.Criterion.KeyMaker;
 
-abstract public class BaseSorter {
+/**
+ * Instantiates a sorting configuration on a particular grid state, to allow comparison of rows or records
+ *
+ * @param <T>
+ *            the type of objects to compare
+ */
+abstract public class BaseSorter<T> implements Comparator<T>, Serializable {
 
-    protected Criterion[] _criteria;
+    private static final long serialVersionUID = 6499317992492625664L;
+    protected List<Criterion> _criteria;
     protected KeyMaker[] _keyMakers;
-    protected ComparatorWrapper[] _comparatorWrappers;
-    protected List<Object[]> _keys;
+    protected List<ComparatorWrapper> _comparatorWrappers;
 
-    public class ComparatorWrapper {
+    public BaseSorter(GridState state, SortingConfig config) {
+        _criteria = config.getCriteria();
+        int count = _criteria.size();
+        _keyMakers = new KeyMaker[count];
+        _comparatorWrappers = new ArrayList<>(count);
 
+        for (int i = 0; i < count; i++) {
+            _keyMakers[i] = _criteria.get(i).createKeyMaker(state.getColumnModel());
+            _comparatorWrappers.add(new ComparatorWrapper(i));
+        }
+    }
+
+    public boolean hasCriteria() {
+        return _criteria != null && _criteria.size() > 0;
+    }
+
+    public class ComparatorWrapper implements Serializable {
+
+        private static final long serialVersionUID = 3091189718283536100L;
         final public int criterionIndex;
         final protected int multiplier;
 
         public ComparatorWrapper(int criterionIndex) {
             this.criterionIndex = criterionIndex;
-            this.multiplier = _criteria[criterionIndex].reverse ? -1 : 1;
+            this.multiplier = _criteria.get(criterionIndex).reverse ? -1 : 1;
         }
 
-        public Object getKey(Project project, Object o, int index) {
-            while (index >= _keys.size()) {
-                _keys.add(null);
-            }
-
-            Object[] keys = _keys.get(index);
-            if (keys == null) {
-                keys = makeKeys(project, o, index);
-                _keys.set(index, keys);
-            }
-            return keys[criterionIndex];
-        }
-
-        public int compare(Project project, Object o1, int i1, Object o2, int i2) {
-            Criterion c = _criteria[criterionIndex];
-            Object key1 = getKey(project, o1, i1);
-            Object key2 = getKey(project, o2, i2);
+        public int compare(T o1, T o2) {
+            Criterion c = _criteria.get(criterionIndex);
+            Serializable key1 = makeKey(_keyMakers[criterionIndex], c, o1);
+            Serializable key2 = makeKey(_keyMakers[criterionIndex], c, o2);
 
             if (key1 == null) {
                 if (key2 == null) {
@@ -102,37 +115,22 @@ abstract public class BaseSorter {
         }
     }
 
-    public void initializeFromConfig(Project project, SortingConfig config) {
-        _criteria = config.getCriteria();
-        int count = _criteria.length;
-        _keyMakers = new KeyMaker[count];
-        _comparatorWrappers = new ComparatorWrapper[count];
+    abstract protected Serializable makeKey(
+            KeyMaker keyMaker, Criterion c, T o);
 
-        for (int i = 0; i < count; i++) {
-            _keyMakers[i] = _criteria[i].createKeyMaker();
-            _comparatorWrappers[i] = new ComparatorWrapper(i);
-        }
-    }
-
-    public boolean hasCriteria() {
-        return _criteria != null && _criteria.length > 0;
-    }
-
-    abstract protected Object makeKey(
-            Project project, KeyMaker keyMaker, Criterion c, Object o, int index);
-
-    protected Object[] makeKeys(Project project, Object o, int index) {
-        Object[] keys = new Object[_keyMakers.length];
+    protected Serializable[] makeKeys(T o) {
+        Serializable[] keys = new Serializable[_keyMakers.length];
         for (int i = 0; i < keys.length; i++) {
-            keys[i] = makeKey(project, _keyMakers[i], _criteria[i], o, index);
+            keys[i] = makeKey(_keyMakers[i], _criteria.get(i), o);
         }
         return keys;
     }
 
-    protected int compare(Project project, Object o1, int i1, Object o2, int i2) {
+    @Override
+    public int compare(T o1, T o2) {
         int c = 0;
-        for (int i = 0; c == 0 && i < _comparatorWrappers.length; i++) {
-            c = _comparatorWrappers[i].compare(project, o1, i1, o2, i2);
+        for (int i = 0; c == 0 && i < _comparatorWrappers.size(); i++) {
+            c = _comparatorWrappers.get(i).compare(o1, o2);
         }
         return c;
     }

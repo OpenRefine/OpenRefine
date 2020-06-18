@@ -60,6 +60,7 @@ import org.openrefine.model.Record;
 import org.openrefine.model.RecordFilter;
 import org.openrefine.model.Row;
 import org.openrefine.model.RowFilter;
+import org.openrefine.sorting.SortingConfig;
 import org.openrefine.util.ParsingUtilities;
 
 public class GetRowsCommand extends Command {
@@ -164,12 +165,14 @@ public class GetRowsCommand extends Command {
                 writer.write("(");
             }
 
-            // TODO add support for sorting
-            /*
-             * SortingConfig sortingConfig = null; try { String sortingJson = request.getParameter("sorting"); if
-             * (sortingJson != null) { sortingConfig = SortingConfig.reconstruct(sortingJson); } } catch (IOException e)
-             * { }
-             */
+            SortingConfig sortingConfig = SortingConfig.NO_SORTING;
+            try {
+                String sortingJson = request.getParameter("sorting");
+                if (sortingJson != null) {
+                    sortingConfig = SortingConfig.reconstruct(sortingJson);
+                }
+            } catch (IOException e) {
+            }
 
             long filtered;
             long totalCount;
@@ -178,7 +181,7 @@ public class GetRowsCommand extends Command {
             if (engine.getMode() == Mode.RowBased) {
                 totalCount = entireGrid.rowCount();
                 RowFilter combinedRowFilters = engine.combinedRowFilters();
-                List<IndexedRow> rows = entireGrid.getRows(combinedRowFilters, start, limit);
+                List<IndexedRow> rows = entireGrid.getRows(combinedRowFilters, sortingConfig, start, limit);
 
                 wrappedRows = rows.stream()
                         .map(tuple -> new WrappedRow(tuple.getRow(), tuple.getIndex(), null))
@@ -188,7 +191,7 @@ public class GetRowsCommand extends Command {
             } else {
                 totalCount = entireGrid.recordCount();
                 RecordFilter combinedRecordFilters = engine.combinedRecordFilters();
-                List<Record> records = entireGrid.getRecords(combinedRecordFilters, start, limit);
+                List<Record> records = entireGrid.getRecords(combinedRecordFilters, sortingConfig, start, limit);
 
                 wrappedRows = records.stream()
                         .flatMap(record -> recordToWrappedRows(record).stream())

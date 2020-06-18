@@ -33,17 +33,15 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package org.openrefine.sorting;
 
+import java.io.Serializable;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonSubTypes.Type;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
-import org.openrefine.expr.ExpressionUtils;
-import org.openrefine.model.ColumnMetadata;
-import org.openrefine.model.Project;
-import org.openrefine.model.Record;
-import org.openrefine.model.Row;
+import org.openrefine.model.ColumnModel;
 
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "valueType")
 @JsonSubTypes({
@@ -51,12 +49,12 @@ import org.openrefine.model.Row;
         @Type(value = DateCriterion.class, name = "date"),
         @Type(value = NumberCriterion.class, name = "number"),
         @Type(value = StringCriterion.class, name = "string") })
-abstract public class Criterion {
+abstract public class Criterion implements Serializable {
+
+    private static final long serialVersionUID = 5338294713927055245L;
 
     @JsonProperty("column")
     public String columnName;
-    @JsonIgnore
-    protected int cellIndex = -2;
 
     // These take on positive and negative values to indicate where blanks and errors
     // go relative to non-blank values. They are also relative to each another.
@@ -72,74 +70,24 @@ abstract public class Criterion {
     @JsonIgnore // already added by @JsonTypeInfo
     public abstract String getValueType();
 
-    // Returns a cached cell index
-    // We delay this fetching because the column might not exist
-    // at deserialization (for instance if the column is created by an operation
-    // that has not been applied yet).
-    protected int getCellIndex(Project project) {
-        if (cellIndex == -2) {
-            ColumnMetadata column = project.columnModel.getColumnByName(columnName);
-            cellIndex = column != null ? column.getCellIndex() : -1;
+    /**
+     * Instantiates the criterion on a particular column model, making it possible to compare two rows together (since
+     * we now have access to the column index of the target column).
+     */
+    abstract public KeyMaker createKeyMaker(ColumnModel columnModel);
+
+    abstract public class KeyMaker implements Serializable {
+
+        private static final long serialVersionUID = -3460406296935132526L;
+
+        protected final int _columnIndex;
+
+        public KeyMaker(ColumnModel columnModel, String columnName) {
+            _columnIndex = columnModel.getColumnIndexByName(columnName);
         }
-        return cellIndex;
+
+        abstract public int compareKeys(Serializable key1, Serializable key2);
+
+        abstract protected Serializable makeKey(Serializable value);
     }
-
-    // TODO: We'd like things to be more strongly typed a la the following, but
-    // it's too involved to change right now
-//    abstract public class Key implements Comparable<Key> {
-//        abstract public int compareTo(Key key);
-//    }
-
-    abstract public class KeyMaker {
-
-        public Object makeKey(Project project, Record record) {
-            Object error = null;
-            Object finalKey = null;
-
-            for (int r = record.fromRowIndex; r < record.toRowIndex; r++) {
-                Object key = makeKey(project, project.rows.get(r), r);
-                if (ExpressionUtils.isError(key)) {
-                    error = key;
-                } else if (ExpressionUtils.isNonBlankData(key)) {
-                    if (finalKey == null) {
-                        finalKey = key;
-                    } else {
-                        int c = compareKeys(finalKey, key);
-                        if (reverse) {
-                            if (c < 0) { // key > finalKey
-                                finalKey = key;
-                            }
-                        } else {
-                            if (c > 0) { // key < finalKey
-                                finalKey = key;
-                            }
-                        }
-                    }
-                }
-            }
-
-            if (finalKey != null) {
-                return finalKey;
-            } else if (error != null) {
-                return error;
-            } else {
-                return null;
-            }
-        }
-
-        public Object makeKey(Project project, Row row, int rowIndex) {
-            if (getCellIndex(project) < 0) {
-                return null;
-            } else {
-                Object value = row.getCellValue(getCellIndex(project));
-                return makeKey(value);
-            }
-        }
-
-        abstract public int compareKeys(Object key1, Object key2);
-
-        abstract protected Object makeKey(Object value);
-    }
-
-    abstract public KeyMaker createKeyMaker();
 }

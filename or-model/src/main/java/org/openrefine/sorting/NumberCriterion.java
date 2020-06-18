@@ -33,21 +33,23 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package org.openrefine.sorting;
 
+import java.io.Serializable;
 import java.time.OffsetDateTime;
 
 import org.openrefine.expr.EvalError;
 import org.openrefine.expr.ExpressionUtils;
+import org.openrefine.model.ColumnModel;
 
 public class NumberCriterion extends Criterion {
 
     final static protected EvalError s_error = new EvalError("Not a number");
 
     @Override
-    public KeyMaker createKeyMaker() {
-        return new KeyMaker() {
+    public KeyMaker createKeyMaker(ColumnModel columnModel) {
+        return new KeyMaker(columnModel, columnName) {
 
             @Override
-            protected Object makeKey(Object value) {
+            protected Serializable makeKey(Serializable value) {
                 if (ExpressionUtils.isNonBlankData(value)) {
                     if (value instanceof Number) {
                         return value;
@@ -71,7 +73,7 @@ public class NumberCriterion extends Criterion {
             }
 
             @Override
-            public int compareKeys(Object key1, Object key2) {
+            public int compareKeys(Serializable key1, Serializable key2) {
                 double d1 = ((Number) key1).doubleValue();
                 double d2 = ((Number) key2).doubleValue();
                 return d1 < d2 ? -1 : (d1 > d2 ? 1 : 0);

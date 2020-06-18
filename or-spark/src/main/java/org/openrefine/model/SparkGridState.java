@@ -22,6 +22,7 @@ import org.apache.spark.api.java.JavaSparkContext;
 import org.apache.spark.api.java.function.FlatMapFunction;
 import org.apache.spark.api.java.function.Function;
 import org.apache.spark.api.java.function.Function2;
+import org.apache.spark.api.java.function.PairFunction;
 import org.apache.spark.rdd.RDD;
 import org.apache.spark.storage.StorageLevel;
 import scala.Tuple2;
@@ -35,6 +36,9 @@ import org.openrefine.model.rdd.RecordRDD;
 import org.openrefine.model.rdd.ScanMapRDD;
 import org.openrefine.model.rdd.SortedRDD;
 import org.openrefine.overlay.OverlayModel;
+import org.openrefine.sorting.RecordSorter;
+import org.openrefine.sorting.RowSorter;
+import org.openrefine.sorting.SortingConfig;
 import org.openrefine.util.ParsingUtilities;
 import org.openrefine.util.RDDUtils;
 
@@ -123,6 +127,13 @@ public class SparkGridState implements GridState {
         return grid;
     }
 
+    /**
+     * @return the RDD of indexed rows (a different format than the PairRDD above)
+     */
+    public JavaRDD<IndexedRow> getIndexedRows() {
+        return grid.map(t -> new IndexedRow(t._1, t._2));
+    }
+
     @Override
     public Row getRow(long id) {
         List<Row> rows = grid.lookup(id);
@@ -144,11 +155,29 @@ public class SparkGridState implements GridState {
     }
 
     @Override
-    public List<IndexedRow> getRows(RowFilter filter, long start, int limit) {
-        return RDDUtils.paginate(grid.filter(wrapRowFilter(filter)), start, limit)
-                .stream()
-                .map(tuple -> new IndexedRow(tuple._1, tuple._2))
-                .collect(Collectors.toList());
+    public List<IndexedRow> getRows(RowFilter filter, SortingConfig sortingConfig, long start, int limit) {
+        JavaPairRDD<Long, Row> filteredGrid = grid;
+        if (!filter.equals(RowFilter.ANY_ROW)) {
+            filteredGrid = grid.filter(wrapRowFilter(filter));
+        }
+        if (sortingConfig.equals(SortingConfig.NO_SORTING)) {
+            // Without sorting, we can rely on row ids to paginate
+            return RDDUtils.paginate(grid.filter(wrapRowFilter(filter)), start, limit)
+                    .stream()
+                    .map(tuple -> new IndexedRow(tuple._1, tuple._2))
+                    .collect(Collectors.toList());
+        } else {
+            RowSorter sorter = new RowSorter(this, sortingConfig);
+            // If we have a sorter, pagination is less efficient since we cannot rely
+            // on the partitioner to locate the rows in the appropriate partition
+            return filteredGrid
+                    .map(t -> new IndexedRow(t._1, t._2))
+                    .keyBy(ir -> ir)
+                    .sortByKey(sorter)
+                    .values()
+                    .take((int) start + limit)
+                    .subList((int) start, (int) start + limit);
+        }
     }
 
     private static Function<Tuple2<Long, Row>, Boolean> wrapRowFilter(RowFilter filter) {
@@ -159,6 +188,19 @@ public class SparkGridState implements GridState {
             @Override
             public Boolean call(Tuple2<Long, Row> tuple) throws Exception {
                 return filter.filterRow(tuple._1, tuple._2);
+            }
+
+        };
+    }
+
+    private static PairFunction<IndexedRow, Long, Row> indexedRowToTuple() {
+        return new PairFunction<IndexedRow, Long, Row>() {
+
+            private static final long serialVersionUID = -5475366854154122849L;
+
+            @Override
+            public Tuple2<Long, Row> call(IndexedRow t) throws Exception {
+                return new Tuple2<Long, Row>(t.getIndex(), t.getRow());
             }
 
         };
@@ -231,9 +273,24 @@ public class SparkGridState implements GridState {
     }
 
     @Override
-    public List<Record> getRecords(RecordFilter filter, long start, int limit) {
-        return RDDUtils.paginate(getRecords().filter(wrapRecordFilter(filter)), start, limit)
-                .stream().map(tuple -> tuple._2).collect(Collectors.toList());
+    public List<Record> getRecords(RecordFilter filter, SortingConfig sortingConfig, long start, int limit) {
+        JavaPairRDD<Long, Record> filteredRecords = getRecords();
+        if (!filter.equals(RecordFilter.ANY_RECORD)) {
+            filteredRecords = filteredRecords.filter(wrapRecordFilter(filter));
+        }
+        if (SortingConfig.NO_SORTING.equals(sortingConfig)) {
+            return RDDUtils.paginate(filteredRecords, start, limit)
+                    .stream().map(tuple -> tuple._2).collect(Collectors.toList());
+        } else {
+            RecordSorter sorter = new RecordSorter(this, sortingConfig);
+            return filteredRecords
+                    .values()
+                    .keyBy(record -> record)
+                    .sortByKey(sorter)
+                    .values()
+                    .take((int) start + limit)
+                    .subList((int) start, (int) start + limit);
+        }
     }
 
     private static Function<Tuple2<Long, Record>, Boolean> wrapRecordFilter(RecordFilter filter) {
@@ -522,6 +579,35 @@ public class SparkGridState implements GridState {
     @Override
     public GridState withColumnModel(ColumnModel newColumnModel) {
         return new SparkGridState(newColumnModel, grid, overlayModels);
+    }
+
+    @Override
+    public GridState reorderRows(SortingConfig sortingConfig) {
+        RowSorter sorter = new RowSorter(this, sortingConfig);
+        // TODO: we should map by the keys generated by the sortingConfig,
+        // and provide a comparator for those: that could be more efficient
+        JavaPairRDD<Long, Row> sortedGrid = RDDUtils.zipWithIndex(
+                getIndexedRows()
+                        .keyBy(ir -> ir)
+                        .sortByKey(sorter)
+                        .values()
+                        .map(ir -> ir.getRow()));
+        return new SparkGridState(columnModel, sortedGrid, overlayModels);
+    }
+
+    @Override
+    public GridState reorderRecords(SortingConfig sortingConfig) {
+        RecordSorter sorter = new RecordSorter(this, sortingConfig);
+        // TODO: we should map by the keys generated by the sortingConfig,
+        // and provide a comparator for those: that could be more efficient
+        JavaPairRDD<Long, Row> sortedGrid = RDDUtils.zipWithIndex(
+                getRecords()
+                        .values()
+                        .keyBy(record -> record)
+                        .sortByKey(sorter)
+                        .values()
+                        .flatMap(recordMap(RecordMapper.IDENTITY)));
+        return new SparkGridState(columnModel, sortedGrid, overlayModels);
     }
 
 }

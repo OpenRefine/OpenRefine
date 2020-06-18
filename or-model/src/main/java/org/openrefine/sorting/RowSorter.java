@@ -33,41 +33,21 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package org.openrefine.sorting;
 
-import java.time.Instant;
-import java.time.OffsetDateTime;
+import java.io.Serializable;
 
-import org.openrefine.expr.EvalError;
-import org.openrefine.expr.ExpressionUtils;
+import org.openrefine.model.GridState;
+import org.openrefine.model.IndexedRow;
+import org.openrefine.sorting.Criterion.KeyMaker;
 
-public class DateCriterion extends Criterion {
+public class RowSorter extends BaseSorter<IndexedRow> {
 
-    final static protected EvalError s_error = new EvalError("Not a date");
-
-    @Override
-    public KeyMaker createKeyMaker() {
-        return new KeyMaker() {
-
-            @Override
-            protected Object makeKey(Object value) {
-                if (ExpressionUtils.isNonBlankData(value)) {
-                    if (value instanceof OffsetDateTime) {
-                        return ((OffsetDateTime) value).toInstant();
-                    } else {
-                        return s_error;
-                    }
-                }
-                return null;
-            }
-
-            @Override
-            public int compareKeys(Object key1, Object key2) {
-                return ((Instant) key1).compareTo((Instant) key2);
-            }
-        };
+    public RowSorter(GridState state, SortingConfig config) {
+        super(state, config);
     }
 
     @Override
-    public String getValueType() {
-        return "date";
+    protected Serializable makeKey(
+            KeyMaker keyMaker, Criterion c, IndexedRow row) {
+        return keyMaker._columnIndex == -1 ? null : keyMaker.makeKey(row.getRow().getCellValue(keyMaker._columnIndex));
     }
 }

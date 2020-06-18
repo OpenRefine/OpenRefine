@@ -23,6 +23,9 @@ import org.openrefine.browsing.facets.FacetResult;
 import org.openrefine.browsing.facets.FacetState;
 import org.openrefine.browsing.facets.StringFacet;
 import org.openrefine.browsing.facets.StringFacetState;
+import org.openrefine.sorting.NumberCriterion;
+import org.openrefine.sorting.SortingConfig;
+import org.openrefine.sorting.StringCriterion;
 import org.openrefine.util.TestUtils;
 
 /**
@@ -37,9 +40,10 @@ public abstract class DatamodelRunnerTestBase {
 
     protected DatamodelRunner SUT;
 
-    protected GridState simpleGrid;
+    protected GridState simpleGrid, gridToSort;
     protected List<Row> expectedRows;
     protected List<Record> expectedRecords;
+    protected SortingConfig sortingConfig;
 
     public abstract DatamodelRunner getDatamodelRunner();
 
@@ -84,11 +88,18 @@ public abstract class DatamodelRunnerTestBase {
                         { "c", true },
                         { null, 123123123123L }
                 });
+        gridToSort = createGrid(new String[] { "foo", "bar" },
+                new Serializable[][] {
+                        { "c", 1 },
+                        { "a", 1 },
+                        { null, 0 },
+                        { "a", 5 }
+                });
         expectedRows = Arrays.asList(
-                new Row(Arrays.asList(new Cell("a", null), new Cell("b", null))),
-                new Row(Arrays.asList(new Cell("", null), new Cell(1, null))),
-                new Row(Arrays.asList(new Cell("c", null), new Cell(true, null))),
-                new Row(Arrays.asList(null, new Cell(123123123123L, null))));
+                row("a", "b"),
+                row("", 1),
+                row("c", true),
+                row(null, 123123123123L));
         expectedRecords = Arrays.asList(
                 new Record(0L, Arrays.asList(
                         expectedRows.get(0),
@@ -96,6 +107,18 @@ public abstract class DatamodelRunnerTestBase {
                 new Record(2L, Arrays.asList(
                         expectedRows.get(2),
                         expectedRows.get(3))));
+
+        NumberCriterion numberCriterion = new NumberCriterion();
+        numberCriterion.columnName = "bar";
+        StringCriterion stringCriterion = new StringCriterion();
+        stringCriterion.columnName = "foo";
+        sortingConfig = new SortingConfig(
+                Arrays.asList(numberCriterion, stringCriterion));
+
+    }
+
+    protected Row row(Serializable... values) {
+        return new Row(Arrays.asList(values).stream().map(v -> v == null ? null : new Cell(v, null)).collect(Collectors.toList()));
     }
 
     @Test
@@ -135,9 +158,26 @@ public abstract class DatamodelRunnerTestBase {
                 expectedRows.subList(1, 3));
         Assert.assertEquals(state.getRows(5L, 3), Collections.emptyList());
 
-        Assert.assertEquals(state.getRows(myRowFilter, 0L, 2),
+        Assert.assertEquals(state.getRows(myRowFilter, SortingConfig.NO_SORTING, 0L, 2),
                 Arrays.asList(new IndexedRow(0L, expectedRows.get(0)),
                         new IndexedRow(2L, expectedRows.get(2))));
+    }
+
+    @Test
+    public void testAccessSortedRows() {
+        GridState state = gridToSort;
+
+        Assert.assertEquals(
+                state.getRows(RowFilter.ANY_ROW, sortingConfig, 0, 2),
+                Arrays.asList(
+                        new IndexedRow(2L, row(null, 0)),
+                        new IndexedRow(1L, row("a", 1))));
+
+        Assert.assertEquals(
+                state.getRows(RowFilter.ANY_ROW, sortingConfig, 2, 2),
+                Arrays.asList(
+                        new IndexedRow(0L, row("c", 1)),
+                        new IndexedRow(3L, row("a", 5))));
     }
 
     protected static RecordFilter myRecordFilter = new RecordFilter() {
@@ -167,7 +207,21 @@ public abstract class DatamodelRunnerTestBase {
 
         Assert.assertEquals(state.getRecords(1L, 2), expectedRecords.subList(1, 2));
 
-        Assert.assertEquals(state.getRecords(myRecordFilter, 0L, 3), Collections.singletonList(expectedRecords.get(1)));
+        Assert.assertEquals(state.getRecords(myRecordFilter, SortingConfig.NO_SORTING, 0L, 3),
+                Collections.singletonList(expectedRecords.get(1)));
+    }
+
+    @Test
+    public void testAccessSortedRecords() {
+        GridState state = gridToSort;
+
+        Assert.assertEquals(
+                state.getRecords(RecordFilter.ANY_RECORD, sortingConfig, 0, 3),
+                Arrays.asList(
+                        new Record(1L, Arrays.asList(row("a", 1), row(null, 0))),
+                        new Record(0L, Arrays.asList(row("c", 1))),
+                        new Record(3L, Arrays.asList(row("a", 5)))));
+
     }
 
     @Test
@@ -350,5 +404,35 @@ public abstract class DatamodelRunnerTestBase {
         Assert.assertEquals(rows.get(0).getRow().getCellValue(1), "b_concat");
         Assert.assertEquals(rows.get(1).getRow().getCellValue(1), "1_concat");
         Assert.assertEquals(rows.get(2).getRow().getCellValue(1), "true_concat");
+    }
+
+    @Test
+    public void testReorderRows() {
+        GridState reordered = gridToSort.reorderRows(sortingConfig);
+
+        GridState expected = createGrid(new String[] { "foo", "bar" },
+                new Serializable[][] {
+                        { null, 0 },
+                        { "a", 1 },
+                        { "c", 1 },
+                        { "a", 5 }
+                });
+
+        Assert.assertEquals(reordered.collectRows(), expected.collectRows());
+    }
+
+    @Test
+    public void testReorderRecords() {
+        GridState reordered = gridToSort.reorderRecords(sortingConfig);
+
+        GridState expected = createGrid(new String[] { "foo", "bar" },
+                new Serializable[][] {
+                        { "a", 1 },
+                        { null, 0 },
+                        { "c", 1 },
+                        { "a", 5 }
+                });
+
+        Assert.assertEquals(reordered.collectRows(), expected.collectRows());
     }
 }

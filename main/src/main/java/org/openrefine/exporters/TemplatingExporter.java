@@ -47,9 +47,9 @@ import org.openrefine.browsing.RecordVisitor;
 import org.openrefine.browsing.RowVisitor;
 import org.openrefine.expr.ParsingException;
 import org.openrefine.model.GridState;
+import org.openrefine.sorting.RecordSorter;
+import org.openrefine.sorting.RowSorter;
 import org.openrefine.sorting.SortingConfig;
-import org.openrefine.sorting.SortingRecordVisitor;
-import org.openrefine.sorting.SortingRowVisitor;
 import org.openrefine.templating.Parser;
 import org.openrefine.templating.Template;
 import org.openrefine.util.ParsingUtilities;
@@ -118,7 +118,7 @@ public class TemplatingExporter implements WriterExporter {
 
             if (sortingJson != null) {
                 SortingConfig sorting = SortingConfig.reconstruct(sortingJson);
-                SortingRowVisitor srv = new SortingRowVisitor(visitor);
+                RowSorter srv = new RowSorter(visitor);
                 srv.initializeFromConfig(grid, sorting);
 
                 if (srv.hasCriteria()) {
@@ -133,7 +133,7 @@ public class TemplatingExporter implements WriterExporter {
 
             if (sortingJson != null) {
                 SortingConfig sorting = SortingConfig.reconstruct(sortingJson);
-                SortingRecordVisitor srv = new SortingRecordVisitor(visitor);
+                RecordSorter srv = new RecordSorter(visitor);
                 srv.initializeFromConfig(grid, sorting);
 
                 if (srv.hasCriteria()) {

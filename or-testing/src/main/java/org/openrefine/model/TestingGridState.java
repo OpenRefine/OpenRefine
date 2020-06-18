@@ -6,6 +6,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -18,6 +19,9 @@ import org.testng.Assert;
 import org.openrefine.browsing.facets.RecordAggregator;
 import org.openrefine.browsing.facets.RowAggregator;
 import org.openrefine.overlay.OverlayModel;
+import org.openrefine.sorting.RecordSorter;
+import org.openrefine.sorting.RowSorter;
+import org.openrefine.sorting.SortingConfig;
 import org.openrefine.util.ParsingUtilities;
 
 /**
@@ -80,12 +84,12 @@ public class TestingGridState implements GridState {
     }
 
     @Override
-    public List<IndexedRow> getRows(RowFilter filter, long start, int limit) {
+    public List<IndexedRow> getRows(RowFilter filter, SortingConfig sortingConfig, long start, int limit) {
         // Check that the filter is serializable as it is required by the interface,
         // even if this implementation does not rely on it.
         TestingDatamodelRunner.ensureSerializable(filter);
-        return indexedRows()
-                .stream()
+        List<IndexedRow> sortedRows = sortedRows(sortingConfig);
+        return sortedRows.stream()
                 .filter(tuple -> tuple.getIndex() >= start && filter.filterRow(tuple.getIndex(), tuple.getRow()))
                 .limit(limit)
                 .collect(Collectors.toList());
@@ -115,11 +119,12 @@ public class TestingGridState implements GridState {
     }
 
     @Override
-    public List<Record> getRecords(RecordFilter filter, long start, int limit) {
+    public List<Record> getRecords(RecordFilter filter, SortingConfig sortingConfig, long start, int limit) {
         // Check that the filter is serializable as it is required by the interface,
         // even if this implementation does not rely on it.
         TestingDatamodelRunner.ensureSerializable(filter);
-        return records
+        List<Record> sorted = sortedRecords(sortingConfig);
+        return sorted
                 .stream()
                 .filter(record -> record.getStartRowId() >= start && filter.filterRecord(record))
                 .limit(limit)
@@ -319,6 +324,46 @@ public class TestingGridState implements GridState {
     @Override
     public GridState withColumnModel(ColumnModel newColumnModel) {
         return new TestingGridState(newColumnModel, rows, overlayModels);
+    }
+
+    @Override
+    public GridState reorderRows(SortingConfig sortingConfig) {
+        return new TestingGridState(columnModel,
+                sortedRows(sortingConfig).stream().map(r -> r.getRow()).collect(Collectors.toList()),
+                overlayModels);
+    }
+
+    @Override
+    public GridState reorderRecords(SortingConfig sortingConfig) {
+        List<Row> newRows = new ArrayList<>(rows.size());
+        if (sortingConfig.getCriteria().isEmpty()) {
+            newRows = rows;
+        } else {
+            for (Record record : sortedRecords(sortingConfig)) {
+                newRows.addAll(record.getRows());
+            }
+        }
+        return new TestingGridState(columnModel, newRows, overlayModels);
+    }
+
+    private List<IndexedRow> sortedRows(SortingConfig sortingConfig) {
+        if (sortingConfig.equals(SortingConfig.NO_SORTING)) {
+            return indexedRows();
+        }
+        RowSorter rowSorter = new RowSorter(this, sortingConfig);
+        List<IndexedRow> sortedIndexedRows = new ArrayList<>(indexedRows());
+        Collections.sort(sortedIndexedRows, rowSorter);
+        return sortedIndexedRows;
+    }
+
+    private List<Record> sortedRecords(SortingConfig sortingConfig) {
+        if (sortingConfig.equals(SortingConfig.NO_SORTING)) {
+            return records;
+        }
+        RecordSorter recordSorter = new RecordSorter(this, sortingConfig);
+        List<Record> sortedRecords = new ArrayList<>(records);
+        Collections.sort(sortedRecords, recordSorter);
+        return sortedRecords;
     }
 
 }
