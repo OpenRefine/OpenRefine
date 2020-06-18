@@ -27,6 +27,8 @@
 package org.openrefine.sorting;
 
 import java.io.IOException;
+import java.util.Collections;
+import java.util.List;
 
 import org.openrefine.util.ParsingUtilities;
 
@@ -41,21 +43,37 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  */
 public final class SortingConfig  {
     
-    protected Criterion[] _criteria;
+    protected final List<Criterion> _criteria;
     
     @JsonCreator
     public SortingConfig(
             @JsonProperty("criteria")
-            Criterion[] criteria) {
+            List<Criterion> criteria) {
         _criteria = criteria;
     }
     
     @JsonProperty("criteria")
-    public Criterion[] getCriteria() {
+    public List<Criterion> getCriteria() {
         return _criteria;
     }
     
     public static SortingConfig reconstruct(String obj) throws IOException {
         return ParsingUtilities.mapper.readValue(obj, SortingConfig.class);
+    }
+    
+    public static final SortingConfig NO_SORTING = new SortingConfig(Collections.emptyList());
+    
+    @Override
+    public boolean equals(Object other) {
+        if (!(other instanceof SortingConfig)) {
+            return false;
+        }
+        SortingConfig otherConfig = (SortingConfig)other;
+        return _criteria.equals(otherConfig.getCriteria());
+    }
+    
+    @Override
+    public int hashCode() {
+        return _criteria.hashCode();
     }
 }

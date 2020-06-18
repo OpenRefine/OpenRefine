@@ -47,8 +47,8 @@ import org.openrefine.model.Row;
 import org.openrefine.model.changes.RowReorderChange;
 import org.openrefine.operations.Operation;
 import org.openrefine.sorting.SortingConfig;
-import org.openrefine.sorting.SortingRecordVisitor;
-import org.openrefine.sorting.SortingRowVisitor;
+import org.openrefine.sorting.RecordSorter;
+import org.openrefine.sorting.RowSorter;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -91,7 +91,7 @@ public class RowReorderOperation extends Operation {
         if (_mode == Mode.RowBased) {
             RowVisitor visitor = new IndexingVisitor(rowIndices);
             if (_sorting != null) {
-                SortingRowVisitor srv = new SortingRowVisitor(visitor);
+                RowSorter srv = new RowSorter(visitor);
 
                 srv.initializeFromConfig(project, _sorting);
                 if (srv.hasCriteria()) {
@@ -103,7 +103,7 @@ public class RowReorderOperation extends Operation {
         } else {
             RecordVisitor visitor = new IndexingVisitor(rowIndices);
             if (_sorting != null) {
-                SortingRecordVisitor srv = new SortingRecordVisitor(visitor);
+                RecordSorter srv = new RecordSorter(visitor);
 
                 srv.initializeFromConfig(project, _sorting);
                 if (srv.hasCriteria()) {

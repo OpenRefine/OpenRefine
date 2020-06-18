@@ -33,53 +33,41 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package org.openrefine.sorting;
 
-import java.time.OffsetDateTime;
+import java.io.Serializable;
 
 import org.openrefine.expr.EvalError;
 import org.openrefine.expr.ExpressionUtils;
+import org.openrefine.model.ColumnModel;
 
-public class NumberCriterion extends Criterion {
-
-    final static protected EvalError s_error = new EvalError("Not a number");
+public class BooleanCriterion extends Criterion {
+    final static protected EvalError s_error = new EvalError("Not a boolean");
 
     @Override
-    public KeyMaker createKeyMaker() {
-        return new KeyMaker() {
+    public KeyMaker createKeyMaker(ColumnModel columnModel) {
+        return new KeyMaker(columnModel, columnName) {
             @Override
-            protected Object makeKey(Object value) {
+            protected Serializable makeKey(Serializable value) {
                 if (ExpressionUtils.isNonBlankData(value)) {
-                    if (value instanceof Number) {
+                    if (value instanceof Boolean) {
                         return value;
-                    } else if (value instanceof Boolean) {
-                        return ((Boolean) value).booleanValue() ? 1 : 0;
-                    } else if (value instanceof OffsetDateTime) {
-                        return ((OffsetDateTime) value).toInstant().toEpochMilli();
                     } else if (value instanceof String) {
-                        try {
-                            double d = Double.parseDouble((String) value);
-                            if (!Double.isNaN(d)) {
-                                return d;
-                            }
-                        } catch (NumberFormatException e) {
-                            // fall through
-                        }
+                        return Boolean.parseBoolean((String) value);
+                    } else {
+                        return s_error;
                     }
-                    return s_error;
                 }
                 return null;
             }
 
             @Override
-            public int compareKeys(Object key1, Object key2) {
-                double d1 = ((Number) key1).doubleValue();
-                double d2 = ((Number) key2).doubleValue();
-                return d1 < d2 ? -1 : (d1 > d2 ? 1 : 0);
+            public int compareKeys(Serializable key1, Serializable key2) {
+                return ((Boolean) key1).compareTo((Boolean) key2);
             }
         };
     }
 
     @Override
     public String getValueType() {
-        return "number";
+        return "boolean";
     }
 }
