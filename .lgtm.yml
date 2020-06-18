@@ -3,4 +3,4 @@ extraction:
   java:
     index:
       build_command:
-      - mvn clean compile
+      - mvn clean test
