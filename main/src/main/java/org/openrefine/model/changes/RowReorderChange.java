@@ -33,27 +33,19 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package org.openrefine.model.changes;
 
-import java.io.IOException;
-import java.io.LineNumberReader;
-import java.io.Writer;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Properties;
-
-import org.openrefine.browsing.EngineConfig;
+import org.openrefine.browsing.Engine.Mode;
 import org.openrefine.history.Change;
 import org.openrefine.history.dag.DagSlice;
-import org.openrefine.model.ColumnModel;
-import org.openrefine.model.Project;
-import org.openrefine.model.Row;
-import org.openrefine.model.RowMapper;
+import org.openrefine.model.GridState;
+import org.openrefine.sorting.SortingConfig;
 
 public class RowReorderChange implements Change {
-    final protected List<Integer> _rowIndices;
+    final protected SortingConfig _sorting;
+	final protected Mode _mode;
     
-    public RowReorderChange(List<Integer> rowIndices) {
-    	super(EngineConfig.ALL_ROWS);
-        _rowIndices = rowIndices;
+    public RowReorderChange(Mode mode, SortingConfig sorting) {
+    	_mode = mode;
+        _sorting = sorting;
     }
     
 	@Override
@@ -67,23 +59,13 @@ public class RowReorderChange implements Change {
 		return null;
 	}
 
-    
-    @Override
-    public void apply(Project project) {
-        synchronized (project) {
-            List<Row> oldRows = project.rows;
-            List<Row> newRows = new ArrayList<Row>(oldRows.size());
-
-            for (Integer oldIndex : _rowIndices) {
-                newRows.add(oldRows.get(oldIndex));
-            }
-
-            project.rows.clear();
-            project.rows.addAll(newRows);
-            project.update();
-        }
-    }
-
-
+	@Override
+	public GridState apply(GridState projectState) throws DoesNotApplyException {
+		if (Mode.RowBased.equals(_mode)) {
+			return projectState.reorderRows(_sorting);
+		} else {
+			return projectState.reorderRecords(_sorting);
+		}
+	}
 
 }
