@@ -134,7 +134,7 @@
     <dependency>
       <groupId>com.google.oauth-client</groupId>
       <artifactId>google-oauth-client-jetty</artifactId>
-      <version>1.23.0</version>
+      <version>1.30.6</version>
     </dependency>
     <dependency>
       <groupId>com.google.apis</groupId>
