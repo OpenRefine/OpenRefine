@@ -13,7 +13,7 @@ import javax.servlet.http.HttpServletRequest;
 import com.google.api.client.auth.oauth2.AuthorizationCodeResponseUrl;
 import com.google.api.client.googleapis.auth.oauth2.GoogleAuthorizationCodeRequestUrl;
 import com.google.api.client.googleapis.auth.oauth2.GoogleAuthorizationCodeTokenRequest;
-import com.google.api.client.googleapis.auth.oauth2.GoogleCredential;
+import com.google.api.client.auth.oauth2.Credential;
 import com.google.api.client.googleapis.auth.oauth2.GoogleTokenResponse;
 import com.google.api.client.http.HttpRequest;
 import com.google.api.client.http.HttpRequestInitializer;
@@ -110,8 +110,8 @@ abstract public class GoogleAPIExtension {
       }
     
     static public Drive getDriveService(String token) {
-        GoogleCredential credential = new GoogleCredential().setAccessToken(token);
-        
+        Credential credential =  new Credential.Builder(null).build().setAccessToken(token);
+
         return new Drive.Builder(HTTP_TRANSPORT, JSON_FACTORY, credential).setHttpRequestInitializer(new HttpRequestInitializer() {
             @Override
             public void initialize(HttpRequest httpRequest) throws IOException {
@@ -156,7 +156,7 @@ abstract public class GoogleAPIExtension {
      * @throws IOException
      */
     public static Sheets getSheetsService(String token) throws IOException {
-        GoogleCredential credential = new GoogleCredential().setAccessToken(token);
+        Credential credential =  new Credential.Builder(null).build().setAccessToken(token);
         int connectTimeout = getConnectTimeout();
         int readTimeout = getReadTimeout();
         
