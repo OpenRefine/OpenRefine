@@ -127,24 +127,14 @@
       <version>4.5.12</version>
     </dependency>
     <dependency>
-      <groupId>com.google.http-client</groupId>
-      <artifactId>google-http-client-jackson</artifactId>
-      <version>1.23.0</version>
-    </dependency>
-    <dependency>
-      <groupId>com.google.oauth-client</groupId>
-      <artifactId>google-oauth-client-jetty</artifactId>
-      <version>1.23.0</version>
-    </dependency>
-    <dependency>
       <groupId>com.google.apis</groupId>
       <artifactId>google-api-services-drive</artifactId>
-      <version>v3-rev101-1.23.0</version>
+      <version>v3-rev20200413-1.30.9</version>
     </dependency>
     <dependency>
       <groupId>com.google.apis</groupId>
       <artifactId>google-api-services-sheets</artifactId>
-      <version>v4-rev502-1.23.0</version>
+      <version>v4-rev20200508-1.30.9</version>
     </dependency>
     <dependency>
       <groupId>com.fasterxml.jackson.core</groupId>
@@ -152,7 +142,6 @@
       <version>${jackson.version}</version>
       <scope>provided</scope>
     </dependency>
-
     <dependency>
       <groupId>org.testng</groupId>
       <artifactId>testng</artifactId>
