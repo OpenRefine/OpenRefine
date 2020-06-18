@@ -33,27 +33,22 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package org.openrefine.operations.row;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import org.openrefine.browsing.Engine;
 import org.openrefine.browsing.Engine.Mode;
-import org.openrefine.browsing.RecordVisitor;
-import org.openrefine.browsing.RowVisitor;
-import org.openrefine.history.HistoryEntry;
-import org.openrefine.model.Project;
-import org.openrefine.model.Record;
-import org.openrefine.model.Row;
+import org.openrefine.history.Change;
 import org.openrefine.model.changes.RowReorderChange;
 import org.openrefine.operations.Operation;
-import org.openrefine.sorting.RecordSorter;
-import org.openrefine.sorting.RowSorter;
 import org.openrefine.sorting.SortingConfig;
 
-public class RowReorderOperation extends Operation {
+/**
+ * An operation which reorders the rows of the grid permanently according to a given sorting configuration.
+ * 
+ * @author Antonin Delpeuch
+ *
+ */
+public class RowReorderOperation implements Operation {
 
     final protected Mode _mode;
     final protected SortingConfig _sorting;
@@ -77,78 +72,13 @@ public class RowReorderOperation extends Operation {
     }
 
     @Override
-    protected String getDescription() {
+    public String getDescription() {
         return "Reorder rows";
     }
 
     @Override
-    protected HistoryEntry createHistoryEntry(Project project, long historyEntryID) throws Exception {
-        Engine engine = new Engine(project);
-        engine.setMode(_mode);
-
-        List<Integer> rowIndices = new ArrayList<Integer>();
-        if (_mode == Mode.RowBased) {
-            RowVisitor visitor = new IndexingVisitor(rowIndices);
-            if (_sorting != null) {
-                RowSorter srv = new RowSorter(visitor);
-
-                srv.initializeFromConfig(project, _sorting);
-                if (srv.hasCriteria()) {
-                    visitor = srv;
-                }
-            }
-
-            engine.getAllRows().accept(project, visitor);
-        } else {
-            RecordVisitor visitor = new IndexingVisitor(rowIndices);
-            if (_sorting != null) {
-                RecordSorter srv = new RecordSorter(visitor);
-
-                srv.initializeFromConfig(project, _sorting);
-                if (srv.hasCriteria()) {
-                    visitor = srv;
-                }
-            }
-
-            engine.getAllRecords().accept(project, visitor);
-        }
-
-        return new HistoryEntry(
-                historyEntryID,
-                project,
-                "Reorder rows",
-                this,
-                new RowReorderChange(rowIndices));
+    public Change createChange() {
+        return new RowReorderChange(_mode, _sorting);
     }
 
-    static protected class IndexingVisitor implements RowVisitor, RecordVisitor {
-
-        List<Integer> _indices;
-
-        IndexingVisitor(List<Integer> indices) {
-            _indices = indices;
-        }
-
-        @Override
-        public void start(Project project) {
-        }
-
-        @Override
-        public void end(Project project) {
-        }
-
-        @Override
-        public boolean visit(Project project, int rowIndex, Row row) {
-            _indices.add(rowIndex);
-            return false;
-        }
-
-        @Override
-        public boolean visit(Project project, Record record) {
-            for (int r = record.fromRowIndex; r < record.toRowIndex; r++) {
-                _indices.add(r);
-            }
-            return false;
-        }
-    }
 }
