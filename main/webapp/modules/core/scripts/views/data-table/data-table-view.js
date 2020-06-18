@@ -514,7 +514,11 @@ DataTableView.prototype._adjustNextSetClasses = function() {
     $('tr:last').css('height', heightToAdd);
     $('tr:last').addClass('last-row');
   }
-  $('tr:nth-last-child(50)').addClass('load-next-set');
+  if (theProject.rowModel.mode == "record-based") {
+    $('tr.record').eq(-51).addClass('load-next-set');
+  } else {
+    $('tr').eq(-52).addClass('load-next-set');
+  }
 };
 
 DataTableView.prototype._showRows = function(start, onDone) {
