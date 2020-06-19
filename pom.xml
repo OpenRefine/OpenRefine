@@ -144,7 +144,7 @@
                 </goals>
                 <phase>process-test-resources</phase>
                 <configuration>
-                    <destFile>${project.build.directory}/report/jacoco.exec</destFile>
+                    <destFile>${project.build.directory}/report/${project.name}.exec</destFile>
                     <propertyName>surefireArgs</propertyName>
                 </configuration>
             </execution>
@@ -154,7 +154,7 @@
                     <goal>report</goal>
                 </goals>
                 <configuration>
-                    <dataFile>${project.build.directory}/jacoco.exec</dataFile>
+                    <dataFile>${project.build.directory}/${project.name}.exec</dataFile>
                     <outputDirectory>${project.reporting.outputDirectory}/jacoco</outputDirectory>
                 </configuration>
             </execution>
@@ -168,10 +168,9 @@
                      <destFile>${project.build.directory}/report/jacoco-merged.exec</destFile>
                      <fileSets>
                         <fileSet>
-                            <directory>${project.build.directory}/report</directory>
+                            <directory>main/target/report</directory>
                             <includes>
-                                <include>jacoco.exec</include>
-                                <include>jacoco-merged.exec</include>
+                                <include>*.exec</include>
                             </includes>
                         </fileSet>
                         <fileSet>
