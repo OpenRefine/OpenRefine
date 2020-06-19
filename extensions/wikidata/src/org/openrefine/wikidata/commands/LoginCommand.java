@@ -219,7 +219,6 @@ public class LoginCommand extends Command {
         cookie.setMaxAge(60 * 60 * 24 * 365); // a year
         cookie.setPath("/");
         // set to false because OpenRefine doesn't require HTTPS
-        // though false is the default value, we set it explicitly here to bypass lgtm-bot alerts
         cookie.setSecure(false);
         response.addCookie(cookie);
     }
