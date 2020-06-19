@@ -96,7 +96,7 @@ public abstract class SparkImportingParserBase extends ImportingParserBase {
 
         JavaPairRDD<Long, Row> grid = tail(rawCells, ignoreLines + headerLines + skipDataLines)
                 .mapValues(toRow);
-        return new SparkGridState(columnModel, grid, Collections.emptyMap());
+        return new SparkGridState(columnModel, grid, Collections.emptyMap(), (SparkDatamodelRunner) runner);
     }
 
     /**

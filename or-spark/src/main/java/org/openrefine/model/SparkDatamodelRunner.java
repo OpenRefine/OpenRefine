@@ -83,7 +83,7 @@ public class SparkDatamodelRunner implements DatamodelRunner {
                 .mapToObj(i -> new Tuple2<Long, Row>((long) i, rows.get(i)))
                 .collect(Collectors.toList());
         JavaPairRDD<Long, Row> rdd = JavaPairRDD.fromJavaRDD(context.parallelize(tuples, defaultParallelism));
-        return new SparkGridState(columnModel, rdd, overlayModels);
+        return new SparkGridState(columnModel, rdd, overlayModels, this);
     }
 
     static private Function0<BoxedUnit> sparkShutdownHook() {

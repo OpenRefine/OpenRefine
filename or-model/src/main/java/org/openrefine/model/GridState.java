@@ -23,6 +23,11 @@ public interface GridState {
     final static public String GRID_PATH = "grid";
 
     /**
+     * @return the runner which created this grid state
+     */
+    public DatamodelRunner getDatamodelRunner();
+
+    /**
      * @return the column metadata at this stage of the workflow
      */
     @JsonProperty("columnModel")

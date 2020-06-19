@@ -128,6 +128,11 @@ public abstract class DatamodelRunnerTestBase {
         Assert.assertEquals(simpleGrid.getOverlayModels(), Collections.emptyMap());
     }
 
+    @Test
+    public void testDatamodelRunner() {
+        Assert.assertNotNull(simpleGrid.getDatamodelRunner());
+    }
+
     protected static RowFilter myRowFilter = new RowFilter() {
 
         private static final long serialVersionUID = -8386034714884614567L;
