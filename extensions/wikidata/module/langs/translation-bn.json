@@ -43,9 +43,7 @@
     "wikidata-account/dialog-header": "উইকিউপাত্ত অ্যাকাউন্ট",
     "wikidata-account/explain-log-in": "<a href=\"https://www.wikidata.org/\" target=\"_blank\">উইকিউপাত্তে</a> প্রবেশ করলে সরাসরি ওপেনরিফাইন থেকে আপনাকে সম্পাদনা আপলোড করতে দেওয়া হবে।",
     "wikidata-account/username-label": "ব্যবহারকারী নাম:",
-    "wikidata-account/username-placeholder": "আপনার ব্যবহারকারী নাম অন্তর্ভুক্ত করুন",
     "wikidata-account/password-label": "পাসওয়ার্ড:",
-    "wikidata-account/password-placeholder": "আপনার পাসওয়ার্ড অন্তর্ভুক্ত করুন",
     "wikidata-account/close": "বন্ধ করুন",
     "wikidata-account/log-in": "প্রবেশ করুন",
     "wikidata-account/log-out": "প্রস্থান করুন"
