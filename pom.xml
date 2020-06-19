@@ -142,7 +142,7 @@
                 <goals>
                     <goal>prepare-agent</goal>
                 </goals>
-                <phase>initialize</phase>
+                <phase>process-test-resources</phase>
                 <configuration>
                     <destFile>${project.build.directory}/report/jacoco.exec</destFile>
                     <propertyName>surefireArgs</propertyName>
