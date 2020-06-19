@@ -154,7 +154,7 @@
                     <goal>report</goal>
                 </goals>
                 <configuration>
-                    <dataFile>${project.build.directory}/${project.name}.exec</dataFile>
+                    <dataFile>${project.build.directory}/report/${project.name}.exec</dataFile>
                     <outputDirectory>${project.reporting.outputDirectory}/jacoco</outputDirectory>
                 </configuration>
             </execution>
