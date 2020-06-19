@@ -30,7 +30,7 @@ import org.testng.Assert;
  *
  */
 public class TestingDatamodelRunner implements DatamodelRunner {
-    
+
     /**
      * Asserts that an object is serializable using Java serialization.
      * @param obj

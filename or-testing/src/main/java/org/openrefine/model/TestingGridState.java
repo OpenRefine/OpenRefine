@@ -367,4 +367,9 @@ public class TestingGridState implements GridState {
         return sortedRecords;
     }
 
+    @Override
+    public DatamodelRunner getDatamodelRunner() {
+        return new TestingDatamodelRunner();
+    }
+
 }

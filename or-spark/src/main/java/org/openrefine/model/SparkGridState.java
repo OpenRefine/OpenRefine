@@ -16,7 +16,6 @@ import org.apache.spark.api.java.JavaSparkContext;
 import org.apache.spark.api.java.function.FlatMapFunction;
 import org.apache.spark.api.java.function.Function;
 import org.apache.spark.api.java.function.Function2;
-import org.apache.spark.api.java.function.PairFunction;
 import org.apache.spark.rdd.RDD;
 import org.apache.spark.storage.StorageLevel;
 import org.openrefine.browsing.facets.Combiner;
@@ -59,6 +58,8 @@ public class SparkGridState implements GridState {
     // it involves running a (small) Spark job
     protected JavaPairRDD<Long, Record> records = null;
     
+    protected final SparkDatamodelRunner runner;
+    
     private transient long cachedRowCount;
     private transient long cachedRecordCount;
     
@@ -73,8 +74,9 @@ public class SparkGridState implements GridState {
     public SparkGridState(
             ColumnModel columnModel,
             JavaPairRDD<Long, Row> grid,
-            Map<String, OverlayModel> overlayModels) {
-        this(columnModel, grid, overlayModels, -1, -1);
+            Map<String, OverlayModel> overlayModels,
+            SparkDatamodelRunner runner) {
+        this(columnModel, grid, overlayModels, runner, -1, -1);
     }
     
     /**
@@ -91,6 +93,7 @@ public class SparkGridState implements GridState {
             ColumnModel columnModel,
             JavaPairRDD<Long, Row> grid,
             Map<String, OverlayModel> overlayModels,
+            SparkDatamodelRunner runner,
             long cachedRowCount,
             long cachedRecordCount) {
         this.columnModel = columnModel;
@@ -101,6 +104,7 @@ public class SparkGridState implements GridState {
         this.cachedRecordCount = cachedRecordCount;
 
         this.overlayModels = immutableMap(overlayModels);
+        this.runner = runner;
         
     }
     
@@ -188,19 +192,6 @@ public class SparkGridState implements GridState {
             @Override
             public Boolean call(Tuple2<Long, Row> tuple) throws Exception {
                 return filter.filterRow(tuple._1, tuple._2);
-            }
-            
-        };
-    }
-    
-    private static PairFunction<IndexedRow, Long, Row> indexedRowToTuple() {
-        return new PairFunction<IndexedRow, Long, Row>() {
-
-            private static final long serialVersionUID = -5475366854154122849L;
-
-            @Override
-            public Tuple2<Long, Row> call(IndexedRow t) throws Exception {
-                return new Tuple2<Long, Row>(t.getIndex(), t.getRow());
             }
             
         };
@@ -386,6 +377,7 @@ public class SparkGridState implements GridState {
 		return new SparkGridState(metadata.columnModel,
 		        grid,
 		        metadata.overlayModels,
+		        new SparkDatamodelRunner(context),
 		        metadata.rowCount,
 		        metadata.recordCount);
 	}
@@ -449,7 +441,7 @@ public class SparkGridState implements GridState {
     @Override
     public SparkGridState mapRows(RowMapper mapper, ColumnModel newColumnModel) {
         JavaPairRDD<Long, Row> rows = RDDUtils.mapKeyValuesToValues(grid, rowMap(mapper));
-        return new SparkGridState(newColumnModel, rows, overlayModels);
+        return new SparkGridState(newColumnModel, rows, overlayModels, runner);
     }
     
     private static Function2<Long, Row, Row> rowMap(RowMapper mapper) {
@@ -476,7 +468,11 @@ public class SparkGridState implements GridState {
                 RDDUtils.ROW_TUPLE2_TAG,
                 ClassManifestFactory.fromClass(Serializable.class));
 
-        return new SparkGridState(newColumnModel, new JavaPairRDD<Long, Row>(rows, RDDUtils.LONG_TAG, RDDUtils.ROW_TAG), overlayModels);
+        return new SparkGridState(
+                newColumnModel,
+                new JavaPairRDD<Long, Row>(rows, RDDUtils.LONG_TAG, RDDUtils.ROW_TAG),
+                overlayModels,
+                runner);
     }
     
     private static <S extends Serializable> Function<Tuple2<Long,Row>,Serializable> rowScanMapperToFeed(RowScanMapper<S> mapper) {
@@ -534,7 +530,11 @@ public class SparkGridState implements GridState {
             JavaRDD<Row> newRows = getRecords().values().flatMap(recordMap(mapper));
             rows = RDDUtils.zipWithIndex(newRows);
         }
-        return new SparkGridState(newColumnModel, rows, overlayModels);
+        return new SparkGridState(
+                newColumnModel, 
+                rows,
+                overlayModels,
+                runner);
     }
     
     private static Function<Record, Iterable<Tuple2<Long,Row>>> rowPreservingRecordMap(RecordMapper mapper) {
@@ -569,12 +569,20 @@ public class SparkGridState implements GridState {
 
     @Override
     public SparkGridState withOverlayModels(Map<String, OverlayModel> newOverlayModels) {
-        return new SparkGridState(columnModel, grid, newOverlayModels);
+        return new SparkGridState(
+                columnModel,
+                grid,
+                newOverlayModels,
+                runner);
     }
 
     @Override
     public GridState withColumnModel(ColumnModel newColumnModel) {
-        return new SparkGridState(newColumnModel, grid, overlayModels);
+        return new SparkGridState(
+                newColumnModel,
+                grid,
+                overlayModels,
+                runner);
     }
 
     @Override
@@ -588,7 +596,11 @@ public class SparkGridState implements GridState {
                 .sortByKey(sorter)
                 .values()
                 .map(ir -> ir.getRow()));
-        return new SparkGridState(columnModel, sortedGrid, overlayModels);
+        return new SparkGridState(
+                columnModel,
+                sortedGrid,
+                overlayModels,
+                runner);
     }
 
     @Override
@@ -603,7 +615,17 @@ public class SparkGridState implements GridState {
                 .sortByKey(sorter)
                 .values()
                 .flatMap(recordMap(RecordMapper.IDENTITY)));
-        return new SparkGridState(columnModel, sortedGrid, overlayModels);
+        return new SparkGridState(
+                columnModel,
+                sortedGrid,
+                overlayModels,
+                runner);
+    }
+
+    @Override
+    public DatamodelRunner getDatamodelRunner() {
+        // TODO Auto-generated method stub
+        return null;
     }
 
 }

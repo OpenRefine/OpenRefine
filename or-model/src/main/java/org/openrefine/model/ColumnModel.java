@@ -166,6 +166,15 @@ public class ColumnModel implements Serializable {
     }
     
     /**
+     * Shortcut for the above, for inserting at the last position.
+     * @param columnMetadata
+     * @return
+     */
+    public ColumnModel appendUnduplicatedColumn(ColumnMetadata columnMetadata) {
+        return insertUnduplicatedColumn(getColumns().size(), columnMetadata);
+    }
+    
+    /**
      * Change the name of a column
      * @param index the index of the column
      * @param newName the new name to give to the column

@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.apache.spark.api.java.JavaPairRDD;
-import org.apache.spark.api.java.JavaSparkContext;
 import org.apache.spark.api.java.function.Function;
 import org.apache.spark.api.java.function.PairFunction;
 import org.openrefine.ProjectMetadata;
@@ -97,7 +96,7 @@ public abstract class SparkImportingParserBase extends ImportingParserBase {
         
 		JavaPairRDD<Long, Row> grid = tail(rawCells, ignoreLines + headerLines + skipDataLines)
         		.mapValues(toRow);
-		return new SparkGridState(columnModel, grid, Collections.emptyMap());
+		return new SparkGridState(columnModel, grid, Collections.emptyMap(), (SparkDatamodelRunner)runner);
     }
 
     /**
