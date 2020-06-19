@@ -1,0 +1,6 @@
+
+extraction:
+  java:
+    index:
+      build_command:
+      - mvn clean test

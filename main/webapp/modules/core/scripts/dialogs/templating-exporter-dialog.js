@@ -143,7 +143,7 @@ TemplatingExporterDialog.prototype._updatePreview = function() {
 };
 
 TemplatingExporterDialog.prototype._export = function() {
-    var name = $.trim(theProject.metadata.name.replace(/\W/g, ' ')).replace(/\s+/g, '-');
+    var name = ExporterManager.stripNonFileChars(theProject.metadata.name);
     var form = document.createElement("form");
     $(form)
         .css("display", "none")

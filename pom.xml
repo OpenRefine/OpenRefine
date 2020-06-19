@@ -57,7 +57,6 @@
     <jee.port>3333</jee.port>
     <refine.data>/tmp/refine</refine.data>
     <surefire.version>2.22.2</surefire.version>
-    <surefireArgs>-Dfile.encoding=cp1252</surefireArgs>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <jackson.version>2.11.0</jackson.version>
   </properties>
@@ -127,7 +126,7 @@
         <artifactId>maven-surefire-plugin</artifactId>
         <version>${surefire.version}</version>
         <configuration>
-          <argLine>${surefireArgs}</argLine>
+          <argLine>${surefireArgs} -Dfile.encoding=cp1252</argLine>
           <suiteXmlFiles>
             <suiteXmlFile>main/tests/server/conf/tests.xml</suiteXmlFile>
           </suiteXmlFiles>
@@ -143,7 +142,7 @@
                 <goals>
                     <goal>prepare-agent</goal>
                 </goals>
-                <phase>process-test-resources</phase>
+                <phase>initialize</phase>
                 <configuration>
                     <destFile>${project.build.directory}/report/jacoco.exec</destFile>
                     <propertyName>surefireArgs</propertyName>
@@ -204,6 +203,7 @@
              <sourceDirectory>extensions/wikidata/src</sourceDirectory>
              <sourceDirectory>extensions/database/src</sourceDirectory>
              <sourceDirectory>extensions/phonetic/src</sourceDirectory>
+             <sourceDirectory>extensions/gdata/src</sourceDirectory>
           </sourceDirectories>
         </configuration>
        </plugin>
@@ -215,6 +215,20 @@
           see main/pom.xml, server/pom.xml and each extension.
     -->
   </dependencies>
- 
+
+  <!-- enabled to access our snapshots of Wikidata-Toolkit -->
+  <repositories>
+    <repository>
+      <id>snapshots</id>
+      <url>https://oss.sonatype.org/content/repositories/snapshots/</url>
+      <releases>
+        <enabled>false</enabled>
+      </releases>
+      <snapshots>
+        <enabled>true</enabled>
+      </snapshots>
+    </repository>
+  </repositories>
+
 </project>
 
