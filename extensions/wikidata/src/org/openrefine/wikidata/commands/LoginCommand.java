@@ -32,7 +32,10 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.net.HttpCookie;
+import java.net.URLDecoder;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -97,7 +100,7 @@ public class LoginCommand extends Command {
             Cookie[] cookies = request.getCookies();
 
             for (Cookie cookie : cookies) {
-                String value = cookie.getValue();
+                String value = getCookieValue(cookie);
                 switch (cookie.getName()) {
                     case CONSUMER_TOKEN:
                         consumerToken = value;
@@ -123,10 +126,10 @@ public class LoginCommand extends Command {
                 for (Cookie cookie : cookies) {
                     if (cookie.getName().startsWith(WIKIDATA_COOKIE_PREFIX)) {
                         String cookieName = cookie.getName().substring(WIKIDATA_COOKIE_PREFIX.length());
-                        Cookie newCookie = new Cookie(cookieName, cookie.getValue());
+                        Cookie newCookie = new Cookie(cookieName, getCookieValue(cookie));
                         cookieList.add(newCookie);
                     } else if (cookie.getName().equals(WIKIBASE_USERNAME_COOKIE_KEY)) {
-                        username1 = cookie.getValue();
+                        username1 = getCookieValue(cookie);
                     }
                 }
 
@@ -206,10 +209,18 @@ public class LoginCommand extends Command {
         removeCookie(response, ACCESS_SECRET);
     }
 
-    private static void setCookie(HttpServletResponse response, String key, String value) {
-        Cookie cookie = new Cookie(key, value);
+    static String getCookieValue(Cookie cookie) throws UnsupportedEncodingException {
+        return URLDecoder.decode(cookie.getValue(), "utf-8");
+    }
+
+    private static void setCookie(HttpServletResponse response, String key, String value) throws UnsupportedEncodingException {
+        String encodedValue = URLEncoder.encode(value, "utf-8");
+        Cookie cookie = new Cookie(key, encodedValue);
         cookie.setMaxAge(60 * 60 * 24 * 365); // a year
         cookie.setPath("/");
+        // set to false because OpenRefine doesn't require HTTPS
+        // though false is the default value, we set it explicitly here to bypass lgtm-bot alerts
+        cookie.setSecure(false);
         response.addCookie(cookie);
     }
 
@@ -217,6 +228,7 @@ public class LoginCommand extends Command {
         Cookie cookie = new Cookie(key, "");
         cookie.setMaxAge(0); // 0 causes the cookie to be deleted
         cookie.setPath("/");
+        cookie.setSecure(false);
         response.addCookie(cookie);
     }
 }

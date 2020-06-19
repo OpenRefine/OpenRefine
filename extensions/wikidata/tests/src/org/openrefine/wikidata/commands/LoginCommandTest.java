@@ -20,6 +20,7 @@ import javax.servlet.http.Cookie;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Constructor;
 import java.net.HttpCookie;
 import java.util.ArrayList;
@@ -252,6 +253,26 @@ public class LoginCommandTest extends CommandTest {
     }
 
     @Test
+    public void testCookieEncoding() throws Exception {
+        OAuthApiConnection connection = mock(OAuthApiConnection.class);
+        whenNew(OAuthApiConnection.class).withAnyArguments().thenReturn(connection);
+
+        when(request.getParameter("csrf_token")).thenReturn(Command.csrfFactory.getFreshToken());
+        when(request.getParameter("remember-credentials")).thenReturn("on");
+        when(request.getParameter(CONSUMER_TOKEN)).thenReturn("malformed consumer token \r\n %?");
+        when(request.getParameter(CONSUMER_SECRET)).thenReturn(consumerSecret);
+        when(request.getParameter(ACCESS_TOKEN)).thenReturn(accessToken);
+        when(request.getParameter(ACCESS_SECRET)).thenReturn(accessSecret);
+        when(request.getCookies()).thenReturn(makeRequestCookies());
+
+        command.doPost(request, response);
+
+        Map<String, Cookie> cookies = getCookieMap(cookieCaptor.getAllValues());
+        assertNotEquals(cookies.get(CONSUMER_TOKEN).getValue(), "malformed consumer token \r\n %?");
+        assertEquals(cookies.get(CONSUMER_TOKEN).getValue(), "malformed+consumer+token+%0D%0A+%25%3F");
+    }
+
+    @Test
     public void testOwnerOnlyConsumerLoginWithCookies() throws Exception {
         OAuthApiConnection connection = mock(OAuthApiConnection.class);
         whenNew(OAuthApiConnection.class).withAnyArguments().thenReturn(connection);
@@ -275,6 +296,27 @@ public class LoginCommandTest extends CommandTest {
         assertCookieEquals(cookies.get(CONSUMER_SECRET), consumerSecret, ONE_YEAR);
         assertCookieEquals(cookies.get(ACCESS_TOKEN), accessToken, ONE_YEAR);
         assertCookieEquals(cookies.get(ACCESS_SECRET), accessSecret, ONE_YEAR);
+    }
+
+    @Test
+    public void testCookieDecoding() throws Exception {
+        ConnectionManager manager = mock(ConnectionManager.class);
+        given(ConnectionManager.getInstance()).willReturn(manager);
+
+        OAuthApiConnection connection = mock(OAuthApiConnection.class);
+        whenNew(OAuthApiConnection.class).withAnyArguments().thenReturn(connection);
+        when(connection.getCurrentUser()).thenReturn(username);
+
+        when(request.getParameter("csrf_token")).thenReturn(Command.csrfFactory.getFreshToken());
+        Cookie consumerTokenCookie = new Cookie(CONSUMER_TOKEN, "malformed+consumer+token+%0D%0A+%25%3F");
+        Cookie consumerSecretCookie = new Cookie(CONSUMER_SECRET, consumerSecret);
+        Cookie accessTokenCookie = new Cookie(ACCESS_TOKEN, accessToken);
+        Cookie accessSecretCookie = new Cookie(ACCESS_SECRET, accessSecret);
+        when(request.getCookies()).thenReturn(new Cookie[]{consumerTokenCookie, consumerSecretCookie, accessTokenCookie, accessSecretCookie});
+
+        command.doPost(request, response);
+
+        verify(manager).login("malformed consumer token \r\n %?", consumerSecret, accessToken, accessSecret);
     }
 
     @Test
@@ -407,7 +449,11 @@ public class LoginCommandTest extends CommandTest {
     }
 
     private static void assertCookieEquals(Cookie cookie, String expectedValue, int expectedMaxAge) {
-        assertEquals(cookie.getValue(), expectedValue);
+        try {
+            assertEquals(getCookieValue(cookie), expectedValue);
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
         assertEquals(cookie.getMaxAge(), expectedMaxAge);
         assertEquals(cookie.getPath(), "/");
     }
