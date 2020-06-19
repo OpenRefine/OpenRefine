@@ -42,7 +42,7 @@ PerformEditsDialog.launch = function(logged_in_username, max_severity) {
         { onDone: function() { dismiss(); } }
       );
     }
-  }
+  };
   
   elmts.loggedInUsername
    .text(logged_in_username)
@@ -72,7 +72,7 @@ PerformEditsDialog.updateEditCount = function(edit_count) {
   this._elmts.reviewYourEdits.html(
     $.i18n('perform-wikidata-edits/review-your-edits')
       .replace('{nb_edits}', edit_count));
-}
+};
 
 PerformEditsDialog._updateWarnings = function(data) {
    var warnings = data.warnings;
@@ -87,7 +87,7 @@ PerformEditsDialog._updateWarnings = function(data) {
       var rendered = WarningsRenderer._renderWarning(warnings[i]);
       rendered.appendTo(table);
    }   
-}
+};
 
 PerformEditsDialog.checkAndLaunch = function () {
   var self = this;
@@ -95,26 +95,24 @@ PerformEditsDialog.checkAndLaunch = function () {
   this._elmts = DOM.bind(this.frame);
   this.missingSchema = false;
 
-  var onSaved = function() {
-    ManageAccountDialog.ensureLoggedIn(function(logged_in_username) {
-        if (logged_in_username) {
-                var discardWaiter = DialogSystem.showBusy($.i18n('perform-wikidata-edits/analyzing-edits'));
-                Refine.postCSRF(
-                    "command/wikidata/preview-wikibase-schema?" + $.param({ project: theProject.id }),
-                    { engine: JSON.stringify(ui.browsingEngine.getJSON()) },
-                    function(data) {
-                    discardWaiter();
-                    if(data['code'] != 'error') {
-                        PerformEditsDialog._updateWarnings(data);
-                        PerformEditsDialog.launch(logged_in_username, data['max_severity']);
-                    } else {
-                        SchemaAlignmentDialog.launch(
-                            PerformEditsDialog.checkAndLaunch);
-                    }
-                    },
-                    "json"
-                );
-        }
+  var onSaved = function () {
+    ManageAccountDialog.ensureLoggedIn(function (logged_in_username) {
+      var discardWaiter = DialogSystem.showBusy($.i18n('perform-wikidata-edits/analyzing-edits'));
+      Refine.postCSRF(
+          "command/wikidata/preview-wikibase-schema?" + $.param({project: theProject.id}),
+          {engine: JSON.stringify(ui.browsingEngine.getJSON())},
+          function (data) {
+            discardWaiter();
+            if (data['code'] != 'error') {
+              PerformEditsDialog._updateWarnings(data);
+              PerformEditsDialog.launch(logged_in_username, data['max_severity']);
+            } else {
+              SchemaAlignmentDialog.launch(
+                  PerformEditsDialog.checkAndLaunch);
+            }
+          },
+          "json"
+      );
     });
   };
 

@@ -2,35 +2,42 @@ var ManageAccountDialog = {};
 
 ManageAccountDialog.firstLogin = true;
 
-ManageAccountDialog.display = function (logged_in_username, callback) {
-
+/**
+ * Displays the logged in page if the user is logged in,
+ * displays the login page otherwise.
+ */
+ManageAccountDialog.display = function (logged_in_username, onSuccess) {
   if (logged_in_username == null) {
-    logged_in_username = ManageAccountDialog.tryLoginWithCookies(callback);
-  }
-
-  if (logged_in_username != null) {
-    ManageAccountDialog.displayLoggedIn(logged_in_username, callback);
+    if (ManageAccountDialog.firstLogin) {
+      ManageAccountDialog.firstLogin = false;
+      ManageAccountDialog.tryLoginWithCookies(onSuccess);
+    } else {
+      ManageAccountDialog.displayPasswordLogin(onSuccess);
+    }
   } else {
-    ManageAccountDialog.displayPasswordLogin(callback);
+    ManageAccountDialog.displayLoggedIn(logged_in_username);
   }
 };
 
-ManageAccountDialog.tryLoginWithCookies = function (callback) {
-  var logged_user_name = null;
-  $.ajaxSetup({async: false});
+
+ManageAccountDialog.tryLoginWithCookies = function (onSuccess) {
+  // In the first login, we try logging in with cookies,
+  // the backend may take a while to tell if the cookies are valid or not.
+  // So we need to call DialogSystem.showBusy to inform the user that
+  // OpenRefine is trying connecting to Wikidata.
+  const discardWaiter = DialogSystem.showBusy($.i18n('wikidata-account/connecting-to-wikidata'));
   Refine.postCSRF(
       "command/wikidata/login",
       {},
       function (data) {
+        discardWaiter();
         if (data.logged_in) {
-          callback(data.username);
-          logged_user_name = data.username;
+          onSuccess(data.username);
+          ManageAccountDialog.displayLoggedIn(data.username);
         } else {
-          logged_user_name = null;
+          ManageAccountDialog.displayPasswordLogin(onSuccess);
         }
       });
-  $.ajaxSetup({async: true});
-  return logged_user_name;
 };
 
 ManageAccountDialog.initCommon = function (elmts) {
@@ -39,7 +46,7 @@ ManageAccountDialog.initCommon = function (elmts) {
   elmts.cancelButton.text($.i18n('wikidata-account/close'));
 };
 
-ManageAccountDialog.displayLoggedIn = function (logged_in_username, callback) {
+ManageAccountDialog.displayLoggedIn = function (logged_in_username) {
   var frame = $(DOM.loadHTML("wikidata", "scripts/dialogs/logged-in-dialog.html"));
   var elmts = DOM.bind(frame);
   ManageAccountDialog.initCommon(elmts);
@@ -57,7 +64,6 @@ ManageAccountDialog.displayLoggedIn = function (logged_in_username, callback) {
 
   elmts.cancelButton.click(function (e) {
     dismiss();
-    callback(null);
   });
 
   elmts.logoutButton.click(function () {
@@ -69,13 +75,12 @@ ManageAccountDialog.displayLoggedIn = function (logged_in_username, callback) {
           frame.show();
           if (!data.logged_in) {
             dismiss();
-            callback(null);
           }
         });
   });
 };
 
-ManageAccountDialog.displayPasswordLogin = function (callback) {
+ManageAccountDialog.displayPasswordLogin = function (onSuccess) {
   const frame = $(DOM.loadHTML("wikidata", "scripts/dialogs/password-login-dialog.html"));
   const elmts = DOM.bind(frame);
   ManageAccountDialog.initCommon(elmts);
@@ -98,12 +103,11 @@ ManageAccountDialog.displayPasswordLogin = function (callback) {
 
   elmts.cancelButton.click(function (e) {
     dismiss();
-    callback(null);
   });
 
   elmts.explainOwnerOnlyConsumerLogin.click(function (e) {
     dismiss();
-    ManageAccountDialog.displayOwnerOnlyConsumerLogin(callback);
+    ManageAccountDialog.displayOwnerOnlyConsumerLogin(onSuccess);
   });
 
   elmts.loginForm.submit(function (e) {
@@ -114,7 +118,7 @@ ManageAccountDialog.displayPasswordLogin = function (callback) {
         function (data) {
           if (data.logged_in) {
             dismiss();
-            callback(data.username);
+            onSuccess(data.username);
           } else {
             frame.show();
             elmts.invalidCredentials.show();
@@ -124,7 +128,7 @@ ManageAccountDialog.displayPasswordLogin = function (callback) {
   });
 };
 
-ManageAccountDialog.displayOwnerOnlyConsumerLogin = function (callback) {
+ManageAccountDialog.displayOwnerOnlyConsumerLogin = function (onSuccess) {
   var frame = $(DOM.loadHTML("wikidata", "scripts/dialogs/owner-only-consumer-login-dialog.html"));
   var elmts = DOM.bind(frame);
   ManageAccountDialog.initCommon(elmts);
@@ -152,12 +156,11 @@ ManageAccountDialog.displayOwnerOnlyConsumerLogin = function (callback) {
 
   elmts.cancelButton.click(function (e) {
     dismiss();
-    callback(null);
   });
 
   elmts.explainPasswordLogin.click(function (e) {
     dismiss();
-    ManageAccountDialog.displayPasswordLogin(callback);
+    ManageAccountDialog.displayPasswordLogin(onSuccess);
   });
 
   elmts.loginForm.submit(function (e) {
@@ -168,7 +171,7 @@ ManageAccountDialog.displayOwnerOnlyConsumerLogin = function (callback) {
         function (data) {
           if (data.logged_in) {
             dismiss();
-            callback(data.username);
+            onSuccess(data.username);
           } else {
             frame.show();
             elmts.invalidCredentials.show();
@@ -178,27 +181,28 @@ ManageAccountDialog.displayOwnerOnlyConsumerLogin = function (callback) {
   });
 };
 
+/**
+ * Checks if the user is logged in or not.
+ *
+ * The callback needs to react to both cases.
+ */
 ManageAccountDialog.isLoggedIn = function (callback) {
-  var discardWaiter = function () {
-  };
-  if (ManageAccountDialog.firstLogin) {
-    discardWaiter = DialogSystem.showBusy($.i18n('wikidata-account/connecting-to-wikidata'));
-  }
   $.get(
       "command/wikidata/login",
       function (data) {
-        discardWaiter();
-        ManageAccountDialog.firstLogin = false;
         callback(data.username);
       });
 };
 
-ManageAccountDialog.ensureLoggedIn = function (callback) {
+/**
+ * The onSuccess callback is called if and only if the user is logged in.
+ */
+ManageAccountDialog.ensureLoggedIn = function (onSuccess) {
   ManageAccountDialog.isLoggedIn(function (logged_in_username) {
     if (logged_in_username == null) {
-      ManageAccountDialog.display(null, callback);
+      ManageAccountDialog.display(null, onSuccess);
     } else {
-      callback(logged_in_username);
+      onSuccess(logged_in_username);
     }
   });
 };
