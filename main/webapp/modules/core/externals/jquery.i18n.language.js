@@ -80,9 +80,6 @@
 			fil: {
 				one: 'v = 0 and i = 1,2,3 or v = 0 and i % 10 != 4,6,9 or v != 0 and f % 10 != 4,6,9'
 			},
-			fr: {
-				one: 'i = 0,1'
-			},
 			ga: {
 				one: 'n = 1',
 				two: 'n = 2',
