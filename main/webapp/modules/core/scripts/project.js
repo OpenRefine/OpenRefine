@@ -64,7 +64,9 @@ Refine.reportException = function(e) {
 
 function resize() {
   var leftPanelWidth = JSON.parse(Refine.getPreference("ui.toolPanelWidth", 300));
-  if(typeof leftPanelWidth != "number") { leftPanelWidth = 300; }
+  if(typeof leftPanelWidth != "number" || leftPanelWidth < 200 || leftPanelWidth > 500) { 
+    leftPanelWidth = 300; 
+  }
 
   var width = $(window).width();
   var top = $("#header").outerHeight();
