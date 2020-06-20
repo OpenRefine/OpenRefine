@@ -161,9 +161,9 @@ ListFacet.prototype._initializeUI = function() {
           '<a href="javascript:{}" class="facet-choice-link" bind="resetButton">'+$.i18n('core-facets/reset')+'</a>' +
           '<a href="javascript:{}" class="facet-choice-link" bind="invertButton">'+$.i18n('core-facets/invert')+'</a>' +
           '<a href="javascript:{}" class="facet-choice-link" bind="changeButton">'+$.i18n('core-facets/change')+'</a>' +
-          '<span class="facet-title-span" bind="titleSpan" title="Click here to edit the name of the facet"></span>' +
+          '<span class="facet-title-span" bind="titleSpan" title="'+$.i18n('core-facets/edit-facet-title')+'"></span>' +
         '</td>' +
-      '</tr></table></div>' +
+      '</tr></table></div>' + 
     '</div>' +
     '<div class="facet-expression" bind="expressionDiv" title="'+$.i18n('core-facets/click-to-edit')+'"></div>' +
     '<div class="facet-controls" bind="controlsDiv" style="display:none;">' +
@@ -529,7 +529,7 @@ ListFacet.prototype._doEdit = function() {
 ListFacet.prototype._editTitle = function() {
   var currentFacetTitle = this._config.name;
   
-  var promptText = "The current name of the facet is: "+ currentFacetTitle +".\n What name do you want now?";
+  var promptText = $.i18n('core-facets/facet-current-title', currentFacetTitle);
   var newFacetTitle = prompt(promptText, currentFacetTitle);
 
   if (newFacetTitle != null) {
