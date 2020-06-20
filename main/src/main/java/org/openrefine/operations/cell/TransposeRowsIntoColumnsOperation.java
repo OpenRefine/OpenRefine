@@ -33,21 +33,14 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package org.openrefine.operations.cell;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.openrefine.history.HistoryEntry;
-import org.openrefine.model.Cell;
-import org.openrefine.model.ColumnMetadata;
-import org.openrefine.model.Project;
-import org.openrefine.model.Row;
-import org.openrefine.model.changes.MassRowColumnChange;
+import org.openrefine.history.Change;
+import org.openrefine.model.changes.TransposeRowsIntoColumnsChange;
 import org.openrefine.operations.Operation;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-public class TransposeRowsIntoColumnsOperation extends Operation {
+public class TransposeRowsIntoColumnsOperation implements Operation {
     final protected String  _columnName;
     final protected int     _rowCount;
 
@@ -73,77 +66,12 @@ public class TransposeRowsIntoColumnsOperation extends Operation {
     }
 
     @Override
-    protected String getDescription() {
+	public String getDescription() {
         return "Transpose every " + _rowCount + " cells in column " + _columnName + " into separate columns";
     }
 
     @Override
-    protected HistoryEntry createHistoryEntry(Project project, long historyEntryID) throws Exception {
-        List<ColumnMetadata> newColumns = new ArrayList<ColumnMetadata>();
-        List<ColumnMetadata> oldColumns = project.columnModel.getColumns();
-        
-        int columnIndex = project.columnModel.getColumnIndexByName(_columnName);
-        int columnCount = oldColumns.size();
-        
-        for (int i = 0; i < columnCount; i++) {
-            ColumnMetadata column = oldColumns.get(i);
-            
-            if (i == columnIndex) {
-                int newIndex = 1;
-                for (int n = 0; n < _rowCount; n++) {
-                    String columnName = _columnName + " " + newIndex++;
-                    while (project.columnModel.getColumnByName(columnName) != null) {
-                        columnName = _columnName + " " + newIndex++;
-                    }
-                    
-                    newColumns.add(new ColumnMetadata(i + n, columnName));
-                }
-            } else if (i < columnIndex) {
-                newColumns.add(new ColumnMetadata(i, column.getName()));
-            } else {
-                newColumns.add(new ColumnMetadata(i + _rowCount - 1, column.getName()));
-            }
-        }
-        
-        List<Row> oldRows = project.rows;
-        List<Row> newRows = new ArrayList<Row>(oldRows.size() / _rowCount);
-        for (int r = 0; r < oldRows.size(); r += _rowCount) {
-            Row firstNewRow = new Row(newColumns.size());
-            
-            for (int r2 = 0; r2 < _rowCount && r + r2 < oldRows.size(); r2++) {
-                Row oldRow = oldRows.get(r + r2);
-                Row newRow = r2 == 0 ? firstNewRow : new Row(newColumns.size());
-                boolean hasData = r2 == 0;
-                
-                for (int c = 0; c < oldColumns.size(); c++) {
-                    ColumnMetadata column = oldColumns.get(c);
-                    Cell cell = oldRow.getCell(column.getCellIndex());
-                    
-                    if (cell != null && cell.value != null) {
-                        if (c == columnIndex) {
-                            firstNewRow.setCell(columnIndex + r2, cell);
-                        } else if (c < columnIndex) {
-                            newRow.setCell(c, cell);
-                            hasData = true;
-                        } else {
-                            newRow.setCell(c + _rowCount - 1, cell);
-                            hasData = true;
-                        }
-                    }
-                }
-                
-                if (hasData) {
-                    newRows.add(newRow);
-                }
-            }
-        }
-        
-        return new HistoryEntry(
-            historyEntryID,
-            project, 
-            getDescription(), 
-            this, 
-            new MassRowColumnChange(newColumns, newRows)
-        );
+    public Change createChange() {
+    	return new TransposeRowsIntoColumnsChange(_columnName, _rowCount);
     }
 }

@@ -42,7 +42,7 @@ import org.slf4j.LoggerFactory;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
-public class TransposeTests extends RefineTest {
+public class TransposeRowsIntoColumnsTests extends RefineTest {
 
     @Override
     @BeforeTest
