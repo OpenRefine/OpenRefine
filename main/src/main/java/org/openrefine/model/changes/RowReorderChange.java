@@ -39,33 +39,3 @@ import org.openrefine.history.dag.DagSlice;
 import org.openrefine.model.GridState;
 import org.openrefine.sorting.SortingConfig;
 
-public class RowReorderChange implements Change {
-    final protected SortingConfig _sorting;
-	final protected Mode _mode;
-    
-    public RowReorderChange(Mode mode, SortingConfig sorting) {
-    	_mode = mode;
-        _sorting = sorting;
-    }
-    
-	@Override
-	public boolean isImmediate() {
-		return true;
-	}
-
-	@Override
-	public DagSlice getDagSlice() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public GridState apply(GridState projectState) throws DoesNotApplyException {
-		if (Mode.RowBased.equals(_mode)) {
-			return projectState.reorderRows(_sorting);
-		} else {
-			return projectState.reorderRecords(_sorting);
-		}
-	}
-
-}

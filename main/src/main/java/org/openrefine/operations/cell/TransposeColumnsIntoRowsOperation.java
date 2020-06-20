@@ -37,6 +37,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.apache.commons.lang3.Validate;
 import org.openrefine.history.Change;
 import org.openrefine.history.dag.DagSlice;
 import org.openrefine.model.Cell;
@@ -135,6 +136,7 @@ public class TransposeColumnsIntoRowsOperation implements Operation {
         boolean prependColumnName,
         String  separator
     ) {
+    	Validate.notNull(startColumnName);
         _startColumnName = startColumnName;
         _columnCount = columnCount;
         _ignoreBlankCells = ignoreBlankCells;
@@ -156,6 +158,7 @@ public class TransposeColumnsIntoRowsOperation implements Operation {
         String  keyColumnName,
         String  valueColumnName
     ) {
+    	Validate.notNull(startColumnName);
         _startColumnName = startColumnName;
         _columnCount = columnCount;
         _ignoreBlankCells = ignoreBlankCells;

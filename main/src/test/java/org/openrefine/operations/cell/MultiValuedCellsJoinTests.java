@@ -34,27 +34,25 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package org.openrefine.operations.cell;
 
 import java.io.Serializable;
-import java.util.Properties;
+import java.util.List;
 
 import org.openrefine.RefineTest;
-import org.openrefine.model.Project;
-import org.openrefine.operations.Operation;
+import org.openrefine.expr.ParsingException;
+import org.openrefine.history.Change;
+import org.openrefine.history.Change.DoesNotApplyException;
+import org.openrefine.model.GridState;
+import org.openrefine.model.IndexedRow;
 import org.openrefine.operations.OperationRegistry;
-import org.openrefine.operations.cell.MultiValuedCellJoinOperation;
-import org.openrefine.process.Process;
 import org.openrefine.util.ParsingUtilities;
 import org.openrefine.util.TestUtils;
 import org.slf4j.LoggerFactory;
 import org.testng.Assert;
-import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
 
-public class JoinMultiValuedCellsTests extends RefineTest {
-    
-    Project project;
+public class MultiValuedCellsJoinTests extends RefineTest {
 
     @Override
     @BeforeTest
@@ -67,18 +65,6 @@ public class JoinMultiValuedCellsTests extends RefineTest {
         OperationRegistry.registerOperation("core", "multivalued-cell-join", MultiValuedCellJoinOperation.class);
     }
     
-    @BeforeMethod
-    public void createProject() {
-        project = createProject(
-        		new String[] {
-                "Key","Value"},
-        		new Serializable[] {
-                "Record_1","one",
-                null,"two",
-                null,"three",
-                null,"four"});
-    }
-    
     @Test
     public void serializeMultiValuedCellJoinOperation() throws Exception {
         String json = "{\"op\":\"core/multivalued-cell-join\","
@@ -88,6 +74,67 @@ public class JoinMultiValuedCellsTests extends RefineTest {
                 + "\"separator\":\",\"}";
         TestUtils.isSerializedTo(ParsingUtilities.mapper.readValue(json, MultiValuedCellJoinOperation.class), json, ParsingUtilities.defaultWriter);
     }
+    
+	GridState initialState;
+	
+	@BeforeTest
+	public void setUpGrid() {
+		initialState = createGrid(
+				new String[] { "key", "foo", "bar" },
+				new Serializable[][] {
+			{ "record1", "a", "b" },
+			{ null,      "c", "d" },
+			{ "record2", "", "f" },
+			{ null,      "g", ""  },
+			{ null,      null, null }
+		});
+	}
+	
+	@Test(expectedExceptions = DoesNotApplyException.class)
+	public void testInvalidColumn() throws DoesNotApplyException, ParsingException {
+		Change SUT = new MultiValuedCellJoinOperation("does_not_exist", "key", ",").createChange();
+		SUT.apply(initialState);
+	}
+	
+	@Test
+	public void testJoin() throws DoesNotApplyException, ParsingException {
+		Change SUT = new MultiValuedCellJoinOperation("foo", "key", ",").createChange();
+		GridState state = SUT.apply(initialState);
+		
+		GridState expected = createGrid(new String[] { "key", "foo", "bar" },
+				new Serializable[][] {
+			{ "record1", "a,c", "b" },
+			{ null,      null, "d" },
+			{ "record2", "g", "f" },
+			{ null,      null, null } // this line is a record on its own, so it is preserved
+		});
+		
+		Assert.assertEquals(state.getColumnModel(), initialState.getColumnModel());
+		List<IndexedRow> rows = state.collectRows();
+		List<IndexedRow> expectedRows = expected.collectRows();
+		Assert.assertEquals(rows, expectedRows);
+	}
+	
+	@Test
+	public void testCustomKey() throws DoesNotApplyException, ParsingException {
+		Change SUT = new MultiValuedCellJoinOperation("bar", "foo", ",").createChange();
+		GridState state = SUT.apply(initialState);
+		
+		GridState expected = createGrid(
+				new String[] { "key", "foo", "bar" },
+				new Serializable[][] {
+			{ "record1", "a", "b" },
+			{ null,      "c", "d,f" },
+			{ "record2", "",   null },
+			{ null,      "g", null  },
+			{ null,      null, null }
+		});
+		
+		Assert.assertEquals(state.getColumnModel(), initialState.getColumnModel());
+		List<IndexedRow> rows = state.collectRows();
+		List<IndexedRow> expectedRows = expected.collectRows();
+		Assert.assertEquals(rows, expectedRows);
+	}
 
 }
 

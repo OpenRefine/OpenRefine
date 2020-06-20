@@ -46,6 +46,12 @@ import org.openrefine.model.RowMapper;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+/**
+ * Changes a single cell at a designated row and column indices.
+ * 
+ * @author Antonin Delpeuch
+ *
+ */
 public class CellChange extends RowMapChange {
 	@JsonProperty("rowId")
     final public long     row;
