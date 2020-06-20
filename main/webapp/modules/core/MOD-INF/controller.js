@@ -116,8 +116,6 @@ function registerCommands() {
   RS.registerCommand(module, "split-column", new Packages.org.openrefine.commands.column.SplitColumnCommand());
   RS.registerCommand(module, "reorder-columns", new Packages.org.openrefine.commands.column.ReorderColumnsCommand());
 
-  RS.registerCommand(module, "denormalize", new Packages.org.openrefine.commands.row.DenormalizeCommand());
-
   RS.registerCommand(module, "reconcile", new Packages.org.openrefine.commands.recon.ReconcileCommand());
   RS.registerCommand(module, "recon-match-best-candidates", new Packages.org.openrefine.commands.recon.ReconMatchBestCandidatesCommand());
   RS.registerCommand(module, "recon-mark-new-topics", new Packages.org.openrefine.commands.recon.ReconMarkNewTopicsCommand());
