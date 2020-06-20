@@ -38,7 +38,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import org.openrefine.browsing.Engine.Mode;
 import org.openrefine.history.Change;
-import org.openrefine.model.changes.RowReorderChange;
+import org.openrefine.model.GridState;
 import org.openrefine.operations.Operation;
 import org.openrefine.sorting.SortingConfig;
 
@@ -78,7 +78,25 @@ public class RowReorderOperation implements Operation {
 
     @Override
     public Change createChange() {
-        return new RowReorderChange(_mode, _sorting);
+        return new RowReorderChange();
+    }
+
+    public class RowReorderChange implements Change {
+
+        @Override
+        public boolean isImmediate() {
+            return true;
+        }
+
+        @Override
+        public GridState apply(GridState projectState) throws DoesNotApplyException {
+            if (Mode.RowBased.equals(_mode)) {
+                return projectState.reorderRows(_sorting);
+            } else {
+                return projectState.reorderRecords(_sorting);
+            }
+        }
+
     }
 
 }

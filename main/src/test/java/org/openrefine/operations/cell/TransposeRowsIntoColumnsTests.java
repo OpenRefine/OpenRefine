@@ -33,17 +33,23 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package org.openrefine.operations.cell;
 
+import java.io.Serializable;
+
 import org.slf4j.LoggerFactory;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
 import org.openrefine.RefineTest;
+import org.openrefine.history.Change;
+import org.openrefine.history.Change.DoesNotApplyException;
+import org.openrefine.model.GridState;
 import org.openrefine.operations.OperationRegistry;
-import org.openrefine.operations.cell.TransposeRowsIntoColumnsOperation;
 import org.openrefine.util.ParsingUtilities;
 import org.openrefine.util.TestUtils;
 
-public class TransposeTests extends RefineTest {
+public class TransposeRowsIntoColumnsTests extends RefineTest {
+
+    GridState initial;
 
     @Override
     @BeforeTest
@@ -60,6 +66,63 @@ public class TransposeTests extends RefineTest {
                 + "\"rowCount\":3}";
         TestUtils.isSerializedTo(ParsingUtilities.mapper.readValue(json, TransposeRowsIntoColumnsOperation.class), json,
                 ParsingUtilities.defaultWriter);
+    }
+
+    @BeforeTest
+    public void setUpGrid() {
+        initial = createGrid(
+                new String[] { "a", "b", "c" },
+                new Serializable[][] {
+                        { "1", "2", "3" },
+                        { "4", "5", "6" },
+                        { "7", "8", "9" },
+                        { "10", "11", "12" }
+                });
+    }
+
+    @Test(expectedExceptions = DoesNotApplyException.class)
+    public void testDoesNotApply() throws DoesNotApplyException {
+        Change change = new TransposeRowsIntoColumnsOperation("d", 2).createChange();
+        change.apply(initial);
+    }
+
+    @Test
+    public void testTransposeRowsIntoColumns() throws DoesNotApplyException {
+        Change change = new TransposeRowsIntoColumnsOperation("b", 2).createChange();
+
+        GridState expected = createGrid(
+                new String[] { "a", "b 1", "b 2", "c" },
+                new Serializable[][] {
+                        { "1", "2", "5", "3" },
+                        { "4", null, null, "6" },
+                        { "7", "8", "11", "9" },
+                        { "10", null, null, "12" }
+                });
+
+        assertGridEquals(change.apply(initial), expected);
+    }
+
+    @Test
+    public void testTransposeRecordsIntoRows() throws DoesNotApplyException {
+        GridState initialRecords = createGrid(
+                new String[] { "a", "b", "c" },
+                new Serializable[][] {
+                        { "1", "2", "3" },
+                        { null, "5", null },
+                        { "7", "8", "9" },
+                        { null, "11", null }
+                });
+
+        Change change = new TransposeRowsIntoColumnsOperation("b", 2).createChange();
+
+        GridState expected = createGrid(
+                new String[] { "a", "b 1", "b 2", "c" },
+                new Serializable[][] {
+                        { "1", "2", "5", "3" },
+                        { "7", "8", "11", "9" }
+                });
+
+        assertGridEquals(change.apply(initialRecords), expected);
     }
 
 }

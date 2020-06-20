@@ -33,14 +33,25 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package org.openrefine.operations.column;
 
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import org.openrefine.browsing.EngineConfig;
 import org.openrefine.expr.ParsingException;
 import org.openrefine.history.Change;
-import org.openrefine.model.changes.ColumnReorderChange;
+import org.openrefine.model.Cell;
+import org.openrefine.model.ColumnMetadata;
+import org.openrefine.model.ColumnModel;
+import org.openrefine.model.GridState;
+import org.openrefine.model.Row;
+import org.openrefine.model.RowMapper;
+import org.openrefine.model.changes.RowMapChange;
 import org.openrefine.operations.ImmediateOperation;
 
 public class ColumnReorderOperation extends ImmediateOperation {
@@ -51,6 +62,10 @@ public class ColumnReorderOperation extends ImmediateOperation {
     public ColumnReorderOperation(
             @JsonProperty("columnNames") List<String> columnNames) {
         _columnNames = columnNames;
+        Set<String> deduplicated = new HashSet<>(_columnNames);
+        if (deduplicated.size() != _columnNames.size()) {
+            throw new IllegalArgumentException("Duplicates in the list of final column names");
+        }
     }
 
     @JsonProperty("columnNames")
@@ -65,6 +80,66 @@ public class ColumnReorderOperation extends ImmediateOperation {
 
     @Override
     public Change createChange() throws ParsingException {
-        return new ColumnReorderChange(_columnNames);
+        return new ColumnReorderChange();
+    }
+
+    public class ColumnReorderChange extends RowMapChange {
+
+        public ColumnReorderChange() {
+            super(EngineConfig.ALL_ROWS);
+
+        }
+
+        @JsonProperty("columnNames")
+        public List<String> getColumnNames() {
+            return _columnNames;
+        }
+
+        @Override
+        public boolean isImmediate() {
+            return true;
+        }
+
+        @Override
+        public ColumnModel getNewColumnModel(GridState grid) throws DoesNotApplyException {
+            ColumnModel model = grid.getColumnModel();
+            List<ColumnMetadata> columns = new ArrayList<>(_columnNames.size());
+            for (String columnName : _columnNames) {
+                ColumnMetadata meta = model.getColumnByName(columnName);
+                if (meta == null) {
+                    throw new DoesNotApplyException(String.format("Column '%s' does not exist", columnName));
+                }
+                columns.add(meta);
+            }
+            return new ColumnModel(columns);
+        }
+
+        @Override
+        public RowMapper getPositiveRowMapper(GridState state) throws DoesNotApplyException {
+            // Build a map from new indices to original ones
+            List<Integer> origIndex = new ArrayList<>(_columnNames.size());
+            for (int i = 0; i != _columnNames.size(); i++) {
+                origIndex.add(columnIndex(state.getColumnModel(), _columnNames.get(i)));
+            }
+
+            return mapper(origIndex);
+        }
+
+    }
+
+    protected static RowMapper mapper(List<Integer> origIndex) {
+        return new RowMapper() {
+
+            private static final long serialVersionUID = 7653347685611673401L;
+
+            @Override
+            public Row call(long rowId, Row row) {
+                List<Cell> newCells = origIndex.stream()
+                        .map(i -> row.getCell(i))
+                        .collect(Collectors.toList());
+                return new Row(newCells);
+            }
+
+        };
     }
 }

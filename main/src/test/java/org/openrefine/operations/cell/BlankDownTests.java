@@ -28,52 +28,52 @@
 package org.openrefine.operations.cell;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Properties;
+import java.util.Arrays;
 
-import org.testng.Assert;
-import org.testng.annotations.AfterMethod;
-import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.BeforeSuite;
+import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
-import org.openrefine.ProjectManager;
 import org.openrefine.RefineTest;
+import org.openrefine.browsing.DecoratedValue;
+import org.openrefine.browsing.Engine;
 import org.openrefine.browsing.EngineConfig;
-import org.openrefine.model.ColumnMetadata;
-import org.openrefine.model.Project;
-import org.openrefine.model.Row;
+import org.openrefine.browsing.facets.ListFacet.ListFacetConfig;
+import org.openrefine.expr.MetaParser;
+import org.openrefine.grel.Parser;
+import org.openrefine.history.Change;
+import org.openrefine.history.Change.DoesNotApplyException;
+import org.openrefine.model.GridState;
 import org.openrefine.operations.Operation;
 import org.openrefine.operations.OperationRegistry;
-import org.openrefine.operations.cell.BlankDownOperation;
-import org.openrefine.process.Process;
 import org.openrefine.util.ParsingUtilities;
 import org.openrefine.util.TestUtils;
 
 public class BlankDownTests extends RefineTest {
-
-    Project project = null;
 
     @BeforeSuite
     public void registerOperation() {
         OperationRegistry.registerOperation("core", "blank-down", BlankDownOperation.class);
     }
 
-    @BeforeMethod
-    public void setUp() {
-        project = createProject(
-                new String[] { "key", "first", "second" },
-                new Serializable[] {
-                        "a", "b", "c",
-                        null, "d", "c",
-                        "e", "f", "c",
-                        null, null, "c" });
-    }
+    GridState toBlankDown;
+    ListFacetConfig facet;
 
-    @AfterMethod
-    public void tearDown() {
-        ProjectManager.singleton.deleteProject(project.id);
+    @BeforeTest
+    public void createSplitProject() {
+        toBlankDown = createGrid(new String[] { "foo", "bar", "hello" },
+                new Serializable[][] {
+                        { "a", "b", "c" },
+                        { "", "b", "d" },
+                        { "e", "b", "f" },
+                        { null, "g", "h" },
+                        { null, "g", "i" }
+                });
+
+        MetaParser.registerLanguageParser("grel", "GREL", Parser.grelParser, "value");
+        facet = new ListFacetConfig();
+        facet.columnName = "hello";
+        facet.setExpression("grel:value");
     }
 
     @Test
@@ -87,56 +87,78 @@ public class BlankDownTests extends RefineTest {
     }
 
     @Test
-    public void testBlankDownRecords() throws Exception {
-        Operation op = new BlankDownOperation(
-                EngineConfig.reconstruct("{\"mode\":\"record-based\",\"facets\":[]}"),
-                "second");
-        Process process = op.createProcess(project, new Properties());
-        process.performImmediate();
+    public void testBlankDownRowsNoFacets() throws DoesNotApplyException {
+        Change change = new BlankDownOperation(EngineConfig.ALL_ROWS, "bar").createChange();
+        GridState applied = change.apply(toBlankDown);
 
-        Assert.assertEquals("c", project.rows.get(0).cells.get(2).value);
-        Assert.assertNull(project.rows.get(1).cells.get(2));
-        Assert.assertEquals("c", project.rows.get(2).cells.get(2).value);
-        Assert.assertNull(project.rows.get(3).cells.get(2));
+        GridState expectedGrid = createGrid(new String[] { "foo", "bar", "hello" },
+                new Serializable[][] {
+                        { "a", "b", "c" },
+                        { "", null, "d" },
+                        { "e", null, "f" },
+                        { null, "g", "h" },
+                        { null, null, "i" }
+                });
+
+        assertGridEquals(applied, expectedGrid);
     }
 
     @Test
-    public void testBlankDownRows() throws Exception {
-        Operation op = new BlankDownOperation(
-                EngineConfig.reconstruct("{\"mode\":\"row-based\",\"facets\":[]}"),
-                "second");
-        Process process = op.createProcess(project, new Properties());
-        process.performImmediate();
+    public void testBlankDownRecordsNoFacets() throws DoesNotApplyException {
+        Change change = new BlankDownOperation(EngineConfig.ALL_RECORDS, "bar").createChange();
+        GridState applied = change.apply(toBlankDown);
 
-        Assert.assertEquals("c", project.rows.get(0).cells.get(2).value);
-        Assert.assertNull(project.rows.get(1).cells.get(2));
-        Assert.assertNull(project.rows.get(2).cells.get(2));
-        Assert.assertNull(project.rows.get(3).cells.get(2));
+        GridState expectedGrid = createGrid(new String[] { "foo", "bar", "hello" },
+                new Serializable[][] {
+                        { "a", "b", "c" },
+                        { "", null, "d" },
+                        { "e", "b", "f" },
+                        { null, "g", "h" },
+                        { null, null, "i" }
+                });
+
+        assertGridEquals(applied, expectedGrid);
     }
 
     @Test
-    public void testKeyColumnIndex() throws Exception {
-        // Shift all column indices
-        for (Row r : project.rows) {
-            r.cells.add(0, null);
-        }
-        List<ColumnMetadata> newColumns = new ArrayList<>();
-        for (ColumnMetadata c : project.columnModel.getColumns()) {
-            newColumns.add(new ColumnMetadata(c.getCellIndex() + 1, c.getName()));
-        }
-        project.columnModel.getColumns().clear();
-        project.columnModel.getColumns().addAll(newColumns);
-        project.columnModel.update();
+    public void testBlankDownRowsFacets() throws DoesNotApplyException {
+        facet.selection = Arrays.asList(
+                new DecoratedValue("c", "c"),
+                new DecoratedValue("f", "f"),
+                new DecoratedValue("i", "i"));
+        EngineConfig engineConfig = new EngineConfig(Arrays.asList(facet), Engine.Mode.RowBased);
+        Change change = new BlankDownOperation(engineConfig, "bar").createChange();
+        GridState applied = change.apply(toBlankDown);
 
-        Operation op = new BlankDownOperation(
-                EngineConfig.reconstruct("{\"mode\":\"record-based\",\"facets\":[]}"),
-                "second");
-        Process process = op.createProcess(project, new Properties());
-        process.performImmediate();
+        GridState expected = createGrid(new String[] { "foo", "bar", "hello" },
+                new Serializable[][] {
+                        { "a", "b", "c" },
+                        { "", "b", "d" },
+                        { "e", null, "f" },
+                        { null, "g", "h" },
+                        { null, "g", "i" }
+                });
 
-        Assert.assertEquals("c", project.rows.get(0).cells.get(3).value);
-        Assert.assertNull(project.rows.get(1).cells.get(3));
-        Assert.assertEquals("c", project.rows.get(2).cells.get(3).value);
-        Assert.assertNull(project.rows.get(3).cells.get(3));
+        assertGridEquals(applied, expected);
+    }
+
+    @Test
+    public void testBlankDownRecordsFacets() throws DoesNotApplyException {
+        facet.selection = Arrays.asList(
+                new DecoratedValue("c", "c"));
+        EngineConfig engineConfig = new EngineConfig(Arrays.asList(facet), Engine.Mode.RecordBased);
+        Change change = new BlankDownOperation(engineConfig, "bar").createChange();
+        GridState applied = change.apply(toBlankDown);
+
+        GridState expected = createGrid(new String[] { "foo", "bar", "hello" },
+                new Serializable[][] {
+                        { "a", "b", "c" },
+                        { "", null, "d" },
+                        { "e", "b", "f" },
+                        { null, "g", "h" },
+                        { null, "g", "i" }
+                });
+
+        assertGridEquals(applied, expected);
     }
 }

@@ -27,16 +27,32 @@
 
 package org.openrefine.operations.cell;
 
+import java.io.Serializable;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import org.testng.Assert;
 import org.testng.annotations.BeforeSuite;
+import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
 import org.openrefine.RefineTest;
+import org.openrefine.browsing.DecoratedValue;
+import org.openrefine.browsing.Engine;
+import org.openrefine.browsing.EngineConfig;
+import org.openrefine.browsing.facets.ListFacet.ListFacetConfig;
+import org.openrefine.expr.EvalError;
+import org.openrefine.expr.MetaParser;
+import org.openrefine.expr.ParsingException;
+import org.openrefine.grel.Parser;
+import org.openrefine.history.Change;
+import org.openrefine.history.Change.DoesNotApplyException;
+import org.openrefine.model.GridState;
+import org.openrefine.model.Project;
+import org.openrefine.model.Row;
 import org.openrefine.operations.OperationRegistry;
-import org.openrefine.operations.cell.MassEditOperation;
 import org.openrefine.operations.cell.MassEditOperation.Edit;
 import org.openrefine.util.ParsingUtilities;
 import org.openrefine.util.TestUtils;
@@ -147,5 +163,76 @@ public class MassOperationTests extends RefineTest {
     }
 
     // Not yet testing for mass edit from OR Error
+
+    private GridState initialState;
+    private static EngineConfig engineConfig;
+    private ListFacetConfig facet;
+    private List<Edit> edits;
+    private List<Edit> editsWithFromBlank;
+
+    @BeforeTest
+    public void setUpInitialState() {
+        MetaParser.registerLanguageParser("grel", "GREL", Parser.grelParser, "value");
+        Project project = createProject("my project", new String[] { "foo", "bar" },
+                new Serializable[][] {
+                        { "v1", "a" },
+                        { "v3", "a" },
+                        { "", "a" },
+                        { "", "b" },
+                        { new EvalError("error"), "a" },
+                        { "v1", "b" }
+                });
+        initialState = project.getCurrentGridState();
+        facet = new ListFacetConfig();
+        facet.columnName = "bar";
+        facet.setExpression("grel:value");
+        facet.selection = Collections.singletonList(new DecoratedValue("a", "a"));
+        engineConfig = new EngineConfig(Arrays.asList(facet), Engine.Mode.RowBased);
+        edits = Collections.singletonList(new Edit(Collections.singletonList("v1"), false, false, "v2"));
+        editsWithFromBlank = Arrays.asList(edits.get(0), new Edit(Collections.emptyList(), true, false, "hey"));
+    }
+
+    @Test
+    public void testSimpleReplace() throws DoesNotApplyException, ParsingException {
+        Change change = new MassEditOperation(engineConfig, "foo", "grel:value", editsWithFromBlank).createChange();
+        GridState applied = change.apply(initialState);
+        Row row0 = applied.getRow(0);
+        Assert.assertEquals(row0.getCellValue(0), "v2");
+        Assert.assertEquals(row0.getCellValue(1), "a");
+        Row row1 = applied.getRow(1);
+        Assert.assertEquals(row1.getCellValue(0), "v3");
+        Assert.assertEquals(row1.getCellValue(1), "a");
+        Row row2 = applied.getRow(2);
+        Assert.assertEquals(row2.getCellValue(0), "hey");
+        Assert.assertEquals(row2.getCellValue(1), "a");
+        Row row3 = applied.getRow(3);
+        Assert.assertEquals(row3.getCellValue(0), "");
+        Assert.assertEquals(row3.getCellValue(1), "b");
+        Row row4 = applied.getRow(5);
+        Assert.assertEquals(row4.getCellValue(0), "v1");
+        Assert.assertEquals(row4.getCellValue(1), "b");
+    }
+
+    @Test
+    public void testRecordsMode() throws DoesNotApplyException, ParsingException {
+        EngineConfig engineConfig = new EngineConfig(Arrays.asList(facet), Engine.Mode.RecordBased);
+        Change change = new MassEditOperation(engineConfig, "foo", "grel:value", editsWithFromBlank).createChange();
+        GridState applied = change.apply(initialState);
+        Row row0 = applied.getRow(0);
+        Assert.assertEquals(row0.getCellValue(0), "v2");
+        Assert.assertEquals(row0.getCellValue(1), "a");
+        Row row1 = applied.getRow(1);
+        Assert.assertEquals(row1.getCellValue(0), "v3");
+        Assert.assertEquals(row1.getCellValue(1), "a");
+        Row row2 = applied.getRow(2);
+        Assert.assertEquals(row2.getCellValue(0), "hey");
+        Assert.assertEquals(row2.getCellValue(1), "a");
+        Row row3 = applied.getRow(3);
+        Assert.assertEquals(row3.getCellValue(0), "hey");
+        Assert.assertEquals(row3.getCellValue(1), "b");
+        Row row4 = applied.getRow(5);
+        Assert.assertEquals(row4.getCellValue(0), "v1");
+        Assert.assertEquals(row4.getCellValue(1), "b");
+    }
 
 }

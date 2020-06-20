@@ -35,22 +35,27 @@ package org.openrefine.operations.cell;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import org.apache.commons.lang3.Validate;
 
-import org.openrefine.history.HistoryEntry;
+import org.openrefine.history.Change;
 import org.openrefine.model.Cell;
 import org.openrefine.model.ColumnMetadata;
-import org.openrefine.model.Project;
+import org.openrefine.model.ColumnModel;
+import org.openrefine.model.GridState;
+import org.openrefine.model.IndexedRow;
 import org.openrefine.model.Row;
-import org.openrefine.model.changes.MassRowColumnChange;
+import org.openrefine.model.RowBuilder;
+import org.openrefine.model.RowFilter;
 import org.openrefine.operations.Operation;
 
-public class TransposeColumnsIntoRowsOperation extends Operation {
+public class TransposeColumnsIntoRowsOperation implements Operation {
 
     @JsonProperty("startColumnName")
     final protected String _startColumnName;
@@ -121,6 +126,7 @@ public class TransposeColumnsIntoRowsOperation extends Operation {
             String combinedColumnName,
             boolean prependColumnName,
             String separator) {
+        Validate.notNull(startColumnName);
         _startColumnName = startColumnName;
         _columnCount = columnCount;
         _ignoreBlankCells = ignoreBlankCells;
@@ -141,6 +147,7 @@ public class TransposeColumnsIntoRowsOperation extends Operation {
             boolean fillDown,
             String keyColumnName,
             String valueColumnName) {
+        Validate.notNull(startColumnName);
         _startColumnName = startColumnName;
         _columnCount = columnCount;
         _ignoreBlankCells = ignoreBlankCells;
@@ -155,11 +162,7 @@ public class TransposeColumnsIntoRowsOperation extends Operation {
     }
 
     @Override
-    protected String getDescription() {
-        return getDescription();
-    }
-
-    protected String getDescription() {
+    public String getDescription() {
         if (_combinedColumnName != null) {
             if (_columnCount > 0) {
                 return "Transpose cells in " + _columnCount +
@@ -186,177 +189,180 @@ public class TransposeColumnsIntoRowsOperation extends Operation {
     }
 
     @Override
-    protected HistoryEntry createHistoryEntry(Project project, long historyEntryID) throws Exception {
-        if (_combinedColumnName != null) {
-            if (project.columnModel.getColumnByName(_combinedColumnName) != null) {
-                throw new Exception("Another column already named " + _combinedColumnName);
-            }
-        } else {
-            if (project.columnModel.getColumnByName(_keyColumnName) != null) {
-                throw new Exception("Another column already named " + _keyColumnName);
-            }
-            if (project.columnModel.getColumnByName(_valueColumnName) != null) {
-                throw new Exception("Another column already named " + _valueColumnName);
-            }
-        }
+    public Change createChange() {
+        return new TransposeColumnsIntoRowsChange();
+    }
 
-        List<ColumnMetadata> newColumns = new ArrayList<ColumnMetadata>();
-        List<ColumnMetadata> oldColumns = project.columnModel.getColumns();
+    public class TransposeColumnsIntoRowsChange implements Change {
 
-        int startColumnIndex = oldColumns.size();
-        int columnCount = _columnCount;
-        if (_columnCount > 0) {
-            int columnsLeftToTranspose = _columnCount;
-            for (int c = 0; c < oldColumns.size(); c++) {
-                ColumnMetadata column = oldColumns.get(c);
-                if (columnsLeftToTranspose == 0) {
-                    // This column is beyond the columns to transpose
-
-                    ColumnMetadata newColumn = column.withCellIndex(newColumns.size());
-
-                    newColumns.add(newColumn);
-                } else if (columnsLeftToTranspose < _columnCount) {
-                    // This column is a column to transpose, but not the first
-                    // nothing to do
-
-                    columnsLeftToTranspose--;
-                } else if (_startColumnName.equals(column.getName())) {
-                    // This is the first column to transpose
-
-                    startColumnIndex = c;
-
-                    if (_combinedColumnName != null) {
-                        newColumns.add(new ColumnMetadata(newColumns.size(), _combinedColumnName));
-                    } else {
-                        newColumns.add(new ColumnMetadata(newColumns.size(), _keyColumnName));
-                        newColumns.add(new ColumnMetadata(newColumns.size(), _valueColumnName));
-                    }
-
-                    columnsLeftToTranspose--;
-                } else {
-                    // This column is before all columns to transpose
-
-                    ColumnMetadata newColumn = column.withCellIndex(newColumns.size());
-
-                    newColumns.add(newColumn);
+        @Override
+        public GridState apply(GridState projectState) throws DoesNotApplyException {
+            ColumnModel columnModel = projectState.getColumnModel();
+            if (_combinedColumnName != null) {
+                if (columnModel.getColumnByName(_combinedColumnName) != null) {
+                    throw new DoesNotApplyException("Another column already named " + _combinedColumnName);
+                }
+            } else {
+                if (columnModel.getColumnByName(_keyColumnName) != null) {
+                    throw new DoesNotApplyException("Another column already named " + _keyColumnName);
+                }
+                if (columnModel.getColumnByName(_valueColumnName) != null) {
+                    throw new DoesNotApplyException("Another column already named " + _valueColumnName);
                 }
             }
-        } else {
-            for (int c = 0; c < oldColumns.size(); c++) {
-                ColumnMetadata column = oldColumns.get(c);
-                if (_startColumnName.equals(column.getName())) {
-                    // This is the first column to transpose
 
-                    startColumnIndex = c;
+            List<ColumnMetadata> newColumns = new ArrayList<>();
+            List<ColumnMetadata> oldColumns = columnModel.getColumns();
 
-                    if (_combinedColumnName != null) {
-                        newColumns.add(new ColumnMetadata(newColumns.size(), _combinedColumnName));
+            int startColumnIndex = oldColumns.size();
+            int columnCount = _columnCount;
+            if (_columnCount > 0) {
+                int columnsLeftToTranspose = _columnCount;
+                for (int c = 0; c < oldColumns.size(); c++) {
+                    ColumnMetadata column = oldColumns.get(c);
+                    if (columnsLeftToTranspose == 0) {
+                        // This column is beyond the columns to transpose
+                        newColumns.add(column);
+                    } else if (columnsLeftToTranspose < _columnCount) {
+                        // This column is a column to transpose, but not the first
+                        // nothing to do
+
+                        columnsLeftToTranspose--;
+                    } else if (_startColumnName.equals(column.getName())) {
+                        // This is the first column to transpose
+
+                        startColumnIndex = c;
+
+                        if (_combinedColumnName != null) {
+                            newColumns.add(new ColumnMetadata(_combinedColumnName));
+                        } else {
+                            newColumns.add(new ColumnMetadata(_keyColumnName));
+                            newColumns.add(new ColumnMetadata(_valueColumnName));
+                        }
+
+                        columnsLeftToTranspose--;
                     } else {
-                        newColumns.add(new ColumnMetadata(newColumns.size(), _keyColumnName));
-                        newColumns.add(new ColumnMetadata(newColumns.size(), _valueColumnName));
+                        // This column is before all columns to transpose
+                        newColumns.add(column);
                     }
-                    break;
-                } else {
-                    // This column is before all columns to transpose
-
-                    ColumnMetadata newColumn = column.withCellIndex(newColumns.size());
-
-                    newColumns.add(newColumn);
                 }
+            } else {
+                for (int c = 0; c < oldColumns.size(); c++) {
+                    ColumnMetadata column = oldColumns.get(c);
+                    if (_startColumnName.equals(column.getName())) {
+                        // This is the first column to transpose
+
+                        startColumnIndex = c;
+
+                        if (_combinedColumnName != null) {
+                            newColumns.add(new ColumnMetadata(_combinedColumnName));
+                        } else {
+                            newColumns.add(new ColumnMetadata(_keyColumnName));
+                            newColumns.add(new ColumnMetadata(_valueColumnName));
+                        }
+                        break;
+                    } else {
+                        // This column is before all columns to transpose
+                        newColumns.add(column);
+                    }
+                }
+                columnCount = oldColumns.size() - startColumnIndex;
             }
-            columnCount = oldColumns.size() - startColumnIndex;
-        }
 
-        List<Row> oldRows = project.rows;
-        List<Row> newRows = new ArrayList<Row>(oldRows.size() * columnCount);
-        for (int r = 0; r < oldRows.size(); r++) {
-            Row oldRow = project.rows.get(r);
-            Row firstNewRow = new Row(newColumns.size());
-            int firstNewRowIndex = newRows.size();
+            List<RowBuilder> newRows = new ArrayList<>();
+            for (IndexedRow indexedRow : projectState.iterateRows(RowFilter.ANY_ROW)) {
+                Row oldRow = indexedRow.getRow();
+                RowBuilder firstNewRow = RowBuilder.create(newColumns.size());
+                int firstNewRowIndex = newRows.size();
 
-            newRows.add(firstNewRow);
+                newRows.add(firstNewRow);
 
-            int transposedCells = 0;
-            for (int c = 0; c < oldColumns.size(); c++) {
-                ColumnMetadata column = oldColumns.get(c);
-                Cell cell = oldRow.getCell(column.getCellIndex());
+                int transposedCells = 0;
+                for (int c = 0; c < oldColumns.size(); c++) {
+                    ColumnMetadata column = oldColumns.get(c);
+                    Cell cell = oldRow.getCell(c);
 
-                if (c < startColumnIndex) {
-                    firstNewRow.setCell(c, cell);
-                } else if (c == startColumnIndex || c < startColumnIndex + columnCount) {
-                    if (_combinedColumnName != null) {
-                        Cell newCell;
-                        if (cell == null || cell.value == null) {
-                            if (_prependColumnName && !_ignoreBlankCells) {
-                                newCell = new Cell(column.getName() + _separator, null);
+                    if (c < startColumnIndex) {
+                        firstNewRow.withCell(c, cell);
+                    } else if (c == startColumnIndex || c < startColumnIndex + columnCount) {
+                        if (_combinedColumnName != null) {
+                            Cell newCell;
+                            if (cell == null || cell.value == null) {
+                                if (_prependColumnName && !_ignoreBlankCells) {
+                                    newCell = new Cell(column.getName() + _separator, null);
+                                } else {
+                                    continue;
+                                }
+                            } else if (_prependColumnName) {
+                                newCell = new Cell(column.getName() + _separator + cell.value, null);
                             } else {
+                                newCell = cell;
+                            }
+
+                            RowBuilder rowToModify;
+                            if (transposedCells == 0) {
+                                rowToModify = firstNewRow;
+                            } else {
+                                rowToModify = RowBuilder.create(newColumns.size());
+                                newRows.add(rowToModify);
+                            }
+                            rowToModify.withCell(startColumnIndex, newCell);
+
+                            transposedCells++;
+                        } else {
+                            if (_ignoreBlankCells && (cell == null || cell.value == null)) {
                                 continue;
                             }
-                        } else if (_prependColumnName) {
-                            newCell = new Cell(column.getName() + _separator + cell.value, null);
-                        } else {
-                            newCell = cell;
+
+                            RowBuilder rowToModify;
+                            if (transposedCells == 0) {
+                                rowToModify = firstNewRow;
+                            } else {
+                                rowToModify = RowBuilder.create(newColumns.size());
+                                newRows.add(rowToModify);
+                            }
+                            rowToModify.withCell(startColumnIndex, new Cell(column.getName(), null));
+                            rowToModify.withCell(startColumnIndex + 1, cell);
+
+                            transposedCells++;
                         }
 
-                        Row rowToModify;
-                        if (transposedCells == 0) {
-                            rowToModify = firstNewRow;
-                        } else {
-                            rowToModify = new Row(newColumns.size());
-                            newRows.add(rowToModify);
-                        }
-                        rowToModify.setCell(startColumnIndex, newCell);
-
-                        transposedCells++;
                     } else {
-                        if (_ignoreBlankCells && (cell == null || cell.value == null)) {
-                            continue;
-                        }
-
-                        Row rowToModify;
-                        if (transposedCells == 0) {
-                            rowToModify = firstNewRow;
-                        } else {
-                            rowToModify = new Row(newColumns.size());
-                            newRows.add(rowToModify);
-                        }
-                        rowToModify.setCell(startColumnIndex, new Cell(column.getName(), null));
-                        rowToModify.setCell(startColumnIndex + 1, cell);
-
-                        transposedCells++;
+                        firstNewRow.withCell(
+                                c - columnCount + (_combinedColumnName != null ? 1 : 2),
+                                cell);
                     }
-
-                } else {
-                    firstNewRow.setCell(
-                            c - columnCount + (_combinedColumnName != null ? 1 : 2),
-                            cell);
                 }
-            }
 
-            if (_fillDown) {
-                for (int r2 = firstNewRowIndex + 1; r2 < newRows.size(); r2++) {
-                    Row newRow = newRows.get(r2);
-                    for (int c = 0; c < newColumns.size(); c++) {
-                        if (c < startColumnIndex ||
-                                (_combinedColumnName != null ? c > startColumnIndex : c > startColumnIndex + 1)) {
-                            ColumnMetadata column = newColumns.get(c);
-                            int cellIndex = column.getCellIndex();
+                if (_fillDown) {
+                    for (int r2 = firstNewRowIndex + 1; r2 < newRows.size(); r2++) {
+                        RowBuilder newRow = newRows.get(r2);
+                        for (int c = 0; c < newColumns.size(); c++) {
+                            if (c < startColumnIndex ||
+                                    (_combinedColumnName != null ? c > startColumnIndex : c > startColumnIndex + 1)) {
+                                int cellIndex = c;
 
-                            Cell cellToCopy = firstNewRow.getCell(cellIndex);
-                            if (cellToCopy != null && newRow.getCell(cellIndex) == null) {
-                                newRow.setCell(cellIndex, cellToCopy);
+                                Cell cellToCopy = firstNewRow.getCell(cellIndex);
+                                if (cellToCopy != null && newRow.getCell(cellIndex) == null) {
+                                    newRow.withCell(cellIndex, cellToCopy);
+                                }
                             }
                         }
                     }
                 }
             }
+
+            List<Row> rows = newRows.stream()
+                    .map(rb -> rb.build(newColumns.size()))
+                    .collect(Collectors.toList());
+            ColumnModel newColumnModel = new ColumnModel(newColumns);
+            return projectState.getDatamodelRunner().create(newColumnModel, rows, projectState.getOverlayModels());
         }
 
-        return new HistoryEntry(
-                historyEntryID,
-                project,
-                getDescription(),
-                this,
-                new MassRowColumnChange(newColumns, newRows));
+        @Override
+        public boolean isImmediate() {
+            return true;
+        }
+
     }
 }

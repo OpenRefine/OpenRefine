@@ -33,6 +33,12 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package org.openrefine.operations.cell;
 
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
+
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
@@ -40,10 +46,21 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import org.openrefine.expr.ParsingException;
 import org.openrefine.history.Change;
-import org.openrefine.model.changes.ColumnSplitChange.Mode;
-import org.openrefine.model.changes.MultiValuedCellSplitChange;
+import org.openrefine.model.Cell;
+import org.openrefine.model.ColumnModel;
+import org.openrefine.model.GridState;
+import org.openrefine.model.Record;
+import org.openrefine.model.RecordMapper;
+import org.openrefine.model.Row;
 import org.openrefine.operations.ImmediateOperation;
+import org.openrefine.operations.column.ColumnSplitOperation.Mode;
+import org.openrefine.operations.utils.CellValueSplitter;
 
+/**
+ * Splits the value of a cell and spreads the splits on the following rows, while respecting the record structure. The
+ * keyColumnName can be used to specify which column should be treated as record key (although this parameter has never
+ * been exposed in the UI as of 2020-05).
+ */
 public class MultiValuedCellSplitOperation extends ImmediateOperation {
 
     final protected String _columnName;
@@ -144,7 +161,103 @@ public class MultiValuedCellSplitOperation extends ImmediateOperation {
 
     @Override
     public Change createChange() throws ParsingException {
-        return new MultiValuedCellSplitChange(_columnName, _keyColumnName, _mode, _separator, _regex, _fieldLengths);
+        return new MultiValuedCellSplitChange();
     }
 
+    public class MultiValuedCellSplitChange implements Change {
+
+        private final CellValueSplitter splitter;
+
+        public MultiValuedCellSplitChange() {
+            this.splitter = CellValueSplitter.construct(_mode, _separator, _regex, _fieldLengths, null);
+        }
+
+        @Override
+        public GridState apply(GridState projectState) throws DoesNotApplyException {
+            ColumnModel columnModel = projectState.getColumnModel();
+            int columnIdx = columnModel.getColumnIndexByName(_columnName);
+            if (columnIdx == -1) {
+                throw new DoesNotApplyException(
+                        String.format("Column '%s' does not exist", _columnName));
+            }
+            int keyColumnIdx = _keyColumnName == null ? 0 : columnModel.getColumnIndexByName(_keyColumnName);
+            if (keyColumnIdx == -1) {
+                throw new DoesNotApplyException(
+                        String.format("Key column '%s' does not exist", _keyColumnName));
+            }
+            if (keyColumnIdx != columnModel.getKeyColumnIndex()) {
+                projectState = projectState.withColumnModel(columnModel.withKeyColumnIndex(keyColumnIdx));
+            }
+            return projectState.mapRecords(recordMapper(columnIdx, splitter), columnModel);
+        }
+
+        @Override
+        public boolean isImmediate() {
+            return true;
+        }
+
+    }
+
+    protected static RecordMapper recordMapper(int columnIdx, CellValueSplitter splitter) {
+        return new RecordMapper() {
+
+            private static final long serialVersionUID = -6481651649785541256L;
+
+            @Override
+            public List<Row> call(Record record) {
+                List<String> splits = Collections.emptyList();
+                List<Row> origRows = record.getRows();
+                List<Row> newRows = new ArrayList<>(origRows.size());
+                int rowSize = 0;
+
+                for (int i = 0; i != origRows.size(); i++) {
+                    Row row = origRows.get(i);
+                    rowSize = row.getCells().size();
+
+                    if (row.isCellBlank(columnIdx)) {
+                        if (!splits.isEmpty()) {
+                            // We have space to add an accumulated split value
+                            String splitValue = splits.remove(0);
+                            newRows.add(row.withCell(columnIdx, new Cell(splitValue, null)));
+                        } else {
+                            // We leave the row as it is
+                            newRows.add(row);
+                        }
+                    } else {
+                        // We have a non-empty value to split
+
+                        // We need to exhaust the queue of splits to insert first
+                        for (String splitValue : splits) {
+                            Row newRow = new Row(Collections.nCopies(rowSize, (Cell) null));
+                            newRows.add(newRow.withCell(columnIdx, new Cell(splitValue, null)));
+                        }
+                        splits = Collections.emptyList();
+
+                        // Split the current value
+                        Serializable cellValue = origRows.get(i).getCellValue(columnIdx);
+                        if (!(cellValue instanceof String)) {
+                            newRows.add(row);
+                        } else {
+                            // we use a linked list because we pop elements one by one later on
+                            splits = new LinkedList<>(splitter.split((String) cellValue));
+                            Cell firstSplit = null;
+                            if (!splits.isEmpty()) {
+                                firstSplit = new Cell(splits.remove(0), null);
+                            }
+                            newRows.add(row.withCell(columnIdx, firstSplit));
+                        }
+                    }
+                }
+
+                //  Exhaust any remaining splits at the end
+                for (String splitValue : splits) {
+                    Row newRow = new Row(Collections.nCopies(rowSize, (Cell) null));
+                    newRows.add(newRow.withCell(columnIdx, new Cell(splitValue, null)));
+                }
+
+                return newRows;
+            }
+
+        };
+    }
 }

@@ -75,10 +75,6 @@ public class ColumnMetadata implements Serializable {
         this(name, name, null, null);
     }
 
-    public ColumnMetadata withCellIndex(int cellIndex) {
-        return new ColumnMetadata(_originalName, _name, _reconConfig, _reconStats);
-    }
-
     @JsonProperty("originalName")
     public String getOriginalHeaderLabel() {
         return _originalName;

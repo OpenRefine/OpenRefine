@@ -27,16 +27,48 @@
 
 package org.openrefine.operations.column;
 
+import java.io.Serializable;
+import java.util.Arrays;
+import java.util.List;
+
+import org.testng.Assert;
+import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.Test;
 
 import org.openrefine.RefineTest;
+import org.openrefine.expr.EvalError;
+import org.openrefine.expr.MetaParser;
+import org.openrefine.expr.ParsingException;
+import org.openrefine.grel.Parser;
+import org.openrefine.history.Change;
+import org.openrefine.history.Change.DoesNotApplyException;
+import org.openrefine.model.Cell;
+import org.openrefine.model.ColumnMetadata;
+import org.openrefine.model.GridState;
+import org.openrefine.model.IndexedRow;
 import org.openrefine.operations.OperationRegistry;
 import org.openrefine.operations.column.ColumnMoveOperation;
 import org.openrefine.util.ParsingUtilities;
 import org.openrefine.util.TestUtils;
 
 public class ColumnMoveOperationTests extends RefineTest {
+
+    protected GridState initialState;
+
+    @BeforeMethod
+    public void setUpInitialState() {
+        MetaParser.registerLanguageParser("grel", "GREL", Parser.grelParser, "value");
+        initialState = createGrid(new String[] { "foo", "bar", "hello" },
+                new Serializable[][] {
+                        { "v1", "a", "d" },
+                        { "v3", "a", "f" },
+                        { "", "a", "g" },
+                        { "", "b", "h" },
+                        { new EvalError("error"), "a", "i" },
+                        { "v1", "b", "j" }
+                });
+    }
 
     @BeforeSuite
     public void setUp() {
@@ -50,5 +82,44 @@ public class ColumnMoveOperationTests extends RefineTest {
                 + "\"columnName\":\"my column\","
                 + "\"index\":3}";
         TestUtils.isSerializedTo(ParsingUtilities.mapper.readValue(json, ColumnMoveOperation.class), json, ParsingUtilities.defaultWriter);
+    }
+
+    @Test
+    public void testForward() throws DoesNotApplyException, ParsingException {
+        Change SUT = new ColumnMoveOperation("foo", 1).createChange();
+        GridState applied = SUT.apply(initialState);
+        List<IndexedRow> rows = applied.collectRows();
+        Assert.assertEquals(applied.getColumnModel().getColumns(),
+                Arrays.asList(new ColumnMetadata("bar"), new ColumnMetadata("foo"), new ColumnMetadata("hello")));
+        Assert.assertEquals(rows.get(0).getRow().getCells(),
+                Arrays.asList(new Cell("a", null), new Cell("v1", null), new Cell("d", null)));
+    }
+
+    @Test
+    public void testSamePosition() throws DoesNotApplyException, ParsingException {
+        Change SUT = new ColumnMoveOperation("bar", 1).createChange();
+        GridState applied = SUT.apply(initialState);
+        List<IndexedRow> rows = applied.collectRows();
+        Assert.assertEquals(applied.getColumnModel().getColumns(),
+                Arrays.asList(new ColumnMetadata("foo"), new ColumnMetadata("bar"), new ColumnMetadata("hello")));
+        Assert.assertEquals(rows.get(0).getRow().getCells(),
+                Arrays.asList(new Cell("v1", null), new Cell("a", null), new Cell("d", null)));
+    }
+
+    @Test
+    public void testBackward() throws DoesNotApplyException, ParsingException {
+        Change SUT = new ColumnMoveOperation("hello", 1).createChange();
+        GridState applied = SUT.apply(initialState);
+        List<IndexedRow> rows = applied.collectRows();
+        Assert.assertEquals(applied.getColumnModel().getColumns(),
+                Arrays.asList(new ColumnMetadata("foo"), new ColumnMetadata("hello"), new ColumnMetadata("bar")));
+        Assert.assertEquals(rows.get(0).getRow().getCells(),
+                Arrays.asList(new Cell("v1", null), new Cell("d", null), new Cell("a", null)));
+    }
+
+    @Test(expectedExceptions = DoesNotApplyException.class)
+    public void testColumnDoesNotExist() throws DoesNotApplyException, ParsingException {
+        Change SUT = new ColumnMoveOperation("not_found", 1).createChange();
+        SUT.apply(initialState);
     }
 }

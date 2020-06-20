@@ -27,10 +27,26 @@
 
 package org.openrefine.operations.column;
 
+import java.io.Serializable;
+import java.util.Arrays;
+import java.util.List;
+
+import org.testng.Assert;
+import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.Test;
 
 import org.openrefine.RefineTest;
+import org.openrefine.expr.EvalError;
+import org.openrefine.expr.MetaParser;
+import org.openrefine.expr.ParsingException;
+import org.openrefine.grel.Parser;
+import org.openrefine.history.Change;
+import org.openrefine.history.Change.DoesNotApplyException;
+import org.openrefine.model.Cell;
+import org.openrefine.model.ColumnMetadata;
+import org.openrefine.model.GridState;
+import org.openrefine.model.IndexedRow;
 import org.openrefine.operations.Operation;
 import org.openrefine.operations.OperationRegistry;
 import org.openrefine.operations.column.ColumnRenameOperation;
@@ -38,6 +54,22 @@ import org.openrefine.util.ParsingUtilities;
 import org.openrefine.util.TestUtils;
 
 public class ColumnRenameOperationTests extends RefineTest {
+
+    protected GridState initialState;
+
+    @BeforeMethod
+    public void setUpInitialState() {
+        MetaParser.registerLanguageParser("grel", "GREL", Parser.grelParser, "value");
+        initialState = createGrid(new String[] { "foo", "bar", "hello" },
+                new Serializable[][] {
+                        { "v1", "a", "d" },
+                        { "v3", "a", "f" },
+                        { "", "a", "g" },
+                        { "", "b", "h" },
+                        { new EvalError("error"), "a", "i" },
+                        { "v1", "b", "j" }
+                });
+    }
 
     @BeforeSuite
     public void setUp() {
@@ -52,5 +84,23 @@ public class ColumnRenameOperationTests extends RefineTest {
                 + "\"newColumnName\":\"new name\"}";
         Operation op = ParsingUtilities.mapper.readValue(json, Operation.class);
         TestUtils.isSerializedTo(op, json, ParsingUtilities.defaultWriter);
+    }
+
+    @Test
+    public void testRename() throws DoesNotApplyException, ParsingException {
+        Change SUT = new ColumnRenameOperation("foo", "newfoo").createChange();
+        GridState applied = SUT.apply(initialState);
+
+        List<IndexedRow> rows = applied.collectRows();
+        Assert.assertEquals(applied.getColumnModel().getColumns(),
+                Arrays.asList(new ColumnMetadata("foo", "newfoo", null, null), new ColumnMetadata("bar"), new ColumnMetadata("hello")));
+        Assert.assertEquals(rows.get(0).getRow().getCells(),
+                Arrays.asList(new Cell("v1", null), new Cell("a", null), new Cell("d", null)));
+    }
+
+    @Test(expectedExceptions = DoesNotApplyException.class)
+    public void testNameConflict() throws DoesNotApplyException, ParsingException {
+        Change SUT = new ColumnRenameOperation("foo", "bar").createChange();
+        SUT.apply(initialState);
     }
 }

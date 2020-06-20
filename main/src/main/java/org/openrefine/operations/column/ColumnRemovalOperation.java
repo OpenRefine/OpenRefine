@@ -36,9 +36,14 @@ package org.openrefine.operations.column;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import org.openrefine.browsing.EngineConfig;
 import org.openrefine.expr.ParsingException;
 import org.openrefine.history.Change;
-import org.openrefine.model.changes.ColumnRemovalChange;
+import org.openrefine.model.ColumnModel;
+import org.openrefine.model.GridState;
+import org.openrefine.model.Row;
+import org.openrefine.model.RowMapper;
+import org.openrefine.model.changes.RowMapChange;
 import org.openrefine.operations.ImmediateOperation;
 
 public class ColumnRemovalOperation extends ImmediateOperation {
@@ -63,6 +68,51 @@ public class ColumnRemovalOperation extends ImmediateOperation {
 
     @Override
     public Change createChange() throws ParsingException {
-        return new ColumnRemovalChange(_columnName);
+        return new ColumnRemovalChange();
+    }
+
+    /**
+     * Removes a column from the grid.
+     * 
+     * @author Antonin Delpeuch
+     *
+     */
+    public class ColumnRemovalChange extends RowMapChange {
+
+        public ColumnRemovalChange() {
+            super(EngineConfig.ALL_ROWS);
+        }
+
+        @Override
+        public boolean isImmediate() {
+            return true;
+        }
+
+        @Override
+        public ColumnModel getNewColumnModel(GridState state) throws DoesNotApplyException {
+            ColumnModel model = state.getColumnModel();
+            int columnIndex = columnIndex(model, _columnName);
+            return model.removeColumn(columnIndex);
+        }
+
+        @Override
+        public RowMapper getPositiveRowMapper(GridState state) throws DoesNotApplyException {
+            int columnIndex = columnIndex(state.getColumnModel(), _columnName);
+            return mapper(columnIndex);
+        }
+
+    }
+
+    protected static RowMapper mapper(int columnIndex) {
+        return new RowMapper() {
+
+            private static final long serialVersionUID = -120614551816915787L;
+
+            @Override
+            public Row call(long rowId, Row row) {
+                return row.removeCell(columnIndex);
+            }
+
+        };
     }
 }

@@ -18,7 +18,7 @@ import org.openrefine.overlay.OverlayModel;
  * A change which acts by transforming each row regardless of its context, and only those matched by facets. In records
  * mode, this change is applied on each row of the filtered records.
  * 
- * This class can also be subclassed for changes which ignore the engine, by initializing the engine config with
+ * This class can also be subclassed by changes which ignore the engine, by initializing the engine config with
  * {@link EngineConfig.ALL_ROWS}.
  * 
  * @author Antonin Delpeuch
@@ -37,14 +37,14 @@ public abstract class RowMapChange extends EngineDependentChange {
      * @author Antonin Delpeuch
      *
      */
-    protected static class GridMap {
+    public static class GridMap {
 
         protected final ColumnModel columnModel;
         protected final RowMapper positiveMapper;
         protected final RowMapper negativeMapper;
         protected final Map<String, OverlayModel> overlayModels;
 
-        protected GridMap(
+        public GridMap(
                 ColumnModel columnModel,
                 RowMapper positiveMapper,
                 RowMapper negativeMapper,

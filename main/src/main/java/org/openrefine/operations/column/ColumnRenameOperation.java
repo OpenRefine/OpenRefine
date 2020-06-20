@@ -36,9 +36,13 @@ package org.openrefine.operations.column;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import org.openrefine.browsing.EngineConfig;
 import org.openrefine.expr.ParsingException;
 import org.openrefine.history.Change;
-import org.openrefine.model.changes.ColumnRenameChange;
+import org.openrefine.model.ColumnModel;
+import org.openrefine.model.GridState;
+import org.openrefine.model.ModelException;
+import org.openrefine.model.changes.RowMapChange;
 import org.openrefine.operations.ImmediateOperation;
 
 public class ColumnRenameOperation extends ImmediateOperation {
@@ -71,6 +75,31 @@ public class ColumnRenameOperation extends ImmediateOperation {
 
     @Override
     public Change createChange() throws ParsingException {
-        return new ColumnRenameChange(_oldColumnName, _newColumnName);
+        return new ColumnRenameChange();
+    }
+
+    public class ColumnRenameChange extends RowMapChange {
+
+        public ColumnRenameChange() {
+            super(EngineConfig.ALL_ROWS);
+        }
+
+        @Override
+        public ColumnModel getNewColumnModel(GridState state) throws DoesNotApplyException {
+            ColumnModel model = state.getColumnModel();
+            int index = columnIndex(model, _oldColumnName);
+            try {
+                return model.renameColumn(index, _newColumnName);
+            } catch (ModelException e) {
+                throw new DoesNotApplyException(
+                        String.format("Column '%s' already exists", _newColumnName));
+            }
+        }
+
+        @Override
+        public boolean isImmediate() {
+            return true;
+        }
+
     }
 }

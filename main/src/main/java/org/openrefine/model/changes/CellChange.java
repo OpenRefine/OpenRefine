@@ -42,6 +42,12 @@ import org.openrefine.model.GridState;
 import org.openrefine.model.Row;
 import org.openrefine.model.RowMapper;
 
+/**
+ * Changes a single cell at a designated row and column indices.
+ * 
+ * @author Antonin Delpeuch
+ *
+ */
 public class CellChange extends RowMapChange {
 
     @JsonProperty("rowId")

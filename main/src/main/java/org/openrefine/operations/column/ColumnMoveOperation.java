@@ -33,12 +33,22 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package org.openrefine.operations.column;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import org.openrefine.browsing.EngineConfig;
 import org.openrefine.expr.ParsingException;
 import org.openrefine.history.Change;
-import org.openrefine.model.changes.ColumnMoveChange;
+import org.openrefine.model.Cell;
+import org.openrefine.model.ColumnMetadata;
+import org.openrefine.model.ColumnModel;
+import org.openrefine.model.GridState;
+import org.openrefine.model.Row;
+import org.openrefine.model.RowMapper;
+import org.openrefine.model.changes.RowMapChange;
 import org.openrefine.operations.ImmediateOperation;
 
 public class ColumnMoveOperation extends ImmediateOperation {
@@ -71,6 +81,59 @@ public class ColumnMoveOperation extends ImmediateOperation {
 
     @Override
     public Change createChange() throws ParsingException {
-        return new ColumnMoveChange(_columnName, _index);
+        return new ColumnMoveChange();
+    }
+
+    public class ColumnMoveChange extends RowMapChange {
+
+        public ColumnMoveChange() {
+            super(EngineConfig.ALL_ROWS);
+        }
+
+        @Override
+        public boolean isImmediate() {
+            return true;
+        }
+
+        @Override
+        public ColumnModel getNewColumnModel(GridState gridState) throws DoesNotApplyException {
+            ColumnModel columnModel = gridState.getColumnModel();
+            int fromIndex = columnIndex(columnModel, _columnName);
+            ColumnMetadata column = columnModel.getColumns().get(fromIndex);
+            return columnModel.removeColumn(fromIndex).insertUnduplicatedColumn(_index, column);
+        }
+
+        @Override
+        public RowMapper getPositiveRowMapper(GridState state) throws DoesNotApplyException {
+            int fromIndex = columnIndex(state.getColumnModel(), _columnName);
+            return mapper(fromIndex, _index);
+        }
+
+    }
+
+    protected static RowMapper mapper(int fromIndex, int toIndex) {
+        return new RowMapper() {
+
+            private static final long serialVersionUID = 1L;
+
+            @Override
+            public Row call(long rowId, Row row) {
+                List<Cell> cells = row.getCells();
+                List<Cell> newCells = new ArrayList<>(cells.size());
+                if (fromIndex <= toIndex) {
+                    newCells.addAll(cells.subList(0, fromIndex));
+                    newCells.addAll(cells.subList(fromIndex + 1, toIndex + 1));
+                    newCells.add(cells.get(fromIndex));
+                    newCells.addAll(cells.subList(toIndex + 1, cells.size()));
+                } else {
+                    newCells.addAll(cells.subList(0, toIndex));
+                    newCells.add(cells.get(fromIndex));
+                    newCells.addAll(cells.subList(toIndex, fromIndex));
+                    newCells.addAll(cells.subList(fromIndex + 1, cells.size()));
+                }
+                return new Row(newCells);
+            }
+
+        };
     }
 }
