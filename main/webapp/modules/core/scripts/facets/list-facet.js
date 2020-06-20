@@ -163,7 +163,7 @@ ListFacet.prototype._initializeUI = function() {
           '<a href="javascript:{}" class="facet-choice-link" bind="changeButton">'+$.i18n('core-facets/change')+'</a>' +
           '<span class="facet-title-span" bind="titleSpan" title="'+$.i18n('core-facets/edit-facet-title')+'"></span>' +
         '</td>' +
-      '</tr></table></div>' + 
+      '</tr></table></div>' +
     '</div>' +
     '<div class="facet-expression" bind="expressionDiv" title="'+$.i18n('core-facets/click-to-edit')+'"></div>' +
     '<div class="facet-controls" bind="controlsDiv" style="display:none;">' +
@@ -179,7 +179,7 @@ ListFacet.prototype._initializeUI = function() {
     '</div>'
   );
   this._elmts = DOM.bind(this._div);
-  
+
   this._elmts.titleSpan.text(this._config.name);
   this._elmts.changeButton.attr("title",$.i18n('core-facets/current-exp')+": " + this._config.expression).click(function() {
     self._elmts.expressionDiv.slideToggle(100, function() {
