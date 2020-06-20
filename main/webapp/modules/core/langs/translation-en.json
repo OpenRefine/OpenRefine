@@ -300,6 +300,8 @@
     "core-dialogs/for-null-cell-value-to-empty-str-label": "Convert null value to NULL in INSERT",
     "core-dialogs/choose-export-destination": "Please choose the destination for project export",
     "core-dialogs/export-to-local": "OpenRefine project archive to file",
+    "core-facets/facet-current-title": "The current name of the facet is: $1.\n To what name do you want to change it?",
+    "core-facets/edit-facet-title": "Click here to edit the name of the facet",
     "core-facets/remove-facet": "Remove this facet",
     "core-facets/minimize-facet": "Toggle between the minimization and maximization of this facet",
     "core-facets/reset": "reset",
