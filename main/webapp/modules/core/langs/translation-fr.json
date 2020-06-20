@@ -13,6 +13,7 @@
     "core-index/version": "Version",
     "core-index/error-rename": "Échec du renommage du projet :",
     "core-index/pref-key": "Valeur de la préférence :",
+    "core-index/prefs-loading-failed": "La lecture des préférences n’a pas réussie.",
     "core-index/change-metadata-value": "Changer la valeur de la clé de métadonnée",
     "core-index/sample-data": "jeux de données d'exemple",
     "core-index/description": "Description :",
