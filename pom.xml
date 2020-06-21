@@ -57,6 +57,7 @@
     <jee.port>3333</jee.port>
     <refine.data>/tmp/refine</refine.data>
     <surefire.version>2.22.2</surefire.version>
+    <surefireArgs></surefireArgs>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <jackson.version>2.11.0</jackson.version>
   </properties>
