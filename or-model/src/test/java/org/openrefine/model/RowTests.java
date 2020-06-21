@@ -125,4 +125,15 @@ public class RowTests {
         Assert.assertTrue((Boolean) row.getField("starred"));
     }
 
+    @Test
+    public void withFlagged() {
+        Row row = new Row(Arrays.asList(new Cell("hello", null)), false, false);
+        Assert.assertTrue(row.withFlagged(true).flagged);
+    }
+
+    @Test
+    public void withStarred() {
+        Row row = new Row(Arrays.asList(new Cell("hello", null)), false, false);
+        Assert.assertTrue(row.withStarred(true).starred);
+    }
 }

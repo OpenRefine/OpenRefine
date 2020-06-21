@@ -232,6 +232,26 @@ public class Row implements HasFields, Serializable {
         return new Row(newCells, flagged, starred);
     }
 
+    /**
+     * Changes the flag on the row.
+     * 
+     * @param newFlagged
+     * @return
+     */
+    public Row withFlagged(boolean newFlagged) {
+        return new Row(cells, newFlagged, starred);
+    }
+
+    /**
+     * Changes the star on the row.
+     * 
+     * @param newStarred
+     * @return
+     */
+    public Row withStarred(boolean newStarred) {
+        return new Row(cells, flagged, newStarred);
+    }
+
     public void save(Writer writer, Properties options) {
         if (options.containsKey("rowIndex")) {
             // See GetRowsCommand to serialize a row with indices
