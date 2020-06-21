@@ -284,7 +284,7 @@
     "core-dialogs/custom-tab-exp": "Exporteur tabulaire personnalisé",
     "core-dialogs/select-columns-dialog": "Sélectionner les colonnes",
     "core-facets/regular-dot": "Point de taille normale",
-    "core-facets/facet-current-title": "Le nom actuel de la facette est : $1.\nQue voulez-vous que le nouveau nom soit?",
+    "core-facets/facet-current-title": "Le nom actuel de la facette est : $1.\nEntrez le nouveau nom de la facette&nbsp;:",
     "core-facets/edit-facet-title": "Cliquez ici pour éditer le nom de la facette",
     "core-facets/current-exp": "Expression en cours",
     "core-facets/set-choice-count": "Indiquer le nombre limite de choix",
