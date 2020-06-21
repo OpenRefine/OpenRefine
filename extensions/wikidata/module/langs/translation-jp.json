@@ -186,5 +186,22 @@
     "warnings-messages/difference-of-the-properties-is-not-within-the-specified-range/body": "{source_entity} と {target_entity} の差は、範囲 [{min_value}, {max_value}]にあると期待されていますが、 {example_entity} などでは範囲内にありません。",
     "warnings-messages/difference-of-the-properties-is-not-within-the-specified-range/title": "{source_entity}と{target_entity}が不正です",
     "warnings-messages/having-conflicts-with-statements/body": "{example_entity}のような項目で、競合するプロパティ {property_entity} を削除する.",
-    "warnings-messages/having-conflicts-with-statements/title": "{property_entity} はステートメント {added_property_entity} と競合します."
+    "warnings-messages/having-conflicts-with-statements/title": "{property_entity} はステートメント {added_property_entity} と競合します.",
+    "wikidata-account/owner-only-consumer-remember-me-title": "Consumer証明書はクッキーに保存さます。共有PCでは使用しないでください.",
+    "wikidata-account/password-remember-me-title": "パスワードは保存されません。共有PCでは使用しないでください.",
+    "wikidata-account/remember-me": "ログイン情報を記憶",
+    "wikidata-account/access-secret-placeholder": "アクセスの秘密",
+    "wikidata-account/access-secret-label": "アクセスの秘密:",
+    "wikidata-account/access-token-placeholder": "アクセストークン",
+    "wikidata-account/access-token-label": "アクセストークン:",
+    "wikidata-account/consumer-secret-placeholder": "consumerの秘密",
+    "wikidata-account/consumer-secret-label": "Consumerの秘密:",
+    "wikidata-account/consumer-token-placeholder": "consumerトークン",
+    "wikidata-account/consumer-token-label": "Consumerトークン:",
+    "wikidata-account/password-placeholder": "パスワード",
+    "wikidata-account/username-placeholder": "ユーザー名",
+    "wikidata-account/invalid-credentials": "無効な証明書",
+    "wikidata-account/explain-owner-only-consumer-login": "<a>オーナー限定consumer</a>でもログインできます",
+    "wikidata-account/explain-password-login": "<a>ユーザー名/パスワード</a>でもログインできます",
+    "wikidata-account/explain-owner-only-consumer-wiki": "オーナー限定comsumerを取得するには、 <a href=\"https://github.com/OpenRefine/OpenRefine/wiki/Wikidata-owner-only-consumer\" target=\"_blank\">wiki</a> を参照してください."
 }
