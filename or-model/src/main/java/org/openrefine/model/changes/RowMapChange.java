@@ -161,7 +161,7 @@ public abstract class RowMapChange extends EngineDependentChange {
 	 * @return
 	 * @throws DoesNotApplyException 
 	 */
-	protected int columnIndex(ColumnModel model, String columnName) throws DoesNotApplyException {
+	public static int columnIndex(ColumnModel model, String columnName) throws DoesNotApplyException {
 		int index = model.getColumnIndexByName(columnName);
 		if (index == -1) {
 			throw new DoesNotApplyException(

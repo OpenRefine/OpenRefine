@@ -34,19 +34,17 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package org.openrefine.operations.column;
 
 import org.openrefine.browsing.EngineConfig;
-import org.openrefine.expr.ParsingException;
-import org.openrefine.history.Change;
-import org.openrefine.history.dag.DagSlice;
+import org.openrefine.history.Change.DoesNotApplyException;
 import org.openrefine.model.ColumnModel;
 import org.openrefine.model.GridState;
 import org.openrefine.model.ModelException;
-import org.openrefine.model.changes.RowMapChange;
-import org.openrefine.operations.ImmediateOperation;
+import org.openrefine.model.RowMapper;
+import org.openrefine.operations.ImmediateRowMapOperation;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-public class ColumnRenameOperation extends ImmediateOperation {
+public class ColumnRenameOperation extends ImmediateRowMapOperation {
     final protected String _oldColumnName;
     final protected String _newColumnName;
 
@@ -57,6 +55,7 @@ public class ColumnRenameOperation extends ImmediateOperation {
         @JsonProperty("newColumnName")
         String newColumnName
     ) {
+    	super(EngineConfig.ALL_ROWS);
         _oldColumnName = oldColumnName;
         _newColumnName = newColumnName;
     }
@@ -76,39 +75,20 @@ public class ColumnRenameOperation extends ImmediateOperation {
         return "Rename column " + _oldColumnName + " to " + _newColumnName;
     }
 
+    @Override
+    public ColumnModel getNewColumnModel(GridState state) throws DoesNotApplyException {
+    	ColumnModel model = state.getColumnModel();
+    	int index = columnIndex(model, _oldColumnName);
+    	try {
+			return model.renameColumn(index, _newColumnName);
+		} catch (ModelException e) {
+			throw new DoesNotApplyException(
+					String.format("Column '%s' already exists", _newColumnName));
+		}
+    }
+
 	@Override
-	public Change createChange() throws ParsingException {
-		return new ColumnRenameChange();
-	}
-	
-	public class ColumnRenameChange extends RowMapChange {
-
-	    public ColumnRenameChange() {
-	    	super(EngineConfig.ALL_ROWS);
-	    }
-	    
-	    @Override
-	    public ColumnModel getNewColumnModel(GridState state) throws DoesNotApplyException {
-	    	ColumnModel model = state.getColumnModel();
-	    	int index = columnIndex(model, _oldColumnName);
-	    	try {
-				return model.renameColumn(index, _newColumnName);
-			} catch (ModelException e) {
-				throw new DoesNotApplyException(
-						String.format("Column '%s' already exists", _newColumnName));
-			}
-	    }
-
-		@Override
-		public boolean isImmediate() {
-			return true;
-		}
-
-		@Override
-		public DagSlice getDagSlice() {
-			// TODO Auto-generated method stub
-			return null;
-		}
-
+	protected RowMapper getPositiveRowMapper(GridState state) throws DoesNotApplyException {
+		return RowMapper.IDENTITY;
 	}
 }

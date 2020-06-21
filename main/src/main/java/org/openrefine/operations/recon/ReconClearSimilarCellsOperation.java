@@ -44,12 +44,14 @@ import org.openrefine.model.Project;
 import org.openrefine.model.Row;
 import org.openrefine.model.changes.CellChange;
 import org.openrefine.model.changes.ReconChange;
+import org.openrefine.model.changes.RowMapChange;
 import org.openrefine.operations.EngineDependentMassCellOperation;
+import org.openrefine.operations.EngineDependentOperation;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-public class ReconClearSimilarCellsOperation extends EngineDependentMassCellOperation {
+public class ReconClearSimilarCellsOperation extends EngineDependentOperation {
     final protected String _similarValue;
 
     @JsonCreator
@@ -76,18 +78,16 @@ public class ReconClearSimilarCellsOperation extends EngineDependentMassCellOper
     }
     
     @Override
-    protected String getDescription() {
+    public String getDescription() {
         return "Clear recon data for cells containing \"" +
             _similarValue + "\" in column " + _columnName;
     }
 
     @Override
-    protected String createDescription(ColumnMetadata column,
-            List<CellChange> cellChanges) {
-        
-        return "Clear recon data for " + cellChanges.size() + " cells containing \"" +
-            _similarValue + "\" in column " + _columnName;
+    public Change createChange() {
+		return null;
     }
+    
 
     @Override
     protected RowVisitor createRowVisitor(final Project project, final List<CellChange> cellChanges, final long historyEntryID) throws Exception {

@@ -48,7 +48,7 @@ import org.openrefine.model.GridState;
 import org.openrefine.model.Record;
 import org.openrefine.model.RecordMapper;
 import org.openrefine.model.Row;
-import org.openrefine.operations.ImmediateOperation;
+import org.openrefine.operations.Operation;
 import org.openrefine.operations.column.ColumnSplitOperation.Mode;
 import org.openrefine.operations.utils.CellValueSplitter;
 
@@ -64,7 +64,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  * be treated as record key (although this parameter has never been
  * exposed in the UI as of 2020-05).
  */
-public class MultiValuedCellSplitOperation extends ImmediateOperation {
+public class MultiValuedCellSplitOperation implements Operation {
     final protected String  _columnName;
     final protected String  _keyColumnName;
     final protected Mode    _mode;

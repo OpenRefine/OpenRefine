@@ -46,7 +46,7 @@ import org.openrefine.model.GridState;
 import org.openrefine.model.Record;
 import org.openrefine.model.RecordMapper;
 import org.openrefine.model.Row;
-import org.openrefine.operations.ImmediateOperation;
+import org.openrefine.operations.Operation;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -61,7 +61,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  * @author Antonin Delpeuch
  *
  */
-public class MultiValuedCellJoinOperation extends ImmediateOperation {
+public class MultiValuedCellJoinOperation implements Operation {
     final protected String    _columnName;
     final protected String    _keyColumnName;
     final protected String    _separator;
