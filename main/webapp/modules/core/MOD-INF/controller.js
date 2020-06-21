@@ -436,6 +436,8 @@ function init() {
       "externals/jquery-ui/jquery-ui-1.10.3.custom.js",
       "externals/imgareaselect/jquery.imgareaselect.js",
       "externals/date.js",
+
+      "externals/CLDRPluralRuleParser.js",
       "externals/jquery.i18n.js",
       "externals/jquery.i18n.messagestore.js",
       "externals/jquery.i18n.parser.js",
