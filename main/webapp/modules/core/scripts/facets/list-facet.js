@@ -152,27 +152,27 @@ ListFacet.prototype._initializeUI = function() {
     '<div class="facet-title" bind="facetTitle">' +
       '<div class="grid-layout layout-tightest layout-full"><table><tr>' +
         '<td width="1%">' +
-          '<a href="javascript:{}" title="'+$.i18n('core-facets/remove-facet')+'" class="facet-title-remove" bind="removeButton">&nbsp;</a>' +
+          '<a href="javascript:{}" title="" class="facet-title-remove" bind="removeButton">&nbsp;</a>' +
         '</td>' +
         '<td width="1%">' +
-          '<a href="javascript:{}" title="'+$.i18n('core-facets/minimize-facet')+'" class="facet-title-minimize" bind="minimizeButton">&nbsp;</a>' +
+          '<a href="javascript:{}" title="" class="facet-title-minimize" bind="minimizeButton">&nbsp;</a>' +
         '</td>' +
         '<td>' +
-          '<a href="javascript:{}" class="facet-choice-link" bind="resetButton">'+$.i18n('core-facets/reset')+'</a>' +
-          '<a href="javascript:{}" class="facet-choice-link" bind="invertButton">'+$.i18n('core-facets/invert')+'</a>' +
-          '<a href="javascript:{}" class="facet-choice-link" bind="changeButton">'+$.i18n('core-facets/change')+'</a>' +
-          '<span class="facet-title-span" bind="titleSpan" title="'+$.i18n('core-facets/edit-facet-title')+'"></span>' +
+          '<a href="javascript:{}" class="facet-choice-link" bind="resetButton"></a>' +
+          '<a href="javascript:{}" class="facet-choice-link" bind="invertButton"></a>' +
+          '<a href="javascript:{}" class="facet-choice-link" bind="changeButton"></a>' +
+          '<span class="facet-title-span" bind="titleSpan" title=""></span>' +
         '</td>' +
       '</tr></table></div>' +
     '</div>' +
-    '<div class="facet-expression" bind="expressionDiv" title="'+$.i18n('core-facets/click-to-edit')+'"></div>' +
+    '<div class="facet-expression" bind="expressionDiv" title=""></div>' +
     '<div class="facet-controls" bind="controlsDiv" style="display:none;">' +
       '<a bind="choiceCountContainer" class="action" href="javascript:{}"></a> ' +
       '<span class="facet-controls-sortControls" bind="sortGroup">'+$.i18n('core-facets/sort-by')+': ' +
-        '<a href="javascript:{}" bind="sortByNameLink">'+$.i18n('core-facets/name')+'</a>' +
-        '<a href="javascript:{}" bind="sortByCountLink">'+$.i18n('core-facets/count')+'</a>' +
+        '<a href="javascript:{}" bind="sortByNameLink"></a>' +
+        '<a href="javascript:{}" bind="sortByCountLink"></a>' +
       '</span>' +
-      '<button bind="clusterLink" class="facet-controls-button button">'+$.i18n('core-facets/cluster')+'</button>' +
+      '<button bind="clusterLink" class="facet-controls-button button"></button>' +
     '</div>' +
     '<div class="facet-body" bind="bodyDiv">' +
       '<div class="facet-body-inner" bind="bodyInnerDiv"></div>' +
@@ -180,7 +180,22 @@ ListFacet.prototype._initializeUI = function() {
   );
   this._elmts = DOM.bind(this._div);
 
+  var facetColumnName = this._config.columnName;
+  if(!facetColumnName) facetColumnName = this._config.source ? "<internal-"+ this._config.source +">" : "<Not defined>";
+
+  this._elmts.titleSpan.attr("title", $.i18n('core-facets/edit-facet-title', facetColumnName));
+  this._elmts.removeButton.attr("title", $.i18n('core-facets/remove-facet'));
+  this._elmts.minimizeButton.attr("title", $.i18n('core-facets/minimize-facet'));
+  this._elmts.expressionDiv.attr("title", $.i18n('core-facets/click-to-edit'));
+
   this._elmts.titleSpan.text(this._config.name);
+  this._elmts.resetButton.text($.i18n('core-facets/reset'));
+  this._elmts.invertButton.text($.i18n('core-facets/invert'));
+  this._elmts.changeButton.text($.i18n('core-facets/change'));
+  this._elmts.sortByNameLink.text($.i18n('core-facets/name'));
+  this._elmts.sortByCountLink.text($.i18n('core-facets/count'));
+  this._elmts.clusterLink.text($.i18n('core-facets/cluster'));
+  
   this._elmts.changeButton.attr("title",$.i18n('core-facets/current-exp')+": " + this._config.expression).click(function() {
     self._elmts.expressionDiv.slideToggle(100, function() {
       if (self._elmts.expressionDiv.css("display") != "none") {
