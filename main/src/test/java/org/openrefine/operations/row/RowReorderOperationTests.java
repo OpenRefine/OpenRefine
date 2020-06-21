@@ -80,7 +80,6 @@ public class RowReorderOperationTests extends RefineTest {
         Assert.assertEquals("d", rows.get(3).cells.get(1).value);
     }
 
-   
     @Test
     public void serializeRowReorderOperation() throws Exception {
         String json = "  {\n" + 

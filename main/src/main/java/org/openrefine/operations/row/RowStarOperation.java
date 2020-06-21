@@ -33,19 +33,13 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package org.openrefine.operations.row;
 
- import java.util.ArrayList;
-import java.util.List;
-
-import org.openrefine.browsing.Engine;
 import org.openrefine.browsing.EngineConfig;
-import org.openrefine.browsing.FilteredRows;
-import org.openrefine.browsing.RowVisitor;
 import org.openrefine.history.Change;
-import org.openrefine.history.HistoryEntry;
-import org.openrefine.model.Project;
+import org.openrefine.history.dag.DagSlice;
+import org.openrefine.model.GridState;
 import org.openrefine.model.Row;
-import org.openrefine.model.changes.MassChange;
-import org.openrefine.model.changes.RowStarChange;
+import org.openrefine.model.RowMapper;
+import org.openrefine.model.changes.RowMapChange;
 import org.openrefine.operations.EngineDependentOperation;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
@@ -70,56 +64,49 @@ public class RowStarOperation extends EngineDependentOperation {
     }
 
     @Override
-    protected String getDescription() {
+    public String getDescription() {
         return (_starred ? "Star rows" : "Unstar rows");
     }
 
-   @Override
-protected HistoryEntry createHistoryEntry(Project project, long historyEntryID) throws Exception {
-        Engine engine = createEngine(project);
-        
-        List<Change> changes = new ArrayList<Change>(project.rows.size());
-        
-        FilteredRows filteredRows = engine.getAllFilteredRows();
-        filteredRows.accept(project, createRowVisitor(project, changes));
-        
-        return new HistoryEntry(
-            historyEntryID,
-            project, 
-            (_starred ? "Star" : "Unstar") + " " + changes.size() + " rows", 
-            this, 
-            new MassChange(changes, false)
-        );
+    @Override
+    public Change createChange() {
+    	return new RowStarChange(getEngineConfig());
     }
+    
+    public class RowStarChange extends RowMapChange {
 
-    protected RowVisitor createRowVisitor(Project project, List<Change> changes) throws Exception {
-        return new RowVisitor() {
-            List<Change> changes;
-            
-            public RowVisitor init(List<Change> changes) {
-                this.changes = changes;
-                return this;
-            }
-            
-            @Override
-            public void start(Project project) {
-                // nothing to do
-            }
+		public RowStarChange(EngineConfig engineConfig) {
+			super(engineConfig);
+		}
+		
+		@Override
+		public RowMapper getPositiveRowMapper(GridState grid) {
+			return rowMapper(_starred);
+		}
 
-            @Override
-            public void end(Project project) {
-                // nothing to do
-            }
-            
-            @Override
-            public boolean visit(Project project, int rowIndex, Row row) {
-                if (row.starred != _starred) {
-                    RowStarChange change = new RowStarChange(rowIndex, _starred);
-                    
-                    changes.add(change);
-                }
-                return false;
-            }
-        }.init(changes);
+		@Override
+		public boolean isImmediate() {
+			return true;
+		}
+
+		@Override
+		public DagSlice getDagSlice() {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+    }
+    
+    protected static RowMapper rowMapper(boolean starred) {
+    	return new RowMapper() {
+
+			private static final long serialVersionUID = 7358285487574613684L;
+
+			@Override
+			public Row call(long rowId, Row row) {
+				return row.withStarred(starred);
+			}
+    		
+    	};
     }
 }
