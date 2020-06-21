@@ -32,7 +32,6 @@ import org.testng.annotations.Test;
 
 import org.openrefine.RefineTest;
 import org.openrefine.operations.OperationRegistry;
-import org.openrefine.operations.row.RowStarOperation;
 import org.openrefine.util.ParsingUtilities;
 import org.openrefine.util.TestUtils;
 

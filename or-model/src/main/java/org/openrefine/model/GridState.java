@@ -271,6 +271,24 @@ public interface GridState {
     public GridState reorderRecords(SortingConfig sortingConfig);
 
     /**
+     * Removes all rows selected by a filter
+     * 
+     * @param filter
+     *            which returns true when we should delete the row
+     * @return the grid where the matching rows have been removed
+     */
+    public GridState removeRows(RowFilter filter);
+
+    /**
+     * Removes all records selected by a filter
+     * 
+     * @param filter
+     *            which returns true when we should delete the record
+     * @return the grid where the matching record have been removed
+     */
+    public GridState removeRecords(RecordFilter filter);
+
+    /**
      * Utility class to help with deserialization of the metadata without other attributes (such as number of rows)
      */
     public static class Metadata {

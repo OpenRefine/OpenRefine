@@ -28,13 +28,24 @@
 package org.openrefine.operations.row;
 
 import java.io.IOException;
+import java.io.Serializable;
+import java.util.Arrays;
 
 import org.testng.annotations.BeforeSuite;
+import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
 import org.openrefine.RefineTest;
+import org.openrefine.browsing.DecoratedValue;
+import org.openrefine.browsing.Engine;
+import org.openrefine.browsing.EngineConfig;
+import org.openrefine.browsing.facets.ListFacet.ListFacetConfig;
+import org.openrefine.expr.MetaParser;
+import org.openrefine.grel.Parser;
+import org.openrefine.history.Change;
+import org.openrefine.history.Change.DoesNotApplyException;
+import org.openrefine.model.GridState;
 import org.openrefine.operations.OperationRegistry;
-import org.openrefine.operations.row.RowRemovalOperation;
 import org.openrefine.util.ParsingUtilities;
 import org.openrefine.util.TestUtils;
 
@@ -52,5 +63,62 @@ public class RowRemovalOperationTests extends RefineTest {
                 + "\"description\":\"Remove rows\","
                 + "\"engineConfig\":{\"mode\":\"row-based\",\"facets\":[]}}";
         TestUtils.isSerializedTo(ParsingUtilities.mapper.readValue(json, RowRemovalOperation.class), json, ParsingUtilities.defaultWriter);
+    }
+
+    GridState initial;
+    ListFacetConfig facet;
+
+    @BeforeTest
+    public void createProject() {
+        initial = createGrid(new String[] { "foo", "bar", "hello" },
+                new Serializable[][] {
+                        { "a", "b", "c" },
+                        { "", null, "d" },
+                        { "e", null, "f" },
+                        { null, "g", "h" },
+                        { null, "", "i" }
+                });
+
+        MetaParser.registerLanguageParser("grel", "GREL", Parser.grelParser, "value");
+        facet = new ListFacetConfig();
+        facet.columnName = "hello";
+        facet.setExpression("grel:value");
+    }
+
+    @Test
+    public void testRemoveRows() throws DoesNotApplyException {
+        facet.selection = Arrays.asList(
+                new DecoratedValue("h", "h"),
+                new DecoratedValue("i", "i"));
+        EngineConfig engineConfig = new EngineConfig(Arrays.asList(facet), Engine.Mode.RowBased);
+        Change change = new RowRemovalOperation(engineConfig).createChange();
+        GridState applied = change.apply(initial);
+
+        GridState expected = createGrid(new String[] { "foo", "bar", "hello" },
+                new Serializable[][] {
+                        { "a", "b", "c" },
+                        { "", null, "d" },
+                        { "e", null, "f" }
+                });
+
+        assertGridEquals(applied, expected);
+    }
+
+    @Test
+    public void testRemoveRecords() throws DoesNotApplyException {
+        facet.selection = Arrays.asList(
+                new DecoratedValue("h", "h"),
+                new DecoratedValue("i", "i"));
+        EngineConfig engineConfig = new EngineConfig(Arrays.asList(facet), Engine.Mode.RecordBased);
+        Change change = new RowRemovalOperation(engineConfig).createChange();
+        GridState applied = change.apply(initial);
+
+        GridState expected = createGrid(new String[] { "foo", "bar", "hello" },
+                new Serializable[][] {
+                        { "a", "b", "c" },
+                        { "", null, "d" }
+                });
+
+        assertGridEquals(applied, expected);
     }
 }

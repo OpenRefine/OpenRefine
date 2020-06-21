@@ -76,4 +76,17 @@ public interface RecordFilter extends Serializable {
             };
         }
     }
+
+    public static RecordFilter negate(RecordFilter filter) {
+        return new RecordFilter() {
+
+            private static final long serialVersionUID = 5699141718569021249L;
+
+            @Override
+            public boolean filterRecord(Record record) {
+                return !filter.filterRecord(record);
+            }
+
+        };
+    }
 }

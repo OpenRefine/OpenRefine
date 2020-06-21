@@ -440,4 +440,31 @@ public abstract class DatamodelRunnerTestBase {
 
         Assert.assertEquals(reordered.collectRows(), expected.collectRows());
     }
+
+    @Test
+    public void testRemoveRows() {
+        GridState removed = simpleGrid.removeRows(myRowFilter);
+
+        GridState expected = createGrid(new String[] { "foo", "bar" },
+                new Serializable[][] {
+                        { "", 1 }
+                });
+
+        Assert.assertEquals(removed.getColumnModel(), expected.getColumnModel());
+        Assert.assertEquals(removed.collectRows(), expected.collectRows());
+    }
+
+    @Test
+    public void testRemoveRecords() {
+        GridState removed = simpleGrid.removeRecords(myRecordFilter);
+
+        GridState expected = createGrid(new String[] { "foo", "bar" },
+                new Serializable[][] {
+                        { "a", "b" },
+                        { "", 1 }
+                });
+
+        Assert.assertEquals(removed.getColumnModel(), expected.getColumnModel());
+        Assert.assertEquals(removed.collectRows(), expected.collectRows());
+    }
 }

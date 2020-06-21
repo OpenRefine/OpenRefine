@@ -14,6 +14,7 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.zip.GZIPOutputStream;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.testng.Assert;
 
 import org.openrefine.browsing.facets.RecordAggregator;
@@ -90,7 +91,8 @@ public class TestingGridState implements GridState {
         TestingDatamodelRunner.ensureSerializable(filter);
         List<IndexedRow> sortedRows = sortedRows(sortingConfig);
         return sortedRows.stream()
-                .filter(tuple -> tuple.getIndex() >= start && filter.filterRow(tuple.getIndex(), tuple.getRow()))
+                .filter(tuple -> filter.filterRow(tuple.getIndex(), tuple.getRow()))
+                .skip(start)
                 .limit(limit)
                 .collect(Collectors.toList());
     }
@@ -367,8 +369,29 @@ public class TestingGridState implements GridState {
     }
 
     @Override
+    @JsonIgnore
     public DatamodelRunner getDatamodelRunner() {
         return new TestingDatamodelRunner();
+    }
+
+    @Override
+    public GridState removeRows(RowFilter filter) {
+        List<Row> newRows = indexedRows()
+                .stream()
+                .filter(ir -> !filter.filterRow(ir.getIndex(), ir.getRow()))
+                .map(ir -> ir.getRow())
+                .collect(Collectors.toList());
+        return new TestingGridState(columnModel, newRows, overlayModels);
+    }
+
+    @Override
+    public GridState removeRecords(RecordFilter filter) {
+        List<Row> newRows = records
+                .stream()
+                .filter(r -> !filter.filterRecord(r))
+                .flatMap(r -> r.getRows().stream())
+                .collect(Collectors.toList());
+        return new TestingGridState(columnModel, newRows, overlayModels);
     }
 
 }

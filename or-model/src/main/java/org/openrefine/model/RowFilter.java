@@ -76,4 +76,17 @@ public interface RowFilter extends Serializable {
             };
         }
     }
+
+    public static RowFilter negate(RowFilter filter) {
+        return new RowFilter() {
+
+            private static final long serialVersionUID = 1898905500246007062L;
+
+            @Override
+            public boolean filterRow(long rowIndex, Row row) {
+                return !filter.filterRow(rowIndex, row);
+            }
+
+        };
+    }
 }

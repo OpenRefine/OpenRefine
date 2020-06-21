@@ -28,30 +28,27 @@
 package org.openrefine.operations.row;
 
 import java.io.Serializable;
-import java.util.Properties;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import org.testng.Assert;
-import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.Test;
 
-import org.openrefine.ProjectManager;
 import org.openrefine.RefineTest;
 import org.openrefine.browsing.Engine.Mode;
-import org.openrefine.model.Cell;
-import org.openrefine.model.Project;
-import org.openrefine.operations.Operation;
+import org.openrefine.history.Change;
+import org.openrefine.model.GridState;
+import org.openrefine.model.Row;
 import org.openrefine.operations.OperationRegistry;
-import org.openrefine.operations.row.RowReorderOperation;
-import org.openrefine.process.Process;
 import org.openrefine.sorting.SortingConfig;
 import org.openrefine.util.ParsingUtilities;
 import org.openrefine.util.TestUtils;
 
 public class RowReorderOperationTests extends RefineTest {
 
-    Project project = null;
+    GridState initial;
 
     @BeforeSuite
     public void registerOperation() {
@@ -60,34 +57,28 @@ public class RowReorderOperationTests extends RefineTest {
 
     @BeforeMethod
     public void setUp() {
-        project = createProject(
+        initial = createGrid(
                 new String[] { "key", "first" },
-                new Serializable[] {
-                        "8", "b",
-                        null, "d",
-                        "2", "f",
-                        "1", "h" });
-    }
-
-    @AfterMethod
-    public void tearDown() {
-        ProjectManager.singleton.deleteProject(project.id);
+                new Serializable[][] {
+                        { "8", "b" },
+                        { "", "d" },
+                        { "2", "f" },
+                        { "1", "h" } });
     }
 
     @Test
     public void testSortEmptyString() throws Exception {
         String sortingJson = "{\"criteria\":[{\"column\":\"key\",\"valueType\":\"number\",\"reverse\":false,\"blankPosition\":2,\"errorPosition\":1}]}";
         SortingConfig sortingConfig = SortingConfig.reconstruct(sortingJson);
-        project.rows.get(1).cells.set(0, new Cell("", null));
-        Operation op = new RowReorderOperation(
-                Mode.RowBased, sortingConfig);
-        Process process = op.createProcess(project, new Properties());
-        process.performImmediate();
 
-        Assert.assertEquals("h", project.rows.get(0).cells.get(1).value);
-        Assert.assertEquals("f", project.rows.get(1).cells.get(1).value);
-        Assert.assertEquals("b", project.rows.get(2).cells.get(1).value);
-        Assert.assertEquals("d", project.rows.get(3).cells.get(1).value);
+        Change change = new RowReorderOperation(Mode.RowBased, sortingConfig).createChange();
+        GridState applied = change.apply(initial);
+        List<Row> rows = applied.collectRows().stream().map(ir -> ir.getRow()).collect(Collectors.toList());
+
+        Assert.assertEquals("h", rows.get(0).cells.get(1).value);
+        Assert.assertEquals("f", rows.get(1).cells.get(1).value);
+        Assert.assertEquals("b", rows.get(2).cells.get(1).value);
+        Assert.assertEquals("d", rows.get(3).cells.get(1).value);
     }
 
     @Test

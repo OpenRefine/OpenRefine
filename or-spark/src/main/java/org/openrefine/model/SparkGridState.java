@@ -123,6 +123,12 @@ public class SparkGridState implements GridState {
         return columnModel;
     }
 
+    @JsonIgnore
+    @Override
+    public DatamodelRunner getDatamodelRunner() {
+        return runner;
+    }
+
     /**
      * @return the grid data at this stage of the workflow
      */
@@ -627,9 +633,30 @@ public class SparkGridState implements GridState {
     }
 
     @Override
-    public DatamodelRunner getDatamodelRunner() {
-        // TODO Auto-generated method stub
-        return null;
+    public GridState removeRows(RowFilter filter) {
+        JavaPairRDD<Long, Row> newRows = RDDUtils.zipWithIndex(grid
+                .filter(wrapRowFilter(RowFilter.negate(filter)))
+                .values());
+
+        return new SparkGridState(
+                columnModel,
+                newRows,
+                overlayModels,
+                runner);
+    }
+
+    @Override
+    public GridState removeRecords(RecordFilter filter) {
+        JavaPairRDD<Long, Row> newRows = RDDUtils.zipWithIndex(getRecords()
+                .filter(wrapRecordFilter(RecordFilter.negate(filter)))
+                .values()
+                .flatMap(recordMap(RecordMapper.IDENTITY)));
+
+        return new SparkGridState(
+                columnModel,
+                newRows,
+                overlayModels,
+                runner);
     }
 
 }

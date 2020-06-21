@@ -33,20 +33,15 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package org.openrefine.operations.row;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import org.openrefine.browsing.Engine;
+import org.openrefine.browsing.Engine.Mode;
 import org.openrefine.browsing.EngineConfig;
-import org.openrefine.browsing.FilteredRows;
-import org.openrefine.browsing.RowVisitor;
-import org.openrefine.history.HistoryEntry;
-import org.openrefine.model.Project;
-import org.openrefine.model.Row;
-import org.openrefine.model.changes.RowRemovalChange;
+import org.openrefine.history.Change;
+import org.openrefine.model.GridState;
+import org.openrefine.model.changes.EngineDependentChange;
 import org.openrefine.operations.EngineDependentOperation;
 
 public class RowRemovalOperation extends EngineDependentOperation {
@@ -58,53 +53,36 @@ public class RowRemovalOperation extends EngineDependentOperation {
     }
 
     @Override
-    protected String getDescription() {
+    public String getDescription() {
         return "Remove rows";
     }
 
     @Override
-    protected HistoryEntry createHistoryEntry(Project project, long historyEntryID) throws Exception {
-        Engine engine = createEngine(project);
-
-        List<Integer> rowIndices = new ArrayList<Integer>();
-
-        FilteredRows filteredRows = engine.getAllFilteredRows();
-        filteredRows.accept(project, createRowVisitor(project, rowIndices));
-
-        return new HistoryEntry(
-                historyEntryID,
-                project,
-                "Remove " + rowIndices.size() + " rows",
-                this,
-                new RowRemovalChange(rowIndices));
+    public Change createChange() {
+        return new RowRemovalChange(_engineConfig);
     }
 
-    protected RowVisitor createRowVisitor(Project project, List<Integer> rowIndices) throws Exception {
-        return new RowVisitor() {
+    public class RowRemovalChange extends EngineDependentChange {
 
-            List<Integer> rowIndices;
+        public RowRemovalChange(EngineConfig engineConfig) {
+            super(engineConfig);
+        }
 
-            public RowVisitor init(List<Integer> rowIndices) {
-                this.rowIndices = rowIndices;
-                return this;
+        @Override
+        public GridState apply(GridState projectState) throws DoesNotApplyException {
+            Engine engine = getEngine(projectState);
+            if (Mode.RowBased.equals(engine.getMode())) {
+                return projectState.removeRows(engine.combinedRowFilters());
+            } else {
+                return projectState.removeRecords(engine.combinedRecordFilters());
             }
+        }
 
-            @Override
-            public void start(Project project) {
-                // nothing to do
-            }
+        @Override
+        public boolean isImmediate() {
+            return true;
+        }
 
-            @Override
-            public void end(Project project) {
-                // nothing to do
-            }
-
-            @Override
-            public boolean visit(Project project, int rowIndex, Row row) {
-                rowIndices.add(rowIndex);
-
-                return false;
-            }
-        }.init(rowIndices);
     }
+
 }
