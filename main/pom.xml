@@ -100,6 +100,7 @@
             </goals>
             <configuration>
                 <outputDirectory>webapp/WEB-INF/lib</outputDirectory>
+                <includeScope>runtime</includeScope>
             </configuration>
             </execution>
         </executions>
