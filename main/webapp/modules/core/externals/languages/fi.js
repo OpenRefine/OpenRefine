@@ -7,7 +7,7 @@
 ( function ( $ ) {
 	'use strict';
 
-	$.i18n.languages.fi = $.extend( {}, $.i18n.languages[ 'default' ], {
+	$.i18n.languages.fi = $.extend( {}, $.i18n.languages['default'], {
 		convertGrammar: function ( word, form ) {
 			// vowel harmony flag
 			var aou = word.match( /[aou][^äöy]*$/i ),
@@ -22,25 +22,25 @@
 			}
 
 			switch ( form ) {
-				case 'genitive':
-					word += 'n';
-					break;
-				case 'elative':
-					word += ( aou ? 'sta' : 'stä' );
-					break;
-				case 'partitive':
-					word += ( aou ? 'a' : 'ä' );
-					break;
-				case 'illative':
+			case 'genitive':
+				word += 'n';
+				break;
+			case 'elative':
+				word += ( aou ? 'sta' : 'stä' );
+				break;
+			case 'partitive':
+				word += ( aou ? 'a' : 'ä' );
+				break;
+			case 'illative':
 				// Double the last letter and add 'n'
-					word += word.slice( -1 ) + 'n';
-					break;
-				case 'inessive':
-					word += ( aou ? 'ssa' : 'ssä' );
-					break;
-				default:
-					word = origWord;
-					break;
+				word += word.substr( word.length - 1 ) + 'n';
+				break;
+			case 'inessive':
+				word += ( aou ? 'ssa' : 'ssä' );
+				break;
+			default:
+				word = origWord;
+				break;
 			}
 
 			return word;

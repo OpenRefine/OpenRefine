@@ -1,4 +1,4 @@
-/*!
+/**
  * jQuery Internationalization library
  *
  * Copyright (C) 2012 Santhosh Thottingal
@@ -11,7 +11,7 @@
  * @licence GNU General Public Licence 2.0 or later
  * @licence MIT License
  */
-( function ( $ ) {
+( function ( $, undefined ) {
 	'use strict';
 
 	$.i18n = $.i18n || {};

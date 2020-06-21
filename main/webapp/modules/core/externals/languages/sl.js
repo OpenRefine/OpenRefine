@@ -5,7 +5,7 @@
 ( function ( $ ) {
 	'use strict';
 
-	$.i18n.languages.sl = $.extend( {}, $.i18n.languages[ 'default' ], {
+	$.i18n.languages.sl = $.extend( {}, $.i18n.languages['default'], {
 		convertGrammar: function ( word, form ) {
 			switch ( form ) {
 				// locative

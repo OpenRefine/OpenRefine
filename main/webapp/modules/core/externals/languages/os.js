@@ -7,7 +7,7 @@
 ( function ( $ ) {
 	'use strict';
 
-	$.i18n.languages.os = $.extend( {}, $.i18n.languages[ 'default' ], {
+	$.i18n.languages.os = $.extend( {}, $.i18n.languages['default'], {
 		convertGrammar: function ( word, form ) {
 			var endAllative, jot, hyphen, ending;
 
@@ -22,7 +22,7 @@
 
 			if ( word.match( /тæ$/i ) ) {
 				// Checking if the $word is in plural form
-				word = word.slice( 0, -1 );
+				word = word.substring( 0, word.length - 1 );
 				endAllative = 'æм';
 			} else if ( word.match( /[аæеёиоыэюя]$/i ) ) {
 				// Works if word is in singular form.
@@ -34,7 +34,8 @@
 				// vowel 'U' in cyrillic Ossetic.
 				// Examples: {{grammar:genitive|аунеу}} = аунеуы,
 				// {{grammar:genitive|лæппу}} = лæппуйы.
-				if ( !word.slice( -2, -1 ).match( /[аæеёиоыэюя]$/i ) ) {
+				if ( !word.substring( word.length - 2, word.length - 1 )
+						.match( /[аæеёиоыэюя]$/i ) ) {
 					jot = 'й';
 				}
 			} else if ( !word.match( /[бвгджзйклмнопрстфхцчшщьъ]$/i ) ) {
@@ -42,31 +43,31 @@
 			}
 
 			switch ( form ) {
-				case 'genitive':
-					ending = hyphen + jot + 'ы';
-					break;
-				case 'dative':
-					ending = hyphen + jot + 'æн';
-					break;
-				case 'allative':
-					ending = hyphen + endAllative;
-					break;
-				case 'ablative':
-					if ( jot === 'й' ) {
-						ending = hyphen + jot + 'æ';
-					} else {
-						ending = hyphen + jot + 'æй';
-					}
-					break;
-				case 'superessive':
-					ending = hyphen + jot + 'ыл';
-					break;
-				case 'equative':
-					ending = hyphen + jot + 'ау';
-					break;
-				case 'comitative':
-					ending = hyphen + 'имæ';
-					break;
+			case 'genitive':
+				ending = hyphen + jot + 'ы';
+				break;
+			case 'dative':
+				ending = hyphen + jot + 'æн';
+				break;
+			case 'allative':
+				ending = hyphen + endAllative;
+				break;
+			case 'ablative':
+				if ( jot === 'й' ) {
+					ending = hyphen + jot + 'æ';
+				} else {
+					ending = hyphen + jot + 'æй';
+				}
+				break;
+			case 'superessive':
+				ending = hyphen + jot + 'ыл';
+				break;
+			case 'equative':
+				ending = hyphen + jot + 'ау';
+				break;
+			case 'comitative':
+				ending = hyphen + 'имæ';
+				break;
 			}
 
 			return word + ending;

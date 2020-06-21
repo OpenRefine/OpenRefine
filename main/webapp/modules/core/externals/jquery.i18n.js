@@ -1,4 +1,4 @@
-/*!
+/**
  * jQuery Internationalization library
  *
  * Copyright (C) 2012 Santhosh Thottingal
@@ -16,7 +16,7 @@
 ( function ( $ ) {
 	'use strict';
 
-	var I18N,
+	var nav, I18N,
 		slice = Array.prototype.slice;
 	/**
 	 * @constructor
@@ -30,52 +30,61 @@
 		this.locale = this.options.locale;
 		this.messageStore = this.options.messageStore;
 		this.languages = {};
+
+		this.init();
 	};
 
 	I18N.prototype = {
 		/**
-		 * Localize a given messageKey to a locale.
-		 * @param {string} messageKey
-		 * @return {string} Localized message
+		 * Initialize by loading locales and setting up
+		 * String.prototype.toLocaleString and String.locale.
 		 */
-		localize: function ( messageKey ) {
-			var localeParts, localePartIndex, locale, fallbackIndex,
-				tryingLocale, message;
+		init: function () {
+			var i18n = this;
 
-			locale = this.locale;
-			fallbackIndex = 0;
+			// Set locale of String environment
+			String.locale = i18n.locale;
 
-			while ( locale ) {
-				// Iterate through locales starting at most-specific until
-				// localization is found. As in fi-Latn-FI, fi-Latn and fi.
-				localeParts = locale.split( '-' );
-				localePartIndex = localeParts.length;
+			// Override String.localeString method
+			String.prototype.toLocaleString = function () {
+				var localeParts, localePartIndex, value, locale, fallbackIndex,
+					tryingLocale, message;
 
-				do {
-					tryingLocale = localeParts.slice( 0, localePartIndex ).join( '-' );
-					message = this.messageStore.get( tryingLocale, messageKey );
+				value = this.valueOf();
+				locale = i18n.locale;
+				fallbackIndex = 0;
 
-					if ( message ) {
-						return message;
+				while ( locale ) {
+					// Iterate through locales starting at most-specific until
+					// localization is found. As in fi-Latn-FI, fi-Latn and fi.
+					localeParts = locale.split( '-' );
+					localePartIndex = localeParts.length;
+
+					do {
+						tryingLocale = localeParts.slice( 0, localePartIndex ).join( '-' );
+						message = i18n.messageStore.get( tryingLocale, value );
+
+						if ( message ) {
+							return message;
+						}
+
+						localePartIndex--;
+					} while ( localePartIndex );
+
+					if ( locale === 'en' ) {
+						break;
 					}
 
-					localePartIndex--;
-				} while ( localePartIndex );
+					locale = ( $.i18n.fallbacks[i18n.locale] && $.i18n.fallbacks[i18n.locale][fallbackIndex] ) ||
+						i18n.options.fallbackLocale;
+					$.i18n.log( 'Trying fallback locale for ' + i18n.locale + ': ' + locale );
 
-				if ( locale === this.options.fallbackLocale ) {
-					break;
+					fallbackIndex++;
 				}
 
-				locale = ( $.i18n.fallbacks[ this.locale ] &&
-						$.i18n.fallbacks[ this.locale ][ fallbackIndex ] ) ||
-						this.options.fallbackLocale;
-				$.i18n.log( 'Trying fallback locale for ' + this.locale + ': ' + locale + ' (' + messageKey + ')' );
-
-				fallbackIndex++;
-			}
-
-			// key not found
-			return '';
+				// key not found
+				return '';
+			};
 		},
 
 		/*
@@ -123,9 +132,9 @@
 		 * If the data argument is null/undefined/false,
 		 * all cached messages for the i18n instance will get reset.
 		 *
-		 * @param {string|Object} source
-		 * @param {string} locale Language tag
-		 * @return {jQuery.Promise}
+		 * @param {String|Object} source
+		 * @param {String} locale Language tag
+		 * @returns {jQuery.Promise}
 		 */
 		load: function ( source, locale ) {
 			var fallbackLocales, locIndex, fallbackLocale, sourceMap = {};
@@ -133,18 +142,16 @@
 				source = 'i18n/' + $.i18n().locale + '.json';
 				locale = $.i18n().locale;
 			}
-			if ( typeof source === 'string' &&
-				// source extension should be json, but can have query params after that.
-				source.split( '?' )[ 0 ].split( '.' ).pop() !== 'json'
+			if ( typeof source === 'string'	&&
+				source.split( '.' ).pop() !== 'json'
 			) {
-				// Load specified locale then check for fallbacks when directory is
-				// specified in load()
-				sourceMap[ locale ] = source + '/' + locale + '.json';
-				fallbackLocales = ( $.i18n.fallbacks[ locale ] || [] )
+				// Load specified locale then check for fallbacks when directory is specified in load()
+				sourceMap[locale] = source + '/' + locale + '.json';
+				fallbackLocales = ( $.i18n.fallbacks[locale] || [] )
 					.concat( this.options.fallbackLocale );
-				for ( locIndex = 0; locIndex < fallbackLocales.length; locIndex++ ) {
-					fallbackLocale = fallbackLocales[ locIndex ];
-					sourceMap[ fallbackLocale ] = source + '/' + fallbackLocale + '.json';
+				for ( locIndex in fallbackLocales ) {
+					fallbackLocale = fallbackLocales[locIndex];
+					sourceMap[fallbackLocale] = source + '/' + fallbackLocale + '.json';
 				}
 				return this.load( sourceMap );
 			} else {
@@ -161,11 +168,11 @@
 		 * @return {string}
 		 */
 		parse: function ( key, parameters ) {
-			var message = this.localize( key );
+			var message = key.toLocaleString();
 			// FIXME: This changes the state of the I18N object,
 			// should probably not change the 'this.parser' but just
 			// pass it to the parser.
-			this.parser.language = $.i18n.languages[ $.i18n().locale ] || $.i18n.languages[ 'default' ];
+			this.parser.language = $.i18n.languages[$.i18n().locale] || $.i18n.languages['default'];
 			if ( message === '' ) {
 				message = key;
 			}
@@ -195,7 +202,7 @@
 		// NOTE: It should only change language for this one call.
 		// Then cache instances of I18N somewhere.
 		if ( options && options.locale && i18n && i18n.locale !== options.locale ) {
-			i18n.locale = options.locale;
+			String.locale = i18n.locale = options.locale;
 		}
 
 		if ( !i18n ) {
@@ -224,38 +231,28 @@
 			i18n = new I18N();
 			$.data( document, 'i18n', i18n );
 		}
-
+		String.locale = i18n.locale;
 		return this.each( function () {
 			var $this = $( this ),
-				messageKey = $this.data( 'i18n' ),
-				lBracket, rBracket, type, key;
+				messageKey = $this.data( 'i18n' );
 
 			if ( messageKey ) {
-				lBracket = messageKey.indexOf( '[' );
-				rBracket = messageKey.indexOf( ']' );
-				if ( lBracket !== -1 && rBracket !== -1 && lBracket < rBracket ) {
-					type = messageKey.slice( lBracket + 1, rBracket );
-					key = messageKey.slice( rBracket + 1 );
-					if ( type === 'html' ) {
-						$this.html( i18n.parse( key ) );
-					} else {
-						$this.attr( type, i18n.parse( key ) );
-					}
-				} else {
-					$this.text( i18n.parse( messageKey ) );
-				}
+				$this.text( i18n.parse( messageKey ) );
 			} else {
 				$this.find( '[data-i18n]' ).i18n();
 			}
 		} );
 	};
 
-	function getDefaultLocale() {
-		var locale = $( 'html' ).attr( 'lang' );
-		if ( !locale ) {
-			locale = navigator.language || navigator.userLanguage || '';
+	String.locale = String.locale || $( 'html' ).attr( 'lang' );
+
+	if ( !String.locale ) {
+		if ( typeof window.navigator !== undefined ) {
+			nav = window.navigator;
+			String.locale = nav.language || nav.userLanguage || '';
+		} else {
+			String.locale = '';
 		}
-		return locale;
 	}
 
 	$.i18n.languages = {};
@@ -265,7 +262,7 @@
 		parse: function ( message, parameters ) {
 			return message.replace( /\$(\d+)/g, function ( str, match ) {
 				var index = parseInt( match, 10 ) - 1;
-				return parameters[ index ] !== undefined ? parameters[ index ] : '$' + match;
+				return parameters[index] !== undefined ? parameters[index] : '$' + match;
 			} );
 		},
 		emitter: {}
@@ -279,7 +276,7 @@
 	};
 	/* Static members */
 	I18N.defaults = {
-		locale: getDefaultLocale(),
+		locale: String.locale,
 		fallbackLocale: 'en',
 		parser: $.i18n.parser,
 		messageStore: $.i18n.messageStore

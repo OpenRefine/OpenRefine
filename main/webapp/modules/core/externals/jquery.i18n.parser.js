@@ -1,4 +1,4 @@
-/*!
+/**
  * jQuery Internationalization library
  *
  * Copyright (C) 2011-2013 Santhosh Thottingal, Neil Kandalgaonkar
@@ -18,7 +18,7 @@
 
 	var MessageParser = function ( options ) {
 		this.options = $.extend( {}, $.i18n.parser.defaults, options );
-		this.language = $.i18n.languages[ String.locale ] || $.i18n.languages[ 'default' ];
+		this.language = $.i18n.languages[String.locale] || $.i18n.languages['default'];
 		this.emitter = $.i18n.parser.emitter;
 	};
 
@@ -30,7 +30,7 @@
 			return message.replace( /\$(\d+)/g, function ( str, match ) {
 				var index = parseInt( match, 10 ) - 1;
 
-				return parameters[ index ] !== undefined ? parameters[ index ] : '$' + match;
+				return parameters[index] !== undefined ? parameters[index] : '$' + match;
 			} );
 		},
 
@@ -39,8 +39,8 @@
 				return this.simpleParse( message, replacements );
 			}
 
-			this.emitter.language = $.i18n.languages[ $.i18n().locale ] ||
-				$.i18n.languages[ 'default' ];
+			this.emitter.language = $.i18n.languages[$.i18n().locale] ||
+				$.i18n.languages['default'];
 
 			return this.emitter.emit( this.ast( message ), replacements );
 		},
@@ -58,7 +58,7 @@
 					var i, result;
 
 					for ( i = 0; i < parserSyntax.length; i++ ) {
-						result = parserSyntax[ i ]();
+						result = parserSyntax[i]();
 
 						if ( result !== null ) {
 							return result;
@@ -78,7 +78,7 @@
 					result = [];
 
 				for ( i = 0; i < parserSyntax.length; i++ ) {
-					res = parserSyntax[ i ]();
+					res = parserSyntax[i]();
 
 					if ( res === null ) {
 						pos = originalPos;
@@ -123,7 +123,7 @@
 				return function () {
 					var result = null;
 
-					if ( message.slice( pos, pos + len ) === s ) {
+					if ( message.substr( pos, len ) === s ) {
 						result = s;
 						pos += len;
 					}
@@ -134,15 +134,15 @@
 
 			function makeRegexParser( regex ) {
 				return function () {
-					var matches = message.slice( pos ).match( regex );
+					var matches = message.substr( pos ).match( regex );
 
 					if ( matches === null ) {
 						return null;
 					}
 
-					pos += matches[ 0 ].length;
+					pos += matches[0].length;
 
-					return matches[ 0 ];
+					return matches[0];
 				};
 			}
 
@@ -152,9 +152,9 @@
 			anyCharacter = makeRegexParser( /^./ );
 			dollar = makeStringParser( '$' );
 			digits = makeRegexParser( /^\d+/ );
-			regularLiteral = makeRegexParser( /^[^{}[\]$\\]/ );
-			regularLiteralWithoutBar = makeRegexParser( /^[^{}[\]$\\|]/ );
-			regularLiteralWithoutSpace = makeRegexParser( /^[^{}[\]$\s]/ );
+			regularLiteral = makeRegexParser( /^[^{}\[\]$\\]/ );
+			regularLiteralWithoutBar = makeRegexParser( /^[^{}\[\]$\\|]/ );
+			regularLiteralWithoutSpace = makeRegexParser( /^[^{}\[\]$\s]/ );
 
 			// There is a general pattern:
 			// parse a thing;
@@ -189,7 +189,7 @@
 			function escapedLiteral() {
 				var result = sequence( [ backslash, anyCharacter ] );
 
-				return result === null ? null : result[ 1 ];
+				return result === null ? null : result[1];
 			}
 
 			choice( [ escapedLiteral, regularLiteralWithoutSpace ] );
@@ -203,13 +203,13 @@
 					return null;
 				}
 
-				return [ 'REPLACE', parseInt( result[ 1 ], 10 ) - 1 ];
+				return [ 'REPLACE', parseInt( result[1], 10 ) - 1 ];
 			}
 
 			templateName = transform(
 				// see $wgLegalTitleChars
 				// not allowing : due to the need to catch "PLURAL:$1"
-				makeRegexParser( /^[ !"$&'()*,./0-9;=?@A-Z^_`a-z~\x80-\xFF+-]+/ ),
+				makeRegexParser( /^[ !"$&'()*,.\/0-9;=?@A-Z\^_`a-z~\x80-\xFF+\-]+/ ),
 
 				function ( result ) {
 					return result.toString();
@@ -224,23 +224,23 @@
 					return null;
 				}
 
-				expr = result[ 1 ];
+				expr = result[1];
 
 				// use a "CONCAT" operator if there are multiple nodes,
 				// otherwise return the first node, raw.
-				return expr.length > 1 ? [ 'CONCAT' ].concat( expr ) : expr[ 0 ];
+				return expr.length > 1 ? [ 'CONCAT' ].concat( expr ) : expr[0];
 			}
 
 			function templateWithReplacement() {
 				var result = sequence( [ templateName, colon, replacement ] );
 
-				return result === null ? null : [ result[ 0 ], result[ 2 ] ];
+				return result === null ? null : [ result[0], result[2] ];
 			}
 
 			function templateWithOutReplacement() {
 				var result = sequence( [ templateName, colon, paramExpression ] );
 
-				return result === null ? null : [ result[ 0 ], result[ 2 ] ];
+				return result === null ? null : [ result[0], result[2] ];
 			}
 
 			templateContents = choice( [
@@ -254,7 +254,7 @@
 						nOrMore( 0, templateParam )
 					] );
 
-					return res === null ? null : res[ 0 ].concat( res[ 1 ] );
+					return res === null ? null : res[0].concat( res[1] );
 				},
 				function () {
 					var res = sequence( [ templateName, nOrMore( 0, templateParam ) ] );
@@ -263,7 +263,7 @@
 						return null;
 					}
 
-					return [ res[ 0 ] ].concat( res[ 1 ] );
+					return [ res[0] ].concat( res[1] );
 				}
 			] );
 
@@ -273,7 +273,7 @@
 			function template() {
 				var result = sequence( [ openTemplate, templateContents, closeTemplate ] );
 
-				return result === null ? null : result[ 1 ];
+				return result === null ? null : result[1];
 			}
 
 			expression = choice( [ template, replacement, literal ] );
@@ -294,8 +294,7 @@
 			/*
 			 * For success, the pos must have gotten to the end of the input
 			 * and returned a non-null.
-			 * n.b. This is part of language infrastructure, so we do not throw an
-			 * internationalizable message.
+			 * n.b. This is part of language infrastructure, so we do not throw an internationalizable message.
 			 */
 			if ( result === null || pos !== message.length ) {
 				throw new Error( 'Parse error at position ' + pos.toString() + ' in input: ' + message );

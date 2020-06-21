@@ -1,4 +1,4 @@
-/*!
+/**
  * jQuery Internationalization library
  *
  * Copyright (C) 2011-2013 Santhosh Thottingal, Neil Kandalgaonkar
@@ -17,7 +17,7 @@
 	'use strict';
 
 	var MessageParserEmitter = function () {
-		this.language = $.i18n.languages[ String.locale ] || $.i18n.languages[ 'default' ];
+		this.language = $.i18n.languages[String.locale] || $.i18n.languages['default'];
 	};
 
 	MessageParserEmitter.prototype = {
@@ -38,36 +38,36 @@
 				messageParserEmitter = this;
 
 			switch ( typeof node ) {
-				case 'string':
-				case 'number':
-					ret = node;
-					break;
-				case 'object':
+			case 'string':
+			case 'number':
+				ret = node;
+				break;
+			case 'object':
 				// node is an array of nodes
-					subnodes = $.map( node.slice( 1 ), function ( n ) {
-						return messageParserEmitter.emit( n, replacements );
-					} );
+				subnodes = $.map( node.slice( 1 ), function ( n ) {
+					return messageParserEmitter.emit( n, replacements );
+				} );
 
-					operation = node[ 0 ].toLowerCase();
+				operation = node[0].toLowerCase();
 
-					if ( typeof messageParserEmitter[ operation ] === 'function' ) {
-						ret = messageParserEmitter[ operation ]( subnodes, replacements );
-					} else {
-						throw new Error( 'unknown operation "' + operation + '"' );
-					}
+				if ( typeof messageParserEmitter[operation] === 'function' ) {
+					ret = messageParserEmitter[operation]( subnodes, replacements );
+				} else {
+					throw new Error( 'unknown operation "' + operation + '"' );
+				}
 
-					break;
-				case 'undefined':
+				break;
+			case 'undefined':
 				// Parsing the empty string (as an entire expression, or as a
 				// paramExpression in a template) results in undefined
 				// Perhaps a more clever parser can detect this, and return the
 				// empty string? Or is that useful information?
 				// The logical thing is probably to return the empty string here
 				// when we encounter undefined.
-					ret = '';
-					break;
-				default:
-					throw new Error( 'unexpected type in AST: ' + typeof node );
+				ret = '';
+				break;
+			default:
+				throw new Error( 'unexpected type in AST: ' + typeof node );
 			}
 
 			return ret;
@@ -80,7 +80,7 @@
 		 * in our children and pass them upwards
 		 *
 		 * @param {Array} nodes Mixed, some single nodes, some arrays of nodes.
-		 * @return {string}
+		 * @return String
 		 */
 		concat: function ( nodes ) {
 			var result = '';
@@ -106,11 +106,11 @@
 		 * @return {string} replacement
 		 */
 		replace: function ( nodes, replacements ) {
-			var index = parseInt( nodes[ 0 ], 10 );
+			var index = parseInt( nodes[0], 10 );
 
 			if ( index < replacements.length ) {
 				// replacement is not a string, don't touch!
-				return replacements[ index ];
+				return replacements[index];
 			} else {
 				// index not found, fallback to displaying variable
 				return '$' + ( index + 1 );
@@ -124,11 +124,11 @@
 		 * convertNumber.
 		 *
 		 * @param {Array} nodes List [ {String|Number}, {String}, {String} ... ]
-		 * @return {string} selected pluralized form according to current
+		 * @return {String} selected pluralized form according to current
 		 *  language.
 		 */
 		plural: function ( nodes ) {
-			var count = parseFloat( this.language.convertNumber( nodes[ 0 ], 10 ) ),
+			var count = parseFloat( this.language.convertNumber( nodes[0], 10 ) ),
 				forms = nodes.slice( 1 );
 
 			return forms.length ? this.language.convertPlural( count, forms ) : '';
@@ -139,10 +139,10 @@
 		 * {{gender:gender|masculine|feminine|neutral}}.
 		 *
 		 * @param {Array} nodes List [ {String}, {String}, {String} , {String} ]
-		 * @return {string} selected gender form according to current language
+		 * @return {String} selected gender form according to current language
 		 */
 		gender: function ( nodes ) {
-			var gender = nodes[ 0 ],
+			var gender = nodes[0],
 				forms = nodes.slice( 1 );
 
 			return this.language.gender( gender, forms );
@@ -153,12 +153,12 @@
 		 * putting {{grammar:form|word}} in a message
 		 *
 		 * @param {Array} nodes List [{Grammar case eg: genitive}, {String word}]
-		 * @return {string} selected grammatical form according to current
+		 * @return {String} selected grammatical form according to current
 		 *  language.
 		 */
 		grammar: function ( nodes ) {
-			var form = nodes[ 0 ],
-				word = nodes[ 1 ];
+			var form = nodes[0],
+				word = nodes[1];
 
 			return word && form && this.language.convertGrammar( word, form );
 		}

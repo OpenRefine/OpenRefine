@@ -6,6 +6,7 @@
  * Released under the MIT license
  * http://opensource.org/licenses/MIT
  *
+ * @version 0.1.0
  * @source https://github.com/santhoshtr/CLDRPluralRuleParser
  * @author Santhosh Thottingal <santhosh.thottingal@gmail.com>
  * @author Timo Tijhof
@@ -323,7 +324,7 @@ function pluralRuleParser(rule, number) {
 
 		debug(' -- passed ' + parseInt(result[0], 10) + ' ' + result[2] + ' ' + parseInt(result[4], 10));
 
-		return parseFloat(result[0]) % parseInt(result[4], 10);
+		return parseInt(result[0], 10) % parseInt(result[4], 10);
 	}
 
 	function not() {
@@ -463,7 +464,7 @@ function pluralRuleParser(rule, number) {
 			range_list = result[5];
 
 			for (i = 0; i < range_list.length; i++) {
-				if (parseInt(range_list[i], 10) === parseFloat(result[0])) {
+				if (parseInt(range_list[i], 10) === parseInt(result[0], 10)) {
 					return (result[1][0] !== 'not');
 				}
 			}
