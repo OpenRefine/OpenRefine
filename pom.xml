@@ -57,6 +57,7 @@
     <jee.port>3333</jee.port>
     <refine.data>/tmp/refine</refine.data>
     <surefire.version>2.22.2</surefire.version>
+    <surefireArgs></surefireArgs>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <jackson.version>2.11.0</jackson.version>
   </properties>
@@ -126,7 +127,7 @@
         <artifactId>maven-surefire-plugin</artifactId>
         <version>${surefire.version}</version>
         <configuration>
-          <argLine>${surefireArgs} -Dfile.encoding=cp1252</argLine>
+          <argLine>@{surefireArgs} -Dfile.encoding=cp1252</argLine>
           <suiteXmlFiles>
             <suiteXmlFile>main/tests/server/conf/tests.xml</suiteXmlFile>
           </suiteXmlFiles>
