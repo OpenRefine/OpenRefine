@@ -28,9 +28,13 @@ package org.openrefine.operations.recon;
 import java.io.Serializable;
 
 import org.openrefine.RefineTest;
+import org.openrefine.browsing.EngineConfig;
+import org.openrefine.history.Change;
+import org.openrefine.history.Change.DoesNotApplyException;
+import org.openrefine.model.Cell;
 import org.openrefine.model.GridState;
+import org.openrefine.model.Recon;
 import org.openrefine.operations.OperationRegistry;
-import org.openrefine.operations.recon.ReconClearSimilarCellsOperation;
 import org.openrefine.util.ParsingUtilities;
 import org.openrefine.util.TestUtils;
 import org.testng.annotations.BeforeSuite;
@@ -61,9 +65,24 @@ public class ReconClearSimilarCellsOperationTests extends RefineTest {
     	initialState = createGrid(
     			new String[] {"foo", "bar"},
     			new Serializable[][] {
-    				{"a", new Cell("b", new Recon())},
-    				{"c", new Cell("d", new Recon())}
+    				{"a", new Cell("b", testRecon("e", "h", Recon.Judgment.Matched))},
+    				{"c", new Cell("d", testRecon("b", "j", Recon.Judgment.None))}
+    			});
+    }
+    
+    @Test
+    public void testReconClearSimilarCells() throws DoesNotApplyException {
+    	Change change = new ReconClearSimilarCellsOperation(EngineConfig.ALL_ROWS, "bar", "b").createChange();
+    	
+    	GridState applied = change.apply(initialState);
+    	
+    	GridState expected = createGrid(
+    			new String[] {"foo", "bar"},
+    			new Serializable[][] {
+    				{"a", new Cell("b", null)},
+    				{"c", new Cell("d", testRecon("b", "j", Recon.Judgment.None))}
     			});
     	
+    	assertGridEquals(applied, expected);
     }
 }

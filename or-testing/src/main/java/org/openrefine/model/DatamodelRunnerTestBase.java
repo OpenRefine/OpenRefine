@@ -26,6 +26,8 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
+import com.google.common.collect.ImmutableList;
+
 /**
  * A collection of generic tests that any implementation
  * of {@link DatamodelRunner} should satisfy.
@@ -274,7 +276,7 @@ public abstract class DatamodelRunnerTestBase {
                 .stream().map(facet -> facet.getAggregator())
                 .collect(Collectors.toList()));
         
-        List<FacetState> states = simpleGrid.aggregateRows(aggregator, initialStates);
+        List<FacetState> states = simpleGrid.aggregateRows(aggregator, ImmutableList.copyOf(initialStates));
         
         List<FacetResult> facetResults = new ArrayList<>();
         for(int i = 0; i != states.size(); i++) {
@@ -312,7 +314,7 @@ public abstract class DatamodelRunnerTestBase {
                 .stream().map(facet -> facet.getAggregator())
                 .collect(Collectors.toList()));
         
-        List<FacetState> states = simpleGrid.aggregateRecords(aggregator, initialStates);
+        List<FacetState> states = simpleGrid.aggregateRecords(aggregator, ImmutableList.copyOf(initialStates));
         
         List<FacetResult> facetResults = new ArrayList<>();
         for(int i = 0; i != states.size(); i++) {

@@ -147,4 +147,15 @@ public class ReconCandidate implements HasFields, Serializable {
             score
         );
     }
+    
+    @Override
+    public boolean equals(Object other) {
+        if (!(other instanceof ReconCandidate)) {
+            return false;
+        }
+        ReconCandidate otherCandidate = (ReconCandidate)other;
+        // skipping score to avoid equality of doubles
+        return (id.equals(otherCandidate.id) &&
+                name.equals(otherCandidate.name));
+    }
 }

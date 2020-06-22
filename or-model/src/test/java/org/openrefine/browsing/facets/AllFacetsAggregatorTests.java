@@ -10,6 +10,8 @@ import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
+import com.google.common.collect.ImmutableList;
+
 public class AllFacetsAggregatorTests {
 	
 	protected RowFilter filterRowId = new RowFilter() {
@@ -41,10 +43,9 @@ public class AllFacetsAggregatorTests {
 	protected FacetAggregator<FacetStateStub> aggregatorRowId;
 	protected FacetAggregator<FacetStateStub> aggregatorFoo;
 	protected FacetAggregator<FacetStateStub> aggregatorBar;
-    private List<FacetState> initial;
+    private ImmutableList<FacetState> initial;
 	
-	@SuppressWarnings("unchecked")
-    @BeforeMethod
+	@BeforeMethod
 	public void setUpAllFacetsState() {
 	    aggregatorRowId = new FacetAggregatorStub(filterRowId);
 	    aggregatorFoo = new FacetAggregatorStub(filterFoo);
@@ -54,7 +55,7 @@ public class AllFacetsAggregatorTests {
 				aggregatorRowId,
 				aggregatorFoo,
 				aggregatorBar));
-		initial = Arrays.asList(
+		initial = ImmutableList.of(
                 new FacetStateStub(0, 0),
                 new FacetStateStub(0, 0),
                 new FacetStateStub(0, 0));
@@ -62,18 +63,18 @@ public class AllFacetsAggregatorTests {
 
 	@Test
 	public void testMerge() {
-		List<FacetState> statesA = 
-				Arrays.asList(
+		ImmutableList<FacetState> statesA = 
+				ImmutableList.of(
 				new FacetStateStub(1, 2),
 				new FacetStateStub(3, 4),
 				new FacetStateStub(5, 6));
-		List<FacetState> statesB = 
-				Arrays.asList(
+		ImmutableList<FacetState> statesB = 
+				ImmutableList.of(
 				new FacetStateStub(7, 8),
 				new FacetStateStub(9, 10),
 				new FacetStateStub(11, 12));
-		List<FacetState> expected = 
-				Arrays.asList(
+		ImmutableList<FacetState> expected = 
+				ImmutableList.of(
 				new FacetStateStub(8, 10),
 				new FacetStateStub(12, 14),
 				new FacetStateStub(16, 18));
