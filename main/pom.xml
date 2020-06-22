@@ -357,6 +357,11 @@
       <artifactId>jaxb-api</artifactId>
       <version>2.3.1</version>
     </dependency>
+    <dependency>
+      <groupId>com.github.albfernandez</groupId>
+      <artifactId>juniversalchardet</artifactId>
+      <version>2.3.2</version>
+    </dependency>
 
     <!-- test dependencies -->
 
