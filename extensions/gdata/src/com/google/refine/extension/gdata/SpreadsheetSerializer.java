@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.google.api.services.sheets.v4.Sheets;
 import com.google.api.services.sheets.v4.model.AppendCellsRequest;
+import com.google.api.services.sheets.v4.model.AppendDimensionRequest;
 import com.google.api.services.sheets.v4.model.BatchUpdateSpreadsheetRequest;
 import com.google.api.services.sheets.v4.model.BatchUpdateSpreadsheetResponse;
 import com.google.api.services.sheets.v4.model.ExtendedValue;
@@ -34,7 +35,11 @@ final class SpreadsheetSerializer implements TabularSerializer {
     private int row = 0;
 
     private List<RowData> rows;
-    
+
+    // FIXME: This is fragile. Can we find out how many columns we have rather than assuming
+    // it'll always be the default A-Z?
+    private int maxColumns = 26;
+
     SpreadsheetSerializer(Sheets service, String spreadsheetId, List<Exception> exceptions) {
         this.service = service;
         this.spreadsheetId = spreadsheetId;
@@ -106,6 +111,17 @@ final class SpreadsheetSerializer implements TabularSerializer {
     }
     
     private void sendBatch(List<RowData> rows) {
+        // If this row is wider than our sheet, add columns to the sheet
+        int columns = rows.get(0).getValues().size();
+        if (columns > maxColumns) {
+            AppendDimensionRequest adr = new AppendDimensionRequest();
+            adr.setDimension("COLUMNS");
+            adr.setLength(columns - maxColumns);
+            maxColumns = columns;
+            Request req = new Request();
+            req.setAppendDimension(adr);
+            requests.add(req);
+        }
         AppendCellsRequest acr = new AppendCellsRequest();
         acr.setFields("*");
         acr.setSheetId(0);
