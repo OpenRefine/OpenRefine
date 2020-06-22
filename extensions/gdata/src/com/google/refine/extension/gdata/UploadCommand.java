@@ -68,6 +68,8 @@ public class UploadCommand extends Command {
     
     private static final String METADATA_DESCRIPTION = "OpenRefine project dump";
     private static final String METADATA_ICON_FILE = "logo-openrefine-550.png";
+
+    // TODO: We need a way to provide progress to the user during long uploads
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -99,7 +101,8 @@ public class UploadCommand extends Command {
                 
                 List<Exception> exceptions = new LinkedList<Exception>();
                 String url = upload(project, engine, params, token, name, exceptions);
-                if (url != null) {
+                // The URL can be non-null even if it doesn't fail
+                if (url != null && exceptions.size() == 0) {
                     writer.writeStringField("status", "ok");
                     writer.writeStringField("url", url);
                 } else if (exceptions.size() == 0) {
