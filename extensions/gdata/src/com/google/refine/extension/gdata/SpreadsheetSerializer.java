@@ -21,7 +21,7 @@ import com.google.refine.exporters.TabularSerializer;
 final class SpreadsheetSerializer implements TabularSerializer {
     static final Logger logger = LoggerFactory.getLogger("SpreadsheetSerializer");
     
-    private static final int BATCH_SIZE = 1000;
+    private static final int BATCH_SIZE = 500;
     
     private Sheets service;
     private String spreadsheetId;
@@ -51,22 +51,6 @@ final class SpreadsheetSerializer implements TabularSerializer {
         if (batchRequest != null) {
             sendBatch(rows);
         }
-        
-        BatchUpdateSpreadsheetRequest requestBody = new BatchUpdateSpreadsheetRequest();
-        requestBody.setIncludeSpreadsheetInResponse(false);
-        requestBody.setRequests(requests);
-
-        Sheets.Spreadsheets.BatchUpdate request;
-        try {
-            logger.debug("spreadsheetId: " + spreadsheetId);
-            logger.debug("requestBody:" + requestBody.toString());
-            request = service.spreadsheets().batchUpdate(spreadsheetId, requestBody);
-            
-            BatchUpdateSpreadsheetResponse response = request.execute();
-            logger.debug("response:" + response.toPrettyString());
-        } catch (IOException e) {
-            exceptions.add(e);
-        }
     }
 
     @Override
@@ -89,6 +73,9 @@ final class SpreadsheetSerializer implements TabularSerializer {
         
         if (row % BATCH_SIZE == 0) {
             sendBatch(rows);
+            if (exceptions.size() > 0) {
+                throw new RuntimeException(exceptions.get(0));
+            }
         }
     }
     
@@ -113,8 +100,29 @@ final class SpreadsheetSerializer implements TabularSerializer {
         acr.setSheetId(0);
         acr.setRows(rows);
         batchRequest.setAppendCells(acr);
-        
         requests.add(batchRequest);
+        
+        // FIXME: We have a 10MB cap on the request size, but I'm not sure we've got a good
+        // way to quickly tell how big our request is. Just reduce row count for now.
+        BatchUpdateSpreadsheetRequest requestBody = new BatchUpdateSpreadsheetRequest();
+        requestBody.setIncludeSpreadsheetInResponse(false);
+        requestBody.setRequests(requests);
+
+        Sheets.Spreadsheets.BatchUpdate request;
+        try {
+            logger.debug("spreadsheetId: " + spreadsheetId);
+//            logger.debug("requestBody:" + requestBody.toString());
+            request = service.spreadsheets().batchUpdate(spreadsheetId, requestBody);
+            BatchUpdateSpreadsheetResponse response = request.execute();
+            logger.debug("response:" + response.toPrettyString());
+        } catch (IOException e) {
+            exceptions.add(e);
+        } finally {
+            requestBody.clear();
+            requests.clear();
+            rows.clear();
+        }
+
     }
     
     public String getUrl() throws UnsupportedEncodingException {
