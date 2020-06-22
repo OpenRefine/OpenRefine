@@ -398,12 +398,12 @@ public class SparkGridState implements GridState {
     // Facet computation
 
     @Override
-    public <T> T aggregateRows(RowAggregator<T> aggregator, T initialState) {
+    public <T extends Serializable> T aggregateRows(RowAggregator<T> aggregator, T initialState) {
         return grid.aggregate(initialState, rowSeqOp(aggregator), facetCombineOp(aggregator));
     }
 
     @Override
-    public <T> T aggregateRecords(RecordAggregator<T> aggregator, T initialState) {
+    public <T extends Serializable> T aggregateRecords(RecordAggregator<T> aggregator, T initialState) {
         return getRecords().aggregate(initialState, recordSeqOp(aggregator), facetCombineOp(aggregator));
     }
 

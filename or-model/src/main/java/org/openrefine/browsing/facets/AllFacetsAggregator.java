@@ -4,6 +4,9 @@ package org.openrefine.browsing.facets;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableList.Builder;
+
 import org.openrefine.model.Record;
 import org.openrefine.model.RecordFilter;
 import org.openrefine.model.Row;
@@ -12,10 +15,12 @@ import org.openrefine.model.RowFilter;
 /**
  * Internal aggregator to compute the state of all facets in one pass over the grid.
  * 
+ * We use {@link com.google.common.collect.ImmutableList} to ensure immutability and serializability of the states.
+ * 
  * @author Antonin Delpeuch
  *
  */
-public class AllFacetsAggregator implements RowAggregator<List<FacetState>>, RecordAggregator<List<FacetState>> {
+public class AllFacetsAggregator implements RowAggregator<ImmutableList<FacetState>>, RecordAggregator<ImmutableList<FacetState>> {
 
     private static final long serialVersionUID = -8277361327137906882L;
 
@@ -34,7 +39,7 @@ public class AllFacetsAggregator implements RowAggregator<List<FacetState>>, Rec
     }
 
     @Override
-    public List<FacetState> withRow(List<FacetState> states, long rowId, Row row) {
+    public ImmutableList<FacetState> withRow(ImmutableList<FacetState> states, long rowId, Row row) {
         if (states.size() != _facetAggregators.size()) {
             throw new IllegalArgumentException("Incompatible list of facet states and facet aggregators");
         }
@@ -56,7 +61,7 @@ public class AllFacetsAggregator implements RowAggregator<List<FacetState>>, Rec
 
         // Compute the new list of facet states
         boolean allMatching = numberOfMismatches == 0;
-        List<FacetState> newStates = new ArrayList<>(states.size());
+        Builder<FacetState> newStates = ImmutableList.<FacetState> builder();
         for (int i = 0; i != states.size(); i++) {
             // Rows are only seen by facets if they are selected by all other facets
             if (allMatching || !matching[i]) {
@@ -65,11 +70,11 @@ public class AllFacetsAggregator implements RowAggregator<List<FacetState>>, Rec
                 newStates.add(states.get(i));
             }
         }
-        return newStates;
+        return newStates.build();
     }
 
     @Override
-    public List<FacetState> withRecord(List<FacetState> states, Record record) {
+    public ImmutableList<FacetState> withRecord(ImmutableList<FacetState> states, Record record) {
         if (states.size() != _facetAggregators.size()) {
             throw new IllegalArgumentException("Incompatible list of facet states and facet aggregators");
         }
@@ -91,7 +96,7 @@ public class AllFacetsAggregator implements RowAggregator<List<FacetState>>, Rec
 
         // Compute the new list of facet states
         boolean allMatching = numberOfMismatches == 0;
-        List<FacetState> newStates = new ArrayList<>(states.size());
+        Builder<FacetState> newStates = ImmutableList.<FacetState> builder();
         List<Row> rows = record.getRows();
         for (int i = 0; i != states.size(); i++) {
             // Rows are only seen by facets if they are selected by all other facets
@@ -105,19 +110,19 @@ public class AllFacetsAggregator implements RowAggregator<List<FacetState>>, Rec
                 newStates.add(states.get(i));
             }
         }
-        return newStates;
+        return newStates.build();
     }
 
     @Override
-    public List<FacetState> sum(List<FacetState> first, List<FacetState> second) {
+    public ImmutableList<FacetState> sum(ImmutableList<FacetState> first, ImmutableList<FacetState> second) {
         if (first.size() != second.size()) {
             throw new IllegalArgumentException("Attempting to merge incompatible AllFacetStates");
         }
-        List<FacetState> newStates = new ArrayList<>(first.size());
+        Builder<FacetState> newStates = ImmutableList.<FacetState> builder();
         for (int i = 0; i != first.size(); i++) {
             newStates.add(sumHelper(_facetAggregators.get(i), first.get(i), second.get(i)));
         }
-        return newStates;
+        return newStates.build();
     }
 
     @SuppressWarnings("unchecked")

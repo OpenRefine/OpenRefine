@@ -33,13 +33,15 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package org.openrefine.browsing;
 
-import java.util.ArrayList;
+import java.io.Serializable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableList.Builder;
 
 import org.openrefine.browsing.facets.AllFacetsAggregator;
 import org.openrefine.browsing.facets.Facet;
@@ -108,14 +110,14 @@ public class Engine {
     }
 
     @JsonProperty("facets")
-    public List<FacetResult> getFacetResults() {
-        List<FacetState> states = _state.aggregateRows(allFacetsAggregator(), allFacetsInitialState());
+    public ImmutableList<FacetResult> getFacetResults() {
+        ImmutableList<FacetState> states = _state.aggregateRows(allFacetsAggregator(), allFacetsInitialState());
 
-        List<FacetResult> facetResults = new ArrayList<>();
+        Builder<FacetResult> facetResults = ImmutableList.<FacetResult> builder();
         for (int i = 0; i != states.size(); i++) {
             facetResults.add(_facets.get(i).getFacetResult(states.get(i)));
         }
-        return facetResults;
+        return facetResults.build();
     }
 
     @JsonIgnore
@@ -177,7 +179,7 @@ public class Engine {
      * @param initialState
      * @return
      */
-    public <T> T aggregateFilteredRows(RowAggregator<T> aggregator, T initialState) {
+    public <T extends Serializable> T aggregateFilteredRows(RowAggregator<T> aggregator, T initialState) {
         return _state.aggregateRows(restrictAggregator(aggregator, combinedRowFilters()), initialState);
     }
 
@@ -189,7 +191,7 @@ public class Engine {
      * @param initialState
      * @return
      */
-    public <T> T aggregateFilteredRecords(RecordAggregator<T> aggregator, T initialState) {
+    public <T extends Serializable> T aggregateFilteredRecords(RecordAggregator<T> aggregator, T initialState) {
         return _state.aggregateRecords(restrictAggregator(aggregator, combinedRecordFilters()), initialState);
     }
 
@@ -212,10 +214,11 @@ public class Engine {
     }
 
     @JsonIgnore
-    private List<FacetState> allFacetsInitialState() {
-        return _facets
-                .stream().map(facet -> facet.getInitialFacetState())
-                .collect(Collectors.toList());
+    private ImmutableList<FacetState> allFacetsInitialState() {
+        return ImmutableList.copyOf(
+                _facets
+                        .stream().map(facet -> facet.getInitialFacetState())
+                        .collect(Collectors.toList()));
     }
 
     @JsonIgnore

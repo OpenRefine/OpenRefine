@@ -41,6 +41,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -64,6 +65,8 @@ import org.openrefine.model.ColumnModel;
 import org.openrefine.model.DatamodelRunner;
 import org.openrefine.model.GridState;
 import org.openrefine.model.Project;
+import org.openrefine.model.Recon;
+import org.openrefine.model.ReconCandidate;
 import org.openrefine.model.Row;
 import org.openrefine.model.TestingDatamodelRunner;
 import org.openrefine.util.TestUtils;
@@ -255,6 +258,26 @@ public class RefineTest extends PowerMockTestCase {
 
         ProjectManager.singleton._projects.clear();
         ProjectManager.singleton._projectsMetadata.clear();
+    }
+
+    protected Recon testRecon(String name, String id, Recon.Judgment judgment) {
+        List<ReconCandidate> candidates = Arrays.asList(
+                new ReconCandidate(id, name + " 1", null, 98.0),
+                new ReconCandidate(id + "2", name + " 2", null, 76.0));
+        ReconCandidate match = Recon.Judgment.Matched.equals(judgment) ? candidates.get(0) : null;
+        return new Recon(
+                1234L,
+                3478L,
+                judgment,
+                match,
+                new Object[3],
+                candidates,
+                "http://my.service.com/api",
+                "http://my.service.com/space",
+                "http://my.service.com/schema",
+                "batch",
+                3L,
+                0);
     }
 
     /**

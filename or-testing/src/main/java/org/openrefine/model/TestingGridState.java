@@ -198,8 +198,9 @@ public class TestingGridState implements GridState {
     }
 
     @Override
-    public <T> T aggregateRows(RowAggregator<T> aggregator, T initialState) {
-
+    public <T extends Serializable> T aggregateRows(RowAggregator<T> aggregator, T initialState) {
+        TestingDatamodelRunner.ensureSerializable(initialState);
+        TestingDatamodelRunner.ensureSerializable(aggregator);
         // Artificially split the grid in two, in order to use the `sum` method
         // of RowAggregator.
         long split = rowCount() / 2;
@@ -217,7 +218,9 @@ public class TestingGridState implements GridState {
     }
 
     @Override
-    public <T> T aggregateRecords(RecordAggregator<T> aggregator, T initialState) {
+    public <T extends Serializable> T aggregateRecords(RecordAggregator<T> aggregator, T initialState) {
+        TestingDatamodelRunner.ensureSerializable(initialState);
+        TestingDatamodelRunner.ensureSerializable(aggregator);
         // Artificially split the grid in two, in order to use the `sum` method
         // of FacetAggregator.
         long split = rowCount() / 2;

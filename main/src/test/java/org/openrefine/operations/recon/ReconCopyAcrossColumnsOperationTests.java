@@ -27,16 +27,29 @@
 
 package org.openrefine.operations.recon;
 
+import java.io.Serializable;
+import java.util.Arrays;
+import java.util.Collections;
+
 import org.testng.annotations.BeforeSuite;
+import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
 import org.openrefine.RefineTest;
+import org.openrefine.browsing.EngineConfig;
+import org.openrefine.history.Change;
+import org.openrefine.history.Change.DoesNotApplyException;
+import org.openrefine.model.Cell;
+import org.openrefine.model.GridState;
+import org.openrefine.model.Recon;
 import org.openrefine.operations.OperationRegistry;
 import org.openrefine.operations.recon.ReconCopyAcrossColumnsOperation;
 import org.openrefine.util.ParsingUtilities;
 import org.openrefine.util.TestUtils;
 
 public class ReconCopyAcrossColumnsOperationTests extends RefineTest {
+
+    GridState initialState;
 
     @BeforeSuite
     public void registerOperation() {
@@ -46,7 +59,7 @@ public class ReconCopyAcrossColumnsOperationTests extends RefineTest {
     @Test
     public void serializeReconCopyAcrossColumnsOperation() throws Exception {
         String json = "{\"op\":\"core/recon-copy-across-columns\","
-                + "\"description\":\"Copy recon judgments from column source column to firstsecond\","
+                + "\"description\":\"Copy recon judgments from column source column to [first, second]\","
                 + "\"engineConfig\":{\"mode\":\"row-based\",\"facets\":[]},"
                 + "\"fromColumnName\":\"source column\","
                 + "\"toColumnNames\":[\"first\",\"second\"],"
@@ -54,5 +67,64 @@ public class ReconCopyAcrossColumnsOperationTests extends RefineTest {
                 + "\"applyToJudgedCells\":true}";
         TestUtils.isSerializedTo(ParsingUtilities.mapper.readValue(json, ReconCopyAcrossColumnsOperation.class), json,
                 ParsingUtilities.defaultWriter);
+    }
+
+    @BeforeTest
+    public void setupInitialState() {
+        initialState = createGrid(
+                new String[] { "foo", "bar" },
+                new Serializable[][] {
+                        { "a", "b" },
+                        { "d", new Cell("b", testRecon("e", "h", Recon.Judgment.Matched)) },
+                        { "b", new Cell("d", testRecon("b", "j", Recon.Judgment.None)) }
+                });
+    }
+
+    @Test
+    public void testReconCopyAcrossColumns() throws DoesNotApplyException {
+        Change change = new ReconCopyAcrossColumnsOperation(
+                EngineConfig.ALL_ROWS,
+                "bar",
+                Collections.singletonList("foo"),
+                Arrays.asList(Recon.Judgment.Matched, Recon.Judgment.None),
+                true).createChange();
+
+        GridState applied = change.apply(initialState);
+
+        GridState expected = createGrid(
+                new String[] { "foo", "bar" },
+                new Serializable[][] {
+                        { "a", "b" },
+                        { new Cell("d", testRecon("b", "j", Recon.Judgment.None)),
+                                new Cell("b", testRecon("e", "h", Recon.Judgment.Matched)) },
+                        { new Cell("b", testRecon("e", "h", Recon.Judgment.Matched)),
+                                new Cell("d", testRecon("b", "j", Recon.Judgment.None)) }
+                });
+
+        assertGridEquals(applied, expected);
+    }
+
+    @Test(expectedExceptions = DoesNotApplyException.class)
+    public void testInvalidSourceColumn() throws DoesNotApplyException {
+        Change change = new ReconCopyAcrossColumnsOperation(
+                EngineConfig.ALL_ROWS,
+                "does_not_exist",
+                Collections.singletonList("foo"),
+                Arrays.asList(Recon.Judgment.Matched, Recon.Judgment.None),
+                true).createChange();
+
+        change.apply(initialState);
+    }
+
+    @Test(expectedExceptions = DoesNotApplyException.class)
+    public void testInvalidTargetColumn() throws DoesNotApplyException {
+        Change change = new ReconCopyAcrossColumnsOperation(
+                EngineConfig.ALL_ROWS,
+                "bar",
+                Collections.singletonList("does_not_exist"),
+                Arrays.asList(Recon.Judgment.Matched, Recon.Judgment.None),
+                true).createChange();
+
+        change.apply(initialState);
     }
 }

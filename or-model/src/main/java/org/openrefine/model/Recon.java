@@ -84,6 +84,12 @@ public class Recon implements HasFields, Serializable {
         }
     }
 
+    /**
+     * Deprecated: use JSON deserialization to create a Judgment object directly.
+     * 
+     * @param s
+     * @return
+     */
     @Deprecated
     static public Judgment stringToJudgment(String s) {
         if ("matched".equals(s)) {
@@ -556,5 +562,29 @@ public class Recon implements HasFields, Serializable {
                 judgmentAction,
                 judgmentBatchSize,
                 newMatchRank);
+    }
+
+    @Override
+    public boolean equals(Object other) {
+        if (!(other instanceof Recon)) {
+            return false;
+        }
+        Recon otherRecon = (Recon) other;
+        return (id == otherRecon.id &&
+                judgmentHistoryEntry == otherRecon.judgmentHistoryEntry &&
+                judgment.equals(otherRecon.judgment) &&
+                ((match == null && otherRecon.match == null) || match.equals(otherRecon.match)) &&
+                candidates.equals(otherRecon.candidates) &&
+                service.equals(otherRecon.service) &&
+                identifierSpace.equals(otherRecon.identifierSpace) &&
+                schemaSpace.equals(otherRecon.schemaSpace) &&
+                judgmentAction.equals(otherRecon.judgmentAction) &&
+                judgmentBatchSize == otherRecon.judgmentBatchSize &&
+                matchRank == otherRecon.matchRank);
+    }
+
+    @Override
+    public int hashCode() {
+        return (int) id;
     }
 }

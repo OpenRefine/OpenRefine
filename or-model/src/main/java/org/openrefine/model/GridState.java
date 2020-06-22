@@ -194,12 +194,12 @@ public interface GridState {
     /**
      * Computes the result of a row aggregator on the grid.
      */
-    public <T> T aggregateRows(RowAggregator<T> aggregator, T initialState);
+    public <T extends Serializable> T aggregateRows(RowAggregator<T> aggregator, T initialState);
 
     /**
      * Computes the result of a row aggregator on the grid.
      */
-    public <T> T aggregateRecords(RecordAggregator<T> aggregator, T initialState);
+    public <T extends Serializable> T aggregateRecords(RecordAggregator<T> aggregator, T initialState);
 
     // Transformations
 

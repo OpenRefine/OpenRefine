@@ -167,7 +167,11 @@ public class Cell implements HasFields, Serializable {
 
     @Override
     public String toString() {
-        return StringUtils.toString(value);
+        if (recon == null) {
+            return StringUtils.toString(value);
+        } else {
+            return String.format("[Cell \"%s\" %s]", StringUtils.toString(value), recon.toString());
+        }
     }
 
     @Override

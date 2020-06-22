@@ -48,18 +48,18 @@ abstract public class ImmediateRowMapOperation extends EngineDependentOperation 
         return new RowMapChange(getEngineConfig()) {
 
             @Override
-            public RowMapper getPositiveRowMapper(GridState state) {
-                return getPositiveRowMapper(state);
+            public RowMapper getPositiveRowMapper(GridState state) throws DoesNotApplyException {
+                return ImmediateRowMapOperation.this.getPositiveRowMapper(state);
             }
 
             @Override
-            public RowMapper getNegativeRowMapper(GridState state) {
-                return getNegativeRowMapper(state);
+            public RowMapper getNegativeRowMapper(GridState state) throws DoesNotApplyException {
+                return ImmediateRowMapOperation.this.getNegativeRowMapper(state);
             }
 
             @Override
-            public ColumnModel getNewColumnModel(GridState state) {
-                return getNewColumnModel(state);
+            public ColumnModel getNewColumnModel(GridState state) throws DoesNotApplyException {
+                return ImmediateRowMapOperation.this.getNewColumnModel(state);
             }
 
             @Override
