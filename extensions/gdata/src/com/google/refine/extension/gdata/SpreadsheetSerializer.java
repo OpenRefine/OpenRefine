@@ -5,6 +5,7 @@ import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -98,10 +99,22 @@ final class SpreadsheetSerializer implements TabularSerializer {
         com.google.api.services.sheets.v4.model.CellData sheetCellData = new com.google.api.services.sheets.v4.model.CellData();
         
         ExtendedValue ev = new ExtendedValue();
-        ev.setStringValue(cellData.value.toString());
-        
+        if (cellData.value instanceof String) {
+            ev.setStringValue((String) cellData.value);
+        } else if (cellData.value instanceof Boolean) {
+            ev.setBoolValue((Boolean) cellData.value);
+        } else if (cellData.value instanceof Integer) {
+            ev.setNumberValue(new Double((Integer)cellData.value));
+        } else if (cellData.value instanceof Double) {
+            ev.setNumberValue((Double) cellData.value);
+        } else if (cellData.value instanceof DateTime) {
+//            ev.setNumberValue((Double) cellData.value);
+            ev.setStringValue(cellData.value.toString());
+        } else {
+            ev.setStringValue(cellData.value.toString());
+        }
         sheetCellData.setUserEnteredValue(ev);
-        
+
         return sheetCellData;
     }
     
