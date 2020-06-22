@@ -19,7 +19,7 @@ import com.google.api.services.sheets.v4.model.Request;
 import com.google.api.services.sheets.v4.model.RowData;
 import com.google.refine.exporters.TabularSerializer;
 
-final class SpreadsheetSerializer implements TabularSerializer {
+class SpreadsheetSerializer implements TabularSerializer {
     static final Logger logger = LoggerFactory.getLogger("SpreadsheetSerializer");
     
     private static final int BATCH_SIZE = 500;
@@ -27,15 +27,9 @@ final class SpreadsheetSerializer implements TabularSerializer {
     private Sheets service;
     private String spreadsheetId;
     private List<Exception> exceptions;
-    
-    // A list of updates to apply to the spreadsheet.
-    private List<Request> requests = new ArrayList<>(); 
-    
-    private Request batchRequest = null;
-    private int row = 0;
 
-    private List<RowData> rows;
-    
+    protected List<RowData> rows = new ArrayList<>();
+
     // FIXME: This is fragile. Can we find out how many columns we have rather than assuming
     // it'll always be the default A-Z?
     private int maxColumns = 26;
@@ -53,17 +47,13 @@ final class SpreadsheetSerializer implements TabularSerializer {
     
     @Override
     public void endFile() {
-        if (batchRequest != null) {
+        if (rows.size() > 0) {
             sendBatch(rows);
-        }
+            }
     }
 
     @Override
     public void addRow(List<CellData> cells, boolean isHeader) {
-        if (batchRequest == null) {
-            batchRequest = new Request();
-            rows = new ArrayList<RowData>(BATCH_SIZE);
-        }
         List<com.google.api.services.sheets.v4.model.CellData> cellDatas = new ArrayList<>();
         RowData rowData = new RowData();
         
@@ -74,9 +64,8 @@ final class SpreadsheetSerializer implements TabularSerializer {
         
         rowData.setValues(cellDatas);
         rows.add(rowData);
-        row++;
-        
-        if (row % BATCH_SIZE == 0) {
+
+        if (rows.size() >= BATCH_SIZE) {
             sendBatch(rows);
             if (exceptions.size() > 0) {
                 throw new RuntimeException(exceptions.get(0));
@@ -100,23 +89,7 @@ final class SpreadsheetSerializer implements TabularSerializer {
     }
     
     private void sendBatch(List<RowData> rows) {
-        // If this row is wider than our sheet, add columns to the sheet
-        int columns = rows.get(0).getValues().size();
-        if (columns > maxColumns) {
-            AppendDimensionRequest adr = new AppendDimensionRequest();
-            adr.setDimension("COLUMNS");
-            adr.setLength(columns - maxColumns);
-            maxColumns = columns;
-            Request req = new Request();
-            req.setAppendDimension(adr);
-            requests.add(req);
-        }
-        AppendCellsRequest acr = new AppendCellsRequest();
-        acr.setFields("*");
-        acr.setSheetId(0);
-        acr.setRows(rows);
-        batchRequest.setAppendCells(acr);
-        requests.add(batchRequest);
+        List<Request> requests = prepareBatch(rows);
         
         // FIXME: We have a 10MB cap on the request size, but I'm not sure we've got a good
         // way to quickly tell how big our request is. Just reduce row count for now.
@@ -139,6 +112,31 @@ final class SpreadsheetSerializer implements TabularSerializer {
             rows.clear();
         }
 
+    }
+
+    protected List<Request> prepareBatch(List<RowData> rows) {
+        List<Request> requests = new ArrayList<>();
+
+        // If this row is wider than our sheet, add columns to the sheet
+        int columns = rows.get(0).getValues().size();
+        if (columns > maxColumns) {
+            AppendDimensionRequest adr = new AppendDimensionRequest();
+            adr.setDimension("COLUMNS");
+            adr.setLength(columns - maxColumns);
+            maxColumns = columns;
+            Request req = new Request();
+            req.setAppendDimension(adr);
+            requests.add(req);
+        }
+        AppendCellsRequest acr = new AppendCellsRequest();
+        acr.setFields("*");
+        acr.setSheetId(0);
+        acr.setRows(rows);
+
+        Request request = new Request();
+        request.setAppendCells(acr);
+        requests.add(request);
+        return requests;
     }
     
     public String getUrl() throws UnsupportedEncodingException {
