@@ -1,6 +1,6 @@
 ---
 id: records_mode
-title: The records mode
+title: Records mode
 sidebar_label: Records mode
 ---
 

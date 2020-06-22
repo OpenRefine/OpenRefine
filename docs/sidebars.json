@@ -1,21 +1,41 @@
 {
   "docs": {
-    "Getting Started": [
+    "New to OpenRefine?": [
       "index",
       "planning",
       "use_cases",
-      "tutorials",
-      "install/install",
-      "install/installextensions",
-      "install/user_data",
-      "records_mode",
-      "history"
+      "tutorials"
     ],
-    "Importing Data": [
-       "importers/csv",
-       "importers/json",
-       "importers/xml",
-       "importers/importingaproject.md"
+    "Install": [
+      "install/systemreqs",
+      "install/install",
+      "install/user_data",
+      "install/memory",
+      "install/installextensions",
+      "install/nightly",
+      "install/server",
+      "install/startexit"
+    ],
+    "The interface": [
+       "interface/project",
+       "interface/history",
+       "interface/records_mode",
+       "interface/preferences"
+    ],
+    "Start a project": [
+       "project/overview",
+       {
+	       "type": "subcategory",
+	       "label": "Create a project by importing data",
+	       "ids": [
+       "project/csv",
+       "project/json",
+       "project/xml",
+       "project/preview"
+	       ]
+       },
+       "project/importaproject",
+       "project/naming"
     ],
     "Operations": [
         "operations/transform",

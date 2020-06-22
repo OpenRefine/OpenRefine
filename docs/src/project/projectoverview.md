@@ -1,7 +1,7 @@
 ---
-id: mac
-title: Installing on Mac
-sidebar_label: Installing on Mac
+id: projectoverview
+title: Start a project: overview
+sidebar_label: Overview
 ---
 
 This site is just a prototype to propose a basic publishing infrastructure for OpenRefine's new product reference.

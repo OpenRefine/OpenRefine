@@ -1,7 +1,7 @@
 ---
-id: linux
-title: Installing on Linux
-sidebar_label: Installing on Linux
+id: preferences
+title: Preferences
+sidebar_label: Preferences
 ---
 
 This site is just a prototype to propose a basic publishing infrastructure for OpenRefine's new product reference.
