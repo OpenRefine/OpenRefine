@@ -80,9 +80,7 @@ final class SpreadsheetSerializer implements TabularSerializer {
         
         for (int c = 0; c < cells.size(); c++) {
             CellData cellData = cells.get(c);
-            if (cellData != null && cellData.text != null) {
-                cellDatas.add(cellData2sheetCellData(cellData));
-            }
+            cellDatas.add(cellData2sheetCellData(cellData));
         }
         
         rowData.setValues(cellDatas);
@@ -98,8 +96,12 @@ final class SpreadsheetSerializer implements TabularSerializer {
         com.google.api.services.sheets.v4.model.CellData sheetCellData = new com.google.api.services.sheets.v4.model.CellData();
         
         ExtendedValue ev = new ExtendedValue();
-        ev.setStringValue(cellData.value.toString());
-        
+        if (cellData == null || cellData.value == null) {
+            ev.setStringValue("");
+        } else {
+            ev.setStringValue(cellData.value.toString());
+        }
+
         sheetCellData.setUserEnteredValue(ev);
         
         return sheetCellData;
