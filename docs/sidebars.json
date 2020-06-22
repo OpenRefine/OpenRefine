@@ -18,9 +18,9 @@
 					"install/mac",
 					"install/windows",
 					"install/linux"
+				]
 			},
 			"install/user_data"
-	      ]
 	      ]
       },
       "install/memory",
