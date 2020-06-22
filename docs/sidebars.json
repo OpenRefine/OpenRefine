@@ -1,39 +1,21 @@
 {
-"docs": {
-	"New to OpenRefine?": [
-		"planning",
-		"use_cases",
-		"tutorials"
-		],
-	"Install": [
-		{
-	      "type": "subcategory",
-	      "label": "Install or Upgrade",
-	      "ids": [
-			"install/systemreqs",
-			{
-				"type": "subcategory",
-				"label": "Installing or upgrading",
-				"ids": [
-					"install/mac",
-					"install/windows",
-					"install/linux"
-				]
-			},
-			"install/user_data"
-	      ]
-      },
-      "install/memory",
+  "docs": {
+    "Getting Started": [
+      "index",
+      "planning",
+      "use_cases",
+      "tutorials",
+      "install/install",
       "install/installextensions",
-      "install/nightly",
-      "install/server",
-      "install/startexit"
+      "install/user_data",
+      "records_mode",
+      "history"
     ],
     "Importing Data": [
        "importers/csv",
        "importers/json",
        "importers/xml",
-       "importers/importingaproject"
+       "importers/importingaproject.md"
     ],
     "Operations": [
         "operations/transform",
