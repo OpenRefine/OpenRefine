@@ -29,13 +29,6 @@
       "install/server",
       "install/startexit"
     ],
-"Importing Data": [
-       "importers/csv",
-       "importers/json",
-       "importers/xml",
-       "importers/importingaproject"
-    ],
-
     "Importing Data": [
        "importers/csv",
        "importers/json",
