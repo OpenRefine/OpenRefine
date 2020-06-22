@@ -95,9 +95,7 @@ public class ReconTests {
                 + "   {\"id\":\"Q30284245\",\"name\":\"Baylor College of Medicine Children\\u2019s Foundation\",\"score\":48.57142857142858,\"types\":[\"Q163740\"]}"
                 + "]"
                 + "}";
-        Recon r = Recon.loadStreaming(fullJson);
-        r.match = null;
-        r.judgment = Judgment.None;
+        Recon r = Recon.loadStreaming(fullJson).withMatch(null).withJudgment(Judgment.None);
         TestUtils.isSerializedTo(r, json, ParsingUtilities.defaultWriter);
     }
 

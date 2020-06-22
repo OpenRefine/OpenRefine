@@ -33,33 +33,30 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package org.openrefine.operations.recon;
 
-import java.util.List;
-
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import org.openrefine.browsing.EngineConfig;
-import org.openrefine.browsing.RowVisitor;
-import org.openrefine.history.Change;
+import org.openrefine.history.Change.DoesNotApplyException;
 import org.openrefine.model.Cell;
-import org.openrefine.model.ColumnMetadata;
-import org.openrefine.model.Project;
+import org.openrefine.model.GridState;
 import org.openrefine.model.Row;
-import org.openrefine.model.changes.CellChange;
-import org.openrefine.model.changes.ReconChange;
-import org.openrefine.operations.EngineDependentOperation;
+import org.openrefine.model.RowMapper;
+import org.openrefine.operations.ImmediateRowMapOperation;
 
-public class ReconClearSimilarCellsOperation extends EngineDependentOperation {
+public class ReconClearSimilarCellsOperation extends ImmediateRowMapOperation {
 
     final protected String _similarValue;
+    final protected String _columnName;
 
     @JsonCreator
     public ReconClearSimilarCellsOperation(
             @JsonProperty("engineConfig") EngineConfig engineConfig,
             @JsonProperty("columnName") String columnName,
             @JsonProperty("similarValue") String similarValue) {
-        super(engineConfig, columnName, false);
-        this._similarValue = similarValue;
+        super(engineConfig);
+        _similarValue = similarValue;
+        _columnName = columnName;
     }
 
     @JsonProperty("columnName")
@@ -79,52 +76,30 @@ public class ReconClearSimilarCellsOperation extends EngineDependentOperation {
     }
 
     @Override
-    public Change createChange() {
-        return null;
+    protected RowMapper getPositiveRowMapper(GridState state) throws DoesNotApplyException {
+        int cellIndex = columnIndex(state.getColumnModel(), _columnName);
+        return rowMapper(cellIndex, _similarValue);
     }
 
-    @Override
-    protected RowVisitor createRowVisitor(final Project project, final List<CellChange> cellChanges, final long historyEntryID)
-            throws Exception {
-        ColumnMetadata column = project.columnModel.getColumnByName(_columnName);
-        final int cellIndex = column != null ? column.getCellIndex() : -1;
+    protected static RowMapper rowMapper(int cellIndex, String _similarValue) {
+        return new RowMapper() {
 
-        return new RowVisitor() {
+            private static final long serialVersionUID = -7567386480566899008L;
 
             @Override
-            public void start(Project project) {
-                // nothing to do
-            }
-
-            @Override
-            public void end(Project project) {
-                // nothing to do
-            }
-
-            @Override
-            public boolean visit(Project project, int rowIndex, Row row) {
-                Cell cell = cellIndex < 0 ? null : row.getCell(cellIndex);
+            public Row call(long rowId, Row row) {
+                Cell cell = row.getCell(cellIndex);
                 if (cell != null && cell.recon != null) {
                     String value = cell.value instanceof String ? ((String) cell.value) : cell.value.toString();
 
                     if (_similarValue.equals(value)) {
                         Cell newCell = new Cell(cell.value, null);
-
-                        CellChange cellChange = new CellChange(rowIndex, cellIndex, cell, newCell);
-                        cellChanges.add(cellChange);
+                        return row.withCell(cellIndex, newCell);
                     }
                 }
-                return false;
+                return row;
             }
-        };
-    }
 
-    @Override
-    protected Change createChange(Project project, ColumnMetadata column, List<CellChange> cellChanges) {
-        return new ReconChange(
-                cellChanges,
-                _columnName,
-                column.getReconConfig(),
-                null);
+        };
     }
 }

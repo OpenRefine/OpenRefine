@@ -172,7 +172,13 @@ public class RefineTest extends PowerMockTestCase {
         for (int i = 0; i != rows.length; i++) {
             cells[i] = new Cell[columns.length];
             for (int j = 0; j != rows[i].length; j++) {
-                cells[i][j] = new Cell(rows[i][j], null);
+                if (rows[i][j] == null) {
+                    cells[i][j] = null;
+                } else if (rows[i][j] instanceof Cell) {
+                    cells[i][j] = (Cell) rows[i][j];
+                } else {
+                    cells[i][j] = new Cell(rows[i][j], null);
+                }
             }
         }
 

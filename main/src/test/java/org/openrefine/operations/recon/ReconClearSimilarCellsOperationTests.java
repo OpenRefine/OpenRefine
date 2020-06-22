@@ -27,16 +27,22 @@
 
 package org.openrefine.operations.recon;
 
+import java.io.Serializable;
+
 import org.testng.annotations.BeforeSuite;
+import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
 import org.openrefine.RefineTest;
+import org.openrefine.model.GridState;
 import org.openrefine.operations.OperationRegistry;
 import org.openrefine.operations.recon.ReconClearSimilarCellsOperation;
 import org.openrefine.util.ParsingUtilities;
 import org.openrefine.util.TestUtils;
 
 public class ReconClearSimilarCellsOperationTests extends RefineTest {
+
+    protected GridState initialState;
 
     @BeforeSuite
     public void registerOperation() {
@@ -52,5 +58,16 @@ public class ReconClearSimilarCellsOperationTests extends RefineTest {
                 + "\"similarValue\":\"some value\"}";
         TestUtils.isSerializedTo(ParsingUtilities.mapper.readValue(json, ReconClearSimilarCellsOperation.class), json,
                 ParsingUtilities.defaultWriter);
+    }
+
+    @BeforeTest
+    public void setupInitialState() {
+        initialState = createGrid(
+                new String[] { "foo", "bar" },
+                new Serializable[][] {
+                        { "a", new Cell("b", new Recon()) },
+                        { "c", new Cell("d", new Recon()) }
+                });
+
     }
 }

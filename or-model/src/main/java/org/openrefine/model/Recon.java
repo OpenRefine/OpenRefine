@@ -34,18 +34,19 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package org.openrefine.model;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonFilter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonView;
+import com.google.common.collect.ImmutableList;
 
 import org.openrefine.expr.HasFields;
 import org.openrefine.util.JsonViews;
@@ -111,30 +112,30 @@ public class Recon implements HasFields, Serializable {
     @JsonIgnore
     final public long id;
     @JsonIgnore
-    public String service = "unknown";
+    final public String service;
     @JsonIgnore
-    public String identifierSpace = null;
+    final public String identifierSpace;
     @JsonIgnore
-    public String schemaSpace = null;
+    final public String schemaSpace;
 
     @JsonIgnore
-    public Object[] features = new Object[Feature_max];
+    final public Object[] features;
     @JsonIgnore
-    public List<ReconCandidate> candidates;
+    final public ImmutableList<ReconCandidate> candidates;
 
     @JsonIgnore
-    public Judgment judgment = Judgment.None;
+    final public Judgment judgment;
     @JsonIgnore
-    public String judgmentAction = "unknown";
+    final public String judgmentAction;
     @JsonIgnore
-    public long judgmentHistoryEntry;
+    final public long judgmentHistoryEntry;
     @JsonIgnore
-    public int judgmentBatchSize = 0;
+    final public long judgmentBatchSize;
 
     @JsonIgnore
-    public ReconCandidate match = null;
+    final public ReconCandidate match;
     @JsonIgnore
-    public int matchRank = -1;
+    final public int matchRank;
 
     @Deprecated
     static public Recon makeFreebaseRecon(long judgmentHistoryEntry) {
@@ -153,57 +154,23 @@ public class Recon implements HasFields, Serializable {
 
     public Recon(long judgmentHistoryEntry, String identifierSpace, String schemaSpace) {
         id = System.currentTimeMillis() * 1000000 + Math.round(Math.random() * 1000000);
+        service = "unknown";
         this.judgmentHistoryEntry = judgmentHistoryEntry;
         this.identifierSpace = identifierSpace;
         this.schemaSpace = schemaSpace;
+        features = new Object[Feature_max];
+        candidates = null;
+        judgment = Judgment.None;
+        judgmentAction = "unknown";
+        judgmentHistoryEntry = 0;
+        judgmentBatchSize = 0;
+        match = null;
+        matchRank = -1;
     }
 
-    protected Recon(long id, long judgmentHistoryEntry) {
-        this.id = id;
-        this.judgmentHistoryEntry = judgmentHistoryEntry;
-    }
-
-    public Recon dup() {
-        Recon r = new Recon(id, judgmentHistoryEntry);
-        r.identifierSpace = identifierSpace;
-        r.schemaSpace = schemaSpace;
-
-        copyTo(r);
-
-        return r;
-    }
-
+    // TODO inline this
     public Recon dup(long judgmentHistoryEntry) {
-        Recon r = new Recon(judgmentHistoryEntry, identifierSpace, schemaSpace);
-
-        copyTo(r);
-
-        return r;
-    }
-
-    protected void copyTo(Recon r) {
-        System.arraycopy(features, 0, r.features, 0, features.length);
-
-        if (candidates != null) {
-            r.candidates = new ArrayList<ReconCandidate>(candidates);
-        }
-
-        r.service = service;
-
-        r.judgment = judgment;
-
-        r.judgmentAction = judgmentAction;
-        r.judgmentBatchSize = judgmentBatchSize;
-
-        r.match = match;
-        r.matchRank = matchRank;
-    }
-
-    public void addCandidate(ReconCandidate candidate) {
-        if (candidates == null) {
-            candidates = new ArrayList<ReconCandidate>(3);
-        }
-        candidates.add(candidate);
+        return withJudgmentHistoryEntry(judgmentHistoryEntry);
     }
 
     @JsonIgnore
@@ -216,25 +183,6 @@ public class Recon implements HasFields, Serializable {
 
     public Object getFeature(int feature) {
         return feature < features.length ? features[feature] : null;
-    }
-
-    public void setFeature(int feature, Object v) {
-        if (feature >= features.length) {
-            if (feature >= Feature_max) {
-                return;
-            }
-
-            // We deserialized this object from an older version of the class
-            // that had fewer features, so we can just try to extend it
-
-            Object[] newFeatures = new Object[Feature_max];
-
-            System.arraycopy(features, 0, newFeatures, 0, features.length);
-
-            features = newFeatures;
-        }
-
-        features[feature] = v;
     }
 
     @Override
@@ -357,7 +305,7 @@ public class Recon implements HasFields, Serializable {
 
     @JsonProperty("judgmentBatchSize")
     @JsonView(JsonViews.SaveMode.class)
-    public int getJudgmentBatchSize() {
+    public long getJudgmentBatchSize() {
         return judgmentBatchSize;
     }
 
@@ -375,6 +323,7 @@ public class Recon implements HasFields, Serializable {
         return ParsingUtilities.mapper.readValue(s, Recon.class);
     }
 
+    @JsonCreator
     public Recon(
             @JsonProperty("id") long id,
             @JsonProperty("judgmentHistoryEntry") long judgmentHistoryEntry,
@@ -386,19 +335,226 @@ public class Recon implements HasFields, Serializable {
             @JsonProperty("identifierSpace") String identifierSpace,
             @JsonProperty("schemaSpace") String schemaSpace,
             @JsonProperty("judgmentAction") String judgmentAction,
-            @JsonProperty("judgmentBatchSize") Integer judgmentBatchSize,
+            @JsonProperty("judgmentBatchSize") Long judgmentBatchSize,
             @JsonProperty("matchRank") Integer matchRank) {
         this.id = id;
         this.judgmentHistoryEntry = judgmentHistoryEntry;
         this.judgment = judgment != null ? judgment : Judgment.None;
         this.match = match;
         this.features = features != null ? features : new Object[Feature_max];
-        this.candidates = candidates != null ? candidates : new ArrayList<>();
+        this.candidates = candidates != null ? ImmutableList.copyOf(candidates) : ImmutableList.of();
         this.service = service != null ? service : "unknown";
         this.identifierSpace = identifierSpace;
         this.schemaSpace = schemaSpace;
         this.judgmentAction = judgmentAction != null ? judgmentAction : "unknown";
         this.judgmentBatchSize = judgmentBatchSize != null ? judgmentBatchSize : 0;
         this.matchRank = matchRank != null ? matchRank : -1;
+    }
+
+    public Recon withId(long newId) {
+        return new Recon(
+                newId,
+                judgmentHistoryEntry,
+                judgment,
+                match,
+                features,
+                candidates,
+                service,
+                identifierSpace,
+                schemaSpace,
+                judgmentAction,
+                judgmentBatchSize,
+                matchRank);
+    }
+
+    public Recon withJudgmentHistoryEntry(long newJudgmentHistoryEntry) {
+        return new Recon(
+                id,
+                newJudgmentHistoryEntry,
+                judgment,
+                match,
+                features,
+                candidates,
+                service,
+                identifierSpace,
+                schemaSpace,
+                judgmentAction,
+                judgmentBatchSize,
+                matchRank);
+    }
+
+    public Recon withJudgment(Judgment newJudgment) {
+        return new Recon(
+                id,
+                judgmentHistoryEntry,
+                newJudgment,
+                match,
+                features,
+                candidates,
+                service,
+                identifierSpace,
+                schemaSpace,
+                judgmentAction,
+                judgmentBatchSize,
+                matchRank);
+    }
+
+    public Recon withMatch(ReconCandidate newMatch) {
+        return new Recon(
+                id,
+                judgmentHistoryEntry,
+                judgment,
+                newMatch,
+                features,
+                candidates,
+                service,
+                identifierSpace,
+                schemaSpace,
+                judgmentAction,
+                judgmentBatchSize,
+                matchRank);
+    }
+
+    public Recon withFeatures(Object[] newFeatures) {
+        return new Recon(
+                id,
+                judgmentHistoryEntry,
+                judgment,
+                match,
+                newFeatures,
+                candidates,
+                service,
+                identifierSpace,
+                schemaSpace,
+                judgmentAction,
+                judgmentBatchSize,
+                matchRank);
+    }
+
+    public Recon withCandidates(List<ReconCandidate> newCandidates) {
+        return new Recon(
+                id,
+                judgmentHistoryEntry,
+                judgment,
+                match,
+                features,
+                newCandidates,
+                service,
+                identifierSpace,
+                schemaSpace,
+                judgmentAction,
+                judgmentBatchSize,
+                matchRank);
+    }
+
+    /**
+     * Adds a reconciliation candidate at the end of the list of candidates
+     * 
+     * @param newCandidate
+     * @return
+     */
+    public Recon withCandidate(ReconCandidate newCandidate) {
+        ImmutableList<ReconCandidate> newCandidates = ImmutableList
+                .<ReconCandidate> builder()
+                .addAll(candidates)
+                .add(newCandidate)
+                .build();
+        return withCandidates(newCandidates);
+    }
+
+    public Recon withService(String service) {
+        return new Recon(
+                id,
+                judgmentHistoryEntry,
+                judgment,
+                match,
+                features,
+                candidates,
+                service,
+                identifierSpace,
+                schemaSpace,
+                judgmentAction,
+                judgmentBatchSize,
+                matchRank);
+    }
+
+    public Recon withIdentifierSpace(String newIdentifierSpace) {
+        return new Recon(
+                id,
+                judgmentHistoryEntry,
+                judgment,
+                match,
+                features,
+                candidates,
+                service,
+                newIdentifierSpace,
+                schemaSpace,
+                judgmentAction,
+                judgmentBatchSize,
+                matchRank);
+    }
+
+    public Recon withSchemaSpace(String newSchemaSpace) {
+        return new Recon(
+                id,
+                judgmentHistoryEntry,
+                judgment,
+                match,
+                features,
+                candidates,
+                service,
+                identifierSpace,
+                newSchemaSpace,
+                judgmentAction,
+                judgmentBatchSize,
+                matchRank);
+    }
+
+    public Recon withJudgmentAction(String newJudgmentAction) {
+        return new Recon(
+                id,
+                judgmentHistoryEntry,
+                judgment,
+                match,
+                features,
+                candidates,
+                service,
+                identifierSpace,
+                schemaSpace,
+                newJudgmentAction,
+                judgmentBatchSize,
+                matchRank);
+    }
+
+    public Recon withJudgmentBatchSize(Long newJudgmentBatchSize) {
+        return new Recon(
+                id,
+                judgmentHistoryEntry,
+                judgment,
+                match,
+                features,
+                candidates,
+                service,
+                identifierSpace,
+                schemaSpace,
+                judgmentAction,
+                newJudgmentBatchSize,
+                matchRank);
+    }
+
+    public Recon withMatchRank(int newMatchRank) {
+        return new Recon(
+                id,
+                judgmentHistoryEntry,
+                judgment,
+                match,
+                features,
+                candidates,
+                service,
+                identifierSpace,
+                schemaSpace,
+                judgmentAction,
+                judgmentBatchSize,
+                newMatchRank);
     }
 }
