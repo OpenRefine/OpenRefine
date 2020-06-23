@@ -22,20 +22,15 @@
        "interface/records_mode",
        "interface/preferences"
     ],
+    "startaproject",
     "Start a project": [
-       "project/overview",
-       {
-	       "type": "subcategory",
-	       "label": "Create a project by importing data",
-	       "ids": [
-       "project/csv",
-       "project/json",
-       "project/xml",
-       "project/preview"
-	       ]
-       },
+	    "startaproject"
+    ],
+    "Start a project": [
+       "project/projectoverview",
+       "project/createaproject",
        "project/importaproject",
-       "project/naming"
+       "project/projectmgmt"
     ],
     "Operations": [
         "operations/transform",
