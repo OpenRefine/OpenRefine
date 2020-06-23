@@ -48,6 +48,9 @@ function DataTableView(div) {
   this._sizeRowFirst = 0;
   this._sizeRowsTotal = 0;
   this._sizeSinglePage = 0;
+  this._scrollTop = 0;
+  this._downwardDirection;
+  this._pageStart = 0;
 
   this._currentPageNumber = 1;
   this._showRows(0);
@@ -484,12 +487,17 @@ DataTableView.prototype._renderDataTables = function(table, tableHeader) {
     }
   };
 
-  window.loadRows = function() {
+  window.loadRows = function(start) {
     var rows = theProject.rowModel.rows;
     var even = true;
     for (var r = 0; r < rows.length; r++) {
       var row = rows[r];
-      var tr = table.insertRow(table.rows.length);
+      if(start != null) {
+        var tr = table.insertRow(r + 1);
+      }
+      else {
+        var tr = table.insertRow(table.rows.length);
+      }
       if (theProject.rowModel.mode == "row-based" || "j" in row) {
         even = !even;
       }
@@ -498,36 +506,55 @@ DataTableView.prototype._renderDataTables = function(table, tableHeader) {
   }
   loadRows();
 
+  var flag = 0;
   $(table.parentNode.parentNode).bind('scroll', function(evt) {
-    var scrollTop = $(this).scrollTop();
+    self._downwardDirection = self._scrollTop < $(this).scrollTop();
+    // self._scrollTop = $(this).scrollTop();
 
-    var element = document.querySelector('.load-next-set');
+    var element = document.querySelectorAll('.load-next-set');
+    element = element[element.length - 1];
     var position = element.getBoundingClientRect();
-    var element2 = document.querySelector('.last-row');
+    var element2 = document.querySelector('.load-next-set');
     var position2 = element2.getBoundingClientRect();
-    var element3 = document.querySelector('.first-row');
-    var position3 = element3.getBoundingClientRect();
+    var lastElement = document.querySelector('.last-row');
+    var positionLastElement = lastElement.getBoundingClientRect();
+    var firstElement = document.querySelector('.first-row');
+    var positionFirstElement = firstElement.getBoundingClientRect();
+    
+    if(self._downwardDirection && !flag) {
+      if((position.top >= 0 && position.bottom <= window.innerHeight) || 
+        (positionLastElement.top < window.innerHeight && positionLastElement.top > 0)) {
+        console.log('Loading next set');
+        flag = true;
+        self._onBottomTable(self._scrollTop, table, this, evt);
+      }
+    }
 
-    if((position.top >= 0 && position.bottom <= window.innerHeight) || 
-      (position2.top < window.innerHeight && position2.top > 0  && position2.bottom + 50 >= window.innerHeight)) {
-      console.log('Loading next set');
-      self._onBottomTable(table, this, evt);
+    if(!self._downwardDirection && !flag) {
+      if(position2.top >= 0 && position2.bottom <= window.innerHeight || 
+        (positionFirstElement.bottom > 0 && positionFirstElement.bottom < window.innerHeight)) {
+        console.log('Loading upper set');
+        flag = true;
+        self._onTopTable(self._scrollTop, table, this, evt);
+      }
     }
 
     clearTimeout($.data(this, 'scrollTimer'));
     $.data(this, 'scrollTimer', setTimeout(function() {
-      if(position2.top <= 0 && position2.bottom >= 0) {
+      if(positionLastElement.top <= 0 && positionLastElement.bottom >= 0) {
         console.log('Last row is partially visible in screen');
-        var goto = self.getPageNumberSrcolling(scrollTop);
-        self._onChangeGotoScrolling(scrollTop, goto, table);
+        var goto = self.getPageNumberSrcolling(self._scrollTop);
+        self._onChangeGotoScrolling(self._scrollTop, goto, table);
       }
 
-      if(position3.top <= 150 && position3.bottom >= 0) {
+      if(positionFirstElement.top < 0 && positionFirstElement.bottom >= window.innerHeight) {
         console.log('First row is partially visible in screen');
-        var goto = self.getPageNumberSrcolling(scrollTop);
-        self._onChangeGotoScrolling(scrollTop, goto, table);
+        var goto = self.getPageNumberSrcolling(self._scrollTop);
+        self._onChangeGotoScrolling(self._scrollTop, goto, table);
       }
+      flag = 0;
     }, 250));
+    self._scrollTop = $(this).scrollTop();
   });
 };
 
@@ -536,23 +563,43 @@ DataTableView.prototype.getPageNumberSrcolling = function(scrollPosition) {
   return num;
 }
 
-DataTableView.prototype._adjustNextSetClasses = function() {
-  var heightToAdd = Math.max(0, this._sizeRowsTotal - (this._totalSize) * this._sizeRowFirst);
+DataTableView.prototype._adjustNextSetClasses = function(start, top) {
+  var heightToAddBottom = Math.max(0, this._sizeRowsTotal - (this._totalSize) * this._sizeRowFirst);
+
+  if(top) {
+    this._pageStart = start;
+    heightToAddBottom = Math.max(0, this._sizeRowsTotal - (this._pageStart + 2 * this._pageSize) * this._sizeRowFirst);
+  }
+
+  if($('tbody tr').length > 102 && start > 100 && top == null) {
+    console.log('Deleting above rows');
+    $('tbody tr').slice(1, $('tbody tr').length - 2 * this._pageSize).remove();
+    this._pageStart = start - this._pageSize;
+  }
+
+  if($('tbody tr').length > 201 && top) {
+    console.log('Deleting below rows');
+    $('tbody tr').slice(201, $('tbody tr').length).remove();
+  }
+
+  var heightToAddTop = (this._pageStart) * this._sizeRowFirst;
+  $('tbody tr:first').css('height', heightToAddTop);
 
   document.querySelector('.data-table').insertRow();
-  $('tr:last').css('height', heightToAdd);
+  $('tr:last').css('height', heightToAddBottom);
   $('tr:last').addClass('last-row');
 
   if (theProject.rowModel.mode == "record-based") {
     $('tr.record').eq(-51).addClass('load-next-set');
+    $('tr.record').eq(51).addClass('load-next-set');
   } else {
     $('tr').eq(-52).addClass('load-next-set');
+    $('tr').eq(51).addClass('load-next-set');
   }
 };
 
-DataTableView.prototype._adjustNextSetClassesSpeed = function(modifiedScrollPosition) {
-  console.log('adjustNextSetClassesSpeed');
-
+DataTableView.prototype._adjustNextSetClassesSpeed = function(modifiedScrollPosition, start) {
+  this._pageStart = start;
   var heightToAddTop = modifiedScrollPosition;
   var heightToAddBottom = Math.max(0, this._sizeRowsTotal - (modifiedScrollPosition + this._sizeSinglePage));
 
@@ -587,7 +634,7 @@ DataTableView.prototype._showRows = function(start, onDone) {
   }, this._sorting);
 };
 
-DataTableView.prototype._showRowsBottom = function(table, start, onDone) {
+DataTableView.prototype._showRowsBottom = function(scrollPosition, table, start, onDone) {
   var self = this;
 
   this._totalSize = start + this._pageSize;
@@ -597,7 +644,26 @@ DataTableView.prototype._showRowsBottom = function(table, start, onDone) {
     $('.last-row').remove();
 
     loadRows();
-    self._adjustNextSetClasses();
+    self._adjustNextSetClasses(start);
+
+    if (onDone) {
+      onDone();
+    }
+  }, this._sorting);
+};
+
+DataTableView.prototype._showRowsTop = function(scrollPosition, table, start, onDone) {
+  var self = this;
+
+  this._totalSize = start + 2 * this._pageSize;
+
+  $('tr.load-next-set').removeClass('load-next-set');
+
+  Refine.fetchRows(start, this._pageSize, function() {
+    $('.last-row').remove();
+
+    loadRows(start);
+    self._adjustNextSetClasses(start, true);
 
     if (onDone) {
       onDone();
@@ -609,14 +675,13 @@ DataTableView.prototype._showRowsBottomSpeed = function(modifiedScrollPosition, 
   var self = this;
 
   this._totalSize = start +  this._pageSize;
-  console.log(this._totalSize);
   $('tr.load-next-set').removeClass('load-next-set');
 
   Refine.fetchRows(start, this._pageSize, function() {
     $('.last-row').remove();
 
     loadRows();
-    self._adjustNextSetClassesSpeed(modifiedScrollPosition);
+    self._adjustNextSetClassesSpeed(modifiedScrollPosition, start);
     setScroll(scrollPosition);
 
     if (onDone) {
@@ -676,8 +741,14 @@ DataTableView.prototype._onClickNextPage = function(elmt, evt) {
   this._showRows(theProject.rowModel.start + this._pageSize);
 };
 
-DataTableView.prototype._onBottomTable = function(table, elmt, evt) {
-  this._showRowsBottom(table, theProject.rowModel.start + this._pageSize);
+DataTableView.prototype._onBottomTable = function(scrollPosition, table, elmt, evt) {
+  this._showRowsBottom(scrollPosition, table, this._totalSize);
+};
+
+DataTableView.prototype._onTopTable = function(scrollPosition, table, elmt, evt) {
+  if(this._pageStart - this._pageSize >= 0) {
+    this._showRowsTop(scrollPosition, table, this._pageStart - this._pageSize);
+  }
 };
 
 DataTableView.prototype._onClickFirstPage = function(elmt, evt) {
