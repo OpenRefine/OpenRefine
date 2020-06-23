@@ -211,7 +211,7 @@
             <phase>generate-test-resources</phase>
             <configuration>
 
-              <tasks>
+              <target>
                 <mkdir dir="./target/"/>
 
                 <mkdir dir="${built.webapp.dir}" />
@@ -261,7 +261,7 @@
                         <replacefilter token="../../extensions" value="extensions"/>
                     </replace>
 
-              </tasks>
+              </target>
 
             </configuration>
             <goals>
