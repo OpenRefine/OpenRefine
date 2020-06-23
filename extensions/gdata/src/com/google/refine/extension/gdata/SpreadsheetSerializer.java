@@ -78,22 +78,26 @@ class SpreadsheetSerializer implements TabularSerializer {
         com.google.api.services.sheets.v4.model.CellData sheetCellData = new com.google.api.services.sheets.v4.model.CellData();
         
         ExtendedValue ev = new ExtendedValue();
-        if (cellData.value instanceof String) {
-            ev.setStringValue((String) cellData.value);
-        } else if (cellData.value instanceof Integer) {
-            ev.setNumberValue(new Double((Integer) cellData.value));
-        } else if (cellData.value instanceof Double) {
-            ev.setNumberValue((Double) cellData.value);
-        } else if (cellData.value instanceof OffsetDateTime) {
-            // supposedly started internally as a double, but not sure how to transform correctly
-            // ev.setNumberValue((Double) cellData.value);
-            ev.setStringValue(cellData.value.toString());
-        } else if (cellData.value instanceof Boolean) {
-            ev.setBoolValue((Boolean) cellData.value);
-        } else if (cellData == null || cellData.value == null) {
-            ev.setStringValue("");
+        if (cellData != null) {
+            if (cellData.value instanceof String) {
+                ev.setStringValue((String) cellData.value);
+            } else if (cellData.value instanceof Integer) {
+                ev.setNumberValue(new Double((Integer) cellData.value));
+            } else if (cellData.value instanceof Double) {
+                ev.setNumberValue((Double) cellData.value);
+            } else if (cellData.value instanceof OffsetDateTime) {
+                // supposedly started internally as a double, but not sure how to transform correctly
+                // ev.setNumberValue((Double) cellData.value);
+                ev.setStringValue(cellData.value.toString());
+            } else if (cellData.value instanceof Boolean) {
+                ev.setBoolValue((Boolean) cellData.value);
+            } else if (cellData.value == null) {
+                ev.setStringValue("");
+            } else {
+                ev.setStringValue(cellData.value.toString());
+            }
         } else {
-            ev.setStringValue(cellData.value.toString());
+            ev.setStringValue("");
         }
 
         sheetCellData.setUserEnteredValue(ev);
