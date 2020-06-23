@@ -22,10 +22,10 @@
        "interface/records_mode",
        "interface/preferences"
     ],
-    "Start a project": [
+    "Start a project 1": [
 	    "startaproject"
     ],
-    "Start a project": [
+    "Start a project 2": [
        "project/projectoverview",
        "project/createaproject",
        "project/importaproject",
