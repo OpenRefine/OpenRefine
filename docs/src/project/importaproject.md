@@ -4,7 +4,7 @@ title: Importing A Project
 sidebar_label: Importing A Project
 ---
 
-### Overview
+## Overview
 
 Because OpenRefine only runs locally on your computer, you can’t have a project accessible to more than one person at the same time. 
 
@@ -13,7 +13,7 @@ The best way to collaborate with another person is to export and import projects
 An exported project will include all of the [history](interface/projectscreen.md#history), so you can see (and undo) all the changes from the previous user. It is essentially a point-in-time snapshot of their work. OpenRefine only exports projects as `.tar.gz` files at this time. 
 
 
-### Instructions
+## Instructions
 
 Once someone has sent you a project archive file from their computer, you can save it anywhere, including your Downloads folder. 
 
