@@ -35,31 +35,31 @@ More formats can be imported by adding extensions that provide that functionalit
 For whichever method you choose, when you click `Next >>` you will be given a preview and a chance to configure the way OpenRefine interprets the file.  
 
 
-# Methods to import data
+## Methods to import data
 
 
-## Get data from this computer
+### Get data from this computer
 
 Click on `Browse…` and select a file on your hard drive. All files will be shown, not just compatible ones. 
 
 If you import an archive file (something with the extension `.zip`, `.tar.gz`, `.tgz`, `.tar.bz2`, `.gz`, or `.bz2`), OpenRefine detects the most common file extension in it and loads all files with that extension into a single project.
 
 
-## Web Addresses (URLs)
+### Web Addresses (URLs)
 
 Type or paste the URL to the data file into the field provided. You can add as many fields as you want. OpenRefine will ____(something I haven’t quite figured out yet)_____________________. 
 
 Do not use this form to load a Google Sheet by its link; use the field on the Google Data form instead. 
 
 
-## Clipboard
+### Clipboard
 
 You can copy and paste in data from anywhere. OpenRefine will recognize comma-separated, tab-separated, or table-formatted information copied from sources such as word-processing documents, spreadsheets, and tables in PDFs. 
 
 This can be useful if you want to pre-select a specific number of rows from your source data, or paste together rows from different places, rather than delete unwanted rows later in the project interace. 
 
 
-## Database (SQL)
+### Database (SQL)
 
 You may want to pull the latest dataset directly from an online database. This could include an online catalogue, a Wordpress or similar content management system, or a [digital repository or collection management system](https://bits.ashleyblewer.com/blog/2017/08/09/collection-management-system-collection/).
 
@@ -99,7 +99,7 @@ If you need help, you may be able to find instructions from your hosting provide
 *   [GoDaddy](https://ca.godaddy.com/help/connect-remotely-to-a-mysql-database-in-my-linux-hosting-account-16103)
 
 
-## Google Data
+### Google Data
 
 You have two ways to load in data from Google Sheets:
 
@@ -109,7 +109,7 @@ You have two ways to load in data from Google Sheets:
 *   Selecting a Google Sheet in your Google Drive
 
 
-### Google Sheet by URL
+#### Google Sheet by URL
 
 You can import data from any Google Sheet that has link-sharing turned on. Paste in a URL that looks something like
 
@@ -118,7 +118,7 @@ You can import data from any Google Sheet that has link-sharing turned on. Paste
 This will only work with Sheets, not with any other Google Drive file that might have an available link. 
 
 
-### Google Sheet from Drive
+#### Google Sheet from Drive
 
 You can authorize OpenRefine to access your Google Drive data and import data from any Google Sheet it finds there. This will include Sheets that belong to you and Sheets that are shared with you, as well as Sheets that are in your trash. 
 
@@ -129,7 +129,7 @@ OpenRefine will generate a list of all Sheets it finds, with the most recently m
 When you click “Preview” the Sheet will open in a new browser tab. When you click the Sheet title, OpenRefine will begin to process the data.
 
 
-# Previewing the project
+## Previewing the project
 
 Once OpenRefine is ready to import the data, you will see a screen with “Configure Parsing Options” at the top. You’ll see a preview of the first 100 rows and all identified columns. 
 
