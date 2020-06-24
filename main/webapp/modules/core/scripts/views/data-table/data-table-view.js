@@ -548,12 +548,12 @@ DataTableView.prototype._renderDataTables = function(table, tableHeader) {
     }, 250));
   });
 
-  var total = 0;
+  var total = 0, row;
   for (var i = 1; i < table.rows.length; i++) {
       row = table.rows[i];
       total += row.offsetHeight;
   }
-  this._sizeRowFirst = total / 100;
+  this._sizeRowFirst = total / this._pageSize;
   this._sizeRowsTotal = this._sizeRowFirst * theProject.metadata.rowCount;
   this._sizeSinglePage = this._sizeRowFirst * this._pageSize;
   document.querySelector('tbody').insertRow(0).setAttribute('class', 'first-row');
