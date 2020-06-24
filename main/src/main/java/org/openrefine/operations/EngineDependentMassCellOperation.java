@@ -43,11 +43,11 @@ import org.openrefine.browsing.Engine;
 import org.openrefine.browsing.EngineConfig;
 import org.openrefine.browsing.FilteredRows;
 import org.openrefine.browsing.RowVisitor;
-import org.openrefine.history.Change;
 import org.openrefine.history.HistoryEntry;
 import org.openrefine.model.ColumnMetadata;
 import org.openrefine.model.Project;
 import org.openrefine.model.changes.CellChange;
+import org.openrefine.model.changes.Change;
 import org.openrefine.model.changes.MassCellChange;
 import org.openrefine.operations.EngineDependentOperation;
 

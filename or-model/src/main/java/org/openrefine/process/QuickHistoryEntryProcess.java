@@ -35,9 +35,9 @@ package org.openrefine.process;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import org.openrefine.history.Change;
 import org.openrefine.history.History;
 import org.openrefine.history.HistoryEntry;
+import org.openrefine.model.changes.Change;
 import org.openrefine.operations.Operation;
 
 public class QuickHistoryEntryProcess extends Process {

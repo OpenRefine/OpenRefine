@@ -44,7 +44,6 @@ import java.util.List;
 import java.util.Properties;
 
 import org.openrefine.ProjectManager;
-import org.openrefine.history.Change;
 import org.openrefine.model.ColumnMetadata;
 import org.openrefine.model.Project;
 import org.openrefine.model.ReconStats;

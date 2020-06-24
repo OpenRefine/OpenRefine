@@ -42,7 +42,6 @@ import java.util.Properties;
 
 import com.google.common.collect.Lists;
 
-import org.openrefine.history.Change;
 import org.openrefine.history.History;
 import org.openrefine.model.Project;
 

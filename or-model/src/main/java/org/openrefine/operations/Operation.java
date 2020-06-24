@@ -39,8 +39,8 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.databind.annotation.JsonTypeIdResolver;
 
 import org.openrefine.expr.ParsingException;
-import org.openrefine.history.Change;
 import org.openrefine.history.History;
+import org.openrefine.model.changes.Change;
 import org.openrefine.process.Process;
 import org.openrefine.process.QuickHistoryEntryProcess;
 

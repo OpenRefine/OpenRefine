@@ -47,13 +47,13 @@ import org.apache.commons.lang3.StringUtils;
 
 import org.openrefine.browsing.EngineConfig;
 import org.openrefine.browsing.facets.RowAggregator;
-import org.openrefine.history.Change.DoesNotApplyException;
 import org.openrefine.model.Cell;
 import org.openrefine.model.GridState;
 import org.openrefine.model.Recon;
 import org.openrefine.model.Recon.Judgment;
 import org.openrefine.model.Row;
 import org.openrefine.model.RowMapper;
+import org.openrefine.model.changes.Change.DoesNotApplyException;
 import org.openrefine.operations.ImmediateRowMapOperation;
 
 public class ReconCopyAcrossColumnsOperation extends ImmediateRowMapOperation {
@@ -109,7 +109,7 @@ public class ReconCopyAcrossColumnsOperation extends ImmediateRowMapOperation {
         }
         for (Integer targetColumnIndex : targetColumnIndices) {
             if (targetColumnIndex == -1) {
-                throw new DoesNotApplyException(String.format("Target column does not exist", _fromColumnName));
+                throw new DoesNotApplyException(String.format("Target column does not exist"));
             }
         }
         Set<Judgment> judgments = new HashSet<>(_judgments);

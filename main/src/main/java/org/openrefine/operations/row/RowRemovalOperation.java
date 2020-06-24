@@ -39,8 +39,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import org.openrefine.browsing.Engine;
 import org.openrefine.browsing.Engine.Mode;
 import org.openrefine.browsing.EngineConfig;
-import org.openrefine.history.Change;
 import org.openrefine.model.GridState;
+import org.openrefine.model.changes.Change;
 import org.openrefine.model.changes.EngineDependentChange;
 import org.openrefine.operations.EngineDependentOperation;
 

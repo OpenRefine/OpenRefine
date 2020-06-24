@@ -39,9 +39,9 @@ import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import org.openrefine.history.Change.DoesNotApplyException;
 import org.openrefine.model.DatamodelRunner;
 import org.openrefine.model.GridState;
+import org.openrefine.model.changes.Change.DoesNotApplyException;
 import org.openrefine.util.ParsingUtilities;
 
 /**

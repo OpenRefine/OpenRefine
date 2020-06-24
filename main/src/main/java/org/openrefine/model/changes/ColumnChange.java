@@ -33,8 +33,6 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package org.openrefine.model.changes;
 
-import org.openrefine.history.Change;
-
 abstract public class ColumnChange implements Change {
 
 }

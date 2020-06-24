@@ -41,7 +41,6 @@ import java.util.stream.Collectors;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import org.openrefine.history.Change;
 import org.openrefine.model.Cell;
 import org.openrefine.model.ColumnMetadata;
 import org.openrefine.model.ColumnModel;
@@ -50,6 +49,7 @@ import org.openrefine.model.IndexedRow;
 import org.openrefine.model.Row;
 import org.openrefine.model.RowBuilder;
 import org.openrefine.model.RowFilter;
+import org.openrefine.model.changes.Change;
 import org.openrefine.operations.Operation;
 
 public class TransposeRowsIntoColumnsOperation implements Operation {

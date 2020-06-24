@@ -37,10 +37,10 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import org.openrefine.browsing.EngineConfig;
-import org.openrefine.history.Change;
 import org.openrefine.model.GridState;
 import org.openrefine.model.Row;
 import org.openrefine.model.RowMapper;
+import org.openrefine.model.changes.Change;
 import org.openrefine.model.changes.RowMapChange;
 import org.openrefine.operations.EngineDependentOperation;
 
