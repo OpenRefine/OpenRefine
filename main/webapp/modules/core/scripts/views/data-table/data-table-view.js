@@ -49,7 +49,7 @@ function DataTableView(div) {
   this._sizeRowsTotal = 0;
   this._sizeSinglePage = 0;
   this._scrollTop = 0;
-  this._downwardDirection;
+  this._downwardDirection = true;
   this._pageStart = 0;
 
   this._currentPageNumber = 1;
@@ -487,8 +487,7 @@ DataTableView.prototype._renderDataTables = function(table, tableHeader) {
       var row = rows[r];
       if(start != null) {
         var tr = table.insertRow(r + 1);
-      }
-      else {
+      } else {
         var tr = table.insertRow(table.rows.length);
       }
       if (theProject.rowModel.mode == "row-based" || "j" in row) {
@@ -549,10 +548,15 @@ DataTableView.prototype._renderDataTables = function(table, tableHeader) {
     }, 250));
   });
 
-  this._sizeRowFirst = $('tr:eq(1)').height();
+  var total = 0;
+  for (var i = 1; i < table.rows.length; i++) {
+      row = table.rows[i];
+      total += row.offsetHeight;
+  }
+  this._sizeRowFirst = total / 100;
   this._sizeRowsTotal = this._sizeRowFirst * theProject.metadata.rowCount;
   this._sizeSinglePage = this._sizeRowFirst * this._pageSize;
-  var firstRow = document.querySelector('tbody').insertRow(0).setAttribute('class', 'first-row');
+  document.querySelector('tbody').insertRow(0).setAttribute('class', 'first-row');
   this._adjustNextSetClasses();
 };
 
@@ -690,7 +694,7 @@ DataTableView.prototype._showRowsBottomSpeed = function(modifiedScrollPosition, 
 
 DataTableView.prototype._onChangeGotoScrolling = function(scrollPosition, gotoPageNumber, table, elmt, evt) {
   var modifiedScrollPosition = this._sizeRowFirst * (gotoPageNumber) * this._pageSize; 
-  this._showRowsBottomSpeed(modifiedScrollPosition, scrollPosition, table, (gotoPageNumber - 1) * this._pageSize);
+  this._showRowsBottomSpeed(modifiedScrollPosition, scrollPosition, table, gotoPageNumber * this._pageSize);
 };
 
 DataTableView.prototype._onChangeGotoPage = function(elmt, evt) {
