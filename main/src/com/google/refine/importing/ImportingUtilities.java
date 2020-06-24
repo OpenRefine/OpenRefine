@@ -44,6 +44,7 @@ import java.io.Reader;
 import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.nio.charset.Charset;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -74,6 +75,7 @@ import org.apache.http.auth.UsernamePasswordCredentials;
 import org.apache.http.client.CredentialsProvider;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.entity.ContentType;
 import org.apache.http.impl.client.BasicCredentialsProvider;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
@@ -313,17 +315,20 @@ public class ImportingUtilities {
                                 throw new Exception("No content found in " + url.toString());
                             }
                             InputStream stream2 = entity.getContent();
-                            String encoding = null;
-                            if (entity.getContentEncoding() != null) {
-                                encoding = entity.getContentEncoding().getValue();
+
+                            String mimeType = null;
+                            String charset = null;
+                            ContentType contentType = ContentType.get(entity);
+                            if (contentType != null) {
+                                mimeType = contentType.getMimeType();
+                                Charset cs = contentType.getCharset();
+                                if (cs != null) {
+                                    charset = cs.toString();
+                                }
                             }
-                            JSONUtilities.safePut(fileRecord, "declaredEncoding", encoding);
-                            String contentType = null;
-                            if (entity.getContentType() != null) {
-                                contentType = entity.getContentType().getValue();
-                            }
-                            JSONUtilities.safePut(fileRecord, "declaredMimeType", contentType);
-                            if (saveStream(stream2, url, rawDataDir, progress, update, 
+                            JSONUtilities.safePut(fileRecord, "declaredMimeType", mimeType);
+                            JSONUtilities.safePut(fileRecord, "declaredEncoding", charset);
+                            if (saveStream(stream2, url, rawDataDir, progress, update,
                                     fileRecord, fileRecords,
                                     entity.getContentLength())) {
                                 archiveCount++;
