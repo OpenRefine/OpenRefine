@@ -2,37 +2,37 @@ module.exports = {
   docs: {
     'Getting Started': [
       'index',
-      'manual/install',
-      'manual/user_data',
-      'manual/records_mode'
+      'install',
+      'user_data',
+      'records_mode'
     ],
     'Importing Data': [
-       'manual/importers/csv',
-       'manual/importers/json',
-       'manual/importers/xml'
+       'importers/csv',
+       'importers/json',
+       'importers/xml'
     ],
     'Operations': [
-        'manual/operations/transform',
-        'manual/operations/add_column',
-        'manual/operations/fill_down',
-        'manual/operations/blank_down',
-        'manual/operations/recon',
-        'manual/operations/key_value_columnize'
+        'operations/transform',
+        'operations/add_column',
+        'operations/fill_down',
+        'operations/blank_down',
+        'operations/recon',
+        'operations/key_value_columnize'
     ],
     'Facets': [
-        'manual/facets/text',
-        'manual/facets/numeric',
-        'manual/facets/scatterplot'
+        'facets/text',
+        'facets/numeric',
+        'facets/scatterplot'
     ],
     'Exporters': [
-        'manual/exporters/csv',
-        'manual/exporters/gsheets',
-        'manual/exporters/ods'
+        'exporters/csv',
+        'exporters/gsheets',
+        'exporters/ods'
     ],
     'GREL': [
-        'manual/grel/cross',
-        'manual/grel/facetCount',
-        'manual/grel/toString'
+        'grel/cross',
+        'grel/facetCount',
+        'grel/toString'
     ]
   },
 };
