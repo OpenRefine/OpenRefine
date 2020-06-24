@@ -808,8 +808,9 @@ public class ImportingUtilities {
             }
         });
         
-        // Default to text/line-based to to avoid parsing as binary/excel.
-        String bestFormat = formats.size() > 0 ? formats.get(0) : "text/line-based";
+        // Default to "text" to to avoid parsing as "binary/excel".
+        // "text" is more general than "text/line-based", so a better starting point
+        String bestFormat = formats.size() > 0 ? formats.get(0) : "text";
         if (JSONUtilities.getInt(retrievalRecord, "archiveCount", 0) == 0) {
             // If there's no archive, then select everything
             for (int i = 0; i < count; i++) {
