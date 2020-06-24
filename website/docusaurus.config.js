@@ -89,19 +89,21 @@ module.exports = {
       copyright: `Copyright © ${new Date().getFullYear()} OpenRefine contributors`,
     },
   },
+  themes: [],
+  plugins: [],
   presets: [
     [
       '@docusaurus/preset-classic',
       {
         docs: {
           // Docs folder path relative to website dir. Equivalent to `customDocsPath`.
-          path: 'docs/src',
+          // path: 'docs',
           // Sidebars file relative to website dir.
           sidebarPath: require.resolve('./sidebars.js'),
           // Equivalent to `editUrl` but should point to `website` dir instead of `website/docs`.
           editUrl: 'https://github.com/OpenRefine/OpenRefine/edit/master/website',
           // Equivalent to `docsUrl`.
-          routeBasePath: '',
+          routeBasePath: '/',
           homePageId: 'index',
           // Remark and Rehype plugins passed to MDX. Replaces `markdownOptions` and `markdownPlugins`.
           remarkPlugins: [],
