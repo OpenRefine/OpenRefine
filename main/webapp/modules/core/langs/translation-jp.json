@@ -759,5 +759,6 @@
     "core-views/by-case-rev-example": "[11A, bcD, ef22]",
     "core-views/by-rev": "逆順で分割",
     "core-views/by-number": "数字から文字へ",
-    "core-views/by-case": "小文字から大文字へ"
+    "core-views/by-case": "小文字から大文字へ",
+    "core-index/prefs-loading-failed": "設定ファイルの読み込みに失敗しました."
 }
