@@ -205,13 +205,13 @@
       <plugin> <!-- necessary for launch4j -->
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-antrun-plugin</artifactId>
-        <version>1.4</version>
+        <version>3.0.0</version>
         <executions>
           <execution>
             <phase>generate-test-resources</phase>
             <configuration>
 
-              <tasks>
+              <target>
                 <mkdir dir="./target/"/>
 
                 <mkdir dir="${built.webapp.dir}" />
@@ -261,7 +261,7 @@
                         <replacefilter token="../../extensions" value="extensions"/>
                     </replace>
 
-              </tasks>
+              </target>
 
             </configuration>
             <goals>
