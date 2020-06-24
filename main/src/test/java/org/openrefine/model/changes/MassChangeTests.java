@@ -33,7 +33,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.openrefine.RefineTest;
-import org.openrefine.history.Change;
 import org.openrefine.model.ModelException;
 import org.openrefine.model.Project;
 import org.openrefine.model.changes.CellAtRow;

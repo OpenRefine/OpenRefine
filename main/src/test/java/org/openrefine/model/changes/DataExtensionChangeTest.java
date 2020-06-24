@@ -35,7 +35,6 @@ import java.io.LineNumberReader;
 import java.io.Serializable;
 
 import org.openrefine.RefineTest;
-import org.openrefine.history.Change;
 import org.openrefine.model.ModelException;
 import org.openrefine.model.Project;
 import org.slf4j.LoggerFactory;

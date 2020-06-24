@@ -33,9 +33,9 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package org.openrefine.process;
 
-import org.openrefine.history.Change;
 import org.openrefine.history.History;
 import org.openrefine.history.HistoryEntry;
+import org.openrefine.model.changes.Change;
 import org.openrefine.operations.Operation;
 
 import com.fasterxml.jackson.annotation.JsonProperty;

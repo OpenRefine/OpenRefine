@@ -1,13 +1,13 @@
 package org.openrefine.operations;
 
 import org.openrefine.browsing.EngineConfig;
-import org.openrefine.history.Change;
-import org.openrefine.history.Change.DoesNotApplyException;
 import org.openrefine.history.dag.DagSlice;
 import org.openrefine.model.ColumnModel;
 import org.openrefine.model.GridState;
 import org.openrefine.model.RowMapper;
+import org.openrefine.model.changes.Change;
 import org.openrefine.model.changes.RowMapChange;
+import org.openrefine.model.changes.Change.DoesNotApplyException;
 
 /**
  * Simplifies the architecture for immediate operations which simply act by mapping rows.

@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.openrefine.expr.ExpressionUtils;
-import org.openrefine.history.Change;
 import org.openrefine.history.dag.DagSlice;
 import org.openrefine.model.Cell;
 import org.openrefine.model.ColumnMetadata;

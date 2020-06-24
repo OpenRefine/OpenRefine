@@ -36,9 +36,9 @@ package org.openrefine.operations.cell;
 import java.io.Serializable;
 
 import org.openrefine.RefineTest;
-import org.openrefine.history.Change;
-import org.openrefine.history.Change.DoesNotApplyException;
 import org.openrefine.model.GridState;
+import org.openrefine.model.changes.Change;
+import org.openrefine.model.changes.Change.DoesNotApplyException;
 import org.openrefine.operations.OperationRegistry;
 import org.openrefine.util.ParsingUtilities;
 import org.openrefine.util.TestUtils;

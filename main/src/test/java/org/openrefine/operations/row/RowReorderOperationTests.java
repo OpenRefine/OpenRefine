@@ -32,9 +32,9 @@ import java.util.stream.Collectors;
 
 import org.openrefine.RefineTest;
 import org.openrefine.browsing.Engine.Mode;
-import org.openrefine.history.Change;
 import org.openrefine.model.GridState;
 import org.openrefine.model.Row;
+import org.openrefine.model.changes.Change;
 import org.openrefine.operations.OperationRegistry;
 import org.openrefine.sorting.SortingConfig;
 import org.openrefine.util.ParsingUtilities;

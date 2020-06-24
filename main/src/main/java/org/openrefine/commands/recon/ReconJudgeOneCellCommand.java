@@ -41,7 +41,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.openrefine.commands.Command;
 import org.openrefine.expr.ExpressionUtils;
-import org.openrefine.history.Change;
 import org.openrefine.history.HistoryEntry;
 import org.openrefine.model.Cell;
 import org.openrefine.model.ColumnMetadata;
@@ -51,6 +50,7 @@ import org.openrefine.model.Recon.Judgment;
 import org.openrefine.model.ReconCandidate;
 import org.openrefine.model.ReconStats;
 import org.openrefine.model.changes.CellChange;
+import org.openrefine.model.changes.Change;
 import org.openrefine.model.changes.ReconChange;
 import org.openrefine.process.QuickHistoryEntryProcess;
 

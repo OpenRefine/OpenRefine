@@ -2,8 +2,8 @@ package org.openrefine.history.rewriters;
 
 import java.util.Map;
 
-import org.openrefine.history.Change;
 import org.openrefine.history.dag.TransformationSlice;
+import org.openrefine.model.changes.Change;
 
 /**
  * Change rewriter for changes which transform a single column,

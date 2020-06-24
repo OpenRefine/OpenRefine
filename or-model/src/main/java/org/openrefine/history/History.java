@@ -37,8 +37,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.openrefine.RefineModel;
-import org.openrefine.history.Change.DoesNotApplyException;
 import org.openrefine.model.GridState;
+import org.openrefine.model.changes.Change;
+import org.openrefine.model.changes.Change.DoesNotApplyException;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;

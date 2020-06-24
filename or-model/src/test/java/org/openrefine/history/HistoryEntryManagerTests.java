@@ -9,13 +9,14 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.mockito.Mockito;
-import org.openrefine.history.Change.DoesNotApplyException;
 import org.openrefine.history.dag.DagSlice;
 import org.openrefine.model.ColumnMetadata;
 import org.openrefine.model.ColumnModel;
 import org.openrefine.model.DatamodelRunner;
 import org.openrefine.model.GridState;
 import org.openrefine.model.RowMapper;
+import org.openrefine.model.changes.Change;
+import org.openrefine.model.changes.Change.DoesNotApplyException;
 import org.openrefine.operations.Operation.NotImmediateOperationException;
 import org.openrefine.operations.UnknownOperation;
 import org.openrefine.util.TestUtils;

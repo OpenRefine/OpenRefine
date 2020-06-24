@@ -4,12 +4,11 @@ import java.io.Serializable;
 import java.util.Arrays;
 
 import org.openrefine.RefineTest;
-import org.openrefine.history.Change;
-import org.openrefine.history.Change.DoesNotApplyException;
 import org.openrefine.model.Cell;
 import org.openrefine.model.GridState;
 import org.openrefine.model.Project;
 import org.openrefine.model.Row;
+import org.openrefine.model.changes.Change.DoesNotApplyException;
 import org.openrefine.util.ParsingUtilities;
 import org.openrefine.util.TestUtils;
 import org.testng.Assert;

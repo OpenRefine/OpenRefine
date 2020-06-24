@@ -1,7 +1,7 @@
 package org.openrefine.history.rewriters;
 
-import org.openrefine.history.Change;
 import org.openrefine.history.dag.DagSlice;
+import org.openrefine.model.changes.Change;
 
 /**
  * An object associated with a change,

@@ -3,8 +3,8 @@ package org.openrefine.history.rewriters;
 import java.util.List;
 import java.util.Map;
 
-import org.openrefine.history.Change;
 import org.openrefine.history.dag.AdditionSlice;
+import org.openrefine.model.changes.Change;
 
 /**
  * Change rewriter for changes which add new columns,

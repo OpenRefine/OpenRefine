@@ -43,7 +43,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
-import org.openrefine.history.Change;
 import org.openrefine.model.Cell;
 import org.openrefine.model.ColumnMetadata;
 import org.openrefine.model.ModelException;

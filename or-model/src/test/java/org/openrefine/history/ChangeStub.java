@@ -7,6 +7,7 @@ import org.openrefine.history.dag.OpaqueSlice;
 import org.openrefine.model.ColumnMetadata;
 import org.openrefine.model.ColumnModel;
 import org.openrefine.model.GridState;
+import org.openrefine.model.changes.Change;
 
 public class ChangeStub implements Change {
 

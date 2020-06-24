@@ -38,6 +38,7 @@ import java.time.OffsetDateTime;
 import java.time.ZoneId;
 
 import org.openrefine.expr.ParsingException;
+import org.openrefine.model.changes.Change;
 import org.openrefine.operations.Operation;
 import org.openrefine.operations.Operation.NotImmediateOperationException;
 import org.openrefine.util.JsonViews;

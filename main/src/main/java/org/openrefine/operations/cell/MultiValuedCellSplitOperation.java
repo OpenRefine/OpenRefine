@@ -40,7 +40,6 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.openrefine.expr.ParsingException;
-import org.openrefine.history.Change;
 import org.openrefine.history.dag.DagSlice;
 import org.openrefine.model.Cell;
 import org.openrefine.model.ColumnModel;
@@ -48,6 +47,7 @@ import org.openrefine.model.GridState;
 import org.openrefine.model.Record;
 import org.openrefine.model.RecordMapper;
 import org.openrefine.model.Row;
+import org.openrefine.model.changes.Change;
 import org.openrefine.operations.Operation;
 import org.openrefine.operations.column.ColumnSplitOperation.Mode;
 import org.openrefine.operations.utils.CellValueSplitter;

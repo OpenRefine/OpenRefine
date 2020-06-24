@@ -40,7 +40,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
-import org.openrefine.history.Change;
 import org.openrefine.history.History;
 import org.openrefine.model.Project;
 

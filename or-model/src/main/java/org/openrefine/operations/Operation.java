@@ -34,8 +34,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package org.openrefine.operations;
 
 import org.openrefine.expr.ParsingException;
-import org.openrefine.history.Change;
 import org.openrefine.history.History;
+import org.openrefine.model.changes.Change;
 import org.openrefine.process.Process;
 import org.openrefine.process.QuickHistoryEntryProcess;
 

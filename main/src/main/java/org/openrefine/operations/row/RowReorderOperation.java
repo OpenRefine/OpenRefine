@@ -34,9 +34,9 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package org.openrefine.operations.row;
 
  import org.openrefine.browsing.Engine.Mode;
-import org.openrefine.history.Change;
 import org.openrefine.history.dag.DagSlice;
 import org.openrefine.model.GridState;
+import org.openrefine.model.changes.Change;
 import org.openrefine.operations.Operation;
 import org.openrefine.sorting.SortingConfig;
 
