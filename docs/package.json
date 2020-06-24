@@ -4,16 +4,18 @@
   "description": "Documentation for OpenRefine",
   "license": "BSD-3-Clause",
   "author": "OpenRefine",
+  "private": true,
   "scripts": {
-    "examples": "docusaurus-examples",
-    "start": "docusaurus-start",
-    "build": "docusaurus-build",
-    "publish-gh-pages": "docusaurus-publish",
-    "write-translations": "docusaurus-write-translations",
-    "version": "docusaurus-version",
-    "rename-version": "docusaurus-rename-version"
+    "start": "docusaurus start",
+    "build": "docusaurus build",
+    "swizzle": "docusaurus swizzle",
+    "deploy": "docusaurus deploy"
   },
-  "devDependencies": {
-    "docusaurus": "^1.14.4"
+  "dependencies": {
+    "@docusaurus/core": "^2.0.0-alpha.58",
+    "@docusaurus/preset-classic": "^2.0.0-alpha.58",
+    "clsx": "^1.1.1",
+    "react": "^16.8.4",
+    "react-dom": "^16.8.4"
   }
 }
