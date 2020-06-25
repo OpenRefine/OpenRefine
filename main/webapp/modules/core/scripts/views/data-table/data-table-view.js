@@ -668,7 +668,7 @@ DataTableView.prototype._showRowsTop = function(scrollPosition, table, start, on
   }, this._sorting);
 };
 
-DataTableView.prototype._showRowsBottomSpeed = function(modifiedScrollPosition, scrollPosition, table, start, onDone) {
+DataTableView.prototype._showRowsSpeed = function(modifiedScrollPosition, scrollPosition, table, start, onDone) {
   var self = this;
 
   this._totalSize = start +  this._pageSize;
@@ -688,7 +688,7 @@ DataTableView.prototype._showRowsBottomSpeed = function(modifiedScrollPosition, 
 
 DataTableView.prototype._onChangeGotoScrolling = function(scrollPosition, gotoPageNumber, table, elmt, evt) {
   var modifiedScrollPosition = this._sizeRowFirst * (gotoPageNumber) * this._pageSize; 
-  this._showRowsBottomSpeed(modifiedScrollPosition, scrollPosition, table, gotoPageNumber * this._pageSize);
+  this._showRowsSpeed(modifiedScrollPosition, scrollPosition, table, gotoPageNumber * this._pageSize);
 };
 
 DataTableView.prototype._onChangeGotoPage = function(elmt, evt) {
