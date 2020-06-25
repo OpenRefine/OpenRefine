@@ -65,10 +65,10 @@ import org.openrefine.model.ColumnModel;
 import org.openrefine.model.DatamodelRunner;
 import org.openrefine.model.GridState;
 import org.openrefine.model.Project;
-import org.openrefine.model.Recon;
-import org.openrefine.model.ReconCandidate;
 import org.openrefine.model.Row;
 import org.openrefine.model.TestingDatamodelRunner;
+import org.openrefine.model.recon.Recon;
+import org.openrefine.model.recon.ReconCandidate;
 import org.openrefine.util.TestUtils;
 
 /**

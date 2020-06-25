@@ -47,7 +47,6 @@ import org.testng.annotations.Test;
 
 import org.openrefine.RefineTest;
 import org.openrefine.model.Project;
-import org.openrefine.model.Recon;
 import org.openrefine.model.Row;
 import org.openrefine.model.recon.ReconConfig;
 import org.openrefine.model.recon.ReconJob;

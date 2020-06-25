@@ -47,14 +47,14 @@ import org.openrefine.model.Cell;
 import org.openrefine.model.ColumnMetadata;
 import org.openrefine.model.ModelException;
 import org.openrefine.model.Project;
-import org.openrefine.model.Recon;
-import org.openrefine.model.Recon.Judgment;
-import org.openrefine.model.ReconCandidate;
-import org.openrefine.model.ReconStats;
-import org.openrefine.model.ReconType;
 import org.openrefine.model.Row;
 import org.openrefine.model.recon.DataExtensionReconConfig;
+import org.openrefine.model.recon.Recon;
+import org.openrefine.model.recon.Recon.Judgment;
+import org.openrefine.model.recon.ReconCandidate;
 import org.openrefine.model.recon.ReconConfig;
+import org.openrefine.model.recon.ReconStats;
+import org.openrefine.model.recon.ReconType;
 import org.openrefine.model.recon.ReconciledDataExtensionJob.DataExtension;
 import org.openrefine.util.ParsingUtilities;
 
@@ -219,7 +219,7 @@ public class DataExtensionChange implements Change {
                         _schemaSpace,
                         columnType);
                 ReconStats reconStats = ReconStats.create(project, cellIndex);
-                if (reconStats.matchedTopics == 0) {
+                if (reconStats.getMatchedTopics() == 0) {
                     reconStats = null;
                 }
                 ColumnMetadata column = new ColumnMetadata(cellIndex, name, name, reconConfig, reconStats);

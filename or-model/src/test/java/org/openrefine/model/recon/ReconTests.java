@@ -25,12 +25,12 @@
  * POSSIBILITY OF SUCH DAMAGE.
  ******************************************************************************/
 
-package org.openrefine.model;
+package org.openrefine.model.recon;
 
 import org.testng.annotations.Test;
 
-import org.openrefine.model.Recon;
-import org.openrefine.model.Recon.Judgment;
+import org.openrefine.model.recon.Recon;
+import org.openrefine.model.recon.Recon.Judgment;
 import org.openrefine.util.ParsingUtilities;
 import org.openrefine.util.TestUtils;
 

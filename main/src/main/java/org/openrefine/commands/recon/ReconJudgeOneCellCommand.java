@@ -45,13 +45,13 @@ import org.openrefine.history.HistoryEntry;
 import org.openrefine.model.Cell;
 import org.openrefine.model.ColumnMetadata;
 import org.openrefine.model.Project;
-import org.openrefine.model.Recon;
-import org.openrefine.model.Recon.Judgment;
-import org.openrefine.model.ReconCandidate;
-import org.openrefine.model.ReconStats;
 import org.openrefine.model.changes.CellChange;
 import org.openrefine.model.changes.Change;
 import org.openrefine.model.changes.ReconChange;
+import org.openrefine.model.recon.Recon;
+import org.openrefine.model.recon.Recon.Judgment;
+import org.openrefine.model.recon.ReconCandidate;
+import org.openrefine.model.recon.ReconStats;
 import org.openrefine.process.QuickHistoryEntryProcess;
 
 public class ReconJudgeOneCellCommand extends Command {
@@ -230,9 +230,9 @@ public class ReconJudgeOneCellCommand extends Command {
                 }
 
                 stats = new ReconStats(
-                        stats.nonBlanks,
-                        stats.newTopics + newChange,
-                        stats.matchedTopics + matchChange);
+                        stats.getNonBlanks(),
+                        stats.getNewTopics() + newChange,
+                        stats.getMatchedTopics() + matchChange);
             }
 
             Change change = new ReconChange(

@@ -25,30 +25,33 @@
  * POSSIBILITY OF SUCH DAMAGE.
  ******************************************************************************/
 
-package org.openrefine.model;
+package org.openrefine.model.recon;
 
-import java.io.IOException;
-
-import org.testng.Assert;
 import org.testng.annotations.Test;
 
-import org.openrefine.model.ReconType;
+import org.openrefine.model.recon.ReconCandidate;
 import org.openrefine.util.ParsingUtilities;
 import org.openrefine.util.TestUtils;
 
-public class ReconTypeTest {
+public class ReconCandidateTests {
 
     @Test
-    public void serializeReconType() throws IOException {
-        String json = "{\"id\":\"Q7540126\",\"name\":\"headquarters\"}";
-        ReconType rt = ReconType.load(json);
-        TestUtils.isSerializedTo(rt, json, ParsingUtilities.defaultWriter);
+    public void serializeReconCandidateInt() throws Exception {
+        String json = "{\"id\":\"Q49213\","
+                + "\"name\":\"University of Texas at Austin\","
+                + "\"score\":100,"
+                + "\"types\":[\"Q875538\",\"Q15936437\",\"Q20971972\",\"Q23002039\"]}";
+        ReconCandidate rc = ReconCandidate.loadStreaming(json);
+        TestUtils.isSerializedTo(rc, json, ParsingUtilities.defaultWriter);
     }
 
     @Test
-    public void deserializeFromString() throws IOException {
-        // reconciliation services can return lists of types as bare lists of strings
-        ReconType rt = ReconType.load("\"Q7540126\"");
-        Assert.assertEquals(rt.id, "Q7540126");
+    public void serializeReconCandidateDouble() throws Exception {
+        String json = "{\"id\":\"Q49213\","
+                + "\"name\":\"University of Texas at Austin\","
+                + "\"score\":0.5,"
+                + "\"types\":[\"Q875538\",\"Q15936437\",\"Q20971972\",\"Q23002039\"]}";
+        ReconCandidate rc = ReconCandidate.loadStreaming(json);
+        TestUtils.isSerializedTo(rc, json, ParsingUtilities.defaultWriter);
     }
 }

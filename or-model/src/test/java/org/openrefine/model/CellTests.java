@@ -35,6 +35,7 @@ import java.time.format.DateTimeFormatter;
 
 import org.testng.annotations.Test;
 
+import org.openrefine.model.recon.Recon;
 import org.openrefine.util.ParsingUtilities;
 import org.openrefine.util.TestUtils;
 

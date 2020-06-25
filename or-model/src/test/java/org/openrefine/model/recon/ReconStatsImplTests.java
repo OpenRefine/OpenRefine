@@ -25,7 +25,7 @@
  * POSSIBILITY OF SUCH DAMAGE.
  ******************************************************************************/
 
-package org.openrefine.model;
+package org.openrefine.model.recon;
 
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -36,32 +36,37 @@ import org.mockito.Mockito;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
+import org.openrefine.model.ColumnMetadata;
+import org.openrefine.model.ColumnModel;
+import org.openrefine.model.GridState;
+import org.openrefine.model.recon.ReconStats;
+import org.openrefine.model.recon.ReconStatsImpl;
 import org.openrefine.util.ParsingUtilities;
 import org.openrefine.util.TestUtils;
 
-public class ReconStatsTests {
+public class ReconStatsImplTests {
 
     @Test
     public void serializeReconStats() {
-        ReconStats rs = new ReconStats(3, 1, 2);
+        ReconStats rs = new ReconStatsImpl(3, 1, 2);
         TestUtils.isSerializedTo(rs, "{\"nonBlanks\":3,\"newTopics\":1,\"matchedTopics\":2}", ParsingUtilities.defaultWriter);
     }
 
     @Test
     public void testCreateFromColumn() {
-        ReconStats rs = new ReconStats(3, 1, 2);
+        ReconStats rs = new ReconStatsImpl(3, 1, 2);
         GridState state = mock(GridState.class);
         when(state.aggregateRows(Mockito.any(), Mockito.eq(ReconStats.ZERO))).thenReturn(rs);
         when(state.getColumnModel()).thenReturn(new ColumnModel(Collections.singletonList(new ColumnMetadata("some column"))));
 
-        Assert.assertEquals(ReconStats.create(state, "some column"), rs);
+        Assert.assertEquals(ReconStatsImpl.create(state, "some column"), rs);
     }
 
     @Test
     public void testEquals() {
-        ReconStats reconA = new ReconStats(10, 8, 1);
-        ReconStats reconB = new ReconStats(10, 8, 1);
-        ReconStats reconC = new ReconStats(10, 8, 2);
+        ReconStats reconA = new ReconStatsImpl(10, 8, 1);
+        ReconStats reconB = new ReconStatsImpl(10, 8, 1);
+        ReconStats reconC = new ReconStatsImpl(10, 8, 2);
 
         Assert.assertEquals(reconA, reconB);
         Assert.assertNotEquals(reconA, reconC);
@@ -70,7 +75,7 @@ public class ReconStatsTests {
 
     @Test
     public void testToString() {
-        ReconStats recon = new ReconStats(10, 8, 1);
+        ReconStats recon = new ReconStatsImpl(10, 8, 1);
         Assert.assertTrue(recon.toString().contains("ReconStats"));
     }
 }

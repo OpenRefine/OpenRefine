@@ -61,8 +61,6 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import org.openrefine.expr.functions.ToDate;
-import org.openrefine.model.ReconCandidate;
-import org.openrefine.model.ReconType;
 import org.openrefine.util.JSONUtilities;
 import org.openrefine.util.JsonViews;
 import org.openrefine.util.ParsingUtilities;

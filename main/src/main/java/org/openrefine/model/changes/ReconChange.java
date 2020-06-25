@@ -46,8 +46,8 @@ import java.util.Properties;
 import org.openrefine.ProjectManager;
 import org.openrefine.model.ColumnMetadata;
 import org.openrefine.model.Project;
-import org.openrefine.model.ReconStats;
 import org.openrefine.model.recon.ReconConfig;
+import org.openrefine.model.recon.ReconStats;
 import org.openrefine.util.ParsingUtilities;
 
 public class ReconChange extends MassCellChange {

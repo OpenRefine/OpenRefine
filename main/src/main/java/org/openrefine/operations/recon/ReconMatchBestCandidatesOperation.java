@@ -45,13 +45,13 @@ import org.openrefine.browsing.RowVisitor;
 import org.openrefine.model.Cell;
 import org.openrefine.model.ColumnMetadata;
 import org.openrefine.model.Project;
-import org.openrefine.model.Recon;
-import org.openrefine.model.Recon.Judgment;
-import org.openrefine.model.ReconCandidate;
 import org.openrefine.model.Row;
 import org.openrefine.model.changes.CellChange;
 import org.openrefine.model.changes.Change;
 import org.openrefine.model.changes.ReconChange;
+import org.openrefine.model.recon.Recon;
+import org.openrefine.model.recon.Recon.Judgment;
+import org.openrefine.model.recon.ReconCandidate;
 import org.openrefine.operations.EngineDependentMassCellOperation;
 
 public class ReconMatchBestCandidatesOperation extends EngineDependentMassCellOperation {

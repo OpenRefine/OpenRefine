@@ -43,6 +43,7 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import org.openrefine.model.recon.ReconConfig;
+import org.openrefine.model.recon.ReconStats;
 import org.openrefine.util.ParsingUtilities;
 
 /**

@@ -33,54 +33,35 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package org.openrefine.model.recon;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.io.Serializable;
 
-import org.openrefine.model.Cell;
-import org.openrefine.model.Project;
-import org.openrefine.model.Row;
-import org.openrefine.model.recon.ReconJob;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
-public class DataExtensionReconConfig extends StandardReconConfig {
+/**
+ * Stores statistics about the judgment of reconciled cells in a column.
+ * 
+ * @author Antonin Delpeuch
+ *
+ */
+public interface ReconStats extends Serializable {
 
-    final public ReconType type;
+    public static final ReconStats ZERO = new ReconStatsImpl(0L, 0L, 0L);
 
-    private final static String WARN = "Not implemented";
-
-    public DataExtensionReconConfig(
-            String service,
-            String identifierSpace,
-            String schemaSpace,
-            ReconType type) {
-        super(
-                service,
-                identifierSpace,
-                schemaSpace,
-                type != null ? type.id : null,
-                type != null ? type.name : null,
-                true,
-                new ArrayList<ColumnDetail>());
-        this.type = type;
+    @JsonCreator
+    public static ReconStats create(
+            @JsonProperty("nonBlanks") long nonBlanks,
+            @JsonProperty("newTopics") long newTopics,
+            @JsonProperty("matchedTopics") long matchedTopics) {
+        return new ReconStatsImpl(nonBlanks, newTopics, matchedTopics);
     }
 
-    @Override
-    public ReconJob createJob(Project project, int rowIndex, Row row,
-            String columnName, Cell cell) {
-        throw new RuntimeException(WARN);
-    }
+    @JsonProperty("nonBlanks")
+    public long getNonBlanks();
 
-    @Override
-    public int getBatchSize() {
-        throw new RuntimeException(WARN);
-    }
+    @JsonProperty("newTopics")
+    public long getNewTopics();
 
-    @Override
-    public List<Recon> batchRecon(List<ReconJob> jobs, long historyEntryID) {
-        throw new RuntimeException(WARN);
-    }
-
-    @Override
-    public String getBriefDescription(Project project, String columnName) {
-        throw new RuntimeException(WARN);
-    }
+    @JsonProperty("matchedTopics")
+    public long getMatchedTopics();
 }

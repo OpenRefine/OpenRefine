@@ -50,7 +50,7 @@ import org.openrefine.commands.recon.ReconJudgeOneCellCommand;
 import org.openrefine.model.Cell;
 import org.openrefine.model.ColumnMetadata;
 import org.openrefine.model.Project;
-import org.openrefine.model.Recon;
+import org.openrefine.model.recon.Recon;
 import org.openrefine.model.recon.ReconConfig;
 import org.openrefine.model.recon.StandardReconConfig;
 

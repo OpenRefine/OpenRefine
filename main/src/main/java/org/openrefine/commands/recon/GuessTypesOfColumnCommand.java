@@ -64,8 +64,8 @@ import org.openrefine.commands.Command;
 import org.openrefine.expr.ExpressionUtils;
 import org.openrefine.model.GridState;
 import org.openrefine.model.Project;
-import org.openrefine.model.ReconType;
 import org.openrefine.model.Row;
+import org.openrefine.model.recon.ReconType;
 import org.openrefine.model.recon.StandardReconConfig.ReconResult;
 import org.openrefine.util.ParsingUtilities;
 

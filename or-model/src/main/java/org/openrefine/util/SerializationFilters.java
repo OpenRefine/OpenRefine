@@ -43,8 +43,8 @@ import com.fasterxml.jackson.databind.ser.PropertyWriter;
 import com.fasterxml.jackson.databind.ser.impl.SimpleBeanPropertyFilter;
 import com.fasterxml.jackson.databind.ser.std.StdSerializer;
 
-import org.openrefine.model.Recon;
-import org.openrefine.model.Recon.Judgment;
+import org.openrefine.model.recon.Recon;
+import org.openrefine.model.recon.Recon.Judgment;
 
 /**
  * Series of classes which configure JSON serialization at application level.

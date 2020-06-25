@@ -49,11 +49,11 @@ import org.openrefine.browsing.EngineConfig;
 import org.openrefine.browsing.facets.RowAggregator;
 import org.openrefine.model.Cell;
 import org.openrefine.model.GridState;
-import org.openrefine.model.Recon;
-import org.openrefine.model.Recon.Judgment;
 import org.openrefine.model.Row;
 import org.openrefine.model.RowMapper;
 import org.openrefine.model.changes.Change.DoesNotApplyException;
+import org.openrefine.model.recon.Recon;
+import org.openrefine.model.recon.Recon.Judgment;
 import org.openrefine.operations.ImmediateRowMapOperation;
 
 public class ReconCopyAcrossColumnsOperation extends ImmediateRowMapOperation {

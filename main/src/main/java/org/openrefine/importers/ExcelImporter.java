@@ -64,9 +64,9 @@ import org.openrefine.importing.ImportingJob;
 import org.openrefine.importing.ImportingUtilities;
 import org.openrefine.model.Cell;
 import org.openrefine.model.Project;
-import org.openrefine.model.Recon;
-import org.openrefine.model.Recon.Judgment;
-import org.openrefine.model.ReconCandidate;
+import org.openrefine.model.recon.Recon;
+import org.openrefine.model.recon.Recon.Judgment;
+import org.openrefine.model.recon.ReconCandidate;
 import org.openrefine.util.JSONUtilities;
 import org.openrefine.util.ParsingUtilities;
 

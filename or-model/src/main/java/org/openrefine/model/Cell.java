@@ -50,6 +50,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import org.openrefine.expr.EvalError;
 import org.openrefine.expr.ExpressionUtils;
 import org.openrefine.expr.HasFields;
+import org.openrefine.model.recon.Recon;
 import org.openrefine.util.ParsingUtilities;
 import org.openrefine.util.StringUtils;
 

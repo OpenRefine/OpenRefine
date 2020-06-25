@@ -54,7 +54,7 @@ import org.openrefine.ProjectManager;
 import org.openrefine.exporters.EngineDependentExporter.CellData;
 import org.openrefine.model.Cell;
 import org.openrefine.model.ColumnMetadata;
-import org.openrefine.model.Recon;
+import org.openrefine.model.recon.Recon;
 import org.openrefine.preference.PreferenceStore;
 import org.openrefine.util.JSONUtilities;
 
