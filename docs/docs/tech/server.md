@@ -1,6 +1,6 @@
 ---
 id: server
-title: OpenRefine Server Architecture
+title: Server Architecture
 sidebar_label: Server Architecture
 ---
 

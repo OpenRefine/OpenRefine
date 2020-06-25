@@ -1,6 +1,6 @@
 ---
 id: architecture
-title: OpenRefine Architecture
+title: Architecture
 sidebar_label: Architecture
 ---
 
@@ -8,8 +8,8 @@ OpenRefine is a web application, but is designed to be run locally on your own m
 
 This architecture provides a good separation of concerns (data vs. UI); allows the use of familiar web technologies (HTML, CSS, Javascript) to implement user interface features; and enables the server side to be called by third-party software through standard GET and POST operations.
 
-- [Technology Stack](Technology-Stack): What languages, libraries and frameworks are used in the OpenRefine application
-- [Server Side Architecture](Server-Side-Architecture): how the data is modeled, stored, changed, etc.
-- [Client Side Architecture](Client-Side-Architecture): how the UI is built
-- [Importing Architecture](Importing-Architecture): how OpenRefine supports the import of data to create projects
-- [Faceted Browsing Architecture](Faceted-Browsing-Architecture): how faceted browsing is implemented (this straddles the client and the server)
+- [Technology Stack](techstack): What languages, libraries and frameworks are used in the OpenRefine application
+- [Server Side](server): how the data is modeled, stored, changed, etc.
+- [Client Side](client): how the UI is built
+- [Importing](importing): how OpenRefine supports the import of data to create projects
+- [Faceted Browsing](faceted_browsing): how faceted browsing is implemented (this straddles the client and the server)

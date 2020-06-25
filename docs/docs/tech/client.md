@@ -1,6 +1,6 @@
 ---
 id: client
-title: OpenRefine Client Architecture
+title: Client Architecture
 sidebar_label: Client Architecture
 ---
 

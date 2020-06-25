@@ -36,8 +36,11 @@ module.exports = {
     ],
     'Technical Reference': [
       'tech/architecture',
+      'tech/techstack',
       'tech/client',
-      'tech/server'
+      'tech/server',
+      'tech/importing',
+      'tech/faceted_browsing'
   ]
   },
 };
