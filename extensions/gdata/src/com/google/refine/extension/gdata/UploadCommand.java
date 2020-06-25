@@ -195,6 +195,7 @@ public class UploadCommand extends Command {
         try {
             File body = new File();
             body.setName(name);
+            // TODO: Internationalize (i18n)
             body.setDescription("Spreadsheet uploaded from OpenRefine project: " + name);
             body.setMimeType("application/vnd.google-apps.spreadsheet");
 
