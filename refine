@@ -47,8 +47,6 @@ where [options] include:
      default: 1024M
      Values less than 256M not allowed
 
-  -k <google api key> a server API key for calling Google APIs
-
   -v <level> verbosity level [from low to high: error,warn,info,debug,trace]
      default: info
 
@@ -572,10 +570,6 @@ run() {
         add_option "-Drefine.host=$REFINE_HOST"
     fi
 
-    if [ "$REFINE_GOOGLE_API_KEY" ] ; then
-        add_option "-Drefine.google_api_key=$REFINE_GOOGLE_API_KEY"
-    fi
-
     if [ "$REFINE_AUTOSAVE_PERIOD" ] ; then
         add_option "-Drefine.autosave=$REFINE_AUTOSAVE_PERIOD"
     fi
@@ -815,7 +809,6 @@ while [ $# -ne 0 ] ; do
         shift;
         continue;
       fi;;
-    -k) shift; REFINE_GOOGLE_API_KEY="$1"; shift; continue;;
     -v) shift; REFINE_VERBOSITY="$1"; shift; continue;;
     -x) shift; REFINE_EXTRA_OPTS="$1"; shift; continue;;
     --debug) shift; add_option '-Xdebug' '-Xrunjdwp:transport=dt_socket,address=8000,server=y,suspend=n'; continue;;
