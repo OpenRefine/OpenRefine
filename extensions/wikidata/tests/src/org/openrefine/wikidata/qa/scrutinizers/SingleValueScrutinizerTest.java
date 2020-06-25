@@ -23,11 +23,16 @@
  ******************************************************************************/
 package org.openrefine.wikidata.qa.scrutinizers;
 
+import org.openrefine.wikidata.qa.ConstraintFetcher;
 import org.openrefine.wikidata.testing.TestingData;
 import org.openrefine.wikidata.updates.ItemUpdate;
 import org.openrefine.wikidata.updates.ItemUpdateBuilder;
 import org.testng.annotations.Test;
 import org.wikidata.wdtk.datamodel.interfaces.ItemIdValue;
+
+import static org.mockito.ArgumentMatchers.floatThat;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 public class SingleValueScrutinizerTest extends ScrutinizerTest {
 
@@ -42,6 +47,8 @@ public class SingleValueScrutinizerTest extends ScrutinizerTest {
         ItemIdValue idB = TestingData.matchedId;
         ItemUpdate update = new ItemUpdateBuilder(idA).addStatement(TestingData.generateStatement(idA, idB))
                 .addStatement(TestingData.generateStatement(idA, idB)).build();
+        ConstraintFetcher fetcher = mock(ConstraintFetcher.class);
+        when(fetcher.getConstraintsByType())
         scrutinize(update);
         assertWarningsRaised(SingleValueScrutinizer.type);
     }

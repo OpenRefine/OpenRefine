@@ -23,13 +23,18 @@
  ******************************************************************************/
 package org.openrefine.wikidata.qa.scrutinizers;
 
-import java.util.HashSet;
-import java.util.Set;
-
 import org.openrefine.wikidata.qa.QAWarning;
 import org.openrefine.wikidata.updates.ItemUpdate;
 import org.wikidata.wdtk.datamodel.interfaces.PropertyIdValue;
+import org.wikidata.wdtk.datamodel.interfaces.Snak;
+import org.wikidata.wdtk.datamodel.interfaces.SnakGroup;
 import org.wikidata.wdtk.datamodel.interfaces.Statement;
+import org.wikidata.wdtk.datamodel.interfaces.Value;
+
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * For now this scrutinizer only checks for uniqueness at the item level (it
@@ -44,6 +49,24 @@ import org.wikidata.wdtk.datamodel.interfaces.Statement;
 public class SingleValueScrutinizer extends EditScrutinizer {
 
     public static final String type = "single-valued-property-added-more-than-once";
+    public static String SINGLE_VALUE_CONSTRAINT_QID = "Q19474404";
+    public static String SINGLE_VALUE_CONSTRAINT_EXCEPTION = "P2303";
+
+    class SingleValueConstraint {
+        Set<Value> constraintExceptions;
+
+        SingleValueConstraint(Statement statement) {
+            constraintExceptions = new HashSet<>();
+            List<SnakGroup> snakGroupList = statement.getClaim().getQualifiers();
+            for(SnakGroup group : snakGroupList) {
+                for (Snak snak : group.getSnaks()) {
+                    if (group.getProperty().getId().equals(SINGLE_VALUE_CONSTRAINT_EXCEPTION)){
+                        constraintExceptions.add(snak.getValue());
+                    }
+                }
+            }
+        }
+    }
 
     @Override
     public void scrutinize(ItemUpdate update) {
@@ -52,7 +75,7 @@ public class SingleValueScrutinizer extends EditScrutinizer {
         for (Statement statement : update.getAddedStatements()) {
             PropertyIdValue pid = statement.getClaim().getMainSnak().getPropertyId();
             if (seenSingleProperties.contains(pid)) {
-
+                List<SingleValueConstraint> constraints = _fetcher.getConstraintsByType(pid, SINGLE_VALUE_CONSTRAINT_QID).map(statementValue -> statementValue == null ? null : new SingleValueConstraint(statementValue)).collect(Collectors.toList());
                 QAWarning issue = new QAWarning(type, pid.getId(), QAWarning.Severity.WARNING, 1);
                 issue.setProperty("property_entity", pid);
                 issue.setProperty("example_entity", update.getItemId());
