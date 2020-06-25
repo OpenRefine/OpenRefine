@@ -133,6 +133,18 @@ public abstract class RowMapChange extends EngineDependentChange {
         return state.getOverlayModels();
     }
 
+    /**
+     * Method run at the end of the change to update any statistics (such as ReconStats or overlay models) on the
+     * resulting state.
+     * 
+     * @param gridState
+     *            the grid after the map operation
+     * @return the grid with updated column statistics (or any other post transformation)
+     */
+    protected GridState postTransform(GridState gridState) {
+        return gridState;
+    }
+
     @Override
     public GridState apply(GridState projectState) throws DoesNotApplyException {
         Engine engine = getEngine(projectState);
@@ -141,19 +153,19 @@ public abstract class RowMapChange extends EngineDependentChange {
         RowMapper negativeMapper = gridMap.negativeMapper;
         ColumnModel newColumnModel = gridMap.columnModel;
         Map<String, OverlayModel> newOverlayModels = gridMap.overlayModels;
+        GridState mappedState;
         if (Mode.RowBased.equals(engine.getMode())) {
             RowFilter rowFilter = engine.combinedRowFilters();
-            return projectState.mapRows(RowMapper.conditionalMapper(rowFilter, positiveMapper, negativeMapper), newColumnModel)
-                    .withOverlayModels(newOverlayModels);
+            mappedState = projectState.mapRows(RowMapper.conditionalMapper(rowFilter, positiveMapper, negativeMapper), newColumnModel);
         } else {
             RecordFilter recordFilter = engine.combinedRecordFilters();
             RecordMapper recordMapper = RecordMapper.rowWiseRecordMapper(positiveMapper);
             RecordMapper negativeRecordMapper = RecordMapper.rowWiseRecordMapper(negativeMapper);
-            return projectState.mapRecords(
+            mappedState = projectState.mapRecords(
                     RecordMapper.conditionalMapper(recordFilter, recordMapper, negativeRecordMapper),
-                    newColumnModel)
-                    .withOverlayModels(newOverlayModels);
+                    newColumnModel);
         }
+        return postTransform(mappedState.withOverlayModels(newOverlayModels));
     }
 
     /**

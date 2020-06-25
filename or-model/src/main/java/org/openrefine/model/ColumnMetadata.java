@@ -124,7 +124,7 @@ public class ColumnMetadata implements Serializable {
 
     @Override
     public String toString() {
-        return _name;
+        return String.format("[ColumnMetadata: %s, %s, %s, %s]", _name, _originalName, _reconConfig, _reconStats);
     }
 
     @Override

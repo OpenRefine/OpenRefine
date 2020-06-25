@@ -43,6 +43,10 @@ abstract public class ImmediateRowMapOperation extends EngineDependentOperation 
         return RowMapChange.columnIndex(model, columnName);
     }
 
+    protected GridState postTransform(GridState state) {
+        return state;
+    }
+
     @Override
     public Change createChange() {
         return new RowMapChange(getEngineConfig()) {
@@ -60,6 +64,11 @@ abstract public class ImmediateRowMapOperation extends EngineDependentOperation 
             @Override
             public ColumnModel getNewColumnModel(GridState state) throws DoesNotApplyException {
                 return ImmediateRowMapOperation.this.getNewColumnModel(state);
+            }
+
+            @Override
+            public GridState postTransform(GridState state) {
+                return ImmediateRowMapOperation.this.postTransform(state);
             }
 
             @Override
