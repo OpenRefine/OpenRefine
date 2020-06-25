@@ -40,6 +40,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang3.StringUtils;
+
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -276,5 +278,10 @@ public class ColumnModel implements Serializable {
     @Override
     public int hashCode() {
         return _columns.hashCode();
+    }
+    
+    @Override
+    public String toString() {
+        return String.format("[ColumnModel: %s]", StringUtils.join(_columns, ", "));
     }
 }
