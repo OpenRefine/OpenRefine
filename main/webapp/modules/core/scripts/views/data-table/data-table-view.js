@@ -638,7 +638,6 @@ DataTableView.prototype._showRowsBottom = function(scrollPosition, table, start,
   var self = this;
 
   this._totalSize = start + this._pageSize;
-  $('tr.load-next-set').removeClass('load-next-set');
 
   Refine.fetchRows(start, this._pageSize, function() {
     $('.last-row').remove();
@@ -656,8 +655,6 @@ DataTableView.prototype._showRowsTop = function(scrollPosition, table, start, on
   var self = this;
 
   this._totalSize = start + 2 * this._pageSize;
-
-  $('tr.load-next-set').removeClass('load-next-set');
 
   Refine.fetchRows(start, this._pageSize, function() {
     $('.last-row').remove();
@@ -682,7 +679,6 @@ DataTableView.prototype._showRowsBottomSpeed = function(modifiedScrollPosition, 
 
     loadRows();
     self._adjustNextSetClassesSpeed(modifiedScrollPosition, start);
-    setScroll(scrollPosition);
 
     if (onDone) {
       onDone();
