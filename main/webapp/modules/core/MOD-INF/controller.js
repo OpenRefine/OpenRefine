@@ -280,6 +280,7 @@ function registerImporting() {
   IM.registerMimeType("text/turtle", "text/rdf/ttl");
   IM.registerMimeType("application/xml", "text/xml");
   IM.registerMimeType("text/xml", "text/xml");
+  IM.registerMimeType("+xml", "text/xml"); // suffix will be tried only as fallback
   IM.registerMimeType("application/rdf+xml", "text/rdf/xml");
   IM.registerMimeType("application/ld+json", "text/rdf/ld+json");
   IM.registerMimeType("application/atom+xml", "text/xml");
@@ -299,6 +300,7 @@ function registerImporting() {
   IM.registerMimeType("application/json", "text/json");
   IM.registerMimeType("application/javascript", "text/json");
   IM.registerMimeType("text/json", "text/json");
+  IM.registerMimeType("+json", "text/json"); // suffix will be tried only as fallback
 
   IM.registerMimeType("application/marc", "text/marc");
   
