@@ -43,7 +43,6 @@ import java.util.Map;
 
 import org.openrefine.model.Cell;
 import org.openrefine.model.Project;
-import org.openrefine.model.Recon;
 import org.openrefine.model.Row;
 import org.openrefine.util.ParsingUtilities;
 import org.slf4j.Logger;

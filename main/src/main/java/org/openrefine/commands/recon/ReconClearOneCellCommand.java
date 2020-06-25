@@ -45,11 +45,11 @@ import org.openrefine.history.HistoryEntry;
 import org.openrefine.model.Cell;
 import org.openrefine.model.ColumnMetadata;
 import org.openrefine.model.Project;
-import org.openrefine.model.Recon.Judgment;
-import org.openrefine.model.ReconStats;
 import org.openrefine.model.changes.CellChange;
 import org.openrefine.model.changes.Change;
 import org.openrefine.model.changes.ReconChange;
+import org.openrefine.model.recon.ReconStats;
+import org.openrefine.model.recon.Recon.Judgment;
 import org.openrefine.process.QuickHistoryEntryProcess;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -154,9 +154,9 @@ public class ReconClearOneCellCommand extends Command {
                 }
 
                 stats = new ReconStats(
-                    stats.nonBlanks + 1,
-                    stats.newTopics + newChange,
-                    stats.matchedTopics + matchChange);
+                    stats.getNonBlanks() + 1,
+                    stats.getNewTopics() + newChange,
+                    stats.getMatchedTopics() + matchChange);
             }
 
             String description =

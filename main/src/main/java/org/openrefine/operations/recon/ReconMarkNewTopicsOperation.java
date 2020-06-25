@@ -42,13 +42,13 @@ import org.openrefine.browsing.RowVisitor;
 import org.openrefine.model.Cell;
 import org.openrefine.model.ColumnMetadata;
 import org.openrefine.model.Project;
-import org.openrefine.model.Recon;
 import org.openrefine.model.Row;
-import org.openrefine.model.Recon.Judgment;
 import org.openrefine.model.changes.CellChange;
 import org.openrefine.model.changes.Change;
 import org.openrefine.model.changes.ReconChange;
+import org.openrefine.model.recon.Recon;
 import org.openrefine.model.recon.ReconConfig;
+import org.openrefine.model.recon.Recon.Judgment;
 import org.openrefine.operations.EngineDependentMassCellOperation;
 
 import com.fasterxml.jackson.annotation.JsonCreator;

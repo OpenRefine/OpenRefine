@@ -24,53 +24,28 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  ******************************************************************************/
-package org.openrefine.model;
+package org.openrefine.model.recon;
 
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import java.io.IOException;
 
-import java.util.Arrays;
-import java.util.Collections;
-
-import org.mockito.Mockito;
-import org.openrefine.model.Recon.Judgment;
+import org.openrefine.model.recon.ReconType;
 import org.openrefine.util.ParsingUtilities;
 import org.openrefine.util.TestUtils;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
-public class ReconStatsTests {
-    
+public class ReconTypeTest {
     @Test
-    public void serializeReconStats() {
-        ReconStats rs = new ReconStats(3, 1, 2);
-        TestUtils.isSerializedTo(rs, "{\"nonBlanks\":3,\"newTopics\":1,\"matchedTopics\":2}", ParsingUtilities.defaultWriter);
+    public void serializeReconType() throws IOException {
+        String json = "{\"id\":\"Q7540126\",\"name\":\"headquarters\"}";
+        ReconType rt = ReconType.load(json);
+        TestUtils.isSerializedTo(rt, json, ParsingUtilities.defaultWriter);
     }
     
     @Test
-    public void testCreateFromColumn() {
-        ReconStats rs = new ReconStats(3, 1, 2);
-        GridState state = mock(GridState.class);
-        when(state.aggregateRows(Mockito.any(), Mockito.eq(ReconStats.ZERO))).thenReturn(rs);
-        when(state.getColumnModel()).thenReturn(new ColumnModel(Collections.singletonList(new ColumnMetadata("some column"))));
-        
-        Assert.assertEquals(ReconStats.create(state, "some column"), rs);
-    }
-    
-    @Test
-    public void testEquals() {
-        ReconStats reconA = new ReconStats(10, 8, 1);
-        ReconStats reconB = new ReconStats(10, 8, 1);
-        ReconStats reconC = new ReconStats(10, 8, 2);
-        
-        Assert.assertEquals(reconA, reconB);
-        Assert.assertNotEquals(reconA, reconC);
-        Assert.assertNotEquals(reconA, 18);
-    }
-    
-    @Test
-    public void testToString() {
-        ReconStats recon = new ReconStats(10, 8, 1);
-        Assert.assertTrue(recon.toString().contains("ReconStats"));
+    public void deserializeFromString() throws IOException {
+    	// reconciliation services can return lists of types as bare lists of strings
+    	ReconType rt = ReconType.load("\"Q7540126\"");
+    	Assert.assertEquals(rt.id, "Q7540126");
     }
 }

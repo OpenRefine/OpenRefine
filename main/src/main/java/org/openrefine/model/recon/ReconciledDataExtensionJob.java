@@ -51,8 +51,6 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.openrefine.expr.functions.ToDate;
-import org.openrefine.model.ReconCandidate;
-import org.openrefine.model.ReconType;
 import org.openrefine.util.JSONUtilities;
 import org.openrefine.util.JsonViews;
 import org.openrefine.util.ParsingUtilities;

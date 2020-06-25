@@ -31,7 +31,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 */
 
-package org.openrefine.model;
+package org.openrefine.model.recon;
 
 import java.io.Serializable;
 import java.util.Collections;

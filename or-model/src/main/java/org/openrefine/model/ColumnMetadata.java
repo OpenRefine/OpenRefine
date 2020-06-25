@@ -38,6 +38,7 @@ import java.io.Serializable;
 import java.io.Writer;
 
 import org.openrefine.model.recon.ReconConfig;
+import org.openrefine.model.recon.ReconStats;
 import org.openrefine.util.ParsingUtilities;
 
 import com.fasterxml.jackson.annotation.JsonCreator;

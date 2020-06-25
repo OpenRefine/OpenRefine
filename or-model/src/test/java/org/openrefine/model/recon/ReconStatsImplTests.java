@@ -24,31 +24,56 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  ******************************************************************************/
-package org.openrefine.model;
+package org.openrefine.model.recon;
 
-import org.openrefine.model.ReconCandidate;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
+import java.util.Collections;
+
+import org.mockito.Mockito;
+import org.openrefine.model.ColumnMetadata;
+import org.openrefine.model.ColumnModel;
+import org.openrefine.model.GridState;
+import org.openrefine.model.recon.ReconStats;
+import org.openrefine.model.recon.ReconStatsImpl;
 import org.openrefine.util.ParsingUtilities;
 import org.openrefine.util.TestUtils;
+import org.testng.Assert;
 import org.testng.annotations.Test;
 
-public class ReconCandidateTests {
+public class ReconStatsImplTests {
+    
     @Test
-    public void serializeReconCandidateInt() throws Exception {
-        String json = "{\"id\":\"Q49213\","
-                + "\"name\":\"University of Texas at Austin\","
-                + "\"score\":100,"
-                + "\"types\":[\"Q875538\",\"Q15936437\",\"Q20971972\",\"Q23002039\"]}";
-        ReconCandidate rc = ReconCandidate.loadStreaming(json);
-        TestUtils.isSerializedTo(rc, json, ParsingUtilities.defaultWriter);
+    public void serializeReconStats() {
+        ReconStats rs = new ReconStatsImpl(3, 1, 2);
+        TestUtils.isSerializedTo(rs, "{\"nonBlanks\":3,\"newTopics\":1,\"matchedTopics\":2}", ParsingUtilities.defaultWriter);
     }
     
     @Test
-    public void serializeReconCandidateDouble() throws Exception {
-        String json = "{\"id\":\"Q49213\","
-                + "\"name\":\"University of Texas at Austin\","
-                + "\"score\":0.5,"
-                + "\"types\":[\"Q875538\",\"Q15936437\",\"Q20971972\",\"Q23002039\"]}";
-        ReconCandidate rc = ReconCandidate.loadStreaming(json);
-        TestUtils.isSerializedTo(rc, json, ParsingUtilities.defaultWriter);
+    public void testCreateFromColumn() {
+        ReconStats rs = new ReconStatsImpl(3, 1, 2);
+        GridState state = mock(GridState.class);
+        when(state.aggregateRows(Mockito.any(), Mockito.eq(ReconStats.ZERO))).thenReturn(rs);
+        when(state.getColumnModel()).thenReturn(new ColumnModel(Collections.singletonList(new ColumnMetadata("some column"))));
+        
+        Assert.assertEquals(ReconStatsImpl.create(state, "some column"), rs);
+    }
+    
+    @Test
+    public void testEquals() {
+        ReconStats reconA = new ReconStatsImpl(10, 8, 1);
+        ReconStats reconB = new ReconStatsImpl(10, 8, 1);
+        ReconStats reconC = new ReconStatsImpl(10, 8, 2);
+        
+        Assert.assertEquals(reconA, reconB);
+        Assert.assertNotEquals(reconA, reconC);
+        Assert.assertNotEquals(reconA, 18);
+    }
+    
+    @Test
+    public void testToString() {
+        ReconStats recon = new ReconStatsImpl(10, 8, 1);
+        Assert.assertTrue(recon.toString().contains("ReconStats"));
     }
 }
