@@ -24,7 +24,7 @@ module.exports = {
          label: 'Technical Reference',
          position: 'left'},
         {
-          href: 'https://github.com/OpenRefine/OpenRefine',
+          href: 'https://github.com/OpenRefine/OpenRefine/edit/master/docs',
           label: 'GitHub',
           position: 'right',
         },
