@@ -33,7 +33,12 @@ module.exports = {
         'manual/grel/cross',
         'manual/grel/facetCount',
         'manual/grel/toString'
-    ]
+    ],
+    'Technical Reference': [
+      'tech/architecture',
+      'tech/client',
+      'tech/server'
+  ]
   },
 };
 

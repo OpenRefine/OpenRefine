@@ -15,12 +15,12 @@ module.exports = {
       },
       links: [
         {
-          to: 'docs/',
+          to: '/',
           activeBasePath: 'docs',
           label: 'User Manual',
           position: 'left',
         },
-        {to: 'docs/tech',
+        {to: 'tech/architecture',
          label: 'Technical Reference',
          position: 'left'},
         {
