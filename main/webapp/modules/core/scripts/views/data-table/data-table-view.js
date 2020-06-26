@@ -672,7 +672,6 @@ DataTableView.prototype._showRowsSpeed = function(modifiedScrollPosition, scroll
   var self = this;
 
   this._totalSize = start +  this._pageSize;
-  $('tr.load-next-set').removeClass('load-next-set');
 
   Refine.fetchRows(start, this._pageSize, function() {
     $('.last-row').remove();
