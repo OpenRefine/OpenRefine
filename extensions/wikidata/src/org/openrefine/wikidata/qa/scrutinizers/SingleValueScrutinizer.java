@@ -34,7 +34,6 @@ import org.wikidata.wdtk.datamodel.interfaces.Value;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 /**
  * For now this scrutinizer only checks for uniqueness at the item level (it
@@ -50,6 +49,7 @@ public class SingleValueScrutinizer extends EditScrutinizer {
 
     public static final String type = "single-valued-property-added-more-than-once";
     public static String SINGLE_VALUE_CONSTRAINT_QID = "Q19474404";
+    public static String SINGLE_BEST_VALUE_CONSTRAINT_QID = "Q52060874";
     public static String SINGLE_VALUE_CONSTRAINT_EXCEPTION = "P2303";
 
     class SingleValueConstraint {
@@ -75,13 +75,21 @@ public class SingleValueScrutinizer extends EditScrutinizer {
         for (Statement statement : update.getAddedStatements()) {
             PropertyIdValue pid = statement.getClaim().getMainSnak().getPropertyId();
             if (seenSingleProperties.contains(pid)) {
-                List<SingleValueConstraint> constraints = _fetcher.getConstraintsByType(pid, SINGLE_VALUE_CONSTRAINT_QID).map(statementValue -> statementValue == null ? null : new SingleValueConstraint(statementValue)).collect(Collectors.toList());
                 QAWarning issue = new QAWarning(type, pid.getId(), QAWarning.Severity.WARNING, 1);
                 issue.setProperty("property_entity", pid);
                 issue.setProperty("example_entity", update.getItemId());
                 addIssue(issue);
-            } else if (_fetcher.hasSingleValue(pid) || _fetcher.hasSingleBestValue(pid)) {
-                seenSingleProperties.add(pid);
+            } else {
+                Statement constraintStatement1 = _fetcher.getConstraintsByType(pid, SINGLE_VALUE_CONSTRAINT_QID).findFirst().orElse(null);
+                Statement constraintStatement2 = _fetcher.getConstraintsByType(pid, SINGLE_BEST_VALUE_CONSTRAINT_QID).findFirst().orElse(null);
+                if (constraintStatement1 != null) {
+                    SingleValueConstraint singleValueConstraint = new SingleValueConstraint(constraintStatement1);
+                    seenSingleProperties.add(pid);
+                }
+                else if (constraintStatement2 != null) {
+                    SingleValueConstraint singleBestValueConstraint = new SingleValueConstraint(constraintStatement2);
+                    seenSingleProperties.add(pid);
+                }
             }
         }
     }
