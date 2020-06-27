@@ -286,7 +286,39 @@ public class RdfTripleImporterTests extends ImporterTest {
         Assert.assertEquals(project.rows.get(0).cells.get(2).value, "mailto:fred@example.com");
         Assert.assertEquals(project.rows.get(0).cells.get(3).value, "http://meetings.example.com/cal#m1");
     }
-    
+
+    @Test
+    public void canParseTurtleBlankNode() throws UnsupportedEncodingException {
+        String sampleRdf = "@prefix ex: <http://example.org/data#> .\n" +
+                "<http://example.org/web-data> ex:title \"Web Data\" ;\n" +
+                "                               ex:professor [ ex:fullName \"Alice Carol\" ;\n" +
+                "                                              ex:homePage <http://example.net/alice-carol> ] .";
+
+        InputStream input = new ByteArrayInputStream(sampleRdf.getBytes("UTF-8"));
+
+        SUT = new RdfTripleImporter(RdfTripleImporter.Mode.TTL);
+        parseOneFile(SUT, input);
+
+        String[] columns = {"subject",
+                "http://example.org/data#professor",
+                "http://example.org/data#title",
+                "http://example.org/data#homePage",
+                "http://example.org/data#fullName",
+                };
+
+        Assert.assertEquals(project.columnModel.columns.size(), columns.length);
+        for (int i = 0; i < columns.length; i++) {
+            Assert.assertEquals(project.columnModel.columns.get(i).getName(), columns[i]);
+        }
+
+        Assert.assertEquals(project.rows.size(), 2);
+        Assert.assertEquals(project.rows.get(0).cells.size(), 3);
+        Assert.assertEquals(project.rows.get(1).cells.size(), 5);
+        Assert.assertEquals(project.rows.get(0).cells.get(0).value, "http://example.org/web-data");
+        // Generated blank node ID is random, but should match
+        Assert.assertEquals(project.rows.get(0).cells.get(1).value, project.rows.get(1).cells.get(0).value);
+    }
+
     @Test
     public void canParseJsonld() throws UnsupportedEncodingException {
         String sampleJsonld = "{\n "+
