@@ -37,6 +37,7 @@ package org.openrefine.operations.row;
 import org.openrefine.history.dag.DagSlice;
 import org.openrefine.model.GridState;
 import org.openrefine.model.changes.Change;
+import org.openrefine.model.changes.ChangeContext;
 import org.openrefine.operations.Operation;
 import org.openrefine.sorting.SortingConfig;
 
@@ -98,7 +99,7 @@ public class RowReorderOperation implements Operation {
     	}
 
     	@Override
-    	public GridState apply(GridState projectState) throws DoesNotApplyException {
+    	public GridState apply(GridState projectState, ChangeContext context) throws DoesNotApplyException {
     		if (Mode.RowBased.equals(_mode)) {
     			return projectState.reorderRows(_sorting);
     		} else {

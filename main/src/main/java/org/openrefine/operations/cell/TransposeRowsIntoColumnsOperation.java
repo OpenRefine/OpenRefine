@@ -48,6 +48,7 @@ import org.openrefine.model.Row;
 import org.openrefine.model.RowBuilder;
 import org.openrefine.model.RowFilter;
 import org.openrefine.model.changes.Change;
+import org.openrefine.model.changes.ChangeContext;
 import org.openrefine.operations.Operation;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
@@ -91,7 +92,7 @@ public class TransposeRowsIntoColumnsOperation implements Operation {
     public class TransposeRowsIntoColumnsChange implements Change {
 
     	@Override
-    	public GridState apply(GridState projectState) throws DoesNotApplyException {
+    	public GridState apply(GridState projectState, ChangeContext context) throws DoesNotApplyException {
             ColumnModel columnModel = projectState.getColumnModel();
             ColumnModel newColumns = new ColumnModel(Collections.emptyList());
             List<ColumnMetadata> oldColumns = columnModel.getColumns();

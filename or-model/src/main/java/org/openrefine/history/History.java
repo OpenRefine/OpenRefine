@@ -40,6 +40,7 @@ import org.openrefine.RefineModel;
 import org.openrefine.model.GridState;
 import org.openrefine.model.changes.Change;
 import org.openrefine.model.changes.Change.DoesNotApplyException;
+import org.openrefine.model.changes.ChangeContext;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -134,7 +135,8 @@ public class History  {
             _states = _states.subList(0, _position+1);
         }
         
-        GridState newState = entry.getChange().apply(getCurrentGridState());
+        ChangeContext context = ChangeContext.create(entry.getId());
+        GridState newState = entry.getChange().apply(getCurrentGridState(), context);
         _states.add(newState);
         _entries.add(entry);
         _position++;

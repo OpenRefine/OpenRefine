@@ -1,11 +1,14 @@
 package org.openrefine.operations.cell;
 
+import static org.mockito.Mockito.mock;
+
 import java.io.Serializable;
 
 import org.openrefine.RefineTest;
 import org.openrefine.expr.ParsingException;
 import org.openrefine.model.GridState;
 import org.openrefine.model.changes.Change;
+import org.openrefine.model.changes.ChangeContext;
 import org.openrefine.model.changes.Change.DoesNotApplyException;
 import org.openrefine.operations.Operation;
 import org.openrefine.operations.OperationRegistry;
@@ -73,7 +76,7 @@ public class TransposeColumnsIntoRowsTests extends RefineTest {
 			{ null, "11", null }
 		});
 		
-		assertGridEquals(change.apply(initialRecords), expected);
+		assertGridEquals(change.apply(initialRecords, mock(ChangeContext.class)), expected);
 	}
 	
 	@Test
@@ -101,7 +104,7 @@ public class TransposeColumnsIntoRowsTests extends RefineTest {
 			{ null, "9" }
 		});
 		
-		assertGridEquals(change.apply(initialRecords), expected);
+		assertGridEquals(change.apply(initialRecords, mock(ChangeContext.class)), expected);
 	}
 	
 	@Test
@@ -127,6 +130,6 @@ public class TransposeColumnsIntoRowsTests extends RefineTest {
 			{ null, "b 2", "11", null}
 		});
 		
-		assertGridEquals(change.apply(initialRecords), expected);
+		assertGridEquals(change.apply(initialRecords, mock(ChangeContext.class)), expected);
 	}
 }

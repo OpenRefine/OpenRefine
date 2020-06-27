@@ -26,6 +26,8 @@
  ******************************************************************************/
 package org.openrefine.operations.column;
 
+import static org.mockito.Mockito.mock;
+
 import java.io.Serializable;
 import java.util.Arrays;
 import java.util.List;
@@ -40,6 +42,7 @@ import org.openrefine.model.ColumnMetadata;
 import org.openrefine.model.GridState;
 import org.openrefine.model.IndexedRow;
 import org.openrefine.model.changes.Change;
+import org.openrefine.model.changes.ChangeContext;
 import org.openrefine.model.changes.Change.DoesNotApplyException;
 import org.openrefine.operations.OperationRegistry;
 import org.openrefine.operations.column.ColumnMoveOperation;
@@ -85,7 +88,7 @@ public class ColumnMoveOperationTests extends RefineTest {
 	@Test
 	public void testForward() throws DoesNotApplyException, ParsingException {
 		Change SUT = new ColumnMoveOperation("foo", 1).createChange();
-		GridState applied = SUT.apply(initialState);
+		GridState applied = SUT.apply(initialState, mock(ChangeContext.class));
 		List<IndexedRow> rows = applied.collectRows();
 		Assert.assertEquals(applied.getColumnModel().getColumns(),
 				Arrays.asList(new ColumnMetadata("bar"), new ColumnMetadata("foo"), new ColumnMetadata("hello")));
@@ -96,7 +99,7 @@ public class ColumnMoveOperationTests extends RefineTest {
 	@Test
 	public void testSamePosition() throws DoesNotApplyException, ParsingException {
 		Change SUT = new ColumnMoveOperation("bar", 1).createChange();
-		GridState applied = SUT.apply(initialState);
+		GridState applied = SUT.apply(initialState, mock(ChangeContext.class));
 		List<IndexedRow> rows = applied.collectRows();
 		Assert.assertEquals(applied.getColumnModel().getColumns(),
 				Arrays.asList(new ColumnMetadata("foo"), new ColumnMetadata("bar"), new ColumnMetadata("hello")));
@@ -107,7 +110,7 @@ public class ColumnMoveOperationTests extends RefineTest {
 	@Test
 	public void testBackward() throws DoesNotApplyException, ParsingException {
 		Change SUT = new ColumnMoveOperation("hello", 1).createChange();
-		GridState applied = SUT.apply(initialState);
+		GridState applied = SUT.apply(initialState, mock(ChangeContext.class));
 		List<IndexedRow> rows = applied.collectRows();
 		Assert.assertEquals(applied.getColumnModel().getColumns(),
 				Arrays.asList(new ColumnMetadata("foo"), new ColumnMetadata("hello"), new ColumnMetadata("bar")));
@@ -118,6 +121,6 @@ public class ColumnMoveOperationTests extends RefineTest {
 	@Test(expectedExceptions = DoesNotApplyException.class)
 	public void testColumnDoesNotExist() throws DoesNotApplyException, ParsingException {
 		Change SUT = new ColumnMoveOperation("not_found", 1).createChange();
-		SUT.apply(initialState);
+		SUT.apply(initialState, mock(ChangeContext.class));
 	}
 }

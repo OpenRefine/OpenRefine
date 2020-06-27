@@ -38,6 +38,7 @@ import org.openrefine.model.ColumnModel;
 import org.openrefine.model.GridState;
 import org.openrefine.model.ModelException;
 import org.openrefine.model.RowMapper;
+import org.openrefine.model.changes.ChangeContext;
 import org.openrefine.model.changes.Change.DoesNotApplyException;
 import org.openrefine.operations.ImmediateRowMapOperation;
 
@@ -76,7 +77,7 @@ public class ColumnRenameOperation extends ImmediateRowMapOperation {
     }
 
     @Override
-    public ColumnModel getNewColumnModel(GridState state) throws DoesNotApplyException {
+    public ColumnModel getNewColumnModel(GridState state, ChangeContext context) throws DoesNotApplyException {
     	ColumnModel model = state.getColumnModel();
     	int index = columnIndex(model, _oldColumnName);
     	try {
@@ -88,7 +89,7 @@ public class ColumnRenameOperation extends ImmediateRowMapOperation {
     }
 
 	@Override
-	protected RowMapper getPositiveRowMapper(GridState state) throws DoesNotApplyException {
+	protected RowMapper getPositiveRowMapper(GridState state, ChangeContext context) throws DoesNotApplyException {
 		return RowMapper.IDENTITY;
 	}
 }

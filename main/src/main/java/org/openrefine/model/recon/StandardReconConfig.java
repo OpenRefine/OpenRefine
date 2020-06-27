@@ -52,10 +52,8 @@ import org.apache.commons.lang.StringUtils;
 import org.openrefine.expr.ExpressionUtils;
 import org.openrefine.model.Cell;
 import org.openrefine.model.Project;
-import org.openrefine.model.Row;
 import org.openrefine.model.RecordModel.RowDependency;
-import org.openrefine.model.recon.ReconConfig;
-import org.openrefine.model.recon.ReconJob;
+import org.openrefine.model.Row;
 import org.openrefine.model.recon.Recon.Judgment;
 import org.openrefine.util.ParsingUtilities;
 import org.slf4j.Logger;
@@ -72,7 +70,10 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 public class StandardReconConfig extends ReconConfig {
-    final static Logger logger = LoggerFactory.getLogger("refine-standard-recon");
+
+	private static final long serialVersionUID = 3641905651013923439L;
+
+	final static Logger logger = LoggerFactory.getLogger("refine-standard-recon");
     
 	private static final String DEFAULT_SCHEMA_SPACE = "http://localhost/schema";
 	private static final String DEFAULT_IDENTIFIER_SPACE = "http://localhost/identifier";
@@ -519,8 +520,8 @@ public class StandardReconConfig extends ReconConfig {
     
     @Override
     public Recon createNewRecon(long historyEntryID) {
-        Recon recon = new Recon(historyEntryID, identifierSpace, schemaSpace);
-        recon.service = service;
+        Recon recon = new Recon(historyEntryID, identifierSpace, schemaSpace)
+        		.withService(service);
         return recon;
     }
 

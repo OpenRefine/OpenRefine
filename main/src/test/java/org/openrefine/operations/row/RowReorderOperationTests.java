@@ -26,6 +26,8 @@
  ******************************************************************************/
 package org.openrefine.operations.row;
 
+import static org.mockito.Mockito.mock;
+
 import java.io.Serializable;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -35,6 +37,7 @@ import org.openrefine.browsing.Engine.Mode;
 import org.openrefine.model.GridState;
 import org.openrefine.model.Row;
 import org.openrefine.model.changes.Change;
+import org.openrefine.model.changes.ChangeContext;
 import org.openrefine.operations.OperationRegistry;
 import org.openrefine.sorting.SortingConfig;
 import org.openrefine.util.ParsingUtilities;
@@ -71,7 +74,7 @@ public class RowReorderOperationTests extends RefineTest {
 
         
         Change change = new RowReorderOperation(Mode.RowBased, sortingConfig).createChange();
-        GridState applied = change.apply(initial);
+        GridState applied = change.apply(initial, mock(ChangeContext.class));
         List<Row> rows = applied.collectRows().stream().map(ir -> ir.getRow()).collect(Collectors.toList());
         
         Assert.assertEquals("h", rows.get(0).cells.get(1).value);

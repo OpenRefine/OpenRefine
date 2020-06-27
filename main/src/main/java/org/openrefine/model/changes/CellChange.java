@@ -81,7 +81,7 @@ public class CellChange extends RowMapChange {
     
 
 	@Override
-	public RowMapper getPositiveRowMapper(GridState state) {
+	public RowMapper getPositiveRowMapper(GridState state, ChangeContext context) {
 		return mapFunction(cellIndex, row, newCell);
 	}
 	

@@ -94,7 +94,7 @@ public class AdditionSlice implements DagSlice {
     @Override
     public String toString() {
         return String.format("[AdditionSlice for %s]",
-                String.join(", ", outputColumns.stream().map(s -> "\"" + s + "\"").collect(Collectors.toList())));
+                String.join(", ", outputColumns.stream().map(s -> "\"" + s.getName() + "\"").collect(Collectors.toList())));
     }
     
     @Override

@@ -26,6 +26,8 @@
  ******************************************************************************/
 package org.openrefine.operations.column;
 
+import static org.mockito.Mockito.mock;
+
 import java.io.Serializable;
 import java.util.Arrays;
 import java.util.List;
@@ -40,6 +42,7 @@ import org.openrefine.model.ColumnMetadata;
 import org.openrefine.model.GridState;
 import org.openrefine.model.IndexedRow;
 import org.openrefine.model.changes.Change;
+import org.openrefine.model.changes.ChangeContext;
 import org.openrefine.model.changes.Change.DoesNotApplyException;
 import org.openrefine.operations.OperationRegistry;
 import org.openrefine.util.ParsingUtilities;
@@ -84,7 +87,7 @@ public class ColumnRemovalOperationTests extends RefineTest {
 	@Test
 	public void testRemoval() throws DoesNotApplyException, ParsingException {
 		Change SUT = new ColumnRemovalOperation("foo").createChange();
-		GridState applied = SUT.apply(initialState);
+		GridState applied = SUT.apply(initialState, mock(ChangeContext.class));
 		List<IndexedRow> rows = applied.collectRows();
 		Assert.assertEquals(applied.getColumnModel().getColumns(),
 				Arrays.asList(new ColumnMetadata("bar"), new ColumnMetadata("hello")));
@@ -95,6 +98,6 @@ public class ColumnRemovalOperationTests extends RefineTest {
 	@Test(expectedExceptions = DoesNotApplyException.class)
 	public void testColumnNotFound() throws DoesNotApplyException, ParsingException {
 		Change SUT = new ColumnRemovalOperation("not_found").createChange();
-		SUT.apply(initialState);
+		SUT.apply(initialState, mock(ChangeContext.class));
 	}
 }

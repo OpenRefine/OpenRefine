@@ -44,6 +44,7 @@ import org.openrefine.model.GridState;
 import org.openrefine.model.Row;
 import org.openrefine.model.RowMapper;
 import org.openrefine.model.changes.Change.DoesNotApplyException;
+import org.openrefine.model.changes.ChangeContext;
 import org.openrefine.operations.ImmediateRowMapOperation;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
@@ -81,7 +82,7 @@ public class ColumnMoveOperation extends ImmediateRowMapOperation {
     }
 
 	@Override
-	public ColumnModel getNewColumnModel(GridState gridState) throws DoesNotApplyException {
+	public ColumnModel getNewColumnModel(GridState gridState, ChangeContext context) throws DoesNotApplyException {
 		ColumnModel columnModel = gridState.getColumnModel();
 		int fromIndex = columnIndex(columnModel, _columnName);
 		ColumnMetadata column = columnModel.getColumns().get(fromIndex);
@@ -89,7 +90,7 @@ public class ColumnMoveOperation extends ImmediateRowMapOperation {
 	}
 
 	@Override
-	public RowMapper getPositiveRowMapper(GridState state) throws DoesNotApplyException {
+	public RowMapper getPositiveRowMapper(GridState state, ChangeContext context) throws DoesNotApplyException {
 		int fromIndex = columnIndex(state.getColumnModel(), _columnName);
 		return mapper(fromIndex, _index);
 	}

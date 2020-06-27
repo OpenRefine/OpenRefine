@@ -83,7 +83,7 @@ public interface Change {
      * @return the state of the grid after the change
      * @throws DoesNotApplyException when the change cannot be applied to the given grid
      */
-    public GridState apply(GridState projectState) throws DoesNotApplyException;
+    public GridState apply(GridState projectState, ChangeContext context) throws DoesNotApplyException;
     
     /**
      * Returns true when the change is derived purely from the operation metadata

@@ -26,6 +26,8 @@
  ******************************************************************************/
 package org.openrefine.operations.cell;
 
+import static org.mockito.Mockito.mock;
+
 import java.io.Serializable;
 import java.util.Arrays;
 
@@ -38,6 +40,7 @@ import org.openrefine.expr.MetaParser;
 import org.openrefine.grel.Parser;
 import org.openrefine.model.GridState;
 import org.openrefine.model.changes.Change;
+import org.openrefine.model.changes.ChangeContext;
 import org.openrefine.model.changes.Change.DoesNotApplyException;
 import org.openrefine.operations.OperationRegistry;
 import org.openrefine.util.ParsingUtilities;
@@ -85,7 +88,7 @@ public class FillDownTests extends RefineTest {
 	@Test
 	public void testFillDownRowsNoFacets() throws DoesNotApplyException {
 		Change change = new FillDownOperation(EngineConfig.ALL_ROWS, "bar").createChange();
-		GridState applied = change.apply(toFillDown);
+		GridState applied = change.apply(toFillDown, mock(ChangeContext.class));
 		
 		GridState expectedGrid = createGrid(new String[] {"foo","bar","hello"},
 				new Serializable[][] {
@@ -104,7 +107,7 @@ public class FillDownTests extends RefineTest {
 	@Test
 	public void testFillDownRecordsNoFacets() throws DoesNotApplyException {
 		Change change = new FillDownOperation(EngineConfig.ALL_RECORDS, "bar").createChange();
-		GridState applied = change.apply(toFillDown);
+		GridState applied = change.apply(toFillDown, mock(ChangeContext.class));
 		
 		GridState expectedGrid = createGrid(new String[] {"foo","bar","hello"},
 				new Serializable[][] {
@@ -125,7 +128,7 @@ public class FillDownTests extends RefineTest {
 				new DecoratedValue("i", "i"));
 		EngineConfig engineConfig = new EngineConfig(Arrays.asList(facet), Engine.Mode.RowBased);
 		Change change = new FillDownOperation(engineConfig, "bar").createChange();
-		GridState applied = change.apply(toFillDown);
+		GridState applied = change.apply(toFillDown, mock(ChangeContext.class));
 		
 		GridState expected = createGrid(new String[] {"foo","bar","hello"},
 				new Serializable[][] {
@@ -145,7 +148,7 @@ public class FillDownTests extends RefineTest {
 				new DecoratedValue("c", "c"));
 		EngineConfig engineConfig = new EngineConfig(Arrays.asList(facet), Engine.Mode.RecordBased);
 		Change change = new FillDownOperation(engineConfig, "bar").createChange();
-		GridState applied = change.apply(toFillDown);
+		GridState applied = change.apply(toFillDown, mock(ChangeContext.class));
 		
 		GridState expected = createGrid(new String[] {"foo","bar","hello"},
 				new Serializable[][] {

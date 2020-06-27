@@ -17,6 +17,7 @@ import org.openrefine.model.GridState;
 import org.openrefine.model.RowMapper;
 import org.openrefine.model.changes.Change;
 import org.openrefine.model.changes.Change.DoesNotApplyException;
+import org.openrefine.model.changes.ChangeContext;
 import org.openrefine.operations.Operation.NotImmediateOperationException;
 import org.openrefine.operations.UnknownOperation;
 import org.openrefine.util.TestUtils;
@@ -35,7 +36,7 @@ public class HistoryEntryManagerTests {
 	public static class MyChange implements Change  {
 		// Deletes the first column of the table
 		@Override
-		public GridState apply(GridState projectState) {
+		public GridState apply(GridState projectState, ChangeContext context) {
 		    List<ColumnMetadata> columns = projectState.getColumnModel().getColumns();
             List<ColumnMetadata> newColumns = columns.subList(1, columns.size());
 		    

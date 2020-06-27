@@ -13,7 +13,7 @@ public class RefineModelTests {
      */
     @Test
     public void loadChangeClassByOldName() throws ClassNotFoundException {
-        Class klass = RefineModel.getClass("com.google.refine.history.Change");
-        Assert.assertEquals(klass.getName(), "org.openrefine.history.Change");
+        Class klass = RefineModel.getClass("com.google.refine.model.changes.Change");
+        Assert.assertEquals(klass.getName(), "org.openrefine.model.changes.Change");
     }
 }

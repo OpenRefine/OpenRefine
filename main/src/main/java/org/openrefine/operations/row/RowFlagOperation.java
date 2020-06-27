@@ -34,18 +34,16 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package org.openrefine.operations.row;
 
 import org.openrefine.browsing.EngineConfig;
-import org.openrefine.history.dag.DagSlice;
 import org.openrefine.model.GridState;
 import org.openrefine.model.Row;
 import org.openrefine.model.RowMapper;
-import org.openrefine.model.changes.Change;
-import org.openrefine.model.changes.RowMapChange;
-import org.openrefine.operations.EngineDependentOperation;
+import org.openrefine.model.changes.ChangeContext;
+import org.openrefine.operations.ImmediateRowMapOperation;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-public class RowFlagOperation extends EngineDependentOperation {
+public class RowFlagOperation extends ImmediateRowMapOperation {
     final protected boolean _flagged;
 
     @JsonCreator
@@ -66,36 +64,12 @@ public class RowFlagOperation extends EngineDependentOperation {
     @Override
 	public String getDescription() {
         return (_flagged ? "Flag rows" : "Unflag rows");
-    }
-    
-    @Override
-    public Change createChange() {
-    	return new RowFlagChange(getEngineConfig());
-    }
-    
-    public class RowFlagChange extends RowMapChange {
+    } 
 
-		public RowFlagChange(EngineConfig engineConfig) {
-			super(engineConfig);
-		}
-		
-		@Override
-		public RowMapper getPositiveRowMapper(GridState grid) {
-			return rowMapper(_flagged);
-		}
-
-		@Override
-		public boolean isImmediate() {
-			return true;
-		}
-
-		@Override
-		public DagSlice getDagSlice() {
-			// TODO Auto-generated method stub
-			return null;
-		}
-
-    }
+	@Override
+	public RowMapper getPositiveRowMapper(GridState grid, ChangeContext context) {
+		return rowMapper(_flagged);
+	}
     
     protected static RowMapper rowMapper(boolean flagged) {
     	return new RowMapper() {
