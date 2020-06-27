@@ -42,6 +42,7 @@ import org.openrefine.model.GridState;
 import org.openrefine.model.Row;
 import org.openrefine.model.RowMapper;
 import org.openrefine.model.changes.Change.DoesNotApplyException;
+import org.openrefine.model.changes.ChangeContext;
 import org.openrefine.model.recon.LazyReconStats;
 import org.openrefine.operations.ImmediateRowMapOperation;
 
@@ -77,13 +78,13 @@ public class ReconClearSimilarCellsOperation extends ImmediateRowMapOperation {
     }
 
     @Override
-    protected RowMapper getPositiveRowMapper(GridState state) throws DoesNotApplyException {
+    protected RowMapper getPositiveRowMapper(GridState state, ChangeContext context) throws DoesNotApplyException {
         int cellIndex = columnIndex(state.getColumnModel(), _columnName);
         return rowMapper(cellIndex, _similarValue);
     }
 
     @Override
-    protected GridState postTransform(GridState newState) {
+    protected GridState postTransform(GridState newState, ChangeContext context) {
         return LazyReconStats.updateReconStats(newState, _columnName);
     }
 

@@ -1,6 +1,8 @@
 
 package org.openrefine.model.changes;
 
+import static org.mockito.Mockito.mock;
+
 import java.io.Serializable;
 import java.util.Arrays;
 
@@ -47,7 +49,7 @@ public class CellChangeTest extends RefineTest {
     public void testCellChange() throws DoesNotApplyException {
         Change change = new CellChange(0L, 0, "foo", new Cell("changed", null));
 
-        GridState newGrid = change.apply(initialGrid);
+        GridState newGrid = change.apply(initialGrid, mock(ChangeContext.class));
 
         Assert.assertEquals(newGrid.getRow(0L),
                 new Row(Arrays.asList(new Cell("changed", null), new Cell(1, null))));

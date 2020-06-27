@@ -33,22 +33,17 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package org.openrefine.operations.recon;
 
-import java.util.List;
-
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import org.openrefine.browsing.EngineConfig;
 import org.openrefine.model.Cell;
-import org.openrefine.model.ColumnMetadata;
 import org.openrefine.model.GridState;
-import org.openrefine.model.Project;
 import org.openrefine.model.Row;
 import org.openrefine.model.RowMapper;
-import org.openrefine.model.changes.CellChange;
-import org.openrefine.model.changes.Change;
 import org.openrefine.model.changes.Change.DoesNotApplyException;
-import org.openrefine.model.changes.ReconChange;
+import org.openrefine.model.changes.ChangeContext;
+import org.openrefine.model.recon.LazyReconStats;
 import org.openrefine.model.recon.Recon;
 import org.openrefine.model.recon.Recon.Judgment;
 import org.openrefine.operations.ImmediateRowMapOperation;
@@ -85,62 +80,41 @@ public class ReconDiscardJudgmentsOperation extends ImmediateRowMapOperation {
     }
 
     @Override
-    public RowMapper getPositiveRowMapper(GridState projectState) throws DoesNotApplyException {
+    public RowMapper getPositiveRowMapper(GridState projectState, ChangeContext context) throws DoesNotApplyException {
         int columnIndex = projectState.getColumnModel().getColumnIndexByName(_columnName);
         if (columnIndex == -1) {
             throw new DoesNotApplyException(String.format("The column '%s' does not exist", _columnName));
         }
-        return rowMapper(columnIndex, _clearData);
+        return rowMapper(columnIndex, _clearData, context.getHistoryEntryId());
     }
 
-    protected static RowMapper rowMapper(int columnIndex, boolean clearData) {
+    @Override
+    protected GridState postTransform(GridState newState, ChangeContext context) {
+        return LazyReconStats.updateReconStats(newState, _columnName);
+    }
+
+    protected static RowMapper rowMapper(int columnIndex, boolean clearData, long historyEntryId) {
         return new RowMapper() {
+
+            private static final long serialVersionUID = 5930949875518485010L;
 
             @Override
             public Row call(long rowId, Row row) {
                 Cell cell = row.getCell(columnIndex);
                 if (cell != null && cell.recon != null) {
-                    Recon newRecon = null;
-                    if (!clearData) {
-                        if (dupReconMap.containsKey(cell.recon.id)) {
-                            newRecon = dupReconMap.get(cell.recon.id);
-                            newRecon.judgmentBatchSize++;
-                        } else {
-                            newRecon = cell.recon.dup(historyEntryID);
-                            newRecon.match = null;
-                            newRecon.matchRank = -1;
-                            newRecon.judgment = Judgment.None;
-                            newRecon.judgmentAction = "mass";
-                            newRecon.judgmentBatchSize = 1;
-
-                            dupReconMap.put(cell.recon.id, newRecon);
-                        }
-                    }
+                    Recon newRecon = cell.recon
+                            .withMatch(null)
+                            .withMatchRank(-1)
+                            .withJudgment(Judgment.None)
+                            .withJudgmentAction("mass")
+                            .withJudgmentHistoryEntry(historyEntryId);
 
                     Cell newCell = new Cell(cell.value, newRecon);
 
-                    CellChange cellChange = new CellChange(rowIndex, cellIndex, cell, newCell);
-                    cellChanges.add(cellChange);
+                    return row.withCell(columnIndex, newCell);
                 }
+                return row;
             }
-
         };
-    }
-
-    @Override
-    protected String createDescription(ColumnMetadata column,
-            List<CellChange> cellChanges) {
-
-        return (_clearData ? "Discard recon judgments and clear recon data" : "Discard recon judgments") +
-                " for " + cellChanges.size() + " cells in column " + column.getName();
-    }
-
-    @Override
-    protected Change createChange(Project project, ColumnMetadata column, List<CellChange> cellChanges) {
-        return new ReconChange(
-                cellChanges,
-                _columnName,
-                column.getReconConfig(),
-                null);
     }
 }

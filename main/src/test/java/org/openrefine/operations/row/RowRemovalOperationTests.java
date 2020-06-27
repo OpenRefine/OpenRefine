@@ -27,6 +27,8 @@
 
 package org.openrefine.operations.row;
 
+import static org.mockito.Mockito.mock;
+
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.Arrays;
@@ -45,6 +47,7 @@ import org.openrefine.grel.Parser;
 import org.openrefine.model.GridState;
 import org.openrefine.model.changes.Change;
 import org.openrefine.model.changes.Change.DoesNotApplyException;
+import org.openrefine.model.changes.ChangeContext;
 import org.openrefine.operations.OperationRegistry;
 import org.openrefine.util.ParsingUtilities;
 import org.openrefine.util.TestUtils;
@@ -92,7 +95,7 @@ public class RowRemovalOperationTests extends RefineTest {
                 new DecoratedValue("i", "i"));
         EngineConfig engineConfig = new EngineConfig(Arrays.asList(facet), Engine.Mode.RowBased);
         Change change = new RowRemovalOperation(engineConfig).createChange();
-        GridState applied = change.apply(initial);
+        GridState applied = change.apply(initial, mock(ChangeContext.class));
 
         GridState expected = createGrid(new String[] { "foo", "bar", "hello" },
                 new Serializable[][] {
@@ -111,7 +114,7 @@ public class RowRemovalOperationTests extends RefineTest {
                 new DecoratedValue("i", "i"));
         EngineConfig engineConfig = new EngineConfig(Arrays.asList(facet), Engine.Mode.RecordBased);
         Change change = new RowRemovalOperation(engineConfig).createChange();
-        GridState applied = change.apply(initial);
+        GridState applied = change.apply(initial, mock(ChangeContext.class));
 
         GridState expected = createGrid(new String[] { "foo", "bar", "hello" },
                 new Serializable[][] {

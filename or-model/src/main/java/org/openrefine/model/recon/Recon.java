@@ -47,6 +47,7 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonView;
 import com.google.common.collect.ImmutableList;
+import org.apache.commons.lang3.StringUtils;
 
 import org.openrefine.expr.HasFields;
 import org.openrefine.util.JsonViews;
@@ -135,8 +136,6 @@ public class Recon implements HasFields, Serializable {
     final public String judgmentAction;
     @JsonIgnore
     final public long judgmentHistoryEntry;
-    @JsonIgnore
-    final public long judgmentBatchSize;
 
     @JsonIgnore
     final public ReconCandidate match;
@@ -169,7 +168,6 @@ public class Recon implements HasFields, Serializable {
         judgment = Judgment.None;
         judgmentAction = "unknown";
         judgmentHistoryEntry = 0;
-        judgmentBatchSize = 0;
         match = null;
         matchRank = -1;
     }
@@ -205,8 +203,6 @@ public class Recon implements HasFields, Serializable {
             return judgmentAction;
         } else if ("judgmentHistoryEntry".equals(name) || "judgementHistoryEntry".equals(name)) {
             return judgmentHistoryEntry;
-        } else if ("judgmentBatchSize".equals(name) || "judgementBatchSize".equals(name)) {
-            return judgmentBatchSize;
         } else if ("matched".equals(name)) {
             return judgment == Judgment.Matched;
         } else if ("new".equals(name)) {
@@ -309,12 +305,6 @@ public class Recon implements HasFields, Serializable {
         return judgmentAction;
     }
 
-    @JsonProperty("judgmentBatchSize")
-    @JsonView(JsonViews.SaveMode.class)
-    public long getJudgmentBatchSize() {
-        return judgmentBatchSize;
-    }
-
     @JsonProperty("matchRank")
     @JsonView(JsonViews.SaveMode.class)
     @JsonInclude(Include.NON_NULL)
@@ -341,7 +331,6 @@ public class Recon implements HasFields, Serializable {
             @JsonProperty("identifierSpace") String identifierSpace,
             @JsonProperty("schemaSpace") String schemaSpace,
             @JsonProperty("judgmentAction") String judgmentAction,
-            @JsonProperty("judgmentBatchSize") Long judgmentBatchSize,
             @JsonProperty("matchRank") Integer matchRank) {
         this.id = id;
         this.judgmentHistoryEntry = judgmentHistoryEntry;
@@ -353,7 +342,6 @@ public class Recon implements HasFields, Serializable {
         this.identifierSpace = identifierSpace;
         this.schemaSpace = schemaSpace;
         this.judgmentAction = judgmentAction != null ? judgmentAction : "unknown";
-        this.judgmentBatchSize = judgmentBatchSize != null ? judgmentBatchSize : 0;
         this.matchRank = matchRank != null ? matchRank : -1;
     }
 
@@ -369,7 +357,6 @@ public class Recon implements HasFields, Serializable {
                 identifierSpace,
                 schemaSpace,
                 judgmentAction,
-                judgmentBatchSize,
                 matchRank);
     }
 
@@ -385,7 +372,6 @@ public class Recon implements HasFields, Serializable {
                 identifierSpace,
                 schemaSpace,
                 judgmentAction,
-                judgmentBatchSize,
                 matchRank);
     }
 
@@ -401,7 +387,6 @@ public class Recon implements HasFields, Serializable {
                 identifierSpace,
                 schemaSpace,
                 judgmentAction,
-                judgmentBatchSize,
                 matchRank);
     }
 
@@ -417,7 +402,6 @@ public class Recon implements HasFields, Serializable {
                 identifierSpace,
                 schemaSpace,
                 judgmentAction,
-                judgmentBatchSize,
                 matchRank);
     }
 
@@ -433,7 +417,6 @@ public class Recon implements HasFields, Serializable {
                 identifierSpace,
                 schemaSpace,
                 judgmentAction,
-                judgmentBatchSize,
                 matchRank);
     }
 
@@ -449,7 +432,6 @@ public class Recon implements HasFields, Serializable {
                 identifierSpace,
                 schemaSpace,
                 judgmentAction,
-                judgmentBatchSize,
                 matchRank);
     }
 
@@ -480,7 +462,6 @@ public class Recon implements HasFields, Serializable {
                 identifierSpace,
                 schemaSpace,
                 judgmentAction,
-                judgmentBatchSize,
                 matchRank);
     }
 
@@ -496,7 +477,6 @@ public class Recon implements HasFields, Serializable {
                 newIdentifierSpace,
                 schemaSpace,
                 judgmentAction,
-                judgmentBatchSize,
                 matchRank);
     }
 
@@ -512,7 +492,6 @@ public class Recon implements HasFields, Serializable {
                 identifierSpace,
                 newSchemaSpace,
                 judgmentAction,
-                judgmentBatchSize,
                 matchRank);
     }
 
@@ -528,23 +507,6 @@ public class Recon implements HasFields, Serializable {
                 identifierSpace,
                 schemaSpace,
                 newJudgmentAction,
-                judgmentBatchSize,
-                matchRank);
-    }
-
-    public Recon withJudgmentBatchSize(Long newJudgmentBatchSize) {
-        return new Recon(
-                id,
-                judgmentHistoryEntry,
-                judgment,
-                match,
-                features,
-                candidates,
-                service,
-                identifierSpace,
-                schemaSpace,
-                judgmentAction,
-                newJudgmentBatchSize,
                 matchRank);
     }
 
@@ -560,7 +522,6 @@ public class Recon implements HasFields, Serializable {
                 identifierSpace,
                 schemaSpace,
                 judgmentAction,
-                judgmentBatchSize,
                 newMatchRank);
     }
 
@@ -579,12 +540,17 @@ public class Recon implements HasFields, Serializable {
                 identifierSpace.equals(otherRecon.identifierSpace) &&
                 schemaSpace.equals(otherRecon.schemaSpace) &&
                 judgmentAction.equals(otherRecon.judgmentAction) &&
-                judgmentBatchSize == otherRecon.judgmentBatchSize &&
                 matchRank == otherRecon.matchRank);
     }
 
     @Override
     public int hashCode() {
         return (int) id;
+    }
+
+    @Override
+    public String toString() {
+        return String.format("[Recon %d %d %s %s %s %s]",
+                id, judgmentHistoryEntry, judgment, match, StringUtils.join(", ", candidates), judgmentAction);
     }
 }

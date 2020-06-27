@@ -33,6 +33,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package org.openrefine.operations.cell;
 
+import static org.mockito.Mockito.mock;
+
 import java.io.Serializable;
 import java.util.List;
 
@@ -48,6 +50,7 @@ import org.openrefine.model.GridState;
 import org.openrefine.model.IndexedRow;
 import org.openrefine.model.changes.Change;
 import org.openrefine.model.changes.Change.DoesNotApplyException;
+import org.openrefine.model.changes.ChangeContext;
 import org.openrefine.operations.OperationRegistry;
 import org.openrefine.util.ParsingUtilities;
 import org.openrefine.util.TestUtils;
@@ -94,13 +97,13 @@ public class MultiValuedCellsJoinTests extends RefineTest {
     @Test(expectedExceptions = DoesNotApplyException.class)
     public void testInvalidColumn() throws DoesNotApplyException, ParsingException {
         Change SUT = new MultiValuedCellJoinOperation("does_not_exist", "key", ",").createChange();
-        SUT.apply(initialState);
+        SUT.apply(initialState, mock(ChangeContext.class));
     }
 
     @Test
     public void testJoin() throws DoesNotApplyException, ParsingException {
         Change SUT = new MultiValuedCellJoinOperation("foo", "key", ",").createChange();
-        GridState state = SUT.apply(initialState);
+        GridState state = SUT.apply(initialState, mock(ChangeContext.class));
 
         GridState expected = createGrid(new String[] { "key", "foo", "bar" },
                 new Serializable[][] {
@@ -119,7 +122,7 @@ public class MultiValuedCellsJoinTests extends RefineTest {
     @Test
     public void testCustomKey() throws DoesNotApplyException, ParsingException {
         Change SUT = new MultiValuedCellJoinOperation("bar", "foo", ",").createChange();
-        GridState state = SUT.apply(initialState);
+        GridState state = SUT.apply(initialState, mock(ChangeContext.class));
 
         GridState expected = createGrid(
                 new String[] { "key", "foo", "bar" },

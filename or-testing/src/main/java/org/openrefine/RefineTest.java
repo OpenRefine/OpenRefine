@@ -276,8 +276,7 @@ public class RefineTest extends PowerMockTestCase {
                 "http://my.service.com/space",
                 "http://my.service.com/schema",
                 "batch",
-                3L,
-                0);
+                -1);
     }
 
     /**

@@ -52,6 +52,7 @@ import org.openrefine.model.Record;
 import org.openrefine.model.RecordMapper;
 import org.openrefine.model.Row;
 import org.openrefine.model.changes.Change;
+import org.openrefine.model.changes.ChangeContext;
 import org.openrefine.operations.Operation;
 import org.openrefine.operations.column.ColumnSplitOperation.Mode;
 import org.openrefine.operations.utils.CellValueSplitter;
@@ -173,7 +174,7 @@ public class MultiValuedCellSplitOperation implements Operation {
         }
 
         @Override
-        public GridState apply(GridState projectState) throws DoesNotApplyException {
+        public GridState apply(GridState projectState, ChangeContext context) throws DoesNotApplyException {
             ColumnModel columnModel = projectState.getColumnModel();
             int columnIdx = columnModel.getColumnIndexByName(_columnName);
             if (columnIdx == -1) {

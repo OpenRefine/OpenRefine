@@ -67,11 +67,11 @@ import org.openrefine.model.Project;
 import org.openrefine.model.RecordModel.RowDependency;
 import org.openrefine.model.Row;
 import org.openrefine.model.recon.Recon.Judgment;
-import org.openrefine.model.recon.ReconConfig;
-import org.openrefine.model.recon.ReconJob;
 import org.openrefine.util.ParsingUtilities;
 
 public class StandardReconConfig extends ReconConfig {
+
+    private static final long serialVersionUID = 3641905651013923439L;
 
     final static Logger logger = LoggerFactory.getLogger("refine-standard-recon");
 
@@ -508,8 +508,8 @@ public class StandardReconConfig extends ReconConfig {
 
     @Override
     public Recon createNewRecon(long historyEntryID) {
-        Recon recon = new Recon(historyEntryID, identifierSpace, schemaSpace);
-        recon.service = service;
+        Recon recon = new Recon(historyEntryID, identifierSpace, schemaSpace)
+                .withService(service);
         return recon;
     }
 

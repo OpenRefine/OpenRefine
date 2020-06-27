@@ -33,29 +33,24 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package org.openrefine.operations.recon;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import org.openrefine.browsing.EngineConfig;
-import org.openrefine.browsing.RowVisitor;
 import org.openrefine.model.Cell;
-import org.openrefine.model.ColumnMetadata;
-import org.openrefine.model.Project;
+import org.openrefine.model.GridState;
 import org.openrefine.model.Row;
-import org.openrefine.model.changes.CellChange;
-import org.openrefine.model.changes.Change;
-import org.openrefine.model.changes.ReconChange;
+import org.openrefine.model.RowMapper;
+import org.openrefine.model.changes.ChangeContext;
+import org.openrefine.model.changes.ColumnNotFoundException;
+import org.openrefine.model.recon.LazyReconStats;
 import org.openrefine.model.recon.Recon;
 import org.openrefine.model.recon.Recon.Judgment;
 import org.openrefine.model.recon.ReconCandidate;
-import org.openrefine.operations.EngineDependentMassCellOperation;
+import org.openrefine.operations.ImmediateRowMapOperation;
 
-public class ReconMatchSpecificTopicOperation extends EngineDependentMassCellOperation {
+public class ReconMatchSpecificTopicOperation extends ImmediateRowMapOperation {
 
     public static class ReconItem {
 
@@ -82,6 +77,8 @@ public class ReconMatchSpecificTopicOperation extends EngineDependentMassCellOpe
         }
     }
 
+    @JsonProperty("columnName")
+    final protected String columnName;
     @JsonProperty("match")
     final protected ReconItem match;
     @JsonProperty("identifierSpace")
@@ -96,101 +93,65 @@ public class ReconMatchSpecificTopicOperation extends EngineDependentMassCellOpe
             @JsonProperty("match") ReconItem match,
             @JsonProperty("identifierSpace") String identifierSpace,
             @JsonProperty("schemaSpace") String schemaSpace) {
-        super(engineConfig, columnName, false);
+        super(engineConfig);
+        this.columnName = columnName;
         this.match = match;
         this.identifierSpace = identifierSpace;
         this.schemaSpace = schemaSpace;
     }
 
     @Override
-    protected String getDescription() {
+    public String getDescription() {
         return "Match specific item " +
                 match.name + " (" +
-                match.id + ") to cells in column " + _columnName;
+                match.id + ") to cells in column " + columnName;
     }
 
     @Override
-    protected String createDescription(ColumnMetadata column,
-            List<CellChange> cellChanges) {
-        return "Match specific item " +
-                match.name + " (" +
-                match.id + ") to " + cellChanges.size() +
-                " cells in column " + column.getName();
+    public RowMapper getPositiveRowMapper(GridState state, ChangeContext context) throws ColumnNotFoundException {
+        int columnIndex = state.getColumnModel().getColumnIndexByName(columnName);
+        if (columnIndex == -1) {
+            throw new ColumnNotFoundException(columnName);
+        }
+        long historyEntryId = context.getHistoryEntryId();
+        return rowMapper(columnIndex, match.getCandidate(), historyEntryId, identifierSpace, schemaSpace);
     }
 
     @Override
-    protected RowVisitor createRowVisitor(Project project, List<CellChange> cellChanges, long historyEntryID) throws Exception {
-        ColumnMetadata column = project.columnModel.getColumnByName(_columnName);
-        ReconCandidate candidate = match.getCandidate();
+    protected GridState postTransform(GridState newState, ChangeContext context) {
+        return LazyReconStats.updateReconStats(newState, columnName);
+    }
 
-        return new RowVisitor() {
+    protected static RowMapper rowMapper(int columnIndex, ReconCandidate match, long historyEntryId, String identifierSpace,
+            String schemaSpace) {
+        return new RowMapper() {
 
-            int cellIndex;
-            List<CellChange> cellChanges;
-            Map<Long, Recon> dupReconMap = new HashMap<Long, Recon>();
-            long historyEntryID;
-
-            public RowVisitor init(int cellIndex, List<CellChange> cellChanges, long historyEntryID) {
-                this.cellIndex = cellIndex;
-                this.cellChanges = cellChanges;
-                this.historyEntryID = historyEntryID;
-                return this;
-            }
+            private static final long serialVersionUID = 5866873129004859060L;
 
             @Override
-            public void start(Project project) {
-                // nothing to do
-            }
-
-            @Override
-            public void end(Project project) {
-                // nothing to do
-            }
-
-            @Override
-            public boolean visit(Project project, int rowIndex, Row row) {
-                Cell cell = row.getCell(cellIndex);
+            public Row call(long rowId, Row row) {
+                Cell cell = row.getCell(columnIndex);
                 if (cell != null) {
-                    long reconID = cell.recon != null ? cell.recon.id : 0;
+                    Recon newRecon = cell.recon != null ? cell.recon.dup(historyEntryId)
+                            : new Recon(
+                                    historyEntryId,
+                                    identifierSpace,
+                                    schemaSpace);
 
-                    Recon newRecon;
-                    if (dupReconMap.containsKey(reconID)) {
-                        newRecon = dupReconMap.get(reconID);
-                        newRecon.judgmentBatchSize++;
-                    } else {
-                        newRecon = cell.recon != null ? cell.recon.dup(historyEntryID)
-                                : new Recon(
-                                        historyEntryID,
-                                        identifierSpace,
-                                        schemaSpace);
-
-                        newRecon.match = candidate;
-                        newRecon.matchRank = -1;
-                        newRecon.judgment = Judgment.Matched;
-                        newRecon.judgmentAction = "mass";
-                        newRecon.judgmentBatchSize = 1;
-
-                        dupReconMap.put(reconID, newRecon);
-                    }
+                    newRecon = newRecon.withMatch(match)
+                            .withMatchRank(-1)
+                            .withJudgment(Judgment.Matched)
+                            .withJudgmentAction("mass");
 
                     Cell newCell = new Cell(
                             cell.value,
                             newRecon);
 
-                    CellChange cellChange = new CellChange(rowIndex, cellIndex, cell, newCell);
-                    cellChanges.add(cellChange);
+                    return row.withCell(columnIndex, newCell);
                 }
-                return false;
+                return row;
             }
-        }.init(column.getCellIndex(), cellChanges, historyEntryID);
-    }
 
-    @Override
-    protected Change createChange(Project project, ColumnMetadata column, List<CellChange> cellChanges) {
-        return new ReconChange(
-                cellChanges,
-                _columnName,
-                column.getReconConfig(),
-                null);
+        };
     }
 }

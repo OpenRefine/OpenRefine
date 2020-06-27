@@ -47,6 +47,9 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.apache.commons.lang3.StringUtils;
 
+import org.openrefine.model.recon.ReconConfig;
+import org.openrefine.model.recon.ReconStats;
+
 public class ColumnModel implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -124,6 +127,36 @@ public class ColumnModel implements Serializable {
         newColumns.add(column);
         newColumns.addAll(getColumns().subList(index + 1, getColumns().size()));
         return new ColumnModel(newColumns);
+    }
+
+    /**
+     * Replaces the recon statistics at the given column index
+     * 
+     * @param index
+     * @param stats
+     * @return
+     */
+    public ColumnModel withReconStats(int index, ReconStats stats) {
+        try {
+            return replaceColumn(index, _columns.get(index).withReconStats(stats));
+        } catch (ModelException e) {
+            return null; // unreachable
+        }
+    }
+
+    /**
+     * Replaces the recon config at the given column index
+     * 
+     * @param index
+     * @param config
+     * @return
+     */
+    public ColumnModel withReconConfig(int index, ReconConfig config) {
+        try {
+            return replaceColumn(index, _columns.get(index).withReconConfig(config));
+        } catch (ModelException e) {
+            return null; // unreachable
+        }
     }
 
     /**

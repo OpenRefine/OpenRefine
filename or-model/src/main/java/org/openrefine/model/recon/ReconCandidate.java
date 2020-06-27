@@ -153,4 +153,9 @@ public class ReconCandidate implements HasFields, Serializable {
         return (id.equals(otherCandidate.id) &&
                 name.equals(otherCandidate.name));
     }
+
+    @Override
+    public String toString() {
+        return String.format("[ReconCandidate %s %s]", id, name);
+    }
 }

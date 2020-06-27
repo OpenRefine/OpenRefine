@@ -53,6 +53,7 @@ import org.openrefine.model.Row;
 import org.openrefine.model.RowBuilder;
 import org.openrefine.model.RowFilter;
 import org.openrefine.model.changes.Change;
+import org.openrefine.model.changes.ChangeContext;
 import org.openrefine.operations.Operation;
 
 public class TransposeColumnsIntoRowsOperation implements Operation {
@@ -196,7 +197,7 @@ public class TransposeColumnsIntoRowsOperation implements Operation {
     public class TransposeColumnsIntoRowsChange implements Change {
 
         @Override
-        public GridState apply(GridState projectState) throws DoesNotApplyException {
+        public GridState apply(GridState projectState, ChangeContext context) throws DoesNotApplyException {
             ColumnModel columnModel = projectState.getColumnModel();
             if (_combinedColumnName != null) {
                 if (columnModel.getColumnByName(_combinedColumnName) != null) {

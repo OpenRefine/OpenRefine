@@ -48,6 +48,7 @@ import org.openrefine.model.Record;
 import org.openrefine.model.RecordMapper;
 import org.openrefine.model.Row;
 import org.openrefine.model.changes.Change;
+import org.openrefine.model.changes.ChangeContext;
 import org.openrefine.operations.Operation;
 
 /**
@@ -102,7 +103,7 @@ public class MultiValuedCellJoinOperation implements Operation {
     public class MultiValuedCellJoinChange implements Change {
 
         @Override
-        public GridState apply(GridState projectState) throws DoesNotApplyException {
+        public GridState apply(GridState projectState, ChangeContext context) throws DoesNotApplyException {
             ColumnModel columnModel = projectState.getColumnModel();
             int columnIdx = columnModel.getColumnIndexByName(_columnName);
             if (columnIdx == -1) {

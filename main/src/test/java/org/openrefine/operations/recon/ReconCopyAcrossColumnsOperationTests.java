@@ -27,6 +27,8 @@
 
 package org.openrefine.operations.recon;
 
+import static org.mockito.Mockito.mock;
+
 import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Collections;
@@ -41,6 +43,7 @@ import org.openrefine.model.Cell;
 import org.openrefine.model.GridState;
 import org.openrefine.model.changes.Change;
 import org.openrefine.model.changes.Change.DoesNotApplyException;
+import org.openrefine.model.changes.ChangeContext;
 import org.openrefine.model.recon.Recon;
 import org.openrefine.operations.OperationRegistry;
 import org.openrefine.operations.recon.ReconCopyAcrossColumnsOperation;
@@ -89,7 +92,7 @@ public class ReconCopyAcrossColumnsOperationTests extends RefineTest {
                 Arrays.asList(Recon.Judgment.Matched, Recon.Judgment.None),
                 true).createChange();
 
-        GridState applied = change.apply(initialState);
+        GridState applied = change.apply(initialState, mock(ChangeContext.class));
 
         GridState expected = createGrid(
                 new String[] { "foo", "bar" },
@@ -113,7 +116,7 @@ public class ReconCopyAcrossColumnsOperationTests extends RefineTest {
                 Arrays.asList(Recon.Judgment.Matched, Recon.Judgment.None),
                 true).createChange();
 
-        change.apply(initialState);
+        change.apply(initialState, mock(ChangeContext.class));
     }
 
     @Test(expectedExceptions = DoesNotApplyException.class)
@@ -125,6 +128,6 @@ public class ReconCopyAcrossColumnsOperationTests extends RefineTest {
                 Arrays.asList(Recon.Judgment.Matched, Recon.Judgment.None),
                 true).createChange();
 
-        change.apply(initialState);
+        change.apply(initialState, mock(ChangeContext.class));
     }
 }

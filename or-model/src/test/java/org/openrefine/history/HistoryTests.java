@@ -33,6 +33,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package org.openrefine.history;
 
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -83,9 +85,9 @@ public class HistoryTests {
         secondEntry = mock(HistoryEntry.class);
         newEntry = mock(HistoryEntry.class);
 
-        when(firstChange.apply(initialState)).thenReturn(intermediateState);
-        when(secondChange.apply(intermediateState)).thenReturn(finalState);
-        when(newChange.apply(intermediateState)).thenReturn(newState);
+        when(firstChange.apply(eq(initialState), any())).thenReturn(intermediateState);
+        when(secondChange.apply(eq(intermediateState), any())).thenReturn(finalState);
+        when(newChange.apply(eq(intermediateState), any())).thenReturn(newState);
 
         when(firstEntry.getId()).thenReturn(firstChangeId);
         when(secondEntry.getId()).thenReturn(secondChangeId);
@@ -121,8 +123,8 @@ public class HistoryTests {
         Assert.assertEquals(history.getEntries(), entries);
 
         // All changes were called only once
-        verify(firstChange, times(1)).apply(initialState);
-        verify(secondChange, times(1)).apply(intermediateState);
+        verify(firstChange, times(1)).apply(eq(initialState), any());
+        verify(secondChange, times(1)).apply(eq(intermediateState), any());
     }
 
     @Test

@@ -42,6 +42,7 @@ import org.openrefine.model.GridState;
 import org.openrefine.model.Row;
 import org.openrefine.model.RowMapper;
 import org.openrefine.model.changes.Change.DoesNotApplyException;
+import org.openrefine.model.changes.ChangeContext;
 import org.openrefine.operations.ImmediateRowMapOperation;
 
 public class ColumnRemovalOperation extends ImmediateRowMapOperation {
@@ -66,14 +67,14 @@ public class ColumnRemovalOperation extends ImmediateRowMapOperation {
     }
 
     @Override
-    public ColumnModel getNewColumnModel(GridState state) throws DoesNotApplyException {
+    public ColumnModel getNewColumnModel(GridState state, ChangeContext context) throws DoesNotApplyException {
         ColumnModel model = state.getColumnModel();
         int columnIndex = columnIndex(model, _columnName);
         return model.removeColumn(columnIndex);
     }
 
     @Override
-    public RowMapper getPositiveRowMapper(GridState state) throws DoesNotApplyException {
+    public RowMapper getPositiveRowMapper(GridState state, ChangeContext context) throws DoesNotApplyException {
         int columnIndex = columnIndex(state.getColumnModel(), _columnName);
         return mapper(columnIndex);
     }

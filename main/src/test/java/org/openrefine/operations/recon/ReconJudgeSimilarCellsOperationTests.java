@@ -27,33 +27,164 @@
 
 package org.openrefine.operations.recon;
 
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
+import java.io.IOException;
+import java.io.Serializable;
+import java.util.Collections;
+
 import org.testng.annotations.BeforeSuite;
+import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
 import org.openrefine.RefineTest;
+import org.openrefine.browsing.EngineConfig;
+import org.openrefine.model.Cell;
+import org.openrefine.model.ColumnMetadata;
+import org.openrefine.model.ColumnModel;
+import org.openrefine.model.GridState;
+import org.openrefine.model.ModelException;
+import org.openrefine.model.changes.Change;
+import org.openrefine.model.changes.Change.DoesNotApplyException;
+import org.openrefine.model.changes.ChangeContext;
+import org.openrefine.model.recon.Recon;
+import org.openrefine.model.recon.Recon.Judgment;
+import org.openrefine.model.recon.ReconCandidate;
+import org.openrefine.model.recon.ReconConfig;
+import org.openrefine.model.recon.ReconStats;
+import org.openrefine.model.recon.StandardReconConfig;
 import org.openrefine.operations.OperationRegistry;
-import org.openrefine.operations.recon.ReconJudgeSimilarCellsOperation;
 import org.openrefine.util.ParsingUtilities;
 import org.openrefine.util.TestUtils;
 
 public class ReconJudgeSimilarCellsOperationTests extends RefineTest {
+
+    private GridState initialState;
+    private ReconConfig reconConfig;
 
     @BeforeSuite
     public void registerOperation() {
         OperationRegistry.registerOperation("core", "recon-judge-similar-cells", ReconJudgeSimilarCellsOperation.class);
     }
 
+    @BeforeTest
+    public void setupInitialState() throws ModelException {
+        reconConfig = new StandardReconConfig("http://my.service.com/api",
+                "http://my.service.com/identifierSpace",
+                "http://my.service.com/schemaSpace",
+                null,
+                true,
+                Collections.emptyList(),
+                5);
+        initialState = createGrid(
+                new String[] { "foo", "bar" },
+                new Serializable[][] {
+                        { "a", new Cell("b", testRecon("e", "h", Recon.Judgment.Matched).withId(1L)) },
+                        { "c", new Cell("b", testRecon("x", "p", Recon.Judgment.New).withId(2L)) },
+                        { "c", new Cell("d", testRecon("b", "j", Recon.Judgment.None)) }
+                });
+        ColumnModel columnModel = initialState.getColumnModel();
+        initialState = initialState.withColumnModel(columnModel.withReconConfig(1, reconConfig));
+    }
+
     @Test
-    public void serializeReconJudgeSimilarCellsOperation() throws Exception {
+    public void serializeReconJudgeSimilarCellsOperationSingleNewItem() throws IOException {
         String json = "{\"op\":\"core/recon-judge-similar-cells\","
-                + "\"description\":\"Match item Unicef Indonesia (Q7884717) for cells containing \\\"UNICEF Indonesia\\\" in column organization_name\","
+                + "\"description\":\"Mark to create one single new item for all cells containing \\\"foo\\\" in column A\","
                 + "\"engineConfig\":{\"mode\":\"row-based\",\"facets\":[]},"
-                + "\"columnName\":\"organization_name\","
-                + "\"similarValue\":\"UNICEF Indonesia\","
-                + "\"judgment\":\"matched\","
-                + "\"match\":{\"id\":\"Q7884717\",\"name\":\"Unicef Indonesia\",\"score\":71.42857142857143,\"types\":[\"Q43229\"]},"
-                + "\"shareNewTopics\":false}";
+                + "\"columnName\":\"A\","
+                + "\"similarValue\":\"foo\","
+                + "\"judgment\":\"new\","
+                + "\"shareNewTopics\":true}";
         TestUtils.isSerializedTo(ParsingUtilities.mapper.readValue(json, ReconJudgeSimilarCellsOperation.class), json,
                 ParsingUtilities.defaultWriter);
     }
+
+    @Test
+    public void serializeReconJudgeSimilarCellsOperationMatch() throws IOException {
+        String json = "{\"op\":\"core/recon-judge-similar-cells\","
+                + "\"description\":\"Match item Douglas Adams (Q42) for cells containing \\\"foo\\\" in column A\","
+                + "\"engineConfig\":{\"mode\":\"row-based\",\"facets\":[]},"
+                + "\"columnName\":\"A\","
+                + "\"similarValue\":\"foo\","
+                + "\"judgment\":\"matched\","
+                + "\"match\":{\"id\":\"Q42\",\"name\":\"Douglas Adams\",\"types\":[\"Q5\"],\"score\":85},"
+                + "\"shareNewTopics\":false"
+                + "}";
+        TestUtils.isSerializedTo(ParsingUtilities.mapper.readValue(json, ReconJudgeSimilarCellsOperation.class), json,
+                ParsingUtilities.defaultWriter);
+    }
+
+    @Test
+    public void testReconJudgeSimilarCellsShareTopics() throws DoesNotApplyException, ModelException {
+        Change change = new ReconJudgeSimilarCellsOperation(EngineConfig.ALL_ROWS, "bar", "b", Judgment.New, null, true).createChange();
+
+        ChangeContext context = mock(ChangeContext.class);
+        when(context.getHistoryEntryId()).thenReturn(2891L);
+
+        GridState applied = change.apply(initialState, context);
+
+        long commonReconId = applied.collectRows().get(0).getRow().getCell(1).recon.id;
+
+        GridState expected = createGrid(
+                new String[] { "foo", "bar" },
+                new Serializable[][] {
+                        { "a", new Cell("b", reconConfig.createNewRecon(2891L)
+                                .withId(commonReconId)
+                                .withJudgmentAction("similar")
+                                .withJudgment(Judgment.New)) },
+                        { "c", new Cell("b", reconConfig.createNewRecon(2891L)
+                                .withId(commonReconId)
+                                .withJudgmentAction("similar")
+                                .withJudgment(Judgment.New)) },
+                        { "c", new Cell("d", testRecon("b", "j", Recon.Judgment.None)) }
+                });
+
+        // Make sure recon stats are updated too
+        ReconStats reconStats = ReconStats.create(3, 2, 0);
+        ColumnModel columnModel = expected.getColumnModel();
+        ColumnMetadata columnMetadata = columnModel.getColumnByName("bar").withReconConfig(reconConfig);
+        expected = expected.withColumnModel(columnModel.replaceColumn(1, columnMetadata.withReconStats(reconStats)));
+
+        assertGridEquals(applied, expected);
+    }
+
+    @Test
+    public void testReconJudgeSimilarCellsMatch() throws DoesNotApplyException, ModelException {
+        ReconCandidate match = new ReconCandidate("p", "x 1", new String[] {}, 24.);
+        Change change = new ReconJudgeSimilarCellsOperation(EngineConfig.ALL_ROWS, "bar", "b", Judgment.Matched, match, false)
+                .createChange();
+
+        ChangeContext context = mock(ChangeContext.class);
+        when(context.getHistoryEntryId()).thenReturn(2891L);
+
+        GridState applied = change.apply(initialState, context);
+
+        GridState expected = createGrid(
+                new String[] { "foo", "bar" },
+                new Serializable[][] {
+                        { "a", new Cell("b", testRecon("e", "h", Recon.Judgment.Matched)
+                                .withId(1L)
+                                .withMatch(match)
+                                .withJudgmentAction("similar")
+                                .withJudgmentHistoryEntry(2891L)) },
+                        { "c", new Cell("b", testRecon("x", "p", Recon.Judgment.Matched)
+                                .withId(2L)
+                                .withMatch(match)
+                                .withMatchRank(0)
+                                .withJudgmentAction("similar")
+                                .withJudgmentHistoryEntry(2891L)) },
+                        { "c", new Cell("d", testRecon("b", "j", Recon.Judgment.None)) }
+                });
+
+        // Make sure recon stats are updated too
+        ReconStats reconStats = ReconStats.create(3, 0, 2);
+        ColumnModel columnModel = expected.getColumnModel();
+        ColumnMetadata columnMetadata = columnModel.getColumnByName("bar").withReconConfig(reconConfig);
+        expected = expected.withColumnModel(columnModel.replaceColumn(1, columnMetadata.withReconStats(reconStats)));
+
+        assertGridEquals(applied, expected);
+    }
+
 }

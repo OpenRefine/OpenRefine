@@ -28,30 +28,40 @@
 package org.openrefine.operations.recon;
 
 import java.util.Collections;
-import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.google.common.collect.ImmutableList;
 
 import org.openrefine.browsing.EngineConfig;
-import org.openrefine.browsing.RowVisitor;
 import org.openrefine.expr.ExpressionUtils;
 import org.openrefine.model.Cell;
-import org.openrefine.model.ColumnMetadata;
-import org.openrefine.model.Project;
+import org.openrefine.model.ColumnModel;
+import org.openrefine.model.GridState;
 import org.openrefine.model.Row;
-import org.openrefine.model.changes.CellChange;
-import org.openrefine.model.changes.Change;
-import org.openrefine.model.changes.ReconChange;
+import org.openrefine.model.RowMapper;
+import org.openrefine.model.changes.ChangeContext;
+import org.openrefine.model.changes.ColumnNotFoundException;
+import org.openrefine.model.recon.LazyReconStats;
 import org.openrefine.model.recon.Recon;
 import org.openrefine.model.recon.Recon.Judgment;
 import org.openrefine.model.recon.ReconCandidate;
+import org.openrefine.model.recon.ReconConfig;
 import org.openrefine.model.recon.StandardReconConfig;
-import org.openrefine.operations.EngineDependentMassCellOperation;
+import org.openrefine.operations.ImmediateRowMapOperation;
 
-public class ReconUseValuesAsIdentifiersOperation extends EngineDependentMassCellOperation {
+/**
+ * When a column contains bare identifiers or URLs, this can be used to mark them as reconciled to some reconciliation
+ * service. This is done without any communication with the service, so identifiers are not checked.
+ * 
+ * @author Antonin Delpeuch
+ *
+ */
+public class ReconUseValuesAsIdentifiersOperation extends ImmediateRowMapOperation {
 
+    @JsonProperty("columnName")
+    protected String columnName;
     @JsonProperty("identifierSpace")
     protected String identifierSpace;
     @JsonProperty("schemaSpace")
@@ -69,7 +79,8 @@ public class ReconUseValuesAsIdentifiersOperation extends EngineDependentMassCel
             @JsonProperty("service") String service,
             @JsonProperty("identifierSpace") String identifierSpace,
             @JsonProperty("schemaSpace") String schemaSpace) {
-        super(engineConfig, columnName, false);
+        super(engineConfig);
+        this.columnName = columnName;
         this.service = service;
         this.identifierSpace = identifierSpace;
         this.schemaSpace = schemaSpace;
@@ -78,40 +89,27 @@ public class ReconUseValuesAsIdentifiersOperation extends EngineDependentMassCel
 
     @Override
     public String getDescription() {
-        return "Use values as reconciliation identifiers in column " + _columnName;
+        return "Use values as reconciliation identifiers in column " + columnName;
     }
 
     @Override
-    protected RowVisitor createRowVisitor(Project project, List<CellChange> cellChanges, long historyEntryID)
-            throws Exception {
-        ColumnMetadata column = project.columnModel.getColumnByName(_columnName);
+    public RowMapper getPositiveRowMapper(GridState state, ChangeContext context) throws ColumnNotFoundException {
+        int columnIndex = state.getColumnModel().getColumnIndexByName(columnName);
+        if (columnIndex == -1) {
+            throw new ColumnNotFoundException(columnName);
+        }
+        long historyEntryId = context.getHistoryEntryId();
+        return rowMapper(columnIndex, historyEntryId, reconConfig, identifierSpace);
+    }
 
-        return new RowVisitor() {
+    protected static RowMapper rowMapper(int columnIndex, long historyEntryId, ReconConfig reconConfig, String identifierSpace) {
+        return new RowMapper() {
 
-            int cellIndex;
-            List<CellChange> cellChanges;
-            long historyEntryID;
-
-            public RowVisitor init(int cellIndex, List<CellChange> cellChanges, long historyEntryID) {
-                this.cellIndex = cellIndex;
-                this.cellChanges = cellChanges;
-                this.historyEntryID = historyEntryID;
-                return this;
-            }
+            private static final long serialVersionUID = -8366546671709391352L;
 
             @Override
-            public void start(Project project) {
-                // nothing to do
-            }
-
-            @Override
-            public void end(Project project) {
-                // nothing to do
-            }
-
-            @Override
-            public boolean visit(Project project, int rowIndex, Row row) {
-                Cell cell = row.getCell(cellIndex);
+            public Row call(long rowId, Row row) {
+                Cell cell = row.getCell(columnIndex);
                 if (cell != null && ExpressionUtils.isNonBlankData(cell.value)) {
                     String id = cell.value.toString();
                     if (id.startsWith(identifierSpace)) {
@@ -119,39 +117,37 @@ public class ReconUseValuesAsIdentifiersOperation extends EngineDependentMassCel
                     }
 
                     ReconCandidate match = new ReconCandidate(id, id, new String[0], 100);
-                    Recon newRecon = reconConfig.createNewRecon(historyEntryID);
-                    newRecon.match = match;
-                    newRecon.candidates = Collections.singletonList(match);
-                    newRecon.matchRank = -1;
-                    newRecon.judgment = Judgment.Matched;
-                    newRecon.judgmentAction = "mass";
-                    newRecon.judgmentBatchSize = 1;
+                    Recon newRecon = reconConfig.createNewRecon(historyEntryId)
+                            .withMatch(match)
+                            .withCandidates(ImmutableList.of(match))
+                            .withMatchRank(-1)
+                            .withJudgment(Judgment.Matched)
+                            .withJudgmentAction("mass");
 
                     Cell newCell = new Cell(
                             cell.value,
                             newRecon);
 
-                    CellChange cellChange = new CellChange(rowIndex, cellIndex, cell, newCell);
-                    cellChanges.add(cellChange);
+                    return row.withCell(columnIndex, newCell);
                 }
-                return false;
+                return row;
             }
-        }.init(column.getCellIndex(), cellChanges, historyEntryID);
+
+        };
     }
 
     @Override
-    protected String createDescription(ColumnMetadata column, List<CellChange> cellChanges) {
-        return "Use values as reconciliation identifiers for " + cellChanges.size() +
-                " cells in column " + column.getName();
+    protected GridState postTransform(GridState newState, ChangeContext context) {
+        return LazyReconStats.updateReconStats(newState, columnName);
     }
 
     @Override
-    protected Change createChange(Project project, ColumnMetadata column, List<CellChange> cellChanges) {
-        return new ReconChange(
-                cellChanges,
-                _columnName,
-                reconConfig,
-                null);
+    protected ColumnModel getNewColumnModel(GridState newState, ChangeContext context) throws ColumnNotFoundException {
+        int columnIndex = newState.getColumnModel().getColumnIndexByName(columnName);
+        if (columnIndex == -1) {
+            throw new ColumnNotFoundException(columnName);
+        }
+        return newState.getColumnModel().withReconConfig(columnIndex, reconConfig);
     }
 
 }

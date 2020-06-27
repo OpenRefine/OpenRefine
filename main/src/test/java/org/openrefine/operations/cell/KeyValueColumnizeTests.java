@@ -33,6 +33,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package org.openrefine.operations.cell;
 
+import static org.mockito.Mockito.mock;
+
 import java.io.Serializable;
 import java.util.Arrays;
 import java.util.List;
@@ -48,6 +50,7 @@ import org.openrefine.model.GridState;
 import org.openrefine.model.Row;
 import org.openrefine.model.changes.Change;
 import org.openrefine.model.changes.Change.DoesNotApplyException;
+import org.openrefine.model.changes.ChangeContext;
 import org.openrefine.operations.OperationRegistry;
 import org.openrefine.util.ParsingUtilities;
 import org.openrefine.util.TestUtils;
@@ -98,7 +101,7 @@ public class KeyValueColumnizeTests extends RefineTest {
 
         Change change = new KeyValueColumnizeOperation(
                 "Cat", "Val", null).createChange();
-        GridState applied = change.apply(grid);
+        GridState applied = change.apply(grid, mock(ChangeContext.class));
 
         ColumnModel columnModel = applied.getColumnModel();
         Assert.assertEquals(columnModel.getColumns().size(), 5);
@@ -150,7 +153,7 @@ public class KeyValueColumnizeTests extends RefineTest {
                 "Key",
                 "Value",
                 null).createChange();
-        GridState applied = change.apply(grid);
+        GridState applied = change.apply(grid, mock(ChangeContext.class));
 
         ColumnModel columnModel = applied.getColumnModel();
         int merchantCol = columnModel.getColumnIndexByName("merchant");
@@ -187,7 +190,7 @@ public class KeyValueColumnizeTests extends RefineTest {
                 "Key",
                 "Value",
                 "Notes").createChange();
-        GridState applied = change.apply(grid);
+        GridState applied = change.apply(grid, mock(ChangeContext.class));
 
         ColumnModel columnModel = applied.getColumnModel();
         Assert.assertEquals(columnModel.getColumnNames(),
@@ -227,7 +230,7 @@ public class KeyValueColumnizeTests extends RefineTest {
                 "Key",
                 "Value",
                 null).createChange();
-        GridState applied = change.apply(grid);
+        GridState applied = change.apply(grid, mock(ChangeContext.class));
 
         ColumnModel columnModel = applied.getColumnModel();
         int merchantCol = columnModel.getColumnIndexByName("merchant");

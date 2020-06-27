@@ -52,6 +52,7 @@ import org.openrefine.model.Row;
 import org.openrefine.model.RowMapper;
 import org.openrefine.model.RowScanMapper;
 import org.openrefine.model.changes.Change;
+import org.openrefine.model.changes.ChangeContext;
 import org.openrefine.model.changes.EngineDependentChange;
 import org.openrefine.operations.EngineDependentOperation;
 
@@ -91,7 +92,7 @@ public class FillDownOperation extends EngineDependentOperation {
         }
 
         @Override
-        public GridState apply(GridState state) throws DoesNotApplyException {
+        public GridState apply(GridState state, ChangeContext context) throws DoesNotApplyException {
             ColumnModel model = state.getColumnModel();
             int index = model.getColumnIndexByName(_columnName);
             if (index == -1) {

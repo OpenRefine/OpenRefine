@@ -27,16 +27,36 @@
 
 package org.openrefine.operations.recon;
 
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
+import java.io.Serializable;
+
 import org.testng.annotations.BeforeSuite;
+import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
 import org.openrefine.RefineTest;
+import org.openrefine.browsing.EngineConfig;
+import org.openrefine.model.Cell;
+import org.openrefine.model.ColumnMetadata;
+import org.openrefine.model.ColumnModel;
+import org.openrefine.model.GridState;
+import org.openrefine.model.ModelException;
+import org.openrefine.model.changes.Change;
+import org.openrefine.model.changes.Change.DoesNotApplyException;
+import org.openrefine.model.changes.ChangeContext;
+import org.openrefine.model.recon.Recon;
+import org.openrefine.model.recon.ReconStats;
 import org.openrefine.operations.OperationRegistry;
 import org.openrefine.operations.recon.ReconMatchSpecificTopicOperation;
+import org.openrefine.operations.recon.ReconMatchSpecificTopicOperation.ReconItem;
 import org.openrefine.util.ParsingUtilities;
 import org.openrefine.util.TestUtils;
 
 public class ReconMatchSpecificTopicOperationTests extends RefineTest {
+
+    private GridState initialState;
 
     @BeforeSuite
     public void registerOperation() {
@@ -65,5 +85,62 @@ public class ReconMatchSpecificTopicOperationTests extends RefineTest {
                 "  }";
         TestUtils.isSerializedTo(ParsingUtilities.mapper.readValue(json, ReconMatchSpecificTopicOperation.class), json,
                 ParsingUtilities.defaultWriter);
+    }
+
+    @BeforeTest
+    public void setupInitialState() throws ModelException {
+        initialState = createGrid(
+                new String[] { "foo", "bar" },
+                new Serializable[][] {
+                        { "a", new Cell("b", testRecon("e", "h", Recon.Judgment.Matched)) },
+                        { "c", "h" },
+                        { "c", new Cell("d", testRecon("b", "j", Recon.Judgment.None)) }
+                });
+    }
+
+    @Test
+    public void testMatchSpecificTopicOperation() throws DoesNotApplyException, ModelException {
+        ReconItem reconItem = new ReconItem("hello", "world", new String[] { "human" });
+        Change change = new ReconMatchSpecificTopicOperation(
+                EngineConfig.ALL_ROWS,
+                "bar", reconItem,
+                "http://identifier.space", "http://schema.space").createChange();
+
+        ChangeContext context = mock(ChangeContext.class);
+        when(context.getHistoryEntryId()).thenReturn(2891L);
+
+        GridState applied = change.apply(initialState, context);
+
+        long reconId = applied.collectRows().get(1).getRow().getCell(1).recon.id;
+
+        GridState expected = createGrid(
+                new String[] { "foo", "bar" },
+                new Serializable[][] {
+                        { "a", new Cell("b", testRecon("e", "h", Recon.Judgment.Matched)
+                                .withJudgmentHistoryEntry(2891L)
+                                .withMatch(reconItem.getCandidate())
+                                .withMatchRank(-1)
+                                .withJudgmentAction("mass")) },
+                        { "c", new Cell("h", new Recon(2891L, "http://identifier.space", "http://schema.space")
+                                .withId(reconId)
+                                .withMatch(reconItem.getCandidate())
+                                .withMatchRank(-1)
+                                .withJudgmentAction("mass")
+                                .withJudgment(Recon.Judgment.Matched)) },
+                        { "c", new Cell("d", testRecon("b", "j", Recon.Judgment.None)
+                                .withJudgmentHistoryEntry(2891L)
+                                .withMatch(reconItem.getCandidate())
+                                .withMatchRank(-1)
+                                .withJudgmentAction("mass")
+                                .withJudgment(Recon.Judgment.Matched)) }
+                });
+
+        // Make sure recon stats are updated too
+        ReconStats reconStats = ReconStats.create(3, 0, 3);
+        ColumnModel columnModel = expected.getColumnModel();
+        ColumnMetadata columnMetadata = columnModel.getColumnByName("bar");
+        expected = expected.withColumnModel(columnModel.replaceColumn(1, columnMetadata.withReconStats(reconStats)));
+
+        assertGridEquals(applied, expected);
     }
 }

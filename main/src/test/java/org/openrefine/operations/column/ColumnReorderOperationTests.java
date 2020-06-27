@@ -27,6 +27,8 @@
 
 package org.openrefine.operations.column;
 
+import static org.mockito.Mockito.mock;
+
 import java.io.Serializable;
 import java.util.Arrays;
 import java.util.List;
@@ -47,6 +49,7 @@ import org.openrefine.model.GridState;
 import org.openrefine.model.IndexedRow;
 import org.openrefine.model.changes.Change;
 import org.openrefine.model.changes.Change.DoesNotApplyException;
+import org.openrefine.model.changes.ChangeContext;
 import org.openrefine.operations.Operation;
 import org.openrefine.operations.OperationRegistry;
 import org.openrefine.util.ParsingUtilities;
@@ -86,7 +89,7 @@ public class ColumnReorderOperationTests extends RefineTest {
     @Test
     public void testReorder() throws DoesNotApplyException, ParsingException {
         Change SUT = new ColumnReorderOperation(Arrays.asList("hello", "bar")).createChange();
-        GridState applied = SUT.apply(initialState);
+        GridState applied = SUT.apply(initialState, mock(ChangeContext.class));
 
         List<IndexedRow> rows = applied.collectRows();
         Assert.assertEquals(applied.getColumnModel().getColumns(),
@@ -103,7 +106,7 @@ public class ColumnReorderOperationTests extends RefineTest {
     @Test(expectedExceptions = Change.DoesNotApplyException.class)
     public void testDoesNotExist() throws DoesNotApplyException, ParsingException {
         Change SUT = new ColumnReorderOperation(Arrays.asList("does_not_exist", "bar")).createChange();
-        SUT.apply(initialState);
+        SUT.apply(initialState, mock(ChangeContext.class));
     }
 
 }

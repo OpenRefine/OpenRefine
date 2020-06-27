@@ -33,6 +33,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package org.openrefine.operations.cell;
 
+import static org.mockito.Mockito.mock;
+
 import java.io.Serializable;
 
 import org.slf4j.LoggerFactory;
@@ -43,6 +45,7 @@ import org.openrefine.RefineTest;
 import org.openrefine.model.GridState;
 import org.openrefine.model.changes.Change;
 import org.openrefine.model.changes.Change.DoesNotApplyException;
+import org.openrefine.model.changes.ChangeContext;
 import org.openrefine.operations.OperationRegistry;
 import org.openrefine.util.ParsingUtilities;
 import org.openrefine.util.TestUtils;
@@ -83,7 +86,7 @@ public class TransposeRowsIntoColumnsTests extends RefineTest {
     @Test(expectedExceptions = DoesNotApplyException.class)
     public void testDoesNotApply() throws DoesNotApplyException {
         Change change = new TransposeRowsIntoColumnsOperation("d", 2).createChange();
-        change.apply(initial);
+        change.apply(initial, mock(ChangeContext.class));
     }
 
     @Test
@@ -99,7 +102,7 @@ public class TransposeRowsIntoColumnsTests extends RefineTest {
                         { "10", null, null, "12" }
                 });
 
-        assertGridEquals(change.apply(initial), expected);
+        assertGridEquals(change.apply(initial, mock(ChangeContext.class)), expected);
     }
 
     @Test
@@ -122,7 +125,7 @@ public class TransposeRowsIntoColumnsTests extends RefineTest {
                         { "7", "8", "11", "9" }
                 });
 
-        assertGridEquals(change.apply(initialRecords), expected);
+        assertGridEquals(change.apply(initialRecords, mock(ChangeContext.class)), expected);
     }
 
 }

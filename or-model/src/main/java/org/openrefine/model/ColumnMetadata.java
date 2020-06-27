@@ -136,9 +136,9 @@ public class ColumnMetadata implements Serializable {
         return (_name.equals(metadata.getName()) &&
                 _originalName.equals(metadata.getOriginalHeaderLabel()) &&
                 ((_reconConfig == null && metadata.getReconConfig() == null)
-                        || _reconConfig.equals(metadata.getReconConfig()))
+                        || (_reconConfig != null && _reconConfig.equals(metadata.getReconConfig())))
                 &&
                 ((_reconStats == null && metadata.getReconStats() == null)
-                        || _reconStats.equals(metadata.getReconStats())));
+                        || (_reconStats != null && _reconStats.equals(metadata.getReconStats()))));
     }
 }

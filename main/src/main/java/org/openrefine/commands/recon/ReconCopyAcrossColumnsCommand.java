@@ -33,6 +33,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package org.openrefine.commands.recon;
 
+import java.util.Arrays;
+
 import javax.servlet.http.HttpServletRequest;
 
 import org.openrefine.browsing.EngineConfig;
@@ -53,6 +55,6 @@ public class ReconCopyAcrossColumnsCommand extends EngineDependentCommand {
         boolean applyToJudgedCells = Boolean.parseBoolean(request.getParameter("applyToJudgedCells"));
 
         return new ReconCopyAcrossColumnsOperation(
-                engineConfig, fromColumnName, toColumnNames, judgments, applyToJudgedCells);
+                engineConfig, fromColumnName, Arrays.asList(toColumnNames), Arrays.asList(judgments), applyToJudgedCells);
     }
 }

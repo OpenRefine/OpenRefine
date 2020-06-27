@@ -27,10 +27,27 @@
 
 package org.openrefine.operations.recon;
 
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
+import java.io.Serializable;
+
 import org.testng.annotations.BeforeSuite;
+import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
 import org.openrefine.RefineTest;
+import org.openrefine.browsing.EngineConfig;
+import org.openrefine.model.Cell;
+import org.openrefine.model.ColumnMetadata;
+import org.openrefine.model.ColumnModel;
+import org.openrefine.model.GridState;
+import org.openrefine.model.ModelException;
+import org.openrefine.model.changes.Change;
+import org.openrefine.model.changes.Change.DoesNotApplyException;
+import org.openrefine.model.changes.ChangeContext;
+import org.openrefine.model.recon.Recon;
+import org.openrefine.model.recon.ReconStats;
 import org.openrefine.operations.OperationRegistry;
 import org.openrefine.operations.recon.ReconDiscardJudgmentsOperation;
 import org.openrefine.util.ParsingUtilities;
@@ -38,9 +55,21 @@ import org.openrefine.util.TestUtils;
 
 public class ReconDiscardJudgmentsOperationTests extends RefineTest {
 
+    GridState initialState;
+
     @BeforeSuite
     public void registerOperation() {
         OperationRegistry.registerOperation("core", "recon-discard-judgments", ReconDiscardJudgmentsOperation.class);
+    }
+
+    @BeforeTest
+    public void setupInitialState() {
+        initialState = createGrid(
+                new String[] { "foo", "bar" },
+                new Serializable[][] {
+                        { "a", new Cell("b", testRecon("e", "h", Recon.Judgment.Matched)) },
+                        { "c", new Cell("d", testRecon("b", "j", Recon.Judgment.None)) }
+                });
     }
 
     @Test
@@ -58,4 +87,32 @@ public class ReconDiscardJudgmentsOperationTests extends RefineTest {
         TestUtils.isSerializedTo(ParsingUtilities.mapper.readValue(json, ReconDiscardJudgmentsOperation.class), json,
                 ParsingUtilities.defaultWriter);
     }
+
+    @Test
+    public void testReconDiscardJudgmentsOperation() throws DoesNotApplyException, ModelException {
+        Change change = new ReconDiscardJudgmentsOperation(EngineConfig.ALL_ROWS, "bar", false).createChange();
+
+        ChangeContext context = mock(ChangeContext.class);
+        when(context.getHistoryEntryId()).thenReturn(2891L);
+
+        GridState applied = change.apply(initialState, context);
+
+        GridState expected = createGrid(
+                new String[] { "foo", "bar" },
+                new Serializable[][] {
+                        { "a", new Cell("b",
+                                testRecon("e", "h", Recon.Judgment.None).withJudgmentAction("mass").withJudgmentHistoryEntry(2891L)) },
+                        { "c", new Cell("d",
+                                testRecon("b", "j", Recon.Judgment.None).withJudgmentAction("mass").withJudgmentHistoryEntry(2891L)) }
+                });
+
+        // Make sure recon stats are updated too
+        ReconStats reconStats = ReconStats.create(2, 0, 0);
+        ColumnModel columnModel = expected.getColumnModel();
+        ColumnMetadata columnMetadata = columnModel.getColumnByName("bar");
+        expected = expected.withColumnModel(columnModel.replaceColumn(1, columnMetadata.withReconStats(reconStats)));
+
+        assertGridEquals(applied, expected);
+    }
+
 }

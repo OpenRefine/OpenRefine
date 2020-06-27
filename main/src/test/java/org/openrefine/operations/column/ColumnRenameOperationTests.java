@@ -27,6 +27,8 @@
 
 package org.openrefine.operations.column;
 
+import static org.mockito.Mockito.mock;
+
 import java.io.Serializable;
 import java.util.Arrays;
 import java.util.List;
@@ -47,6 +49,7 @@ import org.openrefine.model.GridState;
 import org.openrefine.model.IndexedRow;
 import org.openrefine.model.changes.Change;
 import org.openrefine.model.changes.Change.DoesNotApplyException;
+import org.openrefine.model.changes.ChangeContext;
 import org.openrefine.operations.Operation;
 import org.openrefine.operations.OperationRegistry;
 import org.openrefine.operations.column.ColumnRenameOperation;
@@ -89,7 +92,7 @@ public class ColumnRenameOperationTests extends RefineTest {
     @Test
     public void testRename() throws DoesNotApplyException, ParsingException {
         Change SUT = new ColumnRenameOperation("foo", "newfoo").createChange();
-        GridState applied = SUT.apply(initialState);
+        GridState applied = SUT.apply(initialState, mock(ChangeContext.class));
 
         List<IndexedRow> rows = applied.collectRows();
         Assert.assertEquals(applied.getColumnModel().getColumns(),
@@ -101,6 +104,6 @@ public class ColumnRenameOperationTests extends RefineTest {
     @Test(expectedExceptions = DoesNotApplyException.class)
     public void testNameConflict() throws DoesNotApplyException, ParsingException {
         Change SUT = new ColumnRenameOperation("foo", "bar").createChange();
-        SUT.apply(initialState);
+        SUT.apply(initialState, mock(ChangeContext.class));
     }
 }

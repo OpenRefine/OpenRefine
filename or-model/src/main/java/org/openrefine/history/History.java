@@ -43,6 +43,7 @@ import org.openrefine.RefineModel;
 import org.openrefine.model.GridState;
 import org.openrefine.model.changes.Change;
 import org.openrefine.model.changes.Change.DoesNotApplyException;
+import org.openrefine.model.changes.ChangeContext;
 
 /**
  * Track done and undone changes. Done changes can be undone; undone changes can be redone. Each change is actually not
@@ -134,7 +135,8 @@ public class History {
             _states = _states.subList(0, _position + 1);
         }
 
-        GridState newState = entry.getChange().apply(getCurrentGridState());
+        ChangeContext context = ChangeContext.create(entry.getId());
+        GridState newState = entry.getChange().apply(getCurrentGridState(), context);
         _states.add(newState);
         _entries.add(entry);
         _position++;

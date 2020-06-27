@@ -33,6 +33,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package org.openrefine.operations.cell;
 
+import static org.mockito.Mockito.mock;
+
 import java.io.Serializable;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -49,6 +51,7 @@ import org.openrefine.model.IndexedRow;
 import org.openrefine.model.Row;
 import org.openrefine.model.changes.Change;
 import org.openrefine.model.changes.Change.DoesNotApplyException;
+import org.openrefine.model.changes.ChangeContext;
 import org.openrefine.operations.OperationRegistry;
 import org.openrefine.util.ParsingUtilities;
 import org.openrefine.util.TestUtils;
@@ -113,19 +116,19 @@ public class MultiValuedCellsSplitTests extends RefineTest {
     @Test(expectedExceptions = DoesNotApplyException.class)
     public void testInvalidColumn() throws DoesNotApplyException, ParsingException {
         Change SUT = new MultiValuedCellSplitOperation("does_not_exist", "key", ",", false).createChange();
-        SUT.apply(initialState);
+        SUT.apply(initialState, mock(ChangeContext.class));
     }
 
     @Test(expectedExceptions = DoesNotApplyException.class)
     public void testInvalidKeyColumn() throws DoesNotApplyException, ParsingException {
         Change SUT = new MultiValuedCellSplitOperation("foo", "does_not_exist", ",", false).createChange();
-        SUT.apply(initialState);
+        SUT.apply(initialState, mock(ChangeContext.class));
     }
 
     @Test
     public void testSplit() throws DoesNotApplyException, ParsingException {
         Change SUT = new MultiValuedCellSplitOperation("foo", "key", "|", false).createChange();
-        GridState applied = SUT.apply(initialState);
+        GridState applied = SUT.apply(initialState, mock(ChangeContext.class));
 
         GridState expectedState = createGrid(
                 new String[] { "key", "foo", "bar" },
@@ -150,7 +153,7 @@ public class MultiValuedCellsSplitTests extends RefineTest {
     @Test
     public void testSplitRespectsKeyColumn() throws DoesNotApplyException, ParsingException {
         Change SUT = new MultiValuedCellSplitOperation("foo", "bar", "|", false).createChange();
-        GridState applied = SUT.apply(initialState);
+        GridState applied = SUT.apply(initialState, mock(ChangeContext.class));
 
         GridState expectedState = createGrid(
                 new String[] { "key", "foo", "bar" },
@@ -185,7 +188,7 @@ public class MultiValuedCellsSplitTests extends RefineTest {
                 "Key",
                 ":",
                 false).createChange();
-        GridState applied = change.apply(smallGrid);
+        GridState applied = change.apply(smallGrid, mock(ChangeContext.class));
 
         List<IndexedRow> rows = applied.collectRows();
 
@@ -202,7 +205,7 @@ public class MultiValuedCellsSplitTests extends RefineTest {
                 "Key",
                 "\\W",
                 true).createChange();
-        GridState applied = change.apply(smallGrid);
+        GridState applied = change.apply(smallGrid, mock(ChangeContext.class));
 
         List<Row> rows = applied.collectRows().stream().map(r -> r.getRow()).collect(Collectors.toList());
 
@@ -225,7 +228,7 @@ public class MultiValuedCellsSplitTests extends RefineTest {
                 "Key",
                 lengths).createChange();
 
-        GridState applied = change.apply(smallGrid);
+        GridState applied = change.apply(smallGrid, mock(ChangeContext.class));
 
         List<Row> rows = applied.collectRows().stream().map(r -> r.getRow()).collect(Collectors.toList());
 

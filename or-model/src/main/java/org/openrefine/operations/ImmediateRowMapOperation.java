@@ -7,6 +7,7 @@ import org.openrefine.model.GridState;
 import org.openrefine.model.RowMapper;
 import org.openrefine.model.changes.Change;
 import org.openrefine.model.changes.Change.DoesNotApplyException;
+import org.openrefine.model.changes.ChangeContext;
 import org.openrefine.model.changes.RowMapChange;
 
 /**
@@ -29,13 +30,13 @@ abstract public class ImmediateRowMapOperation extends EngineDependentOperation 
      * @return
      * @throws DoesNotApplyException
      */
-    protected abstract RowMapper getPositiveRowMapper(GridState state) throws DoesNotApplyException;
+    protected abstract RowMapper getPositiveRowMapper(GridState state, ChangeContext context) throws DoesNotApplyException;
 
-    protected RowMapper getNegativeRowMapper(GridState state) throws DoesNotApplyException {
+    protected RowMapper getNegativeRowMapper(GridState state, ChangeContext context) throws DoesNotApplyException {
         return RowMapper.IDENTITY;
     }
 
-    protected ColumnModel getNewColumnModel(GridState state) throws DoesNotApplyException {
+    protected ColumnModel getNewColumnModel(GridState state, ChangeContext context) throws DoesNotApplyException {
         return state.getColumnModel();
     }
 
@@ -43,7 +44,7 @@ abstract public class ImmediateRowMapOperation extends EngineDependentOperation 
         return RowMapChange.columnIndex(model, columnName);
     }
 
-    protected GridState postTransform(GridState state) {
+    protected GridState postTransform(GridState state, ChangeContext context) {
         return state;
     }
 
@@ -52,23 +53,23 @@ abstract public class ImmediateRowMapOperation extends EngineDependentOperation 
         return new RowMapChange(getEngineConfig()) {
 
             @Override
-            public RowMapper getPositiveRowMapper(GridState state) throws DoesNotApplyException {
-                return ImmediateRowMapOperation.this.getPositiveRowMapper(state);
+            public RowMapper getPositiveRowMapper(GridState state, ChangeContext context) throws DoesNotApplyException {
+                return ImmediateRowMapOperation.this.getPositiveRowMapper(state, context);
             }
 
             @Override
-            public RowMapper getNegativeRowMapper(GridState state) throws DoesNotApplyException {
-                return ImmediateRowMapOperation.this.getNegativeRowMapper(state);
+            public RowMapper getNegativeRowMapper(GridState state, ChangeContext context) throws DoesNotApplyException {
+                return ImmediateRowMapOperation.this.getNegativeRowMapper(state, context);
             }
 
             @Override
-            public ColumnModel getNewColumnModel(GridState state) throws DoesNotApplyException {
-                return ImmediateRowMapOperation.this.getNewColumnModel(state);
+            public ColumnModel getNewColumnModel(GridState state, ChangeContext context) throws DoesNotApplyException {
+                return ImmediateRowMapOperation.this.getNewColumnModel(state, context);
             }
 
             @Override
-            public GridState postTransform(GridState state) {
-                return ImmediateRowMapOperation.this.postTransform(state);
+            public GridState postTransform(GridState state, ChangeContext context) {
+                return ImmediateRowMapOperation.this.postTransform(state, context);
             }
 
             @Override

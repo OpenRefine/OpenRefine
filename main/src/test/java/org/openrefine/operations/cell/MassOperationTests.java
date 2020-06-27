@@ -27,6 +27,8 @@
 
 package org.openrefine.operations.cell;
 
+import static org.mockito.Mockito.mock;
+
 import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Collections;
@@ -52,6 +54,7 @@ import org.openrefine.model.Project;
 import org.openrefine.model.Row;
 import org.openrefine.model.changes.Change;
 import org.openrefine.model.changes.Change.DoesNotApplyException;
+import org.openrefine.model.changes.ChangeContext;
 import org.openrefine.operations.OperationRegistry;
 import org.openrefine.operations.cell.MassEditOperation.Edit;
 import org.openrefine.util.ParsingUtilities;
@@ -195,7 +198,7 @@ public class MassOperationTests extends RefineTest {
     @Test
     public void testSimpleReplace() throws DoesNotApplyException, ParsingException {
         Change change = new MassEditOperation(engineConfig, "foo", "grel:value", editsWithFromBlank).createChange();
-        GridState applied = change.apply(initialState);
+        GridState applied = change.apply(initialState, mock(ChangeContext.class));
         Row row0 = applied.getRow(0);
         Assert.assertEquals(row0.getCellValue(0), "v2");
         Assert.assertEquals(row0.getCellValue(1), "a");
@@ -217,7 +220,7 @@ public class MassOperationTests extends RefineTest {
     public void testRecordsMode() throws DoesNotApplyException, ParsingException {
         EngineConfig engineConfig = new EngineConfig(Arrays.asList(facet), Engine.Mode.RecordBased);
         Change change = new MassEditOperation(engineConfig, "foo", "grel:value", editsWithFromBlank).createChange();
-        GridState applied = change.apply(initialState);
+        GridState applied = change.apply(initialState, mock(ChangeContext.class));
         Row row0 = applied.getRow(0);
         Assert.assertEquals(row0.getCellValue(0), "v2");
         Assert.assertEquals(row0.getCellValue(1), "a");

@@ -79,12 +79,12 @@ public abstract class RowMapChange extends EngineDependentChange {
      * @throws DoesNotApplyException
      *             if the change does not apply to the given grid
      */
-    protected GridMap getGridMap(GridState state) throws DoesNotApplyException {
+    protected GridMap getGridMap(GridState state, ChangeContext context) throws DoesNotApplyException {
         return new GridMap(
-                getNewColumnModel(state),
-                getPositiveRowMapper(state),
-                getNegativeRowMapper(state),
-                getNewOverlayModels(state));
+                getNewColumnModel(state, context),
+                getPositiveRowMapper(state, context),
+                getNegativeRowMapper(state, context),
+                getNewOverlayModels(state, context));
     }
 
     /**
@@ -95,7 +95,7 @@ public abstract class RowMapChange extends EngineDependentChange {
      *            the grid to which the change should be applied
      * @return the column model of the new grid state
      */
-    protected ColumnModel getNewColumnModel(GridState state) throws DoesNotApplyException {
+    protected ColumnModel getNewColumnModel(GridState state, ChangeContext context) throws DoesNotApplyException {
         return state.getColumnModel();
     }
 
@@ -107,7 +107,7 @@ public abstract class RowMapChange extends EngineDependentChange {
      * @return
      * @throws DoesNotApplyException
      */
-    protected RowMapper getPositiveRowMapper(GridState state) throws DoesNotApplyException {
+    protected RowMapper getPositiveRowMapper(GridState state, ChangeContext context) throws DoesNotApplyException {
         return RowMapper.IDENTITY;
     }
 
@@ -119,7 +119,7 @@ public abstract class RowMapChange extends EngineDependentChange {
      * @return
      * @throws DoesNotApplyException
      */
-    protected RowMapper getNegativeRowMapper(GridState state) throws DoesNotApplyException {
+    protected RowMapper getNegativeRowMapper(GridState state, ChangeContext context) throws DoesNotApplyException {
         return RowMapper.IDENTITY;
     }
 
@@ -129,7 +129,7 @@ public abstract class RowMapChange extends EngineDependentChange {
      * @param state
      * @return
      */
-    protected Map<String, OverlayModel> getNewOverlayModels(GridState state) throws DoesNotApplyException {
+    protected Map<String, OverlayModel> getNewOverlayModels(GridState state, ChangeContext context) throws DoesNotApplyException {
         return state.getOverlayModels();
     }
 
@@ -141,14 +141,14 @@ public abstract class RowMapChange extends EngineDependentChange {
      *            the grid after the map operation
      * @return the grid with updated column statistics (or any other post transformation)
      */
-    protected GridState postTransform(GridState gridState) {
+    protected GridState postTransform(GridState gridState, ChangeContext context) {
         return gridState;
     }
 
     @Override
-    public GridState apply(GridState projectState) throws DoesNotApplyException {
+    public GridState apply(GridState projectState, ChangeContext context) throws DoesNotApplyException {
         Engine engine = getEngine(projectState);
-        GridMap gridMap = getGridMap(projectState);
+        GridMap gridMap = getGridMap(projectState, context);
         RowMapper positiveMapper = gridMap.positiveMapper;
         RowMapper negativeMapper = gridMap.negativeMapper;
         ColumnModel newColumnModel = gridMap.columnModel;
@@ -165,7 +165,7 @@ public abstract class RowMapChange extends EngineDependentChange {
                     RecordMapper.conditionalMapper(recordFilter, recordMapper, negativeRecordMapper),
                     newColumnModel);
         }
-        return postTransform(mappedState.withOverlayModels(newOverlayModels));
+        return postTransform(mappedState.withOverlayModels(newOverlayModels), context);
     }
 
     /**

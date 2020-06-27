@@ -63,7 +63,7 @@ public abstract class ColumnAdditionChange extends RowMapChange {
     }
 
     @Override
-    public ColumnModel getNewColumnModel(GridState grid) throws DoesNotApplyException {
+    public ColumnModel getNewColumnModel(GridState grid, ChangeContext context) throws DoesNotApplyException {
         ColumnMetadata column = new ColumnMetadata(_columnName);
         try {
             return grid.getColumnModel().insertColumn(_columnIndex, column);
@@ -74,7 +74,7 @@ public abstract class ColumnAdditionChange extends RowMapChange {
     }
 
     @Override
-    public RowMapper getPositiveRowMapper(GridState state) {
+    public RowMapper getPositiveRowMapper(GridState state, ChangeContext context) {
         return wrapMapper(getRowCellMapper(state.getColumnModel()), _columnIndex);
     }
 

@@ -55,6 +55,7 @@ import org.openrefine.model.GridState;
 import org.openrefine.model.Row;
 import org.openrefine.model.RowMapper;
 import org.openrefine.model.changes.Change;
+import org.openrefine.model.changes.ChangeContext;
 import org.openrefine.model.changes.RowMapChange;
 import org.openrefine.operations.EngineDependentOperation;
 import org.openrefine.operations.utils.CellValueSplitter;
@@ -219,7 +220,7 @@ public class ColumnSplitOperation extends EngineDependentOperation {
         }
 
         @Override
-        public GridMap getGridMap(GridState state) throws DoesNotApplyException {
+        public GridMap getGridMap(GridState state, ChangeContext context) throws DoesNotApplyException {
             ColumnModel origColumnModel = state.getColumnModel();
             int origColumnIdx = columnIndex(origColumnModel, _columnName);
 

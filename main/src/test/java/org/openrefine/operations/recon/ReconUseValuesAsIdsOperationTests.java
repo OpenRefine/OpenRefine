@@ -27,17 +27,22 @@
 
 package org.openrefine.operations.recon;
 
+import static org.mockito.Mockito.mock;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNull;
 
 import java.io.Serializable;
-import java.util.Properties;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.Test;
 
 import org.openrefine.RefineTest;
-import org.openrefine.model.Project;
+import org.openrefine.model.ColumnModel;
+import org.openrefine.model.GridState;
+import org.openrefine.model.Row;
+import org.openrefine.model.changes.ChangeContext;
 import org.openrefine.model.recon.StandardReconConfig;
 import org.openrefine.operations.OperationRegistry;
 import org.openrefine.operations.recon.ReconUseValuesAsIdentifiersOperation;
@@ -69,21 +74,25 @@ public class ReconUseValuesAsIdsOperationTests extends RefineTest {
 
     @Test
     public void testUseValuesAsIds() throws Exception {
-        Project project = createProject(
+        GridState initialState = createGrid(
                 new String[] { "ids", "v" },
-                new Serializable[] {
-                        "Q343", "hello",
-                        null, "world",
-                        "http://test.org/entities/Q31", "test" });
-        ReconUseValuesAsIdentifiersOperation op = ParsingUtilities.mapper.readValue(json, ReconUseValuesAsIdentifiersOperation.class);
-        op.createProcess(project, new Properties()).performImmediate();
+                new Serializable[][] {
+                        { "Q343", "hello" },
+                        { null, "world" },
+                        { "http://test.org/entities/Q31", "test" } });
+        ChangeContext context = mock(ChangeContext.class);
 
-        assertEquals("Q343", project.rows.get(0).cells.get(0).recon.match.id);
-        assertEquals("http://test.org/entities/", project.rows.get(0).cells.get(0).recon.identifierSpace);
-        assertNull(project.rows.get(1).cells.get(0));
-        assertEquals("Q31", project.rows.get(2).cells.get(0).recon.match.id);
-        assertEquals(2, project.columnModel.getColumns().get(0).getReconStats().matchedTopics);
-        assertEquals("http://test.org/schema/",
-                ((StandardReconConfig) project.columnModel.getColumns().get(0).getReconConfig()).schemaSpace);
+        ReconUseValuesAsIdentifiersOperation op = ParsingUtilities.mapper.readValue(json, ReconUseValuesAsIdentifiersOperation.class);
+        GridState applied = op.createChange().apply(initialState, context);
+
+        List<Row> rows = applied.collectRows().stream().map(ir -> ir.getRow()).collect(Collectors.toList());
+        ColumnModel columnModel = applied.getColumnModel();
+
+        assertEquals("Q343", rows.get(0).cells.get(0).recon.match.id);
+        assertEquals("http://test.org/entities/", rows.get(0).cells.get(0).recon.identifierSpace);
+        assertNull(rows.get(1).getCell(0));
+        assertEquals("Q31", rows.get(2).cells.get(0).recon.match.id);
+        assertEquals(2, columnModel.getColumns().get(0).getReconStats().getMatchedTopics());
+        assertEquals("http://test.org/schema/", ((StandardReconConfig) columnModel.getColumns().get(0).getReconConfig()).schemaSpace);
     }
 }

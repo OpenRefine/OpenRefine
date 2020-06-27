@@ -33,34 +33,31 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package org.openrefine.operations.recon;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import org.openrefine.browsing.EngineConfig;
-import org.openrefine.browsing.RowVisitor;
 import org.openrefine.expr.ExpressionUtils;
 import org.openrefine.model.Cell;
-import org.openrefine.model.ColumnMetadata;
-import org.openrefine.model.Project;
+import org.openrefine.model.GridState;
 import org.openrefine.model.Row;
-import org.openrefine.model.changes.CellChange;
-import org.openrefine.model.changes.Change;
-import org.openrefine.model.changes.ReconChange;
+import org.openrefine.model.RowMapper;
+import org.openrefine.model.changes.Change.DoesNotApplyException;
+import org.openrefine.model.changes.ChangeContext;
+import org.openrefine.model.changes.ColumnNotFoundException;
+import org.openrefine.model.recon.LazyReconStats;
 import org.openrefine.model.recon.Recon;
 import org.openrefine.model.recon.Recon.Judgment;
 import org.openrefine.model.recon.ReconCandidate;
 import org.openrefine.model.recon.ReconConfig;
-import org.openrefine.operations.EngineDependentMassCellOperation;
+import org.openrefine.operations.ImmediateRowMapOperation;
 
-public class ReconJudgeSimilarCellsOperation extends EngineDependentMassCellOperation {
+public class ReconJudgeSimilarCellsOperation extends ImmediateRowMapOperation {
 
     final protected String _similarValue;
+    final protected String _columnName;
     final protected Judgment _judgment;
     final protected ReconCandidate _match;
     final protected boolean _shareNewTopics;
@@ -73,7 +70,8 @@ public class ReconJudgeSimilarCellsOperation extends EngineDependentMassCellOper
             @JsonProperty("judgment") Judgment judgment,
             @JsonProperty("match") ReconCandidate match,
             @JsonProperty("shareNewTopics") Boolean shareNewTopics) {
-        super(engineConfig, columnName, false);
+        super(engineConfig);
+        this._columnName = columnName;
         this._similarValue = similarValue;
         this._judgment = judgment;
         this._match = match;
@@ -107,7 +105,7 @@ public class ReconJudgeSimilarCellsOperation extends EngineDependentMassCellOper
     }
 
     @Override
-    protected String getDescription() {
+    public String getDescription() {
         if (_judgment == Judgment.None) {
             return "Discard recon judgments for cells containing \"" +
                     _similarValue + "\" in column " + _columnName;
@@ -129,137 +127,102 @@ public class ReconJudgeSimilarCellsOperation extends EngineDependentMassCellOper
     }
 
     @Override
-    protected String createDescription(ColumnMetadata column,
-            List<CellChange> cellChanges) {
-
-        if (_judgment == Judgment.None) {
-            return "Discard recon judgments for " + cellChanges.size() + " cells containing \"" +
-                    _similarValue + "\" in column " + _columnName;
-        } else if (_judgment == Judgment.New) {
-            if (_shareNewTopics) {
-                return "Mark to create one single new item for " + cellChanges.size() + " cells containing \"" +
-                        _similarValue + "\" in column " + _columnName;
-            } else {
-                return "Mark to create one new item for each of " + cellChanges.size() + " cells containing \"" +
-                        _similarValue + "\" in column " + _columnName;
-            }
-        } else if (_judgment == Judgment.Matched) {
-            return "Match item " +
-                    _match.name + " (" +
-                    _match.id + ") for " +
-                    cellChanges.size() + " cells containing \"" +
-                    _similarValue + "\" in column " + _columnName;
+    public RowMapper getPositiveRowMapper(GridState grid, ChangeContext context) throws DoesNotApplyException {
+        int columnIndex = grid.getColumnModel().getColumnIndexByName(_columnName);
+        if (columnIndex == -1) {
+            throw new ColumnNotFoundException(_columnName);
         }
-        throw new InternalError("Can't get here");
+        ReconConfig reconConfig = grid.getColumnModel().getColumnByName(_columnName).getReconConfig();
+        long historyEntryId = context.getHistoryEntryId();
+
+        if (_shareNewTopics && _judgment == Judgment.New) {
+            Recon sharedRecon;
+            if (reconConfig != null) {
+                sharedRecon = reconConfig.createNewRecon(historyEntryId);
+            } else {
+                // This should only happen if we are creating new cells
+                // in a column that has not been reconciled before.
+                // In that case, we do not know which reconciliation service
+                // to use, so we fall back on the default one.
+                sharedRecon = new Recon(historyEntryId, null, null);
+            }
+            sharedRecon = sharedRecon.withJudgment(Judgment.New).withJudgmentAction("similar");
+            return rowMapperShareNewTopics(columnIndex, _similarValue, sharedRecon);
+        } else {
+            return rowMapper(columnIndex, _similarValue, _judgment, _match, historyEntryId);
+        }
     }
 
     @Override
-    protected RowVisitor createRowVisitor(Project project, List<CellChange> cellChanges, long historyEntryID) throws Exception {
-        ColumnMetadata column = project.columnModel.getColumnByName(_columnName);
-        ReconConfig reconConfig = column.getReconConfig();
+    protected GridState postTransform(GridState newState, ChangeContext context) {
+        return LazyReconStats.updateReconStats(newState, _columnName);
+    }
 
-        return new RowVisitor() {
+    protected static RowMapper rowMapperShareNewTopics(int columnIndex, String similarValue, Recon sharedRecon) {
+        return new RowMapper() {
 
-            int _cellIndex;
-            List<CellChange> _cellChanges;
-            Recon _sharedNewRecon = null;
-            Map<Long, Recon> _dupReconMap = new HashMap<Long, Recon>();
-            long _historyEntryID;
-
-            public RowVisitor init(int cellIndex, List<CellChange> cellChanges, long historyEntryID) {
-                _cellIndex = cellIndex;
-                _cellChanges = cellChanges;
-                _historyEntryID = historyEntryID;
-                return this;
-            }
+            private static final long serialVersionUID = 2587023425253722417L;
 
             @Override
-            public void start(Project project) {
-                // nothing to do
-            }
-
-            @Override
-            public void end(Project project) {
-                // nothing to do
-            }
-
-            @Override
-            public boolean visit(Project project, int rowIndex, Row row) {
-                Cell cell = row.getCell(_cellIndex);
+            public Row call(long rowId, Row row) {
+                Cell cell = row.getCell(columnIndex);
                 if (cell != null && ExpressionUtils.isNonBlankData(cell.value)) {
                     String value = cell.value instanceof String ? ((String) cell.value) : cell.value.toString();
 
-                    if (_similarValue.equals(value)) {
-                        Recon recon = null;
-                        if (_judgment == Judgment.New && _shareNewTopics) {
-                            if (_sharedNewRecon == null) {
-                                if (reconConfig != null) {
-                                    _sharedNewRecon = reconConfig.createNewRecon(_historyEntryID);
-                                } else {
-                                    // This should only happen if we are creating new cells
-                                    // in a column that has not been reconciled before.
-                                    // In that case, we do not know which reconciliation service
-                                    // to use, so we fall back on the default one.
-                                    _sharedNewRecon = new Recon(_historyEntryID, null, null);
-                                }
-                                _sharedNewRecon.judgment = Judgment.New;
-                                _sharedNewRecon.judgmentBatchSize = 0;
-                                _sharedNewRecon.judgmentAction = "similar";
-                            }
-                            _sharedNewRecon.judgmentBatchSize++;
+                    if (similarValue.equals(value)) {
+                        return row.withCell(columnIndex, new Cell(cell.value, sharedRecon));
+                    }
+                }
+                return row;
+            }
 
-                            recon = _sharedNewRecon;
-                        } else {
-                            if (_dupReconMap.containsKey(cell.recon.id)) {
-                                recon = _dupReconMap.get(cell.recon.id);
-                                recon.judgmentBatchSize++;
-                            } else {
-                                recon = cell.recon.dup(_historyEntryID);
-                                recon.judgmentBatchSize = 1;
-                                recon.matchRank = -1;
-                                recon.judgmentAction = "similar";
+        };
+    }
 
-                                if (_judgment == Judgment.Matched) {
-                                    recon.judgment = Recon.Judgment.Matched;
-                                    recon.match = _match;
+    protected static RowMapper rowMapper(int columnIndex, String similarValue, Judgment judgment, ReconCandidate match,
+            long historyEntryId) {
+        return new RowMapper() {
 
-                                    if (recon.candidates != null) {
-                                        for (int m = 0; m < recon.candidates.size(); m++) {
-                                            if (recon.candidates.get(m).id.equals(_match.id)) {
-                                                recon.matchRank = m;
-                                                break;
-                                            }
-                                        }
+            private static final long serialVersionUID = -3622231157543742155L;
+
+            @Override
+            public Row call(long rowId, Row row) {
+                Cell cell = row.getCell(columnIndex);
+                if (cell != null && ExpressionUtils.isNonBlankData(cell.value)) {
+                    String value = cell.value instanceof String ? ((String) cell.value) : cell.value.toString();
+
+                    if (similarValue.equals(value)) {
+                        Recon recon = cell.recon.dup(historyEntryId)
+                                .withMatchRank(-1)
+                                .withJudgmentAction("similar");
+
+                        if (judgment == Judgment.Matched) {
+                            recon = recon
+                                    .withJudgment(Recon.Judgment.Matched)
+                                    .withMatch(match);
+
+                            if (recon.candidates != null) {
+                                for (int m = 0; m < recon.candidates.size(); m++) {
+                                    if (recon.candidates.get(m).id.equals(match.id)) {
+                                        recon = recon.withMatchRank(m);
+                                        break;
                                     }
-                                } else if (_judgment == Judgment.New) {
-                                    recon.judgment = Recon.Judgment.New;
-                                    recon.match = null;
-                                } else if (_judgment == Judgment.None) {
-                                    recon.judgment = Recon.Judgment.None;
-                                    recon.match = null;
                                 }
-
-                                _dupReconMap.put(cell.recon.id, recon);
                             }
+                        } else {
+                            recon = recon.withJudgment(judgment).withMatch(null);
                         }
 
                         Cell newCell = new Cell(cell.value, recon);
 
-                        CellChange cellChange = new CellChange(rowIndex, _cellIndex, cell, newCell);
-                        _cellChanges.add(cellChange);
+                        return row.withCell(columnIndex, newCell);
                     }
                 }
-                return false;
+                return row;
+
             }
-        }.init(column.getCellIndex(), cellChanges, historyEntryID);
+
+        };
     }
 
-    @Override
-    protected Change createChange(Project project, ColumnMetadata column, List<CellChange> cellChanges) {
-        return new ReconChange(
-                cellChanges,
-                _columnName,
-                column.getReconConfig(),
-                null);
-    }
 }

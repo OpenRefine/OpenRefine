@@ -27,25 +27,54 @@
 
 package org.openrefine.operations.recon;
 
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
+import java.io.Serializable;
+
 import org.testng.annotations.BeforeSuite;
+import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
 import org.openrefine.RefineTest;
+import org.openrefine.browsing.EngineConfig;
 import org.openrefine.browsing.facets.FacetConfigResolver;
 import org.openrefine.browsing.facets.RangeFacet.RangeFacetConfig;
 import org.openrefine.browsing.facets.TimeRangeFacet.TimeRangeFacetConfig;
+import org.openrefine.model.Cell;
+import org.openrefine.model.ColumnMetadata;
+import org.openrefine.model.ColumnModel;
+import org.openrefine.model.GridState;
+import org.openrefine.model.ModelException;
+import org.openrefine.model.changes.Change;
+import org.openrefine.model.changes.Change.DoesNotApplyException;
+import org.openrefine.model.changes.ChangeContext;
+import org.openrefine.model.recon.Recon;
+import org.openrefine.model.recon.ReconStats;
 import org.openrefine.operations.OperationRegistry;
-import org.openrefine.operations.recon.ReconMatchBestCandidatesOperation;
 import org.openrefine.util.ParsingUtilities;
 import org.openrefine.util.TestUtils;
 
 public class ReconMatchBestCandidatesOperationTests extends RefineTest {
+
+    private GridState initialState;
 
     @BeforeSuite
     public void registerOperation() {
         FacetConfigResolver.registerFacetConfig("core", "range", RangeFacetConfig.class);
         FacetConfigResolver.registerFacetConfig("core", "timerange", TimeRangeFacetConfig.class);
         OperationRegistry.registerOperation("core", "recon-match-best-candidates", ReconMatchBestCandidatesOperation.class);
+    }
+
+    @BeforeTest
+    public void setupInitialState() throws ModelException {
+        initialState = createGrid(
+                new String[] { "foo", "bar" },
+                new Serializable[][] {
+                        { "a", new Cell("b", testRecon("e", "h", Recon.Judgment.Matched)) },
+                        { "c", new Cell("b", testRecon("x", "p", Recon.Judgment.New)) },
+                        { "c", new Cell("d", testRecon("b", "j", Recon.Judgment.None)) }
+                });
     }
 
     @Test
@@ -61,5 +90,44 @@ public class ReconMatchBestCandidatesOperationTests extends RefineTest {
                 + "}";
         TestUtils.isSerializedTo(ParsingUtilities.mapper.readValue(json, ReconMatchBestCandidatesOperation.class), json,
                 ParsingUtilities.defaultWriter);
+    }
+
+    @Test
+    public void testReconMatchBestCandidatesOperation() throws ModelException, DoesNotApplyException {
+        Change change = new ReconMatchBestCandidatesOperation(EngineConfig.ALL_ROWS, "bar").createChange();
+
+        ChangeContext context = mock(ChangeContext.class);
+        when(context.getHistoryEntryId()).thenReturn(2891L);
+
+        GridState applied = change.apply(initialState, context);
+
+        GridState expected = createGrid(
+                new String[] { "foo", "bar" },
+                new Serializable[][] {
+                        { "a", new Cell("b", testRecon("e", "h", Recon.Judgment.Matched)
+                                .withJudgmentHistoryEntry(2891L)
+                                .withMatchRank(0)
+                                .withJudgmentAction("mass")) },
+                        { "c", new Cell("b", testRecon("x", "p", Recon.Judgment.New)
+                                .withJudgmentHistoryEntry(2891L)
+                                .withMatchRank(0)
+                                .withMatch(testRecon("x", "p", Recon.Judgment.New).getBestCandidate())
+                                .withJudgmentAction("mass")
+                                .withJudgment(Recon.Judgment.Matched)) },
+                        { "c", new Cell("d", testRecon("b", "j", Recon.Judgment.None)
+                                .withJudgmentHistoryEntry(2891L)
+                                .withMatchRank(0)
+                                .withMatch(testRecon("b", "j", Recon.Judgment.None).getBestCandidate())
+                                .withJudgmentAction("mass")
+                                .withJudgment(Recon.Judgment.Matched)) }
+                });
+
+        // Make sure recon stats are updated too
+        ReconStats reconStats = ReconStats.create(3, 0, 3);
+        ColumnModel columnModel = expected.getColumnModel();
+        ColumnMetadata columnMetadata = columnModel.getColumnByName("bar");
+        expected = expected.withColumnModel(columnModel.replaceColumn(1, columnMetadata.withReconStats(reconStats)));
+
+        assertGridEquals(applied, expected);
     }
 }

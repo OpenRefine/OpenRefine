@@ -76,7 +76,7 @@ public class RowTests {
                 + "\"j\":\"matched\","
                 + "\"m\":{\"id\":\"Q551479\",\"name\":\"La Monnaie\",\"score\":100,\"types\":[\"Q153562\"]},"
                 + "\"c\":[{\"id\":\"Q551479\",\"name\":\"La Monnaie\",\"score\":100,\"types\":[\"Q153562\"]}],"
-                + "\"f\":[false,false,34,0],\"judgmentAction\":\"auto\",\"judgmentBatchSize\":1,\"matchRank\":0}";
+                + "\"f\":[false,false,34,0],\"judgmentAction\":\"auto\",\"matchRank\":0}";
 
         String json = "{\"flagged\":false,"
                 + "\"starred\":false,"

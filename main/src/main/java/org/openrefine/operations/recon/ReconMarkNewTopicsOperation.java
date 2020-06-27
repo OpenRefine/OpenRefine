@@ -33,37 +33,45 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package org.openrefine.operations.recon;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.Map.Entry;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableMap.Builder;
 
 import org.openrefine.browsing.EngineConfig;
-import org.openrefine.browsing.RowVisitor;
+import org.openrefine.browsing.facets.RowAggregator;
 import org.openrefine.model.Cell;
-import org.openrefine.model.ColumnMetadata;
-import org.openrefine.model.Project;
+import org.openrefine.model.GridState;
 import org.openrefine.model.Row;
-import org.openrefine.model.changes.CellChange;
-import org.openrefine.model.changes.Change;
-import org.openrefine.model.changes.ReconChange;
+import org.openrefine.model.RowFilter;
+import org.openrefine.model.RowMapper;
+import org.openrefine.model.changes.Change.DoesNotApplyException;
+import org.openrefine.model.changes.ChangeContext;
+import org.openrefine.model.changes.ColumnNotFoundException;
+import org.openrefine.model.recon.LazyReconStats;
 import org.openrefine.model.recon.Recon;
 import org.openrefine.model.recon.Recon.Judgment;
 import org.openrefine.model.recon.ReconConfig;
-import org.openrefine.operations.EngineDependentMassCellOperation;
+import org.openrefine.operations.ImmediateRowMapOperation;
 
-public class ReconMarkNewTopicsOperation extends EngineDependentMassCellOperation {
+/**
+ * Marks all filtered cells in a given column as reconciled to "new". Similar values can either be matched to the same
+ * reconciliation id, or distinct ones.
+ */
+public class ReconMarkNewTopicsOperation extends ImmediateRowMapOperation {
 
     final protected boolean _shareNewTopics;
+    final protected String _columnName;
 
     @JsonCreator
     public ReconMarkNewTopicsOperation(
             @JsonProperty("engineConfig") EngineConfig engineConfig,
             @JsonProperty("columnName") String columnName,
             @JsonProperty("shareNewTopics") boolean shareNewTopics) {
-        super(engineConfig, columnName, false);
+        super(engineConfig);
+        _columnName = columnName;
         _shareNewTopics = shareNewTopics;
     }
 
@@ -78,103 +86,128 @@ public class ReconMarkNewTopicsOperation extends EngineDependentMassCellOperatio
     }
 
     @Override
-    protected String getDescription() {
+    public String getDescription() {
         return "Mark to create new items for cells in column " + _columnName +
                 (_shareNewTopics ? ", one item for each group of similar cells" : ", one item for each cell");
     }
 
     @Override
-    protected String createDescription(ColumnMetadata column,
-            List<CellChange> cellChanges) {
+    public RowMapper getPositiveRowMapper(GridState state, ChangeContext context) throws DoesNotApplyException {
+        int columnIndex = state.getColumnModel().getColumnIndexByName(_columnName);
+        if (columnIndex == -1) {
+            throw new ColumnNotFoundException(_columnName);
+        }
+        ReconConfig reconConfig = state.getColumnModel().getColumnByName(_columnName).getReconConfig();
+        if (reconConfig == null) {
+            // TODO let the user supply its own recon config via the UI (just like UseValuesAsIdentifiers)
+            throw new DoesNotApplyException(String.format("Column '%s' is not reconciled", _columnName));
+        }
+        long historyEntryId = context.getHistoryEntryId();
 
-        return "Mark to create new items for " + cellChanges.size() +
-                " cells in column " + column.getName() +
-                (_shareNewTopics ? ", one item for each group of similar cells" : ", one item for each cell");
+        if (_shareNewTopics) {
+            // Aggregate the set of distinct values
+            ImmutableMap<String, Long> empty = ImmutableMap.of();
+            RowFilter filter = createEngine(state).combinedRowFilters();
+            ImmutableMap<String, Long> valueToId = state.aggregateRows(aggregator(columnIndex, filter), empty);
+
+            return rowMapperWithSharing(columnIndex, reconConfig, historyEntryId, valueToId);
+        } else {
+            return rowMapperNoSharing(columnIndex, reconConfig, historyEntryId);
+        }
     }
 
-    @Override
-    protected RowVisitor createRowVisitor(Project project, List<CellChange> cellChanges, long historyEntryID) throws Exception {
-        ColumnMetadata column = project.columnModel.getColumnByName(_columnName);
-        ReconConfig reconConfig = column.getReconConfig();
+    protected static RowMapper rowMapperWithSharing(int columnIndex, ReconConfig reconConfig, long historyEntryId,
+            ImmutableMap<String, Long> valueToId) {
+        return new RowMapper() {
 
-        return new RowVisitor() {
-
-            int cellIndex;
-            List<CellChange> cellChanges;
-            Map<String, Recon> sharedRecons = new HashMap<String, Recon>();
-            long historyEntryID;
-
-            public RowVisitor init(int cellIndex, List<CellChange> cellChanges, long historyEntryID) {
-                this.cellIndex = cellIndex;
-                this.cellChanges = cellChanges;
-                this.historyEntryID = historyEntryID;
-                return this;
-            }
+            private static final long serialVersionUID = -2838679493823196821L;
 
             @Override
-            public void start(Project project) {
-                // nothing to do
-            }
-
-            @Override
-            public void end(Project project) {
-                // nothing to do
-            }
-
-            private Recon createNewRecon() {
-                if (reconConfig != null) {
-                    return reconConfig.createNewRecon(historyEntryID);
-                } else {
-                    // This should only happen when marking cells as reconciled
-                    // in a column that has never been reconciled before. In this case,
-                    // we just resort to the default reconciliation space.
-                    return new Recon(historyEntryID, null, null);
-                }
-            }
-
-            @Override
-            public boolean visit(Project project, int rowIndex, Row row) {
-                Cell cell = row.getCell(cellIndex);
+            public Row call(long rowId, Row row) {
+                Cell cell = row.getCell(columnIndex);
                 if (cell != null) {
-                    Recon recon = null;
-                    if (_shareNewTopics) {
-                        String s = cell.value == null ? "" : cell.value.toString();
-                        if (sharedRecons.containsKey(s)) {
-                            recon = sharedRecons.get(s);
-                            recon.judgmentBatchSize++;
-                        } else {
-                            recon = createNewRecon();
-                            recon.judgment = Judgment.New;
-                            recon.judgmentBatchSize = 1;
-                            recon.judgmentAction = "mass";
-
-                            sharedRecons.put(s, recon);
-                        }
-                    } else {
-                        recon = cell.recon == null ? createNewRecon() : cell.recon.dup(historyEntryID);
-                        recon.match = null;
-                        recon.matchRank = -1;
-                        recon.judgment = Judgment.New;
-                        recon.judgmentBatchSize = 1;
-                        recon.judgmentAction = "mass";
+                    Recon recon = reconConfig.createNewRecon(historyEntryId)
+                            .withJudgment(Judgment.New)
+                            .withJudgmentAction("mass");
+                    String s = cell.value == null ? "" : cell.value.toString();
+                    if (valueToId.containsKey(s)) {
+                        recon = recon.withId(valueToId.get(s));
                     }
 
                     Cell newCell = new Cell(cell.value, recon);
 
-                    CellChange cellChange = new CellChange(rowIndex, cellIndex, cell, newCell);
-                    cellChanges.add(cellChange);
+                    return row.withCell(columnIndex, newCell);
                 }
-                return false;
+                return row;
             }
-        }.init(column.getCellIndex(), cellChanges, historyEntryID);
+
+        };
     }
 
     @Override
-    protected Change createChange(Project project, ColumnMetadata column, List<CellChange> cellChanges) {
-        return new ReconChange(
-                cellChanges,
-                _columnName,
-                column.getReconConfig(),
-                null);
+    protected GridState postTransform(GridState newState, ChangeContext context) {
+        return LazyReconStats.updateReconStats(newState, _columnName);
+    }
+
+    protected static RowMapper rowMapperNoSharing(int columnIndex, ReconConfig reconConfig, long historyEntryId) {
+        return new RowMapper() {
+
+            private static final long serialVersionUID = 5224856110246957223L;
+
+            @Override
+            public Row call(long rowId, Row row) {
+                Cell cell = row.getCell(columnIndex);
+                if (cell != null) {
+                    Recon recon = cell.recon == null ? reconConfig.createNewRecon(historyEntryId) : cell.recon.dup(historyEntryId);
+                    recon = recon
+                            .withMatch(null)
+                            .withMatchRank(-1)
+                            .withJudgment(Judgment.New)
+                            .withJudgmentAction("mass");
+
+                    Cell newCell = new Cell(cell.value, recon);
+
+                    return row.withCell(columnIndex, newCell);
+                }
+                return row;
+            }
+
+        };
+    }
+
+    protected static RowAggregator<ImmutableMap<String, Long>> aggregator(int columnIndex, RowFilter filter) {
+        return new RowAggregator<ImmutableMap<String, Long>>() {
+
+            private static final long serialVersionUID = 2749743046303701107L;
+
+            @Override
+            public ImmutableMap<String, Long> sum(ImmutableMap<String, Long> first, ImmutableMap<String, Long> second) {
+                Builder<String, Long> builder = ImmutableMap.<String, Long> builder().putAll(first);
+                // sadly we cannot call `putAll(second)` as conflicting keys will raise an exception
+                for (Entry<String, Long> entry : second.entrySet()) {
+                    if (!first.containsKey(entry.getKey())) {
+                        builder.put(entry.getKey(), entry.getValue());
+                    }
+                }
+                return builder.build();
+            }
+
+            @Override
+            public ImmutableMap<String, Long> withRow(ImmutableMap<String, Long> state, long rowId, Row row) {
+                if (!filter.filterRow(rowId, row)) {
+                    return state;
+                }
+                Cell cell = row.getCell(columnIndex);
+                if (cell != null && cell.value != null) {
+                    String value = cell.value.toString();
+                    if (!state.containsKey(value)) {
+                        long reconId = new Recon(0L, "", "").id;
+                        return ImmutableMap.<String, Long> builder().putAll(state).put(value, reconId).build();
+                    }
+                }
+                return state;
+            }
+
+        };
     }
 }

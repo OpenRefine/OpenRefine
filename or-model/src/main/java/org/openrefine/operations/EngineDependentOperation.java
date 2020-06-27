@@ -47,7 +47,7 @@ abstract public class EngineDependentOperation implements Operation {
         _engineConfig = engineConfig;
     }
 
-    protected Engine createEngine(GridState state) throws Exception {
+    protected Engine createEngine(GridState state) {
         return new Engine(state, _engineConfig);
     }
 

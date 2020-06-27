@@ -33,34 +33,32 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package org.openrefine.operations.recon;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import org.openrefine.browsing.EngineConfig;
-import org.openrefine.browsing.RowVisitor;
 import org.openrefine.model.Cell;
-import org.openrefine.model.ColumnMetadata;
-import org.openrefine.model.Project;
+import org.openrefine.model.GridState;
 import org.openrefine.model.Row;
-import org.openrefine.model.changes.CellChange;
-import org.openrefine.model.changes.Change;
-import org.openrefine.model.changes.ReconChange;
+import org.openrefine.model.RowMapper;
+import org.openrefine.model.changes.ChangeContext;
+import org.openrefine.model.changes.ColumnNotFoundException;
+import org.openrefine.model.recon.LazyReconStats;
 import org.openrefine.model.recon.Recon;
 import org.openrefine.model.recon.Recon.Judgment;
 import org.openrefine.model.recon.ReconCandidate;
-import org.openrefine.operations.EngineDependentMassCellOperation;
+import org.openrefine.operations.ImmediateRowMapOperation;
 
-public class ReconMatchBestCandidatesOperation extends EngineDependentMassCellOperation {
+public class ReconMatchBestCandidatesOperation extends ImmediateRowMapOperation {
+
+    private String _columnName;
 
     @JsonCreator
     public ReconMatchBestCandidatesOperation(
             @JsonProperty("engineConfig") EngineConfig engineConfig,
             @JsonProperty("columnName") String columnName) {
-        super(engineConfig, columnName, false);
+        super(engineConfig);
+        _columnName = columnName;
     }
 
     @JsonProperty
@@ -69,87 +67,53 @@ public class ReconMatchBestCandidatesOperation extends EngineDependentMassCellOp
     }
 
     @Override
-    protected String getDescription() {
+    public String getDescription() {
         return "Match each cell to its best recon candidate in column " + _columnName;
     }
 
     @Override
-    protected String createDescription(ColumnMetadata column,
-            List<CellChange> cellChanges) {
-
-        return "Match each of " + cellChanges.size() +
-                " cells to its best candidate in column " + column.getName();
+    protected GridState postTransform(GridState newState, ChangeContext context) {
+        return LazyReconStats.updateReconStats(newState, _columnName);
     }
 
     @Override
-    protected RowVisitor createRowVisitor(Project project, List<CellChange> cellChanges, long historyEntryID) throws Exception {
-        ColumnMetadata column = project.columnModel.getColumnByName(_columnName);
+    public RowMapper getPositiveRowMapper(GridState state, ChangeContext context) throws ColumnNotFoundException {
+        int columnIndex = state.getColumnModel().getColumnIndexByName(_columnName);
+        if (columnIndex == -1) {
+            throw new ColumnNotFoundException(_columnName);
+        }
+        long historyEntryId = context.getHistoryEntryId();
+        return rowMapper(columnIndex, historyEntryId);
+    }
 
-        return new RowVisitor() {
+    protected static RowMapper rowMapper(int columnIndex, long historyEntryId) {
+        return new RowMapper() {
 
-            int cellIndex;
-            List<CellChange> cellChanges;
-            Map<Long, Recon> dupReconMap = new HashMap<Long, Recon>();
-            long historyEntryID;
-
-            public RowVisitor init(int cellIndex, List<CellChange> cellChanges, long historyEntryID) {
-                this.cellIndex = cellIndex;
-                this.cellChanges = cellChanges;
-                this.historyEntryID = historyEntryID;
-                return this;
-            }
+            private static final long serialVersionUID = -3427425768110168923L;
 
             @Override
-            public void start(Project project) {
-                // nothing to do
-            }
+            public Row call(long rowId, Row row) {
+                Cell cell = row.cells.get(columnIndex);
+                if (cell != null && cell.recon != null) {
+                    ReconCandidate candidate = cell.recon.getBestCandidate();
+                    if (candidate != null) {
+                        Recon newRecon = cell.recon.dup(historyEntryId)
+                                .withMatch(candidate)
+                                .withMatchRank(0)
+                                .withJudgment(Judgment.Matched)
+                                .withJudgmentAction("mass");
 
-            @Override
-            public void end(Project project) {
-                // nothing to do
-            }
+                        Cell newCell = new Cell(
+                                cell.value,
+                                newRecon);
 
-            @Override
-            public boolean visit(Project project, int rowIndex, Row row) {
-                if (cellIndex < row.cells.size()) {
-                    Cell cell = row.cells.get(cellIndex);
-                    if (cell != null && cell.recon != null) {
-                        ReconCandidate candidate = cell.recon.getBestCandidate();
-                        if (candidate != null) {
-                            Recon newRecon;
-                            if (dupReconMap.containsKey(cell.recon.id)) {
-                                newRecon = dupReconMap.get(cell.recon.id);
-                                newRecon.judgmentBatchSize++;
-                            } else {
-                                newRecon = cell.recon.dup(historyEntryID);
-                                newRecon.judgmentBatchSize = 1;
-                                newRecon.match = candidate;
-                                newRecon.matchRank = 0;
-                                newRecon.judgment = Judgment.Matched;
-                                newRecon.judgmentAction = "mass";
-
-                                dupReconMap.put(cell.recon.id, newRecon);
-                            }
-                            Cell newCell = new Cell(
-                                    cell.value,
-                                    newRecon);
-
-                            CellChange cellChange = new CellChange(rowIndex, cellIndex, cell, newCell);
-                            cellChanges.add(cellChange);
-                        }
+                        return row.withCell(columnIndex, newCell);
                     }
                 }
-                return false;
+                return row;
             }
-        }.init(column.getCellIndex(), cellChanges, historyEntryID);
+
+        };
     }
 
-    @Override
-    protected Change createChange(Project project, ColumnMetadata column, List<CellChange> cellChanges) {
-        return new ReconChange(
-                cellChanges,
-                _columnName,
-                column.getReconConfig(),
-                null);
-    }
 }

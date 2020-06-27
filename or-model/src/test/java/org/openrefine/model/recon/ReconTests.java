@@ -55,7 +55,6 @@ public class ReconTests {
             + "],"
             + "\"f\":[false,false,1,0.6666666666666666],"
             + "\"judgmentAction\":\"mass\","
-            + "\"judgmentBatchSize\":1,"
             + "\"matchRank\":0}";
 
     @Test

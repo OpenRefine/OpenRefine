@@ -52,6 +52,7 @@ import org.openrefine.model.GridState;
 import org.openrefine.model.Row;
 import org.openrefine.model.RowMapper;
 import org.openrefine.model.changes.Change.DoesNotApplyException;
+import org.openrefine.model.changes.ChangeContext;
 import org.openrefine.model.recon.Recon;
 import org.openrefine.model.recon.Recon.Judgment;
 import org.openrefine.operations.ImmediateRowMapOperation;
@@ -98,7 +99,7 @@ public class ReconCopyAcrossColumnsOperation extends ImmediateRowMapOperation {
     }
 
     @Override
-    public RowMapper getPositiveRowMapper(GridState projectState) throws DoesNotApplyException {
+    public RowMapper getPositiveRowMapper(GridState projectState, ChangeContext context) throws DoesNotApplyException {
         int columnIndex = projectState.getColumnModel().getColumnIndexByName(_fromColumnName);
         List<Integer> targetColumnIndices = _toColumnNames
                 .stream()
