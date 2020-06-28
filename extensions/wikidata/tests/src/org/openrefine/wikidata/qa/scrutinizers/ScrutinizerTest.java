@@ -110,4 +110,5 @@ public abstract class ScrutinizerTest {
 
         return statements.stream();
     }
+
 }

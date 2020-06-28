@@ -23,8 +23,8 @@ LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
 A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
 OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
 SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
-LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,           
-DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY           
+LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
 THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
@@ -37,7 +37,7 @@ var ClientSideResourceManager = Packages.com.google.refine.ClientSideResourceMan
 var bundle = true;
 
 var templatedFiles = {
-  // Requests with last path segments mentioned here 
+  // Requests with last path segments mentioned here
   // will get served from .vt files with the same names
   "index" : {
     outputEncodings: true
@@ -75,7 +75,7 @@ function registerCommands() {
 
   RS.registerCommand(module, "delete-project", new Packages.com.google.refine.commands.project.DeleteProjectCommand());
   RS.registerCommand(module, "rename-project", new Packages.com.google.refine.commands.project.RenameProjectCommand());
-  
+
   RS.registerCommand(module, "get-models", new Packages.com.google.refine.commands.project.GetModelsCommand());
   RS.registerCommand(module, "get-rows", new Packages.com.google.refine.commands.row.GetRowsCommand());
   RS.registerCommand(module, "get-processes", new Packages.com.google.refine.commands.history.GetProcessesCommand());
@@ -105,7 +105,7 @@ function registerCommands() {
 
   RS.registerCommand(module, "get-languages", Packages.com.google.refine.commands.lang.GetLanguagesCommand());
   RS.registerCommand(module, "load-language", Packages.com.google.refine.commands.lang.LoadLanguageCommand());
-  
+
   RS.registerCommand(module, "add-column", new Packages.com.google.refine.commands.column.AddColumnCommand());
   RS.registerCommand(module, "add-column-by-fetching-urls", new Packages.com.google.refine.commands.column.AddColumnByFetchingURLsCommand());
   RS.registerCommand(module, "remove-column", new Packages.com.google.refine.commands.column.RemoveColumnCommand());
@@ -139,7 +139,7 @@ function registerCommands() {
 
   RS.registerCommand(module, "get-expression-language-info", new Packages.com.google.refine.commands.expr.GetExpressionLanguageInfoCommand());
   RS.registerCommand(module, "get-expression-history", new Packages.com.google.refine.commands.expr.GetExpressionHistoryCommand());
-  RS.registerCommand(module, "get-starred-expressions", new Packages.com.google.refine.commands.expr.GetStarredExpressionsCommand());     
+  RS.registerCommand(module, "get-starred-expressions", new Packages.com.google.refine.commands.expr.GetStarredExpressionsCommand());
   RS.registerCommand(module, "toggle-starred-expression", new Packages.com.google.refine.commands.expr.ToggleStarredExpressionCommand());
   RS.registerCommand(module, "log-expression", new Packages.com.google.refine.commands.expr.LogExpressionCommand());
   RS.registerCommand(module, "preview-expression", new Packages.com.google.refine.commands.expr.PreviewExpressionCommand());
@@ -148,7 +148,7 @@ function registerCommands() {
   RS.registerCommand(module, "get-all-preferences", new Packages.com.google.refine.commands.GetAllPreferencesCommand());
   RS.registerCommand(module, "set-preference", new Packages.com.google.refine.commands.SetPreferenceCommand());
   RS.registerCommand(module, "open-workspace-dir", new Packages.com.google.refine.commands.OpenWorkspaceDirCommand());
-  
+
   RS.registerCommand(module, "authorize", new Packages.com.google.refine.commands.auth.AuthorizeCommand());
   RS.registerCommand(module, "deauthorize", new Packages.com.google.refine.commands.auth.DeAuthorizeCommand());
 
@@ -212,11 +212,11 @@ function registerImporting() {
   IM.registerFormat("text/line-based/fixed-width", "Fixed-width field text files", "FixedWidthParserUI",
       new Packages.com.google.refine.importers.FixedWidthImporter());
 
-  IM.registerFormat("text/rdf/nt", "RDF/N-Triples files", "RdfTriplesParserUI", 
+  IM.registerFormat("text/rdf/nt", "RDF/N-Triples files", "RdfTriplesParserUI",
               new Packages.com.google.refine.importers.RdfTripleImporter(Packages.com.google.refine.importers.RdfTripleImporter.Mode.NT));
-  IM.registerFormat("text/rdf/n3", "RDF/N3 files", "RdfTriplesParserUI", 
+  IM.registerFormat("text/rdf/n3", "RDF/N3 files", "RdfTriplesParserUI",
           new Packages.com.google.refine.importers.RdfTripleImporter(Packages.com.google.refine.importers.RdfTripleImporter.Mode.N3));
-  IM.registerFormat("text/rdf/ttl", "RDF/Turtle files", "RdfTriplesParserUI", 
+  IM.registerFormat("text/rdf/ttl", "RDF/Turtle files", "RdfTriplesParserUI",
                   new Packages.com.google.refine.importers.RdfTripleImporter(Packages.com.google.refine.importers.RdfTripleImporter.Mode.TTL));
   IM.registerFormat("text/rdf/xml", "RDF/XML files", "RdfTriplesParserUI", new Packages.com.google.refine.importers.RdfXmlTripleImporter());
   IM.registerFormat("text/rdf/ld+json", "JSON-LD files", "RdfTriplesParserUI", new Packages.com.google.refine.importers.RdfJsonldTripleImporter());
@@ -235,14 +235,15 @@ function registerImporting() {
   /*
    *  Extension to format mappings
    */
+
+  IM.registerExtension(".txt", "text/line-based");
   IM.registerExtension(".json.txt", "text/json");
-  IM.registerExtension(".txt", "text");
   IM.registerExtension(".csv", "text/line-based/*sv");
   IM.registerExtension(".tsv", "text/line-based/*sv");
 
   IM.registerExtension(".xml", "text/xml");
   IM.registerExtension(".atom", "text/xml");
-  
+
   IM.registerExtension(".json", "text/json");
   IM.registerExtension(".js", "text/json");
 
@@ -250,10 +251,10 @@ function registerImporting() {
   IM.registerExtension(".xlsx", "binary/text/xml/xls/xlsx");
 
   IM.registerExtension(".ods", "text/xml/ods");
-  
+
   IM.registerExtension(".nt", "text/rdf/nt");
   IM.registerExtension(".ntriples", "text/rdf/nt");
-  
+
   IM.registerExtension(".n3", "text/rdf/n3");
   IM.registerExtension(".ttl", "text/rdf/ttl");
   IM.registerExtension(".jsonld", "text/rdf/ld+json");
@@ -274,7 +275,7 @@ function registerImporting() {
   IM.registerMimeType("text/tab-separated-values", "text/line-based/*sv");
 
   IM.registerMimeType("text/fixed-width", "text/line-based/fixed-width");
-  
+
   IM.registerMimeType("application/n-triples", "text/rdf/nt");
   IM.registerMimeType("text/n3", "text/rdf/n3");
   IM.registerMimeType("text/rdf+n3", "text/rdf/n3");
@@ -304,7 +305,7 @@ function registerImporting() {
   IM.registerMimeType("+json", "text/json"); // suffix will be tried only as fallback
 
   IM.registerMimeType("application/marc", "text/marc");
-  
+
   /*
    *  Format guessers: these take a format derived from extensions or mime-types,
    *  look at the actual files' content, and try to guess a better format.
@@ -342,7 +343,7 @@ function init() {
     "index/scripts",
     module,
     [
-      
+
       "externals/jquery-1.11.1.js",
       "externals/jquery-migrate-1.2.1.js",
       "externals/jquery.cookie.js",
@@ -415,7 +416,7 @@ function init() {
       "styles/pure.css",
       "styles/util/dialog.less",
       "styles/util/encoding.less",
-      
+
       "styles/index.less",
       "styles/index/create-project-ui.less",
       "styles/index/open-project-ui.less",
@@ -597,10 +598,10 @@ function process(path, request, response) {
   if (path == "wirings.js") {
     var wirings = butterfly.getWirings(request);
     butterfly.sendString(
-      request, 
-      response, 
-      "var ModuleWirings = " + butterfly.toJSONString(wirings) + ";", 
-      encoding, 
+      request,
+      response,
+      "var ModuleWirings = " + butterfly.toJSONString(wirings) + ";",
+      encoding,
       "text/javascript"
     );
   } else {
@@ -631,8 +632,8 @@ function process(path, request, response) {
             input = new Packages.java.io.BufferedReader(
                 new Packages.java.io.InputStreamReader(urlConnection.getInputStream(), "UTF8"));
 
-            output.write("/* ===== "); 
-            output.write(qualifiedPath.fullPath); 
+            output.write("/* ===== ");
+            output.write(qualifiedPath.fullPath);
             output.write(" ===== */\n\n");
 
             Packages.org.apache.commons.io.IOUtils.copy(input, output);
@@ -661,10 +662,10 @@ function process(path, request, response) {
           params.put(name, request.getParameterValues(name)[0]);
         }
         context.params = params;
-        
+
         // We prepend '' to convert the Java string to a Javascript string.
         context.projectID = ('' + request.getParameter("project")).replace(/\D/g, '');
-        
+
         var styles = ClientSideResourceManager.getPaths(lastSegment + "/styles");
         var styleInjection = [];
         for each (var qualifiedPath in styles) {
@@ -684,10 +685,10 @@ function process(path, request, response) {
           }
           context.scriptInjection = scriptInjection.join("\n");
         }
-        
+
         if (templatedFiles[lastSegment].outputEncodings) {
           var encodings = [];
-          
+
           var sortedCharsetMap = Packages.java.nio.charset.Charset.availableCharsets();
           for each (var code in sortedCharsetMap.keySet().toArray()) {
             var charset = sortedCharsetMap.get(code);
@@ -695,18 +696,18 @@ function process(path, request, response) {
             for each (var alias in charset.aliases().toArray()) {
               aliases.push(alias);
             }
-            
+
             encodings.push({
               code: code,
               name: charset.displayName(),
               aliases: aliases
             });
           }
-          
+
           context.encodingJson = butterfly.toJSONString(encodings);
           context.defaultEncoding = butterfly.toJSONString(Packages.java.nio.charset.Charset.defaultCharset().name());
         }
-        
+
         send(request, response, path + ".vt", context);
       }
     }
