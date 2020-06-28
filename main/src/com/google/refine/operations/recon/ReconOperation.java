@@ -285,23 +285,27 @@ public class ReconOperation extends EngineDependentOperation {
                     Recon    recon = j < recons.size() ? recons.get(j) : null;
                     JobGroup group = jobToGroup.get(job);
                     List<ReconEntry> entries = group.entries;
-                    
+
+                    /*
+                     * TODO: Not sure what this retry is meant to handle, but it's currently
+                     * non-functional due the code at the end of StandardReconConfig#batchRecon()
+                     * which tops up any missing entries.
+                     */
                     if (recon == null) {
                         group.trials++;
                         if (group.trials < 3) {
                             logger.warn("Re-trying job including cell containing: " + entries.get(0).cell.value);
                             continue; // try again next time
                         }
-                        logger.warn("Failed after 3 trials for job including cell containing: " + entries.get(0).cell.value);
+                        String msg = "Failed after 3 trials for job including cell containing: " + entries.get(0).cell.value;
+                        logger.warn(msg);
+                        recon = _reconConfig.createNewRecon(_historyEntryID);
                     }
-                    
+
                     jobToGroup.remove(job);
                     jobs.remove(j);
                     done++;
-                    
-                    if (recon == null) {
-                        recon = _reconConfig.createNewRecon(_historyEntryID);
-                    }
+
                     recon.judgmentBatchSize = entries.size();
                     
                     for (ReconEntry entry : entries) {
@@ -328,6 +332,7 @@ public class ReconOperation extends EngineDependentOperation {
                 }
             }
             
+            // TODO: Option to keep partial results after cancellation?
             if (!_canceled) {
                 Change reconChange = new ReconChange(
                     cellChanges, 

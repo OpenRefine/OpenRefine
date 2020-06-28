@@ -651,7 +651,7 @@
     "core-buttons/apply": "Aplicar",
     "core-buttons/cancel": "Cancelar",
     "core-buttons/close": "Fechar",
-    "core-buttons/reselect-files": "&laquo; Selecionar  arquivos novamente",
+    "core-buttons/reselect-files": "&laquo; Selecionar arquivos novamente",
     "core-buttons/select": "Marcar",
     "core-buttons/new-topic": "Novo item",
     "core-buttons/merge-cluster": "Unir selecionados &amp; Re-agrupar",
@@ -756,5 +756,6 @@
     "core-views/by-case-example": "[11Abc, Def22]",
     "core-views/by-rev": "Ordem de divisão inversa",
     "core-views/by-number": "por transição de números para letras",
-    "core-views/by-case": "por transição de minúsculo para maiúsculo"
+    "core-views/by-case": "por transição de minúsculo para maiúsculo",
+    "core-index/prefs-loading-failed": "Falha ao carregar as preferências."
 }

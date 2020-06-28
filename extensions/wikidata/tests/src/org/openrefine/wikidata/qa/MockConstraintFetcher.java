@@ -75,10 +75,12 @@ public class MockConstraintFetcher implements ConstraintFetcher {
     public static QuantityValue minValuePid = Datamodel.makeQuantityValue(new BigDecimal(0));
     public static QuantityValue maxValuePid = Datamodel.makeQuantityValue(new BigDecimal(150));
 
-    public static PropertyIdValue conflictsWithPid = Datamodel.makeWikidataPropertyIdValue("P50");
+    public static PropertyIdValue conflictsWithPid = Datamodel.makeWikidataPropertyIdValue("P2002");
     public static Value conflictsWithStatementValue = Datamodel.makeWikidataItemIdValue("Q36322");
-    public static PropertyIdValue conflictingStatementPid = Datamodel.makeWikidataPropertyIdValue("P31");
-    public static Value conflictingStatementValue = Datamodel.makeWikidataItemIdValue("Q5");
+    public static PropertyIdValue conflictingStatement1Pid = Datamodel.makeWikidataPropertyIdValue("P31");
+    public static Value conflictingStatement1Value = Datamodel.makeWikidataItemIdValue("Q4167836");
+    public static PropertyIdValue conflictingStatement2Pid = Datamodel.makeWikidataPropertyIdValue("P553");
+    public static Value conflictingStatement2Value = Datamodel.makeWikidataItemIdValue("Q918");
 
     @Override
     public String getFormatRegex(PropertyIdValue pid) {

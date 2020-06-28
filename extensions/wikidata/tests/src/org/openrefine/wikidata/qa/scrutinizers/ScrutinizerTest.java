@@ -23,19 +23,31 @@
  ******************************************************************************/
 package org.openrefine.wikidata.qa.scrutinizers;
 
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertTrue;
-
-import java.util.Arrays;
-import java.util.Set;
-import java.util.stream.Collectors;
-
 import org.openrefine.wikidata.qa.ConstraintFetcher;
 import org.openrefine.wikidata.qa.MockConstraintFetcher;
 import org.openrefine.wikidata.qa.QAWarning;
 import org.openrefine.wikidata.qa.QAWarningStore;
 import org.openrefine.wikidata.updates.ItemUpdate;
 import org.testng.annotations.BeforeMethod;
+import org.wikidata.wdtk.datamodel.helpers.Datamodel;
+import org.wikidata.wdtk.datamodel.interfaces.Claim;
+import org.wikidata.wdtk.datamodel.interfaces.ItemIdValue;
+import org.wikidata.wdtk.datamodel.interfaces.PropertyIdValue;
+import org.wikidata.wdtk.datamodel.interfaces.Reference;
+import org.wikidata.wdtk.datamodel.interfaces.Snak;
+import org.wikidata.wdtk.datamodel.interfaces.SnakGroup;
+import org.wikidata.wdtk.datamodel.interfaces.Statement;
+import org.wikidata.wdtk.datamodel.interfaces.StatementRank;
+
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertTrue;
 
 public abstract class ScrutinizerTest {
 
@@ -79,4 +91,24 @@ public abstract class ScrutinizerTest {
     public Set<String> getWarningTypes() {
         return store.getWarnings().stream().map(w -> w.getType()).collect(Collectors.toSet());
     }
+
+    public void setFetcher(ConstraintFetcher fetcher) {
+        scrutinizer.setFetcher(fetcher);
+    }
+
+    public Stream<Statement> constraintParameterStatementStream(ItemIdValue itemIdValue, List<SnakGroup> listSnakGroup) {
+        PropertyIdValue propertyIdValue = Datamodel.makeWikidataPropertyIdValue("P2302");
+        Snak snakValue = Datamodel.makeValueSnak(propertyIdValue,itemIdValue);
+
+        Claim claim = Datamodel.makeClaim(itemIdValue, snakValue, listSnakGroup);
+
+        Reference reference = Datamodel.makeReference(listSnakGroup);
+        List<Reference> referenceList = Collections.singletonList(reference);
+
+        Statement statement = Datamodel.makeStatement(claim, referenceList, StatementRank.NORMAL, "P2302$77BD7FE4-C051-4776-855C-543F0CE697D0");
+        List<Statement> statements = Collections.singletonList(statement);
+
+        return statements.stream();
+    }
+
 }

@@ -19,7 +19,10 @@
     <jee.port>3333</jee.port>
     <refine.data>/tmp/refine</refine.data>
     <powermock.version>2.0.7</powermock.version>
-    <jena.version>3.15.0</jena.version>
+    <!-- org.odftoolkit:odfdom-java:jar:0.9.0-RC1 bundles Jena 3.9.0 so we should match that
+         Jena 3.15.0 doesn't work. Versions through 3.14.0 appear to, but we'll be conservative
+    -->
+    <jena.version>3.9.0</jena.version>
   </properties>
 
   <scm>
@@ -45,7 +48,7 @@
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>build-helper-maven-plugin</artifactId>
-        <version>1.8</version>
+        <version>3.2.0</version>
         <executions>
           <execution>
             <phase>generate-sources</phase>
@@ -73,7 +76,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-resources-plugin</artifactId>
-        <version>2.6</version>
+        <version>3.1.0</version>
         <configuration>
           <encoding>UTF-8</encoding>
         </configuration>
@@ -190,22 +193,17 @@
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-log4j12</artifactId>
-      <version>1.7.18</version>
+      <version>${slf4j.version}</version>
     </dependency>
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-api</artifactId>
-      <version>1.7.30</version>
+      <version>${slf4j.version}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.commons</groupId>
       <artifactId>commons-lang3</artifactId>
       <version>3.10</version>
-    </dependency>
-    <dependency>
-      <groupId>commons-digester</groupId>
-      <artifactId>commons-digester</artifactId>
-      <version>1.8.1</version>
     </dependency>
     <dependency>
       <groupId>commons-fileupload</groupId>

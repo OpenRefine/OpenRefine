@@ -34,7 +34,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 function DataTableView(div) {
   this._div = div;
 
-  this._gridPagesSizes = JSON.parse(Refine.getPreference("ui.gridPaginationSize", null));
+  this._gridPagesSizes = JSON.parse(Refine.getPreference("ui.browsing.pageSize", null));
   this._gridPagesSizes = this._checkPaginationSize(this._gridPagesSizes, [ 5, 10, 25, 50 ]);
   this._pageSize = ( this._gridPagesSizes[0] < 10 ) ? 10 : this._gridPagesSizes[0];
 
