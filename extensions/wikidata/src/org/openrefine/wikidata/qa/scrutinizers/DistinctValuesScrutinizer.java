@@ -60,7 +60,11 @@ public class DistinctValuesScrutinizer extends StatementScrutinizer {
     @Override
     public void scrutinize(Statement statement, EntityIdValue entityId, boolean added) {
         PropertyIdValue pid = statement.getClaim().getMainSnak().getPropertyId();
-        Statement constraintStatement = _fetcher.getConstraintsByType(pid, DISTINCT_VALUES_CONSTRAINT_QID).findFirst().orElse(null);
+        Statement constraintStatement = null;
+        if (!_seenValues.containsKey(pid)) {
+            constraintStatement = _fetcher.getConstraintsByType(pid, DISTINCT_VALUES_CONSTRAINT_QID).findFirst().orElse(null);
+        }
+
         if (constraintStatement != null) {
             DistinctValueConstraint constraint = new DistinctValueConstraint(constraintStatement);
             Value mainSnakValue = statement.getClaim().getMainSnak().getValue();
