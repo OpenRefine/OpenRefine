@@ -34,16 +34,16 @@ public class ConstraintTest {
 
     @BeforeMethod
     public void setUp() {
-        Snak snak1 = Datamodel.makeValueSnak(constraintException, exceptionValue);
-        List<Snak> snakList1 = Collections.singletonList(snak1);
-        Snak snak2 = Datamodel.makeValueSnak(constraintStatus, statusValue);
-        List<Snak> snakList2 = Collections.singletonList(snak2);
-        SnakGroup snakGroup1 = Datamodel.makeSnakGroup(snakList1);
-        SnakGroup snakGroup2 = Datamodel.makeSnakGroup(snakList2);
-        List<SnakGroup> snakGroupList = Arrays.asList(snakGroup1, snakGroup2);
+        Snak qualifierSnak1 = Datamodel.makeValueSnak(constraintException, exceptionValue);
+        List<Snak> qualifierSnakList1 = Collections.singletonList(qualifierSnak1);
+        Snak qualifierSnak2 = Datamodel.makeValueSnak(constraintStatus, statusValue);
+        List<Snak> qualifierSnakList2 = Collections.singletonList(qualifierSnak2);
+        SnakGroup qualifier1 = Datamodel.makeSnakGroup(qualifierSnakList1);
+        SnakGroup qualifier2 = Datamodel.makeSnakGroup(qualifierSnakList2);
+        List<SnakGroup> snakGroupList = Arrays.asList(qualifier1, qualifier2);
         PropertyIdValue propertyIdValue = Datamodel.makeWikidataPropertyIdValue("P2302");
-        Snak snakValue = Datamodel.makeValueSnak(propertyIdValue,itemIdValue);
-        Claim claim = Datamodel.makeClaim(itemIdValue, snakValue, snakGroupList);
+        Snak mainSnak = Datamodel.makeValueSnak(propertyIdValue,itemIdValue);
+        Claim claim = Datamodel.makeClaim(itemIdValue, mainSnak, snakGroupList);
         Reference reference = Datamodel.makeReference(snakGroupList);
         List<Reference> referenceList = Collections.singletonList(reference);
         statement = Datamodel.makeStatement(claim, referenceList, StatementRank.NORMAL, "P2302$77BD7FE4-C051-4776-855C-543F0CE697D0");
