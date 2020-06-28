@@ -26,10 +26,7 @@ package org.openrefine.wikidata.qa.scrutinizers;
 import org.openrefine.wikidata.qa.QAWarning;
 import org.openrefine.wikidata.updates.ItemUpdate;
 import org.wikidata.wdtk.datamodel.interfaces.PropertyIdValue;
-import org.wikidata.wdtk.datamodel.interfaces.Snak;
-import org.wikidata.wdtk.datamodel.interfaces.SnakGroup;
 import org.wikidata.wdtk.datamodel.interfaces.Statement;
-import org.wikidata.wdtk.datamodel.interfaces.Value;
 
 import java.util.HashSet;
 import java.util.List;
@@ -50,23 +47,6 @@ public class SingleValueScrutinizer extends EditScrutinizer {
     public static final String type = "single-valued-property-added-more-than-once";
     public static String SINGLE_VALUE_CONSTRAINT_QID = "Q19474404";
     public static String SINGLE_BEST_VALUE_CONSTRAINT_QID = "Q52060874";
-    public static String SINGLE_VALUE_CONSTRAINT_EXCEPTION = "P2303";
-
-    class SingleValueConstraint {
-        Set<Value> constraintExceptions;
-
-        SingleValueConstraint(Statement statement) {
-            constraintExceptions = new HashSet<>();
-            List<SnakGroup> snakGroupList = statement.getClaim().getQualifiers();
-            for(SnakGroup group : snakGroupList) {
-                for (Snak snak : group.getSnaks()) {
-                    if (group.getProperty().getId().equals(SINGLE_VALUE_CONSTRAINT_EXCEPTION)){
-                        constraintExceptions.add(snak.getValue());
-                    }
-                }
-            }
-        }
-    }
 
     @Override
     public void scrutinize(ItemUpdate update) {
@@ -74,22 +54,15 @@ public class SingleValueScrutinizer extends EditScrutinizer {
 
         for (Statement statement : update.getAddedStatements()) {
             PropertyIdValue pid = statement.getClaim().getMainSnak().getPropertyId();
+            List<Statement> constraintStatementList1 = _fetcher.getConstraintsByType(pid, SINGLE_VALUE_CONSTRAINT_QID);
+            List<Statement> constraintStatementList2 = _fetcher.getConstraintsByType(pid, SINGLE_BEST_VALUE_CONSTRAINT_QID);
             if (seenSingleProperties.contains(pid)) {
                 QAWarning issue = new QAWarning(type, pid.getId(), QAWarning.Severity.WARNING, 1);
                 issue.setProperty("property_entity", pid);
                 issue.setProperty("example_entity", update.getItemId());
                 addIssue(issue);
-            } else {
-                Statement constraintStatement1 = _fetcher.getConstraintsByType(pid, SINGLE_VALUE_CONSTRAINT_QID).findFirst().orElse(null);
-                Statement constraintStatement2 = _fetcher.getConstraintsByType(pid, SINGLE_BEST_VALUE_CONSTRAINT_QID).findFirst().orElse(null);
-                if (constraintStatement1 != null) {
-                    SingleValueConstraint singleValueConstraint = new SingleValueConstraint(constraintStatement1);
-                    seenSingleProperties.add(pid);
-                }
-                else if (constraintStatement2 != null) {
-                    SingleValueConstraint singleBestValueConstraint = new SingleValueConstraint(constraintStatement2);
-                    seenSingleProperties.add(pid);
-                }
+            } else if (!constraintStatementList1.isEmpty() || !constraintStatementList2.isEmpty()){
+                seenSingleProperties.add(pid);
             }
         }
     }

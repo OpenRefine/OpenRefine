@@ -26,7 +26,7 @@ public class Constraint {
     ItemIdValue constraintStatus;
     Set<EntityIdValue> constraintExceptions;
 
-    Constraint(Statement statement) {
+    public Constraint(Statement statement) {
         constraintExceptions = new HashSet<>();
         List<SnakGroup> snakGroupList = statement.getClaim().getQualifiers();
         for(SnakGroup group : snakGroupList) {
