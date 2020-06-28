@@ -235,6 +235,7 @@ function registerImporting() {
   /*
    *  Extension to format mappings
    */
+  IM.registerExtension(".json.txt", "text/json");
   IM.registerExtension(".txt", "text");
   IM.registerExtension(".csv", "text/line-based/*sv");
   IM.registerExtension(".tsv", "text/line-based/*sv");
