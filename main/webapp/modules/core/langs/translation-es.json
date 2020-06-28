@@ -69,7 +69,7 @@
     "core-index-import/enter-url": "Ingrese una o más direcciones web (URLs) que dirijan a una descarga de datos:",
     "core-index-import/warning-web-address": "Debe especificar una dirección web (URL) válida para importar.",
     "core-index-import/sel-by-extension": "Seleccionar por extensión",
-    "core-index-import/locate": "Localizar un archivo de proyecto de Refine existente (.tar, .tar.gz o .zip):",
+    "core-index-import/locate": "Localizar un archivo de proyecto de Refine existente (.tar.gz):",
     "core-index-import/locate-files": "Seleccione uno o más archivos en su equipo para cargar:",
     "core-index-import/format": "Formato",
     "core-index-import/column-names": "Nombres de columnas:",

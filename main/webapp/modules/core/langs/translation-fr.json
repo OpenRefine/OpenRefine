@@ -91,7 +91,7 @@
     "core-index-import/creating-proj": "Création du projet…",
     "core-index-import/comma-separated": "nombres séparés par des virgules",
     "core-index-import/error": "Erreur :",
-    "core-index-import/locate": "Chercher un fichier de projet OpenRefine (.tar, tar.gz ou .zip) :",
+    "core-index-import/locate": "Chercher un fichier de projet OpenRefine (tar.gz) :",
     "core-index-import/downloading-data": "Téléchargement des données…",
     "core-index-import/parse-as": "Considérer les données comme",
     "core-index-import/unknown-err": "Erreur inconnue",

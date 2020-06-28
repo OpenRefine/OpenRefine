@@ -87,7 +87,7 @@
     "core-index-import/creating-proj": "Isinasagawa ang proyekto ...",
     "core-index-import/comma-separated": "ang mga numerong ihiniwalay ng koma",
     "core-index-import/error": "Ang error:",
-    "core-index-import/locate": "Maghanap ng file sa umiiral na proyekto ng Refine (.tar or .tar.gz):",
+    "core-index-import/locate": "Maghanap ng file sa umiiral na proyekto ng Refine (.tar.gz):",
     "core-index-import/downloading-data": "Idina-download ang datus ...",
     "core-index-import/parse-as": "I-parse ang datus bilang",
     "core-index-import/unknown-err": "Hindi matukoy na error",

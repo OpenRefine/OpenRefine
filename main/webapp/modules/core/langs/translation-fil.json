@@ -87,7 +87,7 @@
     "core-index-import/creating-proj": "Kasalukuyang gumagawa ng proyekto ...",
     "core-index-import/comma-separated": "kama hiwalay sa numero",
     "core-index-import/error": "Mali:",
-    "core-index-import/locate": "Hanapin ang isang umiiral na file na Refine project (.tar o .tar.gz):",
+    "core-index-import/locate": "Hanapin ang isang umiiral na file na Refine project (.tar.gz):",
     "core-index-import/downloading-data": "Nagda-download ng data ...",
     "core-index-import/parse-as": "Pag-parse ng data bilang",
     "core-index-import/unknown-err": "Hindi kilalang error",

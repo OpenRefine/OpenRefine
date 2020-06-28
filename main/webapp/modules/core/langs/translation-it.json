@@ -87,7 +87,7 @@
     "core-index-import/creating-proj": "Sto creando il progetto…",
     "core-index-import/comma-separated": "numeri separati da virgola",
     "core-index-import/error": "Errore:",
-    "core-index-import/locate": "Seleziona un progetto esistente (.tar, .tar.gz o .zip):",
+    "core-index-import/locate": "Seleziona un progetto esistente (.tar.gz):",
     "core-index-import/downloading-data": "Scaricamento dati…",
     "core-index-import/parse-as": "Analizza i dati come",
     "core-index-import/unknown-err": "Errore sconosciuto",

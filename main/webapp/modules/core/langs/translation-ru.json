@@ -128,7 +128,7 @@
     "core-index-import/creating-proj": "Создание проекта …",
     "core-index-import/comma-separated": "числа разделенные запятой",
     "core-index-import/error": "Ошибка:",
-    "core-index-import/locate": "Указать путь к файлу проекта OpenRefine (.tar или .tar.gz):",
+    "core-index-import/locate": "Указать путь к файлу проекта OpenRefine (.tar.gz):",
     "core-index-import/downloading-data": "Загрузка данных…",
     "core-index-import/parse-as": "Парсить данные как",
     "core-index-import/unknown-err": "Неизвестная ошибка",

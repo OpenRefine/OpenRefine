@@ -45,7 +45,7 @@
     "core-index-create/formats": "TSV, CSV, *SV, Excel (.xls en .xlsx), JSON, XML, RDF als XML en Google Data-documenten worden allemaal ondersteund. Ondersteuning voor andere formaten kan worden toegevoegd met OpenRefine-extensies.",
     "core-index-create/from": "Data verkrijgen van",
     "core-index-import/import-proj": "Project importeren",
-    "core-index-import/locate": "Een bestaand Refine-projectbestand kiezen (.tar, .tar.gz of .zip):",
+    "core-index-import/locate": "Een bestaand Refine-projectbestand kiezen (.tar.gz):",
     "core-index-import/file": "Projectbestand:",
     "core-index-import/rename": "Project hernoemen (optioneel):",
     "core-index-import/inspecting": "Geselecteerde bestanden inspecteren…",

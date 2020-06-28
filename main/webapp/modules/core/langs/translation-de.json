@@ -87,7 +87,7 @@
     "core-index-import/creating-proj": "Projekt wird erstellt…",
     "core-index-import/comma-separated": "Kommagetrennte Nummern",
     "core-index-import/error": "Fehler:",
-    "core-index-import/locate": "Suchen Sie eine vorhandene Projektdatei (.tar, .tar.gz oder .zip):",
+    "core-index-import/locate": "Suchen Sie eine vorhandene Projektdatei (.tar.gz):",
     "core-index-import/downloading-data": "Daten werden heruntergeladen…",
     "core-index-import/parse-as": "Daten analysieren als",
     "core-index-import/unknown-err": "Unbekannter Fehler",

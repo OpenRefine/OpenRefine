@@ -33,7 +33,7 @@
     "core-index-create/formats": "完美支持TSV, CSV, *SV, Excel (.xls and .xlsx), JSON, XML, RDF as XML, and Google Data documents这些格式. 此外的其他格式可以通过添加refine扩展来支持",
     "core-index-create/from": "数据来源于",
     "core-index-import/import-proj": "导入项目",
-    "core-index-import/locate": "找到已存在的Refine项目文件所在位置 (.tar or .tar.gz):",
+    "core-index-import/locate": "找到已存在的Refine项目文件所在位置 (.tar.gz):",
     "core-index-import/file": "项目文件:",
     "core-index-import/rename": "重命名项目 (可选):",
     "core-index-import/inspecting": "正在检查所选的文件…",

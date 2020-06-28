@@ -87,7 +87,7 @@
     "core-index-import/creating-proj": "Paggama ug mga proyekto ...",
     "core-index-import/comma-separated": "koma nga gibulag sa mga numero",
     "core-index-import/error": "Sayup:",
-    "core-index-import/locate": "Pangitaa ang uban nga Refine project file(.tar or .tar.gz):",
+    "core-index-import/locate": "Pangitaa ang uban nga Refine project file(.tar.gz):",
     "core-index-import/downloading-data": "Pag download sa mga datus …",
     "core-index-import/parse-as": "Gianalisar nga datus kay",
     "core-index-import/unknown-err": "Wa hibaw i nga mga sayup",

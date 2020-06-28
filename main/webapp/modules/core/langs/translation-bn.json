@@ -18,7 +18,7 @@
     "core-index/tags": "ট্যাগ:",
     "core-index/image": "চিত্র:",
     "core-index-import/uploading-data": "ডেটা আপলোড হচ্ছে…",
-    "core-index-import/locate": "স্থাননির্দেশ করুন একটি বিদ্যমান রিফাইন প্রকল্প (প্রজেক্ট) ফাইল (.tar অথবা .tar.gz অথবা .zip):",
+    "core-index-import/locate": "স্থাননির্দেশ করুন একটি বিদ্যমান রিফাইন প্রকল্প (প্রজেক্ট) ফাইল (.tar.gz):",
     "core-index-import/this-computer": "এই কম্পিউটার",
     "core-index-import/updating-preview": "পূর্বরূপ (প্রিভিউ) আপডেট করা হচ্ছে …",
     "core-index-import/project-tags": "ট্যাগ",

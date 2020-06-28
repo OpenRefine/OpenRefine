@@ -33,7 +33,7 @@
     "core-index-create/formats": "TSV, CSV, *SV, Excel (.xls and .xlsx), JSON, XML, RDF as XML, and Google וגם ניתן להוסיף תמיכה לפורמטים אחרים עם הרחבות של OpenRefine.",
     "core-index-create/from": "השיגו נתונים מ...",
     "core-index-import/import-proj": "יבוא פרוייקט",
-    "core-index-import/locate": "איתור קובץ פרוייקט Refine (.tar or .tar.gz):",
+    "core-index-import/locate": "איתור קובץ פרוייקט Refine (.tar.gz):",
     "core-index-import/file": "קובץ הפרוייקט:",
     "core-index-import/rename": "שינוי שם הפרוייקט (אופציונאלי):",
     "core-index-import/inspecting": "בודק את הקבצים שנבחרו ...",

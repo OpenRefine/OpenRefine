@@ -87,7 +87,7 @@
     "core-index-import/creating-proj": "Projekt létrehozása…",
     "core-index-import/comma-separated": "vesszővel elválasztott számok",
     "core-index-import/error": "Hiba:",
-    "core-index-import/locate": "Létező Refine projekt (.tar vagy .tar.gz) keresése:",
+    "core-index-import/locate": "Létező Refine projekt (.tar.gz) keresése:",
     "core-index-import/downloading-data": "Adatok letöltése…",
     "core-index-import/parse-as": "Adat feldolgozás mint",
     "core-index-import/unknown-err": "Ismeretlen hiba",
