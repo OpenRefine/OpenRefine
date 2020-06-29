@@ -55,6 +55,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.openrefine.commands.Command;
 import org.openrefine.expr.ExpressionUtils;
 import org.openrefine.model.GridState;
+import org.openrefine.model.IndexedRow;
 import org.openrefine.model.Project;
 import org.openrefine.model.Row;
 import org.openrefine.model.recon.ReconType;
@@ -149,8 +150,8 @@ public class GuessTypesOfColumnCommand extends Command {
         List<String> samples = new ArrayList<String>(SAMPLE_SIZE);
         Set<String> sampleSet = new HashSet<String>();
         
-        for (Row row : gridState.getGrid().values().take(SAMPLE_SIZE)) {
-            Object value = row.getCellValue(cellIndex);
+        for (IndexedRow row : gridState.getRows(0, SAMPLE_SIZE)) {
+            Object value = row.getRow().getCellValue(cellIndex);
             if (ExpressionUtils.isNonBlankData(value)) {
                 String s = value.toString().trim();
                 if (!sampleSet.contains(s)) {

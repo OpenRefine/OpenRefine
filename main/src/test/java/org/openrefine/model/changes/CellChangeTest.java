@@ -23,10 +23,7 @@ public class CellChangeTest extends RefineTest {
 	
 	private String serializedChange = ""
 			+ "{\n" + 
-			"       \"cellIndex\" : 23,\n" + 
-			"       \"newCell\" : {\n" + 
-			"         \"v\" : \"changed\"\n" + 
-			"       },\n" + 
+			"       \"newCellValue\" : \"changed\"," + 
 			"       \"columnName\": \"bar\"," +
 			"       \"dagSlice\" : {\n" +
 			"         \"column\": \"bar\",\n" +
@@ -50,7 +47,7 @@ public class CellChangeTest extends RefineTest {
 	
 	@Test
 	public void testCellChange() throws DoesNotApplyException {
-		Change change = new CellChange(0L, 0, "foo", new Cell("changed", null));
+		Change change = new CellChange(0L, "foo", "changed");
 		
 		GridState newGrid = change.apply(initialGrid, mock(ChangeContext.class));
 		
@@ -62,7 +59,7 @@ public class CellChangeTest extends RefineTest {
 	
 	@Test
 	public void testSerialize() {
-		Change change = new CellChange(14L, 23, "bar", new Cell("changed", null));
+		Change change = new CellChange(14L, "bar", "changed");
 		TestUtils.isSerializedTo(change, serializedChange, ParsingUtilities.defaultWriter);
 	}
 }

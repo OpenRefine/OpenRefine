@@ -136,7 +136,7 @@ public abstract class RowMapChange extends EngineDependentChange {
 	 * @param gridState the grid after the map operation
 	 * @return the grid with updated column statistics (or any other post transformation)
 	 */
-	protected GridState postTransform(GridState gridState, ChangeContext context) {
+	protected GridState postTransform(GridState gridState, ChangeContext context) throws DoesNotApplyException {
 	    return gridState;
 	}
 
