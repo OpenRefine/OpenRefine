@@ -167,6 +167,7 @@ public class OdsImporter extends TabularImportingParserBase {
 
                     List<Object> cells = new ArrayList<Object>();
                     OdfTableRow row = table.getRowByIndex(nextRow++);
+                    int maxCol = 0;
                     if (row != null) {
                         int lastCell = row.getCellCount();
                         for (int cellIndex = 0; cellIndex <= lastCell; cellIndex++) {
@@ -177,9 +178,13 @@ public class OdsImporter extends TabularImportingParserBase {
                                 cell = extractCell(sourceCell, reconMap);
                             }
                             cells.add(cell);
+                            if (cell != null && cellIndex > maxCol) {
+                                maxCol = cellIndex;
+                            }
                         }
                     }
-                    return cells;
+                    // Right truncate null cells
+                    return cells.subList(0, maxCol + 1);
                 }
             };
 
@@ -223,10 +228,10 @@ public class OdsImporter extends TabularImportingParserBase {
             if ("".equals(value)) {
                 value = null;
             } else {
-                logger.info("Null cell type with non-empty value: " + value);                
+                logger.warn("Null cell type with non-empty value: " + value);
             }
         } else {
-            logger.info("Unexpected cell type " + cellType);
+            logger.warn("Unexpected cell type " + cellType);
             value = cell.getDisplayText();
         }
         return value;
