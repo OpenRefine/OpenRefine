@@ -108,9 +108,9 @@ DataTableView.prototype.render = function() {
       '<div class="viewpanel-rowrecord" bind="rowRecordControls">'+$.i18n('core-views/show-as')+': ' +
         '<span bind="modeSelectors"></span>' + 
       '</div>' +
-      '<div class="viewpanel-pagesize" bind="pageSizeControls"></div>' +
+      // '<div class="viewpanel-pagesize" bind="pageSizeControls"></div>' +
       '<div class="viewpanel-sorting" bind="sortingControls"></div>' +
-      '<div class="viewpanel-paging" bind="pagingControls"></div>' +
+      // '<div class="viewpanel-paging" bind="pagingControls"></div>' +
     '</div>' +
     '<div bind="dataTableContainer" class="data-table-container">' +
       '<table class="data-table">'+
