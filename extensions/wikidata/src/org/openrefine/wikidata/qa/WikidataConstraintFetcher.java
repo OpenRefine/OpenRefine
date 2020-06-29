@@ -293,7 +293,7 @@ public class WikidataConstraintFetcher implements ConstraintFetcher {
 
     /**
      * Gets the list of constraints of a particular type for a property
-     * 
+     *
      * @param pid
      *            the property to retrieve the constraints for
      * @param qid
@@ -336,7 +336,8 @@ public class WikidataConstraintFetcher implements ConstraintFetcher {
      *            the property to filter on
      * @return
      */
-    protected List<Value> findValues(List<SnakGroup> groups, String pid) {
+    @Override
+    public List<Value> findValues(List<SnakGroup> groups, String pid) {
         List<Value> results = new ArrayList<>();
         for (SnakGroup group : groups) {
             if (group.getProperty().getId().equals(pid)) {
