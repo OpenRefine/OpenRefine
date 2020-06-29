@@ -34,12 +34,16 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package org.openrefine.commands.recon;
 
 import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletRequest;
 
 import org.openrefine.browsing.EngineConfig;
 import org.openrefine.commands.EngineDependentCommand;
 import org.openrefine.model.Project;
+import org.openrefine.model.recon.Recon;
+import org.openrefine.model.recon.Recon.Judgment;
 import org.openrefine.operations.Operation;
 import org.openrefine.operations.recon.ReconCopyAcrossColumnsOperation;
 
@@ -52,9 +56,11 @@ public class ReconCopyAcrossColumnsCommand extends EngineDependentCommand {
         String fromColumnName = request.getParameter("fromColumnName");
         String[] toColumnNames = request.getParameterValues("toColumnName[]");
         String[] judgments = request.getParameterValues("judgment[]");
+        List<Judgment> parsedJudgments = Arrays.asList(judgments).stream().map(
+                s -> Recon.stringToJudgment(s)).collect(Collectors.toList());
         boolean applyToJudgedCells = Boolean.parseBoolean(request.getParameter("applyToJudgedCells"));
 
         return new ReconCopyAcrossColumnsOperation(
-                engineConfig, fromColumnName, Arrays.asList(toColumnNames), Arrays.asList(judgments), applyToJudgedCells);
+                engineConfig, fromColumnName, Arrays.asList(toColumnNames), parsedJudgments, applyToJudgedCells);
     }
 }

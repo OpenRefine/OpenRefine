@@ -44,10 +44,11 @@ import org.openrefine.expr.ExpressionUtils;
 import org.openrefine.history.HistoryEntry;
 import org.openrefine.model.Cell;
 import org.openrefine.model.ColumnMetadata;
+import org.openrefine.model.GridState;
 import org.openrefine.model.Project;
-import org.openrefine.model.changes.CellChange;
 import org.openrefine.model.changes.Change;
-import org.openrefine.model.changes.ReconChange;
+import org.openrefine.model.changes.ReconCellChange;
+import org.openrefine.model.recon.LazyReconStats;
 import org.openrefine.model.recon.Recon;
 import org.openrefine.model.recon.Recon.Judgment;
 import org.openrefine.model.recon.ReconCandidate;
@@ -73,6 +74,8 @@ public class ReconJudgeOneCellCommand extends Command {
             int rowIndex = Integer.parseInt(request.getParameter("row"));
             int cellIndex = Integer.parseInt(request.getParameter("cell"));
             Judgment judgment = Recon.stringToJudgment(request.getParameter("judgment"));
+            String identifierSpace = request.getParameter("identifierSpace");
+            String schemaSpace = request.getParameter("schemaSpace");
 
             ReconCandidate match = null;
             String id = request.getParameter("id");
@@ -86,91 +89,34 @@ public class ReconJudgeOneCellCommand extends Command {
                         scoreString != null ? Double.parseDouble(scoreString) : 100);
             }
 
-            JudgeOneCellProcess process = new JudgeOneCellProcess(
-                    project,
-                    "Judge one cell's recon result",
-                    judgment,
-                    rowIndex,
-                    cellIndex,
-                    match,
-                    request.getParameter("identifierSpace"),
-                    request.getParameter("schemaSpace"));
-
-            HistoryEntry historyEntry = project.processManager.queueProcess(process);
-            if (historyEntry != null) {
-                /*
-                 * If the process is done, write back the cell's data so that the client side can update its UI right
-                 * away.
-                 */
-                respondJSON(response, new ReconClearOneCellCommand.CellResponse(historyEntry, process.newCell));
-            } else {
-                respond(response, "{ \"code\" : \"pending\" }");
-            }
-        } catch (Exception e) {
-            respondException(response, e);
-        }
-    }
-
-    protected static class JudgeOneCellProcess extends QuickHistoryEntryProcess {
-
-        final int rowIndex;
-        final int cellIndex;
-        final Judgment judgment;
-        final ReconCandidate match;
-        final String identifierSpace;
-        final String schemaSpace;
-
-        Cell newCell;
-
-        JudgeOneCellProcess(
-                Project project,
-                String briefDescription,
-                Judgment judgment,
-                int rowIndex,
-                int cellIndex,
-                ReconCandidate match,
-                String identifierSpace,
-                String schemaSpace) {
-            super(project, briefDescription);
-
-            this.judgment = judgment;
-            this.rowIndex = rowIndex;
-            this.cellIndex = cellIndex;
-            this.match = match;
-            this.identifierSpace = identifierSpace;
-            this.schemaSpace = schemaSpace;
-        }
-
-        @Override
-        protected HistoryEntry createHistoryEntry(long historyEntryID) throws Exception {
-            Cell cell = _project.rows.get(rowIndex).getCell(cellIndex);
+            GridState state = project.getCurrentGridState();
+            Cell cell = state.getRow(rowIndex).getCell(cellIndex);
             if (cell == null || !ExpressionUtils.isNonBlankData(cell.value)) {
                 throw new Exception("Cell is blank or error");
             }
 
-            ColumnMetadata column = _project.columnModel.getColumnByCellIndex(cellIndex);
+            ColumnMetadata column = state.getColumnModel().getColumnByIndex(cellIndex);
             if (column == null) {
                 throw new Exception("No such column");
             }
 
             Judgment oldJudgment = cell.recon == null ? Judgment.None : cell.recon.judgment;
 
+            // The historyEntryId will be set on the recon by the CellChange
             Recon newRecon = null;
             if (cell.recon != null) {
-                newRecon = cell.recon.dup(historyEntryID);
+                newRecon = cell.recon;
             } else if (identifierSpace != null && schemaSpace != null) {
-                newRecon = new Recon(historyEntryID, identifierSpace, schemaSpace);
+                newRecon = new Recon(0L, identifierSpace, schemaSpace);
             } else if (column.getReconConfig() != null) {
-                newRecon = column.getReconConfig().createNewRecon(historyEntryID);
+                newRecon = column.getReconConfig().createNewRecon(0L);
             } else {
                 // This should only happen if we are judging a cell in a column that
                 // has never been reconciled before.
-                newRecon = new Recon(historyEntryID, null, null);
+                // TODO we should rather throw an exception in this case,
+                // ReconConfig should be required on the column.
+                newRecon = new Recon(0L, null, null);
             }
-
-            newCell = new Cell(
-                    cell.value,
-                    newRecon);
 
             String cellDescription = "single cell on row " + (rowIndex + 1) +
                     ", column " + column.getName() +
@@ -178,40 +124,45 @@ public class ReconJudgeOneCellCommand extends Command {
 
             String description = null;
 
-            newCell.recon.matchRank = -1;
-            newCell.recon.judgmentAction = "single";
-            newCell.recon.judgmentBatchSize = 1;
+            newRecon = newRecon
+                    .withMatchRank(-1)
+                    .withJudgmentAction("single");
 
             if (judgment == Judgment.None) {
-                newCell.recon.judgment = Recon.Judgment.None;
-                newCell.recon.match = null;
+                newRecon = newRecon.withJudgment(Recon.Judgment.None)
+                        .withMatch(null);
 
                 description = "Discard recon judgment for " + cellDescription;
             } else if (judgment == Judgment.New) {
-                newCell.recon.judgment = Recon.Judgment.New;
-                newCell.recon.match = null;
+                newRecon = newRecon
+                        .withJudgment(Recon.Judgment.New)
+                        .withMatch(null);
 
                 description = "Mark to create new item for " + cellDescription;
             } else {
-                newCell.recon.judgment = Recon.Judgment.Matched;
-                newCell.recon.match = this.match;
-                if (newCell.recon.candidates != null) {
-                    for (int m = 0; m < newCell.recon.candidates.size(); m++) {
-                        if (newCell.recon.candidates.get(m).id.equals(this.match.id)) {
-                            newCell.recon.matchRank = m;
+                newRecon = newRecon.withJudgment(Recon.Judgment.Matched)
+                        .withMatch(match);
+                if (newRecon.candidates != null) {
+                    for (int m = 0; m < newRecon.candidates.size(); m++) {
+                        if (newRecon.candidates.get(m).id.equals(match.id)) {
+                            newRecon = newRecon.withMatchRank(m);
                             break;
                         }
                     }
                 }
 
-                description = "Match " + this.match.name +
+                description = "Match " + match.name +
                         " (" + match.id + ") to " +
                         cellDescription;
             }
 
+            Cell newCell = new Cell(
+                    cell.value,
+                    newRecon);
+
             ReconStats stats = column.getReconStats();
             if (stats == null) {
-                stats = ReconStats.create(_project, cellIndex);
+                stats = new LazyReconStats(state, column.getName());
             } else {
                 int newChange = 0;
                 int matchChange = 0;
@@ -222,27 +173,40 @@ public class ReconJudgeOneCellCommand extends Command {
                 if (oldJudgment == Judgment.Matched) {
                     matchChange--;
                 }
-                if (newCell.recon.judgment == Judgment.New) {
+                if (newRecon.judgment == Judgment.New) {
                     newChange++;
                 }
-                if (newCell.recon.judgment == Judgment.Matched) {
+                if (newRecon.judgment == Judgment.Matched) {
                     matchChange++;
                 }
 
-                stats = new ReconStats(
+                stats = ReconStats.create(
                         stats.getNonBlanks(),
                         stats.getNewTopics() + newChange,
                         stats.getMatchedTopics() + matchChange);
             }
 
-            Change change = new ReconChange(
-                    new CellChange(rowIndex, cellIndex, cell, newCell),
-                    column.getName(),
-                    column.getReconConfig(),
-                    stats);
+            Change change = new ReconCellChange(rowIndex, column.getName(), newRecon, stats);
 
-            return new HistoryEntry(
-                    historyEntryID, _project, description, null, change);
+            QuickHistoryEntryProcess process = new QuickHistoryEntryProcess(
+                    project.getHistory(),
+                    description,
+                    null,
+                    change);
+
+            HistoryEntry historyEntry = project.getProcessManager().queueProcess(process);
+            if (historyEntry != null) {
+                /*
+                 * If the process is done, write back the cell's data so that the client side can update its UI right
+                 * away.
+                 */
+                respondJSON(response, new ReconClearOneCellCommand.CellResponse(historyEntry, newCell));
+            } else {
+                respond(response, "{ \"code\" : \"pending\" }");
+            }
+        } catch (Exception e) {
+            respondException(response, e);
         }
     }
+
 }

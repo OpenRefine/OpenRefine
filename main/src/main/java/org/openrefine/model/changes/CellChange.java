@@ -33,10 +33,11 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package org.openrefine.model.changes;
 
+import java.io.Serializable;
+
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import org.openrefine.browsing.EngineConfig;
 import org.openrefine.model.Cell;
 import org.openrefine.model.GridState;
 import org.openrefine.model.Row;
@@ -48,36 +49,37 @@ import org.openrefine.model.RowMapper;
  * @author Antonin Delpeuch
  *
  */
-public class CellChange extends RowMapChange {
+public class CellChange implements Change {
 
     @JsonProperty("rowId")
     final public long row;
-    @JsonProperty("cellIndex")
-    final public int cellIndex;
     @JsonProperty("columnName")
     final public String columnName;
-    @JsonProperty("newCell")
-    final public Cell newCell;
+    @JsonProperty("newCellValue")
+    final public Serializable newCellValue;
 
     @JsonCreator
     public CellChange(
             @JsonProperty("rowId") long row,
-            @JsonProperty("cellIndex") int cellIndex,
             @JsonProperty("columnName") String columnName,
-            @JsonProperty("newCell") Cell newCell) {
-        super(EngineConfig.ALL_ROWS);
+            @JsonProperty("newCellValue") Object newCellValue) {
         this.row = row;
-        this.cellIndex = cellIndex;
         this.columnName = columnName;
-        this.newCell = newCell;
+        this.newCellValue = (Serializable) newCellValue;
     }
 
     @Override
-    public RowMapper getPositiveRowMapper(GridState state, ChangeContext context) {
-        return mapFunction(cellIndex, row, newCell);
+    public GridState apply(GridState projectState, ChangeContext context) throws DoesNotApplyException {
+        int index = projectState.getColumnModel().getColumnIndexByName(columnName);
+        if (index == -1) {
+            throw new DoesNotApplyException(
+                    String.format("Column '%s' does not exist", columnName));
+        }
+        // set judgment id on recon if changed
+        return projectState.mapRows(mapFunction(index, row, newCellValue), projectState.getColumnModel());
     }
 
-    static protected RowMapper mapFunction(int cellIndex, long rowId, Cell newCell) {
+    static protected RowMapper mapFunction(int cellIndex, long rowId, Serializable newCellValue) {
         return new RowMapper() {
 
             private static final long serialVersionUID = -5983834950609157341L;
@@ -85,6 +87,8 @@ public class CellChange extends RowMapChange {
             @Override
             public Row call(long currentRowId, Row row) {
                 if (rowId == currentRowId) {
+                    Cell oldCell = row.getCell(cellIndex);
+                    Cell newCell = newCellValue == null ? null : new Cell(newCellValue, oldCell == null ? null : oldCell.recon);
                     return row.withCell(cellIndex, newCell);
                 } else {
                     return row;

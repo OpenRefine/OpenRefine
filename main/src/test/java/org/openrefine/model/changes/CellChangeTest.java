@@ -3,9 +3,12 @@ package org.openrefine.model.changes;
 
 import static org.mockito.Mockito.mock;
 
+import java.io.IOException;
 import java.io.Serializable;
 import java.util.Arrays;
 
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.databind.JsonMappingException;
 import org.testng.Assert;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
@@ -25,10 +28,7 @@ public class CellChangeTest extends RefineTest {
 
     private String serializedChange = ""
             + "{\n" +
-            "       \"cellIndex\" : 23,\n" +
-            "       \"newCell\" : {\n" +
-            "         \"v\" : \"changed\"\n" +
-            "       },\n" +
+            "       \"newCellValue\" : \"changed\"," +
             "       \"columnName\": \"bar\"," +
             "       \"rowId\" : 14,\n" +
             "       \"type\" : \"org.openrefine.model.changes.CellChange\"\n" +
@@ -47,7 +47,7 @@ public class CellChangeTest extends RefineTest {
 
     @Test
     public void testCellChange() throws DoesNotApplyException {
-        Change change = new CellChange(0L, 0, "foo", new Cell("changed", null));
+        Change change = new CellChange(0L, "foo", "changed");
 
         GridState newGrid = change.apply(initialGrid, mock(ChangeContext.class));
 
@@ -58,8 +58,9 @@ public class CellChangeTest extends RefineTest {
     }
 
     @Test
-    public void testSerialize() {
-        Change change = new CellChange(14L, 23, "bar", new Cell("changed", null));
+    public void testRoundTripSerialize() throws JsonParseException, JsonMappingException, IOException {
+        Change change = ParsingUtilities.mapper.readValue(serializedChange, Change.class);
         TestUtils.isSerializedTo(change, serializedChange, ParsingUtilities.defaultWriter);
+        Assert.assertTrue(change instanceof CellChange);
     }
 }

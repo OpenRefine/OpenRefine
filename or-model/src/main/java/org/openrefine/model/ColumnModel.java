@@ -270,6 +270,10 @@ public class ColumnModel implements Serializable {
         return null;
     }
 
+    public ColumnMetadata getColumnByIndex(int cellIndex) {
+        return _columns.get(cellIndex);
+    }
+
     /**
      * Return the index of the column with the given name.
      * 
@@ -330,4 +334,5 @@ public class ColumnModel implements Serializable {
     public String toString() {
         return String.format("[ColumnModel: %s]", StringUtils.join(_columns, ", "));
     }
+
 }

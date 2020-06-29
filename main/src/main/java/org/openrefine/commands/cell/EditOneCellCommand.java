@@ -127,7 +127,7 @@ public class EditOneCellCommand extends Command {
             String description = "Edit single cell on row " + (rowIndex + 1) +
                     ", column " + column.getName();
 
-            Change change = new CellChange(rowIndex, cellIndex, column.getName(), newCell);
+            Change change = new CellChange(rowIndex, column.getName(), value);
 
             QuickHistoryEntryProcess process = new QuickHistoryEntryProcess(
                     project.getHistory(),

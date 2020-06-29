@@ -46,10 +46,11 @@ import org.openrefine.expr.ExpressionUtils;
 import org.openrefine.history.HistoryEntry;
 import org.openrefine.model.Cell;
 import org.openrefine.model.ColumnMetadata;
+import org.openrefine.model.GridState;
 import org.openrefine.model.Project;
-import org.openrefine.model.changes.CellChange;
 import org.openrefine.model.changes.Change;
-import org.openrefine.model.changes.ReconChange;
+import org.openrefine.model.changes.ReconCellChange;
+import org.openrefine.model.recon.LazyReconStats;
 import org.openrefine.model.recon.Recon.Judgment;
 import org.openrefine.model.recon.ReconStats;
 import org.openrefine.process.QuickHistoryEntryProcess;
@@ -85,63 +86,24 @@ public class ReconClearOneCellCommand extends Command {
             int rowIndex = Integer.parseInt(request.getParameter("row"));
             int cellIndex = Integer.parseInt(request.getParameter("cell"));
 
-            ClearOneCellProcess process = new ClearOneCellProcess(
-                    project,
-                    "Clear one cell's recon data",
-                    rowIndex,
-                    cellIndex);
-
-            HistoryEntry historyEntry = project.processManager.queueProcess(process);
-            if (historyEntry != null) {
-                /*
-                 * If the process is done, write back the cell's data so that the client side can update its UI right
-                 * away.
-                 */
-                respondJSON(response, new CellResponse(historyEntry, process.newCell));
-            } else {
-                respond(response, "{ \"code\" : \"pending\" }");
-            }
-        } catch (Exception e) {
-            respondException(response, e);
-        }
-    }
-
-    protected static class ClearOneCellProcess extends QuickHistoryEntryProcess {
-
-        final int rowIndex;
-        final int cellIndex;
-        Cell newCell;
-
-        ClearOneCellProcess(
-                Project project,
-                String briefDescription,
-                int rowIndex,
-                int cellIndex) {
-            super(project, briefDescription);
-
-            this.rowIndex = rowIndex;
-            this.cellIndex = cellIndex;
-        }
-
-        @Override
-        protected HistoryEntry createHistoryEntry(long historyEntryID) throws Exception {
-            Cell cell = _project.rows.get(rowIndex).getCell(cellIndex);
+            GridState state = project.getCurrentGridState();
+            Cell cell = state.getRow(rowIndex).getCell(cellIndex);
             if (cell == null || !ExpressionUtils.isNonBlankData(cell.value)) {
                 throw new Exception("Cell is blank or error");
             }
 
-            ColumnMetadata column = _project.columnModel.getColumnByCellIndex(cellIndex);
+            ColumnMetadata column = state.getColumnModel().getColumnByIndex(cellIndex);
             if (column == null) {
                 throw new Exception("No such column");
             }
 
             Judgment oldJudgment = cell.recon == null ? Judgment.None : cell.recon.judgment;
 
-            newCell = new Cell(cell.value, null);
+            Cell newCell = new Cell(cell.value, null);
 
             ReconStats stats = column.getReconStats();
             if (stats == null) {
-                stats = ReconStats.create(_project, cellIndex);
+                stats = new LazyReconStats(state, column.getName());
             } else {
                 int newChange = 0;
                 int matchChange = 0;
@@ -153,7 +115,7 @@ public class ReconClearOneCellCommand extends Command {
                     matchChange--;
                 }
 
-                stats = new ReconStats(
+                stats = ReconStats.create(
                         stats.getNonBlanks() + 1,
                         stats.getNewTopics() + newChange,
                         stats.getMatchedTopics() + matchChange);
@@ -163,14 +125,26 @@ public class ReconClearOneCellCommand extends Command {
                     ", column " + column.getName() +
                     ", containing \"" + cell.value + "\"";
 
-            Change change = new ReconChange(
-                    new CellChange(rowIndex, cellIndex, cell, newCell),
-                    column.getName(),
-                    column.getReconConfig(),
-                    stats);
+            Change change = new ReconCellChange(rowIndex, column.getName(), null, stats);
 
-            return new HistoryEntry(
-                    historyEntryID, _project, description, null, change);
+            QuickHistoryEntryProcess process = new QuickHistoryEntryProcess(
+                    project.getHistory(),
+                    description,
+                    null,
+                    change);
+
+            HistoryEntry historyEntry = project.getProcessManager().queueProcess(process);
+            if (historyEntry != null) {
+                /*
+                 * If the process is done, write back the cell's data so that the client side can update its UI right
+                 * away.
+                 */
+                respondJSON(response, new CellResponse(historyEntry, newCell));
+            } else {
+                respond(response, "{ \"code\" : \"pending\" }");
+            }
+        } catch (Exception e) {
+            respondException(response, e);
         }
     }
 }
