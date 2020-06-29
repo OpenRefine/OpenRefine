@@ -26,10 +26,10 @@ package org.openrefine.wikidata.qa;
 import org.wikidata.wdtk.datamodel.interfaces.ItemIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.PropertyIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.QuantityValue;
+import org.wikidata.wdtk.datamodel.interfaces.Statement;
 import org.wikidata.wdtk.datamodel.interfaces.Value;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 /**
@@ -53,7 +53,7 @@ public interface ConstraintFetcher {
     /**
      * Retrieves the property that is the inverse of a given property
      * 
-     * @param pid:
+     * @param pid
      *            the property to retrieve the inverse for
      * @return the pid of the inverse property
      */
@@ -144,6 +144,17 @@ public interface ConstraintFetcher {
     boolean usableOnItems(PropertyIdValue pid);
 
     /**
+     * Gets the list of constraints of a particular type for a property
+     *
+     * @param pid
+     *            the property to retrieve the constraints for
+     * @param qid
+     *            the type of the constraints
+     * @return the list of matching constraint statements
+     */
+    List<Statement> getConstraintsByType(PropertyIdValue pid, String qid);
+
+    /**
      * Retrieves the lower bound of the range
      * required in difference-within-range constraint
      *
@@ -165,7 +176,7 @@ public interface ConstraintFetcher {
      * Retrieves the lower value property for calculating the difference
      * required in difference-within-range constraint
      *
-     * @param pid:
+     * @param pid
      *            the property to calculate difference with
      * @return the pid of the lower bound property
      */
@@ -176,14 +187,5 @@ public interface ConstraintFetcher {
      * with its lower bound property should be in a range?
      */
     boolean hasDiffWithinRange(PropertyIdValue pid);
-
-     /*
-     * Returns the Map of all the conflicting pid and their item values
-     *
-     * @param pid:
-     *            the property having conflicts-with constraint
-     * @return
-     */
-    Map<PropertyIdValue, List<Value>> getParamConflictsWith(PropertyIdValue pid);
 
 }

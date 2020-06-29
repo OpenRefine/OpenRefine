@@ -24,18 +24,23 @@
 package org.openrefine.wikidata.qa;
 
 import org.wikidata.wdtk.datamodel.helpers.Datamodel;
+import org.wikidata.wdtk.datamodel.interfaces.Claim;
+import org.wikidata.wdtk.datamodel.interfaces.EntityIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.ItemIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.PropertyIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.QuantityValue;
+import org.wikidata.wdtk.datamodel.interfaces.Reference;
+import org.wikidata.wdtk.datamodel.interfaces.Snak;
+import org.wikidata.wdtk.datamodel.interfaces.SnakGroup;
+import org.wikidata.wdtk.datamodel.interfaces.Statement;
+import org.wikidata.wdtk.datamodel.interfaces.StatementRank;
 import org.wikidata.wdtk.datamodel.interfaces.Value;
 
 import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.Set;
-import java.util.Map;
-import java.util.HashMap;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 public class MockConstraintFetcher implements ConstraintFetcher {
@@ -69,10 +74,12 @@ public class MockConstraintFetcher implements ConstraintFetcher {
     public static QuantityValue minValuePid = Datamodel.makeQuantityValue(new BigDecimal(0));
     public static QuantityValue maxValuePid = Datamodel.makeQuantityValue(new BigDecimal(150));
 
-    public static PropertyIdValue conflictsWithPid = Datamodel.makeWikidataPropertyIdValue("P50");
+    public static PropertyIdValue conflictsWithPid = Datamodel.makeWikidataPropertyIdValue("P2002");
     public static Value conflictsWithStatementValue = Datamodel.makeWikidataItemIdValue("Q36322");
-    public static PropertyIdValue conflictingStatementPid = Datamodel.makeWikidataPropertyIdValue("P31");
-    public static Value conflictingStatementValue = Datamodel.makeWikidataItemIdValue("Q5");
+    public static PropertyIdValue conflictingStatement1Pid = Datamodel.makeWikidataPropertyIdValue("P31");
+    public static Value conflictingStatement1Value = Datamodel.makeWikidataItemIdValue("Q4167836");
+    public static PropertyIdValue conflictingStatement2Pid = Datamodel.makeWikidataPropertyIdValue("P553");
+    public static Value conflictingStatement2Value = Datamodel.makeWikidataItemIdValue("Q918");
 
     @Override
     public String getFormatRegex(PropertyIdValue pid) {
@@ -211,10 +218,34 @@ public class MockConstraintFetcher implements ConstraintFetcher {
         return true;
     }
 
-    public Map<PropertyIdValue, List<Value>> getParamConflictsWith(PropertyIdValue pid) {
-        Map<PropertyIdValue, List<Value>> propertyIdValueListMap = new HashMap<>();
-        List<Value> items = Arrays.asList(conflictingStatementValue, null);
-        propertyIdValueListMap.put(conflictingStatementPid, items);
-        return propertyIdValueListMap;
+    @Override
+    public List<Statement> getConstraintsByType(PropertyIdValue pid, String qid) {
+        EntityIdValue entityIdValue = Datamodel.makeWikidataItemIdValue("Q21502838");
+        PropertyIdValue propertyIdValue = Datamodel.makeWikidataPropertyIdValue("P2302");
+        Snak snak = Datamodel.makeValueSnak(propertyIdValue,entityIdValue);
+
+        PropertyIdValue property = Datamodel.makeWikidataPropertyIdValue("P2306");
+        Value propertyValue = Datamodel.makeWikidataPropertyIdValue("P31");
+        Snak snak1 = Datamodel.makeValueSnak(property, propertyValue);
+        List<Snak> group1 = Collections.singletonList(snak1);
+
+        PropertyIdValue item = Datamodel.makeWikidataPropertyIdValue("P2305");
+        Value itemValue = Datamodel.makeWikidataItemIdValue("Q5");
+        Snak snak2 = Datamodel.makeValueSnak(item, itemValue);
+        List<Snak> group2 = Collections.singletonList(snak2);
+
+        SnakGroup snakGroup1 = Datamodel.makeSnakGroup(group1);
+        SnakGroup snakGroup2 = Datamodel.makeSnakGroup(group2);
+
+        List<SnakGroup> listSnakGroup = Arrays.asList(snakGroup1, snakGroup2);
+        Claim claim = Datamodel.makeClaim(entityIdValue, snak, listSnakGroup);
+
+        Reference reference = Datamodel.makeReference(listSnakGroup);
+        List<Reference> referenceList = Collections.singletonList(reference);
+
+        Statement statement = Datamodel.makeStatement(claim, referenceList, StatementRank.NORMAL, "P2302$77BD7FE4-C051-4776-855C-543F0CE697D0");
+        List<Statement> statements = Collections.singletonList(statement);
+
+        return statements;
     }
 }

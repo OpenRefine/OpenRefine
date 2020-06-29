@@ -7,9 +7,9 @@
     </div>
     <div class="wikibase-perform-edits-area">
         <form id="wikibase-perform-edits-form" onsubmit="return false;" bind="performEditsForm" autocomplete="on">
-            <p><span bind="loggedInAs"></span> <a bind="loggedInUsername" target="_blank"></a>.</p>
+            <p style="margin-top: 0.5rem; margin-bottom: 0.5rem"><span bind="loggedInAs"></span> <a bind="loggedInUsername" target="_blank"></a>.</p>
             <p><span bind="editSummaryLabel"></span> <input type="text" name="editSummary" bind="editSummary" class="edit-summary" value="" /></p>
-            <div class="wikibase-login-buttons">
+            <div class="wikibase-perform-edits-buttons">
                 <button class="button cancel-button" bind="cancelButton"></button>
                 <button class="button button-primary" bind="performEditsButton"></button>
             </div>

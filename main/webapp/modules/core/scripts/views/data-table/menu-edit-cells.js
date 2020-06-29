@@ -116,8 +116,9 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
     );
   };
 
-  var doJoinMultiValueCells = function() {
-    var separator = window.prompt($.i18n('core-views/enter-separator'), ", ");
+  var doJoinMultiValueCells = function(separator) {
+    var defaultValue = Refine.getPreference("ui.cell.rowSplitDefaultSeparator", ",");
+    var separator = window.prompt($.i18n('core-views/enter-separator'), defaultValue);
     if (separator !== null) {
       Refine.postCoreProcess(
         "join-multi-value-cells",
@@ -129,6 +130,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
         null,
         { rowsChanged: true }
       );
+      Refine.setPreference("ui.cell.rowSplitDefaultSeparator", separator);
     }
   };
 
@@ -247,7 +249,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
     var level = DialogSystem.showDialog(frame);
     var dismiss = function() { DialogSystem.dismissUntil(level - 1); };
     elmts.cancelButton.click(dismiss);
-	elmts.text_to_findInput.focus();
+    elmts.text_to_findInput.focus();
     elmts.okButton.click(function() {
       var text_to_find = elmts.text_to_findInput[0].value;
       var replacement_text = elmts.replacement_textInput[0].value;
@@ -315,6 +317,8 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
     var level = DialogSystem.showDialog(frame);
     var dismiss = function() { DialogSystem.dismissUntil(level - 1); };
     
+    var defaultValue = Refine.getPreference("ui.cell.rowSplitDefaultSeparator", ",");
+    elmts.separatorInput[0].value = defaultValue;
     elmts.separatorInput.focus().select();
     
     elmts.cancelButton.click(dismiss);
@@ -333,7 +337,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
         }
 
         config.regex = elmts.regexInput[0].checked;
-
+        Refine.setPreference("ui.cell.rowSplitDefaultSeparator", config.separator);
       } else if (mode === "lengths") {
         var s = "[" + elmts.lengthsTextarea[0].value + "]";
         try {

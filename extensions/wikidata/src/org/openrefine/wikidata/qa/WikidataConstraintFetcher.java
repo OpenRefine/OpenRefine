@@ -30,9 +30,7 @@ import org.wikidata.wdtk.datamodel.interfaces.*;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
-import java.util.HashMap;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -96,10 +94,6 @@ public class WikidataConstraintFetcher implements ConstraintFetcher {
     public static String ALLOWED_ENTITY_TYPES_QID = "Q52004125";
     public static String ALLOWED_ITEM_TYPE_QID = "Q29934200";
     public static String ALLOWED_ENTITY_TYPES_PID = "P2305";
-
-    public static String CONFLICTS_WITH_CONSTRAINT_QID = "Q21502838";
-    public static String CONFLICTS_WITH_PROPERTY_PID = "P2306";
-    public static String ITEM_OF_PROPERTY_CONSTRAINT_PID = "P2305";
 
     // The following constraints still need to be implemented:
 
@@ -279,17 +273,20 @@ public class WikidataConstraintFetcher implements ConstraintFetcher {
      * Returns a single constraint for a particular type and a property, or null if
      * there is no such constraint
      * 
-     * @param pid:
+     * @param pid
      *            the property to retrieve the constraints for
-     * @param qid:
+     * @param qid
      *            the type of the constraints
      * @return the list of qualifiers for the constraint, or null if it does not
      *         exist
      */
     protected List<SnakGroup> getSingleConstraint(PropertyIdValue pid, String qid) {
-        Statement statement = getConstraintsByType(pid, qid).findFirst().orElse(null);
-        if (statement != null) {
-            return statement.getClaim().getQualifiers();
+        List<Statement> statementList = getConstraintsByType(pid, qid);
+        if (!statementList.isEmpty()) {
+            Statement statement = statementList.get(0);
+            if (statement != null) {
+                return statement.getClaim().getQualifiers();
+            }
         }
         return null;
     }
@@ -297,24 +294,25 @@ public class WikidataConstraintFetcher implements ConstraintFetcher {
     /**
      * Gets the list of constraints of a particular type for a property
      * 
-     * @param pid:
+     * @param pid
      *            the property to retrieve the constraints for
-     * @param qid:
+     * @param qid
      *            the type of the constraints
-     * @return the stream of matching constraint statements
+     * @return the list of matching constraint statements
      */
-    protected Stream<Statement> getConstraintsByType(PropertyIdValue pid, String qid) {
+    @Override
+    public List<Statement> getConstraintsByType(PropertyIdValue pid, String qid) {
         Stream<Statement> allConstraints = getConstraintStatements(pid).stream()
                 .filter(s -> s.getValue() != null && ((EntityIdValue) s.getValue()).getId().equals(qid))
                 .filter(s -> !StatementRank.DEPRECATED.equals(s.getRank()));
-        return allConstraints;
+        return allConstraints.collect(Collectors.toList());
     }
 
     /**
      * Gets all the constraint statements for a given property
      * 
      * @param pid
-     *            : the id of the property to retrieve the constraints for
+     *             the id of the property to retrieve the constraints for
      * @return the list of constraint statements
      */
     protected List<Statement> getConstraintStatements(PropertyIdValue pid) {
@@ -332,9 +330,9 @@ public class WikidataConstraintFetcher implements ConstraintFetcher {
     /**
      * Returns the values of a given property in qualifiers
      * 
-     * @param groups:
+     * @param groups
      *            the qualifiers
-     * @param pid:
+     * @param pid
      *            the property to filter on
      * @return
      */
@@ -373,7 +371,7 @@ public class WikidataConstraintFetcher implements ConstraintFetcher {
      * Retrieves the lower value property for calculating the difference
      * required in difference-within-range constraint
      *
-     * @param pid:
+     * @param pid
      *            the property to calculate difference with
      * @return the pid of the lower bound property
      */
@@ -428,36 +426,4 @@ public class WikidataConstraintFetcher implements ConstraintFetcher {
         return null;
     }
 
-    /**
-     * Returns the Map of all the conflicting pid and their item values
-     *
-     * @param pid:
-     *            the property having conflicts-with constraint
-     * @return
-     */
-    @Override
-    public Map<PropertyIdValue, List<Value>> getParamConflictsWith(PropertyIdValue pid) {
-        List<Statement> statementList = getConstraintsByType(pid, CONFLICTS_WITH_CONSTRAINT_QID).collect(Collectors.toList());
-        Map<PropertyIdValue, List<Value>> propertyIdValueListMap = new HashMap<>();
-        for (Statement statement : statementList) {
-            List<SnakGroup> specs = statement.getClaim().getQualifiers();
-            PropertyIdValue conflictingPid = null;
-            List<Value> items = new ArrayList<>();
-            for(SnakGroup group : specs) {
-                for (Snak snak : group.getSnaks()) {
-                    if (group.getProperty().getId().equals(CONFLICTS_WITH_PROPERTY_PID)){
-                        conflictingPid = (PropertyIdValue) snak.getValue();
-                    }
-                    if (group.getProperty().getId().equals(ITEM_OF_PROPERTY_CONSTRAINT_PID)){
-                        items.add(snak.getValue());
-                    }
-                }
-            }
-            if (conflictingPid != null) {
-                propertyIdValueListMap.put(conflictingPid, items);
-            }
-        }
-
-        return propertyIdValueListMap;
-    }
 }

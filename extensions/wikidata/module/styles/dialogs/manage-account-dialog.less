@@ -37,12 +37,13 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   text-align: center;
 }
 
-.wikibase-login-buttons {
-  text-align: right;
-}
-
 .wikibase-invalid-credentials {
   color: red;
+  padding-bottom: 0.3rem;
+}
+
+.wikibase-user-login tr td {
+  padding-bottom: 6px;
 }
 
 .wikibase-user-login tr td:first-child {
@@ -55,10 +56,39 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 }
 
 .wikidata-logo {
+  height: 100%;
   float: left;
-  margin: -10px;
+  margin-right: 50px;
+  display:flex;
+  flex-direction: column;
+  justify-content: center;
 }
 
-.right-of-logo {
-  margin-left: 110px;
+.wikidata-logo img {
+  height: 120px;
+}
+
+.wikibase-login-buttons {
+  text-align: right;
+  position: absolute;
+  right: 12px;
+  bottom: 12px;
+}
+
+
+.wikibase-perform-edits-buttons {
+  text-align: right;
+}
+
+.wikibase-import-schema-buttons {
+  text-align: right;
+}
+
+
+.wikibase-login-dialog-footer {
+  text-align: center;
+}
+
+.wikibase-login-dialog-footer span {
+  cursor: pointer;
 }

@@ -1,5 +1,6 @@
 package org.openrefine.wikidata.qa.scrutinizers;
 
+import org.openrefine.wikidata.qa.ConstraintFetcher;
 import org.openrefine.wikidata.qa.MockConstraintFetcher;
 import org.openrefine.wikidata.testing.TestingData;
 import org.openrefine.wikidata.updates.ItemUpdate;
@@ -7,9 +8,40 @@ import org.openrefine.wikidata.updates.ItemUpdateBuilder;
 import org.testng.annotations.Test;
 import org.wikidata.wdtk.datamodel.helpers.Datamodel;
 import org.wikidata.wdtk.datamodel.implementation.StatementImpl;
-import org.wikidata.wdtk.datamodel.interfaces.*;
+import org.wikidata.wdtk.datamodel.interfaces.ItemIdValue;
+import org.wikidata.wdtk.datamodel.interfaces.NoValueSnak;
+import org.wikidata.wdtk.datamodel.interfaces.PropertyIdValue;
+import org.wikidata.wdtk.datamodel.interfaces.Snak;
+import org.wikidata.wdtk.datamodel.interfaces.SnakGroup;
+import org.wikidata.wdtk.datamodel.interfaces.Statement;
+import org.wikidata.wdtk.datamodel.interfaces.Value;
+import org.wikidata.wdtk.datamodel.interfaces.ValueSnak;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 public class ConflictsWithScrutinizerTest extends ScrutinizerTest {
+
+    public static PropertyIdValue conflictsWithPid = MockConstraintFetcher.conflictsWithPid;
+    public static Value conflictsWithValue = MockConstraintFetcher.conflictsWithStatementValue;
+    public static PropertyIdValue propertyWithConflictsPid1 = MockConstraintFetcher.conflictingStatement1Pid;
+    public static Value conflictingValue1  = MockConstraintFetcher.conflictingStatement1Value;
+    public static PropertyIdValue propertyWithConflictsPid2 = MockConstraintFetcher.conflictingStatement2Pid;
+    public static Value conflictingValue2  = MockConstraintFetcher.conflictingStatement2Value;
+
+    public static ItemIdValue entityIdValue = Datamodel.makeWikidataItemIdValue("Q21502838");
+    public static PropertyIdValue propertyParameterPID = Datamodel.makeWikidataPropertyIdValue("P2306");
+    public static Value conflictingPropertyValue1 = Datamodel.makeWikidataPropertyIdValue("P31");
+    public static Value conflictingPropertyValue2 = Datamodel.makeWikidataPropertyIdValue("P553");
+    public static PropertyIdValue itemParameterPID = Datamodel.makeWikidataPropertyIdValue("P2305");
+    public static Value conflictingItemValue1 = Datamodel.makeWikidataItemIdValue("Q4167836");
+    public static Value conflictingItemValue2 = Datamodel.makeWikidataItemIdValue("Q918");
+
     @Override
     public EditScrutinizer getScrutinizer() {
         return new ConflictsWithScrutinizer();
@@ -19,37 +51,55 @@ public class ConflictsWithScrutinizerTest extends ScrutinizerTest {
     public void testTrigger() {
         ItemIdValue idA = TestingData.existingId;
 
-        PropertyIdValue conflictsWithPid = MockConstraintFetcher.conflictsWithPid;
-        Value conflictsWithValue = MockConstraintFetcher.conflictsWithStatementValue;
-
-        PropertyIdValue propertyWithConflictsPid = MockConstraintFetcher.conflictingStatementPid;
-        Value conflictingValue  = MockConstraintFetcher.conflictingStatementValue;
-
         ValueSnak value1 = Datamodel.makeValueSnak(conflictsWithPid, conflictsWithValue);
-        ValueSnak value2 = Datamodel.makeValueSnak(propertyWithConflictsPid, conflictingValue);
+        ValueSnak value2 = Datamodel.makeValueSnak(propertyWithConflictsPid1, conflictingValue1);
 
-        Statement statement1 = new StatementImpl("P50", value1,idA);
+        Statement statement1 = new StatementImpl("P2002", value1,idA);
         Statement statement2 = new StatementImpl("P31", value2,idA);
 
         ItemUpdate updateA = new ItemUpdateBuilder(idA).addStatement(statement1).addStatement(statement2).build();
 
+        Snak snak1 = Datamodel.makeValueSnak(propertyParameterPID, conflictingPropertyValue1);
+        Snak snak2 = Datamodel.makeValueSnak(itemParameterPID, conflictingItemValue1);
+        List<Snak> snakList1 = Collections.singletonList(snak1);
+        List<Snak> snakList2 = Collections.singletonList(snak2);
+        SnakGroup snakGroup1 = Datamodel.makeSnakGroup(snakList1);
+        SnakGroup snakGroup2 = Datamodel.makeSnakGroup(snakList2);
+        List<SnakGroup> snakGroupList = Arrays.asList(snakGroup1, snakGroup2);
+        List<Statement> statementList = constraintParameterStatementList(entityIdValue, snakGroupList);
+
+        ConstraintFetcher fetcher = mock(ConstraintFetcher.class);
+        when(fetcher.getConstraintsByType(conflictsWithPid, "Q21502838")).thenReturn(statementList);
+
+        setFetcher(fetcher);
         scrutinize(updateA);
         assertWarningsRaised(ConflictsWithScrutinizer.type);
     }
 
     @Test
     public void testNoIssue() {
-        ItemIdValue idA = TestingData.existingId;
+        ItemIdValue id = TestingData.existingId;
 
-        PropertyIdValue conflictsWithPid = MockConstraintFetcher.conflictsWithPid;
-        Value conflictsWithValue = MockConstraintFetcher.conflictsWithStatementValue;
+        ValueSnak value = Datamodel.makeValueSnak(conflictsWithPid, conflictsWithValue);
 
-        ValueSnak value1 = Datamodel.makeValueSnak(conflictsWithPid, conflictsWithValue);
+        Statement statement = new StatementImpl("P2002", value,id);
 
-        Statement statement1 = new StatementImpl("P50", value1,idA);
+        ItemUpdate update = new ItemUpdateBuilder(id).addStatement(statement).build();
 
-        ItemUpdate updateA = new ItemUpdateBuilder(idA).addStatement(statement1).build();
-        scrutinize(updateA);
+        Snak snak1 = Datamodel.makeValueSnak(propertyParameterPID, conflictingPropertyValue1);
+        Snak snak2 = Datamodel.makeValueSnak(itemParameterPID, conflictingItemValue1);
+        List<Snak> snakList1 = Collections.singletonList(snak1);
+        List<Snak> snakList2 = Collections.singletonList(snak2);
+        SnakGroup snakGroup1 = Datamodel.makeSnakGroup(snakList1);
+        SnakGroup snakGroup2 = Datamodel.makeSnakGroup(snakList2);
+        List<SnakGroup> snakGroupList = Arrays.asList(snakGroup1, snakGroup2);
+        List<Statement> statementList = constraintParameterStatementList(entityIdValue, snakGroupList);
+
+        ConstraintFetcher fetcher = mock(ConstraintFetcher.class);
+        when(fetcher.getConstraintsByType(conflictsWithPid, "Q21502838")).thenReturn(statementList);
+
+        setFetcher(fetcher);
+        scrutinize(update);
         assertNoWarningRaised();
     }
 
@@ -57,21 +107,82 @@ public class ConflictsWithScrutinizerTest extends ScrutinizerTest {
     public void testNoValueSnak() {
         ItemIdValue idA = TestingData.existingId;
 
-        PropertyIdValue conflictsWithPid = MockConstraintFetcher.conflictsWithPid;
-        Value conflictsWithValue = MockConstraintFetcher.conflictsWithStatementValue;
-
-        PropertyIdValue propertyWithConflictsPid = MockConstraintFetcher.conflictingStatementPid;
-
         ValueSnak value1 = Datamodel.makeValueSnak(conflictsWithPid, conflictsWithValue);
-        NoValueSnak value2 = Datamodel.makeNoValueSnak(propertyWithConflictsPid);
+        NoValueSnak value2 = Datamodel.makeNoValueSnak(propertyWithConflictsPid1);
 
-        Statement statement1 = new StatementImpl("P50", value1,idA);
+        Statement statement1 = new StatementImpl("P2002", value1,idA);
         Statement statement2 = new StatementImpl("P31", value2,idA);
 
         ItemUpdate updateA = new ItemUpdateBuilder(idA).addStatement(statement1).addStatement(statement2).build();
 
+        Snak snak1 = Datamodel.makeValueSnak(propertyParameterPID, conflictingPropertyValue1);
+        Snak snak2 = Datamodel.makeValueSnak(itemParameterPID, conflictingItemValue1);
+        List<Snak> snakList1 = Collections.singletonList(snak1);
+        List<Snak> snakList2 = Collections.singletonList(snak2);
+        SnakGroup snakGroup1 = Datamodel.makeSnakGroup(snakList1);
+        SnakGroup snakGroup2 = Datamodel.makeSnakGroup(snakList2);
+        List<SnakGroup> snakGroupList = Arrays.asList(snakGroup1, snakGroup2);
+        List<Statement> statementList = constraintParameterStatementList(entityIdValue, snakGroupList);
+
+        ConstraintFetcher fetcher = mock(ConstraintFetcher.class);
+        when(fetcher.getConstraintsByType(conflictsWithPid, "Q21502838")).thenReturn(statementList);
+
+        setFetcher(fetcher);
         scrutinize(updateA);
         assertNoWarningRaised();
+    }
+
+    @Test
+    public void testNoStatement() {
+        ItemIdValue idA = TestingData.existingId;
+
+        ValueSnak valueSnak = Datamodel.makeValueSnak(propertyWithConflictsPid1, conflictingValue1);
+
+        Statement statement = new StatementImpl("P31", valueSnak,idA);
+
+        ItemUpdate updateA = new ItemUpdateBuilder(idA).addStatement(statement).build();
+
+        List<Statement> statementList = new ArrayList<>();
+
+        ConstraintFetcher fetcher = mock(ConstraintFetcher.class);
+        when(fetcher.getConstraintsByType(propertyWithConflictsPid1, "Q21502838")).thenReturn(statementList);
+
+        setFetcher(fetcher);
+        scrutinize(updateA);
+        assertNoWarningRaised();
+    }
+
+    @Test
+    public void testMultipleConstraints() {
+        ItemIdValue idA = TestingData.existingId;
+
+        ValueSnak value1 = Datamodel.makeValueSnak(conflictsWithPid, conflictsWithValue);
+        ValueSnak value2 = Datamodel.makeValueSnak(propertyWithConflictsPid1, conflictingValue1);
+        ValueSnak value3 = Datamodel.makeValueSnak(propertyWithConflictsPid2, conflictingValue2);
+
+        Statement statement1 = new StatementImpl("P2002", value1, idA);
+        Statement statement2 = new StatementImpl("P31", value2, idA);
+        Statement statement3 = new StatementImpl("P553", value3, idA);
+
+        ItemUpdate updateA = new ItemUpdateBuilder(idA).addStatement(statement1).addStatement(statement2).addStatement(statement3).build();
+
+        Snak propertySnak1 = Datamodel.makeValueSnak(propertyParameterPID, conflictingPropertyValue1);
+        Snak itemSnak1 = Datamodel.makeValueSnak(itemParameterPID, conflictingItemValue1);
+        Snak propertySnak2 = Datamodel.makeValueSnak(propertyParameterPID, conflictingPropertyValue2);
+        Snak itemSnak2 = Datamodel.makeValueSnak(itemParameterPID, conflictingItemValue2);
+        List<Snak> snakList1 = Arrays.asList(propertySnak1, propertySnak2);
+        List<Snak> snakList2 = Arrays.asList(itemSnak1, itemSnak2);
+        SnakGroup snakGroup1 = Datamodel.makeSnakGroup(snakList1);
+        SnakGroup snakGroup2 = Datamodel.makeSnakGroup(snakList2);
+        List<SnakGroup> snakGroupList = Arrays.asList(snakGroup1, snakGroup2);
+        List<Statement> statementList = constraintParameterStatementList(entityIdValue, snakGroupList);
+
+        ConstraintFetcher fetcher = mock(ConstraintFetcher.class);
+        when(fetcher.getConstraintsByType(conflictsWithPid, "Q21502838")).thenReturn(statementList);
+
+        setFetcher(fetcher);
+        scrutinize(updateA);
+        assertWarningsRaised(ConflictsWithScrutinizer.type, ConflictsWithScrutinizer.type);
     }
 
 }

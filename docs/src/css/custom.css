@@ -1,0 +1,18 @@
+/**
+ * You can override the default Infima variables here.
+ * Note: this is not a complete list of --ifm- variables.
+ */
+
+ /**
+ * Colors extracted from our OpenRefine logo
+ */
+ :root {
+    --ifm-color-primary: #00a0ff;
+    --ifm-color-primary-dark: #0078ff;
+    --ifm-color-primary-darker: #0050ac;
+    --ifm-color-primary-darkest: #003b7e;
+    --ifm-color-primary-light: #00b4ff;
+    --ifm-color-primary-lighter: #2da6d1;
+    --ifm-color-primary-lightest: #00dcff;
+    --ifm-color-secondary: #999999;
+  }

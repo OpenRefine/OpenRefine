@@ -45,6 +45,7 @@ import org.slf4j.LoggerFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.refine.ProjectMetadata;
 import com.google.refine.importers.ImporterUtilities.MultiFileReadingProgress;
+import com.google.refine.importing.EncodingGuesser;
 import com.google.refine.importing.ImportingJob;
 import com.google.refine.importing.ImportingParser;
 import com.google.refine.importing.ImportingUtilities;
@@ -72,7 +73,7 @@ abstract public class ImportingParserBase implements ImportingParser {
         ObjectNode options = ParsingUtilities.mapper.createObjectNode();
         JSONUtilities.safePut(options, "includeFileSources", fileRecords.size() > 1);
         JSONUtilities.safePut(options, "includeArchiveFileName", ImportingUtilities.hasArchiveFileField(fileRecords));
-
+        EncodingGuesser.guessInitialEncoding(fileRecords, options);
         return options;
     }
     

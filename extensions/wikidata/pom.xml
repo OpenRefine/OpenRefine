@@ -16,7 +16,7 @@
 
   <properties>
     <powermock.version>2.0.7</powermock.version>
-    <wdtk.version>0.11.1</wdtk.version>
+    <wdtk.version>0.12.0-SNAPSHOT</wdtk.version>
   </properties>
 
   <build>
@@ -37,7 +37,7 @@
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>build-helper-maven-plugin</artifactId>
-        <version>1.8</version>
+        <version>3.2.0</version>
         <executions>
           <execution>
             <phase>generate-sources</phase>
@@ -66,7 +66,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-resources-plugin</artifactId>
-        <version>2.6</version>
+        <version>3.1.0</version>
         <configuration>
           <encoding>UTF-8</encoding>
         </configuration>
@@ -127,17 +127,17 @@
       <scope>provided</scope>
     </dependency>
     <dependency>
-      <groupId>org.wikidata.wdtk</groupId>
+      <groupId>org.openrefine.dependencies.wdtk</groupId>
       <artifactId>wdtk-wikibaseapi</artifactId>
       <version>${wdtk.version}</version>
     </dependency>
     <dependency>
-      <groupId>org.wikidata.wdtk</groupId>
+      <groupId>org.openrefine.dependencies.wdtk</groupId>
       <artifactId>wdtk-datamodel</artifactId>
       <version>${wdtk.version}</version>
     </dependency>
     <dependency>
-      <groupId>org.wikidata.wdtk</groupId>
+      <groupId>org.openrefine.dependencies.wdtk</groupId>
       <artifactId>wdtk-util</artifactId>
       <version>${wdtk.version}</version>
     </dependency>
