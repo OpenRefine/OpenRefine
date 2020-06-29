@@ -14,7 +14,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 public class ConflictsWithScrutinizer extends EditScrutinizer {
 
@@ -65,7 +64,7 @@ public class ConflictsWithScrutinizer extends EditScrutinizer {
         }
 
         for(PropertyIdValue propertyId : propertyIdValueValueMap.keySet()){
-            List<Statement> statementList = _fetcher.getConstraintsByType(propertyId, CONFLICTS_WITH_CONSTRAINT_QID).collect(Collectors.toList());
+            List<Statement> statementList = _fetcher.getConstraintsByType(propertyId, CONFLICTS_WITH_CONSTRAINT_QID);
             for (Statement statement : statementList) {
                 ConflictsWithConstraint constraint = new ConflictsWithConstraint(statement);
                 PropertyIdValue conflictingPid = constraint.conflictingPid;

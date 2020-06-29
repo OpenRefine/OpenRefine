@@ -42,7 +42,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 public class MockConstraintFetcher implements ConstraintFetcher {
 
@@ -220,7 +219,7 @@ public class MockConstraintFetcher implements ConstraintFetcher {
     }
 
     @Override
-    public Stream<Statement> getConstraintsByType(PropertyIdValue pid, String qid) {
+    public List<Statement> getConstraintsByType(PropertyIdValue pid, String qid) {
         EntityIdValue entityIdValue = Datamodel.makeWikidataItemIdValue("Q21502838");
         PropertyIdValue propertyIdValue = Datamodel.makeWikidataPropertyIdValue("P2302");
         Snak snak = Datamodel.makeValueSnak(propertyIdValue,entityIdValue);
@@ -247,8 +246,6 @@ public class MockConstraintFetcher implements ConstraintFetcher {
         Statement statement = Datamodel.makeStatement(claim, referenceList, StatementRank.NORMAL, "P2302$77BD7FE4-C051-4776-855C-543F0CE697D0");
         List<Statement> statements = Collections.singletonList(statement);
 
-        return statements.stream()
-                .filter(s -> s.getValue() != null && ((EntityIdValue) s.getValue()).getId().equals(qid))
-                .filter(s -> !StatementRank.DEPRECATED.equals(s.getRank()));
+        return statements;
     }
 }

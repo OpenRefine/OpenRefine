@@ -21,7 +21,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.stream.Stream;
 
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -67,10 +66,10 @@ public class ConflictsWithScrutinizerTest extends ScrutinizerTest {
         SnakGroup snakGroup1 = Datamodel.makeSnakGroup(snakList1);
         SnakGroup snakGroup2 = Datamodel.makeSnakGroup(snakList2);
         List<SnakGroup> snakGroupList = Arrays.asList(snakGroup1, snakGroup2);
-        Stream<Statement> statementStream = constraintParameterStatementStream(entityIdValue, snakGroupList);
+        List<Statement> statementList = constraintParameterStatementList(entityIdValue, snakGroupList);
 
         ConstraintFetcher fetcher = mock(ConstraintFetcher.class);
-        when(fetcher.getConstraintsByType(conflictsWithPid, "Q21502838")).thenReturn(statementStream);
+        when(fetcher.getConstraintsByType(conflictsWithPid, "Q21502838")).thenReturn(statementList);
 
         setFetcher(fetcher);
         scrutinize(updateA);
@@ -94,10 +93,10 @@ public class ConflictsWithScrutinizerTest extends ScrutinizerTest {
         SnakGroup snakGroup1 = Datamodel.makeSnakGroup(snakList1);
         SnakGroup snakGroup2 = Datamodel.makeSnakGroup(snakList2);
         List<SnakGroup> snakGroupList = Arrays.asList(snakGroup1, snakGroup2);
-        Stream<Statement> statementStream = constraintParameterStatementStream(entityIdValue, snakGroupList);
+        List<Statement> statementList = constraintParameterStatementList(entityIdValue, snakGroupList);
 
         ConstraintFetcher fetcher = mock(ConstraintFetcher.class);
-        when(fetcher.getConstraintsByType(conflictsWithPid, "Q21502838")).thenReturn(statementStream);
+        when(fetcher.getConstraintsByType(conflictsWithPid, "Q21502838")).thenReturn(statementList);
 
         setFetcher(fetcher);
         scrutinize(update);
@@ -123,10 +122,10 @@ public class ConflictsWithScrutinizerTest extends ScrutinizerTest {
         SnakGroup snakGroup1 = Datamodel.makeSnakGroup(snakList1);
         SnakGroup snakGroup2 = Datamodel.makeSnakGroup(snakList2);
         List<SnakGroup> snakGroupList = Arrays.asList(snakGroup1, snakGroup2);
-        Stream<Statement> statementStream = constraintParameterStatementStream(entityIdValue, snakGroupList);
+        List<Statement> statementList = constraintParameterStatementList(entityIdValue, snakGroupList);
 
         ConstraintFetcher fetcher = mock(ConstraintFetcher.class);
-        when(fetcher.getConstraintsByType(conflictsWithPid, "Q21502838")).thenReturn(statementStream);
+        when(fetcher.getConstraintsByType(conflictsWithPid, "Q21502838")).thenReturn(statementList);
 
         setFetcher(fetcher);
         scrutinize(updateA);
@@ -143,11 +142,10 @@ public class ConflictsWithScrutinizerTest extends ScrutinizerTest {
 
         ItemUpdate updateA = new ItemUpdateBuilder(idA).addStatement(statement).build();
 
-        List<Statement> statements = new ArrayList<>();
-        Stream<Statement> statementStream =  statements.stream();
+        List<Statement> statementList = new ArrayList<>();
 
         ConstraintFetcher fetcher = mock(ConstraintFetcher.class);
-        when(fetcher.getConstraintsByType(propertyWithConflictsPid1, "Q21502838")).thenReturn(statementStream);
+        when(fetcher.getConstraintsByType(propertyWithConflictsPid1, "Q21502838")).thenReturn(statementList);
 
         setFetcher(fetcher);
         scrutinize(updateA);
@@ -177,10 +175,10 @@ public class ConflictsWithScrutinizerTest extends ScrutinizerTest {
         SnakGroup snakGroup1 = Datamodel.makeSnakGroup(snakList1);
         SnakGroup snakGroup2 = Datamodel.makeSnakGroup(snakList2);
         List<SnakGroup> snakGroupList = Arrays.asList(snakGroup1, snakGroup2);
-        Stream<Statement> statementStream = constraintParameterStatementStream(entityIdValue, snakGroupList);
+        List<Statement> statementList = constraintParameterStatementList(entityIdValue, snakGroupList);
 
         ConstraintFetcher fetcher = mock(ConstraintFetcher.class);
-        when(fetcher.getConstraintsByType(conflictsWithPid, "Q21502838")).thenReturn(statementStream);
+        when(fetcher.getConstraintsByType(conflictsWithPid, "Q21502838")).thenReturn(statementList);
 
         setFetcher(fetcher);
         scrutinize(updateA);

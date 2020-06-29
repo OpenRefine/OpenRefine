@@ -44,7 +44,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertTrue;
@@ -96,7 +95,7 @@ public abstract class ScrutinizerTest {
         scrutinizer.setFetcher(fetcher);
     }
 
-    public Stream<Statement> constraintParameterStatementStream(ItemIdValue itemIdValue, List<SnakGroup> listSnakGroup) {
+    public List<Statement> constraintParameterStatementList(ItemIdValue itemIdValue, List<SnakGroup> listSnakGroup) {
         PropertyIdValue propertyIdValue = Datamodel.makeWikidataPropertyIdValue("P2302");
         Snak snakValue = Datamodel.makeValueSnak(propertyIdValue,itemIdValue);
 
@@ -108,7 +107,7 @@ public abstract class ScrutinizerTest {
         Statement statement = Datamodel.makeStatement(claim, referenceList, StatementRank.NORMAL, "P2302$77BD7FE4-C051-4776-855C-543F0CE697D0");
         List<Statement> statements = Collections.singletonList(statement);
 
-        return statements.stream();
+        return statements;
     }
 
 }
