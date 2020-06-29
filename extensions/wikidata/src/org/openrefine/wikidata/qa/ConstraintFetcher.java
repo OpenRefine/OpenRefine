@@ -29,8 +29,8 @@ import org.wikidata.wdtk.datamodel.interfaces.QuantityValue;
 import org.wikidata.wdtk.datamodel.interfaces.Statement;
 import org.wikidata.wdtk.datamodel.interfaces.Value;
 
+import java.util.List;
 import java.util.Set;
-import java.util.stream.Stream;
 
 /**
  * An object that fetches constraints about properties.
@@ -150,9 +150,9 @@ public interface ConstraintFetcher {
      *            the property to retrieve the constraints for
      * @param qid
      *            the type of the constraints
-     * @return the stream of matching constraint statements
+     * @return the list of matching constraint statements
      */
-    Stream<Statement> getConstraintsByType(PropertyIdValue pid, String qid);
+    List<Statement> getConstraintsByType(PropertyIdValue pid, String qid);
 
     /**
      * Retrieves the lower bound of the range

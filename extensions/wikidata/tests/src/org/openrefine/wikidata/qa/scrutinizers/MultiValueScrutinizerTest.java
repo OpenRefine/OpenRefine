@@ -16,7 +16,6 @@ import org.wikidata.wdtk.datamodel.interfaces.Value;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.stream.Stream;
 
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -50,9 +49,9 @@ public class MultiValueScrutinizerTest extends ScrutinizerTest {
         List<Snak> snakList1 = Collections.singletonList(snak);
         SnakGroup snakGroup = Datamodel.makeSnakGroup(snakList1);
         List<SnakGroup> snakGroupList = Collections.singletonList(snakGroup);
-        Stream<Statement> statementStream = constraintParameterStatementStream(entityIdValue, snakGroupList);
+        List<Statement> statementList = constraintParameterStatementList(entityIdValue, snakGroupList);
         ConstraintFetcher fetcher = mock(ConstraintFetcher.class);
-        when(fetcher.getConstraintsByType(propertyIdValue, "Q21510857")).thenReturn(statementStream);
+        when(fetcher.getConstraintsByType(propertyIdValue, "Q21510857")).thenReturn(statementList);
         setFetcher(fetcher);
 
         scrutinize(update);
@@ -72,9 +71,9 @@ public class MultiValueScrutinizerTest extends ScrutinizerTest {
         List<Snak> snakList1 = Collections.singletonList(snak);
         SnakGroup snakGroup = Datamodel.makeSnakGroup(snakList1);
         List<SnakGroup> snakGroupList = Collections.singletonList(snakGroup);
-        Stream<Statement> statementStream = constraintParameterStatementStream(entityIdValue, snakGroupList);
+        List<Statement> statementList = constraintParameterStatementList(entityIdValue, snakGroupList);
         ConstraintFetcher fetcher = mock(ConstraintFetcher.class);
-        when(fetcher.getConstraintsByType(propertyIdValue, "Q21510857")).thenReturn(statementStream);
+        when(fetcher.getConstraintsByType(propertyIdValue, "Q21510857")).thenReturn(statementList);
         setFetcher(fetcher);
 
         scrutinize(updateA, updateB);
@@ -94,9 +93,9 @@ public class MultiValueScrutinizerTest extends ScrutinizerTest {
         List<Snak> snakList1 = Collections.singletonList(snak);
         SnakGroup snakGroup = Datamodel.makeSnakGroup(snakList1);
         List<SnakGroup> snakGroupList = Collections.singletonList(snakGroup);
-        Stream<Statement> statementStream = constraintParameterStatementStream(entityIdValue, snakGroupList);
+        List<Statement> statementList = constraintParameterStatementList(entityIdValue, snakGroupList);
         ConstraintFetcher fetcher = mock(ConstraintFetcher.class);
-        when(fetcher.getConstraintsByType(propertyIdValue, "Q21510857")).thenReturn(statementStream);
+        when(fetcher.getConstraintsByType(propertyIdValue, "Q21510857")).thenReturn(statementList);
         setFetcher(fetcher);
 
         scrutinize(updateA, updateB);

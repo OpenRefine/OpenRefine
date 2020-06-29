@@ -40,14 +40,13 @@ public class MultiValueScrutinizer extends EditScrutinizer {
 
         for (Statement statement : update.getAddedStatements()) {
             PropertyIdValue pid = statement.getClaim().getMainSnak().getPropertyId();
+            List<Statement> statementList = _fetcher.getConstraintsByType(pid, MULTI_VALUE_CONSTRAINT_QID);
             if (propertyCount.containsKey(pid)) {
                 propertyCount.put(pid, propertyCount.get(pid) + 1);
-            } else {
-                Statement constraintStatement = _fetcher.getConstraintsByType(pid, MULTI_VALUE_CONSTRAINT_QID).findFirst().orElse(null);
-                if (constraintStatement != null) {
-                    MultivalueConstraint constraint = new MultivalueConstraint(constraintStatement);
-                    propertyCount.put(pid, 1);
-                }
+            } else if (!statementList.isEmpty()) {
+                Statement constraintStatement = statementList.get(0);
+                MultivalueConstraint constraint = new MultivalueConstraint(constraintStatement);
+                propertyCount.put(pid, 1);
             }
         }
 

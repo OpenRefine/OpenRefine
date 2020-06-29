@@ -281,9 +281,12 @@ public class WikidataConstraintFetcher implements ConstraintFetcher {
      *         exist
      */
     protected List<SnakGroup> getSingleConstraint(PropertyIdValue pid, String qid) {
-        Statement statement = getConstraintsByType(pid, qid).findFirst().orElse(null);
-        if (statement != null) {
-            return statement.getClaim().getQualifiers();
+        List<Statement> statementList = getConstraintsByType(pid, qid);
+        if (!statementList.isEmpty()) {
+            Statement statement = statementList.get(0);
+            if (statement != null) {
+                return statement.getClaim().getQualifiers();
+            }
         }
         return null;
     }
@@ -295,14 +298,14 @@ public class WikidataConstraintFetcher implements ConstraintFetcher {
      *            the property to retrieve the constraints for
      * @param qid
      *            the type of the constraints
-     * @return the stream of matching constraint statements
+     * @return the list of matching constraint statements
      */
     @Override
-    public Stream<Statement> getConstraintsByType(PropertyIdValue pid, String qid) {
+    public List<Statement> getConstraintsByType(PropertyIdValue pid, String qid) {
         Stream<Statement> allConstraints = getConstraintStatements(pid).stream()
                 .filter(s -> s.getValue() != null && ((EntityIdValue) s.getValue()).getId().equals(qid))
                 .filter(s -> !StatementRank.DEPRECATED.equals(s.getRank()));
-        return allConstraints;
+        return allConstraints.collect(Collectors.toList());
     }
 
     /**
