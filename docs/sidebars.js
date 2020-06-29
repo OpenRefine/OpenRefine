@@ -1,12 +1,12 @@
 module.exports = {
   docs: {
+    'index';
     'Getting Started': [
-      'index',
       'manual/install',
       'manual/user_data',
       'manual/records_mode'
     ],
-    'manual/startaproject.md',
+    'manual/startaproject';
     'Operations': [
         'manual/operations/transform',
         'manual/operations/add_column',
