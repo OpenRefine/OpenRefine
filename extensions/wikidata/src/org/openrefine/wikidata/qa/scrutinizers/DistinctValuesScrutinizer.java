@@ -23,7 +23,6 @@
  ******************************************************************************/
 package org.openrefine.wikidata.qa.scrutinizers;
 
-import org.openrefine.wikidata.qa.Constraint;
 import org.openrefine.wikidata.qa.QAWarning;
 import org.wikidata.wdtk.datamodel.interfaces.EntityIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.PropertyIdValue;
@@ -31,6 +30,7 @@ import org.wikidata.wdtk.datamodel.interfaces.Statement;
 import org.wikidata.wdtk.datamodel.interfaces.Value;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -45,12 +45,6 @@ public class DistinctValuesScrutinizer extends StatementScrutinizer {
     public final static String type = "identical-values-for-distinct-valued-property";
     public static String DISTINCT_VALUES_CONSTRAINT_QID = "Q21502410";
 
-    class DistinctValueConstraint extends Constraint {
-        DistinctValueConstraint(Statement statement) {
-            super(statement);
-        }
-    }
-
     private Map<PropertyIdValue, Map<Value, EntityIdValue>> _seenValues;
 
     public DistinctValuesScrutinizer() {
@@ -60,13 +54,8 @@ public class DistinctValuesScrutinizer extends StatementScrutinizer {
     @Override
     public void scrutinize(Statement statement, EntityIdValue entityId, boolean added) {
         PropertyIdValue pid = statement.getClaim().getMainSnak().getPropertyId();
-        Statement constraintStatement = null;
-        if (!_seenValues.containsKey(pid)) {
-            constraintStatement = _fetcher.getConstraintsByType(pid, DISTINCT_VALUES_CONSTRAINT_QID).findFirst().orElse(null);
-        }
-
-        if (constraintStatement != null) {
-            DistinctValueConstraint constraint = new DistinctValueConstraint(constraintStatement);
+        List<Statement> statementList = _fetcher.getConstraintsByType(pid, DISTINCT_VALUES_CONSTRAINT_QID);
+        if (!statementList.isEmpty()) {
             Value mainSnakValue = statement.getClaim().getMainSnak().getValue();
             Map<Value, EntityIdValue> seen = _seenValues.get(pid);
             if (seen == null) {

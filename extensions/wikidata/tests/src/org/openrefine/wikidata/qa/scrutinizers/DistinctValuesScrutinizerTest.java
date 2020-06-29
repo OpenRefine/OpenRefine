@@ -39,7 +39,6 @@ import org.wikidata.wdtk.datamodel.interfaces.Value;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Stream;
 
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -67,14 +66,14 @@ public class DistinctValuesScrutinizerTest extends StatementScrutinizerTest {
         ItemUpdate update = new ItemUpdateBuilder(idA).addStatement(statement1).addStatement(statement2).build();
 
         List<SnakGroup> snakGroupList = new ArrayList<>();
-        Stream<Statement> statementStream = constraintParameterStatementStream(entityIdValue, snakGroupList);
+        List<Statement> statementList = constraintParameterStatementList(entityIdValue, snakGroupList);
 
         ConstraintFetcher fetcher = mock(ConstraintFetcher.class);
-        when(fetcher.getConstraintsByType(propertyIdValue, "Q21502410")).thenReturn(statementStream);
+        when(fetcher.getConstraintsByType(propertyIdValue, "Q21502410")).thenReturn(statementList);
         setFetcher(fetcher);
 
         scrutinize(update);
-//        assertWarningsRaised(DistinctValuesScrutinizer.type);
+        assertWarningsRaised(DistinctValuesScrutinizer.type);
     }
 
     @Test
@@ -88,10 +87,10 @@ public class DistinctValuesScrutinizerTest extends StatementScrutinizerTest {
         ItemUpdate update = new ItemUpdateBuilder(idA).addStatement(statement1).addStatement(statement2).build();
 
         List<SnakGroup> snakGroupList = new ArrayList<>();
-        Stream<Statement> statementStream = constraintParameterStatementStream(entityIdValue, snakGroupList);
+        List<Statement> statementList = constraintParameterStatementList(entityIdValue, snakGroupList);
 
         ConstraintFetcher fetcher = mock(ConstraintFetcher.class);
-        when(fetcher.getConstraintsByType(propertyIdValue, "Q21502410")).thenReturn(statementStream);
+        when(fetcher.getConstraintsByType(propertyIdValue, "Q21502410")).thenReturn(statementList);
         setFetcher(fetcher);
 
         scrutinize(update);
