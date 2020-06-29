@@ -238,7 +238,6 @@ function registerImporting() {
   
   
   IM.registerExtension(".txt", "text");
-  IM.registerExtension(".json.txt", "text/json");
   IM.registerExtension(".csv", "text/line-based/*sv");
   IM.registerExtension(".tsv", "text/line-based/*sv");
 
