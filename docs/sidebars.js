@@ -6,11 +6,7 @@ module.exports = {
       'manual/user_data',
       'manual/records_mode'
     ],
-    'Importing Data': [
-       'manual/importers/csv',
-       'manual/importers/json',
-       'manual/importers/xml'
-    ],
+    'manual/startaproject.md',
     'Operations': [
         'manual/operations/transform',
         'manual/operations/add_column',
