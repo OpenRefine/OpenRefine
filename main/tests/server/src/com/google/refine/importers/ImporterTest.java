@@ -27,6 +27,7 @@
 package com.google.refine.importers;
 
 import static org.mockito.Mockito.when;
+import static org.testng.Assert.assertEquals;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -85,6 +86,7 @@ public abstract class ImporterTest extends RefineTest {
     }
     
     protected void parseOneFile(ImportingParserBase parser, Reader reader) {
+        List<Exception> exceptions = new ArrayList<Exception>();
         parser.parseOneFile(
             project,
             metadata,
@@ -94,12 +96,14 @@ public abstract class ImporterTest extends RefineTest {
             reader,
             -1,
             options,
-            new ArrayList<Exception>()
+            exceptions
         );
+        assertEquals(exceptions.size(), 0);
         project.update();
     }
     
     protected void parseOneFile(ImportingParserBase parser, InputStream inputStream) {
+        List<Exception> exceptions = new ArrayList<Exception>();
         parser.parseOneFile(
             project,
             metadata,
@@ -109,13 +113,32 @@ public abstract class ImporterTest extends RefineTest {
             inputStream,
             -1,
             options,
-            new ArrayList<Exception>()
+            exceptions
         );
+        assertEquals(exceptions.size(), 0);
         project.update();
     }
-    
+
+    protected List<Exception> parseOneFileAndReturnExceptions(ImportingParserBase parser, InputStream inputStream) {
+        List<Exception> exceptions = new ArrayList<Exception>();
+        parser.parseOneFile(
+            project,
+            metadata,
+            job,
+            "file-source",
+            "archive-file",
+            inputStream,
+            -1,
+            options,
+            exceptions
+        );
+        project.update();
+        return exceptions;
+    }
+
     protected void parseOneFile(TreeImportingParserBase parser, Reader reader) {
         ImportColumnGroup rootColumnGroup = new ImportColumnGroup();
+        List<Exception> exceptions = new ArrayList<Exception>();
         parser.parseOneFile(
             project,
             metadata,
@@ -126,8 +149,9 @@ public abstract class ImporterTest extends RefineTest {
             rootColumnGroup,
             -1,
             options,
-            new ArrayList<Exception>()
+            exceptions
         );
+        assertEquals(exceptions.size(), 0);
         XmlImportUtilities.createColumnsFromImport(project, rootColumnGroup);
         project.columnModel.update();
     }
@@ -192,5 +216,6 @@ public abstract class ImporterTest extends RefineTest {
         for (Exception e : exceptions) {
             e.printStackTrace();
         }
+        assertEquals(exceptions.size(), 0);
     }
 }
