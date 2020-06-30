@@ -311,7 +311,7 @@ function registerImporting() {
    */
   IM.registerFormatGuesser("text", new Packages.com.google.refine.importers.TextFormatGuesser());
   IM.registerFormatGuesser("text/line-based", new Packages.com.google.refine.importers.LineBasedFormatGuesser());
-
+  
   /*
    *  Controllers: these implement high-level UI flows for importing data. For example, the default
    *  controller lets the user specify one or more source files, either local or remote or on the clipboard,
