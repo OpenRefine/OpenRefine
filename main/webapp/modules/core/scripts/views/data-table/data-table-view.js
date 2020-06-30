@@ -509,6 +509,8 @@ DataTableView.prototype._renderDataTables = function(table, tableHeader) {
   this._sizeSinglePage = this._sizeRowFirst * this._pageSize;
   document.querySelector('.data-table tbody').insertRow(0).setAttribute('class', 'first-row');
   this._headerTop = $('thead').offset().top + $('thead').height();
+  this._pageStart = 0;
+  this._totalSize = this._pageSize;
   this._adjustNextSetClasses();
 
   var flag = 0;
