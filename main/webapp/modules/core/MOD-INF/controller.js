@@ -235,7 +235,7 @@ function registerImporting() {
   /*
    *  Extension to format mappings
    */
-  IM.registerExtension(".txt", "text/line-based");
+  IM.registerExtension(".txt", "text");
   IM.registerExtension(".csv", "text/line-based/*sv");
   IM.registerExtension(".tsv", "text/line-based/*sv");
 
@@ -267,6 +267,7 @@ function registerImporting() {
    *  Mime type to format mappings
    */
   IM.registerMimeType("text/plain", "text/line-based");
+  IM.registerMimeType("text/plain", "text");
   IM.registerMimeType("text/csv", "text/line-based/*sv");
   IM.registerMimeType("text/x-csv", "text/line-based/*sv");
   IM.registerMimeType("text/tab-separated-value", "text/line-based/*sv");
