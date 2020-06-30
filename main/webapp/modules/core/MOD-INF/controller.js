@@ -269,6 +269,7 @@ function registerImporting() {
    *  Mime type to format mappings
    */
   IM.registerMimeType("text/plain", "text/line-based");
+  IM.registerMimeType("text/plain", "text");
   IM.registerMimeType("text/csv", "text/line-based/*sv");
   IM.registerMimeType("text/x-csv", "text/line-based/*sv");
   IM.registerMimeType("text/tab-separated-value", "text/line-based/*sv");
@@ -312,7 +313,7 @@ function registerImporting() {
    */
   IM.registerFormatGuesser("text", new Packages.com.google.refine.importers.TextFormatGuesser());
   IM.registerFormatGuesser("text/line-based", new Packages.com.google.refine.importers.LineBasedFormatGuesser());
-  IM.registerFormatGuesser("text/line-based", new Packages.com.google.refine.importers.TextFormatGuesser());
+  
   /*
    *  Controllers: these implement high-level UI flows for importing data. For example, the default
    *  controller lets the user specify one or more source files, either local or remote or on the clipboard,
