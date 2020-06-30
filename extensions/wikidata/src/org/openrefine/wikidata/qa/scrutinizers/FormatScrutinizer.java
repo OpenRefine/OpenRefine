@@ -27,9 +27,13 @@ import org.openrefine.wikidata.qa.QAWarning;
 import org.wikidata.wdtk.datamodel.interfaces.EntityIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.PropertyIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.Snak;
+import org.wikidata.wdtk.datamodel.interfaces.SnakGroup;
+import org.wikidata.wdtk.datamodel.interfaces.Statement;
 import org.wikidata.wdtk.datamodel.interfaces.StringValue;
+import org.wikidata.wdtk.datamodel.interfaces.Value;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 
@@ -43,6 +47,8 @@ import java.util.regex.Pattern;
 public class FormatScrutinizer extends SnakScrutinizer {
 
     public static final String type = "add-statements-with-invalid-format";
+    public static String FORMAT_CONSTRAINT_QID = "Q21502404";
+    public static String FORMAT_REGEX_PID = "P1793";
 
     private Map<PropertyIdValue, Pattern> _patterns;
 
@@ -62,7 +68,17 @@ public class FormatScrutinizer extends SnakScrutinizer {
         if (_patterns.containsKey(pid)) {
             return _patterns.get(pid);
         } else {
-            String regex = _fetcher.getFormatRegex(pid);
+            String regex = null;
+            List<Statement> statementList = _fetcher.getConstraintsByType(pid, FORMAT_CONSTRAINT_QID);
+            if (!statementList.isEmpty()){
+                List<SnakGroup> constraint = statementList.get(0).getClaim().getQualifiers();
+                if (constraint != null) {
+                    List<Value> regexes = _fetcher.findValues(constraint, FORMAT_REGEX_PID);
+                    if (!regexes.isEmpty()) {
+                        regex = ((StringValue) regexes.get(0)).getString();
+                    }
+                }
+            }
             Pattern pattern = null;
             if (regex != null) {
                 pattern = Pattern.compile(regex);
