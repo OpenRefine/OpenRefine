@@ -151,7 +151,7 @@ abstract public class TabularImportingParserBase extends ImportingParserBase {
                         ImporterUtilities.setupColumns(project, columnNames);
                     }
                 } else { // data lines
-                    Row row = new Row(columnNames.size());
+                    Row row = new Row(cells.size());
 
                     if (storeBlankRows) {
                         rowsWithData++;
