@@ -507,7 +507,7 @@ DataTableView.prototype._renderDataTables = function(table, tableHeader) {
   this._sizeRowFirst = total / this._pageSize;
   this._sizeRowsTotal = this._sizeRowFirst * theProject.metadata.rowCount;
   this._sizeSinglePage = this._sizeRowFirst * this._pageSize;
-  document.querySelector('tbody').insertRow(0).setAttribute('class', 'first-row');
+  document.querySelector('.data-table tbody').insertRow(0).setAttribute('class', 'first-row');
   this._headerTop = $('thead').offset().top + $('thead').height();
   this._adjustNextSetClasses();
 
@@ -575,19 +575,19 @@ DataTableView.prototype._adjustNextSetClasses = function(start, top) {
     heightToAddBottom = Math.max(0, this._sizeRowsTotal - (this._pageStart + 2 * this._pageSize) * this._sizeRowFirst);
   }
 
-  if($('tbody tr').length > this._pageSize + 2 && start > this._pageSize && top == null) {
+  if($('.data-table tbody tr').length > this._pageSize + 2 && start > this._pageSize && top == null) {
     console.log('Deleting above rows');
-    $('tbody tr').slice(1, $('tbody tr').length - 2 * this._pageSize).remove();
+    $('.data-table tbody tr').slice(1, $('.data-table tbody tr').length - 2 * this._pageSize).remove();
     this._pageStart = start - this._pageSize;
   }
 
-  if($('tbody tr').length > 2 * this._pageSize + 1 && top) {
+  if($('.data-table tbody tr').length > 2 * this._pageSize + 1 && top) {
     console.log('Deleting below rows');
-    $('tbody tr').slice(2 * this._pageSize + 1, $('tbody tr').length).remove();
+    $('.data-table tbody tr').slice(2 * this._pageSize + 1, $('.data-table tbody tr').length).remove();
   }
 
   var heightToAddTop = (this._pageStart) * this._sizeRowFirst;
-  $('tbody tr:first').css('height', heightToAddTop);
+  $('.data-table tbody tr:first').css('height', heightToAddTop);
 
   this._addHeights(heightToAddTop, heightToAddBottom);
 };
@@ -611,9 +611,9 @@ DataTableView.prototype._adjustNextSetClassesSpeed = function(modifiedScrollPosi
   var heightToAddTop = modifiedScrollPosition;
   var heightToAddBottom = Math.max(0, this._sizeRowsTotal - (modifiedScrollPosition + this._sizeSinglePage));
 
-  $('tbody tr').slice(1, $('tbody tr').length - this._pageSize).remove();
+  $('.data-table tbody tr').slice(1, $('.data-table tbody tr').length - this._pageSize).remove();
 
-  $('tbody tr:first').css('height', heightToAddTop);
+  $('.data-table tbody tr:first').css('height', heightToAddTop);
 
   this._addHeights(heightToAddTop, heightToAddBottom);
 };
