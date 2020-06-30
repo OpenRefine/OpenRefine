@@ -209,7 +209,19 @@ public class ExcelImporterTests extends ImporterTest {
         verify(options, times(1)).get("storeBlankCellsAsNulls");
     }
 
-	
+    @Test
+    public void readExcel95() throws FileNotFoundException, IOException{
+
+        InputStream stream = ClassLoader.getSystemResourceAsStream("excel95.xls");
+
+        try {
+            // We don't support Excel 95, but make sure we get an exception back
+            Assert.assertEquals(parseOneFileAndReturnExceptions(SUT, stream).size(), 1);
+        } catch (Exception e) {
+            Assert.fail(e.getMessage());
+        }
+    }
+
     @Test
     public void readMultiSheetXls() throws FileNotFoundException, IOException{
 
