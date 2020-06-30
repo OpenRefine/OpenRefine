@@ -248,4 +248,9 @@ public class MockConstraintFetcher implements ConstraintFetcher {
 
         return statements;
     }
+
+    @Override
+    public List<Value> findValues(List<SnakGroup> groups, String pid) {
+        return null;
+    }
 }
