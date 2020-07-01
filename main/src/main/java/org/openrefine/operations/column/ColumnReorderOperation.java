@@ -51,6 +51,7 @@ import org.openrefine.model.changes.Change.DoesNotApplyException;
 import org.openrefine.operations.ImmediateRowMapOperation;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class ColumnReorderOperation extends ImmediateRowMapOperation {
@@ -117,5 +118,12 @@ public class ColumnReorderOperation extends ImmediateRowMapOperation {
 			}
 			
 		};
+	}
+	
+	// engine config is never useful, so we remove it from the JSON serialization
+	@Override
+	@JsonIgnore
+	public EngineConfig getEngineConfig() {
+		return super.getEngineConfig();
 	}
 }

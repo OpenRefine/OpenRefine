@@ -48,6 +48,7 @@ import org.openrefine.model.changes.ChangeContext;
 import org.openrefine.operations.ImmediateRowMapOperation;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class ColumnMoveOperation extends ImmediateRowMapOperation {
@@ -119,5 +120,12 @@ public class ColumnMoveOperation extends ImmediateRowMapOperation {
 			}
 			
 		};
+	}
+	
+	// engine config is never useful, so we remove it from the JSON serialization
+	@Override
+	@JsonIgnore
+	public EngineConfig getEngineConfig() {
+		return super.getEngineConfig();
 	}
 }
