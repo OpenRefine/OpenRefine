@@ -180,13 +180,14 @@ public class SparkGridState implements GridState {
             RowSorter sorter = new RowSorter(this, sortingConfig);
             // If we have a sorter, pagination is less efficient since we cannot rely
             // on the partitioner to locate the rows in the appropriate partition
-            return filteredGrid
+            List<IndexedRow> rows = filteredGrid
                     .map(t -> new IndexedRow(t._1, t._2))
                     .keyBy(ir -> ir)
                     .sortByKey(sorter)
                     .values()
-                    .take((int) start + limit)
-                    .subList((int) start, (int) start + limit);
+                    .take((int) start + limit);
+            return rows
+                    .subList(Math.min((int) start, rows.size() - 1), Math.min((int) start + limit, rows.size() - 1));
         }
     }
 

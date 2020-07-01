@@ -90,8 +90,8 @@ public class ZippedWithIndexRDD<T> extends RDD<Tuple2<Long, T>> {
         long offset = 0L;
         for (int i = 0; i != origPartitions.length; i++) {
             newPartitions[i] = new ZippedWithIndexRDDPartition(origPartitions[i], offset);
-            if (i > 0 && i < origPartitions.length - 1) {
-                offset += partitionLengths.get(i - 1);
+            if (i < origPartitions.length - 1) {
+                offset += partitionLengths.get(i);
             }
         }
         return newPartitions;
@@ -145,7 +145,7 @@ public class ZippedWithIndexRDD<T> extends RDD<Tuple2<Long, T>> {
         @Override
         public Long apply(TaskContext v1, Iterator<T> iterator) {
             long count = 0;
-            if (iterator.hasNext()) {
+            while (iterator.hasNext()) {
                 iterator.next();
                 count++;
             }

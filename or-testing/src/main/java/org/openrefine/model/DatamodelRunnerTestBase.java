@@ -186,6 +186,15 @@ public abstract class DatamodelRunnerTestBase {
                         new IndexedRow(3L, row("a", 5))));
     }
 
+    @Test
+    public void testAccessSortedRowsOutOfBounds() {
+        GridState state = gridToSort;
+
+        Assert.assertEquals(
+                state.getRows(RowFilter.ANY_ROW, sortingConfig, 30, 10),
+                Collections.emptyList());
+    }
+
     protected static RecordFilter myRecordFilter = new RecordFilter() {
 
         private static final long serialVersionUID = 4197928472022711691L;

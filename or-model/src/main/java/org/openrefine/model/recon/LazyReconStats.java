@@ -17,7 +17,7 @@ public class LazyReconStats implements ReconStats {
     private static final long serialVersionUID = 5308688632569364002L;
 
     private ReconStats _values = null;
-    private final GridState _grid;
+    private final transient GridState _grid;
     private final String _columnName;
 
     public LazyReconStats(GridState grid, String columnName) {
