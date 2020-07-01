@@ -44,12 +44,15 @@ import static org.mockito.Mockito.when;
 
 public class InverseConstaintScrutinizerTest extends StatementScrutinizerTest {
 
-    public static PropertyIdValue propertyIdValue = Datamodel.makeWikidataPropertyIdValue("P25");
+    public static PropertyIdValue propertyId = Datamodel.makeWikidataPropertyIdValue("P25");
+    public static ItemIdValue propertyValue = Datamodel.makeWikidataItemIdValue("Q345");
+    public static PropertyIdValue inversePropertyID = Datamodel.makeWikidataPropertyIdValue("P40");
+    public static PropertyIdValue symmetricPropertyID = Datamodel.makeWikidataPropertyIdValue("P3373");
+    public static ItemIdValue symmetricPropertyValue = Datamodel.makeWikidataItemIdValue("Q9545711");
 
     public static ItemIdValue inverseEntityIdValue = Datamodel.makeWikidataItemIdValue("Q21510855");
     public static ItemIdValue symmetricEntityIdValue = Datamodel.makeWikidataItemIdValue("Q21510862");
     public static PropertyIdValue propertyParameter = Datamodel.makeWikidataPropertyIdValue("P2306");
-    public static PropertyIdValue inversePropertyIDValue = Datamodel.makeWikidataPropertyIdValue("P40");
 
     @Override
     public EditScrutinizer getScrutinizer() {
@@ -59,7 +62,7 @@ public class InverseConstaintScrutinizerTest extends StatementScrutinizerTest {
     @Test
     public void testTrigger() {
         ItemIdValue idA = TestingData.existingId;
-        Snak mainSnak = Datamodel.makeSomeValueSnak(propertyIdValue);
+        Snak mainSnak = Datamodel.makeValueSnak(propertyId, propertyValue);
         Statement statement = new StatementImpl("P25", mainSnak, idA);
         ItemUpdate update = new ItemUpdateBuilder(idA).addStatement(statement).build();
 
@@ -70,27 +73,53 @@ public class InverseConstaintScrutinizerTest extends StatementScrutinizerTest {
         List<Statement> statementList = constraintParameterStatementList(inverseEntityIdValue, snakGroupList);
 
         ConstraintFetcher fetcher = mock(ConstraintFetcher.class);
-        when(fetcher.getConstraintsByType(propertyIdValue, "Q21510855")).thenReturn(statementList);
-        when(fetcher.findValues(snakGroupList, "P2306")).thenReturn(Collections.singletonList(inversePropertyIDValue));
+        when(fetcher.getConstraintsByType(propertyId, "Q21510855")).thenReturn(statementList);
+        when(fetcher.findValues(snakGroupList, "P2306")).thenReturn(Collections.singletonList(inversePropertyID));
         setFetcher(fetcher);
         scrutinize(update);
         assertWarningsRaised(InverseConstraintScrutinizer.type);
     }
 
-//    @Test
-//    public void testSymmetric() {
-//        ItemUpdate update = new ItemUpdateBuilder(idA)
-//                .addStatement(TestingData.generateStatement(idA, symmetricPid, idB)).build();
-//        scrutinize(update);
-//        assertWarningsRaised(InverseConstraintScrutinizer.type);
-//    }
-//
-//    @Test
-//    public void testNoSymmetricClosure() {
-//        ItemUpdate update = new ItemUpdateBuilder(idA).addStatement(TestingData.generateStatement(idA, inversePid, idB))
-//                .build();
-//        scrutinize(update);
-//        assertNoWarningRaised();
-//    }
+    @Test
+    public void testSymmetric() {
+        ItemIdValue idA = TestingData.existingId;
+        Snak mainSnak = Datamodel.makeValueSnak(symmetricPropertyID, symmetricPropertyValue);
+        Statement statement = new StatementImpl("P3373", mainSnak, idA);
+        ItemUpdate update = new ItemUpdateBuilder(idA).addStatement(statement).build();
+
+        Snak qualifierSnak = Datamodel.makeValueSnak(symmetricPropertyID, symmetricEntityIdValue);
+        List<Snak> qualifierSnakList = Collections.singletonList(qualifierSnak);
+        SnakGroup qualifierSnakGroup = Datamodel.makeSnakGroup(qualifierSnakList);
+        List<SnakGroup> snakGroupList = Collections.singletonList(qualifierSnakGroup);
+        List<Statement> statementList = constraintParameterStatementList(symmetricEntityIdValue, snakGroupList);
+
+        ConstraintFetcher fetcher = mock(ConstraintFetcher.class);
+        when(fetcher.getConstraintsByType(symmetricPropertyID, "Q21510862")).thenReturn(statementList);
+        when(fetcher.findValues(snakGroupList, "P2306")).thenReturn(Collections.singletonList(symmetricPropertyID));
+        setFetcher(fetcher);
+        scrutinize(update);
+        assertWarningsRaised(InverseConstraintScrutinizer.type);
+    }
+
+    @Test
+    public void testNoSymmetricClosure() {
+        ItemIdValue idA = TestingData.existingId;
+        Snak mainSnak = Datamodel.makeSomeValueSnak(propertyId);
+        Statement statement = new StatementImpl("P25", mainSnak, idA);
+        ItemUpdate update = new ItemUpdateBuilder(idA).addStatement(statement).build();
+
+        Snak qualifierSnak = Datamodel.makeValueSnak(propertyParameter, inverseEntityIdValue);
+        List<Snak> qualifierSnakList = Collections.singletonList(qualifierSnak);
+        SnakGroup qualifierSnakGroup = Datamodel.makeSnakGroup(qualifierSnakList);
+        List<SnakGroup> snakGroupList = Collections.singletonList(qualifierSnakGroup);
+        List<Statement> statementList = constraintParameterStatementList(inverseEntityIdValue, snakGroupList);
+
+        ConstraintFetcher fetcher = mock(ConstraintFetcher.class);
+        when(fetcher.getConstraintsByType(propertyId, "Q21510855")).thenReturn(statementList);
+        when(fetcher.findValues(snakGroupList, "P2306")).thenReturn(Collections.singletonList(inversePropertyID));
+        setFetcher(fetcher);
+        scrutinize(update);
+        assertNoWarningRaised();
+    }
 
 }
