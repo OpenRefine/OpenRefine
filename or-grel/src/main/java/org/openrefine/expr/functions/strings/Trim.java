@@ -40,6 +40,8 @@ import org.openrefine.grel.PureFunction;
 
 public class Trim extends PureFunction {
 
+    private static final long serialVersionUID = 2205948472517424380L;
+
     @Override
     public Object call(Object[] args) {
         if (args.length == 1) {

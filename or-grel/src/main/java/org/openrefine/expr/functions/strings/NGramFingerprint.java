@@ -43,6 +43,7 @@ import org.openrefine.grel.PureFunction;
 
 public class NGramFingerprint extends PureFunction {
 
+    private static final long serialVersionUID = 1471815787241178487L;
     static Keyer ngram_fingerprint = new NGramFingerprintKeyer();
 
     @Override

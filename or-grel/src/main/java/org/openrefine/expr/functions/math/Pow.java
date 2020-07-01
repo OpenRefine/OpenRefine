@@ -37,6 +37,8 @@ import org.openrefine.grel.PureFunction;
 
 public class Pow extends PureFunction {
 
+    private static final long serialVersionUID = -3130807562591231183L;
+
     @Override
     public Object call(Object[] args) {
         if (args.length == 2 && args[0] instanceof Number && args[1] instanceof Number) {

@@ -41,6 +41,8 @@ import org.openrefine.grel.PureFunction;
 
 public class InnerXml extends PureFunction {
 
+    private static final long serialVersionUID = -747334879674657112L;
+
     @Override
     public Object call(Object[] args) {
         return call(args, "xml");

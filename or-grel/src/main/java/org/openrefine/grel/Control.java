@@ -33,6 +33,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package org.openrefine.grel;
 
+import java.io.Serializable;
 import java.util.Properties;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -45,7 +46,7 @@ import org.openrefine.grel.ast.GrelExpr;
  * Interface of GREL controls such as if, forEach, forNonBlank, with. A control can decide which part of the code to
  * execute and can affect the environment bindings. Functions, on the other hand, can't do either.
  */
-public interface Control {
+public interface Control extends Serializable {
 
     public Object call(Properties bindings, GrelExpr[] args);
 

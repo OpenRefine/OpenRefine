@@ -40,6 +40,8 @@ import org.openrefine.grel.PureFunction;
 
 public class RPartition extends PureFunction {
 
+    private static final long serialVersionUID = -4890738734716192263L;
+
     @Override
     public Object call(Object[] args) {
         if (args.length >= 2 && args.length <= 3) {

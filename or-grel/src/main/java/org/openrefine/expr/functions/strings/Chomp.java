@@ -39,6 +39,8 @@ import org.openrefine.grel.PureFunction;
 
 public class Chomp extends PureFunction {
 
+    private static final long serialVersionUID = -2448464827923364662L;
+
     @Override
     public Object call(Object[] args) {
         if (args.length == 2) {

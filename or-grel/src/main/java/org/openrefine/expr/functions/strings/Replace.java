@@ -41,6 +41,8 @@ import org.openrefine.grel.PureFunction;
 
 public class Replace extends PureFunction {
 
+    private static final long serialVersionUID = 2787504419914720464L;
+
     @Override
     public Object call(Object[] args) {
         if (args.length == 3) {

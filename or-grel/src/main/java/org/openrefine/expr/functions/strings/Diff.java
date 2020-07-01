@@ -43,6 +43,8 @@ import org.openrefine.grel.PureFunction;
 
 public class Diff extends PureFunction {
 
+    private static final long serialVersionUID = -1853581940327948011L;
+
     @Override
     public Object call(Object[] args) {
         if (args.length >= 2) {

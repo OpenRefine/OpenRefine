@@ -41,6 +41,8 @@ import org.openrefine.grel.PureFunction;
 
 public class XmlAttr extends PureFunction {
 
+    private static final long serialVersionUID = -5580421453487844462L;
+
     @Override
     public Object call(Object[] args) {
         if (args.length == 2) {

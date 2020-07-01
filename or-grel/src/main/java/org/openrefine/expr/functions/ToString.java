@@ -43,6 +43,8 @@ import org.openrefine.util.StringUtils;
 
 public class ToString extends PureFunction {
 
+    private static final long serialVersionUID = 3466521976054626379L;
+
     @Override
     public Object call(Object[] args) {
         if (args.length >= 1) {

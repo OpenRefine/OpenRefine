@@ -39,6 +39,8 @@ import org.openrefine.grel.PureFunction;
 
 public class Combin extends PureFunction {
 
+    private static final long serialVersionUID = -586217982427363160L;
+
     @Override
     public Object call(Object[] args) {
         if (args.length != 2) {

@@ -39,6 +39,8 @@ import org.openrefine.grel.PureFunction;
 
 public class Ceil extends PureFunction {
 
+    private static final long serialVersionUID = -7403471940303121479L;
+
     @Override
     public Object call(Object[] args) {
         if (args.length == 1 && args[0] != null && args[0] instanceof Number) {

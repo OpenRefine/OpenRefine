@@ -34,33 +34,32 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package org.openrefine.operations.column;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import org.openrefine.browsing.Engine;
 import org.openrefine.browsing.EngineConfig;
-import org.openrefine.browsing.FilteredRows;
-import org.openrefine.browsing.RowVisitor;
 import org.openrefine.expr.Evaluable;
 import org.openrefine.expr.ExpressionUtils;
 import org.openrefine.expr.MetaParser;
+import org.openrefine.expr.ParsingException;
 import org.openrefine.expr.WrappedCell;
-import org.openrefine.history.HistoryEntry;
 import org.openrefine.model.Cell;
 import org.openrefine.model.ColumnMetadata;
-import org.openrefine.model.Project;
+import org.openrefine.model.ColumnModel;
+import org.openrefine.model.GridState;
+import org.openrefine.model.ModelException;
 import org.openrefine.model.Row;
+import org.openrefine.model.RowMapper;
 import org.openrefine.model.changes.CellAtRow;
-import org.openrefine.model.changes.Change;
-import org.openrefine.model.changes.ColumnAdditionChange;
-import org.openrefine.operations.EngineDependentOperation;
+import org.openrefine.model.changes.Change.DoesNotApplyException;
+import org.openrefine.model.changes.ChangeContext;
+import org.openrefine.operations.ImmediateRowMapOperation;
 import org.openrefine.operations.OnError;
 
-public class ColumnAdditionOperation extends EngineDependentOperation {
+public class ColumnAdditionOperation extends ImmediateRowMapOperation {
 
     final protected String _baseColumnName;
     final protected String _expression;
@@ -113,7 +112,7 @@ public class ColumnAdditionOperation extends EngineDependentOperation {
     }
 
     @Override
-    protected String getDescription() {
+    public String getDescription() {
         return "Create column " + _newColumnName +
                 " at index " + _columnInsertIndex +
                 " based on column " + _baseColumnName +
@@ -128,67 +127,49 @@ public class ColumnAdditionOperation extends EngineDependentOperation {
     }
 
     @Override
-    protected HistoryEntry createHistoryEntry(Project project, long historyEntryID) throws Exception {
-        Engine engine = createEngine(project);
-
-        ColumnMetadata column = project.columnModel.getColumnByName(_baseColumnName);
-        if (column == null) {
-            throw new Exception("No column named " + _baseColumnName);
+    protected ColumnModel getNewColumnModel(GridState state, ChangeContext context) throws DoesNotApplyException {
+        ColumnModel columnModel = state.getColumnModel();
+        try {
+            return columnModel.insertColumn(_columnInsertIndex, new ColumnMetadata(_newColumnName));
+        } catch (ModelException e) {
+            throw new DoesNotApplyException("Another column already named " + _newColumnName);
         }
-        if (project.columnModel.getColumnByName(_newColumnName) != null) {
-            throw new Exception("Another column already named " + _newColumnName);
-        }
-
-        List<CellAtRow> cellsAtRows = new ArrayList<CellAtRow>(project.rows.size());
-
-        FilteredRows filteredRows = engine.getAllFilteredRows();
-        filteredRows.accept(project, createRowVisitor(project, cellsAtRows));
-
-        String description = createDescription(column, cellsAtRows);
-
-        Change change = new ColumnAdditionChange(_newColumnName, _columnInsertIndex, cellsAtRows);
-
-        return new HistoryEntry(
-                historyEntryID, project, description, this, change);
     }
 
-    protected RowVisitor createRowVisitor(Project project, List<CellAtRow> cellsAtRows) throws Exception {
-        ColumnMetadata column = project.columnModel.getColumnByName(_baseColumnName);
-
-        Evaluable eval = MetaParser.parse(_expression);
-        Properties bindings = ExpressionUtils.createBindings();
-
-        return new RowVisitor() {
-
-            int cellIndex;
-            Properties bindings;
-            List<CellAtRow> cellsAtRows;
-            Evaluable eval;
-
-            public RowVisitor init(int cellIndex, Properties bindings, List<CellAtRow> cellsAtRows, Evaluable eval) {
-                this.cellIndex = cellIndex;
-                this.bindings = bindings;
-                this.cellsAtRows = cellsAtRows;
-                this.eval = eval;
-                return this;
+    @Override
+    protected RowMapper getPositiveRowMapper(GridState state, ChangeContext context) throws DoesNotApplyException {
+        ColumnModel columnModel = state.getColumnModel();
+        int columnIndex = columnIndex(columnModel, _baseColumnName);
+        Evaluable eval;
+        try {
+            eval = MetaParser.parse(_expression);
+            if (!eval.isLocal()) {
+                throw new IllegalArgumentException("Non-local expressions are not supported yet");
             }
+        } catch (ParsingException e) {
+            throw new DoesNotApplyException(e.getMessage());
+        }
+        return mapper(columnIndex, _baseColumnName, _columnInsertIndex, _onError, eval, columnModel);
+    }
+
+    @Override
+    protected RowMapper getNegativeRowMapper(GridState state, ChangeContext context) throws DoesNotApplyException {
+        return negativeMapper(_columnInsertIndex);
+    }
+
+    protected static RowMapper mapper(int columnIndex, String baseColumnName, int columnInsertIndex, OnError onError, Evaluable eval,
+            ColumnModel columnModel) {
+        return new RowMapper() {
+
+            private static final long serialVersionUID = 897585827026825498L;
 
             @Override
-            public void start(Project project) {
-                // nothing to do
-            }
-
-            @Override
-            public void end(Project project) {
-                // nothing to do
-            }
-
-            @Override
-            public boolean visit(Project project, int rowIndex, Row row) {
-                Cell cell = row.getCell(cellIndex);
+            public Row call(long rowId, Row row) {
+                Cell cell = row.getCell(columnIndex);
                 Cell newCell = null;
 
-                ExpressionUtils.bind(bindings, null, row, rowIndex, _baseColumnName, cell);
+                Properties bindings = new Properties();
+                ExpressionUtils.bind(bindings, columnModel, row, rowId, baseColumnName, cell);
 
                 Object o = eval.evaluate(bindings);
                 if (o != null) {
@@ -199,9 +180,9 @@ public class ColumnAdditionOperation extends EngineDependentOperation {
                     } else {
                         Serializable v = ExpressionUtils.wrapStorable(o);
                         if (ExpressionUtils.isError(v)) {
-                            if (_onError == OnError.SetToBlank) {
-                                return false;
-                            } else if (_onError == OnError.KeepOriginal) {
+                            if (onError == OnError.SetToBlank) {
+                                return row.insertCell(columnInsertIndex, null);
+                            } else if (onError == OnError.KeepOriginal) {
                                 v = cell != null ? cell.value : null;
                             }
                         }
@@ -211,13 +192,23 @@ public class ColumnAdditionOperation extends EngineDependentOperation {
                         }
                     }
                 }
-
-                if (newCell != null) {
-                    cellsAtRows.add(new CellAtRow(rowIndex, newCell));
-                }
-
-                return false;
+                return row.insertCell(columnInsertIndex, newCell);
             }
-        }.init(column.getCellIndex(), bindings, cellsAtRows, eval);
+
+        };
     }
+
+    protected static RowMapper negativeMapper(int columnInsertIndex) {
+        return new RowMapper() {
+
+            private static final long serialVersionUID = -4885450470285627722L;
+
+            @Override
+            public Row call(long rowId, Row row) {
+                return row.insertCell(columnInsertIndex, null);
+            }
+
+        };
+    }
+
 }

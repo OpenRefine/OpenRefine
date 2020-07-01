@@ -40,6 +40,8 @@ import org.openrefine.grel.PureFunction;
 
 public class Partition extends PureFunction {
 
+    private static final long serialVersionUID = -8910562002409516222L;
+
     @Override
     public Object call(Object[] args) {
         if (args.length >= 2 && args.length <= 3) {

@@ -45,6 +45,8 @@ import org.openrefine.util.StringUtils;
 
 public class Escape extends PureFunction {
 
+    private static final long serialVersionUID = 5555185695108717411L;
+
     @Override
     public Object call(Object[] args) {
         if (args.length == 2) {

@@ -41,6 +41,8 @@ import org.openrefine.grel.PureFunction;
 
 public class XmlText extends PureFunction {
 
+    private static final long serialVersionUID = 8194362960147608680L;
+
     @Override
     public Object call(Object[] args) {
         if (args.length == 1) {

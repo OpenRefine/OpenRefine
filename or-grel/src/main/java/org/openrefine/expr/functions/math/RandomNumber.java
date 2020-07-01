@@ -41,6 +41,8 @@ import org.openrefine.grel.PureFunction;
 
 public class RandomNumber extends PureFunction {
 
+    private static final long serialVersionUID = 8192959188014298714L;
+
     @Override
     public Object call(Object[] args) {
         if (args.length == 2 && args[0] != null && args[0] instanceof Number

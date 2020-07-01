@@ -41,6 +41,8 @@ import org.openrefine.grel.PureFunction;
 
 public class SelectXml extends PureFunction {
 
+    private static final long serialVersionUID = -3706761505628408720L;
+
     @Override
     public Object call(Object[] args) {
         if (args.length == 2) {

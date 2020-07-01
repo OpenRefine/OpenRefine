@@ -44,6 +44,8 @@ import org.openrefine.grel.PureFunction;
  */
 public class Range extends PureFunction {
 
+    private static final long serialVersionUID = -2852623293926126461L;
+
     private static final String SEPARATOR = ",";
 
     private static final String lastCharacterCommaRegex = ",$";

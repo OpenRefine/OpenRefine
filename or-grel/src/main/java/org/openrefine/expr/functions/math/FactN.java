@@ -39,6 +39,8 @@ import org.openrefine.grel.PureFunction;
 
 public class FactN extends PureFunction {
 
+    private static final long serialVersionUID = -1641285189032226117L;
+
     @Override
     public Object call(Object[] args) {
         if (args.length != 2) {

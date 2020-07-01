@@ -41,6 +41,8 @@ import org.openrefine.grel.PureFunction;
 
 public class MD5 extends PureFunction {
 
+    private static final long serialVersionUID = 2274042904008125318L;
+
     @Override
     public Object call(Object[] args) {
         if (args.length == 1 && args[0] != null) {

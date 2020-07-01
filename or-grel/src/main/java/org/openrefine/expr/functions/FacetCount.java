@@ -41,6 +41,8 @@ import org.openrefine.grel.Function;
 
 public class FacetCount implements Function {
 
+    private static final long serialVersionUID = -3149889350806788890L;
+
     @Override
     public Object call(Properties bindings, Object[] args) {
         // TODO to migrate

@@ -45,6 +45,8 @@ import org.openrefine.model.Project;
 
 public class Reinterpret implements Function {
 
+    private static final long serialVersionUID = -1507580457141733313L;
+
     @Override
     public Object call(Properties bindings, Object[] args) {
         if (args.length == 2 || args.length == 3) {

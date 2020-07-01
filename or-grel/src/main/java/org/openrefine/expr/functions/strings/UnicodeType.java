@@ -37,6 +37,8 @@ import org.openrefine.grel.PureFunction;
 
 public class UnicodeType extends PureFunction {
 
+    private static final long serialVersionUID = -8099137357333793342L;
+
     @Override
     public Object call(Object[] args) {
         if (args.length == 1 && args[0] != null) {

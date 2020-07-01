@@ -40,6 +40,8 @@ import org.openrefine.grel.PureFunction;
 
 public class HasField extends PureFunction {
 
+    private static final long serialVersionUID = 2891348412939544263L;
+
     @Override
     public Object call(Object[] args) {
         if (args.length > 1 && args.length <= 2) {

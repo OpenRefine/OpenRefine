@@ -39,6 +39,8 @@ import org.openrefine.grel.PureFunction;
 
 public class Abs extends PureFunction {
 
+    private static final long serialVersionUID = 729407803996751934L;
+
     @Override
     public Object call(Object[] args) {
         if (args.length == 1 && args[0] != null && args[0] instanceof Number) {

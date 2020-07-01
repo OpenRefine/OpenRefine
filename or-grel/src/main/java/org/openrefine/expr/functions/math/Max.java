@@ -39,6 +39,8 @@ import org.openrefine.grel.PureFunction;
 
 public class Max extends PureFunction {
 
+    private static final long serialVersionUID = -8157428910272186584L;
+
     @Override
     public Object call(Object[] args) {
         if (args.length == 2 &&

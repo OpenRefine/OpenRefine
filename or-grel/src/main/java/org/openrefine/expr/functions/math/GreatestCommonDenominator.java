@@ -39,6 +39,8 @@ import org.openrefine.grel.PureFunction;
 
 public class GreatestCommonDenominator extends PureFunction {
 
+    private static final long serialVersionUID = 5337233693109214256L;
+
     @Override
     public Object call(Object[] args) {
         if (args.length == 2 && args[0] != null && args[0] instanceof Number

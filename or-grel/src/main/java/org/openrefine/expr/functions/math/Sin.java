@@ -39,6 +39,8 @@ import org.openrefine.grel.PureFunction;
 
 public class Sin extends PureFunction {
 
+    private static final long serialVersionUID = -3051119794063852532L;
+
     @Override
     public Object call(Object[] args) {
         if (args.length == 1 && args[0] != null && args[0] instanceof Number) {

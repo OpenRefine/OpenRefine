@@ -42,6 +42,8 @@ import org.openrefine.util.ParsingUtilities;
 
 public class ParseJson extends PureFunction {
 
+    private static final long serialVersionUID = 6476256714511367698L;
+
     @Override
     public Object call(Object[] args) {
         if (args.length >= 1) {

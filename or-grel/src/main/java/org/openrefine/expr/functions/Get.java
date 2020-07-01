@@ -46,6 +46,8 @@ import org.openrefine.grel.PureFunction;
 
 public class Get extends PureFunction {
 
+    private static final long serialVersionUID = -768932586974848119L;
+
     @Override
     public Object call(Object[] args) {
         if (args.length > 1 && args.length <= 3) {

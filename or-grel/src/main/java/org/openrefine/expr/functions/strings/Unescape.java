@@ -44,6 +44,8 @@ import org.openrefine.grel.PureFunction;
 
 public class Unescape extends PureFunction {
 
+    private static final long serialVersionUID = -7142623240589822442L;
+
     @Override
     public Object call(Object[] args) {
         if (args.length == 2) {

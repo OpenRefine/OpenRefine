@@ -40,6 +40,8 @@ import org.openrefine.util.ParsingUtilities;
 
 public class Jsonize extends PureFunction {
 
+    private static final long serialVersionUID = 9101167011220829756L;
+
     @Override
     public Object call(Object[] args) {
         if (args.length >= 1) {

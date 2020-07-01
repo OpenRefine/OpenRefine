@@ -43,6 +43,8 @@ import org.openrefine.grel.PureFunction;
 
 public class Split extends PureFunction {
 
+    private static final long serialVersionUID = -5460908853688096089L;
+
     @Override
     public Object call(Object[] args) {
         if (args.length >= 2 && args.length <= 3) {

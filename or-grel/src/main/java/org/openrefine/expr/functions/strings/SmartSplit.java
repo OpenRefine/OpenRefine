@@ -46,6 +46,8 @@ import org.openrefine.grel.PureFunction;
 
 public class SmartSplit extends PureFunction {
 
+    private static final long serialVersionUID = 2560697330486313877L;
+
     static final protected CSVParser s_tabParser = buildParser('\t');
 
     static final protected CSVParser s_commaParser = buildParser(',');

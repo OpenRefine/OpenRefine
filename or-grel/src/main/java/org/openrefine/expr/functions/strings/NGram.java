@@ -41,6 +41,8 @@ import org.openrefine.grel.PureFunction;
 
 public class NGram extends PureFunction {
 
+    private static final long serialVersionUID = -1376512705174506845L;
+
     @Override
     public Object call(Object[] args) {
         if (args.length == 2) {

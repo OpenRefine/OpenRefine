@@ -38,6 +38,8 @@ import org.openrefine.grel.PureFunction;
 
 public class Find extends PureFunction {
 
+    private static final long serialVersionUID = -6789803261631276614L;
+
     @Override
     public Object call(Object[] args) {
         List<String> allMatches = new ArrayList<String>();

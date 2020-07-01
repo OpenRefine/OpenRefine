@@ -45,6 +45,8 @@ import java.util.Properties;
  */
 public abstract class PureFunction implements Function {
 
+    private static final long serialVersionUID = -8765309749225244435L;
+
     /**
      * Computes the value of the function on the given arguments
      * 

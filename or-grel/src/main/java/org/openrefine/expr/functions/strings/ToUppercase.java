@@ -39,6 +39,8 @@ import org.openrefine.grel.PureFunction;
 
 public class ToUppercase extends PureFunction {
 
+    private static final long serialVersionUID = 4836026231879139997L;
+
     @Override
     public Object call(Object[] args) {
         if (args.length == 1 && args[0] != null) {

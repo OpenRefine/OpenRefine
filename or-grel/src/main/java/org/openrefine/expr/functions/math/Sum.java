@@ -42,6 +42,8 @@ import org.openrefine.grel.PureFunction;
 
 public class Sum extends PureFunction {
 
+    private static final long serialVersionUID = 1074658568172590298L;
+
     @Override
     public Object call(Object[] args) {
         if (args.length == 1) {

@@ -41,6 +41,8 @@ import org.openrefine.grel.PureFunction;
 
 public class SplitByCharType extends PureFunction {
 
+    private static final long serialVersionUID = -2254145880171906504L;
+
     @Override
     public Object call(Object[] args) {
         if (args.length == 1) {

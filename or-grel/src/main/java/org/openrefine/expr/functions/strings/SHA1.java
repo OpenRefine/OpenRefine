@@ -41,6 +41,8 @@ import org.openrefine.grel.PureFunction;
 
 public class SHA1 extends PureFunction {
 
+    private static final long serialVersionUID = -1876927417562676640L;
+
     @Override
     public Object call(Object[] args) {
         if (args.length == 1 && args[0] != null) {

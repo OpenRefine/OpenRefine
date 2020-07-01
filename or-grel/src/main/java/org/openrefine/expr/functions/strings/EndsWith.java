@@ -39,6 +39,8 @@ import org.openrefine.grel.PureFunction;
 
 public class EndsWith extends PureFunction {
 
+    private static final long serialVersionUID = -6999641817371025436L;
+
     @Override
     public Object call(Object[] args) {
         if (args.length == 2) {
