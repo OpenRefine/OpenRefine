@@ -4,7 +4,9 @@ package org.openrefine.grel.ast;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertNull;
+import static org.testng.Assert.assertTrue;
 
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
@@ -25,12 +27,14 @@ public class FunctionCallExprTest extends ExprTestBase {
     public void testUnion() {
         GrelExpr ev = new FunctionCallExpr(new GrelExpr[] { constant, currentColumn, twoColumns }, function, "foo");
         assertEquals(ev.getColumnDependencies(baseColumn), set(baseColumn, "a", "b"));
+        assertTrue(ev.isLocal());
     }
 
     @Test
     public void testUnanalyzable() {
         GrelExpr ev = new FunctionCallExpr(new GrelExpr[] { currentColumn, unanalyzable }, function, "foo");
         assertNull(ev.getColumnDependencies(baseColumn));
+        assertFalse(ev.isLocal());
     }
 
     @Test
@@ -39,6 +43,7 @@ public class FunctionCallExprTest extends ExprTestBase {
                 new GrelExpr[] { currentColumn, constant },
                 mock(Function.class), "foo");
         assertNull(ev.getColumnDependencies(baseColumn));
+        assertFalse(ev.isLocal());
     }
 
     @Test

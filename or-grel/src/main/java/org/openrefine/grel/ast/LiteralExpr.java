@@ -76,4 +76,9 @@ public class LiteralExpr implements GrelExpr {
     public LiteralExpr renameColumnDependencies(Map<String, String> substitutions) {
         return this;
     }
+
+    @Override
+    public boolean isLocal() {
+        return true;
+    }
 }

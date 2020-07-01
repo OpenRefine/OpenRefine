@@ -32,6 +32,12 @@ public interface GrelExpr extends Serializable {
     public String toString();
 
     /**
+     * @returns true when the expression can be evaluated purely based on the local context (see
+     *          {@link org.openrefine.expr.Evaluable}).
+     */
+    public boolean isLocal();
+
+    /**
      * Returns the names of the columns this expression depends on.
      * 
      * @param baseColumn

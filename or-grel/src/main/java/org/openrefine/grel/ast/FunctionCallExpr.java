@@ -131,4 +131,17 @@ public class FunctionCallExpr implements GrelExpr {
             return null;
         }
     }
+
+    @Override
+    public boolean isLocal() {
+        if (!(_function instanceof PureFunction)) {
+            return false;
+        }
+        for (GrelExpr ev : _args) {
+            if (!ev.isLocal()) {
+                return false;
+            }
+        }
+        return true;
+    }
 }

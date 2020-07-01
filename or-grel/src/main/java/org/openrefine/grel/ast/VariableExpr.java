@@ -90,4 +90,9 @@ public class VariableExpr implements GrelExpr {
         }
         return this;
     }
+
+    @Override
+    public boolean isLocal() {
+        return true;
+    }
 }

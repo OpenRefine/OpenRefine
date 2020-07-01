@@ -33,12 +33,20 @@ public class ExprTestBase {
 
         when(currentColumn.getColumnDependencies(baseColumn))
                 .thenReturn(set(baseColumn));
+        when(currentColumn.isLocal())
+                .thenReturn(true);
         when(unanalyzable.getColumnDependencies(baseColumn))
                 .thenReturn(null);
+        when(unanalyzable.isLocal())
+                .thenReturn(false);
         when(twoColumns.getColumnDependencies(baseColumn))
                 .thenReturn(set("a", "b"));
+        when(twoColumns.isLocal())
+                .thenReturn(true);
         when(constant.getColumnDependencies(baseColumn))
                 .thenReturn(set());
+        when(constant.isLocal())
+                .thenReturn(true);
     }
 
     protected Set<String> set(String... strings) {

@@ -63,6 +63,15 @@ public interface Evaluable extends Serializable {
     public String getLanguagePrefix();
 
     /**
+     * @return true when the evaluable can be computed fully (and quickly) from the local context (the given row or
+     *         record). If it relies on any other information (external web service, aggregation over the project), then
+     *         it should return false, indicating that the return value may need to be cached by the caller.
+     */
+    public default boolean isLocal() {
+        return false;
+    }
+
+    /**
      * Returns the names of the columns this expression depends on.
      * 
      * @param baseColumn
