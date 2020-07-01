@@ -33,8 +33,16 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  
 package com.google.refine.grel;
 
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNull;
+import static org.testng.Assert.assertTrue;
+
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Map.Entry;
 import java.util.Properties;
+import java.util.Set;
 
 import org.slf4j.LoggerFactory;
 import org.testng.Assert;
@@ -117,5 +125,55 @@ public class FunctionTests extends RefineTest {
         Assert.assertEquals(invoke("facetCount", "a", "value", "Column A"),Integer.valueOf(5));
         Assert.assertEquals(invoke("facetCount", new Integer(1), "value", "Column A"),Integer.valueOf(5));
         Assert.assertEquals(invoke("facetCount", new Integer(2), "value+1", "Column A"),Integer.valueOf(5));
+    }
+
+    @Test
+    void testZeroArgs() {
+        Set<String> valid0args = new HashSet<>(Arrays.asList("now")); // valid 0-arg returns datetype
+        // Not sure which, if any, of these are intended, but fixing them may break existing scripts
+        Set<String> returnsNull = new HashSet<>(Arrays.asList("chomp", "contains", "escape", "unescape", "exp",
+                "fingerprint", "get", "jsonize", "parseJson", "partition", "pow", "rpartition",
+                "slice", "substring", // synonyms for Slice
+                "unicode", "unicodeType"
+                ));
+        Set<String> returnsFalse = new HashSet<>(Arrays.asList("hasField"));
+
+        for (Entry<String, Function> entry : ControlFunctionRegistry.getFunctionMapping()) {
+            Function func = entry.getValue();
+            Object result = func.call(bindings, new Object[0]);
+            if (returnsNull.contains(ControlFunctionRegistry.getFunctionName(func))) {
+                assertNull(result, ControlFunctionRegistry.getFunctionName(func) + " didn't return null on 0 args");
+            } else if (returnsFalse.contains(ControlFunctionRegistry.getFunctionName(func))) {
+                assertEquals(result, Boolean.FALSE, ControlFunctionRegistry.getFunctionName(func) + " didn't return false on 0 args");
+            } else if (!valid0args.contains(ControlFunctionRegistry.getFunctionName(func))) {
+                assertTrue(result instanceof EvalError, ControlFunctionRegistry.getFunctionName(func) + " didn't error on 0 args");
+            }
+        }
+    }
+
+    @Test
+    void testTooManyArgs() {
+        // Not sure which, if any, of these are intended, but fixing them may break existing scripts
+        Set<String> returnsNull = new HashSet<>(Arrays.asList("chomp", "contains", "coalesce", "escape", "unescape",
+                "exp", "fingerprint", "get", "now", "parseJson", "partition", "pow", "rpartition",
+                "slice", "substring", // synonyms for Slice
+                "unicode", "unicodeType"
+                ));
+        Set<String> returnsFalse = new HashSet<>(Arrays.asList("hasField"));
+        Set<String> exempt = new HashSet<>(Arrays.asList(
+                "jsonize" // returns literal string "null"
+                ));
+        for (Entry<String, Function> entry : ControlFunctionRegistry.getFunctionMapping()) {
+            Function func = entry.getValue();
+            // No functions take 8 arguments, so they should all error
+            Object result = func.call(bindings, new Object[] {null, null, null, null, null, null, null, null});
+            if (returnsNull.contains(ControlFunctionRegistry.getFunctionName(func))) {
+                assertNull(result, ControlFunctionRegistry.getFunctionName(func) + " didn't return null on 8 args");
+            } else if (returnsFalse.contains(ControlFunctionRegistry.getFunctionName(func))) {
+                assertEquals(result, Boolean.FALSE, ControlFunctionRegistry.getFunctionName(func) + " didn't return false on 8 args");
+            } else if (!exempt.contains(ControlFunctionRegistry.getFunctionName(func))) {
+                assertTrue(result instanceof EvalError, ControlFunctionRegistry.getFunctionName(func) + " didn't error on 8 args");
+            }
+        }
     }
 }
