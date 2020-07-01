@@ -187,7 +187,7 @@ public class SparkGridState implements GridState {
                     .values()
                     .take((int) start + limit);
             return rows
-                    .subList(Math.min((int) start, rows.size() - 1), Math.min((int) start + limit, rows.size() - 1));
+                    .subList(Math.min((int) start, rows.size()), Math.min((int) start + limit, rows.size()));
         }
     }
 
