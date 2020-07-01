@@ -41,6 +41,8 @@ import org.openrefine.expr.EvalError;
 
 public class ParseHtml extends PureFunction {
 
+    private static final long serialVersionUID = 8226815156165413478L;
+
     @Override
     public Object call(Object[] args) {
         if (args.length == 1) {

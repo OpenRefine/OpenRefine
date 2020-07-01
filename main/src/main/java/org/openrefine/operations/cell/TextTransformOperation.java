@@ -34,27 +34,30 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package org.openrefine.operations.cell;
 
 import java.io.Serializable;
-import java.util.List;
 import java.util.Properties;
 
 import org.openrefine.browsing.EngineConfig;
-import org.openrefine.browsing.RowVisitor;
 import org.openrefine.expr.Evaluable;
 import org.openrefine.expr.ExpressionUtils;
 import org.openrefine.expr.MetaParser;
+import org.openrefine.expr.ParsingException;
 import org.openrefine.expr.WrappedCell;
 import org.openrefine.model.Cell;
-import org.openrefine.model.ColumnMetadata;
-import org.openrefine.model.Project;
+import org.openrefine.model.ColumnModel;
+import org.openrefine.model.GridState;
 import org.openrefine.model.Row;
-import org.openrefine.model.changes.CellChange;
-import org.openrefine.operations.EngineDependentMassCellOperation;
+import org.openrefine.model.RowMapper;
+import org.openrefine.model.changes.Change.DoesNotApplyException;
+import org.openrefine.model.changes.ChangeContext;
+import org.openrefine.operations.ImmediateRowMapOperation;
 import org.openrefine.operations.OnError;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-public class TextTransformOperation extends EngineDependentMassCellOperation {
+public class TextTransformOperation extends ImmediateRowMapOperation {
+	@JsonProperty("columnName")
+	final protected String _columnName;
     @JsonProperty("expression")
     final protected String  _expression;
     @JsonProperty("onError")
@@ -98,7 +101,8 @@ public class TextTransformOperation extends EngineDependentMassCellOperation {
             @JsonProperty("repeatCount")
             int repeatCount
         ) {
-        super(engineConfig, columnName, true);
+        super(engineConfig);
+        _columnName = columnName;
         _expression = expression;
         _onError = onError;
         _repeat = repeat;
@@ -106,64 +110,42 @@ public class TextTransformOperation extends EngineDependentMassCellOperation {
     }
 
     @Override
-    protected String getDescription() {
+    public String getDescription() {
         return "Text transform on cells in column " + _columnName + " using expression " + _expression;
     }
+    
+	@Override
+	protected RowMapper getPositiveRowMapper(GridState state, ChangeContext context) throws DoesNotApplyException {
+		int columnIndex = columnIndex(state.getColumnModel(), _columnName);
+		Evaluable eval;
+		try {
+			eval = MetaParser.parse(_expression);
+			if (!eval.isLocal()) {
+				throw new IllegalArgumentException("Non-local expressions are not supported yet");
+			}
+		} catch (ParsingException e) {
+			throw new DoesNotApplyException(e.getMessage());
+		}
+		return rowMapper(columnIndex, _columnName, state.getColumnModel(), eval, _onError, _repeat ? _repeatCount : 0);
+	}
+	
+	protected static RowMapper rowMapper(int columnIndex, String columnName, ColumnModel columnModel, Evaluable eval, OnError onError, int repeatCount) {
+		return new RowMapper() {
 
-    @Override
-    protected String createDescription(ColumnMetadata column,
-            List<CellChange> cellChanges) {
-        
-        return "Text transform on " + cellChanges.size() + 
-            " cells in column " + column.getName() + ": " + _expression;
-    }
+			private static final long serialVersionUID = 2272064171042189466L;
 
-    @Override
-    protected RowVisitor createRowVisitor(Project project, List<CellChange> cellChanges, long historyEntryID) throws Exception {
-        ColumnMetadata column = project.columnModel.getColumnByName(_columnName);
-        
-        Evaluable eval = MetaParser.parse(_expression);
-        Properties bindings = ExpressionUtils.createBindings();
-        
-        return new RowVisitor() {
-            int                 cellIndex;
-            Properties             bindings;
-            List<CellChange>     cellChanges;
-            Evaluable             eval;
-            
-            public RowVisitor init(int cellIndex, Properties bindings, List<CellChange> cellChanges, Evaluable eval) {
-                this.cellIndex = cellIndex;
-                this.bindings = bindings;
-                this.cellChanges = cellChanges;
-                this.eval = eval;
-                return this;
-            }
-            
-            @Override
-            public void start(Project project) {
-                // nothing to do
-            }
-
-            @Override
-            public void end(Project project) {
-                // nothing to do
-            }
-
-            @Override
-            public boolean visit(Project project, int rowIndex, Row row) {
-                Cell cell = row.getCell(cellIndex);
+			@Override
+			public Row call(long rowId, Row row) {
+                Cell cell = row.getCell(columnIndex);
                 Cell newCell = null;
 
                 Object oldValue = cell != null ? cell.value : null;
-
-                ExpressionUtils.bind(bindings, null, row, rowIndex, _columnName, cell);
+                Properties bindings = new Properties();
+                ExpressionUtils.bind(bindings, columnModel, row, rowId, columnName, cell);
 
                 Object o = eval.evaluate(bindings);
                 if (o == null) {
-                    if (oldValue != null) {
-                        CellChange cellChange = new CellChange(rowIndex, cellIndex, cell, null);
-                        cellChanges.add(cellChange);
-                    }
+                    newCell = null;
                 } else {
                     if (o instanceof Cell) {
                         newCell = (Cell) o;
@@ -172,9 +154,9 @@ public class TextTransformOperation extends EngineDependentMassCellOperation {
                     } else {
                         Serializable newValue = ExpressionUtils.wrapStorable(o);
                         if (ExpressionUtils.isError(newValue)) {
-                            if (_onError == OnError.KeepOriginal) {
-                                return false;
-                            } else if (_onError == OnError.SetToBlank) {
+                            if (onError == OnError.KeepOriginal) {
+                                return row;
+                            } else if (onError == OnError.SetToBlank) {
                                 newValue = null;
                             }
                         }
@@ -182,31 +164,30 @@ public class TextTransformOperation extends EngineDependentMassCellOperation {
                         if (!ExpressionUtils.sameValue(oldValue, newValue)) {
                             newCell = new Cell(newValue, (cell != null) ? cell.recon : null);
                             
-                            if (_repeat) {
-                                for (int i = 0; i < _repeatCount; i++) {
-                                    ExpressionUtils.bind(bindings, null, row, rowIndex, _columnName, newCell);
-                                    
-                                    newValue = ExpressionUtils.wrapStorable(eval.evaluate(bindings));
-                                    if (ExpressionUtils.isError(newValue)) {
-                                        break;
-                                    } else if (ExpressionUtils.sameValue(newCell.value, newValue)) {
-                                        break;
-                                    }
-                                    
-                                    newCell = new Cell(newValue, newCell.recon);
+                            for (int i = 0; i < repeatCount; i++) {
+                                ExpressionUtils.bind(bindings, null, row, rowId, columnName, newCell);
+                                
+                                newValue = ExpressionUtils.wrapStorable(eval.evaluate(bindings));
+                                if (ExpressionUtils.isError(newValue)) {
+                                    break;
+                                } else if (ExpressionUtils.sameValue(newCell.value, newValue)) {
+                                    break;
                                 }
+                                
+                                newCell = new Cell(newValue, newCell.recon);
                             }
                         }
                     }
                     
                     if (newCell != null) {
-                        CellChange cellChange = new CellChange(rowIndex, cellIndex, cell, newCell);
-                        cellChanges.add(cellChange);
+                        return row.withCell(columnIndex, newCell);
                     }
                 }
                 
-                return false;
-            }
-        }.init(column.getCellIndex(), bindings, cellChanges, eval);
-    }
+                return row;
+			}
+			
+		};
+	}
+
 }

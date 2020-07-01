@@ -93,6 +93,11 @@ public class Parser {
         public String getLanguagePrefix() {
             return "grel";
         }
+        
+        @Override
+        public boolean isLocal() {
+            return _expr.isLocal();
+        }
     }
     
 	static public LanguageSpecificParser grelParser = new LanguageSpecificParser() {

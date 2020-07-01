@@ -40,6 +40,8 @@ import org.openrefine.expr.EvalError;
 
 public class Multinomial extends PureFunction {
 
+    private static final long serialVersionUID = -7121745958090579646L;
+
     @Override
     public Object call(Object[] args) {
         if (args.length < 1) {

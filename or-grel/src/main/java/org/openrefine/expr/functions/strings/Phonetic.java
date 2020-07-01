@@ -45,6 +45,7 @@ import org.openrefine.expr.EvalError;
 
 public class Phonetic extends PureFunction {
 
+    private static final long serialVersionUID = 8418855214561000612L;
     // TODO: We could probably lazily initialize these when needed for efficiency
     static private Metaphone3Keyer metaphone3 = new Metaphone3Keyer();
     static private DoubleMetaphoneKeyer metaphone2 = new DoubleMetaphoneKeyer();

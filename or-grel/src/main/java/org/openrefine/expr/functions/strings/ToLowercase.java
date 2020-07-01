@@ -40,6 +40,8 @@ import org.openrefine.expr.EvalError;
 
 public class ToLowercase extends PureFunction {
 
+    private static final long serialVersionUID = 3465445624780713252L;
+
     @Override
     public Object call(Object[] args) {
         if (args.length == 1 && args[0] != null) {

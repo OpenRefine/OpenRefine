@@ -42,6 +42,8 @@ import org.openrefine.expr.EvalError;
 
 public class ParseXml extends PureFunction {
 
+    private static final long serialVersionUID = 593667630296804591L;
+
     @Override
     public Object call(Object[] args) {
         return call(args,"xml");

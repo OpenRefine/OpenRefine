@@ -37,12 +37,13 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 
 import org.apache.commons.lang3.StringEscapeUtils;
+import org.openrefine.expr.EvalError;
 import org.openrefine.grel.ControlFunctionRegistry;
 import org.openrefine.grel.PureFunction;
 
-import org.openrefine.expr.EvalError;
-
 public class Unescape extends PureFunction {
+
+    private static final long serialVersionUID = -7142623240589822442L;
 
     @Override
     public Object call(Object[] args) {

@@ -41,6 +41,8 @@ import org.openrefine.expr.EvalError;
 
 public class InnerXml extends PureFunction {
 
+    private static final long serialVersionUID = -747334879674657112L;
+
     @Override
     public Object call(Object[] args) {
         return call(args, "xml");

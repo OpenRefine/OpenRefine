@@ -40,6 +40,8 @@ import org.openrefine.expr.EvalError;
 
 public class StartsWith extends PureFunction {
 
+    private static final long serialVersionUID = -3411012894275706254L;
+
     @Override
     public Object call(Object[] args) {
         if (args.length == 2) {

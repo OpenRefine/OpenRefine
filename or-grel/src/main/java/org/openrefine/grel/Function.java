@@ -1,5 +1,6 @@
 package org.openrefine.grel;
 
+import java.io.Serializable;
 import java.util.Properties;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -10,7 +11,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  * Interface for functions. When a function is called, its arguments have already
  * been evaluated down into non-error values.
  */
-public interface Function {
+public interface Function extends Serializable {
     /**
      * Computes the value of the function on the given arguments
      * @param bindings

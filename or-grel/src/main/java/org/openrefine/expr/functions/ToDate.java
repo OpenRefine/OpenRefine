@@ -57,6 +57,8 @@ import org.openrefine.util.ParsingUtilities;
 
 public class ToDate extends PureFunction {
 
+    private static final long serialVersionUID = 7422933628328725028L;
+
     @Override
     public Object call(Object[] args) {
         String o1;

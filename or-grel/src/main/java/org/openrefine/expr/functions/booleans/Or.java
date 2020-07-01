@@ -40,6 +40,8 @@ import org.openrefine.expr.EvalError;
 
 public class Or extends PureFunction {
 
+    private static final long serialVersionUID = 1768882897735670507L;
+
     @Override
     public Object call(Object[] args) {
         if (args.length >= 2 && args[0] instanceof Boolean && args[1] instanceof Boolean) {

@@ -40,6 +40,8 @@ import org.openrefine.expr.EvalError;
 
 public class Not extends PureFunction {
 
+    private static final long serialVersionUID = -8539345295423980152L;
+
     @Override
     public Object call(Object[] args) {
         if (args.length == 1 && args[0] instanceof Boolean) {

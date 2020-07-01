@@ -42,6 +42,8 @@ import org.openrefine.expr.EvalError;
 
 public class InnerHtml extends PureFunction {
 
+    private static final long serialVersionUID = 7062946433356613L;
+
     @Override
     public Object call(Object[] args) {
         if (args.length == 1) {

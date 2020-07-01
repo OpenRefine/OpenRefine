@@ -68,5 +68,17 @@ public class EvalError implements Serializable {
     public String getType() {
         return "error";
     }
+    
+    @Override
+    public boolean equals(Object other) {
+        if (!(other instanceof EvalError)) {
+            return false;
+        }
+        return message.equals(((EvalError)other).message);
+    }
 
+    @Override
+    public int hashCode() {
+        return message.hashCode();
+    }
 }

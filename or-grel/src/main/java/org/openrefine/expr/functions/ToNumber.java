@@ -40,6 +40,8 @@ import org.openrefine.expr.EvalError;
 
 public class ToNumber extends PureFunction {
 
+    private static final long serialVersionUID = 622750956949745268L;
+
     @Override
     public Object call(Object[] args) {
         if (args.length == 1 && args[0] != null) {

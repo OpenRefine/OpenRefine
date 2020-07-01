@@ -49,6 +49,8 @@ import org.openrefine.expr.EvalError;
 
 public class DatePart extends PureFunction {
 
+    private static final long serialVersionUID = -5439080531020685817L;
+
     @Override
     public Object call(Object[] args) {
         if (args.length == 2 && 

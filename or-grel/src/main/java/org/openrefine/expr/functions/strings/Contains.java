@@ -40,6 +40,8 @@ import org.openrefine.grel.PureFunction;
 
 public class Contains extends PureFunction {
 
+    private static final long serialVersionUID = -6721884111626918241L;
+
     @Override
     public Object call(Object[] args) {
         if (args.length == 2) {

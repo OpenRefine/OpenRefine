@@ -40,6 +40,8 @@ import org.openrefine.expr.EvalError;
 
 public class LeastCommonMultiple extends PureFunction {
 
+    private static final long serialVersionUID = 5269444406036578391L;
+
     @Override
     public Object call(Object[] args) {
         if (args.length == 2

@@ -41,6 +41,8 @@ import org.openrefine.expr.EvalError;
 
 public class ReplaceChars extends PureFunction {
 
+    private static final long serialVersionUID = -7410222546080297115L;
+
     @Override
     public Object call(Object[] args) {
         if (args.length == 3) {

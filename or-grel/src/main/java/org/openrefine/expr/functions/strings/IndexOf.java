@@ -40,6 +40,8 @@ import org.openrefine.expr.EvalError;
 
 public class IndexOf extends PureFunction {
 
+    private static final long serialVersionUID = 3725367213615945967L;
+
     @Override
     public Object call(Object[] args) {
         if (args.length == 2) {

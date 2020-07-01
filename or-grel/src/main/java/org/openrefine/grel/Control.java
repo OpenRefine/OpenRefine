@@ -33,6 +33,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package org.openrefine.grel;
 
+import java.io.Serializable;
 import java.util.Properties;
 
 import org.openrefine.grel.ast.GrelExpr;
@@ -46,7 +47,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  * decide which part of the code to execute and can affect the environment bindings.
  * Functions, on the other hand, can't do either.
  */
-public interface Control  {
+public interface Control extends Serializable {
     public Object call(Properties bindings, GrelExpr[] args);
     
     public String checkArguments(GrelExpr[] args);

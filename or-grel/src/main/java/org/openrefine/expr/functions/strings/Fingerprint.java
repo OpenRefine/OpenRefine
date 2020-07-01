@@ -40,6 +40,8 @@ import org.openrefine.clustering.binning.Keyer;
 
 public class Fingerprint extends PureFunction {
 
+    private static final long serialVersionUID = 5009329405413583695L;
+    
     static Keyer fingerprint = new FingerprintKeyer();
 
     @Override

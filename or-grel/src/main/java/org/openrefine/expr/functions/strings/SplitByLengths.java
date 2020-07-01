@@ -39,6 +39,9 @@ import org.openrefine.grel.PureFunction;
 import org.openrefine.expr.EvalError;
 
 public class SplitByLengths extends PureFunction {
+
+    private static final long serialVersionUID = -772360047957447320L;
+
     @Override
     public Object call(Object[] args) {
         if (args.length >= 2 && args[0] != null) {

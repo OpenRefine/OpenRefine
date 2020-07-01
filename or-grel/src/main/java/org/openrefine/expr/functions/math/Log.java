@@ -40,6 +40,8 @@ import org.openrefine.expr.EvalError;
 
 public class Log extends PureFunction {
 
+    private static final long serialVersionUID = -2998014874808067285L;
+
     @Override
     public Object call(Object[] args) {
         if (args.length == 1 && args[0] != null && args[0] instanceof Number) {

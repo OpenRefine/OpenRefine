@@ -40,6 +40,8 @@ import org.openrefine.expr.EvalError;
 
 public class Floor extends PureFunction {
 
+    private static final long serialVersionUID = 4130045634151223637L;
+
     @Override
     public Object call(Object[] args) {
         if (args.length == 1 && args[0] != null && args[0] instanceof Number) {

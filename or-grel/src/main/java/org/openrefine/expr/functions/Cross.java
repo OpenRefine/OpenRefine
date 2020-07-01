@@ -47,7 +47,9 @@ import org.openrefine.util.GetProjectIDException;
 import org.openrefine.util.JoinException;
 
 public class Cross implements Function {
-    
+
+    private static final long serialVersionUID = 1124002039493869757L;
+
     @Override
     public Object call(Properties bindings, Object[] args) {
         if (args.length == 3) {

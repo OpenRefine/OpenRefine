@@ -40,6 +40,8 @@ import org.openrefine.expr.EvalError;
 
 public class Min extends PureFunction {
 
+    private static final long serialVersionUID = 161932788334335983L;
+
     @Override
     public Object call(Object[] args) {
         if (args.length == 2 && 

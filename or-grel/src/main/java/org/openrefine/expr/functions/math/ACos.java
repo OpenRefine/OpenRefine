@@ -40,6 +40,8 @@ import org.openrefine.expr.EvalError;
 
 public class ACos extends PureFunction {
 
+    private static final long serialVersionUID = 6331139958503852441L;
+
     @Override
     public Object call(Object[] args) {
         if (args.length == 1 && args[0] != null && args[0] instanceof Number) {
