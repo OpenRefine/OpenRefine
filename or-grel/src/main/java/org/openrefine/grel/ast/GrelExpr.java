@@ -26,13 +26,19 @@ public interface GrelExpr extends Serializable {
      *     the result of the evaluation of the expression
      */
     public Object evaluate(Properties bindings);
-    
+
     /**
      * For GREL expressions, toString should return the source code
      * of the expression, or a source code for an equivalent expression.
      * (without the "grel:" prefix).
      */
     public String toString();
+    
+    /**
+     * @returns true when the expression can be evaluated purely based on
+     * the local context (see {@link org.openrefine.expr.Evaluable}).
+     */
+    public boolean isLocal();
     
     /**
      * Returns the names of the columns this expression depends on.

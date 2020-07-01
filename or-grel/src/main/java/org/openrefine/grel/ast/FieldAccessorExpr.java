@@ -118,4 +118,9 @@ public class FieldAccessorExpr implements GrelExpr {
             return null;
         }
     }
+
+    @Override
+    public boolean isLocal() {
+        return _inner.isLocal();
+    }
 }

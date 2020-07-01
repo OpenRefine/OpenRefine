@@ -31,5 +31,15 @@ public abstract class PureArgumentsExpr implements GrelExpr {
     	}
     	return dependencies;
     }
+    
+    @Override
+    public boolean isLocal() {
+        for (GrelExpr ev : _args) {
+            if(!ev.isLocal()) {
+                return false;
+            }
+        }
+        return true;
+    }
 
 }
