@@ -44,11 +44,12 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import org.openrefine.ProjectManager;
+import org.openrefine.ProjectMetadata;
 import org.openrefine.RefineTest;
 import org.openrefine.commands.Command;
-import org.openrefine.commands.recon.ReconJudgeOneCellCommand;
+import org.openrefine.history.History;
 import org.openrefine.model.Cell;
-import org.openrefine.model.ColumnMetadata;
+import org.openrefine.model.GridState;
 import org.openrefine.model.Project;
 import org.openrefine.model.recon.Recon;
 import org.openrefine.model.recon.ReconConfig;
@@ -64,12 +65,11 @@ public class ReconJudgeOneCellCommandTest extends RefineTest {
 
     @BeforeMethod
     public void setUp() {
-        project = createProject(
+        GridState grid = createGrid(
                 new String[] { "reconciled column", "unreconciled column" },
-                new Serializable[] {
-                        "a", "b",
-                        "c", "d" });
-        ColumnMetadata reconciled = project.columnModel.getColumns().get(0);
+                new Serializable[][] {
+                        { "a", "b" },
+                        { "c", "d" } });
         ReconConfig config = new StandardReconConfig(
                 "http://my.recon.service/api",
                 "http://my.recon.service/rdf/space",
@@ -79,12 +79,16 @@ public class ReconJudgeOneCellCommandTest extends RefineTest {
                 true,
                 Collections.emptyList(),
                 5);
-        reconciled.setReconConfig(config);
+        grid = grid.withColumnModel(grid.getColumnModel().withReconConfig(0, config));
+        project = new Project(grid);
+        ProjectMetadata meta = new ProjectMetadata();
+        meta.setName("test project");
+        ProjectManager.singleton.registerProject(project, meta);
 
         request = mock(HttpServletRequest.class);
         response = mock(HttpServletResponse.class);
 
-        when(request.getParameter("project")).thenReturn(String.valueOf(project.id));
+        when(request.getParameter("project")).thenReturn(String.valueOf(project.getId()));
         when(request.getParameter("csrf_token")).thenReturn(Command.csrfFactory.getFreshToken());
 
         writer = mock(PrintWriter.class);
@@ -99,7 +103,7 @@ public class ReconJudgeOneCellCommandTest extends RefineTest {
 
     @AfterMethod
     public void tearDown() {
-        ProjectManager.singleton.deleteProject(project.id);
+        ProjectManager.singleton.deleteProject(project.getId());
     }
 
     @Test
@@ -110,7 +114,8 @@ public class ReconJudgeOneCellCommandTest extends RefineTest {
         when(request.getParameter("judgment")).thenReturn("new");
         command.doPost(request, response);
         
-        Cell cell = project.rows.get(0).cells.get(0);
+        History history = project.getHistory();
+        Cell cell = project.getCurrentGridState().getRow(0L).cells.get(0);
         Assert.assertEquals(Recon.Judgment.New, cell.recon.judgment);
         Assert.assertEquals("http://my.recon.service/rdf/space", cell.recon.identifierSpace);
     }
@@ -125,7 +130,7 @@ public class ReconJudgeOneCellCommandTest extends RefineTest {
         when(request.getParameter("schemaSpace")).thenReturn("http://my.custom.space/schema");
         command.doPost(request, response);
         
-        Cell cell = project.rows.get(0).cells.get(0);
+        Cell cell = project.getCurrentGridState().getRow(0L).cells.get(0);
         Assert.assertEquals(Recon.Judgment.New, cell.recon.judgment);
         Assert.assertEquals("http://my.custom.space/id", cell.recon.identifierSpace);
         Assert.assertEquals("http://my.custom.space/schema", cell.recon.schemaSpace);

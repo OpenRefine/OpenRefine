@@ -34,6 +34,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package org.openrefine.operations.column;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import org.openrefine.browsing.EngineConfig;
@@ -89,5 +90,12 @@ public class ColumnRenameOperation extends ImmediateRowMapOperation {
     @Override
     protected RowMapper getPositiveRowMapper(GridState state, ChangeContext context) throws DoesNotApplyException {
         return RowMapper.IDENTITY;
+    }
+
+    // engine config is never useful, so we remove it from the JSON serialization
+    @Override
+    @JsonIgnore
+    public EngineConfig getEngineConfig() {
+        return super.getEngineConfig();
     }
 }

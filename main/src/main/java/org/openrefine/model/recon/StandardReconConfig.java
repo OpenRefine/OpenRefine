@@ -482,7 +482,7 @@ public class StandardReconConfig extends ReconConfig {
                         }
 
                         if (recon != null) {
-                            recon.service = service;
+                            recon = recon.withService(service);
                         }
                         recons.add(recon);
                     }
@@ -495,10 +495,10 @@ public class StandardReconConfig extends ReconConfig {
         }
 
         while (recons.size() < jobs.size()) {
-            Recon recon = new Recon(historyEntryID, identifierSpace, schemaSpace);
-            recon.service = service;
-            recon.identifierSpace = identifierSpace;
-            recon.schemaSpace = schemaSpace;
+            Recon recon = new Recon(historyEntryID, identifierSpace, schemaSpace)
+                    .withService(service)
+                    .withIdentifierSpace(identifierSpace)
+                    .withSchemaSpace(schemaSpace);
 
             recons.add(recon);
         }
@@ -528,24 +528,22 @@ public class StandardReconConfig extends ReconConfig {
         });
 
         int length = results.size();
-        int count = 0;
         for (int i = 0; i < length; i++) {
             ReconResult result = results.get(i);
 
             ReconCandidate candidate = result.toCandidate();
 
             if (autoMatch && i == 0 && result.match) {
-                recon.match = candidate;
-                recon.matchRank = 0;
-                recon.judgment = Judgment.Matched;
-                recon.judgmentAction = "auto";
+                recon = recon.withMatch(candidate)
+                        .withMatchRank(0)
+                        .withJudgment(Judgment.Matched)
+                        .withJudgmentAction("auto");
             }
 
-            recon.addCandidate(candidate);
-            count++;
+            recon = recon.withCandidate(candidate);
         }
 
-        computeFeatures(recon, text);
+        recon = computeFeatures(recon, text);
         return recon;
     }
 
@@ -555,27 +553,27 @@ public class StandardReconConfig extends ReconConfig {
      * @param text
      *            the cell value to compare the reconciliation data to
      */
-    public void computeFeatures(Recon recon, String text) {
+    public Recon computeFeatures(Recon recon, String text) {
+        Object[] features = new Object[Recon.Feature_max];
         if (recon.candidates != null && !recon.candidates.isEmpty() && text != null) {
             ReconCandidate candidate = recon.candidates.get(0);
 
-            recon.setFeature(Recon.Feature_nameMatch, text.equalsIgnoreCase(candidate.name));
-            recon.setFeature(Recon.Feature_nameLevenshtein,
-                    StringUtils.getLevenshteinDistance(StringUtils.lowerCase(text), StringUtils.lowerCase(candidate.name)));
-            recon.setFeature(Recon.Feature_nameWordDistance, wordDistance(text, candidate.name));
+            features[Recon.Feature_nameMatch] = text.equalsIgnoreCase(candidate.name);
+            features[Recon.Feature_nameLevenshtein] = StringUtils.getLevenshteinDistance(StringUtils.lowerCase(text),
+                    StringUtils.lowerCase(candidate.name));
+            features[Recon.Feature_nameWordDistance] = wordDistance(text, candidate.name);
 
-            recon.setFeature(Recon.Feature_typeMatch, false);
+            features[Recon.Feature_typeMatch] = false;
             if (this.typeID != null) {
                 for (String typeID : candidate.types) {
                     if (this.typeID.equals(typeID)) {
-                        recon.setFeature(Recon.Feature_typeMatch, true);
+                        features[Recon.Feature_typeMatch] = true;
                         break;
                     }
                 }
             }
-        } else {
-            recon.features = new Object[Recon.Feature_max];
         }
+        return recon.withFeatures(features);
     }
 
     static protected double wordDistance(String s1, String s2) {

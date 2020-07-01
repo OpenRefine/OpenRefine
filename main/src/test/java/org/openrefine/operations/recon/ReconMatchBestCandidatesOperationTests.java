@@ -38,9 +38,6 @@ import org.testng.annotations.Test;
 
 import org.openrefine.RefineTest;
 import org.openrefine.browsing.EngineConfig;
-import org.openrefine.browsing.facets.FacetConfigResolver;
-import org.openrefine.browsing.facets.RangeFacet.RangeFacetConfig;
-import org.openrefine.browsing.facets.TimeRangeFacet.TimeRangeFacetConfig;
 import org.openrefine.model.Cell;
 import org.openrefine.model.ColumnMetadata;
 import org.openrefine.model.ColumnModel;
@@ -61,8 +58,6 @@ public class ReconMatchBestCandidatesOperationTests extends RefineTest {
 
     @BeforeSuite
     public void registerOperation() {
-        FacetConfigResolver.registerFacetConfig("core", "range", RangeFacetConfig.class);
-        FacetConfigResolver.registerFacetConfig("core", "timerange", TimeRangeFacetConfig.class);
         OperationRegistry.registerOperation("core", "recon-match-best-candidates", ReconMatchBestCandidatesOperation.class);
     }
 
@@ -83,8 +78,6 @@ public class ReconMatchBestCandidatesOperationTests extends RefineTest {
                 + "\"op\":\"core/recon-match-best-candidates\","
                 + "\"description\":\"Match each cell to its best recon candidate in column organization_name\","
                 + "\"engineConfig\":{\"mode\":\"row-based\",\"facets\":["
-                + "       {\"selectNumeric\":true,\"expression\":\"cell.recon.best.score\",\"selectBlank\":false,\"selectNonNumeric\":true,\"selectError\":true,\"name\":\"organization_name: best candidate's score\",\"from\":13,\"to\":101,\"type\":\"core/range\",\"columnName\":\"organization_name\"},"
-                + "       {\"selectNonTime\":true,\"expression\":\"grel:toDate(value)\",\"selectBlank\":true,\"selectError\":true,\"selectTime\":true,\"name\":\"start_year\",\"from\":410242968000,\"to\":1262309184000,\"type\":\"core/timerange\",\"columnName\":\"start_year\"}"
                 + "]},"
                 + "\"columnName\":\"organization_name\""
                 + "}";

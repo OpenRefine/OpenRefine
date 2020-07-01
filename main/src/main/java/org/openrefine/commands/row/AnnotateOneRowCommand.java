@@ -40,11 +40,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.openrefine.commands.Command;
-import org.openrefine.history.History;
-import org.openrefine.history.HistoryEntry;
 import org.openrefine.model.Project;
-import org.openrefine.model.changes.RowFlagChange;
-import org.openrefine.model.changes.RowStarChange;
+import org.openrefine.model.changes.StarFlagChange;
 import org.openrefine.process.QuickHistoryEntryProcess;
 
 public class AnnotateOneRowCommand extends Command {
@@ -70,11 +67,11 @@ public class AnnotateOneRowCommand extends Command {
                 boolean starred = "true".endsWith(starredString);
                 String description = (starred ? "Star row " : "Unstar row ") + (rowIndex + 1);
 
-                StarOneRowProcess process = new StarOneRowProcess(
+                QuickHistoryEntryProcess process = new QuickHistoryEntryProcess(
                         project.getHistory(),
                         description,
-                        rowIndex,
-                        starred);
+                        null,
+                        new StarFlagChange(rowIndex, true, starred));
 
                 performProcessAndRespond(request, response, project, process);
                 return;
@@ -85,11 +82,11 @@ public class AnnotateOneRowCommand extends Command {
                 boolean flagged = "true".endsWith(flaggedString);
                 String description = (flagged ? "Flag row " : "Unflag row ") + (rowIndex + 1);
 
-                FlagOneRowProcess process = new FlagOneRowProcess(
+                QuickHistoryEntryProcess process = new QuickHistoryEntryProcess(
                         project.getHistory(),
                         description,
-                        rowIndex,
-                        flagged);
+                        null,
+                        new StarFlagChange(rowIndex, false, flagged));
 
                 performProcessAndRespond(request, response, project, process);
                 return;
@@ -99,58 +96,6 @@ public class AnnotateOneRowCommand extends Command {
 
         } catch (Exception e) {
             respondException(response, e);
-        }
-    }
-
-    protected static class StarOneRowProcess extends QuickHistoryEntryProcess {
-
-        final int rowIndex;
-        final boolean starred;
-
-        StarOneRowProcess(
-                History history,
-                String briefDescription,
-                int rowIndex,
-                boolean starred) {
-            super(history, briefDescription);
-
-            this.rowIndex = rowIndex;
-            this.starred = starred;
-        }
-
-        @Override
-        protected HistoryEntry createHistoryEntry(long historyEntryID) throws Exception {
-            return new HistoryEntry(
-                    historyEntryID,
-                    (starred ? "Star row " : "Unstar row ") + (rowIndex + 1),
-                    null,
-                    new RowStarChange(rowIndex, starred));
-        }
-    }
-
-    protected static class FlagOneRowProcess extends QuickHistoryEntryProcess {
-
-        final int rowIndex;
-        final boolean flagged;
-
-        FlagOneRowProcess(
-                History history,
-                String briefDescription,
-                int rowIndex,
-                boolean flagged) {
-            super(history, briefDescription);
-
-            this.rowIndex = rowIndex;
-            this.flagged = flagged;
-        }
-
-        @Override
-        protected HistoryEntry createHistoryEntry(long historyEntryID) throws Exception {
-            return new HistoryEntry(
-                    historyEntryID,
-                    (flagged ? "Flag row " : "Unflag row ") + (rowIndex + 1),
-                    null,
-                    new RowFlagChange(rowIndex, flagged));
         }
     }
 }

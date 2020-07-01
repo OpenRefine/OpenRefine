@@ -37,6 +37,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import org.openrefine.browsing.EngineConfig;
@@ -117,5 +118,12 @@ public class ColumnMoveOperation extends ImmediateRowMapOperation {
             }
 
         };
+    }
+
+    // engine config is never useful, so we remove it from the JSON serialization
+    @Override
+    @JsonIgnore
+    public EngineConfig getEngineConfig() {
+        return super.getEngineConfig();
     }
 }
