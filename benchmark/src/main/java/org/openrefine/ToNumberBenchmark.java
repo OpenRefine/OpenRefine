@@ -86,33 +86,9 @@ public class ToNumberBenchmark {
 	@Warmup(iterations = 3, time = 200, timeUnit = TimeUnit.MILLISECONDS)
 	@Measurement(iterations = 5, time = 200, timeUnit = TimeUnit.MILLISECONDS)
 	@Fork(1)
-    public void toDoubleOld(ExecutionPlan plan, Blackhole blackhole) {
-		plan.args[0] = plan.testData;
-		blackhole.consume(plan.f.callOld(bindings, plan.args));
-    }
-
-    @Benchmark
-    @BenchmarkMode(Mode.AverageTime)
-    @OutputTimeUnit(TimeUnit.NANOSECONDS)
-	@Warmup(iterations = 3, time = 200, timeUnit = TimeUnit.MILLISECONDS)
-	@Measurement(iterations = 5, time = 200, timeUnit = TimeUnit.MILLISECONDS)
-	@Fork(1)
     public void toLongNew(ExecutionPlan plan, Blackhole blackhole) {
             plan.args[0] = plan.testDataInt;
             blackhole.consume(plan.f.call(bindings, plan.args));
     }
-
-    @Benchmark
-    @BenchmarkMode(Mode.AverageTime)
-    @OutputTimeUnit(TimeUnit.NANOSECONDS)
-	@Warmup(iterations = 3, time = 200, timeUnit = TimeUnit.MILLISECONDS)
-	@Measurement(iterations = 5, time = 200, timeUnit = TimeUnit.MILLISECONDS)
-	@Fork(1)
-    public void toLongOld(ExecutionPlan plan, Blackhole blackhole) {
-            plan.args[0] = plan.testDataInt;
-            blackhole.consume(plan.f.callOld(bindings, plan.args));
-    }
-
-
 }
 

@@ -72,32 +72,6 @@ public class ToNumber implements Function {
         }
     }
 
-
-    public Object callOld(Properties bindings, Object[] args) {
-        if (args.length == 1 && args[0] != null) {
-            if (args[0] instanceof Number) {
-                return args[0];
-            } else {
-                String s = args[0].toString().trim();
-                if (s.length() > 0) {
-                    try {
-                        return Long.parseLong(s);
-                    } catch (NumberFormatException e) {
-                    }
-                    try {
-                        return Double.parseDouble(s);
-                    } catch (NumberFormatException e) {
-                        return new EvalError("Unable to parse as number");
-                    }
-                } else {
-                    return new EvalError("Unable to parse as number");
-                }
-            }
-        } else {
-            return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects one non-null argument");
-        }
-    }
-    
     @Override
     public String getDescription() {
         return "Returns o converted to a number";
