@@ -80,7 +80,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
     var o = DataTableView.sampleVisibleRows(column);
     var previewWidget = new ExpressionPreviewDialog.Widget(
       elmts,
-      column.cellIndex,
+      Refine.columnNameToColumnIndex(column.name),
       o.rowIndices,
       o.values,
       null

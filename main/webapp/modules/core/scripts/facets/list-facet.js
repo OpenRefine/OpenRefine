@@ -689,7 +689,7 @@ ListFacet.prototype._editExpression = function() {
 
   new ExpressionPreviewDialog(
     title,
-    column ? column.cellIndex : -1, 
+    column ? Refine.columnNameToColumnIndex(column.name) : -1, 
     o.rowIndices,
     o.values,
     this._config.expression, 
