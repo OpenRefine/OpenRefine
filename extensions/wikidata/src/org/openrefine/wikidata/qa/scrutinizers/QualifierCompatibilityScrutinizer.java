@@ -23,16 +23,19 @@
  ******************************************************************************/
 package org.openrefine.wikidata.qa.scrutinizers;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-import java.util.stream.Collectors;
-
 import org.openrefine.wikidata.qa.QAWarning;
 import org.wikidata.wdtk.datamodel.interfaces.EntityIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.PropertyIdValue;
+import org.wikidata.wdtk.datamodel.interfaces.SnakGroup;
 import org.wikidata.wdtk.datamodel.interfaces.Statement;
+import org.wikidata.wdtk.datamodel.interfaces.Value;
+
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * A scrutinizer that checks the compatibility of the qualifiers and the
@@ -44,6 +47,42 @@ public class QualifierCompatibilityScrutinizer extends StatementScrutinizer {
 
     public static final String missingMandatoryQualifiersType = "missing-mandatory-qualifiers";
     public static final String disallowedQualifiersType = "disallowed-qualifiers";
+    public static String ALLOWED_QUALIFIERS_CONSTRAINT_QID = "Q21510851";
+    public static String ALLOWED_QUALIFIERS_CONSTRAINT_PID = "P2306";
+
+    public static String MANDATORY_QUALIFIERS_CONSTRAINT_QID = "Q21510856";
+    public static String MANDATORY_QUALIFIERS_CONSTRAINT_PID = "P2306";
+
+    class AllowedQualifierConstraint {
+        Set<PropertyIdValue> allowedProperties;
+        AllowedQualifierConstraint(Statement statement) {
+            allowedProperties = new HashSet<>();
+            List<SnakGroup> specs = statement.getClaim().getQualifiers();
+            if (specs != null) {
+                List<Value> properties = _fetcher.findValues(specs, ALLOWED_QUALIFIERS_CONSTRAINT_PID);
+                allowedProperties = properties.stream()
+                        .filter(e -> e != null)
+                        .map(e -> (PropertyIdValue) e)
+                        .collect(Collectors.toSet());
+            }
+
+        }
+    }
+
+    class MandatoryQualifierConstraint {
+        Set<PropertyIdValue> mandatoryProperties;
+        MandatoryQualifierConstraint(Statement statement) {
+            mandatoryProperties = new HashSet<>();
+            List<SnakGroup> specs = statement.getClaim().getQualifiers();
+            if (specs != null) {
+                List<Value> properties = _fetcher.findValues(specs, MANDATORY_QUALIFIERS_CONSTRAINT_PID);
+                mandatoryProperties = properties.stream()
+                        .filter(e -> e != null)
+                        .map(e -> (PropertyIdValue) e)
+                        .collect(Collectors.toSet());
+            }
+        }
+    }
 
     private Map<PropertyIdValue, Set<PropertyIdValue>> _allowedQualifiers;
     private Map<PropertyIdValue, Set<PropertyIdValue>> _mandatoryQualifiers;
@@ -58,7 +97,11 @@ public class QualifierCompatibilityScrutinizer extends StatementScrutinizer {
         if (_allowedQualifiers.containsKey(statementProperty)) {
             allowed = _allowedQualifiers.get(statementProperty);
         } else {
-            allowed = _fetcher.allowedQualifiers(statementProperty);
+            List<Statement> statementList = _fetcher.getConstraintsByType(statementProperty, ALLOWED_QUALIFIERS_CONSTRAINT_QID);
+            if (!statementList.isEmpty()){
+                AllowedQualifierConstraint allowedQualifierConstraint = new AllowedQualifierConstraint(statementList.get(0));
+                allowed = allowedQualifierConstraint.allowedProperties;
+            }
             _allowedQualifiers.put(statementProperty, allowed);
         }
         return allowed == null || allowed.contains(qualifierProperty);
@@ -69,7 +112,11 @@ public class QualifierCompatibilityScrutinizer extends StatementScrutinizer {
         if (_mandatoryQualifiers.containsKey(statementProperty)) {
             mandatory = _mandatoryQualifiers.get(statementProperty);
         } else {
-            mandatory = _fetcher.mandatoryQualifiers(statementProperty);
+            List<Statement> statementList = _fetcher.getConstraintsByType(statementProperty, MANDATORY_QUALIFIERS_CONSTRAINT_QID);
+            if (!statementList.isEmpty()){
+                MandatoryQualifierConstraint mandatoryQualifierConstraint = new MandatoryQualifierConstraint(statementList.get(0));
+                mandatory = mandatoryQualifierConstraint.mandatoryProperties;
+            }
             if (mandatory == null) {
                 mandatory = new HashSet<>();
             }
