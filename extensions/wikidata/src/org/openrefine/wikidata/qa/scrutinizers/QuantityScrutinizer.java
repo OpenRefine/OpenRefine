@@ -1,7 +1,14 @@
 package org.openrefine.wikidata.qa.scrutinizers;
 
 import org.openrefine.wikidata.qa.QAWarning;
-import org.wikidata.wdtk.datamodel.interfaces.*;
+import org.wikidata.wdtk.datamodel.interfaces.EntityIdValue;
+import org.wikidata.wdtk.datamodel.interfaces.ItemIdValue;
+import org.wikidata.wdtk.datamodel.interfaces.PropertyIdValue;
+import org.wikidata.wdtk.datamodel.interfaces.QuantityValue;
+import org.wikidata.wdtk.datamodel.interfaces.Snak;
+import org.wikidata.wdtk.datamodel.interfaces.SnakGroup;
+import org.wikidata.wdtk.datamodel.interfaces.Statement;
+import org.wikidata.wdtk.datamodel.interfaces.Value;
 
 import java.util.List;
 import java.util.Set;
@@ -44,7 +51,7 @@ public class QuantityScrutinizer extends SnakScrutinizer {
         if (snak.getValue() instanceof QuantityValue && added) {
             PropertyIdValue pid = snak.getPropertyId();
             QuantityValue value = (QuantityValue)snak.getValue();
-            
+
             if(!_fetcher.getConstraintsByType(pid, NO_BOUNDS_CONSTRAINT_QID).isEmpty() && (value.getUpperBound() != null || value.getLowerBound() != null)) {
                 QAWarning issue = new QAWarning(boundsDisallowedType, pid.getId(), QAWarning.Severity.IMPORTANT, 1);
                 issue.setProperty("property_entity", pid);
