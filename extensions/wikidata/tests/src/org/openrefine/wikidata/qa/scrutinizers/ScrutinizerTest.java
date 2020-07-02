@@ -39,9 +39,12 @@ import org.wikidata.wdtk.datamodel.interfaces.SnakGroup;
 import org.wikidata.wdtk.datamodel.interfaces.Statement;
 import org.wikidata.wdtk.datamodel.interfaces.StatementRank;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -108,6 +111,28 @@ public abstract class ScrutinizerTest {
         List<Statement> statements = Collections.singletonList(statement);
 
         return statements;
+    }
+
+    public List<SnakGroup> makeSnakGroupList(Snak... snaks) {
+        Map<PropertyIdValue, List<Snak>> propertySnakMap = new HashMap<>();
+        for (Snak snak : snaks) {
+            PropertyIdValue pid = snak.getPropertyId();
+            List<Snak> snakList;
+            if (propertySnakMap.containsKey(pid)) {
+                snakList = propertySnakMap.get(pid);
+            } else {
+                snakList = new ArrayList<>();
+            }
+            snakList.add(snak);
+            propertySnakMap.put(pid, snakList);
+        }
+
+        List<SnakGroup> snakGroupList = new ArrayList<>();
+        for (List<Snak> snakList : propertySnakMap.values()) {
+            snakGroupList.add(Datamodel.makeSnakGroup(snakList));
+        }
+
+        return snakGroupList;
     }
 
 }
