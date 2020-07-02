@@ -102,6 +102,17 @@ public class ZippedWithIndexRDD<T> extends RDD<Tuple2<Long, T>> {
 
             long currentIndex = startIndex - 1L;
 
+            // Somehow this is required as of 2020-07-02 with Spark 2.4, for tests to pass.
+            // Otherwise we get the following error when collecting the RDD:
+            // java.lang.AbstractMethodError: Receiver class org.openrefine.model.rdd.ScanMapRDD$2 does
+            // not define or inherit an implementation of the resolved method 'abstract scala.collection.TraversableOnce
+            // seq()'
+            // of interface scala.collection.TraversableOnce.
+            @Override
+            public Iterator<Tuple2<Long, T>> seq() {
+                return this;
+            }
+
             @Override
             public boolean hasNext() {
                 return iterator.hasNext();

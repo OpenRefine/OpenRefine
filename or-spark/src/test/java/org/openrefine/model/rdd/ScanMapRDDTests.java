@@ -64,7 +64,7 @@ public class ScanMapRDDTests extends SparkBasedTest {
     }
 
     @Test
-    public void testZipWithIndex() {
+    public void testZipWithIndexViaScanMap() {
         List<String> list = Arrays.asList("lorem", "ipsum", "dolor", "sit", "amet,", "consectetur", "adipiscing", "elit");
         // Replicates zipWithIndex with scanMap
         JavaRDD<String> origRDD = context.parallelize(list, 3);
