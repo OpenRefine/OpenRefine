@@ -639,7 +639,7 @@ public class JsonImporterTests extends ImporterTest {
     private String getComplexJSON(String fileName) throws IOException {
         InputStream in = this.getClass().getClassLoader()
                 .getResourceAsStream(fileName);
-        String content = org.apache.commons.io.IOUtils.toString(in);
+        String content = org.apache.commons.io.IOUtils.toString(in, "UTF-8");
         
         return content;
     }

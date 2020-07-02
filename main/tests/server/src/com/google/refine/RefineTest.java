@@ -95,7 +95,8 @@ public class RefineTest extends PowerMockTestCase {
             FileUtils.writeStringToFile(jsonPath, "{\"projectIDs\":[]\n" + 
                     ",\"preferences\":{\"entries\":{\"scripting.starred-expressions\":" +
                     "{\"class\":\"com.google.refine.preference.TopList\",\"top\":2147483647," +
-                    "\"list\":[]},\"scripting.expressions\":{\"class\":\"com.google.refine.preference.TopList\",\"top\":100,\"list\":[]}}}}");
+                    "\"list\":[]},\"scripting.expressions\":{\"class\":\"com.google.refine.preference.TopList\",\"top\":100,\"list\":[]}}}}",
+                    "UTF-8"); // JSON is always UTF-8
             FileProjectManager.initialize(workspaceDir);
             
 
