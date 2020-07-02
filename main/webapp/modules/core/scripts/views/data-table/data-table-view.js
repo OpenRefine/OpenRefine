@@ -919,12 +919,7 @@ DataTableView.sampleVisibleRows = function(column) {
   var rowIndices = [];
   var values = [];
 
-  var cellIndex = 0;
-  for (var c = 0; c < c.columnModel.columns.length; c++) {
-    if (c.columnModel.columns[i].name === column.name) {
-      cellIndex = c;
-    }
-  }
+  var cellIndex = Refine.columnNameToColumnIndex(column.name);
 
   var rows = theProject.rowModel.rows;
   for (var r = 0; r < rows.length; r++) {
@@ -951,10 +946,12 @@ DataTableView.sampleVisibleRows = function(column) {
 DataTableView.promptExpressionOnVisibleRows = function(column, title, expression, onDone) {
   var o = DataTableView.sampleVisibleRows(column);
 
+  var cellIndex = Refine.columnNameToColumnIndex(column.name);
+
   var self = this;
   new ExpressionPreviewDialog(
     title,
-    column.cellIndex, 
+    cellIndex, 
     o.rowIndices, 
     o.values,
     expression,
