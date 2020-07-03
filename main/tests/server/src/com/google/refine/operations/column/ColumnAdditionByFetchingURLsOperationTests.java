@@ -263,7 +263,7 @@ public class ColumnAdditionByFetchingURLsOperationTests extends RefineTest {
                 true,
                 headers);
 
-            runAndWait(op, 1000);
+            runAndWait(op, 3000);
 
             RecordedRequest request = server.takeRequest();
             Assert.assertEquals(request.getHeader("user-agent"), userAgentValue);
