@@ -127,10 +127,7 @@ SchemaAlignmentDialog.setUpTabs = function() {
 
   // Init the column area
   this.updateColumns();
-
-  var url = ReconciliationManager.ensureDefaultServicePresent();
-  SchemaAlignmentDialog._reconService = ReconciliationManager.getServiceFromUrl(url);
-
+ 
   /**
    * Init the issues tab
    */
@@ -148,10 +145,16 @@ SchemaAlignmentDialog.setUpTabs = function() {
 
   this._previewPanes = $(".schema-alignment-dialog-preview");
 
-  // Load the existing schema
-  this._reset(theProject.overlayModels.wikibaseSchema);
-  // Perform initial preview
-  this.preview();
+  var url = ReconciliationManager.ensureDefaultServicePresent();
+  ReconciliationManager.getOrRegisterServiceFromUrl(url, function(service) {
+
+    // Load the existing schema
+    SchemaAlignmentDialog._reconService = service; 
+    SchemaAlignmentDialog._reset(theProject.overlayModels.wikibaseSchema);
+
+    // Perform initial preview
+    SchemaAlignmentDialog.preview();
+  }, false);
 }
 
 SchemaAlignmentDialog.updateColumns = function() {
