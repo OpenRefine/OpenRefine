@@ -222,7 +222,7 @@ public class ColumnAdditionByFetchingURLsOperationTests extends RefineTest {
                     true,
                     null);
 
-            runAndWait(op, 1000);
+            runAndWait(op, 3000);
 
             int newCol = project.columnModel.getColumnByName("junk").getCellIndex();
             // Inspect rows
