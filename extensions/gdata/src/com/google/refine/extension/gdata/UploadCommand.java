@@ -167,10 +167,10 @@ public class UploadCommand extends Command {
             contentHints.setThumbnail(tn); 
 
             File fileMetadata = new File();
-            fileMetadata.setName(name)
+            fileMetadata.setName(name + ".tar.gz")
                 .setDescription(METADATA_DESCRIPTION)
                 .setContentHints(contentHints);
-            FileContent projectContent = new FileContent("application/zip", filePath);
+            FileContent projectContent = new FileContent("application/x-gzip", filePath);
             File file = GoogleAPIExtension.getDriveService(token)
                     .files().create(fileMetadata, projectContent)
                 .setFields("id")
