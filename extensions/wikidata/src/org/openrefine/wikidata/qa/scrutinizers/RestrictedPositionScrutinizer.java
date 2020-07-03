@@ -32,6 +32,7 @@ import org.wikidata.wdtk.datamodel.interfaces.Reference;
 import org.wikidata.wdtk.datamodel.interfaces.Snak;
 import org.wikidata.wdtk.datamodel.interfaces.SnakGroup;
 import org.wikidata.wdtk.datamodel.interfaces.Statement;
+import org.wikidata.wdtk.datamodel.interfaces.Value;
 
 import java.util.Iterator;
 import java.util.List;
@@ -56,9 +57,10 @@ public class RestrictedPositionScrutinizer extends StatementScrutinizer {
                 ItemIdValue targetValue = Datamodel.makeWikidataItemIdValue(SCOPE_CONSTRAINT_VALUE_QID);
                 ItemIdValue targetQualifier = Datamodel.makeWikidataItemIdValue(SCOPE_CONSTRAINT_QUALIFIER_QID);
                 ItemIdValue targetReference = Datamodel.makeWikidataItemIdValue(SCOPE_CONSTRAINT_REFERENCE_QID);
-                isAllowedAsValue = _fetcher.findValues(specs, SCOPE_CONSTRAINT_PID).contains(targetValue);
-                isAllowedAsQualifier = _fetcher.findValues(specs, SCOPE_CONSTRAINT_PID).contains(targetQualifier);
-                isAllowedAsReference =  _fetcher.findValues(specs, SCOPE_CONSTRAINT_PID).contains(targetReference);
+                List<Value> snakValues = _fetcher.findValues(specs, SCOPE_CONSTRAINT_PID);
+                isAllowedAsValue = snakValues.contains(targetValue);
+                isAllowedAsQualifier = snakValues.contains(targetQualifier);
+                isAllowedAsReference =  snakValues.contains(targetReference);
             }
         }
     }
