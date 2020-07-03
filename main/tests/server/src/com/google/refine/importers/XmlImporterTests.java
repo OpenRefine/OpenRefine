@@ -51,6 +51,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.refine.importers.XmlImporter;
 import com.google.refine.importers.tree.TreeImportingParserBase;
 import com.google.refine.importing.ImportingJob;
+import com.google.refine.model.ColumnGroup;
 import com.google.refine.model.Row;
 import com.google.refine.util.JSONUtilities;
 import com.google.refine.util.ParsingUtilities;
@@ -197,11 +198,12 @@ public class XmlImporterTests extends ImporterTest {
         assertProjectCreated(project, 5, 6);
 
         Assert.assertEquals(project.columnModel.columnGroups.size(),1);
-        Assert.assertEquals(project.columnModel.columnGroups.get(0).keyColumnIndex, 2);
-        Assert.assertEquals(project.columnModel.columnGroups.get(0).startColumnIndex, 2);
-        Assert.assertNull(project.columnModel.columnGroups.get(0).parentGroup);
-        Assert.assertEquals(project.columnModel.columnGroups.get(0).subgroups.size(),0);
-        Assert.assertEquals(project.columnModel.columnGroups.get(0).columnSpan,2);
+        ColumnGroup cg0 = project.columnModel.columnGroups.get(0);
+        Assert.assertEquals(cg0.keyColumnIndex, 1);
+        Assert.assertEquals(cg0.startColumnIndex, 1);
+        Assert.assertNull(cg0.parentGroup);
+        Assert.assertEquals(cg0.subgroups.size(),0);
+        Assert.assertEquals(cg0.columnSpan,2);
     }
 
     //------------helper methods---------------
