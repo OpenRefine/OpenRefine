@@ -8,9 +8,9 @@ import org.wikidata.wdtk.datamodel.interfaces.SnakGroup;
 import org.wikidata.wdtk.datamodel.interfaces.Statement;
 import org.wikidata.wdtk.datamodel.interfaces.Value;
 
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 
 public class RestrictedValuesScrutinizer extends SnakScrutinizer {
@@ -28,7 +28,7 @@ public class RestrictedValuesScrutinizer extends SnakScrutinizer {
             List<SnakGroup> specs = statement.getClaim().getQualifiers();
             if (specs != null) {
                 List<Value> properties = _fetcher.findValues(specs, ALLOWED_VALUES_CONSTRAINT_PID);
-                allowedValues = new HashSet<>(properties);
+                allowedValues = properties.stream().collect(Collectors.toSet());
             }
         }
     }
@@ -39,7 +39,7 @@ public class RestrictedValuesScrutinizer extends SnakScrutinizer {
             List<SnakGroup> specs = statement.getClaim().getQualifiers();
             if (specs != null) {
                 List<Value> properties = _fetcher.findValues(specs, DISALLOWED_VALUES_CONSTRAINT_PID);
-                disallowedValues = new HashSet<>(properties);
+                disallowedValues = properties.stream().collect(Collectors.toSet());
             }
         }
     }
@@ -48,9 +48,17 @@ public class RestrictedValuesScrutinizer extends SnakScrutinizer {
     public void scrutinize(Snak snak, EntityIdValue entityId, boolean added) {
         PropertyIdValue pid = snak.getPropertyId();
         Value value = snak.getValue();
-        
-        Set<Value> allowedValues = _fetcher.allowedValues(pid);
-        Set<Value> disallowedValues = _fetcher.disallowedValues(pid);
+        List<Statement> allowedValueConstraintDefinitions = _fetcher.getConstraintsByType(pid, ALLOWED_VALUES_CONSTRAINT_QID);
+        List<Statement> disallowedValueConstraintDefinitions = _fetcher.getConstraintsByType(pid, DISALLOWED_VALUES_CONSTRAINT_QID);
+        Set<Value> allowedValues = null, disallowedValues = null;
+        if (!allowedValueConstraintDefinitions.isEmpty()) {
+            AllowedValueConstraint constraint = new AllowedValueConstraint(allowedValueConstraintDefinitions.get(0));
+            allowedValues = constraint.allowedValues;
+        }
+        if (!disallowedValueConstraintDefinitions.isEmpty()) {
+            DisallowedValueConstraint constraint = new DisallowedValueConstraint(disallowedValueConstraintDefinitions.get(0));
+            disallowedValues = constraint.disallowedValues;
+        }
         if((allowedValues != null && !allowedValues.contains(value)) ||
            (disallowedValues != null && disallowedValues.contains(value))) {
             QAWarning issue = new QAWarning(type, pid.getId(), QAWarning.Severity.IMPORTANT, 1);
