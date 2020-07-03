@@ -6,8 +6,10 @@ jobs:
   include:
     - jdk: openjdk14
     - jdk: oraclejdk11
+    - dist: trusty
+      jdk: oraclejdk8
     - os: osx
-      osx_image: xcode11.6
+      osx_image: xcode9.4 # macOS 10.13, Oracle JDK 13.0.1
       language: java
       services: # not supported on os x
       addons:
@@ -28,9 +30,6 @@ jobs:
         - psql -c 'CREATE DATABASE test_db;' -U postgres
         - psql -U postgres test_db < extensions/database/tests/conf/travis-pgsql.sql
         - cp extensions/database/tests/conf/travis_tests.xml extensions/database/tests/conf/tests.xml
-    - dist: trusty
-      jdk: oraclejdk8
-    - jdk: openjdk13
     - jdk: openjdk12
       dist: xenial # just for a little variety
 # Jacoco doesn't work with Java 16 and this workaround doesn't work
