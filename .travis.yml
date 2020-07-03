@@ -4,12 +4,12 @@ dist: bionic
 
 jobs:
   include:
-    - jdk: openjdk14
-    - jdk: oraclejdk11
-    - dist: trusty
+    - dist: trusty # Fastest build first
       jdk: oraclejdk8
+    - jdk: openjdk13
+    - jdk: oraclejdk11
     - os: osx
-      osx_image: xcode9.4 # macOS 10.13, Oracle JDK 13.0.1
+      osx_image: xcode11.6 # macOS 10.15.4, Oracle JDK 14.0.1
       language: java
       services: # not supported on os x
       addons:
