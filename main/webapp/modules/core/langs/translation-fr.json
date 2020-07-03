@@ -370,7 +370,7 @@
     "core-recon/error-contact": "Erreur lors de la connexion au service de réconciliation",
     "core-recon/access": "Accès",
     "core-recon/cell-contains": "Chaque cellule contient :",
-    "core-recon/auto-match": "Correspondance automatique des valeurs candidates Auto-match candidates with high confidence",
+    "core-recon/auto-match": "Correspondance automatique des valeurs candidates",
     "core-recon/column": "Colonne",
     "core-recon/service-title": "Services",
     "core-recon/against-type": "Réconcilier avec le type",
