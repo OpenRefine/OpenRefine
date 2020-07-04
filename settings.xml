@@ -6,7 +6,7 @@
     <profile>
       <id>inject-windows-jre-home</id>
       <properties>
-        <windows.jre.home>C:\jre1.8.0_241</windows.jre.home>
+        <windows.jre.home>/opt/windows_jdk8u242-b08-jre</windows.jre.home>
       </properties>
     </profile>
     <profile>
