@@ -23,19 +23,46 @@
  ******************************************************************************/
 package org.openrefine.wikidata.qa.scrutinizers;
 
-import java.util.Iterator;
-
 import org.openrefine.wikidata.qa.QAWarning;
+import org.wikidata.wdtk.datamodel.helpers.Datamodel;
 import org.wikidata.wdtk.datamodel.interfaces.EntityIdValue;
+import org.wikidata.wdtk.datamodel.interfaces.ItemIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.PropertyIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.Reference;
 import org.wikidata.wdtk.datamodel.interfaces.Snak;
+import org.wikidata.wdtk.datamodel.interfaces.SnakGroup;
 import org.wikidata.wdtk.datamodel.interfaces.Statement;
+import org.wikidata.wdtk.datamodel.interfaces.Value;
+
+import java.util.Iterator;
+import java.util.List;
 
 public class RestrictedPositionScrutinizer extends StatementScrutinizer {
 
+    public static String SCOPE_CONSTRAINT_QID = "Q53869507";
+    public static String SCOPE_CONSTRAINT_PID = "P5314";
+    public static String SCOPE_CONSTRAINT_VALUE_QID = "Q54828448";
+    public static String SCOPE_CONSTRAINT_QUALIFIER_QID = "Q54828449";
+    public static String SCOPE_CONSTRAINT_REFERENCE_QID = "Q54828450";
+
     protected enum SnakPosition {
         MAINSNAK, QUALIFIER, REFERENCE
+    }
+
+    class RestrictedPositionConstraint {
+        boolean isAllowedAsValue, isAllowedAsQualifier, isAllowedAsReference;
+        RestrictedPositionConstraint(Statement statement) {
+            List<SnakGroup> specs = statement.getClaim().getQualifiers();
+            if (specs != null) {
+                ItemIdValue targetValue = Datamodel.makeWikidataItemIdValue(SCOPE_CONSTRAINT_VALUE_QID);
+                ItemIdValue targetQualifier = Datamodel.makeWikidataItemIdValue(SCOPE_CONSTRAINT_QUALIFIER_QID);
+                ItemIdValue targetReference = Datamodel.makeWikidataItemIdValue(SCOPE_CONSTRAINT_REFERENCE_QID);
+                List<Value> snakValues = _fetcher.findValues(specs, SCOPE_CONSTRAINT_PID);
+                isAllowedAsValue = snakValues.contains(targetValue);
+                isAllowedAsQualifier = snakValues.contains(targetQualifier);
+                isAllowedAsReference =  snakValues.contains(targetReference);
+            }
+        }
     }
 
     @Override
@@ -72,12 +99,16 @@ public class RestrictedPositionScrutinizer extends StatementScrutinizer {
     }
     
     public boolean positionAllowed(PropertyIdValue pid, SnakPosition position) {
-        if(position.equals(SnakPosition.MAINSNAK)) {
-            return _fetcher.allowedAsValue(pid);
-        } else if(position.equals(SnakPosition.QUALIFIER)) {
-            return _fetcher.allowedAsQualifier(pid);
-        } else if(position.equals(SnakPosition.REFERENCE)) {
-            return _fetcher.allowedAsReference(pid);
+        List<Statement> constraintDefinitions = _fetcher.getConstraintsByType(pid, SCOPE_CONSTRAINT_QID);
+        if (!constraintDefinitions.isEmpty()) {
+            RestrictedPositionConstraint constraint = new RestrictedPositionConstraint(constraintDefinitions.get(0));
+            if (position.equals(SnakPosition.MAINSNAK)) {
+                return constraint.isAllowedAsValue;
+            } else if (position.equals(SnakPosition.QUALIFIER)) {
+                return constraint.isAllowedAsQualifier;
+            } else if (position.equals(SnakPosition.REFERENCE)) {
+                return constraint.isAllowedAsReference;
+            }
         }
         return true;
     }
