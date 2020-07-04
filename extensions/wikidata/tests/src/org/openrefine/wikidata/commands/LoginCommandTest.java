@@ -435,6 +435,33 @@ public class LoginCommandTest extends CommandTest {
         assertTrue(ConnectionManager.getInstance().isLoggedIn());
     }
 
+    @Test
+    public void testLogoutFailedBecauseCredentialsExpired() throws Exception {
+        // if our credentials expire and we try to log out,
+        // we should consider that the logout succeeded.
+        // Workaround for https://github.com/Wikidata/Wikidata-Toolkit/issues/511
+        BasicApiConnection connection = mock(BasicApiConnection.class);
+        whenNew(BasicApiConnection.class).withAnyArguments().thenReturn(connection);
+        when(connection.getCurrentUser()).thenReturn(username);
+
+        when(request.getParameter("csrf_token")).thenReturn(Command.csrfFactory.getFreshToken());
+        when(request.getParameter(USERNAME)).thenReturn(username);
+        when(request.getParameter(PASSWORD)).thenReturn(password);
+
+        // login first
+        command.doPost(request, response);
+
+        assertTrue(ConnectionManager.getInstance().isLoggedIn());
+
+        // logout
+        when(request.getParameter("logout")).thenReturn("true");
+        doThrow(new MediaWikiApiErrorException("assertuserfailed", "No longer logged in")).when(connection).logout();
+        command.doPost(request, response);
+
+        // not logged in anymore
+        assertFalse(ConnectionManager.getInstance().isLoggedIn());
+    }
+
     private static Cookie[] makeRequestCookies() {
         List<Cookie> cookies = new ArrayList<>();
         cookieMap.forEach((key, value) -> cookies.add(new Cookie(WIKIDATA_COOKIE_PREFIX + key, value)));

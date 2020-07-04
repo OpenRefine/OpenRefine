@@ -190,8 +190,15 @@ public class ConnectionManager {
             try {
                 connection.logout();
                 connection = null;
-            } catch (IOException | MediaWikiApiErrorException e) {
+            } catch (IOException e) {
                 logger.error(e.getMessage());
+            } catch (MediaWikiApiErrorException e) {
+                if ("assertuserfailed".equals(e.getErrorCode())) {
+                    // it turns out we were already logged out
+                    connection = null;
+                } else {
+                    logger.error(e.getMessage());
+                }
             }
         }
     }
