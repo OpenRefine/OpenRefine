@@ -1,7 +1,6 @@
 package org.openrefine.wikidata.qa.scrutinizers;
 
 import org.openrefine.wikidata.qa.ConstraintFetcher;
-import org.openrefine.wikidata.qa.MockConstraintFetcher;
 import org.openrefine.wikidata.testing.TestingData;
 import org.openrefine.wikidata.updates.ItemUpdate;
 import org.openrefine.wikidata.updates.ItemUpdateBuilder;
@@ -25,7 +24,7 @@ import static org.mockito.Mockito.when;
 public class EntityTypeScrutinizerTest extends StatementScrutinizerTest {
 
     public static PropertyIdValue propertyIdValue = Datamodel.makeWikidataPropertyIdValue("P2302");
-    public static Value propertyValue = MockConstraintFetcher.conflictsWithStatementValue;
+    public static Value propertyValue = Datamodel.makeWikidataItemIdValue("Q36322");
 
     public static ItemIdValue entityIdValue = Datamodel.makeWikidataItemIdValue("Q52004125");
     public static PropertyIdValue itemParameterPID = Datamodel.makeWikidataPropertyIdValue("P2305");
