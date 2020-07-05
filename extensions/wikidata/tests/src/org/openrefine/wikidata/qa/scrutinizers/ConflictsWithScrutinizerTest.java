@@ -23,6 +23,9 @@ import java.util.List;
 
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+import static org.openrefine.wikidata.qa.scrutinizers.ConflictsWithScrutinizer.CONFLICTS_WITH_CONSTRAINT_QID;
+import static org.openrefine.wikidata.qa.scrutinizers.ConflictsWithScrutinizer.CONFLICTS_WITH_PROPERTY_PID;
+import static org.openrefine.wikidata.qa.scrutinizers.ConflictsWithScrutinizer.ITEM_OF_PROPERTY_CONSTRAINT_PID;
 
 public class ConflictsWithScrutinizerTest extends ScrutinizerTest {
 
@@ -33,11 +36,11 @@ public class ConflictsWithScrutinizerTest extends ScrutinizerTest {
     public static PropertyIdValue propertyWithConflictsPid2 = Datamodel.makeWikidataPropertyIdValue("P553");
     public static Value conflictingValue2  = Datamodel.makeWikidataItemIdValue("Q918");
 
-    public static ItemIdValue entityIdValue = Datamodel.makeWikidataItemIdValue("Q21502838");
-    public static PropertyIdValue propertyParameterPID = Datamodel.makeWikidataPropertyIdValue("P2306");
+    public static ItemIdValue entityIdValue = Datamodel.makeWikidataItemIdValue(CONFLICTS_WITH_CONSTRAINT_QID);
+    public static PropertyIdValue propertyParameterPID = Datamodel.makeWikidataPropertyIdValue(CONFLICTS_WITH_PROPERTY_PID);
     public static Value conflictingPropertyValue1 = Datamodel.makeWikidataPropertyIdValue("P31");
     public static Value conflictingPropertyValue2 = Datamodel.makeWikidataPropertyIdValue("P553");
-    public static PropertyIdValue itemParameterPID = Datamodel.makeWikidataPropertyIdValue("P2305");
+    public static PropertyIdValue itemParameterPID = Datamodel.makeWikidataPropertyIdValue(ITEM_OF_PROPERTY_CONSTRAINT_PID);
     public static Value conflictingItemValue1 = Datamodel.makeWikidataItemIdValue("Q4167836");
     public static Value conflictingItemValue2 = Datamodel.makeWikidataItemIdValue("Q918");
 
