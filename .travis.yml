@@ -5,9 +5,9 @@ dist: bionic
 jobs:
   include:
     - dist: trusty # Fastest build first
-      jdk: oraclejdk8
+      jdk: oraclejdk8 # Trusty default
+    - jdk: openjdk11 # Bionic default
     - jdk: openjdk13
-    - jdk: oraclejdk11
     - os: osx
       osx_image: xcode11.6 # macOS 10.15.4, Oracle JDK 14.0.1
       language: java
@@ -42,6 +42,9 @@ jobs:
   allow_failures:
     - jdk: openjdk-ea
     - jdk: oraclejdk-ea
+    # JDKs below need to be installed and installation fails frequently
+    - jdk: openjdk12
+    - jdk: openjdk13
 
 addons:
   mariadb: '10.3'
