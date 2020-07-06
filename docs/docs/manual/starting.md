@@ -94,7 +94,7 @@ To import data directly from a database online, you will need to do two things:
 *   Add OpenRefine (running from your computer) to an account authorized to access your database
 *   Set up OpenRefine to access that database using that account 
 
-!(img/databaseconnect.jpg "A screenshot of connecting to a database.")
+![A screenshot of connecting to a database](img/databaseconnect.jpg "A screenshot of connecting to a database.")
 
 
 Log in to your hosting provider. Get the database type (such as MySQL), database name, and the URL (either an IP address, such as `127.0.0.1`, or the domain that uses the database, such as _https://openrefine.org/category/blog.html_). Then look at the accounts authorized for access. You may wish to create a new account just for OpenRefine, or add OpenRefine to an existing account. 
@@ -105,7 +105,7 @@ In that list, add the IP address of your own computer, because that is where the
 
 ``` error:Access denied for user 'yourusername'@'123-45-67-89.yourISP.com' ```
 
-Take your IP address from this error message and put that into the “allowable hosts” field on the account you’re trying to use. Add a wildcard to the end of your IP address (“123-45-67-89%”). Save that setting, and then test the connection again with OpenRefine.
+Take your IP address from this error message and put that, with periods instead of hyphens, into the “allowable hosts” field on the account you’re trying to use. Add a wildcard to the end of your IP address (“123.45.67.89%”). Save that setting, and then test the connection again with OpenRefine.
 
 You can either connect just once and gather data, or save the connection to use it again later. If you press “Connect” without saving, OpenRefine will forget all the information you just entered. 
 
@@ -186,7 +186,7 @@ Once someone has sent you a project archive file from their computer, you can sa
 
 In the left-hand menu of the home screen, click “Import Project.” You will see the following screen:
 
-!(img/import.jpg "A screenshot of the Import screen.")
+![A screenshot of the Import screen](img/import.jpg "A screenshot of the Import screen.")
 
 
 Click “Browse…” and navigate to wherever you saved the file you were sent (for example, your Downloads folder). 

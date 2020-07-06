@@ -32,7 +32,7 @@ sidebar_label: Running
 Clicking the diamond  (or on “OpenRefine")
 
 
-    (Don’t click the browser back button!)
+(Don’t click the browser back button!)
 
 
 ### Project title
@@ -41,16 +41,16 @@ Clicking the diamond  (or on “OpenRefine")
 ### Open, Export, Help buttons
 
 
-    About metadata, Tags, Browse workspace, etc.
+About metadata, Tags, Browse workspace, etc.
 
 
 ### The project header
 
 
-    Number of selected/ total rows/records, pagination, display rows 
+Number of selected/ total rows/records, pagination, display rows 
 
 
-    Rows vs. records
+Rows vs. records
 
 
 ### Extensions dropdown 
@@ -67,7 +67,7 @@ Clicking the diamond  (or on “OpenRefine")
 #### Facet/Filter
 
 
-        _Permalink_
+Permalink
 
 
 #### History (Undo/Redo)
@@ -77,7 +77,7 @@ In OpenRefine, any activity that changes the data can be undone. Changes are tra
 Project history gets saved when you export a project archive, and restored when you import that archive to a new installation of OpenRefine. 
 
 
-!(img/history.jpg "A screenshot of the History (Undo/Redo) tab with 5 steps.")
+![A screenshot of the History (Undo/Redo) tab with 5 steps.](img/history.jpg "A screenshot of the History (Undo/Redo) tab with 5 steps.")
 
 
 
