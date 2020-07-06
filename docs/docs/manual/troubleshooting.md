@@ -1,14 +1,8 @@
-
 ---
-
 id: troubleshooting
-
 title: Troubleshooting
-
 sidebar_label: Troubleshooting
-
 ---
-
 
 ## Frequently Asked Questions
 

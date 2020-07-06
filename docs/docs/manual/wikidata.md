@@ -1,14 +1,8 @@
-
 ---
-
 id: wikidata
-
 title: Wikidata
-
 sidebar_label: Wikidata
-
 ---
-
 
 ## Overview
 
