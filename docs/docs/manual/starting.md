@@ -94,12 +94,7 @@ To import data directly from a database online, you will need to do two things:
 *   Add OpenRefine (running from your computer) to an account authorized to access your database
 *   Set up OpenRefine to access that database using that account 
 
-
-
-<p id="gdcalert1" ><span style="color: red; font-weight: bold">>>>>>  gd2md-html alert: inline image link here (to images/image1.jpg). Store image on your image server and adjust path/filename/extension if necessary. </span><br>(<a href="#">Back to top</a>)(<a href="#gdcalert2">Next alert</a>)<br><span style="color: red; font-weight: bold">>>>>> </span></p>
-
-
-![alt_text](images/image1.jpg "image_tooltip")
+!(img/databaseconnect.jpg "A screenshot of connecting to a database.")
 
 
 Log in to your hosting provider. Get the database type (such as MySQL), database name, and the URL (either an IP address, such as `127.0.0.1`, or the domain that uses the database, such as _https://openrefine.org/category/blog.html_). Then look at the accounts authorized for access. You may wish to create a new account just for OpenRefine, or add OpenRefine to an existing account. 
