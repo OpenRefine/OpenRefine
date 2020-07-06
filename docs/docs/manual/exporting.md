@@ -1,14 +1,8 @@
-
 ---
-
 id: exporting
-
 title: Exporting your work
-
 sidebar_label: Exporting
-
 ---
-
 
 ## Overview
 
