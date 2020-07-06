@@ -119,7 +119,7 @@
     "warnings-messages/ignored-references/title": "無視された参照があります.",
     "warnings-messages/ignored-references/body": "参照の記述が解析できませんでした.",
     "warnings-messages/monolingual-text-without-language/title": "言語指定がありません.",
-    "warnings-messages/monolingual-text-without-language/body": "言語指定がないので、ラベル・記述・別名・単一言語テキストが無視されました。例えば: <span class=\"wb-issue-preformat\">{example_text}</span>.",
+    "warnings-messages/monolingual-text-without-language/body": "言語指定がないので、ラベル・記述・別名・単一言語文字列が無視されました。例えば: <span class=\"wb-issue-preformat\">{example_text}</span>.",
     "warnings-messages/duplicate-whitespace/title": "二重の空白文字があります.",
     "warnings-messages/duplicate-whitespace/body": "<span class=\"wb-issue-preformat\">{example_string}</span>には二重の空白文字があります.",
     "warnings-messages/non-printable-characters/title": "印刷できない文字が含まれています.",
