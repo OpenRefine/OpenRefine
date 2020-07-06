@@ -310,13 +310,13 @@ public class ImportingUtilities {
                         CloseableHttpResponse response = httpclient.execute(httpGet);
 
                         try {
-                            StatusLine status = response.getStatusLine();
                             HttpEntity entity = response.getEntity();
                             if (entity == null) {
                                 throw new Exception("No content found in " + url.toString());
                             }
+                            StatusLine status = response.getStatusLine();
                             int statusCode = response.getStatusLine().getStatusCode();
-                            if (statusCode / 100 != 2) {
+                            if (statusCode >= 400) {
                                 String errorString = ParsingUtilities.inputStreamToString(entity.getContent());
                                 String message = String.format("HTTP error %d : %s | %s", statusCode,
                                         status.getReasonPhrase(), errorString);
