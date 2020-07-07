@@ -51,24 +51,28 @@ public class FingerprintKeyer extends Keyer {
     public static final Pattern DIACRITICS_AND_FRIENDS = Pattern
             .compile("[\\p{InCombiningDiacriticalMarks}\\p{IsLm}\\p{IsSk}]+");
 
+    // First part of table based on https://stackoverflow.com/a/1453284/167425 by Andreas Petersson
     private static final ImmutableMap<String, String> NONDIACRITICS = ImmutableMap.<String, String>builder()
             //Replace non-diacritics as their equivalent characters
-            .put("\u0141", "l") // BiaLystock
-            .put("\u0142", "l") // Bialystock
             .put("ß", "ss")
             .put("æ", "ae")
-            .put("ø", "oe") // oe or just o?
-            .put("å", "aa")
-            .put("©", "c")
-            .put("\u00D0", "d") // Icelandic eth All Ð ð from http://de.wikipedia.org/wiki/%C3%90
-            .put("\u00F0", "d")
-            .put("\u0110", "d")
-            .put("\u0111", "d")
-            .put("\u0189", "d")
-            .put("\u0256", "d")
-            .put("\u00DE", "th") // Icelandic thorn Þ
-            .put("\u00FE", "th") // thorn þ
-            .build();
+            .put("ø", "oe")
+            .put("å", "aa") // TODO: We'll never see this after decomposition
+            .put("©", "c") // copyright character
+            .put("\u00F0", "d") // Small letter Icelandic eth
+            .put("\u0111", "d") // Small letter D with stroke
+            .put("\u0256", "d") // Small letter African D
+            .put("\u00FE", "th") // Lower case Icelandic thorn þ
+            // Visually similar replacements from our private former asciify() method
+            // (only need lower case forms since we're already downcased)
+            .put("\u0127", "h") // small H with stroke
+            .put("\u0131", "i") // dotless I
+            .put("\u0138", "k") // small letter Kra
+            .put("\u0142", "l") // Bialystock
+            .put("\u014B", "n") // Small letter Eng
+            .put("\u017F", "s") // long s
+            .put("\u0167", "t") // small letter T with stroke
+           .build();
 
 
     @Override
@@ -78,8 +82,8 @@ public class FingerprintKeyer extends Keyer {
         }
         s = s.trim(); // first off, remove whitespace around the string
         s = s.toLowerCase(); // TODO: This is using the default locale. Is that what we want?
-        s = punctctrl.matcher(s).replaceAll(""); // then remove all punctuation and control chars
         s = normalize(s);
+        s = punctctrl.matcher(s).replaceAll(""); // decomposition can generate punctuation so strip it after
         String[] frags = StringUtils.split(s); // split by whitespace (excluding supplementary characters)
         TreeSet<String> set = new TreeSet<String>();
         for (String ss : frags) {
@@ -108,7 +112,7 @@ public class FingerprintKeyer extends Keyer {
     }
 
     protected static String stripDiacritics(String str) {
-        str = Normalizer.normalize(str, Normalizer.Form.NFD);
+        str = Normalizer.normalize(str, Normalizer.Form.NFKD);
         str = DIACRITICS_AND_FRIENDS.matcher(str).replaceAll("");
         return str;
     }
