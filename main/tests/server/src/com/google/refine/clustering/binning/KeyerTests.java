@@ -59,6 +59,7 @@ public class KeyerTests extends RefineTest {
         {"æø","aeoe"}, // Norwegian replacements from #650
         {"©ß","css"}, // issue #409 esszet
         {"\u00D0\u00DE", "dth"}, // Icelandic eth and thorn 
+        {"ﬀﬁﬂﬃﬅﬆ", "fffiflffistst"}, // ligatures
         // Test legacy replacements
         {"\u00C0\u00C1\u00C2\u00C3\u00C4\u00C5\u00E0\u00E1\u00E2\u00E3\u00E4\u00E5\u0100\u0101\u0102\u0103\u0104\u0105", "aaaaaaaaaaaaaaaaaa"},
         {"\u00C7\u00E7\u0106\u0107\u0108\u0109\u010A\u010B\u010C\u010D", "cccccccccc"},
@@ -86,6 +87,31 @@ public class KeyerTests extends RefineTest {
         {"\u0174\u0175", "ww"},
         {"\u00DD\u00FD\u00FF\u0176\u0177\u0178", "yyyyyy"},
         {"\u0179\u017A\u017B\u017C\u017D\u017E", "zzzzzz"},
+        // Latin Extended A
+        {"ĀāĂăĄąĆćĈĉĊċČčĎďĐđĒēĔĕĖėĘęĚěĜĝĞğĠġĢģĤĥĦħĨĩĪīĬĭĮįİıĲĳĴĵĶķĸĹĺĻļĽľĿŀŁłŃńŅņŇňŉŊŋŌōŎŏŐőŒœŔŕŖŗŘřŚśŜŝŞşŠšŢţŤťŦŧŨũŪūŬŭŮůŰűŲųŴŵŶŷŸŹźŻżŽžſ",
+         "aaaaaaccccccccddddeeeeeeeeeegggggggghhhhiiiiiiiiiiijijjjkkkllllllllllnnnnnnnnnoooooooeoerrrrrrssssssssttttttuuuuuuuuuuuuwwyyyzzzzzzs"},
+        // Latin Extended B
+        // TODO: These don't get folded to ASCII equivalents. Not sure if they should be
+//        {"ƄƅƉƊƋƌƔƕƖƗƘƙƚƛƜƝƞƟƠơƢƣƤƥƦƧƨƩƪƫƬƭƮƯưƱƲƳƴƵƶƷƸƹƺƻƼƽƾƿǀǁǂǃǄǅǆǇǈǉǊǋǌǍǎǏǐǑǒǓǔǕǖǗǘǙǚǛǜǝ",
+//         "bbddddhiikkllmnnooooopprssssttttuuuuyyzz                      aaiioouuuuuuuuuux"},
+//        {"ǞǟǠǡǢǣǤǥǦǧǨǩǪǫǬǭǮǯǰǱǲǳǴǵǶǷǸǹǺǻǼǽǾǿȀȁȂȃȄȅȆȇȈȉȊȋȌȍȎȏȐȑȒȓȔȕȖȗȘșȚțȜȝȞȟȠȡȢȣȤȥȦȧȨȩȪȫȬȭȮȯȰȱȲȳȴȵȶȷȸȹȺȻȼȽȾȿɀɁɂɃɄɅɆɇɈɉɊɋɌɍɎɏ",
+//         "aaaaaeaeggggkkqqqqqssjdzdzggpnnaaaeaeooaaaeeeeeiiiioooorrrruuuusstt    zzaaeeooooooooyy"},
+        // Latin Extended Additional
+        {"ḀḁḂḃḄḅḆḇḈḉḊḋḌḍḎḏḐḑḒḓḔḕḖḗḘḙḚḛḜḝḞḟḠḡḢḣḤḥḦḧḨḩḪḫḬḭḮḯḰḱḲḳḴḵḶḷḸḹḺḻḼḽḾḿṀṁṂṃṄṅṆṇṈṉṊṋṌṍṎṏṐṑṒṓṔṕṖṗ",
+         "aabbbbbbccddddddddddeeeeeeeeeeffgghhhhhhhhhhiiiikkkkkkllllllllmmmmmmnnnnnnnnoooooooopppp"},
+        {"ṘṙṚṛṜṝṞṟṠṡṢṣṤṥṦṧṨṩṪṫṬṭṮṯṰṱṲṳṴṵṶṷṸṹṺṻṼṽṾṿẀẁẂẃẄẅẆẇẈẉẊẋẌẍẎẏẐẑẒẓẔẕ",
+         "rrrrrrrrssssssssssttttttttuuuuuuuuuuvvvvwwwwwwwwwwxxxxyyzzzzzz"},
+        {"ẖẗẘẙẚẛẜẝẞẠạẢảẤấẦầẨẩẪẫẬậẮắẰằẲẳẴẵẶặẸẹẺẻẼẽẾếỀềỂểỄễỆệ",
+         "htwyasssssaaaaaaaaaaaaaaaaaaaaaaaaeeeeeeeeeeeeeeee"},
+        // Latin Extended C - TODO: not supported yet
+//        {"ⱠⱡⱢⱣⱤⱥⱦⱧⱨⱩⱪⱫⱬⱭⱮⱯⱰⱱⱲⱳⱴⱵⱶⱷⱸⱹⱺⱻⱼⱽⱾⱿ",
+//         "lllprathhkkzzamaaavwwwv   e ejvsz"},
+        // Latin Extended D
+        {"", ""},
+        // Latin Extended E
+        {"", ""},
+        // TODO: Add tests for non-Western languages
+        {"", ""},
     };
 
     private static final String[][] testNGramStrings = {
