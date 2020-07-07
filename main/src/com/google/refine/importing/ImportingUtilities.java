@@ -81,6 +81,7 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
+import org.apache.http.StatusLine;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -309,10 +310,17 @@ public class ImportingUtilities {
                         CloseableHttpResponse response = httpclient.execute(httpGet);
 
                         try {
-                            response.getStatusLine();
                             HttpEntity entity = response.getEntity();
                             if (entity == null) {
                                 throw new Exception("No content found in " + url.toString());
+                            }
+                            StatusLine status = response.getStatusLine();
+                            int statusCode = response.getStatusLine().getStatusCode();
+                            if (statusCode >= 400) {
+                                String errorString = ParsingUtilities.inputStreamToString(entity.getContent());
+                                String message = String.format("HTTP error %d : %s | %s", statusCode,
+                                        status.getReasonPhrase(), errorString);
+                                throw new Exception(message);
                             }
                             InputStream stream2 = entity.getContent();
 
