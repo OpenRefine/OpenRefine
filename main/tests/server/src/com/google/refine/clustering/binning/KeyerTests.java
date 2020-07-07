@@ -62,8 +62,9 @@ public class KeyerTests extends RefineTest {
     
     private static final String[][] testNGramStrings = {
         {"abcdefg","abbccddeeffg"},
+        {" a,b.c d\te!f?g ","abbccddeeffg"},
+        {"écÉCec","ceec"},
         {"",""}, //TODO: add more test cases
-        {"",""},
         {"",""},
     };
     
