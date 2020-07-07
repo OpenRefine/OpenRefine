@@ -55,9 +55,10 @@ public class KeyerTests extends RefineTest {
         {" d c b a ","a b c d"},
         {"\tABC \t DEF ","abc def"}, // test leading and trailing whitespace
         {"bbb\taaa","aaa bbb"},
-        {"",""},
-        {"",""},
-        {"",""},
+//        {"å","aa"}, // Requested by issue #650, but conflicts with diacritic folding
+        {"æø","aeoe"}, // Norwegian replacements from #650
+        {"©ß","css"}, // issue #409 esszet
+        {"\u00D0\u00DE", "dth"}, // Icelandic eth and thorn 
     };
     
     private static final String[][] testNGramStrings = {
@@ -106,7 +107,5 @@ public class KeyerTests extends RefineTest {
                     "Fingerprint for string: " + ss[0] + " failed");
         }
     }
-    
- 
 
 }
