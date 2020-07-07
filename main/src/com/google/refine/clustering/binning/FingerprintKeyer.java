@@ -72,7 +72,11 @@ public class FingerprintKeyer extends Keyer {
             .put("\u014B", "n") // Small letter Eng
             .put("\u017F", "s") // long s
             .put("\u0167", "t") // small letter T with stroke
-           .build();
+            // Additional characters following the same principle
+            .put("œ", "oe")
+            .put("ẜ", "s") // more long S forms
+            .put("ẝ", "s")
+            .build();
 
 
     @Override
