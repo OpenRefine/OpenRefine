@@ -60,7 +60,11 @@ Refine.DefaultImportingController.prototype._showParsingPanel = function(hasFile
   if (!(this._projectName) && this._job.config.fileSelection.length > 0) {
     var index = this._job.config.fileSelection[0];
     var record = this._job.config.retrievalRecord.files[index];
-    this._projectName = $.trim(record.fileName.replace(/[\._-]/g, ' ').replace(/\s+/g, ' '));
+    if (record.fileName == '(clipboard)') {
+      this._projectName = $.i18n('core-index-import/clipboard');
+    } else {
+      this._projectName = $.trim(record.fileName.replace(/[\._-]/g, ' ').replace(/\s+/g, ' '));
+    }
   }
   if (this._projectName) {
     this._parsingPanelElmts.projectNameInput[0].value = this._projectName;

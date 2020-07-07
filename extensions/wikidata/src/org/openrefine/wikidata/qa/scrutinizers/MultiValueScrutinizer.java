@@ -17,22 +17,6 @@ public class MultiValueScrutinizer extends EditScrutinizer {
     public static final String new_type = "multi-valued-property-is-required-for-new-item";
     public static final String existing_type = "multi-valued-property-is-required-for-existing-item";
     public static String MULTI_VALUE_CONSTRAINT_QID = "Q21510857";
-    public static String MULTI_VALUE_CONSTRAINT_STATUS = "P2316";
-
-    class MultivalueConstraint {
-        Value constraintStatus;
-
-        MultivalueConstraint(Statement statement) {
-            List<SnakGroup> snakGroupList = statement.getClaim().getQualifiers();
-            for(SnakGroup group : snakGroupList) {
-                for (Snak snak : group.getSnaks()) {
-                    if (group.getProperty().getId().equals(MULTI_VALUE_CONSTRAINT_STATUS)){
-                        constraintStatus = snak.getValue();
-                    }
-                }
-            }
-        }
-    }
 
     @Override
     public void scrutinize(ItemUpdate update) {
@@ -44,8 +28,6 @@ public class MultiValueScrutinizer extends EditScrutinizer {
             if (propertyCount.containsKey(pid)) {
                 propertyCount.put(pid, propertyCount.get(pid) + 1);
             } else if (!statementList.isEmpty()) {
-                Statement constraintStatement = statementList.get(0);
-                MultivalueConstraint constraint = new MultivalueConstraint(constraintStatement);
                 propertyCount.put(pid, 1);
             }
         }

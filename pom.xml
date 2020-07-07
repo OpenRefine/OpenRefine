@@ -1,5 +1,5 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>org.openrefine</groupId>
@@ -49,6 +49,7 @@
         <module>server</module>
         <module>extensions</module>
         <module>packaging</module>
+        <module>benchmark</module>
   </modules>
 
 
@@ -57,7 +58,7 @@
     <jee.port>3333</jee.port>
     <refine.data>/tmp/refine</refine.data>
     <surefire.version>2.22.2</surefire.version>
-    <surefireArgs></surefireArgs>
+    <surefireArgs/>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <jackson.version>2.11.1</jackson.version>
     <slf4j.version>1.7.30</slf4j.version>
@@ -232,4 +233,3 @@
   </repositories>
 
 </project>
-

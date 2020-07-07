@@ -43,6 +43,7 @@ import static org.testng.Assert.assertTrue;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.time.OffsetDateTime;
 
 import org.slf4j.LoggerFactory;
 import org.testng.Assert;
@@ -109,8 +110,7 @@ public class OdsImporterTests extends ImporterTest {
         Row row = project.rows.get(0);
         assertEquals(row.cells.size(), COLUMNS);
         assertEquals((String)row.getCellValue(1),"2 Days In New York");
-        // FIXME: Dates are currently broken
-//        assertEquals(((OffsetDateTime)row.getCellValue(3)).toString().substring(0, 10),"2012-03-28");
+        assertEquals(((OffsetDateTime)row.getCellValue(3)).toString().substring(0, 10),"2012-03-28");
         assertEquals(((Number)row.getCellValue(5)).doubleValue(), 4.5, EPSILON);
 
         assertFalse((Boolean)row.getCellValue(7));
