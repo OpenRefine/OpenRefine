@@ -21,7 +21,7 @@ jobs:
         - brew services start mysql
         - brew services start postgresql
         - brew services start mariadb@10.3
-        #- sleep 15 # wait for databases to start up
+        - sleep 15 # wait for databases to start up
         # Homebrew postgres workaround - create expected user postgres
         - /usr/local/opt/postgres/bin/createuser -s postgres
         # FIXME this is duplicated from linux config, but don't know a better way to do it
