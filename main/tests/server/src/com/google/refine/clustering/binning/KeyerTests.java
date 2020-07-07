@@ -87,6 +87,11 @@ public class KeyerTests extends RefineTest {
         {"\u0174\u0175", "ww"},
         {"\u00DD\u00FD\u00FF\u0176\u0177\u0178", "yyyyyy"},
         {"\u0179\u017A\u017B\u017C\u017D\u017E", "zzzzzz"},
+        // Latin-1 Supplement
+        {//"€‚ƒ„…†‡ˆ‰Š‹ŒŽ‘’“”•–—˜™š›œžŸ " + // These are all considered control characters
+         //"¡¢£¤¥¦§¨©ª«¬­®¯°±²³´µ¶·¸¹º»¼½¾¿" // punctuation
+         "ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖØÙÚÛÜÝÞßàáâãäåæçèéêëìíîïðñòóôõöøùúûüýþÿ",
+         "aaaaaaaeceeeeiiiidnooooooeuuuuythssaaaaaaaeceeeeiiiidnooooooeuuuuythy"},
         // Latin Extended A
         {"ĀāĂăĄąĆćĈĉĊċČčĎďĐđĒēĔĕĖėĘęĚěĜĝĞğĠġĢģĤĥĦħĨĩĪīĬĭĮįİıĲĳĴĵĶķĸĹĺĻļĽľĿŀŁłŃńŅņŇňŉŊŋŌōŎŏŐőŒœŔŕŖŗŘřŚśŜŝŞşŠšŢţŤťŦŧŨũŪūŬŭŮůŰűŲųŴŵŶŷŸŹźŻżŽžſ",
          "aaaaaaccccccccddddeeeeeeeeeegggggggghhhhiiiiiiiiiiijijjjkkkllllllllllnnnnnnnnnoooooooeoerrrrrrssssssssttttttuuuuuuuuuuuuwwyyyzzzzzzs"},
