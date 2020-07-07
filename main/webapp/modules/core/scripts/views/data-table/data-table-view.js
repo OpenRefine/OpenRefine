@@ -613,7 +613,7 @@ DataTableView.prototype._adjustNextSetClassesSpeed = function(modifiedScrollPosi
   var heightToAddTop = modifiedScrollPosition;
   var heightToAddBottom = Math.max(0, this._sizeRowsTotal - (modifiedScrollPosition + this._sizeSinglePage));
 
-  $('.data-table tbody tr').slice(1, $('.data-table tbody tr').length - this._pageSize).remove();
+  $('.data-table tbody tr').slice(1, $('.data-table tbody tr').length - theProject.rowModel.rows.length).remove();
 
   $('.data-table tbody tr:first').css('height', heightToAddTop);
 
