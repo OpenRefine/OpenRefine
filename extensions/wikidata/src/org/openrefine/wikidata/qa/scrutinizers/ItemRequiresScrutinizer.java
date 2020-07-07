@@ -17,7 +17,10 @@ import java.util.Set;
 
 public class ItemRequiresScrutinizer extends EditScrutinizer {
 
-    public static final String type = "property-should-have-certain-other-statement";
+    public static final String newItemRequireValuesType = "new-item-requires-property-to-have-certain-values";
+    public static final String newItemRequirePropertyType = "new-item-requires-certain-other-statement";
+    public static final String existingItemRequireValuesType = "existing-item-requires-property-to-have-certain-values";
+    public static final String existingItemRequirePropertyType = "existing-item-requires-certain-other-statement";
     public static String ITEM_REQUIRES_CONSTRAINT_QID = "Q21503247";
     public static String ITEM_REQUIRES_PROPERTY_PID = "P2306";
     public static String ITEM_OF_PROPERTY_CONSTRAINT_PID = "P2305";
@@ -47,7 +50,7 @@ public class ItemRequiresScrutinizer extends EditScrutinizer {
     @Override
     public void scrutinize(ItemUpdate update) {
         Map<PropertyIdValue, Set<Value>> propertyIdValueValueMap = new HashMap<>();
-        for (Statement statement : update.getAddedStatements()){
+        for (Statement statement : update.getAddedStatements()) {
             PropertyIdValue pid = statement.getClaim().getMainSnak().getPropertyId();
             Value value = statement.getClaim().getMainSnak().getValue();
             Set<Value> values;
@@ -62,27 +65,26 @@ public class ItemRequiresScrutinizer extends EditScrutinizer {
             }
         }
 
-        for(PropertyIdValue propertyId : propertyIdValueValueMap.keySet()){
+        for (PropertyIdValue propertyId : propertyIdValueValueMap.keySet()) {
             List<Statement> constraintDefinitions = _fetcher.getConstraintsByType(propertyId, ITEM_REQUIRES_CONSTRAINT_QID);
             for (Statement statement : constraintDefinitions) {
                 ItemRequiresConstraint constraint = new ItemRequiresConstraint(statement);
                 PropertyIdValue itemRequiresPid = constraint.itemRequiresPid;
                 List<Value> itemList = constraint.itemList;
                 if (!propertyIdValueValueMap.containsKey(itemRequiresPid)) {
-                    QAWarning issue = new QAWarning(type, propertyId.getId()+itemRequiresPid.getId(), QAWarning.Severity.WARNING, 1);
+                    QAWarning issue = new QAWarning(update.isNew() ? newItemRequirePropertyType : existingItemRequirePropertyType, propertyId.getId() + itemRequiresPid.getId(), update.isNew() ? QAWarning.Severity.WARNING : QAWarning.Severity.INFO, 1);
                     issue.setProperty("property_entity", propertyId);
                     issue.setProperty("added_property_entity", itemRequiresPid);
                     issue.setProperty("example_entity", update.getItemId());
                     addIssue(issue);
                 } else if (raiseWarning(propertyIdValueValueMap, itemRequiresPid, itemList)) {
-                    QAWarning issue = new QAWarning(type, propertyId.getId()+itemRequiresPid.getId(), QAWarning.Severity.WARNING, 1);
+                    QAWarning issue = new QAWarning(update.isNew() ? newItemRequireValuesType : existingItemRequireValuesType, propertyId.getId() + itemRequiresPid.getId(), update.isNew() ? QAWarning.Severity.WARNING : QAWarning.Severity.INFO, 1);
                     issue.setProperty("property_entity", propertyId);
                     issue.setProperty("added_property_entity", itemRequiresPid);
                     issue.setProperty("example_entity", update.getItemId());
                     addIssue(issue);
                 }
             }
-
         }
     }
 
