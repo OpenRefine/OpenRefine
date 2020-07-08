@@ -90,7 +90,7 @@ Our community of contributors may have created a version of OpenRefine that work
 
 If you are upgrading from an older version of OpenRefine and have projects already on your computer, you should create backups of those projects before you install a new version.
 
-First, [locate your workspace directory](#where-is-my-data-stored). Then copy everything you find there and paste it into a folder elsewhere on your computer. 
+First, [locate your workspace directory](#where-is-data-stored). Then copy everything you find there and paste it into a folder elsewhere on your computer. 
 
 For extra security you can [export your existing OpenRefine projects](exporting.md#export-a-project). 
 
@@ -144,7 +144,7 @@ Or, for Java 13.x:
 
 :::note
 
-    This post assumes that you have already installed JDK in your system. Setting JAVA_HOME is important for certain applications. This post guides you through the process to be followed to set JAVA_HOME environment variable.
+This post assumes that you have already installed JDK in your system. Setting JAVA_HOME is important for certain applications. This post guides you through the process to be followed to set JAVA_HOME environment variable.
 
 *   Open a terminal
 *   Open “profile” file using following command: **sudo gedit /etc/profile**
@@ -287,7 +287,12 @@ OpenRefine does not currently output an error log, but because the OpenRefine co
 
 Extensions have been created by our contributor community to add functionality or provide convenient shortcuts for common uses of OpenRefine. [We list extensions we know about on our downloads page](https://openrefine.org/download.html). 
 
+
+:::tip
+
 If you think you’d like to create or modify an extension, [see our developer documentation here](https://github.com/OpenRefine/OpenRefine/wiki/Documentation-For-Developers). If you’re having a problem, [use our downloads page](https://openrefine.org/download.html) to go to the extension’s page and report the issue there.
+
+:::
 
 
 ### Two ways to install extensions
@@ -296,7 +301,7 @@ You can install extensions in one of two ways:
 
 
 
-*   [Into your OpenRefine program folder](installing.md#whereisdatastored), so they will only be available to that version/installation of OpenRefine (meaning the extension will not run if you upgrade OpenRefine), or 
+*   [Into your OpenRefine program folder](installing.md#where-is-data-stored), so they will only be available to that version/installation of OpenRefine (meaning the extension will not run if you upgrade OpenRefine), or 
 *   Into your workspace, where your projects are stored, so they will be available no matter which version of OpenRefine you’re using.
 
 We provide these options because you may wish to reinstall a given extension manually each time you upgrade OpenRefine, in order to be sure it works properly. 
@@ -304,16 +309,18 @@ We provide these options because you may wish to reinstall a given extension man
 
 ### Find the right place to install
 
-If you want to install the extension into the program folder, go to `OpenRefine/webapp/extensions` (or create it if not does not exist). 
+If you want to install the extension into the program folder, go to your program directory and then go to `/webapp/extensions` (or create it if not does not exist). 
 
 If you want to install the extension into your workspace, you can:
+
+
 
 *   launch OpenRefine and click “Open Project” in the sidebar 
 *   At the bottom of the screen, click “Browse workspace directory” 
 *   A file-explorer window will open in your workspace
 *   Create a new folder called “extensions” inside the workspace if it does not exist.
 
-You can also [find your workspace on each operating system using these instructions](installing.md#whereisdatastored).  
+You can also [find your workspace on each operating system using these instructions](installing.md#where-is-data-stored).  
 
 
 ### Install the extension
@@ -323,6 +330,8 @@ Some extensions have their own instructions: make sure you read the documentatio
 Some extensions may have multiple versions, to match OpenRefine versions, so be sure to choose the right release for your installation. If you have questions about compatibility or want to request or voice your support for an update, [use our downloads page](https://openrefine.org/download.html) to go to the extension’s page and report the issue there.
 
 Generally, the installation process will be:
+
+
 
 *   Download the extension (usually as a zip file from GitHub)
 *   Extract the zip contents into the `extensions` directory, making sure all the contents go into one folder with the name of the extension
