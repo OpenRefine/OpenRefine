@@ -9,10 +9,6 @@ sidebar_label: Transforming data
 ---
 
 
-# Transforming data
-
-
-
 *   Permanent “view” changes (not data changes, quite) like rearranging columns, removing columns, and renaming columns.
 
 
