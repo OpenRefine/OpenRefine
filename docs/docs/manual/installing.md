@@ -178,7 +178,7 @@ If you are upgrading an existing OpenRefine  installation, you can delete the ol
 
 :::caution
 
-If you have extensions installed, do not delete the `webapp\extensions` folder where you installed them. You may wish to install extensions into the workspace directory instead of the program directory. There is no guarantee that extensions will be forward-compatible with new versions of OpenRefine, and we do not maintain extensions.
+If you have extensions installed, do not delete the `webapp\extensions` folder where you installed them. You may wish to install extensions into the [workspace directory](#where-is-data-stored) instead of the program directory. There is no guarantee that extensions will be forward-compatible with new versions of OpenRefine, and we do not maintain extensions.
 
 :::
 
@@ -303,11 +303,11 @@ If you think you’d like to create or modify an extension, [see our developer d
 
 ### Two ways to install extensions
 
-You can install extensions in one of two ways:
+You can install extensions into [either of the two locations where OpenRefine puts files](#where-is-data-stored):
 
 
 
-*   [Into your OpenRefine program folder](installing.md#where-is-data-stored), so they will only be available to that version/installation of OpenRefine (meaning the extension will not run if you upgrade OpenRefine), or 
+*   Into your OpenRefine program folder, so they will only be available to that version/installation of OpenRefine (meaning the extension will not run if you upgrade OpenRefine), or 
 *   Into your workspace, where your projects are stored, so they will be available no matter which version of OpenRefine you’re using.
 
 We provide these options because you may wish to reinstall a given extension manually each time you upgrade OpenRefine, in order to be sure it works properly. 
