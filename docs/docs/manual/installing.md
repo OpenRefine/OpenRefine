@@ -142,7 +142,7 @@ Or, for Java 13.x:
 
 [Please read this guide by Charini Nanayakkara for setting up JAVA_HOME on Ubuntu.](https://medium.com/@charinin/setting-java-home-environment-variable-in-ubuntu-e355c80e5b6c)
 
-:::note
+:::note Setting JAVA_HOME environment variable in Ubuntu, by Charini Nanayakkara
 
 This post assumes that you have already installed JDK in your system. Setting JAVA_HOME is important for certain applications. This post guides you through the process to be followed to set JAVA_HOME environment variable.
 
@@ -151,12 +151,10 @@ This post assumes that you have already installed JDK in your system. Setting JA
 *   Find the java path in /usr/lib/jvm. If it’s JDK 7 the java path would be something similar to /usr/lib/jvm/java-7-oracle
 *   Insert the following lines at the end of the “profile” file
 
-        ```
-JAVA_HOME=/usr/lib/jvm/java-7-oracle
-PATH=$PATH:$HOME/bin:$JAVA_HOME/bin
-export JAVA_HOME
-export PATH
-```
+```JAVA_HOME=/usr/lib/jvm/java-7-oracle```
+```PATH=$PATH:$HOME/bin:$JAVA_HOME/bin```
+```export JAVA_HOME```
+```export PATH```
 
 *   Save and close the file.
 *   Type the following command: **source /etc/environment**
