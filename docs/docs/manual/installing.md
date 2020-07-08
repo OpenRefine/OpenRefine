@@ -78,7 +78,7 @@ You can find information about all of our releases on the [Releases page on Gith
 
 :::tip Other distributions
 
-Our community of contributors may have created a version of OpenRefine that works for you. Look at the list of “Other Distributions” on our [Download page]([https://openrefine.org/download.html](https://openrefine.org/download.html)).
+Our community of contributors may have created a version of OpenRefine that works for you. Look at the list of “Other Distributions” on our [Download page](https://openrefine.org/download.html).
 
 :::
 
@@ -117,7 +117,7 @@ Once you have Java extracted onto your system, you need to tell your computer wh
 
 1. On Windows 10, click the Windows start menu button, type "env," and look at the search results. Click “Edit the system environment variables.”  If you are using an earlier version of Windows, use the “Search” or “Search programs and files” box in the start menu.
 2. Click `Environment Variables…` at the bottom of the `Advanced` window that appears.
-3. In the `Environment Variables` dialog that appears, click `New…` and create a `JAVA_HOME**`** variable. Set the `Value` to the folder where you installed JDK, in the format `D:\Programs\OpenJDK`.
+3. In the `Environment Variables` dialog that appears, click `New…` and create a `JAVA_HOME` variable. Set the `Value` to the folder where you installed JDK, in the format `D:\Programs\OpenJDK`.
 
 #### Mac OS
 
@@ -125,7 +125,7 @@ First, find where Java is on your computer with this command:
 
 ```which java```
 
-Check the environment variable `JAVA_HOME**` **with:
+Check the environment variable `JAVA_HOME` with:
 
 ```$JAVA_HOME/bin/java --version```
 
@@ -258,7 +258,7 @@ Depending on your version of Windows, the data is in one of these directories:
 *   `C:\Users\(user id)\AppData\Local\OpenRefine`
 *   `C:\Users\(user id)\OpenRefine`
 
-For older Google Refine releases, replace `OpenRefine` with `Google\Refine`.
+For older Google Refine releases, replace **OpenRefine** with **Google\Refine**.
 
 You can change this by adding this line to the file `openrefine.l4j.ini` and specifying your desired drive and folder path:
 
