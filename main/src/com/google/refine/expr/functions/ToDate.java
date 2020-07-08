@@ -39,6 +39,7 @@ import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
@@ -201,5 +202,17 @@ public class ToDate implements Function {
     @Override
     public String getReturns() {
         return "date";
+    }
+
+    public static boolean isDate(Object o) {
+        return o instanceof OffsetDateTime;
+    }
+
+    public static OffsetDateTime toDate(Date date) {
+        return date.toInstant().atOffset(ZoneOffset.UTC);
+    }
+
+    public static OffsetDateTime toDate(Calendar date) {
+        return date.toInstant().atOffset(ZoneOffset.UTC);
     }
 }
