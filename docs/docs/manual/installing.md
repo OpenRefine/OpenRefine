@@ -16,7 +16,12 @@ OpenRefine requires three things on your computer in order to function:
 
 OpenRefine is designed to work with Windows, Mac, and Linux operating systems. Our team releases packages for each. 
 
-It may also work in other environments where Linux terminals are available, such as [Chromebooks](https://gist.github.com/organisciak/3e12e5138e44a2fed75240f4a4985b4f), but this is a community-contributed guide, not a core supported function.
+
+:::tip
+
+OpenRefine may also work in other environments where Linux terminals are available, such as [Chromebooks](https://gist.github.com/organisciak/3e12e5138e44a2fed75240f4a4985b4f), but this is a community-contributed guide, not a core supported function.
+
+:::
 
 
 #### Java 
@@ -60,14 +65,22 @@ For the absolute latest development updates, see the [snapshot releases](https:/
 
 Our [latest release is at the time of writing is OpenRefine 3.4](link goes here!), released XXXX XX 2020. The major changes in this version are listed on the [3.4 final release page](link goes here!) with the downloadable packages. 
 
+
+
+:::note
+
 [This link always goes to the actual latest release](https://github.com/OpenRefine/OpenRefine/releases/latest), whether this user manual is updated or not. 
+
+:::
 
 You can find information about all of our releases on the [Releases page on Github](https://github.com/OpenRefine/OpenRefine/releases).
 
 
-#### Other distributions
+:::tip Other distributions
 
-Our community of contributors may have created a version of OpenRefine that works for you. Look at the list of “Other Distributions” on our [Download page](https://openrefine.org/download.html).
+Our community of contributors may have created a version of OpenRefine that works for you. Look at the list of “Other Distributions” on our [Download page]([https://openrefine.org/download.html](https://openrefine.org/download.html)).
+
+:::
 
 
 ## Installing or upgrading
@@ -81,31 +94,30 @@ First, [locate your workspace directory](#where-is-my-data-stored). Then copy ev
 
 For extra security you can [export your existing OpenRefine projects](exporting.md#export-a-project). 
 
-You may also wish to take note of the [extensions](#installing-extensions) you have currently installed. They may not be compatible with the upgraded version of OpenRefine. Installations can be installed in two places, so be sure to check both your workspace directory and the existing installation directory. 
+
+:::caution
+
+Take note of the [extensions](#installing-extensions) you have currently installed. They may not be compatible with the upgraded version of OpenRefine. Installations can be installed in two places, so be sure to check both your workspace directory and the existing installation directory. 
+
+:::
 
 
 ### Install or upgrade Java
 
-[Java Development Kit (JDK)](https://jdk.java.net/) is required to run OpenRefine and should be installed first. There are packages for Mac, Windows, and Linux. We recommend you install the latest “Ready for use” version: at the time of writing, this is `[JDK 14.0.1](https://jdk.java.net/14/)`. 
+[Java Development Kit (JDK)](https://jdk.java.net/) is required to run OpenRefine and should be installed first. There are packages for Mac, Windows, and Linux. We recommend you install the latest “Ready for use” version: at the time of writing, this is [JDK 14.0.1](https://jdk.java.net/14/). 
 
 Download the archive (either a `.tar.gz` or a `.zip`) to your computer and then extract its contents to a location of your choice. There is no installation process, so you may wish to extract this folder directly into a place where you put program files, or another stable folder. 
 
 Once you have Java extracted onto your system, you need to tell your computer where to find it when OpenRefine looks for it. 
 
 
-#### _Windows_
+#### Windows
 
 
 
-1. On Windows 10, click the Windows start menu button, type "env" and look at the search results. Click “Edit the system environment variables.” 
-
-If you are using an earlier version of Windows, use the “Search” or “Search programs and files” box in the start menu.
-
+1. On Windows 10, click the Windows start menu button, type "env," and look at the search results. Click “Edit the system environment variables.”  If you are using an earlier version of Windows, use the “Search” or “Search programs and files” box in the start menu.
 2. Click `Environment Variables…` at the bottom of the `Advanced` window that appears.
-3. In the `Environment Variables` dialog that appears, click `New…` and create a `**JAVA_HOME`** variable. Set the `Value` to the folder where you installed JDK, in the format `D:\Programs\OpenJDK`.
-
-
-
+3. In the `Environment Variables` dialog that appears, click `New…` and create a `JAVA_HOME**`** variable. Set the `Value` to the folder where you installed JDK, in the format `D:\Programs\OpenJDK`.
 
 #### Mac OS
 
@@ -113,7 +125,7 @@ First, find where Java is on your computer with this command:
 
 ```which java```
 
-Check the environment variable `**JAVA_HOME` **with:
+Check the environment variable `JAVA_HOME**` **with:
 
 ```$JAVA_HOME/bin/java --version```
 
@@ -130,12 +142,39 @@ Or, for Java 13.x:
 
 [Please read this guide by Charini Nanayakkara for setting up JAVA_HOME on Ubuntu.](https://medium.com/@charinin/setting-java-home-environment-variable-in-ubuntu-e355c80e5b6c)
 
+:::note
+
+    This post assumes that you have already installed JDK in your system. Setting JAVA_HOME is important for certain applications. This post guides you through the process to be followed to set JAVA_HOME environment variable.
+
+*   Open a terminal
+*   Open “profile” file using following command: **sudo gedit /etc/profile**
+*   Find the java path in /usr/lib/jvm. If it’s JDK 7 the java path would be something similar to /usr/lib/jvm/java-7-oracle
+*   Insert the following lines at the end of the “profile” file
+
+        ```
+JAVA_HOME=/usr/lib/jvm/java-7-oracle
+PATH=$PATH:$HOME/bin:$JAVA_HOME/bin
+export JAVA_HOME
+export PATH
+```
+
+*   Save and close the file.
+*   Type the following command: **source /etc/environment**
+*   You may have to restart the system
+*   Check whether `JAVA_HOME` is properly set with following command: `echo $JAVA_HOME`. If it’s properly set, /usr/lib/jvm/java-7-oracle would be displayed on the terminal.
+
+:::
+
 
 ### Install or upgrade
 
 If you are upgrading an existing OpenRefine  installation, you can delete the old program files and install the new files into the same space. Do not overwrite the files as some obsolete files may be left over unnecessarily. 
 
+:::caution
+
 If you have extensions installed, do not delete the `webapp\extensions` folder where you installed them. You may wish to install extensions into the workspace directory instead of the program directory. There is no guarantee that extensions will be forward-compatible with new versions of OpenRefine, and we do not maintain extensions.
+
+:::
 
 
 #### Windows
@@ -150,14 +189,18 @@ Once you have downloaded the `.zip` file, and uncompress it into a folder where 
 
 Once you have downloaded the `.dmg` file, open it and drag the OpenRefine icon onto the Applications folder icon (just like you would normally install Mac applications). 
 
-If you get a message saying "Open Refine can't be opened because it is from an unidentified developer": 
 
+:::info
+
+If you get a message saying "Open Refine can't be opened because it is from an unidentified developer": 
 
 
 *   Open System Preferences and go to "Security and Privacy" and the “General” tab. You will see a message indicating that "OpenRefine was blocked from opening because it is not from an identified developer." You may also see “macOS cannot verify that this app is free from malware.” See [issue #2191](https://github.com/OpenRefine/OpenRefine/issues/2191) for more information.
 *   Click the "Open Anyway" button to complete the OpenRefine installation. 
 
 If you are using an older version of MacOS, such as Mountain Lion or Yosemite, you may encounter different error messages and issue. See [issue #590](https://github.com/OpenRefine/OpenRefine/issues/590) for more information. If you use Yosemite you will need to install[ Java for OS X 2014-001](http://support.apple.com/kb/DL1572) first.
+
+:::
 
 
 ##### Install via Homebrew: 
@@ -167,8 +210,7 @@ The quick versions is:
 
 
 1. Install[ Homebrew from here](http://brew.sh)
-2. In Terminal enter \
-``` brew cask install openrefine```
+2. In Terminal enter ` brew cask install openrefine`
 1. Then find OpenRefine in your Applications folder.
 
 We have a detailed[ Homebrew installation guide](https://github.com/OpenRefine/OpenRefine/wiki/Homebrew) if you need it.
