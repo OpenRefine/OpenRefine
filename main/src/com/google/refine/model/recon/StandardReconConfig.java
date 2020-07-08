@@ -33,12 +33,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.model.recon;
 
-import java.io.DataOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.StringWriter;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -47,6 +43,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -71,6 +68,12 @@ import com.google.refine.model.ReconType;
 import com.google.refine.model.RecordModel.RowDependency;
 import com.google.refine.model.Row;
 import com.google.refine.util.ParsingUtilities;
+
+import okhttp3.MediaType;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
 
 public class StandardReconConfig extends ReconConfig {
     final static Logger logger = LoggerFactory.getLogger("refine-standard-recon");
@@ -153,6 +156,12 @@ public class StandardReconConfig extends ReconConfig {
     final public List<ColumnDetail> columnDetails;
     @JsonProperty("limit")
     final private int limit;
+    
+    protected static final MediaType urlencoded = MediaType.get("application/x-www-form-urlencoded; charset=UTF-8");
+    protected static OkHttpClient client = new OkHttpClient.Builder()
+            .connectTimeout(30, TimeUnit.SECONDS)
+            .readTimeout(30, TimeUnit.SECONDS)
+            .build();
 
     @JsonCreator
     public StandardReconConfig(
@@ -446,69 +455,48 @@ public class StandardReconConfig extends ReconConfig {
         stringWriter.write("}");
         String queriesString = stringWriter.toString();
         
-        try {
-            URL url = new URL(service);
-            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-            {
-                connection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
-                connection.setConnectTimeout(30000); // TODO parameterize
-                connection.setDoOutput(true);
-                
-                DataOutputStream dos = new DataOutputStream(connection.getOutputStream());
-                try {
-                    String body = "queries=" + ParsingUtilities.encode(queriesString);
-                    
-                    dos.writeBytes(body);
-                } finally {
-                    dos.flush();
-                    dos.close();
-                }
-                
-                connection.connect();
-            }
-            
-            if (connection.getResponseCode() >= 400) {
-                InputStream is = connection.getErrorStream();
-                String msg = is == null ? "" : ParsingUtilities.inputStreamToString(is);
+        RequestBody body = RequestBody.create("queries=" + ParsingUtilities.encode(queriesString), urlencoded);
+        Request request = new Request.Builder()
+                .url(service)
+                .post(body)
+                .build();
+        
+        try (Response response = client.newCall(request).execute()) {
+            if (!response.isSuccessful()) {
                 logger.error("Failed  - code: "
-                        + Integer.toString(connection.getResponseCode())
-                        + " message: " + msg);
+                        + Integer.toString(response.code())
+                        + " message: " + response.message());
             } else {
-                InputStream is = connection.getInputStream();
-                try {
-                    String s = ParsingUtilities.inputStreamToString(is);
-                    ObjectNode o = ParsingUtilities.evaluateJsonStringToObjectNode(s);
-                    if (o == null) { // utility method returns null instead of throwing
-                        logger.error("Failed to parse string as JSON: " + s);
-                    } else {
-                        for (int i = 0; i < jobs.size(); i++) {
-                            StandardReconJob job = (StandardReconJob) jobs.get(i);
-                            Recon recon = null;
+                String s = response.body().string();
+                ObjectNode o = ParsingUtilities.evaluateJsonStringToObjectNode(s);
+                if (o == null) { // utility method returns null instead of throwing
+                    logger.error("Failed to parse string as JSON: " + s);
+                } else {
+                    for (int i = 0; i < jobs.size(); i++) {
+                        StandardReconJob job = (StandardReconJob) jobs.get(i);
+                        Recon recon = null;
 
-                            String text = job.text;
-                            String key = "q" + i;
-                            if (o.has(key) && o.get(key) instanceof ObjectNode) {
-                                ObjectNode o2 = (ObjectNode) o.get(key);
-                                if (o2.has("result") && o2.get("result") instanceof ArrayNode) {
-                                    ArrayNode results = (ArrayNode) o2.get("result");
+                        String text = job.text;
+                        String key = "q" + i;
+                        if (o.has(key) && o.get(key) instanceof ObjectNode) {
+                            ObjectNode o2 = (ObjectNode) o.get(key);
+                            if (o2.has("result") && o2.get("result") instanceof ArrayNode) {
+                                ArrayNode results = (ArrayNode) o2.get("result");
 
-                                    recon = createReconServiceResults(text, results, historyEntryID);
-                                } else {
-                                    logger.warn("Service error for text: " + text + "\n  Job code: " + job.code + "\n  Response: " + o2.toString());
-                                }
+                                recon = createReconServiceResults(text, results, historyEntryID);
                             } else {
-                                // TODO: better error reporting
-                                logger.warn("Service error for text: " + text + "\n  Job code: " + job.code);
+                                logger.warn("Service error for text: " + text + "\n  Job code: " + job.code + "\n  Response: " + o2.toString());
                             }
-
-                            if (recon != null) {
-                                recon.service = service;
-                            }
-                            recons.add(recon);
+                        } else {
+                            // TODO: better error reporting
+                            logger.warn("Service error for text: " + text + "\n  Job code: " + job.code);
                         }
+
+                        if (recon != null) {
+                            recon.service = service;
+                        }
+                        recons.add(recon);
                     }
-                } finally {
-                    is.close();
                 }
             }
         } catch (Exception e) {

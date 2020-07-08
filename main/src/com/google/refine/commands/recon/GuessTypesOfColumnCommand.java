@@ -33,11 +33,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.commands.recon;
 
-import java.io.DataOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -47,6 +43,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -68,7 +65,17 @@ import com.google.refine.model.Row;
 import com.google.refine.model.recon.StandardReconConfig.ReconResult;
 import com.google.refine.util.ParsingUtilities;
 
+import okhttp3.MediaType;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
+
 public class GuessTypesOfColumnCommand extends Command {
+    
+    final static int DEFAULT_SAMPLE_SIZE = 10;
+    private static final MediaType urlencoded = MediaType.get("application/x-www-form-urlencoded; charset=UTF-8");
+    private int sampleSize = DEFAULT_SAMPLE_SIZE;
      
     protected static class TypesResponse {
         @JsonProperty("code")
@@ -116,8 +123,6 @@ public class GuessTypesOfColumnCommand extends Command {
         }
     }
     
-    final static int SAMPLE_SIZE = 10;
-    
     protected static class IndividualQuery {
         @JsonProperty("query")
         protected String query;
@@ -146,7 +151,7 @@ public class GuessTypesOfColumnCommand extends Command {
         
         int cellIndex = column.getCellIndex();
         
-        List<String> samples = new ArrayList<String>(SAMPLE_SIZE);
+        List<String> samples = new ArrayList<String>(sampleSize);
         Set<String> sampleSet = new HashSet<String>();
         
         for (Row row : project.rows) {
@@ -156,7 +161,7 @@ public class GuessTypesOfColumnCommand extends Command {
                 if (!sampleSet.contains(s)) {
                     samples.add(s);
                     sampleSet.add(s);
-                    if (samples.size() >= SAMPLE_SIZE) {
+                    if (samples.size() >= sampleSize) {
                         break;
                     }
                 }
@@ -170,70 +175,56 @@ public class GuessTypesOfColumnCommand extends Command {
         
         String queriesString = ParsingUtilities.defaultWriter.writeValueAsString(queryMap);
         try {
-            URL url = new URL(serviceUrl);
-            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-            {
-                connection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
-                connection.setConnectTimeout(30000);
-                connection.setDoOutput(true);
-                
-                DataOutputStream dos = new DataOutputStream(connection.getOutputStream());
-                try {
-                    String body = "queries=" + ParsingUtilities.encode(queriesString);
-                    
-                    dos.writeBytes(body);
-                } finally {
-                    dos.flush();
-                    dos.close();
+            OkHttpClient client = new OkHttpClient.Builder()
+                    .connectTimeout(30, TimeUnit.SECONDS)
+                    .readTimeout(30, TimeUnit.SECONDS)
+                    .build();
+            String bodyString = "queries=" + ParsingUtilities.encode(queriesString);
+            RequestBody body = RequestBody.create(bodyString, urlencoded);
+            Request request = new Request.Builder()
+                    .url(serviceUrl)
+                    .post(body)
+                    .build();
+            
+            try (Response response = client.newCall(request).execute()) {
+                if (!response.isSuccessful()) {
+                    throw new IOException("Failed  - code:" 
+                            + Integer.toString(response.code()) 
+                            + " message: " + response.message());
                 }
                 
-                connection.connect();
-            }
+                ObjectNode o = ParsingUtilities.evaluateJsonStringToObjectNode(response.body().string());
 
-            if (connection.getResponseCode() >= 400) {
-                InputStream is = connection.getErrorStream();
-                throw new IOException("Failed  - code:" 
-                        + Integer.toString(connection.getResponseCode()) 
-                        + " message: " + is == null ? "" : ParsingUtilities.inputStreamToString(is));
-            } else {
-                InputStream is = connection.getInputStream();
-                try {
-                    String s = ParsingUtilities.inputStreamToString(is);
-                    ObjectNode o = ParsingUtilities.evaluateJsonStringToObjectNode(s);
+                Iterator<JsonNode> iterator = o.iterator();
+                while (iterator.hasNext()) {
+                    JsonNode o2 = iterator.next();
+                    if (!(o2.has("result") && o2.get("result") instanceof ArrayNode)) {
+                        continue;
+                    }
 
-                    Iterator<JsonNode> iterator = o.iterator();
-                    while (iterator.hasNext()) {
-                        JsonNode o2 = iterator.next();
-                        if (!(o2.has("result") && o2.get("result") instanceof ArrayNode)) {
-                            continue;
-                        }
+                    ArrayNode results = (ArrayNode) o2.get("result");
+                    List<ReconResult> reconResults = ParsingUtilities.mapper.convertValue(results, new TypeReference<List<ReconResult>>() {});
+                    int count = reconResults.size();
 
-                        ArrayNode results = (ArrayNode) o2.get("result");
-                        List<ReconResult> reconResults = ParsingUtilities.mapper.convertValue(results, new TypeReference<List<ReconResult>>() {});
-                        int count = reconResults.size();
+                    for (int j = 0; j < count; j++) {
+                        ReconResult result = reconResults.get(j);
+                        double score = 1.0 / (1 + j); // score by each result's rank
 
-                        for (int j = 0; j < count; j++) {
-                            ReconResult result = reconResults.get(j);
-                            double score = 1.0 / (1 + j); // score by each result's rank
+                        List<ReconType> types = result.types;
+                        int typeCount = types.size();
 
-                            List<ReconType> types = result.types;
-                            int typeCount = types.size();
-
-                            for (int t = 0; t < typeCount; t++) {
-                            	ReconType type = types.get(t);
-                                double score2 = score * (typeCount - t) / typeCount;
-                                if (map.containsKey(type.id)) {
-                                    TypeGroup tg = map.get(type.id);
-                                    tg.score += score2;
-                                    tg.count++;
-                                } else {
-                                    map.put(type.id, new TypeGroup(type.id, type.name, score2));
-                                }
+                        for (int t = 0; t < typeCount; t++) {
+                        	ReconType type = types.get(t);
+                            double score2 = score * (typeCount - t) / typeCount;
+                            if (map.containsKey(type.id)) {
+                                TypeGroup tg = map.get(type.id);
+                                tg.score += score2;
+                                tg.count++;
+                            } else {
+                                map.put(type.id, new TypeGroup(type.id, type.name, score2));
                             }
                         }
                     }
-                } finally {
-                    is.close();
                 }
             }
         } catch (IOException e) {
@@ -245,7 +236,7 @@ public class GuessTypesOfColumnCommand extends Command {
         Collections.sort(types, new Comparator<TypeGroup>() {
             @Override
             public int compare(TypeGroup o1, TypeGroup o2) {
-                int c = Math.min(SAMPLE_SIZE, o2.count) - Math.min(SAMPLE_SIZE, o1.count);
+                int c = Math.min(sampleSize, o2.count) - Math.min(sampleSize, o1.count);
                 if (c != 0) {
                     return c;
                 }
@@ -272,5 +263,10 @@ public class GuessTypesOfColumnCommand extends Command {
             this.score = score;
             this.count = 1;
         }
+    }
+    
+    // for testability
+    protected void setSampleSize(int sampleSize) {
+        this.sampleSize = sampleSize;
     }
 }
