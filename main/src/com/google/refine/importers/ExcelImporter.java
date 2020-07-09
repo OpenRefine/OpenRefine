@@ -58,7 +58,6 @@ import org.slf4j.LoggerFactory;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.refine.ProjectMetadata;
-import com.google.refine.expr.functions.ToDate;
 import com.google.refine.importing.ImportingJob;
 import com.google.refine.importing.ImportingUtilities;
 import com.google.refine.model.Cell;
@@ -249,7 +248,7 @@ public class ExcelImporter extends TabularImportingParserBase {
             double d = cell.getNumericCellValue();
             
             if (DateUtil.isCellDateFormatted(cell)) {
-                value = ToDate.toDate(DateUtil.getJavaDate(d));
+                value = ParsingUtilities.toDate(DateUtil.getJavaDate(d));
                 // TODO: If we had a time datatype, we could use something like the following
                 // to distinguish times from dates (although Excel doesn't really make the distinction)
                 // Another alternative would be to look for values < 0.60

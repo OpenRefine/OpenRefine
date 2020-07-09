@@ -55,7 +55,6 @@ import org.slf4j.LoggerFactory;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.refine.ProjectMetadata;
-import com.google.refine.expr.functions.ToDate;
 import com.google.refine.importing.ImportingJob;
 import com.google.refine.importing.ImportingUtilities;
 import com.google.refine.model.Cell;
@@ -218,7 +217,7 @@ public class OdsImporter extends TabularImportingParserBase {
         } else if ("float".equals(cellType)) {
             value = cell.getDoubleValue();
         } else if ("date".equals(cellType)) {
-            value = ToDate.toDate(cell.getDateValue());
+            value = ParsingUtilities.toDate(cell.getDateValue());
         } else if ("currency".equals(cellType)) {
             value = cell.getCurrencyValue();
         } else if ("percentage".equals(cellType)) {
