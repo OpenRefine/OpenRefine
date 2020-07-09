@@ -63,7 +63,6 @@ import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
 import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.google.refine.expr.functions.ToDate;
 import com.google.refine.importers.ExcelImporter;
 import com.google.refine.util.ParsingUtilities;
 
@@ -137,8 +136,8 @@ public class ExcelImporterTests extends ImporterTest {
         Assert.assertEquals((String)project.rows.get(1).getCellValue(4)," Row 1 Col 5");
         Assert.assertNull((String)project.rows.get(1).getCellValue(5));
 
-        assertTrue(ToDate.isDate(project.rows.get(1).getCellValue(2))); // Calendar
-        assertTrue(ToDate.isDate(project.rows.get(1).getCellValue(3))); // Date
+        assertTrue(ParsingUtilities.isDate(project.rows.get(1).getCellValue(2))); // Calendar
+        assertTrue(ParsingUtilities.isDate(project.rows.get(1).getCellValue(3))); // Date
 
         verify(options, times(1)).get("ignoreLines");
         verify(options, times(1)).get("headerLines");
@@ -205,8 +204,8 @@ public class ExcelImporterTests extends ImporterTest {
         Assert.assertFalse((Boolean)project.rows.get(1).getCellValue(1));
         Assert.assertTrue((Boolean)project.rows.get(2).getCellValue(1));
 
-        assertTrue(ToDate.isDate(project.rows.get(1).getCellValue(2))); // Calendar
-        assertTrue(ToDate.isDate(project.rows.get(1).getCellValue(3))); // Date
+        assertTrue(ParsingUtilities.isDate(project.rows.get(1).getCellValue(2))); // Calendar
+        assertTrue(ParsingUtilities.isDate(project.rows.get(1).getCellValue(3))); // Date
 
         Assert.assertEquals((String)project.rows.get(1).getCellValue(4)," Row 1 Col 5");
         Assert.assertNull((String)project.rows.get(1).getCellValue(5));
@@ -267,8 +266,8 @@ public class ExcelImporterTests extends ImporterTest {
         Assert.assertFalse((Boolean)project.rows.get(1).getCellValue(1));
         Assert.assertTrue((Boolean)project.rows.get(2).getCellValue(1));
 
-        assertTrue(ToDate.isDate(project.rows.get(1).getCellValue(2))); // Calendar
-        assertTrue(ToDate.isDate(project.rows.get(1).getCellValue(3))); // Date
+        assertTrue(ParsingUtilities.isDate(project.rows.get(1).getCellValue(2))); // Calendar
+        assertTrue(ParsingUtilities.isDate(project.rows.get(1).getCellValue(3))); // Date
 
         Assert.assertEquals((String)project.rows.get(1).getCellValue(4)," Row 1 Col 5");
         Assert.assertNull((String)project.rows.get(1).getCellValue(5));
@@ -317,8 +316,8 @@ public class ExcelImporterTests extends ImporterTest {
         Assert.assertFalse((Boolean)project.rows.get(1).getCellValue(1));
         Assert.assertTrue((Boolean)project.rows.get(2).getCellValue(1));
 
-        assertTrue(ToDate.isDate(project.rows.get(1).getCellValue(2))); // Calendar
-        assertTrue(ToDate.isDate(project.rows.get(1).getCellValue(3))); // Date
+        assertTrue(ParsingUtilities.isDate(project.rows.get(1).getCellValue(2))); // Calendar
+        assertTrue(ParsingUtilities.isDate(project.rows.get(1).getCellValue(3))); // Date
 
         Assert.assertEquals((String)project.rows.get(1).getCellValue(4)," Row 1 Col 5");
         Assert.assertNull((String)project.rows.get(1).getCellValue(5));
