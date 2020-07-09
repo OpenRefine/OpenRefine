@@ -43,9 +43,22 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.http.Consts;
+import org.apache.http.NameValuePair;
+import org.apache.http.StatusLine;
+import org.apache.http.client.config.RequestConfig;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpHead;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.DefaultRedirectStrategy;
+import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.http.impl.client.HttpClients;
+import org.apache.http.message.BasicNameValuePair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -58,6 +71,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.google.refine.RefineServlet;
 import com.google.refine.expr.ExpressionUtils;
 import com.google.refine.model.Cell;
 import com.google.refine.model.Project;
@@ -68,12 +82,6 @@ import com.google.refine.model.ReconType;
 import com.google.refine.model.RecordModel.RowDependency;
 import com.google.refine.model.Row;
 import com.google.refine.util.ParsingUtilities;
-
-import okhttp3.MediaType;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.RequestBody;
-import okhttp3.Response;
 
 public class StandardReconConfig extends ReconConfig {
     final static Logger logger = LoggerFactory.getLogger("refine-standard-recon");
@@ -156,12 +164,9 @@ public class StandardReconConfig extends ReconConfig {
     final public List<ColumnDetail> columnDetails;
     @JsonProperty("limit")
     final private int limit;
-    
-    protected static final MediaType urlencoded = MediaType.get("application/x-www-form-urlencoded; charset=UTF-8");
-    protected static OkHttpClient client = new OkHttpClient.Builder()
-            .connectTimeout(30, TimeUnit.SECONDS)
-            .readTimeout(30, TimeUnit.SECONDS)
-            .build();
+
+    // initialized lazily
+    private CloseableHttpClient httpClient = null;
 
     @JsonCreator
     public StandardReconConfig(
@@ -437,6 +442,26 @@ public class StandardReconConfig extends ReconConfig {
         return job;
     }
     
+    private CloseableHttpClient getHttpClient() {
+        if (httpClient != null) {
+            return httpClient;
+        }
+        RequestConfig defaultRequestConfig = RequestConfig.custom()
+                .setConnectTimeout(30 * 1000)
+                .setConnectionRequestTimeout(30 * 1000)
+                .setSocketTimeout(10 * 1000).build();
+
+        HttpClientBuilder httpClientBuilder = HttpClients.custom()
+                .setUserAgent(RefineServlet.getUserAgent())
+                .setRedirectStrategy(new DefaultRedirectStrategy(new String[] {
+                        HttpGet.METHOD_NAME,
+                        HttpHead.METHOD_NAME,
+                        HttpPost.METHOD_NAME }))
+                .setDefaultRequestConfig(defaultRequestConfig);
+        httpClient = httpClientBuilder.build();
+        return httpClient;
+    }
+    
     @Override
     public List<Recon> batchRecon(List<ReconJob> jobs, long historyEntryID) {
         List<Recon> recons = new ArrayList<Recon>(jobs.size());
@@ -455,19 +480,19 @@ public class StandardReconConfig extends ReconConfig {
         stringWriter.write("}");
         String queriesString = stringWriter.toString();
         
-        RequestBody body = RequestBody.create("queries=" + ParsingUtilities.encode(queriesString), urlencoded);
-        Request request = new Request.Builder()
-                .url(service)
-                .post(body)
-                .build();
+        HttpPost request = new HttpPost(service);
+        List<NameValuePair> body = Collections.singletonList(
+                new BasicNameValuePair("queries", queriesString));
+        request.setEntity(new UrlEncodedFormEntity(body, Consts.UTF_8));
         
-        try (Response response = client.newCall(request).execute()) {
-            if (!response.isSuccessful()) {
+        try (CloseableHttpResponse response = getHttpClient().execute(request)) {
+            StatusLine statusLine = response.getStatusLine();
+            if (statusLine.getStatusCode() >= 400) {
                 logger.error("Failed  - code: "
-                        + Integer.toString(response.code())
-                        + " message: " + response.message());
+                        + Integer.toString(statusLine.getStatusCode())
+                        + " message: " + statusLine.getReasonPhrase());
             } else {
-                String s = response.body().string();
+                String s = ParsingUtilities.inputStreamToString(response.getEntity().getContent());
                 ObjectNode o = ParsingUtilities.evaluateJsonStringToObjectNode(s);
                 if (o == null) { // utility method returns null instead of throwing
                     logger.error("Failed to parse string as JSON: " + s);

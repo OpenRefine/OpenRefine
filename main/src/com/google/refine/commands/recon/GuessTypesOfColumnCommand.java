@@ -43,11 +43,25 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.TimeUnit;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import org.apache.http.Consts;
+import org.apache.http.NameValuePair;
+import org.apache.http.StatusLine;
+import org.apache.http.client.config.RequestConfig;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpHead;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.DefaultRedirectStrategy;
+import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.http.impl.client.HttpClients;
+import org.apache.http.message.BasicNameValuePair;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
@@ -56,6 +70,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.google.refine.RefineServlet;
 import com.google.refine.commands.Command;
 import com.google.refine.expr.ExpressionUtils;
 import com.google.refine.model.Column;
@@ -65,16 +80,9 @@ import com.google.refine.model.Row;
 import com.google.refine.model.recon.StandardReconConfig.ReconResult;
 import com.google.refine.util.ParsingUtilities;
 
-import okhttp3.MediaType;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.RequestBody;
-import okhttp3.Response;
-
 public class GuessTypesOfColumnCommand extends Command {
     
     final static int DEFAULT_SAMPLE_SIZE = 10;
-    private static final MediaType urlencoded = MediaType.get("application/x-www-form-urlencoded; charset=UTF-8");
     private int sampleSize = DEFAULT_SAMPLE_SIZE;
      
     protected static class TypesResponse {
@@ -175,25 +183,35 @@ public class GuessTypesOfColumnCommand extends Command {
         
         String queriesString = ParsingUtilities.defaultWriter.writeValueAsString(queryMap);
         try {
-            OkHttpClient client = new OkHttpClient.Builder()
-                    .connectTimeout(30, TimeUnit.SECONDS)
-                    .readTimeout(30, TimeUnit.SECONDS)
-                    .build();
-            String bodyString = "queries=" + ParsingUtilities.encode(queriesString);
-            RequestBody body = RequestBody.create(bodyString, urlencoded);
-            Request request = new Request.Builder()
-                    .url(serviceUrl)
-                    .post(body)
-                    .build();
+            RequestConfig defaultRequestConfig = RequestConfig.custom()
+                    .setConnectTimeout(30 * 1000)
+                    .setConnectionRequestTimeout(30 * 1000)
+                    .setSocketTimeout(10 * 1000).build();
+
+            HttpClientBuilder httpClientBuilder = HttpClients.custom()
+                    .setUserAgent(RefineServlet.getUserAgent())
+                    .setRedirectStrategy(new DefaultRedirectStrategy(new String[] {
+                            HttpGet.METHOD_NAME,
+                            HttpHead.METHOD_NAME,
+                            HttpPost.METHOD_NAME }))
+                    .setDefaultRequestConfig(defaultRequestConfig);
             
-            try (Response response = client.newCall(request).execute()) {
-                if (!response.isSuccessful()) {
+            CloseableHttpClient httpClient = httpClientBuilder.build();
+            HttpPost request = new HttpPost(serviceUrl);
+            List<NameValuePair> body = Collections.singletonList(
+                    new BasicNameValuePair("queries", queriesString));
+            request.setEntity(new UrlEncodedFormEntity(body, Consts.UTF_8));
+            
+            try (CloseableHttpResponse response = httpClient.execute(request)) {
+                StatusLine statusLine = response.getStatusLine();
+                if (statusLine.getStatusCode() >= 400) {
                     throw new IOException("Failed  - code:" 
-                            + Integer.toString(response.code()) 
-                            + " message: " + response.message());
+                            + Integer.toString(statusLine.getStatusCode()) 
+                            + " message: " + statusLine.getReasonPhrase());
                 }
                 
-                ObjectNode o = ParsingUtilities.evaluateJsonStringToObjectNode(response.body().string());
+                String s = ParsingUtilities.inputStreamToString(response.getEntity().getContent());
+                ObjectNode o = ParsingUtilities.evaluateJsonStringToObjectNode(s);
 
                 Iterator<JsonNode> iterator = o.iterator();
                 while (iterator.hasNext()) {
