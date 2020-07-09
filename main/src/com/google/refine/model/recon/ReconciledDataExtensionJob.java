@@ -44,11 +44,27 @@ import java.io.Writer;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
+
+import org.apache.http.Consts;
+import org.apache.http.NameValuePair;
+import org.apache.http.StatusLine;
+import org.apache.http.client.config.RequestConfig;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpHead;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.DefaultRedirectStrategy;
+import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.http.impl.client.HttpClients;
+import org.apache.http.message.BasicNameValuePair;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -58,6 +74,7 @@ import com.fasterxml.jackson.annotation.JsonView;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.google.refine.RefineServlet;
 import com.google.refine.expr.functions.ToDate;
 import com.google.refine.model.ReconCandidate;
 import com.google.refine.model.ReconType;
@@ -159,6 +176,9 @@ public class ReconciledDataExtensionJob {
     final public String              endpoint;
     final public List<ColumnInfo>    columns = new ArrayList<ColumnInfo>();
     
+    // not final: initialized lazily
+    private static CloseableHttpClient httpClient = null;
+    
     public ReconciledDataExtensionJob(DataExtensionConfig obj, String endpoint) {
         this.extension = obj;
         this.endpoint = endpoint;
@@ -206,29 +226,49 @@ public class ReconciledDataExtensionJob {
         }
     }
 
+    /**
+     * @todo this should be refactored to be unified with the HTTP querying code
+     * from StandardReconConfig. We should ideally extract a library to query
+     * reconciliation services and expose it as such for others to reuse.
+     */
+    
     static protected InputStream performQuery(String endpoint, String query) throws IOException {
-        URL url = new URL(endpoint);
-
-        URLConnection connection = url.openConnection();
-        connection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
-        connection.setConnectTimeout(5000);
-        connection.setDoOutput(true);
-
-        DataOutputStream dos = new DataOutputStream(connection.getOutputStream());
-        try {
-            String body = "extend=" + ParsingUtilities.encode(query);
-
-            dos.writeBytes(body);
-        } finally {
-            dos.flush();
-            dos.close();
+        HttpPost request = new HttpPost(endpoint);
+        List<NameValuePair> body = Collections.singletonList(
+                new BasicNameValuePair("queries", query));
+        request.setEntity(new UrlEncodedFormEntity(body, Consts.UTF_8));
+        
+        try (CloseableHttpResponse response = getHttpClient().execute(request)) {
+            StatusLine statusLine = response.getStatusLine();
+            if (statusLine.getStatusCode() >= 400) {
+                throw new IOException("Data extension query failed - code: "
+                        + Integer.toString(statusLine.getStatusCode())
+                        + " message: " + statusLine.getReasonPhrase());
+            } else {
+                return response.getEntity().getContent();
+            }
         }
-
-        connection.connect();
-
-        return connection.getInputStream();
     }
 
+    private static CloseableHttpClient getHttpClient() {
+        if (httpClient != null) {
+            return httpClient;
+        }
+        RequestConfig defaultRequestConfig = RequestConfig.custom()
+                .setConnectTimeout(30 * 1000)
+                .setConnectionRequestTimeout(30 * 1000)
+                .setSocketTimeout(10 * 1000).build();
+
+        HttpClientBuilder httpClientBuilder = HttpClients.custom()
+                .setUserAgent(RefineServlet.getUserAgent())
+                .setRedirectStrategy(new DefaultRedirectStrategy(new String[] {
+                        HttpGet.METHOD_NAME,
+                        HttpHead.METHOD_NAME,
+                        HttpPost.METHOD_NAME }))
+                .setDefaultRequestConfig(defaultRequestConfig);
+        httpClient = httpClientBuilder.build();
+        return httpClient;
+    }
     
     protected ReconciledDataExtensionJob.DataExtension collectResult(
         ObjectNode record,
