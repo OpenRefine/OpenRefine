@@ -217,7 +217,7 @@ public class OdsImporter extends TabularImportingParserBase {
         } else if ("float".equals(cellType)) {
             value = cell.getDoubleValue();
         } else if ("date".equals(cellType)) {
-            value = cell.getDateValue().toInstant().atOffset(ZoneOffset.UTC);
+            value = ParsingUtilities.toDate(cell.getDateValue());
         } else if ("currency".equals(cellType)) {
             value = cell.getCurrencyValue();
         } else if ("percentage".equals(cellType)) {
@@ -289,5 +289,4 @@ public class OdsImporter extends TabularImportingParserBase {
             return null;
         }
     }
-
-} 
+}
