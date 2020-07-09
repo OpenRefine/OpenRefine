@@ -13,7 +13,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 
 public class UseAsQualifierScrutinizer extends EditScrutinizer {
 
@@ -64,32 +63,21 @@ public class UseAsQualifierScrutinizer extends EditScrutinizer {
             }
 
             List<Statement> constraintDefinitions = _fetcher.getConstraintsByType(pid, ONE_OF_QUALIFIER_VALUE_PROPERTY_CONSTRAINT);
-            Map<PropertyIdValue, List<ItemIdValue>> allowedQualifierMap = new HashMap<>();
             for (Statement constraintStatement : constraintDefinitions) {
                 UseAsQualifierConstraint constraint = new UseAsQualifierConstraint(constraintStatement);
-                allowedQualifierMap.put(constraint.allowedQualifierPid, constraint.itemList);
-            }
-
-            for (Entry<PropertyIdValue, List<ItemIdValue>> entry : qualifiersMap.entrySet()) {
-                if (!allowedQualifierMap.containsKey(entry.getKey())) {
-                    QAWarning issue = new QAWarning(type, pid+entry.getKey().getId(), QAWarning.Severity.WARNING, 1);
-                    issue.setProperty("property_entity", pid);
-                    issue.setProperty("added_property_entity", entry.getKey());
-                    issue.setProperty("example_entity", update.getItemId());
-                    addIssue(issue);
-                } else {
-                    List<ItemIdValue> allowedValues = allowedQualifierMap.get(entry.getKey());
-                    for (ItemIdValue itemIdValue : entry.getValue()) {
-                        if (!allowedValues.contains(itemIdValue)) {
-                            QAWarning issue = new QAWarning(type, pid+entry.getKey().getId(), QAWarning.Severity.WARNING, 1);
+                if (qualifiersMap.containsKey(constraint.allowedQualifierPid)) {
+                    for (ItemIdValue value : qualifiersMap.get(constraint.allowedQualifierPid)) {
+                        if (!constraint.itemList.contains(value)) {
+                            QAWarning issue = new QAWarning(type, pid.getId()+constraint.allowedQualifierPid.getId(), QAWarning.Severity.WARNING, 1);
                             issue.setProperty("property_entity", pid);
-                            issue.setProperty("added_property_entity", entry.getKey());
+                            issue.setProperty("added_property_entity", constraint.allowedQualifierPid);
                             issue.setProperty("example_entity", update.getItemId());
                             addIssue(issue);
                         }
                     }
                 }
             }
+
         }
     }
 
