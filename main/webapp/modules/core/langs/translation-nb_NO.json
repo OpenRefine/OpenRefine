@@ -401,7 +401,7 @@
     "core-buttons/deselect-all": "Avvelg alt",
     "core-buttons/select": "Velg",
     "core-buttons/unselect": "Avvelg",
-    "core-buttons/next": "Neste",
+    "core-buttons/next": "Neste &raquo;",
     "core-buttons/add-url": "Legg til enda en nettadresse",
     "core-buttons/close": "Lukk",
     "core-buttons/reset-template": "Tilbakestill mal",
