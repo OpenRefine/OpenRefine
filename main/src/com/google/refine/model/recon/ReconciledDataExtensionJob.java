@@ -36,13 +36,10 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 package com.google.refine.model.recon;
 
-import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringWriter;
 import java.io.Writer;
-import java.net.URL;
-import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -57,13 +54,11 @@ import org.apache.http.StatusLine;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpHead;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.DefaultRedirectStrategy;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.impl.client.HttpClients;
+import org.apache.http.impl.client.LaxRedirectStrategy;
 import org.apache.http.message.BasicNameValuePair;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
@@ -261,10 +256,7 @@ public class ReconciledDataExtensionJob {
 
         HttpClientBuilder httpClientBuilder = HttpClients.custom()
                 .setUserAgent(RefineServlet.getUserAgent())
-                .setRedirectStrategy(new DefaultRedirectStrategy(new String[] {
-                        HttpGet.METHOD_NAME,
-                        HttpHead.METHOD_NAME,
-                        HttpPost.METHOD_NAME }))
+                .setRedirectStrategy(new LaxRedirectStrategy())
                 .setDefaultRequestConfig(defaultRequestConfig);
         httpClient = httpClientBuilder.build();
         return httpClient;

@@ -51,13 +51,11 @@ import org.apache.http.StatusLine;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpHead;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.DefaultRedirectStrategy;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.impl.client.HttpClients;
+import org.apache.http.impl.client.LaxRedirectStrategy;
 import org.apache.http.message.BasicNameValuePair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -453,10 +451,7 @@ public class StandardReconConfig extends ReconConfig {
 
         HttpClientBuilder httpClientBuilder = HttpClients.custom()
                 .setUserAgent(RefineServlet.getUserAgent())
-                .setRedirectStrategy(new DefaultRedirectStrategy(new String[] {
-                        HttpGet.METHOD_NAME,
-                        HttpHead.METHOD_NAME,
-                        HttpPost.METHOD_NAME }))
+                .setRedirectStrategy(new LaxRedirectStrategy())
                 .setDefaultRequestConfig(defaultRequestConfig);
         httpClient = httpClientBuilder.build();
         return httpClient;
