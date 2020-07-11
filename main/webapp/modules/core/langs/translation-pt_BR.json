@@ -87,7 +87,7 @@
     "core-index-import/creating-proj": "Criando projeto…",
     "core-index-import/comma-separated": "números separados por vírgula",
     "core-index-import/error": "Erro:",
-    "core-index-import/locate": "Localizar um arquivo de projeto Refine existente (.tar ou .tar.gz ou .zip):",
+    "core-index-import/locate": "Localizar um arquivo de projeto Refine existente (.tar ou .tar.gz):",
     "core-index-import/downloading-data": "Baixando dados…",
     "core-index-import/parse-as": "Interpretar dados como",
     "core-index-import/unknown-err": "Erro desconhecido",
