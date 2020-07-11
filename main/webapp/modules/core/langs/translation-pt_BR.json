@@ -116,7 +116,7 @@
     "core-index-lang/send-req": "Alterar idioma",
     "core-index-lang/page-reload": "A página será atualizada para aplicar as mudanças.",
     "core-index-lang/lang-settings": "Idioma",
-    "core-index-parser/parse-cell": "Analisar texto das células<br/>como número, datas, …",
+    "core-index-parser/parse-cell": "Tentar analisar texto de<br>células como números",
     "core-index-parser/trim": "Cortar espaços no início e no final dos textos das células",
     "core-index-parser/parse-next": "Analisar próximo",
     "core-index-parser/commas": "vírgulas (CSV)",
