@@ -11,6 +11,7 @@ import java.io.IOException;
 import javax.servlet.ServletException;
 
 import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
 import com.fasterxml.jackson.core.JsonParseException;
@@ -19,12 +20,19 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.refine.RefineServlet;
 import com.google.refine.commands.CommandTestBase;
+import com.google.refine.io.FileProjectManager;
 import com.google.refine.util.ParsingUtilities;
+import com.google.refine.util.TestUtils;
 
 import edu.mit.simile.butterfly.ButterflyModule;
 
 public class LoadLanguageCommandTests extends CommandTestBase {
-	
+
+    @BeforeTest
+    public void setUpTest() throws IOException {
+        FileProjectManager.initialize(TestUtils.createTempDirectory("openrefine-test-workspace-dir"));
+    }
+
 	@BeforeMethod
 	public void setUpCommand() {
 		command = new LoadLanguageCommand();
