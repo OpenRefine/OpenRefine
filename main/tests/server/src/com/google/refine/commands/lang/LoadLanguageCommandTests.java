@@ -33,74 +33,74 @@ public class LoadLanguageCommandTests extends CommandTestBase {
         FileProjectManager.initialize(TestUtils.createTempDirectory("openrefine-test-workspace-dir"));
     }
 
-	@BeforeMethod
-	public void setUpCommand() {
-		command = new LoadLanguageCommand();
-		ButterflyModule coreModule = mock(ButterflyModule.class);
-		
-		when(coreModule.getName()).thenReturn("core");
-		when(coreModule.getPath()).thenReturn(new File("webapp/modules/core"));
-		RefineServlet servlet = mock(RefineServlet.class);
-		when(servlet.getModule("core")).thenReturn(coreModule);
-		command.init(servlet);
-	}
-	
-	@Test
-	public void testLoadLanguages() throws ServletException, IOException {
-		when(request.getParameter("module")).thenReturn("core");
-		when(request.getParameterValues("lang")).thenReturn(new String[] {"en"});
-		
-		command.doPost(request, response);
-		
-		JsonNode response = ParsingUtilities.mapper.readValue(writer.toString(), JsonNode.class);
-		assertTrue(response.has("dictionary"));
-		assertTrue(response.has("lang"));
-	}
-	
-	@Test
-	public void testLoadUnknownLanguage() throws ServletException, IOException {
-		when(request.getParameter("module")).thenReturn("core");
-		when(request.getParameterValues("lang")).thenReturn(new String[] {"foobar"});
-		
-		command.doPost(request, response);
-		
-		JsonNode response = ParsingUtilities.mapper.readValue(writer.toString(), JsonNode.class);
-		assertTrue(response.has("dictionary"));
-		assertEquals(response.get("lang").asText(), "en");
-	}
-	
-	@Test
-	public void testLoadNoLanguage() throws JsonParseException, JsonMappingException, IOException, ServletException {
-	    when(request.getParameter("module")).thenReturn("core");
-	    when(request.getParameter("lang")).thenReturn("");
-	    
-	    command.doPost(request, response);
-	    
-	    JsonNode response = ParsingUtilities.mapper.readValue(writer.toString(), JsonNode.class);
+    @BeforeMethod
+    public void setUpCommand() {
+        command = new LoadLanguageCommand();
+        ButterflyModule coreModule = mock(ButterflyModule.class);
+
+        when(coreModule.getName()).thenReturn("core");
+        when(coreModule.getPath()).thenReturn(new File("webapp/modules/core"));
+        RefineServlet servlet = mock(RefineServlet.class);
+        when(servlet.getModule("core")).thenReturn(coreModule);
+        command.init(servlet);
+    }
+
+    @Test
+    public void testLoadLanguages() throws ServletException, IOException {
+        when(request.getParameter("module")).thenReturn("core");
+        when(request.getParameterValues("lang")).thenReturn(new String[] {"en"});
+
+        command.doPost(request, response);
+
+        JsonNode response = ParsingUtilities.mapper.readValue(writer.toString(), JsonNode.class);
+        assertTrue(response.has("dictionary"));
+        assertTrue(response.has("lang"));
+    }
+
+    @Test
+    public void testLoadUnknownLanguage() throws ServletException, IOException {
+        when(request.getParameter("module")).thenReturn("core");
+        when(request.getParameterValues("lang")).thenReturn(new String[] {"foobar"});
+
+        command.doPost(request, response);
+
+        JsonNode response = ParsingUtilities.mapper.readValue(writer.toString(), JsonNode.class);
         assertTrue(response.has("dictionary"));
         assertEquals(response.get("lang").asText(), "en");
-	}
-	
-	@Test
-	public void testLanguageFallback() throws JsonParseException, JsonMappingException, IOException {
-		String fallbackJson = "{"
-				+ "\"foo\":\"hello\","
-				+ "\"bar\":\"world\""
-				+ "}";
-		String preferredJson = "{"
-				+ "\"foo\":\"hallo\""
-				+ "}";
-		String expectedJson = "{"
-				+ "\"foo\":\"hallo\","
-				+ "\"bar\":\"world\""
-				+ "}";
-		ObjectNode fallback = ParsingUtilities.mapper.readValue(fallbackJson, ObjectNode.class);
-		ObjectNode preferred = ParsingUtilities.mapper.readValue(preferredJson, ObjectNode.class);
-		ObjectNode expected = ParsingUtilities.mapper.readValue(expectedJson, ObjectNode.class);
-		
-		ObjectNode merged = LoadLanguageCommand.mergeLanguages(preferred, fallback);
-		
-		assertEquals(merged, expected);
-	}
+    }
+
+    @Test
+    public void testLoadNoLanguage() throws JsonParseException, JsonMappingException, IOException, ServletException {
+        when(request.getParameter("module")).thenReturn("core");
+        when(request.getParameter("lang")).thenReturn("");
+
+        command.doPost(request, response);
+
+        JsonNode response = ParsingUtilities.mapper.readValue(writer.toString(), JsonNode.class);
+        assertTrue(response.has("dictionary"));
+        assertEquals(response.get("lang").asText(), "en");
+    }
+
+    @Test
+    public void testLanguageFallback() throws JsonParseException, JsonMappingException, IOException {
+        String fallbackJson = "{"
+                + "\"foo\":\"hello\","
+                + "\"bar\":\"world\""
+                + "}";
+        String preferredJson = "{"
+                + "\"foo\":\"hallo\""
+                + "}";
+        String expectedJson = "{"
+                + "\"foo\":\"hallo\","
+                + "\"bar\":\"world\""
+                + "}";
+        ObjectNode fallback = ParsingUtilities.mapper.readValue(fallbackJson, ObjectNode.class);
+        ObjectNode preferred = ParsingUtilities.mapper.readValue(preferredJson, ObjectNode.class);
+        ObjectNode expected = ParsingUtilities.mapper.readValue(expectedJson, ObjectNode.class);
+
+        ObjectNode merged = LoadLanguageCommand.mergeLanguages(preferred, fallback);
+
+        assertEquals(merged, expected);
+    }
 }
 
