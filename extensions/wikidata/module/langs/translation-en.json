@@ -158,6 +158,8 @@
     "warnings-messages/existing-item-requires-certain-other-statement/body": "This property is expected to have another statement with property {added_property_entity} such as on item {example_entity}. If the item already has statements with property {added_property_entity} in Wikidata, then this warning can be ignored.",
     "warnings-messages/values-should-not-be-used-as-qualifier/title": "Invalid value for qualifier {qualifier_entity} on statement {statement_entity}",
     "warnings-messages/values-should-not-be-used-as-qualifier/body": "On items such as {example_entity}, an invalid value for qualifier {qualifier_entity} was supplied on statement {statement_entity}.",
+    "warnings-messages/no-references-provided/title": "{property_entity} requires at least one reference.",
+    "warnings-messages/no-references-provided/body": "The property {property_entity} specifically requires at least one reference for its statements.",
     "warnings-messages/ignored-qualifiers/title": "Some qualifiers were ignored.",
     "warnings-messages/ignored-qualifiers/body": "Qualifier values could not be parsed, so they will not be added to the corresponding statements.",
     "warnings-messages/ignored-references/title": "Some references were ignored.",

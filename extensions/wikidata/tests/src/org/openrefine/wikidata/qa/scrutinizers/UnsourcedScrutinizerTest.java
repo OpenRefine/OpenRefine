@@ -23,10 +23,34 @@
  ******************************************************************************/
 package org.openrefine.wikidata.qa.scrutinizers;
 
+import org.openrefine.wikidata.qa.ConstraintFetcher;
 import org.openrefine.wikidata.testing.TestingData;
+import org.openrefine.wikidata.updates.ItemUpdate;
+import org.openrefine.wikidata.updates.ItemUpdateBuilder;
 import org.testng.annotations.Test;
+import org.wikidata.wdtk.datamodel.helpers.Datamodel;
+import org.wikidata.wdtk.datamodel.implementation.StatementImpl;
+import org.wikidata.wdtk.datamodel.interfaces.ItemIdValue;
+import org.wikidata.wdtk.datamodel.interfaces.PropertyIdValue;
+import org.wikidata.wdtk.datamodel.interfaces.Snak;
+import org.wikidata.wdtk.datamodel.interfaces.SnakGroup;
+import org.wikidata.wdtk.datamodel.interfaces.Statement;
+
+import java.util.Collections;
+import java.util.List;
+
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+import static org.openrefine.wikidata.qa.scrutinizers.UnsourcedScrutinizer.CITATION_NEEDED_QID;
 
 public class UnsourcedScrutinizerTest extends StatementScrutinizerTest {
+
+    public static PropertyIdValue propertyIdValue = Datamodel.makeWikidataPropertyIdValue("P2302");
+    public static PropertyIdValue referenceProperty = Datamodel.makeWikidataPropertyIdValue("P143");
+    public static ItemIdValue referenceValue = Datamodel.makeWikidataItemIdValue("Q348");
+    public static ItemIdValue entityIdValue = Datamodel.makeWikidataItemIdValue(CITATION_NEEDED_QID);
 
     @Override
     public EditScrutinizer getScrutinizer() {
@@ -34,9 +58,45 @@ public class UnsourcedScrutinizerTest extends StatementScrutinizerTest {
     }
 
     @Test
-    public void testTrigger() {
+    public void testWithoutConstraint() {
+        ConstraintFetcher fetcher = mock(ConstraintFetcher.class);
+        when(fetcher.getConstraintsByType(any(), eq(CITATION_NEEDED_QID))).thenReturn(Collections.emptyList());
+        setFetcher(fetcher);
         scrutinize(TestingData.generateStatement(TestingData.existingId, TestingData.matchedId));
-        assertWarningsRaised(UnsourcedScrutinizer.type);
+        assertWarningsRaised(UnsourcedScrutinizer.generalType);
     }
 
+    @Test
+    public void testTrigger() {
+        ItemIdValue id = TestingData.existingId;
+        Snak mainSnak = Datamodel.makeSomeValueSnak(propertyIdValue);
+        Statement statement = new StatementImpl("P172", mainSnak, id);
+        ItemUpdate update = new ItemUpdateBuilder(id).addStatement(statement).build();
+
+        List<Statement> constraintDefinitions = constraintParameterStatementList(entityIdValue, Collections.emptyList());
+        ConstraintFetcher fetcher = mock(ConstraintFetcher.class);
+        when(fetcher.getConstraintsByType(propertyIdValue, CITATION_NEEDED_QID)).thenReturn(constraintDefinitions);
+        setFetcher(fetcher);
+
+        scrutinize(update);
+        assertWarningsRaised(UnsourcedScrutinizer.constraintItemType);
+    }
+
+    @Test
+    public void testNoIssue() {
+        ItemIdValue id = TestingData.existingId;
+        Snak referenceSnak = Datamodel.makeValueSnak(referenceProperty, referenceValue);
+        List<SnakGroup> constraintQualifiers = makeSnakGroupList(referenceSnak);
+        List<Statement> itemStatementList = constraintParameterStatementList(entityIdValue, constraintQualifiers);
+        Statement statement = itemStatementList.get(0);
+        ItemUpdate update = new ItemUpdateBuilder(id).addStatement(statement).build();
+
+        List<Statement> constraintDefinitions = constraintParameterStatementList(entityIdValue, Collections.emptyList());
+        ConstraintFetcher fetcher = mock(ConstraintFetcher.class);
+        when(fetcher.getConstraintsByType(propertyIdValue, CITATION_NEEDED_QID)).thenReturn(constraintDefinitions);
+        setFetcher(fetcher);
+
+        scrutinize(update);
+        assertNoWarningRaised();
+    }
 }
