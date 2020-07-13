@@ -42,6 +42,10 @@ import com.google.refine.importing.FormatGuesser;
 
 public class TextFormatGuesser implements FormatGuesser {
 
+    private static final int XML_BRACKETS_THRESHOLD = 5;
+    private static final int JSON_BRACES_THRESHOLD = 5;
+    private static final long CONTROLS_THRESHOLD = 10;
+
     @Override
     public String guess(File file, String encoding, String seedFormat) {
         try(InputStream is = new FileInputStream(file)) {
@@ -52,7 +56,7 @@ public class TextFormatGuesser implements FormatGuesser {
             try (BufferedReader reader = new BufferedReader(
                     encoding != null ? new InputStreamReader(is, encoding) : new InputStreamReader(is))) {
                 int totalChars = 0;
-                int openBraces = 0;
+                long openBraces = 0;
                 int closeBraces = 0;
                 int openAngleBrackets = 0;
                 int closeAngleBrackets = 0;
@@ -61,14 +65,13 @@ public class TextFormatGuesser implements FormatGuesser {
                 int wikiTableRow = 0;
                 int trailingPeriods = 0;
                 int controls = 0;
-                
+
                 char firstChar = ' ';
                 boolean foundFirstChar = false;
-                
+
                 String line;
-                while ((line = reader.readLine()) != null && totalChars < 64 * 1024) {
+                while ((line = reader.readLine()) != null && totalChars < 64 * 1024 && controls < CONTROLS_THRESHOLD) {
                     line = line.trim();
-                    // TODO: Count C0 controls as an indicator that we're dealing with binary data?
                     controls += CharMatcher.javaIsoControl().countIn(line);
                     openBraces += line.chars().filter(ch -> ch == '{').count();
                     closeBraces += StringUtils.countMatches(line, "}");
@@ -93,21 +96,24 @@ public class TextFormatGuesser implements FormatGuesser {
                     }
                     totalChars += line.length();
                 }
-                
+
+                if (controls >= CONTROLS_THRESHOLD) {
+                    return "binary";
+                }
+
                 if (foundFirstChar) {
                     if (wikiTableBegin >= 1 && (wikiTableBegin - wikiTableEnd <= 1) && wikiTableRow >= 2) {
                         return "text/wiki";
                     } if ((firstChar == '{' || firstChar == '[') &&
-                        openBraces >= 5 && closeBraces >= 5) {
+                        openBraces >= JSON_BRACES_THRESHOLD && closeBraces >= JSON_BRACES_THRESHOLD) {
                         return "text/json";
-                    } else if (openAngleBrackets >= 5 && closeAngleBrackets >= 5) {
+                    } else if (openAngleBrackets >= XML_BRACKETS_THRESHOLD
+                            && closeAngleBrackets >= XML_BRACKETS_THRESHOLD) {
                         if (trailingPeriods > 0) {
                             return "text/rdf/n3";
                         } else if (firstChar == '<') {
                             return "text/xml";
                         }
-                    } else if (controls > 10) {
-                        return "binary";
                     }
                 }
                 return "text/line-based";
@@ -125,8 +131,7 @@ public class TextFormatGuesser implements FormatGuesser {
         try(InputStream is = new FileInputStream(file)) {
             byte[] magic = new byte[4];
             int count = is.read(magic);
-            if (count == 4 && Arrays.equals(magic, new byte[] {0x50,0x4B, 0x03, 0x04}) ||
-                    //                    Arrays.equals(magic, new byte[] {0x50,0x4B, 0x05, 0x06}) || // empty zip
+            if (count == 4 && Arrays.equals(magic, new byte[] {0x50,0x4B, 0x03, 0x04}) || // zip
                     Arrays.equals(magic, new byte[] {0x50,0x4B, 0x07, 0x08}) ||
                     (magic[0] == 0x1F && magic[1] == (byte)0x8B) // gzip
                     ) {
