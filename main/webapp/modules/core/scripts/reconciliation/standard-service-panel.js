@@ -149,7 +149,7 @@ ReconStandardServicePanel.prototype._populatePanel = function() {
       });
 
       if (check) {
-        radio.attr("checked", "true");
+        radio.prop('checked', true);
       }
 
       if (typeName == typeID) {
@@ -172,7 +172,7 @@ ReconStandardServicePanel.prototype._populatePanel = function() {
 
     this._panel
     .find('input[name="type-choice"][value=""]')
-    .attr("checked", "true");
+    .prop('checked', true);
 
     this._elmts.typeInput.focus();
   }
@@ -232,7 +232,7 @@ ReconStandardServicePanel.prototype._wireEvents = function() {
   input.bind("fb-select", function(e, data) {
     self._panel
     .find('input[name="type-choice"][value=""]')
-    .attr("checked", "true");
+    .prop('checked', true);
 
     self._rewirePropertySuggests(data.id);
   });

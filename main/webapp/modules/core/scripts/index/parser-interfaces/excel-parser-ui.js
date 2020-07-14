@@ -150,9 +150,7 @@ Refine.ExcelParserUI.prototype._initialize = function() {
     .attr('class', 'core-excel-worksheet')
     .attr('index', i)
     .appendTo(td0);
-    if (this.selected) {
-      checkbox.prop('checked', true);
-    }
+    checkbox.prop('checked', this.selected);
 
     $('<label>')
       .attr('for', id)

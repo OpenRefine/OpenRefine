@@ -244,7 +244,7 @@ Refine.SeparatorBasedParserUI.prototype._initialize = function() {
     this._optionContainerElmts.includeArchiveFileCheckbox.prop("checked", true);
   }
   if (this._config.trimStrings) {
-    this._optionContainerElmts.trimStringsCheckbox.attr("checked", "unchecked");
+    this._optionContainerElmts.trimStringsCheckbox.prop('checked', false);
   }
 
   var onChange = function() {

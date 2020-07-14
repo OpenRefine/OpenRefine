@@ -353,7 +353,7 @@ ExtendReconciledDataPreviewDialog.prototype._constrainProperty = function(id) {
                                 'name', field.name).appendTo(labelElem);
 
                 if (choice.value === currentValue) {
-                    inputElem.attr('checked', 'checked');
+                    inputElem.prop('checked', true);
                 }
                 labelElem.append(' '+choice.name);
                 td.append('<br/>');
@@ -363,7 +363,7 @@ ExtendReconciledDataPreviewDialog.prototype._constrainProperty = function(id) {
            var label = $('<label></label>').attr('for', field.name).appendTo(td);
            var input = $('<input type="checkbox" />').attr('name', field.name).appendTo(label);
            if (currentValue === 'on') {
-               input.attr('checked','checked');
+               input.prop('checked', true);
            }
            label.append(' '+field.label);
         } else if (field.type === 'number' || field.type == 'text') {

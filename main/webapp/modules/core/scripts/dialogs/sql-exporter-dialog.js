@@ -126,7 +126,7 @@ function SqlExporterDialog(options) {
           .appendTo(row);
           $('<input>')
             .attr('type', 'checkbox')
-            .attr('checked', 'checked')
+            .prop('checked', true)
             .addClass("columnNameCheckboxStyle")
             .appendTo(columnCell);
             $('<span>')
@@ -164,7 +164,7 @@ function SqlExporterDialog(options) {
             .appendTo(row);
             $('<input>')
               .attr('type', 'checkbox')
-              .attr('checked', 'checked')
+              .prop('checked', true)
               .attr('id', allowNullChkBoxName)
               .attr("rowIndex", i)
               .addClass("allowNullCheckboxStyle")
@@ -211,9 +211,8 @@ function SqlExporterDialog(options) {
             $('#' + allowNullChkBoxName).on('click', function() {
                 var rowIndex = this.getAttribute('rowIndex');
                 var id = this.getAttribute('id');
-                var checked =  $(this).is(':checked');;
                 
-                if(checked == false){
+                if(!this.checked){
                     $('#defaultValueTextBox'+ rowIndex).prop("disabled", false);
                 }else{
                     $('#defaultValueTextBox'+ rowIndex).val("");
@@ -230,21 +229,20 @@ function SqlExporterDialog(options) {
     }
    
     this._elmts.allowNullToggleCheckbox.click(function() {
-        var checked =  $(this).is(':checked');
-        if(checked == true){
+        if(this.checked){
             $("input:checkbox[class=allowNullCheckboxStyle]").each(function () {
-                $(this).attr('checked', true);
+                $(this).prop('checked', true);
             });
             $("input:text[class=defaultValueTextBoxStyle]").each(function () {
-                $(this).attr('disabled', true);
+                $(this).prop('disabled', true);
             });
             
         }else{
             $("input:checkbox[class=allowNullCheckboxStyle]").each(function () {
-                $(this).attr('checked', false);
+                $(this).prop('checked', false);
             });
             $("input:text[class=defaultValueTextBoxStyle]").each(function () {
-                $(this).attr('disabled', false);
+                $(this).prop('disabled', false);
             });
         }
         
@@ -252,37 +250,24 @@ function SqlExporterDialog(options) {
     
     this._elmts.selectAllButton.click(function() {
        $("input:checkbox[class=columnNameCheckboxStyle]").each(function () {
-           $(this).attr('checked', true);
+           $(this).prop('checked', true);
         });
       self._updateOptionCode();
     });
     this._elmts.deselectAllButton.click(function() {
         $("input:checkbox[class=columnNameCheckboxStyle]").each(function () {
-           $(this).attr('checked', false);
+           $(this).prop('checked', false);
         });
        self._updateOptionCode();
     });
 
     this._elmts.includeStructureCheckbox.click(function() {
-        var checked =  $(this).is(':checked');
-        //alert('checked ' + checked);
-        if(checked == true){
-            $('#includeDropStatementCheckboxId').removeAttr("disabled");
-            $('#includeIfExistDropStatementCheckboxId').removeAttr("disabled");
-        }else{
-            $('#includeDropStatementCheckboxId').attr("disabled", true);
-            $('#includeIfExistDropStatementCheckboxId').attr("disabled", true);
-        }
+        $('#includeDropStatementCheckboxId').prop("disabled", !this.checked);
+        $('#includeIfExistDropStatementCheckboxId').prop("disabled", !this.checked);
     });
     
     this._elmts.includeContentCheckbox.click(function() {
-        var checked =  $(this).is(':checked');
-        if(checked == true){
-            $('#nullCellValueToEmptyStringCheckboxId').removeAttr("disabled");
-        }else{
-            $('#nullCellValueToEmptyStringCheckboxId').attr("disabled", true);
-          
-        }
+        $('#nullCellValueToEmptyStringCheckboxId').prop("disabled", !this.checked);
     });
     
 
@@ -296,9 +281,9 @@ function SqlExporterDialog(options) {
   SqlExporterDialog.prototype._configureUIFromOptionCode = function(options) {
       
       this._elmts.tableNameTextBox.val(theProject.metadata.name.replace(/\W/g, ' ').replace(/\s+/g, '_'));
-      this._elmts.sqlExportOutputEmptyRowsCheckbox.attr('checked', 'checked');
-      this._elmts.sqlExportTrimAllColumnsCheckbox.attr('checked', 'checked');
-      this._elmts.nullCellValueToEmptyStringLabel.attr('checked', 'checked');
+      this._elmts.sqlExportOutputEmptyRowsCheckbox.prop('checked', true);
+      this._elmts.sqlExportTrimAllColumnsCheckbox.prop('checked', true);
+      this._elmts.nullCellValueToEmptyStringLabel.prop('checked', true);
       
       $("input:text[class=defaultValueTextBoxStyle]").each(function () {
           $(this).prop("disabled", true);
@@ -465,7 +450,7 @@ function SqlExporterDialog(options) {
            // alert("typeSize::" + typeSize);
         }
         
-        var allowNullChkBoxName = $('#allowNullChkBox' + rowIndex).is(':checked');
+        var allowNullChkBoxName = $('#allowNullChkBox' + rowIndex).prop('checked');
         var defaultValueTextBoxName = $('#defaultValueTextBox' + rowIndex).val();
        // alert("allowNullChkBoxName::" + allowNullChkBoxName);
        // alert("defaultValueTextBoxName::" + defaultValueTextBoxName);

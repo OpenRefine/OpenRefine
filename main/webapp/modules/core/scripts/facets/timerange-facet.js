@@ -214,7 +214,7 @@ TimeRangeFacet.prototype._renderOtherChoices = function() {
     self._selectTime = !self._selectTime;
     self._updateRest();
   });
-  if (this._selectTime) timeCheck.attr("checked","checked");
+  if (this._selectTime) timeCheck.prop('checked', true);
 
   var timeLabel = $('<label>').attr("for", facet_id + "-time").appendTo(timeDiv);    
   $('<span>').text($.i18n('core-facets/time')+" ").addClass("facet-range-choice-label").appendTo(timeLabel);
@@ -227,13 +227,13 @@ TimeRangeFacet.prototype._renderOtherChoices = function() {
     self._selectNonTime = !self._selectNonTime;
     self._updateRest();
   });
-  if (this._selectNonTime) nonTimeCheck.attr("checked","checked");
+  if (this._selectNonTime) nonTimeCheck.prop('checked', true);
 
   var nonTimeLabel = $('<label>').attr("for", facet_id + "-non-time").appendTo(nonTimeDiv);    
   $('<span>').text($.i18n('core-facets/non-time')+" ").addClass("facet-range-choice-label").appendTo(nonTimeLabel);
   $('<div>').text(this._nonTimeCount).addClass("facet-range-choice-count").appendTo(nonTimeLabel);
 
-  if (this._baseNonTimeCount === 0) nonTimeCheck.removeAttr("checked");
+  if (this._baseNonTimeCount === 0) nonTimeCheck.prop("checked", false);
 
   // ----------------- blank -----------------
 
@@ -242,13 +242,13 @@ TimeRangeFacet.prototype._renderOtherChoices = function() {
     self._selectBlank = !self._selectBlank;
     self._updateRest();
   });
-  if (this._selectBlank) blankCheck.attr("checked","checked");
+  if (this._selectBlank) blankCheck.prop('checked', true);
 
   var blankLabel = $('<label>').attr("for", facet_id + "-blank").appendTo(blankDiv);    
   $('<span>').text($.i18n('core-facets/blank')+" ").addClass("facet-range-choice-label").appendTo(blankLabel);
   $('<div>').text(this._blankCount).addClass("facet-range-choice-count").appendTo(blankLabel);
 
-  if (this._baseBlankCount === 0) blankCheck.removeAttr("checked");
+  if (this._baseBlankCount === 0) blankCheck.prop("checked", false);
 
   // ----------------- error -----------------
 
@@ -257,13 +257,13 @@ TimeRangeFacet.prototype._renderOtherChoices = function() {
     self._selectError = !self._selectError;
     self._updateRest();
   });
-  if (this._selectError) errorCheck.attr("checked","checked");
+  if (this._selectError) errorCheck.prop('checked', true);
 
   var errorLabel = $('<label>').attr("for", facet_id + "-error").appendTo(errorDiv);    
   $('<span>').text($.i18n('core-facets/error')+" ").addClass("facet-range-choice-label").appendTo(errorLabel);
   $('<div>').text(this._errorCount).addClass("facet-range-choice-count").appendTo(errorLabel);
 
-  if (this._baseErrorCount === 0) errorCheck.removeAttr("checked");
+  if (this._baseErrorCount === 0) errorCheck.prop("checked", false);
 
   // --------------------------
 
