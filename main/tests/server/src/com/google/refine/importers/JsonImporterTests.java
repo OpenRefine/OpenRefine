@@ -81,12 +81,12 @@ public class JsonImporterTests extends ImporterTest {
     public void setUp(Method method){
         super.setUp();
         SUT = new JsonImporter();
-        logger.info("About to run test method: " + method.getName());
+        logger.debug("About to run test method: " + method.getName());
     }
 
     @AfterMethod
     public void tearDown(ITestResult result) {
-//        logger.info("Finished test method: " + result.getMethod().getMethodName());
+        logger.debug("Finished test method: " + result.getMethod().getMethodName());
         SUT = null;
         if (inputStream != null) {
             try {

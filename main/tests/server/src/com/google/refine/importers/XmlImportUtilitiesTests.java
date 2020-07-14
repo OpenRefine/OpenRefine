@@ -215,7 +215,7 @@ public class XmlImportUtilitiesTests extends RefineTest {
         } catch (Exception e){
             Assert.fail();
         }
-        log(project);
+
         assertProjectCreated(project, 0, 6);
 
         Assert.assertEquals(project.rows.get(0).cells.size(), 4);
@@ -239,7 +239,7 @@ public class XmlImportUtilitiesTests extends RefineTest {
         } catch (Exception e){
             Assert.fail();
         }
-        log(project);
+
         assertProjectCreated(project, 0, 6);
         Assert.assertEquals(project.rows.get(0).cells.size(), 4);
         Assert.assertEquals(project.rows.get(5).cells.size(), 5);
@@ -269,7 +269,7 @@ public class XmlImportUtilitiesTests extends RefineTest {
         columnGroup.subgroups.put("e", subGroup);
 
         XmlImportUtilitiesStub.createColumnsFromImport(project, columnGroup);
-        log(project);
+
         assertProjectCreated(project, 4, 0);
         Assert.assertEquals(project.columnModel.columns.get(0).getName(), "hello");
         Assert.assertEquals(project.columnModel.columns.get(1).getName(), "world");
@@ -296,7 +296,6 @@ public class XmlImportUtilitiesTests extends RefineTest {
             Assert.fail();
         }
 
-        log(project);
         assertProjectCreated(project, 0, 6);
 
         Assert.assertEquals(project.rows.get(0).cells.size(), 4);
@@ -314,7 +313,6 @@ public class XmlImportUtilitiesTests extends RefineTest {
         } catch (Exception e) {
             Assert.fail();
         }
-        log(project);
         Assert.assertNotNull(project.rows);
         Assert.assertEquals(project.rows.size(), 1);
         Row row = project.rows.get(0);
@@ -335,7 +333,7 @@ public class XmlImportUtilitiesTests extends RefineTest {
         } catch (Exception e) {
             Assert.fail();
         }
-        log(project);
+
         Assert.assertNotNull(project.rows);
         Assert.assertEquals(project.rows.size(), 2);
 
@@ -360,7 +358,7 @@ public class XmlImportUtilitiesTests extends RefineTest {
         } catch (Exception e) {
             Assert.fail();
         }
-        log(project);
+
         Assert.assertNotNull(project.rows);
         Assert.assertEquals(project.rows.size(), 1);
         Row row = project.rows.get(0);
@@ -385,7 +383,6 @@ public class XmlImportUtilitiesTests extends RefineTest {
         } catch (Exception e) {
             Assert.fail();
         }
-        log(project);
 
         Assert.assertEquals(columnGroup.subgroups.size(), 1);
         Assert.assertEquals(columnGroup.name, "");
@@ -413,7 +410,7 @@ public class XmlImportUtilitiesTests extends RefineTest {
         } catch (Exception e) {
             Assert.fail();
         }
-        log(project);
+
         Assert.assertNotNull(project.rows);
         Assert.assertEquals(project.rows.size(), 1);
         Row row = project.rows.get(0);
@@ -436,7 +433,7 @@ public class XmlImportUtilitiesTests extends RefineTest {
         } catch (Exception e) {
             Assert.fail();
         }
-        log(project);
+
         Assert.assertNotNull(project.rows);
         Assert.assertEquals(project.rows.size(), 1);
         Row row = project.rows.get(0);

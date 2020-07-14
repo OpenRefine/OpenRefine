@@ -97,7 +97,6 @@ public class XmlImporterTests extends ImporterTest {
     public void canParseSample(){
         RunTest(getSample());
 
-        log(project);
         assertProjectCreated(project, 4, 6);
 
         Row row = project.rows.get(0);
@@ -110,7 +109,6 @@ public class XmlImporterTests extends ImporterTest {
     public void canParseDeeplyNestedSample(){
         RunTest(getDeeplyNestedSample(), getNestedOptions(job, SUT));
 
-        log(project);
         assertProjectCreated(project, 4, 6);
 
         Row row = project.rows.get(0);
@@ -123,7 +121,6 @@ public class XmlImporterTests extends ImporterTest {
     public void canParseSampleWithMixedElement(){
         RunTest(getMixedElementSample(), getNestedOptions(job, SUT));
 
-        log(project);
         assertProjectCreated(project, 4, 6);
         
         Row row = project.rows.get(0);
@@ -147,7 +144,6 @@ public class XmlImporterTests extends ImporterTest {
     public void canParseSampleWithDuplicateNestedElements(){
         RunTest(getSampleWithDuplicateNestedElements());
 
-        log(project);
         assertProjectCreated(project, 4, 12);
 
         Row row = project.rows.get(0);
@@ -163,7 +159,6 @@ public class XmlImporterTests extends ImporterTest {
 
         RunTest(getSampleWithLineBreak());
 
-        log(project);
         assertProjectCreated(project, 4, 6);
 
         Row row = project.rows.get(3);
@@ -177,7 +172,6 @@ public class XmlImporterTests extends ImporterTest {
     public void testElementsWithVaryingStructure(){
         RunTest(getSampleWithVaryingStructure());
 
-        log(project);
         assertProjectCreated(project, 5, 6);
 
         Assert.assertEquals(project.columnModel.getColumnByCellIndex(4).getName(), "book - genre");
@@ -194,7 +188,7 @@ public class XmlImporterTests extends ImporterTest {
     @Test
     public void testElementWithNestedTree(){
         RunTest(getSampleWithTreeStructure());
-        log(project);
+
         assertProjectCreated(project, 5, 6);
 
         Assert.assertEquals(project.columnModel.columnGroups.size(),1);
