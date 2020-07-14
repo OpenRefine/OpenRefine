@@ -23,10 +23,6 @@ import java.util.List;
 
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
-import static org.openrefine.wikidata.qa.scrutinizers.DifferenceWithinRangeScrutinizer.DIFFERENCE_WITHIN_RANGE_CONSTRAINT_PID;
-import static org.openrefine.wikidata.qa.scrutinizers.DifferenceWithinRangeScrutinizer.DIFFERENCE_WITHIN_RANGE_CONSTRAINT_QID;
-import static org.openrefine.wikidata.qa.scrutinizers.DifferenceWithinRangeScrutinizer.MAXIMUM_VALUE_PID;
-import static org.openrefine.wikidata.qa.scrutinizers.DifferenceWithinRangeScrutinizer.MINIMUM_VALUE_PID;
 
 public class DifferenceWithinScrutinizerTest extends ScrutinizerTest{
 
@@ -34,11 +30,11 @@ public class DifferenceWithinScrutinizerTest extends ScrutinizerTest{
     public static PropertyIdValue lowerBoundPid = Datamodel.makeWikidataPropertyIdValue("P569");
     public static QuantityValue minValue = Datamodel.makeQuantityValue(new BigDecimal(0));
     public static QuantityValue maxValue = Datamodel.makeQuantityValue(new BigDecimal(150));
-    public static ItemIdValue entityIdValue = Datamodel.makeWikidataItemIdValue(DIFFERENCE_WITHIN_RANGE_CONSTRAINT_QID);
+    public static ItemIdValue entityIdValue = Datamodel.makeWikidataItemIdValue("Q21510854");
 
-    public static PropertyIdValue propertyParameterPID = Datamodel.makeWikidataPropertyIdValue(DIFFERENCE_WITHIN_RANGE_CONSTRAINT_PID);
-    public static PropertyIdValue minimumValuePID = Datamodel.makeWikidataPropertyIdValue(MINIMUM_VALUE_PID);
-    public static PropertyIdValue maximumValuePID = Datamodel.makeWikidataPropertyIdValue(MAXIMUM_VALUE_PID);
+    public static PropertyIdValue propertyParameterPID = Datamodel.makeWikidataPropertyIdValue("P2306");
+    public static PropertyIdValue minimumValuePID = Datamodel.makeWikidataPropertyIdValue("P2313");
+    public static PropertyIdValue maximumValuePID = Datamodel.makeWikidataPropertyIdValue("P2312");
 
     @Override
     public EditScrutinizer getScrutinizer() {
@@ -63,10 +59,10 @@ public class DifferenceWithinScrutinizerTest extends ScrutinizerTest{
         List<Statement> constraintDefinitions = constraintParameterStatementList(entityIdValue, constraintQualifiers);
 
         ConstraintFetcher fetcher = mock(ConstraintFetcher.class);
-        when(fetcher.getConstraintsByType(upperBoundPid, DIFFERENCE_WITHIN_RANGE_CONSTRAINT_QID)).thenReturn(constraintDefinitions);
-        when(fetcher.findValues(constraintQualifiers, DIFFERENCE_WITHIN_RANGE_CONSTRAINT_PID)).thenReturn(Collections.singletonList(lowerBoundPid));
-        when(fetcher.findValues(constraintQualifiers, MINIMUM_VALUE_PID)).thenReturn(Collections.singletonList(minValue));
-        when(fetcher.findValues(constraintQualifiers, MAXIMUM_VALUE_PID)).thenReturn(Collections.singletonList(maxValue));
+        when(fetcher.getConstraintsByType(upperBoundPid, "Q21510854")).thenReturn(constraintDefinitions);
+        when(fetcher.findValues(constraintQualifiers, "P2306")).thenReturn(Collections.singletonList(lowerBoundPid));
+        when(fetcher.findValues(constraintQualifiers, "P2313")).thenReturn(Collections.singletonList(minValue));
+        when(fetcher.findValues(constraintQualifiers, "P2312")).thenReturn(Collections.singletonList(maxValue));
         setFetcher(fetcher);
 
         scrutinize(updateA);
@@ -91,10 +87,10 @@ public class DifferenceWithinScrutinizerTest extends ScrutinizerTest{
         List<Statement> constraintDefinitions = constraintParameterStatementList(entityIdValue, constraintQualifiers);
 
         ConstraintFetcher fetcher = mock(ConstraintFetcher.class);
-        when(fetcher.getConstraintsByType(upperBoundPid, DIFFERENCE_WITHIN_RANGE_CONSTRAINT_QID)).thenReturn(constraintDefinitions);
-        when(fetcher.findValues(constraintQualifiers, DIFFERENCE_WITHIN_RANGE_CONSTRAINT_PID)).thenReturn(Collections.singletonList(lowerBoundPid));
-        when(fetcher.findValues(constraintQualifiers, MINIMUM_VALUE_PID)).thenReturn(Collections.singletonList(minValue));
-        when(fetcher.findValues(constraintQualifiers, MAXIMUM_VALUE_PID)).thenReturn(Collections.singletonList(maxValue));
+        when(fetcher.getConstraintsByType(upperBoundPid, "Q21510854")).thenReturn(constraintDefinitions);
+        when(fetcher.findValues(constraintQualifiers, "P2306")).thenReturn(Collections.singletonList(lowerBoundPid));
+        when(fetcher.findValues(constraintQualifiers, "P2313")).thenReturn(Collections.singletonList(minValue));
+        when(fetcher.findValues(constraintQualifiers, "P2312")).thenReturn(Collections.singletonList(maxValue));
         setFetcher(fetcher);
 
         scrutinize(updateA);

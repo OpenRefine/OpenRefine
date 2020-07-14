@@ -43,8 +43,6 @@ import java.util.List;
 
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
-import static org.openrefine.wikidata.qa.scrutinizers.FormatScrutinizer.FORMAT_CONSTRAINT_QID;
-import static org.openrefine.wikidata.qa.scrutinizers.FormatScrutinizer.FORMAT_REGEX_PID;
 
 public class FormatScrutinizerTest extends ScrutinizerTest {
 
@@ -54,8 +52,8 @@ public class FormatScrutinizerTest extends ScrutinizerTest {
     public static Value incompleteMatchValue = Datamodel.makeStringValue(".jpg");
     public static String regularExpression = "(?i).+\\.(jpg|jpeg|jpe|png|svg|tif|tiff|gif|xcf|pdf|djvu|webp)";
 
-    public static ItemIdValue entityIdValue = Datamodel.makeWikidataItemIdValue(FORMAT_CONSTRAINT_QID);
-    public static PropertyIdValue regularExpressionParameter = Datamodel.makeWikidataPropertyIdValue(FORMAT_REGEX_PID);
+    public static ItemIdValue entityIdValue = Datamodel.makeWikidataItemIdValue("Q21502404");
+    public static PropertyIdValue regularExpressionParameter = Datamodel.makeWikidataPropertyIdValue("P1793");
     public static Value regularExpressionFormat = Datamodel.makeStringValue(regularExpression);
 
     @Override
@@ -78,8 +76,8 @@ public class FormatScrutinizerTest extends ScrutinizerTest {
         List<Statement> statementList = constraintParameterStatementList(entityIdValue, snakGroupList);
 
         ConstraintFetcher fetcher = mock(ConstraintFetcher.class);
-        when(fetcher.getConstraintsByType(propertyIdValue, FORMAT_CONSTRAINT_QID)).thenReturn(statementList);
-        when(fetcher.findValues(snakGroupList, FORMAT_REGEX_PID)).thenReturn(Collections.singletonList(regularExpressionFormat));
+        when(fetcher.getConstraintsByType(propertyIdValue, "Q21502404")).thenReturn(statementList);
+        when(fetcher.findValues(snakGroupList, "P1793")).thenReturn(Collections.singletonList(regularExpressionFormat));
         setFetcher(fetcher);
         scrutinize(updateA);
         assertWarningsRaised(FormatScrutinizer.type);
@@ -99,8 +97,8 @@ public class FormatScrutinizerTest extends ScrutinizerTest {
         List<Statement> statementList = constraintParameterStatementList(entityIdValue, snakGroupList);
 
         ConstraintFetcher fetcher = mock(ConstraintFetcher.class);
-        when(fetcher.getConstraintsByType(propertyIdValue, FORMAT_CONSTRAINT_QID)).thenReturn(statementList);
-        when(fetcher.findValues(snakGroupList, FORMAT_REGEX_PID)).thenReturn(Collections.singletonList(regularExpressionFormat));
+        when(fetcher.getConstraintsByType(propertyIdValue, "Q21502404")).thenReturn(statementList);
+        when(fetcher.findValues(snakGroupList, "P1793")).thenReturn(Collections.singletonList(regularExpressionFormat));
         setFetcher(fetcher);
         scrutinize(updateA);
         assertNoWarningRaised();
@@ -120,8 +118,8 @@ public class FormatScrutinizerTest extends ScrutinizerTest {
         List<Statement> statementList = constraintParameterStatementList(entityIdValue, snakGroupList);
 
         ConstraintFetcher fetcher = mock(ConstraintFetcher.class);
-        when(fetcher.getConstraintsByType(propertyIdValue, FORMAT_CONSTRAINT_QID)).thenReturn(statementList);
-        when(fetcher.findValues(snakGroupList, FORMAT_REGEX_PID)).thenReturn(Collections.singletonList(regularExpressionFormat));
+        when(fetcher.getConstraintsByType(propertyIdValue, "Q21502404")).thenReturn(statementList);
+        when(fetcher.findValues(snakGroupList, "P1793")).thenReturn(Collections.singletonList(regularExpressionFormat));
         setFetcher(fetcher);
         scrutinize(updateA);
         assertWarningsRaised(FormatScrutinizer.type);

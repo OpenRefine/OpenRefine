@@ -44,16 +44,12 @@ import java.util.stream.Collectors;
 
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
-import static org.openrefine.wikidata.qa.scrutinizers.QualifierCompatibilityScrutinizer.ALLOWED_QUALIFIERS_CONSTRAINT_PID;
-import static org.openrefine.wikidata.qa.scrutinizers.QualifierCompatibilityScrutinizer.ALLOWED_QUALIFIERS_CONSTRAINT_QID;
-import static org.openrefine.wikidata.qa.scrutinizers.QualifierCompatibilityScrutinizer.MANDATORY_QUALIFIERS_CONSTRAINT_PID;
-import static org.openrefine.wikidata.qa.scrutinizers.QualifierCompatibilityScrutinizer.MANDATORY_QUALIFIERS_CONSTRAINT_QID;
 
 public class QualifierCompatibilityScrutinizerTest extends StatementScrutinizerTest {
 
-    public static ItemIdValue allowedQualifierEntity = Datamodel.makeWikidataItemIdValue(ALLOWED_QUALIFIERS_CONSTRAINT_QID);
-    public static ItemIdValue mandatoryQualifierEntity = Datamodel.makeWikidataItemIdValue(MANDATORY_QUALIFIERS_CONSTRAINT_QID);
-    public static PropertyIdValue propertyParameterPID = Datamodel.makeWikidataPropertyIdValue(ALLOWED_QUALIFIERS_CONSTRAINT_PID);
+    public static ItemIdValue allowedQualifierEntity = Datamodel.makeWikidataItemIdValue("Q21510851");
+    public static ItemIdValue mandatoryQualifierEntity = Datamodel.makeWikidataItemIdValue("Q21510856");
+    public static PropertyIdValue propertyParameterPID = Datamodel.makeWikidataPropertyIdValue("P2306");
     public static PropertyIdValue propertyParameterValue = Datamodel.makeWikidataPropertyIdValue("P585");
 
     public static PropertyIdValue allowedPropertyIdValue = Datamodel.makeWikidataPropertyIdValue("P2196");
@@ -81,8 +77,8 @@ public class QualifierCompatibilityScrutinizerTest extends StatementScrutinizerT
         List<Statement> statementList = constraintParameterStatementList(allowedQualifierEntity, snakGroupList);
 
         ConstraintFetcher fetcher = mock(ConstraintFetcher.class);
-        when(fetcher.getConstraintsByType(allowedPropertyIdValue, ALLOWED_QUALIFIERS_CONSTRAINT_QID)).thenReturn(statementList);
-        when(fetcher.findValues(snakGroupList, ALLOWED_QUALIFIERS_CONSTRAINT_PID)).thenReturn(Collections.singletonList(qualifierProperty));
+        when(fetcher.getConstraintsByType(allowedPropertyIdValue, "Q21510851")).thenReturn(statementList);
+        when(fetcher.findValues(snakGroupList, "P2306")).thenReturn(Collections.singletonList(qualifierProperty));
         setFetcher(fetcher);
 
         scrutinize(update);
@@ -103,8 +99,8 @@ public class QualifierCompatibilityScrutinizerTest extends StatementScrutinizerT
         List<Statement> statementList = constraintParameterStatementList(mandatoryQualifierEntity, snakGroupList);
 
         ConstraintFetcher fetcher = mock(ConstraintFetcher.class);
-        when(fetcher.getConstraintsByType(mandatoryPropertyIdValue, MANDATORY_QUALIFIERS_CONSTRAINT_QID)).thenReturn(statementList);
-        when(fetcher.findValues(snakGroupList, MANDATORY_QUALIFIERS_CONSTRAINT_PID)).thenReturn(Collections.singletonList(qualifierProperty));
+        when(fetcher.getConstraintsByType(mandatoryPropertyIdValue, "Q21510856")).thenReturn(statementList);
+        when(fetcher.findValues(snakGroupList, "P2306")).thenReturn(Collections.singletonList(qualifierProperty));
         setFetcher(fetcher);
 
         scrutinize(update);
@@ -126,8 +122,8 @@ public class QualifierCompatibilityScrutinizerTest extends StatementScrutinizerT
         List<Statement> statementList = constraintParameterStatementList(allowedQualifierEntity, snakGroupList);
 
         ConstraintFetcher fetcher = mock(ConstraintFetcher.class);
-        when(fetcher.getConstraintsByType(allowedPropertyIdValue, ALLOWED_QUALIFIERS_CONSTRAINT_QID)).thenReturn(statementList);
-        when(fetcher.findValues(snakGroupList, ALLOWED_QUALIFIERS_CONSTRAINT_PID)).thenReturn(Collections.singletonList(qualifierProperty));
+        when(fetcher.getConstraintsByType(allowedPropertyIdValue, "Q21510851")).thenReturn(statementList);
+        when(fetcher.findValues(snakGroupList, "P2306")).thenReturn(Collections.singletonList(qualifierProperty));
         setFetcher(fetcher);
 
         scrutinize(update);
