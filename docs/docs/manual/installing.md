@@ -365,7 +365,7 @@ If you run `openrefine.exe`, you will need to edit the `openrefine.l4j.ini` file
 ```
 
 
-The line `-Xmx1024M` defines the amount of memory available in megabytes (actually [mebibytes](https://en.wikipedia.org/wiki/Mebibyte)). Change the number “1024” - for example, edit the line to `-Xmx2048M` to make 2048MB [2GB] of memory available). 
+The line `-Xmx1024M` defines the amount of memory available in megabytes (actually [mebibytes](https://en.wikipedia.org/wiki/Mebibyte)). Change the number “1024” - for example, edit the line to `-Xmx2048M` to make 2048MB [2GB] of memory available. 
 
 
 :::caution openrefine.exe not running?
