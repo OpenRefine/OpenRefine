@@ -116,7 +116,7 @@
     "core-index-lang/send-req": "変更",
     "core-index-lang/page-reload": "変更を適用するため、再読み込みします。",
     "core-index-lang/label": "言語を選択する",
-    "core-index-parser/parse-cell": "セルの文字列を解析<br/>数字, 日付…",
+    "core-index-parser/parse-cell": "セルを解析<br/>文字から数字",
     "core-index-parser/trim": "前後の空白文字を削除する",
     "core-index-parser/parse-next": "カラム名として解釈",
     "core-index-parser/commas": "カンマ区切り（CSV）",
