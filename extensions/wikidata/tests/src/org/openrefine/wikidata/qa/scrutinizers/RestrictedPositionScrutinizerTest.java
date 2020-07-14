@@ -46,18 +46,15 @@ import static org.mockito.Mockito.when;
 import static org.openrefine.wikidata.qa.scrutinizers.RestrictedPositionScrutinizer.SCOPE_CONSTRAINT_PID;
 import static org.openrefine.wikidata.qa.scrutinizers.RestrictedPositionScrutinizer.SCOPE_CONSTRAINT_QID;
 import static org.openrefine.wikidata.qa.scrutinizers.RestrictedPositionScrutinizer.SCOPE_CONSTRAINT_QUALIFIER_QID;
-import static org.openrefine.wikidata.qa.scrutinizers.RestrictedPositionScrutinizer.SCOPE_CONSTRAINT_REFERENCE_QID;
 import static org.openrefine.wikidata.qa.scrutinizers.RestrictedPositionScrutinizer.SCOPE_CONSTRAINT_VALUE_QID;
 
 public class RestrictedPositionScrutinizerTest extends SnakScrutinizerTest {
 
     public static PropertyIdValue propertyIdValue = Datamodel.makeWikidataPropertyIdValue("P22");
-    public static PropertyIdValue mainSnakPid = Datamodel.makeWikidataPropertyIdValue("P1234");
-    public static PropertyIdValue propertyScopeParameter = Datamodel.makeWikidataPropertyIdValue("P5314");
+    public static PropertyIdValue propertyScopeParameter = Datamodel.makeWikidataPropertyIdValue(SCOPE_CONSTRAINT_PID);
     public static ItemIdValue entityIdValue = Datamodel.makeWikidataItemIdValue(SCOPE_CONSTRAINT_QID);
     public static ItemIdValue asMainSnak = Datamodel.makeWikidataItemIdValue(SCOPE_CONSTRAINT_VALUE_QID);
     public static ItemIdValue asQualifier = Datamodel.makeWikidataItemIdValue(SCOPE_CONSTRAINT_QUALIFIER_QID);
-    public static ItemIdValue asReference = Datamodel.makeWikidataItemIdValue(SCOPE_CONSTRAINT_REFERENCE_QID);
 
     @Override
     public EditScrutinizer getScrutinizer() {
