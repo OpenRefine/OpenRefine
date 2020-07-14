@@ -57,8 +57,8 @@ public class EntityTypeScrutinizerTest extends StatementScrutinizerTest {
         List<Statement> statementList = constraintParameterStatementList(entityIdValue, snakGroupList);
 
         ConstraintFetcher fetcher = mock(ConstraintFetcher.class);
-        when(fetcher.getConstraintsByType(propertyIdValue,"Q52004125")).thenReturn(statementList);
-        when(fetcher.findValues(snakGroupList, "P2305")).thenReturn(Collections.singletonList(allowedValue));
+        when(fetcher.getConstraintsByType(propertyIdValue,ALLOWED_ENTITY_TYPES_QID)).thenReturn(statementList);
+        when(fetcher.findValues(snakGroupList, ALLOWED_ENTITY_TYPES_PID)).thenReturn(Collections.singletonList(allowedValue));
         setFetcher(fetcher);
 
         scrutinize(update);
@@ -81,8 +81,8 @@ public class EntityTypeScrutinizerTest extends StatementScrutinizerTest {
         List<Statement> statementList = constraintParameterStatementList(entityIdValue, snakGroupList);
 
         ConstraintFetcher fetcher = mock(ConstraintFetcher.class);
-        when(fetcher.getConstraintsByType(propertyIdValue,"Q52004125")).thenReturn(statementList);
-        when(fetcher.findValues(snakGroupList, "P2305")).thenReturn(Collections.singletonList(itemValue));
+        when(fetcher.getConstraintsByType(propertyIdValue,ALLOWED_ENTITY_TYPES_QID)).thenReturn(statementList);
+        when(fetcher.findValues(snakGroupList, ALLOWED_ENTITY_TYPES_PID)).thenReturn(Collections.singletonList(itemValue));
         setFetcher(fetcher);
 
         scrutinize(update);

@@ -34,7 +34,7 @@ public class RestrictedValuesScrutinizerTest extends SnakScrutinizerTest {
     public static ItemIdValue allowedValueEntity = Datamodel.makeWikidataItemIdValue(ALLOWED_VALUES_CONSTRAINT_QID);
     public static ItemIdValue disallowedValueEntity = Datamodel.makeWikidataItemIdValue(DISALLOWED_VALUES_CONSTRAINT_QID);
 
-    public static PropertyIdValue itemParameterPID = Datamodel.makeWikidataPropertyIdValue("P2305");
+    public static PropertyIdValue itemParameterPID = Datamodel.makeWikidataPropertyIdValue(ALLOWED_VALUES_CONSTRAINT_PID);
 
     @Override
     public EditScrutinizer getScrutinizer() {
