@@ -90,7 +90,10 @@ Take note of the [extensions](#installing-extensions) you have currently install
 
 ### Install or upgrade Java
 
-[Java Development Kit (JDK)](https://jdk.java.net/) is required to run OpenRefine and should be installed first. There are packages for Mac, Windows, and Linux. We recommend you install the latest “Ready for use” version: at the time of writing, this is [JDK 14.0.1](https://jdk.java.net/14/). 
+[Java Development Kit (JDK)](https://jdk.java.net/) is required to run OpenRefine and should be installed first. [OpenRefine installation packages for Mac and Windows come bundled with JDK](https://openrefine.org/download.html), so you do not need to install it separately if you use those bundles. 
+
+There are JDK packages for Mac, Windows, and Linux. We recommend you install the latest “Ready for use” version: at the time of writing, this is JDK 14.0.1. 
+ 
 
 Download the archive (either a `.tar.gz` or a `.zip`) to your computer and then extract its contents to a location of your choice. There is no installation process, so you may wish to extract this folder directly into a place where you put program files, or another stable folder. 
 
@@ -171,7 +174,7 @@ The quick version:
 
 The long version:
 
-[Homebrew](http://brew.sh) is a popular command-line package manager for macOS. Installing Homebrew is accomplished by pasting the installation command on the Homebrew website into a Terminal window. Once Homebrew is installed, applications like OpenRefine can be installed via a simple command. You can [install Homebrew from their website]([http://brew.sh](http://brew.sh)).
+[Homebrew](http://brew.sh) is a popular command-line package manager for Mac. Installing Homebrew is accomplished by pasting the installation command on the Homebrew website into a Terminal window. Once Homebrew is installed, applications like OpenRefine can be installed via a simple command. You can [install Homebrew from their website]([http://brew.sh](http://brew.sh)).
 
 
 ###### Install OpenRefine
@@ -185,17 +188,16 @@ You should see output like this:
 
 ```
 ==> Downloading https://github.com/OpenRefine/OpenRefine/releases/download/2.7/openrefine-mac-2.7.dmg
-  ################################################################# 100.0%
+  ##################################################### 100.0%
   ==> Verifying checksum for Cask openrefine
   ==> Installing Cask openrefine
   ==> Moving App 'OpenRefine.app' to '/Applications/OpenRefine.app'.
   🍺  openrefine was successfully installed!
 ```
 
-
 Behind the scenes, this command causes Homebrew to download the OpenRefine installer, verify the file’s authenticity (using a SHA-256 checksum), mount the disk image, copy the `OpenRefine.app` application bundle into the Applications folder, unmount the disk image, and save a copy of the installer and metadata about the installation for future use.
 
-If an existing `OpenRefine.app` is found in the Applications folder, Homebrew will not overwrite it, so installing via Homebrew requires either deleting or renaming previously installed copies.
+_If an existing `OpenRefine.app` is found in the Applications folder, Homebrew will not overwrite it, so installing via Homebrew requires either deleting or renaming previously installed copies._
 
 
 ###### Uninstall OpenRefine
@@ -220,7 +222,7 @@ You should see output like this:
 
 ```
  ==> Downloading https://github.com/OpenRefine/OpenRefine/releases/download/2.7/openrefine-mac-2.7.dmg
-  ######################################################################## 100.0%
+  ##################################################### 100.0%
   ==> Verifying checksum for Cask openrefine
   ==> Removing App '/Applications/OpenRefine.app'.
   ==> Moving App 'OpenRefine.app' to '/Applications/OpenRefine.app'.
@@ -239,7 +241,7 @@ If you had previously installed the `openrefine-dev` cask (containing a release 
 
 :::caution Problems starting?
 
-If you get a message saying "Open Refine can't be opened because it is from an unidentified developer": 
+If you are using an older version of OpenRefine, you may get a message saying "Open Refine can't be opened because it is from an unidentified developer". Try the following steps to resolve it: 
 
 
 *   Open System Preferences and go to "Security and Privacy" and the “General” tab. You will see a message indicating that "OpenRefine was blocked from opening because it is not from an identified developer." You may also see “MacOS cannot verify that this app is free from malware.” See [issue #2191](https://github.com/OpenRefine/OpenRefine/issues/2191) for more information.
@@ -257,9 +259,10 @@ Once you have downloaded the `.tar.gz` file, open a shell and type:
 ```tar xzf openrefine-linux-3.4.tar.gz```
 
 
-### Where is data stored?
+### Setting where data is stored
 
-OpenRefine stores data in two places: program files in the program directory (wherever it is you’ve installed it), and project files in what we call the “workspace directory.” You can access this folder easily from OpenRefine by going to the home screen (at [http://127.0.0.1:3333/](http://127.0.0.1:3333/)) and clicking "Browse workspace directory."
+OpenRefine stores data in two places: program files in the program directory, wherever it is you’ve installed it; and project files in what we call the “workspace directory.” You can access this folder easily from OpenRefine by going to the [home screen](running.md#the-home-screen) (at [http://127.0.0.1:3333/](http://127.0.0.1:3333/)) and clicking "Browse workspace directory."
+
 
 By default this is:
 
