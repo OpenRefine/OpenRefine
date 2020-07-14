@@ -187,7 +187,7 @@ CustomTabularExporterDialog.prototype._createDialog = function(options) {
         .attr('id', id)
         .attr('type', 'radio')
         .attr('name', 'custom-tabular-exporter-upload-format')
-        .attr('value', target.id)
+        .val(target.id)
         .appendTo(td0);
       if (i === 0) {
         input.prop('checked', true);
@@ -306,17 +306,17 @@ CustomTabularExporterDialog.prototype._postExport = function(preview) {
   var form = ExporterManager.prepareExportRowsForm(format, !exportAllRowsCheckbox, ext);
   $('<input />')
   .attr("name", "options")
-  .attr("value", JSON.stringify(options))
+  .val(JSON.stringify(options))
   .appendTo(form);
   if (encoding) {
     $('<input />')
     .attr("name", "encoding")
-    .attr("value", encoding)
+    .val(encoding)
     .appendTo(form);
   }
   $('<input />')
   .attr("name", "preview")
-  .attr("value", preview)
+  .val(preview)
   .appendTo(form);
 
   document.body.appendChild(form);

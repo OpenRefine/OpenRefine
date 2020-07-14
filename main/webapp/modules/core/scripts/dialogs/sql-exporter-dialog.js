@@ -90,13 +90,13 @@ function SqlExporterDialog(options) {
 
 
         var sel = $('<select>').appendTo('body');
-        sel.append($("<option>").attr('value','VARCHAR').text('VARCHAR'));
-        sel.append($("<option>").attr('value','TEXT').text('TEXT'));
-        sel.append($("<option>").attr('value','INT').text('INT'));
-        sel.append($("<option>").attr('value','NUMERIC').text('NUMERIC'));
-        sel.append($("<option>").attr('value','CHAR').text('CHAR'));
-        sel.append($("<option>").attr('value','DATE').text('DATE'));
-        sel.append($("<option>").attr('value','TIMESTAMP').text('TIMESTAMP'));
+        sel.append($("<option>").val('VARCHAR').text('VARCHAR'));
+        sel.append($("<option>").val('TEXT').text('TEXT'));
+        sel.append($("<option>").val('INT').text('INT'));
+        sel.append($("<option>").val('NUMERIC').text('NUMERIC'));
+        sel.append($("<option>").val('CHAR').text('CHAR'));
+        sel.append($("<option>").val('DATE').text('DATE'));
+        sel.append($("<option>").val('TIMESTAMP').text('TIMESTAMP'));
     
         sel.attr('id', selectBoxName);
         sel.attr('rowIndex', i);
@@ -153,7 +153,7 @@ function SqlExporterDialog(options) {
             .appendTo(row);
               $('<input>')
               .attr('type', 'button')
-              .attr('value', 'Apply All')
+              .val('Apply All')
               .attr('id', applyAllBtnName)
               .attr("rowIndex", i)
               .appendTo(applyAllCell);
@@ -334,17 +334,17 @@ function SqlExporterDialog(options) {
     var form = self._prepareSqlExportRowsForm(format, !exportAllRowsCheckbox, "sql");
     $('<input />')
     .attr("name", "options")
-    .attr("value", JSON.stringify(options))
+    .val(JSON.stringify(options))
     .appendTo(form);
     if (encoding) {
       $('<input />')
       .attr("name", "encoding")
-      .attr("value", encoding)
+      .val(encoding)
       .appendTo(form);
     }
     $('<input />')
     .attr("name", "preview")
-    .attr("value", preview)
+    .val(preview)
     .appendTo(form);
 
     document.body.appendChild(form);
@@ -368,16 +368,16 @@ function SqlExporterDialog(options) {
 
       $('<input />')
       .attr("name", "project")
-      .attr("value", theProject.id)
+      .val(theProject.id)
       .appendTo(form);
       $('<input />')
       .attr("name", "format")
-      .attr("value", format)
+      .val(format)
       .appendTo(form);
       if (includeEngine) {
         $('<input />')
         .attr("name", "engine")
-        .attr("value", JSON.stringify(ui.browsingEngine.getJSON()))
+        .val(JSON.stringify(ui.browsingEngine.getJSON()))
         .appendTo(form);
       }
      

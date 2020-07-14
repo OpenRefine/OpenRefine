@@ -141,7 +141,7 @@ ReconStandardServicePanel.prototype._populatePanel = function() {
 
       td0.width = "1%";
       var radio = $('<input type="radio" name="type-choice">')
-      .attr("value", typeID)
+      .val(typeID)
       .attr("typeName", typeName)
       .appendTo(td0)
       .click(function() {

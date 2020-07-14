@@ -348,8 +348,7 @@ ExtendReconciledDataPreviewDialog.prototype._constrainProperty = function(id) {
                 var choice = field.choices[j];
                 var labelElem = $('<label></label>').attr('for', field.name+'_'+choice.value).appendTo(td);
                 var inputElem = $('<input type="radio" />').attr(
-                                'id', field.name+'_'+choice.value).attr(
-                                'value', choice.value).attr(
+                                'id', field.name+'_'+choice.value).val(choice.value).attr(
                                 'name', field.name).appendTo(labelElem);
 
                 if (choice.value === currentValue) {
@@ -371,8 +370,7 @@ ExtendReconciledDataPreviewDialog.prototype._constrainProperty = function(id) {
            label.append(field.label+': ');
            var input = $('<input />').attr(
                 'name', field.name).attr(
-                'type', field.type).attr(
-                'value', currentValue).appendTo(label);
+                'type', field.type).val(currentValue).appendTo(label);
         } 
         if (tr.children().length > 0) {
             table.append(tr);

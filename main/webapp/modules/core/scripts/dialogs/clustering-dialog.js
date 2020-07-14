@@ -132,7 +132,7 @@ ClusteringDialog.prototype._createDialog = function() {
               label = keyers[i];
           }
           var option = $('<option></option>')
-             .attr('value', keyers[i])
+             .val(keyers[i])
              .text(label)
              .appendTo(self._elmts.keyingFunctionSelector);
           if (i == 0) {
@@ -145,7 +145,7 @@ ClusteringDialog.prototype._createDialog = function() {
               label = distances[i];
           }
           var option = $('<option></option>')
-             .attr('value', distances[i])
+             .val(distances[i])
              .text(label)
              .appendTo(self._elmts.distanceFunctionSelector);
           if (i == 0) {
@@ -273,7 +273,7 @@ ClusteringDialog.prototype._renderTable = function(clusters) {
             }
 
             $('<input type="text" size="25" />')
-                .attr("value", cluster.value)
+                .val(cluster.value)
                 .bind("keyup change input",function() {
                     cluster.value = this.value;
                 }).appendTo(tr.insertCell(4));

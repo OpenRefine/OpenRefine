@@ -411,7 +411,7 @@ DataTableCellUI.prototype._searchForMatch = function(suggestOptions) {
     suggestOptions2.query_param_name = "prefix";
   }
   elmts.input
-  .attr("value", this._cell.v)
+  .val(this._cell.v)
   .suggest(suggestOptions2)
   .bind("fb-select", function(e, data) {
     match = data;

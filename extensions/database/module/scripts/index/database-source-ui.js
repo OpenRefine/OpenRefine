@@ -91,7 +91,7 @@ Refine.DatabaseSourceUI.prototype.attachUI = function(body) {
   $('input#initialDatabase').attr('placeholder', $.i18n('database-source/databaseNamePlaceholder'));
   $('input#initialSchema').attr('placeholder', $.i18n('database-source/databaseSchemaPlaceholder'));
 
-  $('input#connectionName').attr('value', $.i18n('database-source/connectionNameDefaultValue'));
+  $('input#connectionName').val($.i18n('database-source/connectionNameDefaultValue'));
 
   this._elmts.newConnectionButton.click(function(evt) {
       self._resetDatabaseImportForm();
@@ -513,7 +513,7 @@ Refine.DatabaseSourceUI.prototype._resetDatabaseImportForm = function() {
   
   $( "#databaseHost" ).val(self._defaultDatabaseHost);
 
-  $('input#connectionName').attr('value', $.i18n('database-source/connectionNameDefaultValue'));
+  $('input#connectionName').val($.i18n('database-source/connectionNameDefaultValue'));
   $( "select#databaseTypeSelect" ).val(self._defaultDatabaseType);
   self._updateDatabaseType(self._defaultDatabaseType);
   

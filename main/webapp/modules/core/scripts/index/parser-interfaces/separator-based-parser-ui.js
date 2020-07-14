@@ -168,7 +168,7 @@ Refine.SeparatorBasedParserUI.prototype._initialize = function() {
   $('#or-import-archive').html($.i18n('core-index-parser/store-archive'));
 
   this._optionContainerElmts.encodingInput
-    .attr('value', this._config.encoding || '')
+    .val(this._config.encoding || '')
     .click(function() {
       Encoding.selectEncoding($(this), function() {
         self._updatePreview();

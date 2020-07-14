@@ -146,7 +146,7 @@ Refine.FixedWidthParserUI.prototype._initialize = function() {
 
   
   this._optionContainerElmts.encodingInput
-    .attr('value', this._config.encoding || '')
+    .val(this._config.encoding || '')
     .click(function() {
       Encoding.selectEncoding($(this), function() {
         self.updatePreview();

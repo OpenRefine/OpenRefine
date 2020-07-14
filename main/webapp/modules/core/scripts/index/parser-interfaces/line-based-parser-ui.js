@@ -129,7 +129,7 @@ Refine.LineBasedParserUI.prototype._initialize = function() {
   $('#or-import-rows2').text($.i18n('core-index-parser/rows-data'));
   
   this._optionContainerElmts.encodingInput
-    .attr('value', this._config.encoding || '')
+    .val(this._config.encoding || '')
     .click(function() {
       Encoding.selectEncoding($(this), function() {
         self._updatePreview();
