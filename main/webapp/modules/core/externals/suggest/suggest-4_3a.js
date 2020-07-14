@@ -1,3 +1,5 @@
+// This version is slightly later than v4.3 and incorporates a couple
+// of bug fixes from Google Code SVN as well as a bunch of local changes.
 /*
  * Copyright 2012, Google Inc.
  * All rights reserved.
@@ -239,7 +241,7 @@
         .bind("focus.suggest", function(e) {
           self.focus(e);
         })
-        .bind($.browser.msie ? "paste.suggest" : "input.suggest", function(e) {
+        .bind("paste.suggest input.suggest", function(e) {
           clearTimeout(self.paste_timeout);
           self.paste_timeout = setTimeout(function() {
             self.textchange();
@@ -1361,7 +1363,7 @@
       // spell/correction
       var correction = response_data.correction;
       if (correction && correction.length) {
-        var spell_link = $('<a class="fbs-spell-link" href="#">').append(correction[0])
+        var spell_link = $('<a class="fbs-spell-link" href="#">').text(correction[0])
           .bind("click.suggest", function(e) {
             e.preventDefault();
             e.stopPropagation();

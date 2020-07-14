@@ -438,7 +438,7 @@ function init() {
     "project/scripts",
     module,
     commonModules.concat([
-      "externals/suggest/suggest-4_3.js",
+      "externals/suggest/suggest-4_3a.js",
       "externals/date.js",
 
       "scripts/project.js",
