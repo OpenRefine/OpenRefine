@@ -259,7 +259,7 @@ Once you have downloaded the `.tar.gz` file, open a shell and type:
 ```tar xzf openrefine-linux-3.4.tar.gz```
 
 
-### Setting where data is stored
+### Set where data is stored
 
 OpenRefine stores data in two places: program files in the program directory, wherever it is you’ve installed it; and project files in what we call the “workspace directory.” You can access this folder easily from OpenRefine by going to the [home screen](running.md#the-home-screen) (at [http://127.0.0.1:3333/](http://127.0.0.1:3333/)) and clicking "Browse workspace directory."
 
