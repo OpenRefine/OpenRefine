@@ -23,7 +23,7 @@ import java.util.Set;
 
 import static org.openrefine.wikidata.qa.Constraint.CONSTRAINT_EXCEPTIONS;
 import static org.openrefine.wikidata.qa.Constraint.CONSTRAINT_STATUS;
-import static org.openrefine.wikidata.qa.WikidataConstraintFetcher.SINGLE_VALUE_CONSTRAINT_QID;
+import static org.openrefine.wikidata.qa.scrutinizers.SingleValueScrutinizer.SINGLE_VALUE_CONSTRAINT_QID;
 
 public class ConstraintTest {
 
