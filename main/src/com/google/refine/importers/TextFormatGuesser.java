@@ -35,6 +35,7 @@ import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.util.Arrays;
 
+import org.apache.commons.io.input.BoundedInputStream;
 import org.apache.commons.lang.StringUtils;
 
 import com.google.common.base.CharMatcher;
@@ -48,13 +49,14 @@ public class TextFormatGuesser implements FormatGuesser {
 
     @Override
     public String guess(File file, String encoding, String seedFormat) {
-        try(InputStream is = new FileInputStream(file)) {
+        try(InputStream fis = new FileInputStream(file)) {
             if (isCompressed(file)) {
                 return "binary";
             };
 
+            InputStream bis = new BoundedInputStream(fis, 64 * 1024); // TODO: This seems like a lot
             try (BufferedReader reader = new BufferedReader(
-                    encoding != null ? new InputStreamReader(is, encoding) : new InputStreamReader(is))) {
+                    encoding != null ? new InputStreamReader(bis, encoding) : new InputStreamReader(bis))) {
                 int totalChars = 0;
                 long openBraces = 0;
                 int closeBraces = 0;
@@ -70,7 +72,7 @@ public class TextFormatGuesser implements FormatGuesser {
                 boolean foundFirstChar = false;
 
                 String line;
-                while ((line = reader.readLine()) != null && totalChars < 64 * 1024 && controls < CONTROLS_THRESHOLD) {
+                while ((line = reader.readLine()) != null && controls < CONTROLS_THRESHOLD) {
                     line = line.trim();
                     controls += CharMatcher.javaIsoControl().countIn(line);
                     openBraces += line.chars().filter(ch -> ch == '{').count();
@@ -97,6 +99,7 @@ public class TextFormatGuesser implements FormatGuesser {
                     totalChars += line.length();
                 }
 
+                // TODO: Make thresholds proportional to the amount of data read?
                 if (controls >= CONTROLS_THRESHOLD) {
                     return "binary";
                 }
