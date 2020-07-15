@@ -4,6 +4,7 @@ title: Installing OpenRefine
 sidebar_label: Installing
 ---
 
+
 ## System requirements 
 
 OpenRefine does not require internet access to run its basic functions. Once you download and install it, it runs as a small web server on your own computer, and you access that local web server by using your browser. It only requires an internet connection to import data from the web, reconcile data using a web service, or export data to the web. 
