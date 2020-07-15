@@ -183,8 +183,7 @@ public class GuessTypesOfColumnCommand extends Command {
         try {
             RequestConfig defaultRequestConfig = RequestConfig.custom()
                     .setConnectTimeout(30 * 1000)
-                    .setConnectionRequestTimeout(30 * 1000)
-                    .setSocketTimeout(10 * 1000).build();
+                    .build();
 
             HttpClientBuilder httpClientBuilder = HttpClients.custom()
                     .setUserAgent(RefineServlet.getUserAgent())

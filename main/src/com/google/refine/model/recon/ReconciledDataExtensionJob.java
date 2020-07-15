@@ -187,38 +187,35 @@ public class ReconciledDataExtensionJob {
         formulateQuery(ids, extension, writer);
 
         String query = writer.toString();
-        InputStream is = performQuery(this.endpoint, query);
-        try {
-        	ObjectNode o = ParsingUtilities.mapper.readValue(is, ObjectNode.class);
-          
-            if(columns.size() == 0) {
-                // Extract the column metadata
-            	List<ColumnInfo> newColumns = ParsingUtilities.mapper.convertValue(o.get("meta"), new TypeReference<List<ColumnInfo>>() {});  
-            	columns.addAll(newColumns);
-            }
-          
-            Map<String, ReconciledDataExtensionJob.DataExtension> map = new HashMap<String, ReconciledDataExtensionJob.DataExtension>();
-            if (o.has("rows") && o.get("rows") instanceof ObjectNode){
-                ObjectNode records = (ObjectNode) o.get("rows");
-                
-                // for each identifier
-                for (String id : ids) {
-                    if (records.has(id) && records.get(id) instanceof ObjectNode) {
-                        ObjectNode record = (ObjectNode) records.get(id);
-                        
-                        ReconciledDataExtensionJob.DataExtension ext = collectResult(record, reconCandidateMap);
-                        
-                        if (ext != null) {
-                            map.put(id, ext);
-                        }
+        String response = performQuery(this.endpoint, query);
+
+        ObjectNode o = ParsingUtilities.mapper.readValue(response, ObjectNode.class);
+
+        if(columns.size() == 0) {
+            // Extract the column metadata
+            List<ColumnInfo> newColumns = ParsingUtilities.mapper.convertValue(o.get("meta"), new TypeReference<List<ColumnInfo>>() {});  
+            columns.addAll(newColumns);
+        }
+
+        Map<String, ReconciledDataExtensionJob.DataExtension> map = new HashMap<String, ReconciledDataExtensionJob.DataExtension>();
+        if (o.has("rows") && o.get("rows") instanceof ObjectNode){
+            ObjectNode records = (ObjectNode) o.get("rows");
+
+            // for each identifier
+            for (String id : ids) {
+                if (records.has(id) && records.get(id) instanceof ObjectNode) {
+                    ObjectNode record = (ObjectNode) records.get(id);
+
+                    ReconciledDataExtensionJob.DataExtension ext = collectResult(record, reconCandidateMap);
+
+                    if (ext != null) {
+                        map.put(id, ext);
                     }
                 }
             }
-            
-            return map;
-        } finally {
-            is.close();
         }
+        
+        return map;
     }
 
     /**
@@ -227,10 +224,10 @@ public class ReconciledDataExtensionJob {
      * reconciliation services and expose it as such for others to reuse.
      */
     
-    static protected InputStream performQuery(String endpoint, String query) throws IOException {
+    static protected String performQuery(String endpoint, String query) throws IOException {
         HttpPost request = new HttpPost(endpoint);
         List<NameValuePair> body = Collections.singletonList(
-                new BasicNameValuePair("queries", query));
+                new BasicNameValuePair("extend", query));
         request.setEntity(new UrlEncodedFormEntity(body, Consts.UTF_8));
         
         try (CloseableHttpResponse response = getHttpClient().execute(request)) {
@@ -240,7 +237,7 @@ public class ReconciledDataExtensionJob {
                         + Integer.toString(statusLine.getStatusCode())
                         + " message: " + statusLine.getReasonPhrase());
             } else {
-                return response.getEntity().getContent();
+                return ParsingUtilities.inputStreamToString(response.getEntity().getContent());
             }
         }
     }
@@ -251,8 +248,7 @@ public class ReconciledDataExtensionJob {
         }
         RequestConfig defaultRequestConfig = RequestConfig.custom()
                 .setConnectTimeout(30 * 1000)
-                .setConnectionRequestTimeout(30 * 1000)
-                .setSocketTimeout(10 * 1000).build();
+                .build();
 
         HttpClientBuilder httpClientBuilder = HttpClients.custom()
                 .setUserAgent(RefineServlet.getUserAgent())
