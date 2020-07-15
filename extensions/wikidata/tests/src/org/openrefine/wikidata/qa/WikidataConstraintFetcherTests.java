@@ -24,6 +24,7 @@
 package org.openrefine.wikidata.qa;
 
 import org.openrefine.wikidata.utils.EntityCacheStub;
+import org.testng.annotations.Test;
 
 public class WikidataConstraintFetcherTests {
 
@@ -33,4 +34,13 @@ public class WikidataConstraintFetcherTests {
         fetcher = new WikidataConstraintFetcher(new EntityCacheStub());
     }
 
+    @Test
+    public void testGetConstraintsByType() {
+
+    }
+
+    @Test
+    public void testGetConstraintStatements() {
+
+    }
 }
