@@ -57,7 +57,7 @@ public class RestrictedPositionScrutinizer extends StatementScrutinizer {
                 ItemIdValue targetValue = Datamodel.makeWikidataItemIdValue(SCOPE_CONSTRAINT_VALUE_QID);
                 ItemIdValue targetQualifier = Datamodel.makeWikidataItemIdValue(SCOPE_CONSTRAINT_QUALIFIER_QID);
                 ItemIdValue targetReference = Datamodel.makeWikidataItemIdValue(SCOPE_CONSTRAINT_REFERENCE_QID);
-                List<Value> snakValues = _fetcher.findValues(specs, SCOPE_CONSTRAINT_PID);
+                List<Value> snakValues = findValues(specs, SCOPE_CONSTRAINT_PID);
                 isAllowedAsValue = snakValues.contains(targetValue);
                 isAllowedAsQualifier = snakValues.contains(targetQualifier);
                 isAllowedAsReference =  snakValues.contains(targetReference);

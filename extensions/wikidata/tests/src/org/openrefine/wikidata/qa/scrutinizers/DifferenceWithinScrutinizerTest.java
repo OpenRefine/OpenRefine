@@ -18,7 +18,6 @@ import org.wikidata.wdtk.datamodel.interfaces.TimeValue;
 import org.wikidata.wdtk.datamodel.interfaces.ValueSnak;
 
 import java.math.BigDecimal;
-import java.util.Collections;
 import java.util.List;
 
 import static org.mockito.Mockito.mock;
@@ -64,9 +63,6 @@ public class DifferenceWithinScrutinizerTest extends ScrutinizerTest{
 
         ConstraintFetcher fetcher = mock(ConstraintFetcher.class);
         when(fetcher.getConstraintsByType(upperBoundPid, DIFFERENCE_WITHIN_RANGE_CONSTRAINT_QID)).thenReturn(constraintDefinitions);
-        when(fetcher.findValues(constraintQualifiers, DIFFERENCE_WITHIN_RANGE_CONSTRAINT_PID)).thenReturn(Collections.singletonList(lowerBoundPid));
-        when(fetcher.findValues(constraintQualifiers, MINIMUM_VALUE_PID)).thenReturn(Collections.singletonList(minValue));
-        when(fetcher.findValues(constraintQualifiers, MAXIMUM_VALUE_PID)).thenReturn(Collections.singletonList(maxValue));
         setFetcher(fetcher);
 
         scrutinize(updateA);
@@ -92,9 +88,6 @@ public class DifferenceWithinScrutinizerTest extends ScrutinizerTest{
 
         ConstraintFetcher fetcher = mock(ConstraintFetcher.class);
         when(fetcher.getConstraintsByType(upperBoundPid, DIFFERENCE_WITHIN_RANGE_CONSTRAINT_QID)).thenReturn(constraintDefinitions);
-        when(fetcher.findValues(constraintQualifiers, DIFFERENCE_WITHIN_RANGE_CONSTRAINT_PID)).thenReturn(Collections.singletonList(lowerBoundPid));
-        when(fetcher.findValues(constraintQualifiers, MINIMUM_VALUE_PID)).thenReturn(Collections.singletonList(minValue));
-        when(fetcher.findValues(constraintQualifiers, MAXIMUM_VALUE_PID)).thenReturn(Collections.singletonList(maxValue));
         setFetcher(fetcher);
 
         scrutinize(updateA);

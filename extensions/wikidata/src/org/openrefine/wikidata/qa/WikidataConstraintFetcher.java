@@ -27,12 +27,10 @@ import org.openrefine.wikidata.utils.EntityCache;
 import org.wikidata.wdtk.datamodel.interfaces.EntityIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.PropertyDocument;
 import org.wikidata.wdtk.datamodel.interfaces.PropertyIdValue;
-import org.wikidata.wdtk.datamodel.interfaces.Snak;
 import org.wikidata.wdtk.datamodel.interfaces.SnakGroup;
 import org.wikidata.wdtk.datamodel.interfaces.Statement;
 import org.wikidata.wdtk.datamodel.interfaces.StatementGroup;
 import org.wikidata.wdtk.datamodel.interfaces.StatementRank;
-import org.wikidata.wdtk.datamodel.interfaces.Value;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -116,27 +114,6 @@ public class WikidataConstraintFetcher implements ConstraintFetcher {
         } else {
             return new ArrayList<Statement>();
         }
-    }
-
-    /**
-     * Returns the values of a given property in qualifiers
-     * 
-     * @param groups
-     *            the qualifiers
-     * @param pid
-     *            the property to filter on
-     * @return
-     */
-    @Override
-    public List<Value> findValues(List<SnakGroup> groups, String pid) {
-        List<Value> results = new ArrayList<>();
-        for (SnakGroup group : groups) {
-            if (group.getProperty().getId().equals(pid)) {
-                for (Snak snak : group.getSnaks())
-                    results.add(snak.getValue());
-            }
-        }
-        return results;
     }
 
 }

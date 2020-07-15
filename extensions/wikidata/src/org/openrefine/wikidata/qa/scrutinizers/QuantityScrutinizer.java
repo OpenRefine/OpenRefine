@@ -38,7 +38,7 @@ public class QuantityScrutinizer extends SnakScrutinizer {
         AllowedUnitsConstraint(Statement statement) {
             List<SnakGroup> specs = statement.getClaim().getQualifiers();
             if (specs != null) {
-                List<Value> properties = _fetcher.findValues(specs, ALLOWED_UNITS_CONSTRAINT_PID);
+                List<Value> properties = findValues(specs, ALLOWED_UNITS_CONSTRAINT_PID);
                 allowedUnits = properties.stream()
                         .map(e -> e == null ? null : (ItemIdValue) e)
                         .collect(Collectors.toSet());

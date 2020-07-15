@@ -12,7 +12,6 @@ import org.wikidata.wdtk.datamodel.interfaces.SnakGroup;
 import org.wikidata.wdtk.datamodel.interfaces.Statement;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
@@ -21,7 +20,6 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.openrefine.wikidata.qa.scrutinizers.RestrictedValuesScrutinizer.ALLOWED_VALUES_CONSTRAINT_PID;
 import static org.openrefine.wikidata.qa.scrutinizers.RestrictedValuesScrutinizer.ALLOWED_VALUES_CONSTRAINT_QID;
-import static org.openrefine.wikidata.qa.scrutinizers.RestrictedValuesScrutinizer.DISALLOWED_VALUES_CONSTRAINT_PID;
 import static org.openrefine.wikidata.qa.scrutinizers.RestrictedValuesScrutinizer.DISALLOWED_VALUES_CONSTRAINT_QID;
 
 public class RestrictedValuesScrutinizerTest extends SnakScrutinizerTest {
@@ -64,7 +62,6 @@ public class RestrictedValuesScrutinizerTest extends SnakScrutinizerTest {
         ConstraintFetcher fetcher = mock(ConstraintFetcher.class);
         when(fetcher.getConstraintsByType(allowedPropertyIdValue, ALLOWED_VALUES_CONSTRAINT_QID)).thenReturn(constraintDefinitions);
         when(fetcher.getConstraintsByType(allowedPropertyIdValue, DISALLOWED_VALUES_CONSTRAINT_QID)).thenReturn(new ArrayList<>());
-        when(fetcher.findValues(constraintQualifiers, ALLOWED_VALUES_CONSTRAINT_PID)).thenReturn(Collections.singletonList(allowedValue));
         setFetcher(fetcher);
 
         scrutinize(statement);
@@ -82,7 +79,6 @@ public class RestrictedValuesScrutinizerTest extends SnakScrutinizerTest {
         ConstraintFetcher fetcher = mock(ConstraintFetcher.class);
         when(fetcher.getConstraintsByType(allowedPropertyIdValue, ALLOWED_VALUES_CONSTRAINT_QID)).thenReturn(constraintDefinitions);
         when(fetcher.getConstraintsByType(allowedPropertyIdValue, DISALLOWED_VALUES_CONSTRAINT_QID)).thenReturn(new ArrayList<>());
-        when(fetcher.findValues(constraintQualifiers, ALLOWED_VALUES_CONSTRAINT_PID)).thenReturn(Collections.singletonList(allowedValue));
         setFetcher(fetcher);
 
         scrutinize(statement);
@@ -100,7 +96,6 @@ public class RestrictedValuesScrutinizerTest extends SnakScrutinizerTest {
         ConstraintFetcher fetcher = mock(ConstraintFetcher.class);
         when(fetcher.getConstraintsByType(disallowedPropertyIdValue, ALLOWED_VALUES_CONSTRAINT_QID)).thenReturn(new ArrayList<>());
         when(fetcher.getConstraintsByType(disallowedPropertyIdValue, DISALLOWED_VALUES_CONSTRAINT_QID)).thenReturn(constraintDefinitions);
-        when(fetcher.findValues(constraintQualifiers, DISALLOWED_VALUES_CONSTRAINT_PID)).thenReturn(Collections.singletonList(disallowedValue));
         setFetcher(fetcher);
 
         scrutinize(statement);
@@ -118,7 +113,6 @@ public class RestrictedValuesScrutinizerTest extends SnakScrutinizerTest {
         ConstraintFetcher fetcher = mock(ConstraintFetcher.class);
         when(fetcher.getConstraintsByType(disallowedPropertyIdValue, ALLOWED_VALUES_CONSTRAINT_QID)).thenReturn(new ArrayList<>());
         when(fetcher.getConstraintsByType(disallowedPropertyIdValue, DISALLOWED_VALUES_CONSTRAINT_QID)).thenReturn(constraintDefinitions);
-        when(fetcher.findValues(constraintQualifiers, DISALLOWED_VALUES_CONSTRAINT_PID)).thenReturn(Collections.singletonList(disallowedValue));
         setFetcher(fetcher);
 
         scrutinize(statement);

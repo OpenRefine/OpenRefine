@@ -58,7 +58,7 @@ public class InverseConstraintScrutinizer extends StatementScrutinizer {
             List<SnakGroup> specs = statement.getClaim().getQualifiers();
 
             if (specs != null) {
-                List<Value> inverses = _fetcher.findValues(specs, INVERSE_PROPERTY_PID);
+                List<Value> inverses = findValues(specs, INVERSE_PROPERTY_PID);
                 if (!inverses.isEmpty()) {
                     propertyParameterValue = (PropertyIdValue) inverses.get(0);
                 }

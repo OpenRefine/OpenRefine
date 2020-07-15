@@ -73,7 +73,6 @@ public class RestrictedPositionScrutinizerTest extends SnakScrutinizerTest {
         List<Statement> constraintDefinitions = constraintParameterStatementList(entityIdValue, constraintQualifiers);
         ConstraintFetcher fetcher = mock(ConstraintFetcher.class);
         when(fetcher.getConstraintsByType(propertyIdValue, SCOPE_CONSTRAINT_QID)).thenReturn(constraintDefinitions);
-        when(fetcher.findValues(constraintQualifiers, SCOPE_CONSTRAINT_PID)).thenReturn(Collections.singletonList(asQualifier));
         setFetcher(fetcher);
 
         scrutinize(update);
@@ -92,7 +91,6 @@ public class RestrictedPositionScrutinizerTest extends SnakScrutinizerTest {
         List<Statement> constraintDefinitions = constraintParameterStatementList(entityIdValue, constraintQualifiers);
         ConstraintFetcher fetcher = mock(ConstraintFetcher.class);
         when(fetcher.getConstraintsByType(propertyIdValue, SCOPE_CONSTRAINT_QID)).thenReturn(constraintDefinitions);
-        when(fetcher.findValues(constraintQualifiers, SCOPE_CONSTRAINT_PID)).thenReturn(Collections.singletonList(asMainSnak));
         setFetcher(fetcher);
 
         scrutinize(update);
@@ -130,7 +128,6 @@ public class RestrictedPositionScrutinizerTest extends SnakScrutinizerTest {
         List<Statement> constraintDefinitions = constraintParameterStatementList(entityIdValue, constraintQualifiers);
         ConstraintFetcher fetcher = mock(ConstraintFetcher.class);
         when(fetcher.getConstraintsByType(propertyIdValue, SCOPE_CONSTRAINT_QID)).thenReturn(constraintDefinitions);
-        when(fetcher.findValues(constraintQualifiers, SCOPE_CONSTRAINT_PID)).thenReturn(Collections.singletonList(asMainSnak));
         setFetcher(fetcher);
 
         scrutinize(update);

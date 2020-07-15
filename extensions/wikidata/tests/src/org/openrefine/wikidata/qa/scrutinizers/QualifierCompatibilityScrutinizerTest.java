@@ -46,7 +46,6 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.openrefine.wikidata.qa.scrutinizers.QualifierCompatibilityScrutinizer.ALLOWED_QUALIFIERS_CONSTRAINT_PID;
 import static org.openrefine.wikidata.qa.scrutinizers.QualifierCompatibilityScrutinizer.ALLOWED_QUALIFIERS_CONSTRAINT_QID;
-import static org.openrefine.wikidata.qa.scrutinizers.QualifierCompatibilityScrutinizer.MANDATORY_QUALIFIERS_CONSTRAINT_PID;
 import static org.openrefine.wikidata.qa.scrutinizers.QualifierCompatibilityScrutinizer.MANDATORY_QUALIFIERS_CONSTRAINT_QID;
 
 public class QualifierCompatibilityScrutinizerTest extends StatementScrutinizerTest {
@@ -82,7 +81,6 @@ public class QualifierCompatibilityScrutinizerTest extends StatementScrutinizerT
 
         ConstraintFetcher fetcher = mock(ConstraintFetcher.class);
         when(fetcher.getConstraintsByType(allowedPropertyIdValue, ALLOWED_QUALIFIERS_CONSTRAINT_QID)).thenReturn(statementList);
-        when(fetcher.findValues(snakGroupList, ALLOWED_QUALIFIERS_CONSTRAINT_PID)).thenReturn(Collections.singletonList(qualifierProperty));
         setFetcher(fetcher);
 
         scrutinize(update);
@@ -104,7 +102,6 @@ public class QualifierCompatibilityScrutinizerTest extends StatementScrutinizerT
 
         ConstraintFetcher fetcher = mock(ConstraintFetcher.class);
         when(fetcher.getConstraintsByType(mandatoryPropertyIdValue, MANDATORY_QUALIFIERS_CONSTRAINT_QID)).thenReturn(statementList);
-        when(fetcher.findValues(snakGroupList, MANDATORY_QUALIFIERS_CONSTRAINT_PID)).thenReturn(Collections.singletonList(qualifierProperty));
         setFetcher(fetcher);
 
         scrutinize(update);
@@ -127,7 +124,6 @@ public class QualifierCompatibilityScrutinizerTest extends StatementScrutinizerT
 
         ConstraintFetcher fetcher = mock(ConstraintFetcher.class);
         when(fetcher.getConstraintsByType(allowedPropertyIdValue, ALLOWED_QUALIFIERS_CONSTRAINT_QID)).thenReturn(statementList);
-        when(fetcher.findValues(snakGroupList, ALLOWED_QUALIFIERS_CONSTRAINT_PID)).thenReturn(Collections.singletonList(qualifierProperty));
         setFetcher(fetcher);
 
         scrutinize(update);

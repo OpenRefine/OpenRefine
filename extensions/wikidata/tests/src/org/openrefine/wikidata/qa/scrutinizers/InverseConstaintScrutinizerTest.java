@@ -69,7 +69,7 @@ public class InverseConstaintScrutinizerTest extends StatementScrutinizerTest {
         Statement statement = new StatementImpl("P25", mainSnak, idA);
         ItemUpdate update = new ItemUpdateBuilder(idA).addStatement(statement).build();
 
-        Snak qualifierSnak = Datamodel.makeValueSnak(propertyParameter, inverseEntityIdValue);
+        Snak qualifierSnak = Datamodel.makeValueSnak(propertyParameter, inversePropertyID);
         List<Snak> qualifierSnakList = Collections.singletonList(qualifierSnak);
         SnakGroup qualifierSnakGroup = Datamodel.makeSnakGroup(qualifierSnakList);
         List<SnakGroup> snakGroupList = Collections.singletonList(qualifierSnakGroup);
@@ -77,7 +77,6 @@ public class InverseConstaintScrutinizerTest extends StatementScrutinizerTest {
 
         ConstraintFetcher fetcher = mock(ConstraintFetcher.class);
         when(fetcher.getConstraintsByType(propertyId, INVERSE_CONSTRAINT_QID)).thenReturn(statementList);
-        when(fetcher.findValues(snakGroupList, INVERSE_PROPERTY_PID)).thenReturn(Collections.singletonList(inversePropertyID));
         setFetcher(fetcher);
         scrutinize(update);
         assertWarningsRaised(InverseConstraintScrutinizer.type);
@@ -98,7 +97,6 @@ public class InverseConstaintScrutinizerTest extends StatementScrutinizerTest {
 
         ConstraintFetcher fetcher = mock(ConstraintFetcher.class);
         when(fetcher.getConstraintsByType(symmetricPropertyID, SYMMETRIC_CONSTRAINT_QID)).thenReturn(statementList);
-        when(fetcher.findValues(snakGroupList, INVERSE_PROPERTY_PID)).thenReturn(Collections.singletonList(symmetricPropertyID));
         setFetcher(fetcher);
         scrutinize(update);
         assertWarningsRaised(InverseConstraintScrutinizer.type);
@@ -119,7 +117,6 @@ public class InverseConstaintScrutinizerTest extends StatementScrutinizerTest {
 
         ConstraintFetcher fetcher = mock(ConstraintFetcher.class);
         when(fetcher.getConstraintsByType(propertyId, INVERSE_CONSTRAINT_QID)).thenReturn(statementList);
-        when(fetcher.findValues(snakGroupList, INVERSE_PROPERTY_PID)).thenReturn(Collections.singletonList(inversePropertyID));
         setFetcher(fetcher);
         scrutinize(update);
         assertNoWarningRaised();
