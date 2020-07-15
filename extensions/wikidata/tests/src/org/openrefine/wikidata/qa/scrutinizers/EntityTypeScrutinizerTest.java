@@ -50,7 +50,7 @@ public class EntityTypeScrutinizerTest extends StatementScrutinizerTest {
 
         ItemUpdate update = new ItemUpdateBuilder(idA).addStatement(statement).build();
 
-        Snak qualifierSnak = Datamodel.makeValueSnak(itemParameterPID, itemValue);
+        Snak qualifierSnak = Datamodel.makeValueSnak(itemParameterPID, allowedValue);
         List<Snak> qualifierSnakList = Collections.singletonList(qualifierSnak);
         SnakGroup qualifierSnakGroup = Datamodel.makeSnakGroup(qualifierSnakList);
         List<SnakGroup> snakGroupList = Collections.singletonList(qualifierSnakGroup);
@@ -61,7 +61,7 @@ public class EntityTypeScrutinizerTest extends StatementScrutinizerTest {
         setFetcher(fetcher);
 
         scrutinize(update);
-//        assertNoWarningRaised();
+        assertNoWarningRaised();
     }
 
     @Test
