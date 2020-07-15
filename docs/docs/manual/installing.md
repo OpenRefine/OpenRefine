@@ -4,7 +4,6 @@ title: Installing OpenRefine
 sidebar_label: Installing
 ---
 
-
 ## System requirements 
 
 OpenRefine does not require internet access to run its basic functions. Once you download and install it, it runs as a small web server on your own computer, and you access that local web server by using your browser. It only requires an internet connection to import data from the web, reconcile data using a web service, or export data to the web. 
@@ -25,6 +24,7 @@ Java Development Kit (JDK) must be installed and configured on your computer to 
 #### Compatible browser
 
 OpenRefine works best on browsers based on Webkit, such as:
+
 
 
 *   Google Chrome
@@ -59,9 +59,11 @@ Our [latest release is at the time of writing is OpenRefine 3.4](**link goes her
 
 You can find information about all of our releases on the [Releases page on Github](https://github.com/OpenRefine/OpenRefine/releases).
 
+
 :::info Other distributions
 
 OpenRefine may also work in other environments, such as [Chromebooks](https://gist.github.com/organisciak/3e12e5138e44a2fed75240f4a4985b4f) where Linux terminals are available. Look at our list of [Other Distributions](https://openrefine.org/download.html) on the Downloads page for other ways of running OpenRefine, and refer to our contributor community to see new environments in development.
+
 
 :::
 
@@ -79,6 +81,7 @@ For extra security you can [export your existing OpenRefine projects](exporting.
 
 
 
+
 :::caution
 
 Take note of the [extensions](#installing-extensions) you have currently installed. They may not be compatible with the upgraded version of OpenRefine. Installations can be installed in two places, so be sure to check both your workspace directory and the existing installation directory. 
@@ -90,14 +93,34 @@ Take note of the [extensions](#installing-extensions) you have currently install
 
 ### Install or upgrade Java
 
-[Java Development Kit (JDK)](https://jdk.java.net/) is required to run OpenRefine and should be installed first. [OpenRefine installation packages for Mac and Windows come bundled with JDK](https://openrefine.org/download.html), so you do not need to install it separately if you use those bundles. 
+[Java Development Kit (JDK)](https://jdk.java.net/) is required to run OpenRefine and should be installed first. [OpenRefine installation packages for Mac and Windows come bundled with JDK]([https://openrefine.org/download.html](https://openrefine.org/download.html)), so you do not need to install it separately if you use those bundles. 
 
-There are JDK packages for Mac, Windows, and Linux. We recommend you install the latest “Ready for use” version: at the time of writing, this is JDK 14.0.1. 
- 
+There are JDK packages for Mac, Windows, and Linux. We recommend you install the latest “Ready for use” version: at the time of writing, this is [JDK 14.0.1](https://jdk.java.net/14/). 
 
 Download the archive (either a `.tar.gz` or a `.zip`) to your computer and then extract its contents to a location of your choice. There is no installation process, so you may wish to extract this folder directly into a place where you put program files, or another stable folder. 
 
 Once you have Java extracted onto your system, you need to tell your computer where to find it when OpenRefine looks for it. 
+
+
+<Tabs
+
+  groupId="operating-systems"
+
+  defaultValue="win"
+
+  values={[
+
+	{label: 'Windows', value: 'win'},
+
+	{label: 'Mac', value: 'mac'},
+
+	{label: 'Linux', value: 'linux'},
+
+  ]
+
+}>
+
+<TabItem value="win">
 
 
 #### Windows
@@ -106,11 +129,20 @@ Once you have Java extracted onto your system, you need to tell your computer wh
 
 1. On Windows 10, click the Windows start menu button, type "env," and look at the search results. Click “Edit the system environment variables.” (If you are using an earlier version of Windows, use the “Search” or “Search programs and files” box in the start menu.)
 
+
+
 2. Click “Environment Variables…” at the bottom of the “Advanced” window that appears.
 
 3. In the “Environment Variables” dialog that appears, click “New…” and create a variable with the key `JAVA_HOME`. You can set the variable for only your user account, as in the screenshot below, or set it as a system variable - it will work either way.
 
-4. Set the `Value` to the folder where you installed JDK, in the format `D:\Programs\OpenJDK`. You can locate this folder with the “Browse directory...” button. 
+
+4. Set the `Value` to the folder where you installed JDK, in the format `D:\Programs\OpenJDK`. You can locate this folder with the “Browse directory...” button. \
+
+
+
+</TabItem>
+
+<TabItem value="mac">
 
 
 #### Mac
@@ -131,10 +163,52 @@ Or, for Java 13.x:
 
 ```export JAVA_HOME="$(/usr/libexec/java_home -v 13)"```
 
+</TabItem>
+
+<TabItem value="linux">
+
 
 #### Linux
 
-_[Please read this guide by Charini Nanayakkara for setting up JAVA_HOME on Ubuntu.](https://medium.com/@charinin/setting-java-home-environment-variable-in-ubuntu-e355c80e5b6c)_
+First, [extract the JDK package](https://openjdk.java.net/install/) to the new directory `usr/lib/jvm`:
+
+
+```
+sudo mkdir -p /usr/lib/jvm
+sudo tar -x -C /usr/lib/jvm -f /tmp/openjdk-14.0.1_linux-x64_bin.tar.gz
+```
+
+
+Then, navigate to this folder and confirm the final path (in this case, `usr/lib/jvm/jdk-14.0.1`. 
+
+Open a terminal and type
+
+```sudo gedit /etc/profile```
+
+In the text window that opens, insert the following lines at the end of the “profile” file, using the path above:
+
+
+```
+JAVA_HOME=/usr/lib/jvm/jdk-14.0.1
+PATH=$PATH:$HOME/bin:$JAVA_HOME/bin
+export JAVA_HOME
+export PATH
+```
+
+
+Save and close the file. When you are back in the terminal, type
+
+```source /etc/environment**```**
+
+Exit the terminal and restart your system. You can then check that JAVA_HOME is set properly by opening another terminal and typing
+
+```echo $JAVA_HOME```
+
+It should show the path you set above. 
+
+</TabItem>
+
+</Tabs>
 
 
 ### Install or upgrade
@@ -142,16 +216,43 @@ _[Please read this guide by Charini Nanayakkara for setting up JAVA_HOME on Ubun
 If you are upgrading an existing OpenRefine  installation, you can delete the old program files and install the new files into the same space. Do not overwrite the files as some obsolete files may be left over unnecessarily. 
 
 
+
 :::caution
 
 If you have extensions installed, do not delete the `webapp\extensions` folder where you installed them. You may wish to install extensions into the workspace directory instead of the program directory. There is no guarantee that extensions will be forward-compatible with new versions of OpenRefine, and we do not maintain extensions.
 
+
+
 :::
+
+<Tabs
+
+groupId="operating-systems"
+
+defaultValue="win"
+
+values={[
+
+{label: 'Windows', value: 'win'},
+
+{label: 'Mac', value: 'mac'},
+
+{label: 'Linux', value: 'linux'},
+
+]
+
+}>
+
+<TabItem value="win">
 
 
 #### Windows
 
 Once you have downloaded the `.zip` file, and uncompress it into a folder where you wish to store program files (such as `D:\Program Files\OpenRefine`). 
+
+</TabItem>
+
+<TabItem value="mac">
 
 
 #### Mac
@@ -167,14 +268,14 @@ Once you have downloaded the `.dmg` file, open it and drag the OpenRefine icon o
 The quick version:
 
 
-
 1. Install[ Homebrew from here](http://brew.sh)
 2. In Terminal enter ` brew cask install openrefine`
 1. Then find OpenRefine in your Applications folder.
 
 The long version:
 
-[Homebrew](http://brew.sh) is a popular command-line package manager for Mac. Installing Homebrew is accomplished by pasting the installation command on the Homebrew website into a Terminal window. Once Homebrew is installed, applications like OpenRefine can be installed via a simple command. You can [install Homebrew from their website]([http://brew.sh](http://brew.sh)).
+[Homebrew](http://brew.sh) is a popular command-line package manager for macOS. Installing Homebrew is accomplished by pasting the installation command on the Homebrew website into a Terminal window. Once Homebrew is installed, applications like OpenRefine can be installed via a simple command. You can [install Homebrew from their website]([http://brew.sh](http://brew.sh)).
+
 
 
 ###### Install OpenRefine
@@ -188,16 +289,19 @@ You should see output like this:
 
 ```
 ==> Downloading https://github.com/OpenRefine/OpenRefine/releases/download/2.7/openrefine-mac-2.7.dmg
-  ##################################################### 100.0%
+  ################################################################# 100.0%
   ==> Verifying checksum for Cask openrefine
   ==> Installing Cask openrefine
   ==> Moving App 'OpenRefine.app' to '/Applications/OpenRefine.app'.
   🍺  openrefine was successfully installed!
 ```
 
+
 Behind the scenes, this command causes Homebrew to download the OpenRefine installer, verify the file’s authenticity (using a SHA-256 checksum), mount the disk image, copy the `OpenRefine.app` application bundle into the Applications folder, unmount the disk image, and save a copy of the installer and metadata about the installation for future use.
 
 _If an existing `OpenRefine.app` is found in the Applications folder, Homebrew will not overwrite it, so installing via Homebrew requires either deleting or renaming previously installed copies._
+
+<!--H6 not demoted to H7. -->
 
 
 ###### Uninstall OpenRefine
@@ -209,6 +313,8 @@ To uninstall OpenRefine, paste this command into the Terminal:
 You should see output like this:
 
 ``` ==> Removing App '/Applications/OpenRefine.app'.```
+
+<!--H6 not demoted to H7. -->
 
 
 ###### Updating OpenRefine
@@ -222,7 +328,7 @@ You should see output like this:
 
 ```
  ==> Downloading https://github.com/OpenRefine/OpenRefine/releases/download/2.7/openrefine-mac-2.7.dmg
-  ##################################################### 100.0%
+  ######################################################################## 100.0%
   ==> Verifying checksum for Cask openrefine
   ==> Removing App '/Applications/OpenRefine.app'.
   ==> Moving App 'OpenRefine.app' to '/Applications/OpenRefine.app'.
@@ -239,32 +345,48 @@ If you had previously installed the `openrefine-dev` cask (containing a release 
   brew cask install openrefine
 ```
 
-:::caution Problems starting?
 
-If you are using an older version of OpenRefine, you may get a message saying "Open Refine can't be opened because it is from an unidentified developer". Try the following steps to resolve it: 
+</TabItem>
 
-
-*   Open System Preferences and go to "Security and Privacy" and the “General” tab. You will see a message indicating that "OpenRefine was blocked from opening because it is not from an identified developer." You may also see “MacOS cannot verify that this app is free from malware.” See [issue #2191](https://github.com/OpenRefine/OpenRefine/issues/2191) for more information.
-*   Click the "Open Anyway" button to complete the OpenRefine installation. 
-
-If you are using an older version of MacOS, such as Mountain Lion or Yosemite, you may encounter different error messages and issue. See [issue #590](https://github.com/OpenRefine/OpenRefine/issues/590) for more information. If you use Yosemite you will need to install[ Java for OS X 2014-001](http://support.apple.com/kb/DL1572) first.
-
-:::
+<TabItem value="linux">
 
 
 #### Linux
 
-Once you have downloaded the `.tar.gz` file, open a shell and type:
+Once you have downloaded the `.tar.gz` file, open a shell, navigate to the folder containing the download, and type:
 
 ```tar xzf openrefine-linux-3.4.tar.gz```
+
+</TabItem>
+
+</Tabs>
 
 
 ### Set where data is stored
 
 OpenRefine stores data in two places: program files in the program directory, wherever it is you’ve installed it; and project files in what we call the “workspace directory.” You can access this folder easily from OpenRefine by going to the [home screen](running.md#the-home-screen) (at [http://127.0.0.1:3333/](http://127.0.0.1:3333/)) and clicking "Browse workspace directory."
 
-
 By default this is:
+
+<Tabs
+
+groupId="operating-systems"
+
+defaultValue="win"
+
+values={[
+
+{label: 'Windows', value: 'win'},
+
+{label: 'Mac', value: 'mac'},
+
+{label: 'Linux', value: 'linux'},
+
+]
+
+}>
+
+<TabItem value="win">
 
 
 #### Windows
@@ -292,6 +414,10 @@ If your folder path has spaces, use neutral quotation marks around it:
 
 If the folder does not exist, OpenRefine will create it. 
 
+</TabItem>
+
+<TabItem value="mac">
+
 
 #### Mac
 
@@ -303,6 +429,10 @@ For older versions as Google Refine:
 
 Logging is to `/var/log/daemon.log` - grep for `com.google.refine.Refine`.
 
+</TabItem>
+
+<TabItem value="linux">
+
 
 #### Linux
 
@@ -311,6 +441,10 @@ Logging is to `/var/log/daemon.log` - grep for `com.google.refine.Refine`.
 You can change this when you run OpenRefine from the terminal, by pointing to the workspace directory through the `-d` parameter:
 
 ``` ./refine -p 3333 -i 0.0.0.0 -m 6000M -d /My/Desired/Folder```
+
+</TabItem>
+
+</Tabs>
 
 
 #### Logs
@@ -346,12 +480,34 @@ A good practice is to start with no more than 50% of whatever memory is left ove
 All of the settings below use a four-digit number to specify the megabytes (MB) used. The default is usually 1024MB, but the new value doesn't need to be a multiple of 1024.
 
 
+
 :::info Dealing with large datasets
 
 If your project is big enough to need more than the default amount of memory, consider turning off "Parse cell text into numbers, dates, ..." on import. It's convenient, but less efficient than explicitly converting any columns that you need as a data type other than the default "string" type.
 
 
+
 :::
+
+<Tabs
+
+groupId="operating-systems"
+
+defaultValue="win"
+
+values={[
+
+{label: 'Windows', value: 'win'},
+
+{label: 'Mac', value: 'mac'},
+
+{label: 'Linux', value: 'linux'},
+
+]
+
+}>
+
+<TabItem value="win">
 
 
 ### Windows
@@ -369,6 +525,7 @@ If you run `openrefine.exe`, you will need to edit the `openrefine.l4j.ini` file
 
 
 The line `-Xmx1024M` defines the amount of memory available in megabytes (actually [mebibytes](https://en.wikipedia.org/wiki/Mebibyte)). Change the number “1024” - for example, edit the line to `-Xmx2048M` to make 2048MB [2GB] of memory available. 
+
 
 
 :::caution openrefine.exe not running?
@@ -397,6 +554,10 @@ To change the default that `refine.bat` uses, edit the `refine.ini` line that re
 
 Note that this file is only read if you use `refine.bat`, not `openrefine.exe`.
 
+</TabItem>
+
+<TabItem value="mac">
+
 
 ### Mac
 
@@ -416,6 +577,10 @@ If you have downloaded the `.dmg` package and you start OpenRefine by double-cli
 *   save the file
 *   restart OpenRefine.
 
+</TabItem>
+
+<TabItem value="linux">
+
 
 ### Linux and Mac 
 
@@ -434,6 +599,10 @@ If you don't want to set this option on the command line each time, you can also
 ```REFINE_MEMORY=1024M```
 
 Make sure it is not commented out (that is, that the line doesn't start with a '#' character), and change “1024” to a higher value. Save the file, and when you next start OpenRefine it will use this value.
+
+</TabItem>
+
+</Tabs>
 
 
 ## Installing extensions
@@ -495,6 +664,7 @@ Generally, the installation process will be:
 *   Start (or restart) OpenRefine.
 
 To confirm that installation was a success, follow the instructions provided by the extension. Each extension will appear in its own way inside the OpenRefine interface: make sure you read the documentation to know where the functionality will appear, such as under specific dropdown menus. 
+
 
 
 
