@@ -26,7 +26,7 @@ public class EntityTypeScrutinizer extends SnakScrutinizer {
             List<SnakGroup> constraint = statementList.get(0).getClaim().getQualifiers();
             boolean isUsable = true;
             if (constraint != null) {
-                isUsable = _fetcher.findValues(constraint, ALLOWED_ENTITY_TYPES_PID).contains(
+                isUsable = findValues(constraint, ALLOWED_ENTITY_TYPES_PID).contains(
                         Datamodel.makeWikidataItemIdValue(ALLOWED_ITEM_TYPE_QID));
             }
             if (!isUsable) {

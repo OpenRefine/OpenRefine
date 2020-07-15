@@ -59,7 +59,7 @@ public class QualifierCompatibilityScrutinizer extends StatementScrutinizer {
             allowedProperties = new HashSet<>();
             List<SnakGroup> specs = statement.getClaim().getQualifiers();
             if (specs != null) {
-                List<Value> properties = _fetcher.findValues(specs, ALLOWED_QUALIFIERS_CONSTRAINT_PID);
+                List<Value> properties = findValues(specs, ALLOWED_QUALIFIERS_CONSTRAINT_PID);
                 allowedProperties = properties.stream()
                         .filter(e -> e != null)
                         .map(e -> (PropertyIdValue) e)
@@ -75,7 +75,7 @@ public class QualifierCompatibilityScrutinizer extends StatementScrutinizer {
             mandatoryProperties = new HashSet<>();
             List<SnakGroup> specs = statement.getClaim().getQualifiers();
             if (specs != null) {
-                List<Value> properties = _fetcher.findValues(specs, MANDATORY_QUALIFIERS_CONSTRAINT_PID);
+                List<Value> properties = findValues(specs, MANDATORY_QUALIFIERS_CONSTRAINT_PID);
                 mandatoryProperties = properties.stream()
                         .filter(e -> e != null)
                         .map(e -> (PropertyIdValue) e)

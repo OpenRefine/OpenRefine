@@ -24,9 +24,7 @@
 package org.openrefine.wikidata.qa;
 
 import org.wikidata.wdtk.datamodel.interfaces.PropertyIdValue;
-import org.wikidata.wdtk.datamodel.interfaces.SnakGroup;
 import org.wikidata.wdtk.datamodel.interfaces.Statement;
-import org.wikidata.wdtk.datamodel.interfaces.Value;
 
 import java.util.List;
 
@@ -48,16 +46,5 @@ public interface ConstraintFetcher {
      * @return the list of matching constraint statements
      */
     List<Statement> getConstraintsByType(PropertyIdValue pid, String qid);
-
-    /**
-     * Returns the values of a given property in qualifiers
-     *
-     * @param groups
-     *            the qualifiers
-     * @param pid
-     *            the property to filter on
-     * @return
-     */
-    List<Value> findValues(List<SnakGroup> groups, String pid);
 
 }
