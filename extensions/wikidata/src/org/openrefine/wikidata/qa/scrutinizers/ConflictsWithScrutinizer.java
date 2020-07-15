@@ -57,6 +57,7 @@ public class ConflictsWithScrutinizer extends EditScrutinizer {
                 } else {
                     values = new HashSet<>();
                 }
+
                 values.add(value);
                 propertyIdValueValueMap.put(pid, values);
             }
