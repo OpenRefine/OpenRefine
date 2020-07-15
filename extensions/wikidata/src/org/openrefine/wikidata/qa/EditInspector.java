@@ -73,6 +73,7 @@ public class EditInspector {
         register(new DifferenceWithinRangeScrutinizer());
         register(new ConflictsWithScrutinizer());
         register(new ItemRequiresScrutinizer());
+        register(new UseAsQualifierScrutinizer());
     }
 
     /**
