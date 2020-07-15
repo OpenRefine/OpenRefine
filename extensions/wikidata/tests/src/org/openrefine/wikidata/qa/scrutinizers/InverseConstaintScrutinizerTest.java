@@ -77,7 +77,7 @@ public class InverseConstaintScrutinizerTest extends StatementScrutinizerTest {
 
         ConstraintFetcher fetcher = mock(ConstraintFetcher.class);
         when(fetcher.getConstraintsByType(propertyId, INVERSE_CONSTRAINT_QID)).thenReturn(statementList);
-        when(fetcher.findValues(snakGroupList, INVERSE_PROPERTY_PID)).thenReturn(Collections.singletonList(inversePropertyID));
+//        when(fetcher.findValues(snakGroupList, INVERSE_PROPERTY_PID)).thenReturn(Collections.singletonList(inversePropertyID));
         setFetcher(fetcher);
         scrutinize(update);
         assertWarningsRaised(InverseConstraintScrutinizer.type);
@@ -98,7 +98,7 @@ public class InverseConstaintScrutinizerTest extends StatementScrutinizerTest {
 
         ConstraintFetcher fetcher = mock(ConstraintFetcher.class);
         when(fetcher.getConstraintsByType(symmetricPropertyID, SYMMETRIC_CONSTRAINT_QID)).thenReturn(statementList);
-        when(fetcher.findValues(snakGroupList, INVERSE_PROPERTY_PID)).thenReturn(Collections.singletonList(symmetricPropertyID));
+//        when(fetcher.findValues(snakGroupList, INVERSE_PROPERTY_PID)).thenReturn(Collections.singletonList(symmetricPropertyID));
         setFetcher(fetcher);
         scrutinize(update);
         assertWarningsRaised(InverseConstraintScrutinizer.type);
@@ -119,7 +119,7 @@ public class InverseConstaintScrutinizerTest extends StatementScrutinizerTest {
 
         ConstraintFetcher fetcher = mock(ConstraintFetcher.class);
         when(fetcher.getConstraintsByType(propertyId, INVERSE_CONSTRAINT_QID)).thenReturn(statementList);
-        when(fetcher.findValues(snakGroupList, INVERSE_PROPERTY_PID)).thenReturn(Collections.singletonList(inversePropertyID));
+//        when(fetcher.findValues(snakGroupList, INVERSE_PROPERTY_PID)).thenReturn(Collections.singletonList(inversePropertyID));
         setFetcher(fetcher);
         scrutinize(update);
         assertNoWarningRaised();

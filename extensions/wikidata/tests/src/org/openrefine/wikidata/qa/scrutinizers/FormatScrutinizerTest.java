@@ -79,7 +79,6 @@ public class FormatScrutinizerTest extends ScrutinizerTest {
 
         ConstraintFetcher fetcher = mock(ConstraintFetcher.class);
         when(fetcher.getConstraintsByType(propertyIdValue, FORMAT_CONSTRAINT_QID)).thenReturn(statementList);
-        when(fetcher.findValues(snakGroupList, FORMAT_REGEX_PID)).thenReturn(Collections.singletonList(regularExpressionFormat));
         setFetcher(fetcher);
         scrutinize(updateA);
         assertWarningsRaised(FormatScrutinizer.type);
@@ -100,7 +99,6 @@ public class FormatScrutinizerTest extends ScrutinizerTest {
 
         ConstraintFetcher fetcher = mock(ConstraintFetcher.class);
         when(fetcher.getConstraintsByType(propertyIdValue, FORMAT_CONSTRAINT_QID)).thenReturn(statementList);
-        when(fetcher.findValues(snakGroupList, FORMAT_REGEX_PID)).thenReturn(Collections.singletonList(regularExpressionFormat));
         setFetcher(fetcher);
         scrutinize(updateA);
         assertNoWarningRaised();
@@ -121,7 +119,6 @@ public class FormatScrutinizerTest extends ScrutinizerTest {
 
         ConstraintFetcher fetcher = mock(ConstraintFetcher.class);
         when(fetcher.getConstraintsByType(propertyIdValue, FORMAT_CONSTRAINT_QID)).thenReturn(statementList);
-        when(fetcher.findValues(snakGroupList, FORMAT_REGEX_PID)).thenReturn(Collections.singletonList(regularExpressionFormat));
         setFetcher(fetcher);
         scrutinize(updateA);
         assertWarningsRaised(FormatScrutinizer.type);

@@ -58,7 +58,7 @@ public class EntityTypeScrutinizerTest extends StatementScrutinizerTest {
 
         ConstraintFetcher fetcher = mock(ConstraintFetcher.class);
         when(fetcher.getConstraintsByType(propertyIdValue,ALLOWED_ENTITY_TYPES_QID)).thenReturn(statementList);
-        when(fetcher.findValues(snakGroupList, ALLOWED_ENTITY_TYPES_PID)).thenReturn(Collections.singletonList(allowedValue));
+//        when(fetcher.findValues(snakGroupList, ALLOWED_ENTITY_TYPES_PID)).thenReturn(Collections.singletonList(allowedValue));
         setFetcher(fetcher);
 
         scrutinize(update);
@@ -82,7 +82,7 @@ public class EntityTypeScrutinizerTest extends StatementScrutinizerTest {
 
         ConstraintFetcher fetcher = mock(ConstraintFetcher.class);
         when(fetcher.getConstraintsByType(propertyIdValue,ALLOWED_ENTITY_TYPES_QID)).thenReturn(statementList);
-        when(fetcher.findValues(snakGroupList, ALLOWED_ENTITY_TYPES_PID)).thenReturn(Collections.singletonList(itemValue));
+//        when(fetcher.findValues(snakGroupList, ALLOWED_ENTITY_TYPES_PID)).thenReturn(Collections.singletonList(itemValue));
         setFetcher(fetcher);
 
         scrutinize(update);
