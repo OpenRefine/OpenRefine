@@ -77,15 +77,19 @@ public class EditInspector {
     }
 
     /**
-     * Adds a new scrutinizer to the inspector
+     * Adds a new scrutinizer to the inspector.
+     *
+     * If any necessary dependency is missing, the scrutinizer will not be added.
      * 
      * @param scrutinizer
      */
     public void register(EditScrutinizer scrutinizer) {
-        String key = scrutinizer.getClass().getName();
-        scrutinizers.put(key, scrutinizer);
-        scrutinizer.setStore(warningStore);
-        scrutinizer.setFetcher(fetcher);
+        if (!scrutinizer.missingDependencies()) {
+            String key = scrutinizer.getClass().getName();
+            scrutinizers.put(key, scrutinizer);
+            scrutinizer.setStore(warningStore);
+            scrutinizer.setFetcher(fetcher);
+        }
     }
 
     /**

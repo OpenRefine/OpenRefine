@@ -23,6 +23,8 @@
  ******************************************************************************/
 package org.openrefine.wikidata.qa.scrutinizers;
 
+import org.openrefine.wikidata.manifests.Constraints;
+import org.openrefine.wikidata.manifests.ManifestManager;
 import org.openrefine.wikidata.qa.ConstraintFetcher;
 import org.openrefine.wikidata.qa.QAWarning;
 import org.openrefine.wikidata.qa.QAWarning.Severity;
@@ -42,12 +44,16 @@ import java.util.List;
  */
 public abstract class EditScrutinizer {
 
+    protected boolean missingDependencies;
+
     protected QAWarningStore _store;
     protected ConstraintFetcher _fetcher;
+    protected Constraints constraints = ManifestManager.getInstance().getManifest().getConstraints();
 
     public EditScrutinizer() {
         _fetcher = null;
         _store = null;
+        missingDependencies = prepareDependencies();
     }
 
     public void setStore(QAWarningStore store) {
@@ -57,6 +63,22 @@ public abstract class EditScrutinizer {
     public void setFetcher(ConstraintFetcher fetcher) {
         _fetcher = fetcher;
     }
+
+    /**
+     * Checks if any dependency is missing.
+     */
+    public final boolean missingDependencies() {
+        return missingDependencies;
+    }
+
+    /**
+     * Prepare the dependencies(i.e. constraint-related pids and qids) needed by the scrutinizer.
+     *
+     * Called before {@link EditScrutinizer#batchIsBeginning()}.
+     *
+     * @return false if any necessary dependency is missing, true otherwise.
+     */
+    public abstract boolean prepareDependencies();
     
     /**
      * Called before an edit batch is scrutinized.
@@ -97,8 +119,6 @@ public abstract class EditScrutinizer {
 
     /**
      * Helper to be used by subclasses to emit simple INFO warnings
-     * 
-     * @param warning
      */
     protected void info(String type) {
         addIssue(type, null, QAWarning.Severity.INFO, 1);
@@ -107,8 +127,6 @@ public abstract class EditScrutinizer {
 
     /**
      * Helper to be used by subclasses to emit simple warnings
-     * 
-     * @param warning
      */
     protected void warning(String type) {
         addIssue(type, null, QAWarning.Severity.WARNING, 1);
@@ -116,8 +134,6 @@ public abstract class EditScrutinizer {
 
     /**
      * Helper to be used by subclasses to emit simple important warnings
-     * 
-     * @param warning
      */
     protected void important(String type) {
         addIssue(type, null, QAWarning.Severity.IMPORTANT, 1);
@@ -125,8 +141,6 @@ public abstract class EditScrutinizer {
 
     /**
      * Helper to be used by subclasses to emit simple critical warnings
-     * 
-     * @param warning
      */
     protected void critical(String type) {
         addIssue(type, null, QAWarning.Severity.CRITICAL, 1);

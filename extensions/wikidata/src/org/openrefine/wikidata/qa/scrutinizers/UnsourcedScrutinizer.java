@@ -63,4 +63,8 @@ public class UnsourcedScrutinizer extends EditScrutinizer {
         }
     }
 
+    @Override
+    public boolean prepareDependencies() {
+        return true;
+    }
 }

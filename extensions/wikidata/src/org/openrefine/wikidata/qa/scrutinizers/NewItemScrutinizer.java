@@ -41,6 +41,11 @@ public class NewItemScrutinizer extends EditScrutinizer {
     public static final String newItemType = "new-item-created";
 
     @Override
+    public boolean prepareDependencies() {
+        return true;
+    }
+
+    @Override
     public void scrutinize(ItemUpdate update) {
         if (update.isNew()) {
             info(newItemType);

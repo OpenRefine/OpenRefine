@@ -20,19 +20,20 @@ import java.util.List;
 
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
-import static org.openrefine.wikidata.qa.scrutinizers.EntityTypeScrutinizer.ALLOWED_ENTITY_TYPES_PID;
-import static org.openrefine.wikidata.qa.scrutinizers.EntityTypeScrutinizer.ALLOWED_ENTITY_TYPES_QID;
-import static org.openrefine.wikidata.qa.scrutinizers.EntityTypeScrutinizer.ALLOWED_ITEM_TYPE_QID;
 
 public class EntityTypeScrutinizerTest extends StatementScrutinizerTest {
+
+    public static String ALLOWED_ENTITY_TYPES_QID = "Q52004125";
+    public static String ITEM_OF_PROPERTY_CONSTRAINT_PID = "P2305";
+    public static String WIKIBASE_ITEM_QID = "Q29934200";
 
     public static PropertyIdValue propertyIdValue = Datamodel.makeWikidataPropertyIdValue("P2302");
     public static Value propertyValue = Datamodel.makeWikidataItemIdValue("Q36322");
 
     public static ItemIdValue entityIdValue = Datamodel.makeWikidataItemIdValue(ALLOWED_ENTITY_TYPES_QID);
-    public static PropertyIdValue itemParameterPID = Datamodel.makeWikidataPropertyIdValue(ALLOWED_ENTITY_TYPES_PID);
+    public static PropertyIdValue itemParameterPID = Datamodel.makeWikidataPropertyIdValue(ITEM_OF_PROPERTY_CONSTRAINT_PID);
     public static Value itemValue = Datamodel.makeWikidataItemIdValue("Q29934218");
-    public static Value allowedValue = Datamodel.makeWikidataItemIdValue(ALLOWED_ITEM_TYPE_QID);
+    public static Value allowedValue = Datamodel.makeWikidataItemIdValue(WIKIBASE_ITEM_QID);
 
 
 

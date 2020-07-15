@@ -1,5 +1,6 @@
 package org.openrefine.wikidata.qa.scrutinizers;
 
+import org.openrefine.wikidata.manifests.constraints.ItemRequiresStatementConstraint;
 import org.openrefine.wikidata.qa.QAWarning;
 import org.openrefine.wikidata.updates.ItemUpdate;
 import org.wikidata.wdtk.datamodel.interfaces.PropertyIdValue;
@@ -21,9 +22,9 @@ public class ItemRequiresScrutinizer extends EditScrutinizer {
     public static final String newItemRequirePropertyType = "new-item-requires-certain-other-statement";
     public static final String existingItemRequireValuesType = "existing-item-requires-property-to-have-certain-values";
     public static final String existingItemRequirePropertyType = "existing-item-requires-certain-other-statement";
-    public static String ITEM_REQUIRES_CONSTRAINT_QID = "Q21503247";
-    public static String ITEM_REQUIRES_PROPERTY_PID = "P2306";
-    public static String ITEM_OF_PROPERTY_CONSTRAINT_PID = "P2305";
+    public String itemRequiresConstraintQid;
+    public String itemRequiresPropertyPid;
+    public String itemOfPropertyConstraintPid;
 
     class ItemRequiresConstraint {
         final PropertyIdValue itemRequiresPid;
@@ -35,16 +36,26 @@ public class ItemRequiresScrutinizer extends EditScrutinizer {
             this.itemList = new ArrayList<>();
             for(SnakGroup group : specs) {
                 for (Snak snak : group.getSnaks()) {
-                    if (group.getProperty().getId().equals(ITEM_REQUIRES_PROPERTY_PID)){
+                    if (group.getProperty().getId().equals(itemRequiresPropertyPid)){
                         pid = (PropertyIdValue) snak.getValue();
                     }
-                    if (group.getProperty().getId().equals(ITEM_OF_PROPERTY_CONSTRAINT_PID)){
+                    if (group.getProperty().getId().equals(itemOfPropertyConstraintPid)){
                         this.itemList.add(snak.getValue());
                     }
                 }
             }
             this.itemRequiresPid = pid;
         }
+    }
+
+    @Override
+    public boolean prepareDependencies() {
+        ItemRequiresStatementConstraint itemRequiresStatementConstraint = constraints.getItemRequiresStatementConstraint();
+        if (itemRequiresStatementConstraint == null) return false;
+        itemRequiresConstraintQid = itemRequiresStatementConstraint.getQid();
+        itemRequiresPropertyPid = itemRequiresStatementConstraint.getProperty();
+        itemOfPropertyConstraintPid = itemRequiresStatementConstraint.getItemOfPropertyConstraint();
+        return itemRequiresConstraintQid != null && itemRequiresPropertyPid != null && itemOfPropertyConstraintPid != null;
     }
 
     @Override
@@ -66,7 +77,7 @@ public class ItemRequiresScrutinizer extends EditScrutinizer {
         }
 
         for (PropertyIdValue propertyId : propertyIdValueValueMap.keySet()) {
-            List<Statement> constraintDefinitions = _fetcher.getConstraintsByType(propertyId, ITEM_REQUIRES_CONSTRAINT_QID);
+            List<Statement> constraintDefinitions = _fetcher.getConstraintsByType(propertyId, itemRequiresConstraintQid);
             for (Statement statement : constraintDefinitions) {
                 ItemRequiresConstraint constraint = new ItemRequiresConstraint(statement);
                 PropertyIdValue itemRequiresPid = constraint.itemRequiresPid;

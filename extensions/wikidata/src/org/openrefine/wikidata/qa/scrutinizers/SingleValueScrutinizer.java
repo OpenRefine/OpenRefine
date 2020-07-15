@@ -23,6 +23,8 @@
  ******************************************************************************/
 package org.openrefine.wikidata.qa.scrutinizers;
 
+import org.openrefine.wikidata.manifests.constraints.SingleBestValueConstraint;
+import org.openrefine.wikidata.manifests.constraints.SingleValueConstraint;
 import org.openrefine.wikidata.qa.QAWarning;
 import org.openrefine.wikidata.updates.ItemUpdate;
 import org.wikidata.wdtk.datamodel.interfaces.PropertyIdValue;
@@ -45,8 +47,19 @@ import java.util.Set;
 public class SingleValueScrutinizer extends EditScrutinizer {
 
     public static final String type = "single-valued-property-added-more-than-once";
-    public static String SINGLE_VALUE_CONSTRAINT_QID = "Q19474404";
-    public static String SINGLE_BEST_VALUE_CONSTRAINT_QID = "Q52060874";
+    public String singleValueConstraintQid;
+    public String singleBestValueConstraintQid;
+
+    @Override
+    public boolean prepareDependencies() {
+        SingleValueConstraint singleValueConstraint = constraints.getSingleValueConstraint();
+        SingleBestValueConstraint singleBestValueConstraint = constraints.getSingleBestValueConstraint();
+        if (singleValueConstraint == null) return false;
+        if (singleBestValueConstraint == null) return false;
+        singleValueConstraintQid = singleValueConstraint.getQid();
+        singleBestValueConstraintQid = singleBestValueConstraint.getQid();
+        return false;
+    }
 
     @Override
     public void scrutinize(ItemUpdate update) {
@@ -54,8 +67,8 @@ public class SingleValueScrutinizer extends EditScrutinizer {
 
         for (Statement statement : update.getAddedStatements()) {
             PropertyIdValue pid = statement.getClaim().getMainSnak().getPropertyId();
-            List<Statement> constraintStatementList1 = _fetcher.getConstraintsByType(pid, SINGLE_VALUE_CONSTRAINT_QID);
-            List<Statement> constraintStatementList2 = _fetcher.getConstraintsByType(pid, SINGLE_BEST_VALUE_CONSTRAINT_QID);
+            List<Statement> constraintStatementList1 = _fetcher.getConstraintsByType(pid, singleValueConstraintQid);
+            List<Statement> constraintStatementList2 = _fetcher.getConstraintsByType(pid, singleBestValueConstraintQid);
             if (seenSingleProperties.contains(pid)) {
                 QAWarning issue = new QAWarning(type, pid.getId(), QAWarning.Severity.WARNING, 1);
                 issue.setProperty("property_entity", pid);

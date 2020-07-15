@@ -44,11 +44,12 @@ import java.util.stream.Collectors;
 
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
-import static org.openrefine.wikidata.qa.scrutinizers.QualifierCompatibilityScrutinizer.ALLOWED_QUALIFIERS_CONSTRAINT_PID;
-import static org.openrefine.wikidata.qa.scrutinizers.QualifierCompatibilityScrutinizer.ALLOWED_QUALIFIERS_CONSTRAINT_QID;
-import static org.openrefine.wikidata.qa.scrutinizers.QualifierCompatibilityScrutinizer.MANDATORY_QUALIFIERS_CONSTRAINT_QID;
 
 public class QualifierCompatibilityScrutinizerTest extends StatementScrutinizerTest {
+
+    public static final String ALLOWED_QUALIFIERS_CONSTRAINT_QID = "Q21510851";
+    public static final String MANDATORY_QUALIFIERS_CONSTRAINT_QID = "Q21510856";
+    public static final String ALLOWED_QUALIFIERS_CONSTRAINT_PID = "P2306";
 
     public static ItemIdValue allowedQualifierEntity = Datamodel.makeWikidataItemIdValue(ALLOWED_QUALIFIERS_CONSTRAINT_QID);
     public static ItemIdValue mandatoryQualifierEntity = Datamodel.makeWikidataItemIdValue(MANDATORY_QUALIFIERS_CONSTRAINT_QID);

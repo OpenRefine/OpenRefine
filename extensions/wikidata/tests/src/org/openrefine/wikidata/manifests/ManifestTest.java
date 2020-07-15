@@ -13,7 +13,7 @@ public class ManifestTest {
 
     @Test
     public void test() throws IOException, ManifestException {
-        String json = TestingData.jsonFromFile("manifest/manifest-v1.0.json");
+        String json = TestingData.jsonFromFile("manifest/wikidata-manifest-v1.0.json");
         ManifestManager manager = ManifestManager.getInstance();
         manager.updateManifest(json);
         Manifest manifest = manager.getManifest();
