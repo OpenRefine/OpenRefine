@@ -20,7 +20,7 @@ module.exports = {
           label: 'User Manual',
           position: 'left',
         },
-        {to: 'tech/architecture',
+        {to: 'technical-reference/technical-reference-index',
          label: 'Technical Reference',
          position: 'left'},
         {
