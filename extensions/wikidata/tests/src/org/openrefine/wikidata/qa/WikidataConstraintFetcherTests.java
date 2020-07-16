@@ -23,14 +23,40 @@
  ******************************************************************************/
 package org.openrefine.wikidata.qa;
 
+import org.openrefine.wikidata.qa.scrutinizers.ConflictsWithScrutinizer;
+import org.openrefine.wikidata.qa.scrutinizers.RestrictedValuesScrutinizer;
 import org.openrefine.wikidata.utils.EntityCacheStub;
+import org.testng.Assert;
+import org.testng.annotations.Test;
+import org.wikidata.wdtk.datamodel.helpers.Datamodel;
+import org.wikidata.wdtk.datamodel.interfaces.PropertyIdValue;
+
+import java.util.ArrayList;
 
 public class WikidataConstraintFetcherTests {
 
     private ConstraintFetcher fetcher;
+    public static PropertyIdValue instanceOf;
 
     public WikidataConstraintFetcherTests() {
         fetcher = new WikidataConstraintFetcher(new EntityCacheStub());
+        instanceOf = Datamodel.makeWikidataPropertyIdValue("P31");
     }
 
+    @Test
+    public void testGetConstraintsByType() {
+        Assert.assertEquals(fetcher.getConstraintsByType(instanceOf, ConflictsWithScrutinizer.CONFLICTS_WITH_CONSTRAINT_QID), new ArrayList<>());
+        String constraintDefinitions = "[[ID P31$43E28495-355E-451E-A881-2EE14DFBE99D] http://www.wikidata.org/entity/P31 (property): http://www.wikidata.org/entity/P2302 :: http://www.wikidata.org/entity/Q52558054 (item)\n" +
+                "      http://www.wikidata.org/entity/P2305 :: http://www.wikidata.org/entity/Q467 (item)\n" +
+                "      http://www.wikidata.org/entity/P2305 :: http://www.wikidata.org/entity/Q6581072 (item)\n" +
+                "      http://www.wikidata.org/entity/P2305 :: http://www.wikidata.org/entity/Q6581097 (item)\n" +
+                "      http://www.wikidata.org/entity/P2305 :: http://www.wikidata.org/entity/Q8441 (item)\n" +
+                "      http://www.wikidata.org/entity/P2305 :: http://www.wikidata.org/entity/Q171283 (item)\n" +
+                "      http://www.wikidata.org/entity/P2305 :: http://www.wikidata.org/entity/Q11629 (item)\n" +
+                "      http://www.wikidata.org/entity/P2305 :: http://www.wikidata.org/entity/Q11634 (item)\n" +
+                "      http://www.wikidata.org/entity/P2305 :: http://www.wikidata.org/entity/Q131123 (item)\n" +
+                "      http://www.wikidata.org/entity/P2316 :: http://www.wikidata.org/entity/Q21502408 (item)\n" +
+                "]";
+        Assert.assertEquals(fetcher.getConstraintsByType(instanceOf, RestrictedValuesScrutinizer.DISALLOWED_VALUES_CONSTRAINT_QID).toString(), constraintDefinitions);
+    }
 }
