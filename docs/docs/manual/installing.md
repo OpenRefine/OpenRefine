@@ -107,22 +107,9 @@ Once you have Java extracted onto your system, you need to tell your computer wh
 
 
 <Tabs
-
-  groupId="operating-systems"
-
-  defaultValue="win"
-
-  values={[
-
-	{label: 'Windows', value: 'win'},
-
-	{label: 'Mac', value: 'mac'},
-
-	{label: 'Linux', value: 'linux'},
-
-  ]
-
-}>
+groupId="operating-systems"
+defaultValue="win"
+values={[{label: 'Windows', value: 'win'}, {label: 'Mac', value: 'mac'},{label: 'Linux', value: 'linux'}]}>
 
 <TabItem value="win">
 
@@ -230,21 +217,13 @@ If you have extensions installed, do not delete the `webapp\extensions` folder w
 :::
 
 <Tabs
-
 groupId="operating-systems"
-
 defaultValue="win"
-
 values={[
-
 {label: 'Windows', value: 'win'},
-
 {label: 'Mac', value: 'mac'},
-
 {label: 'Linux', value: 'linux'},
-
 ]
-
 }>
 
 <TabItem value="win">
@@ -373,21 +352,13 @@ OpenRefine stores data in two places: program files in the program directory, wh
 By default this is:
 
 <Tabs
-
 groupId="operating-systems"
-
 defaultValue="win"
-
 values={[
-
 {label: 'Windows', value: 'win'},
-
 {label: 'Mac', value: 'mac'},
-
 {label: 'Linux', value: 'linux'},
-
 ]
-
 }>
 
 <TabItem value="win">
@@ -494,22 +465,13 @@ If your project is big enough to need more than the default amount of memory, co
 :::
 
 <Tabs
-
 groupId="operating-systems"
-
 defaultValue="win"
-
 values={[
-
 {label: 'Windows', value: 'win'},
-
 {label: 'Mac', value: 'mac'},
-
 {label: 'Linux', value: 'linux'},
-
-]
-
-}>
+]}>
 
 <TabItem value="win">
 
