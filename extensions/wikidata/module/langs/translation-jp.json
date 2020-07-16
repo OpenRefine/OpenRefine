@@ -203,5 +203,13 @@
     "wikidata-account/invalid-credentials": "無効な証明書",
     "wikidata-account/explain-owner-only-consumer-login": "<a>オーナー限定consumer</a>でもログインできます",
     "wikidata-account/explain-password-login": "<a>ユーザー名/パスワード</a>でもログインできます",
-    "wikidata-account/explain-owner-only-consumer-wiki": "オーナー限定comsumerを取得するには、 <a href=\"https://github.com/OpenRefine/OpenRefine/wiki/Wikidata-owner-only-consumer\" target=\"_blank\">wiki</a> を参照してください."
+    "wikidata-account/explain-owner-only-consumer-wiki": "オーナー限定comsumerを取得するには、 <a href=\"https://github.com/OpenRefine/OpenRefine/wiki/Wikidata-owner-only-consumer\" target=\"_blank\">wiki</a> を参照してください.",
+    "warnings-messages/existing-item-requires-certain-other-statement/body": "このプロパティは、例えば {example_entity} で、プロパティ {added_property_entity} を持つ別のステートメントを持つことが想定されています。もし、Wikidataにプロパティ {added_property_entity} があるステートメントを持っている場合、この警告は無視しても構いません.",
+    "warnings-messages/existing-item-requires-certain-other-statement/title": "{property_entity} は、プロパティ {added_property_entity} を持つステートメントが必要です.",
+    "warnings-messages/existing-item-requires-property-to-have-certain-values/body": "プロパティ {added_property_entity} が、例えば {example_entity} で適切な値を取っていません。もし、プロパティ {added_property_entity}とWikidataに適切な値を持つステートメントを持つ場合、この警告は無視しても構いません.",
+    "warnings-messages/existing-item-requires-property-to-have-certain-values/title": "{property_entity} は、プロパティ {added_property_entity} がある値を取る必要があります.",
+    "warnings-messages/new-item-requires-certain-other-statement/body": "このプロパティは、例えば {example_entity} で、プロパティ {added_property_entity} を持つステートメントを持つことが想定されています.",
+    "warnings-messages/new-item-requires-property-to-have-certain-values/body": "プロパティ {added_property_entity} が、例えば{example_entity}で、適切な値を取っていません.",
+    "warnings-messages/new-item-requires-certain-other-statement/title": "{property_entity} は、プロパティ {added_property_entity} をもつステートメントが必要です.",
+    "warnings-messages/new-item-requires-property-to-have-certain-values/title": "{property_entity} は、プロパティ {added_property_entity} がある値が取る必要があります."
 }
