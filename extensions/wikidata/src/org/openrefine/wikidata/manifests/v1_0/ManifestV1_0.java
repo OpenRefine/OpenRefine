@@ -7,7 +7,7 @@ import org.openrefine.wikidata.manifests.Manifest;
 public class ManifestV1_0 implements Manifest {
 
     private String name;
-    private String iri;
+    private String entityPrefix;
     private String mediaWikiApiEndpoint;
     private String reconServiceEndpoint;
     private String propertyConstraintPid;
@@ -19,10 +19,10 @@ public class ManifestV1_0 implements Manifest {
         mediaWikiApiEndpoint = mediawiki.path("api").textValue();
 
         JsonNode wikibase = manifest.path("wikibase");
-        iri = wikibase.path("iri").textValue();
         constraints = new ConstraintsV1_0(wikibase.path("constraints"));
         JsonNode properties = wikibase.path("properties");
         propertyConstraintPid = properties.path("property_constraint").textValue();
+        entityPrefix = properties.path("entity_prefix").textValue();
 
         JsonNode reconciliation = manifest.path("reconciliation");
         reconServiceEndpoint = reconciliation.path("endpoint").textValue();
@@ -39,8 +39,8 @@ public class ManifestV1_0 implements Manifest {
     }
 
     @Override
-    public String getIri() {
-        return iri;
+    public String getEntityPrefix() {
+        return entityPrefix;
     }
 
     @Override

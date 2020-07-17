@@ -23,12 +23,12 @@
  ******************************************************************************/
 package org.openrefine.wikidata.utils;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
-import org.wikidata.wdtk.datamodel.helpers.Datamodel;
 import org.wikidata.wdtk.datamodel.interfaces.EntityDocument;
 import org.wikidata.wdtk.datamodel.interfaces.EntityIdValue;
-import org.wikidata.wdtk.wikibaseapi.ApiConnection;
 import org.wikidata.wdtk.wikibaseapi.BasicApiConnection;
 import org.wikidata.wdtk.wikibaseapi.WikibaseDataFetcher;
 import org.wikidata.wdtk.wikibaseapi.apierrors.MediaWikiApiErrorException;
@@ -39,24 +39,23 @@ import com.google.common.cache.LoadingCache;
 
 public class EntityCache {
 
-    private static EntityCache _entityCache = new EntityCache(BasicApiConnection.getWikidataApiConnection());
+    private static Map<String, EntityCache> entityCacheMap = new HashMap<>();
 
-    private LoadingCache<String, EntityDocument> _cache = null;
-    private WikibaseDataFetcher _fetcher;
+    private LoadingCache<String, EntityDocument> cache;
+    private WikibaseDataFetcher fetcher;
 
-    protected EntityCache(ApiConnection connection) {
-        this(new WikibaseDataFetcher(connection, Datamodel.SITE_WIKIDATA));
+    protected EntityCache(String entityPrefix, String mediaWikiApiEndpoint) {
+        this(new WikibaseDataFetcher(new BasicApiConnection(mediaWikiApiEndpoint), entityPrefix));
     }
     
     protected EntityCache(WikibaseDataFetcher fetcher) {
-        _fetcher = fetcher;
+        this.fetcher = fetcher;
 
-        _cache = CacheBuilder.newBuilder().maximumSize(4096).expireAfterWrite(1, TimeUnit.HOURS)
+        cache = CacheBuilder.newBuilder().maximumSize(4096).expireAfterWrite(1, TimeUnit.HOURS)
                 .build(new CacheLoader<String, EntityDocument>() {
 
-                    public EntityDocument load(String entityId)
-                            throws Exception {
-                        EntityDocument doc = _fetcher.getEntityDocument(entityId);
+                    public EntityDocument load(String entityId) throws Exception {
+                        EntityDocument doc = EntityCache.this.fetcher.getEntityDocument(entityId);
                         if (doc != null) {
                             return doc;
                         } else {
@@ -67,17 +66,16 @@ public class EntityCache {
     }
 
     public EntityDocument get(EntityIdValue id) {
-        return _cache.apply(id.getId());
+        return cache.apply(id.getId());
     }
 
-    public static EntityCache getEntityCache() {
-        if (_entityCache == null) {
-            _entityCache = new EntityCache(BasicApiConnection.getWikidataApiConnection());
+    public static EntityCache getEntityCache(String entityPrefix, String mediaWikiApiEndpoint) {
+        EntityCache entityCache = entityCacheMap.get(entityPrefix);
+        if (entityCache == null) {
+            entityCache = new EntityCache(entityPrefix, mediaWikiApiEndpoint);
+            entityCacheMap.put(entityPrefix, entityCache);
         }
-        return _entityCache;
+        return entityCache;
     }
 
-    public static EntityDocument getEntityDocument(EntityIdValue id) {
-        return getEntityCache().get(id);
-    }
 }

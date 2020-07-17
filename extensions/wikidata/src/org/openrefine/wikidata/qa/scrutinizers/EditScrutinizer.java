@@ -24,7 +24,6 @@
 package org.openrefine.wikidata.qa.scrutinizers;
 
 import org.openrefine.wikidata.manifests.Constraints;
-import org.openrefine.wikidata.manifests.ManifestManager;
 import org.openrefine.wikidata.qa.ConstraintFetcher;
 import org.openrefine.wikidata.qa.QAWarning;
 import org.openrefine.wikidata.qa.QAWarning.Severity;
@@ -48,11 +47,9 @@ public abstract class EditScrutinizer {
 
     protected QAWarningStore _store;
     protected ConstraintFetcher _fetcher;
-    protected Constraints constraints = ManifestManager.getInstance().getManifest().getConstraints();
+    protected Constraints constraints;
 
     public EditScrutinizer() {
-        _fetcher = null;
-        _store = null;
         missingDependencies = prepareDependencies();
     }
 
@@ -62,6 +59,10 @@ public abstract class EditScrutinizer {
 
     public void setFetcher(ConstraintFetcher fetcher) {
         _fetcher = fetcher;
+    }
+
+    public void setConstraints(Constraints constraints) {
+        this.constraints = constraints;
     }
 
     /**

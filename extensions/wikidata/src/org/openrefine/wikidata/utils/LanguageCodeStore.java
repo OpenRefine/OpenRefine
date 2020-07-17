@@ -7,7 +7,9 @@ import java.util.stream.Collectors;
 /**
  * A store for the allowed language code for terms and monolingual text values
  * in Wikidata.
- * 
+ *
+ * TODO by afkbrb
+ *
  * @todo generalize for other Wikibase instances (fetch it dynamically via 
  * https://stackoverflow.com/questions/46507037/how-to-get-all-allowed-languages-for-wikidata/46562061)
  * @todo separate the languages allowed for terms from the ones allowed for monolingual text.

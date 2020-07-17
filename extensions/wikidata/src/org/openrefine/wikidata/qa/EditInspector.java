@@ -1,18 +1,18 @@
 /*******************************************************************************
  * MIT License
- * 
+ *
  * Copyright (c) 2018 Antonin Delpeuch
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be included in all
  * copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -23,6 +23,8 @@
  ******************************************************************************/
 package org.openrefine.wikidata.qa;
 
+import org.openrefine.wikidata.manifests.Constraints;
+import org.openrefine.wikidata.manifests.Manifest;
 import org.openrefine.wikidata.qa.scrutinizers.*;
 import org.openrefine.wikidata.updates.ItemUpdate;
 import org.openrefine.wikidata.updates.scheduler.WikibaseAPIUpdateScheduler;
@@ -38,18 +40,20 @@ import java.util.stream.Collectors;
  * Runs a collection of edit scrutinizers on an edit batch.
  * 
  * @author Antonin Delpeuch
- *
  */
 public class EditInspector {
 
     private Map<String, EditScrutinizer> scrutinizers;
     private QAWarningStore warningStore;
     private ConstraintFetcher fetcher;
+    private Constraints constraints;
 
-    public EditInspector(QAWarningStore warningStore) {
+    public EditInspector(QAWarningStore warningStore, Manifest manifest) {
         this.scrutinizers = new HashMap<>();
-        this.fetcher = new WikidataConstraintFetcher(EntityCache.getEntityCache());
+        EntityCache entityCache = EntityCache.getEntityCache(manifest.getEntityPrefix(), manifest.getMediaWikiApiEndpoint());
+        this.fetcher = new ConstraintFetcher(entityCache, manifest.getPropertyConstraintPid());
         this.warningStore = warningStore;
+        this.constraints = manifest.getConstraints();
 
         // Register all known scrutinizers here
         register(new NewItemScrutinizer());
@@ -89,6 +93,7 @@ public class EditInspector {
             scrutinizers.put(key, scrutinizer);
             scrutinizer.setStore(warningStore);
             scrutinizer.setFetcher(fetcher);
+            scrutinizer.setConstraints(constraints);
         }
     }
 

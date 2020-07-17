@@ -6,7 +6,7 @@ public interface Manifest {
 
     String getName();
 
-    String getIri();
+    String getEntityPrefix();
 
     String getMediaWikiApiEndpoint();
 

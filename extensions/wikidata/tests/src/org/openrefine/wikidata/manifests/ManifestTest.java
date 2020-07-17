@@ -14,13 +14,11 @@ public class ManifestTest {
     @Test
     public void test() throws IOException, ManifestException {
         String json = TestingData.jsonFromFile("manifest/wikidata-manifest-v1.0.json");
-        ManifestManager manager = ManifestManager.getInstance();
-        manager.updateManifest(json);
-        Manifest manifest = manager.getManifest();
+        Manifest manifest = ManifestParser.parse(json);
         assertEquals("1.0", manifest.getVersion());
         assertEquals("Wikidata", manifest.getName());
         assertEquals("https://www.wikidata.org/w/api.php", manifest.getMediaWikiApiEndpoint());
-        assertEquals("http://www.wikidata.org/entity/", manifest.getIri());
+        assertEquals("http://www.wikidata.org/entity/", manifest.getEntityPrefix());
         assertEquals("https://wdreconcile.toolforge.org/en/api", manifest.getReconServiceEndpoint());
         assertEquals("P2302", manifest.getPropertyConstraintPid());
 

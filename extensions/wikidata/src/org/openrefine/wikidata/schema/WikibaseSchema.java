@@ -57,10 +57,9 @@ public class WikibaseSchema implements OverlayModel {
 
     final static Logger logger = LoggerFactory.getLogger("RdfSchema");
 
-    @JsonProperty("itemDocuments")
-    protected List<WbItemDocumentExpr> itemDocumentExprs = new ArrayList<WbItemDocumentExpr>();
+    protected List<WbItemDocumentExpr> itemDocumentExprs = new ArrayList<>();
 
-    protected String baseIri = "http://www.wikidata.org/entity/";
+    protected String baseIri;
 
     /**
      * Constructor.
@@ -68,19 +67,21 @@ public class WikibaseSchema implements OverlayModel {
     public WikibaseSchema() {
 
     }
-    
+
     /**
      * Constructor for deserialization via Jackson
      */
     @JsonCreator
-    public WikibaseSchema(@JsonProperty("itemDocuments") List<WbItemDocumentExpr> exprs) {
+    public WikibaseSchema(@JsonProperty("itemDocuments") List<WbItemDocumentExpr> exprs,
+                          @JsonProperty("entityPrefix") String baseIri) {
         this.itemDocumentExprs = exprs;
+        this.baseIri = baseIri;
     }
 
     /**
      * @return the site IRI of the Wikibase instance referenced by this schema
      */
-    @JsonIgnore
+    @JsonProperty("entityPrefix")
     public String getBaseIri() {
         return baseIri;
     }
@@ -88,7 +89,7 @@ public class WikibaseSchema implements OverlayModel {
     /**
      * @return the list of document expressions for this schema
      */
-    @JsonIgnore
+    @JsonProperty("itemDocuments")
     public List<WbItemDocumentExpr> getItemDocumentExpressions() {
         return itemDocumentExprs;
     }
