@@ -1,5 +1,6 @@
 package org.openrefine.wikidata.manifests.constraints;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class ValueTypeConstraint implements Constraint {
@@ -9,8 +10,22 @@ public class ValueTypeConstraint implements Constraint {
     private String instanceOf;
     private String subclassOf;
     private String instanceOrSubclassOf;
-    @JsonProperty("class")
-    private String klass; // i.e. class
+    private String klass;
+
+    @JsonCreator
+    public ValueTypeConstraint(@JsonProperty("qid") String qid,
+                          @JsonProperty("relation") String relation,
+                          @JsonProperty("instance_of") String instanceOf,
+                          @JsonProperty("subclass_of") String subclassOf,
+                          @JsonProperty("instance_of_or_subclass_of") String instanceOrSubclassOf,
+                          @JsonProperty("class") String klass) {
+        this.qid = qid;
+        this.relation = relation;
+        this.instanceOf = instanceOf;
+        this.subclassOf = subclassOf;
+        this.instanceOrSubclassOf = instanceOrSubclassOf;
+        this.klass = klass;
+    }
 
     public String getQid() {
         return qid;
