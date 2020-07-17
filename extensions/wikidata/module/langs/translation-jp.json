@@ -211,5 +211,7 @@
     "warnings-messages/new-item-requires-certain-other-statement/body": "このプロパティは、例えば {example_entity} で、プロパティ {added_property_entity} を持つステートメントを持つことが想定されています.",
     "warnings-messages/new-item-requires-property-to-have-certain-values/body": "プロパティ {added_property_entity} が、例えば{example_entity}で、適切な値を取っていません.",
     "warnings-messages/new-item-requires-certain-other-statement/title": "{property_entity} は、プロパティ {added_property_entity} をもつステートメントが必要です.",
-    "warnings-messages/new-item-requires-property-to-have-certain-values/title": "{property_entity} は、プロパティ {added_property_entity} がある値が取る必要があります."
+    "warnings-messages/new-item-requires-property-to-have-certain-values/title": "{property_entity} は、プロパティ {added_property_entity} がある値が取る必要があります.",
+    "warnings-messages/values-should-not-be-used-as-qualifier/body": "例えば、{example_entity}で、ステートメント {statement_entity} の修飾子 {qualifier_entity} に無効な数字があります.",
+    "warnings-messages/values-should-not-be-used-as-qualifier/title": "ステートメント {statement_entity} の修飾子 {qualifier_entity} に無効な値"
 }
