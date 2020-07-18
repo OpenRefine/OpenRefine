@@ -74,11 +74,11 @@ public class FormatScrutinizerTest extends ScrutinizerTest {
         Snak qualifierSnak = Datamodel.makeValueSnak(regularExpressionParameter, regularExpressionFormat);
         List<Snak> qualifierSnakList = Collections.singletonList(qualifierSnak);
         SnakGroup qualifierSnakGroup = Datamodel.makeSnakGroup(qualifierSnakList);
-        List<SnakGroup> snakGroupList = Collections.singletonList(qualifierSnakGroup);
-        List<Statement> statementList = constraintParameterStatementList(entityIdValue, snakGroupList);
+        List<SnakGroup> constraintQualifiers = Collections.singletonList(qualifierSnakGroup);
+        List<Statement> constraintDefinitions = constraintParameterStatementList(entityIdValue, constraintQualifiers);
 
         ConstraintFetcher fetcher = mock(ConstraintFetcher.class);
-        when(fetcher.getConstraintsByType(propertyIdValue, FORMAT_CONSTRAINT_QID)).thenReturn(statementList);
+        when(fetcher.getConstraintsByType(propertyIdValue, FORMAT_CONSTRAINT_QID)).thenReturn(constraintDefinitions);
         setFetcher(fetcher);
         scrutinize(updateA);
         assertWarningsRaised(FormatScrutinizer.type);
@@ -94,11 +94,11 @@ public class FormatScrutinizerTest extends ScrutinizerTest {
         Snak qualifierSnak = Datamodel.makeValueSnak(regularExpressionParameter, regularExpressionFormat);
         List<Snak> qualifierSnakList = Collections.singletonList(qualifierSnak);
         SnakGroup qualifierSnakGroup = Datamodel.makeSnakGroup(qualifierSnakList);
-        List<SnakGroup> snakGroupList = Collections.singletonList(qualifierSnakGroup);
-        List<Statement> statementList = constraintParameterStatementList(entityIdValue, snakGroupList);
+        List<SnakGroup> constraintQualifiers = Collections.singletonList(qualifierSnakGroup);
+        List<Statement> constraintDefinitions = constraintParameterStatementList(entityIdValue, constraintQualifiers);
 
         ConstraintFetcher fetcher = mock(ConstraintFetcher.class);
-        when(fetcher.getConstraintsByType(propertyIdValue, FORMAT_CONSTRAINT_QID)).thenReturn(statementList);
+        when(fetcher.getConstraintsByType(propertyIdValue, FORMAT_CONSTRAINT_QID)).thenReturn(constraintDefinitions);
         setFetcher(fetcher);
         scrutinize(updateA);
         assertNoWarningRaised();
@@ -114,11 +114,11 @@ public class FormatScrutinizerTest extends ScrutinizerTest {
         Snak qualifierSnak = Datamodel.makeValueSnak(regularExpressionParameter, regularExpressionFormat);
         List<Snak> qualifierSnakList = Collections.singletonList(qualifierSnak);
         SnakGroup qualifierSnakGroup = Datamodel.makeSnakGroup(qualifierSnakList);
-        List<SnakGroup> snakGroupList = Collections.singletonList(qualifierSnakGroup);
-        List<Statement> statementList = constraintParameterStatementList(entityIdValue, snakGroupList);
+        List<SnakGroup> constraintQualifiers = Collections.singletonList(qualifierSnakGroup);
+        List<Statement> constraintDefinitions = constraintParameterStatementList(entityIdValue, constraintQualifiers);
 
         ConstraintFetcher fetcher = mock(ConstraintFetcher.class);
-        when(fetcher.getConstraintsByType(propertyIdValue, FORMAT_CONSTRAINT_QID)).thenReturn(statementList);
+        when(fetcher.getConstraintsByType(propertyIdValue, FORMAT_CONSTRAINT_QID)).thenReturn(constraintDefinitions);
         setFetcher(fetcher);
         scrutinize(updateA);
         assertWarningsRaised(FormatScrutinizer.type);

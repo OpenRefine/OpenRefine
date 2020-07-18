@@ -53,11 +53,11 @@ public class EntityTypeScrutinizerTest extends StatementScrutinizerTest {
         Snak qualifierSnak = Datamodel.makeValueSnak(itemParameterPID, allowedValue);
         List<Snak> qualifierSnakList = Collections.singletonList(qualifierSnak);
         SnakGroup qualifierSnakGroup = Datamodel.makeSnakGroup(qualifierSnakList);
-        List<SnakGroup> snakGroupList = Collections.singletonList(qualifierSnakGroup);
-        List<Statement> statementList = constraintParameterStatementList(entityIdValue, snakGroupList);
+        List<SnakGroup> constraintQualifiers = Collections.singletonList(qualifierSnakGroup);
+        List<Statement> constraintDefinitions = constraintParameterStatementList(entityIdValue, constraintQualifiers);
 
         ConstraintFetcher fetcher = mock(ConstraintFetcher.class);
-        when(fetcher.getConstraintsByType(propertyIdValue,ALLOWED_ENTITY_TYPES_QID)).thenReturn(statementList);
+        when(fetcher.getConstraintsByType(propertyIdValue,ALLOWED_ENTITY_TYPES_QID)).thenReturn(constraintDefinitions);
         setFetcher(fetcher);
 
         scrutinize(update);
@@ -76,11 +76,11 @@ public class EntityTypeScrutinizerTest extends StatementScrutinizerTest {
         Snak qualifierSnak = Datamodel.makeValueSnak(itemParameterPID, itemValue);
         List<Snak> qualifierSnakList = Collections.singletonList(qualifierSnak);
         SnakGroup qualifierSnakGroup = Datamodel.makeSnakGroup(qualifierSnakList);
-        List<SnakGroup> snakGroupList = Collections.singletonList(qualifierSnakGroup);
-        List<Statement> statementList = constraintParameterStatementList(entityIdValue, snakGroupList);
+        List<SnakGroup> constraintQualifiers = Collections.singletonList(qualifierSnakGroup);
+        List<Statement> constraintDefinitions = constraintParameterStatementList(entityIdValue, constraintQualifiers);
 
         ConstraintFetcher fetcher = mock(ConstraintFetcher.class);
-        when(fetcher.getConstraintsByType(propertyIdValue,ALLOWED_ENTITY_TYPES_QID)).thenReturn(statementList);
+        when(fetcher.getConstraintsByType(propertyIdValue,ALLOWED_ENTITY_TYPES_QID)).thenReturn(constraintDefinitions);
         setFetcher(fetcher);
 
         scrutinize(update);

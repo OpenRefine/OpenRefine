@@ -66,11 +66,11 @@ public class DistinctValuesScrutinizerTest extends StatementScrutinizerTest {
 
         ItemUpdate update = new ItemUpdateBuilder(idA).addStatement(statement1).addStatement(statement2).build();
 
-        List<SnakGroup> snakGroupList = new ArrayList<>();
-        List<Statement> statementList = constraintParameterStatementList(entityIdValue, snakGroupList);
+        List<SnakGroup> constraintQualifiers = new ArrayList<>();
+        List<Statement> constraintDefinitions = constraintParameterStatementList(entityIdValue, constraintQualifiers);
 
         ConstraintFetcher fetcher = mock(ConstraintFetcher.class);
-        when(fetcher.getConstraintsByType(propertyIdValue, DISTINCT_VALUES_CONSTRAINT_QID)).thenReturn(statementList);
+        when(fetcher.getConstraintsByType(propertyIdValue, DISTINCT_VALUES_CONSTRAINT_QID)).thenReturn(constraintDefinitions);
         setFetcher(fetcher);
 
         scrutinize(update);
@@ -87,11 +87,11 @@ public class DistinctValuesScrutinizerTest extends StatementScrutinizerTest {
 
         ItemUpdate update = new ItemUpdateBuilder(idA).addStatement(statement1).addStatement(statement2).build();
 
-        List<SnakGroup> snakGroupList = new ArrayList<>();
-        List<Statement> statementList = constraintParameterStatementList(entityIdValue, snakGroupList);
+        List<SnakGroup> constraintQualifiers = new ArrayList<>();
+        List<Statement> constraintDefinitions = constraintParameterStatementList(entityIdValue, constraintQualifiers);
 
         ConstraintFetcher fetcher = mock(ConstraintFetcher.class);
-        when(fetcher.getConstraintsByType(propertyIdValue, DISTINCT_VALUES_CONSTRAINT_QID)).thenReturn(statementList);
+        when(fetcher.getConstraintsByType(propertyIdValue, DISTINCT_VALUES_CONSTRAINT_QID)).thenReturn(constraintDefinitions);
         setFetcher(fetcher);
 
         scrutinize(update);

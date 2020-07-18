@@ -42,9 +42,9 @@ public class MultiValueScrutinizerTest extends ScrutinizerTest {
         ItemUpdate update = new ItemUpdateBuilder(idA).addStatement(TestingData.generateStatement(idA, idB))
                 .addStatement(TestingData.generateStatement(idA, idB)).addStatement(statement1).addStatement(statement2).build();
 
-        List<Statement> statementList = constraintParameterStatementList(entityIdValue, new ArrayList<>());
+        List<Statement> constraintDefinitions = constraintParameterStatementList(entityIdValue, new ArrayList<>());
         ConstraintFetcher fetcher = mock(ConstraintFetcher.class);
-        when(fetcher.getConstraintsByType(propertyIdValue, MULTI_VALUE_CONSTRAINT_QID)).thenReturn(statementList);
+        when(fetcher.getConstraintsByType(propertyIdValue, MULTI_VALUE_CONSTRAINT_QID)).thenReturn(constraintDefinitions);
         setFetcher(fetcher);
 
         scrutinize(update);
@@ -60,9 +60,9 @@ public class MultiValueScrutinizerTest extends ScrutinizerTest {
         ItemUpdate updateA = new ItemUpdateBuilder(idA).addStatement(TestingData.generateStatement(idA, idB)).addStatement(statement).build();
         ItemUpdate updateB = new ItemUpdateBuilder(idB).addStatement(TestingData.generateStatement(idB, idB)).build();
 
-        List<Statement> statementList = constraintParameterStatementList(entityIdValue, new ArrayList<>());
+        List<Statement> constraintDefinitions = constraintParameterStatementList(entityIdValue, new ArrayList<>());
         ConstraintFetcher fetcher = mock(ConstraintFetcher.class);
-        when(fetcher.getConstraintsByType(propertyIdValue, MULTI_VALUE_CONSTRAINT_QID)).thenReturn(statementList);
+        when(fetcher.getConstraintsByType(propertyIdValue, MULTI_VALUE_CONSTRAINT_QID)).thenReturn(constraintDefinitions);
         setFetcher(fetcher);
 
         scrutinize(updateA, updateB);
@@ -78,9 +78,9 @@ public class MultiValueScrutinizerTest extends ScrutinizerTest {
         ItemUpdate updateA = new ItemUpdateBuilder(idA).addStatement(TestingData.generateStatement(idA, idB)).addStatement(statement).build();
         ItemUpdate updateB = new ItemUpdateBuilder(idB).addStatement(TestingData.generateStatement(idB, idB)).build();
 
-        List<Statement> statementList = constraintParameterStatementList(entityIdValue, new ArrayList<>());
+        List<Statement> constraintDefinitions = constraintParameterStatementList(entityIdValue, new ArrayList<>());
         ConstraintFetcher fetcher = mock(ConstraintFetcher.class);
-        when(fetcher.getConstraintsByType(propertyIdValue, MULTI_VALUE_CONSTRAINT_QID)).thenReturn(statementList);
+        when(fetcher.getConstraintsByType(propertyIdValue, MULTI_VALUE_CONSTRAINT_QID)).thenReturn(constraintDefinitions);
         setFetcher(fetcher);
 
         scrutinize(updateA, updateB);

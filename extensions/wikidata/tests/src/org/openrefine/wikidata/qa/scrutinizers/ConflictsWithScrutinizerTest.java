@@ -67,11 +67,11 @@ public class ConflictsWithScrutinizerTest extends ScrutinizerTest {
         List<Snak> snakList2 = Collections.singletonList(snak2);
         SnakGroup snakGroup1 = Datamodel.makeSnakGroup(snakList1);
         SnakGroup snakGroup2 = Datamodel.makeSnakGroup(snakList2);
-        List<SnakGroup> snakGroupList = Arrays.asList(snakGroup1, snakGroup2);
-        List<Statement> statementList = constraintParameterStatementList(entityIdValue, snakGroupList);
+        List<SnakGroup> constraintQualifiers = Arrays.asList(snakGroup1, snakGroup2);
+        List<Statement> constraintDefinitions = constraintParameterStatementList(entityIdValue, constraintQualifiers);
 
         ConstraintFetcher fetcher = mock(ConstraintFetcher.class);
-        when(fetcher.getConstraintsByType(conflictsWithPid, "Q21502838")).thenReturn(statementList);
+        when(fetcher.getConstraintsByType(conflictsWithPid, CONFLICTS_WITH_CONSTRAINT_QID)).thenReturn(constraintDefinitions);
 
         setFetcher(fetcher);
         scrutinize(updateA);
@@ -94,11 +94,11 @@ public class ConflictsWithScrutinizerTest extends ScrutinizerTest {
         List<Snak> snakList2 = Collections.singletonList(snak2);
         SnakGroup snakGroup1 = Datamodel.makeSnakGroup(snakList1);
         SnakGroup snakGroup2 = Datamodel.makeSnakGroup(snakList2);
-        List<SnakGroup> snakGroupList = Arrays.asList(snakGroup1, snakGroup2);
-        List<Statement> statementList = constraintParameterStatementList(entityIdValue, snakGroupList);
+        List<SnakGroup> constraintQualifiers = Arrays.asList(snakGroup1, snakGroup2);
+        List<Statement> constraintDefinitions = constraintParameterStatementList(entityIdValue, constraintQualifiers);
 
         ConstraintFetcher fetcher = mock(ConstraintFetcher.class);
-        when(fetcher.getConstraintsByType(conflictsWithPid, "Q21502838")).thenReturn(statementList);
+        when(fetcher.getConstraintsByType(conflictsWithPid, CONFLICTS_WITH_CONSTRAINT_QID)).thenReturn(constraintDefinitions);
 
         setFetcher(fetcher);
         scrutinize(update);
@@ -123,11 +123,11 @@ public class ConflictsWithScrutinizerTest extends ScrutinizerTest {
         List<Snak> snakList2 = Collections.singletonList(snak2);
         SnakGroup snakGroup1 = Datamodel.makeSnakGroup(snakList1);
         SnakGroup snakGroup2 = Datamodel.makeSnakGroup(snakList2);
-        List<SnakGroup> snakGroupList = Arrays.asList(snakGroup1, snakGroup2);
-        List<Statement> statementList = constraintParameterStatementList(entityIdValue, snakGroupList);
+        List<SnakGroup> constraintQualifiers = Arrays.asList(snakGroup1, snakGroup2);
+        List<Statement> constraintDefinitions = constraintParameterStatementList(entityIdValue, constraintQualifiers);
 
         ConstraintFetcher fetcher = mock(ConstraintFetcher.class);
-        when(fetcher.getConstraintsByType(conflictsWithPid, "Q21502838")).thenReturn(statementList);
+        when(fetcher.getConstraintsByType(conflictsWithPid, CONFLICTS_WITH_CONSTRAINT_QID)).thenReturn(constraintDefinitions);
 
         setFetcher(fetcher);
         scrutinize(updateA);
@@ -144,10 +144,10 @@ public class ConflictsWithScrutinizerTest extends ScrutinizerTest {
 
         ItemUpdate updateA = new ItemUpdateBuilder(idA).addStatement(statement).build();
 
-        List<Statement> statementList = new ArrayList<>();
+        List<Statement> constraintDefinitions = new ArrayList<>();
 
         ConstraintFetcher fetcher = mock(ConstraintFetcher.class);
-        when(fetcher.getConstraintsByType(propertyWithConflictsPid1, "Q21502838")).thenReturn(statementList);
+        when(fetcher.getConstraintsByType(propertyWithConflictsPid1, CONFLICTS_WITH_CONSTRAINT_QID)).thenReturn(constraintDefinitions);
 
         setFetcher(fetcher);
         scrutinize(updateA);
@@ -176,11 +176,11 @@ public class ConflictsWithScrutinizerTest extends ScrutinizerTest {
         List<Snak> snakList2 = Arrays.asList(itemSnak1, itemSnak2);
         SnakGroup snakGroup1 = Datamodel.makeSnakGroup(snakList1);
         SnakGroup snakGroup2 = Datamodel.makeSnakGroup(snakList2);
-        List<SnakGroup> snakGroupList = Arrays.asList(snakGroup1, snakGroup2);
-        List<Statement> statementList = constraintParameterStatementList(entityIdValue, snakGroupList);
+        List<SnakGroup> constraintQualifiers = Arrays.asList(snakGroup1, snakGroup2);
+        List<Statement> constraintDefinitions = constraintParameterStatementList(entityIdValue, constraintQualifiers);
 
         ConstraintFetcher fetcher = mock(ConstraintFetcher.class);
-        when(fetcher.getConstraintsByType(conflictsWithPid, "Q21502838")).thenReturn(statementList);
+        when(fetcher.getConstraintsByType(conflictsWithPid, CONFLICTS_WITH_CONSTRAINT_QID)).thenReturn(constraintDefinitions);
 
         setFetcher(fetcher);
         scrutinize(updateA);

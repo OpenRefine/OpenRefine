@@ -72,11 +72,11 @@ public class InverseConstaintScrutinizerTest extends StatementScrutinizerTest {
         Snak qualifierSnak = Datamodel.makeValueSnak(propertyParameter, inversePropertyID);
         List<Snak> qualifierSnakList = Collections.singletonList(qualifierSnak);
         SnakGroup qualifierSnakGroup = Datamodel.makeSnakGroup(qualifierSnakList);
-        List<SnakGroup> snakGroupList = Collections.singletonList(qualifierSnakGroup);
-        List<Statement> statementList = constraintParameterStatementList(inverseEntityIdValue, snakGroupList);
+        List<SnakGroup> constraintQualifiers = Collections.singletonList(qualifierSnakGroup);
+        List<Statement> constraintDefinitions = constraintParameterStatementList(inverseEntityIdValue, constraintQualifiers);
 
         ConstraintFetcher fetcher = mock(ConstraintFetcher.class);
-        when(fetcher.getConstraintsByType(propertyId, INVERSE_CONSTRAINT_QID)).thenReturn(statementList);
+        when(fetcher.getConstraintsByType(propertyId, INVERSE_CONSTRAINT_QID)).thenReturn(constraintDefinitions);
         setFetcher(fetcher);
         scrutinize(update);
         assertWarningsRaised(InverseConstraintScrutinizer.type);
@@ -92,11 +92,11 @@ public class InverseConstaintScrutinizerTest extends StatementScrutinizerTest {
         Snak qualifierSnak = Datamodel.makeValueSnak(symmetricPropertyID, symmetricEntityIdValue);
         List<Snak> qualifierSnakList = Collections.singletonList(qualifierSnak);
         SnakGroup qualifierSnakGroup = Datamodel.makeSnakGroup(qualifierSnakList);
-        List<SnakGroup> snakGroupList = Collections.singletonList(qualifierSnakGroup);
-        List<Statement> statementList = constraintParameterStatementList(symmetricEntityIdValue, snakGroupList);
+        List<SnakGroup> constraintQualifiers = Collections.singletonList(qualifierSnakGroup);
+        List<Statement> constraintDefinitions = constraintParameterStatementList(symmetricEntityIdValue, constraintQualifiers);
 
         ConstraintFetcher fetcher = mock(ConstraintFetcher.class);
-        when(fetcher.getConstraintsByType(symmetricPropertyID, SYMMETRIC_CONSTRAINT_QID)).thenReturn(statementList);
+        when(fetcher.getConstraintsByType(symmetricPropertyID, SYMMETRIC_CONSTRAINT_QID)).thenReturn(constraintDefinitions);
         setFetcher(fetcher);
         scrutinize(update);
         assertWarningsRaised(InverseConstraintScrutinizer.type);
@@ -112,11 +112,11 @@ public class InverseConstaintScrutinizerTest extends StatementScrutinizerTest {
         Snak qualifierSnak = Datamodel.makeValueSnak(propertyParameter, inverseEntityIdValue);
         List<Snak> qualifierSnakList = Collections.singletonList(qualifierSnak);
         SnakGroup qualifierSnakGroup = Datamodel.makeSnakGroup(qualifierSnakList);
-        List<SnakGroup> snakGroupList = Collections.singletonList(qualifierSnakGroup);
-        List<Statement> statementList = constraintParameterStatementList(inverseEntityIdValue, snakGroupList);
+        List<SnakGroup> constraintQualifiers = Collections.singletonList(qualifierSnakGroup);
+        List<Statement> constraintDefinitions = constraintParameterStatementList(inverseEntityIdValue, constraintQualifiers);
 
         ConstraintFetcher fetcher = mock(ConstraintFetcher.class);
-        when(fetcher.getConstraintsByType(propertyId, INVERSE_CONSTRAINT_QID)).thenReturn(statementList);
+        when(fetcher.getConstraintsByType(propertyId, INVERSE_CONSTRAINT_QID)).thenReturn(constraintDefinitions);
         setFetcher(fetcher);
         scrutinize(update);
         assertNoWarningRaised();
