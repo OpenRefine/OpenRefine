@@ -88,12 +88,12 @@ public class EditInspector {
      * @param scrutinizer
      */
     public void register(EditScrutinizer scrutinizer) {
-        if (!scrutinizer.missingDependencies()) {
+        scrutinizer.setStore(warningStore);
+        scrutinizer.setFetcher(fetcher);
+        scrutinizer.setConstraints(constraints);
+        if (scrutinizer.prepareDependencies()) {
             String key = scrutinizer.getClass().getName();
             scrutinizers.put(key, scrutinizer);
-            scrutinizer.setStore(warningStore);
-            scrutinizer.setFetcher(fetcher);
-            scrutinizer.setConstraints(constraints);
         }
     }
 

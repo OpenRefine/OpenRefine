@@ -43,15 +43,9 @@ import java.util.List;
  */
 public abstract class EditScrutinizer {
 
-    protected boolean missingDependencies;
-
     protected QAWarningStore _store;
     protected ConstraintFetcher _fetcher;
     protected Constraints constraints;
-
-    public EditScrutinizer() {
-        missingDependencies = prepareDependencies();
-    }
 
     public void setStore(QAWarningStore store) {
         _store = store;
@@ -63,13 +57,6 @@ public abstract class EditScrutinizer {
 
     public void setConstraints(Constraints constraints) {
         this.constraints = constraints;
-    }
-
-    /**
-     * Checks if any dependency is missing.
-     */
-    public final boolean missingDependencies() {
-        return missingDependencies;
     }
 
     /**
