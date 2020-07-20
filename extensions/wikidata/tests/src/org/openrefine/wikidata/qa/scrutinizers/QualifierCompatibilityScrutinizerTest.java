@@ -73,14 +73,14 @@ public class QualifierCompatibilityScrutinizerTest extends StatementScrutinizerT
         Statement statement = makeStatement(mainSnak, qualifierSnak);
         ItemUpdate update = new ItemUpdateBuilder(idA).addStatement(statement).build();
 
-        Snak snak1 = Datamodel.makeValueSnak(propertyParameterPID, propertyParameterValue);
-        List<Snak> snakList1 = Collections.singletonList(snak1);
-        SnakGroup snakGroup1 = Datamodel.makeSnakGroup(snakList1);
-        List<SnakGroup> snakGroupList = Collections.singletonList(snakGroup1);
-        List<Statement> statementList = constraintParameterStatementList(allowedQualifierEntity, snakGroupList);
+        Snak constraintQualifierSnak = Datamodel.makeValueSnak(propertyParameterPID, propertyParameterValue);
+        List<Snak> qualifierList = Collections.singletonList(constraintQualifierSnak);
+        SnakGroup qualifierSnakGroup = Datamodel.makeSnakGroup(qualifierList);
+        List<SnakGroup> constraintQualifiers = Collections.singletonList(qualifierSnakGroup);
+        List<Statement> constraintDefinitions = constraintParameterStatementList(allowedQualifierEntity, constraintQualifiers);
 
         ConstraintFetcher fetcher = mock(ConstraintFetcher.class);
-        when(fetcher.getConstraintsByType(allowedPropertyIdValue, ALLOWED_QUALIFIERS_CONSTRAINT_QID)).thenReturn(statementList);
+        when(fetcher.getConstraintsByType(allowedPropertyIdValue, ALLOWED_QUALIFIERS_CONSTRAINT_QID)).thenReturn(constraintDefinitions);
         setFetcher(fetcher);
 
         scrutinize(update);
@@ -94,14 +94,14 @@ public class QualifierCompatibilityScrutinizerTest extends StatementScrutinizerT
         Statement statement = makeStatement(mainSnak);
         ItemUpdate update = new ItemUpdateBuilder(idA).addStatement(statement).build();
 
-        Snak snak1 = Datamodel.makeValueSnak(propertyParameterPID, propertyParameterValue);
-        List<Snak> snakList1 = Collections.singletonList(snak1);
-        SnakGroup snakGroup1 = Datamodel.makeSnakGroup(snakList1);
-        List<SnakGroup> snakGroupList = Collections.singletonList(snakGroup1);
-        List<Statement> statementList = constraintParameterStatementList(mandatoryQualifierEntity, snakGroupList);
+        Snak constraintQualifierSnak = Datamodel.makeValueSnak(propertyParameterPID, propertyParameterValue);
+        List<Snak> qualifierList = Collections.singletonList(constraintQualifierSnak);
+        SnakGroup qualifierSnakGroup = Datamodel.makeSnakGroup(qualifierList);
+        List<SnakGroup> constraintQualifiers = Collections.singletonList(qualifierSnakGroup);
+        List<Statement> constraintDefinitions = constraintParameterStatementList(mandatoryQualifierEntity, constraintQualifiers);
 
         ConstraintFetcher fetcher = mock(ConstraintFetcher.class);
-        when(fetcher.getConstraintsByType(mandatoryPropertyIdValue, MANDATORY_QUALIFIERS_CONSTRAINT_QID)).thenReturn(statementList);
+        when(fetcher.getConstraintsByType(mandatoryPropertyIdValue, MANDATORY_QUALIFIERS_CONSTRAINT_QID)).thenReturn(constraintDefinitions);
         setFetcher(fetcher);
 
         scrutinize(update);
@@ -116,14 +116,14 @@ public class QualifierCompatibilityScrutinizerTest extends StatementScrutinizerT
         Statement statement = makeStatement(mainSnak, qualifierSnak);
         ItemUpdate update = new ItemUpdateBuilder(idA).addStatement(statement).build();
 
-        Snak snak1 = Datamodel.makeValueSnak(propertyParameterPID, propertyParameterValue);
-        List<Snak> snakList1 = Collections.singletonList(snak1);
-        SnakGroup snakGroup1 = Datamodel.makeSnakGroup(snakList1);
-        List<SnakGroup> snakGroupList = Collections.singletonList(snakGroup1);
-        List<Statement> statementList = constraintParameterStatementList(allowedQualifierEntity, snakGroupList);
+        Snak constraintQualifierSnak = Datamodel.makeValueSnak(propertyParameterPID, propertyParameterValue);
+        List<Snak> qualifierList = Collections.singletonList(constraintQualifierSnak);
+        SnakGroup qualifierSnakGroup = Datamodel.makeSnakGroup(qualifierList);
+        List<SnakGroup> constraintQualifiers = Collections.singletonList(qualifierSnakGroup);
+        List<Statement> constraintDefinitions = constraintParameterStatementList(allowedQualifierEntity, constraintQualifiers);
 
         ConstraintFetcher fetcher = mock(ConstraintFetcher.class);
-        when(fetcher.getConstraintsByType(allowedPropertyIdValue, ALLOWED_QUALIFIERS_CONSTRAINT_QID)).thenReturn(statementList);
+        when(fetcher.getConstraintsByType(allowedPropertyIdValue, ALLOWED_QUALIFIERS_CONSTRAINT_QID)).thenReturn(constraintDefinitions);
         setFetcher(fetcher);
 
         scrutinize(update);

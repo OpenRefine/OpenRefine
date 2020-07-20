@@ -205,8 +205,8 @@ public class QuantityScrutinizerTest extends ValueScrutinizerTest{
 
         Snak qualifierSnak = Datamodel.makeValueSnak(itemParameterPID, allowedUnit);
         List<Snak> qualifierSnakList = Collections.singletonList(qualifierSnak);
-        SnakGroup snakGroup1 = Datamodel.makeSnakGroup(qualifierSnakList);
-        List<SnakGroup> constraintQualifiers = Collections.singletonList(snakGroup1);
+        SnakGroup qualifierSnakGroup = Datamodel.makeSnakGroup(qualifierSnakList);
+        List<SnakGroup> constraintQualifiers = Collections.singletonList(qualifierSnakGroup);
         List<Statement> constraintDefinitions = constraintParameterStatementList(allowedUnitEntity, constraintQualifiers);
         ConstraintFetcher fetcher = mock(ConstraintFetcher.class);
         when(fetcher.getConstraintsByType(propertyIdValue, ALLOWED_UNITS_CONSTRAINT_QID)).thenReturn(constraintDefinitions);
