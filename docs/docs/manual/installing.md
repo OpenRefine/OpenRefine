@@ -431,6 +431,7 @@ Note that this file is only read if you use `refine.bat`, not `openrefine.exe`.
 
 </TabItem>
 <TabItem value="mac">
+
 If you have downloaded the `.dmg` package and you start OpenRefine by double-clicking on it:
 
 *   close OpenRefine
@@ -444,6 +445,7 @@ If you have downloaded the `.dmg` package and you start OpenRefine by double-cli
 
 </TabItem>
 <TabItem value="linux">
+
 If you have downloaded the `.tar.gz` package and you start OpenRefine from the command line, add the "-m xxxxM" parameter like this:
 
 `./refine -m 2048m`
