@@ -94,8 +94,14 @@ import TabItem from '@theme/TabItem';
 <TabItem value="win">
 
 1. On Windows 10, click the Windows start menu button, type "env," and look at the search results. Click “Edit the system environment variables.” (If you are using an earlier version of Windows, use the “Search” or “Search programs and files” box in the start menu.)
+
+[A screenshot of the search results for 'env'.](img/env.png "A screenshot of the search results for 'env'.")
+
 2. Click “Environment Variables…” at the bottom of the “Advanced” window that appears.
 3. In the “Environment Variables” dialog that appears, click “New…” and create a variable with the key `JAVA_HOME`. You can set the variable for only your user account, as in the screenshot below, or set it as a system variable - it will work either way.
+
+[A screenshot of 'Environment Variables'.](img/javahome.png "A screenshot of 'Environment Variables'.")
+
 4. Set the `Value` to the folder where you installed JDK, in the format `D:\Programs\OpenJDK`. You can locate this folder with the “Browse directory...” button.
 
 </TabItem>
