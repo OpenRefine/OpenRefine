@@ -1,32 +1,22 @@
 ---
-
 id: starting
-
 title: Starting a project
-
 sidebar_label: Starting a project
-
 ---
-
 
 ## Overview
 
 OpenRefine doesn’t allow you to create a dataset from nothing - you can only start a project by importing in some existing data.
 
- 
-
-No matter where you pull in data from, OpenRefine doesn’t modify your original data source. It copies all the information from your input, creates its own project file, and stores it in your [workspace directory](installing.md#whereisdatastored). 
+No matter where your data comes from, OpenRefine doesn’t modify your original data source. It copies all the information from your input, creates its own project file, and stores it in your [workspace directory](installing.md#set-where-data-is-stored).  
 
 The data and all of your edits are automatically saved inside the project file. When you’re finished modifying the data, you can export it back out into the file format of your choice. 
 
 You can also receive and open other people’s projects, or send them yours, by exporting a project archive and importing it. 
 
-
 ## Create project by importing data
 
 When you start OpenRefine, you’ll be taken to the `Create Project` screen. You’ll see on the left side of the screen that your options are to: 
-
-
 
 *   import data from a file on your computer
 *   import data from a link to the web
@@ -35,8 +25,6 @@ When you start OpenRefine, you’ll be taken to the `Create Project` screen. You
 *   import Sheets from Google Drive. 
 
 From these sources, you can load any of the following file formats:
-
-
 
 *   comma-separated values (CSV) or text-separated values (TSV)
 *   Text files
@@ -52,11 +40,19 @@ From these sources, you can load any of the following file formats:
 
 More formats can be imported by [adding extensions that provide that functionality](https://openrefine.org/download.html). 
 
+If you supply two or more files for one project, the files’ rows will be loaded in order that you specify, and OpenRefine will create a column at the beginning of the dataset with the source URL or file name in it to help you identify where each row came from. If the files have matching columns, the data will load in each column; if not, the successive files will append all of their new columns to the end of the dataset:
+
+|File|Fruit|Quantity|Berry|Berry source|
+|---|---|---|---|---|
+|fruits.csv|Orange|4|
+|fruits.csv|Apple|6|
+|berries.csv||9|Mulberry|Greece|
+|berries.csv||2|Blueberry|Canada|
+
+
 For whichever method you choose, when you click `Next >>` you will be given a preview and a chance to configure the way OpenRefine interprets the file.  
 
-
 ### Methods to import data
-
 
 #### Get data from this computer
 
@@ -64,13 +60,13 @@ Click on `Browse…` and select a file on your hard drive. All files will be sho
 
 If you import an archive file (something with the extension `.zip`, `.tar.gz`, `.tgz`, `.tar.bz2`, `.gz`, or `.bz2`), OpenRefine detects the most common file extension in it and loads all files with that extension into a single project.
 
-
 #### Web Addresses (URLs)
 
-Type or paste the URL to the data file into the field provided. You can add as many fields as you want. OpenRefine will _____(something I haven’t quite figured out yet)______________________. 
+Type or paste the URL to the data file into the field provided. You can add as many fields as you want. OpenRefine will download the file and preview it for you. 
+
+If you supply two or more file URLs, OpenRefine will identify each one and ask you to choose which (or all) to load. 
 
 Do not use this form to load a Google Sheet by its link; use the Google Data form instead. 
-
 
 #### Clipboard
 
@@ -80,24 +76,22 @@ This can be useful if you want to pre-select a specific number of rows from your
 
 This can also be useful if you would like to paste in a list of URLs, which you can use later to fetch the data online and build columns with. 
 
-
 #### Database (SQL)
 
 You may want to pull the latest dataset directly from an online database. This could include an online catalogue, a Wordpress or similar content management system, or a [digital repository or collection management system](https://bits.ashleyblewer.com/blog/2017/08/09/collection-management-system-collection/).
 
 OpenRefine can connect to PostgreSQL, MySQL, MariaDB, and SQLite database systems. It will automatically populate the “Port” field based on which of these you choose, but you can manually edit this if needed.
 
+If you have a downloaded database (`.db`) file, you can supply the path to the file on your computer directly in the “Database” field at the bottom of the form. You can leave the rest of the fields blank.
+
 To import data directly from a database online, you will need to do two things:
-
-
 
 *   Add OpenRefine (running from your computer) to an account authorized to access your database
 *   Set up OpenRefine to access that database using that account 
 
 ![A screenshot of connecting to a database](img/databaseconnect.jpg "A screenshot of connecting to a database.")
 
-
-Log in to your hosting provider. Get the database type (such as MySQL), database name, and the URL (either an IP address, such as `127.0.0.1`, or the domain that uses the database, such as _https://openrefine.org/category/blog.html_). Then look at the accounts authorized for access. You may wish to create a new account just for OpenRefine, or add OpenRefine to an existing account. 
+Log in to your hosting provider. Get the database type (such as MySQL), database name, and the URL (either an IP address, such as `127.0.0.1`, or the domain that uses the database). Then look at the accounts authorized for access. You may wish to create a new account just for OpenRefine, or add OpenRefine to an existing account. 
 
 Each host will have a slightly different method, but generally speaking: look for “accounts with access” to the database you wish to authorize, and within the settings for that account, look for “allowable hosts” or “access hosts.” 
 
