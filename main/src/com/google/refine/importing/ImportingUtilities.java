@@ -407,6 +407,7 @@ public class ImportingUtilities {
                         }
 
                         uploadCount++;
+                        inputStream.close();
                     }
                 }
                 else {
