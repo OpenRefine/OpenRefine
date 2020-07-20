@@ -76,8 +76,9 @@ public class InverseConstraintScrutinizer extends StatementScrutinizer {
 
     @Override
     public boolean prepareDependencies() {
-        if (constraints.getInverseConstraint() == null) return false;
-        if (constraints.getSymmetricConstraint() == null) return false;
+        if (constraints.getInverseConstraint() == null || constraints.getSymmetricConstraint() == null) {
+            return false;
+        }
         inverseConstraintQid = constraints.getInverseConstraint().getQid();
         inversePropertyPid = constraints.getInverseConstraint().getProperty();
         symmetricConstraintQid = constraints.getSymmetricConstraint().getQid();

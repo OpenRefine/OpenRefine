@@ -19,7 +19,9 @@ public class MultiValueScrutinizer extends EditScrutinizer {
     @Override
     public boolean prepareDependencies() {
         MultiValueConstraint multiValueConstraint = constraints.getMultiValueConstraint();
-        if (multiValueConstraint == null) return false;
+        if (multiValueConstraint == null) {
+            return false;
+        }
         multiValueConstraintQid = multiValueConstraint.getQid();
         return multiValueConstraintQid != null;
     }

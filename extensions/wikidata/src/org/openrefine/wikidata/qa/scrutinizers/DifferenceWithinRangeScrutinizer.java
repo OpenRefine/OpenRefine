@@ -41,12 +41,15 @@ public class DifferenceWithinRangeScrutinizer extends EditScrutinizer {
 
     @Override
     public boolean prepareDependencies() {
-        if (constraints.getDifferenceWithinRangeConstraint() == null) return false;
+        if (constraints.getDifferenceWithinRangeConstraint() == null) {
+            return false;
+        }
         differenceWithinRangeConstraintQid = constraints.getDifferenceWithinRangeConstraint().getQid();
         differenceWithinRangeConstraintPid = constraints.getDifferenceWithinRangeConstraint().getProperty();
         minimumValuePid = constraints.getDifferenceWithinRangeConstraint().getMinimumValue();
         maximumValuePid = constraints.getDifferenceWithinRangeConstraint().getMaximumValue();
-        return differenceWithinRangeConstraintQid != null && differenceWithinRangeConstraintPid != null && minimumValuePid != null && maximumValuePid != null;
+        return differenceWithinRangeConstraintQid != null && differenceWithinRangeConstraintPid != null
+                && minimumValuePid != null && maximumValuePid != null;
     }
 
     @Override

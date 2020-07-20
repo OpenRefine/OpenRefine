@@ -42,7 +42,9 @@ public class EntityTypeScrutinizer extends SnakScrutinizer {
     @Override
     public boolean prepareDependencies() {
         AllowedEntityTypesConstraint allowedEntityTypesConstraint = constraints.getAllowedEntityTypesConstraint();
-        if (allowedEntityTypesConstraint == null) return false;
+        if (allowedEntityTypesConstraint == null) {
+            return false;
+        }
         allowedEntityTypesQid = allowedEntityTypesConstraint.getQid();
         wikibaseItemQid = allowedEntityTypesConstraint.getWikibaseItem();
         itemOfPropertyConstraint = allowedEntityTypesConstraint.getItemOfPropertyConstraint();

@@ -28,13 +28,15 @@ public class RestrictedValuesScrutinizer extends SnakScrutinizer {
     public boolean prepareDependencies() {
         OneOfConstraint oneOfConstraint = constraints.getOneOfConstraint();
         NoneOfConstraint noneOfConstraint = constraints.getNoneOfConstraint();
-        if (oneOfConstraint == null) return false;
-        if (noneOfConstraint == null) return false;
+        if (oneOfConstraint == null || noneOfConstraint == null) {
+            return false;
+        }
         allowedValuesConstraintQid = oneOfConstraint.getQid();
         allowedValuesConstraintPid = oneOfConstraint.getItemOfPropertyConstraint();
         disallowedValuesConstraintQid = noneOfConstraint.getQid();
         disallowedValuesConstraintPid = noneOfConstraint.getItemOfPropertyConstraint();
-        return allowedValuesConstraintQid != null && allowedValuesConstraintPid != null && disallowedValuesConstraintQid != null && disallowedValuesConstraintPid != null;
+        return allowedValuesConstraintQid != null && allowedValuesConstraintPid != null
+                && disallowedValuesConstraintQid != null && disallowedValuesConstraintPid != null;
     }
 
     class AllowedValueConstraint {

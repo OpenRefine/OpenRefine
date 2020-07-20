@@ -51,7 +51,9 @@ public class ItemRequiresScrutinizer extends EditScrutinizer {
     @Override
     public boolean prepareDependencies() {
         ItemRequiresStatementConstraint itemRequiresStatementConstraint = constraints.getItemRequiresStatementConstraint();
-        if (itemRequiresStatementConstraint == null) return false;
+        if (itemRequiresStatementConstraint == null) {
+            return false;
+        }
         itemRequiresConstraintQid = itemRequiresStatementConstraint.getQid();
         itemRequiresPropertyPid = itemRequiresStatementConstraint.getProperty();
         itemOfPropertyConstraintPid = itemRequiresStatementConstraint.getItemOfPropertyConstraint();

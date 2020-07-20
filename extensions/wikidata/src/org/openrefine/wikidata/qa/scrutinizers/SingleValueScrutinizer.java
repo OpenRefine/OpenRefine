@@ -54,11 +54,12 @@ public class SingleValueScrutinizer extends EditScrutinizer {
     public boolean prepareDependencies() {
         SingleValueConstraint singleValueConstraint = constraints.getSingleValueConstraint();
         SingleBestValueConstraint singleBestValueConstraint = constraints.getSingleBestValueConstraint();
-        if (singleValueConstraint == null) return false;
-        if (singleBestValueConstraint == null) return false;
+        if (singleValueConstraint == null || singleBestValueConstraint == null) {
+            return false;
+        }
         singleValueConstraintQid = singleValueConstraint.getQid();
         singleBestValueConstraintQid = singleBestValueConstraint.getQid();
-        return false;
+        return singleValueConstraintQid != null && singleBestValueConstraintQid != null;
     }
 
     @Override

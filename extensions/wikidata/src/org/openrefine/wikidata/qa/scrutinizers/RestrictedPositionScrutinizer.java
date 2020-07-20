@@ -49,13 +49,16 @@ public class RestrictedPositionScrutinizer extends StatementScrutinizer {
     @Override
     public boolean prepareDependencies() {
         PropertyScopeConstraint propertyScopeConstraint = constraints.getPropertyScopeConstraint();
-        if (propertyScopeConstraint == null) return false;
+        if (propertyScopeConstraint == null) {
+            return false;
+        }
         scopeConstraintQid = propertyScopeConstraint.getQid();
         scopeConstraintPid = propertyScopeConstraint.getPropertyScope();
         scopeConstraintValueQid = propertyScopeConstraint.getAsMainValue();
         scopeConstraintQualifierQid = propertyScopeConstraint.getAsQualifiers();
         scopeConstraintReferenceQid = propertyScopeConstraint.getAsReferences();
-        return scopeConstraintQid != null && scopeConstraintPid != null && scopeConstraintValueQid != null && scopeConstraintQualifierQid != null && scopeConstraintReferenceQid != null;
+        return scopeConstraintQid != null && scopeConstraintPid != null && scopeConstraintValueQid != null
+                && scopeConstraintQualifierQid != null && scopeConstraintReferenceQid != null;
     }
 
     protected enum SnakPosition {

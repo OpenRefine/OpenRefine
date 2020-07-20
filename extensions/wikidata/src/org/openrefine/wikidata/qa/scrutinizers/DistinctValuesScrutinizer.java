@@ -55,7 +55,9 @@ public class DistinctValuesScrutinizer extends StatementScrutinizer {
     @Override
     public boolean prepareDependencies() {
         DistinctValuesConstraint distinctValuesConstraint = constraints.getDistinctValuesConstraint();
-        if (distinctValuesConstraint == null) return false;
+        if (distinctValuesConstraint == null) {
+            return false;
+        }
         distinctValuesConstraintQid = distinctValuesConstraint.getQid();
         return distinctValuesConstraintQid != null;
     }
