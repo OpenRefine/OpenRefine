@@ -9,7 +9,7 @@ public class ValueTypeConstraint implements Constraint {
     private String relation;
     private String instanceOf;
     private String subclassOf;
-    private String instanceOrSubclassOf;
+    private String instanceOfOrSubclassOf;
     private String klass;
 
     @JsonCreator
@@ -17,13 +17,13 @@ public class ValueTypeConstraint implements Constraint {
                           @JsonProperty("relation") String relation,
                           @JsonProperty("instance_of") String instanceOf,
                           @JsonProperty("subclass_of") String subclassOf,
-                          @JsonProperty("instance_of_or_subclass_of") String instanceOrSubclassOf,
+                          @JsonProperty("instance_of_or_subclass_of") String instanceOfOrSubclassOf,
                           @JsonProperty("class") String klass) {
         this.qid = qid;
         this.relation = relation;
         this.instanceOf = instanceOf;
         this.subclassOf = subclassOf;
-        this.instanceOrSubclassOf = instanceOrSubclassOf;
+        this.instanceOfOrSubclassOf = instanceOfOrSubclassOf;
         this.klass = klass;
     }
 
@@ -43,8 +43,8 @@ public class ValueTypeConstraint implements Constraint {
         return subclassOf;
     }
 
-    public String getInstanceOrSubclassOf() {
-        return instanceOrSubclassOf;
+    public String getInstanceOfOrSubclassOf() {
+        return instanceOfOrSubclassOf;
     }
 
     public String getKlass() {

@@ -23,6 +23,7 @@
  ******************************************************************************/
 package org.openrefine.wikidata.utils;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -54,7 +55,7 @@ public class EntityCache {
         cache = CacheBuilder.newBuilder().maximumSize(4096).expireAfterWrite(1, TimeUnit.HOURS)
                 .build(new CacheLoader<String, EntityDocument>() {
 
-                    public EntityDocument load(String entityId) throws Exception {
+                    public EntityDocument load(String entityId) throws MediaWikiApiErrorException, IOException {
                         EntityDocument doc = EntityCache.this.fetcher.getEntityDocument(entityId);
                         if (doc != null) {
                             return doc;
