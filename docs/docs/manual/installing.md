@@ -158,6 +158,8 @@ It should show the path you set above.
 
 </Tabs>
 
+---
+
 ### Install or upgrade
 
 If you are upgrading an existing OpenRefine  installation, you can delete the old program files and install the new files into the same space. Do not overwrite the files as some obsolete files may be left over unnecessarily. 
@@ -267,6 +269,9 @@ Once you have downloaded the `.tar.gz` file, open a shell, navigate to the folde
 
 </Tabs>
 
+---
+
+
 ### Set where data is stored
 
 OpenRefine stores data in two places: program files in the program directory, wherever it is you’ve installed it; and project files in what we call the “workspace directory.” You can access this folder easily from OpenRefine by going to the [home screen](running.md#the-home-screen) (at [http://127.0.0.1:3333/](http://127.0.0.1:3333/)) and clicking "Browse workspace directory."
@@ -331,6 +336,9 @@ You can change this when you run OpenRefine from the terminal, by pointing to th
 
 </Tabs>
 
+---
+
+
 ### Logs
 
 OpenRefine does not currently output an error log, but because the OpenRefine console window is always open while OpenRefine runs in your browser, you can copy information from the console if an error occurs. 
@@ -356,6 +364,9 @@ You can access OpenRefine server logs from the terminal on Mac:
 </TabItem>
 
 </Tabs>
+
+---
+
 
 ## Increasing memory allocation
 
@@ -448,6 +459,9 @@ Make sure it is not commented out (that is, that the line doesn't start with a '
 </TabItem>
 
 </Tabs>
+
+---
+
 
 ## Installing extensions
 
