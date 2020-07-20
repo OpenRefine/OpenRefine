@@ -33,15 +33,15 @@ import org.wikidata.wdtk.datamodel.implementation.StatementImpl;
 import org.wikidata.wdtk.datamodel.interfaces.ItemIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.PropertyIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.Snak;
-import org.wikidata.wdtk.datamodel.interfaces.SnakGroup;
 import org.wikidata.wdtk.datamodel.interfaces.Statement;
 import org.wikidata.wdtk.datamodel.interfaces.Value;
 
-import java.util.Collections;
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+import static org.openrefine.wikidata.qa.scrutinizers.SingleValueScrutinizer.SINGLE_VALUE_CONSTRAINT_QID;
 
 public class SingleValueScrutinizerTest extends ScrutinizerTest {
 
@@ -49,9 +49,7 @@ public class SingleValueScrutinizerTest extends ScrutinizerTest {
     public static Value value1 = Datamodel.makeWikidataItemIdValue("Q6581072");
     public static Value value2 = Datamodel.makeWikidataItemIdValue("Q6581097");
 
-    public static ItemIdValue entityIdValue = Datamodel.makeWikidataItemIdValue("Q19474404");
-    public static PropertyIdValue constraintException = Datamodel.makeWikidataPropertyIdValue("P2303");
-    public static Value exceptionValue = Datamodel.makeWikidataItemIdValue("Q7409772");
+    public static ItemIdValue entityIdValue = Datamodel.makeWikidataItemIdValue(SINGLE_VALUE_CONSTRAINT_QID);
 
     @Override
     public EditScrutinizer getScrutinizer() {
@@ -67,14 +65,10 @@ public class SingleValueScrutinizerTest extends ScrutinizerTest {
         Statement statement2 = new StatementImpl("P21", snak2, idA);
         ItemUpdate update = new ItemUpdateBuilder(idA).addStatement(statement1).addStatement(statement2).build();
 
-        Snak snak = Datamodel.makeValueSnak(constraintException, exceptionValue);
-        List<Snak> snakList = Collections.singletonList(snak);
-        SnakGroup snakGroup = Datamodel.makeSnakGroup(snakList);
-        List<SnakGroup> snakGroupList = Collections.singletonList(snakGroup);
-        List<Statement> statementList = constraintParameterStatementList(entityIdValue, snakGroupList);
+        List<Statement> statementList = constraintParameterStatementList(entityIdValue, new ArrayList<>());
 
         ConstraintFetcher fetcher = mock(ConstraintFetcher.class);
-        when(fetcher.getConstraintsByType(propertyIdValue, "Q19474404")).thenReturn(statementList);
+        when(fetcher.getConstraintsByType(propertyIdValue, SINGLE_VALUE_CONSTRAINT_QID)).thenReturn(statementList);
         setFetcher(fetcher);
         scrutinize(update);
         assertWarningsRaised(SingleValueScrutinizer.type);
@@ -87,14 +81,10 @@ public class SingleValueScrutinizerTest extends ScrutinizerTest {
         Statement statement1 = new StatementImpl("P21", snak1, idA);
         ItemUpdate updateA = new ItemUpdateBuilder(idA).addStatement(statement1).build();
 
-        Snak snak = Datamodel.makeValueSnak(constraintException, exceptionValue);
-        List<Snak> snakList = Collections.singletonList(snak);
-        SnakGroup snakGroup = Datamodel.makeSnakGroup(snakList);
-        List<SnakGroup> snakGroupList = Collections.singletonList(snakGroup);
-        List<Statement> statementList = constraintParameterStatementList(entityIdValue, snakGroupList);
+        List<Statement> statementList = constraintParameterStatementList(entityIdValue, new ArrayList<>());
 
         ConstraintFetcher fetcher = mock(ConstraintFetcher.class);
-        when(fetcher.getConstraintsByType(propertyIdValue, "Q19474404")).thenReturn(statementList);
+        when(fetcher.getConstraintsByType(propertyIdValue, SINGLE_VALUE_CONSTRAINT_QID)).thenReturn(statementList);
         setFetcher(fetcher);
         scrutinize(updateA);
         assertNoWarningRaised();

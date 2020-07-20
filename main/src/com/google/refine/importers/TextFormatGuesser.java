@@ -26,66 +26,92 @@
  ******************************************************************************/
 package com.google.refine.importers;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.Reader;
 import java.io.UnsupportedEncodingException;
+import java.util.Arrays;
 
+import org.apache.commons.io.input.BoundedInputStream;
+import org.apache.commons.lang.StringUtils;
+
+import com.google.common.base.CharMatcher;
 import com.google.refine.importing.FormatGuesser;
 
 public class TextFormatGuesser implements FormatGuesser {
 
+    private static final int XML_BRACKETS_THRESHOLD = 5;
+    private static final int JSON_BRACES_THRESHOLD = 5;
+    private static final long CONTROLS_THRESHOLD = 10;
+
     @Override
     public String guess(File file, String encoding, String seedFormat) {
-        try {
-            InputStream is = new FileInputStream(file);
-            Reader reader = encoding != null ? new InputStreamReader(is, encoding) : new InputStreamReader(is);
+        try(InputStream fis = new FileInputStream(file)) {
+            if (isCompressed(file)) {
+                return "binary";
+            };
 
-            try {
-                int totalBytes = 0;
-                int openBraces = 0;
+            InputStream bis = new BoundedInputStream(fis, 64 * 1024); // TODO: This seems like a lot
+            try (BufferedReader reader = new BufferedReader(
+                    encoding != null ? new InputStreamReader(bis, encoding) : new InputStreamReader(bis))) {
+                int totalChars = 0;
+                long openBraces = 0;
                 int closeBraces = 0;
                 int openAngleBrackets = 0;
                 int closeAngleBrackets = 0;
                 int wikiTableBegin = 0;
+                int wikiTableEnd = 0;
                 int wikiTableRow = 0;
                 int trailingPeriods = 0;
-                
+                int controls = 0;
+
                 char firstChar = ' ';
                 boolean foundFirstChar = false;
-                
-                char[] chars = new char[4096];
-                int c;
-                while (totalBytes < 64 * 1024 && (c = reader.read(chars)) > 0) {
-                    String chunk = String.valueOf(chars, 0, c);
-                    openBraces += countSubstrings(chunk, "{");
-                    closeBraces += countSubstrings(chunk, "}");
-                    openAngleBrackets += countSubstrings(chunk, "<");
-                    closeAngleBrackets += countSubstrings(chunk, ">");
-                    wikiTableBegin += countSubstrings(chunk, "{|");
-                    wikiTableRow += countSubstrings(chunk, "|-");
-                    trailingPeriods += countLineSuffix(chunk, ".");
-                    
+
+                String line;
+                while ((line = reader.readLine()) != null && controls < CONTROLS_THRESHOLD) {
+                    line = line.trim();
+                    controls += CharMatcher.javaIsoControl().countIn(line);
+                    openBraces += line.chars().filter(ch -> ch == '{').count();
+                    closeBraces += StringUtils.countMatches(line, "}");
+                    openAngleBrackets += StringUtils.countMatches(line, "<");
+                    closeAngleBrackets += StringUtils.countMatches(line, ">");
+                    if (line.startsWith("{|")) {
+                        wikiTableBegin++;
+                    } else if (line.startsWith("|}")) {
+                        wikiTableEnd++;
+                    } else if (line.startsWith("|-")) {
+                        wikiTableRow++;
+                    }
+                    if (line.endsWith(".")) {
+                        trailingPeriods++;
+                    }
+
                     if (!foundFirstChar) {
-                        chunk = chunk.trim();
-                        if (chunk.length() > 0) {
-                            firstChar = chunk.charAt(0);
+                        if (line.length() > 0) {
+                            firstChar = line.charAt(0);
                             foundFirstChar = true;
                         }
                     }
-                    totalBytes += c;
+                    totalChars += line.length();
                 }
-                
+
+                // TODO: Make thresholds proportional to the amount of data read?
+                if (controls >= CONTROLS_THRESHOLD) {
+                    return "binary";
+                }
+
                 if (foundFirstChar) {
-                    if (wikiTableBegin >= 1 && wikiTableRow >= 2) {
+                    if (wikiTableBegin >= 1 && (wikiTableBegin - wikiTableEnd <= 1) && wikiTableRow >= 2) {
                         return "text/wiki";
                     } if ((firstChar == '{' || firstChar == '[') &&
-                        openBraces >= 5 && closeBraces >= 5) {
+                        openBraces >= JSON_BRACES_THRESHOLD && closeBraces >= JSON_BRACES_THRESHOLD) {
                         return "text/json";
-                    } else if (openAngleBrackets >= 5 && closeAngleBrackets >= 5) {
+                    } else if (openAngleBrackets >= XML_BRACKETS_THRESHOLD
+                            && closeAngleBrackets >= XML_BRACKETS_THRESHOLD) {
                         if (trailingPeriods > 0) {
                             return "text/rdf/n3";
                         } else if (firstChar == '<') {
@@ -94,9 +120,6 @@ public class TextFormatGuesser implements FormatGuesser {
                     }
                 }
                 return "text/line-based";
-            } finally {
-                reader.close();
-                is.close();
             }
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
@@ -105,46 +128,20 @@ public class TextFormatGuesser implements FormatGuesser {
         }
         return null;
     }
-    
-    static public int countSubstrings(String s, String sub) {
-        int count = 0;
-        int from = 0;
-        while (from < s.length()) {
-            int i = s.indexOf(sub, from);
-            if (i < 0) {
-                break;
-            } else {
-                from = i + sub.length();
-                count++;
+
+    private boolean isCompressed(File file) throws IOException {
+        // Check for common compressed file types to protect ourselves from binary data
+        try(InputStream is = new FileInputStream(file)) {
+            byte[] magic = new byte[4];
+            int count = is.read(magic);
+            if (count == 4 && Arrays.equals(magic, new byte[] {0x50,0x4B, 0x03, 0x04}) || // zip
+                    Arrays.equals(magic, new byte[] {0x50,0x4B, 0x07, 0x08}) ||
+                    (magic[0] == 0x1F && magic[1] == (byte)0x8B) // gzip
+                    ) {
+                return true;
             }
         }
-        return count;
-    }
-    
-    static public int countLineSuffix(String s, String suffix) {
-        int count = 0;
-        int from = 0;
-        while (from < s.length()) {
-            int lineEnd = s.indexOf('\n', from);
-            if (lineEnd < 0) {
-                break;
-            } else {
-                int i = lineEnd - 1;
-                while (i >= from + suffix.length() - 1) {
-                    if (Character.isWhitespace(s.charAt(i))) {
-                        i--;
-                    } else {
-                        String suffix2 = s.subSequence(i - suffix.length() + 1, i + 1).toString();
-                        if (suffix2.equals(suffix)) {
-                            count++;
-                        }
-                        break;
-                    }
-                }
-                from = lineEnd + 1;
-            }
-        }
-        return count;
+        return false;
     }
 
 }

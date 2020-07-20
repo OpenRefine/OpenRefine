@@ -135,7 +135,7 @@
     "core-index-parser/discard-initial": "Discard initial",
     "core-index-parser/rows-data": "row(s) of data",
     "core-index-parser/load-at-most": "Load at most",
-    "core-index-parser/parse-cell": "Parse cell text into<br/>numbers, dates, …",
+    "core-index-parser/parse-cell": "Attempt to parse cell<br>text into numbers",
     "core-index-parser/store-blank": "Store blank rows",
     "core-index-parser/store-nulls": "Store blank cells as nulls",
     "core-index-parser/blank-spanning-cells": "Pad cells spanning over multiple rows or columns with nulls",

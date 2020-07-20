@@ -36,6 +36,7 @@ package com.google.refine.importers;
 
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import static org.testng.Assert.assertTrue;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -49,6 +50,7 @@ import java.util.Date;
 
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -134,6 +136,9 @@ public class ExcelImporterTests extends ImporterTest {
         Assert.assertEquals((String)project.rows.get(1).getCellValue(4)," Row 1 Col 5");
         Assert.assertNull((String)project.rows.get(1).getCellValue(5));
 
+        assertTrue(ParsingUtilities.isDate(project.rows.get(1).getCellValue(2))); // Calendar
+        assertTrue(ParsingUtilities.isDate(project.rows.get(1).getCellValue(3))); // Date
+
         verify(options, times(1)).get("ignoreLines");
         verify(options, times(1)).get("headerLines");
         verify(options, times(1)).get("skipDataLines");
@@ -198,7 +203,10 @@ public class ExcelImporterTests extends ImporterTest {
 
         Assert.assertFalse((Boolean)project.rows.get(1).getCellValue(1));
         Assert.assertTrue((Boolean)project.rows.get(2).getCellValue(1));
-        
+
+        assertTrue(ParsingUtilities.isDate(project.rows.get(1).getCellValue(2))); // Calendar
+        assertTrue(ParsingUtilities.isDate(project.rows.get(1).getCellValue(3))); // Date
+
         Assert.assertEquals((String)project.rows.get(1).getCellValue(4)," Row 1 Col 5");
         Assert.assertNull((String)project.rows.get(1).getCellValue(5));
 
@@ -258,6 +266,9 @@ public class ExcelImporterTests extends ImporterTest {
         Assert.assertFalse((Boolean)project.rows.get(1).getCellValue(1));
         Assert.assertTrue((Boolean)project.rows.get(2).getCellValue(1));
 
+        assertTrue(ParsingUtilities.isDate(project.rows.get(1).getCellValue(2))); // Calendar
+        assertTrue(ParsingUtilities.isDate(project.rows.get(1).getCellValue(3))); // Date
+
         Assert.assertEquals((String)project.rows.get(1).getCellValue(4)," Row 1 Col 5");
         Assert.assertNull((String)project.rows.get(1).getCellValue(5));
 
@@ -302,9 +313,11 @@ public class ExcelImporterTests extends ImporterTest {
         Assert.assertEquals(((Number)project.rows.get(ROWS).getCellValue(0)).doubleValue(),0.0, EPSILON);
         Assert.assertEquals(((Number)project.rows.get(ROWS).getCellValue(COLUMNS)).doubleValue(),1.0, EPSILON);
 
-
         Assert.assertFalse((Boolean)project.rows.get(1).getCellValue(1));
         Assert.assertTrue((Boolean)project.rows.get(2).getCellValue(1));
+
+        assertTrue(ParsingUtilities.isDate(project.rows.get(1).getCellValue(2))); // Calendar
+        assertTrue(ParsingUtilities.isDate(project.rows.get(1).getCellValue(3))); // Date
 
         Assert.assertEquals((String)project.rows.get(1).getCellValue(4)," Row 1 Col 5");
         Assert.assertNull((String)project.rows.get(1).getCellValue(5));
@@ -321,37 +334,15 @@ public class ExcelImporterTests extends ImporterTest {
 
         final Workbook wb = xml ? new XSSFWorkbook() : new HSSFWorkbook();
 
+        CellStyle dateStyle = wb.createCellStyle();
+        short dateFormat = wb.createDataFormat().getFormat("yyyy-MM-dd");
+        dateStyle.setDataFormat(dateFormat);
+
         for (int s = 0; s < SHEETS; s++) {
             Sheet sheet = wb.createSheet("Test Sheet " + s);
-
             for (int row = 0; row < ROWS; row++) {
-                int col = 0;
-                Row r = sheet.createRow(row);
-                Cell c;
-
-                c = r.createCell(col++);
-                c.setCellValue(row * 1.1); // double
-
-                c = r.createCell(col++);
-                c.setCellValue(row % 2 == 0); // boolean
-
-                c = r.createCell(col++);
-                c.setCellValue(Calendar.getInstance()); // calendar
-
-                c = r.createCell(col++);
-                c.setCellValue(new Date()); // date
-
-                c = r.createCell(col++);
-                c.setCellValue(" Row " + row + " Col " + col); // string
-
-                c = r.createCell(col++);
-                c.setCellValue(""); // string
-
-                //            HSSFHyperlink hl = new HSSFHyperlink(HSSFHyperlink.LINK_URL);
-                //            hl.setLabel(cellData.text);
-                //            hl.setAddress(cellData.link);
+                createDataRow(sheet, row, dateStyle, 0);
             }
-
         }
 
         File file = null;
@@ -367,46 +358,21 @@ public class ExcelImporterTests extends ImporterTest {
             return null;
         }
         return file;
-		
     }
- 
+
    private static File createSheetsWithDifferentColumns(boolean xml) {
 
         final Workbook wb = xml ? new XSSFWorkbook() : new HSSFWorkbook();
 
+        CellStyle dateStyle = wb.createCellStyle();
+        short dateFormat = wb.createDataFormat().getFormat("yyyy-MM-dd");
+        dateStyle.setDataFormat(dateFormat);
+
         for (int s = 0; s < SHEETS; s++) {
             Sheet sheet = wb.createSheet("Test Sheet " + s);
-
             for (int row = 0; row < ROWS; row++) {
-                int col = 0;
-                Row r = sheet.createRow(row);
-                Cell c;
-
-                c = r.createCell(col++);
-                c.setCellValue(row * 1.1); // double
-
-                c = r.createCell(col++);
-                c.setCellValue(row % 2 == 0); // boolean
-
-                c = r.createCell(col++);
-                c.setCellValue(Calendar.getInstance()); // calendar
-
-                c = r.createCell(col++);
-                c.setCellValue(new Date()); // date
-
-                c = r.createCell(col++);
-                c.setCellValue(" Row " + row + " Col " + col); // string
-
-                c = r.createCell(col++);
-                c.setCellValue(""); // string
-
-                // Create extra columns to ensure sheet(i+1) has more columns than sheet(i)
-                for(int i = 0; i < s; i++){
-                    c = r.createCell(col++);
-                    c.setCellValue(i + s);
-                }
+                createDataRow(sheet, row, dateStyle, s);
             }
-
         }
 
         File file = null;
@@ -423,5 +389,42 @@ public class ExcelImporterTests extends ImporterTest {
         }
         return file;
     }
+
+private static void createDataRow(Sheet sheet, int row, CellStyle dateCellStyle, int extra_columns) {
+    int col = 0;
+    Row r = sheet.createRow(row);
+    Cell c;
+
+
+    c = r.createCell(col++);
+    c.setCellValue(row * 1.1); // double
+
+    c = r.createCell(col++);
+    c.setCellValue(row % 2 == 0); // boolean
+
+    c = r.createCell(col++);
+    c.setCellValue(Calendar.getInstance()); // calendar
+    c.setCellStyle(dateCellStyle);
+
+    c = r.createCell(col++);
+    c.setCellValue(new Date()); // date
+    c.setCellStyle(dateCellStyle);
+
+    c = r.createCell(col++);
+    c.setCellValue(" Row " + row + " Col " + col); // string
+
+    c = r.createCell(col++);
+    c.setCellValue(""); // string
+
+//    HSSFHyperlink hl = new HSSFHyperlink(HSSFHyperlink.LINK_URL);
+//    hl.setLabel(cellData.text);
+//    hl.setAddress(cellData.link);
+
+    // Create extra columns to ensure sheet(i+1) has more columns than sheet(i)
+    for(int i = 0; i < extra_columns; i++){
+        c = r.createCell(col++);
+        c.setCellValue(i + extra_columns);
+    }
+}
 
 }

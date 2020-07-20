@@ -28,6 +28,12 @@ import org.openrefine.wikidata.qa.QAWarning;
 import org.openrefine.wikidata.qa.QAWarning.Severity;
 import org.openrefine.wikidata.qa.QAWarningStore;
 import org.openrefine.wikidata.updates.ItemUpdate;
+import org.wikidata.wdtk.datamodel.interfaces.Snak;
+import org.wikidata.wdtk.datamodel.interfaces.SnakGroup;
+import org.wikidata.wdtk.datamodel.interfaces.Value;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Inspects an edit batch and emits warnings.
@@ -124,5 +130,25 @@ public abstract class EditScrutinizer {
      */
     protected void critical(String type) {
         addIssue(type, null, QAWarning.Severity.CRITICAL, 1);
+    }
+
+    /**
+     * Returns the values of a given property in qualifiers
+     *
+     * @param groups
+     *            the qualifiers
+     * @param pid
+     *            the property to filter on
+     * @return
+     */
+    protected List<Value> findValues(List<SnakGroup> groups, String pid) {
+        List<Value> results = new ArrayList<>();
+        for (SnakGroup group : groups) {
+            if (group.getProperty().getId().equals(pid)) {
+                for (Snak snak : group.getSnaks())
+                    results.add(snak.getValue());
+            }
+        }
+        return results;
     }
 }

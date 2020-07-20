@@ -60,7 +60,7 @@ public class FormatScrutinizer extends SnakScrutinizer {
         FormatConstraint(Statement statement) {
             List<SnakGroup> constraint = statement.getClaim().getQualifiers();
             if (constraint != null) {
-                List<Value> regexes = _fetcher.findValues(constraint, FORMAT_REGEX_PID);
+                List<Value> regexes = findValues(constraint, FORMAT_REGEX_PID);
                 if (!regexes.isEmpty()) {
                     regularExpressionFormat = ((StringValue) regexes.get(0)).getString();
                 }

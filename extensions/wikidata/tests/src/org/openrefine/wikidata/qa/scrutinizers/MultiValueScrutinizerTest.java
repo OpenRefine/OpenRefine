@@ -10,24 +10,21 @@ import org.wikidata.wdtk.datamodel.implementation.StatementImpl;
 import org.wikidata.wdtk.datamodel.interfaces.ItemIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.PropertyIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.Snak;
-import org.wikidata.wdtk.datamodel.interfaces.SnakGroup;
 import org.wikidata.wdtk.datamodel.interfaces.Statement;
 import org.wikidata.wdtk.datamodel.interfaces.Value;
 
-import java.util.Collections;
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+import static org.openrefine.wikidata.qa.scrutinizers.MultiValueScrutinizer.MULTI_VALUE_CONSTRAINT_QID;
 
 public class MultiValueScrutinizerTest extends ScrutinizerTest {
 
     public static PropertyIdValue propertyIdValue = Datamodel.makeWikidataPropertyIdValue("P1963");
-    public static Value valueSnak1 = Datamodel.makeWikidataItemIdValue("Q5");
-    public static Value valueSnak2 = Datamodel.makeWikidataItemIdValue("Q4");
-    public static ItemIdValue entityIdValue = Datamodel.makeWikidataItemIdValue("Q21510857");
-    public static PropertyIdValue constraintParameter = Datamodel.makeWikidataPropertyIdValue("P2316");
-    public static Value constraintStatus = Datamodel.makeWikidataItemIdValue("Q62026391");
+    public static Value valueSnak = Datamodel.makeWikidataItemIdValue("Q5");
+    public static ItemIdValue entityIdValue = Datamodel.makeWikidataItemIdValue(MULTI_VALUE_CONSTRAINT_QID);
 
     @Override
     public EditScrutinizer getScrutinizer() {
@@ -45,13 +42,9 @@ public class MultiValueScrutinizerTest extends ScrutinizerTest {
         ItemUpdate update = new ItemUpdateBuilder(idA).addStatement(TestingData.generateStatement(idA, idB))
                 .addStatement(TestingData.generateStatement(idA, idB)).addStatement(statement1).addStatement(statement2).build();
 
-        Snak snak = Datamodel.makeValueSnak(constraintParameter, constraintStatus);
-        List<Snak> snakList1 = Collections.singletonList(snak);
-        SnakGroup snakGroup = Datamodel.makeSnakGroup(snakList1);
-        List<SnakGroup> snakGroupList = Collections.singletonList(snakGroup);
-        List<Statement> statementList = constraintParameterStatementList(entityIdValue, snakGroupList);
+        List<Statement> statementList = constraintParameterStatementList(entityIdValue, new ArrayList<>());
         ConstraintFetcher fetcher = mock(ConstraintFetcher.class);
-        when(fetcher.getConstraintsByType(propertyIdValue, "Q21510857")).thenReturn(statementList);
+        when(fetcher.getConstraintsByType(propertyIdValue, MULTI_VALUE_CONSTRAINT_QID)).thenReturn(statementList);
         setFetcher(fetcher);
 
         scrutinize(update);
@@ -62,18 +55,14 @@ public class MultiValueScrutinizerTest extends ScrutinizerTest {
     public void testNewItemTrigger() {
         ItemIdValue idA = TestingData.newIdA;
         ItemIdValue idB = TestingData.newIdB;
-        Snak mainSnakValue = Datamodel.makeValueSnak(propertyIdValue, valueSnak1);
+        Snak mainSnakValue = Datamodel.makeValueSnak(propertyIdValue, valueSnak);
         Statement statement = new StatementImpl("P1963", mainSnakValue, idA);
         ItemUpdate updateA = new ItemUpdateBuilder(idA).addStatement(TestingData.generateStatement(idA, idB)).addStatement(statement).build();
         ItemUpdate updateB = new ItemUpdateBuilder(idB).addStatement(TestingData.generateStatement(idB, idB)).build();
 
-        Snak snak = Datamodel.makeValueSnak(constraintParameter, constraintStatus);
-        List<Snak> snakList1 = Collections.singletonList(snak);
-        SnakGroup snakGroup = Datamodel.makeSnakGroup(snakList1);
-        List<SnakGroup> snakGroupList = Collections.singletonList(snakGroup);
-        List<Statement> statementList = constraintParameterStatementList(entityIdValue, snakGroupList);
+        List<Statement> statementList = constraintParameterStatementList(entityIdValue, new ArrayList<>());
         ConstraintFetcher fetcher = mock(ConstraintFetcher.class);
-        when(fetcher.getConstraintsByType(propertyIdValue, "Q21510857")).thenReturn(statementList);
+        when(fetcher.getConstraintsByType(propertyIdValue, MULTI_VALUE_CONSTRAINT_QID)).thenReturn(statementList);
         setFetcher(fetcher);
 
         scrutinize(updateA, updateB);
@@ -84,18 +73,14 @@ public class MultiValueScrutinizerTest extends ScrutinizerTest {
     public void testExistingItemTrigger() {
         ItemIdValue idA = TestingData.existingId;
         ItemIdValue idB = TestingData.matchedId;
-        Snak mainSnakValue = Datamodel.makeValueSnak(propertyIdValue, valueSnak1);
+        Snak mainSnakValue = Datamodel.makeValueSnak(propertyIdValue, valueSnak);
         Statement statement = new StatementImpl("P1963", mainSnakValue, idA);
         ItemUpdate updateA = new ItemUpdateBuilder(idA).addStatement(TestingData.generateStatement(idA, idB)).addStatement(statement).build();
         ItemUpdate updateB = new ItemUpdateBuilder(idB).addStatement(TestingData.generateStatement(idB, idB)).build();
 
-        Snak snak = Datamodel.makeValueSnak(constraintParameter, constraintStatus);
-        List<Snak> snakList1 = Collections.singletonList(snak);
-        SnakGroup snakGroup = Datamodel.makeSnakGroup(snakList1);
-        List<SnakGroup> snakGroupList = Collections.singletonList(snakGroup);
-        List<Statement> statementList = constraintParameterStatementList(entityIdValue, snakGroupList);
+        List<Statement> statementList = constraintParameterStatementList(entityIdValue, new ArrayList<>());
         ConstraintFetcher fetcher = mock(ConstraintFetcher.class);
-        when(fetcher.getConstraintsByType(propertyIdValue, "Q21510857")).thenReturn(statementList);
+        when(fetcher.getConstraintsByType(propertyIdValue, MULTI_VALUE_CONSTRAINT_QID)).thenReturn(statementList);
         setFetcher(fetcher);
 
         scrutinize(updateA, updateB);

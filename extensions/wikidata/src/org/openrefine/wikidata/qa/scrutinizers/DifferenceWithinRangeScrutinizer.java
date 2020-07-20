@@ -23,9 +23,9 @@ public class DifferenceWithinRangeScrutinizer extends EditScrutinizer {
         DifferenceWithinRangeConstraint(Statement statement) {
             List<SnakGroup> specs = statement.getClaim().getQualifiers();
             if (specs != null) {
-                List<Value> lowerValueProperty = _fetcher.findValues(specs, DIFFERENCE_WITHIN_RANGE_CONSTRAINT_PID);
-                List<Value> minValue = _fetcher.findValues(specs, MINIMUM_VALUE_PID);
-                List<Value> maxValue = _fetcher.findValues(specs, MAXIMUM_VALUE_PID);
+                List<Value> lowerValueProperty = findValues(specs, DIFFERENCE_WITHIN_RANGE_CONSTRAINT_PID);
+                List<Value> minValue = findValues(specs, MINIMUM_VALUE_PID);
+                List<Value> maxValue = findValues(specs, MAXIMUM_VALUE_PID);
                 if (!lowerValueProperty.isEmpty()) {
                     lowerPropertyIdValue = (PropertyIdValue) lowerValueProperty.get(0);
                 }

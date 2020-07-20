@@ -88,7 +88,7 @@ jobs:
       if: github.repository == 'OpenRefine/OpenRefine'
       uses: dev-drprasad/delete-older-releases@v0.1.0
       with:
-        repo: OpenRefine/OpenRefine-nightly-releases
+        repo: OpenRefine/OpenRefine-snapshot-releases
         # Specifies number of latest releases (sorted by created_at) to keep. Pass 0 if you want to delete all releases
         keep_latest: 10
         # Specifies whether to delete tags associated to older releases or not.

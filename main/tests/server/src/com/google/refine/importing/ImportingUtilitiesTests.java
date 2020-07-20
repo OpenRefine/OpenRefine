@@ -28,8 +28,20 @@ package com.google.refine.importing;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
 import java.util.LinkedList;
+import java.util.Properties;
 
+import okhttp3.HttpUrl;
+import okhttp3.mockwebserver.MockResponse;
+import okhttp3.mockwebserver.MockWebServer;
+import org.apache.http.HttpEntity;
+import org.apache.http.entity.ContentType;
+import org.apache.http.entity.mime.MultipartEntityBuilder;
+import org.apache.http.entity.mime.content.StringBody;
+import org.mockito.Mockito;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -44,6 +56,11 @@ import com.google.refine.importing.ImportingUtilities;
 import com.google.refine.util.JSONUtilities;
 import com.google.refine.util.ParsingUtilities;
 import com.google.refine.util.TestUtils;
+
+import javax.servlet.ServletInputStream;
+import javax.servlet.http.HttpServletRequest;
+
+import static org.mockito.Mockito.when;
 
 public class ImportingUtilitiesTests extends ImporterTest {
 
@@ -81,5 +98,77 @@ public class ImportingUtilitiesTests extends ImporterTest {
         
         JSONUtilities.safePut(options, "recordPath", path);
         return options;
+    }
+
+    @Test
+    public void urlImporting() throws IOException {
+
+        String RESPONSE_BODY = "{code:401,message:Unauthorised}";
+        String MESSAGE = String.format("HTTP error %d : %s | %s", 401,
+                "Client Error", RESPONSE_BODY);
+
+        MockWebServer server = new MockWebServer();
+        MockResponse mockResponse = new MockResponse();
+        mockResponse.setBody(RESPONSE_BODY);
+        mockResponse.setResponseCode(401);
+        server.start();
+        server.enqueue(mockResponse);
+        HttpUrl url = server.url("/random");
+
+        MultipartEntityBuilder builder = MultipartEntityBuilder.create();
+        StringBody stringBody = new StringBody(url.toString(), ContentType.MULTIPART_FORM_DATA);
+        builder = builder.addPart("download", stringBody);
+        HttpEntity entity = builder.build();
+
+        ByteArrayOutputStream os = new ByteArrayOutputStream();
+        entity.writeTo(os);
+        ByteArrayInputStream is = new ByteArrayInputStream(os.toByteArray());
+
+        HttpServletRequest req = Mockito.mock(HttpServletRequest.class);
+        when(req.getContentType()).thenReturn(entity.getContentType().getValue());
+        when(req.getParameter("download")).thenReturn(url.toString());
+        when(req.getMethod()).thenReturn("POST");
+        when(req.getContentLength()).thenReturn((int) entity.getContentLength());
+        when(req.getInputStream()).thenReturn(new MockServletInputStream(is));
+
+
+        ImportingJob job = ImportingManager.createJob();
+        Properties parameters = ParsingUtilities.parseUrlParameters(req);
+        ObjectNode retrievalRecord = ParsingUtilities.mapper.createObjectNode();
+        ObjectNode progress = ParsingUtilities.mapper.createObjectNode();
+        try {
+            ImportingUtilities.retrieveContentFromPostRequest(req, parameters, job.getRawDataDir(), retrievalRecord, new ImportingUtilities.Progress() {
+                @Override
+                public void setProgress(String message, int percent) {
+                    if (message != null) {
+                        JSONUtilities.safePut(progress, "message", message);
+                    }
+                    JSONUtilities.safePut(progress, "percent", percent);
+                }
+
+                @Override
+                public boolean isCanceled() {
+                    return job.canceled;
+                }
+            });
+            Assert.fail("No Exception was thrown");
+        } catch (Exception exception) {
+            Assert.assertEquals(MESSAGE, exception.getMessage());
+        }
+    }
+
+    public static class MockServletInputStream extends ServletInputStream {
+
+        private final InputStream delegate;
+
+        public MockServletInputStream(InputStream delegate) {
+            this.delegate = delegate;
+        }
+
+        @Override
+        public int read() throws IOException {
+            return delegate.read();
+        }
+
     }
 }

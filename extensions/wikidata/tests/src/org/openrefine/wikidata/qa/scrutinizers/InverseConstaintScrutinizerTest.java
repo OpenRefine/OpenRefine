@@ -41,6 +41,9 @@ import java.util.List;
 
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+import static org.openrefine.wikidata.qa.scrutinizers.InverseConstraintScrutinizer.INVERSE_CONSTRAINT_QID;
+import static org.openrefine.wikidata.qa.scrutinizers.InverseConstraintScrutinizer.INVERSE_PROPERTY_PID;
+import static org.openrefine.wikidata.qa.scrutinizers.InverseConstraintScrutinizer.SYMMETRIC_CONSTRAINT_QID;
 
 public class InverseConstaintScrutinizerTest extends StatementScrutinizerTest {
 
@@ -50,9 +53,9 @@ public class InverseConstaintScrutinizerTest extends StatementScrutinizerTest {
     public static PropertyIdValue symmetricPropertyID = Datamodel.makeWikidataPropertyIdValue("P3373");
     public static ItemIdValue symmetricPropertyValue = Datamodel.makeWikidataItemIdValue("Q9545711");
 
-    public static ItemIdValue inverseEntityIdValue = Datamodel.makeWikidataItemIdValue("Q21510855");
-    public static ItemIdValue symmetricEntityIdValue = Datamodel.makeWikidataItemIdValue("Q21510862");
-    public static PropertyIdValue propertyParameter = Datamodel.makeWikidataPropertyIdValue("P2306");
+    public static ItemIdValue inverseEntityIdValue = Datamodel.makeWikidataItemIdValue(INVERSE_CONSTRAINT_QID);
+    public static ItemIdValue symmetricEntityIdValue = Datamodel.makeWikidataItemIdValue(SYMMETRIC_CONSTRAINT_QID);
+    public static PropertyIdValue propertyParameter = Datamodel.makeWikidataPropertyIdValue(INVERSE_PROPERTY_PID);
 
     @Override
     public EditScrutinizer getScrutinizer() {
@@ -66,15 +69,14 @@ public class InverseConstaintScrutinizerTest extends StatementScrutinizerTest {
         Statement statement = new StatementImpl("P25", mainSnak, idA);
         ItemUpdate update = new ItemUpdateBuilder(idA).addStatement(statement).build();
 
-        Snak qualifierSnak = Datamodel.makeValueSnak(propertyParameter, inverseEntityIdValue);
+        Snak qualifierSnak = Datamodel.makeValueSnak(propertyParameter, inversePropertyID);
         List<Snak> qualifierSnakList = Collections.singletonList(qualifierSnak);
         SnakGroup qualifierSnakGroup = Datamodel.makeSnakGroup(qualifierSnakList);
         List<SnakGroup> snakGroupList = Collections.singletonList(qualifierSnakGroup);
         List<Statement> statementList = constraintParameterStatementList(inverseEntityIdValue, snakGroupList);
 
         ConstraintFetcher fetcher = mock(ConstraintFetcher.class);
-        when(fetcher.getConstraintsByType(propertyId, "Q21510855")).thenReturn(statementList);
-        when(fetcher.findValues(snakGroupList, "P2306")).thenReturn(Collections.singletonList(inversePropertyID));
+        when(fetcher.getConstraintsByType(propertyId, INVERSE_CONSTRAINT_QID)).thenReturn(statementList);
         setFetcher(fetcher);
         scrutinize(update);
         assertWarningsRaised(InverseConstraintScrutinizer.type);
@@ -94,8 +96,7 @@ public class InverseConstaintScrutinizerTest extends StatementScrutinizerTest {
         List<Statement> statementList = constraintParameterStatementList(symmetricEntityIdValue, snakGroupList);
 
         ConstraintFetcher fetcher = mock(ConstraintFetcher.class);
-        when(fetcher.getConstraintsByType(symmetricPropertyID, "Q21510862")).thenReturn(statementList);
-        when(fetcher.findValues(snakGroupList, "P2306")).thenReturn(Collections.singletonList(symmetricPropertyID));
+        when(fetcher.getConstraintsByType(symmetricPropertyID, SYMMETRIC_CONSTRAINT_QID)).thenReturn(statementList);
         setFetcher(fetcher);
         scrutinize(update);
         assertWarningsRaised(InverseConstraintScrutinizer.type);
@@ -115,8 +116,7 @@ public class InverseConstaintScrutinizerTest extends StatementScrutinizerTest {
         List<Statement> statementList = constraintParameterStatementList(inverseEntityIdValue, snakGroupList);
 
         ConstraintFetcher fetcher = mock(ConstraintFetcher.class);
-        when(fetcher.getConstraintsByType(propertyId, "Q21510855")).thenReturn(statementList);
-        when(fetcher.findValues(snakGroupList, "P2306")).thenReturn(Collections.singletonList(inversePropertyID));
+        when(fetcher.getConstraintsByType(propertyId, INVERSE_CONSTRAINT_QID)).thenReturn(statementList);
         setFetcher(fetcher);
         scrutinize(update);
         assertNoWarningRaised();

@@ -59,7 +59,16 @@ ReconDialog.prototype._createDialog = function() {
 
   this._level = DialogSystem.showDialog(dialog);
   this._populateDialog();
+  this._registerDialogServiceOpener();
 };
+
+ReconDialog.prototype._registerDialogServiceOpener = function() {
+  var self = this;
+
+  $('.recon-dialog-service-opener').click(function() {
+    self._toggleServices();
+  });
+}
 
 ReconDialog.prototype._onOK = function() {
   if (this._selectedServiceRecordIndex >= 0) {
@@ -132,11 +141,6 @@ ReconDialog.prototype._populateDialog = function() {
     for (var i = 0; i < services.length; i++) {
       renderService(services[i]);
     }
-    
-
-    $('.recon-dialog-service-opener').click(function() {
-      self._toggleServices();
-    });
   }
 };
 
@@ -213,7 +217,7 @@ ReconDialog.prototype._onAddStandardService = function() {
   };
 
   elmts.cancelButton.click(dismiss);
-  elmts.addButton.click(function() {
+  elmts.form.submit(function() {
     var url = $.trim(elmts.input[0].value);
     if (url.length > 0) {
       ReconciliationManager.registerStandardService(url, function(index) {

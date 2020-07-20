@@ -203,7 +203,7 @@
     <dependency>
       <groupId>org.apache.commons</groupId>
       <artifactId>commons-lang3</artifactId>
-      <version>3.10</version>
+      <version>3.11</version>
     </dependency>
     <dependency>
       <groupId>commons-fileupload</groupId>
@@ -370,12 +370,6 @@
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>org.mockito</groupId>
-      <artifactId>mockito-core</artifactId>
-      <version>3.3.3</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
       <groupId>org.powermock</groupId>
       <artifactId>powermock-module-testng</artifactId>
       <version>${powermock.version}</version>
@@ -390,7 +384,13 @@
     <dependency>
       <groupId>com.squareup.okhttp3</groupId>
       <artifactId>mockwebserver</artifactId>
-      <version>4.7.2</version>
+      <version>4.8.0</version>
+      <scope>test</scope>
+     </dependency>
+    <dependency>
+      <groupId>org.apache.httpcomponents</groupId>
+      <artifactId>httpmime</artifactId>
+      <version>4.5.12</version>
       <scope>test</scope>
     </dependency>
     <dependency>

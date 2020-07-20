@@ -27,7 +27,7 @@ public class RestrictedValuesScrutinizer extends SnakScrutinizer {
         AllowedValueConstraint(Statement statement) {
             List<SnakGroup> specs = statement.getClaim().getQualifiers();
             if (specs != null) {
-                List<Value> properties = _fetcher.findValues(specs, ALLOWED_VALUES_CONSTRAINT_PID);
+                List<Value> properties = findValues(specs, ALLOWED_VALUES_CONSTRAINT_PID);
                 allowedValues = properties.stream().collect(Collectors.toSet());
             }
         }
@@ -38,7 +38,7 @@ public class RestrictedValuesScrutinizer extends SnakScrutinizer {
         DisallowedValueConstraint(Statement statement) {
             List<SnakGroup> specs = statement.getClaim().getQualifiers();
             if (specs != null) {
-                List<Value> properties = _fetcher.findValues(specs, DISALLOWED_VALUES_CONSTRAINT_PID);
+                List<Value> properties = findValues(specs, DISALLOWED_VALUES_CONSTRAINT_PID);
                 disallowedValues = properties.stream().collect(Collectors.toSet());
             }
         }

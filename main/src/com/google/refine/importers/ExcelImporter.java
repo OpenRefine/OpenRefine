@@ -34,7 +34,6 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package com.google.refine.importers;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -249,7 +248,7 @@ public class ExcelImporter extends TabularImportingParserBase {
             double d = cell.getNumericCellValue();
             
             if (DateUtil.isCellDateFormatted(cell)) {
-                value = DateUtil.getJavaDate(d);
+                value = ParsingUtilities.toDate(DateUtil.getJavaDate(d));
                 // TODO: If we had a time datatype, we could use something like the following
                 // to distinguish times from dates (although Excel doesn't really make the distinction)
                 // Another alternative would be to look for values < 0.60
