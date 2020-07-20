@@ -108,6 +108,49 @@ UrlImportingSourceUI.prototype.focus = function() {
   this._elmts.urlInput.focus();
 };
 
+// RD Change
+// Adding alternate method to download/upload data using s3
+function S3UrlImportingSourceUI(controller) {
+  this._controller = controller;
+}
+
+function isS3UrlValid(url) {
+  // regex to check if URL is valid s3 url
+  return /^(s3):\/\/(([^\/]+)\/(.*?([^\/]+)\/?))$/i.test(url);
+}
+
+Refine.DefaultImportingController.sources.push({
+  "label": $.i18n('core-index-import/s3-url'),
+  "id": "s3download",
+  "uiClass": S3UrlImportingSourceUI
+});
+
+S3UrlImportingSourceUI.prototype.attachUI = function(bodyDiv) {
+  var self = this;
+
+  bodyDiv.html(DOM.loadHTML("core", "scripts/index/default-importing-sources/import-from-s3-url.html"));
+
+  this._elmts = DOM.bind(bodyDiv);
+
+  $('#or-import-enters3url').text($.i18n('core-index-import/enter-s3-url'));
+  this._elmts.nextButton.html($.i18n('core-buttons/next'));
+
+  this._elmts.form.submit(function(evt){
+    evt.preventDefault();
+    var importUrl = self._elmts.urlInput[0].value.trim();
+    self._elmts.urlInput[0].value = importUrl;
+    if(!isS3UrlValid(importUrl)) {
+      window.alert($.i18n('core-index-import/warning-s3-url-address'));
+    } else {
+      self._controller.startImportJob(self._elmts.form, $.i18n('core-index-import/downloading-data'));
+    }
+  });
+};
+
+S3UrlImportingSourceUI.prototype.focus = function() {
+  this._elmts.textInput.focus();
+};
+
 function ClipboardImportingSourceUI(controller) {
   this._controller = controller;
 }

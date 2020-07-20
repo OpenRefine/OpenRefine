@@ -96,6 +96,10 @@ import com.google.refine.util.JSONUtilities;
 import com.google.refine.util.ParsingUtilities;
 import java.util.stream.Collectors;
 
+import com.amazonaws.services.s3.AmazonS3URI;
+import com.amazonaws.services.s3.transfer.*;
+import com.amazonaws.auth.DefaultAWSCredentialsProviderChain;
+
 public class ImportingUtilities {
     final static protected Logger logger = LoggerFactory.getLogger("importing-utilities");
     
@@ -261,7 +265,8 @@ public class ImportingUtilities {
                     
                     clipboardCount++;
                     
-                } else if (name.equals("download")) {
+                }
+                else if (name.equals("download")) {
                     String urlString = Streams.asString(stream);
                     URL url = new URL(urlString);
                     
@@ -338,7 +343,8 @@ public class ImportingUtilities {
                         } finally {
                             httpGet.reset();
                         }
-                    } else {
+                    }
+                    else {
                         // Fallback handling for non HTTP connections (only FTP?)
                         URLConnection urlConnection = url.openConnection();
                         urlConnection.setConnectTimeout(5000);
@@ -359,14 +365,50 @@ public class ImportingUtilities {
                             stream2.close();
                         }
                     }
-                } else {
+                }
+                else if (name.equals("s3download")) {
+                    String urlString = Streams.asString(stream);
+
+                    DefaultAWSCredentialsProviderChain defaultCredentialsChain = new DefaultAWSCredentialsProviderChain();
+                    TransferManager transferManager = new TransferManager(defaultCredentialsChain);
+                    AmazonS3URI s3URI = new AmazonS3URI(urlString);
+                    String bucket = s3URI.getBucket();
+                    String key = s3URI.getKey();
+                    File localFileItem = allocateFile(rawDataDir, key);
+                    Download download =  transferManager.download(bucket, key, localFileItem);
+                    download.waitForCompletion();
+
+                    String fileName = localFileItem.getName();
+                    if (fileName.length() > 0) {
+                        long fileSize = localFileItem.length();
+                        ObjectNode fileRecord = ParsingUtilities.mapper.createObjectNode();
+                        JSONUtilities.safePut(fileRecord, "origin", "upload");
+                        JSONUtilities.safePut(fileRecord, "declaredEncoding", (String) null);
+                        JSONUtilities.safePut(fileRecord, "declaredMimeType", download.getObjectMetadata().getContentType());
+                        JSONUtilities.safePut(fileRecord, "fileName", fileName);
+                        JSONUtilities.safePut(fileRecord, "location", getRelativePath(localFileItem, rawDataDir));
+
+                        progress.setProgress(
+                                "Saving file " + fileName + " locally (" + formatBytes(fileSize) + " bytes)",
+                                calculateProgressPercent(update.totalExpectedSize, update.totalRetrievedSize));
+
+                        InputStream inputStream = new FileInputStream(localFileItem);
+                        JSONUtilities.safePut(fileRecord, "size", (fileSize/(16*1024)));
+                        if (postProcessRetrievedFile(rawDataDir, localFileItem, fileRecord, fileRecords, progress)) {
+                            archiveCount++;
+                        }
+
+                        uploadCount++;
+                    }
+                }
+                else {
                     String value = Streams.asString(stream);
                     parameters.put(name, value);
                     // TODO: We really want to store this on the request so it's available for everyone
-//                    request.getParameterMap().put(name, value);
+                    // request.getParameterMap().put(name, value);
                 }
-
-            } else { // is file content
+            }
+            else { // is file content
                 String fileName = fileItem.getName();
                 if (fileName.length() > 0) {
                     long fileSize = fileItem.getSize();
