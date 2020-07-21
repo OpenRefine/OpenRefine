@@ -78,42 +78,23 @@ This can also be useful if you would like to paste in a list of URLs, which you 
 
 #### Database (SQL)
 
-You may want to pull the latest dataset directly from an online database. This could include an online catalogue, a Wordpress or similar content management system, or a [digital repository or collection management system](https://bits.ashleyblewer.com/blog/2017/08/09/collection-management-system-collection/).
+If you are an administrator or have SQL access to a database of information, you may want to pull the latest dataset directly from there. This could include an online catalogue, a content management system, or a digital repository or collection management system.
+
+There are some publicly-accessible databases that you may want to query, such as [one provided by Rfam ](https://docs.rfam.org/en/latest/database.html). The instructions provided by Rfam can help you understand how to connect to and query from any database. 
 
 OpenRefine can connect to PostgreSQL, MySQL, MariaDB, and SQLite database systems. It will automatically populate the “Port” field based on which of these you choose, but you can manually edit this if needed.
 
-If you have a downloaded database (`.db`) file, you can supply the path to the file on your computer directly in the “Database” field at the bottom of the form. You can leave the rest of the fields blank.
+If you have a downloaded database (`.db`) file from an SQLite database, you can supply the path to the file on your computer directly in the “Database” field at the bottom of the form. You can leave the rest of the fields blank.
 
 To import data directly from a database online, you will need to do two things:
-
-*   Add OpenRefine (running from your computer) to an account authorized to access your database
-*   Set up OpenRefine to access that database using that account 
+*   Add OpenRefine (running from your computer’s IP address) to an account authorized to access your database
+*   Set up OpenRefine to access that database using that authorized account
 
 ![A screenshot of connecting to a database](img/databaseconnect.jpg "A screenshot of connecting to a database.")
 
-Log in to your hosting provider. Get the database type (such as MySQL), database name, and the URL (either an IP address, such as `127.0.0.1`, or the domain that uses the database). Then look at the accounts authorized for access. You may wish to create a new account just for OpenRefine, or add OpenRefine to an existing account. 
+You can either connect just once and gather data, or save the connection to use it again later. If you press “Connect” without saving, OpenRefine will forget all the information you just entered. To save it, name your connection in a way you will recognize later. Click “Save” and it will appear in the “Saved Connections” list on the left. Now, you can click on the “...” ellipsis to the right of the connection you’ve saved, and click “Connect.” 
 
-Each host will have a slightly different method, but generally speaking: look for “accounts with access” to the database you wish to authorize, and within the settings for that account, look for “allowable hosts” or “access hosts.” 
-
-In that list, add the IP address of your own computer, because that is where the OpenRefine access request will be coming from. You can find this easily, by clicking “Test” within OpenRefine once the rest of the information is filled out: OpenRefine will give you an error that looks like 
-
-``` error:Access denied for user 'yourusername'@'123-45-67-89.yourISP.com' ```
-
-Take your IP address from this error message and put that, with periods instead of hyphens, into the “allowable hosts” field on the account you’re trying to use. Add a wildcard to the end of your IP address (“123.45.67.89%”). Save that setting, and then test the connection again with OpenRefine.
-
-You can either connect just once and gather data, or save the connection to use it again later. If you press “Connect” without saving, OpenRefine will forget all the information you just entered. 
-
-If you’d like to save the connection, name your connection in a way you will recognize later. Click “Save” and it will appear in the “Saved Connections” list on the left. Now, click on the “...” ellipsis to the right of the connection you’ve saved, and click “Connect.” 
-
-If your connection is successful, you will see a Query Editor. From here you can write an [SQL query](https://www.w3schools.com/sql/) to pull the specific data you need. 
-
-If you need help, you may be able to find instructions from your hosting provider. Here are the guides from:
-
-
-
-*   [Dreamhost](https://help.dreamhost.com/hc/en-us/articles/214883058-How-do-I-connect-to-my-database-using-a-third-party-program-)
-*   [GoDaddy](https://ca.godaddy.com/help/connect-remotely-to-a-mysql-database-in-my-linux-hosting-account-16103)
-
+If your connection is successful, you will see a Query Editor. From here you can write an [SQL query](https://www.w3schools.com/sql/) to pull the specific data you need. OpenRefine will give you an error if you write a statement that tries to modify the source database in any way.
 
 #### Google Data
 
