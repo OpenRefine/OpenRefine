@@ -8,7 +8,7 @@ sidebar_label: Starting a project
 
 OpenRefine doesn’t allow you to create a dataset from nothing - you can only start a project by importing in some existing data.
 
-No matter where your data comes from, OpenRefine doesn’t modify your original data source. It copies all the information from your input, creates its own project file, and stores it in your [workspace directory](installing.md#set-where-data-is-stored).  
+No matter where your data comes from, OpenRefine doesn’t modify your original data source. It copies all the information from your input, creates its own project file, and stores it in your [workspace directory](installing#set-where-data-is-stored).  
 
 The data and all of your edits are automatically saved inside the project file. When you’re finished modifying the data, you can export it back out into the file format of your choice. 
 
@@ -66,7 +66,7 @@ Type or paste the URL to the data file into the field provided. You can add as m
 
 If you supply two or more file URLs, OpenRefine will identify each one and ask you to choose which (or all) to load. 
 
-Do not use this form to load a Google Sheet by its link; use the Google Data form instead. 
+Do not use this form to load a Google Sheet by its link; use [the Google Data form instead](#google-data). 
 
 #### Clipboard
 
@@ -99,9 +99,6 @@ If your connection is successful, you will see a Query Editor. From here you can
 #### Google Data
 
 You have two ways to load in data from Google Sheets:
-
-
-
 *   A link to an accessible Google Sheet (that is, one with link-sharing turned on)
 *   Selecting a Google Sheet in your Google Drive
 
@@ -110,7 +107,7 @@ You have two ways to load in data from Google Sheets:
 
 You can import data from any Google Sheet that has link-sharing turned on. Paste in a URL that looks something like
 
-```https://docs.google.com/spreadsheets/……….../edit?usp=sharing```
+```https://docs.google.com/spreadsheets/………/edit?usp=sharing```
 
 This will only work with Sheets, not with any other Google Drive file that might have an available link. 
 
@@ -149,7 +146,7 @@ Because OpenRefine only runs locally on your computer, you can’t have a projec
 
 The best way to collaborate with another person is to export and import projects that save all your changes, so that you can pick up where someone else left off. You can also [export projects](export.md) and import them to new computers of your own, such as for working on the same project from the office and from home. 
 
-An exported project will include all of the [history](interface/projectscreen.md#history), so you can see (and undo) all the changes from the previous user. It is essentially a point-in-time snapshot of their work. OpenRefine only exports projects as `.tar.gz` files at this time. 
+An exported project will include all of the [history](running#history-undoredo), so you can see (and undo) all the changes from the previous user. It is essentially a point-in-time snapshot of their work. OpenRefine only exports projects as `.tar.gz` files at this time. 
 
 
 ### Instructions
@@ -195,8 +192,6 @@ You can only save and share facets and filters, not any other type of view. To s
 
 You can delete projects, which will erase the project files from the work directory on your computer. This is immediate and cannot be undone.
 
- 
-
 Go to “Open Project” and find the project you want to delete. Click on the X to the left of the project name. There will be a confirmation dialog. 
 
 
@@ -204,4 +199,4 @@ Go to “Open Project” and find the project you want to delete. Click on the X
 
 You can find all of your raw project files in your work directory. They will be named according to the unique Project ID that OpenRefine has assigned them, which you can find on the “Open Project” screen, under the “About” button for each project. 
 
-You can point OpenRefine to use another work directory using [Preferences](running.md#preferences). 
+You can point OpenRefine to use another work directory using [Preferences](running#preferences). 
