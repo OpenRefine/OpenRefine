@@ -164,9 +164,6 @@ You should create a project name at this stage. You can also supply tags to keep
 
 ## Import a project
 
-
-### Overview
-
 Because OpenRefine only runs locally on your computer, you can’t have a project accessible to more than one person at the same time. 
 
 The best way to collaborate with another person is to export and import projects that save all your changes, so that you can pick up where someone else left off. You can also [export projects](export.md) and import them to new computers of your own, such as for working on the same project from the office and from home. 
