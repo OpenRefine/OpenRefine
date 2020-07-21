@@ -417,8 +417,9 @@ DataTableView.prototype._renderDataTables = function(table, tableHeader) {
         "json"
       );
     });
-
-    var tdFlag = tr.insertCell(tr.cells.length);    var flag = document.createElement('a');
+    
+    var tdFlag = tr.insertCell(tr.cells.length);
+    var flag = document.createElement('a');
     flag.classList.add(row.flagged ? "data-table-flag-on" : "data-table-flag-off");
     flag.href = "javascript:{}";
     tdFlag.appendChild(flag).appendChild(document.createTextNode('\u00A0'));
@@ -443,12 +444,18 @@ DataTableView.prototype._renderDataTables = function(table, tableHeader) {
     if (theProject.rowModel.mode == "record-based") {
       if ("j" in row) {
         $(tr).addClass("record");
-        $('<div></div>').html((row.j + 1) + ".").appendTo(tdIndex);
+        var div = document.createElement('div');
+        div.innerHTML = (row.j + 1) + '.';
+        tdIndex.appendChild(div);
       } else {
-        $('<div></div>').html("&nbsp;").appendTo(tdIndex);
+        var div = document.createElement('div');
+        div.innerHTML = '\u00A0';
+        tdIndex.appendChild(div);
       }
     } else {
-      $('<div></div>').html((row.i + 1) + ".").appendTo(tdIndex);
+      var div = document.createElement('div');
+      div.innerHTML = (row.i + 1) + '.';
+      tdIndex.appendChild(div);
     }
 
     $(tr).addClass(even ? "even" : "odd");
