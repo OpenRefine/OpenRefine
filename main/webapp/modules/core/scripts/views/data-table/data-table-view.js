@@ -397,11 +397,12 @@ DataTableView.prototype._renderDataTables = function(table, tableHeader) {
     $(tr).empty();
     var cells = row.cells;
     var tdStar = tr.insertCell(tr.cells.length);
-    var star = $('<a href="javascript:{}">&nbsp;</a>')
-    .addClass(row.starred ? "data-table-star-on" : "data-table-star-off")
-    .appendTo(tdStar)
-    .click(function() {
-      var newStarred = !row.starred;
+    var star = document.createElement('a');
+    star.href = "javascript:{}";
+    star.classList.add(row.starred ? "data-table-star-on" : "data-table-star-off");
+    tdStar.appendChild(star).appendChild(document.createTextNode('\u00A0'));
+    star.addEventListener('click', function() {
+    var newStarred = !row.starred;
       Refine.postCoreProcess(
         "annotate-one-row",
         { row: row.i, starred: newStarred },
@@ -416,12 +417,12 @@ DataTableView.prototype._renderDataTables = function(table, tableHeader) {
         "json"
       );
     });
-    
-    var tdFlag = tr.insertCell(tr.cells.length);
-    var flag = $('<a href="javascript:{}">&nbsp;</a>')
-    .addClass(row.flagged ? "data-table-flag-on" : "data-table-flag-off")
-    .appendTo(tdFlag)
-    .click(function() {
+
+    var tdFlag = tr.insertCell(tr.cells.length);    var flag = document.createElement('a');
+    flag.classList.add(row.flagged ? "data-table-flag-on" : "data-table-flag-off");
+    flag.href = "javascript:{}";
+    tdFlag.appendChild(flag).appendChild(document.createTextNode('\u00A0'));
+    flag.addEventListener('click', function() {
       var newFlagged = !row.flagged;
       Refine.postCoreProcess(
         "annotate-one-row",
