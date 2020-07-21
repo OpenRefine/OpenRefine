@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -15,6 +16,9 @@ import java.util.zip.GZIPOutputStream;
 
 import org.openrefine.browsing.facets.RecordAggregator;
 import org.openrefine.browsing.facets.RowAggregator;
+import org.openrefine.model.changes.ChangeData;
+import org.openrefine.model.changes.RowChangeDataJoiner;
+import org.openrefine.model.changes.RowChangeDataProducer;
 import org.openrefine.overlay.OverlayModel;
 import org.openrefine.sorting.RecordSorter;
 import org.openrefine.sorting.RowSorter;
@@ -397,6 +401,30 @@ public class TestingGridState implements GridState {
                 .flatMap(r -> r.getRows().stream())
                 .collect(Collectors.toList());
         return new TestingGridState(columnModel, newRows, overlayModels);
+    }
+
+    @Override
+    public <T extends Serializable> ChangeData<T> mapRows(RowFilter filter, RowChangeDataProducer<T> rowMapper) {
+        // Check that the mapper is serializable as it is required by the interface,
+        // even if this implementation does not rely on it.
+        TestingDatamodelRunner.ensureSerializable(rowMapper);
+        TestingDatamodelRunner.ensureSerializable(filter);
+        Map<Long, T> changeData = new HashMap<>();
+        indexedRows().stream()
+        .filter(ir -> filter.filterRow(ir.getIndex(), ir.getRow()))
+        .forEach(ir -> changeData.put(ir.getIndex(), rowMapper.call(ir.getIndex(), ir.getRow())));
+        return new TestingChangeData<T>(changeData);
+    }
+
+    @Override
+    public <T extends Serializable> GridState join(ChangeData<T> changeData, RowChangeDataJoiner<T> rowJoiner,
+            ColumnModel newColumnModel) {
+        TestingDatamodelRunner.ensureSerializable(rowJoiner);
+        List<Row> newRows = indexedRows()
+                .stream()
+                .map(ir -> rowJoiner.call(ir.getIndex(), ir.getRow(), changeData.get(ir.getIndex())))
+                .collect(Collectors.toList());
+        return new TestingGridState(newColumnModel, newRows, overlayModels);
     }
 
 }

@@ -101,18 +101,18 @@ public class RDDUtils {
      * @return
      *    a RDD with the same partitioning as the original one, with mapped values
      */
-    public static <K,V> JavaPairRDD<K, V> mapKeyValuesToValues(JavaPairRDD<K, V> pairRDD, Function2<K, V, V> function) {
-        PairFlatMapFunction<Iterator<Tuple2<K,V>>, K, V> mapper = mapKeyValuesToValuesInternal(function);
+    public static <K,V,W> JavaPairRDD<K, W> mapKeyValuesToValues(JavaPairRDD<K, V> pairRDD, Function2<K, V, W> function) {
+        PairFlatMapFunction<Iterator<Tuple2<K,V>>, K, W> mapper = mapKeyValuesToValuesInternal(function);
         return pairRDD.mapPartitionsToPair(mapper, true);
     }
     
-    private static <K,V> PairFlatMapFunction<Iterator<Tuple2<K,V>>, K, V> mapKeyValuesToValuesInternal(Function2<K, V, V> function) {
-        return new PairFlatMapFunction<Iterator<Tuple2<K,V>>, K, V>() {
+    private static <K,V,W> PairFlatMapFunction<Iterator<Tuple2<K,V>>, K, W> mapKeyValuesToValuesInternal(Function2<K, V, W> function) {
+        return new PairFlatMapFunction<Iterator<Tuple2<K,V>>, K, W>() {
             private static final long serialVersionUID = 1L;
 
             @Override
-            public Iterator<Tuple2<K, V>> call(Iterator<Tuple2<K, V>> t) throws Exception {
-                return new Iterator<Tuple2<K,V>> () {
+            public Iterator<Tuple2<K, W>> call(Iterator<Tuple2<K, V>> t) throws Exception {
+                return new Iterator<Tuple2<K,W>> () {
 
                     @Override
                     public boolean hasNext() {
@@ -120,10 +120,10 @@ public class RDDUtils {
                     }
 
                     @Override
-                    public Tuple2<K, V> next() {
+                    public Tuple2<K, W> next() {
                         Tuple2<K, V> v = t.next();
                         try {
-                            return new Tuple2<K,V>(v._1, function.call(v._1, v._2));
+                            return new Tuple2<K,W>(v._1, function.call(v._1, v._2));
                         } catch (Exception e) {
                             throw new IllegalStateException(e);
                         }

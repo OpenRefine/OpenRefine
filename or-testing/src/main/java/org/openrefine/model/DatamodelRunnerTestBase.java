@@ -7,16 +7,22 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import org.apache.commons.collections.IteratorUtils;
 import org.openrefine.browsing.facets.AllFacetsAggregator;
 import org.openrefine.browsing.facets.Facet;
 import org.openrefine.browsing.facets.FacetResult;
 import org.openrefine.browsing.facets.FacetState;
 import org.openrefine.browsing.facets.StringFacet;
 import org.openrefine.browsing.facets.StringFacetState;
+import org.openrefine.model.changes.ChangeData;
+import org.openrefine.model.changes.IndexedData;
+import org.openrefine.model.changes.RowChangeDataJoiner;
+import org.openrefine.model.changes.RowChangeDataProducer;
 import org.openrefine.sorting.NumberCriterion;
 import org.openrefine.sorting.SortingConfig;
 import org.openrefine.sorting.StringCriterion;
@@ -26,6 +32,7 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.google.common.collect.ImmutableList;
 
 /**
@@ -43,6 +50,7 @@ public abstract class DatamodelRunnerTestBase {
     protected DatamodelRunner SUT;
     
     protected GridState simpleGrid, gridToSort;
+    protected ChangeData<String> simpleChangeData;
     protected List<Row> expectedRows;
     protected List<Record> expectedRecords;
     protected SortingConfig sortingConfig;
@@ -81,8 +89,13 @@ public abstract class DatamodelRunnerTestBase {
         return createGrid(columnNames, cells);
     }
     
+    protected <T extends Serializable> ChangeData<T> createChangeData(@SuppressWarnings("unchecked") IndexedData<T>... data) {
+        return SUT.create(Arrays.asList(data));
+    }
+    
+    @SuppressWarnings("unchecked")
     @BeforeMethod
-    public void setUpSimpleGrid() {
+    public void setUpExamples() {
         simpleGrid = createGrid(new String[] { "foo", "bar" },
                 new Serializable[][] {
             { "a", "b" },
@@ -97,6 +110,11 @@ public abstract class DatamodelRunnerTestBase {
             { null, 0 },
             { "a",  5  }
         });
+        simpleChangeData = createChangeData(
+           new IndexedData<String>(0L, "first"),
+           new IndexedData<String>(2L, "third"),
+           new IndexedData<String>(3L, "fourth")
+        );
         expectedRows = Arrays.asList(
                 row("a", "b"),
                 row("",  1),
@@ -477,5 +495,81 @@ public abstract class DatamodelRunnerTestBase {
         
         Assert.assertEquals(removed.getColumnModel(), expected.getColumnModel());
         Assert.assertEquals(removed.collectRows(), expected.collectRows());      
+    }
+    
+    /**
+     * Change data
+     */
+    
+    @Test
+    public void testSerializeChangeData() throws IOException {
+        File tempFile = TestUtils.createTempDirectory("testchangedata");
+        
+        simpleChangeData.saveToFile(new File(tempFile, "data"));
+        
+        ChangeData<String> loaded = SUT.loadChangeData(tempFile, new TypeReference<IndexedData<String>>() {});
+        
+        Assert.assertNotNull(loaded.getDatamodelRunner());
+        Assert.assertEquals(loaded.get(0L), "first");
+        Assert.assertNull(loaded.get(1L));
+        Assert.assertEquals(loaded.get(2L), "third");
+        Assert.assertEquals(loaded.get(3L), "fourth");
+    }
+    
+    @Test
+    public void testIterateChangeData() {
+        Iterator<IndexedData<String>> iterator = simpleChangeData.iterator();
+        List<IndexedData<String>> actual = IteratorUtils.toList(iterator);
+        List<IndexedData<String>> expected = new ArrayList<>();
+        expected.add(new IndexedData<String>(0L, "first"));
+        expected.add(new IndexedData<String>(2L, "third"));
+        expected.add(new IndexedData<String>(3L, "fourth"));
+        Assert.assertEquals(actual, expected);
+    }
+    
+    public static RowChangeDataProducer<String> concatChangeMapper = new RowChangeDataProducer<String>() {
+
+        private static final long serialVersionUID = -2137895769820170019L;
+
+        @Override
+        public String call(long rowId, Row row) {
+            return row.getCellValue(1).toString() + "_concat";
+        }
+        
+    };
+    
+    public static RowChangeDataJoiner<String> joiner = new RowChangeDataJoiner<String>() {
+
+        private static final long serialVersionUID = -21382677502256432L;
+
+        @Override
+        public Row call(long rowId, Row row, String changeData) {
+            return row.withCell(1, new Cell(changeData, null));
+        }
+        
+    };
+    
+    @Test
+    public void testGenerateChangeData() {
+        ChangeData<String> changeData = simpleGrid.mapRows(myRowFilter, concatChangeMapper);
+        
+        Assert.assertEquals(changeData.get(0L), "b_concat");
+        Assert.assertNull(changeData.get(1L)); // because it is excluded by the facet
+    }
+    
+    @Test
+    public void testJoinChangeData() {
+        GridState joined = simpleGrid.join(simpleChangeData, joiner, simpleGrid.getColumnModel());
+        
+        GridState expected = createGrid(new String[] { "foo", "bar" },
+                new Serializable[][] {
+            { "a", "first" },
+            { "", null },
+            { "c", "third" },
+            { null, "fourth" }
+        });
+        
+        Assert.assertEquals(joined.getColumnModel(), expected.getColumnModel());
+        Assert.assertEquals(joined.collectRows(), expected.collectRows());    
     }
 }

@@ -8,6 +8,9 @@ import java.util.Map;
 
 import org.openrefine.browsing.facets.RecordAggregator;
 import org.openrefine.browsing.facets.RowAggregator;
+import org.openrefine.model.changes.ChangeData;
+import org.openrefine.model.changes.RowChangeDataJoiner;
+import org.openrefine.model.changes.RowChangeDataProducer;
 import org.openrefine.overlay.OverlayModel;
 import org.openrefine.sorting.SortingConfig;
 
@@ -270,6 +273,27 @@ public interface GridState {
      * @return the grid where the matching record have been removed
      */
     public GridState removeRecords(RecordFilter filter);
+    
+    /**
+     * Extract change data by applying a function to each filtered row.
+     * 
+     * @param <T> the type of change data that is serialized to disk for each row
+     * @param filter a filter to select which rows to map
+     * @param rowMapper produces the change data for each row
+     * @return
+     */
+    public <T extends Serializable> ChangeData<T> mapRows(RowFilter filter, RowChangeDataProducer<T> rowMapper);
+    
+    /**
+     * Joins pre-computed change data with the current grid data.
+     * 
+     * @param <T> the type of change data that was serialized to disk for each row
+     * @param changeData the serialized change data
+     * @param rowJoiner produces the new row by joining the old row with change data
+     * @param newColumnModel the column model to apply to the new grid
+     * @return
+     */
+    public <T extends Serializable> GridState join(ChangeData<T> changeData, RowChangeDataJoiner<T> rowJoiner, ColumnModel newColumnModel);
     
     /**
      * Utility class to help with deserialization of the metadata

@@ -2,6 +2,8 @@ package org.openrefine.model;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.Serializable;
+import java.lang.reflect.Type;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -11,15 +13,24 @@ import org.apache.hadoop.fs.FileSystem;
 import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaPairRDD;
 import org.apache.spark.api.java.JavaSparkContext;
+import org.apache.spark.api.java.function.Function;
+import org.apache.spark.storage.StorageLevel;
 import org.apache.spark.util.ShutdownHookManager;
 import org.openrefine.ProjectManager;
 import org.openrefine.io.OrderedLocalFileSystem;
+import org.openrefine.model.changes.ChangeData;
+import org.openrefine.model.changes.IndexedData;
 import org.openrefine.overlay.OverlayModel;
+import org.openrefine.util.ParsingUtilities;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+
 import scala.Function0;
 import scala.Tuple2;
+import scala.reflect.ClassTag;
+import scala.reflect.api.TypeTags.TypeTag;
 import scala.runtime.BoxedUnit;
 
 /**
@@ -104,6 +115,51 @@ public class SparkDatamodelRunner implements DatamodelRunner {
     @Override
     public FileSystem getFileSystem() throws IOException {
         return FileSystem.get(context.hadoopConfiguration());
+    }
+
+    @Override
+    public <T extends Serializable> ChangeData<T> loadChangeData(File path, TypeReference<IndexedData<T>> expectedType)
+            throws IOException {
+        /*
+         * The text files corresponding to each partition are read in the correct order
+         * thanks to our dedicated file system OrderedLocalFileSystem.
+         * https://issues.apache.org/jira/browse/SPARK-5300
+         */
+        JavaPairRDD<Long, T> data = context.textFile(path.getAbsolutePath())
+                .map(SparkDatamodelRunner.<T>parseIndexedData(expectedType.getType()))
+                .keyBy(p -> p._1)
+                .mapValues(p -> p._2)
+                .persist(StorageLevel.MEMORY_ONLY());
+
+        return new SparkChangeData<T>(data, this);
+    }
+    
+    protected static <T extends Serializable> Function<String, Tuple2<Long,T>> parseIndexedData(Type expectedType) {
+        
+        return new Function<String, Tuple2<Long,T>>() {
+            private static final long serialVersionUID = 3635263442656462809L;
+
+            @Override
+            public Tuple2<Long,T> call(String v1) throws Exception {
+                TypeReference<IndexedData<T>> typeRef = new TypeReference<IndexedData<T>>() {
+                    @Override
+                    public Type getType() {
+                        return expectedType;
+                    }
+                };
+                IndexedData<T> id = ParsingUtilities.mapper.readValue(v1, typeRef);
+                return new Tuple2<Long, T>(id.getId(), id.getData());
+            }
+        };
+    }
+
+    @Override
+    public <T extends Serializable> ChangeData<T> create(List<IndexedData<T>> changeData) {
+        List<Tuple2<Long,T>> tuples = changeData.stream()
+                .map(i -> new Tuple2<Long,T>(i.getId(), i.getData()))
+                .collect(Collectors.toList());
+        JavaPairRDD<Long,T> rdd = JavaPairRDD.fromJavaRDD(context.parallelize(tuples, defaultParallelism));
+        return new SparkChangeData<T>(rdd, this);
     }
 
 }
