@@ -29,6 +29,8 @@ import org.openrefine.wikidata.qa.scrutinizers.*;
 import org.openrefine.wikidata.updates.ItemUpdate;
 import org.openrefine.wikidata.updates.scheduler.WikibaseAPIUpdateScheduler;
 import org.openrefine.wikidata.utils.EntityCache;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.wikidata.wdtk.datamodel.interfaces.EntityIdValue;
 
 import java.util.HashMap;
@@ -42,6 +44,8 @@ import java.util.stream.Collectors;
  * @author Antonin Delpeuch
  */
 public class EditInspector {
+
+    private static final Logger logger = LoggerFactory.getLogger(EditInspector.class);
 
     private Map<String, EditScrutinizer> scrutinizers;
     private QAWarningStore warningStore;
@@ -94,6 +98,9 @@ public class EditInspector {
         if (scrutinizer.prepareDependencies()) {
             String key = scrutinizer.getClass().getName();
             scrutinizers.put(key, scrutinizer);
+        } else {
+            logger.info("scrutinizer [" + scrutinizer.getClass().getSimpleName() + "] is skipped " +
+                    "due to missing of necessary constraint configurations in the Wikibase manifest");
         }
     }
 
