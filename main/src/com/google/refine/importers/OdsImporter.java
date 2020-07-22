@@ -199,8 +199,6 @@ public class OdsImporter extends TabularImportingParserBase {
                     exceptions
             );
         }
-        
-        super.parseOneFile(project, metadata, job, fileSource, inputStream, limit, options, exceptions);
     }
 
     static protected Serializable extractCell(OdfTableCell cell) {

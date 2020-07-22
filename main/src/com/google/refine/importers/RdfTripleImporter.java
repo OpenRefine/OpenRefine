@@ -165,7 +165,5 @@ public class RdfTripleImporter extends ImportingParserBase {
       } catch (ModelException e) {
           exceptions.add(e);
       } 
-      
-      super.parseOneFile(project, metadata, job, fileSource, input, limit, options, exceptions);
     }
 }

@@ -57,9 +57,8 @@ public abstract class ImporterTest extends RefineTest {
     protected ProjectMetadata metadata;
     protected ImportingJob job;
     protected RefineServlet servlet;
-    
     protected ObjectNode options;
-    
+
     public void setUp(){
         //FIXME - should we try and use mock(Project.class); - seems unnecessary complexity
 

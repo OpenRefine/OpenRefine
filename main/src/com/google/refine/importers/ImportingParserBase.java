@@ -1,6 +1,7 @@
 /*
 
 Copyright 2011, Google Inc.
+Copyright 2012,2020 OpenRefine contributors
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -39,6 +40,7 @@ import java.io.InputStream;
 import java.io.Reader;
 import java.util.List;
 
+import org.apache.commons.lang.NotImplementedException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -115,23 +117,23 @@ abstract public class ImportingParserBase implements ImportingParser {
         final File file = ImportingUtilities.getFile(job, fileRecord);
         final String fileSource = ImportingUtilities.getFileSource(fileRecord);
         final String archiveFileName = ImportingUtilities.getArchiveFileName(fileRecord);
-//        JSONUtilities.safePut(options, "archiveFileName", archiveFileName);
-
+        int filenameColumnIndex = -1;
+        int archiveColumnIndex = -1;
+        int startingRowCount = project.rows.size();
+        
         progress.startFile(fileSource);
         try {
             InputStream inputStream = ImporterUtilities.openAndTrackFile(fileSource, file, progress);
             try {
-                
-                int filenameColumnIndex = -1;
-                int archiveColumnIndex = -1;
+
                 if (JSONUtilities.getBoolean(options, "includeArchiveFileName", false)
-                        && ImportingUtilities.getArchiveFileName(fileRecord) != null) {
+                        && archiveFileName != null) {
                     archiveColumnIndex = addArchiveColumn(project);
                 }
                 if (JSONUtilities.getBoolean(options, "includeFileSources", false)) {
                     filenameColumnIndex = addFilenameColumn(project, archiveColumnIndex >=0);
                 }
-                
+
                 if (useInputStream) {
                     parseOneFile(project, metadata, job, fileSource, inputStream, limit, options, exceptions);
                 } else {
@@ -139,16 +141,17 @@ abstract public class ImportingParserBase implements ImportingParser {
                     if (commonEncoding != null && commonEncoding.isEmpty()) {
                         commonEncoding = null;
                     }
-                    
+
                     Reader reader = ImportingUtilities.getReaderFromStream(
-                        inputStream, fileRecord, commonEncoding);
-                    
+                            inputStream, fileRecord, commonEncoding);
+
                     parseOneFile(project, metadata, job, fileSource, reader, limit, options, exceptions);
                 }
-                
-                // File in filename and archive name column for all rows
-                // FIXME: Only update the newly added rows
-                for (Row row : project.rows) {
+
+                // Fill in filename and archive name column for all rows added from this file
+                int endingRowCount = project.rows.size();
+                for (int i = startingRowCount; i < endingRowCount; i++) {
+                    Row row = project.rows.get(i);
                     if (archiveColumnIndex >= 0) {
                         row.setCell(archiveColumnIndex, new Cell(archiveFileName, null));
                     }
@@ -157,9 +160,10 @@ abstract public class ImportingParserBase implements ImportingParser {
                     }
                 }
 
-                pushImportingOptions(metadata, fileSource, options);
-                // FIXME: This is going to push two copies of the options onto the metadata?
-//                pushImportingOptions(metadata, "archiveFileName", archiveFileName, options);
+                // TODO: This has no test coverage
+                JSONUtilities.safePut(options, "fileSource", fileSource);
+                JSONUtilities.safePut(options, "archiveFileName", archiveFileName);
+                metadata.appendImportOptionMetadata(options);
             } finally {
                 inputStream.close();
             }
@@ -192,16 +196,9 @@ abstract public class ImportingParserBase implements ImportingParser {
         ObjectNode options,
         List<Exception> exceptions
     ) {
-        pushImportingOptions(metadata, fileSource, options);
+        throw new NotImplementedException();
     }
 
-    private void pushImportingOptions(ProjectMetadata metadata, String fileSource, ObjectNode options) {
-        // TODO: Extend
-        options.put("fileSource", fileSource);
-        // set the import options to metadata:
-        metadata.appendImportOptionMetadata(options);
-    }
-    
     public void parseOneFile(
         Project project,
         ProjectMetadata metadata,
@@ -212,9 +209,13 @@ abstract public class ImportingParserBase implements ImportingParser {
         ObjectNode options,
         List<Exception> exceptions
     ) {
-        pushImportingOptions(metadata, fileSource, options);
+        throw new NotImplementedException();
     }
-    
+
+    /**
+     * @deprecated 2020-07-21 by tfmorris. This will become private in a future release.
+     */
+    @Deprecated
     protected static int addFilenameColumn(Project project, boolean archiveColumnAdded) {
         String fileNameColumnName = "File";  // TODO: Localize?
         int columnId = archiveColumnAdded? 1 : 0;

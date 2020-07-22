@@ -111,7 +111,6 @@ abstract public class TreeImportingParserBase extends ImportingParserBase {
     ) throws IOException {
         final File file = ImportingUtilities.getFile(job, fileRecord);
         final String fileSource = ImportingUtilities.getFileSource(fileRecord);
-        final String archiveFileName = ImportingUtilities.getArchiveFileName(fileRecord);
         
         progress.startFile(fileSource);
         try {
@@ -175,8 +174,7 @@ abstract public class TreeImportingParserBase extends ImportingParserBase {
         ObjectNode options,
         List<Exception> exceptions
     ) {
-        // throw new NotImplementedException();
-        super.parseOneFile(project, metadata, job, fileSource, inputStream, limit, options, exceptions);
+        throw new NotImplementedException();
     }
     
     /**
