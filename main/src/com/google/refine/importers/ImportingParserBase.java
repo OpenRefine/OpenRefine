@@ -160,10 +160,12 @@ abstract public class ImportingParserBase implements ImportingParser {
                     }
                 }
 
-                // TODO: This has no test coverage
-                JSONUtilities.safePut(options, "fileSource", fileSource);
-                JSONUtilities.safePut(options, "archiveFileName", archiveFileName);
-                metadata.appendImportOptionMetadata(options);
+                ObjectNode fileOptions = options.deepCopy();
+                JSONUtilities.safePut(fileOptions, "fileSource", fileSource);
+                JSONUtilities.safePut(fileOptions, "archiveFileName", archiveFileName);
+                // TODO: This will save a separate copy for each file in the import, but they're
+                // going to be mostly the same
+                metadata.appendImportOptionMetadata(fileOptions);
             } finally {
                 inputStream.close();
             }

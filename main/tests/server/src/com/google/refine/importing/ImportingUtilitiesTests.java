@@ -237,8 +237,21 @@ public class ImportingUtilitiesTests extends ImporterTest {
         assertEquals(project.rows.get(0).getCell(1).getValue(),"movies-condensed.tsv");
         assertEquals(project.columnModel.columns.get(2).getName(),"name");
         assertEquals(project.rows.get(0).getCell(2).getValue(),"Wayne's World");
+
         // Make sure we imported both files contained in the zip file
         assertEquals(project.rows.size(), 252);
+
+        ArrayNode importOptionsArray = metadata.getImportOptionMetadata();
+        assertEquals(importOptionsArray.size(), 2);
+        ObjectNode importOptions = (ObjectNode)importOptionsArray.get(0);
+        assertEquals(importOptions.get("archiveFileName").asText(), "movies.zip");
+        assertEquals(importOptions.get("fileSource").asText(), "movies-condensed.tsv");
+        assertTrue(importOptions.get("includeFileSources").asBoolean());
+        assertTrue(importOptions.get("includeArchiveFileName").asBoolean());
+
+        importOptions = (ObjectNode)importOptionsArray.get(1);
+        assertEquals(importOptions.get("fileSource").asText(), "movies.tsv");
+        assertEquals(importOptions.get("archiveFileName").asText(), "movies.zip");
     }
 
 }
