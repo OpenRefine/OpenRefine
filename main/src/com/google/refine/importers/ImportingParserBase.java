@@ -49,9 +49,11 @@ import com.google.refine.importing.EncodingGuesser;
 import com.google.refine.importing.ImportingJob;
 import com.google.refine.importing.ImportingParser;
 import com.google.refine.importing.ImportingUtilities;
+import com.google.refine.model.Cell;
 import com.google.refine.model.Column;
 import com.google.refine.model.ModelException;
 import com.google.refine.model.Project;
+import com.google.refine.model.Row;
 import com.google.refine.util.JSONUtilities;
 import com.google.refine.util.ParsingUtilities;
 
@@ -99,6 +101,7 @@ abstract public class ImportingParserBase implements ImportingParser {
         }
     }
     
+    // TODO: Make private? At least protected?
     public void parseOneFile(
         Project project,
         ProjectMetadata metadata,
@@ -112,13 +115,25 @@ abstract public class ImportingParserBase implements ImportingParser {
         final File file = ImportingUtilities.getFile(job, fileRecord);
         final String fileSource = ImportingUtilities.getFileSource(fileRecord);
         final String archiveFileName = ImportingUtilities.getArchiveFileName(fileRecord);
-        
+//        JSONUtilities.safePut(options, "archiveFileName", archiveFileName);
+
         progress.startFile(fileSource);
         try {
             InputStream inputStream = ImporterUtilities.openAndTrackFile(fileSource, file, progress);
             try {
+                
+                int filenameColumnIndex = -1;
+                int archiveColumnIndex = -1;
+                if (JSONUtilities.getBoolean(options, "includeArchiveFileName", false)
+                        && ImportingUtilities.getArchiveFileName(fileRecord) != null) {
+                    archiveColumnIndex = addArchiveColumn(project);
+                }
+                if (JSONUtilities.getBoolean(options, "includeFileSources", false)) {
+                    filenameColumnIndex = addFilenameColumn(project, archiveColumnIndex >=0);
+                }
+                
                 if (useInputStream) {
-                    parseOneFile(project, metadata, job, fileSource, archiveFileName, inputStream, limit, options, exceptions);
+                    parseOneFile(project, metadata, job, fileSource, inputStream, limit, options, exceptions);
                 } else {
                     String commonEncoding = JSONUtilities.getString(options, "encoding", null);
                     if (commonEncoding != null && commonEncoding.isEmpty()) {
@@ -128,8 +143,23 @@ abstract public class ImportingParserBase implements ImportingParser {
                     Reader reader = ImportingUtilities.getReaderFromStream(
                         inputStream, fileRecord, commonEncoding);
                     
-                    parseOneFile(project, metadata, job, fileSource, archiveFileName, reader, limit, options, exceptions);
+                    parseOneFile(project, metadata, job, fileSource, reader, limit, options, exceptions);
                 }
+                
+                // File in filename and archive name column for all rows
+                // FIXME: Only update the newly added rows
+                for (Row row : project.rows) {
+                    if (archiveColumnIndex >= 0) {
+                        row.setCell(archiveColumnIndex, new Cell(archiveFileName, null));
+                    }
+                    if (filenameColumnIndex >= 0) {
+                        row.setCell(filenameColumnIndex, new Cell(fileSource, null));
+                    }
+                }
+
+                pushImportingOptions(metadata, fileSource, options);
+                // FIXME: This is going to push two copies of the options onto the metadata?
+//                pushImportingOptions(metadata, "archiveFileName", archiveFileName, options);
             } finally {
                 inputStream.close();
             }
@@ -138,23 +168,36 @@ abstract public class ImportingParserBase implements ImportingParser {
         }
     }
     
+    
+    /**
+     * Parsing method to be implemented by Reader-based parsers.
+     * ie those initialized with useInputStream == false
+     * 
+     * @param project
+     * @param metadata
+     * @param job
+     * @param fileSource
+     * @param reader
+     * @param limit
+     * @param options
+     * @param exceptions
+     */
     public void parseOneFile(
         Project project,
         ProjectMetadata metadata,
         ImportingJob job,
         String fileSource,
-        String archiveFileName,
         Reader reader,
         int limit,
         ObjectNode options,
         List<Exception> exceptions
     ) {
-        pushImportingOptions(metadata, "fileSource", fileSource, options);
-        pushImportingOptions(metadata, "archiveFileName", archiveFileName, options);
+        pushImportingOptions(metadata, fileSource, options);
     }
 
-    private void pushImportingOptions(ProjectMetadata metadata, String key, String value, ObjectNode options) {
-        options.put(key, value);
+    private void pushImportingOptions(ProjectMetadata metadata, String fileSource, ObjectNode options) {
+        // TODO: Extend
+        options.put("fileSource", fileSource);
         // set the import options to metadata:
         metadata.appendImportOptionMetadata(options);
     }
@@ -164,25 +207,30 @@ abstract public class ImportingParserBase implements ImportingParser {
         ProjectMetadata metadata,
         ImportingJob job,
         String fileSource,
-        String archiveFileName,
         InputStream inputStream,
         int limit,
         ObjectNode options,
         List<Exception> exceptions
     ) {
-        pushImportingOptions(metadata, "fileSource", fileSource, options);
-        pushImportingOptions(metadata, "archiveFileName", archiveFileName, options);
+        pushImportingOptions(metadata, fileSource, options);
     }
     
-    
     protected static int addFilenameColumn(Project project, boolean archiveColumnAdded) {
-        String fileNameColumnName = "File";
+        String fileNameColumnName = "File";  // TODO: Localize?
         int columnId = archiveColumnAdded? 1 : 0;
-        if (project.columnModel.getColumnByName(fileNameColumnName) == null) {
+        return addColumn(project, fileNameColumnName, columnId);
+    }
+
+    private static int addArchiveColumn(Project project) {
+        String columnName = "Archive"; // TODO: Localize?
+        return addColumn(project, columnName, 0);
+    }
+
+    private static int addColumn(Project project, String columnName, int columnId) {
+        if (project.columnModel.getColumnByName(columnName) == null) {
             try {
                 project.columnModel.addColumn(
-                        columnId, new Column(project.columnModel.allocateNewCellIndex(), fileNameColumnName), false);
-
+                        columnId, new Column(project.columnModel.allocateNewCellIndex(), columnName), false);
                 return columnId;
             } catch (ModelException e) {
                 // Shouldn't happen: We already checked for duplicate name.
@@ -194,22 +242,5 @@ abstract public class ImportingParserBase implements ImportingParser {
         }
     }
 
-    protected static int addArchiveColumn(Project project) {
-        String ArchiveColumnName = "Archive";
-        if (project.columnModel.getColumnByName(ArchiveColumnName) == null) {
-            try {
-                project.columnModel.addColumn(
-                        0, new Column(project.columnModel.allocateNewCellIndex(), ArchiveColumnName), false);
-
-                return 0;
-            } catch (ModelException e) {
-                // Shouldn't happen: We already checked for duplicate name.
-                logger.error("ModelException adding Filename column",e);
-            }
-            return -1;
-        } else {
-            return 0;
-        }
-    }
 
 }
