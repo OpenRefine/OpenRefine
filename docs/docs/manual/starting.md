@@ -80,7 +80,7 @@ This can also be useful if you would like to paste in a list of URLs, which you 
 
 If you are an administrator or have SQL access to a database of information, you may want to pull the latest dataset directly from there. This could include an online catalogue, a content management system, or a digital repository or collection management system.
 
-There are some publicly-accessible databases that you may want to query, such as [one provided by Rfam ](https://docs.rfam.org/en/latest/database.html). The instructions provided by Rfam can help you understand how to connect to and query from any database. 
+There are some publicly-accessible databases that you may want to query, such as [one provided by Rfam](https://docs.rfam.org/en/latest/database.html). The instructions provided by Rfam can help you understand how to connect to and query from any database. 
 
 OpenRefine can connect to PostgreSQL, MySQL, MariaDB, and SQLite database systems. It will automatically populate the “Port” field based on which of these you choose, but you can manually edit this if needed.
 
@@ -89,8 +89,6 @@ If you have a downloaded database (`.db`) file from an SQLite database, you can 
 To import data directly from a database online, you will need to do two things:
 *   Add OpenRefine (running from your computer’s IP address) to an account authorized to access your database
 *   Set up OpenRefine to access that database using that authorized account
-
-![A screenshot of connecting to a database](img/databaseconnect.jpg "A screenshot of connecting to a database.")
 
 You can either connect just once and gather data, or save the connection to use it again later. If you press “Connect” without saving, OpenRefine will forget all the information you just entered. To save it, name your connection in a way you will recognize later. Click “Save” and it will appear in the “Saved Connections” list on the left. Now, you can click on the “...” ellipsis to the right of the connection you’ve saved, and click “Connect.” 
 
@@ -153,12 +151,7 @@ An exported project will include all of the [history](running#history-undoredo),
 
 Once someone has sent you a project archive file from their computer, you can save it anywhere, including your Downloads folder. 
 
-In the left-hand menu of the home screen, click “Import Project.” You will see the following screen:
-
-![A screenshot of the Import screen](img/import.jpg "A screenshot of the Import screen.")
-
-
-Click “Browse…” and navigate to wherever you saved the file you were sent (for example, your Downloads folder). 
+In the left-hand menu of the home screen, click “Import Project.” Click “Browse…” and navigate to wherever you saved the file you were sent (for example, your Downloads folder). 
 
 You can rename the project if you’d like - we recommend adding your name, a date, or a version number, if you’re planning to continue collaborating with another person (or working from multiple computers).
 
