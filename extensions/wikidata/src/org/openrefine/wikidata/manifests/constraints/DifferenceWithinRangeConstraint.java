@@ -14,7 +14,7 @@ public class DifferenceWithinRangeConstraint implements Constraint {
     public DifferenceWithinRangeConstraint(@JsonProperty("qid") String qid,
                                            @JsonProperty("property") String property,
                                            @JsonProperty("minimum_value") String minimumValue,
-                                           @JsonProperty("maximum") String maximumValue) {
+                                           @JsonProperty("maximum_value") String maximumValue) {
         this.qid = qid;
         this.property = property;
         this.minimumValue = minimumValue;
