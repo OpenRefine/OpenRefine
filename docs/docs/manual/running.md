@@ -114,8 +114,6 @@ _How do you call --debug and --jmx in windows?_
 |--debug|Enable debugging (on port 8000)|refine --debug|
 |--jmx|Enable JMX monitoring for Jconsole and JvisualVM|refine --jmx|
 
-You can also [edit the `refine.ini` file to permanently set the interface and port](#preferences).
-
 #### Modifications with `.ini` files
 
 You can change different settings by editing the `.ini` files in the Windows installation. 
