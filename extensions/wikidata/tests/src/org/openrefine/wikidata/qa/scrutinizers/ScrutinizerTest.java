@@ -95,7 +95,7 @@ public abstract class ScrutinizerTest {
     }
 
     public void assertWarningsRaised(String... types) {
-        assertEquals(Arrays.asList(types).stream().collect(Collectors.toSet()), getWarningTypes());
+        assertEquals(getWarningTypes(), Arrays.asList(types).stream().collect(Collectors.toSet()));
     }
 
     public void assertWarningRaised(QAWarning warning) {
