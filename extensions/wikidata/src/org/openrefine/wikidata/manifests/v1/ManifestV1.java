@@ -1,11 +1,13 @@
-package org.openrefine.wikidata.manifests.v1_0;
+package org.openrefine.wikidata.manifests.v1;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ArrayNode;
 import org.openrefine.wikidata.manifests.Constraints;
 import org.openrefine.wikidata.manifests.Manifest;
 
-public class ManifestV1_0 implements Manifest {
+public class ManifestV1 implements Manifest {
 
+    private String version;
     private String name;
     private String entityPrefix;
     private String mediaWikiApiEndpoint;
@@ -13,13 +15,15 @@ public class ManifestV1_0 implements Manifest {
     private String propertyConstraintPid;
     private Constraints constraints;
 
-    public ManifestV1_0(JsonNode manifest) {
+    public ManifestV1(JsonNode manifest) {
+        version = manifest.path("version").textValue();
+
         JsonNode mediawiki = manifest.path("mediawiki");
         name = mediawiki.path("name").textValue();
         mediaWikiApiEndpoint = mediawiki.path("api").textValue();
 
         JsonNode wikibase = manifest.path("wikibase");
-        constraints = new ConstraintsV1_0(wikibase.path("constraints"));
+        constraints = new ConstraintsV1((ArrayNode) wikibase.path("constraints"));
         JsonNode properties = wikibase.path("properties");
         propertyConstraintPid = properties.path("property_constraint").textValue();
         entityPrefix = properties.path("entity_prefix").textValue();
@@ -30,7 +34,7 @@ public class ManifestV1_0 implements Manifest {
 
     @Override
     public String getVersion() {
-        return "1.0";
+        return version;
     }
 
     @Override

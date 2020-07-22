@@ -4,7 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.lang3.StringUtils;
-import org.openrefine.wikidata.manifests.v1_0.ManifestV1_0;
+import org.openrefine.wikidata.manifests.v1.ManifestV1;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -19,17 +19,18 @@ public final class ManifestParser {
         try {
             root = mapper.readTree(manifestJson);
         } catch (JsonProcessingException e) {
-            throw new ManifestException("invalid manifest format");
+            throw new ManifestException("invalid manifest format", e);
         }
 
         String version = root.path("version").textValue();
         if (StringUtils.isBlank(version)) {
-            version = "1.0";
-            logger.warn("version is missing in the manifest, assumed to be \"1.0\"");
+            throw new ManifestException("invalid manifest format, version is missing");
         }
 
-        if ("1.0".equals(version)) {
-            return new ManifestV1_0(root);
+        String majorVersion = version.split("\\.")[0];
+        // support only v1.x for now
+        if ("1".equals(majorVersion)) {
+            return new ManifestV1(root);
         } else {
             throw new ManifestException("unsupported manifest version: " + version);
         }
