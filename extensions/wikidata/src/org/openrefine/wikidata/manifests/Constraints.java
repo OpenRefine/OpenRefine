@@ -38,6 +38,8 @@ public interface Constraints {
 
     OneOfConstraint getOneOfConstraint();
 
+    OneOfQualifierValuePropertyConstraint getOneOfQualifierValuePropertyConstraint();
+
     PropertyScopeConstraint getPropertyScopeConstraint();
 
     RangeConstraint getRangeConstraint();

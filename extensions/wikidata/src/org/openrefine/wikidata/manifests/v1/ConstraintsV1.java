@@ -35,6 +35,7 @@ public class ConstraintsV1 implements Constraints {
         registerConstraintClass(NoBoundsConstraint.class);
         registerConstraintClass(NoneOfConstraint.class);
         registerConstraintClass(OneOfConstraint.class);
+        registerConstraintClass(OneOfQualifierValuePropertyConstraint.class);
         registerConstraintClass(PropertyScopeConstraint.class);
         registerConstraintClass(RangeConstraint.class);
         registerConstraintClass(SingleBestValueConstraint.class);
@@ -141,6 +142,11 @@ public class ConstraintsV1 implements Constraints {
     @Override
     public OneOfConstraint getOneOfConstraint() {
         return getConstraint(OneOfConstraint.class);
+    }
+
+    @Override
+    public OneOfQualifierValuePropertyConstraint getOneOfQualifierValuePropertyConstraint() {
+        return getConstraint(OneOfQualifierValuePropertyConstraint.class);
     }
 
     @Override

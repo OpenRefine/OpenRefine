@@ -29,7 +29,7 @@ ImportSchemaDialog.launch = function() {
         elmts.schemaTextarea.val(evt.target.result);
         elmts.schemaTextarea.hide();
         elmts.schemaLabel.hide();
-     }
+     };
      freader.readAsText(file);
   });
 
@@ -51,7 +51,7 @@ ImportSchemaDialog.launch = function() {
         {   
         onDone: function() {
             theProject.overlayModels.wikibaseSchema = schema;
-            SchemaAlignmentDialog._discardChanges();
+            SchemaAlignment._discardChanges();
             dismiss();
         },
         onError: function(e) {

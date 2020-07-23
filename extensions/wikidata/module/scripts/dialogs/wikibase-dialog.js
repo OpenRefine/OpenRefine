@@ -1,0 +1,128 @@
+const WikibaseDialog = {};
+
+WikibaseDialog.launch = function () {
+  const frame = $(DOM.loadHTML("wikidata", "scripts/dialogs/wikibase-dialog.html"));
+  const elmts = this.elmts = DOM.bind(frame);
+  elmts.dialogHeader.text($.i18n("wikibase-management/dialog-header"));
+  elmts.explainSelectWikibase.text($.i18n("wikibase-management/explain-select-wikibase"));
+  elmts.currentSelectedWikibase.html($.i18n("wikibase-management/current-selected-wikibase",
+      WikibaseManager.getSelectedWikibaseMainPage(), WikibaseManager.getSelectedWikibaseName()));
+  elmts.closeButton.text($.i18n("wikibase-management/close"));
+  elmts.addButton.text($.i18n("wikibase-management/add-wikibase"));
+
+  WikibaseDialog.populateDialog();
+
+  let level = DialogSystem.showDialog(frame);
+
+  elmts.closeButton.click(function () {
+    DialogSystem.dismissUntil(level - 1);
+  });
+
+  elmts.addButton.click(function () {
+    WikibaseDialog.addWikibaseManifest();
+  });
+};
+
+WikibaseDialog.populateDialog = function () {
+  let wikibases = WikibaseManager.getAllWikibases();
+
+  WikibaseDialog.elmts.wikibaseList.empty();
+  for (let wikibaseName in wikibases) {
+    if (wikibases.hasOwnProperty(wikibaseName)) {
+      let item = "<tr onclick=\"WikibaseDialog.selectWikibase('" + wikibaseName + "')\">";
+      item += "<td>" + wikibaseName + "</td>";
+      if (wikibaseName.toLowerCase() === WikibaseManager.getSelectedWikibaseName().toLowerCase()) {
+        item += "<td><a class=\"wikibase-dialog-selector-remove wikibase-selected\" onclick=\"void(0)\"></a></td>";
+      } else {
+        item += "<td><a class=\"wikibase-dialog-selector-remove\" onclick=\"WikibaseDialog.removeWikibase(event, '" + wikibaseName + "')\"></a></td>";
+      }
+      item += "</tr>";
+      WikibaseDialog.elmts.wikibaseList.append(item);
+    }
+  }
+};
+
+WikibaseDialog.selectWikibase = function (wikibaseName) {
+  if (wikibaseName !== WikibaseManager.getSelectedWikibaseName()) {
+    WikibaseManager.selectWikibase(wikibaseName);
+    WikibaseDialog.elmts.currentSelectedWikibase.html($.i18n("wikibase-management/current-selected-wikibase",
+        WikibaseManager.getSelectedWikibaseMainPage(), WikibaseManager.getSelectedWikibaseName()));
+    WikibaseDialog.populateDialog();
+    SchemaAlignment.onWikibaseChange();
+  }
+};
+
+WikibaseDialog.removeWikibase = function (e, wikibaseName) {
+  e.stopPropagation(); // must stop, otherwise the removed Wikibase will be selected
+  WikibaseManager.removeWikibase(wikibaseName);
+  WikibaseDialog.populateDialog();
+};
+
+
+WikibaseDialog.addWikibaseManifest = function () {
+  const frame = $(DOM.loadHTML("wikidata", "scripts/dialogs/add-wikibase-dialog.html"));
+  const elmts = DOM.bind(frame);
+  elmts.dialogHeader.text($.i18n("wikibase-addition/dialog-header"));
+  elmts.explainAddManifest.text($.i18n("wikibase-addition/explain-add-manifest"));
+  elmts.explainAddManifestViaURL.text($.i18n("wikibase-addition/explain-add-manifest-via-url"));
+  elmts.explainPasteManifest.html($.i18n("wikibase-addition/explain-paste-manifest"));
+  elmts.cancelButton.text($.i18n("wikibase-addition/cancel"));
+  elmts.addButton.text($.i18n("wikibase-addition/add-wikibase"));
+  elmts.invalidManifest.hide();
+  elmts.invalidManifest.text($.i18n("wikibase-addition/invalid-manifest"));
+
+  let level = DialogSystem.showDialog(frame);
+
+  elmts.cancelButton.click(function () {
+    DialogSystem.dismissUntil(level - 1);
+  });
+
+  elmts.addButton.click(function () {
+    let addManifest = function (manifest) {
+      if (!manifest) {
+        alert("manifest is empty");
+        return;
+      }
+      if (!manifest.version) {
+        alert("version is missing in the manifest");
+        return;
+      }
+      if (!/^[0-9]+\.[0-9]+$/.test(manifest.version)) {
+        alert("invalid version format");
+        return;
+      }
+      let majorVersion = manifest.version.split('.')[0];
+      if (majorVersion !== "1") {
+        alert("only manifests with version 1.x are supported for now");
+        return;
+      }
+      // TODO: more strict format check
+
+      let onAddReconServiceSuccess = function () {
+        WikibaseManager.addWikibase(manifest);
+        DialogSystem.dismissUntil(level - 1);
+        WikibaseDialog.populateDialog();
+      };
+
+      let reconServiceURL = manifest.reconciliation.endpoint;
+      if (!ReconciliationManager.getServiceFromUrl(reconServiceURL)) {
+        // add this reconciliation service
+        ReconciliationManager.registerStandardService(reconServiceURL, onAddReconServiceSuccess);
+      } else {
+        onAddReconServiceSuccess();
+      }
+    };
+
+    let manifestURL = $.trim(elmts.manifestURLInput.val());
+    if (manifestURL.length) {
+      WikibaseManager.fetchManifestFromURL(manifestURL, addManifest);
+    } else {
+      try {
+        let manifest = JSON.parse(elmts.manifestTextarea.val());
+        addManifest(manifest);
+      } catch (e) {
+        elmts.invalidManifest.show();
+      }
+    }
+  });
+};

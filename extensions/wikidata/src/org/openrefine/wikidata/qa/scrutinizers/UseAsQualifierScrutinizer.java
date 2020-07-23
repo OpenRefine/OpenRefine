@@ -1,5 +1,6 @@
 package org.openrefine.wikidata.qa.scrutinizers;
 
+import org.openrefine.wikidata.manifests.constraints.OneOfQualifierValuePropertyConstraint;
 import org.openrefine.wikidata.qa.QAWarning;
 import org.openrefine.wikidata.updates.ItemUpdate;
 import org.wikidata.wdtk.datamodel.helpers.Datamodel;
@@ -17,9 +18,9 @@ import java.util.Map;
 public class UseAsQualifierScrutinizer extends EditScrutinizer {
 
     public static final String type = "values-should-not-be-used-as-qualifier";
-    public static String ONE_OF_QUALIFIER_VALUE_PROPERTY_QID = "Q52712340";
-    public static String QUALIFIER_PROPERTY_PID = "P2306";
-    public static String ITEM_OF_PROPERTY_CONSTRAINT_PID = "P2305";
+    public String oneOfQualifierValuePropertyQid;
+    public String property;
+    public String itemOfPropertyConstraintPid;
 
     class UseAsQualifierConstraint {
         final PropertyIdValue allowedQualifierPid;
@@ -30,16 +31,26 @@ public class UseAsQualifierScrutinizer extends EditScrutinizer {
             this.itemList = new ArrayList<>();
             for(SnakGroup group : specs) {
                 for (Snak snak : group.getSnaks()) {
-                    if (group.getProperty().getId().equals(QUALIFIER_PROPERTY_PID)){
+                    if (group.getProperty().getId().equals(property)){
                         pid = (PropertyIdValue) snak.getValue();
                     }
-                    if (group.getProperty().getId().equals(ITEM_OF_PROPERTY_CONSTRAINT_PID)){
+                    if (group.getProperty().getId().equals(itemOfPropertyConstraintPid)){
                         this.itemList.add(snak.getValue());
                     }
                 }
             }
             this.allowedQualifierPid = pid;
         }
+    }
+
+    @Override
+    public boolean prepareDependencies() {
+        OneOfQualifierValuePropertyConstraint constraint = constraints.getOneOfQualifierValuePropertyConstraint();
+        if (constraint == null) return false;
+        oneOfQualifierValuePropertyQid = constraint.getQid();
+        property = constraint.getProperty();
+        itemOfPropertyConstraintPid = constraint.getItemOfPropertyConstraint();
+        return oneOfQualifierValuePropertyQid != null && property != null && itemOfPropertyConstraintPid != null;
     }
 
     @Override
@@ -63,7 +74,7 @@ public class UseAsQualifierScrutinizer extends EditScrutinizer {
                 }
             }
 
-            List<Statement> constraintDefinitions = _fetcher.getConstraintsByType(pid, ONE_OF_QUALIFIER_VALUE_PROPERTY_QID);
+            List<Statement> constraintDefinitions = _fetcher.getConstraintsByType(pid, oneOfQualifierValuePropertyQid);
             for (Statement constraintStatement : constraintDefinitions) {
                 UseAsQualifierConstraint constraint = new UseAsQualifierConstraint(constraintStatement);
                 if (qualifiersMap.containsKey(constraint.allowedQualifierPid)) {

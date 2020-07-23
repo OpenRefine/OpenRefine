@@ -105,6 +105,12 @@
                 "item_of_property_constraint": "P2305"
             },
             {
+                "name": "one_of_qualifier_value_property_constraint",
+                "qid": "Q52712340",
+                "property": "P2306",
+                "item_of_property_constraint": "P2305"
+            },
+            {
                 "name": "property_scope_constraint",
                 "qid": "Q53869507",
                 "property_scope": "P5314",
