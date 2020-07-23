@@ -75,13 +75,36 @@ abstract public class TabularImportingParserBase extends ImportingParserBase {
     protected TabularImportingParserBase(boolean useInputStream) {
         super(useInputStream);
     }
+
+    /**
+     * @param project
+     * @param metadata
+     * @param job
+     * @param reader
+     * @param fileSource
+     * @param limit
+     * @param options
+     * @param exceptions
+     * @deprecated 2020-07-23 Use {@link TabularImportingParserBase#readTable(Project, ImportingJob, TableDataReader, int, ObjectNode, List)}
+     */
+    @Deprecated
+    static public void readTable(
+            Project project,
+            ProjectMetadata metadata,
+            ImportingJob job,
+            TableDataReader reader,
+            String fileSource,
+            int limit,
+            ObjectNode options,
+            List<Exception> exceptions
+        ) {
+        readTable(project, job, reader, limit, options, exceptions);
+    }
     
     static public void readTable(
         Project project,
-        ProjectMetadata metadata,
         ImportingJob job,
         TableDataReader reader,
-        String fileSource,
         int limit,
         ObjectNode options,
         List<Exception> exceptions
