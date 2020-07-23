@@ -584,7 +584,7 @@ DataTableView.prototype._adjustNextSetClasses = function(start, top) {
 
   if($('.data-table tbody tr').length > this._pageSize + 2 && start > this._pageSize && top == null) {
     console.log('Deleting above rows');
-    $('.data-table tbody tr').slice(1, $('.data-table tbody tr').length - 2 * this._pageSize).remove();
+    $('.data-table tbody tr').slice(1, Math.max(0, $('.data-table tbody tr').length - 2 * this._pageSize)).remove();
     this._pageStart = start - this._pageSize;
   }
 
@@ -746,7 +746,9 @@ DataTableView.prototype._onClickNextPage = function(elmt, evt) {
 };
 
 DataTableView.prototype._onBottomTable = function(scrollPosition, table, elmt, evt) {
-  this._showRowsBottom(scrollPosition, table, this._totalSize);
+  if(this._totalSize < theProject.rowModel.filtered) {
+    this._showRowsBottom(scrollPosition, table, this._totalSize);
+  }
 };
 
 DataTableView.prototype._onTopTable = function(scrollPosition, table, elmt, evt) {
