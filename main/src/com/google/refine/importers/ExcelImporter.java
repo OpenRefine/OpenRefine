@@ -128,7 +128,6 @@ public class ExcelImporter extends TabularImportingParserBase {
         ProjectMetadata metadata,
         ImportingJob job,
         String fileSource,
-        String archiveFileName,
         InputStream inputStream,
         int limit,
         ObjectNode options,
@@ -216,19 +215,19 @@ public class ExcelImporter extends TabularImportingParserBase {
                 }
             };
             
+            // TODO: Do we need to preserve the original filename? Take first piece before #?
+//           JSONUtilities.safePut(options, "fileSource", fileSource + "#" + sheet.getSheetName());
             TabularImportingParserBase.readTable(
                 project,
                 metadata,
                 job,
                 dataReader,
-                fileSource + "#" + sheet.getSheetName(), archiveFileName,
+                fileSource + "#" + sheet.getSheetName(),
                 limit,
                 options,
                 exceptions
             );
         }
-
-        super.parseOneFile(project, metadata, job, fileSource, archiveFileName, inputStream, limit, options, exceptions);
     }
     
     static protected Cell extractCell(org.apache.poi.ss.usermodel.Cell cell) {

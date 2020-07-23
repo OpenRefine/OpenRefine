@@ -393,6 +393,7 @@ public class ImportingUtilities {
                         calculateProgressPercent(update.totalExpectedSize, update.totalRetrievedSize));
                     
                     JSONUtilities.safePut(fileRecord, "size", saveStreamToFile(stream, file, null));
+                    // TODO: This needs to be refactored to be able to test import from archives
                     if (postProcessRetrievedFile(rawDataDir, file, fileRecord, fileRecords, progress)) {
                         archiveCount++;
                     }
@@ -641,6 +642,7 @@ public class ImportingUtilities {
         return null;
     }
     
+    // FIXME: This is wasteful of space and time. We should try to process on the fly
     static public boolean explodeArchive(
         File rawDataDir,
         InputStream archiveIS,

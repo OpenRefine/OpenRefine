@@ -285,7 +285,6 @@ public class DatabaseImportController implements ImportingController {
                 job,
                 new DBQueryResultPreviewReader(job, databaseService, querySource, columns, dbQueryInfo, 100),
                 querySource,
-                "", // archivefilename
                 limit,
                 options,
                 exceptions
@@ -415,7 +414,6 @@ public class DatabaseImportController implements ImportingController {
                 job,
                 new DBQueryResultImportReader(job, databaseService, querySource, columns, dbQueryInfo, getCreateBatchSize()),
                 querySource,
-                "", //archivefilename,
                 limit,
                 options,
                 exceptions
