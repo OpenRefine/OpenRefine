@@ -26,6 +26,9 @@ public final class ManifestParser {
         if (StringUtils.isBlank(version)) {
             throw new ManifestException("invalid manifest format, version is missing");
         }
+        if (!version.matches("[0-9]+\\.[0-9]+")) {
+            throw new ManifestException("invalid version: " + version);
+        }
 
         String majorVersion = version.split("\\.")[0];
         // support only v1.x for now
