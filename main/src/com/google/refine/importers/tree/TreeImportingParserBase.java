@@ -40,7 +40,6 @@ import java.io.Reader;
 import java.util.List;
 
 import org.apache.commons.lang.NotImplementedException;
-import com.google.refine.importers.tree.TreeReaderException;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.refine.ProjectMetadata;
@@ -112,14 +111,13 @@ abstract public class TreeImportingParserBase extends ImportingParserBase {
     ) throws IOException {
         final File file = ImportingUtilities.getFile(job, fileRecord);
         final String fileSource = ImportingUtilities.getFileSource(fileRecord);
-        final String archiveFileName = ImportingUtilities.getArchiveFileName(fileRecord);
         
         progress.startFile(fileSource);
         try {
             InputStream inputStream = ImporterUtilities.openAndTrackFile(fileSource, file, progress);
             try {
                 if (useInputStream) {
-                    parseOneFile(project, metadata, job, fileSource, archiveFileName, inputStream,
+                    parseOneFile(project, metadata, job, fileSource, inputStream,
                             rootColumnGroup, limit, options, exceptions);
                 } else {
                     String commonEncoding = JSONUtilities.getString(options, "encoding", null);
@@ -128,7 +126,7 @@ abstract public class TreeImportingParserBase extends ImportingParserBase {
                     }
                     
                     Reader reader = ImportingUtilities.getFileReader(file, fileRecord, commonEncoding);
-                    parseOneFile(project, metadata, job, fileSource, archiveFileName, reader,
+                    parseOneFile(project, metadata, job, fileSource, reader,
                             rootColumnGroup, limit, options, exceptions);
                 }
             } finally {
@@ -150,7 +148,6 @@ abstract public class TreeImportingParserBase extends ImportingParserBase {
         ProjectMetadata metadata,
         ImportingJob job,
         String fileSource,
-        String archiveFileName,
         Reader reader,
         ImportColumnGroup rootColumnGroup,
         int limit,
@@ -171,15 +168,13 @@ abstract public class TreeImportingParserBase extends ImportingParserBase {
         ProjectMetadata metadata,
         ImportingJob job,
         String fileSource,
-        String archiveFileName,
         InputStream inputStream,
         ImportColumnGroup rootColumnGroup,
         int limit,
         ObjectNode options,
         List<Exception> exceptions
     ) {
-        // throw new NotImplementedException();
-        super.parseOneFile(project, metadata, job, fileSource, archiveFileName, inputStream, limit, options, exceptions);
+        throw new NotImplementedException();
     }
     
     /**
@@ -191,7 +186,6 @@ abstract public class TreeImportingParserBase extends ImportingParserBase {
         ProjectMetadata metadata,
         ImportingJob job,
         String fileSource,
-        String archiveFileName,
         TreeReader treeParser,
         ImportColumnGroup rootColumnGroup,
         int limit,
@@ -216,28 +210,12 @@ abstract public class TreeImportingParserBase extends ImportingParserBase {
         boolean trimStrings = JSONUtilities.getBoolean(options, "trimStrings", true);
         boolean storeEmptyStrings = JSONUtilities.getBoolean(options, "storeEmptyStrings", false);
         boolean guessCellValueTypes = JSONUtilities.getBoolean(options, "guessCellValueTypes", true);
-        
         boolean includeFileSources = JSONUtilities.getBoolean(options, "includeFileSources", false);
-        boolean includeArchiveFileName = JSONUtilities.getBoolean(options, "includeArchiveFileName", false);
-        int filenameColumnIndex = -1, archiveColumnIndex = -1;
-        if (includeArchiveFileName && archiveFileName != null) {
-            archiveColumnIndex = addArchiveColumn(project);
-            assert archiveColumnIndex == 0;
-        }
-        if (includeFileSources) {
-            filenameColumnIndex = addFilenameColumn(project, includeArchiveFileName);
-            // If the column add fails for any reason, we'll end up overwriting data in the first column
-            if (includeArchiveFileName) {
-                assert filenameColumnIndex == 1;
-            } else {
-                assert filenameColumnIndex == 0;
-            }
-        }
-        
+
         try {
             XmlImportUtilities.importTreeData(treeParser, project, recordPath, rootColumnGroup, limit2,
                     new ImportParameters(trimStrings, storeEmptyStrings, guessCellValueTypes, includeFileSources,
-                            fileSource, includeArchiveFileName, archiveFileName));
+                            fileSource));
         } catch (Exception e){
             exceptions.add(e);
         }

@@ -1,6 +1,7 @@
 /*
 
 Copyright 2011, Google Inc.
+Copyright 2012,2020 OpenRefine contributors
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -39,6 +40,7 @@ import java.io.InputStream;
 import java.io.Reader;
 import java.util.List;
 
+import org.apache.commons.lang.NotImplementedException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -49,9 +51,11 @@ import com.google.refine.importing.EncodingGuesser;
 import com.google.refine.importing.ImportingJob;
 import com.google.refine.importing.ImportingParser;
 import com.google.refine.importing.ImportingUtilities;
+import com.google.refine.model.Cell;
 import com.google.refine.model.Column;
 import com.google.refine.model.ModelException;
 import com.google.refine.model.Project;
+import com.google.refine.model.Row;
 import com.google.refine.util.JSONUtilities;
 import com.google.refine.util.ParsingUtilities;
 
@@ -99,6 +103,7 @@ abstract public class ImportingParserBase implements ImportingParser {
         }
     }
     
+    // TODO: Make private? At least protected?
     public void parseOneFile(
         Project project,
         ProjectMetadata metadata,
@@ -112,24 +117,55 @@ abstract public class ImportingParserBase implements ImportingParser {
         final File file = ImportingUtilities.getFile(job, fileRecord);
         final String fileSource = ImportingUtilities.getFileSource(fileRecord);
         final String archiveFileName = ImportingUtilities.getArchiveFileName(fileRecord);
+        int filenameColumnIndex = -1;
+        int archiveColumnIndex = -1;
+        int startingRowCount = project.rows.size();
         
         progress.startFile(fileSource);
         try {
             InputStream inputStream = ImporterUtilities.openAndTrackFile(fileSource, file, progress);
             try {
+
+                if (JSONUtilities.getBoolean(options, "includeArchiveFileName", false)
+                        && archiveFileName != null) {
+                    archiveColumnIndex = addArchiveColumn(project);
+                }
+                if (JSONUtilities.getBoolean(options, "includeFileSources", false)) {
+                    filenameColumnIndex = addFilenameColumn(project, archiveColumnIndex >=0);
+                }
+
                 if (useInputStream) {
-                    parseOneFile(project, metadata, job, fileSource, archiveFileName, inputStream, limit, options, exceptions);
+                    parseOneFile(project, metadata, job, fileSource, inputStream, limit, options, exceptions);
                 } else {
                     String commonEncoding = JSONUtilities.getString(options, "encoding", null);
                     if (commonEncoding != null && commonEncoding.isEmpty()) {
                         commonEncoding = null;
                     }
-                    
+
                     Reader reader = ImportingUtilities.getReaderFromStream(
-                        inputStream, fileRecord, commonEncoding);
-                    
-                    parseOneFile(project, metadata, job, fileSource, archiveFileName, reader, limit, options, exceptions);
+                            inputStream, fileRecord, commonEncoding);
+
+                    parseOneFile(project, metadata, job, fileSource, reader, limit, options, exceptions);
                 }
+
+                // Fill in filename and archive name column for all rows added from this file
+                int endingRowCount = project.rows.size();
+                for (int i = startingRowCount; i < endingRowCount; i++) {
+                    Row row = project.rows.get(i);
+                    if (archiveColumnIndex >= 0) {
+                        row.setCell(archiveColumnIndex, new Cell(archiveFileName, null));
+                    }
+                    if (filenameColumnIndex >= 0) {
+                        row.setCell(filenameColumnIndex, new Cell(fileSource, null));
+                    }
+                }
+
+                ObjectNode fileOptions = options.deepCopy();
+                JSONUtilities.safePut(fileOptions, "fileSource", fileSource);
+                JSONUtilities.safePut(fileOptions, "archiveFileName", archiveFileName);
+                // TODO: This will save a separate copy for each file in the import, but they're
+                // going to be mostly the same
+                metadata.appendImportOptionMetadata(fileOptions);
             } finally {
                 inputStream.close();
             }
@@ -138,51 +174,66 @@ abstract public class ImportingParserBase implements ImportingParser {
         }
     }
     
+    
+    /**
+     * Parsing method to be implemented by Reader-based parsers.
+     * ie those initialized with useInputStream == false
+     * 
+     * @param project
+     * @param metadata
+     * @param job
+     * @param fileSource
+     * @param reader
+     * @param limit
+     * @param options
+     * @param exceptions
+     */
     public void parseOneFile(
         Project project,
         ProjectMetadata metadata,
         ImportingJob job,
         String fileSource,
-        String archiveFileName,
         Reader reader,
         int limit,
         ObjectNode options,
         List<Exception> exceptions
     ) {
-        pushImportingOptions(metadata, "fileSource", fileSource, options);
-        pushImportingOptions(metadata, "archiveFileName", archiveFileName, options);
+        throw new NotImplementedException();
     }
 
-    private void pushImportingOptions(ProjectMetadata metadata, String key, String value, ObjectNode options) {
-        options.put(key, value);
-        // set the import options to metadata:
-        metadata.appendImportOptionMetadata(options);
-    }
-    
     public void parseOneFile(
         Project project,
         ProjectMetadata metadata,
         ImportingJob job,
         String fileSource,
-        String archiveFileName,
         InputStream inputStream,
         int limit,
         ObjectNode options,
         List<Exception> exceptions
     ) {
-        pushImportingOptions(metadata, "fileSource", fileSource, options);
-        pushImportingOptions(metadata, "archiveFileName", archiveFileName, options);
+        throw new NotImplementedException();
     }
-    
-    
+
+    /**
+     * @deprecated 2020-07-21 by tfmorris. This will become private in a future release.
+     */
+    @Deprecated
     protected static int addFilenameColumn(Project project, boolean archiveColumnAdded) {
-        String fileNameColumnName = "File";
+        String fileNameColumnName = "File";  // TODO: Localize?
         int columnId = archiveColumnAdded? 1 : 0;
-        if (project.columnModel.getColumnByName(fileNameColumnName) == null) {
+        return addColumn(project, fileNameColumnName, columnId);
+    }
+
+    private static int addArchiveColumn(Project project) {
+        String columnName = "Archive"; // TODO: Localize?
+        return addColumn(project, columnName, 0);
+    }
+
+    private static int addColumn(Project project, String columnName, int columnId) {
+        if (project.columnModel.getColumnByName(columnName) == null) {
             try {
                 project.columnModel.addColumn(
-                        columnId, new Column(project.columnModel.allocateNewCellIndex(), fileNameColumnName), false);
-
+                        columnId, new Column(project.columnModel.allocateNewCellIndex(), columnName), false);
                 return columnId;
             } catch (ModelException e) {
                 // Shouldn't happen: We already checked for duplicate name.
@@ -194,22 +245,5 @@ abstract public class ImportingParserBase implements ImportingParser {
         }
     }
 
-    protected static int addArchiveColumn(Project project) {
-        String ArchiveColumnName = "Archive";
-        if (project.columnModel.getColumnByName(ArchiveColumnName) == null) {
-            try {
-                project.columnModel.addColumn(
-                        0, new Column(project.columnModel.allocateNewCellIndex(), ArchiveColumnName), false);
-
-                return 0;
-            } catch (ModelException e) {
-                // Shouldn't happen: We already checked for duplicate name.
-                logger.error("ModelException adding Filename column",e);
-            }
-            return -1;
-        } else {
-            return 0;
-        }
-    }
 
 }

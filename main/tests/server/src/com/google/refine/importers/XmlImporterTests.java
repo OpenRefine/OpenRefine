@@ -37,7 +37,7 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
-import java.util.LinkedList;
+import java.util.Collections;
 
 import org.slf4j.LoggerFactory;
 import org.testng.Assert;
@@ -48,7 +48,6 @@ import org.testng.annotations.Test;
 
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.google.refine.importers.XmlImporter;
 import com.google.refine.importers.tree.TreeImportingParserBase;
 import com.google.refine.importing.ImportingJob;
 import com.google.refine.model.ColumnGroup;
@@ -248,7 +247,7 @@ public class XmlImporterTests extends ImporterTest {
 
     public static ObjectNode getOptions(ImportingJob job, TreeImportingParserBase parser) {
         ObjectNode options = parser.createParserUIInitializationData(
-                job, new LinkedList<>(), "text/json");
+                job, Collections.emptyList(), "text/xml");
         
         ArrayNode path = ParsingUtilities.mapper.createArrayNode();
         JSONUtilities.append(path, "library");
@@ -260,7 +259,7 @@ public class XmlImporterTests extends ImporterTest {
     
     public static ObjectNode getNestedOptions(ImportingJob job, TreeImportingParserBase parser) {
         ObjectNode options = parser.createParserUIInitializationData(
-                job, new LinkedList<>(), "text/json");
+                job, Collections.emptyList(), "text/xml");
         
         ArrayNode path = ParsingUtilities.mapper.createArrayNode();
         JSONUtilities.append(path, "nest");

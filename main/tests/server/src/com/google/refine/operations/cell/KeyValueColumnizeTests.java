@@ -63,7 +63,6 @@ import com.google.refine.model.AbstractOperation;
 import com.google.refine.model.ModelException;
 import com.google.refine.model.Project;
 import com.google.refine.operations.OperationRegistry;
-import com.google.refine.operations.cell.KeyValueColumnizeOperation;
 import com.google.refine.process.Process;
 import com.google.refine.util.ParsingUtilities;
 import com.google.refine.util.TestUtils;
@@ -202,7 +201,7 @@ public class KeyValueColumnizeTests extends RefineTest {
 		+ "price,3.1\n";
 	prepareOptions(",", 20, 0, 0, 1, false, false);
         List<Exception> exceptions = new ArrayList<Exception>();
-        importer.parseOneFile(project, pm, job, "filesource", "archivefile", new StringReader(csv), -1, options, exceptions);
+        importer.parseOneFile(project, pm, job, "filesource", new StringReader(csv), -1, options, exceptions);
         project.update();
         ProjectManager.singleton.registerProject(project, pm);
 

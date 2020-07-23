@@ -173,7 +173,7 @@
     <dependency>
       <groupId>org.openrefine.dependencies</groupId>
       <artifactId>butterfly</artifactId>
-      <version>1.0.3</version>
+      <version>1.0.4</version>
     </dependency>
     <dependency>
       <groupId>org.mozilla</groupId>
@@ -231,9 +231,9 @@
       <version>1.5</version>
     </dependency>
     <dependency>
-      <groupId>org.openrefine.dependencies</groupId>
+      <groupId>org.marc4j</groupId>
       <artifactId>marc4j</artifactId>
-      <version>2.4</version>
+      <version>2.9.1</version>
     </dependency>
     <dependency>
       <groupId>org.apache.commons</groupId>

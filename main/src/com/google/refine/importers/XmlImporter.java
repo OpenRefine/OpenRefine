@@ -193,15 +193,13 @@ public class XmlImporter extends TreeImportingParserBase {
     
     @Override
     public void parseOneFile(Project project, ProjectMetadata metadata,
-            ImportingJob job, String fileSource, String archiveFileName, InputStream inputStream,
+            ImportingJob job, String fileSource, InputStream inputStream,
             ImportColumnGroup rootColumnGroup, int limit, ObjectNode options,
             List<Exception> exceptions) {
         
         try {
-            parseOneFile(project, metadata, job, fileSource, archiveFileName,
+            parseOneFile(project, metadata, job, fileSource,
                 new XmlParser(inputStream), rootColumnGroup, limit, options, exceptions);
-            
-            super.parseOneFile(project, metadata, job, fileSource, archiveFileName, inputStream, rootColumnGroup, limit, options, exceptions);
         } catch (XMLStreamException e) {
             exceptions.add(e);
         } catch (IOException e) {

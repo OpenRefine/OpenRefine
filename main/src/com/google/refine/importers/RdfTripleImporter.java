@@ -76,7 +76,8 @@ public class RdfTripleImporter extends ImportingParserBase {
         this.mode = mode;
     }
 
-    public void parseOneFile(Project project, ProjectMetadata metadata, ImportingJob job, String fileSource, String archiveFileName,
+    @Override
+    public void parseOneFile(Project project, ProjectMetadata metadata, ImportingJob job, String fileSource,
             InputStream input, int limit, ObjectNode options, List<Exception> exceptions) {
         // create an empty model
         Model model = ModelFactory.createDefaultModel();
@@ -164,7 +165,5 @@ public class RdfTripleImporter extends ImportingParserBase {
       } catch (ModelException e) {
           exceptions.add(e);
       } 
-      
-      super.parseOneFile(project, metadata, job, fileSource, archiveFileName, input, limit, options, exceptions);
     }
 }

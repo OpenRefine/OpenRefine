@@ -43,7 +43,6 @@ import com.google.refine.ProjectMetadata;
 import com.google.refine.RefineServlet;
 import com.google.refine.RefineServletStub;
 import com.google.refine.RefineTest;
-import com.google.refine.importers.ImportingParserBase;
 import com.google.refine.importers.tree.ImportColumnGroup;
 import com.google.refine.importers.tree.TreeImportingParserBase;
 import com.google.refine.importers.tree.XmlImportUtilities;
@@ -58,9 +57,8 @@ public abstract class ImporterTest extends RefineTest {
     protected ProjectMetadata metadata;
     protected ImportingJob job;
     protected RefineServlet servlet;
-    
     protected ObjectNode options;
-    
+
     public void setUp(){
         //FIXME - should we try and use mock(Project.class); - seems unnecessary complexity
 
@@ -92,7 +90,6 @@ public abstract class ImporterTest extends RefineTest {
             metadata,
             job,
             "file-source",
-            "archive-file",
             reader,
             -1,
             options,
@@ -109,7 +106,6 @@ public abstract class ImporterTest extends RefineTest {
             metadata,
             job,
             "file-source",
-            "archive-file",
             inputStream,
             -1,
             options,
@@ -126,7 +122,6 @@ public abstract class ImporterTest extends RefineTest {
             metadata,
             job,
             "file-source",
-            "archive-file",
             inputStream,
             -1,
             options,
@@ -144,7 +139,6 @@ public abstract class ImporterTest extends RefineTest {
             metadata,
             job,
             "file-source",
-            "archive-file",
             reader,
             rootColumnGroup,
             -1,
@@ -170,7 +164,6 @@ public abstract class ImporterTest extends RefineTest {
             metadata,
             job,
             "file-source",
-            "archive-file",
             inputStream,
             rootColumnGroup,
             -1,
@@ -191,7 +184,6 @@ public abstract class ImporterTest extends RefineTest {
             metadata,
             job,
             "file-source",
-            "archive-file",
             reader,
             rootColumnGroup,
             -1,

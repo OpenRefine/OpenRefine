@@ -46,7 +46,7 @@ public class WikidataRefineTest extends PowerMockTestCase {
         SeparatorBasedImporter importer = new SeparatorBasedImporter();
         
         List<Exception> exceptions = new ArrayList<Exception>();
-        importer.parseOneFile(project, metadata, job, "filesource", "archivefile", new StringReader(input), -1, options, exceptions);
+        importer.parseOneFile(project, metadata, job, "filesource", new StringReader(input), -1, options, exceptions);
         project.update();
         ProjectManager.singleton.registerProject(project, metadata);
         

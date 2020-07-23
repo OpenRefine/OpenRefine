@@ -691,7 +691,6 @@ public class WikitextImporter extends TabularImportingParserBase {
         ProjectMetadata metadata,
         ImportingJob job,
         String fileSource,
-        String archiveFileName,
         Reader reader,
         int limit,
         ObjectNode options,
@@ -750,7 +749,7 @@ public class WikitextImporter extends TabularImportingParserBase {
                 // TODO this does not seem to do anything - maybe we need to pass it to OpenRefine in some other way?
             }
 
-            TabularImportingParserBase.readTable(project, metadata, job, dataReader, fileSource, archiveFileName, limit, options, exceptions);
+            TabularImportingParserBase.readTable(project, metadata, job, dataReader, fileSource, limit, options, exceptions);
             
             // Add reconciliation statistics
             if (dataReader.columnReconciled != null) {
@@ -768,8 +767,6 @@ public class WikitextImporter extends TabularImportingParserBase {
             exceptions.add(e1);
             e1.printStackTrace();
         }
-        
-        super.parseOneFile(project, metadata, job, fileSource, archiveFileName, reader, limit, options, exceptions);
     }
     
     private StandardReconConfig getReconConfig(String url) {
