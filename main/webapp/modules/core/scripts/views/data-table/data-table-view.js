@@ -518,11 +518,16 @@ DataTableView.prototype._renderDataTables = function(table, tableHeader) {
     self._downwardDirection = self._scrollTop < $(this).scrollTop();
     self._scrollTop = $(this).scrollTop();
 
-    var element = document.querySelectorAll('.load-next-set');
-    element = element[element.length - 1];
-    var position = element.getBoundingClientRect();
-    var element2 = document.querySelector('.load-next-set');
-    var position2 = element2.getBoundingClientRect();
+    try {
+      var element = document.querySelectorAll('.load-next-set');
+      element = element[element.length - 1];
+      var position = element.getBoundingClientRect();
+      var element2 = document.querySelector('.load-next-set');
+      var position2 = element2.getBoundingClientRect();
+    } catch (err) {
+      var position = {top: undefined, bottom: undefined};
+      var position2 = {top: undefined, bottom: undefined};
+    }
     var lastElement = document.querySelector('.last-row');
     var positionLastElement = lastElement.getBoundingClientRect();
     var firstElement = document.querySelector('.first-row');
@@ -599,12 +604,14 @@ DataTableView.prototype._addHeights = function(heightToAddTop, heightToAddBottom
   $('tr:last').css('height', heightToAddBottom);
   $('tr:last').addClass('last-row');
 
-  if (theProject.rowModel.mode == "record-based") {
-    $('tr.record').eq(-1 * (this._pageSize / 2 + 1)).addClass('load-next-set');
-    $('tr.record').eq(this._pageSize / 2 + 1).addClass('load-next-set');
-  } else {
-    $('tr').eq(-1 * (this._pageSize / 2 + 2)).addClass('load-next-set');
-    $('tr').eq(this._pageSize / 2 + 1).addClass('load-next-set');
+  if(theProject.rowModel.rows.length >= this._pageSize) {
+    if (theProject.rowModel.mode == "record-based") {
+      $('tr.record').eq(-1 * (this._pageSize / 2 + 1)).addClass('load-next-set');
+      $('tr.record').eq(this._pageSize / 2 + 1).addClass('load-next-set');
+    } else {
+      $('tr').eq(-1 * (this._pageSize / 2 + 2)).addClass('load-next-set');
+      $('tr').eq(this._pageSize / 2 + 1).addClass('load-next-set');
+    }
   }
 }
 
