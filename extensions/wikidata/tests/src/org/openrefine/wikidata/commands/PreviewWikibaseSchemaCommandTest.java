@@ -52,8 +52,10 @@ public class PreviewWikibaseSchemaCommandTest extends SchemaCommandTest {
         ConstraintFetcher fetcher = new ConstraintFetcher(new EntityCacheStub(), "P2302");
         PowerMockito.whenNew(ConstraintFetcher.class).withAnyArguments().thenReturn(fetcher);
 
-        String schemaJson = jsonFromFile("schema/inception.json").toString();
+        String schemaJson = jsonFromFile("schema/inception.json");
+        String manifestJson = jsonFromFile("manifest/wikidata-manifest-v1.0.json");
         when(request.getParameter("schema")).thenReturn(schemaJson);
+        when(request.getParameter("manifest")).thenReturn(manifestJson);
 
         command.doPost(request, response);
 

@@ -73,7 +73,7 @@ public class WikibaseSchema implements OverlayModel {
      */
     @JsonCreator
     public WikibaseSchema(@JsonProperty("itemDocuments") List<WbItemDocumentExpr> exprs,
-                          @JsonProperty("entityPrefix") String baseIri) {
+                          @JsonProperty("wikibasePrefix") String baseIri) {
         this.itemDocumentExprs = exprs;
         this.baseIri = baseIri;
     }
@@ -81,7 +81,7 @@ public class WikibaseSchema implements OverlayModel {
     /**
      * @return the site IRI of the Wikibase instance referenced by this schema
      */
-    @JsonProperty("entityPrefix")
+    @JsonProperty("wikibasePrefix")
     public String getBaseIri() {
         return baseIri;
     }

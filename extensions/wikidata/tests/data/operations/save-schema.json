@@ -28,6 +28,7 @@
             }
           ]
         }
-      ]
+      ],
+      "wikibasePrefix": "http://www.wikidata.org/entity/"
     }
 }

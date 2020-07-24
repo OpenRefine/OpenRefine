@@ -245,9 +245,9 @@ var beforeUnload = function(e) {
 $(window).bind('beforeunload', beforeUnload);
 
 SchemaAlignment._reset = function(schema) {
-  if (!schema || !schema.entityPrefix || schema.entityPrefix !== WikibaseManager.getSelectedWikibaseEntityPrefix()) {
+  if (!schema || !schema.wikibasePrefix || schema.wikibasePrefix !== WikibaseManager.getSelectedWikibaseEntityPrefix()) {
     schema = {
-      entityPrefix: WikibaseManager.getSelectedWikibaseEntityPrefix(),
+      wikibasePrefix: WikibaseManager.getSelectedWikibaseEntityPrefix(),
       itemDocuments: []
     };
   }
@@ -1262,8 +1262,8 @@ SchemaAlignment.getJSON = function() {
   });
   if (list.length === itemsDom.length) {
     return {
-        'itemDocuments': list,
-        'entityPrefix': WikibaseManager.getSelectedWikibaseEntityPrefix(),
+        itemDocuments: list,
+        wikibasePrefix: WikibaseManager.getSelectedWikibaseEntityPrefix(),
     };
   } else {
     return null;
