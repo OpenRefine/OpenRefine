@@ -1,19 +1,12 @@
 var ManageAccountDialog = {};
 
-ManageAccountDialog.firstLogin = true;
-
 /**
  * Displays the logged in page if the user is logged in,
  * displays the login page otherwise.
  */
 ManageAccountDialog.display = function (logged_in_username, onSuccess) {
   if (logged_in_username == null) {
-    if (ManageAccountDialog.firstLogin) {
-      ManageAccountDialog.firstLogin = false;
-      ManageAccountDialog.tryLoginWithCookies(onSuccess);
-    } else {
-      ManageAccountDialog.displayPasswordLogin(onSuccess);
-    }
+    ManageAccountDialog.tryLoginWithCookies(onSuccess);
   } else {
     ManageAccountDialog.displayLoggedIn(logged_in_username);
   }
@@ -21,14 +14,11 @@ ManageAccountDialog.display = function (logged_in_username, onSuccess) {
 
 
 ManageAccountDialog.tryLoginWithCookies = function (onSuccess) {
-  // In the first login, we try logging in with cookies,
-  // the backend may take a while to tell if the cookies are valid or not.
-  // So we need to call DialogSystem.showBusy to inform the user that
-  // OpenRefine is trying connecting to Wikidata.
+  // Try with cookies first.
   const discardWaiter = DialogSystem.showBusy($.i18n('wikibase-account/connecting-to-wikibase'));
   Refine.postCSRF(
       "command/wikidata/login",
-      {},
+      {"wb-api-endpoint": WikibaseManager.getSelectedWikibaseApi()},
       function (data) {
         discardWaiter();
         if (data.logged_in) {
@@ -36,6 +26,7 @@ ManageAccountDialog.tryLoginWithCookies = function (onSuccess) {
           ManageAccountDialog.loggedInTo = data.mediawiki_api_endpoint;
           ManageAccountDialog.displayLoggedIn(data.username);
         } else {
+          // If failed, then login with username/password.
           ManageAccountDialog.displayPasswordLogin(onSuccess);
         }
       });

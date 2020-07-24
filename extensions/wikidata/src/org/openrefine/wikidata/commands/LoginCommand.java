@@ -50,10 +50,13 @@ import static org.apache.commons.lang.StringUtils.isNotBlank;
  * Both logging in with username/password or owner-only consumer are supported.
  * <p>
  * This command also manages cookies of login credentials.
+ * <p>
+ * Cookies for different MediaWiki API endpoint are stored,
+ * but only one connection is kept at the same time.
  */
 public class LoginCommand extends Command {
 
-    static final String WIKIDATA_COOKIE_PREFIX = "openrefine-wikidata-";
+    static final String WIKIBASE_COOKIE_PREFIX = "openrefine-wikibase-";
 
     static final String API_ENDPOINT = "wb-api-endpoint";
 
@@ -65,7 +68,6 @@ public class LoginCommand extends Command {
     static final String ACCESS_TOKEN = "wb-access-token";
     static final String ACCESS_SECRET = "wb-access-secret";
 
-    // TODO: check if this command still works as expected
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -76,11 +78,17 @@ public class LoginCommand extends Command {
 
         ConnectionManager manager = ConnectionManager.getInstance();
 
+        String mediawikiApiEndpoint = request.getParameter(API_ENDPOINT);
+        if (isBlank(mediawikiApiEndpoint)) {
+            CommandUtilities.respondError(response, "missing parameter '" + API_ENDPOINT + "'");
+            return;
+        }
+        String mediawikiApiEndpointPrefix = mediawikiApiEndpoint + '-';
+
         if ("true".equals(request.getParameter("logout"))) {
             manager.logout();
-            removeUsernamePasswordCookies(request, response);
-            removeOwnerOnlyConsumerCookies(request, response);
-            removeCookie(response, API_ENDPOINT);
+            removeUsernamePasswordCookies(mediawikiApiEndpointPrefix, request, response);
+            removeOwnerOnlyConsumerCookies(mediawikiApiEndpointPrefix, request, response);
             respond(request, response);
             return; // return directly
         }
@@ -88,7 +96,6 @@ public class LoginCommand extends Command {
         boolean remember = "on".equals(request.getParameter("remember-credentials"));
 
         // Credentials from parameters have higher priority than those from cookies.
-        String wikibaseApiEndpoint = request.getParameter(API_ENDPOINT);
         String username = request.getParameter(USERNAME);
         String password = request.getParameter(PASSWORD);
         String consumerToken = request.getParameter(CONSUMER_TOKEN);
@@ -96,91 +103,69 @@ public class LoginCommand extends Command {
         String accessToken = request.getParameter(ACCESS_TOKEN);
         String accessSecret = request.getParameter(ACCESS_SECRET);
 
-        if (isBlank(wikibaseApiEndpoint) && isBlank(username) && isBlank(password) && isBlank(consumerToken)
+        if (isBlank(username) && isBlank(password) && isBlank(consumerToken)
                 && isBlank(consumerSecret) && isBlank(accessToken) && isBlank(accessSecret)) {
-            // In this case, we use cookie to login, and we will always remember the credentials in cookies.
+            // In this case, we use cookies to login, and we will always remember the credentials in cookies.
             remember = true;
-            Cookie[] cookies = request.getCookies();
-
-            for (Cookie cookie : cookies) {
-                String value = getCookieValue(cookie);
-                switch (cookie.getName()) {
-                    case API_ENDPOINT:
-                        wikibaseApiEndpoint = value;
-                        break;
-                    case USERNAME:
-                        username = value;
-                        break;
-                    case CONSUMER_TOKEN:
-                        consumerToken = value;
-                        break;
-                    case CONSUMER_SECRET:
-                        consumerSecret = value;
-                        break;
-                    case ACCESS_TOKEN:
-                        accessToken = value;
-                        break;
-                    case ACCESS_SECRET:
-                        accessSecret = value;
-                        break;
-                    default:
-                        break;
-                }
-            }
+            Map<String, String> cookieMap = processCookiesWithPrefix(mediawikiApiEndpointPrefix, request.getCookies());
+            username = cookieMap.get(USERNAME);
+            consumerToken = cookieMap.get(CONSUMER_TOKEN);
+            consumerSecret = cookieMap.get(CONSUMER_SECRET);
+            accessToken = cookieMap.get(ACCESS_TOKEN);
+            accessSecret = cookieMap.get(ACCESS_SECRET);
 
             if (isBlank(consumerToken) && isBlank(consumerSecret) && isBlank(accessToken) && isBlank(accessSecret)) {
                 // Try logging in with the cookies of a password-based connection.
                 List<Cookie> cookieList = new ArrayList<>();
-                for (Cookie cookie : cookies) {
-                    if (cookie.getName().startsWith(WIKIDATA_COOKIE_PREFIX)) {
-                        String cookieName = cookie.getName().substring(WIKIDATA_COOKIE_PREFIX.length());
-                        Cookie newCookie = new Cookie(cookieName, getCookieValue(cookie));
+                for (Map.Entry<String, String> entry : cookieMap.entrySet()) {
+                    if (entry.getKey().startsWith(WIKIBASE_COOKIE_PREFIX)) {
+                        String name = entry.getKey().substring(WIKIBASE_COOKIE_PREFIX.length());
+                        Cookie newCookie = new Cookie(name, entry.getValue());
                         cookieList.add(newCookie);
                     }
                 }
 
-                if (cookieList.size() > 0 && isNotBlank(username) && isNotBlank(wikibaseApiEndpoint)) {
-                    removeOwnerOnlyConsumerCookies(request, response);
-                    if (manager.login(wikibaseApiEndpoint, username, cookieList)) {
+                if (cookieList.size() > 0 && isNotBlank(username)) {
+                    removeOwnerOnlyConsumerCookies(mediawikiApiEndpointPrefix, request, response);
+                    if (manager.login(mediawikiApiEndpoint, username, cookieList)) {
                         respond(request, response);
                         return;
                     } else {
-                        removeUsernamePasswordCookies(request, response);
+                        removeUsernamePasswordCookies(mediawikiApiEndpointPrefix, request, response);
                     }
                 }
             }
         }
 
-        if (isNotBlank(wikibaseApiEndpoint) && isNotBlank(username) && isNotBlank(password)) {
+        if (isNotBlank(username) && isNotBlank(password)) {
             // Once logged in with new credentials,
             // the old credentials in cookies should be cleared.
-            if (manager.login(wikibaseApiEndpoint, username, password) && remember) {
+            if (manager.login(mediawikiApiEndpoint, username, password) && remember) {
                 ApiConnection connection = manager.getConnection();
                 List<HttpCookie> cookies = ((BasicApiConnection) connection).getCookies();
+                String prefix = mediawikiApiEndpointPrefix + WIKIBASE_COOKIE_PREFIX;
                 for (HttpCookie cookie : cookies) {
-                    setCookie(response, WIKIDATA_COOKIE_PREFIX + cookie.getName(), cookie.getValue());
+                    setCookie(response, prefix + cookie.getName(), cookie.getValue());
                 }
 
-                setCookie(response, API_ENDPOINT, wikibaseApiEndpoint);
                 // Though the cookies from the connection contain some cookies of username,
                 // we cannot make sure that all Wikibase instances use the same cookie key
                 // to retrieve the username. So we choose to set the username cookie with our own cookie key.
-                setCookie(response, USERNAME, connection.getCurrentUser());
+                setCookie(response, mediawikiApiEndpointPrefix + USERNAME, connection.getCurrentUser());
             } else {
-                removeUsernamePasswordCookies(request, response);
+                removeUsernamePasswordCookies(mediawikiApiEndpointPrefix, request, response);
             }
-            removeOwnerOnlyConsumerCookies(request, response);
-        } else if (isNotBlank(wikibaseApiEndpoint) && isNotBlank(consumerToken) && isNotBlank(consumerSecret) && isNotBlank(accessToken) && isNotBlank(accessSecret)) {
-            if (manager.login(wikibaseApiEndpoint, consumerToken, consumerSecret, accessToken, accessSecret) && remember) {
-                setCookie(response, API_ENDPOINT, wikibaseApiEndpoint);
-                setCookie(response, CONSUMER_TOKEN, consumerToken);
-                setCookie(response, CONSUMER_SECRET, consumerSecret);
-                setCookie(response, ACCESS_TOKEN, accessToken);
-                setCookie(response, ACCESS_SECRET, accessSecret);
+            removeOwnerOnlyConsumerCookies(mediawikiApiEndpointPrefix, request, response);
+        } else if (isNotBlank(consumerToken) && isNotBlank(consumerSecret) && isNotBlank(accessToken) && isNotBlank(accessSecret)) {
+            if (manager.login(mediawikiApiEndpoint, consumerToken, consumerSecret, accessToken, accessSecret) && remember) {
+                setCookie(response, mediawikiApiEndpointPrefix + CONSUMER_TOKEN, consumerToken);
+                setCookie(response, mediawikiApiEndpointPrefix + CONSUMER_SECRET, consumerSecret);
+                setCookie(response, mediawikiApiEndpointPrefix + ACCESS_TOKEN, accessToken);
+                setCookie(response, mediawikiApiEndpointPrefix + ACCESS_SECRET, accessSecret);
             } else {
-                removeOwnerOnlyConsumerCookies(request, response);
+                removeOwnerOnlyConsumerCookies(mediawikiApiEndpointPrefix, request, response);
             }
-            removeUsernamePasswordCookies(request, response);
+            removeUsernamePasswordCookies(mediawikiApiEndpointPrefix, request, response);
         }
 
         respond(request, response);
@@ -193,29 +178,60 @@ public class LoginCommand extends Command {
     }
 
     protected void respond(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        String mediawikiApiEndpoint = request.getParameter(API_ENDPOINT);
+        if (isBlank(mediawikiApiEndpoint)) {
+            CommandUtilities.respondError(response, "missing parameter '" + API_ENDPOINT + "'");
+            return;
+        }
+
         ConnectionManager manager = ConnectionManager.getInstance();
         Map<String, Object> jsonResponse = new HashMap<>();
-        jsonResponse.put("logged_in", manager.isLoggedIn());
-        jsonResponse.put("username", manager.getUsername());
-        jsonResponse.put("mediawiki_api_endpoint", manager.getMediaWikiApiEndpoint());
+        if (mediawikiApiEndpoint.equals(manager.getMediaWikiApiEndpoint())) {
+            jsonResponse.put("logged_in", manager.isLoggedIn());
+            jsonResponse.put("username", manager.getUsername());
+            jsonResponse.put("mediawiki_api_endpoint", manager.getMediaWikiApiEndpoint());
+        } else {
+            jsonResponse.put("logged_in", false);
+            jsonResponse.put("username", null);
+            jsonResponse.put("mediawiki_api_endpoint", null);
+        }
+
         respondJSON(response, jsonResponse);
     }
 
-    private static void removeUsernamePasswordCookies(HttpServletRequest request, HttpServletResponse response) {
+
+    /**
+     * 1. Filters cookies with the given prefix
+     * 2. Removes the prefix
+     */
+    private static Map<String, String> processCookiesWithPrefix(String prefix, Cookie[] cookies) throws UnsupportedEncodingException {
+        Map<String, String> result = new HashMap<>();
+        for (Cookie cookie : cookies) {
+            String name = cookie.getName();
+            if (name.startsWith(prefix)) {
+                result.put(name.substring(prefix.length()), getCookieValue(cookie));
+            }
+        }
+
+        return result;
+    }
+
+    private static void removeUsernamePasswordCookies(String wikibaseApiEndpointPrefix, HttpServletRequest request, HttpServletResponse response) {
+        String toRemovePrefix = wikibaseApiEndpointPrefix + WIKIBASE_COOKIE_PREFIX;
         Cookie[] cookies = request.getCookies();
         for (Cookie cookie : cookies) {
-            if (cookie.getName().startsWith(WIKIDATA_COOKIE_PREFIX)) {
+            if (cookie.getName().startsWith(toRemovePrefix)) {
                 removeCookie(response, cookie.getName());
             }
         }
-        removeCookie(response, USERNAME);
+        removeCookie(response, wikibaseApiEndpointPrefix + USERNAME);
     }
 
-    private static void removeOwnerOnlyConsumerCookies(HttpServletRequest request, HttpServletResponse response) {
-        removeCookie(response, CONSUMER_TOKEN);
-        removeCookie(response, CONSUMER_SECRET);
-        removeCookie(response, ACCESS_TOKEN);
-        removeCookie(response, ACCESS_SECRET);
+    private static void removeOwnerOnlyConsumerCookies(String wikibaseApiEndpointPrefix, HttpServletRequest request, HttpServletResponse response) {
+        removeCookie(response, wikibaseApiEndpointPrefix + CONSUMER_TOKEN);
+        removeCookie(response, wikibaseApiEndpointPrefix + CONSUMER_SECRET);
+        removeCookie(response, wikibaseApiEndpointPrefix + ACCESS_TOKEN);
+        removeCookie(response, wikibaseApiEndpointPrefix + ACCESS_SECRET);
     }
 
     static String getCookieValue(Cookie cookie) throws UnsupportedEncodingException {
