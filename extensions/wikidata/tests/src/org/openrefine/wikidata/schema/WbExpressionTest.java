@@ -53,7 +53,7 @@ public class WbExpressionTest<T> extends WikidataRefineTest {
                 "column A,column B,column C,column D,column E\n" + "value A,value B,value C,value D,value E");
         warningStore = new QAWarningStore();
         row = project.rows.get(0);
-        ctxt = new ExpressionContext("http://www.wikidata.org/entity/", 0, row, project.columnModel, warningStore);
+        ctxt = new ExpressionContext("http://www.wikidata.org/entity/", "https://www.wikidata.org/w/api.php", 0, row, project.columnModel, warningStore);
     }
 
     /**
@@ -75,9 +75,7 @@ public class WbExpressionTest<T> extends WikidataRefineTest {
 
     /**
      * Test that a particular expression is skipped.
-     * 
-     * @param expected
-     *            the expected evaluation of the value
+
      * @param expression
      *            the expression to evaluate
      */
@@ -107,7 +105,7 @@ public class WbExpressionTest<T> extends WikidataRefineTest {
                 row.cells.add(cell);
             }
         }
-        ctxt = new ExpressionContext("http://www.wikidata.org/entity/", 0, row, project.columnModel, warningStore);
+        ctxt = new ExpressionContext("http://www.wikidata.org/entity/", "https://www.wikidata.org/w/api.php", 0, row, project.columnModel, warningStore);
     }
 
     /**
