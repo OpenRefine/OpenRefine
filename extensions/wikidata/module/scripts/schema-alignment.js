@@ -248,6 +248,7 @@ SchemaAlignment._reset = function(schema) {
   if (!schema || !schema.wikibasePrefix || schema.wikibasePrefix !== WikibaseManager.getSelectedWikibaseEntityPrefix()) {
     schema = {
       wikibasePrefix: WikibaseManager.getSelectedWikibaseEntityPrefix(),
+      mediaWikiApiEndpoint: WikibaseManager.getSelectedWikibaseApi(),
       itemDocuments: []
     };
   }
@@ -1264,6 +1265,7 @@ SchemaAlignment.getJSON = function() {
     return {
         itemDocuments: list,
         wikibasePrefix: WikibaseManager.getSelectedWikibaseEntityPrefix(),
+        mediaWikiApiEndpoint: WikibaseManager.getSelectedWikibaseApi()
     };
   } else {
     return null;

@@ -37,6 +37,15 @@ ImportSchemaDialog.launch = function() {
     var schema = null;
     try {
        schema = JSON.parse(elmts.schemaTextarea.val());
+
+       // If Wikibase related information is not included in the schema,
+       // fallback to Wikidata.
+       if (!schema.wikibasePrefix) {
+         schema.wikibasePrefix = WikidataManifestV1_0.wikibase.properties.entity_prefix;
+       }
+       if (!schema.mediaWikiApiEndpoint) {
+         schema.mediaWikiApiEndpoint = WikidataManifestV1_0.mediawiki.api;
+       }
     } catch(e) {
        elmts.invalidSchema.text($.i18n('import-wikibase-schema/invalid-schema'));
        return;

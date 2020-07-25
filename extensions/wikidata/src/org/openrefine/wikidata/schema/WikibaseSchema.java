@@ -57,9 +57,14 @@ public class WikibaseSchema implements OverlayModel {
 
     final static Logger logger = LoggerFactory.getLogger("RdfSchema");
 
+    @JsonProperty("itemDocuments")
     protected List<WbItemDocumentExpr> itemDocumentExprs = new ArrayList<>();
 
+    @JsonProperty("wikibasePrefix")
     protected String baseIri;
+
+    @JsonProperty("mediaWikiApiEndpoint")
+    protected String mediaWikiApiEndpoint;
 
     /**
      * Constructor.
@@ -73,9 +78,11 @@ public class WikibaseSchema implements OverlayModel {
      */
     @JsonCreator
     public WikibaseSchema(@JsonProperty("itemDocuments") List<WbItemDocumentExpr> exprs,
-                          @JsonProperty("wikibasePrefix") String baseIri) {
+                          @JsonProperty("wikibasePrefix") String baseIri,
+                          @JsonProperty("mediaWikiApiEndpoint") String mediaWikiApiEndpoint) {
         this.itemDocumentExprs = exprs;
         this.baseIri = baseIri;
+        this.mediaWikiApiEndpoint = mediaWikiApiEndpoint;
     }
 
     /**
@@ -93,9 +100,10 @@ public class WikibaseSchema implements OverlayModel {
     public List<WbItemDocumentExpr> getItemDocumentExpressions() {
         return itemDocumentExprs;
     }
-    
-    public void setItemDocumentExpressions(List<WbItemDocumentExpr> exprs) {
-        this.itemDocumentExprs = exprs;
+
+    @JsonProperty("mediaWikiApiEndpoint")
+    public String getMediaWikiApiEndpoint() {
+        return mediaWikiApiEndpoint;
     }
 
     /**
@@ -168,7 +176,7 @@ public class WikibaseSchema implements OverlayModel {
 
         @Override
         public boolean visit(Project project, int rowIndex, Row row) {
-            ExpressionContext ctxt = new ExpressionContext(baseIri, rowIndex, row, project.columnModel, warningStore);
+            ExpressionContext ctxt = new ExpressionContext(baseIri, mediaWikiApiEndpoint, rowIndex, row, project.columnModel, warningStore);
             result.addAll(evaluateItemDocuments(ctxt));
             return false;
         }
