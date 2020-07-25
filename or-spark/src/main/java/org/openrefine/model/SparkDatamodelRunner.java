@@ -19,6 +19,7 @@ import org.apache.spark.util.ShutdownHookManager;
 import org.openrefine.ProjectManager;
 import org.openrefine.io.OrderedLocalFileSystem;
 import org.openrefine.model.changes.ChangeData;
+import org.openrefine.model.changes.ChangeDataSerializer;
 import org.openrefine.model.changes.IndexedData;
 import org.openrefine.overlay.OverlayModel;
 import org.openrefine.util.ParsingUtilities;
@@ -118,7 +119,7 @@ public class SparkDatamodelRunner implements DatamodelRunner {
     }
 
     @Override
-    public <T extends Serializable> ChangeData<T> loadChangeData(File path, TypeReference<IndexedData<T>> expectedType)
+    public <T extends Serializable> ChangeData<T> loadChangeData(File path, ChangeDataSerializer<T> serializer)
             throws IOException {
         /*
          * The text files corresponding to each partition are read in the correct order
@@ -126,9 +127,9 @@ public class SparkDatamodelRunner implements DatamodelRunner {
          * https://issues.apache.org/jira/browse/SPARK-5300
          */
         JavaPairRDD<Long, T> data = context.textFile(path.getAbsolutePath())
-                .map(SparkDatamodelRunner.<T>parseIndexedData(expectedType.getType()))
-                .keyBy(p -> p._1)
-                .mapValues(p -> p._2)
+                .map(line -> IndexedData.<T>read(line, serializer))
+                .keyBy(p -> p.getId())
+                .mapValues(p -> p.getData())
                 .persist(StorageLevel.MEMORY_ONLY());
 
         return new SparkChangeData<T>(data, this);

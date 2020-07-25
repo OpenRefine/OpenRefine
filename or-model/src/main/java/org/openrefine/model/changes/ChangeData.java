@@ -3,7 +3,6 @@ package org.openrefine.model.changes;
 import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
-import java.util.Iterator;
 
 import org.openrefine.model.DatamodelRunner;
 
@@ -42,8 +41,9 @@ public interface ChangeData<T extends Serializable> extends Iterable<IndexedData
      * following OpenRefine's format for change data.
      * 
      * @param file the directory where to save the grid state
+     * @param serializer the serializer used to convert the items to strings
      * @throws IOException
      */
-    public void saveToFile(File file) throws IOException;
+    public void saveToFile(File file, ChangeDataSerializer<T> serializer) throws IOException;
     
 }

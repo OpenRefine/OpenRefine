@@ -3,6 +3,7 @@ package org.openrefine.model;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.io.Serializable;
 import java.util.Comparator;
 import java.util.Iterator;
@@ -12,8 +13,8 @@ import java.util.stream.Collectors;
 import java.util.zip.GZIPOutputStream;
 
 import org.openrefine.model.changes.ChangeData;
+import org.openrefine.model.changes.ChangeDataSerializer;
 import org.openrefine.model.changes.IndexedData;
-import org.openrefine.util.ParsingUtilities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -37,21 +38,25 @@ public class TestingChangeData<T extends Serializable> implements ChangeData<T> 
     }
 
     @Override
-    public void saveToFile(File file) throws IOException {
+    public void saveToFile(File file, ChangeDataSerializer<T> serializer) throws IOException {
         
         file.mkdirs();
         File partFile = new File(file, "part-00000.gz");
         FileOutputStream fos = null;
         GZIPOutputStream gos = null;
+        OutputStreamWriter writer = null;
         
         try {
             fos = new FileOutputStream(partFile);
             gos = new GZIPOutputStream(fos);
+            writer = new OutputStreamWriter(gos);
             for(IndexedData<T> row : this) {
-                ParsingUtilities.mapper.writeValue(gos, row);
-                gos.write('\n');
+                row.write(writer, serializer);
             }
         } finally {
+            if (writer != null) {
+                writer.close();
+            }
             if (gos != null) {
                 gos.close();
             }

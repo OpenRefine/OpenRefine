@@ -686,8 +686,9 @@ public class SparkGridState implements GridState {
         }
         SparkChangeData<T> sparkChangeData = (SparkChangeData<T>)changeData;
         // TODO this left outer join does not rely on the fact that the RDDs are sorted by key
-        // and there could be spurious shuffles if the partitioners differ slightly
-        JavaPairRDD<Long, Tuple2<Row, Optional<T>>> join = grid.leftOuterJoin(sparkChangeData.getData());
+        // and there could be spurious shuffles if the partitioners differ slightly.
+        // the last sort could be avoided as well (but by default leftOuterJoin will not preserve order…)
+        JavaPairRDD<Long, Tuple2<Row, Optional<T>>> join = grid.leftOuterJoin(sparkChangeData.getData()).sortByKey();
         JavaPairRDD<Long, Row> newGrid = RDDUtils.mapKeyValuesToValues(join, wrapJoiner(rowJoiner));
         
         return new SparkGridState(newColumnModel, newGrid, overlayModels, runner);
