@@ -82,6 +82,7 @@
     "core-index-import/parse-as": "Parse data as",
     "core-index-import/this-computer": "This Computer",
     "core-index-import/warning-data-file": "You must specify a data file to import.",
+    "core-index-import/warning-import-file": "You must specify a project file.",
     "core-index-import/uploading-data": "Uploading data…",
     "core-index-import/web-address": "Web Addresses (URLs)",
     "core-index-import/warning-web-address": "You must specify a valid web address (URL) to import.",
