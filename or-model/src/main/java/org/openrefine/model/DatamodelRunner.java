@@ -7,10 +7,10 @@ import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 
-import com.fasterxml.jackson.core.type.TypeReference;
 import org.apache.hadoop.fs.FileSystem;
 
 import org.openrefine.model.changes.ChangeData;
+import org.openrefine.model.changes.ChangeDataSerializer;
 import org.openrefine.model.changes.IndexedData;
 import org.openrefine.overlay.OverlayModel;
 
@@ -41,7 +41,7 @@ public interface DatamodelRunner {
      * @throws IOException
      *             when loading the grid failed
      */
-    public <T extends Serializable> ChangeData<T> loadChangeData(File path, TypeReference<IndexedData<T>> expectedType) throws IOException;
+    public <T extends Serializable> ChangeData<T> loadChangeData(File path, ChangeDataSerializer<T> serializer) throws IOException;
 
     /**
      * Returns a file system used by the implementation to read files to import.

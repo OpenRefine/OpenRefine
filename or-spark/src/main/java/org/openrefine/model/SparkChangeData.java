@@ -7,14 +7,13 @@ import java.io.Serializable;
 import java.util.Iterator;
 import java.util.List;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import org.apache.hadoop.io.compress.GzipCodec;
 import org.apache.spark.api.java.JavaPairRDD;
 import scala.Tuple2;
 
 import org.openrefine.model.changes.ChangeData;
+import org.openrefine.model.changes.ChangeDataSerializer;
 import org.openrefine.model.changes.IndexedData;
-import org.openrefine.util.ParsingUtilities;
 
 /**
  * Stores change data in a rowid-indexed RDD.
@@ -60,12 +59,14 @@ public class SparkChangeData<T extends Serializable> implements ChangeData<T> {
     }
 
     @Override
-    public void saveToFile(File file) throws IOException {
-        data.map(r -> serializeIndexedData(r)).saveAsTextFile(file.getAbsolutePath(), GzipCodec.class);
+    public void saveToFile(File file, ChangeDataSerializer<T> serializer) throws IOException {
+        data.map(r -> serializeIndexedData(serializer, r)).saveAsTextFile(file.getAbsolutePath(), GzipCodec.class);
     }
 
-    protected static <T extends Serializable> String serializeIndexedData(Tuple2<Long, T> data) throws JsonProcessingException {
-        return ParsingUtilities.mapper.writeValueAsString(new IndexedData<T>(data._1, data._2));
+    protected static <T extends Serializable> String serializeIndexedData(ChangeDataSerializer<T> serializer, Tuple2<Long, T> data)
+            throws IOException {
+        String serialized = (new IndexedData<T>(data._1, data._2)).writeAsString(serializer);
+        return serialized;
     }
 
 }

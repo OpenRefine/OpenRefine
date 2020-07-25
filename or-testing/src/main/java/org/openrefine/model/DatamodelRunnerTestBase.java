@@ -13,7 +13,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.google.common.collect.ImmutableList;
 import org.apache.commons.collections.IteratorUtils;
 import org.testng.Assert;
@@ -28,6 +27,7 @@ import org.openrefine.browsing.facets.FacetState;
 import org.openrefine.browsing.facets.StringFacet;
 import org.openrefine.browsing.facets.StringFacetState;
 import org.openrefine.model.changes.ChangeData;
+import org.openrefine.model.changes.ChangeDataSerializer;
 import org.openrefine.model.changes.IndexedData;
 import org.openrefine.model.changes.RowChangeDataJoiner;
 import org.openrefine.model.changes.RowChangeDataProducer;
@@ -499,14 +499,29 @@ public abstract class DatamodelRunnerTestBase {
      * Change data
      */
 
+    private static ChangeDataSerializer<String> stringSerializer = new ChangeDataSerializer<String>() {
+
+        private static final long serialVersionUID = -8853248982412622071L;
+
+        @Override
+        public String serialize(String changeDataItem) {
+            return changeDataItem.strip();
+        }
+
+        @Override
+        public String deserialize(String serialized) throws IOException {
+            return serialized.strip();
+        }
+
+    };
+
     @Test
     public void testSerializeChangeData() throws IOException {
         File tempFile = TestUtils.createTempDirectory("testchangedata");
 
-        simpleChangeData.saveToFile(new File(tempFile, "data"));
+        simpleChangeData.saveToFile(new File(tempFile, "data"), stringSerializer);
 
-        ChangeData<String> loaded = SUT.loadChangeData(tempFile, new TypeReference<IndexedData<String>>() {
-        });
+        ChangeData<String> loaded = SUT.loadChangeData(new File(tempFile, "data"), stringSerializer);
 
         Assert.assertNotNull(loaded.getDatamodelRunner());
         Assert.assertEquals(loaded.get(0L), "first");

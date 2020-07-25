@@ -19,13 +19,13 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.zip.GZIPInputStream;
 
-import com.fasterxml.jackson.core.type.TypeReference;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.LocalFileSystem;
 import org.testng.Assert;
 
 import org.openrefine.model.GridState.Metadata;
 import org.openrefine.model.changes.ChangeData;
+import org.openrefine.model.changes.ChangeDataSerializer;
 import org.openrefine.model.changes.IndexedData;
 import org.openrefine.overlay.OverlayModel;
 import org.openrefine.util.ParsingUtilities;
@@ -99,7 +99,7 @@ public class TestingDatamodelRunner implements DatamodelRunner {
     }
 
     @Override
-    public <T extends Serializable> ChangeData<T> loadChangeData(File path, TypeReference<IndexedData<T>> expectedType) throws IOException {
+    public <T extends Serializable> ChangeData<T> loadChangeData(File path, ChangeDataSerializer<T> serializer) throws IOException {
         Map<Long, T> data = new HashMap<>();
         List<File> files = sortedListFiles(path);
         for (File partitionFile : files) {
@@ -117,7 +117,7 @@ public class TestingDatamodelRunner implements DatamodelRunner {
                         if (line.isEmpty()) {
                             break;
                         }
-                        IndexedData<T> indexedData = ParsingUtilities.mapper.readValue(line, expectedType);
+                        IndexedData<T> indexedData = IndexedData.read(line, serializer);
                         data.put(indexedData.getId(), indexedData.getData());
                     }
                 } finally {
