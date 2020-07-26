@@ -99,7 +99,8 @@ import java.util.stream.Collectors;
 
 import com.amazonaws.services.s3.AmazonS3URI;
 import com.amazonaws.services.s3.transfer.*;
-import com.amazonaws.auth.DefaultAWSCredentialsProviderChain;
+import com.amazonaws.auth.AWSCredentials;
+import com.amazonaws.auth.BasicAWSCredentials;
 
 public class ImportingUtilities {
     final static protected Logger logger = LoggerFactory.getLogger("importing-utilities");
@@ -230,8 +231,24 @@ public class ImportingUtilities {
             }
         });
 
-        List<FileItem> tempFiles = (List<FileItem>)upload.parseRequest(request);
-        
+        List<FileItem> allFiles = (List<FileItem>)upload.parseRequest(request);
+
+        List<FileItem> tempFiles = new ArrayList<FileItem>();
+        String awsAccessKeyId = "";
+        String awsSecretKey = "";
+
+        for (FileItem fileItem : allFiles) {
+            if (fileItem.getFieldName().toLowerCase().equals("awsaccesskeyid")) {
+                InputStream stream = fileItem.getInputStream();
+                awsAccessKeyId = Streams.asString(stream);
+            } else if (fileItem.getFieldName().toLowerCase().equals("awssecretkey")) {
+                InputStream stream = fileItem.getInputStream();
+                awsSecretKey = Streams.asString(stream);
+            } else {
+                tempFiles.add(fileItem);
+            }
+        }
+
         progress.setProgress("Uploading data ...", -1);
         parts: for (FileItem fileItem : tempFiles) {
             if (progress.isCanceled()) {
@@ -269,145 +286,147 @@ public class ImportingUtilities {
                 }
                 else if (name.equals("download")) {
                     String urlString = Streams.asString(stream);
-                    URL url = new URL(urlString);
-                    
-                    ObjectNode fileRecord = ParsingUtilities.mapper.createObjectNode();
-                    JSONUtilities.safePut(fileRecord, "origin", "download");
-                    JSONUtilities.safePut(fileRecord, "url", urlString);
-                    
-                    for (UrlRewriter rewriter : ImportingManager.urlRewriters) {
-                        Result result = rewriter.rewrite(urlString);
-                        if (result != null) {
-                            urlString = result.rewrittenUrl;
-                            url = new URL(urlString);
-                            
-                            JSONUtilities.safePut(fileRecord, "url", urlString);
-                            JSONUtilities.safePut(fileRecord, "format", result.format);
-                            if (!result.download) {
-                                downloadCount++;
-                                JSONUtilities.append(fileRecords, fileRecord);
-                                continue parts;
-                            }
-                        }
-                    }
 
-                    if ("http".equals(url.getProtocol()) || "https".equals(url.getProtocol())) {
-                        HttpClientBuilder clientbuilder = HttpClients.custom()
-                                .setUserAgent(RefineServlet.getUserAgent());
-//                                .setConnectionBackoffStrategy(ConnectionBackoffStrategy)
+                    if (urlString.startsWith("s3://")) {
+                        AWSCredentials credentials = new BasicAWSCredentials(awsAccessKeyId, awsSecretKey);
+                        TransferManager transferManager = new TransferManager(credentials);
+                        AmazonS3URI s3URI = new AmazonS3URI(urlString);
+                        String bucket = s3URI.getBucket();
+                        String key = s3URI.getKey();
+                        File localFileItem = allocateFile(rawDataDir, key);
+                        Download download = transferManager.download(bucket, key, localFileItem);
+                        download.waitForCompletion();
 
-                        String userinfo = url.getUserInfo();
-                        // HTTPS only - no sending password in the clear over HTTP
-                        if ("https".equals(url.getProtocol()) && userinfo != null) {
-                            int s = userinfo.indexOf(':');
-                            if (s > 0) {
-                                String user = userinfo.substring(0, s);
-                                String pw = userinfo.substring(s + 1, userinfo.length());
-                                CredentialsProvider credsProvider = new BasicCredentialsProvider();
-                                credsProvider.setCredentials(new AuthScope(url.getHost(), 443),
-                                        new UsernamePasswordCredentials(user, pw));
-                                clientbuilder = clientbuilder.setDefaultCredentialsProvider(credsProvider);
-                            }
-                        }
+                        String fileName = localFileItem.getName();
+                        if (fileName.length() > 0) {
+                            long fileSize = localFileItem.length();
+                            ObjectNode fileRecord = ParsingUtilities.mapper.createObjectNode();
+                            JSONUtilities.safePut(fileRecord, "origin", "upload");
+                            JSONUtilities.safePut(fileRecord, "declaredEncoding", (String) null);
+                            JSONUtilities.safePut(fileRecord, "declaredMimeType", download.getObjectMetadata().getContentType());
+                            JSONUtilities.safePut(fileRecord, "fileName", fileName);
+                            JSONUtilities.safePut(fileRecord, "location", getRelativePath(localFileItem, rawDataDir));
 
-                        CloseableHttpClient httpclient = clientbuilder.build();
-                        HttpGet httpGet = new HttpGet(url.toURI());
-                        CloseableHttpResponse response = httpclient.execute(httpGet);
+                            progress.setProgress(
+                                    "Saving file " + fileName + " locally (" + formatBytes(fileSize) + " bytes)",
+                                    calculateProgressPercent(update.totalExpectedSize, update.totalRetrievedSize));
 
-                        try {
-                            HttpEntity entity = response.getEntity();
-                            if (entity == null) {
-                                throw new Exception("No content found in " + url.toString());
-                            }
-                            StatusLine status = response.getStatusLine();
-                            int statusCode = response.getStatusLine().getStatusCode();
-                            if (statusCode >= 400) {
-                                String errorString = ParsingUtilities.inputStreamToString(entity.getContent());
-                                String message = String.format("HTTP error %d : %s | %s", statusCode,
-                                        status.getReasonPhrase(), errorString);
-                                throw new Exception(message);
-                            }
-                            InputStream stream2 = entity.getContent();
-
-                            String mimeType = null;
-                            String charset = null;
-                            ContentType contentType = ContentType.get(entity);
-                            if (contentType != null) {
-                                mimeType = contentType.getMimeType();
-                                Charset cs = contentType.getCharset();
-                                if (cs != null) {
-                                    charset = cs.toString();
-                                }
-                            }
-                            JSONUtilities.safePut(fileRecord, "declaredMimeType", mimeType);
-                            JSONUtilities.safePut(fileRecord, "declaredEncoding", charset);
-                            if (saveStream(stream2, url, rawDataDir, progress, update,
-                                    fileRecord, fileRecords,
-                                    entity.getContentLength())) {
+                            InputStream inputStream = new FileInputStream(localFileItem);
+                            JSONUtilities.safePut(fileRecord, "size", (fileSize / (16 * 1024)));
+                            if (postProcessRetrievedFile(rawDataDir, localFileItem, fileRecord, fileRecords, progress)) {
                                 archiveCount++;
                             }
-                            downloadCount++;
-                            EntityUtils.consume(entity);
-                        } finally {
-                            httpGet.reset();
+
+                            uploadCount++;
+                            inputStream.close();
                         }
                     }
                     else {
-                        // Fallback handling for non HTTP connections (only FTP?)
-                        URLConnection urlConnection = url.openConnection();
-                        urlConnection.setConnectTimeout(5000);
-                        urlConnection.connect();
-                        InputStream stream2 = urlConnection.getInputStream();
-                        JSONUtilities.safePut(fileRecord, "declaredEncoding", 
-                                urlConnection.getContentEncoding());
-                        JSONUtilities.safePut(fileRecord, "declaredMimeType", 
-                                urlConnection.getContentType());
-                        try {
-                            if (saveStream(stream2, url, rawDataDir, progress, 
-                                    update, fileRecord, fileRecords,
-                                    urlConnection.getContentLength())) {
-                                archiveCount++;
-                            }
-                            downloadCount++;
-                        } finally {
-                            stream2.close();
-                        }
-                    }
-                }
-                else if (name.equals("s3download")) {
-                    String urlString = Streams.asString(stream);
 
-                    DefaultAWSCredentialsProviderChain defaultCredentialsChain = new DefaultAWSCredentialsProviderChain();
-                    TransferManager transferManager = new TransferManager(defaultCredentialsChain);
-                    AmazonS3URI s3URI = new AmazonS3URI(urlString);
-                    String bucket = s3URI.getBucket();
-                    String key = s3URI.getKey();
-                    File localFileItem = allocateFile(rawDataDir, key);
-                    Download download =  transferManager.download(bucket, key, localFileItem);
-                    download.waitForCompletion();
+                        URL url = new URL(urlString);
 
-                    String fileName = localFileItem.getName();
-                    if (fileName.length() > 0) {
-                        long fileSize = localFileItem.length();
                         ObjectNode fileRecord = ParsingUtilities.mapper.createObjectNode();
-                        JSONUtilities.safePut(fileRecord, "origin", "upload");
-                        JSONUtilities.safePut(fileRecord, "declaredEncoding", (String) null);
-                        JSONUtilities.safePut(fileRecord, "declaredMimeType", download.getObjectMetadata().getContentType());
-                        JSONUtilities.safePut(fileRecord, "fileName", fileName);
-                        JSONUtilities.safePut(fileRecord, "location", getRelativePath(localFileItem, rawDataDir));
+                        JSONUtilities.safePut(fileRecord, "origin", "download");
+                        JSONUtilities.safePut(fileRecord, "url", urlString);
 
-                        progress.setProgress(
-                                "Saving file " + fileName + " locally (" + formatBytes(fileSize) + " bytes)",
-                                calculateProgressPercent(update.totalExpectedSize, update.totalRetrievedSize));
+                        for (UrlRewriter rewriter : ImportingManager.urlRewriters) {
+                            Result result = rewriter.rewrite(urlString);
+                            if (result != null) {
+                                urlString = result.rewrittenUrl;
+                                url = new URL(urlString);
 
-                        InputStream inputStream = new FileInputStream(localFileItem);
-                        JSONUtilities.safePut(fileRecord, "size", (fileSize/(16*1024)));
-                        if (postProcessRetrievedFile(rawDataDir, localFileItem, fileRecord, fileRecords, progress)) {
-                            archiveCount++;
+                                JSONUtilities.safePut(fileRecord, "url", urlString);
+                                JSONUtilities.safePut(fileRecord, "format", result.format);
+                                if (!result.download) {
+                                    downloadCount++;
+                                    JSONUtilities.append(fileRecords, fileRecord);
+                                    continue parts;
+                                }
+                            }
                         }
 
-                        uploadCount++;
-                        inputStream.close();
+                        if ("http".equals(url.getProtocol()) || "https".equals(url.getProtocol())) {
+                            HttpClientBuilder clientbuilder = HttpClients.custom()
+                                    .setUserAgent(RefineServlet.getUserAgent());
+                            //                                .setConnectionBackoffStrategy(ConnectionBackoffStrategy)
+
+                            String userinfo = url.getUserInfo();
+                            // HTTPS only - no sending password in the clear over HTTP
+                            if ("https".equals(url.getProtocol()) && userinfo != null) {
+                                int s = userinfo.indexOf(':');
+                                if (s > 0) {
+                                    String user = userinfo.substring(0, s);
+                                    String pw = userinfo.substring(s + 1, userinfo.length());
+                                    CredentialsProvider credsProvider = new BasicCredentialsProvider();
+                                    credsProvider.setCredentials(new AuthScope(url.getHost(), 443),
+                                            new UsernamePasswordCredentials(user, pw));
+                                    clientbuilder = clientbuilder.setDefaultCredentialsProvider(credsProvider);
+                                }
+                            }
+
+                            CloseableHttpClient httpclient = clientbuilder.build();
+                            HttpGet httpGet = new HttpGet(url.toURI());
+                            CloseableHttpResponse response = httpclient.execute(httpGet);
+
+                            try {
+                                HttpEntity entity = response.getEntity();
+                                if (entity == null) {
+                                    throw new Exception("No content found in " + url.toString());
+                                }
+                                StatusLine status = response.getStatusLine();
+                                int statusCode = response.getStatusLine().getStatusCode();
+                                if (statusCode >= 400) {
+                                    String errorString = ParsingUtilities.inputStreamToString(entity.getContent());
+                                    String message = String.format("HTTP error %d : %s | %s", statusCode,
+                                            status.getReasonPhrase(), errorString);
+                                    throw new Exception(message);
+                                }
+                                InputStream stream2 = entity.getContent();
+
+                                String mimeType = null;
+                                String charset = null;
+                                ContentType contentType = ContentType.get(entity);
+                                if (contentType != null) {
+                                    mimeType = contentType.getMimeType();
+                                    Charset cs = contentType.getCharset();
+                                    if (cs != null) {
+                                        charset = cs.toString();
+                                    }
+                                }
+                                JSONUtilities.safePut(fileRecord, "declaredMimeType", mimeType);
+                                JSONUtilities.safePut(fileRecord, "declaredEncoding", charset);
+                                if (saveStream(stream2, url, rawDataDir, progress, update,
+                                        fileRecord, fileRecords,
+                                        entity.getContentLength())) {
+                                    archiveCount++;
+                                }
+                                downloadCount++;
+                                EntityUtils.consume(entity);
+                            } finally {
+                                httpGet.reset();
+                            }
+                        }
+                        else {
+                            // Fallback handling for non HTTP connections (only FTP?)
+                            URLConnection urlConnection = url.openConnection();
+                            urlConnection.setConnectTimeout(5000);
+                            urlConnection.connect();
+                            InputStream stream2 = urlConnection.getInputStream();
+                            JSONUtilities.safePut(fileRecord, "declaredEncoding",
+                                    urlConnection.getContentEncoding());
+                            JSONUtilities.safePut(fileRecord, "declaredMimeType",
+                                    urlConnection.getContentType());
+                            try {
+                                if (saveStream(stream2, url, rawDataDir, progress,
+                                        update, fileRecord, fileRecords,
+                                        urlConnection.getContentLength())) {
+                                    archiveCount++;
+                                }
+                                downloadCount++;
+                            } finally {
+                                stream2.close();
+                            }
+                        }
                     }
                 }
                 else {

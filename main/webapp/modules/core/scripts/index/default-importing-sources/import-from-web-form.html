@@ -1,8 +1,24 @@
-<form bind="form"><div class="grid-layout layout-normal"><table>
-  <tr><td colspan="2" id="or-import-enterurl"></td></tr>
-  <tr bind="urlRow"><td colspan="2"><input bind="urlInput" name="download" class="default-importing-web-url" /></td></tr>
-  <tr bind="buttons">
-    <td width="1"><button bind="addButton" class="button" type="button"></button></td>
-    <td><button type="submit" bind="nextButton" class="button button-primary" type="button"></button></td>
-  </tr>
-</table></div></form>
+<form bind="form">
+  <div class="grid-layout layout-normal">
+    <table>
+      <tr id="httpUrlLabel">
+        <td colspan="2" id="or-import-enterurl"></td>
+      </tr>
+      <tr bind="valueTypeOptions">
+        <td width="2"><input type="radio" bind="http_url" name="urls" value="http_url" checked>HTTP/HTTPS URLs</td>
+        <td width="2"><input type="radio" bind="aws_s3_endpoint" name="urls" value="aws_s3_endpoint">AWS S3 endpoints</td>
+      </tr>
+      <tr id="awsCredentials" bind="awsCredentials">
+        <td width="1"><input bind="awsAccessKeyIdInput" name="awsAccessKeyId" class="aws-credentials" placeholder="AWS Access Key Id" enabled="true"/></td>
+        <td width="1"><input bind="awsSecretKeyInput" name="awsSecretKey" class="aws-credentials" placeholder="AWS Secret Key" enabled="true"/></td>
+      </tr>
+      <tr bind="urlRow">
+        <td colspan="2"><input bind="urlInput" name="download" class="default-importing-web-url" /></td>
+      </tr>
+      <tr bind="buttons">
+        <td><button id="addNewUrlButton" bind="addButton" class="button" type="button"></button></td>
+        <td><button type="submit" bind="nextButton" class="button button-primary" type="button"></button></td>
+      </tr>
+    </table>
+  </div>
+</form>

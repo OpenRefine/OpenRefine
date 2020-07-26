@@ -41,6 +41,12 @@ function isUrlValid(url) {
   // Derived from the jquery-validation repository https://github.com/jquery-validation/jquery-validation/blob/master/src/additional/url2.js
   return /^(https?|s?ftp):\/\/(((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:)*@)?(((\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5]))|((([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.)+(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.?)(:\d*)?)(\/((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)+(\/(([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)*)*)?)?(\?((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)|[\uE000-\uF8FF]|\/|\?)*)?(#((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)|\/|\?)*)?$/i.test(url);
 }
+
+function isS3UrlValid(url) {
+  // regex to check if URL is valid s3 url
+  return /^(s3):\/\/(([^\/]+)\/(.*?([^\/]+)\/?))$/i.test(url);
+}
+
 Refine.DefaultImportingController.sources.push({
   "label": $.i18n('core-index-import/this-computer'),
   "id": "upload",
@@ -82,23 +88,63 @@ UrlImportingSourceUI.prototype.attachUI = function(bodyDiv) {
   var self = this;
 
   bodyDiv.html(DOM.loadHTML("core", "scripts/index/default-importing-sources/import-from-web-form.html"));
-
   this._elmts = DOM.bind(bodyDiv);
+
+  // these are default configurations
+  $( "#awsCredentials" ).hide();
+  $( "#awsCredentialsButtons" ).hide();
+  $( "#httpUrlLabel ").show();
+  $( "#addNewUrlButton" ).show();
   
   $('#or-import-enterurl').text($.i18n('core-index-import/enter-url'));
   this._elmts.addButton.html($.i18n('core-buttons/add-url'));
   this._elmts.nextButton.html($.i18n('core-buttons/next'));
 
+  var updateUI = function(selectedOption) {
+    var importFromWebForm = $(DOM.loadHTML("core", "scripts/index/default-importing-sources/import-from-web-form.html"));
+    this._elmts = DOM.bind(importFromWebForm);
+    if(selectedOption === "aws_s3_endpoint") {
+        $( "#awsCredentials" ).show();
+        $( "#awsCredentialsButtons" ).show();
+        $( "#httpUrlLabel ").hide();
+        $( "#addNewUrlButton" ).hide();
+    } else {
+        $( "#awsCredentials" ).hide();
+        $( "#awsCredentialsButtons" ).hide();
+        $( "#httpUrlLabel ").show();
+        $( "#addNewUrlButton" ).show();
+    }
+  };
+
+  this._elmts.valueTypeOptions
+    .find("input[name=urls]")
+    .change(function() {
+      updateUI($(this).val());
+  });
+
   this._elmts.form.submit(function(evt){
     evt.preventDefault();
-    var importUrl = self._elmts.urlInput[0].value.trim(); 
+    var awsAccessKeyId = self._elmts.awsAccessKeyIdInput[0].value.trim();
+    var awsSecretKey = self._elmts.awsSecretKeyInput[0].value.trim();
+    var importUrl = self._elmts.urlInput[0].value.trim();
     self._elmts.urlInput[0].value = importUrl;
-    if(!isUrlValid(importUrl)) {
-      window.alert($.i18n('core-index-import/warning-web-address'));
-    } else {
-      self._controller.startImportJob(self._elmts.form, $.i18n('core-index-import/downloading-data'));
+
+    if (self._elmts.aws_s3_endpoint[0].checked) {
+        if(!isS3UrlValid(importUrl)) {
+          window.alert($.i18n('core-index-import/warning-s3-url-address'));
+        } else {
+          self._controller.startImportJob(self._elmts.form, $.i18n('core-index-import/downloading-data'));
+        }
+    }
+    else {
+        if(!isUrlValid(importUrl)) {
+          window.alert($.i18n('core-index-import/warning-web-address'));
+        } else {
+          self._controller.startImportJob(self._elmts.form, $.i18n('core-index-import/downloading-data'));
+        }
     }
   });
+
   this._elmts.addButton.click(function(evt) {
     self._elmts.buttons.before(self._elmts.urlRow.clone());
   });
@@ -106,49 +152,6 @@ UrlImportingSourceUI.prototype.attachUI = function(bodyDiv) {
 
 UrlImportingSourceUI.prototype.focus = function() {
   this._elmts.urlInput.focus();
-};
-
-// RD Change
-// Adding alternate method to download/upload data using s3
-function S3UrlImportingSourceUI(controller) {
-  this._controller = controller;
-}
-
-function isS3UrlValid(url) {
-  // regex to check if URL is valid s3 url
-  return /^(s3):\/\/(([^\/]+)\/(.*?([^\/]+)\/?))$/i.test(url);
-}
-
-Refine.DefaultImportingController.sources.push({
-  "label": $.i18n('core-index-import/s3-url'),
-  "id": "s3download",
-  "uiClass": S3UrlImportingSourceUI
-});
-
-S3UrlImportingSourceUI.prototype.attachUI = function(bodyDiv) {
-  var self = this;
-
-  bodyDiv.html(DOM.loadHTML("core", "scripts/index/default-importing-sources/import-from-s3-url.html"));
-
-  this._elmts = DOM.bind(bodyDiv);
-
-  $('#or-import-enters3url').text($.i18n('core-index-import/enter-s3-url'));
-  this._elmts.nextButton.html($.i18n('core-buttons/next'));
-
-  this._elmts.form.submit(function(evt){
-    evt.preventDefault();
-    var importUrl = self._elmts.urlInput[0].value.trim();
-    self._elmts.urlInput[0].value = importUrl;
-    if(!isS3UrlValid(importUrl)) {
-      window.alert($.i18n('core-index-import/warning-s3-url-address'));
-    } else {
-      self._controller.startImportJob(self._elmts.form, $.i18n('core-index-import/downloading-data'));
-    }
-  });
-};
-
-S3UrlImportingSourceUI.prototype.focus = function() {
-  this._elmts.textInput.focus();
 };
 
 function ClipboardImportingSourceUI(controller) {
