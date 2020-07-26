@@ -124,8 +124,6 @@ UrlImportingSourceUI.prototype.attachUI = function(bodyDiv) {
 
   this._elmts.form.submit(function(evt){
     evt.preventDefault();
-    var awsAccessKeyId = self._elmts.awsAccessKeyIdInput[0].value.trim();
-    var awsSecretKey = self._elmts.awsSecretKeyInput[0].value.trim();
     var importUrl = self._elmts.urlInput[0].value.trim();
     self._elmts.urlInput[0].value = importUrl;
 
