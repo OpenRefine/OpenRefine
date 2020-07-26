@@ -521,4 +521,10 @@ public class LoginCommandTest extends CommandTest {
         cookies.forEach(cookie -> map.put(cookie.getName(), cookie));
         return map;
     }
+
+    @Test
+    public void testRemoveCRLF() {
+        assertEquals(removeCRLF("a\rb\nc\r\n\r\nd"), "abcd");
+        assertEquals(removeCRLF(null), "");
+    }
 }

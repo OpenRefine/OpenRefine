@@ -40,7 +40,6 @@ var SchemaAlignment = {};
 SchemaAlignment.setUpTabs = function() {
   console.log($.i18n("wikibase-management/contact-service", "aaa"));
 
-  var self = this;
   this._rightPanel = $('#right-panel');
   this._viewPanel = $('#view-panel').addClass('main-view-panel-tab');
   this._toolPanel = $('#tool-panel');
@@ -238,7 +237,7 @@ SchemaAlignment.launch = function(onDone) {
 
 var beforeUnload = function(e) {
   if (SchemaAlignment.isSetUp() && SchemaAlignment._hasUnsavedChanges === true) {
-     return (e = $.i18n('wikibase-schema/unsaved-warning'));
+     return $.i18n('wikibase-schema/unsaved-warning');
   }
 };
 
@@ -322,9 +321,8 @@ SchemaAlignment._createDraggableColumn = function(name, reconciled) {
 };
 
 SchemaAlignment._plusButton = function(label, element) {
-   var plus = $('<b></b>').html('+&nbsp;').appendTo(element);
-   var span = $('<span></span>').text(label)
-        .appendTo(element);
+   $('<b></b>').html('+&nbsp;').appendTo(element);
+   $('<span></span>').text(label).appendTo(element);
 };
 
 SchemaAlignment._makeDeleteButton = function (noText) {
@@ -484,7 +482,7 @@ SchemaAlignment._addNameDesc = function(item, json) {
      e.preventDefault();
   }).appendTo(toolbar);
 
-  var right = $('<div></div>').addClass('wbs-right').appendTo(namedesc);
+  $('<div></div>').addClass('wbs-right').appendTo(namedesc);
   var value_container = $('<div></div>').addClass('wbs-namedesc-value').appendTo(namedesc);
   SchemaAlignment._initField(value_container, "monolingualtext", value);
 
@@ -494,7 +492,7 @@ SchemaAlignment._addNameDesc = function(item, json) {
        .attr('type', 'checkbox')
        .prop('checked', override)
        .appendTo(label);
-  var span = $('<span></span>').text($.i18n('wikibase-schema/override-term')).appendTo(label);
+  $('<span></span>').text($.i18n('wikibase-schema/override-term')).appendTo(label);
   checkbox.on('change', function(e) {
     SchemaAlignment._hasChanged();
   });
@@ -674,8 +672,8 @@ SchemaAlignment._addStatement = function(container, datatype, json) {
     if (SchemaAlignment._copiedReference === null) {
         referencePaste.hide();
     }
-    var pasteIcon = $('<span></span>').addClass('wbs-icon').appendTo(referencePaste);
-    var referencePasteButton = $('<a></a>')
+    $('<span></span>').addClass('wbs-icon').appendTo(referencePaste);
+    $('<a></a>')
         .addClass('wbs-paste-reference-button')
         .text($.i18n('wikibase-schema/paste-reference'))
         .appendTo(referencePaste)
@@ -894,14 +892,13 @@ SchemaAlignment._initPropertyField = function(inputContainer, targetContainer, i
   input.attr("placeholder", $.i18n('wikibase-schema/property-placeholder'));
 
   if (this._reconService !== null) {
-    endpoint = this._reconService.suggest.property;
+    var endpoint = this._reconService.suggest.property;
     var suggestConfig = $.extend({}, endpoint);
     suggestConfig.key = null;
     suggestConfig.query_param_name = "prefix";
 
     input.suggestP(suggestConfig).bind("fb-select", function(evt, data) {
         // Fetch the type of this property and add the appropriate target value type
-        var statementGroup = inputContainer.parents(".wbs-statement-group, .wbs-qualifier").first();
         SchemaAlignment._getPropertyType(data.id, function(datatype) {
           inputContainer.data("jsonValue", {
             type : "wbpropconstant",

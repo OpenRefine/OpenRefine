@@ -78,7 +78,7 @@ public class LoginCommand extends Command {
 
         ConnectionManager manager = ConnectionManager.getInstance();
 
-        String mediawikiApiEndpoint = request.getParameter(API_ENDPOINT);
+        String mediawikiApiEndpoint = removeCRLF(request.getParameter(API_ENDPOINT));
         if (isBlank(mediawikiApiEndpoint)) {
             CommandUtilities.respondError(response, "missing parameter '" + API_ENDPOINT + "'");
             return;
@@ -254,5 +254,18 @@ public class LoginCommand extends Command {
         cookie.setPath("/");
         cookie.setSecure(false);
         response.addCookie(cookie);
+    }
+
+    /**
+     * To avoid HTTP response splitting.
+     *
+     * See https://lgtm.com/rules/3980077/
+     */
+    static String removeCRLF(String str) {
+        if (str == null) {
+            return "";
+        } else {
+            return str.replaceAll("[\n\r]", "");
+        }
     }
 }
