@@ -90,7 +90,7 @@ DataTableCellUI.prototype._render = function() {
   } else if (!("r" in cell) || !cell.r) {
     if (typeof cell.v !== "string" || "t" in cell) {
       if (typeof cell.v == "number") {
-        divContent.addClass("data-table-cell-content-numeric");
+        divContent.classList.add('data-table-cell-content-numeric');
       }
       var nonstringSpan = document.createElement('span');
       nonstringSpan.className = 'data-table-value-nonstring';
@@ -108,17 +108,18 @@ DataTableCellUI.prototype._render = function() {
       divContent.appendChild(span);
     }
   } else {
+    var divContentRecon = $(divContent);
     var r = cell.r;
     var service = (r.service) ? ReconciliationManager.getServiceFromUrl(r.service) : null;
 
     if (r.j == "new") {
-      $('<span>').text(cell.v).appendTo(divContent);
-      $('<span>').addClass("data-table-recon-new").text("new").appendTo(divContent);
+      $('<span>').text(cell.v).appendTo(divContentRecon);
+      $('<span>').addClass("data-table-recon-new").text("new").appendTo(divContentRecon);
 
       $('<a href="javascript:{}"></a>')
       .text($.i18n('core-views/choose-match'))
       .addClass("data-table-recon-action")
-      .appendTo(divContent).click(function(evt) {
+      .appendTo(divContentRecon).click(function(evt) {
         self._doRematch();
       });
     } else if (r.j == "matched" && "m" in r && r.m !== null) {
@@ -126,7 +127,7 @@ DataTableCellUI.prototype._render = function() {
       var a = $('<a></a>')
       .text(match.name)
       .attr("target", "_blank")
-      .appendTo(divContent);
+      .appendTo(divContentRecon);
 
       if (service && (service.view) && (service.view.url)) {
         a.attr("href", encodeURI(service.view.url.replace("{{id}}", match.id)));
@@ -136,19 +137,19 @@ DataTableCellUI.prototype._render = function() {
         self._previewOnHover(service, match, a, a, false);
       }
 
-      $('<span> </span>').appendTo(divContent);
+      $('<span> </span>').appendTo(divContentRecon);
       $('<a href="javascript:{}"></a>')
       .text($.i18n('core-views/choose-match'))
       .addClass("data-table-recon-action")
-      .appendTo(divContent)
+      .appendTo(divContentRecon)
       .click(function(evt) {
         self._doRematch();
       });
     } else {
-      $('<span>').text(cell.v).appendTo(divContent);
+      $('<span>').text(cell.v).appendTo(divContentRecon);
 
       if (this._dataTableView._showRecon) {
-        var ul = $('<div></div>').addClass("data-table-recon-candidates").appendTo(divContent);
+        var ul = $('<div></div>').addClass("data-table-recon-candidates").appendTo(divContentRecon);
         if ("c" in r && r.c.length > 0) {
           var candidates = r.c;
           var renderCandidate = function(candidate, index) {
@@ -226,7 +227,7 @@ DataTableCellUI.prototype._render = function() {
           addSuggest = true;
         }
 
-        var extraChoices = $('<div>').addClass("data-table-recon-extra").appendTo(divContent);
+        var extraChoices = $('<div>').addClass("data-table-recon-extra").appendTo(divContentRecon);
         if (addSuggest) {
           $('<a href="javascript:{}"></a>')
           .click(function(evt) {
