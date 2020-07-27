@@ -2,7 +2,7 @@ const WikidataManifestV1_0 = {
   "version": "1.0",
   "mediawiki": {
     "name": "Wikidata",
-    "root": "https://www.wikidata.org/wiki",
+    "root": "https://www.wikidata.org/wiki/",
     "main_page": "https://www.wikidata.org/wiki/Wikidata:Main_Page",
     "api": "https://www.wikidata.org/w/api.php"
   },
