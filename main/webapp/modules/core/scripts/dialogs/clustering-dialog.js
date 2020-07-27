@@ -189,7 +189,7 @@ ClusteringDialog.prototype._renderTable = function(clusters) {
 
         var renderCluster = function(cluster, index) {
             var tr = table.insertRow();
-            index % 2 === 0 ? "odd" : "even";
+            tr.className = index % 2 === 0 ? "odd" : "even"; // TODO: Unused?
 
             var cell = tr.insertCell()
             cell.textContent = cluster.choices.length.toString();
