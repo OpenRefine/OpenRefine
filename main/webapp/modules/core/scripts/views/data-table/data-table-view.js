@@ -577,20 +577,30 @@ DataTableView.prototype.getPageNumberSrcolling = function(scrollPosition) {
 DataTableView.prototype._adjustNextSetClasses = function(start, top) {
   var heightToAddBottom = Math.max(0, this._sizeRowsTotal - (this._totalSize) * this._sizeRowFirst);
 
-  if(top) {
+  if(!top) {
+    // Deletion of upper rows that are not visible anymore
+    if (theProject.rowModel.mode == "record-based") {
+      if($('.data-table tbody tr.record').length > 2 * this._pageSize) {
+        console.log('Deleting above records');
+        $('.data-table tbody tr').slice(1, $('.data-table tbody tr.record').eq(this._pageSize).index()).remove();
+      }
+    } else if($('.data-table tbody tr').length > 2 * this._pageSize) {
+      console.log('Deleting above rows');
+      $('.data-table tbody tr').slice(1, Math.max(0, $('.data-table tbody tr').length - 2 * this._pageSize)).remove();
+    }
+    this._pageStart = start - this._pageSize;
+  } else {
     this._pageStart = start;
     heightToAddBottom = Math.max(0, this._sizeRowsTotal - (this._pageStart + 2 * this._pageSize) * this._sizeRowFirst);
-  }
 
-  if($('.data-table tbody tr').length > this._pageSize + 2 && start > this._pageSize && top == null) {
-    console.log('Deleting above rows');
-    $('.data-table tbody tr').slice(1, Math.max(0, $('.data-table tbody tr').length - 2 * this._pageSize)).remove();
-    this._pageStart = start - this._pageSize;
-  }
-
-  if($('.data-table tbody tr').length > 2 * this._pageSize + 1 && top) {
-    console.log('Deleting below rows');
-    $('.data-table tbody tr').slice(2 * this._pageSize + 1, $('.data-table tbody tr').length).remove();
+    // Deletion of lower rows that are not visible anymore
+    if (theProject.rowModel.mode == "record-based") {
+      console.log('Deleting below records');
+      $('.data-table tbody tr').slice($('.data-table tbody tr.record').eq(2 * this._pageSize).index(), $('.data-table tbody tr').length).remove();
+    } else {
+      console.log('Deleting below rows');
+      $('.data-table tbody tr').slice(2 * this._pageSize + 1, $('.data-table tbody tr').length).remove();
+    }
   }
 
   var heightToAddTop = (this._pageStart) * this._sizeRowFirst;
