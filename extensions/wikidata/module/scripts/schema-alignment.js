@@ -38,8 +38,6 @@ var SchemaAlignment = {};
  * extension is called.
  */
 SchemaAlignment.setUpTabs = function() {
-  console.log($.i18n("wikibase-management/contact-service", "aaa"));
-
   this._rightPanel = $('#right-panel');
   this._viewPanel = $('#view-panel').addClass('main-view-panel-tab');
   this._toolPanel = $('#tool-panel');

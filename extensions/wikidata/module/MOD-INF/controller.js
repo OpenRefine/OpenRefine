@@ -55,7 +55,9 @@ function init() {
       "project/scripts",
       module,
       [
+        "scripts/ajv.min.js",
         "scripts/wikidata-manifest-v1.0.js",
+        "scripts/wikibase-manifest-schema-v1.js",
         "scripts/menu-bar-extension.js",
         "scripts/warningsrenderer.js",
         "scripts/langsuggest.js",

@@ -83,4 +83,3 @@ const WikidataManifestV1_0 = {
     "endpoint": "https://wdreconcile.toolforge.org/en/api"
   }
 };
-

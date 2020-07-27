@@ -79,24 +79,9 @@ WikibaseDialog.addWikibaseManifest = function () {
 
   elmts.addButton.click(function () {
     let addManifest = function (manifest) {
-      if (!manifest) {
-        alert("manifest is empty");
+      if (!WikibaseDialog.validateManifest(manifest)) {
         return;
       }
-      if (!manifest.version) {
-        alert("version is missing in the manifest");
-        return;
-      }
-      if (!/^[0-9]+\.[0-9]+$/.test(manifest.version)) {
-        alert("invalid version format");
-        return;
-      }
-      let majorVersion = manifest.version.split('.')[0];
-      if (majorVersion !== "1") {
-        alert("only manifests with version 1.x are supported for now");
-        return;
-      }
-      // TODO: more strict format check
 
       let onAddReconServiceSuccess = function () {
         WikibaseManager.addWikibase(manifest);
@@ -121,8 +106,26 @@ WikibaseDialog.addWikibaseManifest = function () {
         let manifest = JSON.parse(elmts.manifestTextarea.val());
         addManifest(manifest);
       } catch (e) {
+        console.error(e);
         elmts.invalidManifest.show();
       }
     }
   });
+};
+
+WikibaseDialog.validateManifest = function (manifest) {
+  if (!WikibaseDialog.ajv) {
+    WikibaseDialog.ajv = new Ajv();
+    WikibaseDialog.validateWikibaseManifestV1 = WikibaseDialog.ajv.compile(WikibaseManifestSchemaV1);
+  }
+
+  if (WikibaseDialog.validateWikibaseManifestV1(manifest)) {
+    return true;
+  } else {
+    let errMsg = WikibaseDialog.ajv.errorsText(WikibaseDialog.validateWikibaseManifestV1.errors, {
+      dataVar: "manifest"
+    });
+    alert(errMsg);
+    return false;
+  }
 };
