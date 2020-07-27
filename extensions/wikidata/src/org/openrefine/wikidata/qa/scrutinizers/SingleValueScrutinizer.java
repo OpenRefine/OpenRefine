@@ -23,8 +23,6 @@
  ******************************************************************************/
 package org.openrefine.wikidata.qa.scrutinizers;
 
-import org.openrefine.wikidata.manifests.constraints.SingleBestValueConstraint;
-import org.openrefine.wikidata.manifests.constraints.SingleValueConstraint;
 import org.openrefine.wikidata.qa.QAWarning;
 import org.openrefine.wikidata.updates.ItemUpdate;
 import org.wikidata.wdtk.datamodel.interfaces.PropertyIdValue;
@@ -52,13 +50,8 @@ public class SingleValueScrutinizer extends EditScrutinizer {
 
     @Override
     public boolean prepareDependencies() {
-        SingleValueConstraint singleValueConstraint = constraints.getSingleValueConstraint();
-        SingleBestValueConstraint singleBestValueConstraint = constraints.getSingleBestValueConstraint();
-        if (singleValueConstraint == null || singleBestValueConstraint == null) {
-            return false;
-        }
-        singleValueConstraintQid = singleValueConstraint.getQid();
-        singleBestValueConstraintQid = singleBestValueConstraint.getQid();
+        singleValueConstraintQid = getConstraintsRelatedId("single_value_constraint_qid");
+        singleBestValueConstraintQid = getConstraintsRelatedId("single_best_value_constraint_qid");
         return singleValueConstraintQid != null && singleBestValueConstraintQid != null;
     }
 

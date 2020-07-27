@@ -23,7 +23,6 @@
  ******************************************************************************/
 package org.openrefine.wikidata.qa.scrutinizers;
 
-import org.openrefine.wikidata.manifests.constraints.PropertyScopeConstraint;
 import org.openrefine.wikidata.qa.QAWarning;
 import org.wikidata.wdtk.datamodel.helpers.Datamodel;
 import org.wikidata.wdtk.datamodel.interfaces.EntityIdValue;
@@ -48,15 +47,11 @@ public class RestrictedPositionScrutinizer extends StatementScrutinizer {
 
     @Override
     public boolean prepareDependencies() {
-        PropertyScopeConstraint propertyScopeConstraint = constraints.getPropertyScopeConstraint();
-        if (propertyScopeConstraint == null) {
-            return false;
-        }
-        scopeConstraintQid = propertyScopeConstraint.getQid();
-        scopeConstraintPid = propertyScopeConstraint.getPropertyScope();
-        scopeConstraintValueQid = propertyScopeConstraint.getAsMainValue();
-        scopeConstraintQualifierQid = propertyScopeConstraint.getAsQualifiers();
-        scopeConstraintReferenceQid = propertyScopeConstraint.getAsReferences();
+        scopeConstraintQid = getConstraintsRelatedId("property_scope_constraint_qid");
+        scopeConstraintPid = getConstraintsRelatedId("property_scope_pid");
+        scopeConstraintValueQid = getConstraintsRelatedId("as_main_value_qid");
+        scopeConstraintQualifierQid = getConstraintsRelatedId("as_qualifiers_qid");
+        scopeConstraintReferenceQid = getConstraintsRelatedId("as_references_qid");
         return scopeConstraintQid != null && scopeConstraintPid != null && scopeConstraintValueQid != null
                 && scopeConstraintQualifierQid != null && scopeConstraintReferenceQid != null;
     }

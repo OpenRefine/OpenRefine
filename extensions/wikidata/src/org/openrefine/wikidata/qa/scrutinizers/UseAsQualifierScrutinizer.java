@@ -1,6 +1,5 @@
 package org.openrefine.wikidata.qa.scrutinizers;
 
-import org.openrefine.wikidata.manifests.constraints.OneOfQualifierValuePropertyConstraint;
 import org.openrefine.wikidata.qa.QAWarning;
 import org.openrefine.wikidata.updates.ItemUpdate;
 import org.wikidata.wdtk.datamodel.helpers.Datamodel;
@@ -45,11 +44,9 @@ public class UseAsQualifierScrutinizer extends EditScrutinizer {
 
     @Override
     public boolean prepareDependencies() {
-        OneOfQualifierValuePropertyConstraint constraint = constraints.getOneOfQualifierValuePropertyConstraint();
-        if (constraint == null) return false;
-        oneOfQualifierValuePropertyQid = constraint.getQid();
-        property = constraint.getProperty();
-        itemOfPropertyConstraintPid = constraint.getItemOfPropertyConstraint();
+        oneOfQualifierValuePropertyQid = getConstraintsRelatedId("one_of_qualifier_value_property_constraint_qid");
+        property = getConstraintsRelatedId("property_pid");
+        itemOfPropertyConstraintPid = getConstraintsRelatedId("item_of_property_constraint_pid");
         return oneOfQualifierValuePropertyQid != null && property != null && itemOfPropertyConstraintPid != null;
     }
 

@@ -12,8 +12,6 @@ public interface Manifest {
 
     String getReconServiceEndpoint();
 
-    String getPropertyConstraintPid();
-
-    Constraints getConstraints();
+    String getConstraintsRelatedId(String name);
 
 }

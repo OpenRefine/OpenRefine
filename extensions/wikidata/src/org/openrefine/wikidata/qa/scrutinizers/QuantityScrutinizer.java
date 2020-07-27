@@ -35,15 +35,10 @@ public class QuantityScrutinizer extends SnakScrutinizer {
 
     @Override
     public boolean prepareDependencies() {
-        if (constraints.getNoBoundsConstraint() == null || constraints.getIntegerConstraint() == null
-                || constraints.getAllowedUnitsConstraint() == null) {
-            return false;
-        }
-
-        noBoundsConstraintQid = constraints.getNoBoundsConstraint().getQid();
-        integerValuedConstraintQid = constraints.getIntegerConstraint().getQid();
-        allowedUnitsConstraintQid = constraints.getAllowedUnitsConstraint().getQid();
-        allowedUnitsConstraintPid = constraints.getAllowedUnitsConstraint().getItemOfPropertyConstraint();
+        noBoundsConstraintQid = getConstraintsRelatedId("no_bounds_constraint_qid");
+        integerValuedConstraintQid = getConstraintsRelatedId("integer_constraint_qid");
+        allowedUnitsConstraintQid = getConstraintsRelatedId("allowed_units_constraint_qid");
+        allowedUnitsConstraintPid = getConstraintsRelatedId("item_of_property_constraint_pid");
         return noBoundsConstraintQid != null && integerValuedConstraintQid != null
                 && allowedUnitsConstraintQid != null && allowedUnitsConstraintPid != null;
     }

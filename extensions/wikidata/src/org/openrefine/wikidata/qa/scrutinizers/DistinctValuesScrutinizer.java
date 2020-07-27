@@ -23,7 +23,6 @@
  ******************************************************************************/
 package org.openrefine.wikidata.qa.scrutinizers;
 
-import org.openrefine.wikidata.manifests.constraints.DistinctValuesConstraint;
 import org.openrefine.wikidata.qa.QAWarning;
 import org.wikidata.wdtk.datamodel.interfaces.EntityIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.PropertyIdValue;
@@ -54,11 +53,7 @@ public class DistinctValuesScrutinizer extends StatementScrutinizer {
 
     @Override
     public boolean prepareDependencies() {
-        DistinctValuesConstraint distinctValuesConstraint = constraints.getDistinctValuesConstraint();
-        if (distinctValuesConstraint == null) {
-            return false;
-        }
-        distinctValuesConstraintQid = distinctValuesConstraint.getQid();
+        distinctValuesConstraintQid = getConstraintsRelatedId("distinct_values_constraint_qid");
         return distinctValuesConstraintQid != null;
     }
 

@@ -1,9 +1,10 @@
-package org.openrefine.wikidata.manifests.v1;
+package org.openrefine.wikidata.manifests;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.node.ArrayNode;
-import org.openrefine.wikidata.manifests.Constraints;
-import org.openrefine.wikidata.manifests.Manifest;
+
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 
 public class ManifestV1 implements Manifest {
 
@@ -12,8 +13,8 @@ public class ManifestV1 implements Manifest {
     private String entityPrefix;
     private String mediaWikiApiEndpoint;
     private String reconServiceEndpoint;
-    private String propertyConstraintPid;
-    private Constraints constraints;
+
+    private Map<String, String> constraintsRelatedIdMap = new HashMap<>();
 
     public ManifestV1(JsonNode manifest) {
         version = manifest.path("version").textValue();
@@ -23,10 +24,16 @@ public class ManifestV1 implements Manifest {
         mediaWikiApiEndpoint = mediawiki.path("api").textValue();
 
         JsonNode wikibase = manifest.path("wikibase");
-        constraints = new ConstraintsV1((ArrayNode) wikibase.path("constraints"));
         JsonNode properties = wikibase.path("properties");
-        propertyConstraintPid = properties.path("property_constraint").textValue();
         entityPrefix = properties.path("entity_prefix").textValue();
+        JsonNode constraints = wikibase.path("constraints");
+        Iterator<Map.Entry<String, JsonNode>> fields = constraints.fields();
+        while (fields.hasNext()) {
+            Map.Entry<String, JsonNode> entry = fields.next();
+            String name = entry.getKey();
+            String value = entry.getValue().textValue();
+            constraintsRelatedIdMap.put(name, value);
+        }
 
         JsonNode reconciliation = manifest.path("reconciliation");
         reconServiceEndpoint = reconciliation.path("endpoint").textValue();
@@ -58,12 +65,8 @@ public class ManifestV1 implements Manifest {
     }
 
     @Override
-    public String getPropertyConstraintPid() {
-        return propertyConstraintPid;
+    public String getConstraintsRelatedId(String name) {
+        return constraintsRelatedIdMap.get(name);
     }
 
-    @Override
-    public Constraints getConstraints() {
-        return constraints;
-    }
 }

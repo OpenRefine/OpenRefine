@@ -23,7 +23,6 @@
  ******************************************************************************/
 package org.openrefine.wikidata.qa;
 
-import org.openrefine.wikidata.manifests.Constraints;
 import org.openrefine.wikidata.manifests.Manifest;
 import org.openrefine.wikidata.qa.scrutinizers.*;
 import org.openrefine.wikidata.updates.ItemUpdate;
@@ -50,14 +49,14 @@ public class EditInspector {
     private Map<String, EditScrutinizer> scrutinizers;
     private QAWarningStore warningStore;
     private ConstraintFetcher fetcher;
-    private Constraints constraints;
+    private Manifest manifest;
 
     public EditInspector(QAWarningStore warningStore, Manifest manifest) {
         this.scrutinizers = new HashMap<>();
         EntityCache entityCache = EntityCache.getEntityCache(manifest.getEntityPrefix(), manifest.getMediaWikiApiEndpoint());
-        this.fetcher = new ConstraintFetcher(entityCache, manifest.getPropertyConstraintPid());
+        this.fetcher = new ConstraintFetcher(entityCache, manifest.getConstraintsRelatedId("property_constraint_pid"));
         this.warningStore = warningStore;
-        this.constraints = manifest.getConstraints();
+        this.manifest = manifest;
 
         // Register all known scrutinizers here
         register(new NewItemScrutinizer());
@@ -94,7 +93,7 @@ public class EditInspector {
     public void register(EditScrutinizer scrutinizer) {
         scrutinizer.setStore(warningStore);
         scrutinizer.setFetcher(fetcher);
-        scrutinizer.setConstraints(constraints);
+        scrutinizer.setManifest(manifest);
         if (scrutinizer.prepareDependencies()) {
             String key = scrutinizer.getClass().getName();
             scrutinizers.put(key, scrutinizer);

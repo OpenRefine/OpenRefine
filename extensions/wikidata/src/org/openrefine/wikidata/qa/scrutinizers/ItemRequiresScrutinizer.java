@@ -1,6 +1,5 @@
 package org.openrefine.wikidata.qa.scrutinizers;
 
-import org.openrefine.wikidata.manifests.constraints.ItemRequiresStatementConstraint;
 import org.openrefine.wikidata.qa.QAWarning;
 import org.openrefine.wikidata.updates.ItemUpdate;
 import org.wikidata.wdtk.datamodel.interfaces.PropertyIdValue;
@@ -50,13 +49,9 @@ public class ItemRequiresScrutinizer extends EditScrutinizer {
 
     @Override
     public boolean prepareDependencies() {
-        ItemRequiresStatementConstraint itemRequiresStatementConstraint = constraints.getItemRequiresStatementConstraint();
-        if (itemRequiresStatementConstraint == null) {
-            return false;
-        }
-        itemRequiresConstraintQid = itemRequiresStatementConstraint.getQid();
-        itemRequiresPropertyPid = itemRequiresStatementConstraint.getProperty();
-        itemOfPropertyConstraintPid = itemRequiresStatementConstraint.getItemOfPropertyConstraint();
+        itemRequiresConstraintQid = getConstraintsRelatedId("item_requires_statement_constraint_qid");
+        itemRequiresPropertyPid = getConstraintsRelatedId("property_pid");
+        itemOfPropertyConstraintPid = getConstraintsRelatedId("item_of_property_constraint_pid");
         return itemRequiresConstraintQid != null && itemRequiresPropertyPid != null && itemOfPropertyConstraintPid != null;
     }
 

@@ -95,13 +95,10 @@ public class QualifierCompatibilityScrutinizer extends StatementScrutinizer {
 
     @Override
     public boolean prepareDependencies() {
-        if (constraints.getAllowedQualifiersConstraint() == null || constraints.getMandatoryQualifierConstraint() == null) {
-            return false;
-        }
-        allowedQualifiersConstraintQid = constraints.getAllowedQualifiersConstraint().getQid();
-        allowedQualifiersConstraintPid = constraints.getAllowedQualifiersConstraint().getProperty();
-        mandatoryQualifiersConstraintQid = constraints.getMandatoryQualifierConstraint().getQid();
-        mandatoryQualifiersConstraintPid = constraints.getMandatoryQualifierConstraint().getProperty();
+        allowedQualifiersConstraintQid = getConstraintsRelatedId("allowed_qualifiers_constraint_qid");
+        allowedQualifiersConstraintPid = getConstraintsRelatedId("property_pid");
+        mandatoryQualifiersConstraintQid = getConstraintsRelatedId("mandatory_qualifier_constraint_qid");
+        mandatoryQualifiersConstraintPid = getConstraintsRelatedId("property_pid");
         return allowedQualifiersConstraintQid != null && allowedQualifiersConstraintPid != null &&
                 mandatoryQualifiersConstraintQid != null && mandatoryQualifiersConstraintPid != null;
     }

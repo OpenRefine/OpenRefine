@@ -1,7 +1,5 @@
 package org.openrefine.wikidata.qa.scrutinizers;
 
-import org.openrefine.wikidata.manifests.constraints.NoneOfConstraint;
-import org.openrefine.wikidata.manifests.constraints.OneOfConstraint;
 import org.openrefine.wikidata.qa.QAWarning;
 import org.wikidata.wdtk.datamodel.interfaces.EntityIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.PropertyIdValue;
@@ -26,15 +24,10 @@ public class RestrictedValuesScrutinizer extends SnakScrutinizer {
 
     @Override
     public boolean prepareDependencies() {
-        OneOfConstraint oneOfConstraint = constraints.getOneOfConstraint();
-        NoneOfConstraint noneOfConstraint = constraints.getNoneOfConstraint();
-        if (oneOfConstraint == null || noneOfConstraint == null) {
-            return false;
-        }
-        allowedValuesConstraintQid = oneOfConstraint.getQid();
-        allowedValuesConstraintPid = oneOfConstraint.getItemOfPropertyConstraint();
-        disallowedValuesConstraintQid = noneOfConstraint.getQid();
-        disallowedValuesConstraintPid = noneOfConstraint.getItemOfPropertyConstraint();
+        allowedValuesConstraintQid = getConstraintsRelatedId("one_of_constraint_qid");
+        allowedValuesConstraintPid = getConstraintsRelatedId("item_of_property_constraint_pid");
+        disallowedValuesConstraintQid = getConstraintsRelatedId("none_of_constraint_qid");
+        disallowedValuesConstraintPid = getConstraintsRelatedId("item_of_property_constraint_pid");
         return allowedValuesConstraintQid != null && allowedValuesConstraintPid != null
                 && disallowedValuesConstraintQid != null && disallowedValuesConstraintPid != null;
     }

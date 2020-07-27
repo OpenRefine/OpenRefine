@@ -1,6 +1,5 @@
 package org.openrefine.wikidata.qa.scrutinizers;
 
-import org.openrefine.wikidata.manifests.constraints.AllowedEntityTypesConstraint;
 import org.openrefine.wikidata.qa.QAWarning;
 import org.wikidata.wdtk.datamodel.helpers.Datamodel;
 import org.wikidata.wdtk.datamodel.interfaces.EntityIdValue;
@@ -41,13 +40,9 @@ public class EntityTypeScrutinizer extends SnakScrutinizer {
 
     @Override
     public boolean prepareDependencies() {
-        AllowedEntityTypesConstraint allowedEntityTypesConstraint = constraints.getAllowedEntityTypesConstraint();
-        if (allowedEntityTypesConstraint == null) {
-            return false;
-        }
-        allowedEntityTypesQid = allowedEntityTypesConstraint.getQid();
-        wikibaseItemQid = allowedEntityTypesConstraint.getWikibaseItem();
-        itemOfPropertyConstraint = allowedEntityTypesConstraint.getItemOfPropertyConstraint();
+        allowedEntityTypesQid = getConstraintsRelatedId("allowed_entity_types_constraint_qid");
+        wikibaseItemQid = getConstraintsRelatedId("wikibase_item_qid");
+        itemOfPropertyConstraint = getConstraintsRelatedId("item_of_property_constraint_pid");
         return allowedEntityTypesQid != null && wikibaseItemQid != null && itemOfPropertyConstraint != null;
     }
 }

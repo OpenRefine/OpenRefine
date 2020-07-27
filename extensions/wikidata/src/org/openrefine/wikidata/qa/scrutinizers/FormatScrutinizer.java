@@ -73,11 +73,8 @@ public class FormatScrutinizer extends SnakScrutinizer {
 
     @Override
     public boolean prepareDependencies() {
-        if (constraints.getFormatConstraint() == null) {
-            return false;
-        }
-        formatConstraintQid = constraints.getFormatConstraint().getQid();
-        formatRegexPid = constraints.getFormatConstraint().getFormatAsARegularExpression();
+        formatConstraintQid = getConstraintsRelatedId("format_constraint_qid");
+        formatRegexPid = getConstraintsRelatedId("format_as_a_regular_expression_pid");
         return formatConstraintQid != null && formatRegexPid != null;
     }
 

@@ -23,7 +23,6 @@
  ******************************************************************************/
 package org.openrefine.wikidata.qa.scrutinizers;
 
-import org.openrefine.wikidata.manifests.Constraints;
 import org.openrefine.wikidata.manifests.Manifest;
 import org.openrefine.wikidata.manifests.ManifestException;
 import org.openrefine.wikidata.manifests.ManifestParser;
@@ -58,13 +57,12 @@ import static org.testng.Assert.assertTrue;
 
 public abstract class ScrutinizerTest {
 
-    private static Constraints constraints;
+    private static Manifest manifest;
 
     static {
         try {
             String json = TestingData.jsonFromFile("manifest/wikidata-manifest-v1.0.json");
-            Manifest manifest = ManifestParser.parse(json);
-            constraints = manifest.getConstraints();
+            manifest = ManifestParser.parse(json);
         } catch (IOException | ManifestException e) {
             e.printStackTrace();
         }
@@ -80,7 +78,7 @@ public abstract class ScrutinizerTest {
         store = new QAWarningStore();
         scrutinizer = getScrutinizer();
         scrutinizer.setStore(store);
-        scrutinizer.setConstraints(constraints);
+        scrutinizer.setManifest(manifest);
         scrutinizer.prepareDependencies();
     }
 

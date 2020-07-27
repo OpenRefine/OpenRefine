@@ -23,7 +23,7 @@
  ******************************************************************************/
 package org.openrefine.wikidata.qa.scrutinizers;
 
-import org.openrefine.wikidata.manifests.Constraints;
+import org.openrefine.wikidata.manifests.Manifest;
 import org.openrefine.wikidata.qa.ConstraintFetcher;
 import org.openrefine.wikidata.qa.QAWarning;
 import org.openrefine.wikidata.qa.QAWarning.Severity;
@@ -45,7 +45,7 @@ public abstract class EditScrutinizer {
 
     protected QAWarningStore _store;
     protected ConstraintFetcher _fetcher;
-    protected Constraints constraints;
+    protected Manifest manifest;
 
     public void setStore(QAWarningStore store) {
         _store = store;
@@ -55,8 +55,12 @@ public abstract class EditScrutinizer {
         _fetcher = fetcher;
     }
 
-    public void setConstraints(Constraints constraints) {
-        this.constraints = constraints;
+    public void setManifest(Manifest manifest) {
+        this.manifest = manifest;
+    }
+
+    public String getConstraintsRelatedId(String name) {
+        return manifest.getConstraintsRelatedId(name);
     }
 
     /**

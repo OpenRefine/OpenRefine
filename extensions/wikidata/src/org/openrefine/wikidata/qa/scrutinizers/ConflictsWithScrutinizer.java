@@ -46,12 +46,9 @@ public class ConflictsWithScrutinizer extends EditScrutinizer {
 
     @Override
     public boolean prepareDependencies() {
-        if (constraints.getConflictsWithConstraint() == null) {
-            return false;
-        }
-        conflictsWithConstraintQid = constraints.getConflictsWithConstraint().getQid();
-        conflictsWithPropertyPid = constraints.getConflictsWithConstraint().getProperty();
-        itemOfPropertyConstraintPid = constraints.getConflictsWithConstraint().getItemOfPropertyConstraint();
+        conflictsWithConstraintQid = getConstraintsRelatedId("conflicts_with_constraint_qid");
+        conflictsWithPropertyPid = getConstraintsRelatedId("property_pid");
+        itemOfPropertyConstraintPid = getConstraintsRelatedId("item_of_property_constraint");
 
         return conflictsWithConstraintQid != null && conflictsWithPropertyPid != null && itemOfPropertyConstraintPid != null;
     }

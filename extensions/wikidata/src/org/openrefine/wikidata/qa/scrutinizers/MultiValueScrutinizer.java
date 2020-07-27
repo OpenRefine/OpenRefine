@@ -1,6 +1,5 @@
 package org.openrefine.wikidata.qa.scrutinizers;
 
-import org.openrefine.wikidata.manifests.constraints.MultiValueConstraint;
 import org.openrefine.wikidata.qa.QAWarning;
 import org.openrefine.wikidata.updates.ItemUpdate;
 import org.wikidata.wdtk.datamodel.interfaces.PropertyIdValue;
@@ -18,11 +17,7 @@ public class MultiValueScrutinizer extends EditScrutinizer {
 
     @Override
     public boolean prepareDependencies() {
-        MultiValueConstraint multiValueConstraint = constraints.getMultiValueConstraint();
-        if (multiValueConstraint == null) {
-            return false;
-        }
-        multiValueConstraintQid = multiValueConstraint.getQid();
+        multiValueConstraintQid = getConstraintsRelatedId("multi_value_constraint_qid");
         return multiValueConstraintQid != null;
     }
 
