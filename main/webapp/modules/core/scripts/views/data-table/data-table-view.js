@@ -400,7 +400,7 @@ DataTableView.prototype._renderDataTables = function(table, tableHeader) {
     var star = document.createElement('a');
     star.href = "javascript:{}";
     star.classList.add(row.starred ? "data-table-star-on" : "data-table-star-off");
-    tdStar.appendChild(star).appendChild(document.createTextNode('\u00A0'));
+    tdStar.appendChild(star).appendChild(document.createTextNode('\u00A0')); // NBSP
     star.addEventListener('click', function() {
     var newStarred = !row.starred;
       Refine.postCoreProcess(
