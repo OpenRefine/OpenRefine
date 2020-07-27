@@ -16,7 +16,7 @@ You can also receive and open other people’s projects, or send them yours, by 
 
 ## Create project by importing data
 
-When you start OpenRefine, you’ll be taken to the "Create Project" screen. You’ll see on the left side of the screen that your options are to: 
+When you start OpenRefine, you’ll be taken to the “Create Project” screen. You’ll see on the left side of the screen that your options are to: 
 
 *   import data from a file on your computer
 *   import data from a link to the web
@@ -52,15 +52,13 @@ If you supply two or more files for one project, the files’ rows will be loade
 
 For whichever method you choose, when you click "Next >>" you will be given a preview and a chance to configure the way OpenRefine interprets the file.  
 
-### Methods to import data
-
-#### Get data from this computer
+### Get data from this computer
 
 Click on "Browse…" and select a file on your hard drive. All files will be shown, not just compatible ones. 
 
 If you import an archive file (something with the extension `.zip`, `.tar.gz`, `.tgz`, `.tar.bz2`, `.gz`, or `.bz2`), OpenRefine detects the files inside it, shows you a preview screen, and allows you to select which ones to load. This does not work with `.rar` files. 
 
-#### Web Addresses (URLs)
+### Web Addresses (URLs)
 
 Type or paste the URL to the data file into the field provided. You can add as many fields as you want. OpenRefine will download the file and preview it for you. 
 
@@ -68,7 +66,7 @@ If you supply two or more file URLs, OpenRefine will identify each one and ask y
 
 Do not use this form to load a Google Sheet by its link; use [the Google Data form instead](#google-data). 
 
-#### Clipboard
+### Clipboard
 
 You can copy and paste in data from anywhere. OpenRefine will recognize comma-separated, tab-separated, or table-formatted information copied from sources such as word-processing documents, spreadsheets, and tables in PDFs. You can also just paste in a list of items that you want to turn into multi-column rows. OpenRefine recognizes each new text line as a row. 
 
@@ -76,9 +74,9 @@ This can be useful if you want to pre-select a specific number of rows from your
 
 This can also be useful if you would like to paste in a list of URLs, which you can use later to fetch the data online and build columns with. 
 
-#### Database (SQL)
+### Database (SQL)
 
-If you are an administrator or have SQL access to a database of information, you may want to pull the latest dataset directly from there. This could include an online catalogue, a content management system, or a digital repository or collection management system. You can also load a `.db` file saved locally.
+If you are an administrator or have SQL access to a database of information, you may want to pull the latest dataset directly from there. This could include an online catalogue, a content management system, or a digital repository or collection management system. You can also load a `.db` file saved locally. You will need to use an SQL query to import your intended data.
 
 There are some publicly-accessible databases you can query, such as [one provided by Rfam](https://docs.rfam.org/en/latest/database.html). The instructions provided by Rfam can help you understand how to connect to and query from any database. 
 
@@ -86,22 +84,22 @@ OpenRefine can connect to PostgreSQL, MySQL, MariaDB, and SQLite database system
 
 If you have a downloaded database (`.db`) file from an SQLite database, you can supply the path to the file on your computer directly in the “Database” field at the bottom of the form. You can leave the rest of the fields blank.
 
-To import data directly from a database online, you will need the database type (such as MySQL), database name, and the hostname (either an IP address, such as `127.0.0.1`, or the domain that uses the database) and the port on the host. You will need an account authorized for access, and you may need to add OpenRefine (connecting from your computer’s IP) to the “allowable hosts” for that account.
+To import data directly from a database, you will need the database type (such as MySQL), database name, the hostname (either an IP address or the domain that hosts the database), and the port on the host. You will need an account authorized for access, and you may need to add OpenRefine's IP address or host to the “allowable hosts” for that account. You can find that information by pressing “Test” and getting the IP from the error message that results.
 
-You can either connect just once and gather data, or save the connection to use it again later. If you press “Connect” without saving, OpenRefine will forget all the information you just entered. 
+You can either connect just once to gather data, or save the connection to use it again later. If you press “Connect” without saving, OpenRefine will forget all the information you just entered. 
 
 If you’d like to save the connection, name your connection in a way you will recognize later. Click “Save” and it will appear in the “Saved Connections” list on the left. From now on, you can click on the “...” ellipsis to the right of the connection you’ve saved, and click “Connect.” 
 
 If your connection is successful, you will see a Query Editor. From here you can write an [SQL query](https://www.w3schools.com/sql/) to pull the specific data you need. OpenRefine will give you an error if you write a statement that tries to modify the source database in any way.
 
-#### Google Data
+### Google Data
 
 You have two ways to load in data from Google Sheets:
 *   A link to an accessible Google Sheet (that is, one with link-sharing turned on)
 *   Selecting a Google Sheet in your Google Drive
 
 
-##### Google Sheet by URL
+#### Google Sheet by URL
 
 You can import data from any Google Sheet that has link-sharing turned on. Paste in a URL that looks something like
 
@@ -109,7 +107,7 @@ You can import data from any Google Sheet that has link-sharing turned on. Paste
 
 This will only work with Sheets, not with any other Google Drive file that might have an available link, including `.xls` and other valid files that are hosted in Google Drive. These links will also not work [by URL](#web-addresses-urls), so you need to download the files to your computer.
 
-##### Google Sheet from Drive
+#### Google Sheet from Drive
 
 You can authorize OpenRefine to access your Google Drive data and import data from any Google Sheet it finds there. This will include Sheets that belong to you and Sheets that are shared with you, as well as Sheets that are in your trash. 
 
@@ -120,7 +118,7 @@ OpenRefine will generate a list of all Sheets it finds, with the most recently m
 When you click “Preview” the Sheet will open in a new browser tab. When you click the Sheet title, OpenRefine will begin to process the data.
 
 
-### Previewing the project
+## Project preview
 
 Once OpenRefine is ready to import the data, you will see a screen with “Configure Parsing Options” at the top. You’ll see a preview of the first 100 rows and all identified columns. 
 
@@ -128,7 +126,7 @@ At the bottom of the screen you will find options for telling OpenRefine how to 
 
 OpenRefine tries to guess how to parse your data based on the file extension. For example, `.xml` files are going to be parsed as though they are formatted in XML. An unknown file extension (or your clipboard copy-paste) is assumed to be either tab-separated or comma-separated. OpenRefine looks for a tab character; if one is found, it assumes you have imported tab-separated data.
 
-If Google isn’t certain what format you imported, it will provide a list of possibilities under “Parse data as” and some settings. You can specify a custom separator now, or split columns later on in the project interface. 
+If OpenRefine isn’t certain what format you imported, it will provide a list of possibilities under “Parse data as” and some settings. You can specify a custom separator now, or split columns later on in the project interface. 
 
 If you imported a spreadsheet with multiple worksheets, they will be listed along with the number of rows they contain. You can only select data from one worksheet. 
 
@@ -169,7 +167,6 @@ You may have multiple projects from the same dataset, or multiple versions from 
 
 You can name a project when you create it or import it, and you can rename a project by opening it and clicking on the project name at the top of the screen. 
 
-
 ### Autosaving 
 
 OpenRefine saves all of your actions (everything you can see in the Undo/Redo panel). That  includes flagging and starring rows.
@@ -178,13 +175,11 @@ It doesn’t, however, save your facets, filters, or any kind of “view” you 
 
 You can only save and share facets and filters, not any other type of view. To save current facets and filters, click “Permalink.” The project will reload with a different URL, which you can then copy and save elsewhere. This permalink will save both the facets and filters you’ve set, and the settings for each one (such as sorting by count rather than by name). 
 
-
 ### Deleting projects
 
 You can delete projects, which will erase the project files from the work directory on your computer. This is immediate and cannot be undone.
 
-Go to “Open Project” and find the project you want to delete. Click on the "X" to the left of the project name. There will be a confirmation dialog. 
-
+Go to “Open Project” and find the project you want to delete. Click on the “X” to the left of the project name. There will be a confirmation dialog. 
 
 ### Project files
 
