@@ -120,7 +120,7 @@ public class LoginCommandTest extends CommandTest {
         when(request.getParameter("csrf_token")).thenReturn(Command.csrfFactory.getFreshToken());
         when(request.getParameter(API_ENDPOINT)).thenReturn(apiEndpoint);
         command.doPost(request, response);
-        assertEqualAsJson("{\"logged_in\":false,\"username\":null,\"mediawiki_api_endpoint\":null}", writer.toString());
+        assertEqualAsJson("{\"logged_in\":false,\"username\":null,\"mediawiki_api_endpoint\":\"" + apiEndpoint + "\"}", writer.toString());
     }
 
     @Test
@@ -133,11 +133,11 @@ public class LoginCommandTest extends CommandTest {
     public void testGetNotCsrfProtected() throws ServletException, IOException {
         when(request.getParameter(API_ENDPOINT)).thenReturn(apiEndpoint);
         command.doGet(request, response);
-        assertEqualAsJson("{\"logged_in\":false,\"username\":null,\"mediawiki_api_endpoint\":null}", writer.toString());
+        assertEqualAsJson("{\"logged_in\":false,\"username\":null,\"mediawiki_api_endpoint\":\"" + apiEndpoint + "\"}", writer.toString());
     }
 
     private void assertLogin() {
-        assertTrue(ConnectionManager.getInstance().isLoggedIn());
+        assertTrue(ConnectionManager.getInstance().isLoggedIn(apiEndpoint));
         assertEqualAsJson("{\"logged_in\":true,\"username\":\"" + username + "\",\"mediawiki_api_endpoint\":\"" + apiEndpoint + "\"}",
                 writer.toString());
     }
@@ -372,8 +372,8 @@ public class LoginCommandTest extends CommandTest {
 
         command.doPost(request, response);
 
-        assertFalse(ConnectionManager.getInstance().isLoggedIn());
-        assertEqualAsJson("{\"logged_in\":false,\"username\":null, \"mediawiki_api_endpoint\":null}", logoutWriter.toString());
+        assertFalse(ConnectionManager.getInstance().isLoggedIn(apiEndpoint));
+        assertEqualAsJson("{\"logged_in\":false,\"username\":null, \"mediawiki_api_endpoint\":\"" + apiEndpoint + "\"}", logoutWriter.toString());
 
         Map<String, Cookie> cookies = getCookieMap(cookieCaptor.getAllValues().subList(loginCookiesSize, cookieCaptor.getAllValues().size()));
         cookieMap.forEach((key, value) -> assertCookieEquals(cookies.get(apiEndpointPrefix + WIKIBASE_COOKIE_PREFIX + key), "", 0));
@@ -400,7 +400,7 @@ public class LoginCommandTest extends CommandTest {
         command.doPost(request, response);
 
         verify(connection).login(username, password);
-        assertFalse(ConnectionManager.getInstance().isLoggedIn());
+        assertFalse(ConnectionManager.getInstance().isLoggedIn(apiEndpoint));
     }
 
     @Test
@@ -418,7 +418,7 @@ public class LoginCommandTest extends CommandTest {
         command.doPost(request, response);
 
         verify(connection).checkCredentials();
-        assertFalse(ConnectionManager.getInstance().isLoggedIn());
+        assertFalse(ConnectionManager.getInstance().isLoggedIn(apiEndpoint));
     }
 
     @Test
@@ -454,7 +454,7 @@ public class LoginCommandTest extends CommandTest {
         // login first
         command.doPost(request, response);
 
-        assertTrue(ConnectionManager.getInstance().isLoggedIn());
+        assertTrue(ConnectionManager.getInstance().isLoggedIn(apiEndpoint));
 
         // logout
         when(request.getParameter("logout")).thenReturn("true");
@@ -462,7 +462,7 @@ public class LoginCommandTest extends CommandTest {
         command.doPost(request, response);
 
         // still logged in
-        assertTrue(ConnectionManager.getInstance().isLoggedIn());
+        assertTrue(ConnectionManager.getInstance().isLoggedIn(apiEndpoint));
     }
 
     @Test
@@ -482,7 +482,7 @@ public class LoginCommandTest extends CommandTest {
         // login first
         command.doPost(request, response);
 
-        assertTrue(ConnectionManager.getInstance().isLoggedIn());
+        assertTrue(ConnectionManager.getInstance().isLoggedIn(apiEndpoint));
 
         // logout
         when(request.getParameter("logout")).thenReturn("true");
@@ -490,7 +490,7 @@ public class LoginCommandTest extends CommandTest {
         command.doPost(request, response);
 
         // not logged in anymore
-        assertFalse(ConnectionManager.getInstance().isLoggedIn());
+        assertFalse(ConnectionManager.getInstance().isLoggedIn(apiEndpoint));
     }
 
     private static Cookie[] makeRequestCookies() {

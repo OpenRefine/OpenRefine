@@ -86,7 +86,7 @@ public class LoginCommand extends Command {
         String mediawikiApiEndpointPrefix = mediawikiApiEndpoint + '-';
 
         if ("true".equals(request.getParameter("logout"))) {
-            manager.logout();
+            manager.logout(mediawikiApiEndpoint);
             removeUsernamePasswordCookies(mediawikiApiEndpointPrefix, request, response);
             removeOwnerOnlyConsumerCookies(mediawikiApiEndpointPrefix, request, response);
             respond(request, response);
@@ -141,7 +141,7 @@ public class LoginCommand extends Command {
             // Once logged in with new credentials,
             // the old credentials in cookies should be cleared.
             if (manager.login(mediawikiApiEndpoint, username, password) && remember) {
-                ApiConnection connection = manager.getConnection();
+                ApiConnection connection = manager.getConnection(mediawikiApiEndpoint);
                 List<HttpCookie> cookies = ((BasicApiConnection) connection).getCookies();
                 String prefix = mediawikiApiEndpointPrefix + WIKIBASE_COOKIE_PREFIX;
                 for (HttpCookie cookie : cookies) {
@@ -186,14 +186,14 @@ public class LoginCommand extends Command {
 
         ConnectionManager manager = ConnectionManager.getInstance();
         Map<String, Object> jsonResponse = new HashMap<>();
-        if (mediawikiApiEndpoint.equals(manager.getMediaWikiApiEndpoint())) {
-            jsonResponse.put("logged_in", manager.isLoggedIn());
-            jsonResponse.put("username", manager.getUsername());
-            jsonResponse.put("mediawiki_api_endpoint", manager.getMediaWikiApiEndpoint());
+        if (manager.isLoggedIn(mediawikiApiEndpoint)) {
+            jsonResponse.put("logged_in", manager.isLoggedIn(mediawikiApiEndpoint));
+            jsonResponse.put("username", manager.getUsername(mediawikiApiEndpoint));
+            jsonResponse.put("mediawiki_api_endpoint", mediawikiApiEndpoint);
         } else {
             jsonResponse.put("logged_in", false);
             jsonResponse.put("username", null);
-            jsonResponse.put("mediawiki_api_endpoint", null);
+            jsonResponse.put("mediawiki_api_endpoint", mediawikiApiEndpoint);
         }
 
         respondJSON(response, jsonResponse);

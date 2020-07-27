@@ -171,10 +171,11 @@ public class PerformWikibaseEditsOperation extends EngineDependentOperation {
 
             WebResourceFetcherImpl.setUserAgent("OpenRefine Wikidata extension");
             ConnectionManager manager = ConnectionManager.getInstance();
-            if (!manager.isLoggedIn()) {
+            String mediaWikiApiEndpoint = _schema.getMediaWikiApiEndpoint();
+            if (!manager.isLoggedIn(mediaWikiApiEndpoint)) {
                 return;
             }
-            ApiConnection connection = manager.getConnection();
+            ApiConnection connection = manager.getConnection(mediaWikiApiEndpoint);
 
             WikibaseDataFetcher wbdf = new WikibaseDataFetcher(connection, _schema.getBaseIri());
             WikibaseDataEditor wbde = new WikibaseDataEditor(connection, _schema.getBaseIri());

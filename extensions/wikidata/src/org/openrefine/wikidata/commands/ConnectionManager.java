@@ -64,14 +64,7 @@ public class ConnectionManager {
     public static final int CONNECT_TIMEOUT = 5000;
     public static final int READ_TIMEOUT = 10000;
 
-    private String mediaWikiApiEndpoint;
-
-    /**
-     * The single {@link ApiConnection} instance managed by {@link ConnectionManager}.
-     * <p>
-     * Currently, only one connection is supported at the same time.
-     */
-    private ApiConnection connection;
+    private Map<String, ApiConnection> endpointToConnection = new HashMap<>();
 
     private static final ConnectionManager instance = new ConnectionManager();
 
@@ -96,15 +89,14 @@ public class ConnectionManager {
      * @return true if logged in successfully, false otherwise
      */
     public boolean login(String mediaWikiApiEndpoint, String username, String password) {
-        this.mediaWikiApiEndpoint = mediaWikiApiEndpoint;
-        connection = new BasicApiConnection(mediaWikiApiEndpoint);
+        BasicApiConnection connection = new BasicApiConnection(mediaWikiApiEndpoint);
         setupConnection(connection);
         try {
-            ((BasicApiConnection) connection).login(username, password);
+            connection.login(username, password);
+            endpointToConnection.put(mediaWikiApiEndpoint, connection);
             return true;
         } catch (LoginFailedException e) {
             logger.error(e.getMessage());
-            connection = null;
             return false;
         }
     }
@@ -123,18 +115,17 @@ public class ConnectionManager {
      */
     public boolean login(String mediaWikiApiEndpoint, String consumerToken, String consumerSecret,
                          String accessToken, String accessSecret) {
-        this.mediaWikiApiEndpoint = mediaWikiApiEndpoint;
-        connection = new OAuthApiConnection(mediaWikiApiEndpoint,
+        OAuthApiConnection connection = new OAuthApiConnection(mediaWikiApiEndpoint,
                 consumerToken, consumerSecret,
                 accessToken, accessSecret);
         setupConnection(connection);
         try {
             // check if the credentials are valid
             connection.checkCredentials();
+            endpointToConnection.put(mediaWikiApiEndpoint, connection);
             return true;
         } catch (IOException | MediaWikiApiErrorException e) {
             logger.error(e.getMessage());
-            connection = null;
             return false;
         }
     }
@@ -151,7 +142,6 @@ public class ConnectionManager {
      * @return true if logged in successfully, false otherwise
      */
     public boolean login(String mediaWikiApiEndpoint, String username, List<Cookie> cookies) {
-        this.mediaWikiApiEndpoint = mediaWikiApiEndpoint;
         cookies.forEach(cookie -> cookie.setPath("/"));
         Map<String, Object> map = new HashMap<>();
         map.put("baseUrl", mediaWikiApiEndpoint);
@@ -162,13 +152,12 @@ public class ConnectionManager {
         map.put("connectTimeout", CONNECT_TIMEOUT);
         map.put("readTimeout", READ_TIMEOUT);
         try {
-            BasicApiConnection newConnection = convertToBasicApiConnection(map);
-            newConnection.checkCredentials();
-            connection = newConnection;
+            BasicApiConnection connection = convertToBasicApiConnection(map);
+            connection.checkCredentials();
+            endpointToConnection.put(mediaWikiApiEndpoint, connection);
             return true;
         } catch (IOException | MediaWikiApiErrorException e) {
             logger.error(e.getMessage());
-            connection = null;
             return false;
         }
     }
@@ -183,18 +172,18 @@ public class ConnectionManager {
     }
 
 
-    public void logout() {
-        mediaWikiApiEndpoint = null;
+    public void logout(String mediaWikiApiEndpoint) {
+        ApiConnection connection = endpointToConnection.get(mediaWikiApiEndpoint);
         if (connection != null) {
             try {
                 connection.logout();
-                connection = null;
+                endpointToConnection.remove(mediaWikiApiEndpoint);
             } catch (IOException e) {
                 logger.error(e.getMessage());
             } catch (MediaWikiApiErrorException e) {
                 if ("assertuserfailed".equals(e.getErrorCode())) {
                     // it turns out we were already logged out
-                    connection = null;
+                    endpointToConnection.remove(mediaWikiApiEndpoint);
                 } else {
                     logger.error(e.getMessage());
                 }
@@ -202,24 +191,21 @@ public class ConnectionManager {
         }
     }
 
-    public ApiConnection getConnection() {
-        return connection;
+    public ApiConnection getConnection(String mediaWikiApiEndpoint) {
+        return endpointToConnection.get(mediaWikiApiEndpoint);
     }
 
-    public boolean isLoggedIn() {
-        return connection != null;
+    public boolean isLoggedIn(String mediaWikiApiEndpoint) {
+        return endpointToConnection.get(mediaWikiApiEndpoint) != null;
     }
 
-    public String getUsername() {
+    public String getUsername(String mediaWikiApiEndpoint) {
+        ApiConnection connection = endpointToConnection.get(mediaWikiApiEndpoint);
         if (connection != null) {
             return connection.getCurrentUser();
         } else {
             return null;
         }
-    }
-
-    public String getMediaWikiApiEndpoint() {
-        return mediaWikiApiEndpoint;
     }
 
     private void setupConnection(ApiConnection connection) {
