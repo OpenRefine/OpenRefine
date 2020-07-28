@@ -50,11 +50,11 @@ If you supply two or more files for one project, the files’ rows will be loade
 |berries.csv||2|Blueberry|Canada|
 
 
-For whichever method you choose, when you click "Next >>" you will be given a preview and a chance to configure the way OpenRefine interprets the file.  
+For whichever method you choose, when you click “Next >>” you will be given a preview and a chance to configure the way OpenRefine interprets the file.  
 
 ### Get data from this computer
 
-Click on "Browse…" and select a file on your hard drive. All files will be shown, not just compatible ones. 
+Click on “Browse…” and select a file on your hard drive. All files will be shown, not just compatible ones. 
 
 If you import an archive file (something with the extension `.zip`, `.tar.gz`, `.tgz`, `.tar.bz2`, `.gz`, or `.bz2`), OpenRefine detects the files inside it, shows you a preview screen, and allows you to select which ones to load. This does not work with `.rar` files. 
 
@@ -76,7 +76,7 @@ This can also be useful if you would like to paste in a list of URLs, which you 
 
 ### Database (SQL)
 
-If you are an administrator or have SQL access to a database of information, you may want to pull the latest dataset directly from there. This could include an online catalogue, a content management system, or a digital repository or collection management system. You can also load a  database (`.db`) file saved locally. You will need to use an [SQL query](https://www.w3schools.com/sql/) to import your intended data.
+If you are an administrator or have SQL access to a database of information, you may want to pull the latest dataset directly from there. This could include an online catalogue, a content management system, or a digital repository or collection management system. You can also load a database (`.db`) file saved locally. You will need to use an [SQL query](https://www.w3schools.com/sql/) to import your intended data.
 
 There are some publicly-accessible databases you can query, such as [one provided by Rfam](https://docs.rfam.org/en/latest/database.html). The instructions provided by Rfam can help you understand how to connect to and query from any database.
 
