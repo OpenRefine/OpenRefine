@@ -505,7 +505,7 @@ DataTableView.prototype._renderDataTables = function(table, tableHeader) {
       total += row.offsetHeight;
   }
   this._sizeRowFirst = total / this._pageSize;
-  this._sizeRowsTotal = this._sizeRowFirst * theProject.metadata.rowCount;
+  this._sizeRowsTotal = this._sizeRowFirst * theProject.rowModel.filtered;
   this._sizeSinglePage = this._sizeRowFirst * this._pageSize;
   document.querySelector('.data-table tbody').insertRow(0).setAttribute('class', 'first-row');
   this._headerTop = $('thead').offset().top + $('thead').height();
@@ -516,7 +516,6 @@ DataTableView.prototype._renderDataTables = function(table, tableHeader) {
   var flag = 0;
   $(table.parentNode.parentNode).bind('scroll', function(evt) {
     self._downwardDirection = self._scrollTop < $(this).scrollTop();
-    self._scrollTop = $(this).scrollTop();
 
     try {
       var element = document.querySelectorAll('.load-next-set');
@@ -566,6 +565,7 @@ DataTableView.prototype._renderDataTables = function(table, tableHeader) {
       }
       flag = 0;
     }, 250));
+    self._scrollTop = $(this).scrollTop();
   });
 };
 
@@ -575,7 +575,7 @@ DataTableView.prototype.getPageNumberSrcolling = function(scrollPosition) {
 }
 
 DataTableView.prototype._adjustNextSetClasses = function(start, top) {
-  var heightToAddBottom = Math.max(0, this._sizeRowsTotal - (this._totalSize) * this._sizeRowFirst);
+  var heightToAddBottom = Math.max(0, this._sizeRowsTotal - this._totalSize * this._sizeRowFirst);
 
   if(!top) {
     // Deletion of upper rows that are not visible anymore
@@ -591,8 +591,6 @@ DataTableView.prototype._adjustNextSetClasses = function(start, top) {
     this._pageStart = start - this._pageSize;
   } else {
     this._pageStart = start;
-    heightToAddBottom = Math.max(0, this._sizeRowsTotal - (this._pageStart + 2 * this._pageSize) * this._sizeRowFirst);
-
     // Deletion of lower rows that are not visible anymore
     if (theProject.rowModel.mode == "record-based") {
       console.log('Deleting below records');
@@ -604,35 +602,32 @@ DataTableView.prototype._adjustNextSetClasses = function(start, top) {
   }
 
   var heightToAddTop = (this._pageStart) * this._sizeRowFirst;
-  $('.data-table tbody tr:first').css('height', heightToAddTop);
-
   this._addHeights(heightToAddTop, heightToAddBottom);
 };
 
 DataTableView.prototype._addHeights = function(heightToAddTop, heightToAddBottom) {
-  document.querySelector('.data-table').insertRow();
-  $('tr:last').css('height', heightToAddBottom);
-  $('tr:last').addClass('last-row');
+  $('.data-table tbody tr:first').css('height', heightToAddTop);
 
+  document.querySelector('.data-table').insertRow();
+  $('.data-table tbody tr:last').css('height', heightToAddBottom);
+  $('.data-table tbody tr:last').addClass('last-row');
   if(theProject.rowModel.rows.length >= this._pageSize) {
     if (theProject.rowModel.mode == "record-based") {
-      $('tr.record').eq(-1 * (this._pageSize / 2 + 1)).addClass('load-next-set');
-      $('tr.record').eq(this._pageSize / 2 + 1).addClass('load-next-set');
+      $('.data-table tbody tr.record').eq(-1 * (this._pageSize / 2 + 1)).addClass('load-next-set');
+      $('.data-table tbody tr.record').eq(this._pageSize / 2 - 1).addClass('load-next-set');
     } else {
-      $('tr').eq(-1 * (this._pageSize / 2 + 2)).addClass('load-next-set');
-      $('tr').eq(this._pageSize / 2 + 1).addClass('load-next-set');
+      $('.data-table tbody tr').eq(-1 * (this._pageSize / 2 + 2)).addClass('load-next-set');
+      $('.data-table tbody tr').eq(this._pageSize / 2).addClass('load-next-set');
     }
   }
 }
 
 DataTableView.prototype._adjustNextSetClassesSpeed = function(modifiedScrollPosition, start) {
-  this._pageStart = start;
   var heightToAddTop = modifiedScrollPosition;
   var heightToAddBottom = Math.max(0, this._sizeRowsTotal - (modifiedScrollPosition + this._sizeSinglePage));
 
   $('.data-table tbody tr').slice(1, $('.data-table tbody tr').length - theProject.rowModel.rows.length).remove();
-
-  $('.data-table tbody tr:first').css('height', heightToAddTop);
+  this._pageStart = this._totalSize - this._pageSize;
 
   this._addHeights(heightToAddTop, heightToAddBottom);
 };
@@ -705,7 +700,7 @@ DataTableView.prototype._showRowsSpeed = function(modifiedScrollPosition, scroll
 };
 
 DataTableView.prototype._onChangeGotoScrolling = function(scrollPosition, gotoPageNumber, table, elmt, evt) {
-  var modifiedScrollPosition = this._sizeRowFirst * (gotoPageNumber) * this._pageSize; 
+  var modifiedScrollPosition = this._sizeRowFirst * gotoPageNumber * this._pageSize;
   this._showRowsSpeed(modifiedScrollPosition, scrollPosition, table, gotoPageNumber * this._pageSize);
 };
 
