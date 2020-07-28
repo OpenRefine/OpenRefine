@@ -76,21 +76,19 @@ This can also be useful if you would like to paste in a list of URLs, which you 
 
 ### Database (SQL)
 
-If you are an administrator or have SQL access to a database of information, you may want to pull the latest dataset directly from there. This could include an online catalogue, a content management system, or a digital repository or collection management system. You can also load a `.db` file saved locally. You will need to use an SQL query to import your intended data.
+If you are an administrator or have SQL access to a database of information, you may want to pull the latest dataset directly from there. This could include an online catalogue, a content management system, or a digital repository or collection management system. You can also load a  database (`.db`) file saved locally. You will need to use an [SQL query](https://www.w3schools.com/sql/) to import your intended data.
 
-There are some publicly-accessible databases you can query, such as [one provided by Rfam](https://docs.rfam.org/en/latest/database.html). The instructions provided by Rfam can help you understand how to connect to and query from any database. 
+There are some publicly-accessible databases you can query, such as [one provided by Rfam](https://docs.rfam.org/en/latest/database.html). The instructions provided by Rfam can help you understand how to connect to and query from any database.
 
 OpenRefine can connect to PostgreSQL, MySQL, MariaDB, and SQLite database systems. It will automatically populate the “Port” field based on which of these you choose, but you can manually edit this if needed.
 
-If you have a downloaded database (`.db`) file from an SQLite database, you can supply the path to the file on your computer directly in the “Database” field at the bottom of the form. You can leave the rest of the fields blank.
+If you have a `.db` file, you can supply the path to the file on your computer directly in the “Database” field at the bottom of the form. You can leave the rest of the fields blank.
 
 To import data directly from a database, you will need the database type (such as MySQL), database name, the hostname (either an IP address or the domain that hosts the database), and the port on the host. You will need an account authorized for access, and you may need to add OpenRefine's IP address or host to the “allowable hosts” for that account. You can find that information by pressing “Test” and getting the IP from the error message that results.
 
-You can either connect just once to gather data, or save the connection to use it again later. If you press “Connect” without saving, OpenRefine will forget all the information you just entered. 
+You can either connect just once to gather data, or save the connection to use it again later. If you press “Connect” without saving, OpenRefine will forget all the information you just entered. If you’d like to save the connection, name your connection in a way you will recognize later. Click “Save” and it will appear in the “Saved Connections” list on the left. From now on, you can click on the “...” ellipsis to the right of the connection you’ve saved, and click “Connect.” 
 
-If you’d like to save the connection, name your connection in a way you will recognize later. Click “Save” and it will appear in the “Saved Connections” list on the left. From now on, you can click on the “...” ellipsis to the right of the connection you’ve saved, and click “Connect.” 
-
-If your connection is successful, you will see a Query Editor. From here you can write an [SQL query](https://www.w3schools.com/sql/) to pull the specific data you need. OpenRefine will give you an error if you write a statement that tries to modify the source database in any way.
+If your connection is successful, you will see a Query Editor where you can run your SQL query. OpenRefine will give you an error if you write a statement that tries to modify the source database in any way.
 
 ### Google Data
 
@@ -139,7 +137,7 @@ You should create a project name at this stage. You can also supply tags to keep
 
 Because OpenRefine only runs locally on your computer, you can’t have a project accessible to more than one person at the same time. 
 
-The best way to collaborate with another person is to export and import projects that save all your changes, so that you can pick up where someone else left off. You can also [export projects](exporting.md) and import them to new computers of your own, such as for working on the same project from the office and from home. 
+The best way to collaborate with another person is to export and import projects that save all your changes, so that you can pick up where someone else left off. You can also [export projects](exporting) and import them to new computers of your own, such as for working on the same project from the office and from home. 
 
 An exported project will include all of the [history](running#history-undoredo), so you can see (and undo) all the changes from the previous user. It is essentially a point-in-time snapshot of their work. OpenRefine only exports projects as `.tar.gz` files at this time. 
 
@@ -158,7 +156,7 @@ OpenRefine will store the project in its own workspace directory, so you can now
 
 ## Project management
 
-You can access all of your created projects by clicking on “Open Project.” Your project list can be organized by modification date, title, row count, and other metadata you can supply (such as subject, descripton, tags, or creator). To edit the fields you see here, click “About” to the left of each project. There you can Edit a number of available fields. You can also see the project ID that corresponds to the name of the folder in your work directory.  
+You can access all of your created projects by clicking on “Open Project.” Your project list can be organized by modification date, title, row count, and other metadata you can supply (such as subject, descripton, tags, or creator). To edit the fields you see here, click “About” to the left of each project. There you can edit a number of available fields. You can also see the project ID that corresponds to the name of the folder in your work directory.  
 
 
 ### Naming projects 
@@ -169,7 +167,7 @@ You can name a project when you create it or import it, and you can rename a pro
 
 ### Autosaving 
 
-OpenRefine saves all of your actions (everything you can see in the Undo/Redo panel). That  includes flagging and starring rows.
+OpenRefine saves all of your actions (everything you can see in the Undo/Redo panel). That includes flagging and starring rows.
 
 It doesn’t, however, save your facets, filters, or any kind of “view” you may have in place while you work. This includes the number of rows showing, whether you are showing your data as rows or records, and any sorting or column collapsing you may have done. A good rule of thumb is: if it’s not showing in Undo/Redo, you will lose it when you leave the project workspace. 
 
