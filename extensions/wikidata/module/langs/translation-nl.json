@@ -75,7 +75,7 @@
     "warnings-messages/new-item-without-labels-or-aliases/title": "Nieuwe items zullen worden aangemaakt zonder label of alias.",
     "warnings-messages/new-item-without-descriptions/title": "Nieuwe items worden aangemaakt zonder beschrijving.",
     "warnings-messages/new-item-with-deleted-statements/title": "Statements op nieuwe items worden verwijderd.",
-    "warnings-messages/new-item-without-P31-or-P279/title": "Nieuwe items worden aangemaakt zonder type.",
+    "warnings-messages/new-item-without-instance-of-or-subclass-of/title": "Nieuwe items worden aangemaakt zonder type.",
     "warnings-messages/add-statements-with-invalid-format/title": "{property_entity} verklaringen met ongeldig formaat.",
     "warnings-messages/unsourced-statements/title": "Verklaringen zonder bronnen.",
     "warnings-messages/unsourced-statements/body": "Meeste verklaringen hebben bronnen nodig. U kunt deze makkelijk in het schema invoegen.",

@@ -81,7 +81,7 @@
     "warnings-messages/new-item-without-descriptions/body": "{example_entity}와 같은 신규 아이템에 설명을 추가하면 그 아이템에 대한 모호성을 줄여줄 겁니다.",
     "warnings-messages/new-item-with-deleted-statements/title": "신규 아이템에서 statements를 삭제.",
     "warnings-messages/new-item-with-deleted-statements/body": "스키마 또는 프로젝트에  잘못된 것이 아마 있는것 같습니다.",
-    "warnings-messages/new-item-without-P31-or-P279/title": "타입없이 신규 아이템이 생성되었습니다.",
-    "warnings-messages/new-item-without-P31-or-P279/body": "{example_entity}와 같이 생성된 각 아이템마다 \"instance of\" (P31) 또는 \"subclass of\" (P279) statement를 작성해야합니다.",
+    "warnings-messages/new-item-without-instance-of-or-subclass-of/title": "타입없이 신규 아이템이 생성되었습니다.",
+    "warnings-messages/new-item-without-instance-of-or-subclass-of/body": "{example_entity}와 같이 생성된 각 아이템마다 \"instance of\" (P31) 또는 \"subclass of\" (P279) statement를 작성해야합니다.",
     "warnings-messages/add-statements-with-invalid-format/title": "{property_entity} statments는 유효하지 않는 포맷을 가지고 있습니다."
 }

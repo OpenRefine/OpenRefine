@@ -37,7 +37,7 @@ public class NewItemScrutinizer extends EditScrutinizer {
     public static final String noLabelType = "new-item-without-labels-or-aliases";
     public static final String noDescType = "new-item-without-descriptions";
     public static final String deletedStatementsType = "new-item-with-deleted-statements";
-    public static final String noTypeType = "new-item-without-P31-or-P279";
+    public static final String noTypeType = "new-item-without-instance-of-or-subclass-of";
     public static final String newItemType = "new-item-created";
 
     @Override
