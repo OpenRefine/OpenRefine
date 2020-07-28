@@ -39,6 +39,7 @@ import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 public class EntityCache {
 
@@ -57,6 +58,7 @@ public class EntityCache {
         _cache = CacheBuilder.newBuilder().maximumSize(4096).expireAfterWrite(1, TimeUnit.HOURS)
                 .build(new CacheLoader<String, EntityDocument>() {
 
+                    @Override
                     public EntityDocument load(String entityId)
                             throws Exception {
                         EntityDocument doc = _fetcher.getEntityDocument(entityId);
@@ -67,13 +69,15 @@ public class EntityCache {
                         }
                     }
 
-                    public Map<String, EntityDocument> loadAll(List<String> entityIds)
+                    @Override
+                    public Map<String, EntityDocument> loadAll(Iterable<? extends String> entityIds)
                             throws Exception {
-                        Map<String, EntityDocument> entityDocumentMap = _fetcher.getEntityDocuments(entityIds);
+                        Map<String, EntityDocument> entityDocumentMap = _fetcher.getEntityDocuments(StreamSupport.stream(entityIds.spliterator(), false)
+                                .collect(Collectors.toList()));
                         if (!entityDocumentMap.isEmpty()) {
                             return entityDocumentMap;
                         } else {
-                            throw new MediaWikiApiErrorException("400", "Unknown entity id \"" + entityIds + "\"");
+                            throw new MediaWikiApiErrorException("400", "Unknown entity ids in \"" + entityIds.toString() + "\"");
                         }
                     }
 
