@@ -23,7 +23,6 @@ ManageAccountDialog.tryLoginWithCookies = function (onSuccess) {
         discardWaiter();
         if (data.logged_in) {
           onSuccess(data.username);
-          ManageAccountDialog.loggedInTo = data.mediawiki_api_endpoint;
           ManageAccountDialog.displayLoggedIn(data.username);
         } else {
           // If failed, then login with username/password.
@@ -53,7 +52,7 @@ ManageAccountDialog.displayLoggedIn = function (logged_in_username) {
 
   elmts.loggedInUsername
       .text(logged_in_username)
-      .attr('href', 'https://www.wikidata.org/wiki/User:' + logged_in_username);
+      .attr('href', WikibaseManager.getSelectedWikibaseRoot() + 'User:' + logged_in_username);
 
   elmts.cancelButton.click(function (e) {
     dismiss();
@@ -63,12 +62,14 @@ ManageAccountDialog.displayLoggedIn = function (logged_in_username) {
     frame.hide();
     Refine.postCSRF(
         "command/wikidata/login",
-        "logout=true",
+        $.param({
+          "logout": "true",
+          "wb-api-endpoint": WikibaseManager.getSelectedWikibaseApi()
+        }),
         function (data) {
           frame.show();
           if (!data.logged_in) {
             dismiss();
-            ManageAccountDialog.loggedInTo = null;
           }
         });
   });
@@ -119,7 +120,6 @@ ManageAccountDialog.displayPasswordLogin = function (onSuccess) {
         function (data) {
           if (data.logged_in) {
             dismiss();
-            ManageAccountDialog.loggedInTo = data.mediawiki_api_endpoint;
             onSuccess(data.username);
           } else {
             frame.show();
@@ -175,7 +175,6 @@ ManageAccountDialog.displayOwnerOnlyConsumerLogin = function (onSuccess) {
         function (data) {
           if (data.logged_in) {
             dismiss();
-            ManageAccountDialog.loggedInTo = data.mediawiki_api_endpoint;
             onSuccess(data.username);
           } else {
             frame.show();
@@ -194,19 +193,11 @@ ManageAccountDialog.displayOwnerOnlyConsumerLogin = function (onSuccess) {
 ManageAccountDialog.isLoggedIn = function (callback) {
   $.get(
       "command/wikidata/login",
+      {"wb-api-endpoint": WikibaseManager.getSelectedWikibaseApi()},
       function (data) {
-        if (data.username) {
+        if (data.logged_in) {
           // make sure that the user is logged in to the selected Wikibase
-          if (data.mediawiki_api_endpoint === WikibaseManager.getSelectedWikibaseApi()) {
-            callback(data.username)
-          } else {
-            Refine.postCSRF(
-                "command/wikidata/login",
-                "logout=true",
-                function () {
-                  callback(null);
-                });
-          }
+          callback(data.username)
         } else {
           callback(null);
         }
