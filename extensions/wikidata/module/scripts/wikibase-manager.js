@@ -32,6 +32,13 @@ WikibaseManager.getSelectedWikibaseEntityPrefix = function () {
   return WikibaseManager.getSelectedWikibase().wikibase.properties.entity_prefix;
 };
 
+/**
+ * Returns the default reconciliation service URL of the Wikibase,
+ * such as "https://wdreconcile.toolforge.org/${lang}/api".
+ *
+ * Notice that there is a "${lang}" variable in the URL, which should
+ * be replaced with the actual language code.
+ */
 WikibaseManager.getSelectedWikibaseReconEndpoint = function () {
   return WikibaseManager.getSelectedWikibase().reconciliation.endpoint;
 };

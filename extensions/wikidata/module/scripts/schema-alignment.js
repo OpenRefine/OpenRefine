@@ -119,7 +119,7 @@ SchemaAlignment._rerenderTabs = function() {
   schemaElmts.dialogExplanation.html($.i18n('wikibase-schema/dialog-explanation',
       WikibaseManager.getSelectedWikibaseMainPage(),
       WikibaseManager.getSelectedWikibaseName(),
-      WikibaseManager.getSelectedWikibaseReconEndpoint()));
+      WikibaseManager.getSelectedWikibaseReconEndpoint().replace("${lang}", "en")));
   this._plusButton($.i18n('wikibase-schema/add-item-button'), schemaElmts.addItemButton);
   schemaElmts.addItemButton.click(function(e) {
     SchemaAlignment._addItem();

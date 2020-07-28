@@ -83,19 +83,9 @@ WikibaseDialog.addWikibaseManifest = function () {
         return;
       }
 
-      let onAddReconServiceSuccess = function () {
-        WikibaseManager.addWikibase(manifest);
-        DialogSystem.dismissUntil(level - 1);
-        WikibaseDialog.populateDialog();
-      };
-
-      let reconServiceURL = manifest.reconciliation.endpoint;
-      if (!ReconciliationManager.getServiceFromUrl(reconServiceURL)) {
-        // add this reconciliation service
-        ReconciliationManager.registerStandardService(reconServiceURL, onAddReconServiceSuccess);
-      } else {
-        onAddReconServiceSuccess();
-      }
+      WikibaseManager.addWikibase(manifest);
+      DialogSystem.dismissUntil(level - 1);
+      WikibaseDialog.populateDialog();
     };
 
     let manifestURL = $.trim(elmts.manifestURLInput.val());

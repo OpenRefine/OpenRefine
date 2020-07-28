@@ -80,6 +80,6 @@ const WikidataManifestV1_0 = {
     }
   },
   "reconciliation": {
-    "endpoint": "https://wdreconcile.toolforge.org/en/api"
+    "endpoint": "https://wdreconcile.toolforge.org/${lang}/api"
   }
 };

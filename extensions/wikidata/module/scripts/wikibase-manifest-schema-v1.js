@@ -82,7 +82,8 @@ const WikibaseManifestSchemaV1 = {
       "properties": {
         "endpoint": {
           "type": "string",
-          "description": "The default reconciliation API endpoint of the Wikibase, such as 'https://wdreconcile.toolforge.org/en/api'"
+          "pattern": "^.*\\${lang}.*$",
+          "description": "The default reconciliation API endpoint of the Wikibase, the endpoint should include the language variable '${lang}', such as 'https://wdreconcile.toolforge.org/${lang}/api'"
         }
       },
       "required": ["endpoint"]
