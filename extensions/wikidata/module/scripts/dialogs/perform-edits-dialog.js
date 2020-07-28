@@ -91,7 +91,6 @@ PerformEditsDialog._updateWarnings = function(data) {
 };
 
 PerformEditsDialog.checkAndLaunch = function () {
-  var self = this;
   this.frame = $(DOM.loadHTML("wikidata", "scripts/dialogs/perform-edits-dialog.html"));
   this._elmts = DOM.bind(this.frame);
   this.missingSchema = false;
@@ -108,7 +107,7 @@ PerformEditsDialog.checkAndLaunch = function () {
               PerformEditsDialog._updateWarnings(data);
               PerformEditsDialog.launch(logged_in_username, data['max_severity']);
             } else {
-              SchemaAlignment.launch(PerformEditsDialog.checkAndLaunch);
+              SchemaAlignment.launch();
             }
           },
           "json"

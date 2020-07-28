@@ -222,8 +222,7 @@ SchemaAlignment.isSetUp = function() {
   return $('#wikidata-schema-panel').length !== 0;
 };
 
-SchemaAlignment.launch = function(onDone) {
-  this._onDone = onDone;
+SchemaAlignment.launch = function() {
   this._hasUnsavedChanges = false;
 
   if (!SchemaAlignment.isSetUp()) {
