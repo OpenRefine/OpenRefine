@@ -90,7 +90,7 @@ public class PreviewWikibaseSchemaCommand extends Command {
                 try {
                     manifest = ManifestParser.parse(manifestJson);
                 } catch (ManifestException e) {
-                    respondError(response, "Wikibase manifest could not be parsed.");
+                    respondError(response, "Wikibase manifest could not be parsed. Error message: " + e.getMessage());
                     return;
                 }
             }
