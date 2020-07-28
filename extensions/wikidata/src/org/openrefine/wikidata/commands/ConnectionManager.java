@@ -96,7 +96,7 @@ public class ConnectionManager {
             endpointToConnection.put(mediaWikiApiEndpoint, connection);
             return true;
         } catch (LoginFailedException e) {
-            logger.error(e.getMessage());
+            logger.error(e.getMessage(), e);
             return false;
         }
     }
@@ -125,7 +125,7 @@ public class ConnectionManager {
             endpointToConnection.put(mediaWikiApiEndpoint, connection);
             return true;
         } catch (IOException | MediaWikiApiErrorException e) {
-            logger.error(e.getMessage());
+            logger.error(e.getMessage(), e);
             return false;
         }
     }
@@ -157,7 +157,7 @@ public class ConnectionManager {
             endpointToConnection.put(mediaWikiApiEndpoint, connection);
             return true;
         } catch (IOException | MediaWikiApiErrorException e) {
-            logger.error(e.getMessage());
+            logger.error(e.getMessage(), e);
             return false;
         }
     }
@@ -179,13 +179,13 @@ public class ConnectionManager {
                 connection.logout();
                 endpointToConnection.remove(mediaWikiApiEndpoint);
             } catch (IOException e) {
-                logger.error(e.getMessage());
+                logger.error(e.getMessage(), e);
             } catch (MediaWikiApiErrorException e) {
                 if ("assertuserfailed".equals(e.getErrorCode())) {
                     // it turns out we were already logged out
                     endpointToConnection.remove(mediaWikiApiEndpoint);
                 } else {
-                    logger.error(e.getMessage());
+                    logger.error(e.getMessage(), e);
                 }
             }
         }
