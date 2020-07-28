@@ -23,8 +23,9 @@
  ******************************************************************************/
 package org.openrefine.wikidata.utils;
 
-import java.util.concurrent.TimeUnit;
-
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
 import org.wikidata.wdtk.datamodel.helpers.Datamodel;
 import org.wikidata.wdtk.datamodel.interfaces.EntityDocument;
 import org.wikidata.wdtk.datamodel.interfaces.EntityIdValue;
@@ -33,9 +34,12 @@ import org.wikidata.wdtk.wikibaseapi.BasicApiConnection;
 import org.wikidata.wdtk.wikibaseapi.WikibaseDataFetcher;
 import org.wikidata.wdtk.wikibaseapi.apierrors.MediaWikiApiErrorException;
 
-import com.google.common.cache.CacheBuilder;
-import com.google.common.cache.CacheLoader;
-import com.google.common.cache.LoadingCache;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 public class EntityCache {
 
@@ -54,6 +58,7 @@ public class EntityCache {
         _cache = CacheBuilder.newBuilder().maximumSize(4096).expireAfterWrite(1, TimeUnit.HOURS)
                 .build(new CacheLoader<String, EntityDocument>() {
 
+                    @Override
                     public EntityDocument load(String entityId)
                             throws Exception {
                         EntityDocument doc = _fetcher.getEntityDocument(entityId);
@@ -63,6 +68,19 @@ public class EntityCache {
                             throw new MediaWikiApiErrorException("400", "Unknown entity id \"" + entityId + "\"");
                         }
                     }
+
+                    @Override
+                    public Map<String, EntityDocument> loadAll(Iterable<? extends String> entityIds)
+                            throws Exception {
+                        Map<String, EntityDocument> entityDocumentMap = _fetcher.getEntityDocuments(StreamSupport.stream(entityIds.spliterator(), false)
+                                .collect(Collectors.toList()));
+                        if (!entityDocumentMap.isEmpty()) {
+                            return entityDocumentMap;
+                        } else {
+                            throw new MediaWikiApiErrorException("400", "Unknown entity ids in \"" + entityIds.toString() + "\"");
+                        }
+                    }
+
                 });
     }
 
@@ -75,6 +93,11 @@ public class EntityCache {
             _entityCache = new EntityCache(BasicApiConnection.getWikidataApiConnection());
         }
         return _entityCache;
+    }
+
+    public List<EntityDocument> getMultipleDocuments(List<EntityIdValue> entityIds) throws ExecutionException {
+        List<String> ids = entityIds.stream().map(entityId -> entityId.getId()).collect(Collectors.toList());
+        return _cache.getAll(ids).values().stream().collect(Collectors.toList());
     }
 
     public static EntityDocument getEntityDocument(EntityIdValue id) {
