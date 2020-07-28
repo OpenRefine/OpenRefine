@@ -42,7 +42,7 @@ public class LanguageCodeStore {
 			apiEndpointToLangCodes.put(mediaWikiApiEndpoint, langCodes);
 		} catch (IOException e) {
 			logger.error("An error occurred when fetching language codes from: "
-					+ mediaWikiApiEndpoint + ", fallback to the default language codes", e);
+					+ mediaWikiApiEndpoint + ", fall back to the default language codes", e);
 			apiEndpointToLangCodes.put(mediaWikiApiEndpoint, DEFAULT_LANGUAGE_CODES);
 		}
 		return apiEndpointToLangCodes.get(mediaWikiApiEndpoint);
