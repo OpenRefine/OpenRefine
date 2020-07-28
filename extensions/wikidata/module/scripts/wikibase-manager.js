@@ -136,30 +136,21 @@ WikibaseManager.fetchManifestFromURL = function (manifestURL, onSuccess, onError
     }
   };
 
-  // try with CORS first
+  // The manifest host must support CORS.
   $.ajax(manifestURL, {
     "dataType": "json",
     "timeout": 5000
   }).success(function (data) {
     dismissBusy();
     _onSuccess(data);
-  }).error(function () {
-    // if CORS failed, then try with JSONP
-    $.ajax(manifestURL, {
-      "dataType": "jsonp",
-      "timeout": 5000
-    }).success(function () {
-      dismissBusy();
-      _onSuccess(data);
-    }).error(function (jqXHR, textStatus, errorThrown) {
-      dismissBusy();
-      if (!silent) {
-        alert($.i18n("wikibase-management/error-contact")+": " + textStatus + " : " + errorThrown + " - " + manifestURL);
-      }
-      if (onError) {
-        onError();
-      }
-    });
+  }).error(function (jqXHR, textStatus, errorThrown) {
+    dismissBusy();
+    if (!silent) {
+      alert($.i18n("wikibase-management/error-contact")+": " + textStatus + " : " + errorThrown + " - " + manifestURL);
+    }
+    if (onError) {
+      onError();
+    }
   });
 };
 
