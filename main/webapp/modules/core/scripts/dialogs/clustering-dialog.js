@@ -136,7 +136,7 @@ ClusteringDialog.prototype._createDialog = function() {
              .text(label)
              .appendTo(self._elmts.keyingFunctionSelector);
           if (i == 0) {
-             option.attr('selected', 'true');
+             option.prop('selected', 'true');
           }
        }
        for(i = 0; i < distances.length; i++) {
@@ -149,7 +149,7 @@ ClusteringDialog.prototype._createDialog = function() {
              .text(label)
              .appendTo(self._elmts.distanceFunctionSelector);
           if (i == 0) {
-             option.attr('selected', 'true');
+             option.prop('selected', 'true');
           }
        }
        self._level = DialogSystem.showDialog(dialog);

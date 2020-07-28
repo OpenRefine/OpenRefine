@@ -578,7 +578,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
       var column2 = columns[i];
       var option = $('<option>').val(column2.name).text(column2.name).appendTo(elmts.fromColumnSelect);
       if (column2.name == column.name) {
-        option.attr("selected", "true");
+        option.prop("selected", "true");
       }
     }
 
@@ -602,7 +602,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
 
       $('<option>')
         .val("-1")
-        .attr("selected", "true")
+        .prop("selected", "true")
         .text("(last column)")
         .appendTo(elmts.toColumnSelect);
     };
@@ -696,13 +696,13 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
 
       var keyOption = $('<option>').val(column2.name).text(column2.name).appendTo(elmts.keyColumnSelect);
       if (column2.name == column.name) {
-        keyOption.attr("selected", "true");
+        keyOption.prop("selected", "true");
         valueColumnIndex = i + 1;
       }
 
       var valueOption = $('<option>').val(column2.name).text(column2.name).appendTo(elmts.valueColumnSelect);
       if (i === valueColumnIndex) {
-        valueOption.attr("selected", "true");
+        valueOption.prop("selected", "true");
       }
 
       $('<option>').val(column2.name).text(column2.name).appendTo(elmts.noteColumnSelect);
