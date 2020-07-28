@@ -39,6 +39,9 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.refine.util.ParsingUtilities;
 
+import javax.servlet.ServletException;
+import java.io.IOException;
+
 @PrepareForTest(EditInspector.class)
 public class PreviewWikibaseSchemaCommandTest extends SchemaCommandTest {
 
@@ -62,6 +65,28 @@ public class PreviewWikibaseSchemaCommandTest extends SchemaCommandTest {
         ObjectNode response = ParsingUtilities.evaluateJsonStringToObjectNode(writer.toString());
         ArrayNode edits = (ArrayNode) response.get("edits_preview");
         assertEquals(3, edits.size());
+    }
+
+    @Test
+    public void testNoManifest() throws IOException, ServletException {
+        String schemaJson = jsonFromFile("schema/inception.json");
+        when(request.getParameter("schema")).thenReturn(schemaJson);
+
+        command.doPost(request, response);
+
+        assertEquals(writer.toString(), "{\"code\":\"error\",\"message\":\"No Wikibase manifest provided.\"}");
+    }
+
+    @Test
+    public void testInvalidManifest() throws IOException, ServletException {
+        String schemaJson = jsonFromFile("schema/inception.json");
+        String manifestJson = "{ invalid manifest";
+        when(request.getParameter("schema")).thenReturn(schemaJson);
+        when(request.getParameter("manifest")).thenReturn(manifestJson);
+
+        command.doPost(request, response);
+
+        assertEquals(writer.toString(), "{\"code\":\"error\",\"message\":\"Wikibase manifest could not be parsed. Error message: invalid manifest format\"}");
     }
 
 }
