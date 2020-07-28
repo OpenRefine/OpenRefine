@@ -89,31 +89,23 @@ WikibaseManager.loadWikibases = function () {
     }),
     success: function (data) {
       if (data.value && data.value !== "null" && data.value !== "[]") {
-        let toUpdate = false;
         let manifests = JSON.parse(data.value);
         manifests.forEach(function (manifest) {
           if (manifest.custom && manifest.custom.url && manifest.custom.last_updated
               && ((Date.now() - manifest.custom.last_updated) > 7 * 24 * 60 * 60 * 1000)) {
-            toUpdate = true;
             // If the manifest was fetched via URL and hasn't been updated for a week,
             // fetch it again to keep track of the lasted version
             WikibaseManager.fetchManifestFromURL(manifest.custom.url, function (newManifest) {
               WikibaseManager.wikibases[newManifest.mediawiki.name] = newManifest;
+              WikibaseManager.saveWikibases();
             }, function () {
-              // fallback to the current one if failed to fetch the latest one
+              // fall back to the current one if failed to fetch the latest one
               WikibaseManager.wikibases[manifest.mediawiki.name] = manifest;
             }, true)
           } else {
             WikibaseManager.wikibases[manifest.mediawiki.name] = manifest;
           }
         });
-
-        if (toUpdate) {
-          // wait for 10s for fetching latest manifests to finish
-          setTimeout(function () {
-            WikibaseManager.saveWikibases();
-          }, 10000);
-        }
       }
     },
     dataType: "json"
