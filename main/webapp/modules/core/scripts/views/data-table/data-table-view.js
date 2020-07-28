@@ -36,7 +36,6 @@ function DataTableView(div) {
 
   this._gridPagesSizes = JSON.parse(Refine.getPreference("ui.browsing.pageSize", null));
   this._gridPagesSizes = this._checkPaginationSize(this._gridPagesSizes, [ 5, 10, 25, 50 ]);
-  // this._pageSize = ( this._gridPagesSizes[0] < 10 ) ? 10 : this._gridPagesSizes[0];
 
   this._pageSize = 100;
   this._showRecon = true;
@@ -108,9 +107,7 @@ DataTableView.prototype.render = function() {
       '<div class="viewpanel-rowrecord" bind="rowRecordControls">'+$.i18n('core-views/show-as')+': ' +
         '<span bind="modeSelectors"></span>' + 
       '</div>' +
-      // '<div class="viewpanel-pagesize" bind="pageSizeControls"></div>' +
       '<div class="viewpanel-sorting" bind="sortingControls"></div>' +
-      // '<div class="viewpanel-paging" bind="pagingControls"></div>' +
     '</div>' +
     '<div bind="dataTableContainer" class="data-table-container">' +
       '<table class="data-table">'+
@@ -378,7 +375,6 @@ DataTableView.prototype._renderDataTables = function(table, tableHeader) {
   });
   this._columnHeaderUIs = [];
   var createColumnHeader = function(column, index) {
-    console.log('createColumnHeader');
     var th = trHead.appendChild(document.createElement("th"));
     $(th).addClass("column-header").attr('title', column.name);
     if (self._collapsedColumnNames.hasOwnProperty(column.name)) {
@@ -402,7 +398,6 @@ DataTableView.prototype._renderDataTables = function(table, tableHeader) {
    */
 
   var renderRow = function(tr, r, row, even) {
-    console.log('renderRow');
     $(tr).empty();
     var cells = row.cells;
     var tdStar = tr.insertCell(tr.cells.length);
@@ -535,7 +530,6 @@ DataTableView.prototype._renderDataTables = function(table, tableHeader) {
     if(self._downwardDirection && !flag) {
       if((position.top >= 0 && position.bottom <= window.innerHeight) || 
         (positionLastElement.top < window.innerHeight && positionLastElement.top > 0)) {
-        console.log('Loading next set');
         flag = true;
         self._onBottomTable(self._scrollTop, table, this, evt);
       }
@@ -544,7 +538,6 @@ DataTableView.prototype._renderDataTables = function(table, tableHeader) {
     if(!self._downwardDirection && !flag) {
       if(position2.top >= 0 && position2.bottom <= window.innerHeight || 
         (positionFirstElement.bottom > 0 && positionFirstElement.bottom < window.innerHeight)) {
-        console.log('Loading upper set');
         flag = true;
         self._onTopTable(self._scrollTop, table, this, evt);
       }
@@ -553,13 +546,11 @@ DataTableView.prototype._renderDataTables = function(table, tableHeader) {
     clearTimeout($.data(this, 'scrollTimer'));
     $.data(this, 'scrollTimer', setTimeout(function() {
       if(positionLastElement.top <= 0 && positionLastElement.bottom >= 0) {
-        console.log('Last row is partially visible in screen');
         var goto = self.getPageNumberSrcolling(self._scrollTop);
         self._onChangeGotoScrolling(self._scrollTop, goto, table);
       }
 
       if(positionFirstElement.top < self._headerTop + 1 && positionFirstElement.bottom >= window.innerHeight) {
-        console.log('First row is partially visible in screen');
         var goto = self.getPageNumberSrcolling(self._scrollTop);
         self._onChangeGotoScrolling(self._scrollTop, goto, table);
       }
@@ -572,7 +563,7 @@ DataTableView.prototype._renderDataTables = function(table, tableHeader) {
 DataTableView.prototype.getPageNumberSrcolling = function(scrollPosition) {
   var num = Math.floor(scrollPosition / this._sizeSinglePage);
   return num;
-}
+};
 
 DataTableView.prototype._adjustNextSetClasses = function(start, top) {
   var heightToAddBottom = Math.max(0, this._sizeRowsTotal - this._totalSize * this._sizeRowFirst);
@@ -581,11 +572,9 @@ DataTableView.prototype._adjustNextSetClasses = function(start, top) {
     // Deletion of upper rows that are not visible anymore
     if (theProject.rowModel.mode == "record-based") {
       if($('.data-table tbody tr.record').length > 2 * this._pageSize) {
-        console.log('Deleting above records');
         $('.data-table tbody tr').slice(1, $('.data-table tbody tr.record').eq(this._pageSize).index()).remove();
       }
     } else if($('.data-table tbody tr').length > 2 * this._pageSize) {
-      console.log('Deleting above rows');
       $('.data-table tbody tr').slice(1, Math.max(0, $('.data-table tbody tr').length - 2 * this._pageSize)).remove();
     }
     this._pageStart = start - this._pageSize;
@@ -593,10 +582,8 @@ DataTableView.prototype._adjustNextSetClasses = function(start, top) {
     this._pageStart = start;
     // Deletion of lower rows that are not visible anymore
     if (theProject.rowModel.mode == "record-based") {
-      console.log('Deleting below records');
       $('.data-table tbody tr').slice($('.data-table tbody tr.record').eq(2 * this._pageSize).index(), $('.data-table tbody tr').length).remove();
     } else {
-      console.log('Deleting below rows');
       $('.data-table tbody tr').slice(2 * this._pageSize + 1, $('.data-table tbody tr').length).remove();
     }
   }
@@ -620,7 +607,7 @@ DataTableView.prototype._addHeights = function(heightToAddTop, heightToAddBottom
       $('.data-table tbody tr').eq(this._pageSize / 2).addClass('load-next-set');
     }
   }
-}
+};
 
 DataTableView.prototype._adjustNextSetClassesSpeed = function(modifiedScrollPosition, start) {
   var heightToAddTop = modifiedScrollPosition;
@@ -630,11 +617,6 @@ DataTableView.prototype._adjustNextSetClassesSpeed = function(modifiedScrollPosi
   this._pageStart = this._totalSize - this._pageSize;
 
   this._addHeights(heightToAddTop, heightToAddBottom);
-};
-
-var setScroll = function(scrollPosition) {
-    console.log("setScroll");
-    $('.data-table-container').scrollTop(scrollPosition);
 };
 
 DataTableView.prototype._showRows = function(start, onDone) {
