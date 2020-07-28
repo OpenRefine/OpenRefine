@@ -128,21 +128,19 @@ You can change different settings by editing the `.ini` files in the Windows ins
 
 <TabItem value="win">
 
-You can modify the way `openrefine.exe` runs by editing `openrefine.l4j.ini`; you can modify the way `refine.bat` runs by editing `refine.ini`. These are different options and have different syntax than the key/value descriptions above.
+You can modify the way `openrefine.exe` runs by editing `openrefine.l4j.ini`; you can modify the way `refine.bat` runs by editing `refine.ini`. These are different options and have different syntax than the key/value descriptions above. Some of the most common keys with their defaults are:
 
-|Setting|Key|Value syntax|Default|Example|
-|---|---|---|---|---|
+
 
 *   refine.autoreload - false
-*   refine.autosave - 5 (minutes)
+*   refine.autosave|Integer - 5 (minutes)
 *   refine.connection.max_idle_time - 60000
 *   refine.context_path - /
-*   refine.data_dir
+*   refine.data_dir - /
 *   refine.development - false
 *   refine.headless - false
 *   refine.host - 127.0.0.1
 *   refine.max_form_content_size - 1048576
-*   refine.memory - 1400 MB (set at JVM startup, so informational only)
 *   refine.port - 3333
 *   refine.queue.idle_time - 60
 *   refine.queue.max_size - 300
@@ -151,7 +149,20 @@ You can modify the way `openrefine.exe` runs by editing `openrefine.l4j.ini`; yo
 *   refine.verbosity - info
 *   refine.webapp - main/webapp
 
-Refer to the [official Java documentation](https://docs.oracle.com/javase/8/docs/technotes/tools/windows/java.html) for more options.
+The syntax within the `.ini` files is as follows:
+
+
+```
+-Drefine.autoreload=true
+-Drefine.port=3333 
+-Drefine.host=127.0.0.1
+-Drefine.webapp=broker/core
+```
+
+
+etc.
+
+Refer to the[ official Java documentation](https://docs.oracle.com/javase/8/docs/technotes/tools/windows/java.html) for more preferences that can be set.
 
 </TabItem>
 
@@ -165,9 +176,32 @@ When you first launch OpenRefine, you will see a menu on the left hand side that
 
 ### Language Settings
 
-You can set your preferred interface language here. This language setting will persist until you change it again in the future. Currently we support 23 languages. 
+You can set your preferred interface language here. This language setting will persist until you change it again in the future. Currently we support 23 languages: 
 
-_(A list of languages here, yes?)_
+* Arabic
+* Bengali
+* Cebuano
+* Czech
+* German
+* English (UK)
+* English (US)
+* Spanish
+* Filipino
+* French
+* Hebrew
+* Magyar
+* Italian
+* Japanese
+* Korean
+* Norwegian Bokmål
+* Dutch
+* Punjabi
+* Portuguese (Brazil)
+* Romanian
+* Swedish
+* Tagalog
+* Chinese
+
 
 :::info
 We use Weblate to provide translations for the software interface. You can check [our profile on Weblate]([https://hosted.weblate.org/projects/openrefine/#languages](https://hosted.weblate.org/projects/openrefine/#languages)) to see which languages are in the process of being supported. We would love your help to make OpenRefine even more accessible to people in other languages.
@@ -206,24 +240,18 @@ Don’t click the “back” button on your browser.
 :::
 
 ### Project title
-
 You can rename a project at any time by clicking inside the project title, which will turn into a text field. Project names don’t have to be unique, as OpenRefine organizes them based on a unique ID. 
 
-
 ### Open, Export, Help buttons
-
 About metadata, Tags, Browse workspace, etc.
 
-
 ### The project header
-
 OpenRefine will tell you the total number of rows in your project, although it won’t display them all at one time. You can keep track of whether rows are being created or deleted 
 
 Number of selected/ total rows/records, pagination, display rows 
 Rows vs. records
 
 ### Extensions dropdown 
-
 
 ### The project grid 
 (or The grid, or The grid view, or The data grid, why have I seen so many different names for this)
