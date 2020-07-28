@@ -12,7 +12,7 @@
     "wikibase-extension/wikibase-schema": "Wikibase schema",
     "wikibase-extension/quickstatements-export-name": "QuickStatements",
     "wikibase-management/dialog-header": "Manage Wikibase manifests",
-    "wikibase-management/explain-select-wikibase":  "Click on an item below to select it as the target Wikibase to work against. This will cause the schema to be empty. After switching to target Wikibase, you should reconcile your data against it before editing the schema.",
+    "wikibase-management/explain-select-wikibase":  "Click on an item below to select it as the target Wikibase to work against. This will cause the schema to be empty. After switching to the target Wikibase, you should reconcile your data against it before editing the schema.",
     "wikibase-management/current-selected-wikibase": "Current selected Wikibase: <a href=\"$1\" target=\"_blank\">$2</a>",
     "wikibase-management/add-wikibase": "Add Wikibase",
     "wikibase-management/close": "Close",
