@@ -245,7 +245,7 @@ EditRenderer._renderValue = function(json, container) {
             params.datatype = json.datatype;
         }
         $.get(
-            'https://www.wikidata.org/w/api.php',
+            WikibaseManager.getSelectedWikibaseApi(),
             params,
             function (data) {
                 if('result' in data) {
