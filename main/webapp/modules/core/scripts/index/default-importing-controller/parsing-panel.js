@@ -96,6 +96,7 @@ Refine.DefaultImportingController.prototype._prepareParsingPanel = function() {
   });
   this._parsingPanelElmts.progressPanel.hide();
 
+  this._parsingPanelElmts.previousButton.html($.i18n('core-buttons/previous'));
   this._parsingPanelElmts.startOverButton.html($.i18n('core-buttons/startover'));
   this._parsingPanelElmts.nextButton.html($.i18n('core-buttons/create-project'));
   $('#or-import-parsopt').text($.i18n('core-index-import/parsing-options'));

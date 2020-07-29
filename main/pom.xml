@@ -218,7 +218,7 @@
     <dependency>
         <groupId>org.apache.commons</groupId>
         <artifactId>commons-text</artifactId>
-        <version>1.8</version>
+        <version>1.9</version>
     </dependency>
     <dependency>
       <groupId>commons-validator</groupId>
@@ -268,7 +268,7 @@
     <dependency>
       <groupId>org.openrefine.dependencies</groupId>
       <artifactId>vicino</artifactId>
-      <version>1.1</version>
+      <version>1.2</version>
     </dependency>
     <dependency>
       <groupId>oauth.signpost</groupId>
@@ -334,16 +334,6 @@
       <groupId>com.metaweb</groupId>
       <artifactId>lessen</artifactId>
       <version>1.0</version>
-    </dependency>
-    <dependency>
-      <groupId>org.openrefine.dependencies</groupId>
-      <artifactId>secondstring</artifactId>
-      <version>20100303</version>
-    </dependency>
-    <dependency>
-      <groupId>org.openrefine.dependencies</groupId>
-      <artifactId>arithcode</artifactId>
-      <version>1.1</version>
     </dependency>
     <dependency>
       <groupId>com.google.guava</groupId>

@@ -166,7 +166,7 @@ It should show the path you set above.
 
 ---
 
-### Install or upgrade
+### Install or upgrade OpenRefine
 
 If you are upgrading an existing OpenRefine  installation, you can delete the old program files and install the new files into the same space. Do not overwrite the files as some obsolete files may be left over unnecessarily. 
 
@@ -187,7 +187,7 @@ If you have extensions installed, do not delete the `webapp\extensions` folder w
 
 <TabItem value="win">
 
-Once you have downloaded the `.zip` file, and uncompress it into a folder where you wish to store program files (such as `D:\Program Files\OpenRefine`). 
+Once you have downloaded the `.zip` file, extract it into a folder where you wish to store program files (such as `D:\Program Files\OpenRefine`). You can right-click on `openrefine.exe` or `refine.bat` and pin one of those programs to your Start Menu or create shortcuts for easier access. 
 
 </TabItem>
 
@@ -367,11 +367,13 @@ You can access OpenRefine server logs from the terminal on Mac:
 *   Ctrl+Click on "JavaAppLauncher"
 *   Choose 'Open With' from menu, and select "Terminal"
 
+---
+
 </TabItem>
 
 </Tabs>
 
----
+
 
 
 ## Increasing memory allocation
