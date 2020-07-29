@@ -725,6 +725,7 @@
     "core-buttons/reselect-files": "&laquo; Re-select Files",
     "core-buttons/create-project": "Create Project &raquo;",
     "core-buttons/next": "Next &raquo;",
+    "core-buttons/previous": "Back",
     "core-buttons/add-url": "Add Another URL",
     "core-buttons/update-preview": "Update&nbsp;Preview",
     "core-buttons/pick-record": "Pick Record Elements",
