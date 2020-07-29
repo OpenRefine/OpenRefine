@@ -99,8 +99,8 @@ import java.util.stream.Collectors;
 
 import com.amazonaws.services.s3.AmazonS3URI;
 import com.amazonaws.services.s3.transfer.*;
-import com.amazonaws.auth.AWSCredentials;
-import com.amazonaws.auth.BasicAWSCredentials;
+import com.amazonaws.auth.*;
+import com.amazonaws.auth.profile.*;
 
 public class ImportingUtilities {
     final static protected Logger logger = LoggerFactory.getLogger("importing-utilities");
@@ -288,14 +288,8 @@ public class ImportingUtilities {
                     String urlString = Streams.asString(stream);
 
                     if (urlString.startsWith("s3://")) {
-                        AWSCredentials credentials = null;
-                        TransferManager transferManager = null;
-                        if(awsAccessKeyId.equals("") || awsSecretKey.equals("")) {
-                            transferManager = new TransferManager();
-                        } else {
-                            credentials = new BasicAWSCredentials(awsAccessKeyId, awsSecretKey);
-                            transferManager = new TransferManager(credentials);
-                        }
+                        AWSCredentials credentials = new BasicAWSCredentials(awsAccessKeyId, awsSecretKey);
+                        TransferManager transferManager = new TransferManager(credentials);
                         AmazonS3URI s3URI = new AmazonS3URI(urlString);
                         String bucket = s3URI.getBucket();
                         String key = s3URI.getKey();

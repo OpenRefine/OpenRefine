@@ -157,55 +157,6 @@ public class ImportingUtilitiesTests extends ImporterTest {
         }
     }
 
-    @Test
-    public void s3UrlImporting() throws IOException {
-
-        String MESSAGE = String.format("HTTP error %d : %s", 401, "Client Error");
-
-        // public buckets and test files to download here - buckets.grayhatwarfare.com
-        String s3Url = "s3://dev-s1/fasttexttrain/test/2017_august/592e6bc9c0a1b706bccc99df_1501756700611.csv";
-        MultipartEntityBuilder builder = MultipartEntityBuilder.create();
-        StringBody stringBody = new StringBody(s3Url, ContentType.MULTIPART_FORM_DATA);
-        builder = builder.addPart("download", stringBody);
-        HttpEntity entity = builder.build();
-
-        ByteArrayOutputStream os = new ByteArrayOutputStream();
-        entity.writeTo(os);
-        ByteArrayInputStream is = new ByteArrayInputStream(os.toByteArray());
-
-        HttpServletRequest req = Mockito.mock(HttpServletRequest.class);
-        when(req.getContentType()).thenReturn(entity.getContentType().getValue());
-        when(req.getParameter("download")).thenReturn(s3Url);
-        when(req.getMethod()).thenReturn("POST");
-        when(req.getContentLength()).thenReturn((int) entity.getContentLength());
-        when(req.getInputStream()).thenReturn(new MockServletInputStream(is));
-
-
-        ImportingJob job = ImportingManager.createJob();
-        Properties parameters = ParsingUtilities.parseUrlParameters(req);
-        ObjectNode retrievalRecord = ParsingUtilities.mapper.createObjectNode();
-        ObjectNode progress = ParsingUtilities.mapper.createObjectNode();
-        try {
-            ImportingUtilities.retrieveContentFromPostRequest(req, parameters, job.getRawDataDir(), retrievalRecord, new ImportingUtilities.Progress() {
-                @Override
-                public void setProgress(String message, int percent) {
-                    if (message != null) {
-                        JSONUtilities.safePut(progress, "message", message);
-                    }
-                    JSONUtilities.safePut(progress, "percent", percent);
-                }
-
-                @Override
-                public boolean isCanceled() {
-                    return job.canceled;
-                }
-            });
-            Assert.fail("No Exception was thrown");
-        } catch (Exception exception) {
-            Assert.assertEquals(MESSAGE, exception.getMessage());
-        }
-    }
-
     public static class MockServletInputStream extends ServletInputStream {
 
         private final InputStream delegate;
