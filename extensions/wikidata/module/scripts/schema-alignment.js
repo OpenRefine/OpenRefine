@@ -47,25 +47,25 @@ SchemaAlignment.setUpTabs = function() {
         .attr('href', '#view-panel');
 
   // append panels
-  this._schemaPanel = $('<div id="wikidata-schema-panel"></div>')
+  this._schemaPanel = $('<div id="wikibase-schema-panel"></div>')
         .addClass('main-view-panel-tab')
         .appendTo(this._rightPanel);
-  this._issuesPanel = $('<div id="wikidata-issues-panel"></div>')
+  this._issuesPanel = $('<div id="wikibase-issues-panel"></div>')
         .addClass('main-view-panel-tab')
         .appendTo(this._rightPanel);
-  this._previewPanel = $('<div id="wikidata-preview-panel"></div>')
+  this._previewPanel = $('<div id="wikibase-preview-panel"></div>')
         .addClass('main-view-panel-tab')
         .appendTo(this._rightPanel);
 
   // append tools
   var schemaButton = $('<div></div>')
         .addClass('main-view-panel-tab-header')
-        .attr('href', '#wikidata-schema-panel')
+        .attr('href', '#wikibase-schema-panel')
         .text($.i18n('wikibase-schema/schema-tab-header'))
         .appendTo(this._toolPanel);
   var issuesButton = $('<div></div>')
         .addClass('main-view-panel-tab-header')
-        .attr('href', '#wikidata-issues-panel')
+        .attr('href', '#wikibase-issues-panel')
         .text($.i18n('wikibase-schema/warnings-tab-header')+' ')
         .appendTo(this._toolPanel);
   this.issuesTabCount = $('<span></span>')
@@ -78,7 +78,7 @@ SchemaAlignment.setUpTabs = function() {
         .appendTo(issuesButton);
   var previewButton = $('<div></div>')
         .addClass('main-view-panel-tab-header')
-        .attr('href', '#wikidata-preview-panel')
+        .attr('href', '#wikibase-preview-panel')
         .text($.i18n('wikibase-schema/edits-preview-tab-header'))
         .appendTo(this._toolPanel);
   this.previewSpinner = $('<img />')
@@ -221,7 +221,7 @@ SchemaAlignment.switchTab = function(targetTab) {
 };
 
 SchemaAlignment.isSetUp = function() {
-  return $('#wikidata-schema-panel').length !== 0;
+  return $('#wikibase-schema-panel').length !== 0;
 };
 
 SchemaAlignment.launch = function() {
@@ -230,7 +230,7 @@ SchemaAlignment.launch = function() {
   if (!SchemaAlignment.isSetUp()) {
      SchemaAlignment.setUpTabs();
   }
-  SchemaAlignment.switchTab('#wikidata-schema-panel');
+  SchemaAlignment.switchTab('#wikibase-schema-panel');
 };
 
 
@@ -1351,7 +1351,7 @@ Refine.registerUpdateFunction(function(options) {
  *************************/
 
 SchemaAlignment._updateWarnings = function(warnings, totalCount) {
-   var mainDiv = $('#wikidata-issues-panel');
+   var mainDiv = $('#wikibase-issues-panel');
    var countsElem = this.issuesTabCount;
 
    // clear everything
