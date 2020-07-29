@@ -142,9 +142,11 @@ SchemaAlignment._rerenderTabs = function() {
   // Init the column area
   this.updateColumns();
 
-  // TODO
-  var url = ReconciliationManager.ensureDefaultServicePresent();
-  SchemaAlignment._reconService = ReconciliationManager.getServiceFromUrl(url);
+  var reconServiceURL = WikibaseManager.getSelectedWikibaseReconEndpoint()
+      .replace("${lang}", $.i18n("core-recon/wd-recon-lang"));
+  ReconciliationManager.getOrRegisterServiceFromUrl(reconServiceURL, function (service)  {
+    SchemaAlignment._reconService = service;
+  }, true);
 
   /**
    * Init the issues tab
