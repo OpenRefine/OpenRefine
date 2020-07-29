@@ -37,7 +37,7 @@ import TabItem from '@theme/TabItem';
 
 <TabItem value="win">
 
-To exit OpenRefine, close all the browser tabs, then navigate to the command line window. To close this window and ensure OpenRefine exits properly, hold down `control` and press `C` on your keyboard.
+To exit OpenRefine, close all the browser tabs, then navigate to the command line window. To close this window and ensure OpenRefine exits properly, hold down `Control` and press `C` on your keyboard.
 
 #### With openrefine.exe
 You can run OpenRefine by double-clicking `openrefine.exe` or calling it from the command line. If you want to [modify the way `openrefine.exe` opens](#starting-with-modifications), you can edit the `openrefine.l4j.ini` file.  
@@ -166,34 +166,34 @@ To see the full list of command-line options, run `./refine -h`.
 
 #### Modifications set within files
 
-You can modify the way `openrefine.exe` runs by editing `openrefine.l4j.ini`; you can modify the way `refine.bat` runs by editing `refine.ini`. You can modify the Mac application by editing `info.plist`. 
+On Windows, you can modify the way `openrefine.exe` runs by editing `openrefine.l4j.ini`; you can modify the way `refine.bat` runs by editing `refine.ini`. You can modify the Mac application by editing `info.plist`. On Linux, you can edit `refine.ini`. 
 
 These JVM preferences are different options and have different syntax than the key/value descriptions above. Some of the most common keys (with their defaults) are:
-*   refine.autosave (5 [minutes])
-*   refine.data_dir (/)
-*   refine.development (false)
-*   refine.headless (false)
-*   refine.host (127.0.0.1)
-*   refine.port (3333)
-*   refine.webapp (main/webapp)
+*   -Drefine.autosave (5 [minutes])
+*   -Drefine.data_dir (/)
+*   -Drefine.development (false)
+*   -Drefine.headless (false)
+*   -Drefine.host (127.0.0.1)
+*   -Drefine.port (3333)
+*   -Drefine.webapp (main/webapp)
 
-The syntax within these files is as follows:
+The syntax within the `.ini` files is as follows:
 
 <Tabs
   groupId="operating-systems"
   defaultValue="win"
   values={[
     {label: 'Windows', value: 'win'},
-    {label: 'Mac', value: 'mac'}
+    {label: 'Mac', value: 'mac'},
+    {label: 'Linux', value: 'linux'}
   ]
 }>
 
 <TabItem value="win">
 
-Inside either of the `.ini` files, insert lines:
+Inside either of the `.ini` files, insert lines in this way:
 
 ```
--Drefine.autoreload=true
 -Drefine.port=3333 
 -Drefine.host=127.0.0.1
 -Drefine.webapp=broker/core
@@ -203,7 +203,7 @@ Inside either of the `.ini` files, insert lines:
 
 <TabItem value="mac">
 
-In `info.plist`, find the array that follows the line:
+Find the 'array' element that follows the line:
 
 `<key>JVMOptions</key>`
 
@@ -217,11 +217,9 @@ Typically this looks something like:
 <string>-Drefine.version=2.6-beta.1</string>
 <string>-Drefine.webapp=$APP_ROOT/Contents/Resource/webapp</string>
 </array>
-
 ```
 
-Add in lines:
-
+Add in values like:
 
 ```
 <key>JVMOptions</key>
@@ -230,10 +228,22 @@ Add in lines:
 <string>-Xmx1024M</string>
 <string>-Drefine.version=2.6-beta.1</string>
 <string>-Drefine.webapp=$APP_ROOT/Contents/Resource/webapp</string>
-<string>-Drefine.host=localhost</string>
+<string>-Drefine.autosave=2</string>
 <string>-Drefine.port=3334</string>
 </array>
 
+```
+
+</TabItem>
+
+<TabItem value="linux">
+
+In `refine.ini`, add `JAVA_OPTIONS=` before the `-Drefine.preference` declaration. You can un-comment and edit the existing suggested lines, or add lines:
+
+```
+JAVA_OPTIONS=-Drefine.autosave=2
+JAVA_OPTIONS=-Drefine.port=3334
+JAVA_OPTIONS=-Drefine.data_dir=usr/lib/OpenRefineWorkspace
 ```
 
 </TabItem>
@@ -243,7 +253,7 @@ Add in lines:
 
 ---
 
-Refer to the[ official Java documentation](https://docs.oracle.com/javase/8/docs/technotes/tools/windows/java.html) for more preferences that can be set.
+Refer to the [official Java documentation](https://docs.oracle.com/javase/8/docs/technotes/tools/windows/java.html) for more preferences that can be set.
 
 ## The home screen
 
@@ -292,38 +302,68 @@ If the preference you’re looking for isn’t here, look at the options you can
 
 Once you have [begun to work on a project](#starting), you will spend most of your time on the project screen (or work screen). This is a quick walkthrough of the parts of the interface you should familiarize yourself with.
 
-![Image goes here...](/img/projectscreen.png)
+![Image goes here - need an appropriately generic dataset to display...](/img/projectscreen.png)
 
+### The header row
 
-### Logo
-
-At any time you can close your current project and go back to the home screen by clicking on the “OpenRefine” logo or the diamond. If you’d like to open another project in a new browser tab or window, you can right-click on the logo and use “Open in a new tab.” 
+At any time you can close your current project and go back to the home screen by clicking on the “OpenRefine” logo or the diamond. If you’d like to open another project in a new browser tab or window, you can right-click on the logo and use “Open in a new tab.” You will lose your current facets and view settings if you close your project (but data transformations will be saved in the History of the project).
 
 :::caution
-Don’t click the “back” button on your browser. 
+Don’t click the “back” button on your browser - it will likely close your current project and you will lose your facets and view settings.  
 :::
 
-### Project title
-You can rename a project at any time by clicking inside the project title, which will turn into a text field. Project names don’t have to be unique, as OpenRefine organizes them based on a unique ID. 
+You can rename a project at any time by clicking inside the project title, which will turn into a text field. Project names don’t have to be unique, as OpenRefine organizes them based on a unique identifier behind the scenes. 
 
-### Open, Export, Help buttons
-About metadata, Tags, Browse workspace, etc.
+“Permalink” allows you to return to a project at a specific view state - that is, with facets and filters applied. This can help you pick up where you left off if you have to close your project while working with facets and filters. It puts view-specific information directly into the URL: clicking on it will load this current-view URL in the existing tab. You can right-click and copy the Permalink URL to copy the current view state to your clipboard, without refreshing the tab you’re using.
 
-### The project header
-OpenRefine will tell you the total number of rows in your project, although it won’t display them all at one time. You can keep track of whether rows are being created or deleted 
+“Open…” will open up a new browser tab showing the “Create Project” screen. From here you can change settings, start a new project, or open an existing project. 
 
-Number of selected/ total rows/records, pagination, display rows 
-Rows vs. records
+“Export” is a dropdown menu that allows you to pick a format for exporting your current dataset. It will only export rows and records that are currently visible - the currently selected facets and filters, not the total data in the project.
 
-### Extensions dropdown 
+“Help” will open up a new browser tab and bring you to **this user manual on the web**.
+
+### The project grid header
+
+OpenRefine will tell you the total number of rows or records in your project, and indicate whether you are in rows or records mode. 
+
+It will also tell you if you’re currently looking at a select number of rows via facets or filtering, rather than the entire dataset, by displaying either, for example, “180 rows” or “67 matching rows (180 total)”. 
+
+Directly below this you have the ability to switch between row mode and records mode. OpenRefine automatically identifies when you are in records mode and displays this by default if you are. 
+
+To the right of the rows/records selection is the array of options for how many rows/records to view on screen at one time. At the far right of the screen you can navigate through your entire dataset one page at a time. 
+
+### Extensions: Wikidata
+
+The “Wikidata” dropdown offers you options for extending your data - most commonly by uploading your edited statements to Wikidata, or by importing or exporting schema. You can learn more about these functions on the [Wikidata page](wikidata).
 
 ### The project grid 
-(or The grid, or The grid view, or The data grid, why have I seen so many different names for this)
+The area of the project screen that displays your dataset is called the “project grid” (or the “data grid,” or simply the “grid”). The grid may look like a normal spreadsheet program to you. 
+
+Columns are automatically sized based on their contents; some column headers may be cut off, but can be viewed by mousing over the headers. 
+
+In each column header you will see a small arrow. Clicking on this brings up a dropdown menu containing column-specific data exploration and transformation options. You will learn about each of these options in the [Exploring data](exploring-data) and [Transforming data](transforming-data) sections.
+
+The first column in every project will always be “All,” which contains options to flag, star, and do non-column-specific operations. This is also where rows/records are numbered. 
+
+The project grid may display with both vertical and horizontal scrolling, depending on the number and width of columns, and the number of rows/records displayed. You can control the display of the project grid by using [Sort and View options](exploring-data#sort-and-view).
+
+Mousing over individual cells will allow you to [edit cells individually](transforming-your-data).
 
 ### The project sidebar
 
 #### Facet/Filter
-Permalink
+
+The Facet/Filter tab is one of the main ways of exploring your data: displaying the patterns and trends in your data, and helping you narrow your focus and modify that data. [Facets](exploring-data#facets) and [filters](exploring-data#filters) are explained more in [Exploring data](exploring-data).
+
+![Image goes here of a facet in action - generic dataset needed…..](/img/facetfilter.png) 
+
+In the interface, you will see three buttons: “Refresh,” “Reset all,” and “Remove all”. Refreshing your facets will ensure you are looking at the latest information about each facet, if you have changed the counts or eliminated some options, for example. 
+
+Resetting your facets will remove any inclusion or exclusion you may have set - the facet options will stay in the sidebar, but your view settings will be reset.
+
+Removing your facets will clear out the sidebar entirely. If you have written custom facets using expressions, these will be lost.
+
+You can preserve your facets and filters for future use by copying a [Permalink](#the-header-row).
 
 #### History (Undo/Redo)
 
@@ -333,7 +373,7 @@ Project history gets saved when you export a project archive, and restored when 
 
 ![A screenshot of the History (Undo/Redo) tab with 5 steps.](/img/history.jpg "A screenshot of the History (Undo/Redo) tab with 5 steps.")
 
-When you click on “Undo / Redo” in the sidebar of any project, that project’s history is shown as a list of changes in order, with the first "change" being the action of creating the project itself. (That first change, indexed as step zero, cannot be undone.) Here is a sample history with 3 changes:
+When you click on “Undo / Redo” in the sidebar of any project, that project’s history is shown as a list of changes in order, with the first “change” being the action of creating the project itself. (That first change, indexed as step zero, cannot be undone.) Here is a sample history with 3 changes:
 
 ```
 0. Create project
@@ -344,7 +384,7 @@ When you click on “Undo / Redo” in the sidebar of any project, that project�
 
 The current state of the project is highlighted with a dark blue background. If you move back and forth on the **_timeline_** you will see the current state become highlighted, while the actions that came after that state will be grayed out. 
 
-To revert your data back to an earlier state, simply click on the last action in the timeline you want to keep. In the example above, if we keep the removal of 7 rows but revert everything we did after that, then click on "Remove 7 rows." The last 2 changes will be undone, in order to bring the project back to state #1.
+To revert your data back to an earlier state, simply click on the last action in the timeline you want to keep. In the example above, if we keep the removal of 7 rows but revert everything we did after that, then click on “Remove 7 rows.” The last 2 changes will be undone, in order to bring the project back to state #1.
 
 In this example, changes #2 and #3 will now be grayed out. You can redo a change by clicking on it in the history - everything up to and including it will be redone. 
 
@@ -361,10 +401,6 @@ To reuse one or more operations, you first extract it from the project where it 
 
 Move to the second project, go to the Undo/Redo tab, click “Apply…” and paste in that JSON.
 
-_Not all operations can be extracted. Edits to a single cell can’t be replicated._
-
-##### Known Issues
-
-_If your project history is bigger than 100 MB (output file), Chrome will crash when you try to extract the JSON. Firefox can handle around 200 MB (output file). You may need to disable your spellchecker._
+Not all operations can be extracted. Edits to a single cell, for example, can’t be replicated.
 
 ### Common extension buttons
