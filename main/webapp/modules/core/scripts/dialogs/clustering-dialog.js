@@ -281,7 +281,8 @@ ClusteringDialog.prototype._renderTable = function(clusters) {
             return choices.length;
         };
 
-        var maxRenderRows = 10000;
+        // TODO: Make this a preference "ui.clustering.choices.limit"
+        var maxRenderRows = 5000;
         var totalRows = 0;
         for (var clusterIndex = 0; clusterIndex < clusters.length && totalRows < maxRenderRows; clusterIndex++) {
             totalRows += renderCluster(clusters[clusterIndex], clusterIndex);
