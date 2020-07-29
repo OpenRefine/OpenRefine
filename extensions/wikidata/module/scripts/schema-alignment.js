@@ -873,7 +873,7 @@ SchemaAlignment._copyReference = function(reference) {
 
 SchemaAlignment._getPropertyType = function(pid, callback) {
   $.ajax({
-      url:'https://www.wikidata.org/w/api.php',
+      url: WikibaseManager.getSelectedWikibaseApi(),
       data: {
         action: "wbgetentities",
         format: "json",
