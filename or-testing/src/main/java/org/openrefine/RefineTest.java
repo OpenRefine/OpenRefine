@@ -55,6 +55,7 @@ import org.openrefine.model.GridState;
 import org.openrefine.model.Project;
 import org.openrefine.model.Row;
 import org.openrefine.model.TestingDatamodelRunner;
+import org.openrefine.model.changes.LazyChangeDataStore;
 import org.openrefine.model.recon.Recon;
 import org.openrefine.model.recon.ReconCandidate;
 import org.openrefine.util.TestUtils;
@@ -165,7 +166,7 @@ public class RefineTest extends PowerMockTestCase {
     	ProjectMetadata meta = new ProjectMetadata();
     	meta.setName(projectName);
     	GridState state = createGrid(columns, rows);
-    	Project project = new Project(state);
+    	Project project = new Project(state, new LazyChangeDataStore());
     	ProjectManager.singleton.registerProject(project, meta);
     	return project;
     }

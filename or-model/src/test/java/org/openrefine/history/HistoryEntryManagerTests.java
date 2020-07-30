@@ -18,6 +18,7 @@ import org.openrefine.model.RowMapper;
 import org.openrefine.model.changes.Change;
 import org.openrefine.model.changes.Change.DoesNotApplyException;
 import org.openrefine.model.changes.ChangeContext;
+import org.openrefine.model.changes.ChangeDataStore;
 import org.openrefine.operations.Operation.NotImmediateOperationException;
 import org.openrefine.operations.UnknownOperation;
 import org.openrefine.util.TestUtils;
@@ -70,7 +71,7 @@ public class HistoryEntryManagerTests {
     	Change change = new MyChange();
     	HistoryEntry entry = new HistoryEntry(1234L, "some description",
     			new UnknownOperation("my-op", "some desc"), change);
-        history = new History(gridState);
+        history = new History(gridState, mock(ChangeDataStore.class));
         history.addEntry(entry);
         sut = new HistoryEntryManager(runner);
     }

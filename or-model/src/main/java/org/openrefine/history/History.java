@@ -41,6 +41,7 @@ import org.openrefine.model.GridState;
 import org.openrefine.model.changes.Change;
 import org.openrefine.model.changes.Change.DoesNotApplyException;
 import org.openrefine.model.changes.ChangeContext;
+import org.openrefine.model.changes.ChangeDataStore;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -61,14 +62,18 @@ public class History  {
     
     @JsonIgnore
     protected List<GridState>    _states;
+    @JsonIgnore
+    protected ChangeDataStore    _dataStore;
 
     /**
      * Creates an empty on an initial grid state.
      * 
      * @param initialGrid
      *    the initial state of the project
+     * @param dataStore
+     *    where to store change data
      */
-    public History(GridState initialGrid) {
+    public History(GridState initialGrid, ChangeDataStore dataStore) {
         _entries = new ArrayList<>();
         _states = new ArrayList<>();
         _states.add(initialGrid);
@@ -84,9 +89,10 @@ public class History  {
      */
     public History(
             GridState initialGrid,
+            ChangeDataStore dataStore,
             List<HistoryEntry> entries,
             int position) throws DoesNotApplyException {
-        this(initialGrid);
+        this(initialGrid, dataStore);
         for(HistoryEntry entry : entries) {
             addEntry(entry);
         }
@@ -135,7 +141,7 @@ public class History  {
             _states = _states.subList(0, _position+1);
         }
         
-        ChangeContext context = ChangeContext.create(entry.getId());
+        ChangeContext context = ChangeContext.create(entry.getId(), _dataStore);
         GridState newState = entry.getChange().apply(getCurrentGridState(), context);
         _states.add(newState);
         _entries.add(entry);

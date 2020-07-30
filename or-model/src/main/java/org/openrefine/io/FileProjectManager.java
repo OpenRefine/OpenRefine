@@ -57,6 +57,8 @@ import org.openrefine.history.HistoryEntryManager;
 import org.openrefine.model.DatamodelRunner;
 import org.openrefine.model.Project;
 import org.openrefine.model.changes.Change.DoesNotApplyException;
+import org.openrefine.model.changes.ChangeDataStore;
+import org.openrefine.model.changes.FileChangeDataStore;
 import org.openrefine.preference.PreferenceStore;
 import org.openrefine.preference.TopList;
 import org.openrefine.util.ParsingUtilities;
@@ -492,5 +494,10 @@ public class FileProjectManager extends ProjectManager  {
     	if (newExpressions != null) {
     		_preferenceStore.put("scripting.expressions", newExpressions);
     	}
+    }
+
+    @Override
+    public ChangeDataStore getChangeDataStore(long projectID) {
+        return new FileChangeDataStore(_runner, getProjectDir(projectID));
     }
 }

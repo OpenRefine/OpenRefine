@@ -41,10 +41,10 @@ import org.openrefine.ProjectManager;
 import org.openrefine.ProjectMetadata;
 import org.openrefine.RefineTest;
 import org.openrefine.commands.Command;
-import org.openrefine.history.History;
 import org.openrefine.model.Cell;
 import org.openrefine.model.GridState;
 import org.openrefine.model.Project;
+import org.openrefine.model.changes.ChangeDataStore;
 import org.openrefine.model.recon.Recon;
 import org.openrefine.model.recon.ReconConfig;
 import org.openrefine.model.recon.StandardReconConfig;
@@ -78,7 +78,7 @@ public class ReconJudgeOneCellCommandTest extends RefineTest {
                 Collections.emptyList(),
                 5);
         grid = grid.withColumnModel(grid.getColumnModel().withReconConfig(0, config));
-        project = new Project(grid);
+        project = new Project(grid, mock(ChangeDataStore.class));
         ProjectMetadata meta = new ProjectMetadata();
     	meta.setName("test project");
         ProjectManager.singleton.registerProject(project, meta);
@@ -112,7 +112,6 @@ public class ReconJudgeOneCellCommandTest extends RefineTest {
         when(request.getParameter("judgment")).thenReturn("new");
         command.doPost(request, response);
         
-        History history = project.getHistory();
         Cell cell = project.getCurrentGridState().getRow(0L).cells.get(0);
         Assert.assertEquals(Recon.Judgment.New, cell.recon.judgment);
         Assert.assertEquals("http://my.recon.service/rdf/space", cell.recon.identifierSpace);

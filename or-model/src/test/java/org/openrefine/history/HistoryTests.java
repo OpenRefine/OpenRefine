@@ -46,12 +46,15 @@ import java.util.List;
 import org.openrefine.model.GridState;
 import org.openrefine.model.changes.Change;
 import org.openrefine.model.changes.Change.DoesNotApplyException;
+import org.openrefine.model.changes.ChangeDataStore;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 
 public class HistoryTests {
+    
+    ChangeDataStore dataStore;
     
     GridState initialState;
     GridState intermediateState;
@@ -74,6 +77,7 @@ public class HistoryTests {
     
     @BeforeMethod
     public void setUp() throws DoesNotApplyException {
+        dataStore = mock(ChangeDataStore.class);
         initialState = mock(GridState.class);
         intermediateState = mock(GridState.class);
         newState = mock(GridState.class);
@@ -104,7 +108,7 @@ public class HistoryTests {
     @Test
     public void testConstruct() throws DoesNotApplyException {
         
-        History history = new History(initialState, entries, 1);
+        History history = new History(initialState, dataStore, entries, 1);
         
         Assert.assertEquals(history.getPosition(), 1);
         Assert.assertEquals(history.getCurrentGridState(), intermediateState);
@@ -134,14 +138,14 @@ public class HistoryTests {
     
     @Test(expectedExceptions = IllegalArgumentException.class)
     public void testUnknownChangeId() throws DoesNotApplyException {
-        History history = new History(initialState, entries, 1);
+        History history = new History(initialState, dataStore, entries, 1);
         
         history.undoRedo(34782L);
     }
     
     @Test
     public void testEraseUndoneChanges() throws DoesNotApplyException {
-        History history = new History(initialState, entries, 1);
+        History history = new History(initialState, dataStore, entries, 1);
         
         Assert.assertEquals(history.getPosition(), 1);
         Assert.assertEquals(history.getCurrentGridState(), intermediateState);
