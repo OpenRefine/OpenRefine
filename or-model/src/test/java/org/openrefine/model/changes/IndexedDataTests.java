@@ -1,26 +1,10 @@
 
 package org.openrefine.model.changes;
 
-import java.io.IOException;
-
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.JsonMappingException;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
-import org.openrefine.util.ParsingUtilities;
-
 public class IndexedDataTests {
-
-    @Test
-    public void testDeserialize() throws JsonParseException, JsonMappingException, IOException {
-        String json = "{\"i\":12,\"d\":\"foo\"}";
-        IndexedData<String> deserialized = ParsingUtilities.mapper.readValue(json, new TypeReference<IndexedData<String>>() {
-        });
-        Assert.assertEquals(deserialized.getData(), "foo");
-        Assert.assertEquals(deserialized.getId(), 12L);
-    }
 
     @Test
     public void testEquals() {

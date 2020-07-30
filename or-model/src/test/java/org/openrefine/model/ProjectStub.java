@@ -37,11 +37,12 @@ import static org.mockito.Mockito.mock;
 
 import org.openrefine.history.History;
 import org.openrefine.model.Project;
+import org.openrefine.model.changes.LazyChangeDataStore;
 
 public class ProjectStub extends Project {
 
     public ProjectStub(GridState state) {
-        super(state);
+        super(state, new LazyChangeDataStore());
     }
 
     public ProjectStub(long id) {

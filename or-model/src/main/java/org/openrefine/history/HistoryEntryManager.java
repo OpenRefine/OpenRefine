@@ -42,6 +42,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import org.openrefine.model.DatamodelRunner;
 import org.openrefine.model.GridState;
 import org.openrefine.model.changes.Change.DoesNotApplyException;
+import org.openrefine.model.changes.ChangeDataStore;
+import org.openrefine.model.changes.FileChangeDataStore;
 import org.openrefine.util.ParsingUtilities;
 
 /**
@@ -52,11 +54,12 @@ public class HistoryEntryManager {
 
     protected static final String INITIAL_GRID_SUBDIR = "initial";
     protected static final String METADATA_FILENAME = "history.json";
+    protected static final String CHANGE_SUBDIR = "changes";
 
     private final DatamodelRunner runner;
 
-    public HistoryEntryManager(DatamodelRunner _runner) {
-        this.runner = _runner;
+    public HistoryEntryManager(DatamodelRunner runner) {
+        this.runner = runner;
     }
 
     /**
@@ -87,7 +90,9 @@ public class HistoryEntryManager {
         Metadata metadata = ParsingUtilities.mapper.readValue(metadataFile, Metadata.class);
         // Load the initial grid
         GridState gridState = runner.loadGridState(gridFile);
-        return new History(gridState, metadata.entries, metadata.position);
+        // Set up the file-based change data store
+        ChangeDataStore dataStore = new FileChangeDataStore(runner, new File(dir, CHANGE_SUBDIR));
+        return new History(gridState, dataStore, metadata.entries, metadata.position);
     }
 
     /**

@@ -36,14 +36,13 @@ package org.openrefine.model;
 import java.time.LocalDateTime;
 import java.util.Map;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import org.openrefine.ProjectManager;
 import org.openrefine.ProjectMetadata;
 import org.openrefine.history.History;
+import org.openrefine.model.changes.ChangeDataStore;
 import org.openrefine.overlay.OverlayModel;
 import org.openrefine.process.ProcessManager;
 
@@ -69,8 +68,8 @@ public class Project {
      * @param initialState
      *            the initial state of the project.
      */
-    public Project(GridState initialState) {
-        this(generateID(), new History(initialState));
+    public Project(GridState initialState, ChangeDataStore dataStore) {
+        this(generateID(), new History(initialState, dataStore));
     }
 
     /**
@@ -81,20 +80,19 @@ public class Project {
      * @param initialState
      *            the initial state of the project
      */
-    public Project(long projectId, GridState initialState) {
-        this(projectId, new History(initialState));
+    public Project(long projectId, GridState initialState, ChangeDataStore dataStore) {
+        this(projectId, new History(initialState, dataStore));
     }
 
     /**
-     * Deserializes a project from a saved state.
+     * Restores a project from a saved state.
      * 
      * @param id
      * @param initialState
      */
-    @JsonCreator
     public Project(
-            @JsonProperty("id") long id,
-            @JsonProperty("history") History history) {
+            long id,
+            History history) {
         this.id = id;
         this.history = history;
     }

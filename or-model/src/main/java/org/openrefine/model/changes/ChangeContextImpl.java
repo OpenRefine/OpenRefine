@@ -1,17 +1,27 @@
 
 package org.openrefine.model.changes;
 
+import java.io.IOException;
+import java.io.Serializable;
+
 public class ChangeContextImpl implements ChangeContext {
 
     private final long _historyEntryId;
+    private final ChangeDataStore _dataStore;
 
-    public ChangeContextImpl(long historyEntryId) {
+    public ChangeContextImpl(long historyEntryId, ChangeDataStore dataStore) {
         _historyEntryId = historyEntryId;
+        _dataStore = dataStore;
     }
 
     @Override
     public long getHistoryEntryId() {
         return _historyEntryId;
+    }
+
+    @Override
+    public <T extends Serializable> ChangeData<T> getChangeData(String dataId, ChangeDataSerializer<T> serializer) throws IOException {
+        return _dataStore.retrieve(_historyEntryId, dataId, serializer);
     }
 
     @Override
@@ -31,4 +41,5 @@ public class ChangeContextImpl implements ChangeContext {
     public String toString() {
         return String.format("[ChangeContext: %d]", _historyEntryId);
     }
+
 }

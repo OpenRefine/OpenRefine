@@ -83,6 +83,8 @@ import org.openrefine.importing.ImportingJob.ImportingJobConfig;
 import org.openrefine.importing.ImportingJob.RetrievalRecord;
 import org.openrefine.model.GridState;
 import org.openrefine.model.Project;
+import org.openrefine.model.changes.ChangeDataStore;
+import org.openrefine.model.changes.LazyChangeDataStore;
 import org.openrefine.util.JSONUtilities;
 import org.openrefine.util.ParsingUtilities;
 
@@ -770,7 +772,8 @@ public class ImportingUtilities {
                     format,
                     100,
                     optionObj);
-            job.setProject(new Project(state));
+            // this is a preview, so we will not need to store any change data on this project
+            job.setProject(new Project(state, new LazyChangeDataStore()));
         } catch (Exception e) {
             exceptions.add(e);
         }
@@ -824,7 +827,8 @@ public class ImportingUtilities {
                     format,
                     -1,
                     optionObj);
-            newProject = new Project(projectId, state);
+            ChangeDataStore dataStore = ProjectManager.singleton.getChangeDataStore(projectId);
+            newProject = new Project(projectId, state, dataStore);
             job.setProject(newProject);
         } catch (Exception e) {
             exceptions.add(e);

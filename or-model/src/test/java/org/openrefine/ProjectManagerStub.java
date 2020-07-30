@@ -41,6 +41,8 @@ import org.apache.tools.tar.TarOutputStream;
 import org.openrefine.history.HistoryEntryManager;
 import org.openrefine.model.DatamodelRunner;
 import org.openrefine.model.Project;
+import org.openrefine.model.changes.ChangeDataStore;
+import org.openrefine.model.changes.LazyChangeDataStore;
 
 /**
  * Stub used to avoid saves and stub HistoryEntryManager
@@ -107,6 +109,11 @@ public class ProjectManagerStub extends ProjectManager {
     @Override
     protected void saveWorkspace() {
         // empty
+    }
+
+    @Override
+    public ChangeDataStore getChangeDataStore(long projectID) {
+        return new LazyChangeDataStore();
     }
 
 }

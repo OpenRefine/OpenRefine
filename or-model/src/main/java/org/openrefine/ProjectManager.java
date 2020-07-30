@@ -56,6 +56,7 @@ import org.slf4j.LoggerFactory;
 
 import org.openrefine.history.HistoryEntryManager;
 import org.openrefine.model.Project;
+import org.openrefine.model.changes.ChangeDataStore;
 import org.openrefine.preference.PreferenceStore;
 import org.openrefine.preference.TopList;
 import org.openrefine.util.GetProjectIDException;
@@ -148,6 +149,13 @@ public abstract class ProjectManager {
             }
         }
     }
+
+    /**
+     * Return the change data store for a given project
+     * 
+     * @param projectId
+     */
+    public abstract ChangeDataStore getChangeDataStore(long projectID);
 
     /**
      * Load project metadata from data storage
@@ -631,4 +639,5 @@ public abstract class ProjectManager {
         ps.put("scripting.expressions", new TopList(EXPRESSION_HISTORY_MAX));
         ps.put("scripting.starred-expressions", new TopList(Integer.MAX_VALUE));
     }
+
 }
