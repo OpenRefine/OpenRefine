@@ -26,6 +26,7 @@ package org.openrefine.wikidata.commands;
 import static org.mockito.Mockito.when;
 import static org.openrefine.wikidata.testing.TestingData.jsonFromFile;
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertTrue;
 
 import org.openrefine.wikidata.qa.EditInspector;
 import org.openrefine.wikidata.qa.ConstraintFetcher;
@@ -87,6 +88,57 @@ public class PreviewWikibaseSchemaCommandTest extends SchemaCommandTest {
         command.doPost(request, response);
 
         assertEquals(writer.toString(), "{\"code\":\"error\",\"message\":\"Wikibase manifest could not be parsed. Error message: invalid manifest format\"}");
+    }
+
+    @Test
+    public void testEditInspectorNotSkipped() throws Exception {
+        ConstraintFetcher fetcher = new ConstraintFetcher(new EntityCacheStub(), "P2302");
+        PowerMockito.whenNew(ConstraintFetcher.class).withAnyArguments().thenReturn(fetcher);
+
+        String schemaJson = jsonFromFile("schema/inception.json");
+        String manifestJson = jsonFromFile("manifest/wikidata-manifest-v1.0.json");
+        when(request.getParameter("schema")).thenReturn(schemaJson);
+        when(request.getParameter("manifest")).thenReturn(manifestJson);
+
+        command.doPost(request, response);
+
+        ObjectNode response = ParsingUtilities.evaluateJsonStringToObjectNode(writer.toString());
+        ArrayNode warnings = (ArrayNode) response.get("warnings");
+        assertTrue(warnings.size() > 0);
+    }
+
+    @Test
+    public void testMissingConstraintsInManifest() throws Exception {
+        ConstraintFetcher fetcher = new ConstraintFetcher(new EntityCacheStub(), "P2302");
+        PowerMockito.whenNew(ConstraintFetcher.class).withAnyArguments().thenReturn(fetcher);
+
+        String schemaJson = jsonFromFile("schema/inception.json");
+        String manifestJson = jsonFromFile("manifest/wikidata-manifest-v1.0-without-constraints.json");
+        when(request.getParameter("schema")).thenReturn(schemaJson);
+        when(request.getParameter("manifest")).thenReturn(manifestJson);
+
+        command.doPost(request, response);
+
+        ObjectNode response = ParsingUtilities.evaluateJsonStringToObjectNode(writer.toString());
+        ArrayNode warnings = (ArrayNode) response.get("warnings");
+        assertEquals(warnings.size(), 0);
+    }
+
+    @Test
+    public void testMissingPropertyConstraintPidInConstraints() throws Exception {
+        ConstraintFetcher fetcher = new ConstraintFetcher(new EntityCacheStub(), "P2302");
+        PowerMockito.whenNew(ConstraintFetcher.class).withAnyArguments().thenReturn(fetcher);
+
+        String schemaJson = jsonFromFile("schema/inception.json");
+        String manifestJson = jsonFromFile("manifest/wikidata-manifest-v1.0-missing-property-constraint-pid.json");
+        when(request.getParameter("schema")).thenReturn(schemaJson);
+        when(request.getParameter("manifest")).thenReturn(manifestJson);
+
+        command.doPost(request, response);
+
+        ObjectNode response = ParsingUtilities.evaluateJsonStringToObjectNode(writer.toString());
+        ArrayNode warnings = (ArrayNode) response.get("warnings");
+        assertEquals(warnings.size(), 0);
     }
 
 }
