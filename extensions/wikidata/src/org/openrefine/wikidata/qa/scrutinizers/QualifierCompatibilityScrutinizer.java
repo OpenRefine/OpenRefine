@@ -99,7 +99,7 @@ public class QualifierCompatibilityScrutinizer extends StatementScrutinizer {
         allowedQualifiersConstraintPid = getConstraintsRelatedId("property_pid");
         mandatoryQualifiersConstraintQid = getConstraintsRelatedId("mandatory_qualifier_constraint_qid");
         mandatoryQualifiersConstraintPid = getConstraintsRelatedId("property_pid");
-        return allowedQualifiersConstraintQid != null && allowedQualifiersConstraintPid != null &&
+        return _fetcher != null && allowedQualifiersConstraintQid != null && allowedQualifiersConstraintPid != null &&
                 mandatoryQualifiersConstraintQid != null && mandatoryQualifiersConstraintPid != null;
     }
 

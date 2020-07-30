@@ -47,7 +47,7 @@ public class UseAsQualifierScrutinizer extends EditScrutinizer {
         oneOfQualifierValuePropertyQid = getConstraintsRelatedId("one_of_qualifier_value_property_constraint_qid");
         property = getConstraintsRelatedId("property_pid");
         itemOfPropertyConstraintPid = getConstraintsRelatedId("item_of_property_constraint_pid");
-        return oneOfQualifierValuePropertyQid != null && property != null && itemOfPropertyConstraintPid != null;
+        return _fetcher != null && oneOfQualifierValuePropertyQid != null && property != null && itemOfPropertyConstraintPid != null;
     }
 
     @Override

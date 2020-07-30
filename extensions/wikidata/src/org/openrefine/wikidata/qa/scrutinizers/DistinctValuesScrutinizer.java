@@ -54,7 +54,7 @@ public class DistinctValuesScrutinizer extends StatementScrutinizer {
     @Override
     public boolean prepareDependencies() {
         distinctValuesConstraintQid = getConstraintsRelatedId("distinct_values_constraint_qid");
-        return distinctValuesConstraintQid != null;
+        return _fetcher != null && distinctValuesConstraintQid != null;
     }
 
     @Override

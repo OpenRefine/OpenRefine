@@ -28,7 +28,7 @@ public class RestrictedValuesScrutinizer extends SnakScrutinizer {
         allowedValuesConstraintPid = getConstraintsRelatedId("item_of_property_constraint_pid");
         disallowedValuesConstraintQid = getConstraintsRelatedId("none_of_constraint_qid");
         disallowedValuesConstraintPid = getConstraintsRelatedId("item_of_property_constraint_pid");
-        return allowedValuesConstraintQid != null && allowedValuesConstraintPid != null
+        return _fetcher != null && allowedValuesConstraintQid != null && allowedValuesConstraintPid != null
                 && disallowedValuesConstraintQid != null && disallowedValuesConstraintPid != null;
     }
 

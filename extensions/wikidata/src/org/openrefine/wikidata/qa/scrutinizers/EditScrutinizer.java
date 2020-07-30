@@ -51,6 +51,9 @@ public abstract class EditScrutinizer {
         _store = store;
     }
 
+    /**
+     * The fetcher will be set to null if 'property_constraint_pid' is missing in the manifest.
+     */
     public void setFetcher(ConstraintFetcher fetcher) {
         _fetcher = fetcher;
     }

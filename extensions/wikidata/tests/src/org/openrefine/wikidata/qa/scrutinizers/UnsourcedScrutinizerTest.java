@@ -43,9 +43,10 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
-import static org.openrefine.wikidata.qa.scrutinizers.UnsourcedScrutinizer.CITATION_NEEDED_QID;
 
 public class UnsourcedScrutinizerTest extends StatementScrutinizerTest {
+
+    private static final String CITATION_NEEDED_QID = "Q54554025";
 
     public static PropertyIdValue propertyIdValue = Datamodel.makeWikidataPropertyIdValue("P2302");
     public static PropertyIdValue referenceProperty = Datamodel.makeWikidataPropertyIdValue("P143");

@@ -43,6 +43,7 @@ public class EntityTypeScrutinizer extends SnakScrutinizer {
         allowedEntityTypesQid = getConstraintsRelatedId("allowed_entity_types_constraint_qid");
         wikibaseItemQid = getConstraintsRelatedId("wikibase_item_qid");
         itemOfPropertyConstraint = getConstraintsRelatedId("item_of_property_constraint_pid");
-        return allowedEntityTypesQid != null && wikibaseItemQid != null && itemOfPropertyConstraint != null;
+        return _fetcher != null && allowedEntityTypesQid != null
+                && wikibaseItemQid != null && itemOfPropertyConstraint != null;
     }
 }

@@ -52,7 +52,7 @@ public class RestrictedPositionScrutinizer extends StatementScrutinizer {
         scopeConstraintValueQid = getConstraintsRelatedId("as_main_value_qid");
         scopeConstraintQualifierQid = getConstraintsRelatedId("as_qualifiers_qid");
         scopeConstraintReferenceQid = getConstraintsRelatedId("as_references_qid");
-        return scopeConstraintQid != null && scopeConstraintPid != null && scopeConstraintValueQid != null
+        return _fetcher != null && scopeConstraintQid != null && scopeConstraintPid != null && scopeConstraintValueQid != null
                 && scopeConstraintQualifierQid != null && scopeConstraintReferenceQid != null;
     }
 

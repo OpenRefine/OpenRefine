@@ -52,7 +52,7 @@ public class SingleValueScrutinizer extends EditScrutinizer {
     public boolean prepareDependencies() {
         singleValueConstraintQid = getConstraintsRelatedId("single_value_constraint_qid");
         singleBestValueConstraintQid = getConstraintsRelatedId("single_best_value_constraint_qid");
-        return singleValueConstraintQid != null && singleBestValueConstraintQid != null;
+        return _fetcher != null && singleValueConstraintQid != null && singleBestValueConstraintQid != null;
     }
 
     @Override

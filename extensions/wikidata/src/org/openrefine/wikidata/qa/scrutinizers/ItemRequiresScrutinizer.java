@@ -52,7 +52,8 @@ public class ItemRequiresScrutinizer extends EditScrutinizer {
         itemRequiresConstraintQid = getConstraintsRelatedId("item_requires_statement_constraint_qid");
         itemRequiresPropertyPid = getConstraintsRelatedId("property_pid");
         itemOfPropertyConstraintPid = getConstraintsRelatedId("item_of_property_constraint_pid");
-        return itemRequiresConstraintQid != null && itemRequiresPropertyPid != null && itemOfPropertyConstraintPid != null;
+        return _fetcher != null && itemRequiresConstraintQid != null
+                && itemRequiresPropertyPid != null && itemOfPropertyConstraintPid != null;
     }
 
     @Override

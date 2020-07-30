@@ -18,7 +18,7 @@ public class MultiValueScrutinizer extends EditScrutinizer {
     @Override
     public boolean prepareDependencies() {
         multiValueConstraintQid = getConstraintsRelatedId("multi_value_constraint_qid");
-        return multiValueConstraintQid != null;
+        return _fetcher != null && multiValueConstraintQid != null;
     }
 
     @Override

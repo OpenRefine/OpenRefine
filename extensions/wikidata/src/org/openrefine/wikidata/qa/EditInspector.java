@@ -46,17 +46,21 @@ public class EditInspector {
 
     private static final Logger logger = LoggerFactory.getLogger(EditInspector.class);
 
-    private Map<String, EditScrutinizer> scrutinizers;
+    Map<String, EditScrutinizer> scrutinizers;
     private QAWarningStore warningStore;
     private ConstraintFetcher fetcher;
     private Manifest manifest;
 
     public EditInspector(QAWarningStore warningStore, Manifest manifest) {
         this.scrutinizers = new HashMap<>();
-        EntityCache entityCache = EntityCache.getEntityCache(manifest.getEntityPrefix(), manifest.getMediaWikiApiEndpoint());
-        this.fetcher = new ConstraintFetcher(entityCache, manifest.getConstraintsRelatedId("property_constraint_pid"));
         this.warningStore = warningStore;
         this.manifest = manifest;
+
+        String propertyConstraintPid = manifest.getConstraintsRelatedId("property_constraint_pid");
+        if (propertyConstraintPid != null) {
+            EntityCache entityCache = EntityCache.getEntityCache(manifest.getEntityPrefix(), manifest.getMediaWikiApiEndpoint());
+            this.fetcher = new ConstraintFetcher(entityCache, propertyConstraintPid);
+        }
 
         // Register all known scrutinizers here
         register(new NewItemScrutinizer());

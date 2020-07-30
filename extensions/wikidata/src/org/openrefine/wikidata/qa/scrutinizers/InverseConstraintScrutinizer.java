@@ -79,7 +79,8 @@ public class InverseConstraintScrutinizer extends StatementScrutinizer {
         inverseConstraintQid = getConstraintsRelatedId("inverse_constraint_qid");
         inversePropertyPid = getConstraintsRelatedId("property_pid");
         symmetricConstraintQid = getConstraintsRelatedId("symmetric_constraint_qid");
-        return inverseConstraintQid != null && inversePropertyPid != null || symmetricConstraintQid != null;
+        return _fetcher != null && inverseConstraintQid != null
+                && inversePropertyPid != null && symmetricConstraintQid != null;
     }
 
     protected PropertyIdValue getInverseConstraint(PropertyIdValue pid) {

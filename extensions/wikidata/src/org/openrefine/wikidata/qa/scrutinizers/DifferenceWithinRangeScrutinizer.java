@@ -45,7 +45,7 @@ public class DifferenceWithinRangeScrutinizer extends EditScrutinizer {
         differenceWithinRangeConstraintPid = getConstraintsRelatedId("property_pid");
         minimumValuePid = getConstraintsRelatedId("minimum_value_pid");
         maximumValuePid = getConstraintsRelatedId("maximum_value_pid");
-        return differenceWithinRangeConstraintQid != null && differenceWithinRangeConstraintPid != null
+        return _fetcher != null && differenceWithinRangeConstraintQid != null && differenceWithinRangeConstraintPid != null
                 && minimumValuePid != null && maximumValuePid != null;
     }
 

@@ -48,9 +48,10 @@ public class ConflictsWithScrutinizer extends EditScrutinizer {
     public boolean prepareDependencies() {
         conflictsWithConstraintQid = getConstraintsRelatedId("conflicts_with_constraint_qid");
         conflictsWithPropertyPid = getConstraintsRelatedId("property_pid");
-        itemOfPropertyConstraintPid = getConstraintsRelatedId("item_of_property_constraint");
+        itemOfPropertyConstraintPid = getConstraintsRelatedId("item_of_property_constraint_pid");
 
-        return conflictsWithConstraintQid != null && conflictsWithPropertyPid != null && itemOfPropertyConstraintPid != null;
+        return _fetcher != null && conflictsWithConstraintQid != null
+                && conflictsWithPropertyPid != null && itemOfPropertyConstraintPid != null;
     }
 
     @Override

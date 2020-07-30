@@ -75,7 +75,7 @@ public class FormatScrutinizer extends SnakScrutinizer {
     public boolean prepareDependencies() {
         formatConstraintQid = getConstraintsRelatedId("format_constraint_qid");
         formatRegexPid = getConstraintsRelatedId("format_as_a_regular_expression_pid");
-        return formatConstraintQid != null && formatRegexPid != null;
+        return _fetcher != null && formatConstraintQid != null && formatRegexPid != null;
     }
 
     /**

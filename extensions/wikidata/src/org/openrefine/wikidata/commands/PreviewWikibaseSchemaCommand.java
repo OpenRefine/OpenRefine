@@ -105,11 +105,9 @@ public class PreviewWikibaseSchemaCommand extends Command {
             Engine engine = getEngine(request, project);
             List<ItemUpdate> editBatch = schema.evaluate(project, engine, warningStore);
 
-            if (manifest.getConstraintsRelatedId("property_constraint_pid") != null) {
-                // Inspect the edits and generate warnings
-                EditInspector inspector = new EditInspector(warningStore, manifest);
-                inspector.inspect(editBatch);
-            }
+            // Inspect the edits and generate warnings
+            EditInspector inspector = new EditInspector(warningStore, manifest);
+            inspector.inspect(editBatch);
 
             // Dump the first 10 edits, scheduled with the default scheduler
             WikibaseAPIUpdateScheduler scheduler = new WikibaseAPIUpdateScheduler();

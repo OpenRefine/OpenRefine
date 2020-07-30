@@ -39,7 +39,7 @@ public class QuantityScrutinizer extends SnakScrutinizer {
         integerValuedConstraintQid = getConstraintsRelatedId("integer_constraint_qid");
         allowedUnitsConstraintQid = getConstraintsRelatedId("allowed_units_constraint_qid");
         allowedUnitsConstraintPid = getConstraintsRelatedId("item_of_property_constraint_pid");
-        return noBoundsConstraintQid != null && integerValuedConstraintQid != null
+        return _fetcher != null && noBoundsConstraintQid != null && integerValuedConstraintQid != null
                 && allowedUnitsConstraintQid != null && allowedUnitsConstraintPid != null;
     }
 
