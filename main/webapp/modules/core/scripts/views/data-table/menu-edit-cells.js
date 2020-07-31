@@ -145,13 +145,13 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
       // but javascript Regexp accepts it and auto escape it
       var pos = p.replace(/\\\//g,'').indexOf("/");
       if (pos != -1) {
-        alert($.i18n('core-views/warning-regex') + " : " + p);
+        alert($.i18n('core-views/warning-regex',p));
         return 0;}
       try {
         var pattern = new RegExp(p);
         return 1;
         } catch (e) {
-          alert($.i18n('core-views/warning-regex') + " : " + p);
+          alert($.i18n('core-views/warning-regex', p));
         return 0;}
     }
     function escapeInputString(s) {

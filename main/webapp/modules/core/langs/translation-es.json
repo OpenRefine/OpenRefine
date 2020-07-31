@@ -725,7 +725,7 @@
     "core-views/replace-dont-escape": "utilice \\n para saltos de renglón, \\t para tabuladores, \\\\n para \\n, \\\\t para \\t.",
     "core-views/replacement-info": "Si se marca la opción «Expresión regular» y el modelo de búsqueda contiene grupos delimitados por paréntesis, $0 devolverá la cadena completa encontrada por el modelo, y $1, $2…, los grupos primero y segundo, respectivamente.",
     "core-views/use-values-as-identifiers": "Utilizar valores como identificadores",
-    "core-views/warning-regex": "La expresión regular no es válida.",
+    "core-views/warning-regex": "La expresión regular no es válida : $1",
     "core-views/column-join": "Unir columnas",
     "core-views/column-join-field-separator-advice": "Introduzca uno o más caracteres o déjelo en blanco para unir las columnas.",
     "core-views/column-join-field-separator": "Separador entre el contenido de cada columna:",

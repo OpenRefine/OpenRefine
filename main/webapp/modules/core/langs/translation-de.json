@@ -704,7 +704,7 @@
     "core-views/finding-info2": "Aktivieren Sie „regulärer Ausdruck“, um Sonderzeichen (Zeilenumbrüche, Tabulaturen…) oder komplexe Muster zu finden.",
     "core-views/replacement-info": "Wenn die Option „regulärer Ausdruck“ aktiviert ist und das Suchmuster Gruppen enthält, die durch Klammern getrennt sind, gibt $0 die komplette Zeichenkette zurück, die dem Muster entspricht und $1, $2… die erste, zweite… Gruppe.",
     "core-views/replace-dont-escape": "verwenden Sie \\n für neue Zeilen, \\t für Tabulator, \\\\n für \\n, \\\\t für \\t.",
-    "core-views/warning-regex": "Ungültiger regulärer Ausdruck.",
+    "core-views/warning-regex": "Ungültiger regulärer Ausdruck : $1",
     "core-views/use-values-as-identifiers": "Werte als Bezeichner verwenden",
     "core-views/use-values-as-identifiers2": "Zellen markieren, die mit Ihren Werten als Bezeichner abgeglichen sind",
     "core-views/choose-reconciliation-service": "Wählen Sie einen Abgleichdienst aus",
