@@ -32,7 +32,6 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 class ListFacet {
-
   constructor(div, config, options, selection) {
     console.log("Created a new List Facet");
     this._div = div;
@@ -759,7 +758,6 @@ class ListFacet {
       }
     }
   };
-  
 };
 
 ListFacet.reconstruct = function(div, uiState) {
