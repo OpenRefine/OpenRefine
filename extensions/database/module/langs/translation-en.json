@@ -36,6 +36,7 @@
     "database-source/databaseSaveButton": "Save",
     "database-source/databaseConnectButton": "Connect",
     "database-source/newConnectionButtonDiv": "New connection",
+    "database-source/new-connection-legend":"New Connection Editor",
     "database-source/savedConnectionSpan": "Saved connections",
     "database-parsing/start-over": "&laquo; Start over",
     "database-parsing/conf-pars": "Configure parsing options",
