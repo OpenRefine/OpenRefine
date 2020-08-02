@@ -34,9 +34,6 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 function DataTableView(div) {
   this._div = div;
 
-  this._gridPagesSizes = JSON.parse(Refine.getPreference("ui.browsing.pageSize", null));
-  this._gridPagesSizes = this._checkPaginationSize(this._gridPagesSizes, [ 5, 10, 25, 50 ]);
-
   this._pageSize = 100;
   this._showRecon = true;
   this._collapsedColumnNames = {};
@@ -52,7 +49,6 @@ function DataTableView(div) {
   this._pageStart = 0;
   this._headerTop = 0;
 
-  this._currentPageNumber = 1;
   this._showRows(0);
   
   this._refocusPageInput = false;
@@ -92,7 +88,6 @@ DataTableView.prototype.resize = function() {
 };
 
 DataTableView.prototype.update = function(onDone) {
-  this._currentPageNumber = 1;
   this._showRows(0, onDone);
 };
 
@@ -140,8 +135,6 @@ DataTableView.prototype.render = function() {
   renderBrowsingModeLink($.i18n('core-views/rows'), "row-based");
   renderBrowsingModeLink($.i18n('core-views/records'), "record-based");
 
-  this._renderPagingControls(elmts.pageSizeControls, elmts.pagingControls);
-
   if (this._sorting.criteria.length > 0) {
     this._renderSortingControls(elmts.sortingControls);
   }
@@ -167,84 +160,6 @@ DataTableView.prototype._renderSortingControls = function(sortingControls) {
   .click(function() {
     self._createSortingMenu(this);
   });
-};
-
-DataTableView.prototype._renderPagingControls = function(pageSizeControls, pagingControls) {
-  var self = this;
-
-  self._lastPageNumber = Math.floor((theProject.rowModel.filtered - 1) / this._pageSize) + 1;
-
-  var from = (theProject.rowModel.start + 1);
-  var to = Math.min(theProject.rowModel.filtered, theProject.rowModel.start + theProject.rowModel.limit);
-
-  var firstPage = $('<a href="javascript:{}">&laquo; '+$.i18n('core-views/first')+'</a>').appendTo(pagingControls);
-  var previousPage = $('<a href="javascript:{}">&lsaquo; '+$.i18n('core-views/previous')+'</a>').appendTo(pagingControls);
-  if (theProject.rowModel.start > 0) {
-    firstPage.addClass("action").click(function(evt) { self._onClickFirstPage(this, evt); });
-    previousPage.addClass("action").click(function(evt) { self._onClickPreviousPage(this, evt); });
-  } else {
-    firstPage.addClass("inaction");
-    previousPage.addClass("inaction");
-  }
-
-  var pageControlsSpan = $('<span>').attr("id", "viewpanel-paging-current");
-  
-  var pageInputSize = 20 + (8 * ui.dataTableView._lastPageNumber.toString().length);
-  var currentPageInput = $('<input type="number">')
-    .change(function(evt) { self._onChangeGotoPage(this, evt); })
-    .keydown(function(evt) { self._onKeyDownGotoPage(this, evt); })
-    .attr("id", "viewpanel-paging-current-input")
-    .attr("min", 1)
-    .attr("max", self._lastPageNumber)
-    .attr("required", "required")
-    .val(self._currentPageNumber)
-    .css("width", pageInputSize +"px");
-    
-  pageControlsSpan.append($.i18n('core-views/goto-page', '<span id="currentPageInput" />', self._lastPageNumber));
-  pageControlsSpan.appendTo(pagingControls);
-
-  $('span#currentPageInput').replaceWith($(currentPageInput));
-  
-  if(self._refocusPageInput == true) { 
-    self._refocusPageInput = false;
-    var currentPageInputForFocus = $('input#viewpanel-paging-current-input');
-    currentPageInputForFocus.ready(function(evt) { setTimeout(() => { currentPageInputForFocus.focus(); }, 250); });
-  }
-  
-  var nextPage = $('<a href="javascript:{}">'+$.i18n('core-views/next')+' &rsaquo;</a>').appendTo(pagingControls);
-  var lastPage = $('<a href="javascript:{}">'+$.i18n('core-views/last')+' &raquo;</a>').appendTo(pagingControls);
-  if (theProject.rowModel.start + theProject.rowModel.limit < theProject.rowModel.filtered) {
-    nextPage.addClass("action").click(function(evt) { self._onClickNextPage(this, evt); });
-    lastPage.addClass("action").click(function(evt) { self._onClickLastPage(this, evt); });
-  } else {
-    nextPage.addClass("inaction");
-    lastPage.addClass("inaction");
-  }
-
-  $('<span>'+$.i18n('core-views/show')+': </span>').appendTo(pageSizeControls);
-  
-  var renderPageSize = function(index) {
-    var pageSize = self._gridPagesSizes[index];
-    var a = $('<a href="javascript:{}"></a>')
-    .addClass("viewPanel-pagingControls-page")
-    .appendTo(pageSizeControls);
-    if (pageSize == self._pageSize) {
-      a.text(pageSize).addClass("selected");
-    } else {
-      a.text(pageSize).addClass("action").click(function(evt) {
-        self._pageSize = pageSize;
-        self.update();
-      });
-    }
-  };
-  
-  for (var i = 0; i < self._gridPagesSizes.length; i++) {
-    renderPageSize(i);
-  }
-  
-  $('<span>')
-  .text(theProject.rowModel.mode == "record-based" ? ' '+$.i18n('core-views/records') : ' '+$.i18n('core-views/rows'))
-  .appendTo(pageSizeControls);
 };
 
 DataTableView.prototype._checkPaginationSize = function(gridPageSize, defaultGridPageSize) {
@@ -686,52 +601,6 @@ DataTableView.prototype._onChangeGotoScrolling = function(scrollPosition, gotoPa
   this._showRowsSpeed(modifiedScrollPosition, scrollPosition, table, gotoPageNumber * this._pageSize);
 };
 
-DataTableView.prototype._onChangeGotoPage = function(elmt, evt) {
-  var gotoPageNumber = parseInt($('input#viewpanel-paging-current-input').val());
-  
-  if(typeof gotoPageNumber != "number" || isNaN(gotoPageNumber) || gotoPageNumber == "") { 
-    $('input#viewpanel-paging-current-input').val(this._currentPageNumber); 
-    return;
-  }
-  
-  if(gotoPageNumber > this._lastPageNumber) gotoPageNumber = this._lastPageNumber;
-  if(gotoPageNumber < 1) gotoPageNumber = 1;
-  
-  this._currentPageNumber = gotoPageNumber;
-  this._showRows((gotoPageNumber - 1) * this._pageSize);
-};
-
-DataTableView.prototype._onKeyDownGotoPage = function(elmt, evt) {
-  var keyDownCode = event.which;
-  
-  if([38, 40].indexOf(keyDownCode) == -1) return;
-  if(self._refocusPageInput == true) return; 
-
-  evt.preventDefault();
-  this._refocusPageInput = true;
-  
-  var newPageValue = $('input#viewpanel-paging-current-input')[0].value;
-  if(keyDownCode == 38) {  // Up arrow
-    if(newPageValue <= 1) return;
-    this._onClickPreviousPage(elmt, evt);
-  }
-    
-  if(keyDownCode == 40) {  // Down arrow
-    if(newPageValue >= this._lastPageNumber) return;
-    this._onClickNextPage(elmt, evt);
-  }
-};
-
-DataTableView.prototype._onClickPreviousPage = function(elmt, evt) {
-  this._currentPageNumber--;
-  this._showRows(theProject.rowModel.start - this._pageSize);
-};
-
-DataTableView.prototype._onClickNextPage = function(elmt, evt) {
-  this._currentPageNumber++;
-  this._showRows(theProject.rowModel.start + this._pageSize);
-};
-
 DataTableView.prototype._onBottomTable = function(scrollPosition, table, elmt, evt) {
   if(this._totalSize < theProject.rowModel.filtered) {
     this._showRowsBottom(scrollPosition, table, this._totalSize);
@@ -742,16 +611,6 @@ DataTableView.prototype._onTopTable = function(scrollPosition, table, elmt, evt)
   if(this._pageStart - this._pageSize >= 0) {
     this._showRowsTop(scrollPosition, table, this._pageStart - this._pageSize);
   }
-};
-
-DataTableView.prototype._onClickFirstPage = function(elmt, evt) {
-  this._currentPageNumber = 1;
-  this._showRows(0);
-};
-
-DataTableView.prototype._onClickLastPage = function(elmt, evt) {
-  this._currentPageNumber = this._lastPageNumber;
-  this._showRows((this._lastPageNumber - 1) * this._pageSize);
 };
 
 DataTableView.prototype._getSortingCriteriaCount = function() {
