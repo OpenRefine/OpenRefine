@@ -60,6 +60,7 @@ Refine.DefaultImportingController.prototype._prepareFileSelectionPanel = functio
   this._fileSelectionPanelElmts = DOM.bind(this._fileSelectionPanel);
   
   $('#or-import-select').text($.i18n('core-index-import/select-file'));
+  $('#or-import-singleProject').text($.i18n('core-index-import/single-project'));
   $('#or-import-severalFile').text($.i18n('core-index-import/several-file'));
   $('#or-import-selExt').text($.i18n('core-index-import/sel-by-extension'));
   $('#or-import-regex').text($.i18n('core-index-import/sel-by-regex'));

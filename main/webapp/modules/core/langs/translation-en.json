@@ -69,6 +69,7 @@
     "core-index-import/unknown-err": "Unknown error",
     "core-index-import/error": "Error:",
     "core-index-import/select-file": "Select Files to Import",
+    "core-index-import/single-project": "OpenRefine can only import multiple files into a single project if all selected files have the same file format.",
     "core-index-import/several-file": "There are several files available. Please select the ones to import.",
     "core-index-import/sel-by-extension": "Select by Extension",
     "core-index-import/sel-by-regex": "Select by Regex on File Names",
