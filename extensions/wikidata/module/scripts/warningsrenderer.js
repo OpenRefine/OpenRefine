@@ -17,7 +17,7 @@ WarningsRenderer._renderEntity = function (entity) {
 
   var url = entity.iri;
   if (!url && entity.value) {
-    url = WikibaseManager.getSelectedWikibaseEntityPrefix() + entity.value.id;
+    url = WikibaseManager.getSelectedWikibaseSiteIri() + entity.value.id;
   }
 
   if (is_new) {

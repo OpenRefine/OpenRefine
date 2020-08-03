@@ -28,8 +28,8 @@ WikibaseManager.getSelectedWikibaseName = function () {
   return WikibaseManager.selected;
 };
 
-WikibaseManager.getSelectedWikibaseEntityPrefix = function () {
-  return WikibaseManager.getSelectedWikibase().wikibase.properties.entity_prefix;
+WikibaseManager.getSelectedWikibaseSiteIri = function () {
+  return WikibaseManager.getSelectedWikibase().wikibase.site_iri;
 };
 
 /**

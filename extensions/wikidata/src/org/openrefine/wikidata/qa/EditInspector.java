@@ -58,7 +58,7 @@ public class EditInspector {
 
         String propertyConstraintPid = manifest.getConstraintsRelatedId("property_constraint_pid");
         if (propertyConstraintPid != null) {
-            EntityCache entityCache = EntityCache.getEntityCache(manifest.getEntityPrefix(), manifest.getMediaWikiApiEndpoint());
+            EntityCache entityCache = EntityCache.getEntityCache(manifest.getSiteIri(), manifest.getMediaWikiApiEndpoint());
             this.fetcher = new ConstraintFetcher(entityCache, propertyConstraintPid);
         }
 

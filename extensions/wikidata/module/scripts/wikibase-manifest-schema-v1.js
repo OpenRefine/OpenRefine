@@ -37,14 +37,14 @@ const WikibaseManifestSchemaV1 = {
       "type": "object",
       "description": "The configurations of the Wikibase extension",
       "properties": {
+        "site_iri": {
+          "type": "string",
+          "pattern": "^.*/$",
+          "description": "The IRI of the Wikibase, such as 'http://www.wikidata.org/entity/'. This should match the IRI prefixes used in RDF serialization. Be careful about using 'http' or 'https', because any variation will break comparisons at various places. The trailing slash cannot be omitted"
+        },
         "properties": {
           "type": "object",
           "properties": {
-            "entity_prefix": {
-              "type": "string",
-              "pattern": "^.*/$",
-              "description": "The entity prefix of the Wikibase, such as 'http://www.wikidata.org/entity/'. The trailing slash cannot be omitted"
-            },
             "instance_of": {
               "type": "string",
               "description": "The 'instance of' qid of the Wikibase ('P31' for Wikidata)"
@@ -54,7 +54,7 @@ const WikibaseManifestSchemaV1 = {
               "description": "The 'subclass of' qid of the Wikibase ('P279' for Wikidata)"
             }
           },
-          "required": ["entity_prefix", "instance_of", "subclass_of"]
+          "required": ["instance_of", "subclass_of"]
         },
         "constraints": {
           "type": "object",

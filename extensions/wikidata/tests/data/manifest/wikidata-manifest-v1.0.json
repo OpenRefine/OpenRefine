@@ -7,8 +7,8 @@
         "api": "https://www.wikidata.org/w/api.php"
     },
     "wikibase": {
+        "site_iri": "http://www.wikidata.org/entity/",
         "properties": {
-            "entity_prefix": "http://www.wikidata.org/entity/",
             "instance_of": "P31",
             "subclass_of": "P279"
         },

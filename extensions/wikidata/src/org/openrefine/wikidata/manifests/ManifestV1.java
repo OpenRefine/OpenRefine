@@ -10,7 +10,7 @@ public class ManifestV1 implements Manifest {
 
     private String version;
     private String name;
-    private String entityPrefix;
+    private String siteIri;
     private String instanceOfPid;
     private String subclassOfPid;
     private String mediaWikiApiEndpoint;
@@ -26,8 +26,8 @@ public class ManifestV1 implements Manifest {
         mediaWikiApiEndpoint = mediawiki.path("api").textValue();
 
         JsonNode wikibase = manifest.path("wikibase");
+        siteIri = wikibase.path("site_iri").textValue();
         JsonNode properties = wikibase.path("properties");
-        entityPrefix = properties.path("entity_prefix").textValue();
         instanceOfPid = properties.path("instance_of").textValue();
         subclassOfPid = properties.path("subclass_of").textValue();
 
@@ -55,8 +55,8 @@ public class ManifestV1 implements Manifest {
     }
 
     @Override
-    public String getEntityPrefix() {
-        return entityPrefix;
+    public String getSiteIri() {
+        return siteIri;
     }
 
     @Override

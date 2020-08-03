@@ -6,7 +6,7 @@ public interface Manifest {
 
     String getName();
 
-    String getEntityPrefix();
+    String getSiteIri();
 
     String getInstanceOfPid();
 

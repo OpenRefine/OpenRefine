@@ -41,7 +41,7 @@ ImportSchemaDialog.launch = function() {
        // If Wikibase related information is not included in the schema,
        // fallback to Wikidata.
        if (!schema.wikibasePrefix) {
-         schema.wikibasePrefix = WikidataManifestV1_0.wikibase.properties.entity_prefix;
+         schema.wikibasePrefix = WikidataManifestV1_0.wikibase.site_iri;
        }
        if (!schema.mediaWikiApiEndpoint) {
          schema.mediaWikiApiEndpoint = WikidataManifestV1_0.mediawiki.api;

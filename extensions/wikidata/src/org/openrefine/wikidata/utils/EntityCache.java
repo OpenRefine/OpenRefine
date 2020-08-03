@@ -85,11 +85,11 @@ public class EntityCache {
         return cache.apply(id.getId());
     }
 
-    public static EntityCache getEntityCache(String entityPrefix, String mediaWikiApiEndpoint) {
-        EntityCache entityCache = entityCacheMap.get(entityPrefix);
+    public static EntityCache getEntityCache(String siteIri, String mediaWikiApiEndpoint) {
+        EntityCache entityCache = entityCacheMap.get(siteIri);
         if (entityCache == null) {
-            entityCache = new EntityCache(entityPrefix, mediaWikiApiEndpoint);
-            entityCacheMap.put(entityPrefix, entityCache);
+            entityCache = new EntityCache(siteIri, mediaWikiApiEndpoint);
+            entityCacheMap.put(siteIri, entityCache);
         }
         return entityCache;
     }

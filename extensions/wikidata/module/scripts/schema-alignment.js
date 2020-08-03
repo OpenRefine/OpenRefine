@@ -191,7 +191,7 @@ SchemaAlignment.updateColumns = function() {
      var reconConfig = column.reconConfig;
      // make sure the column was reconciled to the target Wikibase
      var cell = SchemaAlignment._createDraggableColumn(column.name,
-        reconConfig && reconConfig.identifierSpace === WikibaseManager.getSelectedWikibaseEntityPrefix() && column.reconStats);
+        reconConfig && reconConfig.identifierSpace === WikibaseManager.getSelectedWikibaseSiteIri() && column.reconStats);
      this._columnArea.append(cell);
   }
 
@@ -251,9 +251,9 @@ var beforeUnload = function(e) {
 $(window).bind('beforeunload', beforeUnload);
 
 SchemaAlignment._reset = function(schema) {
-  if (!schema || !schema.wikibasePrefix || schema.wikibasePrefix !== WikibaseManager.getSelectedWikibaseEntityPrefix()) {
+  if (!schema || !schema.wikibasePrefix || schema.wikibasePrefix !== WikibaseManager.getSelectedWikibaseSiteIri()) {
     schema = {
-      wikibasePrefix: WikibaseManager.getSelectedWikibaseEntityPrefix(),
+      wikibasePrefix: WikibaseManager.getSelectedWikibaseSiteIri(),
       mediaWikiApiEndpoint: WikibaseManager.getSelectedWikibaseApi(),
       itemDocuments: []
     };
@@ -1268,7 +1268,7 @@ SchemaAlignment.getJSON = function() {
   if (list.length === itemsDom.length) {
     return {
         itemDocuments: list,
-        wikibasePrefix: WikibaseManager.getSelectedWikibaseEntityPrefix(),
+        wikibasePrefix: WikibaseManager.getSelectedWikibaseSiteIri(),
         mediaWikiApiEndpoint: WikibaseManager.getSelectedWikibaseApi()
     };
   } else {
