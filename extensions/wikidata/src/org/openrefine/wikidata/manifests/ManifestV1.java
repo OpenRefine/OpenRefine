@@ -11,6 +11,8 @@ public class ManifestV1 implements Manifest {
     private String version;
     private String name;
     private String entityPrefix;
+    private String instanceOfPid;
+    private String subclassOfPid;
     private String mediaWikiApiEndpoint;
     private String reconServiceEndpoint;
 
@@ -26,6 +28,9 @@ public class ManifestV1 implements Manifest {
         JsonNode wikibase = manifest.path("wikibase");
         JsonNode properties = wikibase.path("properties");
         entityPrefix = properties.path("entity_prefix").textValue();
+        instanceOfPid = properties.path("instance_of").textValue();
+        subclassOfPid = properties.path("subclass_of").textValue();
+
         JsonNode constraints = wikibase.path("constraints");
         Iterator<Map.Entry<String, JsonNode>> fields = constraints.fields();
         while (fields.hasNext()) {
@@ -52,6 +57,16 @@ public class ManifestV1 implements Manifest {
     @Override
     public String getEntityPrefix() {
         return entityPrefix;
+    }
+
+    @Override
+    public String getInstanceOfPid() {
+        return instanceOfPid;
+    }
+
+    @Override
+    public String getSubclassOfPid() {
+        return subclassOfPid;
     }
 
     @Override

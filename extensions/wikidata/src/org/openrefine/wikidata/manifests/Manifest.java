@@ -8,6 +8,10 @@ public interface Manifest {
 
     String getEntityPrefix();
 
+    String getInstanceOfPid();
+
+    String getSubclassOfPid();
+
     String getMediaWikiApiEndpoint();
 
     String getReconServiceEndpoint();

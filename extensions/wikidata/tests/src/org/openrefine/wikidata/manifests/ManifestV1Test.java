@@ -17,6 +17,8 @@ public class ManifestV1Test {
         assertEquals("Wikidata", manifest.getName());
         assertEquals("https://www.wikidata.org/w/api.php", manifest.getMediaWikiApiEndpoint());
         assertEquals("http://www.wikidata.org/entity/", manifest.getEntityPrefix());
+        assertEquals("P31", manifest.getInstanceOfPid());
+        assertEquals("P279", manifest.getSubclassOfPid());
         assertEquals("https://wdreconcile.toolforge.org/${lang}/api", manifest.getReconServiceEndpoint());
         assertEquals("P2302", manifest.getConstraintsRelatedId("property_constraint_pid"));
         assertEquals("Q19474404", manifest.getConstraintsRelatedId("single_value_constraint_qid"));
