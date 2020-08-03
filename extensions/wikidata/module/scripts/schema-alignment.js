@@ -31,13 +31,16 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
  */
 
-var SchemaAlignment = {};
+var SchemaAlignment = {
+  _isSetUp: false
+};
 
 /**
  * Installs the tabs in the UI the first time the Wikidata 
  * extension is called.
  */
 SchemaAlignment.setUpTabs = function() {
+  this._isSetUp = true;
   this._rightPanel = $('#right-panel');
   this._viewPanel = $('#view-panel').addClass('main-view-panel-tab');
   this._toolPanel = $('#tool-panel');
@@ -110,6 +113,11 @@ SchemaAlignment.setUpTabs = function() {
  * Called on tabs setup or Wikibase manifest change.
  */
 SchemaAlignment._rerenderTabs = function() {
+  if (!SchemaAlignment._isSetUp) {
+    SchemaAlignment.setUpTabs();
+    return;
+  }
+
   /**
    * Init the schema tab
    */
@@ -221,7 +229,7 @@ SchemaAlignment.switchTab = function(targetTab) {
 };
 
 SchemaAlignment.isSetUp = function() {
-  return $('#wikibase-schema-panel').length !== 0;
+  return SchemaAlignment._isSetUp;
 };
 
 SchemaAlignment.launch = function() {
