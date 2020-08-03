@@ -104,7 +104,6 @@ SchemaAlignment.setUpTabs = function() {
   SchemaAlignment._rerenderTabs();
 
   // perform initial preview of the existing schema
-  this._previewPanes = $(".schema-alignment-dialog-preview");
   this._reset(theProject.overlayModels.wikibaseSchema);
   this.preview();
 };
@@ -172,6 +171,7 @@ SchemaAlignment._rerenderTabs = function() {
   var previewElmts = this._previewElmts = DOM.bind(previewTab);
   SchemaAlignment.updateNbEdits(0);
   previewElmts.invalidSchemaWarningPreview.text($.i18n('wikibase-schema/invalid-schema-warning-preview'));
+  this._previewPanes = $(".schema-alignment-dialog-preview");
 };
 
 SchemaAlignment.onWikibaseChange = function() {
