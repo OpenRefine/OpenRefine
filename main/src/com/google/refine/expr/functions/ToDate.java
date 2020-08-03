@@ -41,6 +41,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.IllformedLocaleException;
 import java.util.List;
 import java.util.Locale;
 import java.util.Properties;
@@ -121,31 +122,30 @@ public class ToDate implements Function {
         }
         return parse(o1,formats);
     }
-    
-    private OffsetDateTime parse(String o1, List<String> formats) {
-        if(formats.size()>0) {
-            String f1 = formats.get(0);
-            formats.remove(0);
-            return parse(o1,f1,formats);   
-        } else {
-            return parse(o1,Locale.getDefault(),formats);
-        }
-    }
-    
-    private OffsetDateTime parse(String o1, String f1, List<String> formats) {
+
+    private Locale getLocale(List<String> formats) {
         Locale locale = Locale.getDefault();
-        Locale possibleLocale = Locale.forLanguageTag(f1); // Java 1.7+ 
-        for (Locale l : DateFormat.getAvailableLocales()) {
-            if (l.equals(possibleLocale)) {
-                locale = possibleLocale;
-            } else {
-                formats.add(0,f1);
+        if (formats.size() > 0) {
+            String possibleLanguageTag = formats.get(0);
+            try {
+                Locale possibleLocale = new Locale.Builder().setLanguageTag(possibleLanguageTag).build();
+                // Check if it's in our list of supported date locales
+                for (Locale l : DateFormat.getAvailableLocales()) {
+                    if (l.equals(possibleLocale)) {
+                        locale = possibleLocale;
+                        formats.remove(0);
+                    }
+                }
+            } catch (IllformedLocaleException e) {
+                // We ignore this. It PROBABLY means we got a date format string, not a language code
+                // although it could be a malformed language tag like zh_TW instead of zh-TW
             }
         }
-        return parse(o1,locale,formats);
+        return locale;
     }
-    
-    private OffsetDateTime parse(String o1, Locale locale, List<String> formats) {
+
+    private OffsetDateTime parse(String o1, List<String> formats) {
+        Locale locale = getLocale(formats);
         DateFormat formatter;
         OffsetDateTime date;
         //need to try using each format in the formats list!
@@ -154,7 +154,8 @@ public class ToDate implements Function {
                 try {
                     formatter = new SimpleDateFormat(formats.get(i),locale);
                 } catch (IllegalArgumentException e) {
-                    continue;
+                    // TODO: We should pass back error info here to let user know format string is bad
+                    return null;
                 }
                 date = parse(o1, formatter);
                 if (date != null) {
