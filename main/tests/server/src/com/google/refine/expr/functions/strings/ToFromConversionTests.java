@@ -35,6 +35,7 @@ package com.google.refine.expr.functions.strings;
 
 import java.time.OffsetDateTime;
 import java.util.Properties;
+import java.util.TimeZone;
 
 import org.slf4j.LoggerFactory;
 import org.testng.Assert;
@@ -49,7 +50,6 @@ import com.google.refine.expr.util.CalendarParser;
 import com.google.refine.expr.util.CalendarParserException;
 import com.google.refine.grel.ControlFunctionRegistry;
 import com.google.refine.grel.Function;
-import com.google.refine.util.ParsingUtilities;
 
 
 /**
@@ -135,6 +135,9 @@ public class ToFromConversionTests extends RefineTest {
     
     @Test
     public void testToDate() throws CalendarParserException {
+        // Inject a fixed non-UTC timezone
+        TimeZone.setDefault(TimeZone.getTimeZone("America/New_York"));
+
       Assert.assertTrue(invoke("toDate") instanceof EvalError);
       Assert.assertTrue(invoke("toDate", (Object) null) instanceof EvalError);
       Assert.assertTrue(invoke("toDate", "") instanceof EvalError);

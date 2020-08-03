@@ -37,8 +37,8 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
-import java.time.ZonedDateTime;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
@@ -167,9 +167,9 @@ public class ToDate implements Function {
             return date;
         } else {
             try {
-                return javax.xml.bind.DatatypeConverter.parseDateTime(o1).getTime().toInstant()
-                		.plusSeconds(ZonedDateTime.now().getOffset().getTotalSeconds())
-                		.atOffset(ZoneOffset.of("Z"));
+                Calendar parsedDate = javax.xml.bind.DatatypeConverter.parseDateTime(o1);
+                int offsetMillis = parsedDate.getTimeZone().getOffset(parsedDate.getTimeInMillis());
+                return parsedDate.toInstant().plusMillis(offsetMillis).atOffset(ZoneOffset.of("Z"));
             } catch (IllegalArgumentException e2) {
                 return null;
             }
