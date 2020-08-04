@@ -257,9 +257,9 @@ Refer to the [official Java documentation](https://docs.oracle.com/javase/8/docs
 
 ## The home screen
 
-When you first launch OpenRefine, you will see a menu on the left hand side that includes “Create Project,” “Open Project,” “Import Project,” and “Language Settings.” This is called the “home screen,” where you can manage your projects and general settings. 
+When you first launch OpenRefine, you will see a screen with a menu on the left hand side that includes “Create Project,” “Open Project,” “Import Project,” and “Language Settings.” This is called the “home screen,” where you can manage your projects and general settings. 
 
-### Language Settings
+### Language settings
 
 You can set your preferred interface language here. This language setting will persist until you change it again in the future. Languages are translated as a community effort; some languages are partially complete and default back to English where unfinished. Currently OpenRefine supports the following languages for 75% or more of the interface: 
 
@@ -294,19 +294,21 @@ At this time you can set preferences using a key/value pair: that is, selecting 
 |Timeout for Google Drive authorization|googleConnectTimeOut|Number (microseconds)|180000|500000|
 |Maximum lag for Wikidata edit retries|wikibase.upload.maxLag|Number (seconds)|5|10|
 
-To leave the Preferences screen, click on the “OpenRefine” logo or the diamond.
+To leave the Preferences screen, click on the “OpenRefine” logo.
 
 If the preference you’re looking for isn’t here, look at the options you can set from the [command line or in an `.ini` file](#starting-with-modifications).
 
 ## The project screen
 
-Once you have [begun to work on a project](#starting), you will spend most of your time on the project screen (or work screen). This is a quick walkthrough of the parts of the interface you should familiarize yourself with.
+The project screen (or work screen) is where you will spend most of your time once you have [begun to work on a project](starting). This is a quick walkthrough of the parts of the interface you should familiarize yourself with.
 
-![Image goes here - need an appropriately generic dataset to display...](/img/projectscreen.png)
+![A screenshot of the project screen.](/img/projectscreen.png)
 
-### The header row
+### The project bar
 
-At any time you can close your current project and go back to the home screen by clicking on the “OpenRefine” logo or the diamond. If you’d like to open another project in a new browser tab or window, you can right-click on the logo and use “Open in a new tab.” You will lose your current facets and view settings if you close your project (but data transformations will be saved in the History of the project).
+The project bar runs across the very top of the project screen. It contains the the OpenRefine logo, the project title, and the project control buttons on the right side. 
+
+At any time you can close your current project and go back to the home screen by clicking on the OpenRefine logo. If you’d like to open another project in a new browser tab or window, you can right-click on the logo and use “Open in a new tab.” You will lose your current facets and view settings if you close your project (but data transformations will be saved in the [History](#history-undoredo) of the project).
 
 :::caution
 Don’t click the “back” button on your browser - it will likely close your current project and you will lose your facets and view settings.  
@@ -314,64 +316,65 @@ Don’t click the “back” button on your browser - it will likely close your 
 
 You can rename a project at any time by clicking inside the project title, which will turn into a text field. Project names don’t have to be unique, as OpenRefine organizes them based on a unique identifier behind the scenes. 
 
-“Permalink” allows you to return to a project at a specific view state - that is, with facets and filters applied. This can help you pick up where you left off if you have to close your project while working with facets and filters. It puts view-specific information directly into the URL: clicking on it will load this current-view URL in the existing tab. You can right-click and copy the Permalink URL to copy the current view state to your clipboard, without refreshing the tab you’re using.
+“Permalink” allows you to return to a project at a specific view state - that is, with facets and filters applied. The permalink can help you pick up where you left off if you have to close your project while working with facets and filters. It puts view-specific information directly into the URL: clicking on it will load this current-view URL in the existing tab. You can right-click and copy the Permalink URL to copy the current view state to your clipboard, without refreshing the tab you’re using.
 
 “Open…” will open up a new browser tab showing the “Create Project” screen. From here you can change settings, start a new project, or open an existing project. 
 
 “Export” is a dropdown menu that allows you to pick a format for exporting your current dataset. It will only export rows and records that are currently visible - the currently selected facets and filters, not the total data in the project.
 
-“Help” will open up a new browser tab and bring you to **this user manual on the web**.
+“Help” will open up a new browser tab and bring you to this user manual on the web.
 
-### The project grid header
+### The grid header
 
-OpenRefine will tell you the total number of rows or records in your project, and indicate whether you are in rows or records mode. 
+The grid header sits below the project bar and above the project grid (the data of your project). The grid header will tell you the total number of rows or records in your project, and indicate whether you are in rows or records mode. 
 
-It will also tell you if you’re currently looking at a select number of rows via facets or filtering, rather than the entire dataset, by displaying either, for example, “180 rows” or “67 matching rows (180 total)”. 
+It will also tell you if you’re currently looking at a select number of rows via facets or filtering, rather than the entire dataset, by displaying either, for example, “180 rows” or “67 matching rows (180 total).” 
 
-Directly below this you have the ability to switch between row mode and records mode. OpenRefine automatically identifies when you are in records mode and displays this by default if you are. 
+Directly below the row number, you have the ability to switch between row mode and records mode. OpenRefine stores which projects are in records mode, and displays your data as records by default if you are. 
 
 To the right of the rows/records selection is the array of options for how many rows/records to view on screen at one time. At the far right of the screen you can navigate through your entire dataset one page at a time. 
 
-### Extensions: Wikidata
+### Extensions
 
-The “Wikidata” dropdown offers you options for extending your data - most commonly by uploading your edited statements to Wikidata, or by importing or exporting schema. You can learn more about these functions on the [Wikidata page](wikidata).
+The "Extensions" dropdown offers you options for extending your data - most commonly by uploading your edited statements to Wikidata, or by importing or exporting schema. You can learn more about these functions on the [Wikidata page](wikidata). Other extensions may also add functions to this dropdown menu.
 
-### The project grid 
-The area of the project screen that displays your dataset is called the “project grid” (or the “data grid,” or simply the “grid”). The grid may look like a normal spreadsheet program to you. 
+### The grid 
 
-Columns are automatically sized based on their contents; some column headers may be cut off, but can be viewed by mousing over the headers. 
+The area of the project screen that displays your dataset is called the “project grid” (or the “data grid,” or simply the “grid”). The grid presents data in a tabular format, which may look like a normal spreadsheet program to you. 
 
-In each column header you will see a small arrow. Clicking on this brings up a dropdown menu containing column-specific data exploration and transformation options. You will learn about each of these options in the [Exploring data](exploring-data) and [Transforming data](transforming-data) sections.
+Columns widths are automatically set based on their contents; some column headers may be cut off, but can be viewed by mousing over the headers. 
 
-The first column in every project will always be “All,” which contains options to flag, star, and do non-column-specific operations. This is also where rows/records are numbered. 
+In each column header you will see a small arrow. Clicking on this arrow brings up a dropdown menu containing column-specific data exploration and transformation options. You will learn about each of these options in the [Exploring data](exploring) and [Transforming data](transforming) sections.
 
-The project grid may display with both vertical and horizontal scrolling, depending on the number and width of columns, and the number of rows/records displayed. You can control the display of the project grid by using [Sort and View options](exploring-data#sort-and-view).
+The first column in every project will always be “All,” which contains options to flag, star, and do non-column-specific operations. The "All" column is also where rows/records are numbered. 
 
-Mousing over individual cells will allow you to [edit cells individually](transforming-your-data).
+The project grid may display with both vertical and horizontal scrolling, depending on the number and width of columns, and the number of rows/records displayed. You can control the display of the project grid by using [Sort and View options](exploring#sort-and-view).
 
-### The project sidebar
+Mousing over individual cells will allow you to [edit cells individually](transforming).
+
+### The sidebar
 
 #### Facet/Filter
 
-The Facet/Filter tab is one of the main ways of exploring your data: displaying the patterns and trends in your data, and helping you narrow your focus and modify that data. [Facets](exploring-data#facets) and [filters](exploring-data#filters) are explained more in [Exploring data](exploring-data).
+The Facet/Filter tab is one of the main ways of exploring your data: displaying the patterns and trends in your data, and helping you narrow your focus and modify that data. [Facets](exploring#facets) and [filters](exploring#filters) are explained more in [Exploring data](exploring).
 
-![Image goes here of a facet in action - generic dataset needed…..](/img/facetfilter.png) 
+![A screenshot of facets and filters in action.](/img/facetfilter.png) 
 
-In the interface, you will see three buttons: “Refresh,” “Reset all,” and “Remove all”. Refreshing your facets will ensure you are looking at the latest information about each facet, if you have changed the counts or eliminated some options, for example. 
+In the interface, you will see three buttons: “Refresh,” “Reset all,” and “Remove all.” Refreshing your facets will ensure you are looking at the latest information about each facet, if you have changed the counts or eliminated some options, for example. 
 
 Resetting your facets will remove any inclusion or exclusion you may have set - the facet options will stay in the sidebar, but your view settings will be reset.
 
 Removing your facets will clear out the sidebar entirely. If you have written custom facets using expressions, these will be lost.
 
-You can preserve your facets and filters for future use by copying a [Permalink](#the-header-row).
+You can preserve your facets and filters for future use by copying a [Permalink](#the-project-bar).
 
 #### History (Undo/Redo)
 
-In OpenRefine, any activity that changes the data can be undone. Changes are tracked from the very beginning, when a project is first created. The undo/redo change history of each project is saved with the project's data, so quitting OpenRefine does not erase the history. When you restart OpenRefine, you can view and undo changes that you made before you quit OpenRefine. 
+In OpenRefine, any activity that changes the data can be undone. Changes are tracked from the very beginning, when a project is first created. The change history of each project is saved with the project's data, so quitting OpenRefine does not erase the steps you've taken. When you restart OpenRefine, you can view and undo changes that you made before you quit OpenRefine. 
 
 Project history gets saved when you export a project archive, and restored when you import that archive to a new installation of OpenRefine. 
 
-![A screenshot of the History (Undo/Redo) tab with 5 steps.](/img/history.jpg "A screenshot of the History (Undo/Redo) tab with 5 steps.")
+![A screenshot of the History (Undo/Redo) tab with 13 steps.](/img/history.png "A screenshot of the History (Undo/Redo) tab with 13 steps.")
 
 When you click on “Undo / Redo” in the sidebar of any project, that project’s history is shown as a list of changes in order, with the first “change” being the action of creating the project itself. (That first change, indexed as step zero, cannot be undone.) Here is a sample history with 3 changes:
 
@@ -382,7 +385,7 @@ When you click on “Undo / Redo” in the sidebar of any project, that project�
 3. Split 230 cell(s) in column Address into several columns by separator
 ```
 
-The current state of the project is highlighted with a dark blue background. If you move back and forth on the **_timeline_** you will see the current state become highlighted, while the actions that came after that state will be grayed out. 
+The current state of the project is highlighted with a dark blue background. If you move back and forth on the timeline you will see the current state become highlighted, while the actions that came after that state will be grayed out. 
 
 To revert your data back to an earlier state, simply click on the last action in the timeline you want to keep. In the example above, if we keep the removal of 7 rows but revert everything we did after that, then click on “Remove 7 rows.” The last 2 changes will be undone, in order to bring the project back to state #1.
 
@@ -392,12 +395,11 @@ If you have moved back one or more states, and then you perform a new operation 
 
 The Undo/Redo tab will show you which step you’re on, and if you’re about to risk erasing work - by saying something like “4/5" or “1/7” at the end.
 
-
-##### Reusing Operations
+##### Reusing operations
 
 Operations that you perform in OpenRefine can be reused. For example, a formula you wrote inside one project can be copied and applied to another project later. 
 
-To reuse one or more operations, you first extract it from the project where it was first applied. Click to the Undo/Redo tab and click “Extract…”. This brings up a box that lists all operations up to the current state (it does not show undone operations). Select the operation or operations you want to extract using the checkboxes on the left, and they will be encoded as JSON on the right. Copy that JSON off to the clipboard. 
+To reuse one or more operations, you first extract it from the project where it was first applied. Click to the Undo/Redo tab and click “Extract….” This brings up a box that lists all operations up to the current state (it does not show undone operations). Select the operation or operations you want to extract using the checkboxes on the left, and they will be encoded as JSON on the right. Copy that JSON off to the clipboard. 
 
 Move to the second project, go to the Undo/Redo tab, click “Apply…” and paste in that JSON.
 
