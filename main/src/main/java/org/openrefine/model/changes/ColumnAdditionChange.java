@@ -47,7 +47,6 @@ public abstract class ColumnAdditionChange extends RowMapChange {
 
     final protected String _columnName;
     final protected int _columnIndex;
-    protected int _newCellIndex = -1;
 
     public ColumnAdditionChange(String columnName, int columnIndex, EngineConfig config) {
         super(config);

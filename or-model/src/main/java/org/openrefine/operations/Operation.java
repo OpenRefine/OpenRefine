@@ -42,6 +42,7 @@ import org.openrefine.expr.ParsingException;
 import org.openrefine.history.History;
 import org.openrefine.model.changes.Change;
 import org.openrefine.process.Process;
+import org.openrefine.process.ProcessManager;
 import org.openrefine.process.QuickHistoryEntryProcess;
 
 /**
@@ -68,7 +69,7 @@ import org.openrefine.process.QuickHistoryEntryProcess;
 @JsonTypeIdResolver(OperationResolver.class)
 public interface Operation {
 
-    public default Process createProcess(History history) throws Exception {
+    public default Process createProcess(History history, ProcessManager manager) throws Exception {
         return new QuickHistoryEntryProcess(history, getDescription(), this, createChange());
     };
 

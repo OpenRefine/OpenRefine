@@ -63,7 +63,6 @@ import org.openrefine.model.DatamodelRunner;
 import org.openrefine.model.Project;
 import org.openrefine.model.changes.Change.DoesNotApplyException;
 import org.openrefine.model.changes.ChangeDataStore;
-import org.openrefine.model.changes.FileChangeDataStore;
 import org.openrefine.preference.PreferenceStore;
 import org.openrefine.preference.TopList;
 import org.openrefine.util.ParsingUtilities;
@@ -495,6 +494,6 @@ public class FileProjectManager extends ProjectManager {
 
     @Override
     public ChangeDataStore getChangeDataStore(long projectID) {
-        return new FileChangeDataStore(_runner, getProjectDir(projectID));
+        return _historyEntryManager.getChangeDataStore(getProjectDir(projectID));
     }
 }

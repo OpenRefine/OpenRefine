@@ -11,6 +11,7 @@ import org.apache.hadoop.io.compress.GzipCodec;
 import org.apache.spark.api.java.JavaPairRDD;
 import scala.Tuple2;
 
+import org.openrefine.io.IOUtils;
 import org.openrefine.model.changes.ChangeData;
 import org.openrefine.model.changes.ChangeDataSerializer;
 import org.openrefine.model.changes.IndexedData;
@@ -60,6 +61,7 @@ public class SparkChangeData<T extends Serializable> implements ChangeData<T> {
 
     @Override
     public void saveToFile(File file, ChangeDataSerializer<T> serializer) throws IOException {
+        IOUtils.deleteDirectoryIfExists(file);
         data.map(r -> serializeIndexedData(serializer, r)).saveAsTextFile(file.getAbsolutePath(), GzipCodec.class);
     }
 
