@@ -259,7 +259,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
   var doSplitColumn = function() {
     var frame = $(DOM.loadHTML("core", "scripts/views/data-table/split-column-dialog.html"));
     var elmts = DOM.bind(frame);
-    elmts.dialogHeader.text($.i18n('core-views/split-col')+" " + column.name + " "+$.i18n('core-views/several-col'));
+    elmts.dialogHeader.text($.i18n('core-views/split-col', column.name));
     
     elmts.or_views_howSplit.text($.i18n('core-views/how-split'));
     elmts.or_views_bySep.text($.i18n('core-views/by-sep'));

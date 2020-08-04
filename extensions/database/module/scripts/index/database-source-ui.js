@@ -69,6 +69,7 @@ Refine.DatabaseSourceUI.prototype.attachUI = function(body) {
   if (self._defaultDatabaseType == "") { self._defaultDatabaseType = "mysql"; }
   
   $('#database-title').text($.i18n('database-import/title')); 
+  $('#new-connection-legend').text($.i18n('database-source/new-connection-legend'));
   $('#connectionNameLabel').html($.i18n('database-source/connectionNameLabel'));
   $('#databaseTypeLabel').html($.i18n('database-source/databaseTypeLabel'));
   $('#databaseHostLabel').text($.i18n('database-source/databaseHostLabel'));

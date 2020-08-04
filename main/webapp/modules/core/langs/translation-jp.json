@@ -671,7 +671,7 @@
     "core-views/finding-info2": "改行などの特殊文字や複雑なパターンを検索する場合は正規表現が使えます.",
     "core-views/replacement-info": "正規表現に()を使ったグループがある場合、$0がマッチ全体を、$1,$2…が各グループを返します.",
     "core-views/replace-dont-escape": "改行文字には\\n、タブ文字には\\tを使います。「\\n」や「\\t」を検索するには「\\\\n」や「\\\\t」を使います（エスケープ文字）.",
-    "core-views/warning-regex": "正規表現が無効です.",
+    "core-views/warning-regex": "正規表現が無効です : $1",
     "core-buttons/unselect-all": "全選択解除",
     "core-buttons/merge-close": "マージして閉じる",
     "core-buttons/import-proj": "インポート",

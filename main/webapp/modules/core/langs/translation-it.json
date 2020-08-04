@@ -708,7 +708,7 @@
     "core-views/finding-info2": "Controlla \"regular expression\" per trovare caratteri speciali (nuove righe, tabulazioni...) o pattern complessi.",
     "core-views/replacement-info": "Se l'opzione \"regular expression\" è attiva e il pattern da ricercare contiene gruppi delimitati da parentesi, $0 ritornerà la stringa completa riscontrata dal pattern, e $1, $2, ... il primo, secondo, ... gruppo rispettivamente.",
     "core-views/replace-dont-escape": "usa \\n per nuova riga, \\t per tabulazione, \\\\n per \\n, \\\\t per \\t.",
-    "core-views/warning-regex": "Espressione regolare invalida.",
+    "core-views/warning-regex": "Espressione regolare invalida : $1",
     "core-views/use-values-as-identifiers": "Usa valori come identificativi",
     "core-views/use-values-as-identifiers2": "Marca celle come riconciliate usando i loro valori come identificativi",
     "core-views/choose-reconciliation-service": "Scegliere servizio di riconciliazione",

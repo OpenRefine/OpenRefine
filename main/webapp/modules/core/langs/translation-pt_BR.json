@@ -704,7 +704,7 @@
     "core-views/finding-info2": "Verificar \"expressão regular\" para encontrar caracteres especiais (novas linhas, tabulações...) ou padrões complexos.",
     "core-views/replacement-info": "Se a opção \"expressão regular\" estiver marcada e o padrão de busca contiver grupos delimitados por parênteses, $0 retornará o texto completo coincidindo com o padrão, e $1, $2… o 1º, 1º… grupo.",
     "core-views/replace-dont-escape": "use \\n para novas linhas, \\t para tabulação, \\\\n para \\n, \\\\t para \\t.",
-    "core-views/warning-regex": "Expressão regular inválida.",
+    "core-views/warning-regex": "Expressão regular inválida : $1",
     "core-views/use-values-as-identifiers": "Usar valores como identificadores",
     "core-views/use-values-as-identifiers2": "Marcar células como reconciliadas com seus valores como identificadores",
     "core-views/choose-reconciliation-service": "Escolher um serviço de reconciliação",
