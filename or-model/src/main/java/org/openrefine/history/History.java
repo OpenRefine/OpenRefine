@@ -78,6 +78,7 @@ public class History  {
         _states = new ArrayList<>();
         _states.add(initialGrid);
         _position = 0;
+        _dataStore = dataStore;
     }
     
     /**
@@ -126,6 +127,11 @@ public class History  {
     @JsonProperty("entries")
     public List<HistoryEntry> getEntries() {
         return _entries;
+    }
+    
+    @JsonIgnore
+    public ChangeDataStore getChangeDataStore() {
+        return _dataStore; 
     }
 
     /**

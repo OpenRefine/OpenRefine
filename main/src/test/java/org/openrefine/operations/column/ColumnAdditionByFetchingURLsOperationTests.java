@@ -34,6 +34,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package org.openrefine.operations.column;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.net.InetAddress;
 import java.util.ArrayList;
 import java.util.List;
@@ -45,6 +46,7 @@ import org.openrefine.expr.ExpressionUtils;
 import org.openrefine.expr.MetaParser;
 import org.openrefine.grel.Parser;
 import org.openrefine.model.Cell;
+import org.openrefine.model.IndexedRow;
 import org.openrefine.model.ModelException;
 import org.openrefine.model.Project;
 import org.openrefine.model.Row;
@@ -111,7 +113,6 @@ public class ColumnAdditionByFetchingURLsOperationTests extends RefineTest {
 
     @BeforeMethod
     public void SetUp() throws IOException, ModelException {
-        project = createProjectWithColumns("UrlFetchingTests", "fruits"); 
         MetaParser.registerLanguageParser("grel", "GREL", Parser.grelParser, "value");     
     }
 
@@ -134,8 +135,13 @@ public class ColumnAdditionByFetchingURLsOperationTests extends RefineTest {
     
     @Test
     public void serializeUrlFetchingProcess() throws Exception {
+    	project = createProject("UrlFetchingTests",
+        		new String[] {"foo"},
+        		new Serializable[][] {
+        	{"bar"}
+        });
         Operation op = ParsingUtilities.mapper.readValue(json, ColumnAdditionByFetchingURLsOperation.class);
-        Process process = op.createProcess(project, new Properties());
+        Process process = op.createProcess(project.getHistory(), project.getProcessManager());
         TestUtils.isSerializedTo(process, String.format(processJson, process.hashCode()), ParsingUtilities.defaultWriter);
     }
     
@@ -148,11 +154,16 @@ public class ColumnAdditionByFetchingURLsOperationTests extends RefineTest {
         if (!isHostReachable("www.random.org", 5000))
             return;
         
-        for (int i = 0; i < 100; i++) {
-            Row row = new Row(2);
-            row.setCell(0, new Cell(i < 5 ? "apple":"orange", null));
-            project.rows.add(row);
-        }
+        project = createProject("UrlFetchingTests",
+        		new String[] {"fruits"},
+        		new Serializable[][] {
+        	{"apple"},
+        	{"apple"},
+        	{"orange"},
+        	{"orange"},
+        	{"orange"},
+        	{"orange"}
+        });
 
         EngineDependentOperation op = new ColumnAdditionByFetchingURLsOperation(engine_config,
                 "fruits",
@@ -164,7 +175,7 @@ public class ColumnAdditionByFetchingURLsOperationTests extends RefineTest {
                 true,
                 null);
         ProcessManager pm = project.getProcessManager();
-        Process process = op.createProcess(project, options);
+        Process process = op.createProcess(project.getHistory(), pm);
         process.startPerforming(pm);
         Assert.assertTrue(process.isRunning());
         try {
@@ -180,14 +191,14 @@ public class ColumnAdditionByFetchingURLsOperationTests extends RefineTest {
 
 
         // Inspect rows
-        String ref_val = (String)project.rows.get(0).getCellValue(1).toString();
+        List<IndexedRow> rows = project.getCurrentGridState().collectRows();
+        String ref_val = (String)rows.get(2).getRow().getCellValue(1).toString();
         if (ref_val.startsWith("HTTP error"))
             return;
         Assert.assertFalse(ref_val.equals("apple")); // just to make sure I picked the right column
-        for (int i = 1; i < 4; i++) {
-            System.out.println("value:" + project.rows.get(i).getCellValue(1));
+        for (int i = 3; i < 5; i++) {
             // all random values should be equal due to caching
-            Assert.assertEquals(project.rows.get(i).getCellValue(1).toString(), ref_val);
+            Assert.assertEquals(rows.get(i).getRow().getCellValue(1).toString(), ref_val);
         }
         Assert.assertFalse(process.isRunning());
     }
@@ -198,15 +209,13 @@ public class ColumnAdditionByFetchingURLsOperationTests extends RefineTest {
      */
     @Test
     public void testInvalidUrl() throws Exception {
-        Row row0 = new Row(2);
-        row0.setCell(0, new Cell("auinrestrsc", null)); // malformed -> null
-        project.rows.add(row0);
-        Row row1 = new Row(2);
-        row1.setCell(0, new Cell("https://www.random.org/integers/?num=1&min=1&max=100&col=1&base=10&format=plain", null)); // fine
-        project.rows.add(row1);
-        Row row2 = new Row(2);
-        row2.setCell(0, new Cell("http://anursiebcuiesldcresturce.detur/anusclbc", null)); // well-formed but invalid
-        project.rows.add(row2);
+    	project = createProject("UrlFetchingTests",
+        		new String[] {"fruits"},
+        		new Serializable[][] {
+        	{"auinrestrsc"}, // malformed -> null
+        	{"https://www.random.org/integers/?num=1&min=1&max=100&col=1&base=10&format=plain"}, // fine
+        	{"http://anursiebcuiesldcresturce.detur/anusclbc"} // well-formed but invalid
+        });
 
         EngineDependentOperation op = new ColumnAdditionByFetchingURLsOperation(engine_config,
                 "fruits",
@@ -219,7 +228,7 @@ public class ColumnAdditionByFetchingURLsOperationTests extends RefineTest {
                 null);
 
         ProcessManager pm = project.getProcessManager();
-        Process process = op.createProcess(project, options);
+        Process process = op.createProcess(project.getHistory(), pm);
         process.startPerforming(pm);
         Assert.assertTrue(process.isRunning());
         try {
@@ -229,17 +238,20 @@ public class ColumnAdditionByFetchingURLsOperationTests extends RefineTest {
         }
         Assert.assertFalse(process.isRunning());
 
-        int newCol = project.columnModel.getColumnByName("junk").getCellIndex();
         // Inspect rows
-        Assert.assertEquals(project.rows.get(0).getCellValue(newCol), null);
-        Assert.assertTrue(project.rows.get(1).getCellValue(newCol) != null);
-        Assert.assertTrue(ExpressionUtils.isError(project.rows.get(2).getCellValue(newCol)));
+        List<IndexedRow> rows = project.getCurrentGridState().collectRows();
+        Assert.assertEquals(rows.get(0).getRow().getCellValue(1), null);
+        Assert.assertTrue(rows.get(1).getRow().getCellValue(1) != null);
+        Assert.assertTrue(ExpressionUtils.isError(rows.get(2).getRow().getCellValue(1)));
     }
 
     @Test
     public void testHttpHeaders() throws Exception {
-        Row row0 = new Row(2);
-        row0.setCell(0, new Cell("http://headers.jsontest.com", null));
+    	project = createProject("UrlFetchingTests",
+        		new String[] {"fruits"},
+        		new Serializable[][] {
+        	{"http://headers.jsontest.com"}
+        });
         /* 
         http://headers.jsontest.com is a service which returns the HTTP request headers
         as JSON. For example:
@@ -251,8 +263,6 @@ public class ColumnAdditionByFetchingURLsOperationTests extends RefineTest {
            "Accept": "*"
         }
         */
-
-        project.rows.add(row0);
 
         String userAgentValue =  "OpenRefine";
         String authorizationValue = "Basic";
@@ -272,7 +282,7 @@ public class ColumnAdditionByFetchingURLsOperationTests extends RefineTest {
             true,
             headers);
         ProcessManager pm = project.getProcessManager();
-        Process process = op.createProcess(project, options);
+        Process process = op.createProcess(project.getHistory(), pm);
         process.startPerforming(pm);
         Assert.assertTrue(process.isRunning());
         try {
@@ -282,15 +292,15 @@ public class ColumnAdditionByFetchingURLsOperationTests extends RefineTest {
             }
         Assert.assertFalse(process.isRunning());
 
-        int newCol = project.columnModel.getColumnByName("junk").getCellIndex();
         ObjectNode headersUsed = null;
         
         // sometime, we got response: 
         // Error
         // Over Quota
         // This application is temporarily over its serving quota. Please try again later.
+        List<IndexedRow> rows = project.getCurrentGridState().collectRows();
         try { 
-            String response = project.rows.get(0).getCellValue(newCol).toString();
+            String response = rows.get(0).getRow().getCellValue(1).toString();
             headersUsed = ParsingUtilities.mapper.readValue(response, ObjectNode.class);
         } catch (IOException ex) {
             return;

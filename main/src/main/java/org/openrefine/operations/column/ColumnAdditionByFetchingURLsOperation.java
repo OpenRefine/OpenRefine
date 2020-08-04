@@ -40,43 +40,55 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 
 import org.openrefine.browsing.Engine;
 import org.openrefine.browsing.EngineConfig;
-import org.openrefine.browsing.FilteredRows;
-import org.openrefine.browsing.RowVisitor;
 import org.openrefine.expr.EvalError;
 import org.openrefine.expr.Evaluable;
 import org.openrefine.expr.ExpressionUtils;
 import org.openrefine.expr.MetaParser;
 import org.openrefine.expr.WrappedCell;
+import org.openrefine.history.History;
 import org.openrefine.history.HistoryEntry;
+import org.openrefine.history.dag.DagSlice;
 import org.openrefine.model.Cell;
 import org.openrefine.model.ColumnMetadata;
-import org.openrefine.model.Project;
+import org.openrefine.model.ColumnModel;
+import org.openrefine.model.GridState;
+import org.openrefine.model.ModelException;
 import org.openrefine.model.Row;
 import org.openrefine.model.changes.CellAtRow;
-import org.openrefine.model.changes.ColumnAdditionChange;
+import org.openrefine.model.changes.Change;
+import org.openrefine.model.changes.ChangeContext;
+import org.openrefine.model.changes.ChangeData;
+import org.openrefine.model.changes.ChangeDataSerializer;
+import org.openrefine.model.changes.RowChangeDataJoiner;
+import org.openrefine.model.changes.RowChangeDataProducer;
 import org.openrefine.operations.EngineDependentOperation;
 import org.openrefine.operations.OnError;
 import org.openrefine.process.LongRunningProcess;
 import org.openrefine.process.Process;
+import org.openrefine.process.ProcessManager;
 import org.openrefine.util.ParsingUtilities;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 
 
 public class ColumnAdditionByFetchingURLsOperation extends EngineDependentOperation {
-    public static final class HttpHeader  {
-        @JsonProperty("name")
+	final static private String urlChangeDataId = "urls";
+	
+    public static final class HttpHeader implements Serializable {
+
+		private static final long serialVersionUID = -7546898562925960196L;
+		@JsonProperty("name")
         final public String name;
         @JsonProperty("value")
         final public String value;
@@ -178,7 +190,7 @@ public class ColumnAdditionByFetchingURLsOperation extends EngineDependentOperat
     }
 
     @Override
-    protected String getDescription() {
+	public String getDescription() {
         return "Create column " + _newColumnName +
             " at index " + _columnInsertIndex +
             " by fetching URLs based on column " + _baseColumnName +
@@ -194,142 +206,124 @@ public class ColumnAdditionByFetchingURLsOperation extends EngineDependentOperat
 
 
     @Override
-    public Process createProcess(Project project, Properties options) throws Exception {
-        Engine engine = createEngine(project);
-        engine.initializeFromConfig(_engineConfig);
+    public Process createProcess(History history, ProcessManager manager) throws Exception {
+        Engine engine = createEngine(history.getCurrentGridState());
 
         Evaluable eval = MetaParser.parse(_urlExpression);
 
         return new ColumnAdditionByFetchingURLsProcess(
-            project,
+            history,
+            manager,
             engine,
             eval,
             getDescription(),
             _cacheResponses
         );
     }
+    
+    protected static class URLFetchingChangeProducer implements RowChangeDataProducer<Cell> {
+    	
+		private static final long serialVersionUID = 131571544240263338L;
+		final protected OnError    _onError;
+    	final protected List<HttpHeader>  _httpHeaders;
+    	final protected boolean     _cacheResponses;
+    	final protected int         _delay;
+    	final protected int         _cellIndex;
+    	final protected String      _baseColumnName;
+    	final protected Evaluable   _eval;
+    	// initialized lazily for serializability
+    	transient private LoadingCache<String, Serializable> _urlCache;
+    	
+    	protected URLFetchingChangeProducer(
+    			OnError onError,
+    			List<HttpHeader> httpHeaders,
+    			boolean cacheResponses,
+    			int delay,
+    			int cellIndex,
+    			String baseColumnName,
+    			Evaluable eval) {
+    		_onError = onError;
+    		_httpHeaders = httpHeaders;
+    		_cacheResponses = cacheResponses;
+    		_delay = delay;
+    		_cellIndex = cellIndex;
+    		_baseColumnName = baseColumnName;
+    		_eval = eval;
+    	}
+    	
+		@Override
+		public Cell call(long rowId, Row row) {
+			
+			Cell cell = row.getCell(_cellIndex);
+            Cell urlCell = null;
 
-    public class ColumnAdditionByFetchingURLsProcess extends LongRunningProcess implements Runnable {
-        final protected Project       _project;
-        final protected Engine        _engine;
-        final protected Evaluable     _eval;
-        final protected long          _historyEntryID;
-        protected int                 _cellIndex;
-        protected LoadingCache<String, Serializable> _urlCache;
+            Properties bindings = new Properties();
+            ExpressionUtils.bind(bindings, null, row, rowId, _baseColumnName, cell);
 
-        public ColumnAdditionByFetchingURLsProcess(
-            Project project,
-            Engine engine,
-            Evaluable eval,
-            String description,
-            boolean cacheResponses
-        ) {
-            super(description);
-            _project = project;
-            _engine = engine;
-            _eval = eval;
-            _historyEntryID = HistoryEntry.allocateID();
-            _urlCache = null;
-            if (cacheResponses) {
-                _urlCache = CacheBuilder.newBuilder()
-                .maximumSize(2048)
-                .expireAfterWrite(10, TimeUnit.MINUTES)
-                .build(
-                     new CacheLoader<String, Serializable>() {
-                        public Serializable load(String urlString) throws Exception {
-                            Serializable result = fetch(urlString);
-                            try {
-                                // Always sleep for the delay, no matter how long the
-                                // request took. This is more responsible than substracting
-                                // the time spend requesting the URL, because it naturally
-                                // slows us down if the server is busy and takes a long time
-                                // to reply.
-                                if (_delay > 0) {
-                                    Thread.sleep(_delay);
-                                }
-                            } catch (InterruptedException e) {
-                                result = null;
-                            }
-
-                            if (result == null) {
-                                // the load method should not return any null value
-                                throw new Exception("null result returned by fetch");
-                            }
-                            return result;
-                        }
-                        });
-            }
-        }
-        
-        @Override
-        protected Runnable getRunnable() {
-            return this;
-        }
-
-        @Override
-        public void run() {
-            ColumnMetadata column = _project.columnModel.getColumnByName(_baseColumnName);
-            if (column == null) {
-                _project.processManager.onFailedProcess(this, new Exception("No column named " + _baseColumnName));
-                return;
-            }
-            if (_project.columnModel.getColumnByName(_newColumnName) != null) {
-                _project.processManager.onFailedProcess(this, new Exception("Another column already named " + _newColumnName));
-                return;
-            }
-
-            List<CellAtRow> urls = new ArrayList<CellAtRow>(_project.rows.size());
-
-            FilteredRows filteredRows = _engine.getAllFilteredRows();
-            filteredRows.accept(_project, createRowVisitor(urls));
-
-            List<CellAtRow> responseBodies = new ArrayList<CellAtRow>(urls.size());
-            for (int i = 0; i < urls.size(); i++) {
-                CellAtRow urlData = urls.get(i);
-                String urlString = urlData.cell.value.toString();
-
-                Serializable response = null;
-                if (_urlCache != null) {
-                    response = cachedFetch(urlString);
+            Object o = _eval.evaluate(bindings);
+            if (o != null) {
+                if (o instanceof Cell) {
+                    urlCell = (Cell) o;
+                } else if (o instanceof WrappedCell) {
+                    urlCell = ((WrappedCell) o).cell;
                 } else {
-                    response = fetch(urlString);
-                }
-
-                if (response != null) {
-                    CellAtRow cellAtRow = new CellAtRow(
-                            urlData.row,
-                            new Cell(response, null));
-
-                    responseBodies.add(cellAtRow);
-                }
-
-                _progress = i * 100 / urls.size();
-
-                if (_canceled) {
-                    break;
+                    Serializable v = ExpressionUtils.wrapStorable(o);
+                    if (ExpressionUtils.isNonBlankData(v)) {
+                        urlCell = new Cell(v.toString(), null);
+                    }
                 }
             }
-
-            if (!_canceled) {
-                HistoryEntry historyEntry = new HistoryEntry(
-                    _historyEntryID,
-                    _project,
-                    _description,
-                    ColumnAdditionByFetchingURLsOperation.this,
-                    new ColumnAdditionChange(
-                        _newColumnName,
-                        _columnInsertIndex,
-                        responseBodies)
-                );
-
-                _project.getHistory().addEntry(historyEntry);
-                _project.processManager.onDoneProcess(this);
+            String urlString = urlCell.value.toString();
+            Serializable response = null;
+            if (_cacheResponses) {
+                response = cachedFetch(urlString);
+            } else {
+                response = fetch(urlString);
             }
-        }
 
+            if (response != null) {
+                return new Cell(response, null);
+            }
+			return null;
+		}
+		
+		protected LoadingCache<String, Serializable> getCache() {
+			if (_urlCache != null) {
+				return _urlCache;
+			}
+			_urlCache = CacheBuilder.newBuilder()
+	                .maximumSize(2048)
+	                .expireAfterWrite(10, TimeUnit.MINUTES)
+	                .build(
+	                     new CacheLoader<String, Serializable>() {
+	                        public Serializable load(String urlString) throws Exception {
+	                            Serializable result = fetch(urlString);
+	                            try {
+	                                // Always sleep for the delay, no matter how long the
+	                                // request took. This is more responsible than subtracting
+	                                // the time spend requesting the URL, because it naturally
+	                                // slows us down if the server is busy and takes a long time
+	                                // to reply.
+	                                if (_delay > 0) {
+	                                    Thread.sleep(_delay);
+	                                }
+	                            } catch (InterruptedException e) {
+	                                result = null;
+	                            }
+
+	                            if (result == null) {
+	                                // the load method should not return any null value
+	                                throw new Exception("null result returned by fetch");
+	                            }
+	                            return result;
+	                        }
+	         });
+			return _urlCache;
+		}
+		
         Serializable cachedFetch(String urlString) {
             try {
-                return  _urlCache.get(urlString);
+                return getCache().get(urlString);
             } catch(Exception e) {
                 return null;
             }
@@ -345,10 +339,10 @@ public class ColumnAdditionByFetchingURLsOperation extends EngineDependentOperat
 
             try {
                 URLConnection urlConnection = url.openConnection();
-                if (_httpHeadersJson != null) {
-                    for (int i = 0; i < _httpHeadersJson.size(); i++) {
-                        String headerLabel = _httpHeadersJson.get(i).name;
-                        String headerValue = _httpHeadersJson.get(i).value;
+                if (_httpHeaders != null) {
+                    for (int i = 0; i < _httpHeaders.size(); i++) {
+                        String headerLabel = _httpHeaders.get(i).name;
+                        String headerValue = _httpHeaders.get(i).value;
                         if (headerValue != null && !headerValue.isEmpty()) {
                             urlConnection.setRequestProperty(headerLabel, headerValue);
                         }
@@ -398,60 +392,168 @@ public class ColumnAdditionByFetchingURLsOperation extends EngineDependentOperat
                         new EvalError(e.getMessage()) : null;
             }
         }
+    	
+    }
+    
+    protected static class CellChangeDataSerializer implements ChangeDataSerializer<Cell> {
 
-        RowVisitor createRowVisitor(List<CellAtRow> cellsAtRows) {
-            return new RowVisitor() {
-                int              cellIndex;
-                Properties       bindings;
-                List<CellAtRow>  cellsAtRows;
+		private static final long serialVersionUID = 606360403156779037L;
 
-                public RowVisitor init(List<CellAtRow> cellsAtRows) {
-                    ColumnMetadata column = _project.columnModel.getColumnByName(_baseColumnName);
+		@Override
+		public String serialize(Cell changeDataItem) {
+			try {
+				return ParsingUtilities.mapper.writeValueAsString(changeDataItem);
+			} catch (JsonProcessingException e) {
+				// does not happen, Cells are always serializable
+				return null;
+			}
+		}
 
-                    this.cellIndex = column.getCellIndex();
-                    this.bindings = ExpressionUtils.createBindings();
-                    this.cellsAtRows = cellsAtRows;
-                    return this;
-                }
+		@Override
+		public Cell deserialize(String serialized) throws IOException {
+			return ParsingUtilities.mapper.readValue(serialized, Cell.class);
+		}
+    	
+    }
 
-                @Override
-                public void start(Project project) {
-                    // nothing to do
-                }
+    public class ColumnAdditionByFetchingURLsProcess extends LongRunningProcess implements Runnable {
+        final protected History       _history;
+        final protected Engine        _engine;
+        final protected Evaluable     _eval;
+        final protected long          _historyEntryID;
+        final protected ProcessManager _processManager;
+        protected int                 _cellIndex;
+   
 
-                @Override
-                public void end(Project project) {
-                    // nothing to do
-                }
-
-                @Override
-                public boolean visit(Project project, int rowIndex, Row row) {
-                    Cell cell = row.getCell(cellIndex);
-                    Cell newCell = null;
-
-                    ExpressionUtils.bind(bindings, null, row, rowIndex, _baseColumnName, cell);
-
-                    Object o = _eval.evaluate(bindings);
-                    if (o != null) {
-                        if (o instanceof Cell) {
-                            newCell = (Cell) o;
-                        } else if (o instanceof WrappedCell) {
-                            newCell = ((WrappedCell) o).cell;
-                        } else {
-                            Serializable v = ExpressionUtils.wrapStorable(o);
-                            if (ExpressionUtils.isNonBlankData(v)) {
-                                newCell = new Cell(v.toString(), null);
-                            }
-                        }
-                    }
-
-                    if (newCell != null) {
-                        cellsAtRows.add(new CellAtRow(rowIndex, newCell));
-                    }
-
-                    return false;
-                }
-            }.init(cellsAtRows);
+        public ColumnAdditionByFetchingURLsProcess(
+            History history,
+            ProcessManager processManager,
+            Engine engine,
+            Evaluable eval,
+            String description,
+            boolean cacheResponses
+        ) {
+            super(description);
+            _processManager = processManager;
+            _history = history;
+            _engine = engine;
+            _eval = eval;
+            _historyEntryID = HistoryEntry.allocateID();
         }
+        
+        @Override
+        protected Runnable getRunnable() {
+            return this;
+        }
+
+        @Override
+        public void run() {
+        	GridState state = _history.getCurrentGridState();
+            ColumnMetadata column = state.getColumnModel().getColumnByName(_baseColumnName);
+            if (column == null) {
+                _processManager.onFailedProcess(this, new Exception("No column named " + _baseColumnName));
+                return;
+            }
+            if (state.getColumnModel().getColumnByName(_newColumnName) != null) {
+                _processManager.onFailedProcess(this, new Exception("Another column already named " + _newColumnName));
+                return;
+            }
+
+            URLFetchingChangeProducer changeProducer = new URLFetchingChangeProducer(
+            		_onError,
+            		_httpHeadersJson,
+            		_cacheResponses,
+            		_delay,
+            		_cellIndex,
+            		_baseColumnName,
+            		_eval);
+            
+            ChangeData<Cell> changeData = state.mapRows(_engine.combinedRowFilters(), changeProducer);
+            
+            try {
+	            _history.getChangeDataStore().store(changeData, _historyEntryID, urlChangeDataId, new CellChangeDataSerializer());
+	
+	            if (!_canceled) {
+	                HistoryEntry historyEntry = new HistoryEntry(
+	                    _historyEntryID,
+	                    _description,
+	                    ColumnAdditionByFetchingURLsOperation.this,
+	                    new ColumnAdditionByChangeData(
+	                        urlChangeDataId,
+	                        _columnInsertIndex,
+	                        _newColumnName)
+	                );
+	
+	                _history.addEntry(historyEntry);
+	                _processManager.onDoneProcess(this);
+	            }
+            } catch(Exception e) {
+            	_processManager.onFailedProcess(this, e);
+            }
+        }
+    }
+    
+    public static class Joiner implements RowChangeDataJoiner<Cell> {
+    	
+		private static final long serialVersionUID = 8332780210267820528L;
+		private final int _columnIndex;
+    	
+    	public Joiner(int columnIndex) {
+    		_columnIndex = columnIndex;
+    	}
+
+		@Override
+		public Row call(long rowId, Row row, Cell cell) {
+			return row.insertCell(_columnIndex, cell);
+		}
+    	
+    }
+    
+    public static class ColumnAdditionByChangeData implements Change {
+    	
+    	private final String      _changeDataId;
+    	private final int         _columnIndex;
+    	private final String      _columnName;
+    	
+    	public ColumnAdditionByChangeData(
+    			String changeDataId,
+    			int columnIndex,
+    			String columnName) {
+    		_changeDataId = changeDataId;
+    		_columnIndex = columnIndex;
+    		_columnName = columnName;
+    	}
+
+		@Override
+		public GridState apply(GridState projectState, ChangeContext context) throws DoesNotApplyException {
+			ChangeData<Cell> changeData = null;
+			try {
+				changeData = context.getChangeData(_changeDataId, new CellChangeDataSerializer());
+			} catch (IOException e) {
+				throw new DoesNotApplyException(String.format("Unable to retrieve change data '%s'", _changeDataId));
+			}
+			RowChangeDataJoiner<Cell> joiner = new Joiner(_columnIndex);
+			ColumnModel columnModel;
+			ColumnMetadata column = new ColumnMetadata(_columnName);
+			try {
+				columnModel = projectState.getColumnModel().insertColumn(_columnIndex, column);
+			} catch(ModelException e) {
+				throw new Change.DoesNotApplyException(
+						String.format("A column with name '{}' cannot be added as the name conflicts with an existing column", _columnName));
+			}
+			return projectState.join(changeData, joiner, columnModel);
+		}
+
+		@Override
+		public boolean isImmediate() {
+			return false;
+		}
+
+		@Override
+		public DagSlice getDagSlice() {
+			// TODO Auto-generated method stub
+			return null;
+		}
+    	
     }
 }

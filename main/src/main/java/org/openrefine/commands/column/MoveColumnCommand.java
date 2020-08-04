@@ -61,7 +61,7 @@ public class MoveColumnCommand extends Command {
             int index = Integer.parseInt(request.getParameter("index"));
             
             Operation op = new ColumnMoveOperation(columnName, index);
-            Process process = op.createProcess(project.getHistory());
+            Process process = op.createProcess(project.getHistory(), project.getProcessManager());
             
             performProcessAndRespond(request, response, project, process);
         } catch (Exception e) {

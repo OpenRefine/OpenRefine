@@ -62,7 +62,7 @@ public class JoinMultiValueCellsCommand extends Command {
             String separator = request.getParameter("separator");
             
             Operation op = new MultiValuedCellJoinOperation(columnName, keyColumnName, separator);
-            Process process = op.createProcess(project.getHistory());
+            Process process = op.createProcess(project.getHistory(), project.getProcessManager());
             
             performProcessAndRespond(request, response, project, process);
         } catch (Exception e) {

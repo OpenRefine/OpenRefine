@@ -180,7 +180,7 @@ abstract public class MetaParser {
         if (info != null) {
             return info.parser.parse(s.substring(colon + 1), null);
         } else {
-            throw new ParsingException("No parser found for language: "+language);
+            return s_languages.get("grel").parser.parse(s, null);
         }
     }   
 }

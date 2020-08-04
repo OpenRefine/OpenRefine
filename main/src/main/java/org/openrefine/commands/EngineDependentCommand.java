@@ -79,7 +79,7 @@ abstract public class EngineDependentCommand extends Command {
             Project project = getProject(request);
             
             Operation op = createOperation(project, request, getEngineConfig(request));
-            Process process = op.createProcess(project.getHistory());
+            Process process = op.createProcess(project.getHistory(), project.getProcessManager());
             
             performProcessAndRespond(request, response, project, process);
         } catch (Exception e) {

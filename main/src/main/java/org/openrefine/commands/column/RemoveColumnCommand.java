@@ -34,7 +34,6 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package org.openrefine.commands.column;
 
 import java.io.IOException;
-import java.util.Properties;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -61,7 +60,7 @@ public class RemoveColumnCommand extends Command {
             String columnName = request.getParameter("columnName");
             
             Operation op = new ColumnRemovalOperation(columnName);
-            Process process = op.createProcess(project.getHistory());
+            Process process = op.createProcess(project.getHistory(), project.getProcessManager());
             
             performProcessAndRespond(request, response, project, process);
         } catch (Exception e) {
