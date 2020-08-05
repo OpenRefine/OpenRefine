@@ -160,7 +160,9 @@ public class TestingDatamodelRunner implements DatamodelRunner {
 
     @Override
     public <T extends Serializable> ChangeData<T> create(List<IndexedData<T>> changeData) {
-        return new TestingChangeData<T>(changeData.stream().collect(Collectors.toMap(IndexedData::getId, IndexedData::getData)));
+        return new TestingChangeData<T>(changeData.stream()
+                .filter(id -> id.getData() != null)
+                .collect(Collectors.toMap(IndexedData::getId, IndexedData::getData)));
     }
 
 }

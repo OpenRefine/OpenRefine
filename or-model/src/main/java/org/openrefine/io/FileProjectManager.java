@@ -498,6 +498,6 @@ public class FileProjectManager extends ProjectManager  {
 
     @Override
     public ChangeDataStore getChangeDataStore(long projectID) {
-        return new FileChangeDataStore(_runner, getProjectDir(projectID));
+        return _historyEntryManager.getChangeDataStore(getProjectDir(projectID));
     }
 }

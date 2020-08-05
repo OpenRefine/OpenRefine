@@ -53,18 +53,14 @@ import org.openrefine.expr.MetaParser;
 import org.openrefine.expr.WrappedCell;
 import org.openrefine.history.History;
 import org.openrefine.history.HistoryEntry;
-import org.openrefine.history.dag.DagSlice;
 import org.openrefine.model.Cell;
 import org.openrefine.model.ColumnMetadata;
-import org.openrefine.model.ColumnModel;
 import org.openrefine.model.GridState;
-import org.openrefine.model.ModelException;
 import org.openrefine.model.Row;
 import org.openrefine.model.changes.CellAtRow;
-import org.openrefine.model.changes.Change;
-import org.openrefine.model.changes.ChangeContext;
 import org.openrefine.model.changes.ChangeData;
 import org.openrefine.model.changes.ChangeDataSerializer;
+import org.openrefine.model.changes.ColumnAdditionByChangeData;
 import org.openrefine.model.changes.RowChangeDataJoiner;
 import org.openrefine.model.changes.RowChangeDataProducer;
 import org.openrefine.operations.EngineDependentOperation;
@@ -394,27 +390,7 @@ public class ColumnAdditionByFetchingURLsOperation extends EngineDependentOperat
         }
     	
     }
-    
-    protected static class CellChangeDataSerializer implements ChangeDataSerializer<Cell> {
 
-		private static final long serialVersionUID = 606360403156779037L;
-
-		@Override
-		public String serialize(Cell changeDataItem) {
-			try {
-				return ParsingUtilities.mapper.writeValueAsString(changeDataItem);
-			} catch (JsonProcessingException e) {
-				// does not happen, Cells are always serializable
-				return null;
-			}
-		}
-
-		@Override
-		public Cell deserialize(String serialized) throws IOException {
-			return ParsingUtilities.mapper.readValue(serialized, Cell.class);
-		}
-    	
-    }
 
     public class ColumnAdditionByFetchingURLsProcess extends LongRunningProcess implements Runnable {
         final protected History       _history;
@@ -471,7 +447,7 @@ public class ColumnAdditionByFetchingURLsOperation extends EngineDependentOperat
             ChangeData<Cell> changeData = state.mapRows(_engine.combinedRowFilters(), changeProducer);
             
             try {
-	            _history.getChangeDataStore().store(changeData, _historyEntryID, urlChangeDataId, new CellChangeDataSerializer());
+	            _history.getChangeDataStore().store(changeData, _historyEntryID, urlChangeDataId, new ColumnAdditionByChangeData.CellChangeDataSerializer());
 	
 	            if (!_canceled) {
 	                HistoryEntry historyEntry = new HistoryEntry(
@@ -492,68 +468,5 @@ public class ColumnAdditionByFetchingURLsOperation extends EngineDependentOperat
             }
         }
     }
-    
-    public static class Joiner implements RowChangeDataJoiner<Cell> {
-    	
-		private static final long serialVersionUID = 8332780210267820528L;
-		private final int _columnIndex;
-    	
-    	public Joiner(int columnIndex) {
-    		_columnIndex = columnIndex;
-    	}
 
-		@Override
-		public Row call(long rowId, Row row, Cell cell) {
-			return row.insertCell(_columnIndex, cell);
-		}
-    	
-    }
-    
-    public static class ColumnAdditionByChangeData implements Change {
-    	
-    	private final String      _changeDataId;
-    	private final int         _columnIndex;
-    	private final String      _columnName;
-    	
-    	public ColumnAdditionByChangeData(
-    			String changeDataId,
-    			int columnIndex,
-    			String columnName) {
-    		_changeDataId = changeDataId;
-    		_columnIndex = columnIndex;
-    		_columnName = columnName;
-    	}
-
-		@Override
-		public GridState apply(GridState projectState, ChangeContext context) throws DoesNotApplyException {
-			ChangeData<Cell> changeData = null;
-			try {
-				changeData = context.getChangeData(_changeDataId, new CellChangeDataSerializer());
-			} catch (IOException e) {
-				throw new DoesNotApplyException(String.format("Unable to retrieve change data '%s'", _changeDataId));
-			}
-			RowChangeDataJoiner<Cell> joiner = new Joiner(_columnIndex);
-			ColumnModel columnModel;
-			ColumnMetadata column = new ColumnMetadata(_columnName);
-			try {
-				columnModel = projectState.getColumnModel().insertColumn(_columnIndex, column);
-			} catch(ModelException e) {
-				throw new Change.DoesNotApplyException(
-						String.format("A column with name '{}' cannot be added as the name conflicts with an existing column", _columnName));
-			}
-			return projectState.join(changeData, joiner, columnModel);
-		}
-
-		@Override
-		public boolean isImmediate() {
-			return false;
-		}
-
-		@Override
-		public DagSlice getDagSlice() {
-			// TODO Auto-generated method stub
-			return null;
-		}
-    	
-    }
 }

@@ -113,7 +113,7 @@ public abstract class DatamodelRunnerTestBase {
         simpleChangeData = createChangeData(
            new IndexedData<String>(0L, "first"),
            new IndexedData<String>(2L, "third"),
-           new IndexedData<String>(3L, "fourth")
+           new IndexedData<String>(3L, null)
         );
         expectedRows = Arrays.asList(
                 row("a", "b"),
@@ -527,9 +527,24 @@ public abstract class DatamodelRunnerTestBase {
         
         Assert.assertNotNull(loaded.getDatamodelRunner());
         Assert.assertEquals(loaded.get(0L), "first");
+        Assert.assertNull(loaded.get(1L)); // not included in changedata
+        Assert.assertEquals(loaded.get(2L), "third");
+        Assert.assertNull(loaded.get(3L)); // null from creation
+    }
+    
+    @Test
+    public void testSerializeChangeDataDirAlreadyExists() throws IOException {
+        File tempFile = TestUtils.createTempDirectory("testchangedata");
+        
+        simpleChangeData.saveToFile(tempFile, stringSerializer);
+        
+        ChangeData<String> loaded = SUT.loadChangeData(tempFile, stringSerializer);
+        
+        Assert.assertNotNull(loaded.getDatamodelRunner());
+        Assert.assertEquals(loaded.get(0L), "first");
         Assert.assertNull(loaded.get(1L));
         Assert.assertEquals(loaded.get(2L), "third");
-        Assert.assertEquals(loaded.get(3L), "fourth");
+        Assert.assertNull(loaded.get(3L));
     }
     
     @Test
@@ -539,7 +554,7 @@ public abstract class DatamodelRunnerTestBase {
         List<IndexedData<String>> expected = new ArrayList<>();
         expected.add(new IndexedData<String>(0L, "first"));
         expected.add(new IndexedData<String>(2L, "third"));
-        expected.add(new IndexedData<String>(3L, "fourth"));
+        // nulls are skipped
         Assert.assertEquals(actual, expected);
     }
     
@@ -582,7 +597,7 @@ public abstract class DatamodelRunnerTestBase {
             { "a", "first" },
             { "", null },
             { "c", "third" },
-            { null, "fourth" }
+            { null, null }
         });
         
         Assert.assertEquals(joined.getColumnModel(), expected.getColumnModel());

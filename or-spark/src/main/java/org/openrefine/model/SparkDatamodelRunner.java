@@ -157,6 +157,7 @@ public class SparkDatamodelRunner implements DatamodelRunner {
     @Override
     public <T extends Serializable> ChangeData<T> create(List<IndexedData<T>> changeData) {
         List<Tuple2<Long,T>> tuples = changeData.stream()
+                .filter(id -> id.getData() != null)
                 .map(i -> new Tuple2<Long,T>(i.getId(), i.getData()))
                 .collect(Collectors.toList());
         JavaPairRDD<Long,T> rdd = JavaPairRDD.fromJavaRDD(context.parallelize(tuples, defaultParallelism));

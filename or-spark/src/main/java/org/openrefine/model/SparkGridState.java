@@ -662,7 +662,8 @@ public class SparkGridState implements GridState {
 
     @Override
     public <T extends Serializable> ChangeData<T> mapRows(RowFilter filter, RowChangeDataProducer<T> rowMapper) {
-        JavaPairRDD<Long, T> data = RDDUtils.mapKeyValuesToValues(grid.filter(wrapRowFilter(filter)), rowMap(rowMapper));
+        JavaPairRDD<Long, T> data = RDDUtils.mapKeyValuesToValues(grid.filter(wrapRowFilter(filter)), rowMap(rowMapper))
+                .filter(t -> t._2 != null);
         return new SparkChangeData<T>(data, runner);
     }
     

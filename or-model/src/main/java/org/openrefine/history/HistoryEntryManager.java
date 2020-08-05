@@ -89,9 +89,16 @@ public class HistoryEntryManager {
     	Metadata metadata = ParsingUtilities.mapper.readValue(metadataFile, Metadata.class);
     	// Load the initial grid
     	GridState gridState = runner.loadGridState(gridFile);
-    	// Set up the file-based change data store
-    	ChangeDataStore dataStore = new FileChangeDataStore(runner, new File(dir, CHANGE_SUBDIR));
-    	return new History(gridState, dataStore, metadata.entries, metadata.position);
+    	return new History(gridState, getChangeDataStore(dir), metadata.entries, metadata.position);
+    }
+    
+    /**
+     * The change data store associated with a project
+     * @param projectDir the root project directory
+     * @return
+     */
+    public ChangeDataStore getChangeDataStore(File projectDir) {
+        return new FileChangeDataStore(runner, new File(projectDir, CHANGE_SUBDIR));
     }
     
     /**
