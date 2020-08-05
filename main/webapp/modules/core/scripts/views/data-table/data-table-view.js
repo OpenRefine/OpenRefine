@@ -460,14 +460,8 @@ DataTableView.prototype._renderDataTables = function(table, tableHeader) {
 
     clearTimeout($.data(this, 'scrollTimer'));
     $.data(this, 'scrollTimer', setTimeout(function() {
-      if(positionLastElement.top <= 0 && positionLastElement.bottom >= 0) {
-        var goto = self.getPageNumberSrcolling(self._scrollTop);
-        self._onChangeGotoScrolling(self._scrollTop, goto, table);
-      }
-
-      if(positionFirstElement.top < self._headerTop + 1 && positionFirstElement.bottom >= window.innerHeight) {
-        var goto = self.getPageNumberSrcolling(self._scrollTop);
-        self._onChangeGotoScrolling(self._scrollTop, goto, table);
+      if((positionLastElement.top <= 0 && positionLastElement.bottom >= 0) || (positionFirstElement.top < self._headerTop + 1 && positionFirstElement.bottom >= window.innerHeight)) {
+        self.getPageNumberSrcolling(self._scrollTop, table);
       }
       prevOperationSet = false;
     }, 250));
@@ -475,9 +469,19 @@ DataTableView.prototype._renderDataTables = function(table, tableHeader) {
   });
 };
 
-DataTableView.prototype.getPageNumberSrcolling = function(scrollPosition) {
-  var num = Math.floor(scrollPosition / this._sizeSinglePage);
-  return num;
+DataTableView.prototype.getPageNumberSrcolling = function(scrollPosition, table) {
+  // Loading sign
+  var width = 150 + 0.5 * window.innerWidth;
+  window.img = document.createElement('img');
+  img.setAttribute('src', 'images/large-spinner.gif');
+  img.style.zIndex = '10';
+  img.style.top = '55%';
+  img.style.left = width + 'px';
+  img.style.position = 'fixed';
+  table.appendChild(img);
+
+  var goto = Math.floor(scrollPosition / this._sizeSinglePage);
+  this._onChangeGotoScrolling(goto, table);
 };
 
 DataTableView.prototype._adjustNextSetClasses = function(start, top) {
@@ -507,7 +511,7 @@ DataTableView.prototype._adjustNextSetClasses = function(start, top) {
   this._addHeights(heightToAddTop, heightToAddBottom);
 };
 
-DataTableView.prototype._addHeights = function(heightToAddTop, heightToAddBottom) {
+DataTableView.prototype._addHeights = function(heightToAddTop, heightToAddBottom, table) {
   $('.data-table tbody tr:first').css('height', heightToAddTop);
 
   document.querySelector('.data-table').insertRow();
@@ -522,16 +526,17 @@ DataTableView.prototype._addHeights = function(heightToAddTop, heightToAddBottom
       $('.data-table tbody tr').eq(this._pageSize / 2).addClass('load-next-set');
     }
   }
+   if(table !== undefined) table.removeChild(img);
 };
 
-DataTableView.prototype._adjustNextSetClassesSpeed = function(modifiedScrollPosition, start) {
+DataTableView.prototype._adjustNextSetClassesSpeed = function(modifiedScrollPosition, start, table) {
   var heightToAddTop = modifiedScrollPosition;
   var heightToAddBottom = Math.max(0, this._sizeRowsTotal - (modifiedScrollPosition + this._sizeSinglePage));
 
   $('.data-table tbody tr').slice(1, $('.data-table tbody tr').length - theProject.rowModel.rows.length).remove();
   this._pageStart = this._totalSize - this._pageSize;
 
-  this._addHeights(heightToAddTop, heightToAddBottom);
+  this._addHeights(heightToAddTop, heightToAddBottom, table);
 };
 
 DataTableView.prototype._showRows = function(start, onDone) {
@@ -545,7 +550,7 @@ DataTableView.prototype._showRows = function(start, onDone) {
   }, this._sorting);
 };
 
-DataTableView.prototype._showRowsBottom = function(scrollPosition, table, start, onDone) {
+DataTableView.prototype._showRowsBottom = function(table, start, onDone) {
   var self = this;
 
   this._totalSize = start + this._pageSize;
@@ -562,7 +567,7 @@ DataTableView.prototype._showRowsBottom = function(scrollPosition, table, start,
   }, this._sorting);
 };
 
-DataTableView.prototype._showRowsTop = function(scrollPosition, table, start, onDone) {
+DataTableView.prototype._showRowsTop = function(table, start, onDone) {
   var self = this;
 
   this._totalSize = start + 2 * this._pageSize;
@@ -579,7 +584,7 @@ DataTableView.prototype._showRowsTop = function(scrollPosition, table, start, on
   }, this._sorting);
 };
 
-DataTableView.prototype._showRowsSpeed = function(modifiedScrollPosition, scrollPosition, table, start, onDone) {
+DataTableView.prototype._showRowsSpeed = function(modifiedScrollPosition, table, start, onDone) {
   var self = this;
 
   this._totalSize = start +  this._pageSize;
@@ -588,7 +593,7 @@ DataTableView.prototype._showRowsSpeed = function(modifiedScrollPosition, scroll
     $('.last-row').remove();
 
     loadRows();
-    self._adjustNextSetClassesSpeed(modifiedScrollPosition, start);
+    self._adjustNextSetClassesSpeed(modifiedScrollPosition, start, table);
 
     if (onDone) {
       onDone();
@@ -596,20 +601,20 @@ DataTableView.prototype._showRowsSpeed = function(modifiedScrollPosition, scroll
   }, this._sorting);
 };
 
-DataTableView.prototype._onChangeGotoScrolling = function(scrollPosition, gotoPageNumber, table, elmt, evt) {
+DataTableView.prototype._onChangeGotoScrolling = function(gotoPageNumber, table, elmt, evt) {
   var modifiedScrollPosition = this._sizeRowFirst * gotoPageNumber * this._pageSize;
-  this._showRowsSpeed(modifiedScrollPosition, scrollPosition, table, gotoPageNumber * this._pageSize);
+  this._showRowsSpeed(modifiedScrollPosition, table, gotoPageNumber * this._pageSize);
 };
 
-DataTableView.prototype._onBottomTable = function(scrollPosition, table, elmt, evt) {
+DataTableView.prototype._onBottomTable = function(table, elmt, evt) {
   if(this._totalSize < theProject.rowModel.filtered) {
-    this._showRowsBottom(scrollPosition, table, this._totalSize);
+    this._showRowsBottom(table, this._totalSize);
   }
 };
 
-DataTableView.prototype._onTopTable = function(scrollPosition, table, elmt, evt) {
+DataTableView.prototype._onTopTable = function(table, elmt, evt) {
   if(this._pageStart - this._pageSize >= 0) {
-    this._showRowsTop(scrollPosition, table, this._pageStart - this._pageSize);
+    this._showRowsTop(table, this._pageStart - this._pageSize);
   }
 };
 
