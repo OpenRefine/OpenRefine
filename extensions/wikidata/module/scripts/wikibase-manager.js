@@ -32,6 +32,10 @@ WikibaseManager.getSelectedWikibaseSiteIri = function () {
   return WikibaseManager.getSelectedWikibase().wikibase.site_iri;
 };
 
+WikibaseManager.getSelectedWikibaseOAuth = function() {
+  return WikibaseManager.getSelectedWikibase().oauth;
+};
+
 /**
  * Returns the default reconciliation service URL of the Wikibase,
  * such as "https://wdreconcile.toolforge.org/${lang}/api".

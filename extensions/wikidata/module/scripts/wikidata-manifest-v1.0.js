@@ -79,6 +79,9 @@ const WikidataManifestV1_0 = {
       "as_references_qid": "Q54828450"
     }
   },
+  "oauth": {
+    "registration_page": "https://meta.wikimedia.org/wiki/Special:OAuthConsumerRegistration/propose"
+  },
   "reconciliation": {
     "endpoint": "https://wdreconcile.toolforge.org/${lang}/api"
   }

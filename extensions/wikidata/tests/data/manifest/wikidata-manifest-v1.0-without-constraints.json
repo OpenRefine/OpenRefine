@@ -13,6 +13,9 @@
             "subclass_of": "P279"
         }
     },
+    "oauth": {
+        "registration_page": "https://meta.wikimedia.org/wiki/Special:OAuthConsumerRegistration/propose"
+    },
     "reconciliation": {
         "endpoint": "https://wdreconcile.toolforge.org/${lang}/api"
     }

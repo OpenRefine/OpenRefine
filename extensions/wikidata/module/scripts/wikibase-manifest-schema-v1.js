@@ -2,7 +2,7 @@ const WikibaseManifestSchemaV1 = {
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "TBD",
   "type": "object",
-  "description": "The schema validates Wikibase manifests with version 1.x",
+  "description": "The schema validates Wikibase manifests with version 1.x. The manifest contains configurations of basic information (e.g. URL of the main page), extensions (e.g. OAuth extension) or external services (e.g. Reconciliation service) of a Wikibase",
   "properties": {
     "version": {
       "type": "string",
@@ -75,6 +75,17 @@ const WikibaseManifestSchemaV1 = {
         }
       },
       "required": ["properties"]
+    },
+    "oauth": {
+      "type": "object",
+      "description": "The configurations of the OAuth extension. Not required. Configuring this if and only if the OAuth extension is installed",
+      "properties": {
+        "registration_page": {
+          "type": "string",
+          "description": "The url of the OAuth consumer registration page, 'https://meta.wikimedia.org/wiki/Special:OAuthConsumerRegistration/propose' for Wikidata"
+        }
+      },
+      "required": ["registration_page"]
     },
     "reconciliation": {
       "type": "object",

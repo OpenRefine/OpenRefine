@@ -91,8 +91,8 @@ ManageAccountDialog.displayPasswordLogin = function (onSuccess) {
   elmts.loginButton.text($.i18n('wikibase-account/log-in'));
   elmts.usernameInput.focus();
 
-  // We don't support logging in with owner-only consumer if the target Wikibase is not Wikidata.
-  if (WikibaseManager.getSelectedWikibaseName().toLowerCase() !== "wikidata") {
+  // We don't support logging in with owner-only consumer if the target Wikibase doesn't support OAuth.
+  if (!WikibaseManager.getSelectedWikibaseOAuth()) {
     elmts.dialogFooter.hide();
   }
 
@@ -134,7 +134,8 @@ ManageAccountDialog.displayOwnerOnlyConsumerLogin = function (onSuccess) {
   var frame = $(DOM.loadHTML("wikidata", "scripts/dialogs/owner-only-consumer-login-dialog.html"));
   var elmts = DOM.bind(frame);
   ManageAccountDialog.initCommon(elmts);
-  elmts.explainOwnerOnlyConsumerWiki.html($.i18n('wikibase-account/explain-owner-only-consumer-wiki'));
+  elmts.explainOwnerOnlyConsumerWiki.html($.i18n('wikibase-account/explain-owner-only-consumer-wiki',
+      WikibaseManager.getSelectedWikibaseOAuth().registration_page));
   elmts.explainPasswordLogin.html($.i18n('wikibase-account/explain-password-login'));
   elmts.invalidCredentials.text($.i18n('wikibase-account/invalid-credentials'));
   elmts.invalidCredentials.hide();

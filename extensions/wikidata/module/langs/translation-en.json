@@ -79,7 +79,7 @@
     "wikibase-preview/new-id": "new item",
     "wikibase-account/dialog-header": "$1 account",
     "wikibase-account/explain-log-in": "Logging in to <a href=\"$1\" target=\"_blank\">$2</a> lets you to upload edits directly from OpenRefine.",
-    "wikibase-account/explain-owner-only-consumer-wiki": "See this <a href=\"https://github.com/OpenRefine/OpenRefine/wiki/Wikidata-owner-only-consumer\" target=\"_blank\">wiki</a> to get your owner-only consumer if you don't have one.",
+    "wikibase-account/explain-owner-only-consumer-wiki": "You need to register an owner-only consumer <a href=\"$1\" target=\"_blank\">here</a> first if you don't have one. See this <a href=\"https://github.com/OpenRefine/OpenRefine/wiki/Wikidata-owner-only-consumer\" target=\"_blank\">wiki</a> to learn how to get one.",
     "wikibase-account/explain-password-login": "You can also <a>login with your username/password.</a>",
     "wikibase-account/explain-owner-only-consumer-login": "You can also <a>login with your owner-only consumer.</a>",
     "wikibase-account/invalid-credentials": "Invalid credentials",
