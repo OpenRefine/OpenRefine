@@ -92,7 +92,7 @@ WikibaseManager.saveWikibases = function () {
 };
 
 // TODO: test
-WikibaseManager.loadWikibases = function () {
+WikibaseManager.loadWikibases = function (onDone) {
   $.ajax({
     async: true,
     url: "command/core/get-preference?" + $.param({
@@ -117,10 +117,34 @@ WikibaseManager.loadWikibases = function () {
             WikibaseManager.wikibases[manifest.mediawiki.name] = manifest;
           }
         });
+
+        WikibaseManager.selected = WikibaseManager.selectDefaultWikibaseAccordingToSavedSchema();
+
+        if (onDone) {
+          onDone();
+        }
       }
     },
     dataType: "json"
   });
+};
+
+WikibaseManager.selectDefaultWikibaseAccordingToSavedSchema = function () {
+  let schema = theProject.overlayModels.wikibaseSchema || {};
+  if (!schema.wikibasePrefix) {
+    return "Wikidata";
+  }
+
+  for (let wikibaseName in WikibaseManager.wikibases) {
+    if (WikibaseManager.wikibases.hasOwnProperty(wikibaseName)) {
+      let wikibase = WikibaseManager.wikibases[wikibaseName];
+      if (schema.wikibasePrefix === wikibase.wikibase.site_iri) {
+        return wikibase.mediawiki.name;
+      }
+    }
+  }
+
+  return "Wikidata";
 };
 
 WikibaseManager.fetchManifestFromURL = function (manifestURL, onSuccess, onError, silent) {
@@ -157,6 +181,3 @@ WikibaseManager.fetchManifestFromURL = function (manifestURL, onSuccess, onError
   });
 };
 
-(function () {
-  WikibaseManager.loadWikibases();
-})();

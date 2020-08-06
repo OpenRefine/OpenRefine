@@ -65,6 +65,7 @@ function init() {
         "scripts/bettersuggest.js",
         "scripts/previewrenderer.js",
         "scripts/schema-alignment.js",
+        "scripts/wikidata-extension-manager.js",
         "scripts/dialogs/manage-account-dialog.js",
         "scripts/dialogs/perform-edits-dialog.js",
         "scripts/dialogs/import-schema-dialog.js",

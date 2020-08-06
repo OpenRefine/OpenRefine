@@ -74,7 +74,7 @@ const WikibaseManifestSchemaV1 = {
           "required": ["property_constraint_pid"]
         }
       },
-      "required": ["properties"]
+      "required": ["site_iri", "properties"]
     },
     "oauth": {
       "type": "object",

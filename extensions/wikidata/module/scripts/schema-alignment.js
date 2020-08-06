@@ -1348,20 +1348,20 @@ SchemaAlignment.preview = function() {
   );
 };
 
-Refine.registerUpdateFunction(function(options) {
-   // Inject tabs in any project where the schema has been defined
-   if(theProject.overlayModels.wikibaseSchema && !SchemaAlignment.isSetUp()) {
-       SchemaAlignment.setUpTabs();
-   }
-   if (SchemaAlignment.isSetUp() && (options.everythingChanged || options.modelsChanged ||
-       options.rowsChanged || options.rowMetadataChanged || options.cellsChanged || options.engineChanged)) {
-       if (!SchemaAlignment._hasUnsavedChanges) {
-          SchemaAlignment._discardChanges();
-       }
-       SchemaAlignment.updateColumns();
-       SchemaAlignment.preview();
-   }
-});
+// Used for injecting tabs in any project where the schema has been defined.
+SchemaAlignment.onProjectUpdate = function(options) {
+  if(theProject.overlayModels.wikibaseSchema && !SchemaAlignment.isSetUp()) {
+    SchemaAlignment.setUpTabs();
+  }
+  if (SchemaAlignment.isSetUp() && (options.everythingChanged || options.modelsChanged ||
+      options.rowsChanged || options.rowMetadataChanged || options.cellsChanged || options.engineChanged)) {
+    if (!SchemaAlignment._hasUnsavedChanges) {
+      SchemaAlignment._discardChanges();
+    }
+    SchemaAlignment.updateColumns();
+    SchemaAlignment.preview();
+  }
+};
 
 /*************************
  * WARNINGS RENDERING *
