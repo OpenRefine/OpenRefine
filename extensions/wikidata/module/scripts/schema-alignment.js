@@ -251,13 +251,22 @@ var beforeUnload = function(e) {
 $(window).bind('beforeunload', beforeUnload);
 
 SchemaAlignment._reset = function(schema) {
-  if (!schema || !schema.wikibasePrefix || schema.wikibasePrefix !== WikibaseManager.getSelectedWikibaseSiteIri()) {
-    schema = {
-      wikibasePrefix: WikibaseManager.getSelectedWikibaseSiteIri(),
-      mediaWikiApiEndpoint: WikibaseManager.getSelectedWikibaseApi(),
-      itemDocuments: []
-    };
+  if (!schema) {
+    schema = {};
   }
+
+  // fall back to Wikidata
+  if (!schema.wikibasePrefix) {
+    schema.wikibasePrefix = WikidataManifestV1_0.wikibase.site_iri;
+  }
+  if (!schema.mediaWikiApiEndpoint) {
+    schema.mediaWikiApiEndpoint = WikidataManifestV1_0.mediawiki.api;
+  }
+
+  if (!schema.itemDocuments) {
+    schema.itemDocuments = [];
+  }
+
   this._originalSchema = schema;
   this._schema = cloneDeep(this._originalSchema); // this is what can be munched on
   this._copiedReference = null;
