@@ -266,7 +266,7 @@ DataTableColumnHeaderUI.prototype._showSortingCriterion = function(criterion, ha
 
   elmts.valueTypeOptions
   .find("input[type='radio'][value='" + criterion.valueType + "']")
-  .attr("checked", "checked");
+  .prop('checked', true);
 
   var setValueType = function(valueType) {
     var forward = elmts.directionForwardLabel;
@@ -292,12 +292,12 @@ DataTableColumnHeaderUI.prototype._showSortingCriterion = function(criterion, ha
   });
 
   if (criterion.valueType == "string" && criterion.caseSensitive) {
-    elmts.caseSensitiveCheckbox.attr("checked", "checked");
+    elmts.caseSensitiveCheckbox.prop('checked', true);
   }
 
   elmts.directionOptions
   .find("input[type='radio'][value='" + (criterion.reverse ? "reverse" : "forward") + "']")
-  .attr("checked", "checked");
+  .prop('checked', true);
 
   if (hasOtherCriteria) {
     elmts.sortAloneContainer.show();

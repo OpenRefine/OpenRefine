@@ -154,7 +154,7 @@ TemplatingExporterDialog.prototype._export = function() {
     var appendField = function(name, value) {
         $('<textarea />')
             .attr("name", name)
-            .attr("value", value)
+            .val(value)
             .appendTo(form);
     };
 

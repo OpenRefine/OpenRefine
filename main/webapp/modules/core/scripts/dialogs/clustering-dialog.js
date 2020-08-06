@@ -132,11 +132,11 @@ ClusteringDialog.prototype._createDialog = function() {
               label = keyers[i];
           }
           var option = $('<option></option>')
-             .attr('value', keyers[i])
+             .val(keyers[i])
              .text(label)
              .appendTo(self._elmts.keyingFunctionSelector);
           if (i == 0) {
-             option.attr('selected', 'true');
+             option.prop('selected', 'true');
           }
        }
        for(i = 0; i < distances.length; i++) {
@@ -145,11 +145,11 @@ ClusteringDialog.prototype._createDialog = function() {
               label = distances[i];
           }
           var option = $('<option></option>')
-             .attr('value', distances[i])
+             .val(distances[i])
              .text(label)
              .appendTo(self._elmts.distanceFunctionSelector);
           if (i == 0) {
-             option.attr('selected', 'true');
+             option.prop('selected', 'true');
           }
        }
        self._level = DialogSystem.showDialog(dialog);
@@ -269,11 +269,11 @@ ClusteringDialog.prototype._renderTable = function(clusters) {
                 }).appendTo(tr.insertCell(3));
 
             if (cluster.edit) {
-                editCheck.attr("checked", "true");
+                editCheck.prop('checked', true);
             }
 
             $('<input type="text" size="25" />')
-                .attr("value", cluster.value)
+                .val(cluster.value)
                 .bind("keyup change input",function() {
                     cluster.value = this.value;
                 }).appendTo(tr.insertCell(4));
@@ -367,11 +367,11 @@ ClusteringDialog.prototype._updateData = function(data) {
 };
 
 ClusteringDialog.prototype._selectAll = function() {
-    $(".clustering-dialog-entry-table input:not(:checked)").attr('checked', true).change();
+    $(".clustering-dialog-entry-table input:not(:checked)").prop('checked', true).change();
 };
 
 ClusteringDialog.prototype._deselectAll = function() {
-    $(".clustering-dialog-entry-table input:checked").attr('checked', false).change();
+    $(".clustering-dialog-entry-table input:checked").prop('checked', false).change();
 };
 
 ClusteringDialog.prototype._onApplyClose = function() {

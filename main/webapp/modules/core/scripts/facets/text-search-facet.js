@@ -121,10 +121,10 @@ TextSearchFacet.prototype._initializeUI = function() {
 
   this._elmts.titleSpan.text(this._config.name);
   if (this._config.caseSensitive) {
-    this._elmts.caseSensitiveCheckbox.attr("checked", "true");
+    this._elmts.caseSensitiveCheckbox.prop("checked", true);
   }
   if (this._config.mode === "regex") {
-    this._elmts.regexCheckbox.attr("checked", "true");
+    this._elmts.regexCheckbox.prop('checked', true);
   }
 
   this._elmts.removeButton.click(function() { self._remove(); });

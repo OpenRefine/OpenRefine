@@ -149,7 +149,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
     var services = ReconciliationManager.getAllServices();
     for (var i = 0; i < services.length; i++) {
         var service = services[i];
-        $('<option></option>').attr('value', service.url)
+        $('<option></option>').val(service.url)
            .text(service.name)
            .appendTo(select);
     }
@@ -251,7 +251,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
     for (var i = 0; i < columns.length; i++) {
       var column2 = columns[i];
       if (column !== column2) {
-        $('<option>').attr("value", column2.name).text(column2.name).appendTo(elmts.toColumnSelect);
+        $('<option>').val(column2.name).text(column2.name).appendTo(elmts.toColumnSelect);
       }
     }
 
