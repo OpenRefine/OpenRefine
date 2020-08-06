@@ -471,7 +471,9 @@ DataTableView.prototype._renderDataTables = function(table, tableHeader) {
 
 DataTableView.prototype.getPageNumberSrcolling = function(scrollPosition, table) {
   // Loading sign
-  var width = 150 + 0.5 * window.innerWidth;
+  if(document.querySelector('div#body').classList.contains('hide-left-panel'))
+    var width = 0.5 * window.innerWidth;
+  else var width = 150 + 0.5 * window.innerWidth;
   window.img = document.createElement('img');
   img.setAttribute('src', 'images/large-spinner.gif');
   img.style.zIndex = '10';
