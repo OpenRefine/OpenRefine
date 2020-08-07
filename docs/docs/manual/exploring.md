@@ -96,8 +96,6 @@ We will see in the sidebar that the countries identified are displayed, along wi
 |Nigeria|1|
 |Turkey|1|
 
-A text facet is very simple: it takes the total contents of the cells of the column in question and matches them up. It does no guessing about typos or near-matches. 
-
 If we want to learn more about a particular country, we can click on its appearance in the facet sidebar. This narrows our dataset down temporarily to only rows matching that facet. When we use a **facet** to narrow or select something to focus on, we are **filtering**. 
 
 You’ll see the “10 rows” notification change to “4 matching rows (10 total)” if you click on “People’s Republic of China”. In the data grid, you’ll see the same number of rows, but only the ones matching your current filter. Each row will maintain its original numbering, though - in this case, rows #1, 2, and 8.
@@ -110,7 +108,7 @@ With the numeric facet, we are given a scale from the smallest to the largest va
 
 When you look at the facet display of countries, you should see a smaller list with a reduced count: OpenRefine is now displaying the facets of the 3 matching rows, not the total dataset of 10 rows. 
 
-We can combine these facets - say, by narrowing to only the Chinese cities with populations greater than 20 million - simply by clicking in both. You should see 12 matching rows for both these criteria. 
+We can combine these facets - say, by narrowing to only the Chinese cities with populations greater than 20 million - simply by clicking in both. You should see 2 matching rows for both these criteria. 
 
 #### Things to know about facets
 
@@ -156,7 +154,7 @@ OpenRefine will recognize a variety of formats and convert them, including conve
 
 ![A screenshot of different date formats being converted, and one error.](/img/dates.png)
 
-You may need to do some reformatting if your dates are not being recognized by the `toDate()` function. For example, in the image above, the date formatted with "7AM" is giving an error message, but "2:42 PM" and "3:22PM" are being converted.
+You may need to do some reformatting if your dates are not being recognized by the `toDate()` function. For example, in the image above, the date that includes "7AM" is giving an error message, but the ones with "2:42 PM" and "3:22PM" are being converted.
 
 ### Scatterplot facet
 
@@ -254,7 +252,7 @@ The text-length facet returns a numerical value for each cell and plots it on a 
 
 ```value.length()```
 
-This can be useful to look for values that did not successfully split on an earlier split operation, 
+This can be useful to, for example, look for values that did not successfully split on an earlier split operation, or to validate that data is a certain expected length (such as whether a date, as YYYY/MM/DD, is eight to ten characters). 
 
 **There is also a “Log of text-length facet” that I will explain later!**
 
@@ -315,7 +313,7 @@ You can press “invert” on this facet to then see blank cells or invalid emai
 
 This filter works differently than facets because it is always active as long as it appears in the sidebar. If you “reset” it, you will delete all the text or expression you have entered. 
 
-You can apply multiple text filters in succession which will successively narrow your data subset. This can be useful if you apply multiple inverted filters, such as to filter out all rows that respond “yes” or “maybe” and only look at the remaining responses.
+You can apply multiple text filters in succession, which will successively narrow your data subset. This can be useful if you apply multiple inverted filters, such as to filter out all rows that respond “yes” or “maybe” and only look at the remaining responses.
 
 ## Sort and View
 
