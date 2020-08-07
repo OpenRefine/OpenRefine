@@ -135,7 +135,7 @@
     <plugin>
         <groupId>pl.project13.maven</groupId>
         <artifactId>git-commit-id-plugin</artifactId>
-        <version>4.0.0</version>
+        <version>4.0.0</version> <!-- WARNING: 4.0.1 and higher don't work for JSON output -->
         <executions>
             <execution>
                 <id>get-the-git-infos</id>
@@ -146,7 +146,6 @@
         </executions>
         <configuration>
             <dotGitDirectory>${project.basedir}/.git</dotGitDirectory>
-            <prefix>git</prefix>
             <verbose>false</verbose>
             <generateGitPropertiesFile>true</generateGitPropertiesFile>
             <generateGitPropertiesFilename>${project.build.outputDirectory}/git.properties</generateGitPropertiesFilename>
@@ -158,6 +157,11 @@
                 <always>false</always>
                 <dirty>-dirty</dirty>
             </gitDescribe>
+            <includeOnlyProperties>
+              <includeOnlyProperty>^git.build.(time|version)$</includeOnlyProperty>
+              <includeOnlyProperty>^git.branch</includeOnlyProperty>
+              <includeOnlyProperty>^git.commit.id.(abbrev|full|describe)$</includeOnlyProperty>
+            </includeOnlyProperties>
         </configuration>
       </plugin>
     </plugins>
