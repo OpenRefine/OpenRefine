@@ -13,9 +13,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+import java.util.stream.Stream;
 import java.util.zip.GZIPOutputStream;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.google.common.collect.Iterators;
 import org.testng.Assert;
 
 import org.openrefine.browsing.facets.RecordAggregator;
@@ -407,10 +409,26 @@ public class TestingGridState implements GridState {
         // even if this implementation does not rely on it.
         TestingDatamodelRunner.ensureSerializable(rowMapper);
         TestingDatamodelRunner.ensureSerializable(filter);
+
         Map<Long, T> changeData = new HashMap<>();
-        indexedRows().stream()
-                .filter(ir -> filter.filterRow(ir.getIndex(), ir.getRow()))
-                .forEach(ir -> changeData.put(ir.getIndex(), rowMapper.call(ir.getIndex(), ir.getRow())));
+        Stream<IndexedRow> filteredRows = indexedRows().stream()
+                .filter(ir -> filter.filterRow(ir.getIndex(), ir.getRow()));
+        if (rowMapper.getBatchSize() == 1) {
+            filteredRows.forEach(ir -> changeData.put(ir.getIndex(), rowMapper.call(ir.getIndex(), ir.getRow())));
+        } else {
+            Iterator<List<IndexedRow>> batches = Iterators.partition(filteredRows.iterator(), rowMapper.getBatchSize());
+            while (batches.hasNext()) {
+                List<IndexedRow> batch = batches.next();
+                List<T> results = rowMapper.call(batch);
+                if (results.size() != batch.size()) {
+                    throw new IllegalStateException(
+                            String.format("Change data producer returned %d results on a batch of %d rows", results.size(), batch.size()));
+                }
+                for (int i = 0; i != batch.size(); i++) {
+                    changeData.put(batch.get(i).getIndex(), results.get(i));
+                }
+            }
+        }
         return new TestingChangeData<T>(changeData);
     }
 
