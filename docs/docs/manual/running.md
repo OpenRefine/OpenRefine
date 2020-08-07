@@ -191,7 +191,7 @@ The syntax within the `.ini` files is as follows:
 
 <TabItem value="win">
 
-Inside either of the `.ini` files, insert lines in this way:
+Inside the `refine.ini` file, insert lines in this way:
 
 ```
 -Drefine.port=3333 
