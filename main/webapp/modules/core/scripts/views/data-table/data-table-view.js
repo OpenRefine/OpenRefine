@@ -391,12 +391,12 @@ DataTableView.prototype._renderDataTables = function(table, tableHeader) {
     }
   };
 
-  window.loadRows = function(start) {
+  window.loadRows = function(start, top) {
     var rows = theProject.rowModel.rows;
-    var even = true;
+    var even = (start % 2) ? false : true;
     for (var r = 0; r < rows.length; r++) {
       var row = rows[r];
-      if(start != null) {
+      if(top) {
         var tr = table.insertRow(r + 1);
       } else {
         var tr = table.insertRow(table.rows.length);
@@ -483,7 +483,7 @@ DataTableView.prototype.getPageNumberSrcolling = function(scrollPosition, table)
   table.appendChild(img);
 
   var goto = Math.floor(scrollPosition / this._sizeSinglePage);
-  this._onChangeGotoScrolling(goto, table);
+  this._onChangeGotoScrolling(scrollPosition, goto, table);
 };
 
 DataTableView.prototype._adjustNextSetClasses = function(start, top) {
@@ -528,12 +528,12 @@ DataTableView.prototype._addHeights = function(heightToAddTop, heightToAddBottom
       $('.data-table tbody tr').eq(this._pageSize / 2).addClass('load-next-set');
     }
   }
-   if(table !== undefined) table.removeChild(img);
+  if(table !== undefined) table.removeChild(img);
 };
 
-DataTableView.prototype._adjustNextSetClassesSpeed = function(modifiedScrollPosition, start, table) {
-  var heightToAddTop = modifiedScrollPosition;
-  var heightToAddBottom = Math.max(0, this._sizeRowsTotal - (modifiedScrollPosition + this._sizeSinglePage));
+DataTableView.prototype._adjustNextSetClassesSpeed = function(start, table) {
+  var heightToAddTop = Math.max(0, start * this._sizeRowFirst);
+  var heightToAddBottom = Math.max(0, this._sizeRowsTotal - this._totalSize * this._sizeRowFirst);
 
   $('.data-table tbody tr').slice(1, $('.data-table tbody tr').length - theProject.rowModel.rows.length).remove();
   this._pageStart = this._totalSize - this._pageSize;
@@ -569,15 +569,15 @@ DataTableView.prototype._showRowsBottom = function(table, start, onDone) {
   }, this._sorting);
 };
 
-DataTableView.prototype._showRowsTop = function(table, start, onDone) {
+DataTableView.prototype._showRowsTop = function(table, start, limit, onDone) {
   var self = this;
 
   this._totalSize = start + 2 * this._pageSize;
 
-  Refine.fetchRows(start, this._pageSize, function() {
+  Refine.fetchRows(start, limit, function() {
     $('.last-row').remove();
 
-    loadRows(start);
+    loadRows(start, true);
     self._adjustNextSetClasses(start, true);
 
     if (onDone) {
@@ -586,7 +586,7 @@ DataTableView.prototype._showRowsTop = function(table, start, onDone) {
   }, this._sorting);
 };
 
-DataTableView.prototype._showRowsSpeed = function(modifiedScrollPosition, table, start, onDone) {
+DataTableView.prototype._showRowsSpeed = function(table, start, onDone) {
   var self = this;
 
   this._totalSize = start +  this._pageSize;
@@ -594,8 +594,8 @@ DataTableView.prototype._showRowsSpeed = function(modifiedScrollPosition, table,
   Refine.fetchRows(start, this._pageSize, function() {
     $('.last-row').remove();
 
-    loadRows();
-    self._adjustNextSetClassesSpeed(modifiedScrollPosition, start, table);
+    loadRows(start);
+    self._adjustNextSetClassesSpeed(start, table);
 
     if (onDone) {
       onDone();
@@ -603,9 +603,10 @@ DataTableView.prototype._showRowsSpeed = function(modifiedScrollPosition, table,
   }, this._sorting);
 };
 
-DataTableView.prototype._onChangeGotoScrolling = function(gotoPageNumber, table, elmt, evt) {
-  var modifiedScrollPosition = this._sizeRowFirst * gotoPageNumber * this._pageSize;
-  this._showRowsSpeed(modifiedScrollPosition, table, gotoPageNumber * this._pageSize);
+DataTableView.prototype._onChangeGotoScrolling = function(scrollPosition, gotoPageNumber, table, elmt, evt) {
+  var row = scrollPosition / this._sizeRowFirst;
+  row -= this._pageSize / 2.5;
+  this._showRowsSpeed(table, Math.floor(row));
 };
 
 DataTableView.prototype._onBottomTable = function(table, elmt, evt) {
@@ -616,7 +617,9 @@ DataTableView.prototype._onBottomTable = function(table, elmt, evt) {
 
 DataTableView.prototype._onTopTable = function(table, elmt, evt) {
   if(this._pageStart - this._pageSize >= 0) {
-    this._showRowsTop(table, this._pageStart - this._pageSize);
+    this._showRowsTop(table, this._pageStart - this._pageSize, this._pageSize);
+  } else {
+    this._showRowsTop(table, 0, this._pageStart);
   }
 };
 
