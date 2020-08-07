@@ -30,6 +30,9 @@ open-refine.log
 .vscode
 .metadata # Eclipse plugins specific
 
+# Locally stored "Eclipse launch configurations"
+*.launch
+
 .idea
 *.iml
 
@@ -55,3 +58,12 @@ apache-maven-*-bin.tar.gz
 
 # Ignore refine-dev.ini
 refine-dev.ini
+
+# Java annotation processor (APT)
+.factorypath
+
+# Code Recommenders
+.recommenders/
+
+# STS (Spring Tool Suite)
+.springBeans
