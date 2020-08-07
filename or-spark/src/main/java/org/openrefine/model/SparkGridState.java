@@ -659,13 +659,6 @@ public class SparkGridState implements GridState {
                 overlayModels,
                 runner);
     }
-
-    @Override
-    public <T extends Serializable> ChangeData<T> mapRows(RowFilter filter, RowChangeDataProducer<T> rowMapper) {
-        JavaPairRDD<Long, T> data = RDDUtils.mapKeyValuesToValues(grid.filter(wrapRowFilter(filter)), rowMap(rowMapper))
-                .filter(t -> t._2 != null);
-        return new SparkChangeData<T>(data, runner);
-    }
     
     private static <T extends Serializable> Function2<Long, Row, T> rowMap(RowChangeDataProducer<T> mapper) {
         return new Function2<Long, Row, T>() {
@@ -676,6 +669,39 @@ public class SparkGridState implements GridState {
             public T call(Long id, Row row) throws Exception {
                 return mapper.call(id, row);
             }
+        };
+    }
+
+    @Override
+    public <T extends Serializable> ChangeData<T> mapRows(RowFilter filter, RowChangeDataProducer<T> rowMapper) {
+        JavaPairRDD<Long, T> data;
+        JavaPairRDD<Long, Row> filteredGrid = grid.filter(wrapRowFilter(filter));
+        if (rowMapper.getBatchSize() == 1) {
+            data = RDDUtils.mapKeyValuesToValues(filteredGrid, rowMap(rowMapper));
+        } else {
+            JavaRDD<List<IndexedRow>> batched = RDDUtils.partitionWiseBatching(filteredGrid.map(t -> new IndexedRow(t._1, t._2)), rowMapper.getBatchSize());
+            data = JavaPairRDD.fromJavaRDD(batched.flatMap(batchedRowMap(rowMapper)));
+        }
+                
+        return new SparkChangeData<T>(data.filter(t -> t._2 != null), runner);
+    }
+   
+    private static <T extends Serializable> FlatMapFunction<List<IndexedRow>, Tuple2<Long, T>> batchedRowMap(RowChangeDataProducer<T> rowMapper) {
+        return new FlatMapFunction<List<IndexedRow>, Tuple2<Long, T>>() {
+
+            private static final long serialVersionUID = 1L;
+
+            @Override
+            public Iterator<Tuple2<Long, T>> call(List<IndexedRow> rows) throws Exception {
+                List<T> results = rowMapper.call(rows);
+                if (rows.size() != results.size()) {
+                    throw new IllegalStateException(String.format("Change data producer returned %d results on a batch of %d rows", results.size(), rows.size()));
+                }
+                return IntStream.range(0, rows.size())
+                        .mapToObj(i -> new Tuple2<Long, T>(rows.get(i).getIndex(), results.get(i)))
+                        .iterator();
+            }
+            
         };
     }
 

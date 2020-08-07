@@ -276,11 +276,14 @@ public interface GridState {
     
     /**
      * Extract change data by applying a function to each filtered row.
+     * The calls to the change data producer are batched if requested by the producer.
      * 
      * @param <T> the type of change data that is serialized to disk for each row
      * @param filter a filter to select which rows to map
      * @param rowMapper produces the change data for each row
      * @return
+     * @throws IllegalStateException if the row mapper returns a batch of results with a
+     * different size than the batch of rows it was called on
      */
     public <T extends Serializable> ChangeData<T> mapRows(RowFilter filter, RowChangeDataProducer<T> rowMapper);
     

@@ -1,16 +1,20 @@
 package org.openrefine.util;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
 import org.apache.spark.api.java.JavaPairRDD;
 import org.apache.spark.api.java.JavaRDD;
+import org.apache.spark.api.java.function.FlatMapFunction;
 import org.apache.spark.api.java.function.Function2;
 import org.apache.spark.api.java.function.PairFlatMapFunction;
 import org.apache.spark.rdd.OrderedRDDFunctions;
 import org.openrefine.model.Row;
 import org.openrefine.model.rdd.SortedRDD;
 import org.openrefine.model.rdd.ZippedWithIndexRDD;
+
+import com.google.common.collect.Iterators;
 
 import scala.Tuple2;
 import scala.math.Ordering;
@@ -176,6 +180,35 @@ public class RDDUtils {
             
         };
         return pairRDD.mapPartitionsToPair(mapper, true);
+    }
+    
+    /**
+     * Groups elements of the RDD by batches of the specified size.
+     * It does so partition-wise, so the RDD may contain multiple incomplete
+     * batches.
+     * 
+     * @param <T>
+     * @param rdd
+     * @param batchSize
+     * @return
+     */
+    public static <T> JavaRDD<List<T>> partitionWiseBatching(JavaRDD<T> rdd, int batchSize) {
+        FlatMapFunction<Iterator<T>, List<T>> f = partitionWiseBatchingFlatMap(batchSize);
+        // the conversion to ArrayList is necessary to ensure serializability of each element
+        return rdd.mapPartitions(f).map(l -> new ArrayList<T>(l));
+    }
+    
+    private static <T> FlatMapFunction<Iterator<T>, List<T>> partitionWiseBatchingFlatMap(int batchSize) {
+        return new FlatMapFunction<Iterator<T>, List<T>>() {
+
+            private static final long serialVersionUID = -1984177858467149132L;
+
+            @Override
+            public Iterator<List<T>> call(Iterator<T> t) throws Exception {
+                return Iterators.partition(t, (int)batchSize);
+            }
+            
+        };
     }
     
 }

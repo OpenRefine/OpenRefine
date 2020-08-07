@@ -13,6 +13,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.apache.commons.collections.IteratorUtils;
+import org.apache.commons.lang.NotImplementedException;
 import org.openrefine.browsing.facets.AllFacetsAggregator;
 import org.openrefine.browsing.facets.Facet;
 import org.openrefine.browsing.facets.FacetResult;
@@ -569,6 +570,77 @@ public abstract class DatamodelRunnerTestBase {
         
     };
     
+    @Test
+    public void testGenerateChangeData() {
+        ChangeData<String> changeData = simpleGrid.mapRows(myRowFilter, concatChangeMapper);
+        
+        Assert.assertEquals(changeData.get(0L), "b_concat");
+        Assert.assertNull(changeData.get(1L)); // because it is excluded by the facet
+    }
+    
+    public static RowChangeDataProducer<String> batchedChangeMapper = new RowChangeDataProducer<String>() {
+
+        private static final long serialVersionUID = -2137895769820170019L;
+
+        @Override
+        public List<String> call(List<IndexedRow> rows) {
+            String val = "";
+            List<String> results = new ArrayList<>();
+            for (IndexedRow ir : rows) {
+                val = val + "," + ir.getRow().getCellValue(1).toString();
+                results.add(val);
+            }
+            return results;
+        }
+        
+        @Override
+        public int getBatchSize() {
+            return 2;
+        }
+
+        @Override
+        public String call(long rowId, Row row) {
+            throw new NotImplementedException();
+        }
+        
+    };
+    
+    @Test
+    public void testGenerateBatchedChangeData() {
+        ChangeData<String> changeData = simpleGrid.mapRows(myRowFilter, batchedChangeMapper);
+        
+        Assert.assertEquals(changeData.get(0L), ",b");
+        Assert.assertNull(changeData.get(1L)); // because it is excluded by the facet
+    }
+    
+    public static RowChangeDataProducer<String> faultyBatchedChangeMapper = new RowChangeDataProducer<String>() {
+
+        private static final long serialVersionUID = -2137895769820170019L;
+
+        @Override
+        public List<String> call(List<IndexedRow> rows) {
+            // it is incorrect to return a list of a different size than the argument
+            return Collections.emptyList();
+        }
+        
+        @Override
+        public int getBatchSize() {
+            return 2;
+        }
+
+        @Override
+        public String call(long rowId, Row row) {
+            throw new NotImplementedException();
+        }
+        
+    };
+    
+    // TODO: require a more specific exception
+    @Test(expectedExceptions = Exception.class)
+    public void testGenerateFaultyChangeData() {
+        simpleGrid.mapRows(myRowFilter, faultyBatchedChangeMapper).get(1L);
+    }
+    
     public static RowChangeDataJoiner<String> joiner = new RowChangeDataJoiner<String>() {
 
         private static final long serialVersionUID = -21382677502256432L;
@@ -579,14 +651,7 @@ public abstract class DatamodelRunnerTestBase {
         }
         
     };
-    
-    @Test
-    public void testGenerateChangeData() {
-        ChangeData<String> changeData = simpleGrid.mapRows(myRowFilter, concatChangeMapper);
-        
-        Assert.assertEquals(changeData.get(0L), "b_concat");
-        Assert.assertNull(changeData.get(1L)); // because it is excluded by the facet
-    }
+  
     
     @Test
     public void testJoinChangeData() {
