@@ -96,7 +96,7 @@ We will see in the sidebar that the countries identified are displayed, along wi
 |Nigeria|1|
 |Turkey|1|
 
-If we want to learn more about a particular country, we can click on its appearance in the facet sidebar. This narrows our dataset down temporarily to only rows matching that facet. When we use a **facet** to narrow or select something to focus on, we are **filtering**. 
+If we want to learn more about a particular country, we can click on its appearance in the facet sidebar. This narrows our dataset down temporarily to only rows matching that facet.
 
 You’ll see the “10 rows” notification change to “4 matching rows (10 total)” if you click on “People’s Republic of China”. In the data grid, you’ll see the same number of rows, but only the ones matching your current filter. Each row will maintain its original numbering, though - in this case, rows #1, 2, and 8.
 
