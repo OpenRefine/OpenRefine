@@ -58,5 +58,6 @@
     "database-source/databaseUserPlaceholder": "ユーザー名を入力してください",
     "database-source/databasePortPlaceholder": "ポート番号を入力してください（例: 3306）",
     "database-source/databaseHostPlaceholder": "データベースのドメイン名かIPアドレスを入力してください",
-    "database-source/connectionNamePlaceholder": "新規接続名を入力してください"
+    "database-source/connectionNamePlaceholder": "新規接続名を入力してください",
+    "database-source/new-connection-legend": "新規接続エディタ"
 }
