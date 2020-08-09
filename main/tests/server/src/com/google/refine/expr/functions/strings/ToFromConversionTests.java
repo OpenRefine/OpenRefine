@@ -141,6 +141,7 @@ public class ToFromConversionTests extends RefineTest {
       Assert.assertTrue(invoke("toDate", "") instanceof EvalError);
       Assert.assertTrue(invoke("toDate", 1.0) instanceof EvalError);
       Assert.assertTrue(invoke("toDate", "2012-03-01", "xxx") instanceof EvalError); // bad format string
+      Assert.assertTrue(invoke("toDate", "2012-03-01", 1L) instanceof EvalError); // non-string format arg
       Assert.assertTrue(invoke("toDate", "P1M") instanceof EvalError); // Durations aren't supported
 
       Assert.assertTrue(invoke("toDate", "2012-03-01") instanceof OffsetDateTime);

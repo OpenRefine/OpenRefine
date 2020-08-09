@@ -62,7 +62,7 @@ public class ToDate implements Function {
     public Object call(Properties bindings, Object[] args) {
         String o1;
         Boolean month_first = null;
-        List<String> formats =  new ArrayList<String>();  
+        List<String> formats =  new ArrayList<>();
         OffsetDateTime date = null;
         
         //Check there is at least one argument
@@ -84,7 +84,11 @@ public class ToDate implements Function {
         }
         
         if(args.length==1) {
-            date = parse(o1,true,formats);
+            try {
+                date = parse(o1, true, formats);
+            } catch (DateFormatException e) {
+                // Should never happen since we're using an empty format list
+            }
         } else if (args.length > 1) {
             if(args[1] instanceof Boolean) {
                 month_first = (Boolean) args[1];
@@ -93,19 +97,21 @@ public class ToDate implements Function {
             } else {
                 return new EvalError("Invalid argument");
             }
-            for(int i=2;i<args.length;i++) {
+            for (int i = 2; i < args.length; i++) {
                 if (!(args[i] instanceof String)) {
-                    // skip formats that aren't strings
-                    continue;
+                    return new EvalError("Invalid non-string format argument " + args[i].toString());
                 }
                 formats.add(StringUtils.trim((String) args[i]));
             }
-            if(month_first != null) {
-                date = parse(o1,month_first,formats);
-            } else {
-                date = parse(o1,formats);
+            try {
+                if (month_first != null) {
+                    date = parse(o1, month_first, formats);
+                } else {
+                    date = parse(o1, formats);
+                }
+            } catch (DateFormatException e) {
+                return new EvalError(e.getMessage());
             }
-            
         }
         if(date != null) {
             return date;
@@ -113,7 +119,7 @@ public class ToDate implements Function {
         return new EvalError("Unable to convert to a date");
     }
     
-    private OffsetDateTime parse(String o1, Boolean month_first, List<String> formats) {
+    private OffsetDateTime parse(String o1, Boolean month_first, List<String> formats) throws DateFormatException {
         if(month_first != null) {
             try {
                return CalendarParser.parseAsOffsetDateTime( o1, (month_first) ? CalendarParser.MM_DD_YY : CalendarParser.DD_MM_YY);
@@ -144,7 +150,7 @@ public class ToDate implements Function {
         return locale;
     }
 
-    private OffsetDateTime parse(String o1, List<String> formats) {
+    private OffsetDateTime parse(String o1, List<String> formats) throws DateFormatException {
         Locale locale = getLocale(formats);
         DateFormat formatter;
         OffsetDateTime date;
@@ -154,8 +160,7 @@ public class ToDate implements Function {
                 try {
                     formatter = new SimpleDateFormat(formats.get(i),locale);
                 } catch (IllegalArgumentException e) {
-                    // TODO: We should pass back error info here to let user know format string is bad
-                    return null;
+                    throw new DateFormatException("Unable to parse date format " + formats.get(i));
                 }
                 date = parse(o1, formatter);
                 if (date != null) {
@@ -202,6 +207,14 @@ public class ToDate implements Function {
     @Override
     public String getReturns() {
         return "date";
+    }
+
+    class DateFormatException extends Exception {
+        private static final long serialVersionUID = -6506736145451835731L;
+
+        public DateFormatException(String string) {
+            super(string);
+        }
     }
 
 }
