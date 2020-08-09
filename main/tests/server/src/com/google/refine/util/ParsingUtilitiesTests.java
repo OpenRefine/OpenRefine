@@ -33,7 +33,9 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.util;
 
-import java.io.*;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.util.zip.GZIPOutputStream;
 
 import java.time.OffsetDateTime;
@@ -49,7 +51,7 @@ import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
 import com.google.refine.RefineTest;
-import com.google.refine.util.ParsingUtilities;
+
 
 public class ParsingUtilitiesTests extends RefineTest {
     
@@ -92,24 +94,26 @@ public class ParsingUtilitiesTests extends RefineTest {
         Assert.assertEquals(2017, ParsingUtilities.stringToLocalDate("2017-04-03T08:09:43.123Z").getYear());
         Assert.assertEquals(2017, ParsingUtilities.stringToLocalDate("2017-04-03T08:09:43+00:00").getYear());
     }
-    
+
     /**
      * Converting between string and local time must be reversible, no matter the timezone.
      */
     @Test
     public void stringToLocalDateNonUTC() {
-    	TimeZone.setDefault(TimeZone.getTimeZone("JST"));
-    	try {
-    		Assert.assertEquals(ParsingUtilities.stringToLocalDate("2001-08-12T00:00:00Z").getHour(), 9);
-    		Assert.assertEquals(ParsingUtilities.localDateToString(
-    				ParsingUtilities.stringToLocalDate("2001-08-12T00:00:00Z")),
-    				"2001-08-12T00:00:00Z");
-    		
-    	} finally {
-    		TimeZone.setDefault(TimeZone.getTimeZone("UTC"));
-    	}
+        TimeZone originalTimeZone = TimeZone.getDefault();
+        try {
+            TimeZone.setDefault(TimeZone.getTimeZone("JST"));
+            Assert.assertEquals(ParsingUtilities.stringToLocalDate("2001-08-12T00:00:00Z").getHour(), 9);
+            // TODO: This doesn't really make sense since a LocalDate, by definition, doesn't have timezone info
+            Assert.assertEquals(ParsingUtilities.localDateToString(
+                    ParsingUtilities.stringToLocalDate("2001-08-12T00:00:00Z")),
+                    "2001-08-12T00:00:00Z");
+
+        } finally {
+            TimeZone.setDefault(originalTimeZone);
+        }
     }
-    
+
     @Test
     public void parseProjectModifiedBeforeJDK8() {
         String modified = "2014-01-15T21:46:25Z";

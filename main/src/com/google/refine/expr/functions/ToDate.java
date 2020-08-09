@@ -37,10 +37,11 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
-import java.time.ZonedDateTime;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.IllformedLocaleException;
 import java.util.List;
 import java.util.Locale;
 import java.util.Properties;
@@ -61,7 +62,7 @@ public class ToDate implements Function {
     public Object call(Properties bindings, Object[] args) {
         String o1;
         Boolean month_first = null;
-        List<String> formats =  new ArrayList<String>();  
+        List<String> formats =  new ArrayList<>();
         OffsetDateTime date = null;
         
         //Check there is at least one argument
@@ -83,7 +84,11 @@ public class ToDate implements Function {
         }
         
         if(args.length==1) {
-            date = parse(o1,true,formats);
+            try {
+                date = parse(o1, true, formats);
+            } catch (DateFormatException e) {
+                // Should never happen since we're using an empty format list
+            }
         } else if (args.length > 1) {
             if(args[1] instanceof Boolean) {
                 month_first = (Boolean) args[1];
@@ -92,19 +97,21 @@ public class ToDate implements Function {
             } else {
                 return new EvalError("Invalid argument");
             }
-            for(int i=2;i<args.length;i++) {
+            for (int i = 2; i < args.length; i++) {
                 if (!(args[i] instanceof String)) {
-                    // skip formats that aren't strings
-                    continue;
+                    return new EvalError("Invalid non-string format argument " + args[i].toString());
                 }
                 formats.add(StringUtils.trim((String) args[i]));
             }
-            if(month_first != null) {
-                date = parse(o1,month_first,formats);
-            } else {
-                date = parse(o1,formats);
+            try {
+                if (month_first != null) {
+                    date = parse(o1, month_first, formats);
+                } else {
+                    date = parse(o1, formats);
+                }
+            } catch (DateFormatException e) {
+                return new EvalError(e.getMessage());
             }
-            
         }
         if(date != null) {
             return date;
@@ -112,7 +119,7 @@ public class ToDate implements Function {
         return new EvalError("Unable to convert to a date");
     }
     
-    private OffsetDateTime parse(String o1, Boolean month_first, List<String> formats) {
+    private OffsetDateTime parse(String o1, Boolean month_first, List<String> formats) throws DateFormatException {
         if(month_first != null) {
             try {
                return CalendarParser.parseAsOffsetDateTime( o1, (month_first) ? CalendarParser.MM_DD_YY : CalendarParser.DD_MM_YY);
@@ -121,31 +128,30 @@ public class ToDate implements Function {
         }
         return parse(o1,formats);
     }
-    
-    private OffsetDateTime parse(String o1, List<String> formats) {
-        if(formats.size()>0) {
-            String f1 = formats.get(0);
-            formats.remove(0);
-            return parse(o1,f1,formats);   
-        } else {
-            return parse(o1,Locale.getDefault(),formats);
-        }
-    }
-    
-    private OffsetDateTime parse(String o1, String f1, List<String> formats) {
+
+    private Locale getLocale(List<String> formats) {
         Locale locale = Locale.getDefault();
-        Locale possibleLocale = Locale.forLanguageTag(f1); // Java 1.7+ 
-        for (Locale l : DateFormat.getAvailableLocales()) {
-            if (l.equals(possibleLocale)) {
-                locale = possibleLocale;
-            } else {
-                formats.add(0,f1);
+        if (formats.size() > 0) {
+            String possibleLanguageTag = formats.get(0);
+            try {
+                Locale possibleLocale = new Locale.Builder().setLanguageTag(possibleLanguageTag).build();
+                // Check if it's in our list of supported date locales
+                for (Locale l : DateFormat.getAvailableLocales()) {
+                    if (l.equals(possibleLocale)) {
+                        locale = possibleLocale;
+                        formats.remove(0);
+                    }
+                }
+            } catch (IllformedLocaleException e) {
+                // We ignore this. It PROBABLY means we got a date format string, not a language code
+                // although it could be a malformed language tag like zh_TW instead of zh-TW
             }
         }
-        return parse(o1,locale,formats);
+        return locale;
     }
-    
-    private OffsetDateTime parse(String o1, Locale locale, List<String> formats) {
+
+    private OffsetDateTime parse(String o1, List<String> formats) throws DateFormatException {
+        Locale locale = getLocale(formats);
         DateFormat formatter;
         OffsetDateTime date;
         //need to try using each format in the formats list!
@@ -154,7 +160,7 @@ public class ToDate implements Function {
                 try {
                     formatter = new SimpleDateFormat(formats.get(i),locale);
                 } catch (IllegalArgumentException e) {
-                    continue;
+                    throw new DateFormatException("Unable to parse date format " + formats.get(i));
                 }
                 date = parse(o1, formatter);
                 if (date != null) {
@@ -167,9 +173,9 @@ public class ToDate implements Function {
             return date;
         } else {
             try {
-                return javax.xml.bind.DatatypeConverter.parseDateTime(o1).getTime().toInstant()
-                		.plusSeconds(ZonedDateTime.now().getOffset().getTotalSeconds())
-                		.atOffset(ZoneOffset.of("Z"));
+                Calendar parsedDate = javax.xml.bind.DatatypeConverter.parseDateTime(o1);
+                int offsetMillis = parsedDate.getTimeZone().getOffset(parsedDate.getTimeInMillis());
+                return parsedDate.toInstant().plusMillis(offsetMillis).atOffset(ZoneOffset.of("Z"));
             } catch (IllegalArgumentException e2) {
                 return null;
             }
@@ -201,6 +207,14 @@ public class ToDate implements Function {
     @Override
     public String getReturns() {
         return "date";
+    }
+
+    class DateFormatException extends Exception {
+        private static final long serialVersionUID = -6506736145451835731L;
+
+        public DateFormatException(String string) {
+            super(string);
+        }
     }
 
 }
