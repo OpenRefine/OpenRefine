@@ -1,6 +1,8 @@
 /*
 
 Copyright 2010, Google Inc.
+Copyright 2013,2020 OpenRefine contributors
+
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -40,11 +42,8 @@ import java.util.zip.GZIPOutputStream;
 
 import java.time.OffsetDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.TimeZone;
 
-import org.apache.commons.lang3.text.StrSubstitutor;
 import org.slf4j.LoggerFactory;
 import org.testng.Assert;
 import org.testng.annotations.BeforeTest;
@@ -114,26 +113,6 @@ public class ParsingUtilitiesTests extends RefineTest {
         }
     }
 
-    @Test
-    public void parseProjectModifiedBeforeJDK8() {
-        String modified = "2014-01-15T21:46:25Z";
-        Assert.assertNotEquals(ParsingUtilities.stringToLocalDate(modified).toString(), 
-                modified);
-    }
-    
-    @Test
-    public void strSubstitutorTest() {
-        Map<String, String> data = new HashMap<String, String>(6);
-        
-        data.put("value", "1234");
-        data.put("field_format", "String");
-        
-        StrSubstitutor sub = new StrSubstitutor(data);
-        String message = "The value ${value} in row ${row_number} and column ${column_number} is not type ${field_type} and format ${field_format}";
-        String result = sub.replace(message);
-        Assert.assertTrue(result.contains("1234"));
-    }
-    
     @Test
     public void testParseGZIPInutstream() throws IOException {
         // Test decompressing gzip
