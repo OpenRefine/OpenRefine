@@ -45,6 +45,8 @@ A row is a simple way to organize data: a series of cells, one cell per column. 
 
 Generally, when you import some data, OpenRefine reads that data in row mode. From there you can convert the project into records mode. OpenRefine remembers this action and will present you with records mode each time you open the project from then on. 
 
+OpenRefine understands records based on the content of the first column. Splitting a row into a multi-row record will base all association on the first column in your dataset. If you have more than one column to split out into multiple rows, OpenRefine will keep your data associated with its original record: you can imagine this structure as a tree with many branches, all leading back to the same trunk. 
+
 OpenRefine assigns a unique key behind the scenes, so your records don’t need a unique identifier. You can keep track of which rows are assigned to which record by the record number that appears under the “All” column.
 
 To [split multi-valued cells](transforming-data#split-multi-valued-cells) and apply other operations that take advantage of records mode, see [Transforming data](transforming-data). 
