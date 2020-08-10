@@ -42,7 +42,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.openrefine.model.Cell;
-import org.openrefine.model.Project;
+import org.openrefine.model.ColumnModel;
 import org.openrefine.model.Row;
 import org.openrefine.util.ParsingUtilities;
 import org.slf4j.Logger;
@@ -105,11 +105,11 @@ abstract public class ReconConfig implements Serializable {
     
     abstract public int getBatchSize();
     
-    abstract public String getBriefDescription(Project project, String columnName);
+    abstract public String getBriefDescription(String columnName);
     
     abstract public ReconJob createJob(
-        Project     project, 
-        int         rowIndex, 
+        ColumnModel columnModel, 
+        long         rowIndex, 
         Row         row,
         String      columnName,
         Cell        cell

@@ -9,20 +9,26 @@ import org.openrefine.model.ColumnModel;
 import org.openrefine.model.GridState;
 import org.openrefine.model.ModelException;
 import org.openrefine.model.Row;
-import org.openrefine.util.ParsingUtilities;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.core.JsonProcessingException;
 
-public class ColumnAdditionByChangeData implements Change {
+/**
+ * Adds a new column based on data fetched from an external process.
+ * If no column name is supplied, then the change will replace the column
+ * at the given index instead.
+ * 
+ * @author Antonin Delpeuch
+ *
+ */
+public class ColumnChangeByChangeData implements Change {
 	
 	private final String      _changeDataId;
 	private final int         _columnIndex;
 	private final String      _columnName;
 	
 	@JsonCreator
-	public ColumnAdditionByChangeData(
+	public ColumnChangeByChangeData(
 			@JsonProperty("changeDataId")
 			String changeDataId,
 			@JsonProperty("columnIndex")
@@ -57,14 +63,16 @@ public class ColumnAdditionByChangeData implements Change {
 		} catch (IOException e) {
 			throw new DoesNotApplyException(String.format("Unable to retrieve change data '%s'", _changeDataId));
 		}
-		RowChangeDataJoiner<Cell> joiner = new Joiner(_columnIndex);
-		ColumnModel columnModel;
-		ColumnMetadata column = new ColumnMetadata(_columnName);
-		try {
-			columnModel = projectState.getColumnModel().insertColumn(_columnIndex, column);
-		} catch(ModelException e) {
-			throw new Change.DoesNotApplyException(
-					String.format("A column with name '{}' cannot be added as the name conflicts with an existing column", _columnName));
+		RowChangeDataJoiner<Cell> joiner = new Joiner(_columnIndex, _columnName != null);
+		ColumnModel columnModel = projectState.getColumnModel();
+		if (_columnName != null) {
+    		ColumnMetadata column = new ColumnMetadata(_columnName);
+    		try {
+    			columnModel = projectState.getColumnModel().insertColumn(_columnIndex, column);
+    		} catch(ModelException e) {
+    			throw new Change.DoesNotApplyException(
+    					String.format("A column with name '{}' cannot be added as the name conflicts with an existing column", _columnName));
+    		}
 		}
 		return projectState.join(changeData, joiner, columnModel);
 	}
@@ -80,39 +88,24 @@ public class ColumnAdditionByChangeData implements Change {
 		return null;
 	}
 
-    public static class CellChangeDataSerializer implements ChangeDataSerializer<Cell> {
-
-        private static final long serialVersionUID = 606360403156779037L;
-
-        @Override
-        public String serialize(Cell changeDataItem) {
-            try {
-                return ParsingUtilities.mapper.writeValueAsString(changeDataItem);
-            } catch (JsonProcessingException e) {
-                // does not happen, Cells are always serializable
-                return null;
-            }
-        }
-
-        @Override
-        public Cell deserialize(String serialized) throws IOException {
-            return ParsingUtilities.mapper.readValue(serialized, Cell.class);
-        }
-        
-    }
-	
     public static class Joiner implements RowChangeDataJoiner<Cell> {
         
         private static final long serialVersionUID = 8332780210267820528L;
         private final int _columnIndex;
+        private final boolean _add;
         
-        public Joiner(int columnIndex) {
+        public Joiner(int columnIndex, boolean add) {
             _columnIndex = columnIndex;
+            _add = add;
         }
 
         @Override
         public Row call(long rowId, Row row, Cell cell) {
-            return row.insertCell(_columnIndex, cell);
+            if (_add) {
+                return row.insertCell(_columnIndex, cell);
+            } else {
+                return row.withCell(_columnIndex, cell);
+            }
         }
         
     }

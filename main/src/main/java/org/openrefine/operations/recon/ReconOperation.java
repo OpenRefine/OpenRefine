@@ -35,24 +35,30 @@ package org.openrefine.operations.recon;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
+import java.util.concurrent.ExecutionException;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 import org.openrefine.browsing.Engine;
 import org.openrefine.browsing.EngineConfig;
-import org.openrefine.browsing.FilteredRows;
-import org.openrefine.browsing.RowVisitor;
-import org.openrefine.expr.ExpressionUtils;
+import org.openrefine.history.History;
 import org.openrefine.history.HistoryEntry;
 import org.openrefine.model.Cell;
-import org.openrefine.model.ColumnMetadata;
-import org.openrefine.model.Project;
+import org.openrefine.model.ColumnModel;
+import org.openrefine.model.GridState;
+import org.openrefine.model.IndexedRow;
 import org.openrefine.model.Row;
-import org.openrefine.model.changes.CellChange;
+import org.openrefine.model.RowFilter;
+import org.openrefine.model.changes.CellChangeDataSerializer;
 import org.openrefine.model.changes.Change;
-import org.openrefine.model.changes.ReconChange;
+import org.openrefine.model.changes.ChangeData;
+import org.openrefine.model.changes.ColumnChangeByChangeData;
+import org.openrefine.model.changes.RowChangeDataProducer;
 import org.openrefine.model.recon.Recon;
 import org.openrefine.model.recon.ReconConfig;
 import org.openrefine.model.recon.ReconJob;
@@ -60,6 +66,7 @@ import org.openrefine.model.recon.StandardReconConfig;
 import org.openrefine.operations.EngineDependentOperation;
 import org.openrefine.process.LongRunningProcess;
 import org.openrefine.process.Process;
+import org.openrefine.process.ProcessManager;
 import org.openrefine.util.ParsingUtilities;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -67,6 +74,9 @@ import org.slf4j.LoggerFactory;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.JsonNode;
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
 
 public class ReconOperation extends EngineDependentOperation {
     final static Logger logger = LoggerFactory.getLogger("recon-operation");
@@ -89,17 +99,18 @@ public class ReconOperation extends EngineDependentOperation {
     }
 
     @Override
-    public Process createProcess(Project project, Properties options) throws Exception {
+    public Process createProcess(History history, ProcessManager manager) throws Exception {
         return new ReconProcess(
-            project, 
-            getEngineConfig(),
+            history,
+            manager,
+            new Engine(history.getCurrentGridState(), getEngineConfig()),
             getDescription()
         );
     }
     
     @Override
-    protected String getDescription() {
-        return _reconConfig.getBriefDescription(project, _columnName);
+	public String getDescription() {
+        return _reconConfig.getBriefDescription(_columnName);
     }
     
     @JsonProperty("config")
@@ -132,11 +143,12 @@ public class ReconOperation extends EngineDependentOperation {
     }
     
     public class ReconProcess extends LongRunningProcess implements Runnable {
-        final protected Project      _project;
-        final protected EngineConfig _engineConfig;
-        final protected long         _historyEntryID;
-        protected List<ReconEntry>   _entries;
-        protected int                _cellIndex;
+        final protected History        _history;
+        final protected ProcessManager _manager;
+        final protected Engine         _engine;
+        final protected long           _historyEntryID;
+        protected List<ReconEntry>     _entries;
+        protected int                  _cellIndex;
         
         protected final String _addJudgmentFacetJson =
                 "{\n" + 
@@ -165,13 +177,15 @@ public class ReconOperation extends EngineDependentOperation {
         protected JsonNode _addJudgmentFacet, _addScoreFacet;
         
         public ReconProcess(
-            Project project, 
-            EngineConfig engineConfig, 
+            History history,
+            ProcessManager manager,
+            Engine engine, 
             String description
         ) {
             super(description);
-            _project = project;
-            _engineConfig = engineConfig;
+            _history = history;
+            _manager = manager;
+            _engine = engine;
             _historyEntryID = HistoryEntry.allocateID();
             try {               
                 _addJudgmentFacet = ParsingUtilities.mapper.readValue(_addJudgmentFacetJson, JsonNode.class);
@@ -196,45 +210,59 @@ public class ReconOperation extends EngineDependentOperation {
             return this;
         }
         
-        protected void populateEntries() throws Exception {
-            Engine engine = new Engine(_project);
-            engine.initializeFromConfig(_engineConfig);
-            
-            ColumnMetadata column = _project.columnModel.getColumnByName(_columnName);
-            if (column == null) {
-                throw new Exception("No column named " + _columnName);
-            }
-            
-            _entries = new ArrayList<ReconEntry>(_project.rows.size());
-            _cellIndex = column.getCellIndex();
-            
-            FilteredRows filteredRows = engine.getAllFilteredRows();
-            filteredRows.accept(_project, new RowVisitor() {
-                @Override
-                public void start(Project project) {
-                    // nothing to do
-                }
-
-                @Override
-                public void end(Project project) {
-                    // nothing to do
-                }
-                
-                @Override
-                public boolean visit(Project project, int rowIndex, Row row) {
-                    if (_cellIndex < row.cells.size()) {
-                        Cell cell = row.cells.get(_cellIndex);
-                        if (cell != null && ExpressionUtils.isNonBlankData(cell.value)) {
-                            _entries.add(new ReconEntry(rowIndex, cell));
-                        }
-                    }
-                    return false;
-                }
-            });
-        }
-        
         @Override
         public void run() {
+        	GridState state = _history.getCurrentGridState();
+        	ColumnModel columnModel = state.getColumnModel();
+        	
+        	int columnIndex = columnModel.getColumnIndexByName(_columnName);
+        	
+        	RowFilter combined = RowFilter.conjunction(Arrays.asList(_engine.combinedRowFilters(), new NonBlankRowFilter(columnIndex)));
+        	RowChangeDataProducer<Cell> rowMapper = new ReconChangeDataProducer(_columnName, columnIndex, _reconConfig, _historyEntryID, columnModel);
+			ChangeData<Cell> changeData = state.mapRows(combined, rowMapper);
+			
+			try {
+				_history.getChangeDataStore().store(changeData, _historyEntryID, "recon", new CellChangeDataSerializer());
+				
+				if (!_canceled) {
+	                Change reconChange = new ColumnChangeByChangeData(
+	                    "recon", 
+	                    columnIndex, 
+	                    null
+	                );
+	                
+	                HistoryEntry historyEntry = new HistoryEntry(
+	                    _historyEntryID, 
+	                    _description, 
+	                    ReconOperation.this, 
+	                    reconChange
+	                );
+	                
+	                _history.addEntry(historyEntry);
+	                _manager.onDoneProcess(this);
+	            }
+			} catch (Exception e) {
+				_manager.onFailedProcess(this, e);
+			}
+			
+			/*
+			 * 	            if (!_canceled) {
+	                HistoryEntry historyEntry = new HistoryEntry(
+	                    _historyEntryID,
+	                    _description,
+	                    ColumnAdditionByFetchingURLsOperation.this,
+	                    new ColumnChangeByChangeData(
+	                        urlChangeDataId,
+	                        _columnInsertIndex,
+	                        _newColumnName)
+	                );
+	
+	                _history.addEntry(historyEntry);
+	                _processManager.onDoneProcess(this);
+	            }
+			 */
+			
+        	/*
             try {
                 populateEntries();
             } catch (Exception e2) {
@@ -246,14 +274,13 @@ public class ReconOperation extends EngineDependentOperation {
             
             for (ReconEntry entry : _entries) {
                 ReconJob job = _reconConfig.createJob(
-                    _project, 
+                    null, 
                     entry.rowIndex, 
                     _project.rows.get(entry.rowIndex), 
-                    _columnName, 
-                    entry.cell
+                    _columnName, entry.cell
                 );
                 
-                String key = job.getStringKey();
+                String key = job.getCellValue();
                 JobGroup group = jobKeyToGroup.get(key);
                 if (group == null) {
                     group = new JobGroup(job);
@@ -271,7 +298,7 @@ public class ReconOperation extends EngineDependentOperation {
             List<ReconJob> jobs = new ArrayList<ReconJob>(batchSize);
             Map<ReconJob, JobGroup> jobToGroup = new HashMap<ReconJob, ReconOperation.JobGroup>();
             
-            for (int i = 0; i < groups.size(); /* don't increment here */) {
+            for (int i = 0; i < groups.size(); ) {
                 while (jobs.size() < batchSize && i < groups.size()) {
                     JobGroup group = groups.get(i++);
                     
@@ -347,6 +374,115 @@ public class ReconOperation extends EngineDependentOperation {
                 _project.getHistory().addEntry(historyEntry);
                 _project.processManager.onDoneProcess(this);
             }
+            */
         }
     }
+    
+    protected static class ReconChangeDataProducer implements RowChangeDataProducer<Cell> {
+    	
+		private static final long serialVersionUID = 881447948869363218L;
+		transient private LoadingCache<ReconJob, Cell> cache = null;
+    	private final ReconConfig reconConfig;
+    	private final String columnName;
+    	private final int columnIndex;
+    	private final long historyEntryId;
+    	private final ColumnModel columnModel;
+    	
+    	protected ReconChangeDataProducer(
+    			String columnName,
+    			int columnIndex,
+    			ReconConfig reconConfig,
+    			long historyEntryId,
+    			ColumnModel columnModel) {
+    		this.reconConfig = reconConfig;
+    		this.columnName = columnName;
+    		this.columnIndex = columnIndex;
+    		this.historyEntryId = historyEntryId;
+    		this.columnModel = columnModel;
+    	}
+    	
+    	private void initCache() {
+    		cache = CacheBuilder.newBuilder()
+    				.maximumSize(4096)
+    				.build(new CacheLoader<ReconJob, Cell>() {
+
+						@Override
+						public Cell load(ReconJob key) throws Exception {
+							return loadAll(Collections.singletonList(key)).get(key);
+						}
+						
+						@Override
+						public Map<ReconJob, Cell> loadAll(Iterable<? extends ReconJob> jobs) {
+							List<ReconJob> jobList = StreamSupport.stream(jobs.spliterator(), false)
+	                                .collect(Collectors.toList());
+							List<Recon> recons = reconConfig.batchRecon(jobList, historyEntryId);
+							Map<ReconJob, Cell> results = new HashMap<>(jobList.size());
+							for(int i = 0; i != jobList.size(); i++) {
+								results.put(jobList.get(i), new Cell(jobList.get(i).getCellValue(), recons.get(i)));
+							}
+							return results;
+						}
+    					
+    				});
+    	}
+
+		@Override
+		public Cell call(long rowId, Row row) {
+			return call(Collections.singletonList(new IndexedRow(rowId,row))).get(0);
+		}
+		
+		@Override
+		public List<Cell> call(List<IndexedRow> rows) {
+			if (cache == null) {
+				initCache();
+			}
+			List<ReconJob> reconJobs = new ArrayList<>(rows.size());
+			for(IndexedRow indexedRow : rows) {
+				Row row = indexedRow.getRow();
+				reconJobs.add(reconConfig.createJob(
+	                    columnModel, 
+	                    indexedRow.getIndex(), 
+	                    row, 
+	                    columnName,
+	                    row.getCell(columnIndex)
+	                ));
+			}
+			try {
+				Map<ReconJob, Cell> results = cache.getAll(reconJobs);
+				return reconJobs.stream().map(job -> results.get(job)).collect(Collectors.toList());
+			} catch (ExecutionException e) {
+				// the `batchRecon` method should throw IOException, it currently does not.
+				// Once that is fixed, we should do a couple of retries here before failing
+				throw new IllegalStateException("Fetching reconciliation responses failed", e);
+			}
+		}
+		
+		@Override
+		public int getBatchSize() {
+			return reconConfig.getBatchSize();
+		}
+    	
+    }
+    
+    /**
+     * Filter used to select only rows which have a non-blank value to reconcile.
+     * 
+     * @author Antonin Delpeuch
+     *
+     */
+    protected static class NonBlankRowFilter implements RowFilter {
+
+		private static final long serialVersionUID = 6646807801184457426L;
+		private final int columnIndex;
+    	
+    	protected NonBlankRowFilter(int columnIndex) {
+    		this.columnIndex = columnIndex;
+    	}
+
+		@Override
+		public boolean filterRow(long rowIndex, Row row) {
+			return !row.isCellBlank(columnIndex);
+		}
+    }
+
 }

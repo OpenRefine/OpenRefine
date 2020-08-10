@@ -58,9 +58,10 @@ import org.openrefine.model.ColumnMetadata;
 import org.openrefine.model.GridState;
 import org.openrefine.model.Row;
 import org.openrefine.model.changes.CellAtRow;
+import org.openrefine.model.changes.CellChangeDataSerializer;
 import org.openrefine.model.changes.ChangeData;
 import org.openrefine.model.changes.ChangeDataSerializer;
-import org.openrefine.model.changes.ColumnAdditionByChangeData;
+import org.openrefine.model.changes.ColumnChangeByChangeData;
 import org.openrefine.model.changes.RowChangeDataJoiner;
 import org.openrefine.model.changes.RowChangeDataProducer;
 import org.openrefine.operations.EngineDependentOperation;
@@ -447,14 +448,14 @@ public class ColumnAdditionByFetchingURLsOperation extends EngineDependentOperat
             ChangeData<Cell> changeData = state.mapRows(_engine.combinedRowFilters(), changeProducer);
             
             try {
-	            _history.getChangeDataStore().store(changeData, _historyEntryID, urlChangeDataId, new ColumnAdditionByChangeData.CellChangeDataSerializer());
+	            _history.getChangeDataStore().store(changeData, _historyEntryID, urlChangeDataId, new CellChangeDataSerializer());
 	
 	            if (!_canceled) {
 	                HistoryEntry historyEntry = new HistoryEntry(
 	                    _historyEntryID,
 	                    _description,
 	                    ColumnAdditionByFetchingURLsOperation.this,
-	                    new ColumnAdditionByChangeData(
+	                    new ColumnChangeByChangeData(
 	                        urlChangeDataId,
 	                        _columnInsertIndex,
 	                        _newColumnName)

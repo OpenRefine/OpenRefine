@@ -27,17 +27,30 @@
 package org.openrefine.operations.recon;
 
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 
-import java.util.Properties;
+import java.util.Arrays;
+import java.util.List;
+
+import static org.mockito.Mockito.doReturn;
 
 import org.openrefine.RefineTest;
+import org.openrefine.model.Cell;
+import org.openrefine.model.ColumnModel;
+import org.openrefine.model.IndexedRow;
 import org.openrefine.model.Project;
+import org.openrefine.model.Row;
+import org.openrefine.model.recon.Recon;
 import org.openrefine.model.recon.ReconConfig;
+import org.openrefine.model.recon.ReconJob;
 import org.openrefine.model.recon.StandardReconConfig;
 import org.openrefine.operations.OperationRegistry;
-import org.openrefine.operations.recon.ReconOperation;
+import org.openrefine.operations.recon.ReconOperation.ReconChangeDataProducer;
 import org.openrefine.util.ParsingUtilities;
 import org.openrefine.util.TestUtils;
+import org.testng.Assert;
 import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.Test;
 
@@ -104,7 +117,55 @@ public class ReconOperationTests extends RefineTest {
     @Test
     public void serializeReconProcess() throws Exception {
         ReconOperation op = ParsingUtilities.mapper.readValue(json, ReconOperation.class);
-        org.openrefine.process.Process process = op.createProcess(project, new Properties());
+        org.openrefine.process.Process process = op.createProcess(project.getHistory(), project.getProcessManager());
         TestUtils.isSerializedTo(process, String.format(processJson, process.hashCode()), ParsingUtilities.defaultWriter);
+    }
+    
+    @Test
+    public void testChangeDataProducer() {
+    	ReconJob job1 = mock(ReconJob.class);
+    	when(job1.getCellValue()).thenReturn("value1");
+    	ReconJob job2 = mock(ReconJob.class);
+    	when(job2.getCellValue()).thenReturn("value2");
+    	ReconJob job3 = mock(ReconJob.class);
+    	when(job3.getCellValue()).thenReturn("value3");
+    	Recon recon1 = mock(Recon.class, "recon1");
+    	Recon recon2 = mock(Recon.class, "recon2");
+    	Recon recon3 = mock(Recon.class, "recon3");
+    	
+    	ReconConfig reconConfig = mock(ReconConfig.class);
+    	doReturn(2).when(reconConfig).getBatchSize();
+    	when(reconConfig.batchRecon(Arrays.asList(job1, job2), 1234L)).thenReturn(Arrays.asList(recon1, recon2));
+    	when(reconConfig.batchRecon(Arrays.asList(job3), 1234L)).thenReturn(Arrays.asList(recon3));
+    	
+    	ColumnModel columnModel = mock(ColumnModel.class);
+    	
+    	Row row1 = new Row(Arrays.asList(new Cell("value1", null)));
+    	Row row2 = new Row(Arrays.asList(new Cell("value2", null)));
+    	Row row3 = new Row(Arrays.asList(new Cell("value3", null)));
+		List<IndexedRow> batch1 = Arrays.asList(
+    			new IndexedRow(0L, row1),
+    			new IndexedRow(1L, row2)
+    			);
+    	List<IndexedRow> batch2 = Arrays.asList(
+    			new IndexedRow(2L, row1),
+    			new IndexedRow(3L, row3)
+    			);
+    	when(reconConfig.createJob(columnModel, 0L, row1, "column", row1.getCell(0))).thenReturn(job1);
+    	when(reconConfig.createJob(columnModel, 1L, row2, "column", row2.getCell(0))).thenReturn(job2);
+    	when(reconConfig.createJob(columnModel, 2L, row1, "column", row1.getCell(0))).thenReturn(job1);
+    	when(reconConfig.createJob(columnModel, 3L, row3, "column", row3.getCell(0))).thenReturn(job3);
+    	
+    	ReconChangeDataProducer producer = new ReconChangeDataProducer("column", 0, reconConfig, 1234L, columnModel);
+    	List<Cell> results1 = producer.call(batch1);
+    	List<Cell> results2 = producer.call(batch2);
+    	
+    	Assert.assertEquals(results1, Arrays.asList(new Cell("value1", recon1), new Cell("value2", recon2)));
+    	Assert.assertEquals(results2, Arrays.asList(new Cell("value1", recon1), new Cell("value3", recon3)));
+    	Assert.assertEquals(producer.getBatchSize(), 2);
+    	Assert.assertEquals(producer.call(0L, batch1.get(0).getRow()), new Cell("value1", recon1));
+    	
+    	verify(reconConfig, times(1)).batchRecon(Arrays.asList(job1, job2), 1234L);
+    	verify(reconConfig, times(1)).batchRecon(Arrays.asList(job3), 1234L);
     }
 }

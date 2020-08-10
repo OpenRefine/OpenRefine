@@ -37,7 +37,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.openrefine.model.Cell;
-import org.openrefine.model.Project;
+import org.openrefine.model.ColumnModel;
 import org.openrefine.model.Row;
 import org.openrefine.model.recon.ReconJob;
 
@@ -63,7 +63,7 @@ public class DataExtensionReconConfig extends StandardReconConfig {
     }
 
     @Override
-    public ReconJob createJob(Project project, int rowIndex, Row row,
+    public ReconJob createJob(ColumnModel columnModel, long rowIndex, Row row,
             String columnName, Cell cell) {
         throw new RuntimeException(WARN);
     }
@@ -79,7 +79,7 @@ public class DataExtensionReconConfig extends StandardReconConfig {
     }
 
     @Override
-    public String getBriefDescription(Project project, String columnName) {
+    public String getBriefDescription(String columnName) {
         throw new RuntimeException(WARN);
     }
 }
