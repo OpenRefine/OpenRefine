@@ -51,7 +51,9 @@ OpenRefine assigns a unique key behind the scenes, so your records don’t need 
 
 To [split multi-valued cells](transforming-data#split-multi-valued-cells) and apply other operations that take advantage of records mode, see [Transforming data](transforming-data). 
 
+:::caution
 Be careful when in records mode that you do not accidentally delete rows based on being blank in one column where there is a value in another. 
+:::
 
 ## Facets
 
