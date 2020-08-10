@@ -560,7 +560,7 @@ DataTableView.prototype._showRowsBottom = function(table, start, onDone) {
   Refine.fetchRows(start, this._pageSize, function() {
     $('.last-row').remove();
 
-    loadRows();
+    loadRows(start);
     self._adjustNextSetClasses(start);
 
     if (onDone) {
