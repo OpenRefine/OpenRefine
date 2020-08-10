@@ -618,7 +618,7 @@ DataTableView.prototype._onBottomTable = function(table, elmt, evt) {
 DataTableView.prototype._onTopTable = function(table, elmt, evt) {
   if(this._pageStart - this._pageSize >= 0) {
     this._showRowsTop(table, this._pageStart - this._pageSize, this._pageSize);
-  } else {
+  } else if(this._pageStart) {
     this._showRowsTop(table, 0, this._pageStart);
   }
 };
