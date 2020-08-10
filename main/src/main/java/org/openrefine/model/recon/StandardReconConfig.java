@@ -63,8 +63,7 @@ import org.slf4j.LoggerFactory;
 
 import org.openrefine.expr.ExpressionUtils;
 import org.openrefine.model.Cell;
-import org.openrefine.model.Project;
-import org.openrefine.model.RecordModel.RowDependency;
+import org.openrefine.model.ColumnModel;
 import org.openrefine.model.Row;
 import org.openrefine.model.recon.Recon.Judgment;
 import org.openrefine.util.ParsingUtilities;
@@ -116,19 +115,44 @@ public class StandardReconConfig extends ReconConfig {
         return ParsingUtilities.mapper.readValue(json, StandardReconConfig.class);
     }
 
-    static protected class StandardReconJob extends ReconJob {
+    static protected class StandardReconJob implements ReconJob {
 
-        String text;
-        String code;
+        private final String cellValue;
+        private final String jsonQuery;
+
+        public StandardReconJob(
+                String cellValue,
+                String jsonQuery) {
+            this.cellValue = cellValue;
+            this.jsonQuery = jsonQuery;
+        }
 
         @Override
-        public int getKey() {
-            return code.hashCode();
+        public String getCellValue() {
+            return cellValue;
+        }
+
+        public String getJsonQuery() {
+            return jsonQuery;
         }
 
         @Override
         public String toString() {
-            return code;
+            return jsonQuery;
+        }
+
+        @Override
+        public int hashCode() {
+            return jsonQuery.hashCode();
+        }
+
+        @Override
+        public boolean equals(Object other) {
+            if (!(other instanceof StandardReconJob)) {
+                return false;
+            }
+            StandardReconJob otherJob = (StandardReconJob) other;
+            return cellValue.equals(otherJob.cellValue) && jsonQuery.equals(otherJob.jsonQuery);
         }
     }
 
@@ -224,7 +248,7 @@ public class StandardReconConfig extends ReconConfig {
     }
 
     @Override
-    public String getBriefDescription(Project project, String columnName) {
+    public String getBriefDescription(String columnName) {
         return "Reconcile cells in column " + columnName + " to type " + typeID;
     }
 
@@ -234,13 +258,10 @@ public class StandardReconConfig extends ReconConfig {
          * is no need for a Project, Row and Cell: this means the job can be created outside the usual context of
          * reconciliation (e.g. in an importer).
          */
-        StandardReconJob job = new StandardReconJob();
         try {
             String queryJson = ParsingUtilities.defaultWriter.writeValueAsString(
                     Collections.singletonMap("query", query));
-            job.text = query;
-            job.code = queryJson;
-            return job;
+            return new StandardReconJob(query, queryJson);
         } catch (JsonProcessingException e) {
             e.printStackTrace();
             return null;
@@ -359,30 +380,28 @@ public class StandardReconConfig extends ReconConfig {
     }
 
     @Override
-    public ReconJob createJob(Project project, int rowIndex, Row row,
+    public ReconJob createJob(ColumnModel columnModel, long rowIndex, Row row,
             String columnName, Cell cell) {
-
-        StandardReconJob job = new StandardReconJob();
 
         List<QueryProperty> properties = new ArrayList<>();
 
         for (ColumnDetail c : columnDetails) {
-            int detailCellIndex = project.columnModel.getColumnByName(c.columnName).getCellIndex();
+            int detailCellIndex = columnModel.getColumnIndexByName(c.columnName);
 
             Cell cell2 = row.getCell(detailCellIndex);
-            if (cell2 == null || !ExpressionUtils.isNonBlankData(cell2.value)) {
-                int cellIndex = project.columnModel.getColumnByName(columnName).getCellIndex();
+            // The following is no longer possible in rows mode. Users
+            // should first fill down their columns before reconciling.
 
-                RowDependency rd = project.recordModel.getRowDependency(rowIndex);
-                if (rd != null && rd.cellDependencies != null) {
-                    int contextRowIndex = rd.cellDependencies[cellIndex].rowIndex;
-                    if (contextRowIndex >= 0 && contextRowIndex < project.rows.size()) {
-                        Row row2 = project.rows.get(contextRowIndex);
-
-                        cell2 = row2.getCell(detailCellIndex);
-                    }
-                }
-            }
+            /*
+             * if (cell2 == null || !ExpressionUtils.isNonBlankData(cell2.value)) { int cellIndex =
+             * columnModel.getColumnByName(columnName).getCellIndex();
+             * 
+             * RowDependency rd = project.recordModel.getRowDependency(rowIndex); if (rd != null && rd.cellDependencies
+             * != null) { int contextRowIndex = rd.cellDependencies[cellIndex].rowIndex; if (contextRowIndex >= 0 &&
+             * contextRowIndex < project.rows.size()) { Row row2 = project.rows.get(contextRowIndex);
+             * 
+             * cell2 = row2.getCell(detailCellIndex); } } }
+             */
 
             if (cell2 != null && ExpressionUtils.isNonBlankData(cell2.value)) {
                 Object v = null;
@@ -401,13 +420,13 @@ public class StandardReconConfig extends ReconConfig {
 
         ReconQuery query = new ReconQuery(cell.value.toString(), typeID, properties, limit);
 
-        job.text = cell.value.toString();
+        String cellValue = cell.value.toString();
         try {
-            job.code = ParsingUtilities.defaultWriter.writeValueAsString(query);
+            String jsonCode = ParsingUtilities.defaultWriter.writeValueAsString(query);
+            return new StandardReconJob(cellValue, jsonCode);
         } catch (JsonProcessingException e) {
-            e.printStackTrace();
+            throw new IllegalStateException("Serialization of reconciliation query failed", e);
         }
-        return job;
     }
 
     @Override
@@ -423,7 +442,7 @@ public class StandardReconConfig extends ReconConfig {
                 stringWriter.write(",");
             }
             stringWriter.write("\"q" + i + "\":");
-            stringWriter.write(job.code);
+            stringWriter.write(job.getJsonQuery());
         }
         stringWriter.write("}");
         String queriesString = stringWriter.toString();
@@ -465,7 +484,7 @@ public class StandardReconConfig extends ReconConfig {
                         StandardReconJob job = (StandardReconJob) jobs.get(i);
                         Recon recon = null;
 
-                        String text = job.text;
+                        String text = job.getCellValue();
                         String key = "q" + i;
                         if (o.has(key) && o.get(key) instanceof ObjectNode) {
                             ObjectNode o2 = (ObjectNode) o.get(key);
@@ -474,11 +493,11 @@ public class StandardReconConfig extends ReconConfig {
 
                                 recon = createReconServiceResults(text, results, historyEntryID);
                             } else {
-                                logger.warn(
-                                        "Service error for text: " + text + "\n  Job code: " + job.code + "\n  Response: " + o2.toString());
+                                logger.warn("Service error for text: " + text + "\n  Job code: " + job.getJsonQuery() + "\n  Response: "
+                                        + o2.toString());
                             }
                         } else {
-                            logger.warn("Service error for text: " + text + "\n  Job code: " + job.code);
+                            logger.warn("Service error for text: " + text + "\n  Job code: " + job.getJsonQuery());
                         }
 
                         if (recon != null) {

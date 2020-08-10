@@ -33,17 +33,15 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package org.openrefine.model.recon;
 
-abstract public class ReconJob {
+/**
+ * A reconciliation query paired with the original cell value which generated it.
+ * 
+ * It is required to be hashable.
+ * 
+ * @author Antonin Delpeuch
+ *
+ */
+public interface ReconJob {
 
-    public int getKey() {
-        return this.hashCode();
-    }
-
-    /**
-     * This method is added because sometimes it's hard to generate integer keys that are not prone to collision. If a
-     * ReconJob class cannot guarantee no collision of integer keys, then that class should override this new method.
-     */
-    public String getStringKey() {
-        return Integer.toString(getKey());
-    }
+    public String getCellValue();
 }

@@ -33,7 +33,6 @@ import org.testng.annotations.Test;
 
 import org.openrefine.model.Cell;
 import org.openrefine.model.ColumnMetadata;
-import org.openrefine.model.Project;
 import org.openrefine.model.Row;
 import org.openrefine.model.recon.Recon;
 import org.openrefine.model.recon.ReconConfig;
@@ -51,12 +50,12 @@ public class ColumnMetadataTests {
         }
 
         @Override
-        public String getBriefDescription(Project project, String columnName) {
+        public String getBriefDescription(String columnName) {
             return "My description";
         }
 
         @Override
-        public ReconJob createJob(Project project, int rowIndex, Row row, String columnName, Cell cell) {
+        public ReconJob createJob(ColumnModel columnModel, long rowIndex, Row row, String columnName, Cell cell) {
             return null;
         }
 
