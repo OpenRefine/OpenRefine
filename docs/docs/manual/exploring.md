@@ -37,7 +37,7 @@ A “null” data type is a special value which basically means “this cell has
 
 You can opt to show “null” values to differentiate them from empty strings, by going to “All” > “View” > “Show/Hide ‘null’ values in cells.”
 
-To transform data from one type to another, see [Transforming data](transforming-data#transform) for information on using `toString()`, `toDate()`, and other functions.
+To transform data from one type to another, see [Transforming data](transforming#transform) for information on using `toString()`, `toDate()`, and other functions.
 
 ## Row types: rows vs. records
 
@@ -49,18 +49,16 @@ OpenRefine understands records based on the content of the first column. Splitti
 
 OpenRefine assigns a unique key behind the scenes, so your records don’t need a unique identifier. You can keep track of which rows are assigned to which record by the record number that appears under the “All” column.
 
-To [split multi-valued cells](transforming-data#split-multi-valued-cells) and apply other operations that take advantage of records mode, see [Transforming data](transforming-data). 
+To [split multi-valued cells](transforming#split-multi-valued-cells) and apply other operations that take advantage of records mode, see [Transforming data](transforming). 
 
-:::caution
 Be careful when in records mode that you do not accidentally delete rows based on being blank in one column where there is a value in another. 
-:::
 
 ## Facets
 
 
 ### Overview
 
-Facets are one of OpenRefine’s strongest features - that’s where the diamond logo comes from! Faceting allows you to look for patterns and trends. Facets are essentially aspects or angles of data variance in a given column. For example, if you had survey data where respondents indicated one of five responses from “Strongly agree” to “Strongly disagree,” each of those five responses would be a text facet, and you could see how many people selected each answer. 
+Facets are one of OpenRefine’s strongest features - that’s where the diamond logo comes from! Faceting allows you to look for patterns and trends. Facets are essentially aspects or angles of data variance in a given column. For example, if you had survey data where respondents indicated one of five responses from “Strongly agree” to “Strongly disagree,” those five responses make up a text facet, showing how many people selected each option.  
 
 Faceted browsing gives you a big-picture look at your data (do they agree or disagree?) and also allows you to filter down to a specific subset to explore it more (what do people who disagree say in other responses?). 
 
@@ -71,7 +69,7 @@ Typically, you create a facet on a particular column. That facet selection appea
 
 You can learn about facets and filtering with the following example. 
 
-We collected [a list of the 10 most populous cities as per Wikidata](https://query.wikidata.org/), using an example query of theirs. We removed the GPS coordinates and added the country. 
+We collected a list of the 10 most populous cities from Wikidata](https://w.wiki/3Em), using an example query of theirs. We removed the GPS coordinates and added the country. 
 
 | cityLabel | population | countryLabel |
 |-|-|-|
@@ -122,7 +120,7 @@ OpenRefine has several default facets, which you’ll learn about below. The mos
 
 Facets are not saved in the project along with the data. But you can save a *permalink* to the current state of the application. Find the "permalink" next to the project’s name.
 
-You can modify any facet by clicking the “change” button to the right of the column name in the facet sidebar.
+You can modify any facet expression by clicking the “change” button to the right of the column name in the facet sidebar.
 
 Facet boxes that appear in the sidebar can be resized and rearranged. You can drag and drop the title bar of each box to reorder them, and drag on the bottom bar of text facet boxes. 
 
@@ -132,7 +130,7 @@ A text facet can be generated on any column with the “text” data type. Selec
 
 A text facet is very simple: it takes the total contents of the cells of the column in question and matches them up. It does no guessing about typos or near-matches. 
 
-You can edit any entry that appears in the facet display, by hovering over the facet and clicking the “edit” button that appears. You can also automate the cleanup of facets by using clustering, with the “Cluster” button displayed within the facet window. 
+You can edit any entry that appears in the facet display, by hovering over the facet and clicking the “edit” button that appears. This will mass-edit every matching cell in your data. This is a great way to fix typos, whitespace, and other issues that may be affecting the way facets appear. You can also automate the cleanup of facets by using [clustering](transforming#cluster-and-edit), with the “Cluster” button displayed within the facet window. 
 
 Each text facet shows up to 2,000 choices by default. You can [increase this limit on the Preferences screen](running#preferences) if you need to, which will increase the processing work required by your browser. If your applied facet has more choices than the current limit, you'll be offered the option to increase the limit, which will edit that preference for you. 
 
@@ -248,7 +246,9 @@ Duplicates facets are case-sensitive and you may wish to filter out things like 
 
 ### Numeric log facet 
 
-**& 1-bounded numeric log facet**
+Logarithmic scales reduce wide-ranging quantities to tiny scopes. If your numerical data is unevenly distributed (say, lots of values in one range, and then a long tail extending off into different magnitudes), a numeric log facet can represent that range better than a simple numeric facet. It will break these values down into more navigable segments than the buckets of a numeric facet. 
+
+A 1-bounded numeric log facet can be used if you'd like to exclude all the values below 1 (including zero and negative numbers). 
 
 ### Text-length facet
 
@@ -258,14 +258,14 @@ The text-length facet returns a numerical value for each cell and plots it on a 
 
 This can be useful to, for example, look for values that did not successfully split on an earlier split operation, or to validate that data is a certain expected length (such as whether a date, as YYYY/MM/DD, is eight to ten characters). 
 
-**There is also a “Log of text-length facet” that I will explain later!**
+You can also employ a log of text-length facet that allows you to navigate more easily a wide range of string lengths. This can be useful in the case of web-scraping, where lots of textual data is loaded into single cells and needs to be parsed out. 
 
 
 ### Unicode character-code facet
 
 ![A screenshot of the Unicode facet.](/img/unicodefacet.png)
 
-The Unicode facet identifies and returns [Unicode decimal values](https://en.wikipedia.org/wiki/List_of_Unicode_characters). That is to say, it generates a list of the Unicode numerical values of each character used in each text cell, which allows you to narrow down and search for special characters, punctuation, and other data formatting issues.
+The Unicode facet identifies and returns [Unicode decimal values](https://en.wikipedia.org/wiki/List_of_Unicode_characters). It generates a list of the Unicode numerical values of each character used in each text cell, which allows you to narrow down and search for special characters, punctuation, and other data formatting issues.
 
 This facet creates a numerical chart, which offers you the ability to narrow down to a range of numbers. For example, lowercase characters are numbers 97-122, uppercase characters are numbers 65-90, and numerical digits are numbers 48-57. 
 
@@ -279,7 +279,7 @@ To output errors, ensure that you have “store error” selected for the “On 
 
 ### Facet by null, empty, or blank
 
-Any column can be faceted for [null and/or empty cells](exploring#cell-data-types). These can help you find cells where you want to manually enter content. “Blank” means both null values and empty values. All three facets will generate “true” and “false” facets, “true” being blank. 
+Any column can be faceted for [null and/or empty cells](#cell-data-types). These can help you find cells where you want to manually enter content. “Blank” means both null values and empty values. All three facets will generate “true” and “false” facets, “true” being blank. 
 
 An empty cell is a cell that is set to contain a string, but doesn’t have any characters in it (a zero-length string). This can be a leftover from an operation that removed characters, or from manually editing a cell and deleting its contents.
 
