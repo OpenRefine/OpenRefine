@@ -69,7 +69,7 @@ Typically, you create a facet on a particular column. That facet selection appea
 
 You can learn about facets and filtering with the following example. 
 
-We collected a list of the 10 most populous cities from Wikidata](https://w.wiki/3Em), using an example query of theirs. We removed the GPS coordinates and added the country. 
+We collected a list of the [10 most populous cities from Wikidata](https://w.wiki/3Em), using an example query of theirs. We removed the GPS coordinates and added the country. 
 
 | cityLabel | population | countryLabel |
 |-|-|-|
