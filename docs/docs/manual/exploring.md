@@ -16,7 +16,7 @@ Data loaded into OpenRefine is assigned a data type. By default every cell will 
 
 You can see data types in action when you preview a new project: check the box that says “Attempt to parse cell text into numbers” and cells will be converted to the number type based on their contents. You’ll see numbers change from black text to green if they are recognized.
 
-The data type will determine what you can do with the value. For example, if you want to add two values together, they must both be recognized as the “number” data type.
+The data type will determine what you can do with the value. For example, if you want to add two values together, they must both be recognized as the “number” data type. 
 
 You can check data types at any time by:
 *   clicking “edit” on a single cell (where you can also edit the type)
@@ -31,13 +31,15 @@ The data types supported are:
 *   error
 *   null
 
+A “date” type is created when a text column is [transformed into dates](transforming#to-date), or when individual cells are set to have the data type “date.” 
+
 An “error” data type is created when the cell is storing an error generated during a transformation in OpenRefine.
 
-A “null” data type is a special value which basically means “this cell has no value.” It’s used to differentiate between cells that have values such as “0” or “false” - or a cell that looks empty but has, for example, spaces in it. When you use `type(value)`, it will show you that the cell’s value is “null” and its type is “undefined.” 
+A “null” data type is a special value which basically means “this cell has no value.” It’s used to differentiate between cells that have values such as “0” or “false” - or a cell that looks empty but has, for example, spaces in it. When you use `type(value)`, it will show you that the cell’s value is “null” and its type is “undefined.” You can opt to [show “null” values](#view) to differentiate them from empty strings, by going to “All” > “View” > “Show/Hide ‘null’ values in cells.”
 
-You can opt to show “null” values to differentiate them from empty strings, by going to “All” > “View” > “Show/Hide ‘null’ values in cells.”
+Converting a cell's data type is not the same operation as transforming its contents. For example, using a column-wide transform such as “Transform” > “Common transforms …” > “to date” may not convert all values successfully, but going to an individual cell, clicking “edit” and changing the data type can successfully convert text to a date. These operations use different underlying code. 
 
-To transform data from one type to another, see [Transforming data](transforming#transform) for information on using `toString()`, `toDate()`, and other functions.
+To transform data from one type to another, see [Transforming data](transforming#transform) for information on using common tranforms, and see [Expressions](expressions) for information on using `toString()`, `toDate()`, and other functions. 
 
 ## Row types: rows vs. records
 
@@ -148,15 +150,7 @@ You will be offered the option to include blank, non-numeric, and error values i
 
 ![A screenshot of an example timeline facet.](/img/timelinefacet.png)
 
-Much like a numeric facet, a timeline facet will display as a small bar graph with the values sorted: in this case, chronologically. A timeline facet only works on dates formatted as “date” data types (i.e. by using the `toDate()` function) and in the structure of the ISO-8601-compliant extended format with time in UTC: **YYYY**-**MM**-**DD**T**HH**:**MM**:**SS**Z. 
-
-If you have a column full of dates in a more common format (such as yyyy/mm/dd or DD-MM-YYYY) you can convert these using “Transform” > “Common transforms …” > “to date,” or the [GREL function](expressions#grel) `toDate(value)`. You may wish to create a new column to transform, in order to preserve the more human-readable version.
-
-OpenRefine will recognize a variety of formats and convert them, including converting from other time zones to UTC:
-
-![A screenshot of different date formats being converted, and one error.](/img/dates.png)
-
-You may need to do some reformatting if your dates are not being recognized by the `toDate()` function. For example, in the image above, the date that includes "7AM" is giving an error message, but the ones with "2:42 PM" and "3:22PM" are being converted.
+Much like a numeric facet, a timeline facet will display as a small bar graph with the values sorted: in this case, chronologically. A timeline facet only works on dates formatted as “date” data types (e.g. by [using the `toDate()` function](expressions#dates) to transform text into dates, or by manually setting the [data type](#cell-data-types) on individual cells) and in the structure of the ISO-8601-compliant extended format with time in UTC: **YYYY**-**MM**-**DD**T**HH**:**MM**:**SS**Z. 
 
 ### Scatterplot facet
 
@@ -246,7 +240,31 @@ Duplicates facets are case-sensitive and you may wish to filter out things like 
 
 ### Numeric log facet 
 
-Logarithmic scales reduce wide-ranging quantities to tiny scopes. If your numerical data is unevenly distributed (say, lots of values in one range, and then a long tail extending off into different magnitudes), a numeric log facet can represent that range better than a simple numeric facet. It will break these values down into more navigable segments than the buckets of a numeric facet. 
+Logarithmic scales reduce wide-ranging quantities to tiny scopes. A log transformation can be used to make highly skewed distributions less skewed. If your numerical data is unevenly distributed (say, lots of values in one range, and then a long tail extending off into different magnitudes), a numeric log facet can represent that range better than a simple numeric facet. It will break these values down into more navigable segments than the buckets of a numeric facet. This facet can make patterns in your data more visible.
+
+OpenRefine uses a base-10 log, the "common logarithm."
+
+For example, we can look at [this data about the body weight of various mammals](http://wiki.stat.ucla.edu/socr/index.php/SOCR_Data_Brain2BodyWeight):
+
+|Species|BodyWeight (kg)|
+|---|---|
+| Newborn_Human | 3.2 |
+| Adult_Human | 73 |
+| Pithecanthropus_Man | 70 |
+| Squirrel | 0.8 |
+| Hamster | 0.15 |
+| Chimpanzee | 50 |
+| Rabbit | 1.4 |
+| Dog_(Beagle) | 10 |
+| Cat | 4.5 |
+| Rat | 0.4 |
+| Sperm_Whale | 35000 |
+| Turtle | 3 |
+| Alligator | 270 |
+
+Most values will be clustered in the 0-100 range, but 35,000 is many magnitudes above that. A numeric facet will create 36 equal buckets of 1,000 each - containing almost all the cells in the first bucket. A numeric log facet will instead display the data more evenly across the visual range.
+
+![A screenshot of a numeric facet first and a numeric log facet second.](/img/numericlogfacet.png)
 
 A 1-bounded numeric log facet can be used if you'd like to exclude all the values below 1 (including zero and negative numbers). 
 
