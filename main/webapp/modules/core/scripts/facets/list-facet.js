@@ -33,7 +33,6 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 class ListFacet {
   constructor(div, config, options, selection) {
-    console.log("Created a new List Facet");
     this._div = div;
     this._config = config;
 
@@ -57,7 +56,7 @@ class ListFacet {
 
     this._initializeUI();
     this._update();
-  }
+  };
 
   dispose = function() {
   };

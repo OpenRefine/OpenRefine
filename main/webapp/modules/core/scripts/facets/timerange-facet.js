@@ -60,7 +60,7 @@ class TimeRangeFacet {
 
     this._error = false;
     this._initializedUI = false;
-  }
+  };
 
   reset = function() {
     this._from = this._config.min;
