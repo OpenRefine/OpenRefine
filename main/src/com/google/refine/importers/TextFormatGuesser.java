@@ -74,7 +74,7 @@ public class TextFormatGuesser implements FormatGuesser {
                 String line;
                 while ((line = reader.readLine()) != null && controls < CONTROLS_THRESHOLD) {
                     line = line.trim();
-                    controls += CharMatcher.javaIsoControl().countIn(line);
+                    controls += CharMatcher.javaIsoControl().and(CharMatcher.whitespace().negate()).countIn(line);
                     openBraces += line.chars().filter(ch -> ch == '{').count();
                     closeBraces += StringUtils.countMatches(line, "}");
                     openAngleBrackets += StringUtils.countMatches(line, "<");
