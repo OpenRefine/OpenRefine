@@ -30,11 +30,17 @@ import org.openrefine.wikidata.updates.scheduler.WikibaseAPIUpdateScheduler;
 import org.openrefine.wikidata.utils.EntityCache;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.wikidata.wdtk.datamodel.interfaces.EntityIdValue;
+import org.openrefine.wikidata.schema.WikibaseSchema;
+import org.wikidata.wdtk.datamodel.interfaces.EntityDocument;
 
 import java.util.HashMap;
 import java.util.List;
+import org.wikidata.wdtk.datamodel.interfaces.EntityIdValue;
+import org.wikidata.wdtk.datamodel.interfaces.PropertyIdValue;
+
 import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 
 /**
@@ -50,6 +56,7 @@ public class EditInspector {
     private QAWarningStore warningStore;
     private ConstraintFetcher fetcher;
     private Manifest manifest;
+    private EntityCache entityCache;
 
     public EditInspector(QAWarningStore warningStore, Manifest manifest) {
         this.scrutinizers = new HashMap<>();
@@ -112,9 +119,12 @@ public class EditInspector {
      * 
      * @param editBatch
      */
-    public void inspect(List<ItemUpdate> editBatch) {
+    public void inspect(List<ItemUpdate> editBatch, WikibaseSchema schema) throws ExecutionException {
         // First, schedule them with some scheduler,
         // so that all newly created entities appear in the batch
+        SchemaPropertyFetcher fetcher = new SchemaPropertyFetcher();
+        Set<PropertyIdValue> properties = fetcher.getAllProperties(schema);
+        List<EntityDocument> propertyDocuments = entityCache.getMultipleDocuments(properties.stream().collect(Collectors.toList()));
         WikibaseAPIUpdateScheduler scheduler = new WikibaseAPIUpdateScheduler();
         editBatch = scheduler.schedule(editBatch);
 
