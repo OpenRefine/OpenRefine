@@ -448,8 +448,7 @@ DataTableView.prototype._renderDataTables = function(table, tableHeader) {
           (positionLastElement.top < window.innerHeight && positionLastElement.top > 0)) {
           self._onBottomTable(self._scrollTop, table, this, evt);
         }
-      }
-      if(!self._downwardDirection) {
+      } else {
         if(positionPrevSet.top >= 0 && positionPrevSet.bottom <= window.innerHeight || 
           (positionFirstElement.bottom > 0 && positionFirstElement.bottom < window.innerHeight)) {
           self._onTopTable(self._scrollTop, table, this, evt);
@@ -458,13 +457,19 @@ DataTableView.prototype._renderDataTables = function(table, tableHeader) {
       prevOperationSet = true;
     }
 
-    clearTimeout($.data(this, 'scrollTimer'));
-    $.data(this, 'scrollTimer', setTimeout(function() {
-      if((positionLastElement.top <= 0 && positionLastElement.bottom >= 0) || (positionFirstElement.top < self._headerTop + 1 && positionFirstElement.bottom >= window.innerHeight)) {
-        self.getPageNumberSrcolling(self._scrollTop, table);
-      }
+    clearTimeout($.data(this, 'resetPrevOperationSet'));
+    $.data(this, 'resetPrevOperationSet', setTimeout(function() {
       prevOperationSet = false;
-    }, 250));
+    }, 50));
+
+    if((positionLastElement.top <= 0 && positionLastElement.bottom >= 0) || (positionFirstElement.top < self._headerTop + 1 && positionFirstElement.bottom >= window.innerHeight)) {
+      clearTimeout($.data(this, 'scrollTimer'));
+      $.data(this, 'scrollTimer', setTimeout(function() {
+        self.getPageNumberSrcolling(self._scrollTop, table);
+        prevOperationSet = false;
+      }, 250));
+    }
+
     self._scrollTop = $(this).scrollTop();
   });
 };
