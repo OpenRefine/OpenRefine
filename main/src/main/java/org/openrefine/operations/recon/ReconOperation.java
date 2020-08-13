@@ -78,6 +78,9 @@ import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 
+/**
+ * Runs reconciliation on a column.
+ */
 public class ReconOperation extends EngineDependentOperation {
     final static Logger logger = LoggerFactory.getLogger("recon-operation");
     
@@ -122,32 +125,12 @@ public class ReconOperation extends EngineDependentOperation {
     public String getColumnName() {
         return _columnName;
     }
-
-    static protected class ReconEntry {
-        final public int rowIndex;
-        final public Cell cell;
-        
-        public ReconEntry(int rowIndex, Cell cell) {
-            this.rowIndex = rowIndex;
-            this.cell = cell;
-        }
-    }
-    static protected class JobGroup {
-        final public ReconJob job;
-        final public List<ReconEntry> entries = new ArrayList<ReconEntry>();
-        public int trials = 0;
-        
-        public JobGroup(ReconJob job) {
-            this.job = job;
-        }
-    }
     
     public class ReconProcess extends LongRunningProcess implements Runnable {
         final protected History        _history;
         final protected ProcessManager _manager;
         final protected Engine         _engine;
         final protected long           _historyEntryID;
-        protected List<ReconEntry>     _entries;
         protected int                  _cellIndex;
         
         protected final String _addJudgmentFacetJson =
@@ -245,136 +228,6 @@ public class ReconOperation extends EngineDependentOperation {
 				_manager.onFailedProcess(this, e);
 			}
 			
-			/*
-			 * 	            if (!_canceled) {
-	                HistoryEntry historyEntry = new HistoryEntry(
-	                    _historyEntryID,
-	                    _description,
-	                    ColumnAdditionByFetchingURLsOperation.this,
-	                    new ColumnChangeByChangeData(
-	                        urlChangeDataId,
-	                        _columnInsertIndex,
-	                        _newColumnName)
-	                );
-	
-	                _history.addEntry(historyEntry);
-	                _processManager.onDoneProcess(this);
-	            }
-			 */
-			
-        	/*
-            try {
-                populateEntries();
-            } catch (Exception e2) {
-                // TODO : Not sure what to do here?
-                e2.printStackTrace();
-            }
-            
-            Map<String, JobGroup> jobKeyToGroup = new HashMap<String, JobGroup>();
-            
-            for (ReconEntry entry : _entries) {
-                ReconJob job = _reconConfig.createJob(
-                    null, 
-                    entry.rowIndex, 
-                    _project.rows.get(entry.rowIndex), 
-                    _columnName, entry.cell
-                );
-                
-                String key = job.getCellValue();
-                JobGroup group = jobKeyToGroup.get(key);
-                if (group == null) {
-                    group = new JobGroup(job);
-                    jobKeyToGroup.put(key, group);
-                }
-                group.entries.add(entry);
-            }
-            
-            int batchSize = _reconConfig.getBatchSize();
-            int done = 0;
-            
-            List<CellChange> cellChanges = new ArrayList<CellChange>(_entries.size());
-            List<JobGroup> groups = new ArrayList<JobGroup>(jobKeyToGroup.values());
-            
-            List<ReconJob> jobs = new ArrayList<ReconJob>(batchSize);
-            Map<ReconJob, JobGroup> jobToGroup = new HashMap<ReconJob, ReconOperation.JobGroup>();
-            
-            for (int i = 0; i < groups.size(); ) {
-                while (jobs.size() < batchSize && i < groups.size()) {
-                    JobGroup group = groups.get(i++);
-                    
-                    jobs.add(group.job);
-                    jobToGroup.put(group.job, group);
-                }
-                
-                List<Recon> recons = _reconConfig.batchRecon(jobs, _historyEntryID);
-                for (int j = jobs.size() - 1; j >= 0; j--) {
-                    ReconJob job = jobs.get(j);
-                    Recon    recon = j < recons.size() ? recons.get(j) : null;
-                    JobGroup group = jobToGroup.get(job);
-                    List<ReconEntry> entries = group.entries;
-                    
-                    if (recon == null) {
-                        group.trials++;
-                        if (group.trials < 3) {
-                            logger.warn("Re-trying job including cell containing: " + entries.get(0).cell.value);
-                            continue; // try again next time
-                        }
-                        logger.warn("Failed after 3 trials for job including cell containing: " + entries.get(0).cell.value);
-                    }
-                    
-                    jobToGroup.remove(job);
-                    jobs.remove(j);
-                    done++;
-                    
-                    if (recon == null) {
-                        recon = _reconConfig.createNewRecon(_historyEntryID);
-                    }
-                    recon.judgmentBatchSize = entries.size();
-                    
-                    for (ReconEntry entry : entries) {
-                        Cell oldCell = entry.cell;
-                        Cell newCell = new Cell(oldCell.value, recon);
-                        
-                        CellChange cellChange = new CellChange(
-                            entry.rowIndex, 
-                            _cellIndex, 
-                            oldCell, 
-                            newCell
-                        );
-                        cellChanges.add(cellChange);
-                    }
-                }
-                
-                _progress = done * 100 / groups.size();
-                try {
-                    Thread.sleep(50);
-                } catch (InterruptedException e) {
-                    if (_canceled) {
-                        break;
-                    }
-                }
-            }
-            
-            if (!_canceled) {
-                Change reconChange = new ReconChange(
-                    cellChanges, 
-                    _columnName, 
-                    _reconConfig,
-                    null
-                );
-                
-                HistoryEntry historyEntry = new HistoryEntry(
-                    _historyEntryID,
-                    _project, 
-                    _description, 
-                    ReconOperation.this, 
-                    reconChange
-                );
-                
-                _project.getHistory().addEntry(historyEntry);
-                _project.processManager.onDoneProcess(this);
-            }
-            */
         }
     }
     

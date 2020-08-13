@@ -26,20 +26,24 @@
  ******************************************************************************/
 package org.openrefine.operations.recon;
 
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.withSettings;
 
+import java.io.Serializable;
 import java.util.Arrays;
 import java.util.List;
 
-import static org.mockito.Mockito.doReturn;
-
 import org.openrefine.RefineTest;
-import org.openrefine.history.History;
+import org.openrefine.browsing.EngineConfig;
 import org.openrefine.model.Cell;
 import org.openrefine.model.ColumnModel;
+import org.openrefine.model.GridState;
 import org.openrefine.model.IndexedRow;
 import org.openrefine.model.Project;
 import org.openrefine.model.Row;
@@ -49,7 +53,7 @@ import org.openrefine.model.recon.ReconJob;
 import org.openrefine.model.recon.StandardReconConfig;
 import org.openrefine.operations.OperationRegistry;
 import org.openrefine.operations.recon.ReconOperation.ReconChangeDataProducer;
-import org.openrefine.process.ProcessManager;
+import org.openrefine.process.Process;
 import org.openrefine.util.ParsingUtilities;
 import org.openrefine.util.TestUtils;
 import org.testng.Assert;
@@ -74,7 +78,18 @@ public class ReconOperationTests extends RefineTest {
             + "   \"limit\":0"
             + "},"
             + "\"engineConfig\":{\"mode\":\"row-based\",\"facets\":[]}}";
+    
     private Project project = null;
+    private ReconConfig reconConfig = null;
+    private Row row1 = null;
+    private Row row2 = null;
+    private Row row3 = null;
+    private Recon recon1 = null;
+    private Recon recon2 = null;
+    private Recon recon3 = null;
+    private ReconJob job1 = null;
+    private ReconJob job2 = null;
+    private ReconJob job3 = null;
     
     private String processJson = ""
             + "    {\n" + 
@@ -113,12 +128,42 @@ public class ReconOperationTests extends RefineTest {
     }
     
     @BeforeTest
-    public void setUpProjectMock() {
-    	project = mock(Project.class);
-    	History history = mock(History.class);
-    	ProcessManager pm = mock(ProcessManager.class);
-    	when(project.getHistory()).thenReturn(history);
-    	when(project.getProcessManager()).thenReturn(pm);
+    public void setUpDependencies() {
+    	project = createProject("test project",
+    			new String[] {"column"},
+    			new Serializable[][] {
+    		{"value1"},
+    		{"value2"},
+    		{"value1"},
+    		{"value3"}
+    	});
+    	
+    	job1 = mock(ReconJob.class, withSettings().serializable());
+    	when(job1.getCellValue()).thenReturn("value1");
+    	job2 = mock(ReconJob.class, withSettings().serializable());
+    	when(job2.getCellValue()).thenReturn("value2");
+    	job3 = mock(ReconJob.class, withSettings().serializable());
+    	when(job3.getCellValue()).thenReturn("value3");
+    	recon1 = mock(Recon.class, withSettings().serializable());
+    	recon2 = mock(Recon.class, withSettings().serializable());
+    	recon3 = mock(Recon.class, withSettings().serializable());
+    	
+    	reconConfig = mock(ReconConfig.class, withSettings().serializable());
+    	doReturn(2).when(reconConfig).getBatchSize();
+    	when(reconConfig.batchRecon(eq(Arrays.asList(job1, job2)), anyLong())).thenReturn(Arrays.asList(recon1, recon2));
+    	when(reconConfig.batchRecon(eq(Arrays.asList(job3)), anyLong())).thenReturn(Arrays.asList(recon3));
+    	
+    	GridState state = project.getCurrentGridState();
+    	ColumnModel columnModel = state.getColumnModel();
+    	
+    	row1 = state.getRow(0L);
+    	row2 = state.getRow(1L);
+    	row3 = state.getRow(3L);
+		
+    	when(reconConfig.createJob(columnModel, 0L, row1, "column", row1.getCell(0))).thenReturn(job1);
+    	when(reconConfig.createJob(columnModel, 1L, row2, "column", row2.getCell(0))).thenReturn(job2);
+    	when(reconConfig.createJob(columnModel, 2L, row1, "column", row1.getCell(0))).thenReturn(job1);
+    	when(reconConfig.createJob(columnModel, 3L, row3, "column", row3.getCell(0))).thenReturn(job3);
     }
     
     @Test
@@ -135,27 +180,7 @@ public class ReconOperationTests extends RefineTest {
     
     @Test
     public void testChangeDataProducer() {
-    	ReconJob job1 = mock(ReconJob.class);
-    	when(job1.getCellValue()).thenReturn("value1");
-    	ReconJob job2 = mock(ReconJob.class);
-    	when(job2.getCellValue()).thenReturn("value2");
-    	ReconJob job3 = mock(ReconJob.class);
-    	when(job3.getCellValue()).thenReturn("value3");
-    	Recon recon1 = mock(Recon.class, "recon1");
-    	Recon recon2 = mock(Recon.class, "recon2");
-    	Recon recon3 = mock(Recon.class, "recon3");
-    	
-    	ReconConfig reconConfig = mock(ReconConfig.class);
-    	doReturn(2).when(reconConfig).getBatchSize();
-    	when(reconConfig.batchRecon(Arrays.asList(job1, job2), 1234L)).thenReturn(Arrays.asList(recon1, recon2));
-    	when(reconConfig.batchRecon(Arrays.asList(job3), 1234L)).thenReturn(Arrays.asList(recon3));
-    	
-    	ColumnModel columnModel = mock(ColumnModel.class);
-    	
-    	Row row1 = new Row(Arrays.asList(new Cell("value1", null)));
-    	Row row2 = new Row(Arrays.asList(new Cell("value2", null)));
-    	Row row3 = new Row(Arrays.asList(new Cell("value3", null)));
-		List<IndexedRow> batch1 = Arrays.asList(
+    	List<IndexedRow> batch1 = Arrays.asList(
     			new IndexedRow(0L, row1),
     			new IndexedRow(1L, row2)
     			);
@@ -163,12 +188,8 @@ public class ReconOperationTests extends RefineTest {
     			new IndexedRow(2L, row1),
     			new IndexedRow(3L, row3)
     			);
-    	when(reconConfig.createJob(columnModel, 0L, row1, "column", row1.getCell(0))).thenReturn(job1);
-    	when(reconConfig.createJob(columnModel, 1L, row2, "column", row2.getCell(0))).thenReturn(job2);
-    	when(reconConfig.createJob(columnModel, 2L, row1, "column", row1.getCell(0))).thenReturn(job1);
-    	when(reconConfig.createJob(columnModel, 3L, row3, "column", row3.getCell(0))).thenReturn(job3);
     	
-    	ReconChangeDataProducer producer = new ReconChangeDataProducer("column", 0, reconConfig, 1234L, columnModel);
+    	ReconChangeDataProducer producer = new ReconChangeDataProducer("column", 0, reconConfig, 1234L, project.getColumnModel());
     	List<Cell> results1 = producer.call(batch1);
     	List<Cell> results2 = producer.call(batch2);
     	
@@ -179,5 +200,30 @@ public class ReconOperationTests extends RefineTest {
     	
     	verify(reconConfig, times(1)).batchRecon(Arrays.asList(job1, job2), 1234L);
     	verify(reconConfig, times(1)).batchRecon(Arrays.asList(job3), 1234L);
+    }
+    
+    @Test
+    public void testFullChange() throws Exception {
+    	ReconOperation operation = new ReconOperation(EngineConfig.ALL_ROWS, "column", reconConfig);
+    	Process process = operation.createProcess(project.getHistory(), project.getProcessManager());
+    	process.startPerforming(project.getProcessManager());
+        Assert.assertTrue(process.isRunning());
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            Assert.fail("Test interrupted");
+        }
+        Assert.assertFalse(process.isRunning());
+        
+        GridState expectedGrid = createGrid(
+        		new String[] {"column"},
+        		new Serializable[][] {
+        			{new Cell("value1", recon1)},
+        			{new Cell("value2", recon2)},
+        			{new Cell("value1", recon1)},
+        			{new Cell("value3", recon3)}
+        		});
+        
+        assertGridEquals(project.getCurrentGridState(), expectedGrid);
     }
 }

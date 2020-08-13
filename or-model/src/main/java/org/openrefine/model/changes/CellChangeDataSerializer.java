@@ -14,10 +14,9 @@ public class CellChangeDataSerializer implements ChangeDataSerializer<Cell> {
     @Override
     public String serialize(Cell changeDataItem) {
         try {
-            return ParsingUtilities.mapper.writeValueAsString(changeDataItem);
+            return ParsingUtilities.saveWriter.writeValueAsString(changeDataItem);
         } catch (JsonProcessingException e) {
-            // does not happen, Cells are always serializable
-            return null;
+            throw new IllegalStateException("Cell serialization failed", e);
         }
     }
 

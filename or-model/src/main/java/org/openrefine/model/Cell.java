@@ -193,7 +193,7 @@ public class Cell implements HasFields, Serializable {
     	    return otherCell.value == null;
     	}
     	return (value.equals(otherCell.value)
-    			&& ((recon == null && otherCell.recon == null) || recon.equals(otherCell.recon)));
+    			&& ((recon == null && otherCell.recon == null) || (recon != null && recon.equals(otherCell.recon))));
     			
     }
 }
