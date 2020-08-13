@@ -23,6 +23,7 @@
  ******************************************************************************/
 package org.openrefine.wikidata.schema;
 
+import org.testng.Assert;
 import static org.testng.Assert.assertEquals;
 
 import java.io.IOException;
@@ -156,5 +157,13 @@ public class WikibaseSchemaTest extends WikidataRefineTest {
         ItemUpdate update1 = new ItemUpdateBuilder(qid1).addStatement(statement1).build();
         expected.add(update1);
         assertEquals(expected, updates);
+    }
+
+    @Test
+    public void testUnmodifiableList() throws IOException {
+        String serialized = TestingData.jsonFromFile("schema/inception.json");
+        WikibaseSchema schema = WikibaseSchema.reconstruct(serialized);
+        List<WbItemDocumentExpr> itemDocumentExprs = schema.getItemDocumentExpressions();
+        Assert.assertTrue(itemDocumentExprs.getClass().getName().contains("Unmodifiable"));
     }
 }

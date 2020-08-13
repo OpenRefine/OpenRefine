@@ -23,11 +23,13 @@
  ******************************************************************************/
 package org.openrefine.wikidata.schema;
 
+import org.testng.Assert;
 import static org.testng.Assert.assertEquals;
 
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
 
 import org.openrefine.wikidata.schema.exceptions.SkipSchemaExpressionException;
 import org.openrefine.wikidata.testing.JacksonSerializationTest;
@@ -154,5 +156,13 @@ public class WbStatementExprTest extends WbExpressionTest<Statement> {
     @Test
     public void testSerialize() {
         JacksonSerializationTest.canonicalSerialization(WbStatementExpr.class, statementExpr, jsonRepresentation);
+    }
+
+    @Test
+    public void testUnmodifiableList() {
+        List<WbSnakExpr> snakExprs = statementExpr.getQualifiers();
+        Assert.assertTrue(snakExprs.getClass().getName().contains("Unmodifiable"));
+        List<WbReferenceExpr> referenceExprs = statementExpr.getReferences();
+        Assert.assertTrue(referenceExprs.getClass().getName().contains("Unmodifiable"));
     }
 }

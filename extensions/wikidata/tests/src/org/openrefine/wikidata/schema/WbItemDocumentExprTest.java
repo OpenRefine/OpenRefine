@@ -24,10 +24,12 @@
 package org.openrefine.wikidata.schema;
 
 import java.util.Collections;
+import java.util.List;
 
 import org.openrefine.wikidata.testing.JacksonSerializationTest;
 import org.openrefine.wikidata.updates.ItemUpdate;
 import org.openrefine.wikidata.updates.ItemUpdateBuilder;
+import org.testng.Assert;
 import org.testng.annotations.Test;
 import org.wikidata.wdtk.datamodel.helpers.Datamodel;
 import org.wikidata.wdtk.datamodel.interfaces.ItemIdValue;
@@ -88,5 +90,13 @@ public class WbItemDocumentExprTest extends WbExpressionTest<ItemUpdate> {
     @Test
     public void testSerialize() {
         JacksonSerializationTest.canonicalSerialization(WbItemDocumentExpr.class, expr, jsonRepresentation);
+    }
+
+    @Test
+    public void testUnmodifiableList() {
+        List<WbNameDescExpr> nameDescExprs = expr.getNameDescs();
+        Assert.assertTrue(nameDescExprs.getClass().getName().contains("Unmodifiable"));
+        List<WbStatementGroupExpr> statementGroupExprs = expr.getStatementGroups();
+        Assert.assertTrue(statementGroupExprs.getClass().getName().contains("Unmodifiable"));
     }
 }

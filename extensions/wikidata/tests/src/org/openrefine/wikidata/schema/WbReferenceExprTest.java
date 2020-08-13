@@ -25,8 +25,10 @@ package org.openrefine.wikidata.schema;
 
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
 
 import org.openrefine.wikidata.testing.JacksonSerializationTest;
+import org.testng.Assert;
 import org.testng.annotations.Test;
 import org.wikidata.wdtk.datamodel.helpers.Datamodel;
 import org.wikidata.wdtk.datamodel.interfaces.Reference;
@@ -76,5 +78,11 @@ public class WbReferenceExprTest extends WbExpressionTest<Reference> {
     public void testSerialize()
             throws JsonProcessingException {
         JacksonSerializationTest.canonicalSerialization(WbReferenceExpr.class, expr, jsonRepresentation);
+    }
+
+    @Test
+    public void testUnmodifiableList() {
+        List<WbSnakExpr> snakExprs = expr.getSnaks();
+        Assert.assertTrue(snakExprs.getClass().getName().contains("Unmodifiable"));
     }
 }
