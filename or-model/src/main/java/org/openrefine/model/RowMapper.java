@@ -5,7 +5,7 @@ import java.io.Serializable;
 
 /**
  * A function applied to a row, returning a new row to replace it. Implementations should be stateless. If a state is
- * required, use {@link RowScanMapper}.
+ * required, use {@link RowScanMapper}. If multiple rows or no rows can be returned, use {@link RowFlatMapper}.
  * 
  * @author Antonin Delpeuch
  *
