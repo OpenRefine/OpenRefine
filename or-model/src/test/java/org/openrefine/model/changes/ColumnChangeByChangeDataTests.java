@@ -10,10 +10,10 @@ import org.testng.annotations.Test;
 import org.openrefine.util.ParsingUtilities;
 import org.openrefine.util.TestUtils;
 
-public class ColumnAdditionByChangeDataTests {
+public class ColumnChangeByChangeDataTests {
 
     public static String changeJson = "{\n" +
-            "        \"type\": \"org.openrefine.model.changes.ColumnAdditionByChangeData\"," +
+            "        \"type\": \"org.openrefine.model.changes.ColumnChangeByChangeData\"," +
             "        \"columnIndex\": 1," +
             "        \"columnName\": \"foo\"," +
             "        \"changeDataId\": \"urls\"\n" +
