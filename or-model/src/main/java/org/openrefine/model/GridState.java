@@ -9,6 +9,7 @@ import java.util.Map;
 import org.openrefine.browsing.facets.RecordAggregator;
 import org.openrefine.browsing.facets.RowAggregator;
 import org.openrefine.model.changes.ChangeData;
+import org.openrefine.model.changes.RowChangeDataFlatJoiner;
 import org.openrefine.model.changes.RowChangeDataJoiner;
 import org.openrefine.model.changes.RowChangeDataProducer;
 import org.openrefine.overlay.OverlayModel;
@@ -215,6 +216,17 @@ public interface GridState {
     public GridState mapRows(RowMapper mapper, ColumnModel newColumnModel);
     
     /**
+     * Returns a new grid state, where the rows have been mapped by the flat mapper.
+     * 
+     * @param mapper the function used to transform rows
+     *               This object and its dependencies are required
+     *               to be serializable.
+     * @param newColumnModel the column model of the resulting grid state
+     * @return the resulting grid state
+     */
+    public GridState flatMapRows(RowFlatMapper mapper, ColumnModel newColumnModel);
+    
+    /**
      * Returns a new grid state where the rows have been mapped by the
      * stateful mapper. This can be significantly less efficient than a
      * stateless mapper, so only use this if you really need to rely on state.
@@ -274,6 +286,8 @@ public interface GridState {
      */
     public GridState removeRecords(RecordFilter filter);
     
+    // Interaction with change data
+    
     /**
      * Extract change data by applying a function to each filtered row.
      * The calls to the change data producer are batched if requested by the producer.
@@ -297,6 +311,18 @@ public interface GridState {
      * @return
      */
     public <T extends Serializable> GridState join(ChangeData<T> changeData, RowChangeDataJoiner<T> rowJoiner, ColumnModel newColumnModel);
+    
+    /**
+     * Joins pre-computed change data with the current grid data,
+     * with a joiner function that can return multiple rows for a given original row.
+     * 
+     * @param <T> the type of change data that was serialized to disk for each row
+     * @param changeData the serialized change data
+     * @param rowJoiner produces the new row by joining the old row with change data
+     * @param newColumnModel the column model to apply to the new grid
+     * @return
+     */
+    public <T extends Serializable> GridState join(ChangeData<T> changeData, RowChangeDataFlatJoiner<T> rowJoiner, ColumnModel newColumnModel);
     
     /**
      * Utility class to help with deserialization of the metadata

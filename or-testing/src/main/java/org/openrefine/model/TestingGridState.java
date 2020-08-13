@@ -19,6 +19,7 @@ import java.util.zip.GZIPOutputStream;
 import org.openrefine.browsing.facets.RecordAggregator;
 import org.openrefine.browsing.facets.RowAggregator;
 import org.openrefine.model.changes.ChangeData;
+import org.openrefine.model.changes.RowChangeDataFlatJoiner;
 import org.openrefine.model.changes.RowChangeDataJoiner;
 import org.openrefine.model.changes.RowChangeDataProducer;
 import org.openrefine.overlay.OverlayModel;
@@ -261,6 +262,27 @@ public class TestingGridState implements GridState {
         }
         return new TestingGridState(newColumnModel, rows, overlayModels);
     }
+    
+
+    @Override
+    public GridState flatMapRows(RowFlatMapper mapper, ColumnModel newColumnModel) {
+     // Check that the mapper is serializable as it is required by the interface,
+        // even if this implementation does not rely on it.
+        TestingDatamodelRunner.ensureSerializable(mapper);
+        
+        List<Row> rows = new ArrayList<>(this.rows.size());
+        for(IndexedRow indexedRow : indexedRows()) {
+            List<Row> rowBatch = mapper.call(indexedRow.getIndex(), indexedRow.getRow());
+            for (Row row : rowBatch) {
+                if (row.getCells().size() != newColumnModel.getColumns().size()) {
+                    Assert.fail(String.format("Row size (%d) inconsistent with supplied column model (%s)",
+                            row.getCells().size(), newColumnModel.getColumns()));
+                }
+            }
+            rows.addAll(rowBatch);
+        }
+        return new TestingGridState(newColumnModel, rows, overlayModels);
+    }
 
     @Override
     public <S extends Serializable> GridState mapRows(RowScanMapper<S> mapper, ColumnModel newColumnModel) {
@@ -437,10 +459,27 @@ public class TestingGridState implements GridState {
     @Override
     public <T extends Serializable> GridState join(ChangeData<T> changeData, RowChangeDataJoiner<T> rowJoiner,
             ColumnModel newColumnModel) {
+        // Check that the joiner is serializable as it is required by the interface,
+        // even if this implementation does not rely on it.
         TestingDatamodelRunner.ensureSerializable(rowJoiner);
+        
         List<Row> newRows = indexedRows()
                 .stream()
                 .map(ir -> rowJoiner.call(ir.getIndex(), ir.getRow(), changeData.get(ir.getIndex())))
+                .collect(Collectors.toList());
+        return new TestingGridState(newColumnModel, newRows, overlayModels);
+    }
+
+    @Override
+    public <T extends Serializable> GridState join(ChangeData<T> changeData, RowChangeDataFlatJoiner<T> rowJoiner,
+            ColumnModel newColumnModel) {
+        // Check that the joiner is serializable as it is required by the interface,
+        // even if this implementation does not rely on it.
+        TestingDatamodelRunner.ensureSerializable(rowJoiner);
+        
+        List<Row> newRows = indexedRows()
+                .stream()
+                .flatMap(ir -> rowJoiner.call(ir.getIndex(), ir.getRow(), changeData.get(ir.getIndex())).stream())
                 .collect(Collectors.toList());
         return new TestingGridState(newColumnModel, newRows, overlayModels);
     }

@@ -23,6 +23,7 @@ import org.openrefine.browsing.facets.Combiner;
 import org.openrefine.browsing.facets.RecordAggregator;
 import org.openrefine.browsing.facets.RowAggregator;
 import org.openrefine.model.changes.ChangeData;
+import org.openrefine.model.changes.RowChangeDataFlatJoiner;
 import org.openrefine.model.changes.RowChangeDataJoiner;
 import org.openrefine.model.changes.RowChangeDataProducer;
 import org.openrefine.model.rdd.PartitionedRDD;
@@ -468,6 +469,25 @@ public class SparkGridState implements GridState {
     }
     
     @Override
+    public GridState flatMapRows(RowFlatMapper mapper, ColumnModel newColumnModel) {
+        JavaPairRDD<Long, Row> rows = RDDUtils.zipWithIndex(grid.flatMap(rowFlatMap(mapper)));
+        return new SparkGridState(newColumnModel, rows, overlayModels, runner);
+    }
+    
+    private static FlatMapFunction<Tuple2<Long,Row>,Row> rowFlatMap(RowFlatMapper mapper) {
+        return new FlatMapFunction<Tuple2<Long,Row>,Row>() {
+
+            private static final long serialVersionUID = -2920197696120331752L;
+
+            @Override
+            public Iterator<Row> call(Tuple2<Long, Row> t) throws Exception {
+                return mapper.call(t._1, t._2).iterator();
+            }
+            
+        };
+    }
+    
+    @Override
     public <S extends Serializable> GridState mapRows(RowScanMapper<S> mapper, ColumnModel newColumnModel) {
         RDD<Tuple2<Long,Row>> rows = new ScanMapRDD<Serializable,Tuple2<Long,Row>,Tuple2<Long,Row>>(
                 grid.rdd(),
@@ -729,6 +749,35 @@ public class SparkGridState implements GridState {
 
             @Override
             public Row call(Long id, Tuple2<Row,Optional<T>> tuple) throws Exception {
+                return joiner.call(id, tuple._1, tuple._2.or(null));
+            }
+        };
+    }
+
+    @Override
+    public <T extends Serializable> GridState join(ChangeData<T> changeData, RowChangeDataFlatJoiner<T> rowJoiner,
+            ColumnModel newColumnModel) {
+        if (!(changeData instanceof SparkChangeData)) {
+            throw new IllegalArgumentException("A Spark grid state can only be joined with Spark change data");
+        }
+        SparkChangeData<T> sparkChangeData = (SparkChangeData<T>)changeData;
+        // TODO this left outer join does not rely on the fact that the RDDs are sorted by key
+        // and there could be spurious shuffles if the partitioners differ slightly.
+        // the last sort could be avoided as well (but by default leftOuterJoin will not preserve order…)
+        JavaPairRDD<Long, Tuple2<Row, Optional<T>>> join = grid.leftOuterJoin(sparkChangeData.getData()).sortByKey();
+        JavaPairRDD<Long, List<Row>> newGrid = RDDUtils.mapKeyValuesToValues(join, wrapFlatJoiner(rowJoiner));
+        JavaPairRDD<Long, Row> flattened = RDDUtils.zipWithIndex(newGrid.values().flatMap(l -> l.iterator()));
+        return new SparkGridState(newColumnModel, flattened, overlayModels, runner);
+    }
+    
+    private static <T extends Serializable> Function2<Long, Tuple2<Row,Optional<T>>, List<Row>> wrapFlatJoiner(RowChangeDataFlatJoiner<T> joiner) {
+        
+        return new Function2<Long, Tuple2<Row,Optional<T>>, List<Row>>() {
+
+            private static final long serialVersionUID = 3976239801526423806L;
+
+            @Override
+            public List<Row> call(Long id, Tuple2<Row,Optional<T>> tuple) throws Exception {
                 return joiner.call(id, tuple._1, tuple._2.or(null));
             }
         };

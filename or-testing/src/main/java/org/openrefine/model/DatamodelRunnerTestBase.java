@@ -23,6 +23,7 @@ import org.openrefine.browsing.facets.StringFacetState;
 import org.openrefine.model.changes.ChangeData;
 import org.openrefine.model.changes.ChangeDataSerializer;
 import org.openrefine.model.changes.IndexedData;
+import org.openrefine.model.changes.RowChangeDataFlatJoiner;
 import org.openrefine.model.changes.RowChangeDataJoiner;
 import org.openrefine.model.changes.RowChangeDataProducer;
 import org.openrefine.sorting.NumberCriterion;
@@ -390,6 +391,29 @@ public abstract class DatamodelRunnerTestBase {
         Assert.assertEquals(rows.get(1).getRow().getCellValue(1), "1_concat");
     }
     
+    public static RowFlatMapper rowDuplicator = new RowFlatMapper() {
+
+        private static final long serialVersionUID = -6205166282452082366L;
+
+        @Override
+        public List<Row> call(long rowId, Row row) {
+            return Arrays.asList(row, row);
+        }
+        
+    };
+    
+    @Test
+    public void testFlatMapRows() {
+        GridState mapped = simpleGrid.flatMapRows(
+                rowDuplicator, simpleGrid.getColumnModel());
+        
+        Assert.assertEquals(mapped.getColumnModel(), simpleGrid.getColumnModel());
+        List<Row> rows = mapped.collectRows().stream().map(ir -> ir.getRow()).collect(Collectors.toList());
+        Assert.assertEquals(rows.size(), 8);
+        Assert.assertEquals(rows.get(0), rows.get(1));
+        Assert.assertEquals(rows.get(0), simpleGrid.getRow(0L));
+    }
+    
     public static RowScanMapper<String> statefulRowMapper = new RowScanMapper<String>() {
 
         private static final long serialVersionUID = -2411339705543951236L;
@@ -667,5 +691,37 @@ public abstract class DatamodelRunnerTestBase {
         
         Assert.assertEquals(joined.getColumnModel(), expected.getColumnModel());
         Assert.assertEquals(joined.collectRows(), expected.collectRows());    
+    }
+    
+    public static RowChangeDataFlatJoiner<String> flatJoiner = new RowChangeDataFlatJoiner<String>() {
+
+        private static final long serialVersionUID = -60939353562371888L;
+
+        @Override
+        public List<Row> call(long rowId, Row row, String changeData) {
+            Row newRow = row.withCell(1, new Cell(changeData, null));
+            return Arrays.asList(row, newRow);
+        }
+        
+    };
+    
+    @Test
+    public void testFlatJoinChangeData() {
+        GridState flatJoined = simpleGrid.join(simpleChangeData, flatJoiner, simpleGrid.getColumnModel());
+        
+        GridState expected = createGrid(new String[] { "foo", "bar" },
+                new Serializable[][] {
+            { "a", "b" },
+            { "a", "first" },
+            { "", 1 },
+            { "", null },
+            { "c", true },
+            { "c", "third" },
+            { null, 123123123123L },
+            { null, null }
+        });
+        
+        Assert.assertEquals(flatJoined.getColumnModel(), expected.getColumnModel());
+        Assert.assertEquals(flatJoined.collectRows(), expected.collectRows());        
     }
 }
