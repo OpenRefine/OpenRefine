@@ -25,6 +25,7 @@ package org.openrefine.wikidata.schema;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.openrefine.wikidata.qa.QAWarningStore;
@@ -90,7 +91,7 @@ public class WikibaseSchema implements OverlayModel {
      */
     @JsonIgnore
     public List<WbItemDocumentExpr> getItemDocumentExpressions() {
-        return itemDocumentExprs;
+        return Collections.unmodifiableList(itemDocumentExprs);
     }
     
     public void setItemDocumentExpressions(List<WbItemDocumentExpr> exprs) {
