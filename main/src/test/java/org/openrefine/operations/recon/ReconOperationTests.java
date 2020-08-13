@@ -37,6 +37,7 @@ import java.util.List;
 import static org.mockito.Mockito.doReturn;
 
 import org.openrefine.RefineTest;
+import org.openrefine.history.History;
 import org.openrefine.model.Cell;
 import org.openrefine.model.ColumnModel;
 import org.openrefine.model.IndexedRow;
@@ -48,10 +49,12 @@ import org.openrefine.model.recon.ReconJob;
 import org.openrefine.model.recon.StandardReconConfig;
 import org.openrefine.operations.OperationRegistry;
 import org.openrefine.operations.recon.ReconOperation.ReconChangeDataProducer;
+import org.openrefine.process.ProcessManager;
 import org.openrefine.util.ParsingUtilities;
 import org.openrefine.util.TestUtils;
 import org.testng.Assert;
 import org.testng.annotations.BeforeSuite;
+import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
 
@@ -71,7 +74,7 @@ public class ReconOperationTests extends RefineTest {
             + "   \"limit\":0"
             + "},"
             + "\"engineConfig\":{\"mode\":\"row-based\",\"facets\":[]}}";
-    private Project project = mock(Project.class);
+    private Project project = null;
     
     private String processJson = ""
             + "    {\n" + 
@@ -107,6 +110,15 @@ public class ReconOperationTests extends RefineTest {
     public void registerOperation() {
         OperationRegistry.registerOperation("core", "recon", ReconOperation.class);
         ReconConfig.registerReconConfig("core", "standard-service", StandardReconConfig.class);
+    }
+    
+    @BeforeTest
+    public void setUpProjectMock() {
+    	project = mock(Project.class);
+    	History history = mock(History.class);
+    	ProcessManager pm = mock(ProcessManager.class);
+    	when(project.getHistory()).thenReturn(history);
+    	when(project.getProcessManager()).thenReturn(pm);
     }
     
     @Test

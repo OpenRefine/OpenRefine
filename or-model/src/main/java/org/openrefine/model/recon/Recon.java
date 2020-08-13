@@ -166,7 +166,7 @@ public class Recon implements HasFields, Serializable {
         this.identifierSpace = identifierSpace;
         this.schemaSpace = schemaSpace;
         features = new Object[Feature_max];
-        candidates = null;
+        candidates = ImmutableList.of();
         judgment = Judgment.None;
         judgmentAction = "unknown";
         judgmentHistoryEntry = 0;

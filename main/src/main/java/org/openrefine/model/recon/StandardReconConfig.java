@@ -331,7 +331,7 @@ public class StandardReconConfig extends ReconConfig {
         // Only send limit if it's non-default to preserve backward compatibility with
         // services which might choke on this
         @JsonProperty("limit")
-        @JsonInclude(Include.NON_DEFAULT)
+        @JsonInclude(Include.NON_EMPTY)
         protected int limit;
         
         public ReconQuery(

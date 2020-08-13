@@ -9,10 +9,10 @@ import org.testng.annotations.Test;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
-public class ColumnAdditionByChangeDataTests {
+public class ColumnChangeByChangeDataTests {
     
     public static String changeJson = "{\n" + 
-            "        \"type\": \"org.openrefine.model.changes.ColumnAdditionByChangeData\"," +
+            "        \"type\": \"org.openrefine.model.changes.ColumnChangeByChangeData\"," +
             "        \"columnIndex\": 1," + 
             "        \"columnName\": \"foo\"," +
             "        \"changeDataId\": \"urls\",\n" + 

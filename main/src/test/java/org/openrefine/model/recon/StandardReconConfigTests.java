@@ -193,8 +193,8 @@ public class StandardReconConfigTests extends RefineTest {
                 "           }\n" +
                 "        ]}";
     	StandardReconConfig r = StandardReconConfig.reconstruct(config);
-    	Row row = project.rows.get(0);
-        ReconJob job = r.createJob(null, 0, row, "title", row.getCell(0));
+    	Row row = project.getCurrentGridState().getRow(0);
+        ReconJob job = r.createJob(project.getCurrentGridState().getColumnModel(), 0, row, "title", row.getCell(0));
         TestUtils.assertEqualAsJson("{"
         		+ "\"query\":\"mulholland drive\","
         		+ "\"type\":\"Q1234\","
