@@ -92,11 +92,13 @@ public class WbItemDocumentExprTest extends WbExpressionTest<ItemUpdate> {
         JacksonSerializationTest.canonicalSerialization(WbItemDocumentExpr.class, expr, jsonRepresentation);
     }
 
-    @Test
-    public void testUnmodifiableList() {
-        List<WbNameDescExpr> nameDescExprs = expr.getNameDescs();
-        Assert.assertTrue(nameDescExprs.getClass().getName().contains("Unmodifiable"));
-        List<WbStatementGroupExpr> statementGroupExprs = expr.getStatementGroups();
-        Assert.assertTrue(statementGroupExprs.getClass().getName().contains("Unmodifiable"));
+    @Test(expectedExceptions = UnsupportedOperationException.class)
+    public void testUnmodifiableNameDescsList() {
+        expr.getNameDescs().clear();
+    }
+
+    @Test(expectedExceptions = UnsupportedOperationException.class)
+    public void testUnmodifiableStatementGroupsList() {
+        expr.getStatementGroups().clear();
     }
 }

@@ -159,11 +159,10 @@ public class WikibaseSchemaTest extends WikidataRefineTest {
         assertEquals(expected, updates);
     }
 
-    @Test
+    @Test(expectedExceptions = UnsupportedOperationException.class)
     public void testUnmodifiableList() throws IOException {
         String serialized = TestingData.jsonFromFile("schema/inception.json");
         WikibaseSchema schema = WikibaseSchema.reconstruct(serialized);
-        List<WbItemDocumentExpr> itemDocumentExprs = schema.getItemDocumentExpressions();
-        Assert.assertTrue(itemDocumentExprs.getClass().getName().contains("Unmodifiable"));
+        schema.getItemDocumentExpressions().clear();
     }
 }

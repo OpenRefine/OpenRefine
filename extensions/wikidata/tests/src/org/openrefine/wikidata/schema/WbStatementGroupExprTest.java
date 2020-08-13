@@ -93,9 +93,8 @@ public class WbStatementGroupExprTest extends WbExpressionTest<StatementGroup> {
         JacksonSerializationTest.canonicalSerialization(WbStatementGroupExpr.class, expr, jsonRepresentation);
     }
 
-    @Test
+    @Test(expectedExceptions = UnsupportedOperationException.class)
     public void testUnmodifiableList() {
-        List<WbStatementExpr> statementExprs = expr.getStatements();
-        Assert.assertTrue(statementExprs.getClass().getName().contains("Unmodifiable"));
+        expr.getStatements().clear();
     }
 }

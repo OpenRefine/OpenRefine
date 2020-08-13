@@ -80,9 +80,8 @@ public class WbReferenceExprTest extends WbExpressionTest<Reference> {
         JacksonSerializationTest.canonicalSerialization(WbReferenceExpr.class, expr, jsonRepresentation);
     }
 
-    @Test
+    @Test(expectedExceptions = UnsupportedOperationException.class)
     public void testUnmodifiableList() {
-        List<WbSnakExpr> snakExprs = expr.getSnaks();
-        Assert.assertTrue(snakExprs.getClass().getName().contains("Unmodifiable"));
+        expr.getSnaks().clear();
     }
 }
