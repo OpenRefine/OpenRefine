@@ -132,11 +132,11 @@ ExporterManager.prepareExportRowsForm = function(format, includeEngine, ext) {
 
   $('<input />')
   .attr("name", "project")
-  .attr("value", theProject.id)
+  .val(theProject.id)
   .appendTo(form);
   $('<input />')
   .attr("name", "format")
-  .attr("value", format)
+  .val(format)
   .appendTo(form);
   $('<input />')
   .attr("name", "quoteAll")
@@ -144,7 +144,7 @@ ExporterManager.prepareExportRowsForm = function(format, includeEngine, ext) {
   if (includeEngine) {
     $('<input />')
     .attr("name", "engine")
-    .attr("value", JSON.stringify(ui.browsingEngine.getJSON()))
+    .val(JSON.stringify(ui.browsingEngine.getJSON()))
     .appendTo(form);
   }
 
@@ -161,7 +161,7 @@ ExporterManager.handlers.exportProjectToLocal = function() {
   .attr("target", "refine-export");
   $('<input />')
   .attr("name", "project")
-  .attr("value", theProject.id)
+  .val(theProject.id)
   .appendTo(form);
 
   document.body.appendChild(form);

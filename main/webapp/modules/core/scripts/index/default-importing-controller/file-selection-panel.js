@@ -60,6 +60,7 @@ Refine.DefaultImportingController.prototype._prepareFileSelectionPanel = functio
   this._fileSelectionPanelElmts = DOM.bind(this._fileSelectionPanel);
   
   $('#or-import-select').text($.i18n('core-index-import/select-file'));
+  $('#or-import-singleProject').text($.i18n('core-index-import/single-project'));
   $('#or-import-severalFile').text($.i18n('core-index-import/several-file'));
   $('#or-import-selExt').text($.i18n('core-index-import/sel-by-extension'));
   $('#or-import-regex').text($.i18n('core-index-import/sel-by-regex'));
@@ -160,7 +161,7 @@ Refine.DefaultImportingController.prototype._renderFileSelectionPanelFileTable =
     });
     if (fileRecord.selected) {
       // Initial selection determined on server side.
-      checkbox.attr("checked", "checked");
+      checkbox.prop('checked', true);
       self._selectedMap[fileRecord.location] = fileRecord;
     }
 
@@ -185,12 +186,12 @@ Refine.DefaultImportingController.prototype._renderFileSelectionPanelControlPane
       var fileRecord = files[i];
       self._selectedMap[fileRecord.location] = fileRecord;
     }
-    self._fileSelectionPanelElmts.filePanel.find("input").attr("checked", "checked");
+    self._fileSelectionPanelElmts.filePanel.find("input").prop('checked', true);
     self._updateFileSelectionSummary();
   });
   this._fileSelectionPanelElmts.unselectAllButton.unbind().click(function(evt) {
     self._selectedMap = {};
-    self._fileSelectionPanelElmts.filePanel.find("input").removeAttr("checked");
+    self._fileSelectionPanelElmts.filePanel.find("input").prop('checked', false);
     self._updateFileSelectionSummary();
   });
 
@@ -213,7 +214,7 @@ Refine.DefaultImportingController.prototype._renderFileSelectionPanelControlPane
             self._selectedMap[file.location] = file;
             self._fileSelectionPanelElmts.filePanel
             .find("input[index='" + i + "']")
-            .attr("checked", "checked");
+            .prop('checked', true);
           }
         }
       }
@@ -231,7 +232,7 @@ Refine.DefaultImportingController.prototype._renderFileSelectionPanelControlPane
             delete self._selectedMap[file.location];
             self._fileSelectionPanelElmts.filePanel
             .find("input[index='" + i + "']")
-            .removeAttr("checked");
+            .prop('checked', false);
           }
         }
       }
@@ -275,7 +276,7 @@ Refine.DefaultImportingController.prototype._renderFileSelectionPanelControlPane
             self._selectedMap[file.location] = file;
             self._fileSelectionPanelElmts.filePanel
             .find("input[index='" + i + "']")
-            .attr("checked", "checked");
+            .prop('checked', true);
           }
         }
       }
@@ -297,7 +298,7 @@ Refine.DefaultImportingController.prototype._renderFileSelectionPanelControlPane
             delete self._selectedMap[file.location];
             self._fileSelectionPanelElmts.filePanel
             .find("input[index='" + i + "']")
-            .removeAttr("checked");
+            .prop('checked', false);
           }
         }
       }

@@ -87,7 +87,7 @@ ExpressionPreviewDialog.Widget = function(
 ) {
     var language = "grel";
     if (!(expression)) {
-        language = $.cookie("scripting.lang");
+        language = Cookies.get("scripting.lang");
         if (language == "gel") { // backward compatible
             language = "grel";
         }
@@ -121,13 +121,13 @@ ExpressionPreviewDialog.Widget = function(
     
     this._elmts.expressionPreviewLanguageSelect[0].value = language;
     this._elmts.expressionPreviewLanguageSelect.bind("change", function() {
-        $.cookie("scripting.lang", this.value);
+        Cookies.set("scripting.lang", this.value, {"SameSite" : "Lax"});
         self.update();
     });
         
     var self = this;
     this._elmts.expressionPreviewTextarea
-        .attr("value", this.expression)
+        .val(this.expression)
         .bind("keyup change input",function(){
             self._scheduleUpdate();
         })

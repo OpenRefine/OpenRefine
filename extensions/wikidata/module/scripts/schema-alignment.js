@@ -478,15 +478,15 @@ SchemaAlignment._addNameDesc = function(item, json) {
   var type_container = $('<div></div>').addClass('wbs-namedesc-type').appendTo(namedesc);
   var type_input = $('<select></select>').appendTo(type_container);
   $('<option></option>')
-  .attr('value', 'LABEL')
+  .val('LABEL')
   .text($.i18n('wikibase-schema/label'))
   .appendTo(type_input);
   $('<option></option>')
-  .attr('value', 'DESCRIPTION')
+  .val('DESCRIPTION')
   .text($.i18n('wikibase-schema/description'))
   .appendTo(type_input);
   $('<option></option>')
-  .attr('value', 'ALIAS')
+  .val('ALIAS')
   .text($.i18n('wikibase-schema/alias'))
   .appendTo(type_input);
   type_input.val(term_type);
@@ -528,7 +528,7 @@ SchemaAlignment._nameDescToJSON = function (namedesc) {
   var term_type = namedesc.find('select').first().val();
   var type = term_type;
   if (term_type !== 'ALIAS') {
-      var override = namedesc.find('input[type=checkbox]').first().is(':checked');
+      var override = namedesc.find('input[type=checkbox]').first().prop('checked');
       if (!override) {
          type = term_type + '_IF_NEW';
       }

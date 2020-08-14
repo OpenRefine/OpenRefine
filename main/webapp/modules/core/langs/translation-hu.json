@@ -700,7 +700,7 @@
     "core-views/finding-info2": "Jelölje meg a \"reguláris kifejezés\" opciót, ha különleges karakterekre (új sor, tabulátor...) vagy komplex mintára kíván keresni.",
     "core-views/replacement-info": "Ha a \"reguláris kifejezések\" opció meg van jelölve, és a keresőkifejezésben zárójelekkel elválasztott csoportok vannak, a $0 a teljes illeszkedő szöveget, az $1, $2... az 1., 2.... csoportot adja vissza.",
     "core-views/replace-dont-escape": "\\n az új sor, \\t a tabulátor; \\\\n, ha \\n-re, \\\\t, ha \\t-re keres.",
-    "core-views/warning-regex": "Érvénytelen reguláris kifejezés.",
+    "core-views/warning-regex": "Érvénytelen reguláris kifejezés : $1",
     "core-views/use-values-as-identifiers": "Értékek használat azonosítóként",
     "core-views/use-values-as-identifiers2": "Cellák jelölése összeegyeztetettként, a cellák értéke az azonosító",
     "core-views/choose-reconciliation-service": "Összeegyeztetési szolgáltatás választása",

@@ -11,7 +11,6 @@ import java.io.IOException;
 import javax.servlet.ServletException;
 
 import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
 import com.fasterxml.jackson.core.JsonParseException;
@@ -28,13 +27,9 @@ import edu.mit.simile.butterfly.ButterflyModule;
 
 public class LoadLanguageCommandTests extends CommandTestBase {
 
-    @BeforeTest
-    public void setUpTest() throws IOException {
-        FileProjectManager.initialize(TestUtils.createTempDirectory("openrefine-test-workspace-dir"));
-    }
-
     @BeforeMethod
-    public void setUpCommand() {
+    public void setUpCommand() throws IOException {
+        FileProjectManager.initialize(TestUtils.createTempDirectory("openrefine-test-workspace-dir"));
         command = new LoadLanguageCommand();
         ButterflyModule coreModule = mock(ButterflyModule.class);
 

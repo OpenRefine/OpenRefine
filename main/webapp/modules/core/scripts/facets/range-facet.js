@@ -213,7 +213,7 @@ RangeFacet.prototype._renderOtherChoices = function() {
     self._selectNumeric = !self._selectNumeric;
     self._updateRest();
   });
-  if (this._selectNumeric) numericCheck.attr("checked","checked");
+  if (this._selectNumeric) numericCheck.prop('checked', true);
 
   var numericLabel = $('<label>').attr("for", facet_id + "-numeric").appendTo(numericDiv);    
   $('<span>').text($.i18n('core-facets/numeric')+" ").addClass("facet-range-choice-label").appendTo(numericLabel);
@@ -226,13 +226,13 @@ RangeFacet.prototype._renderOtherChoices = function() {
     self._selectNonNumeric = !self._selectNonNumeric;
     self._updateRest();
   });
-  if (this._selectNonNumeric) nonNumericCheck.attr("checked","checked");
+  if (this._selectNonNumeric) nonNumericCheck.prop('checked', true);
 
   var nonNumericLabel = $('<label>').attr("for", facet_id + "-non-numeric").appendTo(nonNumericDiv);    
   $('<span>').text("Non-numeric ").addClass("facet-range-choice-label").appendTo(nonNumericLabel);
   $('<div>').text(this._nonNumericCount).addClass("facet-range-choice-count").appendTo(nonNumericLabel);
 
-  if (this._baseNonNumericCount === 0) nonNumericCheck.removeAttr("checked");
+  if (this._baseNonNumericCount === 0) nonNumericCheck.prop('checked', false);
 
   // ----------------- blank -----------------
 
@@ -241,13 +241,13 @@ RangeFacet.prototype._renderOtherChoices = function() {
     self._selectBlank = !self._selectBlank;
     self._updateRest();
   });
-  if (this._selectBlank) blankCheck.attr("checked","checked");
+  if (this._selectBlank) blankCheck.prop('checked', true);
 
   var blankLabel = $('<label>').attr("for", facet_id + "-blank").appendTo(blankDiv);    
   $('<span>').text("Blank ").addClass("facet-range-choice-label").appendTo(blankLabel);
   $('<div>').text(this._blankCount).addClass("facet-range-choice-count").appendTo(blankLabel);
 
-  if (this._baseBlankCount === 0) blankCheck.removeAttr("checked");
+  if (this._baseBlankCount === 0) blankCheck.prop('checked', false);
 
   // ----------------- error -----------------
 
@@ -256,13 +256,13 @@ RangeFacet.prototype._renderOtherChoices = function() {
     self._selectError = !self._selectError;
     self._updateRest();
   });
-  if (this._selectError) errorCheck.attr("checked","checked");
+  if (this._selectError) errorCheck.prop('checked', true);
 
   var errorLabel = $('<label>').attr("for", facet_id + "-error").appendTo(errorDiv);    
   $('<span>').text("Error ").addClass("facet-range-choice-label").appendTo(errorLabel);
   $('<div>').text(this._errorCount).addClass("facet-range-choice-count").appendTo(errorLabel);
 
-  if (this._baseErrorCount === 0) errorCheck.removeAttr("checked");
+  if (this._baseErrorCount === 0) errorCheck.prop("checked", false);
 
   // --------------------------
 

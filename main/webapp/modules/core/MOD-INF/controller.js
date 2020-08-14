@@ -334,19 +334,12 @@ function init() {
   registerOperations();
   registerImporting();
 
-  var RC = Packages.com.google.refine.model.recon.ReconConfig;
-  RC.registerReconConfig(module, "standard-service", Packages.com.google.refine.model.recon.StandardReconConfig);
-
-  ClientSideResourceManager.addPaths(
-    "index/scripts",
-    module,
-    [
-      
-      "externals/jquery-1.11.1.js",
-      "externals/jquery-migrate-1.2.1.js",
-      "externals/jquery.cookie.js",
+  var commonModules = [
+      "externals/jquery-1.12.4.js",
+      "externals/jquery-migrate-1.4.1.js",
       "externals/jquery-ui/jquery-ui-1.10.3.custom.js",
-      "externals/date.js",
+      "externals/js.cookie.js",
+      "externals/underscore-min.js",
 
       "externals/CLDRPluralRuleParser.js",
       "externals/jquery.i18n.js",
@@ -357,12 +350,20 @@ function init() {
       "externals/jquery.i18n.language.js",
       "externals/languages/fi.js",
       "externals/languages/ru.js",
+    ];
 
+  var RC = Packages.com.google.refine.model.recon.ReconConfig;
+  RC.registerReconConfig(module, "standard-service", Packages.com.google.refine.model.recon.StandardReconConfig);
+
+  ClientSideResourceManager.addPaths(
+    "index/scripts",
+    module,
+    commonModules.concat([
+      "externals/date.js",
       "externals/tablesorter/jquery.tablesorter.min.js",
       "externals/moment-with-locales.min.js",
       "externals/select2/select2.min.js",
       "externals/jquery.lavalamp.min.js",
-
 
       "scripts/util/misc.js",
       "scripts/util/url.js",
@@ -399,7 +400,7 @@ function init() {
 
       "scripts/reconciliation/recon-manager.js", // so that reconciliation functions are available to importers
       "scripts/index/edit-metadata-dialog.js"
-    ]
+    ])
   );
 
   ClientSideResourceManager.addPaths(
@@ -436,22 +437,9 @@ function init() {
   ClientSideResourceManager.addPaths(
     "project/scripts",
     module,
-    [
-      "externals/jquery-1.11.1.js",
-      "externals/jquery-migrate-1.2.1.js",
-      "externals/jquery.cookie.js",
-      "externals/suggest/suggest-4_3.js",
-      "externals/jquery-ui/jquery-ui-1.10.3.custom.js",
-      "externals/imgareaselect/jquery.imgareaselect.js",
+    commonModules.concat([
+      "externals/suggest/suggest-4_3a.js",
       "externals/date.js",
-
-      "externals/CLDRPluralRuleParser.js",
-      "externals/jquery.i18n.js",
-      "externals/jquery.i18n.messagestore.js",
-      "externals/jquery.i18n.parser.js",
-      "externals/jquery.i18n.emitter.js",
-      "externals/jquery.i18n.language.js",
-      "externals/underscore-min.js",
 
       "scripts/project.js",
 
@@ -481,6 +469,7 @@ function init() {
       "scripts/facets/list-facet.js",
       "scripts/facets/range-facet.js",
       "scripts/facets/timerange-facet.js",
+      "externals/imgareaselect/jquery.imgareaselect.js", // Used by scatterplot facet only
       "scripts/facets/scatterplot-facet.js",
       "scripts/facets/text-search-facet.js",
 
@@ -506,7 +495,7 @@ function init() {
       "scripts/dialogs/sql-exporter-dialog.js",
       "scripts/dialogs/expression-column-dialog.js",
       "scripts/dialogs/http-headers-dialog.js",
-    ]
+    ])
   );
 
   ClientSideResourceManager.addPaths(
@@ -552,28 +541,9 @@ function init() {
   ClientSideResourceManager.addPaths(
     "preferences/scripts",
     module,
-    [
-      "externals/jquery-1.11.1.js",
-      "externals/jquery-migrate-1.2.1.js",
-      "externals/jquery.cookie.js",
-      "externals/suggest/suggest-4_3.js",
-      "externals/jquery-ui/jquery-ui-1.10.3.custom.js",
-      "externals/imgareaselect/jquery.imgareaselect.js",
-      "externals/date.js",
-
-      "externals/CLDRPluralRuleParser.js",
-      "externals/jquery.i18n.js",
-      "externals/jquery.i18n.messagestore.js",
-      "externals/jquery.i18n.fallbacks.js",
-      "externals/jquery.i18n.parser.js",
-      "externals/jquery.i18n.emitter.js",
-      "externals/jquery.i18n.language.js",
-      "externals/languages/fi.js",
-      "externals/languages/ru.js",
-
-      "externals/underscore-min.js",
+    commonModules.concat([
       "scripts/preferences.js",
-    ]
+    ])
   );
   ClientSideResourceManager.addPaths(
     "preferences/styles",
