@@ -530,7 +530,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
     elmts.cancelButton.on('click', function() {
       dismiss();
     });
-    elmts.new_column_nameInput.change(function() {
+    elmts.new_column_nameInput.on('change', function() {
       if (elmts.new_column_nameInput[0].value != "") {
         elmts.copy_to_new_columnInput.prop('checked',true);
       } else
@@ -538,7 +538,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
         elmts.write_selected_columnInput.prop('checked',true);
         }
     });
-    elmts.null_substituteInput.change(function() {
+    elmts.null_substituteInput.on('change', function() {
         elmts.replace_nullsInput.prop('checked',true);
     });
   };

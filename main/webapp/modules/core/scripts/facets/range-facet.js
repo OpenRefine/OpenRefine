@@ -202,7 +202,7 @@ class RangeFacet extends Facet {
     // ----------------- numeric -----------------
 
     var numericDiv = $('<div class="facet-range-item"></div>').appendTo(choices);
-    var numericCheck = $('<input type="checkbox" />').attr("id",facet_id + "-numeric").appendTo(numericDiv).change(function() {
+  var numericCheck = $('<input type="checkbox" />').attr("id",facet_id + "-numeric").appendTo(numericDiv).on('change', function() {
       self._selectNumeric = !self._selectNumeric;
       self._updateRest();
     });
@@ -215,7 +215,7 @@ class RangeFacet extends Facet {
     // ----------------- non-numeric -----------------
 
     var nonNumericDiv = $('<div class="facet-range-item"></div>').appendTo(choices);    
-    var nonNumericCheck = $('<input type="checkbox" />').attr("id",facet_id + "-non-numeric").appendTo(nonNumericDiv).change(function() {
+  var nonNumericCheck = $('<input type="checkbox" />').attr("id",facet_id + "-non-numeric").appendTo(nonNumericDiv).on('change', function() {
       self._selectNonNumeric = !self._selectNonNumeric;
       self._updateRest();
     });
@@ -230,7 +230,7 @@ class RangeFacet extends Facet {
     // ----------------- blank -----------------
 
     var blankDiv = $('<div class="facet-range-item"></div>').appendTo(choices);        
-    var blankCheck = $('<input type="checkbox" />').attr("id",facet_id + "-blank").appendTo(blankDiv).change(function() {
+  var blankCheck = $('<input type="checkbox" />').attr("id",facet_id + "-blank").appendTo(blankDiv).on('change', function() {
       self._selectBlank = !self._selectBlank;
       self._updateRest();
     });
@@ -245,7 +245,7 @@ class RangeFacet extends Facet {
     // ----------------- error -----------------
 
     var errorDiv = $('<div class="facet-range-item"></div>').appendTo(choices);
-    var errorCheck = $('<input type="checkbox" />').attr("id",facet_id + "-error").appendTo(errorDiv).change(function() {
+  var errorCheck = $('<input type="checkbox" />').attr("id",facet_id + "-error").appendTo(errorDiv).on('change', function() {
       self._selectError = !self._selectError;
       self._updateRest();
     });

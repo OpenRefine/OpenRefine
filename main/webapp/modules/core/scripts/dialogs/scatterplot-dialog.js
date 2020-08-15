@@ -57,17 +57,17 @@ ScatterplotDialog.prototype._createDialog = function() {
     this._elmts.or_dialog_bigDot.attr("title", $.i18n('core-dialogs/big-dot'));
     this._elmts.closeButton.text($.i18n('core-buttons/close'));
     
-    this._elmts.plotSelector.buttonset().change(function() {
+    this._elmts.plotSelector.buttonset().on('change', function() {
         self._plot_method = $(this).find("input:checked").val();
         self._renderMatrix();
     });
 
-    this._elmts.rotationSelector.buttonset().change(function() {
+    this._elmts.rotationSelector.buttonset().on('change', function() {
         self._rotation = $(this).find("input:checked").val();
         self._renderMatrix();
     });
     
-    this._elmts.dotSelector.buttonset().change(function() {
+    this._elmts.dotSelector.buttonset().on('change', function() {
         var dot_size = $(this).find("input:checked").val();
         if (dot_size == "small") {
             self._dot_size = 0.4;

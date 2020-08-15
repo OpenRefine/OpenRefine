@@ -39,7 +39,7 @@ Refine.OpenProjectUI = function(elmt) {
   this._elmt = elmt;
   this._elmts = DOM.bind(elmt);
 
-  $("#project-file-input").change(function() {
+  $("#project-file-input").on('change', function() {
     if ($("#project-name-input")[0].value.length === 0) {
       var fileName = this.files[0].fileName;
       if (fileName) {

@@ -67,18 +67,18 @@ ClusteringDialog.prototype._createDialog = function() {
     this._elmts.applyCloseButton.html($.i18n('core-buttons/merge-close'));
     this._elmts.closeButton.html($.i18n('core-buttons/close'));
 
-    this._elmts.methodSelector.change(function() {
+    this._elmts.methodSelector.on('change', function() {
         var selection = $(this).find("option:selected").text();
         if (selection == $.i18n('core-dialogs/key-collision')) {
             dialog.find(".binning-controls").show();
             dialog.find(".knn-controls").hide();
             self._method = "binning";
-            self._elmts.keyingFunctionSelector.change();
+            self._elmts.keyingFunctionSelector.trigger('change');
         } else if (selection === $.i18n('core-dialogs/nearest-neighbor')) {
             dialog.find(".binning-controls").hide();
             dialog.find(".knn-controls").show();
             self._method = "knn";
-            self._elmts.distanceFunctionSelector.change();
+            self._elmts.distanceFunctionSelector.trigger('change');
         }
     });
 
@@ -89,8 +89,8 @@ ClusteringDialog.prototype._createDialog = function() {
         params_changer();
     };
 
-    this._elmts.keyingFunctionSelector.change(changer);
-    this._elmts.distanceFunctionSelector.change(changer);
+    this._elmts.keyingFunctionSelector.on('change', changer);
+    this._elmts.distanceFunctionSelector.on('change', changer);
 
     var params_changer = function() {
         self._params = {};
@@ -109,9 +109,9 @@ ClusteringDialog.prototype._createDialog = function() {
         self._cluster();
     };
 
-    this._elmts.ngramSize.change(params_changer);
-    this._elmts.radius.change(params_changer);
-    this._elmts.ngramBlock.change(params_changer);
+    this._elmts.ngramSize.on('change', params_changer);
+    this._elmts.radius.on('change', params_changer);
+    this._elmts.ngramBlock.on('change', params_changer);
 
     this._elmts.selectAllButton.on('click', function() { self._selectAll(); });
     this._elmts.deselectAllButton.on('click', function() { self._deselectAll(); });
@@ -220,7 +220,7 @@ ClusteringDialog.prototype._renderTable = function(clusters) {
 
               parent.find("input[type='text']").val(value);
               var checkbox = parent.find("input[type='checkbox']");
-              checkbox.prop('checked', true).change();
+              checkbox.prop('checked', true).trigger('change');
               return false;
             };
             for (var c = 0; c < choices.length; c++) {
@@ -264,7 +264,7 @@ ClusteringDialog.prototype._renderTable = function(clusters) {
                 .append(div);
 
             var editCheck = $('<input type="checkbox" />')
-                .change(function() {
+                .on('change', function() {
                     cluster.edit = this.checked;
                 }).appendTo(tr.insertCell(3));
 
@@ -367,11 +367,11 @@ ClusteringDialog.prototype._updateData = function(data) {
 };
 
 ClusteringDialog.prototype._selectAll = function() {
-    $(".clustering-dialog-entry-table input:not(:checked)").prop('checked', true).change();
+    $(".clustering-dialog-entry-table input:not(:checked)").prop('checked', true).trigger('change');
 };
 
 ClusteringDialog.prototype._deselectAll = function() {
-    $(".clustering-dialog-entry-table input:checked").prop('checked', false).change();
+    $(".clustering-dialog-entry-table input:checked").prop('checked', false).trigger('change');
 };
 
 ClusteringDialog.prototype._onApplyClose = function() {

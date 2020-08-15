@@ -1016,7 +1016,7 @@ SchemaAlignment._initField = function(inputContainer, mode, initialValue, change
         });
     };
     propagateValue("");
-    input.change(function() {
+    input.on('change', function() {
       propagateValue($(this).val());
       changedCallback();
     });
@@ -1032,7 +1032,7 @@ SchemaAlignment._initField = function(inputContainer, mode, initialValue, change
         });
     };
     propagateValue("");
-    input.change(function() {
+    input.on('change', function() {
       propagateValue($(this).val());
       changedCallback();
     });
@@ -1119,7 +1119,7 @@ SchemaAlignment._initField = function(inputContainer, mode, initialValue, change
         });
     };
     propagateValue("");
-    input.change(function() {
+    input.on('change', function() {
       propagateValue($(this).val());
       changedCallback();
     });

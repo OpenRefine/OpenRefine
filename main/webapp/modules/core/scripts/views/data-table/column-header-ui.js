@@ -287,7 +287,7 @@ DataTableColumnHeaderUI.prototype._showSortingCriterion = function(criterion, ha
   };
   elmts.valueTypeOptions
   .find("input[type='radio']")
-  .change(function() {
+  .on('change', function() {
     setValueType(this.value);
   });
 

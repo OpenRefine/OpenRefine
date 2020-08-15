@@ -102,7 +102,7 @@ Refine.DatabaseSourceUI.prototype.attachUI = function(body) {
     //   self._body.find('.sqlEditorDiv').hide();
   });
   
-  this._elmts.databaseTypeSelect.change(function(event) {
+  this._elmts.databaseTypeSelect.on('change', function(event) {
     var type = $( "select#databaseTypeSelect" ).val();
 
     self._updateDatabaseType(type);

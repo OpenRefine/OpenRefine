@@ -200,7 +200,7 @@ class TimeRangeFacet extends Facet{
     // ----------------- time -----------------
 
     var timeDiv = $('<div class="facet-range-item"></div>').appendTo(choices);            
-    var timeCheck = $('<input type="checkbox" />').attr("id",facet_id + "-time").appendTo(timeDiv).change(function() {
+  var timeCheck = $('<input type="checkbox" />').attr("id",facet_id + "-time").appendTo(timeDiv).on('change', function() {
       self._selectTime = !self._selectTime;
       self._updateRest();
     });
@@ -213,7 +213,7 @@ class TimeRangeFacet extends Facet{
     // ----------------- non-Time -----------------
 
     var nonTimeDiv = $('<div class="facet-range-item"></div>').appendTo(choices);            
-    var nonTimeCheck = $('<input type="checkbox" />').attr("id",facet_id + "-non-time").appendTo(nonTimeDiv).change(function() {
+  var nonTimeCheck = $('<input type="checkbox" />').attr("id",facet_id + "-non-time").appendTo(nonTimeDiv).on('change', function() {
       self._selectNonTime = !self._selectNonTime;
       self._updateRest();
     });
@@ -228,7 +228,7 @@ class TimeRangeFacet extends Facet{
     // ----------------- blank -----------------
 
     var blankDiv = $('<div class="facet-range-item"></div>').appendTo(choices);            
-    var blankCheck = $('<input type="checkbox" />').attr("id",facet_id + "-blank").appendTo(blankDiv).change(function() {
+  var blankCheck = $('<input type="checkbox" />').attr("id",facet_id + "-blank").appendTo(blankDiv).on('change', function() {
       self._selectBlank = !self._selectBlank;
       self._updateRest();
     });
@@ -243,7 +243,7 @@ class TimeRangeFacet extends Facet{
     // ----------------- error -----------------
 
     var errorDiv = $('<div class="facet-range-item"></div>').appendTo(choices);            
-    var errorCheck = $('<input type="checkbox" />').attr("id",facet_id + "-error").appendTo(errorDiv).change(function() {
+  var errorCheck = $('<input type="checkbox" />').attr("id",facet_id + "-error").appendTo(errorDiv).on('change', function() {
       self._selectError = !self._selectError;
       self._updateRest();
     });
