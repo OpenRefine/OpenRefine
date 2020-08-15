@@ -67,16 +67,27 @@ public class PerformWikibaseEditsOperation extends EngineDependentOperation {
     @JsonProperty("summary")
     private String summary;
 
+    @JsonProperty("maxlag")
+    private int maxlag;
+
     @JsonCreator
     public PerformWikibaseEditsOperation(
     		@JsonProperty("engineConfig")
     		EngineConfig engineConfig,
     		@JsonProperty("summary")
-    		String summary) {
+    		String summary,
+            @JsonProperty("maxlag")
+            Integer maxlag) {
         super(engineConfig);
         Validate.notNull(summary, "An edit summary must be provided.");
         Validate.notEmpty(summary, "An edit summary must be provided.");
         this.summary = summary;
+        if (maxlag == null) {
+            // For backward compatibility, if the maxlag parameter is not included
+            // in the serialized JSON text, set it to 5.
+            maxlag = 5;
+        }
+        this.maxlag = maxlag;
     }
 
     @Override
@@ -196,7 +207,7 @@ public class PerformWikibaseEditsOperation extends EngineDependentOperation {
             // Prepare the edits
             NewItemLibrary newItemLibrary = new NewItemLibrary();
             EditBatchProcessor processor = new EditBatchProcessor(wbdf, wbde, itemDocuments, newItemLibrary, summary,
-                    _tags, 50);
+                    maxlag, _tags, 50);
 
             // Perform edits
             logger.info("Performing edits");
