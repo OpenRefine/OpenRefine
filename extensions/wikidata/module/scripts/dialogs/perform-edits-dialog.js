@@ -71,7 +71,7 @@ PerformEditsDialog.launch = function(logged_in_username, max_severity) {
     dismiss();
   });
 
-  this._elmts.editSummary.keypress(function (evt) {
+  this._elmts.editSummary.on('keypress', function (evt) {
     if (evt.which === 13) {
       doFormSubmit();
       evt.preventDefault();

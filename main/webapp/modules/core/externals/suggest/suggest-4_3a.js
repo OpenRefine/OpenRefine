@@ -227,7 +227,7 @@
           self.keydown(e);
         })
         .bind("keypress.suggest", function(e) {
-          self.keypress(e);
+          self.on('keypress', e);
         })
         .bind("keyup.suggest", function(e) {
           self.keyup(e);

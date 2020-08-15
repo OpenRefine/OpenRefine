@@ -47,7 +47,7 @@ Refine.OpenProjectUI = function(elmt) {
       }
       $("#project-name-input").focus().select();
     }
-  }).keypress(function(evt) {
+  }).on('keypress', function(evt) {
     if (evt.keyCode == 13) {
       return self._onClickUploadFileButton(evt);
     }

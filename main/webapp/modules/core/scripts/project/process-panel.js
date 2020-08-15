@@ -46,7 +46,7 @@ function ProcessPanel(div) {
   this._elmts.undoLink.html($.i18n('core-project/undo'));
   
   var self = this;
-  $(window).keypress(function(evt) {
+  $(window).on('keypress', function(evt) {
     if (evt.charCode == 26 || (evt.charCode == 122 && (evt.ctrlKey || evt.metaKey))) { // ctrl-z or meta-z
       var t = evt.target;
       if (t) {
