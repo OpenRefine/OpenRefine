@@ -145,7 +145,8 @@ SchemaAlignmentDialog.setUpTabs = function() {
 
   this._previewPanes = $(".schema-alignment-dialog-preview");
 
-  var url = ReconciliationManager.ensureDefaultServicePresent();
+  var lang = $.i18n('core-recon/wd-recon-lang');
+  var url = "https://wdreconcile.toolforge.org/"+lang+"/api";
   ReconciliationManager.getOrRegisterServiceFromUrl(url, function(service) {
 
     // Load the existing schema
