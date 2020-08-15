@@ -11,6 +11,7 @@ import org.openrefine.wikidata.schema.WikibaseSchema;
 import org.wikidata.wdtk.datamodel.helpers.Datamodel;
 import org.wikidata.wdtk.datamodel.interfaces.PropertyIdValue;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -29,7 +30,7 @@ public class SchemaPropertyFetcher {
                 }
                 List<WbStatementExpr> statementExprs = statementGroup.getStatements();
                 for(WbStatementExpr statementExpr : statementExprs) {
-                    List<WbSnakExpr> snakExprs = statementExpr.getQualifiers();
+                    List<WbSnakExpr> snakExprs = new ArrayList<>(statementExpr.getQualifiers());
                     List<WbReferenceExpr> referenceExprs = statementExpr.getReferences();
                     for (WbReferenceExpr referenceExpr : referenceExprs) {
                         snakExprs.addAll(referenceExpr.getSnaks());
