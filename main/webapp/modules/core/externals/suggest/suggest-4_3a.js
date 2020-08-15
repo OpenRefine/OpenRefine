@@ -145,7 +145,7 @@
       o.flyout_lang = null;
       if (o.ac_param.lang) {
         var lang = o.ac_param.lang;
-        if ($.isArray(lang) && lang.length) {
+        if (Array.isArray(lang) && lang.length) {
           lang = lang.join(',');
         }
         if (lang) {
@@ -622,7 +622,7 @@
       }
       var result = [];
 
-      if ($.isArray(data)) {
+      if (Array.isArray(data)) {
         result = data;
       }
       else if ("result" in data) {
@@ -1727,7 +1727,7 @@
      * Get a value from an object multiple levels deep.
      */
      get_value_by_keys: function(obj, var_args) {
-       var keys = $.isArray(var_args) ? var_args :
+       var keys = Array.isArray(var_args) ? var_args :
            Array.prototype.slice.call(arguments, 1);
        for (var i = 0; i < keys.length; i++) {
          obj = obj[keys[i]];
@@ -1757,7 +1757,7 @@
       if (obj == null || path == null || path.length == 0) {
         return null;
       }
-      if (!$.isArray(path)) {
+      if (!Array.isArray(path)) {
         path = [path];
       }
       var v =  $.suggest.suggest.get_value_by_keys(obj, path);
@@ -1765,7 +1765,7 @@
         if (v == null) {
           return [];
         }
-        if (!$.isArray(v)) {
+        if (!Array.isArray(v)) {
           v = [v];
         }
         var values = [];
@@ -1791,7 +1791,7 @@
               }
             }
           }
-          if ($.isArray(value) && value.length) {
+          if (Array.isArray(value) && value.length) {
             value = value[0].value;
           }
           if (value != null) {
@@ -1866,7 +1866,7 @@
           }
           return true;
         });
-        if ($.isArray(best.value) && best.value.length) {
+        if (Array.isArray(best.value) && best.value.length) {
           desc_text = best.value[0].value;
         } else {
           desc_text = best.value;
@@ -1876,7 +1876,7 @@
           desc_source = get_value_by_keys(best, 'provenance', 0, 'source', 0);
           desc_provider =
               get_value_by_keys(best, 'citation', 'provider', 0, 'name');
-          if (desc_provider && $.isArray(desc_provider) &&
+          if (desc_provider && Array.isArray(desc_provider) &&
               desc_provider.length) {
             desc_provider = desc_provider[0].value;
           }
