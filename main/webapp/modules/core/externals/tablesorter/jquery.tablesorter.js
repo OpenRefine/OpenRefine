@@ -1645,7 +1645,7 @@
 			// save sort before applying sortAppend
 			c.last.sortList = $.extend( [], c.sortList );
 			if ( c.sortList.length && c.sortAppend ) {
-				arry = $.isArray( c.sortAppend ) ? c.sortAppend : c.sortAppend[ c.sortList[ 0 ][ 0 ] ];
+				arry = Array.isArray( c.sortAppend ) ? c.sortAppend : c.sortAppend[ c.sortList[ 0 ][ 0 ] ];
 				if ( !ts.isEmptyObject( arry ) ) {
 					for ( indx = 0; indx < arry.length; indx++ ) {
 						if ( arry[ indx ][ 0 ] !== col && ts.isValueInArray( arry[ indx ][ 0 ], c.sortList ) < 0 ) {
@@ -1780,7 +1780,7 @@
 		},
 
 		checkResort : function( c, resort, callback ) {
-			var sortList = $.isArray( resort ) ? resort : c.sortList,
+			var sortList = Array.isArray( resort ) ? resort : c.sortList,
 				// if no resort parameter is passed, fallback to config.resort (true by default)
 				resrt = typeof resort === 'undefined' ? c.resort : resort;
 			// don't try to resort if the table is still processing
@@ -2142,7 +2142,7 @@
 			} else {
 				// name can be either an array of widgets names,
 				// or a space/comma separated list of widget names
-				name = ( $.isArray( name ) ? name.join( ',' ) : name || '' ).toLowerCase().split( /[\s,]+/ );
+				name = ( Array.isArray( name ) ? name.join( ',' ) : name || '' ).toLowerCase().split( /[\s,]+/ );
 			}
 			len = name.length;
 			for ( index = 0; index < len; index++ ) {
