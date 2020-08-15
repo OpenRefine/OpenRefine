@@ -146,7 +146,7 @@ function initializeUI(uiState) {
   ui.extensionBar = new ExtensionBar(ui.extensionBarDiv); // construct the menu first so we can resize everything else
   ui.exporterManager = new ExporterManager($("#export-button"));
 
-  ui.leftPanelTabs.tabs({ selected: 0 });
+  ui.leftPanelTabs.tabs();
   resize();
   resizeTabs();
 

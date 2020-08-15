@@ -302,7 +302,7 @@ ExpressionPreviewDialog.Widget.prototype._renderExpressionHistory = function(dat
             self._elmts.expressionPreviewTextarea[0].value = o.expression;
             self._elmts.expressionPreviewLanguageSelect[0].value = o.language;
             
-            $("#expression-preview-tabs").tabs('option', 'selected', 0);
+            $("#expression-preview-tabs").tabs();
             
             self._elmts.expressionPreviewTextarea.select().focus();
             
@@ -365,7 +365,7 @@ ExpressionPreviewDialog.Widget.prototype._renderStarredExpressions = function(da
             self._elmts.expressionPreviewTextarea[0].value = o.expression;
             self._elmts.expressionPreviewLanguageSelect[0].value = o.language;
             
-            $("#expression-preview-tabs").tabs('option', 'selected', 0);
+            $("#expression-preview-tabs").tabs();
             
             self._elmts.expressionPreviewTextarea.select().focus();
             
