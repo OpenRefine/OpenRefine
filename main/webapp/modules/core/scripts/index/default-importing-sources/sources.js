@@ -89,7 +89,7 @@ UrlImportingSourceUI.prototype.attachUI = function(bodyDiv) {
   this._elmts.addButton.html($.i18n('core-buttons/add-url'));
   this._elmts.nextButton.html($.i18n('core-buttons/next'));
 
-  this._elmts.form.submit(function(evt){
+  this._elmts.form.on('submit', function(evt){
     evt.preventDefault();
     var importUrl = self._elmts.urlInput[0].value.trim(); 
     self._elmts.urlInput[0].value = importUrl;

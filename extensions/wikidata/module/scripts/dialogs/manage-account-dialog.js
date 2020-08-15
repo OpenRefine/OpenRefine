@@ -111,7 +111,7 @@ ManageAccountDialog.displayPasswordLogin = function (onSuccess) {
     ManageAccountDialog.displayOwnerOnlyConsumerLogin(onSuccess);
   });
 
-  elmts.loginForm.submit(function (e) {
+  elmts.loginForm.on('submit', function (e) {
     frame.hide();
     let formArr = elmts.loginForm.serializeArray();
     let username = elmts.usernameInput.val();
@@ -171,7 +171,7 @@ ManageAccountDialog.displayOwnerOnlyConsumerLogin = function (onSuccess) {
     ManageAccountDialog.displayPasswordLogin(onSuccess);
   });
 
-  elmts.loginForm.submit(function (e) {
+  elmts.loginForm.on('submit', function (e) {
     frame.hide();
     let formArr = elmts.loginForm.serializeArray();
     formArr.push({name: "wb-api-endpoint", value: WikibaseManager.getSelectedWikibaseApi()});

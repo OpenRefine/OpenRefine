@@ -322,7 +322,7 @@ CustomTabularExporterDialog.prototype._postExport = function(preview) {
   document.body.appendChild(form);
 
   window.open(" ", "refine-export");
-  form.submit();
+  form.trigger('submit');
 
   document.body.removeChild(form);
 };

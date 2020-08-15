@@ -69,7 +69,7 @@ WikibaseExporterMenuBar.exportTo = function (format) {
   document.body.appendChild(form);
 
   window.open("about:blank", "openrefine-export");
-  form.submit();
+  form.trigger('submit');
 
   document.body.removeChild(form);
 };

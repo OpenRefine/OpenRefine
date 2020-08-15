@@ -350,7 +350,7 @@ function SqlExporterDialog(options) {
     document.body.appendChild(form);
   
     window.open(" ", "refine-export");
-    form.submit();
+    form.trigger('submit');
   
     document.body.removeChild(form);
     return true;

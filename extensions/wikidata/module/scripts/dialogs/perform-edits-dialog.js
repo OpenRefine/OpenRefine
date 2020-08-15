@@ -31,7 +31,7 @@ PerformEditsDialog.launch = function(logged_in_username, max_severity) {
   var doFormSubmit = function() {
     hiddenIframe.find('body').append(elmts.performEditsForm.clone());
     var formCopy = hiddenIframe.find("#wikibase-perform-edits-form");
-    formCopy.submit();
+    formCopy.trigger('submit');
 
     if (elmts.editSummary.val().length === 0) {
       elmts.editSummary.focus();

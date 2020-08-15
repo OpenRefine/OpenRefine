@@ -218,7 +218,7 @@ ReconDialog.prototype._onAddStandardService = function() {
   };
 
   elmts.cancelButton.on('click', dismiss);
-  elmts.form.submit(function() {
+  elmts.form.on('submit', function() {
     var url = $.trim(elmts.input[0].value);
     if (url.length > 0) {
       ReconciliationManager.registerStandardService(url, function(index) {
