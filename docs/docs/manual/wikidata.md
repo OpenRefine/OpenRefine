@@ -28,6 +28,6 @@ sidebar_label: Wikidata
 
 ## More resources
 
-[https://wdreconcile.toolforge.org/](https://wdreconcile.toolforge.org/) 
+[https://wikidata.reconci.link/](https://wikidata.reconci.link/) 
 
 [https://www.wikidata.org/wiki/Wikidata:Tools/OpenRefine](https://www.wikidata.org/wiki/Wikidata:Tools/OpenRefine) 
