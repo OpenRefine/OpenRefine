@@ -25,12 +25,12 @@ package org.openrefine.wikidata.qa;
 
 import org.openrefine.wikidata.manifests.Manifest;
 import org.openrefine.wikidata.qa.scrutinizers.*;
+import org.openrefine.wikidata.schema.WikibaseSchema;
 import org.openrefine.wikidata.updates.ItemUpdate;
 import org.openrefine.wikidata.updates.scheduler.WikibaseAPIUpdateScheduler;
 import org.openrefine.wikidata.utils.EntityCache;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.openrefine.wikidata.schema.WikibaseSchema;
 import org.wikidata.wdtk.datamodel.interfaces.EntityDocument;
 
 import java.util.HashMap;
