@@ -224,13 +224,13 @@
           self._destroy();
         })
         .bind("keydown.suggest", function(e) {
-          self.keydown(e);
+          self.on('keydown', e);
         })
         .bind("keypress.suggest", function(e) {
           self.on('keypress', e);
         })
         .bind("keyup.suggest", function(e) {
-          self.keyup(e);
+          self.on('keyup', e);
         })
         .bind("blur.suggest", function(e) {
           self.blur(e);
