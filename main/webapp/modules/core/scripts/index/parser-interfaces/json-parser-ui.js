@@ -237,7 +237,7 @@ Refine.JsonParserUI.prototype._showPickRecordNodesUI = function() {
     } else {
       if ($.isPlainObject(node)) {
         renderObject(node, container, parentPath);
-      } else if ($.isArray(node)) {
+      } else if (Array.isArray(node)) {
         renderArray(node, container, parentPath);
       } else {
         $('<span>').addClass('literal').text(node.toString()).appendTo(container);
