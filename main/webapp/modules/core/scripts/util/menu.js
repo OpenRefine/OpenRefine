@@ -143,7 +143,7 @@ MenuSystem.createAndShowStandardMenu = function(items, elmt, options) {
           '<td width="1%"><img src="images/right-arrow.png" /></td>' +
           '</tr></table>'
         );
-        menuItem.mouseenter(function() {
+        menuItem.on('mouseenter', function() {
           MenuSystem.dismissUntil(level);
 
           menuItem.addClass("menu-expanded");
@@ -168,7 +168,7 @@ MenuSystem.createAndShowStandardMenu = function(items, elmt, options) {
         if ("tooltip" in item) {
           menuItem.attr("title", item.tooltip);
         }
-        menuItem.mouseenter(function() {
+        menuItem.on('mouseenter', function() {
           MenuSystem.dismissUntil(level);
         });
       }

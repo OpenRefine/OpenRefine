@@ -74,8 +74,8 @@ DataTableCellUI.prototype._render = function() {
 
   $(this._td).empty()
   .unbind()
-  .mouseenter(function() { editLink.style.visibility = "visible" })
-  .mouseleave(function() { editLink.style.visibility = "hidden" });
+  .on('mouseenter', function() { editLink.style.visibility = "visible" })
+  .on('mouseleave', function() { editLink.style.visibility = "hidden" });
 
   if (!cell || ("v" in cell && cell.v === null)) {
     var nullSpan = document.createElement('span');

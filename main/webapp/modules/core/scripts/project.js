@@ -135,7 +135,7 @@ function initializeUI(uiState) {
   $("#or-proj-ext").text($.i18n('core-project/extensions')+":");
 
   $('#project-name-button').on('click', Refine._renameProject);
-  $('#project-permalink-button').mouseenter(function() {
+  $('#project-permalink-button').on('mouseenter', function() {
     this.href = Refine.getPermanentLink();
   });
 

@@ -413,10 +413,10 @@ Refine.FixedWidthPreviewTable.prototype._render = function() {
 
     positionColumnSeparator(outer, charIndex);
 
-    outer.mouseover(function() {
+    outer.on('mouseover', function() {
       newSeparator.hide();
     })
-    .mouseout(function() {
+    .on('mouseout', function() {
       newSeparator.show();
     })
     .mousedown(function() {
@@ -460,7 +460,7 @@ Refine.FixedWidthPreviewTable.prototype._render = function() {
   }
 
   container
-  .mouseout(function(evt) {
+  .on('mouseout', function(evt) {
     newSeparator.hide();
   })
   .mousemove(function(evt) {

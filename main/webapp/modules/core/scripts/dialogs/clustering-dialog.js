@@ -258,8 +258,8 @@ ClusteringDialog.prototype._renderTable = function(clusters) {
                 .appendTo(div);
 
             $(tr.insertCell(2))
-                .mouseenter(function() { browseLink.css("visibility", "visible"); })
-                .mouseleave(function() { browseLink.css("visibility", "hidden"); })
+                .on('mouseenter', function() { browseLink.css("visibility", "visible"); })
+                .on('mouseleave', function() { browseLink.css("visibility", "hidden"); })
                 .append(ul)
                 .append(div);
 

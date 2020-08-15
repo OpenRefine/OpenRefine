@@ -90,14 +90,14 @@ HistoryPanel.prototype._render = function() {
       .on('click', function(evt) {
         return self._onClickHistoryEntry(evt, entry, lastDoneID);
       })
-      .mouseover(function() {
+      .on('mouseover', function() {
         if (past) {
           elmts.pastHighlightDiv.show().height(elmts.pastDiv.height() - this.offsetTop - this.offsetHeight);
         } else {
           elmts.futureHighlightDiv.show().height(this.offsetTop + this.offsetHeight);
         }
       })
-      .mouseout(function() {
+      .on('mouseout', function() {
         if (past) {
           elmts.pastHighlightDiv.hide();
         } else {
