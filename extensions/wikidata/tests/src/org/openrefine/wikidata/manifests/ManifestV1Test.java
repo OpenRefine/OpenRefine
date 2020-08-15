@@ -17,6 +17,7 @@ public class ManifestV1Test {
         assertEquals("Wikidata", manifest.getName());
         assertEquals("https://www.wikidata.org/w/api.php", manifest.getMediaWikiApiEndpoint());
         assertEquals("http://www.wikidata.org/entity/", manifest.getSiteIri());
+        assertEquals(5, manifest.getMaxlag());
         assertEquals("P31", manifest.getInstanceOfPid());
         assertEquals("P279", manifest.getSubclassOfPid());
         assertEquals("https://wdreconcile.toolforge.org/${lang}/api", manifest.getReconServiceEndpoint());

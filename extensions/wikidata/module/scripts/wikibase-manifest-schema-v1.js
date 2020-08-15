@@ -42,6 +42,10 @@ const WikibaseManifestSchemaV1 = {
           "pattern": "^.*/$",
           "description": "The IRI of the Wikibase, such as 'http://www.wikidata.org/entity/'. This should match the IRI prefixes used in RDF serialization. Be careful about using 'http' or 'https', because any variation will break comparisons at various places. The trailing slash cannot be omitted"
         },
+        "maxlag": {
+          "type": "integer",
+          "description": "The default maxlag of this Wikibase. For Wikidata, the default value is 5 (seconds)"
+        },
         "properties": {
           "type": "object",
           "properties": {
@@ -74,7 +78,7 @@ const WikibaseManifestSchemaV1 = {
           "required": ["property_constraint_pid"]
         }
       },
-      "required": ["site_iri", "properties"]
+      "required": ["site_iri", "maxlag", "properties"]
     },
     "oauth": {
       "type": "object",

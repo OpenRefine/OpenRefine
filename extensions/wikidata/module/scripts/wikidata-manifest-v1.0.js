@@ -8,6 +8,7 @@ const WikidataManifestV1_0 = {
   },
   "wikibase": {
     "site_iri": "http://www.wikidata.org/entity/",
+    "maxlag": 5,
     "properties": {
       "instance_of": "P31",
       "subclass_of": "P279"

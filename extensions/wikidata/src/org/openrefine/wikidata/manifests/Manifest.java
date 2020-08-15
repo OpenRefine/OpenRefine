@@ -8,6 +8,8 @@ public interface Manifest {
 
     String getSiteIri();
 
+    int getMaxlag();
+
     String getInstanceOfPid();
 
     String getSubclassOfPid();

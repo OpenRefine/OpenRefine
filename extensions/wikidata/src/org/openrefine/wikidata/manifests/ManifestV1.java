@@ -11,6 +11,7 @@ public class ManifestV1 implements Manifest {
     private String version;
     private String name;
     private String siteIri;
+    private int maxlag;
     private String instanceOfPid;
     private String subclassOfPid;
     private String mediaWikiApiEndpoint;
@@ -27,6 +28,7 @@ public class ManifestV1 implements Manifest {
 
         JsonNode wikibase = manifest.path("wikibase");
         siteIri = wikibase.path("site_iri").textValue();
+        maxlag = wikibase.path("maxlag").intValue();
         JsonNode properties = wikibase.path("properties");
         instanceOfPid = properties.path("instance_of").textValue();
         subclassOfPid = properties.path("subclass_of").textValue();
@@ -57,6 +59,11 @@ public class ManifestV1 implements Manifest {
     @Override
     public String getSiteIri() {
         return siteIri;
+    }
+
+    @Override
+    public int getMaxlag() {
+        return maxlag;
     }
 
     @Override
