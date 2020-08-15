@@ -52,10 +52,10 @@ ReconDialog.prototype._createDialog = function() {
   this._elmts.reconcileButton.html($.i18n('core-buttons/start-recon'));
   this._elmts.cancelButton.html($.i18n('core-buttons/cancel'));
 
-  this._elmts.addStandardServiceButton.click(function() { self._onAddStandardService(); });
+  this._elmts.addStandardServiceButton.on('click', function() { self._onAddStandardService(); });
 
-  this._elmts.reconcileButton.click(function() { self._onOK(); });
-  this._elmts.cancelButton.click(function() { self._dismiss(); });
+  this._elmts.reconcileButton.on('click', function() { self._onOK(); });
+  this._elmts.cancelButton.on('click', function() { self._dismiss(); });
 
   this._level = DialogSystem.showDialog(dialog);
   this._populateDialog();
@@ -65,7 +65,7 @@ ReconDialog.prototype._createDialog = function() {
 ReconDialog.prototype._registerDialogServiceOpener = function() {
   var self = this;
 
-  $('.recon-dialog-service-opener').click(function() {
+  $('.recon-dialog-service-opener').on('click', function() {
     self._toggleServices();
   });
 }
@@ -120,7 +120,7 @@ ReconDialog.prototype._populateDialog = function() {
       .addClass("recon-dialog-service-selector")
       .text(service.name)
       .appendTo(self._elmts.serviceList)
-      .click(function() {
+      .on('click', function() {
     	self._toggleServices();
         self._selectService(record);
       });
@@ -129,7 +129,7 @@ ReconDialog.prototype._populateDialog = function() {
       .html("&nbsp;")
       .addClass("recon-dialog-service-selector-remove")
       .prependTo(record.selector)
-      .click(function(event) {
+      .on('click', function() {
         ReconciliationManager.unregisterService(service, function() {
           self._refresh(-1);
         });
@@ -217,7 +217,7 @@ ReconDialog.prototype._onAddStandardService = function() {
     DialogSystem.dismissUntil(level - 1);
   };
 
-  elmts.cancelButton.click(dismiss);
+  elmts.cancelButton.on('click', dismiss);
   elmts.form.submit(function() {
     var url = $.trim(elmts.input[0].value);
     if (url.length > 0) {

@@ -57,7 +57,7 @@ ThisComputerImportingSourceUI.prototype.attachUI = function(bodyDiv) {
   $('#or-import-locate-files').text($.i18n('core-index-import/locate-files'));
   this._elmts.nextButton.html($.i18n('core-buttons/next'));
   
-  this._elmts.nextButton.click(function(evt) {
+  this._elmts.nextButton.on('click', function(evt) {
     if (self._elmts.fileInput[0].files.length === 0) {
       window.alert($.i18n('core-index-import/warning-data-file'));
     } else {
@@ -99,7 +99,7 @@ UrlImportingSourceUI.prototype.attachUI = function(bodyDiv) {
       self._controller.startImportJob(self._elmts.form, $.i18n('core-index-import/downloading-data'));
     }
   });
-  this._elmts.addButton.click(function(evt) {
+  this._elmts.addButton.on('click', function(evt) {
     self._elmts.buttons.before(self._elmts.urlRow.clone());
   });
 };
@@ -127,7 +127,7 @@ ClipboardImportingSourceUI.prototype.attachUI = function(bodyDiv) {
   $('#or-import-clipboard').text($.i18n('core-index-import/clipboard-label'));
   this._elmts.nextButton.html($.i18n('core-buttons/next'));
   
-  this._elmts.nextButton.click(function(evt) {
+  this._elmts.nextButton.on('click', function(evt) {
     if ($.trim(self._elmts.textInput[0].value).length === 0) {
       window.alert($.i18n('core-index-import/warning-clipboard'));
     } else {

@@ -53,12 +53,12 @@ Refine.OpenProjectUI = function(elmt) {
     }
   });
 
-  $("#upload-file-button").click(function(evt) {
+  $("#upload-file-button").on('click', function(evt) {
     return self._onClickUploadFileButton(evt);
   });
 
   $('#projects-workspace-open').text($.i18n('core-index-open/browse'));
-  $('#projects-workspace-open').click(function() {
+  $('#projects-workspace-open').on('click', function() {
     Refine.postCSRF(
       "command/core/open-workspace-dir",
       {},
@@ -219,7 +219,7 @@ Refine.OpenProjectUI.prototype._renderProjects = function(data) {
       .attr("title",$.i18n('core-index-open/del-title'))
       .attr("href","")
       .html("<img src='images/close.png' />")
-      .click(function() {
+      .on('click', function() {
         if (window.confirm($.i18n('core-index-open/del-body', project.name))) {
           Refine.postCSRF(
             "command/core/delete-project",
@@ -242,7 +242,7 @@ Refine.OpenProjectUI.prototype._renderProjects = function(data) {
       .text($.i18n('core-index-open/edit-meta-data'))
       .addClass("secondary")
       .attr("href", "javascript:{}")
-      .click(function() {
+      .on('click', function() {
           new EditMetadataDialog(project, $(this).parent().parent());
       })
       .appendTo(

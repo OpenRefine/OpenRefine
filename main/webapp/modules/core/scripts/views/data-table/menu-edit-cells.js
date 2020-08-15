@@ -66,8 +66,8 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
     var level = DialogSystem.showDialog(frame);
     var dismiss = function() { DialogSystem.dismissUntil(level - 1); };
 
-    elmts.cancelButton.click(dismiss);
-    elmts.okButton.click(function() {
+    elmts.cancelButton.on('click', dismiss);
+    elmts.okButton.on('click', function() {
       doTextTransform(
         previewWidget.getExpression(true),
         $('input[name="text-transform-dialog-onerror-choice"]:checked')[0].value,
@@ -89,7 +89,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
       params.repeat = elmts.repeatCheckbox[0].checked;
       params.repeatCount = elmts.repeatCountInput[0].value;
     };
-    elmts.repeatCheckbox.click(function() {
+    elmts.repeatCheckbox.on('click', function() {
       previewWidget.update();
     });
   };
@@ -248,9 +248,9 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
     elmts.cancelButton.text($.i18n('core-buttons/cancel'));
     var level = DialogSystem.showDialog(frame);
     var dismiss = function() { DialogSystem.dismissUntil(level - 1); };
-    elmts.cancelButton.click(dismiss);
+    elmts.cancelButton.on('click', dismiss);
     elmts.text_to_findInput.focus();
-    elmts.okButton.click(function() {
+    elmts.okButton.on('click', function() {
       var text_to_find = elmts.text_to_findInput[0].value;
       var replacement_text = elmts.replacement_textInput[0].value;
       var replace_dont_escape = elmts.replace_dont_escapeInput[0].checked;
@@ -321,8 +321,8 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
     elmts.separatorInput[0].value = defaultValue;
     elmts.separatorInput.focus().select();
     
-    elmts.cancelButton.click(dismiss);
-    elmts.okButton.click(function() {
+    elmts.cancelButton.on('click', dismiss);
+    elmts.okButton.on('click', function() {
       var mode = $("input[name='split-by-mode']:checked")[0].value;
       var config = {
         columnName: column.name,
@@ -530,8 +530,8 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
 
     var columns = theProject.columnModel.columns;
 
-    elmts.cancelButton.click(function() { dismiss(); });
-    elmts.okButton.click(function() {
+    elmts.cancelButton.on('click', function() { dismiss(); });
+    elmts.okButton.on('click', function() {
       var config = {
         startColumnName: elmts.fromColumnSelect[0].value,
         columnCount: elmts.toColumnSelect[0].value,
@@ -657,8 +657,8 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
 
     var columns = theProject.columnModel.columns;
 
-    elmts.cancelButton.click(function() { dismiss(); });
-    elmts.okButton.click(function() {
+    elmts.cancelButton.on('click', function() { dismiss(); });
+    elmts.okButton.on('click', function() {
       var config = {
         keyColumnName: elmts.keyColumnSelect[0].value,
         valueColumnName: elmts.valueColumnSelect[0].value,

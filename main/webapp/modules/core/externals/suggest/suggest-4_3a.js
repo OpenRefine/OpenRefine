@@ -405,7 +405,7 @@
         this.down(e);
       }
       else if (e.ctrlKey && key === 77) {
-        $(".fbs-more-link", this.pane).click();
+        $(".fbs-more-link", this.pane).on('click', );
       }
       else if ($.suggest.is_char(e)) {
         //this.textchange();
@@ -1135,7 +1135,7 @@
         this.flyoutpane.hover(hoverover, hoverout)
           .bind("mousedown.suggest", function(e) {
             e.stopPropagation();
-            self.pane.click();
+            self.pane.on('click', );
           });
 
         if (!$.suggest.flyout) {

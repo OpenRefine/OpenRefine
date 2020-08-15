@@ -87,7 +87,7 @@ HistoryPanel.prototype._render = function() {
     var a = $(DOM.loadHTML("core", "scripts/project/history-entry.html")).appendTo(container);
     if (lastDoneID >= 0) {
       a.attr("href", "javascript:{}")
-      .click(function(evt) {
+      .on('click', function(evt) {
         return self._onClickHistoryEntry(evt, entry, lastDoneID);
       })
       .mouseover(function() {
@@ -159,8 +159,8 @@ HistoryPanel.prototype._render = function() {
     elmts.bodyControlsDiv.hide();
   }
 
-  elmts.extractLink.click(function() { self._extractOperations(); });
-  elmts.applyLink.click(function() { self._showApplyOperationsDialog(); });
+  elmts.extractLink.on('click', function() { self._extractOperations(); });
+  elmts.applyLink.on('click', function() { self._showApplyOperationsDialog(); });
 
   this.resize();
 };
@@ -211,7 +211,7 @@ HistoryPanel.prototype._showExtractOperationsDialog = function(json) {
     if ("operation" in entry) {
       entry.selected = true;
 
-      $('<input type="checkbox" checked="true" />').appendTo(td0).click(function() {
+      $('<input type="checkbox" checked="true" />').appendTo(td0).on('click', function() {
         entry.selected = !entry.selected;
         updateJson();
       });
@@ -237,8 +237,8 @@ HistoryPanel.prototype._showExtractOperationsDialog = function(json) {
   };
   updateJson();
 
-  elmts.closeButton.click(function() { DialogSystem.dismissUntil(level - 1); });
-  elmts.selectAllButton.click(function() {
+  elmts.closeButton.on('click', function() { DialogSystem.dismissUntil(level - 1); });
+  elmts.selectAllButton.on('click', function() {
     for (var i = 0; i < json.entries.length; i++) {
       json.entries[i].selected = true;
     }
@@ -246,7 +246,7 @@ HistoryPanel.prototype._showExtractOperationsDialog = function(json) {
     frame.find('input[type="checkbox"]').prop('checked', true);
     updateJson();
   });
-  elmts.unselectAllButton.click(function() {
+  elmts.unselectAllButton.on('click', function() {
     for (var i = 0; i < json.entries.length; i++) {
       json.entries[i].selected = false;
     }
@@ -283,7 +283,7 @@ HistoryPanel.prototype._showApplyOperationsDialog = function() {
     return json.replace(/\}\s*\,\s*\]/g, "} ]").replace(/\}\s*\{/g, "}, {");
   };
 
-  elmts.applyButton.click(function() {
+  elmts.applyButton.on('click', function() {
     var json;
 
     try {
@@ -313,7 +313,7 @@ HistoryPanel.prototype._showApplyOperationsDialog = function() {
     DialogSystem.dismissUntil(level - 1);
   });
 
-  elmts.cancelButton.click(function() {
+  elmts.cancelButton.on('click', function() {
     DialogSystem.dismissUntil(level - 1);
   });
 

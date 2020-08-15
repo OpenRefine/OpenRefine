@@ -107,7 +107,7 @@ Refine.JsonParserUI.prototype._initialize = function() {
   this._optionContainer.unbind().empty().html(
       DOM.loadHTML("core", "scripts/index/parser-interfaces/json-parser-ui.html"));
   this._optionContainerElmts = DOM.bind(this._optionContainer);
-  this._optionContainerElmts.previewButton.click(function() { self._updatePreview(); });
+  this._optionContainerElmts.previewButton.on('click', function() { self._updatePreview(); });
 
   this._optionContainerElmts.pickRecordElementsButton.text($.i18n('core-index-import/warning-record-path'));
   this._optionContainerElmts.previewButton.html($.i18n('core-buttons/update-preview'));
@@ -139,7 +139,7 @@ Refine.JsonParserUI.prototype._initialize = function() {
   if (this._config.includeArchiveFileName) {
     this._optionContainerElmts.includeArchiveFileCheckbox.prop("checked", true);
   }
-  this._optionContainerElmts.pickRecordElementsButton.click(function() {
+  this._optionContainerElmts.pickRecordElementsButton.on('click', function() {
     self._showPickRecordNodesUI();
   });
 
@@ -182,7 +182,7 @@ Refine.JsonParserUI.prototype._showPickRecordNodesUI = function() {
     .bind('mouseout', function(evt) {
       elmt.removeClass('highlight');
     })
-    .click(function(evt) {
+    .on('click', function(evt) {
       if (hittest(evt, elmt)) {
         self._setRecordPath(path);
       }

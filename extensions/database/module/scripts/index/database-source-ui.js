@@ -94,7 +94,7 @@ Refine.DatabaseSourceUI.prototype.attachUI = function(body) {
 
   $('input#connectionName').val($.i18n('database-source/connectionNameDefaultValue'));
 
-  this._elmts.newConnectionButton.click(function(evt) {
+  this._elmts.newConnectionButton.on('click', function(evt) {
       self._resetDatabaseImportForm();
       $( "#newConnectionDiv" ).show();
       $( "#sqlEditorDiv" ).hide();
@@ -111,7 +111,7 @@ Refine.DatabaseSourceUI.prototype.attachUI = function(body) {
   var defaultDatabase = $( "select#databaseTypeSelect" ).val();
   self._updateDatabaseType(defaultDatabase);
 
-  this._elmts.testDatabaseButton.click(function(evt) {
+  this._elmts.testDatabaseButton.on('click', function(evt) {
       
           if(self._validateNewConnectionForm() === true){
              self._testDatabaseConnect(self._getConnectionInfo());
@@ -119,7 +119,7 @@ Refine.DatabaseSourceUI.prototype.attachUI = function(body) {
        
    });
   
-  this._elmts.databaseConnectButton.click(function(evt) {
+  this._elmts.databaseConnectButton.on('click', function(evt) {
       
       if(self._validateNewConnectionForm() === true){
              self._connect(self._getConnectionInfo());
@@ -128,7 +128,7 @@ Refine.DatabaseSourceUI.prototype.attachUI = function(body) {
    
  });
   
- this._elmts.saveConnectionButton.click(function(evt) {
+ this._elmts.saveConnectionButton.on('click', function(evt) {
       
        if(self._validateNewConnectionForm() == true){
             var connectionNameInput = $.trim(self._elmts.connectionNameInput[0].value);
@@ -142,7 +142,7 @@ Refine.DatabaseSourceUI.prototype.attachUI = function(body) {
 
  });
   
-  this._elmts.executeQueryButton.click(function(evt) {
+  this._elmts.executeQueryButton.on('click', function(evt) {
         var jdbcQueryInfo = {};
         jdbcQueryInfo.connectionName = $( "#currentConnectionNameInput" ).val();
         jdbcQueryInfo.databaseType = $( "#currentDatabaseTypeInput" ).val();
@@ -162,7 +162,7 @@ Refine.DatabaseSourceUI.prototype.attachUI = function(body) {
 
 
   
-  this._elmts.editConnectionButton.click(function(evt) {
+  this._elmts.editConnectionButton.on('click', function(evt) {
       
       if(self._validateNewConnectionForm() == true){
                var connectionNameInput = $.trim(self._elmts.connectionNameInput[0].value);
@@ -176,7 +176,7 @@ Refine.DatabaseSourceUI.prototype.attachUI = function(body) {
     
  });
   
- this._elmts.cancelEditConnectionButton.click(function(evt) {
+ this._elmts.cancelEditConnectionButton.on('click', function(evt) {
      self._resetDatabaseImportForm();
         
  });

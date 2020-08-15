@@ -138,7 +138,7 @@ DataTableCellUI.prototype._render = function() {
       $('<a href="javascript:{}"></a>')
       .text($.i18n('core-views/choose-match'))
       .addClass("data-table-recon-action")
-      .appendTo(divContentRecon).click(function(evt) {
+      .appendTo(divContentRecon).on('click', function(evt) {
         self._doRematch();
       });
     } else if (r.j == "matched" && "m" in r && r.m !== null) {
@@ -161,7 +161,7 @@ DataTableCellUI.prototype._render = function() {
       .text($.i18n('core-views/choose-match'))
       .addClass("data-table-recon-action")
       .appendTo(divContentRecon)
-      .click(function(evt) {
+      .on('click', function(evt) {
         self._doRematch();
       });
     } else {
@@ -178,14 +178,14 @@ DataTableCellUI.prototype._render = function() {
             $('<a href="javascript:{}">&nbsp;</a>')
             .addClass("data-table-recon-match-similar")
             .attr("title", $.i18n('core-views/match-all-cells'))
-            .appendTo(liSpan).click(function(evt) {
+            .appendTo(liSpan).on('click', function(evt) {
               self._doMatchTopicToSimilarCells(candidate);
             });
 
             $('<a href="javascript:{}">&nbsp;</a>')
             .addClass("data-table-recon-match")
             .attr("title", $.i18n('core-views/match-this-cell') )
-            .appendTo(liSpan).click(function(evt) {
+            .appendTo(liSpan).on('click', function(evt) {
               self._doMatchTopicToOneCell(candidate);
             });
 
@@ -219,14 +219,14 @@ DataTableCellUI.prototype._render = function() {
         $('<a href="javascript:{}">&nbsp;</a>')
         .addClass("data-table-recon-match-similar")
         .attr("title", $.i18n('core-views/create-topic-cells'))
-        .appendTo(liNew).click(function(evt) {
+        .appendTo(liNew).on('click', function(evt) {
           self._doMatchNewTopicToSimilarCells();
         });
 
         $('<a href="javascript:{}">&nbsp;</a>')
         .addClass("data-table-recon-match")
         .attr("title", $.i18n('core-views/create-topic-cell'))
-        .appendTo(liNew).click(function(evt) {
+        .appendTo(liNew).on('click', function(evt) {
           self._doMatchNewTopicToOneCell();
         });
 
@@ -249,7 +249,7 @@ DataTableCellUI.prototype._render = function() {
         var extraChoices = $('<div>').addClass("data-table-recon-extra").appendTo(divContentRecon);
         if (addSuggest) {
           $('<a href="javascript:{}"></a>')
-          .click(function(evt) {
+          .on('click', function(evt) {
             self._searchForMatch(suggestOptions);
             return false;
           })
@@ -416,10 +416,10 @@ DataTableCellUI.prototype._searchForMatch = function(suggestOptions) {
     dismiss();
   };
 
-  elmts.okButton.click(commit);
-  elmts.newButton.click(commitNew);
-  elmts.clearButton.click(commitClear);
-  elmts.cancelButton.click(dismiss);
+  elmts.okButton.on('click', commit);
+  elmts.newButton.on('click', commitNew);
+  elmts.clearButton.on('click', commitClear);
+  elmts.cancelButton.on('click', dismiss);
 
   var suggestOptions2 = $.extend({ align: "left" }, suggestOptions 
                           || { all_types: true, // FIXME: all_types isn't documented for Suggest.  Is it still implemented?
@@ -510,15 +510,15 @@ DataTableCellUI.prototype._previewCandidateTopic = function(candidate, elmt, pre
     elmts.matchSimilarButton.html($.i18n('core-views/match-identical'));
     elmts.cancelButton.html($.i18n('core-buttons/cancel'));
     
-    elmts.matchButton.click(function() {
+    elmts.matchButton.on('click', function() {
         self._doMatchTopicToOneCell(candidate);
         dismissMenu();
     });
-    elmts.matchSimilarButton.click(function() {
+    elmts.matchSimilarButton.on('click', function() {
         self._doMatchTopicToSimilarCells(candidate);
         dismissMenu();
     });
-    elmts.cancelButton.click(function() {
+    elmts.cancelButton.on('click', function() {
         dismissMenu();
     });
   }
@@ -652,8 +652,8 @@ DataTableCellUI.prototype._startEdit = function(elmt) {
     }
   };
 
-  elmts.okButton.click(commit);
-  elmts.okallButton.click(commit);
+  elmts.okButton.on('click', commit);
+  elmts.okallButton.on('click', commit);
   elmts.textarea
   .text(originalContent)
   .keydown(function(evt) {
@@ -672,7 +672,7 @@ DataTableCellUI.prototype._startEdit = function(elmt) {
   .select()
   .focus();
 
-  elmts.cancelButton.click(function() {
+  elmts.cancelButton.on('click', function() {
     MenuSystem.dismissAll();
   });
 };

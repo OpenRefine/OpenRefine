@@ -188,7 +188,7 @@ Refine.DatabaseImportController.prototype._showParsingPanel = function() {
     $(window).resize(this._parsingPanelResizer);
     this._parsingPanelResizer();
 
-    this._parsingPanelElmts.startOverButton.click(function() {
+    this._parsingPanelElmts.startOverButton.on('click', function() {
       // explicitly cancel the import job
       Refine.CreateProjectUI.cancelImportingJob(self._jobID);
 
@@ -198,8 +198,8 @@ Refine.DatabaseImportController.prototype._showParsingPanel = function() {
       self._createProjectUI.showSourceSelectionPanel();
     });
 
-    this._parsingPanelElmts.createProjectButton.click(function() { self._createProject(); });
-    this._parsingPanelElmts.previewButton.click(function() { self._updatePreview(); });
+    this._parsingPanelElmts.createProjectButton.on('click', function() { self._createProject(); });
+    this._parsingPanelElmts.previewButton.on('click', function() { self._updatePreview(); });
     //alert("datetime::" + $.now());
     //this._parsingPanelElmts.projectNameInput[0].value = this._queryInfo.connectionName + "_" + this._queryInfo.databaseUser + "_" + $.now();
     this._parsingPanelElmts.projectNameInput[0].value = this._queryInfo.databaseServer +  "_" + this._queryInfo.initialDatabase + "_" + $.now();

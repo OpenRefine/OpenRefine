@@ -228,7 +228,7 @@ function SqlExporterDialog(options) {
           };
     }
    
-    this._elmts.allowNullToggleCheckbox.click(function() {
+    this._elmts.allowNullToggleCheckbox.on('click', function() {
         if(this.checked){
             $("input:checkbox[class=allowNullCheckboxStyle]").each(function () {
                 $(this).prop('checked', true);
@@ -248,32 +248,32 @@ function SqlExporterDialog(options) {
         
     });
     
-    this._elmts.selectAllButton.click(function() {
+    this._elmts.selectAllButton.on('click', function() {
        $("input:checkbox[class=columnNameCheckboxStyle]").each(function () {
            $(this).prop('checked', true);
         });
       self._updateOptionCode();
     });
-    this._elmts.deselectAllButton.click(function() {
+    this._elmts.deselectAllButton.on('click', function() {
         $("input:checkbox[class=columnNameCheckboxStyle]").each(function () {
            $(this).prop('checked', false);
         });
        self._updateOptionCode();
     });
 
-    this._elmts.includeStructureCheckbox.click(function() {
+    this._elmts.includeStructureCheckbox.on('click', function() {
         $('#includeDropStatementCheckboxId').prop("disabled", !this.checked);
         $('#includeIfExistDropStatementCheckboxId').prop("disabled", !this.checked);
     });
     
-    this._elmts.includeContentCheckbox.click(function() {
+    this._elmts.includeContentCheckbox.on('click', function() {
         $('#nullCellValueToEmptyStringCheckboxId').prop("disabled", !this.checked);
     });
     
 
-    this._elmts.cancelButton.click(function() { self._dismiss(); });
-    this._elmts.downloadButton.click(function() { self._download(); });
-    this._elmts.downloadPreviewButton.click(function(evt) { self._previewDownload(); });
+    this._elmts.cancelButton.on('click', function() { self._dismiss(); });
+    this._elmts.downloadButton.on('click', function() { self._download(); });
+    this._elmts.downloadPreviewButton.on('click', function(evt) { self._previewDownload(); });
     this._configureUIFromOptionCode(options);
     this._updateOptionCode();
   };

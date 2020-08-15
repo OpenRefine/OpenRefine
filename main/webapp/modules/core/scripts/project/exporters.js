@@ -92,7 +92,7 @@ ExporterManager.MenuItems = [
 ];
 
 ExporterManager.prototype._initializeUI = function() {
-  this._button.click(function(evt) {
+  this._button.on('click', function(evt) {
     MenuSystem.createAndShowStandardMenu(
         ExporterManager.MenuItems,
         this,

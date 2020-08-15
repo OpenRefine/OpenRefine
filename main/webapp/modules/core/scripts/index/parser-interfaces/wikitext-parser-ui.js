@@ -113,7 +113,7 @@ Refine.WikitextParserUI.prototype._initialize = function() {
   this._optionContainer.unbind().empty().html(
       DOM.loadHTML("core", "scripts/index/parser-interfaces/wikitext-parser-ui.html"));
   this._optionContainerElmts = DOM.bind(this._optionContainer);
-  this._optionContainerElmts.previewButton.click(function() { self._updatePreview(); });
+  this._optionContainerElmts.previewButton.on('click', function() { self._updatePreview(); });
   
   this._optionContainerElmts.previewButton.html($.i18n('core-buttons/update-preview'));
   
@@ -135,7 +135,7 @@ Refine.WikitextParserUI.prototype._initialize = function() {
 /*
   this._optionContainerElmts.encodingInput
     .val(this._config.encoding || '')
-    .click(function() {
+    .on('click', function() {
       Encoding.selectEncoding($(this), function() {
         self._updatePreview();
       });

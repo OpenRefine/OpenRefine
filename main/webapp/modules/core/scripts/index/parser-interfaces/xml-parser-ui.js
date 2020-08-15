@@ -104,7 +104,7 @@ Refine.XmlParserUI.prototype._initialize = function() {
   this._optionContainer.unbind().empty().html(
       DOM.loadHTML("core", "scripts/index/parser-interfaces/xml-parser-ui.html"));
   this._optionContainerElmts = DOM.bind(this._optionContainer);
-  this._optionContainerElmts.previewButton.click(function() { self._updatePreview(); });
+  this._optionContainerElmts.previewButton.on('click', function() { self._updatePreview(); });
 
   this._optionContainerElmts.pickRecordElementsButton.html($.i18n('core-buttons/pick-record'));
   this._optionContainerElmts.previewButton.html($.i18n('core-buttons/update-preview'));
@@ -135,7 +135,7 @@ Refine.XmlParserUI.prototype._initialize = function() {
   if (this._config.includeArchiveFileName) {
     this._optionContainerElmts.includeArchiveFileCheckbox.prop("checked", true);
   }
-  this._optionContainerElmts.pickRecordElementsButton.click(function() {
+  this._optionContainerElmts.pickRecordElementsButton.on('click', function() {
     self._config.recordPath = undefined;
     self._showPickRecordElementsUI();
   });
@@ -230,7 +230,7 @@ Refine.XmlParserUI.prototype._showPickRecordElementsUI = function() {
       .bind('mouseout', function(evt) {
         div.removeClass('highlight');
       })
-      .click(function(evt) {
+      .on('click', function(evt) {
         if (hittest(evt)) {
           self._setRecordPath(path);
         }

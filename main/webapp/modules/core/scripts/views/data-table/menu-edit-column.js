@@ -77,8 +77,8 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
       null
     );
     
-    elmts.cancelButton.click(dismiss);
-    elmts.okButton.click(function() {
+    elmts.cancelButton.on('click', dismiss);
+    elmts.okButton.on('click', function() {
       var columnName = $.trim(elmts.columnNameInput[0].value);
       if (!columnName.length) {
         alert($.i18n('core-views/warning-col-name'));
@@ -123,7 +123,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
     elmts.or_views_cacheResponses.text($.i18n('core-views/cache-responses'));
     elmts.or_views_httpHeaders.text($.i18n('core-views/http-headers'));
     elmts.or_views_httpHeadersShowHide.text($.i18n('core-views/show'));
-    elmts.or_views_httpHeadersShowHide.click(function() {
+    elmts.or_views_httpHeadersShowHide.on('click', function() {
                                                           $( ".set-httpheaders-container" ).toggle( "slow", function() {
                                                             if ($(this).is(':visible')) {
                                                               elmts.or_views_httpHeadersShowHide.text($.i18n('core-views/hide'));
@@ -149,8 +149,8 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
     );
 
 
-    elmts.cancelButton.click(dismiss);
-    elmts.okButton.click(function() {
+    elmts.cancelButton.on('click', dismiss);
+    elmts.okButton.on('click', function() {
       var columnName = $.trim(elmts.columnNameInput[0].value);
       if (!columnName.length) {
         alert($.i18n('core-views/warning-col-name'));
@@ -280,8 +280,8 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
     
     elmts.separatorInput.focus().select();
 
-    elmts.cancelButton.click(dismiss);
-    elmts.okButton.click(function() {
+    elmts.cancelButton.on('click', dismiss);
+    elmts.okButton.on('click', function() {
       var mode = $("input[name='split-by-mode']:checked")[0].value;
       var config = {
         columnName: column.name,
@@ -505,29 +505,29 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
     */
     elmts.column_join_columnPicker
       .find('.column-join-column')
-      .click(function() {
+      .on('click', function() {
         elmts.column_join_columnPicker
         .find('.column-join-column')
         .removeClass('selected');
         $(this).addClass('selected');
       });
     elmts.selectAllButton
-      .click(function() {
+      .on('click', function() {
         elmts.column_join_columnPicker
         .find('input[type="checkbox"]')
         .prop('checked',true);
        });
     elmts.deselectAllButton
-      .click(function() {
+      .on('click', function() {
         elmts.column_join_columnPicker
         .find('input[type="checkbox"]')
         .prop('checked',false);
       });
-    elmts.okButton.click(function() {
+    elmts.okButton.on('click', function() {
       transform();
       dismiss();
     });
-    elmts.cancelButton.click(function() {
+    elmts.cancelButton.on('click', function() {
       dismiss();
     });
     elmts.new_column_nameInput.change(function() {

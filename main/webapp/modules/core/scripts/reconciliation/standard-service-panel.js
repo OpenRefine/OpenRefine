@@ -147,7 +147,7 @@ ReconStandardServicePanel.prototype._populatePanel = function() {
       .val(typeID)
       .attr("typeName", typeName)
       .appendTo(td0)
-      .click(function() {
+      .on('click', function() {
         self._rewirePropertySuggests(this.value);
       });
 

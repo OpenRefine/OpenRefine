@@ -137,10 +137,10 @@ class ScatterplotFacet extends Facet {
     this._elmts = DOM.bind(this._div);
 
     this._elmts.titleSpan.text(this._config.name);
-    this._elmts.removeButton.click(function() { self._remove(); });
-    this._elmts.minimizeButton.click(function() { self._minimize(); });
+  this._elmts.removeButton.on('click', function() { self._remove(); });
+  this._elmts.minimizeButton.on('click', function() { self._minimize(); });
     
-    this._elmts.resetButton.click(function() {
+  this._elmts.resetButton.on('click', function() {
       self.reset();
       self._updateRest();
     });

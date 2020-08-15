@@ -41,7 +41,7 @@ MenuSystem.showMenu = function(elmt, onDismiss) {
     MenuSystem._overlay = $('<div>&nbsp;</div>')
     .addClass("menu-overlay")
     .appendTo(document.body)
-    .click(MenuSystem.dismissAll);
+    .on('click', MenuSystem.dismissAll);
   }
 
   elmt.css("z-index", 1010 + MenuSystem._layers.length).appendTo(document.body);
@@ -161,7 +161,7 @@ MenuSystem.createAndShowStandardMenu = function(items, elmt, options) {
           MenuSystem.createAndShowStandardMenu(item.submenu, this, options);
         });
       } else {
-        menuItem.html(item.label).click(function(evt) {
+        menuItem.html(item.label).on('click', function(evt) {
           item.click.call(this, evt);
           MenuSystem.dismissAll();
         });

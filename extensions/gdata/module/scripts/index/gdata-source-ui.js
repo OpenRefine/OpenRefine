@@ -53,7 +53,7 @@ Refine.GDataSourceUI.prototype.attachUI = function(body) {
   $('#gdata-re-signin-another').text($.i18n('gdata-import/re-sign-in-another'));
   
   var self = this;
-  this._body.find('.gdata-signin.button').click(function() {
+  this._body.find('.gdata-signin.button').on('click', function() {
     GdataExtension.showAuthorizationDialog(
       function() {
         self._listDocuments();
@@ -64,13 +64,13 @@ Refine.GDataSourceUI.prototype.attachUI = function(body) {
       }
     );
   });
-  this._body.find('.gdata-signout.button').click(function() {
+  this._body.find('.gdata-signout.button').on('click', function() {
       $.get("command/gdata/deauthorize" );
       self._body.find('.gdata-page').hide();
       self._elmts.signinPage.show();
   });
   
-  this._elmts.urlNextButton.click(function(evt) {
+  this._elmts.urlNextButton.on('click', function(evt) {
     var url = $.trim(self._elmts.urlInput[0].value);
     if (url.length === 0) {
       window.alert($.i18n('gdata-source/alert-url'));
@@ -150,7 +150,7 @@ Refine.GDataSourceUI.prototype._renderDocuments = function(o) {
     .attr('href', 'javascript:{}')
     .text(doc.title)
     .appendTo(td)
-    .click(function(evt) {
+    .on('click', function(evt) {
       self._controller.startImportingDocument(doc);
     });
     

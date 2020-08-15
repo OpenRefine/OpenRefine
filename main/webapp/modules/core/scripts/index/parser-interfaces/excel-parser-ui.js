@@ -119,11 +119,11 @@ Refine.ExcelParserUI.prototype._initialize = function() {
   this._optionContainer.unbind().empty().html(
       DOM.loadHTML("core", "scripts/index/parser-interfaces/excel-parser-ui.html"));
   this._optionContainerElmts = DOM.bind(this._optionContainer);
-  this._optionContainerElmts.previewButton.click(function() { self._updatePreview(); });  
+  this._optionContainerElmts.previewButton.on('click', function() { self._updatePreview(); });  
   this._optionContainerElmts.previewButton.html($.i18n('core-buttons/update-preview'));
-  this._optionContainerElmts.selectAllButton.click(function() { self._selectAll(); }); 
+  this._optionContainerElmts.selectAllButton.on('click', function() { self._selectAll(); }); 
   this._optionContainerElmts.selectAllButton.html($.i18n('core-buttons/select-all'));
-  this._optionContainerElmts.unselectAllButton.click(function() { self._unselectAll(); }); 
+  this._optionContainerElmts.unselectAllButton.on('click', function() { self._unselectAll(); }); 
   this._optionContainerElmts.unselectAllButton.html($.i18n('core-buttons/unselect-all'));
   $('#or-import-worksheet').text($.i18n('core-index-import/import-worksheet'));
   $('#or-import-ignore').text($.i18n('core-index-parser/ignore-first'));

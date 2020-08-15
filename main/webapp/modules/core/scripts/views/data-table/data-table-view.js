@@ -127,7 +127,7 @@ DataTableView.prototype.render = function() {
     if (value == ui.browsingEngine.getMode()) {
       a.addClass("selected");
     } else {
-      a.addClass("action").click(function(evt) {
+      a.addClass("action").on('click', function(evt) {
         ui.browsingEngine.setMode(value);
       });
     }
@@ -159,7 +159,7 @@ DataTableView.prototype._renderSortingControls = function(sortingControls) {
   .text($.i18n('core-views/sort') + " ")
   .append($('<img>').attr("src", "../images/down-arrow.png"))
   .appendTo(sortingControls)
-  .click(function() {
+  .on('click', function() {
     self._createSortingMenu(this);
   });
 };
@@ -175,8 +175,8 @@ DataTableView.prototype._renderPagingControls = function(pageSizeControls, pagin
   var firstPage = $('<a href="javascript:{}">&laquo; '+$.i18n('core-views/first')+'</a>').appendTo(pagingControls);
   var previousPage = $('<a href="javascript:{}">&lsaquo; '+$.i18n('core-views/previous')+'</a>').appendTo(pagingControls);
   if (theProject.rowModel.start > 0) {
-    firstPage.addClass("action").click(function(evt) { self._onClickFirstPage(this, evt); });
-    previousPage.addClass("action").click(function(evt) { self._onClickPreviousPage(this, evt); });
+    firstPage.addClass("action").on('click', function(evt) { self._onClickFirstPage(this, evt); });
+    previousPage.addClass("action").on('click', function(evt) { self._onClickPreviousPage(this, evt); });
   } else {
     firstPage.addClass("inaction");
     previousPage.addClass("inaction");
@@ -209,8 +209,8 @@ DataTableView.prototype._renderPagingControls = function(pageSizeControls, pagin
   var nextPage = $('<a href="javascript:{}">'+$.i18n('core-views/next')+' &rsaquo;</a>').appendTo(pagingControls);
   var lastPage = $('<a href="javascript:{}">'+$.i18n('core-views/last')+' &raquo;</a>').appendTo(pagingControls);
   if (theProject.rowModel.start + theProject.rowModel.limit < theProject.rowModel.filtered) {
-    nextPage.addClass("action").click(function(evt) { self._onClickNextPage(this, evt); });
-    lastPage.addClass("action").click(function(evt) { self._onClickLastPage(this, evt); });
+    nextPage.addClass("action").on('click', function(evt) { self._onClickNextPage(this, evt); });
+    lastPage.addClass("action").on('click', function(evt) { self._onClickLastPage(this, evt); });
   } else {
     nextPage.addClass("inaction");
     lastPage.addClass("inaction");
@@ -226,7 +226,7 @@ DataTableView.prototype._renderPagingControls = function(pageSizeControls, pagin
     if (pageSize == self._pageSize) {
       a.text(pageSize).addClass("selected");
     } else {
-      a.text(pageSize).addClass("action").click(function(evt) {
+      a.text(pageSize).addClass("action").on('click', function(evt) {
         self._pageSize = pageSize;
         self.update();
       });
@@ -365,7 +365,7 @@ DataTableView.prototype._renderDataTables = function(table, tableHeader) {
           '<a class="column-header-menu" bind="dropdownMenu"></a><span class="column-header-name">'+$.i18n('core-views/all')+'</span>' +
         '</div>'
       )
-  ).dropdownMenu.click(function() {
+  ).dropdownMenu.on('click', function() {
     self._createMenuForAllColumns(this);
   });
   this._columnHeaderUIs = [];
@@ -373,7 +373,7 @@ DataTableView.prototype._renderDataTables = function(table, tableHeader) {
     var th = trHead.appendChild(document.createElement("th"));
     $(th).addClass("column-header").attr('title', column.name);
     if (self._collapsedColumnNames.hasOwnProperty(column.name)) {
-      $(th).html("&nbsp;").click(function(evt) {
+      $(th).html("&nbsp;").on('click', function(evt) {
         delete self._collapsedColumnNames[column.name];
         self.render();
       });
@@ -617,8 +617,8 @@ DataTableView.prototype._addSortingCriterion = function(criterion, alone) {
     var level = DialogSystem.showDialog(frame);
     var dismiss = function() { DialogSystem.dismissUntil(level - 1); };
 
-    elmts.cancelButton.click(dismiss);
-    elmts.okButton.click(function() {
+    elmts.cancelButton.on('click', dismiss);
+    elmts.okButton.on('click', function() {
         new ExpressionColumnDialog(
                 previewWidget.getExpression(true),
                 $('input[name="text-transform-dialog-onerror-choice"]:checked')[0].value,

@@ -52,9 +52,9 @@ TemplatingExporterDialog.prototype._createDialog = function() {
     this._elmts.exportButton.html($.i18n('core-buttons/export'));
     this._elmts.cancelButton.html($.i18n('core-buttons/cancel'));
     
-    this._elmts.exportButton.click(function() { self._export(); self._dismiss(); });
-    this._elmts.cancelButton.click(function() { self._dismiss(); });
-    this._elmts.resetButton.click(function() {
+    this._elmts.exportButton.on('click', function() { self._export(); self._dismiss(); });
+    this._elmts.cancelButton.on('click', function() { self._dismiss(); });
+    this._elmts.resetButton.on('click', function() {
         self._fillInTemplate(self._createDefaultTemplate());
         self._updatePreview();
     });

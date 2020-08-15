@@ -54,11 +54,11 @@ ManageAccountDialog.displayLoggedIn = function (logged_in_username) {
       .text(logged_in_username)
       .attr('href', WikibaseManager.getSelectedWikibaseRoot() + 'User:' + logged_in_username);
 
-  elmts.cancelButton.click(function (e) {
+  elmts.cancelButton.on('click', function (e) {
     dismiss();
   });
 
-  elmts.logoutButton.click(function () {
+  elmts.logoutButton.on('click', function () {
     frame.hide();
     Refine.postCSRF(
         "command/wikidata/login",
@@ -102,11 +102,11 @@ ManageAccountDialog.displayPasswordLogin = function (onSuccess) {
     DialogSystem.dismissUntil(level - 1);
   };
 
-  elmts.cancelButton.click(function (e) {
+  elmts.cancelButton.on('click', function (e) {
     dismiss();
   });
 
-  elmts.explainOwnerOnlyConsumerLogin.click(function (e) {
+  elmts.explainOwnerOnlyConsumerLogin.on('click', function (e) {
     dismiss();
     ManageAccountDialog.displayOwnerOnlyConsumerLogin(onSuccess);
   });
@@ -162,11 +162,11 @@ ManageAccountDialog.displayOwnerOnlyConsumerLogin = function (onSuccess) {
     DialogSystem.dismissUntil(level - 1);
   };
 
-  elmts.cancelButton.click(function (e) {
+  elmts.cancelButton.on('click', function (e) {
     dismiss();
   });
 
-  elmts.explainPasswordLogin.click(function (e) {
+  elmts.explainPasswordLogin.on('click', function (e) {
     dismiss();
     ManageAccountDialog.displayPasswordLogin(onSuccess);
   });

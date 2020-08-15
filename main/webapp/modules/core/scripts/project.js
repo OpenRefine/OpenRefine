@@ -134,7 +134,7 @@ function initializeUI(uiState) {
   $("#or-proj-undoRedo").text($.i18n('core-project/undo-redo'));
   $("#or-proj-ext").text($.i18n('core-project/extensions')+":");
 
-  $('#project-name-button').click(Refine._renameProject);
+  $('#project-name-button').on('click', Refine._renameProject);
   $('#project-permalink-button').mouseenter(function() {
     this.href = Refine.getPermanentLink();
   });
@@ -152,12 +152,12 @@ function initializeUI(uiState) {
 
   $('<a>').attr("id", "hide-left-panel-button")
     .addClass("visibility-panel-button")
-    .click(function() { Refine._showHideLeftPanel(); })
+    .on('click', function() { Refine._showHideLeftPanel(); })
     .prependTo(ui.leftPanelTabs);
 
   $('<a>').attr("id", "show-left-panel-button")
     .addClass("visibility-panel-button")
-    .click(function() { Refine._showHideLeftPanel(); })
+    .on('click', function() { Refine._showHideLeftPanel(); })
     .prependTo(ui.toolPanelDiv);
   
   ui.summaryBar = new SummaryBar(ui.summaryBarDiv);

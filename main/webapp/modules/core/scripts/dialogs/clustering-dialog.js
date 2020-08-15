@@ -113,12 +113,12 @@ ClusteringDialog.prototype._createDialog = function() {
     this._elmts.radius.change(params_changer);
     this._elmts.ngramBlock.change(params_changer);
 
-    this._elmts.selectAllButton.click(function() { self._selectAll(); });
-    this._elmts.deselectAllButton.click(function() { self._deselectAll(); });
-    this._elmts.exportClusterButton.click(function() { self._onExportCluster(); });
-    this._elmts.applyReClusterButton.click(function() { self._onApplyReCluster(); });
-    this._elmts.applyCloseButton.click(function() { self._onApplyClose(); });
-    this._elmts.closeButton.click(function() { self._dismiss(); });
+    this._elmts.selectAllButton.on('click', function() { self._selectAll(); });
+    this._elmts.deselectAllButton.on('click', function() { self._deselectAll(); });
+    this._elmts.exportClusterButton.on('click', function() { self._onExportCluster(); });
+    this._elmts.applyReClusterButton.on('click', function() { self._onApplyReCluster(); });
+    this._elmts.applyCloseButton.on('click', function() { self._onApplyClose(); });
+    this._elmts.closeButton.on('click', function() { self._dismiss(); });
 
     // Fill in all the keyers and distances
     $.get("command/core/get-clustering-functions-and-distances")
@@ -451,7 +451,7 @@ ClusteringDialog.prototype._export = function() {
     link.href = 'data:' + data;
     link.download = "clusters_" + projectName + "_" + columnName + "_" + timeStamp + ".json";
     document.body.appendChild(link);
-    link.click();
+    link.on('click', );
     document.body.removeChild(link);
 };
 

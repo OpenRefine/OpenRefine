@@ -42,12 +42,12 @@ function ExtendReconciledDataPreviewDialog(column, columnIndex, rowIndices, onDo
   this._dialog = $(DOM.loadHTML("core", "scripts/views/data-table/extend-data-preview-dialog.html"));
   this._elmts = DOM.bind(this._dialog);
   this._elmts.dialogHeader.html($.i18n('core-views/add-col-recon-col')+" "+column.name);
-  this._elmts.resetButton.click(function() {
+  this._elmts.resetButton.on('click', function() {
     self._extension.properties = [];
     self._update();
   });
 
-  this._elmts.okButton.click(function() {
+  this._elmts.okButton.on('click', function() {
     if (self._extension.properties.length === 0) {
       alert($.i18n('core-views/warning-no-property'));
     } else {
@@ -58,7 +58,7 @@ function ExtendReconciledDataPreviewDialog(column, columnIndex, rowIndices, onDo
                   self._serviceMetadata.schemaSpace);
     }
   });
-  this._elmts.cancelButton.click(function() {
+  this._elmts.cancelButton.on('click', function() {
     DialogSystem.dismissUntil(self._level - 1);
   });
 
@@ -159,7 +159,7 @@ ExtendReconciledDataPreviewDialog.prototype._show = function(properties) {
     .attr("href", "javascript:{}")
     .html(label)
     .appendTo(div)
-    .click(function() {
+    .on('click', function() {
       self._addProperty(property);
     });
   };
@@ -267,7 +267,7 @@ ExtendReconciledDataPreviewDialog.prototype._renderPreview = function(data) {
     .text($.i18n('core-views/remove-prop'))
     .addClass("action")
     .attr("title", $.i18n('core-views/remove-col'))
-    .click(function() {
+    .on('click', function() {
       self._removeProperty(column.id);
     }).appendTo(th);
 
@@ -275,7 +275,7 @@ ExtendReconciledDataPreviewDialog.prototype._renderPreview = function(data) {
     .text($.i18n('core-views/configure-prop'))
     .addClass("action")
     .attr("title", $.i18n('core-views/configure-col'))
-    .click(function() {
+    .on('click', function() {
       self._constrainProperty(column.id);
     }).appendTo(th);
   };
@@ -407,8 +407,8 @@ ExtendReconciledDataPreviewDialog.prototype._constrainProperty = function(id) {
     DialogSystem.dismissUntil(level - 1);
   };
 
-  footerElmts.cancelButton.click(dismiss);
-  footerElmts.okButton.click(function() {
+  footerElmts.cancelButton.on('click', dismiss);
+  footerElmts.okButton.on('click', function() {
     try {
       if (fields != null) {
           var elem = $(bodyElmts.form[0]);

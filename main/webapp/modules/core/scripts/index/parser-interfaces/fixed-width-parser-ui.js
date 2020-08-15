@@ -121,7 +121,7 @@ Refine.FixedWidthParserUI.prototype._initialize = function() {
   this._optionContainer.unbind().empty().html(
       DOM.loadHTML("core", "scripts/index/parser-interfaces/fixed-width-parser-ui.html"));
   this._optionContainerElmts = DOM.bind(this._optionContainer);
-  this._optionContainerElmts.previewButton.click(function() { self.updatePreview(); });
+  this._optionContainerElmts.previewButton.on('click', function() { self.updatePreview(); });
 
   this._optionContainerElmts.previewButton.html($.i18n('core-buttons/update-preview'));
   $('#or-import-encoding').html($.i18n('core-index-import/char-encoding'));
@@ -147,7 +147,7 @@ Refine.FixedWidthParserUI.prototype._initialize = function() {
   
   this._optionContainerElmts.encodingInput
     .val(this._config.encoding || '')
-    .click(function() {
+    .on('click', function() {
       Encoding.selectEncoding($(this), function() {
         self.updatePreview();
       });
@@ -446,7 +446,7 @@ Refine.FixedWidthPreviewTable.prototype._render = function() {
       container.bind('mouseup', mouseUp);
     });
 
-    close.click(function() {
+    close.on('click', function() {
       columnCharIndexes[index] = index > 0 ? columnCharIndexes[index - 1] : 0;
       updatePreview();
     });

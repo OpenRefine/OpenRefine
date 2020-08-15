@@ -222,7 +222,7 @@ $(function() {
     .addClass('action-area-tab')
     .text(actionArea.label)
     .appendTo($('#action-area-tabs'))
-    .click(function() {
+    .on('click', function() {
       Refine.selectActionArea(actionArea.id);
     });
 

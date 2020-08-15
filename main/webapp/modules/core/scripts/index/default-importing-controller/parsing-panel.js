@@ -46,11 +46,11 @@ Refine.DefaultImportingController.prototype._showParsingPanel = function(hasFile
   }
   
   this._prepareParsingPanel();
-  this._parsingPanelElmts.nextButton.click(function() {
+  this._parsingPanelElmts.nextButton.on('click', function() {
     self._createProject();
   });
   if (hasFileSelection) {
-    this._parsingPanelElmts.previousButton.click(function() {
+    this._parsingPanelElmts.previousButton.on('click', function() {
       self._createProjectUI.showCustomPanel(self._fileSelectionPanel);
     });
   } else {
@@ -91,7 +91,7 @@ Refine.DefaultImportingController.prototype._prepareParsingPanel = function() {
       DOM.loadHTML("core", "scripts/index/default-importing-controller/parsing-panel.html"));
 
   this._parsingPanelElmts = DOM.bind(this._parsingPanel);
-  this._parsingPanelElmts.startOverButton.click(function() {
+  this._parsingPanelElmts.startOverButton.on('click', function() {
     self._startOver();
   });
   this._parsingPanelElmts.progressPanel.hide();
@@ -147,7 +147,7 @@ Refine.DefaultImportingController.prototype._prepareParsingPanel = function() {
     .attr("format", format)
     .addClass("default-importing-parsing-control-panel-format")
     .appendTo(self._parsingPanelElmts.formatsContainer)
-    .click(function() {
+    .on('click', function() {
       self._selectFormat(format);
     });
 
