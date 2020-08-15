@@ -598,7 +598,7 @@ class ListFacet extends Facet {
   elmts.okButton.on('click', commit);
     elmts.textarea
     .text(originalContent)
-    .keydown(function(evt) {
+  .on('keydown', function(evt) {
       if (!evt.shiftKey) {
         if (evt.keyCode === 13) {
           commit();

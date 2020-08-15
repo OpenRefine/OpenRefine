@@ -68,7 +68,7 @@ DialogSystem.showDialog = function(elmt, onCancel) {
 
   var level = DialogSystem._layers.length;
 
-  $(window).keydown(escapeKey);
+  $(window).on('keydown', escapeKey);
   
   return level;
 };

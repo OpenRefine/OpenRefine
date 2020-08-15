@@ -187,7 +187,7 @@ DataTableView.prototype._renderPagingControls = function(pageSizeControls, pagin
   var pageInputSize = 20 + (8 * ui.dataTableView._lastPageNumber.toString().length);
   var currentPageInput = $('<input type="number">')
     .on('change', function(evt) { self._onChangeGotoPage(this, evt); })
-    .keydown(function(evt) { self._onKeyDownGotoPage(this, evt); })
+    .on('keydown', function(evt) { self._onKeyDownGotoPage(this, evt); })
     .attr("id", "viewpanel-paging-current-input")
     .attr("min", 1)
     .attr("max", self._lastPageNumber)

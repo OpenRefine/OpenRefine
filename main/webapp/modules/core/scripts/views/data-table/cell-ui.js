@@ -656,7 +656,7 @@ DataTableCellUI.prototype._startEdit = function(elmt) {
   elmts.okallButton.on('click', commit);
   elmts.textarea
   .text(originalContent)
-  .keydown(function(evt) {
+  .on('keydown', function(evt) {
     if (!evt.shiftKey) {
       if (evt.keyCode == 13) {
         if (evt.ctrlKey) {
