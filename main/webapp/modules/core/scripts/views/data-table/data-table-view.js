@@ -185,7 +185,7 @@ DataTableView.prototype._renderPagingControls = function(pageSizeControls, pagin
   var pageControlsSpan = $('<span>').attr("id", "viewpanel-paging-current");
   
   var pageInputSize = 20 + (8 * ui.dataTableView._lastPageNumber.toString().length);
-  var currentPageInput = $('<input type="number">')
+  $('<input type="number">')
     .on('change', function(evt) { self._onChangeGotoPage(this, evt); })
     .on('keydown', function(evt) { self._onKeyDownGotoPage(this, evt); })
     .attr("id", "viewpanel-paging-current-input")
@@ -193,17 +193,17 @@ DataTableView.prototype._renderPagingControls = function(pageSizeControls, pagin
     .attr("max", self._lastPageNumber)
     .attr("required", "required")
     .val(self._currentPageNumber)
-    .css("width", pageInputSize +"px");
-    
-  pageControlsSpan.append($.i18n('core-views/goto-page', '<span id="currentPageInput" />', self._lastPageNumber));
+    .css("width", pageInputSize +"px") // FIXME: No hand calculations of width!
+    .appendTo(pageControlsSpan);
+
+  // TODO: This is poor i18n
+  pageControlsSpan.append($.i18n('core-views/of-page', self._lastPageNumber));
   pageControlsSpan.appendTo(pagingControls);
 
-  $('span#currentPageInput').replaceWith($(currentPageInput));
-  
   if(self._refocusPageInput == true) { 
     self._refocusPageInput = false;
     var currentPageInputForFocus = $('input#viewpanel-paging-current-input');
-    currentPageInputForFocus.ready(function(evt) { setTimeout(() => { currentPageInputForFocus.focus(); }, 250); });
+    currentPageInputForFocus.ready(function(evt) { setTimeout(() => { currentPageInputForFocus.trigger('focus'); }, 250); });
   }
   
   var nextPage = $('<a href="javascript:{}">'+$.i18n('core-views/next')+' &rsaquo;</a>').appendTo(pagingControls);
