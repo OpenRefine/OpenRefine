@@ -419,7 +419,7 @@ Refine.FixedWidthPreviewTable.prototype._render = function() {
     .on('mouseout', function() {
       newSeparator.show();
     })
-    .mousedown(function() {
+    .on("mousedown", function() {
       var mouseMove = function(evt) {
         var newCharIndex = computeCharIndex(evt);
         positionColumnSeparator(outer, newCharIndex);
@@ -429,8 +429,8 @@ Refine.FixedWidthPreviewTable.prototype._render = function() {
         return false;
       };
       var mouseUp = function(evt) {
-        container.unbind('mousemove', mouseMove);
-        container.unbind('mouseup', mouseUp);
+        container.off('mousemove', mouseMove);
+        container.off('mouseup', mouseUp);
 
         var newCharIndex = computeCharIndex(evt);
         positionColumnSeparator(outer, newCharIndex);
@@ -442,8 +442,8 @@ Refine.FixedWidthPreviewTable.prototype._render = function() {
         evt.stopPropagation();
         return false;
       };
-      container.bind('mousemove', mouseMove);
-      container.bind('mouseup', mouseUp);
+      container.on('mousemove', mouseMove);
+      container.on('mouseup', mouseUp);
     });
 
     close.on('click', function() {
@@ -463,12 +463,12 @@ Refine.FixedWidthPreviewTable.prototype._render = function() {
   .on('mouseout', function(evt) {
     newSeparator.hide();
   })
-  .mousemove(function(evt) {
+  .on("mousemove", function(evt) {
     var offset = evt.pageX - container.offset().left;
     var newCharIndex = Math.round((offset - pixelOffset) / pixelsPerChar);
     positionColumnSeparator(newSeparator.show(), newCharIndex);
   });
-  newSeparator.mousedown(function(evt) {
+  newSeparator.on("mousedown", function(evt) {
     var newCharIndex = computeCharIndex(evt);
     columnCharIndexes.push(newCharIndex);
     updatePreview();
