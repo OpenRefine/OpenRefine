@@ -1,3 +1,5 @@
 tests/classes/
 tests/report/
 tests/test-output/
+/target/
+/bin/
