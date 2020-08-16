@@ -97,10 +97,10 @@ ReconciliationManager.registerStandardService = function(url, f, silent) {
     "timeout":5000
      }
   )
-  .success(function(data, textStatus, jqXHR) {
+  .done(function(data, textStatus, jqXHR) {
     registerService(data, "json");
   })
-  .error(function(jqXHR, textStatus, errorThrown) {
+  .fail(function(jqXHR, textStatus, errorThrown) {
     // If it fails, try with JSONP
     $.ajax(
         url,
@@ -108,10 +108,10 @@ ReconciliationManager.registerStandardService = function(url, f, silent) {
            "timeout": 5000
         }
     )
-    .success(function(data, textStatus, jqXHR) {
+    .done(function(data, textStatus, jqXHR) {
       registerService(data, "jsonp");
     })
-    .error(function(jqXHR, textStatus, errorThrown) {
+    .fail(function(jqXHR, textStatus, errorThrown) {
         if (!silent) {
           dismissBusy(); 
           alert($.i18n('core-recon/error-contact')+': ' + textStatus + ' : ' + errorThrown + ' - ' + url);

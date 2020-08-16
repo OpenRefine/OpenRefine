@@ -122,7 +122,7 @@ ClusteringDialog.prototype._createDialog = function() {
 
     // Fill in all the keyers and distances
     $.get("command/core/get-clustering-functions-and-distances")
-    .success(function(data) {
+    .done(function(data) {
        var keyers = data.keyers != null ? data.keyers : [];
        var distances = data.distances != null ? data.distances : [];
        var i = 0;
@@ -154,7 +154,7 @@ ClusteringDialog.prototype._createDialog = function() {
        }
        self._level = DialogSystem.showDialog(dialog);
     })
-    .error(function(error) {
+    .fail(function(error) {
             alert($.i18n('core-dialogs/no-clustering-functions-and-distances'));
     });
 };
