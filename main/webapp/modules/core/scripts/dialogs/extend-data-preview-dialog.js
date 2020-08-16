@@ -428,6 +428,5 @@ ExtendReconciledDataPreviewDialog.prototype._constrainProperty = function(id) {
     }
   });
 
-  //bodyElmts.textarea.focus();
 };
 

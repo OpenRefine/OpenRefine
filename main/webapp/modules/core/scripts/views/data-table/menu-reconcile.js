@@ -133,7 +133,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
     }).appendTo(footer);
 
     var level = DialogSystem.showDialog(frame);
-    input.focus().data("suggest").textchange();
+    input.trigger('focus').data("suggest").textchange();
   };
 
   var doUseValuesAsIdentifiers = function() {

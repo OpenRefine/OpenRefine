@@ -249,7 +249,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
     var level = DialogSystem.showDialog(frame);
     var dismiss = function() { DialogSystem.dismissUntil(level - 1); };
     elmts.cancelButton.on('click', dismiss);
-    elmts.text_to_findInput.focus();
+    elmts.text_to_findInput.trigger('focus');
     elmts.okButton.on('click', function() {
       var text_to_find = elmts.text_to_findInput[0].value;
       var replacement_text = elmts.replacement_textInput[0].value;
@@ -319,7 +319,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
     
     var defaultValue = Refine.getPreference("ui.cell.rowSplitDefaultSeparator", ",");
     elmts.separatorInput[0].value = defaultValue;
-    elmts.separatorInput.focus().select();
+    elmts.separatorInput.trigger('focus').trigger('select');
     
     elmts.cancelButton.on('click', dismiss);
     elmts.okButton.on('click', function() {

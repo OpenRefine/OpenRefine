@@ -115,7 +115,7 @@ if (typeof window.Sign == 'undefined') {
       };
 
       if (window.focus && newwin !== null) {
-        newwin.focus();
+        newwin.trigger('focus');
       }
 
       return false;

@@ -251,8 +251,8 @@ class ListFacet extends Facet {
 
     var textarea = elmts.textarea[0];
     textarea.value = lines.join("\n");
-    textarea.focus();
-    textarea.select();
+  textarea.trigger('focus');
+  textarea.trigger('select');
   };
 
   _update(resetScroll) {
@@ -607,8 +607,8 @@ class ListFacet extends Facet {
         }
       }
     })
-    .select()
-    .focus();
+  .trigger('select')
+  .trigger('focus');
 
   elmts.cancelButton.on('click', function() {
       MenuSystem.dismissAll();

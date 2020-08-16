@@ -147,7 +147,7 @@ class TextSearchFacet extends Facet {
       }
       self._query = this.value;
       self._scheduleUpdate();
-    }).focus();
+  }).trigger('focus');
 
   };
 

@@ -45,7 +45,7 @@ Refine.OpenProjectUI = function(elmt) {
       if (fileName) {
         $("#project-name-input")[0].value = fileName.replace(/\.\w+/, "").replace(/[_\-]/g, " ");
       }
-      $("#project-name-input").focus().select();
+      $("#project-name-input").trigger('focus').trigger('select');
     }
   }).on('keypress', function(evt) {
     if (evt.keyCode == 13) {

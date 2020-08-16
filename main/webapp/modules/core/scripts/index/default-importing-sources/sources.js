@@ -105,7 +105,7 @@ UrlImportingSourceUI.prototype.attachUI = function(bodyDiv) {
 };
 
 UrlImportingSourceUI.prototype.focus = function() {
-  this._elmts.urlInput.focus();
+  this._elmts.urlInput.trigger('focus');
 };
 
 function ClipboardImportingSourceUI(controller) {
@@ -137,6 +137,6 @@ ClipboardImportingSourceUI.prototype.attachUI = function(bodyDiv) {
 };
 
 ClipboardImportingSourceUI.prototype.focus = function() {
-  this._elmts.textInput.focus();
+  this._elmts.textInput.trigger('focus');
 };
 

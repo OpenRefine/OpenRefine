@@ -585,7 +585,7 @@ SchemaAlignment._addStatementGroup = function(item, json) {
         removeButton.hide();
      }
   } else {
-     inputContainer.find('input').focus();
+     inputContainer.find('input').trigger('focus');
   }
      
 };
@@ -775,7 +775,7 @@ SchemaAlignment._addQualifier = function(container, json) {
   if (value && property) {
     SchemaAlignment._addStatement(statementContainer, property.datatype, {value:value});
   } else {
-    inputContainer.find('input').focus();
+    inputContainer.find('input').trigger('focus');
   }
 };
 

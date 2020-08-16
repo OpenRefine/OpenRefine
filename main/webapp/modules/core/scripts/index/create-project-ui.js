@@ -121,6 +121,7 @@ Refine.CreateProjectUI.prototype.selectImportSource = function(id) {
       sourceSelectionUI._divBody.addClass('selected').show();
       sourceSelectionUI._divHeader.addClass('selected');
 
+      // TODO: Give this a better name which is not confusable with jQuery
       sourceSelectionUI.ui.focus();
 
       break;

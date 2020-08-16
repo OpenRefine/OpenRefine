@@ -227,7 +227,7 @@ ReconDialog.prototype._onAddStandardService = function() {
     }
     dismiss();
   });
-  elmts.input.focus().select();
+  elmts.input.trigger('focus').trigger('select');
 };
 
 

@@ -34,7 +34,7 @@ PerformEditsDialog.launch = function(logged_in_username, max_severity) {
     formCopy.trigger('submit');
 
     if (elmts.editSummary.val().length === 0) {
-      elmts.editSummary.focus();
+      elmts.editSummary.trigger('focus');
       return;
     }
 
@@ -44,7 +44,7 @@ PerformEditsDialog.launch = function(logged_in_username, max_severity) {
 
     // validate maxlag
     if (!/^\+?[1-9]\d*$/.test(elmts.maxlag.val())) {
-      elmts.maxlag.focus();
+      elmts.maxlag.trigger('focus');
       alert($.i18n('perform-wikibase-edits/maxlag-validation'));
       return;
     }

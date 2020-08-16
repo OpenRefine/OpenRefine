@@ -194,7 +194,7 @@
       .bind("mouseup", function(e) {
         //console.log("pane mouseup");
         if (self.input.data("dont_hide")) {
-          self.input.focus();
+          self.input.trigger('focus');
         }
         self.input.removeData("dont_hide");
         e.stopPropagation();
@@ -1308,7 +1308,7 @@
         li.on('mousedown', function(e) {
            if (e.which == 2) {
               var win = window.open(view_url, '_blank');
-              win.focus();
+              win.trigger('focus');
               e.preventDefault();
            }
         });

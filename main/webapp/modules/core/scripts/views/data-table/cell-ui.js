@@ -436,7 +436,7 @@ DataTableCellUI.prototype._searchForMatch = function(suggestOptions) {
     match = data;
     commit();
   })
-  .focus()
+  .trigger('focus')
   .data("suggest").textchange();
 };
 
@@ -669,8 +669,8 @@ DataTableCellUI.prototype._startEdit = function(elmt) {
       }
     }
   })
-  .select()
-  .focus();
+  .trigger('select')
+  .trigger('focus');
 
   elmts.cancelButton.on('click', function() {
     MenuSystem.dismissAll();

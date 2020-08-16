@@ -130,8 +130,8 @@ ExpressionPreviewDialog.Widget = function(
         .bind("keyup change input",function(){
             self._scheduleUpdate();
         })
-        .select()
-        .focus();
+        .trigger('select')
+        .trigger('focus');
 
     this._elmts.or_dialog_expr.html($.i18n('core-dialogs/expression'));
     this._elmts.or_dialog_lang.html($.i18n('core-dialogs/language'));
@@ -305,7 +305,7 @@ ExpressionPreviewDialog.Widget.prototype._renderExpressionHistory = function(dat
             
             $("#expression-preview-tabs").tabs();
             
-            self._elmts.expressionPreviewTextarea.select().focus();
+            self._elmts.expressionPreviewTextarea.trigger('select').trigger('focus');
             
             self.update();
         });
@@ -383,7 +383,7 @@ ExpressionPreviewDialog.Widget.prototype._renderStarredExpressions = function(da
             
             $("#expression-preview-tabs").tabs();
             
-            self._elmts.expressionPreviewTextarea.select().focus();
+            self._elmts.expressionPreviewTextarea.trigger('select').trigger('focus');
             
             self.update();
         });

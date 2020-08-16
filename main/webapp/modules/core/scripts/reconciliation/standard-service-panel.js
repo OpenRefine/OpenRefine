@@ -177,7 +177,7 @@ ReconStandardServicePanel.prototype._populatePanel = function() {
     .find('input[name="type-choice"][value=""]')
     .prop('checked', true);
 
-    this._elmts.typeInput.focus();
+    this._elmts.typeInput.trigger('focus');
   }
 
   /*

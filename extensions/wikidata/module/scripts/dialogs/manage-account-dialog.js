@@ -90,7 +90,7 @@ ManageAccountDialog.displayPasswordLogin = function (onSuccess) {
   elmts.rememberMe.text($.i18n('wikibase-account/remember-me'));
   elmts.passwordRememberMeTitle.attr("title", $.i18n('wikibase-account/password-remember-me-title'));
   elmts.loginButton.text($.i18n('wikibase-account/log-in'));
-  elmts.usernameInput.focus();
+  elmts.usernameInput.trigger('focus');
 
   // We don't support logging in with owner-only consumer if the target Wikibase doesn't support OAuth.
   if (!WikibaseManager.getSelectedWikibaseOAuth()) {
@@ -155,7 +155,8 @@ ManageAccountDialog.displayOwnerOnlyConsumerLogin = function (onSuccess) {
   elmts.rememberMe.text($.i18n('wikibase-account/remember-me'));
   elmts.ownerOnlyConsumerRememberMeTitle.attr("title", $.i18n('wikibase-account/owner-only-consumer-remember-me-title'));
   elmts.loginButton.text($.i18n('wikibase-account/log-in'));
-  elmts.consumerTokenInput.focus();
+  elmts.consumerTokenInput.trigger('focus');
+
 
   var level = DialogSystem.showDialog(frame);
   var dismiss = function () {

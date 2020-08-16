@@ -326,7 +326,7 @@ Refine.DatabaseImportController.prototype._createProject = function() {
     var projectName = $.trim(this._parsingPanelElmts.projectNameInput[0].value);
     if (projectName.length == 0) {
       window.alert("Please name the project.");
-      this._parsingPanelElmts.projectNameInput.focus();
+      this._parsingPanelElmts.projectNameInput.trigger('focus');
       return;
     }
 
