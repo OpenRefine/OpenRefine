@@ -101,7 +101,7 @@ Refine.XmlParserUI.prototype.getOptions = function() {
 Refine.XmlParserUI.prototype._initialize = function() {
   var self = this;
 
-  this._optionContainer.unbind().empty().html(
+  this._optionContainer.off().empty().html(
       DOM.loadHTML("core", "scripts/index/parser-interfaces/xml-parser-ui.html"));
   this._optionContainerElmts = DOM.bind(this._optionContainer);
   this._optionContainerElmts.previewButton.on('click', function() { self._updatePreview(); });
@@ -150,7 +150,7 @@ Refine.XmlParserUI.prototype._initialize = function() {
 Refine.XmlParserUI.prototype._showPickRecordElementsUI = function() {
   var self = this;
 
-  this._dataContainer.unbind().empty().html(
+  this._dataContainer.off().empty().html(
       DOM.loadHTML("core", "scripts/index/parser-interfaces/xml-parser-select-ui.html"));
 
   $('#or-import-clickXML').text($.i18n('core-index-parser/click-xml'));
@@ -280,7 +280,7 @@ Refine.XmlParserUI.prototype._updatePreview = function() {
       self._controller.getPreviewData(function(projectData) {
         self._progressContainer.hide();
 
-        new Refine.PreviewTable(projectData, self._dataContainer.unbind().empty());
+        new Refine.PreviewTable(projectData, self._dataContainer.off().empty());
       }, 20);
     }
   });

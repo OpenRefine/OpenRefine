@@ -76,11 +76,11 @@ DialogSystem.showDialog = function(elmt, onCancel) {
 DialogSystem.dismissLevel = function(level) {
     var layer = DialogSystem._layers[level];
 
-    $(document).unbind("keydown", layer.keyHandler);
+    $(document).off("keydown", layer.keyHandler);
 
     layer.overlay.remove();
     layer.container.remove();
-    layer.container.unbind();
+    layer.container.off();
 
     if (layer.onCancel) {
       try {

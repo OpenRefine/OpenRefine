@@ -46,15 +46,15 @@ Refine.DefaultImportingController.prototype._showFileSelectionPanel = function()
 
 Refine.DefaultImportingController.prototype._disposeFileSelectionPanel = function() {
   if (this._fileSelectionPanelResizer) {
-    $(window).unbind("resize", this._fileSelectionPanelResizer);
+    $(window).off("resize", this._fileSelectionPanelResizer);
   }
-  this._fileSelectionPanel.unbind().empty();
+  this._fileSelectionPanel.off().empty();
 };
 
 Refine.DefaultImportingController.prototype._prepareFileSelectionPanel = function() {
   var self = this; 
 
-  this._fileSelectionPanel.unbind().empty().html(
+  this._fileSelectionPanel.off().empty().html(
       DOM.loadHTML("core", "scripts/index/default-importing-controller/file-selection-panel.html"));
 
   this._fileSelectionPanelElmts = DOM.bind(this._fileSelectionPanel);
@@ -181,7 +181,7 @@ Refine.DefaultImportingController.prototype._renderFileSelectionPanelControlPane
   var files = this._job.config.retrievalRecord.files;
 
   this._fileSelectionPanelElmts.extensionContainer.empty();
-  this._fileSelectionPanelElmts.selectAllButton.unbind().on('click', function(evt) {
+  this._fileSelectionPanelElmts.selectAllButton.off().on('click', function(evt) {
     for (var i = 0; i < files.length; i++) {
       var fileRecord = files[i];
       self._selectedMap[fileRecord.location] = fileRecord;
@@ -189,7 +189,7 @@ Refine.DefaultImportingController.prototype._renderFileSelectionPanelControlPane
     self._fileSelectionPanelElmts.filePanel.find("input").prop('checked', true);
     self._updateFileSelectionSummary();
   });
-  this._fileSelectionPanelElmts.unselectAllButton.unbind().on('click', function(evt) {
+  this._fileSelectionPanelElmts.unselectAllButton.off().on('click', function(evt) {
     self._selectedMap = {};
     self._fileSelectionPanelElmts.filePanel.find("input").prop('checked', false);
     self._updateFileSelectionSummary();
@@ -245,7 +245,7 @@ Refine.DefaultImportingController.prototype._renderFileSelectionPanelControlPane
 
   this._updateFileSelectionSummary();
 
-  this._fileSelectionPanelElmts.regexInput.unbind().bind("keyup change input",function() {
+  this._fileSelectionPanelElmts.regexInput.off().bind("keyup change input",function() {
     var count = 0;
     var elmts = self._fileSelectionPanelElmts.filePanel
     .find(".default-importing-file-selection-filename")
@@ -263,7 +263,7 @@ Refine.DefaultImportingController.prototype._renderFileSelectionPanelControlPane
     }
       self._fileSelectionPanelElmts.regexSummary.text($.i18n('core-index-import/match-count'), count);
   });
-  this._fileSelectionPanelElmts.selectRegexButton.unbind().on('click', function() {
+  this._fileSelectionPanelElmts.selectRegexButton.off().on('click', function() {
     self._fileSelectionPanelElmts.filePanel
     .find(".default-importing-file-selection-filename")
     .removeClass("highlighted");
@@ -285,7 +285,7 @@ Refine.DefaultImportingController.prototype._renderFileSelectionPanelControlPane
       // Ignore
     }
   });
-  this._fileSelectionPanelElmts.unselectRegexButton.unbind().on('click', function() {
+  this._fileSelectionPanelElmts.unselectRegexButton.off().on('click', function() {
     self._fileSelectionPanelElmts.filePanel
     .find(".default-importing-file-selection-filename")
     .removeClass("highlighted");

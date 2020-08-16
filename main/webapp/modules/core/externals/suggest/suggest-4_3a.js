@@ -219,7 +219,7 @@
 
       this.input = $(input)
         .attr("autocomplete", "off")
-        .unbind(".suggest")
+        .off(".suggest")
         .bind("remove.suggest", function(e) {
           self._destroy();
         })
@@ -278,10 +278,10 @@
     _destroy: function() {
       this.pane.remove();
       this.list.remove();
-      this.input.unbind(".suggest");
+      this.input.off(".suggest");
       $(window)
-        .unbind("resize.suggest", this.onresize)
-        .unbind("scroll.suggest", this.onresize);
+        .off("resize.suggest", this.onresize)
+        .off("scroll.suggest", this.onresize);
     },
 
     invalidate_position: function() {

@@ -73,7 +73,7 @@ DataTableCellUI.prototype._render = function() {
   editLink.addEventListener('click', function() { self._startEdit(this); });
 
   $(this._td).empty()
-  .unbind()
+  .off()
   .on('mouseenter', function() { editLink.style.visibility = "visible" })
   .on('mouseleave', function() { editLink.style.visibility = "hidden" });
 
@@ -500,7 +500,7 @@ DataTableCellUI.prototype._previewCandidateTopic = function(candidate, elmt, pre
 
   var dismissMenu = function() {
      fakeMenu.remove();
-     fakeMenu.unbind();  
+     fakeMenu.off();  
   };
 
   if (showActions) {

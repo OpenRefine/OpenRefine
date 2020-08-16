@@ -103,7 +103,7 @@ ProcessPanel.prototype.showUndo = function(historyEntry) {
   this._elmts.progressDiv.hide();
   this._elmts.undoDiv.show();
   this._elmts.undoDescription.text( truncDescription );
-  this._elmts.undoLink.unbind().on('click', function() { self.undo(); });
+  this._elmts.undoLink.off().on('click', function() { self.undo(); });
   
   this._div
     .fadeIn(200)
@@ -169,11 +169,11 @@ ProcessPanel.prototype._render = function(newData) {
       this._elmts.countSpan.empty();
     }
     this._elmts.cancelLink
-      .unbind()
+      .off()
       .text($.i18n('core-project/cancel-all', processes.length))
       .on('click', function() {
         self._cancelAll();
-        $(this).text($.i18n('core-project/canceling')).unbind();
+        $(this).text($.i18n('core-project/canceling')).off();
       });
     
     this._div.fadeIn(200);

@@ -118,7 +118,7 @@ Refine.FixedWidthParserUI.prototype.getOptions = function() {
 Refine.FixedWidthParserUI.prototype._initialize = function() {
   var self = this;
 
-  this._optionContainer.unbind().empty().html(
+  this._optionContainer.off().empty().html(
       DOM.loadHTML("core", "scripts/index/parser-interfaces/fixed-width-parser-ui.html"));
   this._optionContainerElmts = DOM.bind(this._optionContainer);
   this._optionContainerElmts.previewButton.on('click', function() { self.updatePreview(); });
@@ -260,7 +260,7 @@ Refine.FixedWidthPreviewTable.prototype._render = function() {
   var scrollTop = this._elmt[0].scrollTop;
   var scrollLeft = this._elmt[0].scrollLeft;
 
-  this._elmt.unbind().empty();
+  this._elmt.off().empty();
 
   var self = this;
   var container = $('<div>')

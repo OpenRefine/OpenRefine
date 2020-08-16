@@ -104,7 +104,7 @@ Refine.JsonParserUI.prototype.getOptions = function() {
 Refine.JsonParserUI.prototype._initialize = function() {
   var self = this;
 
-  this._optionContainer.unbind().empty().html(
+  this._optionContainer.off().empty().html(
       DOM.loadHTML("core", "scripts/index/parser-interfaces/json-parser-ui.html"));
   this._optionContainerElmts = DOM.bind(this._optionContainer);
   this._optionContainerElmts.previewButton.on('click', function() { self._updatePreview(); });
@@ -154,7 +154,7 @@ Refine.JsonParserUI.prototype._showPickRecordNodesUI = function() {
   var ANONYMOUS_NODE_NAME = '_';
   var self = this;
 
-  this._dataContainer.unbind().empty().html(
+  this._dataContainer.off().empty().html(
       DOM.loadHTML("core", "scripts/index/parser-interfaces/json-parser-select-ui.html"));
 
   var elmts = DOM.bind(this._dataContainer);
@@ -282,7 +282,7 @@ Refine.JsonParserUI.prototype._updatePreview = function() {
       self._controller.getPreviewData(function(projectData) {
         self._progressContainer.hide();
 
-        new Refine.PreviewTable(projectData, self._dataContainer.unbind().empty());
+        new Refine.PreviewTable(projectData, self._dataContainer.off().empty());
       }, 100);
     }
   });

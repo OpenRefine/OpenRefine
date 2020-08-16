@@ -137,7 +137,7 @@ Refine.DatabaseImportController.prototype.getOptions = function() {
 Refine.DatabaseImportController.prototype._showParsingPanel = function() {
     var self = this;
 
-    this._parsingPanel.unbind().empty().html(
+    this._parsingPanel.off().empty().html(
         DOM.loadHTML("database",'scripts/index/database-parsing-panel.html'));
 
     this._parsingPanelElmts = DOM.bind(this._parsingPanel);
@@ -157,7 +157,7 @@ Refine.DatabaseImportController.prototype._showParsingPanel = function() {
     this._parsingPanelElmts.database_store_cell.html($.i18n('database-parsing/store-cell'));
 
     if (this._parsingPanelResizer) {
-      $(window).unbind('resize', this._parsingPanelResizer);
+      $(window).off('resize', this._parsingPanelResizer);
     }
 
     this._parsingPanelResizer = function() {
@@ -268,7 +268,7 @@ Refine.DatabaseImportController.prototype._updatePreview = function() {
                 self._parsingPanelElmts.progressPanel.hide();
                 self._parsingPanelElmts.dataPanel.show();
 
-                new Refine.PreviewTable(projectData, self._parsingPanelElmts.dataPanel.unbind().empty());
+                new Refine.PreviewTable(projectData, self._parsingPanelElmts.dataPanel.off().empty());
             });
             } else {
 
