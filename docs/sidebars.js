@@ -5,7 +5,11 @@ module.exports = {
       'manual/installing',
       'manual/running',
       'manual/starting',
-      'manual/exploring',
+	        {
+      type: 'category',
+      label: 'Exploring data',
+      items: ['manual/exploring', 'manual/facets', 'manual/sortview'],
+    },
       'manual/transforming',
       'manual/expressions',
       'manual/wikidata',
