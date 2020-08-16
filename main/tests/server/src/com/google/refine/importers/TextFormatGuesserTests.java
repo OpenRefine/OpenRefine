@@ -83,6 +83,7 @@ public class TextFormatGuesserTests extends ImporterTest {
 
     @Test
     public void xlsTextGuessTest() throws FileNotFoundException, IOException {
+        // Test an XLSX file without the correct file extension
         String dir = ClassLoader.getSystemResource("Colorado-Municipalities-small-xlsx.gz").getPath();
         InputStream is = new GZIPInputStream(new FileInputStream(new File(dir)));
         File tmp = File.createTempFile("openrefinetests-textguesser", "");
@@ -94,6 +95,11 @@ public class TextFormatGuesserTests extends ImporterTest {
     @Test
     public void csvGuesserTest() {
         extensionGuesserTests("csv", "text/line-based");
+    }
+
+    @Test
+    public void tsvGuesserTest() {
+        extensionGuesserTests("tsv", "text/line-based");
     }
 
     @Test(enabled=false) // FIXME: Our JSON guesser doesn't work on small files
@@ -112,8 +118,7 @@ public class TextFormatGuesserTests extends ImporterTest {
         File testDataDir =  new File(dir);
         for (String testFile : testDataDir.list(new PatternFilenameFilter(".+\\." + extension))) {
             String format = guesser.guess(new File(dir, testFile), "UTF-8", "text");
-            logger.info(format + " " + testFile);
-            assertEquals(format, expectedFormat);
+            assertEquals(format, expectedFormat, "Format guess failed for " + testFile);
         }
     }
 
