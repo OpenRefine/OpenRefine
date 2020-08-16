@@ -32,6 +32,10 @@ WikibaseManager.getSelectedWikibaseSiteIri = function () {
   return WikibaseManager.getSelectedWikibase().wikibase.site_iri;
 };
 
+WikibaseManager.getSelectedWikibaseMaxlag = function() {
+  return WikibaseManager.getSelectedWikibase().wikibase.maxlag;
+};
+
 WikibaseManager.getSelectedWikibaseOAuth = function() {
   return WikibaseManager.getSelectedWikibase().oauth;
 };

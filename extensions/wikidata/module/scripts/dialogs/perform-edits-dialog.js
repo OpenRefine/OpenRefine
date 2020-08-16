@@ -14,6 +14,10 @@ PerformEditsDialog.launch = function(logged_in_username, max_severity) {
   this._elmts.loggedInAs.text($.i18n('perform-wikibase-edits/logged-in-as'));
   this._elmts.editSummaryLabel.text($.i18n('perform-wikibase-edits/edit-summary-label'));
   this._elmts.editSummary.attr('placeholder', $.i18n('perform-wikibase-edits/edit-summary-placeholder'));
+  this._elmts.maxlagLabel.text($.i18n('perform-wikibase-edits/maxlag-label'));
+  this._elmts.maxlag.val(WikibaseManager.getSelectedWikibaseMaxlag());
+  this._elmts.maxlag.attr('placeholder', WikibaseManager.getSelectedWikibaseMaxlag());
+  this._elmts.explainMaxlag.html($.i18n('perform-wikibase-edits/explain-maxlag'));
   this._elmts.performEditsButton.text($.i18n('perform-wikibase-edits/perform-edits'));
   this._elmts.cancelButton.text($.i18n('perform-wikibase-edits/cancel'));
 
@@ -29,18 +33,30 @@ PerformEditsDialog.launch = function(logged_in_username, max_severity) {
     var formCopy = hiddenIframe.find("#wikibase-perform-edits-form");
     formCopy.submit();
 
-    if(elmts.editSummary.val().length === 0) {
+    if (elmts.editSummary.val().length === 0) {
       elmts.editSummary.focus();
-    } else {
-      Refine.postProcess(
-        "wikidata",
-        "perform-wikibase-edits",
-        {},
-        { summary: elmts.editSummary.val(), },
-        { includeEngine: true, cellsChanged: true, columnStatsChanged: true },
-        { onDone: function() { dismiss(); } }
-      );
+      return;
     }
+
+    if (elmts.maxlag.val().length === 0) {
+      elmts.maxlag.val(WikibaseManager.getSelectedWikibaseMaxlag());
+    }
+
+    // validate maxlag
+    if (!/^\+?[1-9]\d*$/.test(elmts.maxlag.val())) {
+      elmts.maxlag.focus();
+      alert($.i18n('perform-wikibase-edits/maxlag-validation'));
+      return;
+    }
+
+    Refine.postProcess(
+      "wikidata",
+      "perform-wikibase-edits",
+      {},
+      { summary: elmts.editSummary.val(), maxlag: elmts.maxlag.val() },
+      { includeEngine: true, cellsChanged: true, columnStatsChanged: true },
+      { onDone: function() { dismiss(); } }
+    );
   };
 
   elmts.loggedInUsername
