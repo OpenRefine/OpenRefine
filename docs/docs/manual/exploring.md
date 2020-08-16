@@ -47,9 +47,13 @@ A row is a simple way to organize data: a series of cells, one cell per column. 
 
 Generally, when you import some data, OpenRefine reads that data in row mode. From there you can convert the project into records mode. OpenRefine remembers this action and will present you with records mode each time you open the project from then on. 
 
-OpenRefine understands records based on the content of the first column. Splitting a row into a multi-row record will base all association on the first column in your dataset. If you have more than one column to split out into multiple rows, OpenRefine will keep your data associated with its original record: you can imagine this structure as a tree with many branches, all leading back to the same trunk. 
+OpenRefine understands records based on the content of the first column, what we call the "key column." Splitting a row into a multi-row record will base all association on the first column in your dataset. If you have more than one column to split out into multiple rows, OpenRefine will keep your data associated with its original record: you can imagine this structure as a tree with many branches, all leading back to the same trunk. 
 
-OpenRefine assigns a unique key behind the scenes, so your records don’t need a unique identifier. You can keep track of which rows are assigned to which record by the record number that appears under the “All” column.
+For example, your key column may be a family name, with multiple family members identified by their first names, associated to that family name. You may have one or more phone numbers listed for each person. The phone numbers are linked to the first names, which are linked to the last name. 
+
+Once you are in records mode, you can still move columns around, but if you move a column to the beginning, you may find your data becomes misaligned. The new key column will sort into records based on empty cells, and values in the old key column will be assigned to the last row in the old record (the key value sitting above those values). 
+
+OpenRefine assigns a unique key behind the scenes, so your records don’t need a unique identifier in the key column. You can keep track of which rows are assigned to which record by the record number that appears under the “All” column.
 
 To [split multi-valued cells](transforming#split-multi-valued-cells) and apply other operations that take advantage of records mode, see [Transforming data](transforming). 
 
