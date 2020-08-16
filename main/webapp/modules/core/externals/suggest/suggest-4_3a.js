@@ -1183,7 +1183,7 @@
       // SEARCH_PARAMS can be overridden inline
       var extend_ac_param = null;
 
-      if ($.type(filter) === "string") {
+      if (typeof filter === "string") {
           // the original filter may be a single filter param (string)
           filter = [filter];
       }
@@ -1770,7 +1770,7 @@
         }
         var values = [];
         $.each(v, function(i, value) {
-          if ($.type(value) === 'object') {
+          if (typeof value === 'object') {
             if (value['name'] != null) {
               value = value['name'];
             }
