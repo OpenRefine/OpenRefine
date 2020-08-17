@@ -514,7 +514,7 @@
     "core-views/best-cand-edit-dist": "最良候補の名前の編集距離",
     "core-views/spec-separator": "カラム名とセル値の区切り文字を指定してください。",
     "core-views/by": "基準",
-    "core-views/true-fasle": "trueが先",
+    "core-views/true-false": "trueが先",
     "core-views/move-to-end": "末尾にカラムを移動",
     "core-views/before-val": "+ セルの値",
     "core-views/dates": "日付",

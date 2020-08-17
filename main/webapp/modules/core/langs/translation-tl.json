@@ -498,7 +498,7 @@
     "core-views/best-cand-edit-dist": "ang pag-edit sa distansya ng pangalang ng pinakamagaling na kandidato",
     "core-views/spec-separator": "Pakiusap i-specify ang tagapaghiwalay sa pagitan ng orihinal na pangalan ng kolum at mga balyu ng cell.",
     "core-views/split-into": "Ihiwalay sa",
-    "core-views/true-fasle": "tama pagkatapos mali",
+    "core-views/true-false": "tama pagkatapos mali",
     "core-views/move-to-end": "Ilipat ang kolum sa huli",
     "core-views/before-val": "bago ang ang balyu ng cell",
     "core-views/dates": "mga petsa",

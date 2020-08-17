@@ -514,7 +514,7 @@
     "core-views/milli": "millisecondes",
     "core-views/cluster-edit": "Grouper et éditer",
     "core-views/split-into": "Diviser en",
-    "core-views/true-fasle": "vraies puis fausses",
+    "core-views/true-false": "vraies puis fausses",
     "core-views/move-to-end": "Déplacer la colonne en dernier",
     "core-views/before-val": "avant la valeur de la cellule",
     "core-views/dates": "dates",

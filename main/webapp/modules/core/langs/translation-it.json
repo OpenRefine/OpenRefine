@@ -513,7 +513,7 @@
     "core-views/spec-separator": "Per favore, specifica il separatore tra il nome della colonna originale ed il valore delle celle.",
     "core-views/milli": "millisecondi",
     "core-views/split-into": "Dividi in",
-    "core-views/true-fasle": "vero poi falso",
+    "core-views/true-false": "vero poi falso",
     "core-views/move-to-end": "Sposta colonna alla fine",
     "core-views/before-val": "prima del valore della cella",
     "core-views/dates": "date",
