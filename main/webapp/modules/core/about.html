@@ -43,16 +43,25 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
         margin-bottom: 10em;
       }
     </style>
-    <script type="text/javascript" src="scripts/version.js"></script>
-    <script type="text/javascript" src="externals/jquery-1.11.1.js"></script>
+    <script type="text/javascript" src="externals/jquery-1.12.4.min.js"></script>
+    <script type="text/javascript" src="externals/CLDRPluralRuleParser.js"></script>
+    <script type="text/javascript" src="externals/jquery.i18n.js"></script>
+    <script type="text/javascript" src="externals/jquery.i18n.messagestore.js"></script>
+    <script type="text/javascript" src="externals/jquery.i18n.fallbacks.js"></script>
+    <script type="text/javascript" src="externals/jquery.i18n.parser.js"></script>
+    <script type="text/javascript" src="externals/jquery.i18n.emitter.js"></script>
+    <script type="text/javascript" src="externals/jquery.i18n.language.js"></script>
+    <script type="text/javascript" src="externals/languages/fi.js"></script>
+    <script type="text/javascript" src="externals/languages/ru.js"></script>
+    <script type="text/javascript" src="scripts/index.js"></script>
     <script>
       $(function() {
         if (OpenRefineVersion && OpenRefineVersion.version) {
           if (OpenRefineVersion.version != "$VERSION") {
-            $("#version").text("Version " + OpenRefineVersion.version + " [" + OpenRefineVersion.revision + "]").show();
+            $("#openrefine-version").text($.i18n("core-index/version", OpenRefineVersion.version + " [" + OpenRefineVersion.revision + "]"));
           }
           else {
-            $("#version").text("Version <trunk>").show();
+            $("#openrefine-version").text($.i18n("core-index/version", "[HEAD]"));
           }
         }
       });
@@ -65,7 +74,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
     <div id="body-info">
       <h1>About OpenRefine</h1>
-      <h2 id="version" style="display: none"></h2>
+      <h2 id="openrefine-version"></h2>
       
       <p>
         OpenRefine is a power tool for working with messy data. Use it to improve data consistency,
@@ -236,10 +245,6 @@ licenses/json.LICENSE.txt
 
 licenses/mockito.LICENSE.txt
     mockito
-
-
-Flag icon based on an icon from Silk Icons:
-    http://www.famfamfam.com/lab/icons/silk/
 </pre>
         
     </div>
