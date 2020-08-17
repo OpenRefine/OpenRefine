@@ -95,7 +95,6 @@ WikibaseManager.saveWikibases = function () {
   });
 };
 
-// TODO: test
 WikibaseManager.loadWikibases = function (onDone) {
   $.ajax({
     async: true,
@@ -107,7 +106,7 @@ WikibaseManager.loadWikibases = function (onDone) {
         let manifests = JSON.parse(data.value);
         manifests.forEach(function (manifest) {
           if (manifest.custom && manifest.custom.url && manifest.custom.last_updated
-              && ((Date.now() - manifest.custom.last_updated) > 7 * 24 * 60 * 60 * 1000)) {
+              && ((Date.now() - new Date(manifest.custom.last_updated)) > 7 * 24 * 60 * 60 * 1000)) {
             // If the manifest was fetched via URL and hasn't been updated for a week,
             // fetch it again to keep track of the lasted version
             WikibaseManager.fetchManifestFromURL(manifest.custom.url, function (newManifest) {
