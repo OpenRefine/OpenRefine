@@ -96,8 +96,8 @@ $(function () {
         "label": $.i18n('wikibase-extension/menu-label'),
         "submenu": [
           {
-            id: "wikidata/manager-wikibase",
-            label: "Manage Wikibase",
+            id: "wikidata/select-instance",
+            label: $.i18n('wikibase-extension/select-wikibase-instance'),
             click: function () {
               WikibaseDialog.launch()
             }
