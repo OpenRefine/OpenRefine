@@ -528,7 +528,7 @@
     "core-views/spec-separator": "Пожалуйста, укажите разделитель между наименованиями исходной колонки и значениями ячеек.",
     "core-views/milli": "милисекунд",
     "core-views/by": "По",
-    "core-views/true-fasle": "true, затем false",
+    "core-views/true-false": "true, затем false",
     "core-views/move-to-end": "Переместить колонку в конец",
     "core-views/before-val": "перед значением ячейки",
     "core-views/dates": "даты",

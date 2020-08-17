@@ -554,7 +554,7 @@
     "core-views/best-cand-edit-dist": "Namensbearbeitungsentfernung des besten Kandidaten",
     "core-views/spec-separator": "Bitte geben Sie das Trennzeichen zwischen den ursprünglichen Spaltennamen und den Zellenwerten an.",
     "core-views/by": "Durch",
-    "core-views/true-fasle": "wahr, dann falsch",
+    "core-views/true-false": "wahr, dann falsch",
     "core-views/move-to-end": "Spalte an das Ende verschieben",
     "core-views/before-val": "vor dem Wert der Zelle",
     "core-views/dates": "Datumsangaben",

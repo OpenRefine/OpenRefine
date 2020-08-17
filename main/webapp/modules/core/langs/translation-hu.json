@@ -364,7 +364,7 @@
     "core-views/spec-separator": "Adja meg az eredeti oszlop neve és a cella értékei közötti elválasztót.",
     "core-views/milli": "ezredmásodperc",
     "core-views/by": "Ez alapján",
-    "core-views/true-fasle": "igaz majd hamis",
+    "core-views/true-false": "igaz majd hamis",
     "core-views/move-to-end": "Oszlop áthelyezése a végére",
     "core-views/before-val": "a cella értéke előtt",
     "core-views/dates": "dátumok",
