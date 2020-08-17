@@ -337,7 +337,7 @@ function init() {
   var commonModules = [
       "externals/jquery-1.12.4.js",
       "externals/jquery-migrate-1.4.1.js",
-      "externals/jquery-ui/jquery-ui-1.10.3.custom.js",
+      "externals/jquery-ui/jquery-ui.js",
       "externals/js.cookie.js",
       "externals/underscore-min.js",
 
@@ -407,7 +407,7 @@ function init() {
     "index/styles",
     module,
     [
-      "externals/jquery-ui/css/ui-lightness/jquery-ui-1.10.3.custom.css",
+      "externals/jquery-ui/css/ui-lightness/jquery-ui.css",
       "externals/select2/select2.css",
       "externals/tablesorter/theme.blue.css",
       "styles/jquery-ui-overrides.less",
@@ -503,7 +503,7 @@ function init() {
     module,
     [
       "externals/suggest/css/suggest-4_3.min.css",
-      "externals/jquery-ui/css/ui-lightness/jquery-ui-1.10.3.custom.css",
+      "externals/jquery-ui/css/ui-lightness/jquery-ui.css",
       "externals/imgareaselect/css/imgareaselect-default.css",
 
       "styles/jquery-ui-overrides.less",
@@ -550,7 +550,7 @@ function init() {
     module,
     [
       "externals/suggest/css/suggest-4_3.min.css",
-      "externals/jquery-ui/css/ui-lightness/jquery-ui-1.10.3.custom.css",
+      "externals/jquery-ui/css/ui-lightness/jquery-ui.css",
       "styles/jquery-ui-overrides.less",
       "styles/common.less",
       "styles/pure.css",
