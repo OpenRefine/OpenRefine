@@ -141,8 +141,59 @@ Refine.DefaultImportingController.prototype._prepareParsingPanel = function() {
 
   var formats = this._job.config.rankedFormats;
   var createFormatTab = function(format) {
+    var formateNames = "";
+    switch(format){
+    case "text":
+    formateNames = $.i18n("core-buttons/text");
+    break;
+    case "text/line-based":
+    formateNames = $.i18n("core-buttons/text/line-based");
+    break;
+    case "text/line-based/*sv":
+    formateNames = $.i18n("core-buttons/text/line-based/*sv");
+    break;
+    case "text/line-based/fixed-width":
+    formateNames = $.i18n("core-buttons/text/line-based/fixed-width");
+    break;
+    case "text/rdf/nt":
+    formateNames = $.i18n("core-buttons/text/rdf/nt");
+    break;
+    case "text/rdf/n3":
+    formateNames = $.i18n("core-buttons/text/rdf/n3");
+    break;
+    case "text/rdf/ttl":
+    formateNames = $.i18n("core-buttons/text/rdf/ttl");
+    break;
+    case "text/rdf/xml":
+    formateNames = $.i18n("core-buttons/text/rdf/xml");
+    break;
+    case "text/rdf/ld+json":
+    formateNames = $.i18n("core-buttons/text/rdf/ld+json");
+    break;
+    case "text/xml":
+    formateNames = $.i18n("core-buttons/text/xml");
+    break;
+    case "binary/text/xml/xls/xlsx":
+    formateNames = $.i18n("core-buttons/binary/text/xml/xls/xlsx");
+    break;
+    case "text/xml/ods":
+    formateNames = $.i18n("core-buttons/text/xml/ods");
+    break;
+    case "text/json":
+    formateNames = $.i18n("core-buttons/text/json");
+    break;
+    case "text/marc":
+    formateNames = $.i18n("core-buttons/text/marc");
+    break;
+    case "text/wiki":
+    formateNames = $.i18n("core-buttons/text/wiki");  
+    break;
+    default:
+    formateNames = $.i18n("core-buttons/PC/Axis/text");
+    break;
+    }
     var tab = $('<div>')
-    .text(Refine.importingConfig.formats[format].label)
+    .text(formateNames)
     .attr("format", format)
     .addClass("default-importing-parsing-control-panel-format")
     .appendTo(self._parsingPanelElmts.formatsContainer)

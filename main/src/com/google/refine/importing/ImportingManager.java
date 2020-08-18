@@ -135,12 +135,12 @@ public class ImportingManager {
         service.scheduleWithFixedDelay(new CleaningTimerTask(), TIMER_PERIOD, TIMER_PERIOD, TimeUnit.MINUTES);
     }
     
-    static public void registerFormat(String format, String label) {
-        registerFormat(format, label, null, null);
+    static public void registerFormat(String format) {
+        registerFormat(format, null, false, null, null);
     }
     
-    static public void registerFormat(String format, String label, String uiClass, ImportingParser parser) {
-        formatToRecord.put(format, new Format(format, label, true, uiClass, parser));
+    static public void registerFormat(String format, String uiClass, ImportingParser parser) {
+        formatToRecord.put(format, new Format(format, null, true, uiClass, parser));
     }
     
     static public void registerFormat(
