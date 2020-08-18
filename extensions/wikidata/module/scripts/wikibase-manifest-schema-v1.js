@@ -7,7 +7,7 @@ const WikibaseManifestSchemaV1 = {
     "version": {
       "type": "string",
       "pattern": "^1\\.[0-9]+$",
-      "description": "The version of the Wikibase manifest, in the format of 1.x",
+      "description": "The version of the Wikibase manifest, in the format of 1.x"
     },
     "mediawiki": {
       "type": "object",
@@ -102,7 +102,7 @@ const WikibaseManifestSchemaV1 = {
         }
       },
       "required": ["endpoint"]
-    },
+    }
   },
   "required": ["version", "mediawiki", "wikibase", "reconciliation"]
 };
