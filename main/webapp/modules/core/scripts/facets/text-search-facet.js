@@ -31,18 +31,12 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
  */
 
-class TextSearchFacet {
+class TextSearchFacet extends Facet {
   constructor(div, config, options) {
-    console.log("TextSearchFacet");
-    this._div = div;
-    this._config = config;
+    super(div, config, options);
     if (!("invert" in this._config)) {
       this._config.invert = false;
     }
-
-    this._options = options;
-
-    this._minimizeState = false;
 
     this._query = config.query || null;
     this._timerID = null;
@@ -51,9 +45,6 @@ class TextSearchFacet {
 
     this._initializeUI();
     this._update();
-  };
-
-  dispose = function() {
   };
 
   reset = function() {
@@ -184,24 +175,6 @@ class TextSearchFacet {
     this._config.invert = !this._config.invert;
 
     this._updateRest();
-  };
-
-  _remove = function() {
-    ui.browsingEngine.removeFacet(this);
-
-    this._div = null;
-    this._config = null;
-    this._options = null;
-  };
-
-  _minimize = function() {
-    if(!this._minimizeState) {
-      this._div.addClass("facet-state-minimize");
-    } else {
-      this._div.removeClass("facet-state-minimize");
-    }
-    
-    this._minimizeState = !this._minimizeState;
   };
 
   _update = function () {

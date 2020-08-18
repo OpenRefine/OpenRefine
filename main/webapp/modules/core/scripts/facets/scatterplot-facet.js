@@ -31,13 +31,9 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
  */
 
-class ScatterplotFacet {
+class ScatterplotFacet extends Facet {
   constructor(div, config, options) {
-    this._div = div;
-    this._config = config;
-    this._options = options;
-
-    this._minimizeState = false;
+    super(div, config, options);
 
     this._error = false;
     this._initializedUI = false;
@@ -348,23 +344,6 @@ class ScatterplotFacet {
 
     this._elmts.plotImg.attr("src", this._formulateCurrentImageUrl());
     this._elmts.exportPlotLink.attr("href", this._formulateExportImageUrl());
-  };
-
-  _remove = function() {
-    ui.browsingEngine.removeFacet(this);
-
-    this._div = null;
-    this._config = null;
-  };
-
-  _minimize = function() {
-    if(!this._minimizeState) {
-      this._div.addClass("facet-state-minimize");
-    } else {
-      this._div.removeClass("facet-state-minimize");
-    }
-    
-    this._minimizeState = !this._minimizeState;
   };
 
   _updateRest = function() {

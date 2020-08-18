@@ -31,12 +31,10 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
  */
 
-class ListFacet {
+class ListFacet extends Facet {
   constructor(div, config, options, selection) {
-    this._div = div;
-    this._config = config;
+    super(div, config, options);
 
-    this._options = options || {};
     if (!("sort" in this._options)) {
       this._options.sort = "name";
     }
@@ -46,8 +44,6 @@ class ListFacet {
     if (!("invert" in this._config)) {
       this._config.invert = false;
     }
-    
-    this._minimizeState = false;
 
     this._blankChoice = (config.selectBlank) ? { s : true, c : 0 } : null;
     this._errorChoice = (config.selectError) ? { s : true, c : 0 } : null;
@@ -56,9 +52,6 @@ class ListFacet {
 
     this._initializeUI();
     this._update();
-  };
-
-  dispose = function() {
   };
 
   reset = function() {
@@ -668,28 +661,6 @@ class ListFacet {
     this._config.invert = !this._config.invert;
 
     this._updateRest();
-  };
-
-  _remove = function() {
-    ui.browsingEngine.removeFacet(this);
-
-    this._div = null;
-    this._config = null;
-
-    this._selection = null;
-    this._blankChoice = null;
-    this._errorChoice = null;
-    this._data = null;
-  };
-
-  _minimize = function() {
-    if(!this._minimizeState) {
-      this._div.addClass("facet-state-minimize");
-    } else {
-      this._div.removeClass("facet-state-minimize");
-    }
-    
-    this._minimizeState = !this._minimizeState;
   };
 
   _updateRest = function() {

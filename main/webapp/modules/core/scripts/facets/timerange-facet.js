@@ -31,13 +31,9 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
  */
 
-class TimeRangeFacet {
+class TimeRangeFacet extends Facet{
   constructor(div, config, options) {
-    this._div = div;
-    this._config = config;
-    this._options = options;
-
-    this._minimizeState = false;
+    super(div, config, options);
 
     this._from = ("from" in this._config) ? this._config.from : null;
     this._to = ("to" in this._config) ? this._config.to : null;
@@ -79,9 +75,6 @@ class TimeRangeFacet {
     this._selectError = true;
 
     this._setRangeIndicators();
-  };
-  
-  dispose = function() {
   };
 
   getUIState = function() {
@@ -378,24 +371,6 @@ class TimeRangeFacet {
 
     this._setRangeIndicators();
     this._renderOtherChoices();
-  };
-
-  _remove = function() {
-    ui.browsingEngine.removeFacet(this);
-
-    this._div = null;
-    this._config = null;
-    this._data = null;
-  };
-
-  _minimize = function() {
-    if(!this._minimizeState) {
-      this._div.addClass("facet-state-minimize");
-    } else {
-      this._div.removeClass("facet-state-minimize");
-    }
-    
-    this._minimizeState = !this._minimizeState;
   };
 
   _updateRest = function() {
