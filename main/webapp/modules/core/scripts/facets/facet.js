@@ -34,32 +34,32 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 class Facet {
 	constructor(div, config, options) {
 		this._div = div;
-    this._config = config;
-    this._options = options || {};
+		this._config = config;
+		this._options = options || {};
 		this._minimizeState = false;
 	};
 
 	_minimize = function() {
-	  if(!this._minimizeState) {
-	    this._div.addClass("facet-state-minimize");
-	  } else {
-	    this._div.removeClass("facet-state-minimize");
-	  }
-	  
-	  this._minimizeState = !this._minimizeState;
+		if(!this._minimizeState) {
+			this._div.addClass("facet-state-minimize");
+		} else {
+			this._div.removeClass("facet-state-minimize");
+		}
+		
+		this._minimizeState = !this._minimizeState;
 	};
 
 	_remove = function() {
-	  ui.browsingEngine.removeFacet(this);
+		ui.browsingEngine.removeFacet(this);
 
-	  this._div = null;
-	  this._config = null;
+		this._div = null;
+		this._config = null;
 
-	  this._selection = null;
-	  this._blankChoice = null;
-	  this._errorChoice = null;
-	  this._data = null;
-	  this._options = null;
+		this._selection = null;
+		this._blankChoice = null;
+		this._errorChoice = null;
+		this._data = null;
+		this._options = null;
 	};
 
 	dispose = function() {
