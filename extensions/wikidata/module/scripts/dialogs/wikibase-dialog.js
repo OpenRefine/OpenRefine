@@ -84,6 +84,9 @@ WikibaseDialog.addWikibaseManifest = function () {
       }
 
       WikibaseManager.addWikibase(manifest);
+      let lang = $.i18n('core-recon/wd-recon-lang');
+      let reconEndpoint = manifest.reconciliation.endpoint.replace("${lang}", lang);
+      ReconciliationManager.getOrRegisterServiceFromUrl(reconEndpoint, function () {}, true);
       DialogSystem.dismissUntil(level - 1);
       WikibaseDialog.populateDialog();
     };
