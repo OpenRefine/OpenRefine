@@ -1278,7 +1278,8 @@ SchemaAlignment.getJSON = function() {
     return {
         itemDocuments: list,
         wikibasePrefix: WikibaseManager.getSelectedWikibaseSiteIri(),
-        mediaWikiApiEndpoint: WikibaseManager.getSelectedWikibaseApi()
+        mediaWikiApiEndpoint: WikibaseManager.getSelectedWikibaseApi(),
+        editGroupsURLSchema: WikibaseManager.getSelectedWikibaseEditGroupsURLSchema()
     };
   } else {
     return null;

@@ -102,6 +102,18 @@ const WikibaseManifestSchemaV1 = {
         }
       },
       "required": ["endpoint"]
+    },
+    "editgroups": {
+      "type": "object",
+      "description": "The configurations of the EditGroups service of the Wikibase",
+      "properties": {
+        "url_schema": {
+          "type": "string",
+          "pattern": "^.*\\${batch_id}.*$",
+          "description": "The URL schema used in edits summary. This is used for EditGroups to extract the batch id from a batch of edits and for linking to the EditGroups page of the batch. The URL schema must contains the variable '${batch_id}', such as '([[:toollabs:editgroups/b/OR/${batch_id}|details]])' for Wikidata"
+        },
+      },
+      "required": ["url_schema"]
     }
   },
   "required": ["version", "mediawiki", "wikibase", "reconciliation"]

@@ -39,12 +39,11 @@ ImportSchemaDialog.launch = function() {
        schema = JSON.parse(elmts.schemaTextarea.val());
 
        // If Wikibase related information is not included in the schema,
-       // fallback to Wikidata.
-       if (!schema.wikibasePrefix) {
+       // fall back to Wikidata.
+       if (!schema.wikibasePrefix || !schema.mediaWikiApiEndpoint) {
          schema.wikibasePrefix = WikidataManifestV1_0.wikibase.site_iri;
-       }
-       if (!schema.mediaWikiApiEndpoint) {
          schema.mediaWikiApiEndpoint = WikidataManifestV1_0.mediawiki.api;
+         schema.editGroupsURLSchema = WikidataManifestV1_0.editgroups.url_schema;
        }
     } catch(e) {
        elmts.invalidSchema.text($.i18n('import-wikibase-schema/invalid-schema'));

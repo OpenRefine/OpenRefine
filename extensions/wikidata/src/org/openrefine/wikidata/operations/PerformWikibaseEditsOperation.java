@@ -34,6 +34,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.commons.lang.Validate;
+import org.apache.commons.lang3.StringUtils;
 import org.openrefine.wikidata.commands.ConnectionManager;
 import org.openrefine.wikidata.editing.EditBatchProcessor;
 import org.openrefine.wikidata.editing.NewItemLibrary;
@@ -190,16 +191,20 @@ public class PerformWikibaseEditsOperation extends EngineDependentOperation {
 
             WikibaseDataFetcher wbdf = new WikibaseDataFetcher(connection, _schema.getBaseIri());
             WikibaseDataEditor wbde = new WikibaseDataEditor(connection, _schema.getBaseIri());
-            
-            // Generate batch token
-            long token = (new Random()).nextLong();
-            // The following replacement is a fix for: https://github.com/Wikidata/editgroups/issues/4
-            // Because commas and colons are used by Wikibase to separate the auto-generated summaries
-            // from the user-supplied ones, we replace these separators by similar unicode characters to
-            // make sure they can be told apart.
-            String summaryWithoutCommas = _summary.replaceAll(", ","ꓹ ").replaceAll(": ","։ ");
-            String summary = summaryWithoutCommas + String.format(" ([[:toollabs:editgroups/b/OR/%s|details]])",
-                    (Long.toHexString(token).substring(0, 11)));
+
+            String summary;
+            if (StringUtils.isBlank(_schema.getEditGroupsURLSchema())) {
+                summary = _summary;
+            } else {
+                // Generate batch id
+                String batchId = Long.toHexString((new Random()).nextLong()).substring(0, 11);
+                // The following replacement is a fix for: https://github.com/Wikidata/editgroups/issues/4
+                // Because commas and colons are used by Wikibase to separate the auto-generated summaries
+                // from the user-supplied ones, we replace these separators by similar unicode characters to
+                // make sure they can be told apart.
+                String summaryWithoutCommas = _summary.replaceAll(", ","ꓹ ").replaceAll(": ","։ ");
+                summary = summaryWithoutCommas + " " + _schema.getEditGroupsURLSchema().replace("${batch_id}", batchId);
+            }
 
             // Evaluate the schema
             List<ItemUpdate> itemDocuments = _schema.evaluate(_project, _engine);

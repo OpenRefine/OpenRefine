@@ -40,6 +40,11 @@ WikibaseManager.getSelectedWikibaseOAuth = function() {
   return WikibaseManager.getSelectedWikibase().oauth;
 };
 
+WikibaseManager.getSelectedWikibaseEditGroupsURLSchema = function() {
+  let editgroups = WikibaseManager.getSelectedWikibase().editgroups;
+  return editgroups ? editgroups.url_schema : null;
+};
+
 /**
  * Returns the default reconciliation service URL of the Wikibase,
  * such as "https://wdreconcile.toolforge.org/${lang}/api".

@@ -85,5 +85,8 @@ const WikidataManifestV1_0 = {
   },
   "reconciliation": {
     "endpoint": "https://wdreconcile.toolforge.org/${lang}/api"
+  },
+  "editgroups": {
+    "url_schema": "([[:toollabs:editgroups/b/OR/${batch_id}|details]])"
   }
 };
