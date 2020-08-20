@@ -34,7 +34,6 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package com.google.refine.importers;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -129,7 +128,6 @@ public class ExcelImporter extends TabularImportingParserBase {
         ProjectMetadata metadata,
         ImportingJob job,
         String fileSource,
-        String archiveFileName,
         InputStream inputStream,
         int limit,
         ObjectNode options,
@@ -217,19 +215,19 @@ public class ExcelImporter extends TabularImportingParserBase {
                 }
             };
             
+            // TODO: Do we need to preserve the original filename? Take first piece before #?
+//           JSONUtilities.safePut(options, "fileSource", fileSource + "#" + sheet.getSheetName());
             TabularImportingParserBase.readTable(
                 project,
                 metadata,
                 job,
                 dataReader,
-                fileSource + "#" + sheet.getSheetName(), archiveFileName,
+                fileSource + "#" + sheet.getSheetName(),
                 limit,
                 options,
                 exceptions
             );
         }
-
-        super.parseOneFile(project, metadata, job, fileSource, archiveFileName, inputStream, limit, options, exceptions);
     }
     
     static protected Cell extractCell(org.apache.poi.ss.usermodel.Cell cell) {
@@ -249,7 +247,7 @@ public class ExcelImporter extends TabularImportingParserBase {
             double d = cell.getNumericCellValue();
             
             if (DateUtil.isCellDateFormatted(cell)) {
-                value = DateUtil.getJavaDate(d);
+                value = ParsingUtilities.toDate(DateUtil.getJavaDate(d));
                 // TODO: If we had a time datatype, we could use something like the following
                 // to distinguish times from dates (although Excel doesn't really make the distinction)
                 // Another alternative would be to look for values < 0.60

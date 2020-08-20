@@ -149,7 +149,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
     var services = ReconciliationManager.getAllServices();
     for (var i = 0; i < services.length; i++) {
         var service = services[i];
-        $('<option></option>').attr('value', service.url)
+        $('<option></option>').val(service.url)
            .text(service.name)
            .appendTo(select);
     }
@@ -251,7 +251,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
     for (var i = 0; i < columns.length; i++) {
       var column2 = columns[i];
       if (column !== column2) {
-        $('<option>').attr("value", column2.name).text(column2.name).appendTo(elmts.toColumnSelect);
+        $('<option>').val(column2.name).text(column2.name).appendTo(elmts.toColumnSelect);
       }
     }
 
@@ -298,7 +298,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
   MenuSystem.appendTo(menu, [ "core/reconcile" ], [
     {
       id: "core/reconcile",
-      label: $.i18n('core-views/start-recon')+'...',
+      label: $.i18n('core-views/start-recon'),
       tooltip: $.i18n('core-views/recon-text-fb'),
       click: doReconcile
     },
@@ -314,7 +314,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
             ui.browsingEngine.addFacet(
                 "list", 
                 {
-                  "name" : column.name + ": judgment",
+                  "name" : $.i18n("core-views/judgment", column.name),
                   "columnName" : column.name, 
                   "expression" : 'forNonBlank(cell.recon.judgment, v, v, if(isNonBlank(value), "(unreconciled)", "(blank)"))'
                 },
@@ -331,7 +331,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
             ui.browsingEngine.addFacet(
                 "list", 
                 {
-                  "name" : column.name + " "+$.i18n('core-views/judg-actions2'),
+                  "name" : $.i18n('core-views/judg-actions2', column.name),
                   "columnName" : column.name, 
                   "expression" : "cell.recon.judgmentAction"
                 }
@@ -345,7 +345,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
             ui.browsingEngine.addFacet(
                 "list", 
                 {
-                  "name" : column.name + " "+$.i18n('core-views/hist-entries'),
+                  "name" : $.i18n('core-views/hist-entries', column.name),
                   "columnName" : column.name, 
                   "expression" : "cell.recon.judgmentHistoryEntry"
                 }
@@ -360,7 +360,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
             ui.browsingEngine.addFacet(
                 "range", 
                 {
-                  "name" : column.name + ": "+$.i18n('core-views/best-cand-score'),
+                  "name" : $.i18n('core-views/best-cand-score', column.name),
                   "columnName" : column.name, 
                   "expression" : "cell.recon.best.score",
                   "mode" : "range"
@@ -377,7 +377,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
             ui.browsingEngine.addFacet(
                 "list", 
                 {
-                  "name" : column.name + ": "+$.i18n('core-views/best-cand-type-match'),
+                  "name" : $.i18n('core-views/best-cand-type-match', column.name),
                   "columnName" : column.name, 
                   "expression" : 'forNonBlank(cell.recon.features.typeMatch, v, v, if(isNonBlank(value), if(cell.recon != null, "(no type)", "(unreconciled)"), "(blank)"))'
                 },
@@ -394,7 +394,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
             ui.browsingEngine.addFacet(
                 "list", 
                 {
-                  "name" : column.name + ": "+ $.i18n('core-views/best-cand-name'),
+                  "name" : $.i18n('core-views/best-cand-name', column.name),
                   "columnName" : column.name, 
                   "expression" : 'forNonBlank(cell.recon.features.nameMatch, v, v, if(isNonBlank(value), "(unreconciled)", "(blank)"))'
                 },
@@ -412,7 +412,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
             ui.browsingEngine.addFacet(
                 "range", 
                 {
-                  "name" : column.name + ": "+$.i18n('core-views/best-cand-edit-dist'),
+                  "name" : $.i18n('core-views/best-cand-edit-dist', column.name),
                   "columnName" : column.name, 
                   "expression" : "cell.recon.features.nameLevenshtein",
                   "mode" : "range"
@@ -429,7 +429,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
             ui.browsingEngine.addFacet(
                 "range", 
                 {
-                  "name" : column.name + ": "+$.i18n('core-views/best-cand-word-sim'),
+                  "name" :  $.i18n('core-views/best-cand-word-sim', column.name),
                   "columnName" : column.name, 
                   "expression" : "cell.recon.features.nameWordDistance",
                   "mode" : "range"
@@ -447,7 +447,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
             ui.browsingEngine.addFacet(
                 "list", 
                 {
-                  "name" : column.name + ": best candidate's types",
+                  "name" : $.i18n("core-views/best-cand-types", column.name),
                   "columnName" : column.name,
                   "expression" : 'forNonBlank(cell.recon.best.type, v, v, if(isNonBlank(value), "(unreconciled)", "(blank)"))'
                 }

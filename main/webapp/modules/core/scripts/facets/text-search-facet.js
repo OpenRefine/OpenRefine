@@ -121,10 +121,10 @@ TextSearchFacet.prototype._initializeUI = function() {
 
   this._elmts.titleSpan.text(this._config.name);
   if (this._config.caseSensitive) {
-    this._elmts.caseSensitiveCheckbox.attr("checked", "true");
+    this._elmts.caseSensitiveCheckbox.prop("checked", true);
   }
   if (this._config.mode === "regex") {
-    this._elmts.regexCheckbox.attr("checked", "true");
+    this._elmts.regexCheckbox.prop('checked', true);
   }
 
   this._elmts.removeButton.click(function() { self._remove(); });
@@ -150,8 +150,8 @@ TextSearchFacet.prototype._initializeUI = function() {
   }
   
   this._elmts.input.bind("keyup change input",function(evt) {
-    // Ignore non-character keyup changes
-    if(evt.type === "keyup" && (this.value === self._query || this.value === '' && !self._query)) {
+    // Ignore events which don't change our input value
+    if(this.value === self._query || this.value === '' && !self._query) {
       return;
     }
     self._query = this.value;

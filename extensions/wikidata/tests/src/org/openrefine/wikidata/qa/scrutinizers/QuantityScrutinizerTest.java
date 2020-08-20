@@ -20,10 +20,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+import static org.openrefine.wikidata.qa.scrutinizers.QuantityScrutinizer.ALLOWED_UNITS_CONSTRAINT_PID;
 import static org.openrefine.wikidata.qa.scrutinizers.QuantityScrutinizer.ALLOWED_UNITS_CONSTRAINT_QID;
 import static org.openrefine.wikidata.qa.scrutinizers.QuantityScrutinizer.INTEGER_VALUED_CONSTRAINT_QID;
 import static org.openrefine.wikidata.qa.scrutinizers.QuantityScrutinizer.NO_BOUNDS_CONSTRAINT_QID;
@@ -55,7 +54,7 @@ public class QuantityScrutinizerTest extends ValueScrutinizerTest{
     public static ItemIdValue noBoundsEntity = Datamodel.makeWikidataItemIdValue(NO_BOUNDS_CONSTRAINT_QID);
     public static ItemIdValue integerValueEntity = Datamodel.makeWikidataItemIdValue(INTEGER_VALUED_CONSTRAINT_QID);
     public static ItemIdValue allowedUnitEntity = Datamodel.makeWikidataItemIdValue(ALLOWED_UNITS_CONSTRAINT_QID);
-    public static PropertyIdValue itemParameterPID = Datamodel.makeWikidataPropertyIdValue("P2305");
+    public static PropertyIdValue itemParameterPID = Datamodel.makeWikidataPropertyIdValue(ALLOWED_UNITS_CONSTRAINT_PID);
     public static Value allowedUnit = Datamodel.makeWikidataItemIdValue("Q5");
 
     @Override
@@ -206,12 +205,11 @@ public class QuantityScrutinizerTest extends ValueScrutinizerTest{
 
         Snak qualifierSnak = Datamodel.makeValueSnak(itemParameterPID, allowedUnit);
         List<Snak> qualifierSnakList = Collections.singletonList(qualifierSnak);
-        SnakGroup snakGroup1 = Datamodel.makeSnakGroup(qualifierSnakList);
-        List<SnakGroup> constraintQualifiers = Collections.singletonList(snakGroup1);
+        SnakGroup qualifierSnakGroup = Datamodel.makeSnakGroup(qualifierSnakList);
+        List<SnakGroup> constraintQualifiers = Collections.singletonList(qualifierSnakGroup);
         List<Statement> constraintDefinitions = constraintParameterStatementList(allowedUnitEntity, constraintQualifiers);
         ConstraintFetcher fetcher = mock(ConstraintFetcher.class);
         when(fetcher.getConstraintsByType(propertyIdValue, ALLOWED_UNITS_CONSTRAINT_QID)).thenReturn(constraintDefinitions);
-        when(fetcher.findValues(constraintQualifiers, "P2305")).thenReturn(Collections.singletonList(allowedUnit));
         setFetcher(fetcher);
 
         scrutinize(update);
@@ -228,7 +226,6 @@ public class QuantityScrutinizerTest extends ValueScrutinizerTest{
         List<Statement> constraintDefinitions = constraintParameterStatementList(allowedUnitEntity, new ArrayList<>());
         ConstraintFetcher fetcher = mock(ConstraintFetcher.class);
         when(fetcher.getConstraintsByType(propertyIdValue, ALLOWED_UNITS_CONSTRAINT_QID)).thenReturn(constraintDefinitions);
-        when(fetcher.findValues(any(), eq("P2305"))).thenReturn(new ArrayList<>());
         setFetcher(fetcher);
 
         scrutinize(update);
@@ -244,7 +241,6 @@ public class QuantityScrutinizerTest extends ValueScrutinizerTest{
 
         ConstraintFetcher fetcher = mock(ConstraintFetcher.class);
         when(fetcher.getConstraintsByType(propertyIdValue, ALLOWED_UNITS_CONSTRAINT_QID)).thenReturn(new ArrayList<>());
-        when(fetcher.findValues(any(), eq("P2305"))).thenReturn(new ArrayList<>());
         setFetcher(fetcher);
 
         scrutinize(update);

@@ -175,25 +175,25 @@ ScatterplotFacet.prototype._initializeUI = function() {
   this._plotAreaSelector = this._elmts.plotImg.imgAreaSelect(ops);
 
   if (this._config.dim_x == 'lin' && this._config.dim_y == 'lin') {
-    this._elmts.selectors.find("#" + facet_id + "-dim-lin").attr('checked','checked');
+    this._elmts.selectors.find("#" + facet_id + "-dim-lin").prop('checked', true);
   } else if (this._config.dim_x == 'log' && this._config.dim_y == 'log') {
-    this._elmts.selectors.find("#" + facet_id + "-dim-log").attr('checked','checked');
+    this._elmts.selectors.find("#" + facet_id + "-dim-log").prop('checked', true);
   }
 
   if (this._config.r == 'cw') {
-    this._elmts.selectors.find("#" + facet_id + "-rot-cw").attr('checked','checked');
+    this._elmts.selectors.find("#" + facet_id + "-rot-cw").prop('checked', true);
   } else if (this._config.r == 'ccw') {
-    this._elmts.selectors.find("#" + facet_id + "-rot-ccw").attr('checked','checked');
+    this._elmts.selectors.find("#" + facet_id + "-rot-ccw").prop('checked', true);
   } else {
-    this._elmts.selectors.find("#" + facet_id + "-rot-none").attr('checked','checked');
+    this._elmts.selectors.find("#" + facet_id + "-rot-none").prop('checked', true);
   }
 
   if (this._config.dot >= 1.2) {
-    this._elmts.selectors.find("#" + facet_id + "-dot-big").attr('checked','checked');
+    this._elmts.selectors.find("#" + facet_id + "-dot-big").prop('checked', true);
   } else if (this._config.dot <= 0.4) {
-    this._elmts.selectors.find("#" + facet_id + "-dot-small").attr('checked','checked');
+    this._elmts.selectors.find("#" + facet_id + "-dot-small").prop('checked', true);
   } else {
-    this._elmts.selectors.find("#" + facet_id + "-dot-regular").attr('checked','checked');
+    this._elmts.selectors.find("#" + facet_id + "-dot-regular").prop('checked', true);
   }
 
   this._elmts.selectors.find(".scatterplot-dim-selector").change(function() {

@@ -139,7 +139,44 @@ public class XlsExporterTests extends RefineTest {
             Assert.assertEquals(cell0.toString(),"row0cell0");
         }
     }
-    
+
+    @Test
+    public void test256Columns() throws IOException {
+        CreateGrid(2, 256);
+
+        try {
+            SUT.export(project, options, engine, stream);
+        } catch (IOException e) {
+            Assert.fail();
+        }
+
+        try (HSSFWorkbook wb = new HSSFWorkbook(new ByteArrayInputStream(stream.toByteArray()))) {
+            org.apache.poi.ss.usermodel.Sheet ws = wb.getSheetAt(0);
+            org.apache.poi.ss.usermodel.Row row1 = ws.getRow(1);
+            org.apache.poi.ss.usermodel.Cell cell0 = row1.getCell(255);
+            Assert.assertEquals(cell0.toString(),"row0cell255");
+        }
+    }
+
+    @Test
+    public void test257Columns() throws IOException {
+        CreateGrid(2, 257);
+
+        try {
+            SUT.export(project, options, engine, stream);
+        } catch (IOException e) {
+            Assert.fail();
+        }
+
+        try (HSSFWorkbook wb = new HSSFWorkbook(new ByteArrayInputStream(stream.toByteArray()))) {
+            org.apache.poi.ss.usermodel.Sheet ws = wb.getSheetAt(0);
+            org.apache.poi.ss.usermodel.Row row1 = ws.getRow(1);
+            org.apache.poi.ss.usermodel.Cell cell0 = row1.getCell(255);
+            // FIXME: This is not a good error reporting mechanism, but it's what there today
+            Assert.assertEquals(cell0.toString(),"ERROR: TOO MANY COLUMNS");
+        }
+    }
+
     @Test
     public void exportDateType() throws IOException{
         OffsetDateTime odt =  OffsetDateTime.parse("2019-04-09T12:00+00:00");
@@ -161,7 +198,6 @@ public class XlsExporterTests extends RefineTest {
         }
     }
 
-    @Test(enabled=false)
     public void exportSimpleXlsNoHeader(){
         CreateGrid(2, 2);
         when(options.getProperty("printColumnHeader")).thenReturn("false");
@@ -178,7 +214,6 @@ public class XlsExporterTests extends RefineTest {
     }
 
 
-    @Test(enabled=false)
     public void exportXlsWithEmptyCells(){
         CreateGrid(3,3);
 

@@ -62,56 +62,64 @@ DataTableCellUI.prototype._render = function() {
   var self = this;
   var cell = this._cell;
 
-  var divContent = $('<div/>')
-  .addClass("data-table-cell-content");
+  var divContent = document.createElement('div');
+  divContent.className = 'data-table-cell-content';
 
-  var editLink = $('<a href="javascript:{}">&nbsp;</a>')
-  .addClass("data-table-cell-edit")
-  .attr("title", $.i18n('core-views/edit-cell'))
-  .appendTo(divContent)
-  .click(function() { self._startEdit(this); });
+  var editLink = document.createElement('a');
+  editLink.className = 'data-table-cell-edit';
+  editLink.setAttribute('title', $.i18n('core-views/edit-cell'));
+  editLink.href = 'javascript:{}';
+  divContent.appendChild(editLink).appendChild(document.createTextNode('\u00A0'));
+  editLink.addEventListener('click', function() { self._startEdit(this); });
 
   $(this._td).empty()
   .unbind()
-  .mouseenter(function() { editLink.css("visibility", "visible"); })
-  .mouseleave(function() { editLink.css("visibility", "hidden"); });
+  .mouseenter(function() { editLink.style.visibility = "visible" })
+  .mouseleave(function() { editLink.style.visibility = "hidden" });
 
   if (!cell || ("v" in cell && cell.v === null)) {
-    $('<span>').addClass("data-table-null").html('null').appendTo(divContent);
+    var nullSpan = document.createElement('span');
+    nullSpan.className = 'data-table-null';
+    nullSpan.innerHTML = 'null';
+    divContent.appendChild(nullSpan);
   } else if ("e" in cell) {
-    $('<span>').addClass("data-table-error").text(cell.e).appendTo(divContent);
+    var errorSpan = document.createElement('span');
+    errorSpan.className = 'data-table-error';
+    errorSpan.textContent = cell.e;
+    divContent.appendChild(errorSpan);
   } else if (!("r" in cell) || !cell.r) {
     if (typeof cell.v !== "string" || "t" in cell) {
       if (typeof cell.v == "number") {
-        divContent.addClass("data-table-cell-content-numeric");
+        divContent.classList.add('data-table-cell-content-numeric');
       }
-      $('<span>')
-      .addClass("data-table-value-nonstring")
-      .text(cell.v)
-      .appendTo(divContent);
+      var nonstringSpan = document.createElement('span');
+      nonstringSpan.className = 'data-table-value-nonstring';
+      nonstringSpan.textContent = cell.v;
+      divContent.appendChild(nonstringSpan);
     } else if (URL.looksLikeUrl(cell.v)) {
-      $('<a>')
-      .text(cell.v)
-      .attr("href", cell.v)
-      .attr("target", "_blank")
-      .appendTo(divContent);
+      var url = document.createElement('a');
+      url.textContent = cell.v;
+      url.setAttribute('href', cell.v);
+      url.setAttribute('target', '_blank');
+      divContent.appendChild(url);
     } else {
-      $('<span>')
-      .text(cell.v)
-      .appendTo(divContent);
+      var span = document.createElement('span');
+      span.textContent = cell.v;
+      divContent.appendChild(span);
     }
   } else {
+    var divContentRecon = $(divContent);
     var r = cell.r;
     var service = (r.service) ? ReconciliationManager.getServiceFromUrl(r.service) : null;
 
     if (r.j == "new") {
-      $('<span>').text(cell.v).appendTo(divContent);
-      $('<span>').addClass("data-table-recon-new").text("new").appendTo(divContent);
+      $('<span>').text(cell.v).appendTo(divContentRecon);
+      $('<span>').addClass("data-table-recon-new").text("new").appendTo(divContentRecon);
 
       $('<a href="javascript:{}"></a>')
       .text($.i18n('core-views/choose-match'))
       .addClass("data-table-recon-action")
-      .appendTo(divContent).click(function(evt) {
+      .appendTo(divContentRecon).click(function(evt) {
         self._doRematch();
       });
     } else if (r.j == "matched" && "m" in r && r.m !== null) {
@@ -119,7 +127,7 @@ DataTableCellUI.prototype._render = function() {
       var a = $('<a></a>')
       .text(match.name)
       .attr("target", "_blank")
-      .appendTo(divContent);
+      .appendTo(divContentRecon);
 
       if (service && (service.view) && (service.view.url)) {
         a.attr("href", encodeURI(service.view.url.replace("{{id}}", match.id)));
@@ -129,19 +137,19 @@ DataTableCellUI.prototype._render = function() {
         self._previewOnHover(service, match, a, a, false);
       }
 
-      $('<span> </span>').appendTo(divContent);
+      $('<span> </span>').appendTo(divContentRecon);
       $('<a href="javascript:{}"></a>')
       .text($.i18n('core-views/choose-match'))
       .addClass("data-table-recon-action")
-      .appendTo(divContent)
+      .appendTo(divContentRecon)
       .click(function(evt) {
         self._doRematch();
       });
     } else {
-      $('<span>').text(cell.v).appendTo(divContent);
+      $('<span>').text(cell.v).appendTo(divContentRecon);
 
       if (this._dataTableView._showRecon) {
-        var ul = $('<div></div>').addClass("data-table-recon-candidates").appendTo(divContent);
+        var ul = $('<div></div>').addClass("data-table-recon-candidates").appendTo(divContentRecon);
         if ("c" in r && r.c.length > 0) {
           var candidates = r.c;
           var renderCandidate = function(candidate, index) {
@@ -219,7 +227,7 @@ DataTableCellUI.prototype._render = function() {
           addSuggest = true;
         }
 
-        var extraChoices = $('<div>').addClass("data-table-recon-extra").appendTo(divContent);
+        var extraChoices = $('<div>').addClass("data-table-recon-extra").appendTo(divContentRecon);
         if (addSuggest) {
           $('<a href="javascript:{}"></a>')
           .click(function(evt) {
@@ -233,7 +241,7 @@ DataTableCellUI.prototype._render = function() {
     }
   }
 
-  divContent.appendTo(this._td);
+  this._td.appendChild(divContent);
 };
 
 DataTableCellUI.prototype._doRematch = function() {
@@ -403,7 +411,7 @@ DataTableCellUI.prototype._searchForMatch = function(suggestOptions) {
     suggestOptions2.query_param_name = "prefix";
   }
   elmts.input
-  .attr("value", this._cell.v)
+  .val(this._cell.v)
   .suggest(suggestOptions2)
   .bind("fb-select", function(e, data) {
     match = data;

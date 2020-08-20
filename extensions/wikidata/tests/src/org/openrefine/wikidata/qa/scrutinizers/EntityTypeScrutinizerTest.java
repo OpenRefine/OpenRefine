@@ -1,7 +1,6 @@
 package org.openrefine.wikidata.qa.scrutinizers;
 
 import org.openrefine.wikidata.qa.ConstraintFetcher;
-import org.openrefine.wikidata.qa.MockConstraintFetcher;
 import org.openrefine.wikidata.testing.TestingData;
 import org.openrefine.wikidata.updates.ItemUpdate;
 import org.openrefine.wikidata.updates.ItemUpdateBuilder;
@@ -21,16 +20,19 @@ import java.util.List;
 
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+import static org.openrefine.wikidata.qa.scrutinizers.EntityTypeScrutinizer.ALLOWED_ENTITY_TYPES_PID;
+import static org.openrefine.wikidata.qa.scrutinizers.EntityTypeScrutinizer.ALLOWED_ENTITY_TYPES_QID;
+import static org.openrefine.wikidata.qa.scrutinizers.EntityTypeScrutinizer.ALLOWED_ITEM_TYPE_QID;
 
 public class EntityTypeScrutinizerTest extends StatementScrutinizerTest {
 
     public static PropertyIdValue propertyIdValue = Datamodel.makeWikidataPropertyIdValue("P2302");
-    public static Value propertyValue = MockConstraintFetcher.conflictsWithStatementValue;
+    public static Value propertyValue = Datamodel.makeWikidataItemIdValue("Q36322");
 
-    public static ItemIdValue entityIdValue = Datamodel.makeWikidataItemIdValue("Q52004125");
-    public static PropertyIdValue itemParameterPID = Datamodel.makeWikidataPropertyIdValue("P2305");
+    public static ItemIdValue entityIdValue = Datamodel.makeWikidataItemIdValue(ALLOWED_ENTITY_TYPES_QID);
+    public static PropertyIdValue itemParameterPID = Datamodel.makeWikidataPropertyIdValue(ALLOWED_ENTITY_TYPES_PID);
     public static Value itemValue = Datamodel.makeWikidataItemIdValue("Q29934218");
-    public static Value allowedValue = Datamodel.makeWikidataItemIdValue("Q29934200");
+    public static Value allowedValue = Datamodel.makeWikidataItemIdValue(ALLOWED_ITEM_TYPE_QID);
 
 
 
@@ -48,15 +50,14 @@ public class EntityTypeScrutinizerTest extends StatementScrutinizerTest {
 
         ItemUpdate update = new ItemUpdateBuilder(idA).addStatement(statement).build();
 
-        Snak qualifierSnak = Datamodel.makeValueSnak(itemParameterPID, itemValue);
+        Snak qualifierSnak = Datamodel.makeValueSnak(itemParameterPID, allowedValue);
         List<Snak> qualifierSnakList = Collections.singletonList(qualifierSnak);
         SnakGroup qualifierSnakGroup = Datamodel.makeSnakGroup(qualifierSnakList);
-        List<SnakGroup> snakGroupList = Collections.singletonList(qualifierSnakGroup);
-        List<Statement> statementList = constraintParameterStatementList(entityIdValue, snakGroupList);
+        List<SnakGroup> constraintQualifiers = Collections.singletonList(qualifierSnakGroup);
+        List<Statement> constraintDefinitions = constraintParameterStatementList(entityIdValue, constraintQualifiers);
 
         ConstraintFetcher fetcher = mock(ConstraintFetcher.class);
-        when(fetcher.getConstraintsByType(propertyIdValue,"Q52004125")).thenReturn(statementList);
-        when(fetcher.findValues(snakGroupList, "P2305")).thenReturn(Collections.singletonList(allowedValue));
+        when(fetcher.getConstraintsByType(propertyIdValue,ALLOWED_ENTITY_TYPES_QID)).thenReturn(constraintDefinitions);
         setFetcher(fetcher);
 
         scrutinize(update);
@@ -75,12 +76,11 @@ public class EntityTypeScrutinizerTest extends StatementScrutinizerTest {
         Snak qualifierSnak = Datamodel.makeValueSnak(itemParameterPID, itemValue);
         List<Snak> qualifierSnakList = Collections.singletonList(qualifierSnak);
         SnakGroup qualifierSnakGroup = Datamodel.makeSnakGroup(qualifierSnakList);
-        List<SnakGroup> snakGroupList = Collections.singletonList(qualifierSnakGroup);
-        List<Statement> statementList = constraintParameterStatementList(entityIdValue, snakGroupList);
+        List<SnakGroup> constraintQualifiers = Collections.singletonList(qualifierSnakGroup);
+        List<Statement> constraintDefinitions = constraintParameterStatementList(entityIdValue, constraintQualifiers);
 
         ConstraintFetcher fetcher = mock(ConstraintFetcher.class);
-        when(fetcher.getConstraintsByType(propertyIdValue,"Q52004125")).thenReturn(statementList);
-        when(fetcher.findValues(snakGroupList, "P2305")).thenReturn(Collections.singletonList(itemValue));
+        when(fetcher.getConstraintsByType(propertyIdValue,ALLOWED_ENTITY_TYPES_QID)).thenReturn(constraintDefinitions);
         setFetcher(fetcher);
 
         scrutinize(update);

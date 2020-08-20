@@ -7,7 +7,7 @@ Refine.SetLanguageUI = function(elmt) {
 	this._elmts = DOM.bind(elmt);
 
 	this._elmts.or_lang_label.text($.i18n('core-index-lang/label')+":");
-	this._elmts.set_lan_btn.attr("value", $.i18n('core-index-lang/send-req'));
+	this._elmts.set_lan_btn.val($.i18n('core-index-lang/send-req'));
 	
 
   $.ajax({

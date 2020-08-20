@@ -49,13 +49,14 @@ public class NGramFingerprintKeyer extends FingerprintKeyer {
         }
         s = s.toLowerCase(); // then lowercase it
         s = alphanum.matcher(s).replaceAll(""); // then remove all punctuation and control chars
+        s = asciify(s); // find ASCII equivalent to characters
         TreeSet<String> set = ngram_split(s,ngram_size);
         StringBuffer b = new StringBuffer();
         Iterator<String> i = set.iterator();
         while (i.hasNext()) { // join ordered fragments back together
             b.append(i.next());
         }
-        return asciify(b.toString()); // find ASCII equivalent to characters 
+        return b.toString();
     }
 
     protected TreeSet<String> ngram_split(String s, int size) {

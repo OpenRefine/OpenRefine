@@ -44,6 +44,7 @@ import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.Properties;
 import java.util.TimeZone;
@@ -181,7 +182,7 @@ public class ParsingUtilities {
     static public String localDateToString(LocalDateTime d) {
       OffsetDateTime odt = OffsetDateTime.of(d,
                 OffsetDateTime.now().getOffset());
-      
+      // FIXME: A LocalDate has no timezone, by definition.
       return odt.withOffsetSameInstant(ZoneOffset.of("Z")).format(ISO8601);
     }
 
@@ -238,6 +239,18 @@ public class ParsingUtilities {
         Calendar cal = new GregorianCalendar(TimeZone.getTimeZone("Z"));
         cal.setTimeInMillis(offsetDateTime.toInstant().toEpochMilli());
         return cal;
+    }
+
+    public static boolean isDate(Object o) {
+        return o instanceof OffsetDateTime;
+    }
+
+    public static OffsetDateTime toDate(Date date) {
+        return date.toInstant().atOffset(ZoneOffset.UTC);
+    }
+
+    public static OffsetDateTime toDate(Calendar date) {
+        return date.toInstant().atOffset(ZoneOffset.UTC);
     }
 
 	public static ObjectNode evaluateJsonStringToObjectNode(String optionsString) {

@@ -65,6 +65,7 @@ import com.google.refine.util.JSONUtilities;
 import com.google.refine.util.ParsingUtilities;
 
 
+@SuppressWarnings("deprecation")
 public class OdsImporter extends TabularImportingParserBase { 
     final static Logger logger = LoggerFactory.getLogger("open office");
 
@@ -126,7 +127,6 @@ public class OdsImporter extends TabularImportingParserBase {
             ProjectMetadata metadata,
             ImportingJob job,
             String fileSource,
-            String archiveFileName,
             InputStream inputStream,
             int limit,
             ObjectNode options,
@@ -194,14 +194,11 @@ public class OdsImporter extends TabularImportingParserBase {
                     job,
                     dataReader,
                     fileSource + "#" + table.getTableName(),
-                    archiveFileName,
                     limit,
                     options,
                     exceptions
             );
         }
-        
-        super.parseOneFile(project, metadata, job, fileSource, archiveFileName, inputStream, limit, options, exceptions);
     }
 
     static protected Serializable extractCell(OdfTableCell cell) {
@@ -216,7 +213,7 @@ public class OdsImporter extends TabularImportingParserBase {
         } else if ("float".equals(cellType)) {
             value = cell.getDoubleValue();
         } else if ("date".equals(cellType)) {
-            value = cell.getDateValue();
+            value = ParsingUtilities.toDate(cell.getDateValue());
         } else if ("currency".equals(cellType)) {
             value = cell.getCurrencyValue();
         } else if ("percentage".equals(cellType)) {
@@ -288,5 +285,4 @@ public class OdsImporter extends TabularImportingParserBase {
             return null;
         }
     }
-
-} 
+}

@@ -81,6 +81,7 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
+import org.apache.http.StatusLine;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -309,10 +310,17 @@ public class ImportingUtilities {
                         CloseableHttpResponse response = httpclient.execute(httpGet);
 
                         try {
-                            response.getStatusLine();
                             HttpEntity entity = response.getEntity();
                             if (entity == null) {
                                 throw new Exception("No content found in " + url.toString());
+                            }
+                            StatusLine status = response.getStatusLine();
+                            int statusCode = response.getStatusLine().getStatusCode();
+                            if (statusCode >= 400) {
+                                String errorString = ParsingUtilities.inputStreamToString(entity.getContent());
+                                String message = String.format("HTTP error %d : %s | %s", statusCode,
+                                        status.getReasonPhrase(), errorString);
+                                throw new Exception(message);
                             }
                             InputStream stream2 = entity.getContent();
 
@@ -385,6 +393,7 @@ public class ImportingUtilities {
                         calculateProgressPercent(update.totalExpectedSize, update.totalRetrievedSize));
                     
                     JSONUtilities.safePut(fileRecord, "size", saveStreamToFile(stream, file, null));
+                    // TODO: This needs to be refactored to be able to test import from archives
                     if (postProcessRetrievedFile(rawDataDir, file, fileRecord, fileRecords, progress)) {
                         archiveCount++;
                     }
@@ -449,13 +458,13 @@ public class ImportingUtilities {
             name = name.substring(0, q);
         }
         
-        File file = new File(dir, name);     
+        File file = new File(dir, name);
         // For CVE-2018-19859, issue #1840
-        if (!file.toPath().normalize().startsWith(dir.toPath().normalize())) {
-        	throw new IllegalArgumentException("Zip archives with files escaping their root directory are not allowed.");
+        if (!file.toPath().normalize().startsWith(dir.toPath().normalize() + File.separator)) {
+            throw new IllegalArgumentException("Zip archives with files escaping their root directory are not allowed.");
         }
         
-        int dot = name.indexOf('.');
+        int dot = name.lastIndexOf('.');
         String prefix = dot < 0 ? name : name.substring(0, dot);
         String suffix = dot < 0 ? "" : name.substring(dot);
         int index = 2;
@@ -633,6 +642,7 @@ public class ImportingUtilities {
         return null;
     }
     
+    // FIXME: This is wasteful of space and time. We should try to process on the fly
     static public boolean explodeArchive(
         File rawDataDir,
         InputStream archiveIS,

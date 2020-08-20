@@ -118,7 +118,7 @@ Refine.GDataSourceUI.prototype._listDocuments = function() {
         }),
         null,
         function(o) {
-        self._renderDocuments(o);
+          self._renderDocuments(o);
         },
         "json"
     );
@@ -128,6 +128,10 @@ Refine.GDataSourceUI.prototype._listDocuments = function() {
 Refine.GDataSourceUI.prototype._renderDocuments = function(o) {
   var self = this;
   
+  if (!o.documents) {
+    return;
+  }
+
   this._elmts.listingContainer.empty();
   
   var table = $(

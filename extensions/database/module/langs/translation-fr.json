@@ -36,6 +36,7 @@
     "database-source/databaseSaveButton": "Enregistrer",
     "database-source/databaseConnectButton": "Connexion",
     "database-source/newConnectionButtonDiv": "Nouvelle connexion",
+    "database-source/new-connection-legend": "Editeur de nouvelle connexion",
     "database-source/savedConnectionSpan": "Connexions enregistrées",
     "database-parsing/start-over": "&laquo; Recommencer",
     "database-parsing/conf-pars": "Configurer les options de parsing",

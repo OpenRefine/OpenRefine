@@ -54,15 +54,15 @@ WikibaseExporterMenuBar.exportTo = function(format) {
         .attr("target", "gridworks-export-"+format);
     $('<input />')
         .attr("name", "engine")
-        .attr("value", JSON.stringify(ui.browsingEngine.getJSON()))
+        .val(JSON.stringify(ui.browsingEngine.getJSON()))
         .appendTo(form);
     $('<input />')
         .attr("name", "project")
-        .attr("value", theProject.id)
+        .val(theProject.id)
         .appendTo(form);
     $('<input />')
         .attr("name", "format")
-        .attr("value", format)
+        .val(format)
         .appendTo(form);
 
     document.body.appendChild(form);

@@ -405,7 +405,7 @@
     "core-views/earliest-first": "המוקדם ביותר ראשון",
     "core-views/latest-first": "המאוחר ביותר ראשון",
     "core-views/false-true": "false then true",
-    "core-views/true-fasle": "true then false",
+    "core-views/true-false": "true then false",
     "core-views/valid-values": "ערכים תקינים",
     "core-views/blanks": "חסרים",
     "core-views/errors": "שגיאות",

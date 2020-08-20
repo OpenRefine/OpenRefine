@@ -42,6 +42,7 @@ import java.util.List;
 
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+import static org.openrefine.wikidata.qa.scrutinizers.DistinctValuesScrutinizer.DISTINCT_VALUES_CONSTRAINT_QID;
 
 public class DistinctValuesScrutinizerTest extends StatementScrutinizerTest {
 
@@ -49,7 +50,7 @@ public class DistinctValuesScrutinizerTest extends StatementScrutinizerTest {
     public static Value value1 = Datamodel.makeWikidataItemIdValue("Q41673");
     public static Value value2 = Datamodel.makeWikidataItemIdValue("Q43175");
 
-    public static ItemIdValue entityIdValue = Datamodel.makeWikidataItemIdValue("Q19474404");
+    public static ItemIdValue entityIdValue = Datamodel.makeWikidataItemIdValue(DISTINCT_VALUES_CONSTRAINT_QID);
 
     @Override
     public EditScrutinizer getScrutinizer() {
@@ -65,11 +66,11 @@ public class DistinctValuesScrutinizerTest extends StatementScrutinizerTest {
 
         ItemUpdate update = new ItemUpdateBuilder(idA).addStatement(statement1).addStatement(statement2).build();
 
-        List<SnakGroup> snakGroupList = new ArrayList<>();
-        List<Statement> statementList = constraintParameterStatementList(entityIdValue, snakGroupList);
+        List<SnakGroup> constraintQualifiers = new ArrayList<>();
+        List<Statement> constraintDefinitions = constraintParameterStatementList(entityIdValue, constraintQualifiers);
 
         ConstraintFetcher fetcher = mock(ConstraintFetcher.class);
-        when(fetcher.getConstraintsByType(propertyIdValue, "Q21502410")).thenReturn(statementList);
+        when(fetcher.getConstraintsByType(propertyIdValue, DISTINCT_VALUES_CONSTRAINT_QID)).thenReturn(constraintDefinitions);
         setFetcher(fetcher);
 
         scrutinize(update);
@@ -86,11 +87,11 @@ public class DistinctValuesScrutinizerTest extends StatementScrutinizerTest {
 
         ItemUpdate update = new ItemUpdateBuilder(idA).addStatement(statement1).addStatement(statement2).build();
 
-        List<SnakGroup> snakGroupList = new ArrayList<>();
-        List<Statement> statementList = constraintParameterStatementList(entityIdValue, snakGroupList);
+        List<SnakGroup> constraintQualifiers = new ArrayList<>();
+        List<Statement> constraintDefinitions = constraintParameterStatementList(entityIdValue, constraintQualifiers);
 
         ConstraintFetcher fetcher = mock(ConstraintFetcher.class);
-        when(fetcher.getConstraintsByType(propertyIdValue, "Q21502410")).thenReturn(statementList);
+        when(fetcher.getConstraintsByType(propertyIdValue, DISTINCT_VALUES_CONSTRAINT_QID)).thenReturn(constraintDefinitions);
         setFetcher(fetcher);
 
         scrutinize(update);

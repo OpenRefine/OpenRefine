@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2018, OpenRefine contributors
+ * Copyright (C) 2018, 2020 OpenRefine contributors
  * All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without
@@ -26,10 +26,30 @@
  ******************************************************************************/
 package com.google.refine.importing;
 
+import static org.mockito.Mockito.when;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertTrue;
+
 import java.io.File;
 import java.io.IOException;
-import java.util.LinkedList;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Properties;
 
+import okhttp3.HttpUrl;
+import okhttp3.mockwebserver.MockResponse;
+import okhttp3.mockwebserver.MockWebServer;
+
+import org.apache.commons.collections.IteratorUtils;
+import org.apache.commons.io.FileUtils;
+import org.apache.http.HttpEntity;
+import org.apache.http.entity.ContentType;
+import org.apache.http.entity.mime.MultipartEntityBuilder;
+import org.apache.http.entity.mime.content.StringBody;
+import org.mockito.Mockito;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -38,12 +58,15 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.refine.ProjectMetadata;
 import com.google.refine.importers.ImporterTest;
-import com.google.refine.importers.tree.TreeImportingParserBase;
-import com.google.refine.importing.ImportingJob;
-import com.google.refine.importing.ImportingUtilities;
+import com.google.refine.importers.ImportingParserBase;
+import com.google.refine.importers.SeparatorBasedImporter;
+import com.google.refine.importing.ImportingUtilities.Progress;
 import com.google.refine.util.JSONUtilities;
 import com.google.refine.util.ParsingUtilities;
 import com.google.refine.util.TestUtils;
+
+import javax.servlet.ServletInputStream;
+import javax.servlet.http.HttpServletRequest;
 
 public class ImportingUtilitiesTests extends ImporterTest {
 
@@ -63,23 +86,172 @@ public class ImportingUtilitiesTests extends ImporterTest {
         Assert.assertEquals(pm.getEncoding(), "UTF-8");
         Assert.assertTrue(pm.getTags().length == 0);
     }
-    
+
     @Test(expectedExceptions=IllegalArgumentException.class)
     public void testZipSlip() throws IOException {
-    	File tempDir = TestUtils.createTempDirectory("openrefine-zip-slip-test");
+        File tempDir = TestUtils.createTempDirectory("openrefine-zip-slip-test");
         // For CVE-2018-19859, issue #1840
-    	ImportingUtilities.allocateFile(tempDir, "../../tmp/script.sh");
+        ImportingUtilities.allocateFile(tempDir, "../../tmp/script.sh");
     }
-    
-    private ObjectNode getNestedOptions(ImportingJob job, TreeImportingParserBase parser) {
-        ObjectNode options = parser.createParserUIInitializationData(
-                job, new LinkedList<>(), "text/json");
-        
-        ArrayNode path = ParsingUtilities.mapper.createArrayNode();
-        path.add("results");
-        path.add("result");
-        
-        JSONUtilities.safePut(options, "recordPath", path);
-        return options;
+
+    @Test
+    public void urlImporting() throws IOException {
+
+        String RESPONSE_BODY = "{code:401,message:Unauthorised}";
+        String MESSAGE = String.format("HTTP error %d : %s | %s", 401,
+                "Client Error", RESPONSE_BODY);
+
+        MockWebServer server = new MockWebServer();
+        MockResponse mockResponse = new MockResponse();
+        mockResponse.setBody(RESPONSE_BODY);
+        mockResponse.setResponseCode(401);
+        server.start();
+        server.enqueue(mockResponse);
+        HttpUrl url = server.url("/random");
+
+        MultipartEntityBuilder builder = MultipartEntityBuilder.create();
+        StringBody stringBody = new StringBody(url.toString(), ContentType.MULTIPART_FORM_DATA);
+        builder = builder.addPart("download", stringBody);
+        HttpEntity entity = builder.build();
+
+        ByteArrayOutputStream os = new ByteArrayOutputStream();
+        entity.writeTo(os);
+        ByteArrayInputStream is = new ByteArrayInputStream(os.toByteArray());
+
+        HttpServletRequest req = Mockito.mock(HttpServletRequest.class);
+        when(req.getContentType()).thenReturn(entity.getContentType().getValue());
+        when(req.getParameter("download")).thenReturn(url.toString());
+        when(req.getMethod()).thenReturn("POST");
+        when(req.getContentLength()).thenReturn((int) entity.getContentLength());
+        when(req.getInputStream()).thenReturn(new MockServletInputStream(is));
+
+
+        ImportingJob job = ImportingManager.createJob();
+        Properties parameters = ParsingUtilities.parseUrlParameters(req);
+        ObjectNode retrievalRecord = ParsingUtilities.mapper.createObjectNode();
+        ObjectNode progress = ParsingUtilities.mapper.createObjectNode();
+        try {
+            ImportingUtilities.retrieveContentFromPostRequest(req, parameters, job.getRawDataDir(), retrievalRecord, new ImportingUtilities.Progress() {
+                @Override
+                public void setProgress(String message, int percent) {
+                    if (message != null) {
+                        JSONUtilities.safePut(progress, "message", message);
+                    }
+                    JSONUtilities.safePut(progress, "percent", percent);
+                }
+
+                @Override
+                public boolean isCanceled() {
+                    return job.canceled;
+                }
+            });
+            Assert.fail("No Exception was thrown");
+        } catch (Exception exception) {
+            Assert.assertEquals(MESSAGE, exception.getMessage());
+        } finally {
+            server.close();
+        }
     }
+
+    public static class MockServletInputStream extends ServletInputStream {
+
+        private final InputStream delegate;
+
+        public MockServletInputStream(InputStream delegate) {
+            this.delegate = delegate;
+        }
+
+        @Override
+        public int read() throws IOException {
+            return delegate.read();
+        }
+
+    }
+
+    /**
+     * This tests both exploding a zip archive into it's constituent files
+     * as well as importing them all (both) and making sure that the
+     * recording of archive names and file names works correctly.
+     *
+     * It's kind of a lot to have in one test, but it's a sequence
+     * of steps that need to be done in order.
+     *
+     * @throws IOException
+     */
+    @SuppressWarnings("unchecked")
+    @Test
+    public void importArchive() throws IOException{
+        String filename = "movies.zip";
+        String filepath = ClassLoader.getSystemResource(filename).getPath();
+        // Make a copy in our data directory where it's expected
+        File tmp = File.createTempFile("openrefine-test-movies", ".zip", job.getRawDataDir());
+        tmp.deleteOnExit();
+        FileUtils.copyFile(new File(filepath), tmp);
+
+        Progress dummyProgress = new Progress() {
+            @Override
+            public void setProgress(String message, int percent) {}
+
+            @Override
+            public boolean isCanceled() {
+                return false;
+            }
+        };
+
+        ArrayNode fileRecords = ParsingUtilities.mapper.createArrayNode();
+        ObjectNode fileRecord = ParsingUtilities.mapper.createObjectNode();
+        JSONUtilities.safePut(fileRecord, "origin", "upload");
+        JSONUtilities.safePut(fileRecord, "declaredEncoding", "UTF-8");
+        JSONUtilities.safePut(fileRecord, "declaredMimeType", "application/x-zip-compressed");
+        JSONUtilities.safePut(fileRecord, "fileName", filename);
+        JSONUtilities.safePut(fileRecord, "location", tmp.getName());
+
+        assertTrue(ImportingUtilities.postProcessRetrievedFile(job.getRawDataDir(), tmp, fileRecord, fileRecords, dummyProgress));
+        assertEquals(fileRecords.size(), 2);
+        assertEquals(fileRecords.get(0).get("fileName").asText(), "movies-condensed.tsv");
+        assertEquals(fileRecords.get(0).get("archiveFileName").asText(), "movies.zip");
+        assertEquals(fileRecords.get(1).get("fileName").asText(), "movies.tsv");
+
+        ObjectNode options = ParsingUtilities.mapper.createObjectNode();
+        JSONUtilities.safePut(options, "includeArchiveFileName", true);
+        JSONUtilities.safePut(options, "includeFileSources", true);
+
+        ImportingParserBase parser = new SeparatorBasedImporter();
+        List<Exception> exceptions = new ArrayList<Exception>();
+        parser.parse(
+                project,
+                metadata,
+                job,
+                IteratorUtils.toList(fileRecords.iterator()),
+                "tsv",
+                -1,
+                options,
+                exceptions
+                );
+        assertEquals(exceptions.size(), 0);
+        project.update();
+
+        assertEquals(project.columnModel.columns.get(0).getName(),"Archive");
+        assertEquals(project.rows.get(0).getCell(0).getValue(),"movies.zip");
+        assertEquals(project.columnModel.columns.get(1).getName(),"File");
+        assertEquals(project.rows.get(0).getCell(1).getValue(),"movies-condensed.tsv");
+        assertEquals(project.columnModel.columns.get(2).getName(),"name");
+        assertEquals(project.rows.get(0).getCell(2).getValue(),"Wayne's World");
+
+        // Make sure we imported both files contained in the zip file
+        assertEquals(project.rows.size(), 252);
+
+        ArrayNode importOptionsArray = metadata.getImportOptionMetadata();
+        assertEquals(importOptionsArray.size(), 2);
+        ObjectNode importOptions = (ObjectNode)importOptionsArray.get(0);
+        assertEquals(importOptions.get("archiveFileName").asText(), "movies.zip");
+        assertEquals(importOptions.get("fileSource").asText(), "movies-condensed.tsv");
+        assertTrue(importOptions.get("includeFileSources").asBoolean());
+        assertTrue(importOptions.get("includeArchiveFileName").asBoolean());
+
+        importOptions = (ObjectNode)importOptionsArray.get(1);
+        assertEquals(importOptions.get("fileSource").asText(), "movies.tsv");
+        assertEquals(importOptions.get("archiveFileName").asText(), "movies.zip");
+    }
+
 }

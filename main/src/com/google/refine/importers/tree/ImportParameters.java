@@ -31,10 +31,11 @@ public class ImportParameters {
     protected boolean trimStrings;
     protected boolean storeEmptyStrings;
     protected boolean guessDataType;
-    protected boolean includeFileSources;
-    protected String fileSource;
-    protected boolean includeArchiveFileName;
-    protected String archiveFileName;
+    protected boolean includeFileSources = false;
+    protected String fileSource = null;
+    // TODO: What is the compatibility impact of including new fields
+    protected boolean includeArchiveFileName = false;
+    protected String archiveFileName = null;
 
     public ImportParameters(boolean trimStrings, boolean storeEmptyStrings, boolean guessCellValueTypes,
             boolean includeFileSources, String fileSource, boolean includeArchiveFileName, String archiveFileName) {
@@ -47,8 +48,13 @@ public class ImportParameters {
         this.archiveFileName = archiveFileName;
     }
 
+    public ImportParameters(boolean trimStrings, boolean storeEmptyStrings, boolean guessCellValueTypes,
+            boolean includeFileSources, String fileSource) {
+        this(trimStrings, storeEmptyStrings, guessCellValueTypes, includeFileSources, fileSource, false, "");
+    }
+    
     public ImportParameters(boolean trimStrings, boolean storeEmptyStrings, boolean guessCellValueTypes) {
-        this(trimStrings, storeEmptyStrings, guessCellValueTypes, false, "", false, "");
+        this(trimStrings, storeEmptyStrings, guessCellValueTypes, false, "");
     }
     
 }

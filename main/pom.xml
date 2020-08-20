@@ -77,7 +77,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-resources-plugin</artifactId>
-        <version>3.1.0</version>
+        <version>3.2.0</version>
         <configuration>
           <encoding>UTF-8</encoding>
         </configuration>
@@ -136,7 +136,7 @@
     <plugin>
         <groupId>pl.project13.maven</groupId>
         <artifactId>git-commit-id-plugin</artifactId>
-        <version>4.0.0</version>
+        <version>4.0.0</version> <!-- WARNING: 4.0.1 and higher don't work for JSON output -->
         <executions>
             <execution>
                 <id>get-the-git-infos</id>
@@ -147,7 +147,6 @@
         </executions>
         <configuration>
             <dotGitDirectory>${project.basedir}/.git</dotGitDirectory>
-            <prefix>git</prefix>
             <verbose>false</verbose>
             <generateGitPropertiesFile>true</generateGitPropertiesFile>
             <generateGitPropertiesFilename>${project.build.outputDirectory}/git.properties</generateGitPropertiesFilename>
@@ -159,6 +158,11 @@
                 <always>false</always>
                 <dirty>-dirty</dirty>
             </gitDescribe>
+            <includeOnlyProperties>
+              <includeOnlyProperty>^git.build.(time|version)$</includeOnlyProperty>
+              <includeOnlyProperty>^git.branch</includeOnlyProperty>
+              <includeOnlyProperty>^git.commit.id.(abbrev|full|describe)$</includeOnlyProperty>
+            </includeOnlyProperties>
         </configuration>
       </plugin>
     </plugins>
@@ -174,7 +178,7 @@
     <dependency>
       <groupId>org.openrefine.dependencies</groupId>
       <artifactId>butterfly</artifactId>
-      <version>1.0.3</version>
+      <version>1.0.4</version>
     </dependency>
     <dependency>
       <groupId>org.mozilla</groupId>
@@ -204,7 +208,7 @@
     <dependency>
       <groupId>org.apache.commons</groupId>
       <artifactId>commons-lang3</artifactId>
-      <version>3.10</version>
+      <version>3.11</version>
     </dependency>
     <dependency>
       <groupId>commons-fileupload</groupId>
@@ -219,12 +223,12 @@
     <dependency>
         <groupId>org.apache.commons</groupId>
         <artifactId>commons-text</artifactId>
-        <version>1.8</version>
+        <version>1.9</version>
     </dependency>
     <dependency>
       <groupId>commons-validator</groupId>
       <artifactId>commons-validator</artifactId>
-      <version>1.6</version>
+      <version>1.7</version>
     </dependency>
     <dependency>
       <groupId>velocity</groupId>
@@ -232,9 +236,9 @@
       <version>1.5</version>
     </dependency>
     <dependency>
-      <groupId>org.openrefine.dependencies</groupId>
+      <groupId>org.marc4j</groupId>
       <artifactId>marc4j</artifactId>
-      <version>2.4</version>
+      <version>2.9.1</version>
     </dependency>
     <dependency>
       <groupId>org.apache.commons</groupId>
@@ -269,17 +273,17 @@
     <dependency>
       <groupId>org.openrefine.dependencies</groupId>
       <artifactId>vicino</artifactId>
-      <version>1.1</version>
+      <version>1.2</version>
     </dependency>
     <dependency>
       <groupId>oauth.signpost</groupId>
       <artifactId>signpost-core</artifactId>
-      <version>2.0.0</version>
+      <version>2.1.1</version>
     </dependency>
     <dependency>
       <groupId>oauth.signpost</groupId>
       <artifactId>signpost-commonshttp4</artifactId>
-      <version>2.0.0</version>
+      <version>2.1.1</version>
     </dependency>
     <dependency>
       <groupId>org.clojure</groupId>
@@ -337,16 +341,6 @@
       <version>1.0</version>
     </dependency>
     <dependency>
-      <groupId>org.openrefine.dependencies</groupId>
-      <artifactId>secondstring</artifactId>
-      <version>20100303</version>
-    </dependency>
-    <dependency>
-      <groupId>org.openrefine.dependencies</groupId>
-      <artifactId>arithcode</artifactId>
-      <version>1.1</version>
-    </dependency>
-    <dependency>
       <groupId>com.google.guava</groupId>
       <artifactId>guava</artifactId>
       <version>24.1.1-jre</version>
@@ -367,13 +361,7 @@
     <dependency>
       <groupId>org.testng</groupId>
       <artifactId>testng</artifactId>
-      <version>7.1.0</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.mockito</groupId>
-      <artifactId>mockito-core</artifactId>
-      <version>3.3.3</version>
+      <version>7.3.0</version>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -392,6 +380,12 @@
       <groupId>com.squareup.okhttp3</groupId>
       <artifactId>mockwebserver</artifactId>
       <version>${okhttp.version}</version>
+      <scope>test</scope>
+     </dependency>
+    <dependency>
+      <groupId>org.apache.httpcomponents</groupId>
+      <artifactId>httpmime</artifactId>
+      <version>4.5.12</version>
       <scope>test</scope>
     </dependency>
   </dependencies>

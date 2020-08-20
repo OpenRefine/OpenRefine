@@ -7,38 +7,34 @@ assignees: ''
 
 ---
 
-**Describe the bug**
-<!-- A clear and concise description of what the bug is. -->
+<!-- Describe the bug - Please add a clear and concise description of the bug above this line. You can delete this line if you want. It will be hidden in the final bug report -->
 
-**To Reproduce**
+### To Reproduce
 Steps to reproduce the behavior:
-1. <!-- Go to '...'
-2. Click on '....'
-3. Scroll down to '....'
-4. See error -->
+1. First, do ...
+2. Then, ...
+3. Finally, ...
 
 
 
-**Current Results**
+### Current Results
 <!-- What results occurred or were shown. -->
 
-**Expected behavior**
+### Expected Behavior
 <!-- A clear and concise description of what you expected to happen or to show. -->
 
-**Screenshots**
+### Screenshots
 <!-- If applicable, add screenshots to help explain your problem. -->
 
-**Desktop<!--  (please complete the following information)-->:**
- - OS: <!--  e.g. iOS, Windows 10, Linux, Ubuntu 18.04 -->
+### Versions<!--  (please complete the following information)-->
+ - Operating System: <!--  e.g. iOS, Windows 10, Linux, Ubuntu 18.04 -->
  - Browser Version: <!--  e.g. Chrome 19, Firefox 61, Safari, NOTE: OpenRefine does not support IE but works OK in most cases -->
  - JRE or JDK Version: <!--  output of "java -version" e.g. JRE 1.8.0_181 -->
+ - OpenRefine: <!--  e.g. OpenRefine 3.0 Beta] -->
 
-**OpenRefine <!--(please complete the following information)-->:**
- - Version <!--  e.g. OpenRefine 3.0 Beta] -->
-
-**Datasets**
+### Datasets
 <!-- If you are allowed and are OK with making your data public, it would be awesome if you can include or attach the data causing the issue or a URL pointing to where the data is.
 If you are concerned about keeping your data private, ping us on our [mailing list](https://groups.google.com/forum/#!forum/openrefine) -->
 
-**Additional context**
+### Additional context
 <!-- Add any other context about the problem here. -->

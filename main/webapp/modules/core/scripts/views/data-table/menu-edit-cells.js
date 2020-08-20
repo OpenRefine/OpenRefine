@@ -145,13 +145,13 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
       // but javascript Regexp accepts it and auto escape it
       var pos = p.replace(/\\\//g,'').indexOf("/");
       if (pos != -1) {
-        alert($.i18n('core-views/warning-regex') + " : " + p);
+        alert($.i18n('core-views/warning-regex',p));
         return 0;}
       try {
         var pattern = new RegExp(p);
         return 1;
         } catch (e) {
-          alert($.i18n('core-views/warning-regex') + " : " + p);
+          alert($.i18n('core-views/warning-regex', p));
         return 0;}
     }
     function escapeInputString(s) {
@@ -576,9 +576,9 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
 
     for (var i = 0; i < columns.length; i++) {
       var column2 = columns[i];
-      var option = $('<option>').attr("value", column2.name).text(column2.name).appendTo(elmts.fromColumnSelect);
+      var option = $('<option>').val(column2.name).text(column2.name).appendTo(elmts.fromColumnSelect);
       if (column2.name == column.name) {
-        option.attr("selected", "true");
+        option.prop("selected", "true");
       }
     }
 
@@ -597,12 +597,12 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
 
       for (var k = j + 1; k < columns.length; k++) {
         var column2 = columns[k];
-        $('<option>').attr("value", k - j + 1).text(column2.name).appendTo(elmts.toColumnSelect);
+        $('<option>').val(k - j + 1).text(column2.name).appendTo(elmts.toColumnSelect);
       }
 
       $('<option>')
-        .attr("value", "-1")
-        .attr("selected", "true")
+        .val("-1")
+        .prop("selected", "true")
         .text("(last column)")
         .appendTo(elmts.toColumnSelect);
     };
@@ -694,18 +694,18 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
     for (var i = 0; i < columns.length; i++) {
       var column2 = columns[i];
 
-      var keyOption = $('<option>').attr("value", column2.name).text(column2.name).appendTo(elmts.keyColumnSelect);
+      var keyOption = $('<option>').val(column2.name).text(column2.name).appendTo(elmts.keyColumnSelect);
       if (column2.name == column.name) {
-        keyOption.attr("selected", "true");
+        keyOption.prop("selected", "true");
         valueColumnIndex = i + 1;
       }
 
-      var valueOption = $('<option>').attr("value", column2.name).text(column2.name).appendTo(elmts.valueColumnSelect);
+      var valueOption = $('<option>').val(column2.name).text(column2.name).appendTo(elmts.valueColumnSelect);
       if (i === valueColumnIndex) {
-        valueOption.attr("selected", "true");
+        valueOption.prop("selected", "true");
       }
 
-      $('<option>').attr("value", column2.name).text(column2.name).appendTo(elmts.noteColumnSelect);
+      $('<option>').val(column2.name).text(column2.name).appendTo(elmts.noteColumnSelect);
     }
 
     var currentHeight = dialog.outerHeight();

@@ -52,7 +52,6 @@ import org.testng.annotations.Test;
 
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.google.refine.importers.JsonImporter;
 import com.google.refine.importers.JsonImporter.JSONTreeReader;
 import com.google.refine.importers.tree.TreeImportingParserBase;
 import com.google.refine.importers.tree.TreeReader.Token;
@@ -81,12 +80,12 @@ public class JsonImporterTests extends ImporterTest {
     public void setUp(Method method){
         super.setUp();
         SUT = new JsonImporter();
-        logger.info("About to run test method: " + method.getName());
+        logger.debug("About to run test method: " + method.getName());
     }
 
     @AfterMethod
     public void tearDown(ITestResult result) {
-//        logger.info("Finished test method: " + result.getMethod().getMethodName());
+        logger.debug("Finished test method: " + result.getMethod().getMethodName());
         SUT = null;
         if (inputStream != null) {
             try {
@@ -135,7 +134,6 @@ public class JsonImporterTests extends ImporterTest {
                 metadata,
                 job,
                 "file-source",
-                "archive-file",
                 inputStream,
                 rootColumnGroup,
                 -1,

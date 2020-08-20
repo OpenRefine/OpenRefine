@@ -37,7 +37,7 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
-import java.util.LinkedList;
+import java.util.Collections;
 
 import org.slf4j.LoggerFactory;
 import org.testng.Assert;
@@ -48,7 +48,6 @@ import org.testng.annotations.Test;
 
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.google.refine.importers.XmlImporter;
 import com.google.refine.importers.tree.TreeImportingParserBase;
 import com.google.refine.importing.ImportingJob;
 import com.google.refine.model.ColumnGroup;
@@ -97,7 +96,6 @@ public class XmlImporterTests extends ImporterTest {
     public void canParseSample(){
         RunTest(getSample());
 
-        log(project);
         assertProjectCreated(project, 4, 6);
 
         Row row = project.rows.get(0);
@@ -110,7 +108,6 @@ public class XmlImporterTests extends ImporterTest {
     public void canParseDeeplyNestedSample(){
         RunTest(getDeeplyNestedSample(), getNestedOptions(job, SUT));
 
-        log(project);
         assertProjectCreated(project, 4, 6);
 
         Row row = project.rows.get(0);
@@ -123,7 +120,6 @@ public class XmlImporterTests extends ImporterTest {
     public void canParseSampleWithMixedElement(){
         RunTest(getMixedElementSample(), getNestedOptions(job, SUT));
 
-        log(project);
         assertProjectCreated(project, 4, 6);
         
         Row row = project.rows.get(0);
@@ -147,7 +143,6 @@ public class XmlImporterTests extends ImporterTest {
     public void canParseSampleWithDuplicateNestedElements(){
         RunTest(getSampleWithDuplicateNestedElements());
 
-        log(project);
         assertProjectCreated(project, 4, 12);
 
         Row row = project.rows.get(0);
@@ -163,7 +158,6 @@ public class XmlImporterTests extends ImporterTest {
 
         RunTest(getSampleWithLineBreak());
 
-        log(project);
         assertProjectCreated(project, 4, 6);
 
         Row row = project.rows.get(3);
@@ -177,7 +171,6 @@ public class XmlImporterTests extends ImporterTest {
     public void testElementsWithVaryingStructure(){
         RunTest(getSampleWithVaryingStructure());
 
-        log(project);
         assertProjectCreated(project, 5, 6);
 
         Assert.assertEquals(project.columnModel.getColumnByCellIndex(4).getName(), "book - genre");
@@ -194,7 +187,7 @@ public class XmlImporterTests extends ImporterTest {
     @Test
     public void testElementWithNestedTree(){
         RunTest(getSampleWithTreeStructure());
-        log(project);
+
         assertProjectCreated(project, 5, 6);
 
         Assert.assertEquals(project.columnModel.columnGroups.size(),1);
@@ -254,7 +247,7 @@ public class XmlImporterTests extends ImporterTest {
 
     public static ObjectNode getOptions(ImportingJob job, TreeImportingParserBase parser) {
         ObjectNode options = parser.createParserUIInitializationData(
-                job, new LinkedList<>(), "text/json");
+                job, Collections.emptyList(), "text/xml");
         
         ArrayNode path = ParsingUtilities.mapper.createArrayNode();
         JSONUtilities.append(path, "library");
@@ -266,7 +259,7 @@ public class XmlImporterTests extends ImporterTest {
     
     public static ObjectNode getNestedOptions(ImportingJob job, TreeImportingParserBase parser) {
         ObjectNode options = parser.createParserUIInitializationData(
-                job, new LinkedList<>(), "text/json");
+                job, Collections.emptyList(), "text/xml");
         
         ArrayNode path = ParsingUtilities.mapper.createArrayNode();
         JSONUtilities.append(path, "nest");

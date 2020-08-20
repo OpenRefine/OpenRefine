@@ -71,7 +71,6 @@ public class PCAxisImporter extends TabularImportingParserBase {
         ProjectMetadata metadata,
         ImportingJob job,
         String fileSource,
-        String archiveFileName,
         Reader reader,
         int limit,
         ObjectNode options,
@@ -89,8 +88,6 @@ public class PCAxisImporter extends TabularImportingParserBase {
         
         TabularImportingParserBase.readTable(
             project, metadata, job, dataReader,
-            fileSource, archiveFileName, limit, options, exceptions);
-        
-        super.parseOneFile(project, metadata, job, fileSource, archiveFileName, reader, limit, options, exceptions);
+            fileSource, limit, options, exceptions);
     }
 }
