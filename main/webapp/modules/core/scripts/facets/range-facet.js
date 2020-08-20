@@ -57,7 +57,7 @@ class RangeFacet extends Facet {
     this._initializedUI = false;
   };
 
-  reset = function() {
+  reset() {
     this._from = this._config.min;
     this._to = this._config.max;
     this._sliderWidget.update(
@@ -76,7 +76,7 @@ class RangeFacet extends Facet {
     this._setRangeIndicators();
   };
 
-  getUIState = function() {
+  getUIState() {
     var json = {
         c: this.getJSON(),
         o: this._options
@@ -85,7 +85,7 @@ class RangeFacet extends Facet {
     return json;
   };
 
-  getJSON = function() {
+  getJSON() {
     var o = {
         type: "range",
         name: this._config.name,
@@ -107,7 +107,7 @@ class RangeFacet extends Facet {
     return o;
   };
 
-  hasSelection = function() {
+  hasSelection() {
     if (!this._selectNumeric || !this._selectNonNumeric || !this._selectBlank || !this._selectError) {
       return true;
     }
@@ -116,7 +116,7 @@ class RangeFacet extends Facet {
     (this._to !== null && (!this._initializedUI || this._to < this._config.max));
   };
 
-  _initializeUI = function() {
+  _initializeUI() {
     var self = this;
     this._div
     .empty()
@@ -184,7 +184,7 @@ class RangeFacet extends Facet {
     });
   };
 
-  _renderOtherChoices = function() {
+  _renderOtherChoices() {
     var self = this;
     var container = this._elmts.otherChoicesDiv.empty();
 
@@ -259,11 +259,11 @@ class RangeFacet extends Facet {
     choices.appendTo(container);
   };
 
-  _setRangeIndicators = function() {
+  _setRangeIndicators() {
     this._elmts.statusDiv.html(this._addCommas(this._from.toFixed(2)) + " &mdash; " + this._addCommas(this._to.toFixed(2)));
   };
 
-  _addCommas = function(nStr) {
+  _addCommas(nStr) {
     nStr += '';
     var x = nStr.split('.');
     var x1 = x[0];
@@ -275,7 +275,7 @@ class RangeFacet extends Facet {
     return x1 + x2;
   };
 
-  updateState = function(data) {
+  updateState(data) {
     if ("min" in data && "max" in data) {
       this._error = false;
 
@@ -318,7 +318,7 @@ class RangeFacet extends Facet {
     this.render();
   };
 
-  render = function() {
+  render() {
     if (!this._initializedUI) {
       this._initializeUI();
       this._initializedUI = true;
@@ -357,11 +357,11 @@ class RangeFacet extends Facet {
     this._renderOtherChoices();
   };
 
-  _updateRest = function() {
+  _updateRest() {
     Refine.update({ engineChanged: true });
   };
 
-  _editExpression = function() {
+  _editExpression() {
     var self = this;
     var title = (this._config.columnName) ? 
         ($.i18n('core-facets/edit-based-col')+" " + this._config.columnName) : 

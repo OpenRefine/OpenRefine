@@ -39,11 +39,11 @@ class ScatterplotFacet extends Facet {
     this._initializedUI = false;
   };
 
-  update = function() {
+  update() {
     this._plotAreaSelector.update();
   };
 
-  reset = function() {
+  reset() {
     delete this._config.from_x;
     delete this._config.from_y;
     delete this._config.to_x;
@@ -52,11 +52,11 @@ class ScatterplotFacet extends Facet {
     this._plotAreaSelector.update();
   };
 
-  dispose = function() {
+  dispose() {
     this._elmts.plotImg.imgAreaSelect({ hide : true });
   };
 
-  getUIState = function() {
+  getUIState() {
     var json = {
         c: this.getJSON(),
         o: this._options
@@ -65,21 +65,21 @@ class ScatterplotFacet extends Facet {
     return json;
   };
 
-  getJSON = function() {
+  getJSON() {
     this._config.type = "scatterplot";
     var dot = this._config.dot;
     if (typeof dot == 'number') this._config.dot.toFixed(2);
     return this._config;
   };
 
-  hasSelection = function() {
+  hasSelection() {
     return  ("from_x" in this._config && this._config.from_x !== 0) ||
     ("from_y" in this._config && this._config.from_y !== 0) ||
     ("to_x" in this._config && this._config.to_x !== 1) ||
     ("to_y" in this._config && this._config.to_y !== 1);
   };
 
-  _initializeUI = function() {
+  _initializeUI() {
     var self = this;
     var container = this._div.empty().show();
 
@@ -220,7 +220,7 @@ class ScatterplotFacet extends Facet {
     this._elmts.selectors.find(".buttonset").buttonset();
   };
 
-  _fillSelectionOptions = function(ops) {
+  _fillSelectionOptions(ops) {
     if (this.hasSelection()) {
       ops.x1 = this._config.l * this._config.from_x;
       ops.x2 = this._config.l * this._config.to_x;
@@ -234,7 +234,7 @@ class ScatterplotFacet extends Facet {
     }
   };
 
-  _putSelectionOptions = function(selection) {
+  _putSelectionOptions(selection) {
     if (selection.height === 0 || selection.width === 0) {
       this.reset();
     } else {
@@ -246,19 +246,19 @@ class ScatterplotFacet extends Facet {
     }
   };
 
-  _formulateCurrentImageUrl = function() {
+  _formulateCurrentImageUrl() {
     return this._formulateImageUrl(ui.browsingEngine.getJSON(false, this), { color: "ff6a00" });
   };
 
-  _formulateBaseImageUrl = function() {
+  _formulateBaseImageUrl() {
     return this._formulateImageUrl({},{ color: "888888", dot : this._config.dot * 0.9 });
   };
 
-  _formulateExportImageUrl = function() {
+  _formulateExportImageUrl() {
     return this._formulateImageUrl(ui.browsingEngine.getJSON(false, this), { dot : this._config.dot * 5, l: 500, base_color: "888888" });
   };
 
-  _formulateImageUrl = function(engineConfig, conf) {
+  _formulateImageUrl(engineConfig, conf) {
     var options = {};
     for (var p in this._config) {
       if (this._config.hasOwnProperty(p)) {        
@@ -278,7 +278,7 @@ class ScatterplotFacet extends Facet {
     return "command/core/get-scatterplot?" + $.param(params);
   };
 
-  updateState = function(data) {
+  updateState(data) {
     if ("error" in data) {
       this._error = true;
       this._errorMessage = "error" in data ? data.error : $.i18n('core-facets/unknown-error')+".";
@@ -319,13 +319,13 @@ class ScatterplotFacet extends Facet {
     this.render();
   };
 
-  changePlot = function() {
+  changePlot() {
     this._elmts.plotBaseImg.attr("src", this._formulateBaseImageUrl());
     this._elmts.plotImg.attr("src", this._formulateCurrentImageUrl());
     this._elmts.exportPlotLink.attr("href", this._formulateExportImageUrl());
   };
 
-  render = function() {
+  render() {
     if (!this._initializedUI) {
       this._initializeUI();
       this._initializedUI = true;
@@ -346,7 +346,7 @@ class ScatterplotFacet extends Facet {
     this._elmts.exportPlotLink.attr("href", this._formulateExportImageUrl());
   };
 
-  _updateRest = function() {
+  _updateRest() {
     Refine.update({ engineChanged: true });
   };
 };

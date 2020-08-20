@@ -39,7 +39,7 @@ class Facet {
   	this._minimizeState = false;
   };
 
-  _minimize = function() {
+  _minimize() {
   	if(!this._minimizeState) {
   		this._div.addClass("facet-state-minimize");
   	} else {
@@ -49,7 +49,7 @@ class Facet {
   	this._minimizeState = !this._minimizeState;
   };
 
-  _remove = function() {
+  _remove() {
   	ui.browsingEngine.removeFacet(this);
 
   	this._div = null;
@@ -62,6 +62,6 @@ class Facet {
   	this._options = null;
   };
 
-  dispose = function() {
+  dispose() {
   };
 };

@@ -54,13 +54,13 @@ class ListFacet extends Facet {
     this._update();
   };
 
-  reset = function() {
+  reset() {
     this._selection = [];
     this._blankChoice = null;
     this._errorChoice = null;
   };
 
-  getUIState = function() {
+  getUIState() {
     var json = {
         c: this.getJSON(),
         o: this._options
@@ -72,7 +72,7 @@ class ListFacet extends Facet {
     return json;
   };
 
-  getJSON = function() {
+  getJSON() {
     var o = {
         type: "list",
         name: this._config.name,
@@ -94,13 +94,13 @@ class ListFacet extends Facet {
     return o;
   };
 
-  hasSelection = function() {
+  hasSelection() {
     return this._selection.length > 0 || 
     (this._blankChoice !== null && this._blankChoice.s) || 
     (this._errorChoice !== null && this._errorChoice.s);
   };
 
-  updateState = function(data) {
+  updateState(data) {
     this._data = data;
 
     if ("choices" in data) {
@@ -122,7 +122,7 @@ class ListFacet extends Facet {
     this._update();
   };
 
-  _reSortChoices = function() {
+  _reSortChoices() {
     this._data.choices.sort(this._options.sort === "name" ?
         function(a, b) {
       return a.v.l.toLowerCase().localeCompare(b.v.l.toLowerCase());
@@ -134,7 +134,7 @@ class ListFacet extends Facet {
     );
   };
 
-  _initializeUI = function() {
+  _initializeUI() {
     var self = this;
 
     var facet_id = this._div.attr("id");
@@ -219,7 +219,7 @@ class ListFacet extends Facet {
     }
   };
 
-  _copyChoices = function() {
+  _copyChoices() {
     var self = this;
     var frame = DialogSystem.createDialog();
     frame.width("600px");
@@ -255,7 +255,7 @@ class ListFacet extends Facet {
     textarea.select();
   };
 
-  _update = function(resetScroll) {
+  _update(resetScroll) {
     var self = this;
 
     var invert = this._config.invert;
@@ -475,7 +475,7 @@ class ListFacet extends Facet {
     window.setTimeout(wireEvents, 100);
   }; // end _update()
 
-  _renderBodyControls = function() {
+  _renderBodyControls() {
     var self = this;
     var bodyControls = $('<div>')
     .addClass("facet-body-controls")
@@ -502,7 +502,7 @@ class ListFacet extends Facet {
     });
   };
 
-  _getMetaExpression = function() {
+  _getMetaExpression() {
     var r = Scripting.parse(this._config.expression);
 
     return r.language + ':facetCount(' + [
@@ -512,11 +512,11 @@ class ListFacet extends Facet {
         ].join(', ') + ')';
   };
 
-  _doEdit = function() {
+  _doEdit() {
     new ClusteringDialog(this._config.columnName, this._config.expression);
   };
 
-  _editChoice = function(choice, choiceDiv) {
+  _editChoice(choice, choiceDiv) {
     var self = this;
 
     var menu = MenuSystem.createMenu().addClass("data-table-cell-editor").width("400px");
@@ -615,7 +615,7 @@ class ListFacet extends Facet {
     });
   };
 
-  _select = function(choice, only) {
+  _select(choice, only) {
     if (only) {
       this._selection = [];
       if (this._blankChoice !== null) {
@@ -634,7 +634,7 @@ class ListFacet extends Facet {
     this._updateRest();
   };
 
-  _deselect = function(choice) {
+  _deselect(choice) {
     if (choice === this._errorChoice || choice === this._blankChoice) {
       choice.s = false;
     } else {
@@ -648,7 +648,7 @@ class ListFacet extends Facet {
     this._updateRest();
   };
 
-  _reset = function() {
+  _reset() {
     this._selection = [];
     this._blankChoice = null;
     this._errorChoice = null;
@@ -657,17 +657,17 @@ class ListFacet extends Facet {
     this._updateRest();
   };
 
-  _invert = function() {
+  _invert() {
     this._config.invert = !this._config.invert;
 
     this._updateRest();
   };
 
-  _updateRest = function() {
+  _updateRest() {
     Refine.update({ engineChanged: true });
   };
 
-  _editExpression = function() {
+  _editExpression() {
     var self = this;
     var title = (this._config.columnName) ? 
         ($.i18n('core-facets/edit-based-col')+" " + this._config.columnName) : 
@@ -702,7 +702,7 @@ class ListFacet extends Facet {
     );
   };
 
-  _setChoiceCountLimit = function(choiceCount) {
+  _setChoiceCountLimit(choiceCount) {
     var limit = Math.ceil(choiceCount / 1000) * 1000;
     var s = window.prompt($.i18n('core-facets/set-max-choices'), limit);
     if (s) {

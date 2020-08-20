@@ -47,12 +47,12 @@ class TextSearchFacet extends Facet {
     this._update();
   };
 
-  reset = function() {
+  reset() {
     this._query = null;
     this._div.find(".input-container input").each(function() { this.value = ""; });
   };
 
-  getUIState = function() {
+  getUIState() {
     var json = {
         c: this.getJSON(),
         o: this._options
@@ -61,7 +61,7 @@ class TextSearchFacet extends Facet {
     return json;
   };
 
-  getJSON = function() {
+  getJSON() {
     var o = {
         type: "text",
         name: this._config.name,
@@ -74,11 +74,11 @@ class TextSearchFacet extends Facet {
     return o;
   };
 
-  hasSelection = function() {
+  hasSelection() {
     return this._query !== null;
   };
 
-  _initializeUI = function() {
+  _initializeUI() {
     var self = this;
     var counter = this._uniqueIdForLabels();
     this._div.empty().show().html(
@@ -151,15 +151,15 @@ class TextSearchFacet extends Facet {
 
   };
 
-  updateState = function(data) {
+  updateState(data) {
     this._update();
   };
 
-  render = function() {
+  render() {
     this._setRangeIndicators();
   };
 
-  _reset = function() {
+  _reset() {
     this._query = null;
     this._config.mode = "text";
     this._config.caseSensitive = false;
@@ -171,13 +171,13 @@ class TextSearchFacet extends Facet {
     this._updateRest();
   };
 
-  _invert = function() {
+  _invert() {
     this._config.invert = !this._config.invert;
 
     this._updateRest();
   };
 
-  _update = function () {
+  _update() {
     var invert = this._config.invert;
     if (invert) {
       this._elmts.facetTitle.addClass("facet-title-inverted");
@@ -188,7 +188,7 @@ class TextSearchFacet extends Facet {
     }
   };
 
-  _scheduleUpdate = function() {
+  _scheduleUpdate() {
     if (!this._timerID) {
       var self = this;
       this._timerID = window.setTimeout(function() {
@@ -198,11 +198,11 @@ class TextSearchFacet extends Facet {
     }
   };
 
-  _updateRest = function() {
+  _updateRest() {
     Refine.update({ engineChanged: true });
   };
 
-  _uniqueIdForLabels = function() {
+  _uniqueIdForLabels() {
     return this.textSearchFacetCounterForLabels++;
   };
 };

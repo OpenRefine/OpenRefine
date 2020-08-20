@@ -58,7 +58,7 @@ class TimeRangeFacet extends Facet{
     this._initializedUI = false;
   };
 
-  reset = function() {
+  reset() {
     this._from = this._config.min;
     this._to = this._config.max;
     this._sliderWidget.update(
@@ -77,7 +77,7 @@ class TimeRangeFacet extends Facet{
     this._setRangeIndicators();
   };
 
-  getUIState = function() {
+  getUIState() {
     var json = {
         c: this.getJSON(),
         o: this._options
@@ -86,7 +86,7 @@ class TimeRangeFacet extends Facet{
     return json;
   };
 
-  getJSON = function() {
+  getJSON() {
     var o = {
         type: "timerange",
         name: this._config.name,
@@ -108,7 +108,7 @@ class TimeRangeFacet extends Facet{
     return o;
   };
 
-  hasSelection = function() {
+  hasSelection() {
     if (!this._selectTime || !this._selectNonTime || !this._selectBlank || !this._selectError) {
       return true;
     }
@@ -117,7 +117,7 @@ class TimeRangeFacet extends Facet{
     (this._to !== null && (!this._initializedUI || this._to < this._config.max));
   };
 
-  _initializeUI = function() {
+  _initializeUI() {
     var self = this;
     this._div
     .empty()
@@ -185,7 +185,7 @@ class TimeRangeFacet extends Facet{
     });
   };
 
-  _renderOtherChoices = function() {
+  _renderOtherChoices() {
     var self = this;
     var container = this._elmts.otherChoicesDiv.empty();
 
@@ -260,7 +260,7 @@ class TimeRangeFacet extends Facet{
     choices.appendTo(container);
   };
 
-  _setRangeIndicators = function() {
+  _setRangeIndicators() {
     var fromDate = new Date(this._from);
     var toDate = new Date(this._to);
 
@@ -277,7 +277,7 @@ class TimeRangeFacet extends Facet{
     }
   };
 
-  _addCommas = function(nStr) {
+  _addCommas(nStr) {
     nStr += '';
     x = nStr.split('.');
     x1 = x[0];
@@ -289,7 +289,7 @@ class TimeRangeFacet extends Facet{
     return x1 + x2;
   };
 
-  updateState = function(data) {
+  updateState(data) {
     if ("min" in data && "max" in data) {
       this._error = false;
 
@@ -334,7 +334,7 @@ class TimeRangeFacet extends Facet{
     this.render();
   };
 
-  render = function() {
+  render() {
     if (!this._initializedUI) {
       this._initializeUI();
       this._initializedUI = true;
@@ -373,11 +373,11 @@ class TimeRangeFacet extends Facet{
     this._renderOtherChoices();
   };
 
-  _updateRest = function() {
+  _updateRest() {
     Refine.update({ engineChanged: true });
   };
 
-  _editExpression = function() {
+  _editExpression() {
     var self = this;
     var title = (this._config.columnName) ? 
         ($.i18n('core-facets/edit-based-col')+" " + this._config.columnName) : 
