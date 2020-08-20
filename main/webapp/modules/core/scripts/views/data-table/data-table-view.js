@@ -424,9 +424,27 @@ DataTableView.prototype._renderDataTables = function(table, tableHeader) {
   this._adjustNextSetClasses();
 
   var prevOperationSet = false;
+  var scrollEvent = function(positionNextSet, positionLastElement, positionPrevSet, positionFirstElement, evt) {
+    if(!prevOperationSet) {
+      if(self._downwardDirection) {
+        if((positionNextSet.top >= 0 && positionNextSet.bottom <= window.innerHeight) || 
+          (positionLastElement.top < window.innerHeight && positionLastElement.top > 0)) {
+          self._onBottomTable(self._scrollTop, table, table.parentNode.parentNode, evt);
+          prevOperationSet = true;
+        }
+      }
+      else if(!self._downwardDirection) {
+        if(positionPrevSet.top >= 0 && positionPrevSet.bottom <= window.innerHeight || 
+          (positionFirstElement.bottom > 0 && positionFirstElement.bottom < window.innerHeight)) {
+          self._onTopTable(self._scrollTop, table, table.parentNode.parentNode, evt);
+          prevOperationSet = true;
+        }
+      }
+    }
+  };
+
   $(table.parentNode.parentNode).bind('scroll', function(evt) {
     self._downwardDirection = self._scrollTop < $(this).scrollTop();
-
     try {
       var nextSet = document.querySelectorAll('.load-next-set');
       var prevSet = nextSet[0];
@@ -441,26 +459,14 @@ DataTableView.prototype._renderDataTables = function(table, tableHeader) {
     var positionLastElement = lastElement.getBoundingClientRect();
     var firstElement = document.querySelector('.first-row');
     var positionFirstElement = firstElement.getBoundingClientRect();
-    
-    if(!prevOperationSet) {
-      if(self._downwardDirection) {
-        if((positionNextSet.top >= 0 && positionNextSet.bottom <= window.innerHeight) || 
-          (positionLastElement.top < window.innerHeight && positionLastElement.top > 0)) {
-          self._onBottomTable(self._scrollTop, table, this, evt);
-        }
-      } else {
-        if(positionPrevSet.top >= 0 && positionPrevSet.bottom <= window.innerHeight || 
-          (positionFirstElement.bottom > 0 && positionFirstElement.bottom < window.innerHeight)) {
-          self._onTopTable(self._scrollTop, table, this, evt);
-        }
-      }
-      prevOperationSet = true;
-    }
 
-    clearTimeout($.data(this, 'resetPrevOperationSet'));
-    $.data(this, 'resetPrevOperationSet', setTimeout(function() {
-      prevOperationSet = false;
-    }, 50));
+    scrollEvent(positionNextSet, positionLastElement, positionPrevSet, positionFirstElement, evt);
+
+    if(prevOperationSet) {
+      $.data(table.parentNode.parentNode, 'resetPrevOperationSet', setTimeout(function() {
+        prevOperationSet = false;
+      }, 250));
+    }
 
     if((positionLastElement.top <= 0 && positionLastElement.bottom >= 0) || (positionFirstElement.top < self._headerTop + 1 && positionFirstElement.bottom >= window.innerHeight)) {
       clearTimeout($.data(this, 'scrollTimer'));
