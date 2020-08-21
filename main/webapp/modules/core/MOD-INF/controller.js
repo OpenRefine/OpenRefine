@@ -205,7 +205,7 @@ function registerImporting() {
    */
 
   IM.registerFormat("text","core-buttons/text" ); // generic format, no parser to handle it
-  IM.registerFormat("text/line-based", "core-buttons/PC/Axis/text", "LineBasedParserUI",
+  IM.registerFormat("text/line-based", "core-buttons/text/line-based", "LineBasedParserUI",
       new Packages.com.google.refine.importers.LineBasedImporter());
   IM.registerFormat("text/line-based/*sv", "core-buttons/text/line-based/*sv", "SeparatorBasedParserUI",
       new Packages.com.google.refine.importers.SeparatorBasedImporter());
