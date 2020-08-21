@@ -204,7 +204,7 @@ function registerImporting() {
    *    they also generate defaults for the client-side UIs to initialize.
    */
 
-  IM.registerFormat("text","core-buttons/text" ); // generic format, no parser to handle it
+  IM.registerFormat("text", "core-buttons/text" ); // generic format, no parser to handle it
   IM.registerFormat("text/line-based", "core-buttons/text/line-based", "LineBasedParserUI",
       new Packages.com.google.refine.importers.LineBasedImporter());
   IM.registerFormat("text/line-based/*sv", "core-buttons/text/line-based/*sv", "SeparatorBasedParserUI",

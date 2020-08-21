@@ -764,7 +764,7 @@
     "core-buttons/text/json": "JSON files",
     "core-buttons/text/marc": "MARC files",
     "core-buttons/text/wiki": "Wikitext",
-    "core-buttons/PC/Axis/text": "PC-Axis text files",
+    "core-buttons/text/line-based/pc-axis": "PC-Axis text files",
     "core-buttons/text": "Text files",
     "core-buttons/binary": "Binary files",
     "core-buttons/service": "Services"
