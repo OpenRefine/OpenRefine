@@ -35,19 +35,28 @@ package com.google.refine.expr.functions.math;
 
 import java.util.Properties;
 
+import com.google.refine.expr.EvalError;
+import com.google.refine.grel.ControlFunctionRegistry;
 import com.google.refine.grel.Function;
+
+
+
 
 public class Pow implements Function {
 
     @Override
     public Object call(Properties bindings, Object[] args) {
-        if (args.length == 2 && args[0] instanceof Number && args[1] instanceof Number) {
+        if((args.length != 2)){
+        return new EvalError(ControlFunctionRegistry.getFunctionName(this) + "  expects two numbers");  
+        }
+        else if(! (args[1] instanceof Number) || ! (args[0] instanceof Number)){
+        return new EvalError(ControlFunctionRegistry.getFunctionName(this) + "  arguments is not an instance of number");
+        }else{
             return Math.pow(
                 ((Number) args[0]).doubleValue(),
                 ((Number) args[1]).doubleValue()
             );
         }
-        return null;
     }
 
     @Override
