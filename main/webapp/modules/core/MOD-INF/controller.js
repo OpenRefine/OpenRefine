@@ -204,33 +204,33 @@ function registerImporting() {
    *    they also generate defaults for the client-side UIs to initialize.
    */
 
-  IM.registerFormat("text", "Text files"); // generic format, no parser to handle it
-  IM.registerFormat("text/line-based", "Line-based text files", "LineBasedParserUI",
+  IM.registerFormat("text","core-buttons/text" ); // generic format, no parser to handle it
+  IM.registerFormat("text/line-based", "core-buttons/PC/Axis/text", "LineBasedParserUI",
       new Packages.com.google.refine.importers.LineBasedImporter());
-  IM.registerFormat("text/line-based/*sv", "CSV / TSV / separator-based files", "SeparatorBasedParserUI",
+  IM.registerFormat("text/line-based/*sv", "core-buttons/text/line-based/*sv", "SeparatorBasedParserUI",
       new Packages.com.google.refine.importers.SeparatorBasedImporter());
-  IM.registerFormat("text/line-based/fixed-width", "Fixed-width field text files", "FixedWidthParserUI",
+  IM.registerFormat("text/line-based/fixed-width", "core-buttons/text/line-based/fixed-width", "FixedWidthParserUI",
       new Packages.com.google.refine.importers.FixedWidthImporter());
 
-  IM.registerFormat("text/rdf/nt", "RDF/N-Triples files", "RdfTriplesParserUI", 
+  IM.registerFormat("text/rdf/nt", "core-buttons/text/rdf/nt", "RdfTriplesParserUI", 
               new Packages.com.google.refine.importers.RdfTripleImporter(Packages.com.google.refine.importers.RdfTripleImporter.Mode.NT));
-  IM.registerFormat("text/rdf/n3", "RDF/N3 files", "RdfTriplesParserUI", 
+  IM.registerFormat("text/rdf/n3", "core-buttons/text/rdf/n3", "RdfTriplesParserUI", 
           new Packages.com.google.refine.importers.RdfTripleImporter(Packages.com.google.refine.importers.RdfTripleImporter.Mode.N3));
-  IM.registerFormat("text/rdf/ttl", "RDF/Turtle files", "RdfTriplesParserUI", 
+  IM.registerFormat("text/rdf/ttl", "core-buttons/text/rdf/ttl", "RdfTriplesParserUI", 
                   new Packages.com.google.refine.importers.RdfTripleImporter(Packages.com.google.refine.importers.RdfTripleImporter.Mode.TTL));
-  IM.registerFormat("text/rdf/xml", "RDF/XML files", "RdfTriplesParserUI", new Packages.com.google.refine.importers.RdfXmlTripleImporter());
-  IM.registerFormat("text/rdf/ld+json", "JSON-LD files", "RdfTriplesParserUI", new Packages.com.google.refine.importers.RdfJsonldTripleImporter());
+  IM.registerFormat("text/rdf/xml", "core-buttons/text/rdf/xml", "RdfTriplesParserUI", new Packages.com.google.refine.importers.RdfXmlTripleImporter());
+  IM.registerFormat("text/rdf/ld+json", "core-buttons/text/rdf/ld+json", "RdfTriplesParserUI", new Packages.com.google.refine.importers.RdfJsonldTripleImporter());
 
-  IM.registerFormat("text/xml", "XML files", "XmlParserUI", new Packages.com.google.refine.importers.XmlImporter());
-  IM.registerFormat("binary/text/xml/xls/xlsx", "Excel files", "ExcelParserUI", new Packages.com.google.refine.importers.ExcelImporter());
-  IM.registerFormat("text/xml/ods", "Open Document Format spreadsheets (.ods)", "ExcelParserUI", new Packages.com.google.refine.importers.OdsImporter());
-  IM.registerFormat("text/json", "JSON files", "JsonParserUI", new Packages.com.google.refine.importers.JsonImporter());
-  IM.registerFormat("text/marc", "MARC files", "XmlParserUI", new Packages.com.google.refine.importers.MarcImporter());
-  IM.registerFormat("text/wiki", "Wikitext", "WikitextParserUI", new Packages.com.google.refine.importers.WikitextImporter());
+  IM.registerFormat("text/xml", "core-buttons/text/xml", "XmlParserUI", new Packages.com.google.refine.importers.XmlImporter());
+  IM.registerFormat("binary/text/xml/xls/xlsx", "core-buttons/binary/text/xml/xls/xlsx", "ExcelParserUI", new Packages.com.google.refine.importers.ExcelImporter());
+  IM.registerFormat("text/xml/ods", "core-buttons/text/xml/ods", "ExcelParserUI", new Packages.com.google.refine.importers.OdsImporter());
+  IM.registerFormat("text/json", "core-buttons/text/json", "JsonParserUI", new Packages.com.google.refine.importers.JsonImporter());
+  IM.registerFormat("text/marc", "core-buttons/text/marc", "XmlParserUI", new Packages.com.google.refine.importers.MarcImporter());
+  IM.registerFormat("text/wiki", "core-buttons/text/wiki", "WikitextParserUI", new Packages.com.google.refine.importers.WikitextImporter());
 
-  IM.registerFormat("binary", "Binary files"); // generic format, no parser to handle it
+  IM.registerFormat("binary", "core-buttons/binary"); // generic format, no parser to handle it
 
-  IM.registerFormat("service", "Services"); // generic format, no parser to handle it
+  IM.registerFormat("service", "core-buttons/service"); // generic format, no parser to handle it
 
   /*
    *  Extension to format mappings
