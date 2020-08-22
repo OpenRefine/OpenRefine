@@ -45,7 +45,6 @@ import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 import org.powermock.api.mockito.PowerMockito;
-import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.slf4j.LoggerFactory;
 import org.testng.Assert;
 import org.testng.annotations.AfterMethod;
@@ -58,7 +57,7 @@ import com.google.refine.model.ReconCandidate;
 import com.google.refine.model.recon.ReconJob;
 import com.google.refine.model.recon.StandardReconConfig;
 
-@PrepareForTest(WikitextImporter.class)
+
 public class WikitextImporterTests extends ImporterTest {
 
     private WikitextImporter importer = null;

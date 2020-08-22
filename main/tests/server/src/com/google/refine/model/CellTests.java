@@ -38,8 +38,6 @@ import static org.mockito.Mockito.when;
 import org.testng.annotations.Test;
 
 import com.google.refine.expr.EvalError;
-import com.google.refine.model.Cell;
-import com.google.refine.model.Recon;
 import com.google.refine.util.Pool;
 import com.google.refine.util.TestUtils;
 

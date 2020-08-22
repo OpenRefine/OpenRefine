@@ -28,7 +28,6 @@ package com.google.refine.expr.functions.html;
 
 import org.testng.annotations.Test;
 
-import com.google.refine.expr.functions.html.InnerHtml;
 import com.google.refine.util.TestUtils;
 
 public class InnerHtmlTests {
