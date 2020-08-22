@@ -321,7 +321,7 @@
     "core-facets/no-rotation": "回転なし",
     "core-project/use-facets": "ファセットとフィルタを使う",
     "core-project/extract-history": "操作履歴の抜き出し",
-    "core-project/refreshing-facet": "ファセットを更新中…",
+    "core-project/refreshing-facet": "更新中…",
     "core-project/cancel-all": "すべてをキャンセル",
     "core-project/excel": "Excel (.xls)",
     "core-project/canceling": "取り消し中…",
