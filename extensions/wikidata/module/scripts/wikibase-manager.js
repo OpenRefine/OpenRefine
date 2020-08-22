@@ -102,7 +102,6 @@ WikibaseManager.saveWikibases = function () {
 
 WikibaseManager.loadWikibases = function (onDone) {
   $.ajax({
-    async: true,
     url: "command/core/get-preference?" + $.param({
       name: "wikibase.manifests"
     }),

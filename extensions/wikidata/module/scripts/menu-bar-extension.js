@@ -52,7 +52,7 @@ WikibaseExporterMenuBar.exportTo = function (format) {
   $(form).css("display", "none")
       .attr("method", "post")
       .attr("action", "command/core/export-rows/" + targetUrl)
-      .attr("target", "gridworks-export-" + format);
+      .attr("target", "openrefine-export-" + format);
   $('<input />')
       .attr("name", "engine")
       .val(JSON.stringify(ui.browsingEngine.getJSON()))
@@ -68,7 +68,7 @@ WikibaseExporterMenuBar.exportTo = function (format) {
 
   document.body.appendChild(form);
 
-  window.open("about:blank", "gridworks-export");
+  window.open("about:blank", "openrefine-export");
   form.submit();
 
   document.body.removeChild(form);
