@@ -33,11 +33,12 @@ import java.util.Properties;
 
 import org.testng.annotations.Test;
 
+import com.google.refine.RefineTest;
 import com.google.refine.expr.EvalError;
 import com.google.refine.grel.Function;
 import com.google.refine.util.TestUtils;
 
-public class ToNumberTests {
+public class ToNumberTests extends RefineTest {
 
     private static final Double EPSILON = 0.000001;
     static Properties bindings = new Properties();
@@ -56,5 +57,20 @@ public class ToNumberTests {
         assertTrue((Double)f.call(bindings, new Object[] {"12345.6789"}) - Double.valueOf(12345.6789) < EPSILON);
         assertTrue(f.call(bindings, new Object[] {"abc"}) instanceof EvalError);
         }
+
+    @Test
+    public void testToNumber() {
+        assertTrue(invoke("toNumber") instanceof EvalError);
+        assertTrue(invoke("toNumber", (Object) null) instanceof EvalError);
+        assertTrue(invoke("toNumber", "") instanceof EvalError);
+        assertTrue(invoke("toNumber", "string") instanceof EvalError);
+        assertEquals(invoke("toNumber", "0.0"), 0.0);
+        assertEquals(invoke("toNumber", "123"), Long.valueOf(123));
+        assertTrue(Math.abs((Double) invoke("toNumber", "123.456") - 123.456) < EPSILON);
+        assertTrue(Math.abs((Double) invoke("toNumber", "001.234") - 1.234) < EPSILON);
+        assertTrue(Math.abs((Double) invoke("toNumber", "1e2") - 100.0) < EPSILON);
+        assertTrue(Math.abs((Double) invoke("toNumber", Double.parseDouble("100.0")) - 100.0) < EPSILON);
+    }
+
 }
 
