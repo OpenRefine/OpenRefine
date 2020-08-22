@@ -41,8 +41,6 @@ import com.google.refine.expr.EvalError;
 import com.google.refine.expr.HasFieldsListImpl;
 import com.google.refine.expr.WrappedCell;
 import com.google.refine.expr.WrappedRow;
-import com.google.refine.grel.ControlFunctionRegistry;
-import com.google.refine.grel.Function;
 import com.google.refine.model.Cell;
 import com.google.refine.model.Project;
 import com.google.refine.model.Row;
@@ -52,7 +50,6 @@ import com.google.refine.util.TestUtils;
  * Test cases for cross function.
  */
 public class CrossTests extends RefineTest {
-    static Properties bindings;
     private static OffsetDateTime dateTimeValue = OffsetDateTime.parse("2017-05-12T05:45:00+00:00", DateTimeFormatter.ISO_OFFSET_DATE_TIME);
     
     @Override
@@ -374,22 +371,6 @@ public class CrossTests extends RefineTest {
                 "cross expects a cell or value, a project name to look up (optional), and a column name in that project (optional)");
     }
     
-    /**
-     * Lookup a control function by name and invoke it with a variable number of args
-     */
-    private static Object invoke(String name,Object... args) {
-        // registry uses static initializer, so no need to set it up
-        Function function = ControlFunctionRegistry.getFunction(name);
-        if (function == null) {
-            throw new IllegalArgumentException("Unknown function "+name);
-        }
-        if (args == null) {
-            return function.call(bindings,new Object[0]);
-        } else {
-            return function.call(bindings,args);
-        }
-    }
-
     @Test
     public void serializeCross() {
         String json = "{\"description\":\"Looks up the given value in the target column of the target project, returns an array of matched rows. Two values match if and only if they have the same string representation. " +

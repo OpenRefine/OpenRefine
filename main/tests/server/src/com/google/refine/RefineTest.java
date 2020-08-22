@@ -43,6 +43,7 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Properties;
 
 import org.apache.commons.io.FileUtils;
 import org.powermock.modules.testng.PowerMockTestCase;
@@ -57,6 +58,8 @@ import com.fasterxml.jackson.databind.node.BooleanNode;
 import com.fasterxml.jackson.databind.node.IntNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.databind.node.TextNode;
+import com.google.refine.grel.ControlFunctionRegistry;
+import com.google.refine.grel.Function;
 import com.google.refine.importers.SeparatorBasedImporter;
 import com.google.refine.importing.ImportingJob;
 import com.google.refine.importing.ImportingManager;
@@ -74,6 +77,8 @@ import edu.mit.simile.butterfly.ButterflyModule;
  * A base class containing various utilities to help testing Refine.
  */
 public class RefineTest extends PowerMockTestCase {
+
+    protected static Properties bindings = null;
 
     protected Logger logger;
     
@@ -306,6 +311,30 @@ public class RefineTest extends PowerMockTestCase {
     static public void verifyGetArrayOption(String name, ObjectNode options){
         verify(options, times(1)).has(name);
         verify(options, times(1)).get(name);
+    }
+
+    /**
+     * Lookup a control function by name and invoke it with a variable number of args
+     */
+    protected static Object invoke(String name, Object... args) {
+        // registry uses static initializer, so no need to set it up
+        Function function = ControlFunctionRegistry.getFunction(name);
+        if (bindings == null) {
+            bindings = new Properties();
+        }
+        if (function == null) {
+            throw new IllegalArgumentException("Unknown function "+name);
+        }
+        if (args == null) {
+            return function.call(bindings,new Object[0]);
+        } else {
+            return function.call(bindings,args);
+        }
+    }
+
+    @AfterMethod
+    public void TearDown() throws Exception {
+        bindings = null;
     }
 
     protected ButterflyModule getCoreModule() {
