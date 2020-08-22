@@ -26,7 +26,7 @@
  ******************************************************************************/
 package com.google.refine.expr.functions.strings;
 
-import static org.testng.AssertJUnit.assertEquals;
+import static org.testng.Assert.assertEquals;
 
 import org.testng.annotations.Test;
 
@@ -42,8 +42,13 @@ public class UnescapeTests extends RefineTest {
 
     @Test
     public void testUnescape() {
-        assertEquals(invoke("unescape", "&Auml;", "html"),"Ä");
-        assertEquals(invoke("unescape", "\\u00C4", "javascript"),"Ä");
+        assertEquals(invoke("unescape", "&Auml;", "html"), "Ä");
+        assertEquals(invoke("unescape", "\\u00C4", "javascript"), "Ä");
+
+        assertEquals(invoke("unescape", "\"Test\"", "csv"), "Test"); // Apache TEXT-149 https://github.com/apache/commons-text/pull/119
+        assertEquals(invoke("unescape", "\"This \"\"is\"\" a test\"", "csv"), "This \"is\" a test");
+        assertEquals(invoke("unescape", "\"\n\"", "csv"), "\n");
+        assertEquals(invoke("unescape", "\"a, b\"", "csv"), "a, b");
     }
 
 }

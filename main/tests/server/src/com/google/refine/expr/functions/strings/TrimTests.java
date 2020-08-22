@@ -26,8 +26,6 @@
  ******************************************************************************/
 package com.google.refine.expr.functions.strings;
 
-import java.util.Properties;
-
 import org.slf4j.LoggerFactory;
 import org.testng.Assert;
 import org.testng.annotations.BeforeTest;
@@ -40,7 +38,6 @@ import com.google.refine.util.TestUtils;
 
 public class TrimTests extends RefineTest {
 
-    static Properties bindings;
     private static String NBSP = "\u00A0";
     private static String ENQUAD = "\u2000";
     private static String EMQUAD = "\u2001";

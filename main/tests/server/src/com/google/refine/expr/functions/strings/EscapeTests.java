@@ -43,28 +43,32 @@ public class EscapeTests extends RefineTest {
 
     @Test
     public void testEscape() {
-      assertNull(invoke("escape"));
-      assertEquals(invoke("escape",null,"xml"),"");
-      assertEquals(invoke("escape", "mystring", "html"),"mystring");
-      assertEquals(invoke("escape", "mystring", "xml"),"mystring");
-      assertEquals(invoke("escape", "mystring", "csv"),"mystring");
-      assertEquals(invoke("escape", "mystring", "url"),"mystring");
-      assertEquals(invoke("escape", "mystring", "javascript"),"mystring");
-      assertEquals(invoke("escape", 1, "html"),"1");
-      assertEquals(invoke("escape", 1, "xml"),"1");
-      assertEquals(invoke("escape", 1, "csv"),"1");
-      assertEquals(invoke("escape", 1, "url"),"1");
-      assertEquals(invoke("escape", 1, "javascript"),"1");
-      assertEquals(invoke("escape", Long.parseLong("1"), "html"),"1");
-      assertEquals(invoke("escape", Long.parseLong("1"), "xml"),"1");
-      assertEquals(invoke("escape", Long.parseLong("1"), "csv"),"1");
-      assertEquals(invoke("escape", Long.parseLong("1"), "url"),"1");
-      assertEquals(invoke("escape", Long.parseLong("1"), "javascript"),"1");
-      assertEquals(invoke("escape", Double.parseDouble("1.23"), "html"),"1.23");
-      assertEquals(invoke("escape", Double.parseDouble("1.23"), "xml"),"1.23");
-      assertEquals(invoke("escape", Double.parseDouble("1.23"), "csv"),"1.23");
-      assertEquals(invoke("escape", Double.parseDouble("1.23"), "url"),"1.23");
-      assertEquals(invoke("escape", Double.parseDouble("1.23"), "javascript"),"1.23");
-   }
+        assertNull(invoke("escape"));
+        assertEquals(invoke("escape",null,"xml"), "");
+        assertEquals(invoke("escape", "mystring", "html"), "mystring");
+        assertEquals(invoke("escape", "mystring", "xml"), "mystring");
+        assertEquals(invoke("escape", "mystring", "csv"), "mystring");
+        assertEquals(invoke("escape", "mystring", "url"), "mystring");
+        assertEquals(invoke("escape", "mystring", "javascript"), "mystring");
+        assertEquals(invoke("escape", 1, "html") ,"1");
+        assertEquals(invoke("escape", 1, "xml"), "1");
+        assertEquals(invoke("escape", 1, "csv"), "1");
+        assertEquals(invoke("escape", 1, "url"), "1");
+        assertEquals(invoke("escape", 1, "javascript"), "1");
+        assertEquals(invoke("escape", Long.parseLong("1"), "html"), "1");
+        assertEquals(invoke("escape", Long.parseLong("1"), "xml"), "1");
+        assertEquals(invoke("escape", Long.parseLong("1"), "csv"), "1");
+        assertEquals(invoke("escape", Long.parseLong("1"), "url"), "1");
+        assertEquals(invoke("escape", Long.parseLong("1"), "javascript"), "1");
+        assertEquals(invoke("escape", Double.parseDouble("1.23"), "html"), "1.23");
+        assertEquals(invoke("escape", Double.parseDouble("1.23"), "xml"), "1.23");
+        assertEquals(invoke("escape", Double.parseDouble("1.23"), "csv"), "1.23");
+        assertEquals(invoke("escape", Double.parseDouble("1.23"), "url"), "1.23");
+        assertEquals(invoke("escape", Double.parseDouble("1.23"), "javascript"), "1.23");
+
+        assertEquals("\",\"", invoke("escape", ",", "csv")); // commas get quoted
+        assertEquals("\"\n\"", invoke("escape", "\n", "csv")); // newlines get quoted
+        assertEquals("\"\"\"\"", invoke("escape", "\"", "csv")); // quotes get doubled
+    }
 }
 

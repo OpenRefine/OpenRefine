@@ -48,9 +48,9 @@ public class ToStringTests extends RefineTest {
     public void testToString() throws CalendarParserException {
         assertTrue(invoke("toString") instanceof EvalError);
         assertEquals(invoke("toString", (Object) null), "");
-        assertEquals(invoke("toString", Long.valueOf(100)),"100");
-        assertEquals(invoke("toString", Double.valueOf(100.0)),"100.0");
-        assertEquals(invoke("toString", Double.valueOf(100.0),"%.0f"),"100");
+        assertEquals(invoke("toString", Long.valueOf(100)), "100");
+        assertEquals(invoke("toString", Double.valueOf(100.0)), "100.0");
+        assertEquals(invoke("toString", Double.valueOf(100.0),"%.0f"), "100");
 
         String inputDate = "2013-06-01";
         assertEquals(invoke("toString", CalendarParser.parseAsOffsetDateTime(inputDate)), "2013-06-01T00:00:00Z");
@@ -61,8 +61,8 @@ public class ToStringTests extends RefineTest {
         String inputDateTime = "2013-06-01 13:12:11";
         assertEquals(invoke("toString", CalendarParser.parseAsOffsetDateTime(inputDateTime)), "2013-06-01T13:12:11Z");
         assertEquals(invoke("toString", CalendarParser.parseAsOffsetDateTime(inputDateTime), "yyyy-MM-dd"), "2013-06-01");
-        assertEquals(invoke("toString", CalendarParser.parseAsOffsetDateTime(inputDateTime), "yyyy-MM-dd hh:mm:ss"),"2013-06-01 01:12:11");
-        assertEquals(invoke("toString", CalendarParser.parseAsOffsetDateTime(inputDateTime), "yyyy-MM-dd HH:mm:ss"),"2013-06-01 13:12:11");
+        assertEquals(invoke("toString", CalendarParser.parseAsOffsetDateTime(inputDateTime), "yyyy-MM-dd hh:mm:ss"), "2013-06-01 01:12:11");
+        assertEquals(invoke("toString", CalendarParser.parseAsOffsetDateTime(inputDateTime), "yyyy-MM-dd HH:mm:ss"), "2013-06-01 13:12:11");
     }
 
 }
