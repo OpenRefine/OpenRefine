@@ -42,7 +42,6 @@ import org.testng.annotations.Test;
 
 import com.google.refine.RefineTest;
 import com.google.refine.commands.Command;
-import com.google.refine.commands.expr.PreviewExpressionCommand;
 import com.google.refine.model.Project;
 import com.google.refine.util.TestUtils;
 
@@ -80,7 +79,7 @@ public class PreviewExpressionCommandTests extends RefineTest {
                 "       \"results\" : [ \"d_u\", \"h_u\" ]\n" + 
                 "     }";
         command.doPost(request, response);
-        TestUtils.assertEqualAsJson(json, writer.toString());
+        TestUtils.assertEqualsAsJson(writer.toString(), json);
     }
     
     @Test
@@ -97,6 +96,6 @@ public class PreviewExpressionCommandTests extends RefineTest {
                 "       \"type\" : \"parser\"\n" + 
                 "     }";
         command.doPost(request, response);
-        TestUtils.assertEqualAsJson(json, writer.toString());
+        TestUtils.assertEqualsAsJson(writer.toString(), json);
     }
 }

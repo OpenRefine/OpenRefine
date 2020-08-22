@@ -112,6 +112,6 @@ public class EditOneCellCommandTests extends RefineTest {
 		command.doPost(request, response);
 		
 		assertEquals("c", project.rows.get(1).cells.get(0).value);
-		TestUtils.assertEqualAsJson("{\"code\":\"error\",\"message\":\"Missing or invalid csrf_token parameter\"}", writer.toString());
+		TestUtils.assertEqualsAsJson(writer.toString(), "{\"code\":\"error\",\"message\":\"Missing or invalid csrf_token parameter\"}");
 	}
 }

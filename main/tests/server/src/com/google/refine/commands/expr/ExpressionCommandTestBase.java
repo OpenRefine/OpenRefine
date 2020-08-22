@@ -94,7 +94,7 @@ public class ExpressionCommandTestBase {
                 e.printStackTrace();
             }
         }
-        TestUtils.assertEqualAsJson(expectedJson, actualJson);
+        TestUtils.assertEqualsAsJson(actualJson, expectedJson);
     }
     
 }
