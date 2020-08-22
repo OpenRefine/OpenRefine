@@ -18,9 +18,9 @@ import java.util.Set;
 public class ConflictsWithScrutinizer extends EditScrutinizer {
 
     public static final String type = "having-conflicts-with-statements";
-    public static String CONFLICTS_WITH_CONSTRAINT_QID = "Q21502838";
-    public static String CONFLICTS_WITH_PROPERTY_PID = "P2306";
-    public static String ITEM_OF_PROPERTY_CONSTRAINT_PID = "P2305";
+    public String conflictsWithConstraintQid;
+    public String conflictsWithPropertyPid;
+    public String itemOfPropertyConstraintPid;
 
     class ConflictsWithConstraint {
         final PropertyIdValue conflictingPid;
@@ -32,16 +32,26 @@ public class ConflictsWithScrutinizer extends EditScrutinizer {
             this.itemList = new ArrayList<>();
             for(SnakGroup group : specs) {
                 for (Snak snak : group.getSnaks()) {
-                    if (group.getProperty().getId().equals(CONFLICTS_WITH_PROPERTY_PID)){
+                    if (group.getProperty().getId().equals(conflictsWithPropertyPid)){
                         pid = (PropertyIdValue) snak.getValue();
                     }
-                    if (group.getProperty().getId().equals(ITEM_OF_PROPERTY_CONSTRAINT_PID)){
+                    if (group.getProperty().getId().equals(itemOfPropertyConstraintPid)){
                         this.itemList.add(snak.getValue());
                     }
                 }
             }
             this.conflictingPid = pid;
         }
+    }
+
+    @Override
+    public boolean prepareDependencies() {
+        conflictsWithConstraintQid = getConstraintsRelatedId("conflicts_with_constraint_qid");
+        conflictsWithPropertyPid = getConstraintsRelatedId("property_pid");
+        itemOfPropertyConstraintPid = getConstraintsRelatedId("item_of_property_constraint_pid");
+
+        return _fetcher != null && conflictsWithConstraintQid != null
+                && conflictsWithPropertyPid != null && itemOfPropertyConstraintPid != null;
     }
 
     @Override
@@ -64,7 +74,7 @@ public class ConflictsWithScrutinizer extends EditScrutinizer {
         }
 
         for(PropertyIdValue propertyId : propertyIdValueValueMap.keySet()){
-            List<Statement> statementList = _fetcher.getConstraintsByType(propertyId, CONFLICTS_WITH_CONSTRAINT_QID);
+            List<Statement> statementList = _fetcher.getConstraintsByType(propertyId, conflictsWithConstraintQid);
             for (Statement statement : statementList) {
                 ConflictsWithConstraint constraint = new ConflictsWithConstraint(statement);
                 PropertyIdValue conflictingPid = constraint.conflictingPid;

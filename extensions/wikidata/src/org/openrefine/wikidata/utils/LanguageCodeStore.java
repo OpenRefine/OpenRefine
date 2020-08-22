@@ -1,15 +1,20 @@
 package org.openrefine.wikidata.utils;
 
-import java.util.Arrays;
-import java.util.Set;
-import java.util.stream.Collectors;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.io.IOException;
+import java.util.*;
 
 /**
  * A store for the allowed language code for terms and monolingual text values
- * in Wikidata.
- * 
- * @todo generalize for other Wikibase instances (fetch it dynamically via 
- * https://stackoverflow.com/questions/46507037/how-to-get-all-allowed-languages-for-wikidata/46562061)
+ * in Wikibase.
+ *
  * @todo separate the languages allowed for terms from the ones allowed for monolingual text.
  * Currently the list is for monolingual texts (which is larger).
  * 
@@ -20,7 +25,46 @@ import java.util.stream.Collectors;
  *
  */
 public class LanguageCodeStore {
-	public static Set<String> ALLOWED_LANGUAGE_CODES = Arrays.asList(
+
+	private static final Logger logger = LoggerFactory.getLogger(LanguageCodeStore.class);
+
+	private static Map<String, Set<String>> apiEndpointToLangCodes = new HashMap<>();
+
+	public static Set<String> getLanguageCodes(String mediaWikiApiEndpoint) {
+		if (mediaWikiApiEndpoint == null) return DEFAULT_LANGUAGE_CODES;
+
+		if (apiEndpointToLangCodes.containsKey(mediaWikiApiEndpoint)) {
+			return apiEndpointToLangCodes.get(mediaWikiApiEndpoint);
+		}
+
+		try {
+			Set<String> langCodes = fetchLangCodes(mediaWikiApiEndpoint);
+			apiEndpointToLangCodes.put(mediaWikiApiEndpoint, langCodes);
+		} catch (IOException e) {
+			logger.error("An error occurred when fetching language codes from: "
+					+ mediaWikiApiEndpoint + ", fall back to the default language codes", e);
+			apiEndpointToLangCodes.put(mediaWikiApiEndpoint, DEFAULT_LANGUAGE_CODES);
+		}
+		return apiEndpointToLangCodes.get(mediaWikiApiEndpoint);
+	}
+
+	private static Set<String> fetchLangCodes(String mediaWikiApiEndpoint) throws IOException {
+		String url = mediaWikiApiEndpoint +
+				"?action=query&meta=wbcontentlanguages&wbclprop=code&wbclcontext=monolingualtext&format=json";
+		OkHttpClient client = new OkHttpClient.Builder().build();
+		Request request = new Request.Builder().url(url).build();
+		Response response = client.newCall(request).execute();
+		JsonNode jsonNode = new ObjectMapper().readTree(response.body().string());
+		JsonNode languages = jsonNode.path("query").path("wbcontentlanguages");
+		Set<String> supportedLangCodes = new HashSet<>();
+		for (JsonNode language : languages) {
+			supportedLangCodes.add(language.path("code").textValue());
+		}
+
+		return supportedLangCodes;
+	}
+
+	private static Set<String> DEFAULT_LANGUAGE_CODES = new HashSet<>(Arrays.asList(
 			"aa",
 			"ab",
 			"abs",
@@ -525,5 +569,5 @@ public class LanguageCodeStore {
 			"xpu",
 			"yap",
 			"zun"
-			).stream().collect(Collectors.toSet());
+	));
 }

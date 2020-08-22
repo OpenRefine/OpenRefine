@@ -43,12 +43,13 @@ import java.util.List;
 
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
-import static org.openrefine.wikidata.qa.scrutinizers.RestrictedPositionScrutinizer.SCOPE_CONSTRAINT_PID;
-import static org.openrefine.wikidata.qa.scrutinizers.RestrictedPositionScrutinizer.SCOPE_CONSTRAINT_QID;
-import static org.openrefine.wikidata.qa.scrutinizers.RestrictedPositionScrutinizer.SCOPE_CONSTRAINT_QUALIFIER_QID;
-import static org.openrefine.wikidata.qa.scrutinizers.RestrictedPositionScrutinizer.SCOPE_CONSTRAINT_VALUE_QID;
 
 public class RestrictedPositionScrutinizerTest extends SnakScrutinizerTest {
+
+    public static final String SCOPE_CONSTRAINT_QID = "Q53869507";
+    public static final String SCOPE_CONSTRAINT_PID = "P5314";
+    public static final String SCOPE_CONSTRAINT_VALUE_QID = "Q54828448";
+    public static final String SCOPE_CONSTRAINT_QUALIFIER_QID = "Q54828449";
 
     public static PropertyIdValue propertyIdValue = Datamodel.makeWikidataPropertyIdValue("P22");
     public static PropertyIdValue propertyScopeParameter = Datamodel.makeWikidataPropertyIdValue(SCOPE_CONSTRAINT_PID);

@@ -6,7 +6,7 @@
   position: initial;
 }
 
-#wikidata-schema-panel, #wikidata-issues-panel, #wikidata-preview-panel {
+#wikibase-schema-panel, #wikibase-issues-panel, #wikibase-preview-panel {
   display: block;
   overflow: hidden;
   height: 100%;
@@ -58,6 +58,10 @@
 
 .panel-explanation {
   margin: 1em;
+}
+
+.invalid-schema-warning {
+    margin: 1em;
 }
 
 .schema-alignment-save {
@@ -465,12 +469,12 @@
 }
 
 .schema-alignment-columns-header {
-  margin-bottom: 0.3em;
+  margin-bottom: 0.3em;
 }
 
 /*** Warnings rendering ****/
 
-#wikidata-issues-panel table {
+#wikibase-issues-panel table {
   width: 100%;
 }
 
@@ -503,19 +507,19 @@ tr.wb-warning:nth-of-type(odd) {
 }
 
 .wb-warning-severity-INFO {
-  background-image: url('../../images/Information.png');
+  background-image: url('../images/Information.png');
 }
 
 .wb-warning-severity-WARNING {
-  background-image: url('../../images/Warning.png');
+  background-image: url('../images/Warning.png');
 }
 
 .wb-warning-severity-IMPORTANT {
-  background-image: url('../../images/Important.png');
+  background-image: url('../images/Important.png');
 }
 
 .wb-warning-severity-CRITICAL {
-  background-image: url('../../images/Critical.png');
+  background-image: url('../images/Critical.png');
 }
 
 .wb-warning-body {
@@ -530,15 +534,7 @@ tr.wb-warning:nth-of-type(odd) {
 }
 
 .wb-warning-end {
-  float: clear;
-}
-
-div.perform-edits-warnings-area {
-  min-height: 340px;
-  max-height: 400px;
-  overflow-x: hidden;
-  overflow-y: auto;
-  border: 1px solid #bbb;
+  float: unset;
 }
 
 .wb-issue-preformat {

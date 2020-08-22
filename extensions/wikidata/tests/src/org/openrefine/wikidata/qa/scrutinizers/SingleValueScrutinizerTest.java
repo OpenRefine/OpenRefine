@@ -41,9 +41,10 @@ import java.util.List;
 
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
-import static org.openrefine.wikidata.qa.scrutinizers.SingleValueScrutinizer.SINGLE_VALUE_CONSTRAINT_QID;
 
 public class SingleValueScrutinizerTest extends ScrutinizerTest {
+
+    public static final String SINGLE_VALUE_CONSTRAINT_QID = "Q19474404";
 
     public static PropertyIdValue propertyIdValue = Datamodel.makeWikidataPropertyIdValue("P21");
     public static Value value1 = Datamodel.makeWikidataItemIdValue("Q6581072");

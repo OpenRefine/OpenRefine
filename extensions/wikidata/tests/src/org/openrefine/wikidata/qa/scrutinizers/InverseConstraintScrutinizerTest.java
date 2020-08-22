@@ -41,11 +41,12 @@ import java.util.List;
 
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
-import static org.openrefine.wikidata.qa.scrutinizers.InverseConstraintScrutinizer.INVERSE_CONSTRAINT_QID;
-import static org.openrefine.wikidata.qa.scrutinizers.InverseConstraintScrutinizer.INVERSE_PROPERTY_PID;
-import static org.openrefine.wikidata.qa.scrutinizers.InverseConstraintScrutinizer.SYMMETRIC_CONSTRAINT_QID;
 
-public class InverseConstaintScrutinizerTest extends StatementScrutinizerTest {
+public class InverseConstraintScrutinizerTest extends StatementScrutinizerTest {
+
+    public static final String INVERSE_CONSTRAINT_QID = "Q21510855";
+    public static final String SYMMETRIC_CONSTRAINT_QID = "Q21510862";
+    public static final String INVERSE_PROPERTY_PID = "P2306";
 
     public static PropertyIdValue propertyId = Datamodel.makeWikidataPropertyIdValue("P25");
     public static ItemIdValue propertyValue = Datamodel.makeWikidataItemIdValue("Q345");

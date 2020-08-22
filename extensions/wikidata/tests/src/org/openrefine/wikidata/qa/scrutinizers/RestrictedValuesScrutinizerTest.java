@@ -18,11 +18,12 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
-import static org.openrefine.wikidata.qa.scrutinizers.RestrictedValuesScrutinizer.ALLOWED_VALUES_CONSTRAINT_PID;
-import static org.openrefine.wikidata.qa.scrutinizers.RestrictedValuesScrutinizer.ALLOWED_VALUES_CONSTRAINT_QID;
-import static org.openrefine.wikidata.qa.scrutinizers.RestrictedValuesScrutinizer.DISALLOWED_VALUES_CONSTRAINT_QID;
 
 public class RestrictedValuesScrutinizerTest extends SnakScrutinizerTest {
+
+    public static final String ALLOWED_VALUES_CONSTRAINT_QID = "Q21510859";
+    public static final String DISALLOWED_VALUES_CONSTRAINT_QID = "Q52558054";
+    public static final String ALLOWED_VALUES_CONSTRAINT_PID = "P2305";
     
     private ItemIdValue qid = Datamodel.makeWikidataItemIdValue("Q3487");
     public static PropertyIdValue allowedPropertyIdValue = Datamodel.makeWikidataPropertyIdValue("P1622");

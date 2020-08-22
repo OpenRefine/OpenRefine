@@ -27,18 +27,28 @@ public class QuantityScrutinizer extends SnakScrutinizer {
     public static final String invalidUnitType = "invalid-unit";
     public static final String noUnitProvidedType = "no-unit-provided";
 
-    public static String NO_BOUNDS_CONSTRAINT_QID = "Q51723761";
-    public static String INTEGER_VALUED_CONSTRAINT_QID = "Q52848401";
+    public String noBoundsConstraintQid;
+    public String integerValuedConstraintQid;
 
-    public static String ALLOWED_UNITS_CONSTRAINT_QID = "Q21514353";
-    public static String ALLOWED_UNITS_CONSTRAINT_PID = "P2305";
+    public String allowedUnitsConstraintQid;
+    public String allowedUnitsConstraintPid;
+
+    @Override
+    public boolean prepareDependencies() {
+        noBoundsConstraintQid = getConstraintsRelatedId("no_bounds_constraint_qid");
+        integerValuedConstraintQid = getConstraintsRelatedId("integer_constraint_qid");
+        allowedUnitsConstraintQid = getConstraintsRelatedId("allowed_units_constraint_qid");
+        allowedUnitsConstraintPid = getConstraintsRelatedId("item_of_property_constraint_pid");
+        return _fetcher != null && noBoundsConstraintQid != null && integerValuedConstraintQid != null
+                && allowedUnitsConstraintQid != null && allowedUnitsConstraintPid != null;
+    }
 
     class AllowedUnitsConstraint {
         Set<ItemIdValue> allowedUnits;
         AllowedUnitsConstraint(Statement statement) {
             List<SnakGroup> specs = statement.getClaim().getQualifiers();
             if (specs != null) {
-                List<Value> properties = findValues(specs, ALLOWED_UNITS_CONSTRAINT_PID);
+                List<Value> properties = findValues(specs, allowedUnitsConstraintPid);
                 allowedUnits = properties.stream()
                         .map(e -> e == null ? null : (ItemIdValue) e)
                         .collect(Collectors.toSet());
@@ -52,21 +62,21 @@ public class QuantityScrutinizer extends SnakScrutinizer {
             PropertyIdValue pid = snak.getPropertyId();
             QuantityValue value = (QuantityValue)snak.getValue();
 
-            if(!_fetcher.getConstraintsByType(pid, NO_BOUNDS_CONSTRAINT_QID).isEmpty() && (value.getUpperBound() != null || value.getLowerBound() != null)) {
+            if(!_fetcher.getConstraintsByType(pid, noBoundsConstraintQid).isEmpty() && (value.getUpperBound() != null || value.getLowerBound() != null)) {
                 QAWarning issue = new QAWarning(boundsDisallowedType, pid.getId(), QAWarning.Severity.IMPORTANT, 1);
                 issue.setProperty("property_entity", pid);
                 issue.setProperty("example_value", value.getNumericValue().toString());
                 issue.setProperty("example_item_entity", entityId);
                 addIssue(issue);
             }
-            if(!_fetcher.getConstraintsByType(pid, INTEGER_VALUED_CONSTRAINT_QID).isEmpty() && value.getNumericValue().scale() > 0) {
+            if(!_fetcher.getConstraintsByType(pid, integerValuedConstraintQid).isEmpty() && value.getNumericValue().scale() > 0) {
                 QAWarning issue = new QAWarning(integerConstraintType, pid.getId(), QAWarning.Severity.IMPORTANT, 1);
                 issue.setProperty("property_entity", pid);
                 issue.setProperty("example_value", value.getNumericValue().toString());
                 issue.setProperty("example_item_entity", entityId);
                 addIssue(issue);
             }
-            List<Statement> statementList = _fetcher.getConstraintsByType(pid, ALLOWED_UNITS_CONSTRAINT_QID);
+            List<Statement> statementList = _fetcher.getConstraintsByType(pid, allowedUnitsConstraintQid);
             Set<ItemIdValue> allowedUnits = null;
             if (!statementList.isEmpty()) {
                 AllowedUnitsConstraint allowedUnitsConstraint = new AllowedUnitsConstraint(statementList.get(0));

@@ -39,7 +39,7 @@ import java.util.List;
  */
 public class UnsourcedScrutinizer extends EditScrutinizer {
 
-    public static final String CITATION_NEEDED_QID = "Q54554025";
+    private String citationNeededConstraintQid;
     public static final String generalType = "unsourced-statements";
     public static final String constraintItemType = "no-references-provided";
 
@@ -47,7 +47,7 @@ public class UnsourcedScrutinizer extends EditScrutinizer {
     public void scrutinize(ItemUpdate update) {
         for (Statement statement : update.getAddedStatements()) {
             PropertyIdValue pid = statement.getClaim().getMainSnak().getPropertyId();
-            List<Statement> constraintDefinitions = _fetcher.getConstraintsByType(pid, CITATION_NEEDED_QID);
+            List<Statement> constraintDefinitions = _fetcher.getConstraintsByType(pid, citationNeededConstraintQid);
             List<Reference> referenceList = statement.getReferences();
 
             if (referenceList.isEmpty()) {
@@ -63,4 +63,9 @@ public class UnsourcedScrutinizer extends EditScrutinizer {
         }
     }
 
+    @Override
+    public boolean prepareDependencies() {
+        citationNeededConstraintQid = getConstraintsRelatedId("citation_needed_constraint_qid");
+        return _fetcher != null && citationNeededConstraintQid != null;
+    }
 }

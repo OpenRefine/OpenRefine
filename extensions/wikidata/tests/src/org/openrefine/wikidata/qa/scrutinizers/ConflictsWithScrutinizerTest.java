@@ -23,11 +23,12 @@ import java.util.List;
 
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
-import static org.openrefine.wikidata.qa.scrutinizers.ConflictsWithScrutinizer.CONFLICTS_WITH_CONSTRAINT_QID;
-import static org.openrefine.wikidata.qa.scrutinizers.ConflictsWithScrutinizer.CONFLICTS_WITH_PROPERTY_PID;
-import static org.openrefine.wikidata.qa.scrutinizers.ConflictsWithScrutinizer.ITEM_OF_PROPERTY_CONSTRAINT_PID;
 
 public class ConflictsWithScrutinizerTest extends ScrutinizerTest {
+
+    public static final String CONFLICTS_WITH_CONSTRAINT_QID = "Q21502838";
+    public static final String CONFLICTS_WITH_PROPERTY_PID = "P2306";
+    public static final String ITEM_OF_PROPERTY_CONSTRAINT_PID = "P2305";
 
     public static PropertyIdValue conflictsWithPid = Datamodel.makeWikidataPropertyIdValue("P2002");
     public static Value conflictsWithValue = Datamodel.makeWikidataItemIdValue("Q36322");
