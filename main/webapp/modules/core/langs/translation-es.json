@@ -513,7 +513,7 @@
     "core-views/best-cand-edit-dist": "por distancia de edicion del nombre del mejor candidato",
     "core-views/spec-separator": "Indique el separador entre los nombres de columna originales y los valores de celda.",
     "core-views/split-into": "Dividir en",
-    "core-views/true-fasle": "verdadero luego falso",
+    "core-views/true-false": "verdadero luego falso",
     "core-views/move-to-end": "Mover columna al final",
     "core-views/before-val": "antes del valor de la celda",
     "core-views/dates": "fechas",

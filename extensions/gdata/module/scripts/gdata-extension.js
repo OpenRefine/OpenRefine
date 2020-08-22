@@ -34,6 +34,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 var GdataExtension = {};
 
 GdataExtension.isAuthorized = function() {
+  // TODO: Unreliable - just means that we were authorized at one point
   return Cookies.get('oauth2_token') !== null;
 };
 

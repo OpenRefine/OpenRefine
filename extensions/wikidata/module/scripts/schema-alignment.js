@@ -102,10 +102,6 @@ SchemaAlignment.setUpTabs = function() {
   });
 
   SchemaAlignment._rerenderTabs();
-
-  // perform initial preview of the existing schema
-  this._reset(theProject.overlayModels.wikibaseSchema);
-  this.preview();
 };
 
 /**
@@ -148,13 +144,6 @@ SchemaAlignment._rerenderTabs = function() {
 
   // Init the column area
   this.updateColumns();
-
-  var reconServiceURL = WikibaseManager.getSelectedWikibaseReconEndpoint()
-      .replace("${lang}", $.i18n("core-recon/wd-recon-lang"));
-  ReconciliationManager.getOrRegisterServiceFromUrl(reconServiceURL, function (service)  {
-    SchemaAlignment._reconService = service;
-  }, true);
-
   /**
    * Init the issues tab
    */
@@ -172,6 +161,18 @@ SchemaAlignment._rerenderTabs = function() {
   SchemaAlignment.updateNbEdits(0);
   previewElmts.invalidSchemaWarningPreview.text($.i18n('wikibase-schema/invalid-schema-warning-preview'));
   this._previewPanes = $(".schema-alignment-dialog-preview");
+
+  var reconServiceURL = WikibaseManager.getSelectedWikibaseReconEndpoint()
+      .replace("${lang}", $.i18n("core-recon/wd-recon-lang"));
+  ReconciliationManager.getOrRegisterServiceFromUrl(reconServiceURL, function (service)  {
+    SchemaAlignment._reconService = service;
+
+    // Load the existing schema
+    SchemaAlignment._reset(theProject.overlayModels.wikibaseSchema);
+
+    // Perform initial preview
+    SchemaAlignment.preview();
+  }, false);
 };
 
 SchemaAlignment.onWikibaseChange = function() {

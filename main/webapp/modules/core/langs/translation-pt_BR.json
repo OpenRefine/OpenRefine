@@ -498,7 +498,7 @@
     "core-views/best-cand-edit-dist": "melhor distância de edição de nome de candidato",
     "core-views/spec-separator": "Por favor, especifique o separador entre os nomes das colunas e os valores das células.",
     "core-views/split-into": "Dividir em",
-    "core-views/true-fasle": "verdadeiro, em seguida, falso",
+    "core-views/true-false": "verdadeiro, em seguida, falso",
     "core-views/move-to-end": "Mover coluna para o final",
     "core-views/before-val": "antes do valor da célula",
     "core-views/dates": "datas",
