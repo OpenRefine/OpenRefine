@@ -29,7 +29,7 @@
           ]
         }
       ],
-      "wikibasePrefix": "http://www.wikidata.org/entity/",
+      "siteIri": "http://www.wikidata.org/entity/",
       "mediaWikiApiEndpoint":"https://www.wikidata.org/w/api.php"
     }
 }

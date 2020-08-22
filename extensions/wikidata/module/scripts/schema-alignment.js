@@ -257,8 +257,8 @@ SchemaAlignment._reset = function(schema) {
   }
 
   // fall back to Wikidata
-  if (!schema.wikibasePrefix) {
-    schema.wikibasePrefix = WikidataManifestV1_0.wikibase.site_iri;
+  if (!schema.siteIri) {
+    schema.siteIri = WikidataManifestV1_0.wikibase.site_iri;
   }
   if (!schema.mediaWikiApiEndpoint) {
     schema.mediaWikiApiEndpoint = WikidataManifestV1_0.mediawiki.api;
@@ -1278,7 +1278,7 @@ SchemaAlignment.getJSON = function() {
   if (list.length === itemsDom.length) {
     return {
         itemDocuments: list,
-        wikibasePrefix: WikibaseManager.getSelectedWikibaseSiteIri(),
+        siteIri: WikibaseManager.getSelectedWikibaseSiteIri(),
         mediaWikiApiEndpoint: WikibaseManager.getSelectedWikibaseApi(),
         editGroupsURLSchema: WikibaseManager.getSelectedWikibaseEditGroupsURLSchema()
     };

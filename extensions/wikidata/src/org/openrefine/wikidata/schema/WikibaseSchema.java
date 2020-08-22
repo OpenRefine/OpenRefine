@@ -61,8 +61,8 @@ public class WikibaseSchema implements OverlayModel {
     @JsonProperty("itemDocuments")
     protected List<WbItemDocumentExpr> itemDocumentExprs = new ArrayList<>();
 
-    @JsonProperty("wikibasePrefix")
-    protected String baseIri;
+    @JsonProperty("siteIri")
+    protected String siteIri;
 
     @JsonProperty("mediaWikiApiEndpoint")
     protected String mediaWikiApiEndpoint;
@@ -82,11 +82,11 @@ public class WikibaseSchema implements OverlayModel {
      */
     @JsonCreator
     public WikibaseSchema(@JsonProperty("itemDocuments") List<WbItemDocumentExpr> exprs,
-                          @JsonProperty("wikibasePrefix") String baseIri,
+                          @JsonProperty("siteIri") String siteIri,
                           @JsonProperty("mediaWikiApiEndpoint") String mediaWikiApiEndpoint,
                           @JsonProperty("editGroupsURLSchema") String editGroupsURLSchema) {
         this.itemDocumentExprs = exprs;
-        this.baseIri = baseIri;
+        this.siteIri = siteIri;
         this.mediaWikiApiEndpoint = mediaWikiApiEndpoint;
         this.editGroupsURLSchema = editGroupsURLSchema;
     }
@@ -94,9 +94,9 @@ public class WikibaseSchema implements OverlayModel {
     /**
      * @return the site IRI of the Wikibase instance referenced by this schema
      */
-    @JsonProperty("wikibasePrefix")
-    public String getBaseIri() {
-        return baseIri;
+    @JsonProperty("siteIri")
+    public String getSiteIri() {
+        return siteIri;
     }
 
     /**
@@ -187,7 +187,7 @@ public class WikibaseSchema implements OverlayModel {
 
         @Override
         public boolean visit(Project project, int rowIndex, Row row) {
-            ExpressionContext ctxt = new ExpressionContext(baseIri, mediaWikiApiEndpoint, rowIndex, row, project.columnModel, warningStore);
+            ExpressionContext ctxt = new ExpressionContext(siteIri, mediaWikiApiEndpoint, rowIndex, row, project.columnModel, warningStore);
             result.addAll(evaluateItemDocuments(ctxt));
             return false;
         }

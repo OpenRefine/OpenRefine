@@ -62,7 +62,7 @@ public class SaveWikibaseSchemaCommandTest extends SchemaCommandTest {
     	when(request.getParameter("csrf_token")).thenReturn(Command.csrfFactory.getFreshToken());
     	
         String schemaJson = "{\"itemDocuments\":[{\"statementGroups\":[{\"statements\":[]}],"
-                +"\"nameDescs\":[]}],\"wikibasePrefix\":\"http://www.wikidata.org/entity/\"}";
+                +"\"nameDescs\":[]}],\"siteIri\":\"http://www.wikidata.org/entity/\"}";
         
         when(request.getParameter("schema")).thenReturn(schemaJson);
         command.doPost(request, response);

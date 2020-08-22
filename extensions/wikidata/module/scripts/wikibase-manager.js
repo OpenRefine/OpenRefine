@@ -138,14 +138,14 @@ WikibaseManager.loadWikibases = function (onDone) {
 
 WikibaseManager.selectDefaultWikibaseAccordingToSavedSchema = function () {
   let schema = theProject.overlayModels.wikibaseSchema || {};
-  if (!schema.wikibasePrefix) {
+  if (!schema.siteIri) {
     return "Wikidata";
   }
 
   for (let wikibaseName in WikibaseManager.wikibases) {
     if (WikibaseManager.wikibases.hasOwnProperty(wikibaseName)) {
       let wikibase = WikibaseManager.wikibases[wikibaseName];
-      if (schema.wikibasePrefix === wikibase.wikibase.site_iri) {
+      if (schema.siteIri === wikibase.wikibase.site_iri) {
         return wikibase.mediawiki.name;
       }
     }

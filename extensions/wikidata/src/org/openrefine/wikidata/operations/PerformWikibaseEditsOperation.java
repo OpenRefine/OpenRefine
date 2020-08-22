@@ -189,8 +189,8 @@ public class PerformWikibaseEditsOperation extends EngineDependentOperation {
             }
             ApiConnection connection = manager.getConnection(mediaWikiApiEndpoint);
 
-            WikibaseDataFetcher wbdf = new WikibaseDataFetcher(connection, _schema.getBaseIri());
-            WikibaseDataEditor wbde = new WikibaseDataEditor(connection, _schema.getBaseIri());
+            WikibaseDataFetcher wbdf = new WikibaseDataFetcher(connection, _schema.getSiteIri());
+            WikibaseDataEditor wbde = new WikibaseDataEditor(connection, _schema.getSiteIri());
 
             String summary;
             if (StringUtils.isBlank(_schema.getEditGroupsURLSchema())) {
