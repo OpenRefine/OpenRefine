@@ -36,7 +36,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 function init() {
   var IM = Packages.com.google.refine.importing.ImportingManager;
-  IM.registerFormat("text/line-based/pc-axis", "core-buttons/text/line-based/pc-axis", "PCAxisParserUI",
+  IM.registerFormat("text/line-based/pc-axis", "core-import-formats/text/line-based/pc-axis", "PCAxisParserUI",
       new Packages.com.google.refine.pcaxis.PCAxisImporter());
   IM.registerExtension(".px", "text/line-based/pc-axis");
 
