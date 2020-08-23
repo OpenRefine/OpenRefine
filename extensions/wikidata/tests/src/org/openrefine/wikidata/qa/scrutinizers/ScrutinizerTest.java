@@ -23,9 +23,13 @@
  ******************************************************************************/
 package org.openrefine.wikidata.qa.scrutinizers;
 
+import org.openrefine.wikidata.manifests.Manifest;
+import org.openrefine.wikidata.manifests.ManifestException;
+import org.openrefine.wikidata.manifests.ManifestParser;
 import org.openrefine.wikidata.qa.ConstraintFetcher;
 import org.openrefine.wikidata.qa.QAWarning;
 import org.openrefine.wikidata.qa.QAWarningStore;
+import org.openrefine.wikidata.testing.TestingData;
 import org.openrefine.wikidata.updates.ItemUpdate;
 import org.testng.annotations.BeforeMethod;
 import org.wikidata.wdtk.datamodel.helpers.Datamodel;
@@ -38,6 +42,7 @@ import org.wikidata.wdtk.datamodel.interfaces.SnakGroup;
 import org.wikidata.wdtk.datamodel.interfaces.Statement;
 import org.wikidata.wdtk.datamodel.interfaces.StatementRank;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -52,6 +57,17 @@ import static org.testng.Assert.assertTrue;
 
 public abstract class ScrutinizerTest {
 
+    private static Manifest manifest;
+
+    static {
+        try {
+            String json = TestingData.jsonFromFile("manifest/wikidata-manifest-v1.0.json");
+            manifest = ManifestParser.parse(json);
+        } catch (IOException | ManifestException e) {
+            e.printStackTrace();
+        }
+    }
+
     public abstract EditScrutinizer getScrutinizer();
 
     private EditScrutinizer scrutinizer;
@@ -62,6 +78,8 @@ public abstract class ScrutinizerTest {
         store = new QAWarningStore();
         scrutinizer = getScrutinizer();
         scrutinizer.setStore(store);
+        scrutinizer.setManifest(manifest);
+        scrutinizer.prepareDependencies();
     }
 
     public void scrutinize(ItemUpdate... updates) {
@@ -75,7 +93,7 @@ public abstract class ScrutinizerTest {
     }
 
     public void assertWarningsRaised(String... types) {
-        assertEquals(Arrays.asList(types).stream().collect(Collectors.toSet()), getWarningTypes());
+        assertEquals(getWarningTypes(), Arrays.asList(types).stream().collect(Collectors.toSet()));
     }
 
     public void assertWarningRaised(QAWarning warning) {

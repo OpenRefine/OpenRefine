@@ -14,20 +14,20 @@ import java.util.List;
 public class EntityTypeScrutinizer extends SnakScrutinizer {
     
     public final static String type = "invalid-entity-type";
-    public static String ALLOWED_ENTITY_TYPES_QID = "Q52004125";
-    public static String ALLOWED_ITEM_TYPE_QID = "Q29934200";
-    public static String ALLOWED_ENTITY_TYPES_PID = "P2305";
+    public String allowedEntityTypesQid;
+    public String wikibaseItemQid;
+    public String itemOfPropertyConstraint;
 
     @Override
     public void scrutinize(Snak snak, EntityIdValue entityId, boolean added) {
         PropertyIdValue pid = snak.getPropertyId();
-        List<Statement> statementList = _fetcher.getConstraintsByType(pid, ALLOWED_ENTITY_TYPES_QID);
+        List<Statement> statementList = _fetcher.getConstraintsByType(pid, allowedEntityTypesQid);
         if(!statementList.isEmpty()) {
             List<SnakGroup> constraint = statementList.get(0).getClaim().getQualifiers();
             boolean isUsable = true;
             if (constraint != null) {
-                isUsable = findValues(constraint, ALLOWED_ENTITY_TYPES_PID).contains(
-                        Datamodel.makeWikidataItemIdValue(ALLOWED_ITEM_TYPE_QID));
+                isUsable = findValues(constraint, itemOfPropertyConstraint).contains(
+                        Datamodel.makeWikidataItemIdValue(wikibaseItemQid));
             }
             if (!isUsable) {
                 QAWarning issue = new QAWarning(type, null, QAWarning.Severity.WARNING, 1);
@@ -36,5 +36,14 @@ public class EntityTypeScrutinizer extends SnakScrutinizer {
                 addIssue(issue);
             }
         }
+    }
+
+    @Override
+    public boolean prepareDependencies() {
+        allowedEntityTypesQid = getConstraintsRelatedId("allowed_entity_types_constraint_qid");
+        wikibaseItemQid = getConstraintsRelatedId("wikibase_item_qid");
+        itemOfPropertyConstraint = getConstraintsRelatedId("item_of_property_constraint_pid");
+        return _fetcher != null && allowedEntityTypesQid != null
+                && wikibaseItemQid != null && itemOfPropertyConstraint != null;
     }
 }

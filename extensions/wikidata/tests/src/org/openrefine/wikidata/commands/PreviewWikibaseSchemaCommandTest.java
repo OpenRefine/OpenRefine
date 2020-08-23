@@ -27,12 +27,8 @@ import static org.mockito.Mockito.when;
 import static org.openrefine.wikidata.testing.TestingData.jsonFromFile;
 import static org.testng.Assert.assertEquals;
 
-import java.io.IOException;
-
-import javax.servlet.ServletException;
-
 import org.openrefine.wikidata.qa.EditInspector;
-import org.openrefine.wikidata.qa.WikidataConstraintFetcher;
+import org.openrefine.wikidata.qa.ConstraintFetcher;
 import org.openrefine.wikidata.utils.EntityCacheStub;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
@@ -42,6 +38,9 @@ import org.testng.annotations.Test;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.refine.util.ParsingUtilities;
+
+import javax.servlet.ServletException;
+import java.io.IOException;
 
 @PrepareForTest(EditInspector.class)
 public class PreviewWikibaseSchemaCommandTest extends SchemaCommandTest {
@@ -53,11 +52,13 @@ public class PreviewWikibaseSchemaCommandTest extends SchemaCommandTest {
 
     @Test
     public void testValidSchema() throws Exception {
-        WikidataConstraintFetcher fetcher = new WikidataConstraintFetcher(new EntityCacheStub());
-        PowerMockito.whenNew(WikidataConstraintFetcher.class).withAnyArguments().thenReturn(fetcher);
+        ConstraintFetcher fetcher = new ConstraintFetcher(new EntityCacheStub(), "P2302");
+        PowerMockito.whenNew(ConstraintFetcher.class).withAnyArguments().thenReturn(fetcher);
 
-        String schemaJson = jsonFromFile("schema/inception.json").toString();
+        String schemaJson = jsonFromFile("schema/inception.json");
+        String manifestJson = jsonFromFile("manifest/wikidata-manifest-v1.0.json");
         when(request.getParameter("schema")).thenReturn(schemaJson);
+        when(request.getParameter("manifest")).thenReturn(manifestJson);
 
         command.doPost(request, response);
 
@@ -66,4 +67,25 @@ public class PreviewWikibaseSchemaCommandTest extends SchemaCommandTest {
         assertEquals(3, edits.size());
     }
 
+    @Test
+    public void testNoManifest() throws IOException, ServletException {
+        String schemaJson = jsonFromFile("schema/inception.json");
+        when(request.getParameter("schema")).thenReturn(schemaJson);
+
+        command.doPost(request, response);
+
+        assertEquals(writer.toString(), "{\"code\":\"error\",\"message\":\"No Wikibase manifest provided.\"}");
+    }
+
+    @Test
+    public void testInvalidManifest() throws IOException, ServletException {
+        String schemaJson = jsonFromFile("schema/inception.json");
+        String manifestJson = "{ invalid manifest";
+        when(request.getParameter("schema")).thenReturn(schemaJson);
+        when(request.getParameter("manifest")).thenReturn(manifestJson);
+
+        command.doPost(request, response);
+
+        assertEquals(writer.toString(), "{\"code\":\"error\",\"message\":\"Wikibase manifest could not be parsed. Error message: invalid manifest format\"}");
+    }
 }

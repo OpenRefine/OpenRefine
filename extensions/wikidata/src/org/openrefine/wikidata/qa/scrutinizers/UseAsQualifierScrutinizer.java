@@ -17,9 +17,9 @@ import java.util.Map;
 public class UseAsQualifierScrutinizer extends EditScrutinizer {
 
     public static final String type = "values-should-not-be-used-as-qualifier";
-    public static String ONE_OF_QUALIFIER_VALUE_PROPERTY_QID = "Q52712340";
-    public static String QUALIFIER_PROPERTY_PID = "P2306";
-    public static String ITEM_OF_PROPERTY_CONSTRAINT_PID = "P2305";
+    public String oneOfQualifierValuePropertyQid;
+    public String property;
+    public String itemOfPropertyConstraintPid;
 
     class UseAsQualifierConstraint {
         final PropertyIdValue allowedQualifierPid;
@@ -30,16 +30,24 @@ public class UseAsQualifierScrutinizer extends EditScrutinizer {
             this.itemList = new ArrayList<>();
             for(SnakGroup group : specs) {
                 for (Snak snak : group.getSnaks()) {
-                    if (group.getProperty().getId().equals(QUALIFIER_PROPERTY_PID)){
+                    if (group.getProperty().getId().equals(property)){
                         pid = (PropertyIdValue) snak.getValue();
                     }
-                    if (group.getProperty().getId().equals(ITEM_OF_PROPERTY_CONSTRAINT_PID)){
+                    if (group.getProperty().getId().equals(itemOfPropertyConstraintPid)){
                         this.itemList.add(snak.getValue());
                     }
                 }
             }
             this.allowedQualifierPid = pid;
         }
+    }
+
+    @Override
+    public boolean prepareDependencies() {
+        oneOfQualifierValuePropertyQid = getConstraintsRelatedId("one_of_qualifier_value_property_constraint_qid");
+        property = getConstraintsRelatedId("property_pid");
+        itemOfPropertyConstraintPid = getConstraintsRelatedId("item_of_property_constraint_pid");
+        return _fetcher != null && oneOfQualifierValuePropertyQid != null && property != null && itemOfPropertyConstraintPid != null;
     }
 
     @Override
@@ -63,7 +71,7 @@ public class UseAsQualifierScrutinizer extends EditScrutinizer {
                 }
             }
 
-            List<Statement> constraintDefinitions = _fetcher.getConstraintsByType(pid, ONE_OF_QUALIFIER_VALUE_PROPERTY_QID);
+            List<Statement> constraintDefinitions = _fetcher.getConstraintsByType(pid, oneOfQualifierValuePropertyQid);
             for (Statement constraintStatement : constraintDefinitions) {
                 UseAsQualifierConstraint constraint = new UseAsQualifierConstraint(constraintStatement);
                 if (qualifiersMap.containsKey(constraint.allowedQualifierPid)) {

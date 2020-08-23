@@ -53,9 +53,6 @@ import com.google.refine.model.Project;
 import com.google.refine.model.Recon;
 import com.google.refine.model.ReconCandidate;
 import com.google.refine.model.Row;
-import com.google.refine.model.recon.ReconConfig;
-import com.google.refine.model.recon.ReconJob;
-import com.google.refine.model.recon.StandardReconConfig;
 import com.google.refine.model.recon.StandardReconConfig.ColumnDetail;
 import com.google.refine.model.recon.StandardReconConfig.ReconResult;
 import com.google.refine.operations.OperationRegistry;
@@ -206,13 +203,13 @@ public class StandardReconConfigTests extends RefineTest {
         StandardReconConfig r = StandardReconConfig.reconstruct(config);
         Row row = project.rows.get(0);
         ReconJob job = r.createJob(project, 0, row, "title", row.getCell(0));
-        TestUtils.assertEqualAsJson("{"
+        TestUtils.assertEqualsAsJson( job.toString(), "{"
                         + "\"query\":\"mulholland drive\","
                         + "\"type\":\"Q1234\","
                         + "\"properties\":["
                         + "     {\"pid\":\"P123\",\"v\":\"david lynch\"}"
                         + "],"
-                        + "\"type_strict\":\"should\"}", job.toString());
+                        + "\"type_strict\":\"should\"}");
     }
 
     @Test

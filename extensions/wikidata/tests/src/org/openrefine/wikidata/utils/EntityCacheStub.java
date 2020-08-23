@@ -22,7 +22,7 @@ public class EntityCacheStub extends EntityCache {
 	private ObjectMapper mapper =  new DatamodelMapper(Datamodel.SITE_WIKIDATA);
 	
 	public EntityCacheStub() {
-		super(BasicApiConnection.getWikidataApiConnection());
+		super(null, null);
 	}
 	
 	@Override

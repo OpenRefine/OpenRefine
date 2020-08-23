@@ -11,10 +11,10 @@ import java.util.Map;
 public class DifferenceWithinRangeScrutinizer extends EditScrutinizer {
 
     public static final String type = "difference-of-the-properties-is-not-within-the-specified-range";
-    public static String DIFFERENCE_WITHIN_RANGE_CONSTRAINT_QID = "Q21510854";
-    public static String DIFFERENCE_WITHIN_RANGE_CONSTRAINT_PID = "P2306";
-    public static String MINIMUM_VALUE_PID = "P2313";
-    public static String MAXIMUM_VALUE_PID = "P2312";
+    public String differenceWithinRangeConstraintQid;
+    public String differenceWithinRangeConstraintPid;
+    public String minimumValuePid;
+    public String maximumValuePid;
 
     class DifferenceWithinRangeConstraint {
         PropertyIdValue lowerPropertyIdValue;
@@ -23,9 +23,9 @@ public class DifferenceWithinRangeScrutinizer extends EditScrutinizer {
         DifferenceWithinRangeConstraint(Statement statement) {
             List<SnakGroup> specs = statement.getClaim().getQualifiers();
             if (specs != null) {
-                List<Value> lowerValueProperty = findValues(specs, DIFFERENCE_WITHIN_RANGE_CONSTRAINT_PID);
-                List<Value> minValue = findValues(specs, MINIMUM_VALUE_PID);
-                List<Value> maxValue = findValues(specs, MAXIMUM_VALUE_PID);
+                List<Value> lowerValueProperty = findValues(specs, differenceWithinRangeConstraintPid);
+                List<Value> minValue = findValues(specs, minimumValuePid);
+                List<Value> maxValue = findValues(specs, maximumValuePid);
                 if (!lowerValueProperty.isEmpty()) {
                     lowerPropertyIdValue = (PropertyIdValue) lowerValueProperty.get(0);
                 }
@@ -40,6 +40,16 @@ public class DifferenceWithinRangeScrutinizer extends EditScrutinizer {
     }
 
     @Override
+    public boolean prepareDependencies() {
+        differenceWithinRangeConstraintQid = getConstraintsRelatedId("difference_within_range_constraint_qid");
+        differenceWithinRangeConstraintPid = getConstraintsRelatedId("property_pid");
+        minimumValuePid = getConstraintsRelatedId("minimum_value_pid");
+        maximumValuePid = getConstraintsRelatedId("maximum_value_pid");
+        return _fetcher != null && differenceWithinRangeConstraintQid != null && differenceWithinRangeConstraintPid != null
+                && minimumValuePid != null && maximumValuePid != null;
+    }
+
+    @Override
     public void scrutinize(ItemUpdate update) {
         Map<PropertyIdValue, Value> propertyIdValueValueMap = new HashMap<>();
         for (Statement statement : update.getAddedStatements()){
@@ -49,7 +59,7 @@ public class DifferenceWithinRangeScrutinizer extends EditScrutinizer {
         }
 
         for(PropertyIdValue propertyId : propertyIdValueValueMap.keySet()){
-            List<Statement> statementList = _fetcher.getConstraintsByType(propertyId, DIFFERENCE_WITHIN_RANGE_CONSTRAINT_QID);
+            List<Statement> statementList = _fetcher.getConstraintsByType(propertyId, differenceWithinRangeConstraintQid);
             if (!statementList.isEmpty()){
                 DifferenceWithinRangeConstraint constraint = new DifferenceWithinRangeConstraint(statementList.get(0));
                 PropertyIdValue lowerPropertyId = constraint.lowerPropertyIdValue;
