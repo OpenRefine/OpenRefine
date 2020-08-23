@@ -28,7 +28,6 @@ package com.google.refine.expr.functions.xml;
 
 import org.testng.annotations.Test;
 
-import com.google.refine.expr.functions.xml.InnerXml;
 import com.google.refine.util.TestUtils;
 
 public class InnerXmlTests {

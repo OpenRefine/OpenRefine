@@ -28,7 +28,6 @@ package com.google.refine.model;
 
 import org.testng.annotations.Test;
 
-import com.google.refine.model.ColumnGroup;
 import com.google.refine.util.TestUtils;
 
 public class ColumnGroupTests {

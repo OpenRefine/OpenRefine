@@ -41,9 +41,6 @@ import com.google.refine.RefineTest;
 import com.google.refine.history.Change;
 import com.google.refine.model.ModelException;
 import com.google.refine.model.Project;
-import com.google.refine.model.changes.CellAtRow;
-import com.google.refine.model.changes.ColumnAdditionChange;
-import com.google.refine.model.changes.MassChange;
 
 public class MassChangeTests extends RefineTest {
 

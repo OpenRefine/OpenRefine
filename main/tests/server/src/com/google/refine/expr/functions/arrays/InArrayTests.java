@@ -32,16 +32,11 @@ import java.util.List;
 import java.util.Properties;
 
 import org.testng.Assert;
-import org.testng.annotations.AfterMethod;
-import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.google.refine.RefineTest;
 import com.google.refine.expr.EvalError;
-import com.google.refine.expr.functions.arrays.InArray;
-import com.google.refine.grel.ControlFunctionRegistry;
-import com.google.refine.grel.Function;
 import com.google.refine.util.TestUtils;
 
 public class InArrayTests extends RefineTest {
@@ -50,16 +45,6 @@ public class InArrayTests extends RefineTest {
     static final List<String> listArray = Arrays.asList("v1", "v2", "v3");
     static final String stringArray[] = {"v1","v2","v3"};
     
-    
-    @BeforeMethod
-    public void SetUp() {
-        bindings = new Properties();
-    }
-
-    @AfterMethod
-    public void TearDown() {
-        bindings = null;
-    }
     
     @Test
     public void serializeInArray() {
@@ -92,19 +77,6 @@ public class InArrayTests extends RefineTest {
         }
         Assert.assertTrue((boolean) invoke("inArray", arrayNode, "v1"));
         Assert.assertFalse((boolean) invoke("inArray", arrayNode, "v4"));
-    }
-    
-    private static Object invoke(String name,Object... args) {
-        // registry uses static initializer, so no need to set it up
-        Function function = ControlFunctionRegistry.getFunction(name);
-        if (function == null) {
-            throw new IllegalArgumentException("Unknown function "+name);
-        }
-        if (args == null) {
-            return function.call(bindings,new Object[0]);
-        } else {
-            return function.call(bindings,args);
-        }
     }
 }
 

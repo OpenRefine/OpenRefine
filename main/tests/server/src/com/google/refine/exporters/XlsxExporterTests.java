@@ -61,8 +61,6 @@ import com.google.refine.ProjectManagerStub;
 import com.google.refine.ProjectMetadata;
 import com.google.refine.RefineTest;
 import com.google.refine.browsing.Engine;
-import com.google.refine.exporters.StreamExporter;
-import com.google.refine.exporters.XlsExporter;
 import com.google.refine.model.Cell;
 import com.google.refine.model.Column;
 import com.google.refine.model.ModelException;

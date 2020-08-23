@@ -28,7 +28,6 @@ package com.google.refine.expr.functions;
 
 import org.testng.annotations.Test;
 
-import com.google.refine.expr.functions.HasField;
 import com.google.refine.util.TestUtils;
 
 public class HasFieldTests {

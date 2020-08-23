@@ -54,8 +54,6 @@ import org.testng.annotations.Test;
 import com.google.refine.RefineTest;
 import com.google.refine.browsing.Engine;
 import com.google.refine.expr.EvalError;
-import com.google.refine.grel.ControlFunctionRegistry;
-import com.google.refine.grel.Function;
 import com.google.refine.model.Cell;
 import com.google.refine.model.ModelException;
 import com.google.refine.model.Project;
@@ -63,12 +61,9 @@ import com.google.refine.model.Row;
 
 
 public class FunctionTests extends RefineTest {
-
-    static Properties bindings;
     Project project;
     Engine engine;
 
-    
     @Override
     @BeforeTest
     public void init() {
@@ -77,11 +72,10 @@ public class FunctionTests extends RefineTest {
     
     @BeforeMethod
     public void SetUp() throws IOException, ModelException {
-        
         project = createProjectWithColumns("FunctionTests", "Column A");
         bindings = new Properties();
         bindings.put("project", project);
-        
+
         // Five rows of a's and five of 1s
         for (int i = 0; i < 10; i++) {
             Row row = new Row(1);
@@ -95,31 +89,14 @@ public class FunctionTests extends RefineTest {
     public void TearDown() {
         bindings = null;
     }
-    
-    /**
-     * Lookup a control function by name and invoke it with a variable number of args
-     */
-    private static Object invoke(String name,Object... args) {
-        // registry uses static initializer, so no need to set it up
-        Function function = ControlFunctionRegistry.getFunction(name);
-        if (function == null) {
-            throw new IllegalArgumentException("Unknown function "+name);
-        }
-        if (args == null) {
-            return function.call(bindings,new Object[0]);
-        } else {
-            return function.call(bindings,args);
-        }
-    }
-    
+
     @Test
     public void testInvalidParams() {        
         Assert.assertTrue(invoke("facetCount") instanceof EvalError);
         Assert.assertTrue(invoke("facetCount", "one","two","three") instanceof EvalError);
         Assert.assertTrue(invoke("facetCount", "one","bad(","Column A") instanceof EvalError);
-
     }
-    
+
     @Test
     public void testFacetCount() {        
         Assert.assertEquals(invoke("facetCount", "a", "value", "Column A"),Integer.valueOf(5));

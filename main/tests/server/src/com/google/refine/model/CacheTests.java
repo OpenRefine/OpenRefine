@@ -32,6 +32,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
 package com.google.refine.model;
+
 import java.io.IOException;
 import java.util.Properties;
 
@@ -48,10 +49,6 @@ import com.google.refine.browsing.EngineConfig;
 import com.google.refine.browsing.RowVisitor;
 import com.google.refine.expr.functions.FacetCount;
 import com.google.refine.grel.Function;
-import com.google.refine.model.Cell;
-import com.google.refine.model.ModelException;
-import com.google.refine.model.Project;
-import com.google.refine.model.Row;
 import com.google.refine.operations.EngineDependentOperation;
 import com.google.refine.operations.row.RowRemovalOperation;
 

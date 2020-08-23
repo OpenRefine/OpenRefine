@@ -54,8 +54,6 @@ import com.google.refine.ProjectManagerStub;
 import com.google.refine.ProjectMetadata;
 import com.google.refine.RefineTest;
 import com.google.refine.browsing.Engine;
-import com.google.refine.exporters.HtmlTableExporter;
-import com.google.refine.exporters.WriterExporter;
 import com.google.refine.model.Cell;
 import com.google.refine.model.Column;
 import com.google.refine.model.ModelException;

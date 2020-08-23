@@ -3,7 +3,6 @@ package com.google.refine.commands.expr;
 import static org.mockito.Mockito.when;
 import static org.mockito.Mockito.mock;
 import com.google.refine.ProjectManager;
-import com.google.refine.ProjectManagerStub;
 import com.google.refine.commands.Command;
 import com.google.refine.commands.CommandTestBase;
 import com.google.refine.preference.PreferenceStore;

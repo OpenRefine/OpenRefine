@@ -28,7 +28,6 @@ package com.google.refine.expr.functions.arrays;
 
 import org.testng.annotations.Test;
 
-import com.google.refine.expr.functions.arrays.Join;
 import com.google.refine.util.TestUtils;
 
 public class JoinTests {
