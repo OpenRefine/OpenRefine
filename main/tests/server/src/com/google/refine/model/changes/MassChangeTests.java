@@ -26,7 +26,7 @@
  ******************************************************************************/
 package com.google.refine.model.changes;
 
-import static org.testng.AssertJUnit.assertTrue;
+import static org.testng.Assert.assertTrue;
 
 import java.io.IOException;
 import java.util.ArrayList;
