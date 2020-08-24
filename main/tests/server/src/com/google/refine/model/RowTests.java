@@ -47,10 +47,6 @@ import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
 import com.google.refine.RefineTest;
-import com.google.refine.model.Cell;
-import com.google.refine.model.Project;
-import com.google.refine.model.Recon;
-import com.google.refine.model.Row;
 import com.google.refine.util.Pool;
 import com.google.refine.util.TestUtils;
 
@@ -107,8 +103,8 @@ public class RowTests extends RefineTest {
         Row row = new Row(5);
         row.setCell(0, new Cell("I'm not empty", null));
         row.save(writer, options);
-        TestUtils.assertEqualAsJson(writer.getBuffer().toString(),
-                "{\"flagged\":false,\"starred\":false,\"cells\":[{\"v\":\"I'm not empty\"}]}");
+        TestUtils.assertEqualsAsJson("{\"flagged\":false,\"starred\":false,\"cells\":[{\"v\":\"I'm not empty\"}]}",
+                writer.getBuffer().toString());
     }
 
     // This way of serializing a row with indices is now deprecated, see GetRowsCommand.

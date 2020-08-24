@@ -28,7 +28,6 @@ package com.google.refine.expr.functions.xml;
 
 import org.testng.annotations.Test;
 
-import com.google.refine.expr.functions.xml.OwnText;
 import com.google.refine.util.TestUtils;
 
 public class OwnTextTests {

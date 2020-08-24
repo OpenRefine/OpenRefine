@@ -47,9 +47,9 @@ import java.util.Set;
 public class InverseConstraintScrutinizer extends StatementScrutinizer {
 
     public static final String type = "missing-inverse-statements";
-    public static String INVERSE_CONSTRAINT_QID = "Q21510855";
-    public static String INVERSE_PROPERTY_PID = "P2306";
-    public static String SYMMETRIC_CONSTRAINT_QID = "Q21510862";
+    public String inverseConstraintQid;
+    public String inversePropertyPid;
+    public String symmetricConstraintQid;
 
     class InverseConstraint {
         PropertyIdValue propertyParameterValue;
@@ -58,7 +58,7 @@ public class InverseConstraintScrutinizer extends StatementScrutinizer {
             List<SnakGroup> specs = statement.getClaim().getQualifiers();
 
             if (specs != null) {
-                List<Value> inverses = findValues(specs, INVERSE_PROPERTY_PID);
+                List<Value> inverses = findValues(specs, inversePropertyPid);
                 if (!inverses.isEmpty()) {
                     propertyParameterValue = (PropertyIdValue) inverses.get(0);
                 }
@@ -74,17 +74,26 @@ public class InverseConstraintScrutinizer extends StatementScrutinizer {
         _statements = new HashMap<>();
     }
 
+    @Override
+    public boolean prepareDependencies() {
+        inverseConstraintQid = getConstraintsRelatedId("inverse_constraint_qid");
+        inversePropertyPid = getConstraintsRelatedId("property_pid");
+        symmetricConstraintQid = getConstraintsRelatedId("symmetric_constraint_qid");
+        return _fetcher != null && inverseConstraintQid != null
+                && inversePropertyPid != null && symmetricConstraintQid != null;
+    }
+
     protected PropertyIdValue getInverseConstraint(PropertyIdValue pid) {
         if (_inverse.containsKey(pid)) {
             return _inverse.get(pid);
         } else {
             PropertyIdValue inversePid = null;
-            List<Statement> statementList = _fetcher.getConstraintsByType(pid, INVERSE_CONSTRAINT_QID);
+            List<Statement> statementList = _fetcher.getConstraintsByType(pid, inverseConstraintQid);
             if (!statementList.isEmpty()) {
                 InverseConstraint constraint = new InverseConstraint(statementList.get(0));
                 inversePid = constraint.propertyParameterValue;
             }
-            if (inversePid == null && !_fetcher.getConstraintsByType(pid, SYMMETRIC_CONSTRAINT_QID).isEmpty()) {
+            if (inversePid == null && !_fetcher.getConstraintsByType(pid, symmetricConstraintQid).isEmpty()) {
                 inversePid = pid;
             }
             _inverse.put(pid, inversePid);

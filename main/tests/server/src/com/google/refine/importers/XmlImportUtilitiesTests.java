@@ -49,7 +49,6 @@ import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
 import com.google.refine.RefineTest;
-import com.google.refine.importers.JsonImporter;
 import com.google.refine.importers.JsonImporter.JSONTreeReader;
 import com.google.refine.importers.XmlImporter.XmlParser;
 import com.google.refine.importers.tree.ImportColumn;

@@ -43,13 +43,10 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Manages a connection to Wikidata.
+ * Manages a connection to the current Wikibase instance.
  * <p>
  * The connection can be either {@link BasicApiConnection} or {@link OAuthApiConnection}.
  * <p>
- * This class is also hard-coded for Wikidata,
- * it will be generalized to other Wikibase instances soon.
- *
  * @author Antonin Delpeuch
  * @author Lu Liu
  */
@@ -67,19 +64,7 @@ public class ConnectionManager {
     public static final int CONNECT_TIMEOUT = 5000;
     public static final int READ_TIMEOUT = 10000;
 
-    /**
-     * For now, this class is hard-coded for Wikidata.
-     * <p>
-     * It will be generalized to work against other Wikibase instances in the future.
-     */
-    private static final String WIKIBASE_API_ENDPOINT = ApiConnection.URL_WIKIDATA_API;
-
-    /**
-     * The single {@link ApiConnection} instance managed by {@link ConnectionManager}.
-     * <p>
-     * Currently, only one connection is supported at the same time.
-     */
-    private ApiConnection connection;
+    private Map<String, ApiConnection> endpointToConnection = new HashMap<>();
 
     private static final ConnectionManager instance = new ConnectionManager();
 
@@ -98,19 +83,20 @@ public class ConnectionManager {
      * <p>
      * If failed to login, the connection will be set to null.
      *
+     * @param mediaWikiApiEndpoint the api endpoint of the target Wikibase instance
      * @param username the username to log in with
      * @param password the password to log in with
      * @return true if logged in successfully, false otherwise
      */
-    public boolean login(String username, String password) {
-        connection = new BasicApiConnection(WIKIBASE_API_ENDPOINT);
+    public boolean login(String mediaWikiApiEndpoint, String username, String password) {
+        BasicApiConnection connection = new BasicApiConnection(mediaWikiApiEndpoint);
         setupConnection(connection);
         try {
-            ((BasicApiConnection) connection).login(username, password);
+            connection.login(username, password);
+            endpointToConnection.put(mediaWikiApiEndpoint, connection);
             return true;
         } catch (LoginFailedException e) {
-            logger.error(e.getMessage());
-            connection = null;
+            logger.error(e.getMessage(), e);
             return false;
         }
     }
@@ -120,25 +106,26 @@ public class ConnectionManager {
      * <p>
      * If failed to login, the connection will be set to null.
      *
+     * @param mediaWikiApiEndpoint the api endpoint of the target Wikibase instance
      * @param consumerToken  consumer token of an owner-only consumer
      * @param consumerSecret consumer secret of an owner-only consumer
      * @param accessToken    access token of an owner-only consumer
      * @param accessSecret   access secret of an owner-only consumer
      * @return true if logged in successfully, false otherwise
      */
-    public boolean login(String consumerToken, String consumerSecret,
+    public boolean login(String mediaWikiApiEndpoint, String consumerToken, String consumerSecret,
                          String accessToken, String accessSecret) {
-        connection = new OAuthApiConnection(WIKIBASE_API_ENDPOINT,
+        OAuthApiConnection connection = new OAuthApiConnection(mediaWikiApiEndpoint,
                 consumerToken, consumerSecret,
                 accessToken, accessSecret);
         setupConnection(connection);
         try {
             // check if the credentials are valid
             connection.checkCredentials();
+            endpointToConnection.put(mediaWikiApiEndpoint, connection);
             return true;
         } catch (IOException | MediaWikiApiErrorException e) {
-            logger.error(e.getMessage());
-            connection = null;
+            logger.error(e.getMessage(), e);
             return false;
         }
     }
@@ -149,14 +136,15 @@ public class ConnectionManager {
      * <p>
      * If failed to login, the connection will be set to null.
      *
+     * @param mediaWikiApiEndpoint the api endpoint of the target Wikibase instance
      * @param username the username
      * @param cookies  the cookies used to login
      * @return true if logged in successfully, false otherwise
      */
-    public boolean login(String username, List<Cookie> cookies) {
+    public boolean login(String mediaWikiApiEndpoint, String username, List<Cookie> cookies) {
         cookies.forEach(cookie -> cookie.setPath("/"));
         Map<String, Object> map = new HashMap<>();
-        map.put("baseUrl", WIKIBASE_API_ENDPOINT);
+        map.put("baseUrl", mediaWikiApiEndpoint);
         map.put("cookies", cookies);
         map.put("username", username);
         map.put("loggedIn", true);
@@ -164,13 +152,12 @@ public class ConnectionManager {
         map.put("connectTimeout", CONNECT_TIMEOUT);
         map.put("readTimeout", READ_TIMEOUT);
         try {
-            BasicApiConnection newConnection = convertToBasicApiConnection(map);
-            newConnection.checkCredentials();
-            connection = newConnection;
+            BasicApiConnection connection = convertToBasicApiConnection(map);
+            connection.checkCredentials();
+            endpointToConnection.put(mediaWikiApiEndpoint, connection);
             return true;
         } catch (IOException | MediaWikiApiErrorException e) {
-            logger.error(e.getMessage());
-            connection = null;
+            logger.error(e.getMessage(), e);
             return false;
         }
     }
@@ -185,33 +172,35 @@ public class ConnectionManager {
     }
 
 
-    public void logout() {
+    public void logout(String mediaWikiApiEndpoint) {
+        ApiConnection connection = endpointToConnection.get(mediaWikiApiEndpoint);
         if (connection != null) {
             try {
                 connection.logout();
-                connection = null;
+                endpointToConnection.remove(mediaWikiApiEndpoint);
             } catch (IOException e) {
-                logger.error(e.getMessage());
+                logger.error(e.getMessage(), e);
             } catch (MediaWikiApiErrorException e) {
                 if ("assertuserfailed".equals(e.getErrorCode())) {
                     // it turns out we were already logged out
-                    connection = null;
+                    endpointToConnection.remove(mediaWikiApiEndpoint);
                 } else {
-                    logger.error(e.getMessage());
+                    logger.error(e.getMessage(), e);
                 }
             }
         }
     }
 
-    public ApiConnection getConnection() {
-        return connection;
+    public ApiConnection getConnection(String mediaWikiApiEndpoint) {
+        return endpointToConnection.get(mediaWikiApiEndpoint);
     }
 
-    public boolean isLoggedIn() {
-        return connection != null;
+    public boolean isLoggedIn(String mediaWikiApiEndpoint) {
+        return endpointToConnection.get(mediaWikiApiEndpoint) != null;
     }
 
-    public String getUsername() {
+    public String getUsername(String mediaWikiApiEndpoint) {
+        ApiConnection connection = endpointToConnection.get(mediaWikiApiEndpoint);
         if (connection != null) {
             return connection.getCurrentUser();
         } else {

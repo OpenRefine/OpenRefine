@@ -42,6 +42,7 @@ import com.google.refine.model.Row;
 public class ExpressionContext {
 
     private String baseIRI;
+    private String mediaWikiApiEndpoint;
     private int rowId;
     private Row row;
     private ColumnModel columnModel;
@@ -52,6 +53,8 @@ public class ExpressionContext {
      * 
      * @param baseIRI
      *            the siteIRI of the schema
+     * @param mediaWikiApiEndpoint
+     *            the MediaWiki API endpoint of the Wikibase
      * @param rowId
      *            the id of the row currently visited
      * @param row
@@ -62,9 +65,10 @@ public class ExpressionContext {
      *            where to store the issues encountered when evaluating (can be set
      *            to null if these issues should be ignored)
      */
-    public ExpressionContext(String baseIRI, int rowId, Row row, ColumnModel columnModel, QAWarningStore warningStore) {
+    public ExpressionContext(String baseIRI, String mediaWikiApiEndpoint, int rowId, Row row, ColumnModel columnModel, QAWarningStore warningStore) {
         Validate.notNull(baseIRI);
         this.baseIRI = baseIRI;
+        this.mediaWikiApiEndpoint = mediaWikiApiEndpoint;
         this.rowId = rowId;
         Validate.notNull(row);
         this.row = row;
@@ -75,6 +79,10 @@ public class ExpressionContext {
 
     public String getBaseIRI() {
         return baseIRI;
+    }
+
+    public String getMediaWikiApiEndpoint() {
+        return mediaWikiApiEndpoint;
     }
 
     /**

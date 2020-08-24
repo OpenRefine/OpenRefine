@@ -42,7 +42,6 @@ import com.google.refine.RefineTest;
 import com.google.refine.history.Change;
 import com.google.refine.model.ModelException;
 import com.google.refine.model.Project;
-import com.google.refine.model.changes.DataExtensionChange;
 import com.google.refine.util.Pool;
 
 

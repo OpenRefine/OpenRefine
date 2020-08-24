@@ -33,8 +33,6 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.model;
 
-import com.google.refine.model.Project;
-
 
 public class ProjectStub extends Project {
     public ProjectStub(long id){

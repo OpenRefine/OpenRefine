@@ -19,11 +19,12 @@ import java.util.List;
 
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
-import static org.openrefine.wikidata.qa.scrutinizers.ItemRequiresScrutinizer.ITEM_OF_PROPERTY_CONSTRAINT_PID;
-import static org.openrefine.wikidata.qa.scrutinizers.ItemRequiresScrutinizer.ITEM_REQUIRES_CONSTRAINT_QID;
-import static org.openrefine.wikidata.qa.scrutinizers.ItemRequiresScrutinizer.ITEM_REQUIRES_PROPERTY_PID;
 
 public class ItemRequiresScrutinizerTest extends ScrutinizerTest {
+
+    public static final String ITEM_REQUIRES_CONSTRAINT_QID = "Q21503247";
+    public static final String ITEM_REQUIRES_PROPERTY_PID = "P2306";
+    public static final String ITEM_OF_PROPERTY_CONSTRAINT_PID = "P2305";
 
     public static PropertyIdValue propertyIdValue = Datamodel.makeWikidataPropertyIdValue("P157");
     public static ItemIdValue itemValue = Datamodel.makeWikidataItemIdValue("Q3187975");

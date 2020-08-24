@@ -26,16 +26,29 @@
  ******************************************************************************/
 package com.google.refine.expr.functions.strings;
 
+import static org.testng.Assert.assertEquals;
+
 import org.testng.annotations.Test;
 
-import com.google.refine.expr.functions.strings.Chomp;
+import com.google.refine.RefineTest;
 import com.google.refine.util.TestUtils;
 
-public class ChompTests {
+public class ChompTests extends RefineTest {
     @Test
     public void serializeChomp() {
         String json = "{\"description\":\"Removes separator from the end of str if it's there, otherwise leave it alone.\",\"params\":\"string str, string separator\",\"returns\":\"string\"}";
         TestUtils.isSerializedTo(new Chomp(), json);
     }
+
+    @Test
+    public void testChomp() {
+        // FIXME: These return null instead of an EvalError
+//        assertTrue(invoke("chomp") instanceof EvalError);
+//        assertTrue(invoke("chomp", "") instanceof EvalError);
+//      assertTrue(invoke("chomp", 1, 1) instanceof EvalError);
+        assertEquals(invoke("chomp", "test,", ","), "test");
+        assertEquals(invoke("chomp", "test,", ":"), "test,");
+    }
+
 }
 

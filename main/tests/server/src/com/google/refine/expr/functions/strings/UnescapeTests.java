@@ -26,16 +26,30 @@
  ******************************************************************************/
 package com.google.refine.expr.functions.strings;
 
+import static org.testng.Assert.assertEquals;
+
 import org.testng.annotations.Test;
 
-import com.google.refine.expr.functions.strings.Unescape;
+import com.google.refine.RefineTest;
 import com.google.refine.util.TestUtils;
 
-public class UnescapeTests {
+public class UnescapeTests extends RefineTest {
     @Test
     public void serializeUnescape() {
         String json = "{\"description\":\"Unescapes all escaped parts of the string depending on the given escaping mode.\",\"params\":\"string s, string mode ['html','xml','csv','url','javascript']\",\"returns\":\"string\"}";
         TestUtils.isSerializedTo(new Unescape(), json);
     }
+
+    @Test
+    public void testUnescape() {
+        assertEquals(invoke("unescape", "&Auml;", "html"), "Ä");
+        assertEquals(invoke("unescape", "\\u00C4", "javascript"), "Ä");
+
+        assertEquals(invoke("unescape", "\"Test\"", "csv"), "Test"); // Apache TEXT-149 https://github.com/apache/commons-text/pull/119
+        assertEquals(invoke("unescape", "\"This \"\"is\"\" a test\"", "csv"), "This \"is\" a test");
+        assertEquals(invoke("unescape", "\"\n\"", "csv"), "\n");
+        assertEquals(invoke("unescape", "\"a, b\"", "csv"), "a, b");
+    }
+
 }
 
