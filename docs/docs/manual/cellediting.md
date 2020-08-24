@@ -84,11 +84,11 @@ This can be useful if the split is not straightforward: say, if a capital letter
 
 You can also split based on the lengths of the strings you expect to find. This can be useful if you have predictable data in the cells: for example, a 10-digit phone number, followed by a space, followed by another 10-digit phone number. Any characters past the explicit length you’ve specified will be discarded: if you split by “11, 10” any characters that may come after the 21st character will disappear. If some cells only have one phone number, you will end up with blank rows. 
 
-If you have data that should be split into multiple columns instead of multiple rows, see [split into several columns(#split-into-several-columns). 
+If you have data that should be split into multiple columns instead of multiple rows, see [split into several columns(columnediting#split-into-several-columns). 
 
 ## Join multi-valued cells
 
-Joining will reverse the “split multi-valued cells” operation, or join up information from multiple rows into one row. All the strings will be compressed into the topmost cell in the record, in the order they appear. A window will appear where you can set the separator; the default is a comma and a space (, ). 
+Joining will reverse the “split multi-valued cells” operation, or join up information from multiple rows into one row. All the strings will be compressed into the topmost cell in the record, in the order they appear. A window will appear where you can set the separator; the default is a comma and a space (, ). This separator is optional. 
 
 ## Cluster and edit
 

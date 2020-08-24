@@ -9,7 +9,7 @@ module.exports = {
 	    {
       type: 'category',
       label: 'Transforming data',
-      items: ['manual/transforming', 'manual/cellediting'],
+      items: ['manual/transforming', 'manual/cellediting','manual/columnediting'],
     },
       'manual/expressions',
       'manual/wikidata',
