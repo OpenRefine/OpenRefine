@@ -66,7 +66,7 @@ or whatever metadata format you prefer. [Information about these Wikidata option
 
 This service is more useful when getting metadata files instead of HTML files, but you may wish to work with a page’s entire HTML contents and then parse out information from that. Be cautioned that the fetching process can take quite some time and that servers may not want to fulfill hundreds or thousands of page requests in seconds. 
 
-Fetching allows you to set a “throttle delay” which determines the amount of time between requests. The default is 5 seconds per row in your dataset (5000 milliseconds), so you can estimate how long it will take to work through the entire column using that number. We recommend leaving this value at 5000 or greater. 
+Fetching allows you to set a “throttle delay” which determines the amount of time between requests. The default is 5 seconds per row in your dataset (5000 milliseconds), so you can estimate how long it will take to work through the entire column using that number. We recommend leaving this value at 1000 or greater. 
 
 ![A screenshot of the settings window for fetching URLs.](/img/fetchingURLs.png)
 
@@ -74,7 +74,7 @@ Note the following:
 
 * Many systems prevent you from making too many requests per second. To avoid this problem, set the throttle delay, which tells OpenRefine to wait the specified number of milliseconds between URL requests.
 * Before pressing OK, copy/paste a URL or two from the right column in the dialog and test them in another browser tab to make sure they work.
-* In some situations you may need to set[ HTTP request headers](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers). To set these, click the small “Show” button next to "HTTP headers to be used when fetching URLs" in the settings window. You can set the following request headers:
+* In some situations you may need to set [HTTP request headers](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers). To set these, click the small “Show” button next to "HTTP headers to be used when fetching URLs" in the settings window. The authorization credentials get logged in your operation history in plain text, which may be a security concern for you. You can set the following request headers:
   * [User-Agent](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/User-Agent)
   * [Accept](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Accept)
   * [Authorization](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Authorization)
@@ -85,21 +85,21 @@ When OpenRefine attempts to fetch information from a web page or service, it can
 
 First, make sure that your fetching operation is storing errors (check “store error”). The run the fetch and look at the error messages. 
 
-**"Received fatal alert: handshake_failure" **can occur when you are trying to retrieve information over HTTPS but the remote site is using an encryption not supported by the Java virtual machine being used by OpenRefine.
+**"HTTP error 403 : Forbidden"** can be simply down to you not having access to the URL you are trying to use. If you can access the same URL with your browser, the remote site may be blocking OpenRefine because it doesn't recognize its request as valid. Changing the[ User-Agent](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/User-Agent) request header may help. If you believe you should have access to a site but are “forbidden,” you may wish to contract the administrators.
+
+**"HTTP error 404 : Not Found"** indicates that the information you are requesting does not exist, perhaps due to a problem with your cell values if it only happening in certain rows. **"HTTP error 500 : Internal Server Error"** indicates the remote server is having a problem filling your request. You may wish to simply wait and try again later, or double-check the URLs. 
+
+**“error: javax.net.ssl.SSLHandshakeException: Received fatal alert: handshake_failure”** can occur when you are trying to retrieve information over HTTPS but the remote site is using an encryption not supported by the Java virtual machine being used by OpenRefine.
 
 You can check which encryption methods are supported by your OpenRefine/Java installation by using a service such as **How's my SSL**. Add the URL `https://www.howsmyssl.com/a/check` to an OpenRefine cell and run "Add column by fetching URLs" on it, which will provide a description of the SSL client being used. 
 
-You can try installing additional encryption supports by installing the [Java Cryptography Extension](https://www.oracle.com/java/technologies/javase-jce8-downloads.html). Note on OpenRefine for Mac, these updated cipher suites need to be dropped into the Java install within the OpenRefine application: something like `/Applications/OpenRefine.app/Contents/PlugIns/jdk1.8.0_60.jdk/Contents/Home/jre/lib/security`.
+You can try installing additional encryption supports by installing the [Java Cryptography Extension](https://www.oracle.com/java/technologies/javase-jce8-downloads.html). Note on OpenRefine for Mac, and OpenRefine for Windows in the kit with bundled JRE, these updated cipher suites need to be dropped into the Java install within the OpenRefine application: something like `/Applications/OpenRefine.app/Contents/PlugIns/jdk1.8.0_60.jdk/Contents/Home/jre/lib/security`.
 
-**"sun.security.validator.ValidatorException: PKIX path building failed"**can occur when you try to retrieve information over HTTPS but the remote site is using a certificate not trusted by your local Java installation. You will need to make sure that the certificate, or (more likely) the root certificate, is trusted. 
+**"sun.security.validator.ValidatorException: PKIX path building failed"** can occur when you try to retrieve information over HTTPS but the remote site is using a certificate not trusted by your local Java installation. You will need to make sure that the certificate, or (more likely) the root certificate, is trusted. 
 
 The list of trusted certificates is stored in an encrypted file called `cacerts` in your local Java installation. This can be read and updated by a tool called “keytool.” You can find directions on how to add a security certificate to the list of trusted certificates for a Java installation [here](http://magicmonster.com/kb/prg/java/ssl/pkix_path_building_failed.html) and [here](http://javarevisited.blogspot.co.uk/2012/03/add-list-certficates-java-keystore.html).
 
 Note on OpenRefine for Mac, you need to update the `cacerts` file within the OpenRefine application: something like `/PlugIns/jdk1.8.0_60.jdk/Contents/Home/jre/lib/security/cacerts`.
-
-**"HTTP error 403 : Forbidden" **can be simply down to you not having access to the URL you are trying to use. If you can access the same URL with your browser, the remote site may be blocking OpenRefine because it doesn't recognize its request as valid. Changing the[ User-Agent](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/User-Agent) request header may help. If you believe you should have access to a site but are “forbidden,” you may wish to contract the administrators.
-
-**"HTTP error 404 : Not Found"** indicates that the information you are requesting does not exist, perhaps due to a problem with your cell values if it only happening in certain rows.** "HTTP error 500 : Internal Server Error"** indicates the remote server is having a problem filling your request. You may wish to simply wait and try again later, or double-check the URLs. 
 
 ## Add columns from reconciled values
 
