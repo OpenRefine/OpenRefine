@@ -43,6 +43,9 @@ class RangeFacet extends Facet {
     this._selectBlank = ("selectBlank" in this._config) ? this._config.selectBlank : true;
     this._selectError = ("selectError" in this._config) ? this._config.selectError : true;
 
+    this._lang = Refine.getPreference('userLang', 'en');
+    this._formatter = new Intl.NumberFormat(this._lang, { useGrouping: true, maximumFractionDigits: 2 });
+
     this._baseNumericCount = 0;
     this._baseNonNumericCount = 0;
     this._baseBlankCount = 0;
@@ -260,19 +263,7 @@ class RangeFacet extends Facet {
   };
 
   _setRangeIndicators() {
-    this._elmts.statusDiv.html(this._addCommas(this._from.toFixed(2)) + " &mdash; " + this._addCommas(this._to.toFixed(2)));
-  };
-
-  _addCommas(nStr) {
-    nStr += '';
-    var x = nStr.split('.');
-    var x1 = x[0];
-    var x2 = x.length > 1 ? '.' + x[1] : '';
-    var rgx = /(\d+)(\d{3})/;
-    while (rgx.test(x1)) {
-      x1 = x1.replace(rgx, '$1' + ',' + '$2');
-    }
-    return x1 + x2;
+    this._elmts.statusDiv.html($.i18n('core-facets/value-range', this._formatter.format(this._from), this._formatter.format(this._to)));
   };
 
   updateState(data) {
