@@ -239,7 +239,7 @@
     "wikibase-addition/invalid-manifest": "無効なWikibase manifest.",
     "wikibase-addition/cancel": "中止",
     "wikibase-addition/add-wikibase": "Wikibaseを追加",
-    "wikibase-addition/explain-paste-manifest": "もしくは、manifest JSONを直接貼り付けてください（一部の公開Wikibasesは <a href=\"https://github.com/afkbrb/wikibase-manifest\" target=\"_blank\">ここ</a>にあります。この <a href=\"https://github.com/OpenRefine/OpenRefine/wiki/Write-a-Wikibase-manifest\" target=\"_blank\">tutorial</a>を参照して直接記述するすることも可能です）:",
+    "wikibase-addition/explain-paste-manifest": "もしくは、manifest JSONを直接貼り付けてください（一部の公開Wikibasesは <a href=\"https://github.com/OpenRefine/wikibase-manifests\" target=\"_blank\">ここ</a>にあります。この <a href=\"https://github.com/OpenRefine/OpenRefine/wiki/Write-a-Wikibase-manifest\" target=\"_blank\">tutorial</a>を参照して直接記述するすることも可能です）:",
     "wikibase-addition/explain-add-manifest-via-url": "Wikibase manifestのURLを入力してください（最新manifestに更新するための参考用）:",
     "wikibase-addition/explain-add-manifest": "manifestはWikibaseにリンクされ照合サービスを指定しなければなりません。新たな照合サービスがOpenRefineに追加されます。",
     "wikibase-addition/dialog-header": "Wikibase manifestを追加",
