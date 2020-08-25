@@ -453,7 +453,7 @@ public class DatabaseImportController implements ImportingController {
         try {
         	jdbcConfig.setDatabasePort(Integer.parseInt(request.getParameter("databasePort")));
         }catch(NumberFormatException nfE) {
-        	logger.error("getQueryInfo :: NumberFormatException ::{}", nfE);
+        	logger.error("getQueryInfo :: invalid database port ::{}", nfE);
         }
         jdbcConfig.setDatabaseUser(request.getParameter("databaseUser"));
         jdbcConfig.setDatabasePassword(request.getParameter("databasePassword"));
