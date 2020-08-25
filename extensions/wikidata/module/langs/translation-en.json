@@ -22,7 +22,7 @@
     "wikibase-addition/dialog-header": "Add Wikibase manifest",
     "wikibase-addition/explain-add-manifest": "The manifest should specify a reconciliation service linked to the Wikibase, the reconciliation service will be added to OpenRefine if not added yet.",
     "wikibase-addition/explain-add-manifest-via-url": "Enter the Wikibase manifest's URL (recommended, this is helpful for keeping track of the latest manifest):",
-    "wikibase-addition/explain-paste-manifest": "Or paste the manifest JSON text directly (manifests for some public Wikibases can be found <a href=\"https://github.com/afkbrb/wikibase-manifest\" target=\"_blank\">here</a>, you can also write one yourself according to this <a href=\"https://github.com/OpenRefine/OpenRefine/wiki/Write-a-Wikibase-manifest\" target=\"_blank\">tutorial</a>):",
+    "wikibase-addition/explain-paste-manifest": "Or paste the manifest JSON text directly (manifests for some public Wikibases can be found <a href=\"https://github.com/OpenRefine/wikibase-manifests\" target=\"_blank\">here</a>, you can also write one yourself according to this <a href=\"https://github.com/OpenRefine/OpenRefine/wiki/Write-a-Wikibase-manifest\" target=\"_blank\">tutorial</a>):",
     "wikibase-addition/add-wikibase": "Add Wikibase",
     "wikibase-addition/cancel": "Cancel",
     "wikibase-addition/invalid-manifest": "Invalid Wikibase manifest.",
