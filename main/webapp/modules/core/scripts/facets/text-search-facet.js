@@ -31,205 +31,183 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
  */
 
-function TextSearchFacet(div, config, options) {
-  this._div = div;
-  this._config = config;
-  if (!("invert" in this._config)) {
+class TextSearchFacet extends Facet {
+  constructor(div, config, options) {
+    super(div, config, options);
+    if (!("invert" in this._config)) {
+      this._config.invert = false;
+    }
+
+    this._query = config.query || null;
+    this._timerID = null;
+
+    this.textSearchFacetCounterForLabels = 0;
+
+    this._initializeUI();
+    this._update();
+  };
+
+  reset() {
+    this._query = null;
+    this._div.find(".input-container input").each(function() { this.value = ""; });
+  };
+
+  getUIState() {
+    var json = {
+        c: this.getJSON(),
+        o: this._options
+    };
+
+    return json;
+  };
+
+  getJSON() {
+    var o = {
+        type: "text",
+        name: this._config.name,
+        columnName: this._config.columnName,
+        mode: this._config.mode,
+        caseSensitive: this._config.caseSensitive,
+        invert: this._config.invert,
+        query: this._query
+    };
+    return o;
+  };
+
+  hasSelection() {
+    return this._query !== null;
+  };
+
+  _initializeUI() {
+    var self = this;
+    var counter = this._uniqueIdForLabels();
+    this._div.empty().show().html(
+      '<div class="facet-title" bind="facetTitle">' + 
+        '<div class="grid-layout layout-tightest layout-full"><table><tr>' +
+          '<td width="1%">' +
+            '<a href="javascript:{}" title="'+$.i18n('core-facets/remove-facet')+'" class="facet-title-remove" bind="removeButton">&nbsp;</a>' +
+          '</td>' +
+          '<td width="1%">' +
+            '<a href="javascript:{}" title="'+$.i18n('core-facets/minimize-facet')+'" class="facet-title-minimize" bind="minimizeButton">&nbsp;</a>' +
+          '</td>' +
+          '<td>' +
+            '<a href="javascript:{}" class="facet-choice-link" bind="resetButton">'+$.i18n('core-facets/reset')+'</a>' +
+            '<a href="javascript:{}" class="facet-choice-link" bind="invertButton">'+$.i18n('core-facets/invert')+'</a>' +
+            '<span bind="titleSpan"></span>' +
+          '</td>' +
+        '</tr></table></div>' +
+      '</div>' +
+      '<div class="facet-text-body"><div class="grid-layout layout-tightest layout-full"><table>' +
+        '<tr><td colspan="4"><div class="input-container"><input bind="input" /></div></td></tr>' +
+        '<tr>' +
+          '<td width="1%"><input type="checkbox" bind="caseSensitiveCheckbox" id="caseSensitiveCheckbox'+counter+'" /></td>' +
+          '<td><label for="caseSensitiveCheckbox'+counter+'">'+$.i18n('core-facets/case-sensitive')+'</label></td>' +
+          '<td width="1%"><input type="checkbox" bind="regexCheckbox" id="regexCheckbox'+counter+'" /></td>' +
+          '<td><label for="regexCheckbox'+counter+'">'+$.i18n('core-facets/regular-exp')+'</label></td>' +
+        '</tr>' +
+      '</table></div>'
+    );
+
+    this._elmts = DOM.bind(this._div);
+
+    this._elmts.titleSpan.text(this._config.name);
+    if (this._config.caseSensitive) {
+      this._elmts.caseSensitiveCheckbox.prop('checked', true);
+    }
+    if (this._config.mode === "regex") {
+      this._elmts.regexCheckbox.prop('checked', true);
+    }
+
+    this._elmts.removeButton.click(function() { self._remove(); });
+    this._elmts.minimizeButton.click(function() { self._minimize(); });
+    this._elmts.resetButton.click(function() { self._reset(); });
+    this._elmts.invertButton.click(function() { self._invert(); });
+
+    this._elmts.caseSensitiveCheckbox.bind("change", function() {
+      self._config.caseSensitive = this.checked;
+      if (self._query !== null && self._query.length > 0) {
+        self._scheduleUpdate();
+      }
+    });
+    this._elmts.regexCheckbox.bind("change", function() {
+      self._config.mode = this.checked ? "regex" : "text";
+      if (self._query !== null && self._query.length > 0) {
+        self._scheduleUpdate();
+      }
+    });
+
+    if (this._query) {
+      this._elmts.input[0].value = this._query;
+    }
+    
+    this._elmts.input.bind("keyup change input",function(evt) {
+      // Ignore events which don't change our input value
+      if(this.value === self._query || this.value === '' && !self._query) {
+        return;
+      }
+      self._query = this.value;
+      self._scheduleUpdate();
+    }).focus();
+
+  };
+
+  updateState(data) {
+    this._update();
+  };
+
+  render() {
+    this._setRangeIndicators();
+  };
+
+  _reset() {
+    this._query = null;
+    this._config.mode = "text";
+    this._config.caseSensitive = false;
+    this._elmts.input.val([]);
+    this._elmts.caseSensitiveCheckbox.prop("checked", false);
+    this._elmts.regexCheckbox.prop("checked", false);
     this._config.invert = false;
-  }
 
-  this._options = options;
+    this._updateRest();
+  };
 
-  this._minimizeState = false;
+  _invert() {
+    this._config.invert = !this._config.invert;
 
-  this._query = config.query || null;
-  this._timerID = null;
+    this._updateRest();
+  };
 
-  this._initializeUI();
-  this._update();
-}
+  _update() {
+    var invert = this._config.invert;
+    if (invert) {
+      this._elmts.facetTitle.addClass("facet-title-inverted");
+      this._elmts.invertButton.addClass("facet-mode-inverted");
+    } else {
+      this._elmts.facetTitle.removeClass("facet-title-inverted");
+      this._elmts.invertButton.removeClass("facet-mode-inverted");
+    }
+  };
+
+  _scheduleUpdate() {
+    if (!this._timerID) {
+      var self = this;
+      this._timerID = window.setTimeout(function() {
+        self._timerID = null;
+        self._updateRest();
+      }, self._config.mode === 'regex' ? 1500 : 500);
+    }
+  };
+
+  _updateRest() {
+    Refine.update({ engineChanged: true });
+  };
+
+  _uniqueIdForLabels() {
+    return this.textSearchFacetCounterForLabels++;
+  };
+};
+
 
 TextSearchFacet.reconstruct = function(div, uiState) {
   return new TextSearchFacet(div, uiState.c, uiState.o);
-};
-
-TextSearchFacet.prototype.dispose = function() {
-};
-
-TextSearchFacet.prototype.reset = function() {
-  this._query = null;
-  this._div.find(".input-container input").each(function() { this.value = ""; });
-};
-
-TextSearchFacet.prototype.getUIState = function() {
-  var json = {
-      c: this.getJSON(),
-      o: this._options
-  };
-
-  return json;
-};
-
-TextSearchFacet.prototype.getJSON = function() {
-  var o = {
-      type: "text",
-      name: this._config.name,
-      columnName: this._config.columnName,
-      mode: this._config.mode,
-      caseSensitive: this._config.caseSensitive,
-      invert: this._config.invert,
-      query: this._query
-  };
-  return o;
-};
-
-TextSearchFacet.prototype.hasSelection = function() {
-  return this._query !== null;
-};
-
-TextSearchFacet.prototype._initializeUI = function() {
-  var self = this;
-  var counter = this._uniqueIdForLabels();
-  this._div.empty().show().html(
-    '<div class="facet-title" bind="facetTitle">' + 
-      '<div class="grid-layout layout-tightest layout-full"><table><tr>' +
-        '<td width="1%">' +
-          '<a href="javascript:{}" title="'+$.i18n('core-facets/remove-facet')+'" class="facet-title-remove" bind="removeButton">&nbsp;</a>' +
-        '</td>' +
-        '<td width="1%">' +
-          '<a href="javascript:{}" title="'+$.i18n('core-facets/minimize-facet')+'" class="facet-title-minimize" bind="minimizeButton">&nbsp;</a>' +
-        '</td>' +
-        '<td>' +
-          '<a href="javascript:{}" class="facet-choice-link" bind="resetButton">'+$.i18n('core-facets/reset')+'</a>' +
-          '<a href="javascript:{}" class="facet-choice-link" bind="invertButton">'+$.i18n('core-facets/invert')+'</a>' +
-          '<span bind="titleSpan"></span>' +
-        '</td>' +
-      '</tr></table></div>' +
-    '</div>' +
-    '<div class="facet-text-body"><div class="grid-layout layout-tightest layout-full"><table>' +
-      '<tr><td colspan="4"><div class="input-container"><input bind="input" /></div></td></tr>' +
-      '<tr>' +
-        '<td width="1%"><input type="checkbox" bind="caseSensitiveCheckbox" id="caseSensitiveCheckbox'+counter+'" /></td>' +
-        '<td><label for="caseSensitiveCheckbox'+counter+'">'+$.i18n('core-facets/case-sensitive')+'</label></td>' +
-        '<td width="1%"><input type="checkbox" bind="regexCheckbox" id="regexCheckbox'+counter+'" /></td>' +
-        '<td><label for="regexCheckbox'+counter+'">'+$.i18n('core-facets/regular-exp')+'</label></td>' +
-      '</tr>' +
-    '</table></div>'
-  );
-
-  this._elmts = DOM.bind(this._div);
-
-  this._elmts.titleSpan.text(this._config.name);
-  if (this._config.caseSensitive) {
-    this._elmts.caseSensitiveCheckbox.prop("checked", true);
-  }
-  if (this._config.mode === "regex") {
-    this._elmts.regexCheckbox.prop('checked', true);
-  }
-
-  this._elmts.removeButton.click(function() { self._remove(); });
-  this._elmts.minimizeButton.click(function() { self._minimize(); });
-  this._elmts.resetButton.click(function() { self._reset(); });
-  this._elmts.invertButton.click(function() { self._invert(); });
-
-  this._elmts.caseSensitiveCheckbox.bind("change", function() {
-    self._config.caseSensitive = this.checked;
-    if (self._query !== null && self._query.length > 0) {
-      self._scheduleUpdate();
-    }
-  });
-  this._elmts.regexCheckbox.bind("change", function() {
-    self._config.mode = this.checked ? "regex" : "text";
-    if (self._query !== null && self._query.length > 0) {
-      self._scheduleUpdate();
-    }
-  });
-
-  if (this._query) {
-    this._elmts.input[0].value = this._query;
-  }
-  
-  this._elmts.input.bind("keyup change input",function(evt) {
-    // Ignore events which don't change our input value
-    if(this.value === self._query || this.value === '' && !self._query) {
-      return;
-    }
-    self._query = this.value;
-    self._scheduleUpdate();
-  }).focus();
-
-};
-
-TextSearchFacet.prototype.updateState = function(data) {
-  this._update();
-};
-
-TextSearchFacet.prototype.render = function() {
-  this._setRangeIndicators();
-};
-
-TextSearchFacet.prototype._reset = function() {
-  this._query = null;
-  this._config.mode = "text";
-  this._config.caseSensitive = false;
-  this._elmts.input.val([]);
-  this._elmts.caseSensitiveCheckbox.prop("checked", false);
-  this._elmts.regexCheckbox.prop("checked", false);
-  this._config.invert = false;
-
-  this._updateRest();
-};
-
-TextSearchFacet.prototype._invert = function() {
-  this._config.invert = !this._config.invert;
-
-  this._updateRest();
-};
-
-TextSearchFacet.prototype._remove = function() {
-  ui.browsingEngine.removeFacet(this);
-
-  this._div = null;
-  this._config = null;
-  this._options = null;
-};
-
-TextSearchFacet.prototype._minimize = function() {
-  if(!this._minimizeState) {
-    this._div.addClass("facet-state-minimize");
-  } else {
-    this._div.removeClass("facet-state-minimize");
-  }
-  
-  this._minimizeState = !this._minimizeState;
-};
-
-TextSearchFacet.prototype._update = function () {
-  var invert = this._config.invert;
-  if (invert) {
-    this._elmts.facetTitle.addClass("facet-title-inverted");
-    this._elmts.invertButton.addClass("facet-mode-inverted");
-  } else {
-    this._elmts.facetTitle.removeClass("facet-title-inverted");
-    this._elmts.invertButton.removeClass("facet-mode-inverted");
-  }
-};
-
-TextSearchFacet.prototype._scheduleUpdate = function() {
-  if (!this._timerID) {
-    var self = this;
-    this._timerID = window.setTimeout(function() {
-      self._timerID = null;
-      self._updateRest();
-    }, self._config.mode === 'regex' ? 1500 : 500);
-  }
-};
-
-TextSearchFacet.prototype._updateRest = function() {
-  Refine.update({ engineChanged: true });
-};
-
-var textSearchFacetCounterForLabels = 0;
-TextSearchFacet.prototype._uniqueIdForLabels = function() {
-  return textSearchFacetCounterForLabels++;
 };
