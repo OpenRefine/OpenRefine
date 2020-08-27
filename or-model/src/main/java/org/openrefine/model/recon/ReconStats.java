@@ -38,6 +38,8 @@ import java.io.Serializable;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import org.openrefine.model.Row;
+
 /**
  * Stores statistics about the judgment of reconciled cells in a column.
  * 
@@ -64,4 +66,21 @@ public interface ReconStats extends Serializable {
 
     @JsonProperty("matchedTopics")
     public long getMatchedTopics();
+
+    /**
+     * Updates the recon statistics with an additional row
+     * 
+     * @param row
+     * @param columnIndex
+     * @return
+     */
+    public ReconStats withRow(Row row, int columnIndex);
+
+    /**
+     * Sums the statistics with those contained in another instance
+     * 
+     * @param other
+     * @return
+     */
+    public ReconStats sum(ReconStats other);
 }

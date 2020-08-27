@@ -12,6 +12,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import org.openrefine.browsing.facets.RecordAggregator;
 import org.openrefine.browsing.facets.RowAggregator;
 import org.openrefine.model.changes.ChangeData;
+import org.openrefine.model.changes.RecordChangeDataJoiner;
+import org.openrefine.model.changes.RecordChangeDataProducer;
 import org.openrefine.model.changes.RowChangeDataFlatJoiner;
 import org.openrefine.model.changes.RowChangeDataJoiner;
 import org.openrefine.model.changes.RowChangeDataProducer;
@@ -323,7 +325,24 @@ public interface GridState {
     public <T extends Serializable> ChangeData<T> mapRows(RowFilter filter, RowChangeDataProducer<T> rowMapper);
 
     /**
-     * Joins pre-computed change data with the current grid data.
+     * Extract change data by applying a function to each filtered record. The calls to the change data producer are
+     * batched if requested by the producer.
+     * 
+     * @param <T>
+     *            the type of change data that is serialized to disk for each row
+     * @param filter
+     *            a filter to select which rows to map
+     * @param rowMapper
+     *            produces the change data for each row
+     * @return
+     * @throws IllegalStateException
+     *             if the row mapper returns a batch of results with a different size than the batch of rows it was
+     *             called on
+     */
+    public <T extends Serializable> ChangeData<T> mapRecords(RecordFilter filter, RecordChangeDataProducer<T> rowMapper);
+
+    /**
+     * Joins pre-computed change data with the current grid data, row by row.
      * 
      * @param <T>
      *            the type of change data that was serialized to disk for each row
@@ -352,6 +371,22 @@ public interface GridState {
      * @return
      */
     public <T extends Serializable> GridState join(ChangeData<T> changeData, RowChangeDataFlatJoiner<T> rowJoiner,
+            ColumnModel newColumnModel);
+
+    /**
+     * Joins pre-computed change data with the current grid data, record by record.
+     * 
+     * @param <T>
+     *            the type of change data that was serialized to disk for each record
+     * @param changeData
+     *            the serialized change data
+     * @param rowJoiner
+     *            produces the new list of rows by joining the old record with change data
+     * @param newColumnModel
+     *            the column model to apply to the new grid
+     * @return
+     */
+    public <T extends Serializable> GridState join(ChangeData<T> changeData, RecordChangeDataJoiner<T> recordJoiner,
             ColumnModel newColumnModel);
 
     /**
