@@ -18,6 +18,8 @@ import org.openrefine.model.ColumnModel;
 import org.openrefine.model.GridState;
 import org.openrefine.model.Record;
 import org.openrefine.model.Row;
+import org.openrefine.model.recon.DataExtensionReconConfig;
+import org.openrefine.model.recon.ReconConfig;
 import org.openrefine.model.recon.ReconStats;
 import org.openrefine.model.recon.ReconType;
 import org.openrefine.model.recon.ReconciledDataExtensionJob.DataExtension;
@@ -101,8 +103,14 @@ public class DataExtensionChange extends EngineDependentChange {
 		ColumnModel columnModel = state.getColumnModel();
 		for(int i = 0; i != _columnNames.size(); i++) {
 			if (reconStats.get(i).getMatchedTopics() > 0) {
-				columnModel = columnModel.withReconStats(_columnInsertIndex + i, reconStats.get(i));
-				//TODO add recon config as well
+				ReconConfig reconConfig = new DataExtensionReconConfig(
+						_endpoint,
+						_identifierSpace,
+						_schemaSpace,
+						_columnTypes.get(i));
+				columnModel = columnModel
+						.withReconStats(_columnInsertIndex + i, reconStats.get(i))
+						.withReconConfig(_columnInsertIndex + i, reconConfig);
 			}
 		}
 		return state.withColumnModel(columnModel);

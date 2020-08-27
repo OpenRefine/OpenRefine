@@ -42,14 +42,17 @@ import java.util.Map;
 import java.util.Set;
 
 import org.openrefine.browsing.Engine;
+import org.openrefine.browsing.Engine.Mode;
 import org.openrefine.browsing.EngineConfig;
 import org.openrefine.history.History;
 import org.openrefine.history.HistoryEntry;
 import org.openrefine.model.Cell;
 import org.openrefine.model.ColumnModel;
 import org.openrefine.model.GridState;
+import org.openrefine.model.IndexedRow;
 import org.openrefine.model.Record;
 import org.openrefine.model.Row;
+import org.openrefine.model.RowFilter;
 import org.openrefine.model.changes.ChangeData;
 import org.openrefine.model.changes.DataExtensionChange;
 import org.openrefine.model.changes.DataExtensionChange.DataExtensionSerializer;
@@ -171,8 +174,20 @@ public class ExtendDataOperation extends EngineDependentOperation {
                 throw new Exception("No column named " + _baseColumnName);
             }
             
-            DataExtensionProducer producer = new DataExtensionProducer(_job, _cellIndex);
-            // TODO support rows mode
+            /**
+             * This operation does not always respect the rows mode, because
+             * when fetching multiple values for the same row, the extra values
+             * are spread in the record of the given row. Therefore, the fetching
+             * is done in records mode at all times, but in rows mode we also
+             * pass down the row filter to the fetcher so that it can filter out
+             * rows that should not be fetched inside a given record.
+             */
+            
+            RowFilter rowFilter = RowFilter.ANY_ROW;
+            if (Mode.RowBased.equals(engine.getMode())) {
+            	rowFilter = engine.combinedRowFilters();
+            }
+            DataExtensionProducer producer = new DataExtensionProducer(_job, _cellIndex, rowFilter);
             ChangeData<RecordDataExtension> changeData = state.mapRecords(engine.combinedRecordFilters(), producer);
             
             _history.getChangeDataStore().store(changeData, _historyEntryID, "extend", new DataExtensionSerializer());
@@ -218,10 +233,12 @@ public class ExtendDataOperation extends EngineDependentOperation {
 		private static final long serialVersionUID = -7946297987163653933L;
 		private final ReconciledDataExtensionJob _job;
     	private final int _cellIndex;
+    	private final RowFilter _rowFilter;
     	
-    	protected DataExtensionProducer(ReconciledDataExtensionJob job, int cellIndex) {
+    	protected DataExtensionProducer(ReconciledDataExtensionJob job, int cellIndex, RowFilter rowFilter) {
     		_job = job;
     		_cellIndex = cellIndex;
+    		_rowFilter = rowFilter;
     	}
 
 		@Override
@@ -231,15 +248,15 @@ public class ExtendDataOperation extends EngineDependentOperation {
 		
 		@Override
 		public List<RecordDataExtension> call(List<Record> records) {
-			/*
-			 * TODO: add support for rows-based filtering, in which case the code should still
-			 * work record-wise, but run the row filter inside this function to exclude mismatching rows.
-			 */
 			
 			Set<String> ids = new HashSet<>();
 			
 			for(Record record : records) {
-				for(Row row : record.getRows()) {
+				for(IndexedRow indexedRow : record.getIndexedRows()) {
+					Row row = indexedRow.getRow();
+					if (!_rowFilter.filterRow(indexedRow.getIndex(), row)) {
+						continue;
+					}
 					Cell cell = row.getCell(_cellIndex);
 					if (cell != null && cell.recon != null && cell.recon.match != null) {
 						ids.add(cell.recon.match.id);
@@ -258,12 +275,13 @@ public class ExtendDataOperation extends EngineDependentOperation {
 			List<RecordDataExtension> results = new ArrayList<>();
 			for(Record record : records) {
 				Map<Long, DataExtension> recordExtensions = new HashMap<>();
-				List<Row> rows = record.getRows();
-				for(int i = 0; i != rows.size(); i++) {
-					long rowId = record.getStartRowId() + i;
-					Cell cell = rows.get(i).getCell(_cellIndex);
+				for(IndexedRow indexedRow : record.getIndexedRows()) {
+					if (!_rowFilter.filterRow(indexedRow.getIndex(), indexedRow.getRow())) {
+						continue;
+					}
+					Cell cell = indexedRow.getRow().getCell(_cellIndex);
 					if (cell != null && cell.recon != null && cell.recon.match != null) {
-						recordExtensions.put(rowId, extensions.get(cell.recon.match.id));
+						recordExtensions.put(indexedRow.getIndex(), extensions.get(cell.recon.match.id));
 					}
 				}
 				results.add(new RecordDataExtension(recordExtensions));
