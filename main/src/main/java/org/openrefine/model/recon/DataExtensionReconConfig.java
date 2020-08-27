@@ -43,6 +43,8 @@ import org.openrefine.model.recon.ReconJob;
 
 public class DataExtensionReconConfig extends StandardReconConfig {
 
+    private static final long serialVersionUID = 7365310998349971101L;
+
     final public ReconType type;
 
     private final static String WARN = "Not implemented";
