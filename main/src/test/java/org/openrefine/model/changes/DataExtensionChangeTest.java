@@ -26,18 +26,22 @@
  ******************************************************************************/
 package org.openrefine.model.changes;
 
-import static org.testng.Assert.assertEquals;
-
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.LineNumberReader;
 import java.io.Serializable;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 import org.openrefine.RefineTest;
+import org.openrefine.model.Cell;
+import org.openrefine.model.GridState;
 import org.openrefine.model.ModelException;
 import org.openrefine.model.Project;
+import org.openrefine.model.recon.Recon;
+import org.openrefine.model.recon.Recon.Judgment;
+import org.openrefine.model.recon.ReconStats;
 import org.slf4j.LoggerFactory;
+import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
@@ -61,31 +65,16 @@ public class DataExtensionChangeTest extends RefineTest {
                 new Serializable[] {"some item"});
     }
     
-    // we no longer read changes from 3.x
-    @Test(enabled=false)
-    public void testApplyOldChange() throws Exception {
-        InputStream in = this.getClass().getClassLoader()
-                .getResourceAsStream("changes/data_extension_2.8.txt");
-        LineNumberReader lineReader = new LineNumberReader(new InputStreamReader(in));
-        // skip the header
-        lineReader.readLine();
-        lineReader.readLine();
-        Change change = DataExtensionChange.load(lineReader);
-        change.apply(project);
-        assertEquals("Wikimedia content project", project.rows.get(0).getCell(1).value);
-    }
-    
-    // we no longer read changes from 3.x
-    @Test(enabled=false)
-    public void testApplyNewChange() throws Exception {
-        InputStream in = this.getClass().getClassLoader()
-                .getResourceAsStream("changes/data_extension_3.0.txt");
-        LineNumberReader lineReader = new LineNumberReader(new InputStreamReader(in));
-        // skip the header
-        lineReader.readLine();
-        lineReader.readLine();
-        Change change = DataExtensionChange.load(lineReader);
-        change.apply(project);
-        assertEquals("Wikimedia content project", project.rows.get(0).getCell(1).value);
+    @Test
+    public void testAggregator() {
+    	GridState state = createGrid(new String[] {"foo", "bar"},
+    			new Serializable[][] {
+    		{"hello",null},
+    		{1,      new Cell("recon", new Recon(0, "http://id", "http://schema").withJudgment(Judgment.New))}
+    	});
+        List<ReconStats> stats = state.aggregateRows(
+        		new DataExtensionChange.ReconStatsAggregator(Arrays.asList(0, 1)),
+        		new DataExtensionChange.MultiReconStats(Collections.nCopies(2, ReconStats.ZERO))).stats;
+        Assert.assertEquals(stats, Arrays.asList(ReconStats.create(2, 0, 0), ReconStats.create(1, 1, 0)));
     }
 }

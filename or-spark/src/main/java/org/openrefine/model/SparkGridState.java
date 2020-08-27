@@ -23,6 +23,8 @@ import org.openrefine.browsing.facets.Combiner;
 import org.openrefine.browsing.facets.RecordAggregator;
 import org.openrefine.browsing.facets.RowAggregator;
 import org.openrefine.model.changes.ChangeData;
+import org.openrefine.model.changes.RecordChangeDataJoiner;
+import org.openrefine.model.changes.RecordChangeDataProducer;
 import org.openrefine.model.changes.RowChangeDataFlatJoiner;
 import org.openrefine.model.changes.RowChangeDataJoiner;
 import org.openrefine.model.changes.RowChangeDataProducer;
@@ -724,6 +726,52 @@ public class SparkGridState implements GridState {
             
         };
     }
+    
+    private static <T extends Serializable> Function2<Long, Record, T> recordMap(RecordChangeDataProducer<T> mapper) {
+        return new Function2<Long, Record, T>() {
+
+            private static final long serialVersionUID = -4886309570396715048L;
+
+            @Override
+            public T call(Long id, Record record) throws Exception {
+                return mapper.call(record);
+            }
+        };
+    }
+
+    @Override
+    public <T extends Serializable> ChangeData<T> mapRecords(RecordFilter filter,
+            RecordChangeDataProducer<T> recordMapper) {
+        JavaPairRDD<Long, T> data;
+        JavaPairRDD<Long, Record> filteredGrid = getRecords().filter(wrapRecordFilter(filter));
+        if (recordMapper.getBatchSize() == 1) {
+            data = RDDUtils.mapKeyValuesToValues(filteredGrid, recordMap(recordMapper));
+        } else {
+            JavaRDD<List<Record>> batched = RDDUtils.partitionWiseBatching(filteredGrid.values(), recordMapper.getBatchSize());
+            data = JavaPairRDD.fromJavaRDD(batched.flatMap(batchedRecordMap(recordMapper)));
+        }
+                
+        return new SparkChangeData<T>(data.filter(t -> t._2 != null), runner);
+    }
+    
+    private static <T extends Serializable> FlatMapFunction<List<Record>, Tuple2<Long, T>> batchedRecordMap(RecordChangeDataProducer<T> recordMapper) {
+        return new FlatMapFunction<List<Record>, Tuple2<Long, T>>() {
+
+            private static final long serialVersionUID = 1L;
+
+            @Override
+            public Iterator<Tuple2<Long, T>> call(List<Record> records) throws Exception {
+                List<T> results = recordMapper.call(records);
+                if (records.size() != results.size()) {
+                    throw new IllegalStateException(String.format("Change data producer returned %d results on a batch of %d records", results.size(), records.size()));
+                }
+                return IntStream.range(0, records.size())
+                        .mapToObj(i -> new Tuple2<Long, T>(records.get(i).getStartRowId(), results.get(i)))
+                        .iterator();
+            }
+            
+        };
+    }
 
     @Override
     public <T extends Serializable> GridState join(ChangeData<T> changeData, RowChangeDataJoiner<T> rowJoiner,
@@ -781,6 +829,36 @@ public class SparkGridState implements GridState {
                 return joiner.call(id, tuple._1, tuple._2.or(null));
             }
         };
+    }
+
+    @Override
+    public <T extends Serializable> GridState join(ChangeData<T> changeData, RecordChangeDataJoiner<T> recordJoiner,
+            ColumnModel newColumnModel) {
+        if (!(changeData instanceof SparkChangeData)) {
+            throw new IllegalArgumentException("A Spark grid state can only be joined with Spark change data");
+        }
+        SparkChangeData<T> sparkChangeData = (SparkChangeData<T>)changeData;
+        // TODO this left outer join does not rely on the fact that the RDDs are sorted by key
+        // and there could be spurious shuffles if the partitioners differ slightly.
+        // the last sort could be avoided as well (but by default leftOuterJoin will not preserve order…)
+        JavaPairRDD<Long, Tuple2<Record, Optional<T>>> join = getRecords().leftOuterJoin(sparkChangeData.getData()).sortByKey();
+        JavaRDD<List<Row>> newGrid = join.map(wrapRecordJoiner(recordJoiner));
+        JavaPairRDD<Long, Row> flattened = RDDUtils.zipWithIndex(newGrid.flatMap(l -> l.iterator()));
+        return new SparkGridState(newColumnModel, flattened, overlayModels, runner);
+    }
+    
+    private static <T extends Serializable> Function<Tuple2<Long, Tuple2<Record,Optional<T>>>, List<Row>> wrapRecordJoiner(RecordChangeDataJoiner<T> joiner) {
+        return new Function<Tuple2<Long, Tuple2<Record,Optional<T>>>, List<Row>>() {
+
+            private static final long serialVersionUID = -8170813739798353133L;
+
+            @Override
+            public List<Row> call(Tuple2<Long, Tuple2<Record, Optional<T>>> tuple) throws Exception {
+                return joiner.call(tuple._2._1, tuple._2._2.orNull());
+            }
+            
+        };
+        
     }
 
 }

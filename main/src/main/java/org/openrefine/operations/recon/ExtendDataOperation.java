@@ -34,33 +34,36 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package org.openrefine.operations.recon;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 import java.util.Set;
 
 import org.openrefine.browsing.Engine;
 import org.openrefine.browsing.EngineConfig;
-import org.openrefine.browsing.FilteredRows;
-import org.openrefine.browsing.RowVisitor;
+import org.openrefine.history.History;
 import org.openrefine.history.HistoryEntry;
 import org.openrefine.model.Cell;
-import org.openrefine.model.ColumnMetadata;
-import org.openrefine.model.Project;
+import org.openrefine.model.ColumnModel;
+import org.openrefine.model.GridState;
+import org.openrefine.model.Record;
 import org.openrefine.model.Row;
-import org.openrefine.model.changes.CellAtRow;
+import org.openrefine.model.changes.ChangeData;
 import org.openrefine.model.changes.DataExtensionChange;
-import org.openrefine.model.recon.ReconCandidate;
+import org.openrefine.model.changes.DataExtensionChange.DataExtensionSerializer;
+import org.openrefine.model.changes.RecordChangeDataProducer;
 import org.openrefine.model.recon.ReconType;
 import org.openrefine.model.recon.ReconciledDataExtensionJob;
 import org.openrefine.model.recon.ReconciledDataExtensionJob.ColumnInfo;
 import org.openrefine.model.recon.ReconciledDataExtensionJob.DataExtension;
 import org.openrefine.model.recon.ReconciledDataExtensionJob.DataExtensionConfig;
+import org.openrefine.model.recon.ReconciledDataExtensionJob.RecordDataExtension;
 import org.openrefine.operations.EngineDependentOperation;
 import org.openrefine.process.LongRunningProcess;
 import org.openrefine.process.Process;
+import org.openrefine.process.ProcessManager;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -108,44 +111,46 @@ public class ExtendDataOperation extends EngineDependentOperation {
     }
 
     @Override
-    protected String getDescription() {
+	public String getDescription() {
         return "Extend data at index " + _columnInsertIndex + 
             " based on column " + _baseColumnName;
     }
-
-    protected String createDescription(ColumnMetadata column, List<CellAtRow> cellsAtRows) {
-        return "Extend data at index " + _columnInsertIndex + 
-            " based on column " + column.getName() + 
-            " by filling " + cellsAtRows.size();
-    }
     
     @Override
-    public Process createProcess(Project project, Properties options) throws Exception {
+    public Process createProcess(History history, ProcessManager manager) throws Exception {
         return new ExtendDataProcess(
-            project, 
+            history,
+            manager,
             getEngineConfig(),
-            getDescription()
+            getDescription(),
+            _identifierSpace,
+            _schemaSpace
         );
     }
     
     public class ExtendDataProcess extends LongRunningProcess implements Runnable {
-        final protected Project     _project;
+        final protected History     _history;
+        final protected ProcessManager _processManager;
         final protected EngineConfig  _engineConfig;
         final protected long        _historyEntryID;
         protected int               _cellIndex;
         protected ReconciledDataExtensionJob _job;
 
         public ExtendDataProcess(
-            Project project, 
+            History history, 
+            ProcessManager processManager,
             EngineConfig engineConfig, 
-            String description
+            String description,
+            String identifierSpace,
+            String schemaSpace
         ) {
             super(description);
-            _project = project;
+            _history = history;
+            _processManager = processManager;
             _engineConfig = engineConfig;
             _historyEntryID = HistoryEntry.allocateID();
             
-            _job = new ReconciledDataExtensionJob(_extension, _endpoint);
+            _job = new ReconciledDataExtensionJob(_extension, _endpoint, identifierSpace, schemaSpace);
         }
         
         @Override
@@ -153,118 +158,25 @@ public class ExtendDataOperation extends EngineDependentOperation {
             return this;
         }
         
-        protected void populateRowsWithMatches(List<Integer> rowIndices) throws Exception {
-            Engine engine = new Engine(_project);
-            engine.initializeFromConfig(_engineConfig);
+        @Override
+        public void run() {
+            GridState state = _history.getCurrentGridState();
+			Engine engine = new Engine(state, _engineConfig);
             
-            ColumnMetadata column = _project.columnModel.getColumnByName(_baseColumnName);
-            if (column == null) {
+			ColumnModel columnModel = state.getColumnModel();
+            
+            try {
+            _cellIndex = columnModel.getColumnIndexByName(_baseColumnName);
+            if (_cellIndex == -1) {
                 throw new Exception("No column named " + _baseColumnName);
             }
             
-            _cellIndex = column.getCellIndex();
+            DataExtensionProducer producer = new DataExtensionProducer(_job, _cellIndex);
+            // TODO support rows mode
+            ChangeData<RecordDataExtension> changeData = state.mapRecords(engine.combinedRecordFilters(), producer);
             
-            FilteredRows filteredRows = engine.getAllFilteredRows();
-            filteredRows.accept(_project, new RowVisitor() {
-                List<Integer> _rowIndices;
-                
-                public RowVisitor init(List<Integer> rowIndices) {
-                    _rowIndices = rowIndices;
-                    return this;
-                }
+            _history.getChangeDataStore().store(changeData, _historyEntryID, "extend", new DataExtensionSerializer());
 
-                @Override
-                public void start(Project project) {
-                    // nothing to do
-                }
-
-                @Override
-                public void end(Project project) {
-                    // nothing to do
-                }
-                
-                @Override
-                public boolean visit(Project project, int rowIndex, Row row) {
-                    Cell cell = row.getCell(_cellIndex);
-                    if (cell != null && cell.recon != null && cell.recon.match != null) {
-                        _rowIndices.add(rowIndex);
-                    }
-                    
-                    return false;
-                }
-            }.init(rowIndices));
-        }
-        
-        protected int extendRows(
-            List<Integer> rowIndices, 
-            List<DataExtension> dataExtensions, 
-            int from, 
-            int limit,
-            Map<String, ReconCandidate> reconCandidateMap
-        ) {
-            Set<String> ids = new HashSet<String>();
-            
-            int end;
-            for (end = from; end < limit && ids.size() < 10; end++) {
-                int index = rowIndices.get(end);
-                Row row = _project.rows.get(index);
-                Cell cell = row.getCell(_cellIndex);
-                
-                ids.add(cell.recon.match.id);
-            }
-            
-            Map<String, DataExtension> map = null;
-            try {
-                map = _job.extend(ids, reconCandidateMap);
-            } catch (Exception e) {
-                map = new HashMap<String, DataExtension>();
-            }
-            
-            for (int i = from; i < end; i++) {
-                int index = rowIndices.get(i);
-                Row row = _project.rows.get(index);
-                Cell cell = row.getCell(_cellIndex);
-                String guid = cell.recon.match.id;
-                
-                if (map.containsKey(guid)) {
-                    dataExtensions.add(map.get(guid));
-                } else {
-                    dataExtensions.add(null);
-                }
-            }
-            
-            return end;
-        }
-        
-        @Override
-        public void run() {
-            List<Integer> rowIndices = new ArrayList<Integer>();
-            List<DataExtension> dataExtensions = new ArrayList<DataExtension>();
-            
-            try {
-                populateRowsWithMatches(rowIndices);
-            } catch (Exception e2) {
-                // TODO : Not sure what to do here?
-                e2.printStackTrace();
-            }
-            
-            int start = 0;
-            Map<String, ReconCandidate> reconCandidateMap = new HashMap<String, ReconCandidate>();
-            
-            while (start < rowIndices.size()) {
-                int end = extendRows(rowIndices, dataExtensions, start, rowIndices.size(), reconCandidateMap);
-                start = end;
-                
-                _progress = end * 100 / rowIndices.size();
-                try {
-                    Thread.sleep(200);
-                } catch (InterruptedException e) {
-                    if (_canceled) {
-                        break;
-                    }
-                }
-            }
-            
             if (!_canceled) {
                 List<String> columnNames = new ArrayList<String>();
                 for (ColumnInfo info : _job.columns) {
@@ -277,26 +189,92 @@ public class ExtendDataOperation extends EngineDependentOperation {
                 }
                 
                 HistoryEntry historyEntry = new HistoryEntry(
-                    _historyEntryID,
-                    _project, 
+                    _historyEntryID, 
                     _description, 
                     ExtendDataOperation.this, 
                     new DataExtensionChange(
+                    	_engineConfig,
                         _baseColumnName,
                         _endpoint,
                         _identifierSpace,
                         _schemaSpace,
                         _columnInsertIndex,
                         columnNames,
-                        columnTypes,
-                        rowIndices,
-                        dataExtensions,
-                        _historyEntryID)
+                        columnTypes)
                 );
                 
-                _project.getHistory().addEntry(historyEntry);
-                _project.processManager.onDoneProcess(this);
+                _history.addEntry(historyEntry);
+                _processManager.onDoneProcess(this);
+            }
+            } catch(Exception e) {
+            	e.printStackTrace();
+            	_processManager.onFailedProcess(this, e);
             }
         }
+    }
+    
+    protected static class DataExtensionProducer implements RecordChangeDataProducer<RecordDataExtension> {
+
+		private static final long serialVersionUID = -7946297987163653933L;
+		private final ReconciledDataExtensionJob _job;
+    	private final int _cellIndex;
+    	
+    	protected DataExtensionProducer(ReconciledDataExtensionJob job, int cellIndex) {
+    		_job = job;
+    		_cellIndex = cellIndex;
+    	}
+
+		@Override
+		public RecordDataExtension call(Record record) {
+			return call(Collections.singletonList(record)).get(0);
+		}
+		
+		@Override
+		public List<RecordDataExtension> call(List<Record> records) {
+			/*
+			 * TODO: add support for rows-based filtering, in which case the code should still
+			 * work record-wise, but run the row filter inside this function to exclude mismatching rows.
+			 */
+			
+			Set<String> ids = new HashSet<>();
+			
+			for(Record record : records) {
+				for(Row row : record.getRows()) {
+					Cell cell = row.getCell(_cellIndex);
+					if (cell != null && cell.recon != null && cell.recon.match != null) {
+						ids.add(cell.recon.match.id);
+					}
+				}
+			}
+			
+			Map<String, DataExtension> extensions;
+			try {
+				extensions = _job.extend(ids);
+			} catch (Exception e) {
+				e.printStackTrace();
+				extensions = Collections.emptyMap();
+			}
+			
+			List<RecordDataExtension> results = new ArrayList<>();
+			for(Record record : records) {
+				Map<Long, DataExtension> recordExtensions = new HashMap<>();
+				List<Row> rows = record.getRows();
+				for(int i = 0; i != rows.size(); i++) {
+					long rowId = record.getStartRowId() + i;
+					Cell cell = rows.get(i).getCell(_cellIndex);
+					if (cell != null && cell.recon != null && cell.recon.match != null) {
+						recordExtensions.put(rowId, extensions.get(cell.recon.match.id));
+					}
+				}
+				results.add(new RecordDataExtension(recordExtensions));
+			}
+			return results;
+		}
+		
+		@Override
+		public int getBatchSize() {
+			return _job.getBatchSize();
+		}
+    	
     }
 }

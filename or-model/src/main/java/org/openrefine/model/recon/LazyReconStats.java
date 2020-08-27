@@ -4,6 +4,7 @@ import org.openrefine.model.ColumnMetadata;
 import org.openrefine.model.ColumnModel;
 import org.openrefine.model.GridState;
 import org.openrefine.model.ModelException;
+import org.openrefine.model.Row;
 
 /**
  * Recon stats that are only computed when needed (lazily).
@@ -90,6 +91,18 @@ public class LazyReconStats implements ReconStats {
     public int hashCode() {
         ensureComputed();
         return _values.hashCode();
+    }
+
+    @Override
+    public ReconStats withRow(Row row, int columnIndex) {
+        ensureComputed();
+        return _values.withRow(row, columnIndex);
+    }
+
+    @Override
+    public ReconStats sum(ReconStats other) {
+        ensureComputed();
+        return _values.sum(other);
     }
 
 }

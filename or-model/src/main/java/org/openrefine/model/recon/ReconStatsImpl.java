@@ -62,6 +62,36 @@ public class ReconStatsImpl implements ReconStats {
         return matchedTopics;
     }
 
+    @Override
+    public ReconStats withRow(Row row, int columnIndex) {
+        int nonBlanks = 0;
+        int newTopics = 0;
+        int matchedTopics = 0;
+        Cell cell = row.getCell(columnIndex);
+        if (cell != null && ExpressionUtils.isNonBlankData(cell.value)) {
+            nonBlanks++;
+            
+            if (cell.recon != null) {
+                if (cell.recon.judgment == Judgment.New) {
+                    newTopics++;
+                } else if (cell.recon.judgment == Judgment.Matched) {
+                    matchedTopics++;
+                }
+            }
+        }
+        return new ReconStatsImpl(
+                getNonBlanks() + nonBlanks,
+                getNewTopics() + newTopics,
+                getMatchedTopics() + matchedTopics);
+    }
+
+    @Override
+    public ReconStats sum(ReconStats other) {
+        return new ReconStatsImpl(
+                getNonBlanks() + other.getNonBlanks(),
+                getNewTopics() + other.getNewTopics(),
+                getMatchedTopics() + other.getMatchedTopics());
+    }
     
     /**
      * Creates reconciliation statistics from a column of
@@ -87,10 +117,7 @@ public class ReconStatsImpl implements ReconStats {
 
         @Override
         public ReconStats sum(ReconStats first, ReconStats second) {
-            return new ReconStatsImpl(
-                    first.getNonBlanks() + second.getNonBlanks(),
-                    first.getNewTopics() + second.getNewTopics(),
-                    first.getMatchedTopics() + second.getMatchedTopics());
+            return first.sum(second);
         }
 
         @Override
@@ -139,5 +166,6 @@ public class ReconStatsImpl implements ReconStats {
         return String.format("[ReconStats: non-blanks: %d, new: %d, matched: %d]",
                 getNonBlanks(), getNewTopics(), getMatchedTopics());
     }
+
     
 }

@@ -39,11 +39,13 @@ package org.openrefine.model.recon;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.Serializable;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -51,6 +53,8 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.openrefine.expr.functions.ToDate;
+import org.openrefine.model.Cell;
+import org.openrefine.model.recon.Recon.Judgment;
 import org.openrefine.util.JSONUtilities;
 import org.openrefine.util.JsonViews;
 import org.openrefine.util.ParsingUtilities;
@@ -64,11 +68,14 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
-public class ReconciledDataExtensionJob {
+public class ReconciledDataExtensionJob implements Serializable {
 
-    
-    static public class DataExtensionProperty  {
-        @JsonProperty("id")
+	private static final long serialVersionUID = -8114269895487484756L;
+
+	static public class DataExtensionProperty implements Serializable {
+
+		private static final long serialVersionUID = -6309521399471519189L;
+		@JsonProperty("id")
         public final String id;
         @JsonProperty("name")
         @JsonView(JsonViews.NonSaveMode.class)
@@ -91,27 +98,41 @@ public class ReconciledDataExtensionJob {
         }    
     }
     
-    static public class DataExtensionConfig  {
-        
-        @JsonProperty("properties")
-        public final List<DataExtensionProperty> properties;
+    static public class DataExtensionConfig implements Serializable {
+
+		private static final long serialVersionUID = -8000193899836494952L;
+		private final List<DataExtensionProperty> properties;
+        private final int batchSize;
         
         @JsonCreator
         public DataExtensionConfig(
                 @JsonProperty("properties")
-                List<DataExtensionProperty> properties) {
+                List<DataExtensionProperty> properties,
+                @JsonProperty("batchSize")
+                int batchSize) {
             this.properties = properties;
+            this.batchSize = batchSize <= 0 ? 10 : batchSize;
         }
+        
+        @JsonProperty("batchSize")
+        public int getBatchSize() {
+        	return batchSize;
+        }
+        
+        @JsonProperty("properties")
+		public List<DataExtensionProperty> getProperties() {
+			return properties;
+		}
         
         public static DataExtensionConfig reconstruct(String json) throws IOException {
             return ParsingUtilities.mapper.readValue(json, DataExtensionConfig.class);
-        }     
+        } 
     }
     
-    static public class DataExtensionQuery extends DataExtensionConfig {
+    static public class DataExtensionQuery {
         
-        @JsonProperty("ids")
-        public final List<String> ids;
+    	private final List<DataExtensionProperty> properties;
+        private final List<String> ids;
 
         @JsonCreator
         public DataExtensionQuery(
@@ -119,22 +140,89 @@ public class ReconciledDataExtensionJob {
                 List<String> ids,
                 @JsonProperty("properties")
                 List<DataExtensionProperty> properties) {
-            super(properties);
+        	this.properties = properties;
             this.ids = ids;
-        }   
+        }
+        
+        @JsonProperty("properties")
+		public List<DataExtensionProperty> getProperties() {
+			return properties;
+		}
+
+        @JsonProperty("ids")
+		public List<String> getIds() {
+			return ids;
+		}
+        
     }
     
-    static public class DataExtension {
-        final public Object[][] data;
+    /**
+     * Data extension corresponding to a single record.
+     * Each row in the record can be associated with a data extension.
+     * 
+     * @author Antonin Delpeuch
+     *
+     */
+    static public class RecordDataExtension implements Serializable {
+
+		private static final long serialVersionUID = 9150870996868122876L;
+		final private Map<Long, DataExtension> extensions;
+    	
+    	public RecordDataExtension(Map<Long, DataExtension> extensions) {
+    		this.extensions = extensions;
+    	}
+    	
+    	public Map<Long, DataExtension> getExtensions() {
+    		return extensions;
+    	}
+    	
+    	@Override
+    	public int hashCode() {
+    		return extensions.hashCode();
+    	}
+    	
+    	@Override
+    	public boolean equals(Object other) {
+    		if (!(other instanceof RecordDataExtension)) {
+    			return false;
+    		}
+    		return ((RecordDataExtension)other).getExtensions().equals(extensions);
+    	}
+    }
+    
+    /**
+     * Data extension corresponding to a single row.
+     * @author Antonin Delpeuch
+     *
+     */
+    static public class DataExtension implements Serializable {
+
+		private static final long serialVersionUID = -6098778224771219654L;
+		final public List<List<Cell>> data;
         
-        public DataExtension(Object[][] data) {
+        public DataExtension(List<List<Cell>> data) {
             this.data = data;
+        }
+        
+        @Override
+        public int hashCode() {
+        	return data.hashCode();
+        }
+        
+        @Override
+        public boolean equals(Object other) {
+        	if (!(other instanceof DataExtension)) {
+        		return false;
+        	}
+        	return ((DataExtension)other).data.equals(data);
         }
     }
     
     // Json serialization is used in PreviewExtendDataCommand
-    static public class ColumnInfo {
-        @JsonProperty("name")
+    static public class ColumnInfo implements Serializable {
+
+		private static final long serialVersionUID = 8043235351320028446L;
+		@JsonProperty("name")
         final public String name;
         @JsonProperty("id")
         final public String id;
@@ -157,15 +245,18 @@ public class ReconciledDataExtensionJob {
     final public DataExtensionConfig extension;
     final public String              endpoint;
     final public List<ColumnInfo>    columns = new ArrayList<ColumnInfo>();
+    final private String             identifierSpace;
+    final private String             schemaSpace;
     
-    public ReconciledDataExtensionJob(DataExtensionConfig obj, String endpoint) {
+    public ReconciledDataExtensionJob(DataExtensionConfig obj, String endpoint, String identifierSpace, String schemaSpace) {
         this.extension = obj;
         this.endpoint = endpoint;
+        this.identifierSpace = identifierSpace;
+        this.schemaSpace = schemaSpace;
     }
     
     public Map<String, ReconciledDataExtensionJob.DataExtension> extend(
-        Set<String> ids,
-        Map<String, ReconCandidate> reconCandidateMap
+        Set<String> ids
     ) throws Exception {
         StringWriter writer = new StringWriter();
         formulateQuery(ids, extension, writer);
@@ -181,7 +272,7 @@ public class ReconciledDataExtensionJob {
             	columns.addAll(newColumns);
             }
           
-            Map<String, ReconciledDataExtensionJob.DataExtension> map = new HashMap<String, ReconciledDataExtensionJob.DataExtension>();
+            Map<String, ReconciledDataExtensionJob.DataExtension> map = new HashMap<>();
             if (o.has("rows") && o.get("rows") instanceof ObjectNode){
                 ObjectNode records = (ObjectNode) o.get("rows");
                 
@@ -190,7 +281,7 @@ public class ReconciledDataExtensionJob {
                     if (records.has(id) && records.get(id) instanceof ObjectNode) {
                         ObjectNode record = (ObjectNode) records.get(id);
                         
-                        ReconciledDataExtensionJob.DataExtension ext = collectResult(record, reconCandidateMap);
+                        ReconciledDataExtensionJob.DataExtension ext = collectResult(record);
                         
                         if (ext != null) {
                             map.put(id, ext);
@@ -230,10 +321,9 @@ public class ReconciledDataExtensionJob {
 
     
     protected ReconciledDataExtensionJob.DataExtension collectResult(
-        ObjectNode record,
-        Map<String, ReconCandidate> reconCandidateMap
+        ObjectNode record
     ) {
-        List<Object[]> rows = new ArrayList<Object[]>();
+        List<List<Cell>> rows = new ArrayList<>();
 
         // for each property
         int colindex = 0;
@@ -252,79 +342,61 @@ public class ReconciledDataExtensionJob {
                 ObjectNode val = (ObjectNode) values.get(rowindex);
                 // store a reconciled value
                 if (val.has("id")) {
-                    storeCell(rows, rowindex, colindex, val, reconCandidateMap);
+                	String id = val.get("id").asText();
+                	String name = val.get("name").asText();
+                	ReconCandidate rc = new ReconCandidate(id, name, new String[] {}, 0);
+                	Recon recon = new Recon(0L, identifierSpace, schemaSpace)
+                			.withMatch(rc)
+                			.withJudgmentAction("auto")
+                			.withJudgment(Judgment.Matched)
+                			.withMatchRank(0)
+                			.withService(endpoint);
+                    storeCell(rows, rowindex, colindex, new Cell(name, recon));
                 } else if (val.has("str")) {
                 // store a bare string
                     String str = val.get("str").asText();
-                    storeCell(rows, rowindex, colindex, str); 
+                    storeCell(rows, rowindex, colindex, new Cell(str, null)); 
                 } else if (val.has("float")) {
                     double v = val.get("float").asDouble();
-                    storeCell(rows, rowindex, colindex, v);
+                    storeCell(rows, rowindex, colindex, new Cell(v, null));
                 } else if (val.has("int")) {
                     int v = val.get("int").asInt();
-                    storeCell(rows, rowindex, colindex, v);
+                    storeCell(rows, rowindex, colindex, new Cell(v, null));
                 } else if (val.has("date")) {
                     ToDate td = new ToDate();
                     String[] args = new String[1];
                     args[0] = val.get("date").asText();
                     Object v = td.call(null, args);
-                    storeCell(rows, rowindex, colindex, v);
+                    storeCell(rows, rowindex, colindex, new Cell((Serializable)v, null));
                 } else if(val.has("bool")) {
                     boolean v = val.get("bool").asBoolean();
-                    storeCell(rows, rowindex, colindex, v);
+                    storeCell(rows, rowindex, colindex, new Cell(v, null));
                 }
             }
             colindex++;
         }
 
-       
-        
-        Object[][] data = new Object[rows.size()][columns.size()];
-        rows.toArray(data);
-        
-        return new DataExtension(data);
+        return new DataExtension(rows);
     }
 
     protected void storeCell(
-        List<Object[]>  rows, 
+        List<List<Cell>>  rows, 
         int row,
         int col,
-        Object value
+        Cell cell
     ) {
         while (row >= rows.size()) {
-            rows.add(new Object[columns.size()]);
+            rows.add(new ArrayList<>(Collections.nCopies(columns.size(), null)));
         }
-        rows.get(row)[col] = value;
+        rows.get(row).set(col, cell);
     }
-    
-    protected void storeCell(
-        List<Object[]>  rows, 
-        int row,
-        int col,
-        ObjectNode obj,
-        Map<String, ReconCandidate> reconCandidateMap
-    ) {
-        String id = obj.get("id").asText();
-        ReconCandidate rc;
-        if (reconCandidateMap.containsKey(id)) {
-            rc = reconCandidateMap.get(id);
-        } else {
-            rc = new ReconCandidate(
-                    obj.get("id").asText(),
-                    obj.get("name").asText(),
-                    JSONUtilities.getStringArray(obj, "type"),
-                    100
-                );
-            
-            reconCandidateMap.put(id, rc);
-        }
-        
-        storeCell(rows, row, col, rc);
-    }
-
     
     static protected void formulateQuery(Set<String> ids, DataExtensionConfig node, Writer writer) throws IOException {
-        DataExtensionQuery query = new DataExtensionQuery(ids.stream().filter(e -> e != null).collect(Collectors.toList()), node.properties);
+        DataExtensionQuery query = new DataExtensionQuery(ids.stream().filter(e -> e != null).collect(Collectors.toList()), node.getProperties());
         ParsingUtilities.saveWriter.writeValue(writer, query);
     }
+
+	public int getBatchSize() {
+		return extension.getBatchSize();
+	}
 }

@@ -1,468 +1,235 @@
-/*
-
-Copyright 2010, Google Inc.
-All rights reserved.
-
-Redistribution and use in source and binary forms, with or without
-modification, are permitted provided that the following conditions are
-met:
-
-    * Redistributions of source code must retain the above copyright
-notice, this list of conditions and the following disclaimer.
-    * Redistributions in binary form must reproduce the above
-copyright notice, this list of conditions and the following disclaimer
-in the documentation and/or other materials provided with the
-distribution.
-    * Neither the name of Google Inc. nor the names of its
-contributors may be used to endorse or promote products derived from
-this software without specific prior written permission.
-
-THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
-"AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
-LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
-A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
-OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
-SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
-LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,           
-DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY           
-THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
-(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-
-*/
-
 package org.openrefine.model.changes;
 
 import java.io.IOException;
-import java.io.LineNumberReader;
 import java.io.Serializable;
-import java.io.Writer;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
+import org.openrefine.browsing.EngineConfig;
+import org.openrefine.browsing.facets.RowAggregator;
+import org.openrefine.history.dag.DagSlice;
 import org.openrefine.model.Cell;
 import org.openrefine.model.ColumnMetadata;
-import org.openrefine.model.ModelException;
-import org.openrefine.model.Project;
+import org.openrefine.model.ColumnModel;
+import org.openrefine.model.GridState;
+import org.openrefine.model.Record;
 import org.openrefine.model.Row;
-import org.openrefine.model.recon.DataExtensionReconConfig;
-import org.openrefine.model.recon.Recon;
-import org.openrefine.model.recon.ReconCandidate;
-import org.openrefine.model.recon.ReconConfig;
 import org.openrefine.model.recon.ReconStats;
 import org.openrefine.model.recon.ReconType;
-import org.openrefine.model.recon.Recon.Judgment;
 import org.openrefine.model.recon.ReconciledDataExtensionJob.DataExtension;
+import org.openrefine.model.recon.ReconciledDataExtensionJob.RecordDataExtension;
 import org.openrefine.util.ParsingUtilities;
 
-public class DataExtensionChange implements Change {
-    final protected String              _baseColumnName;
-    final protected String              _service;
-    final protected String              _identifierSpace;
-    final protected String              _schemaSpace;
-    final protected int                 _columnInsertIndex;
-    
-    final protected List<String>        _columnNames;
-    final protected List<ReconType>      _columnTypes;
-    
-    final protected List<Integer>       _rowIndices;
-    final protected List<DataExtension> _dataExtensions;
-    
-    protected long                      _historyEntryID;
-    protected int                       _firstNewCellIndex = -1;
-    protected List<Row>                 _oldRows;
-    protected List<Row>                 _newRows;
-    
-    public DataExtensionChange(
-        String baseColumnName,
-        String service,
-        String identifierSpace,
-        String schemaSpace,
-        int columnInsertIndex, 
-        List<String> columnNames,
-        List<ReconType> columnTypes,
-        List<Integer> rowIndices,
-        List<DataExtension> dataExtensions,
-        long historyEntryID
-    ) {
-        _baseColumnName = baseColumnName;
-        _service = service;
-        _identifierSpace = identifierSpace;
-        _schemaSpace = schemaSpace;
-        _columnInsertIndex = columnInsertIndex;
-        
-        _columnNames = columnNames;
-        _columnTypes = columnTypes;
-        
-        _rowIndices = rowIndices;
-        _dataExtensions = dataExtensions;
-        
-        _historyEntryID = historyEntryID;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.core.JsonProcessingException;
+
+public class DataExtensionChange extends EngineDependentChange {
+	
+	@JsonProperty("baseColumnName")
+	protected final String _baseColumnName;
+	@JsonProperty("endpoint")
+	protected final String _endpoint;
+	@JsonProperty("identifierSpace")
+	protected final String _identifierSpace;
+	@JsonProperty("schemaSpace")
+	private final String _schemaSpace;
+	@JsonProperty("columnInsertIndex")
+	private final int _columnInsertIndex;
+	@JsonProperty("columnNames")
+	private final List<String> _columnNames;
+	@JsonProperty("columnTypes")
+	private final List<ReconType> _columnTypes;
+
+	@JsonCreator
+	public DataExtensionChange(
+			@JsonProperty("engineConfig")
+			EngineConfig engineConfig,
+			@JsonProperty("baseColumnName")
+			String baseColumnName,
+			@JsonProperty("endpoint")
+			String endpoint,
+			@JsonProperty("identifierSpace")
+			String identifierSpace,
+			@JsonProperty("schemaSpace")
+			String schemaSpace,
+			@JsonProperty("columnInsertIndex")
+			int columnInsertIndex,
+			@JsonProperty("columnNames")
+			List<String> columnNames,
+			@JsonProperty("columnTypes")
+			List<ReconType> columnTypes) {
+		super(engineConfig);
+		_baseColumnName = baseColumnName;
+		_endpoint = endpoint;
+		_identifierSpace = identifierSpace;
+		_schemaSpace = schemaSpace;
+		_columnInsertIndex = columnInsertIndex;
+		_columnNames = columnNames;
+		_columnTypes = columnTypes;
+	}
+
+	@Override
+	public GridState apply(GridState projectState, ChangeContext context) throws DoesNotApplyException {
+		ChangeData<RecordDataExtension> changeData;
+		try {
+			changeData = context.getChangeData("extend", new DataExtensionSerializer());
+		} catch (IOException e) {
+			throw new DoesNotApplyException(String.format("Unable to retrieve change data for data extension"));
+		}
+		int baseColumnId = projectState.getColumnModel().getColumnIndexByName(_baseColumnName);
+		if (baseColumnId == -1) {
+			throw new ColumnNotFoundException(_baseColumnName);
+		}
+		ColumnModel newColumnModel = projectState.getColumnModel();
+		for(int i = 0; i != _columnNames.size(); i++) {
+			newColumnModel = newColumnModel.insertUnduplicatedColumn(_columnInsertIndex + i, new ColumnMetadata(_columnNames.get(i)));
+			// TODO add recon stats later on
+		}
+		RecordChangeDataJoiner<RecordDataExtension> joiner = new DataExtensionJoiner(baseColumnId, _columnInsertIndex, _columnNames.size());
+		GridState state = projectState.join(changeData, joiner, newColumnModel);
+		
+		// Compute recon stats
+		ReconStatsAggregator aggregator = new ReconStatsAggregator(IntStream.range(_columnInsertIndex, _columnInsertIndex + _columnNames.size()).boxed().collect(Collectors.toList()));
+		MultiReconStats initialState = new MultiReconStats(Collections.nCopies(_columnNames.size(), ReconStats.ZERO));
+		List<ReconStats> reconStats = state.aggregateRows(aggregator, initialState).stats;
+
+		ColumnModel columnModel = state.getColumnModel();
+		for(int i = 0; i != _columnNames.size(); i++) {
+			if (reconStats.get(i).getMatchedTopics() > 0) {
+				columnModel = columnModel.withReconStats(_columnInsertIndex + i, reconStats.get(i));
+				//TODO add recon config as well
+			}
+		}
+		return state.withColumnModel(columnModel);
+	}
+
+	@Override
+	public boolean isImmediate() {
+		return false;
+	}
+
+	@Override
+	public DagSlice getDagSlice() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
+    public static class DataExtensionSerializer implements ChangeDataSerializer<RecordDataExtension> {
+
+		private static final long serialVersionUID = -8334190917198142840L;
+
+		@Override
+		public String serialize(RecordDataExtension changeDataItem) {
+			try {
+				return ParsingUtilities.saveWriter.writeValueAsString(changeDataItem);
+			} catch (JsonProcessingException e) {
+				throw new IllegalStateException("Cell serialization failed", e);
+			}
+		}
+
+		@Override
+		public RecordDataExtension deserialize(String serialized) throws IOException {
+			return ParsingUtilities.mapper.readValue(serialized, RecordDataExtension.class);
+		}
+    	
     }
+	
+    protected static class DataExtensionJoiner implements RecordChangeDataJoiner<RecordDataExtension> {
 
-    protected DataExtensionChange(
-        String              baseColumnName, 
-        String              service,
-        String              identifierSpace,
-        String              schemaSpace,
-        int                 columnInsertIndex,
-        
-        List<String>        columnNames,
-        List<ReconType> columnTypes,
-        
-        List<Integer>       rowIndices,
-        List<DataExtension> dataExtensions,
-        int                 firstNewCellIndex,
-        List<Row>           oldRows,
-        List<Row>           newRows
-    ) {
-        _baseColumnName = baseColumnName;
-        _service = service;
-        _identifierSpace = identifierSpace;
-        _schemaSpace = schemaSpace;
-        _columnInsertIndex = columnInsertIndex;
-        
-        _columnNames = columnNames;
-        _columnTypes = columnTypes;
-        
-        _rowIndices = rowIndices;
-        _dataExtensions = dataExtensions;
-        
-        _firstNewCellIndex = firstNewCellIndex;
-        _oldRows = oldRows;
-        _newRows = newRows;
-    }
+		private static final long serialVersionUID = 8991393046204795332L;
+		private final int baseColumnId;
+    	private final int columnInsertId;
+    	private final int nbInsertedColumns;
+    	
+    	protected DataExtensionJoiner(int baseColumnId, int columnInsertId, int nbInsertedColumns) {
+    		this.baseColumnId = baseColumnId;
+    		this.columnInsertId = columnInsertId;
+    		this.nbInsertedColumns = nbInsertedColumns;
+    	}
 
-    @Override
-    public void apply(Project project) {
-        synchronized (project) {
-            if (_firstNewCellIndex < 0) {
-                _firstNewCellIndex = project.columnModel.allocateNewCellIndex();
-                for (int i = 1; i < _columnNames.size(); i++) {
-                    project.columnModel.allocateNewCellIndex();
-                }
-                
-                _oldRows = new ArrayList<Row>(project.rows);
-                
-                _newRows = new ArrayList<Row>(project.rows.size());
-                
-                int cellIndex = project.columnModel.getColumnByName(_baseColumnName).getCellIndex();
-                int keyCellIndex = project.columnModel.getColumns().get(project.columnModel.getKeyColumnIndex()).getCellIndex();
-                int index = 0;
-                
-                int rowIndex = index < _rowIndices.size() ? _rowIndices.get(index) : _oldRows.size();
-                DataExtension dataExtension = index < _rowIndices.size() ? _dataExtensions.get(index) : null;
-                
-                index++;
-                
-                Map<String, Recon> reconMap = new HashMap<String, Recon>();
-                
-                for (int r = 0; r < _oldRows.size(); r++) {
-                    Row oldRow = _oldRows.get(r);
-                    if (r < rowIndex) {
-                        _newRows.add(oldRow.dup());
-                        continue;
-                    }
-                    
-                    if (dataExtension == null || dataExtension.data.length == 0) {
-                        _newRows.add(oldRow);
-                    } else {
-                        Row firstNewRow = oldRow.dup();
-                        extendRow(firstNewRow, dataExtension, 0, reconMap);
-                        _newRows.add(firstNewRow);
-                        
-                        int r2 = r + 1;
-                        for (int subR = 1; subR < dataExtension.data.length; subR++) {
-                            if (r2 < project.rows.size()) {
-                                Row oldRow2 = project.rows.get(r2);
-                                if (oldRow2.isCellBlank(cellIndex) && 
-                                    oldRow2.isCellBlank(keyCellIndex)) {
-                                    
-                                    Row newRow = oldRow2.dup();
-                                    extendRow(newRow, dataExtension, subR, reconMap);
-                                    
-                                    _newRows.add(newRow);
-                                    r2++;
-                                    
-                                    continue;
-                                }
-                            }
-                            
-                            Row newRow = new Row(cellIndex + _columnNames.size());
-                            extendRow(newRow, dataExtension, subR, reconMap);
-                            
-                            _newRows.add(newRow);
-                        }
-                        
-                        r = r2 - 1; // r will be incremented by the for loop anyway
-                    }
-                    
-                    rowIndex = index < _rowIndices.size() ? _rowIndices.get(index) : _oldRows.size();
-                    dataExtension = index < _rowIndices.size() ? _dataExtensions.get(index) : null;
-                    index++;
-                }
-            }
-            
-            project.rows.clear();
-            project.rows.addAll(_newRows);
-            
-            for (int i = 0; i < _columnNames.size(); i++) {
-                String name = _columnNames.get(i);
-                int cellIndex = _firstNewCellIndex + i;
-                
-                ReconType columnType = _columnTypes.get(i);
-                ReconConfig reconConfig = new DataExtensionReconConfig(
-                        _service,
-                        _identifierSpace,
-                        _schemaSpace,
-                        columnType);
-                ReconStats reconStats = ReconStats.create(project, cellIndex);
-                if (reconStats.getMatchedTopics() == 0) {
-                	reconStats = null;
-                }
-                ColumnMetadata column = new ColumnMetadata(cellIndex, name, name, reconConfig, reconStats);
-                
-                try {
-                    project.columnModel.addColumn(_columnInsertIndex + i, column, true);
-
-                    // the column might have been renamed to avoid collision
-                    _columnNames.set(i, column.getName());
-                } catch (ModelException e) {
-                    // won't get here since we set the avoid collision flag
-                }
-            }
-            
-            project.update();
-        }
+		@Override
+		public List<Row> call(Record record, RecordDataExtension changeData) {
+			List<Row> newRows = new ArrayList<>();
+			List<Row> oldRows = record.getRows();
+			Map<Long, DataExtension> extensions = changeData.getExtensions();
+			
+			for(int i = 0; i != oldRows.size(); i++) {
+				Row row = oldRows.get(i);
+				Cell baseCell = row.getCell(baseColumnId);
+				if (baseCell == null || baseCell.recon == null || baseCell.recon.match == null) {
+					continue;
+				}
+				long rowId = record.getStartRowId() + i;
+				DataExtension extension = extensions.get(rowId);
+				
+				int origRow = i;
+				for (List<Cell> extensionRow : extension.data) {
+					Row newRow;
+					if (origRow == i || (origRow < oldRows.size() && oldRows.get(origRow).isCellBlank(baseColumnId))) {
+						newRow = oldRows.get(origRow);
+						origRow++;
+					} else {
+						newRow = new Row(Collections.nCopies(row.getCells().size(), null));
+					}
+					List<Cell> insertedCells = extensionRow;
+					if (insertedCells.size() != nbInsertedColumns) {
+						insertedCells = new ArrayList<>();
+						insertedCells.addAll(Collections.nCopies(nbInsertedColumns - row.getCells().size(), null));
+					}
+					newRows.add(newRow.insertCells(columnInsertId, extensionRow));
+				}
+			}
+			return newRows;
+		}
+    	
     }
     
-    protected void extendRow(
-        Row row, 
-        DataExtension dataExtension, 
-        int extensionRowIndex,
-        Map<String, Recon> reconMap
-    ) {
-        Object[] values = dataExtension.data[extensionRowIndex];
-        for (int c = 0; c < values.length; c++) {
-            Object value = values[c];
-            Cell cell = null;
-            
-            if (value instanceof ReconCandidate) {
-                ReconCandidate rc = (ReconCandidate) value;
-                Recon recon;
-                if (reconMap.containsKey(rc.id)) {
-                    recon = reconMap.get(rc.id);
-                } else {
-                    recon = new Recon(_historyEntryID, _identifierSpace, _schemaSpace);
-                    recon.addCandidate(rc);
-                    recon.service = _service;
-                    recon.match = rc;
-                    recon.matchRank = 0;
-                    recon.judgment = Judgment.Matched;
-                    recon.judgmentAction = "auto";
-                    recon.judgmentBatchSize = 1;
-                    
-                    reconMap.put(rc.id, recon);
-                }
-                cell = new Cell(rc.name, recon);
-            } else {
-                cell = new Cell((Serializable) value, null);
-            }
-            
-            row.setCell(_firstNewCellIndex + c, cell);
-        }
-    }
-
-    @Override
-    public void revert(Project project) {
-        synchronized (project) {
-            project.rows.clear();
-            project.rows.addAll(_oldRows);
-            
-            for (int i = 0; i < _columnNames.size(); i++) {
-                project.columnModel.getColumns().remove(_columnInsertIndex);
-            }
-            
-            project.update();
-        }
-    }
-
-    @Override
-    public void save(Writer writer, Properties options) throws IOException {
-        writer.write("baseColumnName="); writer.write(_baseColumnName); writer.write('\n');
-        writer.write("service="); writer.write(_service); writer.write('\n');
-        writer.write("identifierSpace="); writer.write(_identifierSpace); writer.write('\n');
-        writer.write("schemaSpace="); writer.write(_schemaSpace); writer.write('\n');
-        writer.write("columnInsertIndex="); writer.write(Integer.toString(_columnInsertIndex)); writer.write('\n');
-        writer.write("columnNameCount="); writer.write(Integer.toString(_columnNames.size())); writer.write('\n');
-        for (String name : _columnNames) {
-            writer.write(name); writer.write('\n');
-        }
-        writer.write("columnTypeCount="); writer.write(Integer.toString(_columnTypes.size())); writer.write('\n');
-        for (ReconType type : _columnTypes) {
-            if(type != null) {
-                ParsingUtilities.saveWriter.writeValue(writer, type);
-            }
-            writer.write('\n');
-        }
-        writer.write("rowIndexCount="); writer.write(Integer.toString(_rowIndices.size())); writer.write('\n');
-        for (Integer rowIndex : _rowIndices) {
-            writer.write(rowIndex.toString()); writer.write('\n');
-        }
-        
-        writer.write("firstNewCellIndex="); writer.write(Integer.toString(_firstNewCellIndex)); writer.write('\n');
-        
-        writer.write("newRowCount="); writer.write(Integer.toString(_newRows.size())); writer.write('\n');
-        for (Row row : _newRows) {
-            row.save(writer, options);
-            writer.write('\n');
-        }
-        writer.write("oldRowCount="); writer.write(Integer.toString(_oldRows.size())); writer.write('\n');
-        for (Row row : _oldRows) {
-            row.save(writer, options);
-            writer.write('\n');
-        }
-        writer.write("/ec/\n"); // end of change marker
+    /**
+     * Wrapper introduced to satisfy the type bound of aggregateRows
+     * (List<ReconStats> is not recognized as serializable on its own).
+     * @author Antonin Delpeuch
+     *
+     */
+    protected static class MultiReconStats implements Serializable {
+		private static final long serialVersionUID = -5709289822943713622L;
+		public final List<ReconStats> stats;
+    	public MultiReconStats(List<ReconStats> stats) {
+    		this.stats = stats;
+    	}
     }
     
-    static public Change load(LineNumberReader reader) throws Exception {
-        String baseColumnName = null;
-        String service = null;
-        String identifierSpace = null;
-        String schemaSpace = null;
-        int columnInsertIndex = -1;
-        
-        List<String> columnNames = null;
-        List<ReconType> columnTypes = null;
-        
-        List<Integer> rowIndices = null;
-        List<DataExtension> dataExtensions = null;
-        
-        List<Row> oldRows = null;
-        List<Row> newRows = null;
-        
-        int firstNewCellIndex = -1;
-        
-        String line;
-        while ((line = reader.readLine()) != null && !"/ec/".equals(line)) {
-            int equal = line.indexOf('=');
-            CharSequence field = line.subSequence(0, equal);
-            String value = line.substring(equal + 1);
-            
-            if ("baseColumnName".equals(field)) {
-                baseColumnName = value;
-            } else if ("service".equals(field)) {
-                service = value;
-            } else if ("identifierSpace".equals(field)) {
-                identifierSpace = value;
-            } else if ("schemaSpace".equals(field)) {
-                schemaSpace = value;
-            } else if ("columnInsertIndex".equals(field)) {
-                columnInsertIndex = Integer.parseInt(value);
-            } else if ("firstNewCellIndex".equals(field)) {
-                firstNewCellIndex = Integer.parseInt(value);
-            } else if ("rowIndexCount".equals(field)) {
-                int count = Integer.parseInt(value);
-                
-                rowIndices = new ArrayList<Integer>(count);
-                for (int i = 0; i < count; i++) {
-                    line = reader.readLine();
-                    if (line != null) {
-                        rowIndices.add(Integer.parseInt(line));
-                    }
-                }
-            } else if ("columnNameCount".equals(field)) {
-                int count = Integer.parseInt(value);
-                
-                columnNames = new ArrayList<String>(count);
-                for (int i = 0; i < count; i++) {
-                    line = reader.readLine();
-                    if (line != null) {
-                        columnNames.add(line);
-                    }
-                }
-            } else if ("columnTypeCount".equals(field)) {
-                int count = Integer.parseInt(value);
-                
-                columnTypes = new ArrayList<ReconType>(count);
-                for (int i = 0; i < count; i++) {
-                    line = reader.readLine();
-                    if (line == null || line.length() == 0) {
-                        columnTypes.add(null);
-                    } else {
-                        columnTypes.add(ReconType.load(line));
-                    }
-                }
-            } else if ("dataExtensionCount".equals(field)) {
-                // kept for compatibility with 2.8, but the data 
-                // deserialized here is not actually needed to apply/undo
-                // the change, so we ignore it.
-                int count = Integer.parseInt(value);
-                
-                dataExtensions = new ArrayList<DataExtension>(count);
-                for (int i = 0; i < count; i++) {
-                    line = reader.readLine();
-                    
-                    if (line == null) {
-                        continue;
-                    }
-                    
-                    if (line.length() == 0) {
-                        dataExtensions.add(null);
-                        continue;
-                    }
-                    
-                    int rowCount = Integer.parseInt(line);
-                    
-                    for (int r = 0; r < rowCount; r++) {
-                        for (int c = 0; c < columnNames.size(); c++) {
-                            line = reader.readLine();
-                        }
-                    }
-                }
-            } else if ("oldRowCount".equals(field)) {
-                int count = Integer.parseInt(value);
-                
-                oldRows = new ArrayList<Row>(count);
-                for (int i = 0; i < count; i++) {
-                    line = reader.readLine();
-                    if (line != null) {
-                        oldRows.add(Row.load(line));
-                    }
-                }
-            } else if ("newRowCount".equals(field)) {
-                int count = Integer.parseInt(value);
-                
-                newRows = new ArrayList<Row>(count);
-                for (int i = 0; i < count; i++) {
-                    line = reader.readLine();
-                    if (line != null) {
-                        newRows.add(Row.load(line));
-                    }
-                }
-            }
+    protected static class ReconStatsAggregator implements RowAggregator<MultiReconStats> {
 
-        }
-        
-        DataExtensionChange change = new DataExtensionChange(
-            baseColumnName, 
-            service,
-            identifierSpace,
-            schemaSpace,
-            columnInsertIndex, 
-            columnNames,
-            columnTypes,
-            rowIndices,
-            dataExtensions,
-            firstNewCellIndex,
-            oldRows,
-            newRows
-        );
-        
-        
-        return change;
+		private static final long serialVersionUID = -3030069835741440171L;
+		private final List<Integer> columnIds;
+    
+    	protected ReconStatsAggregator(List<Integer> columnIds) {
+    		this.columnIds = columnIds;
+    	}
+
+		@Override
+		public MultiReconStats sum(MultiReconStats first, MultiReconStats second) {
+			List<ReconStats> sum = new ArrayList<>(first.stats.size());
+			for(int i = 0; i != first.stats.size(); i++) {
+				sum.add(first.stats.get(i).sum(second.stats.get(i)));
+			}
+			return new MultiReconStats(sum);
+		}
+
+		@Override
+		public MultiReconStats withRow(MultiReconStats state, long rowId, Row row) {
+			List<ReconStats> sum = new ArrayList<>(state.stats.size());
+			for(int i = 0; i != state.stats.size(); i++) {
+				ReconStats stats = state.stats.get(i);
+				sum.add(stats.withRow(row, columnIds.get(i)));
+			}
+			return new MultiReconStats(sum);
+		}
     }
+	
 }

@@ -23,6 +23,8 @@ import org.openrefine.browsing.facets.StringFacetState;
 import org.openrefine.model.changes.ChangeData;
 import org.openrefine.model.changes.ChangeDataSerializer;
 import org.openrefine.model.changes.IndexedData;
+import org.openrefine.model.changes.RecordChangeDataJoiner;
+import org.openrefine.model.changes.RecordChangeDataProducer;
 import org.openrefine.model.changes.RowChangeDataFlatJoiner;
 import org.openrefine.model.changes.RowChangeDataJoiner;
 import org.openrefine.model.changes.RowChangeDataProducer;
@@ -595,7 +597,7 @@ public abstract class DatamodelRunnerTestBase {
     };
     
     @Test
-    public void testGenerateChangeData() {
+    public void testGenerateRowChangeData() {
         ChangeData<String> changeData = simpleGrid.mapRows(myRowFilter, concatChangeMapper);
         
         Assert.assertEquals(changeData.get(0L), "b_concat");
@@ -675,7 +677,30 @@ public abstract class DatamodelRunnerTestBase {
         }
         
     };
-  
+    
+    public static RecordChangeDataProducer<String> recordChangeMapper = new RecordChangeDataProducer<String>() {
+
+        private static final long serialVersionUID = -3973242967552705600L;
+
+        @Override
+        public String call(Record record) {
+            StringBuilder builder = new StringBuilder();
+            for(Row row : record.getRows()) {
+                builder.append(row.getCellValue(1).toString());
+            }
+            return builder.toString();
+        }
+        
+    };
+    
+    @Test
+    public void testGenerateRecordChangeData() {
+        ChangeData<String> changeData = simpleGrid.mapRecords(RecordFilter.ANY_RECORD, recordChangeMapper);
+        
+        Assert.assertEquals(changeData.get(0L), "b1");
+        Assert.assertNull(changeData.get(1L)); // because it is not a record start position
+        Assert.assertEquals(changeData.get(2L), "true123123123123");
+    }
     
     @Test
     public void testJoinChangeData() {
@@ -723,5 +748,32 @@ public abstract class DatamodelRunnerTestBase {
         
         Assert.assertEquals(flatJoined.getColumnModel(), expected.getColumnModel());
         Assert.assertEquals(flatJoined.collectRows(), expected.collectRows());        
+    }
+    
+    public static RecordChangeDataJoiner<String> recordJoiner = new RecordChangeDataJoiner<String>() {
+        
+        private static final long serialVersionUID = -4413769252252489169L;
+
+        @Override
+        public List<Row> call(Record record, String changeData) {
+            return record.getRows().stream().map(row -> row.withCell(1, new Cell(changeData, null))).collect(Collectors.toList());
+        }
+        
+    };
+    
+    @Test
+    public void testRecordJoinChangeData() {
+        GridState joined = simpleGrid.join(simpleChangeData, recordJoiner, simpleGrid.getColumnModel());
+        
+        GridState expected = createGrid(new String[] {"foo", "bar"},
+                new Serializable[][] { 
+            {"a", "first"},
+            {"", "first"},
+            {"c", "third"},
+            {null, "third"}
+        });
+        
+        Assert.assertEquals(joined.getColumnModel(), expected.getColumnModel());
+        Assert.assertEquals(joined.collectRows(), expected.collectRows()); 
     }
 }

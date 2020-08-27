@@ -19,6 +19,8 @@ import java.util.zip.GZIPOutputStream;
 import org.openrefine.browsing.facets.RecordAggregator;
 import org.openrefine.browsing.facets.RowAggregator;
 import org.openrefine.model.changes.ChangeData;
+import org.openrefine.model.changes.RecordChangeDataJoiner;
+import org.openrefine.model.changes.RecordChangeDataProducer;
 import org.openrefine.model.changes.RowChangeDataFlatJoiner;
 import org.openrefine.model.changes.RowChangeDataJoiner;
 import org.openrefine.model.changes.RowChangeDataProducer;
@@ -455,6 +457,34 @@ public class TestingGridState implements GridState {
         }
         return new TestingChangeData<T>(changeData);
     }
+    
+    @Override
+    public <T extends Serializable> ChangeData<T> mapRecords(RecordFilter filter, RecordChangeDataProducer<T> recordMapper) {
+        // Check that the mapper is serializable as it is required by the interface,
+        // even if this implementation does not rely on it.
+        TestingDatamodelRunner.ensureSerializable(recordMapper);
+        TestingDatamodelRunner.ensureSerializable(filter);
+        
+        Map<Long, T> changeData = new HashMap<>();
+        Stream<Record> filteredRecords = records.stream()
+        .filter(ir -> filter.filterRecord(ir));
+        if (recordMapper.getBatchSize() == 1) {
+            filteredRecords.forEach(record -> changeData.put(record.getStartRowId(), recordMapper.call(record)));
+        } else {
+            Iterator<List<Record>> batches = Iterators.partition(filteredRecords.iterator(), recordMapper.getBatchSize());
+            while (batches.hasNext()) {
+                List<Record> batch = batches.next();
+                List<T> results = recordMapper.call(batch);
+                if (results.size() != batch.size()) {
+                    throw new IllegalStateException(String.format("Change data producer returned %d results on a batch of %d rows", results.size(), batch.size()));
+                }
+                for(int i = 0; i != batch.size(); i++) {
+                    changeData.put(batch.get(i).getStartRowId(), results.get(i));
+                }
+            }
+        }
+        return new TestingChangeData<T>(changeData);
+    }
 
     @Override
     public <T extends Serializable> GridState join(ChangeData<T> changeData, RowChangeDataJoiner<T> rowJoiner,
@@ -482,6 +512,20 @@ public class TestingGridState implements GridState {
                 .flatMap(ir -> rowJoiner.call(ir.getIndex(), ir.getRow(), changeData.get(ir.getIndex())).stream())
                 .collect(Collectors.toList());
         return new TestingGridState(newColumnModel, newRows, overlayModels);
+    }
+
+    @Override
+    public <T extends Serializable> GridState join(ChangeData<T> changeData, RecordChangeDataJoiner<T> recordJoiner,
+            ColumnModel newColumnModel) {
+        // Check that the joiner is serializable as it is required by the interface,
+        // even if this implementation does not rely on it.
+        TestingDatamodelRunner.ensureSerializable(recordJoiner);
+        
+        List<Row> rows = records
+                .stream()
+                .flatMap(record -> recordJoiner.call(record, changeData.get(record.getStartRowId())).stream())
+                .collect(Collectors.toList());
+        return new TestingGridState(newColumnModel, rows, overlayModels);
     }
 
 }
