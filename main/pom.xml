@@ -19,6 +19,7 @@
     <jee.port>3333</jee.port>
     <refine.data>/tmp/refine</refine.data>
     <powermock.version>2.0.2</powermock.version>
+    <okhttp.version>4.7.2</okhttp.version>
   </properties>
 
   <scm>
@@ -375,6 +376,12 @@
       <groupId>org.powermock</groupId>
       <artifactId>powermock-module-testng</artifactId>
       <version>${powermock.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.squareup.okhttp3</groupId>
+      <artifactId>mockwebserver</artifactId>
+      <version>${okhttp.version}</version>
       <scope>test</scope>
      </dependency>
      <dependency>
