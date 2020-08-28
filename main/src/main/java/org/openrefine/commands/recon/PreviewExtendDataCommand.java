@@ -49,6 +49,7 @@ import org.openrefine.commands.Command;
 import org.openrefine.model.Cell;
 import org.openrefine.model.ColumnMetadata;
 import org.openrefine.model.ColumnModel;
+import org.openrefine.model.GridState;
 import org.openrefine.model.Project;
 import org.openrefine.model.Row;
 import org.openrefine.model.recon.ReconCandidate;
@@ -107,11 +108,15 @@ public class PreviewExtendDataCommand extends Command {
 
             // get the endpoint to extract data from
             String endpoint = null;
+            String identifierSpace = null;
+            String schemaSpace = null;
 		    ReconConfig cfg = column.getReconConfig();
 		    if (cfg != null &&
 				cfg instanceof StandardReconConfig) {
 				StandardReconConfig scfg = (StandardReconConfig)cfg;
 				endpoint = scfg.service;
+				identifierSpace = scfg.identifierSpace;
+				schemaSpace = scfg.schemaSpace;
 		    } else {
 	                respond(response, "{ \"code\" : \"error\", \"message\" : \"This column has not been reconciled with a standard service.\" }");
 	                return;
@@ -121,10 +126,12 @@ public class PreviewExtendDataCommand extends Command {
             List<String> topicNames = new ArrayList<String>();
             List<String> topicIds = new ArrayList<String>();
             Set<String> ids = new HashSet<String>();
+            
+            GridState state = project.getCurrentGridState();
             for (int i = 0; i < length; i++) {
                 int rowIndex = rowIndices.get(i);
-                if (rowIndex >= 0 && rowIndex < project.rows.size()) {
-                    Row row = project.rows.get(rowIndex);
+                try {
+                    Row row = state.getRow(rowIndex);
                     Cell cell = row.getCell(cellIndex);
                     if (cell != null && cell.recon != null && cell.recon.match != null) {
                         topicNames.add(cell.recon.match.name);
@@ -135,12 +142,13 @@ public class PreviewExtendDataCommand extends Command {
                         topicIds.add(null);
                         ids.add(null);
                     }
+                } catch(IndexOutOfBoundsException e) {
+                	; // skip row
                 }
             }
             
-            Map<String, ReconCandidate> reconCandidateMap = new HashMap<String, ReconCandidate>();
-            ReconciledDataExtensionJob job = new ReconciledDataExtensionJob(config, endpoint);
-            Map<String, DataExtension> map = job.extend(ids, reconCandidateMap);
+            ReconciledDataExtensionJob job = new ReconciledDataExtensionJob(config, endpoint, identifierSpace, schemaSpace);
+            Map<String, DataExtension> map = job.extend(ids);
             List<List<Object>> rows = new ArrayList<>();
 
             for (int r = 0; r < topicNames.size(); r++) {
@@ -151,8 +159,8 @@ public class PreviewExtendDataCommand extends Command {
                     DataExtension ext = map.get(id);
                     boolean first = true;
                     
-                    if (ext.data.length > 0) {
-                        for (Object[] row : ext.data) {
+                    if (ext.data.size() > 0) {
+                        for (List<Cell> row : ext.data) {
                             List<Object> jsonRow = new ArrayList<>();
                             if (first) {
                                 jsonRow.add(topicName);
@@ -161,8 +169,14 @@ public class PreviewExtendDataCommand extends Command {
                                 jsonRow.add(null);
                             }
                             
-                            for (Object cell : row) {
-                                jsonRow.add(cell);
+                            for (Cell cell : row) {
+                            	if (cell == null) {
+                            		jsonRow.add(null);
+                            	} else if (cell.recon != null && cell.recon.match != null) {
+                            		jsonRow.add(cell.recon.match);
+                            	} else {
+                            		jsonRow.add(cell.value);
+                            	}
                             }
                             rows.add(jsonRow);
                         }
