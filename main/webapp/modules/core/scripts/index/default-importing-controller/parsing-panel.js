@@ -141,9 +141,9 @@ Refine.DefaultImportingController.prototype._prepareParsingPanel = function() {
 
   var formats = this._job.config.rankedFormats;
   var createFormatTab = function(format) {
-    var formateLabelKey =Refine.importingConfig.formats[format].label;
+    var formatLabelKey =Refine.importingConfig.formats[format].label;
     var tab = $('<div>')
-    .text( $.i18n(formateLabelKey))
+    .text( $.i18n(formatLabelKey))
     .attr("format", format)
     .addClass("default-importing-parsing-control-panel-format")
     .appendTo(self._parsingPanelElmts.formatsContainer)
