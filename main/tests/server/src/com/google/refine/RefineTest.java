@@ -58,6 +58,9 @@ import com.fasterxml.jackson.databind.node.BooleanNode;
 import com.fasterxml.jackson.databind.node.IntNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.databind.node.TextNode;
+import com.google.refine.expr.Evaluable;
+import com.google.refine.expr.MetaParser;
+import com.google.refine.expr.ParsingException;
 import com.google.refine.grel.ControlFunctionRegistry;
 import com.google.refine.grel.Function;
 import com.google.refine.importers.SeparatorBasedImporter;
@@ -331,6 +334,22 @@ public class RefineTest extends PowerMockTestCase {
             return function.call(bindings,args);
         }
     }
+
+
+    /**
+     * Parse and evaluate a GREL expression and compare the result to the expect value
+     *
+     * @param bindings
+     * @param test
+     * @throws ParsingException
+     */
+    protected void parseEval(Properties bindings, String[] test)
+    throws ParsingException {
+        Evaluable eval = MetaParser.parse("grel:" + test[0]);
+        Object result = eval.evaluate(bindings);
+        Assert.assertEquals(result.toString(), test[1], "Wrong result for expression: " + test[0]);
+    }
+
 
     @AfterMethod
     public void TearDown() throws Exception {
