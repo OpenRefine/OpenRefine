@@ -27,6 +27,7 @@
 package com.google.refine.grel.controls;
 
 import static org.testng.Assert.assertTrue;
+import static org.testng.Assert.fail;
 
 import java.util.Properties;
 
@@ -57,8 +58,18 @@ public class ForEachTests extends RefineTest {
         bindings = new Properties();
         bindings.put("v", "");
         assertParseError("forEach('test', v, v)");
-        assertParseError("forEach('test', v, v)");
-        assertParseError("forEach('test', v, v)");
+        try {
+            assertParseError("forEach([], 1, 1)");
+            fail("Didn't throw a ParsingException for wrong argument type");
+        } catch (ParsingException e) {}
+        try {
+            assertParseError("forEach([], v)");
+            fail("Didn't throw a ParsingException for 2 arguments");
+        } catch (ParsingException e) {}
+        try {
+            assertParseError("forEach([])");
+            fail("Didn't throw a ParsingException for 1 argument");
+        } catch (ParsingException e) {}
     }
 
     @Test
