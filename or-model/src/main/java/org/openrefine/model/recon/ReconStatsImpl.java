@@ -130,9 +130,9 @@ public class ReconStatsImpl implements ReconStats {
                 nonBlanks++;
                 
                 if (cell.recon != null) {
-                    if (cell.recon.judgment == Judgment.New) {
+                    if (cell.recon.getJudgment() == Judgment.New) {
                         newTopics++;
-                    } else if (cell.recon.judgment == Judgment.Matched) {
+                    } else if (cell.recon.getJudgment() == Judgment.Matched) {
                         matchedTopics++;
                     }
                 }

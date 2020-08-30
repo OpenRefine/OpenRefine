@@ -66,6 +66,20 @@ public class LazyReconStats implements ReconStats {
         return gridState.withColumnModel(newColumnModel);
     }
     
+    /**
+     * Updates the column model with a lazily-computed ReconStats object.
+     * This can be used to update recon statistics without incurring an aggregation
+     * as long as the recon stats are not read.
+     * 
+     * @param gridState
+     * @param columnIndex
+     * @return
+     */
+    public static GridState updateReconStats(GridState gridState, int columnIndex) {
+        String columnName = gridState.getColumnModel().getColumns().get(columnIndex).getName();
+        return updateReconStats(gridState, columnName);
+    }
+    
     private void ensureComputed() {
         if (_values == null) {
             _values = ReconStatsImpl.create(_grid, _columnName);

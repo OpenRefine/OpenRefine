@@ -37,19 +37,23 @@ import static org.mockito.Mockito.withSettings;
 
 import java.io.Serializable;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import org.openrefine.RefineTest;
 import org.openrefine.browsing.EngineConfig;
 import org.openrefine.model.Cell;
+import org.openrefine.model.ColumnMetadata;
 import org.openrefine.model.ColumnModel;
 import org.openrefine.model.GridState;
 import org.openrefine.model.IndexedRow;
 import org.openrefine.model.Project;
 import org.openrefine.model.Row;
 import org.openrefine.model.recon.Recon;
+import org.openrefine.model.recon.Recon.Judgment;
 import org.openrefine.model.recon.ReconConfig;
 import org.openrefine.model.recon.ReconJob;
+import org.openrefine.model.recon.ReconStats;
 import org.openrefine.model.recon.StandardReconConfig;
 import org.openrefine.operations.OperationRegistry;
 import org.openrefine.operations.recon.ReconOperation.ReconChangeDataProducer;
@@ -80,7 +84,7 @@ public class ReconOperationTests extends RefineTest {
             + "\"engineConfig\":{\"mode\":\"row-based\",\"facets\":[]}}";
     
     private Project project = null;
-    private ReconConfig reconConfig = null;
+    private StandardReconConfig reconConfig = null;
     private Row row1 = null;
     private Row row2 = null;
     private Row row3 = null;
@@ -147,9 +151,13 @@ public class ReconOperationTests extends RefineTest {
     	recon1 = mock(Recon.class, withSettings().serializable());
     	recon2 = mock(Recon.class, withSettings().serializable());
     	recon3 = mock(Recon.class, withSettings().serializable());
+    	when(recon1.getJudgment()).thenReturn(Judgment.Matched);
+    	when(recon2.getJudgment()).thenReturn(Judgment.None);
+    	when(recon3.getJudgment()).thenReturn(Judgment.Matched);
     	
-    	reconConfig = mock(ReconConfig.class, withSettings().serializable());
+    	reconConfig = mock(StandardReconConfig.class, withSettings().serializable());
     	doReturn(2).when(reconConfig).getBatchSize();
+    	// mock identifierSpace, service and schemaSpace
     	when(reconConfig.batchRecon(eq(Arrays.asList(job1, job2)), anyLong())).thenReturn(Arrays.asList(recon1, recon2));
     	when(reconConfig.batchRecon(eq(Arrays.asList(job3)), anyLong())).thenReturn(Arrays.asList(recon3));
     	
@@ -215,14 +223,20 @@ public class ReconOperationTests extends RefineTest {
         }
         Assert.assertFalse(process.isRunning());
         
-        GridState expectedGrid = createGrid(
+        ReconStats reconStats = ReconStats.create(4L, 0L, 3L);
+		ColumnModel reconciledColumnModel = new ColumnModel(Collections.singletonList(
+        		new ColumnMetadata("column")
+        		.withReconConfig(reconConfig)
+        		.withReconStats(reconStats)));
+		GridState expectedGrid = createGrid(
         		new String[] {"column"},
         		new Serializable[][] {
         			{new Cell("value1", recon1)},
         			{new Cell("value2", recon2)},
         			{new Cell("value1", recon1)},
         			{new Cell("value3", recon3)}
-        		});
+        		})
+        		.withColumnModel(reconciledColumnModel);
         
         assertGridEquals(project.getCurrentGridState(), expectedGrid);
     }

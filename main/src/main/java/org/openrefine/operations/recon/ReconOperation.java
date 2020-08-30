@@ -211,6 +211,8 @@ public class ReconOperation extends EngineDependentOperation {
 	                Change reconChange = new ColumnChangeByChangeData(
 	                    "recon", 
 	                    columnIndex, 
+	                    null,
+	                    _reconConfig,
 	                    null
 	                );
 	                
