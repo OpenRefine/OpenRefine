@@ -438,7 +438,9 @@ public class ColumnAdditionByFetchingURLsOperation extends EngineDependentOperat
                             new ColumnChangeByChangeData(
                                     urlChangeDataId,
                                     _columnInsertIndex,
-                                    _newColumnName));
+                                    _newColumnName,
+                                    null,
+                                    null));
 
                     _history.addEntry(historyEntry);
                     _processManager.onDoneProcess(this);

@@ -12,10 +12,16 @@ import org.openrefine.model.ColumnModel;
 import org.openrefine.model.GridState;
 import org.openrefine.model.ModelException;
 import org.openrefine.model.Row;
+import org.openrefine.model.recon.LazyReconStats;
+import org.openrefine.model.recon.ReconConfig;
+import org.openrefine.model.recon.ReconStats;
 
 /**
  * Adds a new column based on data fetched from an external process. If no column name is supplied, then the change will
  * replace the column at the given index instead.
+ * 
+ * New recon config and stats can be supplied for the column changed or created. If a recon config and no recon stats
+ * are provided, the change computes the new recon stats on the fly.
  * 
  * @author Antonin Delpeuch
  *
@@ -25,15 +31,21 @@ public class ColumnChangeByChangeData implements Change {
     private final String _changeDataId;
     private final int _columnIndex;
     private final String _columnName;
+    private final ReconConfig _reconConfig;
+    private ReconStats _reconStats;
 
     @JsonCreator
     public ColumnChangeByChangeData(
             @JsonProperty("changeDataId") String changeDataId,
             @JsonProperty("columnIndex") int columnIndex,
-            @JsonProperty("columnName") String columnName) {
+            @JsonProperty("columnName") String columnName,
+            @JsonProperty("reconConfig") ReconConfig reconConfig,
+            @JsonProperty("reconStats") ReconStats reconStats) {
         _changeDataId = changeDataId;
         _columnIndex = columnIndex;
         _columnName = columnName;
+        _reconConfig = reconConfig;
+        _reconStats = reconStats;
     }
 
     @JsonProperty("changeDataId")
@@ -51,6 +63,16 @@ public class ColumnChangeByChangeData implements Change {
         return _columnName;
     }
 
+    @JsonProperty("reconConfig")
+    public ReconConfig getReconConfig() {
+        return _reconConfig;
+    }
+
+    @JsonProperty("reconStats")
+    public ReconStats getReconStats() {
+        return _reconStats;
+    }
+
     @Override
     public GridState apply(GridState projectState, ChangeContext context) throws DoesNotApplyException {
         ChangeData<Cell> changeData = null;
@@ -62,7 +84,9 @@ public class ColumnChangeByChangeData implements Change {
         RowChangeDataJoiner<Cell> joiner = new Joiner(_columnIndex, _columnName != null);
         ColumnModel columnModel = projectState.getColumnModel();
         if (_columnName != null) {
-            ColumnMetadata column = new ColumnMetadata(_columnName);
+            ColumnMetadata column = new ColumnMetadata(_columnName)
+                    .withReconConfig(_reconConfig)
+                    .withReconStats(_reconStats);
             try {
                 columnModel = projectState.getColumnModel().insertColumn(_columnIndex, column);
             } catch (ModelException e) {
@@ -70,8 +94,18 @@ public class ColumnChangeByChangeData implements Change {
                         String.format("A column with name '{}' cannot be added as the name conflicts with an existing column",
                                 _columnName));
             }
+        } else if (_reconConfig != null) {
+            columnModel = columnModel
+                    .withReconConfig(_columnIndex, _reconConfig)
+                    .withReconStats(_columnIndex, _reconStats);
         }
-        return projectState.join(changeData, joiner, columnModel);
+
+        GridState joined = projectState.join(changeData, joiner, columnModel);
+        if (_reconConfig != null && _reconStats == null) {
+            joined = LazyReconStats.updateReconStats(joined, _columnIndex);
+            _reconStats = joined.getColumnModel().getColumns().get(_columnIndex).getReconStats();
+        }
+        return joined;
     }
 
     @Override
