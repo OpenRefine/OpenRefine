@@ -39,9 +39,6 @@ import com.google.refine.expr.EvalError;
 import com.google.refine.grel.ControlFunctionRegistry;
 import com.google.refine.grel.Function;
 
-
-
-
 public class Pow implements Function {
 
     @Override
