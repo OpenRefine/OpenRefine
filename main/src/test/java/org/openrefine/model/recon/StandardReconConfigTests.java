@@ -74,6 +74,8 @@ public class StandardReconConfigTests extends RefineTest {
 
     private class StandardReconConfigStub extends StandardReconConfig {
 
+        private static final long serialVersionUID = -2691547799395332983L;
+
         public StandardReconConfigStub() {
             super("", "", "", "", "", false, new ArrayList<ColumnDetail>());
         }

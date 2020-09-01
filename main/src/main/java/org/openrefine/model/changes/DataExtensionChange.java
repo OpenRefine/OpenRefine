@@ -82,7 +82,6 @@ public class DataExtensionChange extends EngineDependentChange {
         ColumnModel newColumnModel = projectState.getColumnModel();
         for (int i = 0; i != _columnNames.size(); i++) {
             newColumnModel = newColumnModel.insertUnduplicatedColumn(_columnInsertIndex + i, new ColumnMetadata(_columnNames.get(i)));
-            // TODO add recon stats later on
         }
         RecordChangeDataJoiner<RecordDataExtension> joiner = new DataExtensionJoiner(baseColumnId, _columnInsertIndex, _columnNames.size());
         GridState state = projectState.join(changeData, joiner, newColumnModel);
@@ -155,12 +154,12 @@ public class DataExtensionChange extends EngineDependentChange {
 
             for (int i = 0; i != oldRows.size(); i++) {
                 Row row = oldRows.get(i);
-                Cell baseCell = row.getCell(baseColumnId);
-                if (baseCell == null || baseCell.recon == null || baseCell.recon.match == null) {
-                    continue;
-                }
                 long rowId = record.getStartRowId() + i;
                 DataExtension extension = extensions.get(rowId);
+                if (extension == null) {
+                    newRows.add(row.insertCells(columnInsertId, Collections.nCopies(nbInsertedColumns, null)));
+                    continue;
+                }
 
                 int origRow = i;
                 for (List<Cell> extensionRow : extension.data) {
@@ -173,8 +172,8 @@ public class DataExtensionChange extends EngineDependentChange {
                     }
                     List<Cell> insertedCells = extensionRow;
                     if (insertedCells.size() != nbInsertedColumns) {
-                        insertedCells = new ArrayList<>();
-                        insertedCells.addAll(Collections.nCopies(nbInsertedColumns - row.getCells().size(), null));
+                        insertedCells = new ArrayList<>(extensionRow);
+                        insertedCells.addAll(Collections.nCopies(nbInsertedColumns - insertedCells.size(), null));
                     }
                     newRows.add(newRow.insertCells(columnInsertId, extensionRow));
                 }
