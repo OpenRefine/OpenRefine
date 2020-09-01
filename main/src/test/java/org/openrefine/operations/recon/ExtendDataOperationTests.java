@@ -93,6 +93,13 @@ import com.fasterxml.jackson.databind.JsonNode;
 @PrepareForTest(ReconciledDataExtensionJob.class)
 public class ExtendDataOperationTests extends RefineTest {
 
+	private static final String emptyQueryP297 = "{\"ids\":[],\"properties\":[{\"id\":\"P297\"}]}";
+    private static final String emptyResponseP297 = "{"
+	+ "\"rows\": {},"
+	+ "\"meta\": ["
+	+ "   {\"name\": \"ISO 3166-1 alpha-2 code\", \"id\": \"P297\"}"
+	+ "]}";
+	private static final String queryP297 = "{\"ids\":[\"Q863\",\"Q794\",\"Q17\",\"Q30\"],\"properties\":[{\"id\":\"P297\"}]}";
     private static final String responseP297 = "{"
 	+ "\"rows\": {"
 	+ "    \"Q794\": {\"P297\": [{\"str\": \"IR\"}]},"
@@ -103,7 +110,6 @@ public class ExtendDataOperationTests extends RefineTest {
 	+ "\"meta\": ["
 	+ "   {\"name\": \"ISO 3166-1 alpha-2 code\", \"id\": \"P297\"}"
 	+ "]}";
-	private static final String queryP297 = "{\"ids\":[\"Q863\",\"Q794\",\"Q17\",\"Q30\"],\"properties\":[{\"id\":\"P297\"}]}";
 	
 	static final String ENGINE_JSON_URLS = "{\"mode\":\"row-based\"}}";
     static final String RECON_SERVICE = "https://tools.wmflabs.org/openrefine-wikidata/en/api";
@@ -355,6 +361,7 @@ public class ExtendDataOperationTests extends RefineTest {
   
         DataExtensionConfig extension = DataExtensionConfig.reconstruct("{\"properties\":[{\"id\":\"P297\",\"name\":\"ISO 3166-1 alpha-2 code\"}]}");
         
+        mockHttpCall(emptyQueryP297, emptyResponseP297);
         mockHttpCall(queryP297, responseP297);
         
         EngineDependentOperation op = new ExtendDataOperation(engine_config,
@@ -389,6 +396,12 @@ public class ExtendDataOperationTests extends RefineTest {
         DataExtensionConfig extension = DataExtensionConfig.reconstruct(
                 "{\"properties\":[{\"id\":\"P38\",\"name\":\"currency\",\"settings\":{\"count\":\"on\",\"rank\":\"any\"}}]}");
         
+        mockHttpCall("{\"ids\":[],\"properties\":[{\"id\":\"P38\",\"settings\":{\"count\":\"on\",\"rank\":\"any\"}}]}",
+        		"{"
+        		+ "\"rows\": {},"
+        		+ "\"meta\": ["
+        		+ "    {\"settings\": {\"count\": \"on\", \"rank\": \"any\"}, \"name\": \"currency\", \"id\": \"P38\"}"
+        		+ "]}");
         mockHttpCall("{\"ids\":[\"Q863\",\"Q794\",\"Q17\",\"Q30\"],\"properties\":[{\"id\":\"P38\",\"settings\":{\"count\":\"on\",\"rank\":\"any\"}}]}",
         		"{"
         		+ "\"rows\": {"
@@ -431,6 +444,10 @@ public class ExtendDataOperationTests extends RefineTest {
         DataExtensionConfig extension = DataExtensionConfig.reconstruct(
                 "{\"properties\":[{\"id\":\"P38\",\"name\":\"currency\",\"settings\":{\"rank\":\"best\"}}]}");
         
+        mockHttpCall("{\"ids\":[],\"properties\":[{\"id\":\"P38\",\"settings\":{\"rank\":\"best\"}}]}",
+        		"{\"rows\":{}, \"meta\": ["
+        		+ "     {\"settings\": {\"rank\": \"best\"}, \"name\": \"currency\", \"id\": \"P38\"}"
+        		+ "]}");
         mockHttpCall("{\"ids\":[\"Q863\",\"Q794\",\"Q17\",\"Q30\"],\"properties\":[{\"id\":\"P38\",\"settings\":{\"rank\":\"best\"}}]}",
         		"{\"rows\":{"
         		+ "   \"Q794\": {\"P38\": [{\"name\": \"Iranian rial\", \"id\": \"Q188608\"}]},"
@@ -476,6 +493,11 @@ public class ExtendDataOperationTests extends RefineTest {
         DataExtensionConfig extension = DataExtensionConfig.reconstruct(
                 "{\"properties\":[{\"id\":\"P38\",\"name\":\"currency\",\"settings\":{\"rank\":\"any\"}}]}");
         
+        mockHttpCall("{\"ids\":[],\"properties\":[{\"id\":\"P38\",\"settings\":{\"rank\":\"any\"}}]}",
+    			"{\"rows\": {},"
+    			+ "\"meta\": ["
+    			+ "    {\"settings\": {\"rank\": \"any\"}, \"name\": \"currency\", \"id\": \"P38\"}"
+    			+ "]}");
         mockHttpCall("{\"ids\":[\"Q863\",\"Q794\",\"Q17\",\"Q30\"],\"properties\":[{\"id\":\"P38\",\"settings\":{\"rank\":\"any\"}}]}",
     			"{\"rows\": {"
     			+ "   \"Q794\": {\"P38\": [{\"name\": \"Iranian rial\", \"id\": \"Q188608\"}]},"

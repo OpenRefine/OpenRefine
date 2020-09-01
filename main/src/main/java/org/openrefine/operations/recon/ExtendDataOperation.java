@@ -175,6 +175,20 @@ public class ExtendDataOperation extends EngineDependentOperation {
             }
             
             /**
+             * Prefetch column names with an initial request.
+             */
+            _job.extend(Collections.emptySet());
+            List<String> columnNames = new ArrayList<>();
+            for (ColumnInfo info : _job.columns) {
+                columnNames.add(info.name);
+            }
+            
+            List<ReconType> columnTypes = new ArrayList<>();
+            for (ColumnInfo info : _job.columns) {
+                columnTypes.add(info.expectedType);
+            }
+            
+            /**
              * This operation does not always respect the rows mode, because
              * when fetching multiple values for the same row, the extra values
              * are spread in the record of the given row. Therefore, the fetching
@@ -193,16 +207,6 @@ public class ExtendDataOperation extends EngineDependentOperation {
             _history.getChangeDataStore().store(changeData, _historyEntryID, "extend", new DataExtensionSerializer());
 
             if (!_canceled) {
-                List<String> columnNames = new ArrayList<String>();
-                for (ColumnInfo info : _job.columns) {
-                    columnNames.add(info.name);
-                }
-                
-                List<ReconType> columnTypes = new ArrayList<ReconType>();
-                for (ColumnInfo info : _job.columns) {
-                    columnTypes.add(info.expectedType);
-                }
-                
                 HistoryEntry historyEntry = new HistoryEntry(
                     _historyEntryID, 
                     _description, 

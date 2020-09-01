@@ -165,24 +165,28 @@ public class ReconciledDataExtensionJob implements Serializable {
      */
     static public class RecordDataExtension implements Serializable {
 
-		private static final long serialVersionUID = 9150870996868122876L;
-		final private Map<Long, DataExtension> extensions;
+        private static final long serialVersionUID = 9150870996868122876L;
+        final private Map<Long, DataExtension> extensions;
     	
-    	public RecordDataExtension(Map<Long, DataExtension> extensions) {
+        @JsonCreator
+        public RecordDataExtension(
+                @JsonProperty("e")
+    			Map<Long, DataExtension> extensions) {
     		this.extensions = extensions;
     	}
     	
-    	public Map<Long, DataExtension> getExtensions() {
+        @JsonProperty("e")
+        public Map<Long, DataExtension> getExtensions() {
     		return extensions;
     	}
     	
-    	@Override
-    	public int hashCode() {
+        @Override
+        public int hashCode() {
     		return extensions.hashCode();
     	}
     	
-    	@Override
-    	public boolean equals(Object other) {
+        @Override
+        public boolean equals(Object other) {
     		if (!(other instanceof RecordDataExtension)) {
     			return false;
     		}
@@ -198,9 +202,13 @@ public class ReconciledDataExtensionJob implements Serializable {
     static public class DataExtension implements Serializable {
 
 		private static final long serialVersionUID = -6098778224771219654L;
+		@JsonProperty("d")
 		final public List<List<Cell>> data;
         
-        public DataExtension(List<List<Cell>> data) {
+        @JsonCreator
+        public DataExtension(
+                @JsonProperty("d")
+        		List<List<Cell>> data) {
             this.data = data;
         }
         

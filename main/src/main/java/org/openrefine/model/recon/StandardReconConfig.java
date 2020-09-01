@@ -36,6 +36,7 @@ package org.openrefine.model.recon;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.Serializable;
 import java.io.StringWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -77,8 +78,10 @@ public class StandardReconConfig extends ReconConfig {
 	private static final String DEFAULT_SCHEMA_SPACE = "http://localhost/schema";
 	private static final String DEFAULT_IDENTIFIER_SPACE = "http://localhost/identifier";
     
-    static public class ColumnDetail  {
-        @JsonProperty("column")
+    static public class ColumnDetail implements Serializable {
+		private static final long serialVersionUID = -6532890579963639291L;
+		
+		@JsonProperty("column")
         final public String columnName;
         @JsonProperty("propertyName")
         final public String propertyName;
