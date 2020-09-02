@@ -196,7 +196,7 @@ DataTableView.prototype._renderDataTables = function(table, tableHeader) {
 
   var renderColumnKeys = function(keys) {
     if (keys.length > 0) {
-      var tr = tableHeader.insertRow(tableHeader.rows.length);
+      var tr = tableHeader.insertRow(-1);
       $(tr.appendChild(document.createElement("th"))).attr('colspan', '3'); // star, flag, row index
 
       for (var c = 0; c < columns.length; c++) {
@@ -223,7 +223,7 @@ DataTableView.prototype._renderDataTables = function(table, tableHeader) {
     var nextLayer = [];
 
     if (groups.length > 0) {
-      var tr = tableHeader.insertRow(tableHeader.rows.length);
+      var tr = tableHeader.insertRow(-1);
       $(tr.appendChild(document.createElement("th"))).attr('colspan', '3'); // star, flag, row index
 
       for (var c = 0; c < columns.length; c++) {
@@ -275,7 +275,7 @@ DataTableView.prototype._renderDataTables = function(table, tableHeader) {
    *------------------------------------------------------------
    */
 
-  var trHead = tableHeader.insertRow(tableHeader.rows.length);
+  var trHead = tableHeader.insertRow(-1);
   DOM.bind(
       $(trHead.appendChild(document.createElement("th")))
       .attr("colspan", "3")
@@ -312,80 +312,119 @@ DataTableView.prototype._renderDataTables = function(table, tableHeader) {
    *------------------------------------------------------------
    */
 
-  var renderRow = function(tr, r, row, even) {
-    $(tr).empty();
-    var cells = row.cells;
-    var tdStar = tr.insertCell(tr.cells.length);
-    var star = document.createElement('a');
-    star.href = "javascript:{}";
-    star.classList.add(row.starred ? "data-table-star-on" : "data-table-star-off");
-    tdStar.appendChild(star).appendChild(document.createTextNode('\u00A0')); // NBSP
-    star.addEventListener('click', function() {
-    var newStarred = !row.starred;
-      Refine.postCoreProcess(
-        "annotate-one-row",
-        { row: row.i, starred: newStarred },
-        null,
-        {},
-        {
-          onDone: function(o) {
-            row.starred = newStarred;
-            renderRow(tr, r, row, even);
-          }
-        },
-        "json"
-      );
-    });
-    
-    var tdFlag = tr.insertCell(tr.cells.length);
-    var flag = document.createElement('a');
-    flag.classList.add(row.flagged ? "data-table-flag-on" : "data-table-flag-off");
-    flag.href = "javascript:{}";
-    tdFlag.appendChild(flag).appendChild(document.createTextNode('\u00A0'));
-    flag.addEventListener('click', function() {
-      var newFlagged = !row.flagged;
-      Refine.postCoreProcess(
-        "annotate-one-row",
-        { row: row.i, flagged: newFlagged },
-        null,
-        {},
-        {
-          onDone: function(o) {
-            row.flagged = newFlagged;
-            renderRow(tr, r, row, even);
-          }
-        },
-        "json"
-      );
-    });
+  var onClickStar = function(evt) {
+    var selectedRow = evt.currentTarget.data;
+    var newStarred = !selectedRow.row.starred;
+    Refine.postCoreProcess(
+      "annotate-one-row",
+      { row: selectedRow.row.i, starred: newStarred },
+      null,
+      {},
+      {
+        onDone: function(o) {
+          selectedRow.row.starred = newStarred;
+          renderRow(selectedRow.tr, selectedRow.r, selectedRow.row, selectedRow.even);
+        }
+      },
+      "json"
+    );
+  };
+  var onClickFlag = function(evt) {
+    var selectedRow = evt.currentTarget.data;
+    var newFlagged = !selectedRow.row.flagged;
+    Refine.postCoreProcess(
+      "annotate-one-row",
+      { row: selectedRow.row.i, flagged: newFlagged },
+      null,
+      {},
+      {
+        onDone: function(o) {
+          selectedRow.row.flagged = newFlagged;
+          renderRow(selectedRow.tr, selectedRow.r, selectedRow.row, selectedRow.even);
+        }
+      },
+      "json"
+    );
+  };
 
-    var tdIndex = tr.insertCell(tr.cells.length);
+  var renderRowTemplate = function() {
+    var tr = document.createElement('tr');
+    
+    var tdStar = tr.insertCell(-1);
+    $('<a href="javascript:{}">&nbsp;</a>')
+    .addClass("data-table-star-off") // off by default
+    .appendTo(tdStar);
+
+    var tdFlag = tr.insertCell(-1);
+    $('<a href="javascript:{}">&nbsp;</a>')
+    .addClass("data-table-flag-off") // off by default
+    .appendTo(tdFlag);
+
+    var tdIndex = tr.insertCell(-1);
+    var div = document.createElement('div');
+    tdIndex.appendChild(div);
+
+    for (var i = 0; i < columns.length; i++) {
+      var column = columns[i];
+      var td = tr.insertCell(-1);
+    }
+
+    return tr;
+  };
+
+  var rowTemplate = renderRowTemplate();
+
+  var renderRow = function(tr, r, row, even) {
+    var cellsRow = row.cells;
+
+    tr.cells[0].data = {tr: tr, r: r, row: row, even: even};
+    tr.cells[1].data = {tr: tr, r: r, row: row, even: even};
+
+    tr.cells[0].addEventListener('click', onClickStar);
+    if (row.starred) {
+      var a = tr.cells[0].querySelector('a');
+      a.classList.remove("data-table-star-off");
+      a.classList.add("data-table-star-on");
+    } else {
+      var a = tr.cells[0].querySelector('a');
+      a.classList.add("data-table-star-off");
+      a.classList.remove("data-table-star-on");
+    }
+
+    tr.cells[1].addEventListener('click', onClickFlag);
+    if (row.flagged) {
+      var a = tr.cells[1].querySelector('a');
+      a.classList.remove("data-table-flag-off");
+      a.classList.add("data-table-flag-on");
+    } else {
+      var a = tr.cells[1].querySelector('a');
+      a.classList.add("data-table-flag-off");
+      a.classList.remove("data-table-flag-on");
+    }
+
+    var tdIndex = tr.cells[2];
+    var div = tdIndex.querySelector('div');
     if (theProject.rowModel.mode == "record-based") {
       if ("j" in row) {
         $(tr).addClass("record");
-        var div = document.createElement('div');
         div.innerHTML = (row.j + 1) + '.';
-        tdIndex.appendChild(div);
       } else {
-        var div = document.createElement('div');
         div.innerHTML = '\u00A0';
-        tdIndex.appendChild(div);
       }
     } else {
-      var div = document.createElement('div');
       div.innerHTML = (row.i + 1) + '.';
-      tdIndex.appendChild(div);
     }
 
     $(tr).addClass(even ? "even" : "odd");
 
     for (var i = 0; i < columns.length; i++) {
       var column = columns[i];
-      var td = tr.insertCell(tr.cells.length);
+      var td = tr.cells[i + 3];
       if (self._collapsedColumnNames.hasOwnProperty(column.name)) {
         td.innerHTML = "&nbsp;";
       } else {
-        var cell = (column.cellIndex < cells.length) ? cells[column.cellIndex] : null;
+        var cell = (column.cellIndex < cellsRow.length) ? cellsRow[column.cellIndex] : null;
+        // TODO: Update cell rather than replacing
         new DataTableCellUI(self, cell, row.i, column.cellIndex, td);
       }
     }
@@ -396,10 +435,12 @@ DataTableView.prototype._renderDataTables = function(table, tableHeader) {
     var even = (start % 2) ? false : true;
     for (var r = 0; r < rows.length; r++) {
       var row = rows[r];
+      var tr = rowTemplate.cloneNode(true);
+      var tbody = document.querySelector('.data-table tbody');
       if(top) {
-        var tr = table.insertRow(r + 1);
+        tbody.insertBefore(tr, tbody.children[r + 1]);
       } else {
-        var tr = table.insertRow(table.rows.length);
+        tbody.appendChild(tr);
       }
       if (theProject.rowModel.mode == "row-based" || "j" in row) {
         even = !even;
@@ -443,7 +484,7 @@ DataTableView.prototype._renderDataTables = function(table, tableHeader) {
     }
   };
 
-  $(table.parentNode.parentNode).bind('scroll', function(evt) {
+  var onScroll = function(evt) {
     self._downwardDirection = self._scrollTop < $(this).scrollTop();
     try {
       var nextSet = document.querySelectorAll('.load-next-set');
@@ -477,8 +518,10 @@ DataTableView.prototype._renderDataTables = function(table, tableHeader) {
     }
 
     self._scrollTop = $(this).scrollTop();
-  });
-};
+  }
+
+  $(table.parentNode.parentNode).on('scroll', onScroll);
+}; // end _renderDataTables
 
 DataTableView.prototype.getPageNumberScrolling = function(scrollPosition, table) {
   // Loading sign
