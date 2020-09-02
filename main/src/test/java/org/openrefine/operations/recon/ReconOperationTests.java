@@ -82,6 +82,8 @@ public class ReconOperationTests extends RefineTest {
             + "   \"limit\":0"
             + "},"
             + "\"engineConfig\":{\"mode\":\"row-based\",\"facets\":[]}}";
+    private String identifierSpace = "http://www.wikidata.org/entity/";
+    private String schemaSpace = "http://www.wikidata.org/prop/direct/";
     
     private Project project = null;
     private StandardReconConfig reconConfig = null;
@@ -148,13 +150,13 @@ public class ReconOperationTests extends RefineTest {
     	when(job2.getCellValue()).thenReturn("value2");
     	job3 = mock(ReconJob.class, withSettings().serializable());
     	when(job3.getCellValue()).thenReturn("value3");
-    	recon1 = mock(Recon.class, withSettings().serializable());
-    	recon2 = mock(Recon.class, withSettings().serializable());
-    	recon3 = mock(Recon.class, withSettings().serializable());
-    	when(recon1.getJudgment()).thenReturn(Judgment.Matched);
-    	when(recon2.getJudgment()).thenReturn(Judgment.None);
-    	when(recon3.getJudgment()).thenReturn(Judgment.Matched);
-    	
+    	recon1 = new Recon(1234L, identifierSpace, schemaSpace)
+    			.withJudgment(Judgment.Matched);
+    	recon2 = new Recon(5678L, identifierSpace, schemaSpace)
+    			.withJudgment(Judgment.None);
+    	recon3 = new Recon(9012L, identifierSpace, schemaSpace)
+    			.withJudgment(Judgment.Matched);
+
     	reconConfig = mock(StandardReconConfig.class, withSettings().serializable());
     	doReturn(2).when(reconConfig).getBatchSize();
     	// mock identifierSpace, service and schemaSpace
@@ -228,6 +230,7 @@ public class ReconOperationTests extends RefineTest {
         		new ColumnMetadata("column")
         		.withReconConfig(reconConfig)
         		.withReconStats(reconStats)));
+		
 		GridState expectedGrid = createGrid(
         		new String[] {"column"},
         		new Serializable[][] {

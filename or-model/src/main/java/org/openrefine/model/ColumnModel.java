@@ -61,8 +61,8 @@ public class ColumnModel implements Serializable {
     
     final private int _keyColumnIndex;
     
-    transient protected Map<String, Integer>         _nameToPosition;
-    transient protected List<String>                 _columnNames;
+    protected Map<String, Integer>         _nameToPosition;
+    protected List<String>                 _columnNames;
     
     @JsonCreator
     public ColumnModel(

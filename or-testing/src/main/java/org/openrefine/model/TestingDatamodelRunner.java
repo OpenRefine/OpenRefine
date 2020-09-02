@@ -1,11 +1,13 @@
 package org.openrefine.model;
 
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.LineNumberReader;
+import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -50,6 +52,34 @@ public class TestingDatamodelRunner implements DatamodelRunner {
             e.printStackTrace();
             Assert.fail("Object not serializable");
         }
+    }
+    
+    /**
+     * Serializes an object and then deserializes it back.
+     * This ensures that the object is serializable and is useful
+     * to simulate distributed environments (for instance to null out
+     * all transient fields).
+     * 
+     * @param <T>
+     * @param obj
+     * @return
+     */
+    protected static <T> T serializeAndDeserialize(T obj) {
+        try {
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            ObjectOutputStream oos = new ObjectOutputStream(baos);
+            oos.writeObject(obj);
+            ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
+            ObjectInputStream ois = new ObjectInputStream(bais);
+            return (T) ois.readObject();
+        } catch(IOException e) {
+            e.printStackTrace();
+            Assert.fail("Object not serializable");
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+            Assert.fail("Object could not be deserialized");
+        }
+        return null; // unreachable
     }
 
     @Override
