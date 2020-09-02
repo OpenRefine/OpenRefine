@@ -221,6 +221,7 @@ public class ReconOperation extends EngineDependentOperation {
                     _manager.onDoneProcess(this);
                 }
             } catch (Exception e) {
+                e.printStackTrace();
                 _manager.onFailedProcess(this, e);
             }
 
