@@ -441,6 +441,7 @@ public class StandardReconConfig extends ReconConfig {
         }
         RequestConfig defaultRequestConfig = RequestConfig.custom()
                 .setConnectTimeout(30 * 1000)
+                .setSocketTimeout(60 * 1000)
                 .build();
 
         HttpClientBuilder httpClientBuilder = HttpClients.custom()
