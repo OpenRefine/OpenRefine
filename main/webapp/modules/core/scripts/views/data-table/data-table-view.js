@@ -365,8 +365,7 @@ DataTableView.prototype._renderDataTables = function(table, tableHeader) {
     tdIndex.appendChild(div);
 
     for (var i = 0; i < columns.length; i++) {
-      var column = columns[i];
-      var td = tr.insertCell(-1);
+      tr.insertCell(-1);
     }
 
     return tr;
