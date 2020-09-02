@@ -61,6 +61,7 @@ import org.openrefine.history.History;
 import org.openrefine.history.HistoryEntry;
 import org.openrefine.model.Cell;
 import org.openrefine.model.ColumnMetadata;
+import org.openrefine.model.ColumnModel;
 import org.openrefine.model.GridState;
 import org.openrefine.model.Row;
 import org.openrefine.model.changes.CellAtRow;
@@ -406,11 +407,13 @@ public class ColumnAdditionByFetchingURLsOperation extends EngineDependentOperat
         @Override
         public void run() {
             GridState state = _history.getCurrentGridState();
-            ColumnMetadata column = state.getColumnModel().getColumnByName(_baseColumnName);
+            ColumnModel columnModel = state.getColumnModel();
+            ColumnMetadata column = columnModel.getColumnByName(_baseColumnName);
             if (column == null) {
                 _processManager.onFailedProcess(this, new Exception("No column named " + _baseColumnName));
                 return;
             }
+            _cellIndex = columnModel.getColumnIndexByName(_baseColumnName);
             if (state.getColumnModel().getColumnByName(_newColumnName) != null) {
                 _processManager.onFailedProcess(this, new Exception("Another column already named " + _newColumnName));
                 return;
