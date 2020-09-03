@@ -180,7 +180,7 @@
     <dependency>
       <groupId>org.mozilla</groupId>
       <artifactId>rhino-runtime</artifactId>
-      <version>1.7.12</version>
+      <version>1.7.13</version>
     </dependency>
     <dependency>
       <groupId>org.slf4j</groupId>
