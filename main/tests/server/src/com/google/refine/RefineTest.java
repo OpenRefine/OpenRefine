@@ -350,6 +350,20 @@ public class RefineTest extends PowerMockTestCase {
         Assert.assertEquals(result.toString(), test[1], "Wrong result for expression: " + test[0]);
     }
 
+    /**
+     * Parse and evaluate a GREL expression and compare the result an expected
+     * type using instanceof
+     *
+     * @param bindings
+     * @param test
+     * @throws ParsingException
+     */
+    protected void parseEvalType(Properties bindings, String test, @SuppressWarnings("rawtypes") Class clazz)
+    throws ParsingException {
+        Evaluable eval = MetaParser.parse("grel:" + test);
+        Object result = eval.evaluate(bindings);
+        Assert.assertTrue(clazz.isInstance(result), "Wrong result type for expression: " + test);
+    }
 
     @AfterMethod
     public void TearDown() throws Exception {
