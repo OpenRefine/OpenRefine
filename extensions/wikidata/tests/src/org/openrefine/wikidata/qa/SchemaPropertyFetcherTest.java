@@ -1,2 +1,4 @@
-package org.openrefine.wikidata.qa;public class SchemaPropertyFetcherTest {
+package org.openrefine.wikidata.qa;
+
+public class SchemaPropertyFetcherTest {
 }
