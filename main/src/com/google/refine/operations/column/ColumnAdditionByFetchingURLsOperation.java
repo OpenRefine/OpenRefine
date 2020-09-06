@@ -40,24 +40,23 @@ import java.io.Serializable;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 
-import org.apache.http.Header;
-import org.apache.http.HttpEntity;
-import org.apache.http.StatusLine;
-import org.apache.http.client.config.RequestConfig;
-import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.entity.ContentType;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClientBuilder;
-import org.apache.http.impl.client.HttpClients;
-import org.apache.http.message.BasicHeader;
-import org.apache.http.util.EntityUtils;
+import org.apache.hc.client5.http.classic.methods.HttpGet;
+import org.apache.hc.client5.http.config.RequestConfig;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
+import org.apache.hc.client5.http.impl.classic.HttpClientBuilder;
+import org.apache.hc.client5.http.impl.classic.HttpClients;
+import org.apache.hc.client5.http.impl.io.PoolingHttpClientConnectionManager;
+import org.apache.hc.core5.http.Header;
+import org.apache.hc.core5.http.HttpEntity;
+import org.apache.hc.core5.http.io.SocketConfig;
+import org.apache.hc.core5.http.io.entity.EntityUtils;
+import org.apache.hc.core5.http.message.BasicHeader;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -164,21 +163,31 @@ public class ColumnAdditionByFetchingURLsOperation extends EngineDependentOperat
         }
         httpHeaders = headers.toArray(httpHeaders);
 
+        // Create a connection manager with a custom socket timeout
+        PoolingHttpClientConnectionManager connManager = new PoolingHttpClientConnectionManager();
+        final SocketConfig socketConfig = SocketConfig.custom()
+            .setSoTimeout(10, TimeUnit.SECONDS)
+            .build();
+        connManager.setDefaultSocketConfig(socketConfig);
+
         defaultRequestConfig = RequestConfig.custom()
-                .setConnectTimeout(30 * 1000)
-                .setConnectionRequestTimeout(30 * 1000)
-                .setSocketTimeout(10 * 1000).build();
+                .setConnectTimeout(30, TimeUnit.SECONDS)
+                .setConnectionRequestTimeout(30, TimeUnit.SECONDS)
+                .build();
 
         // TODO: Placeholder for future Basic Auth implementation
-//        CredentialsProvider credsProvider = new BasicCredentialsProvider();
+//        BasicCredentialsProvider credsProvider = new BasicCredentialsProvider();
 //        credsProvider.setCredentials(new AuthScope(host, 443),
-//                new UsernamePasswordCredentials(user, password));
+//                new UsernamePasswordCredentials(user, password.toCharArray()));
+
 
         httpClientBuilder = HttpClients.custom()
                 .setUserAgent(RefineServlet.getUserAgent())
-                .setDefaultRequestConfig(defaultRequestConfig);
+                .setDefaultRequestConfig(defaultRequestConfig)
+                .setConnectionManager(connManager)
 //               .setConnectionBackoffStrategy(ConnectionBackoffStrategy)
-//               .setDefaultCredentialsProvider(credsProvider);
+//               .setDefaultCredentialsProvider(credsProvider)
+                ;
     }
 
     @JsonProperty("newColumnName")
@@ -391,11 +400,9 @@ public class ColumnAdditionByFetchingURLsOperation extends EngineDependentOperat
                 return null;
             }
 
-            try {
+            try (CloseableHttpClient httpclient = httpClientBuilder.build();) { //HttpClients.createDefault()) {
                 httpGet.setHeaders(httpHeaders);
                 httpGet.setConfig(defaultRequestConfig);
-
-                CloseableHttpClient httpclient = httpClientBuilder.build();
 
                 CloseableHttpResponse response = null;
                 try {
@@ -403,18 +410,13 @@ public class ColumnAdditionByFetchingURLsOperation extends EngineDependentOperat
 
                     HttpEntity entity = response.getEntity();
                     if (entity == null) {
-                        throw new Exception("No content found in " + httpGet.getURI().toString());
+                        throw new Exception("No content found in " + httpGet.getRequestUri());
                     }
 
                     String encoding = null;
 
                     if (entity.getContentEncoding() != null) {
-                        encoding = entity.getContentEncoding().getValue();
-                    } else {
-                        Charset charset = ContentType.getOrDefault(entity).getCharset();
-                        if (charset != null) {
-                            encoding = charset.name();
-                        }
+                        encoding = entity.getContentEncoding();
                     }
 
                     String result =  ParsingUtilities.inputStreamToString(
@@ -428,14 +430,18 @@ public class ColumnAdditionByFetchingURLsOperation extends EngineDependentOperat
                     if (response == null) {
                         message = "Unknown HTTP error " + e.getLocalizedMessage();
                     } else {
-                        StatusLine status = response.getStatusLine();
+                        String reasonPhrase = response.getReasonPhrase();
                         HttpEntity errorEntity = response.getEntity();
                         String errorString = ParsingUtilities.inputStreamToString(errorEntity.getContent());
-                        message = String.format("HTTP error %d : %s | %s", status.getStatusCode(),
-                                status.getReasonPhrase(),
+                        message = String.format("HTTP error %d : %s | %s", response.getCode(),
+                                reasonPhrase,
                                 errorString);
                     }
                     return _onError == OnError.StoreError ? new EvalError(message) : null;
+                } finally {
+                    if (response != null) {
+                        response.close();
+                    }
                 }
             } catch (Exception e) {
                 return _onError == OnError.StoreError ? new EvalError(e.getMessage()) : null;
