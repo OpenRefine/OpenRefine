@@ -355,7 +355,26 @@
       <artifactId>juniversalchardet</artifactId>
       <version>2.3.2</version>
     </dependency>
-
+    <dependency>
+      <groupId>clojure.java-time</groupId>
+      <artifactId>clojure.java-time</artifactId>
+      <version>0.3.2</version>
+    </dependency>
+    <dependency>
+      <groupId>tick</groupId>
+      <artifactId>tick</artifactId>
+      <version>0.4.26-alpha</version>
+    </dependency>
+    <dependency>
+      <groupId>funcool</groupId>
+      <artifactId>cuerdas</artifactId>
+      <version>2020.03.26-3</version>
+    </dependency>
+    <dependency>
+      <groupId>kixi</groupId>
+      <artifactId>stats</artifactId>
+      <version>0.5.4</version>
+    </dependency>
     <!-- test dependencies -->
 
     <dependency>
