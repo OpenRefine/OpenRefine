@@ -367,7 +367,7 @@ public abstract class Command {
         JsonGenerator writer = ParsingUtilities.mapper.getFactory().createGenerator(w);
         writer.writeStartObject();
         writer.writeStringField("code", "error");   
-        writer.writeStringField("message", e.getMessage());
+        writer.writeStringField("message", e.toString());
         writer.writeStringField("stack", sw.toString());
         writer.writeEndObject();
         writer.flush();
