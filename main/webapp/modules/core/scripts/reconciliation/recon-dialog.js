@@ -121,8 +121,10 @@ ReconDialog.prototype._populateDialog = function() {
       .text(service.name)
       .appendTo(self._elmts.serviceList)
       .click(function() {
+    	self._serviceRecords.push(record);
     	self._toggleServices();
         self._selectService(record);
+       
       });
 
       $('<a>')
@@ -131,11 +133,10 @@ ReconDialog.prototype._populateDialog = function() {
       .prependTo(record.selector)
       .click(function() {
         ReconciliationManager.unregisterService(service, function() {
-          self._refresh(-1);
+          self._refresh(services.indexOf(service));
         });
       });
-
-      self._serviceRecords.push(record);
+      
     };
 
     for (var i = 0; i < services.length; i++) {
