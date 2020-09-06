@@ -27,34 +27,30 @@
 package com.google.refine.importers.tree;
 
 
+/**
+ * @deprecated 2020-07-23 Use the method signatures which take individual parameters instead of this
+ */
+@Deprecated
 public class ImportParameters {
     protected boolean trimStrings;
     protected boolean storeEmptyStrings;
     protected boolean guessDataType;
     protected boolean includeFileSources = false;
     protected String fileSource = null;
-    // TODO: What is the compatibility impact of including new fields
-    protected boolean includeArchiveFileName = false;
-    protected String archiveFileName = null;
 
+    @Deprecated
     public ImportParameters(boolean trimStrings, boolean storeEmptyStrings, boolean guessCellValueTypes,
-            boolean includeFileSources, String fileSource, boolean includeArchiveFileName, String archiveFileName) {
+            boolean includeFileSources, String fileSource) {
         this.trimStrings = trimStrings;
         this.storeEmptyStrings = storeEmptyStrings;
         this.guessDataType = guessCellValueTypes;
         this.includeFileSources = includeFileSources;
         this.fileSource = fileSource;
-        this.includeArchiveFileName = includeArchiveFileName;
-        this.archiveFileName = archiveFileName;
     }
 
-    public ImportParameters(boolean trimStrings, boolean storeEmptyStrings, boolean guessCellValueTypes,
-            boolean includeFileSources, String fileSource) {
-        this(trimStrings, storeEmptyStrings, guessCellValueTypes, includeFileSources, fileSource, false, "");
-    }
-    
+    @Deprecated
     public ImportParameters(boolean trimStrings, boolean storeEmptyStrings, boolean guessCellValueTypes) {
         this(trimStrings, storeEmptyStrings, guessCellValueTypes, false, "");
     }
-    
+
 }
