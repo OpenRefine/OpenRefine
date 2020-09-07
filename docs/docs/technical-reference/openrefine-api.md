@@ -17,7 +17,7 @@ multipart form-data:
       'project-file' : file contents
       'project-name' : project name
       'format' : format of data in project-file (e.g. 'text/line-based/*sv') [optional]
-      'options' : json object containing options relevant to the file format [optional]. However for JSON input file this parameter is [Mandatory]
+      'options' : json object containing options relevant to the file format [optional - however, some importers may have required options, such as `recordPath` for the JSON & XML importers].
 
 The formats supported will depend on the version of OpenRefine you are using and any Extensions you have installed. The common formats include:
 
