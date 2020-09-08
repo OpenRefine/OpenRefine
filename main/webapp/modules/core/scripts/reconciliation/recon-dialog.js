@@ -121,22 +121,22 @@ ReconDialog.prototype._populateDialog = function() {
       .text(service.name)
       .appendTo(self._elmts.serviceList)
       .click(function() {
-    	self._serviceRecords.push(record);
     	self._toggleServices();
         self._selectService(record);
-       
       });
 
       $('<a>')
       .html("&nbsp;")
       .addClass("recon-dialog-service-selector-remove")
       .prependTo(record.selector)
-      .click(function() {
+      .click(function(event) {
         ReconciliationManager.unregisterService(service, function() {
-          self._refresh(services.indexOf(service));
+          self._refresh(-1);
         });
+        event.stopImmediatePropagation();
       });
-      
+
+      self._serviceRecords.push(record);
     };
 
     for (var i = 0; i < services.length; i++) {
