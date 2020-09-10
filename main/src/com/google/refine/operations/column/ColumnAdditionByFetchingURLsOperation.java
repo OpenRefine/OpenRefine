@@ -47,16 +47,23 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.hc.client5.http.classic.methods.HttpGet;
 import org.apache.hc.client5.http.config.RequestConfig;
+import org.apache.hc.client5.http.impl.DefaultHttpRequestRetryStrategy;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
 import org.apache.hc.client5.http.impl.classic.HttpClientBuilder;
 import org.apache.hc.client5.http.impl.classic.HttpClients;
 import org.apache.hc.client5.http.impl.io.PoolingHttpClientConnectionManager;
+import org.apache.hc.core5.http.EntityDetails;
 import org.apache.hc.core5.http.Header;
 import org.apache.hc.core5.http.HttpEntity;
+import org.apache.hc.core5.http.HttpException;
+import org.apache.hc.core5.http.HttpRequest;
+import org.apache.hc.core5.http.HttpRequestInterceptor;
 import org.apache.hc.core5.http.io.SocketConfig;
 import org.apache.hc.core5.http.io.entity.EntityUtils;
 import org.apache.hc.core5.http.message.BasicHeader;
+import org.apache.hc.core5.http.protocol.HttpContext;
+import org.apache.hc.core5.util.TimeValue;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -185,8 +192,31 @@ public class ColumnAdditionByFetchingURLsOperation extends EngineDependentOperat
                 .setUserAgent(RefineServlet.getUserAgent())
                 .setDefaultRequestConfig(defaultRequestConfig)
                 .setConnectionManager(connManager)
+                // Default Apache HC retry is 1x @1 sec (or the value in Retry-Header)
+                .setRetryStrategy(new DefaultHttpRequestRetryStrategy(3, TimeValue.ofMilliseconds(_delay)))
 //               .setConnectionBackoffStrategy(ConnectionBackoffStrategy)
 //               .setDefaultCredentialsProvider(credsProvider)
+                .addRequestInterceptorFirst(new HttpRequestInterceptor() {
+
+                    private long nextRequestTime = System.currentTimeMillis();
+
+                    @Override
+                    public void process(
+                            final HttpRequest request,
+                            final EntityDetails entity,
+                            final HttpContext context) throws HttpException, IOException {
+
+                        long delay = nextRequestTime - System.currentTimeMillis();
+                        if (delay > 0) {
+                            try {
+                                Thread.sleep(delay);
+                            } catch (InterruptedException e) {
+                            }
+                        }
+                        nextRequestTime = System.currentTimeMillis() + _delay;
+
+                    }
+                });
                 ;
     }
 
@@ -291,19 +321,6 @@ public class ColumnAdditionByFetchingURLsOperation extends EngineDependentOperat
                      new CacheLoader<String, Serializable>() {
                         public Serializable load(String urlString) throws Exception {
                             Serializable result = fetch(urlString);
-                            try {
-                                // Always sleep for the delay, no matter how long the
-                                // request took. This is more responsible than substracting
-                                // the time spend requesting the URL, because it naturally
-                                // slows us down if the server is busy and takes a long time
-                                // to reply.
-                                if (_delay > 0) {
-                                    Thread.sleep(_delay);
-                                }
-                            } catch (InterruptedException e) {
-                                result = null;
-                            }
-
                             if (result == null) {
                                 // the load method should not return any null value
                                 throw new Exception("null result returned by fetch");
