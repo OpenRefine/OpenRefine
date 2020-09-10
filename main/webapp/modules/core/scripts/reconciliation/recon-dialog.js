@@ -129,10 +129,11 @@ ReconDialog.prototype._populateDialog = function() {
       .html("&nbsp;")
       .addClass("recon-dialog-service-selector-remove")
       .prependTo(record.selector)
-      .click(function() {
+      .click(function(event) {
         ReconciliationManager.unregisterService(service, function() {
           self._refresh(-1);
         });
+        event.stopImmediatePropagation();
       });
 
       self._serviceRecords.push(record);
