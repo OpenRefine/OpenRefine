@@ -40,7 +40,7 @@
     padding-top: 25px;
   }
 
-  
+
 
   /******* MARKDOWN STYLES *******/
 
@@ -63,25 +63,32 @@
   }
 
   .markdown h4{
-    margin-top: 50px;
+    margin-top: 40px;
     font-size: 20px;
   }
 
   .markdown h3{
-    margin-top: 70px;
+    margin-top: 45px;
     font-size: 29px;
   }
 
   .markdown h2{
-    margin-top: 90px;
+    margin-top: 50px;
     font-size: 35px;
   }
 
   .markdown .menuItems {
-    background-color: var(--ifm-color-primary-lightest);
+    border-color: var(--ifm-color-primary-lightest);;
+    border-style: solid;
+    border-width: 1.5px;
+    margin-right: 2px;
+    margin-left: 2px;
     border-radius: var(--ifm-code-border-radius);
-    padding: 3px;
+    padding: 1px;
+    padding-left: 2.5px;
+    padding-right: 2.5px;
     color: black;
+    display: inline-block;
     
   }
 

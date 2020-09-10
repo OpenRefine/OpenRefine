@@ -169,7 +169,7 @@ You can name a project when you create it or import it, and you can rename a pro
 
 OpenRefine saves all of your actions (everything you can see in the Undo/Redo panel). That includes flagging and starring rows.
 
-It doesn’t, however, save your facets, filters, or any kind of <span class="menuItems">view</span> you may have in place while you work. This includes the number of rows showing, whether you are showing your data as rows or records, and any sorting or column collapsing you may have done. A good rule of thumb is: if it’s not showing in Undo/Redo, you will lose it when you leave the project workspace. 
+It doesn’t, however, save your facets, filters, or any kind of view you may have in place while you work. This includes the number of rows showing, whether you are showing your data as rows or records, and any sorting or column collapsing you may have done. A good rule of thumb is: if it’s not showing in Undo/Redo, you will lose it when you leave the project workspace. 
 
 You can only save and share facets and filters, not any other type of view. To save current facets and filters, click <span class="menuItems">Permalink</span>. The project will reload with a different URL, which you can then copy and save elsewhere. This permalink will save both the facets and filters you’ve set, and the settings for each one (such as sorting by count rather than by name). 
 
