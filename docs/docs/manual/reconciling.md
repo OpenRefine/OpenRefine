@@ -173,7 +173,7 @@ For example, if you have reconciled artists to the Getty's ULAN, and have their 
 
 You can use the [Add entity identifiers column](#add-entity-identifiers-column) operation above if you don't already have a column of unique IDs. 
 
-You can alternatively insert the ID directly from the matched column using a GREL expression like `"http://vocab.getty.edu/" + cell.recon.match.id + "/justlinks.json"` instead. 
+You can alternatively insert the ID directly from the matched column using a GREL expression like `"http://vocab.getty.edu/" + cell.recon.match.id + ".json"` instead. 
 
 Remember to set an appropriate throttle and to refer to the service documentation to ensure your compliance with their terms.
 
