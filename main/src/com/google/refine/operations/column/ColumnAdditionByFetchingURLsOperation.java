@@ -125,6 +125,7 @@ public class ColumnAdditionByFetchingURLsOperation extends EngineDependentOperat
     private Header[] httpHeaders = new Header[0];
     final private RequestConfig defaultRequestConfig;
     private HttpClientBuilder httpClientBuilder;
+    private CloseableHttpClient httpclient;
 
     @JsonCreator
     public ColumnAdditionByFetchingURLsOperation(
@@ -217,7 +218,8 @@ public class ColumnAdditionByFetchingURLsOperation extends EngineDependentOperat
 
                     }
                 });
-                ;
+        httpclient = httpClientBuilder.build();
+
     }
 
     @JsonProperty("newColumnName")
@@ -417,7 +419,7 @@ public class ColumnAdditionByFetchingURLsOperation extends EngineDependentOperat
                 return null;
             }
 
-            try (CloseableHttpClient httpclient = httpClientBuilder.build();) { //HttpClients.createDefault()) {
+            try { //HttpClients.createDefault()) {
                 httpGet.setHeaders(httpHeaders);
                 httpGet.setConfig(defaultRequestConfig);
 
