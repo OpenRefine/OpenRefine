@@ -169,7 +169,7 @@ If the reconciliation service cannot extend data, look for a generic web API for
 
 You will likely not want to pull the entire HTML content of the pages at the ends of these URLs, so look to see whether the service offers a metadata endpoint, such as JSON-formatted data. You can either use a column of IDs, or you can pull the ID from each matched cell during the fetching process. 
 
-For example, if you have reconciled artists to the Getty's ULAN, and have their unique ULAN IDs as a column, you can generate a new column of JSON-formatted data by using "Add column by fetching URLs" and entering the GREL expression `"http://vocab.getty.edu/" + value + ".json"` in the window. For this service, the unique IDs are formatted "/ulan/000000" and so the generated URLs look like "http://vocab.getty.edu/ulan/000000.json."
+For example, if you have reconciled artists to the Getty's ULAN, and have their unique ULAN IDs as a column, you can generate a new column of JSON-formatted data by using "Add column by fetching URLs" and entering the GREL expression `"http://vocab.getty.edu/" + value + ".json"` in the window. For this service, the unique IDs are formatted "ulan/000000" and so the generated URLs look like "http://vocab.getty.edu/ulan/000000.json."
 
 You can use the [Add entity identifiers column](#add-entity-identifiers-column) operation above if you don't already have a column of unique IDs. 
 
