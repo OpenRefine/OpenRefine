@@ -66,7 +66,7 @@ or whatever metadata format you prefer. [Information about these Wikidata option
 
 This service is more useful when getting metadata files instead of HTML files, but you may wish to work with a page’s entire HTML contents and then parse out information from that. Be cautioned that the fetching process can take quite some time and that servers may not want to fulfill hundreds or thousands of page requests in seconds. 
 
-Fetching allows you to set a “throttle delay” which determines the amount of time between requests. The default is 5 seconds per row in your dataset (5000 milliseconds), so you can estimate how long it will take to work through the entire column using that number. We recommend leaving this value at 1000 or greater. 
+Fetching allows you to set a “throttle delay” which determines the amount of time between requests. The default is 5 seconds per row in your dataset (5000 milliseconds), so you can estimate how long it will take to work through the entire column using that number. We recommend starting with 1000 milliseconds. 
 
 ![A screenshot of the settings window for fetching URLs.](/img/fetchingURLs.png)
 
@@ -83,7 +83,7 @@ Note the following:
 
 When OpenRefine attempts to fetch information from a web page or service, it can fail in a variety of ways. The following information is meant to help troubleshoot and fix problems encountered when using this function.
 
-First, make sure that your fetching operation is storing errors (check “store error”). The run the fetch and look at the error messages. 
+First, make sure that your fetching operation is storing errors (check “store error”). Then run the fetch and look at the error messages. 
 
 **"HTTP error 403 : Forbidden"** can be simply down to you not having access to the URL you are trying to use. If you can access the same URL with your browser, the remote site may be blocking OpenRefine because it doesn't recognize its request as valid. Changing the[ User-Agent](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/User-Agent) request header may help. If you believe you should have access to a site but are “forbidden,” you may wish to contract the administrators.
 
@@ -101,25 +101,7 @@ The list of trusted certificates is stored in an encrypted file called `cacerts`
 
 Note on OpenRefine for Mac, you need to update the `cacerts` file within the OpenRefine application: something like `/PlugIns/jdk1.8.0_60.jdk/Contents/Home/jre/lib/security/cacerts`.
 
-## Add columns from reconciled values
 
-The “Add columns from reconciled values…” feature operates on reconciled columns in OpenRefine - that is, columns containing data that has been through [reconciliation](#reconcile) processes. See that section for more details about how to get your data into a reconciled format. 
-
-Once you have pulled reconciliation values and selected one for each cell, selecting “Add column from reconciled values” will bring up a window to choose which information you’d like to generate into a new column. If you have reconciled against Wikidata, for example, you will see the option of adding their unique identifiers as a new column (automatically named “Qid”). 
-
-The quality of the suggested properties will depend on how you have reconciled your data beforehand: reconciling against a specific type will provide you with suggested properties of that type.
-
-![A screenshot of the settings window for adding reconciled values.](/img/columnreconciled.png)
-
-If you have left any values unreconciled in your column, you will see “&lt;not reconciled>” in the preview. These will generate blank cells if you continue with the column addition process. 
-
-One reason to reconcile a dataset to some database is that it allows you to pull data from the database into OpenRefine. There are two ways to do this:
-
-*   If the reconciliation service supports the[ Data Extension API](https://github.com/OpenRefine/OpenRefine/wiki/Data%20Extension%20API), then you can use the "Add columns from reconciled values" action to augment your OpenRefine project with new columns. For example, if you have a column of chemical elements identified by name, you can fetch categorical information about them such as their atomic number and their element symbol, as the animation shows below.
-
-![A screenshare of elements fetching related information.](/img/reconcileelements.gif)
-
-*   If the reconciliation service does not support this feature, look out for a generic web API for that data source. You can use the "Add column by fetching URLs" operation to call this API with the IDs obtained from the reconciliation process. For instance, if you have used the OpenCorporates service, you can use[ their API](https://api.opencorporates.com/documentation/API-Reference) to fetch JSON-formatted data about the reconciled companies. The GREL expression `"https://api.opencorporates.com/companies/"+cell.recon.match.id` will be translated to URLs that can then be parsed in OpenRefine.
 
 ## Rename, Remove, and Move
 
