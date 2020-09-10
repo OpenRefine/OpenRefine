@@ -64,16 +64,16 @@ If you have a column of URLs and watch to fetch the information that they point 
 
 or whatever metadata format you prefer. [Information about these Wikidata options can be found here](https://www.wikidata.org/wiki/Wikidata:Data_access).
 
-This service is more useful when getting metadata files instead of HTML files, but you may wish to work with a page’s entire HTML contents and then parse out information from that. Be cautioned that the fetching process can take quite some time and that servers may not want to fulfill hundreds or thousands of page requests in seconds. 
+This service is more useful when getting metadata files instead of HTML, but you may wish to work with a page’s entire HTML contents and then parse out information from that. 
 
-Fetching allows you to set a “throttle delay” which determines the amount of time between requests. The default is 5 seconds per row in your dataset (5000 milliseconds), so you can estimate how long it will take to work through the entire column using that number. We recommend starting with 1000 milliseconds. 
+Be aware that the fetching process can take quite some time and that servers may not want to fulfill hundreds or thousands of page requests in seconds. Fetching allows you to set a “throttle delay” which determines the amount of time between requests. The default is 5 seconds per row in your dataset (5000 milliseconds).  
 
 ![A screenshot of the settings window for fetching URLs.](/img/fetchingURLs.png)
 
 Note the following:
 
 * Many systems prevent you from making too many requests per second. To avoid this problem, set the throttle delay, which tells OpenRefine to wait the specified number of milliseconds between URL requests.
-* Before pressing OK, copy/paste a URL or two from the right column in the dialog and test them in another browser tab to make sure they work.
+* Before pressing "OK," copy and paste a URL or two from the preview and test them in another browser tab to make sure they work.
 * In some situations you may need to set [HTTP request headers](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers). To set these, click the small “Show” button next to "HTTP headers to be used when fetching URLs" in the settings window. The authorization credentials get logged in your operation history in plain text, which may be a security concern for you. You can set the following request headers:
   * [User-Agent](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/User-Agent)
   * [Accept](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Accept)
