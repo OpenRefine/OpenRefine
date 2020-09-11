@@ -101,7 +101,7 @@ Reconciliation services use unique identifiers for their entities. For example, 
 
 Select the column with unique identifiers and apply the operation “Reconcile” → “Use values as identifiers.” This will bring up the list of reconciliation services you have already added (to add a new service, open the “Start reconciling…” window first). If you reconcile a column of IDs, other columns cannot be included.
 
-Matching identifiers does not actually "reconcile," that is, query the external service to identify matches. All cells will appear as dark blue "confirmed" matches. You may get false positives, which you will need to hover over or click on to identify:
+Matching identifiers does not actually validate identifiers. All cells will appear as dark blue "confirmed" matches. You should check before this operation that the identifiers in the column exist on the target service.
 
 ![Hovering over an error.](/img/reconcileIDerror.png)
 
