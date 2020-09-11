@@ -59,6 +59,7 @@ import org.apache.hc.core5.http.HttpEntity;
 import org.apache.hc.core5.http.HttpException;
 import org.apache.hc.core5.http.HttpRequest;
 import org.apache.hc.core5.http.HttpRequestInterceptor;
+import org.apache.hc.core5.http.HttpResponse;
 import org.apache.hc.core5.http.io.SocketConfig;
 import org.apache.hc.core5.http.io.entity.EntityUtils;
 import org.apache.hc.core5.http.message.BasicHeader;
@@ -194,7 +195,7 @@ public class ColumnAdditionByFetchingURLsOperation extends EngineDependentOperat
                 .setDefaultRequestConfig(defaultRequestConfig)
                 .setConnectionManager(connManager)
                 // Default Apache HC retry is 1x @1 sec (or the value in Retry-Header)
-                .setRetryStrategy(new DefaultHttpRequestRetryStrategy(3, TimeValue.ofMilliseconds(_delay)))
+                .setRetryStrategy(new ExponentialBackoffRetryStrategy(3, TimeValue.ofMilliseconds(_delay)))
 //               .setConnectionBackoffStrategy(ConnectionBackoffStrategy)
 //               .setDefaultCredentialsProvider(credsProvider)
                 .addRequestInterceptorFirst(new HttpRequestInterceptor() {
@@ -526,6 +527,34 @@ public class ColumnAdditionByFetchingURLsOperation extends EngineDependentOperat
                     return false;
                 }
             }.init(cellsAtRows);
+        }
+    }
+
+    /**
+     * Use binary exponential backoff strategy, instead of the default fixed
+     * retry interval, if the server doesn't provide a Retry-After time.
+     */
+    class ExponentialBackoffRetryStrategy extends DefaultHttpRequestRetryStrategy {
+
+        private final TimeValue defaultInterval;
+
+        public ExponentialBackoffRetryStrategy(final int maxRetries, final TimeValue defaultRetryInterval) {
+            super(maxRetries, defaultRetryInterval);
+            this.defaultInterval = defaultRetryInterval;
+        }
+
+        @Override
+        public TimeValue getRetryInterval(HttpResponse response, int execCount, HttpContext context) {
+            // Get the default implementation's interval
+            TimeValue interval = super.getRetryInterval(response, execCount, context);
+            // If it's the same as the default, there was no Retry-After, so use binary
+            // exponential backoff
+            if (interval.compareTo(defaultInterval) == 0) {
+                interval = TimeValue.of(((Double) (Math.pow(2, execCount) * defaultInterval.getDuration())).longValue(),
+                       defaultInterval.getTimeUnit() );
+                return interval;
+            }
+            return interval;
         }
     }
 }

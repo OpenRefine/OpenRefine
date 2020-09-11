@@ -288,8 +288,8 @@ public class ColumnAdditionByFetchingURLsOperationTests extends RefineTest {
                 project.rows.add(row);
             }
 
-            // Queue 4  error responses with 1 sec. Retry-After interval
-            for (int i = 0; i < 4; i++) {
+            // Queue 5 error responses with 1 sec. Retry-After interval
+            for (int i = 0; i < 5; i++) {
                 server.enqueue(new MockResponse()
                         .setHeader("Retry-After", 1)
                         .setResponseCode(429)
@@ -308,16 +308,67 @@ public class ColumnAdditionByFetchingURLsOperationTests extends RefineTest {
                     false,
                     null);
 
-            // 4 requests (3 retries @1 sec) + final response
+            // 6 requests (4 retries @1 sec) + final response
             long start = System.currentTimeMillis();
-            runAndWait(op, 3600);
-            // Make sure that our Retry-After headers were obeyed (3*1 sec vs 3*100msec)
-            long elapsed = System.currentTimeMillis() - start;
-            assertTrue(elapsed > 3000);
+            runAndWait(op, 4500);
 
-            // Inspect rows - 1st row fails 3 retries, 2nd row retries twice and gets value
+            // Make sure that our Retry-After headers were obeyed (4*1 sec vs 4*100msec)
+            long elapsed = System.currentTimeMillis() - start;
+            assertTrue(elapsed > 4000);
+
+            // 1st row fails after 4 tries (3 retries), 2nd row tries twice and gets value
             assertTrue(project.rows.get(0).getCellValue(1).toString().contains("Got error 429"));
             assertEquals(project.rows.get(1).getCellValue(1).toString(), "success");
+
+            server.shutdown();
+        }
+    }
+
+    @Test
+    public void testExponentialRetries() throws Exception {
+        try (MockWebServer server = new MockWebServer()) {
+            server.start();
+            HttpUrl url = server.url("/retries");
+
+            for (int i = 0; i < 3; i++) {
+                Row row = new Row(2);
+                row.setCell(0, new Cell("test" + (i + 1), null));
+                project.rows.add(row);
+            }
+
+            // Use 503 Server Unavailable with no Retry-After header this time
+            for (int i = 0; i < 5; i++) {
+                server.enqueue(new MockResponse()
+                        .setResponseCode(503)
+                        .setBody(Integer.toString(i,10)));
+            }
+            server.enqueue(new MockResponse().setBody("success"));
+
+            server.enqueue(new MockResponse().setBody("not found").setResponseCode(404));
+
+            ColumnAdditionByFetchingURLsOperation op = new ColumnAdditionByFetchingURLsOperation(engine_config,
+                    "fruits",
+                    "\"" + url + "?city=\"+value",
+                    OnError.StoreError,
+                    "rand",
+                    1,
+                    100,
+                    false,
+                    null);
+
+            // 6 requests (4 retries 200, 400, 800, 200 msec) + final response
+            long start = System.currentTimeMillis();
+            runAndWait(op, 2000);
+
+            // Make sure that our exponential back off is working
+            long elapsed = System.currentTimeMillis() - start;
+            assertTrue(elapsed > 1600);
+
+            // 1st row fails after 4 tries (3 retries), 2nd row tries twice and gets value, 3rd row is hard error
+            assertTrue(project.rows.get(0).getCellValue(1).toString().contains("Got error 503"));
+            assertEquals(project.rows.get(1).getCellValue(1).toString(), "success");
+            assertTrue(project.rows.get(2).getCellValue(1).toString().contains("Got error 404"));
+
             server.shutdown();
         }
     }
