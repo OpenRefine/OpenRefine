@@ -204,13 +204,6 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
     var dismiss = function() { DialogSystem.dismissUntil(level - 1); };
 
     var o = DataTableView.sampleVisibleRows(column);
-
-    elmts.columnNameInput[0].addEventListener("keyup", function(event) {
-        if (event.keyCode === 13) {
-    		event.preventDefault();
-    		elmts.okButton.click();
-        }
-    });
     
     elmts.cancelButton.click(dismiss);
     elmts.okButton.click(function() {
