@@ -93,16 +93,16 @@ import TabItem from '@theme/TabItem';
 
 <TabItem value="win">
 
-1. On Windows 10, click the Windows start menu button, type `env`, and look at the search results. Click `Edit the system environment variables`. (If you are using an earlier version of Windows, use the `Search` or `Search programs and files` box in the start menu.)
+1. On Windows 10, click the Windows start menu button, type `env`, and look at the search results. **Edit the system environment** variables. (If you are using an earlier version of Windows, use the **Search** or **Search programs and files** box in the start menu.)
 
 ![A screenshot of the search results for 'env'.](/img/env.png "A screenshot of the search results for 'env'.")
 
-2. Click `Environment Variables…` at the bottom of the `Advanced` window that appears.
-3. In the `Environment Variables` dialog that appears, click `New…` and create a variable with the key `JAVA_HOME`. You can set the variable for only your user account, as in the screenshot below, or set it as a system variable - it will work either way.
+2. Click **Environment Variables…** at the bottom of the **Advanced** window that appears.
+3. In the **Environment Variables** dialog that appears, click **New…** and create a variable with the key `JAVA_HOME`. You can set the variable for only your user account, as in the screenshot below, or set it as a system variable - it will work either way.
 
 ![A screenshot of 'Environment Variables'.](/img/javahome.png "A screenshot of 'Environment Variables'.")
 
-4. Set the `Value` to the folder where you installed JDK, in the format `D:\Programs\OpenJDK`. You can locate this folder with the `Browse directory...` button.
+4. Set the **Value** to the folder where you installed JDK, in the format `D:\Programs\OpenJDK`. You can locate this folder with the **Browse directory...** button.
 
 </TabItem>
 
@@ -362,10 +362,10 @@ OpenRefine does not currently output an error log, but because the OpenRefine co
 You can access OpenRefine server logs from the terminal on Mac:
 
 *   Find the OpenRefine app/icon in Finder
-*   Ctrl+Click on the icon and select `Show Package Contents` from the context menu that displays
-*   This should open a new Finder menu showing a folder called `Contents` - navigate into this folder then into the `MacOS` folder
-*   Ctrl+Click on `JavaAppLauncher`
-*   Choose `Open With` from menu, and select `Terminal`
+*   Ctrl+Click on the icon and select **Show Package Contents** from the context menu that displays
+*   This should open a new Finder menu showing a folder called **Contents** - navigate into this folder then into the **MacOS** folder
+*   Ctrl+Click on **JavaAppLauncher**
+*   Choose **Open With** from menu, and select **Terminal**
 
 ---
 
@@ -423,30 +423,30 @@ Once you increase the memory allocation, you may find that you cannot run `openr
 
 #### Using refine.bat
 
-On Windows, OpenRefine can also be run by using the file `refine.bat` in the program directory. If you start OpenRefine using `refine.bat`, the memory available to OpenRefine can be specified either through command line options, or through the `refine.ini` file.
+On Windows, OpenRefine can also be run by using the file **refine.bat** in the program directory. If you start OpenRefine using **refine.bat**, the memory available to OpenRefine can be specified either through command line options, or through the **refine.ini** file.
 
-To set the maximum amount of memory on the command line when using `refine.bat`, 'cd' to the program directory, then type
+To set the maximum amount of memory on the command line when using **refine.bat**, 'cd' to the program directory, then type
 
 ```refine.bat /m 2048m```
 
 where "2048" is the maximum amount of MB that you want OpenRefine to use.
 
-To change the default that `refine.bat` uses, edit the `refine.ini` line that reads 
+To change the default that **refine.bat** uses, edit the **refine.ini** line that reads 
 
 ```REFINE_MEMORY=1024M```
 
-Note that this file is only read if you use `refine.bat`, not `openrefine.exe`.
+Note that this file is only read if you use **refine.bat**, not **openrefine.exe**.
 
 </TabItem>
 <TabItem value="mac">
 
-If you have downloaded the `.dmg` package and you start OpenRefine by double-clicking on it:
+If you have downloaded the **.dmg** package and you start OpenRefine by double-clicking on it:
 
 *   close OpenRefine
-*   `control-click` on the OpenRefine icon (opens the contextual menu)
-*   click on `show package content` (a finder window opens)
-*   open the `Contents` folder
-*   open the `Info.plist` file with any text editor (like Mac's default TextEdit)
+*   **control-click** on the OpenRefine icon (opens the contextual menu)
+*   click on **show package content** (a finder window opens)
+*   open the **Contents** folder
+*   open the **Info.plist** file with any text editor (like Mac's default TextEdit)
 *   Change `-Xmx1024M` into, for example, `-Xmx2048M` or `-Xmx8G`
 *   save the file
 *   restart OpenRefine.
@@ -460,7 +460,7 @@ If you have downloaded the `.tar.gz` package and you start OpenRefine from the c
 
 #### Setting a default
 
-If you don't want to set this option on the command line each time, you can also set it in the `refine.ini` file. Edit the line
+If you don't want to set this option on the command line each time, you can also set it in the **refine.ini** file. Edit the line
 
 ```REFINE_MEMORY=1024M```
 

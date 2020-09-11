@@ -19,6 +19,7 @@
     --ifm-alert-background-color: #ffffff;
     --ifm-panel-background-color: #ffffff;
     --ifm-panel-box-shadow-color: #999999;
+    --ifm-code-color: var(--ifm-color-primary-darkest);
   }
 
   /******* COMMON *******/
@@ -28,6 +29,7 @@
     --ifm-panel-box-shadow-color: var(--ifm-panel-background-color);
     --ra-admonition-color: var(--ifm-color-black);
     --ra-admonition-icon-color: var(--ifm-color-black);
+    --ifm-code-color: var(--ifm-color-primary-light);
   }
 
 
@@ -78,22 +80,22 @@
   }
 
   .markdown .menuItems {
-    border-color: var(--ifm-color-primary-lightest);;
-    border-style: solid;
-    border-width: 1.5px;
-    margin-right: 2px;
-    margin-left: 2px;
-    border-radius: var(--ifm-code-border-radius);
-    padding: 1px;
-    padding-left: 2.5px;
-    padding-right: 2.5px;
-    color: black;
+    font-family: var(--ifm-font-family-monospace);
+    font-size: var(--ifm-code-font-size);
+    color: var(--ifm-color-primary-darkest);
     display: inline-block;
-    
+    background-color: #c8daf7;
+    border-radius: var(--ifm-code-border-radius);
+    margin: 0;
+    padding: 2px var(--ifm-code-padding-horizontal);
   }
 
   .markdown img {
     display: block;
     margin-left: auto;
     margin-right: auto; 
+  }
+
+  code {
+    color: var(--ifm-code-color);
   }
