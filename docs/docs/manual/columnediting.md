@@ -85,7 +85,7 @@ When OpenRefine attempts to fetch information from a web page or service, it can
 
 First, make sure that your fetching operation is storing errors (check “store error”). Then run the fetch and look at the error messages. 
 
-**"HTTP error 403 : Forbidden"** can be simply down to you not having access to the URL you are trying to use. If you can access the same URL with your browser, the remote site may be blocking OpenRefine because it doesn't recognize its request as valid. Changing the[ User-Agent](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/User-Agent) request header may help. If you believe you should have access to a site but are “forbidden,” you may wish to contract the administrators.
+**"HTTP error 403 : Forbidden"** can be simply down to you not having access to the URL you are trying to use. If you can access the same URL with your browser, the remote site may be blocking OpenRefine because it doesn't recognize its request as valid. Changing the [User-Agent](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/User-Agent) request header may help. If you believe you should have access to a site but are “forbidden,” you may wish to contract the administrators.
 
 **"HTTP error 404 : Not Found"** indicates that the information you are requesting does not exist, perhaps due to a problem with your cell values if it only happening in certain rows. **"HTTP error 500 : Internal Server Error"** indicates the remote server is having a problem filling your request. You may wish to simply wait and try again later, or double-check the URLs. 
 
