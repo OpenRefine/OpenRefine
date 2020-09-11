@@ -132,7 +132,7 @@ public class ColumnAdditionByFetchingURLsOperationTests extends RefineTest {
         } catch (InterruptedException e) {
             Assert.fail("Test interrupted");
         }
-        Assert.assertFalse(process.isRunning());
+        Assert.assertFalse(process.isRunning(),"Process failed to complete within timeout " + timeout);
     }
 
     @Test
@@ -314,10 +314,10 @@ public class ColumnAdditionByFetchingURLsOperationTests extends RefineTest {
 
             // Make sure that our Retry-After headers were obeyed (4*1 sec vs 4*100msec)
             long elapsed = System.currentTimeMillis() - start;
-            assertTrue(elapsed > 4000);
+            assertTrue(elapsed > 4000, "Retry-After retries didn't take long enough - elapsed = " + elapsed );
 
             // 1st row fails after 4 tries (3 retries), 2nd row tries twice and gets value
-            assertTrue(project.rows.get(0).getCellValue(1).toString().contains("Got error 429"));
+            assertTrue(project.rows.get(0).getCellValue(1).toString().contains("HTTP error 429"), "missing 429 error");
             assertEquals(project.rows.get(1).getCellValue(1).toString(), "success");
 
             server.shutdown();
@@ -362,12 +362,12 @@ public class ColumnAdditionByFetchingURLsOperationTests extends RefineTest {
 
             // Make sure that our exponential back off is working
             long elapsed = System.currentTimeMillis() - start;
-            assertTrue(elapsed > 1600);
+            assertTrue(elapsed > 1600, "Exponential retries didn't take enough time - elapsed = " + elapsed);
 
             // 1st row fails after 4 tries (3 retries), 2nd row tries twice and gets value, 3rd row is hard error
-            assertTrue(project.rows.get(0).getCellValue(1).toString().contains("Got error 503"));
+            assertTrue(project.rows.get(0).getCellValue(1).toString().contains("HTTP error 503"), "Missing 503 error");
             assertEquals(project.rows.get(1).getCellValue(1).toString(), "success");
-            assertTrue(project.rows.get(2).getCellValue(1).toString().contains("Got error 404"));
+            assertTrue(project.rows.get(2).getCellValue(1).toString().contains("HTTP error 404"),"Missing 404 error");
 
             server.shutdown();
         }

@@ -430,13 +430,13 @@ public class ColumnAdditionByFetchingURLsOperation extends EngineDependentOperat
                     String reasonPhrase = response.getReasonPhrase();
                     int statusCode = response.getCode();
                     if (statusCode >= 400) { // We should never see 3xx since they get handled automatically
-                        throw new Exception(String.format("Got error %d : %s for URL %s", statusCode, reasonPhrase,
+                        throw new IOException(String.format("Got error %d : %s for URL %s", statusCode, reasonPhrase,
                                 httpGet.getRequestUri()));
                     }
 
                     HttpEntity entity = response.getEntity();
                     if (entity == null) {
-                        throw new Exception("No content found in " + httpGet.getRequestUri());
+                        throw new IOException("No content found in " + httpGet.getRequestUri());
                     }
 
                     String encoding = null;
