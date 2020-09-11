@@ -206,7 +206,8 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
     var o = DataTableView.sampleVisibleRows(column);
     
     elmts.cancelButton.click(dismiss);
-    elmts.okButton.click(function() {
+    elmts.form.submit(function(event) {
+      event.preventDefault();
       var columnName = $.trim(elmts.columnNameInput[0].value);
       if (!columnName.length) {
         alert($.i18n('core-views/warning-col-name'));
