@@ -61,7 +61,7 @@ public class WholeText implements Function {
 
     @Override
     public String getDescription() {
-        return "Selects the (unencoded) text of an element and its children, including any newlines and spaces present in the original and returns unencoded, un-normalized text";
+        return "Selects the (unencoded) text of an element and its children, including any newlines and spaces, and returns unencoded, un-normalized text";
     }
     
     @Override
@@ -74,4 +74,3 @@ public class WholeText implements Function {
         return "String text";
     }
 }
-
