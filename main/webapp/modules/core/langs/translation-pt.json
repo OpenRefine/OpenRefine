@@ -316,7 +316,7 @@
     "core-views/cannot-same": "Se especificado, a coluna comentários não pode ser a mesma que a coluna chave ou a coluna valor.",
     "core-views/copy-opt": "Opções de cópia",
     "core-views/transp-cell-col": "Transpor células de linhas para colunas",
-    "core-views/best-edit-dist": "Best candidate's name edit distance",
+    "core-views/best-edit-dist": "A distância de edição do nome do melhor candidato",
     "core-views/how-split": "Como dividir a coluna",
     "core-views/transp-cell": "Transpor células de colunas para linhas",
     "core-views/facets": "Facetas",
