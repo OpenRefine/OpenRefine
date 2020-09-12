@@ -51,6 +51,13 @@ public class ParseHtmlTests extends RefineTest  {
                         "            <p>para1 <strong>strong text</strong></p>\n" +
                         "            <p>para2</p>\n" +
                         "        </div>\n" +
+                        "        <div class=\"commentthread_comment_text\" id=\"comment_content_257769\">\n" +
+                                 "  Me : Make a 2nd game ?\n" +
+                                 " <br>Dev : Nah man , too much work.\n" +
+                                 " <br>Me : So what's it gonna be ?\n" +
+                                 " <br>Dev : REMASTER !!!!\n" +
+                                 " <br>" +
+                                 "</div>" +
                         "    </body>\n" +
                         "</html>";
     
@@ -76,6 +83,8 @@ public class ParseHtmlTests extends RefineTest  {
         Assert.assertEquals(invoke("htmlAttr",Jsoup.parse(h).select("div").first(),"class"),"class1");
         Assert.assertEquals(invoke("htmlText",Jsoup.parse(h).select("div").first()),"para1 strong text para2");
         Assert.assertEquals(invoke("ownText",Jsoup.parse(h).select("p").first()),"para1");
+        Assert.assertTrue(invoke("wholeText",Jsoup.parse(h).select("div.commentthread_comment_text").first()) instanceof String);
+        Assert.assertEquals(invoke("wholeText",Jsoup.parse(h).select("div.commentthread_comment_text").first()),"\n  Me : Make a 2nd game ?\n Dev : Nah man , too much work.\n Me : So what's it gonna be ?\n Dev : REMASTER !!!!\n ");
     }
 }
 
