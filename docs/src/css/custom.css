@@ -82,7 +82,7 @@
   .markdown .menuItems {
     font-size: var(--ifm-code-font-size);
     display: inline-block;
-    border: 2px solid #8be9ff;
+    border: 2px solid #4dc6e1;
     border-radius: var(--ifm-code-border-radius);
     margin: 0;
     padding: 1px var(--ifm-code-padding-horizontal);

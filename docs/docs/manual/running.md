@@ -317,11 +317,11 @@ Don’t click the “back” button on your browser - it will likely close your 
 You can rename a project at any time by clicking inside the project title, which will turn into a text field. Project names don’t have to be unique, as OpenRefine organizes them based on a unique identifier behind the scenes. 
 
 <span class="menuItems">Permalink</span> allows you to return to a project at a specific view state - that is, with facets and filters applied. The permalink can help you pick up where you left off if you have to close your project while working with facets and filters. It puts view-specific information directly into the URL: clicking on it will load this current-view URL in the existing tab. You can right-click and copy the Permalink URL to copy the current view state to your clipboard, without refreshing the tab you’re using.   
-
+<br/>
 <span class="menuItems">Open…</span> will open up a new browser tab showing the “Create Project” screen. From here you can change settings, start a new project, or open an existing project. 
-
+<br/>
 <span class="menuItems">Export</span> is a dropdown menu that allows you to pick a format for exporting your current dataset. It will only export rows and records that are currently visible - the currently selected facets and filters, not the total data in the project.
-
+<br/>
 <span class="menuItems">Help</span> will open up a new browser tab and bring you to this user manual on the web.
 
 ### The grid header
