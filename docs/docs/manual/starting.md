@@ -149,7 +149,7 @@ In the left-hand menu of the home screen, click <span class="menuItems">Import P
 
 You can rename the project if you’d like - we recommend adding your name, a date, or a version number, if you’re planning to continue collaborating with another person (or working from multiple computers).
 
-Then, click <span class="menuItems">Import Project</span>.  Your project should appear with a step count beside <span class="menuItems">undo/redo</span> if steps were saved by the exporter. 
+Then, click <span class="menuItems">Import Project</span>.  Your project should appear with a step count beside <span class="menuItems">Undo/Redo</span> if steps were saved by the exporter. 
 
 OpenRefine will store the project in its own workspace directory, so you can now delete the original file that was sent to you. 
 
@@ -167,9 +167,9 @@ You can name a project when you create it or import it, and you can rename a pro
 
 ### Autosaving 
 
-OpenRefine saves all of your actions (everything you can see in the Undo/Redo panel). That includes flagging and starring rows.
+OpenRefine saves all of your actions (everything you can see in the <span class="menuItems">Undo/Redo</span> panel). That includes flagging and starring rows.
 
-It doesn’t, however, save your facets, filters, or any kind of view you may have in place while you work. This includes the number of rows showing, whether you are showing your data as rows or records, and any sorting or column collapsing you may have done. A good rule of thumb is: if it’s not showing in Undo/Redo, you will lose it when you leave the project workspace. 
+It doesn’t, however, save your facets, filters, or any kind of view you may have in place while you work. This includes the number of rows showing, whether you are showing your data as rows or records, and any sorting or column collapsing you may have done. A good rule of thumb is: if it’s not showing in <span class="menuItems">Undo/Redo</span>, you will lose it when you leave the project workspace. 
 
 You can only save and share facets and filters, not any other type of view. To save current facets and filters, click <span class="menuItems">Permalink</span>. The project will reload with a different URL, which you can then copy and save elsewhere. This permalink will save both the facets and filters you’ve set, and the settings for each one (such as sorting by count rather than by name). 
 
@@ -181,4 +181,4 @@ Go to <span class="menuItems">Open Project</span> and find the project you want 
 
 ### Project files
 
-You can find all of your raw project files in your work directory. They will be named according to the unique Project ID that OpenRefine has assigned them, which you can find on the <span class="menuItems">Open Project</span> screen, under the “About” button for each project. 
+You can find all of your raw project files in your work directory. They will be named according to the unique Project ID that OpenRefine has assigned them, which you can find on the <span class="menuItems">Open Project</span> screen, under the “About” link for each project. 

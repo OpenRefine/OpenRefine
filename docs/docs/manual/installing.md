@@ -423,19 +423,19 @@ Once you increase the memory allocation, you may find that you cannot run `openr
 
 #### Using refine.bat
 
-On Windows, OpenRefine can also be run by using the file **refine.bat** in the program directory. If you start OpenRefine using **refine.bat**, the memory available to OpenRefine can be specified either through command line options, or through the **refine.ini** file.
+On Windows, OpenRefine can also be run by using the file `refine.bat` in the program directory. If you start OpenRefine using `refine.bat`, the memory available to OpenRefine can be specified either through command line options, or through the `refine.ini` file.
 
-To set the maximum amount of memory on the command line when using **refine.bat**, 'cd' to the program directory, then type
+To set the maximum amount of memory on the command line when using `refine.bat`, 'cd' to the program directory, then type
 
 ```refine.bat /m 2048m```
 
 where "2048" is the maximum amount of MB that you want OpenRefine to use.
 
-To change the default that **refine.bat** uses, edit the **refine.ini** line that reads 
+To change the default that `refine.bat` uses, edit the `refine.ini` line that reads 
 
 ```REFINE_MEMORY=1024M```
 
-Note that this file is only read if you use **refine.bat**, not **openrefine.exe**.
+Note that this file is only read if you use `refine.bat`, not **openrefine.exe**.
 
 </TabItem>
 <TabItem value="mac">
@@ -460,7 +460,7 @@ If you have downloaded the `.tar.gz` package and you start OpenRefine from the c
 
 #### Setting a default
 
-If you don't want to set this option on the command line each time, you can also set it in the **refine.ini** file. Edit the line
+If you don't want to set this option on the command line each time, you can also set it in the `refine.ini` file. Edit the line
 
 ```REFINE_MEMORY=1024M```
 

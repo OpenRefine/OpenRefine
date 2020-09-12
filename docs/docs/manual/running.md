@@ -257,7 +257,7 @@ Refer to the [official Java documentation](https://docs.oracle.com/javase/8/docs
 
 ## The home screen
 
-When you first launch OpenRefine, you will see a screen with a menu on the left hand side that includes <span class="menuItems">Create Project</span>, <span class="menuItems">Open Project</span>, <span class="menuItems">Import Project</span>, and <span class="menuItems">Language Settings</span>. This is called the <span class="menuItems">home screen</span>, where you can manage your projects and general settings. 
+When you first launch OpenRefine, you will see a screen with a menu on the left hand side that includes <span class="menuItems">Create Project</span>, <span class="menuItems">Open Project</span>, <span class="menuItems">Import Project</span>, and <span class="menuItems">Language Settings</span>. This is called the "home screen", where you can manage your projects and general settings. 
 
 ### Language settings
 
@@ -316,7 +316,7 @@ Don’t click the “back” button on your browser - it will likely close your 
 
 You can rename a project at any time by clicking inside the project title, which will turn into a text field. Project names don’t have to be unique, as OpenRefine organizes them based on a unique identifier behind the scenes. 
 
-<span class="menuItems">Permalink</span> allows you to return to a project at a specific view state - that is, with facets and filters applied. The permalink can help you pick up where you left off if you have to close your project while working with facets and filters. It puts view-specific information directly into the URL: clicking on it will load this current-view URL in the existing tab. You can right-click and copy the Permalink URL to copy the current view state to your clipboard, without refreshing the tab you’re using.
+<span class="menuItems">Permalink</span> allows you to return to a project at a specific view state - that is, with facets and filters applied. The permalink can help you pick up where you left off if you have to close your project while working with facets and filters. It puts view-specific information directly into the URL: clicking on it will load this current-view URL in the existing tab. You can right-click and copy the Permalink URL to copy the current view state to your clipboard, without refreshing the tab you’re using.   
 
 <span class="menuItems">Open…</span> will open up a new browser tab showing the “Create Project” screen. From here you can change settings, start a new project, or open an existing project. 
 
@@ -340,7 +340,7 @@ The <span class="menuItems">Extensions</span> dropdown offers you options for ex
 
 ### The grid 
 
-The area of the project screen that displays your dataset is called the <span class="menuItems">project grid</span> (or the <span class="menuItems">data grid</span>, or simply the <span class="menuItems">grid</span>). The grid presents data in a tabular format, which may look like a normal spreadsheet program to you. 
+The area of the project screen that displays your dataset is called the "project grid" (or the "data grid", or simply the "grid"). The grid presents data in a tabular format, which may look like a normal spreadsheet program to you. 
 
 Columns widths are automatically set based on their contents; some column headers may be cut off, but can be viewed by mousing over the headers. 
 
@@ -376,7 +376,7 @@ Project history gets saved when you export a project archive, and restored when 
 
 ![A screenshot of the History (Undo/Redo) tab with 13 steps.](/img/history.png "A screenshot of the History (Undo/Redo) tab with 13 steps.")
 
-When you click on <span class="menuItems">Undo / Redo</span> in the sidebar of any project, that project’s history is shown as a list of changes in order, with the first <span class="menuItems">change</span> being the action of creating the project itself. (That first change, indexed as step zero, cannot be undone.) Here is a sample history with 3 changes:
+When you click on <span class="menuItems">Undo / Redo</span> in the sidebar of any project, that project’s history is shown as a list of changes in order, with the first change being the action of creating the project itself. (That first change, indexed as step zero, cannot be undone.) Here is a sample history with 3 changes:
 
 ```
 0. Create project
@@ -393,15 +393,15 @@ In this example, changes #2 and #3 will now be grayed out. You can redo a change
 
 If you have moved back one or more states, and then you perform a new operation on your data, the later actions (everything that’s greyed out) will be erased and cannot be re-applied. 
 
-The Undo/Redo tab will show you which step you’re on, and if you’re about to risk erasing work - by saying something like <span class="menuItems">4/5</span> or <span class="menuItems">1/7</span> at the end.
+The <span class="menuItems">Undo/Redo</span> tab will show you which step you’re on, and if you’re about to risk erasing work - by saying something like "4/5" or "1/7" at the end.
 
 ##### Reusing operations
 
 Operations that you perform in OpenRefine can be reused. For example, a formula you wrote inside one project can be copied and applied to another project later. 
 
-To reuse one or more operations, you first extract it from the project where it was first applied. Click to the Undo/Redo tab and click <span class="menuItems">Extract…</span>. This brings up a box that lists all operations up to the current state (it does not show undone operations). Select the operation or operations you want to extract using the checkboxes on the left, and they will be encoded as JSON on the right. Copy that JSON off to the clipboard. 
+To reuse one or more operations, you first extract it from the project where it was first applied. Click to the <span class="menuItems">Undo/Redo</span> tab and click <span class="menuItems">Extract…</span>. This brings up a box that lists all operations up to the current state (it does not show undone operations). Select the operation or operations you want to extract using the checkboxes on the left, and they will be encoded as JSON on the right. Copy that JSON off to the clipboard. 
 
-Move to the second project, go to the Undo/Redo tab, click <span class="menuItems">Apply…</span> and paste in that JSON.
+Move to the second project, go to the <span class="menuItems">Undo/Redo</span> tab, click <span class="menuItems">Apply…</span> and paste in that JSON.
 
 Not all operations can be extracted. Edits to a single cell, for example, can’t be replicated.
 
