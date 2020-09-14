@@ -16,7 +16,13 @@ You can also choose where to place errors and blank cells in the sorting. Text c
 
 ![A screenshot of the Sort window.](/img/sort.png)
 
-After you apply sorting, you can make it permanent, remove it, reverse it, or apply a subsequent sorting. You’ll find “Sort” in the project grid header to the right of the rows-display setting, which will show all current sorting settings. 
+After you apply a sorting method, you can make it permanent, remove it, reverse it, or apply a subsequent sorting. You’ll find “Sort” in the project grid header to the right of the rows-display setting, which will show all current sorting settings. 
+
+If you have multiple sorting methods applied, they will work in the order you applied them (represented in order in the "Sort" menu). For example, you can sort an "authors" column alphabetically, and then sort books by publication date, for those authors that have more than one book. If you apply those in a different order -  sort all the publication dates in the dataset first, and then alphabetically by author - your dataset will look different. 
+
+![Temporarily sorted rows.](/img/sort2.png) 
+
+When the sorting method you've applied is temporary, you will see that the rows retain their original numbering. When you make that sorting method permanent, by selecting "Reorder rows permanently," the row numbers will change and the "Sort" menu in the project grid header will disappear. This will apply all current sorting methods. 
 
 ## View
 
