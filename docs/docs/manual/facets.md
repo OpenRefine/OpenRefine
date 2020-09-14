@@ -118,7 +118,9 @@ You may want to explore your textual data in a way that doesn’t involve modify
 
 You can also use text facets to analyze numerical data, such as by analyzing a number as a string, or by creating a test that will return “true” and false” as values. 
 
-If you would like to build your own version of a text facet, you can use the “Custom Text Facet” option. Clicking on “Facets” → “Custom text facet…” will bring up an [expressions](expressions) window where you can enter in a GREL, Python or Jython, or Clojure expression to modify how the facet works. A custom text facet operates just like a [text facet](#text-facet) by default. 
+If you would like to build your own version of a text facet, you can use the “Custom Text Facet” option. Clicking on “Facets” → “Custom text facet…” will bring up an [expressions](expressions) window where you can enter in a GREL, Python or Jython, or Clojure expression to modify how the facet works. 
+
+A custom text facet operates just like a [text facet](#text-facet) by default. Unlike a text facet, however, you cannot edit the facets that appear in the sidebar and change the matching cells in your dataset. 
 
 For example, you may wish to analyze only the first word in a text field - perhaps the first name in a column of “[First Name] [Last Name]” entries. In this case, you can tell OpenRefine to facet only on the information that comes before the first space:
 
@@ -188,7 +190,7 @@ Duplicates facets are case-sensitive and you may wish to filter out things like 
 
 ### Numeric log facet 
 
-Logarithmic scales reduce wide-ranging quantities to tiny scopes. A log transformation can be used to make highly skewed distributions less skewed. If your numerical data is unevenly distributed (say, lots of values in one range, and then a long tail extending off into different magnitudes), a numeric log facet can represent that range better than a simple numeric facet. It will break these values down into more navigable segments than the buckets of a numeric facet. This facet can make patterns in your data more visible.
+Logarithmic scales reduce wide-ranging quantities to more compact and manageable ranges. A log transformation can be used to make highly skewed distributions less skewed. If your numerical data is unevenly distributed (say, lots of values in one range, and then a long tail extending off into different magnitudes), a numeric log facet can represent that range better than a simple numeric facet. It will break these values down into more navigable segments than the buckets of a numeric facet. This facet can make patterns in your data more visible.
 
 OpenRefine uses a base-10 log, the "common logarithm."
 
@@ -241,7 +243,7 @@ An error is a data type created by OpenRefine in the process of transforming dat
 
 ![A view of the expressions window with an error converting a string to a number.](/img/error.png)
 
-To output errors, ensure that you have “store error” selected for the “On error” option in the expressions window. 
+To store errors in cells, ensure that you have “store error” selected for the “On error” option in the expressions window. 
 
 ### Facet by null, empty, or blank
 
@@ -272,9 +274,11 @@ You can also create a text facet on any column with the expression `row.starred`
 
 Filters allow you to narrow down your data based on whether a given column includes a text string. 
 
-When you choose “Text filter” a box appears in the “Facet/Filter” sidebar that allows you to enter in text. Matching rows will narrow dynamically with every character you enter. You can set the search to be case-sensitive or not, and you can use this box to enter in a regular expression. This field supports [Java's regular expression language](http://download.oracle.com/javase/tutorial/essential/regex/).
+When you choose “Text filter” a box appears in the “Facet/Filter” sidebar that allows you to enter in text. Matching rows will narrow dynamically with every character you enter. You can set the search to be case-sensitive or not, and you can use this box to enter in a regular expression. 
 
-For example, you can employ a regular expression to view all properly-formatted emails:
+For example, you can enter in "side" as a text filter, and it will return all cells in that column containing "side," "sideways," "offside," etc. 
+
+The text filter field supports [Java's regular expression language](http://download.oracle.com/javase/tutorial/essential/regex/). For example, you can employ a regular expression to view all properly-formatted emails:
 
 ```([a-zA-Z0-9_\-\.\+]+)@([a-zA-Z0-9\-\.]+)\.([a-zA-Z0-9\-]{2,15})```
 
