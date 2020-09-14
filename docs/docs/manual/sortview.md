@@ -10,13 +10,13 @@ You can temporarily sort your rows by one column. You can sort:
 *   text alphabetically or reverse
 *   numbers by largest or smallest
 *   dates by earliest or latest
-*   boolean values by false, then true, or by **core-views/true-false**
+*   boolean values by false first or true first
 
 You can also choose where to place errors and blank cells in the sorting. Text can be case-sensitive or not: cells that start with lowercase characters will appear ahead of uppercase.
 
 ![A screenshot of the Sort window.](/img/sort.png)
 
-After you apply sorting, you can make it permanent, remove it, reverse it, or apply a different **sorting**. You’ll find “Sort” in the project grid header to the right of the rows-display setting, which will show all current sorting settings. 
+After you apply sorting, you can make it permanent, remove it, reverse it, or apply a subsequent sorting. You’ll find “Sort” in the project grid header to the right of the rows-display setting, which will show all current sorting settings. 
 
 ## View
 

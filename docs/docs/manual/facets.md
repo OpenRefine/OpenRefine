@@ -66,7 +66,7 @@ When you have facets applied, you will see “matching rows” in the [project g
 
 OpenRefine has several default facets, which you’ll learn about below. The most powerful facets are the ones designed by you - custom facets, written using [expressions](expressions) to transform the data behind the scenes and help you narrow down to precisely what you’re looking for. 
 
-Facets are not saved in the project along with the data. But you can save a *permalink* to the current state of the application. Find the "permalink" next to the project’s name.
+Facets are not saved in the project along with the data. But you can save a link to the current state of the application. Find the "permalink" next to the project’s name.
 
 You can modify any facet expression by clicking the “change” button to the right of the column name in the facet sidebar.
 
@@ -74,11 +74,11 @@ Facet boxes that appear in the sidebar can be resized and rearranged. You can dr
 
 ## Text facet
 
-A text facet can be generated on any column with the “text” data type. Select the column dropdown and go to “Facet” > “Text facet”. The created facet will be sorted alphabetically, and can be sorted by count. 
+A text facet can be generated on any column with the “text” data type. Select the column dropdown and go to “Facet” → “Text facet”. The created facet will be sorted alphabetically, and can be sorted by count. 
 
 A text facet is very simple: it takes the total contents of the cells of the column in question and matches them up. It does no guessing about typos or near-matches. 
 
-You can edit any entry that appears in the facet display, by hovering over the facet and clicking the “edit” button that appears. This will mass-edit every matching cell in your data. This is a great way to fix typos, whitespace, and other issues that may be affecting the way facets appear. You can also automate the cleanup of facets by using [clustering](transforming#cluster-and-edit), with the “Cluster” button displayed within the facet window. 
+You can edit any entry that appears in the facet display, by hovering over the facet and clicking the “edit” button that appears. You can then type in a new value manually. This will mass-edit every identical cell in your data. This is a great way to fix typos, whitespace, and other issues that may be affecting the way facets appear. You can also automate the cleanup of facets by using [clustering](transforming#cluster-and-edit), with the “Cluster” button displayed within the facet window. It may be most efficient to cluster cells to one value, and then mass-edit that value to your desired string within the clustering operation window. 
 
 Each text facet shows up to 2,000 choices by default. You can [increase this limit on the Preferences screen](running#preferences) if you need to, which will increase the processing work required by your browser. If your applied facet has more choices than the current limit, you'll be offered the option to increase the limit, which will edit that preference for you. 
 
@@ -88,7 +88,7 @@ The choices and counts displayed in each facet can be copied as tab-separated va
 
 ![A screenshot of an example numeric facet.](/img/numericfacet.png)
 
-Whereas a text facet groups unique text values into groups, a numeric facet sorts numbers by their range - smallest to biggest. This displays visually and allows you to set a custom facet within that range. You can drag the minimum and maximum range markers to set a range. OpenRefine snaps to some basic equal-sized divisions - 19 in the example set above. 
+Whereas a text facet groups unique text values into groups, a numeric facet sorts numbers by their range - smallest to biggest. This displays visually as a histogram, and allows you to set a custom facet within that range. You can drag the minimum and maximum range markers to set a range. OpenRefine snaps to some basic equal-sized divisions - 19 in the example set above. 
 
 You will be offered the option to include blank, non-numeric, and error values in your numeric visualization; these will appear in the visual range as “0” values.
 
@@ -96,7 +96,7 @@ You will be offered the option to include blank, non-numeric, and error values i
 
 ![A screenshot of an example timeline facet.](/img/timelinefacet.png)
 
-Much like a numeric facet, a timeline facet will display as a small bar graph with the values sorted: in this case, chronologically. A timeline facet only works on dates formatted as “date” data types (e.g. by [using the `toDate()` function](expressions#dates) to transform text into dates, or by manually setting the [data type](#cell-data-types) on individual cells) and in the structure of the ISO-8601-compliant extended format with time in UTC: **YYYY**-**MM**-**DD**T**HH**:**MM**:**SS**Z. 
+Much like a numeric facet, a timeline facet will display as a small histogram with the values sorted: in this case, chronologically. A timeline facet only works on dates formatted as “date” data types (e.g. by [using the `toDate()` function](expressions#dates) to transform text into dates, or by manually setting the [data type](#cell-data-types) on individual cells) and in the structure of the ISO-8601-compliant extended format with time in UTC: **YYYY**-**MM**-**DD**T**HH**:**MM**:**SS**Z. 
 
 ## Scatterplot facet
 
@@ -104,7 +104,7 @@ A scatterplot facet can be generated on any number-formatted column. You require
 
 You have the option to generate linear scatterplots (where the X and Y axes show continuous increases) or logarithmic scatterplots (where the X and Y axes show exponential or scaled increases). You can also rotate the plot by 45 degrees in either direction, and you can choose the size of the dot indicating a datapoint. You can make these choices in both the preview and in the facet display. 
 
-Going to “Facet” > “Scatterplot facet” will create a preview of data plotted from every number-formatted column in your dataset, comparing every column against every other column. Each scatterplot will show in its own square, allowing you to choose which data comparison you would like to analyze further. 
+Selecting “Facet” → “Scatterplot facet” will create a preview of data plotted from every number-formatted column in your dataset, comparing every column against every other column. Each scatterplot will show in its own square, allowing you to choose which data comparison you would like to analyze further. 
 
 When you click on your desired square, that two-column comparison will appear in the facets sidebar. From here, you can drag your mouse to draw a rectangle inside the scatterplot, which will narrow down to just the rows matching the points plotted inside that rectangle. This rectangle can be resized by dragging any of the four edges. To draw a new rectangle, simply click and drag your mouse again. To add more scatterplots to the facet sidebar, re-run this process and select a different square. 
 
@@ -114,9 +114,11 @@ If you would like to export a scatterplot, OpenRefine will open a new tab with a
 
 ## Custom text facet
 
-You may want to explore your textual data in a way that doesn’t involve modifying it but does require being more selective about what gets considered. You can also use text facets to analyze numerical data, such as by analyzing a number as a string, or by creating a test that will return “true” and false” as values. 
+You may want to explore your textual data in a way that doesn’t involve modifying it but does require being more selective about what gets considered. Creating custom text facets will load your column into memory, transform the data, and store those transformations inside the facet. 
 
-If you would like to build your own version of a text facet, you can use the “Custom Text Facet” option. Clicking on “Facets” > “Custom text facet…” will bring up an [expressions](expressions) window where you can enter in a GREL, Python or Jython, or Clojure expression to modify how the facet works. A custom text facet operates just like a [text facet](#text-facet) by default. 
+You can also use text facets to analyze numerical data, such as by analyzing a number as a string, or by creating a test that will return “true” and false” as values. 
+
+If you would like to build your own version of a text facet, you can use the “Custom Text Facet” option. Clicking on “Facets” → “Custom text facet…” will bring up an [expressions](expressions) window where you can enter in a GREL, Python or Jython, or Clojure expression to modify how the facet works. A custom text facet operates just like a [text facet](#text-facet) by default. 
 
 For example, you may wish to analyze only the first word in a text field - perhaps the first name in a column of “[First Name] [Last Name]” entries. In this case, you can tell OpenRefine to facet only on the information that comes before the first space:
 
@@ -138,7 +140,7 @@ You can learn more about text-modification functions on the [Expressions page](e
 
 You may want to explore your numerical data in a way that doesn’t involve modifying it but does require being more selective about what gets considered. You can also use custom numeric facets to analyze textual data, such as by getting the length of text strings (with `value.length()`), or by analyzing it as though it were formatted as numbers (with `toNumber(value)`). 
 
-If you would like to build your own version of a numeric facet, you can use the “Custom Numeric Facet” option. Clicking on “Facets” > “Custom Numeric Facet…” will bring up an [expressions](expressions) window where you can enter in a GREL, Python or Jython, or Clojure expression to modify how the facet works. A custom numeric facet operates just like a [numeric facet](#numeric-facet) by default.
+If you would like to build your own version of a numeric facet, you can use the “Custom Numeric Facet” option. Clicking on “Facets” → “Custom Numeric Facet…” will bring up an [expressions](expressions) window where you can enter in a GREL, Python or Jython, or Clojure expression to modify how the facet works. A custom numeric facet operates just like a [numeric facet](#numeric-facet) by default.
 
 For example, you may wish to create a numeric facet that rounds your value to the nearest integer, enter
 
@@ -247,12 +249,11 @@ Any column can be faceted for [null and/or empty cells](#cell-data-types). These
 
 An empty cell is a cell that is set to contain a string, but doesn’t have any characters in it (a zero-length string). This can be a leftover from an operation that removed characters, or from manually editing a cell and deleting its contents.
 
-
 ### Facet by star or flag
 
 Stars and flags offer you the opportunity to mark specific rows for yourself for later focus. Stars and flags persist through closing and opening your project, and thus can provide a different function than using a permalink to persist your facets. Stars and flags can be used in any way you want, although they are designed to help you flag errors and star rows of particular importance. 
 
-You can manually star or flag rows simply by clicking on the icons to the left of each row. You can also apply stars or flags to all matching rows by using the “All” dropdown menu and selecting “Edit rows” > “Star rows” or “Flag rows.” These operations will modify all matching rows in your current subset. You can unstar or unflag them as well. 
+You can manually star or flag rows simply by clicking on the icons to the left of each row. You can also apply stars or flags to all matching rows by using the “All” dropdown menu and selecting “Edit rows” → “Star rows” or “Flag rows.” These operations will modify all matching rows in your current subset. You can unstar or unflag them as well. 
 
 You may wish to create a custom subset of your data through a series of separate faceting activities (rather than successively narrowing down with multiple facets applied). For example, you may wish to: 
 *   apply a facet
@@ -265,7 +266,7 @@ You may wish to create a custom subset of your data through a series of separate
 
 You can use the dropdown menu on the “All” column and selecting “Facet by star” or “Facet by flag.” This will create “true” and “false” facets in the facet sidebar.
 
-You can also create a text facet on any column with the expression ```row.starred``` or ```row.flagged```.
+You can also create a text facet on any column with the expression `row.starred` or `row.flagged`.
 
 ## Text filter
 
