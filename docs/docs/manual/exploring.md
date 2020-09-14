@@ -50,17 +50,24 @@ Generally, when you import some data, OpenRefine reads that data in row mode. Fr
 
 OpenRefine understands records based on the content of the first column, what we call the "key column." Splitting a row into a multi-row record will base all association on the first column in your dataset. If you have more than one column to split out into multiple rows, OpenRefine will keep your data associated with its original record: you can imagine this structure as a tree with many branches, all leading back to the same trunk. 
 
-For example, your key column may be an address, with multiple family members or residents identified by name, associated to that address. You may have one or more phone numbers listed for each person. The phone numbers are linked to the names, which are linked to the address.
+For example, your key column may be a unique identifier such as an IMDB film or show identification number, with multiple cast members identified by name, associated to that work. You may have one or more roles listed for each person. The roles are linked to the actors, which are linked to the title.
 
-|Address (key column)|Resident|Phone number|
-|---|---|---|
-|123 Open Boulevard|Mary Smith|123-456-7890|
-|||123-456-7891|
-||Jane Smith|123-456-7892|
-||John Smith|123-456-7893|
-|||123-456-7894|
-||Emma Smith||
-|456 Open Boulevard|Stephen Doe|123-456-7895|
+|IMDB ID|Work|Actor|Role|
+|---|---|---|---|
+|tt0032138|The Wizard of Oz|Judy Garland|Dorothy Gale|
+|||Ray Bolger|"Hunk"|
+||||The Scarecrow|
+|||Jack Haley|"Hickory"|
+||||The Tin Man|
+|||Bert Lahr|"Zeke"|
+||||The Cowardly Lion|
+|||Frank Morgan|Professor Marvel|
+||||The Gatekeeper|
+||||The Carriage Driver|
+||||The Guard|
+||||The Wizard of Oz|
+|||Margaret Hamilton|Miss Almira Gulch|
+||||The Wicked Witch of the West|
 
 Once you are in records mode, you can still move columns around, but if you move a column to the beginning, you may find your data becomes misaligned. The new key column will sort into records based on empty cells, and values in the old key column will be assigned to the last row in the old record (the key value sitting above those values). 
 
