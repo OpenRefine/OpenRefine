@@ -12,11 +12,11 @@ Unlike spreadsheets, OpenRefine doesn’t store formulas and display the output 
 
 ## Data types
 
-Each piece of information (each cell) in OpenRefine is assigned a data type. By default every cell will be considered a “string,” but you can have OpenRefine convert cell contents into other data types later. This is set at the cell level, not at the column level. 
+Each piece of information (each cell) in OpenRefine is assigned a data type. At first every cell will be considered a “string,” but you can have OpenRefine convert cell contents into other data types later. This is set at the cell level, not at the column level. 
 
-You can see data types in action when you preview a new project: check the box that says “Attempt to parse cell text into numbers” and cells will be converted to the number type based on their contents. You’ll see numbers change from black text to green if they are recognized.
+You can see data types in action when you preview a new project: check the box that says “Attempt to parse cell text into numbers” and cells will be converted to the “number” data type based on their contents. You’ll see numbers change from black text to green if they are recognized.
 
-The data type will determine what you can do with the value. For example, if you want to add two values together, they must both be recognized as the “number” data type. 
+The data type will determine what you can do with the value. For example, if you want to add two values together, they must both be recognized as the number type. 
 
 You can check data types at any time by:
 *   clicking “edit” on a single cell (where you can also edit the type)
@@ -26,7 +26,7 @@ The data types supported are:
 *   string (one or more text characters)
 *   number (one or more characters of numbers only)
 *   boolean (values of “true” or “false”)
-*   date (ISO-8601-compliant extended format with time in UTC: **YYYY**-**MM**-**DD**T**HH**:**MM**:**SS**Z)
+*   date (ISO-8601-compliant extended format with time in UTC: YYYY-MM-DDTHH:MM:SSZ)
 
 A “date” type is created when a text column is [transformed into dates](transforming#to-date), or when individual cells are set to have the data type “date.” 
 
@@ -50,24 +50,24 @@ Generally, when you import some data, OpenRefine reads that data in row mode. Fr
 
 OpenRefine understands records based on the content of the first column, what we call the "key column." Splitting a row into a multi-row record will base all association on the first column in your dataset. If you have more than one column to split out into multiple rows, OpenRefine will keep your data associated with its original record: you can imagine this structure as a tree with many branches, all leading back to the same trunk. 
 
-For example, your key column may be a unique identifier such as an IMDB film or show identification number, with multiple cast members identified by name, associated to that work. You may have one or more roles listed for each person. The roles are linked to the actors, which are linked to the title.
+For example, your key column may be a film or television show, with multiple cast members identified by name, associated to that work. You may have one or more roles listed for each person. The roles are linked to the actors, which are linked to the title.
 
-|IMDB ID|Work|Actor|Role|
-|---|---|---|---|
-|tt0032138|The Wizard of Oz|Judy Garland|Dorothy Gale|
-|||Ray Bolger|"Hunk"|
-||||The Scarecrow|
-|||Jack Haley|"Hickory"|
-||||The Tin Man|
-|||Bert Lahr|"Zeke"|
-||||The Cowardly Lion|
-|||Frank Morgan|Professor Marvel|
-||||The Gatekeeper|
-||||The Carriage Driver|
-||||The Guard|
-||||The Wizard of Oz|
-|||Margaret Hamilton|Miss Almira Gulch|
-||||The Wicked Witch of the West|
+|Work|Actor|Role|
+|---|---|---|
+|The Wizard of Oz|Judy Garland|Dorothy Gale|
+||Ray Bolger|"Hunk"|
+|||The Scarecrow|
+||Jack Haley|"Hickory"|
+|||The Tin Man|
+||Bert Lahr|"Zeke"|
+|||The Cowardly Lion|
+||Frank Morgan|Professor Marvel|
+|||The Gatekeeper|
+|||The Carriage Driver|
+|||The Guard|
+|||The Wizard of Oz|
+||Margaret Hamilton|Miss Almira Gulch|
+|||The Wicked Witch of the West|
 
 Once you are in records mode, you can still move columns around, but if you move a column to the beginning, you may find your data becomes misaligned. The new key column will sort into records based on empty cells, and values in the old key column will be assigned to the last row in the old record (the key value sitting above those values). 
 
