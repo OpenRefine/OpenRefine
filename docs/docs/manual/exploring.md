@@ -12,7 +12,7 @@ Unlike spreadsheets, OpenRefine doesn’t store formulas and display the output 
 
 ## Data types
 
-Each piece of information (each cell) in OpenRefine is assigned a data type. At first every cell will be considered a “string,” but you can have OpenRefine convert cell contents into other data types later. This is set at the cell level, not at the column level. 
+Each piece of information (each cell) in OpenRefine is assigned a data type. Some file formats, when imported, can set data types that are recognized by OpenRefine. Cells without an associated data type on import will be considered a “string” at first, but you can have OpenRefine convert cell contents into other data types later. This is set at the cell level, not at the column level. 
 
 You can see data types in action when you preview a new project: check the box that says “Attempt to parse cell text into numbers” and cells will be converted to the “number” data type based on their contents. You’ll see numbers change from black text to green if they are recognized.
 
