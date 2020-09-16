@@ -50,11 +50,11 @@ If you supply two or more files for one project, the files’ rows will be loade
 |berries.csv||2|Blueberry|Canada|
 
 
-For whichever method you choose, when you click “Next >>” you will be given a preview and a chance to configure the way OpenRefine interprets the file.  
+For whichever method you choose, when you click <span class="menuItems">Next >></span> you will be given a preview and a chance to configure the way OpenRefine interprets the file.  
 
 ### Get data from this computer
 
-Click on “Browse…” and select a file on your hard drive. All files will be shown, not just compatible ones. 
+Click on <span class="menuItems">Browse…</span> and select a file on your hard drive. All files will be shown, not just compatible ones. 
 
 If you import an archive file (something with the extension `.zip`, `.tar.gz`, `.tgz`, `.tar.bz2`, `.gz`, or `.bz2`), OpenRefine detects the files inside it, shows you a preview screen, and allows you to select which ones to load. This does not work with `.rar` files. 
 
@@ -80,13 +80,13 @@ If you are an administrator or have SQL access to a database of information, you
 
 There are some publicly-accessible databases you can query, such as [one provided by Rfam](https://docs.rfam.org/en/latest/database.html). The instructions provided by Rfam can help you understand how to connect to and query from any database.
 
-OpenRefine can connect to PostgreSQL, MySQL, MariaDB, and SQLite database systems. It will automatically populate the “Port” field based on which of these you choose, but you can manually edit this if needed.
+OpenRefine can connect to PostgreSQL, MySQL, MariaDB, and SQLite database systems. It will automatically populate the <span class="menuItems">Port</span> field based on which of these you choose, but you can manually edit this if needed.
 
-If you have a `.db` file, you can supply the path to the file on your computer directly in the “Database” field at the bottom of the form. You can leave the rest of the fields blank.
+If you have a `.db` file, you can supply the path to the file on your computer directly in the <span class="menuItems">Database</span> field at the bottom of the form. You can leave the rest of the fields blank.
 
-To import data directly from a database, you will need the database type (such as MySQL), database name, the hostname (either an IP address or the domain that hosts the database), and the port on the host. You will need an account authorized for access, and you may need to add OpenRefine's IP address or host to the “allowable hosts” for that account. You can find that information by pressing “Test” and getting the IP from the error message that results.
+To import data directly from a database, you will need the database type (such as MySQL), database name, the hostname (either an IP address or the domain that hosts the database), and the port on the host. You will need an account authorized for access, and you may need to add OpenRefine's IP address or host to the <span class="menuItems">allowable hosts</span> for that account. You can find that information by pressing <span class="menuItems">Test</span> and getting the IP from the error message that results.
 
-You can either connect just once to gather data, or save the connection to use it again later. If you press “Connect” without saving, OpenRefine will forget all the information you just entered. If you’d like to save the connection, name your connection in a way you will recognize later. Click “Save” and it will appear in the “Saved Connections” list on the left. From now on, you can click on the “...” ellipsis to the right of the connection you’ve saved, and click “Connect.” 
+You can either connect just once to gather data, or save the connection to use it again later. If you press <span class="menuItems">Connect</span> without saving, OpenRefine will forget all the information you just entered. If you’d like to save the connection, name your connection in a way you will recognize later. Click <span class="menuItems">Save</span> and it will appear in the <span class="menuItems">Saved Connections</span> list on the left. From now on, you can click on the <span class="menuItems">...</span> ellipsis to the right of the connection you’ve saved, and click <span class="menuItems">Connect</span>.
 
 If your connection is successful, you will see a Query Editor where you can run your SQL query. OpenRefine will give you an error if you write a statement that tries to modify the source database in any way.
 
@@ -111,26 +111,26 @@ You can authorize OpenRefine to access your Google Drive data and import data fr
 
 OpenRefine will not show spreadsheets that are in your email inbox or stored in any other Google property - only in Drive. It also won’t show all compatible file formats, only Sheets files.
 
-OpenRefine will generate a list of all Sheets it finds, with the most recently modified Sheets at the top. If a file you’ve just added isn’t showing in this list, you can close and restart OpenRefine, or simply navigate to an existing project, open it, then head back to the “Create Project” window and check again. 
+OpenRefine will generate a list of all Sheets it finds, with the most recently modified Sheets at the top. If a file you’ve just added isn’t showing in this list, you can close and restart OpenRefine, or simply navigate to an existing project, open it, then head back to the <span class="menuItems">Create Project</span> window and check again. 
 
-When you click “Preview” the Sheet will open in a new browser tab. When you click the Sheet title, OpenRefine will begin to process the data.
+When you click <span class="menuItems">Preview</span> the Sheet will open in a new browser tab. When you click the Sheet title, OpenRefine will begin to process the data.
 
 
 ## Project preview
 
-Once OpenRefine is ready to import the data, you will see a screen with “Configure Parsing Options” at the top. You’ll see a preview of the first 100 rows and all identified columns. 
+Once OpenRefine is ready to import the data, you will see a screen with <span class="menuItems">Configure Parsing Options</span> at the top. You’ll see a preview of the first 100 rows and all identified columns. 
 
 At the bottom of the screen you will find options for telling OpenRefine how to process what it has found. You can tell it which row(s) to parse as column headers, as well as to ignore any number of rows at the top. You can also select a specific range of rows to work with, by discarding some rows at the top (excluding the header) and limiting the total number of rows it loads.
 
 OpenRefine tries to guess how to parse your data based on the file extension. For example, `.xml` files are going to be parsed as though they are formatted in XML. An unknown file extension (or your clipboard copy-paste) is assumed to be either tab-separated or comma-separated. OpenRefine looks for a tab character; if one is found, it assumes you have imported tab-separated data.
 
-If OpenRefine isn’t certain what format you imported, it will provide a list of possibilities under “Parse data as” and some settings. You can specify a custom separator now, or split columns later on in the project interface. 
+If OpenRefine isn’t certain what format you imported, it will provide a list of possibilities under <span class="menuItems">Parse data as</span> and some settings. You can specify a custom separator now, or split columns later on in the project interface. 
 
 If you imported a spreadsheet with multiple worksheets, they will be listed along with the number of rows they contain. You can only select data from one worksheet. 
 
 Note that OpenRefine does not preserve any formatting, such as cell or text colour, that my have been in the original data file. 
 
-You should create a project name at this stage. You can also supply tags to keep your projects organized. When you’re happy with the preview, click “Create Project.”
+You should create a project name at this stage. You can also supply tags to keep your projects organized. When you’re happy with the preview, click <span class="menuItems">Create Project</span>.
 
 
 ## Import a project
@@ -145,40 +145,40 @@ An exported project will include all of the [history](running#history-undoredo),
 
 Once someone has sent you a project archive file from their computer, you can save it anywhere, including your Downloads folder. 
 
-In the left-hand menu of the home screen, click “Import Project.” Click “Browse…” and navigate to wherever you saved the file you were sent (for example, your Downloads folder). 
+In the left-hand menu of the home screen, click <span class="menuItems">Import Project</span>. Click <span class="menuItems">Browse…</span> and navigate to wherever you saved the file you were sent (for example, your Downloads folder). 
 
 You can rename the project if you’d like - we recommend adding your name, a date, or a version number, if you’re planning to continue collaborating with another person (or working from multiple computers).
 
-Then, click “Import Project.”  Your project should appear with a step count beside “undo/redo” if steps were saved by the exporter. 
+Then, click <span class="menuItems">Import Project</span>.  Your project should appear with a step count beside <span class="menuItems">Undo/Redo</span> if steps were saved by the exporter. 
 
 OpenRefine will store the project in its own workspace directory, so you can now delete the original file that was sent to you. 
 
 
 ## Project management
 
-You can access all of your created projects by clicking on “Open Project.” Your project list can be organized by modification date, title, row count, and other metadata you can supply (such as subject, descripton, tags, or creator). To edit the fields you see here, click “About” to the left of each project. There you can edit a number of available fields. You can also see the project ID that corresponds to the name of the folder in your work directory.  
+You can access all of your created projects by clicking on <span class="menuItems">Open Project</span>. Your project list can be organized by modification date, title, row count, and other metadata you can supply (such as subject, descripton, tags, or creator). To edit the fields you see here, click <span class="menuItems">About</span> to the left of each project. There you can edit a number of available fields. You can also see the project ID that corresponds to the name of the folder in your work directory.  
 
 
 ### Naming projects 
 
-You may have multiple projects from the same dataset, or multiple versions from sharing a project with another person. OpenRefine automatically generates a project name from the imported file, or “clipboard” when you use Clipboard importing. Project names don’t have to be unique, so OpenRefine will create many projects with the same name unless you intervene. 
+You may have multiple projects from the same dataset, or multiple versions from sharing a project with another person. OpenRefine automatically generates a project name from the imported file, or <span class="menuItems">clipboard</span> when you use Clipboard importing. Project names don’t have to be unique, so OpenRefine will create many projects with the same name unless you intervene. 
 
 You can name a project when you create it or import it, and you can rename a project by opening it and clicking on the project name at the top of the screen. 
 
 ### Autosaving 
 
-OpenRefine saves all of your actions (everything you can see in the Undo/Redo panel). That includes flagging and starring rows.
+OpenRefine saves all of your actions (everything you can see in the <span class="menuItems">Undo/Redo</span> panel). That includes flagging and starring rows.
 
-It doesn’t, however, save your facets, filters, or any kind of “view” you may have in place while you work. This includes the number of rows showing, whether you are showing your data as rows or records, and any sorting or column collapsing you may have done. A good rule of thumb is: if it’s not showing in Undo/Redo, you will lose it when you leave the project workspace. 
+It doesn’t, however, save your facets, filters, or any kind of view you may have in place while you work. This includes the number of rows showing, whether you are showing your data as rows or records, and any sorting or column collapsing you may have done. A good rule of thumb is: if it’s not showing in <span class="menuItems">Undo/Redo</span>, you will lose it when you leave the project workspace. 
 
-You can only save and share facets and filters, not any other type of view. To save current facets and filters, click “Permalink.” The project will reload with a different URL, which you can then copy and save elsewhere. This permalink will save both the facets and filters you’ve set, and the settings for each one (such as sorting by count rather than by name). 
+You can only save and share facets and filters, not any other type of view. To save current facets and filters, click <span class="menuItems">Permalink</span>. The project will reload with a different URL, which you can then copy and save elsewhere. This permalink will save both the facets and filters you’ve set, and the settings for each one (such as sorting by count rather than by name). 
 
 ### Deleting projects
 
 You can delete projects, which will erase the project files from the work directory on your computer. This is immediate and cannot be undone.
 
-Go to “Open Project” and find the project you want to delete. Click on the “X” to the left of the project name. There will be a confirmation dialog. 
+Go to <span class="menuItems">Open Project</span> and find the project you want to delete. Click on the <span class="menuItems">X</span> to the left of the project name. There will be a confirmation dialog. 
 
 ### Project files
 
-You can find all of your raw project files in your work directory. They will be named according to the unique Project ID that OpenRefine has assigned them, which you can find on the “Open Project” screen, under the “About” button for each project. 
+You can find all of your raw project files in your work directory. They will be named according to the unique Project ID that OpenRefine has assigned them, which you can find on the <span class="menuItems">Open Project</span> screen, under the “About” link for each project. 

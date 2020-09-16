@@ -93,16 +93,16 @@ import TabItem from '@theme/TabItem';
 
 <TabItem value="win">
 
-1. On Windows 10, click the Windows start menu button, type "env," and look at the search results. Click “Edit the system environment variables.” (If you are using an earlier version of Windows, use the “Search” or “Search programs and files” box in the start menu.)
+1. On Windows 10, click the Windows start menu button, type `env`, and look at the search results. **Edit the system environment** variables. (If you are using an earlier version of Windows, use the **Search** or **Search programs and files** box in the start menu.)
 
 ![A screenshot of the search results for 'env'.](/img/env.png "A screenshot of the search results for 'env'.")
 
-2. Click “Environment Variables…” at the bottom of the “Advanced” window that appears.
-3. In the “Environment Variables” dialog that appears, click “New…” and create a variable with the key `JAVA_HOME`. You can set the variable for only your user account, as in the screenshot below, or set it as a system variable - it will work either way.
+2. Click **Environment Variables…** at the bottom of the **Advanced** window that appears.
+3. In the **Environment Variables** dialog that appears, click **New…** and create a variable with the key `JAVA_HOME`. You can set the variable for only your user account, as in the screenshot below, or set it as a system variable - it will work either way.
 
 ![A screenshot of 'Environment Variables'.](/img/javahome.png "A screenshot of 'Environment Variables'.")
 
-4. Set the `Value` to the folder where you installed JDK, in the format `D:\Programs\OpenJDK`. You can locate this folder with the “Browse directory...” button.
+4. Set the **Value** to the folder where you installed JDK, in the format `D:\Programs\OpenJDK`. You can locate this folder with the **Browse directory...** button.
 
 </TabItem>
 
@@ -146,7 +146,7 @@ sudo tar -x -C /usr/lib/jvm -f /tmp/openjdk-14.0.1_linux-x64_bin.tar.gz
 Then, navigate to this folder and confirm the final path (in this case, `usr/lib/jvm/jdk-14.0.1`. 
 Open a terminal and type
 ```sudo gedit /etc/profile```
-In the text window that opens, insert the following lines at the end of the “profile” file, using the path above:
+In the text window that opens, insert the following lines at the end of the `profile` file, using the path above:
 
 ```
 JAVA_HOME=/usr/lib/jvm/jdk-14.0.1
@@ -362,10 +362,10 @@ OpenRefine does not currently output an error log, but because the OpenRefine co
 You can access OpenRefine server logs from the terminal on Mac:
 
 *   Find the OpenRefine app/icon in Finder
-*   Ctrl+Click on the icon and select "Show Package Contents" from the context menu that displays
-*   This should open a new Finder menu showing a folder called "Contents" - navigate into this folder then into the "MacOS" folder
-*   Ctrl+Click on "JavaAppLauncher"
-*   Choose 'Open With' from menu, and select "Terminal"
+*   Ctrl+Click on the icon and select **Show Package Contents** from the context menu that displays
+*   This should open a new Finder menu showing a folder called **Contents** - navigate into this folder then into the **MacOS** folder
+*   Ctrl+Click on **JavaAppLauncher**
+*   Choose **Open With** from menu, and select **Terminal**
 
 ---
 
@@ -435,26 +435,26 @@ To change the default that `refine.bat` uses, edit the `refine.ini` line that re
 
 ```REFINE_MEMORY=1024M```
 
-Note that this file is only read if you use `refine.bat`, not `openrefine.exe`.
+Note that this file is only read if you use `refine.bat`, not **openrefine.exe**.
 
 </TabItem>
 <TabItem value="mac">
 
-If you have downloaded the `.dmg` package and you start OpenRefine by double-clicking on it:
+If you have downloaded the **.dmg** package and you start OpenRefine by double-clicking on it:
 
 *   close OpenRefine
-*   "control-click" on the OpenRefine icon (opens the contextual menu)
-*   click on "show package content" (a finder window opens)
-*   open the "Contents" folder
-*   open the "Info.plist" file with any text editor (like Mac's default TextEdit)
-*   Change "-Xmx1024M" into, for example, “-Xmx2048M” or “-Xmx8G”
+*   **control-click** on the OpenRefine icon (opens the contextual menu)
+*   click on **show package content** (a finder window opens)
+*   open the **Contents** folder
+*   open the **Info.plist** file with any text editor (like Mac's default TextEdit)
+*   Change `-Xmx1024M` into, for example, `-Xmx2048M` or `-Xmx8G`
 *   save the file
 *   restart OpenRefine.
 
 </TabItem>
 <TabItem value="linux">
 
-If you have downloaded the `.tar.gz` package and you start OpenRefine from the command line, add the "-m xxxxM" parameter like this:
+If you have downloaded the `.tar.gz` package and you start OpenRefine from the command line, add the `-m xxxxM` parameter like this:
 
 `./refine -m 2048m`
 
@@ -464,7 +464,7 @@ If you don't want to set this option on the command line each time, you can also
 
 ```REFINE_MEMORY=1024M```
 
-Make sure it is not commented out (that is, that the line doesn't start with a '#' character), and change “1024” to a higher value. Save the file, and when you next start OpenRefine it will use this value.
+Make sure it is not commented out (that is, that the line doesn't start with a '#' character), and change `1024` to a higher value. Save the file, and when you next start OpenRefine it will use this value.
 
 </TabItem>
 
@@ -495,10 +495,10 @@ We provide these options because you may wish to reinstall a given extension man
 If you want to install the extension into the program folder, go to your program directory and then go to `/webapp/extensions` (or create it if not does not exist). 
 
 If you want to install the extension into your workspace, you can:
-*   launch OpenRefine and click “Open Project” in the sidebar 
-*   At the bottom of the screen, click “Browse workspace directory” 
+*   launch OpenRefine and click <span class="menuItems">Open Project</span> in the sidebar 
+*   At the bottom of the screen, click <span class="menuItems"> Browse workspace directory </span>
 *   A file-explorer or finder window will open in your workspace
-*   Create a new folder called “extensions” inside the workspace if it does not exist.
+*   Create a new folder called `extensions` inside the workspace if it does not exist.
 
 You can also [find your workspace on each operating system using these instructions](installing.md#set-where-data-is-stored).  
 

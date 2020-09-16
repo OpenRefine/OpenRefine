@@ -20,7 +20,7 @@ OpenRefine works best on browsers based on Webkit, such as:
 
 We are aware of some minor rendering and performance issues on other browsers such as Firefox. We don't support Internet Explorer.
 
-You can launch multiple projects at the same time by simply having multiple tabs or browser windows open. From the “Open Project” screen, you can right-click on project names and select “Open in new tab.” 
+You can launch multiple projects at the same time by simply having multiple tabs or browser windows open. From the <span class="menuItems">Open Project</span> screen, you can right-click on project names and select <span class="menuItems">Open in new tab</span>. 
 
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
@@ -257,7 +257,7 @@ Refer to the [official Java documentation](https://docs.oracle.com/javase/8/docs
 
 ## The home screen
 
-When you first launch OpenRefine, you will see a screen with a menu on the left hand side that includes “Create Project,” “Open Project,” “Import Project,” and “Language Settings.” This is called the “home screen,” where you can manage your projects and general settings. 
+When you first launch OpenRefine, you will see a screen with a menu on the left hand side that includes <span class="menuItems">Create Project</span>, <span class="menuItems">Open Project</span>, <span class="menuItems">Import Project</span>, and <span class="menuItems">Language Settings</span>. This is called the "home screen", where you can manage your projects and general settings. 
 
 ### Language settings
 
@@ -316,19 +316,19 @@ Don’t click the “back” button on your browser - it will likely close your 
 
 You can rename a project at any time by clicking inside the project title, which will turn into a text field. Project names don’t have to be unique, as OpenRefine organizes them based on a unique identifier behind the scenes. 
 
-“Permalink” allows you to return to a project at a specific view state - that is, with facets and filters applied. The permalink can help you pick up where you left off if you have to close your project while working with facets and filters. It puts view-specific information directly into the URL: clicking on it will load this current-view URL in the existing tab. You can right-click and copy the Permalink URL to copy the current view state to your clipboard, without refreshing the tab you’re using.
-
-“Open…” will open up a new browser tab showing the “Create Project” screen. From here you can change settings, start a new project, or open an existing project. 
-
-“Export” is a dropdown menu that allows you to pick a format for exporting your current dataset. It will only export rows and records that are currently visible - the currently selected facets and filters, not the total data in the project.
-
-“Help” will open up a new browser tab and bring you to this user manual on the web.
+<span class="menuItems">Permalink</span> allows you to return to a project at a specific view state - that is, with facets and filters applied. The permalink can help you pick up where you left off if you have to close your project while working with facets and filters. It puts view-specific information directly into the URL: clicking on it will load this current-view URL in the existing tab. You can right-click and copy the Permalink URL to copy the current view state to your clipboard, without refreshing the tab you’re using.   
+<br/>
+<span class="menuItems">Open…</span> will open up a new browser tab showing the “Create Project” screen. From here you can change settings, start a new project, or open an existing project. 
+<br/>
+<span class="menuItems">Export</span> is a dropdown menu that allows you to pick a format for exporting your current dataset. It will only export rows and records that are currently visible - the currently selected facets and filters, not the total data in the project.
+<br/>
+<span class="menuItems">Help</span> will open up a new browser tab and bring you to this user manual on the web.
 
 ### The grid header
 
 The grid header sits below the project bar and above the project grid (the data of your project). The grid header will tell you the total number of rows or records in your project, and indicate whether you are in rows or records mode. 
 
-It will also tell you if you’re currently looking at a select number of rows via facets or filtering, rather than the entire dataset, by displaying either, for example, “180 rows” or “67 matching rows (180 total).” 
+It will also tell you if you’re currently looking at a select number of rows via facets or filtering, rather than the entire dataset, by displaying either, for example, <span class="menuItems">180 rows</span> or <span class="menuItems">67 matching rows (180 total)</span>. 
 
 Directly below the row number, you have the ability to switch between row mode and records mode. OpenRefine stores which projects are in records mode, and displays your data as records by default if you are. 
 
@@ -336,17 +336,17 @@ To the right of the rows/records selection is the array of options for how many 
 
 ### Extensions
 
-The "Extensions" dropdown offers you options for extending your data - most commonly by uploading your edited statements to Wikidata, or by importing or exporting schema. You can learn more about these functions on the [Wikidata page](wikidata). Other extensions may also add functions to this dropdown menu.
+The <span class="menuItems">Extensions</span> dropdown offers you options for extending your data - most commonly by uploading your edited statements to Wikidata, or by importing or exporting schema. You can learn more about these functions on the [Wikidata page](wikidata). Other extensions may also add functions to this dropdown menu.
 
 ### The grid 
 
-The area of the project screen that displays your dataset is called the “project grid” (or the “data grid,” or simply the “grid”). The grid presents data in a tabular format, which may look like a normal spreadsheet program to you. 
+The area of the project screen that displays your dataset is called the "project grid" (or the "data grid", or simply the "grid"). The grid presents data in a tabular format, which may look like a normal spreadsheet program to you. 
 
 Columns widths are automatically set based on their contents; some column headers may be cut off, but can be viewed by mousing over the headers. 
 
 In each column header you will see a small arrow. Clicking on this arrow brings up a dropdown menu containing column-specific data exploration and transformation options. You will learn about each of these options in the [Exploring data](exploring) and [Transforming data](transforming) sections.
 
-The first column in every project will always be “All,” which contains options to flag, star, and do non-column-specific operations. The "All" column is also where rows/records are numbered. 
+The first column in every project will always be <span class="menuItems">All</span>, which contains options to flag, star, and do non-column-specific operations. The <span class="menuItems">All</span> column is also where rows/records are numbered. 
 
 The project grid may display with both vertical and horizontal scrolling, depending on the number and width of columns, and the number of rows/records displayed. You can control the display of the project grid by using [Sort and View options](exploring#sort-and-view).
 
@@ -360,7 +360,7 @@ The Facet/Filter tab is one of the main ways of exploring your data: displaying 
 
 ![A screenshot of facets and filters in action.](/img/facetfilter.png) 
 
-In the interface, you will see three buttons: “Refresh,” “Reset all,” and “Remove all.” Refreshing your facets will ensure you are looking at the latest information about each facet, if you have changed the counts or eliminated some options, for example. 
+In the interface, you will see three buttons: <span class="menuItems">Refresh</span>, <span class="menuItems">Reset all</span>, and <span class="menuItems">Remove all</span>. Refreshing your facets will ensure you are looking at the latest information about each facet, if you have changed the counts or eliminated some options, for example. 
 
 Resetting your facets will remove any inclusion or exclusion you may have set - the facet options will stay in the sidebar, but your view settings will be reset.
 
@@ -376,7 +376,7 @@ Project history gets saved when you export a project archive, and restored when 
 
 ![A screenshot of the History (Undo/Redo) tab with 13 steps.](/img/history.png "A screenshot of the History (Undo/Redo) tab with 13 steps.")
 
-When you click on “Undo / Redo” in the sidebar of any project, that project’s history is shown as a list of changes in order, with the first “change” being the action of creating the project itself. (That first change, indexed as step zero, cannot be undone.) Here is a sample history with 3 changes:
+When you click on <span class="menuItems">Undo / Redo</span> in the sidebar of any project, that project’s history is shown as a list of changes in order, with the first change being the action of creating the project itself. (That first change, indexed as step zero, cannot be undone.) Here is a sample history with 3 changes:
 
 ```
 0. Create project
@@ -387,21 +387,21 @@ When you click on “Undo / Redo” in the sidebar of any project, that project�
 
 The current state of the project is highlighted with a dark blue background. If you move back and forth on the timeline you will see the current state become highlighted, while the actions that came after that state will be grayed out. 
 
-To revert your data back to an earlier state, simply click on the last action in the timeline you want to keep. In the example above, if we keep the removal of 7 rows but revert everything we did after that, then click on “Remove 7 rows.” The last 2 changes will be undone, in order to bring the project back to state #1.
+To revert your data back to an earlier state, simply click on the last action in the timeline you want to keep. In the example above, if we keep the removal of 7 rows but revert everything we did after that, then click on <span class="menuItems">Remove 7 rows</span>. The last 2 changes will be undone, in order to bring the project back to state #1.
 
 In this example, changes #2 and #3 will now be grayed out. You can redo a change by clicking on it in the history - everything up to and including it will be redone. 
 
 If you have moved back one or more states, and then you perform a new operation on your data, the later actions (everything that’s greyed out) will be erased and cannot be re-applied. 
 
-The Undo/Redo tab will show you which step you’re on, and if you’re about to risk erasing work - by saying something like “4/5" or “1/7” at the end.
+The <span class="menuItems">Undo/Redo</span> tab will show you which step you’re on, and if you’re about to risk erasing work - by saying something like "4/5" or "1/7" at the end.
 
 ##### Reusing operations
 
 Operations that you perform in OpenRefine can be reused. For example, a formula you wrote inside one project can be copied and applied to another project later. 
 
-To reuse one or more operations, you first extract it from the project where it was first applied. Click to the Undo/Redo tab and click “Extract….” This brings up a box that lists all operations up to the current state (it does not show undone operations). Select the operation or operations you want to extract using the checkboxes on the left, and they will be encoded as JSON on the right. Copy that JSON off to the clipboard. 
+To reuse one or more operations, you first extract it from the project where it was first applied. Click to the <span class="menuItems">Undo/Redo</span> tab and click <span class="menuItems">Extract…</span>. This brings up a box that lists all operations up to the current state (it does not show undone operations). Select the operation or operations you want to extract using the checkboxes on the left, and they will be encoded as JSON on the right. Copy that JSON off to the clipboard. 
 
-Move to the second project, go to the Undo/Redo tab, click “Apply…” and paste in that JSON.
+Move to the second project, go to the <span class="menuItems">Undo/Redo</span> tab, click <span class="menuItems">Apply…</span> and paste in that JSON.
 
 Not all operations can be extracted. Edits to a single cell, for example, can’t be replicated.
 
