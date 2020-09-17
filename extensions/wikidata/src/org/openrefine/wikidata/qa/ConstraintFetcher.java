@@ -23,18 +23,36 @@
  ******************************************************************************/
 package org.openrefine.wikidata.qa;
 
+import org.openrefine.wikidata.utils.EntityCache;
+import org.wikidata.wdtk.datamodel.interfaces.EntityIdValue;
+import org.wikidata.wdtk.datamodel.interfaces.PropertyDocument;
 import org.wikidata.wdtk.datamodel.interfaces.PropertyIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.Statement;
+import org.wikidata.wdtk.datamodel.interfaces.StatementGroup;
+import org.wikidata.wdtk.datamodel.interfaces.StatementRank;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
- * An object that fetches constraints about properties.
+ * This class provides an abstraction over the way constraint definitions are
+ * stored in a Wikibase instance.
  * 
  * @author Antonin Delpeuch
  *
  */
-public interface ConstraintFetcher {
+public class ConstraintFetcher {
+
+    private String wikibaseConstraintPid;
+
+    private EntityCache entityCache;
+    
+    public ConstraintFetcher(EntityCache cache, String wikibaseConstraintPid) {
+        entityCache = cache;
+        this.wikibaseConstraintPid = wikibaseConstraintPid;
+    }
 
     /**
      * Gets the list of constraints of a particular type for a property
@@ -45,6 +63,30 @@ public interface ConstraintFetcher {
      *            the type of the constraints
      * @return the list of matching constraint statements
      */
-    List<Statement> getConstraintsByType(PropertyIdValue pid, String qid);
+    public List<Statement> getConstraintsByType(PropertyIdValue pid, String qid) {
+        Stream<Statement> allConstraints = getConstraintStatements(pid).stream()
+                .filter(s -> s.getValue() != null && ((EntityIdValue) s.getValue()).getId().equals(qid))
+                .filter(s -> !StatementRank.DEPRECATED.equals(s.getRank()));
+        return allConstraints.collect(Collectors.toList());
+    }
+
+    /**
+     * Gets all the constraint statements for a given property
+     * 
+     * @param pid
+     *             the id of the property to retrieve the constraints for
+     * @return the list of constraint statements
+     */
+    private List<Statement> getConstraintStatements(PropertyIdValue pid) {
+        PropertyDocument doc = (PropertyDocument) entityCache.get(pid);
+        StatementGroup group = doc.findStatementGroup(wikibaseConstraintPid);
+        if (group != null) {
+            return group.getStatements().stream()
+                    .filter(s -> s.getValue() != null && s.getValue() instanceof EntityIdValue)
+                    .collect(Collectors.toList());
+        } else {
+            return Collections.emptyList();
+        }
+    }
 
 }

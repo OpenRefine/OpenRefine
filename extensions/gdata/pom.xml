@@ -129,12 +129,12 @@
     <dependency>
       <groupId>com.google.apis</groupId>
       <artifactId>google-api-services-drive</artifactId>
-      <version>v3-rev20200723-1.30.10</version>
+      <version>v3-rev20200813-1.30.10</version>
     </dependency>
     <dependency>
       <groupId>com.google.apis</groupId>
       <artifactId>google-api-services-sheets</artifactId>
-      <version>v4-rev20200707-1.30.10</version>
+      <version>v4-rev20200908-1.30.10</version>
     </dependency>
     <dependency>
       <groupId>com.fasterxml.jackson.core</groupId>
@@ -151,7 +151,7 @@
     <dependency>
       <groupId>org.mockito</groupId>
       <artifactId>mockito-core</artifactId>
-      <version>3.5.2</version>
+      <version>3.5.10</version>
       <scope>test</scope>
     </dependency>
 

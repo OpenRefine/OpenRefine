@@ -28,7 +28,6 @@ package com.google.refine.expr.functions.strings;
 
 import org.testng.annotations.Test;
 
-import com.google.refine.expr.functions.strings.NGramFingerprint;
 import com.google.refine.util.TestUtils;
 
 public class NGramFingerprintTests {

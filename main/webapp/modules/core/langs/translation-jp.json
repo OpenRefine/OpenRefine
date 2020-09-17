@@ -321,7 +321,7 @@
     "core-facets/no-rotation": "回転なし",
     "core-project/use-facets": "ファセットとフィルタを使う",
     "core-project/extract-history": "操作履歴の抜き出し",
-    "core-project/refreshing-facet": "ファセットを更新中…",
+    "core-project/refreshing-facet": "更新中…",
     "core-project/cancel-all": "すべてをキャンセル",
     "core-project/excel": "Excel (.xls)",
     "core-project/canceling": "取り消し中…",
@@ -772,5 +772,6 @@
     "core-dialogs/cluster-row-limit-exceeded": "選択肢の上限 $1 を超えました",
     "core-index-import/warning-import-file": "プロジェクトファイルを指定してください.",
     "core-index-import/single-project": "OpenRefineは、同じフォーマットの場合だけ、複数ファイルをインポートできます.",
-    "core-index/download-now": "$1 をダウンロード"
+    "core-index/download-now": "$1 をダウンロード",
+    "core-facets/value-range": "$1 — $2"
 }

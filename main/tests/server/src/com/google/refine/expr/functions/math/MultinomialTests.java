@@ -28,7 +28,6 @@ package com.google.refine.expr.functions.math;
 
 import org.testng.annotations.Test;
 
-import com.google.refine.expr.functions.math.Multinomial;
 import com.google.refine.util.TestUtils;
 
 public class MultinomialTests {

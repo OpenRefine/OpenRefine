@@ -137,6 +137,7 @@ import com.google.refine.expr.functions.xml.InnerXml;
 import com.google.refine.expr.functions.xml.OwnText;
 import com.google.refine.expr.functions.xml.ParseXml;
 import com.google.refine.expr.functions.xml.SelectXml;
+import com.google.refine.expr.functions.xml.WholeText;
 import com.google.refine.expr.functions.xml.XmlAttr;
 import com.google.refine.expr.functions.xml.XmlText;
 import com.google.refine.grel.controls.Filter;
@@ -256,6 +257,7 @@ public class ControlFunctionRegistry {
         registerFunction("innerXml", new InnerXml());
         registerFunction("innerHtml", new InnerHtml());
         registerFunction("ownText", new OwnText());
+        registerFunction("wholeText", new WholeText());
 
         registerFunction("indexOf", new IndexOf());
         registerFunction("lastIndexOf", new LastIndexOf());

@@ -26,11 +26,17 @@ package org.openrefine.wikidata.schema;
 import java.io.IOException;
 import java.io.Serializable;
 
+import okhttp3.mockwebserver.Dispatcher;
+import okhttp3.mockwebserver.MockResponse;
+import okhttp3.mockwebserver.MockWebServer;
+import okhttp3.mockwebserver.RecordedRequest;
 import org.openrefine.wikidata.qa.QAWarningStore;
 import org.openrefine.wikidata.schema.exceptions.SkipSchemaExpressionException;
 import org.openrefine.wikidata.testing.TestingData;
 import org.openrefine.wikidata.testing.WikidataRefineTest;
 import org.testng.Assert;
+import org.testng.annotations.AfterClass;
+import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
 
 import com.google.refine.model.Cell;
@@ -46,6 +52,28 @@ public class WbExpressionTest<T> extends WikidataRefineTest {
     protected ExpressionContext ctxt;
     protected QAWarningStore warningStore;
 
+    protected static MockWebServer server;
+
+    @BeforeClass
+    public void startServer() throws IOException {
+        server = new MockWebServer();
+        String json = TestingData.jsonFromFile("langcode/wikidata-monolingualtext-langcode.json");
+        server.setDispatcher(new Dispatcher() {
+            @Override
+            public MockResponse dispatch(RecordedRequest request) throws InterruptedException {
+                return new MockResponse()
+                        .addHeader("Content-Type", "application/json; charset=utf-8")
+                        .setBody(json);
+            }
+        });
+        server.start();
+    }
+
+    @AfterClass
+    public void shutdownServer() throws IOException {
+        server.shutdown();
+    }
+
     @BeforeMethod
     public void createProject()
             throws IOException, ModelException {
@@ -53,7 +81,7 @@ public class WbExpressionTest<T> extends WikidataRefineTest {
                 "column A,column B,column C,column D,column E\n" + "value A,value B,value C,value D,value E");
         warningStore = new QAWarningStore();
         row = project.rows.get(0);
-        ctxt = new ExpressionContext("http://www.wikidata.org/entity/", 0, row, project.columnModel, warningStore);
+        ctxt = new ExpressionContext("http://www.wikidata.org/entity/", server.url("/w/api.php").toString(), 0, row, project.columnModel, warningStore);
     }
 
     /**
@@ -75,9 +103,7 @@ public class WbExpressionTest<T> extends WikidataRefineTest {
 
     /**
      * Test that a particular expression is skipped.
-     * 
-     * @param expected
-     *            the expected evaluation of the value
+
      * @param expression
      *            the expression to evaluate
      */
@@ -107,7 +133,7 @@ public class WbExpressionTest<T> extends WikidataRefineTest {
                 row.cells.add(cell);
             }
         }
-        ctxt = new ExpressionContext("http://www.wikidata.org/entity/", 0, row, project.columnModel, warningStore);
+        ctxt = new ExpressionContext("http://www.wikidata.org/entity/", server.url("/w/api.php").toString(), 0, row, project.columnModel, warningStore);
     }
 
     /**

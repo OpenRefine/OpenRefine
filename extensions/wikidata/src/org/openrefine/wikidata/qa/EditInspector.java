@@ -1,18 +1,18 @@
 /*******************************************************************************
  * MIT License
- * 
+ *
  * Copyright (c) 2018 Antonin Delpeuch
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be included in all
  * copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -23,33 +23,51 @@
  ******************************************************************************/
 package org.openrefine.wikidata.qa;
 
+import org.openrefine.wikidata.manifests.Manifest;
 import org.openrefine.wikidata.qa.scrutinizers.*;
+import org.openrefine.wikidata.schema.WikibaseSchema;
 import org.openrefine.wikidata.updates.ItemUpdate;
 import org.openrefine.wikidata.updates.scheduler.WikibaseAPIUpdateScheduler;
 import org.openrefine.wikidata.utils.EntityCache;
-import org.wikidata.wdtk.datamodel.interfaces.EntityIdValue;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.wikidata.wdtk.datamodel.interfaces.EntityDocument;
 
 import java.util.HashMap;
 import java.util.List;
+import org.wikidata.wdtk.datamodel.interfaces.EntityIdValue;
+import org.wikidata.wdtk.datamodel.interfaces.PropertyIdValue;
+
 import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 
 /**
  * Runs a collection of edit scrutinizers on an edit batch.
  * 
  * @author Antonin Delpeuch
- *
  */
 public class EditInspector {
 
-    private Map<String, EditScrutinizer> scrutinizers;
+    private static final Logger logger = LoggerFactory.getLogger(EditInspector.class);
+
+    Map<String, EditScrutinizer> scrutinizers;
     private QAWarningStore warningStore;
     private ConstraintFetcher fetcher;
+    private Manifest manifest;
+    private EntityCache entityCache;
 
-    public EditInspector(QAWarningStore warningStore) {
+    public EditInspector(QAWarningStore warningStore, Manifest manifest) {
         this.scrutinizers = new HashMap<>();
-        this.fetcher = new WikidataConstraintFetcher(EntityCache.getEntityCache());
         this.warningStore = warningStore;
+        this.manifest = manifest;
+
+        String propertyConstraintPid = manifest.getConstraintsRelatedId("property_constraint_pid");
+        if (propertyConstraintPid != null) {
+            entityCache = EntityCache.getEntityCache(manifest.getSiteIri(), manifest.getMediaWikiApiEndpoint());
+            this.fetcher = new ConstraintFetcher(entityCache, propertyConstraintPid);
+        }
 
         // Register all known scrutinizers here
         register(new NewItemScrutinizer());
@@ -77,15 +95,23 @@ public class EditInspector {
     }
 
     /**
-     * Adds a new scrutinizer to the inspector
+     * Adds a new scrutinizer to the inspector.
+     *
+     * If any necessary dependency is missing, the scrutinizer will not be added.
      * 
      * @param scrutinizer
      */
     public void register(EditScrutinizer scrutinizer) {
-        String key = scrutinizer.getClass().getName();
-        scrutinizers.put(key, scrutinizer);
         scrutinizer.setStore(warningStore);
         scrutinizer.setFetcher(fetcher);
+        scrutinizer.setManifest(manifest);
+        if (scrutinizer.prepareDependencies()) {
+            String key = scrutinizer.getClass().getName();
+            scrutinizers.put(key, scrutinizer);
+        } else {
+            logger.info("scrutinizer [" + scrutinizer.getClass().getSimpleName() + "] is skipped " +
+                    "due to missing of necessary constraint configurations in the Wikibase manifest");
+        }
     }
 
     /**
@@ -93,9 +119,12 @@ public class EditInspector {
      * 
      * @param editBatch
      */
-    public void inspect(List<ItemUpdate> editBatch) {
+    public void inspect(List<ItemUpdate> editBatch, WikibaseSchema schema) throws ExecutionException {
         // First, schedule them with some scheduler,
         // so that all newly created entities appear in the batch
+        SchemaPropertyExtractor fetcher = new SchemaPropertyExtractor();
+        Set<PropertyIdValue> properties = fetcher.getAllProperties(schema);
+        List<EntityDocument> propertyDocuments = entityCache.getMultipleDocuments(properties.stream().collect(Collectors.toList()));
         WikibaseAPIUpdateScheduler scheduler = new WikibaseAPIUpdateScheduler();
         editBatch = scheduler.schedule(editBatch);
 

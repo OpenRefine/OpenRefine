@@ -52,8 +52,6 @@ import org.wikidata.wdtk.datamodel.interfaces.MonolingualTextValue;
 import org.wikidata.wdtk.wikibaseapi.WikibaseDataEditor;
 import org.wikidata.wdtk.wikibaseapi.WikibaseDataFetcher;
 import org.wikidata.wdtk.wikibaseapi.apierrors.MediaWikiApiErrorException;
-import com.google.refine.ProjectManager;
-import com.google.refine.preference.PreferenceStore;
 
 public class EditBatchProcessorTest extends WikidataRefineTest {
 
@@ -61,6 +59,7 @@ public class EditBatchProcessorTest extends WikidataRefineTest {
     private WikibaseDataEditor editor = null;
     private NewItemLibrary library = null;
     private String summary = "my fantastic edits";
+    private int maxlag = 5;
     private List<String> tags = null;
 
     @BeforeMethod
@@ -94,7 +93,7 @@ public class EditBatchProcessorTest extends WikidataRefineTest {
                 .withLabel(label).withRevisionId(37828L).build();
         when(editor.createItemDocument(expectedNewItem, summary, tags)).thenReturn(createdNewItem);
 
-        EditBatchProcessor processor = new EditBatchProcessor(fetcher, editor, batch, library, summary, tags, 50);
+        EditBatchProcessor processor = new EditBatchProcessor(fetcher, editor, batch, library, summary, maxlag, tags, 50);
         assertEquals(2, processor.remainingEdits());
         assertEquals(0, processor.progress());
         processor.performEdit();
@@ -139,7 +138,7 @@ public class EditBatchProcessorTest extends WikidataRefineTest {
         when(fetcher.getEntityDocuments(toQids(secondBatch))).thenReturn(toMap(secondBatch));
 
         // Run edits
-        EditBatchProcessor processor = new EditBatchProcessor(fetcher, editor, batch, library, summary, tags, batchSize);
+        EditBatchProcessor processor = new EditBatchProcessor(fetcher, editor, batch, library, summary, maxlag, tags, batchSize);
         assertEquals(0, processor.progress());
         for (int i = 124; i < 190; i++) {
             assertEquals(processor.remainingEdits(), 190 - i);
@@ -157,18 +156,6 @@ public class EditBatchProcessorTest extends WikidataRefineTest {
                     Collections.singletonList(description), Collections.emptyList(), Collections.emptyList(),
                     Collections.emptyList(), Collections.emptyList(), summary, tags);
         }
-    }
-
-    @Test
-    public void testSetMaxLag() {
-        // use default value
-        EditBatchProcessor processor1 = new EditBatchProcessor(fetcher, editor, Collections.emptyList(), library, summary, tags, 50);
-        verify(editor, times(1)).setMaxLag(EditBatchProcessor.MAX_LAG_DEFAULT);
-
-        // use value in preference store
-        ProjectManager.singleton.getPreferenceStore().put(EditBatchProcessor.MAX_LAG_KEY, "10");
-        EditBatchProcessor processor2 = new EditBatchProcessor(fetcher, editor, Collections.emptyList(), library, summary, tags, 50);
-        verify(editor, times(1)).setMaxLag(10);
     }
 
     private Map<String, EntityDocument> toMap(List<ItemDocument> docs) {

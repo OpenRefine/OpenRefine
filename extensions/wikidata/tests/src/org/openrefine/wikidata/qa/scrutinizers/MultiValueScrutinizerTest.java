@@ -18,9 +18,10 @@ import java.util.List;
 
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
-import static org.openrefine.wikidata.qa.scrutinizers.MultiValueScrutinizer.MULTI_VALUE_CONSTRAINT_QID;
 
 public class MultiValueScrutinizerTest extends ScrutinizerTest {
+
+    public static final String MULTI_VALUE_CONSTRAINT_QID = "Q21510857";
 
     public static PropertyIdValue propertyIdValue = Datamodel.makeWikidataPropertyIdValue("P1963");
     public static Value valueSnak = Datamodel.makeWikidataItemIdValue("Q5");

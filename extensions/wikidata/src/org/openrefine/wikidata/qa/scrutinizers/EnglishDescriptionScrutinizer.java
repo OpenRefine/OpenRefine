@@ -71,4 +71,8 @@ public class EnglishDescriptionScrutinizer extends DescriptionScrutinizer {
         }
     }
 
+    @Override
+    public boolean prepareDependencies() {
+        return true;
+    }
 }

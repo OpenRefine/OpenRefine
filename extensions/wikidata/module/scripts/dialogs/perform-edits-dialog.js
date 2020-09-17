@@ -10,13 +10,16 @@ PerformEditsDialog.launch = function(logged_in_username, max_severity) {
   }
 
   this._level = DialogSystem.showDialog(frame);
-
-  this._elmts.dialogHeader.text($.i18n('perform-wikidata-edits/dialog-header'));
-  this._elmts.loggedInAs.text($.i18n('perform-wikidata-edits/logged-in-as'));
-  this._elmts.editSummaryLabel.text($.i18n('perform-wikidata-edits/edit-summary-label'));
-  this._elmts.editSummary.attr('placeholder', $.i18n('perform-wikidata-edits/edit-summary-placeholder'));
-  this._elmts.performEditsButton.text($.i18n('perform-wikidata-edits/perform-edits'));
-  this._elmts.cancelButton.text($.i18n('perform-wikidata-edits/cancel'));
+  this._elmts.dialogHeader.text($.i18n('perform-wikibase-edits/dialog-header', WikibaseManager.getSelectedWikibaseName()));
+  this._elmts.loggedInAs.text($.i18n('perform-wikibase-edits/logged-in-as'));
+  this._elmts.editSummaryLabel.text($.i18n('perform-wikibase-edits/edit-summary-label'));
+  this._elmts.editSummary.attr('placeholder', $.i18n('perform-wikibase-edits/edit-summary-placeholder'));
+  this._elmts.maxlagLabel.text($.i18n('perform-wikibase-edits/maxlag-label'));
+  this._elmts.maxlag.val(WikibaseManager.getSelectedWikibaseMaxlag());
+  this._elmts.maxlag.attr('placeholder', WikibaseManager.getSelectedWikibaseMaxlag());
+  this._elmts.explainMaxlag.html($.i18n('perform-wikibase-edits/explain-maxlag'));
+  this._elmts.performEditsButton.text($.i18n('perform-wikibase-edits/perform-edits'));
+  this._elmts.cancelButton.text($.i18n('perform-wikibase-edits/cancel'));
 
   var hiddenIframe = $('#hiddenIframe').contents();
 
@@ -30,24 +33,36 @@ PerformEditsDialog.launch = function(logged_in_username, max_severity) {
     var formCopy = hiddenIframe.find("#wikibase-perform-edits-form");
     formCopy.submit();
 
-    if(elmts.editSummary.val().length == 0) {
+    if (elmts.editSummary.val().length === 0) {
       elmts.editSummary.focus();
-    } else {
-      Refine.postProcess(
-        "wikidata",
-        "perform-wikibase-edits",
-        {},
-        { summary: elmts.editSummary.val(), },
-        { includeEngine: true, cellsChanged: true, columnStatsChanged: true },
-        { onDone: function() { dismiss(); } }
-      );
+      return;
     }
+
+    if (elmts.maxlag.val().length === 0) {
+      elmts.maxlag.val(WikibaseManager.getSelectedWikibaseMaxlag());
+    }
+
+    // validate maxlag
+    if (!/^\+?[1-9]\d*$/.test(elmts.maxlag.val())) {
+      elmts.maxlag.focus();
+      alert($.i18n('perform-wikibase-edits/maxlag-validation'));
+      return;
+    }
+
+    Refine.postProcess(
+      "wikidata",
+      "perform-wikibase-edits",
+      {},
+      { summary: elmts.editSummary.val(), maxlag: elmts.maxlag.val() },
+      { includeEngine: true, cellsChanged: true, columnStatsChanged: true },
+      { onDone: function() { dismiss(); } }
+    );
   };
-  
+
   elmts.loggedInUsername
    .text(logged_in_username)
-   .attr('href','https://www.wikidata.org/wiki/User:'+logged_in_username);
-  
+   .attr('href', WikibaseManager.getSelectedWikibaseRoot() + 'User:' + logged_in_username);
+
   frame.find('.cancel-button').click(function() {
     dismiss();
   });
@@ -69,9 +84,11 @@ PerformEditsDialog.launch = function(logged_in_username, max_severity) {
 };
 
 PerformEditsDialog.updateEditCount = function(edit_count) {
-  this._elmts.reviewYourEdits.html(
-    $.i18n('perform-wikidata-edits/review-your-edits')
-      .replace('{nb_edits}', edit_count));
+  this._elmts.reviewYourEdits.html($.i18n('perform-wikibase-edits/review-your-edits',
+      edit_count,
+      WikibaseManager.getSelectedWikibaseMainPage(),
+      WikibaseManager.getSelectedWikibaseName(),
+  ));
 };
 
 PerformEditsDialog._updateWarnings = function(data) {
@@ -83,32 +100,30 @@ PerformEditsDialog._updateWarnings = function(data) {
    PerformEditsDialog.updateEditCount(data.edit_count);
 
    var table = $('<table></table>').appendTo(mainDiv);
-   for (var i = 0; i != warnings.length; i++) {
+   for (var i = 0; i < warnings.length; i++) {
       var rendered = WarningsRenderer._renderWarning(warnings[i]);
       rendered.appendTo(table);
-   }   
+   }
 };
 
 PerformEditsDialog.checkAndLaunch = function () {
-  var self = this;
   this.frame = $(DOM.loadHTML("wikidata", "scripts/dialogs/perform-edits-dialog.html"));
   this._elmts = DOM.bind(this.frame);
   this.missingSchema = false;
 
   var onSaved = function () {
     ManageAccountDialog.ensureLoggedIn(function (logged_in_username) {
-      var discardWaiter = DialogSystem.showBusy($.i18n('perform-wikidata-edits/analyzing-edits'));
+      var discardWaiter = DialogSystem.showBusy($.i18n('perform-wikibase-edits/analyzing-edits'));
       Refine.postCSRF(
           "command/wikidata/preview-wikibase-schema?" + $.param({project: theProject.id}),
-          {engine: JSON.stringify(ui.browsingEngine.getJSON())},
+          {manifest: JSON.stringify(WikibaseManager.getSelectedWikibase()), engine: JSON.stringify(ui.browsingEngine.getJSON())},
           function (data) {
             discardWaiter();
-            if (data['code'] != 'error') {
+            if (data['code'] !== 'error') {
               PerformEditsDialog._updateWarnings(data);
               PerformEditsDialog.launch(logged_in_username, data['max_severity']);
             } else {
-              SchemaAlignmentDialog.launch(
-                  PerformEditsDialog.checkAndLaunch);
+              SchemaAlignment.launch();
             }
           },
           "json"
@@ -117,8 +132,8 @@ PerformEditsDialog.checkAndLaunch = function () {
   };
 
 
-  if (SchemaAlignmentDialog.isSetUp() && SchemaAlignmentDialog._hasUnsavedChanges) {
-     SchemaAlignmentDialog._save(onSaved);
+  if (SchemaAlignment.isSetUp() && SchemaAlignment._hasUnsavedChanges) {
+     SchemaAlignment._save(onSaved);
   } else {
      onSaved();
   }

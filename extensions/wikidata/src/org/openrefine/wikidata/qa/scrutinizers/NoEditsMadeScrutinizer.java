@@ -30,7 +30,12 @@ public class NoEditsMadeScrutinizer extends EditScrutinizer {
     public static final String type = "no-edit-generated";
     
     private boolean nonNullUpdateSeen = false;
-    
+
+    @Override
+    public boolean prepareDependencies() {
+        return true;
+    }
+
     @Override
     public void batchIsBeginning() {
         nonNullUpdateSeen = false;

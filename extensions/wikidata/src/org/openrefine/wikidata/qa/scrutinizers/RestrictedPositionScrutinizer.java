@@ -39,11 +39,22 @@ import java.util.List;
 
 public class RestrictedPositionScrutinizer extends StatementScrutinizer {
 
-    public static String SCOPE_CONSTRAINT_QID = "Q53869507";
-    public static String SCOPE_CONSTRAINT_PID = "P5314";
-    public static String SCOPE_CONSTRAINT_VALUE_QID = "Q54828448";
-    public static String SCOPE_CONSTRAINT_QUALIFIER_QID = "Q54828449";
-    public static String SCOPE_CONSTRAINT_REFERENCE_QID = "Q54828450";
+    public String scopeConstraintQid;
+    public String scopeConstraintPid;
+    public String scopeConstraintValueQid;
+    public String scopeConstraintQualifierQid;
+    public String scopeConstraintReferenceQid;
+
+    @Override
+    public boolean prepareDependencies() {
+        scopeConstraintQid = getConstraintsRelatedId("property_scope_constraint_qid");
+        scopeConstraintPid = getConstraintsRelatedId("property_scope_pid");
+        scopeConstraintValueQid = getConstraintsRelatedId("as_main_value_qid");
+        scopeConstraintQualifierQid = getConstraintsRelatedId("as_qualifiers_qid");
+        scopeConstraintReferenceQid = getConstraintsRelatedId("as_references_qid");
+        return _fetcher != null && scopeConstraintQid != null && scopeConstraintPid != null && scopeConstraintValueQid != null
+                && scopeConstraintQualifierQid != null && scopeConstraintReferenceQid != null;
+    }
 
     protected enum SnakPosition {
         MAINSNAK, QUALIFIER, REFERENCE
@@ -54,10 +65,10 @@ public class RestrictedPositionScrutinizer extends StatementScrutinizer {
         RestrictedPositionConstraint(Statement statement) {
             List<SnakGroup> specs = statement.getClaim().getQualifiers();
             if (specs != null) {
-                ItemIdValue targetValue = Datamodel.makeWikidataItemIdValue(SCOPE_CONSTRAINT_VALUE_QID);
-                ItemIdValue targetQualifier = Datamodel.makeWikidataItemIdValue(SCOPE_CONSTRAINT_QUALIFIER_QID);
-                ItemIdValue targetReference = Datamodel.makeWikidataItemIdValue(SCOPE_CONSTRAINT_REFERENCE_QID);
-                List<Value> snakValues = findValues(specs, SCOPE_CONSTRAINT_PID);
+                ItemIdValue targetValue = Datamodel.makeWikidataItemIdValue(scopeConstraintValueQid);
+                ItemIdValue targetQualifier = Datamodel.makeWikidataItemIdValue(scopeConstraintQualifierQid);
+                ItemIdValue targetReference = Datamodel.makeWikidataItemIdValue(scopeConstraintReferenceQid);
+                List<Value> snakValues = findValues(specs, scopeConstraintPid);
                 isAllowedAsValue = snakValues.contains(targetValue);
                 isAllowedAsQualifier = snakValues.contains(targetQualifier);
                 isAllowedAsReference =  snakValues.contains(targetReference);
@@ -99,7 +110,7 @@ public class RestrictedPositionScrutinizer extends StatementScrutinizer {
     }
     
     public boolean positionAllowed(PropertyIdValue pid, SnakPosition position) {
-        List<Statement> constraintDefinitions = _fetcher.getConstraintsByType(pid, SCOPE_CONSTRAINT_QID);
+        List<Statement> constraintDefinitions = _fetcher.getConstraintsByType(pid, scopeConstraintQid);
         if (!constraintDefinitions.isEmpty()) {
             RestrictedPositionConstraint constraint = new RestrictedPositionConstraint(constraintDefinitions.get(0));
             if (position.equals(SnakPosition.MAINSNAK)) {
