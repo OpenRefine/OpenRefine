@@ -34,25 +34,31 @@ The joined data will appear in the column you originally selected, or you can cr
 
 ## Add column based on this column
 
-This selection will open up an [expressions](expressions) window where you can transform the data from this column (using `value`) or write a complex expression that takes information from any number of columns or from external reconciliation sources. 
+This selection will open up an [expressions](expressions) window where you can transform the data from this column (using `value`), or write a more complex expression that takes information from any number of columns or from external reconciliation sources. 
 
-One common use of this function is to join information from two projects together in one place. Just like referring from one table to another table in an entity-relationship database, you need a key that exists in both. 
+The simplest way to use this operation is simply leave the default `value` in the expression field, to create an exact copy of your column. 
 
-The expression is
+For a reconciled column, you can use the variable `cell` instead, to copy both the original string and the existing reconciliation data. This will include matched values, candidates, and new items. You can learn other useful variables in the [Expressions section on GREL variables](expressions#variables).
 
-```cell.cross('arg1','arg2').cells['arg3'].value[arg4]```
+You can create a column based on concatenating (merging) two other columns. Select either of the source columns, apply "Column editing" > "Add column based on this column...", name your new column, and use the following format in the expression window:
 
-where 
+```
+cells["Column 1"].value + cells["Column 2"].value
+```
 
-*   **arg1** is the name of the project you want to pull data from (you will get an error in the Preview window if there are multiple projects with the identified name)
-*   **arg2** is the column in that project with matching values to the column in the current project
-*   **arg3** is the column in that project you’d like to copy over (you can only specify one column at a time)
-*   and **arg4** is which value in that column to import (most likely 0).
+If your column names do not contain spaces, you can use the following format:
 
-Learn more about [cross()](expressions#cross) and other GREL functions to use in this window on the [Expressions](expressions) page. 
+```
+cells.Column1.value + cells.Column2.value
+```
 
-Some of the other most common ways to add a new column based on an existing one are separate functions, and are explained below.
+If you are in records mode instead of rows mode, you can concatenate using the following format:
 
+```
+row.record.cells.Column1.value + row.record.cells.Column2.value
+```
+
+You may wish to add separators or spaces, or modify your input during this operation with more advanced GREL. 
 
 ## Add column by fetching URLs
 
@@ -60,7 +66,9 @@ Through the "Add column by fetching URLs" function, OpenRefine supports the abil
 
 If you have a column of URLs and watch to fetch the information that they point to, you can simply run the expression as `value`. If your column has, for example, unique identifiers for Wikidata entities (numerical values starting with Q), you can download the JSON-formatted metadata about each entity with
 
-```“https://www.wikidata.org/wiki/Special:EntityData/” + value + “.json”```
+```
+“https://www.wikidata.org/wiki/Special:EntityData/” + value + “.json”
+```
 
 or whatever metadata format you prefer. [Information about these Wikidata options can be found here](https://www.wikidata.org/wiki/Wikidata:Data_access).
 
@@ -93,13 +101,20 @@ First, make sure that your fetching operation is storing errors (check “store 
 
 You can check which encryption methods are supported by your OpenRefine/Java installation by using a service such as **How's my SSL**. Add the URL `https://www.howsmyssl.com/a/check` to an OpenRefine cell and run "Add column by fetching URLs" on it, which will provide a description of the SSL client being used. 
 
-You can try installing additional encryption supports by installing the [Java Cryptography Extension](https://www.oracle.com/java/technologies/javase-jce8-downloads.html). Note on OpenRefine for Mac, and OpenRefine for Windows in the kit with bundled JRE, these updated cipher suites need to be dropped into the Java install within the OpenRefine application: something like `/Applications/OpenRefine.app/Contents/PlugIns/jdk1.8.0_60.jdk/Contents/Home/jre/lib/security`.
+You can try installing additional encryption supports by installing the [Java Cryptography Extension](https://www.oracle.com/java/technologies/javase-jce8-downloads.html). 
+Note that for Mac users and for Windows users with the OpenRefine installation with bundled JRE, these updated cipher suites need to be dropped into the Java install within the OpenRefine application: 
+
+* On Mac, it will look something like `/Applications/OpenRefine.app/Contents/PlugIns/jdk1.8.0_60.jdk/Contents/Home/jre/lib/security`. 
+* On Windows: `\server\target\jre\lib\security`.
 
 **"sun.security.validator.ValidatorException: PKIX path building failed"** can occur when you try to retrieve information over HTTPS but the remote site is using a certificate not trusted by your local Java installation. You will need to make sure that the certificate, or (more likely) the root certificate, is trusted. 
 
 The list of trusted certificates is stored in an encrypted file called `cacerts` in your local Java installation. This can be read and updated by a tool called “keytool.” You can find directions on how to add a security certificate to the list of trusted certificates for a Java installation [here](http://magicmonster.com/kb/prg/java/ssl/pkix_path_building_failed.html) and [here](http://javarevisited.blogspot.co.uk/2012/03/add-list-certficates-java-keystore.html).
 
-Note on OpenRefine for Mac, you need to update the `cacerts` file within the OpenRefine application: something like `/PlugIns/jdk1.8.0_60.jdk/Contents/Home/jre/lib/security/cacerts`.
+Note that for Mac users and for Windows users with the OpenRefine installation with bundled JRE, the `cacerts` file within the OpenRefine application needs to be updated. 
+
+* On Mac, it will look something like `/Applications/OpenRefine.app/Contents/PlugIns/jdk1.8.0_60.jdk/Contents/Home/jre/lib/security/cacerts`.
+* On Windows: `\server\target\jre\lib\security\`.
 
 
 
