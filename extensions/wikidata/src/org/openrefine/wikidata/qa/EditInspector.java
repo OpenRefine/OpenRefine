@@ -65,7 +65,7 @@ public class EditInspector {
 
         String propertyConstraintPid = manifest.getConstraintsRelatedId("property_constraint_pid");
         if (propertyConstraintPid != null) {
-            EntityCache entityCache = EntityCache.getEntityCache(manifest.getSiteIri(), manifest.getMediaWikiApiEndpoint());
+            entityCache = EntityCache.getEntityCache(manifest.getSiteIri(), manifest.getMediaWikiApiEndpoint());
             this.fetcher = new ConstraintFetcher(entityCache, propertyConstraintPid);
         }
 
@@ -122,7 +122,7 @@ public class EditInspector {
     public void inspect(List<ItemUpdate> editBatch, WikibaseSchema schema) throws ExecutionException {
         // First, schedule them with some scheduler,
         // so that all newly created entities appear in the batch
-        SchemaPropertyFetcher fetcher = new SchemaPropertyFetcher();
+        SchemaPropertyExtractor fetcher = new SchemaPropertyExtractor();
         Set<PropertyIdValue> properties = fetcher.getAllProperties(schema);
         List<EntityDocument> propertyDocuments = entityCache.getMultipleDocuments(properties.stream().collect(Collectors.toList()));
         WikibaseAPIUpdateScheduler scheduler = new WikibaseAPIUpdateScheduler();

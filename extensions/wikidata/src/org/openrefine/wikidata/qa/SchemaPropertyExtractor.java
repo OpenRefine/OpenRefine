@@ -16,7 +16,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-public class SchemaPropertyFetcher {
+public class SchemaPropertyExtractor {
 
     public Set<PropertyIdValue> getAllProperties(WikibaseSchema schema) {
         Set<PropertyIdValue> properties = new HashSet<>();
