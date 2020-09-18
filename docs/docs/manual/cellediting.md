@@ -11,7 +11,7 @@ One way of doing this is editing through a [text facet](facets#text-facet). Once
 
 ## Transform
 
-Select “Edit cells” > “Transforms” to open up an expressions window. From here, you can apply [expressions](expressions) to your data. The simplest examples are GREL functions such as `toUppercase` or `toLowercase`, used in expressions as `toUppercase(value)` or `toLowercase(value)`. In all of these cases, `value` is the value in each cell in the selected column. 
+Select “Edit cells” → “Transforms” to open up an expressions window. From here, you can apply [expressions](expressions) to your data. The simplest examples are GREL functions such as `toUppercase` or `toLowercase`, used in expressions as `toUppercase(value)` or `toLowercase(value)`. In all of these cases, `value` is the value in each cell in the selected column. 
 
 Use the preview to ensure your data is being transformed correctly. 
 
@@ -31,7 +31,7 @@ You may also find that some text cells contain what look like spaces but are act
 
 ### Unescape HTML 
 
-Your data may come from an HTML-formatted source that expresses some characters through references (such as "&amp;nbsp;" for a space, or "%u0107" for a ć) instead of the actual Unicode characters. You can use the “unescape HTML entities” transform to look for these codes and replace them with the characters they represent. 
+Your data may come from an HTML-formatted source that expresses some characters through references (such as “&amp;nbsp;” for a space, or “%u0107” for a ć) instead of the actual Unicode characters. You can use the “unescape HTML entities” transform to look for these codes and replace them with the characters they represent. 
 
 ### Replace smart quotes with ASCII
 
@@ -96,7 +96,7 @@ Creating a facet on a column is a great way to look for inconsistencies in your 
 
 Clustering always requires the user to approve each suggested edit - it will display values it thinks are variations on the same thing, and you can select which version to keep and apply across all those matching cells (or type in your own version). OpenRefine will do a number of cleanup operations behind the scenes, in memory, in order to do its analysis, but only the merges you approve will modify your data. 
 
-You can start the process in two ways: using the dropdown menu on your column, select “Edit cells” > “Cluster and edit…” or create a text facet and then press the “Cluster” button that appears in the facet box. 
+You can start the process in two ways: using the dropdown menu on your column, select “Edit cells” → “Cluster and edit…” or create a text facet and then press the “Cluster” button that appears in the facet box. 
 
 ![A screenshot of the Clustering window.](/img/cluster.png)
 
@@ -131,7 +131,7 @@ The clustering pop-up window offers you a variety of clustering methods:
 
 The next four methods are phonetic algorithsm: they know whether two letters sound the same when pronounced out loud, and assess text values based on that (such as knowing that a word with an “S” might be a mistype of a word with a “Z”).  They are great for spotting mistakes made by not knowing the spelling of a word or name after only hearing it spoken aloud. 
 
-**Metaphone3 fingerprinting** is an English-language phonetic algorithm. For example, "Reuben Gevorkiantz" and "Ruben Gevorkyants" share the same phonetic fingerprint in English.
+**Metaphone3 fingerprinting** is an English-language phonetic algorithm. For example, “Reuben Gevorkiantz” and “Ruben Gevorkyants” share the same phonetic fingerprint in English.
 
 **Cologne fingerprinting** is another phonetic algorithm, but for German pronunciation. 
 
@@ -149,7 +149,7 @@ For more of the theory behind clustering, see [Clustering In Depth](https://gith
 
 ## Replace
 
-OpenRefine provides a find/replace function for you to edit your data. Selecting “Edit cells” > “Replace” will bring up a simple window where you can input a string to search and a string to replace it with. You can set case-sensitivity, and set it to only select whole words, defined by a string with spaces or punctuation around it (to prevent, for example, “house” selecting the “house” part of “doghouse”). You can use regular expressions in this field. 
+OpenRefine provides a find/replace function for you to edit your data. Selecting “Edit cells” → “Replace” will bring up a simple window where you can input a string to search and a string to replace it with. You can set case-sensitivity, and set it to only select whole words, defined by a string with spaces or punctuation around it (to prevent, for example, “house” selecting the “house” part of “doghouse”). You can use regular expressions in this field. 
 
 You may wish to preview the results of this operation by testing it with a [Text filter](facets#text-filter) first.
 
@@ -157,6 +157,6 @@ You can also perform a sort of find/replace operation by editing one cell, and s
 
 ## Edit one cell at a time
 
-You can edit individual cells by hovering your mouse over that cell. You should see a tiny blue button labeled "edit". Click it to edit the cell. That pops up a window with a bigger text field for you to edit. You can change the data type of that cell, and you can apply these changes to all identical cells (in the same column), using this pop-up window. 
+You can edit individual cells by hovering your mouse over that cell. You should see a tiny blue button labeled “edit.” Click it to edit the cell. That pops up a window with a bigger text field for you to edit. You can change the data type of that cell, and you can apply these changes to all identical cells (in the same column), using this pop-up window. 
 
 You will likely want to avoid doing this except in rare cases - the more efficient means of improving your data will be through automated and bulk operations. 

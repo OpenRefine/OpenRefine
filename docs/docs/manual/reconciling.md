@@ -38,7 +38,7 @@ In the reconciliation window, you will see Wikidata offered as a default service
 
 ![The reconciliation window.](/img/reconcilewindow.png)
 
-Once you select a service, the service may sample your selected column and identify some [suggested categories ("types")](#reconciling-by-type) to reconcile against. Other services will suggest their available types without sampling, and some services have no types. 
+Once you select a service, the service may sample your selected column and identify some [suggested categories (“types”)](#reconciling-by-type) to reconcile against. Other services will suggest their available types without sampling, and some services have no types. 
 
 For example, if you had a list of artists represented in a gallery collection, you could reconcile their names against the Getty Research Institute’s [Union List of Artist Names (ULAN)](https://www.getty.edu/research/tools/vocabularies/ulan/). The same Getty reconciliation URL will offer you ULAN, AAT (Art and Architecture Thesaurus), and TGN (Thesaurus of Geographic Names).
 
@@ -54,7 +54,7 @@ If there is no clear match, a few candidates are displayed, together with their 
 
 For each matching decision you make, you have two options: match this cell only ![button to perform a single match](https://openrefine-wikidata.toolforge.org/static/screenshot_single_match.png), or also use the same identifier for all other cells containing the same original string ![button to perform a multiple match](https://openrefine-wikidata.toolforge.org/static/screenshot_bulk_match.png).
 
-For services that offer the ["preview entities" feature](https://reconciliation-api.github.io/testbench/), you can hover your mouse over the suggestions to see more information about the candidates or matches. Each participating service (and each type) will deliver different structured data that may help you compare the candidates. 
+For services that offer the [“preview entities” feature](https://reconciliation-api.github.io/testbench/), you can hover your mouse over the suggestions to see more information about the candidates or matches. Each participating service (and each type) will deliver different structured data that may help you compare the candidates. 
 
 For example, the Getty ULAN shows an artist’s discipline, nationality, and birth and death years: 
 
@@ -68,11 +68,11 @@ For each cell, you can manually “Create new item,” which will take the cell�
 
 ### Reconciliation facets
 
-Under "Reconcile" → "Facets" you can see a number of reconciliation-specific faceting options. OpenRefine automatically creates two facets for you when you reconcile a column. 
+Under “Reconcile” → “Facets” you can see a number of reconciliation-specific faceting options. OpenRefine automatically creates two facets for you when you reconcile a column. 
 
-One is a numeric facet for "best candidate's score," the range of reconciliation scores of only the best candidate of each cell. Each service calculates scores differently and has a different range, but higher scores always mean better matches. You can facet for higher scores in the numeric facet, and then approve them all in bulk, by using “Reconcile” → “Actions” → “Match each cell to its best candidate.” 
+One is a numeric facet for “best candidate's score,” the range of reconciliation scores of only the best candidate of each cell. Each service calculates scores differently and has a different range, but higher scores always mean better matches. You can facet for higher scores in the numeric facet, and then approve them all in bulk, by using “Reconcile” → “Actions” → “Match each cell to its best candidate.” 
 
-There is also a “judgment” facet created, which lets you filter for the cells that haven't been matched (pick "none" in the facet). As you process each cell, its judgment changes from “none” to “matched” and it disappears from the view.
+There is also a “judgment” facet created, which lets you filter for the cells that haven't been matched (pick “none” in the facet). As you process each cell, its judgment changes from “none” to “matched” and it disappears from the view.
 
 You can add other reconciliation facets by selecting “Reconcile” → “Facets” on your column. You can facet by: 
 
@@ -94,26 +94,26 @@ These facets are useful for doing successive reconciliation attempts, against di
 
 ### Reconciliation actions
 
-You can use the “Reconcile” → "Actions" menu options to perform bulk changes, which will apply only to your current set of rows or records:
+You can use the “Reconcile” → “Actions” menu options to perform bulk changes, which will apply only to your current set of rows or records:
 *   Match each cell to its best candidate (by highest score)
 *   Create a new item for each cell (discard any suggested matches)
 *   Create one new item for similar cells (a new entity will be created for each unique string)
-*   Match all filtered cells to... (a specific item from the chosen service, via a search box. For [services with the "suggest entities" property](https://reconciliation-api.github.io/testbench/).)
+*   Match all filtered cells to... (a specific item from the chosen service, via a search box. For [services with the “suggest entities” property](https://reconciliation-api.github.io/testbench/).)
 *   Discard all reconciliation judgments (reverts back to multiple candidates per cell, including cells that may have been auto-matched in the original reconciliation process)
 *   Clear reconciliation data, reverting all cells back to their original values.
 
-The other options available under "Reconcile" are:
+The other options available under “Reconcile” are:
 *   Copy reconciliation data... (to an existing column: if the original values in your reconciliation column are identical to those in your chosen column, the matched and/or new cells will copy over. Unmatched values will not change.) 
 *   [Use values as identifiers](#reconciling-with-unique-identifiers) (if you are reconciling with unique identifiers instead of by doing string searches).
 *   [Add entity identifiers column](#add-entity-identifiers-column).
 
 ## Reconciling with unique identifiers
 
-Reconciliation services use unique identifiers for their entities. For example, the 14th Dalai Lama has the VIAF ID [38242123](https://viaf.org/viaf/38242123/) and the Wikidata ID [Q17293](https://www.wikidata.org/wiki/Q37349). You can supply these identifiers directly to your chosen reconciliation service in order to pull more data, but these strings will not be "reconciled" against the external dataset. 
+Reconciliation services use unique identifiers for their entities. For example, the 14th Dalai Lama has the VIAF ID [38242123](https://viaf.org/viaf/38242123/) and the Wikidata ID [Q17293](https://www.wikidata.org/wiki/Q37349). You can supply these identifiers directly to your chosen reconciliation service in order to pull more data, but these strings will not be “reconciled” against the external dataset. 
 
 Select the column with unique identifiers and apply the operation “Reconcile” → “Use values as identifiers.” This will bring up the list of reconciliation services you have already added (to add a new service, open the “Start reconciling…” window first). If you use this operation on a column of IDs, you will not have access to the usual reconciliation settings.
 
-Matching identifiers does not validate them. All cells will appear as dark blue "confirmed" matches. You should check before this operation that the identifiers in the column exist on the target service. 
+Matching identifiers does not validate them. All cells will appear as dark blue “confirmed” matches. You should check before this operation that the identifiers in the column exist on the target service. 
 
 You may get false positives, which you will need to hover over or click on to identify:
 
@@ -123,9 +123,9 @@ You may get false positives, which you will need to hover over or click on to id
 
 Reconciliation services, once added to OpenRefine, may suggest types from their databases. These types will usually be whatever the service specializes in: people, events, places, buildings, tools, plants, animals, organizations, etc.  
 
-Reconciling against a type may be faster and more accurate, but may result in fewer matches. Some services have hierarchical types (such as "mammal" as a subtype of "animal"). When you reconcile against a more specific type, unmatched values may fall back to more broad types. Other services will not do this, so you may need to perform successive reconciliation attempts against different types. Refer to the documentation specific to the reconciliation service to learn more. 
+Reconciling against a type may be faster and more accurate, but may result in fewer matches. Some services have hierarchical types (such as “mammal” as a subtype of “animal”). When you reconcile against a more specific type, unmatched values may fall back to more broad types. Other services will not do this, so you may need to perform successive reconciliation attempts against different types. Refer to the documentation specific to the reconciliation service to learn more. 
 
-When you select a service from the list, OpenRefine will load some or all available types. Some services will sample the first ten rows of your column to suggest types (check the ["Suggest types" column on this table of services](https://reconciliation-api.github.io/testbench/)). You will see a service’s types in the reconciliation window:
+When you select a service from the list, OpenRefine will load some or all available types. Some services will sample the first ten rows of your column to suggest types (check the [“Suggest types” column on this table of services](https://reconciliation-api.github.io/testbench/)). You will see a service’s types in the reconciliation window:
 
 ![Reconciling using a type.](/img/reconcile-by-type.png)
 
@@ -145,9 +145,9 @@ Some of your cells may be ambiguous, in the sense that a string can point to mor
 
 Including supplementary information can be useful, depending on the service (such as including birthdate information about each person you are trying to reconcile). The other columns in your project will appear in the reconciliation window, with an “Include?” checkbox available on each. 
 
-You can fill in the “As Property” field with the type of information you are including. When you start typing, potential fields may pop up (depending on the ["suggest properties" feature](https://reconciliation-api.github.io/testbench/)), such as “birthDate” in the case of ULAN or "Geburtsdatum" in the case of Integrated Authority File (GND). Use the documentation for your chosen service to identify the fields in their terms. 
+You can fill in the “As Property” field with the type of information you are including. When you start typing, potential fields may pop up (depending on the [“suggest properties” feature](https://reconciliation-api.github.io/testbench/)), such as “birthDate” in the case of ULAN or “Geburtsdatum” in the case of Integrated Authority File (GND). Use the documentation for your chosen service to identify the fields in their terms. 
 
-Some services will not be able to search for the exact name of your desired "As Property" entry, but you can still manually supply the field name. Refer to the service to make sure you enter it correctly. 
+Some services will not be able to search for the exact name of your desired “As Property” entry, but you can still manually supply the field name. Refer to the service to make sure you enter it correctly. 
 
 ![Including a birth-date type.](/img/reconcile-by-type.png)
 
@@ -165,13 +165,13 @@ Once you have selected matches for your cells, you can retrieve the unique ident
 
 ### Add columns from reconciled values
 
-If the reconciliation service supports [data extension](https://reconciliation-api.github.io/testbench/), then you can augment your reconciled data with new columns using "Edit column" → "Add columns from reconciled values...." 
+If the reconciliation service supports [data extension](https://reconciliation-api.github.io/testbench/), then you can augment your reconciled data with new columns using “Edit column” → “Add columns from reconciled values....” 
 
 For example, if you have a column of chemical elements identified by name, you can fetch categorical information about them such as their atomic number and their element symbol, as the animation shows below:
 
 ![A screenshare of elements fetching related information.](/img/reconcileelements.gif)
 
-Once you have pulled reconciliation values and selected one for each cell, selecting “Add column from reconciled values...” will bring up a window to choose which information you’d like to import into a new column. The quality of the suggested properties will depend on how you have reconciled your data beforehand: reconciling against a specific type will provide you with suggested properties of that type. For example, GND suggests elements about the "people" type after you've reconciled with it, such as their parents, native languages, children, etc. 
+Once you have pulled reconciliation values and selected one for each cell, selecting “Add column from reconciled values...” will bring up a window to choose which information you’d like to import into a new column. The quality of the suggested properties will depend on how you have reconciled your data beforehand: reconciling against a specific type will provide you with suggested properties of that type. For example, GND suggests elements about the “people” type after you've reconciled with it, such as their parents, native languages, children, etc. 
 
 ![A screenshot of available properties from GND.](/img/reconcileGND.png) 
 
@@ -179,25 +179,25 @@ If you have left any values unreconciled in your column, you will see “&lt;not
 
 ### Add columns by fetching URLs
 
-If the reconciliation service cannot extend data, look for a generic web API for that data source, or a structured URL that points to their dataset entities via unique IDs (such as https://viaf.org/viaf/000000). You can use the "Edit column" → "[Add column by fetching URLs](columnediting#add-column-by-fetching-urls)" operation to call this API or URL with the IDs obtained from the reconciliation process. This will require using [GREL expressions](expressions#GREL).
+If the reconciliation service cannot extend data, look for a generic web API for that data source, or a structured URL that points to their dataset entities via unique IDs (such as https://viaf.org/viaf/000000). You can use the “Edit column” → “[Add column by fetching URLs](columnediting#add-column-by-fetching-urls)” operation to call this API or URL with the IDs obtained from the reconciliation process. This will require using [GREL expressions](expressions#GREL).
 
 You will likely not want to pull the entire HTML content of the pages at the ends of these URLs, so look to see whether the service offers a metadata endpoint, such as JSON-formatted data. You can either use a column of IDs, or you can pull the ID from each matched cell during the fetching process. 
 
-For example, if you have reconciled artists to the Getty's ULAN, and [have their unique ULAN IDs as a column](#add-entity-identifiers-column), you can generate a new column of JSON-formatted data by using "Add column by fetching URLs" and entering the GREL expression `"http://vocab.getty.edu/" + value + ".json"` in the window. For this service, the unique IDs are formatted "ulan/000000" and so the generated URLs look like "http://vocab.getty.edu/ulan/000000.json".
+For example, if you have reconciled artists to the Getty's ULAN, and [have their unique ULAN IDs as a column](#add-entity-identifiers-column), you can generate a new column of JSON-formatted data by using “Add column by fetching URLs” and entering the GREL expression `“http://vocab.getty.edu/” + value + “.json”` in the window. For this service, the unique IDs are formatted “ulan/000000” and so the generated URLs look like “http://vocab.getty.edu/ulan/000000.json”.
 
-You can alternatively insert the ID directly from the matched column using a GREL expression like `"http://vocab.getty.edu/" + cell.recon.match.id + ".json"` instead. 
+You can alternatively insert the ID directly from the matched column using a GREL expression like `“http://vocab.getty.edu/” + cell.recon.match.id + “.json”` instead. 
 
 Remember to set an appropriate throttle and to refer to the service documentation to ensure your compliance with their terms. See [the section about this operation](columnediting#add-column-by-fetching-urls) to learn more about common errors with this process. 
 
 ## Keep all the suggestions made
 
-If you would like to generate a list of each suggestion made, rather than only the best candidate, you can use a [GREL expression](expressions#GREL). Go to "Edit column" → "Add column based on this column." To create a list of all the possible matches, use 
+If you would like to generate a list of each suggestion made, rather than only the best candidate, you can use a [GREL expression](expressions#GREL). Go to “Edit column” → “Add column based on this column.” To create a list of all the possible matches, use 
 
-```forEach(cell.recon.candidates,c,c.name).join(",")```
+```forEach(cell.recon.candidates,c,c.name).join(“,”)```
 
 To get the unique identifiers of these matches instead, use 
 
-```forEach(cell.recon.candidates,c,c.id).join(",")```
+```forEach(cell.recon.candidates,c,c.id).join(“,”)```
 
 This information is stored as a string without any attached reconciliation information. 
 
@@ -209,9 +209,9 @@ For example, some of the reconciliation variables are:
 * `cell.recon.match.id` or `cell.recon.match.name` for matched values
 * `cell.recon.best.name` or `cell.recon.best.id` for best-candidate values
 * `cell.recon.candidates` for all listed candidates of each cell
-* `cell.recon.judgment` (the values used in the "judgment" facet)
-* `cell.recon.judgmentHistory` (the values used in the "judgment action timestamp" facet)
-* `cell.recon.matched` (a "true" or "false" value)
+* `cell.recon.judgment` (the values used in the “judgment” facet)
+* `cell.recon.judgmentHistory` (the values used in the “judgment action timestamp” facet)
+* `cell.recon.matched` (a “true” or “false” value)
 
 You can find out more in the [reconciliaton variables](expressions#reconciliaton-variables) section. 
 

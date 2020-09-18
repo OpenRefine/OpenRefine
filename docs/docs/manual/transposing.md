@@ -6,11 +6,9 @@ sidebar_label: Transposing
 
 ## Overview
 
-These functions were created to solve common problems with reshaping your data: pivot cells from a row into a column, or pivot cells from a column into a row. You can transpose from columns to rows, from rows to columns, and by creating multiple columns.
+These functions were created to solve common problems with reshaping your data: pivoting cells from a row into a column, or pivoting cells from a column into a row. You can also transpose from a repeated set of values into multiple columns.
 
 ## Transpose cells across columns into rows
-
-![A screenshot of the transpose across columns window.](/img/transpose1.png)
 
 Imagine personal data with addresses in this format:
 
@@ -19,7 +17,9 @@ Imagine personal data with addresses in this format:
 |Jacques Cousteau|23, quai de Conti|Paris||France|75270|
 |Emmy Noether|010 N Merion Avenue|Bryn Mawr|Pennsylvania|USA|19010|
 
-You can transpose information from this format into multiple rows. Go to the "Street" column and select "Transpose" → "Transpose cells across columns into rows." From there you can select all of the five columns, starting with "Street" and ending with "Postal code," that correspond to address information. Once you begin, you should put your project into [records mode](exploring#rows-vs-records) to associate the subsequent rows with "Name" as the key column. 
+You can transpose the address information from this format into multiple rows. Go to the “Street” column and select “Transpose” → “Transpose cells across columns into rows.” From there you can select all of the five columns, starting with “Street” and ending with “Postal code,” that correspond to address information. Once you begin, you should put your project into [records mode](exploring#rows-vs-records) to associate the subsequent rows with “Name” as the key column. 
+
+![A screenshot of the transpose across columns window.](/img/transpose1.png)
 
 ### One column
 
@@ -53,7 +53,7 @@ You can include the column-name information in each cell by prepending it to the
 
 ### Two columns
 
-You can retain the column names as separate cell values, by selecting "Two new columns" and naming the key and value columns.
+You can retain the column names as separate cell values, by selecting “Two new columns” and naming the key and value columns.
 
 |Name|Address part|Address|
 |---|---|---|
@@ -91,7 +91,7 @@ The goal is to sort out all of the information contained in one column into sepa
 |Joe Khoury                |Junior analyst       |Beirut|
 |Samantha Martinez               |CTO      |Tokyo|
 
-By selecting "Transpose" → "Transpose cells in rows into columns..." a window will appear that simply asks how many rows to transpose. In this case, each employee record has three rows, so input "3" (do not subtract one for the original column). The original column will disappear and be replaced with three columns, with the name of the original column plus a number appended.
+By selecting “Transpose” → “Transpose cells in rows into columns...” a window will appear that simply asks how many rows to transpose. In this case, each employee record has three rows, so input “3” (do not subtract one for the original column). The original column will disappear and be replaced with three columns, with the name of the original column plus a number appended.
 
 |Column 1 |Column 2    |Column 3|
 |---|---|---|
@@ -99,17 +99,17 @@ By selecting "Transpose" → "Transpose cells in rows into columns..." a window 
 |Employee: Joe Khoury                |Job title: Junior analyst       |Office: Beirut|
 |Employee: Samantha Martinez               |Job title: CTO      |Office: Tokyo|
 
-From here you can use a text find/replace to remove "Employee: ", "Job title: ", and "Office: ", or use [GREL functions](expressions#grel) with "Edit cells" → "Transform..." to clean out the extraneous characters: `value.replace('Employee: ', '')`, etc.
+From here you can use “Cell editing” → “Replace” to remove “Employee: ”, “Job title: ”, and “Office: ”, or use [GREL functions](expressions#grel) with “Edit cells” → “Transform...” to clean out the extraneous characters: `value.replace('Employee: ', '')`, etc.
 
-If your dataset doesn't have a predictable number of cells per intended row, such that you cannot specify easily how many columns to create, try "Columnize by key/value columns."
+If your dataset doesn't have a predictable number of cells per intended row, such that you cannot specify easily how many columns to create, try “Columnize by key/value columns.“
 
 ## Columnize by key/value columns
 
-This operation can be used to reshape a table which contains *key* and *value* columns, such that the repeating strings in the key column become new column names, and the contents of the value column are moved to new columns. This operation is located at “Transpose” → “Columnize by key/value columns.”
+This operation can be used to reshape a dataset that contains key and value columns: the repeating strings in the key column become new column names, and the contents of the value column are moved to new columns. This operation can be found at “Transpose” → “Columnize by key/value columns.”
 
 ![A screenshot of the Columnize window.](/img/transpose2.png) 
 
-Consider the following example, with flowers, their colours, and their International Union for Conservation of Nature identifiers:
+Consider the following example, with flowers, their colours, and their International Union for Conservation of Nature (IUCN) identifiers:
 
 |Field   |Data              	|
 |--------|----------------------|
@@ -120,7 +120,7 @@ Consider the following example, with flowers, their colours, and their Internati
 |Color   |Yellow            	|
 |IUCN ID |161899            	|
 
-In this format, each flower species is described by multiple attributes, which are spread on consecutive rows. In this example, the "Field" column contains the keys and the "Data" column contains the values. The Columnize window allows us to select each of these from the available columns. Then, it transforms the table as follows:
+In this format, each flower species is described by multiple attributes on consecutive rows. The “Field” column contains the keys and the “Data” column contains the values. In the “Columnize by key/value columns” window you can select each of these from the available columns. It transforms the table as follows:
 
 | Name              	| Color	| IUCN ID |
 |-----------------------|----------|---------|
@@ -129,7 +129,7 @@ In this format, each flower species is described by multiple attributes, which a
 
 ### Entries with multiple values in the same column
 
-If an entry has multiple values for a given key, then these values will be grouped on consecutive rows, to form a [record structure](exploring#rows-vs-records).
+If a new row would have multiple values for a given key, then these values will be grouped on consecutive rows, to form a [record structure](exploring#rows-vs-records).
 
 For instance, flowers can have multiple colors:
 
@@ -143,7 +143,7 @@ For instance, flowers can have multiple colors:
 | Color   	| Yellow            	|
 | IUCN ID 	| 161899            	|
 
-This table is transformed by the Columnize operation as follows:
+This table is transformed by the Columnize operation to:
 
 | Name              	| Color	| IUCN ID |
 |-----------------------|----------|---------|
@@ -151,13 +151,11 @@ This table is transformed by the Columnize operation as follows:
 |                   	| Green	|     	|
 | Narcissus cyclamineus | Yellow   | 161899  |
 
-The first key encountered by the operation serves as the record key.
-
-The "Green" value is attached to the "Galanthus nivalis" name because it is the latest record key encountered by the operation as it scans the table. See the [Row order](#row-order) section for more details about the influence of row order on the results of the operation.
+The first key encountered by the operation serves as the record key, so the “Green” value is attached to the “Galanthus nivalis” name. See the [Row order](#row-order) section for more details about the influence of row order on the results of the operation.
 
 ### Notes column
 
-In addition to the key and value columns, a *notes* column can be used optionally. This can be used to store extra metadata associated to a key/value pair.
+In addition to the key and value columns, you can optionally add a column for notes. This can be used to store extra metadata associated to a key/value pair.
 
 Consider the following example:
 
@@ -170,7 +168,7 @@ Consider the following example:
 | Color   | Yellow            	| 2009 survey       	|
 | IUCN ID | 161899            	|                   	|
 
-If the "Source" column is selected as notes column, this table is transformed to:
+If the “Source” column is selected as the notes column, this table is transformed to:
 
 | Name              	| Color	| IUCN ID | Source: Name | Source: Color    	|
 |-----------------------|----------|---------|---------------|-----------------------|
@@ -179,33 +177,9 @@ If the "Source" column is selected as notes column, this table is transformed to
 
 Notes columns can therefore be used to preserve provenance or other context about a particular key/value pair.
 
-### Extra columns
-
-If the table contains extra columns, which are not used as key, value or notes columns, they can be preserved by the operation. For this to work, they must have the same value in all old rows corresponding to a new row.
-
-Consider for instance the following table, where the "Field" and "Data" columns are used as key and value columns respectively, and the "Wikidata ID" column is not selected:
-
-| Field   | Data              	| Wikidata ID |
-|---------|-----------------------|-------------|
-| Name	| Galanthus nivalis 	| Q109995 	|
-| Color   | White             	| Q109995 	|
-| IUCN ID | 162168            	| Q109995 	|
-| Name	| Narcissus cyclamineus | Q1727024	|
-| Color   | Yellow            	| Q1727024	|
-| IUCN ID | 161899            	| Q1727024	|
-
-This will be transformed to
-
-| Wikidata ID | Name              	| Color	| IUCN ID |
-|-------------|-----------------------|----------|---------|
-| Q109995 	| Galanthus nivalis 	| White	| 162168  |
-| Q1727024	| Narcissus cyclamineus | Yellow   | 161899  |
-
-If extra columns do not contain identical values for all old rows spanning an entry, this can be fixed beforehand by using the [fill down operation](cellediting#fill-down).
-
 ### Row order
 
-In the absence of extra columns, it is important to note that the order in which the key/value pairs appear matters. Specifically, the operation will use the first key it encounters as the delimiter for entries: every time it encounters this key again, it will produce a new row and add the following other key/value pairs to that row.
+The order in which the key/value pairs appear matters. The Columnize operation will use the first key it encounters as the delimiter for entries: every time it encounters this key again, it will produce a new row, and add the following key/value pairs to that row.
 
 Consider for instance the following table:
 
@@ -219,7 +193,7 @@ Consider for instance the following table:
 | Color	| Yellow            	|
 | IUCN ID  | 161899            	|
 
-The occurrences of the "Name" value in the "Field" column define the boundaries of the entries. Because there is no other row between the "Crinum variabile" and the "Narcissus cyclamineus" rows, the "Color" and "IUCN ID" columns for the "Crinum variabile" entry will be empty:
+The occurrences of the “Name” value in the “Field” column define the boundaries of the entries. Because there is no other row between the “Crinum variabile” and the “Narcissus cyclamineus” rows, the “Color” and “IUCN ID” columns for the “Crinum variabile” entry will be empty:
 
 | Name              	| Color	| IUCN ID |
 |-----------------------|----------|---------|
@@ -227,8 +201,30 @@ The occurrences of the "Name" value in the "Field" column define the boundaries 
 | Crinum variabile  	|      	|     	|
 | Narcissus cyclamineus | Yellow   | 161899  |
 
-This sensitivity to order is removed if there are extra columns: in that case, the first extra column will serve as root identifier for the entries.
+This sensitivity to order is removed if there are extra columns: in that case, the first extra column will serve as the key for the new rows.
 
-### Behavior in records mode
+### Extra columns
 
-In records mode, this operation behaves just like in rows mode, except that any facets applied to it will be interpreted in records mode.
+If your dataset contains extra columns, that are not being used as the key, value, or notes columns, they can be preserved by the operation. For this to work, they must have the same value in all old rows corresponding to a new row. 
+
+In the following example, the “Field” and “Data” columns are used as key and value columns respectively, and the “Wikidata ID” column is not selected:
+
+| Field   | Data              	| Wikidata ID |
+|---------|-----------------------|-------------|
+| Name	| Galanthus nivalis 	| Q109995 	|
+| Color   | White             	| Q109995 	|
+| IUCN ID | 162168            	| Q109995 	|
+| Name	| Narcissus cyclamineus | Q1727024	|
+| Color   | Yellow            	| Q1727024	|
+| IUCN ID | 161899            	| Q1727024	|
+
+This will be transformed to:
+
+| Wikidata ID | Name              	| Color	| IUCN ID |
+|-------------|-----------------------|----------|---------|
+| Q109995 	| Galanthus nivalis 	| White	| 162168  |
+| Q1727024	| Narcissus cyclamineus | Yellow   | 161899  |
+
+This actually changes the operation: OpenRefine no longer looks for the first key (“Name”) but simply pivots all information based on the first extra column's values. Every old row with the same value gets transposed into one new row. If you have more than one extra column, they are pivoted as well but not used as the new key. 
+
+You can use [“Fill down”](cellediting#fill-down) to put identical values in the extra columns if you need to.
