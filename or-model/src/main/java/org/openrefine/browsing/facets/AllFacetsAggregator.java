@@ -43,7 +43,7 @@ public class AllFacetsAggregator implements RowAggregator<ImmutableList<FacetSta
         if (states.size() != _facetAggregators.size()) {
             throw new IllegalArgumentException("Incompatible list of facet states and facet aggregators");
         }
-        // Compute which whether each facet matches the row
+        // Compute whether each facet matches the row
         boolean[] matching = new boolean[_facetAggregators.size()];
         int numberOfMismatches = 0;
         for(int i = 0; i != _facetAggregators.size(); i++) {
@@ -52,11 +52,6 @@ public class AllFacetsAggregator implements RowAggregator<ImmutableList<FacetSta
             if (!matching[i]) {
                 numberOfMismatches++;
             }
-            // No need to keep evaluating facets if we already found
-            // two mismatching facets: this row will not count towards any statistics.
-            if(numberOfMismatches > 1) {
-                return states;
-            }
         }
         
         // Compute the new list of facet states
@@ -64,11 +59,7 @@ public class AllFacetsAggregator implements RowAggregator<ImmutableList<FacetSta
         Builder<FacetState> newStates = ImmutableList.<FacetState>builder();
         for(int i = 0; i != states.size(); i++) {
             // Rows are only seen by facets if they are selected by all other facets
-            if(allMatching || !matching[i]) {
-                newStates.add(incrementHelper(_facetAggregators.get(i), states.get(i), rowId, row));
-            } else {
-                newStates.add(states.get(i));
-            }
+            newStates.add(incrementHelper(_facetAggregators.get(i), states.get(i), rowId, row, allMatching || (numberOfMismatches == 1 && !matching[i])));
         }
         return newStates.build();
     }
@@ -103,7 +94,7 @@ public class AllFacetsAggregator implements RowAggregator<ImmutableList<FacetSta
             if(allMatching || !matching[i]) {
                 FacetState currentState = states.get(i);
                 for(int j = 0; j != rows.size(); j++) {
-                    currentState = incrementHelper(_facetAggregators.get(i), currentState, record.getStartRowId()+j, rows.get(j));
+                    currentState = incrementHelper(_facetAggregators.get(i), currentState, record.getStartRowId()+j, rows.get(j), true);
                 }
                 newStates.add(currentState);
             } else {
@@ -126,11 +117,13 @@ public class AllFacetsAggregator implements RowAggregator<ImmutableList<FacetSta
     }
     
     @SuppressWarnings("unchecked")
-    private static <T extends FacetState> T incrementHelper(FacetAggregator<T> aggregator, FacetState state, long rowId, Row row) {
+    private static <T extends FacetState> T incrementHelper(FacetAggregator<T> aggregator, FacetState state, long rowId, Row row, boolean insideView) {
         if (aggregator == null) {
             return (T) state;
-        } else {
+        } else if (insideView) {
             return aggregator.withRow((T) state, rowId, row);
+        } else {
+            return aggregator.withRowOutsideView((T) state, rowId, row);
         }
     }
     

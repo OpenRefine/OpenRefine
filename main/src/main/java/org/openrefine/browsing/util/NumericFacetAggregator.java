@@ -7,14 +7,10 @@ import org.openrefine.browsing.facets.FacetAggregator;
 import org.openrefine.browsing.filters.AllRowsRecordFilter;
 import org.openrefine.browsing.filters.AnyRowRecordFilter;
 import org.openrefine.browsing.filters.ExpressionNumberComparisonRowFilter;
-import org.openrefine.expr.Evaluable;
 import org.openrefine.expr.ExpressionUtils;
-import org.openrefine.model.ColumnModel;
 import org.openrefine.model.RecordFilter;
 import org.openrefine.model.Row;
 import org.openrefine.model.RowFilter;
-
-import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class NumericFacetAggregator implements FacetAggregator<NumericFacetState> {
 
@@ -59,13 +55,39 @@ public class NumericFacetAggregator implements FacetAggregator<NumericFacetState
 		_selected = selected;
 		_rowEvaluable = rowEvaluable;
 	}
-
+	
 	@Override
 	public NumericFacetState withRow(NumericFacetState state, long rowId, Row row) {
+		// Add the value to both the visible histogram and the global one.
 		Properties bindings = ExpressionUtils.createBindings();
         Object value = _rowEvaluable.eval(rowId, row, bindings);
         
-        NumericFacetState newState = state;
+        return new NumericFacetState(
+        		withRow(state.getAllRowsHistogram(), value),
+        		withRow(state.getRowsInViewHistogram(), value));
+	}
+	
+	@Override
+	public NumericFacetState withRowOutsideView(NumericFacetState state, long rowId, Row row) {
+		// Add the value to the global histogram only
+		Properties bindings = ExpressionUtils.createBindings();
+        Object value = _rowEvaluable.eval(rowId, row, bindings);
+        
+        return new NumericFacetState(
+        		withRow(state.getAllRowsHistogram(), value),
+        		state.getRowsInViewHistogram());
+    }
+
+	@Override
+	public NumericFacetState sum(NumericFacetState first, NumericFacetState second) {
+		// Sum the histograms pointwise
+		return new NumericFacetState(
+				sum(first.getAllRowsHistogram(), second.getAllRowsHistogram()),
+				sum(first.getRowsInViewHistogram(), second.getRowsInViewHistogram()));
+	}
+
+	public HistogramState withRow(HistogramState state, Object value) {
+        HistogramState newState = state;
         if (value != null && value.getClass().isArray()) {
         	Object[] a = (Object[]) value;
             for (Object v : a) {
@@ -82,7 +104,7 @@ public class NumericFacetAggregator implements FacetAggregator<NumericFacetState
 		return newState;
 	}
 	
-	protected NumericFacetState withValue(NumericFacetState state, Object value) {
+	protected HistogramState withValue(HistogramState state, Object value) {
 		if (ExpressionUtils.isError(value)) {
 			return state.addCounts(0, 1, 0);
         } else if (ExpressionUtils.isNonBlankData(value)) {
@@ -90,7 +112,7 @@ public class NumericFacetAggregator implements FacetAggregator<NumericFacetState
             	double doubleValue = ((Number) value).doubleValue();
             	if (!Double.isInfinite(doubleValue) && !Double.isNaN(doubleValue)) {
             		// Create a single facet state from the row
-            		NumericFacetState singleValueState = new NumericFacetState(1, 0, 0, 0, doubleValue);
+            		HistogramState singleValueState = new HistogramState(1, 0, 0, 0, doubleValue);
             		
             		return sum(state, singleValueState);
                 } else {
@@ -104,8 +126,7 @@ public class NumericFacetAggregator implements FacetAggregator<NumericFacetState
         }
 	}
 
-	@Override
-	public NumericFacetState sum(NumericFacetState first, NumericFacetState second) {
+	public HistogramState sum(HistogramState first, HistogramState second) {
 		if (first.getNumericCount() == 0) {
 			return second.addCounts(first.getNonNumericCount(), first.getErrorCount(), first.getBlankCount());
 		} else if (second.getNumericCount() == 0) {
@@ -116,7 +137,7 @@ public class NumericFacetAggregator implements FacetAggregator<NumericFacetState
 		if (first.getBins() == null && second.getBins() == null) {
 			// we have exactly one distinct value in each state
 			if (first.getSingleValue() == second.getSingleValue()) {
-				return new NumericFacetState(
+				return new HistogramState(
 						first.getNumericCount() + second.getNumericCount(),
 						first.getNonNumericCount() + second.getNonNumericCount(),
 						first.getErrorCount() + second.getErrorCount(),
@@ -136,8 +157,8 @@ public class NumericFacetAggregator implements FacetAggregator<NumericFacetState
 			logBinSize = (int) Math.max(first.getLogBinSize(), second.getLogBinSize());
 		}
 		
-		NumericFacetState rescaledFirst = first.rescale(logBinSize);
-		NumericFacetState rescaledSecond = second.rescale(logBinSize);
+		HistogramState rescaledFirst = first.rescale(logBinSize);
+		HistogramState rescaledSecond = second.rescale(logBinSize);
 		
 		// compute the pointwise sum of the states now that they have the same scale
 		long minBin = Math.min(rescaledFirst.getMinBin(), rescaledSecond.getMinBin());
@@ -170,7 +191,7 @@ public class NumericFacetAggregator implements FacetAggregator<NumericFacetState
 			newBins[i] = nbOccurrences;
 		}
 		
-		return new NumericFacetState(
+		return new HistogramState(
 				rescaledFirst.getNumericCount() + rescaledSecond.getNumericCount(),
 				rescaledFirst.getNonNumericCount() + rescaledSecond.getNonNumericCount(),
 				rescaledFirst.getErrorCount() + rescaledSecond.getErrorCount(),
@@ -204,5 +225,5 @@ public class NumericFacetAggregator implements FacetAggregator<NumericFacetState
         }
         return _invert ? new AllRowsRecordFilter(rowFilter) : new AnyRowRecordFilter(rowFilter);
 	}
-
+	
 }

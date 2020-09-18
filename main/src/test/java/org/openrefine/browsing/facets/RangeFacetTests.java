@@ -28,14 +28,16 @@ package org.openrefine.browsing.facets;
 
 import java.io.IOException;
 import java.io.Serializable;
+import java.util.Collections;
 
 import org.openrefine.RefineTest;
 import org.openrefine.browsing.Engine;
-import org.openrefine.browsing.facets.FacetConfigResolver;
-import org.openrefine.browsing.facets.RangeFacet;
+import org.openrefine.browsing.Engine.Mode;
+import org.openrefine.browsing.EngineConfig;
 import org.openrefine.browsing.facets.RangeFacet.RangeFacetConfig;
-import org.openrefine.model.Cell;
-import org.openrefine.model.Project;
+import org.openrefine.expr.MetaParser;
+import org.openrefine.grel.Parser;
+import org.openrefine.model.GridState;
 import org.openrefine.util.ParsingUtilities;
 import org.openrefine.util.TestUtils;
 import org.testng.annotations.BeforeTest;
@@ -58,6 +60,16 @@ public class RangeFacetTests extends RefineTest {
             "          \"columnName\": \"my column\"\n" + 
             "        }";
     
+    public static String configWithoutBoundsJson = "{"
+    		+ "\"type\":\"range\","
+    		+ "\"name\":\"my column\","
+    		+ "\"expression\":\"value\","
+    		+ "\"columnName\":\"my column\","
+    		+ "\"selectNumeric\":true,"
+    		+ "\"selectNonNumeric\":true,"
+    		+ "\"selectBlank\":true,"
+    		+ "\"selectError\":true}";
+    
     public static String facetJson = "{"
             + "\"name\":\"my column\","
             + "\"expression\":\"value\","
@@ -78,9 +90,44 @@ public class RangeFacetTests extends RefineTest {
             + "\"blankCount\":0,"
             + "\"errorCount\":0}";
     
+    public static String facetNoNumericJson = "{"
+    		+ "\"baseNumericCount\":0,"
+    		+ "\"baseNonNumericCount\":2,"
+    		+ "\"baseBlankCount\":0,"
+    		+ "\"baseErrorCount\":0,"
+    		+ "\"numericCount\":0,"
+    		+ "\"nonNumericCount\":2,"
+    		+ "\"blankCount\":0,"
+    		+ "\"errorCount\":0,"
+    		+ "\"name\":\"my column\","
+    		+ "\"error\":\"No numeric value present.\","
+    		+ "\"expression\":\"value\","
+    		+ "\"columnName\":\"my column\"}";
+    
+    public static String facetSingleNumericJson = "{"
+    		+ "\"baseNumericCount\":1,"
+    		+ "\"baseNonNumericCount\":1,"
+    		+ "\"baseBlankCount\":0,"
+    		+ "\"baseErrorCount\":0,"
+    		+ "\"numericCount\":1,"
+    		+ "\"nonNumericCount\":1,"
+    		+ "\"blankCount\":0,"
+    		+ "\"errorCount\":0,"
+    		+ "\"name\":\"my column\","
+    		+ "\"from\":12,"
+    		+ "\"baseBins\":[1],"
+    		+ "\"to\":13,"
+    		+ "\"max\":13,"
+    		+ "\"expression\":\"value\","
+    		+ "\"step\":1,"
+    		+ "\"bins\":[1],"
+    		+ "\"columnName\":\"my column\","
+    		+ "\"min\":12}";
+    
     @BeforeTest
     public void registerFacetConfig() {
     	FacetConfigResolver.registerFacetConfig("core", "range", RangeFacetConfig.class);
+    	MetaParser.registerLanguageParser("grel", "GREL", Parser.grelParser, "value");
     }
     
     @Test
@@ -91,19 +138,48 @@ public class RangeFacetTests extends RefineTest {
     
     @Test
     public void serializeRangeFacet() throws JsonParseException, JsonMappingException, IOException {
-        Project project = createProject(new String[] {"my column"},
-        		new Serializable[] {
-                89.2,
-                -45.9,
-                "blah",
-                0.4});
-        project.rows.get(0).cells.set(0, new Cell(89.2, null));
-        project.rows.get(1).cells.set(0, new Cell(-45.9, null));
-        project.rows.get(3).cells.set(0, new Cell(0.4, null));
-        Engine engine = new Engine(project);
+        GridState grid = createGrid(
+        		new String[] {"my column"},
+        		new Serializable[][] {
+                { 89.2 },
+                { -45.9 },
+                { "blah" },
+                { 0.4 }
+        });
+
         RangeFacetConfig config = ParsingUtilities.mapper.readValue(configJson, RangeFacetConfig.class);
-        RangeFacet facet = config.apply(project);
-        facet.computeChoices(project, engine.getAllFilteredRows());
-        TestUtils.isSerializedTo(facet, facetJson, ParsingUtilities.defaultWriter);
+        Engine engine = new Engine(grid, new EngineConfig(Collections.singletonList(config), Mode.RowBased));
+        
+        TestUtils.isSerializedTo(engine.getFacetResults().get(0), facetJson, ParsingUtilities.defaultWriter);
+    }
+    
+    @Test
+    public void testNoNumericValue() throws JsonParseException, JsonMappingException, IOException {
+    	GridState grid = createGrid(
+        		new String[] {"my column"},
+        		new Serializable[][] {
+                { "blah" },
+                { "hey" }
+        });
+    	
+    	RangeFacetConfig config = ParsingUtilities.mapper.readValue(configJson, RangeFacetConfig.class);
+    	Engine engine = new Engine(grid, new EngineConfig(Collections.singletonList(config), Mode.RowBased));
+    	
+    	TestUtils.isSerializedTo(engine.getFacetResults().get(0), facetNoNumericJson, ParsingUtilities.defaultWriter);
+    }
+    
+    @Test
+    public void testSingleNumericValue() throws JsonParseException, JsonMappingException, IOException {
+    	GridState grid = createGrid(
+        		new String[] {"my column"},
+        		new Serializable[][] {
+                { 12 },
+                { "hey" }
+        });
+    	
+    	RangeFacetConfig config = ParsingUtilities.mapper.readValue(configWithoutBoundsJson, RangeFacetConfig.class);
+    	Engine engine = new Engine(grid, new EngineConfig(Collections.singletonList(config), Mode.RowBased));
+    	
+    	TestUtils.isSerializedTo(engine.getFacetResults().get(0), facetSingleNumericJson, ParsingUtilities.defaultWriter);
     }
 }

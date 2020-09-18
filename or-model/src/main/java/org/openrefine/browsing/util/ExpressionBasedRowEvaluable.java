@@ -41,6 +41,8 @@ import org.openrefine.model.Cell;
 import org.openrefine.model.Row;
 
 public class ExpressionBasedRowEvaluable implements RowEvaluable {
+
+    private static final long serialVersionUID = -5124242947059242993L;
     final protected String         _columnName;
     final protected int            _cellIndex;
     final protected Evaluable      _eval;

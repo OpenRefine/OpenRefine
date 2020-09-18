@@ -193,13 +193,6 @@ public class ListFacet implements Facet {
     protected Evaluable  _eval;
     protected String     _errorMessage;
     
-    /*
-     * Computed results
-     */
-    protected List<NominalFacetChoice> _choices = new LinkedList<NominalFacetChoice>();
-    protected int _blankCount;
-    protected int _errorCount;
-    
     public ListFacet(ListFacetConfig config, ColumnModel model) {
     	_config = config;
     	_columnModel = model;
