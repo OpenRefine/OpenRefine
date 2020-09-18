@@ -749,7 +749,7 @@ public class WikitextImporter extends TabularImportingParserBase {
                 // TODO this does not seem to do anything - maybe we need to pass it to OpenRefine in some other way?
             }
 
-            TabularImportingParserBase.readTable(project, metadata, job, dataReader, fileSource, limit, options, exceptions);
+            TabularImportingParserBase.readTable(project, job, dataReader, limit, options, exceptions);
             
             // Add reconciliation statistics
             if (dataReader.columnReconciled != null) {

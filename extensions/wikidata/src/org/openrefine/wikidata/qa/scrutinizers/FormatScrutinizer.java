@@ -49,8 +49,8 @@ import java.util.regex.Pattern;
 public class FormatScrutinizer extends SnakScrutinizer {
 
     public static final String type = "add-statements-with-invalid-format";
-    public static String FORMAT_CONSTRAINT_QID = "Q21502404";
-    public static String FORMAT_REGEX_PID = "P1793";
+    public String formatConstraintQid;
+    public String formatRegexPid;
 
     private Map<PropertyIdValue, Set<Pattern>> _patterns;
 
@@ -60,7 +60,7 @@ public class FormatScrutinizer extends SnakScrutinizer {
         FormatConstraint(Statement statement) {
             List<SnakGroup> constraint = statement.getClaim().getQualifiers();
             if (constraint != null) {
-                List<Value> regexes = findValues(constraint, FORMAT_REGEX_PID);
+                List<Value> regexes = findValues(constraint, formatRegexPid);
                 if (!regexes.isEmpty()) {
                     regularExpressionFormat = ((StringValue) regexes.get(0)).getString();
                 }
@@ -69,6 +69,13 @@ public class FormatScrutinizer extends SnakScrutinizer {
     }
     public FormatScrutinizer() {
         _patterns = new HashMap<>();
+    }
+
+    @Override
+    public boolean prepareDependencies() {
+        formatConstraintQid = getConstraintsRelatedId("format_constraint_qid");
+        formatRegexPid = getConstraintsRelatedId("format_as_a_regular_expression_pid");
+        return _fetcher != null && formatConstraintQid != null && formatRegexPid != null;
     }
 
     /**
@@ -83,7 +90,7 @@ public class FormatScrutinizer extends SnakScrutinizer {
         if (_patterns.containsKey(pid)) {
             return _patterns.get(pid);
         } else {
-            List<Statement> statementList = _fetcher.getConstraintsByType(pid, FORMAT_CONSTRAINT_QID);
+            List<Statement> statementList = _fetcher.getConstraintsByType(pid, formatConstraintQid);
             Set<Pattern> patterns = new HashSet<>();
             for (Statement statement: statementList) {
                 FormatConstraint constraint = new FormatConstraint(statement);

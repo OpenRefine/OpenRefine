@@ -371,12 +371,24 @@ public class RefineServlet extends Butterfly {
         return klass;
     }
     
+    /**
+     * @deprecated extensions relying on HttpURLConnection should rather
+     * migrate to a more high-level and mature HTTP client.
+     * Use {@link RefineServlet.getUserAgent()} instead.
+     */
+    @Deprecated
     static public void setUserAgent(URLConnection urlConnection) {
         if (urlConnection instanceof HttpURLConnection) {
             setUserAgent((HttpURLConnection) urlConnection);
         }
     }
     
+    /**
+     * @deprecated extensions relying on HttpURLConnection should rather
+     * migrate to a more high-level and mature HTTP client.
+     * Use {@link RefineServlet.getUserAgent()} instead.
+     */
+    @Deprecated
     static public void setUserAgent(HttpURLConnection httpConnection) {
         httpConnection.addRequestProperty("User-Agent", getUserAgent());
     }

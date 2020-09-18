@@ -42,9 +42,10 @@ import java.util.List;
 
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
-import static org.openrefine.wikidata.qa.scrutinizers.DistinctValuesScrutinizer.DISTINCT_VALUES_CONSTRAINT_QID;
 
 public class DistinctValuesScrutinizerTest extends StatementScrutinizerTest {
+
+    public static String DISTINCT_VALUES_CONSTRAINT_QID = "Q21502410";
 
     public static PropertyIdValue propertyIdValue = Datamodel.makeWikidataPropertyIdValue("P163");
     public static Value value1 = Datamodel.makeWikidataItemIdValue("Q41673");

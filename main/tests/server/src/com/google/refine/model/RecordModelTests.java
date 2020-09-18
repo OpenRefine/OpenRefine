@@ -29,7 +29,6 @@ package com.google.refine.model;
 import org.testng.annotations.Test;
 
 import com.google.refine.RefineTest;
-import com.google.refine.model.Project;
 import com.google.refine.util.TestUtils;
 
 public class RecordModelTests extends RefineTest {

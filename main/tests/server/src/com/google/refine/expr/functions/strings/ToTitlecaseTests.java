@@ -26,16 +26,35 @@
  ******************************************************************************/
 package com.google.refine.expr.functions.strings;
 
+import org.testng.Assert;
 import org.testng.annotations.Test;
 
-import com.google.refine.expr.functions.strings.ToTitlecase;
+import com.google.refine.RefineTest;
+import com.google.refine.expr.EvalError;
 import com.google.refine.util.TestUtils;
 
-public class ToTitlecaseTests {
+public class ToTitlecaseTests extends RefineTest {
     @Test
     public void serializeToTitlecase() {
         String json = "{\"description\":\"Returns s converted to titlecase\",\"params\":\"string s\",\"returns\":\"string\"}";
         TestUtils.isSerializedTo(new ToTitlecase(), json);
     }
+
+    @Test
+    public void testToTitlecaseInvalidParams() {
+        Assert.assertTrue(invoke("toTitlecase") instanceof EvalError);
+        Assert.assertTrue(invoke("toTitlecase", "one","two","three") instanceof EvalError);
+    }
+
+    @Test
+    public void testToTitlecase() {
+        Assert.assertEquals((String)(invoke("toTitlecase", "one")),"One");
+        Assert.assertEquals((String)(invoke("toTitlecase", "ONE")),"One");
+        Assert.assertEquals((String)(invoke("toTitlecase", "one two three")),"One Two Three");
+        Assert.assertEquals((String)(invoke("toTitlecase", "C.R. SANDIDGE WINES, INC.")),"C.R. Sandidge Wines, Inc.");
+        Assert.assertEquals((String)(invoke("toTitlecase", "C.R. SANDIDGE WINES, INC.",",. ")),"C.R. Sandidge Wines, Inc.");
+        Assert.assertEquals((String)(invoke("toTitlecase", "one-two-three","-")),"One-Two-Three");
+    }
+
 }
 

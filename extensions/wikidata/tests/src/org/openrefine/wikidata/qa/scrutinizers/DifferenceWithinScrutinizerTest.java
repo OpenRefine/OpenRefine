@@ -22,12 +22,13 @@ import java.util.List;
 
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
-import static org.openrefine.wikidata.qa.scrutinizers.DifferenceWithinRangeScrutinizer.DIFFERENCE_WITHIN_RANGE_CONSTRAINT_PID;
-import static org.openrefine.wikidata.qa.scrutinizers.DifferenceWithinRangeScrutinizer.DIFFERENCE_WITHIN_RANGE_CONSTRAINT_QID;
-import static org.openrefine.wikidata.qa.scrutinizers.DifferenceWithinRangeScrutinizer.MAXIMUM_VALUE_PID;
-import static org.openrefine.wikidata.qa.scrutinizers.DifferenceWithinRangeScrutinizer.MINIMUM_VALUE_PID;
 
 public class DifferenceWithinScrutinizerTest extends ScrutinizerTest{
+
+    public static String DIFFERENCE_WITHIN_RANGE_CONSTRAINT_QID = "Q21510854";
+    public static String DIFFERENCE_WITHIN_RANGE_CONSTRAINT_PID = "P2306";
+    public static String MINIMUM_VALUE_PID = "P2313";
+    public static String MAXIMUM_VALUE_PID = "P2312";
 
     public static PropertyIdValue upperBoundPid = Datamodel.makeWikidataPropertyIdValue("P570");
     public static PropertyIdValue lowerBoundPid = Datamodel.makeWikidataPropertyIdValue("P569");

@@ -22,12 +22,13 @@ import java.util.List;
 
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
-import static org.openrefine.wikidata.qa.scrutinizers.QuantityScrutinizer.ALLOWED_UNITS_CONSTRAINT_PID;
-import static org.openrefine.wikidata.qa.scrutinizers.QuantityScrutinizer.ALLOWED_UNITS_CONSTRAINT_QID;
-import static org.openrefine.wikidata.qa.scrutinizers.QuantityScrutinizer.INTEGER_VALUED_CONSTRAINT_QID;
-import static org.openrefine.wikidata.qa.scrutinizers.QuantityScrutinizer.NO_BOUNDS_CONSTRAINT_QID;
 
 public class QuantityScrutinizerTest extends ValueScrutinizerTest{
+
+    public static final String NO_BOUNDS_CONSTRAINT_QID = "Q51723761";
+    public static final String INTEGER_VALUED_CONSTRAINT_QID = "Q52848401";
+    public static final String ALLOWED_UNITS_CONSTRAINT_QID = "Q21514353";
+    public static final String ALLOWED_UNITS_CONSTRAINT_PID = "P2305";
     
     private QuantityValue exactValue = Datamodel.makeQuantityValue(
             new BigDecimal("1.234"));

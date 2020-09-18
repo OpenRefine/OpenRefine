@@ -33,8 +33,6 @@ import org.testng.annotations.Test;
 
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
-import com.google.refine.preference.PreferenceValue;
-import com.google.refine.preference.TopList;
 import com.google.refine.util.ParsingUtilities;
 import com.google.refine.util.TestUtils;
 

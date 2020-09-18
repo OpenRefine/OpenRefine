@@ -72,11 +72,22 @@ public class TestUtils {
         dir.mkdir();
         return dir;
     }
-    
+
     /**
-     * Compare two JSON strings for equality.
+     * Assert that two JSON strings are equal as JSON objects.
+     *
+     * @deprecated for 3.5 by Tom Morris Use the method with the same parameter
+     *             order as the rest of the assert
+     *             methods{@link #assertEqualsAsJson(String, String)}
      */
     public static void assertEqualAsJson(String expected, String actual) {
+        assertEqualsAsJson(actual, expected);
+    }
+
+    /**
+     * Assert that two JSON strings are equal as JSON objects.
+     */
+    public static void assertEqualsAsJson(String actual, String expected) {
         try {
             JsonNode jsonA = mapper.readValue(expected, JsonNode.class);
             JsonNode jsonB = mapper.readValue(actual, JsonNode.class);
@@ -85,20 +96,20 @@ public class TestUtils {
                 fail("Objects above are not equal as JSON strings.");
             }
         } catch(Exception e) {
-            fail("\""+expected+"\" and \""+actual+"\" are not equal as JSON strings.");
+            fail("\""+actual+"\" and \""+expected+"\" are not equal as JSON strings.");
         }
     }
     
-    public static boolean equalAsJson(String expected, String actual)  {
+    public static boolean equalAsJson(String a, String b)  {
         try {
-            JsonNode jsonA = mapper.readValue(expected, JsonNode.class);
-            JsonNode jsonB = mapper.readValue(actual, JsonNode.class);
+            JsonNode jsonA = mapper.readValue(a, JsonNode.class);
+            JsonNode jsonB = mapper.readValue(b, JsonNode.class);
             return (jsonA == null && jsonB == null) || jsonA.equals(jsonB);
         } catch(Exception e) {
             return false;
         }
     }
-    
+
     /**
      * Checks that a serializable object is serialized to the target JSON string.
      * @throws IOException 
@@ -114,7 +125,7 @@ public class TestUtils {
                 writer = ParsingUtilities.defaultWriter;
             }
             String jacksonJson = writer.writeValueAsString(o);
-            assertEqualAsJson(targetJson, jacksonJson);
+            assertEqualsAsJson(jacksonJson, targetJson);
         } catch (JsonProcessingException e) {
             e.printStackTrace();
             fail("jackson serialization failed");

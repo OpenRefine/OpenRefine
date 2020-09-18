@@ -33,12 +33,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.model.recon;
 
-import java.io.DataOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.StringWriter;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -49,6 +45,18 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.http.Consts;
+import org.apache.http.NameValuePair;
+import org.apache.http.StatusLine;
+import org.apache.http.client.config.RequestConfig;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.http.impl.client.HttpClients;
+import org.apache.http.impl.client.LaxRedirectStrategy;
+import org.apache.http.message.BasicNameValuePair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -61,6 +69,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.google.refine.RefineServlet;
 import com.google.refine.expr.ExpressionUtils;
 import com.google.refine.model.Cell;
 import com.google.refine.model.Project;
@@ -153,6 +162,9 @@ public class StandardReconConfig extends ReconConfig {
     final public List<ColumnDetail> columnDetails;
     @JsonProperty("limit")
     final private int limit;
+
+    // initialized lazily
+    private CloseableHttpClient httpClient = null;
 
     @JsonCreator
     public StandardReconConfig(
@@ -428,6 +440,23 @@ public class StandardReconConfig extends ReconConfig {
         return job;
     }
     
+    private CloseableHttpClient getHttpClient() {
+        if (httpClient != null) {
+            return httpClient;
+        }
+        RequestConfig defaultRequestConfig = RequestConfig.custom()
+                .setConnectTimeout(30 * 1000)
+                .setSocketTimeout(60 * 1000)
+                .build();
+
+        HttpClientBuilder httpClientBuilder = HttpClients.custom()
+                .setUserAgent(RefineServlet.getUserAgent())
+                .setRedirectStrategy(new LaxRedirectStrategy())
+                .setDefaultRequestConfig(defaultRequestConfig);
+        httpClient = httpClientBuilder.build();
+        return httpClient;
+    }
+    
     @Override
     public List<Recon> batchRecon(List<ReconJob> jobs, long historyEntryID) {
         List<Recon> recons = new ArrayList<Recon>(jobs.size());
@@ -446,69 +475,48 @@ public class StandardReconConfig extends ReconConfig {
         stringWriter.write("}");
         String queriesString = stringWriter.toString();
         
-        try {
-            URL url = new URL(service);
-            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-            {
-                connection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
-                connection.setConnectTimeout(30000); // TODO parameterize
-                connection.setDoOutput(true);
-                
-                DataOutputStream dos = new DataOutputStream(connection.getOutputStream());
-                try {
-                    String body = "queries=" + ParsingUtilities.encode(queriesString);
-                    
-                    dos.writeBytes(body);
-                } finally {
-                    dos.flush();
-                    dos.close();
-                }
-                
-                connection.connect();
-            }
-            
-            if (connection.getResponseCode() >= 400) {
-                InputStream is = connection.getErrorStream();
-                String msg = is == null ? "" : ParsingUtilities.inputStreamToString(is);
+        HttpPost request = new HttpPost(service);
+        List<NameValuePair> body = Collections.singletonList(
+                new BasicNameValuePair("queries", queriesString));
+        request.setEntity(new UrlEncodedFormEntity(body, Consts.UTF_8));
+        
+        try (CloseableHttpResponse response = getHttpClient().execute(request)) {
+            StatusLine statusLine = response.getStatusLine();
+            if (statusLine.getStatusCode() >= 400) {
                 logger.error("Failed  - code: "
-                        + Integer.toString(connection.getResponseCode())
-                        + " message: " + msg);
+                        + Integer.toString(statusLine.getStatusCode())
+                        + " message: " + statusLine.getReasonPhrase());
             } else {
-                InputStream is = connection.getInputStream();
-                try {
-                    String s = ParsingUtilities.inputStreamToString(is);
-                    ObjectNode o = ParsingUtilities.evaluateJsonStringToObjectNode(s);
-                    if (o == null) { // utility method returns null instead of throwing
-                        logger.error("Failed to parse string as JSON: " + s);
-                    } else {
-                        for (int i = 0; i < jobs.size(); i++) {
-                            StandardReconJob job = (StandardReconJob) jobs.get(i);
-                            Recon recon = null;
+                String s = ParsingUtilities.inputStreamToString(response.getEntity().getContent());
+                ObjectNode o = ParsingUtilities.evaluateJsonStringToObjectNode(s);
+                if (o == null) { // utility method returns null instead of throwing
+                    logger.error("Failed to parse string as JSON: " + s);
+                } else {
+                    for (int i = 0; i < jobs.size(); i++) {
+                        StandardReconJob job = (StandardReconJob) jobs.get(i);
+                        Recon recon = null;
 
-                            String text = job.text;
-                            String key = "q" + i;
-                            if (o.has(key) && o.get(key) instanceof ObjectNode) {
-                                ObjectNode o2 = (ObjectNode) o.get(key);
-                                if (o2.has("result") && o2.get("result") instanceof ArrayNode) {
-                                    ArrayNode results = (ArrayNode) o2.get("result");
+                        String text = job.text;
+                        String key = "q" + i;
+                        if (o.has(key) && o.get(key) instanceof ObjectNode) {
+                            ObjectNode o2 = (ObjectNode) o.get(key);
+                            if (o2.has("result") && o2.get("result") instanceof ArrayNode) {
+                                ArrayNode results = (ArrayNode) o2.get("result");
 
-                                    recon = createReconServiceResults(text, results, historyEntryID);
-                                } else {
-                                    logger.warn("Service error for text: " + text + "\n  Job code: " + job.code + "\n  Response: " + o2.toString());
-                                }
+                                recon = createReconServiceResults(text, results, historyEntryID);
                             } else {
-                                // TODO: better error reporting
-                                logger.warn("Service error for text: " + text + "\n  Job code: " + job.code);
+                                logger.warn("Service error for text: " + text + "\n  Job code: " + job.code + "\n  Response: " + o2.toString());
                             }
-
-                            if (recon != null) {
-                                recon.service = service;
-                            }
-                            recons.add(recon);
+                        } else {
+                            // TODO: better error reporting
+                            logger.warn("Service error for text: " + text + "\n  Job code: " + job.code);
                         }
+
+                        if (recon != null) {
+                            recon.service = service;
+                        }
+                        recons.add(recon);
                     }
-                } finally {
-                    is.close();
                 }
             }
         } catch (Exception e) {

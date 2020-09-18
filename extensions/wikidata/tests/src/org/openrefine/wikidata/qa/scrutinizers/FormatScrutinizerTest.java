@@ -43,10 +43,11 @@ import java.util.List;
 
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
-import static org.openrefine.wikidata.qa.scrutinizers.FormatScrutinizer.FORMAT_CONSTRAINT_QID;
-import static org.openrefine.wikidata.qa.scrutinizers.FormatScrutinizer.FORMAT_REGEX_PID;
 
 public class FormatScrutinizerTest extends ScrutinizerTest {
+
+    public static final String FORMAT_CONSTRAINT_QID = "Q21502404";
+    public static final String FORMAT_REGEX_PID = "P1793";
 
     public static PropertyIdValue propertyIdValue = Datamodel.makeWikidataPropertyIdValue("P18");
     public static Value completeMatchValue = Datamodel.makeStringValue("image.png");

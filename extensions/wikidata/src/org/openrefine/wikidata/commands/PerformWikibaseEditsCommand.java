@@ -38,7 +38,9 @@ public class PerformWikibaseEditsCommand extends EngineDependentCommand {
     protected AbstractOperation createOperation(Project project, HttpServletRequest request, EngineConfig engineConfig)
             throws Exception {
         String summary = request.getParameter("summary");
-        return new PerformWikibaseEditsOperation(engineConfig, summary);
+        String maxlagStr = request.getParameter("maxlag");
+        int maxlag = maxlagStr == null ? 5 : Integer.parseInt(maxlagStr);
+        return new PerformWikibaseEditsOperation(engineConfig, summary, maxlag);
     }
 
 }

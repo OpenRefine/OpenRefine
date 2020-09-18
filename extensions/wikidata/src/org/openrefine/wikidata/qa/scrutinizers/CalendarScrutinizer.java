@@ -28,4 +28,8 @@ public class CalendarScrutinizer extends ValueScrutinizer {
 		}
 	}
 
+	@Override
+	public boolean prepareDependencies() {
+		return true;
+	}
 }

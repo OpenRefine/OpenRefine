@@ -56,7 +56,6 @@ import com.google.refine.model.Row;
 import com.google.refine.operations.EngineDependentOperation;
 import com.google.refine.operations.OnError;
 import com.google.refine.operations.OperationRegistry;
-import com.google.refine.operations.column.ColumnAdditionByFetchingURLsOperation;
 import com.google.refine.operations.column.ColumnAdditionByFetchingURLsOperation.HttpHeader;
 import com.google.refine.process.Process;
 import com.google.refine.process.ProcessManager;

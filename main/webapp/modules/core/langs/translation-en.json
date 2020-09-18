@@ -333,6 +333,7 @@
     "core-facets/big-dot": "Big Dot Size",
     "core-facets/export-plot": "export plot",
     "core-facets/numeric": "Numeric",
+    "core-facets/value-range": "$1 — $2",
     "core-project/open": "Open",
     "core-project/permalink": "Permalink",
     "core-project/export": "Export",

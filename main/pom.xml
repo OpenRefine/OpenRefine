@@ -23,6 +23,7 @@
          Jena 3.15.0 doesn't work. Versions through 3.14.0 appear to, but we'll be conservative
     -->
     <jena.version>3.9.0</jena.version>
+    <okhttp.version>4.9.0</okhttp.version>
   </properties>
 
   <scm>
@@ -182,7 +183,7 @@
     <dependency>
       <groupId>org.mozilla</groupId>
       <artifactId>rhino-runtime</artifactId>
-      <version>1.7.12</version>
+      <version>1.7.13</version>
     </dependency>
     <dependency>
       <groupId>com.fasterxml.jackson.core</groupId>
@@ -378,7 +379,7 @@
     <dependency>
       <groupId>com.squareup.okhttp3</groupId>
       <artifactId>mockwebserver</artifactId>
-      <version>4.8.1</version>
+      <version>${okhttp.version}</version>
       <scope>test</scope>
      </dependency>
     <dependency>

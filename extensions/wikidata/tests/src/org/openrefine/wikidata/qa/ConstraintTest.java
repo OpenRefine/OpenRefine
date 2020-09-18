@@ -23,9 +23,10 @@ import java.util.Set;
 
 import static org.openrefine.wikidata.qa.Constraint.CONSTRAINT_EXCEPTIONS;
 import static org.openrefine.wikidata.qa.Constraint.CONSTRAINT_STATUS;
-import static org.openrefine.wikidata.qa.scrutinizers.SingleValueScrutinizer.SINGLE_VALUE_CONSTRAINT_QID;
 
 public class ConstraintTest {
+
+    public static final String SINGLE_VALUE_CONSTRAINT_QID = "Q19474404";
 
     public static ItemIdValue itemIdValue = Datamodel.makeWikidataItemIdValue(SINGLE_VALUE_CONSTRAINT_QID);
     public static PropertyIdValue constraintException = Datamodel.makeWikidataPropertyIdValue(CONSTRAINT_EXCEPTIONS);

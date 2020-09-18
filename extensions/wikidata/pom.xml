@@ -175,7 +175,13 @@
       <artifactId>powermock-api-mockito2</artifactId>
       <version>${powermock.version}</version>
       <scope>test</scope>
-     </dependency> 
+     </dependency>
+    <dependency>
+      <groupId>com.squareup.okhttp3</groupId>
+      <artifactId>mockwebserver</artifactId>
+      <version>4.9.0</version>
+      <scope>test</scope>
+    </dependency>
   </dependencies>
 
 </project>

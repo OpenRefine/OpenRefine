@@ -15,19 +15,29 @@ import java.util.stream.Collectors;
 
 public class RestrictedValuesScrutinizer extends SnakScrutinizer {
     
-    public static String type = "forbidden-value";
-    public static String ALLOWED_VALUES_CONSTRAINT_QID = "Q21510859";
-    public static String ALLOWED_VALUES_CONSTRAINT_PID = "P2305";
+    public static final String type = "forbidden-value";
+    public String allowedValuesConstraintQid;
+    public String allowedValuesConstraintPid;
 
-    public static String DISALLOWED_VALUES_CONSTRAINT_QID = "Q52558054";
-    public static String DISALLOWED_VALUES_CONSTRAINT_PID = "P2305";
+    public String disallowedValuesConstraintQid;
+    public String disallowedValuesConstraintPid;
+
+    @Override
+    public boolean prepareDependencies() {
+        allowedValuesConstraintQid = getConstraintsRelatedId("one_of_constraint_qid");
+        allowedValuesConstraintPid = getConstraintsRelatedId("item_of_property_constraint_pid");
+        disallowedValuesConstraintQid = getConstraintsRelatedId("none_of_constraint_qid");
+        disallowedValuesConstraintPid = getConstraintsRelatedId("item_of_property_constraint_pid");
+        return _fetcher != null && allowedValuesConstraintQid != null && allowedValuesConstraintPid != null
+                && disallowedValuesConstraintQid != null && disallowedValuesConstraintPid != null;
+    }
 
     class AllowedValueConstraint {
         Set<Value> allowedValues;
         AllowedValueConstraint(Statement statement) {
             List<SnakGroup> specs = statement.getClaim().getQualifiers();
             if (specs != null) {
-                List<Value> properties = findValues(specs, ALLOWED_VALUES_CONSTRAINT_PID);
+                List<Value> properties = findValues(specs, allowedValuesConstraintPid);
                 allowedValues = properties.stream().collect(Collectors.toSet());
             }
         }
@@ -38,7 +48,7 @@ public class RestrictedValuesScrutinizer extends SnakScrutinizer {
         DisallowedValueConstraint(Statement statement) {
             List<SnakGroup> specs = statement.getClaim().getQualifiers();
             if (specs != null) {
-                List<Value> properties = findValues(specs, DISALLOWED_VALUES_CONSTRAINT_PID);
+                List<Value> properties = findValues(specs, disallowedValuesConstraintPid);
                 disallowedValues = properties.stream().collect(Collectors.toSet());
             }
         }
@@ -48,8 +58,8 @@ public class RestrictedValuesScrutinizer extends SnakScrutinizer {
     public void scrutinize(Snak snak, EntityIdValue entityId, boolean added) {
         PropertyIdValue pid = snak.getPropertyId();
         Value value = snak.getValue();
-        List<Statement> allowedValueConstraintDefinitions = _fetcher.getConstraintsByType(pid, ALLOWED_VALUES_CONSTRAINT_QID);
-        List<Statement> disallowedValueConstraintDefinitions = _fetcher.getConstraintsByType(pid, DISALLOWED_VALUES_CONSTRAINT_QID);
+        List<Statement> allowedValueConstraintDefinitions = _fetcher.getConstraintsByType(pid, allowedValuesConstraintQid);
+        List<Statement> disallowedValueConstraintDefinitions = _fetcher.getConstraintsByType(pid, disallowedValuesConstraintQid);
         Set<Value> allowedValues = null, disallowedValues = null;
         if (!allowedValueConstraintDefinitions.isEmpty()) {
             AllowedValueConstraint constraint = new AllowedValueConstraint(allowedValueConstraintDefinitions.get(0));

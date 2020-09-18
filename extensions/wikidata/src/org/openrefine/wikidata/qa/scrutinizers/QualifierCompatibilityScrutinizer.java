@@ -47,11 +47,12 @@ public class QualifierCompatibilityScrutinizer extends StatementScrutinizer {
 
     public static final String missingMandatoryQualifiersType = "missing-mandatory-qualifiers";
     public static final String disallowedQualifiersType = "disallowed-qualifiers";
-    public static String ALLOWED_QUALIFIERS_CONSTRAINT_QID = "Q21510851";
-    public static String ALLOWED_QUALIFIERS_CONSTRAINT_PID = "P2306";
 
-    public static String MANDATORY_QUALIFIERS_CONSTRAINT_QID = "Q21510856";
-    public static String MANDATORY_QUALIFIERS_CONSTRAINT_PID = "P2306";
+    public String allowedQualifiersConstraintQid;
+    public String allowedQualifiersConstraintPid;
+
+    public String mandatoryQualifiersConstraintQid;
+    public String mandatoryQualifiersConstraintPid;
 
     class AllowedQualifierConstraint {
         Set<PropertyIdValue> allowedProperties;
@@ -59,7 +60,7 @@ public class QualifierCompatibilityScrutinizer extends StatementScrutinizer {
             allowedProperties = new HashSet<>();
             List<SnakGroup> specs = statement.getClaim().getQualifiers();
             if (specs != null) {
-                List<Value> properties = findValues(specs, ALLOWED_QUALIFIERS_CONSTRAINT_PID);
+                List<Value> properties = findValues(specs, allowedQualifiersConstraintPid);
                 allowedProperties = properties.stream()
                         .filter(e -> e != null)
                         .map(e -> (PropertyIdValue) e)
@@ -75,7 +76,7 @@ public class QualifierCompatibilityScrutinizer extends StatementScrutinizer {
             mandatoryProperties = new HashSet<>();
             List<SnakGroup> specs = statement.getClaim().getQualifiers();
             if (specs != null) {
-                List<Value> properties = findValues(specs, MANDATORY_QUALIFIERS_CONSTRAINT_PID);
+                List<Value> properties = findValues(specs, mandatoryQualifiersConstraintPid);
                 mandatoryProperties = properties.stream()
                         .filter(e -> e != null)
                         .map(e -> (PropertyIdValue) e)
@@ -92,12 +93,22 @@ public class QualifierCompatibilityScrutinizer extends StatementScrutinizer {
         _mandatoryQualifiers = new HashMap<>();
     }
 
+    @Override
+    public boolean prepareDependencies() {
+        allowedQualifiersConstraintQid = getConstraintsRelatedId("allowed_qualifiers_constraint_qid");
+        allowedQualifiersConstraintPid = getConstraintsRelatedId("property_pid");
+        mandatoryQualifiersConstraintQid = getConstraintsRelatedId("mandatory_qualifier_constraint_qid");
+        mandatoryQualifiersConstraintPid = getConstraintsRelatedId("property_pid");
+        return _fetcher != null && allowedQualifiersConstraintQid != null && allowedQualifiersConstraintPid != null &&
+                mandatoryQualifiersConstraintQid != null && mandatoryQualifiersConstraintPid != null;
+    }
+
     protected boolean qualifierIsAllowed(PropertyIdValue statementProperty, PropertyIdValue qualifierProperty) {
         Set<PropertyIdValue> allowed = null;
         if (_allowedQualifiers.containsKey(statementProperty)) {
             allowed = _allowedQualifiers.get(statementProperty);
         } else {
-            List<Statement> statementList = _fetcher.getConstraintsByType(statementProperty, ALLOWED_QUALIFIERS_CONSTRAINT_QID);
+            List<Statement> statementList = _fetcher.getConstraintsByType(statementProperty, allowedQualifiersConstraintQid);
             if (!statementList.isEmpty()){
                 AllowedQualifierConstraint allowedQualifierConstraint = new AllowedQualifierConstraint(statementList.get(0));
                 allowed = allowedQualifierConstraint.allowedProperties;
@@ -112,7 +123,7 @@ public class QualifierCompatibilityScrutinizer extends StatementScrutinizer {
         if (_mandatoryQualifiers.containsKey(statementProperty)) {
             mandatory = _mandatoryQualifiers.get(statementProperty);
         } else {
-            List<Statement> statementList = _fetcher.getConstraintsByType(statementProperty, MANDATORY_QUALIFIERS_CONSTRAINT_QID);
+            List<Statement> statementList = _fetcher.getConstraintsByType(statementProperty, mandatoryQualifiersConstraintQid);
             if (!statementList.isEmpty()){
                 MandatoryQualifierConstraint mandatoryQualifierConstraint = new MandatoryQualifierConstraint(statementList.get(0));
                 mandatory = mandatoryQualifierConstraint.mandatoryProperties;

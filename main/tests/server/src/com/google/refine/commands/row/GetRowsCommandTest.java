@@ -42,7 +42,6 @@ import org.testng.annotations.Test;
 
 import com.google.refine.RefineTest;
 import com.google.refine.commands.Command;
-import com.google.refine.commands.row.GetRowsCommand;
 import com.google.refine.model.Project;
 import com.google.refine.util.TestUtils;
 
@@ -101,7 +100,7 @@ public class GetRowsCommandTest extends RefineTest {
         
         when(request.getParameter("engine")).thenReturn("{\"mode\":\"row-based\",\"facets\":[]}");
         command.doPost(request, response);
-        TestUtils.assertEqualAsJson(rowJson, writer.toString());
+        TestUtils.assertEqualsAsJson(writer.toString(), rowJson);
     }
     
     @Test
@@ -137,6 +136,6 @@ public class GetRowsCommandTest extends RefineTest {
         
         when(request.getParameter("engine")).thenReturn("{\"mode\":\"record-based\",\"facets\":[]}");
         command.doPost(request, response);
-        TestUtils.assertEqualAsJson(recordJson, writer.toString());
+        TestUtils.assertEqualsAsJson(writer.toString(), recordJson);
     }
 }

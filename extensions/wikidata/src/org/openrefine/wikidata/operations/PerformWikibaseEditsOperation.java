@@ -34,6 +34,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.commons.lang.Validate;
+import org.apache.commons.lang3.StringUtils;
 import org.openrefine.wikidata.commands.ConnectionManager;
 import org.openrefine.wikidata.editing.EditBatchProcessor;
 import org.openrefine.wikidata.editing.NewItemLibrary;
@@ -67,16 +68,27 @@ public class PerformWikibaseEditsOperation extends EngineDependentOperation {
     @JsonProperty("summary")
     private String summary;
 
+    @JsonProperty("maxlag")
+    private int maxlag;
+
     @JsonCreator
     public PerformWikibaseEditsOperation(
     		@JsonProperty("engineConfig")
     		EngineConfig engineConfig,
     		@JsonProperty("summary")
-    		String summary) {
+    		String summary,
+            @JsonProperty("maxlag")
+            Integer maxlag) {
         super(engineConfig);
         Validate.notNull(summary, "An edit summary must be provided.");
         Validate.notEmpty(summary, "An edit summary must be provided.");
         this.summary = summary;
+        if (maxlag == null) {
+            // For backward compatibility, if the maxlag parameter is not included
+            // in the serialized JSON text, set it to 5.
+            maxlag = 5;
+        }
+        this.maxlag = maxlag;
     }
 
     @Override
@@ -171,23 +183,28 @@ public class PerformWikibaseEditsOperation extends EngineDependentOperation {
 
             WebResourceFetcherImpl.setUserAgent("OpenRefine Wikidata extension");
             ConnectionManager manager = ConnectionManager.getInstance();
-            if (!manager.isLoggedIn()) {
+            String mediaWikiApiEndpoint = _schema.getMediaWikiApiEndpoint();
+            if (!manager.isLoggedIn(mediaWikiApiEndpoint)) {
                 return;
             }
-            ApiConnection connection = manager.getConnection();
+            ApiConnection connection = manager.getConnection(mediaWikiApiEndpoint);
 
-            WikibaseDataFetcher wbdf = new WikibaseDataFetcher(connection, _schema.getBaseIri());
-            WikibaseDataEditor wbde = new WikibaseDataEditor(connection, _schema.getBaseIri());
-            
-            // Generate batch token
-            long token = (new Random()).nextLong();
-            // The following replacement is a fix for: https://github.com/Wikidata/editgroups/issues/4
-            // Because commas and colons are used by Wikibase to separate the auto-generated summaries
-            // from the user-supplied ones, we replace these separators by similar unicode characters to
-            // make sure they can be told apart.
-            String summaryWithoutCommas = _summary.replaceAll(", ","ꓹ ").replaceAll(": ","։ ");
-            String summary = summaryWithoutCommas + String.format(" ([[:toollabs:editgroups/b/OR/%s|details]])",
-                    (Long.toHexString(token).substring(0, 11)));
+            WikibaseDataFetcher wbdf = new WikibaseDataFetcher(connection, _schema.getSiteIri());
+            WikibaseDataEditor wbde = new WikibaseDataEditor(connection, _schema.getSiteIri());
+
+            String summary;
+            if (StringUtils.isBlank(_schema.getEditGroupsURLSchema())) {
+                summary = _summary;
+            } else {
+                // Generate batch id
+                String batchId = Long.toHexString((new Random()).nextLong()).substring(0, 11);
+                // The following replacement is a fix for: https://github.com/Wikidata/editgroups/issues/4
+                // Because commas and colons are used by Wikibase to separate the auto-generated summaries
+                // from the user-supplied ones, we replace these separators by similar unicode characters to
+                // make sure they can be told apart.
+                String summaryWithoutCommas = _summary.replaceAll(", ","ꓹ ").replaceAll(": ","։ ");
+                summary = summaryWithoutCommas + " " + _schema.getEditGroupsURLSchema().replace("${batch_id}", batchId);
+            }
 
             // Evaluate the schema
             List<ItemUpdate> itemDocuments = _schema.evaluate(_project, _engine);
@@ -195,7 +212,7 @@ public class PerformWikibaseEditsOperation extends EngineDependentOperation {
             // Prepare the edits
             NewItemLibrary newItemLibrary = new NewItemLibrary();
             EditBatchProcessor processor = new EditBatchProcessor(wbdf, wbde, itemDocuments, newItemLibrary, summary,
-                    _tags, 50);
+                    maxlag, _tags, 50);
 
             // Perform edits
             logger.info("Performing edits");
