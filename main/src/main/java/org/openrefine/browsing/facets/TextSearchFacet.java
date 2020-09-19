@@ -33,57 +33,105 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package org.openrefine.browsing.facets;
 
+import java.io.Serializable;
+import java.util.Collections;
+import java.util.Map;
+import java.util.Properties;
+import java.util.Set;
 import java.util.regex.Pattern;
 
-import org.openrefine.browsing.FilteredRecords;
-import org.openrefine.browsing.FilteredRows;
-import org.openrefine.browsing.facets.Facet;
-import org.openrefine.browsing.facets.FacetConfig;
+import org.openrefine.browsing.filters.AllRowsRecordFilter;
 import org.openrefine.browsing.filters.AnyRowRecordFilter;
 import org.openrefine.browsing.filters.ExpressionStringComparisonRowFilter;
 import org.openrefine.expr.Evaluable;
-import org.openrefine.grel.ast.VariableExpr;
-import org.openrefine.model.ColumnMetadata;
 import org.openrefine.model.ColumnModel;
-import org.openrefine.model.Project;
 import org.openrefine.model.RecordFilter;
+import org.openrefine.model.Row;
 import org.openrefine.model.RowFilter;
 import org.openrefine.util.PatternSyntaxExceptionParser;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class TextSearchFacet implements Facet {
     
     /*
-     *  Configuration
+     *  Configuration.
+     *  Because the facet does not aggregate any state, the configuration
+     *  also serves as facet result.
      */
-    public static class TextSearchFacetConfig implements FacetConfig {  
-        @JsonProperty("name")
-        protected String     _name;
+    public static class TextSearchFacetConfig implements FacetConfig, FacetResult, Serializable {  
+    	
+		private static final long serialVersionUID = 5974503135359500944L;
+		@JsonProperty("name")
+        protected final String     _name;
         @JsonProperty("columnName")
-        protected String     _columnName;
+        protected final String     _columnName;
         @JsonProperty("query")
-        protected String     _query = null;
+        protected final String     _query;
         @JsonProperty("mode")
-        protected String     _mode;
+        protected final String     _mode;
         @JsonProperty("caseSensitive")
-        protected boolean    _caseSensitive;
+        protected final boolean    _caseSensitive;
         @JsonProperty("invert")
-        protected boolean    _invert;
+        protected final boolean    _invert;
+        
+        @JsonCreator
+        public TextSearchFacetConfig(
+        		@JsonProperty("name")
+        		String name,
+        		@JsonProperty("columnName")
+        		String columnName,
+        		@JsonProperty("query")
+        		String query,
+        		@JsonProperty("mode")
+        		String mode,
+        		@JsonProperty("caseSensitive")
+        		boolean caseSensitive,
+        		@JsonProperty("invert")
+        		boolean invert) {
+        	_name = name;
+        	_columnName = columnName;
+        	_query = query;
+        	_mode = mode;
+        	_caseSensitive = caseSensitive;
+        	_invert = invert;
+        }
         
         @Override
         public TextSearchFacet apply(ColumnModel columnModel) {
-            TextSearchFacet facet = new TextSearchFacet();
-            facet.initializeFromConfig(this, columnModel);
-            return facet;
+        	int cellIndex = columnModel.getColumnIndexByName(_columnName);
+            return new TextSearchFacet(this, cellIndex);
         }
         
         @Override
         public String getJsonType() {
             return "core/text";
         }
+
+		@Override
+		public Set<String> getColumnDependencies() {
+			return Collections.singleton(_name);
+		}
+
+		@Override
+		public TextSearchFacetConfig renameColumnDependencies(Map<String, String> substitutions) {
+			return new TextSearchFacetConfig(
+					_name,
+					substitutions.getOrDefault(_columnName, _columnName),
+					_query,
+					_mode,
+					_caseSensitive,
+					_invert);
+		}
+
+		@Override
+		public boolean isNeutral() {
+			return _query == null || _query.length() == 0;
+		}
     }
-    TextSearchFacetConfig _config = new TextSearchFacetConfig();
+    
+    protected TextSearchFacetConfig _config;
     
     /*
      *  Derived configuration
@@ -92,7 +140,25 @@ public class TextSearchFacet implements Facet {
     protected Pattern    _pattern;
     protected String     _query; // normalized version of the query from the config
     
-    public TextSearchFacet() {
+    public TextSearchFacet(TextSearchFacetConfig config, int cellIndex) {
+    	_config = config;
+    	_cellIndex = cellIndex;
+    	
+    	_query = _config._query;
+        if (_query != null) {
+            if ("regex".equals(_config._mode)) {
+                try {
+                    _pattern = Pattern.compile(
+                            _query, 
+                            _config._caseSensitive ? 0 : Pattern.CASE_INSENSITIVE);
+                } catch (java.util.regex.PatternSyntaxException e) {
+                    PatternSyntaxExceptionParser err = new PatternSyntaxExceptionParser(e);
+                    throw new IllegalArgumentException(err.getUserMessage());
+                }
+            } else if (!_config._caseSensitive) {
+                _query = _query.toLowerCase();
+            }
+        }
     }
     
     @JsonProperty("name")
@@ -125,70 +191,122 @@ public class TextSearchFacet implements Facet {
         return _config._invert;
     }
 
-    public void initializeFromConfig(TextSearchFacetConfig config, Project project) {
-        _config = config;
-        
-        ColumnMetadata column = project.columnModel.getColumnByName(_config._columnName);
-        _cellIndex = column != null ? column.getCellIndex() : -1;
-        
-        _query = _config._query;
-        if (_query != null) {
-            if ("regex".equals(_config._mode)) {
-                try {
-                    _pattern = Pattern.compile(
-                            _query, 
-                            _config._caseSensitive ? 0 : Pattern.CASE_INSENSITIVE);
-                } catch (java.util.regex.PatternSyntaxException e) {
-                    PatternSyntaxExceptionParser err = new PatternSyntaxExceptionParser(e);
-                    throw new IllegalArgumentException(err.getUserMessage());
-                }
-            } else if (!_config._caseSensitive) {
-                _query = _query.toLowerCase();
-            }
-        }
+	@Override
+	public FacetConfig getConfig() {
+		return _config;
+	}
 
-    }
+	@Override
+	public FacetState getInitialFacetState() {
+		return new TextSearchFacetState();
+	}
 
-    @Override
-    public RowFilter getRowFilter(ColumnModel columnModel) {
-        if (_query == null || _query.length() == 0 || _cellIndex < 0) {
-            return null;
-        } else if ("regex".equals(_config._mode) && _pattern == null) {
-            return null;
-        }
-        
-        Evaluable eval = new VariableExpr("value");
-        
-        if ("regex".equals(_config._mode)) {
-            return new ExpressionStringComparisonRowFilter(eval, _config._invert, _config._columnName, _cellIndex) {
-                @Override
-                protected boolean checkValue(String s) {
-                    return _pattern.matcher(s).find();
-                };
-            };
-        } else {
-            return new ExpressionStringComparisonRowFilter(eval, _config._invert, _config._columnName, _cellIndex) {
-                @Override
-                protected boolean checkValue(String s) {
-                    return (_config._caseSensitive ? s : s.toLowerCase()).contains(_query);
-                };
-            };
-        }        
-    }
+	@Override
+	public FacetAggregator<?> getAggregator() {
+		return new TextSearchAggregator(_pattern, _cellIndex, _config);
+	}
 
-    @Override
-    public RecordFilter getRecordFilter(ColumnModel columnModel) {
-        RowFilter rowFilter = getRowFilter(columnModel);
-        return rowFilter == null ? null : new AnyRowRecordFilter(rowFilter);
-    }
+	@Override
+	public FacetResult getFacetResult(FacetState state) {
+		return _config;
+	}
+	
+	public static class TextSearchFacetState implements FacetState {
 
-    @Override
-    public void computeChoices(Project project, FilteredRows filteredRows) {
-        // nothing to do
-    }
+		private static final long serialVersionUID = 1L;
+		// No state to be kept
+	}
+	
+	public static class TextSearchAggregator implements FacetAggregator<TextSearchFacetState> {
+		
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 1L;
+		private Pattern _pattern;
+		private int     _cellIndex;
+		private TextSearchFacetConfig _config;
+		
+		public TextSearchAggregator(Pattern pattern, int cellIndex, TextSearchFacetConfig config) {
+			_pattern = pattern;
+			_cellIndex = cellIndex;
+			_config = config;
+		}
 
-    @Override
-    public void computeChoices(Project project, FilteredRecords filteredRecords) {
-        // nothing to do
-    }
+		@Override
+		public TextSearchFacetState withRow(TextSearchFacetState state, long rowId, Row row) {
+			return state;
+		}
+
+		@Override
+		public TextSearchFacetState sum(TextSearchFacetState first, TextSearchFacetState second) {
+			return first;
+		}
+
+		@Override
+		public RowFilter getRowFilter() {
+			if (_config.isNeutral() || _cellIndex < 0) {
+	            return null;
+	        } else if ("regex".equals(_config._mode) && _pattern == null) {
+	            return null;
+	        }
+	        
+	        Evaluable eval = new Evaluable() {
+	        	
+				private static final long serialVersionUID = 1L;
+
+				@Override
+				public Object evaluate(Properties bindings) {
+					return bindings.get("value");
+				}
+
+				@Override
+				public String getSource() {
+					return null;
+				}
+
+				@Override
+				public String getLanguagePrefix() {
+					return null;
+				}
+	        	
+	        };
+	        
+	        if ("regex".equals(_config._mode)) {
+	            return new ExpressionStringComparisonRowFilter(eval, _config._invert, _config._columnName, _cellIndex) {
+	                /**
+					 * 
+					 */
+					private static final long serialVersionUID = 1L;
+
+					@Override
+	                protected boolean checkValue(String s) {
+	                    return _pattern.matcher(s).find();
+	                };
+	            };
+	        } else {
+	            return new ExpressionStringComparisonRowFilter(eval, _config._invert, _config._columnName, _cellIndex) {
+	                /**
+					 * 
+					 */
+					private static final long serialVersionUID = 1L;
+
+					@Override
+	                protected boolean checkValue(String s) {
+	                    return (_config._caseSensitive ? s : s.toLowerCase()).contains(_config._query);
+	                };
+	            };
+	        }
+		}
+
+		@Override
+		public RecordFilter getRecordFilter() {
+			RowFilter rowFilter = getRowFilter();
+			if (rowFilter == null) {
+				return null;
+			}
+			return _config._invert ? new AllRowsRecordFilter(rowFilter) : new AnyRowRecordFilter(rowFilter);
+		}
+		
+	}
 }

@@ -35,13 +35,18 @@ package org.openrefine.browsing.facets;
 
 import java.io.IOException;
 import java.io.Serializable;
+import java.util.Collections;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import org.openrefine.RefineTest;
-import org.openrefine.browsing.facets.FacetConfigResolver;
-import org.openrefine.browsing.facets.TextSearchFacet;
+import org.openrefine.browsing.Engine;
+import org.openrefine.browsing.EngineConfig;
+import org.openrefine.browsing.Engine.Mode;
 import org.openrefine.browsing.facets.TextSearchFacet.TextSearchFacetConfig;
+import org.openrefine.model.GridState;
 import org.openrefine.model.ModelException;
-import org.openrefine.model.Project;
+import org.openrefine.model.Row;
 import org.openrefine.model.RowFilter;
 import org.openrefine.util.ParsingUtilities;
 import org.openrefine.util.TestUtils;
@@ -57,10 +62,11 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 
 public class TextSearchFacetTests extends RefineTest {
     // dependencies
-    private Project project;
-    private TextSearchFacetConfig textfilterconfig;
-    private TextSearchFacet textfilter;
-    private RowFilter rowfilter;
+    private GridState grid;
+    private List<Row> rows;
+    private TextSearchFacetConfig textFilterConfig;
+    private TextSearchFacet textFilter;
+    private RowFilter rowFilter;
     private String sensitiveConfigJson = "{\"type\":\"core/text\","
             + "\"name\":\"Value\","
             + "\"columnName\":\"Value\","
@@ -68,13 +74,6 @@ public class TextSearchFacetTests extends RefineTest {
             + "\"caseSensitive\":true,"
             + "\"invert\":false,"
             + "\"query\":\"A\"}";
-    
-    private String sensitiveFacetJson = "{\"name\":\"Value\","
-            + "\"columnName\":\"Value\","
-            + "\"query\":\"A\","
-            + "\"mode\":\"text\","
-            + "\"caseSensitive\":true,"
-            + "\"invert\":false}";
 
     @Override
     @BeforeTest
@@ -85,20 +84,21 @@ public class TextSearchFacetTests extends RefineTest {
     @BeforeMethod
     public void setUp() throws IOException, ModelException {
     	FacetConfigResolver.registerFacetConfig("core", "text", TextSearchFacetConfig.class);
-        project = createProject("TextSearchFacet",
+        grid = createGrid(
              new String[] {"Value"},
-             new Serializable [] {
-             "a",
-             "b",
-             "ab",
-             "Abc"});
+             new Serializable[][] {
+            	 {"a"},
+            	 {"b"},
+            	 {"ab"},
+            	 {"Abc"}});
+        rows = grid.collectRows().stream().map(ir -> ir.getRow()).collect(Collectors.toList());
     }
     
     private void configureFilter(String filter) throws JsonParseException, JsonMappingException, IOException {
         //Add the facet to the project and create a row filter
-        textfilterconfig = ParsingUtilities.mapper.readValue(filter, TextSearchFacetConfig.class);
-        textfilter = textfilterconfig.apply(project);
-        rowfilter = textfilter.getRowFilter(project);
+        textFilterConfig = ParsingUtilities.mapper.readValue(filter, TextSearchFacetConfig.class);
+        textFilter = textFilterConfig.apply(grid.getColumnModel());
+        rowFilter = textFilter.getAggregator().getRowFilter();
     }
     
     /**
@@ -125,10 +125,10 @@ public class TextSearchFacetTests extends RefineTest {
         configureFilter(filter);
 
         //Check each row in the project against the filter
-        Assert.assertEquals(rowfilter.filterRow(0, project.rows.get(0)),true);
-        Assert.assertEquals(rowfilter.filterRow(1, project.rows.get(1)),false);
-        Assert.assertEquals(rowfilter.filterRow(2, project.rows.get(2)),true);
-        Assert.assertEquals(rowfilter.filterRow(3, project.rows.get(3)),true);
+        Assert.assertEquals(rowFilter.filterRow(0, rows.get(0)),true);
+        Assert.assertEquals(rowFilter.filterRow(1, rows.get(1)),false);
+        Assert.assertEquals(rowFilter.filterRow(2, rows.get(2)),true);
+        Assert.assertEquals(rowFilter.filterRow(3, rows.get(3)),true);
     }
 
     @Test
@@ -151,10 +151,10 @@ public class TextSearchFacetTests extends RefineTest {
         configureFilter(filter);
 
         //Check each row in the project against the filter
-        Assert.assertEquals(rowfilter.filterRow(0, project.rows.get(0)),false);
-        Assert.assertEquals(rowfilter.filterRow(1, project.rows.get(1)),true);
-        Assert.assertEquals(rowfilter.filterRow(2, project.rows.get(2)),false);
-        Assert.assertEquals(rowfilter.filterRow(3, project.rows.get(3)),false);
+        Assert.assertEquals(rowFilter.filterRow(0, rows.get(0)),false);
+        Assert.assertEquals(rowFilter.filterRow(1, rows.get(1)),true);
+        Assert.assertEquals(rowFilter.filterRow(2, rows.get(2)),false);
+        Assert.assertEquals(rowFilter.filterRow(3, rows.get(3)),false);
     }
 
     @Test
@@ -177,10 +177,10 @@ public class TextSearchFacetTests extends RefineTest {
         configureFilter(filter);
 
         //Check each row in the project against the filter
-        Assert.assertEquals(rowfilter.filterRow(0, project.rows.get(0)),false);
-        Assert.assertEquals(rowfilter.filterRow(1, project.rows.get(1)),true);
-        Assert.assertEquals(rowfilter.filterRow(2, project.rows.get(2)),true);
-        Assert.assertEquals(rowfilter.filterRow(3, project.rows.get(3)),true);
+        Assert.assertEquals(rowFilter.filterRow(0, rows.get(0)),false);
+        Assert.assertEquals(rowFilter.filterRow(1, rows.get(1)),true);
+        Assert.assertEquals(rowFilter.filterRow(2, rows.get(2)),true);
+        Assert.assertEquals(rowFilter.filterRow(3, rows.get(3)),true);
     }
 
     @Test
@@ -191,10 +191,10 @@ public class TextSearchFacetTests extends RefineTest {
 
         //Check each row in the project against the filter
         //Expect to retrieve one row containing "Abc"
-        Assert.assertEquals(rowfilter.filterRow(0, project.rows.get(0)),false);
-        Assert.assertEquals(rowfilter.filterRow(1, project.rows.get(1)),false);
-        Assert.assertEquals(rowfilter.filterRow(2, project.rows.get(2)),false);
-        Assert.assertEquals(rowfilter.filterRow(3, project.rows.get(3)),true);
+        Assert.assertEquals(rowFilter.filterRow(0, rows.get(0)),false);
+        Assert.assertEquals(rowFilter.filterRow(1, rows.get(1)),false);
+        Assert.assertEquals(rowFilter.filterRow(2, rows.get(2)),false);
+        Assert.assertEquals(rowFilter.filterRow(3, rows.get(3)),true);
     }
     
     @Test
@@ -206,8 +206,9 @@ public class TextSearchFacetTests extends RefineTest {
     @Test
     public void serializeTextSearchFacet() throws JsonParseException, JsonMappingException, IOException {
         TextSearchFacetConfig config = ParsingUtilities.mapper.readValue(sensitiveConfigJson, TextSearchFacetConfig.class);
-        TextSearchFacet facet = config.apply(project);
-        TestUtils.isSerializedTo(facet, sensitiveFacetJson, ParsingUtilities.defaultWriter);
+        Engine engine = new Engine(grid, new EngineConfig(Collections.singletonList(config), Mode.RowBased));
+    	
+    	TestUtils.isSerializedTo(engine.getFacetResults().get(0), sensitiveConfigJson, ParsingUtilities.defaultWriter);
     }
 }
 
