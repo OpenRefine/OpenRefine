@@ -3,6 +3,15 @@ package org.openrefine.browsing.util;
 import java.io.Serializable;
 import java.util.Arrays;
 
+/**
+ * Stores a histogram of numerical values, used in range facets.
+ * The histogram is computed using a uniform subdivision of the
+ * interval in which the distribution spreads and the bin size is
+ * required to be an integer power of the bin base (10 by default).
+ * 
+ * @author Antonin Delpeuch
+ *
+ */
 public class HistogramState implements Serializable {
 	
 	private static final long serialVersionUID = -4736421579621615069L;
@@ -127,11 +136,9 @@ public class HistogramState implements Serializable {
 	 * @return
 	 */
 	public HistogramState rescale(int newLogBinSize) {
-		if (newLogBinSize < _logBinSize) {
-			throw new IllegalArgumentException("New bin size is smaller than the one currently used");
-		} else if (newLogBinSize == _logBinSize && _bins != null) {
+		if (newLogBinSize == _logBinSize && _bins != null || (_numericCount == 0 && _bins == null)) {
 			return this;
-		} else if (_bins == null) {
+		} else if (_bins == null && _numericCount > 0) {
 			// we have seen at most one value (possibly multiple times)
 			return new HistogramState(
 					_numericCount,
@@ -141,6 +148,8 @@ public class HistogramState implements Serializable {
 					_numericCount > 0 ? newLogBinSize : 0,
 					(long) Math.floor((double) _singleValue / Math.pow(_binBase, newLogBinSize)),
 					_numericCount > 0 ? new long[] { _numericCount } : null);
+		} else if (newLogBinSize < _logBinSize) {
+			throw new IllegalArgumentException("New bin size is smaller than the one currently used");
 		}
 		
 		// number of old bins in each new bin
@@ -174,6 +183,13 @@ public class HistogramState implements Serializable {
 				newBins);
 	}
 	
+	/**
+	 * Add counts outside the numeric range (non numeric, errors and blanks).
+	 * @param nonNumericCount
+	 * @param errorCount
+	 * @param blankCount
+	 * @return a new histogram state
+	 */
 	public HistogramState addCounts(long nonNumericCount, long errorCount, long blankCount) {
 		if (_bins == null) {
 			return new HistogramState(
@@ -192,6 +208,35 @@ public class HistogramState implements Serializable {
 					_minBin,
 					_bins);
 		}
+	}
+	
+	/**
+	 * Extend the bins to new bounds, filling the newly-created bins with zeroes.
+	 * 
+	 * @param newMinBin
+	 * @param newMaxBin
+	 * @return
+	 */
+	public HistogramState extend(long newMinBin, long newMaxBin) {
+		if (_bins == null) {
+			throw new IllegalStateException("Histogram must be rescaled before it can be extended");
+		} else if (newMinBin > _minBin || newMaxBin < getMaxBin()) {
+			throw new IllegalArgumentException("Supplied new bounds are within the current interval");
+		}
+		int newLength = (int)(newMaxBin - newMinBin);
+		long[] newBins = new long[newLength];
+		int offset = (int)(_minBin - newMinBin);
+		for (int i = 0; i != newLength; i++) {
+			newBins[i] = i >= offset  && i - offset < _bins.length ? _bins[i - offset] : 0L;
+		}
+		return new HistogramState(
+				_numericCount,
+				_nonNumericCount,
+				_errorCount,
+				_blankCount,
+				_logBinSize,
+				newMinBin,
+				newBins);
 	}
 	
 	// should only be useful for tests

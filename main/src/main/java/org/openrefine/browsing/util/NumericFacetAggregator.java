@@ -63,8 +63,8 @@ public class NumericFacetAggregator implements FacetAggregator<NumericFacetState
         Object value = _rowEvaluable.eval(rowId, row, bindings);
         
         return new NumericFacetState(
-        		withRow(state.getAllRowsHistogram(), value),
-        		withRow(state.getRowsInViewHistogram(), value));
+        		withRow(state.getGlobalHistogram(), value),
+        		withRow(state.getViewHistogram(), value));
 	}
 	
 	@Override
@@ -74,16 +74,16 @@ public class NumericFacetAggregator implements FacetAggregator<NumericFacetState
         Object value = _rowEvaluable.eval(rowId, row, bindings);
         
         return new NumericFacetState(
-        		withRow(state.getAllRowsHistogram(), value),
-        		state.getRowsInViewHistogram());
+        		withRow(state.getGlobalHistogram(), value),
+        		state.getViewHistogram());
     }
 
 	@Override
 	public NumericFacetState sum(NumericFacetState first, NumericFacetState second) {
 		// Sum the histograms pointwise
 		return new NumericFacetState(
-				sum(first.getAllRowsHistogram(), second.getAllRowsHistogram()),
-				sum(first.getRowsInViewHistogram(), second.getRowsInViewHistogram()));
+				sum(first.getGlobalHistogram(), second.getGlobalHistogram()),
+				sum(first.getViewHistogram(), second.getViewHistogram()));
 	}
 
 	public HistogramState withRow(HistogramState state, Object value) {
@@ -147,7 +147,7 @@ public class NumericFacetAggregator implements FacetAggregator<NumericFacetState
 				// determine the correct bin size to obtain at most the target number of bins between
 				// the two values
 				double distance = Math.max(first.getSingleValue(), second.getSingleValue()) - Math.min(first.getSingleValue(), second.getSingleValue());
-				logBinSize = (int) Math.ceil(Math.log10(distance) / (_binBaseLog10 * _maxBinCount));
+				logBinSize = (int) Math.ceil(Math.log10(distance / _maxBinCount) / _binBaseLog10);
 			}
 		} else if (first.getBins() == null) {
 			logBinSize = second.getLogBinSize();

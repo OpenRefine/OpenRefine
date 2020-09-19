@@ -28,12 +28,14 @@ package org.openrefine.browsing.facets;
 
 import java.io.IOException;
 import java.io.Serializable;
+import java.util.Arrays;
 import java.util.Collections;
 
 import org.openrefine.RefineTest;
 import org.openrefine.browsing.Engine;
 import org.openrefine.browsing.Engine.Mode;
 import org.openrefine.browsing.EngineConfig;
+import org.openrefine.browsing.facets.ListFacet.ListFacetConfig;
 import org.openrefine.browsing.facets.RangeFacet.RangeFacetConfig;
 import org.openrefine.expr.MetaParser;
 import org.openrefine.grel.Parser;
@@ -124,9 +126,62 @@ public class RangeFacetTests extends RefineTest {
     		+ "\"columnName\":\"my column\","
     		+ "\"min\":12}";
     
+    private static String facetTwoValuesJson = "{"
+    		+ "\"baseNumericCount\":2,"
+    		+ "\"baseNonNumericCount\":0,"
+    		+ "\"baseBlankCount\":0,"
+    		+ "\"baseErrorCount\":0,"
+    		+ "\"numericCount\":2,"
+    		+ "\"nonNumericCount\":0,"
+    		+ "\"blankCount\":0,"
+    		+ "\"errorCount\":0,"
+    		+ "\"name\":\"my column\","
+    		+ "\"from\":12,"
+    		+ "\"baseBins\":[1,0,0,0,0,0,0,0,0,0,0,0,1],"
+    		+ "\"to\":25,"
+    		+ "\"max\":25,"
+    		+ "\"expression\":\"value\","
+    		+ "\"bins\":[1,0,0,0,0,0,0,0,0,0,0,0,1],"
+    		+ "\"step\":1,"
+    		+ "\"columnName\":\"my column\","
+    		+ "\"min\":12}";
+    
+    private static String listFacetConfigJson = "{"
+    		+ "\"type\":\"list\","
+    		+ "\"name\":\"other column\","
+    		+ "\"columnName\":\"other column\","
+    		+ "\"expression\":\"value\","
+    		+ "\"omitBlank\":false,"
+    		+ "\"omitError\":false,"
+    		+ "\"selection\":[{\"v\":{\"v\":\"foo\",\"l\":\"foo\"}}],"
+    		+ "\"selectBlank\":false,"
+    		+ "\"selectError\":false,"
+    		+ "\"invert\":false}";
+    
+    private static String facetBinBaseJson = "{"
+    		+ "\"baseNumericCount\":2,"
+    		+ "\"baseNonNumericCount\":0,"
+    		+ "\"baseBlankCount\":0,"
+    		+ "\"baseErrorCount\":0,"
+    		+ "\"numericCount\":1,"
+    		+ "\"nonNumericCount\":0,"
+    		+ "\"blankCount\":0,"
+    		+ "\"errorCount\":0,"
+    		+ "\"name\":\"my column\","
+    		+ "\"from\":12,"
+    		+ "\"baseBins\":[1,0,0,0,0,0,0,0,0,0,0,0,1],"
+    		+ "\"to\":25,"
+    		+ "\"max\":25,"
+    		+ "\"expression\":\"value\","
+    		+ "\"bins\":[1,0,0,0,0,0,0,0,0,0,0,0,0],"
+    		+ "\"step\":1,"
+    		+ "\"columnName\":\"my column\","
+    		+ "\"min\":12}";
+    
     @BeforeTest
     public void registerFacetConfig() {
     	FacetConfigResolver.registerFacetConfig("core", "range", RangeFacetConfig.class);
+    	FacetConfigResolver.registerFacetConfig("core", "list", ListFacetConfig.class);
     	MetaParser.registerLanguageParser("grel", "GREL", Parser.grelParser, "value");
     }
     
@@ -181,5 +236,37 @@ public class RangeFacetTests extends RefineTest {
     	Engine engine = new Engine(grid, new EngineConfig(Collections.singletonList(config), Mode.RowBased));
     	
     	TestUtils.isSerializedTo(engine.getFacetResults().get(0), facetSingleNumericJson, ParsingUtilities.defaultWriter);
+    }
+    
+    @Test
+    public void testTwoValues() throws JsonParseException, JsonMappingException, IOException {
+    	GridState grid = createGrid(
+        		new String[] {"my column", "other column"},
+        		new Serializable[][] {
+                { 12, "foo" },
+                { 24, "bar" }
+        });
+    	
+    	RangeFacetConfig config = ParsingUtilities.mapper.readValue(configWithoutBoundsJson, RangeFacetConfig.class);
+    	Engine engine = new Engine(grid, new EngineConfig(Collections.singletonList(config), Mode.RowBased));
+    	
+    	TestUtils.isSerializedTo(engine.getFacetResults().get(0), facetTwoValuesJson, ParsingUtilities.defaultWriter);
+    }
+    
+    @Test
+    public void testOtherFacet() throws JsonParseException, JsonMappingException, IOException {
+    	GridState grid = createGrid(
+        		new String[] {"my column", "other column"},
+        		new Serializable[][] {
+                { 12, "foo" },
+                { 24, "bar" }
+        });
+    	
+    	RangeFacetConfig config = ParsingUtilities.mapper.readValue(configWithoutBoundsJson, RangeFacetConfig.class);
+    	ListFacetConfig configListFacet = ParsingUtilities.mapper.readValue(listFacetConfigJson, ListFacetConfig.class);
+    	
+    	Engine engine = new Engine(grid, new EngineConfig(Arrays.asList(config, configListFacet), Mode.RowBased));
+    	
+    	TestUtils.isSerializedTo(engine.getFacetResults().get(0), facetBinBaseJson, ParsingUtilities.defaultWriter);
     }
 }

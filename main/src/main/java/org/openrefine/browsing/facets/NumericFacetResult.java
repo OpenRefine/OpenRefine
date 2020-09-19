@@ -26,8 +26,8 @@ public class NumericFacetResult implements FacetResult {
     
     public NumericFacetResult(RangeFacetConfig config, NumericFacetState state) {
     	_config = config;
-    	_allRowsHistogram = state.getAllRowsHistogram();
-    	_rowsInViewHistogram = state.getRowsInViewHistogram();
+    	_allRowsHistogram = state.getGlobalHistogram();
+    	_rowsInViewHistogram = state.getViewHistogram();
     	_step = _allRowsHistogram.getBinSize();
     	_min = _allRowsHistogram.getMinBin() * _step;
     	_max = _allRowsHistogram.getMaxBin() * _step;

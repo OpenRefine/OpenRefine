@@ -45,14 +45,38 @@ public class HistogramStateTests {
 		Assert.assertEquals(rescaled.getBins(), new long[] { 7, 5 });
 	}
 	
+	@Test(expectedExceptions = IllegalArgumentException.class)
+	public void testExtendWrongBounds() {
+		multiValuesState.extend(0, 1);
+	}
+	
+	@Test(expectedExceptions = IllegalStateException.class)
+	public void testExtendSingleValueState() {
+		singleValueState.extend(234, 12034);
+	}
+	
+	@Test
+	public void testExtendSuccessfully() {
+		HistogramState extended = multiValuesState.extend(-5, 3);
+		
+		Assert.assertEquals(extended.getLogBinSize(), -1);
+		Assert.assertEquals(extended.getBlankCount(), multiValuesState.getBlankCount());
+		Assert.assertEquals(extended.getErrorCount(), multiValuesState.getErrorCount());
+		Assert.assertEquals(extended.getNumericCount(), multiValuesState.getNumericCount());
+		Assert.assertEquals(extended.getNonNumericCount(), multiValuesState.getNonNumericCount());
+		Assert.assertEquals(extended.getMinBin(), -5);
+		Assert.assertEquals(extended.getBins(), new long[] { 0, 0, 3, 4, 0, 0, 5, 0 });
+	}
+	
 	@Test
 	public void testEmptyState() {
 		Assert.assertNull(emptyState.getBins());
 		
-		// rescaling an empty facet state does not do anything
+		// rescaling an empty facet creates a single bin
 		HistogramState rescaled = emptyState.rescale(3);
 		
 		Assert.assertEquals(rescaled.getLogBinSize(), 0);
+		Assert.assertNotNull(rescaled.getBins());
 	}
 	
 	@Test

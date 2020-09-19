@@ -217,7 +217,7 @@ public class RangeFacet implements Facet {
 
 	@Override
 	public FacetResult getFacetResult(FacetState state) {
-		return new NumericFacetResult(_config, ((NumericFacetState) state).rescaleIfSingleValued(0));
+		return new NumericFacetResult(_config, ((NumericFacetState) state).normalizeForReporting(0));
 	}
 
     
