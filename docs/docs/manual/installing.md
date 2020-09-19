@@ -70,7 +70,7 @@ Take note of the [extensions](#installing-extensions) you have currently install
 
 ### Install or upgrade Java
 
-[Java Development Kit (JDK)](https://jdk.java.net/) is required to run OpenRefine and should be installed first. [OpenRefine installation packages for Mac and Windows come bundled with JDK]([https://openrefine.org/download.html](https://openrefine.org/download.html)), so you do not need to install it separately if you use those bundles. 
+[Java Development Kit (JDK)](https://jdk.java.net/) is required to run OpenRefine and should be installed first. [OpenRefine installation packages for Mac and Windows come bundled with JDK](https://openrefine.org/download.html), so you do not need to install it separately if you use those bundles. 
 
 There are JDK packages for Mac, Windows, and Linux. We recommend you install the latest “Ready for use” version: at the time of writing, this is [JDK 14.0.1](https://jdk.java.net/14/). 
 

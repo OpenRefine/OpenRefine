@@ -4,6 +4,9 @@ title: How to build, test and run
 sidebar_label: How to build, test and run 
 ---
 
+import useBaseUrl from '@docusaurus/useBaseUrl';
+
+
 You will need:
 * [OpenRefine source code](https://github.com/OpenRefine/OpenRefine)
 * [Java JDK](http://java.sun.com/javase/downloads/index.jsp)
@@ -87,16 +90,16 @@ git clone https://github.com/OpenRefine/OpenRefine.git
 
 In Eclipse, invoke the `Import...` command and select `Existing Maven Projects`. 
 
-![Screenshot of Import a Maven project option](../img/eclipse-import-maven-project-1.png)
+![Screenshot of Import a Maven project option](/img/eclipse-import-maven-project-1.png)
 
 Choose the root directory of your clone of the repository. You get to choose which modules of the project will be imported. You can safely leave out the `packaging` module which is only used to generate the Linux, Windows and MacOS distributions.
 
-![Screenshot of Select maven projects to import](../img/eclipse-import-maven-project-2.png)
+<img alt="Screenshot of Select maven projects to import" src={useBaseUrl('img/eclipse-import-maven-project-2.png')} />
 
 To run and debug OpenRefine from Eclipse, you will need to add an execution configuration on the `server` sub-project.
 Right click on the `server` subproject, click `Run as...` and `Run configurations...`. Just pick the root directory of the project and use `exec:java` as a Maven goal.
 
-![Screenshot of Add a run configuration with the exec:java goal](../img/eclipse-exec-config.png)
+![Screenshot of Add a run configuration with the exec:java goal](/img/eclipse-exec-config.png)
 
 This will add a run configuration that you can then use to run OpenRefine from Eclipse.
 
@@ -104,7 +107,7 @@ This will add a run configuration that you can then use to run OpenRefine from E
 
 You can run the server tests directly from Eclipse. To do that you need to have the TestNG launcher plugin installed, as well as the TestNG M2E plugin (for integration with Maven). If you don't have it, you can get it by [installing new software](https://help.eclipse.org/2020-03/index.jsp?topic=/org.eclipse.platform.doc.user/tasks/tasks-129.htm) from this update URL http://dl.bintray.com/testng-team/testng-eclipse-release/
 
-Once the TestNG launching plugin is installed in your Eclipse, right click on the source folder ![](main/tests/server/src), select `Run As` -> `TestNG Test`. This should open a new tab with the TestNG launcher running the OpenRefine tests.
+Once the TestNG launching plugin is installed in your Eclipse, right click on the source folder "main/tests/server/src", select `Run As` -> `TestNG Test`. This should open a new tab with the TestNG launcher running the OpenRefine tests.
 
 ### Test coverage in Eclipse
 
@@ -113,7 +116,7 @@ It is possible to analyze test coverage in Eclipse with the `EclEmma Java Code C
 ### Debug with Eclipse
 Here's an example of putting configuration in Eclipse for debugging, like putting values for the Google Data extension. Other type of configurations that can be set are memory, Wikidata login information and more. 
 
-![Screenshot of Eclipse debug configuration](../img/eclipse-debug-config.png)
+![Screenshot of Eclipse debug configuration](/img/eclipse-debug-config.png)
 
 ## Building, Testing and Running OpenRefine from IntelliJ idea
 
@@ -125,22 +128,22 @@ git clone https://github.com/OpenRefine/OpenRefine.git
 
 Then, open the IntelliJ idea and go to `file -> open` and select the location of the cloned repository.
 
-![Screenshot of Open option on the IntelliJ File menu](../img/intellij-setup-1.png)
+![Screenshot of Open option on the IntelliJ File menu](/img/intellij-setup-1.png)
 
 It will prompt you to add as a maven project as the source code contains a pom.xml file in it. Allow `auto-import` so that it can add it as a maven project. 
 If it doesn't prompt something like this then you can go on the right side of the IDE and click on maven then, click on `reimport all the maven projects` that will add all the dependencies and jar files required for the project.
 
-![Screenshot of Maven project controls in IntelliJ](../img/intellij-maven.png)
+![Screenshot of Maven project controls in IntelliJ](/img/intellij-maven.png)
 
 After this, you will be able to properly build, test, and run the OpenRefine project from the terminal. 
 But if you will go to any of the test folders and open some file it will show you some import errors because the project isn't yet set up at the module level.
 
 For removing those errors, and enjoying the features of the IDE like ctrl + click, etc you need to set up the project at the module level too. Open the different modules like `extensions/wikidata`, `main` as a project in the IDE. Then, right-click on the project folder and open the module settings.
 
-![Screenshot of open module settings menu in IntelliJ](../img/intellij-open-module-settings.png)
+![Screenshot of open module settings menu in IntelliJ](/img/intellij-open-module-settings.png)
 
 In the module settings, add the source folder and test source folders of that module. 
 
-![Screenshot of module settings in IntelliJ](../img/intellij-module-settings.png)
+![Screenshot of module settings in IntelliJ](/img/intellij-module-settings.png)
 
 Then, do the same thing for the main OpenRefine project and now you are good to go.

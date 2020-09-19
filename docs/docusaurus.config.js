@@ -13,7 +13,7 @@ module.exports = {
         alt: 'OpenRefine diamond logo',
         src: 'img/openrefine_logo.png',
       },
-      links: [
+      items: [
         {
           to: '/',
           activeBasePath: 'docs',
@@ -104,7 +104,6 @@ module.exports = {
           editUrl: 'https://github.com/OpenRefine/OpenRefine/edit/master/docs',
           // Equivalent to `docsUrl`.
           routeBasePath: '/',
-          homePageId: 'index',
           // Remark and Rehype plugins passed to MDX. Replaces `markdownOptions` and `markdownPlugins`.
           remarkPlugins: [],
           rehypePlugins: [],
