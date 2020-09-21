@@ -138,4 +138,4 @@ The CS&S, the Steering and Advisory comittees have experience applying and manag
 
 ### Other assets 
 
-CS&S owns and manage the domain openrefine.org 
+CS&S owns and manages the domain openrefine.org 
