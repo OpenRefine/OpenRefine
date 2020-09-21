@@ -58,7 +58,7 @@ The list is available here: https://github.com/orgs/OpenRefine/people.
 ### Release Manager
 The Release Manager is responsible to 
 * Coordinate with the community to select which issue and pull request are part of the release
-* Prepare and publish the release 
+* Prepare and coordinate publishing the release 
 
 The current Release Manager is Antonin Delpeuch
 
