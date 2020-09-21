@@ -121,7 +121,7 @@ In the event of any conflict of interest (a Committee Member, their family membe
 
 Since January 2020, OpenRefine is a member project of the Code For Science and Society (CS&S). 
 
-CS&S provides adminstrative and fiscal infrastructure to received and manage funds under CS&S Fiscal Sponsorship Agreement. CS&S is a USA based organization qualified as exempt from federal income tax under Section 501(c)(3) of the Internal Revenue Code (IRC) and classified as a public charity under IRC Sections 509(a)(1) and 170(b)(1)(A)(vi). 
+CS&S provides administrative and fiscal infrastructure to receive and manage funds under CS&S Fiscal Sponsorship Agreement. CS&S is a USA based organization qualified as exempt from federal income tax under Section 501(c)(3) of the Internal Revenue Code (IRC) and classified as a public charity under IRC Sections 509(a)(1) and 170(b)(1)(A)(vi). 
 
 ### Manage Funds 
 
