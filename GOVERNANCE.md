@@ -17,7 +17,7 @@ Users activities include (but are not limited to):
 - Informing developers of strengths and weaknesses from a new user perspective through the [user discussion list](https://groups.google.com/forum/?fromgroups#!forum/openrefine) or the [issue list](https://github.com/OpenRefine/OpenRefine/issues?state=open)
 - Providing moral support (a ‘thank you’ goes a long way)
 - Writing tutorials
-- Make financial contribution to OpenRefine //TO DO add link 
+- Making a financial contribution to OpenRefine //TO DO add link 
 
 How to become an OpenRefine user? [Download OpenRefine](http://openrefine.org/download.html) and start refining!
 
