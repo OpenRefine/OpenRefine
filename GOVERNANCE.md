@@ -92,7 +92,7 @@ Steering Committee are invited by the Advisory Committee
 ### Advisory Committee
 The Advisory Committee runs the adminstrative aspect of the project on a day to day basis with the support of Code for Science and Society (CS&S). Its member are bound by the  fiscal sponsorship agreement with Code for Science and Society. Meet once per month with Code for Science and Society. 
 
-It is composed of at least three members. No more than 49 percent of the members of the Advisory Committee may be paid by the projcet.
+It is composed of at least three members. No more than 49 percent of the members of the Advisory Committee may be paid by the project.
 
 Advisory Committee members: 
 * Represent OpenRefine with Code for Science and Society 
