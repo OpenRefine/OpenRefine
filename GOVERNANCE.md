@@ -99,7 +99,7 @@ Advisory Committee members:
 * Provide guidance and oversight of the Project’s staff and operations;
 * Approve budgets, and contracts
 * Vote to terminate contracts when necessary.
-* Participate to at least one call per quarter;
+* Participate in at least one call per quarter;
 * Help advocate for the Project;
 * Help the Project build connections and partnerships;
 * Are part of the Admin team for the project on Github
