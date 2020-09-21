@@ -125,7 +125,7 @@ CS&S provides administrative and fiscal infrastructure to receive and manage fun
 
 ### Manage Funds 
 
-While the vast majority of OpenRefine contributors are volunteers, we recognized that need to attract and retain contributors to either
+While the vast majority of OpenRefine contributors are volunteers, we recognize the need to attract and retain contributors to help:
 - perform time critical maintenance tasks for the project (for example release management, security update, pull request review and comments)
 - address issues that will not be naturally done by the community (for example documentation or working on large or long term projects)
 
