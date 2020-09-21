@@ -127,7 +127,7 @@ CS&S provides administrative and fiscal infrastructure to receive and manage fun
 
 While the vast majority of OpenRefine contributors are volunteers, we recognized that need to attract and retain contributors to either
 - perform time critical maintenance tasks for the project (for example release management, security update, pull request review and comments)
-- address issue that will not be naturally done by the communittee (for example documentation or on long terms project like OpenRefine 4.x)
+- address issues that will not be naturally done by the community (for example documentation or working on large or long term projects)
 
 CS&S currently manage the current funding sources: 
 - **Grants**: Funds are allocated based on the grants requierements. Grants help to secure resources to achieve long term goal or supports software maintenance, growth, development, and community engagement.
