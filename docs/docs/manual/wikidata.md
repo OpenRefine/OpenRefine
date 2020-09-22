@@ -155,7 +155,7 @@ Wikidata is unlike Wikipedia in that there are fewer editors supervising consist
 
 The best resource is the [Schema alignment page](https://www.wikidata.org/wiki/Wikidata:Tools/OpenRefine/Editing/Schema_alignment) on Wikidata.
 
-A [schema](https://en.wikipedia.org/wiki/Database_schema) is the plan for how to structure information in a database. In OpenRefine, the schema operates as a template for how edits should be applied. OpenRefine uses schemas to [transform your tabular data into Wikidata statements](https://www.wikidata.org/wiki/Special:MyLanguage/Wikidata:Tools/OpenRefine/Editing). With a schema, you can:
+A [schema](https://en.wikipedia.org/wiki/Database_schema) is the plan for how to structure information in a database. In OpenRefine, the schema operates as a template for how Wikidata edits should be applied: how to translate your tabular data into statements. With a schema, you can:
 *   preview the Wikidata edits and inspect them manually;
 *   analyze and fix any issues raised automatically by the tool;
 *   upload your changes to Wikidata by logging in with your own account;
@@ -173,6 +173,25 @@ OpenRefine presents you with an easy visual way to map out the relationships in 
 
 There is [a Wikidata tutorial on how OpenRefine handles Wikidata schema](https://www.wikidata.org/wiki/Wikidata:Tools/OpenRefine/Editing/Tutorials/Basic_editing).
 
+#### Editing terms with your schema
+
+You may wish to include edits to [terms](#terms-labels-descriptions-aliases-and-sitelinks) (labels, aliases, descriptions, or sitelinks) as well as establishing relationships between entities. 
+
+For example, you may wish to upload pseudonyms, pen names, maiden or married names for historical authors. You can do so by putting the preferred names in one column of your dataset and alternative names in another column. In the schema interface, add an item for the preferred values, then click "Add term" on the right-hand side of the screen. Select "Alias" from the dropdown, enter in "English" in the language field, and drop your alternative names column into the space. 
+
+Terms must always have a language selected. You cannot edit multiple languages at once, unless you drop a suitable column into the "language" field. For example, if you had translated publication titles, with data in the format
+
+|English title|Translated title|Translation language|
+|---|---|---|
+|Possession|Besessen|German|
+||Обладать|Russian|
+|Disgrace|Disgrâce|French|
+||Vergogna|Italian|
+|Wolf Hall|En la corte del lobo|Spanish|
+||ウルフ・ホール|Japanese|
+
+You could upload translated titles to "Label" with the language from "Translation language." You may wish to fetch the two-letter language code and use that instead for better language matches.
+
 ### Manage Wikidata account
 
 To edit Wikidata directly from OpenRefine, you must have a Wikidata account and log in with it in OpenRefine. OpenRefine can only upload edits with Wikidata user accounts that are "[autoconfirmed](https://www.wikidata.org/wiki/Wikidata:Autoconfirmed_users)" - that is, accounts that have more than 50 edits and have existed for longer than four days. 
@@ -186,7 +205,7 @@ For security reasons, you may not wish to use your usual account authorization w
 * Edit existing pages
 * Create, edit, and move pages
 
-It will then generate a username (in the form of `yourwikidatausername@yourbotname`) and password for you to use with OpenRefine.
+It will then generate a username (in the form of "yourwikidatausername@yourbotname") and password for you to use with OpenRefine.
 
 If your account or your bot is not properly authorized, OpenRefine will not display a warning or error when you try to upload your edits.
 
@@ -196,7 +215,7 @@ You may also wish to store your unencrypted username and password in OpenRefine,
 
 You can save time on repetitive processes by defining a schema on one project, then exporting it and importing for use on new datasets in the future. Or you and your colleagues can share a schema with each other to coordinate your work. 
 
-You can export a schema from a project using <span class="menuItems">Export</span> → <span class="menuItems">Wikidata schema</span>, or by using <span class="menuItems">Extensions</span> → <span class="menuItems">Export schema</span>. OpenRefine will generate a JSON file for you to save and share. You may experience issues with pop-up windows in your browser: consider allowing pop-ups for the OpenRefine URL (127.0.0.1) from now on.
+You can export a schema from a project using <span class="menuItems">Export</span> → <span class="menuItems">Wikidata schema</span>, or by using <span class="menuItems">Extensions</span> → <span class="menuItems">Export schema</span>. OpenRefine will generate a JSON file for you to save and share. You may experience issues with pop-up windows in your browser: consider allowing pop-ups for the OpenRefine URL (`127.0.0.1`) from now on.
 
 You can import a schema using <span class="menuItems">Extensions</span> → <span class="menuItems">Import schema</span>. You can upload a JSON file, or paste JSON statements directly into a field in the window. An imported schema will look for columns with the same names, and you will see an error message if your project doesn't contain matching columns.
 
