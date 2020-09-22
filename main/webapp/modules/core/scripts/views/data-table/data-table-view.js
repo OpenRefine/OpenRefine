@@ -472,13 +472,13 @@ DataTableView.prototype._renderDataTables = function(table, tableHeader) {
     if(!prevOperationSet) {
       if(self._downwardDirection) {
         if((positionNextSet.top >= 0 && positionNextSet.bottom <= window.innerHeight) || (positionLastElement.top < window.innerHeight && positionLastElement.top > 0)) {
-          self._onBottomTable(self._scrollTop, table, table.parentNode.parentNode, evt);
+          self._onBottomTable(table.parentNode.parentNode, evt);
           prevOperationSet = true;
         }
       }
       else if(!self._downwardDirection) {
         if(positionPrevSet.top >= 0 && positionPrevSet.bottom <= window.innerHeight || (positionFirstElement.bottom > 0 && positionFirstElement.bottom < window.innerHeight)) {
-          self._onTopTable(self._scrollTop, table, table.parentNode.parentNode, evt);
+          self._onTopTable(table.parentNode.parentNode, evt);
           prevOperationSet = true;
         }
       }
@@ -544,7 +544,7 @@ DataTableView.prototype._removeUpperRows = function(start) {
     if(this._pageSize > this._screenSize) {
       $('.data-table tbody tr').slice(1, Math.max(0, $('.data-table tbody tr').length - 2 * this._pageSize)).remove();
     } else {
-      this._pageStart = Math.max(0, this._totalSize - this._bigScreenSetSize);
+      this._pageStart = Math.max(this._pageStart, this._totalSize - this._bigScreenSetSize);
       var sliceIndex = $('.data-table tbody tr').length - this._bigScreenSetSize;
       $('.data-table tbody tr').slice(1, Math.max(0, sliceIndex)).remove();
     }
@@ -565,8 +565,6 @@ DataTableView.prototype._removeLowerRows = function(start) {
 };
 
 DataTableView.prototype._adjustNextSetClasses = function(start, top) {
-  var heightToAddBottom = Math.max(0, this._sizeRowsTotal - this._totalSize * this._sizeRowFirst);
-
   if(!top) {
     // Deletion of upper rows that are not visible anymore
     this._pageStart = start - this._pageSize;
@@ -578,6 +576,7 @@ DataTableView.prototype._adjustNextSetClasses = function(start, top) {
   }
 
   var heightToAddTop = (this._pageStart) * this._sizeRowFirst;
+  var heightToAddBottom = Math.max(0, this._sizeRowsTotal - this._totalSize * this._sizeRowFirst);
   this._addHeights(heightToAddTop, heightToAddBottom);
 };
 
@@ -615,13 +614,17 @@ DataTableView.prototype._showRows = function(start, onDone) {
   Refine.fetchRows(start, this._pageSize, function() {
     self.render();
 
+    while(self._totalSize < self._screenSize) {
+      self._showRowsBottom(start + self._pageSize, onDone);
+    }
+
     if (onDone) {
       onDone();
     }
   }, this._sorting);
 };
 
-DataTableView.prototype._showRowsBottom = function(table, start, onDone) {
+DataTableView.prototype._showRowsBottom = function(start, onDone) {
   var self = this;
 
   this._totalSize = start + this._pageSize;
@@ -638,7 +641,7 @@ DataTableView.prototype._showRowsBottom = function(table, start, onDone) {
   }, this._sorting);
 };
 
-DataTableView.prototype._showRowsTop = function(table, start, limit, onDone) {
+DataTableView.prototype._showRowsTop = function(start, limit, onDone) {
   var self = this;
 
   this._totalSize = start + 2 * this._pageSize;
@@ -666,6 +669,10 @@ DataTableView.prototype._showRowsSpeed = function(table, start, loadingImg, onDo
     loadRows(start);
     self._adjustNextSetClassesSpeed(start, table, loadingImg);
 
+    while(self._totalSize - self._pageStart < self._screenSize) {
+      self._showRowsBottom(start + self._pageSize, onDone);
+    }
+
     if (onDone) {
       onDone();
     }
@@ -678,17 +685,17 @@ DataTableView.prototype._onChangeGotoScrolling = function(scrollPosition, gotoPa
   this._showRowsSpeed(table, Math.floor(row), loadingImg);
 };
 
-DataTableView.prototype._onBottomTable = function(table, elmt, evt) {
+DataTableView.prototype._onBottomTable = function(elmt, evt) {
   if(this._totalSize < theProject.rowModel.filtered) {
-    this._showRowsBottom(table, this._totalSize);
+    this._showRowsBottom(this._totalSize);
   }
 };
 
-DataTableView.prototype._onTopTable = function(table, elmt, evt) {
+DataTableView.prototype._onTopTable = function(elmt, evt) {
   if(this._pageStart - this._pageSize >= 0) {
-    this._showRowsTop(table, this._pageStart - this._pageSize, this._pageSize);
+    this._showRowsTop(this._pageStart - this._pageSize, this._pageSize);
   } else if(this._pageStart) {
-    this._showRowsTop(table, 0, this._pageStart);
+    this._showRowsTop(0, this._pageStart);
   }
 };
 
