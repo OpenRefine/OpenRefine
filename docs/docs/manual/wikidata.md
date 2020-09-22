@@ -82,7 +82,7 @@ This is supported by the reconciliation interface, with a syntax inspired by [SP
 
 This additional information can allow OpenRefine to disambiguate namesakes, at least to the country level. "Cambridge, US" is still ambiguous, so there will be multiple items with a perfect matching score, but "Oxford, GB" successfully disambiguates one particular city from other "Oxfords." 
 
-The endpoint currently supports two property combinators: `/`, to concatenate two paths as above, and `|`, to compute the union of the values yielded by two paths. Concatenation `/` has precedence over disjunction `|`. The dot character `.` can be used to denote the empty path. For instance, the following property paths are equivalent:
+The endpoint currently supports two property combinators: /, to concatenate two paths as above, and |, to compute the union of the values yielded by two paths. Concatenation / has precedence over disjunction |. The dot character . can be used to denote the empty path. For instance, the following property paths are equivalent:
 *   P17|P749/P17
 *   P17|(P749/P17)
 *   (.|P749)/P17
@@ -93,9 +93,9 @@ They fetch the [country (P17)](https://www.wikidata.org/wiki/Property:P17) of an
 
 Entities on Wikidata have "terms:" labels, descriptions, aliases, and sitelinks. Each entity has human-readable preferred names (labels) in one or more languages. Each label comes with a description field, and a space for alternative labels in that language. Entities also can have a link to the related Wikipedia page in one or more langauges. 
 
-For example, [Q5](https://www.wikidata.org/wiki/Q5) has the English label "human" and the aliases "person" and "people," with a description including "common name of Homo sapiens;" it also has the Italian label "umano" and the alias "persona" with a description "specie a cui appartiene il genere umano." The English sitelink is "https://en.wikipedia.org/wiki/Human" but Italian Wikipedia has no equivalent article attached to Q5. Not every language will have values, but these terms can still be useful for reconciling. 
+For example, [Q5](https://www.wikidata.org/wiki/Q5) has the English label "human" and the aliases "person" and "people," with a description including "common name of Homo sapiens;" it also has the Italian label "umano" and the alias "persona" with a description "specie a cui appartiene il genere umano." The English sitelink is "https://en&#46;wikipedia.org/wiki/Human" but Italian Wikipedia has no equivalent article attached to Q5. Not every language will have values, but these terms can still be useful for reconciling. 
 
-After reconciliation, you can extend your data with these terms. You can fetch aliases for a given term, or labels in another languages, by using the <span class="menuItems">“Edit column” → “Add columns from reconciled values....”</span> operation. 
+After reconciliation, you can extend your data with these terms. You can fetch aliases for a given term, or labels in another languages, by using <span class="menuItems">Edit column</span> → <span class="menuItems">Add columns from reconciled values....</span>. 
 
 You can refer to a term in a specific language by manually entering in a three-letter code. The first letter is the term ("L" for label, "D" for description, "A" for aliases, "S" for sitelink) and the next two are the language code. For example:
 
@@ -104,7 +104,7 @@ You can refer to a term in a specific language by manually entering in a three-l
 *   `Apt` for Alias in Portuguese
 *   `Sde` for Sitelink in German
 
-Enter in the three-letter code manually in the <span class="menuItems">"Add Property"</span> field. You can manually enter as many term/language combinations as you require. 
+Enter in the three-letter code manually in the <span class="menuItems">Add Property</span> field. You can manually enter as many term/language combinations as you require. 
 
 No language fall-back is performed when retrieving the values.
 
@@ -121,7 +121,7 @@ Sometimes, we need a more specific matching on sub-parts of these values. It is 
 *   @year, @month, @day, @hour, @minute and @second: parts of a time value (integer). They are returned only if the precision of the Wikidata value is good enough to define them.
 *   @isodate: returns a date in the ISO format 1987-08-23 (string). A value is always returned.
 *   @iso: returns the date and time in the ISO format 1996-03-17T04:15:00+00:00. A value is always returned. 
-*   @urlscheme ("https"), @netloc ("www.wikidata.org") and @urlpath ("/wiki/Q42") can be used to perform exact matching on parts of URLs.
+*   @urlscheme ("https"), @netloc ("www&#46;wikidata.org") and @urlpath ("/wiki/Q42") can be used to perform exact matching on parts of URLs.
 
 For times and dates, all values are returned in the UTC time zone.
 
@@ -135,7 +135,7 @@ As a user-maintained data source, Wikidata can be edited by anyone. OpenRefine m
 
 Wikidata is built by creating entities (such as people, organizations, or places, identified with unique numbers starting with Q), defining properties (unique numbers starting with P), and using properties to define relationships between entities (a Q has a property P, with a value of another Q). 
 
-For example, you may wish to create entities for local authors and the books they've set in your community. Each writer will be an entity with the occupation author (Q482980), each book will be an entity with the property literary work (Q7725634), and books will be related to authors through a property author (P50). Authors can have places where they resided, or places where they were born or educated, and books can have places where they are set. In OpenRefine, you'll need a column of publication titles that you have reconciled (and then created new items where needed); each publication will have one or more locations in a "setting" column, which is also reconciled to municipalities or regions where they exist (and have new items where needed). Then you can add those new relationships to each book, and create new entities for both books and places.
+For example, you may wish to create entities for local authors and the books they've set in your community. Each writer will be an entity with the occupation [author (Q482980)](https://www.wikidata.org/wiki/Q482980), each book will be an entity with  [literary work (Q7725634)](https://www.wikidata.org/wiki/Q7725634), and books will be related to authors through a property [author (P50)](https://www.wikidata.org/wiki/Property:P50). Books can have places where they are set, with [setting (Q617332)](https://www.wikidata.org/wiki/Q617332). In OpenRefine, you'll need a column of publication titles that you have reconciled (and then created new items where needed); each publication will have one or more locations in a "setting" column, which is also reconciled to municipalities or regions where they exist (and have new items where needed). Then you can add those new relationships to each book, and create new entities for both books and places.
 
 There is a list of [tutorials and walkthroughs on Wikidata](https://www.wikidata.org/wiki/Wikidata:Tools/OpenRefine/Editing) that will allow you to see the full process. You can save your schemas and drafts in OpenRefine, and your progress stays in draft until you are sure you’re ready to upload it to Wikidata. You can also find information on [how to design a schema](https://www.wikidata.org/wiki/Wikidata:Tools/OpenRefine/Editing/Schema_alignment) and [how OpenRefine evaluates your proposed edits for issues](https://www.wikidata.org/wiki/Wikidata:Tools/OpenRefine/Editing/Quality_assurance).
 
@@ -196,9 +196,9 @@ You may also wish to store your unencrypted username and password in OpenRefine,
 
 You can save time on repetitive processes by defining a schema on one project, then exporting it and importing for use on new datasets in the future. Or you and your colleagues can share a schema with each other to coordinate your work. 
 
-You can export a schema from a project using the <span class="menuItems">Export</span> dropdown menu (<span class="menuItems">Wikidata schema</span>), or by using the <span class="menuItems">Extensions</span> dropdown menu (<span class="menuItems">Export schema</span>). OpenRefine will generate a JSON file for you to save and share. You may experience issues with pop-up windows in your browser: consider allowing pop-ups for the OpenRefine URL (127.0.0.1) from now on.
+You can export a schema from a project using <span class="menuItems">Export</span> → <span class="menuItems">Wikidata schema</span>, or by using <span class="menuItems">Extensions</span> → <span class="menuItems">Export schema</span>. OpenRefine will generate a JSON file for you to save and share. You may experience issues with pop-up windows in your browser: consider allowing pop-ups for the OpenRefine URL (127.0.0.1) from now on.
 
-You can import a schema using the <span class="menuItems">Extensions</span> dropdown and selecting <span class="menuItems">Import schema</span>. You can upload a JSON file, or paste JSON statements directly into a field in the window. An imported schema will look for columns with the same names, and you will see an error message if your project doesn't contain matching columns.
+You can import a schema using <span class="menuItems">Extensions</span> → <span class="menuItems">Import schema</span>. You can upload a JSON file, or paste JSON statements directly into a field in the window. An imported schema will look for columns with the same names, and you will see an error message if your project doesn't contain matching columns.
 
 ### Upload edits to Wikidata
 
