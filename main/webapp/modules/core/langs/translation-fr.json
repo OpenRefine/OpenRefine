@@ -741,5 +741,7 @@
     "core-views/add-id-column": "Ajouter une colonne d'identifiants d'entités",
     "core-dialogs/lb-formats-quotation": "Toujours citer le texte",
     "core-views/add-id-col": "Ajouter une colonne contenant des identifiants d'entités en $1",
-    "core-views/add-id-column2": "Ajouter une colonne avec des identifiants d'éléments"
+    "core-views/add-id-column2": "Ajouter une colonne avec des identifiants d'éléments",
+    "core-index-import/warning-import-file": "Vous devez indiquer un fichier de projet.",
+    "core-index-import/single-project": "OpenRefine ne peut importer plusieurs fichiers dans un même projet que s'ils ont le même format."
 }
