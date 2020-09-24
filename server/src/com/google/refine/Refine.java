@@ -48,6 +48,8 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletResponse;
 import javax.swing.JFrame;
 
 import org.apache.log4j.Level;
@@ -56,6 +58,7 @@ import org.mortbay.jetty.Server;
 import org.mortbay.jetty.bio.SocketConnector;
 import org.mortbay.jetty.servlet.ServletHolder;
 import org.mortbay.jetty.webapp.WebAppContext;
+import org.mortbay.jetty.handler.HandlerWrapper;
 import org.mortbay.util.Scanner;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -105,8 +108,9 @@ public class Refine {
 
     public void init(String[] args) throws Exception {
 
+        boolean validateHost = Configurations.getBoolean("refine.host.validate", true);
         RefineServer server = new RefineServer();
-        server.init(host,port);
+        server.init(host, port, validateHost);
 
         boolean headless = Configurations.getBoolean("refine.headless",false);
         if (headless) {
@@ -138,7 +142,7 @@ class RefineServer extends Server {
         
     private ThreadPoolExecutor threadPool;
     
-    public void init(String host, int port) throws Exception {
+    public void init(String host, int port, boolean validateHost) throws Exception {
         logger.info("Starting Server bound to '" + host + ":" + port + "'");
 
         String memory = Configurations.get("refine.memory");
@@ -183,7 +187,14 @@ class RefineServer extends Server {
         WebAppContext context = new WebAppContext(webapp.getAbsolutePath(), contextPath);
         context.setMaxFormContentSize(maxFormContentSize);
 
-        this.setHandler(context);
+        if (!validateHost || "0.0.0.0".equals(host)) {
+            this.setHandler(context);
+        } else {
+            ValidateHostHandler wrapper = new ValidateHostHandler(host);
+            wrapper.setHandler(context);
+            this.setHandler(wrapper);
+        }
+
         this.setStopAtShutdown(true);
         this.setSendServerVersion(true);
 
@@ -449,6 +460,33 @@ class RefineServer extends Server {
         return path.substring(0, q) + goodPath.substring(q, goodPathSep) + path.substring(pathSep);
     }
     
+}
+
+class ValidateHostHandler extends HandlerWrapper {
+
+    private String expectedHost;
+
+    public ValidateHostHandler(String expectedHost) {
+        this.expectedHost = expectedHost;
+    }
+
+    @Override
+    public void handle(String target, javax.servlet.http.HttpServletRequest request, javax.servlet.http.HttpServletResponse response, int dispatch) throws IOException, ServletException {
+        String host = request.getHeader("Host");
+        if (host != null) {
+            int index = host.indexOf(':');
+            if (index > 0) {
+                host = host.substring(0, index);
+            }
+            if (expectedHost.equalsIgnoreCase(host))
+            {
+                super.handle(target, request, response, dispatch);
+                return;
+            }
+        }
+        response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+    }
+
 }
 
 /* -------------- Refine Client ----------------- */
