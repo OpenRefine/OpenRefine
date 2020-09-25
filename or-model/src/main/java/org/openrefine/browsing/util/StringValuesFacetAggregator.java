@@ -17,16 +17,14 @@ import org.openrefine.model.Row;
 import org.openrefine.model.RowFilter;
 import org.openrefine.util.StringUtils;
 
-public class StringValuesFacetAggregator implements FacetAggregator<StringValuesFacetState> {
+public class StringValuesFacetAggregator extends ExpressionValueFacetAggregator<StringValuesFacetState> {
     private static final long serialVersionUID = 1L;
 
-    protected final ColumnModel _columnModel;
-    protected final int         _cellIndex;
-    protected final Evaluable   _evaluable;
-    protected final Set<String> _selected;
-    protected final boolean     _selectBlanks;
-    protected final boolean     _selectErrors;
-    protected final boolean     _invert;
+    protected final ColumnModel  _columnModel;
+    protected final int          _cellIndex;
+    protected final Set<String>  _selected;
+    protected final boolean      _selectBlanks;
+    protected final boolean      _selectErrors;
     
     /**
      * Constructor.
@@ -47,15 +45,14 @@ public class StringValuesFacetAggregator implements FacetAggregator<StringValues
      *      whether the selection should be inverted
      */
     public StringValuesFacetAggregator(
-            ColumnModel columnModel, int cellIndex, Evaluable evaluable,
+            ColumnModel columnModel, int cellIndex, RowEvaluable evaluable,
             Set<String> selected, boolean selectBlanks, boolean selectErrors, boolean invert) {
+        super(invert, evaluable);
         _columnModel = columnModel;
         _cellIndex = cellIndex;
-        _evaluable = evaluable;
         _selected = selected;
         _selectBlanks = selectBlanks;
         _selectErrors = selectErrors;
-        _invert = invert;
     }
     
     @Override
@@ -75,9 +72,25 @@ public class StringValuesFacetAggregator implements FacetAggregator<StringValues
     }
 
     @Override
-    public StringValuesFacetState withRow(StringValuesFacetState state, long rowId, Row row) {
-        // Evaluate the expression on that row
-        Object value = evaluateOnRow(rowId, row);
+    public RowFilter getRowFilter() {
+        return _eval == null || 
+                (_selected.size() == 0 && !_selectBlanks && !_selectErrors) ? 
+                    null :
+                    new ExpressionEqualRowFilter(
+                        _eval, 
+                        _columnModel.getColumns().get(_cellIndex).getName(),
+                        _cellIndex, 
+                        _selected, 
+                        _selectBlanks, 
+                        _selectErrors,
+                        _invert);
+    }
+
+    @Override
+    protected StringValuesFacetState withValue(StringValuesFacetState state, Object value, boolean inView) {
+        if (!inView) {
+            return state;
+        }
         if (ExpressionUtils.isError(value)) {
             return new StringValuesFacetState(
                     state.getCounts(), state.getErrorCount() + 1, state.getBlankCount());
@@ -95,36 +108,6 @@ public class StringValuesFacetAggregator implements FacetAggregator<StringValues
             return new StringValuesFacetState(
                     state.getCounts(), state.getErrorCount(), state.getBlankCount() + 1);
         }
-    }
-    
-    protected Object evaluateOnRow(long rowId, Row row) {
-        Properties bindings = ExpressionUtils.createBindings();
-        ExpressionUtils.bind(bindings, _columnModel, row, rowId, null, row.getCell(_cellIndex));
-        return _evaluable.evaluate(bindings);
-    }
-
-    @Override
-    public RowFilter getRowFilter() {
-        return _evaluable == null || 
-                (_selected.size() == 0 && !_selectBlanks && !_selectErrors) ? 
-                    null :
-                    new ExpressionEqualRowFilter(
-                        _evaluable, 
-                        _columnModel.getColumns().get(_cellIndex).getName(),
-                        _cellIndex, 
-                        _selected, 
-                        _selectBlanks, 
-                        _selectErrors,
-                        _invert);
-    }
-
-    @Override
-    public RecordFilter getRecordFilter() {
-        RowFilter rowFilter = getRowFilter();
-        if (rowFilter == null) {
-            return null;
-        }
-        return _invert ? new AllRowsRecordFilter(rowFilter) : new AnyRowRecordFilter(rowFilter);
     }
 
 }

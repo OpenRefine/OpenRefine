@@ -37,6 +37,7 @@ import java.util.Collection;
 import java.util.Properties;
 import java.util.Set;
 
+import org.openrefine.browsing.util.RowEvaluable;
 import org.openrefine.expr.Evaluable;
 import org.openrefine.expr.ExpressionUtils;
 import org.openrefine.expr.util.JsonValueConverter;
@@ -55,7 +56,7 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 public class ExpressionEqualRowFilter implements RowFilter {
     private static final long serialVersionUID = 1L;
 
-    final protected Evaluable       _evaluable; // the expression to evaluate
+    final protected RowEvaluable       _evaluable; // the expression to evaluate
     
     final protected String          _columnName;
     final protected int             _cellIndex; // the expression is based on this column;
@@ -68,7 +69,7 @@ public class ExpressionEqualRowFilter implements RowFilter {
     final protected boolean         _invert;
     
     public ExpressionEqualRowFilter(
-        Evaluable evaluable,
+        RowEvaluable evaluable,
         String columnName,
         int cellIndex, 
         Set<String> matches, 
@@ -92,12 +93,9 @@ public class ExpressionEqualRowFilter implements RowFilter {
     }
     
     public boolean internalFilterRow(long rowIndex, Row row) {
-        Cell cell = _cellIndex < 0 ? null : row.getCell(_cellIndex);
-        
         Properties bindings = ExpressionUtils.createBindings();
-        ExpressionUtils.bind(bindings, null, row, rowIndex, _columnName, cell);
         
-        Object value = _evaluable.evaluate(bindings);
+        Object value = _evaluable.eval(rowIndex, row, bindings);
         if (value != null) {
             if (value.getClass().isArray()) {
                 Object[] a = (Object[]) value;

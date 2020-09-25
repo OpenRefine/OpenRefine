@@ -87,19 +87,19 @@ public class NumericFacetAggregatorTests {
 	
 	@Test
 	public void testWithValueNonNumeric() {
-		HistogramState withRow = SUT.withRow(rangeA, "string value");
+		HistogramState withRow = SUT.withValue(rangeA, "string value");
 		Assert.assertEquals(withRow, new HistogramState(7, 4, 2, 1, 0, -3, new long[] { 3, 4 }));
 	}
 	
 	@Test
 	public void testWithValueArray() {
-		HistogramState withRow = SUT.withRow(rangeA, new Serializable[] {-2.3, "string value"});
+		HistogramState withRow = SUT.withValue(rangeA, new Serializable[] {-2.3, "string value"});
 		Assert.assertEquals(withRow, new HistogramState(8, 4, 2, 1, 0, -3, new long[] { 4, 4 }));
 	}
 	
 	@Test
 	public void testWithValueList() {
-		HistogramState withRow = SUT.withRow(rangeA, (Serializable) Arrays.asList(new Serializable[] {-2.3, "string value"}));
+		HistogramState withRow = SUT.withValue(rangeA, (Serializable) Arrays.asList(new Serializable[] {-2.3, "string value"}));
 		Assert.assertEquals(withRow, new HistogramState(8, 4, 2, 1, 0, -3, new long[] { 4, 4 }));
 	}
 

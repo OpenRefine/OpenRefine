@@ -41,6 +41,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.openrefine.browsing.DecoratedValue;
+import org.openrefine.browsing.util.ExpressionBasedRowEvaluable;
 import org.openrefine.browsing.util.StringValuesFacetAggregator;
 import org.openrefine.browsing.util.StringValuesFacetState;
 import org.openrefine.expr.Evaluable;
@@ -237,7 +238,7 @@ public class ListFacet implements Facet {
 	@Override
 	public FacetAggregator<StringValuesFacetState> getAggregator() {
 		if (_errorMessage == null) {
-			return new StringValuesFacetAggregator(_columnModel, _cellIndex, _eval,
+			return new StringValuesFacetAggregator(_columnModel, _cellIndex, new ExpressionBasedRowEvaluable(_config.columnName, _cellIndex, _eval),
 					Arrays.stream(createMatches()).map(o -> StringUtils.toString(o))
 					.collect(Collectors.toSet()), _config.selectBlank, _config.selectError, _config.invert);
 		} else {
