@@ -8,7 +8,7 @@ sidebar_label: Wikidata
 
 OpenRefine includes powerful ways to both pull data from Wikidata and add data to it. 
 
-OpenRefine’s connections to Wikidata were formerly an optional extension, but are now installed automatically with the downloadable package. The Wikidata extension can be removed manually by navigating to your OpenRefine installation folder, and then looking inside `webapp/extensions/` and deleting the `Wikidata` folder inside. 
+OpenRefine’s connections to Wikidata were formerly an optional extension, but are now installed automatically with the downloadable package. The Wikidata extension can be removed manually by navigating to your OpenRefine installation folder, and then looking inside `webapp/extensions/` and deleting the `wikidata` folder inside. 
 
 You do not need a Wikidata account to reconcile your local OpenRefine project to Wikidata. If you wish to upload your cleaned dataset to Wikidata, you will need to register an account, and authorize OpenRefine with that account. 
 
@@ -16,11 +16,11 @@ The best source for information about how OpenRefine works with Wikidata is [on 
 
 ## Reconciling with Wikidata
 
-Wikidata is, at this time, the most powerful [reconciliation service](reconciling) for OpenRefine. [It supports](https://reconciliation-api.github.io/testbench/):
+The [Wikidata reconciliation service](reconciling) for OpenRefine [supports](https://reconciliation-api.github.io/testbench/):
 *   A large number of potential types to reconcile against
 *   Previewing and viewing entities
 *   Suggesting entities, types, and properties
-*   Augmenting your dataset with more information pulled from Wikidata 
+*   Augmenting your project with more information pulled from Wikidata 
 
 You can find the documentation and further resources [here](https://wikidata.reconci.link/).
 
@@ -30,7 +30,7 @@ For the most part, Wikidata reconciliation behaves the same way other reconcilia
 
 You can install a version of the Wikidata reconciliation service that uses your language.
 
-First, you need your language code: this is the two-letter code in the domain name of your Wikipedia (for instance "fr" if your Wikipedia is [https://fr.wikipedia.org/wiki/](https://fr.wikipedia.org/wiki/)).
+First, you need the language code: this is the [two-letter WP code found on this list](https://en.wikipedia.org/wiki/List_of_Wikipedias), or in the domain name of the desired Wikipedia (for instance, "fr" if your Wikipedia is [https://fr.wikipedia.org/wiki/](https://fr.wikipedia.org/wiki/)).
 
 Then, open the reconciliation dialog and click <span class="menuItems">Add Standard Service</span>. The URL is `https://openrefine-wikidata.toolforge.org/fr/api` where "fr" is replaced by your language code.
 
@@ -52,19 +52,15 @@ Some items are not marked as the instances of anything, because no one has taken
 
 ### Reconciling via unique identifiers
 
-You can supply a column of unique identifiers directly to Wikidata in order to pull more data, but these strings will not be "reconciled" against the external dataset. Matching identifiers does not validate them. 
+You can supply a column of unique identifiers directly to Wikidata in order to pull more data, but [these strings will not be "reconciled" against the external dataset](reconciling##reconciling-with-unique-identifiers). These identifiers will not be validated. 
 
-Apply the operation “Reconcile” → “Use values as identifiers” on your column of identifiers. All cells will appear as dark blue "confirmed" matches. You should check before this operation that the identifiers in the column exist on the target service.
-
-You may get false positives, which you will need to hover over or click on to identify.
+Apply the operation “Reconcile” → “Use values as identifiers” on your column of identifiers. All cells will appear as dark blue "confirmed" matches. Some of the "matches" may be errors, which you will need to hover over or click on to identify.
 
 Sometimes the same external identifier is assigned to different Wikidata items (in which case the conflict will be flagged in Wikidata as a uniqueness constraint violation). In this case, all of the matching items are returned as candidates, but are not automatically matched.
 
 ### Property paths
 
-This feature is specific to the reconciliation interface for Wikidata.
-
-Sometimes, when including extra columns as properties in reconciliation, the relation between the reconciled item and the disambiguating column is not direct - it is not represented as a property itself. For example, take this dataset of cities:
+This feature is specific to the reconciliation interface for Wikidata. Sometimes, when including extra columns as properties in reconciliation, the relation between the reconciled item and the disambiguating column is not direct - it is not represented as a property itself. For example, take this dataset of cities:
 
 |City|Country|
 |---|---|
@@ -111,7 +107,7 @@ No language fall-back is performed when retrieving the values.
 ### Comparing values
 
 By default, data in OpenRefine and entities in Wikidata are compared by string fuzzy-matching. There are some exceptions to this:
-*   If the value is an identifier, then it confirms the exact string without matching.
+*   If you are [reconciling by unique identifiers](#reconciling-with-unique-identifiers), then it confirms the exact strings without matching.
 *   If the values are integers, exact equality between integers is used.
 *   If the values are floating point numbers, the score is 100 if they are equal and decreases towards 0 as their absolute difference increases.
 *   If the values are coordinates (specified in the "lat,lng" format on OpenRefine's side), then the matching score is 100 when they are equal and decreases as their distance increases. Currently a score of 0 is reached when the points are 1 kilometre away from each other.
