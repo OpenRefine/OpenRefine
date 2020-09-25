@@ -10,8 +10,6 @@ import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
 import org.openrefine.expr.EvalError;
-import org.openrefine.expr.Evaluable;
-import org.openrefine.expr.WrappedRow;
 import org.openrefine.model.Cell;
 import org.openrefine.model.ColumnMetadata;
 import org.openrefine.model.ColumnModel;
@@ -21,22 +19,13 @@ public class StringValuesFacetAggregatorTests {
 
     ColumnModel cm;
     StringValuesFacetState initial;
-    Evaluable dummy = new Evaluable() {
+    RowEvaluable dummy = new RowEvaluable() {
+
+        private static final long serialVersionUID = -5844679178529098676L;
 
         @Override
-        public Object evaluate(Properties bindings) {
-            WrappedRow row = (WrappedRow) bindings.get("row");
-            return row.row.getCellValue(0);
-        }
-
-        @Override
-        public String getSource() {
-            return "firstvalue";
-        }
-
-        @Override
-        public String getLanguagePrefix() {
-            return "mylanguage";
+        public Object eval(long rowIndex, Row row, Properties bindings) {
+            return row.getCellValue(0);
         }
     };
 

@@ -1,19 +1,14 @@
 
 package org.openrefine.browsing.util;
 
-import java.util.Collection;
-import java.util.Properties;
-
-import org.openrefine.browsing.facets.FacetAggregator;
 import org.openrefine.browsing.filters.AllRowsRecordFilter;
 import org.openrefine.browsing.filters.AnyRowRecordFilter;
 import org.openrefine.browsing.filters.ExpressionNumberComparisonRowFilter;
 import org.openrefine.expr.ExpressionUtils;
 import org.openrefine.model.RecordFilter;
-import org.openrefine.model.Row;
 import org.openrefine.model.RowFilter;
 
-public class NumericFacetAggregator implements FacetAggregator<NumericFacetState> {
+public class NumericFacetAggregator extends ExpressionValueFacetAggregator<NumericFacetState> {
 
     private static final long serialVersionUID = -4557334363154009835L;
 
@@ -29,9 +24,7 @@ public class NumericFacetAggregator implements FacetAggregator<NumericFacetState
     private final boolean _selectNonNumeric;
     private final boolean _selectBlank;
     private final boolean _selectError;
-    private final boolean _invert;
     private final boolean _selected;
-    private final RowEvaluable _rowEvaluable;
 
     public NumericFacetAggregator(
             int maxBinCount,
@@ -44,6 +37,7 @@ public class NumericFacetAggregator implements FacetAggregator<NumericFacetState
             boolean selectError,
             boolean invert,
             boolean selected) {
+        super(invert, rowEvaluable);
         _maxBinCount = maxBinCount;
 
         _from = from;
@@ -52,31 +46,7 @@ public class NumericFacetAggregator implements FacetAggregator<NumericFacetState
         _selectNonNumeric = selectNonNumeric;
         _selectBlank = selectBlank;
         _selectError = selectError;
-        _invert = invert;
         _selected = selected;
-        _rowEvaluable = rowEvaluable;
-    }
-
-    @Override
-    public NumericFacetState withRow(NumericFacetState state, long rowId, Row row) {
-        // Add the value to both the visible histogram and the global one.
-        Properties bindings = ExpressionUtils.createBindings();
-        Object value = _rowEvaluable.eval(rowId, row, bindings);
-
-        return new NumericFacetState(
-                withRow(state.getGlobalHistogram(), value),
-                withRow(state.getViewHistogram(), value));
-    }
-
-    @Override
-    public NumericFacetState withRowOutsideView(NumericFacetState state, long rowId, Row row) {
-        // Add the value to the global histogram only
-        Properties bindings = ExpressionUtils.createBindings();
-        Object value = _rowEvaluable.eval(rowId, row, bindings);
-
-        return new NumericFacetState(
-                withRow(state.getGlobalHistogram(), value),
-                state.getViewHistogram());
     }
 
     @Override
@@ -87,22 +57,17 @@ public class NumericFacetAggregator implements FacetAggregator<NumericFacetState
                 sum(first.getViewHistogram(), second.getViewHistogram()));
     }
 
-    public HistogramState withRow(HistogramState state, Object value) {
-        HistogramState newState = state;
-        if (value != null && value.getClass().isArray()) {
-            Object[] a = (Object[]) value;
-            for (Object v : a) {
-                newState = withValue(newState, v);
-            }
-        } else if (value instanceof Collection<?>) {
-            for (Object v : ExpressionUtils.toObjectCollection(value)) {
-                newState = withValue(newState, v);
-            }
+    @Override
+    protected NumericFacetState withValue(NumericFacetState state, Object value, boolean inView) {
+        if (inView) {
+            return new NumericFacetState(
+                    withValue(state.getGlobalHistogram(), value),
+                    withValue(state.getViewHistogram(), value));
         } else {
-            newState = withValue(newState, value);
+            return new NumericFacetState(
+                    withValue(state.getGlobalHistogram(), value),
+                    state.getViewHistogram());
         }
-
-        return newState;
     }
 
     protected HistogramState withValue(HistogramState state, Object value) {
@@ -207,7 +172,7 @@ public class NumericFacetAggregator implements FacetAggregator<NumericFacetState
     public RowFilter getRowFilter() {
         if (_selected) {
             return new ExpressionNumberComparisonRowFilter(
-                    _rowEvaluable, _selectNumeric, _selectNonNumeric, _selectBlank, _selectError) {
+                    _eval, _selectNumeric, _selectNonNumeric, _selectBlank, _selectError) {
 
                 @Override
                 protected boolean checkValue(double d) {
