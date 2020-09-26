@@ -1,4 +1,5 @@
 {
+    "database-import/importer-name": "Base de données",
     "database-import/title": "Serveurs de base de données",
     "database-import/preparing": "Préparation du résultat…",
     "database-import/checking": "Validation de la requête…",
