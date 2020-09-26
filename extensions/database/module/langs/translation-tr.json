@@ -59,5 +59,6 @@
     "database-source/alert-password": "Bir veri tabanı parolası belirtmelisiniz",
     "database-source/alert-user": "Bir veri tabanı kullanıcısı belirtmelisiniz",
     "database-source/alert-port": "Bir veri tabanı bağlantı noktası belirtmelisiniz",
-    "database-source/alert-host": "Bir veri tabanı sunucusu belirtmelisiniz"
+    "database-source/alert-host": "Bir veri tabanı sunucusu belirtmelisiniz",
+    "database-import/importer-name": "Veri tabanı"
 }
