@@ -34,24 +34,22 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package org.openrefine.commands.column;
 
 import java.io.IOException;
+import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.openrefine.browsing.util.ExpressionBasedRowEvaluable;
-import org.openrefine.browsing.util.NumericBinIndex;
-import org.openrefine.browsing.util.NumericBinRowIndex;
+import org.openrefine.browsing.facets.RowAggregator;
 import org.openrefine.commands.Command;
-import org.openrefine.expr.Evaluable;
-import org.openrefine.expr.MetaParser;
-import org.openrefine.expr.ParsingException;
-import org.openrefine.model.ColumnMetadata;
+import org.openrefine.model.GridState;
 import org.openrefine.model.Project;
-import org.openrefine.util.ParsingUtilities;
+import org.openrefine.model.Row;
 
-import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class GetColumnsInfoCommand extends Command {
 
@@ -65,57 +63,87 @@ public class GetColumnsInfoCommand extends Command {
 
             Project project = getProject(request);
             
-            JsonGenerator writer = ParsingUtilities.mapper.getFactory().createGenerator(response.getWriter());
-            List<ColumnMetadata> columns = project.getColumnModel().getColumns();
-            writer.writeStartArray();
-            for(int i = 0; i != columns.size(); i++ ) {
-                writer.writeStartObject();
-                    write(project, columns.get(i), i, writer);
-                writer.writeEndObject();
-            }
-            writer.writeEndArray();
-            writer.flush();
-            writer.close();
+            GridState grid = project.getCurrentGridState();
+            AggregationState initial = new AggregationState();
+            initial.statistics = grid.getColumnModel().getColumns().stream().map(c -> new ColumnStatistics(c.getName(), 0, 0)).collect(Collectors.toList());
+            AggregationState aggregated = grid.aggregateRows(new Aggregator(), initial);
+            
+            respondJSON(response, aggregated);
         } catch (Exception e) {
             e.printStackTrace();
             respondException(response, e);
         }
     }
     
-    private NumericBinIndex getBinIndex(Project project, ColumnMetadata column, int cellIndex) {
-        String expression = "value";
-        String key = "numeric-bin:" + expression;
-        Evaluable eval = null;
-        try {
-            eval = MetaParser.parse(expression);
-        } catch (ParsingException e) {
-            // this should never happen
-        }
-        NumericBinIndex index = null;
-        // TODO migrate this
-        if (index == null) {
-            index = new NumericBinRowIndex(project, new ExpressionBasedRowEvaluable(column.getName(), cellIndex, eval));
-        }
-        return index;
+    private static class AggregationState implements Serializable {
+		private static final long serialVersionUID = -7825020364579861122L;
+		public List<ColumnStatistics> statistics;
     }
     
-    private void write(Project project, ColumnMetadata column, int index, JsonGenerator writer) throws IOException {
-        NumericBinIndex columnIndex = getBinIndex(project, column, index);
-        if (columnIndex != null) {
-            writer.writeStringField("name", column.getName());
-            boolean is_numeric = columnIndex.isNumeric();
-            writer.writeBooleanField("is_numeric", is_numeric);
-            writer.writeNumberField("numeric_row_count", columnIndex.getNumericRowCount());
-            writer.writeNumberField("non_numeric_row_count", columnIndex.getNonNumericRowCount());
-            writer.writeNumberField("error_row_count", columnIndex.getErrorRowCount());
-            writer.writeNumberField("blank_row_count", columnIndex.getBlankRowCount());
-            if (is_numeric) {
-                writer.writeNumberField("min", columnIndex.getMin());
-                writer.writeNumberField("max", columnIndex.getMax());
-                writer.writeNumberField("step", columnIndex.getStep());
-            }
-        } else {
-            writer.writeStringField("error", "error finding numeric information on the '" + column.getName() + "' column");
-        }
+    private static class ColumnStatistics implements Serializable {
+
+		private static final long serialVersionUID = -8845292788196741719L;
+
+		public ColumnStatistics(
+    			String name,
+    			long numericCount,
+    			long otherCount) {
+    		this.name = name;
+    		this.numericCount = numericCount;
+    		this.otherCount = otherCount;
+    	}
+    	@JsonProperty("name")
+    	public final String name;
+    	@JsonProperty("numeric_row_count")
+    	public final long numericCount;
+    	@JsonProperty("other_count")
+    	public final long otherCount;
+    	
+    	@JsonProperty("is_numeric")
+    	public boolean isNumeric() {
+    		return numericCount > otherCount;
+    	}
+
+    	public ColumnStatistics sum(ColumnStatistics other) {
+    		return new ColumnStatistics(
+    				name,
+    				numericCount + other.numericCount,
+    				otherCount + other.otherCount);
+    	}
+    	
+    	public ColumnStatistics withValue(Object value) {
+    		if (value instanceof Number) {
+    			return new ColumnStatistics(name, numericCount + 1, otherCount);
+    		} else {
+    			return new ColumnStatistics(name, numericCount, otherCount + 1);
+    		}
+    	}
+    	
+    }
+    
+    private static class Aggregator implements RowAggregator<AggregationState> {
+
+		private static final long serialVersionUID = 6172712485208754636L;
+
+		@Override
+		public AggregationState sum(AggregationState first, AggregationState second) {
+			AggregationState result = new AggregationState();
+			result.statistics = new ArrayList<>();
+			for(int i = 0; i != first.statistics.size(); i++) {
+				result.statistics.add(first.statistics.get(i).sum(second.statistics.get(i)));
+			}
+			return result;
+		}
+
+		@Override
+		public AggregationState withRow(AggregationState state, long rowId, Row row) {
+			AggregationState result = new AggregationState();
+			result.statistics = new ArrayList<>();
+			for(int i = 0; i != state.statistics.size(); i++) {
+				result.statistics.add(state.statistics.get(i).withValue(row.getCellValue(i)));
+			}
+			return result;
+		}
+    	
     }
 }
