@@ -105,11 +105,6 @@ public class ScatterplotFacetResult implements FacetResult {
         return config.rotation;
     }
     
-    @JsonProperty(ScatterplotFacet.COLOR)
-    public String getColorString() {
-        return config.color_str;
-    }
-    
     @JsonProperty(ScatterplotFacet.ERROR_X)
     @JsonInclude(Include.NON_NULL)
     public String getErrorX() {

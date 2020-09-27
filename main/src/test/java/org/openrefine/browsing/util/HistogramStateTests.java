@@ -76,7 +76,7 @@ public class HistogramStateTests {
 		HistogramState rescaled = emptyState.rescale(3);
 		
 		Assert.assertEquals(rescaled.getLogBinSize(), 0);
-		Assert.assertNotNull(rescaled.getBins());
+		Assert.assertNull(rescaled.getBins());
 	}
 	
 	@Test

@@ -80,7 +80,6 @@ public class ScatterplotFacetTests extends RefineTest {
             + "\"r\":\"none\","
             + "\"dim_x\":\"lin\","
             + "\"dim_y\":\"lin\","
-            + "\"color\":\"000000\","
             + "\"from_x\":0.2,"
             + "\"to_x\":10,"
             + "\"from_y\":-1,"
@@ -103,8 +102,7 @@ public class ScatterplotFacetTests extends RefineTest {
             + "\"dot\":1,"
             + "\"r\":\"none\","
             + "\"dim_x\":\"lin\","
-            + "\"dim_y\":\"lin\","
-            + "\"color\":\"000000\""
+            + "\"dim_y\":\"lin\""
             + "}";
     
     GridState grid;
