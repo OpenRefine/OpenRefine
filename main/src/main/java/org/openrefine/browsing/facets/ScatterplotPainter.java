@@ -43,19 +43,14 @@ import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.awt.image.RenderedImage;
 
-import org.openrefine.browsing.RecordVisitor;
-import org.openrefine.browsing.RowVisitor;
-import org.openrefine.model.Cell;
-import org.openrefine.model.Project;
-import org.openrefine.model.Record;
-import org.openrefine.model.Row;
+import org.openrefine.browsing.facets.ScatterplotFacet.Dimension;
+import org.openrefine.browsing.facets.ScatterplotFacet.Rotation;
+import org.openrefine.browsing.util.ScatterplotFacetState;
 
-public class ScatterplotDrawingRowVisitor implements RowVisitor, RecordVisitor {
+public class ScatterplotPainter {
 
-    int col_x;
-    int col_y;
-    int dim_x;
-    int dim_y;
+    Dimension dim_x;
+    Dimension dim_y;
 
     double l;
     double dot;
@@ -65,24 +60,45 @@ public class ScatterplotDrawingRowVisitor implements RowVisitor, RecordVisitor {
     double min_y;
     double max_y;
     
+    Color color;
+    Color baseColor;
+    
+    // Derived scaling factors
+    double range_x;
+    double range_y;
+    
     BufferedImage image;
     Graphics2D g2;
     
     AffineTransform r;
     
-    public ScatterplotDrawingRowVisitor(
-            int col_x, int col_y, double min_x, double max_x, double min_y, double max_y,
-            int size, int dim_x, int dim_y, int rotation, double dot, Color color)  
-    {
-        this.col_x = col_x;
-        this.col_y = col_y;
-        this.min_x = min_x;
-        this.min_y = min_y;
-        this.max_x = max_x;
-        this.max_y = max_y;
+    public ScatterplotPainter(
+    		ScatterplotFacetResult facetResults,
+            int size,
+            Dimension dim_x,
+            Dimension dim_y,
+            Rotation rotation,
+            double dot,
+            Color color,
+            Color baseColor) {
+        this.min_x = facetResults.getMinX();
+        this.min_y = facetResults.getMinY();
+        this.max_x = facetResults.getMaxX();
+        this.max_y = facetResults.getMaxY();
         this.dot = dot;
         this.dim_x = dim_x;
         this.dim_y = dim_y;
+        this.color = color;
+        this.baseColor = baseColor;
+        
+        range_x = max_x - min_x;
+        if (range_x <= 0) {
+        	range_x = 1;
+        }
+        range_y = max_y - min_y;
+        if (range_y <= 0) {
+        	range_y = 1;
+        }
         
         l = size;
         r = ScatterplotFacet.createRotationMatrix(rotation, l);
@@ -96,8 +112,6 @@ public class ScatterplotDrawingRowVisitor implements RowVisitor, RecordVisitor {
         t.scale(1, -1);
         
         g2.setTransform(t);
-        g2.setColor(color);
-        g2.setPaint(color);
         
         if (r != null) {
             /*
@@ -118,43 +132,31 @@ public class ScatterplotDrawingRowVisitor implements RowVisitor, RecordVisitor {
         g2.setPaint(color);
     }
     
-    @Override
-    public void start(Project project) {
-        // nothing to do
-    }
-
-    @Override
-    public void end(Project project) {
-        // nothing to do
+    public void drawPoints(ScatterplotFacetState state) {
+    	for(int i = 0; i != state.getValuesCount(); i++) {
+    		drawPoint(state.getValuesX()[i], state.getValuesY()[i], state.getInView()[i]);
+    	}
     }
     
-    @Override
-    public boolean visit(Project project, int rowIndex, Row row) {
-        Cell cellx = row.getCell(col_x);
-        Cell celly = row.getCell(col_y);
-        if ((cellx != null && cellx.value != null && cellx.value instanceof Number) &&
-            (celly != null && celly.value != null && celly.value instanceof Number)) 
-        {
-            double xv = ((Number) cellx.value).doubleValue();
-            double yv = ((Number) celly.value).doubleValue();
-
-            Point2D.Double p = new Point2D.Double(xv,yv);
-            
-            p = ScatterplotFacet.translateCoordinates(
-                    p, min_x, max_x, min_y, max_y, dim_x, dim_y, l, r);
-            
-            g2.fill(new Rectangle2D.Double(p.x - dot / 2, p.y - dot / 2, dot, dot));
-        }
+    public void drawPoint(double x, double y, boolean inView) {
+        Point2D.Double p = new Point2D.Double(x,y);
         
-        return false;
-    }
-    
-    @Override
-    public boolean visit(Project project, Record record) {
-        for (int r = record.fromRowIndex; r < record.toRowIndex; r++) {
-            visit(project, r, project.rows.get(r));
+        p = ScatterplotFacet.translateCoordinates(p, dim_x, dim_y, l, r);
+        
+        // rescale the point to the appropriate dimensions
+        Point2D.Double rescaled = new Point2D.Double(
+        		l * (p.x - min_x) / range_x, l * (p.y - min_y) / range_y);
+        
+        Color currentColor = null;
+        if (inView || color != null) {
+        	currentColor = color;
+        } else {
+        	currentColor = baseColor;
         }
-        return false;
+        if (currentColor != null) {
+        	setColor(currentColor);
+        	g2.fill(new Rectangle2D.Double(rescaled.x - dot / 2, p.y - dot / 2, dot, dot));
+        }
     }
     
     public RenderedImage getImage() {

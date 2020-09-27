@@ -36,9 +36,8 @@ package org.openrefine.browsing.filters;
 import java.util.Collection;
 import java.util.Properties;
 
-import org.openrefine.expr.Evaluable;
+import org.openrefine.browsing.util.RowEvaluable;
 import org.openrefine.expr.ExpressionUtils;
-import org.openrefine.model.Cell;
 import org.openrefine.model.Row;
 import org.openrefine.model.RowFilter;
 
@@ -48,40 +47,25 @@ import org.openrefine.model.RowFilter;
  */
 abstract public class DualExpressionsNumberComparisonRowFilter implements RowFilter {
 
-    final protected Evaluable  _x_evaluable;
-    final protected String     _x_columnName;
-    final protected int        _x_cellIndex;
-    final protected Evaluable  _y_evaluable;
-    final protected String     _y_columnName;
-    final protected int        _y_cellIndex;
+	private static final long serialVersionUID = 8056332324847967312L;
+	final protected RowEvaluable  _evalX;
+    final protected RowEvaluable  _evalY;
         
     public DualExpressionsNumberComparisonRowFilter (
-        Evaluable x_evaluable,
-        String x_columnName,
-        int x_cellIndex,
-        Evaluable y_evaluable,
-        String y_columnName,
-        int y_cellIndex
+        RowEvaluable evaluableX,
+        RowEvaluable evaluableY
     ) {
-        _x_evaluable = x_evaluable;
-        _x_columnName = x_columnName;
-        _x_cellIndex = x_cellIndex;
-        _y_evaluable = y_evaluable;
-        _y_columnName = y_columnName;
-        _y_cellIndex = y_cellIndex;
+        _evalX = evaluableX;
+        _evalY = evaluableY;
     }
 
     @Override
     public boolean filterRow(long rowIndex, Row row) {
-        Cell x_cell = _x_cellIndex < 0 ? null : row.getCell(_x_cellIndex);
         Properties x_bindings = ExpressionUtils.createBindings();
-        ExpressionUtils.bind(x_bindings, null, row, rowIndex, _x_columnName, x_cell);
-        Object x_value = _x_evaluable.evaluate(x_bindings);
+        Object x_value = _evalX.eval(rowIndex, row, x_bindings);
         
-        Cell y_cell = _y_cellIndex < 0 ? null : row.getCell(_y_cellIndex);
         Properties y_bindings = ExpressionUtils.createBindings();
-        ExpressionUtils.bind(y_bindings, null, row, rowIndex, _y_columnName, y_cell);
-        Object y_value = _y_evaluable.evaluate(y_bindings);
+        Object y_value = _evalY.eval(rowIndex, row, y_bindings);
 
         if (x_value != null && y_value != null) {
             if (x_value.getClass().isArray() || y_value.getClass().isArray()) {

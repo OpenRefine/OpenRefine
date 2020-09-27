@@ -33,10 +33,11 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package org.openrefine.commands.browsing;
 
-import java.awt.Color;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.imageio.ImageIO;
 import javax.servlet.ServletException;
@@ -45,22 +46,18 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.openrefine.browsing.Engine;
-import org.openrefine.browsing.FilteredRows;
-import org.openrefine.browsing.facets.ScatterplotDrawingRowVisitor;
-import org.openrefine.browsing.facets.ScatterplotFacet;
-import org.openrefine.browsing.util.NumericBinIndex;
+import org.openrefine.browsing.EngineConfig;
+import org.openrefine.browsing.facets.FacetConfig;
+import org.openrefine.browsing.facets.ScatterplotFacet.ScatterplotFacetConfig;
+import org.openrefine.browsing.facets.ScatterplotFacetResult;
+import org.openrefine.browsing.facets.ScatterplotPainter;
+import org.openrefine.browsing.util.ScatterplotFacetState;
 import org.openrefine.commands.Command;
-import org.openrefine.expr.Evaluable;
-import org.openrefine.expr.MetaParser;
-import org.openrefine.expr.ParsingException;
-import org.openrefine.model.ColumnMetadata;
+import org.openrefine.model.GridState;
 import org.openrefine.model.Project;
 import org.openrefine.util.ParsingUtilities;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class GetScatterplotCommand extends Command {
 
@@ -75,9 +72,9 @@ public class GetScatterplotCommand extends Command {
             
             Project project = getProject(request);
             Engine engine = getEngine(request, project);
-            PlotterConfig conf = ParsingUtilities.mapper.readValue(
+            ScatterplotFacetConfig conf = ParsingUtilities.mapper.readValue(
             		request.getParameter("plotter"),
-            		PlotterConfig.class);
+            		ScatterplotFacetConfig.class);
             
             response.setHeader("Content-Type", "image/png");
             
@@ -96,147 +93,29 @@ public class GetScatterplotCommand extends Command {
             respondException(response, e);
         }
     }
-    
-    protected static class PlotterConfig {
-    	@JsonProperty(ScatterplotFacet.SIZE)
-    	public int size = 100;
-    	@JsonProperty(ScatterplotFacet.DOT)
-    	double dot = 100;
-    	@JsonIgnore
-    	public int dim_x = ScatterplotFacet.LIN;
-    	@JsonIgnore
-    	public int dim_y = ScatterplotFacet.LIN;
-    	@JsonProperty(ScatterplotFacet.ROTATION)
-    	public int rotation = ScatterplotFacet.NO_ROTATION;
-    	@JsonProperty(ScatterplotFacet.COLOR)
-    	public String color_str = "000000";
-    	@JsonProperty(ScatterplotFacet.BASE_COLOR)
-    	public String base_color_str = null;
-    	@JsonProperty(ScatterplotFacet.X_COLUMN_NAME)
-    	public String columnName_x = "";
-    	@JsonProperty(ScatterplotFacet.X_EXPRESSION)
-    	public String expression_x = "value";
-    	@JsonProperty(ScatterplotFacet.Y_COLUMN_NAME)
-    	public String columnName_y = "";
-    	@JsonProperty(ScatterplotFacet.Y_EXPRESSION)
-    	public String expression_y = "value";
-    	
-        @JsonProperty(ScatterplotFacet.DIM_X)
-        public String getDimX() {
-            return dim_x == ScatterplotFacet.LIN ? "lin" : "log";
-        }
-        
-        @JsonProperty(ScatterplotFacet.DIM_Y)
-        public String getDimY() {
-            return dim_y == ScatterplotFacet.LIN ? "lin" : "log";
-        }
-        
-        @JsonProperty(ScatterplotFacet.DIM_X)
-        public void setDimX(String dim) {
-        	dim_x = dim.equals("lin") ? ScatterplotFacet.LIN : ScatterplotFacet.LOG;
-        }
-        
-        @JsonProperty(ScatterplotFacet.DIM_Y)
-        public void setDimY(String dim) {
-        	dim_y = dim.equals("lin") ? ScatterplotFacet.LIN : ScatterplotFacet.LOG;
-        }
-        
-        // rotation can be set to "none" (a JSON string) in which case it should be ignored
-        @JsonProperty(ScatterplotFacet.ROTATION)
-        public void setRotation(Object rotation) {
-        	try {
-        		this.rotation = Integer.parseInt(rotation.toString());
-        	} catch(NumberFormatException e) {
-        		;
-        	}
-        }
-    }
-    
-    public void draw(OutputStream output, Project project, Engine engine, PlotterConfig o) throws IOException {
 
-        double min_x = 0;
-        double min_y = 0;
-        double max_x = 0;
-        double max_y = 0;
+    public void draw(OutputStream output, Project project, Engine engine, ScatterplotFacetConfig o) throws IOException {
+        GridState grid = project.getCurrentGridState();
         
-        int columnIndex_x = 0;
-        int columnIndex_y = 0;
+        // Compute a modified Engine which includes the facet in last position
+        EngineConfig origEngineConfig = engine.getConfig();
+        int scatterplotFacetPosition = origEngineConfig.getFacetConfigs().size();
+        List<FacetConfig> newFacetConfigs = new ArrayList<>(origEngineConfig.getFacetConfigs());
+        newFacetConfigs.add(o);
+        EngineConfig newEngineConfig = new EngineConfig(newFacetConfigs, engine.getMode());
+        Engine newEngine = new Engine(grid, newEngineConfig);
         
-        Evaluable eval_x = null;
-        Evaluable eval_y = null;
+        ScatterplotFacetResult scatterplotFacetResult = (ScatterplotFacetResult) newEngine.getFacetResults().get(scatterplotFacetPosition);
+        ScatterplotFacetState facetState = scatterplotFacetResult.getFacetState();
         
-        Color color = new Color(Integer.parseInt(o.color_str,16));
-        
-        Color base_color = o.base_color_str != null ? new Color(Integer.parseInt(o.base_color_str,16)) : null;
-        
-        if (o.columnName_x.length() > 0) {
-            ColumnMetadata x_column = project.columnModel.getColumnByName(o.columnName_x);
-            if (x_column != null) {
-                columnIndex_x = x_column.getCellIndex();
-            }
-        } else {
-            columnIndex_x = -1;
-        }
-        
-        try {
-            eval_x = MetaParser.parse(o.expression_x);
-        } catch (ParsingException e) {
-            logger.warn("error parsing expression", e);
-        }
-        
-        if (o.columnName_y.length() > 0) {
-            ColumnMetadata y_column = project.columnModel.getColumnByName(o.columnName_y);
-            if (y_column != null) {
-                columnIndex_y = y_column.getCellIndex();
-            }
-        } else {
-            columnIndex_y = -1;
-        }
-        
-        try {
-            eval_y = MetaParser.parse(o.expression_y);
-        } catch (ParsingException e) {
-            logger.warn("error parsing expression", e);
-        }
-        
-        NumericBinIndex index_x = null;
-        NumericBinIndex index_y = null;
-        
-        ColumnMetadata column_x = project.columnModel.getColumnByName(o.columnName_x);
-        if (column_x != null) {
-            columnIndex_x = column_x.getCellIndex();
-            index_x = ScatterplotFacet.getBinIndex(project, column_x, eval_x, o.expression_x);
-            min_x = index_x.getMin();
-            max_x = index_x.getMax();
-        }
-
-        ColumnMetadata column_y = project.columnModel.getColumnByName(o.columnName_y);
-        if (column_y != null) {
-            columnIndex_y = column_y.getCellIndex();
-            index_y = ScatterplotFacet.getBinIndex(project, column_y, eval_y, o.expression_y);
-            min_y = index_y.getMin();
-            max_y = index_y.getMax();
-        }
-        
-        if (index_x != null && index_y != null && index_x.isNumeric() && index_y.isNumeric()) {
-            ScatterplotDrawingRowVisitor drawer = new ScatterplotDrawingRowVisitor(
-                columnIndex_x, columnIndex_y, min_x, max_x, min_y, max_y, 
-                o.size, o.dim_x, o.dim_y, o.rotation, o.dot, color
+        if (facetState.getValuesCount() > 0) {
+            ScatterplotPainter drawer = new ScatterplotPainter(
+                scatterplotFacetResult, 
+                o.size, o.dim_x, o.dim_y, o.rotation, o.dot,
+                o.getColor(), o.getBaseColor()
             );
             
-            if (base_color != null) {
-                drawer.setColor(base_color);
-                
-                FilteredRows filteredRows = engine.getAllRows();
-                filteredRows.accept(project, drawer);
-                
-                drawer.setColor(color);
-            }
-            
-            {
-                FilteredRows filteredRows = engine.getAllFilteredRows();
-                filteredRows.accept(project, drawer);
-            }
+            drawer.drawPoints(facetState);
             
             ImageIO.write(drawer.getImage(), "png", output);
         } else {

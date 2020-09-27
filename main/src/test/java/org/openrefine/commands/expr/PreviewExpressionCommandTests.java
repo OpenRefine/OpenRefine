@@ -75,7 +75,7 @@ public class PreviewExpressionCommandTests extends RefineTest {
     @Test
     public void testJsonResponse() throws ServletException, IOException {
 
-        when(request.getParameter("project")).thenReturn(Long.toString(project.id));
+        when(request.getParameter("project")).thenReturn(Long.toString(project.getId()));
         when(request.getParameter("cellIndex")).thenReturn("1");
         when(request.getParameter("expression")).thenReturn("grel:value + \"_u\"");
         when(request.getParameter("rowIndices")).thenReturn("[0,2]");
@@ -91,7 +91,7 @@ public class PreviewExpressionCommandTests extends RefineTest {
     @Test
     public void testParseError() throws ServletException, IOException {
 
-        when(request.getParameter("project")).thenReturn(Long.toString(project.id));
+        when(request.getParameter("project")).thenReturn(Long.toString(project.getId()));
         when(request.getParameter("cellIndex")).thenReturn("1");
         when(request.getParameter("expression")).thenReturn("grel:value +");
         when(request.getParameter("rowIndices")).thenReturn("[0,2]");
