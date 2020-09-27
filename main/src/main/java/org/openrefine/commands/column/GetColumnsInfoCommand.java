@@ -44,6 +44,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonValue;
 
 import org.openrefine.browsing.facets.RowAggregator;
 import org.openrefine.commands.Command;
@@ -79,6 +80,12 @@ public class GetColumnsInfoCommand extends Command {
     private static class AggregationState implements Serializable {
 
         private static final long serialVersionUID = -7825020364579861122L;
+
+        @JsonValue
+        public List<ColumnStatistics> getStatistics() {
+            return statistics;
+        }
+
         public List<ColumnStatistics> statistics;
     }
 
