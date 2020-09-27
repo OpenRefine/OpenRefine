@@ -50,6 +50,7 @@ import org.openrefine.model.Project;
 import org.openrefine.model.Row;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonValue;
 
 public class GetColumnsInfoCommand extends Command {
 
@@ -77,6 +78,10 @@ public class GetColumnsInfoCommand extends Command {
     
     private static class AggregationState implements Serializable {
 		private static final long serialVersionUID = -7825020364579861122L;
+		@JsonValue
+		public List<ColumnStatistics> getStatistics() {
+			return statistics;
+		}
 		public List<ColumnStatistics> statistics;
     }
     

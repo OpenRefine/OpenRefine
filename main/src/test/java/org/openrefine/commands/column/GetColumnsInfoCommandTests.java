@@ -17,8 +17,7 @@ public class GetColumnsInfoCommandTests extends CommandTestBase {
 	
 	Project project = null;
 	static String jsonResponse = ""
-			+ "{\n" + 
-			"       \"statistics\" : [ {\n" + 
+			+ "[ {\n" + 
 			"         \"is_numeric\" : false,\n" + 
 			"         \"name\" : \"a\",\n" + 
 			"         \"numeric_row_count\" : 1,\n" + 
@@ -33,8 +32,7 @@ public class GetColumnsInfoCommandTests extends CommandTestBase {
 			"         \"name\" : \"c\",\n" + 
 			"         \"numeric_row_count\" : 3,\n" + 
 			"         \"other_count\" : 0\n" + 
-			"       } ]\n" + 
-			"     }";
+			"       } ]";
 	
 	@BeforeMethod
 	public void setUpCommand() {
