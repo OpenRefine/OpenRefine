@@ -37,6 +37,7 @@ import org.openrefine.RefineTest;
 import org.openrefine.browsing.Engine;
 import org.openrefine.browsing.Engine.Mode;
 import org.openrefine.browsing.EngineConfig;
+import org.openrefine.browsing.facets.ScatterplotFacet.Dimension;
 import org.openrefine.browsing.facets.ScatterplotFacet.ScatterplotFacetConfig;
 import org.openrefine.expr.MetaParser;
 import org.openrefine.grel.Parser;
@@ -44,6 +45,7 @@ import org.openrefine.model.GridState;
 import org.openrefine.model.RowFilter;
 import org.openrefine.util.ParsingUtilities;
 import org.openrefine.util.TestUtils;
+import org.testng.Assert;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
@@ -66,6 +68,18 @@ public class ScatterplotFacetTests extends RefineTest {
             "          \"dim_y\": \"lin\",\n" + 
             "          \"ex\": \"value\",\n" + 
             "          \"dim_x\": \"lin\",\n" +
+            "          \"ey\": \"value\",\n" + 
+            "          \"cx\": \"my column\",\n" + 
+            "          \"cy\": \"e\",\n" +
+            "          \"r\": \"none\"," + 
+            "          \"name\": \"my column (x) vs. e (y)\"\n" + 
+            "        }";
+    
+    public static String configNeutralJson = "{\n" + 
+            "          \"dot\": 1,\n" + 
+            "          \"l\": 150,\n" + 
+            "          \"type\": \"core/scatterplot\",\n" + 
+            "          \"ex\": \"value\",\n" + 
             "          \"ey\": \"value\",\n" + 
             "          \"cx\": \"my column\",\n" + 
             "          \"cy\": \"e\",\n" +
@@ -127,6 +141,19 @@ public class ScatterplotFacetTests extends RefineTest {
     public void serializeScatterplotFacetConfig() throws JsonParseException, JsonMappingException, IOException {
         ScatterplotFacetConfig config = ParsingUtilities.mapper.readValue(configJson, ScatterplotFacetConfig.class);
         TestUtils.isSerializedTo(config, configJson, ParsingUtilities.defaultWriter);
+    }
+    
+    @Test
+    public void deserializeNeutralScatterplotFacetConfig() throws JsonParseException, JsonMappingException, IOException {
+    	ScatterplotFacetConfig config = ParsingUtilities.mapper.readValue(configNeutralJson, ScatterplotFacetConfig.class);
+    	
+    	// unspecified fields have correct default values
+    	Assert.assertEquals(config.fromX, 0.0);
+    	Assert.assertEquals(config.toX, 1.0);
+    	Assert.assertEquals(config.fromY, 0.0);
+    	Assert.assertEquals(config.toY, 1.0);
+    	Assert.assertEquals(config.dim_x, Dimension.LIN);
+    	Assert.assertEquals(config.dim_y, Dimension.LIN);
     }
     
     @Test
