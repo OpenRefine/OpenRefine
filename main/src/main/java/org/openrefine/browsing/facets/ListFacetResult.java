@@ -66,8 +66,7 @@ public class ListFacetResult implements FacetResult {
 		}
 		
 		for(String missingValue : selectedValues) {
-			// TODO (antonin): not sure why "true" must be used here, seems implied by previous tests
-			DecoratedValue decoratedValue = new DecoratedValue(missingValue, "true");
+			DecoratedValue decoratedValue = new DecoratedValue(missingValue, missingValue);
 			NominalFacetChoice choice = new NominalFacetChoice(decoratedValue, 0, true);
 			_choices.add(choice);
 		}

@@ -2,18 +2,11 @@ package org.openrefine.browsing.util;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Properties;
 import java.util.Set;
 
-import org.openrefine.browsing.facets.FacetAggregator;
-import org.openrefine.browsing.filters.AllRowsRecordFilter;
-import org.openrefine.browsing.filters.AnyRowRecordFilter;
 import org.openrefine.browsing.filters.ExpressionEqualRowFilter;
-import org.openrefine.expr.Evaluable;
 import org.openrefine.expr.ExpressionUtils;
 import org.openrefine.model.ColumnModel;
-import org.openrefine.model.RecordFilter;
-import org.openrefine.model.Row;
 import org.openrefine.model.RowFilter;
 import org.openrefine.util.StringUtils;
 

@@ -12,7 +12,6 @@ import org.openrefine.ProjectManager;
 import org.openrefine.browsing.DecoratedValue;
 import org.openrefine.browsing.facets.ListFacet.ListFacetConfig;
 import org.openrefine.browsing.util.StringValuesFacetState;
-import org.openrefine.expr.Evaluable;
 import org.openrefine.expr.MetaParser;
 import org.openrefine.grel.Parser;
 import org.openrefine.model.ColumnMetadata;
@@ -55,11 +54,10 @@ public class ListFacetResultTests {
     		+ "    {\"v\":{\"v\":\"ebar\",\"l\":\"ebar\"},\"c\":1,\"s\":false},"
     		+ "    {\"v\":{\"v\":\"cbar\",\"l\":\"cbar\"},\"c\":1,\"s\":false},"
     		+ "    {\"v\":{\"v\":\"abar\",\"l\":\"abar\"},\"c\":1,\"s\":false},"
-    		+ "    {\"v\":{\"v\":\"foobar\",\"l\":\"true\"},\"c\":0,\"s\":true}"
+    		+ "    {\"v\":{\"v\":\"foobar\",\"l\":\"foobar\"},\"c\":0,\"s\":true}"
     		+ "]}";
     
     private ListFacetConfig config;
-    private Evaluable evaluable = mock(Evaluable.class);
     
     @BeforeMethod
     public void setUpConfig() {
