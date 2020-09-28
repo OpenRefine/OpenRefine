@@ -306,6 +306,20 @@ ScatterplotFacet.prototype.updateState = function(data) {
       this._config.to_y = 1;
     }
 
+    if ("min_x" in data) {
+      this._config.min_x = data.min_x;
+    }
+    if ("max_x" in data) {
+      this._config.max_x = data.max_x;
+    }
+    if ("min_y" in data) {
+      this._config.min_y = data.min_y;
+    }
+    if ("max_y" in data) {
+      this._config.max_y = data.max_y;
+    }
+
+
     if (this._plotAreaSelector) {
       var ops = {};
       this._fillSelectionOptions(ops);
