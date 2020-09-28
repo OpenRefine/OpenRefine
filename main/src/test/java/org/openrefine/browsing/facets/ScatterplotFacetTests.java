@@ -52,13 +52,17 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 
 public class ScatterplotFacetTests extends RefineTest {
     public static String configJson = "{\n" + 
-            "          \"to_x\": 10,\n" + 
-            "          \"to_y\": 5,\n" + 
+            "          \"max_x\" : 89.2," +
+            "          \"max_y\" : 32," +
+            "          \"min_x\" : -45.9," +
+            "          \"min_y\" : -38," +
+            "          \"to_x\": 1,\n" + 
+            "          \"to_y\": 1,\n" + 
             "          \"dot\": 1,\n" + 
             "          \"from_x\": 0.2,\n" + 
             "          \"l\": 150,\n" + 
             "          \"type\": \"core/scatterplot\",\n" + 
-            "          \"from_y\": -1,\n" + 
+            "          \"from_y\": 0.25,\n" + 
             "          \"dim_y\": \"lin\",\n" + 
             "          \"ex\": \"value\",\n" + 
             "          \"dim_x\": \"lin\",\n" +
@@ -81,9 +85,9 @@ public class ScatterplotFacetTests extends RefineTest {
             + "\"dim_x\":\"lin\","
             + "\"dim_y\":\"lin\","
             + "\"from_x\":0.2,"
-            + "\"to_x\":10,"
-            + "\"from_y\":-1,"
-            + "\"to_y\":5,"
+            + "\"to_x\":1,"
+            + "\"from_y\":0.25,"
+            + "\"to_y\":1,"
             + "\"max_x\" : 89.2,"
             + "\"max_y\" : 32,"
             + "\"min_x\" : -45.9,"
@@ -113,8 +117,8 @@ public class ScatterplotFacetTests extends RefineTest {
     	FacetConfigResolver.registerFacetConfig("core", "scatterplot", ScatterplotFacetConfig.class);
     	grid = createGrid(new String[] {"my column","e"},
         		new Serializable[][] {
-                { 89.2,-38 },
-                { -45.9, 32 }, 
+                { 89.2, 32 },
+                { -45.9, -38 }, 
                 { "blah","blah" },
                 { 0.4, 1 }});
     }
@@ -154,7 +158,7 @@ public class ScatterplotFacetTests extends RefineTest {
     	ScatterplotFacet facet = config.apply(grid.getColumnModel());
         RowFilter filter = facet.getAggregator().getRowFilter();
         
-        assertFalse(filter.filterRow(0, grid.getRow(0)));
+        assertTrue(filter.filterRow(0, grid.getRow(0)));
         assertFalse(filter.filterRow(1, grid.getRow(1)));
         assertFalse(filter.filterRow(2, grid.getRow(2)));
         assertTrue(filter.filterRow(3, grid.getRow(3)));

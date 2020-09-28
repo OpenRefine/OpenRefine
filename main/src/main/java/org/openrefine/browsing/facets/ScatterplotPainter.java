@@ -141,11 +141,7 @@ public class ScatterplotPainter {
     public void drawPoint(double x, double y, boolean inView) {
         Point2D.Double p = new Point2D.Double(x,y);
         
-        p = ScatterplotFacet.translateCoordinates(p, dim_x, dim_y, l, r);
-        
-        // rescale the point to the appropriate dimensions
-        Point2D.Double rescaled = new Point2D.Double(
-        		l * (p.x - min_x) / range_x, l * (p.y - min_y) / range_y);
+        p = ScatterplotFacet.translateCoordinates(p, min_x, max_x, min_y, max_y, dim_x, dim_y, l, r);
         
         Color currentColor = null;
         if (inView || color != null) {
@@ -155,7 +151,7 @@ public class ScatterplotPainter {
         }
         if (currentColor != null) {
         	setColor(currentColor);
-        	g2.fill(new Rectangle2D.Double(rescaled.x - dot / 2, p.y - dot / 2, dot, dot));
+        	g2.fill(new Rectangle2D.Double(p.x - dot / 2, p.y - dot / 2, dot, dot));
         }
     }
     

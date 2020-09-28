@@ -54,7 +54,6 @@ import org.slf4j.LoggerFactory;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.google.common.primitives.Doubles;
 
 public class ScatterplotFacet implements Facet {
 
@@ -93,9 +92,9 @@ public class ScatterplotFacet implements Facet {
     public enum Rotation {
     	@JsonProperty("none")
     	NO_ROTATION,
-    	@JsonProperty("rotate_cw")
+    	@JsonProperty("cw")
     	ROTATE_CW,
-    	@JsonProperty("rotate_ccw")
+    	@JsonProperty("ccw")
     	ROTATE_CCW
     }
     
@@ -131,18 +130,26 @@ public class ScatterplotFacet implements Facet {
         public Dimension dim_y;
         @JsonProperty(ROTATION)
         public Rotation rotation;
-    
-        @JsonIgnore
-        public double l = 1.;
         
         @JsonProperty(FROM_X)
-        public double fromX; // the numeric selection for the x axis
+        public double fromX; // the numeric selection for the x axis, from 0 to 1
         @JsonProperty(TO_X)
         public double toX;
         @JsonProperty(FROM_Y)
-        public double fromY; // the numeric selection for the y axis
+        public double fromY; // the numeric selection for the y axis, from 0 to 1
         @JsonProperty(TO_Y)
         public double toY;
+        
+        // the bounds of the scatterplot, used to interpret the values
+        // above after transformation
+        @JsonProperty(MIN_X)
+        public double minX;
+        @JsonProperty(MAX_X)
+        public double maxX;
+        @JsonProperty(MIN_Y)
+        public double minY;
+        @JsonProperty(MAX_Y)
+        public double maxY;
         
         // Only used for plotting
         @JsonProperty(DOT)
@@ -194,7 +201,15 @@ public class ScatterplotFacet implements Facet {
         		double toX,
         		@JsonProperty(FROM_Y)
         		double fromY,
-        		@JsonProperty(TO_Y)
+                @JsonProperty(MIN_X)
+                double minX,
+                @JsonProperty(MAX_X)
+                double maxX,
+                @JsonProperty(MIN_Y)
+                double minY,
+                @JsonProperty(MAX_Y)
+                double maxY,
+                @JsonProperty(TO_Y)
         		double toY,
         		@JsonProperty(DIM_X)
         		Dimension dimX,
@@ -203,8 +218,8 @@ public class ScatterplotFacet implements Facet {
         		@JsonProperty(ROTATION)
         		Rotation r) {
         	this.name = name;
-        	this.expression_x = expressionX;
-        	this.expression_y = expressionY;
+        	this.expression_x = expressionX != null ? expressionX : "value";
+        	this.expression_y = expressionY != null ? expressionY : "value";
         	this.columnName_x = columnNameX;
         	this.columnName_y = columnNameY;
         	this.size = size;
@@ -215,18 +230,22 @@ public class ScatterplotFacet implements Facet {
         	this.toX = toX;
         	this.fromY = fromY;
         	this.toY = toY;
+        	this.minX = minX;
+        	this.maxX = maxX;
+        	this.minY = minY;
+        	this.maxY = maxY;
         	this.dim_x = dimX == null ? Dimension.LIN : dimX;
         	this.dim_y = dimY == null ? Dimension.LIN : dimY;
         	this.rotation = r == null ? Rotation.NO_ROTATION : r;
         	try {
-	            evaluableX = MetaParser.parse(expressionX);
+	            evaluableX = MetaParser.parse(this.expression_x);
 	            errorMessageX = null;
 	        } catch (ParsingException e) {
 	            errorMessageX = e.getMessage();
 	            evaluableX = null;
 	        }
         	try {
-	            evaluableY = MetaParser.parse(expressionY);
+	            evaluableY = MetaParser.parse(this.expression_y);
 	            errorMessageY = null;
 	        } catch (ParsingException e) {
 	            errorMessageY = e.getMessage();
@@ -279,6 +298,10 @@ public class ScatterplotFacet implements Facet {
 	        		toX,
 	        		fromY,
 	        		toY,
+	        		minX,
+	        		maxX,
+	        		minY,
+	        		maxY,
 	        		dim_x,
 	        		dim_y,
 	        		rotation);
@@ -286,7 +309,7 @@ public class ScatterplotFacet implements Facet {
 
 		@Override
 		public boolean isNeutral() {
-			return !(fromX > 0 || toX < 1 || fromY > 0 || toY < 1);
+			return !(fromX > 0 || toX < 1 || fromY > 0 || toY < 1) || (minX == 0 && maxX == 0 && minY == 0 && maxY == 0);
 		}
 
 		@Override
@@ -319,14 +342,10 @@ public class ScatterplotFacet implements Facet {
     protected String     errorMessage_x;
     protected String     errorMessage_y;
 
-    protected AffineTransform t;
-
     final static Logger logger = LoggerFactory.getLogger("scatterplot_facet");
     
     public ScatterplotFacet(ScatterplotFacetConfig config, int cellIndexX, int cellIndexY) {
     	this.config = config;
-    	
-        t = createRotationMatrix(config.rotation, config.l);
         
         columnIndex_x = cellIndexX;
         columnIndex_y = cellIndexY;
@@ -361,7 +380,8 @@ public class ScatterplotFacet implements Facet {
     }
     
     public static Point2D.Double translateCoordinates(
-            Point2D.Double p, 
+            Point2D.Double p,
+            double minX, double maxX, double minY, double maxY,
             Dimension dimX,
             Dimension dimY,
             double l,
@@ -370,16 +390,21 @@ public class ScatterplotFacet implements Facet {
         double x = p.x;
         double y = p.y;
         
+        double relativeX = x - minX;
+        double rangeX = maxX - minX;
+                
         if (dimX == Dimension.LOG) {
-            x = Math.log10(Math.abs(x) + 1) * l;
+            x = Math.log10(Math.abs(relativeX) + 1) * l / Math.log10(rangeX + 1);
         } else {
-            x = x * l;
+            x = relativeX * l / rangeX;
         }
 
+        double relativeY = y - minY;
+        double rangeY = maxY - minY;
         if (dimY == Dimension.LOG) {
-            y = Math.log10(Math.abs(y) + 1) * l;
+            y = Math.log10(Math.abs(relativeY) + 1) * l / Math.log10(rangeY + 1);
         } else {
-            y = y * l;
+            y = relativeY * l / rangeY;
         }
         
         p.x = x;
@@ -406,8 +431,7 @@ public class ScatterplotFacet implements Facet {
 		if (config.evaluableX != null && config.evaluableY != null) {
 			return new ScatterplotFacetAggregator(config,
 				new ExpressionBasedRowEvaluable(config.columnName_x, columnIndex_x, config.evaluableX),
-				new ExpressionBasedRowEvaluable(config.columnName_y, columnIndex_y, config.evaluableY),
-				config.rotation, config.l, config.dim_x, config.dim_y);
+				new ExpressionBasedRowEvaluable(config.columnName_y, columnIndex_y, config.evaluableY));
 		} else {
 			return null;
 		}

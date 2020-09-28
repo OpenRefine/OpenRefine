@@ -1,13 +1,8 @@
 package org.openrefine.browsing.util;
 
-import java.awt.geom.AffineTransform;
-import java.awt.geom.Point2D;
 import java.util.Properties;
 
 import org.openrefine.browsing.facets.FacetAggregator;
-import org.openrefine.browsing.facets.ScatterplotFacet;
-import org.openrefine.browsing.facets.ScatterplotFacet.Dimension;
-import org.openrefine.browsing.facets.ScatterplotFacet.Rotation;
 import org.openrefine.browsing.facets.ScatterplotFacet.ScatterplotFacetConfig;
 import org.openrefine.browsing.filters.AnyRowRecordFilter;
 import org.openrefine.expr.ExpressionUtils;
@@ -25,35 +20,14 @@ public class ScatterplotFacetAggregator implements FacetAggregator<ScatterplotFa
 	private final ScatterplotFacetConfig    _config;
 	private final RowEvaluable              _evalX;
 	private final RowEvaluable              _evalY;
-	private final Rotation                  _rotation;
-	private final double                    _l;
-	private final Dimension					_dimX;
-	private final Dimension                 _dimY;
-	private transient AffineTransform       _transform;
 	
 	public ScatterplotFacetAggregator(
 			ScatterplotFacetConfig config,
 			RowEvaluable evalX,
-			RowEvaluable evalY,
-			Rotation rotation,
-			double l,
-			Dimension dim_x,
-			Dimension dim_y) {
+			RowEvaluable evalY) {
 		_config = config;
 		_evalX = evalX;
 		_evalY = evalY;
-		_rotation = rotation;
-		_l = l;
-		_dimX = dim_x;
-		_dimY = dim_y;
-	}
-	
-	protected AffineTransform getTransform() {
-		if (_transform != null || _rotation == Rotation.NO_ROTATION) {
-			return _transform;
-		}
-		_transform = ScatterplotFacet.createRotationMatrix(_rotation, _l);
-		return _transform;
 	}
 	
 	@Override
@@ -83,9 +57,7 @@ public class ScatterplotFacetAggregator implements FacetAggregator<ScatterplotFa
                         !Double.isNaN(dx) && 
                         !Double.isInfinite(dy) && 
                         !Double.isNaN(dy)) {
-                	Point2D.Double p = new Point2D.Double(dx, dy);
-                	Point2D.Double t = ScatterplotFacet.translateCoordinates(p, _dimX, _dimY, _l, getTransform());
-                	return state.addValue(t.x, t.y, inView);
+                	return state.addValue(dx, dy, inView);
                 }
             }
         }
@@ -109,8 +81,9 @@ public class ScatterplotFacetAggregator implements FacetAggregator<ScatterplotFa
                 _evalY != null) 
         {
             return new ScatterplotRowFilter(_evalX, _evalY,
+            		_config.minX, _config.maxX, _config.minY, _config.maxY,
             		_config.fromX, _config.toX, _config.fromY, _config.toY,
-            		_config.dim_x, _config.dim_y, _config.l, _config.rotation);
+            		_config.dim_x, _config.dim_y, _config.size, _config.rotation);
         } else {
             return null;
         }

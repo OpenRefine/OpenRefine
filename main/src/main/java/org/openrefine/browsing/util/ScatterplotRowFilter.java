@@ -18,6 +18,10 @@ public class ScatterplotRowFilter extends DualExpressionsNumberComparisonRowFilt
 
 	private static final long serialVersionUID = -1872143237020444678L;
 	
+	private final double    _minX;
+	private final double    _maxX;
+	private final double    _minY;
+	private final double    _maxY;
 	private final double    _fromX;
 	private final double    _toX;
 	private final double    _fromY;
@@ -32,6 +36,10 @@ public class ScatterplotRowFilter extends DualExpressionsNumberComparisonRowFilt
 	public ScatterplotRowFilter(
 			RowEvaluable evaluableX,
 			RowEvaluable evaluableY,
+			double minX,
+			double maxX,
+			double minY,
+			double maxY,
 			double fromX,
 			double toX,
 			double fromY,
@@ -41,10 +49,14 @@ public class ScatterplotRowFilter extends DualExpressionsNumberComparisonRowFilt
 			double l,
 			Rotation rotation) {
 		super(evaluableX, evaluableY);
-		_fromX = fromX;
-		_toX = toX;
-		_fromY = fromY;
-		_toY = toY;
+		_minX = minX;
+		_maxX = maxX;
+		_minY = minY;
+		_maxY = maxY;
+		_fromX = fromX * l;
+		_toX = toX * l;
+		_fromY = fromY * l;
+		_toY = toY * l;
 		_dimX = dimX;
 		_dimY = dimY;
 		_l = l;
@@ -54,7 +66,7 @@ public class ScatterplotRowFilter extends DualExpressionsNumberComparisonRowFilt
 	@Override
 	protected boolean checkValues(double x, double y) {
 		Point2D.Double point = new Point2D.Double(x, y);
-		Point2D.Double t = ScatterplotFacet.translateCoordinates(point, _dimX, _dimY, _l, getTransform());
+		Point2D.Double t = ScatterplotFacet.translateCoordinates(point, _minX, _maxX, _minY, _maxY, _dimX, _dimY, _l, getTransform());
         return t.x >= _fromX && t.x <= _toX && t.y >= _fromY && t.y <= _toY;
 	}
 

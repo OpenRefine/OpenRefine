@@ -118,6 +118,7 @@ ScatterplotDialog.prototype._renderMatrix = function() {
                 var title = cx + ' (x) vs. ' + cy + ' (y)';
                 var link = '<a href="javascript:{}" title="' + title + '" cx="' + cx + '" cy="' + cy + '">';
                 var plotter_params = { 
+                    'type': 'core/scatterplot',
                     'cx' : cx, 
                     'cy' : cy,
                     'l' : self._plot_size,
