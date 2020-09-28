@@ -187,13 +187,13 @@ public class ScatterplotFacet implements Facet {
                 @JsonProperty(BASE_COLOR) String baseColor,
                 @JsonProperty(DOT) double dot,
                 @JsonProperty(FROM_X) double fromX,
-                @JsonProperty(TO_X) double toX,
+                @JsonProperty(TO_X) Double toX,
                 @JsonProperty(FROM_Y) double fromY,
                 @JsonProperty(MIN_X) double minX,
                 @JsonProperty(MAX_X) double maxX,
                 @JsonProperty(MIN_Y) double minY,
                 @JsonProperty(MAX_Y) double maxY,
-                @JsonProperty(TO_Y) double toY,
+                @JsonProperty(TO_Y) Double toY,
                 @JsonProperty(DIM_X) Dimension dimX,
                 @JsonProperty(DIM_Y) Dimension dimY,
                 @JsonProperty(ROTATION) Rotation r) {
@@ -207,9 +207,9 @@ public class ScatterplotFacet implements Facet {
             this.baseColor_str = baseColor;
             this.dot = dot;
             this.fromX = fromX;
-            this.toX = toX;
+            this.toX = toX == null ? 1 : toX;
             this.fromY = fromY;
-            this.toY = toY;
+            this.toY = toY == null ? 1 : toY;
             this.minX = minX;
             this.maxX = maxX;
             this.minY = minY;
@@ -289,7 +289,7 @@ public class ScatterplotFacet implements Facet {
 
         @Override
         public boolean isNeutral() {
-            return !(fromX > 0 || toX < 1 || fromY > 0 || toY < 1) || (minX == 0 && maxX == 0 && minY == 0 && maxY == 0);
+            return (!(fromX > 0 || toX < 1 || fromY > 0 || toY < 1)) || (minX == 0 && maxX == 0 && minY == 0 && maxY == 0);
         }
 
         @Override
