@@ -80,6 +80,8 @@
     "wikibase-preview/new-id": "new item",
     "wikibase-account/dialog-header": "$1 account",
     "wikibase-account/explain-log-in": "Logging in to <a href=\"$1\" target=\"_blank\">$2</a> lets you to upload edits directly from OpenRefine.",
+    "wikibase-account/explain-bot-passwords": "You are encouraged to login with <a href=\"$1\" target=\"_blank\">bot passwords</a>, see this <a href=\"https://docs.openrefine.org/manual/wikidata#manage-wikidata-account\" target=\"_blank\">wiki page</a> to learn how to get one.",
+    "wikibase-account/bot-passwords-alert": "You are appearing to use your main password to login in. We encourage you to use bot password to login. For bot password, the username should be in the form of \"yourwikidatausername@yourbotname\".",
     "wikibase-account/explain-owner-only-consumer-wiki": "You need to register an owner-only consumer <a href=\"$1\" target=\"_blank\">here</a> first if you don't have one. See this <a href=\"https://github.com/OpenRefine/OpenRefine/wiki/Wikidata-owner-only-consumer\" target=\"_blank\">wiki</a> to learn how to get one.",
     "wikibase-account/explain-password-login": "You can also <a>login with your username/password.</a>",
     "wikibase-account/explain-owner-only-consumer-login": "You can also <a>login with your owner-only consumer.</a>",
