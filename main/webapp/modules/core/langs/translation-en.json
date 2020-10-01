@@ -750,5 +750,22 @@
     "core-buttons/match": "Match",
     "core-buttons/copy": "Copy",
     "core-buttons/transpose": "Transpose",
-    "core-buttons/apply-to-all": "Apply to All Identical Cells"
+    "core-buttons/apply-to-all": "Apply to All Identical Cells",
+    "core-import-formats/text/line-based": "Line-based text files",
+    "core-import-formats/text/line-based/*sv": "CSV / TSV / separator-based files",
+    "core-import-formats/text/line-based/fixed-width": "Fixed-width field text files",
+    "core-import-formats/text/rdf/nt": "RDF/N-Triples files",
+    "core-import-formats/text/rdf/n3": "RDF/N3 files",
+    "core-import-formats/text/rdf/ttl": "RDF/Turtle files",
+    "core-import-formats/text/rdf/xml": "RDF/XML files",
+    "core-import-formats/text/rdf/ld+json": "JSON-LD files",
+    "core-import-formats/text/xml": "XML files",
+    "core-import-formats/binary/text/xml/xls/xlsx": "Excel files",
+    "core-import-formats/text/xml/ods": "Open Document Format spreadsheets (.ods)",
+    "core-import-formats/text/json": "JSON files",
+    "core-import-formats/text/marc": "MARC files",
+    "core-import-formats/text/wiki": "Wikitext",
+    "core-import-formats/text": "Text files",
+    "core-import-formats/binary": "Binary files",
+    "core-import-formats/service": "Services"
 }
