@@ -250,5 +250,7 @@
     "wikibase-management/current-selected-wikibase": "現在のWikibase: <a href=\"$1\" target=\"_blank\">$2</a>",
     "wikibase-management/explain-select-wikibase": "作業したいWikibaseを選択してください。現在使っているスキーマは更新されます。Wikibaseを切り替えた後、スキーマを編集する前に、Wikibaseに対して照合を行ってください。",
     "wikibase-management/dialog-header": "Wikibaseインスタンスを選択",
-    "wikibase-extension/select-wikibase-instance": "Wikibaseインスタンスを選択"
+    "wikibase-extension/select-wikibase-instance": "Wikibaseインスタンスを選択",
+    "wikibase-account/bot-passwords-alert": "メイン・パスワードを使用してログインしているようですが、ボット・パスワードの使用をお勧めします。その際は\"yourwikidatausername@yourbotname\"の形式のユーザー名を使用する必要があります。",
+    "wikibase-account/explain-bot-passwords": "<a href=\"$1\" target=\"_blank\">ボット・パスワード</a>でログインすることをお勧めします。詳しくは、<a href=\"https://docs.openrefine.org/manual/wikidata#manage-wikidata-account\" target=\"_blank\">wiki page</a>を参照してください。"
 }
