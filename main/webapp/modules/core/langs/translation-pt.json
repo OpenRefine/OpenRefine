@@ -328,7 +328,7 @@
     "core-buttons/add-service": "Adicionar serviço",
     "core-views/after-split": "Depois de dividir",
     "core-index/try-these": "Se não tem dados para trabalhar experimente estes",
-    "core-util-enc/invalid-date": "Formato de data inválido",
+    "core-util-enc/invalid-date": "Cadeia de data inválida",
     "core-index/description": "Descrição:",
     "core-facets/logar-plot-abbr": "log",
     "core-project/excel-xml": "Excel 2007+ (.xlsx)",
