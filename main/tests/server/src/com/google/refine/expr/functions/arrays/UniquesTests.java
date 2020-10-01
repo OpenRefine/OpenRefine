@@ -39,8 +39,9 @@ public class UniquesTests extends RefineTest {
         TestUtils.isSerializedTo(new Uniques(), json);
     }
 
+    @Test
     public void uniquesJsonArray() throws ParsingException {
-        String[] test = {"'[2,1,1,3]'.parseJson().uniques().toString()", "[2, 1, 3]"};
+        String[] test = {"'{a:[2,1,1,3]}'.parseJson().a.uniques().toString()", "[2, 1, 3]"};
         parseEval(bindings, test);
         String[] test1 = {"'[2,2,null,null,3,3]'.parseJson().uniques().toString()", "[2, null, 3]"};
         parseEval(bindings, test1);
