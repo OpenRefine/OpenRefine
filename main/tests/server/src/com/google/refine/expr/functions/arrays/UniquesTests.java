@@ -61,6 +61,9 @@ public class UniquesTests extends RefineTest {
 
         String[] test4 = {"[toDate(2020), '2018-03-02'.toDate(), toDate(2020)].uniques().toString()", "[2020-01-01T00:00Z, 2018-03-02T00:00Z]"};
         parseEval(bindings, test4);
+
+        String[] test5 = {"[null,null,null].uniques().toString()", "[null]"};
+        parseEval(bindings, test5);
     }
 
     @Test
