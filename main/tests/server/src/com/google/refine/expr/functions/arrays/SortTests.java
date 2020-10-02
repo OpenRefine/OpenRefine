@@ -64,6 +64,7 @@ public class SortTests extends RefineTest {
         parseEval(bindings, test4);
     }
 
+    @Test
     public void sortMixedArray() throws ParsingException {
         String test = "[2,1.0,3].sort().toString()";
         parseEvalType(bindings, test, EvalError.class);
