@@ -22,14 +22,18 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 
 public class ScatterplotFacetAggregatorTests {
 	
-	public static String configJson = "{\n" + 
+	public static String configJson = "{\n" +
+		    "          \"min_x\": -37,\n" +
+			"          \"max_x\": 140,\n" +
+			"          \"min_y\": -300,\n" +
+			"          \"max_y\": 300,\n" + 
             "          \"to_x\": 1,\n" + 
             "          \"to_y\": 1,\n" + 
             "          \"dot\": 1,\n" + 
-            "          \"from_x\": 20," +
-            "          \"to_x\": 25," +
-            "          \"from_y\": -10,\n" + 
-            "          \"to_y\": -3,\n" + 
+            "          \"from_x\": 0," +
+            "          \"to_x\": 1," +
+            "          \"from_y\": 0.4,\n" + 
+            "          \"to_y\": 0.6,\n" + 
             "          \"l\": 150,\n" + 
             "          \"type\": \"core/scatterplot\",\n" + 
             "          \"dim_y\": \"lin\",\n" + 
@@ -135,7 +139,7 @@ public class ScatterplotFacetAggregatorTests {
 		RowFilter filter = SUT.getRowFilter();
 		
 		Assert.assertTrue(filter.filterRow(1234L, new Row(Arrays.asList(new Cell(23.3, null), new Cell(-7, null)))));
-		Assert.assertFalse(filter.filterRow(1234L, new Row(Arrays.asList(new Cell(-8, null), new Cell(34, null)))));
+		Assert.assertFalse(filter.filterRow(1234L, new Row(Arrays.asList(new Cell(-8, null), new Cell(200, null)))));
 	}
 	
 	@Test
@@ -145,13 +149,15 @@ public class ScatterplotFacetAggregatorTests {
 	
 	@Test
 	public void testRotation() {
+		// the rotation does not change anything to the aggregation states as the transformation is applied later on
+		
 		ScatterplotFacetAggregator withRotation = new ScatterplotFacetAggregator(
 				config, evalX, evalY);
 		
 		ScatterplotFacetState state = withRotation.withRow(genericState, 1234L, new Row(Arrays.asList(new Cell(23.3, null), new Cell(-7, null))));
 		ScatterplotFacetState expectedState = new ScatterplotFacetState(
-				new double[] { 3.45, 89.7, -37, 15.649999999999999 },
-				new double[] { -90, 1.3, 378, 8.149999999999999 },
+				new double[] { 3.45, 89.7, -37, 23.3 },
+				new double[] { -90, 1.3, 378, -7 },
 				new boolean[] { true, true, false, true }, 4);
 		
 		Assert.assertEquals(state, expectedState);

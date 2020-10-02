@@ -15,9 +15,12 @@ import java.util.stream.Collectors;
 import org.apache.commons.collections.IteratorUtils;
 import org.apache.commons.lang.NotImplementedException;
 import org.openrefine.browsing.facets.AllFacetsAggregator;
+import org.openrefine.browsing.facets.AllFacetsState;
 import org.openrefine.browsing.facets.Facet;
 import org.openrefine.browsing.facets.FacetResult;
 import org.openrefine.browsing.facets.FacetState;
+import org.openrefine.browsing.facets.RecordAggregator;
+import org.openrefine.browsing.facets.RowAggregator;
 import org.openrefine.browsing.facets.StringFacet;
 import org.openrefine.browsing.facets.StringFacetState;
 import org.openrefine.model.changes.ChangeData;
@@ -307,7 +310,7 @@ public abstract class DatamodelRunnerTestBase {
                 .stream().map(facet -> facet.getAggregator())
                 .collect(Collectors.toList()));
         
-        List<FacetState> states = simpleGrid.aggregateRows(aggregator, ImmutableList.copyOf(initialStates));
+        AllFacetsState states = simpleGrid.aggregateRows(aggregator, new AllFacetsState(ImmutableList.copyOf(initialStates), 0L, 0L));
         
         List<FacetResult> facetResults = new ArrayList<>();
         for(int i = 0; i != states.size(); i++) {
@@ -345,7 +348,7 @@ public abstract class DatamodelRunnerTestBase {
                 .stream().map(facet -> facet.getAggregator())
                 .collect(Collectors.toList()));
         
-        List<FacetState> states = simpleGrid.aggregateRecords(aggregator, ImmutableList.copyOf(initialStates));
+        AllFacetsState states = simpleGrid.aggregateRecords(aggregator, new AllFacetsState(ImmutableList.copyOf(initialStates), 0L, 0L));
         
         List<FacetResult> facetResults = new ArrayList<>();
         for(int i = 0; i != states.size(); i++) {
@@ -370,6 +373,48 @@ public abstract class DatamodelRunnerTestBase {
         expectedMap.put("b", 1L);
         expectedMap.put("1", 1L);
         Assert.assertEquals(result2.occurences, expectedMap);
+    }
+    
+    private static class BoxedLong implements FacetState {
+        private static final long serialVersionUID = 7896255599935102833L;
+        public final long value;
+        public BoxedLong(long v) {
+            value = v;
+        }
+        public static BoxedLong zero = new BoxedLong(0L);
+    }
+    
+    private static class RowCounter implements RowAggregator<BoxedLong>, RecordAggregator<BoxedLong> {
+
+        @Override
+        public BoxedLong sum(BoxedLong first, BoxedLong second) {
+            return new BoxedLong(first.value + second.value);
+        }
+
+        @Override
+        public BoxedLong withRow(BoxedLong state, long rowId, Row row) {
+            return new BoxedLong(state.value + 1);
+        }
+
+        @Override
+        public BoxedLong withRecord(BoxedLong state, Record record) {
+            return new BoxedLong(state.value + 1);
+        }
+        
+    }
+    
+    @Test
+    public void testAggregateRowsApprox() {
+        RowCounter aggregator = new RowCounter();
+        Assert.assertTrue(simpleGrid.aggregateRowsApprox(aggregator, BoxedLong.zero, 2L).value <= 2L);
+        Assert.assertEquals(simpleGrid.aggregateRowsApprox(aggregator, BoxedLong.zero, 8L).value, 4L);
+    }
+    
+    @Test
+    public void testAggregateRecordsApprox() {
+        RowCounter aggregator = new RowCounter();
+        Assert.assertTrue(gridToSort.aggregateRecordsApprox(aggregator, BoxedLong.zero, 2L).value <= 2L);
+        Assert.assertEquals(gridToSort.aggregateRecordsApprox(aggregator, BoxedLong.zero, 8L).value, 3L);
     }
     
     public static RowMapper concatRowMapper = new RowMapper() {

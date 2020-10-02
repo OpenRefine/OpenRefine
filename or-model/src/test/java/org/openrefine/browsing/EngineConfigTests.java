@@ -66,6 +66,8 @@ public class EngineConfigTests {
             + "    \"facets\":[]"
             + "}";
     
+    public static String engineConfigWithLimitJson = "{\"mode\":\"row-based\",\"facets\":[],\"aggregationLimit\":1000}";
+    
     public static String noFacetProvided = "{\"mode\":\"row-based\"}";
     
     protected static class MyFacetConfig implements FacetConfig {
@@ -116,6 +118,12 @@ public class EngineConfigTests {
     public void serializeEngineConfigRecordMode() {
         EngineConfig ec = EngineConfig.reconstruct(engineConfigRecordModeJson);
         TestUtils.isSerializedTo(ec, engineConfigRecordModeJson, ParsingUtilities.defaultWriter);
+    }
+    
+    @Test
+    public void serializeEngineConfigAggregationLimit() {
+        EngineConfig ec = EngineConfig.reconstruct(engineConfigWithLimitJson);
+        TestUtils.isSerializedTo(ec, engineConfigWithLimitJson, ParsingUtilities.defaultWriter);
     }
     
     @Test

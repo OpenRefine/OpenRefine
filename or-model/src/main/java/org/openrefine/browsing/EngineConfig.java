@@ -38,11 +38,15 @@ import org.openrefine.util.ParsingUtilities;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
  * Stores the configuration of facets and whether we are using row or
  * record mode.
+ * In addition it also stores an optional limit on the number of rows (or records)
+ * to aggregate when computing facets.
  * 
  * @author Antonin Delpeuch
  *
@@ -51,25 +55,47 @@ public class EngineConfig  {
     
     protected final List<FacetConfig> _facets;
     protected final Mode _mode;
+    protected final Long _aggregationLimit;
     
     public static final EngineConfig ALL_ROWS = new EngineConfig(Collections.emptyList(), Mode.RowBased);
     public static final EngineConfig ALL_RECORDS = new EngineConfig(Collections.emptyList(), Mode.RecordBased);
     
     /**
      * Creates a new EngineConfig from a list of facet
-     * configurations and an engine mode.
+     * configurations and an engine mode. No limit on facet
+     * aggregation.
      * 
      * @param facets
      * @param mode
+     */
+    public EngineConfig(List<FacetConfig> facets, Mode mode) {
+        this(facets, mode, null);
+    }
+    
+    /**
+     * Creates a new EngineConfig from a list of facet
+     * configurations, an engine mode and an aggregation limit.
+     * 
+     * A null aggregationLimit of means no limit (which
+     * happens when the field is not specified in the JSON
+     * serialization).
+     * A zero aggregationLimit means no aggregation at all.
+     * 
+     * @param facets
+     * @param mode
+     * @param aggregationLimit 
      */
     @JsonCreator
     public EngineConfig(
             @JsonProperty("facets")
             List<FacetConfig> facets,
             @JsonProperty("mode")
-            Mode mode) {
+            Mode mode,
+            @JsonProperty("aggregationLimit")
+            Long aggregationLimit) {
         _facets = facets == null ? Collections.emptyList() : facets;
         _mode = mode == null ? Mode.RowBased : mode;
+        _aggregationLimit = aggregationLimit;
     }
     
     @JsonProperty("mode")
@@ -80,6 +106,12 @@ public class EngineConfig  {
     @JsonProperty("facets")
     public List<FacetConfig> getFacetConfigs() {
         return _facets;
+    }
+    
+    @JsonProperty("aggregationLimit")
+    @JsonInclude(Include.NON_NULL)
+    public Long getAggregationLimit() {
+        return _aggregationLimit;
     }
     
     /**

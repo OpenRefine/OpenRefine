@@ -43,7 +43,7 @@ public class AllFacetsAggregatorTests {
 	protected FacetAggregator<FacetStateStub> aggregatorRowId;
 	protected FacetAggregator<FacetStateStub> aggregatorFoo;
 	protected FacetAggregator<FacetStateStub> aggregatorBar;
-    private ImmutableList<FacetState> initial;
+    private AllFacetsState initial;
 	
 	@BeforeMethod
 	public void setUpAllFacetsState() {
@@ -55,29 +55,37 @@ public class AllFacetsAggregatorTests {
 				aggregatorRowId,
 				aggregatorFoo,
 				aggregatorBar));
-		initial = ImmutableList.of(
+		initial = new AllFacetsState(
+		        ImmutableList.of(
                 new FacetStateStub(0, 0),
                 new FacetStateStub(0, 0),
-                new FacetStateStub(0, 0));
+                new FacetStateStub(0, 0)),
+		        0L, 0L);
 	}
 
 	@Test
 	public void testMerge() {
-		ImmutableList<FacetState> statesA = 
+		AllFacetsState statesA = 
+		        new AllFacetsState(
 				ImmutableList.of(
 				new FacetStateStub(1, 2),
 				new FacetStateStub(3, 4),
-				new FacetStateStub(5, 6));
-		ImmutableList<FacetState> statesB = 
+				new FacetStateStub(5, 6)),
+				78, 34);
+		AllFacetsState statesB =
+		        new AllFacetsState(
 				ImmutableList.of(
 				new FacetStateStub(7, 8),
 				new FacetStateStub(9, 10),
-				new FacetStateStub(11, 12));
-		ImmutableList<FacetState> expected = 
+				new FacetStateStub(11, 12)),
+				23, 1);
+		AllFacetsState expected = 
+		        new AllFacetsState(
 				ImmutableList.of(
 				new FacetStateStub(8, 10),
 				new FacetStateStub(12, 14),
-				new FacetStateStub(16, 18));
+				new FacetStateStub(16, 18)),
+				101, 35);
 		Assert.assertEquals(SUT.sum(statesA, statesB), expected);
 	}
 	
@@ -86,7 +94,7 @@ public class AllFacetsAggregatorTests {
 		Row row = new Row(Arrays.asList(
 				new Cell("foo", null), new Cell("bar", null)));
 		
-        List<FacetState> result = SUT.withRow(initial, 1, row);
+        List<FacetState> result = SUT.withRow(initial, 1, row).getStates();
 		Assert.assertEquals(result, Arrays.asList(
 				new FacetStateStub(1, 0),
 				new FacetStateStub(1, 0),
@@ -98,7 +106,7 @@ public class AllFacetsAggregatorTests {
 		Row row = new Row(Arrays.asList(
 				new Cell("wrong", null), new Cell("bar", null)));
 		
-        List<FacetState>  result = SUT.withRow(initial, 1, row);
+        List<FacetState>  result = SUT.withRow(initial, 1, row).getStates();
 		Assert.assertEquals(result, Arrays.asList(
 				new FacetStateStub(0, 0),
 				new FacetStateStub(0, 1),
@@ -110,8 +118,8 @@ public class AllFacetsAggregatorTests {
 		Row row = new Row(Arrays.asList(
 				new Cell("wrong", null), new Cell("fail", null)));
 		
-		List<FacetState> result = SUT.withRow(initial, 1, row);
-		Assert.assertEquals(result, initial);
+		AllFacetsState result = SUT.withRow(initial, 1, row);
+		Assert.assertEquals(result, new AllFacetsState(initial.getStates(), 1, 0));
 	}
 	
 	@Test
@@ -119,8 +127,8 @@ public class AllFacetsAggregatorTests {
 		Row row = new Row(Arrays.asList(
 				new Cell("wrong", null), new Cell("fail", null)));
 		
-		List<FacetState> result = SUT.withRow(initial, 43, row);
-		Assert.assertEquals(result, initial);
+		AllFacetsState result = SUT.withRow(initial, 43, row);
+		Assert.assertEquals(result, new AllFacetsState(initial.getStates(), 1, 0));
 	}
 	
 	@SuppressWarnings("unlikely-arg-type")

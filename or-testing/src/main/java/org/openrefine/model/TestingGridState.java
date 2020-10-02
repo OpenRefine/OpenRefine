@@ -210,6 +210,16 @@ public class TestingGridState implements GridState {
 
     @Override
     public <T extends Serializable> T aggregateRows(RowAggregator<T> aggregator, T initialState) {
+          return aggregateRowsApprox(aggregator, initialState, rows.size());
+    }
+    
+    @Override
+    public <T extends Serializable> T aggregateRecords(RecordAggregator<T> aggregator, T initialState) {
+        return aggregateRecordsApprox(aggregator, initialState, records.size());
+    }
+    
+    @Override
+    public <T extends Serializable> T aggregateRowsApprox(RowAggregator<T> aggregator, T initialState, long maxRows) {
         initialState = TestingDatamodelRunner.serializeAndDeserialize(initialState);
         aggregator = TestingDatamodelRunner.serializeAndDeserialize(aggregator);
         // Artificially split the grid in two, in order to use the `sum` method
@@ -217,19 +227,25 @@ public class TestingGridState implements GridState {
         long split = rowCount() / 2;
         T statesA = initialState;
         T statesB = initialState;
+        long count = 0;
         for(IndexedRow row : indexedRows()) {
+            if (count == maxRows) {
+                break;
+            }
             if (row.getIndex() < split) {
                 statesA = aggregator.withRow(statesA, row.getIndex(), row.getRow());
             } else {
                 statesB = aggregator.withRow(statesB, row.getIndex(), row.getRow());
             }
+            count += 1;
         }
         
-        return aggregator.sum(statesA, statesB);  
+        return aggregator.sum(statesA, statesB);
     }
-    
+
     @Override
-    public <T extends Serializable> T aggregateRecords(RecordAggregator<T> aggregator, T initialState) {
+    public <T extends Serializable> T aggregateRecordsApprox(RecordAggregator<T> aggregator, T initialState,
+            long maxRecords) {
         initialState = TestingDatamodelRunner.serializeAndDeserialize(initialState);
         aggregator = TestingDatamodelRunner.serializeAndDeserialize(aggregator);
         // Artificially split the grid in two, in order to use the `sum` method
@@ -237,12 +253,17 @@ public class TestingGridState implements GridState {
         long split = rowCount() / 2;
         T statesA = initialState;
         T statesB = initialState;
+        long count = 0;
         for(Record record : records) {
+            if (count == maxRecords) {
+                break;
+            }
             if (record.getStartRowId() < split) {
                 statesA = aggregator.withRecord(statesA, record);
             } else {
                 statesB = aggregator.withRecord(statesB, record);
             }
+            count += 1;
         }
         
         return aggregator.sum(statesA, statesB);

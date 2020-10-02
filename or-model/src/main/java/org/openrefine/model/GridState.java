@@ -196,6 +196,20 @@ public interface GridState {
      * Computes the result of a row aggregator on the grid.
      */
     public <T extends Serializable> T aggregateRecords(RecordAggregator<T> aggregator, T initialState);
+    
+    /**
+     * Computes the result of a row aggregator on the grid,
+     * reading at most a fixed number of rows.
+     * The rows read should be deterministic for a given implementation.
+     */
+    public <T extends Serializable> T aggregateRowsApprox(RowAggregator<T> aggregator, T initialState, long maxRows);
+    
+    /**
+     * Computes the result of a row aggregator on the grid,
+     * reading at most a fixed number of records.
+     * The records read should be deterministic for a given implementation.
+     */
+    public <T extends Serializable> T aggregateRecordsApprox(RecordAggregator<T> aggregator, T initialState, long maxRecords);
 
     // Transformations
     

@@ -415,6 +415,20 @@ public class SparkGridState implements GridState {
         return getRecords().aggregate(initialState, recordSeqOp(aggregator), facetCombineOp(aggregator));
     }
     
+    @Override
+    public <T extends Serializable> T aggregateRowsApprox(RowAggregator<T> aggregator, T initialState, long maxRows) {
+        return RDDUtils.limitPartitions(grid, maxRows / grid.getNumPartitions())
+                .aggregate(initialState, rowSeqOp(aggregator), facetCombineOp(aggregator));
+    }
+
+    @Override
+    public <T extends Serializable> T aggregateRecordsApprox(RecordAggregator<T> aggregator, T initialState,
+            long maxRecords) {
+        JavaPairRDD<Long, Record> records = getRecords();
+        return RDDUtils.limitPartitions(records, maxRecords / records.getNumPartitions())
+                .aggregate(initialState, recordSeqOp(aggregator), facetCombineOp(aggregator));
+    }
+    
     private static <T> Function2<T, Tuple2<Long,Row>, T> rowSeqOp(RowAggregator<T> aggregator) {
         return new Function2<T, Tuple2<Long,Row>, T>() {
 

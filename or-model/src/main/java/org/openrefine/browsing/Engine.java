@@ -39,6 +39,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.openrefine.browsing.facets.AllFacetsAggregator;
+import org.openrefine.browsing.facets.AllFacetsState;
 import org.openrefine.browsing.facets.Facet;
 import org.openrefine.browsing.facets.FacetResult;
 import org.openrefine.browsing.facets.FacetState;
@@ -78,6 +79,7 @@ public class Engine  {
     protected final GridState _state;
     protected final List<Facet> _facets;
     protected final EngineConfig _config;
+    protected AllFacetsState _facetsState;
 
 
     static public String modeToString(Mode mode) {
@@ -93,6 +95,7 @@ public class Engine  {
         _facets = config.getFacetConfigs().stream()
         		.map(fc -> fc.apply(state.getColumnModel()))
         		.collect(Collectors.toList());
+        _facetsState = null;
         
     }
 
@@ -110,16 +113,38 @@ public class Engine  {
     public EngineConfig getConfig() {
         return _config;
     }
+    
+    @JsonIgnore
+    protected AllFacetsState getFacetsState() {
+        if (_facetsState == null) {
+            if (_config.getAggregationLimit() == null) {
+                _facetsState = _state.aggregateRows(allFacetsAggregator(), allFacetsInitialState());
+            } else {
+                _facetsState = _state.aggregateRowsApprox(allFacetsAggregator(), allFacetsInitialState(), _config.getAggregationLimit());
+            }
+        }
+        return _facetsState;
+    }
 
     @JsonProperty("facets")
     public ImmutableList<FacetResult> getFacetResults() {
-        ImmutableList<FacetState> states = _state.aggregateRows(allFacetsAggregator(), allFacetsInitialState());
+        AllFacetsState states = getFacetsState();
         
         Builder<FacetResult> facetResults = ImmutableList.<FacetResult>builder();
         for(int i = 0; i != states.size(); i++) {
            facetResults.add(_facets.get(i).getFacetResult(states.get(i))); 
         }
         return facetResults.build();
+    }
+    
+    @JsonProperty("aggregatedCount")
+    public long getAggregatedCount() {
+        return getFacetsState().getAggregatedCount();
+    }
+    
+    @JsonProperty("filteredCount")
+    public long getFilteredCount() {
+        return getFacetsState().getFilteredCount();
     }
     
     @JsonIgnore
@@ -216,11 +241,12 @@ public class Engine  {
     }
     
     @JsonIgnore
-	private ImmutableList<FacetState> allFacetsInitialState() {
-		return ImmutableList.copyOf(
+	private AllFacetsState allFacetsInitialState() {
+        ImmutableList<FacetState> facets = ImmutableList.copyOf(
 		        _facets
     			.stream().map(facet -> facet.getInitialFacetState())
     			.collect(Collectors.toList()));
+        return new AllFacetsState(facets, 0L, 0L);
 	}
     
     @JsonIgnore

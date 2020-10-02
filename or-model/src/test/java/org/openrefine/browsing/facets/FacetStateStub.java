@@ -4,7 +4,7 @@ package org.openrefine.browsing.facets;
  * A simple facet state which simply computes the number
  * of matching and mismatching rows.
  */
-public class FacetStateStub implements FacetState {
+public class FacetStateStub implements FacetState, FacetResult {
 	
 	private static final long serialVersionUID = 1L;
 	protected int matching;

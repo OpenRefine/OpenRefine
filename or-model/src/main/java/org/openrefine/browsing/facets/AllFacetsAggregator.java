@@ -20,13 +20,13 @@ import com.google.common.collect.ImmutableList.Builder;
  * @author Antonin Delpeuch
  *
  */
-public class AllFacetsAggregator implements RowAggregator<ImmutableList<FacetState>>, RecordAggregator<ImmutableList<FacetState>> {
+public class AllFacetsAggregator implements RowAggregator<AllFacetsState>, RecordAggregator<AllFacetsState> {
     
     private static final long serialVersionUID = -8277361327137906882L;
     
     protected final List<FacetAggregator<?>> _facetAggregators;
-    protected final List<RowFilter> _rowFilters;
-    protected final List<RecordFilter> _recordFilters;
+    protected final List<RowFilter>          _rowFilters;
+    protected final List<RecordFilter>       _recordFilters;
     
     public AllFacetsAggregator(List<FacetAggregator<?>> facetAggregators) {
         _facetAggregators = facetAggregators;
@@ -39,7 +39,7 @@ public class AllFacetsAggregator implements RowAggregator<ImmutableList<FacetSta
     }
     
     @Override
-    public ImmutableList<FacetState> withRow(ImmutableList<FacetState> states, long rowId, Row row) {
+    public AllFacetsState withRow(AllFacetsState states, long rowId, Row row) {
         if (states.size() != _facetAggregators.size()) {
             throw new IllegalArgumentException("Incompatible list of facet states and facet aggregators");
         }
@@ -61,11 +61,11 @@ public class AllFacetsAggregator implements RowAggregator<ImmutableList<FacetSta
             // Rows are only seen by facets if they are selected by all other facets
             newStates.add(incrementHelper(_facetAggregators.get(i), states.get(i), rowId, row, allMatching || (numberOfMismatches == 1 && !matching[i])));
         }
-        return newStates.build();
+        return new AllFacetsState(newStates.build(), states.getAggregatedCount()+1, states.getFilteredCount() + (numberOfMismatches == 0 ? 1 : 0));
     }
     
     @Override
-    public ImmutableList<FacetState> withRecord(ImmutableList<FacetState> states, Record record) {
+    public AllFacetsState withRecord(AllFacetsState states, Record record) {
         if (states.size() != _facetAggregators.size()) {
             throw new IllegalArgumentException("Incompatible list of facet states and facet aggregators");
         }
@@ -101,11 +101,11 @@ public class AllFacetsAggregator implements RowAggregator<ImmutableList<FacetSta
                 newStates.add(states.get(i));
             }
         }
-        return newStates.build();
+        return new AllFacetsState(newStates.build(), states.getAggregatedCount()+1, states.getFilteredCount() + (numberOfMismatches == 0 ? 1 : 0));
     }
     
     @Override
-    public ImmutableList<FacetState> sum(ImmutableList<FacetState> first, ImmutableList<FacetState> second) {
+    public AllFacetsState sum(AllFacetsState first, AllFacetsState second) {
         if(first.size() != second.size()) {
             throw new IllegalArgumentException("Attempting to merge incompatible AllFacetStates");
         }
@@ -113,7 +113,10 @@ public class AllFacetsAggregator implements RowAggregator<ImmutableList<FacetSta
         for(int i = 0; i != first.size(); i++) {
             newStates.add(sumHelper(_facetAggregators.get(i), first.get(i), second.get(i)));
         }
-        return newStates.build();
+        return new AllFacetsState(
+                newStates.build(),
+                first.getAggregatedCount() + second.getAggregatedCount(),
+                first.getFilteredCount() + second.getFilteredCount());
     }
     
     @SuppressWarnings("unchecked")
