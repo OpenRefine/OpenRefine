@@ -4,11 +4,20 @@ dist: bionic
 
 jobs:
   include:
-    - dist: trusty # Fastest build first
+    - dist: trusty # Fastest build first & for all builds
       jdk: oraclejdk8 # Trusty default
-    - jdk: openjdk11 # Bionic default
-    - jdk: openjdk13
-    - os: osx
+    # Full matrix only for merges to master or anything to do with release branches e.g. v3.5
+    - if: (branch = master AND type != pull_request) OR branch ~= /^v\d\.\d.*/
+      jdk: openjdk11 # Bionic default
+    - if: branch = master AND type != pull_request OR branch ~= /^v\d\.\d.*/
+      jdk: openjdk12
+      dist: xenial # just for a little variety
+    - if: branch = master AND type != pull_request OR branch ~= /^v\d\.\d.*/
+      jdk: openjdk13
+    - if: branch = master AND type != pull_request OR branch ~= /^v\d\.\d.*/
+      jdk: openjdk14 # replacement for OS X Java 14 build
+    - if: branch = master AND type != pull_request OR branch ~= /^v\d\.\d.*/
+      os: osx
       osx_image: xcode11.6 # macOS 10.15.4, Oracle JDK 14.0.1
       language: java
       services: # not supported on os x
@@ -30,21 +39,14 @@ jobs:
         - psql -c 'CREATE DATABASE test_db;' -U postgres
         - psql -U postgres test_db < extensions/database/tests/conf/travis-pgsql.sql
         - cp extensions/database/tests/conf/travis_tests.xml extensions/database/tests/conf/tests.xml
-    - jdk: openjdk12
-      dist: xenial # just for a little variety
-# Jacoco doesn't work with Java 16 and this workaround doesn't work
-#    - jdk: oraclejdk-ea
-#      script: mvn test
-#      after_success: mvn prepare-package -DskipTests=true
-#    - jdk: openjdk-ea
-#      script: mvn test
-#      after_success: mvn prepare-package -DskipTests=true
+    - if: branch = master AND type != pull_request OR branch ~= /^v\d\.\d.*/
+      jdk: oraclejdk-ea
+    - if: branch = master AND type != pull_request OR branch ~= /^v\d\.\d.*/
+      jdk: openjdk-ea
   allow_failures:
     - os: osx
     - jdk: openjdk-ea
     - jdk: oraclejdk-ea
-    # JDKs below need to be installed and installation fails frequently
-    - jdk: openjdk13
 
 addons:
   mariadb: '10.3'
