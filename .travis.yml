@@ -40,10 +40,10 @@ jobs:
 #      script: mvn test
 #      after_success: mvn prepare-package -DskipTests=true
   allow_failures:
+    - os: osx
     - jdk: openjdk-ea
     - jdk: oraclejdk-ea
     # JDKs below need to be installed and installation fails frequently
-    - jdk: openjdk12
     - jdk: openjdk13
 
 addons:
