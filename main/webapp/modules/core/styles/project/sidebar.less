@@ -38,20 +38,27 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   display: none;
   }
 
-.browsing-panel-errors {
+.browsing-panel-errors, .browsing-panel-aggregation {
   display: none;
   position: relative;
   height: auto;
   margin: 5px;
-  text-align: center;
-  background: #fff0f4; 
-  color: #c51244;
   padding: 4px 4px;
   -moz-border-radius: 4px;
   -webkit-border-radius: 4px;
   border: 1px solid #ccc;
   }
 
+.browsing-panel-errors {
+  background: #fff0f4; 
+  color: #c51244;
+  text-align: center;
+  }
+
+.browsing-panel-aggregation input[type="number"] {
+  width: 100px;
+  }
+ 
 .browsing-panel-indicator {
   display: none;
   position: relative;

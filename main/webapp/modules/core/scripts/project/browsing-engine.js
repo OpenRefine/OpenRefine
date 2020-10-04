@@ -36,6 +36,9 @@ function BrowsingEngine(div, facetConfigs) {
   this._mode = theProject.recordModel.hasRecords ? "record-based" : "row-based";
 
   this._facets = [];
+  this._defaultAggregationLimit = 1000;
+  this._aggregationLimit = this._defaultAggregationLimit;
+  this._aggregationLimitEnabled = true;
   this._initializeUI();
 
   if (facetConfigs.length > 0) {
@@ -102,6 +105,10 @@ BrowsingEngine.prototype._initializeUI = function() {
     '</div>' +
     '<div class="browsing-panel-header" bind="header">' +
     '<div class="browsing-panel-errors" bind="errors"></div>' +
+    '<div class="browsing-panel-aggregation" bind="aggregation">' +
+    '  <input type="checkbox" bind="aggregationLimitCheckBox" checked="checked"/>' +
+    '  <label><span bind="aggregationLimitLabel"></span> <input type="number" bind="aggregationLimitInput" min="0" /></label>' +
+    '</div>' +
     '<div class="browsing-panel-indicator" bind="indicator">' +
     '<img src="images/small-spinner.gif" /> '+$.i18n('core-project/refreshing-facet')+'' +
     '</div>' +
@@ -126,6 +133,18 @@ BrowsingEngine.prototype._initializeUI = function() {
   this._elmts.refreshLink.click(function() { self.update(); });
   this._elmts.resetLink.click(function() { self.reset(); });
   this._elmts.removeLink.click(function() { self.remove(); });
+
+  this._elmts.aggregationLimitLabel.text(this._mode == 'row-based' ? 'Row limit: ' : 'Record limit: '); // TODO i18n
+  this._elmts.aggregationLimitInput.val(this._aggregationLimit);
+  this._elmts.aggregationLimitInput.change(function() {
+    self._aggregationLimit = self._elmts.aggregationLimitInput.val();
+    self.update();
+  });
+  this._elmts.aggregationLimitCheckBox.change(function() {
+    self._aggregationLimitEnabled = this.checked;
+    self._elmts.aggregationLimitInput.attr('disabled', !self._aggregationLimitEnabled);
+    self.update();
+  });
 };
 
 BrowsingEngine.prototype._updateFacetOrder = function() {
@@ -159,6 +178,9 @@ BrowsingEngine.prototype.getJSON = function(keepUnrestrictedFacets, except) {
       facets: [],
       mode: this._mode
   };
+  if (this._aggregationLimitEnabled) {
+    a.aggregationLimit = this._aggregationLimit;
+  }
   for (var i = 0; i < this._facets.length; i++) {
     var facet = this._facets[i];
     if ((keepUnrestrictedFacets || facet.facet.hasSelection()) && (facet.facet !== except)) {
@@ -237,6 +259,7 @@ BrowsingEngine.prototype.removeFacet = function(facet) {
 BrowsingEngine.prototype.update = function(onDone) {
   var self = this;
 
+  this._elmts.aggregationLimitLabel.text(this._mode == 'row-based' ? 'Row limit: ' : 'Record limit: '); // TODO i18n
   this._elmts.help.hide();
 
   this._elmts.header.show();
@@ -273,6 +296,12 @@ BrowsingEngine.prototype.update = function(onDone) {
         self.resize();
       } else {
         self._elmts.help.show();
+      }
+
+      if (self._aggregationLimitEnabled || data.aggregatedCount >= self._aggregationLimit) {
+        self._elmts.aggregation.show();
+      } else {
+	self._elmts.aggregation.css("display", "none");
       }
 
       if (onDone) {
