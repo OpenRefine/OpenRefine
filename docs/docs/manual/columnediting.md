@@ -6,7 +6,7 @@ sidebar_label: Column editing
 
 ## Overview
 
-Column editing contains some of the most powerful data-improvement methods in OpenRefine. While we call it “edit column,” in fact many of the best features involve using one column of data to add entirely new columns and fields to your dataset. 
+Column editing contains some of the most powerful data-improvement methods in OpenRefine. While we call it “edit column,” this includes using one column of data to add entirely new columns and fields to your dataset. 
 
 ## Split or Join
 
