@@ -47,4 +47,8 @@ public class SelfReferentialScrutinizer extends SnakScrutinizer {
         }
     }
 
+    @Override
+    public boolean prepareDependencies() {
+        return true;
+    }
 }

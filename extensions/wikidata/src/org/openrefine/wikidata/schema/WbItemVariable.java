@@ -62,7 +62,7 @@ public class WbItemVariable extends WbVariableExpr<ItemIdValue> {
             throws SkipSchemaExpressionException {
         if (cell.recon != null
                 && (Judgment.Matched.equals(cell.recon.judgment) || Judgment.New.equals(cell.recon.judgment))) {
-            if (cell.recon.identifierSpace == null || !cell.recon.identifierSpace.equals(Datamodel.SITE_WIKIDATA)) {
+            if (cell.recon.identifierSpace == null || !cell.recon.identifierSpace.equals(ctxt.getBaseIRI())) {
                 QAWarning warning = new QAWarning("invalid-identifier-space", null, QAWarning.Severity.INFO, 1);
                 warning.setProperty("example_cell", cell.value.toString());
                 ctxt.addWarning(warning);

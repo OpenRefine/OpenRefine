@@ -34,7 +34,6 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package com.google.refine.importers;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -45,12 +44,13 @@ import java.util.List;
 import org.apache.poi.ooxml.POIXMLException;
 import org.apache.poi.ss.usermodel.DateUtil;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.poifs.filesystem.FileMagic;
+import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.apache.poi.poifs.filesystem.FileMagic;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -83,43 +83,39 @@ public class ExcelImporter extends TabularImportingParserBase {
             for (int index = 0;index < fileRecords.size();index++) {
                 ObjectNode fileRecord = fileRecords.get(index);
                 File file = ImportingUtilities.getFile(job, fileRecord);
-                InputStream is = new FileInputStream(file);
 
-                if (!is.markSupported()) {
-                  is = new BufferedInputStream(is);
-                }
-
+                Workbook wb = null;
                 try {
-                    Workbook wb = FileMagic.valueOf(is) == FileMagic.OOXML ?
-                            new XSSFWorkbook(is) :
-                                new HSSFWorkbook(new POIFSFileSystem(is));
+                    wb = FileMagic.valueOf(file) == FileMagic.OOXML ? new XSSFWorkbook(file) :
+                                 new HSSFWorkbook(new POIFSFileSystem(file));
 
-                            int sheetCount = wb.getNumberOfSheets();
-                            for (int i = 0; i < sheetCount; i++) {
-                                Sheet sheet = wb.getSheetAt(i);
-                                int rows = sheet.getLastRowNum() - sheet.getFirstRowNum() + 1;
+                    int sheetCount = wb.getNumberOfSheets();
+                    for (int i = 0; i < sheetCount; i++) {
+                        Sheet sheet = wb.getSheetAt(i);
+                        int rows = sheet.getLastRowNum() - sheet.getFirstRowNum() + 1;
 
-                                ObjectNode sheetRecord = ParsingUtilities.mapper.createObjectNode();
-                                JSONUtilities.safePut(sheetRecord, "name",  file.getName() + "#" + sheet.getSheetName());
-                                JSONUtilities.safePut(sheetRecord, "fileNameAndSheetIndex", file.getName() + "#" + i);
-                                JSONUtilities.safePut(sheetRecord, "rows", rows);
-                                if (rows > 1) {
-                                    JSONUtilities.safePut(sheetRecord, "selected", true);
-                                } else {
-                                    JSONUtilities.safePut(sheetRecord, "selected", false);
-                                }
-                                JSONUtilities.append(sheetRecords, sheetRecord);
-                            }
-                            wb.close();
+                        ObjectNode sheetRecord = ParsingUtilities.mapper.createObjectNode();
+                        JSONUtilities.safePut(sheetRecord, "name",  file.getName() + "#" + sheet.getSheetName());
+                        JSONUtilities.safePut(sheetRecord, "fileNameAndSheetIndex", file.getName() + "#" + i);
+                        JSONUtilities.safePut(sheetRecord, "rows", rows);
+                        if (rows > 1) {
+                            JSONUtilities.safePut(sheetRecord, "selected", true);
+                        } else {
+                            JSONUtilities.safePut(sheetRecord, "selected", false);
+                        }
+                        JSONUtilities.append(sheetRecords, sheetRecord);
+                    }
                 } finally {
-                    is.close();
+                    if (wb != null) {
+                        wb.close();
+                    }
                 }
             }                
         } catch (IOException e) {
             logger.error("Error generating parser UI initialization data for Excel file", e);
         } catch (IllegalArgumentException e) {
             logger.error("Error generating parser UI initialization data for Excel file (only Excel 97 & later supported)", e);
-        } catch (POIXMLException e) {
+        } catch (POIXMLException|InvalidFormatException e) {
             logger.error("Error generating parser UI initialization data for Excel file - invalid XML", e);
         }
         
@@ -219,6 +215,8 @@ public class ExcelImporter extends TabularImportingParserBase {
                 }
             };
             
+            // TODO: Do we need to preserve the original filename? Take first piece before #?
+//           JSONUtilities.safePut(options, "fileSource", fileSource + "#" + sheet.getSheetName());
             TabularImportingParserBase.readTable(
                 project,
                 metadata,
@@ -230,8 +228,6 @@ public class ExcelImporter extends TabularImportingParserBase {
                 exceptions
             );
         }
-
-        super.parseOneFile(project, metadata, job, fileSource, inputStream, limit, options, exceptions);
     }
     
     static protected Cell extractCell(org.apache.poi.ss.usermodel.Cell cell) {
@@ -251,7 +247,7 @@ public class ExcelImporter extends TabularImportingParserBase {
             double d = cell.getNumericCellValue();
             
             if (DateUtil.isCellDateFormatted(cell)) {
-                value = DateUtil.getJavaDate(d);
+                value = ParsingUtilities.toDate(DateUtil.getJavaDate(d));
                 // TODO: If we had a time datatype, we could use something like the following
                 // to distinguish times from dates (although Excel doesn't really make the distinction)
                 // Another alternative would be to look for values < 0.60

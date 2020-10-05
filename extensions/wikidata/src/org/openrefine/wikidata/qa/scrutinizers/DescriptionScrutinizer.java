@@ -1,6 +1,5 @@
 package org.openrefine.wikidata.qa.scrutinizers;
 
-import org.openrefine.wikidata.qa.QAWarning;
 import org.openrefine.wikidata.updates.ItemUpdate;
 import org.wikidata.wdtk.datamodel.interfaces.MonolingualTextValue;
 
@@ -17,9 +16,13 @@ public abstract class DescriptionScrutinizer extends EditScrutinizer {
         descriptions.addAll(update.getDescriptionsIfNew()); // merge
         for (MonolingualTextValue description : descriptions) {
             String descText = description.getText();
-            if (descText == null) continue;
+            if (descText == null) {
+                continue;
+            }
             descText = descText.trim();
-            if (descText.length() == 0) continue; // avoid NullPointerException
+            if (descText.length() == 0) {
+                continue; // avoid NullPointerException
+            }
 
             scrutinize(update, descText, description.getLanguageCode());
         }

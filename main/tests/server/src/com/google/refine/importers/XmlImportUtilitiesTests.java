@@ -49,7 +49,6 @@ import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
 import com.google.refine.RefineTest;
-import com.google.refine.importers.JsonImporter;
 import com.google.refine.importers.JsonImporter.JSONTreeReader;
 import com.google.refine.importers.XmlImporter.XmlParser;
 import com.google.refine.importers.tree.ImportColumn;
@@ -211,11 +210,38 @@ public class XmlImportUtilitiesTests extends RefineTest {
         String[] recordPath = new String[]{"library","book"};
         try {
             XmlImportUtilitiesStub.importTreeData(createXmlParser(), project, recordPath, columnGroup, -1,
+                    false, true, false);
+        } catch (Exception e){
+            Assert.fail();
+        }
+
+        assertProjectCreated(project, 0, 6);
+
+        Assert.assertEquals(project.rows.get(0).cells.size(), 4);
+
+        Assert.assertEquals(columnGroup.subgroups.size(), 1);
+        Assert.assertNotNull(columnGroup.subgroups.get("book"));
+        Assert.assertEquals(columnGroup.subgroups.get("book").subgroups.size(), 3);
+        Assert.assertNotNull(columnGroup.subgroups.get("book").subgroups.get("author"));
+        Assert.assertNotNull(columnGroup.subgroups.get("book").subgroups.get("title"));
+        Assert.assertNotNull(columnGroup.subgroups.get("book").subgroups.get("publish_date"));
+    }
+    
+    /**
+     * Test of deprecated method which can go away when it does
+     */
+    @Test
+    public void importTreeDataXmlTestDeprecated(){
+        loadSampleXml();
+
+        String[] recordPath = new String[]{"library","book"};
+        try {
+            XmlImportUtilitiesStub.importTreeData(createXmlParser(), project, recordPath, columnGroup, -1,
                     new ImportParameters(false, true, false));
         } catch (Exception e){
             Assert.fail();
         }
-        log(project);
+
         assertProjectCreated(project, 0, 6);
 
         Assert.assertEquals(project.rows.get(0).cells.size(), 4);
@@ -235,11 +261,44 @@ public class XmlImportUtilitiesTests extends RefineTest {
         String[] recordPath = new String[]{"library", "book"};
         try {
             XmlImportUtilitiesStub.importTreeData(createXmlParser(), project, recordPath, columnGroup, -1,
+                    false, true, false);
+        } catch (Exception e){
+            Assert.fail();
+        }
+
+        assertProjectCreated(project, 0, 6);
+        Assert.assertEquals(project.rows.get(0).cells.size(), 4);
+        Assert.assertEquals(project.rows.get(5).cells.size(), 5);
+
+        Assert.assertEquals(columnGroup.subgroups.size(), 1);
+        Assert.assertEquals(columnGroup.name, "");
+        ImportColumnGroup book = columnGroup.subgroups.get("book");
+        Assert.assertNotNull(book);
+        Assert.assertEquals(book.columns.size(), 1);
+        Assert.assertEquals(book.subgroups.size(), 4);
+        Assert.assertNotNull(book.subgroups.get("author"));
+        Assert.assertEquals(book.subgroups.get("author").columns.size(), 1);
+        Assert.assertNotNull(book.subgroups.get("title"));
+        Assert.assertNotNull(book.subgroups.get("publish_date"));
+        Assert.assertNotNull(book.subgroups.get("genre"));
+    }
+
+
+    /**
+     * Test using deprecated method which can go away when it does
+     */
+    @Test
+    public void importXmlWithVaryingStructureTestDeprecated(){
+        loadData(XmlImporterTests.getSampleWithVaryingStructure());
+
+        String[] recordPath = new String[]{"library", "book"};
+        try {
+            XmlImportUtilitiesStub.importTreeData(createXmlParser(), project, recordPath, columnGroup, -1,
                     new ImportParameters(false, true, false));
         } catch (Exception e){
             Assert.fail();
         }
-        log(project);
+
         assertProjectCreated(project, 0, 6);
         Assert.assertEquals(project.rows.get(0).cells.size(), 4);
         Assert.assertEquals(project.rows.get(5).cells.size(), 5);
@@ -269,7 +328,7 @@ public class XmlImportUtilitiesTests extends RefineTest {
         columnGroup.subgroups.put("e", subGroup);
 
         XmlImportUtilitiesStub.createColumnsFromImport(project, columnGroup);
-        log(project);
+
         assertProjectCreated(project, 4, 0);
         Assert.assertEquals(project.columnModel.columns.get(0).getName(), "hello");
         Assert.assertEquals(project.columnModel.columns.get(1).getName(), "world");
@@ -290,18 +349,43 @@ public class XmlImportUtilitiesTests extends RefineTest {
         int pathIndex = 0;
 
         try {
-            SUT.findRecordWrapper(project, parser, recordPath, pathIndex, columnGroup,
+            SUT.findRecordWrapper(project, parser, recordPath, pathIndex, columnGroup, -1,
                     false, false, false);
         } catch (Exception e) {
             Assert.fail();
         }
 
-        log(project);
         assertProjectCreated(project, 0, 6);
 
         Assert.assertEquals(project.rows.get(0).cells.size(), 4);
         //TODO
     }
+
+    /**
+     * Test of deprecated wrapper method which can go away when it does
+     */
+    @Test
+    public void findRecordTestXmlDeprecated(){
+        loadSampleXml();
+        createXmlParser();
+        ParserSkip();
+
+        String[] recordPath = new String[]{"library","book"};
+        int pathIndex = 0;
+
+        try {
+            SUT.findRecordWrapper(project, parser, recordPath, pathIndex, columnGroup, -1,
+                    new ImportParameters(false, false, false));
+        } catch (Exception e) {
+            Assert.fail();
+        }
+
+        assertProjectCreated(project, 0, 6);
+
+        Assert.assertEquals(project.rows.get(0).cells.size(), 4);
+        //TODO
+    }
+
 
     @Test
     public void processRecordTestXml(){
@@ -314,7 +398,6 @@ public class XmlImportUtilitiesTests extends RefineTest {
         } catch (Exception e) {
             Assert.fail();
         }
-        log(project);
         Assert.assertNotNull(project.rows);
         Assert.assertEquals(project.rows.size(), 1);
         Row row = project.rows.get(0);
@@ -335,7 +418,7 @@ public class XmlImportUtilitiesTests extends RefineTest {
         } catch (Exception e) {
             Assert.fail();
         }
-        log(project);
+
         Assert.assertNotNull(project.rows);
         Assert.assertEquals(project.rows.size(), 2);
 
@@ -360,7 +443,7 @@ public class XmlImportUtilitiesTests extends RefineTest {
         } catch (Exception e) {
             Assert.fail();
         }
-        log(project);
+
         Assert.assertNotNull(project.rows);
         Assert.assertEquals(project.rows.size(), 1);
         Row row = project.rows.get(0);
@@ -380,12 +463,11 @@ public class XmlImportUtilitiesTests extends RefineTest {
         ParserSkip();
 
         try {
-            SUT.ProcessSubRecordWrapper(project, parser, columnGroup, record,0, 
+            SUT.processSubRecordWrapper(project, parser, columnGroup, record,0, 
                     new ImportParameters(false, false, false));
         } catch (Exception e) {
             Assert.fail();
         }
-        log(project);
 
         Assert.assertEquals(columnGroup.subgroups.size(), 1);
         Assert.assertEquals(columnGroup.name, "");
@@ -413,7 +495,7 @@ public class XmlImportUtilitiesTests extends RefineTest {
         } catch (Exception e) {
             Assert.fail();
         }
-        log(project);
+
         Assert.assertNotNull(project.rows);
         Assert.assertEquals(project.rows.size(), 1);
         Row row = project.rows.get(0);
@@ -436,7 +518,7 @@ public class XmlImportUtilitiesTests extends RefineTest {
         } catch (Exception e) {
             Assert.fail();
         }
-        log(project);
+
         Assert.assertNotNull(project.rows);
         Assert.assertEquals(project.rows.size(), 1);
         Row row = project.rows.get(0);

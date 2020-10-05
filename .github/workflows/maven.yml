@@ -39,6 +39,7 @@ jobs:
       run: ./refine dist ${{ env.OR_VERSION }}
 
     - name: Create Release
+      if: github.repository == 'OpenRefine/OpenRefine'
       id: create_release
       run: echo ::set-env name=API_RELEASE::$(./.github/workflows/release_manager.sh)
       env:
@@ -48,6 +49,7 @@ jobs:
 
     - name: Upload Release Asset Windows
       id: upload-release-asset-win
+      if: github.repository == 'OpenRefine/OpenRefine'
       uses: actions/upload-release-asset@v1.0.1
       env:
         GITHUB_TOKEN: ${{ secrets.RELEASE_REPO_TOKEN }}
@@ -59,6 +61,7 @@ jobs:
 
     - name: Upload Release Asset Linux
       id: upload-release-asset-linux
+      if: github.repository == 'OpenRefine/OpenRefine'
       uses: actions/upload-release-asset@v1.0.1
       env:
         GITHUB_TOKEN: ${{ secrets.RELEASE_REPO_TOKEN }}
@@ -70,6 +73,7 @@ jobs:
 
     - name: Upload Release Asset Mac
       id: upload-release-asset-mac
+      if: github.repository == 'OpenRefine/OpenRefine'
       uses: actions/upload-release-asset@v1.0.1
       env:
         GITHUB_TOKEN: ${{ secrets.RELEASE_REPO_TOKEN }}
@@ -78,3 +82,18 @@ jobs:
         asset_path: ./packaging/target/openrefine-mac-${{ env.OR_VERSION }}.dmg
         asset_name: openrefine-mac-${{ env.OR_VERSION }}.dmg
         asset_content_type: application/x-apple-diskimage
+
+    - name: Delete older releases
+      id: delete-older-releases
+      if: github.repository == 'OpenRefine/OpenRefine'
+      uses: dev-drprasad/delete-older-releases@v0.1.0
+      with:
+        repo: OpenRefine/OpenRefine-snapshot-releases
+        # Specifies number of latest releases (sorted by created_at) to keep. Pass 0 if you want to delete all releases
+        keep_latest: 10
+        # Specifies whether to delete tags associated to older releases or not.
+        # Older tags without any associated releases will not be deleted
+        delete_tags: true  
+      env:
+        GITHUB_TOKEN: ${{ secrets.RELEASE_REPO_TOKEN }}
+

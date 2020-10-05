@@ -44,17 +44,26 @@ import com.google.refine.RefineServlet;
 
 public class GetVersionCommand extends Command {
 
-	protected class VersionResponse {
-		@JsonProperty("version")
-		public String version = RefineServlet.VERSION;
-		@JsonProperty("revision")
-		public String revision = RefineServlet.REVISION;
-		@JsonProperty("full_version")
-		public String full_version = RefineServlet.FULL_VERSION;
-		@JsonProperty("full_name")
-		public String full_name = RefineServlet.FULLNAME;
-	}
-    
+    protected class VersionResponse {
+        @JsonProperty("version")
+        public String version = RefineServlet.VERSION;
+        @JsonProperty("revision")
+        public String revision = RefineServlet.REVISION;
+        @JsonProperty("full_version")
+        public String full_version = RefineServlet.FULL_VERSION;
+        @JsonProperty("full_name")
+        public String full_name = RefineServlet.FULLNAME;
+        @JsonProperty("java_vm_name")
+        public String java_vm_name = System.getProperty("java.vm.name", "?");
+        @JsonProperty("java_vm_version")
+        public String java_vm_version = System.getProperty("java.vm.version", "?");
+        @JsonProperty("java_runtime_name")
+        public String java_runtime_name = System.getProperty("java.runtime.name", "?");
+        @JsonProperty("java_runtime_version")
+        // public String java_runtime_version = Runtime.getRuntime().version(); // Java 9 or later
+        public String java_runtime_version = System.getProperty("java.runtime.version", "?");
+    }
+
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         respondJSON(response, new VersionResponse());

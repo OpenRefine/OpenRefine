@@ -43,7 +43,6 @@ import org.testng.annotations.BeforeTest;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
-import com.google.refine.importers.SeparatorBasedImporter;
 import com.google.refine.util.ParsingUtilities;
 
 public class TsvCsvImporterTests extends ImporterTest {
@@ -245,6 +244,27 @@ public class TsvCsvImporterTests extends ImporterTest {
         Assert.assertEquals(project.rows.get(0).cells.get(1).value, " 3.4 ");
         Assert.assertEquals(project.rows.get(0).cells.get(2).value, " data3 ");
     }
+    
+    @Test(groups = {  }, dataProvider = "CSV-TSV-AutoDetermine")
+    public void trimAndAutodetectDatatype(String sep){
+        //create input to test with
+        String inputSeparator =  sep == null ? "\t" : sep;
+        String input = " data1 " + inputSeparator + " 3.4 " + inputSeparator + " data3 ";
+
+        try {
+            prepareOptions(sep, -1, 0, 0, 0, true, false, true);
+            parseOneFile(SUT, new StringReader(input));
+        } catch (Exception e) {
+            Assert.fail("Exception during file parse",e);
+        }
+        Assert.assertEquals(project.columnModel.columns.size(), 3);
+        Assert.assertEquals(project.rows.size(), 1);
+        Assert.assertEquals(project.rows.get(0).cells.size(), 3);
+        Assert.assertEquals(project.rows.get(0).cells.get(0).value, "data1");
+        Assert.assertEquals(project.rows.get(0).cells.get(1).value, Double.parseDouble("3.4"));
+        Assert.assertEquals(project.rows.get(0).cells.get(2).value, "data3");
+    }
+
 
     @Test(dataProvider = "CSV-TSV-AutoDetermine")
     public void readCanAddNull(String sep){
@@ -558,7 +578,7 @@ public class TsvCsvImporterTests extends ImporterTest {
         String input = "data1" + inputSeparator + "data2" + inputSeparator + "data3\n";
         
         try {
-            prepareOptions(sep, -1, 0, 0, 1, false, false,"\"","[\"col1\",\"col2\",\"col3\"]");
+            prepareOptions(sep, -1, 0, 0, 1, false, false,"\"","[\"col1\",\"col2\",\"col3\"]", false);
             parseOneFile(SUT, new StringReader(input));
         } catch (Exception e) {
             Assert.fail("Exception during file parse",e);
@@ -634,7 +654,7 @@ public class TsvCsvImporterTests extends ImporterTest {
         String sep, int limit, int skip, int ignoreLines,
         int headerLines, boolean guessValueType, boolean ignoreQuotes, String quoteCharacter) {
         
-        prepareOptions(sep, limit, skip, ignoreLines, headerLines, guessValueType, ignoreQuotes, quoteCharacter,"[]");      
+        prepareOptions(sep, limit, skip, ignoreLines, headerLines, guessValueType, ignoreQuotes, quoteCharacter,"[]", false);
     }
 
     protected void prepareOptions(
@@ -652,7 +672,7 @@ public class TsvCsvImporterTests extends ImporterTest {
     
     protected void prepareOptions(
             String sep, int limit, int skip, int ignoreLines,
-            int headerLines, boolean guessValueType, boolean ignoreQuotes, String quoteCharacter, String columnNames) {
+            int headerLines, boolean guessValueType, boolean ignoreQuotes, String quoteCharacter, String columnNames, boolean includeArchiveFileName) {
             
             whenGetStringOption("separator", options, sep);
             whenGetStringOption("quoteCharacter", options, quoteCharacter);
@@ -664,5 +684,6 @@ public class TsvCsvImporterTests extends ImporterTest {
             whenGetBooleanOption("processQuotes", options, !ignoreQuotes);
             whenGetBooleanOption("storeBlankCellsAsNulls", options, true);
             whenGetArrayOption("columnNames", options, ParsingUtilities.evaluateJsonStringToArrayNode(columnNames));
+            whenGetBooleanOption("includeArchiveFileName", options, includeArchiveFileName);
         }
 }

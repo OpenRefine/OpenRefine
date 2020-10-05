@@ -51,7 +51,6 @@ import com.google.refine.model.ModelException;
 import com.google.refine.model.Project;
 import com.google.refine.model.Row;
 
-
 public class ExpressionNominalValueGrouperTests extends RefineTest {
     // dependencies    
     //Variables
@@ -173,5 +172,36 @@ public class ExpressionNominalValueGrouperTests extends RefineTest {
       Assert.assertTrue(grouper.choices.containsKey(dateTimeStringValue));
       Assert.assertEquals(grouper.choices.get(dateTimeStringValue).decoratedValue.label,dateTimeStringValue);
       Assert.assertEquals(grouper.choices.get(dateTimeStringValue).decoratedValue.value.toString(),dateTimeStringValue);
+    }
+
+    @Test
+    public void expressionNominalValueGrouperRecords() throws Exception {
+        String completeProjectJson = "col1,col2,col3\n"
+                + "record1,1,a\n"
+                + ",,a\n"
+                + ",,a\n"
+                + "record2,,a\n"
+                + ",1,a\n";
+
+        project = createCSVProject(completeProjectJson);
+        bindings = new Properties();
+        bindings.put("project", project);
+
+        eval = MetaParser.parse("value");
+        grouper = new ExpressionNominalValueGrouper(eval, "col2", 1);
+        try {
+            grouper.start(project);
+            int c = project.recordModel.getRecordCount();
+            for (int r = 0; r < c; r++) {
+                grouper.visit(project, project.recordModel.getRecord(r));
+            }
+        } finally {
+            grouper.end(project);
+        }
+
+        Assert.assertEquals(grouper.blankCount, 3);
+        Assert.assertEquals(grouper.choices.size(), 1);
+        Assert.assertTrue(grouper.choices.containsKey(integerStringValue));
+        Assert.assertEquals(grouper.choices.get(integerStringValue).count, 2);
     }
 }

@@ -2,6 +2,7 @@
   "op": "wikidata/perform-wikibase-edits",
   "description": "Perform Wikibase edits",
   "summary": "test null edit",
+  "maxlag": 5,
   "engineConfig": {
     "mode": "row-based",
     "facets": []

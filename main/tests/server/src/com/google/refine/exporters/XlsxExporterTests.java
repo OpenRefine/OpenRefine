@@ -34,6 +34,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package com.google.refine.exporters;
 
 import java.io.ByteArrayInputStream;
+
+import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFRow;
@@ -59,8 +61,6 @@ import com.google.refine.ProjectManagerStub;
 import com.google.refine.ProjectMetadata;
 import com.google.refine.RefineTest;
 import com.google.refine.browsing.Engine;
-import com.google.refine.exporters.StreamExporter;
-import com.google.refine.exporters.XlsExporter;
 import com.google.refine.model.Cell;
 import com.google.refine.model.Column;
 import com.google.refine.model.ModelException;
@@ -108,6 +108,17 @@ public class XlsxExporterTests extends RefineTest {
         project = null;
         engine = null;
         options = null;
+    }
+
+    @Test
+    public void getContentType(){
+        Assert.assertEquals(SUT.getContentType(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+    }
+
+    @Test
+    public void getSpreadsheetVersion(){
+        XlsExporter exporter = (XlsExporter)SUT;
+        Assert.assertEquals(exporter.getSpreadsheetVersion(), SpreadsheetVersion.EXCEL2007);
     }
 
     @Test
@@ -178,6 +189,42 @@ public class XlsxExporterTests extends RefineTest {
             wb.close();
         } catch (IOException e) {
             Assert.fail();
+        }
+    }
+
+    @Test
+    public void test257Columns() throws IOException {
+        CreateGrid(2, 257);
+
+        try {
+            SUT.export(project, options, engine, stream);
+        } catch (IOException e) {
+            Assert.fail();
+        }
+
+        try (XSSFWorkbook wb = new XSSFWorkbook(new ByteArrayInputStream(stream.toByteArray()))) {
+            org.apache.poi.ss.usermodel.Sheet ws = wb.getSheetAt(0);
+            org.apache.poi.ss.usermodel.Row row1 = ws.getRow(1);
+            org.apache.poi.ss.usermodel.Cell cell0 = row1.getCell(256);
+            Assert.assertEquals(cell0.toString(),"row0cell256");
+        }
+    }
+
+    @Test
+    public void test10000Columns() throws IOException {
+        CreateGrid(2, 10000);
+
+        try {
+            SUT.export(project, options, engine, stream);
+        } catch (IOException e) {
+            Assert.fail();
+        }
+
+        try (XSSFWorkbook wb = new XSSFWorkbook(new ByteArrayInputStream(stream.toByteArray()))) {
+            org.apache.poi.ss.usermodel.Sheet ws = wb.getSheetAt(0);
+            org.apache.poi.ss.usermodel.Row row1 = ws.getRow(1);
+            org.apache.poi.ss.usermodel.Cell cell0 = row1.getCell(9999);
+            Assert.assertEquals(cell0.toString(),"row0cell9999");
         }
     }
 

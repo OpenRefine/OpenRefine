@@ -41,32 +41,37 @@ import com.google.refine.grel.Function;
 
 public class ToNumber implements Function {
 
-    @Override
+  @Override
     public Object call(Properties bindings, Object[] args) {
         if (args.length == 1 && args[0] != null) {
             if (args[0] instanceof Number) {
                 return args[0];
             } else {
-                String s = args[0].toString().trim();
-                if (s.length() > 0) {
-                    try {
-                        return Long.parseLong(s);
-                    } catch (NumberFormatException e) {
-                    }
-                    try {
-                        return Double.parseDouble(s);
-                    } catch (NumberFormatException e) {
-                        return new EvalError("Unable to parse as number");
-                    }
+                String s;
+                if (args[0] instanceof String) {
+                    s = (String)args[0];
                 } else {
-                    return new EvalError("Unable to parse as number");
+                    s = args[0].toString();
                 }
+                if (s.length() > 0) {
+                    if (!s.contains(".")) { // lightweight test for strings which will definitely fail
+                        try {
+                            return Long.valueOf(s, 10);
+                        } catch (NumberFormatException e) {
+                        }
+                    }
+                    try {
+                        return Double.valueOf(s);
+                    } catch (NumberFormatException e) {
+                    }
+                }
+                return new EvalError("Unable to parse as number");
             }
         } else {
             return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects one non-null argument");
         }
     }
-    
+
     @Override
     public String getDescription() {
         return "Returns o converted to a number";

@@ -182,4 +182,17 @@ public class JSONUtilities {
 		}
 		return result;
 	}
+
+    @SuppressWarnings("rawtypes")
+    public static Comparable[] toSortableArray(ArrayNode v) {
+        if (v == null) {
+            return null;
+        }
+        Comparable[] result = new Comparable[v.size()];
+        for (int i = 0; i != v.size(); i++) {
+            result[i] = JsonValueConverter.convertComparable(v.get(i));
+        }
+        return result;
+    }
+
 }

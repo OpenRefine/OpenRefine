@@ -43,19 +43,19 @@ public class ExpressionContextTest extends WikidataRefineTest {
 
     @Test
     public void testGetCellByColumnName() {
-        ExpressionContext ctxt = new ExpressionContext("foo:", 1, project.rows.get(1), project.columnModel, null);
+        ExpressionContext ctxt = new ExpressionContext("foo:", "https://www.wikidata.org/w/api.php", 1, project.rows.get(1), project.columnModel, null);
         assertEquals("e", ctxt.getCellByName("b").value);
     }
 
     @Test
     public void testNonExistentColumn() {
-        ExpressionContext ctxt = new ExpressionContext("foo:", 1, project.rows.get(1), project.columnModel, null);
+        ExpressionContext ctxt = new ExpressionContext("foo:", "https://www.wikidata.org/w/api.php", 1, project.rows.get(1), project.columnModel, null);
         assertNull(ctxt.getCellByName("auie"));
     }
 
     @Test
     public void testGetRowId() {
-        ExpressionContext ctxt = new ExpressionContext("foo:", 1, project.rows.get(1), project.columnModel, null);
+        ExpressionContext ctxt = new ExpressionContext("foo:", "https://www.wikidata.org/w/api.php", 1, project.rows.get(1), project.columnModel, null);
         assertEquals(1, ctxt.getRowId());
     }
 }

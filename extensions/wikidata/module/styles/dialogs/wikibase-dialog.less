@@ -1,0 +1,44 @@
+@import-less url("../theme.less");
+
+.wikibase-dialog p {
+  padding: 0 10px 10px 10px
+}
+
+.wikibase-dialog .add-wikibase-buttons {
+  text-align: right;
+}
+
+.wikibase-list-wrapper {
+  max-height: 300px; overflow-y: auto
+}
+
+.wikibase-dialog-wikibase-list {
+  width: 100%
+}
+
+.wikibase-dialog-wikibase-list tr:hover {
+  background: @dialog_footer;
+  cursor: pointer;
+}
+
+.wikibase-dialog-wikibase-list tr td {
+  padding: 10px;
+}
+
+.wikibase-dialog-selector-remove {
+  float: right;
+  position: relative;
+  width: 12px;
+  height: 12px;
+  text-decoration: none;
+  background-image: url(../../images/close-map.png);
+  background-repeat: no-repeat;
+  background-position: 0px 0px;
+}
+.wikibase-dialog-selector-remove:hover {
+  background-position: -12px 0px;
+}
+
+.wikibase-dialog-selector-remove.wikibase-selected:hover {
+  cursor: not-allowed;
+}

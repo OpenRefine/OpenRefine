@@ -26,16 +26,44 @@
  ******************************************************************************/
 package com.google.refine.expr.functions;
 
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertTrue;
+
 import org.testng.annotations.Test;
 
-import com.google.refine.expr.functions.ToString;
+import com.google.refine.RefineTest;
+import com.google.refine.expr.EvalError;
+import com.google.refine.expr.util.CalendarParser;
+import com.google.refine.expr.util.CalendarParserException;
 import com.google.refine.util.TestUtils;
 
-public class ToStringTests {
+public class ToStringTests extends RefineTest {
     @Test
     public void serializeToString() {
         String json = "{\"description\":\"Returns o converted to a string\",\"params\":\"o, string format (optional)\",\"returns\":\"string\"}";
         TestUtils.isSerializedTo(new ToString(), json);
     }
+
+    @Test
+    public void testToString() throws CalendarParserException {
+        assertTrue(invoke("toString") instanceof EvalError);
+        assertEquals(invoke("toString", (Object) null), "");
+        assertEquals(invoke("toString", Long.valueOf(100)), "100");
+        assertEquals(invoke("toString", Double.valueOf(100.0)), "100.0");
+        assertEquals(invoke("toString", Double.valueOf(100.0),"%.0f"), "100");
+
+        String inputDate = "2013-06-01";
+        assertEquals(invoke("toString", CalendarParser.parseAsOffsetDateTime(inputDate)), "2013-06-01T00:00:00Z");
+        assertEquals(invoke("toString", CalendarParser.parseAsOffsetDateTime(inputDate), "yyyy-MM-dd"), "2013-06-01");
+        assertEquals(invoke("toString", CalendarParser.parseAsOffsetDateTime(inputDate), "yyyy/dd/MM"), "2013/01/06");
+        assertEquals(invoke("toString", CalendarParser.parseAsOffsetDateTime(inputDate), "yyyy-MM-dd hh:mm:ss"), "2013-06-01 12:00:00");
+
+        String inputDateTime = "2013-06-01 13:12:11";
+        assertEquals(invoke("toString", CalendarParser.parseAsOffsetDateTime(inputDateTime)), "2013-06-01T13:12:11Z");
+        assertEquals(invoke("toString", CalendarParser.parseAsOffsetDateTime(inputDateTime), "yyyy-MM-dd"), "2013-06-01");
+        assertEquals(invoke("toString", CalendarParser.parseAsOffsetDateTime(inputDateTime), "yyyy-MM-dd hh:mm:ss"), "2013-06-01 01:12:11");
+        assertEquals(invoke("toString", CalendarParser.parseAsOffsetDateTime(inputDateTime), "yyyy-MM-dd HH:mm:ss"), "2013-06-01 13:12:11");
+    }
+
 }
 
