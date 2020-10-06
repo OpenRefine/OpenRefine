@@ -189,7 +189,7 @@ Use the Extensions menu to select <span class="menuItems">Manage Wikidata accoun
 
 ![The Wikidata authorization window in OpenRefine.](/img/wikidata-login.png)
 
-For security reasons, you may not wish to use your usual account authorization with OpenRefine. Wikidata allows you to set special passwords to access your account through software. You can find this setting for your account at [https://www.wikidata.org/wiki/Special:BotPasswords](https://www.wikidata.org/wiki/Special:BotPasswords) once logged in. Creating bot access will prompt you for a unique name, and allow you to enable the following required settings:
+For security reasons, it is suggested that you not use your main account authorization with OpenRefine. Wikidata allows you to set special passwords to access your account through software. You can find this setting for your account at [https://www.wikidata.org/wiki/Special:BotPasswords](https://www.wikidata.org/wiki/Special:BotPasswords) once logged in. Creating bot access will prompt you for a unique name, and allow you to enable the following required settings:
 * High-volume editing
 * Edit existing pages
 * Create, edit, and move pages
