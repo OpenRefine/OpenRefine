@@ -14,8 +14,6 @@ You do not need a Wikidata account to reconcile your local OpenRefine project to
 
 The best source for information about how OpenRefine works with Wikidata is [on Wikidata itself, under Tools](https://www.wikidata.org/wiki/Wikidata:Tools/OpenRefine). This has tutorials, guidelines on editing, and spaces for discussion and help.
 
-Everything true about the way OpenRefine works with Wikidata is also true about any other Wikibase. Anything built on the same Wikibase platform will offer a reconciliation endpoint that works the same. To find a Wikibase reconciliation URL, 
-
 ## Reconciling with Wikidata
 
 The [Wikidata reconciliation service](reconciling) for OpenRefine [supports](https://reconciliation-api.github.io/testbench/):
