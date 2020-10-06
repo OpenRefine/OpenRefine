@@ -134,7 +134,6 @@ If you upload edits that are redundant (that is, all the statements you want to 
 
 You can use OpenRefine's previews to look at the target Wikidata elements and see what information they already have, and whether the elements' histories have had similar edits reverted in the past. 
 
-Wikidata is unlike Wikipedia in that there are fewer editors supervising consistency. Many entities' discussion pages are not used; rather, discussion happens on individual users' pages and on project pages. 
 
 ### Edit Wikidata schema
 
