@@ -47,9 +47,9 @@ Some items may not yet be set as an instance of anything, because Wikidata is cr
 
 ### Reconciling via unique identifiers
 
-You can supply a column of unique identifiers directly to Wikidata in order to pull more data, but [these strings will not be “reconciled” against the external dataset](reconciling#reconciling-with-unique-identifiers). Apply the operation <span class="menuItems">Reconcile</span> → <span class="menuItems">Use values as identifiers</span> on your column of identifiers. All cells will appear as dark blue “confirmed” matches. Some of the “matches” may be errors, which you will need to hover over or click on to identify.
+You can supply a column of unique identifiers (in the form "Q###") directly to Wikidata in order to pull more data, but [these strings will not be “reconciled” against the external dataset](reconciling#reconciling-with-unique-identifiers). Apply the operation <span class="menuItems">Reconcile</span> → <span class="menuItems">Use values as identifiers</span> on your column of QIDs. All cells will appear as dark blue “confirmed” matches. Some of the “matches” may be errors, which you will need to hover over or click on to identify.
 
-If the same external identifier is assigned to multiple Wikidata items, all of the items are returned as candidates, with none automatically matched.
+If the same QID is assigned to multiple Wikidata items, all of the items are returned as candidates, with none automatically matched.
 
 ### Property paths
 
@@ -94,8 +94,6 @@ You can refer to a term in a specific language by manually entering in a three-l
 *   `Sde` for Sitelink in German
 
 Enter in the three-letter code manually in the <span class="menuItems">Add Property</span> field. You can manually enter as many term/language combinations as you require. 
-
-No language fall-back is performed when retrieving the values.
 
 ### Comparing values
 
@@ -183,7 +181,7 @@ You could upload translated titles to “Label” with the language from “Tran
 
 ### Manage Wikidata account
 
-To edit Wikidata directly from OpenRefine, you must have a Wikidata account and log in with it in OpenRefine. OpenRefine can only upload edits with Wikidata user accounts that are “[autoconfirmed](https://www.wikidata.org/wiki/Wikidata:Autoconfirmed_users)” - that is, accounts that have more than 50 edits and have existed for longer than four days. 
+To edit Wikidata directly from OpenRefine, you must have a Wikidata account and log in with it in OpenRefine. OpenRefine can only upload edits with Wikidata user accounts that are “[autoconfirmed](https://www.wikidata.org/wiki/Wikidata:Autoconfirmed_users)” - that is, accounts that have more than 50 edits and have existed for longer than four days (as of 2020). 
 
 Use the Extensions menu to select <span class="menuItems">Manage Wikidata account</span> and you will be presented with the following window:
 
