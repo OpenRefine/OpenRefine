@@ -49,7 +49,7 @@ Some items may not yet be set as an instance of anything, because Wikidata is cr
 
 You can supply a column of unique identifiers directly to Wikidata in order to pull more data, but [these strings will not be “reconciled” against the external dataset](reconciling#reconciling-with-unique-identifiers). Apply the operation <span class="menuItems">Reconcile</span> → <span class="menuItems">Use values as identifiers</span> on your column of identifiers. All cells will appear as dark blue “confirmed” matches. Some of the “matches” may be errors, which you will need to hover over or click on to identify.
 
-Sometimes the same external identifier is assigned to different Wikidata items (in which case the conflict will be flagged in Wikidata as a uniqueness constraint violation). In this case, all of the matching items are returned as candidates, but are not automatically matched.
+If the same external identifier is assigned to multiple Wikidata items, all of the items are returned as candidates, with none automatically matched.
 
 ### Property paths
 
