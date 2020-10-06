@@ -134,7 +134,7 @@ Batches of edits to Wikidata that are created with OpenRefine can be undone. You
 * https://www.wikidata.org/wiki/Q15397819
 * https://www.wikidata.org/wiki/Q64768399
 
-If you upload edits that are redundant (that is, all the statements you want to make have already been made), nothing will happen. If you upload edits that conflict with existing information (such as a different birthdate than one already in Wikidata), it will be added as a second statement. OpenRefine produces no warnings as to whether your data replicates or conflicts existing Wikidata elements. 
+If you upload edits that are redundant (that is, all the statements you want to make have already been made), nothing will happen. If you upload edits that conflict with existing information (such as a different birthdate than one already in Wikidata), it will be added as a second statement. OpenRefine produces no warnings as to whether your data replicates or conflicts with existing Wikidata elements. 
 
 You can use OpenRefine's previews to look at the target Wikidata elements and see what information they already have, and whether the elements' histories have had similar edits reverted in the past. 
 
