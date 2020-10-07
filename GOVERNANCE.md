@@ -129,12 +129,12 @@ While the vast majority of OpenRefine contributors are volunteers, we recognize 
 - perform time critical maintenance tasks for the project (for example release management, security update, pull request review and comments)
 - address issues that will not be naturally done by the community (for example documentation or working on large or long term projects)
 
-CS&S currently manage the current funding sources: 
-- **Grants**: Funds are allocated based on the grants requierements. Grants help to secure resources to achieve long term goal or supports software maintenance, growth, development, and community engagement.
-- **Google Summer of Code**: Google Summer of Code mentors are eligible to a USD 500 compensation for their work. 
-- **Donations made through Github sponsors or done directly to CS&S on behalf of OpenRefine**: Usage of the fund is made by the Advisory committee with guidance from Organization Members. 
+CS&S currently manages the current funding sources: 
+- **Grants**: Funds are allocated based on the grants requirements. Grants help to secure resources to achieve long term goal or supports software maintenance, growth, development, and community engagement.
+- **Google Summer of Code**: Google Summer of Code mentors are eligible for USD 500 compensation for their work. 
+- **Donations made through GitHub Sponsors or made directly to CS&S on behalf of OpenRefine**: Decisions on usage of funds is made by the Advisory committee with guidance from Organization Members. 
 
-The CS&S, the Steering and Advisory comittees have experience applying and managing grants. If you are interested in applying to a grant to improve OpenRefine, please share your idea early on the Developer mailing list. It will be a pleasure helping you through your grant application. New grants must be approved by the Advisory Committee. that CS&S retains a 15% handling fees on any contribution to finance their operations (20% for government funding). 
+Combined with CS&S, the Steering and Advisory committees have experience applying and managing grants. If you are interested in applying to a grant to improve OpenRefine, please share your idea early on the Developer mailing list. It will be a pleasure helping you through your grant application. New grants must be approved by the Advisory Committee. that CS&S retains a 15% handling fees on any donation to finance their operations (20% for government funding). 
 
 ### Other assets 
 
