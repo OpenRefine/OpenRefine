@@ -45,7 +45,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import org.openrefine.browsing.Engine;
-import org.openrefine.model.Project;
+import org.openrefine.model.GridState;
 import org.openrefine.util.ParsingUtilities;
 
 public class CsvExporter implements WriterExporter {
@@ -72,7 +72,7 @@ public class CsvExporter implements WriterExporter {
     }
 
     @Override
-    public void export(Project project, Properties params, Engine engine, final Writer writer)
+    public void export(GridState grid, Properties params, Engine engine, final Writer writer)
             throws IOException {
 
         String optionsString = (params == null) ? null : params.getProperty("options");
@@ -122,7 +122,7 @@ public class CsvExporter implements WriterExporter {
             }
         };
 
-        CustomizableTabularExporterUtilities.exportRows(project, engine, params, serializer);
+        CustomizableTabularExporterUtilities.exportRows(grid, engine, params, serializer);
 
         csvWriter.close();
     }

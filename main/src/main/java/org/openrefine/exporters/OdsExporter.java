@@ -47,7 +47,7 @@ import org.odftoolkit.odfdom.doc.table.OdfTableRow;
 
 import org.openrefine.ProjectManager;
 import org.openrefine.browsing.Engine;
-import org.openrefine.model.Project;
+import org.openrefine.model.GridState;
 import org.openrefine.util.ParsingUtilities;
 
 public class OdsExporter implements StreamExporter {
@@ -58,7 +58,7 @@ public class OdsExporter implements StreamExporter {
     }
 
     @Override
-    public void export(final Project project, Properties params, Engine engine,
+    public void export(final GridState grid, Properties params, Engine engine,
             OutputStream outputStream) throws IOException {
 
         final OdfSpreadsheetDocument odfDoc;
@@ -76,7 +76,7 @@ public class OdsExporter implements StreamExporter {
             @Override
             public void startFile(JsonNode options) {
                 table = OdfTable.newTable(odfDoc);
-                table.setTableName(ProjectManager.singleton.getProjectMetadata(project.id).getName());
+                table.setTableName(ProjectManager.singleton.getProjectMetadata(grid.id).getName());
             }
 
             @Override
@@ -114,7 +114,7 @@ public class OdsExporter implements StreamExporter {
         };
 
         CustomizableTabularExporterUtilities.exportRows(
-                project, engine, params, serializer);
+                grid, engine, params, serializer);
 
         try {
             odfDoc.save(outputStream);
