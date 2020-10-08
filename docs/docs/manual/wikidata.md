@@ -45,9 +45,9 @@ Some items may not yet be set as an instance of anything, because Wikidata is cr
 
 ### Reconciling via unique identifiers
 
-You can supply a column of unique identifiers (in the form "Q###") directly to Wikidata in order to pull more data, but [these strings will not be “reconciled” against the external dataset](reconciling#reconciling-with-unique-identifiers). Apply the operation <span class="menuItems">Reconcile</span> → <span class="menuItems">Use values as identifiers</span> on your column of QIDs. All cells will appear as dark blue “confirmed” matches. Some of the “matches” may be errors, which you will need to hover over or click on to identify.
+You can supply a column of unique identifiers (in the form "Q###" for entities) directly to Wikidata in order to pull more data, but [these strings will not be “reconciled” against the external dataset](reconciling#reconciling-with-unique-identifiers). Apply the operation <span class="menuItems">Reconcile</span> → <span class="menuItems">Use values as identifiers</span> on your column of QIDs. All cells will appear as dark blue “confirmed” matches. Some of the “matches” may be errors, which you will need to hover over or click on to identify. You cannot use this to reconcile properties (in the form "P###").
 
-If the same QID is assigned to multiple Wikidata items, all of the items are returned as candidates, with none automatically matched.
+If the same identifier is assigned to multiple Wikidata items, all of the items are returned as candidates, with none automatically matched.
 
 ### Property paths
 
@@ -82,7 +82,7 @@ Entities on Wikidata have what they call “terms:” labels, descriptions, alia
 
 For example, [Q5](https://www.wikidata.org/wiki/Q5) has the English label “human” and the aliases “person” and “people,” with a description including “common name of Homo sapiens;” it also has the Italian label “umano” and the alias “persona” with a description “specie a cui appartiene il genere umano.” The English sitelink is “https://en&#46;wikipedia.org/wiki/Human” but Italian Wikipedia has no equivalent article attached to Q5. Not every language will have values, but these terms can still be useful for reconciling. 
 
-After reconciliation, you can extend your data with these terms. You can fetch aliases for a given term, or labels in another languages, by using <span class="menuItems">Edit column</span> → <span class="menuItems">Add columns from reconciled values....</span>. 
+After reconciliation, you can extend your data with these terms. You can fetch aliases for a given term, or labels in other languages, by using <span class="menuItems">Edit column</span> → <span class="menuItems">Add columns from reconciled values....</span>. 
 
 You can refer to a term in a specific language by manually entering in a three-letter code. The first letter is the term (“L” for label, “D” for description, “A” for aliases, “S” for sitelink) and the next two are the language code. For example:
 
@@ -134,7 +134,6 @@ If you upload edits that are redundant (that is, all the statements you want to 
 
 You can use OpenRefine's previews to look at the target Wikidata elements and see what information they already have, and whether the elements' histories have had similar edits reverted in the past. 
 
-
 ### Edit Wikidata schema
 
 The best resource is the [Schema alignment page](https://www.wikidata.org/wiki/Wikidata:Tools/OpenRefine/Editing/Schema_alignment) on Wikidata.
@@ -175,6 +174,9 @@ Terms must always have a language selected. You cannot edit multiple languages a
 ||ウルフ・ホール|Japanese|
 
 You could upload translated titles to “Label” with the language from “Translation language.” You may wish to fetch the two-letter language code and use that instead for better language matches.
+
+![Constructing a schema with aliases and languages.](/img/wikidata-translated.png)
+
 
 ### Manage Wikidata account
 
