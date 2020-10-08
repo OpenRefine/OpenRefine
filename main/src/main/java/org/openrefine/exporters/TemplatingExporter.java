@@ -44,7 +44,7 @@ import org.openrefine.browsing.RecordVisitor;
 import org.openrefine.browsing.RowVisitor;
 import org.openrefine.browsing.Engine.Mode;
 import org.openrefine.expr.ParsingException;
-import org.openrefine.model.GridState;
+import org.openrefine.model.Project;
 import org.openrefine.sorting.SortingConfig;
 import org.openrefine.sorting.RecordSorter;
 import org.openrefine.sorting.RowSorter;
@@ -82,7 +82,7 @@ public class TemplatingExporter implements WriterExporter {
     }
 
     @Override
-    public void export(GridState grid, Properties options, Engine engine, Writer writer) throws IOException {
+    public void export(Project project, Properties options, Engine engine, Writer writer) throws IOException {
         String limitString = options.getProperty("limit");
         int limit = limitString != null ? Integer.parseInt(limitString) : -1;
         
@@ -107,7 +107,7 @@ public class TemplatingExporter implements WriterExporter {
         if (!"true".equals(options.getProperty("preview"))) {
             TemplateConfig config = new TemplateConfig(templateString, prefixString,
                     suffixString, separatorString);
-            grid.getMetadata().getPreferenceStore().put("exporters.templating.template",
+            project.getMetadata().getPreferenceStore().put("exporters.templating.template",
                     ParsingUtilities.defaultWriter.writeValueAsString(config));
         }
         
@@ -125,7 +125,7 @@ public class TemplatingExporter implements WriterExporter {
                 }
             }
             
-            filteredRows.accept(grid, visitor);
+            filteredRows.accept(project, visitor);
         } else {
             FilteredRecords filteredRecords = engine.getFilteredRecords();
             RecordVisitor visitor = template.getRecordVisitor(writer, limit);
@@ -140,7 +140,7 @@ public class TemplatingExporter implements WriterExporter {
                 }
             }
             
-            filteredRecords.accept(grid, visitor);
+            filteredRecords.accept(project, visitor);
         }
     }
     

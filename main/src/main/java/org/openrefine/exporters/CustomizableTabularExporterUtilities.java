@@ -33,33 +33,185 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package org.openrefine.exporters;
 
+import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.time.OffsetDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.TimeZone;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.validator.routines.UrlValidator;
 import org.openrefine.ProjectManager;
-import org.openrefine.exporters.EngineDependentExporter.CellData;
+import org.openrefine.browsing.Engine;
+import org.openrefine.browsing.FilteredRows;
+import org.openrefine.browsing.RowVisitor;
+import org.openrefine.exporters.TabularSerializer.CellData;
 import org.openrefine.model.Cell;
 import org.openrefine.model.ColumnMetadata;
 import org.openrefine.model.recon.Recon;
+import org.openrefine.model.Project;
+import org.openrefine.model.Recon;
+import org.openrefine.model.Row;
 import org.openrefine.preference.PreferenceStore;
 import org.openrefine.util.JSONUtilities;
+import org.openrefine.util.ParsingUtilities;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 abstract public class CustomizableTabularExporterUtilities {
 	final static private String fullIso8601 = "yyyy-MM-dd'T'HH:mm:ss'Z'";
+	
+    static public void exportRows(
+        final Project project,
+        final Engine engine,
+        Properties params,
+        final TabularSerializer serializer) {
+        
+        String optionsString = (params != null) ? params.getProperty("options") : null;
+        JsonNode optionsTemp = null;
+        if (optionsString != null) {
+            try {
+                optionsTemp = ParsingUtilities.mapper.readTree(optionsString);
+            } catch (IOException e) {
+                // Ignore and keep options null.
+            }
+        }
+        final JsonNode options = optionsTemp;
+        
+        final boolean outputColumnHeaders = options == null ? true :
+            JSONUtilities.getBoolean(options, "outputColumnHeaders", true);
+        final boolean outputEmptyRows = options == null ? false :
+            JSONUtilities.getBoolean(options, "outputBlankRows", true);
+        final int limit = options == null ? -1 :
+            JSONUtilities.getInt(options, "limit", -1);
+        
+        final List<String> columnNames;
+        final Map<String, CellFormatter> columnNameToFormatter =
+            new HashMap<String, CustomizableTabularExporterUtilities.CellFormatter>();
+        
+        List<JsonNode> columnOptionArray = options == null ? null :
+            JSONUtilities.getArray(options, "columns");
+        if (columnOptionArray == null) {
+            List<ColumnMetadata> columns = project.columnModel.getColumns();
+            
+            columnNames = new ArrayList<String>(columns.size());
+            for (ColumnMetadata column : columns) {
+                String name = column.getName();
+                columnNames.add(name);
+                columnNameToFormatter.put(name, new CellFormatter());
+            }
+        } else {
+            int count = columnOptionArray.size();
+            
+            columnNames = new ArrayList<String>(count);
+            for (int i = 0; i < count; i++) {
+                JsonNode columnOptions = columnOptionArray.get(i);
+                if (columnOptions != null) {
+                    String name = JSONUtilities.getString(columnOptions, "name", null);
+                    if (name != null) {
+                        columnNames.add(name);
+                        try {
+							columnNameToFormatter.put(name, ParsingUtilities.mapper.treeToValue(columnOptions, ColumnOptions.class));
+						} catch (JsonProcessingException e) {
+							e.printStackTrace();
+						}
+                    }
+                }
+            }
+        }
+        
+        RowVisitor visitor = new RowVisitor() {
+            int rowCount = 0;
+            
+            @Override
+            public void start(Project project) {
+                serializer.startFile(options);
+                if (outputColumnHeaders) {
+                    List<CellData> cells = new ArrayList<TabularSerializer.CellData>(columnNames.size());
+                    for (String name : columnNames) {
+                        cells.add(new CellData(name, name, name, null));
+                    }
+                    serializer.addRow(cells, true);
+                }
+            }
+
+            @Override
+            public boolean visit(Project project, int rowIndex, Row row) {
+                List<CellData> cells = new ArrayList<TabularSerializer.CellData>(columnNames.size());
+                int nonNullCount = 0;
+                
+                for (String columnName : columnNames) {
+                    ColumnMetadata column = project.columnModel.getColumnByName(columnName);
+                    CellFormatter formatter = columnNameToFormatter.get(columnName);
+                    CellData cellData = formatter.format(
+                        project,
+                        column,
+                        row.getCell(column.getCellIndex()));
+                    
+                    cells.add(cellData);
+                    if (cellData != null) {
+                        nonNullCount++;
+                    }
+                }
+                
+                if (nonNullCount > 0 || outputEmptyRows) {
+                    serializer.addRow(cells, false);
+                    rowCount++;
+                }
+                
+                return limit > 0 && rowCount >= limit;
+            }
+
+            @Override
+            public void end(Project project) {
+                serializer.endFile();
+            }
+        };
+
+        FilteredRows filteredRows = engine.getAllFilteredRows();
+        filteredRows.accept(project, visitor);
+    }
+    
+    static public int[] countColumnsRows(
+            final Project project,
+            final Engine engine,
+            Properties params) {
+        RowCountingTabularSerializer serializer = new RowCountingTabularSerializer();
+        exportRows(project, engine, params, serializer);
+        return new int[] { serializer.columns, serializer.rows };
+    }
+    
+    static private class RowCountingTabularSerializer implements TabularSerializer {
+        int columns;
+        int rows;
+        
+        @Override
+        public void startFile(JsonNode options) {
+        }
+
+        @Override
+        public void endFile() {
+        }
+
+        @Override
+        public void addRow(List<CellData> cells, boolean isHeader) {
+            columns = Math.max(columns, cells.size());
+            rows++;
+        }
+    }
     
     private enum ReconOutputMode {
         @JsonProperty("entity-name")
@@ -188,7 +340,7 @@ abstract public class CustomizableTabularExporterUtilities {
             }
         }
         
-        CellData format(ColumnMetadata column, Cell cell) {
+        CellData format(Project project, ColumnMetadata column, Cell cell) {
             if (cell != null) {
                 String link = null;
                 String text = null;

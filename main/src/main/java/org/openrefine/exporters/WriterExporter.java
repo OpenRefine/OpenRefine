@@ -39,24 +39,10 @@ import java.io.Writer;
 import java.util.Properties;
 
 import org.openrefine.browsing.Engine;
-import org.openrefine.model.GridState;
+import org.openrefine.model.Project;
 
-/**
- * An exporter that writes project data to an output stream
- * represented by a {@class java.util.Writer}.
- *
- */
 public interface WriterExporter extends Exporter {
 
-	/**
-	 * Exports the project at a given stage
-	 * 
-	 * @param grid     the table data in the project
-	 * @param options  some exporter-specific options to control the export
-	 * @param engine   the state of facets and rows/records mode, which can be respected by the exporter
-	 * @param writer   the output stream where to write project data
-	 * @throws IOException  if exporting the project failed
-	 */
-    public void export(GridState grid, Properties options, Engine engine, Writer writer) throws IOException;
+    public void export(Project project, Properties options, Engine engine, Writer writer) throws IOException;
 
 }
