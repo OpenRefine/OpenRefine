@@ -10,9 +10,15 @@ module.exports = {
       label: 'Exploring data',
       items: ['manual/exploring', 'manual/facets', 'manual/sortview'],
     },
-      'manual/transforming',
+	    {
+      type: 'category',
+      label: 'Transforming data',
+      items: ['manual/transforming', 'manual/cellediting','manual/columnediting','manual/transposing'],
+    },
+      'manual/reconciling',
       'manual/expressions',
       'manual/wikidata',
+      'manual/expressions',
       'manual/exporting',
       'manual/glossary',
       'manual/troubleshooting'

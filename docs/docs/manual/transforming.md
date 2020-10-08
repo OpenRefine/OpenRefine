@@ -1,114 +1,33 @@
 ---
-
 id: transforming
-
 title: Transforming data
-
-sidebar_label: Transforming data
-
+sidebar_label: Overview
 ---
 
+## Overview
 
-*   Permanent “view” changes (not data changes, quite) like rearranging columns, removing columns, and renaming columns.
+OpenRefine gives you powerful ways to clean, correct, codify, and extend your data. Without ever needing to type inside a single cell, you can automatically fix typos, convert things to the right format, and add structured categories from trusted sources. 
 
+The following ways to improve data are organized by their appearance in the menu options in OpenRefine. You can:
 
-## Edit cells
+*   change the order of rows or columns
+*   edit cell contents within a particular column
+*   edit cell contents across all rows and columns
+*   transform rows into columns, and columns into rows
+*   split or join columns
+*   add new columns based on existing data or through reconciliation
+*   convert your rows of data into multi-row records
 
+## Edit rows
 
-### Overview
+Moving rows around is a permanent change to your data. 
 
+You can [sort your data](sortview#sort) based on the values in one column, but that change is a temporary view setting. With that setting applied, you can make that new order permanent. 
 
-### Transform
+![A screenshot of where to find the Sort menu with a sorting applied.](/img/sortPermanent.png)
 
+In the project grid header, the word “Sort” will appear when a sort operation is applied. Click on it to show the dropdown menu, and select “Reorder rows permanently.” You will see the numbering of the rows change under the “All” column. 
 
+Reordering rows permanently will affect all rows in the dataset, not just those currently viewed through facets and filters. 
 
-*   Transform…
-*   Common transforms
-    *   Trim / Collapse
-    *   Unescape
-    *   Replace
-    *   Case	
-    *   Data type
-    *   To null/empty
-
-
-### Fill down
-
-
-### Blank down
-
-
-### Split multi-valued cells...
-
-
-### Join multi-valued cells...
-
-
-### Cluster and edit...
-
-
-### Replace
-
-
-## Edit column
-
-
-### Overview
-
-
-### Split or Join
-
-
-### Add column based on this column
-
-
-### Add column by fetching URLs
-
-
-### Add columns from reconciled values
-
-
-### Rename or Remove
-
-
-### Move
-
-
-## Transpose
-
-
-### Overview
-
-
-### Transpose cells across columns into rows
-
-
-### Transpose cells in rows into columns
-
-
-### Columnize by key/value columns
-
-
-## Reconcile
-
-
-### Overview
-
-
-### Sources
-
-[https://github.com/OpenRefine/OpenRefine/wiki/Reconcilable-Data-Sources](https://github.com/OpenRefine/OpenRefine/wiki/Reconcilable-Data-Sources)
-
-
-### Functions
-
-
-
-*   Match each cell to its best candidate
-*   Create a new item for each cell
-*   Create one new item for similar cells
-*   Match all filtered cells
-*   Discard all reconciliation judgments
-*   Clear reconciliation data
-*   Copy reconciliation data
-*   Use values as identifiers
+You can undo this action using the [“History” sidebar](running#history-undoredo). 
