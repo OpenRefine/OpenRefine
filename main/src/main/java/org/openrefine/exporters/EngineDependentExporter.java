@@ -42,9 +42,9 @@ public abstract class EngineDependentExporter implements WriterExporter {
         }
     }
     
-    public abstract void startFile(JsonNode options, Properties params, ColumnModel columnModel, Writer writer);
+    public abstract void startFile(JsonNode options, ColumnModel columnModel, Writer writer);
     
-    public abstract void endFile() throws IOException;
+    public abstract void endFile();
     
     public abstract void addRow(List<CellData> cells, boolean isHeader);
 

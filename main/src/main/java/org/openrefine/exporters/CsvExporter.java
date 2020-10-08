@@ -38,7 +38,8 @@ import java.io.Writer;
 import java.util.List;
 import java.util.Properties;
 
-import org.openrefine.model.ColumnModel;
+import org.openrefine.browsing.Engine;
+import org.openrefine.model.GridState;
 import org.openrefine.util.ParsingUtilities;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -48,16 +49,13 @@ import com.fasterxml.jackson.databind.JsonNode;
 
 import au.com.bytecode.opencsv.CSVWriter;
 
-public class CsvExporter extends EngineDependentExporter {
+public class CsvExporter implements WriterExporter{
 
     final static Logger logger = LoggerFactory.getLogger("CsvExporter");
-	private Configuration config;
-	private char separator;
-	private boolean printColumnHeader;
-	private CSVWriter csvWriter;
+    char separator;
 
     public CsvExporter() {
-        this.separator = ',';
+        separator = ','; //Comma separated-value is default
     }
 
     public CsvExporter(char separator) {
@@ -74,47 +72,67 @@ public class CsvExporter extends EngineDependentExporter {
     }
 
     @Override
+    public void export(GridState grid, Properties params, Engine engine, final Writer writer)
+            throws IOException {
+        
+        String optionsString = (params == null) ? null : params.getProperty("options");
+        Configuration options = new Configuration();
+        if (optionsString != null) {
+            try {
+                options = ParsingUtilities.mapper.readValue(optionsString, Configuration.class);
+            } catch (IOException e) {
+                // Ignore and keep options null.
+                e.printStackTrace();
+            }
+        }
+        if (options.separator == null) {
+            options.separator = Character.toString(separator);
+        }
+        
+        final String separator = options.separator;
+        final String lineSeparator = options.lineSeparator;
+        final boolean quoteAll = options.quoteAll;
+        
+        final boolean printColumnHeader =
+            (params != null && params.getProperty("printColumnHeader") != null) ?
+                Boolean.parseBoolean(params.getProperty("printColumnHeader")) :
+                true;
+        
+        final CSVWriter csvWriter = 
+            new CSVWriter(writer, separator.charAt(0), CSVWriter.DEFAULT_QUOTE_CHARACTER, lineSeparator);
+        
+        TabularSerializer serializer = new TabularSerializer() {
+            @Override
+            public void startFile(JsonNode options) {
+            }
+
+            @Override
+            public void endFile() {
+            }
+
+            @Override
+            public void addRow(List<CellData> cells, boolean isHeader) {
+                if (!isHeader || printColumnHeader) {
+                    String[] strings = new String[cells.size()];
+                    for (int i = 0; i < strings.length; i++) {
+                        CellData cellData = cells.get(i);
+                        strings[i] =
+                            (cellData != null && cellData.text != null) ?
+                            cellData.text :
+                            "";
+                    }
+                    csvWriter.writeNext(strings, quoteAll);
+                }
+            }
+        };
+        
+        CustomizableTabularExporterUtilities.exportRows(grid, engine, params, serializer);
+        
+        csvWriter.close();
+    }
+
+    @Override
     public String getContentType() {
         return "text/plain";
     }
-
-	@Override
-	public void startFile(JsonNode options, Properties params, ColumnModel columnModel, Writer writer) {
-		config = new Configuration();
-		if (options != null) {
-			try {
-				config = ParsingUtilities.mapper.treeToValue(options, Configuration.class);
-			} catch(IOException e) {
-				;
-			}
-		}
-		if (config.separator == null) {
-            config.separator = Character.toString(separator);
-        }
-		printColumnHeader = (params != null && params.getProperty("printColumnHeader") != null) ?
-		    Boolean.parseBoolean(params.getProperty("printColumnHeader")) :
-		    true;
-	    csvWriter = new CSVWriter(writer, config.separator.charAt(0), CSVWriter.DEFAULT_QUOTE_CHARACTER, config.lineSeparator);
-	}
-
-	@Override
-	public void endFile() throws IOException {
-		csvWriter.close();
-	}
-
-	@Override
-	public void addRow(List<CellData> cells, boolean isHeader) {
-		if (!isHeader || printColumnHeader) {
-            String[] strings = new String[cells.size()];
-            for (int i = 0; i < strings.length; i++) {
-                CellData cellData = cells.get(i);
-                strings[i] =
-                    (cellData != null && cellData.text != null) ?
-                    cellData.text :
-                    "";
-            }
-            csvWriter.writeNext(strings, config.quoteAll);
-        }
-		
-	}
 }
