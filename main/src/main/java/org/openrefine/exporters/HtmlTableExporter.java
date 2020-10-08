@@ -43,7 +43,7 @@ import org.apache.commons.lang3.StringEscapeUtils;
 
 import org.openrefine.ProjectManager;
 import org.openrefine.browsing.Engine;
-import org.openrefine.model.GridState;
+import org.openrefine.model.Project;
 
 public class HtmlTableExporter implements WriterExporter {
 
@@ -53,7 +53,7 @@ public class HtmlTableExporter implements WriterExporter {
     }
 
     @Override
-    public void export(final GridState grid, Properties params, Engine engine, final Writer writer)
+    public void export(final Project project, Properties params, Engine engine, final Writer writer)
             throws IOException {
 
         TabularSerializer serializer = new TabularSerializer() {
@@ -64,7 +64,7 @@ public class HtmlTableExporter implements WriterExporter {
                     writer.write("<html>\n");
                     writer.write("<head>\n");
                     writer.write("<title>");
-                    writer.write(ProjectManager.singleton.getProjectMetadata(grid.id).getName());
+                    writer.write(ProjectManager.singleton.getProjectMetadata(project.id).getName());
                     writer.write("</title>\n");
                     writer.write("<meta charset=\"utf-8\" />\n");
                     writer.write("</head>\n");
@@ -123,6 +123,6 @@ public class HtmlTableExporter implements WriterExporter {
         };
 
         CustomizableTabularExporterUtilities.exportRows(
-                grid, engine, params, serializer);
+                project, engine, params, serializer);
     }
 }

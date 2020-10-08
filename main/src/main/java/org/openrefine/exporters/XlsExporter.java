@@ -145,7 +145,7 @@ public class XlsExporter implements StreamExporter {
             }
         };
 
-        EngineDependentExporter.exportRows(
+        CustomizableTabularExporterUtilities.exportRows(
                 project, engine, params, serializer);
 
         wb.write(outputStream);

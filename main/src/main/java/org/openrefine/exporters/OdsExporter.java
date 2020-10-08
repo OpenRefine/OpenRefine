@@ -113,7 +113,7 @@ public class OdsExporter implements StreamExporter {
             }
         };
 
-        EngineDependentExporter.exportRows(
+        CustomizableTabularExporterUtilities.exportRows(
                 project, engine, params, serializer);
 
         try {
