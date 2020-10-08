@@ -39,10 +39,10 @@ import java.io.Writer;
 import java.util.Properties;
 
 import org.openrefine.browsing.Engine;
-import org.openrefine.model.Project;
+import org.openrefine.model.GridState;
 
 public interface WriterExporter extends Exporter {
 
-    public void export(Project project, Properties options, Engine engine, Writer writer) throws IOException;
+    public void export(GridState grid, Properties options, Engine engine, Writer writer) throws IOException;
 
 }

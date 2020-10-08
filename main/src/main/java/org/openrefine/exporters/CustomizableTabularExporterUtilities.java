@@ -51,15 +51,13 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.validator.routines.UrlValidator;
 import org.openrefine.ProjectManager;
 import org.openrefine.browsing.Engine;
-import org.openrefine.browsing.FilteredRows;
-import org.openrefine.browsing.RowVisitor;
 import org.openrefine.exporters.TabularSerializer.CellData;
 import org.openrefine.model.Cell;
 import org.openrefine.model.ColumnMetadata;
+import org.openrefine.model.ColumnModel;
+import org.openrefine.model.GridState;
+import org.openrefine.model.IndexedRow;
 import org.openrefine.model.recon.Recon;
-import org.openrefine.model.Project;
-import org.openrefine.model.Recon;
-import org.openrefine.model.Row;
 import org.openrefine.preference.PreferenceStore;
 import org.openrefine.util.JSONUtilities;
 import org.openrefine.util.ParsingUtilities;
@@ -75,7 +73,7 @@ abstract public class CustomizableTabularExporterUtilities {
 	final static private String fullIso8601 = "yyyy-MM-dd'T'HH:mm:ss'Z'";
 	
     static public void exportRows(
-        final Project project,
+        final GridState grid,
         final Engine engine,
         Properties params,
         final TabularSerializer serializer) {
@@ -104,8 +102,9 @@ abstract public class CustomizableTabularExporterUtilities {
         
         List<JsonNode> columnOptionArray = options == null ? null :
             JSONUtilities.getArray(options, "columns");
-        if (columnOptionArray == null) {
-            List<ColumnMetadata> columns = project.columnModel.getColumns();
+        ColumnModel columnModel = grid.getColumnModel();
+		if (columnOptionArray == null) {
+            List<ColumnMetadata> columns = columnModel.getColumns();
             
             columnNames = new ArrayList<String>(columns.size());
             for (ColumnMetadata column : columns) {
@@ -133,64 +132,52 @@ abstract public class CustomizableTabularExporterUtilities {
             }
         }
         
-        RowVisitor visitor = new RowVisitor() {
-            int rowCount = 0;
+        long rowCount = 0;
+        serializer.startFile(options);
+        if (outputColumnHeaders) {
+            List<CellData> cells = new ArrayList<TabularSerializer.CellData>(columnNames.size());
+            for (String name : columnNames) {
+                cells.add(new CellData(name, name, name, null));
+            }
+            serializer.addRow(cells, true);
+        }
+
+        for(IndexedRow indexedRow : grid.iterateRows(engine.combinedRowFilters())) {
+            List<CellData> cells = new ArrayList<TabularSerializer.CellData>(columnNames.size());
+            int nonNullCount = 0;
             
-            @Override
-            public void start(Project project) {
-                serializer.startFile(options);
-                if (outputColumnHeaders) {
-                    List<CellData> cells = new ArrayList<TabularSerializer.CellData>(columnNames.size());
-                    for (String name : columnNames) {
-                        cells.add(new CellData(name, name, name, null));
-                    }
-                    serializer.addRow(cells, true);
+            for (String columnName : columnNames) {
+                int columnIndex = columnModel.getColumnIndexByName(columnName);
+                CellFormatter formatter = columnNameToFormatter.get(columnName);
+                CellData cellData = formatter.format(
+                    columnModel.getColumnByIndex(columnIndex),
+                    indexedRow.getRow().getCell(columnIndex));
+                
+                cells.add(cellData);
+                if (cellData != null) {
+                    nonNullCount++;
                 }
             }
-
-            @Override
-            public boolean visit(Project project, int rowIndex, Row row) {
-                List<CellData> cells = new ArrayList<TabularSerializer.CellData>(columnNames.size());
-                int nonNullCount = 0;
-                
-                for (String columnName : columnNames) {
-                    ColumnMetadata column = project.columnModel.getColumnByName(columnName);
-                    CellFormatter formatter = columnNameToFormatter.get(columnName);
-                    CellData cellData = formatter.format(
-                        project,
-                        column,
-                        row.getCell(column.getCellIndex()));
-                    
-                    cells.add(cellData);
-                    if (cellData != null) {
-                        nonNullCount++;
-                    }
-                }
-                
-                if (nonNullCount > 0 || outputEmptyRows) {
-                    serializer.addRow(cells, false);
-                    rowCount++;
-                }
-                
-                return limit > 0 && rowCount >= limit;
+            
+            if (nonNullCount > 0 || outputEmptyRows) {
+                serializer.addRow(cells, false);
+                rowCount++;
             }
-
-            @Override
-            public void end(Project project) {
-                serializer.endFile();
+            
+            if (limit > 0 && rowCount >= limit) {
+            	break;
             }
-        };
+        }
 
-        FilteredRows filteredRows = engine.getAllFilteredRows();
-        filteredRows.accept(project, visitor);
+        serializer.endFile();
     }
     
     static public int[] countColumnsRows(
-            final Project project,
+            final GridState grid,
             final Engine engine,
             Properties params) {
         RowCountingTabularSerializer serializer = new RowCountingTabularSerializer();
-        exportRows(project, engine, params, serializer);
+        exportRows(grid, engine, params, serializer);
         return new int[] { serializer.columns, serializer.rows };
     }
     
@@ -340,7 +327,7 @@ abstract public class CustomizableTabularExporterUtilities {
             }
         }
         
-        CellData format(Project project, ColumnMetadata column, Cell cell) {
+        CellData format(ColumnMetadata column, Cell cell) {
             if (cell != null) {
                 String link = null;
                 String text = null;

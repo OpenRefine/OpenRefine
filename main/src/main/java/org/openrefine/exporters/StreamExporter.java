@@ -38,11 +38,11 @@ import java.io.OutputStream;
 import java.util.Properties;
 
 import org.openrefine.browsing.Engine;
-import org.openrefine.model.Project;
+import org.openrefine.model.GridState;
 
 
 public interface StreamExporter extends Exporter {
 
-    public void export(Project project, Properties options, Engine engine, OutputStream outputStream) throws IOException;
+    public void export(GridState grid, Properties options, Engine engine, OutputStream outputStream) throws IOException;
 
 }
