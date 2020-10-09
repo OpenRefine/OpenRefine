@@ -26,10 +26,11 @@
  ******************************************************************************/
 package com.google.refine.expr.functions;
 
+import static org.testng.Assert.assertNull;
+
 import java.util.Properties;
 
 import org.slf4j.LoggerFactory;
-import org.testng.Assert;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.BeforeTest;
@@ -67,16 +68,48 @@ public class GetTests extends RefineTest {
     }
 
     @Test
+    public void testGetFieldFromNull() throws ParsingException {
+        String test[] = { "null.get('value')", null };
+        parseEval(bindings, test);
+        String test2[] = { "get(null,'value')", null };
+        parseEval(bindings, test2);
+        String test3[] = { "get(null,'foo')", null }; // FIXME: should be an error
+        parseEval(bindings, test3);
+    }
+
+    @Test
+    public void testGetSubstring() throws ParsingException {
+        String test[] = { "'abc'.get(2)", "c" };
+        parseEval(bindings, test);
+        String test2[] = { "get('abcd', 1, 3)", "bc" };
+        parseEval(bindings, test2);
+        String test3[] = { "get('abcd', 1, 10)", "bcd" };
+        parseEval(bindings, test3);
+        String test4[] = { "get(null, 2)", null }; // FIXME: should be an error?
+        parseEval(bindings, test4);
+    }
+
+    @Test
+    public void testGetArraySlice() throws ParsingException {
+        String test[] = { "[1,2,3].get(2)", "3" };
+        parseEval(bindings, test);
+        String test2[] = { "get([1,2,3,4], 1, 3)", "[2, 3]" };
+        parseEval(bindings, test2);
+        String test3[] = { "get([1,2,3,4], 1, 10)", "[2, 3, 4]" };
+        parseEval(bindings, test3);
+    }
+
+    @Test
     public void testGetJsonFieldExists() throws ParsingException {
-        String test[] = { "\"[{\\\"one\\\": \\\"1\\\"}]\".parseJson()[0].one", "1" };
+        String test[] = { "\"[{\\\"one\\\": \\\"1\\\"}]\".parseJson()[0].get('one')", "1" };
         parseEval(bindings, test);
     }
 
     @Test
     public void testGetJsonFieldAbsent() throws ParsingException {
-        String test =  "\"[{\\\"one\\\": \\\"1\\\"}]\".parseJson()[0].two";
+        String test =  "\"[{\\\"one\\\": \\\"1\\\"}]\".parseJson()[0].get('two')";
         Evaluable eval = MetaParser.parse("grel:" + test);
-        Assert.assertNull(eval.evaluate(bindings));
+        assertNull(eval.evaluate(bindings));
     }
 
 }
