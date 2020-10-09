@@ -37,6 +37,7 @@ import java.util.Properties;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.google.refine.expr.EvalError;
 import com.google.refine.expr.Evaluable;
 import com.google.refine.expr.ExpressionUtils;
 import com.google.refine.expr.HasFields;
@@ -62,14 +63,17 @@ public class FieldAccessorExpr implements Evaluable {
         if (ExpressionUtils.isError(o)) {
             return o; // bubble the error up
         } else if (o == null) {
-            return null;
+            if ("value".equals(_fieldName)) {
+                return null;
+            }
+            return new EvalError("Cannot retrieve field from null");
         } else if (o instanceof HasFields) {
             return ((HasFields) o).getField(_fieldName, bindings);
         } else if (o instanceof ObjectNode) {
-        	JsonNode value = ((ObjectNode) o).get(_fieldName);
-        	return JsonValueConverter.convert(value);
+            JsonNode value = ((ObjectNode) o).get(_fieldName);
+            return JsonValueConverter.convert(value);
         } else {
-            return null;
+            return new EvalError("No accessible fields available");
         }
     }
 
