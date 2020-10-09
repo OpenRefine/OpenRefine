@@ -72,6 +72,7 @@ import com.google.refine.model.Column;
 import com.google.refine.model.ModelException;
 import com.google.refine.model.Project;
 import com.google.refine.model.Row;
+import com.google.refine.util.StringUtils;
 import com.google.refine.util.TestUtils;
 
 import edu.mit.simile.butterfly.ButterflyModule;
@@ -347,7 +348,9 @@ public class RefineTest extends PowerMockTestCase {
     throws ParsingException {
         Evaluable eval = MetaParser.parse("grel:" + test[0]);
         Object result = eval.evaluate(bindings);
-        Assert.assertEquals(result.toString(), test[1], "Wrong result for expression: " + test[0]);
+        if (result != test[1]) { // special case null
+            Assert.assertEquals(StringUtils.toString(result), test[1], "Wrong result for expression: " + test[0]);
+        }
     }
 
     /**
