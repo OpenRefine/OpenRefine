@@ -33,10 +33,13 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.grel;
 
+import static org.testng.Assert.assertNull;
+import static org.testng.Assert.assertTrue;
+import static org.testng.Assert.fail;
+
 import java.util.Properties;
 
 import org.slf4j.LoggerFactory;
-import org.testng.Assert;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.BeforeTest;
@@ -91,7 +94,7 @@ public class GrelTests extends RefineTest {
                 // Test succeeded
                 continue;
             }
-            Assert.fail("Expression failed to generate parse syntax error: " + test);
+            fail("Expression failed to generate parse syntax error: " + test);
         }
     }
 
@@ -105,9 +108,9 @@ public class GrelTests extends RefineTest {
             try {
                 Evaluable eval = MetaParser.parse("grel:" + test);
                 Object result = eval.evaluate(bindings);
-                Assert.assertTrue(result instanceof EvalError );
+                assertTrue(result instanceof EvalError );
             } catch (ParsingException e) {
-                Assert.fail("Unexpected parse failure: " + test);                
+                fail("Unexpected parse failure: " + test);
             }
         }
     }
@@ -177,7 +180,7 @@ public class GrelTests extends RefineTest {
     public void testGetJsonFieldAbsent() throws ParsingException {
         String test =  "\"[{\\\"one\\\": \\\"1\\\"}]\".parseJson()[0].two";
         Evaluable eval = MetaParser.parse("grel:" + test);
-        Assert.assertNull(eval.evaluate(bindings));
+        assertNull(eval.evaluate(bindings));
     }
 
     @Test
@@ -188,23 +191,25 @@ public class GrelTests extends RefineTest {
 
     @Test
     public void testGetFieldFromNull() throws ParsingException {
-        String test =  "null.value";
+        String test =  "null.value"; // special case evaluates to null
         Evaluable eval = MetaParser.parse("grel:" + test);
-        Assert.assertNull(eval.evaluate(bindings));
+        assertNull(eval.evaluate(bindings));
+        Evaluable eval2 = MetaParser.parse("grel:null.foo"); // all others error
+        assertTrue(eval2.evaluate(bindings) instanceof EvalError);
     }
-    
+
     // to demonstrate bug fixing for #1204
     @Test
     public void testCrossFunctionEval() {
-            String test = "cross(\"Mary\", \"My Address Book\", \"friend\")";
-            
-            try {
-                Evaluable eval = MetaParser.parse("grel:" + test);
-                Object result = eval.evaluate(bindings);
-                Assert.assertTrue(result instanceof EvalError );
-            } catch (ParsingException e) {
-                Assert.fail("Unexpected parse failure for cross function: " + test);                
-            }
+        String test = "cross(\"Mary\", \"My Address Book\", \"friend\")";
+
+        try {
+            Evaluable eval = MetaParser.parse("grel:" + test);
+            Object result = eval.evaluate(bindings);
+            assertTrue(result instanceof EvalError );
+        } catch (ParsingException e) {
+            fail("Unexpected parse failure for cross function: " + test);
+        }
     }
 
 }
