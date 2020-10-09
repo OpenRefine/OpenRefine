@@ -51,8 +51,10 @@ import org.openrefine.model.Cell;
 import org.openrefine.model.ColumnMetadata;
 import org.openrefine.model.ColumnModel;
 import org.openrefine.model.GridState;
+import org.openrefine.model.IndexedRow;
 import org.openrefine.model.Row;
 import org.openrefine.model.RowFilter;
+import org.openrefine.sorting.SortingConfig;
 
 public class EngineTests {
 
@@ -148,6 +150,20 @@ public class EngineTests {
     public void testFilteredCount() {
         Assert.assertEquals(engine.getFilteredCount(), 65);
         Assert.assertEquals(enginePartial.getFilteredCount(), 8);
+    }
+
+    @Test
+    public void testGetMatchingRows() {
+        @SuppressWarnings("unchecked")
+        Iterable<IndexedRow> mockIterable = mock(Iterable.class);
+        when(initialState.iterateRows(Mockito.any(), Mockito.eq(SortingConfig.NO_SORTING))).thenReturn(mockIterable);
+
+        Assert.assertEquals(engine.getMatchingRows(SortingConfig.NO_SORTING), mockIterable);
+    }
+
+    @Test(expectedExceptions = IllegalStateException.class)
+    public void testGetMatchingRecordsInRowsMode() {
+        engine.getMatchingRecords(SortingConfig.NO_SORTING);
     }
 
 }

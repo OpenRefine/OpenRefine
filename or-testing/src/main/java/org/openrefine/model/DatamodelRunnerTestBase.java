@@ -230,6 +230,31 @@ public abstract class DatamodelRunnerTestBase {
     };
 
     @Test
+    public void testIterateRowsFilter() {
+        Iterator<IndexedRow> indexedRows = simpleGrid.iterateRows(myRowFilter, SortingConfig.NO_SORTING).iterator();
+        Assert.assertTrue(indexedRows.hasNext());
+        Assert.assertEquals(indexedRows.next(), new IndexedRow(0L, expectedRows.get(0)));
+        Assert.assertTrue(indexedRows.hasNext());
+        Assert.assertEquals(indexedRows.next(), new IndexedRow(2L, expectedRows.get(2)));
+        Assert.assertTrue(indexedRows.hasNext());
+    }
+
+    @Test
+    public void testIterateRowsSortingConfig() {
+        Iterator<IndexedRow> indexedRows = gridToSort.iterateRows(RowFilter.ANY_ROW, sortingConfig).iterator();
+        Assert.assertTrue(indexedRows.hasNext());
+        Assert.assertEquals(indexedRows.next(), new IndexedRow(2L, row(null, 0)));
+        Assert.assertTrue(indexedRows.hasNext());
+        Assert.assertEquals(indexedRows.next(), new IndexedRow(1L, row("a", 1)));
+        Assert.assertTrue(indexedRows.hasNext());
+    }
+
+    @Test
+    public void testCountMatchingRows() {
+        Assert.assertEquals(simpleGrid.countMatchingRows(myRowFilter), 3);
+    }
+
+    @Test
     public void testAccessRecords() {
         GridState state = simpleGrid;
 
@@ -278,6 +303,31 @@ public abstract class DatamodelRunnerTestBase {
                 new Record(3L, Arrays.asList(
                         expectedRows.get(3))));
         Assert.assertEquals(state.collectRecords(), records);
+    }
+
+    @Test
+    public void testIterateRecordsFilter() {
+        Iterator<Record> records = simpleGrid.iterateRecords(myRecordFilter, SortingConfig.NO_SORTING).iterator();
+        Assert.assertTrue(records.hasNext());
+        Assert.assertEquals(records.next(), expectedRecords.get(1));
+        Assert.assertFalse(records.hasNext());
+    }
+
+    @Test
+    public void testIterateRecordsSortingConfig() {
+        Iterator<Record> records = gridToSort.iterateRecords(RecordFilter.ANY_RECORD, sortingConfig).iterator();
+        Assert.assertTrue(records.hasNext());
+        Assert.assertEquals(records.next(), new Record(1L, Arrays.asList(row("a", 1), row(null, 0))));
+        Assert.assertTrue(records.hasNext());
+        Assert.assertEquals(records.next(), new Record(0L, Arrays.asList(row("c", 1))));
+        Assert.assertTrue(records.hasNext());
+        Assert.assertEquals(records.next(), new Record(3L, Arrays.asList(row("a", 5))));
+        Assert.assertFalse(records.hasNext());
+    }
+
+    @Test
+    public void testCountMatchingRecords() {
+        Assert.assertEquals(simpleGrid.countMatchingRecords(myRecordFilter), 1);
     }
 
     @Test

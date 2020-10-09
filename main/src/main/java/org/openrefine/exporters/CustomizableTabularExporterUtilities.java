@@ -66,6 +66,7 @@ import org.openrefine.model.GridState;
 import org.openrefine.model.IndexedRow;
 import org.openrefine.model.recon.Recon;
 import org.openrefine.preference.PreferenceStore;
+import org.openrefine.sorting.SortingConfig;
 import org.openrefine.util.JSONUtilities;
 import org.openrefine.util.ParsingUtilities;
 
@@ -77,7 +78,8 @@ abstract public class CustomizableTabularExporterUtilities {
             final GridState grid,
             final Engine engine,
             Properties params,
-            final TabularSerializer serializer) {
+            final TabularSerializer serializer,
+            SortingConfig sortingConfig) {
 
         String optionsString = (params != null) ? params.getProperty("options") : null;
         JsonNode optionsTemp = null;
@@ -138,7 +140,7 @@ abstract public class CustomizableTabularExporterUtilities {
             serializer.addRow(cells, true);
         }
 
-        for (IndexedRow indexedRow : grid.iterateRows(engine.combinedRowFilters())) {
+        for (IndexedRow indexedRow : grid.iterateRows(engine.combinedRowFilters(), sortingConfig)) {
             List<CellData> cells = new ArrayList<TabularSerializer.CellData>(columnNames.size());
             int nonNullCount = 0;
 
@@ -173,7 +175,7 @@ abstract public class CustomizableTabularExporterUtilities {
             final Engine engine,
             Properties params) {
         RowCountingTabularSerializer serializer = new RowCountingTabularSerializer();
-        exportRows(grid, engine, params, serializer);
+        exportRows(grid, engine, params, serializer, SortingConfig.NO_SORTING);
         return new int[] { serializer.columns, serializer.rows };
     }
 

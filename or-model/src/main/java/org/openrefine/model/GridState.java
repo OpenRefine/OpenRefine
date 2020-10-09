@@ -87,10 +87,11 @@ public interface GridState {
     public List<IndexedRow> getRows(RowFilter filter, SortingConfig sortingConfig, long start, int limit);
 
     /**
-     * Iterate over rows matched by a filter. This might not require loading all rows in memory at once, but might be
-     * less efficient than {@link collectRows()} if all rows are to be stored in memory downstream.
+     * Iterate over rows matched by a filter, in the order determined by a sorting configuration. This might not require
+     * loading all rows in memory at once, but might be less efficient than {@link collectRows()} if all rows are to be
+     * stored in memory downstream.
      */
-    public Iterable<IndexedRow> iterateRows(RowFilter filter);
+    public Iterable<IndexedRow> iterateRows(RowFilter filter, SortingConfig sortingConfig);
 
     /**
      * Count the number of rows which match a given filter.
@@ -148,10 +149,11 @@ public interface GridState {
     public List<Record> getRecords(RecordFilter filter, SortingConfig sortingConfig, long start, int limit);
 
     /**
-     * Iterate over records matched by a filter. This might not require loading all records in memory at once, but might
-     * be less efficient than {@link collectRecords()} if all records are to be stored in memory downstream.
+     * Iterate over records matched by a filter, ordered according to the sorting configuration. This might not require
+     * loading all records in memory at once, but might be less efficient than {@link collectRecords()} if all records
+     * are to be stored in memory downstream.
      */
-    public Iterable<Record> iterateRecords(RecordFilter filter);
+    public Iterable<Record> iterateRecords(RecordFilter filter, SortingConfig sortingConfig);
 
     /**
      * Return the number of records which are filtered by this filter.

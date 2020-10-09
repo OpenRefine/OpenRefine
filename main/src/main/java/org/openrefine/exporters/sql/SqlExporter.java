@@ -39,12 +39,13 @@ import com.fasterxml.jackson.databind.JsonNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import org.openrefine.ProjectManager;
+import org.openrefine.ProjectMetadata;
 import org.openrefine.browsing.Engine;
 import org.openrefine.exporters.CustomizableTabularExporterUtilities;
 import org.openrefine.exporters.TabularSerializer;
 import org.openrefine.exporters.WriterExporter;
 import org.openrefine.model.GridState;
+import org.openrefine.sorting.SortingConfig;
 import org.openrefine.util.JSONUtilities;
 
 public class SqlExporter implements WriterExporter {
@@ -67,7 +68,7 @@ public class SqlExporter implements WriterExporter {
     }
 
     @Override
-    public void export(final GridState grid, Properties params, Engine engine, final Writer writer)
+    public void export(final GridState grid, ProjectMetadata projectMetadata, Properties params, Engine engine, final Writer writer)
             throws IOException {
         if (logger.isDebugEnabled()) {
             logger.debug("export sql with params: {}", params);
@@ -94,7 +95,7 @@ public class SqlExporter implements WriterExporter {
                         throw new SqlExporterException(NO_OPTIONS_PRESENT_ERROR);
 
                     }
-                    String tableName = ProjectManager.singleton.getProjectMetadata(grid.getId()).getName();
+                    String tableName = projectMetadata.getName();
 
                     String tableNameManual = JSONUtilities.getString(sqlOptions, JSON_TABLE_NAME, null);
 
@@ -162,7 +163,7 @@ public class SqlExporter implements WriterExporter {
             }
         };
 
-        CustomizableTabularExporterUtilities.exportRows(grid, engine, params, serializer);
+        CustomizableTabularExporterUtilities.exportRows(grid, engine, params, serializer, SortingConfig.NO_SORTING);
     }
 
 }

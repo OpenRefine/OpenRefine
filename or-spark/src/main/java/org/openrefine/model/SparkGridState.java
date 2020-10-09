@@ -212,10 +212,22 @@ public class SparkGridState implements GridState {
     }
 
     @Override
-    public Iterable<IndexedRow> iterateRows(RowFilter filter) {
-        JavaRDD<IndexedRow> filtered = grid
-                .filter(wrapRowFilter(filter))
-                .map(t -> new IndexedRow(t._1, t._2));
+    public Iterable<IndexedRow> iterateRows(RowFilter filter, SortingConfig sortingConfig) {
+        JavaRDD<IndexedRow> filtered;
+        if (SortingConfig.NO_SORTING.equals(sortingConfig)) {
+            filtered = grid
+                    .filter(wrapRowFilter(filter))
+                    .map(t -> new IndexedRow(t._1, t._2));
+        } else {
+            RowSorter sorter = new RowSorter(this, sortingConfig);
+            filtered = grid
+                    .filter(wrapRowFilter(filter))
+                    .map(t -> new IndexedRow(t._1, t._2))
+                    .keyBy(ir -> ir)
+                    .sortByKey(sorter)
+                    .values();
+        }
+
         return new Iterable<IndexedRow>() {
 
             @Override
@@ -312,10 +324,21 @@ public class SparkGridState implements GridState {
     }
 
     @Override
-    public Iterable<Record> iterateRecords(RecordFilter filter) {
-        JavaRDD<Record> filtered = getRecords()
-                .filter(wrapRecordFilter(filter))
-                .values();
+    public Iterable<Record> iterateRecords(RecordFilter filter, SortingConfig sortingConfig) {
+        JavaRDD<Record> filtered;
+        if (SortingConfig.NO_SORTING.equals(sortingConfig)) {
+            filtered = getRecords()
+                    .filter(wrapRecordFilter(filter))
+                    .values();
+        } else {
+            RecordSorter sorter = new RecordSorter(this, sortingConfig);
+            filtered = getRecords()
+                    .filter(wrapRecordFilter(filter))
+                    .values()
+                    .keyBy(record -> record)
+                    .sortByKey(sorter)
+                    .values();
+        }
         return new Iterable<Record>() {
 
             @Override

@@ -39,10 +39,9 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Properties;
 
-import org.openrefine.browsing.RecordVisitor;
-import org.openrefine.browsing.RowVisitor;
 import org.openrefine.expr.ExpressionUtils;
-import org.openrefine.model.Project;
+import org.openrefine.model.ColumnModel;
+import org.openrefine.model.IndexedRow;
 import org.openrefine.model.Record;
 import org.openrefine.model.Row;
 
@@ -70,139 +69,94 @@ public class Template {
         _separator = separator;
     }
 
-    public RowVisitor getRowVisitor(Writer writer, int limit) {
-        return get(writer, limit);
-    }
-
-    public RecordVisitor getRecordVisitor(Writer writer, int limit) {
-        return get(writer, limit);
-    }
-
-    protected RowWritingVisitor get(Writer writer, int limit) {
-        return new RowWritingVisitor(writer, limit);
-    }
-
-    protected class RowWritingVisitor implements RowVisitor, RecordVisitor {
-
-        final protected int limit;
-        final protected Writer writer;
-        protected Properties bindings;
-
-        public int total;
-
-        public RowWritingVisitor(Writer writer, int limit) {
-            this.limit = limit;
-            this.writer = writer;
+    public void writeRows(Iterable<IndexedRow> rows, Writer writer, ColumnModel columnModel, int limit) throws IOException {
+        Properties bindings = ExpressionUtils.createBindings();
+        if (_prefix != null) {
+            writer.write(_prefix);
         }
-
-        @Override
-        public void start(Project project) {
-            bindings = ExpressionUtils.createBindings();
-
-            try {
-                if (_prefix != null) {
-                    writer.write(_prefix);
-                }
-            } catch (IOException e) {
-                // ignore
+        long total = 0;
+        for (IndexedRow indexedRow : rows) {
+            if (limit > 0 && total >= limit) {
+                break;
             }
-        }
 
-        @Override
-        public void end(Project project) {
-            try {
-                if (_suffix != null) {
-                    writer.write(_suffix);
-                }
-            } catch (IOException e) {
-                // ignore
-            }
-        }
-
-        @Override
-        public boolean visit(Project project, int rowIndex, Row row) {
-            if (limit <= 0 || total < limit) {
-                internalVisit(project, rowIndex, row);
-            }
+            internalVisit(indexedRow.getIndex(), indexedRow.getRow(), total, writer, bindings, columnModel);
             total++;
-
-            return limit > 0 && total >= limit;
         }
+        if (_suffix != null) {
+            writer.write(_suffix);
+        }
+    }
 
-        @Override
-        public boolean visit(Project project, Record record) {
-            if (limit <= 0 || total < limit) {
-                internalVisit(project, record);
+    public void writeRecords(Iterable<Record> records, Writer writer, ColumnModel columnModel, int limit) throws IOException {
+        Properties bindings = ExpressionUtils.createBindings();
+        if (_prefix != null) {
+            writer.write(_prefix);
+        }
+        long total = 0;
+        for (Record record : records) {
+            if (limit > 0 && total >= limit) {
+                break;
             }
-            total++;
-
-            return limit > 0 && total >= limit;
-        }
-
-        protected void writeValue(Object v) throws IOException {
-            if (v == null) {
-                writer.write("null");
-            } else if (ExpressionUtils.isError(v)) {
-                writer.write("null");
-                // writer.write("[Error: " + ((EvalError) v).message);
-            } else if (v instanceof String) {
-                writer.write((String) v);
-            } else {
-                writer.write(v.toString());
-            }
-        }
-
-        public boolean internalVisit(Project project, int rowIndex, Row row) {
-            try {
-                if (total > 0 && _separator != null) {
-                    writer.write(_separator);
+            bindings.put("recordIndex", record.getStartRowId());
+            for (IndexedRow indexedRow : record.getIndexedRows()) {
+                if (limit > 0 && total >= limit) {
+                    break;
                 }
-
-                ExpressionUtils.bind(bindings, null, row, rowIndex, null, null);
-                for (Fragment f : _fragments) {
-                    if (f instanceof StaticFragment) {
-                        writer.write(((StaticFragment) f).text);
-                    } else {
-                        DynamicFragment df = (DynamicFragment) f;
-                        Object value = df.eval.evaluate(bindings);
-
-                        if (value != null && ExpressionUtils.isArrayOrCollection(value)) {
-                            if (ExpressionUtils.isArray(value)) {
-                                Object[] a = (Object[]) value;
-                                for (Object v : a) {
-                                    writeValue(v);
-                                }
-                            } else {
-                                Collection<Object> a = ExpressionUtils.toObjectCollection(value);
-                                for (Object v : a) {
-                                    writeValue(v);
-                                }
-                            }
-                            continue;
-                        }
-
-                        writeValue(value);
-                    }
-                }
-            } catch (IOException e) {
-                // ignore
-            }
-            return false;
-        }
-
-        protected boolean internalVisit(Project project, Record record) {
-            bindings.put("recordIndex", record.recordIndex);
-
-            for (int r = record.fromRowIndex; r < record.toRowIndex; r++) {
-                Row row = project.rows.get(r);
-
-                bindings.put("rowIndex", r);
-
-                internalVisit(project, r, row);
-
+                internalVisit(indexedRow.getIndex(), indexedRow.getRow(), total, writer, bindings, columnModel);
                 bindings.remove("recordIndex");
+                total++;
             }
-            return false;
+        }
+        if (_suffix != null) {
+            writer.write(_suffix);
+        }
+    }
+
+    public void internalVisit(long rowIndex, Row row, long total, Writer writer, Properties bindings, ColumnModel columnModel)
+            throws IOException {
+        if (total > 0 && _separator != null) {
+            writer.write(_separator);
+        }
+
+        ExpressionUtils.bind(bindings, columnModel, row, rowIndex, null, null);
+        for (Fragment f : _fragments) {
+            if (f instanceof StaticFragment) {
+                writer.write(((StaticFragment) f).text);
+            } else {
+                DynamicFragment df = (DynamicFragment) f;
+                Object value = df.eval.evaluate(bindings);
+
+                if (value != null && ExpressionUtils.isArrayOrCollection(value)) {
+                    if (ExpressionUtils.isArray(value)) {
+                        Object[] a = (Object[]) value;
+                        for (Object v : a) {
+                            writeValue(v, writer);
+                        }
+                    } else {
+                        Collection<Object> a = ExpressionUtils.toObjectCollection(value);
+                        for (Object v : a) {
+                            writeValue(v, writer);
+                        }
+                    }
+                    continue;
+                }
+
+                writeValue(value, writer);
+            }
+        }
+    }
+
+    protected void writeValue(Object v, Writer writer) throws IOException {
+        if (v == null) {
+            writer.write("null");
+        } else if (ExpressionUtils.isError(v)) {
+            writer.write("null");
+            // writer.write("[Error: " + ((EvalError) v).message);
+        } else if (v instanceof String) {
+            writer.write((String) v);
+        } else {
+            writer.write(v.toString());
         }
     }
 

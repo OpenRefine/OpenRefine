@@ -39,6 +39,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.io.StringWriter;
 import java.util.Properties;
 
@@ -49,18 +50,11 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
-import org.openrefine.ProjectManager;
-import org.openrefine.ProjectManagerStub;
 import org.openrefine.ProjectMetadata;
 import org.openrefine.RefineTest;
 import org.openrefine.browsing.Engine;
-import org.openrefine.exporters.HtmlTableExporter;
-import org.openrefine.exporters.WriterExporter;
-import org.openrefine.model.Cell;
-import org.openrefine.model.ColumnMetadata;
-import org.openrefine.model.ModelException;
-import org.openrefine.model.Project;
-import org.openrefine.model.Row;
+import org.openrefine.browsing.EngineConfig;
+import org.openrefine.model.GridState;
 
 public class HtmlExporterTests extends RefineTest {
 
@@ -74,9 +68,9 @@ public class HtmlExporterTests extends RefineTest {
 
     // dependencies
     StringWriter writer;
-    ProjectMetadata projectMetadata;
-    Project project;
     Engine engine;
+    GridState grid;
+    ProjectMetadata projectMetadata;
     Properties options;
 
     // System Under Test
@@ -85,13 +79,9 @@ public class HtmlExporterTests extends RefineTest {
     @BeforeMethod
     public void SetUp() {
         SUT = new HtmlTableExporter();
-        writer = new StringWriter();
-        ProjectManager.singleton = new ProjectManagerStub();
         projectMetadata = new ProjectMetadata();
-        project = new Project();
         projectMetadata.setName(TEST_PROJECT_NAME);
-        ProjectManager.singleton.registerProject(project, projectMetadata);
-        engine = new Engine(project);
+        writer = new StringWriter();
         options = mock(Properties.class);
     }
 
@@ -99,19 +89,22 @@ public class HtmlExporterTests extends RefineTest {
     public void TearDown() {
         SUT = null;
         writer = null;
-        ProjectManager.singleton.deleteProject(project.id);
-        project = null;
-        projectMetadata = null;
+        grid = null;
         engine = null;
         options = null;
     }
 
     @Test
     public void exportSimpleHtmlTable() {
-        CreateGrid(2, 2);
+        grid = createGrid(new String[] { "column0", "column1" },
+                new Serializable[][] {
+                        { "row0cell0", "row0cell1" },
+                        { "row1cell0", "row1cell1" }
+                });
+        engine = new Engine(grid, EngineConfig.ALL_ROWS);
 
         try {
-            SUT.export(project, options, engine, writer);
+            SUT.export(grid, projectMetadata, options, engine, writer);
         } catch (IOException e) {
             Assert.fail();
         }
@@ -135,10 +128,16 @@ public class HtmlExporterTests extends RefineTest {
     // apparently doesn't honor the column header option. Should it?
     @Test(enabled = false)
     public void exportSimpleHtmlTableNoHeader() {
-        CreateGrid(2, 2);
+        grid = createGrid(new String[] { "column0", "column1" },
+                new Serializable[][] {
+                        { "row0cell0", "row0cell1" },
+                        { "row1cell0", "row1cell1" }
+                });
+        engine = new Engine(grid, EngineConfig.ALL_ROWS);
+
         when(options.getProperty("printColumnHeader")).thenReturn("false");
         try {
-            SUT.export(project, options, engine, writer);
+            SUT.export(grid, projectMetadata, options, engine, writer);
         } catch (IOException e) {
             Assert.fail();
         }
@@ -159,12 +158,16 @@ public class HtmlExporterTests extends RefineTest {
 
     @Test
     public void exportHtmlTableWithEmptyCells() {
-        CreateGrid(3, 3);
+        grid = createGrid(new String[] { "column0", "column1", "column2" },
+                new Serializable[][] {
+                        { "row0cell0", "row0cell1", "row0cell2" },
+                        { "row1cell0", null, "row1cell2" },
+                        { null, "row2cell1", "row2cell2" }
+                });
+        engine = new Engine(grid, EngineConfig.ALL_ROWS);
 
-        project.rows.get(1).cells.set(1, null);
-        project.rows.get(2).cells.set(0, null);
         try {
-            SUT.export(project, options, engine, writer);
+            SUT.export(grid, projectMetadata, options, engine, writer);
         } catch (IOException e) {
             Assert.fail();
         }
@@ -186,12 +189,16 @@ public class HtmlExporterTests extends RefineTest {
 
     @Test
     public void exportHtmlTableWithURLs() {
-        CreateGrid(3, 3);
+        grid = createGrid(new String[] { "column0", "column1", "column2" },
+                new Serializable[][] {
+                        { "row0cell0", "row0cell1", "row0cell2" },
+                        { "row1cell0", "ftp://ftp.ripe.net/ripe/", "row1cell2" },
+                        { "https://gnu.org/", "row2cell1", "row2cell2" }
+                });
+        engine = new Engine(grid, EngineConfig.ALL_ROWS);
 
-        project.rows.get(1).cells.set(1, new Cell("ftp://ftp.ripe.net/ripe/", null));
-        project.rows.get(2).cells.set(0, new Cell("https://gnu.org/", null));
         try {
-            SUT.export(project, options, engine, writer);
+            SUT.export(grid, projectMetadata, options, engine, writer);
         } catch (IOException e) {
             Assert.fail();
         }
@@ -210,29 +217,5 @@ public class HtmlExporterTests extends RefineTest {
                 "</table>\n" +
                 "</body>\n" +
                 "</html>\n");
-    }
-
-    // helper methods
-
-    protected void CreateColumns(int noOfColumns) {
-        for (int i = 0; i < noOfColumns; i++) {
-            try {
-                project.columnModel.addColumn(i, new ColumnMetadata(i, "column" + i), true);
-            } catch (ModelException e1) {
-                Assert.fail("Could not create column");
-            }
-        }
-    }
-
-    protected void CreateGrid(int noOfRows, int noOfColumns) {
-        CreateColumns(noOfColumns);
-
-        for (int i = 0; i < noOfRows; i++) {
-            Row row = new Row(noOfColumns);
-            for (int j = 0; j < noOfColumns; j++) {
-                row.cells.add(new Cell("row" + i + "cell" + j, null));
-            }
-            project.rows.add(row);
-        }
     }
 }

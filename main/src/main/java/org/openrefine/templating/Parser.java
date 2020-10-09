@@ -38,6 +38,7 @@ import java.util.List;
 
 import org.openrefine.expr.MetaParser;
 import org.openrefine.expr.ParsingException;
+import org.openrefine.grel.GrelEvaluable;
 import org.openrefine.grel.ast.FieldAccessorExpr;
 import org.openrefine.grel.ast.VariableExpr;
 
@@ -73,11 +74,13 @@ public class Parser {
 
                     fragments.add(
                             new DynamicFragment(
-                                    new FieldAccessorExpr(
+                                    new GrelEvaluable(
                                             new FieldAccessorExpr(
-                                                    new VariableExpr("cells"),
-                                                    columnName),
-                                            "value")));
+                                                    new FieldAccessorExpr(
+                                                            new VariableExpr("cells"),
+                                                            columnName),
+                                                    "value"),
+                                            "grel")));
 
                     continue;
                 }

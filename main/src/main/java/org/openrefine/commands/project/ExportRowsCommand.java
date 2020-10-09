@@ -107,13 +107,13 @@ public class ExportRowsCommand extends Command {
                 response.setCharacterEncoding(encoding != null ? encoding : "UTF-8");
                 Writer writer = encoding == null ? response.getWriter() : new OutputStreamWriter(response.getOutputStream(), encoding);
 
-                ((WriterExporter) exporter).export(project.getCurrentGridState(), params, engine, writer);
+                ((WriterExporter) exporter).export(project.getCurrentGridState(), null, params, engine, writer);
                 writer.close();
             } else if (exporter instanceof StreamExporter) {
                 response.setCharacterEncoding("UTF-8");
 
                 OutputStream stream = response.getOutputStream();
-                ((StreamExporter) exporter).export(project.getCurrentGridState(), params, engine, stream);
+                ((StreamExporter) exporter).export(project.getCurrentGridState(), null, params, engine, stream);
                 stream.close();
 //          } else if (exporter instanceof UrlExporter) {
 //              ((UrlExporter) exporter).export(project, options, engine);
