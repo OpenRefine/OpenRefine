@@ -37,12 +37,13 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Properties;
 
+import org.openrefine.ProjectMetadata;
 import org.openrefine.browsing.Engine;
 import org.openrefine.model.GridState;
 
 
 public interface StreamExporter extends Exporter {
 
-    public void export(GridState grid, Properties options, Engine engine, OutputStream outputStream) throws IOException;
+    public void export(GridState grid, ProjectMetadata projectMetadata, Properties options, Engine engine, OutputStream outputStream) throws IOException;
 
 }

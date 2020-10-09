@@ -28,12 +28,14 @@ package org.openrefine.exporters;
 
 import java.util.List;
 
+import org.openrefine.sorting.SortingConfig;
+
 import com.fasterxml.jackson.databind.JsonNode;
 
 
 /**
  * An interface to be implemented by exporters which use 
- * {@link CustomizableTabularExporterUtilities#exportRows(org.openrefine.model.Project, org.openrefine.browsing.Engine, java.util.Properties, TabularSerializer)}
+ * {@link CustomizableTabularExporterUtilities#exportRows(org.openrefine.model.Project, org.openrefine.browsing.Engine, java.util.Properties, TabularSerializer, SortingConfig)}
  *
  */
 public interface TabularSerializer {

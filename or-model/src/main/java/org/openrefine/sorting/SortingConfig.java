@@ -42,6 +42,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  *
  */
 public final class SortingConfig  {
+	
+	public static final SortingConfig NO_SORTING = new SortingConfig(Collections.emptyList());
     
     protected final List<Criterion> _criteria;
     
@@ -60,8 +62,6 @@ public final class SortingConfig  {
     public static SortingConfig reconstruct(String obj) throws IOException {
         return ParsingUtilities.mapper.readValue(obj, SortingConfig.class);
     }
-    
-    public static final SortingConfig NO_SORTING = new SortingConfig(Collections.emptyList());
     
     @Override
     public boolean equals(Object other) {

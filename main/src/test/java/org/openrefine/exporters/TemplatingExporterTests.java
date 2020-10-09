@@ -37,21 +37,15 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.io.StringWriter;
 import java.util.Properties;
 
-import org.openrefine.ProjectManager;
-import org.openrefine.ProjectManagerStub;
 import org.openrefine.ProjectMetadata;
 import org.openrefine.RefineTest;
 import org.openrefine.browsing.Engine;
-import org.openrefine.exporters.TemplatingExporter;
-import org.openrefine.exporters.WriterExporter;
-import org.openrefine.model.Cell;
-import org.openrefine.model.ColumnMetadata;
-import org.openrefine.model.ModelException;
-import org.openrefine.model.Project;
-import org.openrefine.model.Row;
+import org.openrefine.browsing.EngineConfig;
+import org.openrefine.model.GridState;
 import org.slf4j.LoggerFactory;
 import org.testng.Assert;
 import org.testng.annotations.AfterMethod;
@@ -77,8 +71,8 @@ public class TemplatingExporterTests extends RefineTest {
 
     //dependencies
     StringWriter writer;
+    GridState grid;
     ProjectMetadata projectMetadata;
-    Project project;
     Engine engine;
     Properties options;
 
@@ -88,13 +82,9 @@ public class TemplatingExporterTests extends RefineTest {
     @BeforeMethod
     public void SetUp(){
         SUT = new TemplatingExporter();
-        writer = new StringWriter();
-        ProjectManager.singleton = new ProjectManagerStub();
         projectMetadata = new ProjectMetadata();
-        project = new Project();
         projectMetadata.setName(TEST_PROJECT_NAME);
-        ProjectManager.singleton.registerProject(project, projectMetadata);
-        engine = new Engine(project);
+        writer = new StringWriter();
         options = mock(Properties.class);
     }
 
@@ -102,24 +92,22 @@ public class TemplatingExporterTests extends RefineTest {
     public void TearDown(){
         SUT = null;
         writer = null;
-        ProjectManager.singleton.deleteProject(project.id);
-        project = null;
+        grid = null;
         engine = null;
         options = null;
     }
     @Test
     public void exportEmptyTemplate(){
+    	grid = createGrid(new String[] {"foo"}, new Serializable[][] {});
+    	engine = new Engine(grid, EngineConfig.ALL_ROWS);
 
-//        when(options.getProperty("limit")).thenReturn("100"); // optional integer
-//        when(options.getProperty("sorting")).thenReturn(""); //optional
         when(options.getProperty("template")).thenReturn("a template that should never get used");
         when(options.getProperty("prefix")).thenReturn(prefix);
         when(options.getProperty("suffix")).thenReturn(suffix);
         when(options.getProperty("separator")).thenReturn(rowSeparator);
-//        when(options.getProperty("preview")).thenReturn("false"); // optional true|false
 
         try {
-            SUT.export(project, options, engine, writer);
+            SUT.export(grid, projectMetadata, options, engine, writer);
         } catch (IOException e) {
             Assert.fail();
         }
@@ -128,22 +116,23 @@ public class TemplatingExporterTests extends RefineTest {
     }
     
     @Test
-    public void exportSimpleTemplate(){
-        CreateGrid(2, 2);
-        String template = rowPrefix + "${column0}" + cellSeparator + "${column1}";
-//      String template = "boilerplate${column0}{{4+3}}${column1}";
+    public void exportSimpleTemplate() {
+    	grid = createGrid(new String[] {"column0", "column1"},
+    			new Serializable[][] {
+    		{"row0cell0", "row0cell1"},
+    		{"row1cell0", "row1cell1"}
+    	});
+    	engine = new Engine(grid, EngineConfig.ALL_ROWS);
 
-        
-//        when(options.getProperty("limit")).thenReturn("100"); // optional integer
-//        when(options.getProperty("sorting")).thenReturn(""); //optional
+        String template = rowPrefix + "${column0}" + cellSeparator + "${column1}";
+
         when(options.getProperty("template")).thenReturn(template);
         when(options.getProperty("prefix")).thenReturn(prefix);
         when(options.getProperty("suffix")).thenReturn(suffix);
         when(options.getProperty("separator")).thenReturn(rowSeparator);
-//        when(options.getProperty("preview")).thenReturn("false"); // optional true|false
 
         try {
-            SUT.export(project, options, engine, writer);
+            SUT.export(grid, projectMetadata, options, engine, writer);
         } catch (IOException e) {
             Assert.fail();
         }
@@ -158,21 +147,21 @@ public class TemplatingExporterTests extends RefineTest {
 
     @Test()
     public void exportTemplateWithEmptyCells(){
-        
-//      when(options.getProperty("limit")).thenReturn("100"); // optional integer
-//      when(options.getProperty("sorting")).thenReturn(""); //optional
-      when(options.getProperty("template")).thenReturn(rowPrefix + "${column0}" + cellSeparator + "${column1}" + cellSeparator + "${column2}");
-      when(options.getProperty("prefix")).thenReturn(prefix);
-      when(options.getProperty("suffix")).thenReturn(suffix);
-      when(options.getProperty("separator")).thenReturn(rowSeparator);
-//      when(options.getProperty("preview")).thenReturn("false"); // optional true|false
+    	grid = createGrid(new String[] {"column0", "column1", "column2"},
+    			new Serializable[][] {
+    		{"row0cell0", "row0cell1", "row0cell2"},
+    		{"row1cell0", null, "row1cell2"},
+    		{null, "row2cell1", "row2cell2"}
+    	});
+    	engine = new Engine(grid, EngineConfig.ALL_ROWS);
+    	
+        when(options.getProperty("template")).thenReturn(rowPrefix + "${column0}" + cellSeparator + "${column1}" + cellSeparator + "${column2}");
+        when(options.getProperty("prefix")).thenReturn(prefix);
+        when(options.getProperty("suffix")).thenReturn(suffix);
+        when(options.getProperty("separator")).thenReturn(rowSeparator);
 
-        CreateGrid(3,3);
-
-        project.rows.get(1).cells.set(1, null);
-        project.rows.get(2).cells.set(0, null);
         try {
-            SUT.export(project, options, engine, writer);
+            SUT.export(grid, projectMetadata, options, engine, writer);
         } catch (IOException e) {
             Assert.fail();
         }
@@ -188,20 +177,23 @@ public class TemplatingExporterTests extends RefineTest {
     }
 
     @Test()
-    public void exportTemplateWithLimit(){
+    public void exportTemplateWithLimit() {
+    	grid = createGrid(new String[] {"column0", "column1", "column2"},
+    			new Serializable[][] {
+    		{"row0cell0", "row0cell1", "row0cell2"},
+    		{"row1cell0", "row1cell1", "row1cell2"},
+    		{"row2cell0", "row2cell1", "row2cell2"}
+    	});
+    	engine = new Engine(grid, EngineConfig.ALL_ROWS);
         
-      when(options.getProperty("limit")).thenReturn("2"); // optional integer
-//      when(options.getProperty("sorting")).thenReturn(""); //optional
-      when(options.getProperty("template")).thenReturn(rowPrefix + "${column0}" + cellSeparator + "${column1}" + cellSeparator + "${column2}");
-      when(options.getProperty("prefix")).thenReturn(prefix);
-      when(options.getProperty("suffix")).thenReturn(suffix);
-      when(options.getProperty("separator")).thenReturn(rowSeparator);
-//      when(options.getProperty("preview")).thenReturn("false"); // optional true|false
-
-        CreateGrid(3,3);
+        when(options.getProperty("limit")).thenReturn("2"); // optional integer
+        when(options.getProperty("template")).thenReturn(rowPrefix + "${column0}" + cellSeparator + "${column1}" + cellSeparator + "${column2}");
+        when(options.getProperty("prefix")).thenReturn(prefix);
+        when(options.getProperty("suffix")).thenReturn(suffix);
+        when(options.getProperty("separator")).thenReturn(rowSeparator);
 
         try {
-            SUT.export(project, options, engine, writer);
+            SUT.export(grid, projectMetadata, options, engine, writer);
         } catch (IOException e) {
             Assert.fail();
         }
@@ -213,29 +205,5 @@ public class TemplatingExporterTests extends RefineTest {
                 // third row should be skipped because of limit
                 + suffix);
 
-    }
-    
-    //helper methods
-
-    protected void CreateColumns(int noOfColumns){
-        for(int i = 0; i < noOfColumns; i++){
-            try {
-                project.columnModel.addColumn(i, new ColumnMetadata(i, "column" + i), true);
-            } catch (ModelException e1) {
-                Assert.fail("Could not create column");
-            }
-        }
-    }
-
-    protected void CreateGrid(int noOfRows, int noOfColumns){
-        CreateColumns(noOfColumns);
-
-        for(int i = 0; i < noOfRows; i++){
-            Row row = new Row(noOfColumns);
-            for(int j = 0; j < noOfColumns; j++){
-                row.cells.add(new Cell("row" + i + "cell" + j, null));
-            }
-            project.rows.add(row);
-        }
     }
 }

@@ -38,8 +38,10 @@ import java.io.Writer;
 import java.util.List;
 import java.util.Properties;
 
+import org.openrefine.ProjectMetadata;
 import org.openrefine.browsing.Engine;
 import org.openrefine.model.GridState;
+import org.openrefine.sorting.SortingConfig;
 import org.openrefine.util.ParsingUtilities;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -72,7 +74,7 @@ public class CsvExporter implements WriterExporter{
     }
 
     @Override
-    public void export(GridState grid, Properties params, Engine engine, final Writer writer)
+    public void export(GridState grid, ProjectMetadata projectMetadata, Properties params, Engine engine, final Writer writer)
             throws IOException {
         
         String optionsString = (params == null) ? null : params.getProperty("options");
@@ -126,7 +128,7 @@ public class CsvExporter implements WriterExporter{
             }
         };
         
-        CustomizableTabularExporterUtilities.exportRows(grid, engine, params, serializer);
+        CustomizableTabularExporterUtilities.exportRows(grid, engine, params, serializer, SortingConfig.NO_SORTING);
         
         csvWriter.close();
     }

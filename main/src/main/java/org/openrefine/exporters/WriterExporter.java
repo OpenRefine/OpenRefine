@@ -38,11 +38,12 @@ import java.io.IOException;
 import java.io.Writer;
 import java.util.Properties;
 
+import org.openrefine.ProjectMetadata;
 import org.openrefine.browsing.Engine;
 import org.openrefine.model.GridState;
 
 public interface WriterExporter extends Exporter {
 
-    public void export(GridState grid, Properties options, Engine engine, Writer writer) throws IOException;
+    public void export(GridState grid, ProjectMetadata projectMetadata, Properties options, Engine engine, Writer writer) throws IOException;
 
 }

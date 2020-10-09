@@ -37,17 +37,12 @@ import java.io.IOException;
 import java.io.Writer;
 import java.util.Properties;
 
+import org.openrefine.ProjectMetadata;
 import org.openrefine.browsing.Engine;
-import org.openrefine.browsing.FilteredRecords;
-import org.openrefine.browsing.FilteredRows;
-import org.openrefine.browsing.RecordVisitor;
-import org.openrefine.browsing.RowVisitor;
 import org.openrefine.browsing.Engine.Mode;
 import org.openrefine.expr.ParsingException;
 import org.openrefine.model.GridState;
 import org.openrefine.sorting.SortingConfig;
-import org.openrefine.sorting.RecordSorter;
-import org.openrefine.sorting.RowSorter;
 import org.openrefine.templating.Parser;
 import org.openrefine.templating.Template;
 import org.openrefine.util.ParsingUtilities;
@@ -82,7 +77,7 @@ public class TemplatingExporter implements WriterExporter {
     }
 
     @Override
-    public void export(GridState grid, Properties options, Engine engine, Writer writer) throws IOException {
+    public void export(GridState grid, ProjectMetadata projectMetadata, Properties options, Engine engine, Writer writer) throws IOException {
         String limitString = options.getProperty("limit");
         int limit = limitString != null ? Integer.parseInt(limitString) : -1;
         
@@ -107,40 +102,19 @@ public class TemplatingExporter implements WriterExporter {
         if (!"true".equals(options.getProperty("preview"))) {
             TemplateConfig config = new TemplateConfig(templateString, prefixString,
                     suffixString, separatorString);
-            grid.getMetadata().getPreferenceStore().put("exporters.templating.template",
+            projectMetadata.getPreferenceStore().put("exporters.templating.template",
                     ParsingUtilities.defaultWriter.writeValueAsString(config));
         }
         
+        SortingConfig sorting = SortingConfig.NO_SORTING;
+        if (sortingJson != null) {
+            sorting = SortingConfig.reconstruct(sortingJson);
+        }
+        
         if (engine.getMode() == Mode.RowBased) {
-            FilteredRows filteredRows = engine.getAllFilteredRows();
-            RowVisitor visitor = template.getRowVisitor(writer, limit);
-            
-            if (sortingJson != null) {
-                SortingConfig sorting = SortingConfig.reconstruct(sortingJson);
-                RowSorter srv = new RowSorter(visitor);
-                srv.initializeFromConfig(grid, sorting);
-                
-                if (srv.hasCriteria()) {
-                    visitor = srv;
-                }
-            }
-            
-            filteredRows.accept(grid, visitor);
+            template.writeRows(engine.getMatchingRows(sorting), writer, grid.getColumnModel(), limit);
         } else {
-            FilteredRecords filteredRecords = engine.getFilteredRecords();
-            RecordVisitor visitor = template.getRecordVisitor(writer, limit);
-            
-            if (sortingJson != null) {
-                SortingConfig sorting = SortingConfig.reconstruct(sortingJson);
-                RecordSorter srv = new RecordSorter(visitor);
-                srv.initializeFromConfig(grid, sorting);
-                
-                if (srv.hasCriteria()) {
-                    visitor = srv;
-                }
-            }
-            
-            filteredRecords.accept(grid, visitor);
+            template.writeRecords(engine.getMatchingRecords(sorting), writer, grid.getColumnModel(), limit);
         }
     }
     

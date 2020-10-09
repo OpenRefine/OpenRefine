@@ -35,9 +35,6 @@ package org.openrefine.grel;
 
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-import java.util.Set;
 import java.util.regex.Pattern;
 
 import org.openrefine.expr.Evaluable;
@@ -58,49 +55,7 @@ import org.openrefine.grel.ast.VariableExpr;
 
 public class Parser {
     
-    static public class GrelEvaluable implements Evaluable {
-        private static final long serialVersionUID = 916126073490453712L;
-        private GrelExpr _expr;
-        private String   _languagePrefix;
-
-        public GrelEvaluable(GrelExpr expr, String languagePrefix) {
-            _expr = expr;
-            _languagePrefix = languagePrefix;
-        }
-
-        @Override
-        public Object evaluate(Properties bindings) {
-            return _expr.evaluate(bindings);
-        }
- 
-        @Override
-        public Set<String> getColumnDependencies(String baseColumn) {
-            return _expr.getColumnDependencies(baseColumn);
-        }
-        
-        @Override
-        public Evaluable renameColumnDependencies(Map<String, String> substitutions) {
-            GrelExpr newExpr = _expr.renameColumnDependencies(substitutions);
-            return newExpr == null ? null : new GrelEvaluable(newExpr, _languagePrefix);
-        }
-
-        @Override
-        public String getSource() {
-            return _expr.toString();
-        }
-
-        @Override
-        public String getLanguagePrefix() {
-            return "grel";
-        }
-        
-        @Override
-        public boolean isLocal() {
-            return _expr.isLocal();
-        }
-    }
-    
-	static public LanguageSpecificParser grelParser = new LanguageSpecificParser() {
+    static public LanguageSpecificParser grelParser = new LanguageSpecificParser() {
 	        
 	        @Override
 	        public Evaluable parse(String source, String languagePrefix) throws ParsingException {

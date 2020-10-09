@@ -50,8 +50,10 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.util.WorkbookUtil;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.openrefine.ProjectManager;
+import org.openrefine.ProjectMetadata;
 import org.openrefine.browsing.Engine;
 import org.openrefine.model.GridState;
+import org.openrefine.sorting.SortingConfig;
 import org.openrefine.util.ParsingUtilities;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -69,8 +71,8 @@ public class XlsExporter implements StreamExporter {
     }
 
     @Override
-    public void export(final GridState grid, Properties params, Engine engine,
-            OutputStream outputStream) throws IOException {
+    public void export(final GridState grid, ProjectMetadata projectMetadata, Properties params,
+            Engine engine, OutputStream outputStream) throws IOException {
 
         final Workbook wb = xml ? new XSSFWorkbook() : new HSSFWorkbook();
         
@@ -83,7 +85,7 @@ public class XlsExporter implements StreamExporter {
             public void startFile(JsonNode options) {
                 s = wb.createSheet();
                 String sheetName = WorkbookUtil.createSafeSheetName(
-                        ProjectManager.singleton.getProjectMetadata(grid.id).getName());
+                        projectMetadata.getName());
                 wb.setSheetName(0, sheetName);
 
                 dateStyle = wb.createCellStyle();
@@ -144,7 +146,7 @@ public class XlsExporter implements StreamExporter {
         };
         
         CustomizableTabularExporterUtilities.exportRows(
-                grid, engine, params, serializer);
+                grid, engine, params, serializer, SortingConfig.NO_SORTING);
         
         wb.write(outputStream);
         outputStream.flush();

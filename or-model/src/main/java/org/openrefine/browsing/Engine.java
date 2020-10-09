@@ -51,6 +51,7 @@ import org.openrefine.model.Record;
 import org.openrefine.model.RecordFilter;
 import org.openrefine.model.Row;
 import org.openrefine.model.RowFilter;
+import org.openrefine.sorting.SortingConfig;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -147,12 +148,18 @@ public class Engine  {
         return getFacetsState().getFilteredCount();
     }
     
+    /**
+     * Iterates over the rows matched by the given filters. If the engine
+     * is in records mode, the rows corresponding to the matching records are
+     * returned.
+     * @param sortingConfig in which order to iterate over rows
+     */
     @JsonIgnore
-    public Iterable<IndexedRow> getMatchingRows() {
+    public Iterable<IndexedRow> getMatchingRows(SortingConfig sortingConfig) {
         if (Mode.RowBased.equals(getMode())) {
-            return _state.iterateRows(combinedRowFilters());
+            return _state.iterateRows(combinedRowFilters(), sortingConfig);
         } else {
-            Iterable<Record> records = _state.iterateRecords(combinedRecordFilters());
+            Iterable<Record> records = _state.iterateRecords(combinedRecordFilters(), sortingConfig);
             return new Iterable<IndexedRow>() {
 
                 @Override
@@ -180,6 +187,20 @@ public class Engine  {
                 
             };
         }
+    }
+    
+    /**
+     * Iterates over the records matched by the given filters. If the engine
+     * is in records mode, the rows corresponding to the matching records are
+     * returned.
+     * @param sortingConfig in which order to iterate over records
+     */
+    @JsonIgnore
+    public Iterable<Record> getMatchingRecords(SortingConfig sortingConfig) {
+    	if (Mode.RowBased.equals(getMode())) {
+    		throw new IllegalStateException("Cannot iterate over records in rows mode");
+    	}
+    	return _state.iterateRecords(combinedRecordFilters(), sortingConfig);
     }
     
     /**

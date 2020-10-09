@@ -50,6 +50,7 @@ import org.openrefine.model.RowFilter;
 import org.openrefine.model.changes.Change;
 import org.openrefine.model.changes.ChangeContext;
 import org.openrefine.operations.Operation;
+import org.openrefine.sorting.SortingConfig;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -282,7 +283,7 @@ public class TransposeColumnsIntoRowsOperation implements Operation {
             }
             
             List<RowBuilder> newRows = new ArrayList<>();
-            for (IndexedRow indexedRow : projectState.iterateRows(RowFilter.ANY_ROW)) {
+            for (IndexedRow indexedRow : projectState.iterateRows(RowFilter.ANY_ROW, SortingConfig.NO_SORTING)) {
                 Row oldRow = indexedRow.getRow();
                 RowBuilder firstNewRow = RowBuilder.create(newColumns.size());
                 int firstNewRowIndex = newRows.size();

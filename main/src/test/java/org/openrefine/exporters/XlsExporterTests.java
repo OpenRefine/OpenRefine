@@ -34,27 +34,18 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package org.openrefine.exporters;
 
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.Serializable;
 import java.time.OffsetDateTime;
 import java.util.Properties;
 
-import org.openrefine.ProjectManager;
-import org.openrefine.ProjectManagerStub;
 import org.openrefine.ProjectMetadata;
 import org.openrefine.RefineTest;
 import org.openrefine.browsing.Engine;
-import org.openrefine.exporters.StreamExporter;
-import org.openrefine.exporters.XlsExporter;
-import org.openrefine.model.Cell;
-import org.openrefine.model.ColumnMetadata;
-import org.openrefine.model.ModelException;
-import org.openrefine.model.Project;
-import org.openrefine.model.Row;
+import org.openrefine.browsing.EngineConfig;
+import org.openrefine.model.GridState;
 import org.slf4j.LoggerFactory;
 import org.testng.Assert;
 import org.testng.annotations.AfterMethod;
@@ -74,8 +65,8 @@ public class XlsExporterTests extends RefineTest {
 
     //dependencies
     ByteArrayOutputStream stream;
+    GridState grid;
     ProjectMetadata projectMetadata;
-    Project project;
     Engine engine;
     Properties options;
 
@@ -85,13 +76,9 @@ public class XlsExporterTests extends RefineTest {
     @BeforeMethod
     public void SetUp(){
         SUT = new XlsExporter(false);
-        stream = new ByteArrayOutputStream();
-        ProjectManager.singleton = new ProjectManagerStub();
         projectMetadata = new ProjectMetadata();
-        project = new Project();
         projectMetadata.setName(TEST_PROJECT_NAME);
-        ProjectManager.singleton.registerProject(project, projectMetadata);
-        engine = new Engine(project);
+        stream = new ByteArrayOutputStream();
         options = mock(Properties.class);
     }
 
@@ -99,18 +86,22 @@ public class XlsExporterTests extends RefineTest {
     public void TearDown(){
         SUT = null;
         stream = null;
-        ProjectManager.singleton.deleteProject(project.id);
-        project = null;
+        grid = null;
         engine = null;
         options = null;
     }
 
     @Test
     public void exportSimpleXls(){
-        CreateGrid(2, 2);
+    	grid = createGrid(new String[] {"column0", "column1"},
+    			new Serializable[][] {
+    		{"row0cell0", "row0cell1"},
+    		{"row1cell0", "row1cell1"}
+    	});
+    	engine = new Engine(grid, EngineConfig.ALL_ROWS);
 
         try {
-            SUT.export(project, options, engine, stream);
+            SUT.export(grid, projectMetadata, options, engine, stream);
         } catch (IOException e) {
             Assert.fail();
         }
@@ -124,85 +115,19 @@ public class XlsExporterTests extends RefineTest {
     @Test
     public void exportDateType() throws IOException{
         OffsetDateTime odt = OffsetDateTime.now();
-        createDateGrid(2, 2, odt);
+        grid = createGrid(new String[] {"column0", "column1"},
+    			new Serializable[][] {
+    		{odt, odt},
+    		{odt, odt}
+    	});
+    	engine = new Engine(grid, EngineConfig.ALL_ROWS);
 
         try {
-            SUT.export(project, options, engine, stream);
+            SUT.export(grid, projectMetadata, options, engine, stream);
         } catch (IOException e) {
             Assert.fail();
         }
         
         Assert.assertEquals(stream.size(),4096);
-    }
-
-    @Test(enabled=false)
-    public void exportSimpleXlsNoHeader(){
-        CreateGrid(2, 2);
-        when(options.getProperty("printColumnHeader")).thenReturn("false");
-        try {
-            SUT.export(project, options, engine, stream);
-        } catch (IOException e) {
-            Assert.fail();
-        }
-
-        Assert.assertEquals(stream.toString(), "row0cell0,row0cell1\n" +
-                                               "row1cell0,row1cell1\n");
-
-        verify(options,times(2)).getProperty("printColumnHeader");
-    }
-
-
-    @Test(enabled=false)
-    public void exportXlsWithEmptyCells(){
-        CreateGrid(3,3);
-
-        project.rows.get(1).cells.set(1, null);
-        project.rows.get(2).cells.set(0, null);
-        try {
-            SUT.export(project, options, engine, stream);
-        } catch (IOException e) {
-            Assert.fail();
-        }
-
-        Assert.assertEquals(stream.toString(), "column0,column1,column2\n" +
-                                               "row0cell0,row0cell1,row0cell2\n" +
-                                               "row1cell0,,row1cell2\n" +
-                                               ",row2cell1,row2cell2\n");
-    }
-
-    //helper methods
-
-    protected void CreateColumns(int noOfColumns){
-        for(int i = 0; i < noOfColumns; i++){
-            try {
-                project.columnModel.addColumn(i, new ColumnMetadata(i, "column" + i), true);
-            } catch (ModelException e1) {
-                Assert.fail("Could not create column");
-            }
-        }
-    }
-
-    protected void CreateGrid(int noOfRows, int noOfColumns){
-        CreateColumns(noOfColumns);
-
-        for(int i = 0; i < noOfRows; i++){
-            Row row = new Row(noOfColumns);
-            for(int j = 0; j < noOfColumns; j++){
-                row.cells.add(new Cell("row" + i + "cell" + j, null));
-            }
-            project.rows.add(row);
-        }
-    }
-    
-    private void createDateGrid(int noOfRows, int noOfColumns, OffsetDateTime now){
-        CreateColumns(noOfColumns);
-
-        for(int i = 0; i < noOfRows; i++){
-            Row row = new Row(noOfColumns);
-            for(int j = 0; j < noOfColumns; j++){
-                row.cells.add(new Cell(now, null));
-            }
-            project.rows.add(row);
-        }
     }
 }

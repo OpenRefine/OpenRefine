@@ -43,9 +43,10 @@ import org.odftoolkit.odfdom.doc.OdfSpreadsheetDocument;
 import org.odftoolkit.odfdom.doc.table.OdfTable;
 import org.odftoolkit.odfdom.doc.table.OdfTableCell;
 import org.odftoolkit.odfdom.doc.table.OdfTableRow;
-import org.openrefine.ProjectManager;
+import org.openrefine.ProjectMetadata;
 import org.openrefine.browsing.Engine;
 import org.openrefine.model.GridState;
+import org.openrefine.sorting.SortingConfig;
 import org.openrefine.util.ParsingUtilities;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -58,8 +59,8 @@ public class OdsExporter implements StreamExporter {
     }
 
     @Override
-    public void export(final GridState grid, Properties params, Engine engine,
-            OutputStream outputStream) throws IOException {
+    public void export(final GridState grid, ProjectMetadata projectMetadata, Properties params,
+            Engine engine, OutputStream outputStream) throws IOException {
 
         final OdfSpreadsheetDocument odfDoc;
         try {
@@ -75,7 +76,7 @@ public class OdsExporter implements StreamExporter {
             @Override
             public void startFile(JsonNode options) {
                 table = OdfTable.newTable(odfDoc);
-                table.setTableName(ProjectManager.singleton.getProjectMetadata(grid.id).getName());
+                table.setTableName(projectMetadata.getName());
             }
 
             @Override
@@ -113,7 +114,7 @@ public class OdsExporter implements StreamExporter {
         };
         
         CustomizableTabularExporterUtilities.exportRows(
-                grid, engine, params, serializer);
+                grid, engine, params, serializer, SortingConfig.NO_SORTING);
         
         try {
             odfDoc.save(outputStream);

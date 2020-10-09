@@ -349,12 +349,13 @@ public class TestingGridState implements GridState {
     }
 
     @Override
-    public Iterable<IndexedRow> iterateRows(RowFilter filter) {
+    public Iterable<IndexedRow> iterateRows(RowFilter filter, SortingConfig sortingConfig) {
+    	List<IndexedRow> sortedRows = sortedRows(sortingConfig);
         return new Iterable<IndexedRow>() {
 
             @Override
             public Iterator<IndexedRow> iterator() {
-                return indexedRows()
+                return sortedRows
                         .stream()
                         .filter(ir -> filter.filterRow(ir.getIndex(), ir.getRow()))
                         .iterator();
@@ -364,12 +365,13 @@ public class TestingGridState implements GridState {
     }
 
     @Override
-    public Iterable<Record> iterateRecords(RecordFilter filter) {
+    public Iterable<Record> iterateRecords(RecordFilter filter, SortingConfig sortingConfig) {
+    	List<Record> sorted = sortedRecords(sortingConfig);
         return new Iterable<Record>() {
 
             @Override
             public Iterator<Record> iterator() {
-                return records
+                return sorted
                         .stream()
                         .filter(r -> filter.filterRecord(r))
                         .iterator();

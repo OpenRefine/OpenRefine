@@ -51,6 +51,7 @@ import org.openrefine.model.RowFilter;
 import org.openrefine.model.changes.Change;
 import org.openrefine.model.changes.ChangeContext;
 import org.openrefine.operations.Operation;
+import org.openrefine.sorting.SortingConfig;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -152,7 +153,7 @@ public class KeyValueColumnizeOperation implements Operation {
                 currentNotes.add(notes);
             }
 
-            for (IndexedRow indexedRow : projectState.iterateRows(RowFilter.ANY_ROW)) {
+            for (IndexedRow indexedRow : projectState.iterateRows(RowFilter.ANY_ROW, SortingConfig.NO_SORTING)) {
                 Row oldRow = indexedRow.getRow();
                 
                 Object key = oldRow.getCellValue(keyColumnIndex);
