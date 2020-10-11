@@ -109,7 +109,7 @@ public class FunctionTests extends RefineTest {
         Set<String> valid0args = new HashSet<>(Arrays.asList("now")); // valid 0-arg returns datetype
         // Not sure which, if any, of these are intended, but fixing them may break existing scripts
         Set<String> returnsNull = new HashSet<>(Arrays.asList("chomp", "contains", "escape", "unescape", "exp",
-                "fingerprint", "get", "jsonize", "parseJson", "partition", "pow", "rpartition",
+                "fingerprint", "jsonize", "parseJson", "partition", "pow", "rpartition",
                 "slice", "substring", // synonyms for Slice
                 "unicode", "unicodeType"
                 ));
@@ -132,7 +132,7 @@ public class FunctionTests extends RefineTest {
     void testTooManyArgs() {
         // Not sure which, if any, of these are intended, but fixing them may break existing scripts
         Set<String> returnsNull = new HashSet<>(Arrays.asList("chomp", "contains", "coalesce", "escape", "unescape",
-                "exp", "fingerprint", "get", "now", "parseJson", "partition", "pow", "rpartition",
+                "exp", "fingerprint", "now", "parseJson", "partition", "pow", "rpartition",
                 "slice", "substring", // synonyms for Slice
                 "unicode", "unicodeType"
                 ));

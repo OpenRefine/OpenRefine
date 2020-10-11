@@ -88,7 +88,7 @@ public class GrelTests extends RefineTest {
                 "2^3",
                 "1 2",
                 "'a' 'b'",
-                "1e3" // TODO: error until scientific notation implementation done
+                "1e3", // TODO: error until scientific notation implementation done
                 };
         for (String test : tests) {
             try{
@@ -106,6 +106,8 @@ public class GrelTests extends RefineTest {
         String tests[] = {
                 "1=1",
                 "value.datePart()",
+                "[1['a','b','c']]", // issue #2507
+                "value.endsWith(\"ROAD\")))))*&(&#37;!#(&)", // issue #169
                 };
         for (String test : tests) {
             try {

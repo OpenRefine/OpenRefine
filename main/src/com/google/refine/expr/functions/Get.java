@@ -38,10 +38,12 @@ import java.util.Properties;
 
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.google.refine.expr.EvalError;
 import com.google.refine.expr.ExpressionUtils;
 import com.google.refine.expr.HasFields;
 import com.google.refine.expr.HasFieldsList;
 import com.google.refine.expr.util.JsonValueConverter;
+import com.google.refine.grel.ControlFunctionRegistry;
 import com.google.refine.grel.Function;
 
 public class Get implements Function {
@@ -52,102 +54,104 @@ public class Get implements Function {
             Object v = args[0];
             Object from = args[1];
             Object to = (args.length == 3) ? args[2] : null;
-            
-            if (v != null && from != null) {
-                if (v instanceof HasFields && from instanceof String) {
-                    return ((HasFields) v).getField((String) from, bindings);
-                } else if (v instanceof ObjectNode && from instanceof String) {
-                    return JsonValueConverter.convert(((ObjectNode) v).get((String) from));
-                } else {
-                    if (from instanceof Number && (to == null || to instanceof Number)) {
-                        if (v.getClass().isArray() || 
-                            v instanceof List<?> || 
-                            v instanceof HasFieldsList || 
+
+            if (v == null) {
+                if (args.length == 2 && "value".equals(from)) {
+                    return null; // special case get(null,'value')
+                }
+            } else if (v instanceof HasFields && from instanceof String && args.length == 2) {
+                return ((HasFields) v).getField((String) from, bindings);
+            } else if (v instanceof ObjectNode && from instanceof String && args.length == 2) {
+                return JsonValueConverter.convert(((ObjectNode) v).get((String) from));
+            } else {
+                if (from instanceof Number && (to == null || to instanceof Number)) {
+                    if (v.getClass().isArray() ||
+                            v instanceof List<?> ||
+                            v instanceof HasFieldsList ||
                             v instanceof ArrayNode) {
-                            
-                            int length = 0;
-                            if (v.getClass().isArray()) { 
-                                length = ((Object[]) v).length;
+
+                        int length = 0;
+                        if (v.getClass().isArray()) {
+                            length = ((Object[]) v).length;
+                        } else if (v instanceof HasFieldsList) {
+                            length = ((HasFieldsList) v).length();
+                        } else if (v instanceof ArrayNode) {
+                            length = ((ArrayNode) v).size();
+                        } else {
+                            length = ExpressionUtils.toObjectList(v).size();
+                        }
+
+                        int start = ((Number) from).intValue();
+                        if (start < 0) {
+                            start = length + start;
+                        }
+                        start = Math.min(length, Math.max(0, start));
+
+                        if (to == null) {
+                            if (v.getClass().isArray()) {
+                                return ((Object[]) v)[start];
                             } else if (v instanceof HasFieldsList) {
-                                length = ((HasFieldsList) v).length();
+                                return ((HasFieldsList) v).get(start);
                             } else if (v instanceof ArrayNode) {
-                                length = ((ArrayNode) v).size();
+                                return JsonValueConverter.convert(((ArrayNode) v).get(start));
                             } else {
-                                length = ExpressionUtils.toObjectList(v).size();
-                            }
-                            
-                            int start = ((Number) from).intValue();
-                            if (start < 0) {
-                                start = length + start;
-                            }
-                            start = Math.min(length, Math.max(0, start));
-                            
-                            if (to == null) {
-                                if (v.getClass().isArray()) {
-                                    return ((Object[]) v)[start];
-                                } else if (v instanceof HasFieldsList) {
-                                    return ((HasFieldsList) v).get(start);
-                                } else if (v instanceof ArrayNode) {
-                                    return JsonValueConverter.convert(((ArrayNode) v).get(start));
-                                } else {
-                                    return ExpressionUtils.toObjectList(v).get(start);
-                                }
-                            } else {
-                                int end = ((Number) to).intValue();
-                                            
-                                if (end < 0) {
-                                    end = length + end;
-                                }
-                                end = Math.min(length, Math.max(start, end));
-                                
-                                if (end > start) {
-                                    if (v.getClass().isArray()) {
-                                        Object[] a2 = new Object[end - start];
-                                        
-                                        System.arraycopy(v, start, a2, 0, end - start);
-                                        
-                                        return a2;
-                                    } else if (v instanceof HasFieldsList) {
-                                        return ((HasFieldsList) v).getSubList(start, end);
-                                    } else if (v instanceof ArrayNode) {
-                                        ArrayNode a = (ArrayNode) v;
-                                        Object[] a2 = new Object[end - start];
-                                        
-                                        for (int i = 0; i < a2.length; i++) {
-                                            a2[i] = JsonValueConverter.convert(a.get(start + i)); 
-                                        }
-                                        return a2;
-                                    } else {
-                                        return ExpressionUtils.toObjectList(v).subList(start, end);
-                                    }
-                                }
+                                return ExpressionUtils.toObjectList(v).get(start);
                             }
                         } else {
-                            String s = (v instanceof String) ? (String) v : v.toString();
-                            
-                            int start = ((Number) from).intValue();
-                            if (start < 0) {
-                                start = s.length() + start;
+                            int end = ((Number) to).intValue();
+
+                            if (end < 0) {
+                                end = length + end;
                             }
-                            start = Math.min(s.length(), Math.max(0, start));
-                            
-                            if (to != null) {
-                                int end = ((Number) to).intValue();
-                                if (end < 0) {
-                                    end = s.length() + end;
+                            end = Math.min(length, Math.max(start, end));
+
+                            if (end > start) {
+                                if (v.getClass().isArray()) {
+                                    Object[] a2 = new Object[end - start];
+
+                                    System.arraycopy(v, start, a2, 0, end - start);
+
+                                    return a2;
+                                } else if (v instanceof HasFieldsList) {
+                                    return ((HasFieldsList) v).getSubList(start, end);
+                                } else if (v instanceof ArrayNode) {
+                                    ArrayNode a = (ArrayNode) v;
+                                    Object[] a2 = new Object[end - start];
+
+                                    for (int i = 0; i < a2.length; i++) {
+                                        a2[i] = JsonValueConverter.convert(a.get(start + i));
+                                    }
+                                    return a2;
+                                } else {
+                                    return ExpressionUtils.toObjectList(v).subList(start, end);
                                 }
-                                end = Math.min(s.length(), Math.max(start, end));
-                                
-                                return s.substring(start, end);
-                            } else {
-                                return s.substring(start, start + 1);
                             }
+                        }
+                    } else {
+                        String s = (v instanceof String) ? (String) v : v.toString();
+
+                        int start = ((Number) from).intValue();
+                        if (start < 0) {
+                            start = s.length() + start;
+                        }
+                        start = Math.min(s.length(), Math.max(0, start));
+
+                        if (to != null) {
+                            int end = ((Number) to).intValue();
+                            if (end < 0) {
+                                end = s.length() + end;
+                            }
+                            end = Math.min(s.length(), Math.max(start, end));
+
+                            return s.substring(start, end);
+                        } else {
+                            return s.substring(start, start + 1);
                         }
                     }
                 }
             }
         }
-        return null;
+        return new EvalError("Unexpected operand types for " + ControlFunctionRegistry.getFunctionName(this));
     }
 
     @Override

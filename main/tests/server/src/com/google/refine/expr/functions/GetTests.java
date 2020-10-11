@@ -37,6 +37,7 @@ import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
 import com.google.refine.RefineTest;
+import com.google.refine.expr.EvalError;
 import com.google.refine.expr.Evaluable;
 import com.google.refine.expr.ExpressionUtils;
 import com.google.refine.expr.MetaParser;
@@ -73,8 +74,16 @@ public class GetTests extends RefineTest {
         parseEval(bindings, test);
         String test2[] = { "get(null,'value')", null };
         parseEval(bindings, test2);
-        String test3[] = { "get(null,'foo')", null }; // FIXME: should be an error
-        parseEval(bindings, test3);
+        parseEvalType(bindings, "get(null,'foo')", EvalError.class);
+        parseEvalType(bindings, "get(null, 2)", EvalError.class);
+        parseEvalType(bindings, "get(null, 'value', 2)", EvalError.class);
+    }
+
+    @Test
+    public void testGetFromBadType() throws ParsingException {
+        parseEvalType(bindings, "1.get('value')", EvalError.class);
+        parseEvalType(bindings, "1.1.get('value')", EvalError.class);
+        parseEvalType(bindings, "get(toDate('2020-01-01'),'foo')", EvalError.class);
     }
 
     @Test
@@ -85,9 +94,21 @@ public class GetTests extends RefineTest {
         parseEval(bindings, test2);
         String test3[] = { "get('abcd', 1, 10)", "bcd" };
         parseEval(bindings, test3);
-        String test4[] = { "get(null, 2)", null }; // FIXME: should be an error?
+        // Floating point indices are explicitly allowed/handled for some bizarre reason
+        String test4[] = { "'abc'.get(2.1)", "c" };
         parseEval(bindings, test4);
-    }
+        String test5[] = { "get('abcd', 1.1, 3.1)", "bc" };
+        parseEval(bindings, test5);
+        // Non-array types are (weirdly) cast to strings before slicing
+        String test6[] = { "get(1.1, 1)", "." };
+        parseEval(bindings, test6);
+        String test7[] = { "get(1, 0)", "1" };
+        parseEval(bindings, test7);
+        String test8[] = { "get(toDate('2020-01-01'), 0, 4)", "2020" };
+        parseEval(bindings, test8);
+        parseEvalType(bindings, "get(null, 2)", EvalError.class);
+        parseEvalType(bindings, "1.get(1)", EvalError.class);
+        }
 
     @Test
     public void testGetArraySlice() throws ParsingException {
