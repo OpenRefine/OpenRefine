@@ -111,6 +111,10 @@ public class Parser {
     protected Evaluable parseSubExpression() throws ParsingException {
         Evaluable sub = parseTerm();
 
+        if (_token != null && _token.type != TokenType.Operator && _token.type != TokenType.Delimiter) {
+            throw makeException("Expecting an operator or delimiter here");
+        }
+
         while (_token != null &&
                 _token.type == TokenType.Operator &&
                 "+-".indexOf(_token.text) >= 0) {
@@ -133,6 +137,10 @@ public class Parser {
      */
     protected Evaluable parseTerm() throws ParsingException {
         Evaluable factor = parseFactor();
+
+        if (_token != null && _token.type != TokenType.Operator && _token.type != TokenType.Delimiter) {
+            throw makeException("Expecting an operator or delimiter here");
+        }
 
         while (_token != null &&
                 _token.type == TokenType.Operator &&
@@ -248,7 +256,9 @@ public class Parser {
         }
 
         while (_token != null) {
-            if (_token.type == TokenType.Operator && _token.text.equals(".")) {
+            if (_token.type == TokenType.Error) {
+                throw makeException("Parse error");
+            } else if (_token.type == TokenType.Operator && _token.text.equals(".")) {
                 next(false); // swallow .
 
                 if (_token == null || _token.type != TokenType.Identifier) {

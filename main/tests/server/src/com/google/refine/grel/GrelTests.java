@@ -85,7 +85,10 @@ public class GrelTests extends RefineTest {
                 "",
                 "1-1-",
                 "2**3",
-//                "2^3" // TODO: Should this generate an error?
+                "2^3",
+                "1 2",
+                "'a' 'b'",
+                "1e3" // TODO: error until scientific notation implementation done
                 };
         for (String test : tests) {
             try{
@@ -101,7 +104,7 @@ public class GrelTests extends RefineTest {
     @Test
     public void testEvalError() {
         String tests[] = {
-//                "1=1", // TODO: Throws NullPointerException
+                "1=1",
                 "value.datePart()",
                 };
         for (String test : tests) {
@@ -124,7 +127,8 @@ public class GrelTests extends RefineTest {
                 { "1-1-1", "-1" }, 
                 { "1-2-3", "-4" }, 
                 { "1-(2-3)", "2" }, 
-                { "2*3", "6" }, 
+                { "2*3", "6" },
+                { "2.0*3", "6.0" },
                 { "3%2", "1" }, 
                 { "3/2", "1" },
                 { "3.0/2", "1.5" }, 
@@ -136,7 +140,8 @@ public class GrelTests extends RefineTest {
                 { "1>=1", "true" }, 
                 { "1<=2", "true" }, 
                 { "2<=2", "true" }, 
-                { "3<=2", "false" }, 
+                { "3<=2", "false" },
+//                { "1e3", "1000" }, // TODO: scientific notation has only a placeholder so far
 //                { "", "" }, 
         };
         for (String[] test : tests) {
@@ -183,6 +188,7 @@ public class GrelTests extends RefineTest {
         assertNull(eval.evaluate(bindings));
     }
 
+    // TODO: This seems like it's actually a join() test
     @Test
     public void testJoinJsonArray() throws ParsingException {
         String test[] = { "\"{\\\"values\\\":[\\\"one\\\",\\\"two\\\",\\\"three\\\"]}\".parseJson().values.join(\",\")", "one,two,three" };
@@ -196,6 +202,20 @@ public class GrelTests extends RefineTest {
         assertNull(eval.evaluate(bindings));
         Evaluable eval2 = MetaParser.parse("grel:null.foo"); // all others error
         assertTrue(eval2.evaluate(bindings) instanceof EvalError);
+    }
+
+    @Test
+    public void testGetFieldFromBadType() throws ParsingException {
+        String test =  "1.foo";
+        Evaluable eval = MetaParser.parse("grel:" + test);
+        assertTrue(eval.evaluate(bindings) instanceof EvalError);
+        String test1 =  "1.1.foo";
+        Evaluable eval1 = MetaParser.parse("grel:" + test1);
+        assertTrue(eval1.evaluate(bindings) instanceof EvalError);
+        Evaluable eval2 = MetaParser.parse("grel:[1,2].value");
+        assertTrue(eval2.evaluate(bindings) instanceof EvalError);
+        Evaluable eval3 = MetaParser.parse("grel:'foo'.value");
+        assertTrue(eval3.evaluate(bindings) instanceof EvalError);
     }
 
     // to demonstrate bug fixing for #1204

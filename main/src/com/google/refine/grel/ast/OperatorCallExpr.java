@@ -35,6 +35,7 @@ package com.google.refine.grel.ast;
 
 import java.util.Properties;
 
+import com.google.refine.expr.EvalError;
 import com.google.refine.expr.Evaluable;
 import com.google.refine.expr.ExpressionUtils;
 
@@ -138,7 +139,7 @@ public class OperatorCallExpr implements Evaluable {
                 }
             }
         }
-        return null;
+        return new EvalError("Unrecognized operator: " + _op);
     }
 
     @Override
