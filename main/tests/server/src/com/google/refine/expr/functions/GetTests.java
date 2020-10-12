@@ -28,6 +28,7 @@ package com.google.refine.expr.functions;
 
 import static org.testng.Assert.assertNull;
 
+import java.io.IOException;
 import java.util.Properties;
 
 import org.slf4j.LoggerFactory;
@@ -42,7 +43,10 @@ import com.google.refine.expr.Evaluable;
 import com.google.refine.expr.ExpressionUtils;
 import com.google.refine.expr.MetaParser;
 import com.google.refine.expr.ParsingException;
+import com.google.refine.model.Cell;
+import com.google.refine.model.ModelException;
 import com.google.refine.model.Project;
+import com.google.refine.model.Row;
 import com.google.refine.util.TestUtils;
 
 public class GetTests extends RefineTest {
@@ -116,8 +120,11 @@ public class GetTests extends RefineTest {
         parseEval(bindings, test);
         String test2[] = { "get([1,2,3,4], 1, 3)", "[2, 3]" };
         parseEval(bindings, test2);
-        String test3[] = { "get([1,2,3,4], 1, 10)", "[2, 3, 4]" };
+        // Bracket indexing syntax gets converted to get() call
+        String test3[] = { "[1,2,3,4][1, 3]", "[2, 3]" };
         parseEval(bindings, test3);
+        String test4[] = { "get([1,2,3,4], 1, 10)", "[2, 3, 4]" };
+        parseEval(bindings, test4);
     }
 
     @Test
@@ -131,6 +138,28 @@ public class GetTests extends RefineTest {
         String test =  "\"[{\\\"one\\\": \\\"1\\\"}]\".parseJson()[0].get('two')";
         Evaluable eval = MetaParser.parse("grel:" + test);
         assertNull(eval.evaluate(bindings));
+    }
+
+    @Test
+    public void testGetEmptyCell() throws ParsingException, IOException, ModelException {
+        project = createProjectWithColumns("Column Test Project", "Column A", "Column B");
+        Row row = new Row(2);
+        row.setCell(0, new Cell(Integer.valueOf(1), null));
+        project.rows.add(row);
+
+        bindings = ExpressionUtils.createBindings(project);
+        ExpressionUtils.bind(bindings, row, 0, "Column B", null);
+
+        String test[] = { "isNull(cells['Column B'].value)", "true" };
+        parseEval(bindings, test);
+
+        // FIXME: Misspelled column names don't error
+//        String test1[] = { "isError(cells['not a column'].value)", "true" };
+        String test1[] = { "isNull(cells['not a column'].value)", "true" };
+        parseEval(bindings, test1);
+
+        String test2[] = { "cells['Column A'].value)", "1" };
+        parseEval(bindings, test2);
     }
 
 }
