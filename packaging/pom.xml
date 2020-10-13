@@ -401,7 +401,7 @@
           <version>1.2.0</version>
           <dependencies>
             <dependency>
-              <!-- dependency upgraded to a newer version to fix runtime issues with some JRE versions:
+              <!-- dependency upgraded to >4.0 to fix runtime issues with some JRE versions:
                    https://stackoverflow.com/questions/53696439/appbundle-maven-plugin-fails-on-mac-osx-with-java-10 -->
               <groupId>org.codehaus.plexus</groupId>
               <artifactId>plexus-archiver</artifactId>
