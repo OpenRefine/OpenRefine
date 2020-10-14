@@ -139,7 +139,7 @@ Most of the OpenRefine-specific variables have attributes, aspects of the object
 
 #### Row
 
-The `row` variable itself is not very useful, but you can use the row's member fields, which can be accessed with a dot operator or with square brackets: `row.index` or `row["index"]`.
+The `row` variable itself is best used to access its member fields, using a dot operator or square brackets: `row.index` or `row["index"]`.
 
 |Member field name |Meaning |
 |-|-|
@@ -154,13 +154,13 @@ The `row` variable itself is not very useful, but you can use the row's member f
 
 The `cells` object, which can also be accessed as `row.cells`, has fields that correspond to the data column names. For example, `cells.Foo` returns a `cell` object representing the cell in the column named “Foo” of the current row. If the column name has spaces, use the square bracket method, e.g., cells["Postal Code"].
 
-When you need to get the value of the cells variable itself, you need `.value` at the end, e.g.,
+When you need to get the value of the `cells` variable itself, you need `.value` at the end, e.g.,
 
 ```
 cells["column name"].value
 ```
 
-When you need to set or mass edit the values of the columns cells, then you can simply use a GREL expression within quotes, such as just `"San Francisco Bay"`.
+When you need to set or mass edit the values of the column's cells, you can simply use a GREL expression within quotes, such as just `"San Francisco Bay"`.
 
 Alternatively, you can use faceting to edit large quantities of identical cell values, using the “edit” button that appears in the facet display.
 
@@ -275,26 +275,183 @@ If you're used to Excel, note that the operator for string concatenation is + (n
 
 #### Boolean functions
 
-and(boolean b1, boolean b2, ...etc)
+###### and(boolean b1, boolean b2, ...etc)
 
-Logically AND two or more booleans to yield a boolean. For example, and(1 < 3, 1 > 0) returns true because both conditions are true.
+Logically AND two or more booleans to yield a boolean. 
+For example, and(1 < 3, 1 > 0) returns true because both conditions are true.
 
-or(boolean b1, boolean b2, ...etc)
+###### or(boolean b1, boolean b2, ...etc)
 
-Logically OR two or more booleans to yield a boolean. For example, or(1 < 3, 1 > 7) returns true because at least one of the conditions (the first one) is true.
+Logically OR two or more booleans to yield a boolean. 
+For example, or(1 < 3, 1 > 7) returns true because at least one of the conditions (the first one) is true.
 
-not(boolean b)
+###### not(boolean b)
 
-Logically NOT a boolean to yield another boolean. For example, not(1 > 7) returns true because 1 > 7 itself is false.
+Logically NOT a boolean to yield another boolean. 
+For example, not(1 > 7) returns true because 1 > 7 itself is false.
 
-xor(boolean b1, boolean b2, ...etc)
+###### xor(boolean b1, boolean b2, ...etc)
 
-Logically XOR (exclusive-or) two or more booleans to yield a boolean. For example, xor(1 < 3, 1 > 7) returns true because only one of the conditions (the first one) is true. xor(1 < 3, 1 < 7) returns false because more than one of the conditions is true.
-
-
-
+Logically XOR (exclusive-or) two or more booleans to yield a boolean. 
+For example, xor(1 < 3, 1 > 7) returns true because only one of the conditions (the first one) is true. xor(1 < 3, 1 < 7) returns false because more than one of the conditions is true.
 
 #### String functions
+
+###### length(string s)
+
+Returns the length of s as a number.
+
+###### toString(o, string format (optional))
+
+The toString function will work on any value type (string, number, date, boolean, error, null) and gives a string version of that value. You can convert between types within some limits. For example, you can't turn the string "asdfsd" into a date or a number, because OpenRefine has no way of knowing how to make a date or number from letters.
+
+Number formatting:
+
+value.toString("%.0f")
+
+|Input|Output|
+|---|---|
+|3.2|3|
+|0.8|1|
+|0.15|0|
+|100.0|100|
+
+Date formatting:
+
+value.toString("MMM-dd-yyyy")
+
+[date 2024-10-15T00:00:00Z]  ->  Oct-15-2024
+
+Note: Using toString on a null cell results in the string "null" being stored in the cell.
+
+##### Testing String Characteristics
+
+###### startsWith(string s, string sub)
+
+Returns boolean indicating whether `s` starts with `sub`. For example,
+`startsWith("food", "foo")` returns `true`, whereas `startsWith("food",
+"bar")` returns `false`. You could also write the first case as
+`"food".startsWith("foo")`.
+
+###### endsWith(string s, string sub)
+
+Returns boolean indicating whether `s` ends with `sub`. For example,
+`endsWith("food", "ood")` returns `true`, whereas `endsWith("food",
+"odd")` returns `false`. You could also write the first case as
+`"food".endsWith("ood")`.
+
+###### contains(string s, string sub)
+
+Returns boolean indicating whether `s` contains `sub`. For example,
+`contains("food", "oo")` returns `true` whereas `contains("food", "ee")`
+returns `false`. You could also write the first case as
+`"food".contains("oo")`.
+
+###### indexOf(string s, string sub)
+
+Returns integer indicating position of `sub` within `s` or `-1` if `sub`
+is not found. For example, `indexOf("food", "oo")` returns `2`, whereas
+`indexOf("food", "ee")` returns `-1`.
+
+Returning `-1` is equivalent to returning boolean `false`, which is very
+useful for finding strings that do **NOT** contain `sub`.
+
+##### Case Conversion
+
+###### toLowercase(string s)
+
+Returns `s` converted to lowercase.
+
+###### toUppercase(string s)
+
+Returns `s` converted to uppercase.
+
+###### toTitlecase(string s)
+
+Returns `s` converted to titlecase. For example, `toTitlecase("Once upon
+a midnight dreary")` returns the string `Once Upon A Midnight Dreary`.
+
+##### Trimming
+
+###### trim(string s) and strip(string s)
+
+Returns a copy of the string, with leading and trailing whitespace
+removed. For example, `trim(" island ")` returns the string `island`.
+
+###### chomp(string s, string sep)
+
+Returns a copy of `s` with `sep` removed from the end if `s` ends with
+`sep`; otherwise, just returns `s`. For example, `chomp("hardly", "ly")`
+and `chomp("hard", "ly")` both return the string `hard`.
+
+##### Substring
+
+###### substring(s, number from, optional number to)
+
+Returns the substring of `s` starting from character index `from` and
+upto character index `to`. If `to` is omitted, it's understood as the
+end of the string `s`. For example, `substring("profound", 3)` returns
+the string `found`, and `substring("profound", 2, 4)` returns the string
+`of`.
+
+Character indexes start from zero. Negative character indexes are
+understood as counting from the end of the string. For example,
+`substring("profound", 1, -1)` returns the string `rofoun`.
+
+Strings also support indexing/slicing using square bracket notation. "mystring"[0,4] returns "mystr".
+
+###### slice(s, number from, optional number to)
+
+See `substring` function above.
+
+For details see slicearray
+
+###### get(o, number or string from, optional number to)
+
+See `substring` function above.
+
+For details see getarray
+
+##### Find and Replace
+
+###### indexOf(string s, string sub)
+
+Returns the index of `sub` first ocurring in `s` as a character index;
+or `-1` if `s` does not contain `sub`. For example,
+`indexOf("internationalization", "nation")` returns `5`, whereas
+`indexOf("internationalization", "world")` returns `-1`.
+
+###### lastIndexOf(string s, string sub)
+
+Returns the index of `sub` last ocurring in `s` as a character index; or
+`-1` if `s` does not contain `sub`. For example,
+`lastIndexOf("parallel", "a")` returns `3` (pointing at the second
+character "a").
+
+###### replace(string s, string f, string r)
+
+Returns the string obtained by replacing `f` with `r` in `s`. `f` can be
+a regular expression, in which case `r` can also contain capture groups
+declared in f.
+
+For a simple example, `replace("The cow jumps over the moon and moos",
+"oo", "ee")` returns the string `The cow jumps over the meen and mees`.
+
+**NOTE:** Replace does not work with `null` since `null` is not actually
+a string. So, you can either:
+
+1.  create a facet for null-values and then edit, and change the
+    expression of `value` to the string you want to replace the nulls
+    with, such as `"new"`
+2.  or you Edit cells -\> Transform and then apply an expression like
+    `if(value==null,'new',value)`
+
+###### replaceChars(string s, string f, string r)
+
+Returns the string obtained by replacing any character in `s` that is
+also in `f` with the character `r`. For example, `replaceChars("commas ,
+and semicolons ; are separators", ",;", "**")` returns the string
+`commas ** and semicolons ** are separators`.
 
 #### Format functions (JSON, HTML, XML)
 
@@ -305,6 +462,30 @@ Logically XOR (exclusive-or) two or more booleans to yield a boolean. For exampl
 #### Math functions
 
 #### Other functions
+
+###### type(o)
+
+Returns the type of o, such as undefined, string, number, boolean, etc. For example, using `value.type` in a Transform operation will convert all cells in a column to their data types.
+
+
+###### hasField(o, string name)
+
+Returns a boolean indicating whether o has a member field called name. For example, cell.recon.hasField(“match”) will return null if a reconciliation match hasn’t been selected yet. You cannot string fields in succession (e.g. cell.hasField(“recon.match”) will not work).
+
+
+###### coalesce(o1, o2, o3, ...)
+
+Returns the first non-null from a series of values (the list of objects o1, o2, o3 ...).
+
+Example of use is: coalesce(value,"")
+
+This would return an empty string "" if the value was null, but otherwise, return the value.
+
+
+###### cross(cell c, string projectName, string columnName)
+
+Returns an array of zero or more rows in the project projectName for which the cells in their column columnName have the same content as cell c (similar to a lookup).
+
 
 ### Controls
 
