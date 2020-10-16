@@ -39,23 +39,6 @@ module.exports = {
       style: 'dark',
       links: [
         {
-          title: 'Docs',
-          items: [
-            {
-              label: 'Style Guide',
-              to: 'docs/styleguide',
-            },
-            {
-              label: 'Technical Reference',
-              to: 'docs/tech',
-            },
-            {
-              label: 'Contributors',
-              to: 'docs/contrib',
-            },
-          ],
-        },
-        {
           title: 'Community',
           items: [
             {
