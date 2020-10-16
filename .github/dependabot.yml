@@ -1,3 +1,6 @@
+# Documentation for all configuration options:
+# https://help.github.com/github/administering-a-repository/configuration-options-for-dependency-updates
+
 version: 2
 updates:
 - package-ecosystem: maven
@@ -6,11 +9,15 @@ updates:
     interval: daily
   open-pull-requests-limit: 10
   ignore:
-  - dependency-name: com.google.apis:google-api-services-drive
-    versions:
-    - ">= v3-rev20200706-1.30.a"
-    - "< v3-rev20200706-1.30.1000009"
   - dependency-name: com.thoughtworks.xstream:xstream
     versions:
     - "> 1.4.12"
     - "< 2"
+- package-ecosystem: "npm" # For Yarn
+  directory: "/"
+  schedule:
+    interval: "daily"
+- package-ecosystem: "github-actions"
+  directory: "/"
+  schedule:
+    interval: "daily"
