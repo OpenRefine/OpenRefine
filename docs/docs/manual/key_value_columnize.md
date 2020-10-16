@@ -34,7 +34,7 @@ Entries with multiple values in the same column
 -----------------------------------------------
 
 If an entry has multiple values for a given key, then these values will be grouped on consecutive rows,
-to form a [record structure](../records_mode.md).
+to form a [record structure](exploring#rows-vs-records).
 
 For instance, flower species can have multiple colors:
 
@@ -112,7 +112,7 @@ This will be transformed to
 | Q1727024    | Narcissus cyclamineus | Yellow   | 161899  |
 
 If extra columns do not contain identical values for all old rows spanning an entry, this can
-be fixed beforehand by using the [fill down operation](fill_down.md).
+be fixed beforehand by using the [fill down operation](cellediting#fill-down).
 
 Row order
 ---------
