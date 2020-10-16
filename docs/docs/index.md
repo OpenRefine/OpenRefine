@@ -1,4 +1,5 @@
 ---
+slug: /
 id: index
 title: OpenRefine product reference
 sidebar_label: Index

@@ -1,4 +1,5 @@
 module.exports = {
+  onBrokenLinks: 'warn',
   title: 'OpenRefine',
   tagline: 'A power tool for working with messy data.',
   url: 'https://docs.openrefine.org/',
@@ -13,7 +14,7 @@ module.exports = {
         alt: 'OpenRefine diamond logo',
         src: 'img/openrefine_logo.png',
       },
-      links: [
+      items: [
         {
           to: '/',
           activeBasePath: 'docs',
@@ -38,23 +39,6 @@ module.exports = {
       },
       style: 'dark',
       links: [
-        {
-          title: 'Docs',
-          items: [
-            {
-              label: 'Style Guide',
-              to: 'docs/styleguide',
-            },
-            {
-              label: 'Technical Reference',
-              to: 'docs/tech',
-            },
-            {
-              label: 'Contributors',
-              to: 'docs/contrib',
-            },
-          ],
-        },
         {
           title: 'Community',
           items: [
@@ -104,7 +88,6 @@ module.exports = {
           editUrl: 'https://github.com/OpenRefine/OpenRefine/edit/master/docs',
           // Equivalent to `docsUrl`.
           routeBasePath: '/',
-          homePageId: 'index',
           // Remark and Rehype plugins passed to MDX. Replaces `markdownOptions` and `markdownPlugins`.
           remarkPlugins: [],
           rehypePlugins: [],
