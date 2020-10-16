@@ -1,0 +1,16 @@
+version: 2
+updates:
+- package-ecosystem: maven
+  directory: "/"
+  schedule:
+    interval: daily
+  open-pull-requests-limit: 10
+  ignore:
+  - dependency-name: com.google.apis:google-api-services-drive
+    versions:
+    - ">= v3-rev20200706-1.30.a"
+    - "< v3-rev20200706-1.30.1000009"
+  - dependency-name: com.thoughtworks.xstream:xstream
+    versions:
+    - "> 1.4.12"
+    - "< 2"
