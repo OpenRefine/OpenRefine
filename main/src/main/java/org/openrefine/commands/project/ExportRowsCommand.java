@@ -49,6 +49,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import org.openrefine.ProjectManager;
+import org.openrefine.ProjectMetadata;
 import org.openrefine.browsing.Engine;
 import org.openrefine.commands.Command;
 import org.openrefine.exporters.CsvExporter;
@@ -86,6 +87,7 @@ public class ExportRowsCommand extends Command {
 
         try {
             Project project = getProject(request);
+            ProjectMetadata projectMetadata = ProjectManager.singleton.getProjectMetadata(project.getId());
             Engine engine = getEngine(request, project);
             Properties params = getRequestParameters(request);
 
@@ -107,7 +109,7 @@ public class ExportRowsCommand extends Command {
                 response.setCharacterEncoding(encoding != null ? encoding : "UTF-8");
                 Writer writer = encoding == null ? response.getWriter() : new OutputStreamWriter(response.getOutputStream(), encoding);
 
-                ((WriterExporter) exporter).export(project.getCurrentGridState(), null, params, engine, writer);
+                ((WriterExporter) exporter).export(project.getCurrentGridState(), projectMetadata, params, engine, writer);
                 writer.close();
             } else if (exporter instanceof StreamExporter) {
                 response.setCharacterEncoding("UTF-8");
