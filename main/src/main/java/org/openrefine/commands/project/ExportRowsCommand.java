@@ -46,6 +46,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.http.HttpStatus;
 import org.openrefine.ProjectManager;
+import org.openrefine.ProjectMetadata;
 import org.openrefine.browsing.Engine;
 import org.openrefine.commands.Command;
 import org.openrefine.exporters.CsvExporter;
@@ -84,6 +85,7 @@ public class ExportRowsCommand extends Command {
        
         try {
             Project project = getProject(request);
+            ProjectMetadata projectMetadata = ProjectManager.singleton.getProjectMetadata(project.getId());
             Engine engine = getEngine(request, project);
             Properties params = getRequestParameters(request);
             
@@ -107,7 +109,7 @@ public class ExportRowsCommand extends Command {
                     response.getWriter() :
                     new OutputStreamWriter(response.getOutputStream(), encoding);
                 
-                ((WriterExporter) exporter).export(project.getCurrentGridState() , null, params, engine, writer);
+                ((WriterExporter) exporter).export(project.getCurrentGridState(), projectMetadata, params, engine, writer);
                 writer.close();
             }
             else if (exporter instanceof StreamExporter) {
