@@ -363,6 +363,20 @@ public interface GridState {
      */
     public <T extends Serializable> GridState join(ChangeData<T> changeData, RecordChangeDataJoiner<T> recordJoiner, ColumnModel newColumnModel);
     
+    // Union of grid states
+    
+    /**
+     * Creates a new grid state containing all rows in this grid, followed
+     * by all rows in the other grid supplied.
+     * The overlay models of this grid have priority over the others.
+     * 
+     * The two grid states are required to have the same number of columns.
+     * 
+     * @param other the grid to concatenate to this one
+     * @return a new grid, union of the two
+     */
+    public GridState concatenate(GridState other);
+    
     /**
      * Utility class to help with deserialization of the metadata
      * without other attributes (such as number of rows)

@@ -44,6 +44,7 @@ import java.io.Serializable;
 import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -56,9 +57,12 @@ import java.util.stream.Collectors;
 import org.apache.hadoop.fs.FileSystem;
 import org.openrefine.importing.ImportingFileRecord;
 import org.openrefine.importing.ImportingJob;
+import org.openrefine.model.Cell;
 import org.openrefine.model.ColumnMetadata;
 import org.openrefine.model.ColumnModel;
+import org.openrefine.model.GridState;
 import org.openrefine.model.Row;
+import org.openrefine.model.RowMapper;
 import org.openrefine.util.JSONUtilities;
 import org.openrefine.util.ParsingUtilities;
 import org.openrefine.util.TrackingInputStream;
@@ -317,5 +321,69 @@ public class ImporterUtilities {
             JSONUtilities.append(a, o);
         }
         return a;
+    }
+    
+    /**
+     * Given two grid states with potentially different columns,
+     * unify the two into a single grid state by adding columns of the
+     * second grid which are not present in the first at the end.
+     * 
+     * @param state1
+     * @param state2
+     * @return
+     */
+    protected static GridState mergeGridStates(GridState state1, GridState state2) {
+        Map<Integer, Integer> positions = new HashMap<>();
+        List<ColumnMetadata> mergedColumns = new ArrayList<>(state1.getColumnModel().getColumns());
+        List<ColumnMetadata> columns2 = state2.getColumnModel().getColumns();
+        ColumnModel columnModel1 = state1.getColumnModel();
+        for (int i = 0; i != columns2.size(); i++) {
+            String columnName = columns2.get(i).getName();
+            int position = columnModel1.getColumnIndexByName(columnName);
+            if (position == -1) {
+                position = mergedColumns.size();
+                mergedColumns.add(columns2.get(i));
+            } else {
+                mergedColumns.set(position, mergedColumns.get(position).merge(columns2.get(i)));
+            }
+            positions.put(i, position);
+        }
+        ColumnModel mergedColumnModel = new ColumnModel(mergedColumns);
+        
+        int origSizeState1 = columnModel1.getColumns().size();
+        GridState translatedState1 = state1.mapRows(translateFirstGrid(origSizeState1, mergedColumns.size() - origSizeState1), mergedColumnModel);
+        GridState translatedState2 = state2.mapRows(translateSecondGrid(mergedColumns.size(), positions), mergedColumnModel);
+        return translatedState1.concatenate(translatedState2);
+    }
+    
+    private static RowMapper translateFirstGrid(int oldColumns, int additionalColumns) {
+        List<Cell> nullCells = Arrays.asList(new Cell[additionalColumns]);
+        return new RowMapper() {
+
+            private static final long serialVersionUID = 7085491437207390723L;
+
+            @Override
+            public Row call(long rowId, Row row) {
+                return row.insertCells(oldColumns, nullCells);
+            }
+            
+        };
+    }
+    
+    private static RowMapper translateSecondGrid(int nbColumns, Map<Integer, Integer> positions) {
+        return new RowMapper() {
+
+            private static final long serialVersionUID = 5925580892216279741L;
+
+            @Override
+            public Row call(long rowId, Row row) {
+                 List<Cell> cells = Arrays.asList(new Cell[nbColumns]);
+                 for (int i = 0; i != row.getCells().size(); i++) {
+                     cells.set(positions.get(i), row.getCell(i));
+                 }
+                 return new Row(cells, row.flagged, row.starred);
+            }
+            
+        };
     }
 }

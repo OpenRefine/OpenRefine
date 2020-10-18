@@ -126,6 +126,23 @@ public class ColumnMetadata implements Serializable {
         return ParsingUtilities.mapper.readValue(s, ColumnMetadata.class);
     }
     
+    /**
+     * Merges the recon statistics of this column with those of 
+     * another column. The column names of this column are preserved.
+     * 
+     * @param otherMetadata the other column metadata to extract recon statistics from
+     * @return a new column metadata with the sum of the recon statistics
+     */
+    public ColumnMetadata merge(ColumnMetadata otherMetadata) {
+        ReconStats newReconStats = _reconStats;
+        if (_reconStats != null && otherMetadata.getReconStats() != null) {
+            newReconStats = _reconStats.sum(otherMetadata.getReconStats());
+        } else if (_reconStats == null) {
+            newReconStats = otherMetadata.getReconStats();
+        }
+        return new ColumnMetadata(_originalName, _name, _reconConfig, newReconStats);
+    }
+    
     @Override
     public String toString() {
         return String.format("[ColumnMetadata: %s, %s, %s, %s]", _name, _originalName, _reconConfig, _reconStats);

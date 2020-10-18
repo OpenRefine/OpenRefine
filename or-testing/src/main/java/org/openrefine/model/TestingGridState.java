@@ -554,4 +554,18 @@ public class TestingGridState implements GridState {
         return new TestingGridState(newColumnModel, rows, overlayModels);
     }
 
+    @Override
+    public GridState concatenate(GridState other) {
+        ColumnModel merged = columnModel.merge(other.getColumnModel());
+        
+        List<Row> otherRows = other.collectRows().stream().map(r -> r.getRow()).collect(Collectors.toList());
+        List<Row> newRows = new ArrayList<>(rows.size() + otherRows.size());
+        newRows.addAll(rows);
+        newRows.addAll(otherRows);
+        
+        Map<String, OverlayModel> newOverlayModels = new HashMap<>(other.getOverlayModels());
+        newOverlayModels.putAll(overlayModels);
+        return new TestingGridState(merged, newRows, newOverlayModels);
+    }
+
 }

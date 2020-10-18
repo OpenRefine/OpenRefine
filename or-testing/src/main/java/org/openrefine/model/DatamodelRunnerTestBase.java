@@ -31,6 +31,7 @@ import org.openrefine.model.changes.RecordChangeDataProducer;
 import org.openrefine.model.changes.RowChangeDataFlatJoiner;
 import org.openrefine.model.changes.RowChangeDataJoiner;
 import org.openrefine.model.changes.RowChangeDataProducer;
+import org.openrefine.overlay.OverlayModel;
 import org.openrefine.sorting.NumberCriterion;
 import org.openrefine.sorting.SortingConfig;
 import org.openrefine.sorting.StringCriterion;
@@ -41,8 +42,6 @@ import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableList;
-
-import jersey.repackaged.com.google.common.collect.Lists;
 
 /**
  * A collection of generic tests that any implementation
@@ -63,6 +62,7 @@ public abstract class DatamodelRunnerTestBase {
     protected List<Row> expectedRows;
     protected List<Record> expectedRecords;
     protected SortingConfig sortingConfig;
+    protected OverlayModel overlayModel;
     
     public abstract DatamodelRunner getDatamodelRunner();
     
@@ -144,6 +144,7 @@ public abstract class DatamodelRunnerTestBase {
         stringCriterion.columnName = "foo";
         sortingConfig = new SortingConfig(
                 Arrays.asList(numberCriterion, stringCriterion));
+        overlayModel = new OverlayModel() {};
 
     }
     
@@ -156,6 +157,14 @@ public abstract class DatamodelRunnerTestBase {
         Assert.assertEquals(simpleGrid.getColumnModel(),
                 new ColumnModel(Arrays.asList(new ColumnMetadata("foo"), new ColumnMetadata("bar"))));
         Assert.assertEquals(simpleGrid.getOverlayModels(), Collections.emptyMap());
+    }
+    
+    @Test
+    public void testWithOverlayModel() {
+        GridState withOverlayModel = simpleGrid.withOverlayModels(Collections.singletonMap("foo", overlayModel));
+        Map<String, OverlayModel> overlayModels = withOverlayModel.getOverlayModels();
+        Assert.assertEquals(overlayModels.get("foo"), overlayModel);
+        Assert.assertNull(overlayModels.get("bar"));
     }
     
     @Test
@@ -872,5 +881,40 @@ public abstract class DatamodelRunnerTestBase {
         
         Assert.assertEquals(joined.getColumnModel(), expected.getColumnModel());
         Assert.assertEquals(joined.collectRows(), expected.collectRows()); 
+    }
+    
+    @Test
+    public void testConcatenate() {
+        GridState otherGrid = createGrid(new String[] { "foo2", "bar" },
+                new Serializable[][] {
+            { "k", "l" },
+            { "p", "q" }
+        });
+        
+        GridState expected = createGrid(new String[] { "foo", "bar" },
+                new Serializable[][] {
+            { "a", "b" },
+            { "", 1 },
+            { "c", true },
+            { null, 123123123123L },
+            { "k", "l" },
+            { "p", "q" }
+        });
+        
+        GridState concatenated = simpleGrid.concatenate(otherGrid);
+        
+        Assert.assertEquals(concatenated.getColumnModel(), expected.getColumnModel());
+        Assert.assertEquals(concatenated.collectRows(), expected.collectRows());
+    }
+    
+    @Test(expectedExceptions = IllegalArgumentException.class)
+    public void testConcatenateIncompatibleNumberOfColumns() {
+        GridState otherGrid = createGrid(new String[] { "foo2" },
+                new Serializable[][] {
+            { "k" },
+            { "p" }
+        });
+        
+        simpleGrid.concatenate(otherGrid);
     }
 }

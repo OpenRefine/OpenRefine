@@ -31,6 +31,7 @@ import static org.mockito.Mockito.when;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -38,6 +39,7 @@ import java.util.List;
 import org.openrefine.ProjectMetadata;
 import org.openrefine.importers.ImporterTest;
 import org.openrefine.importers.ImporterUtilities;
+import org.openrefine.model.GridState;
 import org.openrefine.util.ParsingUtilities;
 import org.openrefine.util.TestUtils;
 import org.testng.Assert;
@@ -97,4 +99,5 @@ public class ImportingUtilitiesTests extends ImporterTest {
     	Assert.assertEquals(ImportingUtilities.extractFilenameFromSparkURI("hdfs:///data/records"), "records");
     	Assert.assertNull(ImportingUtilities.extractFilenameFromSparkURI("////"));
     }
+
 }

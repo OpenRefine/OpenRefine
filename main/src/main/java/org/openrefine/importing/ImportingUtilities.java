@@ -44,7 +44,10 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.text.NumberFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.ZipEntry;
@@ -77,8 +80,13 @@ import org.openrefine.RefineServlet;
 import org.openrefine.importers.ImporterUtilities;
 import org.openrefine.importing.ImportingJob.ImportingJobConfig;
 import org.openrefine.importing.ImportingJob.RetrievalRecord;
+import org.openrefine.model.Cell;
+import org.openrefine.model.ColumnMetadata;
+import org.openrefine.model.ColumnModel;
 import org.openrefine.model.GridState;
 import org.openrefine.model.Project;
+import org.openrefine.model.Row;
+import org.openrefine.model.RowMapper;
 import org.openrefine.model.changes.ChangeDataStore;
 import org.openrefine.model.changes.LazyChangeDataStore;
 import org.openrefine.util.JSONUtilities;
@@ -857,4 +865,5 @@ public class ImportingUtilities {
         pm.setEncoding(encoding);
         return pm;
     }
+
 }

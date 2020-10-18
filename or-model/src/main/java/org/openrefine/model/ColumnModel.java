@@ -231,6 +231,29 @@ public class ColumnModel implements Serializable {
         return new ColumnModel(newColumns);
     }
     
+    /**
+     * Given another column model with the same number of columns,
+     * merge the recon configuration and statistics in each n-th column.
+     * 
+     * @param other
+     * @return
+     * @throws IllegalArgumentException if the number of columns is different or
+     * columns have incompatible reconciliation configurations.
+     */
+    public ColumnModel merge(ColumnModel other) {
+        List<ColumnMetadata> otherColumns = other.getColumns();
+        if (otherColumns.size() != _columns.size()) {
+            throw new IllegalArgumentException(
+                    String.format("Attempting to merge column models with %d and %d columns",
+                            _columns.size(), otherColumns.size()));
+        }
+        
+        List<ColumnMetadata> newColumns = new ArrayList<>(_columns.size());
+        for (int i = 0; i != _columns.size(); i++) {
+            newColumns.add(_columns.get(i).merge(otherColumns.get(i)));
+        }
+        return new ColumnModel(newColumns);
+    }
     
     public String getUnduplicatedColumnName(String baseName) {
         String name = baseName;

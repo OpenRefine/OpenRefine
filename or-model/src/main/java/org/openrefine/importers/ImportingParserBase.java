@@ -129,14 +129,14 @@ abstract public class ImportingParserBase implements ImportingParser {
      * @return
      */
     private GridState mergeGridStates(List<GridState> gridStates) {
-		if (gridStates.size() == 1) {
-			return gridStates.get(0);
-		} else {
-			// TODO add back multiple file support
-			// - merge the column models with a "File" column at the start, containing the filename
-			// - do the union of grid states
-			throw new IllegalStateException("Support for multiple files not implemented");
-		}
+        if (gridStates.isEmpty()) {
+            throw new IllegalArgumentException("No grid states provided");
+        }
+        GridState current = gridStates.get(0);
+        for (int i = 1; i != gridStates.size(); i++) {
+            current = ImporterUtilities.mergeGridStates(current, gridStates.get(i));
+        }
+        return current;
 	}
 
 	public GridState parseOneFile(

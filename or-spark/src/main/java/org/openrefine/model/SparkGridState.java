@@ -3,6 +3,7 @@ package org.openrefine.model;
 import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -896,6 +897,22 @@ public class SparkGridState implements GridState {
             
         };
         
+    }
+
+    @Override
+    public GridState concatenate(GridState other) {
+        if (!(other instanceof SparkGridState)) {
+            throw new IllegalArgumentException("Union of a Spark GridState is only possible with another Spark GridState");
+        }
+        
+        ColumnModel merged = columnModel.merge(other.getColumnModel());
+        SparkGridState sparkGrid = (SparkGridState) other;
+        
+        JavaRDD<Row> rows = grid.values().union(sparkGrid.getGrid().values());
+        JavaPairRDD<Long, Row> indexedRows = RDDUtils.zipWithIndex(rows);
+        Map<String, OverlayModel> mergedOverlayModels = new HashMap<>(other.getOverlayModels());
+        mergedOverlayModels.putAll(overlayModels);
+        return new SparkGridState(merged, indexedRows, mergedOverlayModels, runner);
     }
 
 }

@@ -34,8 +34,10 @@ import org.openrefine.model.Row;
 import org.openrefine.model.recon.Recon;
 import org.openrefine.model.recon.ReconConfig;
 import org.openrefine.model.recon.ReconJob;
+import org.openrefine.model.recon.ReconStats;
 import org.openrefine.util.ParsingUtilities;
 import org.openrefine.util.TestUtils;
+import org.testng.Assert;
 import org.testng.annotations.Test;
 
 public class ColumnMetadataTests {
@@ -74,6 +76,9 @@ public class ColumnMetadataTests {
 		
 	}
 	
+	ReconConfig reconConfig = new MyReconConfig();
+	ColumnMetadata SUT = new ColumnMetadata("name", "organization_name", reconConfig, ReconStats.create(1L, 2L, 3L));
+	
     @Test
     public void serializeColumn() throws Exception {
         ReconConfig.registerReconConfig("core", "my-recon", MyReconConfig.class);
@@ -90,5 +95,22 @@ public class ColumnMetadataTests {
                 + "    \"matchedTopics\":222"
                 + "}}";
         TestUtils.isSerializedTo(ColumnMetadata.load(json), json, ParsingUtilities.defaultWriter);
+    }
+    
+    @Test
+    public void testMerge() {
+        ColumnMetadata column2 = new ColumnMetadata("name2", "organization_name2", reconConfig, ReconStats.create(3L, 4L, 5L));
+        ColumnMetadata expected = new ColumnMetadata("name", "organization_name", reconConfig, ReconStats.create(4L, 6L, 8L));
+        
+        Assert.assertEquals(SUT.merge(column2), expected);
+    }
+    
+    @Test
+    public void testEquals() {
+        Assert.assertNotEquals(SUT, 4L);
+        Assert.assertNotEquals(SUT, new ColumnMetadata("name", "organization_name", null, ReconStats.create(1L, 2L, 3L)));
+        Assert.assertNotEquals(SUT, new ColumnMetadata("name", "organization_name", reconConfig, null));
+        Assert.assertNotEquals(SUT, new ColumnMetadata("name2", "organization_name", reconConfig, ReconStats.create(1L, 2L, 3L)));
+        Assert.assertEquals(SUT, new ColumnMetadata("name", "organization_name", reconConfig, ReconStats.create(1L, 2L, 3L)));
     }
 }

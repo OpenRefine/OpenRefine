@@ -38,13 +38,17 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
 
 import org.openrefine.RefineTest;
 import org.openrefine.importers.ImporterUtilities;
+import org.openrefine.importing.ImportingUtilities;
 import org.openrefine.model.Cell;
+import org.openrefine.model.GridState;
 import org.openrefine.model.Project;
 import org.openrefine.model.Row;
 import org.slf4j.LoggerFactory;
@@ -115,7 +119,7 @@ public class ImporterUtilitiesTests extends RefineTest {
     public void ensureColumnsInRowExist(){
         String VALUE_1 = "value1";
         String VALUE_2 = "value2";
-        Row row = new Row(2);
+        Row row = new Row(Arrays.asList(new Cell[2]));
         ArrayList<String> columnNames = new ArrayList<String>(2);
         columnNames.add(VALUE_1);
         columnNames.add(VALUE_2);
@@ -129,31 +133,43 @@ public class ImporterUtilitiesTests extends RefineTest {
 
     @Test
     public void ensureColumnsInRowExistDoesExpand(){
-        Row row = new Row(4);
+        Row row = new Row(Arrays.asList(new Cell[4]));
         for(int i = 1; i < 5; i++) {
             row.cells.add(new Cell("value" + i, null));
         }
 
         ArrayList<String> columnNames = new ArrayList<String>(2);
 
-
         ImporterUtilities.ensureColumnsInRowExist(columnNames, row);
 
         Assert.assertEquals(row.cells.size(), 4);
         Assert.assertEquals(columnNames.size(), 4);
     }
-
+    
+    
     @Test
-    public void setupColumns(){
-        Project project = new Project();
-        List<String> columnNames = new ArrayList<String>();
-        columnNames.add("col1");
-        columnNames.add("col2");
-        columnNames.add("");
-        ImporterUtilities.setupColumns(project, columnNames);
-        Assert.assertEquals( project.columnModel.getColumns().get(0).getName(), "col1" );
-        Assert.assertEquals( project.columnModel.getColumns().get(1).getName(), "col2" );
-        Assert.assertEquals( project.columnModel.getColumns().get(2).getName(), "Column");
+    public void testMergeGridStates() {
+    	GridState grid1 = createGrid(new String[] { "foo", "bar" },
+    			new Serializable[][] {
+    		{ 1, 2 },
+    		{ 3, 4 }
+    	});
+    	GridState grid2 = createGrid(new String[] { "foo", "oof" },
+    			new Serializable[][] {
+    		{ 5, 6 },
+    		{ 7, 8 }
+    	});
+    	GridState expected = createGrid(new String[] { "foo", "bar", "oof" },
+    			new Serializable[][] {
+    		{ 1,    2, null },
+    		{ 3,    4, null },
+    		{ 5, null,    6 },
+    		{ 7, null,    8 }
+    	});
+    	
+    	GridState merged = ImporterUtilities.mergeGridStates(grid1, grid2);
+		Assert.assertEquals(merged.getColumnModel(), expected.getColumnModel());
+		Assert.assertEquals(merged.collectRows(), expected.collectRows());
     }
 
 }

@@ -32,11 +32,19 @@ import java.util.Collections;
 import org.openrefine.model.ColumnMetadata;
 import org.openrefine.model.ColumnModel;
 import org.openrefine.model.ModelException;
+import org.openrefine.model.recon.ReconStats;
 import org.openrefine.util.ParsingUtilities;
 import org.openrefine.util.TestUtils;
+import org.testng.Assert;
 import org.testng.annotations.Test;
 
 public class ColumnModelTests {
+    
+    ColumnModel SUT = new ColumnModel(
+            Arrays.asList(
+                    new ColumnMetadata("a", "b", null, ReconStats.create(1L, 2L, 3L)),
+                    new ColumnMetadata("c", "d", null, null)));
+    
     @Test
     public void serializeColumnModel() throws ModelException {
         ColumnModel model = new ColumnModel(
@@ -62,5 +70,26 @@ public class ColumnModelTests {
                 + "}";
         ColumnModel m = new ColumnModel(Collections.emptyList());
         TestUtils.isSerializedTo(m, json, ParsingUtilities.defaultWriter);
+    }
+    
+    @Test
+    public void testMerge() {
+        ColumnModel columnModelB = new ColumnModel(
+                Arrays.asList(
+                        new ColumnMetadata("e", "f", null, ReconStats.create(4L, 5L, 6L)),
+                        new ColumnMetadata("g", "h", null, null)));
+        ColumnModel expected = new ColumnModel(
+                Arrays.asList(
+                        new ColumnMetadata("a", "b", null, ReconStats.create(5L, 7L, 9L)),
+                        new ColumnMetadata("c", "d", null, null)));
+        
+        Assert.assertEquals(SUT.merge(columnModelB), expected);
+    }
+    
+    @Test(expectedExceptions = IllegalArgumentException.class)
+    public void testMergeIncompatibleNumberOfColumns() {
+        ColumnModel columnModel = new ColumnModel(
+                Arrays.asList(new ColumnMetadata("a", "b", null, ReconStats.create(1L, 2L, 3L))));
+        SUT.merge(columnModel);
     }
 }
