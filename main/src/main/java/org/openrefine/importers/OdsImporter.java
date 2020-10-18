@@ -65,7 +65,7 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 
-public class OdsImporter extends TabularImportingParserBase { 
+public class OdsImporter extends TabularParserHelper { 
     final static Logger logger = LoggerFactory.getLogger("open office");
 
     public OdsImporter() {
@@ -182,7 +182,7 @@ public class OdsImporter extends TabularImportingParserBase {
                 }
             };
 
-            TabularImportingParserBase.readTable(
+            TabularParserHelper.readTable(
                     project,
                     metadata,
                     job,

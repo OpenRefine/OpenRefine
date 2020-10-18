@@ -39,7 +39,6 @@ import java.io.Reader;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.lang3.NotImplementedException;
 import org.apache.hadoop.fs.FileSystem;
 import org.openrefine.ProjectMetadata;
 import org.openrefine.importers.ImporterUtilities.MultiFileReadingProgress;
@@ -61,24 +60,11 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 abstract public class ImportingParserBase implements ImportingParser {
     final static Logger logger = LoggerFactory.getLogger("ImportingParserBase");
 
-    final protected Mode mode;
     final protected DatamodelRunner runner;
     
     /**
-     * Determines how a file should be read by the subclass, which
-     * implements the corresponding method accordingly.
      */
-    public static enum Mode {
-    	InputStream,
-    	Reader,
-    	SparkURI
-    };
-    
-    /**
-     * @param mode true if parser takes an InputStream, false if it takes a Reader.
-     */
-    protected ImportingParserBase(Mode mode, DatamodelRunner runner) {
-        this.mode = mode;
+    protected ImportingParserBase(DatamodelRunner runner) {
         this.runner = runner;
     }
     
@@ -153,15 +139,15 @@ abstract public class ImportingParserBase implements ImportingParser {
         progress.startFile(fileSource);
         pushImportingOptions(metadata, fileSource, options);
        
-    	if (mode.equals(Mode.SparkURI)) {
-    		return parseOneFile(metadata, job, fileSource, fileRecord.getDerivedSparkURI(job.getRawDataDir()), limit, options);
+    	if (this instanceof HDFSImporter) {
+    		return ((HDFSImporter)this).parseOneFile(metadata, job, fileSource, fileRecord.getDerivedSparkURI(job.getRawDataDir()), limit, options);
     	} else {
     		final File file = fileRecord.getFile(job.getRawDataDir());
     		try {
 	            InputStream inputStream = ImporterUtilities.openAndTrackFile(fileSource, file, progress);
 	            try {
-	                if (mode.equals(Mode.InputStream)) {
-	                    return parseOneFile(metadata, job, fileSource, inputStream, limit, options);
+	                if (this instanceof InputStreamImporter) {
+	                    return ((InputStreamImporter)this).parseOneFile(metadata, job, fileSource, inputStream, limit, options);
 	                } else {
 	                    String commonEncoding = JSONUtilities.getString(options, "encoding", null);
 	                    if (commonEncoding != null && commonEncoding.isEmpty()) {
@@ -171,7 +157,7 @@ abstract public class ImportingParserBase implements ImportingParser {
 	                    Reader reader = ImporterUtilities.getReaderFromStream(
 	                        inputStream, fileRecord, commonEncoding);
 	                    
-	                    return parseOneFile(metadata, job, fileSource, reader, limit, options);
+	                    return ((ReaderImporter)this).parseOneFile(metadata, job, fileSource, reader, limit, options);
 	                }
 	            } finally {
 	                inputStream.close();
@@ -182,96 +168,6 @@ abstract public class ImportingParserBase implements ImportingParser {
     	}
         
     }
-    
-	
-	/**
-	 * Parses one file, designated by a URI understood by Spark.
-	 * 
-	 * @param metadata
-	 *    the project metadata associated with the project to parse (which can be
-	 *    modified by the importer)
-	 * @param job
-	 *    the importing job where this import is being done
-	 * @param fileSource
-	 *    the original path or source of the file (could be "clipboard" or a URL as well)
-	 * @param uri
-	 *    the uri understood by Spark where to read the data from
-	 * @param limit
-	 *    the maximum number of rows to read
-	 * @param options
-	 *    any options passed to the importer as a JSON payload
-	 * @return
-	 *    a parsed GridState
-	 */
-	public GridState parseOneFile(ProjectMetadata metadata, ImportingJob job, String fileSource, String uri,
-			long limit, ObjectNode options) throws Exception {
-		throw new NotImplementedException("Importer does not support reading from a Spark URI");
-	}
-
-	/**
-	 * Parses one file, read from a {@class Reader} object,
-	 * into a GridState.
-	 * 
-	 * @param metadata
-	 *    the project metadata associated with the project to parse (which can be
-	 *    modified by the importer)
-	 * @param job
-	 *    the importing job where this import is being done
-	 * @param fileSource
-	 *    the path or source of the file (could be "clipboard" or a URL as well)
-	 * @param reader
-	 *    the reader object where to read the data from
-	 * @param limit
-	 *    the maximum number of rows to read
-	 * @param options
-	 *    any options passed to the importer as a JSON payload
-	 * @return
-	 *    a parsed GridState
-	 * @throws Exception
-	 */
-    public GridState parseOneFile(
-	        ProjectMetadata metadata,
-	        ImportingJob job,
-	        String fileSource,
-	        Reader reader,
-	        long limit,
-	        ObjectNode options
-	    ) throws Exception {
-    	throw new NotImplementedException("Importer does not support reading from a Reader");
-    }
-    
-    /**
-     * Parses one file, read from an {@class InputStream} object,
-     * into a GridState.
-     * 
-	 * @param metadata
-	 *    the project metadata associated with the project to parse (which can be
-	 *    modified by the importer)
-	 * @param job
-	 *    the importing job where this import is being done
-	 * @param fileSource
-	 *    the path or source of the file (could be "clipboard" or a URL as well)
-	 * @param inputStream
-	 *    the input stream where to read the data from
-	 * @param limit
-	 *    the maximum number of rows to read
-	 * @param options
-	 *    any options passed to the importer as a JSON payload
-	 * @return
-	 *    a parsed GridState
-     * @throws Exception
-     */
-    public GridState parseOneFile(
-            ProjectMetadata metadata,
-            ImportingJob job,
-            String fileSource,
-            InputStream inputStream,
-            long limit,
-            ObjectNode options
-        ) throws Exception {
-    	throw new NotImplementedException("Importer does not support reading from an InputStream");
-    }
-
 
     private void pushImportingOptions(ProjectMetadata metadata, String fileSource, ObjectNode options) {
         options.put("fileSource", fileSource);

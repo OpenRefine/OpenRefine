@@ -23,10 +23,10 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import scala.Tuple2;
 
-public abstract class SparkImportingParserBase extends ImportingParserBase {
+public abstract class SparkImportingParserBase extends HDFSImporter {
 
 	protected SparkImportingParserBase(SparkDatamodelRunner runner) {
-		super(Mode.SparkURI, runner);
+		super(runner);
 	}
 	
     /**

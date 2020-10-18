@@ -35,6 +35,8 @@ import java.io.Reader;
 import org.mockito.Mockito;
 import org.openrefine.ProjectMetadata;
 import org.openrefine.RefineTest;
+import org.openrefine.importers.ImporterUtilities.MultiFileReadingProgress;
+import org.openrefine.importing.ImportingFileRecord;
 import org.openrefine.importing.ImportingJob;
 import org.openrefine.importing.ImportingJob.RetrievalRecord;
 import org.openrefine.model.GridState;
@@ -61,9 +63,9 @@ public abstract class ImporterTest extends RefineTest {
         job = null;
         options = null;
     }
-    
+
     protected GridState parseOneFile(ImportingParserBase parser, Reader reader) throws Exception {
-        return parser.parseOneFile(
+        return ((ReaderImporter)parser).parseOneFile(
             metadata,
             job,
             "file-source",
@@ -74,7 +76,7 @@ public abstract class ImporterTest extends RefineTest {
     }
     
     protected GridState parseOneFile(ImportingParserBase parser, InputStream inputStream) throws Exception {
-        return parser.parseOneFile(
+        return ((InputStreamImporter)parser).parseOneFile(
             metadata,
             job,
             "file-source",
@@ -85,7 +87,7 @@ public abstract class ImporterTest extends RefineTest {
     }
     
     protected GridState parseOneFile(ImportingParserBase parser, String sparkURI) throws Exception {
-        return parser.parseOneFile(
+        return ((HDFSImporter)parser).parseOneFile(
             metadata,
             job,
             "file-source",

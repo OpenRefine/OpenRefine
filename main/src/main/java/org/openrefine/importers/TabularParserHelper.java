@@ -34,7 +34,6 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package org.openrefine.importers;
 
 import java.io.IOException;
-import java.io.Reader;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -44,7 +43,6 @@ import java.util.List;
 import org.openrefine.ProjectMetadata;
 import org.openrefine.expr.ExpressionUtils;
 import org.openrefine.importing.ImportingJob;
-import org.openrefine.importing.ImportingFileRecord;
 import org.openrefine.model.Cell;
 import org.openrefine.model.ColumnModel;
 import org.openrefine.model.DatamodelRunner;
@@ -54,16 +52,19 @@ import org.openrefine.util.JSONUtilities;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
-abstract public class TabularImportingParserBase extends ImportingParserBase {
+public class TabularParserHelper {
+	
     static public interface TableDataReader {
         public List<Object> getNextRowOfCells() throws IOException;
     }
     
-    @Override
-    public ObjectNode createParserUIInitializationData(ImportingJob job,
-            List<ImportingFileRecord> fileRecords, String format) {
-        ObjectNode options = super.createParserUIInitializationData(job, fileRecords, format);
-        
+    protected final DatamodelRunner runner;
+    
+    public TabularParserHelper(DatamodelRunner runner) {
+    	this.runner = runner;
+    }
+    
+    public ObjectNode createParserUIInitializationData(ObjectNode options) {
         JSONUtilities.safePut(options, "ignoreLines", -1); // number of blank lines at the beginning to ignore
         JSONUtilities.safePut(options, "headerLines", 1); // number of header lines
         
@@ -73,21 +74,9 @@ abstract public class TabularImportingParserBase extends ImportingParserBase {
         
         return options;
     }
-    
-    /**
-     * @param useInputStream true if parser takes an InputStream, false if it takes a Reader.
-     *  
-     */
-    protected TabularImportingParserBase(Mode mode, DatamodelRunner runner) {
-        super(mode, runner);
-    }
-    
-    protected abstract TableDataReader createTableDataReader(ProjectMetadata metadata, ImportingJob job, Reader reader,
-			ObjectNode options);
 
-    @Override
-    public GridState parseOneFile(ProjectMetadata metadata, ImportingJob job, String fileSource,
-                Reader reader, long limit, ObjectNode options) throws Exception {
+    public GridState parseOneFileInternal(ProjectMetadata metadata, ImportingJob job, String fileSource,
+                TableDataReader dataReader, long limit, ObjectNode options) throws Exception {
         int ignoreLines = JSONUtilities.getInt(options, "ignoreLines", -1);
         int headerLines = JSONUtilities.getInt(options, "headerLines", 1);
         int skipDataLines = JSONUtilities.getInt(options, "skipDataLines", 0);
@@ -110,9 +99,7 @@ abstract public class TabularImportingParserBase extends ImportingParserBase {
         
         List<Object> cellValues = null;
         int rowsWithData = 0;
-        
-        TableDataReader dataReader = createTableDataReader(metadata, job, reader, options);
-        
+
         List<Row> rows = new LinkedList<>();
         ColumnModel columnModel = new ColumnModel(Collections.emptyList());
         while (!job.canceled && (cellValues = dataReader.getNextRowOfCells()) != null) {

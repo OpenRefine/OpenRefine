@@ -41,7 +41,7 @@ import org.slf4j.LoggerFactory;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
-public class LineBasedImporter extends TabularImportingParserBase {
+public class LineBasedImporter extends TabularParserHelper {
     static final Logger logger = LoggerFactory.getLogger(LineBasedImporter.class);
     
     public LineBasedImporter() {
@@ -129,7 +129,7 @@ public class LineBasedImporter extends TabularImportingParserBase {
             }
         };
         
-        TabularImportingParserBase.readTable(project, metadata, job, dataReader, fileSource, limit, options, exceptions);
+        TabularParserHelper.readTable(project, metadata, job, dataReader, fileSource, limit, options, exceptions);
         
         super.parseOneFile(project, metadata, job, fileSource, reader, limit, options, exceptions);
     }
