@@ -64,7 +64,7 @@ import org.openrefine.model.recon.ReconCandidate;
 import org.openrefine.util.JSONUtilities;
 import org.openrefine.util.ParsingUtilities;
 
-public class OdsImporter extends TabularImportingParserBase {
+public class OdsImporter extends TabularParserHelper {
 
     final static Logger logger = LoggerFactory.getLogger("open office");
 
@@ -180,7 +180,7 @@ public class OdsImporter extends TabularImportingParserBase {
                 }
             };
 
-            TabularImportingParserBase.readTable(
+            TabularParserHelper.readTable(
                     project,
                     metadata,
                     job,

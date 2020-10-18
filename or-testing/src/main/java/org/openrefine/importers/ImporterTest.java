@@ -65,7 +65,7 @@ public abstract class ImporterTest extends RefineTest {
     }
 
     protected GridState parseOneFile(ImportingParserBase parser, Reader reader) throws Exception {
-        return parser.parseOneFile(
+        return ((ReaderImporter) parser).parseOneFile(
                 metadata,
                 job,
                 "file-source",
@@ -75,7 +75,7 @@ public abstract class ImporterTest extends RefineTest {
     }
 
     protected GridState parseOneFile(ImportingParserBase parser, InputStream inputStream) throws Exception {
-        return parser.parseOneFile(
+        return ((InputStreamImporter) parser).parseOneFile(
                 metadata,
                 job,
                 "file-source",
@@ -85,7 +85,7 @@ public abstract class ImporterTest extends RefineTest {
     }
 
     protected GridState parseOneFile(ImportingParserBase parser, String sparkURI) throws Exception {
-        return parser.parseOneFile(
+        return ((HDFSImporter) parser).parseOneFile(
                 metadata,
                 job,
                 "file-source",

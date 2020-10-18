@@ -93,7 +93,7 @@ import org.openrefine.model.recon.StandardReconConfig;
 import org.openrefine.model.recon.StandardReconConfig.ColumnDetail;
 import org.openrefine.util.JSONUtilities;
 
-public class WikitextImporter extends TabularImportingParserBase {
+public class WikitextImporter extends TabularParserHelper {
     // static final private Logger logger = LoggerFactory.getLogger(WikitextImporter.class);
 
     public WikitextImporter() {
@@ -745,7 +745,7 @@ public class WikitextImporter extends TabularImportingParserBase {
                 // TODO this does not seem to do anything - maybe we need to pass it to OpenRefine in some other way?
             }
 
-            TabularImportingParserBase.readTable(project, metadata, job, dataReader, fileSource, limit, options, exceptions);
+            TabularParserHelper.readTable(project, metadata, job, dataReader, fileSource, limit, options, exceptions);
 
             // Add reconciliation statistics
             if (dataReader.columnReconciled != null) {

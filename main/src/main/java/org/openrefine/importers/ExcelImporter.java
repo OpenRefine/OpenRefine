@@ -60,35 +60,37 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import org.openrefine.ProjectMetadata;
+import org.openrefine.importers.TabularParserHelper.TableDataReader;
+import org.openrefine.importing.ImportingFileRecord;
 import org.openrefine.importing.ImportingJob;
-import org.openrefine.importing.ImportingUtilities;
 import org.openrefine.model.Cell;
-import org.openrefine.model.Project;
+import org.openrefine.model.DatamodelRunner;
+import org.openrefine.model.GridState;
 import org.openrefine.model.recon.Recon;
 import org.openrefine.model.recon.Recon.Judgment;
 import org.openrefine.model.recon.ReconCandidate;
 import org.openrefine.util.JSONUtilities;
 import org.openrefine.util.ParsingUtilities;
 
-public class ExcelImporter extends TabularImportingParserBase {
+public class ExcelImporter extends InputStreamImporter {
 
     static final Logger logger = LoggerFactory.getLogger(ExcelImporter.class);
 
-    public ExcelImporter() {
-        super(true);
+    public ExcelImporter(DatamodelRunner runner) {
+        super(runner);
     }
 
     @Override
-    public ObjectNode createParserUIInitializationData(
-            ImportingJob job, List<ObjectNode> fileRecords, String format) {
+    public ObjectNode createParserUIInitializationData(ImportingJob job,
+            List<ImportingFileRecord> fileRecords, String format) {
         ObjectNode options = super.createParserUIInitializationData(job, fileRecords, format);
 
         ArrayNode sheetRecords = ParsingUtilities.mapper.createArrayNode();
         JSONUtilities.safePut(options, "sheetRecords", sheetRecords);
         try {
             for (int index = 0; index < fileRecords.size(); index++) {
-                ObjectNode fileRecord = fileRecords.get(index);
-                File file = ImportingUtilities.getFile(job, fileRecord);
+                ImportingFileRecord fileRecord = fileRecords.get(index);
+                File file = fileRecord.getFile(job.getRawDataDir());
                 InputStream is = new FileInputStream(file);
 
                 if (!is.markSupported()) {
@@ -132,15 +134,8 @@ public class ExcelImporter extends TabularImportingParserBase {
     }
 
     @Override
-    public void parseOneFile(
-            Project project,
-            ProjectMetadata metadata,
-            ImportingJob job,
-            String fileSource,
-            InputStream inputStream,
-            int limit,
-            ObjectNode options,
-            List<Exception> exceptions) {
+    public GridState parseOneFile(ProjectMetadata metadata, ImportingJob job, String fileSource,
+            InputStream inputStream, long limit, ObjectNode options) throws Exception {
         Workbook wb = null;
         if (!inputStream.markSupported()) {
             inputStream = new BufferedInputStream(inputStream);
@@ -150,32 +145,28 @@ public class ExcelImporter extends TabularImportingParserBase {
             wb = FileMagic.valueOf(inputStream) == FileMagic.OOXML ? new XSSFWorkbook(inputStream)
                     : new HSSFWorkbook(new POIFSFileSystem(inputStream));
         } catch (IOException e) {
-            exceptions.add(new ImportException(
+            throw new ImportException(
                     "Attempted to parse as an Excel file but failed. " +
                             "Try to use Excel to re-save the file as a different Excel version or as TSV and upload again.",
-                    e));
-            return;
+                    e);
         } catch (ArrayIndexOutOfBoundsException e) {
-            exceptions.add(new ImportException(
+            throw new ImportException(
                     "Attempted to parse file as an Excel file but failed. " +
                             "This is probably caused by a corrupt excel file, or due to the file having previously been created or saved by a non-Microsoft application. "
                             +
                             "Please try opening the file in Microsoft Excel and resaving it, then try re-uploading the file. " +
                             "See https://issues.apache.org/bugzilla/show_bug.cgi?id=48261 for further details",
-                    e));
-            return;
+                    e);
         } catch (IllegalArgumentException e) {
-            exceptions.add(new ImportException(
+            throw new ImportException(
                     "Attempted to parse as an Excel file but failed. " +
                             "Only Excel 97 and later formats are supported.",
-                    e));
-            return;
+                    e);
         } catch (POIXMLException e) {
-            exceptions.add(new ImportException(
+            throw new ImportException(
                     "Attempted to parse as an Excel file but failed. " +
                             "Invalid XML.",
-                    e));
-            return;
+                    e);
         }
 
         ArrayNode sheets = (ArrayNode) options.get("sheets");
@@ -192,47 +183,50 @@ public class ExcelImporter extends TabularImportingParserBase {
             final Sheet sheet = wb.getSheetAt(Integer.parseInt(fileNameAndSheetIndex[1]));
             final int lastRow = sheet.getLastRowNum();
 
-            TableDataReader dataReader = new TableDataReader() {
-
-                int nextRow = 0;
-                Map<String, Recon> reconMap = new HashMap<String, Recon>();
-
-                @Override
-                public List<Object> getNextRowOfCells() throws IOException {
-                    if (nextRow > lastRow) {
-                        return null;
-                    }
-
-                    List<Object> cells = new ArrayList<Object>();
-                    org.apache.poi.ss.usermodel.Row row = sheet.getRow(nextRow++);
-                    if (row != null) {
-                        short lastCell = row.getLastCellNum();
-                        for (short cellIndex = 0; cellIndex < lastCell; cellIndex++) {
-                            Cell cell = null;
-
-                            org.apache.poi.ss.usermodel.Cell sourceCell = row.getCell(cellIndex);
-                            if (sourceCell != null) {
-                                cell = extractCell(sourceCell, reconMap);
-                            }
-                            cells.add(cell);
-                        }
-                    }
-                    return cells;
-                }
-            };
-
-            TabularImportingParserBase.readTable(
+            TabularParserHelper.readTable(
                     project,
                     metadata,
                     job,
                     dataReader,
                     fileSource + "#" + sheet.getSheetName(),
                     limit,
-                    options,
-                    exceptions);
+                    options);
         }
 
         super.parseOneFile(project, metadata, job, fileSource, inputStream, limit, options, exceptions);
+    }
+
+    @Override
+    protected TableDataReader createTableDataReader(ProjectMetadata metadata, ImportingJob job, InputStream inputStream,
+            ObjectNode options) {
+        return new TableDataReader() {
+
+            int nextRow = 0;
+            Map<String, Recon> reconMap = new HashMap<String, Recon>();
+
+            @Override
+            public List<Object> getNextRowOfCells() throws IOException {
+                if (nextRow > lastRow) {
+                    return null;
+                }
+
+                List<Object> cells = new ArrayList<Object>();
+                org.apache.poi.ss.usermodel.Row row = sheet.getRow(nextRow++);
+                if (row != null) {
+                    short lastCell = row.getLastCellNum();
+                    for (short cellIndex = 0; cellIndex < lastCell; cellIndex++) {
+                        Cell cell = null;
+
+                        org.apache.poi.ss.usermodel.Cell sourceCell = row.getCell(cellIndex);
+                        if (sourceCell != null) {
+                            cell = extractCell(sourceCell, reconMap);
+                        }
+                        cells.add(cell);
+                    }
+                }
+                return cells;
+            }
+        };
     }
 
     static protected Serializable extractCell(org.apache.poi.ss.usermodel.Cell cell) {

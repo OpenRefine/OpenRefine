@@ -42,7 +42,7 @@ import org.openrefine.importing.ImportingJob;
 import org.openrefine.model.Project;
 import org.openrefine.util.JSONUtilities;
 
-public class LineBasedImporter extends TabularImportingParserBase {
+public class LineBasedImporter extends TabularParserHelper {
 
     static final Logger logger = LoggerFactory.getLogger(LineBasedImporter.class);
 
@@ -131,7 +131,7 @@ public class LineBasedImporter extends TabularImportingParserBase {
             }
         };
 
-        TabularImportingParserBase.readTable(project, metadata, job, dataReader, fileSource, limit, options, exceptions);
+        TabularParserHelper.readTable(project, metadata, job, dataReader, fileSource, limit, options, exceptions);
 
         super.parseOneFile(project, metadata, job, fileSource, reader, limit, options, exceptions);
     }

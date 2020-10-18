@@ -23,10 +23,10 @@ import org.openrefine.model.SparkDatamodelRunner;
 import org.openrefine.model.SparkGridState;
 import org.openrefine.util.JSONUtilities;
 
-public abstract class SparkImportingParserBase extends ImportingParserBase {
+public abstract class SparkImportingParserBase extends HDFSImporter {
 
     protected SparkImportingParserBase(SparkDatamodelRunner runner) {
-        super(Mode.SparkURI, runner);
+        super(runner);
     }
 
     /**

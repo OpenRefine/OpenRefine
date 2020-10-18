@@ -54,21 +54,27 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.apache.commons.lang3.StringEscapeUtils;
 
 import org.openrefine.ProjectMetadata;
+import org.openrefine.importers.TabularParserHelper.TableDataReader;
 import org.openrefine.importing.ImportingFileRecord;
 import org.openrefine.importing.ImportingJob;
 import org.openrefine.model.DatamodelRunner;
+import org.openrefine.model.GridState;
 import org.openrefine.util.JSONUtilities;
 
-public class SeparatorBasedImporter extends TabularImportingParserBase {
+public class SeparatorBasedImporter extends ReaderImporter {
+
+    private final TabularParserHelper tabularParserHelper;
 
     public SeparatorBasedImporter(DatamodelRunner runner) {
-        super(Mode.Reader, runner);
+        super(runner);
+        tabularParserHelper = new TabularParserHelper(runner);
     }
 
     @Override
     public ObjectNode createParserUIInitializationData(ImportingJob job,
             List<ImportingFileRecord> fileRecords, String format) {
         ObjectNode options = super.createParserUIInitializationData(job, fileRecords, format);
+        tabularParserHelper.createParserUIInitializationData(options);
 
         String separator = guessSeparator(job, fileRecords);
         JSONUtilities.safePut(options, "separator", separator != null ? separator : "\\t");
@@ -81,6 +87,12 @@ public class SeparatorBasedImporter extends TabularImportingParserBase {
     }
 
     @Override
+    public GridState parseOneFile(ProjectMetadata metadata, ImportingJob job, String fileSource, Reader reader,
+            long limit, ObjectNode options) throws Exception {
+        TableDataReader dataReader = createTableDataReader(metadata, job, reader, options);
+        return tabularParserHelper.parseOneFileInternal(metadata, job, fileSource, dataReader, limit, options);
+    }
+
     public TableDataReader createTableDataReader(
             ProjectMetadata metadata,
             ImportingJob job,
