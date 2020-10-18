@@ -98,4 +98,5 @@ public class ImportingUtilitiesTests extends ImporterTest {
         Assert.assertEquals(ImportingUtilities.extractFilenameFromSparkURI("hdfs:///data/records"), "records");
         Assert.assertNull(ImportingUtilities.extractFilenameFromSparkURI("////"));
     }
+
 }
