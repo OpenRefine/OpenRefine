@@ -16,7 +16,6 @@ module.exports = {
       items: ['manual/transforming', 'manual/cellediting','manual/columnediting','manual/transposing'],
     },
       'manual/reconciling',
-      'manual/expressions',
       'manual/wikidata',
       'manual/expressions',
       'manual/exporting',

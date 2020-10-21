@@ -154,7 +154,7 @@ The `cells` object is used to call information from the columns in your project.
 
 A `cell` object contains all the data of a cell and is stored as a single object that has two fields.
 
-You can use `cell` on its own in the expressions editor to copy all the contents of a column to another column, including reconciliation information. Although the preview in the expressions editor will only show a small representation [object Cell], it will actually copy all the cell's data. Try this with <span class="menuItems">Edit Column</span> -> <span class="menuItems">Add Column based on this column ...</span>.
+You can use `cell` on its own in the expressions editor to copy all the contents of a column to another column, including reconciliation information. Although the preview in the expressions editor will only show a small representation [object Cell], it will actually copy all the cell's data. Try this with <span class="menuItems">Edit Column</span> → <span class="menuItems">Add Column based on this column ...</span>.
 
 |Field name |Meaning |Member fields |
 |-|-|-|
@@ -290,10 +290,15 @@ The toString function will work on any value type (string, number, date, boolean
 You can also use toString to convert numbers to strings with rounding, using the string format argument. For example, using the expression `value.toString("%.0f")` on a column:
 
 |Input|Output|
+
 |-|-|
+
 |3.2|3|
+
 |0.8|1|
+
 |0.15|0|
+
 |100.0|100|
 
 You can also convert dates to strings, with something such as `value.toString("MMM-dd-yyyy")`. With this expression, the date value [2024-10-15T00:00:00Z]  would be converted to “Oct-15-2024”.
@@ -321,7 +326,7 @@ Returns boolean indicating whether s contains sub. For example, "food".contains(
 
 ###### indexOf(string s, string sub)
 
-Returns integer indicating position of sub within s or -1 if sub is not found. For example, "food".indexOf("food", "oo") returns 2, whereas "food".indexOf("food", "ee") returns -1.
+Returns integer indicating position of sub within s or -1 if sub is not found. For example, "food".indexOf("oo") returns 2, whereas "food".indexOf("ee") returns -1.
 
 Returning -1 is equivalent to returning boolean false, which is very useful for finding strings that do **NOT** contain sub.
 
@@ -350,19 +355,20 @@ Returns s converted into titlecase. For example, toTitlecase("Once upon a midnig
 ##### Trimming
 
 
-###### trim(string s) and 
+###### trim(string s) 
 
-Returns a copy of the string with leading and trailing whitespace removed. For example, trim(" island ") returns the string “island”.
+Returns a copy of the string with leading and trailing whitespace removed. For example, " island ".trim() returns the string “island”.
 
 
 ###### strip(string s)
 
-Returns a copy of the string, with leading and trailing whitespace removed. For example, striptrim(" island ") returns the string “island”. Identical to trim().
+Returns a copy of the string with leading and trailing whitespace removed. For example, " island ".strip() returns the string “island”. Identical to trim().
 
 
 ###### chomp(string s, string sep)
 
-Returns a copy of s with sep removed from the end if s ends with sep; otherwise, just returns s. For example, chomp("hardly", "ly") and chomp("hard", "ly") both return the string hard.
+Returns a copy of s with sep removed from the end if s ends with sep; otherwise, just returns s. For example, "hardly".chomp("ly") and "hard".chomp("ly") both return the string hard.
+
 
 
 ### Controls
