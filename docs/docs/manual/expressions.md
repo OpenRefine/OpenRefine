@@ -133,7 +133,7 @@ Most of the OpenRefine-specific variables have attributes: aspects of the variab
 
 The `row` variable itself is best used to access its member fields, which you can do using either a dot operator or square brackets: `row.index` or `row["index"]`.
 
-|Member field name |Meaning |
+|Field |Meaning |
 |-|-|
 | row.index | The index value of the current row (the first row is 0) |
 | row.cells | The cells of the row, returned as an array |
@@ -156,7 +156,7 @@ A `cell` object contains all the data of a cell and is stored as a single object
 
 You can use `cell` on its own in the expressions editor to copy all the contents of a column to another column, including reconciliation information. Although the preview in the expressions editor will only show a small representation [object Cell], it will actually copy all the cell's data. Try this with <span class="menuItems">Edit Column</span> → <span class="menuItems">Add Column based on this column ...</span>.
 
-|Field name |Meaning |Member fields |
+|Field |Meaning |Member fields |
 |-|-|-|
 | cell | An object containing the entire contents of the cell | .value, .recon, .errorMessage |
 | cell.value | The value in the cell, which can be a string, a number, a boolean, null, or an error |  |
@@ -167,7 +167,7 @@ You can use `cell` on its own in the expressions editor to copy all the contents
 
 Several of the fields here are equivalent to what can be used through [reconciliation facets](reconciling#reconciliation-facets). You must type `cell.recon`; `recon` on its own will not work.
 
-|Field name |Meaning |Member fields |
+|Field|Meaning |Member fields |
 |-|-|-|
 | cell.recon.judgment | A string, either "matched", "new", "none" |  |
 | cell.recon.judgmentAction | A string, either "single" or "similar" (or "unknown") |  |
@@ -193,7 +193,7 @@ forEach(cell.recon.candidates,v,v.name).join("; ")
 
 A `row.record` object encapsulates one or more rows that are grouped together, when your project is in records mode. You must call it as `row.record`; `record` will not return values. 
 
-|Field name |Meaning |
+|Field|Meaning |
 |-|-|
 | row.record.index | The index of the current record (starting at 0) |
 | row.record.cells | The cells of the row |
@@ -255,22 +255,22 @@ For the reference below, the function is given in full-length notation and the i
 #### Boolean functions
 
 
-###### and(boolean b1, boolean b2, ...etc)
+###### and(b1, b2, ...etc)
 
 Uses the logical operator AND on two or more booleans to yield a boolean. Evaluates multiple statements into booleans, then returns true if all of the statements are true. For example, `and(1 < 3, 1 < 0)` returns false because one condition is true and one is false.
 
 
-###### or(boolean b1, boolean b2, ...etc)
+###### or(b1, b2, ...etc)
 
 Uses the logical operator OR on two or more booleans to yield a boolean. For example, `or(1 < 3, 1 > 7)` returns true because at least one of the conditions (the first one) is true.
 
 
-###### not(boolean b)
+###### not(b)
 
 Uses the logical operator NOT on a boolean to yield a boolean. For example, `not(1 > 7)` returns true because 1 > 7 itself is false.
 
 
-###### xor(boolean b1, boolean b2, ...etc)
+###### xor(b1, b2, ...etc)
 
 Uses the logical operator XOR (exclusive-or) on two or more booleans to yield a boolean. Evaluates multiple statements, then returns true if only one of them is true. For example, `xor(1 < 3, 1 < 7)` returns false because more than one of the conditions is true.
 
@@ -278,7 +278,7 @@ Uses the logical operator XOR (exclusive-or) on two or more booleans to yield a 
 #### String functions
 
 
-###### length(string s)
+###### length(s)
 
 Returns the length of s as a number.
 
@@ -290,15 +290,10 @@ The toString function will work on any value type (string, number, date, boolean
 You can also use toString to convert numbers to strings with rounding, using the string format argument. For example, using the expression `value.toString("%.0f")` on a column:
 
 |Input|Output|
-
 |-|-|
-
 |3.2|3|
-
 |0.8|1|
-
 |0.15|0|
-
 |100.0|100|
 
 You can also convert dates to strings, with something such as `value.toString("MMM-dd-yyyy")`. With this expression, the date value [2024-10-15T00:00:00Z]  would be converted to “Oct-15-2024”.
@@ -309,65 +304,59 @@ Note: In OpenRefine, using toString() on a null cell outputs the string "null".
 ##### Testing String Characteristics
 
 
-###### startsWith(string s, string sub)
+###### startsWith(s, sub)
 
-Returns a boolean indicating whether s starts with sub. For example, “food”.startsWith("foo") returns true, whereas “food”.startsWith("bar") returns false. 
+Returns a boolean indicating whether string s starts with string sub. For example, “food”.startsWith("foo") returns true, whereas “food”.startsWith("bar") returns false. 
 
 
-###### endsWith(string s, string sub)
+###### endsWith(s, sub)
 
 Returns boolean indicating whether s ends with sub. For example, "food".endsWith("ood") returns true, whereas “food”.endsWith("odd") returns false. 
 
 
-###### contains(string s, string sub)
+###### contains(s, sub)
 
 Returns boolean indicating whether s contains sub. For example, "food".contains("oo") returns true whereas "food".contains("ee") returns false.
 
 
-###### indexOf(string s, string sub)
+###### indexOf(s, sub)
 
-Returns integer indicating position of sub within s or -1 if sub is not found. For example, "food".indexOf("oo") returns 2, whereas "food".indexOf("ee") returns -1.
-
-Returning -1 is equivalent to returning boolean false, which is very useful for finding strings that do **NOT** contain sub.
-
+Returns integer indicating the starting position of sub within string s, or -1 if sub is not found. For example, "food".indexOf("oo") returns 2, whereas "food".indexOf("ee") returns "-1". Returning "-1" is equivalent to returning a boolean false, which is very useful for finding strings that do not contain sub.
 
 ##### Basic String Modification
 
-
 ##### Case Conversion
 
+###### toLowercase(s)
 
-###### toLowercase(string s)
-
-Returns s converted to all lowercase characters.
-
-
-###### toUppercase(string s)
-
-Returns s converted to all uppercase characters.
+Returns string s converted to all lowercase characters.
 
 
-###### toTitlecase(string s)
+###### toUppercase(s)
 
-Returns s converted into titlecase. For example, toTitlecase("Once upon a midnight dreary") returns the string “Once Upon A Midnight Dreary”.
+Returns string s converted to all uppercase characters.
+
+
+###### toTitlecase(s)
+
+Returns string s converted into titlecase. For example, "Once upon a midnight dreary".toTitlecase() returns the string “Once Upon A Midnight Dreary”.
 
 
 ##### Trimming
 
 
-###### trim(string s) 
+###### trim(s) 
 
-Returns a copy of the string with leading and trailing whitespace removed. For example, " island ".trim() returns the string “island”.
-
-
-###### strip(string s)
-
-Returns a copy of the string with leading and trailing whitespace removed. For example, " island ".strip() returns the string “island”. Identical to trim().
+Returns a copy of the string s with leading and trailing whitespace removed. For example, " island ".trim() returns the string “island”.
 
 
-###### chomp(string s, string sep)
+###### strip(s)
 
-Returns a copy of s with sep removed from the end if s ends with sep; otherwise, just returns s. For example, "hardly".chomp("ly") and "hard".chomp("ly") both return the string hard.
+Returns a copy of the string s with leading and trailing whitespace removed. For example, " island ".strip() returns the string “island”. Identical to trim().
+
+###### chomp(s, sep)
+
+Returns a copy of string s with the string sep removed from the end if s ends with sep; otherwise, just returns s. For example, "hardly".chomp("ly") and "hard".chomp("ly") both return the string hard.
 
 
 
