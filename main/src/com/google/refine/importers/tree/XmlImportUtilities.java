@@ -613,8 +613,11 @@ public class XmlImportUtilities extends TreeImportUtilities {
                     if(trimStrings) {
                         text = text.trim();
                     }
-                    addCell(project, thisColumnGroup, record, colName, text, 
-                            storeEmptyStrings, guessDataType);
+                    // Issue #1095 : Preventing addition of empty cells containing whitespaces in the table
+                    if (!text.trim().isEmpty()) {
+                        addCell(project, thisColumnGroup, record, colName, text,
+                                storeEmptyStrings, guessDataType);
+                    }
                 } else {
                     addCell(project, thisColumnGroup, record, colName, value);
                 }

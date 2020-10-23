@@ -553,6 +553,42 @@ public class XmlImportUtilitiesTests extends RefineTest {
 
     }
 
+    /**
+     * Validates the output records data with Input as Xml containing whitespaces
+     *
+     * Fix: Issue#1095 :: Open XML file from URL generates lots of empty lines
+     */
+    @Test
+    public void processRecordsFromXmlWithWhiteSpacesTest() {
+        loadData("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
+                "<library>\n" +
+                "\t<author id=\"1\">\n" +
+                "\t<author-name>Name1</author-name>\n" +
+                "\t<author-dob>1999</author-dob>\n" +
+                "\t</author>\n" +
+                "\t<author id=\"2\">\n" +
+                "\t<author-name>Name 2</author-name>\n" +
+                "\t<author-dob>1998</author-dob>\n" +
+                "\t</author>\n" +
+                "</library>");
+        createXmlParser();
+        ParserSkip();
+        try {
+            SUT.processRecordWrapper(project, parser, columnGroup, false, false, false);
+        } catch (Exception e) {
+            Assert.fail("Failed to parse records from the given XML Data. Reason: " + e.getMessage(), e);
+        }
+        Assert.assertNotNull(project.rows, "Checks the record count of project");
+        Assert.assertEquals(project.rows.size(), 2, "Checks the number of records parsed from Xml");
+        Row row = project.rows.get(0);
+        Assert.assertNotNull(row, "Checks the row instance with index '0'");
+        Assert.assertEquals(row.cells.size(), 3, "Checks the row cells count");
+        Assert.assertNotNull(row.getCell(1), "Checks the cell instance at index '1'");
+        Assert.assertEquals(row.getCell(1).value, "Name1", "Checks the value for 'author-name'");
+        Assert.assertNotNull(row.getCell(2), "Checks the cell instance at index '2'");
+        Assert.assertEquals(row.getCell(2).value, "1999", "Checks the value for 'author-dob'");
+    }
+
     //----------------helpers-------------
     public void loadSampleXml(){
         loadData( XmlImporterTests.getSample() );
