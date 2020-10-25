@@ -39,9 +39,6 @@ import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
 import com.google.refine.RefineTest;
-import com.google.refine.clustering.binning.FingerprintKeyer;
-import com.google.refine.clustering.binning.Keyer;
-import com.google.refine.clustering.binning.NGramFingerprintKeyer;
 
 
 public class KeyerTests extends RefineTest {
@@ -87,6 +84,8 @@ public class KeyerTests extends RefineTest {
         {"\u0174\u0175", "ww"},
         {"\u00DD\u00FD\u00FF\u0176\u0177\u0178", "yyyyyy"},
         {"\u0179\u017A\u017B\u017C\u017D\u017E", "zzzzzz"},
+        // Various forms of Unicode whitespace characters - NBSP, em space, en space, etc
+        {"a\u0009\nb\u000Bc\u000Cd\re\u0085f\u00A0g\u1680h\u2000i\u2001j\u2002k\u2003l\u2004m\u2005n\u2006o\u2007p\u2008q\u2009r\u200As\u2028t\u2029u\u202Fv\u205Fw\u3000z","a b c d e f g h i j k l m n o p q r s t u v w z"},
         // Latin-1 Supplement
         {//"€‚ƒ„…†‡ˆ‰Š‹ŒŽ‘’“”•–—˜™š›œžŸ " + // These are all considered control characters
          //"¡¢£¤¥¦§¨©ª«¬­®¯°±²³´µ¶·¸¹º»¼½¾¿" // punctuation
@@ -121,8 +120,12 @@ public class KeyerTests extends RefineTest {
 
     private static final String[][] testNGramStrings = {
         {"abcdefg","abbccddeeffg"},
+        {"gfedcba","bacbdcedfegf"},
+        {"a b c d e f g","abbccddeeffg"},
         {" a,b.c d\te!f?g ","abbccddeeffg"},
         {"écÉCec","ceec"},
+        // All the whitespace characters below should be skipped
+        {"a\u0009\nb\u000Bc\u000Cd\re\u0085f\u00A0g\u1680h\u2000i\u2001j\u2002k\u2003l\u2004m\u2005n\u2006o\u2007p\u2008q\u2009r\u200As\u2028t\u2029u\u202Fv\u205Fw\u3000z","abbccddeeffgghhiijjkkllmmnnooppqqrrssttuuvvwwz"},
         {"",""}, //TODO: add more test cases
         {"",""},
     };
