@@ -64,8 +64,8 @@ public class NGramFingerprintKeyer extends FingerprintKeyer {
     /**
      * Generate a stream of sorted unique character N-grams from a string
      * 
-     * @param String to generate N-grams from
-     * @param number of characters per N-gram
+     * @param s String to generate N-grams from
+     * @param size number of characters per N-gram
      * @return a stream of sorted unique N-gram Strings
      */
     protected Stream<String> sorted_ngrams(String s, int size) {
