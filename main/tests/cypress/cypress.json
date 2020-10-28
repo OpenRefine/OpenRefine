@@ -1,0 +1,8 @@
+{
+	"integrationFolder": "./cypress/integration",
+	"nodeVersion": "system",
+	"retries": {
+		"runMode": 0,
+		"openMode": 0
+	}
+}

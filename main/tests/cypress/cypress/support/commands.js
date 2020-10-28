@@ -1,0 +1,84 @@
+// ***********************************************
+// This example commands.js shows you how to
+// create various custom commands and overwrite
+// existing commands.
+//
+// For more comprehensive examples of custom
+// commands please read more here:
+// https://on.cypress.io/custom-commands
+// ***********************************************
+
+import 'cypress-file-upload';
+import 'cypress-wait-until';
+// const fs = require('fs-extra');
+// var uniqid = require('uniqid');
+//
+//
+
+Cypress.Commands.add('visitOpenRefine', (options) => {
+	cy.visit(Cypress.env('OPENREFINE_URL'), options);
+});
+
+Cypress.Commands.add('getCell', (rowIndex, columnName) => {
+	const cssRowIndex = rowIndex + 1;
+	// first get the header, to know the cell index
+	cy.get(`table.data-table thead th[title="${columnName}"]`).then(($elem) => {
+		// there are 3 td at the beginning of each row
+		const columnIndex = $elem.index() + 3;
+		return cy.get(`table.data-table tbody tr:nth-child(${cssRowIndex}) td:nth-child(${columnIndex})`);
+	});
+});
+
+Cypress.Commands.add('assertCellEquals', (rowIndex, columnName, value) => {
+	const cssRowIndex = rowIndex + 1;
+	// first get the header, to know the cell index
+	cy.get(`table.data-table thead th[title="${columnName}"]`).then(($elem) => {
+		// there are 3 td at the beginning of each row
+		const columnIndex = $elem.index() + 3;
+		cy.get(`table.data-table tbody tr:nth-child(${cssRowIndex}) td:nth-child(${columnIndex}) div`).contains(value, { timeout: 5000 });
+	});
+});
+
+Cypress.Commands.add('navigateTo', (target) => {
+	cy.get('#action-area-tabs li').contains(target).click();
+});
+
+Cypress.Commands.add('waitForOrOperation', () => {
+	cy.get('body[ajax_in_progress="true"]');
+	cy.get('body[ajax_in_progress="false"]');
+});
+
+Cypress.Commands.add('deleteColumn', (columnName) => {
+	cy.get('.data-table th[title="' + columnName + '"]').should('exist');
+	cy.columnActionClick(columnName, ['Edit column', 'Remove this column']);
+	cy.get('.data-table th[title="' + columnName + '"]').should('not.exist');
+});
+
+Cypress.Commands.add('waitForDialogPanel', () => {
+	cy.get('body > .dialog-container > .dialog-frame').should('be.visible');
+});
+
+Cypress.Commands.add('confirmDialogPanel', () => {
+	cy.get('body > .dialog-container > .dialog-frame .dialog-footer button[bind="okButton"]').click();
+	cy.get('body > .dialog-container > .dialog-frame').should('not.be.visible');
+});
+
+Cypress.Commands.add('columnActionClick', (columnName, actions) => {
+	cy.get('.data-table th:contains("' + columnName + '") .column-header-menu').click();
+
+	for (var i = 0; i < actions.length; i++) {
+		cy.get('body > .menu-container').eq(i).contains(actions[i]).click();
+	}
+	cy.get('body[ajax_in_progress="false"]');
+});
+
+Cypress.Commands.add('visitProject', (projectId) => {
+	cy.visit(Cypress.env('OPENREFINE_URL') + '/project?project=' + projectId);
+	cy.get('#project-title').should('exist');
+});
+
+Cypress.Commands.add('loadAndVisitProject', (fixture, projectName = Date.now()) => {
+	cy.loadProject(fixture, projectName).then((projectId) => {
+		cy.visit(Cypress.env('OPENREFINE_URL') + '/project?project=' + projectId);
+	});
+});

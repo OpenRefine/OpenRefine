@@ -1,0 +1,11 @@
+{
+	"dependencies": {
+		"cypress": "5.5.0",
+		"cypress-dotenv": "^1.2.2",
+		"cypress-file-upload": "^4.1.1",
+		"cypress-wait-until": "^1.7.1",
+		"dotenv": "^8.2.0",
+		"fs-extra": "^9.0.1",
+		"uniqid": "^5.2.0"
+	}
+}
