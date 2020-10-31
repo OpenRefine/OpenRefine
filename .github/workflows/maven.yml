@@ -50,7 +50,7 @@ jobs:
     - name: Upload Release Asset Windows
       id: upload-release-asset-win
       if: github.repository == 'OpenRefine/OpenRefine'
-      uses: actions/upload-release-asset@v1.0.1
+      uses: actions/upload-release-asset@v1.0.2
       env:
         GITHUB_TOKEN: ${{ secrets.RELEASE_REPO_TOKEN }}
       with:
@@ -62,7 +62,7 @@ jobs:
     - name: Upload Release Asset Linux
       id: upload-release-asset-linux
       if: github.repository == 'OpenRefine/OpenRefine'
-      uses: actions/upload-release-asset@v1.0.1
+      uses: actions/upload-release-asset@v1.0.2
       env:
         GITHUB_TOKEN: ${{ secrets.RELEASE_REPO_TOKEN }}
       with:
@@ -74,7 +74,7 @@ jobs:
     - name: Upload Release Asset Mac
       id: upload-release-asset-mac
       if: github.repository == 'OpenRefine/OpenRefine'
-      uses: actions/upload-release-asset@v1.0.1
+      uses: actions/upload-release-asset@v1.0.2
       env:
         GITHUB_TOKEN: ${{ secrets.RELEASE_REPO_TOKEN }}
       with:
