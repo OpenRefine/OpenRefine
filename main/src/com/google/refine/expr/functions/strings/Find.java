@@ -55,10 +55,8 @@ public class Find implements Function {
             }
             
             if (s != null && p != null && p instanceof Pattern) {
-                
-                Pattern pattern = (p instanceof String) ? Pattern.compile((String) p) : (Pattern) p;
 
-                Matcher matcher = pattern.matcher(s.toString());
+                Matcher matcher = p.matcher(s.toString());
                 
                 while (matcher.find()) {
                     allMatches.add(matcher.group());
@@ -72,7 +70,7 @@ public class Find implements Function {
     
     @Override
     public String getDescription() {
-        return "Returns all the occurances of match given regular expression";
+        return "Returns all the occurances of match given regular expression or simple string";
     }
     
     @Override
