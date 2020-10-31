@@ -56,7 +56,7 @@ public class Find implements Function {
             
             if (s != null && p != null && p instanceof Pattern) {
 
-                Matcher matcher = p.matcher(s.toString());
+                Matcher matcher = (Pattern)p.matcher(s.toString());
                 
                 while (matcher.find()) {
                     allMatches.add(matcher.group());
