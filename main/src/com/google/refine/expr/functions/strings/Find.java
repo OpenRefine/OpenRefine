@@ -55,7 +55,6 @@ public class Find implements Function {
             }
             
             if (s != null && p != null && p instanceof Pattern) {
-
                 Pattern pattern = (Pattern) p;
                 Matcher matcher = pattern.matcher(s.toString());
                 
@@ -71,7 +70,7 @@ public class Find implements Function {
     
     @Override
     public String getDescription() {
-        return "Returns all the occurances of match given regular expression or simple string";
+        return "Returns all the occurrences of match given regular expression or simple string";
     }
     
     @Override

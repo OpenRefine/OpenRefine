@@ -75,7 +75,7 @@ public class FindTests extends RefineTest {
     
     @Test
     public void serializeFind() {
-        String json = "{\"description\":\"Returns all the occurances of match given regular expression\",\"params\":\"string or regexp\",\"returns\":\"array of strings\"}";
+        String json = "{\"description\":\"Returns all the occurrences of match given regular expression or simple string\",\"params\":\"string or regexp\",\"returns\":\"array of strings\"}";
         TestUtils.isSerializedTo(new Find(), json);
     }
 }
