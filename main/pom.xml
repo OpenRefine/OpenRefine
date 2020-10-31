@@ -136,7 +136,7 @@
     <plugin>
         <groupId>pl.project13.maven</groupId>
         <artifactId>git-commit-id-plugin</artifactId>
-        <version>4.0.0</version> <!-- WARNING: 4.0.1 and higher don't work for JSON output -->
+        <version>4.0.2</version> <!-- WARNING: 4.0.1 and higher don't work for JSON output -->
         <executions>
             <execution>
                 <id>get-the-git-infos</id>
