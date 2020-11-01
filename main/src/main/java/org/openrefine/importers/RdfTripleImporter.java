@@ -33,12 +33,14 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package org.openrefine.importers;
 
-import java.io.InputStream;
+import java.io.Reader;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.LinkedHashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
+import java.util.stream.Collectors;
 
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
@@ -49,14 +51,15 @@ import org.openrefine.expr.ExpressionUtils;
 import org.openrefine.importing.ImportingJob;
 import org.openrefine.model.Cell;
 import org.openrefine.model.ColumnMetadata;
-import org.openrefine.model.ModelException;
-import org.openrefine.model.Project;
+import org.openrefine.model.ColumnModel;
+import org.openrefine.model.DatamodelRunner;
+import org.openrefine.model.GridState;
 import org.openrefine.model.Row;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 
-public class RdfTripleImporter extends ImportingParserBase {
+public class RdfTripleImporter extends ReaderImporter {
     private Mode mode;
     
     public enum Mode {
@@ -67,101 +70,116 @@ public class RdfTripleImporter extends ImportingParserBase {
         JSONLD
     }
 
-    public RdfTripleImporter() {
-        this(Mode.NT);
+    public RdfTripleImporter(DatamodelRunner runner) {
+        this(runner, Mode.NT);
     }
     
-    public RdfTripleImporter(Mode mode) {
-        super(true);
+    public RdfTripleImporter(DatamodelRunner runner, Mode mode) {
+        super(runner);
         this.mode = mode;
     }
 
-    public void parseOneFile(Project project, ProjectMetadata metadata, ImportingJob job, String fileSource,
-            InputStream input, int limit, ObjectNode options, List<Exception> exceptions) {
+	@Override
+	public GridState parseOneFile(ProjectMetadata metadata, ImportingJob job, String fileSource, Reader input,
+			long limit, ObjectNode options) throws Exception {
         // create an empty model
         Model model = ModelFactory.createDefaultModel();
 
-        try {
-            switch (mode) {
-            case NT:
-                model.read(input, null, "NT");
-                break;
-            case N3:
-                model.read(input, null, "N3");
-                break;
-            case TTL:
-                model.read(input, null, "TTL");
-                break;
-            case JSONLD:
-                model.read(input, null, "JSON-LD");
-                break;
-            case RDFXML:
-                model.read(input, null);            
-                break;
-            default:
-                throw new IllegalArgumentException("Unknown parsing mode");    
-            }
-        } catch (Exception e) {
-            exceptions.add(e);
-            return;
+        switch (mode) {
+        case NT:
+            model.read(input, null, "NT");
+            break;
+        case N3:
+            model.read(input, null, "N3");
+            break;
+        case TTL:
+            model.read(input, null, "TTL");
+            break;
+        case JSONLD:
+            model.read(input, null, "JSON-LD");
+            break;
+        case RDFXML:
+            model.read(input, null);            
+            break;
+        default:
+            throw new IllegalArgumentException("Unknown parsing mode");    
         }
 
-      StmtIterator triples = model.listStatements();
-      
-      try {
-          Map<String, List<Row>> subjectToRows = new LinkedHashMap<String, List<Row>>();
-          ColumnMetadata subjectColumn = new ColumnMetadata(project.columnModel.allocateNewCellIndex(), "subject");
-          project.columnModel.addColumn(0, subjectColumn, false);
-          project.columnModel.setKeyColumnIndex(0);
-          
-          while (triples.hasNext()) {
-              Statement triple = triples.nextStatement();
-              String subject = triple.getSubject().toString();
-              String predicate = triple.getPredicate().toString();
-              String object = triple.getObject().toString();
-
-              ColumnMetadata column = project.columnModel.getColumnByName(predicate);
-              if (column == null) {
-                  column = new ColumnMetadata(project.columnModel.allocateNewCellIndex(), predicate);
-                  project.columnModel.addColumn(-1, column, true);
-              }
-
-              int cellIndex = column.getCellIndex();
-              if (subjectToRows.containsKey(subject)) {
-                  List<Row> rows = subjectToRows.get(subject);
-                  for (Row row : rows) {
-                      if (!ExpressionUtils.isNonBlankData(row.getCellValue(cellIndex))) {
-                          row.setCell(cellIndex, new Cell(object, null));
-                          object = null;
-                          break;
-                      }
-                  }
-
-                  if (object != null) {
-                      Row row = new Row(project.columnModel.getMaxCellIndex() + 1);
-                      rows.add(row);
-
-                      row.setCell(cellIndex, new Cell(object, null));
-                  }
-              } else {
-                  List<Row> rows = new ArrayList<Row>();
-                  subjectToRows.put(subject, rows);
-
-                  Row row = new Row(project.columnModel.getMaxCellIndex() + 1);
-                  rows.add(row);
-
-                  row.setCell(subjectColumn.getCellIndex(), new Cell(subject, null));
-                  row.setCell(cellIndex, new Cell(object, null));
-              }
-          }
-
-          for (Entry<String, List<Row>> entry : subjectToRows.entrySet()) {
-              project.rows.addAll(entry.getValue());
-          }
-      } catch (ModelException e) {
-          exceptions.add(e);
-      } 
-      
-      super.parseOneFile(project, metadata, job, fileSource, input, limit, options, exceptions);
+	    StmtIterator triples = model.listStatements();
+	  
+	    Map<String, EntityRecord> subjectToRows = new LinkedHashMap<>();
+	    ColumnModel columnModel = new ColumnModel(Collections.singletonList(new ColumnMetadata("subject")));
+	  
+	    while (triples.hasNext()) {
+	        Statement triple = triples.nextStatement();
+	        String subject = triple.getSubject().toString();
+	        String predicate = triple.getPredicate().toString();
+	        String object = triple.getObject().toString();
+	
+	        int cellIndex = columnModel.getColumnIndexByName(predicate);
+	        if (cellIndex == -1) {
+	       	    cellIndex = columnModel.getColumns().size();
+	            columnModel = columnModel.appendUnduplicatedColumn(new ColumnMetadata(predicate));
+	        }
+	
+	        EntityRecord entityRecord = subjectToRows.get(subject);
+	        if (entityRecord == null) {
+	        	entityRecord = new EntityRecord(subject);
+	        	subjectToRows.put(subject, entityRecord);
+	        }
+	        entityRecord.addValue(predicate, object);
+	    }
+	
+	    List<ColumnMetadata> columns = columnModel.getColumns();
+	    List<Row> rows = subjectToRows
+			  .entrySet()
+			  .stream()
+			  .flatMap(entry -> entry.getValue().toRows(columns).stream())
+			  .collect(Collectors.toList());
+	  
+	    return runner.create(columnModel, rows, Collections.emptyMap());
     }
+	
+	private class EntityRecord {
+		protected String subject;
+		protected Map<String, List<String>> values;
+		protected int maxNbValues = 1;
+		
+		protected EntityRecord(String subject) {
+			this.subject = subject;
+			this.values = new LinkedHashMap<>();
+		}
+		
+		protected void addValue(String predicate, String value) {
+			List<String> predicateValues = values.get(predicate);
+			if (predicateValues == null) {
+				predicateValues = new LinkedList<>();
+				values.put(predicate, predicateValues);
+			}
+			predicateValues.add(value);
+			maxNbValues = Integer.max(predicateValues.size(), maxNbValues);
+		}
+		
+		protected List<Row> toRows(List<ColumnMetadata> columns) {
+			List<Row> rows = new ArrayList<>(maxNbValues);
+			for (int i = 0; i != maxNbValues; i++) {
+				List<Cell> cells = new ArrayList<>(columns.size());
+				for (int j = 0; j != columns.size(); j++) {
+					if (j == 0) {
+						cells.add(i == 0 ? new Cell(subject, null) : null);
+					} else {
+						List<String> predicateValues = values.get(columns.get(j).getName());
+						String currentValue = null;
+						if (predicateValues != null && predicateValues.size() > i) {
+							currentValue = predicateValues.get(i);
+						}
+						cells.add(new Cell(currentValue, null));
+					}
+				}
+				rows.add(new Row(cells));
+			}
+			return rows;
+		}
+	}
+
 }

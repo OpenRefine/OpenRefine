@@ -34,19 +34,26 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package org.openrefine.importers.tree;
 
 import java.io.File;
-import java.io.IOException;
 import java.io.InputStream;
-import java.io.Reader;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang.NotImplementedException;
 import org.openrefine.ProjectMetadata;
 import org.openrefine.importers.ImporterUtilities;
-import org.openrefine.importers.ImportingParserBase;
 import org.openrefine.importers.ImporterUtilities.MultiFileReadingProgress;
+import org.openrefine.importers.ImportingParserBase;
+import org.openrefine.importers.tree.TreeImportUtilities.ColumnIndexAllocator;
+import org.openrefine.importing.ImportingFileRecord;
 import org.openrefine.importing.ImportingJob;
-import org.openrefine.importing.ImportingUtilities;
-import org.openrefine.model.Project;
+import org.openrefine.model.Cell;
+import org.openrefine.model.ColumnMetadata;
+import org.openrefine.model.ColumnModel;
+import org.openrefine.model.DatamodelRunner;
+import org.openrefine.model.GridState;
+import org.openrefine.model.Row;
 import org.openrefine.util.JSONUtilities;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -57,13 +64,13 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
  */
 abstract public class TreeImportingParserBase extends ImportingParserBase {
 
-    protected TreeImportingParserBase(final boolean useInputStream) {
-        super(useInputStream);
+    protected TreeImportingParserBase(DatamodelRunner runner) {
+        super(runner);
     }
     
     @Override
     public ObjectNode createParserUIInitializationData(ImportingJob job,
-            List<ObjectNode> fileRecords, String format) {
+            List<ImportingFileRecord> fileRecords, String format) {
         ObjectNode options = super.createParserUIInitializationData(job, fileRecords, format);
         
         JSONUtilities.safePut(options, "trimStrings", false);
@@ -74,61 +81,59 @@ abstract public class TreeImportingParserBase extends ImportingParserBase {
 
     
     @Override
-    public void parse(Project project, ProjectMetadata metadata,
-            ImportingJob job, List<ObjectNode> fileRecords, String format,
-            int limit, ObjectNode options, List<Exception> exceptions) {
-        
-        MultiFileReadingProgress progress = ImporterUtilities.createMultiFileReadingProgress(job, fileRecords);
+    public GridState parse(ProjectMetadata metadata,
+            final ImportingJob job, List<ImportingFileRecord> fileRecords, String format,
+            long limit, ObjectNode options) throws Exception {
+        MultiFileReadingProgress progress = ImporterUtilities.createMultiFileReadingProgress(job, fileRecords, runner.getFileSystem());
         ImportColumnGroup rootColumnGroup = new ImportColumnGroup();
         
-        for (ObjectNode fileRecord : fileRecords) {
-            try {
-                parseOneFile(project, metadata, job, fileRecord, rootColumnGroup, limit, options, exceptions, progress);
-            } catch (IOException e) {
-                exceptions.add(e);
-            }
+        List<Row> rows = new ArrayList<>();
+        ColumnIndexAllocator allocator = new ColumnIndexAllocator();
+        for (ImportingFileRecord fileRecord : fileRecords) {
+            parseOneFile(allocator, rows, metadata, job, fileRecord, rootColumnGroup, limit, options, progress);
             
-            if (limit > 0 && project.rows.size() >= limit) {
+            if (limit > 0 && rows.size() >= limit) {
                 break;
             }
         }
         
         rootColumnGroup.tabulate();
-        XmlImportUtilities.createColumnsFromImport(project, rootColumnGroup);
-        project.columnModel.update();
+        List<Integer> columnIndexTranslation = new ArrayList<>();
+        ColumnModel columnModel = new ColumnModel(Collections.emptyList());
+        boolean includeFileSources = JSONUtilities.getBoolean(options, "includeFileSources", false);
+        if (includeFileSources) {
+        	columnModel.appendUnduplicatedColumn(new ColumnMetadata("File"));
+        }
+        columnModel = XmlImportUtilities.createColumnsFromImport(columnModel, rootColumnGroup, columnIndexTranslation);
+        List<Row> reordered = new ArrayList<>(rows.size());
+        for (int i = 0; i != rows.size(); i++) {
+        	Row row = rows.get(i);
+        	List<Cell> cells = columnIndexTranslation.stream().map(idx -> row.getCell(idx)).collect(Collectors.toList());
+        	reordered.add(new Row(cells));
+        }
+        return runner.create(columnModel, reordered, Collections.emptyMap());
     }
     
     public void parseOneFile(
-        Project project,
+        ColumnIndexAllocator allocator,
+        List<Row> rows,
         ProjectMetadata metadata,
         ImportingJob job,
-        ObjectNode fileRecord,
+        ImportingFileRecord fileRecord,
         ImportColumnGroup rootColumnGroup,
-        int limit,
+        long limit,
         ObjectNode options,
-        List<Exception> exceptions,
         final MultiFileReadingProgress progress
-    ) throws IOException {
-        final File file = ImportingUtilities.getFile(job, fileRecord);
-        final String fileSource = ImportingUtilities.getFileSource(fileRecord);
+    ) throws Exception {
+        final File file = fileRecord.getFile(job.getRawDataDir());
+        final String fileSource = fileRecord.getFileSource();
         
         progress.startFile(fileSource);
         try {
             InputStream inputStream = ImporterUtilities.openAndTrackFile(fileSource, file, progress);
             try {
-                if (useInputStream) {
-                    parseOneFile(project, metadata, job, fileSource, inputStream,
-                            rootColumnGroup, limit, options, exceptions);
-                } else {
-                    String commonEncoding = JSONUtilities.getString(options, "encoding", null);
-                    if (commonEncoding != null && commonEncoding.isEmpty()) {
-                        commonEncoding = null;
-                    }
-                    
-                    Reader reader = ImportingUtilities.getFileReader(file, fileRecord, commonEncoding);
-                    parseOneFile(project, metadata, job, fileSource, reader,
-                            rootColumnGroup, limit, options, exceptions);
-                }
+                parseOneFile(allocator, rows, metadata, job, fileSource, inputStream,
+                        rootColumnGroup, limit, options);
             } finally {
                 inputStream.close();
             }
@@ -138,44 +143,23 @@ abstract public class TreeImportingParserBase extends ImportingParserBase {
     }
     
     /**
-     * Parse a single file from a Reader.
-     * 
-     * The default implementation just throws a NotImplementedException.
-     * Override in subclasses to implement.
-     */
-    public void parseOneFile(
-        Project project,
-        ProjectMetadata metadata,
-        ImportingJob job,
-        String fileSource,
-        Reader reader,
-        ImportColumnGroup rootColumnGroup,
-        int limit,
-        ObjectNode options,
-        List<Exception> exceptions
-    ) {
-        throw new NotImplementedException();
-    }
-    
-    /**
      * Parse a single file from an InputStream.
      * 
      * The default implementation just throws a NotImplementedException.
      * Override in subclasses to implement.
      */
     public void parseOneFile(
-        Project project,
+        ColumnIndexAllocator allocator,
+        List<Row> rows,
         ProjectMetadata metadata,
         ImportingJob job,
         String fileSource,
         InputStream inputStream,
         ImportColumnGroup rootColumnGroup,
-        int limit,
-        ObjectNode options,
-        List<Exception> exceptions
-    ) {
-        // throw new NotImplementedException();
-        super.parseOneFile(project, metadata, job, fileSource, inputStream, limit, options, exceptions);
+        long limit,
+        ObjectNode options
+    ) throws Exception {
+        throw new NotImplementedException();
     }
     
     /**
@@ -183,18 +167,18 @@ abstract public class TreeImportingParserBase extends ImportingParserBase {
      * 
      */
     protected void parseOneFile(
-        Project project,
+        ColumnIndexAllocator allocator,
+        List<Row> rows,
         ProjectMetadata metadata,
         ImportingJob job,
         String fileSource,
         TreeReader treeParser,
         ImportColumnGroup rootColumnGroup,
-        int limit,
-        ObjectNode options,
-        List<Exception> exceptions
-    ) {
+        long limit,
+        ObjectNode options
+    ) throws Exception {
         String[] recordPath = JSONUtilities.getStringArray(options, "recordPath");
-        int limit2 = JSONUtilities.getInt(options, "limit", -1);
+        long limit2 = JSONUtilities.getLong(options, "limit", -1);
         if (limit > 0) {
             if (limit2 > 0) {
                 limit2 = Math.min(limit, limit2);
@@ -213,14 +197,11 @@ abstract public class TreeImportingParserBase extends ImportingParserBase {
         boolean guessCellValueTypes = JSONUtilities.getBoolean(options, "guessCellValueTypes", true);
         
         boolean includeFileSources = JSONUtilities.getBoolean(options, "includeFileSources", false);
-        int filenameColumnIndex = -1;
         if (includeFileSources) {
-            filenameColumnIndex = addFilenameColumn(project);
-            // If the column add fails for any reason, we'll end up overwriting data in the first column
-            assert filenameColumnIndex == 0;
+        	allocator.allocateColumnIndex();
         }
         
-        XmlImportUtilities.importTreeData(treeParser, project, recordPath, rootColumnGroup, limit2, 
+        XmlImportUtilities.importTreeData(treeParser, allocator, rows, recordPath, rootColumnGroup, limit2, 
                 new ImportParameters(trimStrings, storeEmptyStrings, guessCellValueTypes, includeFileSources,
                         fileSource));
     }

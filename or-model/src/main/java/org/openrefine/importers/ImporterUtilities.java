@@ -136,13 +136,6 @@ public class ImporterUtilities {
         }
     }
 
-    static public void ensureColumnsInRowExist(List<String> columnNames, Row row) {
-        int count = row.cells.size();
-        while (count > columnNames.size()) {
-            columnNames.add("");
-        }
-    }
-
     static public ColumnModel setupColumns(List<String> columnNames) {
         Map<String, Integer> nameToIndex = new HashMap<String, Integer>();
         for (int c = 0; c < columnNames.size(); c++) {

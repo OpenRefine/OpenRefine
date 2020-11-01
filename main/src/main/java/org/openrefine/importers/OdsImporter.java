@@ -49,13 +49,15 @@ import org.odftoolkit.odfdom.doc.table.OdfTable;
 import org.odftoolkit.odfdom.doc.table.OdfTableCell;
 import org.odftoolkit.odfdom.doc.table.OdfTableRow;
 import org.openrefine.ProjectMetadata;
+import org.openrefine.importers.TabularParserHelper.TableDataReader;
+import org.openrefine.importing.ImportingFileRecord;
 import org.openrefine.importing.ImportingJob;
-import org.openrefine.importing.ImportingUtilities;
 import org.openrefine.model.Cell;
-import org.openrefine.model.Project;
+import org.openrefine.model.DatamodelRunner;
+import org.openrefine.model.GridState;
 import org.openrefine.model.recon.Recon;
-import org.openrefine.model.recon.ReconCandidate;
 import org.openrefine.model.recon.Recon.Judgment;
+import org.openrefine.model.recon.ReconCandidate;
 import org.openrefine.util.JSONUtilities;
 import org.openrefine.util.ParsingUtilities;
 import org.slf4j.Logger;
@@ -65,17 +67,20 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 
-public class OdsImporter extends TabularParserHelper { 
+public class OdsImporter extends InputStreamImporter { 
     final static Logger logger = LoggerFactory.getLogger("open office");
+    
+    private final TabularParserHelper tabularParserHelper;
 
-    public OdsImporter() {
-        super(true);
+    public OdsImporter(DatamodelRunner runner) {
+        super(runner);
+        tabularParserHelper = new TabularParserHelper(runner);
     }
 
     
     @Override
-    public ObjectNode createParserUIInitializationData(
-            ImportingJob job, List<ObjectNode> fileRecords, String format) {
+    public ObjectNode createParserUIInitializationData(ImportingJob job,
+            List<ImportingFileRecord> fileRecords, String format) {
         ObjectNode options = super.createParserUIInitializationData(job, fileRecords, format);
 
         ArrayNode sheetRecords = ParsingUtilities.mapper.createArrayNode();
@@ -83,8 +88,8 @@ public class OdsImporter extends TabularParserHelper {
         OdfDocument odfDoc = null;
         try {
             for (int index = 0;index < fileRecords.size();index++) {
-                ObjectNode fileRecord = fileRecords.get(index);
-                File file = ImportingUtilities.getFile(job, fileRecord);
+                ImportingFileRecord fileRecord = fileRecords.get(index);
+                File file = fileRecord.getFile(job.getRawDataDir());
                 InputStream is = new FileInputStream(file);
                 odfDoc = OdfDocument.loadDocument(is);
                 List<OdfTable> tables = odfDoc.getTableList();
@@ -121,25 +126,23 @@ public class OdsImporter extends TabularParserHelper {
     
 
     @Override
-    public void parseOneFile(
-            Project project,
+    public GridState parseOneFile(
             ProjectMetadata metadata,
             ImportingJob job,
             String fileSource,
             InputStream inputStream,
-            int limit,
-            ObjectNode options,
-            List<Exception> exceptions
-    ) {
+            long limit,
+            ObjectNode options
+    ) throws Exception {
         OdfDocument odfDoc;
         try {
             odfDoc = OdfDocument.loadDocument(inputStream);
         } catch (Exception e) { // Ugh! could they throw any wider exception?
-            exceptions.add(e);
-            return;
+            throw e;
         }
 
         List<OdfTable> tables = odfDoc.getTableList();
+        List<GridState> grids = new ArrayList<>();
 
         ArrayNode sheets = JSONUtilities.getArray(options, "sheets");
         for(int i=0;i<sheets.size();i++)  {
@@ -182,19 +185,17 @@ public class OdsImporter extends TabularParserHelper {
                 }
             };
 
-            TabularParserHelper.readTable(
-                    project,
+            grids.add(tabularParserHelper.parseOneFile(
                     metadata,
                     job,
-                    dataReader,
                     fileSource + "#" + table.getTableName(),
+                    dataReader,
                     limit,
-                    options,
-                    exceptions
-            );
+                    options
+            ));
         }
         
-        super.parseOneFile(project, metadata, job, fileSource, inputStream, limit, options, exceptions);
+        return mergeGridStates(grids);
     }
 
     static protected Serializable extractCell(OdfTableCell cell) {
@@ -260,16 +261,15 @@ public class OdsImporter extends TabularParserHelper {
 
                         if (reconMap.containsKey(id)) {
                             recon = reconMap.get(id);
-                            recon.judgmentBatchSize++;
                         } else {
-                            recon = new Recon(0, null, null);
-                            recon.service = "import";
-                            recon.match = new ReconCandidate(id, value.toString(), new String[0], 100);
-                            recon.matchRank = 0;
-                            recon.judgment = Judgment.Matched;
-                            recon.judgmentAction = "auto";
-                            recon.judgmentBatchSize = 1;
-                            recon.addCandidate(recon.match);
+                        	ReconCandidate candidate = new ReconCandidate(id, value.toString(), new String[0], 100);
+                            recon = new Recon(0, null, null)
+                            		.withService("import")
+                            		.withMatch(candidate)
+                            		.withMatchRank(0)
+                            		.withJudgment(Judgment.Matched)
+                            		.withJudgmentAction("auto")
+                            		.withCandidate(candidate);
 
                             reconMap.put(id, recon);
                         }

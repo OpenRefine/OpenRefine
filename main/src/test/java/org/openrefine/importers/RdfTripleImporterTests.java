@@ -33,12 +33,10 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package org.openrefine.importers;
 
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
 import java.io.StringReader;
-import java.io.UnsupportedEncodingException;
 
-import org.openrefine.importers.RdfTripleImporter;
+import org.openrefine.model.ColumnModel;
+import org.openrefine.model.GridState;
 import org.openrefine.util.JSONUtilities;
 import org.slf4j.LoggerFactory;
 import org.testng.Assert;
@@ -62,116 +60,111 @@ public class RdfTripleImporterTests extends ImporterTest {
     @BeforeMethod
     public void setUp(){
         super.setUp();
-        SUT = new RdfTripleImporter();
+        SUT = new RdfTripleImporter(runner());
         JSONUtilities.safePut(options, "base-url", "http://rdf.freebase.com");
     }
 
     @Test(enabled=false)
-    public void canParseSingleLineTriple(){
+    public void canParseSingleLineTriple() throws Exception{
         String sampleRdf = "<http://rdf.freebase.com/ns/en.bob_dylan> <http://rdf.freebase.com/ns/music.artist.album> <http://rdf.freebase.com/ns/en.blood_on_the_tracks>.";
         StringReader reader = new StringReader(sampleRdf);
 
-        try {
-            parseOneFile(SUT, reader);
-        } catch (Exception e) {
-            Assert.fail();
-        }
-
-        Assert.assertEquals(project.columnModel.getColumns().size(), 2);
-        Assert.assertEquals(project.columnModel.getColumns().get(0).getName(), "subject");
-        Assert.assertEquals(project.columnModel.getColumns().get(1).getName(), "http://rdf.freebase.com/ns/music.artist.album");
-        Assert.assertEquals(project.rows.size(), 1);
-        Assert.assertEquals(project.rows.get(0).cells.size(), 2);
-        Assert.assertEquals(project.rows.get(0).cells.get(0).value, "http://rdf.freebase.com/ns/en.bob_dylan");
-        Assert.assertEquals(project.rows.get(0).cells.get(1).value, "http://rdf.freebase.com/ns/en.blood_on_the_tracks");
+        GridState grid = parseOneFile(SUT, reader);
+        
+        ColumnModel columnModel = grid.getColumnModel();
+            
+        Assert.assertEquals(columnModel.getColumns().size(), 2);
+        Assert.assertEquals(columnModel.getColumns().get(0).getName(), "subject");
+        Assert.assertEquals(columnModel.getColumns().get(1).getName(), "http://rdf.freebase.com/ns/music.artist.album");
+        Assert.assertEquals(grid.rowCount(), 1);
+        Assert.assertEquals(grid.getRow(0).cells.size(), 2);
+        Assert.assertEquals(grid.getRow(0).getCell(0).value, "http://rdf.freebase.com/ns/en.bob_dylan");
+        Assert.assertEquals(grid.getRow(0).getCell(1).value, "http://rdf.freebase.com/ns/en.blood_on_the_tracks");
     }
 
     @Test
-    public void canParseMultiLineTriple() throws UnsupportedEncodingException {
+    public void canParseMultiLineTriple() throws Exception {
         String sampleRdf = "<http://rdf.freebase.com/ns/en.bob_dylan> <http://rdf.freebase.com/ns/music.artist.album> <http://rdf.freebase.com/ns/en.blood_on_the_tracks>.\n" +
             "<http://rdf.freebase.com/ns/en.bob_dylan> <http://rdf.freebase.com/ns/music.artist.album> <http://rdf.freebase.com/ns/en.under_the_red_sky>.\n" +
             "<http://rdf.freebase.com/ns/en.bob_dylan> <http://rdf.freebase.com/ns/music.artist.album> <http://rdf.freebase.com/ns/en.bringing_it_all_back_home>.";
-        InputStream input = new ByteArrayInputStream(sampleRdf.getBytes("UTF-8"));
-        parseOneFile(SUT, input);
+        StringReader input = new StringReader(sampleRdf);
+        GridState grid = parseOneFile(SUT, input);
 
+        ColumnModel columnModel = grid.getColumnModel();
         //columns
-        Assert.assertEquals(project.columnModel.getColumns().size(), 2);
-        Assert.assertEquals(project.columnModel.getColumns().get(0).getName(), "subject");
-        Assert.assertEquals(project.columnModel.getColumns().get(1).getName(), "http://rdf.freebase.com/ns/music.artist.album");
+        Assert.assertEquals(columnModel.getColumns().size(), 2);
+        Assert.assertEquals(columnModel.getColumns().get(0).getName(), "subject");
+        Assert.assertEquals(columnModel.getColumns().get(1).getName(), "http://rdf.freebase.com/ns/music.artist.album");
 
         //rows
-        Assert.assertEquals(project.rows.size(), 3);
+        Assert.assertEquals(grid.rowCount(), 3);
         
         //row0
-        Assert.assertEquals(project.rows.get(0).cells.size(), 2);
-        Assert.assertEquals(project.rows.get(0).cells.get(0).value, "http://rdf.freebase.com/ns/en.bob_dylan");
-        Assert.assertEquals(project.rows.get(0).cells.get(1).value, "http://rdf.freebase.com/ns/en.bringing_it_all_back_home"); 
+        Assert.assertEquals(grid.getRow(0).cells.size(), 2);
+        Assert.assertEquals(grid.getRow(0).getCellValue(0), "http://rdf.freebase.com/ns/en.bob_dylan");
+        Assert.assertEquals(grid.getRow(0).getCellValue(1), "http://rdf.freebase.com/ns/en.bringing_it_all_back_home"); 
 
         //row1
-        Assert.assertEquals(project.rows.get(1).cells.size(), 2);
-        Assert.assertNull(project.rows.get(1).cells.get(0));
-        Assert.assertEquals(project.rows.get(1).cells.get(1).value, "http://rdf.freebase.com/ns/en.under_the_red_sky");
-        Assert.assertEquals(project.recordModel.getRowDependency(1).cellDependencies[1].rowIndex, 0);
-        Assert.assertEquals(project.recordModel.getRowDependency(1).cellDependencies[1].cellIndex, 0);
+        Assert.assertEquals(grid.getRow(1).cells.size(), 2);
+        Assert.assertNull(grid.getRow(1).getCell(0));
+        Assert.assertEquals(grid.getRow(1).getCellValue(1), "http://rdf.freebase.com/ns/en.under_the_red_sky");
 
         //row2
-        Assert.assertEquals(project.rows.get(2).cells.size(), 2);
-        Assert.assertNull(project.rows.get(2).cells.get(0));
-        Assert.assertEquals(project.rows.get(2).cells.get(1).value, "http://rdf.freebase.com/ns/en.blood_on_the_tracks");
-        Assert.assertEquals(project.recordModel.getRowDependency(2).cellDependencies[1].rowIndex, 0);
-        Assert.assertEquals(project.recordModel.getRowDependency(2).cellDependencies[1].cellIndex, 0);
+        Assert.assertEquals(grid.getRow(2).cells.size(), 2);
+        Assert.assertNull(grid.getRow(2).getCell(0));
+        Assert.assertEquals(grid.getRow(2).getCellValue(1), "http://rdf.freebase.com/ns/en.blood_on_the_tracks");
     }
 
     @Test
-    public void canParseMultiLineMultiPredicatesTriple() throws UnsupportedEncodingException {
+    public void canParseMultiLineMultiPredicatesTriple() throws Exception {
         String sampleRdf = "<http://rdf.freebase.com/ns/en.bob_dylan> <http://rdf.freebase.com/ns/music.artist.album> <http://rdf.freebase.com/ns/en.blood_on_the_tracks>.\n" +
             "<http://rdf.freebase.com/ns/en.bob_dylan> <http://rdf.freebase.com/ns/music.artist.genre> <http://rdf.freebase.com/ns/en.folk_rock>.\n" +
             "<http://rdf.freebase.com/ns/en.bob_dylan> <http://rdf.freebase.com/ns/music.artist.album> <http://rdf.freebase.com/ns/en.bringing_it_all_back_home>.";
-        InputStream input = new ByteArrayInputStream(sampleRdf.getBytes("UTF-8"));
-        parseOneFile(SUT, input);
+        StringReader input = new StringReader(sampleRdf);
+        GridState grid = parseOneFile(SUT, input);
  
+        ColumnModel columnModel = grid.getColumnModel();
         //columns
-        Assert.assertEquals(project.columnModel.getColumns().size(), 3);
-        Assert.assertEquals(project.columnModel.getColumns().get(0).getName(), "subject");
-        Assert.assertEquals(project.columnModel.getColumns().get(1).getName(), "http://rdf.freebase.com/ns/music.artist.album");
-        Assert.assertEquals(project.columnModel.getColumns().get(2).getName(), "http://rdf.freebase.com/ns/music.artist.genre");
+        Assert.assertEquals(columnModel.getColumns().size(), 3);
+        Assert.assertEquals(columnModel.getColumns().get(0).getName(), "subject");
+        Assert.assertEquals(columnModel.getColumns().get(1).getName(), "http://rdf.freebase.com/ns/music.artist.album");
+        Assert.assertEquals(columnModel.getColumns().get(2).getName(), "http://rdf.freebase.com/ns/music.artist.genre");
         
         //rows
-        Assert.assertEquals(project.rows.size(), 2);
+        Assert.assertEquals(grid.rowCount(), 2);
 
         //row0
-        Assert.assertEquals(project.rows.get(0).cells.size(), 3);
-        Assert.assertEquals(project.rows.get(0).cells.get(0).value, "http://rdf.freebase.com/ns/en.bob_dylan");
-        Assert.assertEquals(project.rows.get(0).cells.get(1).value, "http://rdf.freebase.com/ns/en.bringing_it_all_back_home");
-        Assert.assertEquals(project.rows.get(0).cells.get(2).value, "http://rdf.freebase.com/ns/en.folk_rock");
+        Assert.assertEquals(grid.getRow(0).cells.size(), 3);
+        Assert.assertEquals(grid.getRow(0).getCellValue(0), "http://rdf.freebase.com/ns/en.bob_dylan");
+        Assert.assertEquals(grid.getRow(0).getCellValue(1), "http://rdf.freebase.com/ns/en.bringing_it_all_back_home");
+        Assert.assertEquals(grid.getRow(0).getCellValue(2), "http://rdf.freebase.com/ns/en.folk_rock");
 
         //row1
-        Assert.assertEquals(project.rows.get(1).cells.size(), 2);
-        Assert.assertNull(project.rows.get(1).cells.get(0));
-        Assert.assertEquals(project.rows.get(1).cells.get(1).value, "http://rdf.freebase.com/ns/en.blood_on_the_tracks");
-        Assert.assertEquals(project.recordModel.getRowDependency(1).cellDependencies[1].rowIndex, 0);
-        Assert.assertEquals(project.recordModel.getRowDependency(1).cellDependencies[1].cellIndex, 0);
+        Assert.assertEquals(grid.getRow(1).cells.size(), 3);
+        Assert.assertNull(grid.getRow(1).getCell(0));
+        Assert.assertEquals(grid.getRow(1).getCell(1).value, "http://rdf.freebase.com/ns/en.blood_on_the_tracks");
     }
     
     @Test
-    public void canParseTripleWithValue() throws UnsupportedEncodingException {
+    public void canParseTripleWithValue() throws Exception {
         String sampleRdf = "<http://rdf.freebase.com/ns/en.bob_dylan> <http://rdf.freebase.com/ns/common.topic.alias>\"Robert Zimmerman\"@en.";
-        InputStream input = new ByteArrayInputStream(sampleRdf.getBytes("UTF-8"));
+        StringReader input = new StringReader(sampleRdf);
         
-        SUT = new RdfTripleImporter(RdfTripleImporter.Mode.N3);
-        parseOneFile(SUT, input);
+        SUT = new RdfTripleImporter(runner(), RdfTripleImporter.Mode.N3);
+        GridState grid = parseOneFile(SUT, input);
 
-        Assert.assertEquals(project.columnModel.getColumns().size(), 2);
-        Assert.assertEquals(project.columnModel.getColumns().get(0).getName(), "subject");
-        Assert.assertEquals(project.columnModel.getColumns().get(1).getName(), "http://rdf.freebase.com/ns/common.topic.alias");
-        Assert.assertEquals(project.rows.size(), 1);
-        Assert.assertEquals(project.rows.get(0).cells.size(), 2);
-        Assert.assertEquals(project.rows.get(0).cells.get(0).value, "http://rdf.freebase.com/ns/en.bob_dylan");
-        Assert.assertEquals(project.rows.get(0).cells.get(1).value, "Robert Zimmerman@en");
+        ColumnModel columnModel = grid.getColumnModel();
+        Assert.assertEquals(columnModel.getColumns().size(), 2);
+        Assert.assertEquals(columnModel.getColumns().get(0).getName(), "subject");
+        Assert.assertEquals(columnModel.getColumns().get(1).getName(), "http://rdf.freebase.com/ns/common.topic.alias");
+        Assert.assertEquals(grid.rowCount(), 1);
+        Assert.assertEquals(grid.getRow(0).cells.size(), 2);
+        Assert.assertEquals(grid.getRow(0).getCellValue(0), "http://rdf.freebase.com/ns/en.bob_dylan");
+        Assert.assertEquals(grid.getRow(0).getCellValue(1), "Robert Zimmerman@en");
     }    
     
     @Test
-    public void canParseRdfXml() throws UnsupportedEncodingException {
+    public void canParseRdfXml() throws Exception {
         // From W3C spec http://www.w3.org/TR/REC-rdf-syntax/#example8
         String sampleRdf = "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n"
                 + "<rdf:RDF xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\"\n"
@@ -189,26 +182,27 @@ public class RdfTripleImporterTests extends ImporterTest {
                 + "  </rdf:Description>\n"
                 + "</rdf:RDF>\n";
 
-        InputStream input = new ByteArrayInputStream(sampleRdf.getBytes("UTF-8"));
-        SUT = new RdfTripleImporter(RdfTripleImporter.Mode.RDFXML);
-        parseOneFile(SUT, input);
+        StringReader input = new StringReader(sampleRdf);
+        SUT = new RdfTripleImporter(runner(), RdfTripleImporter.Mode.RDFXML);
+        GridState grid = parseOneFile(SUT, input);
 
-        Assert.assertEquals(project.columnModel.getColumns().size(), 3);
-        Assert.assertEquals(project.columnModel.getColumns().get(0).getName(), "subject");
-        Assert.assertEquals(project.columnModel.getColumns().get(1).getName(), "http://purl.org/dc/elements/1.1/title");
-        Assert.assertEquals(project.columnModel.getColumns().get(2).getName(), "http://purl.org/dc/elements/1.1/description");
-        Assert.assertEquals(project.rows.size(), 5);
-        Assert.assertEquals(project.rows.get(0).cells.size(), 2);
-        Assert.assertEquals(project.rows.get(0).cells.get(0).value, "http://www.w3.org/TR/rdf-syntax-grammar");
-        Assert.assertEquals(project.rows.get(0).cells.get(1).value, "RDF/XML Syntax Specification (Revised)@en-US");
-        Assert.assertEquals(project.rows.get(3).cells.size(), 3);
-        Assert.assertEquals(project.rows.get(3).cells.get(0).value, "http://example.org/buecher/baum");
-        Assert.assertEquals(project.rows.get(3).cells.get(1).value, "The Tree@en");
-        Assert.assertEquals(project.rows.get(3).cells.get(2).value, "Das Buch ist außergewöhnlich@de");
+        ColumnModel columnModel = grid.getColumnModel();
+        Assert.assertEquals(columnModel.getColumns().size(), 3);
+        Assert.assertEquals(columnModel.getColumns().get(0).getName(), "subject");
+        Assert.assertEquals(columnModel.getColumns().get(1).getName(), "http://purl.org/dc/elements/1.1/title");
+        Assert.assertEquals(columnModel.getColumns().get(2).getName(), "http://purl.org/dc/elements/1.1/description");
+        Assert.assertEquals(grid.rowCount(), 5);
+        Assert.assertEquals(grid.getRow(0).cells.size(), 3);
+        Assert.assertEquals(grid.getRow(0).getCellValue(0), "http://www.w3.org/TR/rdf-syntax-grammar");
+        Assert.assertEquals(grid.getRow(0).getCellValue(1), "RDF/XML Syntax Specification (Revised)@en-US");
+        Assert.assertEquals(grid.getRow(3).cells.size(), 3);
+        Assert.assertEquals(grid.getRow(3).getCellValue(0), "http://example.org/buecher/baum");
+        Assert.assertEquals(grid.getRow(3).getCellValue(1), "The Tree@en");
+        Assert.assertEquals(grid.getRow(3).getCellValue(2), "Das Buch ist außergewöhnlich@de");
     }
     
     @Test
-    public void canParseN3() throws UnsupportedEncodingException {
+    public void canParseN3() throws Exception {
         String sampleRdf = "@prefix p:  <http://www.example.org/personal_details#> .\n" + 
             "@prefix m:  <http://www.example.org/meeting_organization#> .\n\n" + 
             "<http://www.example.org/people#fred>\n" + 
@@ -216,26 +210,27 @@ public class RdfTripleImporterTests extends ImporterTest {
                     "p:hasEmail              <mailto:fred@example.com>;\n" + 
                     "m:attending     <http://meetings.example.com/cal#m1> .\n";
                         
-        InputStream input = new ByteArrayInputStream(sampleRdf.getBytes("UTF-8"));
+        StringReader input = new StringReader(sampleRdf);
         
-        SUT = new RdfTripleImporter(RdfTripleImporter.Mode.N3);
-        parseOneFile(SUT, input);
+        SUT = new RdfTripleImporter(runner(), RdfTripleImporter.Mode.N3);
+        GridState grid = parseOneFile(SUT, input);
 
-        Assert.assertEquals(project.columnModel.getColumns().size(), 4);
-        Assert.assertEquals(project.columnModel.getColumns().get(0).getName(), "subject");
-        Assert.assertEquals(project.columnModel.getColumns().get(1).getName(), "http://www.example.org/meeting_organization#attending");
-        Assert.assertEquals(project.columnModel.getColumns().get(2).getName(), "http://www.example.org/personal_details#hasEmail");
-        Assert.assertEquals(project.columnModel.getColumns().get(3).getName(), "http://www.example.org/personal_details#GivenName");
-        Assert.assertEquals(project.rows.size(), 1);
-        Assert.assertEquals(project.rows.get(0).cells.size(), 4);
-        Assert.assertEquals(project.rows.get(0).cells.get(0).value, "http://www.example.org/people#fred");
-        Assert.assertEquals(project.rows.get(0).cells.get(1).value, "http://meetings.example.com/cal#m1");
-        Assert.assertEquals(project.rows.get(0).cells.get(2).value, "mailto:fred@example.com");
-        Assert.assertEquals(project.rows.get(0).cells.get(3).value, "Fred");
+        ColumnModel columnModel = grid.getColumnModel();
+        Assert.assertEquals(columnModel.getColumns().size(), 4);
+        Assert.assertEquals(columnModel.getColumns().get(0).getName(), "subject");
+        Assert.assertEquals(columnModel.getColumns().get(1).getName(), "http://www.example.org/meeting_organization#attending");
+        Assert.assertEquals(columnModel.getColumns().get(2).getName(), "http://www.example.org/personal_details#hasEmail");
+        Assert.assertEquals(columnModel.getColumns().get(3).getName(), "http://www.example.org/personal_details#GivenName");
+        Assert.assertEquals(grid.rowCount(), 1);
+        Assert.assertEquals(grid.getRow(0).cells.size(), 4);
+        Assert.assertEquals(grid.getRow(0).getCellValue(0), "http://www.example.org/people#fred");
+        Assert.assertEquals(grid.getRow(0).getCellValue(1), "http://meetings.example.com/cal#m1");
+        Assert.assertEquals(grid.getRow(0).getCellValue(2), "mailto:fred@example.com");
+        Assert.assertEquals(grid.getRow(0).getCellValue(3), "Fred");
     }
     
     @Test
-    public void canParseTtl() throws UnsupportedEncodingException {
+    public void canParseTtl() throws Exception {
         String sampleRdf = "@prefix p:  <http://www.example.org/personal_details#> .\n" + 
             "@prefix m:  <http://www.example.org/meeting_organization#> .\n\n" + 
             "<http://www.example.org/people#fred>\n" + 
@@ -243,51 +238,53 @@ public class RdfTripleImporterTests extends ImporterTest {
                     "p:hasEmail              <mailto:fred@example.com>;\n" + 
                     "m:attending     <http://meetings.example.com/cal#m1> .\n";
                         
-        InputStream input = new ByteArrayInputStream(sampleRdf.getBytes("UTF-8"));
+        StringReader input = new StringReader(sampleRdf);
         
-        SUT = new RdfTripleImporter(RdfTripleImporter.Mode.TTL);
-        parseOneFile(SUT, input);
+        SUT = new RdfTripleImporter(runner(), RdfTripleImporter.Mode.TTL);
+        GridState grid = parseOneFile(SUT, input);
 
-        Assert.assertEquals(project.columnModel.getColumns().size(), 4);
-        Assert.assertEquals(project.columnModel.getColumns().get(0).getName(), "subject");
-        Assert.assertEquals(project.columnModel.getColumns().get(1).getName(), "http://www.example.org/meeting_organization#attending");
-        Assert.assertEquals(project.columnModel.getColumns().get(2).getName(), "http://www.example.org/personal_details#hasEmail");
-        Assert.assertEquals(project.columnModel.getColumns().get(3).getName(), "http://www.example.org/personal_details#GivenName");
-        Assert.assertEquals(project.rows.size(), 1);
-        Assert.assertEquals(project.rows.get(0).cells.size(), 4);
-        Assert.assertEquals(project.rows.get(0).cells.get(0).value, "http://www.example.org/people#fred");
-        Assert.assertEquals(project.rows.get(0).cells.get(1).value, "http://meetings.example.com/cal#m1");
-        Assert.assertEquals(project.rows.get(0).cells.get(2).value, "mailto:fred@example.com");
-        Assert.assertEquals(project.rows.get(0).cells.get(3).value, "Fred");
+        ColumnModel columnModel = grid.getColumnModel();
+        Assert.assertEquals(columnModel.getColumns().size(), 4);
+        Assert.assertEquals(columnModel.getColumns().get(0).getName(), "subject");
+        Assert.assertEquals(columnModel.getColumns().get(1).getName(), "http://www.example.org/meeting_organization#attending");
+        Assert.assertEquals(columnModel.getColumns().get(2).getName(), "http://www.example.org/personal_details#hasEmail");
+        Assert.assertEquals(columnModel.getColumns().get(3).getName(), "http://www.example.org/personal_details#GivenName");
+        Assert.assertEquals(grid.rowCount(), 1);
+        Assert.assertEquals(grid.getRow(0).cells.size(), 4);
+        Assert.assertEquals(grid.getRow(0).getCellValue(0), "http://www.example.org/people#fred");
+        Assert.assertEquals(grid.getRow(0).getCellValue(1), "http://meetings.example.com/cal#m1");
+        Assert.assertEquals(grid.getRow(0).getCellValue(2), "mailto:fred@example.com");
+        Assert.assertEquals(grid.getRow(0).getCellValue(3), "Fred");
     }
     
     @Test
-    public void canParseNTriples() throws UnsupportedEncodingException {
+    public void canParseNTriples() throws Exception {
         String sampleRdf = "<http://www.example.org/people#fred> <http://www.example.org/meeting_organization#attending> <http://meetings.example.com/cal#m1> . \n" +
                            "<http://www.example.org/people#fred> <http://www.example.org/personal_details#hasEmail> <mailto:fred@example.com> . \n" +
                            "<http://www.example.org/people#fred> <http://www.example.org/personal_details#GivenName> \"Fred\" . ";
                         
-        InputStream input = new ByteArrayInputStream(sampleRdf.getBytes("UTF-8"));
+        StringReader input = new StringReader(sampleRdf);
         
-        SUT = new RdfTripleImporter(RdfTripleImporter.Mode.NT);
-        parseOneFile(SUT, input);
+        SUT = new RdfTripleImporter(runner(), RdfTripleImporter.Mode.NT);
+        GridState grid = parseOneFile(SUT, input);
 
-        Assert.assertEquals(project.columnModel.getColumns().size(), 4);
-        Assert.assertEquals(project.columnModel.getColumns().get(0).getName(), "subject");
-        Assert.assertEquals(project.columnModel.getColumns().get(1).getName(), "http://www.example.org/personal_details#GivenName");
-        Assert.assertEquals(project.columnModel.getColumns().get(2).getName(), "http://www.example.org/personal_details#hasEmail");
-        Assert.assertEquals(project.columnModel.getColumns().get(3).getName(), "http://www.example.org/meeting_organization#attending");
+        ColumnModel columnModel = grid.getColumnModel();
+        Assert.assertEquals(columnModel.getColumns().size(), 4);
+        Assert.assertEquals(columnModel.getColumns().get(0).getName(), "subject");
+        Assert.assertEquals(columnModel.getColumns().get(1).getName(), "http://www.example.org/personal_details#GivenName");
+        Assert.assertEquals(columnModel.getColumns().get(2).getName(), "http://www.example.org/personal_details#hasEmail");
+        Assert.assertEquals(columnModel.getColumns().get(3).getName(), "http://www.example.org/meeting_organization#attending");
         
-        Assert.assertEquals(project.rows.size(), 1);
-        Assert.assertEquals(project.rows.get(0).cells.size(), 4);
-        Assert.assertEquals(project.rows.get(0).cells.get(0).value, "http://www.example.org/people#fred");
-        Assert.assertEquals(project.rows.get(0).cells.get(1).value, "Fred");
-        Assert.assertEquals(project.rows.get(0).cells.get(2).value, "mailto:fred@example.com");
-        Assert.assertEquals(project.rows.get(0).cells.get(3).value, "http://meetings.example.com/cal#m1");
+        Assert.assertEquals(grid.rowCount(), 1);
+        Assert.assertEquals(grid.getRow(0).cells.size(), 4);
+        Assert.assertEquals(grid.getRow(0).getCell(0).value, "http://www.example.org/people#fred");
+        Assert.assertEquals(grid.getRow(0).getCell(1).value, "Fred");
+        Assert.assertEquals(grid.getRow(0).getCell(2).value, "mailto:fred@example.com");
+        Assert.assertEquals(grid.getRow(0).getCell(3).value, "http://meetings.example.com/cal#m1");
     }
     
     @Test
-    public void canParseJsonld() throws UnsupportedEncodingException {
+    public void canParseJsonld() throws Exception {
         String sampleJsonld = "{\n "+
         "  \"@context\": {\n "+
         "    \"m\": \"http://www.example.org/meeting_organization#\",\n "+
@@ -306,21 +303,22 @@ public class RdfTripleImporterTests extends ImporterTest {
         "  }\n "+
         "}";
                         
-        InputStream input = new ByteArrayInputStream(sampleJsonld.getBytes("UTF-8"));
+        StringReader input = new StringReader(sampleJsonld);
         
-        SUT = new RdfTripleImporter(RdfTripleImporter.Mode.JSONLD);
-        parseOneFile(SUT, input);
+        SUT = new RdfTripleImporter(runner(), RdfTripleImporter.Mode.JSONLD);
+        GridState grid = parseOneFile(SUT, input);
 
-        Assert.assertEquals(project.columnModel.getColumns().size(), 4);
-        Assert.assertEquals(project.columnModel.getColumns().get(0).getName(), "subject");
-        Assert.assertEquals(project.columnModel.getColumns().get(1).getName(), "http://www.example.org/personal_details#hasEmail");
-        Assert.assertEquals(project.columnModel.getColumns().get(2).getName(), "http://www.example.org/personal_details#GivenName");
-        Assert.assertEquals(project.columnModel.getColumns().get(3).getName(), "http://www.example.org/meeting_organization#attending");
-        Assert.assertEquals(project.rows.size(), 1);
-        Assert.assertEquals(project.rows.get(0).cells.size(), 4);
-        Assert.assertEquals(project.rows.get(0).cells.get(0).value, "http://www.example.org/people#fred");
-        Assert.assertEquals(project.rows.get(0).cells.get(1).value, "mailto:fred@example.com");
-        Assert.assertEquals(project.rows.get(0).cells.get(2).value, "Fred");
-        Assert.assertEquals(project.rows.get(0).cells.get(3).value, "http://meetings.example.com/cal#m1");
+        ColumnModel columnModel = grid.getColumnModel();
+        Assert.assertEquals(columnModel.getColumns().size(), 4);
+        Assert.assertEquals(columnModel.getColumns().get(0).getName(), "subject");
+        Assert.assertEquals(columnModel.getColumns().get(1).getName(), "http://www.example.org/personal_details#hasEmail");
+        Assert.assertEquals(columnModel.getColumns().get(2).getName(), "http://www.example.org/personal_details#GivenName");
+        Assert.assertEquals(columnModel.getColumns().get(3).getName(), "http://www.example.org/meeting_organization#attending");
+        Assert.assertEquals(grid.rowCount(), 1);
+        Assert.assertEquals(grid.getRow(0).cells.size(), 4);
+        Assert.assertEquals(grid.getRow(0).getCellValue(0), "http://www.example.org/people#fred");
+        Assert.assertEquals(grid.getRow(0).getCellValue(1), "mailto:fred@example.com");
+        Assert.assertEquals(grid.getRow(0).getCellValue(2), "Fred");
+        Assert.assertEquals(grid.getRow(0).getCellValue(3), "http://meetings.example.com/cal#m1");
     } 
 }

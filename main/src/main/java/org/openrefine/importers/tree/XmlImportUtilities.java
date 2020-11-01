@@ -46,7 +46,6 @@ import javax.servlet.ServletException;
 
 import org.openrefine.importers.tree.TreeReader.Token;
 import org.openrefine.model.Cell;
-import org.openrefine.model.Project;
 import org.openrefine.model.Row;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -246,10 +245,11 @@ public class XmlImportUtilities extends TreeImportUtilities {
 
     static public void importTreeData(
         TreeReader parser,
-        Project project,
+        ColumnIndexAllocator columnIndexAllocator,
+        List<Row> rows,
         String[] recordPath,
         ImportColumnGroup rootColumnGroup,
-        int limit,
+        long limit,
         ImportParameters parameters
     ) {
         if (logger.isTraceEnabled()) {
@@ -259,7 +259,7 @@ public class XmlImportUtilities extends TreeImportUtilities {
             while (parser.hasNext()) {
                 Token eventType = parser.next();
                 if (eventType == Token.StartEntity) {
-                    findRecord(project, parser, recordPath, 0, rootColumnGroup, limit--,parameters);
+                    findRecord(columnIndexAllocator, rows, parser, recordPath, 0, rootColumnGroup, limit--,parameters);
                 }
             }
         } catch (TreeReaderException e) {
@@ -278,12 +278,13 @@ public class XmlImportUtilities extends TreeImportUtilities {
      * @throws ServletException
      */
     static protected void findRecord(
-        Project project,
+        ColumnIndexAllocator columnIndexAllocator,
+        List<Row> rows,
         TreeReader parser,
         String[] recordPath,
         int pathIndex,
         ImportColumnGroup rootColumnGroup,
-        int limit,
+        long limit,
         ImportParameters parameters
     ) throws TreeReaderException {
         if (logger.isTraceEnabled()) {
@@ -303,7 +304,7 @@ public class XmlImportUtilities extends TreeImportUtilities {
                 while (parser.hasNext() && limit != 0) {
                     Token eventType = parser.next();
                     if (eventType == Token.StartEntity) {
-                        findRecord(project, parser, recordPath, pathIndex + 1, rootColumnGroup, limit--,
+                        findRecord(columnIndexAllocator, rows, parser, recordPath, pathIndex + 1, rootColumnGroup, limit--,
                                 parameters);
                     } else if (eventType == Token.EndEntity) {
                         break;
@@ -313,13 +314,13 @@ public class XmlImportUtilities extends TreeImportUtilities {
                             String desiredFieldName = recordPath[pathIndex + 1];
                             String currentFieldName = parser.getFieldName();
                             if (desiredFieldName.equals(currentFieldName)) {
-                                processFieldAsRecord(project, parser, rootColumnGroup,parameters);
+                                processFieldAsRecord(columnIndexAllocator, rows, parser, rootColumnGroup,parameters);
                             }
                         }
                     }
                 }
             } else {
-                processRecord(project, parser, rootColumnGroup, parameters);
+                processRecord(columnIndexAllocator, rows, parser, rootColumnGroup, parameters);
             }
         } else {
             skip(parser);
@@ -347,7 +348,8 @@ public class XmlImportUtilities extends TreeImportUtilities {
      * @throws ServletException
      */
     static protected void processRecord(
-        Project project,
+        ColumnIndexAllocator columnIndexAllocator,
+        List<Row> rows,
         TreeReader parser,
         ImportColumnGroup rootColumnGroup,
         ImportParameters parameter
@@ -357,21 +359,22 @@ public class XmlImportUtilities extends TreeImportUtilities {
         }
         ImportRecord record = new ImportRecord();
 
-        processSubRecord(project, parser, rootColumnGroup, record, 0, parameter);
-        addImportRecordToProject(record, project, parameter.includeFileSources, parameter.fileSource);
+        processSubRecord(columnIndexAllocator, rows, parser, rootColumnGroup, record, 0, parameter);
+        addImportRecordToProject(record, rows, parameter.includeFileSources, parameter.fileSource);
     }
 
         
     /**
      * processFieldAsRecord parses Tree data for a single element and it's sub-elements,
      * adding the parsed data as a row to the project
-     * @param project
+     * @param columnIndexAllocator
      * @param parser
      * @param rootColumnGroup
      * @throws ServletException
      */
     static protected void processFieldAsRecord(
-        Project project,
+        ColumnIndexAllocator columnIndexAllocator,
+        List<Row> rows,
         TreeReader parser,
         ImportColumnGroup rootColumnGroup,
         ImportParameters parameter
@@ -389,7 +392,7 @@ public class XmlImportUtilities extends TreeImportUtilities {
             if (text.length() > 0 | !parameter.storeEmptyStrings) {
                 record = new ImportRecord();
                 addCell(
-                        project,
+                        columnIndexAllocator,
                         rootColumnGroup,
                         record,
                         parser.getFieldName(),
@@ -401,7 +404,7 @@ public class XmlImportUtilities extends TreeImportUtilities {
         } else {
             record = new ImportRecord();
             addCell(
-                project,
+                columnIndexAllocator,
                 rootColumnGroup,
                 record,
                 parser.getFieldName(),
@@ -409,31 +412,20 @@ public class XmlImportUtilities extends TreeImportUtilities {
             );
         }
         if (record != null) {
-            addImportRecordToProject(record, project, 
+            addImportRecordToProject(record, rows, 
                     parameter.includeFileSources, parameter.fileSource);
         }
     }
 
-    static protected void addImportRecordToProject(ImportRecord record, Project project,
+    static protected void addImportRecordToProject(ImportRecord record, List<Row> project,
             boolean includeFileSources, String fileSource) {
         for (List<Cell> row : record.rows) {
             if (row.size() > 0) {
-                Row realRow = new Row(row.size());
-                for (int c = 0; c < row.size(); c++) {
-                    if (c == 0 && includeFileSources)  {    // to add the file source:
-                        realRow.setCell(
-                                0,
-                            new Cell(fileSource, null));
-                        continue;
-                    }
-                    Cell cell = row.get(c);
-                    if (cell != null) {
-                        realRow.setCell(c, cell);
-                    }
+                Row realRow = new Row(row, false, false);
+                if (includeFileSources) {
+                	realRow = realRow.withCell(0, new Cell(fileSource, null));
                 }
-                if (realRow != null) {
-                    project.rows.add(realRow);
-                }
+                project.add(realRow);
             }
         }
     }
@@ -447,7 +439,8 @@ public class XmlImportUtilities extends TreeImportUtilities {
      * @throws ServletException
      */
     static protected void processSubRecord(
-        Project project,
+        ColumnIndexAllocator columnIndexAllocator,
+        List<Row> rows,
         TreeReader parser,
         ImportColumnGroup columnGroup,
         ImportRecord record,
@@ -463,7 +456,6 @@ public class XmlImportUtilities extends TreeImportUtilities {
         }
         
         ImportColumnGroup thisColumnGroup = getColumnGroup(
-                    project,
                     columnGroup,
                     composeName(parser.getPrefix(), parser.getFieldName()));
         
@@ -477,7 +469,7 @@ public class XmlImportUtilities extends TreeImportUtilities {
             }
             if (text.length() > 0 | !parameter.storeEmptyStrings) {
                 addCell(
-                    project,
+                    columnIndexAllocator,
                     thisColumnGroup,
                     record,
                     composeName(parser.getAttributePrefix(i), parser.getAttributeLocalName(i)),
@@ -492,7 +484,8 @@ public class XmlImportUtilities extends TreeImportUtilities {
             Token eventType = parser.next();
             if (eventType == Token.StartEntity) {
                 processSubRecord(
-                    project,
+                    columnIndexAllocator,
+                    rows,
                     parser,
                     thisColumnGroup,
                     record,
@@ -505,10 +498,10 @@ public class XmlImportUtilities extends TreeImportUtilities {
                 String colName = parser.getFieldName();
                 if (value instanceof String) {
                     String text = (String) value;
-                    addCell(project, thisColumnGroup, record, colName, text, 
+                    addCell(columnIndexAllocator, thisColumnGroup, record, colName, text, 
                             parameter.storeEmptyStrings, parameter.guessDataType);
                 } else {
-                    addCell(project, thisColumnGroup, record, colName, value);
+                    addCell(columnIndexAllocator, thisColumnGroup, record, colName, value);
                 }
             } else if (eventType == Token.EndEntity) {
                 break;

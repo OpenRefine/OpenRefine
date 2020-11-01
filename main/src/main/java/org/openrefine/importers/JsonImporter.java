@@ -41,12 +41,14 @@ import java.util.List;
 
 import org.openrefine.ProjectMetadata;
 import org.openrefine.importers.tree.ImportColumnGroup;
+import org.openrefine.importers.tree.TreeImportUtilities.ColumnIndexAllocator;
 import org.openrefine.importers.tree.TreeImportingParserBase;
 import org.openrefine.importers.tree.TreeReader;
 import org.openrefine.importers.tree.TreeReaderException;
+import org.openrefine.importing.ImportingFileRecord;
 import org.openrefine.importing.ImportingJob;
-import org.openrefine.importing.ImportingUtilities;
-import org.openrefine.model.Project;
+import org.openrefine.model.DatamodelRunner;
+import org.openrefine.model.Row;
 import org.openrefine.util.JSONUtilities;
 import org.openrefine.util.ParsingUtilities;
 import org.slf4j.Logger;
@@ -70,8 +72,8 @@ public class JsonImporter extends TreeImportingParserBase {
 
     public final static String ANONYMOUS = "_";
 
-    public JsonImporter() {
-        super(true);
+    public JsonImporter(DatamodelRunner runner) {
+        super(runner);
     }
     
     static private class PreviewParsingState {
@@ -82,12 +84,12 @@ public class JsonImporter extends TreeImportingParserBase {
     
     @Override
     public ObjectNode createParserUIInitializationData(ImportingJob job,
-            List<ObjectNode> fileRecords, String format) {
+            List<ImportingFileRecord> fileRecords, String format) {
         ObjectNode options = super.createParserUIInitializationData(job, fileRecords, format);
         if (fileRecords.size() > 0) {
             try {
-                ObjectNode firstFileRecord = fileRecords.get(0);
-                File file = ImportingUtilities.getFile(job, firstFileRecord);
+                ImportingFileRecord firstFileRecord = fileRecords.get(0);
+                File file = firstFileRecord.getFile(job.getRawDataDir());
                 JsonFactory factory = new JsonFactory();
                 JsonParser parser = factory.createJsonParser(file);
 
@@ -199,14 +201,20 @@ public class JsonImporter extends TreeImportingParserBase {
     }
     
     @Override
-    public void parseOneFile(Project project, ProjectMetadata metadata,
-            ImportingJob job, String fileSource, InputStream is,
-            ImportColumnGroup rootColumnGroup, int limit, ObjectNode options, List<Exception> exceptions) {
+    public void parseOneFile(
+            ColumnIndexAllocator allocator,
+            List<Row> rows,
+            ProjectMetadata metadata,
+            ImportingJob job,
+            String fileSource,
+            InputStream is,
+            ImportColumnGroup rootColumnGroup,
+            long limit,
+            ObjectNode options
+        ) throws Exception {
         
-        parseOneFile(project, metadata, job, fileSource,
-            new JSONTreeReader(is), rootColumnGroup, limit, options, exceptions);
-        
-        super.parseOneFile(project, metadata, job, fileSource, is, rootColumnGroup, limit, options, exceptions);
+        parseOneFile(allocator, rows, metadata, job, fileSource,
+            new JSONTreeReader(is), rootColumnGroup, limit, options);
     }
     
     static public class JSONTreeReader implements TreeReader {

@@ -31,26 +31,33 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 */
 
-package org.openrefine.importers;
+package org.openrefine.importers.tree;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import javax.xml.stream.XMLStreamException;
 
 import org.openrefine.RefineTest;
 import org.openrefine.importers.JsonImporter;
+import org.openrefine.importers.JsonImporterTests;
+import org.openrefine.importers.XmlImporter;
+import org.openrefine.importers.XmlImporterTests;
 import org.openrefine.importers.JsonImporter.JSONTreeReader;
 import org.openrefine.importers.XmlImporter.XmlParser;
 import org.openrefine.importers.tree.ImportColumn;
 import org.openrefine.importers.tree.ImportColumnGroup;
 import org.openrefine.importers.tree.ImportParameters;
 import org.openrefine.importers.tree.ImportRecord;
+import org.openrefine.importers.tree.TreeImportUtilities.ColumnIndexAllocator;
 import org.openrefine.importers.tree.TreeReader;
 import org.openrefine.importers.tree.TreeReaderException;
+import org.openrefine.importers.tree.XmlImportUtilities;
+import org.openrefine.model.ColumnModel;
 import org.openrefine.model.Project;
 import org.openrefine.model.Row;
 import org.slf4j.LoggerFactory;
@@ -70,27 +77,28 @@ public class XmlImportUtilitiesTests extends RefineTest {
     }
 
     //dependencies
-    Project project;
     TreeReader parser;
     ImportColumnGroup columnGroup;
     ImportRecord record;
     ByteArrayInputStream inputStream;
+    ColumnIndexAllocator allocator;
+    List<Row> rows;
 
     //System Under Test
-    XmlImportUtilitiesStub SUT;
+    XmlImportUtilities SUT;
 
     @BeforeMethod
     public void SetUp(){
-        SUT = new XmlImportUtilitiesStub();
-        project = new Project();
+        SUT = new XmlImportUtilities();
         columnGroup = new ImportColumnGroup();
         record = new ImportRecord();
+        allocator = new ColumnIndexAllocator();
+        rows = new ArrayList<>();
     }
 
     @AfterMethod
     public void TearDown() throws IOException{
         SUT = null;
-        project = null;
         parser = null;
         columnGroup = null;
         record = null;
@@ -98,6 +106,8 @@ public class XmlImportUtilitiesTests extends RefineTest {
             inputStream.close();
         }
         inputStream = null;
+        allocator = null;
+        rows = null;
     }
 
     @Test
@@ -107,7 +117,7 @@ public class XmlImportUtilitiesTests extends RefineTest {
         String tag = "library";
         createXmlParser();
 
-        String[] response = XmlImportUtilitiesStub.detectPathFromTag(parser, tag);
+        String[] response = XmlImportUtilities.detectPathFromTag(parser, tag);
         Assert.assertNotNull(response);
         Assert.assertEquals(response.length, 1);
         Assert.assertEquals(response[0], "library");
@@ -120,7 +130,7 @@ public class XmlImportUtilitiesTests extends RefineTest {
 
         createXmlParser();
 
-        String[] response = XmlImportUtilitiesStub.detectPathFromTag(parser, tag);
+        String[] response = XmlImportUtilities.detectPathFromTag(parser, tag);
         Assert.assertNotNull(response);
         Assert.assertEquals(response.length, 2);
         Assert.assertEquals(response[0], "library");
@@ -136,7 +146,7 @@ public class XmlImportUtilitiesTests extends RefineTest {
 
         List<String> response = new ArrayList<String>();
         try {
-            response = SUT.detectRecordElementWrapper(parser, tag);
+            response = XmlImportUtilities.detectRecordElement(parser, tag);
         } catch (Exception e) {
             Assert.fail(e.getMessage());
         }
@@ -154,7 +164,7 @@ public class XmlImportUtilitiesTests extends RefineTest {
 
         List<String> response = new ArrayList<String>();
         try {
-            response = SUT.detectRecordElementWrapper(parser, tag);
+            response = XmlImportUtilities.detectRecordElement(parser, tag);
         } catch (Exception e) {
             Assert.fail(e.getMessage());
         }
@@ -173,7 +183,7 @@ public class XmlImportUtilitiesTests extends RefineTest {
 
         List<String> response = new ArrayList<String>();
         try {
-            response = SUT.detectRecordElementWrapper(parser, tag);
+            response = XmlImportUtilities.detectRecordElement(parser, tag);
         } catch (Exception e) {
             Assert.fail(e.getMessage());
         }
@@ -184,7 +194,7 @@ public class XmlImportUtilitiesTests extends RefineTest {
     public void detectRecordElementRegressionXmlTest(){
         loadSampleXml();
 
-        String[] path = XmlImportUtilitiesStub.detectRecordElement(createXmlParser());
+        String[] path = XmlImportUtilities.detectRecordElement(createXmlParser());
         Assert.assertNotNull(path);
         Assert.assertEquals(path.length, 2);
         Assert.assertEquals(path[0], "library");
@@ -195,7 +205,7 @@ public class XmlImportUtilitiesTests extends RefineTest {
     public void detectRecordElementRegressionJsonTest(){
         loadSampleJson();
 
-        String[] path = XmlImportUtilitiesStub.detectRecordElement(
+        String[] path = XmlImportUtilities.detectRecordElement(
                 new JSONTreeReader(inputStream));
         Assert.assertNotNull(path);
         Assert.assertEquals(path.length, 2);
@@ -208,13 +218,11 @@ public class XmlImportUtilitiesTests extends RefineTest {
         loadSampleXml();
 
         String[] recordPath = new String[]{"library","book"};
-        XmlImportUtilitiesStub.importTreeData(createXmlParser(), project, recordPath, columnGroup, -1, 
+        XmlImportUtilities.importTreeData(createXmlParser(), allocator, rows, recordPath, columnGroup, -1, 
                 new ImportParameters(false, true, false));
 
-        log(project);
-        assertProjectCreated(project, 0, 6);
-
-        Assert.assertEquals(project.rows.get(0).cells.size(), 4);
+        Assert.assertEquals(rows.size(), 6);
+        Assert.assertEquals(rows.get(0).cells.size(), 4);
 
         Assert.assertEquals(columnGroup.subgroups.size(), 1);
         Assert.assertNotNull(columnGroup.subgroups.get("book"));
@@ -229,13 +237,12 @@ public class XmlImportUtilitiesTests extends RefineTest {
         loadData(XmlImporterTests.getSampleWithVaryingStructure());
 
         String[] recordPath = new String[]{"library", "book"};
-        XmlImportUtilitiesStub.importTreeData(createXmlParser(), project, recordPath, columnGroup, -1, 
+        XmlImportUtilities.importTreeData(createXmlParser(), allocator, rows, recordPath, columnGroup, -1, 
                 new ImportParameters(false, true, false));
 
-        log(project);
-        assertProjectCreated(project, 0, 6);
-        Assert.assertEquals(project.rows.get(0).cells.size(), 4);
-        Assert.assertEquals(project.rows.get(5).cells.size(), 5);
+        Assert.assertEquals(rows.size(), 6);
+        Assert.assertEquals(rows.get(0).cells.size(), 4);
+        Assert.assertEquals(rows.get(5).cells.size(), 5);
 
         Assert.assertEquals(columnGroup.subgroups.size(), 1);
         Assert.assertEquals(columnGroup.name, "");
@@ -261,17 +268,19 @@ public class XmlImportUtilitiesTests extends RefineTest {
         subGroup.columns.put("d", new ImportColumn("bar"));
         columnGroup.subgroups.put("e", subGroup);
 
-        XmlImportUtilitiesStub.createColumnsFromImport(project, columnGroup);
-        log(project);
-        assertProjectCreated(project, 4, 0);
-        Assert.assertEquals(project.columnModel.getColumns().get(0).getName(), "hello");
-        Assert.assertEquals(project.columnModel.getColumns().get(1).getName(), "world");
-        Assert.assertEquals(project.columnModel.getColumns().get(2).getName(), "foo");
-        Assert.assertEquals(project.columnModel.getColumns().get(3).getName(), "bar");
+        List<Integer> columnIndexTranslation = new ArrayList<>();
+        ColumnModel columnModel = XmlImportUtilities.createColumnsFromImport(
+        		new ColumnModel(Collections.emptyList()), columnGroup, columnIndexTranslation);
+        
+        Assert.assertEquals(columnModel.getColumns().size(), 4);
+        Assert.assertEquals(columnModel.getColumns().get(0).getName(), "hello");
+        Assert.assertEquals(columnModel.getColumns().get(1).getName(), "world");
+        Assert.assertEquals(columnModel.getColumns().get(2).getName(), "foo");
+        Assert.assertEquals(columnModel.getColumns().get(3).getName(), "bar");
     }
 
     @Test
-    public void findRecordTestXml(){
+    public void findRecordTestXml() throws TreeReaderException {
         loadSampleXml();
         createXmlParser();
         ParserSkip();
@@ -279,17 +288,12 @@ public class XmlImportUtilitiesTests extends RefineTest {
         String[] recordPath = new String[]{"library","book"};
         int pathIndex = 0;
 
-        try {
-            SUT.findRecordWrapper(project, parser, recordPath, pathIndex, columnGroup,
-                    false, false, false);
-        } catch (Exception e) {
-            Assert.fail();
-        }
+        XmlImportUtilities.findRecord(allocator, rows, parser, recordPath, pathIndex, columnGroup, 0,
+                    new ImportParameters(false, false, false));
 
-        log(project);
-        assertProjectCreated(project, 0, 6);
+        Assert.assertEquals(rows.size(), 6);
 
-        Assert.assertEquals(project.rows.get(0).cells.size(), 4);
+        Assert.assertEquals(rows.get(0).cells.size(), 4);
         //TODO
     }
 
@@ -300,14 +304,14 @@ public class XmlImportUtilitiesTests extends RefineTest {
         ParserSkip();
 
         try {
-            SUT.processRecordWrapper(project, parser, columnGroup, false, false, false);
+            XmlImportUtilities.processRecord(allocator, rows, parser, columnGroup, new ImportParameters(false, false, false));
         } catch (Exception e) {
             Assert.fail();
         }
-        log(project);
-        Assert.assertNotNull(project.rows);
-        Assert.assertEquals(project.rows.size(), 1);
-        Row row = project.rows.get(0);
+
+        Assert.assertNotNull(rows);
+        Assert.assertEquals(rows.size(), 1);
+        Row row = rows.get(0);
         Assert.assertNotNull(row);
         Assert.assertNotNull(row.getCell(1));
         Assert.assertEquals(row.getCell(1).value, "author1");
@@ -315,45 +319,37 @@ public class XmlImportUtilitiesTests extends RefineTest {
     }
 
     @Test
-    public void processRecordTestDuplicateColumnsXml(){
+    public void processRecordTestDuplicateColumnsXml() throws TreeReaderException {
         loadData("<?xml version=\"1.0\"?><library><book id=\"1\"><authors><author>author1</author><author>author2</author></authors><genre>genre1</genre></book></library>");
         createXmlParser();
         ParserSkip();
 
-        try {
-            SUT.processRecordWrapper(project, parser, columnGroup, false, false, false);
-        } catch (Exception e) {
-            Assert.fail();
-        }
-        log(project);
-        Assert.assertNotNull(project.rows);
-        Assert.assertEquals(project.rows.size(), 2);
+        XmlImportUtilities.processRecord(allocator, rows, parser, columnGroup, new ImportParameters(false, false, false));
 
-        Row row = project.rows.get(0);
+        Assert.assertNotNull(rows);
+        Assert.assertEquals(rows.size(), 2);
+
+        Row row = rows.get(0);
         Assert.assertNotNull(row);
         Assert.assertEquals(row.cells.size(), 3);
         Assert.assertNotNull(row.getCell(1));
         Assert.assertEquals(row.getCell(1).value, "author1");
 
-        row = project.rows.get(1);
+        row = rows.get(1);
         Assert.assertEquals(row.getCell(1).value, "author2");
     }
 
     @Test
-    public void processRecordTestNestedElementXml(){
+    public void processRecordTestNestedElementXml() throws TreeReaderException{
         loadData("<?xml version=\"1.0\"?><library><book id=\"1\"><author><author-name>author1</author-name><author-dob>a date</author-dob></author><genre>genre1</genre></book></library>");
         createXmlParser();
         ParserSkip();
 
-        try {
-            SUT.processRecordWrapper(project, parser, columnGroup, false, false, false);
-        } catch (Exception e) {
-            Assert.fail();
-        }
-        log(project);
-        Assert.assertNotNull(project.rows);
-        Assert.assertEquals(project.rows.size(), 1);
-        Row row = project.rows.get(0);
+        XmlImportUtilities.processRecord(allocator, rows, parser, columnGroup, new ImportParameters(false, false, false));
+
+        Assert.assertNotNull(rows);
+        Assert.assertEquals(rows.size(), 1);
+        Row row = rows.get(0);
         Assert.assertNotNull(row);
         Assert.assertEquals(row.cells.size(), 4);
         Assert.assertNotNull(row.getCell(1));
@@ -364,18 +360,13 @@ public class XmlImportUtilitiesTests extends RefineTest {
 
 
     @Test
-    public void processSubRecordTestXml(){
+    public void processSubRecordTestXml() throws TreeReaderException{
         loadData("<?xml version=\"1.0\"?><library><book id=\"1\"><author>author1</author><genre>genre1</genre></book></library>");
         createXmlParser();
         ParserSkip();
 
-        try {
-            SUT.ProcessSubRecordWrapper(project, parser, columnGroup, record,0, 
-                    new ImportParameters(false, false, false));
-        } catch (Exception e) {
-            Assert.fail();
-        }
-        log(project);
+        XmlImportUtilities.processSubRecord(allocator, rows, parser, columnGroup, record,0, 
+                new ImportParameters(false, false, false));
 
         Assert.assertEquals(columnGroup.subgroups.size(), 1);
         Assert.assertEquals(columnGroup.name, "");
@@ -396,8 +387,8 @@ public class XmlImportUtilitiesTests extends RefineTest {
     public void addCellTest(){
         String columnLocalName = "author";
         String text = "Author1, The";
-        int commonStartingRowIndex = 0;
-        SUT.addCellWrapper(project, columnGroup, record, columnLocalName, text, commonStartingRowIndex);
+
+        TreeImportUtilities.addCell(allocator, columnGroup, record, columnLocalName, text, true, true);
 
         Assert.assertNotNull(record);
         Assert.assertNotNull(record.rows);

@@ -33,11 +33,12 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package org.openrefine.importers;
 
+import org.openrefine.model.DatamodelRunner;
 
 public class RdfJsonldTripleImporter extends RdfTripleImporter {
 
-    public RdfJsonldTripleImporter() {
-        super(RdfTripleImporter.Mode.JSONLD);
+    public RdfJsonldTripleImporter(DatamodelRunner runner) {
+        super(runner, RdfTripleImporter.Mode.JSONLD);
     }
     
 }

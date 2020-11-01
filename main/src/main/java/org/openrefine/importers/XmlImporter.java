@@ -48,12 +48,14 @@ import javax.xml.stream.XMLStreamReader;
 
 import org.openrefine.ProjectMetadata;
 import org.openrefine.importers.tree.ImportColumnGroup;
+import org.openrefine.importers.tree.TreeImportUtilities.ColumnIndexAllocator;
 import org.openrefine.importers.tree.TreeImportingParserBase;
 import org.openrefine.importers.tree.TreeReader;
 import org.openrefine.importers.tree.TreeReaderException;
+import org.openrefine.importing.ImportingFileRecord;
 import org.openrefine.importing.ImportingJob;
-import org.openrefine.importing.ImportingUtilities;
-import org.openrefine.model.Project;
+import org.openrefine.model.DatamodelRunner;
+import org.openrefine.model.Row;
 import org.openrefine.util.JSONUtilities;
 import org.openrefine.util.ParsingUtilities;
 import org.slf4j.Logger;
@@ -65,8 +67,8 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 public class XmlImporter extends TreeImportingParserBase {
     static final Logger logger = LoggerFactory.getLogger(XmlImporter.class);
     
-    public XmlImporter() {
-        super(true);
+    public XmlImporter(DatamodelRunner runner) {
+        super(runner);
     }
     
     static private class PreviewParsingState {
@@ -76,13 +78,13 @@ public class XmlImporter extends TreeImportingParserBase {
     final static private int PREVIEW_PARSING_LIMIT = 1000;
     
     @Override
-    public ObjectNode createParserUIInitializationData(
-            ImportingJob job, List<ObjectNode> fileRecords, String format) {
+    public ObjectNode createParserUIInitializationData(ImportingJob job,
+            List<ImportingFileRecord> fileRecords, String format) {
         ObjectNode options = super.createParserUIInitializationData(job, fileRecords, format);
         try {
             if (fileRecords.size() > 0) {
-                ObjectNode firstFileRecord = fileRecords.get(0);
-                File file = ImportingUtilities.getFile(job, firstFileRecord);
+                ImportingFileRecord firstFileRecord = fileRecords.get(0);
+                File file = firstFileRecord.getFile(job.getRawDataDir());
                 InputStream is = new FileInputStream(file);
                 
                 try {
@@ -192,21 +194,19 @@ public class XmlImporter extends TreeImportingParserBase {
     }
     
     @Override
-    public void parseOneFile(Project project, ProjectMetadata metadata,
-            ImportingJob job, String fileSource, InputStream inputStream,
-            ImportColumnGroup rootColumnGroup, int limit, ObjectNode options,
-            List<Exception> exceptions) {
-        
-        try {
-            parseOneFile(project, metadata, job, fileSource,
-                new XmlParser(inputStream), rootColumnGroup, limit, options, exceptions);
-            
-            super.parseOneFile(project, metadata, job, fileSource, inputStream, rootColumnGroup, limit, options, exceptions);
-        } catch (XMLStreamException e) {
-            exceptions.add(e);
-        } catch (IOException e) {
-            exceptions.add(e);
-        }
+    public void parseOneFile(
+            ColumnIndexAllocator allocator,
+            List<Row> rows,
+            ProjectMetadata metadata,
+            ImportingJob job,
+            String fileSource,
+            InputStream inputStream,
+            ImportColumnGroup rootColumnGroup,
+            long limit,
+            ObjectNode options
+        ) throws Exception {
+        parseOneFile(allocator, rows, metadata, job, fileSource,
+            new XmlParser(inputStream), rootColumnGroup, limit, options);
     }
     
     static public class XmlParser implements TreeReader {

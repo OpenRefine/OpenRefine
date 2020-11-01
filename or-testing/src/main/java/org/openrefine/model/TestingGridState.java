@@ -52,6 +52,12 @@ public class TestingGridState implements GridState {
         this.rows = rows;
         this.overlayModels = overlayModels;
         records = groupRowsIntoRecords(rows, columnModel.getKeyColumnIndex());
+        
+        // Check that all rows have the same number of cells as the project has columns
+        int expectedSize = columnModel.getColumns().size();
+        if(!rows.stream().allMatch(r -> r.getCells().size() == expectedSize)) {
+            throw new IllegalArgumentException("Rows are required to contain as many cells as there are columns");
+        }
     }
     
     public static List<Record> groupRowsIntoRecords(List<Row> rows, int keyCellIndex) {

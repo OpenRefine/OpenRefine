@@ -35,13 +35,12 @@ package org.openrefine.importers;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
+import java.io.Serializable;
 import java.util.LinkedList;
 
-import org.openrefine.importers.XmlImporter;
 import org.openrefine.importers.tree.TreeImportingParserBase;
 import org.openrefine.importing.ImportingJob;
+import org.openrefine.model.GridState;
 import org.openrefine.model.Row;
 import org.openrefine.util.JSONUtilities;
 import org.openrefine.util.ParsingUtilities;
@@ -69,12 +68,25 @@ public class XmlImporterTests extends ImporterTest {
 
     //System Under Test
     XmlImporter SUT = null;
+   
+    // Common expected state for many tests
+    GridState expectedGrid;
     
     @Override
     @BeforeMethod
     public void setUp(){
         super.setUp();
-        SUT = new XmlImporter();
+        SUT = new XmlImporter(runner());
+        expectedGrid = createGrid(new String[] {
+        		"book - id", "book - title", "book - author", "book - publish_date"
+        }, new Serializable[][] {
+        	{ "1", "Book title 1", "Author 1, The", "2010-05-26" },
+        	{ "2", "Book title 2", "Author 2, The", "2010-05-26" },
+        	{ "3", "Book title 3", "Author 3, The", "2010-05-26" },
+        	{ "4", "Book title 4", "Author 4, The", "2010-05-26" },
+        	{ "5", "Book title 5", "Author 5, The", "2010-05-26" },
+        	{ "6", "Book title 6", "Author 6, The", "2010-05-26" },
+        });
     }
 
     @Override
@@ -93,108 +105,87 @@ public class XmlImporterTests extends ImporterTest {
     }
 
     @Test
-    public void canParseSample(){
-        RunTest(getSample());
-
-        log(project);
-        assertProjectCreated(project, 4, 6);
-
-        Row row = project.rows.get(0);
-        Assert.assertNotNull(row);
-        Assert.assertNotNull(row.getCell(1));
-        Assert.assertEquals(row.getCell(1).value, "Author 1, The");
+    public void canParseSample() throws Exception{
+        GridState grid = RunTest(getSample());
+		
+		assertGridEquals(grid, expectedGrid);
     }
     
     @Test
-    public void canParseDeeplyNestedSample(){
-        RunTest(getDeeplyNestedSample(), getNestedOptions(job, SUT));
-
-        log(project);
-        assertProjectCreated(project, 4, 6);
-
-        Row row = project.rows.get(0);
-        Assert.assertNotNull(row);
-        Assert.assertNotNull(row.getCell(1));
-        Assert.assertEquals(row.getCell(1).value, "Author 1, The");
+    public void canParseDeeplyNestedSample() throws Exception{
+        GridState grid = RunTest(getDeeplyNestedSample(), getNestedOptions(job, SUT));
+		
+		assertGridEquals(grid, expectedGrid);
     }
     
     @Test
-    public void canParseSampleWithMixedElement(){
-        RunTest(getMixedElementSample(), getNestedOptions(job, SUT));
-
-        log(project);
-        assertProjectCreated(project, 4, 6);
-        
-        Row row = project.rows.get(0);
-        Assert.assertNotNull(row);
-        Assert.assertNotNull(row.getCell(1));
-        Assert.assertEquals(row.getCell(1).value, "Author 1, The");
+    public void canParseSampleWithMixedElement() throws Exception {
+        GridState grid = RunTest(getMixedElementSample(), getNestedOptions(job, SUT));
+		
+		assertGridEquals(grid, expectedGrid);
     }
     
     @Test
-    public void ignoresDtds() {
-    	RunTest(getSampleWithDtd());
+    public void ignoresDtds() throws Exception {
+    	GridState grid = RunTest(getSampleWithDtd());
     	
-    	assertProjectCreated(project, 4, 6);
-    	Row row = project.rows.get(0);
-        Assert.assertNotNull(row);
-        Assert.assertNotNull(row.getCell(1));
-        Assert.assertEquals(row.getCell(1).value, "Author 1, The");
+    	assertGridEquals(grid, expectedGrid);
     }
 
     @Test
-    public void canParseSampleWithDuplicateNestedElements(){
-        RunTest(getSampleWithDuplicateNestedElements());
+    public void canParseSampleWithDuplicateNestedElements() throws Exception {
+        GridState grid = RunTest(getSampleWithDuplicateNestedElements());
 
-        log(project);
-        assertProjectCreated(project, 4, 12);
+        assertProjectCreated(grid, 4, 12);
 
-        Row row = project.rows.get(0);
+        Row row = grid.getRow(0);
         Assert.assertNotNull(row);
         Assert.assertEquals(row.cells.size(), 4);
         Assert.assertNotNull(row.getCell(1));
         Assert.assertEquals(row.getCell(1).value, "Author 1, The");
-        Assert.assertEquals(project.rows.get(1).getCell(1).value, "Author 1, Another");
+        Assert.assertEquals(grid.getRow(1).getCell(1).value, "Author 1, Another");
     }
 
     @Test
-    public void testCanParseLineBreak(){
+    public void testCanParseLineBreak() throws Exception {
+        GridState grid = RunTest(getSampleWithLineBreak());
 
-        RunTest(getSampleWithLineBreak());
-
-        log(project);
-        assertProjectCreated(project, 4, 6);
-
-        Row row = project.rows.get(3);
-        Assert.assertNotNull(row);
-        Assert.assertEquals(row.cells.size(), 4);
-        Assert.assertNotNull(row.getCell(1));
-        Assert.assertEquals(row.getCell(1).value, "With line\n break");
+		GridState expectedGrid = createGrid(new String[] {
+        		"book - id", "book - title", "book - author", "book - publish_date"
+        }, new Serializable[][] {
+        	{ "1", "Book title 1", "Author 1, The",     "2010-05-26" },
+        	{ "2", "Book title 2", "Author 2, The",     "2010-05-26" },
+        	{ "3", "Book title 3", "Author 3, The",     "2010-05-26" },
+        	{ "4", "Book title 4", "With line\n break", "2010-05-26" },
+        	{ "5", "Book title 5", "Author 5, The",     "2010-05-26" },
+        	{ "6", "Book title 6", "Author 6, The",     "2010-05-26" },
+        });
+        assertGridEquals(grid, expectedGrid);
     }
 
     @Test
-    public void testElementsWithVaryingStructure(){
-        RunTest(getSampleWithVaryingStructure());
+    public void testElementsWithVaryingStructure() throws Exception {
+        GridState grid = RunTest(getSampleWithVaryingStructure());
+        
+        GridState expected = createGrid(new String[] {
+        		"book - id", "book - title", "book - author", "book - publish_date", "book - genre"
+        }, new Serializable[][] {
+        	{ "1", "Book title 1", "Author 1, The", "2010-05-26", null },
+        	{ "2", "Book title 2", "Author 2, The", "2010-05-26", null },
+        	{ "3", "Book title 3", "Author 3, The", "2010-05-26", null },
+        	{ "4", "Book title 4", "Author 4, The", "2010-05-26", null },
+        	{ "5", "Book title 5", "Author 5, The", "2010-05-26", null },
+        	{ "6", "Book title 6", "Author 6, The", "2010-05-26", "New element not seen in other records" },
+        });
 
-        log(project);
-        assertProjectCreated(project, 5, 6);
-
-        Assert.assertEquals(project.columnModel.getColumnByCellIndex(4).getName(), "book - genre");
-
-        Row row0 = project.rows.get(0);
-        Assert.assertNotNull(row0);
-        Assert.assertEquals(row0.cells.size(),4);
-
-        Row row5  = project.rows.get(5);
-        Assert.assertNotNull(row5);
-        Assert.assertEquals(row5.cells.size(),5);
+        assertGridEquals(grid, expected);
     }
 
     @Test
-    public void testElementWithNestedTree(){
-        RunTest(getSampleWithTreeStructure());
-        log(project);
-        assertProjectCreated(project, 5, 6);
+    public void testElementWithNestedTree() throws Exception {
+        GridState grid = RunTest(getSampleWithTreeStructure());
+
+        assertProjectCreated(grid, 5, 6);
     }
 
     //------------helper methods---------------
@@ -352,27 +343,17 @@ public class XmlImporterTests extends ImporterTest {
         return sb.toString();
     }
 
-    private void RunTest(String testString){
-        RunTest(testString, getOptions(job, SUT));
+    private GridState RunTest(String testString) throws Exception {
+        return RunTest(testString, getOptions(job, SUT));
     }
     
-    private void RunTest(String testString, ObjectNode objectNode) {
-        try {
-            inputStream = new ByteArrayInputStream(testString.getBytes( "UTF-8" ));
-        } catch (UnsupportedEncodingException e1) {
-            Assert.fail();
-        }
+    private GridState RunTest(String testString, ObjectNode objectNode) throws Exception {
+        return parseOneString(SUT, testString, objectNode);
+    }
+    
+    private void assertProjectCreated(GridState grid, int nbColumns, int nbRows) {
+    	Assert.assertEquals(grid.getColumnModel().getColumns().size(), nbColumns);
+    	Assert.assertEquals(grid.rowCount(), nbRows);
+    }
 
-        try {
-            parseOneFile(SUT, inputStream, objectNode);
-        } catch (Exception e) {
-            e.printStackTrace();
-            Assert.fail();
-        }
-    }
-    
-    @Override
-    protected void parseOneFile(TreeImportingParserBase parser, InputStream inputStream, ObjectNode options) {
-        parseOneInputStream(parser, inputStream, options);
-    }
 }

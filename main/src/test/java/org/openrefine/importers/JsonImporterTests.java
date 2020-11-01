@@ -36,14 +36,15 @@ package org.openrefine.importers;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
+import java.io.Serializable;
 import java.util.LinkedList;
 
-import org.openrefine.importers.JsonImporter;
 import org.openrefine.importers.JsonImporter.JSONTreeReader;
 import org.openrefine.importers.tree.TreeImportingParserBase;
 import org.openrefine.importers.tree.TreeReader.Token;
 import org.openrefine.importing.ImportingJob;
+import org.openrefine.model.ColumnModel;
+import org.openrefine.model.GridState;
 import org.openrefine.model.Row;
 import org.openrefine.util.JSONUtilities;
 import org.openrefine.util.ParsingUtilities;
@@ -75,7 +76,7 @@ public class JsonImporterTests extends ImporterTest {
     @BeforeMethod
     public void setUp(){
         super.setUp();
-        SUT = new JsonImporter();
+        SUT = new JsonImporter(runner());
     }
 
     @Override
@@ -92,77 +93,91 @@ public class JsonImporterTests extends ImporterTest {
         }
         super.tearDown();
     }
-
+    
     @Test
-    public void canParseSample(){
-        RunTest(getSample());
-
-        log(project);
-        assertProjectCreated(project, 4, 6);
-
-        Row row = project.rows.get(0);
-        Assert.assertNotNull(row);
-        Assert.assertNotNull(row.getCell(1));
-        Assert.assertEquals(row.getCell(1).value, "Author 1, The");
+    public void canParseSample() throws Exception{
+    	GridState grid = RunTest(getSample());
+        
+        GridState expected = createGrid(new String[] {
+        		"_ - id", "_ - title", "_ - author", "_ - publish_date"
+        }, new Serializable[][] {
+        	{ 1L, "Book title 1", "Author 1, The", "2010-05-26" },
+        	{ 2L, "Book title 2", "Author 2, The", "2010-05-26" },
+        	{ 3L, "Book title 3", "Author 3, The", "2010-05-26" },
+        	{ 4L, "Book title 4", "Author 4, The", "2010-05-26" },
+        	{ 5L, "Book title 5", "Author 5, The", "2010-05-26" },
+        	{ 6L, "Book title 6", "Author 6, The", "2010-05-26" },
+        });
+		assertGridEquals(grid, expected);
     }
 
     @Test
-    public void canParseSampleWithDuplicateNestedElements(){
-        RunTest(getSampleWithDuplicateNestedElements());
+    public void canParseSampleWithDuplicateNestedElements() throws Exception{
+        GridState grid = RunTest(getSampleWithDuplicateNestedElements());
 
-        log(project);
-        assertProjectCreated(project, 4, 12);
-
-        Row row = project.rows.get(0);
-        Assert.assertNotNull(row);
-        Assert.assertEquals(row.cells.size(), 4);
-        Assert.assertNotNull(row.getCell(1));
-        Assert.assertEquals(row.getCell(1).value, "Author 1, The");
-        Assert.assertEquals(project.rows.get(1).getCell(1).value, "Author 1, Another");
+        GridState expected = createGrid(new String[] {
+        	"_ - id", "_ - title", "_ - publish_date", "_ - authors - _ - name"
+        }, new Serializable[][] {
+        	{ 1L,   "Book title 1", "2010-05-26", "Author 1, The" },
+        	{ null, null,           null,         "Author 1, Another" },  
+        	{ 2L,   "Book title 2", "2010-05-26", "Author 2, The" },
+        	{ null, null,           null,         "Author 2, Another" }, 
+        	{ 3L,   "Book title 3", "2010-05-26", "Author 3, The" },
+        	{ null, null,           null,         "Author 3, Another" }, 
+        	{ 4L,   "Book title 4", "2010-05-26", "Author 4, The" },
+        	{ null, null,           null,         "Author 4, Another" }, 
+        	{ 5L,   "Book title 5", "2010-05-26", "Author 5, The" },
+        	{ null, null,           null,         "Author 5, Another" }, 
+        	{ 6L,   "Book title 6", "2010-05-26", "Author 6, The" },
+        	{ null, null,           null,         "Author 6, Another" }, 
+        });
+		assertGridEquals(grid, expected);
     }
 
     @Test
-    public void testCanParseLineBreak(){
+    public void testCanParseLineBreak() throws Exception {
+        GridState grid = RunTest(getSampleWithLineBreak());
 
-        RunTest(getSampleWithLineBreak());
-
-        log(project);
-        assertProjectCreated(project, 4, 6);
-
-        Row row = project.rows.get(3);
-        Assert.assertNotNull(row);
-        Assert.assertEquals(row.cells.size(), 4);
-        Assert.assertNotNull(row.getCell(1));
-        Assert.assertEquals(row.getCell(1).value, "With line\n break");
+		GridState expected = createGrid(new String[] {
+        		"_ - id", "_ - title", "_ - author", "_ - publish_date"
+        }, new Serializable[][] {
+        	{ 1L, "Book title 1", "Author 1, The",    "2010-05-26" },
+        	{ 2L, "Book title 2", "Author 2, The",    "2010-05-26" },
+        	{ 3L, "Book title 3", "Author 3, The",    "2010-05-26" },
+        	{ 4L, "Book title 4", "With line\n break", "2010-05-26" },
+        	{ 5L, "Book title 5", "Author 5, The",    "2010-05-26" },
+        	{ 6L, "Book title 6", "Author 6, The",    "2010-05-26" },
+        });
+		assertGridEquals(grid, expected);
     }
 
     @Test
-    public void testElementsWithVaryingStructure(){
-        RunTest(getSampleWithVaryingStructure());
+    public void testElementsWithVaryingStructure() throws Exception {
+        GridState grid = RunTest(getSampleWithVaryingStructure());
 
-        log(project);
-        assertProjectCreated(project, 5, 6);
-
-        Assert.assertEquals( project.columnModel.getColumnByCellIndex(4).getName(), JsonImporter.ANONYMOUS + " - genre");
-
-        Row row0 = project.rows.get(0);
-        Assert.assertNotNull(row0);
-        Assert.assertEquals(row0.cells.size(),4);
-
-        Row row5  = project.rows.get(5);
-        Assert.assertNotNull(row5);
-        Assert.assertEquals(row5.cells.size(),5);
+		GridState expected = createGrid(new String[] {
+        		"_ - id", "_ - title", "_ - author", "_ - publish_date", "_ - genre"
+        }, new Serializable[][] {
+        	{ 1L, "Book title 1", "Author 1, The", "2010-05-26", null },
+        	{ 2L, "Book title 2", "Author 2, The", "2010-05-26", null },
+        	{ 3L, "Book title 3", "Author 3, The", "2010-05-26", null },
+        	{ 4L, "Book title 4", "Author 4, The", "2010-05-26", null },
+        	{ 5L, "Book title 5", "Author 5, The", "2010-05-26", null },
+        	{ 6L, "Book title 6", "Author 6, The", "2010-05-26", "New element not seen in other records"},
+        });
+		assertGridEquals(grid, expected);
     }
 
     @Test
-    public void testElementWithNestedTree(){
-        RunTest(getSampleWithTreeStructure());
-        log(project);
-        assertProjectCreated(project, 5, 6);
+    public void testElementWithNestedTree() throws Exception {
+        GridState grid = RunTest(getSampleWithTreeStructure());
+
+        Assert.assertEquals(grid.getColumnModel().getColumns().size(), 5);
+		Assert.assertEquals(grid.rowCount(), 6);
     }
     
     @Test
-    public void testElementWithMqlReadOutput(){
+    public void testElementWithMqlReadOutput() throws Exception {
         String mqlOutput = "{\"code\":\"/api/status/ok\",\"result\":[{\"armed_force\":{\"id\":\"/en/wehrmacht\"},\"id\":\"/en/afrika_korps\",\"type\":\"/military/military_unit\"},{\"armed_force\":{\"id\":\"/m/0chtrwn\"},\"id\":\"/en/sacred_band_of_thebes\",\"type\":\"/military/military_unit\"},{\"armed_force\":{\"id\":\"/en/british_army\"},\"id\":\"/en/british_16_air_assault_brigade\",\"type\":\"/military/military_unit\"},{\"armed_force\":{\"id\":\"/en/british_army\"},\"id\":\"/en/pathfinder_platoon\",\"type\":\"/military/military_unit\"},{\"armed_force\":{\"id\":\"/m/0ch7qgz\"},\"id\":\"/en/sacred_band\",\"type\":\"/military/military_unit\"},{\"armed_force\":{\"id\":\"/en/polish_navy\"},\"id\":\"/en/3rd_ship_flotilla\",\"type\":\"/military/military_unit\"},{\"armed_force\":{\"id\":\"/m/0chtrwn\"},\"id\":\"/m/0c0kxn9\",\"type\":\"/military/military_unit\"},{\"armed_force\":{\"id\":\"/m/0chtrwn\"},\"id\":\"/m/0c0kxq9\",\"type\":\"/military/military_unit\"},{\"armed_force\":{\"id\":\"/m/0chtrwn\"},\"id\":\"/m/0c0kxqh\",\"type\":\"/military/military_unit\"},{\"armed_force\":{\"id\":\"/m/0chtrwn\"},\"id\":\"/m/0c0kxqp\",\"type\":\"/military/military_unit\"},{\"armed_force\":{\"id\":\"/m/0chtrwn\"},\"id\":\"/m/0c0kxqw\",\"type\":\"/military/military_unit\"},{\"armed_force\":{\"id\":\"/m/0chtrwn\"},\"id\":\"/m/0c1wxl3\",\"type\":\"/military/military_unit\"},{\"armed_force\":{\"id\":\"/m/0chtrwn\"},\"id\":\"/m/0c1wxlp\",\"type\":\"/military/military_unit\"},{\"armed_force\":{\"id\":\"/m/0chtrwn\"},\"id\":\"/m/0ck96kz\",\"type\":\"/military/military_unit\"},{\"armed_force\":{\"id\":\"/m/0chtrwn\"},\"id\":\"/m/0cm3j23\",\"type\":\"/military/military_unit\"},{\"armed_force\":{\"id\":\"/m/0chtrwn\"},\"id\":\"/m/0cw8hb4\",\"type\":\"/military/military_unit\"}],\"status\":\"200 OK\",\"transaction_id\":\"cache;cache01.p01.sjc1:8101;2010-10-04T15:04:33Z;0007\"}";
         
         ObjectNode options = SUT.createParserUIInitializationData(
@@ -173,13 +188,14 @@ public class JsonImporterTests extends ImporterTest {
         path.add(JsonImporter.ANONYMOUS);
         JSONUtilities.safePut(options, "recordPath", path);
 
-        RunTest(mqlOutput, options);
-        log(project);
-        assertProjectCreated(project,3,16);
+        GridState grid = RunTest(mqlOutput, options);
+        
+        Assert.assertEquals(grid.getColumnModel().getColumns().size(), 3);
+		Assert.assertEquals(grid.rowCount(), 16);
     }
     
     @Test
-    public void testJSONMinimumArray(){
+    public void testJSONMinimumArray() throws Exception {
         String ScraperwikiOutput = 
             "[\n" +
             "{\n" +
@@ -207,9 +223,10 @@ public class JsonImporterTests extends ImporterTest {
             "        \"citations-score\": \"100\"\n" +
             "    }\n" +
             "]\n";
-        RunTest(ScraperwikiOutput);
-        log(project);
-        assertProjectCreated(project,9,2);
+        GridState grid = RunTest(ScraperwikiOutput);
+        
+        Assert.assertEquals(grid.getColumnModel().getColumns().size(), 9);
+		Assert.assertEquals(grid.rowCount(), 2);
     }
         
     /**
@@ -290,63 +307,65 @@ public class JsonImporterTests extends ImporterTest {
     }
 
     @Test
-    public void testJsonDatatypes(){
-        RunTest(getSampleWithDataTypes());
+    public void testJsonDatatypes() throws Exception{
+        GridState grid = RunTest(getSampleWithDataTypes());
 
-        log(project);
-        assertProjectCreated(project, 2, 21,4);
+        Assert.assertEquals(grid.getColumnModel().getColumns().size(), 2);
+		Assert.assertEquals(grid.rowCount(), 21);
+		Assert.assertEquals(grid.recordCount(), 4);
 
-        Assert.assertEquals( project.columnModel.getColumnByCellIndex(0).getName(), JsonImporter.ANONYMOUS + " - id");
-        Assert.assertEquals( project.columnModel.getColumnByCellIndex(1).getName(), JsonImporter.ANONYMOUS + " - cell - cell");
+        ColumnModel columnModel = grid.getColumnModel();
+        Assert.assertEquals(columnModel.getColumns().get(0).getName(), JsonImporter.ANONYMOUS + " - id");
+        Assert.assertEquals(columnModel.getColumns().get(1).getName(), JsonImporter.ANONYMOUS + " - cell - cell");
 
-        Row row = project.rows.get(8);
+        Row row = grid.getRow(8);
         Assert.assertNotNull(row);
         Assert.assertEquals(row.cells.size(),2);
         Assert.assertEquals(row.cells.get(1).value,""); // Make sure empty strings are preserved
 
         // null, true, false 0,1,-2.1,0.23,-0.24,3.14e100
 
-        row = project.rows.get(12);
+        row = grid.getRow(12);
         Assert.assertNotNull(row);
         Assert.assertEquals(row.cells.size(),2);
         Assert.assertNull(row.cells.get(1).value); 
 
-        row = project.rows.get(13);
+        row = grid.getRow(13);
         Assert.assertNotNull(row);
         Assert.assertEquals(row.cells.size(),2);
         Assert.assertEquals(row.cells.get(1).value,Boolean.TRUE); 
         
-        row = project.rows.get(14);
+        row = grid.getRow(14);
         Assert.assertNotNull(row);
         Assert.assertEquals(row.cells.size(),2);
         Assert.assertEquals(row.cells.get(1).value,Boolean.FALSE); 
         
-        row = project.rows.get(15);
+        row = grid.getRow(15);
         Assert.assertNotNull(row);
         Assert.assertEquals(row.cells.size(),2);
         Assert.assertEquals(row.cells.get(1).value,Long.valueOf(0)); 
 
-        row = project.rows.get(16);
+        row = grid.getRow(16);
         Assert.assertNotNull(row);
         Assert.assertEquals(row.cells.size(),2);
         Assert.assertEquals(row.cells.get(1).value,Long.valueOf(1)); 
 
-        row = project.rows.get(17);
+        row = grid.getRow(17);
         Assert.assertNotNull(row);
         Assert.assertEquals(row.cells.size(),2);
         Assert.assertEquals(row.cells.get(1).value,Double.parseDouble("-2.1")); 
 
-        row = project.rows.get(18);
+        row = grid.getRow(18);
         Assert.assertNotNull(row);
         Assert.assertEquals(row.cells.size(),2);
         Assert.assertEquals(row.cells.get(1).value,Double.valueOf((double)0.23)); 
         
-        row = project.rows.get(19);
+        row = grid.getRow(19);
         Assert.assertNotNull(row);
         Assert.assertEquals(row.cells.size(),2);
         Assert.assertEquals(row.cells.get(1).value,Double.valueOf((double)-0.24)); 
         
-        row = project.rows.get(20);
+        row = grid.getRow(20);
         Assert.assertNotNull(row);
         Assert.assertEquals(row.cells.size(),2);
         Assert.assertFalse(Double.isNaN((Double) row.cells.get(1).value)); 
@@ -360,16 +379,13 @@ public class JsonImporterTests extends ImporterTest {
 
 
     @Test
-    public void testComplexJsonStructure() throws IOException{
+    public void testComplexJsonStructure() throws Exception {
         String fileName = "grid_small.json";
-        RunComplexJSONTest(getComplexJSON(fileName));
-
-        log(project);
-        logger.info("************************ columnu number:" + project.columnModel.getColumns().size() + 
-                ".\trow number:" + project.rows.size() + ".\trecord number:" + project.recordModel.getRecordCount()) ;
+        GridState grid = RunComplexJSONTest(getComplexJSON(fileName));
         
-        
-        assertProjectCreated(project, 63, 63, 8);
+        Assert.assertEquals(grid.getColumnModel().getColumns().size(), 63);
+		Assert.assertEquals(grid.rowCount(), 63);
+		Assert.assertEquals(grid.recordCount(), 8);
     }   
     
     //------------helper methods---------------
@@ -393,7 +409,7 @@ public class JsonImporterTests extends ImporterTest {
                "}";
     }
 
-    static String getSample(){
+    public static String getSample() {
         StringBuilder sb = new StringBuilder();
         sb.append("[");
         for(int i = 1; i < 7; i++){
@@ -435,7 +451,7 @@ public class JsonImporterTests extends ImporterTest {
         return sb.toString();
     }
 
-    private static String getSampleWithLineBreak(){
+    private static String getSampleWithLineBreak() {
         StringBuilder sb = new StringBuilder();
         sb.append("[");
         for(int i = 1; i < 4; i++){
@@ -501,26 +517,16 @@ public class JsonImporterTests extends ImporterTest {
     }
     
 
-    private void RunTest(String testString) {
-        RunTest(testString, getOptions(job, SUT, JsonImporter.ANONYMOUS));
+    private GridState RunTest(String testString) throws Exception {
+        return RunTest(testString, getOptions(job, SUT, JsonImporter.ANONYMOUS));
     }
     
-    private void RunComplexJSONTest(String testString) {
-        RunTest(testString, getOptions(job, SUT, "institutes"));
+    private GridState RunComplexJSONTest(String testString) throws Exception {
+        return RunTest(testString, getOptions(job, SUT, "institutes"));
     }
     
-    private void RunTest(String testString, ObjectNode options) {
-        try {
-            inputStream = new ByteArrayInputStream( testString.getBytes( "UTF-8" ) );
-        } catch (UnsupportedEncodingException e1) {
-            Assert.fail();
-        }
-
-        try {
-            parseOneInputStream(SUT, inputStream, options);
-        } catch (Exception e) {
-            Assert.fail();
-        }
+    private GridState RunTest(String testString, ObjectNode options) throws Exception {
+        return parseOneString(SUT, testString, options);
     }
     
     private String getComplexJSON(String fileName) throws IOException {

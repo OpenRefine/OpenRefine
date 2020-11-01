@@ -116,38 +116,6 @@ public class ImporterUtilitiesTests extends RefineTest {
     }
 
     @Test
-    public void ensureColumnsInRowExist(){
-        String VALUE_1 = "value1";
-        String VALUE_2 = "value2";
-        Row row = new Row(Arrays.asList(new Cell[2]));
-        ArrayList<String> columnNames = new ArrayList<String>(2);
-        columnNames.add(VALUE_1);
-        columnNames.add(VALUE_2);
-
-        ImporterUtilities.ensureColumnsInRowExist(columnNames, row);
-
-        Assert.assertEquals(columnNames.size(), 2);
-        Assert.assertEquals(columnNames.get(0), VALUE_1);
-        Assert.assertEquals(columnNames.get(1), VALUE_2);
-    }
-
-    @Test
-    public void ensureColumnsInRowExistDoesExpand(){
-        Row row = new Row(Arrays.asList(new Cell[4]));
-        for(int i = 1; i < 5; i++) {
-            row.cells.add(new Cell("value" + i, null));
-        }
-
-        ArrayList<String> columnNames = new ArrayList<String>(2);
-
-        ImporterUtilities.ensureColumnsInRowExist(columnNames, row);
-
-        Assert.assertEquals(row.cells.size(), 4);
-        Assert.assertEquals(columnNames.size(), 4);
-    }
-    
-    
-    @Test
     public void testMergeGridStates() {
     	GridState grid1 = createGrid(new String[] { "foo", "bar" },
     			new Serializable[][] {

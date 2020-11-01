@@ -39,6 +39,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.openrefine.ProjectMetadata;
 import org.openrefine.expr.ExpressionUtils;
@@ -75,7 +76,7 @@ public class TabularParserHelper {
         return options;
     }
 
-    public GridState parseOneFileInternal(ProjectMetadata metadata, ImportingJob job, String fileSource,
+    public GridState parseOneFile(ProjectMetadata metadata, ImportingJob job, String fileSource,
                 TableDataReader dataReader, long limit, ObjectNode options) throws Exception {
         int ignoreLines = JSONUtilities.getInt(options, "ignoreLines", -1);
         int headerLines = JSONUtilities.getInt(options, "headerLines", 1);
@@ -177,8 +178,11 @@ public class TabularParserHelper {
             }
         }
         
+        // Make sure each row has as many cells as there are columns in the column model
+        int nbColumns = columnModel.getColumns().size();
+        rows = rows.stream().map(r -> r.padWithNull(nbColumns)).collect(Collectors.toList());
+        
         return runner.create(columnModel, rows, Collections.emptyMap());
     }
-
 	
 }

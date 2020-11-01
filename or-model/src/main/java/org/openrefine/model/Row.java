@@ -37,6 +37,8 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.io.Writer;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Properties;
 import java.util.stream.Collectors;
@@ -83,6 +85,10 @@ public class Row implements HasFields, Serializable {
                         cells.stream().map(c -> c != null ? c : Cell.NULL).collect(Collectors.toList())
                 ).build() : ImmutableList.of(),
                 flagged, starred);
+    }
+    
+    public Row(int nbCells) {
+        this(Collections.nCopies(nbCells, null), false, false);
     }
     
     protected Row(ImmutableList<Cell> cells, boolean flagged, boolean starred) {
@@ -247,6 +253,23 @@ public class Row implements HasFields, Serializable {
      */
     public Row withStarred(boolean newStarred) {
         return new Row(cells, flagged, newStarred);
+    }
+    
+    /**
+     * Returns a copy of this row with null cells added at the end,
+     * such that the new row has the supplied size.
+     * 
+     * @param finalSize the size of the returned row
+     * @return
+     */
+    public Row padWithNull(int finalSize) {
+        if (cells.size() == finalSize) {
+            return this;
+        } else if (cells.size() > finalSize) {
+            throw new IllegalArgumentException("Desired row size is smaller than the actual row size: impossible to pad with null cells");
+        } else {
+            return insertCells(cells.size(), Arrays.asList(new Cell[finalSize - cells.size()]));
+        }
     }
     
     public void save(Writer writer, Properties options) {

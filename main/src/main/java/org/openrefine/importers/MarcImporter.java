@@ -39,30 +39,31 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.List;
 
 import org.marc4j.MarcPermissiveStreamReader;
 import org.marc4j.MarcWriter;
 import org.marc4j.MarcXmlWriter;
 import org.marc4j.marc.Record;
+import org.openrefine.importing.ImportingFileRecord;
 import org.openrefine.importing.ImportingJob;
-import org.openrefine.importing.ImportingUtilities;
-import org.openrefine.util.JSONUtilities;
+import org.openrefine.model.DatamodelRunner;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 public class MarcImporter extends XmlImporter {
     
-    public MarcImporter() {
-        super();
+    public MarcImporter(DatamodelRunner runner) {
+        super(runner);
     }
     
     @Override
-    public ObjectNode createParserUIInitializationData(ImportingJob job, java.util.List<ObjectNode> fileRecords, String format) {
+    public ObjectNode createParserUIInitializationData(ImportingJob job,
+            List<ImportingFileRecord> fileRecords, String format) {
         if (fileRecords.size() > 0) {
-            ObjectNode firstFileRecord = fileRecords.get(0);
-            File file = ImportingUtilities.getFile(job, firstFileRecord);
+            ImportingFileRecord firstFileRecord = fileRecords.get(0);
+            File file = firstFileRecord.getFile(job.getRawDataDir());
             File tempFile = new File(file.getAbsolutePath()+".xml");
-
 
             try {
                 InputStream inputStream = new FileInputStream(file);
@@ -82,11 +83,11 @@ public class MarcImporter extends XmlImporter {
                         outputStream.close();
                         inputStream.close();
                         
-                        if (tempFile.length() == 0)             // write failed. Most of time because of wrong Marc format
+                        if (tempFile.length() == 0) {           // write failed. Most of time because of wrong Marc format
                             tempFile.delete();
-                        else                    // only set json if write the temp file successfully:
-                            JSONUtilities.safePut(firstFileRecord, "location", 
-                                    JSONUtilities.getString(firstFileRecord, "location", "")+".xml");
+                        } else {                 // only set json if write the temp file successfully:
+                        	firstFileRecord.setLocation(firstFileRecord.getLocation()+".xml");
+                        }
                         
 //                        file.delete(); // get rid of our original file
                     } catch (IOException e) {

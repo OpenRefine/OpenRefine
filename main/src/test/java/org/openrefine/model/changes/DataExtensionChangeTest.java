@@ -42,9 +42,6 @@ import org.openrefine.model.Record;
 import org.openrefine.model.Row;
 import org.openrefine.model.changes.DataExtensionChange.DataExtensionJoiner;
 import org.openrefine.model.changes.DataExtensionChange.DataExtensionSerializer;
-import org.openrefine.model.recon.Recon;
-import org.openrefine.model.recon.Recon.Judgment;
-import org.openrefine.model.recon.ReconStats;
 import org.openrefine.model.recon.ReconciledDataExtensionJob.DataExtension;
 import org.openrefine.model.recon.ReconciledDataExtensionJob.RecordDataExtension;
 import org.openrefine.util.ParsingUtilities;
@@ -103,19 +100,6 @@ public class DataExtensionChangeTest extends RefineTest {
     			Collections.singletonList(new Cell("b", null))
     			));
     	recordDataExtension = new RecordDataExtension(Collections.singletonMap(0L, dataExtension));
-    }
-    
-    @Test
-    public void testAggregator() {
-    	GridState state = createGrid(new String[] {"foo", "bar"},
-    			new Serializable[][] {
-    		{"hello",null},
-    		{1,      new Cell("recon", new Recon(0, "http://id", "http://schema").withJudgment(Judgment.New))}
-    	});
-        List<ReconStats> stats = state.aggregateRows(
-        		new DataExtensionChange.ReconStatsAggregator(Arrays.asList(0, 1)),
-        		new DataExtensionChange.MultiReconStats(Collections.nCopies(2, ReconStats.ZERO))).stats;
-        Assert.assertEquals(stats, Arrays.asList(ReconStats.create(2, 0, 0), ReconStats.create(1, 1, 0)));
     }
     
     @Test

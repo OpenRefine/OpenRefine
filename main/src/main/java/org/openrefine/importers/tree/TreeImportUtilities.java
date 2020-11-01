@@ -38,16 +38,25 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 
 import org.openrefine.importers.ImporterUtilities;
 import org.openrefine.model.Cell;
 import org.openrefine.model.ColumnMetadata;
-import org.openrefine.model.Project;
+import org.openrefine.model.ColumnModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public abstract class TreeImportUtilities {
     final static Logger logger = LoggerFactory.getLogger("TreeImportUtilities");
+    
+    public static class ColumnIndexAllocator {
+    	int nextIndex = 0;
+    	
+    	int allocateColumnIndex() {
+    		return nextIndex++;
+    	}
+    }
 
     static protected void sortRecordElementCandidates(List<RecordElementCandidate> list) {
         Collections.sort(list, new Comparator<RecordElementCandidate>() {
@@ -58,12 +67,11 @@ public abstract class TreeImportUtilities {
         });
     }
 
-    static public void createColumnsFromImport(
-            Project project,
-            ImportColumnGroup columnGroup
+    static public ColumnModel createColumnsFromImport(
+            ColumnModel columnModel,
+            ImportColumnGroup columnGroup,
+            List<Integer> columnIndexTranslation
     ) {
-        int startColumnIndex = project.columnModel.getColumns().size();
-
         List<ImportColumn> columns = new ArrayList<ImportColumn>(columnGroup.columns.values());
         Collections.sort(columns, new Comparator<ImportColumn>() {
             @Override
@@ -80,11 +88,12 @@ public abstract class TreeImportUtilities {
         for (int i = 0; i < columns.size(); i++) {
             ImportColumn c = columns.get(i);
 
-            ColumnMetadata column = new org.openrefine.model.ColumnMetadata(c.cellIndex, c.name);
-            project.columnModel.getColumns().add(column);
+            ColumnMetadata column = new org.openrefine.model.ColumnMetadata(c.name);
+            columnIndexTranslation.add(c.cellIndex);
+            columnModel = columnModel.appendUnduplicatedColumn(column);
         }
 
-        List<ImportColumnGroup> subgroups = new ArrayList<ImportColumnGroup>(columnGroup.subgroups.values());
+        List<ImportColumnGroup> subgroups = new ArrayList<>(columnGroup.subgroups.values());
         Collections.sort(subgroups, new Comparator<ImportColumnGroup>() {
             @Override
             public int compare(ImportColumnGroup o1, ImportColumnGroup o2) {
@@ -102,23 +111,25 @@ public abstract class TreeImportUtilities {
         });
 
         for (ImportColumnGroup g : subgroups) {
-            createColumnsFromImport(project, g);
+            columnModel = createColumnsFromImport(columnModel, g, columnIndexTranslation);
         }
+        
+        return columnModel;
     }
 
     @Deprecated
     static protected void addCell(
-            Project project,
+            ColumnIndexAllocator columnIndexAllocator,
             ImportColumnGroup columnGroup,
             ImportRecord record,
             String columnLocalName,
             String text
     ) {
-        addCell(project, columnGroup, record, columnLocalName, text, true, true);
+        addCell(columnIndexAllocator, columnGroup, record, columnLocalName, text, true, true);
     }
     
     static protected void addCell(
-            Project project,
+            ColumnIndexAllocator columnIndexAllocator,
             ImportColumnGroup columnGroup,
             ImportRecord record,
             String columnLocalName,
@@ -133,12 +144,12 @@ public abstract class TreeImportUtilities {
         if (guessDataType) {
             value = ImporterUtilities.parseCellValue(text); 
         }
-        addCell(project, columnGroup, record, columnLocalName, value);
+        addCell(columnIndexAllocator, columnGroup, record, columnLocalName, value);
     }
 
-    protected static void addCell(Project project, ImportColumnGroup columnGroup, ImportRecord record,
+    protected static void addCell(ColumnIndexAllocator columnIndexAllocator, ImportColumnGroup columnGroup, ImportRecord record,
             String columnLocalName, Serializable value) {
-        ImportColumn column = getColumn(project, columnGroup, columnLocalName);
+        ImportColumn column = getColumn(columnIndexAllocator, columnGroup, columnLocalName);
         int cellIndex = column.cellIndex;
 
         int rowIndex = Math.max(columnGroup.nextRowIndex, column.nextRowIndex);
@@ -161,7 +172,7 @@ public abstract class TreeImportUtilities {
 
 
     static protected ImportColumn getColumn(
-            Project project,
+            ColumnIndexAllocator columnIndexAllocator,
             ImportColumnGroup columnGroup,
             String localName
     ) {
@@ -169,14 +180,14 @@ public abstract class TreeImportUtilities {
             return columnGroup.columns.get(localName);
         }
 
-        ImportColumn column = createColumn(project, columnGroup, localName);
+        ImportColumn column = createColumn(columnIndexAllocator, columnGroup, localName);
         columnGroup.columns.put(localName, column);
 
         return column;
     }
 
     static protected ImportColumn createColumn(
-            Project project,
+            ColumnIndexAllocator columnIndexAllocator,
             ImportColumnGroup columnGroup,
             String localName
     ) {
@@ -186,14 +197,13 @@ public abstract class TreeImportUtilities {
                 (localName == null ? "Text" : localName) :
                     (localName == null ? columnGroup.name : (columnGroup.name + " - " + localName));
 
-        newColumn.cellIndex = project.columnModel.allocateNewCellIndex();
+        newColumn.cellIndex = columnIndexAllocator.allocateColumnIndex();
         newColumn.nextRowIndex = columnGroup.nextRowIndex;
 
         return newColumn;
     }
 
     static protected ImportColumnGroup getColumnGroup(
-            Project project,
             ImportColumnGroup columnGroup,
             String localName
     ) {
@@ -201,14 +211,13 @@ public abstract class TreeImportUtilities {
             return columnGroup.subgroups.get(localName);
         }
 
-        ImportColumnGroup subgroup = createColumnGroup(project, columnGroup, localName);
+        ImportColumnGroup subgroup = createColumnGroup(columnGroup, localName);
         columnGroup.subgroups.put(localName, subgroup);
 
         return subgroup;
     }
 
     static protected ImportColumnGroup createColumnGroup(
-            Project project,
             ImportColumnGroup columnGroup,
             String localName
     ) {

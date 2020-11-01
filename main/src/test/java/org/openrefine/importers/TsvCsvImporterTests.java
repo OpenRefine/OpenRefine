@@ -279,7 +279,7 @@ public class TsvCsvImporterTests extends ImporterTest {
         Assert.assertEquals(state.getColumnModel().getColumns().get(2).getName(), "col3");
         Assert.assertEquals(state.rowCount(), 1);
         Row row0 = state.getRow(0);
-		Assert.assertEquals(row0.cells.size(), 2);
+		Assert.assertEquals(row0.cells.size(), 3);
         Assert.assertEquals(row0.getCell(0).value, "\"To Be\" is often followed by \"or not To Be\"");
         Assert.assertEquals(row0.getCell(1).value, "data2");
     }
@@ -426,7 +426,7 @@ public class TsvCsvImporterTests extends ImporterTest {
         Assert.assertEquals(state.getColumnModel().getColumns().get(2).getName(), "col3");
         Assert.assertEquals(state.rowCount(), 1);
         Row row0 = state.getRow(0);
-		Assert.assertEquals(row0.cells.size(), 2);
+		Assert.assertEquals(row0.cells.size(), 3);
         Assert.assertEquals(row0.getCell(0).value, "\"To\n Be\" is often followed by \"or not To\n Be\"");
         Assert.assertEquals(row0.getCell(1).value, "data2");
     }
@@ -447,7 +447,7 @@ public class TsvCsvImporterTests extends ImporterTest {
         Assert.assertEquals(state.getColumnModel().getColumns().get(2).getName(), "col3");
         Assert.assertEquals(state.rowCount(), 1);
         Row row0 = state.getRow(0);
-		Assert.assertEquals(row0.cells.size(), 2);
+		Assert.assertEquals(row0.cells.size(), 3);
         Assert.assertEquals(row0.getCell(0).value, "A line with many \n\n\n\n\n empty lines");
         Assert.assertEquals(row0.getCell(1).value, "data2");
     }

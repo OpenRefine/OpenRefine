@@ -46,14 +46,20 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.openrefine.importers.ExcelImporter;
+import org.openrefine.model.DatamodelRunner;
+import org.openrefine.model.GridState;
+import org.openrefine.model.IndexedRow;
+import org.openrefine.model.Row;
+import org.openrefine.model.TestingDatamodelRunner;
 import org.openrefine.util.ParsingUtilities;
 import org.slf4j.LoggerFactory;
 import org.testng.Assert;
@@ -88,7 +94,8 @@ public class ExcelImporterTests extends ImporterTest {
     @BeforeMethod
     public void setUp(){
         super.setUp();
-        SUT = new ExcelImporter();
+        DatamodelRunner runner = new TestingDatamodelRunner();
+        SUT = new ExcelImporter(runner);
     }
 
     @Override
@@ -100,7 +107,7 @@ public class ExcelImporterTests extends ImporterTest {
     
     //---------------------read tests------------------------
     @Test
-    public void readXls() throws FileNotFoundException, IOException{
+    public void readXls() throws FileNotFoundException, IOException {
 
         ArrayNode sheets = ParsingUtilities.mapper.createArrayNode();
         sheets.add(ParsingUtilities.mapper.readTree("{name: \"file-source#Test Sheet 0\", fileNameAndSheetIndex: \"file-source#0\", rows: 31, selected: true}"));
@@ -114,22 +121,24 @@ public class ExcelImporterTests extends ImporterTest {
         
         InputStream stream = new FileInputStream(xlsFile);
         
+        GridState grid = null;
         try {
-            parseOneFile(SUT, stream);
+            grid = parseOneFile(SUT, stream);
         } catch (Exception e) {
             Assert.fail(e.getMessage());
         }
         
-        Assert.assertEquals(project.rows.size(), ROWS);
-        Assert.assertEquals(project.rows.get(1).cells.size(), COLUMNS);
-        Assert.assertEquals(((Number)project.rows.get(1).getCellValue(0)).doubleValue(),1.1, EPSILON);
-        Assert.assertEquals(((Number)project.rows.get(2).getCellValue(0)).doubleValue(),2.2, EPSILON);
+        List<Row> rows = grid.collectRows().stream().map(IndexedRow::getRow).collect(Collectors.toList());
+        Assert.assertEquals(rows.size(), ROWS);
+        Assert.assertEquals(rows.get(1).cells.size(), COLUMNS);
+        Assert.assertEquals(((Number)rows.get(1).getCellValue(0)).doubleValue(),1.1, EPSILON);
+        Assert.assertEquals(((Number)rows.get(2).getCellValue(0)).doubleValue(),2.2, EPSILON);
 
-        Assert.assertFalse((Boolean)project.rows.get(1).getCellValue(1));
-        Assert.assertTrue((Boolean)project.rows.get(2).getCellValue(1));
+        Assert.assertFalse((Boolean)rows.get(1).getCellValue(1));
+        Assert.assertTrue((Boolean)rows.get(2).getCellValue(1));
         
-        Assert.assertEquals((String)project.rows.get(1).getCellValue(4)," Row 1 Col 5");
-        Assert.assertNull((String)project.rows.get(1).getCellValue(5));
+        Assert.assertEquals((String)rows.get(1).getCellValue(4)," Row 1 Col 5");
+        Assert.assertNull((String)rows.get(1).getCellValue(5));
 
         verify(options, times(1)).get("ignoreLines");
         verify(options, times(1)).get("headerLines");
@@ -153,22 +162,24 @@ public class ExcelImporterTests extends ImporterTest {
         
         InputStream stream = new FileInputStream(xlsxFile);
         
+        GridState grid = null;
         try {
-            parseOneFile(SUT, stream);
+            grid = parseOneFile(SUT, stream);
         } catch (Exception e) {
             Assert.fail(e.getMessage());
         }
         
-        Assert.assertEquals(project.rows.size(), ROWS);
-        Assert.assertEquals(project.rows.get(1).cells.size(), COLUMNS);
-        Assert.assertEquals(((Number)project.rows.get(1).getCellValue(0)).doubleValue(),1.1, EPSILON);
-        Assert.assertEquals(((Number)project.rows.get(2).getCellValue(0)).doubleValue(),2.2, EPSILON);
+        List<Row> rows = grid.collectRows().stream().map(IndexedRow::getRow).collect(Collectors.toList());
+        Assert.assertEquals(rows.size(), ROWS);
+        Assert.assertEquals(rows.get(1).cells.size(), COLUMNS);
+        Assert.assertEquals(((Number)rows.get(1).getCellValue(0)).doubleValue(),1.1, EPSILON);
+        Assert.assertEquals(((Number)rows.get(2).getCellValue(0)).doubleValue(),2.2, EPSILON);
 
-        Assert.assertFalse((Boolean)project.rows.get(1).getCellValue(1));
-        Assert.assertTrue((Boolean)project.rows.get(2).getCellValue(1));
+        Assert.assertFalse((Boolean)rows.get(1).getCellValue(1));
+        Assert.assertTrue((Boolean)rows.get(2).getCellValue(1));
         
-        Assert.assertEquals((String)project.rows.get(1).getCellValue(4)," Row 1 Col 5");
-        Assert.assertNull((String)project.rows.get(1).getCellValue(5));
+        Assert.assertEquals((String)rows.get(1).getCellValue(4)," Row 1 Col 5");
+        Assert.assertNull((String)rows.get(1).getCellValue(5));
 
         verify(options, times(1)).get("ignoreLines");
         verify(options, times(1)).get("headerLines");
@@ -186,7 +197,7 @@ public class ExcelImporterTests extends ImporterTest {
 
             for (int row = 0; row < ROWS; row++) {
                 int col = 0;
-                Row r = sheet.createRow(row);
+                org.apache.poi.ss.usermodel.Row r = sheet.createRow(row);
                 Cell c;
 
                 c = r.createCell(col++);

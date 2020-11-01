@@ -114,7 +114,7 @@ abstract public class ImportingParserBase implements ImportingParser {
      *    a list of grids returned by the importers
      * @return
      */
-    private GridState mergeGridStates(List<GridState> gridStates) {
+    protected GridState mergeGridStates(List<GridState> gridStates) {
         if (gridStates.isEmpty()) {
             throw new IllegalArgumentException("No grid states provided");
         }

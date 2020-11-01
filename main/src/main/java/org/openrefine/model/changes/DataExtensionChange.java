@@ -1,7 +1,6 @@
 package org.openrefine.model.changes;
 
 import java.io.IOException;
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -10,7 +9,6 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import org.openrefine.browsing.EngineConfig;
-import org.openrefine.browsing.facets.RowAggregator;
 import org.openrefine.history.dag.DagSlice;
 import org.openrefine.model.Cell;
 import org.openrefine.model.ColumnMetadata;
@@ -24,6 +22,7 @@ import org.openrefine.model.recon.ReconStats;
 import org.openrefine.model.recon.ReconType;
 import org.openrefine.model.recon.ReconciledDataExtensionJob.DataExtension;
 import org.openrefine.model.recon.ReconciledDataExtensionJob.RecordDataExtension;
+import org.openrefine.operations.utils.ReconStatsAggregator;
 import org.openrefine.util.ParsingUtilities;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
@@ -95,25 +94,17 @@ public class DataExtensionChange extends EngineDependentChange {
 		GridState state = projectState.join(changeData, joiner, newColumnModel);
 		
 		// Compute recon stats
-		ReconStatsAggregator aggregator = new ReconStatsAggregator(
-				IntStream.range(_columnInsertIndex, _columnInsertIndex + _columnNames.size()).boxed().collect(Collectors.toList()));
-		MultiReconStats initialState = new MultiReconStats(Collections.nCopies(_columnNames.size(), ReconStats.ZERO));
-		List<ReconStats> reconStats = state.aggregateRows(aggregator, initialState).stats;
-
-		ColumnModel columnModel = state.getColumnModel();
-		for(int i = 0; i != _columnNames.size(); i++) {
-			if (reconStats.get(i).getMatchedTopics() > 0) {
-				ReconConfig reconConfig = new DataExtensionReconConfig(
+		List<Integer> columnIndices = IntStream.range(_columnInsertIndex, _columnInsertIndex + _columnNames.size())
+				.boxed().collect(Collectors.toList());
+		List<ReconConfig> reconConfigs = IntStream.range(_columnInsertIndex, _columnInsertIndex + _columnNames.size())
+				.mapToObj(i -> new DataExtensionReconConfig(
 						_endpoint,
 						_identifierSpace,
 						_schemaSpace,
-						_columnTypes.get(i));
-				columnModel = columnModel
-						.withReconStats(_columnInsertIndex + i, reconStats.get(i))
-						.withReconConfig(_columnInsertIndex + i, reconConfig);
-			}
-		}
-		return state.withColumnModel(columnModel);
+						_columnTypes.get(i)))
+				.collect(Collectors.toList());
+
+		return ReconStatsAggregator.updateReconStats(state, columnIndices, reconConfigs);
 	}
 
 	@Override
@@ -195,49 +186,6 @@ public class DataExtensionChange extends EngineDependentChange {
 			return newRows;
 		}
     	
-    }
-    
-    /**
-     * Wrapper introduced to satisfy the type bound of aggregateRows
-     * (List<ReconStats> is not recognized as serializable on its own).
-     * @author Antonin Delpeuch
-     *
-     */
-    protected static class MultiReconStats implements Serializable {
-		private static final long serialVersionUID = -5709289822943713622L;
-		public final List<ReconStats> stats;
-    	public MultiReconStats(List<ReconStats> stats) {
-    		this.stats = stats;
-    	}
-    }
-    
-    protected static class ReconStatsAggregator implements RowAggregator<MultiReconStats> {
-
-		private static final long serialVersionUID = -3030069835741440171L;
-		private final List<Integer> columnIds;
-    
-    	protected ReconStatsAggregator(List<Integer> columnIds) {
-    		this.columnIds = columnIds;
-    	}
-
-		@Override
-		public MultiReconStats sum(MultiReconStats first, MultiReconStats second) {
-			List<ReconStats> sum = new ArrayList<>(first.stats.size());
-			for(int i = 0; i != first.stats.size(); i++) {
-				sum.add(first.stats.get(i).sum(second.stats.get(i)));
-			}
-			return new MultiReconStats(sum);
-		}
-
-		@Override
-		public MultiReconStats withRow(MultiReconStats state, long rowId, Row row) {
-			List<ReconStats> sum = new ArrayList<>(state.stats.size());
-			for(int i = 0; i != state.stats.size(); i++) {
-				ReconStats stats = state.stats.get(i);
-				sum.add(stats.withRow(row, columnIds.get(i)));
-			}
-			return new MultiReconStats(sum);
-		}
     }
 	
 }

@@ -135,4 +135,20 @@ public class RowTests {
         Row row = new Row(Arrays.asList(new Cell("hello", null)), false, false);
         Assert.assertTrue(row.withStarred(true).starred);
     }
+    
+    @Test
+    public void testPadWithNull() {
+        Row row = new Row(Arrays.asList(new Cell("foo", null), new Cell("bar", null)));
+        
+        Assert.assertEquals(row.padWithNull(2), row);
+        Assert.assertEquals(row.padWithNull(4),
+                new Row(Arrays.asList(new Cell("foo", null), new Cell("bar", null), null, null)));
+    }
+    
+    @Test(expectedExceptions = IllegalArgumentException.class)
+    public void testPadWithNullTooShort() {
+        Row row = new Row(Arrays.asList(new Cell("foo", null), new Cell("bar", null)));
+        
+        row.padWithNull(1);
+    }
 }

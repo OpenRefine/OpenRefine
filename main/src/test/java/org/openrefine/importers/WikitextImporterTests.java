@@ -34,9 +34,15 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package org.openrefine.importers;
 
 
+import java.io.Serializable;
 import java.io.StringReader;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import org.openrefine.importers.WikitextImporter;
+import org.openrefine.model.ColumnModel;
+import org.openrefine.model.GridState;
+import org.openrefine.model.Row;
 import org.slf4j.LoggerFactory;
 import org.testng.Assert;
 import org.testng.annotations.AfterMethod;
@@ -58,7 +64,7 @@ public class WikitextImporterTests extends ImporterTest {
     @BeforeMethod
     public void setUp() {
         super.setUp();
-        importer = new WikitextImporter();
+        importer = new WikitextImporter(runner());
     }
 
     @Override
@@ -69,7 +75,7 @@ public class WikitextImporterTests extends ImporterTest {
     }
     
     @Test
-    public void readSimpleData() {
+    public void readSimpleData() throws Exception {
     	String input = "\n"
 		+ "{|\n"
 		+ "|-\n"
@@ -78,26 +84,27 @@ public class WikitextImporterTests extends ImporterTest {
 		+ "| d || e || f<br>\n"
 		+ "|-\n"
 		+ "|}\n";
-    	try {
-    	   prepareOptions(0, 0, true, true, null);
-    	   parse(input);
-    	} catch (Exception e) {
-    	   Assert.fail("Parsing failed", e);
-    	}
-    	Assert.assertEquals(project.columnModel.getColumns().size(), 3);
-    	Assert.assertEquals(project.rows.size(), 2);
-        Assert.assertEquals(project.rows.get(0).cells.size(), 3);
-        Assert.assertEquals(project.rows.get(0).cells.get(0).value, "a");
-        Assert.assertEquals(project.rows.get(0).cells.get(1).value, "b\n2");
-        Assert.assertEquals(project.rows.get(1).cells.get(2).value, "f");
+    	
+		prepareOptions(0, 0, true, true, null);
+		GridState parsed = parse(input);
+		
+		GridState expected = createGrid(
+				new String[] { "Column 1", "Column 2", "Column 3"},
+				new Serializable[][] {
+					{ "a", "b\n2", "c" },
+					{ "d", "e",    "f" }
+				});
+		
+		assertGridEquals(parsed, expected);
     }
     
     /**
      * Issue #1448
      * https://github.com/OpenRefine/OpenRefine/issues/1448
+     * @throws Exception 
      */
     @Test
-    public void readTableWithMisplacedHeaders() {
+    public void readTableWithMisplacedHeaders() throws Exception {
         String input = "\n"
                 + "{|\n"
                 + "|-\n"
@@ -108,21 +115,22 @@ public class WikitextImporterTests extends ImporterTest {
                 + "| f<br>\n"
                 + "|-\n"
                 + "|}\n";
-        try {
-           prepareOptions(0, 0, true, true, null);
-           parse(input);
-        } catch (Exception e) {
-           Assert.fail("Parsing failed", e);
-        }
-        Assert.assertEquals(project.columnModel.getColumns().size(), 3);
-        Assert.assertEquals(project.rows.size(), 2);
-        Assert.assertEquals(project.rows.get(0).cells.size(), 3);
-        Assert.assertEquals(project.rows.get(1).cells.get(1).value, "e");
-        Assert.assertEquals(project.rows.get(1).cells.get(2).value, "f");
+        
+        prepareOptions(0, 0, true, true, null);
+        GridState parsed = parse(input);
+    
+        GridState expected = createGrid(
+        		new String[] { "Column 1", "Column 2", "Column 3" },
+        		new Serializable[][] {
+        			{ "a", "b\n2", "c" },
+        			{ "d", "e", "f" }
+        		});
+        
+        assertGridEquals(parsed, expected);
     }
     
     @Test
-    public void readTableWithLinks() {
+    public void readTableWithLinks() throws Exception {
         // Data credits: Wikipedia contributors, https://de.wikipedia.org/w/index.php?title=Agenturen_der_Europäischen_Union&action=edit
         String input = "\n"
             +"{|\n"
@@ -135,31 +143,30 @@ public class WikitextImporterTests extends ImporterTest {
             +"|-\n"
             +"|}\n";
 
-        try {
-           prepareOptions(0, 0, true, true, "https://de.wikipedia.org/wiki/");
-           parse(input);
-        } catch (Exception e) {
-           Assert.fail("Parsing failed", e);
-        }
-        Assert.assertEquals(project.columnModel.getColumns().size(), 3);
-        Assert.assertEquals(project.rows.size(), 3);
-        Assert.assertEquals(project.rows.get(0).cells.size(), 3);
+        
+        prepareOptions(0, 0, true, true, "https://de.wikipedia.org/wiki/");
+        GridState grid = parse(input);
+        
+        List<Row> rows = grid.collectRows().stream().map(ir -> ir.getRow()).collect(Collectors.toList());
+        Assert.assertEquals(grid.getColumnModel().getColumns().size(), 3);
+        Assert.assertEquals(rows.size(), 3);
+        Assert.assertEquals(rows.get(0).cells.size(), 3);
         
         // Reconciled cells
-        Assert.assertEquals(project.rows.get(0).cells.get(1).value, "Cedefop");
-        Assert.assertEquals(project.rows.get(0).cells.get(1).recon, null);
-        Assert.assertEquals(project.rows.get(2).cells.get(0).value, "Europäische Beobachtungsstelle für Drogen und Drogensucht");
-        Assert.assertEquals(project.rows.get(2).cells.get(0).recon.getBestCandidate().id, "Q1377256");
+        Assert.assertEquals(rows.get(0).cells.get(1).value, "Cedefop");
+        Assert.assertEquals(rows.get(0).cells.get(1).recon, null);
+        Assert.assertEquals(rows.get(2).cells.get(0).value, "Europäische Beobachtungsstelle für Drogen und Drogensucht");
+        Assert.assertEquals(rows.get(2).cells.get(0).recon.getBestCandidate().id, "Q1377256");
         
         // various ways to input external links
-        Assert.assertEquals(project.rows.get(1).cells.get(2).value, "http://www.eurofound.europa.eu/");
-        Assert.assertEquals(project.rows.get(2).cells.get(2).value, "http://www.emcdda.europa.eu/");
+        Assert.assertEquals(rows.get(1).cells.get(2).value, "http://www.eurofound.europa.eu/");
+        Assert.assertEquals(rows.get(2).cells.get(2).value, "http://www.emcdda.europa.eu/");
         // Assert.assertEquals(project.rows.get(0).cells.get(2).value, "http://www.cedefop.europa.eu/");
         // unfortunately the above does not seem to be supported by the parser (parsed as blank instead)
     }
 
     @Test
-    public void readStyledTableWithHeader() {
+    public void readStyledTableWithHeader() throws Exception {
         // Data credits: Wikipedia contributors, https://de.wikipedia.org/w/index.php?title=Agenturen_der_Europäischen_Union&action=edit
         String input = "\n"
             +"==Agenturen==\n"
@@ -180,23 +187,22 @@ public class WikitextImporterTests extends ImporterTest {
             +"|-\n"
             +"|}\n";
 
-        try {
-           prepareOptions(-1, 1, true, true, null);
-           parse(input);
-        } catch (Exception e) {
-           Assert.fail("Parsing failed", e);
-        }
-        Assert.assertEquals(project.columnModel.getColumns().size(), 7);
-        Assert.assertEquals(project.rows.get(0).cells.get(0).value, "Europäisches Zentrum für die Förderung der Berufsbildung");
-        Assert.assertEquals(project.rows.get(0).cells.get(1).value, "Cedefop");
-        Assert.assertEquals(project.rows.get(1).cells.get(1).value, "EUROFOUND");
-        Assert.assertEquals(project.columnModel.getColumns().get(0).getName(), "Offizieller Name");
-        Assert.assertEquals(project.columnModel.getColumns().get(6).getName(), "Anmerkungen");
-        Assert.assertEquals(project.rows.get(0).cells.size(), 7);  
+        prepareOptions(-1, 1, true, true, null);
+        GridState grid = parse(input);
+        
+        List<Row> rows = grid.collectRows().stream().map(ir -> ir.getRow()).collect(Collectors.toList());
+        ColumnModel columnModel = grid.getColumnModel();
+		Assert.assertEquals(columnModel.getColumns().size(), 7);
+        Assert.assertEquals(rows.get(0).cells.get(0).value, "Europäisches Zentrum für die Förderung der Berufsbildung");
+        Assert.assertEquals(rows.get(0).cells.get(1).value, "Cedefop");
+        Assert.assertEquals(rows.get(1).cells.get(1).value, "EUROFOUND");
+        Assert.assertEquals(columnModel.getColumns().get(0).getName(), "Offizieller Name");
+        Assert.assertEquals(columnModel.getColumns().get(6).getName(), "Anmerkungen");
+        Assert.assertEquals(rows.get(0).cells.size(), 7);  
     }
 
     @Test
-    public void readTableWithSpanningCells() {
+    public void readTableWithSpanningCells() throws Exception {
         // inspired from https://www.mediawiki.org/wiki/Help:Tables
         String input = "{| class=\"wikitable\"\n"
         +"!colspan=\"6\"|Shopping List\n"
@@ -213,20 +219,22 @@ public class WikitextImporterTests extends ImporterTest {
         +"|Yogurt\n"
         +"|}\n";
         
-        try {
-           prepareOptions(-1, 1, true, true, null);
-           parse(input);
-        } catch (Exception e) {
-           Assert.fail("Parsing failed", e);
-        }
-        Assert.assertEquals(project.columnModel.getColumns().size(), 6);
-        Assert.assertNull(project.rows.get(1).cells.get(2));
-        Assert.assertNull(project.rows.get(1).cells.get(3));
-        Assert.assertEquals(project.rows.get(1).cells.get(4).value, "Butter");
+        prepareOptions(-1, 1, true, true, null);
+        GridState grid = parse(input);
+        
+        GridState expected = createGrid(
+        		new String[] {
+        				"Shopping List", "Column", "Column2", "Column3", "Column4", "Column5"
+        		}, new Serializable[][] {
+        			{ "Bread & Butter", "Pie", "Buns", "Danish", "Croissant", null },
+        			{ "Cheese", "Ice cream", null, null, "Butter", "Yogurt" }
+        		});
+        
+        assertGridEquals(grid, expected);
     }
     
     @Test
-    public void readTableWithReferences() {
+    public void readTableWithReferences() throws Exception {
         // inspired from https://www.mediawiki.org/wiki/Help:Tables
         String input = "{|\n"
         +"! price\n"
@@ -239,22 +247,21 @@ public class WikitextImporterTests extends ImporterTest {
         +"|-\n"
         +"|}\n";
         
-        try {
-           prepareOptions(-1, 1, true, true, null);
-           parse(input);
-        } catch (Exception e) {
-           Assert.fail("Parsing failed", e);
-        }
-        Assert.assertEquals(project.columnModel.getColumns().size(), 5);
-        Assert.assertEquals(project.rows.get(0).cells.get(1).value, "b");
-        Assert.assertEquals(project.rows.get(0).cells.get(2).value, "http://gnu.org");
-        Assert.assertEquals(project.rows.get(0).cells.get(4).value, "http://microsoft.com/");
-        Assert.assertEquals(project.rows.get(1).cells.get(4).value, "http://gnu.org");
-        Assert.assertEquals(project.rows.get(1).cells.get(2).value, "http://microsoft.com/");
+        prepareOptions(-1, 1, true, true, null);
+        GridState grid = parse(input);
+        
+        GridState expected = createGrid(
+        		new String[] {
+        				"price", "fruit",  "Column", "merchant", "Column2"
+        		}, new Serializable[][] {
+        			{"a", "b", "http://gnu.org", "c", "http://microsoft.com/"},
+        			{"d", "e", "http://microsoft.com/", "f", "http://gnu.org"}
+        		});
+        assertGridEquals(grid, expected);
     }
 
     @Test
-    public void readTableWithReferencesTemplates() {
+    public void readTableWithReferencesTemplates() throws Exception {
         // inspired from https://www.mediawiki.org/wiki/Help:Tables
         String input = "{|\n"
         +"! price\n"
@@ -267,25 +274,25 @@ public class WikitextImporterTests extends ImporterTest {
         +"|-\n"
         +"|}\n";
         
-        try {
-           prepareOptions(-1, 1, true, true, null);
-           parse(input);
-        } catch (Exception e) {
-           Assert.fail("Parsing failed", e);
-        }
-        Assert.assertEquals(project.columnModel.getColumns().size(), 5);
-        Assert.assertEquals(project.rows.get(0).cells.get(1).value, "b");
-        Assert.assertEquals(project.rows.get(0).cells.get(2).value, "http://gnu.org");
-        Assert.assertEquals(project.rows.get(0).cells.get(4).value, "http://microsoft.com/");
-        Assert.assertEquals(project.rows.get(1).cells.get(4).value, "http://gnu.org");
-        Assert.assertEquals(project.rows.get(1).cells.get(2).value, "http://microsoft.com/");
+        prepareOptions(-1, 1, true, true, null);
+        GridState grid = parse(input);
+        
+        GridState expected = createGrid(
+        		new String[] {
+        				"price", "fruit", "Column", "merchant", "Column2"
+        		}, new Serializable[][] {
+        			{"a", "b", "http://gnu.org", "c", "http://microsoft.com/"},
+        			{"d", "e", "http://microsoft.com/", "f", "http://gnu.org"}
+        		});
+        assertGridEquals(grid, expected);
     }
     
     /**
      * Include templates and image filenames
+     * @throws Exception 
      */
     @Test
-    public void readTableWithTemplates() {
+    public void readTableWithTemplates() throws Exception {
         String input = "\n"
                 + "{|\n"
                 + "|-\n"
@@ -296,23 +303,25 @@ public class WikitextImporterTests extends ImporterTest {
                 + "| f<br>\n"
                 + "|-\n"
                 + "|}\n";
-        try {
-           prepareOptions(0, 0, true, true, null);
-           parse(input);
-        } catch (Exception e) {
-           Assert.fail("Parsing failed", e);
-        }
-        Assert.assertEquals(project.columnModel.getColumns().size(), 3);
-        Assert.assertEquals(project.rows.size(), 2);
-        Assert.assertEquals(project.rows.get(0).cells.size(), 3);
-        Assert.assertEquals(project.rows.get(0).cells.get(0).value, "{{free to read}}");
-        Assert.assertEquals(project.rows.get(1).cells.get(1).value, "[[File:My logo.svg]]");
+        
+        prepareOptions(0, 0, true, true, null);
+        GridState grid = parse(input);
+        
+        GridState expected = createGrid(
+        		new String[] {
+        				"Column 1", "Column 2", "Column 3"
+        		}, new Serializable[][] {
+        			{ "{{free to read}}", "b", "c" },
+        			{ "d", "[[File:My logo.svg]]", "f" }
+        		});
+        
+        assertGridEquals(grid, expected);
     }
 
     //--helpers--
     
-    private void parse(String wikitext) {
-    	parseOneFile(importer, new StringReader(wikitext));
+    private GridState parse(String wikitext) throws Exception {
+    	return parseOneFile(importer, new StringReader(wikitext));
     }
 
     private void prepareOptions(
@@ -327,6 +336,6 @@ public class WikitextImporterTests extends ImporterTest {
         whenGetBooleanOption("parseReferences", options, true);
         whenGetBooleanOption("includeRawTemplates", options, true);
         whenGetStringOption("wikiUrl", options, wikiUrl);
-        whenGetStringOption("reconService", options, "https://tools.wmflabs.org/openrefine-wikidata/en/api");
+        whenGetStringOption("reconService", options, "https://wdreconcile.toolforge.org/en/api");
     }
 }
