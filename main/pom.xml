@@ -310,6 +310,7 @@
       <artifactId>joda-time</artifactId>
       <version>2.10.8</version>
     </dependency>
+
     <dependency>
       <groupId>org.apache.jena</groupId>
       <artifactId>jena-arq</artifactId>
@@ -329,6 +330,12 @@
       <groupId>org.apache.jena</groupId>
       <artifactId>jena-core</artifactId>
       <version>${jena.version}</version>
+    </dependency>
+    <!-- v1.15 is needed for Jena 3.14+ - copied from org.apache.jena:jena:pom -->
+    <dependency>
+      <groupId>commons-codec</groupId>
+      <artifactId>commons-codec</artifactId>
+      <version>1.15</version>
     </dependency>
     <dependency>
       <groupId>commons-io</groupId>
