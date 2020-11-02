@@ -55,14 +55,7 @@ import org.openrefine.importers.JsonImporter.JSONTreeReader;
 import org.openrefine.importers.JsonImporterTests;
 import org.openrefine.importers.XmlImporter.XmlParser;
 import org.openrefine.importers.XmlImporterTests;
-import org.openrefine.importers.tree.ImportColumn;
-import org.openrefine.importers.tree.ImportColumnGroup;
-import org.openrefine.importers.tree.ImportParameters;
-import org.openrefine.importers.tree.ImportRecord;
 import org.openrefine.importers.tree.TreeImportUtilities.ColumnIndexAllocator;
-import org.openrefine.importers.tree.TreeReader;
-import org.openrefine.importers.tree.TreeReaderException;
-import org.openrefine.importers.tree.XmlImportUtilities;
 import org.openrefine.model.ColumnModel;
 import org.openrefine.model.Row;
 
@@ -286,7 +279,7 @@ public class XmlImportUtilitiesTests extends RefineTest {
         String[] recordPath = new String[] { "library", "book" };
         int pathIndex = 0;
 
-        XmlImportUtilities.findRecord(allocator, rows, parser, recordPath, pathIndex, columnGroup, 0,
+        XmlImportUtilities.findRecord(allocator, rows, parser, recordPath, pathIndex, columnGroup, -1,
                 new ImportParameters(false, false, false));
 
         Assert.assertEquals(rows.size(), 6);
