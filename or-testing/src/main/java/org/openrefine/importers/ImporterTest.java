@@ -41,6 +41,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 
+import org.apache.commons.io.FileUtils;
 import org.mockito.Mockito;
 import org.openrefine.ProjectMetadata;
 import org.openrefine.RefineTest;
@@ -51,8 +52,10 @@ import org.openrefine.importing.ImportingParser;
 import org.openrefine.model.GridState;
 import org.openrefine.util.TestUtils;
 import org.testng.annotations.AfterMethod;
+import org.testng.annotations.AfterSuite;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.BeforeSuite;
+import org.testng.annotations.BeforeTest;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.common.io.ByteStreams;
@@ -63,11 +66,19 @@ public abstract class ImporterTest extends RefineTest {
     protected ImportingJob job;
     
     protected ObjectNode options;
-    protected File importerTestDir;
+    protected static File importerTestDir;
     
     @BeforeSuite
     public void setUpImporterTestDirectory() throws IOException {
         importerTestDir = TestUtils.createTempDirectory("openrefine-test-importer-dir");
+    }
+    
+    @AfterSuite
+    public void tearDownTestDirector() throws IOException {
+        if (importerTestDir != null) {
+            FileUtils.deleteDirectory(importerTestDir);
+            importerTestDir = null;
+        }
     }
     
     @BeforeMethod

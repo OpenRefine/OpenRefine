@@ -12,8 +12,6 @@ import org.openrefine.model.changes.ChangeDataSerializer;
 import org.openrefine.model.changes.IndexedData;
 import org.openrefine.overlay.OverlayModel;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-
 /**
  * Encapsulates the context required to implement,
  * read and execute operations on {@link GridState} objects.
@@ -54,6 +52,13 @@ public interface DatamodelRunner {
      * which will be numbered from 0 to length-1.
      */
     public GridState create(ColumnModel columnModel, List<Row> rows, Map<String,OverlayModel> overlayModels);
+    
+    /**
+     * Loads a text file as a {@link GridState} with a single column
+     * named "Column" and whose contents are the lines in the file,
+     * parsed as strings.
+     */
+    public GridState loadTextFile(String path) throws IOException;
     
     /**
      * Creates a {@link ChangeData} from an in-memory list of

@@ -47,7 +47,6 @@ import org.apache.jena.rdf.model.ModelFactory;
 import org.apache.jena.rdf.model.Statement;
 import org.apache.jena.rdf.model.StmtIterator;
 import org.openrefine.ProjectMetadata;
-import org.openrefine.expr.ExpressionUtils;
 import org.openrefine.importing.ImportingJob;
 import org.openrefine.model.Cell;
 import org.openrefine.model.ColumnMetadata;

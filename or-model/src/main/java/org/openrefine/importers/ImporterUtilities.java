@@ -48,7 +48,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -234,7 +233,6 @@ public class ImporterUtilities {
 		if(c < columns.size()) {
 			return columnModel;
 		} else if (c == columns.size()){
-			List<ColumnMetadata> newColumns = new LinkedList<>(columns);
 			String prefix = "Column ";
             int i = c + 1;
             while (true) {
@@ -244,8 +242,7 @@ public class ImporterUtilities {
                 	i++;
                 } else {
                     column = new ColumnMetadata(columnName);
-                    newColumns.add(column);
-                    return new ColumnModel(newColumns);
+                    return columnModel.appendUnduplicatedColumn(column);
                 }
             }
 		} else {

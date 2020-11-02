@@ -1,6 +1,7 @@
 package org.openrefine.model;
 
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -13,6 +14,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.apache.commons.collections.IteratorUtils;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.NotImplementedException;
 import org.openrefine.browsing.facets.AllFacetsAggregator;
 import org.openrefine.browsing.facets.AllFacetsState;
@@ -37,6 +39,7 @@ import org.openrefine.sorting.SortingConfig;
 import org.openrefine.sorting.StringCriterion;
 import org.openrefine.util.TestUtils;
 import org.testng.Assert;
+import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
@@ -64,11 +67,21 @@ public abstract class DatamodelRunnerTestBase {
     protected SortingConfig sortingConfig;
     protected OverlayModel overlayModel;
     
+    protected File tempDir;
+    
     public abstract DatamodelRunner getDatamodelRunner();
     
     @BeforeTest
-    public void setUpDatamodelRunner() {
+    public void setUp() throws IOException {
         SUT = getDatamodelRunner();
+        tempDir = TestUtils.createTempDirectory("datamodelrunnertest");
+    }
+    
+    @AfterTest
+    public void tearDown() throws IOException {
+        SUT = null;
+        FileUtils.deleteDirectory(tempDir);
+        tempDir = null;
     }
     
     protected GridState createGrid(String[] columnNames, Cell[][] cells) {
@@ -344,7 +357,7 @@ public abstract class DatamodelRunnerTestBase {
     
     @Test
     public void testRoundTripSerialization() throws IOException {
-        File tempFile = TestUtils.createTempDirectory("testgrid");
+        File tempFile = new File(tempDir, "testgrid");
         
         simpleGrid.saveToFile(tempFile);
         
@@ -652,7 +665,7 @@ public abstract class DatamodelRunnerTestBase {
     
     @Test
     public void testSerializeChangeData() throws IOException {
-        File tempFile = TestUtils.createTempDirectory("testchangedata");
+        File tempFile = new File(tempDir, "testchangedata");
         
         simpleChangeData.saveToFile(new File(tempFile, "data"), stringSerializer);
         
@@ -916,5 +929,56 @@ public abstract class DatamodelRunnerTestBase {
         });
         
         simpleGrid.concatenate(otherGrid);
+    }
+    
+    @Test
+    public void testLoadTextFile() throws IOException {
+        File tempFile = new File(tempDir, "textfile.txt");
+        createTestTextFile(tempFile, "foo\nbar\nbaz");
+      
+        GridState textGrid = SUT.loadTextFile(tempFile.getAbsolutePath());
+        
+        GridState expected = createGrid(new String[] { "Column" },
+                new Serializable[][] {
+            { "foo" },
+            { "bar" },
+            { "baz" }
+        });
+        Assert.assertEquals(textGrid.getColumnModel(), expected.getColumnModel());
+        Assert.assertEquals(textGrid.collectRows(), expected.collectRows());
+    }
+    
+    @Test
+    public void testLoadTextFileTrailingNewLine() throws IOException {
+        File tempFile = new File(tempDir, "textfileWithNewline.txt");
+        createTestTextFile(tempFile, "foo\nbar\nbaz\n");
+        
+        GridState textGrid = SUT.loadTextFile(tempFile.getAbsolutePath());
+        
+        GridState expected = createGrid(new String[] { "Column" },
+                new Serializable[][] {
+            { "foo" },
+            { "bar" },
+            { "baz" }
+        });
+        Assert.assertEquals(textGrid.getColumnModel(), expected.getColumnModel());
+        Assert.assertEquals(textGrid.collectRows(), expected.collectRows());
+    }
+    
+    @Test(expectedExceptions = IOException.class)
+    public void testLoadTextFileDoesNotExist() throws IOException {
+        SUT.loadTextFile(new File(tempDir, "doesNotExist.txt").getAbsolutePath());
+    }
+    
+    protected void createTestTextFile(File file, String contents) throws IOException {
+        FileWriter fileWriter = null;
+        try {
+            fileWriter = new FileWriter(file);
+            fileWriter.write(contents);
+        } finally {
+            if (fileWriter != null) {
+                fileWriter.close();
+            }
+        }
     }
 }

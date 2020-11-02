@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
 import java.lang.reflect.Type;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -12,6 +13,7 @@ import java.util.stream.IntStream;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaPairRDD;
+import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.JavaSparkContext;
 import org.apache.spark.api.java.function.Function;
 import org.apache.spark.storage.StorageLevel;
@@ -23,6 +25,7 @@ import org.openrefine.model.changes.ChangeDataSerializer;
 import org.openrefine.model.changes.IndexedData;
 import org.openrefine.overlay.OverlayModel;
 import org.openrefine.util.ParsingUtilities;
+import org.openrefine.util.RDDUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -30,8 +33,6 @@ import com.fasterxml.jackson.core.type.TypeReference;
 
 import scala.Function0;
 import scala.Tuple2;
-import scala.reflect.ClassTag;
-import scala.reflect.api.TypeTags.TypeTag;
 import scala.runtime.BoxedUnit;
 
 /**
@@ -162,6 +163,15 @@ public class SparkDatamodelRunner implements DatamodelRunner {
                 .collect(Collectors.toList());
         JavaPairRDD<Long,T> rdd = JavaPairRDD.fromJavaRDD(context.parallelize(tuples, defaultParallelism));
         return new SparkChangeData<T>(rdd, this);
+    }
+
+    @Override
+    public GridState loadTextFile(String path) throws IOException {
+        JavaRDD<String> lines = context.textFile(path);
+        ColumnModel columnModel = new ColumnModel(Collections.singletonList(new ColumnMetadata("Column")));
+        JavaRDD<Row> rows = lines.map(s -> new Row(Collections.singletonList(new Cell(s, null))));
+        JavaPairRDD<Long, Row> indexedRows = RDDUtils.zipWithIndex(rows);
+        return new SparkGridState(columnModel, indexedRows, Collections.emptyMap(), this);
     }
 
 }

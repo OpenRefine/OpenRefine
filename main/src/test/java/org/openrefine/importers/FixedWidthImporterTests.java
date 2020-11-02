@@ -31,8 +31,6 @@ import java.io.File;
 import java.util.Arrays;
 import java.util.List;
 
-import org.openrefine.SparkBasedTest;
-import org.openrefine.model.DatamodelRunner;
 import org.openrefine.model.GridState;
 import org.openrefine.model.IndexedRow;
 import org.openrefine.model.SparkDatamodelRunner;
@@ -53,17 +51,12 @@ public class FixedWidthImporterTests extends ImporterTest {
 
     //System Under Test
     FixedWidthImporter SUT = null;
-    
-    @Override
-    public DatamodelRunner createDatamodelRunner() {
-        return new SparkDatamodelRunner(SparkBasedTest.context);
-    }
 
     @Override
     @BeforeMethod
     public void setUp(){
         super.setUp();
-        SUT = new FixedWidthImporter((SparkDatamodelRunner)runner());
+        SUT = new FixedWidthImporter(runner());
     }
 
     @Override
@@ -141,7 +134,7 @@ public class FixedWidthImporterTests extends ImporterTest {
         Assert.assertEquals((String)rows.get(1).getRow().getCellValue(1), "rt");
         Assert.assertNull(rows.get(1).getRow().getCellValue(2));
         
-        Assert.assertEquals(result.getColumnModel().getColumnNames(), Arrays.asList("Column", "Column2", "Column3"));
+        Assert.assertEquals(result.getColumnModel().getColumnNames(), Arrays.asList("Column 1", "Column 2", "Column 3"));
     }
     
     @Test

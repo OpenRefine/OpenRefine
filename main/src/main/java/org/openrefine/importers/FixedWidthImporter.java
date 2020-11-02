@@ -37,30 +37,24 @@ import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
-import org.apache.spark.api.java.JavaPairRDD;
-import org.apache.spark.api.java.JavaRDD;
-import org.apache.spark.api.java.JavaSparkContext;
-import org.apache.spark.api.java.function.PairFunction;
-import org.openrefine.ProjectMetadata;
 import org.openrefine.importing.ImportingFileRecord;
 import org.openrefine.importing.ImportingJob;
-import org.openrefine.model.SparkDatamodelRunner;
+import org.openrefine.model.Cell;
+import org.openrefine.model.DatamodelRunner;
+import org.openrefine.model.Row;
+import org.openrefine.model.RowMapper;
 import org.openrefine.util.JSONUtilities;
 import org.openrefine.util.ParsingUtilities;
 
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
-import scala.Tuple2;
+public class FixedWidthImporter extends LineBasedImporter {
 
-public class FixedWidthImporter extends SparkImportingParserBase {
-    
-    private JavaSparkContext context;
-    
-    public FixedWidthImporter(SparkDatamodelRunner datamodelRunner) {
+    public FixedWidthImporter(DatamodelRunner datamodelRunner) {
         super(datamodelRunner);
-        context = datamodelRunner.getContext();
     }
     
     @Override
@@ -88,25 +82,28 @@ public class FixedWidthImporter extends SparkImportingParserBase {
         }
         return options;
     }
+    
 
     @Override
-    public JavaPairRDD<Long, List<Serializable>> parseRawCells(ProjectMetadata metadata, ImportingJob job,
-			String fileSource, String sparkURI, long limit, ObjectNode options) {
+    public RowMapper getRowMapper(ObjectNode options) {
         final int[] columnWidths = JSONUtilities.getIntArray(options, "columnWidths");
-        
-        JavaRDD<String> lines = context.textFile(sparkURI, 4);
-		return lines.zipWithIndex().mapToPair(parseCells(columnWidths));
+
+        return parseCells(columnWidths);
     }
     
-    static private PairFunction<Tuple2<String,Long>, Long, List<Serializable>> parseCells(int[] widths) {
-		return new PairFunction<Tuple2<String,Long>, Long, List<Serializable>>() {
+    static private RowMapper parseCells(int[] widths) {
+		return new RowMapper() {
 			private static final long serialVersionUID = 1L;
 
-			@Override
-			public Tuple2<Long, List<Serializable>> call(Tuple2<String, Long> v1) throws Exception {
-				List<Serializable> cellValues = getCells(v1._1, widths);
-				return new Tuple2<Long,List<Serializable>>(v1._2, cellValues);
-			}
+            @Override
+            public Row call(long rowId, Row row) {
+                String line = (String)row.getCellValue(0);
+                List<Cell> cellValues = getCells(line, widths)
+                        .stream()
+                        .map(v -> new Cell(v, null))
+                        .collect(Collectors.toList());
+                return new Row(cellValues);
+            }
 			
 		};
     }
@@ -223,4 +220,5 @@ public class FixedWidthImporter extends SparkImportingParserBase {
         }
         return null;
     }
+
 }

@@ -1,138 +1,145 @@
-/*******************************************************************************
- * Copyright (C) 2018, OpenRefine contributors
- * All rights reserved.
- * 
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions are met:
- * 
- * 1. Redistributions of source code must retain the above copyright notice,
- *    this list of conditions and the following disclaimer.
- * 
- * 2. Redistributions in binary form must reproduce the above copyright notice,
- *    this list of conditions and the following disclaimer in the documentation
- *    and/or other materials provided with the distribution.
- * 
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
- * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
- * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
- * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
- * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
- * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
- * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
- * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
- * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
- * POSSIBILITY OF SUCH DAMAGE.
- ******************************************************************************/
 package org.openrefine.importers;
 
-import java.io.IOException;
-import java.io.LineNumberReader;
-import java.io.Reader;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.openrefine.ProjectMetadata;
-import org.openrefine.importers.TabularParserHelper.TableDataReader;
-import org.openrefine.importing.ImportingFileRecord;
+import org.openrefine.browsing.facets.RowAggregator;
 import org.openrefine.importing.ImportingJob;
+import org.openrefine.model.ColumnModel;
 import org.openrefine.model.DatamodelRunner;
 import org.openrefine.model.GridState;
+import org.openrefine.model.IndexedRow;
+import org.openrefine.model.Row;
+import org.openrefine.model.RowFilter;
+import org.openrefine.model.RowMapper;
 import org.openrefine.util.JSONUtilities;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
-public class LineBasedImporter extends ReaderImporter {
-    static final Logger logger = LoggerFactory.getLogger(LineBasedImporter.class);
-    
-    private TabularParserHelper tabularParserHelper;
-    
-    public LineBasedImporter(DatamodelRunner runner) {
+public class LineBasedImporter extends HDFSImporter {
+
+    protected LineBasedImporter(DatamodelRunner runner) {
         super(runner);
-        tabularParserHelper = new TabularParserHelper(runner);
-    }
-    
-    @Override
-    public ObjectNode createParserUIInitializationData(ImportingJob job,
-            List<ImportingFileRecord> fileRecords, String format) {
-        ObjectNode options = super.createParserUIInitializationData(job, fileRecords, format);
-        
-        JSONUtilities.safePut(options, "linesPerRow", 1);
-        JSONUtilities.safePut(options, "headerLines", 0);
-        JSONUtilities.safePut(options, "guessCellValueTypes", false);
-        
-        return options;
     }
 
+    protected RowMapper getRowMapper(ObjectNode options) {
+        return RowMapper.IDENTITY;
+    }
+    
     @Override
-    public GridState parseOneFile(
-	        ProjectMetadata metadata,
-	        ImportingJob job,
-	        String fileSource,
-	        Reader reader,
-	        long limit,
-	        ObjectNode options
-	    ) throws Exception {
-        final int linesPerRow = JSONUtilities.getInt(options, "linesPerRow", 1);
-        
-        final List<Object> columnNames;
-        if (options.has("columnNames")) {
-            columnNames = new ArrayList<Object>();
-            String[] strings = JSONUtilities.getStringArray(options, "columnNames");
-            for (String s : strings) {
-                columnNames.add(s);
+    public GridState parseOneFile(ProjectMetadata metadata, ImportingJob job, String fileSource,
+                String sparkURI, long limit, ObjectNode options) throws Exception {
+        int ignoreLines = Math.max(JSONUtilities.getInt(options, "ignoreLines", -1), 0);
+        int headerLines = Math.max(JSONUtilities.getInt(options, "headerLines", 0), 0);
+        int skipDataLines = Math.max(JSONUtilities.getInt(options, "skipDataLines", 0), 0);
+        String[] optionColumnNames = JSONUtilities.getStringArray(options, "columnNames");
+        long limit2 = JSONUtilities.getLong(options, "limit", -1);
+        if (limit > 0) {
+            if (limit2 > 0) {
+                limit2 = Math.min(limit, limit2);
+            } else {
+                limit2 = limit;
             }
-            JSONUtilities.safePut(options, "headerLines", 1);
-        } else {
-            columnNames = null;
-            JSONUtilities.safePut(options, "headerLines", 0);
         }
         
-        final LineNumberReader lnReader = new LineNumberReader(reader);
+        RowMapper rowMapper = getRowMapper(options);
+        GridState rawCells = runner.loadTextFile(sparkURI);
         
-        try {
-            int skip = JSONUtilities.getInt(options, "ignoreLines", -1);
-            while (skip > 0) {
-                lnReader.readLine();
-                skip--;
+        // Compute the maximum number of cells in the entire grid
+        int maxColumnNb = countMaxColumnNb(rawCells, rowMapper);
+        
+        // Parse column names
+        List<String> columnNames = new ArrayList<>();
+        
+        if (optionColumnNames.length > 0) {
+            for (int i = 0; i != optionColumnNames.length; i++) {
+                ImporterUtilities.appendColumnName(columnNames, i, optionColumnNames[i]);
             }
-        } catch (IOException e) {
-            logger.error("Error reading line-based file", e);
-        }
-        JSONUtilities.safePut(options, "ignoreLines", -1);
-        
-        TableDataReader dataReader = new TableDataReader() {
-            boolean usedColumnNames = false;
+        } else if (headerLines > 0) {
+            int numTake = ignoreLines + headerLines;
             
-            @Override
-            public List<Object> getNextRowOfCells() throws IOException {
-                if (columnNames != null && !usedColumnNames) {
-                    usedColumnNames = true;
-                    return columnNames;
-                } else {
-                    List<Object> cells = null;
-                    for (int i = 0; i < linesPerRow; i++) {
-                        String line = lnReader.readLine();
-                        if (i == 0) {
-                            if (line == null) {
-                                return null;
-                            } else {
-                                cells = new ArrayList<Object>(linesPerRow);
-                                cells.add(line);
-                            }
-                        } else if (line != null) {
-                            cells.add(line);
-                        } else {
-                            break;
-                        }
-                    }
-                    return cells;
+            List<IndexedRow> firstLines = rawCells.getRows(ignoreLines, numTake);
+            for(int i = 0; i < firstLines.size(); i++) {
+                IndexedRow headerLine = firstLines.get(i);
+                Row mappedRow = rowMapper.call(headerLine.getIndex(), headerLine.getRow());
+                for(int j = 0; j != mappedRow.getCells().size(); j++) {
+                    Serializable cellValue = mappedRow.getCellValue(j);
+                    ImporterUtilities.appendColumnName(columnNames, j, cellValue == null ? "" : cellValue.toString());
                 }
+            }           
+        }
+        
+        ColumnModel columnModel = ImporterUtilities.setupColumns(columnNames);
+        while (columnModel.getColumns().size() < maxColumnNb) {
+        	columnModel = ImporterUtilities.expandColumnModelIfNeeded(columnModel, columnModel.getColumns().size());
+        }
+        return rawCells.removeRows(removeFirstRows(ignoreLines + headerLines + skipDataLines))
+                .mapRows(rowMapperWithPadding(rowMapper, maxColumnNb), columnModel);
+    }
+    
+    protected static int countMaxColumnNb(GridState grid, RowMapper rowMapper) {
+        RowAggregator<Integer> aggregator = new RowAggregator<Integer>() {
+
+            private static final long serialVersionUID = 1L;
+
+            @Override
+            public Integer sum(Integer first, Integer second) {
+                return Math.max(first, second);
             }
+
+            @Override
+            public Integer withRow(Integer state, long rowId, Row row) {
+                return Math.max(state, rowMapper.call(rowId, row).getCells().size());
+            }
+            
         };
         
-        return tabularParserHelper.parseOneFile(metadata, job, fileSource, dataReader, limit, options);
+        return grid.aggregateRows(aggregator, 0);
     }
+    
+    /**
+     * Makes sure a row mapper always returns rows of the same size.
+     * 
+     * We do not simply express this as two consecutive maps because
+     * the intermediate grid size would be invalid (not having as many cells
+     * in each rows as there are columns).
+     * 
+     * @param mapper the original row mapper
+     * @param nbColumns the number of columns
+     * @return the modified mapper
+     */
+    protected static RowMapper rowMapperWithPadding(RowMapper mapper, int nbColumns) {
+        return new RowMapper() {
+
+            private static final long serialVersionUID = 1L;
+
+            @Override
+            public Row call(long rowId, Row row) {
+                return mapper.call(rowId, row).padWithNull(nbColumns);
+            }
+            
+        };
+    }
+    
+    /**
+     * Returns true for the first n rows.
+     * 
+     * @param n the number of rows to remove
+     * @return 
+     */
+    protected static RowFilter removeFirstRows(int n) {
+        return new RowFilter() {
+
+            private static final long serialVersionUID = 7373072483613980130L;
+
+            @Override
+            public boolean filterRow(long rowIndex, Row row) {
+                return rowIndex < n;
+            }
+            
+        };
+    }
+
 }
