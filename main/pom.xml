@@ -18,7 +18,7 @@
     <jee.path>/</jee.path>
     <jee.port>3333</jee.port>
     <refine.data>/tmp/refine</refine.data>
-    <powermock.version>2.0.7</powermock.version>
+    <powermock.version>2.0.9</powermock.version>
     <!-- org.odftoolkit:odfdom-java:jar:0.9.0-RC1 bundles Jena 3.9.0 so we should match that
          Jena 3.15.0 doesn't work. Versions through 3.14.0 appear to, but we'll be conservative
     -->
