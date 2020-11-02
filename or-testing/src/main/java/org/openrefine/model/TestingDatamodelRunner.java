@@ -5,6 +5,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.LineNumberReader;
@@ -13,6 +14,7 @@ import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -192,6 +194,25 @@ public class TestingDatamodelRunner implements DatamodelRunner {
         return new TestingChangeData<T>(changeData.stream()
                 .filter(id -> id.getData() != null)
                 .collect(Collectors.toMap(IndexedData::getId, IndexedData::getData)));
+    }
+
+    @Override
+    public GridState loadTextFile(String path) throws IOException {
+        FileReader reader = null;
+        try {
+            reader = new FileReader(new File(path));
+            LineNumberReader lineReader = new LineNumberReader(reader);
+            List<Row> rows = lineReader.lines()
+                    .map(line -> new Row(Collections.singletonList(new Cell(line, null))))
+                    .collect(Collectors.toList());
+
+            ColumnModel columnModel = new ColumnModel(Collections.singletonList(new ColumnMetadata("Column")));
+            return new TestingGridState(columnModel, rows, Collections.emptyMap());
+        } finally {
+            if (reader != null) {
+                reader.close();
+            }
+        }
     }
 
 }
