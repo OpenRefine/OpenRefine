@@ -21,7 +21,7 @@ import org.openrefine.util.JSONUtilities;
 
 public class LineBasedImporter extends HDFSImporter {
 
-    protected LineBasedImporter(DatamodelRunner runner) {
+    public LineBasedImporter(DatamodelRunner runner) {
         super(runner);
     }
 
