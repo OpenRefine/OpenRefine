@@ -66,7 +66,7 @@ public class Reinterpret implements Function {
                 return reinterpret(str, decoder, encoder);
             }
         }
-        return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects String to reinterpret with a given target encoder and optional source decoder");
+        return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects 2 or 3 arguments");
     }
 
     private Object reinterpret(String str, String decoder, String encoder) {
@@ -89,7 +89,7 @@ public class Reinterpret implements Function {
                 result = new String(bytes, encoder);
             }
         } catch (UnsupportedEncodingException e) {
-            return new EvalError(ControlFunctionRegistry.getFunctionName(this) + ": target encoding '" + encoder + "' is not available or recognized.");
+            return new EvalError(ControlFunctionRegistry.getFunctionName(this) + ": encoding '" + encoder + "' is not available or recognized.");
         }
                         
         return result;
@@ -97,12 +97,12 @@ public class Reinterpret implements Function {
     
     @Override
     public String getDescription() {
-        return "Returns s reinterpreted thru the given target encoder and optional source decoder.";
+        return "Returns s reinterpreted thru the given encoder.";
     }
     
     @Override
     public String getParams() {
-        return "string s, string target encoder, string source decoder";
+        return "string s, string encoder";
     }
     
     @Override
