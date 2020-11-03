@@ -102,7 +102,7 @@ public class Reinterpret implements Function {
     
     @Override
     public String getParams() {
-        return "string s, string target encoder, string source decoder";
+        return "string s, string target encoding, string source encoding";
     }
     
     @Override
