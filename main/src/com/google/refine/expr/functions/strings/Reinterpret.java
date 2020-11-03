@@ -97,7 +97,7 @@ public class Reinterpret implements Function {
     
     @Override
     public String getDescription() {
-        return "Returns s reinterpreted thru the given target encoder and optional source decoder.";
+        return "Returns s reinterpreted using a target encoding and optional source encoding.";
     }
     
     @Override
