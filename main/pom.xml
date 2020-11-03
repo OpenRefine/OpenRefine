@@ -343,7 +343,7 @@
     <dependency>
       <groupId>com.google.guava</groupId>
       <artifactId>guava</artifactId>
-      <version>24.1.1-jre</version>
+      <version>30.0-jre</version>
     </dependency>
     <dependency>
       <groupId>javax.xml.bind</groupId>
