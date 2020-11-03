@@ -206,7 +206,7 @@ function registerImporting() {
 
   FR.registerFormat("text", "Text files"); // generic format, no parser to handle it
   FR.registerFormat("text/line-based", "Line-based text files", "LineBasedParserUI",
-      new Packages.org.openrefine.importers.LineBasedImporter());
+      new Packages.org.openrefine.importers.LineBasedImporter(runner));
   FR.registerFormat("text/line-based/*sv", "CSV / TSV / separator-based files", "SeparatorBasedParserUI",
       new Packages.org.openrefine.importers.SeparatorBasedImporter(runner));
   FR.registerFormat("text/line-based/fixed-width", "Fixed-width field text files", "FixedWidthParserUI",

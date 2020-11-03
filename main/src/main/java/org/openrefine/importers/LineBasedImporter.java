@@ -20,7 +20,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 
 public class LineBasedImporter extends HDFSImporter {
 
-    protected LineBasedImporter(DatamodelRunner runner) {
+    public LineBasedImporter(DatamodelRunner runner) {
         super(runner);
     }
 
