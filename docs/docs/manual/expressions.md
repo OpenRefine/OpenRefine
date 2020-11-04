@@ -454,19 +454,19 @@ Takes two strings or two dates and compares them, returning a string. The two ob
 
 ###### escape(s, s mode)
 
-Escapes s in the given escaping mode. Can be one of: html, xml, csv, url, javascript.
+Escapes s in the given escaping mode. The mode can be one of: html, xml, csv, url, javascript. See the [recipe here](https://github.com/OpenRefine/OpenRefine/wiki/Recipes#question-marks--showing-in-your-data) for an example.
 
 ###### unescape(s, s mode)
 
-Unescapes s in the given escaping mode. Can be one of: html, xml, csv, url, javascript.
+Unescapes s in the given escaping mode. The mode can be one of: html, xml, csv, url, javascript. See the [recipe here](https://github.com/OpenRefine/OpenRefine/wiki/Recipes#atampampt----att) for an example. 
 
 ###### md5(o)
 
-Returns the [MD5 hash](https://en.wikipedia.org/wiki/MD5) of an object. If fed something other than a string (array, number, date, etc.) md5 will convert it to a string and deliver the hash of the string. For example, `"[ blah, blah, blah ]".md5()` will return 877ec03c582e43a325a034e409820e62.
+Returns the [MD5 hash](https://en.wikipedia.org/wiki/MD5) of an object. If fed something other than a string (array, number, date, etc.), md5() will convert it to a string and deliver the hash of the string. For example, `"[ and, or, not ]".md5()` will return 80fd34c2da7787a20c6c5e32e4899459.
 
 ###### sha1(o)
 
-Returns the [SHA-1 hash](https://en.wikipedia.org/wiki/SHA-1) of an object. If fed something other than a string (array, number, date, etc.) sha1() will convert it to a string and deliver the hash of the string. For example, `"[ and, or, not ]".sha1()` will return a6664fc5476a043cabc179da1e3ce736e3959bbc.
+Returns the [SHA-1 hash](https://en.wikipedia.org/wiki/SHA-1) of an object. If fed something other than a string (array, number, date, etc.), sha1() will convert it to a string and deliver the hash of the string. For example, `"[ and, or, not ]".sha1()` will return a6664fc5476a043cabc179da1e3ce736e3959bbc.
 
 ###### phonetic(s, s encoding)
 
@@ -506,9 +506,7 @@ Quotes a value as a JSON literal value.
 
 Parses a string as JSON. get() can then be used with parseJson(): for example, `parseJson(" { 'a' : 1 } ").get("a")` returns 1.
 
-To get all instances from a JSON array called "keywords" having the same object string name of "text", combine with the forEach() function to iterate over the array.
-
-Given the JSON:
+For example from the following JSON array, let's get all instancescalled "keywords" having the same object string name of "text", combine with the forEach() function to iterate over the array.
 
     {
        "status":"OK",
@@ -627,10 +625,10 @@ You may need to do some reformatting if your dates are not being recognized by t
 
 Returns the current time in the [ISO 8601 extended format](exploring#data-types). For example, 12:58pm on October 28th 2020 returns [date 2020-10-28T16:58:32Z].
 
-###### toDate(o, boolean month_first / format1, format2, ... )
+###### toDate(o, boolean monthFirst / format1, format2, ... )
 
 Returns the inputted object converted to a date object. Without arguments, it returns the ISO 8601 extended format. With arguments, you can control the output format:
-*   month_first: set false if the date is formatted with the day before the month.
+*   monthFirst: set false if the date is formatted with the day before the month.
 *   formatN: attempt to parse the date using an ordered list of possible formats. Supply formats based on the [SimpleDateFormat](https://docs.oracle.com/javase/8/docs/api/java/text/SimpleDateFormat.html) syntax (and see the table below for a handy reference). 
 
 For example, you can parse a column containing dates in different formats, such as cells with "Nov-09" and "11/09", using `value.toDate('MM/yy','MMM-yy').toString('yyyy-MM')` and both will output “2009-11”. For another example, "1/4/2012 13:30:00" can be parsed into a date using `value.toDate('d/M/y H&#58;m&#58;s')`.
@@ -639,7 +637,7 @@ For example, you can parse a column containing dates in different formats, such 
 |-|-|-|-|
 | G | Era designator | Text | AD |
 | y | Year | Year | 1996; 96 |
-| Y | Week year | Year | 2009; 09 |
+| Y | [Week year](https://en.wikipedia.org/wiki/ISO_week_date#First_week) | Year | 2009; 09 |
 | M | Month in year | Month | July; Jul; 07 |
 | w | Week in year | Number | 27 |
 | W | Week in month | Number | 2 |
@@ -665,7 +663,7 @@ For example, you can parse a column containing dates in different formats, such 
 
 Given two dates, returns a number indicating the difference in a given time unit (see the table below). For example, `diff(("Nov-11".toDate('MMM-yy')), ("Nov-09".toDate('MMM-yy')), "weeks")` will return 104, for 104 weeks, or two years. The later date should go first. If the output is negative, invert d1 and d2.
 
-###### inc(d, n value, s timeUnit)
+###### inc(d, n, s timeUnit)
 
 Returns a date changed by the given amount in the given unit of time (see the table below). The default unit is “hour.” For example, if you want to move a date backwards by two months, use `value.inc(-2,'month')`.
 
@@ -736,7 +734,7 @@ Returns [e](https://en.wikipedia.org/wiki/E_(mathematical_constant)) raised to t
 ###### pow(n1, n2)
 Returns n1 raised to the power of n2. For example, `pow(2, 3)` returns 8 (2 cubed) and `pow(3, 2)` returns 9 (3 squared). The square root of any numeric value can be called with `value.pow(0.5)`. Note: `value.mod(0.5)` will work, whereas `74.mod(value)` will not work.
 
-###### randomNumber(n lower_bound, n upper_bound)
+###### randomNumber(n lowerBound, n upperBound)
 Returns a random integer in the interval between the lower and upper bounds (inclusively). Will output a different random number in each cell in a column.
 
 #### Other functions
@@ -745,7 +743,7 @@ Returns a random integer in the interval between the lower and upper bounds (inc
 Returns a string with the data type of o, such as undefined, string, number, boolean, etc. For example, a Transform operation using `value.type()` will convert all cells in a column to strings of their data types.
 
 ###### facetCount(choiceValue, s facetExpression, s columnName)
-Returns the facet count corresponding to the given choice value. For example, to create facet counts for the following table, we could generate a new column based on “gift” and enter in `value.facetCount("value", "gift")`. This would add the column “count”:
+Returns the facet count corresponding to the given choice value, by looking for the facetExpression in the choiceValue in columnName. For example, to create facet counts for the following table, we could generate a new column based on “Gift” and enter in `value.facetCount("value", "Gift")`. This would add the column we've named “Count”:
 
 | Gift | Recipient | Price | Count |
 |-|-|-|-|
@@ -762,7 +760,7 @@ Returns a boolean indicating whether o has a member field called name. For examp
 ###### coalesce(o1, o2, o3, ...)
 Returns the first non-null from a series of values of any kind. For example, `coalesce(value, "")` would return an empty string "" if the value was null, but otherwise return the value.
 
-###### cross(cell c, string projectName, string columnName)
+###### cross(cell c, s projectName, s columnName)
 Returns an array of zero or more rows in the project projectName for which the cells in their column columnName have the same content as cell c.
 
 ### Controls
@@ -771,7 +769,7 @@ GREL offers controls to support branching and looping (that is, “if” and “
 
 Please note that the GREL control names are case-sensitive: for example, the isError() control can't be called with iserror().
 
-#### if(expression o, expression eTrue, expression eFalse)
+#### if(e, expression eTrue, expression eFalse)
 
 Expression o is evaluated to a value. If that value is true, then expression eTrue is evaluated and the result is the value of the whole `if` expression. Otherwise, expression eFalse is evaluated and that result is the value.
 
@@ -792,9 +790,9 @@ Nested if (switch case) example:
 
 	null)))
 
-#### with(expression o, variable v, expression e)
+#### with(e1, variable v, e2)
 
-Evaluates expression o and binds its value to variable v. Then evaluates expression e and returns that result.
+Evaluates expression e1 and binds its value to variable v. Then evaluates expression e2 and returns that result.
 
 | Example expression                                                                       	| Result 	|
 | ------------------------------------------------------------------------------------ | ---------- |
@@ -802,37 +800,37 @@ Evaluates expression o and binds its value to variable v. Then evaluates express
 | `with("european union".split(" "), a, forEach(a, v, v.length()))`                	| [ 8, 5 ] |
 | `with("european union".split(" "), a, forEach(a, v, v.length()).sum() / a.length())` | 6.5  	|
 
-#### filter(expression a, variable v, expression test)
+#### filter(e1, variable v, e test)
 
-Evaluates expression a to an array. Then for each array element, binds its value to variable v, evaluates expression test - which should return a boolean. If the boolean is true, pushes v onto the result array.
+Evaluates expression e1 to an array. Then for each array element, binds its value to variable v, evaluates expression test - which should return a boolean. If the boolean is true, pushes v onto the result array.
 
 | Expression                                 	| Result    	|
 | ---------------------------------------------- | ------------- |
 | `filter([ 3, 4, 8, 7, 9 ], v, mod(v, 2) == 1)` | [ 3, 7, 9 ] |
 
-#### forEach(expression a, variable v, expression e)
+#### forEach(e1, variable v, e2)
 
-Evaluates expression a to an array. Then for each array element, binds its value to variable v, evaluates expression e, and pushes the result onto the result array.
+Evaluates expression e1 to an array. Then for each array element, binds its value to variable v, evaluates expression e2, and pushes the result onto the result array.
 
 | Expression                             	| Result          	|
 | ------------------------------------------ | ------------------- |
 | `forEach([ 3, 4, 8, 7, 9 ], v, mod(v, 2))` | [ 1, 0, 0, 1, 1 ] |
 
-#### forEachIndex(expression a, variable i, variable v, expression e)
+#### forEachIndex(e1, variable i, variable v, e2)
 
-Evaluates expression a to an array. Then for each array element, binds its index to variable i and its value to variable v, evaluates expression e, and pushes the result onto the result array.
+Evaluates expression e1 to an array. Then for each array element, binds its index to variable i and its value to variable v, evaluates expression e2, and pushes the result onto the result array.
 
 | Expression                                                                  	| Result                  	|
 | ------------------------------------------------------------------------------- | --------------------------- |
 | `forEachIndex([ "anne", "ben", "cindy" ], i, v, (i + 1) + ". " + v).join(", ")` | 1. anne, 2. ben, 3. cindy |
 
-#### forRange(n from, n to, n step, variable v, expression e)
+#### forRange(n from, n to, n step, variable v, e)
 
 Iterates over the variable v starting at from, incrementing by step each time while less than to. At each iteration, evaluates expression e, and pushes the result onto the result array.
 
-#### forNonBlank(expression o, variable v, expression eNonBlank, expression eBlank)
+#### forNonBlank(e, variable v, expression eNonBlank, expression eBlank)
 
-Evaluates expression o. If it is non-blank, binds its value to variable v, evaluates expression eNonBlank and returns the result. Otherwise (if o evaluates to blank), evaluates expression eBlank and returns that result instead.
+Evaluates expression e. If it is non-blank, forNonBlank() binds its value to variable v, evaluates expression eNonBlank and returns the result. Otherwise (if o evaluates to blank), forNonBlank() evaluates expression eBlank and returns that result instead.
 
 Unlike other GREL functions beginning with "for", forNonBlank() is not iterative. forNonBlank() essentially offers a shorter syntax to achieving the same outcome by using the isNonBlank() function within an "if" statement.
 
