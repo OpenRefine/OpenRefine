@@ -358,7 +358,7 @@ public class ColumnAdditionByFetchingURLsOperationTests extends RefineTest {
 
             // 6 requests (4 retries 200, 400, 800, 200 msec) + final response
             long start = System.currentTimeMillis();
-            runAndWait(op, 2000);
+            runAndWait(op, 2500);
 
             // Make sure that our exponential back off is working
             long elapsed = System.currentTimeMillis() - start;

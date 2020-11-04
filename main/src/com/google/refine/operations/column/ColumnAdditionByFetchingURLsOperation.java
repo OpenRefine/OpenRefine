@@ -37,34 +37,13 @@ import static com.google.common.base.Strings.isNullOrEmpty;
 
 import java.io.IOException;
 import java.io.Serializable;
-import java.net.MalformedURLException;
-import java.net.URISyntaxException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 
-import org.apache.hc.client5.http.classic.methods.HttpGet;
-import org.apache.hc.client5.http.config.RequestConfig;
-import org.apache.hc.client5.http.impl.DefaultHttpRequestRetryStrategy;
-import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
-import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
-import org.apache.hc.client5.http.impl.classic.HttpClientBuilder;
-import org.apache.hc.client5.http.impl.classic.HttpClients;
-import org.apache.hc.client5.http.impl.io.PoolingHttpClientConnectionManager;
-import org.apache.hc.core5.http.EntityDetails;
 import org.apache.hc.core5.http.Header;
-import org.apache.hc.core5.http.HttpEntity;
-import org.apache.hc.core5.http.HttpException;
-import org.apache.hc.core5.http.HttpRequest;
-import org.apache.hc.core5.http.HttpRequestInterceptor;
-import org.apache.hc.core5.http.HttpResponse;
-import org.apache.hc.core5.http.io.SocketConfig;
-import org.apache.hc.core5.http.io.entity.EntityUtils;
 import org.apache.hc.core5.http.message.BasicHeader;
-import org.apache.hc.core5.http.protocol.HttpContext;
-import org.apache.hc.core5.util.TimeValue;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -72,7 +51,6 @@ import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 
-import com.google.refine.RefineServlet;
 import com.google.refine.browsing.Engine;
 import com.google.refine.browsing.EngineConfig;
 import com.google.refine.browsing.FilteredRows;
@@ -93,7 +71,7 @@ import com.google.refine.operations.EngineDependentOperation;
 import com.google.refine.operations.OnError;
 import com.google.refine.process.LongRunningProcess;
 import com.google.refine.process.Process;
-import com.google.refine.util.ParsingUtilities;
+import com.google.refine.util.HttpClient;
 
 
 public class ColumnAdditionByFetchingURLsOperation extends EngineDependentOperation {
@@ -124,9 +102,8 @@ public class ColumnAdditionByFetchingURLsOperation extends EngineDependentOperat
     final protected boolean    _cacheResponses;
     final protected List<HttpHeader>  _httpHeadersJson;
     private Header[] httpHeaders = new Header[0];
-    final private RequestConfig defaultRequestConfig;
-    private HttpClientBuilder httpClientBuilder;
-    private CloseableHttpClient httpclient;
+    private HttpClient _httpClient;
+
 
     @JsonCreator
     public ColumnAdditionByFetchingURLsOperation(
@@ -171,55 +148,7 @@ public class ColumnAdditionByFetchingURLsOperation extends EngineDependentOperat
             }
         }
         httpHeaders = headers.toArray(httpHeaders);
-
-        // Create a connection manager with a custom socket timeout
-        PoolingHttpClientConnectionManager connManager = new PoolingHttpClientConnectionManager();
-        final SocketConfig socketConfig = SocketConfig.custom()
-            .setSoTimeout(10, TimeUnit.SECONDS)
-            .build();
-        connManager.setDefaultSocketConfig(socketConfig);
-
-        defaultRequestConfig = RequestConfig.custom()
-                .setConnectTimeout(30, TimeUnit.SECONDS)
-                .setConnectionRequestTimeout(30, TimeUnit.SECONDS)
-                .build();
-
-        // TODO: Placeholder for future Basic Auth implementation
-//        BasicCredentialsProvider credsProvider = new BasicCredentialsProvider();
-//        credsProvider.setCredentials(new AuthScope(host, 443),
-//                new UsernamePasswordCredentials(user, password.toCharArray()));
-
-
-        httpClientBuilder = HttpClients.custom()
-                .setUserAgent(RefineServlet.getUserAgent())
-                .setDefaultRequestConfig(defaultRequestConfig)
-                .setConnectionManager(connManager)
-                // Default Apache HC retry is 1x @1 sec (or the value in Retry-Header)
-                .setRetryStrategy(new ExponentialBackoffRetryStrategy(3, TimeValue.ofMilliseconds(_delay)))
-//               .setConnectionBackoffStrategy(ConnectionBackoffStrategy)
-//               .setDefaultCredentialsProvider(credsProvider)
-                .addRequestInterceptorFirst(new HttpRequestInterceptor() {
-
-                    private long nextRequestTime = System.currentTimeMillis();
-
-                    @Override
-                    public void process(
-                            final HttpRequest request,
-                            final EntityDetails entity,
-                            final HttpContext context) throws HttpException, IOException {
-
-                        long delay = nextRequestTime - System.currentTimeMillis();
-                        if (delay > 0) {
-                            try {
-                                Thread.sleep(delay);
-                            } catch (InterruptedException e) {
-                            }
-                        }
-                        nextRequestTime = System.currentTimeMillis() + _delay;
-
-                    }
-                });
-        httpclient = httpClientBuilder.build();
+        _httpClient = new HttpClient(_delay);
 
     }
 
@@ -323,7 +252,7 @@ public class ColumnAdditionByFetchingURLsOperation extends EngineDependentOperat
                 .build(
                      new CacheLoader<String, Serializable>() {
                         public Serializable load(String urlString) throws Exception {
-                            Serializable result = fetch(urlString);
+                            Serializable result = fetch(urlString, httpHeaders);
                             if (result == null) {
                                 // the load method should not return any null value
                                 throw new Exception("null result returned by fetch");
@@ -364,9 +293,9 @@ public class ColumnAdditionByFetchingURLsOperation extends EngineDependentOperat
 
                 Serializable response = null;
                 if (_urlCache != null) {
-                    response = cachedFetch(urlString); // TODO: Why does this need a separate method?
+                    response = cachedFetch(urlString);
                 } else {
-                    response = fetch(urlString);
+                    response = fetch(urlString, httpHeaders);
                 }
 
                 if (response != null) {
@@ -409,70 +338,18 @@ public class ColumnAdditionByFetchingURLsOperation extends EngineDependentOperat
             }
         }
 
-        Serializable fetch(String urlString) {
-            HttpGet httpGet;
-
-            try {
-                // Use of URL constructor below is purely to get additional error checking to mimic
-                // previous behavior for the tests.
-                httpGet = new HttpGet(new URL(urlString).toURI());
-            } catch (IllegalArgumentException | MalformedURLException | URISyntaxException e) {
-                return null;
-            }
-
+        Serializable fetch(String urlString, Header[] headers) {
             try { //HttpClients.createDefault()) {
-                httpGet.setHeaders(httpHeaders);
-                httpGet.setConfig(defaultRequestConfig);
-
-                CloseableHttpResponse response = null;
                 try {
-                    response = httpclient.execute(httpGet);
-                    String reasonPhrase = response.getReasonPhrase();
-                    int statusCode = response.getCode();
-                    if (statusCode >= 400) { // We should never see 3xx since they get handled automatically
-                        throw new IOException(String.format("Got error %d : %s for URL %s", statusCode, reasonPhrase,
-                                httpGet.getRequestUri()));
-                    }
-
-                    HttpEntity entity = response.getEntity();
-                    if (entity == null) {
-                        throw new IOException("No content found in " + httpGet.getRequestUri());
-                    }
-
-                    String encoding = null;
-
-                    if (entity.getContentEncoding() != null) {
-                        encoding = entity.getContentEncoding();
-                    }
-
-                    String result =  ParsingUtilities.inputStreamToString(
-                            entity.getContent(), (encoding == null) || ( encoding.equalsIgnoreCase("\"UTF-8\"")) ? "UTF-8" : encoding);
-
-                    EntityUtils.consume(entity);
-                    return result;
-
+                    return _httpClient.getAsString(urlString, headers);
                 } catch (IOException e) {
-                    String message;
-                    if (response == null) {
-                        message = "Unknown HTTP error " + e.getLocalizedMessage();
-                    } else {
-                        String reasonPhrase = response.getReasonPhrase();
-                        HttpEntity errorEntity = response.getEntity();
-                        String errorString = ParsingUtilities.inputStreamToString(errorEntity.getContent());
-                        message = String.format("HTTP error %d : %s | %s", response.getCode(),
-                                reasonPhrase,
-                                errorString);
-                    }
-                    return _onError == OnError.StoreError ? new EvalError(message) : null;
-                } finally {
-                    if (response != null) {
-                        response.close();
-                    }
+                    return _onError == OnError.StoreError ? new EvalError(e) : null;
                 }
             } catch (Exception e) {
                 return _onError == OnError.StoreError ? new EvalError(e.getMessage()) : null;
             }
         }
+
 
         RowVisitor createRowVisitor(List<CellAtRow> cellsAtRows) {
             return new RowVisitor() {
@@ -530,31 +407,4 @@ public class ColumnAdditionByFetchingURLsOperation extends EngineDependentOperat
         }
     }
 
-    /**
-     * Use binary exponential backoff strategy, instead of the default fixed
-     * retry interval, if the server doesn't provide a Retry-After time.
-     */
-    class ExponentialBackoffRetryStrategy extends DefaultHttpRequestRetryStrategy {
-
-        private final TimeValue defaultInterval;
-
-        public ExponentialBackoffRetryStrategy(final int maxRetries, final TimeValue defaultRetryInterval) {
-            super(maxRetries, defaultRetryInterval);
-            this.defaultInterval = defaultRetryInterval;
-        }
-
-        @Override
-        public TimeValue getRetryInterval(HttpResponse response, int execCount, HttpContext context) {
-            // Get the default implementation's interval
-            TimeValue interval = super.getRetryInterval(response, execCount, context);
-            // If it's the same as the default, there was no Retry-After, so use binary
-            // exponential backoff
-            if (interval.compareTo(defaultInterval) == 0) {
-                interval = TimeValue.of(((Double) (Math.pow(2, execCount) * defaultInterval.getDuration())).longValue(),
-                       defaultInterval.getTimeUnit() );
-                return interval;
-            }
-            return interval;
-        }
-    }
 }
