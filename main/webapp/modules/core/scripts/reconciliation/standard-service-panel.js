@@ -52,24 +52,28 @@ ReconStandardServicePanel.prototype._guessTypes = function(f) {
     }),
     null, 
     function(data) {
-      self._types = data.types;
+      if (data.code && data.code === 'ok') {
+        self._types = data.types;
 
-      if (self._types.length === 0 && "defaultTypes" in self._service) {
-        var defaultTypes = {};
-        $.each(self._service.defaultTypes, function() {
-          defaultTypes[this.id] = this.name;
-        });
-        $.each(self._types, function() {
-          delete defaultTypes[typeof this == "string" ? this : this.id];
-        });
-        for (var id in defaultTypes) {
-          if (defaultTypes.hasOwnProperty(id)) {
-            self._types.push({
-              id: id,
-              name: defaultTypes[id].name
-            });
+        if (self._types.length === 0 && "defaultTypes" in self._service) {
+          var defaultTypes = {};
+          $.each(self._service.defaultTypes, function() {
+            defaultTypes[this.id] = this.name;
+          });
+          $.each(self._types, function() {
+            delete defaultTypes[typeof this == "string" ? this : this.id];
+          });
+          for (var id in defaultTypes) {
+            if (defaultTypes.hasOwnProperty(id)) {
+              self._types.push({
+                id: id,
+                name: defaultTypes[id].name
+              });
+            }
           }
         }
+      } else {
+        alert('Guess Types query failed ' + data.code + ' : ' + data.message);
       }
 
       dismissBusy();
