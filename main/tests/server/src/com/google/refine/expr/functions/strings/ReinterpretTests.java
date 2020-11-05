@@ -33,7 +33,7 @@ import com.google.refine.util.TestUtils;
 public class ReinterpretTests {
     @Test
     public void serializeReinterpret() {
-        String json = "{\"description\":\"Returns s reinterpreted thru the given encoder.\",\"params\":\"string s, string encoder\",\"returns\":\"string\"}";
+        String json = "{\"description\":\"Returns s reinterpreted using a target encoding and optional source encoding.\",\"params\":\"string s, string target encoding, string source encoding\",\"returns\":\"string\"}";
         TestUtils.isSerializedTo(new Reinterpret(), json);
     }
 }
