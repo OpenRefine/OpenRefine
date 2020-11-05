@@ -734,5 +734,6 @@
     "core-views/column-join-write-selected-column": "Schreib Ergebnis in ausgewählte Spalte.",
     "core-views/column-join-copy-to-new-column": "Schreib Ergebnis in neue Spalte mit Namen…",
     "core-views/column-join-delete-joined-columns": "Verbundene Spalten löschen.",
-    "core-views/column-join-dont-escape": "Verwende im Ersatz für Separatoren und Null-Werte \\n für neue Zeilen, \\t für Tabulatoren, \\\\n für \\n, \\\\t für \\t."
+    "core-views/column-join-dont-escape": "Verwende im Ersatz für Separatoren und Null-Werte \\n für neue Zeilen, \\t für Tabulatoren, \\\\n für \\n, \\\\t für \\t.",
+    "core-index/download-now": "Jetzt $1 herunterladen."
 }
