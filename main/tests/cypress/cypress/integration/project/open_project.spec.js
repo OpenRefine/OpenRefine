@@ -1,5 +1,5 @@
 describe(__filename, function () {
-	it('Open an existing project', function () {
+	it('Open an existing project by visiting the URL directly', function () {
 		const projectName = Date.now();
 		cy.loadProject('food.mini.csv', projectName).then((projectId) => {
 			cy.visitProject(projectId);

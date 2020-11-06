@@ -19,6 +19,32 @@ Cypress.Commands.add('visitOpenRefine', (options) => {
 	cy.visit(Cypress.env('OPENREFINE_URL'), options);
 });
 
+Cypress.Commands.add('createProjectThroughUserInterface', (fixtureFile) => {
+	cy.navigateTo('Create Project');
+
+	const uploadFile = { filePath: fixtureFile, mimeType: 'application/csv' };
+	cy.get('.create-project-ui-source-selection-tab-body.selected input[type="file"]').attachFile(uploadFile);
+	cy.get('.create-project-ui-source-selection-tab-body.selected button.button-primary').click();
+});
+
+Cypress.Commands.add('doCreateProjectThroughUserInterface', () => {
+	cy.get('.default-importing-wizard-header button[bind="nextButton"]').click();
+	cy.get('#create-project-progress-message').contains('Done.');
+
+	// workaround to ensure project is loaded
+	// cypress does not support window.location = ...
+	cy.get('h2').contains('HTTP ERROR 404');
+	cy.location().should((location) => {
+		expect(location.href).contains('http://localhost:3333/__/project?');
+	});
+
+	cy.location().then((location) => {
+		const projectId = location.href.split('=').slice(-1)[0];
+		cy.visitProject(projectId);
+		cy.wrap(projectId).as('createdProjectId');
+	});
+});
+
 Cypress.Commands.add('getCell', (rowIndex, columnName) => {
 	const cssRowIndex = rowIndex + 1;
 	// first get the header, to know the cell index
