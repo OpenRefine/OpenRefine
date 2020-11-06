@@ -14,7 +14,13 @@ import 'cypress-wait-until';
 // var uniqid = require('uniqid');
 //
 //
-
+Cypress.Commands.add('assertTextareaHaveJsonValue', (selector, json) => {
+	cy.get(selector).then((el) => {
+		// expected json needs to be parsed / restringified, to avoid inconsitencies about spaces and tabs
+		const present = JSON.parse(el.val());
+		cy.expect(JSON.stringify(present)).to.equal(JSON.stringify(json));
+	});
+});
 Cypress.Commands.add('visitOpenRefine', (options) => {
 	cy.visit(Cypress.env('OPENREFINE_URL'), options);
 });
