@@ -734,8 +734,8 @@ For integer division and precision, you can use simple evaluations such as `1 / 
 |mod(n1, n2)|Returns n1 modulus n2. Note: `value.mod(9)` will work, whereas `74.mod(9)` will not work.|`mod(74, 9)` returns 2. |
 |multinomial(n1, n2 …(optional))|Calculates the multinomial of one number or a series of numbers.|`multinomial(2,3)` returns 10.|
 |odd(n)|Rounds the number up to the nearest even integer.|`odd(10)` returns 11.|
-|pow(n1, n2)|Returns n1 raised to the power of n2. Note: `value.mod(0.5)` will work, whereas `74.mod(0.5)` will not work.|`pow(2, 3)` returns 8 (2 cubed) and `pow(3, 2)` returns 9 (3 squared). The square root of any numeric value can be called with `value.pow(0.5)`.|
-|quotient(n1, n2)|Returns the integer portion of a division, when supplied with a numerator and denominator.|`quotient(10,5)` returns 2.|
+|pow(n1, n2)|Returns n1 raised to the power of n2. Note: value.pow(3)` will work, whereas `2.pow(3)` will not work.|`pow(2, 3)` returns 8 (2 cubed) and `pow(3, 2)` returns 9 (3 squared). The square root of any numeric value can be called with `value.pow(0.5)`.|
+|quotient(n1, n2)|Returns the integer portion of a division (truncated, not rounded), when supplied with a numerator and denominator.|`quotient(9,2)` returns 4.|
 |radians(n)|Converts an angle in degrees to radians.|`radians(10)` returns 0.17453292519943295.|
 |randomNumber(n lower_bound, n upper_bound)|Returns a random integer in the interval between the lower and upper bounds (inclusively). Will output a different random number in each cell in a column.|
 |round(n)|Rounds a number to the nearest integer.|`3.7.round()` returns 4 and `-3.7.round()` returns -4.|
@@ -763,13 +763,22 @@ Returns the facet count corresponding to the given choice value, by looking for 
 The facet expression, wrapped in quotes, can be useful to manipulate the inputted values before counting. For example, you could create a numeric facet that rounds the price to the nearest $10, then counts: `(round(value / 10.0)*10).facetCount("round(value / 10.0)*10","Price")`. This would count 1 value at 20, 2 at 60, 1 at 80, and 2 at 60.
 
 ###### hasField(o, s name)
-Returns a boolean indicating whether o has a member field called name. For example, `cell.recon.hasField(“match”)` will return false if a reconciliation match hasn’t been selected yet, or true if it does. You cannot chain your desired fields: for example, `cell.hasField(“recon.match”)` will return false even if the above expression returns true).
+Returns a boolean indicating whether o has a member field called name. For example, `cell.recon.hasField("match")` will return false if a reconciliation match hasn’t been selected yet, or true if it does. You cannot chain your desired fields: for example, `cell.hasField(“recon.match”)` will return false even if the above expression returns true).
 
 ###### coalesce(o1, o2, o3, ...)
 Returns the first non-null from a series of values of any kind. For example, `coalesce(value, "")` would return an empty string "" if the value was null, but otherwise return the value.
 
-###### cross(cell c, s projectName, s columnName)
-Returns an array of zero or more rows in the project projectName for which the cells in their column columnName have the same content as cell c.
+###### cross(c cell, s projectName, s columnName)
+Returns an array of zero or more rows in the project projectName for which the cells in their column columnName have the same content as cell c. For example, if two projects included matching names, and you wanted to pull addresses for people by their names from a project called "People" you would apply the following expression to your column of names: 
+```
+cell.cross("People","Name").cells["Address"].value[0]
+```
+
+This would match your current column to the "Name" column in "People" and, using those matches, pull the respective "Address" value into your current project. 
+
+You may need to do some data preparation with cross(), such as using trim() on your key columns or deduplicating values.
+
+Recipes and more examples for using cross() can be found [on our wiki](https://github.com/OpenRefine/OpenRefine/wiki/Recipes#combining-datasets).
 
 ### Controls
 
@@ -911,12 +920,26 @@ To return the lower case of value (if the value is not null):
 - [Extending Jython with pypi modules](https://github.com/OpenRefine/OpenRefine/wiki/Extending-Jython-with-pypi-modules)
 - [Working with Phone numbers using Java libraries inside Python](https://github.com/OpenRefine/OpenRefine/wiki/Jython#tutorial---working-with-phone-numbers-using-java-libraries-inside-python)
 
-Full documentation on the Jython language can be found on its official site [http://www.jython.org](http://www.jython.org).
+Full documentation on the Jython language can be found on its official site: [http://www.jython.org](http://www.jython.org).
 
 ## Clojure
 
-Clojure 1.10.1 comes bundled with the default installation of OpenRefine 3.4.1. 
+Clojure 1.10.1 comes bundled with the default installation of OpenRefine 3.4.1. At this time, not all [variables](#variables) can be used with Clojure expressions: only value, row, rowIndex, cell, and cells are available.
 
-For a guide to Clojure syntax, see the [Clojure website's guide to syntax](https://clojure.org/guides/learn/syntax).
+For example, functions can take the form 
+```
+(.. value (toUpperCase) )
+```
 
-Full documentation on the Clojure language can be found on its official site [https://clojure.org/](https://clojure.org/).
+Or can look like 
+```
+(-> value (str/split #" ") last )
+```
+
+which functions like `value.split(" ")` in GREL.
+
+For help with syntax, see the [Clojure website's guide to syntax](https://clojure.org/guides/learn/syntax).
+
+User-contributed Clojure recipes can be found on our wiki at [https://github.com/OpenRefine/OpenRefine/wiki/Recipes#11-clojure](https://github.com/OpenRefine/OpenRefine/wiki/Recipes#11-clojure).
+
+Full documentation on the Clojure language can be found on its official site: [https://clojure.org/](https://clojure.org/).
