@@ -285,7 +285,7 @@ Returns the length of string s as a number.
 
 Takes any value type (string, number, date, boolean, error, null) and gives a string version of that value. You can convert between types, within limits (for example, you can't turn the string "asdfsd" into a date or a number, but you can convert the number "123" into a string).
 
-You can also use toString() to convert numbers to strings with rounding, using an optional string format. For example, if you applied the expression `value.toString("%.0f")` to a column:
+You can also use toString() to convert numbers to strings with rounding, using an [optional string format](https://docs.oracle.com/javase/8/docs/api/java/util/Formatter.html). For example, if you applied the expression `value.toString("%.0f")` to a column:
 
 |Input|Output|
 |-|-|
@@ -370,9 +370,9 @@ Returns the first character index of sub as it first occurs in s; or, returns -1
 
 Returns the first character index of sub as it last occurs in s; or, returns -1 if s does not contain sub. For example, `"parallel".lastIndexOf("a")` returns 3 (pointing at the second "a").
 
-###### replace(s, sp find, s replace)
+###### replace(s, s or p find, s replace)
 
-Returns the string obtained by replacing the find string with the replace string in the inputted string. For example, `"The cow jumps over the moon and moos".replace("oo", "ee")` returns the string “The cow jumps over the meen and mees”. Find can be a regular expression; if so, replace can also contain capture groups declared in find. 
+Returns the string obtained by replacing the find string with the replace string in the inputted string. For example, `"The cow jumps over the moon and moos".replace("oo", "ee")` returns the string “The cow jumps over the meen and mees”. Find can be a regex pattern; if so, replace can also contain capture groups declared in find. 
 
 You cannot find or replace nulls with this, as null is not a string. You can instead:
 
@@ -412,7 +412,7 @@ You can supply a string instead of p, by putting it in quotes, and OpenRefine wi
 
 Returns o converted to a number.
 
-###### split(s, sp sep)
+###### split(s, s or p sep)
 
 Returns the array of strings obtained by splitting s by the separator sep. The sep can be either a string or a regex pattern. For example, `"fire, water, earth, air".split(",")` returns an array of 4 strings: [ "fire", " water", " earth”, “ air” ]. Note that the space characters are retained but the separator is removed.
 
@@ -420,7 +420,7 @@ Returns the array of strings obtained by splitting s by the separator sep. The s
 
 Returns the array of strings obtained by splitting s into substrings with the given lengths. For example, `"internationalization".splitByLengths(5, 6, 3)` returns an array of 3 strings: [ inter, nation, ali ]. Excess characters are discarded.
 
-###### smartSplit(s, sp sep (optional))
+###### smartSplit(s, s or p sep (optional))
 
 Returns the array of strings obtained by splitting s by the separator sep, or by guessing either tab or comma separation if there is no sep given. Handles quotes properly. The sep can be either a string or a regex pattern. For example, `value.smartSplit("\n")` will split at a carriage return or a new-line character.
 
@@ -432,7 +432,7 @@ Returns an array of strings obtained by splitting s into groups of consecutive c
 
 It is useful for separating letters and numbers: `"BE1A3E".splitByCharType()` will result in [ BE, 1, A, 3, E ].
 
-###### partition(s, sp fragment, b omitFragment (optional))
+###### partition(s, s or p fragment, b omitFragment (optional))
 
 Returns an array of strings [ a, fragment, z ] where a is the substring within s before the first occurrence of fragment, and z is the substring after fragment. Fragment can be a string or a regex. For example, `"internationalization".partition("nation")` returns 3 strings: [ inter, nation, alization ]. If s does not contain fragment, it returns an array of [ s, "", "" ] (the original unpartitioned string, and two empty strings). 
 
@@ -440,7 +440,7 @@ If the omitFragment boolean is true, for example with `"internationalization".pa
 
 You can use regex for your fragment. The expresion `"abcdefgh".partition(/c.e/)` will output  [“abc”, "cde", defgh” ]. 
 
-###### rpartition(s, sp fragment, b omitFragment (optional))
+###### rpartition(s, s or p fragment, b omitFragment (optional))
 
 Returns an array of strings [ a, fragment, z ] where a is the substring within s before the last occurrence of fragment, and z is the substring after the last instance of fragment. (Rpartition means “reverse partition.”) For example, `"parallel".rpartition("a")` returns 3 strings: [ par, a, llel ]. 
 
@@ -448,7 +448,7 @@ Otherwise works identically to partition() above.
 
 ##### Encoding and Hashing
 
-###### diff(sd1, sd2, s timeUnit (optional))
+###### diff(s1 or d1, s2 or d2, s timeUnit (optional))
 
 Takes two strings or two dates and compares them, returning a string. The two objects must be the same data type. For strings, diff() returns the remainder of s2 starting with the first character where they differ. For example, `diff("cacti", "cactus")` returns "us". For dates, see [Date functions](#diffd1-d2-s-timeunit).
 
@@ -627,7 +627,7 @@ You may need to do some reformatting if your dates are not being recognized by t
 
 Returns the current time in the [ISO 8601 extended format](exploring#data-types). For example, 12:58pm on October 28th 2020 returns [date 2020-10-28T16:58:32Z].
 
-###### toDate(o, boolean monthFirst / format1, format2, ... )
+###### toDate(o, b monthFirst, s format1, s format2, ...)
 
 Returns the inputted object converted to a date object. Without arguments, it returns the ISO 8601 extended format. With arguments, you can control the output format:
 *   monthFirst: set false if the date is formatted with the day before the month.
@@ -712,7 +712,7 @@ For integer division and precision, you can use simple evaluations such as `1 / 
 |-|-|-|
 |abs(n)|Returns the absolute value of a number.|`abs(-6)` returns 6.|
 |acos(n)|Returns the arc cosine of an angle, in the range 0 through PI.|`acos(0.345)` returns 1.218557541697832.|
-|asin(n)|Returns the arc sine of an angle in the range of -PI/2 through PI/2.|`asin(0.345)` returns 0.35223878509706474.|
+|asin(n)|Returns the arc sine of an angle in the range of -PI/2 through [PI](https://docs.oracle.com/javase/8/docs/api/java/lang/Math.html#PI)/2.|`asin(0.345)` returns 0.35223878509706474.|
 |atan(n)|Returns the arc tangent of an angle in the range of -PI/2 through PI/2.|`atan(0.345)` returns 0.3322135507465967.|
 |atan2(n1, n2)|Converts rectangular coordinates (n1, n2) to polar (r, theta). Returns number theta.|`atan2(0.345,0.6)` returns 	0.5218342798144103.|
 |ceil(n)|Returns the ceiling of a number.|`3.7.ceil()` returns 4 and `-3.7.ceil()` returns -3.|
@@ -733,7 +733,7 @@ For integer division and precision, you can use simple evaluations such as `1 / 
 |min(n1, n2)|Returns the smaller of two numbers.|`min(3,10)` returns 3.|
 |mod(n1, n2)|Returns n1 modulus n2. Note: `value.mod(9)` will work, whereas `74.mod(9)` will not work.|`mod(74, 9)` returns 2. |
 |multinomial(n1, n2 …(optional))|Calculates the multinomial of one number or a series of numbers.|`multinomial(2,3)` returns 10.|
-|odd(n)|Rounds the number up to the nearest even integer.|`odd(10)` returns 11.|
+|odd(n)|Rounds the number up to the nearest odd integer.|`odd(10)` returns 11.|
 |pow(n1, n2)|Returns n1 raised to the power of n2. Note: value.pow(3)` will work, whereas `2.pow(3)` will not work.|`pow(2, 3)` returns 8 (2 cubed) and `pow(3, 2)` returns 9 (3 squared). The square root of any numeric value can be called with `value.pow(0.5)`.|
 |quotient(n1, n2)|Returns the integer portion of a division (truncated, not rounded), when supplied with a numerator and denominator.|`quotient(9,2)` returns 4.|
 |radians(n)|Converts an angle in degrees to radians.|`radians(10)` returns 0.17453292519943295.|
@@ -768,8 +768,8 @@ Returns a boolean indicating whether o has a member field called name. For examp
 ###### coalesce(o1, o2, o3, ...)
 Returns the first non-null from a series of values of any kind. For example, `coalesce(value, "")` would return an empty string "" if the value was null, but otherwise return the value.
 
-###### cross(c cell, s projectName, s columnName)
-Returns an array of zero or more rows in the project projectName for which the cells in their column columnName have the same content as cell c. For example, if two projects included matching names, and you wanted to pull addresses for people by their names from a project called "People" you would apply the following expression to your column of names: 
+###### cross(cell, s projectName, s columnName)
+Returns an array of zero or more rows in the project projectName for which the cells in their column columnName have the same content as the cell in your chosen column. For example, if two projects contained matching names, and you wanted to pull addresses for people by their names from a project called "People" you would apply the following expression to your column of names: 
 ```
 cell.cross("People","Name").cells["Address"].value[0]
 ```
@@ -879,7 +879,7 @@ Remember that these are controls and not functions. So you can’t use dot notat
 
 ## Jython
 
-Jython 2.7.2 comes bundled with the default installation of OpenRefine 3.4.1. [You can add libraries and code by following this tutorial](https://github.com/OpenRefine/OpenRefine/wiki/Extending-Jython-with-pypi-modules). You will find that a large number of Python files (.py or .pyc) are compatible. Python code that depends on C bindings will not work in OpenRefine, which uses Java / Jython only. Since Jython is essentially Java, you can also import Java libraries and utilize those. Remember to restart OpenRefine, so that new Jython/Python libraries are initialized during Butterfly's startup.
+Jython 2.7.2 comes bundled with the default installation of OpenRefine 3.4.1. You can add libraries and code by following [this tutorial](https://github.com/OpenRefine/OpenRefine/wiki/Extending-Jython-with-pypi-modules). A large number of Python files (.py or .pyc) are compatible. Python code that depends on C bindings will not work in OpenRefine, which uses Java / Jython only. Since Jython is essentially Java, you can also import Java libraries and utilize those. Remember to restart OpenRefine, so that new Jython/Python libraries are initialized during Butterfly's startup.
 
 OpenRefine now has [most of the Jsoup.org library built into GREL functions](#jsoup-xml-and-html-parsing-functions), for parsing and working with HTML elements and extraction.
 
