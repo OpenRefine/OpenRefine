@@ -564,7 +564,9 @@ Returns a string of the text from within an HTML element (including all child el
 Returns a string of the text from within an XML element (including all child elements). Functions the same way as htmlText() is described above. Use it in conjunction with parseXml() and select() to provide an element.
 
 ###### wholeText(element)
+
 _Works from OpenRefine 3.4.1 beta 644 onwards only_
+
 Selects the (unencoded) text of an element and its children, including any newlines and spaces, and returns a string of unencoded, un-normalized text. Use it in conjunction with parseHtml() and select() to provide an element as in the following example: `value.parseHtml().select("div.footer")[0].wholeText()`.
 
 ###### innerHtml(element)
@@ -587,10 +589,10 @@ Returns the length of an array, meaning the number of objects inside it. Arrays 
 ###### slice(a, n from, n to (optional))
 Returns a sub-array of a given array, from the first index provided and up to and excluding the optional last index provided. Remember that array objects are indexed starting at 0. If to is omitted, it is understood to be the end of the array. For example, `[0, 1, 2, 3, 4].slice(1, 3)` returns [ 1, 2 ], and `[ 0, 1, 2, 3, 4].slice(1)` returns [ 1, 2, 3, 4 ]. Also works with strings; see [String functions](#slices-n-from-n-to-optional).
 
-###### get(o, n from, n to (optional))
+###### get(a, n from, n to (optional))
 Returns a sub-array of a given array, from the first index provided and up to and excluding the optional last index provided. Remember that array objects are indexed starting at 0. If to is omitted, only one array item is returned, as a string, instead of a sub-array. To return a sub-array from one index to the end, you can set the to argument to a very high number, such as get(2,9999). For example: `["A","B","C","D","E"].get(1,4)` returns the value [ "B", "C", "D" ]. `[1,2,3,4].get(2)` returns the value 3.
 
-Also works with strings; see [String functions](#gets-n-or-s-from-n-to-optional).
+Also works with strings; see [get() in String functions](#gets-n-from-n-to-optional).
 
 ###### inArray(a, s)
 Returns true if the array contains the desired string, and false otherwise.
@@ -613,7 +615,7 @@ Returns the array with duplicates removed. Case-sensitive. For example, `[ "al",
 As of OpenRefine 3.4.1, uniques() reorders the array items it returns; in 3.4 beta 644 and onwards, it preserves the original order (in this case, [ "al", "Joe", "Bob", "Al" ]). 
 
 #### Date functions
-If you have a column full of dates in a more common format (such as yyyy/mm/dd or YYYYMMDD) you can convert these using “Transform” > “Common transforms …” > “to date,” or the GREL function toDate(). You may wish to create a new column with the transformation, in order to also preserve the more human-readable version.
+If you have a column full of dates in a more common format (such as yyyy/mm/dd or YYYYMMDD) you can convert these using [“Transform” > “Common transforms …” > “to date”](cellediting#data-type-transforms), or the GREL function toDate(). You may wish to create a new column with the transformation, in order to also preserve the more human-readable version.
 
 OpenRefine uses [Date.parse()](https://www.w3schools.com/jsref/jsref_parse.asp) to recognize a variety of formats and convert them, including converting from other time zones to UTC:
 
@@ -663,6 +665,8 @@ For example, you can parse a column containing dates in different formats, such 
 
 Given two dates, returns a number indicating the difference in a given time unit (see the table below). For example, `diff(("Nov-11".toDate('MMM-yy')), ("Nov-09".toDate('MMM-yy')), "weeks")` will return 104, for 104 weeks, or two years. The later date should go first. If the output is negative, invert d1 and d2.
 
+Also works with strings; see [diff() in string functions](#diffsd1-sd2-s-timeunit-optional).
+
 ###### inc(d, n, s timeUnit)
 
 Returns a date changed by the given amount in the given unit of time (see the table below). The default unit is “hour.” For example, if you want to move a date backwards by two months, use `value.inc(-2,'month')`.
@@ -704,38 +708,42 @@ OpenRefine supports the following values for timeUnit:
 
 For integer division and precision, you can use simple evaluations such as `1 / 2`, which is equivalent to `floor(1/2)` - that is, it returns only whole number results. If either operand is a floating point number, they both get promoted to floating point and a floating point result is returned. You can use `1 / 2.0` or `1.0 / 2` or `1.0 * x / y` (if you're working with variables of unknown contents).
 
-###### floor(n)
-Returns the floor of a number. For example, `3.7.floor()` returns 3 and `-3.7.floor()` returns -4.
-
-###### ceil(n)
-Returns the ceiling of a number. For example, `3.7.ceil()` returns 4 and `-3.7.ceil()` returns -3.
-
-###### round(n)
-Rounds a number to the nearest integer. For example, `3.7.round()` returns 4 and `-3.7.round()` returns -4.
-
-###### min(n1, n2)
-Returns the smaller of two numbers.
-
-###### max(n1, n2)
-Returns the larger of two numbers.
-
-###### mod(n1, n2)
-Returns n1 modulus n2. For example, mod(74, 9) returns 2. Note: `value.mod(9)` will work, whereas `74.mod(value)` will not work.
-
-###### ln(n)
-Returns the [natural logarithm](https://en.wikipedia.org/wiki/Natural_logarithm) of n.
-
-###### log(n)
-Returns the base 10 logarithm of n.
-
-###### exp(n)
-Returns [e](https://en.wikipedia.org/wiki/E_(mathematical_constant)) raised to the power of n.
-
-###### pow(n1, n2)
-Returns n1 raised to the power of n2. For example, `pow(2, 3)` returns 8 (2 cubed) and `pow(3, 2)` returns 9 (3 squared). The square root of any numeric value can be called with `value.pow(0.5)`. Note: `value.mod(0.5)` will work, whereas `74.mod(value)` will not work.
-
-###### randomNumber(n lowerBound, n upperBound)
-Returns a random integer in the interval between the lower and upper bounds (inclusively). Will output a different random number in each cell in a column.
+|Function|Use|Example|
+|-|-|-|
+|abs(n)|Returns the absolute value of a number.|`abs(-6)` returns 6.|
+|acos(n)|Returns the arc cosine of an angle, in the range 0 through PI.|`acos(0.345)` returns 1.218557541697832.|
+|asin(n)|Returns the arc sine of an angle in the range of -PI/2 through PI/2.|`asin(0.345)` returns 0.35223878509706474.|
+|atan(n)|Returns the arc tangent of an angle in the range of -PI/2 through PI/2.|`atan(0.345)` returns 0.3322135507465967.|
+|atan2(n1, n2)|Converts rectangular coordinates (n1, n2) to polar (r, theta). Returns number theta.|`atan2(0.345,0.6)` returns 	0.5218342798144103.|
+|ceil(n)|Returns the ceiling of a number.|`3.7.ceil()` returns 4 and `-3.7.ceil()` returns -3.|
+|combin(n1, n2)|Returns the number of combinations for n2 elements as divided into n1.|`combin(20,2)` returns 190.|
+|cos(n)|Returns the trigonometric cosine of an angle.|`cos(5)` returns 0.28366218546322625.|
+|cosh(n)|Returns the hyperbolic cosine of a value.|`cosh(5)` returns 74.20994852478785.|
+|degrees(n)|Converts an angle from radians to degrees.|`degrees(5)` returns 286.4788975654116.|
+|even(n)|Rounds the number up to the nearest even integer.|`even(5)` returns 6.|
+|exp(n)|Returns [e](https://en.wikipedia.org/wiki/E_(mathematical_constant)) raised to the power of n.|`exp(5)` returns 148.4131591025766.|
+|fact(n)|Returns the factorial of a number, starting from 1.|`fact(5)` returns 120.|
+|factn(n1, n2)|Returns the factorial of n1, starting from n2.|`factn(10,3)` returns 280.|
+|floor(n)|Returns the floor of a number.|`3.7.floor()` returns 3 and `-3.7.floor()` returns -4.|
+|gcd(n1, n2)|Returns the greatest common denominator of the two numbers.|`gcd(95,135)` returns 5.|
+|lcm(n1, n2)|Least common multiple: Returns the least common multiple of two numbers.|`lcm(95,135)` returns 2565.|
+|ln(n)|Returns the natural logarithm of n.|`ln(5)` returns 1.6094379124341003.|
+|log(n)|Returns the base 10 logarithm of n.|`log(5)` returns 0.6989700043360189.|
+|max(n1, n2)|Returns the larger of two numbers.|`max(3,10)` returns 10.|
+|min(n1, n2)|Returns the smaller of two numbers.|`min(3,10)` returns 3.|
+|mod(n1, n2)|Returns n1 modulus n2. Note: `value.mod(9)` will work, whereas `74.mod(9)` will not work.|`mod(74, 9)` returns 2. |
+|multinomial(n1, n2 …(optional))|Calculates the multinomial of one number or a series of numbers.|`multinomial(2,3)` returns 10.|
+|odd(n)|Rounds the number up to the nearest even integer.|`odd(10)` returns 11.|
+|pow(n1, n2)|Returns n1 raised to the power of n2. Note: `value.mod(0.5)` will work, whereas `74.mod(0.5)` will not work.|`pow(2, 3)` returns 8 (2 cubed) and `pow(3, 2)` returns 9 (3 squared). The square root of any numeric value can be called with `value.pow(0.5)`.|
+|quotient(n1, n2)|Returns the integer portion of a division, when supplied with a numerator and denominator.|`quotient(10,5)` returns 2.|
+|radians(n)|Converts an angle in degrees to radians.|`radians(10)` returns 0.17453292519943295.|
+|randomNumber(n lower_bound, n upper_bound)|Returns a random integer in the interval between the lower and upper bounds (inclusively). Will output a different random number in each cell in a column.|
+|round(n)|Rounds a number to the nearest integer.|`3.7.round()` returns 4 and `-3.7.round()` returns -4.|
+|sin(n)|Returns the trigonometric sine of an angle.|`sin(10)` returns -0.5440211108893698.|
+|sinh(n)|Returns the hyperbolic sine of an angle.|`sinh(10)` returns 11013.232874703393.|
+|sum(a)|Sums the numbers in an array. Ignores non-number items. Returns 0 if the array does not contain numbers.|`sum([ 10, 2, three ])` returns 12.|
+|tan(n)|Returns the trigonometric tangent of an angle.|`tan(10)` returns 0.6483608274590866.|
+|tanh(n)|Returns the hyperbolic tangent of a value.|`tanh(10)` returns 0.9999999958776927.|
 
 #### Other functions
 
