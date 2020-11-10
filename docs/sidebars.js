@@ -17,7 +17,11 @@ module.exports = {
     },
       'manual/reconciling',
       'manual/wikidata',
-      'manual/expressions',
+	    {
+      type: 'category',
+      label: 'Expressions',
+      items: ['manual/expressions', 'manual/grelfunctions'],
+    },
       'manual/exporting',
       'manual/glossary',
       'manual/troubleshooting'
