@@ -422,7 +422,7 @@ Returns the array of strings obtained by splitting s into substrings with the gi
 
 ###### smartSplit(s, s or p sep (optional))
 
-Returns the array of strings obtained by splitting s by the separator sep, or by guessing either tab or comma separation if there is no sep given. Handles quotes properly. The sep can be either a string or a regex pattern. For example, `value.smartSplit("\n")` will split at a carriage return or a new-line character.
+Returns the array of strings obtained by splitting s by the separator sep, or by guessing either tab or comma separation if there is no sep given. Handles quotes properly and understands cancelled characters. The separator can be either a string or a regex pattern. For example, `value.smartSplit("\n")` will split at a carriage return or a new-line character.
 
 Note: `value.[escape](#escapes-s-mode)('javascript')` is useful for previewing unprintable characters prior to using smartSplit().
 
@@ -454,11 +454,11 @@ Takes two strings or two dates and compares them, returning a string. The two ob
 
 ###### escape(s, s mode)
 
-Escapes s in the given escaping mode. The mode can be one of: html, xml, csv, url, javascript. See the [recipe here](https://github.com/OpenRefine/OpenRefine/wiki/Recipes#question-marks--showing-in-your-data) for an example.
+Escapes s in the given escaping mode. The mode can be one of: html, xml, csv, url, javascript. See the [recipes](https://github.com/OpenRefine/OpenRefine/wiki/Recipes#question-marks--showing-in-your-data) for examples of escaping and unescaping.
 
 ###### unescape(s, s mode)
 
-Unescapes s in the given escaping mode. The mode can be one of: html, xml, csv, url, javascript. See the [recipe here](https://github.com/OpenRefine/OpenRefine/wiki/Recipes#atampampt----att) for an example. 
+Unescapes s in the given escaping mode. The mode can be one of: html, xml, csv, url, javascript. See the [recipes](https://github.com/OpenRefine/OpenRefine/wiki/Recipes#atampampt----att) for examples of escaping and unescaping. 
 
 ###### md5(o)
 
@@ -590,7 +590,9 @@ Returns the length of an array, meaning the number of objects inside it. Arrays 
 Returns a sub-array of a given array, from the first index provided and up to and excluding the optional last index provided. Remember that array objects are indexed starting at 0. If to is omitted, it is understood to be the end of the array. For example, `[0, 1, 2, 3, 4].slice(1, 3)` returns [ 1, 2 ], and `[ 0, 1, 2, 3, 4].slice(1)` returns [ 1, 2, 3, 4 ]. Also works with strings; see [String functions](#slices-n-from-n-to-optional).
 
 ###### get(a, n from, n to (optional))
-Returns a sub-array of a given array, from the first index provided and up to and excluding the optional last index provided. Remember that array objects are indexed starting at 0. If to is omitted, only one array item is returned, as a string, instead of a sub-array. To return a sub-array from one index to the end, you can set the to argument to a very high number, such as get(2,9999). For example: `["A","B","C","D","E"].get(1,4)` returns the value [ "B", "C", "D" ]. `[1,2,3,4].get(2)` returns the value 3.
+Returns a sub-array of a given array, from the first index provided and up to and excluding the optional last index provided. Remember that array objects are indexed starting at 0. 
+
+If to is omitted, only one array item is returned, as a string, instead of a sub-array. To return a sub-array from one index to the end, you can set the to argument to a very high number such as `value.get(2,999)` or you can use something like `with(value,a,a.get(1,a.length()))` to count the length of each array.
 
 Also works with strings; see [get() in String functions](#gets-n-from-n-to-optional).
 
