@@ -10,7 +10,7 @@ OpenRefine includes powerful ways to both pull data from Wikidata and add data t
 
 OpenRefine’s connections to Wikidata were formerly an optional extension, but are now installed automatically with the downloadable package. The Wikidata extension can be removed manually by navigating to your OpenRefine installation folder, and then looking inside `webapp/extensions/` and deleting the `wikidata` folder inside. 
 
-You do not need a Wikidata account to reconcile your local OpenRefine project to Wikidata. If you wish to upload your cleaned dataset to Wikidata, you will need to register an account, and authorize OpenRefine with that account. 
+You do not need a Wikidata account to reconcile your local OpenRefine project to Wikidata. If you wish to upload your cleaned dataset to Wikidata, you will need an [autoconfirmed](https://www.wikidata.org/wiki/Wikidata:Autoconfirmed_users) account, and you must authorize OpenRefine with that account. 
 
 The best source for information about how OpenRefine works with Wikidata is [on Wikidata itself, under Tools](https://www.wikidata.org/wiki/Wikidata:Tools/OpenRefine). This has tutorials, guidelines on editing, and spaces for discussion and help.
 
@@ -28,7 +28,7 @@ For the most part, Wikidata reconciliation behaves the same way other reconcilia
 
 ### Language settings
 
-You can install a version of the Wikidata reconciliation service that uses your language. First, you need the language code: this is the [two-letter WP code found on this list](https://en.wikipedia.org/wiki/List_of_Wikipedias), or in the domain name of the desired Wikipedia (for instance, “fr” if your Wikipedia is [https://fr.wikipedia.org/wiki/](https://fr.wikipedia.org/wiki/)).
+You can install a version of the Wikidata reconciliation service that uses your language. First, you need the language code: this is the [two-letter code found on this list](https://en.wikipedia.org/wiki/List_of_Wikipedias), or in the domain name of the desired Wikipedia (for instance, “fr” if your Wikipedia is [https://fr.wikipedia.org/wiki/](https://fr.wikipedia.org/wiki/)).
 
 Then, open the reconciliation window (under <span class="menuItems">Reconcile</span> → <span class="menuItems">Start reconciling...</span>) and click <span class="menuItems">Add Standard Service</span>. The URL is `https://openrefine-wikidata.toolforge.org/fr/api` where “fr” is replaced by your language code.
 
@@ -49,68 +49,10 @@ You can supply a column of unique identifiers (in the form "Q###" for entities) 
 
 If the same identifier is assigned to multiple Wikidata items, all of the items are returned as candidates, with none automatically matched.
 
-### Property paths
+### Property paths, special properties, and subfields
 
-This feature is specific to the reconciliation interface for Wikidata. Sometimes, when including extra columns as properties in reconciliation, the relation between the reconciled item and the disambiguating column is not direct - it is not represented as a property itself. For example, take this dataset of cities:
+You can find documentation and further resources [here](https://wikidata.reconci.link/#documentation).
 
-|City|Country|
-|---|---|
-|Oxford|GB|
-|Paris|FR|
-|Geneva|CH|
-|Cambridge|GB|
-|Cambridge|US|
-|London|CA|
-|London|GB|
-
-To fetch the country code from an item representing a city, you need to follow two properties. First, follow [country (P17)](https://www.wikidata.org/wiki/Property:P17) to get to the item for the country in which this city is located, then follow [ISO 3166-1 alpha-2 code (P297)](https://www.wikidata.org/wiki/Property:P297) to get the two-letter code string.
-
-This is supported by the reconciliation interface, with a syntax inspired by [SPARQL property paths](https://www.w3.org/TR/sparql11-property-paths/): include the “country” column, and for <span class="menuItems">As Property</span> enter the sequence of property identifiers separated by slashes: “P17/P297.”
-
-This additional information can allow OpenRefine to disambiguate namesakes, at least to the country level. “Cambridge, US” is still ambiguous, so there will be multiple items with a perfect matching score, but “Oxford, GB” successfully disambiguates one particular city from other “Oxfords.” 
-
-The endpoint currently supports two property combinators: /, to concatenate two paths as above, and |, to compute the union of the values yielded by two paths. Concatenation / has precedence over disjunction |. The dot character . can be used to denote the empty path. For instance, the following property paths are equivalent:
-*   P17|P749/P17
-*   P17|(P749/P17)
-*   (.|P749)/P17
-
-They fetch the [country (P17)](https://www.wikidata.org/wiki/Property:P17) of an item or that of its [parent organization (P749)](https://www.wikidata.org/wiki/Property:P17).
-
-### Terms: labels, descriptions, aliases, and sitelinks
-
-Entities on Wikidata have what they call “terms:” labels, descriptions, aliases, and sitelinks. Each entity has human-readable preferred names (labels) in one or more languages. Each label comes with a description field, and a space for alternative labels in that language. Entities also can have a link to the related Wikipedia page in one or more langauges. 
-
-For example, [Q5](https://www.wikidata.org/wiki/Q5) has the English label “human” and the aliases “person” and “people,” with a description including “common name of Homo sapiens;” it also has the Italian label “umano” and the alias “persona” with a description “specie a cui appartiene il genere umano.” The English sitelink is “https://en&#46;wikipedia.org/wiki/Human” but Italian Wikipedia has no equivalent article attached to Q5. Not every language will have values, but these terms can still be useful for reconciling. 
-
-After reconciliation, you can extend your data with these terms. You can fetch aliases for a given term, or labels in other languages, by using <span class="menuItems">Edit column</span> → <span class="menuItems">Add columns from reconciled values....</span>. 
-
-You can refer to a term in a specific language by manually entering in a three-letter code. The first letter is the term (“L” for label, “D” for description, “A” for aliases, “S” for sitelink) and the next two are the language code. For example:
-
-*   `Len` for Label in English
-*   `Dfi` for Description in Finnish
-*   `Apt` for Alias in Portuguese
-*   `Sde` for Sitelink in German
-
-Enter in the three-letter code manually in the <span class="menuItems">Add Property</span> field. You can manually enter as many term/language combinations as you require. 
-
-### Comparing values
-
-By default, data in OpenRefine and entities in Wikidata are compared by string fuzzy-matching. There are some exceptions to this:
-*   If you are [reconciling by unique identifiers](#reconciling-with-unique-identifiers), then it confirms the exact strings without matching.
-*   If the values are integers, exact equality between integers is used.
-*   If the values are floating point numbers, the score is 100 if they are equal and decreases towards 0 as their absolute difference increases.
-*   If the values are coordinates (specified in the “lat,lng” format on OpenRefine's side), then the matching score is 100 when they are equal and decreases as their distance increases. Currently a score of 0 is reached when the points are 1 kilometre away from each other.
-
-Sometimes, we need a more specific matching on sub-parts of these values. It is possible to select these parts for matching by appending a modifier at the end of the property path:
-*   @lat and @lng: latitude and longitude of geographical coordinates (float)
-*   @year, @month, @day, @hour, @minute and @second: parts of a time value (integer). They are returned only if the precision of the Wikidata value is good enough to define them.
-*   @isodate: returns a date in the ISO format 1987-08-23 (string). A value is always returned.
-*   @iso: returns the date and time in the ISO format 1996-03-17T04:15:00+00:00. A value is always returned. 
-*   @urlscheme (“https”), @netloc (“www&#46;wikidata.org”) and @urlpath (“/wiki/Q42”) can be used to perform exact matching on parts of URLs.
-
-For times and dates, all values are returned in the UTC time zone.
-
-For instance, if you want to reconcile people by their birthdates, but you only have the month and day, split the birthday dates into two columns, for month and day. Then reconcile using the [date of birth (P569)](https://www.wikidata.org/wiki/Property:P569) property using the  parameters `P569@month` and `P569@day` with your included columns.
 
 ## Editing Wikidata with OpenRefine
 
@@ -221,7 +163,7 @@ All edits can be undone from this interface.
 
 ### QuickStatements export
 
-Your OpenRefine data can be exported in a format recognized by [QuickStatements](https://www.wikidata.org/wiki/Help:QuickStatements), a tool that creates Wikidata edits using text commands. OpenRefine generates “version 1” QuickStatements commands. In order to use QuickStatements, you must authorize it with a Wikidata account (it may appear as “MediaWiki” when you authorize). 
+Your OpenRefine data can be exported in a format recognized by [QuickStatements](https://www.wikidata.org/wiki/Help:QuickStatements), a tool that creates Wikidata edits using text commands. OpenRefine generates “version 1” QuickStatements commands. In order to use QuickStatements, you must authorize it with a Wikidata account that is [autoconfirmed](https://www.wikidata.org/wiki/Wikidata:Autoconfirmed_users) (it may appear as “MediaWiki” when you authorize). 
 
 Any dataset can be converted into QuickStatements text commands. You can follow the steps listed on [this page](https://www.wikidata.org/wiki/Help:QuickStatements#Running_QuickStatements). 
 
@@ -240,3 +182,9 @@ The best resource is the [Quality assurance page](https://www.wikidata.org/wiki/
 OpenRefine will analyze your schema and make suggestions. It does not check for conflicts in your proposed edits, or tell you about redundancies. 
 
 One of the most common suggestions is to attach [a reference to your edits](https://www.wikidata.org/wiki/Help:Sources) - a citation for where the information can be found. This can be a book or newspaper citation, a URL to an online page, a reference to a physical source in an archival or special collection, or another source. If the source is itself an item on Wikidata, use the relationship [stated in (P248)](https://www.wikidata.org/wiki/Property:P248); otherwise, use [reference URL (P854)](https://www.wikidata.org/wiki/Property:P854) to identify an external source. 
+
+## Wikibases
+
+Much of the above is also true of other Wikibase instances. You can reconcile your dataset against an available Wikibase reconciliation API. 
+
+Wikibase administrators can configure a reconciliation API using the [instructions here](https://openrefine-wikibase.readthedocs.io/en/latest/index.html).
