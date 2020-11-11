@@ -6,23 +6,23 @@ sidebar_label: Wikidata
 
 ## Overview
 
-OpenRefine includes powerful ways to both pull data from Wikidata and add data to it. 
+OpenRefine provides powerful ways to both pull data from Wikidata and add data to it. 
 
 OpenRefine’s connections to Wikidata were formerly an optional extension, but are now installed automatically with the downloadable package. The Wikidata extension can be removed manually by navigating to your OpenRefine installation folder, and then looking inside `webapp/extensions/` and deleting the `wikidata` folder inside. 
 
-You do not need a Wikidata account to reconcile your local OpenRefine project to Wikidata. If you wish to upload your cleaned dataset to Wikidata, you will need an [autoconfirmed](https://www.wikidata.org/wiki/Wikidata:Autoconfirmed_users) account, and you must authorize OpenRefine with that account. 
+You do not need a Wikidata account to reconcile your local OpenRefine project to Wikidata. If you wish to [upload your cleaned dataset to Wikidata](#editing-wikidata-with-openrefine), you will need an [autoconfirmed](https://www.wikidata.org/wiki/Wikidata:Autoconfirmed_users) account, and you must [authorize OpenRefine with that account](#manage-wikidata-account). 
 
-The best source for information about how OpenRefine works with Wikidata is [on Wikidata itself, under Tools](https://www.wikidata.org/wiki/Wikidata:Tools/OpenRefine). This has tutorials, guidelines on editing, and spaces for discussion and help.
+The best source for information about how OpenRefine works with Wikidata is [on Wikidata itself, under Tools](https://www.wikidata.org/wiki/Wikidata:Tools/OpenRefine). This section has tutorials, guidelines on editing, and spaces for discussion and help. The following text reviews the basics and can help you get set up, but the Wikidata help page is more regularly updated when technology or policies change.
 
 ## Reconciling with Wikidata
 
-The [Wikidata reconciliation service](reconciling) for OpenRefine [supports](https://reconciliation-api.github.io/testbench/):
+The Wikidata [reconciliation service](reconciling) for OpenRefine [supports](https://reconciliation-api.github.io/testbench/):
 *   A large number of potential types to reconcile against
 *   Previewing and viewing entities
 *   Suggesting entities, types, and properties
 *   Augmenting your project with more information pulled from Wikidata. 
 
-You can find the documentation and further resources [here](https://wikidata.reconci.link/).
+You can find documentation and further resources on the reconciliation API [here](https://wikidata.reconci.link/).
 
 For the most part, Wikidata reconciliation behaves the same way other reconciliation processes do, but there are a few processes and features specific to Wikidata. 
 
@@ -30,16 +30,15 @@ For the most part, Wikidata reconciliation behaves the same way other reconcilia
 
 You can install a version of the Wikidata reconciliation service that uses your language. First, you need the language code: this is the [two-letter code found on this list](https://en.wikipedia.org/wiki/List_of_Wikipedias), or in the domain name of the desired Wikipedia (for instance, “fr” if your Wikipedia is [https://fr.wikipedia.org/wiki/](https://fr.wikipedia.org/wiki/)).
 
-Then, open the reconciliation window (under <span class="menuItems">Reconcile</span> → <span class="menuItems">Start reconciling...</span>) and click <span class="menuItems">Add Standard Service</span>. The URL is `https://openrefine-wikidata.toolforge.org/fr/api` where “fr” is replaced by your language code.
+Then, open the reconciliation window (under <span class="menuItems">Reconcile</span> → <span class="menuItems">Start reconciling...</span>) and click <span class="menuItems">Add Standard Service</span>. The URL is `https://openrefine-wikidata.toolforge.org/fr/api` where “fr” is your desired language code.
 
 When reconciling using this interface, items and properties will be displayed in your language if a translation is available. The matching score of the reconciliation is not influenced by your choice of language: items are matched by considering all labels and keeping the best possible match. So the language of your dataset is irrelevant to the choice of the language for the reconciliation interface.
 
 ### Restricting matches by type
 
-In Wikidata, types are items themselves. For instance, the [university of Ljubljana (Q1377)](https://www.wikidata.org/wiki/Q1377) has the type [public university (Q875538)](https://www.wikidata.org/wiki/Q875538), using the [instance of (P31)](https://www.wikidata.org/wiki/Property:P31) property. 
-Types can be subclasses of other types, using the [subclass of (P279)](https://www.wikidata.org/wiki/Property:P279) property. For instance, [public university (Q875538)](https://www.wikidata.org/wiki/Q875538) is a subclass of [university (Q3918)](https://www.wikidata.org/wiki/Q3918). You can visualize these structures with the [Wikidata Graph Builder](https://angryloki.github.io/wikidata-graph-builder/). 
+In Wikidata, types are items themselves. For instance, the [university of Ljubljana (Q1377)](https://www.wikidata.org/wiki/Q1377) has the type [public university (Q875538)](https://www.wikidata.org/wiki/Q875538), using the [instance of (P31)](https://www.wikidata.org/wiki/Property:P31) property. Types can be subclasses of other types, using the [subclass of (P279)](https://www.wikidata.org/wiki/Property:P279) property. For instance, [public university (Q875538)](https://www.wikidata.org/wiki/Q875538) is a subclass of [university (Q3918)](https://www.wikidata.org/wiki/Q3918). You can visualize these structures with the [Wikidata Graph Builder](https://angryloki.github.io/wikidata-graph-builder/). 
 
-When you select or enter a type for reconciliation, OpenRefine will include that type and all its subtypes. For instance, if you select [university (Q3918)](https://www.wikidata.org/wiki/Q3918), then [university of Ljubljana (Q1377)](https://www.wikidata.org/wiki/Q1377) will be a possible match.
+When you select or enter a type for reconciliation, OpenRefine will include that type and all of its subtypes. For instance, if you select [university (Q3918)](https://www.wikidata.org/wiki/Q3918), then [university of Ljubljana (Q1377)](https://www.wikidata.org/wiki/Q1377) will be a possible match, though that item isn't directly linked to Q3918.
 
 Some items may not yet be set as an instance of anything, because Wikidata is crowdsourced. If you restrict reconciliation to a type, these items will not appear in the results, except as a fallback, and will have a lower score.
 
@@ -47,12 +46,13 @@ Some items may not yet be set as an instance of anything, because Wikidata is cr
 
 You can supply a column of unique identifiers (in the form "Q###" for entities) directly to Wikidata in order to pull more data, but [these strings will not be “reconciled” against the external dataset](reconciling#reconciling-with-unique-identifiers). Apply the operation <span class="menuItems">Reconcile</span> → <span class="menuItems">Use values as identifiers</span> on your column of QIDs. All cells will appear as dark blue “confirmed” matches. Some of the “matches” may be errors, which you will need to hover over or click on to identify. You cannot use this to reconcile properties (in the form "P###").
 
-If the same identifier is assigned to multiple Wikidata items, all of the items are returned as candidates, with none automatically matched.
+If the identifier you submit is assigned to multiple Wikidata items (because Wikidata is crowdsourced), all of the items are returned as candidates, with none automatically matched.
 
 ### Property paths, special properties, and subfields
 
-You can find documentation and further resources [here](https://wikidata.reconci.link/#documentation).
+Wikidata's hierarchical property structure can be called by using property paths (using |, /, and . symbols). Labels, aliases, descriptions, and sitelinks can also be accessed. You can also match values against subfields, such as latitude and longitude subfields of a geographical coordinate.
 
+For information on how to do this, read the documentation and further resources [here](https://wikidata.reconci.link/#documentation).
 
 ## Editing Wikidata with OpenRefine
 
@@ -62,7 +62,7 @@ As a user-maintained data source, Wikidata can be edited by anyone. OpenRefine m
 
 Wikidata is built by creating entities (such as people, organizations, or places, identified with unique numbers starting with Q), defining properties (unique numbers starting with P), and using properties to define relationships between entities (a Q has a property P, with a value of another Q). 
 
-For example, you may wish to create entities for local authors and the books they've set in your community. Each writer will be an entity with the occupation [author (Q482980)](https://www.wikidata.org/wiki/Q482980), each book will be an entity with  [literary work (Q7725634)](https://www.wikidata.org/wiki/Q7725634), and books will be related to authors through a property [author (P50)](https://www.wikidata.org/wiki/Property:P50). Books can have places where they are set, with [setting (Q617332)](https://www.wikidata.org/wiki/Q617332). In OpenRefine, you'll need a column of publication titles that you have reconciled (and then created new items where needed); each publication will have one or more locations in a “setting” column, which is also reconciled to municipalities or regions where they exist (and have new items where needed). Then you can add those new relationships to each book, and create new entities for both books and places.
+For example, you may wish to create entities for local authors and the books they've set in your community. Each writer will be an entity with the occupation [author (Q482980)](https://www.wikidata.org/wiki/Q482980), each book will be an entity with [literary work (Q7725634)](https://www.wikidata.org/wiki/Q7725634), and books will be related to authors through a property [author (P50)](https://www.wikidata.org/wiki/Property:P50). Books can have places where they are set, with [setting (Q617332)](https://www.wikidata.org/wiki/Q617332). In OpenRefine, you'll need a column of publication titles that you have reconciled (and create new items where needed); each publication will have one or more locations in a “setting” column, which is also reconciled to municipalities or regions where they exist (and create new items where needed). Then you can add those new relationships to each book, and create new entities for both books and places.
 
 There is a list of [tutorials and walkthroughs on Wikidata](https://www.wikidata.org/wiki/Wikidata:Tools/OpenRefine/Editing) that will allow you to see the full process. You can save your schemas and drafts in OpenRefine, and your progress stays in draft until you are sure you’re ready to upload it to Wikidata. You can also find information on [how to design a schema](https://www.wikidata.org/wiki/Wikidata:Tools/OpenRefine/Editing/Schema_alignment) and [how OpenRefine evaluates your proposed edits for issues](https://www.wikidata.org/wiki/Wikidata:Tools/OpenRefine/Editing/Quality_assurance).
 
@@ -74,7 +74,7 @@ Batches of edits to Wikidata that are created with OpenRefine can be undone. You
 
 If you upload edits that are redundant (that is, all the statements you want to make have already been made), nothing will happen. If you upload edits that conflict with existing information (such as a different birthdate than one already in Wikidata), it will be added as a second statement. OpenRefine produces no warnings as to whether your data replicates or conflicts with existing Wikidata elements. 
 
-You can use OpenRefine's previews to look at the target Wikidata elements and see what information they already have, and whether the elements' histories have had similar edits reverted in the past. 
+You can use OpenRefine's reconciliation preview to look at the target Wikidata elements and see what information they already have, and whether the elements' histories have had similar edits reverted in the past. 
 
 ### Edit Wikidata schema
 
@@ -90,7 +90,7 @@ For example, if your dataset has columns for authors, publication titles, and pu
 
 You can export any schema you create, and import an existing schema for use with a new dataset. This can help you work in batches on a large amount of data with a minimum of redundant labor.
 
-Once you select <span class="menuItems">Edit Wikidata schema</span> under the <span class="menuItems">Extensions</span> dropdown menu, your project interface will change. You’ll see new tabs added to the right of “X rows/records" in the grid header: “Schema,” “Issues,” and “Preview.” You can now flip between the tabular grid format of your dataset, or the screens that allow you to prepare data for uploading. 
+Once you select <span class="menuItems">Edit Wikidata schema</span> under the <span class="menuItems">Extensions</span> dropdown menu, your project interface will change. You’ll see new tabs added to the right of “X rows/records" in the grid header: “Schema,” “Issues,” and “Preview.” You can now switch between the tabular grid format of your dataset and the screens that allow you to prepare data for uploading. 
 
 OpenRefine presents you with an easy visual way to map out the relationships in your dataset. Each of the columns of your project will appear at the top of the sceren, and you can simply drag and drop them into the appropriate slots. To get start, select one column as an item. 
 
@@ -100,7 +100,7 @@ There is [a Wikidata tutorial on how OpenRefine handles Wikidata schema](https:/
 
 #### Editing terms with your schema
 
-You may wish to include edits to [terms](#terms-labels-descriptions-aliases-and-sitelinks) (labels, aliases, descriptions, or sitelinks) as well as establishing relationships between entities. 
+You may wish to include edits to terms (labels, aliases, descriptions, or sitelinks) as well as establishing relationships between entities. 
 
 For example, you may wish to upload pseudonyms, pen names, maiden or married names for historical authors. You can do so by putting the preferred names in one column of your dataset and alternative names in another column. In the schema interface, add an item for the preferred values, then click “Add term” on the right-hand side of the screen. Select “Alias” from the dropdown, enter in “English” in the language field, and drop your alternative names column into the space. 
 
@@ -119,10 +119,9 @@ You could upload translated titles to “Label” with the language from “Tran
 
 ![Constructing a schema with aliases and languages.](/img/wikidata-translated.png)
 
-
 ### Manage Wikidata account
 
-To edit Wikidata directly from OpenRefine, you must have a Wikidata account and log in with it in OpenRefine. OpenRefine can only upload edits with Wikidata user accounts that are “[autoconfirmed](https://www.wikidata.org/wiki/Wikidata:Autoconfirmed_users)” - that is, accounts that have more than 50 edits and have existed for longer than four days (as of 2020). 
+To edit Wikidata directly from OpenRefine, you must have a Wikidata account and log into it in OpenRefine. OpenRefine can only upload edits with Wikidata user accounts that are “[autoconfirmed](https://www.wikidata.org/wiki/Wikidata:Autoconfirmed_users)” - at this time, that means accounts that have more than 50 edits and have existed for longer than four days. 
 
 Use the Extensions menu to select <span class="menuItems">Manage Wikidata account</span> and you will be presented with the following window:
 
@@ -151,7 +150,7 @@ You can import a schema using <span class="menuItems">Extensions</span> → <spa
 
 The best resource is the [Uploading page](https://www.wikidata.org/wiki/Wikidata:Tools/OpenRefine/Editing/Uploading) on Wikidata.
 
-There are two menu option for applying your edits to Wikidata. Under <span class="menuItems">Export</span> you will see <span class="menuItems">Wikidata edits...</span> and under <span class="menuItems">Extensions</span> you will see <span class="menuItems">Upload edits to Wikidata</span>. Both will bring up the same window for you to [log in with your Wikidata account](#manage-wikidata-account). 
+There are two menu options in OpenRefine for applying your edits to Wikidata. Under <span class="menuItems">Export</span> you will see <span class="menuItems">Wikidata edits...</span> and under <span class="menuItems">Extensions</span> you will see <span class="menuItems">Upload edits to Wikidata</span>. Both will bring up the same window for you to [log in with your Wikidata account](#manage-wikidata-account). 
 
 Once you are authorized, you will see a window with any outstanding issues. You can ignore these issues, but we recommend you resolve them. 
 
