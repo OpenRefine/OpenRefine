@@ -56,7 +56,7 @@ You can also convert dates to strings, using date parsing syntax built in to Ope
 
 Note: In OpenRefine, using toString() on a null cell outputs the string "null".
 
-### Testing String Characteristics
+### Testing string characteristics
 
 ###### endsWith(s, sub)
 
@@ -64,17 +64,13 @@ Returns a boolean indicating whether s ends with sub. For example, `"food".endsW
 
 ###### contains(s, sub or p)
 
-Returns a boolean indicating whether s contains sub. For example, `"food".contains("oo")` returns true whereas `"food".contains("ee")` returns false. 
+Returns a boolean indicating whether s contains sub, which is either a substring or a regex pattern. For example, `"food".contains("oo")` returns true whereas `"food".contains("ee")` returns false. 
 
-You can search for regex by wrapping a regex pattern in forward slashes rather than quotes: `"rose is a rose".contains(/\s+/)` returns true. startsWith() and endsWith() can only take strings, while contains() can take a regex pattern, so you can use contains() to look for beginning and ending string patterns.  
+You can search for a regular expression by wrapping it in forward slashes rather than quotes: `"rose is a rose".contains(/\s+/)` returns true. startsWith() and endsWith() can only take strings, while contains() can take a regex pattern, so you can use contains() to look for beginning and ending string patterns.  
 
-###### indexOf(s, sub)
+### Basic string modification
 
-Returns an integer indicating position of sub within s or -1 if sub is not found. For example, `"food".indexOf("oo")` returns 2, whereas `"food".indexOf("ee")` returns -1. Returning -1 is equivalent to returning boolean false, which is useful for finding strings that do not contain sub.
-
-### Basic String Modification
-
-#### Case Conversion
+#### Case conversion
 
 ###### toLowercase(s)
 
@@ -118,7 +114,7 @@ Identical to substring() in relation to strings. Also works with arrays; see [Ar
 
 Identical to substring() in relation to strings. Also works with named fields. Also works with arrays; see [Array functions section](#geta-n-or-s-from-n-to-optional).
 
-#### Find and Replace
+#### Find and replace
 
 ###### indexOf(s, sub)
 
@@ -143,13 +139,13 @@ Returns the string obtained by replacing a character in s, identified by find, w
 
 ###### match(s, p)
 
-Attempts to match the string s in its entirety against the [regex](#grel-supported-regex) pattern p and, if it matches, returns an array of the desired substrings (found in order). For example, `"230.22398, 12.3480".match(/.*(\d\d\d\d)/)` returns an array of 1 substring: [3480]. It does not find 2239 as the first sequence with four digits, because the regex indicates the four digits must come at the end of the string.
+Attempts to match the string s in its entirety against the [regex](#grel-supported-regex) pattern p and, if the pattern is found, returns an array of the desired substrings (found in order). For example, `"230.22398, 12.3480".match(/.*(\d\d\d\d)/)` returns an array of 1 substring: [3480]. It does not find 2239 as the first sequence with four digits, because the regex indicates the four digits must come at the end of the string.
 
-You will need to convert the array to a string to capture it in a cell, with a function such as toString(). An empty array [] is output when there is no match to the desired substrings. A null is output when the entire regex does not match.
+You will need to convert the array to a string to capture it in a cell, with a function such as toString(). An empty array [] is returned when there is no match to the desired substrings. A null is output when the entire regex does not match.
 
 Remember to enclose your regex in forward slashes, and to cancel out characters and use parentheses as needed. Parentheses are required to denote a desired substring; for example, “.*(\d\d\d\d)” would return one array value, while “(.*)(\d\d\d\d)” would return two. So, if you are looking for a desired substring anywhere within a string, use the syntax `value.match(/.*(desired-substring-regex).*/)`.
 
-For another example, if the cell contains value “hello 123456 goodbye”:
+For example, if the cell contains value “hello 123456 goodbye”:
 
 |Expression|Result|
 |-|-|
@@ -160,11 +156,11 @@ For another example, if the cell contains value “hello 123456 goodbye”:
 
 ###### find(s, p)
 
-Outputs, into an array, all consecutive substrings inside string s that match the [regex](#grel-supported-regex) pattern p. Unlike match(), find() can return several occurrences of the same pattern in a string, because it is not evaluating the regex against the string in its entirety. For example, `"abeadsabmoloei".find(/[aeio]+/)` would result in [ "a", "ea", "a", "o", "oei" ].
+Outputs, into an array, all consecutive substrings inside string s that match the [regex](#grel-supported-regex) pattern p. Unlike match(), find() can search out and return several occurrences of the same pattern in a string, because it is not evaluating the regex against the string in its entirety. For example, `"abeadsabmoloei".find(/[aeio]+/)` would result in [ "a", "ea", "a", "o", "oei" ].
 
 You can supply a string instead of p, by putting it in quotes, and OpenRefine will compile it into a regex pattern. Anytime you supply quotes, OpenRefine interprets the contents as a string, not regex. If you wish to use any regex notation, wrap the pattern in forward slashes, for example: `"OpenRefine is Awesome".find(/fine\sis/)` would return [ “fine is” ].
 
-### String Parsing and Splitting
+### String parsing and splitting
 
 ###### toNumber(o)
 
@@ -204,7 +200,7 @@ Returns an array of strings [ a, fragment, z ] where a is the substring within s
 
 Otherwise works identically to partition() above.
 
-### Encoding and Hashing
+### Encoding and hashing
 
 ###### diff(s1 or d1, s2 or d2, s timeUnit (optional))
 
@@ -288,7 +284,7 @@ For example from the following JSON array, let's get all instancescalled "keywor
 
 The GREL expression `forEach(value.parseJson().keywords,v,v.text).join(":::")` will output "York en route:::Anthony Eden:::President Eisenhower".
 
-### Jsoup XML and HTML parsing functions
+### Jsoup XML and HTML parsing
 
 ###### parseHtml(s)
 Given a cell full of HTML-formatted text, simplifies HTML tags (such as by removing “ /” at the end of self-closing tags), closes any unclosed tags, and inserts linebreaks and indents for cleaner code. You cannot pass parseHtml() a URL, but you can pre-fetch HTML with the “Add column by fetching URLs” menu option. A cell cannot store the output of parseHtml() unless you convert it with toString(). 
@@ -342,7 +338,7 @@ Returns the text directly inside the selected XML or HTML element only, ignoring
 ## Array functions
 
 ###### length(a)
-Returns the length of an array, meaning the number of objects inside it. Arrays can be empty, in which case length() will return 0. 
+Returns the size of an array, meaning the number of objects inside it. Arrays can be empty, in which case length() will return 0. 
 
 ###### slice(a, n from, n to (optional))
 Returns a sub-array of a given array, from the first index provided and up to and excluding the optional last index provided. Remember that array objects are indexed starting at 0. If to is omitted, it is understood to be the end of the array. For example, `[0, 1, 2, 3, 4].slice(1, 3)` returns [ 1, 2 ], and `[ 0, 1, 2, 3, 4].slice(1)` returns [ 1, 2, 3, 4 ]. Also works with strings; see [String functions](#slices-n-from-n-to-optional).
