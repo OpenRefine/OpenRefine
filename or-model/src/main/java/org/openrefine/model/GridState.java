@@ -103,6 +103,17 @@ public interface GridState {
     public long countMatchingRows(RowFilter filter);
 
     /**
+     * Return the number of rows matching the given row filter, but by processing at most a fixed number of row.
+     * 
+     * @param filter
+     *            counts the number of records on which it returns true
+     * @param limit
+     *            maximum number of records to process
+     * @return
+     */
+    public ApproxCount countMatchingRowsApprox(RowFilter filter, long limit);
+
+    /**
      * Returns all rows in a list. This is inefficient for large datasets as it forces the entire grid to be loaded in
      * memory.
      */
@@ -163,6 +174,18 @@ public interface GridState {
      * @return the number of records for which this filter evaluates to true
      */
     public long countMatchingRecords(RecordFilter filter);
+
+    /**
+     * Return the number of records matching the given record filter, but by processing at most a fixed number of
+     * records.
+     * 
+     * @param filter
+     *            counts the number of records on which it returns true
+     * @param limit
+     *            maximum number of records to process
+     * @return
+     */
+    public ApproxCount countMatchingRecordsApprox(RecordFilter filter, long limit);
 
     /**
      * Returns all records in a list. This is inefficient for large datasets as it forces all records to be loaded in
@@ -416,6 +439,30 @@ public interface GridState {
      * @return a new grid, union of the two
      */
     public GridState concatenate(GridState other);
+
+    /**
+     * Utility class to represent the outcome of a partial count: the number of records/rows processed, and how many of
+     * these fulfilled the condition.
+     */
+    public static class ApproxCount implements Serializable {
+
+        private static final long serialVersionUID = -6472934740385946264L;
+        private final long _processed;
+        private final long _matched;
+
+        public ApproxCount(long processed, long matched) {
+            _processed = processed;
+            _matched = matched;
+        }
+
+        public long getProcessed() {
+            return _processed;
+        }
+
+        public long getMatched() {
+            return _matched;
+        }
+    }
 
     /**
      * Utility class to help with deserialization of the metadata without other attributes (such as number of rows)

@@ -33,6 +33,7 @@ import org.openrefine.browsing.facets.RecordAggregator;
 import org.openrefine.browsing.facets.RowAggregator;
 import org.openrefine.browsing.facets.StringFacet;
 import org.openrefine.browsing.facets.StringFacetState;
+import org.openrefine.model.GridState.ApproxCount;
 import org.openrefine.model.changes.ChangeData;
 import org.openrefine.model.changes.ChangeDataSerializer;
 import org.openrefine.model.changes.IndexedData;
@@ -280,6 +281,31 @@ public abstract class DatamodelRunnerTestBase {
     }
 
     @Test
+    public void testCountMatchingRecordsApproxOvershoot() {
+        // with a limit that overshoots the total number of rows
+        ApproxCount count = simpleGrid.countMatchingRecordsApprox(myRecordFilter, 10);
+        Assert.assertEquals(count.getMatched(), 1);
+        Assert.assertEquals(count.getProcessed(), 2);
+    }
+
+    @Test
+    public void testCountMatchingRecordsApproxZero() {
+        // with 0 as a limit
+        ApproxCount count = simpleGrid.countMatchingRecordsApprox(myRecordFilter, 0);
+        Assert.assertEquals(count.getMatched(), 0);
+        Assert.assertEquals(count.getProcessed(), 0);
+    }
+
+    @Test
+    public void testCountMatchingRecordsApproxIntermediate() {
+        // the way the datamodel implementation selects rows is unspecified.
+        // it can also filter slightly less than the limit
+        ApproxCount count = simpleGrid.countMatchingRecordsApprox(myRecordFilter, 2);
+        Assert.assertTrue(count.getMatched() <= count.getProcessed());
+        Assert.assertTrue(count.getProcessed() <= 2);
+    }
+
+    @Test
     public void testAccessRecords() {
         GridState state = simpleGrid;
 
@@ -353,6 +379,31 @@ public abstract class DatamodelRunnerTestBase {
     @Test
     public void testCountMatchingRecords() {
         Assert.assertEquals(simpleGrid.countMatchingRecords(myRecordFilter), 1);
+    }
+
+    @Test
+    public void testCountMatchingRowsApproxOvershoot() {
+        // with a limit that overshoots the total number of rows
+        ApproxCount count = simpleGrid.countMatchingRowsApprox(myRowFilter, 10);
+        Assert.assertEquals(count.getMatched(), 3);
+        Assert.assertEquals(count.getProcessed(), 4);
+    }
+
+    @Test
+    public void testCountMatchingRowsApproxZero() {
+        // with 0 as a limit
+        ApproxCount count = simpleGrid.countMatchingRowsApprox(myRowFilter, 0);
+        Assert.assertEquals(count.getMatched(), 0);
+        Assert.assertEquals(count.getProcessed(), 0);
+    }
+
+    @Test
+    public void testCountMatchingRowsApproxIntermediate() {
+        // the way the datamodel implementation selects rows is unspecified.
+        // it can also filter slightly less than the limit
+        ApproxCount count = simpleGrid.countMatchingRowsApprox(myRowFilter, 2);
+        Assert.assertTrue(count.getMatched() <= count.getProcessed());
+        Assert.assertTrue(count.getProcessed() <= 2);
     }
 
     @Test

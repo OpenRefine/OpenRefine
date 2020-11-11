@@ -54,6 +54,7 @@ import org.openrefine.commands.Command;
 import org.openrefine.importing.ImportingJob;
 import org.openrefine.importing.ImportingManager;
 import org.openrefine.model.GridState;
+import org.openrefine.model.GridState.ApproxCount;
 import org.openrefine.model.IndexedRow;
 import org.openrefine.model.Project;
 import org.openrefine.model.Record;
@@ -84,24 +85,44 @@ public class GetRowsCommand extends Command {
 
     protected static class JsonResult {
 
+        /**
+         * Mode of the engine (row or record based)
+         */
         @JsonProperty("mode")
         protected final Mode mode;
+        /**
+         * Rows in the view
+         */
         @JsonProperty("rows")
         protected final List<WrappedRow> rows;
+        /**
+         * Number of rows selected by the current filter, possibly capped by the engine configuration.
+         */
         @JsonProperty("filtered")
         protected final long filtered;
+        /**
+         * Number of rows on which the facets were actually checked. Can be less than "total" if the engine
+         * configuration capped the number of rows to process.
+         */
+        @JsonProperty("processed")
+        protected final long processed;
+        /**
+         * Total number of rows/records in the unfiltered grid
+         */
         @JsonProperty("total")
         protected final long totalCount;
+
         @JsonProperty("start")
         protected final long start;
         @JsonProperty("limit")
         protected final int limit;
 
         protected JsonResult(Mode mode, List<WrappedRow> rows, long filtered,
-                long totalCount, long start, int limit) {
+                long processed, long totalCount, long start, int limit) {
             this.mode = mode;
             this.rows = rows;
             this.filtered = filtered;
+            this.processed = processed;
             this.totalCount = totalCount;
             this.start = start;
             this.limit = Math.min(rows.size(), limit);
@@ -175,6 +196,7 @@ public class GetRowsCommand extends Command {
             }
 
             long filtered;
+            long processed;
             long totalCount;
             List<WrappedRow> wrappedRows;
 
@@ -186,8 +208,15 @@ public class GetRowsCommand extends Command {
                 wrappedRows = rows.stream()
                         .map(tuple -> new WrappedRow(tuple.getRow(), tuple.getIndex(), null))
                         .collect(Collectors.toList());
-
-                filtered = entireGrid.countMatchingRows(combinedRowFilters);
+                if (engine.getConfig().getAggregationLimit() == null) {
+                    filtered = entireGrid.countMatchingRows(combinedRowFilters);
+                    processed = totalCount;
+                } else {
+                    ApproxCount approxCount = entireGrid.countMatchingRowsApprox(combinedRowFilters,
+                            engine.getConfig().getAggregationLimit());
+                    filtered = approxCount.getMatched();
+                    processed = approxCount.getProcessed();
+                }
             } else {
                 totalCount = entireGrid.recordCount();
                 RecordFilter combinedRecordFilters = engine.combinedRecordFilters();
@@ -196,11 +225,20 @@ public class GetRowsCommand extends Command {
                 wrappedRows = records.stream()
                         .flatMap(record -> recordToWrappedRows(record).stream())
                         .collect(Collectors.toList());
-                filtered = entireGrid.countMatchingRecords(combinedRecordFilters);
+
+                if (engine.getConfig().getAggregationLimit() == null) {
+                    filtered = entireGrid.countMatchingRecords(combinedRecordFilters);
+                    processed = totalCount;
+                } else {
+                    ApproxCount approxCount = entireGrid.countMatchingRecordsApprox(combinedRecordFilters,
+                            engine.getConfig().getAggregationLimit());
+                    filtered = approxCount.getMatched();
+                    processed = approxCount.getProcessed();
+                }
             }
 
             JsonResult result = new JsonResult(engine.getMode(),
-                    wrappedRows, filtered,
+                    wrappedRows, filtered, processed,
                     totalCount, start, limit);
 
             ParsingUtilities.defaultWriter.writeValue(writer, result);

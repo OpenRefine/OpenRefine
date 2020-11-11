@@ -260,6 +260,40 @@ public class SparkGridState implements GridState {
         return grid.filter(wrapRowFilter(filter)).count();
     }
 
+    @Override
+    public ApproxCount countMatchingRowsApprox(RowFilter filter, long limit) {
+        ApproxCount initialState = new ApproxCount(0L, 0L);
+        return RDDUtils.limitPartitions(grid, limit / grid.getNumPartitions())
+                .aggregate(initialState, approxRowFilterAggregator(filter), approxCountSum());
+    }
+
+    private static Function2<ApproxCount, ApproxCount, ApproxCount> approxCountSum() {
+        return new Function2<ApproxCount, ApproxCount, ApproxCount>() {
+
+            private static final long serialVersionUID = -9146406229890703337L;
+
+            @Override
+            public ApproxCount call(ApproxCount v1, ApproxCount v2) throws Exception {
+                return new ApproxCount(v1.getProcessed() + v2.getProcessed(), v1.getMatched() + v2.getMatched());
+            }
+
+        };
+    }
+
+    private static Function2<ApproxCount, Tuple2<Long, Row>, ApproxCount> approxRowFilterAggregator(RowFilter filter) {
+        return new Function2<ApproxCount, Tuple2<Long, Row>, ApproxCount>() {
+
+            private static final long serialVersionUID = -54284705503006433L;
+
+            @Override
+            public ApproxCount call(ApproxCount count, Tuple2<Long, Row> tuple) throws Exception {
+                long matched = count.getMatched() + (filter.filterRow(tuple._1, tuple._2) ? 1 : 0);
+                return new ApproxCount(count.getProcessed() + 1, matched);
+            }
+
+        };
+    }
+
     /**
      * @return the rows grouped into records, indexed by the first row id in the record
      */
@@ -370,6 +404,27 @@ public class SparkGridState implements GridState {
     @Override
     public long countMatchingRecords(RecordFilter filter) {
         return getRecords().filter(wrapRecordFilter(filter)).count();
+    }
+
+    @Override
+    public ApproxCount countMatchingRecordsApprox(RecordFilter filter, long limit) {
+        ApproxCount initialState = new ApproxCount(0L, 0L);
+        return RDDUtils.limitPartitions(getRecords(), limit / grid.getNumPartitions())
+                .aggregate(initialState, approxRecordFilterAggregator(filter), approxCountSum());
+    }
+
+    private static Function2<ApproxCount, Tuple2<Long, Record>, ApproxCount> approxRecordFilterAggregator(RecordFilter filter) {
+        return new Function2<ApproxCount, Tuple2<Long, Record>, ApproxCount>() {
+
+            private static final long serialVersionUID = 1266194909791433973L;
+
+            @Override
+            public ApproxCount call(ApproxCount count, Tuple2<Long, Record> tuple) throws Exception {
+                long matched = count.getMatched() + (filter.filterRecord(tuple._2) ? 1 : 0);
+                return new ApproxCount(count.getProcessed() + 1, matched);
+            }
+
+        };
     }
 
     @Override

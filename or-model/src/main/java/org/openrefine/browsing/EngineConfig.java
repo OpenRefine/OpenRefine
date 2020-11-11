@@ -99,6 +99,9 @@ public class EngineConfig {
         return _facets;
     }
 
+    /**
+     * A null aggregation limit means no limit. A zero aggregation limit means no aggregation at all.
+     */
     @JsonProperty("aggregationLimit")
     @JsonInclude(Include.NON_NULL)
     public Long getAggregationLimit() {

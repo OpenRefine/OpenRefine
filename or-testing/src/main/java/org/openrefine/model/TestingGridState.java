@@ -173,11 +173,31 @@ public class TestingGridState implements GridState {
     }
 
     @Override
+    public ApproxCount countMatchingRowsApprox(RowFilter filter, long limit) {
+        long matching = indexedRows()
+                .stream()
+                .limit(limit)
+                .filter(tuple -> filter.filterRow(tuple.getIndex(), tuple.getRow()))
+                .count();
+        return new ApproxCount(Math.min(limit, rows.size()), matching);
+    }
+
+    @Override
     public long countMatchingRecords(RecordFilter filter) {
         return records
                 .stream()
                 .filter(record -> filter.filterRecord(record))
                 .count();
+    }
+
+    @Override
+    public ApproxCount countMatchingRecordsApprox(RecordFilter filter, long limit) {
+        long matching = records
+                .stream()
+                .limit(limit)
+                .filter(record -> filter.filterRecord(record))
+                .count();
+        return new ApproxCount(Math.min(limit, records.size()), matching);
     }
 
     @Override
