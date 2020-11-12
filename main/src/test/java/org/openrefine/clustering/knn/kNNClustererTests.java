@@ -40,12 +40,10 @@ import org.testng.annotations.Test;
 
 import org.openrefine.RefineTest;
 import org.openrefine.browsing.Engine;
+import org.openrefine.browsing.EngineConfig;
 import org.openrefine.clustering.ClustererConfigFactory;
-import org.openrefine.clustering.knn.DistanceFactory;
-import org.openrefine.clustering.knn.VicinoDistance;
-import org.openrefine.clustering.knn.kNNClusterer;
 import org.openrefine.clustering.knn.kNNClusterer.kNNClustererConfig;
-import org.openrefine.model.Project;
+import org.openrefine.model.GridState;
 import org.openrefine.util.ParsingUtilities;
 import org.openrefine.util.TestUtils;
 
@@ -75,29 +73,29 @@ public class kNNClustererTests extends RefineTest {
 
     @Test
     public void serializekNNClusterer() throws JsonParseException, JsonMappingException, IOException {
-        Project project = createProject(new String[] { "column" },
-                new Serializable[] {
-                        "ab",
-                        "abc",
-                        "c",
-                        "ĉ" });
+        GridState grid = createGrid(new String[] { "values" },
+                new Serializable[][] {
+                        { "ab" },
+                        { "abc" },
+                        { "c" },
+                        { "ĉ" } });
 
         kNNClustererConfig config = ParsingUtilities.mapper.readValue(configJson, kNNClustererConfig.class);
-        kNNClusterer clusterer = config.apply(project);
-        clusterer.computeClusters(new Engine(project));
+        kNNClusterer clusterer = config.apply(grid);
+        clusterer.computeClusters(new Engine(grid, EngineConfig.ALL_ROWS));
 
         TestUtils.isSerializedTo(clusterer, clustererJson, ParsingUtilities.defaultWriter);
     }
 
     @Test
     public void testNoLonelyclusters() throws JsonParseException, JsonMappingException, IOException {
-        Project project = createProject(new String[] { "column" },
-                new Serializable[] {
-                        "foo",
-                        "bar" });
+        GridState grid = createGrid(new String[] { "values" },
+                new Serializable[][] {
+                        { "foo" },
+                        { "bar" } });
         kNNClustererConfig config = ParsingUtilities.mapper.readValue(configJson, kNNClustererConfig.class);
-        kNNClusterer clusterer = config.apply(project);
-        clusterer.computeClusters(new Engine(project));
+        kNNClusterer clusterer = config.apply(grid);
+        clusterer.computeClusters(new Engine(grid, EngineConfig.ALL_ROWS));
 
         assertTrue(clusterer.getJsonRepresentation().isEmpty());
     }

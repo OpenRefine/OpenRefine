@@ -38,9 +38,9 @@ import org.testng.annotations.Test;
 
 import org.openrefine.RefineTest;
 import org.openrefine.browsing.Engine;
-import org.openrefine.clustering.binning.BinningClusterer;
+import org.openrefine.browsing.EngineConfig;
 import org.openrefine.clustering.binning.BinningClusterer.BinningClustererConfig;
-import org.openrefine.model.Project;
+import org.openrefine.model.GridState;
 import org.openrefine.util.ParsingUtilities;
 import org.openrefine.util.TestUtils;
 
@@ -77,28 +77,28 @@ public class BinningClustererTests extends RefineTest {
 
     @Test
     public void testSerializeBinningClusterer() throws JsonParseException, JsonMappingException, IOException {
-        Project project = createProject(new String[] { "column" },
-                new Serializable[] {
-                        "a",
-                        "à",
-                        "c",
-                        "ĉ" });
+        GridState grid = createGrid(new String[] { "values" },
+                new Serializable[][] {
+                        { "a" },
+                        { "à" },
+                        { "c" },
+                        { "ĉ" } });
         BinningClustererConfig config = ParsingUtilities.mapper.readValue(configJson, BinningClustererConfig.class);
-        BinningClusterer clusterer = config.apply(project);
-        clusterer.computeClusters(new Engine(project));
+        BinningClusterer clusterer = config.apply(grid);
+        clusterer.computeClusters(new Engine(grid, EngineConfig.ALL_ROWS));
         TestUtils.isSerializedTo(clusterer, clustererJson, ParsingUtilities.defaultWriter);
     }
 
     @Test
     public void testNoLonelyClusters() throws JsonParseException, JsonMappingException, IOException {
-        Project project = createProject(new String[] { "column" },
-                new Serializable[] {
-                        "c",
-                        "ĉ",
-                        "d" });
+        GridState grid = createGrid(new String[] { "values" },
+                new Serializable[][] {
+                        { "c" },
+                        { "ĉ" },
+                        { "d" } });
         BinningClustererConfig config = ParsingUtilities.mapper.readValue(configJson, BinningClustererConfig.class);
-        BinningClusterer clusterer = config.apply(project);
-        clusterer.computeClusters(new Engine(project));
+        BinningClusterer clusterer = config.apply(grid);
+        clusterer.computeClusters(new Engine(grid, EngineConfig.ALL_ROWS));
         assertEquals(clusterer.getJsonRepresentation().size(), 1);
     }
 }

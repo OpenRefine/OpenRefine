@@ -36,7 +36,6 @@ package org.openrefine.clustering.knn;
 import java.io.Serializable;
 import java.util.Comparator;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -47,21 +46,18 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonValue;
 import edu.mit.simile.vicino.clustering.NGramClusterer;
-import edu.mit.simile.vicino.clustering.VPTreeClusterer;
 import edu.mit.simile.vicino.distances.Distance;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import org.openrefine.browsing.Engine;
-import org.openrefine.browsing.FilteredRows;
-import org.openrefine.browsing.RowVisitor;
 import org.openrefine.clustering.ClusteredEntry;
 import org.openrefine.clustering.Clusterer;
 import org.openrefine.clustering.ClustererConfig;
-import org.openrefine.model.Cell;
 import org.openrefine.model.GridState;
-import org.openrefine.model.Project;
+import org.openrefine.model.IndexedRow;
 import org.openrefine.model.Row;
+import org.openrefine.sorting.SortingConfig;
 
 public class kNNClusterer extends Clusterer {
 
@@ -133,99 +129,17 @@ public class kNNClusterer extends Clusterer {
 
     final static Logger logger = LoggerFactory.getLogger("kNN_clusterer");
 
-    class VPTreeClusteringRowVisitor implements RowVisitor {
+    private class DistanceWrapper extends Distance {
 
-        Distance _distance;
-        kNNClustererConfigParameters _params;
-        VPTreeClusterer _clusterer;
+        private final SimilarityDistance _d;
 
-        public VPTreeClusteringRowVisitor(Distance d, kNNClustererConfigParameters params) {
-            _distance = d;
-            _clusterer = new VPTreeClusterer(_distance);
-            _params = params;
+        protected DistanceWrapper(SimilarityDistance d) {
+            _d = d;
         }
 
         @Override
-        public void start(Project project) {
-            // nothing to do
-        }
-
-        @Override
-        public void end(Project project) {
-            // nothing to do
-        }
-
-        @Override
-        public boolean visit(Project project, int rowIndex, Row row) {
-            Cell cell = row.getCell(_colindex);
-            if (cell != null && cell.value != null) {
-                Object v = cell.value;
-                String s = (v instanceof String) ? ((String) v) : v.toString();
-                _clusterer.populate(s);
-                count(s);
-            }
-            return false;
-        }
-
-        public List<Set<Serializable>> getClusters() {
-            return _clusterer.getClusters(_params.radius);
-        }
-    }
-
-    class BlockingClusteringRowVisitor implements RowVisitor {
-
-        SimilarityDistance _distance;
-        double _radius = 1.0d;
-        int _blockingNgramSize = 6;
-        HashSet<String> _data;
-        NGramClusterer _clusterer;
-
-        private class DistanceWrapper extends Distance {
-
-            private final SimilarityDistance _d;
-
-            protected DistanceWrapper(SimilarityDistance d) {
-                _d = d;
-            }
-
-            @Override
-            public double d(String arg0, String arg1) {
-                return _d.compute(arg0, arg1);
-            }
-        }
-
-        public BlockingClusteringRowVisitor(SimilarityDistance _distance2, kNNClustererConfigParameters params) {
-            _distance = _distance2;
-            _data = new HashSet<String>();
-            _blockingNgramSize = params.blockingNgramSize;
-            _radius = params.radius;
-            _clusterer = new NGramClusterer(new DistanceWrapper(_distance), _blockingNgramSize);
-        }
-
-        @Override
-        public void start(Project project) {
-            // nothing to do
-        }
-
-        @Override
-        public void end(Project project) {
-            // nothing to do
-        }
-
-        @Override
-        public boolean visit(Project project, int rowIndex, Row row) {
-            Cell cell = row.getCell(_colindex);
-            if (cell != null && cell.value != null) {
-                Object v = cell.value;
-                String s = (v instanceof String) ? ((String) v) : v.toString().intern();
-                _clusterer.populate(s);
-                count(s);
-            }
-            return false;
-        }
-
-        public List<Set<Serializable>> getClusters() {
-            return _clusterer.getClusters(_radius);
+        public double d(String arg0, String arg1) {
+            return _d.compute(arg0, arg1);
         }
     }
 
@@ -240,12 +154,20 @@ public class kNNClusterer extends Clusterer {
 
     @Override
     public void computeClusters(Engine engine) {
-        // VPTreeClusteringRowVisitor visitor = new VPTreeClusteringRowVisitor(_distance,_config);
-        BlockingClusteringRowVisitor visitor = new BlockingClusteringRowVisitor(_distance, _params);
-        FilteredRows filteredRows = engine.getAllFilteredRows();
-        filteredRows.accept(_project, visitor);
+        NGramClusterer clusterer = new NGramClusterer(new DistanceWrapper(_distance), _params.blockingNgramSize);
 
-        _clusters = visitor.getClusters();
+        Iterable<IndexedRow> filteredRows = engine.getMatchingRows(SortingConfig.NO_SORTING);
+        for (IndexedRow indexedRow : filteredRows) {
+            Row row = indexedRow.getRow();
+            Object v = row.getCellValue(_colindex);
+            if (v != null) {
+                String s = (v instanceof String) ? ((String) v) : v.toString().intern();
+                clusterer.populate(s);
+                count(s);
+            }
+        }
+
+        _clusters = clusterer.getClusters(_params.radius);
     }
 
     public static class ValuesComparator implements Comparator<Entry<Serializable, Integer>>, Serializable {
