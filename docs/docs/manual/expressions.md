@@ -176,10 +176,10 @@ Several of the fields here are equivalent to what can be used through [reconcili
 | `cell.recon.match` | The recon candidate that has been matched against this cell (or null) | .id, .name, .type |
 | `cell.recon.best` | The highest scoring recon candidate from the reconciliation service (or null) | .id, .name, .type, .score |
 | `cell.recon.features` | An array of reconciliation features to help you assess the accuracy of your matches | .typeMatch, .nameMatch, .nameLevenshtein, .nameWordDistance | 
-| `cell.recon.features<br />.typeMatch`  | A boolean, true if your chosen type is "matched" and false if not (or "(no type)" if unreconciled) |  |
-| `cell.recon.features<br />.nameMatch` | A boolean, true if the cell and candidate strings are identical and false if not (or "(unreconciled)") |  |
-| `cell.recon.features<br />.nameLevenshtein` | A number, representing the [Levenshtein distance](https://en.wikipedia.org/wiki/Levenshtein_distance): larger if the difference is greater between value and candidate |  | 
-| `cell.recon.features<br />.nameWordDistance` | A number, based on the [word similarity](reconciling#reconciliation-facets) |  |
+| `cell.recon.features.typeMatch`  | A boolean, true if your chosen type is "matched" and false if not (or "(no type)" if unreconciled) |  |
+| `cell.recon.features.nameMatch` | A boolean, true if the cell and candidate strings are identical and false if not (or "(unreconciled)") |  |
+| `cell.recon.features.nameLevenshtein` | A number, representing the [Levenshtein distance](https://en.wikipedia.org/wiki/Levenshtein_distance): larger if the difference is greater between value and candidate |  | 
+| `cell.recon.features.nameWordDistance` | A number, based on the [word similarity](reconciling#reconciliation-facets) |  |
 | `cell.recon.candidates` | An array of the top 3 candidates (default) | .id, .name, .type, .score |
 
 The `cell.recon.candidates` and `cell.recon.best` objects have a few deeper fields: `id`, `name`, `type`, and `score`. `type` is an array of type identifiers for a list of candidates, or a single string for the best candidate. 
