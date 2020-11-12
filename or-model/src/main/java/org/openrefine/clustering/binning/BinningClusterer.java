@@ -41,13 +41,18 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.TreeMap;
 import java.util.stream.Collectors;
 
 import org.openrefine.browsing.Engine;
 import org.openrefine.clustering.ClusteredEntry;
 import org.openrefine.clustering.Clusterer;
 import org.openrefine.clustering.ClustererConfig;
+import org.openrefine.model.Cell;
 import org.openrefine.model.GridState;
+import org.openrefine.model.IndexedRow;
+import org.openrefine.model.Row;
+import org.openrefine.sorting.SortingConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -121,65 +126,7 @@ public class BinningClusterer extends Clusterer {
     final static Logger logger = LoggerFactory.getLogger("binning_clusterer");
     
     List<Map<String,Integer>> _clusters;
-
-    /*
-    class BinningRowVisitor implements RowVisitor {
-
-        Keyer _keyer;
-        Object[] _params;
-        BinningParameters _parameters;
-        
-        Map<String,Map<String,Integer>> _map = new HashMap<String,Map<String,Integer>>();
-        
-        public BinningRowVisitor(Keyer k, BinningParameters parameters) {
-            _keyer = k;
-            _parameters = parameters;
-            if(_parameters != null) {
-            	// this is only used by the NGramFingerprintKeyer in practice…
-                _params = new Object[1];
-                _params[0] = _parameters.ngramSize;
-            }
-        }
-        
-        @Override
-        public void start(Project project) {
-            // nothing to do
-        }
-
-        @Override
-        public void end(Project project) {
-            // nothing to do
-        }
-        
-        @Override
-        public boolean visit(Project project, int rowIndex, Row row) {
-            Cell cell = row.getCell(_colindex);
-            if (cell != null && cell.value != null) {
-                Object v = cell.value;
-                String s = (v instanceof String) ? ((String) v) : v.toString();
-                String key = _keyer.key(s,_params);
-                if (_map.containsKey(key)) {
-                    Map<String,Integer> m = _map.get(key);
-                    if (m.containsKey(s)) {
-                        m.put(s, m.get(s) + 1);
-                    } else {
-                        m.put(s,1);
-                    }
-                } else {
-                    Map<String,Integer> m = new TreeMap<String,Integer>();
-                    m.put(s,1);
-                    _map.put(key, m);
-                }
-            }
-            return false;
-        }
-        
-        public Map<String,Map<String,Integer>> getMap() {
-            return _map;
-        }
-    }
-    */
-            
+ 
     public static class SizeComparator implements Comparator<Map<String,Integer>>, Serializable {
         private static final long serialVersionUID = -1390696157208674054L;
         @Override
@@ -218,13 +165,37 @@ public class BinningClusterer extends Clusterer {
 
     @Override
     public void computeClusters(Engine engine) {
-    	// TODO adapt to Spark
-    	/*
-        BinningRowVisitor visitor = new BinningRowVisitor(_keyer,_parameters);
-        FilteredRows filteredRows = engine.getAllFilteredRows();
-        filteredRows.accept(_project, visitor);  */
+        Iterable<IndexedRow> filteredRows = engine.getMatchingRows(SortingConfig.NO_SORTING);
+        Map<String,Map<String,Integer>> map = new HashMap<String,Map<String,Integer>>();
+        Object[] params = null;
+        if(_parameters != null) {
+            // this is only used by the NGramFingerprintKeyer in practice…
+            params = new Object[1];
+            params[0] = _parameters.ngramSize;
+        }
+        
+        for(IndexedRow indexedRow : filteredRows) {
+            Row row = indexedRow.getRow();
+            Cell cell = row.getCell(_colindex);
+            if (cell != null && cell.value != null) {
+                Object v = cell.value;
+                String s = (v instanceof String) ? ((String) v) : v.toString();
+                String key = _keyer.key(s,params);
+                if (map.containsKey(key)) {
+                    Map<String,Integer> m = map.get(key);
+                    if (m.containsKey(s)) {
+                        m.put(s, m.get(s) + 1);
+                    } else {
+                        m.put(s,1);
+                    }
+                } else {
+                    Map<String,Integer> m = new TreeMap<String,Integer>();
+                    m.put(s,1);
+                    map.put(key, m);
+                }
+            }
+        }
      
-        Map<String,Map<String,Integer>> map = Collections.emptyMap(); // visitor.getMap();
         _clusters = new ArrayList<Map<String,Integer>>(map.values());
         Collections.sort(_clusters, new SizeComparator());
     }
