@@ -17,10 +17,8 @@
         <module>or-util</module>
         <module>or-testing</module>
         <module>or-spark</module>
-        <module>or-localrunner</module>
         <module>main</module>
         <module>server</module>
-        <module>extensions</module>
         <module>packaging</module>
   </modules>
 

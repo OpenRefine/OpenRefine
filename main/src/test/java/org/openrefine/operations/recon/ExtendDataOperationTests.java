@@ -55,9 +55,6 @@ import org.mockito.stubbing.Answer;
 import org.openrefine.RefineTest;
 import org.openrefine.browsing.Engine;
 import org.openrefine.browsing.EngineConfig;
-import org.openrefine.browsing.facets.FacetConfigResolver;
-import org.openrefine.browsing.facets.RangeFacet.RangeFacetConfig;
-import org.openrefine.browsing.facets.TimeRangeFacet.TimeRangeFacetConfig;
 import org.openrefine.model.Cell;
 import org.openrefine.model.ColumnModel;
 import org.openrefine.model.GridState;
@@ -135,10 +132,7 @@ public class ExtendDataOperationTests extends RefineTest {
     
     private String operationJson = "{\"op\":\"core/extend-reconciled-data\","
             + "\"description\":\"Extend data at index 3 based on column organization_name\","
-            + "\"engineConfig\":{\"mode\":\"row-based\",\"facets\":["
-            + "    {\"selectNumeric\":true,\"expression\":\"cell.recon.best.score\",\"selectBlank\":false,\"selectNonNumeric\":true,\"selectError\":true,\"name\":\"organization_name: best candidate's score\",\"from\":13,\"to\":101,\"type\":\"core/range\",\"columnName\":\"organization_name\"},"
-            + "    {\"selectNonTime\":true,\"expression\":\"grel:toDate(value)\",\"selectBlank\":true,\"selectError\":true,\"selectTime\":true,\"name\":\"start_year\",\"from\":410242968000,\"to\":1262309184000,\"type\":\"core/timerange\",\"columnName\":\"start_year\"}"
-            + "]},"
+            + "\"engineConfig\":{\"mode\":\"row-based\",\"facets\":[]},"
             + "\"columnInsertIndex\":3,"
             + "\"baseColumnName\":\"organization_name\","
             + "\"endpoint\":\"https://tools.wmflabs.org/openrefine-wikidata/en/api\","
@@ -196,8 +190,6 @@ public class ExtendDataOperationTests extends RefineTest {
 
     @BeforeMethod
     public void SetUp() throws IOException, ModelException {
-    	FacetConfigResolver.registerFacetConfig("core", "range", RangeFacetConfig.class);
-    	FacetConfigResolver.registerFacetConfig("core", "timerange", TimeRangeFacetConfig.class);
         OperationRegistry.registerOperation("core", "extend-reconciled-data", ExtendDataOperation.class);
         project = createProject("DataExtensionTests",
         		new String[] {"country"},

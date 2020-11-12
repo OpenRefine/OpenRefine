@@ -124,7 +124,7 @@ public class RefineServlet extends Butterfly {
         REVISION = getInitParameter("refine.revision");    
         
         if (VERSION.equals("$VERSION")) {
-            VERSION = RefineModel.ASSIGNED_VERSION;
+            VERSION = RefineModel.VERSION;
         }
         if (REVISION.equals("$REVISION")) {
             ClassLoader classLoader = getClass().getClassLoader();

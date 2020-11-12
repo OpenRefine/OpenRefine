@@ -55,6 +55,7 @@ import org.openrefine.model.Cell;
 import org.openrefine.model.ColumnModel;
 import org.openrefine.model.Row;
 import org.openrefine.model.recon.Recon.Judgment;
+import org.openrefine.model.Row;
 import org.openrefine.util.ParsingUtilities;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
