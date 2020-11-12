@@ -10,7 +10,7 @@ For the reference below, the function is given in full-length notation and the i
 
 If a function can take more than one kind of data as input or can output more than one kind of data, that is indicated with more than one letter (as with “s or a”) or with o for object. 
 
-We also use shorthands for substring (“sub”) and separator (“sep”). 
+We also use shorthands for substring (“sub”) and separator string (“sep”). 
 Optional arguments will say “(optional)”.
 
 In places where OpenRefine will accept a string or a regex pattern, you can supply a string by putting it in quotes. If you wish to use any regex notation, wrap the pattern in forward slashes.
@@ -41,7 +41,7 @@ Returns the length of string s as a number.
 
 ###### toString(o, string format (optional))
 
-Takes any value type (string, number, date, boolean, error, null) and gives a string version of that value. You can convert between types, within limits (for example, you can't turn the string "asdfsd" into a date or a number, but you can convert the number "123" into a string).
+Takes any value type (string, number, date, boolean, error, null) and gives a string version of that value. You can convert between types, within limits (for example, you can't turn the string “asdfsd” into a date or a number, but you can convert the number “123” into a string).
 
 You can also use toString() to convert numbers to strings with rounding, using an [optional string format](https://docs.oracle.com/javase/8/docs/api/java/util/Formatter.html). For example, if you applied the expression `value.toString("%.0f")` to a column:
 
@@ -54,13 +54,17 @@ You can also use toString() to convert numbers to strings with rounding, using a
 
 You can also convert dates to strings, using date parsing syntax built in to OpenRefine (see [the toDate() function for details](#todateo-boolean-month_first--format1-format2--)). For example,  `value.toString("MMM-dd-yyyy")` would convert the date value [2024-10-15T00:00:00Z] to “Oct-15-2024”.
 
-Note: In OpenRefine, using toString() on a null cell outputs the string "null".
+Note: In OpenRefine, using toString() on a null cell outputs the string “null”.
 
 ### Testing string characteristics
 
+###### startsWith(s, sub)
+
+Returns a boolean indicating whether s starts with sub. For example, `"food".startsWith("foo")` returns true, whereas `"food".startsWith("bar")` returns false. 
+
 ###### endsWith(s, sub)
 
-Returns a boolean indicating whether s ends with sub. For example, `"food".endsWith("ood")` returns true, whereas `“food”.endsWith("odd")` returns false. 
+Returns a boolean indicating whether s ends with sub. For example, `"food".endsWith("ood")` returns true, whereas `"food".endsWith("odd")` returns false. 
 
 ###### contains(s, sub or p)
 
@@ -82,7 +86,7 @@ Returns string s converted to all uppercase characters.
 
 ###### toTitlecase(s)
 
-Returns string s converted into titlecase. For example, `"Once upon a midnight dreary".toTitlecase()` returns the string “Once Upon A Midnight Dreary”.
+Returns string s converted into titlecase: a capital letter starting each word, and the rest of the letters lowercase. For example, `"Once upon a midnight DREARY".toTitlecase()` returns the string “Once Upon A Midnight Dreary”.
 
 #### Trimming
 
@@ -96,7 +100,7 @@ Returns a copy of the string s with leading and trailing whitespace removed. For
 
 ###### chomp(s, sep)
 
-Returns a copy of string s with the string sep removed from the end if s ends with sep; otherwise, just returns s. For example, `"hardly".chomp("ly")` and `"hard".chomp("ly")` both return the string hard.
+Returns a copy of string s with the string sep removed from the end if s ends with sep; otherwise, just returns s. For example, `"hardly".chomp("ly")` and `"hard".chomp("ly")` both return the string “hard”.
 
 #### Substring
 
@@ -104,7 +108,7 @@ Returns a copy of string s with the string sep removed from the end if s ends wi
 
 Returns the substring of s starting from character index from, and up to (excluding) character index to. If the to argument is omitted, substring will output to the end of s. For example, `"profound".substring(3)` returns the string “found”, and `"profound".substring(2, 4)` returns the string “of”.
 
-Character indexes start from zero. Negative character indexes count from the end of the string. For example, `"profound".substring(1, -1)` returns the string rofoun.
+Character indexes start from zero. Negative character indexes count from the end of the string. For example, `"profound".substring(0, -1)` returns the string “profoun”.
 
 ###### slice(s, n from, n to (optional))
 
@@ -122,7 +126,7 @@ Returns the first character index of sub as it first occurs in s; or, returns -1
 
 ###### lastIndexOf(s, sub)
 
-Returns the first character index of sub as it last occurs in s; or, returns -1 if s does not contain sub. For example, `"parallel".lastIndexOf("a")` returns 3 (pointing at the second "a").
+Returns the first character index of sub as it last occurs in s; or, returns -1 if s does not contain sub. For example, `"parallel".lastIndexOf("a")` returns 3 (pointing at the second “a”).
 
 ###### replace(s, s or p find, s replace)
 
@@ -135,60 +139,60 @@ You cannot find or replace nulls with this, as null is not a string. You can ins
 
 ###### replaceChars(s, s find, s replace)
 
-Returns the string obtained by replacing a character in s, identified by find, with the corresponding character identified in replace. For example, `"all the big cows lumber".replaceChars("aeiou", "A!IOU")` returns the string “All th! bIg cOws lUmb!r”. You cannot use this to replace a single character with more than one character.
+Returns the string obtained by replacing a character in s, identified by find, with the corresponding character identified in replace. For example, `"Thís téxt was optícálly recógnízéd".replaceChars("áéíóú", "aeiou")` returns the string “This text was optically recognized”. You cannot use this to replace a single character with more than one character.
+
+###### find(s, sub or p)
+
+Outputs an array of all consecutive substrings inside string s that match the substring or [regex](#grel-supported-regex) pattern p. For example, `"abeadsabmoloei".find(/[aeio]+/)` would result in the array [ "a", "ea", "a", "o", "oei" ].
+
+You can supply a sub instead of p, by putting it in quotes, and OpenRefine will compile it into a regex pattern. Anytime you supply quotes, OpenRefine interprets the contents as a string, not regex. If you wish to use any regex notation, wrap the pattern in forward slashes, for example: `"OpenRefine is Awesome".find(/fine\sis/)` would return [ "fine is" ].
 
 ###### match(s, p)
 
-Attempts to match the string s in its entirety against the [regex](#grel-supported-regex) pattern p and, if the pattern is found, returns an array of the desired substrings (found in order). For example, `"230.22398, 12.3480".match(/.*(\d\d\d\d)/)` returns an array of 1 substring: [3480]. It does not find 2239 as the first sequence with four digits, because the regex indicates the four digits must come at the end of the string.
+Attempts to match the string s in its entirety against the [regex](#grel-supported-regex) pattern p and, if the pattern is found, outputs an array of all capturing groups (found in order). For example, `"230.22398, 12.3480".match(/.*(\d\d\d\d)/)` returns an array of 1 substring: [ "3480" ]. It does not find 2239 as the first sequence with four digits, because the regex indicates the four digits must come at the end of the string.
 
-You will need to convert the array to a string to capture it in a cell, with a function such as toString(). An empty array [] is returned when there is no match to the desired substrings. A null is output when the entire regex does not match.
+You will need to convert the array to a string to store it in a cell, with a function such as toString(). An empty array [] is returned when there is no match to the desired substrings. A null is output when the entire regex does not match.
 
-Remember to enclose your regex in forward slashes, and to cancel out characters and use parentheses as needed. Parentheses are required to denote a desired substring; for example, “.*(\d\d\d\d)” would return one array value, while “(.*)(\d\d\d\d)” would return two. So, if you are looking for a desired substring anywhere within a string, use the syntax `value.match(/.*(desired-substring-regex).*/)`.
+Remember to enclose your regex in forward slashes, and to escape characters and use parentheses as needed. Parentheses are required to denote a desired substring (capturing group); for example, “.&#42;(\d\d\d\d)” would return an array containing a single value, while “(.&#42;)(\d\d\d\d)” would return two. So, if you are looking for a desired substring anywhere within a string, use the syntax `value.match(/.*(desired-substring-regex).*/)`.
 
-For example, if the cell contains value “hello 123456 goodbye”:
+For example, if the value is “hello 123456 goodbye”:
 
 |Expression|Result|
 |-|-|
-|value.match(/\d{6}/) |null (does not match the full string)|
-|value.match(/.*\d{6}.*/) |[ ] (no indicated substring)|
-|value.match(/.*(\d{6}).*/) |[ "123456" ] (array with one value)|
-|value.match(/(.*)(\d{6})(.*)/) |[ "hello ", "123456", " goodbye" ] (array with three values)|
-
-###### find(s, p)
-
-Outputs, into an array, all consecutive substrings inside string s that match the [regex](#grel-supported-regex) pattern p. Unlike match(), find() can search out and return several occurrences of the same pattern in a string, because it is not evaluating the regex against the string in its entirety. For example, `"abeadsabmoloei".find(/[aeio]+/)` would result in [ "a", "ea", "a", "o", "oei" ].
-
-You can supply a string instead of p, by putting it in quotes, and OpenRefine will compile it into a regex pattern. Anytime you supply quotes, OpenRefine interprets the contents as a string, not regex. If you wish to use any regex notation, wrap the pattern in forward slashes, for example: `"OpenRefine is Awesome".find(/fine\sis/)` would return [ “fine is” ].
+|`value.match(/\d{6}/)` |null (does not match the full string)|
+|`value.match(/.*\d{6}.*/)` |[ ] (no indicated substring)|
+|`value.match(/.*(\d{6}).*/)` |[ "123456" ] (array with one value)|
+|`value.match(/(.*)(\d{6})(.*)/)` |[ "hello ", "123456", " goodbye" ] (array with three values)|
 
 ### String parsing and splitting
 
-###### toNumber(o)
+###### toNumber(s)
 
-Returns o converted to a number.
+Returns a string converted to a number. Will attempt to convert other formats into a string, then into a number. If the value is already a number, it will return the number.
 
 ###### split(s, s or p sep)
 
-Returns the array of strings obtained by splitting s by the separator sep. The sep can be either a string or a regex pattern. For example, `"fire, water, earth, air".split(",")` returns an array of 4 strings: [ "fire", " water", " earth”, “ air” ]. Note that the space characters are retained but the separator is removed.
+Returns the array of strings obtained by splitting s by sep. The separator can be either a string or a regex pattern. For example, `"fire, water, earth, air".split(",")` returns an array of 4 strings: [ "fire", " water", " earth", " air" ]. Note that the space characters are retained but the separator is removed.
 
 ###### splitByLengths(s, n1, n2, ...)
 
-Returns the array of strings obtained by splitting s into substrings with the given lengths. For example, `"internationalization".splitByLengths(5, 6, 3)` returns an array of 3 strings: [ inter, nation, ali ]. Excess characters are discarded.
+Returns the array of strings obtained by splitting s into substrings with the given lengths. For example, `"internationalization".splitByLengths(5, 6, 3)` returns an array of 3 strings: [ "inter", "nation", "ali" ]. Excess characters are discarded.
 
 ###### smartSplit(s, s or p sep (optional))
 
-Returns the array of strings obtained by splitting s by the separator sep, or by guessing either tab or comma separation if there is no sep given. Handles quotes properly and understands cancelled characters. The separator can be either a string or a regex pattern. For example, `value.smartSplit("\n")` will split at a carriage return or a new-line character.
+Returns the array of strings obtained by splitting s by sep, or by guessing either tab or comma separation if there is no sep given. Handles quotes properly and understands cancelled characters. The separator can be either a string or a regex pattern. For example, `value.smartSplit("\n")` will split at a carriage return or a new-line character.
 
 Note: `value.[escape](#escapes-s-mode)('javascript')` is useful for previewing unprintable characters prior to using smartSplit().
 
 ###### splitByCharType(s)
 
-Returns an array of strings obtained by splitting s into groups of consecutive characters each time the characters change unicode types. For example, `“HenryCTaylor”.splitByCharType()` will result in an array of [ H, enry, CT, aylor ].
+Returns an array of strings obtained by splitting s into groups of consecutive characters each time the characters change unicode types. For example, `"HenryCTaylor".splitByCharType()` will result in an array of [ "H", "enry", "CT", "aylor" ].
 
-It is useful for separating letters and numbers: `"BE1A3E".splitByCharType()` will result in [ BE, 1, A, 3, E ].
+It is useful for separating letters and numbers: `"BE1A3E".splitByCharType()` will result in [ "BE", "1", "A", "3", "E" ].
 
 ###### partition(s, s or p fragment, b omitFragment (optional))
 
-Returns an array of strings [ a, fragment, z ] where a is the substring within s before the first occurrence of fragment, and z is the substring after fragment. Fragment can be a string or a regex. For example, `"internationalization".partition("nation")` returns 3 strings: [ inter, nation, alization ]. If s does not contain fragment, it returns an array of [ s, "", "" ] (the original unpartitioned string, and two empty strings). 
+Returns an array of strings [ a, fragment, z ] where a is the substring within s before the first occurrence of fragment, and z is the substring after fragment. Fragment can be a string or a regex. For example, `"internationalization".partition("nation")` returns 3 strings: [ "inter", "nation", "alization" ]. If s does not contain fragment, it returns an array of [ s, "", "" ] (the original unpartitioned string, and two empty strings). 
 
 If the omitFragment boolean is true, for example with `"internationalization".partition("nation", true)`, the fragment is not returned. The output is [ "inter", "alization" ].
 
@@ -196,59 +200,61 @@ You can use regex for your fragment. The expresion `"abcdefgh".partition(/c.e/)`
 
 ###### rpartition(s, s or p fragment, b omitFragment (optional))
 
-Returns an array of strings [ a, fragment, z ] where a is the substring within s before the last occurrence of fragment, and z is the substring after the last instance of fragment. (Rpartition means “reverse partition.”) For example, `"parallel".rpartition("a")` returns 3 strings: [ par, a, llel ]. 
+Returns an array of strings [ a, fragment, z ] where a is the substring within s before the last occurrence of fragment, and z is the substring after the last instance of fragment. (Rpartition means “reverse partition.”) For example, `"parallel".rpartition("a")` returns 3 strings: [ "par", "a", "llel" ]. 
 
 Otherwise works identically to partition() above.
 
 ### Encoding and hashing
 
-###### diff(s1 or d1, s2 or d2, s timeUnit (optional))
+###### diff(s1, s2, s timeUnit (optional))
 
-Takes two strings or two dates and compares them, returning a string. The two objects must be the same data type. For strings, diff() returns the remainder of s2 starting with the first character where they differ. For example, `diff("cacti", "cactus")` returns "us". For dates, see [Date functions](#diffd1-d2-s-timeunit).
+Takes two strings and compares them, returning a string. Returns the remainder of s2 starting with the first character where they differ. For example, `diff("cacti", "cactus")` returns "us". Also works with dates; see [Date functions](#diffd1-d2-s-timeunit).
 
 ###### escape(s, s mode)
 
-Escapes s in the given escaping mode. The mode can be one of: html, xml, csv, url, javascript. See the [recipes](https://github.com/OpenRefine/OpenRefine/wiki/Recipes#question-marks--showing-in-your-data) for examples of escaping and unescaping.
+Escapes s in the given escaping mode. The mode can be one of: "html", "xml", "csv", "url", "javascript". Note that quotes are required around your mode. See the [recipes](https://github.com/OpenRefine/OpenRefine/wiki/Recipes#question-marks--showing-in-your-data) for examples of escaping and unescaping.
 
 ###### unescape(s, s mode)
 
-Unescapes s in the given escaping mode. The mode can be one of: html, xml, csv, url, javascript. See the [recipes](https://github.com/OpenRefine/OpenRefine/wiki/Recipes#atampampt----att) for examples of escaping and unescaping. 
+Unescapes s in the given escaping mode. The mode can be one of: "html", "xml", "csv", "url", "javascript". Note that quotes are required around your mode. See the [recipes](https://github.com/OpenRefine/OpenRefine/wiki/Recipes#atampampt----att) for examples of escaping and unescaping. 
 
 ###### md5(o)
 
-Returns the [MD5 hash](https://en.wikipedia.org/wiki/MD5) of an object. If fed something other than a string (array, number, date, etc.), md5() will convert it to a string and deliver the hash of the string. For example, `"[ and, or, not ]".md5()` will return 80fd34c2da7787a20c6c5e32e4899459.
+Returns the [MD5 hash](https://en.wikipedia.org/wiki/MD5) of an object. If fed something other than a string (array, number, date, etc.), md5() will convert it to a string and deliver the hash of the string. For example, `"internationalization".md5()` will return 2c55a1626e31b4e373ceedaa9adc12a3.
 
 ###### sha1(o)
 
-Returns the [SHA-1 hash](https://en.wikipedia.org/wiki/SHA-1) of an object. If fed something other than a string (array, number, date, etc.), sha1() will convert it to a string and deliver the hash of the string. For example, `"[ and, or, not ]".sha1()` will return a6664fc5476a043cabc179da1e3ce736e3959bbc.
+Returns the [SHA-1 hash](https://en.wikipedia.org/wiki/SHA-1) of an object. If fed something other than a string (array, number, date, etc.), sha1() will convert it to a string and deliver the hash of the string. For example, `"internationalization".sha1()` will return cd05286ee0ff8a830dbdc0c24f1cb68b83b0ef36.
 
 ###### phonetic(s, s encoding)
 
-Returns a phonetic encoding of a string, based on an available phonetic algorithm. See the [section on phonetic clustering](cellediting#clustering-methods) for more information. Can be one of the following supported phonetic methods: [metaphone, doublemetaphone, metaphone3](https://www.wikipedia.org/wiki/Metaphone), [soundex](https://en.wikipedia.org/wiki/Soundex), [cologne](https://en.wikipedia.org/wiki/Cologne_phonetics). For example, “Ruth Prawer Jhabvala“.phonetic(metaphone3) outputs the string “R0PRRJPF”.
+Returns a phonetic encoding of a string, based on an available phonetic algorithm. See the [section on phonetic clustering](cellediting#clustering-methods) for more information. Can be one of the following supported phonetic methods: [metaphone, doublemetaphone, metaphone3](https://www.wikipedia.org/wiki/Metaphone), [soundex](https://en.wikipedia.org/wiki/Soundex), [cologne](https://en.wikipedia.org/wiki/Cologne_phonetics). For example, `"Ruth Prawer Jhabvala".phonetic("metaphone")` outputs the string “R0PRWRJHBFL”. Note that quotes are required around your method; otherwise, it will default to metaphone3. 
 
 ###### reinterpret(s, s encoder)
 
-Returns s reinterpreted through the given character encoder. You must supply one of the [supported encodings](http://java.sun.com/j2se/1.5.0/docs/guide/intl/encoding.doc.html). When an OpenRefine project is started, data is imported and interpreted. A specific character encoding is identified or manually selected at that time (such as UTF-8). You can reinterpret a column into another specificed encoding using this function. This function may not fix your data; it may be better to use this in conjunction with new projects to test the interpretation, and pre-format your data as needed. 
+Returns s reinterpreted through the given character encoder. You must supply one of the [supported encodings](http://java.sun.com/j2se/1.5.0/docs/guide/intl/encoding.doc.html). Note that quotes are required around your character encoder.
+
+When an OpenRefine project is started, data is imported and interpreted. A specific character encoding is identified or manually selected at that time (such as UTF-8). You can reinterpret a column into another specificed encoding using this function. This function may not fix your data; it may be better to use this in conjunction with new projects to test the interpretation, and pre-format your data as needed. 
 
 ###### fingerprint(s)
 
-Returns the fingerprint of s, a string that is the first step in [fingerprint clustering methods](cellediting#clustering-methods): it will trim whitespaces, convert all characters to lowercase, remove punctuation, sort words alphabetically, etc. For example, `“Ruth  Prawer    Jhabvala”.fingerprint()` outputs the string “jhabvala prawer ruth”.
+Returns the fingerprint of s, a string that is the first step in [fingerprint clustering methods](cellediting#clustering-methods): it will trim whitespaces, convert all characters to lowercase, remove punctuation, sort words alphabetically, etc. For example, `"Ruth  Prawer    Jhabvala".fingerprint()` outputs the string “jhabvala prawer ruth”.
 
 ###### ngram(s, n)
 
-Returns an array of the word n-grams of s. That is, it lists all the possible consecutive combinations of n words in the string. For example, `“Ruth Prawer Jhabvala“.ngram(2)` would output the array [ "Ruth Prawer", "Prawer Jhabvala" ]. A word n-gram of 1 simply lists all the words in original order; a larger n-gram will only return the original string inside an array (e.g. `“Ruth Prawer Jhabvala“.ngram(4)` would simply return [“Ruth Prawer Jhabvala“]).
+Returns an array of the word n-grams of s. That is, it lists all the possible consecutive combinations of n words in the string. For example, `"Ruth Prawer Jhabvala".ngram(2)` would output the array [ "Ruth Prawer", "Prawer Jhabvala" ]. A word n-gram of 1 simply lists all the words in original order; an n-gram larger than the number of words in the string will only return the original string inside an array (e.g. `"Ruth Prawer Jhabvala".ngram(4)` would simply return ["Ruth Prawer Jhabvala"]).
 
 ###### ngramFingerprint(s, n)
 
-Returns the [n-gram fingerprint](cellediting#clustering-methods) of s. For example, `“banana”.ngram(2)` would output “anbana”, after first generating the 2-grams “ba an na an na”, removing duplicates, and sorting them alphabetically.
+Returns the [n-gram fingerprint](cellediting#clustering-methods) of s. For example, `"banana".ngram(2)` would output “anbana”, after first generating the 2-grams “ba an na an na”, removing duplicates, and sorting them alphabetically.
 
 ###### unicode(s)
 
-Returns an array of strings describing each character of s in their full unicode notation. For example, `“Bernice Rubens”.unicode()` outputs [ 66, 101, 114, 110, 105, 99, 101, 32, 82, 117, 98, 101, 110, 115 ].
+Returns an array of strings describing each character of s in their full unicode notation. For example, `"Bernice Rubens".unicode()` outputs [ 66, 101, 114, 110, 105, 99, 101, 32, 82, 117, 98, 101, 110, 115 ].
 
 ###### unicodeType(s)
 
-Returns an array of strings describing each character of s by their unicode type. For example, `“Bernice Rubens”.unicodeType()` outputs [ "uppercase letter", "lowercase letter", "lowercase letter", "lowercase letter", "lowercase letter", "lowercase letter", "lowercase letter", "space separator", "uppercase letter", "lowercase letter", "lowercase letter", "lowercase letter", "lowercase letter", "lowercase letter" ].
+Returns an array of strings describing each character of s by their unicode type. For example, `"Bernice Rubens".unicodeType()` outputs [ "uppercase letter", "lowercase letter", "lowercase letter", "lowercase letter", "lowercase letter", "lowercase letter", "lowercase letter", "space separator", "uppercase letter", "lowercase letter", "lowercase letter", "lowercase letter", "lowercase letter", "lowercase letter" ].
 
 ## Format-based functions (JSON, HTML, XML)
 
@@ -260,7 +266,7 @@ Quotes a value as a JSON literal value.
 
 Parses a string as JSON. get() can then be used with parseJson(): for example, `parseJson(" { 'a' : 1 } ").get("a")` returns 1.
 
-For example from the following JSON array, let's get all instancescalled "keywords" having the same object string name of "text", combine with the forEach() function to iterate over the array.
+For example from the following JSON array, let's get all instances called “keywords” having the same object string name of “text”, and combine it with the forEach() function to iterate over the array.
 
     {
        "status":"OK",
@@ -282,12 +288,12 @@ For example from the following JSON array, let's get all instancescalled "keywor
        ]
     }
 
-The GREL expression `forEach(value.parseJson().keywords,v,v.text).join(":::")` will output "York en route:::Anthony Eden:::President Eisenhower".
+The GREL expression `forEach(value.parseJson().keywords,v,v.text).join(":::")` will output “York en route:::Anthony Eden:::President Eisenhower”.
 
 ### Jsoup XML and HTML parsing
 
 ###### parseHtml(s)
-Given a cell full of HTML-formatted text, simplifies HTML tags (such as by removing “ /” at the end of self-closing tags), closes any unclosed tags, and inserts linebreaks and indents for cleaner code. You cannot pass parseHtml() a URL, but you can pre-fetch HTML with the “Add column by fetching URLs” menu option. A cell cannot store the output of parseHtml() unless you convert it with toString(). 
+Given a cell full of HTML-formatted text, simplifies HTML tags (such as by removing “ /” at the end of self-closing tags), closes any unclosed tags, and inserts linebreaks and indents for cleaner code. You cannot pass parseHtml() a URL, but you can pre-fetch HTML with the <span class="menuItems">Add column by fetching URLs</span> menu option. A cell cannot store the output of parseHtml() unless you convert it with toString(). 
 
 When parseHtml() simplifies HTML, it can sometimes introduce errors. When closing tags, it makes its best guesses based on line breaks, indentation, and the presence of other tags. You may need to manually check the results. 
 
@@ -297,7 +303,7 @@ You can then extract or select() which portions of the HTML document you need fo
 Given a cell full of XML-formatted text, returns a full XML document and adds any missing closing tags. You can then extract or select() which portions of the XML document you need for further splitting, partitioning, etc. Functions the same way as parseHtml() is described above. 
 
 ###### select(s, element)
-Returns an array of all the desired elements from an HTML or XML document, if the element exists. Elements are identified using the [Jsoup selector syntax](https://jsoup.org/apidocs/org/jsoup/select/Selector.html). For example, `value.parseHtml().select(“img.portrait”)[0]` would return the entirety of the first "img" tag with the “portrait” class found in the parsed HTML inside `value`. Returns an empty array if no matching element is found. Use with toString() to capture the results in a cell. A tutorial of select() is shown in [StrippingHTML](https://github.com/OpenRefine/OpenRefine/wiki/StrippingHTML).
+Returns an array of all the desired elements from an HTML or XML document, if the element exists. Elements are identified using the [Jsoup selector syntax](https://jsoup.org/apidocs/org/jsoup/select/Selector.html). For example, `value.parseHtml().select("img.portrait")[0]` would return the entirety of the first “img” tag with the “portrait” class found in the parsed HTML inside `value`. Returns an empty array if no matching element is found. Use with toString() to capture the results in a cell. A tutorial of select() is shown in [StrippingHTML](https://github.com/OpenRefine/OpenRefine/wiki/StrippingHTML).
 
 You can use select() more than once:
 
@@ -360,10 +366,10 @@ Reverses the array. For example, `[ 0, 1, 2, 3].reverse()` returns the array [ 3
 Sorts the array in ascending order. Sorting is case-sensitive, uppercase first and lowercase second. For example, `[ "al", "Joe", "Bob", "jim" ].sort()` returns the array [ "Bob", "Joe", "al", "jim" ]. 
 
 ###### sum(a)
-Return the sum of the numbers in the array a. For example, `[ 2, 1, 0, 3].sum()` returns 6.
+Return the sum of the numbers in the array. For example, `[ 2, 1, 0, 3].sum()` returns 6.
 
 ###### join(a, sep)
-Joins the items in the array with the separator string, and returns it all as a string. For example, `[ "and", "or", "not" ].join("/")` returns the string “and/or/not”.
+Joins the items in the array with sep, and returns it all as a string. For example, `[ "and", "or", "not" ].join("/")` returns the string “and/or/not”.
 
 ###### uniques(a)
 Returns the array with duplicates removed. Case-sensitive. For example, `[ "al", "Joe", "Bob", "Joe", "Al", "Bob" ].uniques()` returns the array [ "Joe", "al", "Al", "Bob" ]. 
@@ -377,7 +383,7 @@ OpenRefine uses [Date.parse()](https://www.w3schools.com/jsref/jsref_parse.asp) 
 
 ![A screenshot of different date formats being converted, and one error.](/img/dates.png)
 
-You may need to do some reformatting if your dates are not being recognized by the toDate() function. For example, in the image above, the date that includes "7AM" is giving an error message, but the ones with "2:42 PM" and "3:22PM" are being converted.
+You may need to do some reformatting if your dates are not being recognized by the toDate() function. For example, in the image above, the date that includes “7AM” is giving an error message, but the ones with “2:42 PM” and “3:22PM” are being converted.
 
 ###### now()
 
@@ -389,7 +395,7 @@ Returns the inputted object converted to a date object. Without arguments, it re
 *   monthFirst: set false if the date is formatted with the day before the month.
 *   formatN: attempt to parse the date using an ordered list of possible formats. Supply formats based on the [SimpleDateFormat](https://docs.oracle.com/javase/8/docs/api/java/text/SimpleDateFormat.html) syntax (and see the table below for a handy reference). 
 
-For example, you can parse a column containing dates in different formats, such as cells with "Nov-09" and "11/09", using `value.toDate('MM/yy','MMM-yy').toString('yyyy-MM')` and both will output “2009-11”. For another example, "1/4/2012 13:30:00" can be parsed into a date using `value.toDate('d/M/y H&#58;m&#58;s')`.
+For example, you can parse a column containing dates in different formats, such as cells with “Nov-09” and “11/09”, using `value.toDate('MM/yy','MMM-yy').toString('yyyy-MM')` and both will output “2009-11”. For another example, “1/4/2012 13:30:00” can be parsed into a date using `value.toDate('d/M/y H&#58;m&#58;s')`.
 
 | Letter | Date or Time Component | Presentation | Examples |
 |-|-|-|-|
@@ -425,7 +431,7 @@ Also works with strings; see [diff() in string functions](#diffsd1-sd2-s-timeuni
 
 ###### inc(d, n, s timeUnit)
 
-Returns a date changed by the given amount in the given unit of time (see the table below). The default unit is “hour.” For example, if you want to move a date backwards by two months, use `value.inc(-2,'month')`.
+Returns a date changed by the given amount in the given unit of time (see the table below). The default unit is “hour”. For example, if you want to move a date backwards by two months, use `value.inc(-2,'month')`.
 
 ###### datePart(d, s timeUnit)
 
@@ -466,40 +472,40 @@ For integer division and precision, you can use simple evaluations such as `1 / 
 
 |Function|Use|Example|
 |-|-|-|
-|abs(n)|Returns the absolute value of a number.|`abs(-6)` returns 6.|
-|acos(n)|Returns the arc cosine of an angle, in the range 0 through PI.|`acos(0.345)` returns 1.218557541697832.|
-|asin(n)|Returns the arc sine of an angle in the range of -PI/2 through [PI](https://docs.oracle.com/javase/8/docs/api/java/lang/Math.html#PI)/2.|`asin(0.345)` returns 0.35223878509706474.|
-|atan(n)|Returns the arc tangent of an angle in the range of -PI/2 through PI/2.|`atan(0.345)` returns 0.3322135507465967.|
-|atan2(n1, n2)|Converts rectangular coordinates (n1, n2) to polar (r, theta). Returns number theta.|`atan2(0.345,0.6)` returns 	0.5218342798144103.|
-|ceil(n)|Returns the ceiling of a number.|`3.7.ceil()` returns 4 and `-3.7.ceil()` returns -3.|
-|combin(n1, n2)|Returns the number of combinations for n2 elements as divided into n1.|`combin(20,2)` returns 190.|
-|cos(n)|Returns the trigonometric cosine of an angle.|`cos(5)` returns 0.28366218546322625.|
-|cosh(n)|Returns the hyperbolic cosine of a value.|`cosh(5)` returns 74.20994852478785.|
-|degrees(n)|Converts an angle from radians to degrees.|`degrees(5)` returns 286.4788975654116.|
-|even(n)|Rounds the number up to the nearest even integer.|`even(5)` returns 6.|
-|exp(n)|Returns [e](https://en.wikipedia.org/wiki/E_(mathematical_constant)) raised to the power of n.|`exp(5)` returns 148.4131591025766.|
-|fact(n)|Returns the factorial of a number, starting from 1.|`fact(5)` returns 120.|
-|factn(n1, n2)|Returns the factorial of n1, starting from n2.|`factn(10,3)` returns 280.|
-|floor(n)|Returns the floor of a number.|`3.7.floor()` returns 3 and `-3.7.floor()` returns -4.|
-|gcd(n1, n2)|Returns the greatest common denominator of the two numbers.|`gcd(95,135)` returns 5.|
-|lcm(n1, n2)|Least common multiple: Returns the least common multiple of two numbers.|`lcm(95,135)` returns 2565.|
-|ln(n)|Returns the natural logarithm of n.|`ln(5)` returns 1.6094379124341003.|
-|log(n)|Returns the base 10 logarithm of n.|`log(5)` returns 0.6989700043360189.|
-|max(n1, n2)|Returns the larger of two numbers.|`max(3,10)` returns 10.|
-|min(n1, n2)|Returns the smaller of two numbers.|`min(3,10)` returns 3.|
-|mod(n1, n2)|Returns n1 modulus n2. Note: `value.mod(9)` will work, whereas `74.mod(9)` will not work.|`mod(74, 9)` returns 2. |
-|multinomial(n1, n2 …(optional))|Calculates the multinomial of one number or a series of numbers.|`multinomial(2,3)` returns 10.|
-|odd(n)|Rounds the number up to the nearest odd integer.|`odd(10)` returns 11.|
-|pow(n1, n2)|Returns n1 raised to the power of n2. Note: value.pow(3)` will work, whereas `2.pow(3)` will not work.|`pow(2, 3)` returns 8 (2 cubed) and `pow(3, 2)` returns 9 (3 squared). The square root of any numeric value can be called with `value.pow(0.5)`.|
-|quotient(n1, n2)|Returns the integer portion of a division (truncated, not rounded), when supplied with a numerator and denominator.|`quotient(9,2)` returns 4.|
-|radians(n)|Converts an angle in degrees to radians.|`radians(10)` returns 0.17453292519943295.|
-|randomNumber(n lower_bound, n upper_bound)|Returns a random integer in the interval between the lower and upper bounds (inclusively). Will output a different random number in each cell in a column.|
-|round(n)|Rounds a number to the nearest integer.|`3.7.round()` returns 4 and `-3.7.round()` returns -4.|
-|sin(n)|Returns the trigonometric sine of an angle.|`sin(10)` returns -0.5440211108893698.|
-|sinh(n)|Returns the hyperbolic sine of an angle.|`sinh(10)` returns 11013.232874703393.|
-|sum(a)|Sums the numbers in an array. Ignores non-number items. Returns 0 if the array does not contain numbers.|`sum([ 10, 2, three ])` returns 12.|
-|tan(n)|Returns the trigonometric tangent of an angle.|`tan(10)` returns 0.6483608274590866.|
-|tanh(n)|Returns the hyperbolic tangent of a value.|`tanh(10)` returns 0.9999999958776927.|
+|`abs(n)`|Returns the absolute value of a number.|`abs(-6)` returns 6.|
+|`acos(n)`|Returns the arc cosine of an angle, in the range 0 through PI.|`acos(0.345)` returns 1.218557541697832.|
+|`asin(n)`|Returns the arc sine of an angle in the range of -PI/2 through [PI](https://docs.oracle.com/javase/8/docs/api/java/lang/Math.html#PI)/2.|`asin(0.345)` returns 0.35223878509706474.|
+|`atan(n)`|Returns the arc tangent of an angle in the range of -PI/2 through PI/2.|`atan(0.345)` returns 0.3322135507465967.|
+|`atan2(n1, n2)`|Converts rectangular coordinates (n1, n2) to polar (r, theta). Returns number theta.|`atan2(0.345,0.6)` returns 	0.5218342798144103.|
+|`ceil(n)`|Returns the ceiling of a number.|`3.7.ceil()` returns 4 and `-3.7.ceil()` returns -3.|
+|`combin(n1, n2)`|Returns the number of combinations for n2 elements as divided into n1.|`combin(20,2)` returns 190.|
+|`cos(n)`|Returns the trigonometric cosine of an angle.|`cos(5)` returns 0.28366218546322625.|
+|`cosh(n)`|Returns the hyperbolic cosine of a value.|`cosh(5)` returns 74.20994852478785.|
+|`degrees(n)`|Converts an angle from radians to degrees.|`degrees(5)` returns 286.4788975654116.|
+|`even(n)`|Rounds the number up to the nearest even integer.|`even(5)` returns 6.|
+|`exp(n)`|Returns [e](https://en.wikipedia.org/wiki/E_(mathematical_constant)) raised to the power of n.|`exp(5)` returns 148.4131591025766.|
+|`fact(n)`|Returns the factorial of a number, starting from 1.|`fact(5)` returns 120.|
+|`factn(n1, n2)`|Returns the factorial of n1, starting from n2.|`factn(10,3)` returns 280.|
+|`floor(n)`|Returns the floor of a number.|`3.7.floor()` returns 3 and `-3.7.floor()` returns -4.|
+|`gcd(n1, n2)`|Returns the greatest common denominator of the two numbers.|`gcd(95,135)` returns 5.|
+|`lcm(n1, n2)`|Returns the least common multiple of two numbers.|`lcm(95,135)` returns 2565.|
+|`ln(n)`|Returns the natural logarithm of n.|`ln(5)` returns 1.6094379124341003.|
+|`log(n)`|Returns the base 10 logarithm of n.|`log(5)` returns 0.6989700043360189.|
+|`max(n1, n2)`|Returns the larger of two numbers.|`max(3,10)` returns 10.|
+|`min(n1, n2)`|Returns the smaller of two numbers.|`min(3,10)` returns 3.|
+|`mod(n1, n2)`|Returns n1 modulus n2. Note: `value.mod(9)` will work, whereas `74.mod(9)` will not work.|`mod(74, 9)` returns 2. |
+|`multinomial(n1, n2 …(optional))`|Calculates the multinomial of one number or a series of numbers.|`multinomial(2,3)` returns 10.|
+|`odd(n)`|Rounds the number up to the nearest odd integer.|`odd(10)` returns 11.|
+|`pow(n1, n2)`|Returns n1 raised to the power of n2. Note: value.pow(3)` will work, whereas `2.pow(3)` will not work.|`pow(2, 3)` returns 8 (2 cubed) and `pow(3, 2)` returns 9 (3 squared). The square root of any numeric value can be called with `value.pow(0.5)`.|
+|`quotient(n1, n2)`|Returns the integer portion of a division (truncated, not rounded), when supplied with a numerator and denominator.|`quotient(9,2)` returns 4.|
+|`radians(n)`|Converts an angle in degrees to radians.|`radians(10)` returns 0.17453292519943295.|
+|`randomNumber(n lower_bound, n upper_bound)`|Returns a random integer in the interval between the lower and upper bounds (inclusively). Will output a different random number in each cell in a column.|
+|`round(n)`|Rounds a number to the nearest integer.|`3.7.round()` returns 4 and `-3.7.round()` returns -4.|
+|`sin(n)`|Returns the trigonometric sine of an angle.|`sin(10)` returns -0.5440211108893698.|
+|`sinh(n)`|Returns the hyperbolic sine of an angle.|`sinh(10)` returns 11013.232874703393.|
+|`sum(a)`|Sums the numbers in an array. Ignores non-number items. Returns 0 if the array does not contain numbers.|`sum([ 10, 2, three ])` returns 12.|
+|`tan(n)`|Returns the trigonometric tangent of an angle.|`tan(10)` returns 0.6483608274590866.|
+|`tanh(n)`|Returns the hyperbolic tangent of a value.|`tanh(10)` returns 0.9999999958776927.|
 
 ## Other functions
 
@@ -516,21 +522,21 @@ Returns the facet count corresponding to the given choice value, by looking for 
 | watch | Amit | 80 | 1 |
 | clock | Claire | 62 | 2 |
 
-The facet expression, wrapped in quotes, can be useful to manipulate the inputted values before counting. For example, you could create a numeric facet that rounds the price to the nearest $10, then counts: `(round(value / 10.0)*10).facetCount("round(value / 10.0)*10","Price")`. This would count 1 value at 20, 2 at 60, 1 at 80, and 2 at 60.
+The facet expression, wrapped in quotes, can be useful to manipulate the inputted values before counting. For example, you could do a textual cleanup using fingerprint(): `(value.fingerprint()).facetCount(value.fingerprint(),"Gift")`.
 
 ###### hasField(o, s name)
 Returns a boolean indicating whether o has a member field called name. For example, `cell.recon.hasField("match")` will return false if a reconciliation match hasn’t been selected yet, or true if it does. You cannot chain your desired fields: for example, `cell.hasField(“recon.match”)` will return false even if the above expression returns true).
 
 ###### coalesce(o1, o2, o3, ...)
-Returns the first non-null from a series of values of any kind. For example, `coalesce(value, "")` would return an empty string "" if the value was null, but otherwise return the value.
+Returns the first non-null from a series of values of any kind. For example, `coalesce(value, "")` would return an empty string “” if the value was null, but otherwise return the value.
 
 ###### cross(cell, s projectName, s columnName)
-Returns an array of zero or more rows in the project projectName for which the cells in their column columnName have the same content as the cell in your chosen column. For example, if two projects contained matching names, and you wanted to pull addresses for people by their names from a project called "People" you would apply the following expression to your column of names: 
+Returns an array of zero or more rows in the project projectName for which the cells in their column columnName have the same content as the cell in your chosen column. For example, if two projects contained matching names, and you wanted to pull addresses for people by their names from a project called “People” you would apply the following expression to your column of names: 
 ```
 cell.cross("People","Name").cells["Address"].value[0]
 ```
 
-This would match your current column to the "Name" column in "People" and, using those matches, pull the respective "Address" value into your current project. 
+This would match your current column to the “Name” column in “People” and, using those matches, pull the respective “Address” value into your current project. 
 
 You may need to do some data preparation with cross(), such as using trim() on your key columns or deduplicating values.
 

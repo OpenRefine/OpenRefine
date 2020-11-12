@@ -121,13 +121,13 @@ Most of the OpenRefine-specific variables have attributes: aspects of the variab
 
 |Variable |Meaning |
 |-|-|
-| value | The value of the cell in the current column of the current row (can be null) |
-| row | The current row |
-| row.record | One or more rows grouped together to form a record |
-| cells | The cells of the current row, with fields that correspond to the column names (or row.cells) |
-| cell | The cell in the current column of the current row, containing value and other attributes |
-| cell.recon | The cell's reconciliation information returned from a reconciliation service or provider |
-| rowIndex | The index value of the current row (the first row is 0) |
+| `value` | The value of the cell in the current column of the current row (can be null) |
+| `row` | The current row |
+| `row.record` | One or more rows grouped together to form a record |
+| `cells` | The cells of the current row, with fields that correspond to the column names (or row.cells) |
+| `cell` | The cell in the current column of the current row, containing value and other attributes |
+| `cell.recon` | The cell's reconciliation information returned from a reconciliation service or provider |
+| `rowIndex` | The index value of the current row (the first row is 0) |
 
 ### Row
 
@@ -135,12 +135,12 @@ The `row` variable itself is best used to access its member fields, which you ca
 
 |Field |Meaning |
 |-|-|
-| row.index | The index value of the current row (the first row is 0) |
-| row.cells | The cells of the row, returned as an array |
-| row.columnNames | An array of the column names of the row, i.e. the column names in the project. This will report all columns, even those with null cell values in the particular row. |
-| row.starred | A boolean indicating if the row is starred |
-| row.flagged | A boolean indicating if the row is flagged |
-| row.record | The [record](#record) object containing the current row |
+| `row.index` | The index value of the current row (the first row is 0) |
+| `row.cells` | The cells of the row, returned as an array |
+| `row.columnNames` | An array of the column names of the row, i.e. the column names in the project. This will report all columns, even those with null cell values in the particular row. |
+| `row.starred` | A boolean indicating if the row is starred |
+| `row.flagged` | A boolean indicating if the row is flagged |
+| `row.record` | The [record](#record) object containing the current row |
 
 For array objects such as `row.columnNames` you can preview the array using the expressions window, and output it as a string using `toString(row.columnNames)` or with something like:
 
@@ -158,10 +158,10 @@ You can use `cell` on its own in the expressions editor to copy all the contents
 
 |Field |Meaning |Member fields |
 |-|-|-|
-| cell | An object containing the entire contents of the cell | .value, .recon, .errorMessage |
-| cell.value | The value in the cell, which can be a string, a number, a boolean, null, or an error |  |
-| cell.recon | An object encapsulating reconciliation results for that cell | See the reconciliation section below |
-| cell.errorMessage | Returns the message of an *EvalError* instead of the error object itself (use value to return the error object) | .value |
+| `cell` | An object containing the entire contents of the cell | .value, .recon, .errorMessage |
+| `cell.value` | The value in the cell, which can be a string, a number, a boolean, null, or an error |  |
+| `cell.recon` | An object encapsulating reconciliation results for that cell | See the reconciliation section below |
+| `cell.errorMessage` | Returns the message of an *EvalError* instead of the error object itself (use value to return the error object) | .value |
 
 ### Reconciliation
 
@@ -169,18 +169,18 @@ Several of the fields here are equivalent to what can be used through [reconcili
 
 |Field|Meaning |Member fields |
 |-|-|-|
-| cell.recon.judgment | A string, either "matched", "new", "none" |  |
-| cell.recon.judgmentAction | A string, either "single" or "similar" (or "unknown") |  |
-| cell.recon.judgmentHistory | A number, the epoch timestamp (in milliseconds) of your judgment  |  |
-| cell.recon.matched | A boolean, true if judgment is "matched" |  |
-| cell.recon.match | The recon candidate that has been matched against this cell (or null) | .id, .name, .type |
-| cell.recon.best | The highest scoring recon candidate from the reconciliation service (or null) | .id, .name, .type, .score |
-| cell.recon.features | An array of reconciliation features to help you assess the accuracy of your matches | .typeMatch, .nameMatch, .nameLevenshtein, .nameWordDistance | 
-| cell.recon.features<br />.typeMatch  | A boolean, true if your chosen type is "matched" and false if not (or "(no type)" if unreconciled) |  |
-| cell.recon.features<br />.nameMatch | A boolean, true if the cell and candidate strings are identical and false if not (or "(unreconciled)") |  |
-| cell.recon.features<br />.nameLevenshtein | A number, representing the [Levenshtein distance](https://en.wikipedia.org/wiki/Levenshtein_distance): larger if the difference is greater between value and candidate |  | 
-| cell.recon.features<br />.nameWordDistance | A number, based on the [word similarity](reconciling#reconciliation-facets) |  |
-| cell.recon.candidates | An array of the top 3 candidates (default) | .id, .name, .type, .score |
+| `cell.recon.judgment` | A string, either "matched", "new", "none" |  |
+| `cell.recon.judgmentAction` | A string, either "single" or "similar" (or "unknown") |  |
+| `cell.recon.judgmentHistory` | A number, the epoch timestamp (in milliseconds) of your judgment  |  |
+| `cell.recon.matched` | A boolean, true if judgment is "matched" |  |
+| `cell.recon.match` | The recon candidate that has been matched against this cell (or null) | .id, .name, .type |
+| `cell.recon.best` | The highest scoring recon candidate from the reconciliation service (or null) | .id, .name, .type, .score |
+| `cell.recon.features` | An array of reconciliation features to help you assess the accuracy of your matches | .typeMatch, .nameMatch, .nameLevenshtein, .nameWordDistance | 
+| `cell.recon.features<br />.typeMatch`  | A boolean, true if your chosen type is "matched" and false if not (or "(no type)" if unreconciled) |  |
+| `cell.recon.features<br />.nameMatch` | A boolean, true if the cell and candidate strings are identical and false if not (or "(unreconciled)") |  |
+| `cell.recon.features<br />.nameLevenshtein` | A number, representing the [Levenshtein distance](https://en.wikipedia.org/wiki/Levenshtein_distance): larger if the difference is greater between value and candidate |  | 
+| `cell.recon.features<br />.nameWordDistance` | A number, based on the [word similarity](reconciling#reconciliation-facets) |  |
+| `cell.recon.candidates` | An array of the top 3 candidates (default) | .id, .name, .type, .score |
 
 The `cell.recon.candidates` and `cell.recon.best` objects have a few deeper fields: `id`, `name`, `type`, and `score`. `type` is an array of type identifiers for a list of candidates, or a single string for the best candidate. 
 
@@ -195,11 +195,11 @@ A `row.record` object encapsulates one or more rows that are grouped together, w
 
 |Field|Meaning |
 |-|-|
-| row.record.index | The index of the current record (starting at 0) |
-| row.record.cells | The cells of the row |
-| row.record.fromRowIndex | The row index of the first row in the record |
-| row.record.toRowIndex | The row index of the last row in the record + 1 (i.e. the next row) |
-| row.record.rowCount | count of the number of rows in the record |
+| `row.record.index` | The index of the current record (starting at 0) |
+| `row.record.cells` | The cells of the row |
+| `row.record.fromRowIndex` | The row index of the first row in the record |
+| `row.record.toRowIndex` | The row index of the last row in the record + 1 (i.e. the next row) |
+| `row.record.rowCount` | count of the number of rows in the record |
 
 ## GREL (General Refine Expression Language)
 
@@ -209,11 +209,11 @@ GREL is designed to resemble Javascript. Formulas use variables and depend on da
 
 |Example|Output|
 |---|---|
-| value + " (approved)" | Concatenate two strings; whatever is in the cell gets converted to a string first |
-| value + 2.239    | Add 2.239 to the existing value (if a number); append text "2.239" to the end of the string otherwise |
-| value.trim().length() &nbsp; &nbsp; | Trim leading and trailing whitespace of the cell value and then output the length of the result |
-| value.substring(7, 10) | Output the substring of the value from character index 7, 8, and 9 (excluding character index 10) |
-| value.substring(13) | Output the substring from index 13 to the end of the string |
+| `value + " (approved)"` | Concatenate two strings; whatever is in the cell gets converted to a string first |
+| `value + 2.239`    | Add 2.239 to the existing value (if a number); append text "2.239" to the end of the string otherwise |
+| `value.trim().length()` &nbsp; &nbsp; | Trim leading and trailing whitespace of the cell value and then output the length of the result |
+| `value.substring(7, 10)` | Output the substring of the value from character index 7, 8, and 9 (excluding character index 10) |
+| `value.substring(13)` | Output the substring from index 13 to the end of the string |
 
 If you're used to Excel, note that the operator for string concatenation is + (not &). Evaluating conditions uses symbols such as <, >, *, /, etc. To check whether two objects are equal, use two equal signs (`value=="true"`).
 
@@ -227,8 +227,8 @@ The second form is a shorthand to make expressions easier to read. It simply pul
 
 |Dot notation |Full notation |
 |-|-|
-| value.trim().length() | length(trim(value)) |
-| value.substring(7, 10) | substring(value, 7, 10) |
+| `value.trim().length()` | `length(trim(value))` |
+| `value.substring(7, 10)` | `substring(value, 7, 10)` |
 
 So, in the dot shorthand, the functions occur from left to right in the order of calling, rather than in the reverse order with parentheses.
 
@@ -236,16 +236,16 @@ The dot notation can also be used to access the member fields of [variables](#va
 
 |Example |Description |
 |-|-|
-| FirstName.cells | Access the cell in the column named “FirstName” of the current row |
-| cells["First Name"] | Access the cell in the column called “First Name” of the current row |
+| `FirstName.cells` | Access the cell in the column named “FirstName” of the current row |
+| `cells["First Name"]` | Access the cell in the column called “First Name” of the current row |
 
 Brackets can also be used to get substrings and sub-arrays, and single items from arrays:
 
 |Example |Description |
 |-|-|
-| value[1,3] | A substring of value, starting from character 1 up to but excluding character 3 |
-| "internationalization"[1,-2] | Will return “nternationalizati” (negative indexes are counted from the end) |
-|row.columnNames[5]| Will return the name of the fifth column |
+| `value[1,3]` | A substring of value, starting from character 1 up to but excluding character 3 |
+| `"internationalization"[1,-2]` | Will return “nternationalizati” (negative indexes are counted from the end) |
+| `row.columnNames[5]` | Will return the name of the fifth column |
 
 Any function that outputs an array can use square brackets to select only one part of the array to output as a string (remember that the index of the items in an array starts with 0). For example, partition() would normally output an array of three items: the part before your chosen fragment, the fragment you've identified, and the part after. Selecting the third part with "internationalization".partition("nation")[2] will output “alization” (and so will [-1], indicating the final item in the array).
 
