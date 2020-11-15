@@ -26,6 +26,7 @@
  ******************************************************************************/
 package com.google.refine.preference;
 
+import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertTrue;
 
@@ -63,9 +64,11 @@ public class PreferenceStoreTests {
         PreferenceStore prefStore = ParsingUtilities.mapper.readValue(json, PreferenceStore.class);
         assertFalse(prefStore.isDirty());
         prefStore.put("mypreference", "myvalue");
+        assertEquals(prefStore.get("mypreference"), "myvalue");
+        assertTrue(prefStore.getKeys().contains("mypreference"));
         assertTrue(prefStore.isDirty());
         TestUtils.isSerializedTo(prefStore, jsonAfter);
         assertFalse(prefStore.isDirty());
     }
-    
+
 }

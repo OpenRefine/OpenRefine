@@ -5,6 +5,7 @@ import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -177,6 +178,17 @@ public class HttpClient {
         }
     }
 
+    public static String reverseURL(String urlString) {
+        try {
+            URL url = new URL(urlString);
+            List<String> pieces = Arrays.asList(url.getHost().split("\\."));
+            Collections.reverse(pieces);
+            String reversedHost = String.join(".", pieces);
+            return new URL(url.getProtocol(), reversedHost, url.getPort(), url.getFile()).toExternalForm();
+        } catch (MalformedURLException e) {
+            return null;
+        }
+    }
 
     /**
      * Use binary exponential backoff strategy, instead of the default fixed

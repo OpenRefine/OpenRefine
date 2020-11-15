@@ -33,11 +33,13 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.preference;
 
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
-import java.util.logging.Logger;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -46,6 +48,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.google.refine.ProjectManager;
+import com.google.refine.util.HttpClient;
 import com.google.refine.util.ParsingUtilities;
 
 public class PreferenceStore  {
@@ -117,7 +121,50 @@ public class PreferenceStore  {
     public Map<String, Object> getEntries() {
     	return _prefs;
     }
-    
+
+    public Map<String, Object> getEntries(String prefix) {
+        Map<String, Object> result = new HashMap<>();
+        for (Entry<String, Object> pref : _prefs.entrySet()) {
+            if (pref.getKey().startsWith(prefix)) {
+                result.put(pref.getKey(), pref.getValue());
+            }
+        }
+        return Collections.unmodifiableMap(result);
+    }
+
+    public static String[] getCredentials(String url) {
+        String PREFIX = "http-auth-";
+        PreferenceStore prefStore = ProjectManager.singleton.getPreferenceStore();
+        // FIXME: The line below returns an empty preference store
+        // PreferenceStore ps2 =  _project.getMetadata().getPreferenceStore();
+        Map<String, Object> auths =prefStore.getEntries(PREFIX);
+        String reversedUrl = HttpClient.reverseURL(url);
+        String match = "";
+        // TODO: Do we want to ignore protocol for matching purposes?
+        for (  Entry<String, Object> auth : auths.entrySet()) {
+            String candidate = auth.getKey().substring(PREFIX.length());
+            if (reversedUrl.startsWith(candidate) && candidate.length() > match.length()) {
+                match = candidate;
+            }
+        }
+        if (!"".equals(match)) {
+            String payload = (String) auths.get(PREFIX + match);
+            if (payload != null && !"".equals(payload)) {
+                String[] pieces = payload.split(" ");
+                if ("token".equals(pieces[0]) || "basic".equals(pieces[0])) {
+                    String name = pieces[1]; // no spaces allowed in name
+                    // rejoin any spaces in the password
+                    String value = String.join(" ", Arrays.copyOfRange(pieces, 2, pieces.length));
+                    return new String[] {pieces[0], name, value};
+                } else {
+                    throw new RuntimeException("Unrecognized authentication payload in prefences for " + url);
+                }
+            }
+        }
+        return null;
+    }
+
+
     static public Object loadObject(JsonNode o) {
         try {
 	        if (o instanceof ObjectNode) {

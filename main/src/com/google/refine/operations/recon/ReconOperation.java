@@ -64,6 +64,7 @@ import com.google.refine.model.recon.ReconConfig;
 import com.google.refine.model.recon.ReconJob;
 import com.google.refine.model.recon.StandardReconConfig;
 import com.google.refine.operations.EngineDependentOperation;
+import com.google.refine.preference.PreferenceStore;
 import com.google.refine.process.LongRunningProcess;
 import com.google.refine.process.Process;
 import com.google.refine.util.ParsingUtilities;
@@ -241,9 +242,15 @@ public class ReconOperation extends EngineDependentOperation {
                 // TODO : Not sure what to do here?
                 e2.printStackTrace();
             }
-            
+
+            String url = ((StandardReconConfig)_reconConfig).service;
+            String[] auth = PreferenceStore.getCredentials(url);
+            if (auth != null) {
+                ((StandardReconConfig)_reconConfig).setAuthenticationInfo(auth);
+            }
+
             Map<String, JobGroup> jobKeyToGroup = new HashMap<String, JobGroup>();
-            
+
             for (ReconEntry entry : _entries) {
                 ReconJob job = _reconConfig.createJob(
                     _project, 
@@ -353,5 +360,6 @@ public class ReconOperation extends EngineDependentOperation {
                 _project.processManager.onDoneProcess(this);
             }
         }
+
     }
 }

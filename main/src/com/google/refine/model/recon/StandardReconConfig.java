@@ -35,6 +35,7 @@ package com.google.refine.model.recon;
 
 import java.io.IOException;
 import java.io.StringWriter;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -45,6 +46,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.hc.core5.net.URIBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -121,6 +123,7 @@ public class StandardReconConfig extends ReconConfig {
     static protected class StandardReconJob extends ReconJob {
         String text;
         String code;
+        Project project;
         
         @Override
         public int getKey() {
@@ -153,6 +156,8 @@ public class StandardReconConfig extends ReconConfig {
 
     // initialized lazily
     private HttpClient httpClient = null;
+
+    private String[] authInfo;
 
     @JsonCreator
     public StandardReconConfig(
@@ -436,7 +441,18 @@ public class StandardReconConfig extends ReconConfig {
         return httpClient;
     }
 
-    private String postQueries(String url, String queriesString) throws IOException {
+    public void setAuthenticationInfo(String[] auth) {
+        if (auth != null) {
+            authInfo = auth;
+        }
+    }
+
+    private String postQueries(String url, String queriesString) throws IOException, URISyntaxException {
+        if (authInfo != null && "token".equals(authInfo[0])) {
+            url = new URIBuilder(url)
+                    .addParameter(authInfo[1], authInfo[2])
+                    .build().toString();
+        }
         try {
             return getHttpClient().postNameValue(url, "queries", queriesString);
 
@@ -497,7 +513,7 @@ public class StandardReconConfig extends ReconConfig {
                     recons.add(recon);
                 }
             }
-        } catch (IOException e) {
+        } catch (IOException | URISyntaxException e) {
             logger.error("Failed to batch recon with load:\n" + queriesString, e);
         }
 

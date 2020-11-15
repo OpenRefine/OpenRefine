@@ -115,6 +115,13 @@ abstract public class ReconConfig  {
         Cell        cell
     );
     
+    /**
+     * Reconcile a batch of entries organized into jobs
+     * 
+     * @param jobs List of jobs to be processed
+     * @param historyEntryID id to use for history entry when done
+     * @return a list of Recon objects
+     */
     abstract public List<Recon> batchRecon(List<ReconJob> jobs, long historyEntryID);
     
     abstract public Recon createNewRecon(long historyEntryID);

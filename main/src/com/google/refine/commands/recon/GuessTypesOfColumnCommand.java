@@ -34,6 +34,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package com.google.refine.commands.recon;
 
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -47,6 +48,8 @@ import java.util.Set;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import org.apache.hc.core5.net.URIBuilder;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
@@ -62,6 +65,7 @@ import com.google.refine.model.Project;
 import com.google.refine.model.ReconType;
 import com.google.refine.model.Row;
 import com.google.refine.model.recon.StandardReconConfig.ReconResult;
+import com.google.refine.preference.PreferenceStore;
 import com.google.refine.util.HttpClient;
 import com.google.refine.util.ParsingUtilities;
 
@@ -169,6 +173,13 @@ public class GuessTypesOfColumnCommand extends Command {
         String queriesString = ParsingUtilities.defaultWriter.writeValueAsString(queryMap);
         String responseString;
         try {
+            String[] authInfo = PreferenceStore.getCredentials(serviceUrl);
+            if (authInfo != null && "token".equals(authInfo[0])) {
+                serviceUrl = new URIBuilder(serviceUrl)
+                        .addParameter(authInfo[1], authInfo[2])
+                        .build().toString();
+            }
+
             responseString = postQueries(serviceUrl, queriesString);
             ObjectNode o = ParsingUtilities.evaluateJsonStringToObjectNode(responseString);
 
@@ -206,6 +217,8 @@ public class GuessTypesOfColumnCommand extends Command {
         } catch (IOException e) {
             logger.error("Failed to guess cell types for load\n" + queriesString, e);
             throw e;
+        } catch (URISyntaxException e) {
+            throw new IOException("Unexpected URI syntax exception", e);
         }
 
         List<TypeGroup> types = new ArrayList<TypeGroup>(map.values());
