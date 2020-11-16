@@ -41,6 +41,8 @@ You can also choose how to output date-formatted cells, and whether you wish to 
 
 ![A screenshot of the custom tabular file download tab.](/img/custom-tabular-exporter2.png)
 
+With the download options, you can generate a preview of how the first ten rows of your dataset will output. If you do not choose one of the file formats on the right, the "Download" button will generate a text file. 
+
 With the "Option Code" tab, you can copy JSON data that saves your current settings, to reuse on another project, or you can paste in existing JSON settings data to apply to the current project. 
 
 
