@@ -21,9 +21,9 @@ To export from a project, click the Export button at the top right corner and pi
 *   Excel (XLS or XLSX)
 *   ODF spreadsheet
 *   Upload to Google Sheets (requires Google account authorization)
-*   Custom tabular exporter
+*   [Custom tabular exporter](#custom-tabular-exporter)
 *   SQL statement exporter: creates [a table containing the data you’ve exported, which you can use to overwrite an existing database](https://blog.ouseful.info/2018/06/19/quick-notes-openrefine-working-with-databases/)
-*   Templating exporter
+*   [Templating exporter](#templating-exporter)
 
 You can also [export reconciled data to Wikidata](wikidata#editing-wikidata-with-openrefine), or save your schema for future use with others OpenRefine projects:
 
@@ -31,7 +31,20 @@ You can also [export reconciled data to Wikidata](wikidata#editing-wikidata-with
 *   Export to QuickStatement
 *   Export Wikidata schema
 
-### Templating Exporter
+### Custom tabular exporter
+
+![A screenshot of the custom tabular content tab.](/img/custom-tabular-exporter.png)
+
+With the custom tabular exporter, you can choose which of your data to export, the separator you wish to use, and whether you'd like to download it to your computer or upload it into a Google Sheet. This exporter is especially useful with reconciled data, as you can choose whether you wish to output the cells' original values, the matched values, or the matched IDs. 
+
+You can also choose how to output date-formatted cells, and whether you wish to export all the project's data or just the current view set. 
+
+![A screenshot of the custom tabular file download tab.](/img/custom-tabular-exporter2.png)
+
+With the "Option Code" tab, you can copy JSON data that saves your current settings, to reuse on another project, or you can paste in existing JSON settings data to apply to the current project. 
+
+
+### Templating exporter
 
 If you pick <span class="menuItems">Templating…</span> from the <span class="menuItems">Export</span> dropdown menu, you can “roll your own” exporter. This is useful for formats that we don't support natively yet, or won't support. For example, the Templating exporter generates JSON by default. 
 
