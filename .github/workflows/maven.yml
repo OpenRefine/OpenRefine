@@ -34,6 +34,8 @@ jobs:
 
     - name: Get the OpenRefine snapshot version
       run: echo ::set-env name=OR_VERSION::$(cat ./main/webapp/WEB-INF/classes/git.properties | jq -r '.["git.commit.id.describe"]')
+      env:
+        ACTIONS_ALLOW_UNSECURE_COMMANDS: true
 
     - name: Generate dist files
       run: ./refine dist ${{ env.OR_VERSION }}
@@ -43,6 +45,7 @@ jobs:
       id: create_release
       run: echo ::set-env name=API_RELEASE::$(./.github/workflows/release_manager.sh)
       env:
+        ACTIONS_ALLOW_UNSECURE_COMMANDS: true
         OR_VERSION: ${{ env.OR_VERSION }}
         RELEASE_REPO_OWNER: OpenRefine
         RELEASE_REPO_TOKEN: ${{ secrets.RELEASE_REPO_TOKEN }}
