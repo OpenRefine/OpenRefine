@@ -47,7 +47,7 @@ To build the OpenRefine application from source type:
 Since OpenRefine is composed of two parts, a server and a in-browser UI, the testing system reflects that:
 
 * on the server side, it's powered by [TestNG](http://testng.org/) and the unit tests are written in Java;
-* on the client side, we currently do not have any tests. Previously client side tests were implemented with [Windmill](https://github.com/windmill/windmill), which is no longer maintained.
+* on the client side, we use [Cypress](https://www.cypress.io/) and the tests are written in Javascript
 
 To run all tests, use:
 ```shell
@@ -59,6 +59,11 @@ To run all tests, use:
 If you want to run only the server side portion of the tests, use:
 ```shell
 ./refine server_test
+```
+
+If you want to run only the client side portion of the tests, use:
+```shell
+yarn --cwd ./main/tests/cypress run cypress open
 ```
 
 ## Running
