@@ -134,5 +134,9 @@
     "core-index/license": "رخصة:",
     "core-index/title": "عنوان:",
     "core-index/tags": "وسوم:",
-    "core-index/delete-key": "حذف مفتاح التفضيل"
+    "core-index/delete-key": "حذف مفتاح التفضيل",
+    "core-dialogs/browse-only-these": "تصفح هذه القيم فقط",
+    "core-dialogs/use-this-val": "استخدم هذه القيمة",
+    "core-dialogs/new-cell-val": "القيمة الجديدة للخلية",
+    "core-dialogs/merge": "دمج؟"
 }
