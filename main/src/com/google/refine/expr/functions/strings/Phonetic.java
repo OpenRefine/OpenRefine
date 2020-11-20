@@ -72,7 +72,10 @@ public class Phonetic implements Function {
                     return new EvalError(ControlFunctionRegistry.getFunctionName(this)
                             + " expects a string for the second argument");
                 }
-            }
+            } else {
+                return new EvalError(ControlFunctionRegistry.getFunctionName(this)
+                        + " expects a string for the second argument.Make sure to pass the argument in proper string format");
+                }     
         }
         if (args.length < 3) {
             if ("doublemetaphone".equalsIgnoreCase(encoding)) {
