@@ -74,7 +74,7 @@ public class Phonetic implements Function {
                 }
             } else {
                 return new EvalError(ControlFunctionRegistry.getFunctionName(this)
-                        + " expects a string for the second argument.Make sure to pass the argument in proper string format");
+                        + " expects a string for the second argument, the phonetic encoding to use.");
                 }     
         }
         if (args.length < 3) {
