@@ -129,7 +129,7 @@
     <dependency>
       <groupId>com.google.apis</groupId>
       <artifactId>google-api-services-drive</artifactId>
-      <version>v3-rev20201004-1.30.10</version>
+      <version>v3-rev20201115-1.30.10</version>
     </dependency>
     <dependency>
       <groupId>com.google.apis</groupId>
