@@ -29,6 +29,7 @@ import org.testng.Assert;
 import org.testng.annotations.Test;
 import com.google.refine.RefineTest;
 import com.google.refine.util.TestUtils;
+import com.google.refine.expr.EvalError;
 
 public class PhoneticTests extends RefineTest {
     @Test
