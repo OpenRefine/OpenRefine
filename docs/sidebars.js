@@ -38,6 +38,7 @@ module.exports = {
       'technical-reference/writing-extensions',
       'technical-reference/migrating-older-extensions',
       'technical-reference/translating',
+      'technical-reference/functional-tests'
   ]
   },
 };

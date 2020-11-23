@@ -1,0 +1,7 @@
+node_modules
+.env
+.env.local
+cypress/videos
+cypress/screenshots
+npm-debug.log
+cypress.env.json
