@@ -22,7 +22,7 @@ To export from a project, click the Export button at the top right corner and pi
 *   ODF spreadsheet
 *   Upload to Google Sheets (requires Google account authorization)
 *   [Custom tabular exporter](#custom-tabular-exporter)
-*   SQL statement exporter: creates [a table containing the data you’ve exported, which you can use to overwrite an existing database](https://blog.ouseful.info/2018/06/19/quick-notes-openrefine-working-with-databases/)
+*   [SQL statement exporter](#sql-statement-exporter)
 *   [Templating exporter](#templating-exporter)
 
 You can also [export reconciled data to Wikidata](wikidata#editing-wikidata-with-openrefine), or save your schema for future use with others OpenRefine projects:
@@ -45,6 +45,16 @@ With the download options, you can generate a preview of how the first ten rows 
 
 With the "Option Code" tab, you can copy JSON data that saves your current settings, to reuse on another project, or you can paste in existing JSON settings data to apply to the current project. 
 
+### SQL statement exporter
+
+The SQL statement exporter creates a table containing the data you’ve exported, which you can use to overwrite an existing database.
+
+![A screenshot of the SQL statement creator window.](/img/sql-exporter.png)
+
+A window with two tabs will pop up: one to define what data to output, and another to modify the statement table. This allows you to craft a complete SQL command, including DROP and IF EXISTS if you require them. 
+
+![A screenshot of the SQL statement download window.](/img/sql-exporter2.png)
+
 
 ### Templating exporter
 
@@ -65,3 +75,7 @@ You can share a project in progress with another computer, a colleague, or with 
 From the <span class="menuItems">Export</span> dropdown, select <span class="menuItems">OpenRefine project archive to file</span>. OpenRefine exports your full project with all of its history. It does not export any current views or applied facets. Any reconciliation information will be preserved, but the importing installation will need to add the same reconciliation services to keep working with that data. 
 
 OpenRefine exports files in `.tar.gz` format. You can rename the file when you save it; otherwise it will bear the project name. You can either save it locally or upload it to Google Drive (which requires you to authorize a Google account), using the <span class="menuItems">OpenRefine project archive to Google Drive...</span> option. OpenRefine will not share the link with you, only confirm that the file was uploaded.
+
+## Export operations
+
+You can [save and re-apply the history of any project](running#reusing-operations) (all the operations shown in the Undo/Redo tab). This creates JSON that you can copy into a file for later reuse.
