@@ -149,7 +149,7 @@ You can supply a sub instead of p, by putting it in quotes, and OpenRefine will 
 
 ###### match(s, p)
 
-Attempts to match the string s in its entirety against the [regex](#grel-supported-regex) pattern p and, if the pattern is found, outputs an array of all capturing groups (found in order). For example, `"230.22398, 12.3480".match(/.*(\d\d\d\d)/)` returns an array of 1 substring: [ "3480" ]. It does not find 2239 as the first sequence with four digits, because the regex indicates the four digits must come at the end of the string.
+Attempts to match the string s in its entirety against the [regex](#grel-supported-regex) pattern p and, if the pattern is found, outputs an array of all [capturing groups](https://www.regular-expressions.info/brackets.html) (found in order). For example, `"230.22398, 12.3480".match(/.*(\d\d\d\d)/)` returns an array of 1 substring: [ "3480" ]. It does not find 2239 as the first sequence with four digits, because the regex indicates the four digits must come at the end of the string.
 
 You will need to convert the array to a string to store it in a cell, with a function such as toString(). An empty array [] is returned when there is no match to the desired substrings. A null is output when the entire regex does not match.
 
