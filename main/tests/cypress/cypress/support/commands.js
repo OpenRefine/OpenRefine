@@ -67,7 +67,9 @@ Cypress.Commands.add('assertCellEquals', (rowIndex, columnName, value) => {
 	cy.get(`table.data-table thead th[title="${columnName}"]`).then(($elem) => {
 		// there are 3 td at the beginning of each row
 		const columnIndex = $elem.index() + 3;
-		cy.get(`table.data-table tbody tr:nth-child(${cssRowIndex}) td:nth-child(${columnIndex}) div`).contains(value, { timeout: 5000 });
+		cy.get(`table.data-table tbody tr:nth-child(${cssRowIndex}) td:nth-child(${columnIndex}) div.data-table-cell-content > span`).should(($cellSpan)=>{
+			expect($cellSpan.text()).equals(value);
+		});
 	});
 });
 
