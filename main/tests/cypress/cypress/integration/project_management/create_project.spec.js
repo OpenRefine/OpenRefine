@@ -67,7 +67,7 @@ describe(__filename, function () {
 		// cypress does not support window.location = ...
 		cy.get('h2').contains('HTTP ERROR 404');
 		cy.location().should((location) => {
-			expect(location.href).contains('http://localhost:3333/__/project?');
+			expect(location.href).contains(Cypress.env('OPENREFINE_URL')+'/__/project?');
 		});
 
 		cy.location().then((location) => {

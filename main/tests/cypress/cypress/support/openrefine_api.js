@@ -1,8 +1,9 @@
 Cypress.Commands.add('setPreference', (preferenceName, preferenceValue) => {
-	cy.request(Cypress.env('OPENREFINE_URL') + '/command/core/get-csrf-token').then((response) => {
+	const openRefineUrl = Cypress.env('OPENREFINE_URL')
+	cy.request( openRefineUrl + '/command/core/get-csrf-token').then((response) => {
 		cy.request({
 			method: 'POST',
-			url: `http://127.0.0.1:3333/command/core/set-preference`,
+			url: `${openRefineUrl}/command/core/set-preference`,
 			body: `name=${preferenceName}&value="${preferenceValue}"&csrf_token=${response.body.token}`,
 			form: false,
 			headers: {
@@ -15,12 +16,13 @@ Cypress.Commands.add('setPreference', (preferenceName, preferenceValue) => {
 });
 
 Cypress.Commands.add('cleanupProjects', () => {
+	const openRefineUrl = Cypress.env('OPENREFINE_URL')
 	cy.get('@deletetoken', { log: false }).then((token) => {
 		cy.get('@loadedProjectIds', { log: false }).then((loadedProjectIds) => {
 			for (const projectId of loadedProjectIds) {
 				cy.request({
 					method: 'POST',
-					url: `http://127.0.0.1:3333/command/core/delete-project?csrf_token=` + token,
+					url: `${openRefineUrl}/command/core/delete-project?csrf_token=` + token,
 					body: { project: projectId },
 					form: true,
 				}).then((resp) => {
@@ -32,6 +34,7 @@ Cypress.Commands.add('cleanupProjects', () => {
 });
 
 Cypress.Commands.add('loadProject', (fixture, projectName) => {
+	const openRefineUrl = Cypress.env('OPENREFINE_URL');
 	const openRefineProjectName = projectName ? projectName : fixture;
 	cy.fixture(fixture).then((content) => {
 		cy.get('@token', { log: false }).then((token) => {
@@ -54,7 +57,7 @@ Cypress.Commands.add('loadProject', (fixture, projectName) => {
 
 			cy.request({
 				method: 'POST',
-				url: `http://127.0.0.1:3333/command/core/create-project-from-upload?csrf_token=` + token,
+				url: `${openRefineUrl}/command/core/create-project-from-upload?csrf_token=` + token,
 				body: postData,
 				headers: {
 					'content-type': 'multipart/form-data; boundary=----BOUNDARY',
