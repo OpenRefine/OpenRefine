@@ -124,7 +124,10 @@ public class EditInspector {
         // so that all newly created entities appear in the batch
         SchemaPropertyExtractor fetcher = new SchemaPropertyExtractor();
         Set<PropertyIdValue> properties = fetcher.getAllProperties(schema);
-        List<EntityDocument> propertyDocuments = entityCache.getMultipleDocuments(properties.stream().collect(Collectors.toList()));
+        if (entityCache != null) {
+            // Prefetch property documents in one API call rather than requesting them one by one.
+            entityCache.getMultipleDocuments(properties.stream().collect(Collectors.toList()));
+        }
         WikibaseAPIUpdateScheduler scheduler = new WikibaseAPIUpdateScheduler();
         editBatch = scheduler.schedule(editBatch);
 
