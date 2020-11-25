@@ -128,6 +128,7 @@ Most of the OpenRefine-specific variables have attributes: aspects of the variab
 | `cell` | The cell in the current column of the current row, containing value and other attributes |
 | `cell.recon` | The cell's reconciliation information returned from a reconciliation service or provider |
 | `rowIndex` | The index value of the current row (the first row is 0) |
+| `columnName` | The name of the current cell's column, as a string |
 
 ### Row
 
@@ -137,7 +138,7 @@ The `row` variable itself is best used to access its member fields, which you ca
 |-|-|
 | `row.index` | The index value of the current row (the first row is 0) |
 | `row.cells` | The cells of the row, returned as an array |
-| `row.columnNames` | An array of the column names of the row, i.e. the column names in the project. This will report all columns, even those with null cell values in the particular row. |
+| `row.columnNames` | An array of the column names of the row, i.e. the column names in the project. This will report all columns, even those with null cell values in the particular row. Call a column by number with row.columnNames[3] |
 | `row.starred` | A boolean indicating if the row is starred |
 | `row.flagged` | A boolean indicating if the row is flagged |
 | `row.record` | The [record](#record) object containing the current row |
