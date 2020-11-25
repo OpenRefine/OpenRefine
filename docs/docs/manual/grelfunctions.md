@@ -470,6 +470,10 @@ OpenRefine supports the following values for timeUnit:
 
 For integer division and precision, you can use simple evaluations such as `1 / 2`, which is equivalent to `floor(1/2)` - that is, it returns only whole number results. If either operand is a floating point number, they both get promoted to floating point and a floating point result is returned. You can use `1 / 2.0` or `1.0 / 2` or `1.0 * x / y` (if you're working with variables of unknown contents).
 
+:::caution
+Some of these math functions don't recognize integers when supplied as the first argument in dot notation (e.g., `5.cos()` simply returns 5 instead of the expected result). To ensure operations are successful, always wrap the first argument in brackets, such as `(value).cos()`.
+:::
+
 |Function|Use|Example|
 |-|-|-|
 |`abs(n)`|Returns the absolute value of a number.|`abs(-6)` returns 6.|
