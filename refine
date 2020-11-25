@@ -64,7 +64,7 @@ and <action> is one of
 
    test ................................ Run all OpenRefine tests
    server_test ......................... Run only the server tests
-   ui_test ............................. Run only the UI tests
+   ui_test <project_id> <record_key> ... Run only the UI tests (If passing a project Id and a record key, tests will be recorded in Cypress.io Dashboard)
    extensions_test ..................... Run only the extensions tests
 
    broker .............................. Run OpenRefine Broker
@@ -480,15 +480,23 @@ test() {
 }
 
 ui_test() {
-    INTERACTIVE=$1
+    CYPRESS_PROJECT_ID="$1"
+    CYPRESS_RECORD_KEY="$2"
+    CYPRESS_RECORD=0
     
-    windmill_prepare
+    if [ ! -z "$CYPRESS_PROJECT_ID" ] && [ ! -z "$CYPRESS_RECORD_KEY" ] ; then
+        CYPRESS_RECORD=1
+        echo "Tests will be recorded in Cypress Dashboard"
+    elif [ ! -z "$CYPRESS_PROJECT_ID" ] && [ -z "$CYPRESS_RECORD_KEY" ] ; then
+        fail "Found a Cypress project id but no record key"
+    fi
 
     REFINE_DATA_DIR="${TMPDIR:=/tmp}/openrefine-tests"
     
     add_option "-Drefine.headless=true"
+    add_option "-Drefine.verbosity=error"
     
-    run fork
+    run fork > /dev/null
     
     echo "Waiting for OpenRefine to load..."
     sleep 5
@@ -498,16 +506,27 @@ ui_test() {
     fi
     echo "... proceed with the tests."
     echo ""
-    
-    load_data "$REFINE_TEST_DIR/data/food.csv" "Food"
-    sleep 3
-    echo ""
-    
-    echo "Starting Windmill..."
-    if [ -z "$INTERACTIVE" ] ; then
-        "$WINDMILL" firefox firebug loglevel=WARN http://${REFINE_HOST}:${REFINE_PORT}/ jsdir=$REFINE_TEST_DIR/client/src exit
+
+    echo "Starting Cypress..."
+    CYPRESS_RUN_CMD="yarn --cwd ./main/tests/cypress run cypress run --quiet --reporter list --env OPENREFINE_URL=http://$REFINE_HOST:$REFINE_PORT"
+
+    if [ "$CYPRESS_RECORD" = "1" ] ; then
+        # if tests are recorded, project id is added to env vars, and --record flag is added to the cmd-line
+        export CYPRESS_PROJECT_ID=$CYPRESS_PROJECT_ID
+        CYPRESS_RUN_CMD="$CYPRESS_RUN_CMD --record --key $CYPRESS_RECORD_KEY"
+    fi
+
+    echo $CYPRESS_RUN_CMD
+    exec $CYPRESS_RUN_CMD
+
+    if [ "$?" = "0" ] ; then
+        UI_TEST_SUCCESS="1"
     else
-        "$WINDMILL" firefox firebug loglevel=WARN http://${REFINE_HOST}:${REFINE_PORT}/
+        UI_TEST_SUCCESS="0"
+    fi
+
+    if [ "$CYPRESS_RECORD" = "1" ] ; then
+        echo "You can review tests on Cypress.io: https://dashboard.cypress.io/projects/$CYPRESS_PROJECT_ID/runs"
     fi
     
     echo ""
@@ -515,6 +534,10 @@ ui_test() {
     /bin/kill -9 $REFINE_PID
     echo "Cleaning up"
     rm -rf "$REFINE_DATA_DIR"
+
+    if [ "$UI_TEST_SUCCESS" = "0" ] ; then
+        error "The UI test suite failed."
+    fi
 }
 
 server_test() {
