@@ -139,7 +139,7 @@ You cannot find or replace nulls with this, as null is not a string. You can ins
 
 ###### replaceChars(s, s find, s replace)
 
-Returns the string obtained by replacing a character in s, identified by find, with the corresponding character identified in replace. For example, `"Thís téxt was optícálly recógnízéd".replaceChars("áéíóú", "aeiou")` returns the string “This text was optically recognized”. You cannot use this to replace a single character with more than one character.
+Returns the string obtained by replacing a character in s, identified by find, with the corresponding character identified in replace. For example, `"Téxt thát was optícálly recógnízéd".replaceChars("áéíóú", "aeiou")` returns the string “Text that was optically recognized”. You cannot use this to replace a single character with more than one character.
 
 ###### find(s, sub or p)
 
@@ -228,7 +228,7 @@ Returns the [SHA-1 hash](https://en.wikipedia.org/wiki/SHA-1) of an object. If f
 
 ###### phonetic(s, s encoding)
 
-Returns a phonetic encoding of a string, based on an available phonetic algorithm. See the [section on phonetic clustering](cellediting#clustering-methods) for more information. Can be one of the following supported phonetic methods: [metaphone, doublemetaphone, metaphone3](https://www.wikipedia.org/wiki/Metaphone), [soundex](https://en.wikipedia.org/wiki/Soundex), [cologne](https://en.wikipedia.org/wiki/Cologne_phonetics). For example, `"Ruth Prawer Jhabvala".phonetic("metaphone")` outputs the string “R0PRWRJHBFL”. Note that quotes are required around your method; otherwise, it will default to metaphone3. 
+Returns a phonetic encoding of a string, based on an available phonetic algorithm. See the [section on phonetic clustering](cellediting#clustering-methods) for more information. Can be one of the following supported phonetic methods: [metaphone, doublemetaphone, metaphone3](https://www.wikipedia.org/wiki/Metaphone), [soundex](https://en.wikipedia.org/wiki/Soundex), [cologne](https://en.wikipedia.org/wiki/Cologne_phonetics). Quotes are required around your encoding method. For example, `"Ruth Prawer Jhabvala".phonetic("metaphone")` outputs the string “R0PRWRJHBFL”.  
 
 ###### reinterpret(s, s encoder)
 
