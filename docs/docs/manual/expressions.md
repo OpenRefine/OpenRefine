@@ -394,7 +394,7 @@ Full documentation on the Jython language can be found on its official site: [ht
 
 ## Clojure
 
-Clojure 1.10.1 comes bundled with the default installation of OpenRefine 3.4.1. At this time, not all [variables](#variables) can be used with Clojure expressions: only value, row, rowIndex, cell, and cells are available.
+Clojure 1.10.1 comes bundled with the default installation of OpenRefine 3.4.1. At this time, not all [variables](#variables) can be used with Clojure expressions: only `value`, `row`, `rowIndex`, `cell`, and `cells` are available.
 
 For example, functions can take the form 
 ```
