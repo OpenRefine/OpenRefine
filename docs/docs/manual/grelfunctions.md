@@ -380,7 +380,7 @@ As of OpenRefine 3.4.1, uniques() reorders the array items it returns; in 3.4 be
 
 ###### now()
 
-Returns the current time according to your system clock, in the [ISO 8601 extended format](exploring#data-types) (converted to UTC). For example, 12:58pm on October 28th 2020 returns [date 2020-10-28T16:58:32Z].
+Returns the current time according to your system clock, in the [ISO 8601 extended format](exploring#data-types) (converted to UTC). For example, 10:53am (and 00 seconds) on November 26th 2020 in EST returns [date 2020-11-26T15:53:00Z].
 
 ###### toDate(o, b monthFirst, s format1, s format2, ...)
 
