@@ -41,10 +41,10 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.google.refine.ProjectMetadata;
 
 public class ProjectMetadataTests {
-	  
+
     private String jsonSaveMode = null;
     private String jsonNonSaveMode = null;
-    
+
     @BeforeSuite
     public void setUpJson() throws IOException {
     	InputStream f = ProjectMetadataTests.class.getClassLoader().getResourceAsStream("example_project_metadata.json");
@@ -59,16 +59,17 @@ public class ProjectMetadataTests {
         TestUtils.isSerializedTo(metadata, jsonNonSaveMode);
         TestUtils.isSerializedTo(metadata, jsonSaveMode, true);
 	}
-	
-	@Test
-	public void serializeProjectMetadataInDifferentTimezone() throws JsonParseException, JsonMappingException, IOException {
-    	TimeZone.setDefault(TimeZone.getTimeZone("JST"));
-    	try {
-	        ProjectMetadata metadata = ParsingUtilities.mapper.readValue(jsonSaveMode, ProjectMetadata.class);
-	        TestUtils.isSerializedTo(metadata, jsonNonSaveMode);
-	        TestUtils.isSerializedTo(metadata, jsonSaveMode, true);
-    	} finally {
-    		TimeZone.setDefault(TimeZone.getTimeZone("UTC"));
-    	}
-	}
+
+    @Test
+    public void serializeProjectMetadataInDifferentTimezone() throws JsonParseException, JsonMappingException, IOException {
+        TimeZone originalTimeZone = TimeZone.getDefault();
+        try {
+            TimeZone.setDefault(TimeZone.getTimeZone("JST"));
+            ProjectMetadata metadata = ParsingUtilities.mapper.readValue(jsonSaveMode, ProjectMetadata.class);
+            TestUtils.isSerializedTo(metadata, jsonNonSaveMode);
+            TestUtils.isSerializedTo(metadata, jsonSaveMode, true);
+        } finally {
+            TimeZone.setDefault(originalTimeZone);
+        }
+    }
 }

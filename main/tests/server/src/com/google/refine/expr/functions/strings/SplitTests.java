@@ -26,16 +26,26 @@
  ******************************************************************************/
 package com.google.refine.expr.functions.strings;
 
+import static org.testng.Assert.assertEquals;
+
 import org.testng.annotations.Test;
 
-import com.google.refine.expr.functions.strings.Split;
+import com.google.refine.RefineTest;
 import com.google.refine.util.TestUtils;
 
-public class SplitTests {
+public class SplitTests extends RefineTest {
     @Test
     public void serializeSplit() {
         String json = "{\"description\":\"Returns the array of strings obtained by splitting s with separator sep. If preserveAllTokens is true, then empty segments are preserved.\",\"params\":\"string s, string or regex sep, optional boolean preserveAllTokens\",\"returns\":\"array\"}";
         TestUtils.isSerializedTo(new Split(), json);
+    }
+
+    @Test
+    public void testSplit() {
+        assertEquals(invoke("split", "a,,b,c,d", ","), new String[] {"a", "b", "c", "d"});
+        assertEquals(invoke("split", "a,,b,c,d", ",", true), new String[] {"a", "", "b", "c", "d"});
+        assertEquals(invoke("split", "", ","), new String[] {});
+        assertEquals(invoke("split", ",,,", ","), new String[] {""}); // TODO: Should this return an empty array?
     }
 }
 

@@ -147,18 +147,17 @@ public class SeparatorBasedImporter extends TabularImportingParserBase {
                     usedColumnNames = true;
                     return columnNames;
                 } else {
-	                String line = lnReader.readLine();
-	                if (line == null) {
-	                    return null;
-	                } else {
-	                    return getCells(line, parser, lnReader);
-	                }
+                    String line = lnReader.readLine();
+                    if (line == null) {
+                        return null;
+                    } else {
+                        return getCells(line, parser, lnReader);
+                    }
                 }
             }
         };
         
-        TabularImportingParserBase.readTable(project, metadata, job, dataReader, fileSource, limit, options, exceptions);
-        super.parseOneFile(project, metadata, job, fileSource, lnReader, limit, options, exceptions);
+        TabularImportingParserBase.readTable(project, job, dataReader, limit, options, exceptions);
     }
     
     static protected ArrayList<Object> getCells(String line, CSVParser parser, LineNumberReader lnReader)

@@ -30,7 +30,6 @@ import java.io.IOException;
 
 import org.testng.annotations.Test;
 
-import com.google.refine.sorting.SortingConfig;
 import com.google.refine.util.TestUtils;
 
 public class SortingConfigTests {

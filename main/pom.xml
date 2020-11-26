@@ -11,14 +11,19 @@
   <parent>
     <groupId>org.openrefine</groupId>
     <artifactId>openrefine</artifactId>
-    <version>3.4-SNAPSHOT</version>
+    <version>3.5-SNAPSHOT</version>
   </parent>
 
   <properties>
     <jee.path>/</jee.path>
     <jee.port>3333</jee.port>
     <refine.data>/tmp/refine</refine.data>
-    <powermock.version>2.0.2</powermock.version>
+    <powermock.version>2.0.9</powermock.version>
+    <!-- org.odftoolkit:odfdom-java:jar:0.9.0-RC1 bundles Jena 3.9.0 so we should match that
+         Jena 3.15.0 doesn't work. Versions through 3.14.0 appear to, but we'll be conservative
+    -->
+    <jena.version>3.9.0</jena.version>
+    <okhttp.version>4.9.0</okhttp.version>
   </properties>
 
   <scm>
@@ -44,7 +49,7 @@
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>build-helper-maven-plugin</artifactId>
-        <version>1.8</version>
+        <version>3.2.0</version>
         <executions>
           <execution>
             <phase>generate-sources</phase>
@@ -62,7 +67,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
-        <version>3.8.0</version>
+        <version>3.8.1</version>
         <configuration>
 	  <!--release>11</release-->
           <encoding>UTF-8</encoding>
@@ -72,7 +77,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-resources-plugin</artifactId>
-        <version>2.6</version>
+        <version>3.2.0</version>
         <configuration>
           <encoding>UTF-8</encoding>
         </configuration>
@@ -90,7 +95,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-dependency-plugin</artifactId>
-        <version>3.1.1</version>
+        <version>3.1.2</version>
         <executions>
             <execution>
             <phase>compile</phase>
@@ -99,6 +104,7 @@
             </goals>
             <configuration>
                 <outputDirectory>webapp/WEB-INF/lib</outputDirectory>
+                <includeScope>runtime</includeScope>
             </configuration>
             </execution>
         </executions>
@@ -106,7 +112,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-jar-plugin</artifactId>
-        <version>3.1.0</version>
+        <version>3.2.0</version>
         <executions>
           <execution>
             <goals>
@@ -130,7 +136,7 @@
     <plugin>
         <groupId>pl.project13.maven</groupId>
         <artifactId>git-commit-id-plugin</artifactId>
-        <version>2.2.4</version>
+        <version>4.0.3</version>
         <executions>
             <execution>
                 <id>get-the-git-infos</id>
@@ -141,7 +147,6 @@
         </executions>
         <configuration>
             <dotGitDirectory>${project.basedir}/.git</dotGitDirectory>
-            <prefix>git</prefix>
             <verbose>false</verbose>
             <generateGitPropertiesFile>true</generateGitPropertiesFile>
             <generateGitPropertiesFilename>${project.build.outputDirectory}/git.properties</generateGitPropertiesFilename>
@@ -153,6 +158,11 @@
                 <always>false</always>
                 <dirty>-dirty</dirty>
             </gitDescribe>
+            <includeOnlyProperties>
+              <includeOnlyProperty>^git.build.(time|version)$</includeOnlyProperty>
+              <includeOnlyProperty>^git.branch</includeOnlyProperty>
+              <includeOnlyProperty>^git.commit.id.(abbrev|full|describe)$</includeOnlyProperty>
+            </includeOnlyProperties>
         </configuration>
       </plugin>
     </plugins>
@@ -168,12 +178,12 @@
     <dependency>
       <groupId>org.openrefine.dependencies</groupId>
       <artifactId>butterfly</artifactId>
-      <version>1.0.2</version>
+      <version>1.0.4</version>
     </dependency>
     <dependency>
       <groupId>org.mozilla</groupId>
-      <artifactId>rhino</artifactId>
-      <version>1.7.10</version>
+      <artifactId>rhino-runtime</artifactId>
+      <version>1.7.13</version>
     </dependency>
     <dependency>
       <groupId>com.fasterxml.jackson.core</groupId>
@@ -188,22 +198,17 @@
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-log4j12</artifactId>
-      <version>1.7.18</version>
+      <version>${slf4j.version}</version>
     </dependency>
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-api</artifactId>
-      <version>1.7.18</version>
+      <version>${slf4j.version}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.commons</groupId>
       <artifactId>commons-lang3</artifactId>
-      <version>3.6</version>
-    </dependency>
-    <dependency>
-      <groupId>commons-digester</groupId>
-      <artifactId>commons-digester</artifactId>
-      <version>1.8.1</version>
+      <version>3.11</version>
     </dependency>
     <dependency>
       <groupId>commons-fileupload</groupId>
@@ -218,12 +223,12 @@
     <dependency>
         <groupId>org.apache.commons</groupId>
         <artifactId>commons-text</artifactId>
-        <version>1.8</version>
+        <version>1.9</version>
     </dependency>
     <dependency>
       <groupId>commons-validator</groupId>
       <artifactId>commons-validator</artifactId>
-      <version>1.5.1</version>
+      <version>1.7</version>
     </dependency>
     <dependency>
       <groupId>velocity</groupId>
@@ -231,19 +236,19 @@
       <version>1.5</version>
     </dependency>
     <dependency>
-      <groupId>org.openrefine.dependencies</groupId>
+      <groupId>org.marc4j</groupId>
       <artifactId>marc4j</artifactId>
-      <version>2.4</version>
+      <version>2.9.1</version>
     </dependency>
     <dependency>
-      <groupId>org.apache.ant</groupId>
-      <artifactId>ant</artifactId> <!-- for org.apache.tools.bzip2 -->
-      <version>1.8.0</version>
+      <groupId>org.apache.commons</groupId>
+      <artifactId>commons-compress</artifactId>
+      <version>1.20</version>
     </dependency>
     <dependency>
       <groupId>org.jsoup</groupId>
       <artifactId>jsoup</artifactId>
-      <version>1.11.3</version>
+      <version>1.13.1</version>
     </dependency>
     <dependency>
       <groupId>org.openrefine.dependencies</groupId>
@@ -253,12 +258,12 @@
     <dependency>
       <groupId>org.apache.poi</groupId>
       <artifactId>poi</artifactId>
-      <version>4.1.1</version>
+      <version>4.1.2</version>
     </dependency>
     <dependency>
       <groupId>org.apache.poi</groupId>
       <artifactId>poi-ooxml</artifactId>
-      <version>4.1.1</version>
+      <version>4.1.2</version>
     </dependency>
     <dependency>
       <groupId>org.odftoolkit</groupId>
@@ -268,62 +273,67 @@
     <dependency>
       <groupId>org.openrefine.dependencies</groupId>
       <artifactId>vicino</artifactId>
-      <version>1.1</version>
+      <version>1.2</version>
     </dependency>
     <dependency>
       <groupId>oauth.signpost</groupId>
       <artifactId>signpost-core</artifactId>
-      <version>1.2.1.2</version>
+      <version>2.1.1</version>
     </dependency>
     <dependency>
       <groupId>oauth.signpost</groupId>
       <artifactId>signpost-commonshttp4</artifactId>
-      <version>1.2.1.2</version>
+      <version>2.1.1</version>
     </dependency>
     <dependency>
       <groupId>org.clojure</groupId>
       <artifactId>clojure</artifactId>
-      <version>1.5.1</version>
+      <version>1.10.1</version>
     </dependency>
     <dependency>
       <groupId>org.apache.httpcomponents</groupId>
       <artifactId>httpclient</artifactId>
-      <version>4.5.5</version>
+      <version>4.5.13</version>
     </dependency>
     <dependency>
       <groupId>org.apache.httpcomponents</groupId>
       <artifactId>httpcore</artifactId>
-      <version>4.4.9</version>
+      <version>4.4.13</version>
     </dependency>
     <dependency>
       <groupId>org.sweble.wikitext</groupId>
       <artifactId>swc-parser-lazy</artifactId>
-      <version>3.1.7</version>
+      <version>3.1.9</version>
     </dependency>
     <dependency>
       <groupId>joda-time</groupId>
       <artifactId>joda-time</artifactId>
-      <version>2.9.9</version>
+      <version>2.10.8</version>
     </dependency>
     <dependency>
       <groupId>org.apache.jena</groupId>
       <artifactId>jena-arq</artifactId>
-      <version>3.6.0</version>
+      <version>${jena.version}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.jena</groupId>
       <artifactId>jena-base</artifactId>
-      <version>3.6.0</version>
+      <version>${jena.version}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.jena</groupId>
       <artifactId>jena-cmds</artifactId>
-      <version>3.6.0</version>
+      <version>${jena.version}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.jena</groupId>
       <artifactId>jena-core</artifactId>
-      <version>3.6.0</version>
+      <version>${jena.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>commons-io</groupId>
+      <artifactId>commons-io</artifactId>
+      <version>2.8.0</version>
     </dependency>
     <dependency>
       <groupId>com.metaweb</groupId>
@@ -331,53 +341,52 @@
       <version>1.0</version>
     </dependency>
     <dependency>
-      <groupId>org.openrefine.dependencies</groupId>
-      <artifactId>secondstring</artifactId>
-      <version>20100303</version>
-    </dependency>
-    <dependency>
-      <groupId>org.openrefine.dependencies</groupId>
-      <artifactId>arithcode</artifactId>
-      <version>1.1</version>
-    </dependency>
-    <dependency>
       <groupId>com.google.guava</groupId>
       <artifactId>guava</artifactId>
-      <version>19.0</version>
+      <version>30.0-jre</version>
     </dependency>
-
+    <dependency>
+      <groupId>javax.xml.bind</groupId>
+      <artifactId>jaxb-api</artifactId>
+      <version>2.3.1</version>
+    </dependency>
+    <dependency>
+      <groupId>com.github.albfernandez</groupId>
+      <artifactId>juniversalchardet</artifactId>
+      <version>2.3.2</version>
+    </dependency>
 
     <!-- test dependencies -->
 
     <dependency>
       <groupId>org.testng</groupId>
       <artifactId>testng</artifactId>
-      <version>6.9.10</version>
+      <version>7.3.0</version>
       <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.mockito</groupId>
-      <artifactId>mockito-core</artifactId>
-      <version>2.23.4</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>javax.xml.bind</groupId>
-      <artifactId>jaxb-api</artifactId>
-      <version>2.3.0</version>
     </dependency>
     <dependency>
       <groupId>org.powermock</groupId>
       <artifactId>powermock-module-testng</artifactId>
       <version>${powermock.version}</version>
       <scope>test</scope>
-     </dependency>
-     <dependency>
+    </dependency>
+    <dependency>
       <groupId>org.powermock</groupId>
       <artifactId>powermock-api-mockito2</artifactId>
       <version>${powermock.version}</version>
       <scope>test</scope>
-     </dependency> 
+    </dependency>
+    <dependency>
+      <groupId>com.squareup.okhttp3</groupId>
+      <artifactId>mockwebserver</artifactId>
+      <version>${okhttp.version}</version>
+      <scope>test</scope>
+     </dependency>
+    <dependency>
+      <groupId>org.apache.httpcomponents</groupId>
+      <artifactId>httpmime</artifactId>
+      <version>4.5.13</version>
+      <scope>test</scope>
+    </dependency>
   </dependencies>
 </project>
-

@@ -33,7 +33,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.expr.functions.arrays;
 
-import java.util.HashSet;
+import java.util.Arrays;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Properties;
 import java.util.Set;
@@ -51,25 +52,18 @@ public class Uniques implements Function {
     public Object call(Properties bindings, Object[] args) {
         if (args.length == 1) {
             Object v = args[0];
-            
+
             if (v != null) {
                 if (v instanceof ArrayNode) {
                     v = JSONUtilities.toArray((ArrayNode) v);
                 }
-                
-                if (v.getClass().isArray() || v instanceof List<?>) {
-                    Set<Object> set = null;
-                    
-                    if (v.getClass().isArray()) {
-                        Object[] a = (Object[]) v;
-                        
-                        set = new HashSet<Object>(a.length);
-                        for (Object element : a) {
-                            set.add(element);
-                        }
-                    } else {
-                        set = new HashSet<Object>(ExpressionUtils.toObjectList(v));
-                    }
+                Set<Object> set = null;
+                if (v.getClass().isArray()) {
+                    set = new LinkedHashSet<Object>(Arrays.asList((Object[]) v));
+                } else if (v instanceof List<?>) {
+                    set = new LinkedHashSet<Object>(ExpressionUtils.toObjectList(v));
+                }
+                if (set != null) {
                     return set.toArray();
                 }
             }

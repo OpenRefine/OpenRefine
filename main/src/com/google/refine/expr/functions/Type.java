@@ -57,8 +57,10 @@ public class Type implements Function {
                     return "number";
                 } else if (v.getClass().isArray() || v instanceof List<?>) {
                     return "array";
-                } else if (v instanceof EvalError) {
-                    return "error";
+                } else if (v instanceof Boolean) {
+                    return "boolean";
+//                } else if (v instanceof EvalError) { // @ToDo fix this with issue #2562
+//                    return "error";
                 } else {
                     return v.getClass().getName();
                 }
@@ -70,7 +72,7 @@ public class Type implements Function {
 
     @Override
     public String getDescription() {
-        return "Returns the type of o";
+        return "Returns the type of o as a string ('string', 'date', 'number', 'array', 'boolean' or a class name)";
     }
     
     @Override

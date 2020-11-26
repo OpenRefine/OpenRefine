@@ -3,7 +3,7 @@ package com.google.refine.commands.cell;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.testng.Assert.assertEquals;
-import static org.testng.AssertJUnit.assertTrue;
+import static org.testng.Assert.assertTrue;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -59,10 +59,10 @@ public class EditOneCellCommandTests extends RefineTest {
 		
 		command.doPost(request, response);
 		
-		assertEquals("a", project.rows.get(0).cells.get(0).value);
-		assertEquals("b", project.rows.get(0).cells.get(1).value);
-		assertEquals("e", project.rows.get(1).cells.get(0).value);
-		assertEquals("d", project.rows.get(1).cells.get(1).value);
+		assertEquals(project.rows.get(0).cells.get(0).value, "a");
+		assertEquals(project.rows.get(0).cells.get(1).value, "b");
+		assertEquals(project.rows.get(1).cells.get(0).value, "e");
+		assertEquals(project.rows.get(1).cells.get(1).value, "d");
 	}
 	
 	@Test
@@ -76,11 +76,11 @@ public class EditOneCellCommandTests extends RefineTest {
 
 		command.doPost(request, response);
 
-		assertEquals("a", project.rows.get(0).cells.get(0).value);
-		assertEquals("b", project.rows.get(0).cells.get(1).value);
+		assertEquals(project.rows.get(0).cells.get(0).value, "a");
+		assertEquals(project.rows.get(0).cells.get(1).value, "b");
 		assertTrue(project.rows.get(1).cells.get(0).value instanceof Long);
 		assertEquals(new Long(12345), project.rows.get(1).cells.get(0).value);
-		assertEquals("d", project.rows.get(1).cells.get(1).value);
+		assertEquals(project.rows.get(1).cells.get(1).value, "d");
 	}
 
 	@Test
@@ -94,11 +94,11 @@ public class EditOneCellCommandTests extends RefineTest {
 
 		command.doPost(request, response);
 
-		assertEquals("a", project.rows.get(0).cells.get(0).value);
-		assertEquals("b", project.rows.get(0).cells.get(1).value);
+		assertEquals(project.rows.get(0).cells.get(0).value, "a");
+		assertEquals(project.rows.get(0).cells.get(1).value, "b");
 		assertTrue(project.rows.get(1).cells.get(0).value instanceof Double);
-		assertEquals(12345.123, project.rows.get(1).cells.get(0).value);
-		assertEquals("d", project.rows.get(1).cells.get(1).value);
+		assertEquals(project.rows.get(1).cells.get(0).value, 12345.123);
+		assertEquals(project.rows.get(1).cells.get(1).value, "d");
 	}
 	
 	@Test
@@ -111,7 +111,7 @@ public class EditOneCellCommandTests extends RefineTest {
 		
 		command.doPost(request, response);
 		
-		assertEquals("c", project.rows.get(1).cells.get(0).value);
+		assertEquals(project.rows.get(1).cells.get(0).value, "c");
 		TestUtils.assertEqualAsJson("{\"code\":\"error\",\"message\":\"Missing or invalid csrf_token parameter\"}", writer.toString());
 	}
 }

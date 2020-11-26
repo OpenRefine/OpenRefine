@@ -37,7 +37,6 @@ import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
 import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.google.refine.importers.FixedWidthImporter;
 import com.google.refine.util.JSONUtilities;
 import com.google.refine.util.ParsingUtilities;
 
@@ -90,7 +89,7 @@ public class FixedWidthImporterTests extends ImporterTest {
         whenGetIntegerOption("skipDataLines", options, 0);
         whenGetIntegerOption("limit", options, -1);
         whenGetBooleanOption("storeBlankCellsAsNulls",options,true);
-        
+
         try {
             parseOneFile(SUT, reader);
         } catch (Exception e) {
@@ -107,4 +106,5 @@ public class FixedWidthImporterTests extends ImporterTest {
         Assert.assertEquals((String)project.rows.get(2).getCellValue(1), "rt");
         Assert.assertNull(project.rows.get(2).getCellValue(2));
     }
+
 }

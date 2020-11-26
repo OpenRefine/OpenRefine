@@ -11,11 +11,12 @@
   <parent>
     <groupId>org.openrefine</groupId>
     <artifactId>extensions</artifactId>
-    <version>3.4-SNAPSHOT</version>
+    <version>3.5-SNAPSHOT</version>
   </parent>
 
   <properties>
-    <powermock.version>2.0.2</powermock.version>
+    <powermock.version>2.0.9</powermock.version>
+    <wdtk.version>0.12.0-SNAPSHOT</wdtk.version>
   </properties>
 
   <build>
@@ -36,7 +37,7 @@
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>build-helper-maven-plugin</artifactId>
-        <version>1.8</version>
+        <version>3.2.0</version>
         <executions>
           <execution>
             <phase>generate-sources</phase>
@@ -54,7 +55,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
-        <version>3.1</version>
+        <version>3.8.1</version>
         <configuration>
           <source>1.8</source>
           <target>1.8</target>
@@ -65,7 +66,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-resources-plugin</artifactId>
-        <version>2.6</version>
+        <version>3.2.0</version>
         <configuration>
           <encoding>UTF-8</encoding>
         </configuration>
@@ -83,7 +84,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-dependency-plugin</artifactId>
-        <version>3.1.1</version>
+        <version>3.1.2</version>
         <executions>
             <execution>
             <phase>compile</phase>
@@ -126,24 +127,24 @@
       <scope>provided</scope>
     </dependency>
     <dependency>
-      <groupId>org.wikidata.wdtk</groupId>
+      <groupId>org.openrefine.dependencies.wdtk</groupId>
       <artifactId>wdtk-wikibaseapi</artifactId>
-      <version>0.11.0</version>
+      <version>${wdtk.version}</version>
     </dependency>
     <dependency>
-      <groupId>org.wikidata.wdtk</groupId>
+      <groupId>org.openrefine.dependencies.wdtk</groupId>
       <artifactId>wdtk-datamodel</artifactId>
-      <version>0.11.0</version>
+      <version>${wdtk.version}</version>
     </dependency>
     <dependency>
-      <groupId>org.wikidata.wdtk</groupId>
+      <groupId>org.openrefine.dependencies.wdtk</groupId>
       <artifactId>wdtk-util</artifactId>
-      <version>0.11.0</version>
+      <version>${wdtk.version}</version>
     </dependency>
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-api</artifactId>
-      <version>1.7.18</version>
+      <version>1.7.30</version>
       <scope>provided</scope>
     </dependency>
 
@@ -160,13 +161,7 @@
     <dependency>
       <groupId>org.testng</groupId>
       <artifactId>testng</artifactId>
-      <version>6.9.10</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.mockito</groupId>
-      <artifactId>mockito-core</artifactId>
-      <version>2.23.4</version>
+      <version>7.3.0</version>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -180,7 +175,13 @@
       <artifactId>powermock-api-mockito2</artifactId>
       <version>${powermock.version}</version>
       <scope>test</scope>
-     </dependency> 
+     </dependency>
+    <dependency>
+      <groupId>com.squareup.okhttp3</groupId>
+      <artifactId>mockwebserver</artifactId>
+      <version>4.9.0</version>
+      <scope>test</scope>
+    </dependency>
   </dependencies>
 
 </project>

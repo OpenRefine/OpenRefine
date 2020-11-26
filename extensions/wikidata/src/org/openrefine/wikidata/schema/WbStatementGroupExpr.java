@@ -24,6 +24,7 @@
 package org.openrefine.wikidata.schema;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.jsoup.helper.Validate;
@@ -79,7 +80,7 @@ public class WbStatementGroupExpr {
 
     @JsonProperty("statements")
     public List<WbStatementExpr> getStatements() {
-        return statementExprs;
+        return Collections.unmodifiableList(statementExprs);
     }
 
     @Override

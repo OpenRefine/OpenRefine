@@ -28,7 +28,6 @@ package com.google.refine.expr.functions.booleans;
 
 import org.testng.annotations.Test;
 
-import com.google.refine.expr.functions.booleans.Xor;
 import com.google.refine.util.TestUtils;
 
 public class XorTests {

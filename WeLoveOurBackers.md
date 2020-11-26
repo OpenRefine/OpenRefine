@@ -5,3 +5,4 @@ An evergrowing list of our forever immortalized OpenRefine Backers that we LOVE 
 3. Jens Willmer -
 4. mroswell -
 5. Google News Initiative - https://newsinitiative.withgoogle.com/
+6. Chan Zuckerberg Initiative - https://chanzuckerberg.com/

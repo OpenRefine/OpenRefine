@@ -47,8 +47,6 @@ where [options] include:
      default: 1024M
      Values less than 256M not allowed
 
-  -k <google api key> a server API key for calling Google APIs
-
   -v <level> verbosity level [from low to high: error,warn,info,debug,trace]
      default: info
 
@@ -387,7 +385,21 @@ dist() {
     get_version $1
     mvn_prepare
     "$MVN" versions:set -DnewVersion="$VERSION"
-    mvn package
+    "$MVN" package
+}
+
+windows_dist() {
+    get_version $1
+    mvn_prepare
+    "$MVN" versions:set -DnewVersion="$VERSION"
+    "$MVN" package -P windows
+}
+
+linux_dist() {
+    get_version $1
+    mvn_prepare
+    "$MVN" versions:set -DnewVersion="$VERSION"
+    "$MVN" package -P linux
 }
  
 # Kept just in case someone wants to follow this workflow on a mac,
@@ -558,10 +570,6 @@ run() {
         add_option "-Drefine.host=$REFINE_HOST"
     fi
 
-    if [ "$REFINE_GOOGLE_API_KEY" ] ; then
-        add_option "-Drefine.google_api_key=$REFINE_GOOGLE_API_KEY"
-    fi
-
     if [ "$REFINE_AUTOSAVE_PERIOD" ] ; then
         add_option "-Drefine.autosave=$REFINE_AUTOSAVE_PERIOD"
     fi
@@ -569,6 +577,7 @@ run() {
     CLASSPATH="$REFINE_CLASSES_DIR${SEP}$REFINE_LIB_DIR/*"
 
     RUN_CMD=("$JAVA" -cp "$CLASSPATH" "${OPTS[@]}" "com.google.refine.Refine")
+    echo "${RUN_CMD[@]}"
 
     echo "Starting OpenRefine at 'http://${REFINE_HOST}:${REFINE_PORT}/'"
     echo ""
@@ -751,7 +760,13 @@ fi
 
 # ----- Load configurations -------------------------------------
 
-load_configs refine.ini
+if [ -f "refine-dev.ini" ]; then
+  echo "Using refine-dev.ini for configuration"
+  load_configs refine-dev.ini
+else
+  echo "Using refine.ini for configuration"
+  load_configs refine.ini
+fi
 
 # ----- Make sure there is an appropriate java environment is available -------------
 
@@ -794,7 +809,6 @@ while [ $# -ne 0 ] ; do
         shift;
         continue;
       fi;;
-    -k) shift; REFINE_GOOGLE_API_KEY="$1"; shift; continue;;
     -v) shift; REFINE_VERBOSITY="$1"; shift; continue;;
     -x) shift; REFINE_EXTRA_OPTS="$1"; shift; continue;;
     --debug) shift; add_option '-Xdebug' '-Xrunjdwp:transport=dt_socket,address=8000,server=y,suspend=n'; continue;;
@@ -837,7 +851,7 @@ fi
 echo You have "$freeRam"M of free memory. 
 echo Your current configuration is set to use $REFINE_MEMORY of memory.
 echo OpenRefine can run better when given more memory. Read our FAQ on how to allocate more memory here:
-echo https://github.com/OpenRefine/OpenRefine/wiki/FAQ:-Allocate-More-Memory
+echo https://github.com/OpenRefine/OpenRefine/wiki/FAQ-Allocate-More-Memory
 
 if [ -z "$REFINE_MAX_FORM_CONTENT_SIZE" ] ; then
     REFINE_MAX_FORM_CONTENT_SIZE="1048576"

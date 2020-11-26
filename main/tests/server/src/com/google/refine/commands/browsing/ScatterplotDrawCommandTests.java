@@ -18,7 +18,6 @@ import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.google.refine.browsing.facets.ScatterplotFacet;
 import com.google.refine.commands.Command;
-import com.google.refine.commands.browsing.GetScatterplotCommand;
 import com.google.refine.util.ParsingUtilities;
 
 public class ScatterplotDrawCommandTests {

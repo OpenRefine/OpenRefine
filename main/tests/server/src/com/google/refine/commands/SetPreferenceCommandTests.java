@@ -1,6 +1,5 @@
 package com.google.refine.commands;
 
-import com.google.refine.commands.CommandTestBase;
 import java.io.IOException;
 
 import javax.servlet.ServletException;
