@@ -377,17 +377,10 @@ Returns the array with duplicates removed. Case-sensitive. For example, `[ "al",
 As of OpenRefine 3.4.1, uniques() reorders the array items it returns; in 3.4 beta 644 and onwards, it preserves the original order (in this case, [ "al", "Joe", "Bob", "Al" ]). 
 
 ## Date functions
-If you have a column full of dates in a more common format (such as yyyy/mm/dd or YYYYMMDD) you can convert these using [“Transform” > “Common transforms …” > “to date”](cellediting#data-type-transforms), or the GREL function toDate(). You may wish to create a new column with the transformation, in order to also preserve the more human-readable version.
-
-OpenRefine uses [Date.parse()](https://www.w3schools.com/jsref/jsref_parse.asp) to recognize a variety of formats and convert them, including converting from other time zones to UTC:
-
-![A screenshot of different date formats being converted, and one error.](/img/dates.png)
-
-You may need to do some reformatting if your dates are not being recognized by the toDate() function. For example, in the image above, the date that includes “7AM” is giving an error message, but the ones with “2:42 PM” and “3:22PM” are being converted.
 
 ###### now()
 
-Returns the current time in the [ISO 8601 extended format](exploring#data-types). For example, 12:58pm on October 28th 2020 returns [date 2020-10-28T16:58:32Z].
+Returns the current time according to your system clock, in the [ISO 8601 extended format](exploring#data-types) (converted to UTC). For example, 12:58pm on October 28th 2020 returns [date 2020-10-28T16:58:32Z].
 
 ###### toDate(o, b monthFirst, s format1, s format2, ...)
 
@@ -529,10 +522,10 @@ Returns the facet count corresponding to the given choice value, by looking for 
 The facet expression, wrapped in quotes, can be useful to manipulate the inputted values before counting. For example, you could do a textual cleanup using fingerprint(): `(value.fingerprint()).facetCount(value.fingerprint(),"Gift")`.
 
 ###### hasField(o, s name)
-Returns a boolean indicating whether o has a member field called name. For example, `cell.recon.hasField("match")` will return false if a reconciliation match hasn’t been selected yet, or true if it does. You cannot chain your desired fields: for example, `cell.hasField(“recon.match”)` will return false even if the above expression returns true).
+Returns a boolean indicating whether o has a member field called [name](expressions#variables). For example, `cell.recon.hasField("match")` will return false if a reconciliation match hasn’t been selected yet, or true if it has. You cannot chain your desired fields: for example, `cell.hasField(“recon.match”)` will return false even if the above expression returns true).
 
 ###### coalesce(o1, o2, o3, ...)
-Returns the first non-null from a series of values of any kind. For example, `coalesce(value, "")` would return an empty string “” if the value was null, but otherwise return the value.
+Returns the first non-null from a series of objects. For example, `coalesce(value, "")` would return an empty string “” if `value` was null, but otherwise return `value`.
 
 ###### cross(cell, s projectName, s columnName)
 Returns an array of zero or more rows in the project projectName for which the cells in their column columnName have the same content as the cell in your chosen column. For example, if two projects contained matching names, and you wanted to pull addresses for people by their names from a project called “People” you would apply the following expression to your column of names: 
