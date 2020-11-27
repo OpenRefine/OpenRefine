@@ -93,11 +93,14 @@ the regular expression is `\s+`, and the syntax used in the expression wraps it 
 Do not use slashes to wrap regular expressions outside of a GREL expression.
 
 The [GREL functions](#grel-general-refine-expression-language) that support regex are:
+*   contains
 *   replace
+*   find
 *   match
 *   partition
 *   rpartition
 *   split
+*   smartSplit
 
 #### Jython-supported regex
 

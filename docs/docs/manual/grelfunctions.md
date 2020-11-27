@@ -6,14 +6,14 @@ sidebar_label: GREL functions
 
 ## Reading this reference
 
-For the reference below, the function is given in full-length notation and the in-text examples are written in dot notation. Shorthands are used to indicate the kind of [data type](exploring#data-types) used in each function: s for string, b for boolean, n for number, d for date, a for array, as well as with “null” and “error.” 
+For the reference below, the function is given in full-length notation and the in-text examples are written in dot notation. Shorthands are used to indicate the kind of [data type](exploring#data-types) used in each function: s for string, b for boolean, n for number, d for date, a for array, p for a regex pattern, as well as with “null” and “error.” 
 
 If a function can take more than one kind of data as input or can output more than one kind of data, that is indicated with more than one letter (as with “s or a”) or with o for object. 
 
 We also use shorthands for substring (“sub”) and separator string (“sep”). 
 Optional arguments will say “(optional)”.
 
-In places where OpenRefine will accept a string or a regex pattern, you can supply a string by putting it in quotes. If you wish to use any regex notation, wrap the pattern in forward slashes.
+In places where OpenRefine will accept a string (s) or a regex pattern (p), you can supply a string by putting it in quotes. If you wish to use any regex notation, wrap the pattern in forward slashes.
 
 ## Boolean functions
 
