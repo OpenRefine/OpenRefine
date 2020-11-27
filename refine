@@ -64,7 +64,7 @@ and <action> is one of
 
    test ................................ Run all OpenRefine tests
    server_test ......................... Run only the server tests
-   ui_test <project_id> <record_key> ... Run only the UI tests (If passing a project Id and a record key, tests will be recorded in Cypress.io Dashboard)
+   ui_test <browser> <id> <key> ........ Run only the UI tests (If passing a project Id and a Record Key, tests will be recorded in Cypress.io Dashboard)
    extensions_test ..................... Run only the extensions tests
 
    broker .............................. Run OpenRefine Broker
@@ -480,9 +480,16 @@ test() {
 }
 
 ui_test() {
-    CYPRESS_PROJECT_ID="$1"
-    CYPRESS_RECORD_KEY="$2"
+    get_revision
+
+    BROWSER="$1"
+    CYPRESS_PROJECT_ID="$2"
+    CYPRESS_RECORD_KEY="$3"
     CYPRESS_RECORD=0
+
+    if [ -z "$BROWSER" ] ; then
+        BROWSER="electron"
+    fi
     
     if [ ! -z "$CYPRESS_PROJECT_ID" ] && [ ! -z "$CYPRESS_RECORD_KEY" ] ; then
         CYPRESS_RECORD=1
@@ -494,8 +501,9 @@ ui_test() {
     REFINE_DATA_DIR="${TMPDIR:=/tmp}/openrefine-tests"
     
     add_option "-Drefine.headless=true"
-    add_option "-Drefine.verbosity=error"
-    
+    add_option "-Drefine.autoreload=false"
+    add_option "-Dbutterfly.autoreload=false"
+ 
     run fork > /dev/null
     
     echo "Waiting for OpenRefine to load..."
@@ -508,16 +516,15 @@ ui_test() {
     echo ""
 
     echo "Starting Cypress..."
-    CYPRESS_RUN_CMD="yarn --cwd ./main/tests/cypress run cypress run --quiet --reporter list --env OPENREFINE_URL=http://$REFINE_HOST:$REFINE_PORT"
-
+    CYPRESS_RUN_CMD="yarn --cwd ./main/tests/cypress run cypress run --browser $BROWSER --headless --quiet --reporter list --env OPENREFINE_URL=http://$REFINE_HOST:$REFINE_PORT"
     if [ "$CYPRESS_RECORD" = "1" ] ; then
         # if tests are recorded, project id is added to env vars, and --record flag is added to the cmd-line
         export CYPRESS_PROJECT_ID=$CYPRESS_PROJECT_ID
-        CYPRESS_RUN_CMD="$CYPRESS_RUN_CMD --record --key $CYPRESS_RECORD_KEY"
+        CYPRESS_RUN_CMD="$CYPRESS_RUN_CMD --record --key $CYPRESS_RECORD_KEY --tag $BROWSER,$REVISION"
     fi
-
+    export MOZ_FORCE_DISABLE_E10S=1
     echo $CYPRESS_RUN_CMD
-    exec $CYPRESS_RUN_CMD
+    $CYPRESS_RUN_CMD
 
     if [ "$?" = "0" ] ; then
         UI_TEST_SUCCESS="1"
@@ -949,8 +956,8 @@ case "$ACTION" in
   distclean) mvn distclean;;
   test) test $1;;  
   tests) test $1;;  
-  ui_test) ui_test $1;;  
-  ui_tests) ui_test $1;;  
+  ui_test) ui_test $1 $2 $3;;  
+  ui_tests) ui_test $1 $2 $3;; 
   server_test) server_test $1;;  
   server_tests) server_test $1;;  
   extensions_test) extensions_test $1;;
