@@ -5,16 +5,38 @@ dist: bionic
 jobs:
   include:
     - jdk: openjdk12
+      name: "UX Tests - Chrome"
+      stage: test
       services: ~
       script:
-          - REFINE_MEMORY=4096 ./refine ui_test $CYPRESS_PROJECT_ID $CYPRESS_RECORD_KEY
+          - REFINE_MEMORY=4096 ./refine ui_test chrome $CYPRESS_PROJECT_ID $CYPRESS_RECORD_KEY
       before_script: ~
       before_install:
           - cp packaging/travis_pom.xml packaging/pom.xml
           - mvn process-resources
           - nvm install 14
           - nvm use 14
-          - cd ./main/tests/cypress && npm install && cd ../../../
+          - cd ./main/tests/cypress && yarn install && cd ../../../
+
+    - jdk: openjdk12
+      name: "UX Tests - Edge"
+      stage: test
+      services: ~
+      script:
+          - REFINE_MEMORY=4096 ./refine ui_test edge $CYPRESS_PROJECT_ID $CYPRESS_RECORD_KEY
+      before_script: ~
+      before_install:
+          - curl https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > microsoft.gpg
+          - sudo install -o root -g root -m 644 microsoft.gpg /etc/apt/trusted.gpg.d/
+          - sudo sh -c 'echo "deb [arch=amd64] https://packages.microsoft.com/repos/edge stable main" > /etc/apt/sources.list.d/microsoft-edge-dev.list'
+          - sudo rm microsoft.gpg
+          - sudo apt-get update
+          - sudo apt-get install microsoft-edge-dev
+          - cp packaging/travis_pom.xml packaging/pom.xml
+          - mvn process-resources
+          - nvm install 14
+          - nvm use 14
+          - cd ./main/tests/cypress && yarn install && cd ../../../
     - dist: trusty # Fastest build first & for all builds
       jdk: oraclejdk8 # Trusty default
     # Full matrix only for merges to master or anything to do with release branches e.g. v3.5
