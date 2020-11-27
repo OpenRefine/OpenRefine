@@ -4,7 +4,9 @@ dist: bionic
 
 jobs:
   include:
-    - jdk: openjdk12
+    - dist: trusty # Fastest build first & for all builds
+      jdk: oraclejdk8 # Trusty default
+    - jdk: oraclejdk8
       name: "UX Tests - Chrome"
       stage: test
       services: ~
@@ -17,7 +19,7 @@ jobs:
           - nvm install 14
           - nvm use 14
           - cd ./main/tests/cypress && yarn install && cd ../../../
-
+    # Full matrix only for merges to master or anything to do with release branches e.g. v3.5
     - jdk: openjdk12
       name: "UX Tests - Edge"
       stage: test
@@ -37,9 +39,6 @@ jobs:
           - nvm install 14
           - nvm use 14
           - cd ./main/tests/cypress && yarn install && cd ../../../
-    - dist: trusty # Fastest build first & for all builds
-      jdk: oraclejdk8 # Trusty default
-    # Full matrix only for merges to master or anything to do with release branches e.g. v3.5
     - if: (branch = master AND type != pull_request) OR branch ~= /^v\d\.\d.*/
       jdk: openjdk11 # Bionic default
     - if: branch = master AND type != pull_request OR branch ~= /^v\d\.\d.*/
