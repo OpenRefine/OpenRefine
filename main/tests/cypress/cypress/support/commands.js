@@ -94,7 +94,7 @@ Cypress.Commands.add('waitForDialogPanel', () => {
 
 Cypress.Commands.add('confirmDialogPanel', () => {
 	cy.get('body > .dialog-container > .dialog-frame .dialog-footer button[bind="okButton"]').click();
-	cy.get('body > .dialog-container > .dialog-frame').should('not.be.visible');
+	cy.get('body > .dialog-container > .dialog-frame').should('not.exist');
 });
 
 Cypress.Commands.add('columnActionClick', (columnName, actions) => {
