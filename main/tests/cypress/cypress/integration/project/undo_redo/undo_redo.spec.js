@@ -1,38 +1,39 @@
 describe(__filename, function () {
-	// it('Ensure the Undo button is visible after deleting a column', function () {
-	// 	cy.loadAndVisitProject('food.mini.csv');
-	// 	cy.deleteColumn('NDB_No');
+	it('Ensure the Undo button is visible after deleting a column', function () {
+		cy.loadAndVisitProject('food.mini.csv');
+		cy.deleteColumn('NDB_No');
 
-	// 	cy.get('#notification-container').should('be.visible').contains('Remove column NDB_No');
-	// 	cy.get('#notification-container .notification-action').should('be.visible').contains('Undo');
-	// });
+		cy.get('#notification-container').should('be.visible').should('to.contain', 'Remove column NDB_No');
+		cy.get('#notification-container .notification-action').should('be.visible').should('to.contain', 'Undo');
+	});
 
-	// it('Ensure the Undo button is effectively working', function () {
-	// 	cy.loadAndVisitProject('food.mini.csv');
+	it('Ensure the Undo button is effectively working', function () {
+		cy.loadAndVisitProject('food.mini.csv');
 
-	// 	cy.deleteColumn('NDB_No');
-	// 	// ensure that the column is back in the grid
-	// 	cy.get('#notification-container .notification-action').should('be.visible').contains('Undo').click();
-	// 	cy.get('.data-table th[title="NDB_No"]').should('exist');
-	// });
+		cy.deleteColumn('NDB_No');
+		// ensure that the column is back in the grid
+		cy.get('#notification-container .notification-action').should('be.visible').should('to.contain', 'Undo');
+		cy.get('#notification-container a[bind="undoLink"]').click();
+		cy.get('.data-table th[title="NDB_No"]').should('exist');
+	});
 
 	it('Delete 3 columns, then successively undo and redo the modifications using the Undo/Redo panel', function () {
 		cy.loadAndVisitProject('food.mini.csv');
 
 		// delete NDB_No
 		cy.deleteColumn('NDB_No');
-		cy.get('#or-proj-undoRedo').contains('1 / 1');
-		cy.get('.history-panel-body .history-now').contains('Remove column NDB_No');
+		cy.get('#or-proj-undoRedo').should('to.contain', '1 / 1');
+		cy.get('.history-panel-body .history-now').should('to.contain', 'Remove column NDB_No');
 
 		// delete Water
 		cy.deleteColumn('Water');
-		cy.get('#or-proj-undoRedo').contains('2 / 2');
-		cy.get('.history-panel-body .history-now').contains('Remove column Water');
+		cy.get('#or-proj-undoRedo').should('to.contain', '2 / 2');
+		cy.get('.history-panel-body .history-now').should('to.contain', 'Remove column Water');
 
 		// Delete Shrt_Desc
 		cy.deleteColumn('Shrt_Desc');
-		cy.get('#or-proj-undoRedo').contains('3 / 3');
-		cy.get('.history-panel-body .history-now').contains('Remove column Shrt_Desc');
+		cy.get('#or-proj-undoRedo').should('to.contain', '3 / 3');
+		cy.get('.history-panel-body .history-now').should('to.contain', 'Remove column Shrt_Desc');
 
 		// Open the Undo/Redo panel
 		cy.get('#or-proj-undoRedo').click();
