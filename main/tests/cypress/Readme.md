@@ -1,13 +1,6 @@
-# OpenRefine test suite
+# OpenRefine UI test suite
 
-## Install
+Please refer to the official OpenRefine documentation
 
-```
-cd ./main/tests/e2e
-npm install
-```
-
-## Usage
-
--   Run OpenRefine on a separate terminal
--   Open the Cypress test runner with `./node_modules/.bin/cypress open`
+-   [How to build tests and run](https://docs.openrefine.org/technical-reference/build-test-run/)
+-   [Functional tests](https://docs.openrefine.org/technical-reference/functional-tests)
