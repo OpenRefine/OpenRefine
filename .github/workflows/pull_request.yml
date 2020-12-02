@@ -39,11 +39,11 @@ jobs:
         java-version: 1.8
 
     - name: Create test database
-      id: create_release
+      id: create_test_db
       run: mysql -u root -e 'CREATE DATABASE test_db;' 
 
     - name: Configure connections to databases
-      id: create_release
+      id: configure_db_connections
       run: cp extensions/database/tests/conf/github_actions_tests.xml extensions/database/tests/conf/tests.xml 
 
     - name: Build and test with Maven
