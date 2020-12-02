@@ -23,8 +23,8 @@ LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
 A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
 OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
 SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
-LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
-DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,           
+DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY           
 THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
@@ -47,10 +47,7 @@ import java.util.List;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
-import java.util.regex.Pattern;
 
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletResponse;
 import javax.swing.JFrame;
 
 import org.apache.log4j.Level;
@@ -59,7 +56,6 @@ import org.mortbay.jetty.Server;
 import org.mortbay.jetty.bio.SocketConnector;
 import org.mortbay.jetty.servlet.ServletHolder;
 import org.mortbay.jetty.webapp.WebAppContext;
-import org.mortbay.jetty.handler.HandlerWrapper;
 import org.mortbay.util.Scanner;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -73,29 +69,29 @@ import com.google.util.threads.ThreadPoolExecutorAdapter;
  * Jetty HTTP server / servlet container (inner class Refine Server).
  */
 public class Refine {
-
+    
     static private final String DEFAULT_HOST = "127.0.0.1";
     static private final int DEFAULT_PORT = 3333;
-
+        
     static private int port;
     static private String host;
 
     final static Logger logger = LoggerFactory.getLogger("refine");
-
+        
     public static void main(String[] args) throws Exception {
-
+        
         // tell jetty to use SLF4J for logging instead of its own stuff
         System.setProperty("VERBOSE","false");
         System.setProperty("org.mortbay.log.class","org.mortbay.log.Slf4jLog");
-
+        
         // tell macosx to keep the menu associated with the screen and what the app title is
-        System.setProperty("apple.laf.useScreenMenuBar", "true");
-        System.setProperty("com.apple.eawt.CocoaComponent.CompatibilityMode", "false");
+        System.setProperty("apple.laf.useScreenMenuBar", "true");  
+        System.setProperty("com.apple.eawt.CocoaComponent.CompatibilityMode", "false"); 
         System.setProperty("com.apple.mrj.application.apple.menu.about.name", "OpenRefine");
-
+        
         // tell the signpost library to log
         //System.setProperty("debug","true");
-
+        
         // set the log verbosity level
         org.apache.log4j.Logger.getRootLogger().setLevel(Level.toLevel(Configurations.get("refine.verbosity","info")));
 
@@ -103,13 +99,13 @@ public class Refine {
         host = Configurations.get("refine.host",DEFAULT_HOST);
 
         Refine refine = new Refine();
-
+        
         refine.init(args);
     }
 
     public void init(String[] args) throws Exception {
 
-        boolean validateHost = Configurations.getBoolean("refine.host.validate", true);
+		boolean validateHost = Configurations.getBoolean("refine.host.validate", true);
         RefineServer server = new RefineServer();
         server.init(host, port, validateHost);
 
@@ -125,12 +121,12 @@ public class Refine {
                 logger.warn("Sorry, some error prevented us from launching the browser for you.\n\n Point your browser to http://" + host + ":" + port + "/ to start using Refine.");
             }
         }
-
+        
         // hook up the signal handlers
         Runtime.getRuntime().addShutdownHook(
             new Thread(new ShutdownSignalHandler(server))
         );
-
+ 
         server.join();
     }
 }
@@ -138,11 +134,11 @@ public class Refine {
 /* -------------- Refine Server ----------------- */
 
 class RefineServer extends Server {
-
+    
     final static Logger logger = LoggerFactory.getLogger("refine_server");
-
+        
     private ThreadPoolExecutor threadPool;
-
+    
     public void init(String host, int port, boolean validateHost) throws Exception {
         logger.info("Starting Server bound to '" + host + ":" + port + "'");
 
@@ -150,17 +146,17 @@ class RefineServer extends Server {
         if (memory != null) {
             logger.info("refine.memory size: " + memory + " JVM Max heap: " + Runtime.getRuntime().maxMemory());
         }
-
+        
         int maxThreads = Configurations.getInteger("refine.queue.size", 30);
         int maxQueue = Configurations.getInteger("refine.queue.max_size", 300);
         long keepAliveTime = Configurations.getInteger("refine.queue.idle_time", 60);
 
         LinkedBlockingQueue<Runnable> queue = new LinkedBlockingQueue<Runnable>(maxQueue);
-
+        
         threadPool = new ThreadPoolExecutor(maxThreads, maxQueue, keepAliveTime, TimeUnit.SECONDS, queue);
 
         this.setThreadPool(new ThreadPoolExecutorAdapter(threadPool));
-
+        
         Connector connector = new SocketConnector();
         connector.setPort(port);
         connector.setHost(host);
@@ -183,7 +179,7 @@ class RefineServer extends Server {
 
         final String contextPath = Configurations.get("refine.context_path","/");
         final int maxFormContentSize = Configurations.getInteger("refine.max_form_content_size", 1048576);
-
+        
         logger.info("Initializing context: '" + contextPath + "' from '" + webapp.getAbsolutePath() + "'");
         WebAppContext context = new WebAppContext(webapp.getAbsolutePath(), contextPath);
         context.setMaxFormContentSize(maxFormContentSize);
@@ -195,7 +191,7 @@ class RefineServer extends Server {
             wrapper.setHandler(context);
             this.setHandler(wrapper);
         }
-
+		
         this.setStopAtShutdown(true);
         this.setSendServerVersion(true);
 
@@ -203,7 +199,7 @@ class RefineServer extends Server {
         if (Configurations.getBoolean("refine.autoreload",false)) {
             scanForUpdates(webapp, context);
         }
-
+        
         // start the server
         try {
             this.start();
@@ -211,25 +207,25 @@ class RefineServer extends Server {
             logger.error("Failed to start server - is there another copy running already on this port/address?");
             throw e;
         }
-
+        
         configure(context);
     }
-
+    
     @Override
-    protected void doStop() throws Exception {
+    protected void doStop() throws Exception {    
         try {
             // shutdown our scheduled tasks first, if any
             if (threadPool != null) {
                 threadPool.shutdown();
             }
-
+            
             // then let the parent stop
             super.doStop();
         } catch (InterruptedException e) {
             // ignore
         }
     }
-
+        
     static private boolean isWebapp(File dir) {
         if (dir == null) {
             return false;
@@ -240,7 +236,7 @@ class RefineServer extends Server {
         File webXml = new File(dir, "WEB-INF/web.xml");
         return webXml.exists() && webXml.canRead();
     }
-
+    
     static private void scanForUpdates(final File contextRoot, final WebAppContext context) {
         List<File> scanList = new ArrayList<File>();
 
@@ -264,7 +260,7 @@ class RefineServer extends Server {
 
                     logger.info("Starting context: " + contextRoot.getAbsolutePath());
                     context.start();
-
+                    
                     configure(context);
                 } catch (Exception ex) {
                     throw new RuntimeException(ex);
@@ -274,7 +270,7 @@ class RefineServer extends Server {
 
         scanner.start();
     }
-
+    
     static private void findFiles(final String extension, File baseDir, final Collection<File> found) {
         baseDir.listFiles(new FileFilter() {
             @Override
@@ -291,7 +287,7 @@ class RefineServer extends Server {
 
     // inject configuration parameters in the servlets
     // NOTE: this is done *after* starting the server because jetty might override the init
-    // parameters if we set them in the webapp context upon reading the web.xml file
+    // parameters if we set them in the webapp context upon reading the web.xml file    
 
     static private void configure(WebAppContext context) throws Exception {
         ServletHolder servlet = context.getServletHandler().getServlet("refine");
@@ -317,19 +313,19 @@ class RefineServer extends Server {
         if (data_dir != null) {
             return data_dir;
         }
-
+        
         File dataDir = null;
         File grefineDir = null;
         File gridworksDir = null;
-
+        
         String os = System.getProperty("os.name").toLowerCase();
         if (os.contains("windows")) {
             try {
                 // NOTE(SM): finding the "local data app" in windows from java is actually a PITA
                 // see http://stackoverflow.com/questions/1198911/how-to-get-local-application-data-folder-in-java
-                // so we're using a library that uses JNI to ask directly the win32 APIs,
+                // so we're using a library that uses JNI to ask directly the win32 APIs, 
                 // it's not elegant but it's the safest bet.
-
+                
                 dataDir = new File(fixWindowsUnicodePath(JDataPathSystem.getLocalSystem()
                         .getLocalDataPath("OpenRefine").getPath()));
 
@@ -345,11 +341,11 @@ class RefineServer extends Server {
                  *  we include is compiled for 32-bit. In this case, we just have to dig up
                  *  environment variables and try our best to find a user-specific path.
                  */
-
+                
                 logger.warn("Failed to use jdatapath to detect user data path: resorting to environment variables");
-
+                
                 File parentDir = null;
-                String appData = System.getenv("APPDATA");
+                String appData = System.getenv("APPDATA"); 
                 if (appData != null && appData.length() > 0) {
                     // e.g., C:\Users\[userid]\AppData\Roaming
                     parentDir = new File(appData);
@@ -364,7 +360,7 @@ class RefineServer extends Server {
                 if (parentDir == null) {
                     parentDir = new File(".");
                 }
-
+                
                 dataDir = new File(parentDir, "OpenRefine");
                 grefineDir = new File(new File(parentDir, "Google"), "Refine");
                 gridworksDir = new File(parentDir, "Gridworks");
@@ -372,14 +368,14 @@ class RefineServer extends Server {
         } else if (os.contains("os x")) {
             // on macosx, use "~/Library/Application Support"
             String home = System.getProperty("user.home");
-
+            
             String data_home = (home != null) ? home + "/Library/Application Support/OpenRefine" : ".openrefine";
             dataDir = new File(data_home);
-
+            
             String grefine_home = (home != null) ? home + "/Library/Application Support/Google/Refine" : ".google-refine";
             grefineDir = new File(grefine_home);
-
-            String gridworks_home = (home != null) ? home + "/Library/Application Support/Gridworks" : ".gridworks";
+            
+            String gridworks_home = (home != null) ? home + "/Library/Application Support/Gridworks" : ".gridworks"; 
             gridworksDir = new File(gridworks_home);
         } else { // most likely a UNIX flavor
             // start with the XDG environment
@@ -392,12 +388,12 @@ class RefineServer extends Server {
                 }
                 data_home = home + "/.local/share";
             }
-
+            
             dataDir = new File(data_home + "/openrefine");
             grefineDir = new File(data_home + "/google/refine");
             gridworksDir = new File(data_home + "/gridworks");
         }
-
+        
         // If refine data dir doesn't exist, try to find and move Google Refine or Gridworks data dir over
         if (!dataDir.exists()) {
             if (grefineDir.exists()) {
@@ -406,25 +402,25 @@ class RefineServer extends Server {
                             + " & Googld Refine dirs " + grefineDir) ;
                 }
                 if (grefineDir.renameTo(dataDir)) {
-                    logger.info("Renamed Google Refine directory " + grefineDir
+                    logger.info("Renamed Google Refine directory " + grefineDir 
                             + " to " + dataDir);
                 } else {
-                    logger.error("FAILED to rename Google Refine directory "
-                            + grefineDir
+                    logger.error("FAILED to rename Google Refine directory " 
+                            + grefineDir 
                             + " to " + dataDir);
-                }
+                } 
             } else if (gridworksDir.exists()) {
                 if (gridworksDir.renameTo(dataDir)) {
-                    logger.info("Renamed Gridworks directory " + gridworksDir
+                    logger.info("Renamed Gridworks directory " + gridworksDir 
                             + " to " + dataDir);
                 } else {
-                    logger.error("FAILED to rename Gridworks directory "
-                            + gridworksDir
+                    logger.error("FAILED to rename Gridworks directory " 
+                            + gridworksDir 
                             + " to " + dataDir);
                 }
             }
         }
-
+        
         // Either rename failed or nothing to rename - create a new one
         if (!dataDir.exists()) {
             logger.info("Creating new workspace directory " + dataDir);
@@ -432,10 +428,10 @@ class RefineServer extends Server {
                 logger.error("FAILED to create new workspace directory " + dataDir);
             }
         }
-
+        
         return dataDir.getAbsolutePath();
     }
-
+    
     /**
      * For Windows file paths that contain user IDs with non ASCII characters,
      * those characters might get replaced with ?. We need to use the environment
@@ -447,7 +443,7 @@ class RefineServer extends Server {
             return path;
         }
         int pathSep = path.indexOf(File.separatorChar, q);
-
+        
         String goodPath = System.getenv("APPDATA");
         if (goodPath == null || goodPath.length() == 0) {
             goodPath = System.getenv("USERPROFILE");
@@ -455,84 +451,24 @@ class RefineServer extends Server {
                 goodPath = goodPath + File.separator;
             }
         }
-
+        
         int goodPathSep = goodPath.indexOf(File.separatorChar, q);
-
+        
         return path.substring(0, q) + goodPath.substring(q, goodPathSep) + path.substring(pathSep);
     }
-
-}
-
-/**
- * Validate the Host header of the HTTP request to see if it matches either a loopback IP
- * address, localhost or an explicitly specified hostname. This is required to avoid DNS
- * rebinding attacks against users running OpenRefine on their desktop computers.
- */
-class ValidateHostHandler extends HandlerWrapper {
-
-    /**
-     * Matches:
-     *  - addresses in the 127.0.0.0/8 subnet
-     *  - different representations of ::1
-     *  - localhost
-     * Matching is a little fuzzy to simplify the regular expression - it expects the Host
-     * header to be well-formed. Some invalid addresses would be accepted, for example:
-     *  - 127.6..64.245
-     *  - 0::0:::0:00:1
-     * This is not a problem however, as these are not valid DNS names either, and should
-     * never be sent by a well-behaved browser - and validating the host header only ever
-     * helps if the browser works as expected and cannot be used to fake the Host header.
-     */
-    static private final Pattern LOOPBACK_PATTERN = Pattern.compile("^(?:127\\.[0-9\\.]*|\\[[0\\:]*\\:1\\]|localhost)(?:\\:[0-9]+)?$", Pattern.CASE_INSENSITIVE);
-
-    private String expectedHost;
-
-    public ValidateHostHandler(String expectedHost) {
-        this.expectedHost = expectedHost;
-    }
-
-    private boolean isValidHost(String host) {
-
-        // Allow loopback IPv4 and IPv6 addresses, as well as localhost
-        if (LOOPBACK_PATTERN.matcher(host).find()) {
-            return true;
-        }
-
-        // Strip port from hostname - for IPv6 addresses, if
-        // they end with a bracket, then there is no port
-        int index = host.lastIndexOf(':');
-        if (index > 0 && !host.endsWith("]")) {
-            host = host.substring(0, index);
-        }
-
-        // Allow only if stripped hostname matches expected hostname
-        return expectedHost.equalsIgnoreCase(host);
-    }
-
-    @Override
-    public void handle(String target, javax.servlet.http.HttpServletRequest request, javax.servlet.http.HttpServletResponse response, int dispatch) throws IOException, ServletException {
-        String host = request.getHeader("Host");
-        if (isValidHost(host)) {
-            super.handle(target, request, response, dispatch);
-        } else {
-            // Return HTTP 404 Not Found, since we are
-            // not serving content for the requested URL
-            response.setStatus(HttpServletResponse.SC_NOT_FOUND);
-        }
-    }
-
+    
 }
 
 /* -------------- Refine Client ----------------- */
 
 class RefineClient extends JFrame implements ActionListener {
-
+    
     private static final long serialVersionUID = 7886547342175227132L;
 
     final static Logger logger = LoggerFactory.getLogger("refine-client");
 
     private URI uri;
-
+    
     public void init(String host, int port) throws Exception {
 
     	String cleanedHost = host;
@@ -542,15 +478,15 @@ class RefineClient extends JFrame implements ActionListener {
         uri = new URI("http://" + cleanedHost + ":" + port + "/");
         openBrowser();
     }
-
+    
     @Override
-    public void actionPerformed(ActionEvent e) {
-        String item = e.getActionCommand();
+    public void actionPerformed(ActionEvent e) { 
+        String item = e.getActionCommand(); 
         if (item.startsWith("Open")) {
             openBrowser();
         }
-    }
-
+    } 
+    
     private void openBrowser() {
         if (!Desktop.isDesktopSupported()) {
             logger.warn("Java Desktop class not supported on this platform.  Please open %s in your browser",uri.toString());
@@ -564,7 +500,7 @@ class RefineClient extends JFrame implements ActionListener {
 }
 
 class ShutdownSignalHandler implements Runnable {
-
+    
     private Server _server;
 
     public ShutdownSignalHandler(Server server) {
@@ -591,4 +527,4 @@ class ShutdownSignalHandler implements Runnable {
     }
 
 }
-
+    
