@@ -36,9 +36,14 @@ jobs:
       with:
         java-version: 1.8
 
-    - name: Create test database
+    - name: Create test MySQL database
       id: create_test_db
-      run: mysql -u root -h 127.0.0.1 -p root -e 'CREATE DATABASE test_db;' 
+      uses: mirromutth/mysql-action@v1.1
+      with:
+        host port: 3306
+        container port: 3306
+        mysql database: 'test_db'
+        mysql root password: 'root'
 
     - name: Configure connections to databases
       id: configure_db_connections
