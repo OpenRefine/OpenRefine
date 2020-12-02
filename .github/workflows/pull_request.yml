@@ -42,6 +42,7 @@ jobs:
       uses: mirromutth/mysql-action@v1.1
       with:
         mysql database: 'test_db'
+        mysql root password: 'mysql'
 
     - name: Configure connections to databases
       id: create_release

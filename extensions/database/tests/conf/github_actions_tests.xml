@@ -4,7 +4,7 @@
     <parameter name = "mySqlDbHost" value="127.0.0.1"/> 
     <parameter name = "mySqlDbPort" value="3306"/> 
     <parameter name = "mySqlDbUser" value="root"/>
-    <parameter name = "mySqlDbPassword" value=""/>
+    <parameter name = "mySqlDbPassword" value="mysql"/>
     <parameter name = "mySqlTestTable" value="test_table"/>
     
     <parameter name = "pgSqlDbName" value="test_db"/> 
@@ -18,7 +18,7 @@
     <parameter name = "mariaDbHost" value="127.0.0.1"/> 
     <parameter name = "mariadbDbPort" value="3306"/> 
     <parameter name = "mariaDbUser" value="root"/>
-    <parameter name = "mariaDbPassword" value=""/>
+    <parameter name = "mariaDbPassword" value="mysql"/>
     <parameter name = "mariaDbTestTable" value="test_table"/>
 
     <parameter name = "sqliteDbName" value="extension_test_db.sqlite"/>

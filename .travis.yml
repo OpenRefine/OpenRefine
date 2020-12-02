@@ -8,17 +8,10 @@ jobs:
       jdk: oraclejdk8 # Trusty default
     - jdk: openjdk14 # Latest JRE
 
-addons:
-  mariadb: '10.3'
-  
 services:
   - mysql
   - postgresql 
 
-env:
-  # encrypted Codacy key, see https://docs.travis-ci.com/user/encryption-keys/
-  - secure: "VmS4He99YlI6rdmw8Q25OZ9kUp11sRbt0W1QMBvA5lzNSmhN1Q1KtaMj9AGwpCZWcyGWri4AQxEmloARxACxQHXRmNE7ro2DESGw46RAocBAf+RfBxYTifIyUGu5TnSCQhz56SkgpyWpedZAZWyah9ZxgUMfet4KXFUfeiUgYQA="
-  
 before_install:
   # Fake out packaging for Travis builds before mvn install
   - cp packaging/travis_pom.xml packaging/pom.xml
