@@ -21,6 +21,15 @@ jobs:
           --health-retries 5
 
     steps:
+    - name: Create test MySQL database
+      id: create_test_db
+      uses: mirromutth/mysql-action@v1.1
+      with:
+        host port: 3306
+        container port: 3306
+        mysql database: 'test_db'
+        mysql root password: 'root'
+
     - uses: actions/checkout@v2.3.4
 
     - name: Restore dependency cache
@@ -35,15 +44,6 @@ jobs:
       uses: actions/setup-java@v1
       with:
         java-version: 1.8
-
-    - name: Create test MySQL database
-      id: create_test_db
-      uses: mirromutth/mysql-action@v1.1
-      with:
-        host port: 3306
-        container port: 3306
-        mysql database: 'test_db'
-        mysql root password: 'root'
 
     - name: Configure connections to databases
       id: configure_db_connections
