@@ -46,6 +46,7 @@ import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 
+import com.google.common.base.CharMatcher;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -209,7 +210,6 @@ public class XmlImporter extends TreeImportingParserBase {
     
     static public class XmlParser implements TreeReader {
         final protected XMLStreamReader parser;
-        static final String WHITESPACES_PATTERN = "^[\\n\\r\\t].*$";
         static final int WHITESPACE_CHARACTERS_TOKEN = 15;
 
         public XmlParser(InputStream inputStream) throws XMLStreamException, IOException {
@@ -237,7 +237,7 @@ public class XmlImporter extends TreeImportingParserBase {
             // Updates the token if the text value is a whitespace
             if (currentToken == XMLStreamConstants.CHARACTERS) {
                 String text = parser.getText();
-                if (!text.isEmpty() && text.matches(WHITESPACES_PATTERN)) {
+                if (!text.isEmpty() && CharMatcher.whitespace().matchesAllOf(text)) {
                     currentToken = WHITESPACE_CHARACTERS_TOKEN;
                 }
             }
