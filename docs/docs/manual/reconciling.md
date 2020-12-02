@@ -77,20 +77,20 @@ There is also a “judgment” facet created, which lets you filter for the cell
 You can add other reconciliation facets by selecting “Reconcile” → “Facets” on your column. You can facet by: 
 
 * your judgments (“matched,” or “none” for unreconciled cells, or “new” for entities you've created)
-* the action you’ve performed on that cell (chosen a “single” match, or no action, as “unknown”)
+* the action you’ve performed on that cell (chosen a “single” match, or set a "mass" match, or no action, as “unknown”)
 * the timestamps on the edits you’ve made so far (these appear as millisecond counts since an arbitrary point: they can be sorted alphabetically to move forward and back in time). 
 
 You can facet only the best candidates for each cell, based on:
 *   the score (calculated based on each service's own methods)
-*   the edit distance (how many single-character edits would be required to get your original value to the candidate value)
-*   the word similarity (calculated on individual word matching, not including [stop words](https://en.wikipedia.org/wiki/Stop_word)). 
+*   the edit distance (using the [Levenshtein distance](https://www.wikiwand.com/en/Levenshtein_distance), a number based on how many single-character edits would be required to get your original value to the candidate value, with a larger value being a greater difference)
+*   the word similarity (not including [stop words](https://en.wikipedia.org/wiki/Stop_word), a percentage based on how many words in the original value match words in the candidate. For example, the value "Maria Luisa Zuloaga de Tovar" matched to the candidate "Palacios, Luisa Zuloaga de" results in a word similarity value of 0.6, or 60%, or 3 out of 5 words. Cells that are not yet matched to one candidate will show as 0.0.)
 
 You can also look at each best candidate’s:
 *   type (the ones you have selected in successive reconciliation attempts, or other types returned by the service based on the cell values) 
 *   type match (“true” if you selected a type and it succeeded, “false” if you reconciled against no particular type, and “(no type)” if it didn’t reconcile)
 *   name match (“true” if you’ve matched, “false” if you haven’t yet chosen from the candidates, or “(unreconciled)” if it didn’t reconcile). 
 
-These facets are useful for doing successive reconciliation attempts, against different types, and with different supplementary information.
+These facets are useful for doing successive reconciliation attempts, against different types, and with different supplementary information. The information represented by these facets are held in the cells themselves and can be called using the [reconciliation variables](expressions#reconciliation) available in expressions.
 
 ### Reconciliation actions
 
@@ -218,3 +218,5 @@ You can find out more in the [reconciliaton variables](expressions#reconciliaton
 ## Exporting your reconciled data
 
 Once you have data that is reconciled to existing entities online, you may wish to export that data to a user-editable service such as Wikidata. See the section on [uploading your edits to Wikidata](wikidata#upload-edits-to-wikidata) for more information, or the section on [exporting](exporting) to see other formats OpenRefine can produce.
+
+You can share reconciled data in progress through a [project export or import](exporting#export-a-project), with some preparation. The importing user needs to have the reconciliation services installed on their OpenRefine instance in advance of opening the project in order to use candidate and match links. Otherwise, the links will be broken and the user will need to add the reconciliation service and re-reconcile the columns in question. [Wikidata](wikidata) reconciliation data can be shared more easily as the service comes bundled with OpenRefine.
