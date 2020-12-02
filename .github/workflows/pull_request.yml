@@ -12,7 +12,7 @@ jobs:
         image: postgres
         env:
           POSTGRES_USER: postgres
-          POSTGRES_PASSWORD: ''
+          POSTGRES_PASSWORD: 'postgres'
           POSTGRES_DB: test_db
         options: >-
           --health-cmd pg_isready
@@ -45,7 +45,7 @@ jobs:
 
     - name: Configure connections to databases
       id: create_release
-      run: cp extensions/database/tests/conf/travis_tests.xml extensions/database/tests/conf/tests.xml 
+      run: cp extensions/database/tests/conf/github_actions_tests.xml extensions/database/tests/conf/tests.xml 
 
     - name: Build and test with Maven
       run: mvn jacoco:prepare-agent test
