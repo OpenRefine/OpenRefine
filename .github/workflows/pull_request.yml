@@ -49,6 +49,12 @@ jobs:
       id: configure_db_connections
       run: cp extensions/database/tests/conf/github_actions_tests.xml extensions/database/tests/conf/tests.xml 
 
+    - name: Populate databases with test data
+      id: populate_databases_with_test_data
+      run:
+        mysql -u root -h 127.0.0.1 -p root < extensions/database/tests/conf/travis-mysql.sql
+        psql -U postgres test_db < extensions/database/tests/conf/travis-pgsql.sql
+
     - name: Build and test with Maven
       run: mvn jacoco:prepare-agent test
 
