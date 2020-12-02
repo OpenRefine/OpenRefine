@@ -51,7 +51,7 @@ jobs:
 
     - name: Populate databases with test data
       id: populate_databases_with_test_data
-      run:
+      run: |
         mysql -u root -h 127.0.0.1 -p root < extensions/database/tests/conf/travis-mysql.sql
         psql -U postgres test_db < extensions/database/tests/conf/travis-pgsql.sql
 
@@ -59,7 +59,7 @@ jobs:
       run: mvn jacoco:prepare-agent test
 
     - name: Submit test coverage to Coveralls
-      run:
+      run: |
         mvn prepare-package -DskipTests=true
         mvn jacoco:report coveralls:report
 
