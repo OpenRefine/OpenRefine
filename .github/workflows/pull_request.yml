@@ -38,11 +38,9 @@ jobs:
       with:
         java-version: 1.8
 
-    - name: Start MySQL
-      uses: mirromutth/mysql-action@v1.1
-      with:
-        mysql database: 'test_db'
-        mysql root password: 'mysql'
+    - name: Create test database
+      id: create_release
+      run: mysql -u root -e 'CREATE DATABASE test_db;' 
 
     - name: Configure connections to databases
       id: create_release
