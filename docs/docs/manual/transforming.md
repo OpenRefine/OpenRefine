@@ -8,7 +8,7 @@ sidebar_label: Overview
 
 OpenRefine gives you powerful ways to clean, correct, codify, and extend your data. Without ever needing to type inside a single cell, you can automatically fix typos, convert things to the right format, and add structured categories from trusted sources. 
 
-The following ways to improve data are organized by their appearance in the menu options in OpenRefine. You can:
+This section of ways to improve data are organized by their appearance in the menu options in OpenRefine. You can:
 
 *   change the order of rows or columns
 *   edit cell contents within a particular column
@@ -16,7 +16,7 @@ The following ways to improve data are organized by their appearance in the menu
 *   transform rows into columns, and columns into rows
 *   split or join columns
 *   add new columns based on existing data or through reconciliation
-*   convert your rows of data into multi-row records
+*   convert your rows of data into multi-row records.
 
 ## Edit rows
 

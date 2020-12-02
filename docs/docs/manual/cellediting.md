@@ -56,7 +56,7 @@ For example, the following column of strings on the left will transform into the
 |today|>|today|
 |never|>|never|
 
-This is based on OpenRefine’s ability to recognize dates with the [`toDate()` function](expressions#dates). 
+This is based on OpenRefine’s ability to recognize dates with the [`toDate()` function](expressions#date-functions). 
 
 Clicking the “today” cell and editing its data type manually will convert “today” into a value such as “2020-08-14T00:00:00Z”. Attempting the same data-type change on “never” will give you an error message and refuse to proceed.  
 
@@ -123,13 +123,17 @@ The clustering pop-up window offers you a variety of clustering methods:
     *   levenshtein
     *   ppm
 
+#### Key collision
+
 **Key collisions** are very fast and can process millions of cells in seconds:
 
 **Fingerprinting** is the least likely to produce false positives, so it’s a good place to start. It does the same kind of data-cleaning behind the scenes that you might think to do manually: fix whitespace into single spaces, put all uppercase letters into lowercase, discard punctuation, remove diacritics (e.g. accents) from characters, split all strings (words) and sort them alphabetically (so “Zhenyi, Wang” becomes “Wang Zhenyi”). This makes comparing those types of name values very easy.
 
 **N-gram fingerprinting** allows you to set the _n_ value to whatever number you’d like, and will create n-grams of _n_ size (after doing some cleaning), alphabetize them, then join them back together into a _fingerprint_. For example, a 1-gram fingerprint will simply organize all the letters in the cell into alphabetical order - by creating segments one character in length. A 2-gram fingerprint will find all the two-character segments, remove duplicates, alphabetize them, and join them back together (for example, “banana” generates “ba an na an na,” which becomes “anbana”). This can help match cells that have typos, or incorrect spaces (such as matching “lookout” and “look out,” which fingerprinting itself won’t identify). The higher the _n_ value, the fewer clusters will be identified. With 1-grams, keep an eye out for mismatched values that are near-anagrams of each other (such as “Wellington” and “Elgin Town”). 
 
-The next four methods are phonetic algorithsm: they know whether two letters sound the same when pronounced out loud, and assess text values based on that (such as knowing that a word with an “S” might be a mistype of a word with a “Z”).  They are great for spotting mistakes made by not knowing the spelling of a word or name after only hearing it spoken aloud. 
+##### Phonetic clustering
+
+The next four methods are phonetic algorithms: they know whether two letters sound the same when pronounced out loud, and assess text values based on that (such as knowing that a word with an “S” might be a mistype of a word with a “Z”).  They are great for spotting mistakes made by not knowing the spelling of a word or name after only hearing it spoken aloud. 
 
 **Metaphone3 fingerprinting** is an English-language phonetic algorithm. For example, “Reuben Gevorkiantz” and “Ruben Gevorkyants” share the same phonetic fingerprint in English.
 
@@ -138,6 +142,8 @@ The next four methods are phonetic algorithsm: they know whether two letters sou
 **Daitch-Mokotoff** is a phonetic algorithm for Slavic and Yiddish words, especially names. **Baider-Morse** is a version of Daitch-Mokotoff that is slightly more strict. 
 
 Regardless of the language of your data, applying each of them might find different potential matches: for example, Metaphone clusters “Cornwall” and “Corn Hill” and “Green Hill,” while Cologne clusters “Greenvale” and “Granville” and “Cornwall” and “Green Wall.” 
+
+#### Nearest neighbor
 
 **Nearest neighbor** clustering methods are slower than key collision methods. They allow the user to set a radius - a threshold for matching or not matching. OpenRefine uses a “blocking” method first, which sorts values based on whether they have a certain amount of similarity (the default is “6” for a six-character string of identical characters) and then runs the nearest-neighbor operations on those sorted groups. We recommend setting the block number to at least 3, and then increasing it if you need to be more strict (for example, if every value with “river” is being matched, you should increase it to 6 or more). Note bigger block values will take much longer to process, while smaller blocks may miss matches. Increasing the radius will make the matches more lax, as bigger differences will be clustered:
 

@@ -8,7 +8,7 @@ sidebar_label: Wikidata
 
 OpenRefine provides powerful ways to both pull data from Wikidata and add data to it. 
 
-OpenRefine’s connections to Wikidata is supplied by an extension that is available by default in OpenRefine. The Wikidata extension can be removed manually by navigating to your OpenRefine installation folder, and then looking inside `webapp/extensions/` and deleting the `wikidata` folder inside. 
+OpenRefine’s connections to Wikidata were formerly an optional extension, but are now installed automatically with the downloadable package. The Wikidata extension can be removed manually by navigating to your OpenRefine installation folder, and then looking inside `webapp/extensions/` and deleting the `wikidata` folder inside. 
 
 You do not need a Wikidata account to reconcile your local OpenRefine project to Wikidata. If you wish to [upload your cleaned dataset to Wikidata](#editing-wikidata-with-openrefine), you will need an [autoconfirmed](https://www.wikidata.org/wiki/Wikidata:Autoconfirmed_users) account, and you must [authorize OpenRefine with that account](#manage-wikidata-account). 
 
@@ -181,9 +181,3 @@ The best resource is the [Quality assurance page](https://www.wikidata.org/wiki/
 OpenRefine will analyze your schema and make suggestions. It does not check for conflicts in your proposed edits, or tell you about redundancies. 
 
 One of the most common suggestions is to attach [a reference to your edits](https://www.wikidata.org/wiki/Help:Sources) - a citation for where the information can be found. This can be a book or newspaper citation, a URL to an online page, a reference to a physical source in an archival or special collection, or another source. If the source is itself an item on Wikidata, use the relationship [stated in (P248)](https://www.wikidata.org/wiki/Property:P248); otherwise, use [reference URL (P854)](https://www.wikidata.org/wiki/Property:P854) to identify an external source. 
-
-## Wikibases
-
-Much of the above is also true of other Wikibase instances. You can reconcile your dataset against an available Wikibase reconciliation API. 
-
-Wikibase administrators can configure a reconciliation API using the [instructions here](https://openrefine-wikibase.readthedocs.io/en/latest/index.html).
