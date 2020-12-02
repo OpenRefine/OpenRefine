@@ -1,4 +1,4 @@
-name: Java CI
+name: Snapshot release
 
 on:
   push:
@@ -31,8 +31,8 @@ jobs:
     - name: Install genisoimage and jq
       run: sudo apt-get install genisoimage jq
 
-    - name: Build with Maven
-      run: ./refine build
+    - name: Build and test with Maven
+      run: ./refine test
 
     - name: Get the OpenRefine snapshot version
       run: echo ::set-env name=OR_VERSION::$(cat ./main/webapp/WEB-INF/classes/git.properties | jq -r '.["git.commit.id.describe"]')
