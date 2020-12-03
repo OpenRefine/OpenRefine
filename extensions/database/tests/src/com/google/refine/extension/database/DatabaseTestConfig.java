@@ -21,7 +21,7 @@ public class DatabaseTestConfig extends DBExtensionTests {
     @BeforeSuite
     @Parameters({ "mySqlDbName", "mySqlDbHost", "mySqlDbPort", "mySqlDbUser", "mySqlDbPassword", "mySqlTestTable",
                   "pgSqlDbName", "pgSqlDbHost", "pgSqlDbPort", "pgSqlDbUser", "pgSqlDbPassword", "pgSqlTestTable",
-                  "mariadbDbName", "mariadbDbHost", "mariadbDbPort", "mariadbyDbUser", "mariadbDbPassword", "mariadbTestTable",
+                  "mariadbDbName", "mariadbDbHost", "mariadbDbPort", "mariadbDbUser", "mariadbDbPassword", "mariadbTestTable",
                   "sqliteDbName", "sqliteTestTable"})
     public void beforeSuite(
             @Optional(DEFAULT_MYSQL_DB_NAME)   String mySqlDbName,     @Optional(DEFAULT_MYSQL_HOST)  String mySqlDbHost, 
