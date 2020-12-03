@@ -56,8 +56,10 @@ jobs:
     - name: Populate databases with test data
       id: populate_databases_with_test_data
       run: |
-        mysql -u root -h ${{ job.services.mysql.ports[3306] }} -proot < extensions/database/tests/conf/travis-mysql.sql
+        mysql -u root -h 127.0.0.1 -P ${{ job.services.mysql.ports[3306] }} -proot < extensions/database/tests/conf/travis-mysql.sql
         psql -U postgres test_db -p ${{ job.services.postgres.ports[5432] }} < extensions/database/tests/conf/travis-pgsql.sql
+      env:
+        PGPASSWORD: postgres
 
     - name: Build and test with Maven
       run: |
