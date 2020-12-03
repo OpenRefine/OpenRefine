@@ -51,7 +51,9 @@ jobs:
 
     - name: Configure connections to databases
       id: configure_db_connections
-      run: cat extensions/database/tests/conf/github_actions_tests.xml | sed -e "s/MYSQL_PORT/${{ job.services.mysql.ports[3306] }}/g" | sed -e "s/POSTGRES_PORT/${{ job.services.postgres.ports[5432] }}/g" > extensions/database/tests/conf/tests.xml
+      run: |
+        cat extensions/database/tests/conf/github_actions_tests.xml | sed -e "s/MYSQL_PORT/${{ job.services.mysql.ports[3306] }}/g" | sed -e "s/POSTGRES_PORT/${{ job.services.postgres.ports[5432] }}/g" > extensions/database/tests/conf/tests.xml
+        cat extensions/database/tests/conf/tests.xml
 
     - name: Populate databases with test data
       id: populate_databases_with_test_data
