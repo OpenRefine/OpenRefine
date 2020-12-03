@@ -10,6 +10,8 @@ jobs:
     services:
       postgres:
         image: postgres
+        ports:
+          - 5432
         env:
           POSTGRES_USER: postgres
           POSTGRES_PASSWORD: 'postgres'
@@ -19,16 +21,13 @@ jobs:
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
-
-    steps:
-    - name: Create test MySQL database
-      id: create_test_db
-      uses: mirromutth/mysql-action@v1.1
-      with:
-        host port: 3306
-        container port: 3306
-        mysql database: 'test_db'
-        mysql root password: 'root'
+      mysql:
+        image: mysql:8
+        ports:
+          - 3306
+        env:
+          MYSQL_ROOT_PASSWORD: root
+        options: --health-cmd="mysqladmin ping" --health-interval=5s --health-timeout=2s --health-retries=3
 
     - uses: actions/checkout@v2.3.4
 
@@ -47,20 +46,21 @@ jobs:
 
     - name: Configure connections to databases
       id: configure_db_connections
-      run: cp extensions/database/tests/conf/github_actions_tests.xml extensions/database/tests/conf/tests.xml 
+      run: cat extensions/database/tests/conf/github_actions_tests.xml | sed -e "s/MYSQL_PORT/${{ job.services.mysql.ports[3306] }}/" | sed -e "s/POSTGRES_PORT/${{ job.services.postgres.ports[5432] }}/" > extensions/database/tests/conf/tests.xml
 
     - name: Populate databases with test data
       id: populate_databases_with_test_data
       run: |
-        mysql -u root -h 127.0.0.1 -p root < extensions/database/tests/conf/travis-mysql.sql
-        psql -U postgres test_db < extensions/database/tests/conf/travis-pgsql.sql
+        mysql -u root -h ${{ job.services.mysql.ports[3306] }} -proot < extensions/database/tests/conf/travis-mysql.sql
+        psql -U postgres test_db -p ${{ job.services.postgres.ports[5432] }} < extensions/database/tests/conf/travis-pgsql.sql
 
     - name: Build and test with Maven
-      run: mvn jacoco:prepare-agent test
-
-    - name: Submit test coverage to Coveralls
       run: |
+        mvn jacoco:prepare-agent test
         mvn prepare-package -DskipTests=true
-        mvn jacoco:report coveralls:report
+        mvn jacoco:report
 
-
+    - name: Submit test coverage to coveralls Coveralls
+      uses: coverallsapp/github-action@master
+      with:
+        github-token: ${{ secrets.GITHUB_TOKEN }}

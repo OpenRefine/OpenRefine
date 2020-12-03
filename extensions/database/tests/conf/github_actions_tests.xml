@@ -2,21 +2,21 @@
 <suite name="DatabaseExtensionUnitTestSuite">
     <parameter name = "mySqlDbName" value="test_db"/> 
     <parameter name = "mySqlDbHost" value="127.0.0.1"/> 
-    <parameter name = "mySqlDbPort" value="3306"/> 
+    <parameter name = "mySqlDbPort" value="MYSQL_PORT"/> 
     <parameter name = "mySqlDbUser" value="root"/>
     <parameter name = "mySqlDbPassword" value="root"/>
     <parameter name = "mySqlTestTable" value="test_table"/>
     
     <parameter name = "pgSqlDbName" value="test_db"/> 
     <parameter name = "pgSqlDbHost" value="postgres"/> 
-    <parameter name = "pgSqlDbPort" value="5432"/> 
+    <parameter name = "pgSqlDbPort" value="POSTGRES_PORT"/> 
     <parameter name = "pgSqlDbUser" value="postgres"/>
     <parameter name = "pgSqlDbPassword" value="postgres"/>
     <parameter name = "pgSqlTestTable" value="test_table"/>
     
     <parameter name = "mariaDbName" value="test_db"/> 
     <parameter name = "mariaDbHost" value="127.0.0.1"/> 
-    <parameter name = "mariadbDbPort" value="3306"/> 
+    <parameter name = "mariadbDbPort" value="MYSQL_PORT"/> 
     <parameter name = "mariaDbUser" value="root"/>
     <parameter name = "mariaDbPassword" value="root"/>
     <parameter name = "mariaDbTestTable" value="test_table"/>
