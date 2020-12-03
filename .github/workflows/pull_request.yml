@@ -69,5 +69,3 @@ jobs:
       run: |
         mvn prepare-package -DskipTests=true
         mvn jacoco:report
-      with:
-        github-token: ${{ secrets.GITHUB_TOKEN }}
