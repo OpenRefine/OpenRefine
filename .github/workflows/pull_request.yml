@@ -33,6 +33,7 @@ jobs:
           --health-timeout 2s
           --health-retries 3
 
+    steps:
     - uses: actions/checkout@v2.3.4
 
     - name: Restore dependency cache
