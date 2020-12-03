@@ -28,10 +28,10 @@ jobs:
         env:
           MYSQL_ROOT_PASSWORD: root
         options: >-
-          --health-cmd="mysqladmin ping"
-          --health-interval=5s
-          --health-timeout=2s
-          --health-retries=3
+          --health-cmd "mysqladmin ping"
+          --health-interval 5s
+          --health-timeout 2s
+          --health-retries 3
 
     - uses: actions/checkout@v2.3.4
 
