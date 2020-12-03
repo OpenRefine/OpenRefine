@@ -68,4 +68,4 @@ jobs:
     - name: Submit test coverage to Coveralls
       run: |
         mvn prepare-package -DskipTests=true
-        mvn jacoco:report coveralls:report
+        mvn jacoco:report coveralls:report -DrepoToken=${{ secrets.COVERALLS_TOKEN }} -DpullRequest=${{ github.event.number }}
