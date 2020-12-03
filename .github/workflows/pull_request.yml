@@ -63,12 +63,11 @@ jobs:
         PGPASSWORD: postgres
 
     - name: Build and test with Maven
+      run: mvn jacoco:prepare-agent test
+
+    - name: Submit test coverage to Coveralls
       run: |
-        mvn jacoco:prepare-agent test
         mvn prepare-package -DskipTests=true
         mvn jacoco:report
-
-    - name: Submit test coverage to coveralls Coveralls
-      uses: coverallsapp/github-action@master
       with:
         github-token: ${{ secrets.GITHUB_TOKEN }}
