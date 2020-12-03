@@ -8,7 +8,7 @@
     <parameter name = "mySqlTestTable" value="test_table"/>
     
     <parameter name = "pgSqlDbName" value="test_db"/> 
-    <parameter name = "pgSqlDbHost" value="postgres"/> 
+    <parameter name = "pgSqlDbHost" value="127.0.0.11"/> 
     <parameter name = "pgSqlDbPort" value="POSTGRES_PORT"/> 
     <parameter name = "pgSqlDbUser" value="postgres"/>
     <parameter name = "pgSqlDbPassword" value="postgres"/>
