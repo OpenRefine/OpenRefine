@@ -44,6 +44,7 @@ class ValidateHostHandler extends HandlerWrapper {
     /**
      * Matches:
      *  - addresses in the 127.0.0.0/8 subnet
+     *  - IPv4-mapped addresses in the ::ffff:7f00:00/104 subnet
      *  - different representations of ::1
      *  - localhost
      * Matching is a little fuzzy to simplify the regular expression - it expects the Host
@@ -55,7 +56,7 @@ class ValidateHostHandler extends HandlerWrapper {
      * helps if the browser works as expected and cannot be used to fake the Host header.
      */
     static private final Pattern LOOPBACK_PATTERN = Pattern
-            .compile("^(?:127\\.[0-9\\.]*|\\[[0\\:]*\\:1\\]|localhost)(?:\\:[0-9]+)?$", Pattern.CASE_INSENSITIVE);
+            .compile("^(?:127\\.[0-9\\.]*|\\[[0\\:]*\\:(?:ffff\\:7f[0-9a-f]{2}:[0-9a-f]{1,4}|0{0,3}1)\\]|localhost)(?:\\:[0-9]+)?$", Pattern.CASE_INSENSITIVE);
 
     private String expectedHost;
 
