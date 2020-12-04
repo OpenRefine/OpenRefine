@@ -96,7 +96,7 @@ class ValidateHostHandler extends HandlerWrapper {
         } else {
             // Return HTTP 404 Not Found, since we are
             // not serving content for the requested URL
-            response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+            response.sendError(HttpServletResponse.SC_NOT_FOUND, "Invalid hostname");
         }
     }
 
