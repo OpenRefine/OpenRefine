@@ -60,7 +60,7 @@
     <surefire.version>2.22.2</surefire.version>
     <surefireArgs/>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <jackson.version>2.11.3</jackson.version>
+    <jackson.version>2.12.0</jackson.version>
     <slf4j.version>1.7.30</slf4j.version>
   </properties>
 
