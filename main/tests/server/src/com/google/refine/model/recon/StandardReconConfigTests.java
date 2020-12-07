@@ -91,7 +91,7 @@ public class StandardReconConfigTests extends RefineTest {
             return wordDistance(s1, s2);
         }
         
-        protected Recon createReconServiceResults(String text, ArrayNode resultsList, long historyEntryID) throws IOException {
+        protected Recon createReconServiceResults(String text, ArrayNode resultsList, long historyEntryID) {
         	return super.createReconServiceResults(text, resultsList, historyEntryID);
         }
     }
