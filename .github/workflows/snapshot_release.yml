@@ -8,6 +8,32 @@ on:
 jobs:
   build:
 
+    services:
+      postgres:
+        image: postgres
+        ports:
+          - 5432
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: 'postgres'
+          POSTGRES_DB: test_db
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+      mysql:
+        image: mysql:8
+        ports:
+          - 3306
+        env:
+          MYSQL_ROOT_PASSWORD: root
+        options: >-
+          --health-cmd "mysqladmin ping"
+          --health-interval 5s
+          --health-timeout 2s
+          --health-retries 3
+
     runs-on: ubuntu-latest
 
     steps:
@@ -31,8 +57,26 @@ jobs:
     - name: Install genisoimage and jq
       run: sudo apt-get install genisoimage jq
 
+    - name: Configure connections to databases
+      id: configure_db_connections
+      run: cat extensions/database/tests/conf/github_actions_tests.xml | sed -e "s/MYSQL_PORT/${{ job.services.mysql.ports[3306] }}/g" | sed -e "s/POSTGRES_PORT/${{ job.services.postgres.ports[5432] }}/g" > extensions/database/tests/conf/tests.xml
+
+    - name: Populate databases with test data
+      id: populate_databases_with_test_data
+      run: |
+        mysql -u root -h 127.0.0.1 -P ${{ job.services.mysql.ports[3306] }} -proot -e 'CREATE DATABASE test_db;'
+        mysql -u root -h 127.0.0.1 -P ${{ job.services.mysql.ports[3306] }} -proot < extensions/database/tests/conf/test-mysql.sql
+        psql -U postgres test_db -h 127.0.0.1 -p ${{ job.services.postgres.ports[5432] }} < extensions/database/tests/conf/test-pgsql.sql
+      env:
+        PGPASSWORD: postgres
+
     - name: Build and test with Maven
-      run: ./refine test
+      run: mvn jacoco:prepare-agent test
+
+    - name: Submit test coverage to Coveralls
+      run: |
+        mvn prepare-package -DskipTests=true
+        mvn jacoco:report coveralls:report -DrepoToken=${{ secrets.COVERALLS_TOKEN }} -DpullRequest=${{ github.event.number }} -DserviceName="GitHub Actions" -DserviceBuildNumber=${{ env.GITHUB_RUN_ID }} -Dbranch=master
 
     - name: Get the OpenRefine snapshot version
       run: echo ::set-env name=OR_VERSION::$(cat ./main/webapp/WEB-INF/classes/git.properties | jq -r '.["git.commit.id.describe"]')
