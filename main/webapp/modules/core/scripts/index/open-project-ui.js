@@ -96,16 +96,25 @@ Refine.OpenProjectUI.prototype._buildProjectSearchPanel = function(){
     .attr('method','POST')
     .attr('autocomplete','off')
     .appendTo(div);
-  // Add input to the form
-  $('<input/>')
-    .attr('type', 'text')
-    .attr('id','searchInProjects')
-    .addClass("header-search-box").text('Search').appendTo(form);
+  // div for image
+  var divImage = $('<div/>')
+    .attr('id','divImage')
+    .appendTo(form)
   // Add img to the form
   $('<img/>')
     .attr('src', 'images/search.png')
     .attr('id', 'searchIcon')
-    .addClass("magnifying_glass").text('Search').appendTo(form);
+    .addClass("magnifying_glass").text('Search').appendTo(divImage);
+
+  // div for input
+  var divImage = $('<div/>')
+    .attr('id','divInput')
+    .appendTo(form)
+  // Add input to the form
+  $('<input/>')
+    .attr('type', 'text')
+    .attr('id','searchInProjects')
+    .addClass("header-search-box").text('Search').appendTo(divImage);
 
     self._searchAnimation();
     self._searchInput();
@@ -161,6 +170,7 @@ Refine.OpenProjectUI.prototype._searchAnimation = function() {
     if (form.is(':hidden'))
     {
       $("#tagsUl").hide()
+      $("#divInput").show()
       form.show()
     }
     var widthFormOpen = Math.floor($('#right-panel-body').width() * 2 / 3);
@@ -169,6 +179,7 @@ Refine.OpenProjectUI.prototype._searchAnimation = function() {
     }, 'fast', function () {
       if (form.width() == 0) {
         form.hide()
+                $("#divInput").hide()
         $("#tagsUl").show()
       }
     });
@@ -180,6 +191,7 @@ Refine.OpenProjectUI.prototype._searchInput = function() {
     // search dynamically
     search.keyup(function () {
         var text = search.val();
+        // get the text, get back the projects that contains the text in the metadata
     });
 };
 
