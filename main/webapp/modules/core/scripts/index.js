@@ -205,7 +205,20 @@ $(function() {
     .css("margin-top", rightPanelBodyVPaddings + "px")
     .css("width", ($('#right-panel').width() - rightPanelBodyHPaddings) + "px")
     .css("height", ($('#right-panel').height() - rightPanelBodyVPaddings) + "px");
-    
+    // search
+    $('#divSearch')
+    .css("float","left")
+    .css("width", 0 + "px");
+
+    $('.header-search-box')
+    .css("display","none")
+    .css("width", 0 + "px")
+    .css("float", "left");
+    // icon search
+    $('.magnifying_glass')
+    .css("width", 40 + "px")
+    .css("height", 27 + "px");
+
     for (var i = 0; i < Refine.actionAreas.length; i++) {
       Refine.actionAreas[i].ui.resize();
     }

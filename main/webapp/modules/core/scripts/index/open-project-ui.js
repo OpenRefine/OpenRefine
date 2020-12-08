@@ -101,15 +101,45 @@ Refine.OpenProjectUI.prototype._fetchProjects = function() {
 };
 
 Refine.OpenProjectUI.prototype._buildTagsAndFetchProjects = function() {
+    this._buildProjectSearchPanel();
     this._buildTagsListPanel();
     this._fetchProjects();
 };
+
+Refine.OpenProjectUI.prototype._buildProjectSearchPanel = function(){
+    var self = this;
+    self._allTags = Refine.TagsManager._getAllProjectTags();
+    var container = self._elmts.projectTags;
+    // Add search menu item
+    var div = $('<div/>')
+    .attr('id','divSearch')
+    .appendTo(container)
+    // Add form to the div on the left
+    var form = $('<form/>')
+    .attr('id','formSearch')
+    .attr('method','POST')
+    .attr('autocomplete','off')
+    .appendTo(div);
+    // Add input to the form
+    $('<input/>')
+    .attr('type', 'text')
+    .attr('id','searchInProjects')
+    .addClass("header-search-box").text('Search').appendTo(form);
+    // Add img to the form
+    $('<img/>')
+    .attr('src', 'images/search.png')
+    .attr('id', 'searchIcon')
+    .addClass("magnifying_glass").text('Search').appendTo(form);
+
+    self._searchAnimation();
+}
+
 
 Refine.OpenProjectUI.prototype._buildTagsListPanel = function() {
     var self = this;
     self._allTags = Refine.TagsManager._getAllProjectTags();
 
-    var container = self._elmts.projectTags.empty();
+    var container = self._elmts.projectTags;
     var ul = $("<ul/>").attr('id', 'tagsUl').appendTo(container);
 
     // Add 'all' menu item
@@ -129,6 +159,27 @@ Refine.OpenProjectUI.prototype._addTagsListAnimation = function() {
     $("#tagsUl").lavalamp({
             setOnClick : true,
             duration : 300
+    });
+};
+
+Refine.OpenProjectUI.prototype._searchAnimation = function() {
+    var search = $('#searchIcon');
+    var form = $('.header-search-box');
+    search.click(function () {
+        if (form.is(':hidden'))
+        {
+            $("#tagsUl").hide()
+            form.show()
+        }
+        var widthFormOpen = Math.floor($('#right-panel-body').width() * 2 / 3);
+        form.animate({
+            'width': form.width() == widthFormOpen ? '0px' : widthFormOpen + "px"
+        }, 'fast', function () {
+            if (form.width() == 0) {
+                form.hide()
+                $("#tagsUl").show()
+            }
+        });
     });
 };
 
