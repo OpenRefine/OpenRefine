@@ -135,7 +135,7 @@ jobs:
     - name: Delete older releases
       id: delete-older-releases
       if: github.repository == 'OpenRefine/OpenRefine'
-      uses: dev-drprasad/delete-older-releases@v0.1.0
+      uses: dev-drprasad/delete-older-releases@v0.2.0
       with:
         repo: OpenRefine/OpenRefine-snapshot-releases
         # Specifies number of latest releases (sorted by created_at) to keep. Pass 0 if you want to delete all releases
