@@ -132,6 +132,7 @@ Refine.OpenProjectUI.prototype._buildProjectSearchPanel = function(){
     .addClass("magnifying_glass").text('Search').appendTo(form);
 
     self._searchAnimation();
+    self._searchInput();
 }
 
 
@@ -183,6 +184,14 @@ Refine.OpenProjectUI.prototype._searchAnimation = function() {
     });
 };
 
+Refine.OpenProjectUI.prototype._searchInput = function() {
+    var search = $('#searchInProjects');
+    // search dynamically
+    search.keyup(function () {
+        var text = search.val();
+    });
+};
+
 Refine.OpenProjectUI.prototype._fetchProjects = function() {
     var self = this;
     $.ajax({
@@ -218,7 +227,7 @@ Refine.OpenProjectUI.prototype._renderProjects = function(data) {
                   if (!found) {
                       project.userMetadata.push({
                           name: data.customMetadataColumns[m].name,
-                          dispay: data.customMetadataColumns[m].display,
+                          display: data.customMetadataColumns[m].display,
                           value: ""
                       });
                   }
