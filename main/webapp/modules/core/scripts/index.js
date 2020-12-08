@@ -210,6 +210,18 @@ $(function() {
     .css("float","left")
     .css("width", 0 + "px");
 
+    $('#divImage')
+    .css("float","left")
+
+    $('#divInput')
+    .css("float","right")
+    .css("width", 100 + "%")
+    .css("display","none")
+
+    // input
+    $('#searchInProjects')
+    .css("float","right")
+
     $('.header-search-box')
     .css("display","none")
     .css("width", 0 + "px")
