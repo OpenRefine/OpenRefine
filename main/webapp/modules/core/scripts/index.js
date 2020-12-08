@@ -221,6 +221,7 @@ $(function() {
     // input
     $('#searchInProjects')
     .css("float","right")
+    .css("border-radius", 10 + "px");
 
     $('.header-search-box')
     .css("display","none")
@@ -229,7 +230,8 @@ $(function() {
     // icon search
     $('.magnifying_glass')
     .css("width", 40 + "px")
-    .css("height", 27 + "px");
+    .css("height", 27 + "px")
+    .css("border-radius", 10 + "px");
 
     for (var i = 0; i < Refine.actionAreas.length; i++) {
       Refine.actionAreas[i].ui.resize();
