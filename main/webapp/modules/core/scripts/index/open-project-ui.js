@@ -107,7 +107,8 @@ Refine.OpenProjectUI.prototype._buildProjectSearchPanel = function(){
     .attr('id', 'searchIcon')
     .addClass("magnifying_glass").text('Search').appendTo(form);
 
-  self._searchAnimation();
+    self._searchAnimation();
+    self._searchInput();
 }
 
 
@@ -172,6 +173,14 @@ Refine.OpenProjectUI.prototype._searchAnimation = function() {
       }
     });
   });
+};
+
+Refine.OpenProjectUI.prototype._searchInput = function() {
+    var search = $('#searchInProjects');
+    // search dynamically
+    search.keyup(function () {
+        var text = search.val();
+    });
 };
 
 // FIXME: This is overwriting an earlier function definition
