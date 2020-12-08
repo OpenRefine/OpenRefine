@@ -64,7 +64,7 @@ If you want to run only the server side portion of the tests, use:
 If you are running the UI tests for the first time, [you must go through the installation process.](functional-tests)  
 If you want to run only the client side portion of the tests, use:
 ```shell
-yarn --cwd ./main/tests/cypress run cypress open
+./refine ui_test chrome
 ```
 
 ## Running
