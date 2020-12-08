@@ -96,7 +96,7 @@ Refine.OpenProjectUI.prototype._buildProjectSearchPanel = function(){
     .attr('method','POST')
     .attr('autocomplete','off')
     .appendTo(div);
-  // div for image
+    // Add div for image in the form
   var divImage = $('<div/>')
     .attr('id','divImage')
     .appendTo(form)
@@ -106,11 +106,11 @@ Refine.OpenProjectUI.prototype._buildProjectSearchPanel = function(){
     .attr('id', 'searchIcon')
     .addClass("magnifying_glass").text('Search').appendTo(divImage);
 
-  // div for input
+    // Add div for input, in the form
   var divImage = $('<div/>')
     .attr('id','divInput')
     .appendTo(form)
-  // Add input to the form
+    // Add input to the div
   $('<input/>')
     .attr('type', 'text')
     .attr('id','searchInProjects')
@@ -166,11 +166,13 @@ Refine.OpenProjectUI._filterTags = function(tag) {
 Refine.OpenProjectUI.prototype._searchAnimation = function() {
   var search = $('#searchIcon');
   var form = $('.header-search-box');
+    var icon = $('.magnifying_glass');
   search.click(function () {
     if (form.is(':hidden'))
     {
       $("#tagsUl").hide()
       $("#divInput").show()
+            icon.addClass("magnifying-glass-open")
       form.show()
     }
     var widthFormOpen = Math.floor($('#right-panel-body').width() * 2 / 3);
@@ -179,6 +181,8 @@ Refine.OpenProjectUI.prototype._searchAnimation = function() {
     }, 'fast', function () {
       if (form.width() == 0) {
         form.hide()
+                form.val('')
+                icon.removeClass("magnifying-glass-open")
                 $("#divInput").hide()
         $("#tagsUl").show()
       }
