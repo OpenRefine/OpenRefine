@@ -414,6 +414,8 @@ function init() {
       "scripts/util/encoding.js",
       "scripts/util/host.js",
       "scripts/util/sign.js",
+      "scripts/util/filter-lists.js",
+      "scripts/util/filter-lists-search.js",
 
       "scripts/index.js",
       "scripts/index/create-project-ui.js",
@@ -455,7 +457,7 @@ function init() {
       "styles/common.css",
       "styles/util/dialog.css",
       "styles/util/encoding.css",
-      
+
       "styles/index.css",
       "styles/index/create-project-ui.css",
       "styles/index/open-project-ui.css",

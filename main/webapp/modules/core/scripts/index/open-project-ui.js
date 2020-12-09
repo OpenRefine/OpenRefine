@@ -196,6 +196,7 @@ Refine.OpenProjectUI.prototype._searchInput = function() {
     search.keyup(function () {
         var text = search.val();
         // get the text, get back the projects that contains the text in the metadata
+        $("#tableBody").filterListSearch(text);
     });
 };
 
@@ -397,7 +398,7 @@ Refine.OpenProjectUI.prototype._addTagFilter = function() {
 };
 
 Refine.OpenProjectUI.refreshProject = function(tr, metaData, project) {
-    
+
     var refreshMetaField = function(data, index) {
         if (index === 3) {
             $('a', $('td', tr).eq(index))
