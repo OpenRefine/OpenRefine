@@ -166,6 +166,7 @@ $(function() {
   };
 
   var resize = function() {
+    console.log("resize")
     var leftPanelWidth = 150;
     // px
     var width = $(window).width();
@@ -205,33 +206,7 @@ $(function() {
     .css("margin-top", rightPanelBodyVPaddings + "px")
     .css("width", ($('#right-panel').width() - rightPanelBodyHPaddings) + "px")
     .css("height", ($('#right-panel').height() - rightPanelBodyVPaddings) + "px");
-    // search
-    $('#divSearch')
-    .css("float","left")
-    .css("width", 0 + "px");
 
-    $('#divImage')
-    .css("float","left")
-
-    $('#divInput')
-    .css("float","right")
-    .css("width", 100 + "%")
-    .css("display","none")
-
-    // input
-    $('#searchInProjects')
-    .css("float","right")
-    .css("border-radius", 10 + "px");
-
-    $('.header-search-box')
-    .css("display","none")
-    .css("width", 0 + "px")
-    .css("float", "left");
-    // icon search
-    $('.magnifying_glass')
-    .css("width", 40 + "px")
-    .css("height", 27 + "px")
-    .css("border-radius", 10 + "px");
 
     for (var i = 0; i < Refine.actionAreas.length; i++) {
       Refine.actionAreas[i].ui.resize();

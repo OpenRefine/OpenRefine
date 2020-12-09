@@ -109,7 +109,7 @@ Refine.OpenProjectUI.prototype._buildTagsAndFetchProjects = function() {
 Refine.OpenProjectUI.prototype._buildProjectSearchPanel = function(){
     var self = this;
     self._allTags = Refine.TagsManager._getAllProjectTags();
-    var container = self._elmts.projectTags;
+    var container = self._elmts.projectTags.empty();
     // Add search menu item
     var div = $('<div/>')
     .attr('id','divSearch')
@@ -422,7 +422,6 @@ Refine.OpenProjectUI.prototype._onClickUploadFileButton = function(evt) {
 };
 
 Refine.OpenProjectUI.refreshProject = function(tr, metaData, project) {
-    
     var refreshMetaField = function(data, index) {
         if (index === 3) {
             $('a', $('td', tr).eq(index))
