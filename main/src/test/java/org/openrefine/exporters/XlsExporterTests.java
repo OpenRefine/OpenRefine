@@ -35,12 +35,14 @@ package org.openrefine.exporters;
 
 import static org.mockito.Mockito.mock;
 
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.Serializable;
 import java.time.OffsetDateTime;
 import java.util.Properties;
 
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.openrefine.ProjectMetadata;
 import org.openrefine.RefineTest;
 import org.openrefine.browsing.Engine;
@@ -52,6 +54,10 @@ import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
+
+import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 
 public class XlsExporterTests extends RefineTest {
 
@@ -92,7 +98,7 @@ public class XlsExporterTests extends RefineTest {
     }
 
     @Test
-    public void exportSimpleXls(){
+    public void exportSimpleXls() throws IOException{
     	grid = createGrid(new String[] {"column0", "column1"},
     			new Serializable[][] {
     		{"row0cell0", "row0cell1"},
@@ -106,12 +112,54 @@ public class XlsExporterTests extends RefineTest {
             Assert.fail();
         }
 
-        // TODO: Not a very effective test! 
-        // (it didn't crash though, and it created output)
         Assert.assertEquals(stream.size(),4096);
 
+        try (HSSFWorkbook wb = new HSSFWorkbook(new ByteArrayInputStream(stream.toByteArray()))) {
+            org.apache.poi.ss.usermodel.Sheet ws = wb.getSheetAt(0);
+            org.apache.poi.ss.usermodel.Row row1 = ws.getRow(1);
+            org.apache.poi.ss.usermodel.Cell cell0 = row1.getCell(0);
+            Assert.assertEquals(cell0.toString(),"row0cell0");
+        }
+
     }
-    
+
+    @Test
+    public void test256Columns() throws IOException {
+        CreateGrid(2, 256);
+
+        try {
+            SUT.export(grid, projectMetadata, options, engine, stream);
+        } catch (IOException e) {
+            Assert.fail();
+        }
+
+        try (HSSFWorkbook wb = new HSSFWorkbook(new ByteArrayInputStream(stream.toByteArray()))) {
+            org.apache.poi.ss.usermodel.Sheet ws = wb.getSheetAt(0);
+            org.apache.poi.ss.usermodel.Row row1 = ws.getRow(1);
+            org.apache.poi.ss.usermodel.Cell cell0 = row1.getCell(255);
+            Assert.assertEquals(cell0.toString(),"row0cell255");
+        }
+    }
+
+    @Test
+    public void test257Columns() throws IOException {
+        CreateGrid(2, 257);
+
+        try {
+            SUT.export(grid, projectMetadata, options, engine, stream);
+        } catch (IOException e) {
+            Assert.fail();
+        }
+
+        try (HSSFWorkbook wb = new HSSFWorkbook(new ByteArrayInputStream(stream.toByteArray()))) {
+            org.apache.poi.ss.usermodel.Sheet ws = wb.getSheetAt(0);
+            org.apache.poi.ss.usermodel.Row row1 = ws.getRow(1);
+            org.apache.poi.ss.usermodel.Cell cell0 = row1.getCell(255);
+            // FIXME: This is not a good error reporting mechanism, but it's what there today
+            Assert.assertEquals(cell0.toString(),"ERROR: TOO MANY COLUMNS");
+        }
+    }
+
     @Test
     public void exportDateType() throws IOException{
         OffsetDateTime odt = OffsetDateTime.now();
@@ -129,5 +177,54 @@ public class XlsExporterTests extends RefineTest {
         }
         
         Assert.assertEquals(stream.size(),4096);
+    }
+
+    @Test
+    public void exportSimpleXlsNoHeader(){
+        CreateGrid(2, 2);
+        when(options.getProperty("printColumnHeader")).thenReturn("false");
+        try {
+            SUT.export(grid, projectMetadata, options, engine, stream);
+        } catch (IOException e) {
+            Assert.fail();
+        }
+
+        Assert.assertEquals(stream.toString(), "row0cell0,row0cell1\n" +
+                                               "row1cell0,row1cell1\n");
+
+        verify(options, times(2)).getProperty("printColumnHeader");
+    }
+
+    @Test
+    public void exportXlsWithEmptyCells(){
+    	grid = createGrid(new String[] {"column0", "column1"},
+    			new Serializable[][] {
+    		{"row0cell0", "row0cell1", "row0cell2"},
+    		{"row1cell0", null,        "row1cell2"},
+    		{null,        "row2cell1", "row2cell2"}
+    	});
+
+        try {
+            SUT.export(grid, projectMetadata, options, engine, stream);
+        } catch (IOException e) {
+            Assert.fail();
+        }
+
+        Assert.assertEquals(stream.toString(), "column0,column1,column2\n" +
+                                               "row0cell0,row0cell1,row0cell2\n" +
+                                               "row1cell0,,row1cell2\n" +
+                                               ",row2cell1,row2cell2\n");
+    }
+
+    private void CreateGrid(int rows, int columns) {
+    	Serializable[][] values = new Serializable[rows][columns];
+    	String[] columnNames = new String[columns];
+		for(int column = 0; column != columns; column++) {
+			columnNames[column] = String.format("column%d", column);
+			for (int row = 0; row != rows; row++) {
+    			values[row][column] = String.format("row%dcell%d", row, column);
+    		}
+    	}
+    	grid = createGrid(columnNames, values);
     }
 }

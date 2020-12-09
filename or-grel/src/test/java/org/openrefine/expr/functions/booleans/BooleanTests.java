@@ -34,7 +34,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package org.openrefine.expr.functions.booleans;
 
 import org.openrefine.expr.EvalError;
-import org.openrefine.expr.functions.FunctionTestBase;
+import org.openrefine.grel.FunctionTestBase;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 

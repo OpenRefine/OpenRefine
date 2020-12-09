@@ -26,7 +26,6 @@
  ******************************************************************************/
 package org.openrefine.util;
 
-import static org.testng.Assert.assertTrue;
 import static org.testng.Assert.fail;
 
 import java.io.File;
@@ -77,7 +76,7 @@ public class TestUtils {
         dir.mkdir();
         return dir;
     }
-    
+
     /**
      * Creates a temporary file with the given contents.
      * This is useful in the case where Java's resource mechanism is not
@@ -101,25 +100,36 @@ public class TestUtils {
     }
     
     /**
-     * Compare two JSON strings for equality.
+     * Assert that two JSON strings are equal as JSON objects.
+     *
+     * @deprecated for 3.5 by Tom Morris Use the method with the same parameter
+     *             order as the rest of the assert
+     *             methods{@link #assertEqualsAsJson(String, String)}
      */
     public static void assertEqualAsJson(String expected, String actual) {
+        assertEqualsAsJson(actual, expected);
+    }
+
+    /**
+     * Assert that two JSON strings are equal as JSON objects.
+     */
+    public static void assertEqualsAsJson(String actual, String expected) {
         try {
             JsonNode jsonA = mapper.readValue(expected, JsonNode.class);
             JsonNode jsonB = mapper.readValue(actual, JsonNode.class);
             if (!jsonA.equals(jsonB)) {
                 jsonDiff(expected, actual);
+                fail("Objects above are not equal as JSON strings.");
             }
-            assertTrue(jsonA.equals(jsonB));
         } catch(Exception e) {
-            fail("\""+expected+"\" and \""+actual+"\" are not equal as JSON strings.");
+            fail("\""+actual+"\" and \""+expected+"\" are not equal as JSON strings.");
         }
     }
     
-    public static boolean equalAsJson(String expected, String actual)  {
+    public static boolean equalAsJson(String a, String b)  {
         try {
-            JsonNode jsonA = mapper.readValue(expected, JsonNode.class);
-            JsonNode jsonB = mapper.readValue(actual, JsonNode.class);
+            JsonNode jsonA = mapper.readValue(a, JsonNode.class);
+            JsonNode jsonB = mapper.readValue(b, JsonNode.class);
             return (jsonA == null && jsonB == null) || jsonA.equals(jsonB);
         } catch(Exception e) {
             return false;
@@ -127,6 +137,8 @@ public class TestUtils {
     }
     
     public static void isSerializedTo(Object o, String targetJson, ObjectWriter writer) {
+
+        // also check Jackson serialization
         try {
             String jacksonJson = writer.writeValueAsString(o);
             if(!equalAsJson(targetJson, jacksonJson)) {

@@ -1,0 +1,11 @@
+{
+	"integrationFolder": "./cypress/integration",
+	"nodeVersion": "system",
+	"retries": {
+		"runMode": 1,
+		"openMode": 1
+	},
+	"env":{
+		"OPENREFINE_URL":"http://localhost:3333"
+	}
+}

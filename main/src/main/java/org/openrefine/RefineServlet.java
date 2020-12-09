@@ -53,6 +53,7 @@ import org.openrefine.commands.Command;
 import org.openrefine.importing.ImportingManager;
 import org.openrefine.io.FileProjectManager;
 import org.openrefine.model.DatamodelRunner;
+import org.apache.http.HttpStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -63,15 +64,13 @@ import edu.mit.simile.butterfly.Butterfly;
 import edu.mit.simile.butterfly.ButterflyModule;
 
 public class RefineServlet extends Butterfly {
+    static private String ASSIGNED_VERSION = "3.5-beta";
     
     static public String VERSION = "";
     static public String REVISION = "";
     static public String FULL_VERSION = "";
     static public String FULLNAME = "OpenRefine ";
 
-
-    static public final String AGENT_ID = "/en/google_refine"; // TODO: Unused?  Freebase ID
-    
     static final long serialVersionUID = 2386057901503517403L;
 
     static private final String JAVAX_SERVLET_CONTEXT_TEMPDIR = "javax.servlet.context.tempdir";
@@ -222,10 +221,10 @@ public class RefineServlet extends Butterfly {
                     command.doDelete(request, response);
                     logger.trace("< DELETE {}", commandKey);
                 } else {
-                    response.sendError(405);
+                    response.sendError(HttpStatus.SC_METHOD_NOT_ALLOWED);
                 }
             } else {
-                response.sendError(404);
+                response.sendError(HttpStatus.SC_NOT_FOUND);
             }
         } else {
             super.service(request, response);
@@ -339,12 +338,24 @@ public class RefineServlet extends Butterfly {
     }
     
     
+    /**
+     * @deprecated extensions relying on HttpURLConnection should rather
+     * migrate to a more high-level and mature HTTP client.
+     * Use {@link RefineServlet.getUserAgent()} instead.
+     */
+    @Deprecated
     static public void setUserAgent(URLConnection urlConnection) {
         if (urlConnection instanceof HttpURLConnection) {
             setUserAgent((HttpURLConnection) urlConnection);
         }
     }
     
+    /**
+     * @deprecated extensions relying on HttpURLConnection should rather
+     * migrate to a more high-level and mature HTTP client.
+     * Use {@link RefineServlet.getUserAgent()} instead.
+     */
+    @Deprecated
     static public void setUserAgent(HttpURLConnection httpConnection) {
         httpConnection.addRequestProperty("User-Agent", getUserAgent());
     }

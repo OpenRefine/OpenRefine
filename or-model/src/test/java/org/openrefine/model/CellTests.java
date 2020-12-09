@@ -32,9 +32,15 @@ import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.time.format.DateTimeFormatter;
 
+import org.openrefine.expr.EvalError;
 import org.openrefine.model.recon.Recon;
 import org.openrefine.util.ParsingUtilities;
 import org.openrefine.util.TestUtils;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNull;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
 import org.testng.annotations.Test;
 
 public class CellTests {
@@ -86,7 +92,16 @@ public class CellTests {
         Cell c = Cell.loadStreaming(json);
         TestUtils.isSerializedTo(c, json, ParsingUtilities.defaultWriter);
     }
-    
+	
+    @Test
+    public void getMessageFromErrorCell() throws Exception {
+        String errorMessage = "Sample error message";
+        EvalError err = new EvalError(errorMessage);
+        Cell c = new Cell(err, null);
+        assertEquals(c.getField("errorMessage"), errorMessage);
+        assertEquals(c.getField("value"), err);
+    }
+
     @Test
     public void serializeDateCell() throws Exception {
         String json = "{\"v\":\"2018-03-04T08:09:10Z\",\"t\":\"date\"}";

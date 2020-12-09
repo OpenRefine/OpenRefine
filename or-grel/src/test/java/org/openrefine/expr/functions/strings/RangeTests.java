@@ -26,14 +26,12 @@
  ******************************************************************************/
 package org.openrefine.expr.functions.strings;
 
-import org.openrefine.expr.functions.strings.Range;
-import org.testng.Assert;
-import org.testng.annotations.Test;
-
 import org.openrefine.expr.EvalError;
-import org.openrefine.expr.functions.FunctionTestBase;
+import org.openrefine.grel.FunctionTestBase;
 import org.openrefine.util.ParsingUtilities;
 import org.openrefine.util.TestUtils;
+import org.testng.Assert;
+import org.testng.annotations.Test;
 
 /**
  * Tests for the range function.

@@ -85,7 +85,7 @@ public class PreviewExpressionCommandTests extends RefineTest {
                 "       \"results\" : [ \"d_u\", \"h_u\" ]\n" + 
                 "     }";
         command.doPost(request, response);
-        TestUtils.assertEqualAsJson(json, writer.toString());
+        TestUtils.assertEqualsAsJson(writer.toString(), json);
     }
     
     @Test
@@ -102,6 +102,6 @@ public class PreviewExpressionCommandTests extends RefineTest {
                 "       \"type\" : \"parser\"\n" + 
                 "     }";
         command.doPost(request, response);
-        TestUtils.assertEqualAsJson(json, writer.toString());
+        TestUtils.assertEqualsAsJson(writer.toString(), json);
     }
 }

@@ -194,6 +194,61 @@ public class TsvCsvImporterTests extends ImporterTest {
         Assert.assertEquals(row0.getCell(2).value, " data3");
     }
 
+    @Test(groups = {  }, dataProvider = "CSV-TSV-AutoDetermine")
+    public void readTrimsLeadingTrailingWhitespaceOnTrimStrings(String sep) throws Exception {
+        //create input to test with
+        String inputSeparator =  sep == null ? "\t" : sep;
+        String input = " data1 " + inputSeparator + " 3.4 " + inputSeparator + " data3 ";
+
+        prepareOptions(sep, -1, 0, 0, 0, false, false, true);
+        GridState state = parseOneFile(SUT, new StringReader(input));
+
+        Assert.assertEquals(state.getColumnModel().getColumns().size(), 3);
+        Assert.assertEquals(state.rowCount(), 1);
+        Row row0 = state.getRow(0);
+        Assert.assertEquals(row0.cells.size(), 3);
+        Assert.assertEquals(row0.getCellValue(0), "data1");
+        Assert.assertEquals(row0.getCellValue(1), "3.4");
+        Assert.assertEquals(row0.getCellValue(2), "data3");
+    }
+
+    @Test(groups = {  }, dataProvider = "CSV-TSV-AutoDetermine")
+    public void readDoesNotTrimLeadingTrailingWhitespaceOnNoTrimStrings(String sep) throws Exception {
+        //create input to test with
+        String inputSeparator =  sep == null ? "\t" : sep;
+        String input = " data1 " + inputSeparator + " 3.4 " + inputSeparator + " data3 ";
+
+        prepareOptions(sep, -1, 0, 0, 0, false, false, false);
+        GridState state = parseOneFile(SUT, new StringReader(input));
+
+        Assert.assertEquals(state.getColumnModel().getColumns().size(), 3);
+        Assert.assertEquals(state.rowCount(), 1);
+        Row row0 = state.getRow(0);
+        Assert.assertEquals(row0.cells.size(), 3);
+        Assert.assertEquals(row0.getCellValue(0), " data1 ");
+        Assert.assertEquals(row0.getCellValue(1), " 3.4 ");
+        Assert.assertEquals(row0.getCellValue(2), " data3 ");
+    }
+    
+    @Test(groups = {  }, dataProvider = "CSV-TSV-AutoDetermine")
+    public void trimAndAutodetectDatatype(String sep) throws Exception {
+        //create input to test with
+        String inputSeparator =  sep == null ? "\t" : sep;
+        String input = " data1 " + inputSeparator + " 3.4 " + inputSeparator + " data3 ";
+
+        prepareOptions(sep, -1, 0, 0, 0, true, false, true);
+        GridState state = parseOneFile(SUT, new StringReader(input));
+
+        Assert.assertEquals(state.getColumnModel().getColumns().size(), 3);
+        Assert.assertEquals(state.rowCount(), 1);
+        Row row0 = state.getRow(0);
+        Assert.assertEquals(row0.cells.size(), 3);
+        Assert.assertEquals(row0.getCellValue(0), "data1");
+        Assert.assertEquals(row0.getCellValue(1), Double.parseDouble("3.4"));
+        Assert.assertEquals(row0.getCellValue(2), "data3");
+    }
+
+
     @Test(dataProvider = "CSV-TSV-AutoDetermine")
     public void readCanAddNull(String sep) throws Exception{
         //create input to test with
@@ -546,6 +601,13 @@ public class TsvCsvImporterTests extends ImporterTest {
             int headerLines, boolean guessValueType, boolean ignoreQuotes) {
         prepareOptions(sep, limit, skip, ignoreLines, headerLines, guessValueType, ignoreQuotes, "\"");
     }
+    
+    protected void prepareOptions(
+            String sep, int limit, int skip, int ignoreLines,
+            int headerLines, boolean guessValueType, boolean ignoreQuotes, boolean trimStrings) {
+        prepareOptions(sep, limit, skip, ignoreLines, headerLines, guessValueType, ignoreQuotes, "\"");
+        whenGetBooleanOption("trimStrings", options, trimStrings);
+    }
 
     private void prepareOptions(
         String sep, int limit, int skip, int ignoreLines,
@@ -555,18 +617,18 @@ public class TsvCsvImporterTests extends ImporterTest {
     }
     
     protected void prepareOptions(
-            String sep, int limit, int skip, int ignoreLines,
-            int headerLines, boolean guessValueType, boolean ignoreQuotes, String quoteCharacter, String columnNames) {
-            
-            whenGetStringOption("separator", options, sep);
-            whenGetStringOption("quoteCharacter", options, quoteCharacter);
-            whenGetIntegerOption("limit", options, limit);
-            whenGetIntegerOption("skipDataLines", options, skip);
-            whenGetIntegerOption("ignoreLines", options, ignoreLines);
-            whenGetIntegerOption("headerLines", options, headerLines);
-            whenGetBooleanOption("guessCellValueTypes", options, guessValueType);
-            whenGetBooleanOption("processQuotes", options, !ignoreQuotes);
-            whenGetBooleanOption("storeBlankCellsAsNulls", options, true);
-            whenGetArrayOption("columnNames", options, ParsingUtilities.evaluateJsonStringToArrayNode(columnNames));
-        }
+        String sep, int limit, int skip, int ignoreLines,
+        int headerLines, boolean guessValueType, boolean ignoreQuotes, String quoteCharacter, String columnNames) {
+        
+        whenGetStringOption("separator", options, sep);
+        whenGetStringOption("quoteCharacter", options, quoteCharacter);
+        whenGetIntegerOption("limit", options, limit);
+        whenGetIntegerOption("skipDataLines", options, skip);
+        whenGetIntegerOption("ignoreLines", options, ignoreLines);
+        whenGetIntegerOption("headerLines", options, headerLines);
+        whenGetBooleanOption("guessCellValueTypes", options, guessValueType);
+        whenGetBooleanOption("processQuotes", options, !ignoreQuotes);
+        whenGetBooleanOption("storeBlankCellsAsNulls", options, true);
+        whenGetArrayOption("columnNames", options, ParsingUtilities.evaluateJsonStringToArrayNode(columnNames));
+    }
 }

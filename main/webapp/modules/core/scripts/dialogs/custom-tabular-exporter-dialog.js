@@ -40,7 +40,8 @@ function CustomTabularExporterDialog(options) {
     outputColumnHeaders: true,
     outputBlankRows: false,
     xlsx: false,
-    columns: null
+    columns: null,
+    quoteAll: false
   };
   
   this._columnOptionMap = {};
@@ -119,6 +120,7 @@ CustomTabularExporterDialog.prototype._createDialog = function(options) {
   this._elmts.or_dialog_htmlTable.html($.i18n('core-dialogs/html-table'));
   this._elmts.or_dialog_lineSep.html($.i18n('core-dialogs/line-sep'));
   this._elmts.or_dialog_charEnc.html($.i18n('core-dialogs/char-enc'));
+  this._elmts.or_dialog_quoteAll.html($.i18n('core-dialogs/lb-formats-quotation'));
   this._elmts.downloadPreviewButton.html($.i18n('core-buttons/preview'));
   this._elmts.downloadButton.html($.i18n('core-buttons/download'));
   this._elmts.or_dialog_uploadTo.html($.i18n('core-dialogs/upload-to'));
@@ -146,7 +148,7 @@ CustomTabularExporterDialog.prototype._createDialog = function(options) {
     
     $('<input>')
       .attr('type', 'checkbox')
-      .attr('checked', 'checked')
+      .prop('checked', true)
       .appendTo(div);
     $('<span>')
       .text(name)
@@ -185,10 +187,10 @@ CustomTabularExporterDialog.prototype._createDialog = function(options) {
         .attr('id', id)
         .attr('type', 'radio')
         .attr('name', 'custom-tabular-exporter-upload-format')
-        .attr('value', target.id)
+        .val(target.id)
         .appendTo(td0);
       if (i === 0) {
-        input.attr('checked', 'checked');
+        input.prop('checked', true);
       }
       
       $('<label>')
@@ -218,11 +220,11 @@ CustomTabularExporterDialog.prototype._createDialog = function(options) {
     self._updateOptionCode();
   });
   this._elmts.selectAllButton.click(function() {
-    self._elmts.columnList.find('input[type="checkbox"]').attr('checked', true);
+    self._elmts.columnList.find('input[type="checkbox"]').prop('checked', true);
     self._updateOptionCode();
   });
   this._elmts.deselectAllButton.click(function() {
-    self._elmts.columnList.find('input[type="checkbox"]').attr('checked', false);
+    self._elmts.columnList.find('input[type="checkbox"]').prop('checked', false);
     self._updateOptionCode();
   });
   
@@ -249,22 +251,23 @@ CustomTabularExporterDialog.prototype._configureUIFromOptionCode = function(opti
   var escapeJavascriptString = function(s) {
     return JSON.stringify([s]).replace(/^\[\s*"/, '').replace(/"\s*]$/, '');
   };
-  this._dialog.find('input[name="custom-tabular-exporter-download-format"][value="' + options.format + '"]').attr('checked', 'checked');
+  this._dialog.find('input[name="custom-tabular-exporter-download-format"][value="' + options.format + '"]').prop('checked', true);
   this._elmts.separatorInput[0].value = escapeJavascriptString(options.separator || ',');
   this._elmts.lineSeparatorInput[0].value = escapeJavascriptString(options.lineSeparator || '\n');
   this._elmts.encodingInput[0].value = options.encoding;
-  this._elmts.outputColumnHeadersCheckbox.attr('checked', (options.outputColumnHeaders) ? 'checked' : '');
-  this._elmts.outputEmptyRowsCheckbox.attr('checked', (options.outputBlankRows) ? 'checked' : '');
-  
+  this._elmts.outputColumnHeadersCheckbox.prop('checked', options.outputColumnHeaders);
+  this._elmts.outputEmptyRowsCheckbox.prop('checked', options.outputBlankRows);
+  this._elmts.quoteAllCheckbox.prop('checked', options.quoteAll);
+
   if (options.columns !== null) {
     var self = this;
-    this._elmts.columnList.find('.custom-tabular-exporter-dialog-column input[type="checkbox"]').attr('checked', false);
+    this._elmts.columnList.find('.custom-tabular-exporter-dialog-column input[type="checkbox"]').prop('checked', false);
     $.each(options.columns, function() {
       var name = this.name;
       self._columnOptionMap[name] = this;
       self._elmts.columnList.find('.custom-tabular-exporter-dialog-column').each(function() {
         if (this.getAttribute('column') == name) {
-          $(this).find('input[type="checkbox"]').attr('checked', 'checked');
+          $(this).find('input[type="checkbox"]').prop('checked', true);
         }
       });
     });
@@ -303,24 +306,22 @@ CustomTabularExporterDialog.prototype._postExport = function(preview) {
   var form = ExporterManager.prepareExportRowsForm(format, !exportAllRowsCheckbox, ext);
   $('<input />')
   .attr("name", "options")
-  .attr("value", JSON.stringify(options))
+  .val(JSON.stringify(options))
   .appendTo(form);
   if (encoding) {
     $('<input />')
     .attr("name", "encoding")
-    .attr("value", encoding)
+    .val(encoding)
     .appendTo(form);
   }
-  if (!preview) {
-    $('<input />')
-    .attr("name", "contentType")
-    .attr("value", "application/x-unknown") // force download
-    .appendTo(form);
-  }
-  
+  $('<input />')
+  .attr("name", "preview")
+  .val(preview)
+  .appendTo(form);
+
   document.body.appendChild(form);
 
-  window.open("about:blank", "refine-export");
+  window.open(" ", "refine-export");
   form.submit();
 
   document.body.removeChild(form);
@@ -332,15 +333,15 @@ CustomTabularExporterDialog.prototype._selectColumn = function(columnName) {
   var columnOptions = this._columnOptionMap[columnName];
   
   this._elmts.columnOptionPane.find('input[name="custom-tabular-exporter-recon"][value="' +
-    columnOptions.reconSettings.output + '"]').attr('checked', 'checked');
-  this._elmts.reconBlankUnmatchedCheckbox.attr('checked', columnOptions.reconSettings.blankUnmatchedCells ? 'checked' : '');
-  this._elmts.reconLinkCheckbox.attr('checked', columnOptions.reconSettings.linkToEntityPages ? 'checked' : '');
+    columnOptions.reconSettings.output + '"]').prop('checked', true);
+  this._elmts.reconBlankUnmatchedCheckbox.prop('checked', columnOptions.reconSettings.blankUnmatchedCells);
+  this._elmts.reconLinkCheckbox.prop('checked', columnOptions.reconSettings.linkToEntityPages);
   
   this._elmts.columnOptionPane.find('input[name="custom-tabular-exporter-date"][value="' +
-    columnOptions.dateSettings.format + '"]').attr('checked', 'checked');
+    columnOptions.dateSettings.format + '"]').prop('checked', true);
   this._elmts.dateCustomInput.val(columnOptions.dateSettings.custom);
-  this._elmts.dateLocalTimeZoneCheckbox.attr('checked', columnOptions.dateSettings.useLocalTimeZone ? 'checked' : '');
-  this._elmts.omitTimeCheckbox.attr('checked', columnOptions.dateSettings.omitTime ? 'checked' : '');
+  this._elmts.dateLocalTimeZoneCheckbox.prop('checked', columnOptions.dateSettings.useLocalTimeZone);
+  this._elmts.omitTimeCheckbox.prop('checked', columnOptions.dateSettings.omitTime);
 };
 
 CustomTabularExporterDialog.prototype._updateCurrentColumnOptions = function() {
@@ -399,6 +400,7 @@ CustomTabularExporterDialog.prototype._getOptionCode = function() {
     }
     options.lineSeparator = unescapeJavascriptString(this._elmts.lineSeparatorInput.val());
     options.encoding = this._elmts.encodingInput.val();
+    options.quoteAll = this._elmts.quoteAllCheckbox[0].checked;
   }
   options.outputColumnHeaders = this._elmts.outputColumnHeadersCheckbox[0].checked;
   options.outputBlankRows = this._elmts.outputEmptyRowsCheckbox[0].checked;

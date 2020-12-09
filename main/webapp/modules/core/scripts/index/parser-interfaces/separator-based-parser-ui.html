@@ -23,6 +23,8 @@
       <tr><td width="1%"><input type="radio" name="column-separator" value="custom" id="$column-separator-custom" /></td>
         <td><label for="$column-separator-custom" id="or-import-custom"></label>
           <input bind="columnSeparatorInput" type="text" class="lightweight" size="5" /></td></tr>
+      <tr><td width="1%"><input type="checkbox" bind="trimStringsCheckbox" id="$trim" /></td>
+        <td><label for="$trim" id="or-import-trim"></label></td></tr>
       <tr><td colspan="2" id="or-import-escape"></td></tr>
       </table></div></td>
     
@@ -76,6 +78,8 @@
         
       <tr><td width="1%"><input type="checkbox" bind="includeFileSourcesCheckbox" id="$include-file-sources" /></td>
         <td><label for="$include-file-sources" id="or-import-source"></label></td></tr>
+      <tr><td width="1%"><input type="checkbox" bind="includeArchiveFileCheckbox" id="$include-archive-file" /></td>
+        <td><label for="$include-archive-file" id="or-import-archive"></label></td></tr>
     </table></div></td>
   </tr>
 </table></div>

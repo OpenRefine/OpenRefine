@@ -53,6 +53,7 @@ import org.openrefine.preference.PreferenceStore;
 import org.openrefine.preference.TopList;
 import org.openrefine.util.GetProjectIDException;
 import org.openrefine.util.ParsingUtilities;
+import org.apache.commons.compress.archivers.tar.TarArchiveOutputStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -85,9 +86,9 @@ public abstract class ProjectManager {
     final static Logger logger = LoggerFactory.getLogger("ProjectManager");
 
     /**
-     *  What caches the joins between projects.
+     *  What caches the lookups of projects.
      */
-    transient protected InterProjectModel _interProjectModel = new InterProjectModel();
+    transient protected LookupCacheManager _lookupCacheManager = new LookupCacheManager();
 
     /**
      *  Flag for heavy operations like creating or importing projects.  Workspace saves are skipped while it's set.
@@ -190,7 +191,7 @@ public abstract class ProjectManager {
      * @param tos
      * @throws IOException
      */
-    public abstract void exportProject(long projectId, TarOutputStream tos) throws IOException;
+    public abstract void exportProject(long projectId, TarArchiveOutputStream tos) throws IOException;
 
 
     /**
@@ -357,13 +358,12 @@ public abstract class ProjectManager {
     }
 
     /**
-     * Gets the InterProjectModel from memory
+     * Gets the LookupCacheManager from memory
      */
     @JsonIgnore
-    public InterProjectModel getInterProjectModel() {
-        return _interProjectModel;
+    public LookupCacheManager getLookupCacheManager() {
+        return _lookupCacheManager;
     }
-
 
     /**
      * Gets the project metadata from memory
@@ -462,7 +462,7 @@ public abstract class ProjectManager {
                 ObjectNode node = (ObjectNode)jsonObj;
                 if (node.get("name").asText("").equals(placeHolderJsonObj.get("name").asText(""))) {
                     found = true;
-                    node.put("display", placeHolderJsonObj.get("display"));
+                    node.set("display", placeHolderJsonObj.get("display"));
                     break;
                 }
             }

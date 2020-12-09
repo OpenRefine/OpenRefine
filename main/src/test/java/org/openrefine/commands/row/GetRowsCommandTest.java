@@ -134,7 +134,7 @@ public class GetRowsCommandTest extends RefineTest {
         when(request.getParameter("engine")).thenReturn("{\"mode\":\"row-based\",\"facets\":[],\"aggregationLimit\":2}");
         when(request.getParameter("limit")).thenReturn("1");
         command.doPost(request, response);
-        TestUtils.assertEqualAsJson(rowJson, writer.toString());
+        TestUtils.assertEqualsAsJson(writer.toString(), rowJson);
     }
     
     @Test
@@ -204,6 +204,6 @@ public class GetRowsCommandTest extends RefineTest {
         when(request.getParameter("engine")).thenReturn("{\"mode\":\"record-based\",\"facets\":[],\"aggregationLimit\":2}");
         when(request.getParameter("limit")).thenReturn("1");
         command.doPost(request, response);
-        TestUtils.assertEqualAsJson(recordJson, writer.toString());
+        TestUtils.assertEqualsAsJson(writer.toString(), recordJson);
     }
 }

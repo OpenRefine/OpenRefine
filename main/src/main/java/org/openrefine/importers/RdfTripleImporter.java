@@ -85,6 +85,8 @@ public class RdfTripleImporter extends ReaderImporter {
         Model model = ModelFactory.createDefaultModel();
 
         switch (mode) {
+        // TODO: The standard lang name is "N-TRIPLE"
+        // we may need to switch if we change packagings
         case NT:
             model.read(input, null, "NT");
             break;
@@ -94,6 +96,7 @@ public class RdfTripleImporter extends ReaderImporter {
         case TTL:
             model.read(input, null, "TTL");
             break;
+        // TODO: The standard lang name is "JSONLD"
         case JSONLD:
             model.read(input, null, "JSON-LD");
             break;

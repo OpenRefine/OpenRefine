@@ -44,6 +44,7 @@ import org.wikidata.wdtk.wikibaseapi.WikibaseDataEditor;
 import org.wikidata.wdtk.wikibaseapi.WikibaseDataFetcher;
 import org.wikidata.wdtk.wikibaseapi.apierrors.MediaWikiApiErrorException;
 
+
 /**
  * Schedules and performs a list of updates to items via the API.
  * 
@@ -90,7 +91,7 @@ public class EditBatchProcessor {
      *            API
      */
     public EditBatchProcessor(WikibaseDataFetcher fetcher, WikibaseDataEditor editor, List<ItemUpdate> updates,
-            NewItemLibrary library, String summary, List<String> tags, int batchSize) {
+            NewItemLibrary library, String summary, int maxLag, List<String> tags, int batchSize) {
         this.fetcher = fetcher;
         this.editor = editor;
         editor.setEditAsBot(true); // this will not do anything if the user does not
@@ -99,6 +100,8 @@ public class EditBatchProcessor {
         // edit at 60 edits/min by default. If Wikidata is overloaded
         // it will slow us down via the maxlag mechanism.
         editor.setAverageTimePerEdit(1000);
+        // set maxlag based on preference store
+        editor.setMaxLag(maxLag);
 
         this.library = library;
         this.summary = summary;

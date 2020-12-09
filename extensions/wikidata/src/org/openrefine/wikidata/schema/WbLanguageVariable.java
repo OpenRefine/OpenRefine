@@ -56,7 +56,8 @@ public class WbLanguageVariable extends WbVariableExpr<String> {
             throws SkipSchemaExpressionException {
         if (cell.value != null && !cell.value.toString().isEmpty()) {
             String code = cell.value.toString().trim();
-            String normalized = WbLanguageConstant.normalizeLanguageCode(code);
+            String mediaWikiApiEndpoint = ctxt.getMediaWikiApiEndpoint();
+            String normalized = WbLanguageConstant.normalizeLanguageCode(code, mediaWikiApiEndpoint);
             if (normalized != null) {
                 return normalized;
             } else {

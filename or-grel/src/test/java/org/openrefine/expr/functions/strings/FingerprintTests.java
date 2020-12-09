@@ -34,10 +34,9 @@ package org.openrefine.expr.functions.strings;
 import java.util.Properties;
 
 import org.openrefine.expr.functions.strings.Fingerprint;
+import org.openrefine.grel.FunctionTestBase;
 import org.testng.Assert;
 import org.testng.annotations.Test;
-
-import org.openrefine.expr.functions.FunctionTestBase;
 import org.openrefine.util.ParsingUtilities;
 import org.openrefine.util.TestUtils;
 

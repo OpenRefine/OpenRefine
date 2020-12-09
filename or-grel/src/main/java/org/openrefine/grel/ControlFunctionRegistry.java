@@ -37,6 +37,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import org.openrefine.expr.functions.Coalesce;
 import org.openrefine.expr.functions.Cross;
@@ -152,8 +153,7 @@ import org.openrefine.grel.controls.IsNotNull;
 import org.openrefine.grel.controls.IsNull;
 import org.openrefine.grel.controls.IsNumeric;
 import org.openrefine.grel.controls.With;
-
-import java.util.Set;
+import org.openrefine.grel.functions.xml.WholeText;
 
 public class ControlFunctionRegistry {
 
@@ -257,6 +257,7 @@ public class ControlFunctionRegistry {
         registerFunction("innerXml", new InnerXml());
         registerFunction("innerHtml", new InnerHtml());
         registerFunction("ownText", new OwnText());
+        registerFunction("wholeText", new WholeText());
 
         registerFunction("indexOf", new IndexOf());
         registerFunction("lastIndexOf", new LastIndexOf());

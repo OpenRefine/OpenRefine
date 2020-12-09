@@ -33,9 +33,13 @@ import static org.testng.Assert.assertTrue;
 
 import java.io.IOException;
 import java.io.Serializable;
+import java.net.URLEncoder;
 import java.util.ArrayList;
+import java.util.Properties;
 
 import org.openrefine.RefineTest;
+import org.openrefine.browsing.EngineConfig;
+import org.openrefine.model.Cell;
 import org.openrefine.model.Project;
 import org.openrefine.model.Row;
 import org.openrefine.model.recon.ReconConfig;
@@ -47,6 +51,8 @@ import org.openrefine.operations.OperationRegistry;
 import org.openrefine.operations.recon.ReconOperation;
 import org.openrefine.util.ParsingUtilities;
 import org.openrefine.util.TestUtils;
+import org.openrefine.process.Process;
+import org.openrefine.process.ProcessManager;
 import org.slf4j.LoggerFactory;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
@@ -56,6 +62,11 @@ import org.testng.annotations.Test;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.node.ArrayNode;
+
+import okhttp3.HttpUrl;
+import okhttp3.mockwebserver.MockResponse;
+import okhttp3.mockwebserver.MockWebServer;
+import okhttp3.mockwebserver.RecordedRequest;
 
 public class StandardReconConfigTests extends RefineTest {
     
@@ -197,15 +208,196 @@ public class StandardReconConfigTests extends RefineTest {
     	StandardReconConfig r = StandardReconConfig.reconstruct(config);
     	Row row = project.getCurrentGridState().getRow(0);
         ReconJob job = r.createJob(project.getCurrentGridState().getColumnModel(), 0, row, "title", row.getCell(0));
-        TestUtils.assertEqualAsJson("{"
+        TestUtils.assertEqualAsJson(job.toString(), "{"
         		+ "\"query\":\"mulholland drive\","
         		+ "\"type\":\"Q1234\","
         		+ "\"properties\":["
         		+ "     {\"pid\":\"P123\",\"v\":\"david lynch\"}"
         		+ "],"
-        		+ "\"type_strict\":\"should\"}", job.toString());
+        		+ "\"type_strict\":\"should\"}");
     }
-    
+
+    @Test
+    public void reconNonJsonTest() throws Exception {
+    	Project project = createProject(
+    			new String[] {"title","director"},
+    			new Serializable[] {
+    			"mulholland drive","david lynch"});
+
+        String nonJsonResponse = "<!DOCTYPE html>\n" +
+                "<html lang=\"en\">\n" +
+                "  <head>\n" +
+                "    <meta charset=\"utf-8\">\n" +
+                "    <title>Error</title>\n" +
+                "  </head>\n" +
+                "  <body>\n" +
+                "    You have reached an error page.\n" +
+                "  </body>\n" +
+                "</html>";
+
+
+        try (MockWebServer server = new MockWebServer()) {
+            server.start();
+            HttpUrl url = server.url("/openrefine-wikidata/en/api");
+            server.enqueue(new MockResponse().setBody(nonJsonResponse));
+            server.enqueue(new MockResponse());
+
+            String configJson = " {\n" +
+                    "        \"mode\": \"standard-service\",\n" +
+                    "        \"service\": \"" + url + "\",\n" +
+                    "        \"identifierSpace\": \"http://www.wikidata.org/entity/\",\n" +
+                    "        \"schemaSpace\": \"http://www.wikidata.org/prop/direct/\",\n" +
+                    "        \"type\": {\n" +
+                    "                \"id\": \"Q11424\",\n" +
+                    "                \"name\": \"film\"\n" +
+                    "        },\n" +
+                    "        \"autoMatch\": true,\n" +
+                    "        \"columnDetails\": [\n" +
+                    "           {\n" +
+                    "             \"column\": \"director\",\n" +
+                    "             \"propertyName\": \"Director\",\n" +
+                    "             \"propertyID\": \"P57\"\n" +
+                    "           }\n" +
+                    "        ]}";
+            StandardReconConfig config = StandardReconConfig.reconstruct(configJson);
+            ReconOperation op = new ReconOperation(EngineConfig.ALL_ROWS, "director", config);
+            Process process = op.createProcess(project.getHistory(), project.getProcessManager());
+            ProcessManager pm = project.getProcessManager();
+            process.startPerforming(pm);
+            Assert.assertTrue(process.isRunning());
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                Assert.fail("Test interrupted");
+            }
+            Assert.assertFalse(process.isRunning());
+
+            RecordedRequest request1 = server.takeRequest();
+
+            assertNotNull(request1);
+
+            // We won't have gotten a result, but we want to make sure things didn't die
+            Row row = project.getCurrentGridState().getRow(0L);
+            Cell cell = row.cells.get(1);
+            assertNotNull(cell.recon);
+            assertEquals(cell.recon.service, url.toString());
+            ReconCandidate candidate = cell.recon.getBestCandidate();
+            assertNull(candidate);
+        }
+    }
+
+    @Test
+    public void reconTest() throws Exception {
+    	Project project = createProject(
+    			new String[] {"title","director"},
+    			new Serializable[] {
+    			"mulholland drive","david lynch"});
+
+        String reconResponse = "{\n" +
+                "q0: {\n" +
+                "  result: [\n" +
+                "    {\n" +
+                "    P57: {\n" +
+                "score: 100,\n" +
+                "weighted: 40\n" +
+                "},\n" +
+                "all_labels: {\n" +
+                "score: 59,\n" +
+                "weighted: 59\n" +
+                "},\n" +
+                "score: 70.71428571428572,\n" +
+                "id: \"Q3989262\",\n" +
+                "name: \"The Short Films of David Lynch\",\n" +
+                "type: [\n" +
+                "{\n" +
+                "id: \"Q24862\",\n" +
+                "name: \"short film\"\n" +
+                "},\n" +
+                "{\n" +
+                "id: \"Q202866\",\n" +
+                "name: \"animated film\"\n" +
+                "}\n" +
+                "],\n" +
+                "match: false\n" +
+                "},\n" +
+                "{\n" +
+                "P57: {\n" +
+                "score: 100,\n" +
+                "weighted: 40\n" +
+                "},\n" +
+                "all_labels: {\n" +
+                "score: 44,\n" +
+                "weighted: 44\n" +
+                "},\n" +
+                "score: 60.00000000000001,\n" +
+                "id: \"Q83365219\",\n" +
+                "name: \"What Did Jack Do?\",\n" +
+                "type: [\n" +
+                "{\n" +
+                "id: \"Q24862\",\n" +
+                "name: \"short film\"\n" +
+                "}\n" +
+                "],\n" +
+                "match: false\n" +
+                "    }\n" +
+                "    ]\n" +
+                "  }\n" +
+                "}\n";
+        try (MockWebServer server = new MockWebServer()) {
+            server.start();
+            HttpUrl url = server.url("/openrefine-wikidata/en/api");
+            // FIXME: Retry doesn't currently work, but should be tested
+//            server.enqueue(new MockResponse().setResponseCode(503)); // service overloaded
+            server.enqueue(new MockResponse().setBody(reconResponse));
+            server.enqueue(new MockResponse());
+
+            String configJson = " {\n" +
+                    "        \"mode\": \"standard-service\",\n" +
+                    "        \"service\": \"" + url + "\",\n" +
+                    "        \"identifierSpace\": \"http://www.wikidata.org/entity/\",\n" +
+                    "        \"schemaSpace\": \"http://www.wikidata.org/prop/direct/\",\n" +
+                    "        \"type\": {\n" +
+                    "                \"id\": \"Q11424\",\n" +
+                    "                \"name\": \"film\"\n" +
+                    "        },\n" +
+                    "        \"autoMatch\": true,\n" +
+                    "        \"columnDetails\": [\n" +
+                    "           {\n" +
+                    "             \"column\": \"director\",\n" +
+                    "             \"propertyName\": \"Director\",\n" +
+                    "             \"propertyID\": \"P57\"\n" +
+                    "           }\n" +
+                    "        ]}";
+            StandardReconConfig config = StandardReconConfig.reconstruct(configJson);
+            ReconOperation op = new ReconOperation(EngineConfig.reconstruct(null), "director", config);
+            Process process = op.createProcess(project.getHistory(), project.getProcessManager());
+            ProcessManager pm = project.getProcessManager();
+            process.startPerforming(pm);
+            Assert.assertTrue(process.isRunning());
+            try {
+                Thread.sleep(1000); // TODO: timeout will need to increase for retries
+            } catch (InterruptedException e) {
+                Assert.fail("Test interrupted");
+            }
+            Assert.assertFalse(process.isRunning());
+
+//          RecordedRequest scratchFirstRquest = server.takeRequest();
+            RecordedRequest request1 = server.takeRequest();
+
+            assertNotNull(request1);
+            String query = request1.getBody().readUtf8Line();
+            assertNotNull(query);
+            String expected = "queries=" + URLEncoder.encode("{\"q0\":{\"query\":\"david lynch\",\"type\":\"Q11424\",\"properties\":[{\"pid\":\"P57\",\"v\":\"david lynch\"}],\"type_strict\":\"should\"}}", "UTF-8");
+            assertEquals(query, expected);
+
+            Row row = project.getCurrentGridState().getRow(0L);
+            Cell cell = row.cells.get(1);
+            assertNotNull(cell.recon);
+            assertEquals(cell.recon.service, url.toString());
+            assertEquals(cell.recon.getBestCandidate().types[0], "Q24862");
+        }
+    }
+
     /**
      * The UI format and the backend format differ for serialization
      * (the UI never deserializes and the backend serialization did not matter).

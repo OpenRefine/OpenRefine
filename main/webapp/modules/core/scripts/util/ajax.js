@@ -42,10 +42,15 @@ Ajax.chainGetJSON = function() {
       var data = a[i++];
       var callback = a[i++];
 
-      $.getJSON(url, data, function(o) {
+      $.ajax({
+        dataType: "json",
+        url: url,
+        data: data,
+        timeout: 30000
+      }).done(function(o) {
         callback(o);
         next();
-      }, "json");
+      });
     } else if (i < a.length) {
       var finalCallback = a[i++];
       finalCallback();

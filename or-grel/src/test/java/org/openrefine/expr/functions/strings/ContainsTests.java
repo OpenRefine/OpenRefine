@@ -28,11 +28,12 @@ package org.openrefine.expr.functions.strings;
 
 import java.util.regex.Pattern;
 
+import org.openrefine.RefineTest;
 import org.openrefine.expr.functions.strings.Contains;
+import org.openrefine.grel.FunctionTestBase;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
-import org.openrefine.expr.functions.FunctionTestBase;
 import org.openrefine.util.ParsingUtilities;
 import org.openrefine.util.TestUtils;
 
@@ -50,11 +51,11 @@ public class ContainsTests extends FunctionTestBase {
         Assert.assertEquals(invoke("contains", value, "$"),false);
         Assert.assertEquals(invoke("contains", value, "r.se"),false);
         Assert.assertEquals(invoke("contains", value, "\\s+"),false);
-        // Input regex pattern in UI with : "/ /" , is intepreted as Pattern
+        // Input regex pattern in UI with : "/ /" , is interpreted as Pattern
         Assert.assertEquals(invoke("contains", value, Pattern.compile("$")),true);
         Assert.assertEquals(invoke("contains", value, Pattern.compile("\\s+")),true);
     }
-    
+
     @Test
     public void serializeContains() {
         String json = "{\"description\":\"Returns whether s contains frag\",\"params\":\"string s, string frag\",\"returns\":\"boolean\"}";

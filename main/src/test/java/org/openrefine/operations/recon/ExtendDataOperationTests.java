@@ -42,6 +42,7 @@ import java.io.InputStream;
 import java.io.Serializable;
 import java.io.StringWriter;
 import java.util.Arrays;
+import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -233,7 +234,7 @@ public class ExtendDataOperationTests extends RefineTest {
         Set<String> ids = Collections.singleton("Q2");
         String json = "{\"ids\":[\"Q2\"],\"properties\":[{\"id\":\"P571\"},{\"id\":\"P159\"},{\"id\":\"P625\"}]}";
         ReconciledDataExtensionJobStub stub = new ReconciledDataExtensionJobStub(config, "http://endpoint", "http://identifier.space", "http://schema.space");
-        TestUtils.assertEqualAsJson(json, stub.formulateQueryStub(ids, config));
+        TestUtils.assertEqualAsJson(stub.formulateQueryStub(ids, config), json);
     }
    
 
@@ -263,9 +264,9 @@ public class ExtendDataOperationTests extends RefineTest {
     public void mockHttpCalls() throws Exception {
     	mockStatic(ReconciledDataExtensionJob.class);
     	PowerMockito.spy(ReconciledDataExtensionJob.class);
-    	Answer<InputStream> mockedResponse = new Answer<InputStream>() {
+    	Answer<String> mockedResponse = new Answer<String>() {
 			@Override
-			public InputStream answer(InvocationOnMock invocation) throws Throwable {
+			public String answer(InvocationOnMock invocation) throws Throwable {
 				return fakeHttpCall(invocation.getArgument(0), invocation.getArgument(1));
 			}
     	};
@@ -527,17 +528,17 @@ public class ExtendDataOperationTests extends RefineTest {
         Assert.assertEquals(columnModel.getColumnByName("currency").getReconStats().getMatchedTopics(), 5L);
         Assert.assertNotNull(columnModel.getColumnByName("currency").getReconConfig());
     }
-    
+
     private void mockHttpCall(String query, String response) throws IOException {
-    	mockedResponses.put(ParsingUtilities.mapper.readTree(query), response);
+        mockedResponses.put(ParsingUtilities.mapper.readTree(query), response);
     }
-     
-    InputStream fakeHttpCall(String endpoint, String query) throws IOException {
-    	JsonNode parsedQuery = ParsingUtilities.mapper.readTree(query);
-    	if (mockedResponses.containsKey(parsedQuery)) {
-    		return IOUtils.toInputStream(mockedResponses.get(parsedQuery));
-    	} else {
-    		throw new IllegalArgumentException("HTTP call not mocked for query: "+query);
-    	}
+
+    String fakeHttpCall(String endpoint, String query) throws IOException {
+    	  JsonNode parsedQuery = ParsingUtilities.mapper.readTree(query);
+    	  if (mockedResponses.containsKey(parsedQuery)) {
+    		    return mockedResponses.get(parsedQuery);
+    	  } else {
+    		    throw new IllegalArgumentException("HTTP call not mocked for query: "+query);
+    	  }
     }
 }

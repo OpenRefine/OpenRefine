@@ -30,14 +30,12 @@ import java.util.Properties;
 
 import org.jsoup.Jsoup;
 import org.jsoup.parser.Parser;
-import org.openrefine.expr.functions.xml.ParseXml;
-import org.testng.Assert;
-import org.testng.annotations.Test;
-
 import org.openrefine.expr.EvalError;
-import org.openrefine.expr.functions.FunctionTestBase;
+import org.openrefine.grel.FunctionTestBase;
 import org.openrefine.util.ParsingUtilities;
 import org.openrefine.util.TestUtils;
+import org.testng.Assert;
+import org.testng.annotations.Test;
 
 
 public class ParseXmlTests extends FunctionTestBase {

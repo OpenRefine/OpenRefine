@@ -49,7 +49,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.lang3.StringEscapeUtils;
+import org.apache.commons.text.StringEscapeUtils;
 import org.openrefine.ProjectMetadata;
 import org.openrefine.importers.TabularParserHelper.TableDataReader;
 import org.openrefine.importing.ImportingFileRecord;
@@ -83,6 +83,7 @@ public class SeparatorBasedImporter extends ReaderImporter {
         JSONUtilities.safePut(options, "guessCellValueTypes", false);
         JSONUtilities.safePut(options, "processQuotes", true);
         JSONUtilities.safePut(options, "quoteCharacter", String.valueOf(CSVParser.DEFAULT_QUOTE_CHARACTER));
+        JSONUtilities.safePut(options, "trimStrings", true);
 
         return options;
     }
@@ -155,12 +156,12 @@ public class SeparatorBasedImporter extends ReaderImporter {
                     usedColumnNames = true;
                     return columnNames;
                 } else {
-	                String line = lnReader.readLine();
-	                if (line == null) {
-	                    return null;
-	                } else {
-	                    return getCells(line, parser, lnReader);
-	                }
+                    String line = lnReader.readLine();
+                    if (line == null) {
+                        return null;
+                    } else {
+                        return getCells(line, parser, lnReader);
+                    }
                 }
             }
         };

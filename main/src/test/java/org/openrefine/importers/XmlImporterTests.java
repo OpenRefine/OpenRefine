@@ -36,7 +36,7 @@ package org.openrefine.importers;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.Serializable;
-import java.util.LinkedList;
+import java.util.Collections;
 
 import org.openrefine.importers.tree.TreeImportingParserBase;
 import org.openrefine.importing.ImportingJob;
@@ -236,7 +236,7 @@ public class XmlImporterTests extends ImporterTest {
 
     public static ObjectNode getOptions(ImportingJob job, TreeImportingParserBase parser) {
         ObjectNode options = parser.createParserUIInitializationData(
-                job, new LinkedList<>(), "text/json");
+                job, Collections.emptyList(), "text/xml");
         
         ArrayNode path = ParsingUtilities.mapper.createArrayNode();
         JSONUtilities.append(path, "library");
@@ -248,7 +248,7 @@ public class XmlImporterTests extends ImporterTest {
     
     public static ObjectNode getNestedOptions(ImportingJob job, TreeImportingParserBase parser) {
         ObjectNode options = parser.createParserUIInitializationData(
-                job, new LinkedList<>(), "text/json");
+                job, Collections.emptyList(), "text/xml");
         
         ArrayNode path = ParsingUtilities.mapper.createArrayNode();
         JSONUtilities.append(path, "nest");

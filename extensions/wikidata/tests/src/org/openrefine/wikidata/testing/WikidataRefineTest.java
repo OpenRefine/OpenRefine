@@ -16,6 +16,7 @@ import org.openrefine.importers.SeparatorBasedImporter;
 import org.openrefine.importing.ImportingJob;
 import org.openrefine.importing.ImportingManager;
 import org.openrefine.model.Project;
+import org.powermock.modules.testng.PowerMockTestCase;
 import org.testng.annotations.BeforeMethod;
 
 import com.fasterxml.jackson.databind.node.BooleanNode;
@@ -23,7 +24,7 @@ import com.fasterxml.jackson.databind.node.IntNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.databind.node.TextNode;
 
-public class WikidataRefineTest {
+public class WikidataRefineTest extends PowerMockTestCase {
 	protected File workspaceDir;
     protected RefineServlet servlet;
     private List<Project> projects = new ArrayList<Project>();

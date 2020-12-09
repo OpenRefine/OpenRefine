@@ -26,11 +26,9 @@
  ******************************************************************************/
 package org.openrefine.expr.functions.xml;
 
-import org.openrefine.expr.functions.xml.InnerXml;
-import org.testng.annotations.Test;
-
 import org.openrefine.util.ParsingUtilities;
 import org.openrefine.util.TestUtils;
+import org.testng.annotations.Test;
 
 public class InnerXmlTests {
     @Test

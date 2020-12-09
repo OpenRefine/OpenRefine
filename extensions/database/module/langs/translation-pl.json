@@ -1,0 +1,14 @@
+{
+    "database-source/newConnectionButtonDiv": "Nowe połączenie",
+    "database-source/databaseConnectButton": "Połącz",
+    "database-source/databaseSaveButton": "Zapisz",
+    "database-source/databaseNameLabel": "Nazwa Bazy danych:",
+    "database-source/databasePasswordLabel": "Hasło:",
+    "database-source/databaseUserLabel": "Użytkownik:",
+    "database-source/databaseTypeLabel": "Typ:",
+    "database-source/connectionNameLabel": "Nazwa:",
+    "database-import/creating": "Tworzenie projektu …",
+    "database-import/preparing": "Przygotowanie wyników …",
+    "database-import/title": "Serwis bazy danych",
+    "database-import/importer-name": "Baza danych"
+}

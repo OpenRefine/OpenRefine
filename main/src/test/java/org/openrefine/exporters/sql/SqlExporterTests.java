@@ -128,13 +128,11 @@ public class SqlExporterTests extends RefineTest {
         }
         
         String result = writer.toString();
-        logger.info("result = \n" + result);
+        logger.debug("result = \n" + result);
         Assert.assertNotNull(result);
         assertNotEquals(writer.toString(), SqlExporter.NO_OPTIONS_PRESENT_ERROR);
         boolean checkResult = result.contains("CREATE TABLE " + tableName);
-        //logger.info("checkResult1 =" + checkResult);
         checkResult = result.contains("INSERT INTO " + tableName);
-       // logger.info("checkResult2 =" + checkResult);
         Assert.assertEquals(checkResult,  true);
    
     }
@@ -179,7 +177,6 @@ public class SqlExporterTests extends RefineTest {
         ObjectNode optionsJson = (ObjectNode) createOptionsFromProject(tableName, null,null);
         optionsJson.put("includeStructure", false);
         when(options.getProperty("options")).thenReturn(optionsJson.toString());
-       // logger.info("Options = " + optionsJson.toString());
 
         try {
             SUT.export(grid, projectMetadata, options, engine, writer);
@@ -188,7 +185,6 @@ public class SqlExporterTests extends RefineTest {
         }
         
         String result = writer.toString();
-        //logger.info("result = \n" + result);
         Assert.assertNotNull(result);
         assertNotEquals(writer.toString(), SqlExporter.NO_OPTIONS_PRESENT_ERROR);
         boolean checkResult = result.contains("CREATE TABLE " + tableName);
@@ -212,7 +208,6 @@ public class SqlExporterTests extends RefineTest {
         ObjectNode optionsJson = (ObjectNode) createOptionsFromProject(tableName, null, null);
         optionsJson.put("includeContent", false);
         when(options.getProperty("options")).thenReturn(optionsJson.toString());
-        //logger.info("Options = " + optionsJson.toString());
 
         try {
             SUT.export(grid, projectMetadata, options, engine, writer);
@@ -221,7 +216,6 @@ public class SqlExporterTests extends RefineTest {
         }
         
         String result = writer.toString();
-       // logger.info("result = \n" + result);
         Assert.assertNotNull(result);
         assertNotEquals(writer.toString(), SqlExporter.NO_OPTIONS_PRESENT_ERROR);
         boolean checkResult = result.contains("CREATE TABLE " + tableName);
@@ -247,7 +241,6 @@ public class SqlExporterTests extends RefineTest {
         optionsJson.put("includeDropStatement", true);
         
         when(options.getProperty("options")).thenReturn(optionsJson.toString());
-        //logger.info("Options = " + optionsJson.toString());
 
         try {
             SUT.export(grid, projectMetadata, options, engine, writer);
@@ -256,23 +249,19 @@ public class SqlExporterTests extends RefineTest {
         }
         
         String result = writer.toString();
-        //logger.info("result = " + result);
-        
+
         Assert.assertNotNull(result);
 //        assertNotEquals(writer.toString(), SqlExporter.NO_OPTIONS_PRESENT_ERROR);
 //        assertNotEquals(writer.toString(), SqlExporter.NO_COL_SELECTED_ERROR);
         
         boolean checkResult = result.contains("CREATE TABLE " + tableName);
         Assert.assertEquals(checkResult,  true);
-        //logger.info("checkResult1 = " + checkResult);
        
         checkResult = result.contains("INSERT INTO " + tableName );
         Assert.assertEquals(checkResult,  true);
-        //logger.info("checkResult2 = " + checkResult);
         
         checkResult = result.contains("DROP TABLE IF EXISTS " + tableName + ";");
         Assert.assertEquals(checkResult,  true);
-        //logger.info("checkResult3 = " + checkResult);
    
     }
 
@@ -290,12 +279,10 @@ public class SqlExporterTests extends RefineTest {
         String type = "CHAR";
         String size = "2";
         JsonNode optionsJson = createOptionsFromProject(tableName, type, size);
-       // logger.info("Options:: = " + optionsJson.toString());
         List<String> columns = grid.getColumnModel().getColumns().stream().map(col -> col.getName()).collect(Collectors.toList());
        
         sqlCreateBuilder  = new SqlCreateBuilder(tableName, columns, optionsJson);
         String createSql = sqlCreateBuilder.getCreateSQL();
-        //logger.info("createSql = \n" + createSql);
         Assert.assertNotNull(createSql);
         Assert.assertTrue(createSql.contains(type + "(" + size + ")"));
     }
@@ -320,7 +307,6 @@ public class SqlExporterTests extends RefineTest {
         
         
         when(options.getProperty("options")).thenReturn(optionsJson.toString());
-        //logger.info("Options = " + optionsJson.toString());
 
         try {
             SUT.export(grid, projectMetadata, options, engine, writer);
@@ -330,9 +316,7 @@ public class SqlExporterTests extends RefineTest {
         
         String result = writer.toString();
         Assert.assertNotNull(result);
-        //logger.info("\nresult = " + result);
-       // logger.info("\nNull Count:" + countWordInString(result, "null"));
-        
+
         int countNull = countWordInString(result, "null");
         Assert.assertEquals(countNull, inNull);
 
@@ -362,13 +346,12 @@ public class SqlExporterTests extends RefineTest {
         }
         
         String result = writer.toString();
-        logger.info("\nresult:={} ", result);
+        logger.debug("\nresult:={} ", result);
         Assert.assertNotNull(result);
      
         int countNull = countWordInString(result, "NOT NULL");
-        logger.info("\nNot Null Count: {}" , countNull);
+        logger.debug("\nNot Null Count: {}" , countNull);
         Assert.assertEquals(countNull, 4);
-
     }
     
     @Test
@@ -393,7 +376,7 @@ public class SqlExporterTests extends RefineTest {
         }
         
         String result = writer.toString();
-        logger.info("\nresult:={} ", result);
+        logger.debug("\nresult:={} ", result);
 
         Assert.assertTrue(result.contains("INSERT INTO sql_table_test (column0,column1,column2,column3) VALUES \n" + 
         		"( 'It''s row0cell0','It''s row0cell1','It''s row0cell2','It''s row0cell3' )"));
@@ -426,7 +409,6 @@ public class SqlExporterTests extends RefineTest {
         List<ColumnMetadata> cols = grid.getColumnModel().getColumns();
       
         cols.forEach(c -> {
-            //logger.info("Column Name = " + c.getName());
             ObjectNode columnModel = ParsingUtilities.mapper.createObjectNode();
             columnModel.put("name", c.getName());
             if(type != null) {
@@ -444,7 +426,6 @@ public class SqlExporterTests extends RefineTest {
                 columnModel.put("type", type);
             }
             if(size != null) {
-               // logger.info(" Size = " + size);
                 columnModel.put("size", size);
             }
             
@@ -463,7 +444,6 @@ public class SqlExporterTests extends RefineTest {
        List<ColumnMetadata> cols = grid.getColumnModel().getColumns();
      
        cols.forEach(c -> {
-           //logger.info("Column Name = " + c.getName());
            ObjectNode columnModel = ParsingUtilities.mapper.createObjectNode();
            columnModel.put("name", c.getName());
            if(type != null) {
@@ -481,7 +461,6 @@ public class SqlExporterTests extends RefineTest {
                columnModel.put("type", type);
            }
            if(size != null) {
-              // logger.info(" Size = " + size);
                columnModel.put("size", size);
            }
            
@@ -502,7 +481,6 @@ public class SqlExporterTests extends RefineTest {
        List<ColumnMetadata> cols = grid.getColumnModel().getColumns();
      
        cols.forEach(c -> {
-           //logger.info("Column Name = " + c.getName());
            ObjectNode columnModel = ParsingUtilities.mapper.createObjectNode();
            columnModel.put("name", c.getName());
            if(type != null) {
@@ -520,7 +498,6 @@ public class SqlExporterTests extends RefineTest {
                columnModel.put("type", type);
            }
            if(size != null) {
-              // logger.info(" Size = " + size);
                columnModel.put("size", size);
            }
           
@@ -539,7 +516,5 @@ public class SqlExporterTests extends RefineTest {
         double randomnum = Math.floor(Math.random() * (10 * precision - 1 * precision) + 1 * precision) / (1*precision);
         return randomnum;
     }
-    
-   
-  
+
 }

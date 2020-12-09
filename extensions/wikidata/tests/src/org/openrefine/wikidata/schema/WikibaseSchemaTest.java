@@ -23,6 +23,7 @@
  ******************************************************************************/
 package org.openrefine.wikidata.schema;
 
+import org.testng.Assert;
 import static org.testng.Assert.assertEquals;
 
 import java.io.IOException;
@@ -129,7 +130,7 @@ public class WikibaseSchemaTest extends WikidataRefineTest {
     @Test(expectedExceptions = IOException.class)
     public void testDeserializeEmpty() throws IOException {
         String schemaJson = "{\"itemDocuments\":[{\"statementGroups\":[{\"statements\":[]}],"
-                +"\"nameDescs\":[]}],\"wikibasePrefix\":\"http://www.wikidata.org/entity/\"}";
+                +"\"nameDescs\":[]}],\"siteIri\":\"http://www.wikidata.org/entity/\"}";
         WikibaseSchema.reconstruct(schemaJson);
     }
 
@@ -159,5 +160,12 @@ public class WikibaseSchemaTest extends WikidataRefineTest {
         ItemUpdate update1 = new ItemUpdateBuilder(qid1).addStatement(statement1).build();
         expected.add(update1);
         assertEquals(expected, updates);
+    }
+
+    @Test(expectedExceptions = UnsupportedOperationException.class)
+    public void testUnmodifiableList() throws IOException {
+        String serialized = TestingData.jsonFromFile("schema/inception.json");
+        WikibaseSchema schema = WikibaseSchema.reconstruct(serialized);
+        schema.getItemDocumentExpressions().clear();
     }
 }

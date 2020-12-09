@@ -9,6 +9,9 @@ import org.openrefine.util.ParsingUtilities;
 
 import com.fasterxml.jackson.core.JsonGenerator;
 
+import org.openrefine.commands.Command;
+import org.openrefine.util.ParsingUtilities;
+
 public class CommandUtilities {
     
     /**

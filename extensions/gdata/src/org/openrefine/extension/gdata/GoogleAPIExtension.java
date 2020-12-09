@@ -15,16 +15,17 @@ import org.openrefine.preference.PreferenceStore;
 import org.openrefine.util.ParsingUtilities;
 
 import com.google.api.client.auth.oauth2.AuthorizationCodeResponseUrl;
+import com.google.api.client.auth.oauth2.BearerToken;
 import com.google.api.client.googleapis.auth.oauth2.GoogleAuthorizationCodeRequestUrl;
 import com.google.api.client.googleapis.auth.oauth2.GoogleAuthorizationCodeTokenRequest;
-import com.google.api.client.googleapis.auth.oauth2.GoogleCredential;
+import com.google.api.client.auth.oauth2.Credential;
 import com.google.api.client.googleapis.auth.oauth2.GoogleTokenResponse;
 import com.google.api.client.http.HttpRequest;
 import com.google.api.client.http.HttpRequestInitializer;
 import com.google.api.client.http.HttpTransport;
 import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.json.JsonFactory;
-import com.google.api.client.json.jackson.JacksonFactory;
+import com.google.api.client.json.jackson2.JacksonFactory;
 import com.google.api.services.drive.Drive;
 import com.google.api.services.drive.DriveScopes;
 import com.google.api.services.sheets.v4.Sheets;
@@ -34,8 +35,10 @@ import edu.mit.simile.butterfly.ButterflyModule;
 
 abstract public class GoogleAPIExtension {
     protected static final String SERVICE_APP_NAME = "OpenRefine-Google-Service";
-    private static final String CLIENT_ID = "";
-    private static final String CLIENT_SECRET = ""; 
+    // We can set the second param to a default client_id for release version
+    private static final String CLIENT_ID = System.getProperty("ext.gdata.clientid", "");
+    // We can set the second param to a default client_secret for release version
+    private static final String CLIENT_SECRET = System.getProperty("ext.gdata.clientsecret", "");
     
     /** Global instance of the HTTP transport. */
     protected static final HttpTransport HTTP_TRANSPORT = new NetHttpTransport();
@@ -110,8 +113,8 @@ abstract public class GoogleAPIExtension {
       }
     
     static public Drive getDriveService(String token) {
-        GoogleCredential credential = new GoogleCredential().setAccessToken(token);
-        
+        Credential credential =  new Credential.Builder(BearerToken.authorizationHeaderAccessMethod()).build().setAccessToken(token);
+
         return new Drive.Builder(HTTP_TRANSPORT, JSON_FACTORY, credential).setHttpRequestInitializer(new HttpRequestInitializer() {
             @Override
             public void initialize(HttpRequest httpRequest) throws IOException {
@@ -156,7 +159,7 @@ abstract public class GoogleAPIExtension {
      * @throws IOException
      */
     public static Sheets getSheetsService(String token) throws IOException {
-        GoogleCredential credential = new GoogleCredential().setAccessToken(token);
+        Credential credential =  new Credential.Builder(null).build().setAccessToken(token);
         int connectTimeout = getConnectTimeout();
         int readTimeout = getReadTimeout();
         
@@ -185,7 +188,7 @@ abstract public class GoogleAPIExtension {
          throws IllegalArgumentException {
       URL urlAsUrl;
       
-      Matcher matcher = Pattern.compile("(?<=\\/d\\/).*(?=\\/.*)").matcher(url);
+      Matcher matcher = Pattern.compile("(?<=/d/).*?(?=[/?#]|$)").matcher(url);
       if (matcher.find()) {
           return matcher.group(0);
       }

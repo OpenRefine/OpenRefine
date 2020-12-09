@@ -32,6 +32,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
+  var columnIndex = Refine.columnNameToColumnIndex(column.name);
   var doReconcile = function() {
     new ReconDialog(column);
   };
@@ -148,7 +149,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
     var services = ReconciliationManager.getAllServices();
     for (var i = 0; i < services.length; i++) {
         var service = services[i];
-        $('<option></option>').attr('value', service.url)
+        $('<option></option>').val(service.url)
            .text(service.name)
            .appendTo(select);
     }
@@ -188,6 +189,50 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
     var level = DialogSystem.showDialog(frame);
   };
 
+  var doAddIdcolumn = function() {
+    var frame = $(
+      DOM.loadHTML("core", "scripts/views/data-table/add-q-column-dialog.html"));
+
+    var elmts = DOM.bind(frame);
+    elmts.dialogHeader.text($.i18n('core-views/add-id-col', column.name));
+    
+    elmts.or_views_newCol.text($.i18n('core-views/new-col-name'));
+    elmts.okButton.html($.i18n('core-buttons/ok'));
+    elmts.cancelButton.text($.i18n('core-buttons/cancel'));
+
+    var level = DialogSystem.showDialog(frame);
+    var dismiss = function() { DialogSystem.dismissUntil(level - 1); };
+
+    var o = DataTableView.sampleVisibleRows(column);
+    
+    elmts.cancelButton.click(dismiss);
+    elmts.form.submit(function(event) {
+      event.preventDefault();
+      var columnName = $.trim(elmts.columnNameInput[0].value);
+      if (!columnName.length) {
+        alert($.i18n('core-views/warning-col-name'));
+        return;
+      }
+
+      Refine.postCoreProcess(
+        "add-column", 
+        {
+          baseColumnName: column.name,  
+          newColumnName: columnName, 
+          columnInsertIndex: columnIndex + 1,
+          onError: "set-to-blank"
+        },
+        { expression: "cell.recon.match.id" },
+        { modelsChanged: true },
+        {
+          onDone: function(o) {
+            dismiss();
+          }
+        }
+      );
+    });
+  };
+
 
   var doCopyAcrossColumns = function() {
     var frame = $(DOM.loadHTML("core", "scripts/views/data-table/copy-recon-across-columns-dialog.html"));
@@ -207,7 +252,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
     for (var i = 0; i < columns.length; i++) {
       var column2 = columns[i];
       if (column !== column2) {
-        $('<option>').attr("value", column2.name).text(column2.name).appendTo(elmts.toColumnSelect);
+        $('<option>').val(column2.name).text(column2.name).appendTo(elmts.toColumnSelect);
       }
     }
 
@@ -254,7 +299,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
   MenuSystem.appendTo(menu, [ "core/reconcile" ], [
     {
       id: "core/reconcile",
-      label: $.i18n('core-views/start-recon')+'...',
+      label: $.i18n('core-views/start-recon'),
       tooltip: $.i18n('core-views/recon-text-fb'),
       click: doReconcile
     },
@@ -270,7 +315,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
             ui.browsingEngine.addFacet(
                 "list", 
                 {
-                  "name" : column.name + ": judgment",
+                  "name" : $.i18n("core-views/judgment", column.name),
                   "columnName" : column.name, 
                   "expression" : 'forNonBlank(cell.recon.judgment, v, v, if(isNonBlank(value), "(unreconciled)", "(blank)"))'
                 },
@@ -287,7 +332,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
             ui.browsingEngine.addFacet(
                 "list", 
                 {
-                  "name" : column.name + " "+$.i18n('core-views/judg-actions2'),
+                  "name" : $.i18n('core-views/judg-actions2', column.name),
                   "columnName" : column.name, 
                   "expression" : "cell.recon.judgmentAction"
                 }
@@ -301,7 +346,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
             ui.browsingEngine.addFacet(
                 "list", 
                 {
-                  "name" : column.name + " "+$.i18n('core-views/hist-entries'),
+                  "name" : $.i18n('core-views/hist-entries', column.name),
                   "columnName" : column.name, 
                   "expression" : "cell.recon.judgmentHistoryEntry"
                 }
@@ -316,7 +361,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
             ui.browsingEngine.addFacet(
                 "range", 
                 {
-                  "name" : column.name + ": "+$.i18n('core-views/best-cand-score'),
+                  "name" : $.i18n('core-views/best-cand-score', column.name),
                   "columnName" : column.name, 
                   "expression" : "cell.recon.best.score",
                   "mode" : "range"
@@ -333,7 +378,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
             ui.browsingEngine.addFacet(
                 "list", 
                 {
-                  "name" : column.name + ": "+$.i18n('core-views/best-cand-type-match'),
+                  "name" : $.i18n('core-views/best-cand-type-match', column.name),
                   "columnName" : column.name, 
                   "expression" : 'forNonBlank(cell.recon.features.typeMatch, v, v, if(isNonBlank(value), if(cell.recon != null, "(no type)", "(unreconciled)"), "(blank)"))'
                 },
@@ -350,7 +395,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
             ui.browsingEngine.addFacet(
                 "list", 
                 {
-                  "name" : column.name + ": "+ $.i18n('core-views/best-cand-name'),
+                  "name" : $.i18n('core-views/best-cand-name', column.name),
                   "columnName" : column.name, 
                   "expression" : 'forNonBlank(cell.recon.features.nameMatch, v, v, if(isNonBlank(value), "(unreconciled)", "(blank)"))'
                 },
@@ -368,7 +413,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
             ui.browsingEngine.addFacet(
                 "range", 
                 {
-                  "name" : column.name + ": "+$.i18n('core-views/best-cand-edit-dist'),
+                  "name" : $.i18n('core-views/best-cand-edit-dist', column.name),
                   "columnName" : column.name, 
                   "expression" : "cell.recon.features.nameLevenshtein",
                   "mode" : "range"
@@ -385,7 +430,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
             ui.browsingEngine.addFacet(
                 "range", 
                 {
-                  "name" : column.name + ": "+$.i18n('core-views/best-cand-word-sim'),
+                  "name" :  $.i18n('core-views/best-cand-word-sim', column.name),
                   "columnName" : column.name, 
                   "expression" : "cell.recon.features.nameWordDistance",
                   "mode" : "range"
@@ -403,7 +448,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
             ui.browsingEngine.addFacet(
                 "list", 
                 {
-                  "name" : column.name + ": best candidate's types",
+                  "name" : $.i18n("core-views/best-cand-types", column.name),
                   "columnName" : column.name,
                   "expression" : 'forNonBlank(cell.recon.best.type, v, v, if(isNonBlank(value), "(unreconciled)", "(blank)"))'
                 }
@@ -471,6 +516,13 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
       label: $.i18n('core-views/use-values-as-identifiers'),
       tooltip: $.i18n('core-views/use-values-as-identifiers2'),
       click: doUseValuesAsIdentifiers
+    },
+    {},
+    {
+      id: "core/add-id-column",
+      label: $.i18n('core-views/add-id-column'),
+      tooltip: $.i18n('core-views/add-id-column2'),
+      click: doAddIdcolumn
     }
   ]);
 });

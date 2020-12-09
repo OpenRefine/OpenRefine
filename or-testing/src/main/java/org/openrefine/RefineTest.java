@@ -44,8 +44,12 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Properties;
 
 import org.apache.commons.io.FileUtils;
+import org.openrefine.expr.Evaluable;
+import org.openrefine.expr.MetaParser;
+import org.openrefine.expr.ParsingException;
 import org.openrefine.io.FileProjectManager;
 import org.openrefine.model.Cell;
 import org.openrefine.model.ColumnMetadata;
@@ -76,6 +80,8 @@ import com.fasterxml.jackson.databind.node.TextNode;
  * A base class containing various utilities to help testing Refine.
  */
 public class RefineTest extends PowerMockTestCase {
+
+    protected static Properties bindings = null;
 
     protected Logger logger;
     
@@ -111,9 +117,9 @@ public class RefineTest extends PowerMockTestCase {
             FileUtils.writeStringToFile(jsonPath, "{\"projectIDs\":[]\n" + 
                     ",\"preferences\":{\"entries\":{\"scripting.starred-expressions\":" +
                     "{\"class\":\"org.openrefine.preference.TopList\",\"top\":2147483647," +
-                    "\"list\":[]},\"scripting.expressions\":{\"class\":\"org.openrefine.preference.TopList\",\"top\":100,\"list\":[]}}}}");
+                    "\"list\":[]},\"scripting.expressions\":{\"class\":\"org.openrefine.preference.TopList\",\"top\":100,\"list\":[]}}}}",
+                    "UTF-8"); // JSON is always UTF-8
             FileProjectManager.initialize(runner, workspaceDir);
-            
 
         } catch (IOException e) {
             workspaceDir = null;
@@ -352,4 +358,39 @@ public class RefineTest extends PowerMockTestCase {
         verify(options, times(1)).has(name);
         verify(options, times(1)).get(name);
     }
+
+    /**
+     * Parse and evaluate a GREL expression and compare the result to the expect value
+     *
+     * @param bindings
+     * @param test
+     * @throws ParsingException
+     */
+    protected void parseEval(Properties bindings, String[] test)
+    throws ParsingException {
+        Evaluable eval = MetaParser.parse("grel:" + test[0]);
+        Object result = eval.evaluate(bindings);
+        Assert.assertEquals(result.toString(), test[1], "Wrong result for expression: " + test[0]);
+    }
+
+    /**
+     * Parse and evaluate a GREL expression and compare the result an expected
+     * type using instanceof
+     *
+     * @param bindings
+     * @param test
+     * @throws ParsingException
+     */
+    protected void parseEvalType(Properties bindings, String test, @SuppressWarnings("rawtypes") Class clazz)
+    throws ParsingException {
+        Evaluable eval = MetaParser.parse("grel:" + test);
+        Object result = eval.evaluate(bindings);
+        Assert.assertTrue(clazz.isInstance(result), "Wrong result type for expression: " + test);
+    }
+
+    @AfterMethod
+    public void TearDown() throws Exception {
+        bindings = null;
+    }
+
 }

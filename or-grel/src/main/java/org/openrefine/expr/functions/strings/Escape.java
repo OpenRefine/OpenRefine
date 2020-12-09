@@ -36,11 +36,10 @@ package org.openrefine.expr.functions.strings;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 
-import org.apache.commons.lang3.StringEscapeUtils;
+import org.apache.commons.text.StringEscapeUtils;
+import org.openrefine.expr.EvalError;
 import org.openrefine.grel.ControlFunctionRegistry;
 import org.openrefine.grel.PureFunction;
-
-import org.openrefine.expr.EvalError;
 import org.openrefine.util.StringUtils;
 
 public class Escape extends PureFunction {

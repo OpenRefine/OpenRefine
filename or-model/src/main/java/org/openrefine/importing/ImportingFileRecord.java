@@ -28,7 +28,7 @@ public class ImportingFileRecord {
 	private String _declaredMimeType;
 	private final String _mimeType;
 	private final String _url;
-	private final String _encoding;
+	private String _encoding;
 	private String _declaredEncoding;
 	private String _format;
 	private final String _archiveFileName;
@@ -259,4 +259,11 @@ public class ImportingFileRecord {
 	public void setSize(long size) {
 		_size = size;
 	}
+
+	/**
+	 * TODO remove this and make field final
+	 */
+    public void setEncoding(String encoding) {
+        _encoding = encoding;
+    }
 }

@@ -66,26 +66,25 @@ public class SplitMultiValueCellsCommand extends Command {
             String mode = request.getParameter("mode");
             Boolean regex = Boolean.parseBoolean(request.getParameter("regex"));
 
-            if ("separator".equals(mode)) {
-                Operation op = new MultiValuedCellSplitOperation(columnName, 
-                                                                         keyColumnName,
-                                                                         separator, 
-                                                                         regex);
-                Process process = op.createProcess(project.getHistory(), project.getProcessManager());
-                
-                performProcessAndRespond(request, response, project, process);
-            } else {
+            Operation op;
+
+            if ("lengths".equals(mode)) {
                 String s = request.getParameter("fieldLengths");
                 
                 int[] fieldLengths = ParsingUtilities.mapper.readValue(s, new TypeReference<int[]>() {});
                 
-                Operation op = new MultiValuedCellSplitOperation(columnName,
-                                                                         keyColumnName,
-                                                                         fieldLengths);
-                Process process = op.createProcess(project.getHistory(), project.getProcessManager());
+                op = new MultiValuedCellSplitOperation(columnName,
+                                                       keyColumnName,
+                                                       fieldLengths);
                 
-                performProcessAndRespond(request, response, project, process);
-            }
+            } else {
+                op = new MultiValuedCellSplitOperation(columnName, 
+                                                       keyColumnName,
+                                                       separator, 
+                                                       regex);
+            } 
+            Process process = op.createProcess(project.getHistory(), project.getProcessManager());
+            performProcessAndRespond(request, response, project, process);
         } catch (Exception e) {
             respondException(response, e);
         }

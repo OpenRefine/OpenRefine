@@ -38,7 +38,7 @@ import java.io.Writer;
 import java.util.List;
 import java.util.Properties;
 
-import org.apache.commons.lang3.StringEscapeUtils;
+import org.apache.commons.text.StringEscapeUtils;
 import org.openrefine.ProjectMetadata;
 import org.openrefine.browsing.Engine;
 import org.openrefine.model.GridState;
@@ -107,7 +107,7 @@ public class HtmlTableExporter implements WriterExporter {
                                     writer.write(StringEscapeUtils.escapeHtml4(cellData.link));
                                     writer.write("\">");
                                 }
-                                writer.write(StringEscapeUtils.escapeXml(cellData.text));
+                                writer.write(StringEscapeUtils.escapeXml10(cellData.text));
                                 if (cellData.link != null) {
                                     writer.write("</a>");
                                 }

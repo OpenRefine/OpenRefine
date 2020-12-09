@@ -241,7 +241,7 @@ HistoryPanel.prototype._showExtractOperationsDialog = function(json) {
       json.entries[i].selected = true;
     }
 
-    frame.find('input[type="checkbox"]').attr("checked", "true");
+    frame.find('input[type="checkbox"]').prop('checked', true);
     updateJson();
   });
   elmts.unselectAllButton.click(function() {
@@ -249,7 +249,7 @@ HistoryPanel.prototype._showExtractOperationsDialog = function(json) {
       json.entries[i].selected = false;
     }
 
-    frame.find('input[type="checkbox"]').removeAttr("checked");
+    frame.find('input[type="checkbox"]').prop('checked', false);
     updateJson();
   });
 

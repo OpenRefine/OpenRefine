@@ -36,19 +36,20 @@ package org.openrefine.importers;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.poi.common.usermodel.Hyperlink;
-import org.apache.poi.hssf.usermodel.HSSFDateUtil;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ooxml.POIXMLException;
+import org.apache.poi.common.usermodel.Hyperlink;
+import org.apache.poi.ss.usermodel.DateUtil;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.poifs.filesystem.FileMagic;
+import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -93,43 +94,39 @@ public class ExcelImporter extends InputStreamImporter {
             for (int index = 0;index < fileRecords.size();index++) {
                 ImportingFileRecord fileRecord = fileRecords.get(index);
                 File file = fileRecord.getFile(job.getRawDataDir());
-                InputStream is = new FileInputStream(file);
 
-                if (!is.markSupported()) {
-                  is = new BufferedInputStream(is);
-                }
-
+                Workbook wb = null;
                 try {
-                    Workbook wb = FileMagic.valueOf(is) == FileMagic.OOXML ?
-                            new XSSFWorkbook(is) :
-                                new HSSFWorkbook(new POIFSFileSystem(is));
+                    wb = FileMagic.valueOf(file) == FileMagic.OOXML ? new XSSFWorkbook(file) :
+                                 new HSSFWorkbook(new POIFSFileSystem(file));
 
-                            int sheetCount = wb.getNumberOfSheets();
-                            for (int i = 0; i < sheetCount; i++) {
-                                Sheet sheet = wb.getSheetAt(i);
-                                int rows = sheet.getLastRowNum() - sheet.getFirstRowNum() + 1;
+                    int sheetCount = wb.getNumberOfSheets();
+                    for (int i = 0; i < sheetCount; i++) {
+                        Sheet sheet = wb.getSheetAt(i);
+                        int rows = sheet.getLastRowNum() - sheet.getFirstRowNum() + 1;
 
-                                ObjectNode sheetRecord = ParsingUtilities.mapper.createObjectNode();
-                                JSONUtilities.safePut(sheetRecord, "name",  file.getName() + "#" + sheet.getSheetName());
-                                JSONUtilities.safePut(sheetRecord, "fileNameAndSheetIndex", file.getName() + "#" + i);
-                                JSONUtilities.safePut(sheetRecord, "rows", rows);
-                                if (rows > 1) {
-                                    JSONUtilities.safePut(sheetRecord, "selected", true);
-                                } else {
-                                    JSONUtilities.safePut(sheetRecord, "selected", false);
-                                }
-                                JSONUtilities.append(sheetRecords, sheetRecord);
-                            }
-                            wb.close();
+                        ObjectNode sheetRecord = ParsingUtilities.mapper.createObjectNode();
+                        JSONUtilities.safePut(sheetRecord, "name",  file.getName() + "#" + sheet.getSheetName());
+                        JSONUtilities.safePut(sheetRecord, "fileNameAndSheetIndex", file.getName() + "#" + i);
+                        JSONUtilities.safePut(sheetRecord, "rows", rows);
+                        if (rows > 1) {
+                            JSONUtilities.safePut(sheetRecord, "selected", true);
+                        } else {
+                            JSONUtilities.safePut(sheetRecord, "selected", false);
+                        }
+                        JSONUtilities.append(sheetRecords, sheetRecord);
+                    }
                 } finally {
-                    is.close();
+                    if (wb != null) {
+                        wb.close();
+                    }
                 }
             }                
         } catch (IOException e) {
             logger.error("Error generating parser UI initialization data for Excel file", e);
         } catch (IllegalArgumentException e) {
             logger.error("Error generating parser UI initialization data for Excel file (only Excel 97 & later supported)", e);
-        } catch (POIXMLException e) {
+        } catch (POIXMLException|InvalidFormatException e) {
             logger.error("Error generating parser UI initialization data for Excel file - invalid XML", e);
         }
         
@@ -193,7 +190,6 @@ public class ExcelImporter extends InputStreamImporter {
             
             TableDataReader dataReader = new TableDataReader() {
                 int nextRow = 0;
-                Map<String, Recon> reconMap = new HashMap<String, Recon>();
                 
                 @Override
                 public List<Object> getNextRowOfCells() throws IOException {
@@ -210,7 +206,7 @@ public class ExcelImporter extends InputStreamImporter {
                             
                             org.apache.poi.ss.usermodel.Cell sourceCell = row.getCell(cellIndex);
                             if (sourceCell != null) {
-                                cell = extractCell(sourceCell, reconMap);
+                                cell = extractCell(sourceCell);
                             }
                             cells.add(cell);
                         }
@@ -219,6 +215,8 @@ public class ExcelImporter extends InputStreamImporter {
                 }
             };
             
+            // TODO: Do we need to preserve the original filename? Take first piece before #?
+//           JSONUtilities.safePut(options, "fileSource", fileSource + "#" + sheet.getSheetName());
             gridStates.add(tabularParserHelper.parseOneFile(
                 metadata,
                 job,
@@ -232,7 +230,7 @@ public class ExcelImporter extends InputStreamImporter {
         return mergeGridStates(gridStates);
     }
     
-    static protected Serializable extractCell(org.apache.poi.ss.usermodel.Cell cell) {
+    static protected Cell extractCell(org.apache.poi.ss.usermodel.Cell cell) {
         CellType cellType = cell.getCellType();
         if (cellType.equals(CellType.FORMULA)) {
             cellType = cell.getCachedFormulaResultType();
@@ -248,8 +246,8 @@ public class ExcelImporter extends InputStreamImporter {
         } else if (cellType.equals(CellType.NUMERIC)) {
             double d = cell.getNumericCellValue();
             
-            if (HSSFDateUtil.isCellDateFormatted(cell)) {
-                value = HSSFDateUtil.getJavaDate(d);
+            if (DateUtil.isCellDateFormatted(cell)) {
+                value = ParsingUtilities.toDate(DateUtil.getJavaDate(d));
                 // TODO: If we had a time datatype, we could use something like the following
                 // to distinguish times from dates (although Excel doesn't really make the distinction)
                 // Another alternative would be to look for values < 0.60
@@ -267,7 +265,7 @@ public class ExcelImporter extends InputStreamImporter {
             }
         }
         
-        return value;
+        return new Cell(value, null);
     }
     
     static protected Cell extractCell(org.apache.poi.ss.usermodel.Cell cell, Map<String, Recon> reconMap) {

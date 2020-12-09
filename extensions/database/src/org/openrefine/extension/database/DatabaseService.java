@@ -39,6 +39,7 @@ import org.openrefine.extension.database.model.DatabaseInfo;
 import org.openrefine.extension.database.model.DatabaseRow;
 import org.openrefine.extension.database.mysql.MySQLDatabaseService;
 import org.openrefine.extension.database.pgsql.PgSQLDatabaseService;
+import org.openrefine.extension.database.sqlite.SQLiteDatabaseService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -56,6 +57,7 @@ public abstract class DatabaseService {
                 DatabaseService.DBType.registerDatabase(MySQLDatabaseService.DB_NAME, MySQLDatabaseService.getInstance());
                 DatabaseService.DBType.registerDatabase(PgSQLDatabaseService.DB_NAME, PgSQLDatabaseService.getInstance());
                 DatabaseService.DBType.registerDatabase(MariaDBDatabaseService.DB_NAME, MariaDBDatabaseService.getInstance());
+                DatabaseService.DBType.registerDatabase(SQLiteDatabaseService.DB_NAME, SQLiteDatabaseService.getInstance());
 
             } catch (Exception e) {
                 logger.error("Exception occurred while trying to prepare databases!", e);

@@ -60,7 +60,11 @@ Refine.DefaultImportingController.prototype._showParsingPanel = function(hasFile
   if (!(this._projectName) && this._job.config.fileSelection.length > 0) {
     var index = this._job.config.fileSelection[0];
     var record = this._job.config.retrievalRecord.files[index];
-    this._projectName = $.trim(record.fileName.replace(/\W/g, ' ').replace(/\s+/g, ' '));
+    if (record.fileName == '(clipboard)') {
+      this._projectName = $.i18n('core-index-import/clipboard');
+    } else {
+      this._projectName = $.trim(record.fileName.replace(/[\._-]/g, ' ').replace(/\s+/g, ' '));
+    }
   }
   if (this._projectName) {
     this._parsingPanelElmts.projectNameInput[0].value = this._projectName;
@@ -92,6 +96,7 @@ Refine.DefaultImportingController.prototype._prepareParsingPanel = function() {
   });
   this._parsingPanelElmts.progressPanel.hide();
 
+  this._parsingPanelElmts.previousButton.html($.i18n('core-buttons/previous'));
   this._parsingPanelElmts.startOverButton.html($.i18n('core-buttons/startover'));
   this._parsingPanelElmts.nextButton.html($.i18n('core-buttons/create-project'));
   $('#or-import-parsopt').text($.i18n('core-index-import/parsing-options'));
@@ -136,8 +141,9 @@ Refine.DefaultImportingController.prototype._prepareParsingPanel = function() {
 
   var formats = this._job.config.rankedFormats;
   var createFormatTab = function(format) {
+    var formatLabelKey =Refine.importingConfig.formats[format].label;
     var tab = $('<div>')
-    .text(Refine.importingConfig.formats[format].label)
+    .text( $.i18n(formatLabelKey))
     .attr("format", format)
     .addClass("default-importing-parsing-control-panel-format")
     .appendTo(self._parsingPanelElmts.formatsContainer)

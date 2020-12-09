@@ -1,5 +1,5 @@
 {
-    "name": "영어",
+    "name": "한국어",
     "core-index/slogan": "복잡한 데이터를 처리할 수 있는 강력한 도구",
     "core-index/help": "도움말",
     "core-index/about": "관하여",
@@ -68,5 +68,9 @@
     "core-index/title": "제목:",
     "core-index/license": "라이선스:",
     "core-index/homepage": "홈페이지:",
-    "core-index/image": "사진:"
+    "core-index/image": "사진:",
+    "core-index-import/project-name": "프로젝트&nbsp;이름",
+    "core-index-import/project-tags": "태그",
+    "core-index-import/this-computer": "이 컴퓨터",
+    "core-index-import/clipboard": "클립보드"
 }

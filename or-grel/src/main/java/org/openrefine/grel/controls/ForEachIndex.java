@@ -37,16 +37,15 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
+import org.openrefine.expr.EvalError;
+import org.openrefine.expr.ExpressionUtils;
+import org.openrefine.expr.util.JsonValueConverter;
 import org.openrefine.grel.Control;
 import org.openrefine.grel.ControlFunctionRegistry;
 import org.openrefine.grel.ast.GrelExpr;
 import org.openrefine.grel.ast.VariableExpr;
 
 import com.fasterxml.jackson.databind.node.ArrayNode;
-import org.openrefine.expr.EvalError;
-import org.openrefine.expr.Evaluable;
-import org.openrefine.expr.ExpressionUtils;
-import org.openrefine.expr.util.JsonValueConverter;
 
 public class ForEachIndex implements Control {
     @Override

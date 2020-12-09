@@ -59,6 +59,7 @@ public class EditBatchProcessorTest extends WikidataRefineTest {
     private WikibaseDataEditor editor = null;
     private NewItemLibrary library = null;
     private String summary = "my fantastic edits";
+    private int maxlag = 5;
     private List<String> tags = null;
 
     @BeforeMethod
@@ -92,7 +93,7 @@ public class EditBatchProcessorTest extends WikidataRefineTest {
                 .withLabel(label).withRevisionId(37828L).build();
         when(editor.createItemDocument(expectedNewItem, summary, tags)).thenReturn(createdNewItem);
 
-        EditBatchProcessor processor = new EditBatchProcessor(fetcher, editor, batch, library, summary, tags, 50);
+        EditBatchProcessor processor = new EditBatchProcessor(fetcher, editor, batch, library, summary, maxlag, tags, 50);
         assertEquals(2, processor.remainingEdits());
         assertEquals(0, processor.progress());
         processor.performEdit();
@@ -137,7 +138,7 @@ public class EditBatchProcessorTest extends WikidataRefineTest {
         when(fetcher.getEntityDocuments(toQids(secondBatch))).thenReturn(toMap(secondBatch));
 
         // Run edits
-        EditBatchProcessor processor = new EditBatchProcessor(fetcher, editor, batch, library, summary, tags, batchSize);
+        EditBatchProcessor processor = new EditBatchProcessor(fetcher, editor, batch, library, summary, maxlag, tags, batchSize);
         assertEquals(0, processor.progress());
         for (int i = 124; i < 190; i++) {
             assertEquals(processor.remainingEdits(), 190 - i);

@@ -33,13 +33,9 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package org.openrefine.model.recon;
 
-import java.io.DataOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.Serializable;
 import java.io.StringWriter;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -50,6 +46,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
+import org.openrefine.RefineServlet;
 import org.openrefine.expr.ExpressionUtils;
 import org.openrefine.model.Cell;
 import org.openrefine.model.ColumnModel;
@@ -57,6 +54,19 @@ import org.openrefine.model.Row;
 import org.openrefine.model.recon.Recon.Judgment;
 import org.openrefine.model.Row;
 import org.openrefine.util.ParsingUtilities;
+import org.apache.http.Consts;
+import org.apache.http.NameValuePair;
+import org.apache.http.StatusLine;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.config.RequestConfig;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.http.impl.client.HttpClients;
+import org.apache.http.impl.client.LaxRedirectStrategy;
+import org.apache.http.message.BasicNameValuePair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -110,14 +120,14 @@ public class StandardReconConfig extends ReconConfig {
             this.propertyID = property == null ? propertyID : property.id;
         }
         
-    	@Override
-    	public String toString() {
-    		try {
-				return ParsingUtilities.mapper.writeValueAsString(this);
-			} catch (JsonProcessingException e) {
-				return super.toString();
-			}
-    	}
+        @Override
+        public String toString() {
+            try {
+                return ParsingUtilities.mapper.writeValueAsString(this);
+            } catch (JsonProcessingException e) {
+                return super.toString();
+            }
+        }
     }
     
     static public StandardReconConfig reconstruct(String json) throws IOException {
@@ -154,7 +164,7 @@ public class StandardReconConfig extends ReconConfig {
         public int hashCode() {
         	return jsonQuery.hashCode();
         }
-        
+
         @Override
         public boolean equals(Object other) {
         	if (!(other instanceof StandardReconJob)) {
@@ -164,7 +174,7 @@ public class StandardReconConfig extends ReconConfig {
         	return cellValue.equals(otherJob.cellValue) && jsonQuery.equals(otherJob.jsonQuery);
         }
     }
-    
+
     @JsonProperty("service")
     final public String     service;
     @JsonProperty("identifierSpace")
@@ -183,6 +193,9 @@ public class StandardReconConfig extends ReconConfig {
     @JsonProperty("limit")
     final private int limit;
 
+    // initialized lazily
+    private CloseableHttpClient httpClient = null;
+
     @JsonCreator
     public StandardReconConfig(
             @JsonProperty("service")
@@ -200,11 +213,11 @@ public class StandardReconConfig extends ReconConfig {
             @JsonProperty("limit")
             int limit) {
         this(service, identifierSpace, schemaSpace,
-        		type != null ? type.id : null,
-        		type != null ? type.name : null,
-        		autoMatch, columnDetails, limit);
+                type != null ? type.id : null,
+                type != null ? type.name : null,
+                autoMatch, columnDetails, limit);
     }
-            
+
     public StandardReconConfig(
             String service,
             String identifierSpace,
@@ -301,14 +314,14 @@ public class StandardReconConfig extends ReconConfig {
             this.v = v;
         }
         
-    	@Override
-    	public String toString() {
-    		try {
-				return ParsingUtilities.mapper.writeValueAsString(this);
-			} catch (JsonProcessingException e) {
-				return super.toString();
-			}
-    	}
+        @Override
+        public String toString() {
+            try {
+                return ParsingUtilities.mapper.writeValueAsString(this);
+            } catch (JsonProcessingException e) {
+                return super.toString();
+            }
+        }
     }
     
     protected static class ReconQuery {
@@ -332,12 +345,21 @@ public class StandardReconConfig extends ReconConfig {
         @JsonInclude(Include.NON_EMPTY)
         protected List<QueryProperty> properties;
         
-        // Only send limit if it's non-default to preserve backward compatibility with
-        // services which might choke on this
+        // Only send limit if it's non-default (default = 0) to preserve backward
+        // compatibility with services which might choke on this (pre-2013)
         @JsonProperty("limit")
         @JsonInclude(Include.NON_EMPTY)
         protected int limit;
         
+        public ReconQuery() {
+            super();
+            this.query = "";
+            this.typeID = null;
+            this.properties = null;
+            this.limit = 0;
+        }
+
+        @JsonCreator
         public ReconQuery(
                 String query,
                 String typeID,
@@ -349,52 +371,47 @@ public class StandardReconConfig extends ReconConfig {
             this.limit = limit;
         }
         
-    	@Override
-    	public String toString() {
-    		try {
-				return ParsingUtilities.mapper.writeValueAsString(this);
-			} catch (JsonProcessingException e) {
-				return super.toString();
-			}
-    	}
+        @Override
+        public String toString() {
+            try {
+                return ParsingUtilities.mapper.writeValueAsString(this);
+            } catch (JsonProcessingException e) {
+                return super.toString();
+            }
+        }
     }
     
     public static class ReconResult {
-    	@JsonProperty("name")
-    	public String name;
-    	@JsonProperty("id")
-    	public String id;
-    	@JsonProperty("type")
-		public List<ReconType> types = Collections.emptyList();
-    	@JsonProperty("score")
-    	public double score;
-    	@JsonProperty("match")
-    	public boolean match = false;
-    	
-    	@JsonIgnore
-		public ReconCandidate toCandidate() {
-    		String[] bareTypes = new String[types.size()];
-    		for(int i = 0; i != types.size(); i++) {
-    			bareTypes[i] = types.get(i).id;
-    		}
-       		ReconCandidate result = new ReconCandidate(
-		        id,
-		        name,
-		        bareTypes,
-		        score
-		    );
-       
-			return result;
-		}
-    	
-    	@Override
-    	public String toString() {
-    		try {
-				return ParsingUtilities.mapper.writeValueAsString(this);
-			} catch (JsonProcessingException e) {
-				return super.toString();
-			}
-    	}
+        @JsonProperty("name")
+        public String name;
+        @JsonProperty("id")
+        public String id;
+        @JsonProperty("type")
+        public List<ReconType> types = Collections.emptyList();
+        @JsonProperty("score")
+        public double score;
+        @JsonProperty("match")
+        public boolean match = false;
+
+        @JsonIgnore
+        public ReconCandidate toCandidate() {
+            String[] bareTypes = new String[types.size()];
+            for (int i = 0; i != types.size(); i++) {
+                bareTypes[i] = types.get(i).id;
+            }
+            ReconCandidate result = new ReconCandidate(id, name, bareTypes, score);
+
+            return result;
+        }
+
+        @Override
+        public String toString() {
+            try {
+                return ParsingUtilities.mapper.writeValueAsString(this);
+            } catch (JsonProcessingException e) {
+                return super.toString();
+            }
+        }
     }
 
     @Override
@@ -452,6 +469,20 @@ public class StandardReconConfig extends ReconConfig {
             throw new IllegalStateException("Serialization of reconciliation query failed", e);
         }
     }
+        
+    protected CloseableHttpClient getHttpClient() {
+        RequestConfig defaultRequestConfig = RequestConfig.custom()
+                .setConnectTimeout(30 * 1000)
+                .setSocketTimeout(60 * 1000)
+                .build();
+
+        HttpClientBuilder httpClientBuilder = HttpClients.custom()
+                .setUserAgent(RefineServlet.getUserAgent())
+                .setRedirectStrategy(new LaxRedirectStrategy())
+                .setDefaultRequestConfig(defaultRequestConfig);
+        httpClient = httpClientBuilder.build();
+        return httpClient;
+    }
     
     @Override
     public List<Recon> batchRecon(List<ReconJob> jobs, long historyEntryID) {
@@ -471,39 +502,23 @@ public class StandardReconConfig extends ReconConfig {
         stringWriter.write("}");
         String queriesString = stringWriter.toString();
         
-        try {
-            URL url = new URL(service);
-            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-            {
-                connection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
-                connection.setConnectTimeout(30000);
-                connection.setDoOutput(true);
-                
-                DataOutputStream dos = new DataOutputStream(connection.getOutputStream());
-                try {
-                    String body = "queries=" + ParsingUtilities.encode(queriesString);
-                    
-                    dos.writeBytes(body);
-                } finally {
-                    dos.flush();
-                    dos.close();
-                }
-                
-                connection.connect();
-            }
-            
-            if (connection.getResponseCode() >= 400) {
-                InputStream is = connection.getErrorStream();
-                logger.error("Failed  - code:" 
-                        + Integer.toString(connection.getResponseCode()) 
-                        + " message: " + is == null ? ""
-                                : ParsingUtilities.inputStreamToString(is));
+        HttpPost request = new HttpPost(service);
+        List<NameValuePair> body = Collections.singletonList(
+                new BasicNameValuePair("queries", queriesString));
+        request.setEntity(new UrlEncodedFormEntity(body, Consts.UTF_8));
+        
+        try (CloseableHttpResponse response = getHttpClient().execute(request)) {
+            StatusLine statusLine = response.getStatusLine();
+            if (statusLine.getStatusCode() >= 400) {
+                logger.error("Failed  - code: "
+                        + Integer.toString(statusLine.getStatusCode())
+                        + " message: " + statusLine.getReasonPhrase());
             } else {
-                InputStream is = connection.getInputStream();
-                try {
-                    String s = ParsingUtilities.inputStreamToString(is);
-                    ObjectNode o = ParsingUtilities.evaluateJsonStringToObjectNode(s);
-
+                String s = ParsingUtilities.inputStreamToString(response.getEntity().getContent());
+                ObjectNode o = ParsingUtilities.evaluateJsonStringToObjectNode(s);
+                if (o == null) { // utility method returns null instead of throwing
+                    logger.error("Failed to parse string as JSON: " + s);
+                } else {
                     for (int i = 0; i < jobs.size(); i++) {
                         StandardReconJob job = (StandardReconJob) jobs.get(i);
                         Recon recon = null;
@@ -520,6 +535,7 @@ public class StandardReconConfig extends ReconConfig {
                                 logger.warn("Service error for text: " + text + "\n  Job code: " + job.getJsonQuery() + "\n  Response: " + o2.toString());
                             }
                         } else {
+                            // TODO: better error reporting
                             logger.warn("Service error for text: " + text + "\n  Job code: " + job.getJsonQuery());
                         }
 
@@ -528,14 +544,13 @@ public class StandardReconConfig extends ReconConfig {
                         }
                         recons.add(recon);
                     }
-                } finally {
-                    is.close();
                 }
             }
-        } catch (IOException e) {
+        } catch (Exception e) {
             logger.error("Failed to batch recon with load:\n" + queriesString, e);
         }
 
+        // TODO: This code prevents the retry mechanism in ReconOperation from working
         while (recons.size() < jobs.size()) {
             Recon recon = new Recon(historyEntryID, identifierSpace, schemaSpace)
             		.withService(service)
@@ -561,10 +576,10 @@ public class StandardReconConfig extends ReconConfig {
         
         // Sort results by decreasing score
         results.sort(new Comparator<ReconResult>() {
-        	@Override
-        	public int compare(ReconResult a, ReconResult b) {
-        		return Double.compare(b.score, a.score);
-        	}
+            @Override
+            public int compare(ReconResult a, ReconResult b) {
+                return Double.compare(b.score, a.score);
+            }
         });
         
         int length = results.size();
@@ -591,18 +606,19 @@ public class StandardReconConfig extends ReconConfig {
      * Recomputes the features associated with this reconciliation
      * object (only if we have at least one candidate).
      * 
-     * @param text
-     * 	    the cell value to compare the reconciliation data to
+     * @param text the cell value to compare the reconciliation data to
      */
     public Recon computeFeatures(Recon recon, String text) {
     	Object[] features = new Object[Recon.Feature_max];
         if (recon.candidates != null && !recon.candidates.isEmpty() && text != null) {
             ReconCandidate candidate = recon.candidates.get(0);
             
-            features[Recon.Feature_nameMatch] = text.equalsIgnoreCase(candidate.name);
-            features[Recon.Feature_nameLevenshtein] =
-                    StringUtils.getLevenshteinDistance(StringUtils.lowerCase(text), StringUtils.lowerCase(candidate.name));
-            features[Recon.Feature_nameWordDistance] = wordDistance(text, candidate.name);
+            if (candidate.name != null) {
+                features[Recon.Feature_nameMatch] = text.equalsIgnoreCase(candidate.name);
+                features[Recon.Feature_nameLevenshtein] =
+                        StringUtils.getLevenshteinDistance(StringUtils.lowerCase(text), StringUtils.lowerCase(candidate.name));
+                features[Recon.Feature_nameWordDistance] = wordDistance(text, candidate.name);
+            }
             
             features[Recon.Feature_typeMatch] = false;
             if (this.typeID != null) {

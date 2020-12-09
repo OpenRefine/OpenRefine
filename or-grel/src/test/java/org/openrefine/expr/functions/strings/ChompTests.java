@@ -26,17 +26,29 @@
  ******************************************************************************/
 package org.openrefine.expr.functions.strings;
 
-import org.openrefine.expr.functions.strings.Chomp;
-import org.testng.annotations.Test;
+import static org.testng.Assert.assertEquals;
 
+import org.openrefine.grel.FunctionTestBase;
 import org.openrefine.util.ParsingUtilities;
 import org.openrefine.util.TestUtils;
+import org.testng.annotations.Test;
 
-public class ChompTests {
+public class ChompTests extends FunctionTestBase {
     @Test
     public void serializeChomp() {
         String json = "{\"description\":\"Removes separator from the end of str if it's there, otherwise leave it alone.\",\"params\":\"string str, string separator\",\"returns\":\"string\"}";
         TestUtils.isSerializedTo(new Chomp(), json, ParsingUtilities.defaultWriter);
     }
+
+    @Test
+    public void testChomp() {
+        // FIXME: These return null instead of an EvalError
+//        assertTrue(invoke("chomp") instanceof EvalError);
+//        assertTrue(invoke("chomp", "") instanceof EvalError);
+//      assertTrue(invoke("chomp", 1, 1) instanceof EvalError);
+        assertEquals(invoke("chomp", "test,", ","), "test");
+        assertEquals(invoke("chomp", "test,", ":"), "test,");
+    }
+
 }
 

@@ -32,12 +32,12 @@ import java.time.format.DateTimeFormatter;
 import java.util.Properties;
 
 import org.openrefine.expr.functions.strings.Diff;
+import org.openrefine.grel.FunctionTestBase;
 import org.testng.Assert;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
-
+import org.openrefine.RefineTest;
 import org.openrefine.expr.EvalError;
-import org.openrefine.expr.functions.FunctionTestBase;
 import org.openrefine.util.ParsingUtilities;
 import org.openrefine.util.TestUtils;
 
