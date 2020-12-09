@@ -148,7 +148,7 @@ function registerCommands() {
   RS.registerCommand(module, "get-all-preferences", new Packages.com.google.refine.commands.GetAllPreferencesCommand());
   RS.registerCommand(module, "set-preference", new Packages.com.google.refine.commands.SetPreferenceCommand());
   RS.registerCommand(module, "open-workspace-dir", new Packages.com.google.refine.commands.OpenWorkspaceDirCommand());
-  
+
 }
 
 function registerOperations() {
@@ -370,6 +370,8 @@ function init() {
       "scripts/util/dom.js",
       "scripts/util/encoding.js",
       "scripts/util/sign.js",
+      "scripts/util/filter-lists.js",
+      "scripts/util/filter-lists-search.js",
 
       "scripts/index.js",
       "scripts/index/create-project-ui.js",
@@ -410,7 +412,7 @@ function init() {
       "styles/common.css",
       "styles/util/dialog.css",
       "styles/util/encoding.css",
-      
+
       "styles/index.css",
       "styles/index/create-project-ui.css",
       "styles/index/open-project-ui.css",
