@@ -85,7 +85,7 @@ Refine.OpenProjectUI.prototype._buildTagsAndFetchProjects = function() {
 Refine.OpenProjectUI.prototype._buildProjectSearchPanel = function(){
   var self = this;
   self._allTags = Refine.TagsManager._getAllProjectTags();
-  var container = self._elmts.projectTags;
+    var container = self._elmts.projectTags.empty();
   // Add search menu item
   var div = $('<div/>')
     .attr('id','divSearch')
