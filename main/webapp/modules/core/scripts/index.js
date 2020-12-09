@@ -166,7 +166,6 @@ $(function() {
   };
 
   var resize = function() {
-    console.log("resize")
     var leftPanelWidth = 150;
     // px
     var width = $(window).width();

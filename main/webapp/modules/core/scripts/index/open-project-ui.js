@@ -205,21 +205,7 @@ Refine.OpenProjectUI.prototype._searchInput = function() {
     search.keyup(function () {
         var text = search.val();
         // get the text, get back the projects that contains the text in the metadata
-    });
-};
-
-Refine.OpenProjectUI.prototype._fetchProjects = function() {
-    var self = this;
-    $.ajax({
-            type : 'GET',
-            url : "command/core/get-all-project-metadata",
-            dataType : 'json',
-            success : function(data) {
-                    self._renderProjects(data);
-                    self.resize();
-            },
-            data : {},
-            async : false
+        $("#tableBody").filterListSearch(text);
     });
 };
 
