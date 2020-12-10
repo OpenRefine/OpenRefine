@@ -196,7 +196,7 @@ Refine.OpenProjectUI.prototype._searchInput = function() {
     search.keyup(function () {
         var text = search.val();
         // get the text, get back the projects that contains the text in the metadata
-        $("#tableBody").filterListSearch(text);
+        $("#tableBody tr").filterListSearch(text);
     });
 };
 
