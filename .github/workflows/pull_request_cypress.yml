@@ -1,6 +1,6 @@
 name: Cypress CI
 
-on: [pull_request_target]
+on: [pull_request]
 
 jobs:
     build:
@@ -43,7 +43,7 @@ jobs:
                   yarn install
 
             - name: Test with Cypress on ${{ matrix.browser }}
-              run: | 
-                echo REFINE_MIN_MEMORY=1400M >> ./refine.ini
-                echo REFINE_MEMORY=4096M >> ./refine.ini
-                ./refine ui_test ${{ matrix.browser }} s5du3k "${{ secrets.CYPRESS_RECORD_KEY }}"
+              run: |
+                  echo REFINE_MIN_MEMORY=1400M >> ./refine.ini
+                  echo REFINE_MEMORY=4096M >> ./refine.ini
+                  ./refine ui_test ${{ matrix.browser }} s5du3k "${{ secrets.CYPRESS_RECORD_KEY }}"
