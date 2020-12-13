@@ -9,9 +9,9 @@
 
 ## Reporting a Vulnerability
 
-You can report a vulnerability by opening a bug report [HERE](https://github.com/OpenRefine/OpenRefine/issues/new/choose)
+You can privately report a vulnerability to us by sending a report to this private mailing list [mailto:openrefine-coredev@googlegroups.com](mailto:openrefine-coredev@googlegroups.com)
 
-We will try our best to fix any valid vulnerability that is reported to us.
+Our core team will try their best to fix any valid vulnerability that is reported to them.
 
 Keep in mind that OpenRefine is designed to run locally on a users PC, while also making network calls across the internet only upon a users choice or command.
 
