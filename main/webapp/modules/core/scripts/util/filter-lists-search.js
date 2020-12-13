@@ -18,7 +18,7 @@
             /* FILTER: select a text and filter */
             listElements.bind("filterSearch", function( e, text ) {
                 // get each project row
-                var tableRow = $(this).find("tr").filter(function() {
+                $(this).find("tr").filter(function() {
                         $(this).removeClass(settings.selectedTagClass);
                         return $(this).text().toLowerCase().contains(text)
                 }).addClass(settings.selectedTagClass);
