@@ -91,10 +91,8 @@ Refine.OpenProjectUI.prototype._buildProjectSearchPanel = function(){
     .attr('id','divSearch')
     .appendTo(container)
   // Add form to the div on the left
-  var form = $('<form/>')
+    var form = $('<div/>')
     .attr('id','formSearch')
-    .attr('method','POST')
-    .attr('autocomplete','off')
     .appendTo(div);
     // Add div for image in the form
   var divImage = $('<div/>')
@@ -195,10 +193,17 @@ Refine.OpenProjectUI.prototype._searchAnimation = function() {
 Refine.OpenProjectUI.prototype._searchInput = function() {
     var search = $('#searchInProjects');
     // search dynamically
-    search.keyup(function () {
-        var text = search.val();
-        // get the text, get back the projects that contains the text in the metadata
-        $("#tableBody tr").filterListSearch(text);
+    search.keypress(function (e) {
+        // when enter is pressed
+        if (e.keyCode == '13')
+        {
+            event.preventDefault();
+            var text = ''
+            text = search.val();
+            // get the text, get back the projects that contains the text in the metadata
+            $("#tableBody").filterListSearch(text);
+        }
+
     });
 };
 
