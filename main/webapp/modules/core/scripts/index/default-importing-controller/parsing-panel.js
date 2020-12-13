@@ -99,6 +99,12 @@ Refine.DefaultImportingController.prototype._prepareParsingPanel = function() {
   this._parsingPanelElmts.previousButton.html($.i18n('core-buttons/previous'));
   this._parsingPanelElmts.startOverButton.html($.i18n('core-buttons/startover'));
   this._parsingPanelElmts.nextButton.html($.i18n('core-buttons/create-project'));
+	document.getElementById("projectNameTextField")
+  	.addEventListener("keyup", function(e) {
+    if (e.code === 'Enter') {
+      document.getElementById("createButton").click();
+    }
+  });
   $('#or-import-parsopt').text($.i18n('core-index-import/parsing-options'));
   $('#or-import-projname').html($.i18n('core-index-import/project-name'));
   $('#or-import-projtags').html($.i18n('core-index-import/project-tags'));
