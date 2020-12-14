@@ -8,13 +8,13 @@ sidebar_label: Exporting
 
 Once your data is cleaned, you will need to get it out of OpenRefine and into the system of your choice. OpenRefine outputs a number of file formats, can upload your data directly into Google Sheets, and can create or update statements on Wikidata.
 
-You can also export your full project data so that it can be opened by someone else using OpenRefine (or yourself, on another computer).
+You can also [export your full project data](#export-a-project) so that it can be opened by someone else using OpenRefine (or yourself, on another computer).
 
 ## Export data
 
 Many of the following options only export data in the current view - that is, with current filters and facets applied. Some will give you the choice to export your entire dataset or just your current view.
 
-To export from a project, click the Export button at the top right corner and pick the format you want. You options are:
+To export from a project, click the <span class="menuItems">Export</span> dropdown button at the top right corner and pick the format you want. You options are:
 
 *   Tab-separated value (TSV) or Comma-separated value (CSV)
 *   HTML-formatted table
@@ -37,7 +37,7 @@ You can also export reconciled data to Wikidata, or export your Wikidata schema 
 
 With the custom tabular exporter, you can choose which of your data to export, the separator you wish to use, and whether you'd like to download it to your computer or upload it into a Google Sheet. 
 
-You can drag and drop the columns appearing in the column list to reorder the output. The options for reconciled and date data are applied to each column individually. 
+On the <span class="tabLabels">Content</span> tab, you can drag and drop the columns appearing in the column list to reorder the output. The options for reconciled and date data are applied to each column individually. 
 
 This exporter is especially useful with reconciled data, as you can choose whether you wish to output the cells' original values, the matched values, or the matched IDs. Ouputting “match entity's name”, “matched entity's ID”, or “cell's content” will output, respectively, the contents of `cell.recon.match.name`, `cell.recon.match.id`, and `cell.value`. 
 
@@ -48,9 +48,9 @@ In the future, you will also be able to choose how to [output date-formatted cel
 
 ![A screenshot of the custom tabular file download tab.](/img/custom-tabular-exporter2.png)
 
-With the download options, you can generate a preview of how the first ten rows of your dataset will output. If you do not choose one of the file formats on the right, the "Download" button will generate a text file. 
+On the <span class="tabLabels">Download</span> tab, you can generate a preview of how the first ten rows of your dataset will output. If you do not choose one of the file formats on the right, the <span class="buttonLabels">Download</span> button will generate a text file. On the <span class="tabLabels">Upload</span> tab, you can create a new Google Sheet. 
 
-With the <span class="menuItems">Option Code</span> tab, you can copy JSON data that saves your current settings, to reuse on another project, or you can paste in existing JSON settings data to apply to the current project. 
+With the <span class="tabLabels">Option Code</span> tab, you can copy JSON of your current settings to reuse on another project, or you can paste in existing JSON settings to apply to the current project. 
 
 ### SQL exporter
 
@@ -58,17 +58,17 @@ The SQL exporter creates a SQL statement containing the data you’ve exported, 
 
 ![A screenshot of the SQL statement creator window.](/img/sql-exporter.png)
 
-The "Content" tab allows you to craft a complete SQL statement, including DROP and IF EXISTS if you require them.
+The <span class="tabLabels">Content</span> tab allows you to craft a complete SQL statement, including DROP and IF EXISTS if you require them.
 
 You can set a default value for empty cells after unchecking “Allow null” in one or more columns. Trimming column names will remove their whitespace characters. 
 
 ![A screenshot of the SQL statement download window.](/img/sql-exporter2.png)
 
-The "Download" tab allows you to finalize your statement, name it, and preview or download it.
+The <span class="tabLabels">Download</span> tab allows you to finalize your statement, name it, and preview or download it.
 
-“Include schema” means that you will start your statement with the creation of a table. Without that, you will only have an INSERT statement. 
+<span class="fieldLabels">Include schema</span> means that you will start your statement with the creation of a table. Without that, you will only have an INSERT statement. 
 
-“Include content” means the INSERT statement with data from your project. Without that, you will only create empty columns. 
+<span class="fieldLabels">Include content</span> means the INSERT statement with data from your project. Without that, you will only create empty columns. 
 
 You can then preview your statement, which will open up a new browser tab/window showing a statement with the first ten rows of your data, or you can save a `.sql` file to your computer. 
 
@@ -76,14 +76,14 @@ You can then preview your statement, which will open up a new browser tab/window
 
 If you pick <span class="menuItems">Templating…</span> from the <span class="menuItems">Export</span> dropdown menu, you can “roll your own” exporter. This is useful for formats that we don't support natively yet, or won't support. The Templating exporter generates JSON by default. 
 
-The window that appears allows you to set your own separators, prefix, and suffix to create a complete dataset in the language of your choice. In the <span class="menuItems">Row Template</span> section, you can choose which columns to generate from each row by calling them with variables. 
+The window that appears allows you to set your own separators, prefix, and suffix to create a complete dataset in the language of your choice. In the <span class="fieldLabels">Row Template</span> section, you can choose which columns to generate from each row by calling them with variables. 
 
 This can be used to:
 * output reconciliation data (`cells["column name"].recon.match.name`, `.recon.match.id`, and `.recon.best.name`, for example) instead of cell values
 * create multiple columns of output from different member fields of a single project column
 * employ GREL expressions to modify cell data for output (for example, `cells["column name"].value.toUppercase()`). 
 
-Anything that appears inside curly braces ({{}}) is treated as a GREL expression; anything outside is generated as straight text. You can use Jython or Clojure by declaring it at the start: for example, `{{jython:return cells["Author"].value}}` will run a Jython expression.
+Anything that appears inside doubled curly braces ({{}}) is treated as a GREL expression; anything outside is generated as straight text. You can use Jython or Clojure by declaring it at the start: for example, `{{jython:return cells["Author"].value}}` will run a Jython expression.
 
 :::caution
 Note that some syntax is different in this tool than elsewhere in OpenRefine: a forward slash must be escaped with a backslash, while other characters do not need escaping. You cannot, at this time, include a closing curly brace (}) anywhere in your expression, or it will cause it to malfunction.
@@ -93,11 +93,13 @@ You can include [regular expressions](expressions#regular-expressions) as usual 
 
 You could also simply output a plain-text document inserting data from your project into sentences (for example, "In `{{cells["Year"].value}}` we received `{{cells["RequestCount"].value}}` requests.").
 
-If your projects is in records mode, the <span class="menuItems">Row separator</span> field will insert a separator between records, rather than individual rows. Rows inside a single record will be directly appended to one another as per the content in the <span class="menuItems">Row Template</span> field. 
+You can use the shorthand `${Column Name}` (no need for quotes) to insert column values directly. You cannot use this inside an expression, because of the closing curly brace.
+
+If your projects is in records mode, the <span class="fieldLabels">Row separator</span> field will insert a separator between records, rather than individual rows. Rows inside a single record will be directly appended to one another as per the content in the <span class="fieldLabels">Row Template</span> field. 
 
 ![A screenshot of the Templating exporter generating JSON by default.](/img/templating-exporter.png)
 
-Once you have created your template, you may wish to save the text you produced in each field, in order to reuse it in the future. Once you click “Export” OpenRefine will output a simple text file, and your template will be discarded.
+Once you have created your template, you may wish to save the text you produced in each field, in order to reuse it in the future. Once you click <span class="buttonLabels">Export</span> OpenRefine will output a simple text file, and your template will be discarded.
 
 We have recipes on using the Templating exporter to [produce several different formats](https://github.com/OpenRefine/OpenRefine/wiki/Recipes#12-templating-exporter).
 
