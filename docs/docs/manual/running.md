@@ -1,4 +1,4 @@
----
+﻿---
 id: running
 title: Running OpenRefine
 sidebar_label: Running
@@ -8,9 +8,9 @@ sidebar_label: Running
 
 OpenRefine does not require internet access to run its basic functions. Once you download and install it, it runs as a small web server on your own computer, and you access that local web server by using your browser. 
 
-You will see a command line window open when you run OpenRefine. Leave that window alone while you work on datasets in your browser. 
+You will see a command line window open when you run OpenRefine. Ignore that window while you work on datasets in your browser. 
 
-No matter how you load OpenRefine, it will load in your computer’s default browser. If you would like to use another browser instead, start OpenRefine and then point your chosen browser at the home screen: http://127.0.0.1:3333/.
+No matter how you start OpenRefine, it will load its interface in your computer’s default browser. If you would like to use another browser instead, start OpenRefine and then point your chosen browser at the home screen: [http://127.0.0.1:3333/](http://127.0.0.1:3333/).
 
 OpenRefine works best on browsers based on Webkit, such as:
 *   Google Chrome
@@ -20,7 +20,7 @@ OpenRefine works best on browsers based on Webkit, such as:
 
 We are aware of some minor rendering and performance issues on other browsers such as Firefox. We don't support Internet Explorer.
 
-You can launch multiple projects at the same time by simply having multiple tabs or browser windows open. From the <span class="menuItems">Open Project</span> screen, you can right-click on project names and open them in new tabs or windows. 
+You can view and work on multiple projects at the same time by simply having multiple tabs or browser windows open. From the <span class="menuItems">Open Project</span> screen, you can right-click on project names and open them in new tabs or windows. 
 
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
@@ -37,21 +37,28 @@ import TabItem from '@theme/TabItem';
 
 <TabItem value="win">
 
-To exit OpenRefine, close all the browser tabs or windows, then navigate to the command line window. To close this window and ensure OpenRefine exits properly, hold down `Control` and press `C` on your keyboard. This will save any last changes to your projects.
-
 #### With openrefine.exe
-You can run OpenRefine by double-clicking `openrefine.exe` or calling it from the command line. If you want to [modify the way `openrefine.exe` opens](#starting-with-modifications), you can edit the `openrefine.l4j.ini` file.  
+You can run OpenRefine by double-clicking `openrefine.exe` or calling it from the command line. 
+
+If you want to [modify the way `openrefine.exe` opens](#starting-with-modifications), you can edit the `openrefine.l4j.ini` file.  
 
 #### With refine.bat
 On Windows, OpenRefine can also be run by using the file `refine.bat` in the program directory. If you start OpenRefine using `refine.bat`, you can do so by opening the file itself, or by calling it from the command line. 
 
-If you call `refine.bat` from the command line, you can [start OpenRefine with modifications](#starting-with-modifications). If you want to modify the way `refine.bat` opens through double-clicking or using a shortcut, you can edit the `refine.ini` file.  
+If you call `refine.bat` from the command line, you can [start OpenRefine with modifications](#starting-with-modifications). 
+If you want to modify the way `refine.bat` opens through double-clicking or using a shortcut, you can edit the `refine.ini` file. 
+
+#### Exiting
+
+To exit OpenRefine, close all the browser tabs or windows, then navigate to the command line window. To close this window and ensure OpenRefine exits properly, hold down `Control` and press `C` on your keyboard. This will save any last changes to your projects. 
 
 </TabItem>
 
 <TabItem value="mac">
 
-You can find OpenRefine in your Applications folder, or you can call it from the command line. To exit, close all your OpenRefine browser tabs, go back to the terminal window and press `Command` and `Q` to close it down.
+You can find OpenRefine in your Applications folder, or you can call it from the command line with `./refine`. 
+
+To exit, close all your OpenRefine browser tabs, go back to the terminal window and press `Command` and `Q` to close it down.
 
 :::caution Problems starting?
 If you are using an older version of OpenRefine or are on an older version of MacOS, [check our Wiki for solutions to problems with MacOS](https://github.com/OpenRefine/OpenRefine/wiki/Installation-Instructions#macos). 
@@ -64,7 +71,7 @@ If you are using an older version of OpenRefine or are on an older version of Ma
 Use a terminal to launch OpenRefine. First, navigate to the installation folder. Then call the program:
 
 ```
-cd openrefine-3.4
+cd openrefine-3.4.1
   ./refine
 ```
 
@@ -134,9 +141,9 @@ To see the full list of command-line options, run `./refine -h`.
 |-m|Memory maximum heap|./refine -m 6000M|
 |-p|Port|./refine -p 3334|
 |-i|Interface (IP address, or IP and port)|./refine -i 127.0.0.2:3334|
-|-k|Add a Google API key|_need an example_|
-|-v|Verbosity (from low to high)|error,warn,info,debug,trace|
-|-x|Additional configuration parameters|_need an example_|
+|-k|Add a Google API key|./refine -k YOUR_API_KEY|
+|-v|Verbosity (from low to high: error,warn,info,debug,trace)|./refine -v info|
+|-x|Additional configuration parameters||
 |--debug|Enable debugging (on port 8000)|./refine --debug|
 |--jmx|Enable JMX monitoring for Jconsole and JvisualVM|./refine --jmx|
 
@@ -153,9 +160,9 @@ To see the full list of command-line options, run `./refine -h`.
 |-m|Memory maximum heap|./refine -m 6000M|
 |-p|Port|./refine -p 3334|
 |-i|Interface (IP address, or IP and port)|./refine -i 127.0.0.2:3334|
-|-k|Add a Google API key|_need an example_|
-|-v|Verbosity (from low to high)|error,warn,info,debug,trace|
-|-x|Additional configuration parameters|_need an example_|
+|-k|Add a Google API key|./refine -k YOUR_API_KEY|
+|-v|Verbosity (from low to high: error,warn,info,debug,trace)|./refine -v info|
+|-x|Additional configuration parameters||
 |--debug|Enable debugging (on port 8000)|./refine --debug|
 |--jmx|Enable JMX monitoring for Jconsole and JvisualVM|./refine --jmx|
 
@@ -168,7 +175,9 @@ To see the full list of command-line options, run `./refine -h`.
 #### Modifications set within files
 
 On Windows, you can modify the way `openrefine.exe` runs by editing `openrefine.l4j.ini`; you can modify the way `refine.bat` runs by editing `refine.ini`. 
-You can modify the Mac application by editing `Info.plist`. 
+
+You can modify the Mac application by editing `info.plist`. 
+
 On Linux, you can edit `refine.ini`. 
 
 Some settings, such as changing memory allocations, are already set inside these files, and all you have to do is change the values. Some lines need to be un-commented to work. 
@@ -189,16 +198,18 @@ REFINE_MIN_MEMORY=1400M
 ...
 ```
 
-Further modifications can be performed by using JVM preferences. 
+##### JVM preferences 
 
-These JVM preferences are different options and have different syntax than the key/value descriptions used on the command line. Some of the most common keys (with their defaults) are:
-*   -Drefine.autosave (5 [minutes])
-*   -Drefine.data_dir (/)
-*   -Drefine.development (false)
-*   -Drefine.headless (false)
-*   -Drefine.host (127.0.0.1)
-*   -Drefine.port (3333)
-*   -Drefine.webapp (main/webapp)
+Further modifications can be performed by using JVM preferences. These JVM preferences are different options and have different syntax than the key/value descriptions used on the command line. 
+
+Some of the most common keys (with their defaults) are:
+*   The project [autosave](starting#autosaving) frequency: `-Drefine.autosave` (5 [minutes])
+*   The workspace director: `-Drefine.data_dir` (/)
+*   Development mode: `-Drefine.development` (false)
+*   Headless mode: `-Drefine.headless` (false)
+*   IP: `-Drefine.host` (127.0.0.1)
+*   Port: `-Drefine.port` (3333)
+*   The application folder: `-Drefine.webapp` (main/webapp)
 
 The syntax is as follows:
 
@@ -214,7 +225,7 @@ The syntax is as follows:
 
 <TabItem value="win">
 
-Inside the `refine.l4j.ini` file, insert lines in this way:
+Locate the `refine.l4j.ini` file, and insert lines in this way:
 
 ```
 -Drefine.port=3334 
@@ -232,9 +243,11 @@ JAVA_OPTIONS=-Drefine.data_dir=C:\Users\user\Documents\OpenRefine\ -Drefine.port
 
 <TabItem value="mac">
 
-Find the 'array' element that follows the line:
+Locate the `info.plist`, and find the `array` element that follows the line
 
-`<key>JVMOptions</key>`
+```
+<key>JVMOptions</key>
+```
 
 Typically this looks something like:
 
@@ -248,7 +261,7 @@ Typically this looks something like:
 </array>
 ```
 
-Add in values like:
+Add in values such as:
 
 ```
 <key>JVMOptions</key>
@@ -267,7 +280,7 @@ Add in values like:
 
 <TabItem value="linux">
 
-In `refine.ini`, add `JAVA_OPTIONS=` before the `-Drefine.preference` declaration. You can un-comment and edit the existing suggested lines, or add lines:
+Locate the `refine.ini` file, and add `JAVA_OPTIONS=` before the `-Drefine.preference` declaration. You can un-comment and edit the existing suggested lines, or add lines:
 
 ```
 JAVA_OPTIONS=-Drefine.autosave=2
@@ -288,9 +301,11 @@ Refer to the [official Java documentation](https://docs.oracle.com/javase/8/docs
 
 When you first launch OpenRefine, you will see a screen with a menu on the left hand side that includes <span class="menuItems">Create Project</span>, <span class="menuItems">Open Project</span>, <span class="menuItems">Import Project</span>, and <span class="menuItems">Language Settings</span>. This is called the “home screen,” where you can manage your projects and general settings. 
 
+In the lower left-hand corner of the screen, you'll see <span class="menuItems">Preferences</span>, <span class="menuItems">Help</span>, and <span class="menuItems">About</span>.
+
 ### Language settings
 
-You can set your preferred interface language here. This language setting will persist until you change it again in the future. Languages are translated as a community effort; some languages are partially complete and default back to English where unfinished. Currently OpenRefine supports the following languages for 75% or more of the interface: 
+From the home screen, look in the options to the left for <span class="menuItems">Language Settings</span>. You can set your preferred interface language here. This language setting will persist until you change it again in the future. Languages are translated as a community effort; some languages are partially complete and default back to English where unfinished. Currently OpenRefine supports the following languages for 75% or more of the interface: 
 
 * Cebuano
 * German
@@ -307,13 +322,15 @@ You can set your preferred interface language here. This language setting will p
 * Tagalog
 * Chinese (简体中文)
 
+To leave the Language Settings screen, click on the diamond “OpenRefine” logo.
+
 :::info
 We use Weblate to provide translations for the interface. You can check [our profile on Weblate](https://hosted.weblate.org/projects/openrefine/translations/) to see which languages are in the process of being supported. See [our technical reference if you are interested in contributing translation work](https://docs.openrefine.org/technical-reference/translating) to make OpenRefine accessible to people in other languages.
 :::
 
 ### Preferences
 
-At this time you can set preferences using a key/value pair: that is, selecting one of the keys below and setting a value for it. 
+In the bottom left corner of the screen, look for <span class="menuItems">Preferences</span>. At this time you can set preferences using a key/value pair: that is, selecting one of the keys below and setting a value for it. 
 
 |Setting|Key|Value syntax|Default|Example|
 |---|---|---|---|---|
@@ -337,7 +354,7 @@ The project screen (or work screen) is where you will spend most of your time on
 
 The project bar runs across the very top of the project screen. It contains the the OpenRefine logo, the project title, and the project control buttons on the right side. 
 
-At any time you can close your current project and go back to the home screen by clicking on the OpenRefine logo. If you’d like to open another project in a new browser tab or window, you can right-click on the logo and use “Open in a new tab.” You will lose your current facets and view settings if you close your project (but data transformations will be saved in the [History](#history-undoredo) of the project).
+At any time you can close your current project and go back to the home screen by clicking on the OpenRefine logo. If you’d like to open another project in a new browser tab or window, you can right-click on the logo and use “Open in a new tab.” You will lose [your current facets and view settings](#facetfilter) if you close your project (but data transformations will be saved in the [History](#history-undoredo) of the project).
 
 :::caution
 Don’t click the “back” button on your browser - it will likely close your current project and you will lose your facets and view settings.  
@@ -345,21 +362,21 @@ Don’t click the “back” button on your browser - it will likely close your 
 
 You can rename a project at any time by clicking inside the project title, which will turn into a text field. Project names don’t have to be unique, as OpenRefine organizes them based on a unique identifier behind the scenes. 
 
-The <span class="menuItems">Permalink</span> allows you to return to a project at a specific view state - that is, with facets and filters applied. The permalink can help you pick up where you left off if you have to close your project while working with facets and filters. It puts view-specific information directly into the URL: clicking on it will load this current-view URL in the existing tab. You can right-click and copy the Permalink URL to copy the current view state to your clipboard, without refreshing the tab you’re using.
+The <span class="menuItems">Permalink</span> allows you to return to a project at a specific view state - that is, with [facets and filters](facets) applied. The <span class="menuItems">Permalink</span> can help you pick up where you left off if you have to close your project while working with facets and filters. It puts view-specific information directly into the URL: clicking on it will load this current-view URL in the existing tab. You can right-click and copy the <span class="menuItems">Permalink</span> URL to copy the current view state to your clipboard, without refreshing the tab you’re using.
 
 The <span class="menuItems">Open…</span> button will open up a new browser tab showing the <span class="menuItems">Create Project</span> screen. From here you can change settings, start a new project, or open an existing project. 
 
-<span class="menuItems">Export</span> is a dropdown menu that allows you to pick a format for exporting your current dataset. It will only export rows and records that are currently visible - the currently selected facets and filters, not the total data in the project.
+<span class="menuItems">Export</span> is a dropdown menu that allows you to pick a format for exporting a dataset. Many of the export options will only export rows and records that are currently visible - the currently selected facets and filters, not the total data in the project.
 
 <span class="menuItems">Help</span> will open up a new browser tab and bring you to this user manual on the web.
 
 ### The grid header
 
-The grid header sits below the project bar and above the project grid (the data of your project). The grid header will tell you the total number of rows or records in your project, and indicate whether you are in rows or records mode. 
+The grid header sits below the project bar and above the project grid (where the data of your project is displayed). The grid header will tell you the total number of rows or records in your project, and indicate whether you are in [rows or records mode](exploring#rows-vs-records). 
 
 It will also tell you if you’re currently looking at a select number of rows via facets or filtering, rather than the entire dataset, by displaying either, for example, “180 rows” or “67 matching rows (180 total).” 
 
-Directly below the row number, you have the ability to switch between [row mode and records mode](exploring#rows-vs-records). OpenRefine stores which projects are in records mode, and displays your data as records by default if you are. 
+Directly below the row number, you have the ability to switch between [row mode and records mode](exploring#rows-vs-records). OpenRefine stores projects persistently in one of the two modes, and displays your data as records by default if you are. 
 
 To the right of the rows/records selection is the array of options for how many rows/records to view on screen at one time. At the far right of the screen you can navigate through your entire dataset one page at a time. 
 
@@ -369,13 +386,13 @@ The <span class="menuItems">Extensions</span> dropdown offers you options for ex
 
 ### The grid 
 
-The area of the project screen that displays your dataset is called the “project grid” (or the “data grid,” or simply the “grid”). The grid presents data in a tabular format, which may look like a normal spreadsheet program to you. 
+The area of the project screen that displays your dataset is called the “grid” (or the “data grid,” or the “project grid”). The grid presents data in a tabular format, which may look like a normal spreadsheet program to you. 
 
 Columns widths are automatically set based on their contents; some column headers may be cut off, but can be viewed by mousing over the headers. 
 
 In each column header you will see a small arrow. Clicking on this arrow brings up a dropdown menu containing column-specific data exploration and transformation options. You will learn about each of these options in the [Exploring data](exploring) and [Transforming data](transforming) sections.
 
-The first column in every project will always be “All,” which contains options to flag, star, and do non-column-specific operations. The “All” column is also where rows/records are numbered. 
+The first column in every project will always be <span class="menuItems">All</span>, which contains options to flag, star, and do non-column-specific operations. The <span class="menuItems">All</span> column is also where rows/records are numbered. Numbering shows the permanent order of rows and records; a temporary sorting or facet may reorder the rows or show a limited set, but numbering will show you the original identifiers unless you make a permanent change. 
 
 The project grid may display with both vertical and horizontal scrolling, depending on the number and width of columns, and the number of rows/records displayed. You can control the display of the project grid by using [Sort and View options](exploring#sort-and-view).
 
@@ -383,17 +400,19 @@ Mousing over individual cells will allow you to [edit cells individually](celled
 
 ### Facet/Filter
 
-The Facet/Filter tab is one of the main ways of exploring your data: displaying the patterns and trends in your data, and helping you narrow your focus and modify that data. [Facets](facets) and [filters](facets#text-filter) are explained more in [Exploring data](exploring).
+The <span class="tabLabels">Facet/Filter</span> tab is one of the main ways of exploring your data: displaying the patterns and trends in your data, and helping you narrow your focus and modify that data. [Facets](facets) and [filters](facets#text-filter) are explained more in [Exploring data](exploring).
 
 ![A screenshot of facets and filters in action.](/img/facetfilter.png) 
 
-In the interface, you will see three buttons: <span class="menuItems">Refresh</span>, <span class="menuItems">Reset all</span>, and <span class="menuItems">Remove all</span>. Refreshing your facets will ensure you are looking at the latest information about each facet, if you have changed the counts or eliminated some options, for example. 
+In the tab, you will see three buttons: <span class="menuItems">Refresh</span>, <span class="menuItems">Reset all</span>, and <span class="menuItems">Remove all</span>. 
 
-Resetting your facets will remove any inclusion or exclusion you may have set - the facet options will stay in the sidebar, but your view settings will be reset.
+Refreshing your facets will ensure you are looking at the latest information about each facet, for example if you have changed the counts or eliminated some options. 
 
-Removing your facets will clear out the sidebar entirely. If you have written custom facets using expressions, these will be lost.
+Resetting your facets will remove any inclusion or exclusion you may have set - the facet options will stay in the sidebar, but your view settings will be undone.
 
-You can preserve your facets and filters for future use by copying a [Permalink](#the-project-bar).
+Removing your facets will clear out the sidebar entirely. If you have written custom facets using [expressions](expressions), these will be lost.
+
+You can preserve your facets and filters for future use by copying a <span class="menuItems">[Permalink](#the-project-bar)</span>.
 
 ### History (Undo/Redo)
 
@@ -403,7 +422,7 @@ Project history gets saved when you export a project archive, and restored when 
 
 ![A screenshot of the History (Undo/Redo) tab with 13 steps.](/img/history.png "A screenshot of the History (Undo/Redo) tab with 13 steps.")
 
-When you click on <span class="menuItems">Undo / Redo</span> in the sidebar of any project, that project’s history is shown as a list of changes in order, with the first “change” being the action of creating the project itself. (That first change, indexed as step zero, cannot be undone.) Here is a sample history with 3 changes:
+When you click on the <span class="tabLabels">Undo / Redo</span> tab in the sidebar of any project, that project’s history is shown as a list of changes in order, with the first “change” being the action of creating the project itself. (That first change, indexed as step zero, cannot be undone.) Here is a sample history with 3 changes:
 
 ```
 0. Create project
@@ -420,15 +439,15 @@ In this example, changes #2 and #3 will now be grayed out. You can redo a change
 
 If you have moved back one or more states, and then you perform a new operation on your data, the later actions (everything that’s greyed out) will be erased and cannot be re-applied. 
 
-The Undo/Redo tab will show you which step you’re on, and if you’re about to risk erasing work - by saying something like “4/5" or “1/7” at the end.
+The Undo/Redo tab will indicate which step you’re on, and if you’re about to risk erasing work - by saying something like “4/5" or “1/7” at the end.
 
 #### Reusing operations
 
 Operations that you perform in OpenRefine can be reused. For example, a formula you wrote inside one project can be copied and applied to another project later. 
 
-To reuse one or more operations, you first extract it from the project where it was first applied. Click to the Undo/Redo tab and click <span class="menuItems">Extract…</span>. This brings up a box that lists all operations up to the current state (it does not show undone operations). Select the operation or operations you want to extract using the checkboxes on the left, and they will be encoded as JSON on the right. Copy that JSON off to the clipboard. 
+To reuse one or more operations, first extract it from the project where it was first applied. Click to the <span class="tabLabels">Undo/Redo</span> tab and click <span class="menuItems">Extract…</span>. This brings up a box that lists all operations up to the current state (it does not show undone operations). Select the operation or operations you want to extract using the checkboxes on the left, and they will be encoded as JSON on the right. Copy that JSON to the clipboard. 
 
-Move to the second project, go to the Undo/Redo tab, click <span class="menuItems">Apply…</span> and paste in that JSON.
+Move to the second project, go to the <span class="tabLabels">Undo/Redo</span> tab, click <span class="menuItems">Apply…</span> and paste in that JSON.
 
 Not all operations can be extracted. Edits to a single cell, for example, can’t be replicated.
 
@@ -477,7 +496,6 @@ Some users may wish to employ OpenRefine for batch processing as part of a large
 The following are all third-party extensions and code; the OpenRefine team does not maintain them and cannot guarantee that any of them work. 
 :::
 
-
 Some examples:
 
 * This project allows OpenRefine to be run from the command line using [operations saved in a JSON file](running#reusing-operations): [OpenRefine batch processing](https://github.com/opencultureconsulting/openrefine-batch)
@@ -485,6 +503,4 @@ Some examples:
 * And the same in Ruby: [Refine-Ruby](https://github.com/maxogden/refine-ruby)
 * Another Python client library, by Paul Makepeace: [OpenRefine Python Client Library](https://github.com/PaulMakepeace/refine-client-py) 
 
-To look for other instances, search our Google Groups [for users](https://groups.google.com/g/openrefine and [for developers](https://groups.google.com/g/openrefine-dev), where [these projects were originally posted](https://groups.google.com/g/openrefine/c/GfS1bfCBJow/m/qWYOZo3PKe4J).
-
-
+To look for other instances, search our Google Groups [for users](https://groups.google.com/g/openrefine) and [for developers](https://groups.google.com/g/openrefine-dev), where [these projects were originally posted](https://groups.google.com/g/openrefine/c/GfS1bfCBJow/m/qWYOZo3PKe4J).

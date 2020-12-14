@@ -45,7 +45,7 @@ For the absolute latest development updates, see the [snapshot releases](https:/
 
 #### What’s changed 
 
-Our [latest version is OpenRefine 3.4.1](https://github.com/OpenRefine/OpenRefine/releases/tag/3.4.1), released September 24th 2020. The major changes in this version are listed on the [3.4 release page](https://github.com/OpenRefine/OpenRefine/releases/tag/3.4.1) with the downloadable packages. 
+Our [latest version is OpenRefine 3.4.1](https://github.com/OpenRefine/OpenRefine/releases/tag/3.4.1), released September 24th 2020. The major changes in this version are listed on the [3.4.1 release page](https://github.com/OpenRefine/OpenRefine/releases/tag/3.4.1) with the downloadable packages. 
 
 You can find information about all OpenRefine versions on the [Releases page on Github](https://github.com/OpenRefine/OpenRefine/releases).
 
@@ -70,7 +70,7 @@ Take note of the [extensions](#installing-extensions) you have currently install
 
 [Java Development Kit (JDK)](https://jdk.java.net/) is required to run OpenRefine and should be installed first. [OpenRefine installation packages for Mac and Windows come bundled with JDK](https://openrefine.org/download.html), so you do not need to install it separately if you use those bundles. 
 
-There are JDK packages for Mac, Windows, and Linux. We recommend you install the latest “Ready for use” version: at the time of writing, this is [JDK 14.0.1](https://jdk.java.net/14/). 
+There are JDK packages for Mac, Windows, and Linux. We recommend you install the latest “Ready for use” version. At the time of writing, this is [JDK 14.0.1](https://jdk.java.net/14/). 
 
 Download the archive (either a `.tar.gz` or a `.zip`) to your computer and then extract its contents to a location of your choice. There is no installation process, so you may wish to extract this folder directly into a place where you put program files, or another stable folder. 
 
@@ -91,16 +91,16 @@ import TabItem from '@theme/TabItem';
 
 <TabItem value="win">
 
-1. On Windows 10, click the Windows start menu button, type “env,” and look at the search results. Click “Edit the system environment variables.” (If you are using an earlier version of Windows, use the “Search” or “Search programs and files” box in the start menu.)
+1. On Windows 10, click the Start Menu button, type `env`, and look at the search results. Click <span class="buttonLabels">Edit the system environment variables</span>. (If you are using an earlier version of Windows, use the “Search” or “Search programs and files” box in the Start Menu.)
 
 ![A screenshot of the search results for 'env'.](/img/env.png "A screenshot of the search results for 'env'.")
 
-2. Click “Environment Variables…” at the bottom of the “Advanced” window that appears.
-3. In the “Environment Variables” dialog that appears, click “New…” and create a variable with the key `JAVA_HOME`. You can set the variable for only your user account, as in the screenshot below, or set it as a system variable - it will work either way.
+2. Click <span class="buttonLabels">Environment Variables…</span> at the bottom of the <span class="tabLabels">Advanced</span> window.
+3. In the <span class="tabLabels">Environment Variables</span> window that appears, click <span class="buttonLabels">New…</span> and create a variable with the key `JAVA_HOME`. You can set the variable for only your user account, as in the screenshot below, or set it as a system variable - it will work either way.
 
 ![A screenshot of 'Environment Variables'.](/img/javahome.png "A screenshot of 'Environment Variables'.")
 
-4. Set the `Value` to the folder where you installed JDK, in the format `D:\Programs\OpenJDK`. You can locate this folder with the “Browse directory...” button.
+4. Set the `Value` to the folder where you installed JDK, in the format `D:\Programs\OpenJDK`. You can locate this folder with the <span class="buttonLabels">Browse directory...</span> button.
 
 </TabItem>
 
@@ -174,7 +174,7 @@ Save and close the file. When you are back in the terminal, type
 source /etc/environment
 ```
 
-Exit the terminal and restart your system. You can then check that JAVA_HOME is set properly by opening another terminal and typing
+Exit the terminal and restart your system. You can then check that `JAVA_HOME` is set properly by opening another terminal and typing
 ```
 echo $JAVA_HOME
 ```
@@ -208,7 +208,9 @@ If you have extensions installed, do not delete the `webapp\extensions` folder w
 
 <TabItem value="win">
 
-Once you have downloaded the `.zip` file, extract it into a folder where you wish to store program files (such as `D:\Program Files\OpenRefine`). You can right-click on `openrefine.exe` or `refine.bat` and pin one of those programs to your Start Menu or create shortcuts for easier access. 
+Once you have downloaded the `.zip` file, extract it into a folder where you wish to store program files (such as `D:\Program Files\OpenRefine`). 
+
+You can right-click on `openrefine.exe` or `refine.bat` and pin one of those programs to your Start Menu or create shortcuts for easier access. 
 
 </TabItem>
 
@@ -311,7 +313,7 @@ tar xzf openrefine-linux-3.4.tar.gz
 
 ### Set where data is stored
 
-OpenRefine stores data in two places: program files in the program directory, wherever it is you’ve installed it; and project files in what we call the “workspace directory.” You can access this folder easily from OpenRefine by going to the [home screen](running#the-home-screen) (at [http://127.0.0.1:3333/](http://127.0.0.1:3333/)) and clicking “Browse workspace directory.”
+OpenRefine stores data in two places: program files in the program directory, wherever it is you’ve installed it; and project files in what we call the “workspace directory.” You can access this folder easily from OpenRefine by going to the [home screen](running#the-home-screen) (at [http://127.0.0.1:3333/](http://127.0.0.1:3333/)) and clicking <span class="buttonLabels">Browse workspace directory</span>.
 
 By default this is:
 
@@ -359,7 +361,7 @@ If the folder does not exist, OpenRefine will create it.
 ~/Library/Application Support/OpenRefine/
 ```
 
-For older versions as Google Refine:
+For older versions, as Google Refine:
 
 ```
 ~/Library/Application Support/Google/Refine/ 
@@ -418,7 +420,7 @@ You can access OpenRefine server logs from the terminal on Mac:
 
 ## Increasing memory allocation
 
-OpenRefine relies on having computer memory available to it to work effectively. If you are planning to work with large data sets, you may wish to set up OpenRefine to handle it at the outset. By “large” we generally mean one of the following indicators:
+OpenRefine relies on having computer memory available to it to work effectively. If you are planning to work with large datasets, you may wish to set up OpenRefine to handle it at the outset. By “large” we generally mean one of the following indicators:
 *   more than one million total cells
 *   an input file size of more than 50 megabytes (MB)
 *   more than 50 [rows per record in records mode](running#records-mode)
@@ -430,7 +432,7 @@ A good practice is to start with no more than 50% of whatever memory is left ove
 All of the settings below use a four-digit number to specify the megabytes (MB) used (actually [mebibytes](https://en.wikipedia.org/wiki/Mebibyte)). The default is usually 1024MB, but the new value doesn't need to be a multiple of 1024.
 
 :::info Dealing with large datasets
-If your project is big enough to need more than the default amount of memory, consider turning off “Parse cell text into numbers, dates, ...” on import. It's convenient, but less efficient than explicitly converting any columns that you need as a data type other than the default “string” type.
+If your project is big enough to need more than the default amount of memory, consider turning off <span class="fieldLabels">Parse cell text into numbers, dates, ...</span> on import. It's convenient, but less efficient than explicitly converting any columns that you need as a data type other than the default “string” type.
 :::
 
 <Tabs
@@ -464,7 +466,7 @@ Once you increase the memory allocation, you may find that you cannot run `openr
 
 On Windows, OpenRefine can also be run by using the file `refine.bat` in the program directory. If you start OpenRefine using `refine.bat`, the memory available to OpenRefine can be specified either through command line options, or through the `refine.ini` file.
 
-To set the maximum amount of memory on the command line when using `refine.bat`, "cd" to the program directory, then type
+To set the maximum amount of memory on the command line when using `refine.bat`, `cd` to the program directory, then type
 
 ```refine.bat /m 2048m```
 
@@ -523,7 +525,7 @@ If you’d like to create or modify an extension, [see our developer documentati
 
 ### Two ways to install extensions
 
-You can [install extensions in one of two places](installing#set-where-data-is-stored):
+You can [install extensions in one of two places](#set-where-data-is-stored):
 
 *   Into your OpenRefine program folder, so they will only be available to that version/installation of OpenRefine (meaning the extension will not run if you upgrade OpenRefine), or 
 *   Into your workspace, where your projects are stored, so they will be available no matter which version of OpenRefine you’re using.
@@ -532,7 +534,7 @@ We provide these options because you may wish to reinstall a given extension man
 
 ### Find the right place to install
 
-If you want to install the extension into the program folder, go to your program directory and then go to `/webapp/extensions` (or create it if not does not exist). 
+If you want to install the extension into the program folder, go to your program directory and then go to `webapp\extensions` (or create it if not does not exist). 
 
 If you want to install the extension into your workspace, you can:
 *   launch OpenRefine and click <span class="menuItems">Open Project</span> in the sidebar 
@@ -540,7 +542,7 @@ If you want to install the extension into your workspace, you can:
 *   A file-explorer or finder window will open in your workspace
 *   Create a new folder called “extensions” inside the workspace if it does not exist.
 
-You can also [find your workspace on each operating system using these instructions](installing#set-where-data-is-stored).  
+You can also [find your workspace on each operating system using these instructions](#set-where-data-is-stored).  
 
 ### Install the extension
 
@@ -551,7 +553,7 @@ Some extensions may have multiple versions, to match OpenRefine versions, so be 
 Generally, the installation process will be:
 
 *   Download the extension (usually as a zip file from GitHub)
-*   Extract the zip contents into the `extensions` directory, making sure all the contents go into one folder with the name of the extension
+*   Extract the zip contents into the “extensions” directory, making sure all the contents go into one folder with the name of the extension
 *   Start (or restart) OpenRefine.
 
-To confirm that installation was a success, follow the instructions provided by the extension. Each extension will appear in its own way inside the OpenRefine interface: make sure you read the documentation to know where the functionality will appear, such as under specific dropdown menus. 
+To confirm that installation was a success, follow the instructions provided by the extension. Each extension will appear in its own way inside the OpenRefine interface. Make sure you read its documentation to know where the functionality will appear, such as under specific dropdown menus. 

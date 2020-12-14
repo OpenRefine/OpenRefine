@@ -182,7 +182,7 @@ Returns the array of strings obtained by splitting s into substrings with the gi
 
 Returns the array of strings obtained by splitting s by sep, or by guessing either tab or comma separation if there is no sep given. Handles quotes properly and understands cancelled characters. The separator can be either a string or a regex pattern. For example, `value.smartSplit("\n")` will split at a carriage return or a new-line character.
 
-Note: `value.[escape](#escapes-s-mode)('javascript')` is useful for previewing unprintable characters prior to using smartSplit().
+Note: [`value.escape('javascript')`](#escapes-s-mode) is useful for previewing unprintable characters prior to using smartSplit().
 
 ###### splitByCharType(s)
 
