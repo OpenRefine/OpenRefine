@@ -162,7 +162,7 @@ To see the full list of command-line options, run `./refine -h`.
 |-i|Interface (IP address, or IP and port)|./refine -i 127.0.0.2:3334|
 |-k|Add a Google API key|./refine -k YOUR_API_KEY|
 |-v|Verbosity (from low to high: error,warn,info,debug,trace)|./refine -v info|
-|-x|Additional configuration parameters||
+|-x|Additional Java configuration parameters (see Java documentation)||
 |--debug|Enable debugging (on port 8000)|./refine --debug|
 |--jmx|Enable JMX monitoring for Jconsole and JvisualVM|./refine --jmx|
 
