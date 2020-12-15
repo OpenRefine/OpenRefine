@@ -1,16 +1,16 @@
 {
-   "name":"OpenRefine-Cypress-Test-Suite",
-   "version":"1.0.0",
-   "description":"Cypress tests for OpenRefine",
-   "license":"BSD-3-Clause",
-   "author":"OpenRefine",
-   "private":true,
-   "dependencies":{
-      "cypress":"5.6.0",
-      "cypress-file-upload":"^4.1.1",
-      "cypress-wait-until":"^1.7.1",
-      "dotenv":"^8.2.0",
-      "fs-extra":"^9.0.1",
-      "uniqid":"^5.2.0"
-   }
+    "name": "OpenRefine-Cypress-Test-Suite",
+    "version": "1.0.0",
+    "description": "Cypress tests for OpenRefine",
+    "license": "BSD-3-Clause",
+    "author": "OpenRefine",
+    "private": true,
+    "dependencies": {
+        "cypress": "6.0.1",
+        "cypress-file-upload": "^4.1.1",
+        "cypress-wait-until": "^1.7.1",
+        "dotenv": "^8.2.0",
+        "fs-extra": "^9.0.1",
+        "uniqid": "^5.2.0"
+    }
 }

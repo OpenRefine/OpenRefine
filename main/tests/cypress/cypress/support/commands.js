@@ -41,7 +41,7 @@ Cypress.Commands.add('doCreateProjectThroughUserInterface', () => {
 	// cypress does not support window.location = ...
 	cy.get('h2').contains('HTTP ERROR 404');
 	cy.location().should((location) => {
-		expect(location.href).contains('http://localhost:3333/__/project?');
+		expect(location.href).contains(Cypress.env('OPENREFINE_URL')+'/__/project?');
 	});
 
 	cy.location().then((location) => {
@@ -67,7 +67,9 @@ Cypress.Commands.add('assertCellEquals', (rowIndex, columnName, value) => {
 	cy.get(`table.data-table thead th[title="${columnName}"]`).then(($elem) => {
 		// there are 3 td at the beginning of each row
 		const columnIndex = $elem.index() + 3;
-		cy.get(`table.data-table tbody tr:nth-child(${cssRowIndex}) td:nth-child(${columnIndex}) div`).contains(value, { timeout: 5000 });
+		cy.get(`table.data-table tbody tr:nth-child(${cssRowIndex}) td:nth-child(${columnIndex}) div.data-table-cell-content > span`).should(($cellSpan)=>{
+			expect($cellSpan.text()).equals(value);
+		});
 	});
 });
 
@@ -92,7 +94,7 @@ Cypress.Commands.add('waitForDialogPanel', () => {
 
 Cypress.Commands.add('confirmDialogPanel', () => {
 	cy.get('body > .dialog-container > .dialog-frame .dialog-footer button[bind="okButton"]').click();
-	cy.get('body > .dialog-container > .dialog-frame').should('not.be.visible');
+	cy.get('body > .dialog-container > .dialog-frame').should('not.exist');
 });
 
 Cypress.Commands.add('columnActionClick', (columnName, actions) => {
