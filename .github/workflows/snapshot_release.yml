@@ -45,7 +45,7 @@ jobs:
       run: | 
         echo REFINE_MIN_MEMORY=1400M >> ./refine.ini
         echo REFINE_MEMORY=4096M >> ./refine.ini
-        ./refine ui_test chrome cn3r2t "${{ secrets.CYPRESS_RECORD_KEY }}"
+        ./refine ui_test chrome s5du3k "${{ secrets.CYPRESS_RECORD_KEY }}"
 
   build:
 
