@@ -13,7 +13,7 @@ You can apply a text facet on numbers, boolean values, and dates, but if you edi
 
 ## Transform
 
-Select <span class="menuItems">Edit cells</span> → <span class="menuItems">Transforms</span> to open up an expressions window. From here, you can apply [expressions](expressions) to your data. The simplest examples are GREL functions such as [`toUppercase()`](grelfunctions#touppercases or [`toLowercase()`](grelfunctions#tolowercases), used in expressions as `toUppercase(value)` or `toLowercase(value)`. In these cases, `value` is the value in each cell in the selected column. 
+Select <span class="menuItems">Edit cells</span> → <span class="menuItems">Transforms</span> to open up an expressions window. From here, you can apply [expressions](expressions) to your data. The simplest examples are GREL functions such as [`toUppercase()`](grelfunctions#touppercases) or [`toLowercase()`](grelfunctions#tolowercases), used in expressions as `toUppercase(value)` or `toLowercase(value)`. When used on a column operation, `value` is the information in each cell in the selected column. 
 
 Use the preview to ensure your data is being transformed correctly. 
 
@@ -122,13 +122,15 @@ The clustering pop-up window offers you a variety of clustering methods:
 
 **Key collisions** are very fast and can process millions of cells in seconds:
 
-**Fingerprinting** is the least likely to produce false positives, so it’s a good place to start. It does the same kind of data-cleaning behind the scenes that you might think to do manually: fix whitespace into single spaces, put all uppercase letters into lowercase, discard punctuation, remove diacritics (e.g. accents) from characters, split all strings (words) and sort them alphabetically (so “Zhenyi, Wang” becomes “wang zhenyi”).
+**Fingerprinting** is the least likely to produce false positives, so it’s a good place to start. It does the same kind of data-cleaning behind the scenes that you might think to do manually: fix whitespace into single spaces, put all uppercase letters into lowercase, discard punctuation, remove diacritics (e.g. accents) from characters, split up all strings (words) and sort them alphabetically (so “Zhenyi, Wang” becomes “wang zhenyi”).
 
-**N-gram fingerprinting** allows you to set the _n_ value to whatever number you’d like, and will create n-grams of _n_ size (after doing some cleaning), alphabetize them, then join them back together into a _fingerprint_. For example, a 1-gram fingerprint will simply organize all the letters in the cell into alphabetical order - by creating segments one character in length. A 2-gram fingerprint will find all the two-character segments, remove duplicates, alphabetize them, and join them back together (for example, “banana” generates “ba an na an na,” which becomes “anbana”). This can help match cells that have typos, or incorrect spaces (such as matching “lookout” and “look out,” which fingerprinting itself won’t identify because it keeps words separated). The higher the _n_ value, the fewer clusters will be identified. With 1-grams, keep an eye out for mismatched values that are near-anagrams of each other (such as “Wellington” and “Elgin Town”). 
+**N-gram fingerprinting** allows you to set the _n_ value to whatever number you’d like, and will create n-grams of _n_ size (after doing some cleaning), alphabetize them, then join them back together into a fingerprint. For example, a 1-gram fingerprint will simply organize all the letters in the cell into alphabetical order - by creating segments one character in length. A 2-gram fingerprint will find all the two-character segments, remove duplicates, alphabetize them, and join them back together (for example, “banana” generates “ba an na an na,” which becomes “anbana”). 
+
+This can help match cells that have typos, or incorrect spaces (such as matching “lookout” and “look out,” which fingerprinting itself won’t identify because it separates words). The higher the _n_ value, the fewer clusters will be identified. With 1-grams, keep an eye out for mismatched values that are near-anagrams of each other (such as “Wellington” and “Elgin Town”). 
 
 ##### Phonetic clustering
 
-The next four methods are phonetic algorithms: they know whether two letters sound the same when pronounced out loud, and assess text values based on that (such as knowing that a word with an “S” might be a mistype of a word with a “Z”).  They are great for spotting mistakes made by not knowing the spelling of a word or name after only hearing it spoken aloud. 
+The next four methods are phonetic algorithms: they identify letters that sound the same when pronounced out loud, and assess text values based on that (such as knowing that a word with an “S” might be a mistype of a word with a “Z”). They are great for spotting mistakes made by not knowing the spelling of a word or name after hearing it spoken aloud. 
 
 **Metaphone3 fingerprinting** is an English-language phonetic algorithm. For example, “Reuben Gevorkiantz” and “Ruben Gevorkyants” share the same phonetic fingerprint in English.
 
@@ -140,24 +142,24 @@ Regardless of the language of your data, applying each of them might find differ
 
 #### Nearest neighbor
 
-**Nearest neighbor** clustering methods are slower than key collision methods. They allow the user to set a radius - a threshold for matching or not matching. OpenRefine uses a “blocking” method first, which sorts values based on whether they have a certain amount of similarity (the default is “6” for a six-character string of identical characters) and then runs the nearest-neighbor operations on those sorted groups. We recommend setting the block number to at least 3, and then increasing it if you need to be more strict (for example, if every value with “river” is being matched, you should increase it to 6 or more). Note bigger block values will take much longer to process, while smaller blocks may miss matches. Increasing the radius will make the matches more lax, as bigger differences will be clustered:
+**Nearest neighbor** clustering methods are slower than key collision methods. They allow the user to set a radius - a threshold for matching or not matching. OpenRefine uses a “blocking” method first, which sorts values based on whether they have a certain amount of similarity (the default is “6” for a six-character string of identical characters) and then runs the nearest-neighbor operations on those sorted groups. 
 
-**Levenshtein distance** counts the number of edits required to make one value perfectly match another. As in the key collision methods above, it will do things like change uppercase to lowercase, fix whitespace, change special characters, etc. Each character that gets changed counts as 1 “distance.” “New York” and “newyork” have an edit distance value of 3 (“N” to “n”, “Y” to “y,” remove the space). It can do relatively advanced edits, such as understand the distance between “M. Makeba” and “Miriam Makeba” (5), but it may create false positives if these distances are greater than other, simpler transformations (such as the one-character distance to “B. Makeba,” another person entirely).
+We recommend setting the block number to at least 3, and then increasing it if you need to be more strict (for example, if every value with “river” is being matched, you should increase it to 6 or more). Note that bigger block values will take much longer to process, while smaller blocks may miss matches. Increasing the radius will make the matches more lax, as bigger differences will be clustered.
 
-**PPM (or Prediction by Partial Matching)** uses compression to see whether two values are similar or different. In practice, this method is very lax even for small radius values and tends to generate many false positives, but because it operates at a sub-character level it is capable of finding substructures that are not easily identifiable by distances that work at the character level. So it should be used as a 'last resort' clustering method. It is also more effective on longer strings than on shorter ones.
+**Levenshtein distance** counts the number of edits required to make one value perfectly match another. As in the key collision methods above, it will do things like change uppercase to lowercase, fix whitespace, change special characters, etc. Each character that gets changed counts as 1 “distance.” “New York” and “newyork” have an edit distance value of 3 (“N” to “n”; “Y” to “y”; remove the space). It can do relatively advanced edits, such as understand the distance between “M. Makeba” and “Miriam Makeba” (5), but it may create false positives if these distances are greater than other, simpler transformations (such as the one-character distance to “B. Makeba,” another person entirely).
+
+**PPM (Prediction by Partial Matching)** uses compression to see whether two values are similar or different. In practice, this method is very lax even for small radius values and tends to generate many false positives, but because it operates at a sub-character level it is capable of finding substructures that are not easily identifiable by distances that work at the character level. So it should be used as a “last resort” clustering method. It is also more effective on longer strings than on shorter ones.
 
 For more of the theory behind clustering, see [Clustering In Depth](https://github.com/OpenRefine/OpenRefine/wiki/Clustering-In-Depth).
 
 ## Replace
 
-OpenRefine provides a find/replace function for you to edit your data. Selecting “Edit cells” → “Replace” will bring up a simple window where you can input a string to search and a string to replace it with. You can set case-sensitivity, and set it to only select whole words, defined by a string with spaces or punctuation around it (to prevent, for example, “house” selecting the “house” part of “doghouse”). You can use regular expressions in this field. 
-
-You may wish to preview the results of this operation by testing it with a [Text filter](facets#text-filter) first.
+OpenRefine provides a find/replace function for you to edit your data. Selecting <span class="menuItems">Edit cells</span> → <span class="menuItems">Replace</span> will bring up a simple window where you can input a string to search and a string to replace it with. You can set case-sensitivity, and set it to only select whole words, defined by a string with spaces or punctuation around it (to prevent, for example, “house” selecting the “house” part of “doghouse”). You can use [regular expressions](expressions#regular-expressions) in this field. You may wish to preview the results of this operation by testing it with a [Text filter](facets#text-filter) first.
 
 You can also perform a sort of find/replace operation by editing one cell, and selecting “apply to all identical cells.”
 
 ## Edit one cell at a time
 
-You can edit individual cells by hovering your mouse over that cell. You should see a tiny blue button labeled “edit.” Click it to edit the cell. That pops up a window with a bigger text field for you to edit. You can change the data type of that cell, and you can apply these changes to all identical cells (in the same column), using this pop-up window. 
+You can edit individual cells by hovering your mouse over that cell. You should see a tiny blue link labeled “edit.” Click it to edit the cell. That pops up a window with a bigger text field for you to edit. You can change the [data type](exploring#data-types) of that cell, and you can apply these changes to all identical cells (in the same column), using this pop-up window.  
 
 You will likely want to avoid doing this except in rare cases - the more efficient means of improving your data will be through automated and bulk operations. 

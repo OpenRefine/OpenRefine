@@ -67,7 +67,7 @@
     font-size: 35px;
   }
 
-  .markdown .menuItems {
+  .markdown .menuItems, .markdown .fieldLabels, .markdown .tabLabels, .markdown .buttonLabels {
     font-size: var(--ifm-code-font-size);
     display: inline-block;
     border: 2px solid #4dc6e1;

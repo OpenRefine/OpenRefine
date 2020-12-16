@@ -128,7 +128,7 @@ If you would like to export a scatterplot, OpenRefine will open a new tab with a
 
 You may want to explore your textual data with modifications that aren't permanent. Creating custom text facets will load your column into memory, transform the data temporarily, and store those transformations inside the facet. 
 
-You can also use custom text facets to analyze numerical data, such as by analyzing a number as a string, or by creating a test that will return “true” and false” as values. 
+You can also use custom text facets to analyze numerical data, such as by analyzing a number as a string, or by creating a test that will return “true” and “false” as values. 
 
 Clicking on <span class="menuItems">Facet</span> → <span class="menuItems">Custom text facet…</span> will bring up an [expressions](expressions) window where you can enter in a GREL, Jython, or Clojure expression to modify how the facet works. 
 
@@ -140,7 +140,7 @@ For example, you may wish to analyze only the first word in a text field - perha
 value.split(" ")[0]
 ```
 
-In this case, `split()` is creating an array of text strings based on every space in the cells ["Firstname", "Lastname"]. Because arrays number their entries starting with 0, we want the first value, so we ask for `[0]`. (Assuming the first name is one word, not something like “Mary Anne”.) We can do the same splitting and ask for the last name with 
+In this case, `split()` is creating an array of text strings based on every space in the cells ["Firstname", "Lastname"]. Because arrays number their entries starting with 0, we want the first value, so we ask for `[0]`. (Assuming the first name is one word, not something like “Mary Anne.”) We can do the same splitting and ask for the last name with 
 
 ```
 value.split(" ")[1]
@@ -152,7 +152,7 @@ You may want to create a facet that references several columns. For example, let
 cells["First Name"].value[0] == cells["Last Name"].value[0]
 ```
 
-That expression will look for the first letter (the character at index 0) of each entry and compare them. Then it will facet your rows into `true` and `false`. 
+That expression will look for the first letter (the character at index 0) of each entry and compare them. Then it will facet your rows into “true” and “false.” 
 
 You can learn more about text-modification functions on the [Expressions page](expressions). 
 
