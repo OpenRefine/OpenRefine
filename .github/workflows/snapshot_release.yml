@@ -55,11 +55,11 @@ jobs:
           cd ./main/tests/cypress
           yarn install
 
-    - name: Test with Cypress on chrome
+    - name: Test with Cypress on ${{ matrix.browser }}
       run: | 
         echo REFINE_MIN_MEMORY=1400M >> ./refine.ini
         echo REFINE_MEMORY=4096M >> ./refine.ini
-        ./refine ui_test chrome s5du3k "${{ secrets.CYPRESS_RECORD_KEY }}"
+        ./refine ui_test ${{ matrix.browser }} s5du3k "${{ secrets.CYPRESS_RECORD_KEY }}"
 
   build:
 
