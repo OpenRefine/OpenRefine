@@ -54,23 +54,25 @@ With the <span class="tabLabels">Option Code</span> tab, you can copy JSON of yo
 
 ### SQL exporter
 
-The SQL exporter creates a SQL statement containing the data you’ve exported, which you can use to overwrite or add to an existing database. A window with two tabs will pop up: one to define what data to output, and another to modify the statement table. 
+The SQL exporter creates a SQL statement containing the data you’ve exported, which you can use to overwrite or add to an existing database. Choosing <span class="menuItems">Export</span> → <span class="menuItems">SQL exporter</span> will bring up a window with two tabs: one to define what data to output, and another to modify other aspects of the SQL statement with options to preview and download the statement.  
 
-![A screenshot of the SQL statement creator window.](/img/sql-exporter.png)
+![A screenshot of the SQL statement content window.](/img/sql-exporter.png)
 
-The <span class="tabLabels">Content</span> tab allows you to craft a complete SQL statement, including DROP and IF EXISTS if you require them.
+The <span class="tabLabels">Content</span> tab allows you to craft your dataset into an SQL table. From here, you can choose which columns to export, the data type to export for each (or choose "VARCHAR"), and the maximum character length for each field (if applicable based on the data type). You can set a default value for empty cells after unchecking “Allow null” in one or more columns. 
 
-You can set a default value for empty cells after unchecking “Allow null” in one or more columns. Trimming column names will remove their whitespace characters. 
+With this output tool, you can choose whether to output only currently visible rows, or all the rows in your dataset, as well as whether to include empty rows. Trimming column names will remove their whitespace characters. 
 
 ![A screenshot of the SQL statement download window.](/img/sql-exporter2.png)
 
-The <span class="tabLabels">Download</span> tab allows you to finalize your statement, name it, and preview or download it.
+The <span class="tabLabels">Download</span> tab allows you to finalize your complete SQL statement. 
 
 <span class="fieldLabels">Include schema</span> means that you will start your statement with the creation of a table. Without that, you will only have an INSERT statement. 
 
 <span class="fieldLabels">Include content</span> means the INSERT statement with data from your project. Without that, you will only create empty columns. 
 
-You can then preview your statement, which will open up a new browser tab/window showing a statement with the first ten rows of your data, or you can save a `.sql` file to your computer. 
+You can include DROP and IF EXISTS if you require them, and set a name for the table which the statement will refer to.
+
+You can then preview your statement, which will open up a new browser tab/window showing a statement with the first ten rows of your data (if included), or you can save a `.sql` file to your computer. 
 
 ### Templating exporter
 
