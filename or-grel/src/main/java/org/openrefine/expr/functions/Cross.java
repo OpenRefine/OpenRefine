@@ -37,7 +37,7 @@ import java.util.Properties;
 
 import org.openrefine.grel.ControlFunctionRegistry;
 import org.openrefine.grel.Function;
-
+import org.openrefine.LookupCacheManager;
 import org.openrefine.LookupCacheManager.ProjectLookup;
 import org.openrefine.ProjectManager;
 import org.openrefine.expr.EvalError;
@@ -48,8 +48,6 @@ import org.openrefine.util.LookupException;
 public class Cross implements Function {
 
     private static final long serialVersionUID = 1124002039493869757L;
-
-    public static final String INDEX_COLUMN_NAME = "_OpenRefine_Index_Column_Name_";
 
     @Override
     public Object call(Properties bindings, Object[] args) {
@@ -65,7 +63,7 @@ public class Cross implements Function {
                 targetProjectName = args[1];
             }
             // if 3rd argument is omitted or set to "", use the index column
-            Object targetColumnName = args.length < 3 || args[2].equals("") ? INDEX_COLUMN_NAME: args[2];
+            Object targetColumnName = args.length < 3 || args[2].equals("") ? LookupCacheManager.INDEX_COLUMN_NAME: args[2];
 
             long targetProjectID;
             ProjectLookup lookup;

@@ -1,15 +1,20 @@
 package org.openrefine;
 
-import org.apache.commons.lang3.NotImplementedException;
 import org.openrefine.expr.ExpressionUtils;
 import org.openrefine.expr.HasFieldsListImpl;
 import org.openrefine.expr.WrappedRow;
+import org.openrefine.history.History;
+import org.openrefine.history.HistoryEntry;
 import org.openrefine.model.ColumnModel;
 import org.openrefine.model.GridState;
+import org.openrefine.model.IndexedRow;
 import org.openrefine.model.Project;
 import org.openrefine.model.Row;
+import org.openrefine.model.RowFilter;
+import org.openrefine.sorting.SortingConfig;
 import org.openrefine.util.LookupException;
 
+import java.io.Serializable;
 import java.util.*;
 
 /**
@@ -18,6 +23,8 @@ import java.util.*;
  * @author Lu Liu
  */
 public class LookupCacheManager {
+
+    public static final String INDEX_COLUMN_NAME = "_OpenRefine_Index_Column_Name_";
 
     protected final Map<String, ProjectLookup> _lookups = new HashMap<>();
 
@@ -31,114 +38,96 @@ public class LookupCacheManager {
      */
     public ProjectLookup getLookup(long targetProject, String targetColumn) throws LookupException {
         String key = targetProject + ";" + targetColumn;
-        if (!_lookups.containsKey(key)) {
-            ProjectLookup lookup = new ProjectLookup(targetProject, targetColumn);
-            computeLookup(lookup);
+        
+        Project project = ProjectManager.singleton.getProject(targetProject);
+        if (project == null) {
+            throw new LookupException(String.format("Project %d could not be found", targetProject));
+        }
+        
+        // Retrieve the id of the last entry, used for cache invalidation
+        History history = project.getHistory();
+        List<HistoryEntry> entries = history.getLastPastEntries(1);
+        long changeId = 0;
+        if (!entries.isEmpty()) {
+            changeId = entries.get(0).getId();
+        }
+        
+        ProjectLookup lookup = _lookups.get(key);
+        
+        if (lookup == null || lookup.getChangeId() != changeId) { 
+            lookup = new ProjectLookup(project.getCurrentGridState(), targetColumn, changeId, project.getMetadata().getName());
 
             synchronized (_lookups) {
                 _lookups.put(key, lookup);
             }
         }
 
-        return _lookups.get(key);
+        return lookup;
     }
+    
+    static public class ProjectLookup implements Serializable {
 
-    public void flushLookupsInvolvingProject(long projectID) {
-        synchronized (_lookups) {
-            for (Iterator<Map.Entry<String, ProjectLookup>> it = _lookups.entrySet().iterator(); it.hasNext(); ) {
-                Map.Entry<String, ProjectLookup> entry = it.next();
-                ProjectLookup lookup = entry.getValue();
-                if (lookup.targetProjectID == projectID) {
-                    it.remove();
-                }
-            }
-        }
-    }
-
-    public void flushLookupsInvolvingProjectColumn(long projectID, String columnName) {
-        synchronized (_lookups) {
-            for (Iterator<Map.Entry<String, ProjectLookup>> it = _lookups.entrySet().iterator(); it.hasNext(); ) {
-                Map.Entry<String, ProjectLookup> entry = it.next();
-                ProjectLookup lookup = entry.getValue();
-                if (lookup.targetProjectID == projectID && lookup.targetColumnName.equals(columnName)) {
-                    it.remove();
-                }
-            }
-        }
-    }
-
-    protected void computeLookup(ProjectLookup lookup) throws LookupException {
-        // TODO to be migrated
-        throw new NotImplementedException("not migrated to the new architecture yet");
-        /*
-        if (lookup.targetProjectID < 0) {
-            return;
-        }
-
-        Project targetProject = ProjectManager.singleton.getProject(lookup.targetProjectID);
-        ProjectMetadata targetProjectMetadata = ProjectManager.singleton.getProjectMetadata(lookup.targetProjectID);
-        if (targetProject == null) {
-            return;
-        }
-
-        // if this is a lookup on the index column
-        if (lookup.targetColumnName.equals(Cross.INDEX_COLUMN_NAME)) {
-            for (int r = 0; r < targetProject.rows.size(); r++) {
-                lookup.valueToRowIndices.put(String.valueOf(r) , Collections.singletonList(r));
-            }
-            return; // return directly
-        }
-
-        Column targetColumn = targetProject.columnModel.getColumnByName(lookup.targetColumnName);
-        if (targetColumn == null) {
-            throw new LookupException("Unable to find column " + lookup.targetColumnName + " in project " + targetProjectMetadata.getName());
-        }
-
-        // We can't use for-each here, because we'll need the row index when creating WrappedRow
-        int count = targetProject.rows.size();
-        for (int r = 0; r < count; r++) {
-            Row targetRow = targetProject.rows.get(r);
-            Object value = targetRow.getCellValue(targetColumn.getCellIndex());
-            if (ExpressionUtils.isNonBlankData(value)) {
-                String valueStr = value.toString();
-                lookup.valueToRowIndices.putIfAbsent(valueStr, new ArrayList<>());
-                lookup.valueToRowIndices.get(valueStr).add(r);
-            }
-        }
-        */
-    }
-
-    static public class ProjectLookup {
-
-        final public long targetProjectID;
+        private static final long serialVersionUID = -7316491331964997894L;
+        private final GridState grid; 
+        private final long changeId;
         final public String targetColumnName;
 
-        final public Map<Object, List<Integer>> valueToRowIndices = new HashMap<>();
+        final public Map<Object, List<Long>> valueToRowIndices = new HashMap<>();
 
-        ProjectLookup(long targetProjectID, String targetColumnName) {
-            this.targetProjectID = targetProjectID;
-            this.targetColumnName = targetColumnName;
+        ProjectLookup(GridState grid, String columnName, long changeId, String projectName) throws LookupException {
+            this.grid = grid;
+            this.targetColumnName = columnName;
+            this.changeId = changeId;
+            
+            // Populate the index
+            // if this is a lookup on the index column
+            if (INDEX_COLUMN_NAME.equals(targetColumnName)) {
+                for (long r = 0; r < grid.rowCount(); r++) {
+                    valueToRowIndices.put(String.valueOf(r) , Collections.singletonList(r));
+                }
+                return; // return directly
+            }
+
+            ColumnModel columnModel = grid.getColumnModel();
+            int targetColumnIndex = columnModel.getColumnIndexByName(columnName);
+            if (targetColumnIndex == -1) {
+                throw new LookupException("Unable to find column " + targetColumnName + " in project " + projectName);
+            }
+
+            // We can't use for-each here, because we'll need the row index when creating WrappedRow
+            for (IndexedRow indexedRow : grid.iterateRows(RowFilter.ANY_ROW, SortingConfig.NO_SORTING)) {
+                Row targetRow = indexedRow.getRow();
+                Object value = targetRow.getCellValue(targetColumnIndex);
+                if (ExpressionUtils.isNonBlankData(value)) {
+                    String valueStr = value.toString();
+                    valueToRowIndices.putIfAbsent(valueStr, new ArrayList<>());
+                    valueToRowIndices.get(valueStr).add(indexedRow.getIndex());
+                }
+            }
+        }
+
+        public long getChangeId() {
+            return changeId;
         }
 
         public HasFieldsListImpl getRows(Object value) {
-            if (!ExpressionUtils.isNonBlankData(value)) return null;
+            if (!ExpressionUtils.isNonBlankData(value))
+                return null;
             String valueStr = value.toString();
-            if (valueToRowIndices.containsKey(valueStr)) {
-                Project targetProject = ProjectManager.singleton.getProject(targetProjectID);
-                
-                GridState grid = targetProject.getCurrentGridState();
-                ColumnModel columnModel = grid.getColumnModel();
-                if (targetProject != null) {
-                    HasFieldsListImpl rows = new HasFieldsListImpl();
-                    for (Integer r : valueToRowIndices.get(valueStr)) {
-                        Row row = grid.getRow(r);
-                        rows.add(new WrappedRow(columnModel, r, row));
-                    }
-
-                    return rows;
-                }
+            ColumnModel columnModel = grid.getColumnModel();
+            HasFieldsListImpl rows = new HasFieldsListImpl();
+            List<Long> rowIds = valueToRowIndices.get(valueStr);
+            if (rowIds == null) {
+                return null;
             }
-            return null;
+            for (Long r : rowIds) {
+                // TODO optimize by adding a method GridState.getRows which accepts multiple indices
+                // this method will be useful at other places (e.g. expression preview)
+                Row row = grid.getRow(r);
+                rows.add(new WrappedRow(columnModel, r, row));
+            }
+
+            return rows;
         }
     }
 }
