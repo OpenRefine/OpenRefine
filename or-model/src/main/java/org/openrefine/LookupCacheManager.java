@@ -120,11 +120,9 @@ public class LookupCacheManager {
             if (rowIds == null) {
                 return null;
             }
-            for (Long r : rowIds) {
-                // TODO optimize by adding a method GridState.getRows which accepts multiple indices
-                // this method will be useful at other places (e.g. expression preview)
-                Row row = grid.getRow(r);
-                rows.add(new WrappedRow(columnModel, r, row));
+            List<IndexedRow> matchedRows = grid.getRows(rowIds);
+            for (IndexedRow indexedRow : matchedRows) {
+                rows.add(new WrappedRow(columnModel, indexedRow.getIndex(), indexedRow.getRow()));
             }
 
             return rows;

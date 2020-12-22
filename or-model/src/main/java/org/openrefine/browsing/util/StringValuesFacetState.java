@@ -1,19 +1,9 @@
 package org.openrefine.browsing.util;
 
 import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 
-import org.openrefine.browsing.facets.Facet;
 import org.openrefine.browsing.facets.FacetState;
-import org.openrefine.expr.Evaluable;
-import org.openrefine.expr.ExpressionUtils;
-import org.openrefine.model.ColumnModel;
-import org.openrefine.model.Record;
-import org.openrefine.model.Row;
-import org.openrefine.util.StringUtils;
 
 /**
  * Gathers statistics about distinct string representations

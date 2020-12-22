@@ -219,6 +219,19 @@ public abstract class DatamodelRunnerTestBase {
     }
     
     @Test
+    public void testGetRowsById() {
+        List<Long> indices = Arrays.asList(-1L, 0L, 2L, 5L);
+        List<IndexedRow> expected = Arrays.asList(
+                null,
+                new IndexedRow(0L, simpleGrid.getRow(0L)),
+                new IndexedRow(2L, simpleGrid.getRow(2L)),
+                null);
+        
+        List<IndexedRow> rows = simpleGrid.getRows(indices);
+        Assert.assertEquals(rows, expected);
+    }
+    
+    @Test
     public void testAccessSortedRows() {
         GridState state = gridToSort;
         

@@ -62,39 +62,12 @@ public class FunctionTests extends FunctionTestBase {
     @BeforeMethod
     public void SetUp() throws IOException, ModelException {
         MetaParser.registerLanguageParser("grel", "General Refine Expression Language", Parser.grelParser, "value");
-        /*
-        project = new Project();
-        project.columnModel.addColumn(0, new ColumnMetadata(0, "Column A"), false);
-        bindings = new Properties();
-        bindings.put("project", project);
-
-        // Five rows of a's and five of 1s
-        for (int i = 0; i < 10; i++) {
-            Row row = new Row(1);
-            row.setCell(0, new Cell(i < 5 ? "a":new Integer(1), null));
-            project.rows.add(row);
-        }
-        */
     }
 
 
     @AfterMethod
     public void TearDown() {
         bindings = null;
-    }
-
-    @Test
-    public void testInvalidParams() {        
-        Assert.assertTrue(invoke("facetCount") instanceof EvalError);
-        Assert.assertTrue(invoke("facetCount", "one","two","three") instanceof EvalError);
-        Assert.assertTrue(invoke("facetCount", "one","bad(","Column A") instanceof EvalError);
-    }
-    
-    @Test(groups = {"broken_by_spark"})
-    public void testFacetCount() {        
-        Assert.assertEquals(invoke("facetCount", "a", "value", "Column A"),Integer.valueOf(5));
-        Assert.assertEquals(invoke("facetCount", new Integer(1), "value", "Column A"),Integer.valueOf(5));
-        Assert.assertEquals(invoke("facetCount", new Integer(2), "value+1", "Column A"),Integer.valueOf(5));
     }
 
     @Test

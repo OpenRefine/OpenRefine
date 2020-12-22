@@ -86,9 +86,14 @@ public abstract class ProjectManager {
     final static Logger logger = LoggerFactory.getLogger("ProjectManager");
 
     /**
-     *  What caches the lookups of projects.
+     *  What caches the lookups of projects (for the GREL cross function)
      */
     transient protected LookupCacheManager _lookupCacheManager = new LookupCacheManager();
+    
+    /**
+     * Caches the facet counts of projects (for the GREL facetCount function)
+     */
+    transient protected FacetCountCacheManager _facetCountCacheManager = new FacetCountCacheManager();
 
     /**
      *  Flag for heavy operations like creating or importing projects.  Workspace saves are skipped while it's set.
@@ -363,6 +368,11 @@ public abstract class ProjectManager {
     @JsonIgnore
     public LookupCacheManager getLookupCacheManager() {
         return _lookupCacheManager;
+    }
+    
+    @JsonIgnore
+    public FacetCountCacheManager getFacetCountCache() {
+        return _facetCountCacheManager;
     }
 
     /**
