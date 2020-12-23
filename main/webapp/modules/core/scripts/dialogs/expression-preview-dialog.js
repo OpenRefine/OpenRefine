@@ -366,11 +366,11 @@ ExpressionPreviewDialog.Widget.prototype._renderStarredExpressions = function(da
                     },
                     "json"
                 );
-                DialogSystem.dismissUntil(1);
+                DialogSystem.dismissUntil(DialogSystem._layers.length - 1);
             }).appendTo(removeExpressionFooter);
 
             $('<button class="button" style="float:right;"></button>').text($.i18n('core-buttons/cancel')).click(function() {
-                DialogSystem.dismissUntil(1);
+                DialogSystem.dismissUntil(DialogSystem._layers.length - 1);
             }).appendTo(removeExpressionFooter);
 
             this._level = DialogSystem.showDialog(removeExpression);
