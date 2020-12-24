@@ -1,8 +1,8 @@
 package org.openrefine.commands.recon;
 
-import org.openrefine.commands.CommandTestBase;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.Serializable;
@@ -12,15 +12,13 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.openrefine.commands.recon.GuessTypesOfColumnCommand;
-import org.testng.Assert;
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.Test;
-
 import org.openrefine.RefineTest;
 import org.openrefine.commands.Command;
 import org.openrefine.model.Project;
 import org.openrefine.util.TestUtils;
+import org.testng.Assert;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Test;
 
 import okhttp3.HttpUrl;
 import okhttp3.mockwebserver.MockResponse;

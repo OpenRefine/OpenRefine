@@ -159,8 +159,6 @@ public class ImportingUtilitiesTests extends ImporterTest {
         when(req.getContentLength()).thenReturn((int) entity.getContentLength());
         when(req.getInputStream()).thenReturn(new MockServletInputStream(is));
 
-
-        ImportingJob job = ImportingManager.createJob();
         Properties parameters = ParsingUtilities.parseUrlParameters(req);
         RetrievalRecord retrievalRecord = new RetrievalRecord();
         ObjectNode progress = ParsingUtilities.mapper.createObjectNode();

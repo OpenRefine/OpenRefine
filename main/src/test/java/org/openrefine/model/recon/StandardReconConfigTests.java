@@ -185,8 +185,8 @@ public class StandardReconConfigTests extends RefineTest {
     public void formulateQueryTest() throws IOException {
     	Project project = createProject(
     			new String[] {"title","director"},
-    			new Serializable[] {
-    			"mulholland drive","david lynch"});
+    			new Serializable[][] {
+    				{"mulholland drive","david lynch"}});
     	
     	String config = " {\n" + 
                 "        \"mode\": \"standard-service\",\n" + 
@@ -221,8 +221,8 @@ public class StandardReconConfigTests extends RefineTest {
     public void reconNonJsonTest() throws Exception {
     	Project project = createProject(
     			new String[] {"title","director"},
-    			new Serializable[] {
-    			"mulholland drive","david lynch"});
+    			new Serializable[][] {
+    				{"mulholland drive","david lynch"}});
 
         String nonJsonResponse = "<!DOCTYPE html>\n" +
                 "<html lang=\"en\">\n" +
@@ -290,8 +290,8 @@ public class StandardReconConfigTests extends RefineTest {
     public void reconTest() throws Exception {
     	Project project = createProject(
     			new String[] {"title","director"},
-    			new Serializable[] {
-    			"mulholland drive","david lynch"});
+    			new Serializable[][] {
+    				{"mulholland drive","david lynch"}});
 
         String reconResponse = "{\n" +
                 "q0: {\n" +

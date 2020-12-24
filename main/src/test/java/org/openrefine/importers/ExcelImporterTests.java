@@ -58,6 +58,7 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.openrefine.importers.ExcelImporter;
+import org.openrefine.model.ColumnModel;
 import org.openrefine.model.DatamodelRunner;
 import org.openrefine.model.GridState;
 import org.openrefine.model.IndexedRow;
@@ -228,7 +229,7 @@ public class ExcelImporterTests extends ImporterTest {
 
         List<org.openrefine.model.Row> rows = grid.collectRows().stream().map(IndexedRow::getRow).collect(Collectors.toList());
         Assert.assertEquals(rows.size(), ROWS * SHEETS);
-        Assert.assertEquals(rows.get(1).cells.size(), COLUMNS);
+        Assert.assertEquals(rows.get(1).cells.size(), COLUMNS + SHEETS - 1);
         Assert.assertEquals(grid.getColumnModel().getColumns().size(), COLUMNS + SHEETS - 1);
 
         Assert.assertEquals(((Number)rows.get(1).getCellValue(0)).doubleValue(),1.1, EPSILON);
@@ -275,7 +276,7 @@ public class ExcelImporterTests extends ImporterTest {
 
         List<org.openrefine.model.Row> rows = grid.collectRows().stream().map(IndexedRow::getRow).collect(Collectors.toList());
         Assert.assertEquals(rows.size(), ROWS * SHEETS);
-        Assert.assertEquals(rows.get(1).cells.size(), COLUMNS);
+        Assert.assertEquals(rows.get(1).cells.size(), COLUMNS + SHEETS - 1);
         Assert.assertEquals(grid.getColumnModel().getColumns().size(), COLUMNS + SHEETS - 1);
 
         Assert.assertEquals(((Number)rows.get(1).getCellValue(0)).doubleValue(),1.1, EPSILON);

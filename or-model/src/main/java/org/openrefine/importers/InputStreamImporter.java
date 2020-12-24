@@ -28,15 +28,17 @@ public abstract class InputStreamImporter extends ImportingParserBase {
 	 * @param metadata
 	 *    the project metadata associated with the project to parse (which can be
 	 *    modified by the importer)
-	 * @param job
+     * @param job
 	 *    the importing job where this import is being done
-	 * @param fileSource
+     * @param fileSource
 	 *    the path or source of the file (could be "clipboard" or a URL as well)
-	 * @param inputStream
+     * @param archiveFileName
+     *    the path or source of the archive which contained this file
+     * @param inputStream
 	 *    the input stream where to read the data from
-	 * @param limit
+     * @param limit
 	 *    the maximum number of rows to read
-	 * @param options
+     * @param options
 	 *    any options passed to the importer as a JSON payload
 	 * @return
 	 *    a parsed GridState
@@ -46,9 +48,9 @@ public abstract class InputStreamImporter extends ImportingParserBase {
             ProjectMetadata metadata,
             ImportingJob job,
             String fileSource,
+            String archiveFileName,
             InputStream inputStream,
-            long limit,
-            ObjectNode options
+            long limit, ObjectNode options
         ) throws Exception;
 
 }

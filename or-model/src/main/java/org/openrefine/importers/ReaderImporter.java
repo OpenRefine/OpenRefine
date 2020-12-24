@@ -32,6 +32,8 @@ public abstract class ReaderImporter extends ImportingParserBase {
 	 *    the importing job where this import is being done
 	 * @param fileSource
 	 *    the path or source of the file (could be "clipboard" or a URL as well)
+	 * @param archiveFileName
+	 *    the path or source of the archive the file was extracted from
 	 * @param reader
 	 *    the reader object where to read the data from
 	 * @param limit
@@ -46,9 +48,9 @@ public abstract class ReaderImporter extends ImportingParserBase {
 	        ProjectMetadata metadata,
 	        ImportingJob job,
 	        String fileSource,
+	        String archiveFileName,
 	        Reader reader,
-	        long limit,
-	        ObjectNode options
+	        long limit, ObjectNode options
 	    ) throws Exception;
 
 }

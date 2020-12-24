@@ -126,6 +126,7 @@ public class XlsExporterTests extends RefineTest {
     @Test
     public void test256Columns() throws IOException {
         CreateGrid(2, 256);
+        engine = new Engine(grid, EngineConfig.ALL_ROWS);
 
         try {
             SUT.export(grid, projectMetadata, options, engine, stream);
@@ -144,6 +145,7 @@ public class XlsExporterTests extends RefineTest {
     @Test
     public void test257Columns() throws IOException {
         CreateGrid(2, 257);
+        engine = new Engine(grid, EngineConfig.ALL_ROWS);
 
         try {
             SUT.export(grid, projectMetadata, options, engine, stream);
@@ -177,43 +179,6 @@ public class XlsExporterTests extends RefineTest {
         }
         
         Assert.assertEquals(stream.size(),4096);
-    }
-
-    @Test
-    public void exportSimpleXlsNoHeader(){
-        CreateGrid(2, 2);
-        when(options.getProperty("printColumnHeader")).thenReturn("false");
-        try {
-            SUT.export(grid, projectMetadata, options, engine, stream);
-        } catch (IOException e) {
-            Assert.fail();
-        }
-
-        Assert.assertEquals(stream.toString(), "row0cell0,row0cell1\n" +
-                                               "row1cell0,row1cell1\n");
-
-        verify(options, times(2)).getProperty("printColumnHeader");
-    }
-
-    @Test
-    public void exportXlsWithEmptyCells(){
-    	grid = createGrid(new String[] {"column0", "column1"},
-    			new Serializable[][] {
-    		{"row0cell0", "row0cell1", "row0cell2"},
-    		{"row1cell0", null,        "row1cell2"},
-    		{null,        "row2cell1", "row2cell2"}
-    	});
-
-        try {
-            SUT.export(grid, projectMetadata, options, engine, stream);
-        } catch (IOException e) {
-            Assert.fail();
-        }
-
-        Assert.assertEquals(stream.toString(), "column0,column1,column2\n" +
-                                               "row0cell0,row0cell1,row0cell2\n" +
-                                               "row1cell0,,row1cell2\n" +
-                                               ",row2cell1,row2cell2\n");
     }
 
     private void CreateGrid(int rows, int columns) {

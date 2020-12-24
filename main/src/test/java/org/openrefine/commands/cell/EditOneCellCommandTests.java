@@ -37,9 +37,9 @@ public class EditOneCellCommandTests extends RefineTest {
 	public void setUpProject() {
 		project = createProject(
 				new String[] {"first_column","second_column"},
-				new Serializable[] {
-				"a","b",
-				"c","d"});
+				new Serializable[][] {
+					{"a","b"},
+					{"c","d"}});
 		command = new EditOneCellCommand();
 		request = mock(HttpServletRequest.class);
 		response = mock(HttpServletResponse.class);

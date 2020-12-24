@@ -73,8 +73,8 @@ public class MarcImporterTests extends ImporterTest {
                 job, new LinkedList<>(), "text/json");
         
         ArrayNode path = ParsingUtilities.mapper.createArrayNode();
-        JSONUtilities.append(path, "collection");
-        JSONUtilities.append(path, "record");
+        JSONUtilities.append(path, "marc:collection");
+        JSONUtilities.append(path, "marc:record");
         JSONUtilities.safePut(options, "recordPath", path);
         
 		InputStream inputStream = this.getClass().getClassLoader().getResourceAsStream("importers/sample.mrc");
@@ -88,7 +88,7 @@ public class MarcImporterTests extends ImporterTest {
 		GridState grid = parseFiles(parser, importingFileRecords, options);
 		
 		List<String> columnNames = grid.getColumnModel().getColumnNames();
-		Assert.assertTrue(columnNames.contains("record - datafield - tag"));
+		Assert.assertTrue(columnNames.contains("marc:record - marc:datafield - tag"));
 	}
 	
 	@Test
@@ -115,17 +115,17 @@ public class MarcImporterTests extends ImporterTest {
 		
 		List<Row> rows = grid.collectRows().stream().map(IndexedRow::getRow).collect(Collectors.toList());
 		assertEquals(grid.rowCount(), 30);
-        assertEquals(rows.get(1).cells.size(), 6);
+        assertEquals(rows.get(1).cells.size(), 8);
 
         Row r0 = rows.get(0);
-        assertEquals(r0.getCellValue(1), "001");
-        assertEquals(r0.getCellValue(3), "010");
-        assertEquals(rows.get(1).getCellValue(1), "003");
-        assertEquals(rows.get(1).getCellValue(2), "DLC");
+        assertEquals(r0.getCellValue(5), "001");
+        assertEquals(r0.getCellValue(0), "010");
+        assertEquals(rows.get(1).getCellValue(5), "003");
+        assertEquals(rows.get(1).getCellValue(6), "DLC");
         Row r2 = rows.get(2);
-        assertEquals(r2.getCellValue(1), "005");
-        assertEquals(r2.getCellValue(5), "£4.99");
-        assertEquals(rows.get(29).getCellValue(3),"700");
+        assertEquals(r2.getCellValue(5), "005");
+        assertEquals(r2.getCellValue(4), "£4.99");
+        assertEquals(rows.get(29).getCellValue(0),"700");
 	}
 
 

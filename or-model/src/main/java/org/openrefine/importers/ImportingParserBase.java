@@ -134,10 +134,12 @@ abstract public class ImportingParserBase implements ImportingParser {
         final MultiFileReadingProgress progress
     ) throws Exception {
         
-        final String fileSource = fileRecord.getFileSource();
+        String fileSource = fileRecord.getFileSource();
+        String archiveFileName = fileRecord.getArchiveFileName();
         
         progress.startFile(fileSource);
-        pushImportingOptions(metadata, fileSource, options);
+        ObjectNode optionsCopy = options.deepCopy();
+        pushImportingOptions(metadata, fileSource, archiveFileName, optionsCopy);
        
     	if (this instanceof HDFSImporter) {
     		return ((HDFSImporter)this).parseOneFile(metadata, job, fileSource, fileRecord.getDerivedSparkURI(job.getRawDataDir()), limit, options);
@@ -147,7 +149,7 @@ abstract public class ImportingParserBase implements ImportingParser {
 	            InputStream inputStream = ImporterUtilities.openAndTrackFile(fileSource, file, progress);
 	            try {
 	                if (this instanceof InputStreamImporter) {
-	                    return ((InputStreamImporter)this).parseOneFile(metadata, job, fileSource, inputStream, limit, options);
+	                    return ((InputStreamImporter)this).parseOneFile(metadata, job, fileSource, archiveFileName, inputStream, limit, options);
 	                } else {
 	                    String commonEncoding = JSONUtilities.getString(options, "encoding", null);
 	                    if (commonEncoding != null && commonEncoding.isEmpty()) {
@@ -157,7 +159,7 @@ abstract public class ImportingParserBase implements ImportingParser {
 	                    Reader reader = ImporterUtilities.getReaderFromStream(
 	                        inputStream, fileRecord, commonEncoding);
 	                    
-	                    return ((ReaderImporter)this).parseOneFile(metadata, job, fileSource, reader, limit, options);
+	                    return ((ReaderImporter)this).parseOneFile(metadata, job, fileSource, archiveFileName, reader, limit, options);
 	                }
 	            } finally {
 	                inputStream.close();
@@ -169,8 +171,9 @@ abstract public class ImportingParserBase implements ImportingParser {
         
     }
 
-    private void pushImportingOptions(ProjectMetadata metadata, String fileSource, ObjectNode options) {
+    private void pushImportingOptions(ProjectMetadata metadata, String fileSource, String archiveFileName, ObjectNode options) {
         options.put("fileSource", fileSource);
+        options.put("archiveFileName", archiveFileName);
         // set the import options to metadata:
         metadata.appendImportOptionMetadata(options);
     }

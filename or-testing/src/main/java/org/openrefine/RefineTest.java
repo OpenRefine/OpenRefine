@@ -147,7 +147,7 @@ public class RefineTest extends PowerMockTestCase {
      *          the cell values, as a flattened array of arrays
      * @return
      */
-    protected Project createProject(String[] columns, Serializable[] rows) {
+    protected Project createProject(String[] columns, Serializable[][] rows) {
         return createProject("test project", columns, rows);
     }
     

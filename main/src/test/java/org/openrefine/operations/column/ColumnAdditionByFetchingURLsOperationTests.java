@@ -58,6 +58,7 @@ import org.openrefine.operations.OnError;
 import org.openrefine.operations.OperationRegistry;
 import org.openrefine.operations.column.ColumnAdditionByFetchingURLsOperation;
 import org.openrefine.operations.column.ColumnAdditionByFetchingURLsOperation.HttpHeader;
+import org.openrefine.process.LongRunningProcessStub;
 import org.openrefine.process.Process;
 import org.openrefine.process.ProcessManager;
 import org.openrefine.util.ParsingUtilities;
@@ -203,7 +204,6 @@ public class ColumnAdditionByFetchingURLsOperationTests extends RefineTest {
             // Inspect rows
             List<IndexedRow> rows = project.getCurrentGridState().collectRows();
             String refVal = (String)rows.get(0).getRow().getCellValue(1).toString();
-            Assert.assertFalse(refVal.equals("apple")); // just to make sure I picked the right column
             Assert.assertEquals(rows.get(1).getRow().getCellValue(1).toString(), refVal);
             server.shutdown();
         }
@@ -220,13 +220,15 @@ public class ColumnAdditionByFetchingURLsOperationTests extends RefineTest {
             server.start();
             HttpUrl url = server.url("/random");
             server.enqueue(new MockResponse());
+            HttpUrl url404 = server.url("/404");
+            server.enqueue(new MockResponse().setResponseCode(404).setBody("not found").setStatus("NOT FOUND"));
 
             project = createProject("UrlFetchingTests",
                             new String[] {"fruits"},
                             new Serializable[][] {
-                    {"auinrestrsc"}, // malformed -> null
-                    {"https://www.random.org/integers/?num=1&min=1&max=100&col=1&base=10&format=plain"}, // fine
-                    {"http://anursiebcuiesldcresturce.detur/anusclbc"} // well-formed but invalid
+                    {"malformed"}, // malformed -> null
+                    {url.toString()}, // fine
+                    {url404.toString()} // well-formed but invalid
             });
 
             EngineDependentOperation op = new ColumnAdditionByFetchingURLsOperation(engine_config,
@@ -239,7 +241,8 @@ public class ColumnAdditionByFetchingURLsOperationTests extends RefineTest {
                     true,
                     null);
 
-            runAndWait(op, 3000);
+            LongRunningProcessStub process = new LongRunningProcessStub(op.createProcess(project.getHistory(), project.getProcessManager()));
+            process.run();
 
             GridState grid = project.getCurrentGridState();
             int newCol = 1;
@@ -283,14 +286,12 @@ public class ColumnAdditionByFetchingURLsOperationTests extends RefineTest {
                 50,
                 true,
                 headers);
-
-            runAndWait(op, 3000);
+            LongRunningProcessStub process = new LongRunningProcessStub(op.createProcess(project.getHistory(), project.getProcessManager()));
+            process.run();
 
             // Inspect rows
             List<IndexedRow> rows = project.getCurrentGridState().collectRows();
-            Assert.assertEquals(rows.get(0).getRow().getCellValue(1), null);
-            Assert.assertTrue(rows.get(1).getRow().getCellValue(1) != null);
-            Assert.assertTrue(ExpressionUtils.isError(rows.get(2).getRow().getCellValue(1)));
+            Assert.assertEquals(rows.get(0).getRow().getCellValue(1), "first");
 
             RecordedRequest request = server.takeRequest();
             Assert.assertEquals(request.getHeader("user-agent"), userAgentValue);

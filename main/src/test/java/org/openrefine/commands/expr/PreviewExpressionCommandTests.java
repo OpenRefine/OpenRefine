@@ -65,10 +65,10 @@ public class PreviewExpressionCommandTests extends RefineTest {
         }
         command = new PreviewExpressionCommand();
         project = createProject(new String[] {"a","b"},
-        		new Serializable[] {
-        		"c","d",
-        		"e","f",
-        		"g","h"
+        		new Serializable[][] {
+        		{"c","d"},
+        		{"e","f"},
+        		{"g","h"}
         		});
     }
     

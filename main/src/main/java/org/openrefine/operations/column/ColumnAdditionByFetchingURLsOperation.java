@@ -307,7 +307,7 @@ public class ColumnAdditionByFetchingURLsOperation extends EngineDependentOperat
                     }
                 }
             }
-            _headers = (Header[]) headers.toArray();
+            _headers = (Header[]) headers.toArray(new Header[headers.size()]);
             return _headers;
     	}
 
@@ -411,7 +411,7 @@ public class ColumnAdditionByFetchingURLsOperation extends EngineDependentOperat
                 httpGet.setHeaders(getHttpHeaders());
                 httpGet.setConfig(getRequestConfig());
 
-                CloseableHttpClient httpclient = _httpClientBuilder.build();
+                CloseableHttpClient httpclient = getHttpClientBuilder().build();
 
                 CloseableHttpResponse response = null;
                 try {

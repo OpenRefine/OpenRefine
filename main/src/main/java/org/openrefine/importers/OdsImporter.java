@@ -129,9 +129,9 @@ public class OdsImporter extends InputStreamImporter {
             ProjectMetadata metadata,
             ImportingJob job,
             String fileSource,
+            String archiveFileName,
             InputStream inputStream,
-            long limit,
-            ObjectNode options
+            long limit, ObjectNode options
     ) throws Exception {
         OdfDocument odfDoc;
         try {
@@ -193,9 +193,9 @@ public class OdsImporter extends InputStreamImporter {
                     metadata,
                     job,
                     fileSource + "#" + table.getTableName(),
+                    archiveFileName,
                     dataReader,
-                    limit,
-                    options
+                    limit, options
             ));
         }
         

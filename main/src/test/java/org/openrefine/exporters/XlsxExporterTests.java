@@ -197,6 +197,7 @@ public class XlsxExporterTests extends RefineTest {
     @Test
     public void test257Columns() throws IOException {
         CreateGrid(2, 257);
+        engine = new Engine(grid, EngineConfig.ALL_ROWS);
 
         try {
             SUT.export(grid, projectMetadata, options, engine, stream);
@@ -215,6 +216,7 @@ public class XlsxExporterTests extends RefineTest {
     @Test
     public void test10000Columns() throws IOException {
         CreateGrid(2, 10000);
+        engine = new Engine(grid, EngineConfig.ALL_ROWS);
 
         try {
             SUT.export(grid, projectMetadata, options, engine, stream);

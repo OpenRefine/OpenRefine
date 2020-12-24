@@ -59,12 +59,12 @@ public class GetRowsCommandTest extends RefineTest {
         request = mock(HttpServletRequest.class);
         response = mock(HttpServletResponse.class);
         project = createProject(new String[] {"foo", "bar"},
-        		new Serializable[] {
-        			"a", "b",
-        			null, "c",
-        			"d", "e",
-        			"", "f",
-        			"g", "h"
+        		new Serializable[][] {
+        			{"a", "b"},
+        			{null, "c"},
+        			{"d", "e"},
+        			{"", "f"},
+        			{"g", "h"}
         		});
         command = new GetRowsCommand();
         writer = new StringWriter();

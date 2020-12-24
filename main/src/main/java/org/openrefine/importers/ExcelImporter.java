@@ -135,7 +135,7 @@ public class ExcelImporter extends InputStreamImporter {
     
     @Override
     public GridState parseOneFile(ProjectMetadata metadata, ImportingJob job, String fileSource,
-                InputStream inputStream, long limit, ObjectNode options) throws Exception {
+                String archiveFileName, InputStream inputStream, long limit, ObjectNode options) throws Exception {
         Workbook wb = null;
         if (!inputStream.markSupported()) {
           inputStream = new BufferedInputStream(inputStream);
@@ -221,9 +221,9 @@ public class ExcelImporter extends InputStreamImporter {
                 metadata,
                 job,
                 fileSource + "#" + sheet.getSheetName(),
+                archiveFileName,
                 dataReader,
-                limit,
-                options
+                limit, options
             ));
         }
 

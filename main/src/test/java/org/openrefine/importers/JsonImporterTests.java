@@ -107,14 +107,14 @@ public class JsonImporterTests extends ImporterTest {
     	GridState grid = RunTest(getSample());
         
         GridState expected = createGrid(new String[] {
-        		"_ - id", "_ - title", "_ - author", "_ - publish_date"
+        		"_ - id", "_ - author", "_ - title", "_ - publish_date"
         }, new Serializable[][] {
-        	{ 1L, "Book title 1", "Author 1, The", "2010-05-26" },
-        	{ 2L, "Book title 2", "Author 2, The", "2010-05-26" },
-        	{ 3L, "Book title 3", "Author 3, The", "2010-05-26" },
-        	{ 4L, "Book title 4", "Author 4, The", "2010-05-26" },
-        	{ 5L, "Book title 5", "Author 5, The", "2010-05-26" },
-        	{ 6L, "Book title 6", "Author 6, The", "2010-05-26" },
+        	{ 1L, "Author 1, The", "Book title 1", "2010-05-26" },
+        	{ 2L, "Author 2, The", "Book title 2", "2010-05-26" },
+        	{ 3L, "Author 3, The", "Book title 3", "2010-05-26" },
+        	{ 4L, "Author 4, The", "Book title 4", "2010-05-26" },
+        	{ 5L, "Author 5, The", "Book title 5", "2010-05-26" },
+        	{ 6L, "Author 6, The", "Book title 6", "2010-05-26" },
         });
 		assertGridEquals(grid, expected);
     }
@@ -153,7 +153,7 @@ public class JsonImporterTests extends ImporterTest {
 	        );
 	        Assert.fail("Parsing should have thrown an error");
         } catch(Exception exception) {
-        	Assert.assertEquals("Unexpected character (';' (code 59)): was expecting comma to separate Object entries",
+        	Assert.assertEquals("Unexpected character (';' (code 59)): was expecting comma to separate OBJECT entries",
                 exception.getMessage());
         }
     }
@@ -169,7 +169,7 @@ public class JsonImporterTests extends ImporterTest {
             "        \"intl-student-score\": \"95\"\n" +
             "    }\n" +
             "]\n";
-        GridState grid = RunTest(ScraperwikiOutput, true);
+        GridState grid = RunTest(ScraperwikiOutput, getOptions(job, SUT, JsonImporter.ANONYMOUS, true));
         Row row = grid.getRow(0);
         Assert.assertNotNull(row);
         Assert.assertNotNull(row.getCell(1));
@@ -224,14 +224,14 @@ public class JsonImporterTests extends ImporterTest {
         GridState grid = RunTest(getSampleWithLineBreak());
 
 		GridState expected = createGrid(new String[] {
-        		"_ - id", "_ - title", "_ - author", "_ - publish_date"
+        		"_ - id", "_ - author", "_ - title", "_ - publish_date"
         }, new Serializable[][] {
-        	{ 1L, "Book title 1", "Author 1, The",    "2010-05-26" },
-        	{ 2L, "Book title 2", "Author 2, The",    "2010-05-26" },
-        	{ 3L, "Book title 3", "Author 3, The",    "2010-05-26" },
-        	{ 4L, "Book title 4", "With line\n break", "2010-05-26" },
-        	{ 5L, "Book title 5", "Author 5, The",    "2010-05-26" },
-        	{ 6L, "Book title 6", "Author 6, The",    "2010-05-26" },
+        	{ 1L, "Author 1, The",     "Book title 1", "2010-05-26" },
+        	{ 2L, "Author 2, The",     "Book title 2", "2010-05-26" },
+        	{ 3L, "Author 3, The",     "Book title 3", "2010-05-26" },
+        	{ 4L, "With line\n break", "Book title 4", "2010-05-26" },
+        	{ 5L, "Author 5, The",     "Book title 5", "2010-05-26" },
+        	{ 6L, "Author 6, The",     "Book title 6", "2010-05-26" },
         });
 		assertGridEquals(grid, expected);
     }
@@ -241,14 +241,14 @@ public class JsonImporterTests extends ImporterTest {
         GridState grid = RunTest(getSampleWithVaryingStructure());
 
 		GridState expected = createGrid(new String[] {
-        		"_ - id", "_ - title", "_ - author", "_ - publish_date", "_ - genre"
+        		"_ - id", "_ - author", "_ - title", "_ - publish_date", "_ - genre"
         }, new Serializable[][] {
-        	{ 1L, "Book title 1", "Author 1, The", "2010-05-26", null },
-        	{ 2L, "Book title 2", "Author 2, The", "2010-05-26", null },
-        	{ 3L, "Book title 3", "Author 3, The", "2010-05-26", null },
-        	{ 4L, "Book title 4", "Author 4, The", "2010-05-26", null },
-        	{ 5L, "Book title 5", "Author 5, The", "2010-05-26", null },
-        	{ 6L, "Book title 6", "Author 6, The", "2010-05-26", "New element not seen in other records"},
+        	{ 1L, "Author 1, The", "Book title 1", "2010-05-26", null },
+        	{ 2L, "Author 2, The", "Book title 2", "2010-05-26", null },
+        	{ 3L, "Author 3, The", "Book title 3", "2010-05-26", null },
+        	{ 4L, "Author 4, The", "Book title 4", "2010-05-26", null },
+        	{ 5L, "Author 5, The", "Book title 5", "2010-05-26", null },
+        	{ 6L, "Author 6, The", "Book title 6", "2010-05-26", "New element not seen in other records"},
         });
 		assertGridEquals(grid, expected);
     }
@@ -645,10 +645,6 @@ public class JsonImporterTests extends ImporterTest {
     
     private GridState RunTest(String testString, ObjectNode options) throws Exception {
         return parseOneString(SUT, testString, options);
-    }
-    
-    private GridState RunTest(String testString, boolean trimStrings) throws Exception {
-    	return RunTest(testString, getOptions(job, SUT, "institutes", trimStrings));
     }
     
     private String getComplexJSON(String fileName) throws IOException {

@@ -79,8 +79,8 @@ public class RdfTripleImporter extends ReaderImporter {
     }
 
 	@Override
-	public GridState parseOneFile(ProjectMetadata metadata, ImportingJob job, String fileSource, Reader input,
-			long limit, ObjectNode options) throws Exception {
+	public GridState parseOneFile(ProjectMetadata metadata, ImportingJob job, String fileSource, String archiveFileName,
+			Reader input, long limit, ObjectNode options) throws Exception {
         // create an empty model
         Model model = ModelFactory.createDefaultModel();
 

@@ -89,10 +89,10 @@ public class SeparatorBasedImporter extends ReaderImporter {
     }
 
 	@Override
-	public GridState parseOneFile(ProjectMetadata metadata, ImportingJob job, String fileSource, Reader reader,
-			long limit, ObjectNode options) throws Exception {
+	public GridState parseOneFile(ProjectMetadata metadata, ImportingJob job, String fileSource, String archiveFileName,
+			Reader reader, long limit, ObjectNode options) throws Exception {
 		TableDataReader dataReader = createTableDataReader(metadata, job, reader, options);
-		return tabularParserHelper.parseOneFile(metadata, job, fileSource, dataReader, limit, options);
+		return tabularParserHelper.parseOneFile(metadata, job, fileSource, archiveFileName, dataReader, limit, options);
 	}
     
     public TableDataReader createTableDataReader(

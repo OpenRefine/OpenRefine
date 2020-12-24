@@ -107,9 +107,9 @@ public abstract class ImporterTest extends RefineTest {
             metadata,
             job,
             "file-source",
+            "archive-file-name",
             reader,
-            -1,
-            options
+            -1, options
         );
     }
     
@@ -118,9 +118,9 @@ public abstract class ImporterTest extends RefineTest {
             metadata,
             job,
             "file-source",
+            "archive-file-name",
             inputStream,
-            -1,
-            options
+            -1, options
         );
     }
     
@@ -129,9 +129,9 @@ public abstract class ImporterTest extends RefineTest {
             metadata,
             job,
             "file-source",
+            "archive-file-name",
             inputStream,
-            -1,
-            options
+            -1, options
         );
     }
     
