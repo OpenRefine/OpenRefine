@@ -49,8 +49,8 @@ public class FacetCountTests extends FunctionTestBase {
     @BeforeMethod
     public void setUpProject() {
         MetaParser.registerLanguageParser("grel", "General Refine Expression Language", Parser.grelParser, "value");
-        project = createProject(new String[] { "Column A" }, new Serializable[] { 
-                "a", "a", "a", 1, 1, true
+        project = createProject(new String[] { "Column A" }, new Serializable[][] { 
+                {"a"}, {"a"}, {"a"}, {1}, {1}, {true}
         });
         bindings = new Properties();
         bindings.put("project", project);
