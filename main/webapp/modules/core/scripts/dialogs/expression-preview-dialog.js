@@ -352,7 +352,7 @@ ExpressionPreviewDialog.Widget.prototype._renderStarredExpressions = function(da
         $('<a href="javascript:{}">'+$.i18n('core-dialogs/remove')+'</a>').appendTo(tr.insertCell(0)).click(function() {
             var removeExpression = DialogSystem.createDialog();
                 removeExpression.width("250px");
-            var removeExpressionHead = $('<div></div>').addClass("dialog-header").text($.i18n('core-dialogs/remove') + " " + $.i18n('core-dialogs/expression') + "?")
+            var removeExpressionHead = $('<div></div>').addClass("dialog-header").text($.i18n('core-dialogs/unstar-expression'))
                 .appendTo(removeExpression);
             var removeExpressionFooter = $('<div></div>').addClass("dialog-footer").appendTo(removeExpression);
 
