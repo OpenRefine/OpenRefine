@@ -787,6 +787,17 @@ public class SparkGridState implements GridState {
                 runner);
     }
     
+
+    @Override
+    public GridState limitRows(long rowLimit) {
+        JavaPairRDD<Long, Row> limited = RDDUtils.limit(grid, rowLimit);
+        return new SparkGridState(
+                columnModel,
+                limited,
+                overlayModels,
+                runner);
+    }
+    
     private static <T extends Serializable> Function2<Long, Row, T> rowMap(RowChangeDataProducer<T> mapper) {
         return new Function2<Long, Row, T>() {
             

@@ -94,7 +94,7 @@ public interface GridState {
      * @param filter the subset of rows to paginate through.
      *               This object and its dependencies are required
      *               to be serializable.
-     * @param sortingConfig TODO
+     * @param sortingConfig the order in which to return the rows
      * @param start the first row id to fetch (inclusive)
      * @param limit the maximum number of rows to fetch
      * @return the list of rows with their ids (if any)
@@ -161,7 +161,7 @@ public interface GridState {
      * @param filter the filter which defines the subset of records to paginate through
      *               This object and its dependencies are required
      *               to be serializable.
-     * @param sortingConfig TODO
+     * @param sortingConfig the order in which the rows should be returned
      * @param start the first record id to fetch (inclusive)
      * @param limit the maximum number of records to fetch
      * @return the list of records (if any)
@@ -342,6 +342,34 @@ public interface GridState {
      * @return the grid where the matching record have been removed
      */
     public GridState removeRecords(RecordFilter filter);
+    
+    /**
+     * Only keep the first rows.
+     * 
+     * By default, this uses {@link GridState.removeRows}
+     * to remove the last rows, but implementations can override
+     * this for efficiency.
+     * 
+     * @param rowLimit the number of rows to keep
+     * @return the limited grid
+     */
+    public default GridState limitRows(long rowLimit) {
+        return removeRows(RowFilter.limitFilter(rowLimit));
+    }
+    
+    /**
+     * Drop the first rows.
+     * 
+     * By default, this uses {@link GridState.removeRows}
+     * to remove the first rows, but implementations can override
+     * this for efficiency.
+     * 
+     * @param rowsToDrop the number of rows to drop
+     * @return the grid consisting of the last rows
+     */
+    public default GridState dropRows(long rowsToDrop) {
+        return removeRows(RowFilter.dropFilter(rowsToDrop));
+    }
     
     // Interaction with change data
     
