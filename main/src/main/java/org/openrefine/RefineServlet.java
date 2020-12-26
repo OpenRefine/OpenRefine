@@ -37,8 +37,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
-import java.net.HttpURLConnection;
-import java.net.URLConnection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.Executors;
@@ -49,11 +47,11 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.http.HttpStatus;
 import org.openrefine.commands.Command;
 import org.openrefine.importing.ImportingManager;
 import org.openrefine.io.FileProjectManager;
 import org.openrefine.model.DatamodelRunner;
-import org.apache.http.HttpStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -336,32 +334,13 @@ public class RefineServlet extends Butterfly {
     static public void registerClassMapping(String from, String to) {
         RefineModel.registerClassMapping(from, to);
     }
-    
-    
-    /**
-     * @deprecated extensions relying on HttpURLConnection should rather
-     * migrate to a more high-level and mature HTTP client.
-     * Use {@link RefineServlet.getUserAgent()} instead.
-     */
-    @Deprecated
-    static public void setUserAgent(URLConnection urlConnection) {
-        if (urlConnection instanceof HttpURLConnection) {
-            setUserAgent((HttpURLConnection) urlConnection);
-        }
-    }
-    
-    /**
-     * @deprecated extensions relying on HttpURLConnection should rather
-     * migrate to a more high-level and mature HTTP client.
-     * Use {@link RefineServlet.getUserAgent()} instead.
-     */
-    @Deprecated
-    static public void setUserAgent(HttpURLConnection httpConnection) {
-        httpConnection.addRequestProperty("User-Agent", getUserAgent());
-    }
 
+    /**
+     * @deprecated use {@link RefineModel.getUserAgent()} instead.
+     */
+    @Deprecated
     static public String getUserAgent() {
-        return "OpenRefine/" + FULL_VERSION;
+        return RefineModel.getUserAgent();
     }
     
     static public DatamodelRunner getDatamodelRunner() {

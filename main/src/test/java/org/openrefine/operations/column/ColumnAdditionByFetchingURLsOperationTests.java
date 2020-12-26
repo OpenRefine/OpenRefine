@@ -49,17 +49,15 @@ import org.openrefine.browsing.EngineConfig;
 import org.openrefine.expr.ExpressionUtils;
 import org.openrefine.expr.MetaParser;
 import org.openrefine.grel.Parser;
-import org.openrefine.model.Cell;
 import org.openrefine.model.GridState;
 import org.openrefine.model.IndexedRow;
 import org.openrefine.model.ModelException;
 import org.openrefine.model.Project;
 import org.openrefine.model.Row;
-import org.openrefine.operations.Operation;
 import org.openrefine.operations.EngineDependentOperation;
 import org.openrefine.operations.OnError;
+import org.openrefine.operations.Operation;
 import org.openrefine.operations.OperationRegistry;
-import org.openrefine.operations.column.ColumnAdditionByFetchingURLsOperation;
 import org.openrefine.operations.column.ColumnAdditionByFetchingURLsOperation.HttpHeader;
 import org.openrefine.process.LongRunningProcessStub;
 import org.openrefine.process.Process;
@@ -72,7 +70,6 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import okhttp3.HttpUrl;
 import okhttp3.mockwebserver.MockResponse;
 import okhttp3.mockwebserver.MockWebServer;
@@ -337,7 +334,8 @@ public class ColumnAdditionByFetchingURLsOperationTests extends RefineTest {
 
             // 6 requests (4 retries @1 sec) + final response
             long start = System.currentTimeMillis();
-            runAndWait(op, 4500);
+            LongRunningProcessStub process = new LongRunningProcessStub(op.createProcess(project.getHistory(), project.getProcessManager()));
+            process.run();
 
             // Make sure that our Retry-After headers were obeyed (4*1 sec vs 4*100msec)
             long elapsed = System.currentTimeMillis() - start;
@@ -385,7 +383,8 @@ public class ColumnAdditionByFetchingURLsOperationTests extends RefineTest {
 
             // 6 requests (4 retries 200, 400, 800, 200 msec) + final response
             long start = System.currentTimeMillis();
-            runAndWait(op, 2500);
+            LongRunningProcessStub process = new LongRunningProcessStub(op.createProcess(project.getHistory(), project.getProcessManager()));
+            process.run();
 
             // Make sure that our exponential back off is working
             long elapsed = System.currentTimeMillis() - start;

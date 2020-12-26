@@ -369,11 +369,12 @@ public class ColumnAdditionByFetchingURLsOperation extends EngineDependentOperat
             try { //HttpClients.createDefault()) {
                 try {
                 	Header[] headers = getHttpHeaders();
-                    return _httpClient.getAsString(urlString, headers);
+                    return getHttpClient().getAsString(urlString, headers);
                 } catch (IOException e) {
                     return _onError == OnError.StoreError ? new EvalError(e) : null;
                 }
             } catch (Exception e) {
+            	e.printStackTrace();
                 return _onError == OnError.StoreError ? new EvalError(e.getMessage()) : null;
             }
         }

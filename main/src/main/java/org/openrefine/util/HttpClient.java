@@ -1,4 +1,4 @@
-package com.google.refine.util;
+package org.openrefine.util;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -37,8 +37,7 @@ import org.apache.hc.core5.http.io.entity.EntityUtils;
 import org.apache.hc.core5.http.message.BasicNameValuePair;
 import org.apache.hc.core5.http.protocol.HttpContext;
 import org.apache.hc.core5.util.TimeValue;
-
-import com.google.refine.RefineServlet;
+import org.openrefine.RefineModel;
 
 
 public class HttpClient {
@@ -66,7 +65,7 @@ public class HttpClient {
                 .build();
 
         httpClientBuilder = HttpClients.custom()
-                .setUserAgent(RefineServlet.getUserAgent())
+                .setUserAgent(RefineModel.getUserAgent())
                 .setDefaultRequestConfig(defaultRequestConfig)
                 .setConnectionManager(connManager)
                 // Default Apache HC retry is 1x @1 sec (or the value in Retry-Header)

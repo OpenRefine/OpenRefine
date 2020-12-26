@@ -527,13 +527,13 @@ public class XmlImportUtilitiesTests extends RefineTest {
         createXmlParser();
         ParserSkip();
         try {
-            SUT.processRecordWrapper(project, parser, columnGroup, false, false, false);
+            XmlImportUtilities.processRecord(allocator, rows, parser, columnGroup, false, false, false, false, "");
         } catch (Exception e) {
             Assert.fail("Failed to parse records from the given XML Data. Reason: " + e.getMessage(), e);
         }
-        Assert.assertNotNull(project.rows, "Checks the record count of project");
-        Assert.assertEquals(project.rows.size(), 3, "Checks the number of records parsed from Xml");
-        Row row = project.rows.get(0);
+        Assert.assertNotNull(rows, "Checks the record count of project");
+        Assert.assertEquals(rows.size(), 3, "Checks the number of records parsed from Xml");
+        Row row = rows.get(0);
         Assert.assertNotNull(row, "Checks the row instance with index '0'");
         Assert.assertEquals(row.cells.size(), 4, "Checks the row cells count");
         Assert.assertNotNull(row.getCell(1), "Checks the cell instance at index '1'");
@@ -548,13 +548,13 @@ public class XmlImportUtilitiesTests extends RefineTest {
         createXmlParser();
         ParserSkip();
         try {
-            SUT.processRecordWrapper(project, parser, columnGroup, false, false, false);
+            XmlImportUtilities.processRecord(allocator, rows, parser, columnGroup, false, false, false, false, "");
         } catch (Exception e) {
             Assert.fail("Failed to parse records from the given XML Data. Reason: " + e.getMessage(), e);
         }
-        Assert.assertNotNull(project.rows, "Checks the record count of project");
-        Assert.assertEquals(project.rows.size(), 3, "Checks the number of records parsed from Xml");
-        Row row = project.rows.get(0);
+        Assert.assertNotNull(rows, "Checks the record count of project");
+        Assert.assertEquals(rows.size(), 3, "Checks the number of records parsed from Xml");
+        Row row = rows.get(0);
         Assert.assertNotNull(row, "Checks the row instance with index '0'");
         Assert.assertEquals(row.cells.size(), 4, "Checks the row cells count");
         Assert.assertNotNull(row.getCell(1), "Checks the cell instance at index '1'");
@@ -569,13 +569,13 @@ public class XmlImportUtilitiesTests extends RefineTest {
         createXmlParser();
         ParserSkip();
         try {
-            SUT.processRecordWrapper(project, parser, columnGroup, false, false, false);
+        	XmlImportUtilities.processRecord(allocator, rows, parser, columnGroup, false, false, false, false, "");
         } catch (Exception e) {
             Assert.fail("Failed to parse records from the given XML Data. Reason: " + e.getMessage(), e);
         }
-        Assert.assertNotNull(project.rows, "Checks the record count of project");
-        Assert.assertEquals(project.rows.size(), 3, "Checks the number of records parsed from Xml");
-        Row row = project.rows.get(0);
+        Assert.assertNotNull(rows, "Checks the record count of project");
+        Assert.assertEquals(rows.size(), 3, "Checks the number of records parsed from Xml");
+        Row row = rows.get(0);
         Assert.assertNotNull(row, "Checks the row instance with index '0'");
         Assert.assertEquals(row.cells.size(), 4, "Checks the row cells count");
         Assert.assertNotNull(row.getCell(1), "Checks the cell instance at index '1'");
@@ -591,13 +591,13 @@ public class XmlImportUtilitiesTests extends RefineTest {
         createXmlParser();
         ParserSkip();
         try {
-            SUT.processRecordWrapper(project, parser, columnGroup, false, false, false);
+        	XmlImportUtilities.processRecord(allocator, rows, parser, columnGroup, false, false, false, false, "");
         } catch (Exception e) {
             Assert.fail("Failed to parse records from the given XML Data. Reason: " + e.getMessage(), e);
         }
-        Assert.assertNotNull(project.rows, "Checks the record count of project");
-        Assert.assertEquals(project.rows.size(), 50, "Checks the number of records parsed from Xml");
-        Row row = project.rows.get(0);
+        Assert.assertNotNull(rows, "Checks the record count of project");
+        Assert.assertEquals(rows.size(), 50, "Checks the number of records parsed from Xml");
+        Row row = rows.get(0);
         Assert.assertNotNull(row, "Checks the row instance with index '0'");
         Assert.assertEquals(row.cells.size(), 14, "Checks the row cells count");
         Assert.assertNotNull(row.getCell(1), "Checks the cell instance at index '1'");
