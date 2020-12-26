@@ -22,12 +22,12 @@
     <parameter name = "pgSqlDbPassword" value=""/>
     <parameter name = "pgSqlTestTable" value="test_table"/>
     
-    <parameter name = "mariaDbName" value="test_db"/> 
-    <parameter name = "mariaDbHost" value="127.0.0.1"/> 
+    <parameter name = "mariadbDbName" value="test_db"/> 
+    <parameter name = "mariadbDbHost" value="127.0.0.1"/> 
     <parameter name = "mariadbDbPort" value="3306"/> 
-    <parameter name = "mariaDbUser" value="root"/>
-    <parameter name = "mariaDbPassword" value=""/>
-    <parameter name = "mariaDbTestTable" value="test_table"/>
+    <parameter name = "mariadbDbUser" value="root"/>
+    <parameter name = "mariadbDbPassword" value=""/>
+    <parameter name = "mariadbTestTable" value="test_table"/>
 
     <parameter name = "sqliteDbName" value="extension_test_db.sqlite"/>
     <parameter name = "sqliteDbHost" value=""/>

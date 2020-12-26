@@ -54,7 +54,7 @@ public class KeyerTests extends RefineTest {
 //        {"å","aa"}, // Requested by issue #650, but conflicts with diacritic folding
         {"æø","aeoe"}, // Norwegian replacements from #650
         {"©ß","css"}, // issue #409 esszet
-        {"\u00D0\u00DE", "dth"}, // Icelandic eth and thorn 
+        {"\u00D0\u00F0\u00DE\u00FEǷƿ", "ddththww"}, // eth, thorn, & wynn for Icelandic / Olde English
         {"ﬀﬁﬂﬃﬅﬆ", "fffiflffistst"}, // ligatures
         // Test legacy replacements
         {"\u00C0\u00C1\u00C2\u00C3\u00C4\u00C5\u00E0\u00E1\u00E2\u00E3\u00E4\u00E5\u0100\u0101\u0102\u0103\u0104\u0105", "aaaaaaaaaaaaaaaaaa"},

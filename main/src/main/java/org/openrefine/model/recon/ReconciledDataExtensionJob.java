@@ -41,7 +41,6 @@ import java.io.Serializable;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -55,20 +54,6 @@ import org.openrefine.model.recon.Recon.Judgment;
 import org.openrefine.util.JSONUtilities;
 import org.openrefine.util.JsonViews;
 import org.openrefine.util.ParsingUtilities;
-
-import org.apache.http.Consts;
-import org.apache.http.NameValuePair;
-import org.apache.http.StatusLine;
-import org.apache.http.client.config.RequestConfig;
-import org.apache.http.client.entity.UrlEncodedFormEntity;
-import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClientBuilder;
-import org.apache.http.impl.client.HttpClients;
-import org.apache.http.impl.client.LaxRedirectStrategy;
-import org.apache.http.message.BasicNameValuePair;
-
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
@@ -267,7 +252,7 @@ public class ReconciledDataExtensionJob implements Serializable {
     final private String             schemaSpace;
 
     // not final: initialized lazily
-    private static CloseableHttpClient httpClient = null;
+    private static HttpClient httpClient = null;
     
     public ReconciledDataExtensionJob(DataExtensionConfig obj, String endpoint, String identifierSpace, String schemaSpace) {
         this.extension = obj;
@@ -275,7 +260,15 @@ public class ReconciledDataExtensionJob implements Serializable {
         this.identifierSpace = identifierSpace;
         this.schemaSpace = schemaSpace;
     }
-    
+
+    /**
+     * @todo Although the HTTP code has been unified, there may still be opportunity
+     * to refactor a higher level querying library out of this which could be shared
+     * with StandardReconConfig
+     *
+     * It may also be possible to extract a library to query reconciliation services
+     * which could be used outside of OpenRefine.
+     */
     public Map<String, ReconciledDataExtensionJob.DataExtension> extend(
         Set<String> ids
     ) throws Exception {
@@ -283,7 +276,7 @@ public class ReconciledDataExtensionJob implements Serializable {
         formulateQuery(ids, extension, writer);
 
         String query = writer.toString();
-        String response = performQuery(this.endpoint, query);
+        String response = postExtendQuery(this.endpoint, query);
 
         ObjectNode o = ParsingUtilities.mapper.readValue(response, ObjectNode.class);
 
@@ -314,46 +307,17 @@ public class ReconciledDataExtensionJob implements Serializable {
         return map;
     }
 
-    /**
-     * @todo this should be refactored to be unified with the HTTP querying code
-     * from StandardReconConfig. We should ideally extract a library to query
-     * reconciliation services and expose it as such for others to reuse.
-     */
-    
-    static protected String performQuery(String endpoint, String query) throws IOException {
-        HttpPost request = new HttpPost(endpoint);
-        List<NameValuePair> body = Collections.singletonList(
-                new BasicNameValuePair("extend", query));
-        request.setEntity(new UrlEncodedFormEntity(body, Consts.UTF_8));
-        
-        try (CloseableHttpResponse response = getHttpClient().execute(request)) {
-            StatusLine statusLine = response.getStatusLine();
-            if (statusLine.getStatusCode() >= 400) {
-                throw new IOException("Data extension query failed - code: "
-                        + Integer.toString(statusLine.getStatusCode())
-                        + " message: " + statusLine.getReasonPhrase());
-            } else {
-                return ParsingUtilities.inputStreamToString(response.getEntity().getContent());
-            }
-        }
+    static protected String postExtendQuery(String endpoint, String query) throws IOException {
+        return getHttpClient().postNameValue(endpoint, "extend", query);
     }
 
-    private static CloseableHttpClient getHttpClient() {
-        if (httpClient != null) {
-            return httpClient;
+    private static HttpClient getHttpClient() {
+        if (httpClient == null) {
+            httpClient = new HttpClient();
         }
-        RequestConfig defaultRequestConfig = RequestConfig.custom()
-                .setConnectTimeout(30 * 1000)
-                .build();
-
-        HttpClientBuilder httpClientBuilder = HttpClients.custom()
-                .setUserAgent(RefineServlet.getUserAgent())
-                .setRedirectStrategy(new LaxRedirectStrategy())
-                .setDefaultRequestConfig(defaultRequestConfig);
-        httpClient = httpClientBuilder.build();
         return httpClient;
     }
-    
+
     protected ReconciledDataExtensionJob.DataExtension collectResult(
         ObjectNode record
     ) {

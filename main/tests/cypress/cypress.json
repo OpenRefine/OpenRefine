@@ -2,7 +2,7 @@
 	"integrationFolder": "./cypress/integration",
 	"nodeVersion": "system",
 	"retries": {
-		"runMode": 1,
+		"runMode": 2,
 		"openMode": 1
 	},
 	"env":{

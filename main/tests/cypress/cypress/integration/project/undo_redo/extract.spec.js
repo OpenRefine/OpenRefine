@@ -88,7 +88,7 @@ describe(__filename, function () {
 
 		cy.get('.dialog-container').should('exist').should('be.visible');
 		cy.get('.dialog-container button[bind="closeButton"]').click();
-		cy.get('.dialog-container').should('not.be.visible');
+		cy.get('.dialog-container').should('not.exist');
 	});
 
 	it('Ensure action are recorded in the extract panel', function () {

@@ -33,6 +33,9 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package org.openrefine.operations.column;
 
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertTrue;
+
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -138,7 +141,7 @@ public class ColumnAdditionByFetchingURLsOperationTests extends RefineTest {
         } catch (InterruptedException e) {
             Assert.fail("Test interrupted");
         }
-        Assert.assertFalse(process.isRunning());
+        Assert.assertFalse(process.isRunning(),"Process failed to complete within timeout " + timeout);
     }
 
     @Test
@@ -298,6 +301,103 @@ public class ColumnAdditionByFetchingURLsOperationTests extends RefineTest {
             Assert.assertEquals(request.getHeader("authorization"), authorizationValue);
             Assert.assertEquals(request.getHeader("accept"), acceptValue);
                 server.shutdown();
+        }
+    }
+
+    @Test
+    public void testRetries() throws Exception {
+        try (MockWebServer server = new MockWebServer()) {
+            server.start();
+            HttpUrl url = server.url("/retries");
+
+            project = createProject(new String[] {"fruits"},
+            		new Serializable[][] {
+            	{"test1"}, {"test2"}, {"test3"}
+            });
+
+            // Queue 5 error responses with 1 sec. Retry-After interval
+            for (int i = 0; i < 5; i++) {
+                server.enqueue(new MockResponse()
+                        .setHeader("Retry-After", 1)
+                        .setResponseCode(429)
+                        .setBody(Integer.toString(i,10)));
+            }
+
+            server.enqueue(new MockResponse().setBody("success"));
+
+            EngineDependentOperation op = new ColumnAdditionByFetchingURLsOperation(engine_config,
+                    "fruits",
+                    "\"" + url + "?city=\"+value",
+                    OnError.StoreError,
+                    "rand",
+                    1,
+                    100,
+                    false,
+                    null);
+
+            // 6 requests (4 retries @1 sec) + final response
+            long start = System.currentTimeMillis();
+            runAndWait(op, 4500);
+
+            // Make sure that our Retry-After headers were obeyed (4*1 sec vs 4*100msec)
+            long elapsed = System.currentTimeMillis() - start;
+            assertTrue(elapsed > 4000, "Retry-After retries didn't take long enough - elapsed = " + elapsed );
+
+            // 1st row fails after 4 tries (3 retries), 2nd row tries twice and gets value
+            List<Row> rows = project.getCurrentGridState().collectRows().stream().map(IndexedRow::getRow).collect(Collectors.toList());
+            assertTrue(rows.get(0).getCellValue(1).toString().contains("HTTP error 429"), "missing 429 error");
+            assertEquals(rows.get(1).getCellValue(1).toString(), "success");
+
+            server.shutdown();
+        }
+    }
+
+    @Test
+    public void testExponentialRetries() throws Exception {
+        try (MockWebServer server = new MockWebServer()) {
+            server.start();
+            HttpUrl url = server.url("/retries");
+
+            project = createProject(new String[] {"fruits"},
+            		new Serializable[][] {
+            	{"test1"}, {"test2"}, {"test3"}
+            });
+
+            // Use 503 Server Unavailable with no Retry-After header this time
+            for (int i = 0; i < 5; i++) {
+                server.enqueue(new MockResponse()
+                        .setResponseCode(503)
+                        .setBody(Integer.toString(i,10)));
+            }
+            server.enqueue(new MockResponse().setBody("success"));
+
+            server.enqueue(new MockResponse().setBody("not found").setResponseCode(404));
+
+            ColumnAdditionByFetchingURLsOperation op = new ColumnAdditionByFetchingURLsOperation(engine_config,
+                    "fruits",
+                    "\"" + url + "?city=\"+value",
+                    OnError.StoreError,
+                    "rand",
+                    1,
+                    100,
+                    false,
+                    null);
+
+            // 6 requests (4 retries 200, 400, 800, 200 msec) + final response
+            long start = System.currentTimeMillis();
+            runAndWait(op, 2500);
+
+            // Make sure that our exponential back off is working
+            long elapsed = System.currentTimeMillis() - start;
+            assertTrue(elapsed > 1600, "Exponential retries didn't take enough time - elapsed = " + elapsed);
+
+            // 1st row fails after 4 tries (3 retries), 2nd row tries twice and gets value, 3rd row is hard error
+            List<Row> rows = project.getCurrentGridState().collectRows().stream().map(IndexedRow::getRow).collect(Collectors.toList());
+            assertTrue(rows.get(0).getCellValue(1).toString().contains("HTTP error 503"), "Missing 503 error");
+            assertEquals(rows.get(1).getCellValue(1).toString(), "success");
+            assertTrue(rows.get(2).getCellValue(1).toString().contains("HTTP error 404"),"Missing 404 error");
+
+            server.shutdown();
         }
     }
 

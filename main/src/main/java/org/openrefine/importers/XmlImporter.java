@@ -58,6 +58,7 @@ import org.openrefine.model.DatamodelRunner;
 import org.openrefine.model.Row;
 import org.openrefine.util.JSONUtilities;
 import org.openrefine.util.ParsingUtilities;
+import com.google.common.base.CharMatcher;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -211,7 +212,8 @@ public class XmlImporter extends TreeImportingParserBase {
     
     static public class XmlParser implements TreeReader {
         final protected XMLStreamReader parser;
-        
+        static final int WHITESPACE_CHARACTERS_TOKEN = 15;
+
         public XmlParser(InputStream inputStream) throws XMLStreamException, IOException {
             parser = createXMLStreamReader(inputStream);
         }
@@ -232,7 +234,15 @@ public class XmlImporter extends TreeImportingParserBase {
             } catch (XMLStreamException e) {
                 throw new TreeReaderException(e);
             }
-            
+            // Issue #1095 : Preventing addition of empty cells containing whitespaces in the table
+            // Whitespaces between tags will be parsed as Characters by default
+            // Updates the token if the text value is a whitespace
+            if (currentToken == XMLStreamConstants.CHARACTERS) {
+                String text = parser.getText();
+                if (!text.isEmpty() && CharMatcher.whitespace().matchesAllOf(text)) {
+                    currentToken = WHITESPACE_CHARACTERS_TOKEN;
+                }
+            }
             return mapToToken(currentToken);
         }
         
@@ -252,6 +262,7 @@ public class XmlImporter extends TreeImportingParserBase {
                 case XMLStreamConstants.COMMENT: return Token.Ignorable;
                 case XMLStreamConstants.CDATA: return Token.Ignorable;
                 case XMLStreamConstants.ATTRIBUTE: return Token.Ignorable;
+                case WHITESPACE_CHARACTERS_TOKEN: return Token.Ignorable;
                 default:
                     return Token.Ignorable;
             }

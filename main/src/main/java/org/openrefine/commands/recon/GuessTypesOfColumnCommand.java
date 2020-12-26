@@ -48,29 +48,6 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.http.Consts;
-import org.apache.http.NameValuePair;
-import org.apache.http.StatusLine;
-import org.apache.http.client.config.RequestConfig;
-import org.apache.http.client.entity.UrlEncodedFormEntity;
-import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClientBuilder;
-import org.apache.http.impl.client.HttpClients;
-import org.apache.http.impl.client.LaxRedirectStrategy;
-import org.apache.http.message.BasicNameValuePair;
-import org.openrefine.RefineServlet;
-import org.openrefine.commands.Command;
-import org.openrefine.expr.ExpressionUtils;
-import org.openrefine.model.GridState;
-import org.openrefine.model.IndexedRow;
-import org.openrefine.model.Project;
-import org.openrefine.model.Row;
-import org.openrefine.model.recon.ReconType;
-import org.openrefine.model.recon.StandardReconConfig.ReconResult;
-import org.openrefine.util.ParsingUtilities;
-
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -78,7 +55,6 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-
 public class GuessTypesOfColumnCommand extends Command {
     
     final static int DEFAULT_SAMPLE_SIZE = 10;
@@ -177,61 +153,38 @@ public class GuessTypesOfColumnCommand extends Command {
         }
         
         String queriesString = ParsingUtilities.defaultWriter.writeValueAsString(queryMap);
+        String responseString;
         try {
-            RequestConfig defaultRequestConfig = RequestConfig.custom()
-                    .setConnectTimeout(30 * 1000)
-                    .build();
+            responseString = postQueries(serviceUrl, queriesString);
+            ObjectNode o = ParsingUtilities.evaluateJsonStringToObjectNode(responseString);
 
-            HttpClientBuilder httpClientBuilder = HttpClients.custom()
-                    .setUserAgent(RefineServlet.getUserAgent())
-                    .setRedirectStrategy(new LaxRedirectStrategy())
-                    .setDefaultRequestConfig(defaultRequestConfig);
-            
-            CloseableHttpClient httpClient = httpClientBuilder.build();
-            HttpPost request = new HttpPost(serviceUrl);
-            List<NameValuePair> body = Collections.singletonList(
-                    new BasicNameValuePair("queries", queriesString));
-            request.setEntity(new UrlEncodedFormEntity(body, Consts.UTF_8));
-            
-            try (CloseableHttpResponse response = httpClient.execute(request)) {
-                StatusLine statusLine = response.getStatusLine();
-                if (statusLine.getStatusCode() >= 400) {
-                    throw new IOException("Failed  - code:" 
-                            + Integer.toString(statusLine.getStatusCode()) 
-                            + " message: " + statusLine.getReasonPhrase());
+            Iterator<JsonNode> iterator = o.iterator();
+            while (iterator.hasNext()) {
+                JsonNode o2 = iterator.next();
+                if (!(o2.has("result") && o2.get("result") instanceof ArrayNode)) {
+                    continue;
                 }
-                
-                String s = ParsingUtilities.inputStreamToString(response.getEntity().getContent());
-                ObjectNode o = ParsingUtilities.evaluateJsonStringToObjectNode(s);
 
-                Iterator<JsonNode> iterator = o.iterator();
-                while (iterator.hasNext()) {
-                    JsonNode o2 = iterator.next();
-                    if (!(o2.has("result") && o2.get("result") instanceof ArrayNode)) {
-                        continue;
-                    }
+                ArrayNode results = (ArrayNode) o2.get("result");
+                List<ReconResult> reconResults = ParsingUtilities.mapper.convertValue(results, new TypeReference<List<ReconResult>>() {});
+                int count = reconResults.size();
 
-                    ArrayNode results = (ArrayNode) o2.get("result");
-                    List<ReconResult> reconResults = ParsingUtilities.mapper.convertValue(results, new TypeReference<List<ReconResult>>() {});
-                    int count = reconResults.size();
+                for (int j = 0; j < count; j++) {
+                    ReconResult result = reconResults.get(j);
+                    double score = 1.0 / (1 + j); // score by each result's rank
 
-                    for (int j = 0; j < count; j++) {
-                        ReconResult result = reconResults.get(j);
-                        double score = 1.0 / (1 + j); // score by each result's rank
+                    List<ReconType> types = result.types;
+                    int typeCount = types.size();
 
-                        List<ReconType> types = result.types;
-                        int typeCount = types.size();
-
-                        for (int t = 0; t < typeCount; t++) {
-                        	ReconType type = types.get(t);
-                            double score2 = score * (typeCount - t) / typeCount;
-                            if (map.containsKey(type.id)) {
-                                TypeGroup tg = map.get(type.id);
-                                tg.score += score2;
-                                tg.count++;
-                            } else {
-                                map.put(type.id, new TypeGroup(type.id, type.name, score2));
-                            }
+                    for (int t = 0; t < typeCount; t++) {
+                        ReconType type = types.get(t);
+                        double score2 = score * (typeCount - t) / typeCount;
+                        if (map.containsKey(type.id)) {
+                            TypeGroup tg = map.get(type.id);
+                            tg.score += score2;
+                            tg.count++;
+                        } else {
+                            map.put(type.id, new TypeGroup(type.id, type.name, score2));
                         }
                     }
                 }
@@ -240,7 +193,7 @@ public class GuessTypesOfColumnCommand extends Command {
             logger.error("Failed to guess cell types for load\n" + queriesString, e);
             throw e;
         }
-        
+
         List<TypeGroup> types = new ArrayList<TypeGroup>(map.values());
         Collections.sort(types, new Comparator<TypeGroup>() {
             @Override
@@ -255,7 +208,12 @@ public class GuessTypesOfColumnCommand extends Command {
         
         return types;
     }
-    
+
+    private String postQueries(String serviceUrl, String queriesString) throws IOException {
+        HttpClient client = new HttpClient();
+        return client.postNameValue(serviceUrl, "queries", queriesString);
+    }
+
     static protected class TypeGroup {
         @JsonProperty("id")
         protected String id;

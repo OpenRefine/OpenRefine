@@ -32,18 +32,6 @@
     --ifm-code-color: var(--ifm-color-primary-light);
   }
 
-
-
-  /******* SIDE BAR STYLES *******/
-
-  .menu__link--sublist {
-    margin-top: 10px;
-    padding-bottom: 25px;
-    padding-top: 25px;
-  }
-
-
-
   /******* MARKDOWN STYLES *******/
 
   .alert {

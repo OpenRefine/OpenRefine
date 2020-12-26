@@ -37,29 +37,14 @@ import static com.google.common.base.Strings.isNullOrEmpty;
 
 import java.io.IOException;
 import java.io.Serializable;
-import java.net.MalformedURLException;
-import java.net.URISyntaxException;
-import java.net.URL;
-import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 
-import org.apache.http.Header;
-import org.apache.http.HttpEntity;
-import org.apache.http.StatusLine;
-import org.apache.http.client.config.RequestConfig;
-import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.entity.ContentType;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClientBuilder;
-import org.apache.http.impl.client.HttpClients;
-import org.apache.http.message.BasicHeader;
-import org.apache.http.util.EntityUtils;
-import org.openrefine.RefineServlet;
+import org.apache.hc.core5.http.Header;
+import org.apache.hc.core5.http.message.BasicHeader;
 import org.openrefine.browsing.Engine;
 import org.openrefine.browsing.EngineConfig;
 import org.openrefine.expr.EvalError;
@@ -84,14 +69,13 @@ import org.openrefine.operations.OnError;
 import org.openrefine.process.LongRunningProcess;
 import org.openrefine.process.Process;
 import org.openrefine.process.ProcessManager;
-import org.openrefine.util.ParsingUtilities;
+import org.openrefine.util.HttpClient;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
-
 
 public class ColumnAdditionByFetchingURLsOperation extends EngineDependentOperation {
 	final static private String urlChangeDataId = "urls";
@@ -124,7 +108,6 @@ public class ColumnAdditionByFetchingURLsOperation extends EngineDependentOperat
     final protected int        _delay;
     final protected boolean    _cacheResponses;
     final protected List<HttpHeader>  _httpHeadersJson;
-
 
     @JsonCreator
     public ColumnAdditionByFetchingURLsOperation(
@@ -168,6 +151,7 @@ public class ColumnAdditionByFetchingURLsOperation extends EngineDependentOperat
                 }
             }
         }
+
     }
 
     @JsonProperty("newColumnName")
@@ -254,7 +238,7 @@ public class ColumnAdditionByFetchingURLsOperation extends EngineDependentOperat
     	final protected Evaluable   _eval;
     	// initialized lazily for serializability
     	transient private LoadingCache<String, Serializable> _urlCache;
-        transient private HttpClientBuilder _httpClientBuilder;
+        transient private HttpClient _httpClient;
         transient private Header[] _headers;
     	
     	protected URLFetchingChangeProducer(
@@ -272,34 +256,26 @@ public class ColumnAdditionByFetchingURLsOperation extends EngineDependentOperat
     		_cellIndex = cellIndex;
     		_baseColumnName = baseColumnName;
     		_eval = eval;
-    		
+                _headers = null;
+                _httpClient = null;
 
 
     	}
     	
-    	protected HttpClientBuilder getHttpClientBuilder() {
-    		if (_httpClientBuilder != null) {
-    			return _httpClientBuilder;
+    	protected HttpClient getHttpClient() {
+    		if (_httpClient != null) {
+    			return _httpClient;
     		}
 
-            // TODO: Placeholder for future Basic Auth implementation
-            // CredentialsProvider credsProvider = new BasicCredentialsProvider();
-            // credsProvider.setCredentials(new AuthScope(host, 443),
-            // new UsernamePasswordCredentials(user, password));
-
-            _httpClientBuilder = HttpClients.custom()
-                    .setUserAgent(RefineServlet.getUserAgent())
-                    .setDefaultRequestConfig(getRequestConfig());
-            //      .setConnectionBackoffStrategy(ConnectionBackoffStrategy)
-            //      .setDefaultCredentialsProvider(credsProvider);
-            return _httpClientBuilder;
+            _httpClient = new HttpClient(_delay);
+            return _httpClient;
     	}
     	
     	protected Header[] getHttpHeaders() {
     		if (_headers != null) {
     			return _headers;
     		}
-    		List<Header> headers = new ArrayList<Header>();
+    		List<Header> headers = new ArrayList<>();
             if (_httpHeaders != null) {
                 for (HttpHeader header : _httpHeaders) {
                     if (!isNullOrEmpty(header.name) && !isNullOrEmpty(header.value)) {
@@ -309,13 +285,6 @@ public class ColumnAdditionByFetchingURLsOperation extends EngineDependentOperat
             }
             _headers = (Header[]) headers.toArray(new Header[headers.size()]);
             return _headers;
-    	}
-
-        protected RequestConfig getRequestConfig() {
-            return RequestConfig.custom()
-                    .setConnectTimeout(30 * 1000)
-                    .setConnectionRequestTimeout(30 * 1000)
-                    .setSocketTimeout(10 * 1000).build();
     	}
     	
 		@Override
@@ -397,61 +366,12 @@ public class ColumnAdditionByFetchingURLsOperation extends EngineDependentOperat
         }
 
         Serializable fetch(String urlString) {
-            HttpGet httpGet;
-
-            try {
-                // Use of URL constructor below is purely to get additional error checking to mimic
-                // previous behavior for the tests.
-                httpGet = new HttpGet(new URL(urlString).toURI());
-            } catch (IllegalArgumentException | MalformedURLException | URISyntaxException e) {
-                return null;
-            }
-
-            try {
-                httpGet.setHeaders(getHttpHeaders());
-                httpGet.setConfig(getRequestConfig());
-
-                CloseableHttpClient httpclient = getHttpClientBuilder().build();
-
-                CloseableHttpResponse response = null;
+            try { //HttpClients.createDefault()) {
                 try {
-                    response = httpclient.execute(httpGet);
-
-                    HttpEntity entity = response.getEntity();
-                    if (entity == null) {
-                        throw new Exception("No content found in " + httpGet.getURI().toString());
-                    }
-
-                    String encoding = null;
-
-                    if (entity.getContentEncoding() != null) {
-                        encoding = entity.getContentEncoding().getValue();
-                    } else {
-                        Charset charset = ContentType.getOrDefault(entity).getCharset();
-                        if (charset != null) {
-                            encoding = charset.name();
-                        }
-                    }
-
-                    String result =  ParsingUtilities.inputStreamToString(
-                            entity.getContent(), (encoding == null) || ( encoding.equalsIgnoreCase("\"UTF-8\"")) ? "UTF-8" : encoding);
-
-                    EntityUtils.consume(entity);
-                    return result;
-
+                	Header[] headers = getHttpHeaders();
+                    return _httpClient.getAsString(urlString, headers);
                 } catch (IOException e) {
-                    String message;
-                    if (response == null) {
-                        message = "Unknown HTTP error " + e.getLocalizedMessage();
-                    } else {
-                        StatusLine status = response.getStatusLine();
-                        HttpEntity errorEntity = response.getEntity();
-                        String errorString = ParsingUtilities.inputStreamToString(errorEntity.getContent());
-                        message = String.format("HTTP error %d : %s | %s", status.getStatusCode(),
-                                status.getReasonPhrase(),
-                                errorString);
-                    }
-                    return _onError == OnError.StoreError ? new EvalError(message) : null;
+                    return _onError == OnError.StoreError ? new EvalError(e) : null;
                 }
             } catch (Exception e) {
                 return _onError == OnError.StoreError ? new EvalError(e.getMessage()) : null;
@@ -459,7 +379,6 @@ public class ColumnAdditionByFetchingURLsOperation extends EngineDependentOperat
         }
     	
     }
-
 
     public class ColumnAdditionByFetchingURLsProcess extends LongRunningProcess implements Runnable {
         final protected History       _history;

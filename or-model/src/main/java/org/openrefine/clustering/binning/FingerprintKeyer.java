@@ -72,6 +72,7 @@ public class FingerprintKeyer extends Keyer {
             .put("\u0111", "d") // Small letter D with stroke
             .put("\u0256", "d") // Small letter African D
             .put("\u00FE", "th") // Lower case Icelandic thorn þ
+            .put("ƿ","w") // Lower case Wynn from Old English modernly transliterated to w
             // Visually similar replacements from our private former asciify() method
             // (only need lower case forms since we're already downcased)
             .put("\u0127", "h") // small H with stroke
