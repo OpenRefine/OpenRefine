@@ -40,13 +40,13 @@ public class OdsImporterTests extends ImporterTest {
         ArrayNode sheets = ParsingUtilities.mapper.createArrayNode();
         sheets.add(ParsingUtilities.mapper.readTree("{name: \"file-source#Test Sheet 0\", fileNameAndSheetIndex: \"file-source#0\", rows: 3, selected: true}"));
         sheets.add(ParsingUtilities.mapper.readTree("{name: \"file-source#Test Sheet 1\", fileNameAndSheetIndex: \"file-source#1\", rows: 3, selected: true}"));
-        whenGetArrayOption("sheets", options, sheets);
+        options.set("sheets", sheets);
         
-        whenGetIntegerOption("ignoreLines", options, 0);
-        whenGetIntegerOption("headerLines", options, 1);
-        whenGetIntegerOption("skipDataLines", options, 0);
-        whenGetIntegerOption("limit", options, -1);
-        whenGetBooleanOption("storeBlankCellsAsNulls",options,true);
+        options.put("ignoreLines", 0);
+        options.put("headerLines", 1);
+        options.put("skipDataLines", 0);
+        options.put("limit", -1);
+        options.put("storeBlankCellsAsNulls", true);
         
         InputStream stream = this.getClass().getClassLoader().getResourceAsStream("importers/sample.ods");
         
@@ -64,13 +64,13 @@ public class OdsImporterTests extends ImporterTest {
     	
     	ArrayNode sheets = ParsingUtilities.mapper.createArrayNode();
         sheets.add(ParsingUtilities.mapper.readTree("{name: \"file-source#Test Sheet 0\", fileNameAndSheetIndex: \"file-source#0\", rows: 31, selected: true}"));
-        whenGetArrayOption("sheets", options, sheets);
+        options.set("sheets", sheets);
         
-        whenGetIntegerOption("ignoreLines", options, 0);
-        whenGetIntegerOption("headerLines", options, 1);
-        whenGetIntegerOption("skipDataLines", options, 0);
-        whenGetIntegerOption("limit", options, 5);
-        whenGetBooleanOption("storeBlankCellsAsNulls",options,true);
+        options.put("ignoreLines", 0);
+        options.put("headerLines", 1);
+        options.put("skipDataLines", 0);
+        options.put("limit", 5);
+        options.put("storeBlankCellsAsNulls", true);
         
         InputStream stream = this.getClass().getClassLoader().getResourceAsStream("importers/films.ods");
         GridState grid = parseOneFile(SUT, stream);

@@ -51,7 +51,7 @@ import org.openrefine.util.ParsingUtilities;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
-public class FixedWidthImporter extends LineBasedImporter {
+public class FixedWidthImporter extends LineBasedImporterBase {
 
     public FixedWidthImporter(DatamodelRunner datamodelRunner) {
         super(datamodelRunner);

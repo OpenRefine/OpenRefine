@@ -246,14 +246,14 @@ public class RefineTest extends PowerMockTestCase {
             String sep, int limit, int skip, int ignoreLines,
             int headerLines, boolean guessValueType, boolean ignoreQuotes) {
             
-            whenGetStringOption("separator", options, sep);
-            whenGetIntegerOption("limit", options, limit);
-            whenGetIntegerOption("skipDataLines", options, skip);
-            whenGetIntegerOption("ignoreLines", options, ignoreLines);
-            whenGetIntegerOption("headerLines", options, headerLines);
-            whenGetBooleanOption("guessCellValueTypes", options, guessValueType);
-            whenGetBooleanOption("processQuotes", options, !ignoreQuotes);
-            whenGetBooleanOption("storeBlankCellsAsNulls", options, true);
+            options.put("separator", sep);
+            options.put("limit", limit);
+            options.put("skipDataLines", skip);
+            options.put("ignoreLines", ignoreLines);
+            options.put("headerLines", headerLines);
+            options.put("guessCellValueTypes", guessValueType);
+            options.put("processQuotes", !ignoreQuotes);
+            options.put("storeBlankCellsAsNulls", true);
     }
     
     /**
@@ -306,57 +306,6 @@ public class RefineTest extends PowerMockTestCase {
         Assert.assertNotNull(model);
         Assert.assertEquals(model.getColumns().size(), numCols);
         Assert.assertEquals(project.getHistory().getInitialGridState().rowCount(), numRows);
-    }
-
-    /**
-     * Check that a project was created with the appropriate number of columns, rows, and records.
-     * 
-     * @param project project to check
-     * @param numCols expected column count
-     * @param numRows expected row count
-     * @param numRows expected record count
-     */
-    public static void assertProjectCreated(Project project, int numCols, int numRows, int numRecords) {
-    	throw new IllegalStateException("records mode not implemented");
-    	/*
-        assertProjectCreated(project,numCols,numRows);
-        Assert.assertNotNull(project.recordModel);
-        Assert.assertEquals(project.recordModel.getRecordCount(),numRecords);
-        */
-    }
-
-    //----helpers----
-    
-    
-    static public void whenGetBooleanOption(String name, ObjectNode options, Boolean def){
-        when(options.has(name)).thenReturn(true);
-        when(options.get(name)).thenReturn(def ? BooleanNode.TRUE : BooleanNode.FALSE);
-    }
-    
-    static public void whenGetIntegerOption(String name, ObjectNode options, int def){
-        when(options.has(name)).thenReturn(true);
-        when(options.get(name)).thenReturn(new IntNode(def));
-    }
-    
-    static public void whenGetStringOption(String name, ObjectNode options, String def){
-        when(options.has(name)).thenReturn(true);
-        when(options.get(name)).thenReturn(new TextNode(def));
-    }
-    
-    static public void whenGetObjectOption(String name, ObjectNode options, ObjectNode def){
-        when(options.has(name)).thenReturn(true);
-        when(options.get(name)).thenReturn(def);
-    }
-    
-    static public void whenGetArrayOption(String name, ObjectNode options, ArrayNode def){
-        when(options.has(name)).thenReturn(true);
-        when(options.get(name)).thenReturn(def);
-    }
-    
-    // Works for both int, String, and JSON arrays
-    static public void verifyGetArrayOption(String name, ObjectNode options){
-        verify(options, times(1)).has(name);
-        verify(options, times(1)).get(name);
     }
 
     /**

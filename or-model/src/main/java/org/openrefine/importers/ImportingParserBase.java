@@ -142,7 +142,7 @@ abstract public class ImportingParserBase implements ImportingParser {
         pushImportingOptions(metadata, fileSource, archiveFileName, optionsCopy);
        
     	if (this instanceof HDFSImporter) {
-    		return ((HDFSImporter)this).parseOneFile(metadata, job, fileSource, fileRecord.getDerivedSparkURI(job.getRawDataDir()), limit, options);
+    		return ((HDFSImporter)this).parseOneFile(metadata, job, fileSource, archiveFileName, fileRecord.getDerivedSparkURI(job.getRawDataDir()), limit, options);
     	} else {
     		final File file = fileRecord.getFile(job.getRawDataDir());
     		try {

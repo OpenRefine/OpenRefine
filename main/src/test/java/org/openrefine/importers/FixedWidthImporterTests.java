@@ -33,7 +33,6 @@ import java.util.List;
 
 import org.openrefine.model.GridState;
 import org.openrefine.model.IndexedRow;
-import org.openrefine.model.SparkDatamodelRunner;
 import org.openrefine.util.JSONUtilities;
 import org.openrefine.util.ParsingUtilities;
 import org.openrefine.util.TestUtils;
@@ -75,19 +74,19 @@ public class FixedWidthImporterTests extends ImporterTest {
         JSONUtilities.append(columnWidths, 6);
         JSONUtilities.append(columnWidths, 9);
         JSONUtilities.append(columnWidths, 5);
-        whenGetArrayOption("columnWidths", options, columnWidths);
-
+        options.set("columnWidths", columnWidths);
+ 
         ArrayNode columnNames = ParsingUtilities.mapper.createArrayNode();
         columnNames.add("Col 1");
         columnNames.add("Col 2"); 
         columnNames.add("Col 3");
-        whenGetArrayOption("columnNames", options, columnNames);
+        options.set("columnNames", columnNames);
 
-        whenGetIntegerOption("ignoreLines", options, 0);
-        whenGetIntegerOption("headerLines", options, 0);
-        whenGetIntegerOption("skipDataLines", options, 0);
-        whenGetIntegerOption("limit", options, -1);
-        whenGetBooleanOption("storeBlankCellsAsNulls",options,true);
+        options.put("ignoreLines", 0);
+        options.put("headerLines", 0);
+        options.put("skipDataLines", 0);
+        options.put("limit", -1);
+        options.put("storeBlankCellsAsNulls", true);
         
         GridState result = parseOneFile(SUT, testFile.getAbsolutePath());
         
@@ -113,13 +112,13 @@ public class FixedWidthImporterTests extends ImporterTest {
         JSONUtilities.append(columnWidths, 6);
         JSONUtilities.append(columnWidths, 9);
         JSONUtilities.append(columnWidths, 5);
-        whenGetArrayOption("columnWidths", options, columnWidths);
+        options.set("columnWidths", columnWidths);
 
-        whenGetIntegerOption("ignoreLines", options, 0);
-        whenGetIntegerOption("headerLines", options, 0);
-        whenGetIntegerOption("skipDataLines", options, 0);
-        whenGetIntegerOption("limit", options, -1);
-        whenGetBooleanOption("storeBlankCellsAsNulls",options,true);
+        options.put("ignoreLines", 0);
+        options.put("headerLines", 0);
+        options.put("skipDataLines", 0);
+        options.put("limit", -1);
+        options.put("storeBlankCellsAsNulls", true);
         
         GridState result = parseOneFile(SUT, testFile.getAbsolutePath());
         
@@ -145,13 +144,13 @@ public class FixedWidthImporterTests extends ImporterTest {
         JSONUtilities.append(columnWidths, 6);
         JSONUtilities.append(columnWidths, 9);
         JSONUtilities.append(columnWidths, 5);
-        whenGetArrayOption("columnWidths", options, columnWidths);
+        options.set("columnWidths", columnWidths);
 
-        whenGetIntegerOption("ignoreLines", options, 0);
-        whenGetIntegerOption("headerLines", options, 1);
-        whenGetIntegerOption("skipDataLines", options, 0);
-        whenGetIntegerOption("limit", options, -1);
-        whenGetBooleanOption("storeBlankCellsAsNulls",options,true);
+        options.put("ignoreLines", 0);
+        options.put("headerLines", 1);
+        options.put("skipDataLines", 0);
+        options.put("limit", -1);
+        options.put("storeBlankCellsAsNulls", true);
         
         GridState result = parseOneFile(SUT, testFile.getAbsolutePath());
         

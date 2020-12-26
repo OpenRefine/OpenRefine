@@ -12,7 +12,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 
 public class LineBasedImporterTests extends ImporterTest {
 	
-	LineBasedImporter SUT;
+	LineBasedImporterBase SUT;
 
 	@BeforeMethod
 	public void setUpImporter() {

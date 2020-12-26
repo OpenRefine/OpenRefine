@@ -50,6 +50,7 @@ import org.openrefine.importing.ImportingJob;
 import org.openrefine.importing.ImportingJob.RetrievalRecord;
 import org.openrefine.importing.ImportingParser;
 import org.openrefine.model.GridState;
+import org.openrefine.util.ParsingUtilities;
 import org.openrefine.util.TestUtils;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.AfterSuite;
@@ -88,7 +89,7 @@ public abstract class ImporterTest extends RefineTest {
         when(job.getRetrievalRecord()).thenReturn(new RetrievalRecord());
         when(job.getRawDataDir()).thenReturn(importerTestDir);
         
-        options = Mockito.mock(ObjectNode.class);
+        options = ParsingUtilities.mapper.createObjectNode();
     }
     
     @AfterMethod
@@ -140,6 +141,7 @@ public abstract class ImporterTest extends RefineTest {
             metadata,
             job,
             "file-source",
+            "archive-file-name",
             sparkURI,
             -1,
             options
@@ -197,64 +199,4 @@ public abstract class ImporterTest extends RefineTest {
             inputStream.close();
         }
     }
-    
-    /*
-    
-    protected void parseOneFile(TreeImportingParserBase parser, InputStream inputStream, ObjectNode options) {
-        parseOneInputStreamAsReader(parser, inputStream, options);
-    }
-    
-    protected void parseOneInputStream(
-            TreeImportingParserBase parser, InputStream inputStream, ObjectNode options) {
-        ImportColumnGroup rootColumnGroup = new ImportColumnGroup();
-        List<Exception> exceptions = new ArrayList<Exception>();
-        
-        parser.parseOneFile(
-            metadata,
-            job,
-            "file-source",
-            inputStream,
-            rootColumnGroup,
-            -1,
-            options
-        );
-        postProcessProject(project, rootColumnGroup, exceptions);
-    }
-
-    protected void parseOneInputStreamAsReader(
-            TreeImportingParserBase parser, InputStream inputStream, ObjectNode options) {
-        ImportColumnGroup rootColumnGroup = new ImportColumnGroup();
-        List<Exception> exceptions = new ArrayList<Exception>();
-        
-        Reader reader = new InputStreamReader(inputStream);
-        parser.parseOneFile(
-            project,
-            metadata,
-            job,
-            "file-source",
-            reader,
-            rootColumnGroup,
-            -1,
-            options,
-            exceptions
-        );
-        postProcessProject(project, rootColumnGroup, exceptions);
-        
-        try {
-            reader.close();
-        } catch (IOException e) {
-            //ignore errors on close
-        }
-    }
-    
-    protected void postProcessProject(
-        Project project, ImportColumnGroup rootColumnGroup, List<Exception> exceptions) {
-        
-        XmlImportUtilities.createColumnsFromImport(project, rootColumnGroup);
-        
-        for (Exception e : exceptions) {
-            e.printStackTrace();
-        }
-    }
-    */
 }
