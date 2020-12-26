@@ -21,11 +21,12 @@ cd ./main/tests/cypress
 yarn install
 ```
 
-Cypress always assumes that OpenRefine is up and running on the local machine, the tests themselves do not launch OpenRefine, nor restarts it.
+Cypress tests can be started in two modes:
 
-Once OpenRefine is running, Cypress tests can be started in two modes
 
 ### Development / Debugging mode
+
+Dev mode assumes that OpenRefine is up and running on the local machine, the tests themselves do not launch OpenRefine, nor restarts it.
 
 Run :
 
@@ -34,12 +35,15 @@ yarn --cwd ./main/tests/cypress run cypress open
 ```
 
 It will open the Cypress test runner, where you can choose, replay, visualize tests.
-This is the recommended way to run tests when adding or fixing tests
+This is the recommended way to run tests when adding or fixing tests.  
+The runners assumes
 
 ### Command-line mode
 
+Command line mode will starts OpenRefine with a temporary folder for data
+
 ```shell
-yarn --cwd ./main/tests/cypress run cypress run
+./refine ui_test chrome
 ```
 
 It will run all tests in the command-line, without windows, displaying results in the standard output
