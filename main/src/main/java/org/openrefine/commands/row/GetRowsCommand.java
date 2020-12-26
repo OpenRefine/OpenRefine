@@ -50,6 +50,7 @@ import com.fasterxml.jackson.annotation.JsonUnwrapped;
 
 import org.openrefine.browsing.Engine;
 import org.openrefine.browsing.Engine.Mode;
+import org.openrefine.browsing.EngineConfig;
 import org.openrefine.commands.Command;
 import org.openrefine.importing.ImportingJob;
 import org.openrefine.importing.ImportingManager;
@@ -200,6 +201,7 @@ public class GetRowsCommand extends Command {
             long totalCount;
             List<WrappedRow> wrappedRows;
 
+            EngineConfig engineConfig = engine.getConfig();
             if (engine.getMode() == Mode.RowBased) {
                 totalCount = entireGrid.rowCount();
                 RowFilter combinedRowFilters = engine.combinedRowFilters();
@@ -208,14 +210,19 @@ public class GetRowsCommand extends Command {
                 wrappedRows = rows.stream()
                         .map(tuple -> new WrappedRow(tuple.getRow(), tuple.getIndex(), null))
                         .collect(Collectors.toList());
-                if (engine.getConfig().getAggregationLimit() == null) {
-                    filtered = entireGrid.countMatchingRows(combinedRowFilters);
+                if (engineConfig.isNeutral()) {
+                    filtered = totalCount;
                     processed = totalCount;
                 } else {
-                    ApproxCount approxCount = entireGrid.countMatchingRowsApprox(combinedRowFilters,
-                            engine.getConfig().getAggregationLimit());
-                    filtered = approxCount.getMatched();
-                    processed = approxCount.getProcessed();
+                    if (engineConfig.getAggregationLimit() == null) {
+                        filtered = entireGrid.countMatchingRows(combinedRowFilters);
+                        processed = totalCount;
+                    } else {
+                        ApproxCount approxCount = entireGrid.countMatchingRowsApprox(combinedRowFilters,
+                                engineConfig.getAggregationLimit());
+                        filtered = approxCount.getMatched();
+                        processed = approxCount.getProcessed();
+                    }
                 }
             } else {
                 totalCount = entireGrid.recordCount();
@@ -226,14 +233,19 @@ public class GetRowsCommand extends Command {
                         .flatMap(record -> recordToWrappedRows(record).stream())
                         .collect(Collectors.toList());
 
-                if (engine.getConfig().getAggregationLimit() == null) {
-                    filtered = entireGrid.countMatchingRecords(combinedRecordFilters);
+                if (engineConfig.isNeutral()) {
+                    filtered = totalCount;
                     processed = totalCount;
                 } else {
-                    ApproxCount approxCount = entireGrid.countMatchingRecordsApprox(combinedRecordFilters,
-                            engine.getConfig().getAggregationLimit());
-                    filtered = approxCount.getMatched();
-                    processed = approxCount.getProcessed();
+                    if (engineConfig.getAggregationLimit() == null) {
+                        filtered = entireGrid.countMatchingRecords(combinedRecordFilters);
+                        processed = totalCount;
+                    } else {
+                        ApproxCount approxCount = entireGrid.countMatchingRecordsApprox(combinedRecordFilters,
+                                engineConfig.getAggregationLimit());
+                        filtered = approxCount.getMatched();
+                        processed = approxCount.getProcessed();
+                    }
                 }
             }
 

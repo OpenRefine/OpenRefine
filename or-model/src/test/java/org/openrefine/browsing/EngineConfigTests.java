@@ -171,4 +171,12 @@ public class EngineConfigTests {
                 new EngineConfig(Arrays.asList(configB, configC), Mode.RecordBased)
                         .getColumnDependencies());
     }
+
+    @Test
+    public void testIsNeutral() {
+        EngineConfig ec = EngineConfig.reconstruct(noFacetProvided);
+        Assert.assertTrue(ec.isNeutral());
+        ec = EngineConfig.reconstruct(engineConfigJson);
+        Assert.assertFalse(ec.isNeutral());
+    }
 }

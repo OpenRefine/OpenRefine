@@ -133,6 +133,17 @@ public class EngineConfig {
         return dependencies;
     }
 
+    /**
+     * Returns true when this engine configuration does not filter out any row, which is when all the applied facets are
+     * in the "reset" position.
+     * 
+     * @return
+     */
+    @JsonIgnore
+    public boolean isNeutral() {
+        return _facets.stream().allMatch(f -> f.isNeutral());
+    }
+
     public static EngineConfig reconstruct(String json) {
         if (json == null) {
             return new EngineConfig(Collections.emptyList(), Mode.RowBased);
