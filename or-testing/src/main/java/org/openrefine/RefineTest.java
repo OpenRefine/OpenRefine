@@ -33,10 +33,6 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package org.openrefine;
 
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
 import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
@@ -45,11 +41,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.fasterxml.jackson.databind.node.BooleanNode;
-import com.fasterxml.jackson.databind.node.IntNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.fasterxml.jackson.databind.node.TextNode;
 import org.apache.commons.io.FileUtils;
 import org.powermock.modules.testng.PowerMockTestCase;
 import org.slf4j.Logger;
@@ -236,14 +228,14 @@ public class RefineTest extends PowerMockTestCase {
             String sep, int limit, int skip, int ignoreLines,
             int headerLines, boolean guessValueType, boolean ignoreQuotes) {
 
-        whenGetStringOption("separator", options, sep);
-        whenGetIntegerOption("limit", options, limit);
-        whenGetIntegerOption("skipDataLines", options, skip);
-        whenGetIntegerOption("ignoreLines", options, ignoreLines);
-        whenGetIntegerOption("headerLines", options, headerLines);
-        whenGetBooleanOption("guessCellValueTypes", options, guessValueType);
-        whenGetBooleanOption("processQuotes", options, !ignoreQuotes);
-        whenGetBooleanOption("storeBlankCellsAsNulls", options, true);
+        options.put("separator", sep);
+        options.put("limit", limit);
+        options.put("skipDataLines", skip);
+        options.put("ignoreLines", ignoreLines);
+        options.put("headerLines", headerLines);
+        options.put("guessCellValueTypes", guessValueType);
+        options.put("processQuotes", !ignoreQuotes);
+        options.put("storeBlankCellsAsNulls", true);
     }
 
     /**
@@ -301,55 +293,36 @@ public class RefineTest extends PowerMockTestCase {
     }
 
     /**
-     * Check that a project was created with the appropriate number of columns, rows, and records.
-     * 
-     * @param project
-     *            project to check
-     * @param numCols
-     *            expected column count
-     * @param numRows
-     *            expected row count
-     * @param numRows
-     *            expected record count
+     * Parse and evaluate a GREL expression and compare the result to the expect value
+     *
+     * @param bindings
+     * @param test
+     * @throws ParsingException
      */
-    public static void assertProjectCreated(Project project, int numCols, int numRows, int numRecords) {
-        throw new IllegalStateException("records mode not implemented");
-        /*
-         * assertProjectCreated(project,numCols,numRows); Assert.assertNotNull(project.recordModel);
-         * Assert.assertEquals(project.recordModel.getRecordCount(),numRecords);
-         */
+    protected void parseEval(Properties bindings, String[] test)
+            throws ParsingException {
+        Evaluable eval = MetaParser.parse("grel:" + test[0]);
+        Object result = eval.evaluate(bindings);
+        Assert.assertEquals(result.toString(), test[1], "Wrong result for expression: " + test[0]);
     }
 
-    // ----helpers----
-
-    static public void whenGetBooleanOption(String name, ObjectNode options, Boolean def){
-        when(options.has(name)).thenReturn(true);
-        when(options.get(name)).thenReturn(def ? BooleanNode.TRUE : BooleanNode.FALSE);
+    /**
+     * Parse and evaluate a GREL expression and compare the result an expected type using instanceof
+     *
+     * @param bindings
+     * @param test
+     * @throws ParsingException
+     */
+    protected void parseEvalType(Properties bindings, String test, @SuppressWarnings("rawtypes") Class clazz)
+            throws ParsingException {
+        Evaluable eval = MetaParser.parse("grel:" + test);
+        Object result = eval.evaluate(bindings);
+        Assert.assertTrue(clazz.isInstance(result), "Wrong result type for expression: " + test);
     }
 
-    static public void whenGetIntegerOption(String name, ObjectNode options, int def){
-        when(options.has(name)).thenReturn(true);
-        when(options.get(name)).thenReturn(new IntNode(def));
+    @AfterMethod
+    public void TearDown() throws Exception {
+        bindings = null;
     }
 
-    static public void whenGetStringOption(String name, ObjectNode options, String def){
-        when(options.has(name)).thenReturn(true);
-        when(options.get(name)).thenReturn(new TextNode(def));
-    }
-
-    static public void whenGetObjectOption(String name, ObjectNode options, ObjectNode def){
-        when(options.has(name)).thenReturn(true);
-        when(options.get(name)).thenReturn(def);
-    }
-
-    static public void whenGetArrayOption(String name, ObjectNode options, ArrayNode def){
-        when(options.has(name)).thenReturn(true);
-        when(options.get(name)).thenReturn(def);
-    }
-
-    // Works for both int, String, and JSON arrays
-    static public void verifyGetArrayOption(String name, ObjectNode options) {
-        verify(options, times(1)).has(name);
-        verify(options, times(1)).get(name);
-    }
 }

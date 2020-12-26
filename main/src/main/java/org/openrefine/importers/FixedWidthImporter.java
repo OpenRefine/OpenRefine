@@ -52,7 +52,7 @@ import org.openrefine.model.RowMapper;
 import org.openrefine.util.JSONUtilities;
 import org.openrefine.util.ParsingUtilities;
 
-public class FixedWidthImporter extends LineBasedImporter {
+public class FixedWidthImporter extends LineBasedImporterBase {
 
     public FixedWidthImporter(DatamodelRunner datamodelRunner) {
         super(datamodelRunner);

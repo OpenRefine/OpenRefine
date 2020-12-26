@@ -29,6 +29,8 @@ public abstract class HDFSImporter extends ImportingParserBase {
      *            the importing job where this import is being done
      * @param fileSource
      *            the original path or source of the file (could be "clipboard" or a URL as well)
+     * @param archiveFileName
+     *            the original name of the archive the file was extracted from
      * @param uri
      *            the HDFS URI where to read the data from
      * @param limit
@@ -37,7 +39,7 @@ public abstract class HDFSImporter extends ImportingParserBase {
      *            any options passed to the importer as a JSON payload
      * @return a parsed GridState
      */
-    public abstract GridState parseOneFile(ProjectMetadata metadata, ImportingJob job, String fileSource, String uri,
-            long limit, ObjectNode options) throws Exception;
+    public abstract GridState parseOneFile(ProjectMetadata metadata, ImportingJob job, String fileSource,
+            String archiveFileName, String uri, long limit, ObjectNode options) throws Exception;
 
 }

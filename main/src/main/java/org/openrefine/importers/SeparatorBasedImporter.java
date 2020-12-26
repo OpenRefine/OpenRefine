@@ -46,8 +46,10 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import au.com.bytecode.opencsv.CSVParser;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -57,11 +59,17 @@ import org.openrefine.ProjectMetadata;
 import org.openrefine.importers.TabularParserHelper.TableDataReader;
 import org.openrefine.importing.ImportingFileRecord;
 import org.openrefine.importing.ImportingJob;
+import org.openrefine.model.Cell;
 import org.openrefine.model.DatamodelRunner;
 import org.openrefine.model.GridState;
+import org.openrefine.model.IndexedRow;
+import org.openrefine.model.Row;
+import org.openrefine.model.RowFilter;
+import org.openrefine.model.RowMapper;
+import org.openrefine.sorting.SortingConfig;
 import org.openrefine.util.JSONUtilities;
 
-public class SeparatorBasedImporter extends ReaderImporter {
+public class SeparatorBasedImporter extends LineBasedImporterBase {
 
     private final TabularParserHelper tabularParserHelper;
 
@@ -87,25 +95,59 @@ public class SeparatorBasedImporter extends ReaderImporter {
     }
 
     @Override
-    public GridState parseOneFile(ProjectMetadata metadata, ImportingJob job, String fileSource, Reader reader,
-            long limit, ObjectNode options) throws Exception {
-        TableDataReader dataReader = createTableDataReader(metadata, job, reader, options);
-        return tabularParserHelper.parseOneFile(metadata, job, fileSource, dataReader, limit, options);
+    public GridState parseOneFile(ProjectMetadata metadata, ImportingJob job, String fileSource, String archiveFileName, String sparkURI,
+            long limit, ObjectNode options)
+            throws Exception {
+        boolean processQuotes = JSONUtilities.getBoolean(options, "processQuotes", true);
+
+        // If we use quotes, then a line of the original file does not necessarily correspond
+        // to a row in the grid, so we unfortunately cannot use the logic from LineBasedImporterBase.
+        // We resort to loading the whole file in memory.
+        if (processQuotes) {
+            GridState lines = runner.loadTextFile(sparkURI);
+            TableDataReader dataReader = createTableDataReader(metadata, job, lines, options);
+            return tabularParserHelper.parseOneFile(metadata, job, fileSource, archiveFileName, dataReader, limit, options);
+        } else {
+            // otherwise, go for the efficient route, using line-based parsing
+            return super.parseOneFile(metadata, job, fileSource, archiveFileName, sparkURI, limit, options);
+        }
+    }
+
+    // Only used when no escape character is set
+    @Override
+    protected RowMapper getRowMapper(ObjectNode options) {
+        return new RowParser(options);
+    }
+
+    protected static CSVParser getCSVParser(ObjectNode options) {
+        return (new RowParser(options)).getCSVParser();
+    }
+
+    protected static CSVParser getCSVParser(String sep, boolean processQuotes, boolean strictQuotes, String quoteCharacter) {
+        if (sep == null || "".equals(sep)) {
+            sep = "\\t";
+        }
+        sep = StringEscapeUtils.unescapeJava(sep);
+
+        Character quote = CSVParser.DEFAULT_QUOTE_CHARACTER;
+        if (quoteCharacter != null && quoteCharacter.trim().length() == 1) {
+            quote = quoteCharacter.trim().charAt(0);
+        }
+
+        return new CSVParser(
+                sep,
+                quote,
+                (char) 0, // we don't want escape processing
+                strictQuotes,
+                CSVParser.DEFAULT_IGNORE_LEADING_WHITESPACE,
+                !processQuotes);
     }
 
     public TableDataReader createTableDataReader(
             ProjectMetadata metadata,
             ImportingJob job,
-            Reader reader,
+            GridState grid,
             ObjectNode options) {
-        String sep = JSONUtilities.getString(options, "separator", "\\t");
-        if (sep == null || "".equals(sep)) {
-            sep = "\\t";
-        }
-        sep = StringEscapeUtils.unescapeJava(sep);
-        boolean processQuotes = JSONUtilities.getBoolean(options, "processQuotes", true);
-        boolean strictQuotes = JSONUtilities.getBoolean(options, "strictQuotes", false);
-
         List<Object> retrievedColumnNames = null;
         if (options.has("columnNames")) {
             String[] strings = JSONUtilities.getStringArray(options, "columnNames");
@@ -128,21 +170,9 @@ public class SeparatorBasedImporter extends ReaderImporter {
 
         final List<Object> columnNames = retrievedColumnNames;
 
-        Character quote = CSVParser.DEFAULT_QUOTE_CHARACTER;
-        String quoteCharacter = JSONUtilities.getString(options, "quoteCharacter", null);
-        if (quoteCharacter != null && quoteCharacter.trim().length() == 1) {
-            quote = quoteCharacter.trim().charAt(0);
-        }
+        final CSVParser parser = getCSVParser(options);
 
-        final CSVParser parser = new CSVParser(
-                sep,
-                quote,
-                (char) 0, // we don't want escape processing
-                strictQuotes,
-                CSVParser.DEFAULT_IGNORE_LEADING_WHITESPACE,
-                !processQuotes);
-
-        final LineNumberReader lnReader = new LineNumberReader(reader);
+        Iterator<IndexedRow> lines = grid.iterateRows(RowFilter.ANY_ROW, SortingConfig.NO_SORTING).iterator();
 
         TableDataReader dataReader = new TableDataReader() {
 
@@ -154,11 +184,11 @@ public class SeparatorBasedImporter extends ReaderImporter {
                     usedColumnNames = true;
                     return columnNames;
                 } else {
-                    String line = lnReader.readLine();
-                    if (line == null) {
+                    if (!lines.hasNext()) {
                         return null;
                     } else {
-                        return getCells(line, parser, lnReader);
+                        String line = (String) lines.next().getRow().getCellValue(0);
+                        return getCells(line, parser, lines);
                     }
                 }
             }
@@ -167,14 +197,14 @@ public class SeparatorBasedImporter extends ReaderImporter {
         return dataReader;
     }
 
-    static protected ArrayList<Object> getCells(String line, CSVParser parser, LineNumberReader lnReader)
+    static protected ArrayList<Object> getCells(String line, CSVParser parser, Iterator<IndexedRow> lines)
             throws IOException {
 
         ArrayList<Object> cells = new ArrayList<Object>();
         String[] tokens = parser.parseLineMulti(line);
         cells.addAll(Arrays.asList(tokens));
-        while (parser.isPending()) {
-            tokens = parser.parseLineMulti(lnReader.readLine());
+        while (parser.isPending() && lines.hasNext()) {
+            tokens = parser.parseLineMulti((String) lines.next().getRow().getCellValue(0));
             cells.addAll(Arrays.asList(tokens));
         }
         return cells;
@@ -211,6 +241,50 @@ public class SeparatorBasedImporter extends ReaderImporter {
 
     static public Separator guessSeparator(File file, String encoding) {
         return guessSeparator(file, encoding, false); // quotes off for backward compatibility
+    }
+
+    /**
+     * Row mapper used to split lines when parsing without quote handling.
+     */
+    static protected class RowParser implements RowMapper {
+
+        private static final long serialVersionUID = -3376815677470571001L;
+
+        private final String _sep;
+        private final boolean _processQuotes;
+        private final boolean _strictQuotes;
+        private final String _quoteCharacter;
+
+        protected RowParser(ObjectNode options) {
+            _sep = JSONUtilities.getString(options, "separator", "\\t");
+            _processQuotes = JSONUtilities.getBoolean(options, "processQuotes", true);
+            _strictQuotes = JSONUtilities.getBoolean(options, "strictQuotes", false);
+            _quoteCharacter = JSONUtilities.getString(options, "quoteCharacter", null);
+        }
+
+        // transient cache to ensure serializability
+        private transient CSVParser _csvParser = null;
+
+        protected CSVParser getCSVParser() {
+            if (_csvParser != null) {
+                return _csvParser;
+            }
+            _csvParser = SeparatorBasedImporter.getCSVParser(_sep, _processQuotes, _strictQuotes, _quoteCharacter);
+            return _csvParser;
+        }
+
+        @Override
+        public Row call(long rowId, Row row) {
+            CSVParser parser = getCSVParser();
+            String[] cellStrings;
+            try {
+                cellStrings = parser.parseLine((String) row.getCellValue(0));
+            } catch (IOException e) {
+                // should not happen: IOException can only be thrown when quoting is enabled
+                throw new IllegalStateException(e);
+            }
+            return new Row(Arrays.asList(cellStrings).stream().map(s -> new Cell(s, null)).collect(Collectors.toList()));
+        }
     }
 
     // TODO: Move this to the CSV project?
@@ -304,4 +378,5 @@ public class SeparatorBasedImporter extends ReaderImporter {
         }
         return null;
     }
+
 }

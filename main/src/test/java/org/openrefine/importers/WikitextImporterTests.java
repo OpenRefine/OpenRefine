@@ -334,14 +334,14 @@ public class WikitextImporterTests extends ImporterTest {
             int limit, int headerLines, boolean blankSpanningCells,
             boolean guessValueType, String wikiUrl) {
 
-        whenGetIntegerOption("limit", options, limit);
-        whenGetIntegerOption("headerLines", options, headerLines);
-        whenGetBooleanOption("guessCellValueTypes", options, guessValueType);
-        whenGetBooleanOption("blankSpanningCells", options, blankSpanningCells);
-        whenGetBooleanOption("storeBlankCellsAsNulls", options, true);
-        whenGetBooleanOption("parseReferences", options, true);
-        whenGetBooleanOption("includeRawTemplates", options, true);
-        whenGetStringOption("wikiUrl", options, wikiUrl);
-        whenGetStringOption("reconService", options, "https://wdreconcile.toolforge.org/en/api");
+        options.put("limit", limit);
+        options.put("headerLines", headerLines);
+        options.put("guessCellValueTypes", guessValueType);
+        options.put("blankSpanningCells", blankSpanningCells);
+        options.put("storeBlankCellsAsNulls", true);
+        options.put("parseReferences", true);
+        options.put("includeRawTemplates", true);
+        options.put("wikiUrl", wikiUrl);
+        options.put("reconService", "https://wdreconcile.toolforge.org/en/api");
     }
 }

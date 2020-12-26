@@ -13,7 +13,7 @@ import org.openrefine.util.ParsingUtilities;
 
 public class LineBasedImporterTests extends ImporterTest {
 
-    LineBasedImporter SUT;
+    LineBasedImporterBase SUT;
 
     @BeforeMethod
     public void setUpImporter() {
