@@ -43,10 +43,17 @@ SummaryBar.prototype._initializeUI = function() {
 SummaryBar.prototype.updateResultCount = function() {
   var summaryText;
   var units = theProject.rowModel.mode == "row-based" ? $.i18n('core-views/rows') : $.i18n('core-views/records');
-  if (theProject.rowModel.filtered == theProject.rowModel.total) {
-    summaryText = (theProject.rowModel.total) + ' ' + units;
+  var rowModel = theProject.rowModel;
+  if (rowModel.filtered == rowModel.total) {
+    summaryText = $.i18n(theProject.rowModel.mode == "row-based" ? 'core-views/total-rows' : 'core-views/total-records', rowModel.total);
+  } else if (rowModel.processed == rowModel.total) {
+    summaryText = $.i18n(theProject.rowModel.mode == "row-based" ? 'core-views/total-matching-rows' : 'core-views/total-matching-records', rowModel.filtered, rowModel.total);
   } else {
-    summaryText = (theProject.rowModel.filtered) + ' matching ' + units + ' <span id="summary-total">(' + (theProject.rowModel.total) + ' total)</span>';
+    var percentage = 100;
+    if (rowModel.processed > 0) {
+        percentage = Math.round(1000 * rowModel.filtered / rowModel.processed) / 10;
+    }
+    summaryText = $.i18n(theProject.rowModel.mode == "row-based" ? 'core-views/approx-matching-rows' : 'core-views/approx-matching-records', percentage, rowModel.total);
   }
 
   $('<span>').html(summaryText).appendTo(this._div.empty());
