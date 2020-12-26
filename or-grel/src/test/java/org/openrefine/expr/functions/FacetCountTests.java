@@ -27,12 +27,53 @@
 
 package org.openrefine.expr.functions;
 
+import java.io.Serializable;
+import java.util.Properties;
+
+import org.testng.Assert;
+import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
+import org.openrefine.expr.EvalError;
+import org.openrefine.expr.MetaParser;
+import org.openrefine.expr.functions.FacetCount;
+import org.openrefine.grel.FunctionTestBase;
+import org.openrefine.grel.Parser;
+import org.openrefine.model.Project;
 import org.openrefine.util.ParsingUtilities;
 import org.openrefine.util.TestUtils;
 
-public class FacetCountTests {
+public class FacetCountTests extends FunctionTestBase {
+
+    Project project = null;
+
+    @BeforeMethod
+    public void setUpProject() {
+        MetaParser.registerLanguageParser("grel", "General Refine Expression Language", Parser.grelParser, "value");
+        project = createProject(new String[] { "Column A" }, new Serializable[][] {
+                { "a" }, { "a" }, { "a" }, { 1 }, { 1 }, { true }
+        });
+        bindings = new Properties();
+        bindings.put("project", project);
+    }
+
+    @Test
+    public void testInvalidParams() {
+        Assert.assertTrue(invoke("facetCount") instanceof EvalError);
+        Assert.assertTrue(invoke("facetCount", "one", "two", "three") instanceof EvalError);
+        Assert.assertTrue(invoke("facetCount", "one", "bad(", "Column A") instanceof EvalError);
+    }
+
+    @Test
+    public void testFacetCountString() {
+        Assert.assertEquals(invoke("facetCount", "a", "value", "Column A"), Long.valueOf(3));
+    }
+
+    @Test
+    public void testExpressionChange() {
+        Assert.assertEquals(invoke("facetCount", new Integer(1), "value", "Column A"), Long.valueOf(2));
+        Assert.assertEquals(invoke("facetCount", new Integer(2), "value+1", "Column A"), Long.valueOf(2));
+    }
 
     @Test
     public void serializeFacetCount() {

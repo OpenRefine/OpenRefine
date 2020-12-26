@@ -1,0 +1,18 @@
+<div class="dialog-frame wikibase-dialog" style="width: 700px">
+  <div class="dialog-header" bind="dialogHeader"></div>
+  <div class="dialog-body" bind="dialogBody">
+    <p bind="explainSelectWikibase"></p>
+    <p bind="currentSelectedWikibase"></p>
+    <div class="wikibase-list-wrapper">
+      <table class="wikibase-dialog-wikibase-list" bind="wikibaseList">
+        <!-- dynamically generated -->
+      </table>
+    </div>
+  </div>
+  <div class="dialog-footer" bind="dialogFooter">
+    <div class="add-wikibase-buttons">
+      <button class="button" bind="closeButton"></button>
+      <button class="button" bind="addButton"></button>
+    </div>
+  </div>
+</div>

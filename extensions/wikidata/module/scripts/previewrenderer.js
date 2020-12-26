@@ -11,10 +11,10 @@ EditRenderer.maxStatements = 25; // max number of statements per statement group
 // main method: takes a DOM element and a list
 // of edits to render there.
 EditRenderer.renderEdits = function(edits, container) {
-   for(var i = 0; i != edits.length; i++) {
+   for(var i = 0; i < edits.length; i++) {
       EditRenderer._renderItem(edits[i], container);
    }
-}
+};
 
 /**************/
 /*** ITEMS ****/
@@ -57,14 +57,14 @@ EditRenderer._renderItem = function(json, container) {
   // Statements
   if (json.addedStatementGroups && json.addedStatementGroups.length) {
     // $('<div></div>').addClass('wbs-statements-header')
-    //        .text($.i18n('wikidata-schema/statements-header')).appendTo(right);
+    //        .text($.i18n('wikibase-schema/statements-header')).appendTo(right);
     var statementsGroupContainer = $('<div></div>').addClass('wbs-statement-group-container')
             .appendTo(right);
     for(var i = 0; i != json.addedStatementGroups.length; i++) {
        EditRenderer._renderStatementGroup(json.addedStatementGroups[i], statementsGroupContainer);
     }
   }
-}
+};
 
 /**************************
  * NAMES AND DESCRIPTIONS *
@@ -80,18 +80,18 @@ EditRenderer._renderTermsList = function(termList, termType, termsContainer) {
     if(termList.length > this.maxTerms) {
         $('<div></div>').addClass('wbs-namedesc').text('...').appendTo(termsContainer);
     }
-}
+};
 
 EditRenderer._renderTerm = function(termType, json, container) {
   var namedesc = $('<div></div>').addClass('wbs-namedesc').appendTo(container);
   var type_container = $('<div></div>').addClass('wbs-namedesc-type').appendTo(namedesc);
   var type_span = $('<span></span>').appendTo(type_container)
-        .text($.i18n('wikidata-schema/'+termType));
+        .text($.i18n('wikibase-schema/'+termType));
 
   var right = $('<div></div>').addClass('wbs-right').appendTo(namedesc);
   var value_container = $('<div></div>').addClass('wbs-namedesc-value').appendTo(namedesc);
   EditRenderer._renderValue({datavalue:json,datatype:'monolingualtext'}, value_container); 
-}
+};
 
 /********************
  * STATEMENT GROUPS *
@@ -114,7 +114,7 @@ EditRenderer._renderStatementGroup = function(json, container) {
          .addClass('wbs-statement')
          .appendTo(statementContainer);
   }
-}
+};
 
 /**************
  * STATEMENTS *
@@ -165,7 +165,7 @@ EditRenderer._renderStatement = function(json, container) {
       }
   }
   EditRenderer._updateReferencesNumber(referenceContainer);
-}
+};
 
 /*********************************
  * QUALIFIER AND REFERENCE SNAKS *
@@ -180,7 +180,7 @@ EditRenderer._renderSnak = function(json, container) {
   var statementContainer = $('<div></div>').addClass('wbs-statement-container').appendTo(right);
   EditRenderer._renderEntity(json.full_property, inputContainer);
   EditRenderer._renderValue(json, statementContainer);
-}
+};
 
 /**************
  * REFERENCES *
@@ -206,8 +206,8 @@ EditRenderer._updateReferencesNumber = function(container) {
   var childrenCount = container.children().length;
   var statement = container.parents('.wbs-statement');
   var a = statement.find('.wbs-references-toggle a').first();
-  a.html(childrenCount+$.i18n('wikidata-schema/nb-references'));
-}
+  a.html(childrenCount+$.i18n('wikibase-schema/nb-references'));
+};
 
 /*******************
  * VALUE RENDERING *
@@ -218,7 +218,7 @@ EditRenderer.renderedValueCache = {};
 EditRenderer._renderEntity = function(json, container) {
   var html = WarningsRenderer._renderEntity(json);
   $(html).appendTo(container);
-}
+};
 
 EditRenderer._renderValue = function(json, container) {
   var input = $('<span></span>').appendTo(container);
@@ -245,7 +245,7 @@ EditRenderer._renderValue = function(json, container) {
             params.datatype = json.datatype;
         }
         $.get(
-            'https://www.wikidata.org/w/api.php',
+            WikibaseManager.getSelectedWikibaseApi(),
             params,
             function (data) {
                 if('result' in data) {
@@ -257,6 +257,6 @@ EditRenderer._renderValue = function(json, container) {
         );
     }
   }
-}
+};
 
 

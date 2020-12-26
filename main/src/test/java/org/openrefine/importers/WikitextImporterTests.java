@@ -35,9 +35,17 @@ package org.openrefine.importers;
 
 import java.io.Serializable;
 import java.io.StringReader;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
+import org.mockito.Mockito;
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.stubbing.Answer;
+import org.powermock.api.mockito.PowerMockito;
 import org.slf4j.LoggerFactory;
 import org.testng.Assert;
 import org.testng.annotations.AfterMethod;
@@ -49,10 +57,15 @@ import org.openrefine.importers.WikitextImporter;
 import org.openrefine.model.ColumnModel;
 import org.openrefine.model.GridState;
 import org.openrefine.model.Row;
+import org.openrefine.model.recon.Recon;
+import org.openrefine.model.recon.ReconCandidate;
+import org.openrefine.model.recon.ReconJob;
+import org.openrefine.model.recon.StandardReconConfig;
 
 public class WikitextImporterTests extends ImporterTest {
 
     private WikitextImporter importer = null;
+    private Map<String, Recon> mockedRecons = null;
 
     @Override
     @BeforeTest
@@ -65,6 +78,7 @@ public class WikitextImporterTests extends ImporterTest {
     public void setUp() {
         super.setUp();
         importer = new WikitextImporter(runner());
+        mockedRecons = new HashMap<>();
     }
 
     @Override
@@ -129,8 +143,49 @@ public class WikitextImporterTests extends ImporterTest {
         assertGridEquals(parsed, expected);
     }
 
-    @Test(groups = { "broken" })
+    @BeforeMethod
+    public void mockReconCalls() throws Exception {
+        StandardReconConfig cfg = Mockito.spy(new StandardReconConfig(
+                "http://endpoint.com", "http://schemaspace", "http://schemaspace.com", null, true, Collections.emptyList(), 0));
+        PowerMockito.whenNew(StandardReconConfig.class).withAnyArguments().thenReturn(cfg);
+        Answer<List<Recon>> mockedResponse = new Answer<List<Recon>>() {
+
+            @Override
+            public List<Recon> answer(InvocationOnMock invocation) throws Throwable {
+                return fakeReconCall(invocation.getArgument(0));
+            }
+        };
+        PowerMockito.doAnswer(mockedResponse).when(cfg, "batchRecon", Mockito.any(), Mockito.anyLong());
+    }
+
+    private List<Recon> fakeReconCall(List<ReconJob> jobs) {
+        List<Recon> result = new ArrayList<>();
+        for (ReconJob job : jobs) {
+            result.add(mockedRecons.get(job.toString()));
+        }
+        return result;
+    }
+
+    @Test(enabled = false) // disabled due to flakiness on CI
     public void readTableWithLinks() throws Exception {
+        // This mock is used to avoid real network connection during test
+        Recon ecdvt = Mockito.mock(Recon.class);
+        Mockito.when(ecdvt.getBestCandidate()).thenReturn(
+                new ReconCandidate("Q116214", "European Centre for the Development of Vocational Training", new String[] { "Q392918" },
+                        100));
+        mockedRecons.put("{\"query\":\"https://de.wikipedia.org/wiki/Europäisches Zentrum für die Förderung der Berufsbildung\"}", ecdvt);
+        Recon efilwc = Mockito.mock(Recon.class);
+        Mockito.when(efilwc.getBestCandidate()).thenReturn(
+                new ReconCandidate("Q1377549", "European Foundation for the Improvement of Living and Working Conditions",
+                        new String[] { "Q392918" }, 100));
+        mockedRecons.put(
+                "{\"query\":\"https://de.wikipedia.org/wiki/Europäische Stiftung zur Verbesserung der Lebens- und Arbeitsbedingungen\"}",
+                efilwc);
+        Recon emcdda = Mockito.mock(Recon.class);
+        Mockito.when(emcdda.getBestCandidate()).thenReturn(
+                new ReconCandidate("Q1377256", "European Monitoring Centre for Drugs and Drug Addiction", new String[] { "Q392918" }, 100));
+        mockedRecons.put("{\"query\":\"https://de.wikipedia.org/wiki/Europäische Beobachtungsstelle für Drogen und Drogensucht\"}", emcdda);
+
         // Data credits: Wikipedia contributors,
         // https://de.wikipedia.org/w/index.php?title=Agenturen_der_Europäischen_Union&action=edit
         String input = "\n"

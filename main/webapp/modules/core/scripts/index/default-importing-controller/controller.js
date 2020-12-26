@@ -76,7 +76,7 @@ Refine.DefaultImportingController.prototype.startImportJob = function(form, prog
   
   $(form).find('input:text').filter(function() { 
 		return this.value === ""; 
-  }).attr("disabled", "disabled");
+  }).prop("disabled", true);
   
   Refine.wrapCSRF(function(token) {
     $.post(

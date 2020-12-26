@@ -74,7 +74,7 @@ public class PerformWikibaseEditsOperationTest extends OperationTest {
 
     @Test(expectedExceptions = IllegalArgumentException.class)
     public void testConstructor() {
-        new PerformWikibaseEditsOperation(EngineConfig.reconstruct("{}"), "");
+        new PerformWikibaseEditsOperation(EngineConfig.reconstruct("{}"), "", 5);
     }
 
     @Test

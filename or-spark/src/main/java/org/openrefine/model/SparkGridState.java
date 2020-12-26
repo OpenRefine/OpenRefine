@@ -194,6 +194,15 @@ public class SparkGridState implements GridState {
                 .collect(Collectors.toList());
     }
 
+    /**
+     * @todo override this to do the fetching more efficiently: * separate all indices by the partitions they belong to
+     *       * run a job for each partition with non-empty indices * gather all results and return
+     */
+    @Override
+    public List<IndexedRow> getRows(List<Long> rowIndices) {
+        return GridState.super.getRows(rowIndices);
+    }
+
     @Override
     public List<IndexedRow> getRows(RowFilter filter, SortingConfig sortingConfig, long start, int limit) {
         JavaPairRDD<Long, Row> filteredGrid = grid;

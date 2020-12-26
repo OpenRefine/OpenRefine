@@ -36,7 +36,6 @@ package org.openrefine.io;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -49,9 +48,10 @@ import java.util.zip.GZIPOutputStream;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import org.apache.tools.tar.TarEntry;
-import org.apache.tools.tar.TarInputStream;
-import org.apache.tools.tar.TarOutputStream;
+import com.google.common.io.ByteStreams;
+import org.apache.commons.compress.archivers.tar.TarArchiveEntry;
+import org.apache.commons.compress.archivers.tar.TarArchiveInputStream;
+import org.apache.commons.compress.archivers.tar.TarArchiveOutputStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -165,10 +165,10 @@ public class FileProjectManager extends ProjectManager {
     }
 
     protected void untar(File destDir, InputStream inputStream) throws IOException {
-        TarInputStream tin = new TarInputStream(inputStream);
-        TarEntry tarEntry = null;
+        TarArchiveInputStream tin = new TarArchiveInputStream(inputStream);
+        TarArchiveEntry tarEntry = null;
 
-        while ((tarEntry = tin.getNextEntry()) != null) {
+        while ((tarEntry = tin.getNextTarEntry()) != null) {
             File destEntry = new File(destDir, tarEntry.getName());
             File parent = destEntry.getParentFile();
 
@@ -181,7 +181,7 @@ public class FileProjectManager extends ProjectManager {
             } else {
                 FileOutputStream fout = new FileOutputStream(destEntry);
                 try {
-                    tin.copyEntryContents(fout);
+                    ByteStreams.copy(tin, fout);
                 } finally {
                     fout.close();
                 }
@@ -192,12 +192,12 @@ public class FileProjectManager extends ProjectManager {
     }
 
     @Override
-    public void exportProject(long projectId, TarOutputStream tos) throws IOException {
+    public void exportProject(long projectId, TarArchiveOutputStream tos) throws IOException {
         File dir = this.getProjectDir(projectId);
         tarDir("", dir, tos);
     }
 
-    protected static void tarDir(String relative, File dir, TarOutputStream tos) throws IOException {
+    protected static void tarDir(String relative, File dir, TarArchiveOutputStream tos) throws IOException {
         File[] files = dir.listFiles();
         if (files == null) return;
         for (File file : files) {
@@ -208,17 +208,17 @@ public class FileProjectManager extends ProjectManager {
                 if (file.isDirectory()) {
                     tarDir(path + File.separator, file, tos);
                 } else {
-                    TarEntry entry = new TarEntry(path);
+                    TarArchiveEntry entry = new TarArchiveEntry(path);
 
-                    entry.setMode(TarEntry.DEFAULT_FILE_MODE);
+                    entry.setMode(TarArchiveEntry.DEFAULT_FILE_MODE);
                     entry.setSize(file.length());
                     entry.setModTime(file.lastModified());
 
-                    tos.putNextEntry(entry);
+                    tos.putArchiveEntry(entry);
 
                     copyFile(file, tos);
 
-                    tos.closeEntry();
+                    tos.closeArchiveEntry();
                 }
             }
         }
@@ -325,13 +325,14 @@ public class FileProjectManager extends ProjectManager {
     }
 
     protected boolean saveToFile(File file) throws IOException {
-        FileWriter writer = new FileWriter(file);
+        OutputStream stream = new FileOutputStream(file);
         boolean saveWasNeeded = saveNeeded();
         try {
-            ParsingUtilities.defaultWriter.writeValue(writer, this);
+            // writeValue(OutputStream) is documented to use JsonEncoding.UTF8
+            ParsingUtilities.defaultWriter.writeValue(stream, this);
             saveProjectMetadata();
         } finally {
-            writer.close();
+            stream.close();
         }
         return saveWasNeeded;
     }
@@ -440,7 +441,7 @@ public class FileProjectManager extends ProjectManager {
 
     public static void gzipTarToOutputStream(Project project, OutputStream os) throws IOException {
         GZIPOutputStream gos = new GZIPOutputStream(os);
-        TarOutputStream tos = new TarOutputStream(gos);
+        TarArchiveOutputStream tos = new TarArchiveOutputStream(gos);
         try {
             ProjectManager.singleton.exportProject(project.getId(), tos);
         } finally {

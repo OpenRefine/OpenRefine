@@ -29,6 +29,7 @@ package org.openrefine.expr.functions.math;
 
 import org.testng.annotations.Test;
 
+import org.openrefine.expr.functions.math.Multinomial;
 import org.openrefine.util.ParsingUtilities;
 import org.openrefine.util.TestUtils;
 

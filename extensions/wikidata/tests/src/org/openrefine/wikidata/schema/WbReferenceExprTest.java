@@ -79,4 +79,9 @@ public class WbReferenceExprTest extends WbExpressionTest<Reference> {
             throws JsonProcessingException {
         JacksonSerializationTest.canonicalSerialization(WbReferenceExpr.class, expr, jsonRepresentation);
     }
+
+    @Test(expectedExceptions = UnsupportedOperationException.class)
+    public void testUnmodifiableList() {
+        expr.getSnaks().clear();
+    }
 }

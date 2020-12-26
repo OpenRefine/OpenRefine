@@ -19,7 +19,87 @@
     <webapp.target>../main/target</webapp.target>
     <icon.path>../graphics/icon/openrefine.icns</icon.path>
     <mac.jre.path>/opt/jre1.8.0_181.jre</mac.jre.path>
+
+    <!-- default options for windows: no embedded JRE. Use the "embedded-jre" from ../settings.xml to add a JRE -->
+    <windows.package.jre.path>%JAVA_HOME%;%PATH%</windows.package.jre.path>
+    <windows.package.jre.directory>null</windows.package.jre.directory>
+    <windows.package.jre.outputDirectory>jre</windows.package.jre.outputDirectory>
+    <windows.package.jre.prefix></windows.package.jre.prefix>
   </properties>
+
+  <profiles>
+    <profile>
+      <id>default</id>
+      <activation>
+        <activeByDefault>true</activeByDefault>
+      </activation>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>sh.tak.appbundler</groupId>
+            <artifactId>appbundle-maven-plugin</artifactId>
+          </plugin>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-assembly-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>package-distributions</id>
+                <configuration>
+                  <descriptors>
+                    <descriptor>linux.xml</descriptor>
+                    <descriptor>windows.xml</descriptor>
+                  </descriptors>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+    <profile>
+      <id>linux</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-assembly-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>package-distributions</id>
+                <configuration>
+                  <descriptors>
+                    <descriptor>linux.xml</descriptor>
+                  </descriptors>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+    <profile>
+      <id>windows</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-assembly-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>package-distributions</id>
+                <configuration>
+                  <descriptors>
+                    <descriptor>windows.xml</descriptor>
+                  </descriptors>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
 
   <build>
     <finalName>openrefine</finalName>
@@ -126,13 +206,13 @@
       <plugin> <!-- necessary for launch4j -->
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-antrun-plugin</artifactId>
-        <version>1.4</version>
+        <version>3.0.0</version>
         <executions>
           <execution>
             <phase>generate-test-resources</phase>
             <configuration>
 
-              <tasks>
+              <target>
                 <mkdir dir="./target/"/>
 
                 <mkdir dir="${built.webapp.dir}" />
@@ -175,14 +255,14 @@
                     </copy>
                     
                     <replace file="${built.webapp.dir}/WEB-INF/web.xml">
-                        <replacefilter token="$VERSION" value="${version}"/>
+                        <replacefilter token="$VERSION" value="${project.version}"/>
                     </replace>
 
                     <replace file="${built.webapp.dir}/WEB-INF/butterfly.properties">
                         <replacefilter token="../../extensions" value="extensions"/>
                     </replace>
 
-              </tasks>
+              </target>
 
             </configuration>
             <goals>
@@ -211,7 +291,7 @@
           <dependency>
             <groupId>com.thoughtworks.xstream</groupId>
             <artifactId>xstream</artifactId>
-          <version>1.4.9</version>
+          <version>1.4.12</version>
         </dependency>
         </dependencies>
         <executions>
@@ -232,7 +312,7 @@
                 <postCp>server/target/lib/*.jar</postCp>
               </classPath>
               <jre>
-                <path>%JAVA_HOME%;%PATH%</path>
+                <path>${windows.package.jre.path}</path>
                 <minVersion>1.8.0</minVersion>
                 <bundledJreAsFallback>true</bundledJreAsFallback>
                 <initialHeapSize>512</initialHeapSize>
@@ -255,93 +335,6 @@
             </configuration>
           </execution>
         </executions>
-      </plugin>
-      <plugin>
-        <groupId>sh.tak.appbundler</groupId>
-        <artifactId>appbundle-maven-plugin</artifactId>
-        <version>1.2.0</version>
-        <dependencies>
-          <dependency>
-            <groupId>org.codehaus.plexus</groupId>
-            <artifactId>plexus-archiver</artifactId>
-            <version>4.0.0</version>
-          </dependency>
-          <dependency>
-            <groupId>org.apache.velocity</groupId>
-            <artifactId>velocity-tools</artifactId>
-            <version>2.0</version>
-          </dependency>
-        </dependencies>
-        <configuration>
-          <mainClass>org.openrefine.Refine</mainClass>
-          <bundleName>OpenRefine</bundleName>
-          <buildDirectory>target/OpenRefine ${version}</buildDirectory>
-          <iconFile>${icon.path}</iconFile>
-          <generateDiskImageFile>true</generateDiskImageFile>
-          <diskImageFile>${project.build.directory}/${project.parent.build.finalName}-mac-${project.version}.dmg</diskImageFile>
-          <jvmVersion>1.8</jvmVersion>
-          <jrePath>${mac.jre.path}</jrePath>
-          <jvmOptions>
-            <param>-Xms512M</param>
-            <param>-Xmx2048M</param>
-            <param>-Drefine.version=${project.version}</param>
-            <param>-Drefine.webapp=$APP_ROOT/Contents/Resources/webapp</param>
-          </jvmOptions>
-          <additionalResources>
-            <fileSet>
-              <directory>target</directory>
-              <includes>
-                <include>OpenRefine.app/Contents/Resources/webapp/**/**</include>
-              </includes>
-            </fileSet>
-          </additionalResources>
-          <additionalBundledClasspathResources>
-            <fileSet>
-              <directory>${rootdir}/server/target/lib/</directory>
-              <includes>
-                <include>*.jar</include>
-              </includes>
-            </fileSet>
-            <fileSet>
-              <directory>${rootdir}/server/target</directory>
-              <includes>
-                <include>openrefine-${version}-server.jar</include>
-              </includes>
-              <excludes>
-                <exclude>**/lib/**</exclude>
-                <exclude>**/org/**</exclude>
-              </excludes>
-            </fileSet>
-          </additionalBundledClasspathResources>
-        </configuration>
-        <executions>
-          <execution>
-            <phase>package</phase>
-            <goals>
-              <goal>bundle</goal>
-            </goals>
-          </execution>
-        </executions>
-      </plugin>
-      <plugin>
-	<groupId>org.apache.maven.plugins</groupId>
-	<artifactId>maven-assembly-plugin</artifactId>
-	<version>3.1.0</version>
-	<executions>
-	  <execution>
-	    <id>package-distributions</id>
-	    <goals>
-	      <goal>single</goal>
-	    </goals>
-	    <phase>package</phase>
-	    <configuration>
-	      <descriptors>
-		<descriptor>linux.xml</descriptor>
-		<descriptor>windows.xml</descriptor>
-	      </descriptors>
-	    </configuration>
-	  </execution>
-	</executions>
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -384,6 +377,96 @@
     				</lifecycleMappingMetadata>
     			</configuration>
     		</plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-assembly-plugin</artifactId>
+          <version>3.3.0</version>
+          <executions>
+            <execution>
+              <id>package-distributions</id>
+              <goals>
+                <goal>single</goal>
+              </goals>
+              <phase>package</phase>
+              <configuration>
+                <descriptors>
+                <!-- TBD -->
+                </descriptors>
+              </configuration>
+            </execution>
+          </executions>
+        </plugin>
+        <plugin>
+          <groupId>sh.tak.appbundler</groupId>
+          <artifactId>appbundle-maven-plugin</artifactId>
+          <version>1.2.0</version>
+          <dependencies>
+            <dependency>
+              <!-- dependency upgraded to >4.0 to fix runtime issues with some JRE versions:
+                   https://stackoverflow.com/questions/53696439/appbundle-maven-plugin-fails-on-mac-osx-with-java-10 -->
+              <groupId>org.codehaus.plexus</groupId>
+              <artifactId>plexus-archiver</artifactId>
+              <version>4.2.3</version>
+            </dependency>
+            <dependency>
+              <groupId>org.apache.velocity</groupId>
+              <artifactId>velocity-tools</artifactId>
+              <version>2.0</version>
+            </dependency>
+          </dependencies>
+          <configuration>
+            <mainClass>org.openrefine.Refine</mainClass>
+            <bundleName>OpenRefine</bundleName>
+            <buildDirectory>target/OpenRefine ${project.version}</buildDirectory>
+            <iconFile>${icon.path}</iconFile>
+            <generateDiskImageFile>true</generateDiskImageFile>
+            <diskImageFile>
+              ${project.build.directory}/${project.build.finalName}-mac-${project.version}.dmg
+            </diskImageFile>
+            <jvmVersion>1.8</jvmVersion>
+            <jrePath>${mac.jre.path}</jrePath>
+            <jvmOptions>
+              <param>-Xms512M</param>
+              <param>-Xmx2048M</param>
+              <param>-Drefine.version=${project.version}</param>
+              <param>-Drefine.webapp=$APP_ROOT/Contents/Resources/webapp</param>
+            </jvmOptions>
+            <additionalResources>
+              <fileSet>
+                <directory>target</directory>
+                <includes>
+                  <include>OpenRefine.app/Contents/Resources/webapp/**/**</include>
+                </includes>
+              </fileSet>
+            </additionalResources>
+            <additionalBundledClasspathResources>
+              <fileSet>
+                <directory>${rootdir}/server/target/lib/</directory>
+                <includes>
+                  <include>*.jar</include>
+                </includes>
+              </fileSet>
+              <fileSet>
+                <directory>${rootdir}/server/target</directory>
+                <includes>
+                  <include>openrefine-${project.version}-server.jar</include>
+                </includes>
+                <excludes>
+                  <exclude>**/lib/**</exclude>
+                  <exclude>**/org/**</exclude>
+                </excludes>
+              </fileSet>
+            </additionalBundledClasspathResources>
+          </configuration>
+          <executions>
+            <execution>
+              <phase>package</phase>
+              <goals>
+                <goal>bundle</goal>
+              </goals>
+            </execution>
+          </executions>
+        </plugin>
     	</plugins>
     </pluginManagement>
   </build>
@@ -396,5 +479,4 @@
     </dependency>
   </dependencies>
 </project>
-
 

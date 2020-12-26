@@ -90,7 +90,7 @@ public class EditBatchProcessor {
      *            the number of items that should be retrieved in one go from the API
      */
     public EditBatchProcessor(WikibaseDataFetcher fetcher, WikibaseDataEditor editor, List<ItemUpdate> updates,
-            NewItemLibrary library, String summary, List<String> tags, int batchSize) {
+            NewItemLibrary library, String summary, int maxLag, List<String> tags, int batchSize) {
         this.fetcher = fetcher;
         this.editor = editor;
         editor.setEditAsBot(true); // this will not do anything if the user does not
@@ -99,6 +99,8 @@ public class EditBatchProcessor {
         // edit at 60 edits/min by default. If Wikidata is overloaded
         // it will slow us down via the maxlag mechanism.
         editor.setAverageTimePerEdit(1000);
+        // set maxlag based on preference store
+        editor.setMaxLag(maxLag);
 
         this.library = library;
         this.summary = summary;

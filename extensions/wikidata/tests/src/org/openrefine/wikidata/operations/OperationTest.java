@@ -46,7 +46,7 @@ public abstract class OperationTest extends RefineTest {
     @BeforeMethod
     public void setUp() {
         project = createProject(new String[] { "a", "b" },
-                new Serializable[] { "c", "d" });
+                new Serializable[][] { { "c", "d" } });
     }
 
     protected void registerOperation(String name, Class klass) {

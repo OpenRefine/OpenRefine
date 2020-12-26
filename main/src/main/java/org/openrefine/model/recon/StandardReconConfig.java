@@ -33,13 +33,9 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package org.openrefine.model.recon;
 
-import java.io.DataOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.Serializable;
 import java.io.StringWriter;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -67,6 +63,7 @@ import org.openrefine.model.Cell;
 import org.openrefine.model.ColumnModel;
 import org.openrefine.model.Row;
 import org.openrefine.model.recon.Recon.Judgment;
+import org.openrefine.util.HttpClient;
 import org.openrefine.util.ParsingUtilities;
 
 public class StandardReconConfig extends ReconConfig {
@@ -176,6 +173,9 @@ public class StandardReconConfig extends ReconConfig {
     final public List<ColumnDetail> columnDetails;
     @JsonProperty("limit")
     final private int limit;
+
+    // initialized lazily
+    private HttpClient httpClient = null;
 
     @JsonCreator
     public StandardReconConfig(
@@ -317,12 +317,21 @@ public class StandardReconConfig extends ReconConfig {
         @JsonInclude(Include.NON_EMPTY)
         protected List<QueryProperty> properties;
 
-        // Only send limit if it's non-default to preserve backward compatibility with
-        // services which might choke on this
+        // Only send limit if it's non-default (default = 0) to preserve backward
+        // compatibility with services which might choke on this (pre-2013)
         @JsonProperty("limit")
         @JsonInclude(Include.NON_EMPTY)
         protected int limit;
 
+        public ReconQuery() {
+            super();
+            this.query = "";
+            this.typeID = null;
+            this.properties = null;
+            this.limit = 0;
+        }
+
+        @JsonCreator
         public ReconQuery(
                 String query,
                 String typeID,
@@ -363,11 +372,7 @@ public class StandardReconConfig extends ReconConfig {
             for (int i = 0; i != types.size(); i++) {
                 bareTypes[i] = types.get(i).id;
             }
-            ReconCandidate result = new ReconCandidate(
-                    id,
-                    name,
-                    bareTypes,
-                    score);
+            ReconCandidate result = new ReconCandidate(id, name, bareTypes, score);
 
             return result;
         }
@@ -432,6 +437,22 @@ public class StandardReconConfig extends ReconConfig {
         }
     }
 
+    protected HttpClient getHttpClient() {
+        if (httpClient == null) {
+            httpClient = new HttpClient();
+        }
+        return httpClient;
+    }
+
+    private String postQueries(String url, String queriesString) throws IOException {
+        try {
+            return getHttpClient().postNameValue(url, "queries", queriesString);
+
+        } catch (IOException e) {
+            throw new IOException("Failed to batch recon with load:\n" + queriesString, e);
+        }
+    }
+
     @Override
     public List<Recon> batchRecon(List<ReconJob> jobs, long historyEntryID) {
         List<Recon> recons = new ArrayList<Recon>(jobs.size());
@@ -451,71 +472,45 @@ public class StandardReconConfig extends ReconConfig {
         String queriesString = stringWriter.toString();
 
         try {
-            URL url = new URL(service);
-            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-            {
-                connection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
-                connection.setConnectTimeout(30000);
-                connection.setDoOutput(true);
+            String responseString = postQueries(service, queriesString);
+            ObjectNode o = ParsingUtilities.evaluateJsonStringToObjectNode(responseString);
 
-                DataOutputStream dos = new DataOutputStream(connection.getOutputStream());
-                try {
-                    String body = "queries=" + ParsingUtilities.encode(queriesString);
-
-                    dos.writeBytes(body);
-                } finally {
-                    dos.flush();
-                    dos.close();
-                }
-
-                connection.connect();
-            }
-
-            if (connection.getResponseCode() >= 400) {
-                InputStream is = connection.getErrorStream();
-                logger.error("Failed  - code:"
-                        + Integer.toString(connection.getResponseCode())
-                        + " message: " + is == null ? ""
-                                : ParsingUtilities.inputStreamToString(is));
+            if (o == null) { // utility method returns null instead of throwing
+                logger.error("Failed to parse string as JSON: " + responseString);
             } else {
-                InputStream is = connection.getInputStream();
-                try {
-                    String s = ParsingUtilities.inputStreamToString(is);
-                    ObjectNode o = ParsingUtilities.evaluateJsonStringToObjectNode(s);
+                for (int i = 0; i < jobs.size(); i++) {
+                    StandardReconJob job = (StandardReconJob) jobs.get(i);
+                    Recon recon = null;
 
-                    for (int i = 0; i < jobs.size(); i++) {
-                        StandardReconJob job = (StandardReconJob) jobs.get(i);
-                        Recon recon = null;
+                    String text = job.getCellValue();
+                    String key = "q" + i;
+                    if (o.has(key) && o.get(key) instanceof ObjectNode) {
+                        ObjectNode o2 = (ObjectNode) o.get(key);
+                        if (o2.has("result") && o2.get("result") instanceof ArrayNode) {
+                            ArrayNode results = (ArrayNode) o2.get("result");
 
-                        String text = job.getCellValue();
-                        String key = "q" + i;
-                        if (o.has(key) && o.get(key) instanceof ObjectNode) {
-                            ObjectNode o2 = (ObjectNode) o.get(key);
-                            if (o2.has("result") && o2.get("result") instanceof ArrayNode) {
-                                ArrayNode results = (ArrayNode) o2.get("result");
-
-                                recon = createReconServiceResults(text, results, historyEntryID);
-                            } else {
-                                logger.warn("Service error for text: " + text + "\n  Job code: " + job.getJsonQuery() + "\n  Response: "
-                                        + o2.toString());
-                            }
+                            recon = createReconServiceResults(text, results, historyEntryID);
                         } else {
-                            logger.warn("Service error for text: " + text + "\n  Job code: " + job.getJsonQuery());
+                            // TODO: better error reporting
+                            logger.warn("Service error for text: " + text + "\n  Job code: " + job.getJsonQuery() + "\n  Response: "
+                                    + o2.toString());
                         }
-
-                        if (recon != null) {
-                            recon = recon.withService(service);
-                        }
-                        recons.add(recon);
+                    } else {
+                        // TODO: better error reporting
+                        logger.warn("Service error for text: " + text + "\n  Job code: " + job.getJsonQuery());
                     }
-                } finally {
-                    is.close();
+
+                    if (recon != null) {
+                        recon = recon.withService(service);
+                    }
+                    recons.add(recon);
                 }
             }
         } catch (IOException e) {
             logger.error("Failed to batch recon with load:\n" + queriesString, e);
         }
 
+        // TODO: This code prevents the retry mechanism in ReconOperation from working
         while (recons.size() < jobs.size()) {
             Recon recon = new Recon(historyEntryID, identifierSpace, schemaSpace)
                     .withService(service)
@@ -535,7 +530,7 @@ public class StandardReconConfig extends ReconConfig {
         return recon;
     }
 
-    protected Recon createReconServiceResults(String text, ArrayNode resultsList, long historyEntryID) throws IOException {
+    protected Recon createReconServiceResults(String text, ArrayNode resultsList, long historyEntryID) {
         Recon recon = new Recon(historyEntryID, identifierSpace, schemaSpace);
         List<ReconResult> results = ParsingUtilities.mapper.convertValue(resultsList, new TypeReference<List<ReconResult>>() {
         });
@@ -580,10 +575,12 @@ public class StandardReconConfig extends ReconConfig {
         if (recon.candidates != null && !recon.candidates.isEmpty() && text != null) {
             ReconCandidate candidate = recon.candidates.get(0);
 
-            features[Recon.Feature_nameMatch] = text.equalsIgnoreCase(candidate.name);
-            features[Recon.Feature_nameLevenshtein] = StringUtils.getLevenshteinDistance(StringUtils.lowerCase(text),
-                    StringUtils.lowerCase(candidate.name));
-            features[Recon.Feature_nameWordDistance] = wordDistance(text, candidate.name);
+            if (candidate.name != null) {
+                features[Recon.Feature_nameMatch] = text.equalsIgnoreCase(candidate.name);
+                features[Recon.Feature_nameLevenshtein] = StringUtils.getLevenshteinDistance(StringUtils.lowerCase(text),
+                        StringUtils.lowerCase(candidate.name));
+                features[Recon.Feature_nameWordDistance] = wordDistance(text, candidate.name);
+            }
 
             features[Recon.Feature_typeMatch] = false;
             if (this.typeID != null) {

@@ -26,6 +26,7 @@ package org.openrefine.wikidata.qa.scrutinizers;
 
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -33,6 +34,7 @@ import java.util.Set;
 import org.wikidata.wdtk.datamodel.interfaces.EntityIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.ItemIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.PropertyIdValue;
+import org.wikidata.wdtk.datamodel.interfaces.SnakGroup;
 import org.wikidata.wdtk.datamodel.interfaces.Statement;
 import org.wikidata.wdtk.datamodel.interfaces.Value;
 
@@ -47,6 +49,25 @@ import org.openrefine.wikidata.qa.QAWarning;
 public class InverseConstraintScrutinizer extends StatementScrutinizer {
 
     public static final String type = "missing-inverse-statements";
+    public String inverseConstraintQid;
+    public String inversePropertyPid;
+    public String symmetricConstraintQid;
+
+    class InverseConstraint {
+
+        PropertyIdValue propertyParameterValue;
+
+        InverseConstraint(Statement statement) {
+            List<SnakGroup> specs = statement.getClaim().getQualifiers();
+
+            if (specs != null) {
+                List<Value> inverses = findValues(specs, inversePropertyPid);
+                if (!inverses.isEmpty()) {
+                    propertyParameterValue = (PropertyIdValue) inverses.get(0);
+                }
+            }
+        }
+    }
 
     private Map<PropertyIdValue, PropertyIdValue> _inverse;
     private Map<PropertyIdValue, Map<EntityIdValue, Set<EntityIdValue>>> _statements;
@@ -56,12 +77,26 @@ public class InverseConstraintScrutinizer extends StatementScrutinizer {
         _statements = new HashMap<>();
     }
 
+    @Override
+    public boolean prepareDependencies() {
+        inverseConstraintQid = getConstraintsRelatedId("inverse_constraint_qid");
+        inversePropertyPid = getConstraintsRelatedId("property_pid");
+        symmetricConstraintQid = getConstraintsRelatedId("symmetric_constraint_qid");
+        return _fetcher != null && inverseConstraintQid != null
+                && inversePropertyPid != null && symmetricConstraintQid != null;
+    }
+
     protected PropertyIdValue getInverseConstraint(PropertyIdValue pid) {
         if (_inverse.containsKey(pid)) {
             return _inverse.get(pid);
         } else {
-            PropertyIdValue inversePid = _fetcher.getInversePid(pid);
-            if (inversePid == null && _fetcher.isSymmetric(pid)) {
+            PropertyIdValue inversePid = null;
+            List<Statement> statementList = _fetcher.getConstraintsByType(pid, inverseConstraintQid);
+            if (!statementList.isEmpty()) {
+                InverseConstraint constraint = new InverseConstraint(statementList.get(0));
+                inversePid = constraint.propertyParameterValue;
+            }
+            if (inversePid == null && !_fetcher.getConstraintsByType(pid, symmetricConstraintQid).isEmpty()) {
                 inversePid = pid;
             }
             _inverse.put(pid, inversePid);
@@ -84,7 +119,7 @@ public class InverseConstraintScrutinizer extends StatementScrutinizer {
         }
 
         Value mainSnakValue = statement.getClaim().getMainSnak().getValue();
-        if (ItemIdValue.class.isInstance(mainSnakValue)) {
+        if (mainSnakValue instanceof ItemIdValue) {
             PropertyIdValue pid = statement.getClaim().getMainSnak().getPropertyId();
             PropertyIdValue inversePid = getInverseConstraint(pid);
             if (inversePid != null) {

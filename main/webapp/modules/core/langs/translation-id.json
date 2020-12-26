@@ -1,0 +1,15 @@
+{
+    "core-index/add-pref": "Tambah preferensi",
+    "core-index/value": "Nilai",
+    "core-index/key": "Kunci",
+    "core-index/preferences": "Preferensi",
+    "core-index/delete-key": "Hapus kunci preferensi",
+    "core-index/change-value": "Ubah nilai kunci preferensi",
+    "core-index/download-now": "Download $1 sekarang.",
+    "core-index/new-version": "Versi Baru",
+    "core-index/version": "Versi $1",
+    "core-index/about": "Tentang",
+    "core-index/help": "Bantuan",
+    "core-index/slogan": "Sebuah alat canggih untuk bekerja dengan data yang berantakan",
+    "name": "Bahasa Inggris"
+}

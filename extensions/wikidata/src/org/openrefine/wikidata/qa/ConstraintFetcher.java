@@ -24,109 +24,70 @@
 
 package org.openrefine.wikidata.qa;
 
-import java.util.Set;
+import java.util.Collections;
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
-import org.wikidata.wdtk.datamodel.interfaces.*;
+import org.wikidata.wdtk.datamodel.interfaces.EntityIdValue;
+import org.wikidata.wdtk.datamodel.interfaces.PropertyDocument;
+import org.wikidata.wdtk.datamodel.interfaces.PropertyIdValue;
+import org.wikidata.wdtk.datamodel.interfaces.Statement;
+import org.wikidata.wdtk.datamodel.interfaces.StatementGroup;
+import org.wikidata.wdtk.datamodel.interfaces.StatementRank;
+
+import org.openrefine.wikidata.utils.EntityCache;
 
 /**
- * An object that fetches constraints about properties.
+ * This class provides an abstraction over the way constraint definitions are stored in a Wikibase instance.
  * 
  * @author Antonin Delpeuch
  *
  */
-public interface ConstraintFetcher {
+public class ConstraintFetcher {
+
+    private String wikibaseConstraintPid;
+
+    private EntityCache entityCache;
+
+    public ConstraintFetcher(EntityCache cache, String wikibaseConstraintPid) {
+        entityCache = cache;
+        this.wikibaseConstraintPid = wikibaseConstraintPid;
+    }
 
     /**
-     * Retrieves the regular expression for formatting a property, or null if there is no such constraint
+     * Gets the list of constraints of a particular type for a property
+     *
+     * @param pid
+     *            the property to retrieve the constraints for
+     * @param qid
+     *            the type of the constraints
+     * @return the list of matching constraint statements
+     */
+    public List<Statement> getConstraintsByType(PropertyIdValue pid, String qid) {
+        Stream<Statement> allConstraints = getConstraintStatements(pid).stream()
+                .filter(s -> s.getValue() != null && ((EntityIdValue) s.getValue()).getId().equals(qid))
+                .filter(s -> !StatementRank.DEPRECATED.equals(s.getRank()));
+        return allConstraints.collect(Collectors.toList());
+    }
+
+    /**
+     * Gets all the constraint statements for a given property
      * 
      * @param pid
-     * @return the expression of a regular expression which should be compatible with java.util.regex
+     *            the id of the property to retrieve the constraints for
+     * @return the list of constraint statements
      */
-    String getFormatRegex(PropertyIdValue pid);
+    private List<Statement> getConstraintStatements(PropertyIdValue pid) {
+        PropertyDocument doc = (PropertyDocument) entityCache.get(pid);
+        StatementGroup group = doc.findStatementGroup(wikibaseConstraintPid);
+        if (group != null) {
+            return group.getStatements().stream()
+                    .filter(s -> s.getValue() != null && s.getValue() instanceof EntityIdValue)
+                    .collect(Collectors.toList());
+        } else {
+            return Collections.emptyList();
+        }
+    }
 
-    /**
-     * Retrieves the property that is the inverse of a given property
-     * 
-     * @param pid:
-     *            the property to retrieve the inverse for
-     * @return the pid of the inverse property
-     */
-    PropertyIdValue getInversePid(PropertyIdValue pid);
-
-    /**
-     * Is this property supposed to be symmetric (its own inverse)?
-     */
-    boolean isSymmetric(PropertyIdValue pid);
-
-    /**
-     * Can this property be used as values?
-     */
-    boolean allowedAsValue(PropertyIdValue pid);
-
-    /**
-     * Can this property be used as qualifiers?
-     */
-    boolean allowedAsQualifier(PropertyIdValue pid);
-
-    /**
-     * Can this property be used in a reference?
-     */
-    boolean allowedAsReference(PropertyIdValue pid);
-
-    /**
-     * Get the list of allowed qualifiers (as property ids) for this property (null if any)
-     */
-    Set<PropertyIdValue> allowedQualifiers(PropertyIdValue pid);
-
-    /**
-     * Get the list of mandatory qualifiers (as property ids) for this property (null if any)
-     */
-    Set<PropertyIdValue> mandatoryQualifiers(PropertyIdValue pid);
-
-    /**
-     * Get the set of allowed values for this property (null if no such constraint). This set may contain null if one of
-     * the allowed values in novalue or somevalue.
-     */
-    Set<Value> allowedValues(PropertyIdValue pid);
-
-    /**
-     * Get the set of disallowed values for this property (null if no such constraint). This set may contain null if one
-     * of the allowed values in novalue or somevalue.
-     */
-    Set<Value> disallowedValues(PropertyIdValue pid);
-
-    /**
-     * Is this property expected to have at most one value per item?
-     */
-    boolean hasSingleValue(PropertyIdValue pid);
-
-    /**
-     * Is this property expected to have a single best value only?
-     */
-    boolean hasSingleBestValue(PropertyIdValue pid);
-
-    /**
-     * Is this property expected to have distinct values?
-     */
-    boolean hasDistinctValues(PropertyIdValue pid);
-
-    /**
-     * Can statements using this property have uncertainty bounds?
-     */
-    boolean boundsAllowed(PropertyIdValue pid);
-
-    /**
-     * Is this property expected to have integer values only?
-     */
-    boolean integerValued(PropertyIdValue pid);
-
-    /**
-     * Returns the allowed units for this property. If empty, no unit is allowed. If null, any unit is allowed.
-     */
-    Set<ItemIdValue> allowedUnits(PropertyIdValue pid);
-
-    /**
-     * Can this property be used on items?
-     */
-    boolean usableOnItems(PropertyIdValue pid);
 }

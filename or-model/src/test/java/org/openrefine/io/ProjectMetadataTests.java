@@ -63,13 +63,14 @@ public class ProjectMetadataTests {
 
     @Test
     public void serializeProjectMetadataInDifferentTimezone() throws JsonParseException, JsonMappingException, IOException {
-        TimeZone.setDefault(TimeZone.getTimeZone("JST"));
+        TimeZone originalTimeZone = TimeZone.getDefault();
         try {
+            TimeZone.setDefault(TimeZone.getTimeZone("JST"));
             ProjectMetadata metadata = ParsingUtilities.mapper.readValue(jsonSaveMode, ProjectMetadata.class);
             TestUtils.isSerializedTo(metadata, jsonNonSaveMode, ParsingUtilities.defaultWriter);
             TestUtils.isSerializedTo(metadata, jsonSaveMode, ParsingUtilities.saveWriter);
         } finally {
-            TimeZone.setDefault(TimeZone.getTimeZone("UTC"));
+            TimeZone.setDefault(originalTimeZone);
         }
     }
 }

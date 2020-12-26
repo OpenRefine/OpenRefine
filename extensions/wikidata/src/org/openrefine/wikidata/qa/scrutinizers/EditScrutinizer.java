@@ -24,6 +24,14 @@
 
 package org.openrefine.wikidata.qa.scrutinizers;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.wikidata.wdtk.datamodel.interfaces.Snak;
+import org.wikidata.wdtk.datamodel.interfaces.SnakGroup;
+import org.wikidata.wdtk.datamodel.interfaces.Value;
+
+import org.openrefine.wikidata.manifests.Manifest;
 import org.openrefine.wikidata.qa.ConstraintFetcher;
 import org.openrefine.wikidata.qa.QAWarning;
 import org.openrefine.wikidata.qa.QAWarning.Severity;
@@ -39,19 +47,35 @@ public abstract class EditScrutinizer {
 
     protected QAWarningStore _store;
     protected ConstraintFetcher _fetcher;
-
-    public EditScrutinizer() {
-        _fetcher = null;
-        _store = null;
-    }
+    protected Manifest manifest;
 
     public void setStore(QAWarningStore store) {
         _store = store;
     }
 
+    /**
+     * The fetcher will be set to null if 'property_constraint_pid' is missing in the manifest.
+     */
     public void setFetcher(ConstraintFetcher fetcher) {
         _fetcher = fetcher;
     }
+
+    public void setManifest(Manifest manifest) {
+        this.manifest = manifest;
+    }
+
+    public String getConstraintsRelatedId(String name) {
+        return manifest.getConstraintsRelatedId(name);
+    }
+
+    /**
+     * Prepare the dependencies(i.e. constraint-related pids and qids) needed by the scrutinizer.
+     *
+     * Called before {@link EditScrutinizer#batchIsBeginning()}.
+     *
+     * @return false if any necessary dependency is missing, true otherwise.
+     */
+    public abstract boolean prepareDependencies();
 
     /**
      * Called before an edit batch is scrutinized.
@@ -91,8 +115,6 @@ public abstract class EditScrutinizer {
 
     /**
      * Helper to be used by subclasses to emit simple INFO warnings
-     * 
-     * @param warning
      */
     protected void info(String type) {
         addIssue(type, null, QAWarning.Severity.INFO, 1);
@@ -101,8 +123,6 @@ public abstract class EditScrutinizer {
 
     /**
      * Helper to be used by subclasses to emit simple warnings
-     * 
-     * @param warning
      */
     protected void warning(String type) {
         addIssue(type, null, QAWarning.Severity.WARNING, 1);
@@ -110,8 +130,6 @@ public abstract class EditScrutinizer {
 
     /**
      * Helper to be used by subclasses to emit simple important warnings
-     * 
-     * @param warning
      */
     protected void important(String type) {
         addIssue(type, null, QAWarning.Severity.IMPORTANT, 1);
@@ -119,10 +137,28 @@ public abstract class EditScrutinizer {
 
     /**
      * Helper to be used by subclasses to emit simple critical warnings
-     * 
-     * @param warning
      */
     protected void critical(String type) {
         addIssue(type, null, QAWarning.Severity.CRITICAL, 1);
+    }
+
+    /**
+     * Returns the values of a given property in qualifiers
+     *
+     * @param groups
+     *            the qualifiers
+     * @param pid
+     *            the property to filter on
+     * @return
+     */
+    protected List<Value> findValues(List<SnakGroup> groups, String pid) {
+        List<Value> results = new ArrayList<>();
+        for (SnakGroup group : groups) {
+            if (group.getProperty().getId().equals(pid)) {
+                for (Snak snak : group.getSnaks())
+                    results.add(snak.getValue());
+            }
+        }
+        return results;
     }
 }

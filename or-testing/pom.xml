@@ -76,11 +76,6 @@
       <artifactId>ant</artifactId> <!-- for org.apache.tools.bzip2 -->
       <version>1.8.0</version>
     </dependency>
-    <dependency>
-      <groupId>org.powermock</groupId>
-      <artifactId>powermock-module-testng</artifactId>
-      <version>${powermock.version}</version>
-    </dependency> 
 
 
     <!-- test dependencies -->
@@ -99,7 +94,12 @@
       <groupId>org.powermock</groupId>
       <artifactId>powermock-module-testng</artifactId>
       <version>${powermock.version}</version>
-     </dependency>
+    </dependency>
+    <dependency>
+      <groupId>org.powermock</groupId>
+      <artifactId>powermock-api-mockito2</artifactId>
+      <version>${powermock.version}</version>
+    </dependency> 
   </dependencies>
 </project>
 

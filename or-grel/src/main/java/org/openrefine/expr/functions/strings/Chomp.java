@@ -47,7 +47,7 @@ public class Chomp extends PureFunction {
             Object o1 = args[0];
             Object o2 = args[1];
             if (o1 != null && o2 != null && o1 instanceof String && o2 instanceof String) {
-                return StringUtils.chomp((String) o1, (String) o2);
+                return StringUtils.removeEnd((String) o1, (String) o2);
             }
         }
         return null;

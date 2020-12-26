@@ -21,6 +21,7 @@
     "database-source/databaseUserLabel": "Användare:",
     "database-source/databasePasswordLabel": "Lösenord:",
     "database-source/databaseNameLabel": "Databas:",
+    "database-source/databaseFileNameLabel": "Databas file:",
     "database-source/databaseSchemaLabel": "Schema:",
     "database-source/databaseTestButton": "Test",
     "database-source/databaseSaveButton": "Spara",

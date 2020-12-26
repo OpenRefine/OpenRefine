@@ -25,19 +25,59 @@
 package org.openrefine.wikidata.qa.scrutinizers;
 
 import java.util.Iterator;
+import java.util.List;
 
+import org.wikidata.wdtk.datamodel.helpers.Datamodel;
 import org.wikidata.wdtk.datamodel.interfaces.EntityIdValue;
+import org.wikidata.wdtk.datamodel.interfaces.ItemIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.PropertyIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.Reference;
 import org.wikidata.wdtk.datamodel.interfaces.Snak;
+import org.wikidata.wdtk.datamodel.interfaces.SnakGroup;
 import org.wikidata.wdtk.datamodel.interfaces.Statement;
+import org.wikidata.wdtk.datamodel.interfaces.Value;
 
 import org.openrefine.wikidata.qa.QAWarning;
 
 public class RestrictedPositionScrutinizer extends StatementScrutinizer {
 
+    public String scopeConstraintQid;
+    public String scopeConstraintPid;
+    public String scopeConstraintValueQid;
+    public String scopeConstraintQualifierQid;
+    public String scopeConstraintReferenceQid;
+
+    @Override
+    public boolean prepareDependencies() {
+        scopeConstraintQid = getConstraintsRelatedId("property_scope_constraint_qid");
+        scopeConstraintPid = getConstraintsRelatedId("property_scope_pid");
+        scopeConstraintValueQid = getConstraintsRelatedId("as_main_value_qid");
+        scopeConstraintQualifierQid = getConstraintsRelatedId("as_qualifiers_qid");
+        scopeConstraintReferenceQid = getConstraintsRelatedId("as_references_qid");
+        return _fetcher != null && scopeConstraintQid != null && scopeConstraintPid != null && scopeConstraintValueQid != null
+                && scopeConstraintQualifierQid != null && scopeConstraintReferenceQid != null;
+    }
+
     protected enum SnakPosition {
         MAINSNAK, QUALIFIER, REFERENCE
+    }
+
+    class RestrictedPositionConstraint {
+
+        boolean isAllowedAsValue, isAllowedAsQualifier, isAllowedAsReference;
+
+        RestrictedPositionConstraint(Statement statement) {
+            List<SnakGroup> specs = statement.getClaim().getQualifiers();
+            if (specs != null) {
+                ItemIdValue targetValue = Datamodel.makeWikidataItemIdValue(scopeConstraintValueQid);
+                ItemIdValue targetQualifier = Datamodel.makeWikidataItemIdValue(scopeConstraintQualifierQid);
+                ItemIdValue targetReference = Datamodel.makeWikidataItemIdValue(scopeConstraintReferenceQid);
+                List<Value> snakValues = findValues(specs, scopeConstraintPid);
+                isAllowedAsValue = snakValues.contains(targetValue);
+                isAllowedAsQualifier = snakValues.contains(targetQualifier);
+                isAllowedAsReference = snakValues.contains(targetReference);
+            }
+        }
     }
 
     @Override
@@ -74,12 +114,16 @@ public class RestrictedPositionScrutinizer extends StatementScrutinizer {
     }
 
     public boolean positionAllowed(PropertyIdValue pid, SnakPosition position) {
-        if (position.equals(SnakPosition.MAINSNAK)) {
-            return _fetcher.allowedAsValue(pid);
-        } else if (position.equals(SnakPosition.QUALIFIER)) {
-            return _fetcher.allowedAsQualifier(pid);
-        } else if (position.equals(SnakPosition.REFERENCE)) {
-            return _fetcher.allowedAsReference(pid);
+        List<Statement> constraintDefinitions = _fetcher.getConstraintsByType(pid, scopeConstraintQid);
+        if (!constraintDefinitions.isEmpty()) {
+            RestrictedPositionConstraint constraint = new RestrictedPositionConstraint(constraintDefinitions.get(0));
+            if (position.equals(SnakPosition.MAINSNAK)) {
+                return constraint.isAllowedAsValue;
+            } else if (position.equals(SnakPosition.QUALIFIER)) {
+                return constraint.isAllowedAsQualifier;
+            } else if (position.equals(SnakPosition.REFERENCE)) {
+                return constraint.isAllowedAsReference;
+            }
         }
         return true;
     }

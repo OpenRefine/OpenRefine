@@ -42,6 +42,7 @@ import java.util.Properties;
 import com.fasterxml.jackson.databind.JsonNode;
 import org.apache.poi.common.usermodel.HyperlinkType;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Hyperlink;
@@ -49,7 +50,7 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.util.WorkbookUtil;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 
 import org.openrefine.ProjectMetadata;
 import org.openrefine.browsing.Engine;
@@ -67,14 +68,14 @@ public class XlsExporter implements StreamExporter {
 
     @Override
     public String getContentType() {
-        return xml ? "application/xlsx" : "application/xls";
+        return xml ? "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" : "application/vnd.ms-excel";
     }
 
     @Override
     public void export(final GridState grid, ProjectMetadata projectMetadata, Properties params,
             Engine engine, OutputStream outputStream) throws IOException {
 
-        final Workbook wb = xml ? new XSSFWorkbook() : new HSSFWorkbook();
+        final Workbook wb = xml ? new SXSSFWorkbook() : new HSSFWorkbook();
 
         TabularSerializer serializer = new TabularSerializer() {
 
@@ -101,10 +102,12 @@ public class XlsExporter implements StreamExporter {
             @Override
             public void addRow(List<CellData> cells, boolean isHeader) {
                 Row r = s.createRow(rowCount++);
+                int maxColumns = getSpreadsheetVersion().getMaxColumns();
+                int maxTextLength = getSpreadsheetVersion().getMaxTextLength();
 
                 for (int i = 0; i < cells.size(); i++) {
                     Cell c = r.createCell(i);
-                    if (i == 255 && cells.size() > 256) {
+                    if (i == (maxColumns - 1) && cells.size() > maxColumns) {
                         c.setCellValue("ERROR: TOO MANY COLUMNS");
                         break;
                     } else {
@@ -122,9 +125,9 @@ public class XlsExporter implements StreamExporter {
                                 c.setCellStyle(dateStyle);
                             } else {
                                 String s = cellData.text;
-                                if (s.length() > 32767) {
+                                if (s.length() > maxTextLength) {
                                     // The maximum length of cell contents (text) is 32,767 characters
-                                    s = s.substring(0, 32767);
+                                    s = s.substring(0, maxTextLength);
                                 }
                                 c.setCellValue(s);
                             }
@@ -152,6 +155,13 @@ public class XlsExporter implements StreamExporter {
         wb.write(outputStream);
         outputStream.flush();
         wb.close();
+    }
+
+    /**
+     * @return POI <code></code>SpreadsheetVersion</code> with metadata about row and column limits
+     */
+    SpreadsheetVersion getSpreadsheetVersion() {
+        return xml ? SpreadsheetVersion.EXCEL2007 : SpreadsheetVersion.EXCEL97;
     }
 
 }

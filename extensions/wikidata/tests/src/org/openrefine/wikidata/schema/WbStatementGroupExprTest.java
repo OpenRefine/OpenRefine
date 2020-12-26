@@ -91,4 +91,9 @@ public class WbStatementGroupExprTest extends WbExpressionTest<StatementGroup> {
             throws JsonProcessingException {
         JacksonSerializationTest.canonicalSerialization(WbStatementGroupExpr.class, expr, jsonRepresentation);
     }
+
+    @Test(expectedExceptions = UnsupportedOperationException.class)
+    public void testUnmodifiableList() {
+        expr.getStatements().clear();
+    }
 }

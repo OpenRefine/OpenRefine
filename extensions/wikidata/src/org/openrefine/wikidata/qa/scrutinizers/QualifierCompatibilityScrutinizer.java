@@ -26,13 +26,16 @@ package org.openrefine.wikidata.qa.scrutinizers;
 
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.wikidata.wdtk.datamodel.interfaces.EntityIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.PropertyIdValue;
+import org.wikidata.wdtk.datamodel.interfaces.SnakGroup;
 import org.wikidata.wdtk.datamodel.interfaces.Statement;
+import org.wikidata.wdtk.datamodel.interfaces.Value;
 
 import org.openrefine.wikidata.qa.QAWarning;
 
@@ -47,6 +50,47 @@ public class QualifierCompatibilityScrutinizer extends StatementScrutinizer {
     public static final String missingMandatoryQualifiersType = "missing-mandatory-qualifiers";
     public static final String disallowedQualifiersType = "disallowed-qualifiers";
 
+    public String allowedQualifiersConstraintQid;
+    public String allowedQualifiersConstraintPid;
+
+    public String mandatoryQualifiersConstraintQid;
+    public String mandatoryQualifiersConstraintPid;
+
+    class AllowedQualifierConstraint {
+
+        Set<PropertyIdValue> allowedProperties;
+
+        AllowedQualifierConstraint(Statement statement) {
+            allowedProperties = new HashSet<>();
+            List<SnakGroup> specs = statement.getClaim().getQualifiers();
+            if (specs != null) {
+                List<Value> properties = findValues(specs, allowedQualifiersConstraintPid);
+                allowedProperties = properties.stream()
+                        .filter(e -> e != null)
+                        .map(e -> (PropertyIdValue) e)
+                        .collect(Collectors.toSet());
+            }
+
+        }
+    }
+
+    class MandatoryQualifierConstraint {
+
+        Set<PropertyIdValue> mandatoryProperties;
+
+        MandatoryQualifierConstraint(Statement statement) {
+            mandatoryProperties = new HashSet<>();
+            List<SnakGroup> specs = statement.getClaim().getQualifiers();
+            if (specs != null) {
+                List<Value> properties = findValues(specs, mandatoryQualifiersConstraintPid);
+                mandatoryProperties = properties.stream()
+                        .filter(e -> e != null)
+                        .map(e -> (PropertyIdValue) e)
+                        .collect(Collectors.toSet());
+            }
+        }
+    }
+
     private Map<PropertyIdValue, Set<PropertyIdValue>> _allowedQualifiers;
     private Map<PropertyIdValue, Set<PropertyIdValue>> _mandatoryQualifiers;
 
@@ -55,12 +99,26 @@ public class QualifierCompatibilityScrutinizer extends StatementScrutinizer {
         _mandatoryQualifiers = new HashMap<>();
     }
 
+    @Override
+    public boolean prepareDependencies() {
+        allowedQualifiersConstraintQid = getConstraintsRelatedId("allowed_qualifiers_constraint_qid");
+        allowedQualifiersConstraintPid = getConstraintsRelatedId("property_pid");
+        mandatoryQualifiersConstraintQid = getConstraintsRelatedId("mandatory_qualifier_constraint_qid");
+        mandatoryQualifiersConstraintPid = getConstraintsRelatedId("property_pid");
+        return _fetcher != null && allowedQualifiersConstraintQid != null && allowedQualifiersConstraintPid != null &&
+                mandatoryQualifiersConstraintQid != null && mandatoryQualifiersConstraintPid != null;
+    }
+
     protected boolean qualifierIsAllowed(PropertyIdValue statementProperty, PropertyIdValue qualifierProperty) {
         Set<PropertyIdValue> allowed = null;
         if (_allowedQualifiers.containsKey(statementProperty)) {
             allowed = _allowedQualifiers.get(statementProperty);
         } else {
-            allowed = _fetcher.allowedQualifiers(statementProperty);
+            List<Statement> statementList = _fetcher.getConstraintsByType(statementProperty, allowedQualifiersConstraintQid);
+            if (!statementList.isEmpty()) {
+                AllowedQualifierConstraint allowedQualifierConstraint = new AllowedQualifierConstraint(statementList.get(0));
+                allowed = allowedQualifierConstraint.allowedProperties;
+            }
             _allowedQualifiers.put(statementProperty, allowed);
         }
         return allowed == null || allowed.contains(qualifierProperty);
@@ -71,7 +129,11 @@ public class QualifierCompatibilityScrutinizer extends StatementScrutinizer {
         if (_mandatoryQualifiers.containsKey(statementProperty)) {
             mandatory = _mandatoryQualifiers.get(statementProperty);
         } else {
-            mandatory = _fetcher.mandatoryQualifiers(statementProperty);
+            List<Statement> statementList = _fetcher.getConstraintsByType(statementProperty, mandatoryQualifiersConstraintQid);
+            if (!statementList.isEmpty()) {
+                MandatoryQualifierConstraint mandatoryQualifierConstraint = new MandatoryQualifierConstraint(statementList.get(0));
+                mandatory = mandatoryQualifierConstraint.mandatoryProperties;
+            }
             if (mandatory == null) {
                 mandatory = new HashSet<>();
             }

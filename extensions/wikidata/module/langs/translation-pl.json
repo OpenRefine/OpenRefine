@@ -1,0 +1,11 @@
+{
+    "wikibase-schema/remove-column": "usuń kolumnę",
+    "wikibase-schema/terms-header": "Warunki",
+    "wikibase-schema/remove": "usuń",
+    "wikibase-schema/add-reference-snak": "dodaj",
+    "wikibase-schema/edits-preview-tab-header": "Podgląd",
+    "wikibase-management/close": "Zamknij",
+    "wikibase-extension/export-schema": "Eksportuj schemat",
+    "wikibase-extension/import-wikibase-schema": "Importuj schemat",
+    "wikibase-extension/menu-label": "Wikidata"
+}

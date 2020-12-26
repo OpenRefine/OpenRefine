@@ -27,16 +27,42 @@
 
 package org.openrefine.expr.functions;
 
+import java.time.OffsetDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.Arrays;
+import java.util.List;
+
+import org.testng.Assert;
 import org.testng.annotations.Test;
 
+import org.openrefine.expr.EvalError;
+import org.openrefine.grel.FunctionTestBase;
 import org.openrefine.util.ParsingUtilities;
 import org.openrefine.util.TestUtils;
 
-public class TypeTests {
+public class TypeTests extends FunctionTestBase {
+
+    static final List<String> listArray = Arrays.asList("v1", "v2", "v3");
+    private static OffsetDateTime dateTimeValue = OffsetDateTime.parse("2017-05-12T05:45:00+00:00", DateTimeFormatter.ISO_OFFSET_DATE_TIME);
+
+    @Test
+    public void testTypeInvalidParams() {
+        Assert.assertTrue(invoke("type") instanceof EvalError);
+    }
+
+    @Test
+    public void testType() {
+        Assert.assertEquals(invoke("type", (Object) null), "undefined");
+        Assert.assertEquals(invoke("type", 1), "number");
+        Assert.assertEquals(invoke("type", true), "boolean");
+        Assert.assertEquals(invoke("type", "a string"), "string");
+        Assert.assertEquals(invoke("type", dateTimeValue), "date");
+        Assert.assertEquals(invoke("type", listArray), "array");
+    }
 
     @Test
     public void serializeType() {
-        String json = "{\"description\":\"Returns the type of o\",\"params\":\"object o\",\"returns\":\"string\"}";
+        String json = "{\"description\":\"Returns the type of o as a string ('string', 'date', 'number', 'array', 'boolean' or a class name)\",\"params\":\"object o\",\"returns\":\"string\"}";
         TestUtils.isSerializedTo(new Type(), json, ParsingUtilities.defaultWriter);
     }
 }

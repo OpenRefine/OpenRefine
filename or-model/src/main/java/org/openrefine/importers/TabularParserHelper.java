@@ -46,7 +46,13 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.openrefine.ProjectMetadata;
 import org.openrefine.expr.ExpressionUtils;
 import org.openrefine.importing.ImportingJob;
-import org.openrefine.model.*;
+import org.openrefine.model.Cell;
+import org.openrefine.model.ColumnMetadata;
+import org.openrefine.model.ColumnModel;
+import org.openrefine.model.DatamodelRunner;
+import org.openrefine.model.GridState;
+import org.openrefine.model.Row;
+import org.openrefine.model.RowMapper;
 import org.openrefine.util.JSONUtilities;
 
 public class TabularParserHelper {
@@ -69,12 +75,15 @@ public class TabularParserHelper {
         JSONUtilities.safePut(options, "skipDataLines", 0); // number of initial data lines to skip
         JSONUtilities.safePut(options, "storeBlankRows", true);
         JSONUtilities.safePut(options, "storeBlankCellsAsNulls", true);
+        JSONUtilities.safePut(options, "includeArchiveFileName", false);
+        JSONUtilities.safePut(options, "includeFileSources", false);
 
         return options;
     }
 
     public GridState parseOneFile(ProjectMetadata metadata, ImportingJob job, String fileSource,
-            TableDataReader dataReader, long limit, ObjectNode options) throws Exception {
+            String archiveFileName, TableDataReader dataReader, long limit,
+            ObjectNode options) throws Exception {
         int ignoreLines = JSONUtilities.getInt(options, "ignoreLines", -1);
         int headerLines = JSONUtilities.getInt(options, "headerLines", 1);
         int skipDataLines = JSONUtilities.getInt(options, "skipDataLines", 0);
@@ -88,9 +97,12 @@ public class TabularParserHelper {
         }
 
         boolean guessCellValueTypes = JSONUtilities.getBoolean(options, "guessCellValueTypes", false);
+        boolean trimStrings = JSONUtilities.getBoolean(options, "trimStrings", false);
 
         boolean storeBlankRows = JSONUtilities.getBoolean(options, "storeBlankRows", true);
         boolean storeBlankCellsAsNulls = JSONUtilities.getBoolean(options, "storeBlankCellsAsNulls", true);
+        boolean includeFileSources = JSONUtilities.getBoolean(options, "includeFileSources", false);
+        boolean includeArchiveFileName = JSONUtilities.getBoolean(options, "includeArchiveFileName", false);
 
         List<String> columnNames = new ArrayList<String>();
         boolean hasOurOwnColumnNames = headerLines > 0;
@@ -148,6 +160,9 @@ public class TabularParserHelper {
                         } else if (ExpressionUtils.isNonBlankData(value)) {
                             Serializable storedValue;
                             if (value instanceof String) {
+                                if (trimStrings) {
+                                    value = ((String) value).trim();
+                                }
                                 storedValue = guessCellValueTypes ? ImporterUtilities.parseCellValue((String) value) : (String) value;
                             } else {
                                 storedValue = ExpressionUtils.wrapStorable(value);
@@ -178,13 +193,20 @@ public class TabularParserHelper {
         int nbColumns = columnModel.getColumns().size();
         rows = rows.stream().map(r -> r.padWithNull(nbColumns)).collect(Collectors.toList());
 
-        return runner.create(columnModel, rows, Collections.emptyMap());
+        GridState grid = runner.create(columnModel, rows, Collections.emptyMap());
+        if (includeFileSources) {
+            grid = prependColumn("File", fileSource, grid);
+        }
+        if (includeArchiveFileName) {
+            grid = prependColumn("Archive", archiveFileName, grid);
+        }
+        return grid;
     }
 
     /**
      * Adds a column to the grid, with the same string content in all cells. The column is added at the beginning of the
      * grid.
-     *
+     * 
      * @param columnName
      *            the name of the column to add
      * @param cellValue

@@ -154,7 +154,7 @@ public class QAWarning implements Comparable<QAWarning> {
 
     @Override
     public boolean equals(Object other) {
-        if (other == null || !QAWarning.class.isInstance(other)) {
+        if (!(other instanceof QAWarning)) {
             return false;
         }
         QAWarning otherWarning = (QAWarning) other;

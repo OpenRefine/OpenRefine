@@ -27,16 +27,37 @@
 
 package org.openrefine.expr.functions.strings;
 
+import org.testng.Assert;
 import org.testng.annotations.Test;
 
+import org.openrefine.expr.EvalError;
+import org.openrefine.expr.functions.strings.ToTitlecase;
+import org.openrefine.grel.FunctionTestBase;
 import org.openrefine.util.ParsingUtilities;
 import org.openrefine.util.TestUtils;
 
-public class ToTitlecaseTests {
+public class ToTitlecaseTests extends FunctionTestBase {
 
     @Test
     public void serializeToTitlecase() {
         String json = "{\"description\":\"Returns s converted to titlecase\",\"params\":\"string s\",\"returns\":\"string\"}";
         TestUtils.isSerializedTo(new ToTitlecase(), json, ParsingUtilities.defaultWriter);
     }
+
+    @Test
+    public void testToTitlecaseInvalidParams() {
+        Assert.assertTrue(invoke("toTitlecase") instanceof EvalError);
+        Assert.assertTrue(invoke("toTitlecase", "one", "two", "three") instanceof EvalError);
+    }
+
+    @Test
+    public void testToTitlecase() {
+        Assert.assertEquals((String) (invoke("toTitlecase", "one")), "One");
+        Assert.assertEquals((String) (invoke("toTitlecase", "ONE")), "One");
+        Assert.assertEquals((String) (invoke("toTitlecase", "one two three")), "One Two Three");
+        Assert.assertEquals((String) (invoke("toTitlecase", "C.R. SANDIDGE WINES, INC.")), "C.R. Sandidge Wines, Inc.");
+        Assert.assertEquals((String) (invoke("toTitlecase", "C.R. SANDIDGE WINES, INC.", ",. ")), "C.R. Sandidge Wines, Inc.");
+        Assert.assertEquals((String) (invoke("toTitlecase", "one-two-three", "-")), "One-Two-Three");
+    }
+
 }

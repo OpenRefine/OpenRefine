@@ -60,6 +60,9 @@ public class DBExtensionTests {
     protected final String DEFAULT_MARIADB_PASSWORD = "secret";
     protected final String DEFAULT_MARIADB_NAME = "testdb";
 
+    protected final String SQLITE_DB_NAME = "sqlite";
+    protected final String DEFAULT_SQLITE_DB_NAME = "extension_test_db.sqlite";
+
     protected final String DEFAULT_TEST_TABLE = "test_data";
 
     protected Properties properties;

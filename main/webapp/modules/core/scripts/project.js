@@ -32,6 +32,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 var theProject;
+var thePreferences;
 var ui = {};
 
 var lang = (navigator.language|| navigator.userLanguage).split("-")[0];
@@ -53,9 +54,7 @@ $.i18n().load(dictionary, lang);
 $.i18n({ locale: lang });
 // End internationalization
 
-var Refine = {
-  refineHelperService: "http://openrefine-helper.freebaseapps.com"
-};
+var Refine = {};
 
 Refine.reportException = function(e) {
   if (window.console) {
@@ -68,6 +67,8 @@ function resize() {
   var width = $(window).width();
   var top = $("#header").outerHeight();
   var height = $(window).height() - top;
+  
+  if (ui.leftPanelDiv.css('display') == "none") { leftPanelWidth = 0; }
 
   var leftPanelPaddings = ui.leftPanelDiv.outerHeight(true) - ui.leftPanelDiv.height();
   ui.leftPanelDiv
@@ -145,10 +146,20 @@ function initializeUI(uiState) {
   ui.extensionBar = new ExtensionBar(ui.extensionBarDiv); // construct the menu first so we can resize everything else
   ui.exporterManager = new ExporterManager($("#export-button"));
 
-  ui.leftPanelTabs.tabs({ selected: 0 });
+  ui.leftPanelTabs.tabs();
   resize();
   resizeTabs();
 
+  $('<a>').attr("id", "hide-left-panel-button")
+    .addClass("visibility-panel-button")
+    .click(function() { Refine._showHideLeftPanel(); })
+    .prependTo(ui.leftPanelTabs);
+
+  $('<a>').attr("id", "show-left-panel-button")
+    .addClass("visibility-panel-button")
+    .click(function() { Refine._showHideLeftPanel(); })
+    .prependTo(ui.toolPanelDiv);
+  
   ui.summaryBar = new SummaryBar(ui.summaryBarDiv);
   ui.browsingEngine = new BrowsingEngine(ui.facetPanelDiv, uiState.facets || []);
   ui.processPanel = new ProcessPanel(ui.processPanelDiv);
@@ -165,6 +176,11 @@ function initializeUI(uiState) {
     Refine.update({ engineChanged: true });
   }
 }
+
+Refine._showHideLeftPanel = function() {
+  $('div#body').toggleClass("hide-left-panel");
+  resizeAll();
+};
 
 Refine.setTitle = function(status) {
   var title = theProject.metadata.name + " - OpenRefine";
@@ -190,12 +206,35 @@ Refine.reinitializeProjectData = function(f, fError) {
         $.getJSON(
           "command/core/get-models?" + $.param({ project: theProject.id }), null,
           function(data) {
-            for (var n in data) {
-              if (data.hasOwnProperty(n)) {
-                theProject[n] = data[n];
+            if (data.status == "error") {
+              alert(data.message);
+              if (fError) {
+                fError();
               }
+            } else {
+              for (var n in data) {
+                if (data.hasOwnProperty(n)) {
+                  theProject[n] = data[n];
+                }
+              }
+              $.post(
+                "command/core/get-all-preferences", null,
+                function(preferences) {
+                  if (preferences.status == "error") {
+                    alert(preferences.message);
+                    if (fError) {
+                      fError();
+                    }
+                  } else {
+                    if (preferences != null) {
+                      thePreferences = preferences;
+                    }
+                    f();
+                  }
+                },
+                'json'
+              );
             }
-            f();
           },
           'json'
         );
@@ -204,6 +243,30 @@ Refine.reinitializeProjectData = function(f, fError) {
     'json'
   );
 };
+
+Refine.getPreference = function(key, defaultValue) { 
+  if(!thePreferences.hasOwnProperty(key)) { return defaultValue; }
+
+  return thePreferences[key];
+}
+
+Refine.setPreference = function(key, newValue) { 
+  thePreferences[key] = newValue;
+
+  Refine.wrapCSRF(function(token) {
+    $.ajax({
+      async: false,
+      type: "POST",
+      url: "command/core/set-preference?" + $.param({ name: key }),
+      data: {
+        "value" : JSON.stringify(newValue), 
+        csrf_token: token
+      },
+      success: function(data) { },
+      dataType: "json"
+    });
+  });
+}
 
 Refine._renameProject = function() {
   var name = window.prompt($.i18n('core-index/new-proj-name'), theProject.metadata.name);

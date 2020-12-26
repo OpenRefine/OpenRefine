@@ -37,6 +37,7 @@ import org.testng.annotations.Test;
 import org.wikidata.wdtk.datamodel.helpers.Datamodel;
 import org.wikidata.wdtk.datamodel.interfaces.Claim;
 import org.wikidata.wdtk.datamodel.interfaces.ItemIdValue;
+import org.wikidata.wdtk.datamodel.interfaces.Reference;
 import org.wikidata.wdtk.datamodel.interfaces.Snak;
 import org.wikidata.wdtk.datamodel.interfaces.SnakGroup;
 import org.wikidata.wdtk.datamodel.interfaces.Statement;
@@ -146,6 +147,34 @@ public class QuickStatementsExporterTest extends RefineTest {
         ItemUpdate update = new ItemUpdateBuilder(qid1).addStatement(statement).build();
 
         assertEquals("Q1377\tP38\tQ865528\tP38\tQ1377\n", export(update));
+    }
+
+    /**
+     * issue #2320
+     *
+     * A statement with different references should be duplicated, but each with a different reference.
+     */
+    @Test
+    public void testReferences()
+            throws IOException {
+        Statement baseStatement = TestingData.generateStatement(qid1, qid2);
+        Statement otherStatement = TestingData.generateStatement(qid2, qid1);
+
+        Snak snak1 = baseStatement.getClaim().getMainSnak();
+        Snak snak2 = otherStatement.getClaim().getMainSnak();
+        SnakGroup group1 = Datamodel.makeSnakGroup(Collections.singletonList(snak1));
+        SnakGroup group2 = Datamodel.makeSnakGroup(Collections.singletonList(snak2));
+        Claim claim = Datamodel.makeClaim(qid1, baseStatement.getClaim().getMainSnak(),
+                Collections.singletonList(group2));
+
+        Reference reference1 = Datamodel.makeReference(Collections.singletonList(group1));
+        Reference reference2 = Datamodel.makeReference(Collections.singletonList(group2));
+
+        Statement statement = Datamodel.makeStatement(claim, Arrays.asList(reference1, reference2), StatementRank.NORMAL, "");
+        ItemUpdate update = new ItemUpdateBuilder(qid1).addStatement(statement).build();
+
+        assertEquals("Q1377\tP38\tQ865528\tP38\tQ1377\tS38\tQ865528\n" +
+                "Q1377\tP38\tQ865528\tP38\tQ1377\tS38\tQ1377\n", export(update));
     }
 
     @Test

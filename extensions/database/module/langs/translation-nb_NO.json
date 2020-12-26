@@ -19,6 +19,7 @@
     "database-source/databaseUserLabel": "Bruker:",
     "database-source/databasePasswordLabel": "Passord:",
     "database-source/databaseNameLabel": "Database:",
+    "database-source/databaseFileNameLabel": "Database file:",
     "database-source/databaseSchemaLabel": "Skjema:",
     "database-source/databaseTestButton": "Test",
     "database-source/databaseSaveButton": "Lagre",
@@ -44,5 +45,7 @@
     "database-parsing/store-cell": "Lagre blanke celler som null",
     "database-source/alert-invalid-query-keyword": "Spørring kan ikke inneholde datamanipuleringsnøkkelord:",
     "database-source/form-validation-failure": "Nytt tilkoblingsskjema ugyldig!",
-    "database-parsing/worksheet": "Regneark"
+    "database-parsing/worksheet": "Regneark",
+    "database-source/databaseHostPlaceholder": "Skriv inn databasetjener eller IP",
+    "database-source/connectionNamePlaceholder": "Skriv inn nytt tilkoblingsnavn"
 }

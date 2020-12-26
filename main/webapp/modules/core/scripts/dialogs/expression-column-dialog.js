@@ -51,7 +51,7 @@ ExpressionColumnDialog.prototype._createDialog = function() {
     
     $('<input>')
       .attr('type', 'checkbox')
-      .attr('checked', 'checked')
+      .prop('checked', true)
       .appendTo(div);
     $('<span>')
       .text(name)
@@ -69,10 +69,10 @@ ExpressionColumnDialog.prototype._createDialog = function() {
     $(this).addClass('selected');
   });
   this._elmts.selectAllButton.click(function() {
-    self._elmts.columnList.find('input[type="checkbox"]').attr('checked', true);
+    self._elmts.columnList.find('input[type="checkbox"]').prop('checked', true);
   });
   this._elmts.deselectAllButton.click(function() {
-    self._elmts.columnList.find('input[type="checkbox"]').attr('checked', false);
+    self._elmts.columnList.find('input[type="checkbox"]').prop('checked', false);
   });
   
   this._elmts.okButton.click(function() { self._transform(); });

@@ -29,6 +29,7 @@ package org.openrefine.expr.functions.booleans;
 
 import org.testng.annotations.Test;
 
+import org.openrefine.expr.functions.booleans.And;
 import org.openrefine.util.ParsingUtilities;
 import org.openrefine.util.TestUtils;
 

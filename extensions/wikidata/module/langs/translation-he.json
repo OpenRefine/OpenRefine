@@ -1,0 +1,23 @@
+{
+    "wikibase-addition/dialog-header": "הוספת מניפסט ויקיבייס",
+    "wikibase-management/error-contact": "שגיאה ביצירת קשר עם שירות מניפסט",
+    "wikibase-management/contact-service": "יצירת קשר עם שירות מניפסט",
+    "wikibase-management/close": "סגירה",
+    "wikibase-management/add-wikibase": "הוספת ויקיבייס",
+    "wikibase-management/current-selected-wikibase": "הוויקיבייס שנבחר נכון לעכשיו: <a href=\"$1\" target=\"_blank\">$2</a>",
+    "wikibase-management/explain-select-wikibase": "ניתן ללחוץ על פריט להלן ובלחור אותו בתור יעד הוויקיבייס לעבוד מולו. בחירה זו תפנה כל סכמה קיימת, לאחר מעבר לוויקיבייס היעד, עליך להשלים את הנתונים שלך מולו בטרם עריכת הסכמה.",
+    "wikibase-management/dialog-header": "בחירת עותק ויקיבייס",
+    "wikibase-extension/quickstatements-export-name": "QuickStatements",
+    "wikibase-extension/wikibase-schema": "סכמה של ויקיבייס",
+    "wikibase-extension/export-wikibase-schema": "ייצוא סכמת ויקיבייס",
+    "wikibase-extension/export-schema": "ייצוא סכמה",
+    "wikibase-extension/wikibase-edits": "עריכות ויקיבייס…",
+    "wikibase-extension/qs-file": "קובץ QuickStatements",
+    "wikibase-extension/export-to-qs": "ייצוא ל־QuickStatements",
+    "wikibase-extension/perform-edits-on-wikibase": "העלאת עריכות לוויקיבייס",
+    "wikibase-extension/manage-wikibase-account": "ניהול חשבון ויקיבייס",
+    "wikibase-extension/import-wikibase-schema": "ייבוא סכמה",
+    "wikibase-extension/edit-wikibase-schema": "עריכת סכמת ויקיבייס",
+    "wikibase-extension/select-wikibase-instance": "בחירת עותק ויקיבייס",
+    "wikibase-extension/menu-label": "ויקינתונים"
+}

@@ -158,4 +158,14 @@ public class WbStatementExprTest extends WbExpressionTest<Statement> {
     public void testSerialize() {
         JacksonSerializationTest.canonicalSerialization(WbStatementExpr.class, statementExpr, jsonRepresentation);
     }
+
+    @Test(expectedExceptions = UnsupportedOperationException.class)
+    public void testUnmodifiableQualifiersList() {
+        statementExpr.getQualifiers().clear();
+    }
+
+    @Test(expectedExceptions = UnsupportedOperationException.class)
+    public void testUnmodifiableReferencesList() {
+        statementExpr.getReferences().clear();
+    }
 }

@@ -29,30 +29,17 @@ package org.openrefine.expr.functions.date;
 
 import java.time.OffsetDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Properties;
 
 import org.testng.Assert;
-import org.testng.annotations.AfterMethod;
-import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-import org.openrefine.expr.functions.FunctionTestBase;
+import org.openrefine.grel.FunctionTestBase;
 import org.openrefine.util.ParsingUtilities;
 import org.openrefine.util.TestUtils;
 
 public class NowTests extends FunctionTestBase {
 
     private DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd-HH:mm:ss.SSSSSSSSSX");
-
-    @BeforeMethod
-    public void setUp() {
-        bindings = new Properties();
-    }
-
-    @AfterMethod
-    public void tearDown() {
-        bindings = null;
-    }
 
     @Test
     public void testNow() {

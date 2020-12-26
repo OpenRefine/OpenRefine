@@ -33,13 +33,12 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package org.openrefine.operations.column;
 
+import static com.google.common.base.Strings.isNullOrEmpty;
+
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.Serializable;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLConnection;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Properties;
 import java.util.concurrent.TimeUnit;
@@ -49,6 +48,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
+import org.apache.hc.core5.http.Header;
+import org.apache.hc.core5.http.message.BasicHeader;
 
 import org.openrefine.browsing.Engine;
 import org.openrefine.browsing.EngineConfig;
@@ -74,7 +75,7 @@ import org.openrefine.operations.OnError;
 import org.openrefine.process.LongRunningProcess;
 import org.openrefine.process.Process;
 import org.openrefine.process.ProcessManager;
-import org.openrefine.util.ParsingUtilities;
+import org.openrefine.util.HttpClient;
 
 public class ColumnAdditionByFetchingURLsOperation extends EngineDependentOperation {
 
@@ -130,6 +131,16 @@ public class ColumnAdditionByFetchingURLsOperation extends EngineDependentOperat
         _delay = delay;
         _cacheResponses = cacheResponses;
         _httpHeadersJson = httpHeadersJson;
+
+        List<Header> headers = new ArrayList<Header>();
+        if (_httpHeadersJson != null) {
+            for (HttpHeader header : _httpHeadersJson) {
+                if (!isNullOrEmpty(header.name) && !isNullOrEmpty(header.value)) {
+                    headers.add(new BasicHeader(header.name, header.value));
+                }
+            }
+        }
+
     }
 
     @JsonProperty("newColumnName")
@@ -214,6 +225,8 @@ public class ColumnAdditionByFetchingURLsOperation extends EngineDependentOperat
         final protected Evaluable _eval;
         // initialized lazily for serializability
         transient private LoadingCache<String, Serializable> _urlCache;
+        transient private HttpClient _httpClient;
+        transient private Header[] _headers;
 
         protected URLFetchingChangeProducer(
                 OnError onError,
@@ -224,12 +237,40 @@ public class ColumnAdditionByFetchingURLsOperation extends EngineDependentOperat
                 String baseColumnName,
                 Evaluable eval) {
             _onError = onError;
-            _httpHeaders = httpHeaders;
             _cacheResponses = cacheResponses;
+            _httpHeaders = httpHeaders != null ? httpHeaders : Collections.emptyList();
             _delay = delay;
             _cellIndex = cellIndex;
             _baseColumnName = baseColumnName;
             _eval = eval;
+            _headers = null;
+            _httpClient = null;
+
+        }
+
+        protected HttpClient getHttpClient() {
+            if (_httpClient != null) {
+                return _httpClient;
+            }
+
+            _httpClient = new HttpClient(_delay);
+            return _httpClient;
+        }
+
+        protected Header[] getHttpHeaders() {
+            if (_headers != null) {
+                return _headers;
+            }
+            List<Header> headers = new ArrayList<>();
+            if (_httpHeaders != null) {
+                for (HttpHeader header : _httpHeaders) {
+                    if (!isNullOrEmpty(header.name) && !isNullOrEmpty(header.value)) {
+                        headers.add(new BasicHeader(header.name, header.value));
+                    }
+                }
+            }
+            _headers = (Header[]) headers.toArray(new Header[headers.size()]);
+            return _headers;
         }
 
         @Override
@@ -312,63 +353,15 @@ public class ColumnAdditionByFetchingURLsOperation extends EngineDependentOperat
         }
 
         Serializable fetch(String urlString) {
-            URL url = null;
-            try {
-                url = new URL(urlString);
-            } catch (MalformedURLException e) {
-                return null;
-            }
-
-            try {
-                URLConnection urlConnection = url.openConnection();
-                if (_httpHeaders != null) {
-                    for (int i = 0; i < _httpHeaders.size(); i++) {
-                        String headerLabel = _httpHeaders.get(i).name;
-                        String headerValue = _httpHeaders.get(i).value;
-                        if (headerValue != null && !headerValue.isEmpty()) {
-                            urlConnection.setRequestProperty(headerLabel, headerValue);
-                        }
-                    }
-                }
-
+            try { // HttpClients.createDefault()) {
                 try {
-                    InputStream is = urlConnection.getInputStream();
-                    try {
-                        String encoding = urlConnection.getContentEncoding();
-                        if (encoding == null) {
-                            String contentType = urlConnection.getContentType();
-                            if (contentType != null) {
-                                final String charsetEqual = "charset=";
-                                int c = contentType.lastIndexOf(charsetEqual);
-                                if (c > 0) {
-                                    encoding = contentType.substring(c + charsetEqual.length());
-                                }
-                            }
-                        }
-                        return ParsingUtilities.inputStreamToString(
-                                is, (encoding == null) || (encoding.equalsIgnoreCase("\"UTF-8\"")) ? "UTF-8" : encoding);
-
-                    } finally {
-                        is.close();
-                    }
+                    Header[] headers = getHttpHeaders();
+                    return getHttpClient().getAsString(urlString, headers);
                 } catch (IOException e) {
-                    String message;
-                    if (urlConnection instanceof HttpURLConnection) {
-                        int status = ((HttpURLConnection) urlConnection).getResponseCode();
-                        String errorString = "";
-                        InputStream errorStream = ((HttpURLConnection) urlConnection).getErrorStream();
-                        if (errorStream != null) {
-                            errorString = ParsingUtilities.inputStreamToString(errorStream);
-                        }
-                        message = String.format("HTTP error %d : %s | %s", status,
-                                ((HttpURLConnection) urlConnection).getResponseMessage(),
-                                errorString);
-                    } else {
-                        message = e.toString();
-                    }
-                    return _onError == OnError.StoreError ? new EvalError(message) : null;
+                    return _onError == OnError.StoreError ? new EvalError(e) : null;
                 }
             } catch (Exception e) {
+                e.printStackTrace();
                 return _onError == OnError.StoreError ? new EvalError(e.getMessage()) : null;
             }
         }

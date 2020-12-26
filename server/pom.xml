@@ -39,7 +39,7 @@
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>build-helper-maven-plugin</artifactId>
-        <version>1.8</version>
+        <version>3.2.0</version>
         <executions>
           <execution>
             <phase>generate-sources</phase>
@@ -57,7 +57,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
-        <version>3.1</version>
+        <version>3.8.1</version>
         <configuration>
           <source>1.8</source>
           <target>1.8</target>
@@ -68,7 +68,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-resources-plugin</artifactId>
-        <version>2.6</version>
+        <version>3.2.0</version>
         <configuration>
           <encoding>UTF-8</encoding>
         </configuration>
@@ -76,7 +76,7 @@
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>exec-maven-plugin</artifactId>
-        <version>1.3</version>
+        <version>3.0.0</version>
         <configuration>
           <mainClass>org.openrefine.Refine</mainClass>
           <commandlineArgs>-Drefine.headless=true -Drefine.autoreload=true -Dbutterfly.autoreload=true -Drefine.memory=1400M -Drefine.port=3333 -Drefine.host=127.0.0.1</commandlineArgs>
@@ -91,36 +91,13 @@
           <skip>true</skip>
         </configuration>
       </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-install-plugin</artifactId>
-        <version>2.5.2</version>
-        <executions>
-            <execution>
-                <id>install-jdapath</id>
-                <phase>process-resources</phase>
-                <configuration>
-                    <file>${basedir}/lib-local/jdatapath-alpha2.jar</file>
-                    <repositoryLayout>default</repositoryLayout>
-                    <groupId>com.codeberry.jdatapath</groupId>
-                    <artifactId>jdatapath</artifactId>
-                    <version>alpha2</version>
-                    <packaging>jar</packaging>
-                    <generatePom>true</generatePom>
-                </configuration>
-                <goals>
-                    <goal>install-file</goal>
-                </goals>
-            </execution>
-        </executions>
-      </plugin>
     </plugins>
     <pluginManagement>
       <plugins>
         <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-dependency-plugin</artifactId>
-            <version>3.1.1</version>
+            <version>3.1.2</version>
             <configuration>
                 <includeScope>runtime</includeScope>
             </configuration>
@@ -198,30 +175,29 @@
       <version>${jetty.version}</version>
     </dependency>
     <dependency>
-      <groupId>com.codeberry.jdatapath</groupId>
+      <groupId>org.openrefine.dependencies</groupId>
       <artifactId>jdatapath</artifactId>
       <version>alpha2</version>
     </dependency>
     <dependency>
-      <groupId>edu.mit.simile</groupId>
+      <groupId>org.openrefine.dependencies</groupId>
       <artifactId>butterfly</artifactId>
       <version>${butterfly.version}</version>
     </dependency>
     <dependency>
       <groupId>org.mozilla</groupId>
-      <artifactId>rhino</artifactId>
-      <version>1.7.10</version>
+      <artifactId>rhino-runtime</artifactId>
+      <version>1.7.13</version>
     </dependency>
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-log4j12</artifactId>
-      <version>1.7.18</version>
+      <version>${slf4j.version}</version>
     </dependency>
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-api</artifactId>
-      <version>1.7.18</version>
+      <version>${slf4j.version}</version>
     </dependency>
   </dependencies>
 </project>
-

@@ -41,10 +41,10 @@ public class GetColumnsInfoCommandTests extends CommandTestBase {
         command = new GetColumnsInfoCommand();
         project = createProject(
                 new String[] { "a", "b", "c" },
-                new Serializable[] {
-                        1, 2, 3,
-                        "a", 4, 5,
-                        "b", "c", 6
+                new Serializable[][] {
+                        { 1, 2, 3 },
+                        { "a", 4, 5 },
+                        { "b", "c", 6 }
                 });
     }
 

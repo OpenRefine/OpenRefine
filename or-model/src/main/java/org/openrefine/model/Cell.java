@@ -76,6 +76,8 @@ public class Cell implements HasFields, Serializable {
             return value;
         } else if ("recon".equals(name)) {
             return recon;
+        } else if ("errorMessage".equals(name)) {
+            return getErrorMessage();
         }
         return null;
     }

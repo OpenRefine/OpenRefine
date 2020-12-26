@@ -27,16 +27,36 @@
 
 package org.openrefine.expr.functions.strings;
 
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertTrue;
+
 import org.testng.annotations.Test;
 
+import org.openrefine.expr.EvalError;
+import org.openrefine.expr.functions.strings.Replace;
+import org.openrefine.grel.FunctionTestBase;
 import org.openrefine.util.ParsingUtilities;
 import org.openrefine.util.TestUtils;
 
-public class ReplaceTests {
+public class ReplaceTests extends FunctionTestBase {
 
     @Test
     public void serializeReplace() {
         String json = "{\"description\":\"Returns the string obtained by replacing f with r in s\",\"params\":\"string s, string or regex f, string r\",\"returns\":\"string\"}";
         TestUtils.isSerializedTo(new Replace(), json, ParsingUtilities.defaultWriter);
+    }
+
+    @Test
+    public void testReplace() {
+        assertTrue(invoke("replace") instanceof EvalError);
+        assertTrue(invoke("replace", "test") instanceof EvalError);
+        assertTrue(invoke("replace", "test", "test") instanceof EvalError);
+        assertTrue(invoke("replace", "test", "test", null) instanceof EvalError);
+        assertEquals(invoke("replace", "", "ripe", "green"), "");
+        assertEquals(invoke("replace", "", "", ""), "");
+        assertEquals(invoke("replace", "ripe banana", "ripe", "green"), "green banana");
+        assertEquals(invoke("replace", "ripe banana", "ripe", ""), " banana");
+        assertEquals(invoke("replace", "ripe banana", "wrong", "green"), "ripe banana");
+        assertEquals(invoke("replace", "ripe ripe banana", "ripe", "green"), "green green banana");
     }
 }

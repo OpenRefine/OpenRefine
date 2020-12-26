@@ -75,12 +75,14 @@ public class RdfTripleImporter extends ReaderImporter {
     }
 
     @Override
-    public GridState parseOneFile(ProjectMetadata metadata, ImportingJob job, String fileSource, Reader input,
-            long limit, ObjectNode options) throws Exception {
+    public GridState parseOneFile(ProjectMetadata metadata, ImportingJob job, String fileSource, String archiveFileName,
+            Reader input, long limit, ObjectNode options) throws Exception {
         // create an empty model
         Model model = ModelFactory.createDefaultModel();
 
         switch (mode) {
+            // TODO: The standard lang name is "N-TRIPLE"
+            // we may need to switch if we change packagings
             case NT:
                 model.read(input, null, "NT");
                 break;
@@ -90,6 +92,7 @@ public class RdfTripleImporter extends ReaderImporter {
             case TTL:
                 model.read(input, null, "TTL");
                 break;
+            // TODO: The standard lang name is "JSONLD"
             case JSONLD:
                 model.read(input, null, "JSON-LD");
                 break;

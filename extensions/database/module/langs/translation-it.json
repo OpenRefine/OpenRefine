@@ -20,6 +20,7 @@
     "database-source/databaseUserLabel": "Utente:",
     "database-source/databasePasswordLabel": "Password:",
     "database-source/databaseNameLabel": "Database:",
+    "database-source/databaseFileNameLabel": "Database file:",
     "database-source/databaseSchemaLabel": "Schema:",
     "database-source/databaseTestButton": "Test",
     "database-source/databaseSaveButton": "Salva",

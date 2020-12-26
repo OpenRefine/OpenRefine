@@ -96,12 +96,12 @@ public class WbItemDocumentExpr implements WbExpression<ItemUpdate> {
 
     @JsonProperty("nameDescs")
     public List<WbNameDescExpr> getNameDescs() {
-        return nameDescs;
+        return Collections.unmodifiableList(nameDescs);
     }
 
     @JsonProperty("statementGroups")
     public List<WbStatementGroupExpr> getStatementGroups() {
-        return statementGroups;
+        return Collections.unmodifiableList(statementGroups);
     }
 
     @Override

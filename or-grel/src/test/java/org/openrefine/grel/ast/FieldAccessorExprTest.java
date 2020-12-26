@@ -8,6 +8,8 @@ import static org.testng.Assert.assertNull;
 
 import org.testng.annotations.Test;
 
+import org.openrefine.grel.ast.FieldAccessorExpr;
+
 public class FieldAccessorExprTest extends ExprTestBase {
 
     @Test

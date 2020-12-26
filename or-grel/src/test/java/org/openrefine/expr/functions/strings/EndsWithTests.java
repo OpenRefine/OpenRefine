@@ -27,16 +27,26 @@
 
 package org.openrefine.expr.functions.strings;
 
+import static org.testng.Assert.assertFalse;
+import static org.testng.Assert.assertTrue;
+
 import org.testng.annotations.Test;
 
+import org.openrefine.grel.FunctionTestBase;
 import org.openrefine.util.ParsingUtilities;
 import org.openrefine.util.TestUtils;
 
-public class EndsWithTests {
+public class EndsWithTests extends FunctionTestBase {
 
     @Test
     public void serializeEndsWith() {
         String json = "{\"description\":\"Returns whether s ends with sub\",\"params\":\"string s, string sub\",\"returns\":\"boolean\"}";
         TestUtils.isSerializedTo(new EndsWith(), json, ParsingUtilities.defaultWriter);
+    }
+
+    @Test
+    public void testStartsWith() {
+        assertTrue((Boolean) invoke("endsWith", "testString", "ing"));
+        assertFalse((Boolean) invoke("startsWith", "testString", "banana"));
     }
 }

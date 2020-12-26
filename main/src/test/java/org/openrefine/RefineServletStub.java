@@ -1,6 +1,7 @@
 /*
 
-Copyright 2010, Google Inc.
+Copyright 2010 Google Inc.
+Copyright 2019,2020 OpenRefine contributors
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -35,6 +36,8 @@ package org.openrefine;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -65,7 +68,8 @@ public class RefineServletStub extends RefineServlet {
     public File getTempDir() {
         if (tempDir == null) {
             try {
-                tempDir = File.createTempFile("refine-test-dir", "");
+                Path tempDirPath = Files.createTempDirectory("refine-test-dir");
+                tempDir = tempDirPath.toFile();
                 tempDir.deleteOnExit();
             } catch (IOException e) {
                 throw new RuntimeException("Failed to create temp directory", e);

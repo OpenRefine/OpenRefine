@@ -106,7 +106,6 @@ public class CsvExporterTests extends RefineTest {
         Assert.assertEquals(writer.toString(), "column0,column1\n" +
                 "row0cell0,row0cell1\n" +
                 "row1cell0,row1cell1\n");
-
     }
 
     @Test
@@ -139,7 +138,22 @@ public class CsvExporterTests extends RefineTest {
         Assert.assertEquals(writer.toString(), "column0,column1X" +
                 "row0cell0,row0cell1X" +
                 "row1cell0,row1cell1X");
+    }
 
+    @Test
+    public void exportSimpleCsvQuoteAll() {
+        CreateGrid(2, 2);
+        when(options.getProperty("options")).thenReturn("{\"quoteAll\":\"true\"}");
+
+        try {
+            SUT.export(grid, projectMetadata, options, engine, writer);
+        } catch (IOException e) {
+            Assert.fail();
+        }
+
+        Assert.assertEquals(writer.toString(), "\"column0\",\"column1\"\n" +
+                "\"row0cell0\",\"row0cell1\"\n" +
+                "\"row1cell0\",\"row1cell1\"\n");
     }
 
     @Test

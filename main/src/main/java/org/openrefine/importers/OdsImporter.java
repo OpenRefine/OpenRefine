@@ -128,9 +128,9 @@ public class OdsImporter extends InputStreamImporter {
             ProjectMetadata metadata,
             ImportingJob job,
             String fileSource,
+            String archiveFileName,
             InputStream inputStream,
-            long limit,
-            ObjectNode options) throws Exception {
+            long limit, ObjectNode options) throws Exception {
         OdfDocument odfDoc;
         try {
             odfDoc = OdfDocument.loadDocument(inputStream);
@@ -167,6 +167,7 @@ public class OdsImporter extends InputStreamImporter {
 
                     List<Object> cells = new ArrayList<Object>();
                     OdfTableRow row = table.getRowByIndex(nextRow++);
+                    int maxCol = 0;
                     if (row != null) {
                         int lastCell = row.getCellCount();
                         for (int cellIndex = 0; cellIndex <= lastCell; cellIndex++) {
@@ -177,9 +178,13 @@ public class OdsImporter extends InputStreamImporter {
                                 cell = extractCell(sourceCell, reconMap);
                             }
                             cells.add(cell);
+                            if (cell != null && cellIndex > maxCol) {
+                                maxCol = cellIndex;
+                            }
                         }
                     }
-                    return cells;
+                    // Right truncate null cells
+                    return cells.subList(0, maxCol + 1);
                 }
             };
 
@@ -187,9 +192,9 @@ public class OdsImporter extends InputStreamImporter {
                     metadata,
                     job,
                     fileSource + "#" + table.getTableName(),
+                    archiveFileName,
                     dataReader,
-                    limit,
-                    options));
+                    limit, options));
         }
 
         return mergeGridStates(grids);
@@ -207,7 +212,7 @@ public class OdsImporter extends InputStreamImporter {
         } else if ("float".equals(cellType)) {
             value = cell.getDoubleValue();
         } else if ("date".equals(cellType)) {
-            value = cell.getDateValue();
+            value = ParsingUtilities.toDate(cell.getDateValue());
         } else if ("currency".equals(cellType)) {
             value = cell.getCurrencyValue();
         } else if ("percentage".equals(cellType)) {
@@ -219,10 +224,10 @@ public class OdsImporter extends InputStreamImporter {
             if ("".equals(value)) {
                 value = null;
             } else {
-                logger.info("Null cell type with non-empty value: " + value);
+                logger.warn("Null cell type with non-empty value: " + value);
             }
         } else {
-            logger.info("Unexpected cell type " + cellType);
+            logger.warn("Unexpected cell type " + cellType);
             value = cell.getDisplayText();
         }
         return value;
@@ -278,5 +283,4 @@ public class OdsImporter extends InputStreamImporter {
             return null;
         }
     }
-
 }

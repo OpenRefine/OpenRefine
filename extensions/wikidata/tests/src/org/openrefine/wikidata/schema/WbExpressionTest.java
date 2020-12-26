@@ -29,7 +29,13 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+import okhttp3.mockwebserver.Dispatcher;
+import okhttp3.mockwebserver.MockResponse;
+import okhttp3.mockwebserver.MockWebServer;
+import okhttp3.mockwebserver.RecordedRequest;
 import org.testng.Assert;
+import org.testng.annotations.AfterClass;
+import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
 
 import org.openrefine.RefineTest;
@@ -49,6 +55,29 @@ public class WbExpressionTest<T> extends RefineTest {
     protected ExpressionContext ctxt;
     protected QAWarningStore warningStore;
 
+    protected static MockWebServer server;
+
+    @BeforeClass
+    public void startServer() throws IOException {
+        server = new MockWebServer();
+        String json = TestingData.jsonFromFile("langcode/wikidata-monolingualtext-langcode.json");
+        server.setDispatcher(new Dispatcher() {
+
+            @Override
+            public MockResponse dispatch(RecordedRequest request) throws InterruptedException {
+                return new MockResponse()
+                        .addHeader("Content-Type", "application/json; charset=utf-8")
+                        .setBody(json);
+            }
+        });
+        server.start();
+    }
+
+    @AfterClass
+    public void shutdownServer() throws IOException {
+        server.shutdown();
+    }
+
     @BeforeMethod
     public void createProject()
             throws IOException, ModelException {
@@ -58,7 +87,7 @@ public class WbExpressionTest<T> extends RefineTest {
                         { "value A", "value B", "value C", "value D", "value E" } });
         warningStore = new QAWarningStore();
         row = project.getCurrentGridState().getRow(0);
-        ctxt = new ExpressionContext("http://www.wikidata.org/entity/", 0,
+        ctxt = new ExpressionContext("http://www.wikidata.org/entity/", server.url("/w/api.php").toString(), 0,
                 row, project.getCurrentGridState().getColumnModel(), warningStore);
     }
 
@@ -82,8 +111,6 @@ public class WbExpressionTest<T> extends RefineTest {
     /**
      * Test that a particular expression is skipped.
      * 
-     * @param expected
-     *            the expected evaluation of the value
      * @param expression
      *            the expression to evaluate
      */
@@ -118,7 +145,7 @@ public class WbExpressionTest<T> extends RefineTest {
 
     public void setRow(Row row) {
         this.row = row;
-        ctxt = new ExpressionContext("http://www.wikidata.org/entity/", 0,
+        ctxt = new ExpressionContext("http://www.wikidata.org/entity/", server.url("/w/api.php").toString(), 0,
                 row, project.getCurrentGridState().getColumnModel(), warningStore);
 
     }

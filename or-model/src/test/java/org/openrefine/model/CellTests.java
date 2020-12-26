@@ -27,6 +27,7 @@
 
 package org.openrefine.model;
 
+import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNull;
 
 import java.time.LocalDateTime;
@@ -35,6 +36,7 @@ import java.time.format.DateTimeFormatter;
 
 import org.testng.annotations.Test;
 
+import org.openrefine.expr.EvalError;
 import org.openrefine.model.recon.Recon;
 import org.openrefine.util.ParsingUtilities;
 import org.openrefine.util.TestUtils;
@@ -87,6 +89,15 @@ public class CellTests {
         String json = "{\"e\":\"HTTP 403\"}";
         Cell c = Cell.loadStreaming(json);
         TestUtils.isSerializedTo(c, json, ParsingUtilities.defaultWriter);
+    }
+
+    @Test
+    public void getMessageFromErrorCell() throws Exception {
+        String errorMessage = "Sample error message";
+        EvalError err = new EvalError(errorMessage);
+        Cell c = new Cell(err, null);
+        assertEquals(c.getField("errorMessage"), errorMessage);
+        assertEquals(c.getField("value"), err);
     }
 
     @Test

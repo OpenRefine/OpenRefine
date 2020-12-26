@@ -67,12 +67,12 @@ public class GetRowsCommandTest extends RefineTest {
         request = mock(HttpServletRequest.class);
         response = mock(HttpServletResponse.class);
         project = createProject(new String[] { "foo", "bar" },
-                new Serializable[] {
-                        "a", "b",
-                        null, "c",
-                        "d", "e",
-                        "", "f",
-                        "g", "h"
+                new Serializable[][] {
+                        { "a", "b" },
+                        { null, "c" },
+                        { "d", "e" },
+                        { "", "f" },
+                        { "g", "h" }
                 });
         command = new GetRowsCommand();
         writer = new StringWriter();
@@ -145,7 +145,7 @@ public class GetRowsCommandTest extends RefineTest {
         when(request.getParameter("engine")).thenReturn("{\"mode\":\"row-based\",\"facets\":[],\"aggregationLimit\":2}");
         when(request.getParameter("limit")).thenReturn("1");
         command.doPost(request, response);
-        TestUtils.assertEqualAsJson(writer.toString(), rowJson);
+        TestUtils.assertEqualsAsJson(writer.toString(), rowJson);
     }
 
     @Test
@@ -180,7 +180,7 @@ public class GetRowsCommandTest extends RefineTest {
         when(request.getParameter("limit")).thenReturn("1");
 
         command.doPost(request, response);
-        TestUtils.assertEqualAsJson(rowJson, writer.toString());
+        TestUtils.assertEqualsAsJson(writer.toString(), rowJson);
     }
 
     @Test
@@ -250,7 +250,7 @@ public class GetRowsCommandTest extends RefineTest {
         when(request.getParameter("engine")).thenReturn("{\"mode\":\"record-based\",\"facets\":[],\"aggregationLimit\":2}");
         when(request.getParameter("limit")).thenReturn("1");
         command.doPost(request, response);
-        TestUtils.assertEqualAsJson(writer.toString(), recordJson);
+        TestUtils.assertEqualsAsJson(writer.toString(), recordJson);
     }
 
     @Test
@@ -292,6 +292,6 @@ public class GetRowsCommandTest extends RefineTest {
         when(request.getParameter("engine")).thenReturn(engineConfig);
         when(request.getParameter("limit")).thenReturn("1");
         command.doPost(request, response);
-        TestUtils.assertEqualAsJson(recordJson, writer.toString());
+        TestUtils.assertEqualsAsJson(writer.toString(), recordJson);
     }
 }

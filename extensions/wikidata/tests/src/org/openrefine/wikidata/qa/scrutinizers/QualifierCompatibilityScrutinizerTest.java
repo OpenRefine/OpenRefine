@@ -24,6 +24,9 @@
 
 package org.openrefine.wikidata.qa.scrutinizers;
 
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -32,19 +35,33 @@ import java.util.stream.Collectors;
 import org.testng.annotations.Test;
 import org.wikidata.wdtk.datamodel.helpers.Datamodel;
 import org.wikidata.wdtk.datamodel.interfaces.Claim;
+import org.wikidata.wdtk.datamodel.interfaces.ItemIdValue;
+import org.wikidata.wdtk.datamodel.interfaces.PropertyIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.Snak;
 import org.wikidata.wdtk.datamodel.interfaces.SnakGroup;
 import org.wikidata.wdtk.datamodel.interfaces.Statement;
 import org.wikidata.wdtk.datamodel.interfaces.StatementRank;
 
-import org.openrefine.wikidata.qa.MockConstraintFetcher;
+import org.openrefine.wikidata.qa.ConstraintFetcher;
 import org.openrefine.wikidata.testing.TestingData;
+import org.openrefine.wikidata.updates.ItemUpdate;
+import org.openrefine.wikidata.updates.ItemUpdateBuilder;
 
 public class QualifierCompatibilityScrutinizerTest extends StatementScrutinizerTest {
 
-    private Snak disallowedQualifier = Datamodel.makeNoValueSnak(MockConstraintFetcher.qualifierPid);
-    private Snak mandatoryQualifier = Datamodel.makeNoValueSnak(MockConstraintFetcher.mandatoryQualifierPid);
-    private Snak allowedQualifier = Datamodel.makeNoValueSnak(MockConstraintFetcher.allowedQualifierPid);
+    public static final String ALLOWED_QUALIFIERS_CONSTRAINT_QID = "Q21510851";
+    public static final String MANDATORY_QUALIFIERS_CONSTRAINT_QID = "Q21510856";
+    public static final String ALLOWED_QUALIFIERS_CONSTRAINT_PID = "P2306";
+
+    public static ItemIdValue allowedQualifierEntity = Datamodel.makeWikidataItemIdValue(ALLOWED_QUALIFIERS_CONSTRAINT_QID);
+    public static ItemIdValue mandatoryQualifierEntity = Datamodel.makeWikidataItemIdValue(MANDATORY_QUALIFIERS_CONSTRAINT_QID);
+    public static PropertyIdValue propertyParameterPID = Datamodel.makeWikidataPropertyIdValue(ALLOWED_QUALIFIERS_CONSTRAINT_PID);
+    public static PropertyIdValue propertyParameterValue = Datamodel.makeWikidataPropertyIdValue("P585");
+
+    public static PropertyIdValue allowedPropertyIdValue = Datamodel.makeWikidataPropertyIdValue("P2196");
+    public static PropertyIdValue mandatoryPropertyIdValue = Datamodel.makeWikidataPropertyIdValue("P2196");
+    public static PropertyIdValue qualifierProperty = Datamodel.makeWikidataPropertyIdValue("P585");
+    public static PropertyIdValue disallowedQualifierProperty = Datamodel.makeWikidataPropertyIdValue("P586");
 
     @Override
     public EditScrutinizer getScrutinizer() {
@@ -53,26 +70,72 @@ public class QualifierCompatibilityScrutinizerTest extends StatementScrutinizerT
 
     @Test
     public void testDisallowedQualifier() {
+        ItemIdValue idA = TestingData.existingId;
+        Snak mainSnak = Datamodel.makeSomeValueSnak(allowedPropertyIdValue);
+        Snak qualifierSnak = Datamodel.makeSomeValueSnak(disallowedQualifierProperty);
+        Statement statement = makeStatement(mainSnak, qualifierSnak);
+        ItemUpdate update = new ItemUpdateBuilder(idA).addStatement(statement).build();
 
-        scrutinize(makeStatement(disallowedQualifier, mandatoryQualifier));
+        Snak constraintQualifierSnak = Datamodel.makeValueSnak(propertyParameterPID, propertyParameterValue);
+        List<Snak> qualifierList = Collections.singletonList(constraintQualifierSnak);
+        SnakGroup qualifierSnakGroup = Datamodel.makeSnakGroup(qualifierList);
+        List<SnakGroup> constraintQualifiers = Collections.singletonList(qualifierSnakGroup);
+        List<Statement> constraintDefinitions = constraintParameterStatementList(allowedQualifierEntity, constraintQualifiers);
+
+        ConstraintFetcher fetcher = mock(ConstraintFetcher.class);
+        when(fetcher.getConstraintsByType(allowedPropertyIdValue, ALLOWED_QUALIFIERS_CONSTRAINT_QID)).thenReturn(constraintDefinitions);
+        setFetcher(fetcher);
+
+        scrutinize(update);
         assertWarningsRaised(QualifierCompatibilityScrutinizer.disallowedQualifiersType);
     }
 
     @Test
     public void testMissingQualifier() {
-        scrutinize(makeStatement());
+        ItemIdValue idA = TestingData.existingId;
+        Snak mainSnak = Datamodel.makeSomeValueSnak(mandatoryPropertyIdValue);
+        Statement statement = makeStatement(mainSnak);
+        ItemUpdate update = new ItemUpdateBuilder(idA).addStatement(statement).build();
+
+        Snak constraintQualifierSnak = Datamodel.makeValueSnak(propertyParameterPID, propertyParameterValue);
+        List<Snak> qualifierList = Collections.singletonList(constraintQualifierSnak);
+        SnakGroup qualifierSnakGroup = Datamodel.makeSnakGroup(qualifierList);
+        List<SnakGroup> constraintQualifiers = Collections.singletonList(qualifierSnakGroup);
+        List<Statement> constraintDefinitions = constraintParameterStatementList(mandatoryQualifierEntity, constraintQualifiers);
+
+        ConstraintFetcher fetcher = mock(ConstraintFetcher.class);
+        when(fetcher.getConstraintsByType(mandatoryPropertyIdValue, MANDATORY_QUALIFIERS_CONSTRAINT_QID)).thenReturn(constraintDefinitions);
+        setFetcher(fetcher);
+
+        scrutinize(update);
         assertWarningsRaised(QualifierCompatibilityScrutinizer.missingMandatoryQualifiersType);
     }
 
     @Test
     public void testGoodEdit() {
-        scrutinize(makeStatement(allowedQualifier, mandatoryQualifier));
+        ItemIdValue idA = TestingData.existingId;
+        Snak mainSnak = Datamodel.makeSomeValueSnak(allowedPropertyIdValue);
+        Snak qualifierSnak = Datamodel.makeSomeValueSnak(qualifierProperty);
+        Statement statement = makeStatement(mainSnak, qualifierSnak);
+        ItemUpdate update = new ItemUpdateBuilder(idA).addStatement(statement).build();
+
+        Snak constraintQualifierSnak = Datamodel.makeValueSnak(propertyParameterPID, propertyParameterValue);
+        List<Snak> qualifierList = Collections.singletonList(constraintQualifierSnak);
+        SnakGroup qualifierSnakGroup = Datamodel.makeSnakGroup(qualifierList);
+        List<SnakGroup> constraintQualifiers = Collections.singletonList(qualifierSnakGroup);
+        List<Statement> constraintDefinitions = constraintParameterStatementList(allowedQualifierEntity, constraintQualifiers);
+
+        ConstraintFetcher fetcher = mock(ConstraintFetcher.class);
+        when(fetcher.getConstraintsByType(allowedPropertyIdValue, ALLOWED_QUALIFIERS_CONSTRAINT_QID)).thenReturn(constraintDefinitions);
+        setFetcher(fetcher);
+
+        scrutinize(update);
         assertNoWarningRaised();
     }
 
-    private Statement makeStatement(Snak... qualifiers) {
+    private Statement makeStatement(Snak mainSnak, Snak... qualifiers) {
         Claim claim = Datamodel.makeClaim(TestingData.existingId,
-                Datamodel.makeNoValueSnak(MockConstraintFetcher.mainSnakPid), makeQualifiers(qualifiers));
+                mainSnak, makeQualifiers(qualifiers));
         return Datamodel.makeStatement(claim, Collections.emptyList(), StatementRank.NORMAL, "");
     }
 

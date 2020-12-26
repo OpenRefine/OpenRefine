@@ -37,7 +37,7 @@ import org.testng.Assert;
 import org.testng.annotations.Test;
 
 import org.openrefine.expr.EvalError;
-import org.openrefine.expr.functions.FunctionTestBase;
+import org.openrefine.grel.FunctionTestBase;
 
 /**
  * Tests for string up/low/title case functions. (A very brief start so far)

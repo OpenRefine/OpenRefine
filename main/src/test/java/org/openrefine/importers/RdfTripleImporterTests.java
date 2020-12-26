@@ -289,6 +289,39 @@ public class RdfTripleImporterTests extends ImporterTest {
     }
 
     @Test
+    public void canParseTurtleBlankNode() throws Exception {
+        String sampleRdf = "@prefix ex: <http://example.org/data#> .\n" +
+                "<http://example.org/web-data> ex:title \"Web Data\" ;\n" +
+                "                               ex:professor [ ex:fullName \"Alice Carol\" ;\n" +
+                "                                              ex:homePage <http://example.net/alice-carol> ] .";
+
+        StringReader input = new StringReader(sampleRdf);
+
+        SUT = new RdfTripleImporter(runner(), RdfTripleImporter.Mode.TTL);
+        GridState grid = parseOneFile(SUT, input);
+
+        String[] columns = { "subject",
+                "http://example.org/data#professor",
+                "http://example.org/data#title",
+                "http://example.org/data#homePage",
+                "http://example.org/data#fullName",
+        };
+
+        ColumnModel columnModel = grid.getColumnModel();
+        Assert.assertEquals(columnModel.getColumns().size(), columns.length);
+        for (int i = 0; i < columns.length; i++) {
+            Assert.assertEquals(columnModel.getColumns().get(i).getName(), columns[i]);
+        }
+
+        Assert.assertEquals(grid.rowCount(), 2);
+        Assert.assertEquals(grid.getRow(0).getCells().size(), 5);
+        Assert.assertEquals(grid.getRow(1).getCells().size(), 5);
+        Assert.assertEquals(grid.getRow(0).getCellValue(0), "http://example.org/web-data");
+        // Generated blank node ID is random, but should match
+        Assert.assertEquals(grid.getRow(0).getCellValue(1), grid.getRow(1).getCellValue(0));
+    }
+
+    @Test
     public void canParseJsonld() throws Exception {
         String sampleJsonld = "{\n " +
                 "  \"@context\": {\n " +

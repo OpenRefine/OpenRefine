@@ -1040,7 +1040,7 @@ since IE8 won't execute CSS that contains a CSS3 selector.
     margin-left: 5px;
     color: #333;
     /* border-bottom: 1px solid #e5e5e5; */
-    border-bottom: 1px solid #bce8f1;
+    border-bottom: 1px solid #bcf;
 }
 
 .pure-form-stacked input[type="text"],

@@ -92,7 +92,7 @@ public class DataExtensionChange extends EngineDependentChange {
                         _endpoint,
                         _identifierSpace,
                         _schemaSpace,
-                        _columnTypes.get(i)))
+                        _columnTypes.get(i - _columnInsertIndex)))
                 .collect(Collectors.toList());
 
         return ReconStatsAggregator.updateReconStats(state, columnIndices, reconConfigs);

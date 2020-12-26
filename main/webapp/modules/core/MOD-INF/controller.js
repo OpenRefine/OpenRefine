@@ -76,7 +76,6 @@ function registerCommands() {
 
   RS.registerCommand(module, "delete-project", new Packages.org.openrefine.commands.project.DeleteProjectCommand());
   RS.registerCommand(module, "rename-project", new Packages.org.openrefine.commands.project.RenameProjectCommand());
-  RS.registerCommand(module, "set-project-metadata", new Packages.org.openrefine.commands.project.SetProjectMetadataCommand());
 
   RS.registerCommand(module, "get-models", new Packages.org.openrefine.commands.project.GetModelsCommand());
   RS.registerCommand(module, "get-rows", new Packages.org.openrefine.commands.row.GetRowsCommand());
@@ -204,44 +203,45 @@ function registerImporting() {
    *    they also generate defaults for the client-side UIs to initialize.
    */
 
-  FR.registerFormat("text", "Text files"); // generic format, no parser to handle it
-  FR.registerFormat("text/line-based", "Line-based text files", "LineBasedParserUI",
+  FR.registerFormat("text", "core-import-formats/text" ); // generic format, no parser to handle it
+  FR.registerFormat("text/line-based", "core-import-formats/text/line-based", "LineBasedParserUI",
       new Packages.org.openrefine.importers.LineBasedImporter(runner));
-  FR.registerFormat("text/line-based/*sv", "CSV / TSV / separator-based files", "SeparatorBasedParserUI",
+  FR.registerFormat("text/line-based/*sv", "core-import-formats/text/line-based/*sv", "SeparatorBasedParserUI",
       new Packages.org.openrefine.importers.SeparatorBasedImporter(runner));
-  FR.registerFormat("text/line-based/fixed-width", "Fixed-width field text files", "FixedWidthParserUI",
+  FR.registerFormat("text/line-based/fixed-width", "core-import-formats/text/line-based/fixed-width", "FixedWidthParserUI",
       new Packages.org.openrefine.importers.FixedWidthImporter(runner));
 
-  FR.registerFormat("text/rdf/nt", "RDF/N-Triples files", "RdfTriplesParserUI", 
+  FR.registerFormat("text/rdf/nt", "core-import-formats/text/rdf/nt", "RdfTriplesParserUI", 
               new Packages.org.openrefine.importers.RdfTripleImporter(runner, Packages.org.openrefine.importers.RdfTripleImporter.Mode.NT));
-  FR.registerFormat("text/rdf/n3", "RDF/N3 files", "RdfTriplesParserUI", 
+  FR.registerFormat("text/rdf/n3", "core-import-formats/text/rdf/n3", "RdfTriplesParserUI", 
           new Packages.org.openrefine.importers.RdfTripleImporter(runner, Packages.org.openrefine.importers.RdfTripleImporter.Mode.N3));
-  FR.registerFormat("text/rdf/ttl", "RDF/Turtle files", "RdfTriplesParserUI", 
+  FR.registerFormat("text/rdf/ttl", "core-import-formats/text/rdf/ttl", "RdfTriplesParserUI", 
                   new Packages.org.openrefine.importers.RdfTripleImporter(runner, Packages.org.openrefine.importers.RdfTripleImporter.Mode.TTL));
-  FR.registerFormat("text/rdf/xml", "RDF/XML files", "RdfTriplesParserUI", new Packages.org.openrefine.importers.RdfXmlTripleImporter(runner));
-  FR.registerFormat("text/rdf/ld+json", "JSON-LD files", "RdfTriplesParserUI", new Packages.org.openrefine.importers.RdfJsonldTripleImporter(runner));
+  FR.registerFormat("text/rdf/xml", "core-import-formats/text/rdf/xml", "RdfTriplesParserUI", new Packages.org.openrefine.importers.RdfXmlTripleImporter(runner));
+  FR.registerFormat("text/rdf/ld+json", "core-import-formats/text/rdf/ld+json", "RdfTriplesParserUI", new Packages.org.openrefine.importers.RdfJsonldTripleImporter(runner));
 
-  FR.registerFormat("text/xml", "XML files", "XmlParserUI", new Packages.org.openrefine.importers.XmlImporter(runner));
-  FR.registerFormat("binary/text/xml/xls/xlsx", "Excel files", "ExcelParserUI", new Packages.org.openrefine.importers.ExcelImporter(runner));
-  FR.registerFormat("text/xml/ods", "Open Document Format spreadsheets (.ods)", "ExcelParserUI", new Packages.org.openrefine.importers.OdsImporter(runner));
-  FR.registerFormat("text/json", "JSON files", "JsonParserUI", new Packages.org.openrefine.importers.JsonImporter(runner));
-  FR.registerFormat("text/marc", "MARC files", "XmlParserUI", new Packages.org.openrefine.importers.MarcImporter(runner));
-  FR.registerFormat("text/wiki", "Wikitext", "WikitextParserUI", new Packages.org.openrefine.importers.WikitextImporter(runner));
+  FR.registerFormat("text/xml", "core-import-formats/text/xml", "XmlParserUI", new Packages.org.openrefine.importers.XmlImporter(runner));
+  FR.registerFormat("binary/text/xml/xls/xlsx", "core-import-formats/binary/text/xml/xls/xlsx", "ExcelParserUI", new Packages.org.openrefine.importers.ExcelImporter(runner));
+  FR.registerFormat("text/xml/ods", "core-import-formats/text/xml/ods", "ExcelParserUI", new Packages.org.openrefine.importers.OdsImporter(runner));
+  FR.registerFormat("text/json", "core-import-formats/text/json", "JsonParserUI", new Packages.org.openrefine.importers.JsonImporter(runner));
+  FR.registerFormat("text/marc", "core-import-formats/text/marc", "XmlParserUI", new Packages.org.openrefine.importers.MarcImporter(runner));
+  FR.registerFormat("text/wiki", "core-import-formats/text/wiki", "WikitextParserUI", new Packages.org.openrefine.importers.WikitextImporter(runner));
   FR.registerFormat("openrefine-legacy", null, null, new Packages.org.openrefine.importers.LegacyProjectImporter(runner));
 
-  FR.registerFormat("binary", "Binary files"); // generic format, no parser to handle it
+  FR.registerFormat("binary", "core-import-formats/binary"); // generic format, no parser to handle it
 
-  FR.registerFormat("service", "Services"); // generic format, no parser to handle it
+  FR.registerFormat("service", "core-import-formats/service"); // generic format, no parser to handle it
 
   /*
    *  Extension to format mappings
    */
-  FR.registerExtension(".txt", "text/line-based");
+  FR.registerExtension(".txt", "text");
   FR.registerExtension(".csv", "text/line-based/*sv");
   FR.registerExtension(".tsv", "text/line-based/*sv");
 
   FR.registerExtension(".xml", "text/xml");
-
+  FR.registerExtension(".atom", "text/xml");
+  
   FR.registerExtension(".json", "text/json");
   FR.registerExtension(".js", "text/json");
 
@@ -250,7 +250,6 @@ function registerImporting() {
 
   FR.registerExtension(".ods", "text/xml/ods");
   
-  FR.registerExtension(".nt", "text/rdf/nt");
   FR.registerExtension(".n3", "text/rdf/n3");
   FR.registerExtension(".ttl", "text/rdf/ttl");
   FR.registerExtension(".jsonld", "text/rdf/ld+json");
@@ -264,10 +263,11 @@ function registerImporting() {
   /*
    *  Mime type to format mappings
    */
-  FR.registerMimeType("text/plain", "text/line-based");
+  FR.registerMimeType("text/plain", "text");
   FR.registerMimeType("text/csv", "text/line-based/*sv");
   FR.registerMimeType("text/x-csv", "text/line-based/*sv");
   FR.registerMimeType("text/tab-separated-value", "text/line-based/*sv");
+  FR.registerMimeType("text/tab-separated-values", "text/line-based/*sv");
 
   FR.registerMimeType("text/fixed-width", "text/line-based/fixed-width");
   
@@ -275,8 +275,12 @@ function registerImporting() {
   FR.registerMimeType("text/n3", "text/rdf/n3");
   FR.registerMimeType("text/rdf+n3", "text/rdf/n3");
   FR.registerMimeType("text/turtle", "text/rdf/ttl");
+  FR.registerMimeType("application/xml", "text/xml");
+  FR.registerMimeType("text/xml", "text/xml");
+  FR.registerMimeType("+xml", "text/xml"); // suffix will be tried only as fallback
   FR.registerMimeType("application/rdf+xml", "text/rdf/xml");
   FR.registerMimeType("application/ld+json", "text/rdf/ld+json");
+  FR.registerMimeType("application/atom+xml", "text/xml");
 
   FR.registerMimeType("application/msexcel", "binary/text/xml/xls/xlsx");
   FR.registerMimeType("application/x-msexcel", "binary/text/xml/xls/xlsx");
@@ -285,12 +289,15 @@ function registerImporting() {
   FR.registerMimeType("application/x-excel", "binary/text/xml/xls/xlsx");
   FR.registerMimeType("application/xls", "binary/text/xml/xls/xlsx");
   FR.registerMimeType("application/x-xls", "binary/text/xml/xls/xlsx");
-  
+  FR.registerMimeType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "binary/text/xml/xls/xlsx");
+  FR.registerMimeType("application/vnd.openxmlformats-officedocument.spreadsheetml.template", "binary/text/xml/xls/xlsx");
+
   FR.registerMimeType("application/vnd.oasis.opendocument.spreadsheet","text/xml/ods");
 
   FR.registerMimeType("application/json", "text/json");
   FR.registerMimeType("application/javascript", "text/json");
   FR.registerMimeType("text/json", "text/json");
+  FR.registerMimeType("+json", "text/json"); // suffix will be tried only as fallback
 
   FR.registerMimeType("application/marc", "text/marc");
   
@@ -373,29 +380,36 @@ function init() {
   registerDistances();
   registerReconConfigs();
 
+  var commonModules = [
+      "externals/jquery-1.12.4.js",
+      "externals/jquery-migrate-1.4.1.js",
+      "externals/jquery-ui/jquery-ui.js",
+      "externals/js.cookie.js",
+      "externals/underscore-min.js",
+
+      "externals/CLDRPluralRuleParser.js",
+      "externals/jquery.i18n.js",
+      "externals/jquery.i18n.messagestore.js",
+      "externals/jquery.i18n.fallbacks.js",
+      "externals/jquery.i18n.parser.js",
+      "externals/jquery.i18n.emitter.js",
+      "externals/jquery.i18n.language.js",
+      "externals/languages/fi.js",
+      "externals/languages/ru.js",
+    ];
+
   var RC = Packages.org.openrefine.model.recon.ReconConfig;
   RC.registerReconConfig(module, "standard-service", Packages.org.openrefine.model.recon.StandardReconConfig);
 
   ClientSideResourceManager.addPaths(
     "index/scripts",
     module,
-    [
-      
-      "externals/jquery-1.11.1.js",
-      "externals/jquery-migrate-1.2.1.js",
-      "externals/jquery.cookie.js",
-      "externals/jquery-ui/jquery-ui-1.10.3.custom.js",
+    commonModules.concat([
       "externals/date.js",
-      "externals/jquery.i18n.js",
       "externals/tablesorter/jquery.tablesorter.min.js",
       "externals/moment-with-locales.min.js",
       "externals/select2/select2.min.js",
       "externals/jquery.lavalamp.min.js",
-      "externals/jquery.i18n.messagestore.js",
-      "externals/jquery.i18n.emitter.js",
-      "externals/jquery.i18n.parser.js",
-      "externals/jquery.i18n.emitter.js",
-      "externals/jquery.i18n.language.js",
 
       "scripts/util/misc.js",
       "scripts/util/url.js",
@@ -432,14 +446,14 @@ function init() {
 
       "scripts/reconciliation/recon-manager.js", // so that reconciliation functions are available to importers
       "scripts/index/edit-metadata-dialog.js"
-    ]
+    ])
   );
 
   ClientSideResourceManager.addPaths(
     "index/styles",
     module,
     [
-      "externals/jquery-ui/css/ui-lightness/jquery-ui-1.10.3.custom.css",
+      "externals/jquery-ui/css/ui-lightness/jquery-ui.css",
       "externals/select2/select2.css",
       "externals/tablesorter/theme.blue.css",
       "styles/jquery-ui-overrides.less",
@@ -469,20 +483,9 @@ function init() {
   ClientSideResourceManager.addPaths(
     "project/scripts",
     module,
-    [
-      "externals/jquery-1.11.1.js",
-      "externals/jquery-migrate-1.2.1.js",
-      "externals/jquery.cookie.js",
-      "externals/suggest/suggest-4_3.js",
-      "externals/jquery-ui/jquery-ui-1.10.3.custom.js",
-      "externals/imgareaselect/jquery.imgareaselect.js",
+    commonModules.concat([
+      "externals/suggest/suggest-4_3a.js",
       "externals/date.js",
-      "externals/jquery.i18n.js",
-      "externals/jquery.i18n.messagestore.js",
-      "externals/jquery.i18n.parser.js",
-      "externals/jquery.i18n.emitter.js",
-      "externals/jquery.i18n.language.js",
-      "externals/underscore-min.js",
 
       "scripts/project.js",
 
@@ -509,9 +512,11 @@ function init() {
       "scripts/project/exporters.js",
       "scripts/project/scripting.js",
 
+      "scripts/facets/facet.js",
       "scripts/facets/list-facet.js",
       "scripts/facets/range-facet.js",
       "scripts/facets/timerange-facet.js",
+      "externals/imgareaselect/jquery.imgareaselect.js", // Used by scatterplot facet only
       "scripts/facets/scatterplot-facet.js",
       "scripts/facets/text-search-facet.js",
 
@@ -537,7 +542,7 @@ function init() {
       "scripts/dialogs/sql-exporter-dialog.js",
       "scripts/dialogs/expression-column-dialog.js",
       "scripts/dialogs/http-headers-dialog.js",
-    ]
+    ])
   );
 
   ClientSideResourceManager.addPaths(
@@ -545,7 +550,7 @@ function init() {
     module,
     [
       "externals/suggest/css/suggest-4_3.min.css",
-      "externals/jquery-ui/css/ui-lightness/jquery-ui-1.10.3.custom.css",
+      "externals/jquery-ui/css/ui-lightness/jquery-ui.css",
       "externals/imgareaselect/css/imgareaselect-default.css",
 
       "styles/jquery-ui-overrides.less",
@@ -583,29 +588,16 @@ function init() {
   ClientSideResourceManager.addPaths(
     "preferences/scripts",
     module,
-    [
-      "externals/jquery-1.11.1.js",
-      "externals/jquery-migrate-1.2.1.js",
-      "externals/jquery.cookie.js",
-      "externals/suggest/suggest-4_3.js",
-      "externals/jquery-ui/jquery-ui-1.10.3.custom.js",
-      "externals/imgareaselect/jquery.imgareaselect.js",
-      "externals/date.js",
-      "externals/jquery.i18n.js",
-      "externals/jquery.i18n.messagestore.js",
-      "externals/jquery.i18n.parser.js",
-      "externals/jquery.i18n.emitter.js",
-      "externals/jquery.i18n.language.js",
-      "externals/underscore-min.js",
+    commonModules.concat([
       "scripts/preferences.js",
-    ]
+    ])
   );
   ClientSideResourceManager.addPaths(
     "preferences/styles",
     module,
     [
       "externals/suggest/css/suggest-4_3.min.css",
-      "externals/jquery-ui/css/ui-lightness/jquery-ui-1.10.3.custom.css",
+      "externals/jquery-ui/css/ui-lightness/jquery-ui.css",
       "styles/jquery-ui-overrides.less",
       "styles/common.less",
       "styles/pure.css",

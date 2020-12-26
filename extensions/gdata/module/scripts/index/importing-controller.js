@@ -128,6 +128,7 @@ Refine.GDataImportingController.prototype.getOptions = function() {
     this._parsingPanelElmts.sheetRecordContainer.find('input').each(function() {
       if (this.checked) {
         options.sheetUrl = this.getAttribute('sheetUrl');
+        options.worksheetIndex = this.getAttribute('worksheetIndex');
       }
     });
 
@@ -243,6 +244,7 @@ Refine.GDataImportingController.prototype._showParsingPanel = function() {
       .attr('type', 'radio')
       .attr('name', 'gdata-importing-parsing-worksheet')
       .attr('sheetUrl', this.link)
+      .attr('worksheetIndex', this.worksheetIndex)
       .appendTo(td0);
       if (i === 0) {
         checkbox.prop("checked", true);

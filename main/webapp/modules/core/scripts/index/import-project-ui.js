@@ -40,11 +40,19 @@ Refine.ImportProjectUI = function(elmt) {
   
   this._elmt = elmt;
   this._elmts = DOM.bind(elmt);
-  
+  this._elmts.projectButton.bind('click', function(e) {	
+    if(document.getElementById("project-tar-file-input").value === "" ){	
+     alert($.i18n('core-index-import/warning-import-file'));
+    }
+    else{
+     document.getElementById("import-project-button").type = "submit";
+     }
+  });
+
   $('#or-import-locate').text($.i18n('core-index-import/locate'));
   $('#or-import-file').text($.i18n('core-index-import/file'));
   $('#or-import-rename').text($.i18n('core-index-import/rename'));
-  $('#import-project-button').attr("value",$.i18n('core-buttons/import-proj'));
+  $('#import-project-button').val($.i18n('core-buttons/import-proj'));
 };
 
 Refine.actionAreas.push({
@@ -54,5 +62,5 @@ Refine.actionAreas.push({
 });
 
 Refine.ImportProjectUI.prototype.resize = function() {
-  
+
 };

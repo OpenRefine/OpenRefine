@@ -56,9 +56,9 @@ public class ScatterplotDrawCommandTests extends RefineTest {
             e.printStackTrace();
         }
         project = createProject(new String[] { "a", "b" },
-                new Serializable[] {
-                        0, 1,
-                        2, 3
+                new Serializable[][] {
+                        { 0, 1 },
+                        { 2, 3 }
                 });
     }
 

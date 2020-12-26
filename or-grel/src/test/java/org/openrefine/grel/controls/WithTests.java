@@ -29,6 +29,7 @@ package org.openrefine.grel.controls;
 
 import org.testng.annotations.Test;
 
+import org.openrefine.grel.controls.With;
 import org.openrefine.util.ParsingUtilities;
 import org.openrefine.util.TestUtils;
 

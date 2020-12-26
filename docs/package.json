@@ -1,0 +1,21 @@
+{
+  "name": "OpenRefine-Documentation",
+  "version": "1.0.0",
+  "description": "Documentation for OpenRefine",
+  "license": "BSD-3-Clause",
+  "author": "OpenRefine",
+  "private": true,
+  "scripts": {
+    "start": "docusaurus start",
+    "build": "docusaurus build",
+    "swizzle": "docusaurus swizzle",
+    "deploy": "docusaurus deploy"
+  },
+  "dependencies": {
+    "@docusaurus/core": "^2.0.0-alpha.65",
+    "@docusaurus/preset-classic": "^2.0.0-alpha.58",
+    "clsx": "^1.1.1",
+    "react": "^16.8.4",
+    "react-dom": "^16.8.4"
+  }
+}

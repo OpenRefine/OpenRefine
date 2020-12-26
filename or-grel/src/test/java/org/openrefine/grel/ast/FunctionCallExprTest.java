@@ -13,6 +13,7 @@ import org.testng.annotations.Test;
 
 import org.openrefine.grel.Function;
 import org.openrefine.grel.PureFunction;
+import org.openrefine.grel.ast.FunctionCallExpr;
 
 public class FunctionCallExprTest extends ExprTestBase {
 

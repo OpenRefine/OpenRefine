@@ -111,8 +111,8 @@ public class LoadLanguageCommand extends Command {
         if (translations != null) {
             try {
                 ObjectNode node = ParsingUtilities.mapper.createObjectNode();
-                node.put("dictionary", translations);
-                node.put("lang", new TextNode(bestLang));
+                node.set("dictionary", translations);
+                node.set("lang", new TextNode(bestLang));
                 respondJSON(response, node);
             } catch (IOException e) {
                 logger.error("Error writing language labels to response stream");
@@ -158,7 +158,7 @@ public class LoadLanguageCommand extends Command {
                 ;
                 value = entry.getValue();
             }
-            results.put(code, value);
+            results.set(code, value);
         }
         return results;
     }

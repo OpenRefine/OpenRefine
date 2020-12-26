@@ -43,8 +43,8 @@ ScatterplotDialog.prototype._createDialog = function() {
     var dialog = $(DOM.loadHTML("core", "scripts/dialogs/scatterplot-dialog.html"));
     this._elmts = DOM.bind(dialog);
     this._elmts.dialogHeader.text(
-    		$.i18n('core-dialogs/scatterplot-matrix') + 
-            ((typeof this._column == "undefined") ? "" : " ("+$.i18n('core-dialogs/focusing-on')+" '" + this._column + "')"));
+            $.i18n('core-dialogs/scatterplot-matrix') + 
+            ((typeof this._column == "undefined") ? "" : $.i18n('core-dialogs/focusing-on-column', this._column)));
 
     this._elmts.closeButton.click(function() { self._dismiss(); });
     this._elmts.or_dialog_linplot.attr("title", $.i18n('core-dialogs/linear-plot'));
@@ -81,6 +81,11 @@ ScatterplotDialog.prototype._createDialog = function() {
     
     this._level = DialogSystem.showDialog(dialog);
     this._renderMatrix();
+    //the function buttonset() groups the input buttons into one but in doing so it creates icon on the input button
+    //the icon is created using checkboxradio() 
+    //to get rid of the icon a class "no-icon" is directly applied to input button and checkboxradio() is called again with option :- icon=false  
+    $(".no-icon").checkboxradio("option", "icon", false);
+    //this function only works after initialisation
 };
 
 ScatterplotDialog.prototype._renderMatrix = function() {
@@ -193,7 +198,7 @@ ScatterplotDialog.prototype._renderMatrix = function() {
             };
             
             var load_image = function(data) {
-                var img = $(data.images[data.index]);                
+                var img = $(data.images[data.index]);
                 var src2 = img.attr("src2");
                 if (src2) {
                     img.attr("src", src2);

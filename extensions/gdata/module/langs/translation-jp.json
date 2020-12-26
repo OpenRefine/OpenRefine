@@ -2,9 +2,9 @@
     "gdata-import/preparing": "準備中…",
     "gdata-import/creating": "プロジェクトを作る…",
     "gdata-import/title": "一般公開文書(public document)",
-    "gdata-import/import-by-url": "一般公開している(<em>public</em>)Google SpreadsheetのURLを入力してください:",
+    "gdata-import/import-by-url": "一般公開している（<em>public</em>）Google SpreadsheetのURLを入力してください:",
     "gdata-import/next->": "次へ &raquo;",
-    "gdata-import/auth-doc": "制限付き文書(authorized document)",
+    "gdata-import/auth-doc": "制限付き文書（authorized document）",
     "gdata-import/please": "まず",
     "gdata-import/sign-in": "サインインして認証",
     "gdata-import/sign-out": "サインアウト",
@@ -30,7 +30,7 @@
     "gdata-parsing/limit": "行分",
     "gdata-parsing/store-row": "空白行も保存",
     "gdata-parsing/store-cell": "nullとして空白セルを保存",
-    "gdata-source/alert-url": "インポートするアドレス(URL)を入力してください.",
+    "gdata-source/alert-url": "インポートするアドレス（URL）を入力してください.",
     "gdata-source/type": "形式",
     "gdata-source/title": "題名",
     "gdata-source/authors": "著者",
@@ -42,5 +42,9 @@
     "gdata-exporter/upload-success": "プロジェクトがGoogle Driveにアップロードされました ",
     "gdata-auth/authorize-label": "OpenRefine - 認証",
     "gdata-auth/authorized-label": "認証が完了しました。このウインドウを閉じてOpenRefineで作業できます.",
-    "gdata-exporter/enter-filename": "Google Driveにエクスポートするファイル名を入力"
+    "gdata-exporter/enter-filename": "Google Driveにエクスポートするファイル名を入力",
+    "gdata-exporter/google-sheets": "Googleシート",
+    "gdata-exporter/upload-google-sheets-success": "Google Driveにアップロードされたプロジェクト ",
+    "gdata-exporter/upload-google-drive-success": "Google Driveにアップロードされたプロジェクト ",
+    "gdata-exporter/export-to-google-drive": "プロジェクトをGoogle Driveへ…"
 }

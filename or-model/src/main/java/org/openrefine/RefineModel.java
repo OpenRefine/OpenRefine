@@ -86,4 +86,8 @@ public class RefineModel {
         }
         return klass;
     }
+
+    static public String getUserAgent() {
+        return "OpenRefine/" + VERSION;
+    }
 }

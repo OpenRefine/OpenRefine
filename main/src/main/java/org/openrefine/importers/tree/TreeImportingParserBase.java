@@ -196,7 +196,7 @@ abstract public class TreeImportingParserBase extends ImportingParserBase {
         }
 
         XmlImportUtilities.importTreeData(treeParser, allocator, rows, recordPath, rootColumnGroup, limit2,
-                new ImportParameters(trimStrings, storeEmptyStrings, guessCellValueTypes, includeFileSources,
-                        fileSource));
+                trimStrings, storeEmptyStrings, guessCellValueTypes, includeFileSources,
+                fileSource);
     }
 }

@@ -1,6 +1,8 @@
 /*
 
 Copyright 2010, Google Inc.
+Copyright 2013,2020 OpenRefine contributors
+
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -33,13 +35,14 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package org.openrefine.util;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.time.OffsetDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.TimeZone;
+import java.util.zip.GZIPOutputStream;
 
-import org.apache.commons.lang3.text.StrSubstitutor;
 import org.slf4j.LoggerFactory;
 import org.testng.Assert;
 import org.testng.annotations.BeforeTest;
@@ -94,35 +97,47 @@ public class ParsingUtilitiesTests extends RefineTest {
      */
     @Test
     public void stringToLocalDateNonUTC() {
-        TimeZone.setDefault(TimeZone.getTimeZone("JST"));
+        TimeZone originalTimeZone = TimeZone.getDefault();
         try {
+            TimeZone.setDefault(TimeZone.getTimeZone("JST"));
             Assert.assertEquals(ParsingUtilities.stringToLocalDate("2001-08-12T00:00:00Z").getHour(), 9);
+            // TODO: This doesn't really make sense since a LocalDate, by definition, doesn't have timezone info
             Assert.assertEquals(ParsingUtilities.localDateToString(
                     ParsingUtilities.stringToLocalDate("2001-08-12T00:00:00Z")),
                     "2001-08-12T00:00:00Z");
 
         } finally {
-            TimeZone.setDefault(TimeZone.getTimeZone("UTC"));
+            TimeZone.setDefault(originalTimeZone);
         }
     }
 
     @Test
-    public void parseProjectModifiedBeforeJDK8() {
-        String modified = "2014-01-15T21:46:25Z";
-        Assert.assertNotEquals(ParsingUtilities.stringToLocalDate(modified).toString(),
-                modified);
-    }
+    public void testParseGZIPInutstream() throws IOException {
+        // Test decompressing gzip
+        try {
+            String sampleBody = "<HTML>\n" +
+                    "\n" +
+                    "<HEAD>\n" +
+                    "\n" +
+                    "<TITLE>Your Title Here</TITLE>\n" +
+                    "\n" +
+                    "</HEAD>\n" +
+                    "\n" +
+                    "<BODY BGCOLOR=\"FFFFFF\">\n" +
+                    "\n" +
+                    "</BODY>\n" +
+                    "\n" +
+                    "</HTML>";
+            ByteArrayOutputStream obj = new ByteArrayOutputStream();
+            GZIPOutputStream gzip = new GZIPOutputStream(obj);
+            gzip.write(sampleBody.getBytes("UTF-8"));
+            gzip.close();
+            byte[] compressed = obj.toByteArray();
 
-    @Test
-    public void strSubstitutorTest() {
-        Map<String, String> data = new HashMap<String, String>(6);
-
-        data.put("value", "1234");
-        data.put("field_format", "String");
-
-        StrSubstitutor sub = new StrSubstitutor(data);
-        String message = "The value ${value} in row ${row_number} and column ${column_number} is not type ${field_type} and format ${field_format}";
-        String result = sub.replace(message);
-        Assert.assertTrue(result.contains("1234"));
+            String res = ParsingUtilities.inputStreamToString(new ByteArrayInputStream(compressed), "gzip");
+            Assert.assertEquals(res, sampleBody);
+        } catch (Exception e) {
+            Assert.fail();
+        }
     }
 }

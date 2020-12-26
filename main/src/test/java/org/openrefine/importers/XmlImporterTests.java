@@ -36,7 +36,7 @@ package org.openrefine.importers;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.Serializable;
-import java.util.LinkedList;
+import java.util.Collections;
 
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -77,14 +77,14 @@ public class XmlImporterTests extends ImporterTest {
         super.setUp();
         SUT = new XmlImporter(runner());
         expectedGrid = createGrid(new String[] {
-                "book - id", "book - title", "book - author", "book - publish_date"
+                "book - id", "book - author", "book - title", "book - publish_date"
         }, new Serializable[][] {
-                { "1", "Book title 1", "Author 1, The", "2010-05-26" },
-                { "2", "Book title 2", "Author 2, The", "2010-05-26" },
-                { "3", "Book title 3", "Author 3, The", "2010-05-26" },
-                { "4", "Book title 4", "Author 4, The", "2010-05-26" },
-                { "5", "Book title 5", "Author 5, The", "2010-05-26" },
-                { "6", "Book title 6", "Author 6, The", "2010-05-26" },
+                { "1", "Author 1, The", "Book title 1", "2010-05-26" },
+                { "2", "Author 2, The", "Book title 2", "2010-05-26" },
+                { "3", "Author 3, The", "Book title 3", "2010-05-26" },
+                { "4", "Author 4, The", "Book title 4", "2010-05-26" },
+                { "5", "Author 5, The", "Book title 5", "2010-05-26" },
+                { "6", "Author 6, The", "Book title 6", "2010-05-26" },
         });
     }
 
@@ -150,14 +150,14 @@ public class XmlImporterTests extends ImporterTest {
         GridState grid = RunTest(getSampleWithLineBreak());
 
         GridState expectedGrid = createGrid(new String[] {
-                "book - id", "book - title", "book - author", "book - publish_date"
+                "book - id", "book - author", "book - title", "book - publish_date"
         }, new Serializable[][] {
-                { "1", "Book title 1", "Author 1, The", "2010-05-26" },
-                { "2", "Book title 2", "Author 2, The", "2010-05-26" },
-                { "3", "Book title 3", "Author 3, The", "2010-05-26" },
-                { "4", "Book title 4", "With line\n break", "2010-05-26" },
-                { "5", "Book title 5", "Author 5, The", "2010-05-26" },
-                { "6", "Book title 6", "Author 6, The", "2010-05-26" },
+                { "1", "Author 1, The", "Book title 1", "2010-05-26" },
+                { "2", "Author 2, The", "Book title 2", "2010-05-26" },
+                { "3", "Author 3, The", "Book title 3", "2010-05-26" },
+                { "4", "With line\n break", "Book title 4", "2010-05-26" },
+                { "5", "Author 5, The", "Book title 5", "2010-05-26" },
+                { "6", "Author 6, The", "Book title 6", "2010-05-26" },
         });
         assertGridEquals(grid, expectedGrid);
     }
@@ -167,14 +167,14 @@ public class XmlImporterTests extends ImporterTest {
         GridState grid = RunTest(getSampleWithVaryingStructure());
 
         GridState expected = createGrid(new String[] {
-                "book - id", "book - title", "book - author", "book - publish_date", "book - genre"
+                "book - id", "book - author", "book - title", "book - publish_date", "book - genre"
         }, new Serializable[][] {
-                { "1", "Book title 1", "Author 1, The", "2010-05-26", null },
-                { "2", "Book title 2", "Author 2, The", "2010-05-26", null },
-                { "3", "Book title 3", "Author 3, The", "2010-05-26", null },
-                { "4", "Book title 4", "Author 4, The", "2010-05-26", null },
-                { "5", "Book title 5", "Author 5, The", "2010-05-26", null },
-                { "6", "Book title 6", "Author 6, The", "2010-05-26", "New element not seen in other records" },
+                { "1", "Author 1, The", "Book title 1", "2010-05-26", null },
+                { "2", "Author 2, The", "Book title 2", "2010-05-26", null },
+                { "3", "Author 3, The", "Book title 3", "2010-05-26", null },
+                { "4", "Author 4, The", "Book title 4", "2010-05-26", null },
+                { "5", "Author 5, The", "Book title 5", "2010-05-26", null },
+                { "6", "Author 6, The", "Book title 6", "2010-05-26", "New element not seen in other records" },
         });
 
         assertGridEquals(grid, expected);
@@ -235,7 +235,7 @@ public class XmlImporterTests extends ImporterTest {
 
     public static ObjectNode getOptions(ImportingJob job, TreeImportingParserBase parser) {
         ObjectNode options = parser.createParserUIInitializationData(
-                job, new LinkedList<>(), "text/json");
+                job, Collections.emptyList(), "text/xml");
 
         ArrayNode path = ParsingUtilities.mapper.createArrayNode();
         JSONUtilities.append(path, "library");
@@ -247,7 +247,7 @@ public class XmlImporterTests extends ImporterTest {
 
     public static ObjectNode getNestedOptions(ImportingJob job, TreeImportingParserBase parser) {
         ObjectNode options = parser.createParserUIInitializationData(
-                job, new LinkedList<>(), "text/json");
+                job, Collections.emptyList(), "text/xml");
 
         ArrayNode path = ParsingUtilities.mapper.createArrayNode();
         JSONUtilities.append(path, "nest");

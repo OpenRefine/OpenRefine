@@ -24,8 +24,14 @@
 
 package org.openrefine.wikidata.qa.scrutinizers;
 
-import org.wikidata.wdtk.datamodel.interfaces.EntityIdValue;
+import java.util.List;
+
+import org.wikidata.wdtk.datamodel.interfaces.PropertyIdValue;
+import org.wikidata.wdtk.datamodel.interfaces.Reference;
 import org.wikidata.wdtk.datamodel.interfaces.Statement;
+
+import org.openrefine.wikidata.qa.QAWarning;
+import org.openrefine.wikidata.updates.ItemUpdate;
 
 /**
  * A scrutinizer checking for unsourced statements
@@ -33,15 +39,35 @@ import org.wikidata.wdtk.datamodel.interfaces.Statement;
  * @author Antonin Delpeuch
  *
  */
-public class UnsourcedScrutinizer extends StatementScrutinizer {
+public class UnsourcedScrutinizer extends EditScrutinizer {
 
-    public static final String type = "unsourced-statements";
+    private String citationNeededConstraintQid;
+    public static final String generalType = "unsourced-statements";
+    public static final String constraintItemType = "no-references-provided";
 
     @Override
-    public void scrutinize(Statement statement, EntityIdValue entityId, boolean added) {
-        if (statement.getReferences().isEmpty() && added) {
-            warning(type);
+    public void scrutinize(ItemUpdate update) {
+        for (Statement statement : update.getAddedStatements()) {
+            PropertyIdValue pid = statement.getClaim().getMainSnak().getPropertyId();
+            List<Statement> constraintDefinitions = _fetcher.getConstraintsByType(pid, citationNeededConstraintQid);
+            List<Reference> referenceList = statement.getReferences();
+
+            if (referenceList.isEmpty()) {
+                if (!constraintDefinitions.isEmpty()) {
+                    QAWarning issue = new QAWarning(constraintItemType, pid.getId(), QAWarning.Severity.IMPORTANT, 1);
+                    issue.setProperty("property_entity", pid);
+                    issue.setProperty("example_entity", update.getItemId());
+                    addIssue(issue);
+                } else {
+                    warning(generalType);
+                }
+            }
         }
     }
 
+    @Override
+    public boolean prepareDependencies() {
+        citationNeededConstraintQid = getConstraintsRelatedId("citation_needed_constraint_qid");
+        return _fetcher != null && citationNeededConstraintQid != null;
+    }
 }

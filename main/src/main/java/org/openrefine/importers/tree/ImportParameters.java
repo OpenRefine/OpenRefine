@@ -27,14 +27,19 @@
 
 package org.openrefine.importers.tree;
 
+/**
+ * @deprecated 2020-07-23 Use the method signatures which take individual parameters instead of this
+ */
+@Deprecated
 public class ImportParameters {
 
     protected boolean trimStrings;
     protected boolean storeEmptyStrings;
     protected boolean guessDataType;
-    protected boolean includeFileSources;
-    protected String fileSource;
+    protected boolean includeFileSources = false;
+    protected String fileSource = null;
 
+    @Deprecated
     public ImportParameters(boolean trimStrings, boolean storeEmptyStrings, boolean guessCellValueTypes,
             boolean includeFileSources, String fileSource) {
         this.trimStrings = trimStrings;
@@ -44,6 +49,7 @@ public class ImportParameters {
         this.fileSource = fileSource;
     }
 
+    @Deprecated
     public ImportParameters(boolean trimStrings, boolean storeEmptyStrings, boolean guessCellValueTypes) {
         this(trimStrings, storeEmptyStrings, guessCellValueTypes, false, "");
     }

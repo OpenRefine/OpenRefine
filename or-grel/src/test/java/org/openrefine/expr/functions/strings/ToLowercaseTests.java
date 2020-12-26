@@ -27,16 +27,36 @@
 
 package org.openrefine.expr.functions.strings;
 
+import org.testng.Assert;
 import org.testng.annotations.Test;
 
+import org.openrefine.expr.EvalError;
+import org.openrefine.expr.functions.strings.ToLowercase;
+import org.openrefine.grel.FunctionTestBase;
 import org.openrefine.util.ParsingUtilities;
 import org.openrefine.util.TestUtils;
 
-public class ToLowercaseTests {
+public class ToLowercaseTests extends FunctionTestBase {
 
     @Test
     public void serializeToLowercase() {
         String json = "{\"description\":\"Returns s converted to lowercase\",\"params\":\"string s\",\"returns\":\"string\"}";
         TestUtils.isSerializedTo(new ToLowercase(), json, ParsingUtilities.defaultWriter);
+    }
+
+    @Test
+    public void testtoLowercaseInvalidParams() {
+        Assert.assertTrue(invoke("toLowercase") instanceof EvalError);
+        Assert.assertTrue(invoke("toLowercase", (Object[]) null) instanceof EvalError);
+        Assert.assertTrue(invoke("toLowercase", "one", "two", "three") instanceof EvalError);
+    }
+
+    @Test
+    public void testtoLowercase() {
+        Assert.assertEquals((String) (invoke("toLowercase", "One")), "one");
+        Assert.assertEquals((String) (invoke("toLowercase", "Ône")), "ône");
+        Assert.assertEquals((String) (invoke("toLowercase", "ONE")), "one");
+        Assert.assertEquals((String) (invoke("toLowercase", 1)), "1");
+        Assert.assertEquals((String) (invoke("toLowercase", true)), "true");
     }
 }

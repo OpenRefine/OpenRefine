@@ -36,7 +36,7 @@ package org.openrefine;
 import java.io.IOException;
 import java.io.InputStream;
 
-import org.apache.tools.tar.TarOutputStream;
+import org.apache.commons.compress.archivers.tar.TarArchiveOutputStream;
 
 import org.openrefine.history.HistoryEntryManager;
 import org.openrefine.model.DatamodelRunner;
@@ -63,7 +63,7 @@ public class ProjectManagerStub extends ProjectManager {
     }
 
     @Override
-    public void exportProject(long projectId, TarOutputStream tos) throws IOException {
+    public void exportProject(long projectId, TarArchiveOutputStream tos) throws IOException {
         // empty
     }
 

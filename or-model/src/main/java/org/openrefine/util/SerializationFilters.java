@@ -116,7 +116,7 @@ public class SerializationFilters {
         @Override
         public void serialize(Double arg0, JsonGenerator gen, SerializerProvider s)
                 throws IOException {
-            if (new Double(arg0.longValue()).equals(arg0)) {
+            if (Double.valueOf(arg0.longValue()).equals(arg0)) {
                 gen.writeNumber(arg0.longValue());
             } else {
                 gen.writeNumber(arg0);

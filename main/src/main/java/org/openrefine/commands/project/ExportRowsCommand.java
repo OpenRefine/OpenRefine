@@ -103,6 +103,13 @@ public class ExportRowsCommand extends Command {
             }
             response.setHeader("Content-Type", contentType);
 
+            String preview = params.getProperty("preview");
+            if (!"true".equals(preview)) {
+                String path = request.getPathInfo();
+                String filename = path.substring(path.lastIndexOf('/') + 1);
+                response.setHeader("Content-Disposition", "attachment; filename=" + filename);
+            }
+
             if (exporter instanceof WriterExporter) {
                 String encoding = params.getProperty("encoding");
 

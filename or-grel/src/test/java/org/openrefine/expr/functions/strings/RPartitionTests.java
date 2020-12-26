@@ -29,6 +29,7 @@ package org.openrefine.expr.functions.strings;
 
 import org.testng.annotations.Test;
 
+import org.openrefine.expr.functions.strings.RPartition;
 import org.openrefine.util.ParsingUtilities;
 import org.openrefine.util.TestUtils;
 

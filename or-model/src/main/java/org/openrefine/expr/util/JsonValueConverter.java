@@ -62,4 +62,29 @@ public class JsonValueConverter {
         }
     }
 
+    @SuppressWarnings("rawtypes")
+    public static Comparable convertComparable(JsonNode value) {
+        if (value == null) {
+            return null;
+        }
+        if (value.isContainerNode()) {
+            // TODO: return null instead (like fallthrough case)
+            throw new IllegalArgumentException("Arrays and objects aren't comparable");
+        } else if (value.isBigDecimal() || value.isDouble() || value.isFloat()) {
+            return value.asDouble();
+        } else if (value.isBigInteger()) {
+            return value.asLong();
+        } else if (value.isInt()) {
+            return value.asInt();
+        } else if (value.isBinary() || value.isTextual()) {
+            return value.asText();
+        } else if (value.isBoolean()) {
+            return value.asBoolean();
+        } else if (value.isNull()) {
+            return null;
+        } else {
+            return null;
+        }
+    }
+
 }

@@ -33,6 +33,11 @@ public class NoEditsMadeScrutinizer extends EditScrutinizer {
     private boolean nonNullUpdateSeen = false;
 
     @Override
+    public boolean prepareDependencies() {
+        return true;
+    }
+
+    @Override
     public void batchIsBeginning() {
         nonNullUpdateSeen = false;
     }

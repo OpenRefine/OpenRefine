@@ -21,6 +21,7 @@
     "database-source/databaseUserLabel": "사용자:",
     "database-source/databasePasswordLabel": "비밀번호:",
     "database-source/databaseNameLabel": "데이터베이스:",
+    "database-source/databaseFileNameLabel": "데이터베이스:",
     "database-source/databaseSchemaLabel": "스키마:",
     "database-source/databaseTestButton": "테스트",
     "database-source/databaseSaveButton": "저장",

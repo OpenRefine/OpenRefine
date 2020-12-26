@@ -153,21 +153,38 @@ public class QuickStatementsExporter implements WriterExporter {
         Value val = claim.getValue();
         ValueVisitor<String> vv = new QSValuePrinter();
         String targetValue = val.accept(vv);
-        if (targetValue != null) {
+        if (targetValue != null) { // issue #2320
             if (!add) {
+                // According to: https://www.wikidata.org/wiki/Help:QuickStatements#Removing_statements,
+                // Removing statements won't be followed by qualifiers or references.
                 writer.write("- ");
-            }
-            writer.write(qid + "\t" + pid + "\t" + targetValue);
-            for (SnakGroup q : claim.getQualifiers()) {
-                translateSnakGroup(q, false, writer);
-            }
-            for (Reference r : statement.getReferences()) {
-                for (SnakGroup g : r.getSnakGroups()) {
-                    translateSnakGroup(g, true, writer);
+                writer.write(qid + "\t" + pid + "\t" + targetValue);
+                writer.write("\n");
+            } else { // add statements
+                if (statement.getReferences().isEmpty()) {
+                    writer.write(qid + "\t" + pid + "\t" + targetValue);
+                    for (SnakGroup q : claim.getQualifiers()) {
+                        translateSnakGroup(q, false, writer);
+                    }
+                    writer.write("\n");
+                } else {
+                    // According to: https://www.wikidata.org/wiki/Help:QuickStatements#Add_statement_with_sources
+                    // Existing statements with an exact match (property and value) will not be added again;
+                    // however additional references might be added to the statement.
+
+                    // So, to handle multiple references, we can duplicate the statement just with different references.
+                    for (Reference r : statement.getReferences()) {
+                        writer.write(qid + "\t" + pid + "\t" + targetValue);
+                        for (SnakGroup q : claim.getQualifiers()) {
+                            translateSnakGroup(q, false, writer);
+                        }
+                        for (SnakGroup g : r.getSnakGroups()) {
+                            translateSnakGroup(g, true, writer);
+                        }
+                        writer.write("\n");
+                    }
                 }
-                break; // QS only supports one reference
             }
-            writer.write("\n");
         }
     }
 

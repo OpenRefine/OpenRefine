@@ -37,14 +37,10 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package org.openrefine.model.recon;
 
-import java.io.DataOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.Serializable;
 import java.io.StringWriter;
 import java.io.Writer;
-import java.net.URL;
-import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -65,6 +61,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.openrefine.expr.functions.ToDate;
 import org.openrefine.model.Cell;
 import org.openrefine.model.recon.Recon.Judgment;
+import org.openrefine.util.HttpClient;
 import org.openrefine.util.JSONUtilities;
 import org.openrefine.util.JsonViews;
 import org.openrefine.util.ParsingUtilities;
@@ -245,6 +242,9 @@ public class ReconciledDataExtensionJob implements Serializable {
     final private String identifierSpace;
     final private String schemaSpace;
 
+    // not final: initialized lazily
+    private static HttpClient httpClient = null;
+
     public ReconciledDataExtensionJob(DataExtensionConfig obj, String endpoint, String identifierSpace, String schemaSpace) {
         this.extension = obj;
         this.endpoint = endpoint;
@@ -252,68 +252,60 @@ public class ReconciledDataExtensionJob implements Serializable {
         this.schemaSpace = schemaSpace;
     }
 
+    /**
+     * @todo Although the HTTP code has been unified, there may still be opportunity to refactor a higher level querying
+     *       library out of this which could be shared with StandardReconConfig
+     *
+     *       It may also be possible to extract a library to query reconciliation services which could be used outside
+     *       of OpenRefine.
+     */
     public Map<String, ReconciledDataExtensionJob.DataExtension> extend(
             Set<String> ids) throws Exception {
         StringWriter writer = new StringWriter();
         formulateQuery(ids, extension, writer);
 
         String query = writer.toString();
-        InputStream is = performQuery(this.endpoint, query);
-        try {
-            ObjectNode o = ParsingUtilities.mapper.readValue(is, ObjectNode.class);
+        String response = postExtendQuery(this.endpoint, query);
 
-            if (columns.size() == 0) {
-                // Extract the column metadata
-                List<ColumnInfo> newColumns = ParsingUtilities.mapper.convertValue(o.get("meta"), new TypeReference<List<ColumnInfo>>() {
-                });
-                columns.addAll(newColumns);
-            }
+        ObjectNode o = ParsingUtilities.mapper.readValue(response, ObjectNode.class);
 
-            Map<String, ReconciledDataExtensionJob.DataExtension> map = new HashMap<>();
-            if (o.has("rows") && o.get("rows") instanceof ObjectNode) {
-                ObjectNode records = (ObjectNode) o.get("rows");
+        if (columns.size() == 0) {
+            // Extract the column metadata
+            List<ColumnInfo> newColumns = ParsingUtilities.mapper.convertValue(o.get("meta"), new TypeReference<List<ColumnInfo>>() {
+            });
+            columns.addAll(newColumns);
+        }
 
-                // for each identifier
-                for (String id : ids) {
-                    if (records.has(id) && records.get(id) instanceof ObjectNode) {
-                        ObjectNode record = (ObjectNode) records.get(id);
+        Map<String, ReconciledDataExtensionJob.DataExtension> map = new HashMap<String, ReconciledDataExtensionJob.DataExtension>();
+        if (o.has("rows") && o.get("rows") instanceof ObjectNode) {
+            ObjectNode records = (ObjectNode) o.get("rows");
 
-                        ReconciledDataExtensionJob.DataExtension ext = collectResult(record);
+            // for each identifier
+            for (String id : ids) {
+                if (records.has(id) && records.get(id) instanceof ObjectNode) {
+                    ObjectNode record = (ObjectNode) records.get(id);
 
-                        if (ext != null) {
-                            map.put(id, ext);
-                        }
+                    ReconciledDataExtensionJob.DataExtension ext = collectResult(record);
+
+                    if (ext != null) {
+                        map.put(id, ext);
                     }
                 }
             }
-
-            return map;
-        } finally {
-            is.close();
         }
+
+        return map;
     }
 
-    static protected InputStream performQuery(String endpoint, String query) throws IOException {
-        URL url = new URL(endpoint);
+    static protected String postExtendQuery(String endpoint, String query) throws IOException {
+        return getHttpClient().postNameValue(endpoint, "extend", query);
+    }
 
-        URLConnection connection = url.openConnection();
-        connection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
-        connection.setConnectTimeout(5000);
-        connection.setDoOutput(true);
-
-        DataOutputStream dos = new DataOutputStream(connection.getOutputStream());
-        try {
-            String body = "extend=" + ParsingUtilities.encode(query);
-
-            dos.writeBytes(body);
-        } finally {
-            dos.flush();
-            dos.close();
+    private static HttpClient getHttpClient() {
+        if (httpClient == null) {
+            httpClient = new HttpClient();
         }
-
-        connection.connect();
-
-        return connection.getInputStream();
+        return httpClient;
     }
 
     protected ReconciledDataExtensionJob.DataExtension collectResult(

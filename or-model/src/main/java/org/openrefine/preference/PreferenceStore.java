@@ -102,6 +102,12 @@ public class PreferenceStore {
             if (entries.get(key) != null) {
                 JsonNode o = entries.get(key);
                 Object loaded = loadObject(o);
+                if (loaded == null) {
+                    if ("scripting.starred-expressions".contentEquals(key)) {
+                        // HACK to work around preferences corruption
+                        loaded = new TopList(10);
+                    }
+                }
                 _prefs.put(key, loaded);
             }
         }

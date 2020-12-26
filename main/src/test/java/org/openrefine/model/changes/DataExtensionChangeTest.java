@@ -92,7 +92,7 @@ public class DataExtensionChangeTest extends RefineTest {
             throws IOException, ModelException {
         project = createProject(
                 new String[] { "reconciled" },
-                new Serializable[] { "some item" });
+                new Serializable[][] { { "some item" } });
 
         DataExtension dataExtension = new DataExtension(Arrays.asList(
                 Collections.singletonList(new Cell("a", null)),

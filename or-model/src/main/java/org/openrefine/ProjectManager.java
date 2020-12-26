@@ -50,7 +50,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import org.apache.tools.tar.TarOutputStream;
+import org.apache.commons.compress.archivers.tar.TarArchiveOutputStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -85,9 +85,14 @@ public abstract class ProjectManager {
     final static Logger logger = LoggerFactory.getLogger("ProjectManager");
 
     /**
-     * What caches the joins between projects.
+     * What caches the lookups of projects (for the GREL cross function)
      */
-    transient protected InterProjectModel _interProjectModel = new InterProjectModel();
+    transient protected LookupCacheManager _lookupCacheManager = new LookupCacheManager();
+
+    /**
+     * Caches the facet counts of projects (for the GREL facetCount function)
+     */
+    transient protected FacetCountCacheManager _facetCountCacheManager = new FacetCountCacheManager();
 
     /**
      * Flag for heavy operations like creating or importing projects. Workspace saves are skipped while it's set.
@@ -191,7 +196,7 @@ public abstract class ProjectManager {
      * @param tos
      * @throws IOException
      */
-    public abstract void exportProject(long projectId, TarOutputStream tos) throws IOException;
+    public abstract void exportProject(long projectId, TarArchiveOutputStream tos) throws IOException;
 
     /**
      * Saves a project and its metadata to the data store
@@ -371,11 +376,16 @@ public abstract class ProjectManager {
     }
 
     /**
-     * Gets the InterProjectModel from memory
+     * Gets the LookupCacheManager from memory
      */
     @JsonIgnore
-    public InterProjectModel getInterProjectModel() {
-        return _interProjectModel;
+    public LookupCacheManager getLookupCacheManager() {
+        return _lookupCacheManager;
+    }
+
+    @JsonIgnore
+    public FacetCountCacheManager getFacetCountCache() {
+        return _facetCountCacheManager;
     }
 
     /**
@@ -476,7 +486,7 @@ public abstract class ProjectManager {
                 ObjectNode node = (ObjectNode) jsonObj;
                 if (node.get("name").asText("").equals(placeHolderJsonObj.get("name").asText(""))) {
                     found = true;
-                    node.put("display", placeHolderJsonObj.get("display"));
+                    node.set("display", placeHolderJsonObj.get("display"));
                     break;
                 }
             }

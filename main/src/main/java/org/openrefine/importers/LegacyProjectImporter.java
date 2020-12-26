@@ -44,7 +44,7 @@ public class LegacyProjectImporter extends InputStreamImporter {
     }
 
     @Override
-    public GridState parseOneFile(ProjectMetadata metadata, ImportingJob job, String fileSource,
+    public GridState parseOneFile(ProjectMetadata metadata, ImportingJob job, String fileSource, String archiveFileName,
             InputStream inputStream, long limit, ObjectNode options) throws Exception {
         // open the project archive
         if (!fileSource.endsWith(".tar")) {

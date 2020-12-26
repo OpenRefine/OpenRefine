@@ -77,6 +77,34 @@ a.facet-title-remove:hover {
   background-position: -12px 0px;
   }
 
+li.facet-state-minimize {
+  height: 22px;
+  overflow: hidden;
+}
+
+a.facet-title-minimize {
+  display: block;
+  width: 12px;
+  height: 12px;
+  margin: 2px 0 0 0;
+  text-decoration: none;
+  background-image: url(../../images/minimize-map.png);
+  background-repeat: no-repeat;
+  background-position: -0px 0px;
+  }
+
+a.facet-title-minimize:hover {
+  background-position: -12px 0px;
+  }
+
+li.facet-state-minimize a.facet-title-minimize {
+  background-position: -24px 0px;
+  }
+
+li.facet-state-minimize a.facet-title-minimize:hover {
+  background-position: -36px 0px;
+  }
+
 .facet-expression {
   padding: 3px 5px;
   font-family: monospace;
@@ -114,9 +142,6 @@ a.facet-title-remove:hover {
   text-align: center;
   }
 
-.facet-body {
-  }
-  
 .facet-body-scrollable {
   height: 17em;
   padding-bottom: 8px;
@@ -257,7 +282,7 @@ img.facet-choice-link {
   }
 
 .facet-scatterplot-selectors-container .scatterplot-selectors .buttonset {
-  margin: 0.8em 0em;
+  margin: 0.4em 0em;
   }
 
 .scatterplot-selectors .ui-button-text-only .ui-button-text {
@@ -308,11 +333,13 @@ img.facet-choice-link {
 .scatterplot-selectors .scatterplot-dim-selector label {
   width: 32px;
   height: 16px;
+  padding: 0px;
   }
 
 .scatterplot-selectors .scatterplot-rot-selector label {
   width: 22px;
   height: 18px;
+  padding: 0px;
   background-image: url("../../images/scatterplot-icons.png");
   }
     
@@ -331,6 +358,7 @@ img.facet-choice-link {
 .scatterplot-selectors .scatterplot-dot-selector label {
   width: 22px;
   height: 18px;
+  padding: 0px;
   background-image: url("../../images/scatterplot-icons.png");
   }
 

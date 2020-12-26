@@ -133,8 +133,8 @@ $(function() {
         function(data) {
           OpenRefineVersion = data;
 
-          $("#openrefine-version").text($.i18n('core-index/version')+" " + OpenRefineVersion.full_version);
-          
+          $("#openrefine-version").text($.i18n('core-index/version', OpenRefineVersion.full_version));
+          $("#java-runtime-version").text(OpenRefineVersion.java_runtime_name + " " + OpenRefineVersion.java_runtime_version);
 
             $.getJSON("https://api.github.com/repos/openrefine/openrefine/releases/latest",
              function( data ) {
@@ -157,7 +157,7 @@ $(function() {
                 .addClass('notification-action')
                 .attr("href", latestVersionUrl)
                 .attr("target", "_blank")
-                .text($.i18n('core-index/download')+' ' + latestVersionName + ' '+$.i18n('core-index/now')+'.')
+                .text($.i18n('core-index/download-now', latestVersionName))
                 .appendTo(notification);
               }
             });

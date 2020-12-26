@@ -38,7 +38,9 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Properties;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import org.openrefine.expr.EvalError;
 import org.openrefine.expr.ExpressionUtils;
@@ -49,6 +51,8 @@ import org.openrefine.grel.ast.GrelExpr;
 import org.openrefine.grel.ast.VariableExpr;
 
 public class ForEach implements Control {
+
+    private static final long serialVersionUID = -6996588434654926170L;
 
     @Override
     public String checkArguments(GrelExpr[] args) {
@@ -66,8 +70,9 @@ public class ForEach implements Control {
         Object o = args[0].evaluate(bindings);
         if (ExpressionUtils.isError(o)) {
             return o;
-        } else if (!ExpressionUtils.isArrayOrCollection(o) && !(o instanceof ArrayNode)) {
-            return new EvalError("First argument to forEach is not an array");
+        } else if (!ExpressionUtils.isArrayOrCollection(o) && !(o instanceof ArrayNode)
+                && !(o instanceof ObjectNode)) {
+            return new EvalError("First argument to forEach is not an array or JSON object");
         }
 
         String name = ((VariableExpr) args[1]).getName();
@@ -107,6 +112,18 @@ public class ForEach implements Control {
 
                     Object r = args[2].evaluate(bindings);
 
+                    results.add(r);
+                }
+            } else if (o instanceof ObjectNode) {
+                ObjectNode obj = (ObjectNode) o;
+                results = new ArrayList<Object>(obj.size());
+                for (JsonNode v : obj) {
+                    if (v != null) {
+                        bindings.put(name, v);
+                    } else {
+                        bindings.remove(name);
+                    }
+                    Object r = args[2].evaluate(bindings);
                     results.add(r);
                 }
             } else {

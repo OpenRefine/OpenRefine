@@ -1,0 +1,21 @@
+{
+    "database-import/title": "数据库服务器",
+    "database-import/preparing": "正在准备返回结果…",
+    "database-import/checking": "正在验证查询…",
+    "database-import/creating": "创建项目…",
+    "database-source/alert-host": "你必须指定一个数据库主机",
+    "database-source/alert-port": "你必须指定一个数据库端口",
+    "database-source/alert-user": "你必须指定一个数据库用户",
+    "database-source/alert-password": "你必须设定一个数据库密码",
+    "database-source/alert-connection-name": "你必须指定一个连接名称",
+    "database-source/alert-initial-database": "你必须指定一个初始数据库",
+    "database-source/alert-query": "你必须指定一个有效的查询",
+    "database-source/alert-invalid-query-keyword": "任何数据库查询语句均不能够包含数据操作关键字：",
+    "database-source/alert-invalid-query-select": "查询语句必须从 SELECT 关键字开始",
+    "database-source/form-validation-failure": "无效的新建连接表！",
+    "database-source/alert-connection-edit": "连接已编辑",
+    "database-source/connectionNameLabel": "名称：",
+    "database-source/databaseTypeLabel": "类型：",
+    "database-source/databaseHostLabel": "主机：",
+    "database-source/databasePortLabel": "端口："
+}

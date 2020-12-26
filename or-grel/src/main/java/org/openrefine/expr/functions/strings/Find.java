@@ -57,9 +57,7 @@ public class Find extends PureFunction {
             }
 
             if (s != null && p != null && p instanceof Pattern) {
-
-                Pattern pattern = (p instanceof String) ? Pattern.compile((String) p) : (Pattern) p;
-
+                Pattern pattern = (Pattern) p;
                 Matcher matcher = pattern.matcher(s.toString());
 
                 while (matcher.find()) {
@@ -74,7 +72,7 @@ public class Find extends PureFunction {
 
     @Override
     public String getDescription() {
-        return "Returns all the occurances of match given regular expression";
+        return "Returns all the occurrences of match given regular expression or simple string";
     }
 
     @Override

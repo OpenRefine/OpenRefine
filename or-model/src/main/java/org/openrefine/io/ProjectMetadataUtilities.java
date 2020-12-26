@@ -39,7 +39,9 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
+import java.nio.charset.StandardCharsets;
 
+import org.apache.commons.lang3.NotImplementedException;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -54,25 +56,33 @@ public class ProjectMetadataUtilities {
     public static void save(ProjectMetadata projectMeta, File projectDir) throws IOException {
         File tempFile = new File(projectDir, "metadata.temp.json");
         saveToFile(projectMeta, tempFile);
+        if (tempFile.length() == 0) {
+            throw new IOException("Failed to save project metadata - keeping backups");
+        }
+
+        // TODO Do we want to make sure we can successfully deserialize the file too?
 
         File file = new File(projectDir, "metadata.json");
         File oldFile = new File(projectDir, "metadata.old.json");
 
-        if (oldFile.exists()) {
-            oldFile.delete();
-        }
-
         if (file.exists()) {
-            file.renameTo(oldFile);
+            if (file.length() > 0) {
+                if (oldFile.exists()) {
+                    oldFile.delete();
+                }
+                file.renameTo(oldFile);
+            } else {
+                file.delete();
+            }
         }
 
         tempFile.renameTo(file);
     }
 
     protected static void saveToFile(ProjectMetadata projectMeta, File metadataFile) throws IOException {
-        Writer writer = new OutputStreamWriter(new FileOutputStream(metadataFile));
+        Writer writer = new OutputStreamWriter(new FileOutputStream(metadataFile), StandardCharsets.UTF_8);
         try {
-            ParsingUtilities.defaultWriter.writeValue(writer, projectMeta);
+            ParsingUtilities.saveWriter.writeValue(writer, projectMeta);
         } finally {
             writer.close();
         }
@@ -107,6 +117,38 @@ public class ProjectMetadataUtilities {
         }
 
         return pm;
+    }
+
+    /**
+     * Reconstruct the project metadata on a best efforts basis. The name is gone, so build something descriptive from
+     * the column names. Recover the creation and modification times based on whatever files are available.
+     * 
+     * @param projectDir
+     *            the project directory
+     * @param id
+     *            the project id
+     * @return
+     */
+    static public ProjectMetadata recover(File projectDir, long id) {
+        /**
+         * @todo TODO adapt to new architecture
+         */
+        throw new NotImplementedException("Project metadata recovery has not been migrated to the new architecture yet");
+        /*
+         * ProjectMetadata pm = null; Project p = ProjectUtilities.load(projectDir, id); if (p != null) { List<String>
+         * columnNames = p.columnModel.getColumnNames(); String tempName = "<recovered project> - " + columnNames.size()
+         * + " cols X " + p.rows.size() + " rows - " + StringUtils.join(columnNames,'|'); p.dispose(); long ctime =
+         * System.currentTimeMillis(); long mtime = 0;
+         * 
+         * File dataFile = new File(projectDir, "data.zip"); ctime = mtime = dataFile.lastModified();
+         * 
+         * File historyDir = new File(projectDir,"history"); File[] files = historyDir.listFiles(); if (files != null) {
+         * for (File f : files) { long time = f.lastModified(); ctime = Math.min(ctime, time); mtime = Math.max(mtime,
+         * time); } } pm = new ProjectMetadata(LocalDateTime.ofInstant(Instant.ofEpochMilli(ctime),
+         * ZoneId.systemDefault()), LocalDateTime.ofInstant(Instant.ofEpochMilli(mtime), ZoneId.systemDefault()),
+         * tempName); logger.error("Partially recovered missing metadata project in directory " + projectDir + " - " +
+         * tempName); } return pm;
+         */
     }
 
     static protected ProjectMetadata loadFromFile(File metadataFile) throws Exception {

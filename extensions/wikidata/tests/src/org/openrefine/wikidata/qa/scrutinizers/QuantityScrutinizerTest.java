@@ -1,15 +1,36 @@
 
 package org.openrefine.wikidata.qa.scrutinizers;
 
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 import org.testng.annotations.Test;
 import org.wikidata.wdtk.datamodel.helpers.Datamodel;
+import org.wikidata.wdtk.datamodel.implementation.StatementImpl;
+import org.wikidata.wdtk.datamodel.interfaces.ItemIdValue;
+import org.wikidata.wdtk.datamodel.interfaces.PropertyIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.QuantityValue;
+import org.wikidata.wdtk.datamodel.interfaces.Snak;
+import org.wikidata.wdtk.datamodel.interfaces.SnakGroup;
+import org.wikidata.wdtk.datamodel.interfaces.Statement;
+import org.wikidata.wdtk.datamodel.interfaces.Value;
 
-import org.openrefine.wikidata.qa.MockConstraintFetcher;
+import org.openrefine.wikidata.qa.ConstraintFetcher;
+import org.openrefine.wikidata.testing.TestingData;
+import org.openrefine.wikidata.updates.ItemUpdate;
+import org.openrefine.wikidata.updates.ItemUpdateBuilder;
 
 public class QuantityScrutinizerTest extends ValueScrutinizerTest {
+
+    public static final String NO_BOUNDS_CONSTRAINT_QID = "Q51723761";
+    public static final String INTEGER_VALUED_CONSTRAINT_QID = "Q52848401";
+    public static final String ALLOWED_UNITS_CONSTRAINT_QID = "Q21514353";
+    public static final String ALLOWED_UNITS_CONSTRAINT_PID = "P2305";
 
     private QuantityValue exactValue = Datamodel.makeQuantityValue(
             new BigDecimal("1.234"));
@@ -29,7 +50,14 @@ public class QuantityScrutinizerTest extends ValueScrutinizerTest {
             new BigDecimal("1.234"), "Q346721");
 
     private QuantityValue goodUnitValue = Datamodel.makeQuantityValue(
-            new BigDecimal("1.234"), MockConstraintFetcher.allowedUnit.getIri());
+            new BigDecimal("1.234"), (ItemIdValue) allowedUnit);
+
+    public static PropertyIdValue propertyIdValue = Datamodel.makeWikidataPropertyIdValue("P1083");
+    public static ItemIdValue noBoundsEntity = Datamodel.makeWikidataItemIdValue(NO_BOUNDS_CONSTRAINT_QID);
+    public static ItemIdValue integerValueEntity = Datamodel.makeWikidataItemIdValue(INTEGER_VALUED_CONSTRAINT_QID);
+    public static ItemIdValue allowedUnitEntity = Datamodel.makeWikidataItemIdValue(ALLOWED_UNITS_CONSTRAINT_QID);
+    public static PropertyIdValue itemParameterPID = Datamodel.makeWikidataPropertyIdValue(ALLOWED_UNITS_CONSTRAINT_PID);
+    public static Value allowedUnit = Datamodel.makeWikidataItemIdValue("Q5");
 
     @Override
     public EditScrutinizer getScrutinizer() {
@@ -38,67 +66,186 @@ public class QuantityScrutinizerTest extends ValueScrutinizerTest {
 
     @Test
     public void testBoundsAllowed() {
-        scrutinize(valueWithBounds);
+        ItemIdValue idA = TestingData.existingId;
+        Snak mainSnak = Datamodel.makeValueSnak(propertyIdValue, valueWithBounds);
+        Statement statement = new StatementImpl("P1083", mainSnak, idA);
+        ItemUpdate update = new ItemUpdateBuilder(idA).addStatement(statement).build();
+
+        ConstraintFetcher fetcher = mock(ConstraintFetcher.class);
+        when(fetcher.getConstraintsByType(propertyIdValue, NO_BOUNDS_CONSTRAINT_QID)).thenReturn(new ArrayList<>());
+        setFetcher(fetcher);
+
+        scrutinize(update);
         assertNoWarningRaised();
     }
 
     @Test
     public void testBoundsDisallowed() {
-        scrutinize(MockConstraintFetcher.noBoundsPid, valueWithBounds);
+        ItemIdValue idA = TestingData.existingId;
+        Snak mainSnak = Datamodel.makeValueSnak(propertyIdValue, valueWithBounds);
+        Statement statement = new StatementImpl("P1083", mainSnak, idA);
+        ItemUpdate update = new ItemUpdateBuilder(idA).addStatement(statement).build();
+
+        List<Statement> constraintDefinitions = constraintParameterStatementList(noBoundsEntity, new ArrayList<>());
+        ConstraintFetcher fetcher = mock(ConstraintFetcher.class);
+        when(fetcher.getConstraintsByType(propertyIdValue, NO_BOUNDS_CONSTRAINT_QID)).thenReturn(constraintDefinitions);
+        setFetcher(fetcher);
+
+        scrutinize(update);
         assertWarningsRaised(QuantityScrutinizer.boundsDisallowedType);
     }
 
     @Test
     public void testFractionalAllowed() {
-        scrutinize(exactValue);
+        ItemIdValue idA = TestingData.existingId;
+        Snak mainSnak = Datamodel.makeValueSnak(propertyIdValue, exactValue);
+        Statement statement = new StatementImpl("P1083", mainSnak, idA);
+        ItemUpdate update = new ItemUpdateBuilder(idA).addStatement(statement).build();
+
+        ConstraintFetcher fetcher = mock(ConstraintFetcher.class);
+        when(fetcher.getConstraintsByType(propertyIdValue, INTEGER_VALUED_CONSTRAINT_QID)).thenReturn(new ArrayList<>());
+        setFetcher(fetcher);
+
+        scrutinize(update);
         assertNoWarningRaised();
     }
 
     @Test
     public void testFractionalDisallowed() {
-        scrutinize(MockConstraintFetcher.integerPid, exactValue);
+        ItemIdValue idA = TestingData.existingId;
+        Snak mainSnak = Datamodel.makeValueSnak(propertyIdValue, exactValue);
+        Statement statement = new StatementImpl("P1083", mainSnak, idA);
+        ItemUpdate update = new ItemUpdateBuilder(idA).addStatement(statement).build();
+
+        List<Statement> constraintDefinitions = constraintParameterStatementList(integerValueEntity, new ArrayList<>());
+        ConstraintFetcher fetcher = mock(ConstraintFetcher.class);
+        when(fetcher.getConstraintsByType(propertyIdValue, INTEGER_VALUED_CONSTRAINT_QID)).thenReturn(constraintDefinitions);
+        setFetcher(fetcher);
+
+        scrutinize(update);
         assertWarningsRaised(QuantityScrutinizer.integerConstraintType);
     }
 
     @Test
     public void testTrailingZeros() {
-        scrutinize(MockConstraintFetcher.integerPid, trailingZeros);
+        ItemIdValue idA = TestingData.existingId;
+        Snak mainSnak = Datamodel.makeValueSnak(propertyIdValue, trailingZeros);
+        Statement statement = new StatementImpl("P1083", mainSnak, idA);
+        ItemUpdate update = new ItemUpdateBuilder(idA).addStatement(statement).build();
+
+        List<Statement> constraintDefinitions = constraintParameterStatementList(integerValueEntity, new ArrayList<>());
+        ConstraintFetcher fetcher = mock(ConstraintFetcher.class);
+        when(fetcher.getConstraintsByType(propertyIdValue, INTEGER_VALUED_CONSTRAINT_QID)).thenReturn(constraintDefinitions);
+        setFetcher(fetcher);
+
+        scrutinize(update);
         assertWarningsRaised(QuantityScrutinizer.integerConstraintType);
     }
 
     @Test
     public void testInteger() {
-        scrutinize(MockConstraintFetcher.integerPid, integerValue);
+        ItemIdValue idA = TestingData.existingId;
+        Snak mainSnak = Datamodel.makeValueSnak(propertyIdValue, integerValue);
+        Statement statement = new StatementImpl("P1083", mainSnak, idA);
+        ItemUpdate update = new ItemUpdateBuilder(idA).addStatement(statement).build();
+
+        List<Statement> constraintDefinitions = constraintParameterStatementList(integerValueEntity, new ArrayList<>());
+        ConstraintFetcher fetcher = mock(ConstraintFetcher.class);
+        when(fetcher.getConstraintsByType(propertyIdValue, INTEGER_VALUED_CONSTRAINT_QID)).thenReturn(constraintDefinitions);
+        setFetcher(fetcher);
+
+        scrutinize(update);
         assertNoWarningRaised();
     }
 
     @Test
     public void testUnitReqired() {
-        scrutinize(MockConstraintFetcher.allowedUnitsPid, integerValue);
+        ItemIdValue idA = TestingData.existingId;
+        Snak mainSnak = Datamodel.makeValueSnak(propertyIdValue, integerValue);
+        Statement statement = new StatementImpl("P1083", mainSnak, idA);
+        ItemUpdate update = new ItemUpdateBuilder(idA).addStatement(statement).build();
+
+        Snak qualifierSnak = Datamodel.makeValueSnak(itemParameterPID, allowedUnit);
+        List<Snak> qualifierSnakList = Collections.singletonList(qualifierSnak);
+        SnakGroup snakGroup1 = Datamodel.makeSnakGroup(qualifierSnakList);
+        List<SnakGroup> constraintQualifiers = Collections.singletonList(snakGroup1);
+        List<Statement> constraintDefinitions = constraintParameterStatementList(allowedUnitEntity, constraintQualifiers);
+        ConstraintFetcher fetcher = mock(ConstraintFetcher.class);
+        when(fetcher.getConstraintsByType(propertyIdValue, ALLOWED_UNITS_CONSTRAINT_QID)).thenReturn(constraintDefinitions);
+        setFetcher(fetcher);
+
+        scrutinize(update);
         assertWarningsRaised(QuantityScrutinizer.noUnitProvidedType);
     }
 
     @Test
     public void testWrongUnit() {
-        scrutinize(MockConstraintFetcher.allowedUnitsPid, wrongUnitValue);
+        ItemIdValue idA = TestingData.existingId;
+        Snak mainSnak = Datamodel.makeValueSnak(propertyIdValue, wrongUnitValue);
+        Statement statement = new StatementImpl("P1083", mainSnak, idA);
+        ItemUpdate update = new ItemUpdateBuilder(idA).addStatement(statement).build();
+
+        Snak qualifierSnak = Datamodel.makeValueSnak(itemParameterPID, allowedUnit);
+        List<Snak> qualifierSnakList = Collections.singletonList(qualifierSnak);
+        SnakGroup snakGroup1 = Datamodel.makeSnakGroup(qualifierSnakList);
+        List<SnakGroup> constraintQualifiers = Collections.singletonList(snakGroup1);
+        List<Statement> constraintDefinitions = constraintParameterStatementList(allowedUnitEntity, constraintQualifiers);
+        ConstraintFetcher fetcher = mock(ConstraintFetcher.class);
+        when(fetcher.getConstraintsByType(propertyIdValue, ALLOWED_UNITS_CONSTRAINT_QID)).thenReturn(constraintDefinitions);
+        setFetcher(fetcher);
+
+        scrutinize(update);
         assertWarningsRaised(QuantityScrutinizer.invalidUnitType);
     }
 
     @Test
     public void testGoodUnit() {
-        scrutinize(MockConstraintFetcher.allowedUnitsPid, goodUnitValue);
+        ItemIdValue idA = TestingData.existingId;
+        Snak mainSnak = Datamodel.makeValueSnak(propertyIdValue, goodUnitValue);
+        Statement statement = new StatementImpl("P1083", mainSnak, idA);
+        ItemUpdate update = new ItemUpdateBuilder(idA).addStatement(statement).build();
+
+        Snak qualifierSnak = Datamodel.makeValueSnak(itemParameterPID, allowedUnit);
+        List<Snak> qualifierSnakList = Collections.singletonList(qualifierSnak);
+        SnakGroup qualifierSnakGroup = Datamodel.makeSnakGroup(qualifierSnakList);
+        List<SnakGroup> constraintQualifiers = Collections.singletonList(qualifierSnakGroup);
+        List<Statement> constraintDefinitions = constraintParameterStatementList(allowedUnitEntity, constraintQualifiers);
+        ConstraintFetcher fetcher = mock(ConstraintFetcher.class);
+        when(fetcher.getConstraintsByType(propertyIdValue, ALLOWED_UNITS_CONSTRAINT_QID)).thenReturn(constraintDefinitions);
+        setFetcher(fetcher);
+
+        scrutinize(update);
         assertNoWarningRaised();
     }
 
     @Test
     public void testUnitForbidden() {
-        scrutinize(MockConstraintFetcher.noUnitsPid, goodUnitValue);
+        ItemIdValue idA = TestingData.existingId;
+        Snak mainSnak = Datamodel.makeValueSnak(propertyIdValue, goodUnitValue);
+        Statement statement = new StatementImpl("P1083", mainSnak, idA);
+        ItemUpdate update = new ItemUpdateBuilder(idA).addStatement(statement).build();
+
+        List<Statement> constraintDefinitions = constraintParameterStatementList(allowedUnitEntity, new ArrayList<>());
+        ConstraintFetcher fetcher = mock(ConstraintFetcher.class);
+        when(fetcher.getConstraintsByType(propertyIdValue, ALLOWED_UNITS_CONSTRAINT_QID)).thenReturn(constraintDefinitions);
+        setFetcher(fetcher);
+
+        scrutinize(update);
         assertWarningsRaised(QuantityScrutinizer.invalidUnitType);
     }
 
     @Test
     public void testNoUnit() {
-        scrutinize(MockConstraintFetcher.noUnitsPid, integerValue);
+        ItemIdValue idA = TestingData.existingId;
+        Snak mainSnak = Datamodel.makeValueSnak(propertyIdValue, integerValue);
+        Statement statement = new StatementImpl("P1083", mainSnak, idA);
+        ItemUpdate update = new ItemUpdateBuilder(idA).addStatement(statement).build();
+
+        ConstraintFetcher fetcher = mock(ConstraintFetcher.class);
+        when(fetcher.getConstraintsByType(propertyIdValue, ALLOWED_UNITS_CONSTRAINT_QID)).thenReturn(new ArrayList<>());
+        setFetcher(fetcher);
+
+        scrutinize(update);
         assertNoWarningRaised();
     }
 }

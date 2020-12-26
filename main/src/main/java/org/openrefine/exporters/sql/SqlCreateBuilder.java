@@ -72,7 +72,7 @@ public class SqlCreateBuilder {
                 String size = JSONUtilities.getString(columnOptions, "size", "");
                 boolean allowNull = JSONUtilities.getBoolean(columnOptions, "allowNull", true);
                 String defaultValue = JSONUtilities.getString(columnOptions, "defaultValue", null);
-                logger.info("allowNull::{}", allowNull);
+                logger.debug("allowNull::{}", allowNull);
 
                 String allowNullStr = "NULL";
                 if (!allowNull) {

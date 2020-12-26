@@ -143,7 +143,7 @@ TemplatingExporterDialog.prototype._updatePreview = function() {
 };
 
 TemplatingExporterDialog.prototype._export = function() {
-    var name = $.trim(theProject.metadata.name.replace(/\W/g, ' ')).replace(/\s+/g, '-');
+    var name = ExporterManager.stripNonFileChars(theProject.metadata.name);
     var form = document.createElement("form");
     $(form)
         .css("display", "none")
@@ -154,7 +154,7 @@ TemplatingExporterDialog.prototype._export = function() {
     var appendField = function(name, value) {
         $('<textarea />')
             .attr("name", name)
-            .attr("value", value)
+            .val(value)
             .appendTo(form);
     };
 
@@ -169,7 +169,7 @@ TemplatingExporterDialog.prototype._export = function() {
 
     document.body.appendChild(form);
 
-    window.open("about:blank", "refine-export");
+    window.open(" ", "refine-export");
     form.submit();
 
     document.body.removeChild(form);

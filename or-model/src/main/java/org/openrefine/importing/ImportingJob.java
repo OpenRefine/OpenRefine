@@ -393,10 +393,11 @@ public class ImportingJob {
         List<ImportingFileRecord> fileRecords = retrievalRecord.files;
         int count = fileRecords.size();
 
-        // Default to text/line-based to to avoid parsing as binary/excel.
+        // Default to text to to avoid parsing as binary/excel.
+        // "text" is more general than "text/line-based", so better as a fallback
         String bestFormat = ImporterUtilities.mostCommonFormat(retrievalRecord.files);
         if (bestFormat == null) {
-            bestFormat = "text/line-based";
+            bestFormat = "text";
         }
 
         if (retrievalRecord.archiveCount == 0) {

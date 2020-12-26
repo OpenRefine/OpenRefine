@@ -182,7 +182,7 @@ public class CancelProcessesCommandTests {
         } catch (IOException e) {
             Assert.fail();
         }
-        TestUtils.assertEqualAsJson("{ \"code\" : \"ok\" }", sw.toString());
+        TestUtils.assertEqualsAsJson(sw.toString(), "{ \"code\" : \"ok\" }");
     }
 
     @Test

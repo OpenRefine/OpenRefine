@@ -35,6 +35,7 @@ package org.openrefine.expr.functions.arrays;
 
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import com.fasterxml.jackson.databind.node.ArrayNode;
@@ -47,29 +48,34 @@ import org.openrefine.util.JSONUtilities;
 public class Sort extends PureFunction {
 
     @Override
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({ "unchecked", "rawtypes" })
     public Object call(Object[] args) {
         if (args.length == 1) {
             Object v = args[0];
-
             if (v != null) {
                 if (v.getClass().isArray()) {
                     Object[] a = (Object[]) v;
-                    Object[] r = a.clone();
-
-                    Arrays.sort(r, 0, r.length);
-
+                    Comparable[] r = new Comparable[a.length];
+                    for (int i = 0; i < r.length; i++) {
+                        if (a[i] instanceof Comparable) {
+                            r[i] = (Comparable) a[i];
+                        } else if (a[i] == null) {
+                            r[i] = null;
+                        } else {
+                            return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects an array of uniform type");
+                        }
+                    }
+                    Arrays.sort(r, Comparator.nullsLast(Comparator.naturalOrder()));
                     return r;
                 } else if (v instanceof ArrayNode) {
-                    Object[] r = JSONUtilities.toArray((ArrayNode) v);
-
-                    Arrays.sort(r, 0, r.length);
-
+                    // FIXME: Probably need a test for this
+                    // Comparable[] is a (slight) lie since nulls can be included, but our comparator will handle them
+                    Comparable[] r = (Comparable[]) JSONUtilities.toSortableArray((ArrayNode) v);
+                    Arrays.sort(r, Comparator.nullsLast(Comparator.naturalOrder()));
                     return r;
                 } else if (v instanceof List<?>) {
                     List<? extends Comparable<Object>> a = (List<? extends Comparable<Object>>) v;
-                    Collections.sort(a);
-
+                    Collections.sort(a, Comparator.nullsLast(Comparator.naturalOrder()));
                     return a;
                 }
             }
@@ -84,7 +90,7 @@ public class Sort extends PureFunction {
 
     @Override
     public String getParams() {
-        return "array a";
+        return "array a of uniform type";
     }
 
     @Override

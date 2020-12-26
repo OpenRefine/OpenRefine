@@ -110,7 +110,7 @@ public class MultiValuedCellsSplitTests extends RefineTest {
         smallGrid = createGrid(
                 new String[] { "Key", "Value" },
                 new Serializable[][] {
-                        { "Record_1", "one:two;three four" } });
+                        { "Record_1", "one:two;three four;fiveSix SevèËight;niné91011twelve thirteen 14Àifteen" } });
     }
 
     @Test(expectedExceptions = DoesNotApplyException.class)
@@ -195,7 +195,7 @@ public class MultiValuedCellsSplitTests extends RefineTest {
         Assert.assertEquals(rows.get(0).getRow().getCellValue(0), "Record_1");
         Assert.assertEquals(rows.get(0).getRow().getCellValue(1), "one");
         Assert.assertEquals(rows.get(1).getRow().getCellValue(0), null);
-        Assert.assertEquals(rows.get(1).getRow().getCellValue(1), "two;three four");
+        Assert.assertEquals(rows.get(1).getRow().getCellValue(1), "two;three four;fiveSix SevèËight;niné91011twelve thirteen 14Àifteen");
     }
 
     @Test
@@ -240,6 +240,101 @@ public class MultiValuedCellsSplitTests extends RefineTest {
         Assert.assertEquals(rows.get(2).getCellValue(1), "three ");
         Assert.assertEquals(rows.get(3).getCellValue(0), null);
         Assert.assertEquals(rows.get(3).getCellValue(1), "four");
+    }
+
+    @Test
+    public void testSplitMultiValuedCellsTextCase() throws Exception {
+        Change change = new MultiValuedCellSplitOperation(
+                "Value",
+                "Key",
+                "(?<=\\p{Lower}|[\\p{Lower}][\\s])(?=\\p{Upper})",
+                true).createChange();
+
+        GridState applied = change.apply(smallGrid, mock(ChangeContext.class));
+
+        List<Row> rows = applied.collectRows().stream().map(r -> r.getRow()).collect(Collectors.toList());
+        int keyCol = 0;
+        int valueCol = 1;
+
+        Assert.assertEquals(rows.get(0).getCellValue(keyCol), "Record_1");
+        Assert.assertEquals(rows.get(0).getCellValue(valueCol), "one:two;three four;five");
+        Assert.assertEquals(rows.get(1).getCellValue(keyCol), null);
+        Assert.assertEquals(rows.get(1).getCellValue(valueCol), "Six ");
+        Assert.assertEquals(rows.get(2).getCellValue(keyCol), null);
+        Assert.assertEquals(rows.get(2).getCellValue(valueCol), "Sevè");
+        Assert.assertEquals(rows.get(3).getCellValue(keyCol), null);
+        Assert.assertEquals(rows.get(3).getCellValue(valueCol), "Ëight;niné91011twelve thirteen 14Àifteen");
+    }
+
+    @Test
+    public void testSplitMultiValuedCellsTextCaseReverse() throws Exception {
+        Change change = new MultiValuedCellSplitOperation(
+                "Value",
+                "Key",
+                "(?<=\\p{Upper}|[\\p{Upper}][\\s])(?=\\p{Lower})",
+                true).createChange();
+
+        GridState applied = change.apply(smallGrid, mock(ChangeContext.class));
+
+        List<Row> rows = applied.collectRows().stream().map(r -> r.getRow()).collect(Collectors.toList());
+        int keyCol = 0;
+        int valueCol = 1;
+
+        Assert.assertEquals(rows.get(0).getCellValue(keyCol), "Record_1");
+        Assert.assertEquals(rows.get(0).getCellValue(valueCol), "one:two;three four;fiveS");
+        Assert.assertEquals(rows.get(1).getCellValue(keyCol), null);
+        Assert.assertEquals(rows.get(1).getCellValue(valueCol), "ix S");
+        Assert.assertEquals(rows.get(2).getCellValue(keyCol), null);
+        Assert.assertEquals(rows.get(2).getCellValue(valueCol), "evèË");
+        Assert.assertEquals(rows.get(3).getCellValue(keyCol), null);
+        Assert.assertEquals(rows.get(3).getCellValue(valueCol), "ight;niné91011twelve thirteen 14À");
+        Assert.assertEquals(rows.get(4).getCellValue(keyCol), null);
+        Assert.assertEquals(rows.get(4).getCellValue(valueCol), "ifteen");
+    }
+
+    @Test
+    public void testSplitMultiValuedCellsTextNumber() throws Exception {
+        Change change = new MultiValuedCellSplitOperation(
+                "Value",
+                "Key",
+                "(?<=\\p{Digit}|[\\p{Digit}][\\s])(?=\\p{L})",
+                true).createChange();
+
+        GridState applied = change.apply(smallGrid, mock(ChangeContext.class));
+
+        List<Row> rows = applied.collectRows().stream().map(r -> r.getRow()).collect(Collectors.toList());
+        int keyCol = 0;
+        int valueCol = 1;
+
+        Assert.assertEquals(rows.get(0).getCellValue(keyCol), "Record_1");
+        Assert.assertEquals(rows.get(0).getCellValue(valueCol), "one:two;three four;fiveSix SevèËight;niné91011");
+        Assert.assertEquals(rows.get(1).getCellValue(keyCol), null);
+        Assert.assertEquals(rows.get(1).getCellValue(valueCol), "twelve thirteen 14");
+        Assert.assertEquals(rows.get(2).getCellValue(keyCol), null);
+        Assert.assertEquals(rows.get(2).getCellValue(valueCol), "Àifteen");
+    }
+
+    @Test
+    public void testSplitMultiValuedCellsTextNumberReverse() throws Exception {
+        Change change = new MultiValuedCellSplitOperation(
+                "Value",
+                "Key",
+                "(?<=\\p{L}|[\\p{L}][\\s])(?=\\p{Digit})",
+                true).createChange();
+
+        GridState applied = change.apply(smallGrid, mock(ChangeContext.class));
+
+        List<Row> rows = applied.collectRows().stream().map(r -> r.getRow()).collect(Collectors.toList());
+
+        int keyCol = 0;
+        int valueCol = 1;
+
+        Assert.assertEquals(rows.get(0).getCellValue(keyCol), "Record_1");
+        Assert.assertEquals(rows.get(0).getCellValue(valueCol), "one:two;three four;fiveSix SevèËight;niné");
+        Assert.assertEquals(rows.get(1).getCellValue(keyCol), null);
+        Assert.assertEquals(rows.get(1).getCellValue(valueCol), "91011twelve thirteen ");
+        Assert.assertEquals(rows.get(2).getCellValue(keyCol), null);
+        Assert.assertEquals(rows.get(2).getCellValue(valueCol), "14Àifteen");
     }
 
 }

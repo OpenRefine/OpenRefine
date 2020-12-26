@@ -37,18 +37,25 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
+import java.io.UnsupportedEncodingException;
+import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.List;
 
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.slf4j.LoggerFactory;
 import org.testng.Assert;
+import org.testng.ITestResult;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
 import org.openrefine.importers.JsonImporter.JSONTreeReader;
+import org.openrefine.importers.tree.ImportColumnGroup;
+import org.openrefine.importers.tree.TreeImportUtilities.ColumnIndexAllocator;
 import org.openrefine.importers.tree.TreeImportingParserBase;
 import org.openrefine.importers.tree.TreeReader.Token;
 import org.openrefine.importing.ImportingJob;
@@ -72,16 +79,16 @@ public class JsonImporterTests extends ImporterTest {
     // System Under Test
     JsonImporter SUT = null;
 
-    @Override
     @BeforeMethod
-    public void setUp() {
+    public void setUp(Method method) {
         super.setUp();
         SUT = new JsonImporter(runner());
+        logger.debug("About to run test method: " + method.getName());
     }
 
-    @Override
     @AfterMethod
-    public void tearDown() {
+    public void tearDown(ITestResult result) {
+        logger.debug("Finished test method: " + result.getMethod().getMethodName());
         SUT = null;
         if (inputStream != null) {
             try {
@@ -99,16 +106,90 @@ public class JsonImporterTests extends ImporterTest {
         GridState grid = RunTest(getSample());
 
         GridState expected = createGrid(new String[] {
-                "_ - id", "_ - title", "_ - author", "_ - publish_date"
+                "_ - id", "_ - author", "_ - title", "_ - publish_date"
         }, new Serializable[][] {
-                { 1L, "Book title 1", "Author 1, The", "2010-05-26" },
-                { 2L, "Book title 2", "Author 2, The", "2010-05-26" },
-                { 3L, "Book title 3", "Author 3, The", "2010-05-26" },
-                { 4L, "Book title 4", "Author 4, The", "2010-05-26" },
-                { 5L, "Book title 5", "Author 5, The", "2010-05-26" },
-                { 6L, "Book title 6", "Author 6, The", "2010-05-26" },
+                { 1L, "Author 1, The", "Book title 1", "2010-05-26" },
+                { 2L, "Author 2, The", "Book title 2", "2010-05-26" },
+                { 3L, "Author 3, The", "Book title 3", "2010-05-26" },
+                { 4L, "Author 4, The", "Book title 4", "2010-05-26" },
+                { 5L, "Author 5, The", "Book title 5", "2010-05-26" },
+                { 6L, "Author 6, The", "Book title 6", "2010-05-26" },
         });
         assertGridEquals(grid, expected);
+    }
+
+    @Test
+    public void canThrowError() {
+        String errJSON = getSampleWithError();
+        ObjectNode options = SUT.createParserUIInitializationData(
+                job, new LinkedList<>(), "text/json");
+        ArrayNode path = ParsingUtilities.mapper.createArrayNode();
+        JSONUtilities.append(path, JsonImporter.ANONYMOUS);
+        JSONUtilities.safePut(options, "recordPath", path);
+        JSONUtilities.safePut(options, "trimStrings", false);
+        JSONUtilities.safePut(options, "storeEmptyStrings", true);
+        JSONUtilities.safePut(options, "guessCellValueTypes", false);
+
+        try {
+            inputStream = new ByteArrayInputStream(errJSON.getBytes("UTF-8"));
+        } catch (UnsupportedEncodingException e1) {
+            Assert.fail();
+        }
+        ImportColumnGroup rootColumnGroup = new ImportColumnGroup();
+        ColumnIndexAllocator allocator = new ColumnIndexAllocator();
+        List<Row> rows = new ArrayList<>();
+
+        try {
+            SUT.parseOneFile(
+                    allocator, rows,
+                    metadata,
+                    job,
+                    "file-source",
+                    inputStream,
+                    rootColumnGroup,
+                    -1L,
+                    options);
+            Assert.fail("Parsing should have thrown an error");
+        } catch (Exception exception) {
+            Assert.assertEquals("Unexpected character (';' (code 59)): was expecting comma to separate OBJECT entries",
+                    exception.getMessage());
+        }
+    }
+
+    @Test
+    public void trimLeadingTrailingWhitespaceOnTrimStrings() throws Exception {
+        String ScraperwikiOutput = "[\n" +
+                "{\n" +
+                "        \"school\": \"  University of Cambridge  \",\n" +
+                "        \"name\": \"          Amy Zhang                   \",\n" +
+                "        \"student-faculty-score\": \"100\",\n" +
+                "        \"intl-student-score\": \"95\"\n" +
+                "    }\n" +
+                "]\n";
+        GridState grid = RunTest(ScraperwikiOutput, getOptions(job, SUT, JsonImporter.ANONYMOUS, true));
+        Row row = grid.getRow(0);
+        Assert.assertNotNull(row);
+        Assert.assertNotNull(row.getCell(1));
+        Assert.assertEquals(row.getCell(0).value, "University of Cambridge");
+        Assert.assertEquals(row.getCell(1).value, "Amy Zhang");
+    }
+
+    @Test
+    public void doesNotTrimLeadingTrailingWhitespaceOnNoTrimStrings() throws Exception {
+        String ScraperwikiOutput = "[\n" +
+                "{\n" +
+                "        \"school\": \"  University of Cambridge  \",\n" +
+                "        \"name\": \"          Amy Zhang                   \",\n" +
+                "        \"student-faculty-score\": \"100\",\n" +
+                "        \"intl-student-score\": \"95\"\n" +
+                "    }\n" +
+                "]\n";
+        GridState grid = RunTest(ScraperwikiOutput);
+        Row row = grid.getRow(0);
+        Assert.assertNotNull(row);
+        Assert.assertNotNull(row.getCell(1));
+        Assert.assertEquals(row.getCell(0).value, "  University of Cambridge  ");
+        Assert.assertEquals(row.getCell(1).value, "          Amy Zhang                   ");
     }
 
     @Test
@@ -139,14 +220,14 @@ public class JsonImporterTests extends ImporterTest {
         GridState grid = RunTest(getSampleWithLineBreak());
 
         GridState expected = createGrid(new String[] {
-                "_ - id", "_ - title", "_ - author", "_ - publish_date"
+                "_ - id", "_ - author", "_ - title", "_ - publish_date"
         }, new Serializable[][] {
-                { 1L, "Book title 1", "Author 1, The", "2010-05-26" },
-                { 2L, "Book title 2", "Author 2, The", "2010-05-26" },
-                { 3L, "Book title 3", "Author 3, The", "2010-05-26" },
-                { 4L, "Book title 4", "With line\n break", "2010-05-26" },
-                { 5L, "Book title 5", "Author 5, The", "2010-05-26" },
-                { 6L, "Book title 6", "Author 6, The", "2010-05-26" },
+                { 1L, "Author 1, The", "Book title 1", "2010-05-26" },
+                { 2L, "Author 2, The", "Book title 2", "2010-05-26" },
+                { 3L, "Author 3, The", "Book title 3", "2010-05-26" },
+                { 4L, "With line\n break", "Book title 4", "2010-05-26" },
+                { 5L, "Author 5, The", "Book title 5", "2010-05-26" },
+                { 6L, "Author 6, The", "Book title 6", "2010-05-26" },
         });
         assertGridEquals(grid, expected);
     }
@@ -156,14 +237,14 @@ public class JsonImporterTests extends ImporterTest {
         GridState grid = RunTest(getSampleWithVaryingStructure());
 
         GridState expected = createGrid(new String[] {
-                "_ - id", "_ - title", "_ - author", "_ - publish_date", "_ - genre"
+                "_ - id", "_ - author", "_ - title", "_ - publish_date", "_ - genre"
         }, new Serializable[][] {
-                { 1L, "Book title 1", "Author 1, The", "2010-05-26", null },
-                { 2L, "Book title 2", "Author 2, The", "2010-05-26", null },
-                { 3L, "Book title 3", "Author 3, The", "2010-05-26", null },
-                { 4L, "Book title 4", "Author 4, The", "2010-05-26", null },
-                { 5L, "Book title 5", "Author 5, The", "2010-05-26", null },
-                { 6L, "Book title 6", "Author 6, The", "2010-05-26", "New element not seen in other records" },
+                { 1L, "Author 1, The", "Book title 1", "2010-05-26", null },
+                { 2L, "Author 2, The", "Book title 2", "2010-05-26", null },
+                { 3L, "Author 3, The", "Book title 3", "2010-05-26", null },
+                { 4L, "Author 4, The", "Book title 4", "2010-05-26", null },
+                { 5L, "Author 5, The", "Book title 5", "2010-05-26", null },
+                { 6L, "Author 6, The", "Book title 6", "2010-05-26", "New element not seen in other records" },
         });
         assertGridEquals(grid, expected);
     }
@@ -305,6 +386,32 @@ public class JsonImporterTests extends ImporterTest {
     }
 
     @Test
+    public void testCanParseTab() throws Exception {
+        // Use un-escaped tabs here.
+        String sampleJson = "{\"\tfield\":\t\"\tvalue\"}";
+
+        JSONTreeReader parser = new JSONTreeReader(new ByteArrayInputStream(sampleJson.getBytes("UTF-8")));
+        Token token = Token.Ignorable;
+        int i = 0;
+        try {
+            while (token != null) {
+                token = parser.next();
+                if (token == null) {
+                    break;
+                }
+                i++;
+                if (i == 3) {
+                    Assert.assertEquals(Token.Value, token);
+                    Assert.assertEquals("\tfield", parser.getFieldName());
+                    Assert.assertEquals("\tvalue", parser.getFieldValue());
+                }
+            }
+        } catch (Exception e) {
+            Assert.fail();
+        }
+    }
+
+    @Test
     public void testJsonDatatypes() throws Exception {
         GridState grid = RunTest(getSampleWithDataTypes());
 
@@ -384,8 +491,6 @@ public class JsonImporterTests extends ImporterTest {
         Assert.assertEquals(grid.recordCount(), 8);
     }
 
-    // ------------helper methods---------------
-
     private static String getTypicalElement(int id) {
         return "{ \"id\" : " + id + "," +
                 "\"author\" : \"Author " + id + ", The\"," +
@@ -418,7 +523,7 @@ public class JsonImporterTests extends ImporterTest {
         return sb.toString();
     }
 
-    private static ObjectNode getOptions(ImportingJob job, TreeImportingParserBase parser, String pathSelector) {
+    private static ObjectNode getOptions(ImportingJob job, TreeImportingParserBase parser, String pathSelector, boolean trimStrings) {
         ObjectNode options = parser.createParserUIInitializationData(
                 job, new LinkedList<>(), "text/json");
 
@@ -427,7 +532,7 @@ public class JsonImporterTests extends ImporterTest {
         JSONUtilities.append(path, pathSelector);
 
         JSONUtilities.safePut(options, "recordPath", path);
-        JSONUtilities.safePut(options, "trimStrings", false);
+        JSONUtilities.safePut(options, "trimStrings", trimStrings);
         JSONUtilities.safePut(options, "storeEmptyStrings", true);
         JSONUtilities.safePut(options, "guessCellValueTypes", false);
 
@@ -512,12 +617,20 @@ public class JsonImporterTests extends ImporterTest {
         return sb.toString();
     }
 
+    private static String getSampleWithError() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("[");
+        sb.append("{\"id\":" + "\"\n\";");
+        sb.append("]");
+        return sb.toString();
+    }
+
     private GridState RunTest(String testString) throws Exception {
-        return RunTest(testString, getOptions(job, SUT, JsonImporter.ANONYMOUS));
+        return RunTest(testString, getOptions(job, SUT, JsonImporter.ANONYMOUS, false));
     }
 
     private GridState RunComplexJSONTest(String testString) throws Exception {
-        return RunTest(testString, getOptions(job, SUT, "institutes"));
+        return RunTest(testString, getOptions(job, SUT, "institutes", false));
     }
 
     private GridState RunTest(String testString, ObjectNode options) throws Exception {
@@ -527,7 +640,7 @@ public class JsonImporterTests extends ImporterTest {
     private String getComplexJSON(String fileName) throws IOException {
         InputStream in = this.getClass().getClassLoader()
                 .getResourceAsStream(fileName);
-        String content = org.apache.commons.io.IOUtils.toString(in);
+        String content = org.apache.commons.io.IOUtils.toString(in, "UTF-8");
 
         return content;
     }

@@ -21,12 +21,15 @@ import org.testng.annotations.Test;
 
 import org.openrefine.RefineServlet;
 import org.openrefine.commands.CommandTestBase;
+import org.openrefine.io.FileProjectManager;
 import org.openrefine.util.ParsingUtilities;
+import org.openrefine.util.TestUtils;
 
 public class LoadLanguageCommandTests extends CommandTestBase {
 
     @BeforeMethod
-    public void setUpCommand() {
+    public void setUpCommand() throws IOException {
+        FileProjectManager.initialize(runner(), TestUtils.createTempDirectory("openrefine-test-workspace-dir"));
         command = new LoadLanguageCommand();
         ButterflyModule coreModule = mock(ButterflyModule.class);
 
@@ -38,40 +41,40 @@ public class LoadLanguageCommandTests extends CommandTestBase {
     }
 
     @Test
-	public void testLoadLanguages() throws ServletException, IOException {
-		when(request.getParameter("module")).thenReturn("core");
-		when(request.getParameterValues("lang")).thenReturn(new String[] {"en"});
-		
-		command.doPost(request, response);
-		
-		JsonNode response = ParsingUtilities.mapper.readValue(writer.toString(), JsonNode.class);
-		assertTrue(response.has("dictionary"));
-		assertTrue(response.has("lang"));
-	}
+    public void testLoadLanguages() throws ServletException, IOException {
+        when(request.getParameter("module")).thenReturn("core");
+        when(request.getParameterValues("lang")).thenReturn(new String[] {"en"});
+
+        command.doPost(request, response);
+
+        JsonNode response = ParsingUtilities.mapper.readValue(writer.toString(), JsonNode.class);
+        assertTrue(response.has("dictionary"));
+        assertTrue(response.has("lang"));
+    }
 
     @Test
-	public void testLoadUnknownLanguage() throws ServletException, IOException {
-		when(request.getParameter("module")).thenReturn("core");
-		when(request.getParameterValues("lang")).thenReturn(new String[] {"foobar"});
-		
-		command.doPost(request, response);
-		
-		JsonNode response = ParsingUtilities.mapper.readValue(writer.toString(), JsonNode.class);
-		assertTrue(response.has("dictionary"));
-		assertEquals(response.get("lang").asText(), "en");
-	}
+    public void testLoadUnknownLanguage() throws ServletException, IOException {
+        when(request.getParameter("module")).thenReturn("core");
+        when(request.getParameterValues("lang")).thenReturn(new String[] {"foobar"});
 
-    @Test
-	public void testLoadNoLanguage() throws JsonParseException, JsonMappingException, IOException, ServletException {
-	    when(request.getParameter("module")).thenReturn("core");
-	    when(request.getParameter("lang")).thenReturn("");
-	    
-	    command.doPost(request, response);
-	    
-	    JsonNode response = ParsingUtilities.mapper.readValue(writer.toString(), JsonNode.class);
+        command.doPost(request, response);
+
+        JsonNode response = ParsingUtilities.mapper.readValue(writer.toString(), JsonNode.class);
         assertTrue(response.has("dictionary"));
         assertEquals(response.get("lang").asText(), "en");
-	}
+    }
+
+    @Test
+    public void testLoadNoLanguage() throws JsonParseException, JsonMappingException, IOException, ServletException {
+        when(request.getParameter("module")).thenReturn("core");
+        when(request.getParameter("lang")).thenReturn("");
+
+        command.doPost(request, response);
+
+        JsonNode response = ParsingUtilities.mapper.readValue(writer.toString(), JsonNode.class);
+        assertTrue(response.has("dictionary"));
+        assertEquals(response.get("lang").asText(), "en");
+    }
 
     @Test
     public void testLanguageFallback() throws JsonParseException, JsonMappingException, IOException {

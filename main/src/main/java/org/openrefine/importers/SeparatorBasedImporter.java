@@ -53,7 +53,7 @@ import java.util.stream.Collectors;
 
 import au.com.bytecode.opencsv.CSVParser;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import org.apache.commons.lang3.StringEscapeUtils;
+import org.apache.commons.text.StringEscapeUtils;
 
 import org.openrefine.ProjectMetadata;
 import org.openrefine.importers.TabularParserHelper.TableDataReader;
@@ -90,6 +90,7 @@ public class SeparatorBasedImporter extends LineBasedImporterBase {
         JSONUtilities.safePut(options, "guessCellValueTypes", false);
         JSONUtilities.safePut(options, "processQuotes", true);
         JSONUtilities.safePut(options, "quoteCharacter", String.valueOf(CSVParser.DEFAULT_QUOTE_CHARACTER));
+        JSONUtilities.safePut(options, "trimStrings", true);
 
         return options;
     }
@@ -106,7 +107,7 @@ public class SeparatorBasedImporter extends LineBasedImporterBase {
         if (processQuotes) {
             GridState lines = limit > 0 ? runner.loadTextFile(sparkURI, limit) : runner.loadTextFile(sparkURI);
             TableDataReader dataReader = createTableDataReader(metadata, job, lines, options);
-            return tabularParserHelper.parseOneFile(metadata, job, fileSource, dataReader, limit, options);
+            return tabularParserHelper.parseOneFile(metadata, job, fileSource, archiveFileName, dataReader, limit, options);
         } else {
             // otherwise, go for the efficient route, using line-based parsing
             return super.parseOneFile(metadata, job, fileSource, archiveFileName, sparkURI, limit, options);

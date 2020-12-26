@@ -34,14 +34,20 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 function DataTableView(div) {
   this._div = div;
 
-  this._pageSize = 10;
+  this._gridPagesSizes = JSON.parse(Refine.getPreference("ui.browsing.pageSize", null));
+  this._gridPagesSizes = this._checkPaginationSize(this._gridPagesSizes, [ 5, 10, 25, 50 ]);
+  this._pageSize = ( this._gridPagesSizes[0] < 10 ) ? 10 : this._gridPagesSizes[0];
+
   this._showRecon = true;
   this._collapsedColumnNames = {};
   this._sorting = { criteria: [] };
   this._columnHeaderUIs = [];
   this._shownulls = false;
 
+  this._currentPageNumber = 1;
   this._showRows(0);
+  
+  this._refocusPageInput = false;
 }
 
 DataTableView._extenders = [];
@@ -68,11 +74,9 @@ DataTableView.prototype.getSorting = function() {
 };
 
 DataTableView.prototype.resize = function() {
-  this._adjustDataTables();
   
   var topHeight =
-    this._div.find(".viewpanel-header").outerHeight(true) +
-    this._div.find(".data-header-table-container").outerHeight(true);
+    this._div.find(".viewpanel-header").outerHeight(true);
   var tableContainerIntendedHeight = this._div.innerHeight() - topHeight;
   
   var tableContainer = this._div.find(".data-table-container").css("display", "block");
@@ -81,6 +85,7 @@ DataTableView.prototype.resize = function() {
 };
 
 DataTableView.prototype.update = function(onDone) {
+  this._currentPageNumber = 1;
   this._showRows(0, onDone);
 };
 
@@ -99,14 +104,17 @@ DataTableView.prototype.render = function() {
       '<div class="viewpanel-sorting" bind="sortingControls"></div>' +
       '<div class="viewpanel-paging" bind="pagingControls"></div>' +
     '</div>' +
-    '<div bind="dataHeaderTableContainer" class="data-header-table-container">' +
-      '<table bind="headerTable" class="data-header-table"></table>' +
-    '</div>' +
     '<div bind="dataTableContainer" class="data-table-container">' +
-      '<table bind="table" class="data-table"></table>' +
+      '<table class="data-table">'+
+        '<thead bind="tableHeader" class="data-table-header">'+
+        '</thead>'+
+        '<tbody bind="table" class="data-table">'+
+        '</tbody>'+
+      '</table>' +
     '</div>'
   );
   var elmts = DOM.bind(html);
+  this._div.empty().append(html);
 
   ui.summaryBar.updateResultCount();
 
@@ -133,8 +141,7 @@ DataTableView.prototype.render = function() {
     this._renderSortingControls(elmts.sortingControls);
   }
 
-  this._renderDataTables(elmts.table[0], elmts.headerTable[0]);
-  this._div.empty().append(html);
+  this._renderDataTables(elmts.table[0], elmts.tableHeader[0]);
 
   // show/hide null values in cells
   $(".data-table-null").toggle(self._shownulls);
@@ -160,6 +167,8 @@ DataTableView.prototype._renderSortingControls = function(sortingControls) {
 DataTableView.prototype._renderPagingControls = function(pageSizeControls, pagingControls) {
   var self = this;
 
+  self._lastPageNumber = Math.floor((theProject.rowModel.filtered - 1) / this._pageSize) + 1;
+
   var from = (theProject.rowModel.start + 1);
   var to = Math.min(theProject.rowModel.filtered, theProject.rowModel.start + theProject.rowModel.limit);
 
@@ -173,8 +182,30 @@ DataTableView.prototype._renderPagingControls = function(pageSizeControls, pagin
     previousPage.addClass("inaction");
   }
 
-  $('<span>').addClass("viewpanel-pagingcount").html(" " + from + " - " + to + " ").appendTo(pagingControls);
+  var pageControlsSpan = $('<span>').attr("id", "viewpanel-paging-current");
+  
+  var pageInputSize = 20 + (8 * ui.dataTableView._lastPageNumber.toString().length);
+  var currentPageInput = $('<input type="number">')
+    .change(function(evt) { self._onChangeGotoPage(this, evt); })
+    .keydown(function(evt) { self._onKeyDownGotoPage(this, evt); })
+    .attr("id", "viewpanel-paging-current-input")
+    .attr("min", 1)
+    .attr("max", self._lastPageNumber)
+    .attr("required", "required")
+    .val(self._currentPageNumber)
+    .css("width", pageInputSize +"px");
+    
+  pageControlsSpan.append($.i18n('core-views/goto-page', '<span id="currentPageInput" />', self._lastPageNumber));
+  pageControlsSpan.appendTo(pagingControls);
 
+  $('span#currentPageInput').replaceWith($(currentPageInput));
+  
+  if(self._refocusPageInput == true) { 
+    self._refocusPageInput = false;
+    var currentPageInputForFocus = $('input#viewpanel-paging-current-input');
+    currentPageInputForFocus.ready(function(evt) { setTimeout(() => { currentPageInputForFocus.focus(); }, 250); });
+  }
+  
   var nextPage = $('<a href="javascript:{}">'+$.i18n('core-views/next')+' &rsaquo;</a>').appendTo(pagingControls);
   var lastPage = $('<a href="javascript:{}">'+$.i18n('core-views/last')+' &raquo;</a>').appendTo(pagingControls);
   if (theProject.rowModel.start + theProject.rowModel.limit < theProject.rowModel.filtered) {
@@ -186,9 +217,9 @@ DataTableView.prototype._renderPagingControls = function(pageSizeControls, pagin
   }
 
   $('<span>'+$.i18n('core-views/show')+': </span>').appendTo(pageSizeControls);
-  var sizes = [ 5, 10, 25, 50 ];
+  
   var renderPageSize = function(index) {
-    var pageSize = sizes[index];
+    var pageSize = self._gridPagesSizes[index];
     var a = $('<a href="javascript:{}"></a>')
     .addClass("viewPanel-pagingControls-page")
     .appendTo(pageSizeControls);
@@ -201,16 +232,38 @@ DataTableView.prototype._renderPagingControls = function(pageSizeControls, pagin
       });
     }
   };
-  for (var i = 0; i < sizes.length; i++) {
+  
+  for (var i = 0; i < self._gridPagesSizes.length; i++) {
     renderPageSize(i);
   }
-
+  
   $('<span>')
   .text(theProject.rowModel.mode == "record-based" ? ' '+$.i18n('core-views/records') : ' '+$.i18n('core-views/rows'))
   .appendTo(pageSizeControls);
 };
 
-DataTableView.prototype._renderDataTables = function(table, headerTable) {
+DataTableView.prototype._checkPaginationSize = function(gridPageSize, defaultGridPageSize) {
+  var self = this;
+  var newGridPageSize = [];
+  
+  if(gridPageSize == null || typeof gridPageSize != "object") return defaultGridPageSize;
+
+  for (var i = 0; i < gridPageSize.length; i++) {
+    if(typeof gridPageSize[i] == "number" && gridPageSize[i] > 0 && gridPageSize[i] < 10000)
+      newGridPageSize.push(gridPageSize[i]);
+  }
+
+  if(newGridPageSize.length < 2) return defaultGridPageSize;
+  
+  var distinctValueFilter = (value, index, selfArray) => (selfArray.indexOf(value) == index);
+  newGridPageSize.filter(distinctValueFilter);
+  
+  newGridPageSize.sort((a, b) => (a - b));
+  
+  return newGridPageSize;
+};
+
+DataTableView.prototype._renderDataTables = function(table, tableHeader) {
   var self = this;
 
   var columns = theProject.columnModel.columns;
@@ -222,18 +275,21 @@ DataTableView.prototype._renderDataTables = function(table, headerTable) {
 
   var renderColumnKeys = function(keys) {
     if (keys.length > 0) {
-      var tr = headerTable.insertRow(headerTable.rows.length);
-      $(tr.insertCell(0)).attr('colspan', '3'); // star, flag, row index
+      var tr = tableHeader.insertRow(tableHeader.rows.length);
+      $(tr.appendChild(document.createElement("th"))).attr('colspan', '3'); // star, flag, row index
 
       for (var c = 0; c < columns.length; c++) {
         var column = columns[c];
-        var td = tr.insertCell(tr.cells.length);
-        if (column.name in self._collapsedColumnNames) {
-          $(td).html('&nbsp;');
+        var th = tr.appendChild(document.createElement("th"));
+        if (self._collapsedColumnNames.hasOwnProperty(column.name)) {
+          $(th).html('&nbsp;');
         } else {
           for (var k = 0; k < keys.length; k++) {
+            // if a node is a key in the tree-based data (JSON/XML/etc), then also display a dropdown arrow (non-functional currently)
+            // See https://github.com/OpenRefine/OpenRefine/blob/master/main/src/com/google/refine/model/ColumnGroup.java
+            // and https://github.com/OpenRefine/OpenRefine/tree/master/main/src/com/google/refine/importers/tree
             if (c == keys[k]) {
-              $('<img />').attr("src", "../images/down-arrow.png").appendTo(td);
+              $('<img />').attr("src", "../images/down-arrow.png").appendTo(th);
               break;
             }
           }
@@ -247,9 +303,9 @@ DataTableView.prototype._renderDataTables = function(table, headerTable) {
    *------------------------------------------------------------
    */
 
-  var trHead = headerTable.insertRow(headerTable.rows.length);
+  var trHead = tableHeader.insertRow(tableHeader.rows.length);
   DOM.bind(
-      $(trHead.insertCell(trHead.cells.length))
+      $(trHead.appendChild(document.createElement("th")))
       .attr("colspan", "3")
       .addClass("column-header")
       .html(
@@ -262,15 +318,15 @@ DataTableView.prototype._renderDataTables = function(table, headerTable) {
   });
   this._columnHeaderUIs = [];
   var createColumnHeader = function(column, index) {
-    var td = trHead.insertCell(trHead.cells.length);
-    $(td).addClass("column-header").attr('title', column.name);
-    if (column.name in self._collapsedColumnNames) {
-      $(td).html("&nbsp;").click(function(evt) {
+    var th = trHead.appendChild(document.createElement("th"));
+    $(th).addClass("column-header").attr('title', column.name);
+    if (self._collapsedColumnNames.hasOwnProperty(column.name)) {
+      $(th).html("&nbsp;").click(function(evt) {
         delete self._collapsedColumnNames[column.name];
         self.render();
       });
     } else {
-      var columnHeaderUI = new DataTableColumnHeaderUI(self, column, index, td);
+      var columnHeaderUI = new DataTableColumnHeaderUI(self, column, index, th);
       self._columnHeaderUIs.push(columnHeaderUI);
     }
   };
@@ -287,16 +343,14 @@ DataTableView.prototype._renderDataTables = function(table, headerTable) {
   var rows = theProject.rowModel.rows;
   var renderRow = function(tr, r, row, even) {
     $(tr).empty();
-
     var cells = row.cells;
-
     var tdStar = tr.insertCell(tr.cells.length);
-    var star = $('<a href="javascript:{}">&nbsp;</a>')
-    .addClass(row.starred ? "data-table-star-on" : "data-table-star-off")
-    .appendTo(tdStar)
-    .click(function() {
-      var newStarred = !row.starred;
-
+    var star = document.createElement('a');
+    star.href = "javascript:{}";
+    star.classList.add(row.starred ? "data-table-star-on" : "data-table-star-off");
+    tdStar.appendChild(star).appendChild(document.createTextNode('\u00A0')); // NBSP
+    star.addEventListener('click', function() {
+    var newStarred = !row.starred;
       Refine.postCoreProcess(
         "annotate-one-row",
         { row: row.i, starred: newStarred },
@@ -306,20 +360,19 @@ DataTableView.prototype._renderDataTables = function(table, headerTable) {
           onDone: function(o) {
             row.starred = newStarred;
             renderRow(tr, r, row, even);
-            self._adjustDataTables();
           }
         },
         "json"
       );
     });
-
+    
     var tdFlag = tr.insertCell(tr.cells.length);
-    var flag = $('<a href="javascript:{}">&nbsp;</a>')
-    .addClass(row.flagged ? "data-table-flag-on" : "data-table-flag-off")
-    .appendTo(tdFlag)
-    .click(function() {
+    var flag = document.createElement('a');
+    flag.classList.add(row.flagged ? "data-table-flag-on" : "data-table-flag-off");
+    flag.href = "javascript:{}";
+    tdFlag.appendChild(flag).appendChild(document.createTextNode('\u00A0'));
+    flag.addEventListener('click', function() {
       var newFlagged = !row.flagged;
-
       Refine.postCoreProcess(
         "annotate-one-row",
         { row: row.i, flagged: newFlagged },
@@ -329,7 +382,6 @@ DataTableView.prototype._renderDataTables = function(table, headerTable) {
           onDone: function(o) {
             row.flagged = newFlagged;
             renderRow(tr, r, row, even);
-            self._adjustDataTables();
           }
         },
         "json"
@@ -340,12 +392,18 @@ DataTableView.prototype._renderDataTables = function(table, headerTable) {
     if (theProject.rowModel.mode == "record-based") {
       if ("j" in row) {
         $(tr).addClass("record");
-        $('<div></div>').html((row.j + 1) + ".").appendTo(tdIndex);
+        var div = document.createElement('div');
+        div.innerHTML = (row.j + 1) + '.';
+        tdIndex.appendChild(div);
       } else {
-        $('<div></div>').html("&nbsp;").appendTo(tdIndex);
+        var div = document.createElement('div');
+        div.innerHTML = '\u00A0';
+        tdIndex.appendChild(div);
       }
     } else {
-      $('<div></div>').html((row.i + 1) + ".").appendTo(tdIndex);
+      var div = document.createElement('div');
+      div.innerHTML = (row.i + 1) + '.';
+      tdIndex.appendChild(div);
     }
 
     $(tr).addClass(even ? "even" : "odd");
@@ -353,7 +411,7 @@ DataTableView.prototype._renderDataTables = function(table, headerTable) {
     for (var i = 0; i < columns.length; i++) {
       var column = columns[i];
       var td = tr.insertCell(tr.cells.length);
-      if (column.name in self._collapsedColumnNames) {
+      if (self._collapsedColumnNames.hasOwnProperty(column.name)) {
         td.innerHTML = "&nbsp;";
       } else {
         var cell = (i < cells.length) ? cells[i] : null;
@@ -371,63 +429,6 @@ DataTableView.prototype._renderDataTables = function(table, headerTable) {
     }
     renderRow(tr, r, row, even);
   }
-  
-  $(table.parentNode).bind('scroll', function(evt) {
-    self._adjustDataTableScroll();
-  });
-};
-
-DataTableView.prototype._adjustDataTables = function() {
-  var dataTable = this._div.find('.data-table');
-  var headerTable = this._div.find('.data-header-table');
-  if (dataTable.length === 0 || headerTable.length === 0) {
-    return;
-  }
-  dataTable = dataTable[0];
-  headerTable = headerTable[0];
-  
-  if (dataTable.rows.length === 0) {
-    return;
-  }
-  
-  var dataTr = dataTable.rows[0];
-  var headerTr = headerTable.rows[headerTable.rows.length - 1];
-  
-  var marginColumnWidths =
-    $(dataTr.cells[0]).outerWidth(true) +
-    $(dataTr.cells[1]).outerWidth(true) +
-    $(dataTr.cells[2]).outerWidth(true) -
-    DOM.getHPaddings($(headerTr.cells[0])) + 1;
-  
-  $(headerTable)
-    .find('> tbody > tr > td:first-child')
-    .width('1%')
-    .children()
-      .first()
-      .width(marginColumnWidths);
-  
-  for (var i = 1; i < headerTr.cells.length; i++) {
-    var headerTd = $(headerTr.cells[i]);
-    var dataTd = $(dataTr.cells[i + 2]);
-    var commonWidth = Math.max(
-      Math.min(headerTd.width(), 100),
-      dataTd.width()
-    );
-    headerTd.width('1%').find('> div').width(commonWidth);
-    dataTd.children().first().width(commonWidth);
-  }
-  
-  this._adjustDataTableScroll();
-};
-
-DataTableView.prototype._adjustDataTableScroll = function() {
-  var dataTableContainer = this._div.find('.data-table-container');
-  var headerTableContainer = this._div.find('.data-header-table-container');
-  if (dataTableContainer.length > 0 && headerTableContainer.length > 0) {
-    headerTableContainer
-      .find('> .data-header-table')
-      .css('left', '-' + dataTableContainer[0].scrollLeft + 'px');
-  }
 };
 
 DataTableView.prototype._showRows = function(start, onDone) {
@@ -441,20 +442,60 @@ DataTableView.prototype._showRows = function(start, onDone) {
   }, this._sorting);
 };
 
+DataTableView.prototype._onChangeGotoPage = function(elmt, evt) {
+  var gotoPageNumber = parseInt($('input#viewpanel-paging-current-input').val());
+  
+  if(typeof gotoPageNumber != "number" || isNaN(gotoPageNumber) || gotoPageNumber == "") { 
+    $('input#viewpanel-paging-current-input').val(this._currentPageNumber); 
+    return;
+  }
+  
+  if(gotoPageNumber > this._lastPageNumber) gotoPageNumber = this._lastPageNumber;
+  if(gotoPageNumber < 1) gotoPageNumber = 1;
+  
+  this._currentPageNumber = gotoPageNumber;
+  this._showRows((gotoPageNumber - 1) * this._pageSize);
+};
+
+DataTableView.prototype._onKeyDownGotoPage = function(elmt, evt) {
+  var keyDownCode = event.which;
+  
+  if([38, 40].indexOf(keyDownCode) == -1) return;
+  if(self._refocusPageInput == true) return; 
+
+  evt.preventDefault();
+  this._refocusPageInput = true;
+  
+  var newPageValue = $('input#viewpanel-paging-current-input')[0].value;
+  if(keyDownCode == 38) {  // Up arrow
+    if(newPageValue <= 1) return;
+    this._onClickPreviousPage(elmt, evt);
+  }
+    
+  if(keyDownCode == 40) {  // Down arrow
+    if(newPageValue >= this._lastPageNumber) return;
+    this._onClickNextPage(elmt, evt);
+  }
+};
+
 DataTableView.prototype._onClickPreviousPage = function(elmt, evt) {
+  this._currentPageNumber--;
   this._showRows(theProject.rowModel.start - this._pageSize);
 };
 
 DataTableView.prototype._onClickNextPage = function(elmt, evt) {
+  this._currentPageNumber++;
   this._showRows(theProject.rowModel.start + this._pageSize);
 };
 
 DataTableView.prototype._onClickFirstPage = function(elmt, evt) {
+  this._currentPageNumber = 1;
   this._showRows(0);
 };
 
 DataTableView.prototype._onClickLastPage = function(elmt, evt) {
-  this._showRows(Math.floor((theProject.rowModel.filtered - 1) / this._pageSize) * this._pageSize);
+  this._currentPageNumber = this._lastPageNumber;
+  this._showRows((this._lastPageNumber - 1) * this._pageSize);
 };
 
 DataTableView.prototype._getSortingCriteriaCount = function() {

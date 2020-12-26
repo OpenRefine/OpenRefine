@@ -78,6 +78,7 @@ public class PCAxisImporter extends ReaderImporter {
             ProjectMetadata metadata,
             ImportingJob job,
             String fileSource,
+            String archiveFileName,
             Reader reader,
             long limit, ObjectNode options) throws Exception {
         LineNumberReader lnReader = new LineNumberReader(reader);
@@ -93,7 +94,7 @@ public class PCAxisImporter extends ReaderImporter {
 
         TabularParserHelper tabularParsingHelper = new TabularParserHelper(runner);
         GridState grid = tabularParsingHelper.parseOneFile(
-                metadata, job, fileSource, dataReader,
+                metadata, job, fileSource, "", dataReader,
                 limit, options);
         if (!exceptions.isEmpty()) {
             throw exceptions.get(0);

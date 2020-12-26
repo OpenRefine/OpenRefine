@@ -691,8 +691,8 @@ public class WikitextImporter extends ReaderImporter {
     }
 
     @Override
-    public GridState parseOneFile(ProjectMetadata metadata, ImportingJob job, String fileSource, Reader reader,
-            long limit, ObjectNode options) throws Exception {
+    public GridState parseOneFile(ProjectMetadata metadata, ImportingJob job, String fileSource, String archiveFileName,
+            Reader reader, long limit, ObjectNode options) throws Exception {
         // Set-up a simple wiki configuration
         ParserConfig parserConfig = new SimpleParserConfig();
 
@@ -743,7 +743,7 @@ public class WikitextImporter extends ReaderImporter {
             // TODO this does not seem to do anything - maybe we need to pass it to OpenRefine in some other way?
         }
 
-        GridState grid = tabularParserHelper.parseOneFile(metadata, job, fileSource, dataReader, limit, options);
+        GridState grid = tabularParserHelper.parseOneFile(metadata, job, fileSource, archiveFileName, dataReader, limit, options);
 
         int nbColumns = grid.getColumnModel().getColumnNames().size();
         List<Integer> allColumnIndices = IntStream.range(0, nbColumns)

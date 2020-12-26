@@ -1,0 +1,8 @@
+extraction:
+  java:
+    index:
+      build_command:
+      - mvn clean test
+
+queries:
+  - exclude: java/insecure-cookie

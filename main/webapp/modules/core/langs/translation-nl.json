@@ -71,7 +71,7 @@
     "core-index-import/warning-data-file": "U moet een databestand selecteren om te importeren.",
     "core-index-import/uploading-data": "Data uploaden…",
     "core-index-import/web-address": "Webadresssen (URL's)",
-    "core-index-import/warning-web-address": "U moet een webadres (URL) opgeven om te importeren.",
+    "core-index-import/warning-web-address": "U moet een correct webadres (URL) opgeven om te importeren.",
     "core-index-import/downloading-data": "Data downloaden…",
     "core-index-import/clipboard": "Klembord",
     "core-index-import/locate-files": "Selecteer een of meerdere bestand(en) op uw computer om te uploaden:",
@@ -128,7 +128,8 @@
     "core-index-parser/include-raw-templates": "Sjablonen en afbeeldingen als ruwe wikitekst invoegen",
     "core-index-parser/parse-references": "Referenties in extra kolommen bijvoegen",
     "core-index-parser/invalid-wikitext": "Geen tabel kon worden verwerkt. Weet u zeker dat dit een geldige wikitabel is?",
-    "core-index-parser/store-source": "Bestandsbron<br/>(bestandsnamen, URL's)<br/>in elke rij opslaan",
+    "core-index-parser/store-source": "Bestandsbron opslaan",
+    "core-index-parser/store-archive": "Bewaar archiefbestand",
     "core-index-parser/preserve-empty": "Lege tekenreeksen behouden",
     "core-index-parser/trim": "Voorloop- en volgspaties van tekenreeksen verwijderen",
     "core-index-parser/parse-every": "Verwerk elke",
@@ -407,5 +408,11 @@
     "core-dialogs/processing": "Bezig met verwerken…",
     "core-dialogs/no-column-dataset": "Er zijn geen kolommen in deze dataset",
     "core-dialogs/no-rotation": "Geen rotatie",
-    "core-dialogs/rotated-clock": "45° met de klok mee gedraaid"
+    "core-dialogs/rotated-clock": "45° met de klok mee gedraaid",
+    "core-dialogs/nearest-neighbor": "naaste buur",
+    "core-dialogs/clusters-filtered": "<b>$1</b> {{plural:$1|cluster|clusters}} gefilterd uit een totaal van <b>$2</b>",
+    "core-dialogs/clusters-found": "<b>$1</b> {{plural:$1|cluster|clusters}} gevonden",
+    "core-index-import/pick-nodes": "Kies Record Nodes.",
+    "core-index-import/warning-record-path": "Geef eerst een record path op.",
+    "core-index/prefs-loading-failed": "Mislukt om voorkeuren te laden."
 }

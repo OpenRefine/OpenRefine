@@ -27,16 +27,34 @@
 
 package org.openrefine.expr.functions.strings;
 
+import org.testng.Assert;
 import org.testng.annotations.Test;
 
+import org.openrefine.expr.EvalError;
+import org.openrefine.expr.functions.strings.Phonetic;
+import org.openrefine.grel.FunctionTestBase;
 import org.openrefine.util.ParsingUtilities;
 import org.openrefine.util.TestUtils;
 
-public class PhoneticTests {
+public class PhoneticTests extends FunctionTestBase {
 
     @Test
     public void serializePhonetic() {
         String json = "{\"description\":\"Returns the a phonetic encoding of s (optionally indicating which encoding to use')\",\"params\":\"string s, string encoding (optional, defaults to 'metaphone3')\",\"returns\":\"string\"}";
         TestUtils.isSerializedTo(new Phonetic(), json, ParsingUtilities.defaultWriter);
+    }
+
+    @Test
+    public void testtoPhoneticInvalidParams() {
+        Assert.assertTrue(invoke("phonetic") instanceof EvalError); // if no arguments are provided
+        Assert.assertTrue(invoke("phonetic", (Object[]) null) instanceof EvalError); // if first argument(value) is null
+        Assert.assertTrue(invoke("phonetic", "one", (Object[]) null) instanceof EvalError); // if second
+                                                                                            // argument(encoding type)
+                                                                                            // is null
+        Assert.assertTrue(invoke("phonetic", "one", "other") instanceof EvalError); // if second argument(encoding type)
+                                                                                    // is not a valid encoding type
+        Assert.assertTrue(invoke("phonetic", "one", "metaphone3", "three") instanceof EvalError); // if more than 2
+                                                                                                  // arguments are
+                                                                                                  // provided
     }
 }

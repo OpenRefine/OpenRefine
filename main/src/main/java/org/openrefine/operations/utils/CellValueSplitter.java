@@ -41,7 +41,7 @@ public interface CellValueSplitter extends Serializable {
             return CellValueSplitter.splitByLengths(fieldLengths);
         } else {
             if (regex) {
-                Pattern pattern = Pattern.compile(separator);
+                Pattern pattern = Pattern.compile(separator, Pattern.UNICODE_CHARACTER_CLASS);
                 return CellValueSplitter.splitByRegex(pattern, maxColumns == null ? 0 : maxColumns);
             } else {
                 return CellValueSplitter.splitBySeparator(separator, maxColumns == null ? 0 : maxColumns);

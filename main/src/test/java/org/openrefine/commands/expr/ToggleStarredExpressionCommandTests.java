@@ -81,6 +81,6 @@ public class ToggleStarredExpressionCommandTests extends ExpressionCommandTestBa
     @Test
     public void testCSRFProtection() throws ServletException, IOException {
         command.doPost(request, response);
-        TestUtils.assertEqualAsJson("{\"code\":\"error\",\"message\":\"Missing or invalid csrf_token parameter\"}", writer.toString());
+        TestUtils.assertEqualsAsJson(writer.toString(), "{\"code\":\"error\",\"message\":\"Missing or invalid csrf_token parameter\"}");
     }
 }

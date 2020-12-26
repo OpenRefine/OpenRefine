@@ -65,6 +65,7 @@ import org.openrefine.expr.WrappedCell;
 import org.openrefine.expr.WrappedRow;
 import org.openrefine.model.Cell;
 import org.openrefine.model.GridState;
+import org.openrefine.model.IndexedRow;
 import org.openrefine.model.Project;
 import org.openrefine.model.Row;
 import org.openrefine.util.ParsingUtilities;
@@ -159,7 +160,7 @@ public class PreviewExpressionCommand extends Command {
                 }
             }
 
-            List<Integer> rowIndices = ParsingUtilities.mapper.readValue(rowIndicesString, new TypeReference<List<Integer>>() {
+            List<Long> rowIndices = ParsingUtilities.mapper.readValue(rowIndicesString, new TypeReference<List<Long>>() {
             });
             int length = rowIndices.size();
             GridState state = project.getCurrentGridState();
@@ -169,13 +170,14 @@ public class PreviewExpressionCommand extends Command {
 
                 List<ExpressionValue> evaluated = new ArrayList<>();
                 Properties bindings = ExpressionUtils.createBindings();
+                List<IndexedRow> rows = state.getRows(rowIndices);
                 for (int i = 0; i < length; i++) {
                     Object result = null;
 
-                    int rowIndex = rowIndices.get(i);
+                    Long rowIndex = rowIndices.get(i);
 
                     try {
-                        Row row = state.getRow(rowIndex);
+                        Row row = rows.get(i).getRow();
                         Cell cell = row.getCell(cellIndex);
                         ExpressionUtils.bind(bindings, null, row, rowIndex, columnName, cell);
                         result = eval.evaluate(bindings);

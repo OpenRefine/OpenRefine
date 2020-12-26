@@ -35,6 +35,7 @@ package org.openrefine.importers.tree;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -205,12 +206,40 @@ public class XmlImportUtilitiesTests extends RefineTest {
     }
 
     @Test
-    public void importTreeDataXmlTest() {
+    public void importTreeDataXmlTest() throws TreeReaderException {
         loadSampleXml();
 
         String[] recordPath = new String[] { "library", "book" };
-        XmlImportUtilities.importTreeData(createXmlParser(), allocator, rows, recordPath, columnGroup, -1,
-                new ImportParameters(false, true, false));
+
+        XmlImportUtilities.importTreeData(createXmlParser(), allocator, rows, recordPath, columnGroup, -1L,
+                false, true, false, false, null);
+
+        Assert.assertEquals(rows.size(), 6);
+
+        Assert.assertEquals(rows.get(0).cells.size(), 4);
+
+        Assert.assertEquals(columnGroup.subgroups.size(), 1);
+        Assert.assertNotNull(columnGroup.subgroups.get("book"));
+        Assert.assertEquals(columnGroup.subgroups.get("book").subgroups.size(), 3);
+        Assert.assertNotNull(columnGroup.subgroups.get("book").subgroups.get("author"));
+        Assert.assertNotNull(columnGroup.subgroups.get("book").subgroups.get("title"));
+        Assert.assertNotNull(columnGroup.subgroups.get("book").subgroups.get("publish_date"));
+    }
+
+    /**
+     * Test of deprecated method which can go away when it does
+     */
+    @Test
+    public void importTreeDataXmlTestDeprecated() {
+        loadSampleXml();
+
+        String[] recordPath = new String[] { "library", "book" };
+        try {
+            XmlImportUtilities.importTreeData(createXmlParser(), allocator, rows, recordPath, columnGroup, -1,
+                    false, true, false, false, null);
+        } catch (Exception e) {
+            Assert.fail();
+        }
 
         Assert.assertEquals(rows.size(), 6);
         Assert.assertEquals(rows.get(0).cells.size(), 4);
@@ -224,7 +253,37 @@ public class XmlImportUtilitiesTests extends RefineTest {
     }
 
     @Test
-    public void importXmlWithVaryingStructureTest() {
+    public void importXmlWithVaryingStructureTest() throws TreeReaderException {
+        loadData(XmlImporterTests.getSampleWithVaryingStructure());
+
+        String[] recordPath = new String[] { "library", "book" };
+        XmlImportUtilities.importTreeData(createXmlParser(), allocator, rows, recordPath, columnGroup, -1,
+                false, true, false, false, null);
+
+        Assert.assertEquals(rows.size(), 6);
+        Assert.assertEquals(rows.get(0).cells.size(), 4);
+        Assert.assertEquals(rows.get(5).cells.size(), 5);
+
+        Assert.assertEquals(columnGroup.subgroups.size(), 1);
+        Assert.assertEquals(columnGroup.name, "");
+        ImportColumnGroup book = columnGroup.subgroups.get("book");
+        Assert.assertNotNull(book);
+        Assert.assertEquals(book.columns.size(), 1);
+        Assert.assertEquals(book.subgroups.size(), 4);
+        Assert.assertNotNull(book.subgroups.get("author"));
+        Assert.assertEquals(book.subgroups.get("author").columns.size(), 1);
+        Assert.assertNotNull(book.subgroups.get("title"));
+        Assert.assertNotNull(book.subgroups.get("publish_date"));
+        Assert.assertNotNull(book.subgroups.get("genre"));
+    }
+
+    /**
+     * Test using deprecated method which can go away when it does
+     * 
+     * @throws TreeReaderException
+     */
+    @Test
+    public void importXmlWithVaryingStructureTestDeprecated() throws TreeReaderException {
         loadData(XmlImporterTests.getSampleWithVaryingStructure());
 
         String[] recordPath = new String[] { "library", "book" };
@@ -280,7 +339,30 @@ public class XmlImportUtilitiesTests extends RefineTest {
         int pathIndex = 0;
 
         XmlImportUtilities.findRecord(allocator, rows, parser, recordPath, pathIndex, columnGroup, -1,
-                new ImportParameters(false, false, false));
+                false, false, false, false, null);
+
+        Assert.assertEquals(rows.size(), 6);
+
+        Assert.assertEquals(rows.get(0).cells.size(), 4);
+        // TODO
+    }
+
+    /**
+     * Test of deprecated wrapper method which can go away when it does
+     * 
+     * @throws TreeReaderException
+     */
+    @Test
+    public void findRecordTestXmlDeprecated() throws TreeReaderException {
+        loadSampleXml();
+        createXmlParser();
+        ParserSkip();
+
+        String[] recordPath = new String[] { "library", "book" };
+        int pathIndex = 0;
+
+        XmlImportUtilities.findRecord(allocator, rows, parser, recordPath, pathIndex, columnGroup, -1,
+                false, false, false, false, null);
 
         Assert.assertEquals(rows.size(), 6);
 
@@ -289,16 +371,12 @@ public class XmlImportUtilitiesTests extends RefineTest {
     }
 
     @Test
-    public void processRecordTestXml() {
+    public void processRecordTestXml() throws TreeReaderException {
         loadData("<?xml version=\"1.0\"?><library><book id=\"1\"><author>author1</author><genre>genre1</genre></book></library>");
         createXmlParser();
         ParserSkip();
 
-        try {
-            XmlImportUtilities.processRecord(allocator, rows, parser, columnGroup, new ImportParameters(false, false, false));
-        } catch (Exception e) {
-            Assert.fail();
-        }
+        XmlImportUtilities.processRecord(allocator, rows, parser, columnGroup, false, false, false, false, "");
 
         Assert.assertNotNull(rows);
         Assert.assertEquals(rows.size(), 1);
@@ -316,7 +394,7 @@ public class XmlImportUtilitiesTests extends RefineTest {
         createXmlParser();
         ParserSkip();
 
-        XmlImportUtilities.processRecord(allocator, rows, parser, columnGroup, new ImportParameters(false, false, false));
+        XmlImportUtilities.processRecord(allocator, rows, parser, columnGroup, false, false, false, false, "");
 
         Assert.assertNotNull(rows);
         Assert.assertEquals(rows.size(), 2);
@@ -338,7 +416,7 @@ public class XmlImportUtilitiesTests extends RefineTest {
         createXmlParser();
         ParserSkip();
 
-        XmlImportUtilities.processRecord(allocator, rows, parser, columnGroup, new ImportParameters(false, false, false));
+        XmlImportUtilities.processRecord(allocator, rows, parser, columnGroup, false, false, false, false, "");
 
         Assert.assertNotNull(rows);
         Assert.assertEquals(rows.size(), 1);
@@ -358,7 +436,7 @@ public class XmlImportUtilitiesTests extends RefineTest {
         ParserSkip();
 
         XmlImportUtilities.processSubRecord(allocator, rows, parser, columnGroup, record, 0,
-                new ImportParameters(false, false, false));
+                false, false, false);
 
         Assert.assertEquals(columnGroup.subgroups.size(), 1);
         Assert.assertEquals(columnGroup.name, "");
@@ -373,6 +451,50 @@ public class XmlImportUtilitiesTests extends RefineTest {
         Assert.assertNotNull(book.subgroups.get("genre"));
 
         // TODO check record
+    }
+
+    @Test
+    public void trimLeadingTrailingWhitespaceOnTrimString() throws TreeReaderException {
+        loadData(
+                "<?xml version=\"1.0\"?><library><book id=\"1\"><author><author-name>  author1  </author-name><author-dob>  a date  </author-dob></author><genre>genre1</genre></book></library>");
+        createXmlParser();
+        ParserSkip();
+
+        XmlImportUtilities.processRecord(allocator, rows, parser, columnGroup, true, false, false, false, "");
+
+        Assert.assertNotNull(rows);
+        Assert.assertEquals(rows.size(), 1);
+        Row row = rows.get(0);
+        Assert.assertNotNull(row);
+        Assert.assertEquals(row.cells.size(), 4);
+        Assert.assertNotNull(row.getCell(1));
+        Assert.assertEquals(row.getCell(1).value, "author1");
+        Assert.assertNotNull(row.getCell(2));
+        Assert.assertEquals(row.getCell(2).value, "a date");
+    }
+
+    @Test
+    public void doesNotTrimLeadingTrailingWhitespaceOnNoTrimString() {
+        loadData(
+                "<?xml version=\"1.0\"?><library><book id=\"1\"><author><author-name>  author1  </author-name><author-dob>  a date  </author-dob></author><genre>genre1</genre></book></library>");
+        createXmlParser();
+        ParserSkip();
+
+        try {
+            XmlImportUtilities.processRecord(allocator, rows, parser, columnGroup, false, false, false, false, "");
+        } catch (Exception e) {
+            Assert.fail();
+        }
+
+        Assert.assertNotNull(rows);
+        Assert.assertEquals(rows.size(), 1);
+        Row row = rows.get(0);
+        Assert.assertNotNull(row);
+        Assert.assertEquals(row.cells.size(), 4);
+        Assert.assertNotNull(row.getCell(1));
+        Assert.assertEquals(row.getCell(1).value, "  author1  ");
+        Assert.assertNotNull(row.getCell(2));
+        Assert.assertEquals(row.getCell(2).value, "  a date  ");
     }
 
     @Test
@@ -396,6 +518,96 @@ public class XmlImportUtilitiesTests extends RefineTest {
         // Assert.assertEquals(record.columnEmptyRowIndices.get(0).intValue(),0);
         // Assert.assertEquals(record.columnEmptyRowIndices.get(1).intValue(),1);
 
+    }
+
+    /**
+     * Validates the output records data with Input as Xml containing whitespaces
+     * <p>
+     * Fix: Issue#1095 :: Open XML file from URL generates lots of empty lines
+     */
+    @Test
+    public void processRecordsFromXmlWithWhiteSpacesBeforeTagsTest() throws IOException {
+        loadData(_getXmlDataFromFile("xml-sample-format-1.xml"));
+        createXmlParser();
+        ParserSkip();
+        try {
+            XmlImportUtilities.processRecord(allocator, rows, parser, columnGroup, false, false, false, false, "");
+        } catch (Exception e) {
+            Assert.fail("Failed to parse records from the given XML Data. Reason: " + e.getMessage(), e);
+        }
+        Assert.assertNotNull(rows, "Checks the record count of project");
+        Assert.assertEquals(rows.size(), 3, "Checks the number of records parsed from Xml");
+        Row row = rows.get(0);
+        Assert.assertNotNull(row, "Checks the row instance with index '0'");
+        Assert.assertEquals(row.cells.size(), 4, "Checks the row cells count");
+        Assert.assertNotNull(row.getCell(1), "Checks the cell instance at index '1'");
+        Assert.assertEquals(row.getCell(1).value, "author1", "Checks the value for 'author-name'");
+        Assert.assertNotNull(row.getCell(2), "Checks the cell instance at index '2'");
+        Assert.assertEquals(row.getCell(2).value, "a date", "Checks the value for 'author-dob'");
+    }
+
+    @Test
+    public void processRecordsFromComplexXmlWithTagsHavingWhitespaces() throws IOException {
+        loadData(_getXmlDataFromFile("xml-sample-format-2.xml"));
+        createXmlParser();
+        ParserSkip();
+        try {
+            XmlImportUtilities.processRecord(allocator, rows, parser, columnGroup, false, false, false, false, "");
+        } catch (Exception e) {
+            Assert.fail("Failed to parse records from the given XML Data. Reason: " + e.getMessage(), e);
+        }
+        Assert.assertNotNull(rows, "Checks the record count of project");
+        Assert.assertEquals(rows.size(), 3, "Checks the number of records parsed from Xml");
+        Row row = rows.get(0);
+        Assert.assertNotNull(row, "Checks the row instance with index '0'");
+        Assert.assertEquals(row.cells.size(), 4, "Checks the row cells count");
+        Assert.assertNotNull(row.getCell(1), "Checks the cell instance at index '1'");
+        Assert.assertEquals(row.getCell(1).value, "author1", "Checks the value for first item");
+        Assert.assertNotNull(row.getCell(2), "Checks the cell instance at index '2'");
+        Assert.assertEquals(row.getCell(2).value, "a date", "Checks the value for 'author-dob'");
+    }
+
+    @Test
+    public void processRecordsFromXMLWithDataHavingWhitespaces() throws IOException {
+        loadData(_getXmlDataFromFile("xml-sample-format-3.xml"));
+        createXmlParser();
+        ParserSkip();
+        try {
+            XmlImportUtilities.processRecord(allocator, rows, parser, columnGroup, false, false, false, false, "");
+        } catch (Exception e) {
+            Assert.fail("Failed to parse records from the given XML Data. Reason: " + e.getMessage(), e);
+        }
+        Assert.assertNotNull(rows, "Checks the record count of project");
+        Assert.assertEquals(rows.size(), 3, "Checks the number of records parsed from Xml");
+        Row row = rows.get(0);
+        Assert.assertNotNull(row, "Checks the row instance with index '0'");
+        Assert.assertEquals(row.cells.size(), 4, "Checks the row cells count");
+        Assert.assertNotNull(row.getCell(1), "Checks the cell instance at index '1'");
+        Assert.assertEquals(row.getCell(1).value.toString().substring(2, 9), "author1", "Checks the value for first item");
+        Assert.assertNotNull(row.getCell(2), "Checks the cell instance at index '2'");
+        Assert.assertEquals(row.getCell(2).value.toString().substring(2, 8), "a date", "Checks the value for 'author-dob'");
+
+    }
+
+    @Test
+    public void processRecordsFromComplexXmlStructure() throws IOException {
+        loadData(_getXmlDataFromFile("xml-sample-format-4.xml"));
+        createXmlParser();
+        ParserSkip();
+        try {
+            XmlImportUtilities.processRecord(allocator, rows, parser, columnGroup, false, false, false, false, "");
+        } catch (Exception e) {
+            Assert.fail("Failed to parse records from the given XML Data. Reason: " + e.getMessage(), e);
+        }
+        Assert.assertNotNull(rows, "Checks the record count of project");
+        Assert.assertEquals(rows.size(), 50, "Checks the number of records parsed from Xml");
+        Row row = rows.get(0);
+        Assert.assertNotNull(row, "Checks the row instance with index '0'");
+        Assert.assertEquals(row.cells.size(), 14, "Checks the row cells count");
+        Assert.assertNotNull(row.getCell(1), "Checks the cell instance at index '1'");
+        Assert.assertEquals(row.getCell(1).value, "11", "Checks the value for 'pages'");
+        Assert.assertNotNull(row.getCell(2), "Checks the cell instance at index '2'");
+        Assert.assertEquals(row.getCell(2).value, "50", "Checks the value for 'per-page'");
     }
 
     // ----------------helpers-------------
@@ -439,5 +651,12 @@ public class XmlImportUtilitiesTests extends RefineTest {
     public TreeReader createJsonParser() {
         parser = new JSONTreeReader(inputStream);
         return parser;
+    }
+
+    private String _getXmlDataFromFile(String fileName) throws IOException {
+        InputStream in = this.getClass().getClassLoader()
+                .getResourceAsStream(fileName);
+        String content = org.apache.commons.io.IOUtils.toString(in, "UTF-8");
+        return content;
     }
 }

@@ -44,6 +44,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.http.HttpStatus;
 import org.slf4j.LoggerFactory;
 import org.testng.Assert;
 import org.testng.annotations.AfterMethod;
@@ -298,7 +299,7 @@ public class RefineServletTests extends RefineTest {
 
     protected void verifyError404Called() {
         try {
-            verify(response, times(1)).sendError(404);
+            verify(response, times(1)).sendError(HttpStatus.SC_NOT_FOUND);
         } catch (IOException e) {
             Assert.fail();
         }

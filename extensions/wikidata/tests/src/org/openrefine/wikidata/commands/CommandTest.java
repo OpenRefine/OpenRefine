@@ -56,11 +56,11 @@ public abstract class CommandTest extends RefineTest {
     public void setUpProject() {
         project = createProject(
                 new String[] { "subject", "inception", "reference" },
-                new Serializable[] {
-                        TestingData.makeMatchedCell("Q1377", "University of Ljubljana"), "1919",
-                        "http://www.ljubljana-slovenia.com/university-ljubljana",
-                        TestingData.makeMatchedCell("Q865528", "University of Warwick"), "1965", "",
-                        TestingData.makeNewItemCell(1234L, "new uni"), "2016", "http://new-uni.com/" });
+                new Serializable[][] {
+                        { TestingData.makeMatchedCell("Q1377", "University of Ljubljana"), "1919",
+                                "http://www.ljubljana-slovenia.com/university-ljubljana" },
+                        { TestingData.makeMatchedCell("Q865528", "University of Warwick"), "1965", "" },
+                        { TestingData.makeNewItemCell(1234L, "new uni"), "2016", "http://new-uni.com/" } });
         request = mock(HttpServletRequest.class);
         response = mock(HttpServletResponse.class);
         writer = new StringWriter();

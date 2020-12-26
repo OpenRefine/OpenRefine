@@ -42,5 +42,9 @@
     "gdata-auth/authorize-label": "OpenRefine - Autorizzazione",
     "gdata-auth/authorized-label": "Processo di autorizzazione completato. Chiudi questa finestra e torna ad OpenRefine.",
     "gdata-exporter/upload-success": "Il progetto è stato caricato con successo su Google Drive ",
-    "gdata-exporter/enter-filename": "Definisci un nome del file per esportare il progetto su Google Drive"
+    "gdata-exporter/enter-filename": "Inserisci un nome del file per esportare il progetto su Google Drive",
+    "gdata-exporter/upload-google-sheets-success": "Progetto caricato su Google Drive ",
+    "gdata-exporter/export-to-google-drive": "Archiviando progetto di OpenRefine su Google Drive…",
+    "gdata-exporter/upload-google-drive-success": "Progetto caricato su Google Drive ",
+    "gdata-exporter/google-sheets": "Google Sheets"
 }

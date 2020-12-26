@@ -3,6 +3,7 @@ package org.openrefine.extension.gdata;
 
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+import static org.testng.Assert.assertEquals;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -20,6 +21,13 @@ import org.testng.annotations.Test;
 import org.openrefine.commands.Command;
 import org.openrefine.extension.gdata.UploadCommand;
 import org.openrefine.util.ParsingUtilities;
+
+class UploadCommandStub extends UploadCommand {
+
+    public byte[] getIcon() throws IOException {
+        return getIconImage();
+    }
+}
 
 public class UploadCommandTest {
 
@@ -49,5 +57,11 @@ public class UploadCommandTest {
                         ObjectNode.class),
                 ParsingUtilities.mapper.readValue(writer.toString(), ObjectNode.class));
 
+    }
+
+    @Test
+    public void testIconRead() throws IOException {
+        UploadCommandStub cmd = new UploadCommandStub();
+        assertEquals(cmd.getIconImage().length, 58994);
     }
 }

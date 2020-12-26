@@ -53,19 +53,22 @@ public class ExpressionContextTest extends RefineTest {
 
     @Test
     public void testGetCellByColumnName() {
-        ExpressionContext ctxt = new ExpressionContext("foo:", 1, rows.get(1), grid.getColumnModel(), null);
+        ExpressionContext ctxt = new ExpressionContext("foo:", "https://www.wikidata.org/w/api.php", 1, rows.get(1), grid.getColumnModel(),
+                null);
         assertEquals("e", ctxt.getCellByName("b").value);
     }
 
     @Test
     public void testNonExistentColumn() {
-        ExpressionContext ctxt = new ExpressionContext("foo:", 1, rows.get(1), grid.getColumnModel(), null);
+        ExpressionContext ctxt = new ExpressionContext("foo:", "https://www.wikidata.org/w/api.php", 1, rows.get(1), grid.getColumnModel(),
+                null);
         assertNull(ctxt.getCellByName("auie"));
     }
 
     @Test
     public void testGetRowId() {
-        ExpressionContext ctxt = new ExpressionContext("foo:", 1, rows.get(1), grid.getColumnModel(), null);
+        ExpressionContext ctxt = new ExpressionContext("foo:", "https://www.wikidata.org/w/api.php", 1, rows.get(1), grid.getColumnModel(),
+                null);
         assertEquals(1, ctxt.getRowId());
     }
 }

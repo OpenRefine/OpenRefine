@@ -28,6 +28,7 @@
 package org.openrefine.io;
 
 import static org.mockito.Mockito.mock;
+import static org.testng.Assert.assertEquals;
 
 import java.io.File;
 import java.io.IOException;
@@ -54,7 +55,7 @@ public class FileProjectManagerTests {
 
         protected FileProjectManagerStub(File dir) {
             super(mock(DatamodelRunner.class), dir);
-            _projectsMetadata.put(1234L, mock(ProjectMetadata.class));
+            _projectsMetadata.put(5555L, mock(ProjectMetadata.class));
         }
     }
 
@@ -76,8 +77,21 @@ public class FileProjectManagerTests {
                 "           }\n" +
                 "         }\n" +
                 "       },\n" +
-                "       \"projectIDs\" : [ 1234 ]\n" +
+                "       \"projectIDs\" : [ 5555 ]\n" +
                 "     }";
         TestUtils.isSerializedTo(manager, json, ParsingUtilities.defaultWriter);
+    }
+
+    /**
+     * Test that we can save and restore non-ASCII characters. For best effectiveness, this should be run with a
+     * non-UTF8 default encoding for Java e.g. java -Dfile.encoding=cp1252 to simulate running on a Windows system
+     */
+    @Test
+    public void saveReloadMultinationalCharacter() throws IOException {
+        FileProjectManager manager = new FileProjectManagerStub(workspaceDir);
+        manager.getPreferenceStore().put("testPref", "Refiné");
+        manager.saveWorkspace();
+        manager = new FileProjectManagerStub(workspaceDir);
+        assertEquals(manager.getPreferenceStore().get("testPref"), "Refiné");
     }
 }

@@ -35,7 +35,8 @@ import org.testng.Assert;
 import org.testng.annotations.Test;
 
 import org.openrefine.expr.EvalError;
-import org.openrefine.expr.functions.FunctionTestBase;
+import org.openrefine.expr.functions.date.Inc;
+import org.openrefine.grel.FunctionTestBase;
 import org.openrefine.util.ParsingUtilities;
 import org.openrefine.util.TestUtils;
 

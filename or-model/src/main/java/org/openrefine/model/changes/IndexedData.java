@@ -48,7 +48,7 @@ public class IndexedData<T extends Serializable> implements Serializable {
         OutputStreamWriter writer = new OutputStreamWriter(baos);
         write(writer, serializer);
         writer.close();
-        return new String(baos.toByteArray()).trim();
+        return new String(baos.toByteArray()).strip();
     }
 
     public static <T extends Serializable> IndexedData<T> read(String line, ChangeDataSerializer<T> serializer) throws IOException {

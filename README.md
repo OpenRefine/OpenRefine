@@ -1,6 +1,6 @@
 # OpenRefine
 
-[![Join the chat at https://gitter.im/OpenRefine/OpenRefine](https://badges.gitter.im/OpenRefine/OpenRefine.svg)](https://gitter.im/OpenRefine/OpenRefine?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge) [![Build Status](https://travis-ci.org/OpenRefine/OpenRefine.svg?branch=master)](https://travis-ci.org/OpenRefine/OpenRefine) [![Coverage Status](https://coveralls.io/repos/github/OpenRefine/OpenRefine/badge.svg?branch=coveralls)](https://coveralls.io/github/OpenRefine/OpenRefine?branch=coveralls) [![Translation progress](https://hosted.weblate.org/widgets/openrefine/-/svg-badge.svg)](https://hosted.weblate.org/engage/openrefine/?utm_source=widget)
+[![Join the chat at https://gitter.im/OpenRefine/OpenRefine](https://badges.gitter.im/OpenRefine/OpenRefine.svg)](https://gitter.im/OpenRefine/OpenRefine) ![Java CI](https://github.com/OpenRefine/OpenRefine/workflows/Java%20CI/badge.svg) [![Coverage Status](https://coveralls.io/repos/github/OpenRefine/OpenRefine/badge.svg?branch=master)](https://coveralls.io/github/OpenRefine/OpenRefine?branch=master) [![Translation progress](https://hosted.weblate.org/widgets/openrefine/-/svg-badge.svg)](https://hosted.weblate.org/engage/openrefine/?utm_source=widget) [![Total alerts](https://img.shields.io/lgtm/alerts/g/OpenRefine/OpenRefine.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/OpenRefine/OpenRefine/alerts/)
 
 OpenRefine is a Java-based power tool that allows you to load data, understand it,
 clean it up, reconcile it, and augment it with data coming from
@@ -51,4 +51,4 @@ was acquired by Google, Inc. in July 2010 and the product was renamed Google Ref
 In October 2012, it was renamed OpenRefine as it transitioned to a 
 community-supported product.
 
-See `AUTHORS.md` for the list of OpenRefine contributors.
+See [AUTHORS.md](./AUTHORS.md) for the list of OpenRefine contributors and [CONTRIBUTING.md](./CONTRIBUTING.md) for instructions on how to contribute yourself.

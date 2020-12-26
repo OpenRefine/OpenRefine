@@ -38,7 +38,6 @@ import static org.mockito.Mockito.mock;
 import static org.powermock.api.mockito.PowerMockito.mockStatic;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.Serializable;
 import java.io.StringWriter;
 import java.util.Arrays;
@@ -50,7 +49,6 @@ import java.util.Properties;
 import java.util.Set;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import org.apache.commons.io.IOUtils;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 import org.powermock.api.mockito.PowerMockito;
@@ -237,7 +235,7 @@ public class ExtendDataOperationTests extends RefineTest {
         String json = "{\"ids\":[\"Q2\"],\"properties\":[{\"id\":\"P571\"},{\"id\":\"P159\"},{\"id\":\"P625\"}]}";
         ReconciledDataExtensionJobStub stub = new ReconciledDataExtensionJobStub(config, "http://endpoint", "http://identifier.space",
                 "http://schema.space");
-        TestUtils.assertEqualAsJson(json, stub.formulateQueryStub(ids, config));
+        TestUtils.assertEqualAsJson(stub.formulateQueryStub(ids, config), json);
     }
 
     @AfterMethod
@@ -262,19 +260,18 @@ public class ExtendDataOperationTests extends RefineTest {
      * 
      * @throws Exception
      */
-
     @BeforeMethod
     public void mockHttpCalls() throws Exception {
         mockStatic(ReconciledDataExtensionJob.class);
         PowerMockito.spy(ReconciledDataExtensionJob.class);
-        Answer<InputStream> mockedResponse = new Answer<InputStream>() {
+        Answer<String> mockedResponse = new Answer<String>() {
 
             @Override
-            public InputStream answer(InvocationOnMock invocation) throws Throwable {
+            public String answer(InvocationOnMock invocation) throws Throwable {
                 return fakeHttpCall(invocation.getArgument(0), invocation.getArgument(1));
             }
         };
-        PowerMockito.doAnswer(mockedResponse).when(ReconciledDataExtensionJob.class, "performQuery", anyString(), anyString());
+        PowerMockito.doAnswer(mockedResponse).when(ReconciledDataExtensionJob.class, "postExtendQuery", anyString(), anyString());
     }
 
     @AfterMethod
@@ -355,7 +352,7 @@ public class ExtendDataOperationTests extends RefineTest {
         Assert.assertEquals(dataExtensions, Arrays.asList(dataExtension1, dataExtension2, dataExtension3, dataExtension4));
     }
 
-    @Test(enabled = false)
+    @Test
     public void testFetchStrings() throws Exception {
 
         DataExtensionConfig extension = DataExtensionConfig
@@ -391,7 +388,7 @@ public class ExtendDataOperationTests extends RefineTest {
      * Test to fetch counts of values
      */
 
-    @Test(enabled = false)
+    @Test
     public void testFetchCounts() throws Exception {
         DataExtensionConfig extension = DataExtensionConfig.reconstruct(
                 "{\"properties\":[{\"id\":\"P38\",\"name\":\"currency\",\"settings\":{\"count\":\"on\",\"rank\":\"any\"}}]}");
@@ -442,7 +439,7 @@ public class ExtendDataOperationTests extends RefineTest {
     /**
      * Test fetch only the best statements
      */
-    @Test(enabled = false)
+    @Test
     public void testFetchCurrent() throws Exception {
         DataExtensionConfig extension = DataExtensionConfig.reconstruct(
                 "{\"properties\":[{\"id\":\"P38\",\"name\":\"currency\",\"settings\":{\"rank\":\"best\"}}]}");
@@ -489,7 +486,7 @@ public class ExtendDataOperationTests extends RefineTest {
     /**
      * Test fetch records (multiple values per reconciled cell)
      */
-    @Test(enabled = false)
+    @Test
     public void testFetchRecord() throws Exception {
         DataExtensionConfig extension = DataExtensionConfig.reconstruct(
                 "{\"properties\":[{\"id\":\"P38\",\"name\":\"currency\",\"settings\":{\"rank\":\"any\"}}]}");
@@ -539,10 +536,10 @@ public class ExtendDataOperationTests extends RefineTest {
         mockedResponses.put(ParsingUtilities.mapper.readTree(query), response);
     }
 
-    InputStream fakeHttpCall(String endpoint, String query) throws IOException {
+    String fakeHttpCall(String endpoint, String query) throws IOException {
         JsonNode parsedQuery = ParsingUtilities.mapper.readTree(query);
         if (mockedResponses.containsKey(parsedQuery)) {
-            return IOUtils.toInputStream(mockedResponses.get(parsedQuery));
+            return mockedResponses.get(parsedQuery);
         } else {
             throw new IllegalArgumentException("HTTP call not mocked for query: " + query);
         }

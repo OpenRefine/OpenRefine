@@ -25,6 +25,7 @@
 package org.openrefine.wikidata.schema;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
@@ -80,7 +81,7 @@ public class WbStatementGroupExpr {
 
     @JsonProperty("statements")
     public List<WbStatementExpr> getStatements() {
-        return statementExprs;
+        return Collections.unmodifiableList(statementExprs);
     }
 
     @Override

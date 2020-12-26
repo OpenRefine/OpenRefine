@@ -16,6 +16,7 @@ import org.openrefine.extension.database.model.DatabaseInfo;
 import org.openrefine.extension.database.model.DatabaseRow;
 import org.openrefine.extension.database.mysql.MySQLDatabaseService;
 import org.openrefine.extension.database.pgsql.PgSQLDatabaseService;
+import org.openrefine.extension.database.sqlite.SQLiteDatabaseService;
 
 public class DatabaseServiceTest extends DBExtensionTests {
 
@@ -75,6 +76,14 @@ public class DatabaseServiceTest extends DBExtensionTests {
         DatabaseService dbService = DatabaseService.get(MariaDBDatabaseService.DB_NAME);
         Assert.assertNotNull(dbService);
         Assert.assertEquals(dbService.getClass(), MariaDBDatabaseService.class);
+    }
+
+    @Test(groups = { "requiresSQLite" })
+    public void testGetSQLiteDBService() {
+
+        DatabaseService dbService = DatabaseService.get(SQLiteDatabaseService.DB_NAME);
+        Assert.assertNotNull(dbService);
+        Assert.assertEquals(dbService.getClass(), SQLiteDatabaseService.class);
     }
 
     @Test(groups = { "requiresMySQL" })

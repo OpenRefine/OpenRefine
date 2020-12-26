@@ -4,6 +4,7 @@ package org.openrefine.model;
 import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -71,6 +72,26 @@ public interface GridState {
      * @return the list of rows with their ids (if any)
      */
     public List<IndexedRow> getRows(long start, int limit);
+
+    /**
+     * Returns a list of rows corresponding to the row indices supplied. By default this calls {@link getRow(long)} on
+     * all values, but implementations can override this to more efficient strategies if available.
+     * 
+     * @param rowIndices
+     *            the indices of the rows to lookup
+     * @return the list contains null values for the row indices which could not be found.
+     */
+    public default List<IndexedRow> getRows(List<Long> rowIndices) {
+        List<IndexedRow> result = new ArrayList<>(rowIndices.size());
+        for (long rowId : rowIndices) {
+            try {
+                result.add(new IndexedRow(rowId, getRow(rowId)));
+            } catch (IndexOutOfBoundsException e) {
+                result.add(null);
+            }
+        }
+        return result;
+    }
 
     /**
      * Among the subset of filtered rows, return a list of rows, starting from a given index and defined by a maximum

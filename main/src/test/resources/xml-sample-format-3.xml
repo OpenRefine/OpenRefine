@@ -1,0 +1,24 @@
+<?xml version = "1.0"?>
+<library>
+    <book id="  1  ">
+        <author>
+            <author-name>  author1  </author-name>
+            <author-dob>  a date  </author-dob>
+        </author>
+        <genre>  genre1  </genre>
+    </book>
+    <book id="  2  ">
+        <author>
+            <author-name>  author2  </author-name>
+            <author-dob>  a date2  </author-dob>
+        </author>
+        <genre>  genre2  </genre>
+    </book>
+    <book id="  3  ">
+        <author>
+            <author-name>  author3  </author-name>
+            <author-dob>  a date3  </author-dob>
+        </author>
+        <genre>  genre3  </genre>
+    </book>
+</library>
