@@ -77,7 +77,7 @@ public abstract class LineBasedImporterBase extends HDFSImporter {
         }
 
         RowMapper rowMapper = getRowMapper(options);
-        GridState rawCells = runner.loadTextFile(sparkURI);
+        GridState rawCells = runner.loadTextFile(sparkURI).limitRows(limit2);
 
         // Compute the maximum number of cells in the entire grid
         int maxColumnNb = getColumnCount(rawCells, rowMapper, options);

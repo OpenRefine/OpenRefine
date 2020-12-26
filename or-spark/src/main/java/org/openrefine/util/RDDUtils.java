@@ -6,9 +6,11 @@ import java.util.Iterator;
 import java.util.List;
 
 import com.google.common.collect.Iterators;
+import org.apache.spark.Partitioner;
 import org.apache.spark.api.java.JavaPairRDD;
 import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.function.FlatMapFunction;
+import org.apache.spark.api.java.function.Function;
 import org.apache.spark.api.java.function.Function2;
 import org.apache.spark.api.java.function.PairFlatMapFunction;
 import org.apache.spark.rdd.OrderedRDDFunctions;
@@ -18,7 +20,9 @@ import scala.reflect.ClassManifestFactory;
 import scala.reflect.ClassTag;
 
 import org.openrefine.model.Row;
+import org.openrefine.model.rdd.PartitionedRDD;
 import org.openrefine.model.rdd.SortedRDD;
+import org.openrefine.model.rdd.SortedRDD.SortedPartitioner;
 import org.openrefine.model.rdd.ZippedWithIndexRDD;
 
 /**
@@ -187,6 +191,79 @@ public class RDDUtils {
 
         };
         return pairRDD.mapPartitionsToPair(mapper, true);
+    }
+
+    /**
+     * Performs a limit: returns a new RDD which contains the n first elements of this RDD. The supplied RDD is assumed
+     * to be keyed by indices, and the resulting RDD will be more efficient if the original RDD is partitioned by key.
+     * 
+     * @param <V>
+     * @param pairRDD
+     * @param limit
+     * @return
+     */
+    public static <V> JavaPairRDD<Long, V> limit(JavaPairRDD<Long, V> pairRDD, long limit) {
+        if (pairRDD.getNumPartitions() > 1 && pairRDD.partitioner().isPresent()) {
+            Partitioner partitioner = pairRDD.partitioner().get();
+            if (partitioner instanceof SortedPartitioner) {
+                @SuppressWarnings("unchecked")
+                SortedPartitioner<Long> sortedPartitioner = (SortedPartitioner<Long>) partitioner;
+
+                List<Long> limits = new ArrayList<>(pairRDD.getNumPartitions());
+                limits.add(limit);
+                for (Long firstKey : sortedPartitioner.firstKeys()) {
+                    limits.add(Math.max(0, limit - firstKey));
+                }
+
+                // use the known partition starts to limit each partition to the appropriate limit
+                JavaPairRDD<Long, V> limited = JavaPairRDD.fromJavaRDD(pairRDD.mapPartitionsWithIndex(new PartitionLimiter(limits), true));
+                return new PartitionedRDD<Long, V>(limited, sortedPartitioner).asPairRDD(pairRDD.kClassTag(), pairRDD.vClassTag());
+            }
+        }
+        // fallback: less efficient, but still avoids doing a full pass on the dataset
+        return limitPartitions(pairRDD, limit)
+                .filter(new Function<Tuple2<Long, V>, Boolean>() {
+
+                    private static final long serialVersionUID = 1L;
+
+                    @Override
+                    public Boolean call(Tuple2<Long, V> v1) throws Exception {
+                        return v1._1 < limit;
+                    }
+
+                });
+    }
+
+    private static class PartitionLimiter<V> implements Function2<Integer, Iterator<Tuple2<Long, V>>, Iterator<Tuple2<Long, V>>> {
+
+        private static final long serialVersionUID = 7276022996698290108L;
+
+        private final List<Long> _limits;
+
+        public PartitionLimiter(List<Long> limits) {
+            _limits = limits;
+        }
+
+        @Override
+        public Iterator<Tuple2<Long, V>> call(Integer partitionIndex, Iterator<Tuple2<Long, V>> t) throws Exception {
+            return new Iterator<Tuple2<Long, V>>() {
+
+                long seen = 0;
+
+                @Override
+                public boolean hasNext() {
+                    return seen < _limits.get(partitionIndex) && t.hasNext();
+                }
+
+                @Override
+                public Tuple2<Long, V> next() {
+                    seen++;
+                    return t.next();
+                }
+
+            };
+        }
+
     }
 
     /**

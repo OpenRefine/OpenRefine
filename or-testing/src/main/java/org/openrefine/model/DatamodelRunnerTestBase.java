@@ -696,6 +696,32 @@ public abstract class DatamodelRunnerTestBase {
         Assert.assertEquals(removed.collectRows(), expected.collectRows());
     }
 
+    @Test
+    public void testLimitRows() {
+        GridState limited = simpleGrid.limitRows(2L);
+        GridState expected = createGrid(new String[] { "foo", "bar" },
+                new Serializable[][] {
+                        { "a", "b" },
+                        { "", 1 }
+                });
+
+        Assert.assertEquals(limited.getColumnModel(), expected.getColumnModel());
+        Assert.assertEquals(limited.collectRows(), expected.collectRows());
+    }
+
+    @Test
+    public void testDropRows() {
+        GridState limited = simpleGrid.dropRows(2L);
+        GridState expected = createGrid(new String[] { "foo", "bar" },
+                new Serializable[][] {
+                        { "c", true },
+                        { null, 123123123123L }
+                });
+
+        Assert.assertEquals(limited.getColumnModel(), expected.getColumnModel());
+        Assert.assertEquals(limited.collectRows(), expected.collectRows());
+    }
+
     /**
      * Change data
      */

@@ -114,6 +114,10 @@ public class SortedRDD<K extends Comparable<K>, V> extends PartitionedRDD<K, V> 
             return numPartitions;
         }
 
+        public List<T> firstKeys() {
+            return firstKeys;
+        }
+
     }
 
     /**

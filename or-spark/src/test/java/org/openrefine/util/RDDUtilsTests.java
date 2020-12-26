@@ -71,4 +71,32 @@ public class RDDUtilsTests extends SparkBasedTest {
                         Arrays.asList(12L, 13L, 14L),
                         Arrays.asList(15L)));
     }
+
+    @Test
+    public void testLimitNoPartitioner() {
+        List<Tuple2<Long, Long>> list = LongStream.range(0L, 16L).boxed().map(l -> new Tuple2<Long, Long>(l, l))
+                .collect(Collectors.toList());
+        JavaRDD<Tuple2<Long, Long>> rdd = context().parallelize(list, 4);
+
+        JavaPairRDD<Long, Long> pairs = JavaPairRDD.fromJavaRDD(rdd);
+        Assert.assertFalse(pairs.partitioner().isPresent());
+
+        JavaPairRDD<Long, Long> limited = RDDUtils.limit(pairs, 6);
+
+        Assert.assertEquals(limited.keys().collect(), LongStream.range(0L, 6L).boxed().collect(Collectors.toList()));
+    }
+
+    @Test
+    public void testLimitPartitioner() {
+        List<Long> list = LongStream.range(0L, 16L).boxed().collect(Collectors.toList());
+        JavaRDD<Long> rdd = context().parallelize(list, 4);
+
+        JavaPairRDD<Long, Long> pairs = RDDUtils.zipWithIndex(rdd);
+        Assert.assertTrue(pairs.partitioner().isPresent());
+        Assert.assertTrue(rdd.getNumPartitions() > 1);
+
+        JavaPairRDD<Long, Long> limited = RDDUtils.limit(pairs, 6);
+
+        Assert.assertEquals(limited.keys().collect(), LongStream.range(0L, 6L).boxed().collect(Collectors.toList()));
+    }
 }
