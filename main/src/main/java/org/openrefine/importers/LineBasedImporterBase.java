@@ -15,7 +15,6 @@ import org.openrefine.model.DatamodelRunner;
 import org.openrefine.model.GridState;
 import org.openrefine.model.IndexedRow;
 import org.openrefine.model.Row;
-import org.openrefine.model.RowFilter;
 import org.openrefine.model.RowMapper;
 import org.openrefine.util.JSONUtilities;
 
@@ -77,7 +76,7 @@ public abstract class LineBasedImporterBase extends HDFSImporter {
         }
 
         RowMapper rowMapper = getRowMapper(options);
-        GridState rawCells = runner.loadTextFile(sparkURI).limitRows(limit2);
+        GridState rawCells = limit2 > 0 ? runner.loadTextFile(sparkURI, limit2) : runner.loadTextFile(sparkURI);
 
         // Compute the maximum number of cells in the entire grid
         int maxColumnNb = getColumnCount(rawCells, rowMapper, options);
@@ -107,7 +106,7 @@ public abstract class LineBasedImporterBase extends HDFSImporter {
         while (columnModel.getColumns().size() < maxColumnNb) {
             columnModel = ImporterUtilities.expandColumnModelIfNeeded(columnModel, columnModel.getColumns().size());
         }
-        GridState grid = rawCells.removeRows(removeFirstRows(ignoreLines + headerLines + skipDataLines))
+        GridState grid = rawCells.dropRows(ignoreLines + headerLines + skipDataLines)
                 .mapRows(rowMapperWithPadding(rowMapper, maxColumnNb), columnModel);
         if (includeFileSources) {
             grid = TabularParserHelper.prependColumn("File", fileSource, grid);
@@ -138,26 +137,6 @@ public abstract class LineBasedImporterBase extends HDFSImporter {
             @Override
             public Row call(long rowId, Row row) {
                 return mapper.call(rowId, row).padWithNull(nbColumns);
-            }
-
-        };
-    }
-
-    /**
-     * Returns true for the first n rows.
-     * 
-     * @param n
-     *            the number of rows to remove
-     * @return
-     */
-    protected static RowFilter removeFirstRows(int n) {
-        return new RowFilter() {
-
-            private static final long serialVersionUID = 7373072483613980130L;
-
-            @Override
-            public boolean filterRow(long rowIndex, Row row) {
-                return rowIndex < n;
             }
 
         };

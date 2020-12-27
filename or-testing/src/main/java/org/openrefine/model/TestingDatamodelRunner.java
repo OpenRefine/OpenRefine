@@ -198,12 +198,18 @@ public class TestingDatamodelRunner implements DatamodelRunner {
 
     @Override
     public GridState loadTextFile(String path) throws IOException {
+        return loadTextFile(path, Long.MAX_VALUE);
+    }
+
+    @Override
+    public GridState loadTextFile(String path, long limit) throws IOException {
         FileReader reader = null;
         try {
             reader = new FileReader(new File(path));
             LineNumberReader lineReader = new LineNumberReader(reader);
             List<Row> rows = lineReader.lines()
                     .map(line -> new Row(Collections.singletonList(new Cell(line, null))))
+                    .limit(limit)
                     .collect(Collectors.toList());
 
             ColumnModel columnModel = new ColumnModel(Collections.singletonList(new ColumnMetadata("Column")));

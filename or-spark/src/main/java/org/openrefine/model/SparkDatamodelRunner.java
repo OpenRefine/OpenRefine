@@ -168,10 +168,25 @@ public class SparkDatamodelRunner implements DatamodelRunner {
 
     @Override
     public GridState loadTextFile(String path) throws IOException {
+        return loadTextFile(path, -1);
+    }
+
+    @Override
+    public GridState loadTextFile(String path, long limit) throws IOException {
         JavaRDD<String> lines = context.textFile(path);
         ColumnModel columnModel = new ColumnModel(Collections.singletonList(new ColumnMetadata("Column")));
         JavaRDD<Row> rows = lines.map(s -> new Row(Collections.singletonList(new Cell(s, null))));
+        if (limit >= 0) {
+            // this generally leaves more rows than necessary, but is the best thing
+            // we can do so far without reading the dataset to add row indices
+            rows = RDDUtils.limitPartitions(rows, limit);
+        }
         JavaPairRDD<Long, Row> indexedRows = RDDUtils.zipWithIndex(rows);
+        if (limit >= 0) {
+            // enforce limit properly by removing any rows from the following partitions
+            // that exceed the desired row count
+            indexedRows = RDDUtils.limit(indexedRows, limit);
+        }
         return new SparkGridState(columnModel, indexedRows, Collections.emptyMap(), this);
     }
 

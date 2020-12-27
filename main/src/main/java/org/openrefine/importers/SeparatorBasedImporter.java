@@ -104,7 +104,7 @@ public class SeparatorBasedImporter extends LineBasedImporterBase {
         // to a row in the grid, so we unfortunately cannot use the logic from LineBasedImporterBase.
         // We resort to loading the whole file in memory.
         if (processQuotes) {
-            GridState lines = runner.loadTextFile(sparkURI).limitRows(limit);
+            GridState lines = limit > 0 ? runner.loadTextFile(sparkURI, limit) : runner.loadTextFile(sparkURI);
             TableDataReader dataReader = createTableDataReader(metadata, job, lines, options);
             return tabularParserHelper.parseOneFile(metadata, job, fileSource, archiveFileName, dataReader, limit, options);
         } else {

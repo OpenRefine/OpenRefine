@@ -62,6 +62,17 @@ public interface DatamodelRunner {
     public GridState loadTextFile(String path) throws IOException;
 
     /**
+     * Loads a text file as a {@link GridState} with a single column named "Column" and whose contents are the lines in
+     * the file, parsed as strings.
+     * 
+     * @param path
+     *            the path to the text file to load
+     * @param limit
+     *            the maximum number of lines to read
+     */
+    public GridState loadTextFile(String path, long limit) throws IOException;
+
+    /**
      * Creates a {@link ChangeData} from an in-memory list of indexed data. The list is required to be sorted.
      */
     public <T extends Serializable> ChangeData<T> create(List<IndexedData<T>> changeData);

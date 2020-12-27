@@ -194,6 +194,48 @@ public class RDDUtils {
     }
 
     /**
+     * Performs a partition-wise limit: returns a RDD where partitions are capped to a maximum number of items.
+     * 
+     * This is intended to be used as a deterministic and efficient form of "sampling". Spark's own sampling is
+     * non-deterministic and does not speed up computations much because it still scans the entire RDD (it is equivalent
+     * to a filter).
+     * 
+     * @param pairRDD
+     *            the RDD to limit
+     * @param limit
+     *            the maximum number of elements per partition
+     * @return the truncated RDD
+     */
+    public static <T> JavaRDD<T> limitPartitions(JavaRDD<T> pairRDD, long limit) {
+        FlatMapFunction<Iterator<T>, T> mapper = new FlatMapFunction<Iterator<T>, T>() {
+
+            private static final long serialVersionUID = 1L;
+
+            @Override
+            public Iterator<T> call(Iterator<T> t) throws Exception {
+                return new Iterator<T>() {
+
+                    long seen = 0;
+
+                    @Override
+                    public boolean hasNext() {
+                        return seen < limit && t.hasNext();
+                    }
+
+                    @Override
+                    public T next() {
+                        seen++;
+                        return t.next();
+                    }
+
+                };
+            }
+
+        };
+        return pairRDD.mapPartitions(mapper, true);
+    }
+
+    /**
      * Performs a limit: returns a new RDD which contains the n first elements of this RDD. The supplied RDD is assumed
      * to be keyed by indices, and the resulting RDD will be more efficient if the original RDD is partitioned by key.
      * 

@@ -1028,6 +1028,27 @@ public abstract class DatamodelRunnerTestBase {
     }
 
     @Test
+    public void testLoadTextFileLimit() throws IOException {
+        File tempFile = new File(tempDir, "longtextfile.txt");
+        createTestTextFile(tempFile, "foo\nbar\nbaz\nhello\nworld\nwelcome\nto\nopenrefine");
+
+        GridState textGrid = SUT.loadTextFile(tempFile.getAbsolutePath(), 7);
+
+        GridState expected = createGrid(new String[] { "Column" },
+                new Serializable[][] {
+                        { "foo" },
+                        { "bar" },
+                        { "baz" },
+                        { "hello" },
+                        { "world" },
+                        { "welcome" },
+                        { "to" }
+                });
+        Assert.assertEquals(textGrid.getColumnModel(), expected.getColumnModel());
+        Assert.assertEquals(textGrid.collectRows(), expected.collectRows());
+    }
+
+    @Test
     public void testLoadTextFileTrailingNewLine() throws IOException {
         File tempFile = new File(tempDir, "textfileWithNewline.txt");
         createTestTextFile(tempFile, "foo\nbar\nbaz\n");

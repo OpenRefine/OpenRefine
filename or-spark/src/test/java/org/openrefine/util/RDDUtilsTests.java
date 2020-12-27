@@ -36,7 +36,7 @@ public class RDDUtilsTests extends SparkBasedTest {
     }
 
     @Test
-    public void testLimitPartitions() {
+    public void testLimitPartitionsPair() {
         List<Tuple2<Long, Row>> list = new ArrayList<>();
         for (int i = 0; i < 10; i++) {
             list.add(new Tuple2<Long, Row>((long) i, new Row(
@@ -45,12 +45,45 @@ public class RDDUtilsTests extends SparkBasedTest {
         JavaPairRDD<Long, Row> rdd = context().parallelize(list, 2)
                 .keyBy(t -> (Long) t._1)
                 .mapValues(t -> t._2);
+        Assert.assertFalse(rdd.partitioner().isPresent());
 
         JavaPairRDD<Long, Row> capped = RDDUtils.limitPartitions(rdd, 3);
         List<Tuple2<Long, Row>> rows = capped.collect();
         Assert.assertEquals(rows.size(), 6);
         Assert.assertEquals(rows.stream().map(t -> t._1).collect(Collectors.toList()),
                 Arrays.asList(0L, 1L, 2L, 5L, 6L, 7L));
+        Assert.assertFalse(rdd.partitioner().isPresent());
+    }
+
+    @Test
+    public void testLimitPartitionsPairPreservesPartitioning() {
+        List<Row> list = new ArrayList<>();
+        for (int i = 0; i < 10; i++) {
+            list.add(new Row(
+                    Arrays.asList(new Cell(i, null))));
+        }
+
+        JavaPairRDD<Long, Row> rdd = RDDUtils.zipWithIndex(context().parallelize(list, 2));
+        Assert.assertTrue(rdd.partitioner().isPresent());
+
+        JavaPairRDD<Long, Row> capped = RDDUtils.limitPartitions(rdd, 3);
+        Assert.assertTrue(capped.partitioner().isPresent());
+        Assert.assertEquals(capped.keys().collect(),
+                Arrays.asList(0L, 1L, 2L, 5L, 6L, 7L));
+    }
+
+    @Test
+    public void testLimitPartitions() {
+        List<Long> list = new ArrayList<>();
+        for (int i = 0; i < 10; i++) {
+            list.add((long) i);
+        }
+        JavaRDD<Long> rdd = context().parallelize(list, 2);
+
+        JavaRDD<Long> capped = RDDUtils.limitPartitions(rdd, 3);
+        List<Long> rows = capped.collect();
+        Assert.assertEquals(rows.size(), 6);
+        Assert.assertEquals(rows, Arrays.asList(0L, 1L, 2L, 5L, 6L, 7L));
     }
 
     @Test
