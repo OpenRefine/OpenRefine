@@ -54,6 +54,7 @@ import com.google.refine.util.ParsingUtilities;
 
 public class PreferenceStore  {
     public static final String USER_METADATA_KEY = "userMetadata";
+    private static final String AUTH_PREFIX = "authentication.http.";
     
     private boolean dirty = false;
     protected Map<String, Object> _prefs = new HashMap<>();
@@ -132,23 +133,29 @@ public class PreferenceStore  {
         return Collections.unmodifiableMap(result);
     }
 
+    public static boolean putCredentials(String url, String type, String auth1, String auth2) {
+        PreferenceStore prefStore = ProjectManager.singleton.getPreferenceStore();
+        String key = AUTH_PREFIX + HttpClient.reverseURL(url);
+        prefStore.put(key, type + " " + auth1 + " " + auth2);
+        return true;
+    }
+
     public static String[] getCredentials(String url) {
-        String PREFIX = "http-auth-";
         PreferenceStore prefStore = ProjectManager.singleton.getPreferenceStore();
         // FIXME: The line below returns an empty preference store
         // PreferenceStore ps2 =  _project.getMetadata().getPreferenceStore();
-        Map<String, Object> auths =prefStore.getEntries(PREFIX);
+        Map<String, Object> auths = prefStore.getEntries(AUTH_PREFIX);
         String reversedUrl = HttpClient.reverseURL(url);
         String match = "";
         // TODO: Do we want to ignore protocol for matching purposes?
         for (  Entry<String, Object> auth : auths.entrySet()) {
-            String candidate = auth.getKey().substring(PREFIX.length());
+            String candidate = auth.getKey().substring(AUTH_PREFIX.length());
             if (reversedUrl.startsWith(candidate) && candidate.length() > match.length()) {
                 match = candidate;
             }
         }
         if (!"".equals(match)) {
-            String payload = (String) auths.get(PREFIX + match);
+            String payload = (String) auths.get(AUTH_PREFIX + match);
             if (payload != null && !"".equals(payload)) {
                 String[] pieces = payload.split(" ");
                 if ("token".equals(pieces[0]) || "basic".equals(pieces[0])) {

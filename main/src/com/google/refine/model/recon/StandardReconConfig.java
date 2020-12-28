@@ -153,6 +153,10 @@ public class StandardReconConfig extends ReconConfig {
     final public List<ColumnDetail> columnDetails;
     @JsonProperty("limit")
     final private int limit;
+    @JsonProperty("apiKeyName")
+    final public String apiKeyName;
+    @JsonProperty("apiKeyValue")
+    final public String apiKeyValue;
 
     // initialized lazily
     private HttpClient httpClient = null;
@@ -194,6 +198,19 @@ public class StandardReconConfig extends ReconConfig {
         this(service, identifierSpace, schemaSpace, typeID, typeName, autoMatch, columnDetails, 0);
     }
     
+
+    public StandardReconConfig(
+        String service,
+        String identifierSpace,
+        String schemaSpace,
+        String typeID, 
+        String typeName,
+        boolean autoMatch,
+        List<ColumnDetail> columnDetails,
+        int limit
+    ) {
+        this(service, identifierSpace, schemaSpace, typeID, typeName, autoMatch, columnDetails, limit, null, null);
+    }
     
     /**
      * @param service
@@ -213,7 +230,9 @@ public class StandardReconConfig extends ReconConfig {
         String typeName,
         boolean autoMatch,
         List<ColumnDetail> columnDetails,
-        int limit
+        int limit,
+        String apiKeyName,
+        String apiKeyValue
     ) {
         this.service = service;
         this.identifierSpace = identifierSpace != null ? identifierSpace : DEFAULT_IDENTIFIER_SPACE;
@@ -224,6 +243,8 @@ public class StandardReconConfig extends ReconConfig {
         this.autoMatch = autoMatch;
         this.columnDetails = columnDetails;
         this.limit = limit;
+        this.apiKeyName = apiKeyName;
+        this.apiKeyValue = apiKeyValue;
     }
     
     @JsonProperty("type")

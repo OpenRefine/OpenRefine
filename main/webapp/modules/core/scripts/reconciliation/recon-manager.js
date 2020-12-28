@@ -62,18 +62,31 @@ ReconciliationManager.registerService = function(service) {
   return ReconciliationManager.customServices.length - 1;
 };
 
-ReconciliationManager.registerStandardService = function(url, f, silent) {
+ReconciliationManager.registerStandardService = function(url, f, silent, apiKey) {
   var dismissBusy = function() {};
   if (!silent) {
     dismissBusy =  DialogSystem.showBusy($.i18n('core-recon/contact-service')+"...");
   }
 
-  var registerService = function(data, mode) {
+  var registerService = function(data, mode, apiKey) {
     data.url = url;
     data.ui = {
       "handler" : "ReconStandardServicePanel",
       "access" : mode
     };
+
+    if ('authentication' in data) {
+      if (data.authentication.in != 'query' || data.authentication.type != 'apiKey') {
+        alert($.i18n('core-recon/error-unsupported-auth'));
+        return;
+      }
+      if (!apiKey) {
+        alert($.i18n('core-recon/error-api-key-required'));
+        return;
+      }
+      const name = data.authentication.name;
+      data.authentication.apiKey = apiKey;
+    }
 
     index = ReconciliationManager.customServices.length + 
     ReconciliationManager.standardServices.length;
@@ -98,7 +111,7 @@ ReconciliationManager.registerStandardService = function(url, f, silent) {
      }
   )
   .success(function(data, textStatus, jqXHR) {
-    registerService(data, "json");
+    registerService(data, "json", apiKey);
   })
   .error(function(jqXHR, textStatus, errorThrown) {
     // If it fails, try with JSONP
@@ -109,7 +122,7 @@ ReconciliationManager.registerStandardService = function(url, f, silent) {
         }
     )
     .success(function(data, textStatus, jqXHR) {
-      registerService(data, "jsonp");
+      registerService(data, "jsonp", apiKey);
     })
     .error(function(jqXHR, textStatus, errorThrown) {
         if (!silent) {
@@ -143,7 +156,7 @@ ReconciliationManager.save = function(f) {
         async: false,
         type: "POST",
         url: "command/core/set-preference?" + $.param({ 
-        name: "reconciliation.standardServices" 
+          name: "reconciliation.standardServices" 
         }),
         data: {
           "value" : JSON.stringify(ReconciliationManager.standardServices), 

@@ -48,7 +48,9 @@ ReconStandardServicePanel.prototype._guessTypes = function(f) {
     "command/core/guess-types-of-column?" + $.param({
       project: theProject.id, 
       columnName: this._column.name,
-      service: this._service.url
+      service: this._service.url,
+      apiKeyName: this._service.authentication.name,
+      apiKeyValue: this._service.authentication.apiKey,
     }),
     null, 
     function(data) {
@@ -73,6 +75,7 @@ ReconStandardServicePanel.prototype._guessTypes = function(f) {
           }
         }
       } else {
+        // TODO: Add special case for 403 Forbidden to ask for auth credentials?
         alert('Guess Types query failed ' + data.code + ' : ' + data.message);
       }
 
@@ -329,7 +332,9 @@ ReconStandardServicePanel.prototype.start = function() {
         type: (type) ? { id: type.id, name: type.name } : null,
         autoMatch: this._elmts.automatchCheck[0].checked,
         columnDetails: columnDetails,
-        limit: parseInt(this._elmts.maxCandidates[0].value) || 0
+        limit: parseInt(this._elmts.maxCandidates[0].value) || 0,
+        apiKeyName: this._service?.authentication.name,
+        apiKeyValue: this._service?.authentication.apiKey,
       })
     },
     { cellsChanged: true, columnStatsChanged: true }

@@ -243,10 +243,17 @@ public class ReconOperation extends EngineDependentOperation {
                 e2.printStackTrace();
             }
 
-            String url = ((StandardReconConfig)_reconConfig).service;
-            String[] auth = PreferenceStore.getCredentials(url);
-            if (auth != null) {
-                ((StandardReconConfig)_reconConfig).setAuthenticationInfo(auth);
+            String url = ((StandardReconConfig) _reconConfig).service;
+            String apiKeyName = ((StandardReconConfig) _reconConfig).apiKeyName;
+            String apiKeyValue = ((StandardReconConfig) _reconConfig).apiKeyValue;
+            if (apiKeyName != null && apiKeyValue != null) {
+                ((StandardReconConfig) _reconConfig)
+                        .setAuthenticationInfo(new String[] { "token", apiKeyName, apiKeyValue });
+            } else {
+                String[] auth = PreferenceStore.getCredentials(url);
+                if (auth != null) {
+                    ((StandardReconConfig) _reconConfig).setAuthenticationInfo(auth);
+                }
             }
 
             Map<String, JobGroup> jobKeyToGroup = new HashMap<String, JobGroup>();

@@ -106,13 +106,20 @@ public class GuessTypesOfColumnCommand extends Command {
             Project project = getProject(request);
             String columnName = request.getParameter("columnName");
             String serviceUrl = request.getParameter("service");
+            String apiKeyName = request.getParameter("apiKeyName");
+            String apiKeyValue = request.getParameter("apiKeyValue");
             
+            if ((apiKeyName == null && apiKeyValue != null) || 
+                    (apiKeyName != null && apiKeyValue == null)) {
+                respondJSON(response, new TypesResponse("error", 
+                                "Invalid parameter combination - both apiKeyName & apiKeyValue must be provided (or neither)", null));
+            }
             Column column = project.columnModel.getColumnByName(columnName);
             if (column == null) {
                 respondJSON(response, new TypesResponse("error", "No such column", null));
             } else {
-                List<TypeGroup> typeGroups = guessTypes(project, column, serviceUrl);
-                respondJSON(response, new TypesResponse("ok", null, typeGroups));   
+                List<TypeGroup> typeGroups = guessTypes(project, column, serviceUrl, apiKeyName, apiKeyValue);
+                respondJSON(response, new TypesResponse("ok", null, typeGroups));
             }
 
         } catch (Exception e) {
@@ -132,6 +139,7 @@ public class GuessTypesOfColumnCommand extends Command {
         }
     }
     
+    
     /**
      * Run relevance searches for the first n cells in the given column and
      * count the types of the results. Return a sorted list of types, from most
@@ -139,11 +147,31 @@ public class GuessTypesOfColumnCommand extends Command {
      * 
      * @param project
      * @param column
+     * @param serviceUrl
      * @return
-     * @throws JSONException, IOException 
+     * @throws IOException 
      */
     protected List<TypeGroup> guessTypes(Project project, Column column, String serviceUrl)
             throws IOException {
+        return guessTypes(project, column, serviceUrl, null, null);
+    }
+
+    /**
+     * Run relevance searches for the first n cells in the given column and
+     * count the types of the results. Return a sorted list of types, from most
+     * frequent to least. 
+     * 
+     * @param project
+     * @param column
+     * @param serviceUrl
+     * @param apiKeyValue 
+     * @param apiKeyName 
+     * @return
+     * @throws JSONException, IOException 
+     */
+    protected List<TypeGroup> guessTypes(Project project, Column column, String serviceUrl, String apiKeyName,
+            String apiKeyValue) throws IOException {
+
         Map<String, TypeGroup> map = new HashMap<String, TypeGroup>();
         
         int cellIndex = column.getCellIndex();
@@ -173,13 +201,17 @@ public class GuessTypesOfColumnCommand extends Command {
         String queriesString = ParsingUtilities.defaultWriter.writeValueAsString(queryMap);
         String responseString;
         try {
-            String[] authInfo = PreferenceStore.getCredentials(serviceUrl);
-            if (authInfo != null && "token".equals(authInfo[0])) {
-                serviceUrl = new URIBuilder(serviceUrl)
-                        .addParameter(authInfo[1], authInfo[2])
-                        .build().toString();
-            }
+            if (apiKeyName == null && apiKeyValue == null) {
+                String[] authInfo = PreferenceStore.getCredentials(serviceUrl);
+                if (authInfo != null && "token".equals(authInfo[0])) {
+                    apiKeyName = authInfo[1];
+                    apiKeyValue = authInfo[2];
 
+                }
+            }
+            if (apiKeyName != null && apiKeyValue != null) {
+                serviceUrl = new URIBuilder(serviceUrl).addParameter(apiKeyName, apiKeyValue).build().toString();
+            }
             responseString = postQueries(serviceUrl, queriesString);
             ObjectNode o = ParsingUtilities.evaluateJsonStringToObjectNode(responseString);
 

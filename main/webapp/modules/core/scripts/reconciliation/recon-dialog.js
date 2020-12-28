@@ -209,6 +209,7 @@ ReconDialog.prototype._onAddStandardService = function() {
 
   elmts.dialogHeader.html($.i18n('core-recon/add-std-srv'));
   elmts.or_recon_enterUrl.html($.i18n('core-recon/enter-url')+":");
+  elmts.or_recon_enterApiKey.html($.i18n('core-recon/enter-api-key'));
   elmts.addButton.html($.i18n('core-buttons/add-service'));
   elmts.cancelButton.html($.i18n('core-buttons/cancel'));
   
@@ -220,10 +221,11 @@ ReconDialog.prototype._onAddStandardService = function() {
   elmts.cancelButton.click(dismiss);
   elmts.form.submit(function() {
     var url = $.trim(elmts.input[0].value);
+    var apiKey = $.trim(elmts.apiKey[0].value);
     if (url.length > 0) {
       ReconciliationManager.registerStandardService(url, function(index) {
         self._refresh(index);
-      });
+      }, false, apiKey);
     }
     dismiss();
   });
