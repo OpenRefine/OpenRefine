@@ -154,8 +154,10 @@ public class StandardReconConfig extends ReconConfig {
     @JsonProperty("limit")
     final private int limit;
     @JsonProperty("apiKeyName")
+    @JsonInclude(Include.NON_EMPTY)
     final public String apiKeyName;
     @JsonProperty("apiKeyValue")
+    @JsonInclude(Include.NON_EMPTY)
     final public String apiKeyValue;
 
     // initialized lazily
