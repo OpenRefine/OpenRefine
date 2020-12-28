@@ -572,7 +572,7 @@ public class SparkGridState implements GridState {
     @Override
     public SparkGridState mapRows(RowMapper mapper, ColumnModel newColumnModel) {
         JavaPairRDD<Long, Row> rows = RDDUtils.mapKeyValuesToValues(grid, rowMap(mapper));
-        return new SparkGridState(newColumnModel, rows, overlayModels, runner);
+        return new SparkGridState(newColumnModel, rows, overlayModels, runner, cachedRowCount, -1);
     }
 
     private static Function2<Long, Row, Row> rowMap(RowMapper mapper) {
@@ -725,7 +725,9 @@ public class SparkGridState implements GridState {
                 columnModel,
                 grid,
                 newOverlayModels,
-                runner);
+                runner,
+                cachedRowCount,
+                cachedRecordCount);
     }
 
     @Override
@@ -734,7 +736,9 @@ public class SparkGridState implements GridState {
                 newColumnModel,
                 grid,
                 overlayModels,
-                runner);
+                runner,
+                cachedRowCount,
+                cachedRecordCount);
     }
 
     @Override
@@ -752,7 +756,9 @@ public class SparkGridState implements GridState {
                 columnModel,
                 sortedGrid,
                 overlayModels,
-                runner);
+                runner,
+                cachedRowCount,
+                -1); // reordering rows can change the number of records
     }
 
     @Override
@@ -771,7 +777,9 @@ public class SparkGridState implements GridState {
                 columnModel,
                 sortedGrid,
                 overlayModels,
-                runner);
+                runner,
+                cachedRowCount,
+                cachedRecordCount); // reordering records does not change their count
     }
 
     @Override
@@ -785,6 +793,7 @@ public class SparkGridState implements GridState {
                 newRows,
                 overlayModels,
                 runner);
+        // cached row and record counts are not preserved
     }
 
     @Override
@@ -799,16 +808,20 @@ public class SparkGridState implements GridState {
                 newRows,
                 overlayModels,
                 runner);
+        // cached row and record counts are not preserved
     }
 
     @Override
     public GridState limitRows(long rowLimit) {
         JavaPairRDD<Long, Row> limited = RDDUtils.limit(grid, rowLimit);
+        long newCachedRowCount = cachedRowCount == -1 ? -1 : Math.max(cachedRowCount, rowLimit);
         return new SparkGridState(
                 columnModel,
                 limited,
                 overlayModels,
-                runner);
+                runner,
+                newCachedRowCount,
+                -1);
     }
 
     @Override
@@ -835,11 +848,16 @@ public class SparkGridState implements GridState {
             newRows = new PartitionedRDD<Long, Row>(newRows, newPartitioner).asPairRDD(grid.kClassTag(), grid.vClassTag());
         }
 
+        // Compute the new row count
+        long newRowCount = cachedRowCount == -1 ? -1 : Math.max(0, cachedRowCount - rowLimit);
+
         return new SparkGridState(
                 columnModel,
                 newRows,
                 overlayModels,
-                runner);
+                runner,
+                newRowCount,
+                -1);
     }
 
     private static PairFunction<Tuple2<Long, Row>, Long, Row> offsetRowIds(long offset) {
@@ -1054,7 +1072,13 @@ public class SparkGridState implements GridState {
         JavaPairRDD<Long, Row> indexedRows = RDDUtils.zipWithIndex(rows);
         Map<String, OverlayModel> mergedOverlayModels = new HashMap<>(other.getOverlayModels());
         mergedOverlayModels.putAll(overlayModels);
-        return new SparkGridState(merged, indexedRows, mergedOverlayModels, runner);
+
+        long newRowCount = -1;
+        if (cachedRowCount != -1 && sparkGrid.cachedRowCount != -1) {
+            newRowCount = cachedRowCount + sparkGrid.cachedRowCount;
+        }
+        return new SparkGridState(merged, indexedRows, mergedOverlayModels,
+                runner, newRowCount, -1);
     }
 
 }
