@@ -3,6 +3,7 @@ package org.openrefine.model;
 import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -11,6 +12,7 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import org.apache.hadoop.io.compress.GzipCodec;
+import org.apache.spark.Partitioner;
 import org.apache.spark.api.java.JavaPairRDD;
 import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.JavaSparkContext;
@@ -18,6 +20,7 @@ import org.apache.spark.api.java.Optional;
 import org.apache.spark.api.java.function.FlatMapFunction;
 import org.apache.spark.api.java.function.Function;
 import org.apache.spark.api.java.function.Function2;
+import org.apache.spark.api.java.function.PairFunction;
 import org.apache.spark.rdd.RDD;
 import org.apache.spark.storage.StorageLevel;
 import org.openrefine.browsing.facets.Combiner;
@@ -41,6 +44,7 @@ import org.openrefine.util.ParsingUtilities;
 import org.openrefine.util.RDDUtils;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreType;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.google.common.collect.ImmutableMap;
@@ -54,6 +58,7 @@ import scala.reflect.ClassManifestFactory;
  * at a given point in a workflow. This might only contain a subset of the rows
  * if a filter has been applied.
  */
+@JsonIgnoreType
 public class SparkGridState implements GridState {
 	
 	final static protected String METADATA_PATH = "metadata.json";
@@ -147,8 +152,29 @@ public class SparkGridState implements GridState {
     }
     
     /**
+     * If true, calling {@link rowCount()} will
+     * not trigger any Spark job as a cached value
+     * will be returned instead.
+     */
+    @JsonIgnore
+    public boolean isRowCountCached() {
+        return cachedRowCount >= 0;
+    }
+    
+    /**
+     * If true, calling {@link recordCount()} will
+     * not trigger any Spark job as a cached value
+     * will be returned instead.
+     */
+    @JsonIgnore
+    public boolean isRecordCountCached() {
+        return cachedRecordCount >= 0;
+    }
+    
+    /**
      * @return the RDD of indexed rows (a different format than the PairRDD above)
      */
+    @JsonIgnore
     public JavaRDD<IndexedRow> getIndexedRows() {
         return grid.map(t -> new IndexedRow(t._1, t._2));
     }
@@ -308,6 +334,7 @@ public class SparkGridState implements GridState {
     /** 
      * @return the rows grouped into records, indexed by the first row id in the record
      */
+    @JsonIgnore
     public JavaPairRDD<Long, Record> getRecords() {
         if (records == null) {
             records = new RecordRDD(grid, columnModel.getKeyColumnIndex()).toJavaPairRDD();
@@ -476,8 +503,8 @@ public class SparkGridState implements GridState {
 		JavaPairRDD<Long, Row> grid = context.textFile(gridFile.getAbsolutePath())
 		        .map(s -> parseIndexedRow(s.toString()))
 		        .keyBy(p -> p._1)
-		        .mapValues(p -> p._2)
-		        .persist(StorageLevel.MEMORY_ONLY());
+		        .mapValues(p -> p._2);
+		//        .persist(StorageLevel.MEMORY_ONLY());
 
 		return new SparkGridState(metadata.columnModel,
 		        grid,
@@ -796,6 +823,50 @@ public class SparkGridState implements GridState {
                 limited,
                 overlayModels,
                 runner);
+    }
+    
+    @Override
+    public GridState dropRows(long rowLimit) {
+        JavaPairRDD<Long, Row> newRows = grid
+                .filter(wrapRowFilter(RowFilter.limitFilter(rowLimit)))
+                .mapToPair(offsetRowIds(-rowLimit));
+        
+        // Adapt the partitioner to the new row ids
+        if (grid.partitioner().isPresent() && grid.partitioner().get() instanceof SortedRDD.SortedPartitioner) {
+            @SuppressWarnings("unchecked")
+            SortedRDD.SortedPartitioner<Long> oldPartitioner = (SortedRDD.SortedPartitioner<Long>)grid.partitioner().get();
+            List<Long> oldIndices = oldPartitioner.firstKeys();
+            List<Long> newIndices = new ArrayList<>(oldIndices.size());
+            for(int i = 0; i < oldIndices.size(); i++) {
+                long newFirstElement = oldIndices.get(i) - rowLimit;
+                if (newFirstElement < 0 && i < oldIndices.size()-1 && oldIndices.get(i+1) <= rowLimit) {
+                    newIndices.add(null);
+                } else {
+                    newIndices.add(Math.max(0, newFirstElement));
+                }
+            }
+            Partitioner newPartitioner = new SortedRDD.SortedPartitioner<>(oldPartitioner.numPartitions(), newIndices);
+            newRows = new PartitionedRDD<Long, Row>(newRows, newPartitioner).asPairRDD(grid.kClassTag(), grid.vClassTag());
+        }
+                
+        return new SparkGridState(
+                columnModel,
+                newRows,
+                overlayModels,
+                runner);
+    }
+    
+    private static PairFunction<Tuple2<Long, Row>, Long, Row> offsetRowIds(long offset) {
+        return new PairFunction<Tuple2<Long, Row>, Long, Row>() {
+
+            private static final long serialVersionUID = -3138980400353310379L;
+
+            @Override
+            public Tuple2<Long, Row> call(Tuple2<Long, Row> t) throws Exception {
+                return new Tuple2<Long, Row>(t._1 + offset, t._2);
+            }
+            
+        };
     }
     
     private static <T extends Serializable> Function2<Long, Row, T> rowMap(RowChangeDataProducer<T> mapper) {

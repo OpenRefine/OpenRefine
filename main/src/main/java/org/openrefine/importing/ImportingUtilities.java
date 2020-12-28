@@ -46,6 +46,7 @@ import java.nio.charset.Charset;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -860,9 +861,13 @@ public class ImportingUtilities {
             if (exceptions.size() == 0) {
                 
                 ProjectManager.singleton.registerProject(newProject, pm);
-                
-                job.setProjectID(newProject.getId());
-                job.setState("created-project");
+                try {
+                    ProjectManager.singleton.reloadProjectFromWorkspace(projectId);
+                    job.setProjectID(newProject.getId());
+                    job.setState("created-project");
+                } catch (IOException e) {
+                    job.setError(Collections.singletonList(e));
+                }
             } else {
                 job.setError(exceptions);
             }

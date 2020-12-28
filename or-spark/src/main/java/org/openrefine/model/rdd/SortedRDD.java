@@ -1,8 +1,10 @@
 package org.openrefine.model.rdd;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
+import org.apache.commons.lang.Validate;
 import org.apache.spark.Partitioner;
 import org.apache.spark.TaskContext;
 import org.apache.spark.api.java.JavaPairRDD;
@@ -90,6 +92,9 @@ public class SortedRDD <K extends Comparable<K>, V> extends PartitionedRDD<K, V>
         public SortedPartitioner(int numPartitions, List<T> firstRowIds) {
             this.numPartitions = numPartitions;
             this.firstKeys = firstRowIds;
+            if (numPartitions > 1) {
+                Validate.isTrue(firstKeys.size() == numPartitions - 1);
+            }
         }
 
         @Override
@@ -118,7 +123,7 @@ public class SortedRDD <K extends Comparable<K>, V> extends PartitionedRDD<K, V>
         }
         
         public List<T> firstKeys() {
-            return firstKeys;
+            return firstKeys == null ? Collections.emptyList() : firstKeys;
         }
         
     }
