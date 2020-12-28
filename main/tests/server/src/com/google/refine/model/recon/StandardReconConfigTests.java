@@ -167,15 +167,32 @@ public class StandardReconConfigTests extends RefineTest {
     
     @Test
     public void testReconstructNoIdentifierSchemaSpaces() throws IOException {
-    	String json = "{\"mode\":\"standard-service\","
-    			+ "\"service\":\"https://tools.wmflabs.org/openrefine-wikidata/en/api\","
-    			+ "\"type\":null,"
-    			+ "\"autoMatch\":true,"
-    			+ "\"columnDetails\":[],"
-    			+ "\"limit\":0}";
-    	StandardReconConfig config = StandardReconConfig.reconstruct(json);
-    	assertEquals(config.identifierSpace, "http://localhost/identifier");
-    	assertEquals(config.schemaSpace, "http://localhost/schema");
+        String json = "{\"mode\":\"standard-service\","
+                        + "\"service\":\"https://tools.wmflabs.org/openrefine-wikidata/en/api\","
+                        + "\"type\":null,"
+                        + "\"autoMatch\":true,"
+                        + "\"columnDetails\":[],"
+                        + "\"limit\":0}";
+        StandardReconConfig config = StandardReconConfig.reconstruct(json);
+        assertEquals(config.identifierSpace, "http://localhost/identifier");
+        assertEquals(config.schemaSpace, "http://localhost/schema");
+    }
+    
+    
+    @Test
+    public void testReconstructApiKey() throws IOException {
+        String json = "{\"mode\":\"standard-service\","
+                        + "\"service\":\"https://tools.wmflabs.org/openrefine-wikidata/en/api\","
+                        + "\"type\":null,"
+                        + "\"autoMatch\":true,"
+                        + "\"columnDetails\":[],"
+                        + "\"limit\":0,"
+                        + "\"apiKeyName\": \"api_token\","
+                        + "\"apiKeyValue\": \"token_value\""
+                        + "}";
+        StandardReconConfig config = StandardReconConfig.reconstruct(json);
+        assertEquals(config.apiKeyName, "api_token");
+        assertEquals(config.apiKeyValue, "token_value");
     }
     
     @Test
@@ -278,6 +295,61 @@ public class StandardReconConfigTests extends RefineTest {
             assertNull(candidate);
         }
     }
+
+    @Test
+    public void reconApiKeyTest() throws Exception {
+        Project project = createCSVProject("title,director\n"
+                        + "mulholland drive,david lynch");
+
+
+        try (MockWebServer server = new MockWebServer()) {
+            server.start();
+            HttpUrl url = server.url("/openrefine-wikidata/en/api");
+            server.enqueue(new MockResponse().setBody(""));
+            server.enqueue(new MockResponse());
+
+            String configJson = " {\n" +
+                    "        \"mode\": \"standard-service\",\n" +
+                    "        \"service\": \"" + url + "\",\n" +
+                    "        \"identifierSpace\": \"http://www.wikidata.org/entity/\",\n" +
+                    "        \"schemaSpace\": \"http://www.wikidata.org/prop/direct/\",\n" +
+                    "        \"type\": {\n" +
+                    "                \"id\": \"Q11424\",\n" +
+                    "                \"name\": \"film\"\n" +
+                    "        },\n" +
+                    "        \"autoMatch\": true,\n" +
+                    "        \"columnDetails\": [\n" +
+                    "           {\n" +
+                    "             \"column\": \"director\",\n" +
+                    "             \"propertyName\": \"Director\",\n" +
+                    "             \"propertyID\": \"P57\"\n" +
+                    "           }],\n" +
+                    "\"apiKeyName\": \"api_token\"," + 
+                    "\"apiKeyValue\": \"token_value\"" +
+                    "}";
+            StandardReconConfig config = StandardReconConfig.reconstruct(configJson);
+            ReconOperation op = new ReconOperation(EngineConfig.reconstruct(null), "director", config);
+            Process process = op.createProcess(project, new Properties());
+            ProcessManager pm = project.getProcessManager();
+            process.startPerforming(pm);
+            Assert.assertTrue(process.isRunning());
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                Assert.fail("Test interrupted");
+            }
+            Assert.assertFalse(process.isRunning());
+
+            RecordedRequest request1 = server.takeRequest();
+
+            assertNotNull(request1);
+            // Make sure the API token was sent with the correct name & value
+            HttpUrl requestUrl = request1.getRequestUrl();
+            assertTrue(requestUrl.queryParameterNames().contains("api_token"), "No api_token parameter received");
+            assertEquals(requestUrl.queryParameter("api_token"), "token_value", "api_token has wrong value");
+        }
+    }
+
 
     @Test
     public void reconTest() throws Exception {
