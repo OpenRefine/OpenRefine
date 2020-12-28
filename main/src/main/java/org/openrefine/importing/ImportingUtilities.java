@@ -44,6 +44,7 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.text.NumberFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Properties;
 import java.util.zip.GZIPInputStream;
@@ -838,9 +839,13 @@ public class ImportingUtilities {
             if (exceptions.size() == 0) {
 
                 ProjectManager.singleton.registerProject(newProject, pm);
-
-                job.setProjectID(newProject.getId());
-                job.setState("created-project");
+                try {
+                    ProjectManager.singleton.reloadProjectFromWorkspace(projectId);
+                    job.setProjectID(newProject.getId());
+                    job.setState("created-project");
+                } catch (IOException e) {
+                    job.setError(Collections.singletonList(e));
+                }
             } else {
                 job.setError(exceptions);
             }

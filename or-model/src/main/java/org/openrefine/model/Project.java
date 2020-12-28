@@ -58,7 +58,8 @@ public class Project {
     private final History history;
 
     transient private ProcessManager processManager = new ProcessManager();
-    transient private LocalDateTime _lastSave = LocalDateTime.now();
+    // by default, the project has never been saved so far.
+    transient private LocalDateTime _lastSave = LocalDateTime.of(1970, 01, 02, 00, 30, 00);
 
     final static Logger logger = LoggerFactory.getLogger("project");
 

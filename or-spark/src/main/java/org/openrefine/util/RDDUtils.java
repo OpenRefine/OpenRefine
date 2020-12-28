@@ -21,7 +21,6 @@ import scala.reflect.ClassTag;
 
 import org.openrefine.model.Row;
 import org.openrefine.model.rdd.PartitionedRDD;
-import org.openrefine.model.rdd.SortedRDD;
 import org.openrefine.model.rdd.SortedRDD.SortedPartitioner;
 import org.openrefine.model.rdd.ZippedWithIndexRDD;
 
@@ -67,7 +66,7 @@ public class RDDUtils {
      * @return
      */
     public static <T> JavaPairRDD<Long, T> zipWithIndex(JavaRDD<T> rdd) {
-        return SortedRDD.assumeSorted(new ZippedWithIndexRDD<T>(rdd).asPairRDD());
+        return new ZippedWithIndexRDD<T>(rdd).asPairRDD();
     }
 
     /**

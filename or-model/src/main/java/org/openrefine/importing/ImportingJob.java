@@ -418,7 +418,7 @@ public class ImportingJob {
             // then select them all
             if (fileSelection.size() == 0 && count > 0) {
                 for (int i = 0; i < count; i++) {
-                    fileSelection.get(i);
+                    fileSelection.add(i);
                 }
             }
         }

@@ -223,6 +223,25 @@ public abstract class ProjectManager {
     }
 
     /**
+     * Ensures a project is saved in the workspace and its grid states are read from there.
+     * 
+     * @param id
+     *            the project id to load
+     * @throws IOException
+     */
+    public void reloadProjectFromWorkspace(long id) throws IOException {
+        ensureProjectSaved(id);
+        synchronized (this) {
+            Project project = _projects.get(id);
+            if (project != null) {
+                project.dispose();
+            }
+            _projects.remove(id);
+            loadProject(id);
+        }
+    }
+
+    /**
      * Save project metadata to the data store
      * 
      * @param metadata

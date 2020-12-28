@@ -6,11 +6,13 @@ import java.util.Collections;
 import java.util.List;
 
 import org.apache.spark.Partition;
+import org.apache.spark.Partitioner;
 import org.apache.spark.TaskContext;
 import org.apache.spark.api.java.JavaPairRDD;
 import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.rdd.RDD;
 import scala.Function2;
+import scala.Option;
 import scala.Serializable;
 import scala.Tuple2;
 import scala.collection.Iterator;
@@ -24,7 +26,7 @@ import scala.reflect.ClassTag;
  * A RDD which adds an index to its elements. This index is used as key, not as value, unlike Spark's
  * {@link RDD.zipWithIndex()}.
  * 
- * This RDD is suitable for partitioning with {@link SortedRDD}.
+ * This RDD is equipped with a partitioner, from {@link SortedRDD}.
  * 
  * @author Antonin Delpeuch
  *
@@ -36,13 +38,22 @@ public class ZippedWithIndexRDD<T> extends RDD<Tuple2<Long, T>> {
 
     private static final ClassTag<Long> LONG_TAG = ClassManifestFactory$.MODULE$.fromClass(Long.class);
 
+    // length of partitions 0, ..., n-1
     private final List<Long> partitionLengths;
+    // index of the first element in partitions 1, ..., n or null if empty
+    private final List<Long> firstIndices;
     private final ClassTag<T> valueClassTag;
 
     public ZippedWithIndexRDD(RDD<T> parent, ClassTag<Tuple2<Long, T>> tupleClassTag) {
         super(parent, tupleClassTag);
         partitionLengths = fetchLengths(parent);
+        firstIndices = new ArrayList<Long>(partitionLengths.size());
         valueClassTag = parent.elementClassTag();
+        long sum = 0;
+        for (int i = 0; i != partitionLengths.size(); i++) {
+            sum += partitionLengths.get(i);
+            firstIndices.add(i < partitionLengths.size() - 1 && partitionLengths.get(i + 1) == 0 ? null : sum);
+        }
     }
 
     @SuppressWarnings("unchecked")
@@ -87,14 +98,19 @@ public class ZippedWithIndexRDD<T> extends RDD<Tuple2<Long, T>> {
         Partition[] origPartitions = this.firstParent(elementClassTag()).getPartitions();
         Partition[] newPartitions = new Partition[origPartitions.length];
 
-        long offset = 0L;
         for (int i = 0; i != origPartitions.length; i++) {
-            newPartitions[i] = new ZippedWithIndexRDDPartition(origPartitions[i], offset);
-            if (i < origPartitions.length - 1) {
-                offset += partitionLengths.get(i);
+            long offset = 0L;
+            if (i > 0 && firstIndices.get(i - 1) != null) {
+                offset = firstIndices.get(i - 1);
             }
+            newPartitions[i] = new ZippedWithIndexRDDPartition(origPartitions[i], offset);
         }
         return newPartitions;
+    }
+
+    @Override
+    public Option<Partitioner> partitioner() {
+        return Option.apply(new SortedRDD.SortedPartitioner<Long>(firstIndices.size() + 1, firstIndices));
     }
 
     private static <T> Iterator<Tuple2<Long, T>> zipIteratorWithIndex(Iterator<T> iterator, long startIndex) {
