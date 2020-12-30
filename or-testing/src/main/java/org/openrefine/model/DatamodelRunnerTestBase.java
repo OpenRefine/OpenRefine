@@ -1092,4 +1092,13 @@ public abstract class DatamodelRunnerTestBase {
             }
         }
     }
+    
+    @Test
+    public void testCaching() {
+        Assert.assertFalse(simpleGrid.isCached());
+        simpleGrid.cache();
+        Assert.assertTrue(simpleGrid.isCached());
+        simpleGrid.uncache();
+        Assert.assertFalse(simpleGrid.isCached());
+    }
 }
