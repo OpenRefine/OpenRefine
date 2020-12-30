@@ -1,5 +1,5 @@
 {
-    "name": "OpenRefine-Cypress-Test-Suite",
+    "name": "openrefine-cypress-test-suite",
     "version": "1.0.0",
     "description": "Cypress tests for OpenRefine",
     "license": "BSD-3-Clause",
