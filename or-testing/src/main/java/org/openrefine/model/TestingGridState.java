@@ -47,6 +47,11 @@ public class TestingGridState implements GridState {
     private List<Row> rows;
     private List<Record> records;
 
+    // the following is just to emulate the behaviour of a real implementation,
+    // since in this testing one everything is always loaded in memory (cached).
+    // This boolean indicates whether we pretend that the grid is cached or not.
+    private boolean isCached = false;
+
     public TestingGridState(ColumnModel columnModel, List<Row> rows, Map<String, OverlayModel> overlayModels) {
         this.columnModel = columnModel;
         this.rows = rows;
@@ -591,6 +596,22 @@ public class TestingGridState implements GridState {
         Map<String, OverlayModel> newOverlayModels = new HashMap<>(other.getOverlayModels());
         newOverlayModels.putAll(overlayModels);
         return new TestingGridState(merged, newRows, newOverlayModels);
+    }
+
+    @Override
+    public boolean isCached() {
+        return isCached;
+    }
+
+    @Override
+    public void uncache() {
+        isCached = false;
+    }
+
+    @Override
+    public boolean cache() {
+        isCached = true;
+        return true;
     }
 
 }

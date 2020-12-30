@@ -29,6 +29,7 @@ import org.apache.spark.api.java.function.Function;
 import org.apache.spark.api.java.function.Function2;
 import org.apache.spark.api.java.function.PairFunction;
 import org.apache.spark.rdd.RDD;
+import org.apache.spark.storage.StorageLevel;
 import scala.Tuple2;
 import scala.reflect.ClassManifestFactory;
 
@@ -1079,6 +1080,22 @@ public class SparkGridState implements GridState {
         }
         return new SparkGridState(merged, indexedRows, mergedOverlayModels,
                 runner, newRowCount, -1);
+    }
+
+    @Override
+    public boolean isCached() {
+        return grid.getStorageLevel().useMemory();
+    }
+
+    @Override
+    public void uncache() {
+        grid.unpersist(true);
+    }
+
+    @Override
+    public boolean cache() {
+        grid.persist(StorageLevel.MEMORY_ONLY());
+        return isCached();
     }
 
 }

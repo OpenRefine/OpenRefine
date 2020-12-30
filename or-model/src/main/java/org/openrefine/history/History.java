@@ -76,6 +76,7 @@ public class History {
         _entries = new ArrayList<>();
         _states = new ArrayList<>();
         _states.add(initialGrid);
+        initialGrid.cache();
         _position = 0;
         _dataStore = dataStore;
     }
@@ -143,6 +144,7 @@ public class History {
     public void addEntry(HistoryEntry entry) throws DoesNotApplyException {
         // Any new change will clear all future entries.
         if (_position != _entries.size()) {
+            // TODO uncache all the grid states that we are removing
             _entries = _entries.subList(0, _position);
             _states = _states.subList(0, _position + 1);
         }

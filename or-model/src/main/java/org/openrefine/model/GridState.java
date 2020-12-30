@@ -468,6 +468,25 @@ public interface GridState {
      */
     public GridState concatenate(GridState other);
 
+    // Memory management
+
+    /**
+     * Is this grid cached in memory? If not, its contents are stored on disk.
+     */
+    public boolean isCached();
+
+    /**
+     * Free up any memory used to cache this grid in memory.
+     */
+    public void uncache();
+
+    /**
+     * Attempt to cache this grid in memory. If the grid is too big, this can fail.
+     * 
+     * @return whether the grid was actually cached in memory.
+     */
+    public boolean cache();
+
     /**
      * Utility class to represent the outcome of a partial count: the number of records/rows processed, and how many of
      * these fulfilled the condition.
