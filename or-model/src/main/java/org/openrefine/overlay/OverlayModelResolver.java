@@ -46,5 +46,14 @@ public class OverlayModelResolver extends TypeIdResolverBase {
 	public Id getMechanism() {
 		return Id.NAME;
 	}
+	
+	/**
+	 * Exposed for deserialization of legacy projects.
+	 * @param id
+	 * @return
+	 */
+	public static Class<? extends OverlayModel> getClass(String id) {
+	    return s_overlayModelClasses.get(id);
+	}
 
 }
