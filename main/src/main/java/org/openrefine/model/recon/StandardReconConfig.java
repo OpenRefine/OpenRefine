@@ -647,4 +647,23 @@ public class StandardReconConfig extends ReconConfig {
     public String getMode() {
         return "standard-service";
     }
+
+    public boolean equals(Object other) {
+        if (!(other instanceof StandardReconConfig)) {
+            return false;
+        }
+        StandardReconConfig otherConfig = (StandardReconConfig) other;
+        return (service.equals(otherConfig.service) &&
+                identifierSpace.equals(otherConfig.identifierSpace) &&
+                schemaSpace.equals(otherConfig.schemaSpace) &&
+                ((typeID == null && otherConfig.typeID == null) || typeID.equals(otherConfig.typeID)) &&
+                ((typeName == null && otherConfig.typeName == null) || typeName.equals(otherConfig.typeName)) &&
+                autoMatch == otherConfig.autoMatch &&
+                columnDetails.equals(otherConfig.columnDetails) &&
+                limit == otherConfig.limit);
+    }
+
+    public int hashCode() {
+        return service.hashCode() + 11 * columnDetails.hashCode() + 27 * typeID.hashCode();
+    }
 }

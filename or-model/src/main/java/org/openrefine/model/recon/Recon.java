@@ -33,6 +33,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package org.openrefine.model.recon;
 
+import java.io.IOException;
 import java.io.Serializable;
 import java.util.Collections;
 import java.util.HashMap;
@@ -315,7 +316,7 @@ public class Recon implements HasFields, Serializable {
         return null;
     }
 
-    static public Recon loadStreaming(String s) throws Exception {
+    static public Recon loadStreaming(String s) throws IOException {
         return ParsingUtilities.mapper.readValue(s, Recon.class);
     }
 

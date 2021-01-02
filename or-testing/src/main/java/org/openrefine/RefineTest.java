@@ -36,10 +36,7 @@ package org.openrefine;
 import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.apache.commons.io.FileUtils;
@@ -50,6 +47,9 @@ import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.BeforeSuite;
 
+import org.openrefine.expr.Evaluable;
+import org.openrefine.expr.MetaParser;
+import org.openrefine.expr.ParsingException;
 import org.openrefine.io.FileProjectManager;
 import org.openrefine.model.Cell;
 import org.openrefine.model.ColumnMetadata;
@@ -75,6 +75,7 @@ public class RefineTest extends PowerMockTestCase {
     protected File workspaceDir;
 
     private DatamodelRunner runner;
+    private Properties bindings;
 
     /**
      * Method that subclasses can override to change the datamodel runner used in the test.

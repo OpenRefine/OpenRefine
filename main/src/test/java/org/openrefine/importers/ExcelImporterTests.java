@@ -136,9 +136,6 @@ public class ExcelImporterTests extends ImporterTest {
 
         Assert.assertEquals((String) rows.get(1).getCellValue(4), " Row 1 Col 5");
         Assert.assertNull((String) rows.get(1).getCellValue(5));
-
-        assertTrue(ParsingUtilities.isDate(rows.get(1).getCellValue(2))); // Calendar
-        assertTrue(ParsingUtilities.isDate(rows.get(1).getCellValue(3))); // Date
     }
 
     @Test
