@@ -244,6 +244,7 @@
     "core-dialogs/sql-exporter": "SQL Exporter",
     "core-dialogs/custom-tab-exp": "Custom Tabular Exporter",
     "core-dialogs/select-columns-dialog": "Select columns",
+    "core-dialogs/unstar-expression": "Unstar expression?",
     "core-dialogs/content": "Content",
     "core-dialogs/download": "Download",
     "core-dialogs/upload": "Upload",

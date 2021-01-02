@@ -350,15 +350,30 @@ ExpressionPreviewDialog.Widget.prototype._renderStarredExpressions = function(da
         var o = Scripting.parse(entry.code);
         
         $('<a href="javascript:{}">'+$.i18n('core-dialogs/remove')+'</a>').appendTo(tr.insertCell(0)).click(function() {
-            Refine.postCSRF(
-                "command/core/toggle-starred-expression",
-                { expression: entry.code, returnList: true },
-                function(data) {
-                    self._renderStarredExpressions(data);
-                    self._renderExpressionHistoryTab();
-                },
-                "json"
-            );
+            var removeExpression = DialogSystem.createDialog();
+                removeExpression.width("250px");
+            var removeExpressionHead = $('<div></div>').addClass("dialog-header").text($.i18n('core-dialogs/unstar-expression'))
+                .appendTo(removeExpression);
+            var removeExpressionFooter = $('<div></div>').addClass("dialog-footer").appendTo(removeExpression);
+
+            $('<button class="button"></button>').html($.i18n('core-buttons/ok')).click(function() {
+                Refine.postCSRF(
+                    "command/core/toggle-starred-expression",
+                    { expression: entry.code, returnList: true },
+                    function(data) {
+                        self._renderStarredExpressions(data);
+                        self._renderExpressionHistoryTab();
+                    },
+                    "json"
+                );
+                DialogSystem.dismissUntil(DialogSystem._layers.length - 1);
+            }).appendTo(removeExpressionFooter);
+
+            $('<button class="button" style="float:right;"></button>').text($.i18n('core-buttons/cancel')).click(function() {
+                DialogSystem.dismissUntil(DialogSystem._layers.length - 1);
+            }).appendTo(removeExpressionFooter);
+
+            this._level = DialogSystem.showDialog(removeExpression);
         });
         
         $('<a href="javascript:{}">Reuse</a>').appendTo(tr.insertCell(1)).click(function() {
