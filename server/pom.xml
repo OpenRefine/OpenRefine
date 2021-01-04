@@ -175,7 +175,7 @@
       <version>${jetty.version}</version>
     </dependency>
     <dependency>
-      <groupId>com.codeberry.jdatapath</groupId>
+      <groupId>org.openrefine.dependencies</groupId>
       <artifactId>jdatapath</artifactId>
       <version>alpha2</version>
     </dependency>
