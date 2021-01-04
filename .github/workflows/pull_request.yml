@@ -1,9 +1,9 @@
-name: OpenRefine
+name: Continuous Integration
 
 on: [pull_request_target]
 
 jobs:
-  build:
+  server_tests:
     strategy:
       matrix:
         java: [ 8, 14 ]
@@ -72,11 +72,11 @@ jobs:
       run: |
         mvn prepare-package -DskipTests=true
         mvn jacoco:report coveralls:report -DrepoToken=${{ secrets.COVERALLS_TOKEN }} -DpullRequest=${{ github.event.number }}
-  cypress_tests:
+
+  ui_tests:
     strategy:
       matrix:
           browser: ['chrome']
-
     runs-on: ubuntu-latest
 
     steps:
