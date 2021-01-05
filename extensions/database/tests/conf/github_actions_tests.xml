@@ -1,32 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <suite name="DatabaseExtensionUnitTestSuite">
-    <!--
-        To test the database extension against a particular
-        database, provide the connection settings below,
-        and remove the <exclude /> tag which corresponds
-        to the database to test. All tests which rely on
-        this database will then run.
-    -->
-
     <parameter name = "mySqlDbName" value="test_db"/> 
     <parameter name = "mySqlDbHost" value="127.0.0.1"/> 
-    <parameter name = "mySqlDbPort" value="3306"/> 
+    <parameter name = "mySqlDbPort" value="MYSQL_PORT"/> 
     <parameter name = "mySqlDbUser" value="root"/>
-    <parameter name = "mySqlDbPassword" value=""/>
+    <parameter name = "mySqlDbPassword" value="root"/>
     <parameter name = "mySqlTestTable" value="test_table"/>
     
     <parameter name = "pgSqlDbName" value="test_db"/> 
-    <parameter name = "pgSqlDbHost" value="127.0.0.1"/> 
-    <parameter name = "pgSqlDbPort" value="5432"/> 
+    <parameter name = "pgSqlDbHost" value="127.0.0.11"/> 
+    <parameter name = "pgSqlDbPort" value="POSTGRES_PORT"/> 
     <parameter name = "pgSqlDbUser" value="postgres"/>
-    <parameter name = "pgSqlDbPassword" value=""/>
+    <parameter name = "pgSqlDbPassword" value="postgres"/>
     <parameter name = "pgSqlTestTable" value="test_table"/>
     
     <parameter name = "mariadbDbName" value="test_db"/> 
     <parameter name = "mariadbDbHost" value="127.0.0.1"/> 
-    <parameter name = "mariadbDbPort" value="3306"/> 
+    <parameter name = "mariadbDbPort" value="MYSQL_PORT"/> 
     <parameter name = "mariadbDbUser" value="root"/>
-    <parameter name = "mariadbDbPassword" value=""/>
+    <parameter name = "mariadbDbPassword" value="root"/>
     <parameter name = "mariadbTestTable" value="test_table"/>
 
     <parameter name = "sqliteDbName" value="extension_test_db.sqlite"/>
@@ -39,12 +31,8 @@
     <test name="DatabaseExtensionUnitTest">
         <groups>
             <run>
-                <exclude name="requiresMySQL"/>
-                <exclude name="requiresPgSQL"/>
-                <exclude name="requiresMariaDB" />
-                <exclude name="requiresSQLite" />
             </run>
-        </groups> <!--
+        </groups> 
         <classes>
             <class name="com.google.refine.extension.database.DatabaseImportControllerTest"/>
             <class name="com.google.refine.extension.database.DatabaseServiceTest"/>
@@ -60,10 +48,8 @@
             <class name="com.google.refine.extension.database.mysql.MySQLDatabaseServiceTest"/>
             <class name="com.google.refine.extension.database.pgsql.PgSQLConnectionManagerTest"/>
             <class name="com.google.refine.extension.database.pgsql.PgSQLDatabaseServiceTest" />
-        </classes> -->
-        <packages>
-          <package name="org.openrefine.wikidata.*" />
-        </packages>
-
+            <class name="com.google.refine.extension.database.sqlite.SQLiteConnectionManagerTest"/>
+            <class name="com.google.refine.extension.database.sqlite.SQLiteDatabaseServiceTest" />
+        </classes>
     </test>
 </suite>

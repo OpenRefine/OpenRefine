@@ -192,7 +192,7 @@
     "core-dialogs/use-this-val": "この値を使う",
     "core-dialogs/cells-of-row": "現在の行のcells: row.cellsの別名です。特定のセルは、cells.<column name>かcells[column name]でアクセスできます.",
     "core-dialogs/for-include-drop-statement-checkbox": "Drop文を含める",
-    "core-dialogs/ngram-radius": "ngram半径;",
+    "core-dialogs/ngram-radius": "半径&nbsp;",
     "core-dialogs/processing": "処理中…",
     "core-dialogs/row-index": "現在の行のindex（row.indexの別名）",
     "core-dialogs/ignore-facets": "ファセットやフィルタを無視し、すべての行を出力",
