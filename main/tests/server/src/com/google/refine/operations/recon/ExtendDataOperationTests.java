@@ -38,9 +38,7 @@ import static org.mockito.Mockito.mock;
 import static org.powermock.api.mockito.PowerMockito.mockStatic;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.StringWriter;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -49,7 +47,6 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 
-import org.apache.commons.io.IOUtils;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 import org.powermock.api.mockito.PowerMockito;
@@ -225,7 +222,6 @@ public class ExtendDataOperationTests extends RefineTest {
      * Test to fetch simple strings
      * @throws Exception 
      */
-    
     @BeforeMethod
     public void mockHttpCalls() throws Exception {
     	mockStatic(ReconciledDataExtensionJob.class);
@@ -236,9 +232,9 @@ public class ExtendDataOperationTests extends RefineTest {
 				return fakeHttpCall(invocation.getArgument(0), invocation.getArgument(1));
 			}
     	};
-    	PowerMockito.doAnswer(mockedResponse).when(ReconciledDataExtensionJob.class, "performQuery", anyString(), anyString());
+    	PowerMockito.doAnswer(mockedResponse).when(ReconciledDataExtensionJob.class, "postExtendQuery", anyString(), anyString());
     }
-    
+
     @AfterMethod
     public void cleanupHttpMocks() {
     	mockedResponses.clear();

@@ -21,7 +21,7 @@ public class DatabaseTestConfig extends DBExtensionTests {
     @BeforeSuite
     @Parameters({ "mySqlDbName", "mySqlDbHost", "mySqlDbPort", "mySqlDbUser", "mySqlDbPassword", "mySqlTestTable",
                   "pgSqlDbName", "pgSqlDbHost", "pgSqlDbPort", "pgSqlDbUser", "pgSqlDbPassword", "pgSqlTestTable",
-                  "mariadbDbName", "mariadbDbHost", "mariadbDbPort", "mariadbyDbUser", "mariadbDbPassword", "mariadbTestTable",
+                  "mariadbDbName", "mariadbDbHost", "mariadbDbPort", "mariadbDbUser", "mariadbDbPassword", "mariadbTestTable",
                   "sqliteDbName", "sqliteTestTable"})
     public void beforeSuite(
             @Optional(DEFAULT_MYSQL_DB_NAME)   String mySqlDbName,     @Optional(DEFAULT_MYSQL_HOST)  String mySqlDbHost, 
@@ -33,7 +33,7 @@ public class DatabaseTestConfig extends DBExtensionTests {
             @Optional(DEFAULT_PGSQL_PASSWORD)  String pgSqlDbPassword, @Optional(DEFAULT_TEST_TABLE)  String pgSqlTestTable,
             
             @Optional(DEFAULT_MARIADB_NAME)      String mariadbDbName,     @Optional(DEFAULT_MARIADB_HOST)  String mariadbDbHost, 
-            @Optional(DEFAULT_MARIADB_PORT)      String mariadbDbPort,     @Optional(DEFAULT_MARIADB_USER)  String mariadbyDbUser,
+            @Optional(DEFAULT_MARIADB_PORT)      String mariadbDbPort,     @Optional(DEFAULT_MARIADB_USER)  String mariadbDbUser,
             @Optional(DEFAULT_MARIADB_PASSWORD)  String mariadbDbPassword, @Optional(DEFAULT_TEST_TABLE)    String mariadbTestTable,
 
             @Optional(DEFAULT_SQLITE_DB_NAME) String sqliteDbName, @Optional(DEFAULT_TEST_TABLE) String sqliteTestTable)
@@ -64,7 +64,7 @@ public class DatabaseTestConfig extends DBExtensionTests {
         mariadbDbConfig.setDatabasePassword(mariadbDbPassword);
         mariadbDbConfig.setDatabasePort(Integer.parseInt(mariadbDbPort));
         mariadbDbConfig.setDatabaseType(MariaDBDatabaseService.DB_NAME);
-        mariadbDbConfig.setDatabaseUser(mariadbyDbUser);
+        mariadbDbConfig.setDatabaseUser(mariadbDbUser);
         mariadbDbConfig.setUseSSL(false);
 
         sqliteDbConfig = new DatabaseConfiguration();

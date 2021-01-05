@@ -163,7 +163,7 @@
     "core-dialogs/idling": "בהמתנה…",
     "core-dialogs/updating": "מתבצע עדכון…",
     "core-dialogs/scatterplot-matrix": "טבלת פיזור",
-    "core-dialogs/focusing-on": "התמקדות ב",
+    "core-dialogs/focusing-on": "התמקדות על",
     "core-dialogs/processing": "מתבצע עיבוד…",
     "core-dialogs/error-getColumnInfo": "שגיאה בביצוע 'get-columns-info'",
     "core-dialogs/no-column-dataset": "אין טורם בצביר נתונים זה",
@@ -171,12 +171,12 @@
     "core-dialogs/logarithmic-plot": "הצגה לוגריטמית",
     "core-dialogs/rotated-counter-clock": "הוסב ב-45 מעלות בניגוד ללכיוון השעון",
     "core-dialogs/no-rotation": "ללא סיבוב",
-    "core-dialogs/rotated-clock": "הוסב ב-45 מעלות עם כיוון השעון",
+    "core-dialogs/rotated-clock": "הוסב ב־45 מעלות עם כיוון השעון",
     "core-dialogs/small-dot": "גודל הנקודה הקטנה",
     "core-dialogs/regular-dot": "גודל נקודה רגילה",
     "core-dialogs/big-dot": "גודל נקודה גדולה",
-    "core-dialogs/cell-fields": "בתא הנוכחי, יש כמה שדות: 'value', 'recon' and 'errorMessage'.",
-    "core-dialogs/cell-value": "ערך התא הנוכחי. זהו קיצור דרך עבור 'cell.value'.",
+    "core-dialogs/cell-fields": "בתא הנוכחי, יש מספר שדות: ‚value’,‏ ‚recon’ ו־‚errorMessage’.",
+    "core-dialogs/cell-value": "ערך התא הנוכחי. זהו קיצור דרך עבור ‚cell.value’.",
     "core-dialogs/row-fields": "בשורה הנוכחית, יש 5 שדות: 'flagged', 'starred', 'index', 'cells', 'record'.",
     "core-dialogs/cells-of-row": "התאים של השורה הנוכחית. זהו קיצור דרך ל־‚row.cells’. אפשר להחזיר תא מסוים בעזרת ‚cells.<column name>‎’ אם <column name> היא מילה בודדת, או עם ‚cells[\"<column name>\"]’ אם יותר.",
     "core-dialogs/row-index": "אינדקס השורה הנוכחית. זהו קיצור דרך ל- 'row.index'.",
@@ -697,5 +697,6 @@
     "core-views/blank-records": "רשומות ריקות לפי עמודה",
     "core-views/blank-values": "ערכים ריקים לפי עמודה",
     "core-views/blank-rows": "שורות ריקות",
-    "core-views/goto-page": "$1 מתוך {{plural:$2|דף אחד|$2 דפים}}"
+    "core-views/goto-page": "$1 מתוך {{plural:$2|דף אחד|$2 דפים}}",
+    "core-dialogs/focusing-on-column": " (התמקדות על $1)"
 }

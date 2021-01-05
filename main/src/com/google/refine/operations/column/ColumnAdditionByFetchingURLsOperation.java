@@ -37,27 +37,13 @@ import static com.google.common.base.Strings.isNullOrEmpty;
 
 import java.io.IOException;
 import java.io.Serializable;
-import java.net.MalformedURLException;
-import java.net.URISyntaxException;
-import java.net.URL;
-import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 
-import org.apache.http.Header;
-import org.apache.http.HttpEntity;
-import org.apache.http.StatusLine;
-import org.apache.http.client.config.RequestConfig;
-import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.entity.ContentType;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClientBuilder;
-import org.apache.http.impl.client.HttpClients;
-import org.apache.http.message.BasicHeader;
-import org.apache.http.util.EntityUtils;
+import org.apache.hc.core5.http.Header;
+import org.apache.hc.core5.http.message.BasicHeader;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -65,7 +51,6 @@ import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 
-import com.google.refine.RefineServlet;
 import com.google.refine.browsing.Engine;
 import com.google.refine.browsing.EngineConfig;
 import com.google.refine.browsing.FilteredRows;
@@ -86,7 +71,7 @@ import com.google.refine.operations.EngineDependentOperation;
 import com.google.refine.operations.OnError;
 import com.google.refine.process.LongRunningProcess;
 import com.google.refine.process.Process;
-import com.google.refine.util.ParsingUtilities;
+import com.google.refine.util.HttpClient;
 
 
 public class ColumnAdditionByFetchingURLsOperation extends EngineDependentOperation {
@@ -117,8 +102,8 @@ public class ColumnAdditionByFetchingURLsOperation extends EngineDependentOperat
     final protected boolean    _cacheResponses;
     final protected List<HttpHeader>  _httpHeadersJson;
     private Header[] httpHeaders = new Header[0];
-    final private RequestConfig defaultRequestConfig;
-    private HttpClientBuilder httpClientBuilder;
+    private HttpClient _httpClient;
+
 
     @JsonCreator
     public ColumnAdditionByFetchingURLsOperation(
@@ -163,22 +148,8 @@ public class ColumnAdditionByFetchingURLsOperation extends EngineDependentOperat
             }
         }
         httpHeaders = headers.toArray(httpHeaders);
+        _httpClient = new HttpClient(_delay);
 
-        defaultRequestConfig = RequestConfig.custom()
-                .setConnectTimeout(30 * 1000)
-                .setConnectionRequestTimeout(30 * 1000)
-                .setSocketTimeout(10 * 1000).build();
-
-        // TODO: Placeholder for future Basic Auth implementation
-//        CredentialsProvider credsProvider = new BasicCredentialsProvider();
-//        credsProvider.setCredentials(new AuthScope(host, 443),
-//                new UsernamePasswordCredentials(user, password));
-
-        httpClientBuilder = HttpClients.custom()
-                .setUserAgent(RefineServlet.getUserAgent())
-                .setDefaultRequestConfig(defaultRequestConfig);
-//               .setConnectionBackoffStrategy(ConnectionBackoffStrategy)
-//               .setDefaultCredentialsProvider(credsProvider);
     }
 
     @JsonProperty("newColumnName")
@@ -281,20 +252,7 @@ public class ColumnAdditionByFetchingURLsOperation extends EngineDependentOperat
                 .build(
                      new CacheLoader<String, Serializable>() {
                         public Serializable load(String urlString) throws Exception {
-                            Serializable result = fetch(urlString);
-                            try {
-                                // Always sleep for the delay, no matter how long the
-                                // request took. This is more responsible than substracting
-                                // the time spend requesting the URL, because it naturally
-                                // slows us down if the server is busy and takes a long time
-                                // to reply.
-                                if (_delay > 0) {
-                                    Thread.sleep(_delay);
-                                }
-                            } catch (InterruptedException e) {
-                                result = null;
-                            }
-
+                            Serializable result = fetch(urlString, httpHeaders);
                             if (result == null) {
                                 // the load method should not return any null value
                                 throw new Exception("null result returned by fetch");
@@ -335,9 +293,9 @@ public class ColumnAdditionByFetchingURLsOperation extends EngineDependentOperat
 
                 Serializable response = null;
                 if (_urlCache != null) {
-                    response = cachedFetch(urlString); // TODO: Why does this need a separate method?
+                    response = cachedFetch(urlString);
                 } else {
-                    response = fetch(urlString);
+                    response = fetch(urlString, httpHeaders);
                 }
 
                 if (response != null) {
@@ -380,67 +338,18 @@ public class ColumnAdditionByFetchingURLsOperation extends EngineDependentOperat
             }
         }
 
-        Serializable fetch(String urlString) {
-            HttpGet httpGet;
-
-            try {
-                // Use of URL constructor below is purely to get additional error checking to mimic
-                // previous behavior for the tests.
-                httpGet = new HttpGet(new URL(urlString).toURI());
-            } catch (IllegalArgumentException | MalformedURLException | URISyntaxException e) {
-                return null;
-            }
-
-            try {
-                httpGet.setHeaders(httpHeaders);
-                httpGet.setConfig(defaultRequestConfig);
-
-                CloseableHttpClient httpclient = httpClientBuilder.build();
-
-                CloseableHttpResponse response = null;
+        Serializable fetch(String urlString, Header[] headers) {
+            try { //HttpClients.createDefault()) {
                 try {
-                    response = httpclient.execute(httpGet);
-
-                    HttpEntity entity = response.getEntity();
-                    if (entity == null) {
-                        throw new Exception("No content found in " + httpGet.getURI().toString());
-                    }
-
-                    String encoding = null;
-
-                    if (entity.getContentEncoding() != null) {
-                        encoding = entity.getContentEncoding().getValue();
-                    } else {
-                        Charset charset = ContentType.getOrDefault(entity).getCharset();
-                        if (charset != null) {
-                            encoding = charset.name();
-                        }
-                    }
-
-                    String result =  ParsingUtilities.inputStreamToString(
-                            entity.getContent(), (encoding == null) || ( encoding.equalsIgnoreCase("\"UTF-8\"")) ? "UTF-8" : encoding);
-
-                    EntityUtils.consume(entity);
-                    return result;
-
+                    return _httpClient.getAsString(urlString, headers);
                 } catch (IOException e) {
-                    String message;
-                    if (response == null) {
-                        message = "Unknown HTTP error " + e.getLocalizedMessage();
-                    } else {
-                        StatusLine status = response.getStatusLine();
-                        HttpEntity errorEntity = response.getEntity();
-                        String errorString = ParsingUtilities.inputStreamToString(errorEntity.getContent());
-                        message = String.format("HTTP error %d : %s | %s", status.getStatusCode(),
-                                status.getReasonPhrase(),
-                                errorString);
-                    }
-                    return _onError == OnError.StoreError ? new EvalError(message) : null;
+                    return _onError == OnError.StoreError ? new EvalError(e) : null;
                 }
             } catch (Exception e) {
                 return _onError == OnError.StoreError ? new EvalError(e.getMessage()) : null;
             }
         }
+
 
         RowVisitor createRowVisitor(List<CellAtRow> cellsAtRows) {
             return new RowVisitor() {
@@ -497,4 +406,5 @@ public class ColumnAdditionByFetchingURLsOperation extends EngineDependentOperat
             }.init(cellsAtRows);
         }
     }
+
 }
