@@ -341,7 +341,7 @@ Examples:
 | `isError("abc")`	| false |
 | `isError(1 / 0)`	| true  |
 
-Remember that these are controls and not functions. So you can’t use dot notation (the `e.isX()` syntax).
+Remember that these are controls and not functions: you can’t use dot notation (the `e.isX()` syntax).
 
 ### Constants
 |Name |Meaning |
@@ -352,7 +352,7 @@ Remember that these are controls and not functions. So you can’t use dot notat
 
 ## Jython
 
-Jython 2.7.2 comes bundled with the default installation of OpenRefine 3.4.1. You can add libraries and code by following [this tutorial](https://github.com/OpenRefine/OpenRefine/wiki/Extending-Jython-with-pypi-modules). A large number of Python files (.py or .pyc) are compatible. Python code that depends on C bindings will not work in OpenRefine, which uses Java / Jython only. Since Jython is essentially Java, you can also import Java libraries and utilize those. Remember to restart OpenRefine, so that new Jython/Python libraries are initialized during Butterfly's startup.
+Jython 2.7.2 comes bundled with the default installation of OpenRefine 3.4.1. You can add libraries and code by following [this tutorial](https://github.com/OpenRefine/OpenRefine/wiki/Extending-Jython-with-pypi-modules). A large number of Python files (`.py` or `.pyc`) are compatible. Python code that depends on C bindings will not work in OpenRefine, which uses Java / Jython only. Since Jython is essentially Java, you can also import Java libraries and utilize those. You will need to restart OpenRefine, so that new Jython or Python libraries are initialized during startup.
 
 OpenRefine now has [most of the Jsoup.org library built into GREL functions](#jsoup-xml-and-html-parsing-functions), for parsing and working with HTML elements and extraction.
 
@@ -374,7 +374,7 @@ Fields have to be accessed using the bracket operator rather than the dot operat
   return cells["col1"]["value"]
 ```
 
-To access the Levenshtein distance between the reconciled value and the cell value (?) use the [recon variables](#reconciliation):
+To access the [edit distance](reconciling#reconciliation-facets) between a reconciled value and an original cell value, use [recon variables](#reconciliation):
 
 ```
   return cell["recon"]["features"]["nameLevenshtein"]
