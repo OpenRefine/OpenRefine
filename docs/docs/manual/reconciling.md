@@ -178,7 +178,7 @@ For example, if you have a column of chemical elements identified by name, you c
 
 ![A screenshare of elements fetching related information.](/img/reconcileelements.gif)
 
-Once you have pulled reconciliation values and selected one for each cell, selecting <span class="menuItems">Add column from reconciled values...</span> will bring up a window to choose which information you’d like to import into new columns. You can manually enter desired properties, or select from a list of suggestions. 
+Once you have chosen reconciliation matches for your cells, selecting <span class="menuItems">Add column from reconciled values...</span> will bring up a window to choose which related information you’d like to import into new columns. You can manually enter desired properties, or select from a list of suggestions. 
 
 The quality of the suggested properties will depend on how you have reconciled your data beforehand: reconciling against a specific type will provide you with the associated properties of that type. For example, GND suggests elements about the “people” type after you've reconciled with it, such as their parents, native languages, children, etc. 
 
@@ -186,7 +186,7 @@ The quality of the suggested properties will depend on how you have reconciled y
 
 If you have left any values unreconciled in your column, you will see “&lt;not reconciled>” in the preview. These will generate blank cells if you continue with the column addition process. 
 
-This process may pull more than one property per row in your data (such as multiple children's names), so you may need to switch into records mode after you've added columns.
+This process may pull more than one property per row in your data (such as multiple occupations), so you may need to switch into records mode after you've added columns.
 
 ### Add columns by fetching URLs
 
