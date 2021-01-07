@@ -45,7 +45,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.apache.tools.tar.TarOutputStream;
+import org.apache.commons.compress.archivers.tar.TarArchiveOutputStream;
 import org.openrefine.history.HistoryEntryManager;
 import org.openrefine.model.Project;
 import org.openrefine.model.changes.ChangeDataStore;
@@ -53,7 +53,6 @@ import org.openrefine.preference.PreferenceStore;
 import org.openrefine.preference.TopList;
 import org.openrefine.util.GetProjectIDException;
 import org.openrefine.util.ParsingUtilities;
-import org.apache.commons.compress.archivers.tar.TarArchiveOutputStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -234,17 +233,7 @@ public abstract class ProjectManager {
      * @param id the project id to load
      * @throws IOException
      */
-    public void reloadProjectFromWorkspace(long id) throws IOException {
-        ensureProjectSaved(id);
-        synchronized(this) {
-            Project project = _projects.get(id);
-            if (project != null) {
-                project.dispose();
-            }
-            _projects.remove(id);
-            loadProject(id);
-        }
-    }
+    public abstract void reloadProjectFromWorkspace(long id) throws IOException;
 
     /**
      * Save project metadata to the data store

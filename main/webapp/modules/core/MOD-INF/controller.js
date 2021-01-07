@@ -226,6 +226,7 @@ function registerImporting() {
   FR.registerFormat("text/json", "core-import-formats/text/json", "JsonParserUI", new Packages.org.openrefine.importers.JsonImporter(runner));
   FR.registerFormat("text/marc", "core-import-formats/text/marc", "XmlParserUI", new Packages.org.openrefine.importers.MarcImporter(runner));
   FR.registerFormat("text/wiki", "core-import-formats/text/wiki", "WikitextParserUI", new Packages.org.openrefine.importers.WikitextImporter(runner));
+  FR.registerFormat("openrefine-legacy", null, null, new Packages.org.openrefine.importers.LegacyProjectImporter(runner));
 
   FR.registerFormat("binary", "core-import-formats/binary"); // generic format, no parser to handle it
 

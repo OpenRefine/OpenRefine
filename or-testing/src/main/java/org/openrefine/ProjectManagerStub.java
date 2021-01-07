@@ -114,7 +114,11 @@ public class ProjectManagerStub extends ProjectManager {
     @Override
     public void exportProject(long projectId, TarArchiveOutputStream tos) throws IOException {
         // empty
-        
+    }
+
+    @Override
+    public void reloadProjectFromWorkspace(long id) throws IOException {
+        // empty
     }
 
 }

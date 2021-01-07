@@ -38,7 +38,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 
 public class LegacyProjectImporter extends InputStreamImporter {
 	
-	protected LegacyProjectImporter(DatamodelRunner runner) {
+	public LegacyProjectImporter(DatamodelRunner runner) {
 		super(runner);
 	}
 
@@ -299,7 +299,7 @@ public class LegacyProjectImporter extends InputStreamImporter {
 	    }
 	    
 	    public Row toRow(Map<Long, Recon> pool) {
-	        return new Row(_cells.stream().map(c -> c.toCell(pool)).collect(Collectors.toList()), _flagged, _starred);
+	        return new Row(_cells.stream().map(c -> c == null ? null : c.toCell(pool)).collect(Collectors.toList()), _flagged, _starred);
 	    }
 	}
 

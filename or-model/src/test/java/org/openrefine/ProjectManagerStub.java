@@ -81,6 +81,11 @@ public class ProjectManagerStub extends ProjectManager {
         // empty
         return null;
     }
+    
+    @Override
+    public void reloadProjectFromWorkspace(long id) throws IOException {
+        // empty
+    }
 
     @Override
     public boolean loadProjectMetadata(long projectID) {
