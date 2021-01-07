@@ -77,7 +77,7 @@ public class ImportingJob {
     public static class ImportingJobConfig {
 
         @JsonProperty("retrievalRecord")
-        public RetrievalRecord retrievalRecord;
+        public RetrievalRecord retrievalRecord = new RetrievalRecord();
         @JsonProperty("fileSelection")
         public List<Integer> fileSelection;
         @JsonProperty("state")
@@ -102,17 +102,17 @@ public class ImportingJob {
     public static class RetrievalRecord {
 
         @JsonProperty("files")
-        List<ImportingFileRecord> files = new ArrayList<>();
+        public List<ImportingFileRecord> files = new ArrayList<>();
         @JsonProperty("archiveCount")
-        public int archiveCount;
+        public int archiveCount = 0;
         @JsonProperty("uploadCount")
-        public int uploadCount;
+        public int uploadCount = 0;
         @JsonProperty("downloadCount")
-        public int downloadCount;
+        public int downloadCount = 0;
         @JsonProperty("clipboardCount")
-        public int clipboardCount;
+        public int clipboardCount = 0;
         @JsonProperty("sparkCount")
-        public int sparkCount;
+        public int sparkCount = 0;
     }
 
     public ImportingJob(long id, File dir) {

@@ -116,4 +116,9 @@ public class ProjectManagerStub extends ProjectManager {
         return new LazyChangeDataStore();
     }
 
+    @Override
+    public void reloadProjectFromWorkspace(long id) throws IOException {
+        // empty
+    }
+
 }

@@ -229,17 +229,7 @@ public abstract class ProjectManager {
      *            the project id to load
      * @throws IOException
      */
-    public void reloadProjectFromWorkspace(long id) throws IOException {
-        ensureProjectSaved(id);
-        synchronized (this) {
-            Project project = _projects.get(id);
-            if (project != null) {
-                project.dispose();
-            }
-            _projects.remove(id);
-            loadProject(id);
-        }
-    }
+    public abstract void reloadProjectFromWorkspace(long id) throws IOException;
 
     /**
      * Save project metadata to the data store

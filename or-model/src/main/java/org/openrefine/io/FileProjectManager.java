@@ -496,4 +496,18 @@ public class FileProjectManager extends ProjectManager {
     public ChangeDataStore getChangeDataStore(long projectID) {
         return _historyEntryManager.getChangeDataStore(getProjectDir(projectID));
     }
+
+    @Override
+    public void reloadProjectFromWorkspace(long id) throws IOException {
+        ensureProjectSaved(id);
+        synchronized (this) {
+            Project project = _projects.get(id);
+            if (project != null) {
+                project.dispose();
+            }
+            _projects.remove(id);
+            loadProject(id);
+        }
+    }
+
 }
