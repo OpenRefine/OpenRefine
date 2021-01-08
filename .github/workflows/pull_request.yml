@@ -1,9 +1,7 @@
 name: Continuous Integration
 
 on:
-  pull_request:
-    branches:
-      - 'master'
+  pull_request_target:
     paths-ignore:
       - 'docs/**'
 
@@ -123,6 +121,7 @@ jobs:
     - name: Install test dependencies
       run: |
           cd ./main/tests/cypress
+          npm cache clean --force
           npm i -g yarn
           yarn install
 
