@@ -8,8 +8,8 @@ describe(__filename, function () {
 		cy.confirmDialogPanel();
 
 		// ensure sorting is active
-		cy.getCell(0, 'Shrt_Desc').contains('BUTTER,WHIPPED,WITH SALT');
-		cy.getCell(1, 'Shrt_Desc').contains('BUTTER,WITH SALT');
+		cy.getCell(0, 'Shrt_Desc').should('to.contain', 'BUTTER,WHIPPED,WITH SALT')
+		cy.getCell(1, 'Shrt_Desc').should('to.contain', 'BUTTER,WITH SALT');
 	});
 
 	it('Perform a basic sort + Reverse', function () {
@@ -21,15 +21,15 @@ describe(__filename, function () {
 		cy.confirmDialogPanel();
 
 		// check the sorting
-		cy.getCell(0, 'Shrt_Desc').contains('BUTTER,WHIPPED,WITH SALT');
-		cy.getCell(1, 'Shrt_Desc').contains('BUTTER,WITH SALT');
+		cy.getCell(0, 'Shrt_Desc').should('to.contain', 'BUTTER,WHIPPED,WITH SALT');
+		cy.getCell(1, 'Shrt_Desc').should('to.contain', 'BUTTER,WITH SALT');
 
 		// do a reverse sort
 		cy.columnActionClick('Shrt_Desc', ['Sort', 'Reverse']);
 
 		// re-check the sorting
-		cy.getCell(0, 'Shrt_Desc').contains('BUTTER,WITH SALT');
-		cy.getCell(1, 'Shrt_Desc').contains('BUTTER,WHIPPED,WITH SALT');
+		cy.getCell(0, 'Shrt_Desc').should('to.contain', 'BUTTER,WITH SALT');
+		cy.getCell(1, 'Shrt_Desc').should('to.contain', 'BUTTER,WHIPPED,WITH SALT');
 	});
 
 	it('Perform a basic sort + Remove Sort', function () {
@@ -41,14 +41,14 @@ describe(__filename, function () {
 		cy.confirmDialogPanel();
 
 		// check the sorting
-		cy.getCell(0, 'Shrt_Desc').contains('BUTTER,WHIPPED,WITH SALT');
-		cy.getCell(1, 'Shrt_Desc').contains('BUTTER,WITH SALT');
+		cy.getCell(0, 'Shrt_Desc').should('to.contain', 'BUTTER,WHIPPED,WITH SALT');
+		cy.getCell(1, 'Shrt_Desc').should('to.contain', 'BUTTER,WITH SALT');
 
 		// remove
 		cy.columnActionClick('Shrt_Desc', ['Sort', 'Remove sort']);
 
 		// re-check the sorting
-		cy.getCell(0, 'Shrt_Desc').contains('BUTTER,WITH SALT');
-		cy.getCell(1, 'Shrt_Desc').contains('BUTTER,WHIPPED,WITH SALT');
+		cy.getCell(0, 'Shrt_Desc').should('to.contain', 'BUTTER,WITH SALT');
+		cy.getCell(1, 'Shrt_Desc').should('to.contain', 'BUTTER,WHIPPED,WITH SALT');
 	});
 });
