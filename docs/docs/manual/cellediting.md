@@ -13,7 +13,7 @@ You can apply a text facet on numbers, boolean values, and dates, but if you edi
 
 ## Transform
 
-Select <span class="menuItems">Edit cells</span> → <span class="menuItems">Transforms</span> to open up an expressions window. From here, you can apply [expressions](expressions) to your data. The simplest examples are GREL functions such as [`toUppercase()`](grelfunctions#touppercases) or [`toLowercase()`](grelfunctions#tolowercases), used in expressions as `toUppercase(value)` or `toLowercase(value)`. When used on a column operation, `value` is the information in each cell in the selected column. 
+Select <span class="menuItems">Edit cells</span> → <span class="menuItems">Transform...</span> to open up an expressions window. From here, you can apply [expressions](expressions) to your data. The simplest examples are GREL functions such as [`toUppercase()`](grelfunctions#touppercases) or [`toLowercase()`](grelfunctions#tolowercases), used in expressions as `toUppercase(value)` or `toLowercase(value)`. When used on a column operation, `value` is the information in each cell in the selected column. 
 
 Use the preview to ensure your data is being transformed correctly. 
 

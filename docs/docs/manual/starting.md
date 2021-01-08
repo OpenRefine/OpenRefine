@@ -59,7 +59,7 @@ Click on <span class="menuItems">Browse…</span> and select a file (or several)
 
 If you import an archive file (something with the extension `.zip`, `.tar.gz`, `.tgz`, `.tar.bz2`, `.gz`, or `.bz2`), OpenRefine detects the files inside it, shows you a preview screen, and allows you to select which ones to load. This does not work with `.rar` files. 
 
-### Web Addresses (URLs)
+### Web addresses (URLs)
 
 Type or paste the URL to a data file into the field provided. You can add as many fields as you want. OpenRefine will download the file and preview the project for you. 
 
@@ -91,7 +91,7 @@ You can either connect just once to gather data, or save the connection to use i
 
 If your connection is successful, you will see a Query Editor where you can run your SQL query. OpenRefine will give you an error if you write a statement that tries to modify the source database in any way.
 
-### Google Data
+### Google data
 
 You have two ways to load in data from Google Sheets:
 *   providing a link to an accessible Google Sheet (that is, one with link-sharing turned on), and
