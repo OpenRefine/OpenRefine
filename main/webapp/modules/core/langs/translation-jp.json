@@ -790,5 +790,6 @@
     "core-import-formats/text/rdf/nt": "RDF/N-Triplesファイル",
     "core-import-formats/text/line-based/fixed-width": "固定長テキスト",
     "core-import-formats/text/line-based/*sv": "文字区切りテキスト(CSV/TSV)",
-    "core-import-formats/text/line-based": "行単位のテキスト"
+    "core-import-formats/text/line-based": "行単位のテキスト",
+    "core-dialogs/unstar-expression": "星削除式?"
 }
