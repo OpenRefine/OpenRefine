@@ -1,9 +1,9 @@
 name: Continuous Integration
 
 on:
-  pull_request_target:
-    paths-ignore:
-      - 'docs/**'
+  pull_request:
+    branches:
+      - master
 
 jobs:
   server_tests:
@@ -79,7 +79,7 @@ jobs:
   ui_tests:
     strategy:
       matrix:
-          browser: ['chrome']
+          browser: ['chrome', 'firefox']
     runs-on: ubuntu-latest
 
     steps:
