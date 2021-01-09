@@ -124,6 +124,11 @@ jobs:
           npm i -g yarn
           yarn install
 
+    - name: Disable multi-process on firefox
+      if: matrix.browser == 'firefox'
+      run: |
+        export MOZ_FORCE_DISABLE_E10S=1
+ 
     - name: Test with Cypress on ${{ matrix.browser }}
       run: | 
         echo REFINE_MIN_MEMORY=1400M >> ./refine.ini
