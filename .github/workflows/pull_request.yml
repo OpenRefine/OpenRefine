@@ -1,9 +1,12 @@
-name: Java CI
+name: Continuous Integration
 
-on: [pull_request_target]
+on:
+  pull_request_target:
+    paths-ignore:
+      - 'docs/**'
 
 jobs:
-  build:
+  server_tests:
     strategy:
       matrix:
         java: [ 8, 14 ]
@@ -72,11 +75,11 @@ jobs:
       run: |
         mvn prepare-package -DskipTests=true
         mvn jacoco:report coveralls:report -DrepoToken=${{ secrets.COVERALLS_TOKEN }} -DpullRequest=${{ github.event.number }}
-  cypress_tests:
+
+  ui_tests:
     strategy:
       matrix:
           browser: ['chrome']
-
     runs-on: ubuntu-latest
 
     steps:
@@ -98,10 +101,19 @@ jobs:
     - name: Build OpenRefine
       run: ./refine build
 
+    - name: Setup Node
+      uses: actions/setup-node@v2
+      with:
+        node-version: '12'
+
     - name: Restore Tests dependency cache
       uses: actions/cache@v2.1.3
       with:
-          path: '**/node_modules'
+          path: |
+            ~/cache
+            ~/.cache
+            **/node_modules
+            !~/cache/exclude
           key: ${{ runner.os }}-modules-${{ hashFiles('**/yarn.lock') }}
           restore-keys: |
               ${{ runner.os }}-yarn
@@ -109,6 +121,7 @@ jobs:
     - name: Install test dependencies
       run: |
           cd ./main/tests/cypress
+          npm i -g yarn
           yarn install
 
     - name: Test with Cypress on ${{ matrix.browser }}
