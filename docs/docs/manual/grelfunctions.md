@@ -6,32 +6,32 @@ sidebar_label: GREL functions
 
 ## Reading this reference
 
-For the reference below, the function is given in full-length notation and the in-text examples are written in dot notation. Shorthands are used to indicate the kind of [data type](exploring#data-types) used in each function: s for string, b for boolean, n for number, d for date, a for array, p for a regex pattern, as well as with “null” and “error.” 
+For the reference below, the function is given in full-length notation and the in-text examples are written in dot notation. Shorthands are used to indicate the kind of [data type](exploring#data-types) used in each function: s for string, b for boolean, n for number, d for date, a for array, p for a regex pattern, and o for any data type, as well as “null” and “error” data types. 
 
 If a function can take more than one kind of data as input or can output more than one kind of data, that is indicated with more than one letter (as with “s or a”) or with o for object. 
 
 We also use shorthands for substring (“sub”) and separator string (“sep”). 
 Optional arguments will say “(optional)”.
 
-In places where OpenRefine will accept a string (s) or a regex pattern (p), you can supply a string by putting it in quotes. If you wish to use any regex notation, wrap the pattern in forward slashes.
+In places where OpenRefine will accept a string (s) or a regex pattern (p), you can supply a string by putting it in quotes. If you wish to use any [regex](expressions#regular-expressions) notation, wrap the pattern in forward slashes.
 
 ## Boolean functions
 
 ###### and(b1, b2, ...)
 
-Uses the logical operator AND on two or more booleans to yield a boolean. Evaluates multiple statements into booleans, then returns true if all of the statements are true. For example, `and(1 < 3, 1 < 0)` returns false because one condition is true and one is false.
+Uses the logical operator AND on two or more booleans to output a boolean. Evaluates multiple statements into booleans, then returns true if all of the statements are true. For example, `(1 < 3).and(1 < 0)` returns false because one condition is true and one is false.
 
 ###### or(b1, b2, ...)
 
-Uses the logical operator OR on two or more booleans to yield a boolean. For example, `or(1 < 3, 1 > 7)` returns true because at least one of the conditions (the first one) is true.
+Uses the logical operator OR on two or more booleans to output a boolean. For example, `(1 < 3).or(1 > 7)` returns true because at least one of the conditions (the first one) is true.
 
 ###### not(b)
 
-Uses the logical operator NOT on a boolean to yield a boolean. For example, `not(1 > 7)` returns true because 1 > 7 itself is false.
+Uses the logical operator NOT on a boolean to output a boolean. For example, `not(1 > 7)` returns true because 1 > 7 itself is false.
 
 ###### xor(b1, b2, ...)
 
-Uses the logical operator XOR (exclusive-or) on two or more booleans to yield a boolean. Evaluates multiple statements, then returns true if only one of them is true. For example, `xor(1 < 3, 1 < 7)` returns false because more than one of the conditions is true.
+Uses the logical operator XOR (exclusive-or) on two or more booleans to output a boolean. Evaluates multiple statements, then returns true if only one of them is true. For example, `(1 < 3).xor(1 < 7)` returns false because more than one of the conditions is true.
 
 ## String functions
 
@@ -41,9 +41,9 @@ Returns the length of string s as a number.
 
 ###### toString(o, string format (optional))
 
-Takes any value type (string, number, date, boolean, error, null) and gives a string version of that value. You can convert between types, within limits (for example, you can't turn the string “asdfsd” into a date or a number, but you can convert the number “123” into a string).
+Takes any value type (string, number, date, boolean, error, null) and gives a string version of that value. 
 
-You can also use toString() to convert numbers to strings with rounding, using an [optional string format](https://docs.oracle.com/javase/8/docs/api/java/util/Formatter.html). For example, if you applied the expression `value.toString("%.0f")` to a column:
+You can use toString() to convert numbers to strings with rounding, using an [optional string format](https://docs.oracle.com/javase/8/docs/api/java/util/Formatter.html). For example, if you applied the expression `value.toString("%.0f")` to a column:
 
 |Input|Output|
 |-|-|
@@ -100,7 +100,7 @@ Returns a copy of the string s with leading and trailing whitespace removed. For
 
 ###### chomp(s, sep)
 
-Returns a copy of string s with the string sep removed from the end if s ends with sep; otherwise, just returns s. For example, `"hardly".chomp("ly")` and `"hard".chomp("ly")` both return the string “hard”.
+Returns a copy of string s with the string sep removed from the end if s ends with sep; otherwise, just returns s. For example, `"barely".chomp("ly")` and `"bare".chomp("ly")` both return the string “bare”.
 
 #### Substring
 
@@ -108,7 +108,7 @@ Returns a copy of string s with the string sep removed from the end if s ends wi
 
 Returns the substring of s starting from character index from, and up to (excluding) character index to. If the to argument is omitted, substring will output to the end of s. For example, `"profound".substring(3)` returns the string “found”, and `"profound".substring(2, 4)` returns the string “of”.
 
-Character indexes start from zero. Negative character indexes count from the end of the string. For example, `"profound".substring(0, -1)` returns the string “profoun”.
+Remember that character indices start from zero. A negative character index counts from the end of the string. For example, `"profound".substring(0, -1)` returns the string “profoun”.
 
 ###### slice(s, n from, n to (optional))
 
@@ -130,12 +130,12 @@ Returns the first character index of sub as it last occurs in s; or, returns -1 
 
 ###### replace(s, s or p find, s replace)
 
-Returns the string obtained by replacing the find string with the replace string in the inputted string. For example, `"The cow jumps over the moon and moos".replace("oo", "ee")` returns the string “The cow jumps over the meen and mees”. Find can be a regex pattern; if so, replace can also contain capture groups declared in find. 
+Returns the string obtained by replacing the find string with the replace string in the inputted string. For example, `"The cow jumps over the moon and moos".replace("oo", "ee")` returns the string “The cow jumps over the meen and mees”. Find can be a regex pattern. For example, `"The cow jumps over the moon and moos".replace(/\s+/, "_")` will return “The_cow_jumps_over_the_moon_and_moos”. 
 
 You cannot find or replace nulls with this, as null is not a string. You can instead:
 
 1. Facet by null and then bulk-edit them to a string, or
-2. Transform the column with an expression such as `if(value==null,'new',value)`
+2. Transform the column with an expression such as `if(value==null,"new",value)`.
 
 ###### replaceChars(s, s find, s replace)
 
@@ -145,7 +145,7 @@ Returns the string obtained by replacing a character in s, identified by find, w
 
 Outputs an array of all consecutive substrings inside string s that match the substring or [regex](expressions#grel-supported-regex) pattern p. For example, `"abeadsabmoloei".find(/[aeio]+/)` would result in the array [ "a", "ea", "a", "o", "oei" ].
 
-You can supply a sub instead of p, by putting it in quotes, and OpenRefine will compile it into a regex pattern. Anytime you supply quotes, OpenRefine interprets the contents as a string, not regex. If you wish to use any regex notation, wrap the pattern in forward slashes, for example: `"OpenRefine is Awesome".find(/fine\sis/)` would return [ "fine is" ].
+You can supply a substring instead of p, by putting it in quotes, and OpenRefine will compile it into a regex pattern. Anytime you supply quotes, OpenRefine interprets the contents as a string, not regex. If you wish to use any regex notation, wrap the pattern in forward slashes. 
 
 ###### match(s, p)
 
@@ -153,9 +153,9 @@ Attempts to match the string s in its entirety against the [regex](expressions#g
 
 You will need to convert the array to a string to store it in a cell, with a function such as toString(). An empty array [] is returned when there is no match to the desired substrings. A null is output when the entire regex does not match.
 
-Remember to enclose your regex in forward slashes, and to escape characters and use parentheses as needed. Parentheses are required to denote a desired substring (capturing group); for example, “.&#42;(\d\d\d\d)” would return an array containing a single value, while “(.&#42;)(\d\d\d\d)” would return two. So, if you are looking for a desired substring anywhere within a string, use the syntax `value.match(/.*(desired-substring-regex).*/)`.
+Remember to enclose your regex in forward slashes, and to escape characters and use parentheses as needed. Parentheses denote a desired substring (capturing group); for example, “.&#42;(\d\d\d\d)” would return an array containing a single value, while “(.&#42;)(\d\d\d\d)” would return two. So, if you are looking for a desired substring anywhere within a string, use the syntax `value.match(/.*(desired-substring-regex).*/)`.
 
-For example, if the value is “hello 123456 goodbye”:
+For example, if `value` is “hello 123456 goodbye”, the following would occur:
 
 |Expression|Result|
 |-|-|
@@ -186,9 +186,7 @@ Note: [`value.escape('javascript')`](#escapes-s-mode) is useful for previewing u
 
 ###### splitByCharType(s)
 
-Returns an array of strings obtained by splitting s into groups of consecutive characters each time the characters change unicode types. For example, `"HenryCTaylor".splitByCharType()` will result in an array of [ "H", "enry", "CT", "aylor" ].
-
-It is useful for separating letters and numbers: `"BE1A3E".splitByCharType()` will result in [ "BE", "1", "A", "3", "E" ].
+Returns an array of strings obtained by splitting s into groups of consecutive characters each time the characters change [Unicode categories](https://en.wikipedia.org/wiki/Unicode_character_property#General_Category). For example, `"HenryCTaylor".splitByCharType()` will result in an array of [ "H", "enry", "CT", "aylor" ]. It is useful for separating letters and numbers: `"BE1A3E".splitByCharType()` will result in [ "BE", "1", "A", "3", "E" ].
 
 ###### partition(s, s or p fragment, b omitFragment (optional))
 
@@ -200,15 +198,13 @@ You can use regex for your fragment. The expresion `"abcdefgh".partition(/c.e/)`
 
 ###### rpartition(s, s or p fragment, b omitFragment (optional))
 
-Returns an array of strings [ a, fragment, z ] where a is the substring within s before the last occurrence of fragment, and z is the substring after the last instance of fragment. (Rpartition means “reverse partition.”) For example, `"parallel".rpartition("a")` returns 3 strings: [ "par", "a", "llel" ]. 
-
-Otherwise works identically to partition() above.
+Returns an array of strings [ a, fragment, z ] where a is the substring within s before the last occurrence of fragment, and z is the substring after the last instance of fragment. (Rpartition means “reverse partition.”) For example, `"parallel".rpartition("a")` returns 3 strings: [ "par", "a", "llel" ]. Otherwise works identically to partition() above.
 
 ### Encoding and hashing
 
 ###### diff(s1, s2, s timeUnit (optional))
 
-Takes two strings and compares them, returning a string. Returns the remainder of s2 starting with the first character where they differ. For example, `diff("cacti", "cactus")` returns "us". Also works with dates; see [Date functions](#diffd1-d2-s-timeunit).
+Takes two strings and compares them, returning a string. Returns the remainder of s2 starting with the first character where they differ. For example, `"cacti".diff("cactus")` returns "us". Also works with dates; see [Date functions](#diffd1-d2-s-timeunit).
 
 ###### escape(s, s mode)
 
@@ -266,7 +262,7 @@ Quotes a value as a JSON literal value.
 
 Parses a string as JSON. get() can then be used with parseJson(): for example, `parseJson(" { 'a' : 1 } ").get("a")` returns 1.
 
-For example from the following JSON array, let's get all instances called “keywords” having the same object string name of “text”, and combine it with the forEach() function to iterate over the array.
+For example, from the following JSON array in `value`, we want to get all instances of “keywords” having the same object string name of “text”, and combine them, using the forEach() function to iterate over the array.
 
     {
        "status":"OK",
@@ -293,14 +289,16 @@ The GREL expression `forEach(value.parseJson().keywords,v,v.text).join(":::")` w
 ### Jsoup XML and HTML parsing
 
 ###### parseHtml(s)
-Given a cell full of HTML-formatted text, simplifies HTML tags (such as by removing “ /” at the end of self-closing tags), closes any unclosed tags, and inserts linebreaks and indents for cleaner code. You cannot pass parseHtml() a URL, but you can pre-fetch HTML with the <span class="menuItems">Add column by fetching URLs</span> menu option. A cell cannot store the output of parseHtml() unless you convert it with toString(). 
+Given a cell full of HTML-formatted text, parseHtml() simplifies HTML tags (such as by removing “ /” at the end of self-closing tags), closes any unclosed tags, and inserts linebreaks and indents for cleaner code. You cannot pass parseHtml() a URL, but you can pre-fetch HTML with the <span class="menuItems">[Add column by fetching URLs](columnediting#add-column-by-fetching-urls)</span> menu option. 
+
+A cell cannot store the output of parseHtml() unless you convert it with toString(): for example, `value.parseHtml().toString()`. 
 
 When parseHtml() simplifies HTML, it can sometimes introduce errors. When closing tags, it makes its best guesses based on line breaks, indentation, and the presence of other tags. You may need to manually check the results. 
 
-You can then extract or select() which portions of the HTML document you need for further splitting, partitioning, etc. An example of extracting all table rows from a div using parseHtml().select() together is described more in depth at [StrippingHTML](https://github.com/OpenRefine/OpenRefine/wiki/StrippingHTML).
+You can then extract or [select()](#selects-element) which portions of the HTML document you need for further splitting, partitioning, etc. An example of extracting all table rows from a div using parseHtml().select() together is described more in depth at [StrippingHTML](https://github.com/OpenRefine/OpenRefine/wiki/StrippingHTML).
 
 ###### parseXml(s)
-Given a cell full of XML-formatted text, returns a full XML document and adds any missing closing tags. You can then extract or select() which portions of the XML document you need for further splitting, partitioning, etc. Functions the same way as parseHtml() is described above. 
+Given a cell full of XML-formatted text, parseXml() returns a full XML document and adds any missing closing tags. You can then extract or [select()](#selects-element) which portions of the XML document you need for further splitting, partitioning, etc. Functions the same way as parseHtml() is described above. 
 
 ###### select(s, element)
 Returns an array of all the desired elements from an HTML or XML document, if the element exists. Elements are identified using the [Jsoup selector syntax](https://jsoup.org/apidocs/org/jsoup/select/Selector.html). For example, `value.parseHtml().select("img.portrait")[0]` would return the entirety of the first “img” tag with the “portrait” class found in the parsed HTML inside `value`. Returns an empty array if no matching element is found. Use with toString() to capture the results in a cell. A tutorial of select() is shown in [StrippingHTML](https://github.com/OpenRefine/OpenRefine/wiki/StrippingHTML).
@@ -312,34 +310,34 @@ value.parseHtml().select("div#content")[0].select("tr").toString()
 ```
 
 ###### htmlAttr(s, element)
-Returns a string from an attribute on an HTML element. Use it in conjunction with parseHtml() as in the following example: `value.parseHtml().select("a.email")[0].htmlAttr("href")`.
+Returns a string from an attribute on an HTML element. Use it in conjunction with parseHtml() as in the following example: `value.parseHtml().select("a.email")[0].htmlAttr("href")` would retrieve the email address attached to a link with the “email” class.
 
 ###### xmlAttr(s, element)
-Returns a string from an attribute on an XML element. Function the same way htmlAttr() is described above. Use it in conjunction with parseXml().
+Returns a string from an attribute on an XML element. Functions the same way htmlAttr() is described above. Use it in conjunction with parseXml().
 
 ###### htmlText(element)
 Returns a string of the text from within an HTML element (including all child elements), removing HTML tags and line breaks inside the string. Use it in conjunction with parseHtml() and select() to provide an element, as in the following example: `value.parseHtml().select("div.footer")[0].htmlText()`. 
 
 ###### xmlText(element)
-Returns a string of the text from within an XML element (including all child elements). Functions the same way as htmlText() is described above. Use it in conjunction with parseXml() and select() to provide an element.
+Returns a string of the text from within an XML element (including all child elements). Functions the same way htmlText() is described above. Use it in conjunction with parseXml() and select() to provide an element.
 
 ###### wholeText(element)
 
 _Works from OpenRefine 3.4.1 beta 644 onwards only_
 
-Selects the (unencoded) text of an element and its children, including any newlines and spaces, and returns a string of unencoded, un-normalized text. Use it in conjunction with parseHtml() and select() to provide an element as in the following example: `value.parseHtml().select("div.footer")[0].wholeText()`.
+Selects the (unencoded) text of an element and its children, including any new lines and spaces, and returns a string of unencoded, un-normalized text. Use it in conjunction with parseHtml() and select() to provide an element as in the following example: `value.parseHtml().select("div.footer")[0].wholeText()`.
 
 ###### innerHtml(element)
 Returns the [inner HTML](https://developer.mozilla.org/en-US/docs/Web/API/Element/innerHTML) of an HTML element. This will include text and children elements within the element selected. Use it in conjunction with parseHtml() and select() to provide an element.
 
 ###### innerXml(element)
-Returns all the inner XML elements inside your chosen XML element. Does not return the text directly inside your chosen XML element - only the contents of its children. To select the direct text, use ownText(). To select both, use xmlText(). Use it in conjunction with parseXml() and select() to provide an element.
+Returns the inner XML elements of an XML element. Does not return the text directly inside your chosen XML element - only the contents of its children. To select the direct text, use ownText(). To select both, use xmlText(). Use it in conjunction with parseXml() and select() to provide an element.
 
 ###### outerHtml(element)
 Returns the [outer HTML](https://developer.mozilla.org/en-US/docs/Web/API/Element/outerHTML) of an HTML element. outerHtml includes the start and end tags of the current element. Use it in conjunction with parseHtml() and select() to provide an element.
 
 ###### ownText(element)
-Returns the text directly inside the selected XML or HTML element only, ignoring text inside children elements. Use it in conjunction with a parser and select() to provide an element.
+Returns the text directly inside the selected XML or HTML element only, ignoring text inside children elements (for this, use innerXml()). Use it in conjunction with a parser and select() to provide an element.
 
 ## Array functions
 
@@ -347,17 +345,17 @@ Returns the text directly inside the selected XML or HTML element only, ignoring
 Returns the size of an array, meaning the number of objects inside it. Arrays can be empty, in which case length() will return 0. 
 
 ###### slice(a, n from, n to (optional))
-Returns a sub-array of a given array, from the first index provided and up to and excluding the optional last index provided. Remember that array objects are indexed starting at 0. If to is omitted, it is understood to be the end of the array. For example, `[0, 1, 2, 3, 4].slice(1, 3)` returns [ 1, 2 ], and `[ 0, 1, 2, 3, 4].slice(1)` returns [ 1, 2, 3, 4 ]. Also works with strings; see [String functions](#slices-n-from-n-to-optional).
+Returns a sub-array of a given array, from the first index provided and up to and excluding the optional last index provided. Remember that array objects are indexed starting at 0. If the to value is omitted, it is understood to be the end of the array. For example, `[0, 1, 2, 3, 4].slice(1, 3)` returns [ 1, 2 ], and `[ 0, 1, 2, 3, 4].slice(2)` returns [ 2, 3, 4 ]. Also works with strings; see [String functions](#slices-n-from-n-to-optional).
 
 ###### get(a, n from, n to (optional))
 Returns a sub-array of a given array, from the first index provided and up to and excluding the optional last index provided. Remember that array objects are indexed starting at 0. 
 
-If to is omitted, only one array item is returned, as a string, instead of a sub-array. To return a sub-array from one index to the end, you can set the to argument to a very high number such as `value.get(2,999)` or you can use something like `with(value,a,a.get(1,a.length()))` to count the length of each array.
+If the to value is omitted, only one array item is returned, as a string, instead of a sub-array. To return a sub-array from one index to the end, you can set the to argument to a very high number such as `value.get(2,999)` or you can use something like `with(value,a,a.get(1,a.length()))` to count the length of each array.
 
-Also works with strings; see [get() in String functions](#gets-n-from-n-to-optional).
+Also works with strings; see [String functions](#gets-n-from-n-to-optional).
 
 ###### inArray(a, s)
-Returns true if the array contains the desired string, and false otherwise.
+Returns true if the array contains the desired string, and false otherwise. Will not convert data types; for example, `[ 1, 2, 3, 4 ].inArray("3")` will return false.
 
 ###### reverse(a)
 Reverses the array. For example, `[ 0, 1, 2, 3].reverse()` returns the array [ 3, 2, 1, 0 ].
@@ -366,7 +364,7 @@ Reverses the array. For example, `[ 0, 1, 2, 3].reverse()` returns the array [ 3
 Sorts the array in ascending order. Sorting is case-sensitive, uppercase first and lowercase second. For example, `[ "al", "Joe", "Bob", "jim" ].sort()` returns the array [ "Bob", "Joe", "al", "jim" ]. 
 
 ###### sum(a)
-Return the sum of the numbers in the array. For example, `[ 2, 1, 0, 3].sum()` returns 6.
+Return the sum of the numbers in the array. For example, `[ 2, 1, 0, 3 ].sum()` returns 6.
 
 ###### join(a, sep)
 Joins the items in the array with sep, and returns it all as a string. For example, `[ "and", "or", "not" ].join("/")` returns the string “and/or/not”.
@@ -424,40 +422,40 @@ Also works with strings; see [diff() in string functions](#diffsd1-sd2-s-timeuni
 
 ###### inc(d, n, s timeUnit)
 
-Returns a date changed by the given amount in the given unit of time (see the table below). The default unit is “hour”. For example, if you want to move a date backwards by two months, use `value.inc(-2,'month')`.
+Returns a date changed by the given amount in the given unit of time (see the table below). The default unit is “hour”. A positive value increases the date, and a negative value moves it back in time. For example, if you want to move a date backwards by two months, use `value.inc(-2,"month")`.
 
 ###### datePart(d, s timeUnit)
 
-Returns part of a date. Data type returned depends on the unit (see the table below). 
+Returns part of a date. The data type returned depends on the unit (see the table below). 
 
 OpenRefine supports the following values for timeUnit:
 
 | Unit | Date part returned | Returned data type | Example using [date 2014-03-14T05:30:04.000789000Z] as value |
 |-|-|-|-|
-| years | Year | Number | value.datePart("years") -> 2014 |
-| year | Year | Number | value.datePart("year") -> 2014 |
-| months | Month | Number | value.datePart("months") -> 2 |
-| month | Month | Number | value.datePart("month") -> 2 |
-| weeks | Week of the month | Number | value.datePart("weeks") -> 3 |
-| week | Week of the month | Number | value.datePart("week") -> 3 |
-| w | Week of the month | Number | value.datePart("w") -> 3 |
-| weekday | Day of the week | String | value.datePart("weekday") -> Friday |
-| hours | Hour | Number | value.datePart("hours") -> 5 |
-| hour | Hour | Number | value.datePart("hour") -> 5 |
-| h | Hour | Number | value.datePart("h") -> 5 |
-| minutes | Minute | Number | value.datePart("minutes") -> 30 |
-| minute | Minute | Number | value.datePart("minute") -> 30 |
-| min | Minute | Number | value.datePart("min") -> 30 |
-| seconds | Seconds | Number | value.datePart("seconds") -> 04 |
-| sec | Seconds | Number | value.datePart("sec") -> 04 |
-| s | Seconds | Number | value.datePart("s") -> 04 |
-| milliseconds | Millseconds | Number | value.datePart("milliseconds") -> 789 |
-| ms | Millseconds | Number | value.datePart("ms") -> 789 |
-| S | Millseconds | Number | value.datePart("S") -> 789 |
-| n | Nanoseconds | Number | value.datePart("n") -> 789000 |
-| nano | Nanoseconds | Number | value.datePart("n") -> 789000 |
-| nanos | Nanoseconds | Number | value.datePart("n") -> 789000 |
-| time | Date expressed as milliseconds since the Unix Epoch | Number | value.datePart("time") -> 1394775004000 |
+| years | Year | Number | value.datePart("years") → 2014 |
+| year | Year | Number | value.datePart("year") → 2014 |
+| months | Month | Number | value.datePart("months") → 2 |
+| month | Month | Number | value.datePart("month") → 2 |
+| weeks | Week of the month | Number | value.datePart("weeks") → 3 |
+| week | Week of the month | Number | value.datePart("week") → 3 |
+| w | Week of the month | Number | value.datePart("w") → 3 |
+| weekday | Day of the week | String | value.datePart("weekday") → Friday |
+| hours | Hour | Number | value.datePart("hours") → 5 |
+| hour | Hour | Number | value.datePart("hour") → 5 |
+| h | Hour | Number | value.datePart("h") → 5 |
+| minutes | Minute | Number | value.datePart("minutes") → 30 |
+| minute | Minute | Number | value.datePart("minute") → 30 |
+| min | Minute | Number | value.datePart("min") → 30 |
+| seconds | Seconds | Number | value.datePart("seconds") → 04 |
+| sec | Seconds | Number | value.datePart("sec") → 04 |
+| s | Seconds | Number | value.datePart("s") → 04 |
+| milliseconds | Millseconds | Number | value.datePart("milliseconds") → 789 |
+| ms | Millseconds | Number | value.datePart("ms") → 789 |
+| S | Millseconds | Number | value.datePart("S") → 789 |
+| n | Nanoseconds | Number | value.datePart("n") → 789000 |
+| nano | Nanoseconds | Number | value.datePart("n") → 789000 |
+| nanos | Nanoseconds | Number | value.datePart("n") → 789000 |
+| time | Milliseconds between input and the [Unix Epoch](https://en.wikipedia.org/wiki/Unix_time) | Number | value.datePart("time") → 1394775004000 |
 
 ## Math functions
 
@@ -507,7 +505,7 @@ Some of these math functions don't recognize integers when supplied as the first
 ## Other functions
 
 ###### type(o)
-Returns a string with the data type of o, such as undefined, string, number, boolean, etc. For example, a Transform operation using `value.type()` will convert all cells in a column to strings of their data types.
+Returns a string with the data type of o, such as undefined, string, number, boolean, etc. For example, a [Transform](cellediting#transform) operation using `value.type()` will convert all cells in a column to strings of their data types.
 
 ###### facetCount(choiceValue, s facetExpression, s columnName)
 Returns the facet count corresponding to the given choice value, by looking for the facetExpression in the choiceValue in columnName. For example, to create facet counts for the following table, we could generate a new column based on “Gift” and enter in `value.facetCount("value", "Gift")`. This would add the column we've named “Count”:
@@ -522,7 +520,7 @@ Returns the facet count corresponding to the given choice value, by looking for 
 The facet expression, wrapped in quotes, can be useful to manipulate the inputted values before counting. For example, you could do a textual cleanup using fingerprint(): `(value.fingerprint()).facetCount(value.fingerprint(),"Gift")`.
 
 ###### hasField(o, s name)
-Returns a boolean indicating whether o has a member field called [name](expressions#variables). For example, `cell.recon.hasField("match")` will return false if a reconciliation match hasn’t been selected yet, or true if it has. You cannot chain your desired fields: for example, `cell.hasField(“recon.match”)` will return false even if the above expression returns true).
+Returns a boolean indicating whether o has a member field called [name](expressions#variables). For example, `cell.recon.hasField("match")` will return false if a reconciliation match hasn’t been selected yet, or true if it has. You cannot chain your desired fields: for example, `cell.hasField("recon.match")` will return false even if the above expression returns true).
 
 ###### coalesce(o1, o2, o3, ...)
 Returns the first non-null from a series of objects. For example, `coalesce(value, "")` would return an empty string “” if `value` was null, but otherwise return `value`.
