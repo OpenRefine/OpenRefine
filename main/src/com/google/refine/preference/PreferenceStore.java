@@ -48,7 +48,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.google.refine.ProjectManager;
 import com.google.refine.util.HttpClient;
 import com.google.refine.util.ParsingUtilities;
 
@@ -133,18 +132,18 @@ public class PreferenceStore  {
         return Collections.unmodifiableMap(result);
     }
 
-    public static boolean putCredentials(String url, String type, String auth1, String auth2) {
-        PreferenceStore prefStore = ProjectManager.singleton.getPreferenceStore();
+    public boolean putCredentials(String url, String type, String auth1, String auth2) {
         String key = AUTH_PREFIX + HttpClient.reverseURL(url);
-        prefStore.put(key, type + " " + auth1 + " " + auth2);
+        put(key, type + " " + auth1 + " " + auth2);
         return true;
     }
 
-    public static String[] getCredentials(String url) {
-        PreferenceStore prefStore = ProjectManager.singleton.getPreferenceStore();
+    // TODO: There's no UI for creating/updating credentials, so, from a practical point of view,
+    // this will never return anything
+    public String[] getCredentials(String url) {
         // FIXME: The line below returns an empty preference store
         // PreferenceStore ps2 =  _project.getMetadata().getPreferenceStore();
-        Map<String, Object> auths = prefStore.getEntries(AUTH_PREFIX);
+        Map<String, Object> auths = getEntries(AUTH_PREFIX);
         String reversedUrl = HttpClient.reverseURL(url);
         String match = "";
         // TODO: Do we want to ignore protocol for matching purposes?
@@ -164,7 +163,7 @@ public class PreferenceStore  {
                     String value = String.join(" ", Arrays.copyOfRange(pieces, 2, pieces.length));
                     return new String[] {pieces[0], name, value};
                 } else {
-                    throw new RuntimeException("Unrecognized authentication payload in prefences for " + url);
+                    throw new RuntimeException("Unrecognized authentication payload in preferences for " + url);
                 }
             }
         }

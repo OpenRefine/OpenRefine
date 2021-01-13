@@ -46,6 +46,7 @@ import org.slf4j.LoggerFactory;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.JsonNode;
+import com.google.refine.ProjectManager;
 import com.google.refine.browsing.Engine;
 import com.google.refine.browsing.EngineConfig;
 import com.google.refine.browsing.FilteredRows;
@@ -71,6 +72,8 @@ import com.google.refine.util.ParsingUtilities;
 
 public class ReconOperation extends EngineDependentOperation {
     final static Logger logger = LoggerFactory.getLogger("recon-operation");
+    final static PreferenceStore prefStore = ProjectManager.singleton.getPreferenceStore();
+
     
     final protected String      _columnName;
     final protected ReconConfig _reconConfig;
@@ -250,7 +253,8 @@ public class ReconOperation extends EngineDependentOperation {
                 ((StandardReconConfig) _reconConfig)
                         .setAuthenticationInfo(new String[] { "token", apiKeyName, apiKeyValue });
             } else {
-                String[] auth = PreferenceStore.getCredentials(url);
+                // TODO: There is no UI to create these credentials, so this will always return null
+                String[] auth = prefStore.getCredentials(url);
                 if (auth != null) {
                     ((StandardReconConfig) _reconConfig).setAuthenticationInfo(auth);
                 }

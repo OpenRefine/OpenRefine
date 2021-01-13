@@ -58,6 +58,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.google.refine.ProjectManager;
 import com.google.refine.commands.Command;
 import com.google.refine.expr.ExpressionUtils;
 import com.google.refine.model.Column;
@@ -73,6 +74,8 @@ public class GuessTypesOfColumnCommand extends Command {
     
     final static int DEFAULT_SAMPLE_SIZE = 10;
     private int sampleSize = DEFAULT_SAMPLE_SIZE;
+    final static PreferenceStore prefStore = ProjectManager.singleton.getPreferenceStore();
+
      
     protected static class TypesResponse {
         @JsonProperty("code")
@@ -202,7 +205,7 @@ public class GuessTypesOfColumnCommand extends Command {
         String responseString;
         try {
             if (apiKeyName == null && apiKeyValue == null) {
-                String[] authInfo = PreferenceStore.getCredentials(serviceUrl);
+                String[] authInfo = prefStore.getCredentials(serviceUrl);
                 if (authInfo != null && "token".equals(authInfo[0])) {
                     apiKeyName = authInfo[1];
                     apiKeyValue = authInfo[2];
