@@ -84,7 +84,6 @@ ReconciliationManager.registerStandardService = function(url, f, silent, apiKey)
         alert($.i18n('core-recon/error-api-key-required'));
         return;
       }
-      const name = data.authentication.name;
       data.authentication.apiKey = apiKey;
     }
 
