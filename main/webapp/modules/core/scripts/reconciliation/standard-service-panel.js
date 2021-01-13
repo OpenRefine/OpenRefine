@@ -43,15 +43,18 @@ function ReconStandardServicePanel(column, service, container) {
 ReconStandardServicePanel.prototype._guessTypes = function(f) {
   var self = this;
   var dismissBusy = DialogSystem.showBusy();
-
-  Refine.postCSRF(
-    "command/core/guess-types-of-column?" + $.param({
+  var params = {
       project: theProject.id, 
       columnName: this._column.name,
       service: this._service.url,
-      apiKeyName: this._service.authentication.name,
-      apiKeyValue: this._service.authentication.apiKey,
-    }),
+
+    };
+  if ('authentication' in this._service) {
+    params.apiKeyName= this._service.authentication.name;
+    params.apiKeyValue = this._service.authentication.apiKey;
+  }
+  Refine.postCSRF(
+    "command/core/guess-types-of-column?" + $.param(params),
     null, 
     function(data) {
       if (data.code && data.code === 'ok') {
@@ -75,8 +78,13 @@ ReconStandardServicePanel.prototype._guessTypes = function(f) {
           }
         }
       } else {
-        // TODO: Add special case for 403 Forbidden to ask for auth credentials?
-        alert('Guess Types query failed ' + data.code + ' : ' + data.message);
+        // TODO: i18n
+        if (data.message.includes('403') && 'authentication' in self._service) {
+          alert('Query was forbidden. Please check your credentials and re-add the reconciliation service, if necessary.\n\n' 
+               + data.code + ' : ' + data.message);
+        } else {
+          alert('Guess Types query failed ' + data.code + ' : ' + data.message);
+        }
       }
 
       dismissBusy();
@@ -319,23 +327,28 @@ ReconStandardServicePanel.prototype.start = function() {
     }
   );
 
+  var config = {
+    mode: "standard-service",
+    service: this._service.url,
+    identifierSpace: this._service.identifierSpace,
+    schemaSpace: this._service.schemaSpace,
+    type: (type) ? { id: type.id, name: type.name } : null,
+    autoMatch: this._elmts.automatchCheck[0].checked,
+    columnDetails: columnDetails,
+    limit: parseInt(this._elmts.maxCandidates[0].value) || 0,
+  };
+
+  if ('authentication' in this._service) {
+    config.apiKeyName = this._service.authentication?.name;
+    config.apiKeyValue = this._service.authentication?.apiKey;
+  };
+
   Refine.postCoreProcess(
     "reconcile",
     {},
     {
       columnName: this._column.name,
-      config: JSON.stringify({
-        mode: "standard-service",
-        service: this._service.url,
-        identifierSpace: this._service.identifierSpace,
-        schemaSpace: this._service.schemaSpace,
-        type: (type) ? { id: type.id, name: type.name } : null,
-        autoMatch: this._elmts.automatchCheck[0].checked,
-        columnDetails: columnDetails,
-        limit: parseInt(this._elmts.maxCandidates[0].value) || 0,
-        apiKeyName: this._service?.authentication.name,
-        apiKeyValue: this._service?.authentication.apiKey,
-      })
+      config: JSON.stringify(config)
     },
     { cellsChanged: true, columnStatsChanged: true }
   );

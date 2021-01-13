@@ -170,8 +170,7 @@ public class HttpClient {
             String reasonPhrase = response.getReasonPhrase();
             int statusCode = response.getCode();
             if (statusCode >= 400) { // We should never see 3xx since they get handled automatically
-                throw new IOException(String.format("HTTP error %d : %s for URL %s", statusCode, reasonPhrase,
-                        request.getRequestUri()));
+                throw new HttpErrorException(statusCode, reasonPhrase, request.getRequestUri());
             }
 
             return ParsingUtilities.inputStreamToString(response.getEntity().getContent());
@@ -215,6 +214,23 @@ public class HttpClient {
                 return interval;
             }
             return interval;
+        }
+    }
+
+
+    public class HttpErrorException extends IOException {
+        public int statusCode;
+        public String url;
+
+        public HttpErrorException(int code, String reason, String url) {
+            super(reason);
+            this.statusCode = code;
+            this.url = url;
+        }
+        
+        public String toString() {
+            return String.format("HTTP error %d : %s for URL %s", this.statusCode, 
+                    this.getMessage(), this.url);
         }
     }
 }

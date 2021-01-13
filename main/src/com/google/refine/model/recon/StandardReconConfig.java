@@ -69,6 +69,7 @@ import com.google.refine.model.ReconType;
 import com.google.refine.model.RecordModel.RowDependency;
 import com.google.refine.model.Row;
 import com.google.refine.util.HttpClient;
+import com.google.refine.util.HttpClient.HttpErrorException;
 import com.google.refine.util.ParsingUtilities;
 
 public class StandardReconConfig extends ReconConfig {
@@ -476,12 +477,7 @@ public class StandardReconConfig extends ReconConfig {
                     .addParameter(authInfo[1], authInfo[2])
                     .build().toString();
         }
-        try {
-            return getHttpClient().postNameValue(url, "queries", queriesString);
-
-        } catch (IOException e) {
-            throw new IOException("Failed to batch recon with load:\n" + queriesString, e);
-        }
+        return getHttpClient().postNameValue(url, "queries", queriesString);
     }
 
     @Override
@@ -535,6 +531,14 @@ public class StandardReconConfig extends ReconConfig {
                     }
                     recons.add(recon);
                 }
+            }
+        } catch (HttpErrorException e) {
+            if (e.statusCode >= 400 && e.statusCode < 500) {
+                logger.error("Fatal error - ", e);
+//                throw e;
+            } else {
+                logger.error("Failed to batch recon with load:\n" + queriesString, e);
+                return null;
             }
         } catch (IOException | URISyntaxException e) {
             logger.error("Failed to batch recon with load:\n" + queriesString, e);
