@@ -27,7 +27,7 @@ You can [sort your data](sortview#sort) based on the values in one column, but t
 
 In the project grid header, the word “Sort” will appear when a sort operation is applied. Click on it to show the dropdown menu, and select <span class="menuItems">Reorder rows permanently</span>. You will see the numbering of the rows change under the <span class="menuItems">All</span> column. 
 
-:::info
+:::info Reordering all rows
 Reordering rows permanently will affect all rows in the dataset, not just those currently viewed through [facets and filters](facets). 
 :::
 

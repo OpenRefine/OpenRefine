@@ -134,7 +134,7 @@ If you imported a spreadsheet with multiple worksheets, they will be listed alon
 
 Note that OpenRefine does not preserve any formatting, such as cell or text colour, that my have been in the original data file. Hyperlinked text will be input as plain text, but OpenRefine will recognize links and make them clickable inside the project interface. 
 
-:::info
+:::info Encoding issues?
 Look for character encoding issues at this stage. You may want to manually select an encoding, such as UTF-8, UTF-16, or ASCII, if OpenRefine does not display some characters correctly in the preview. Once your project is created, you can specify another encoding for specific columns using the [reinterpret() function](grelfunctions#reinterprets-s-encoder).
 :::
 

@@ -324,7 +324,7 @@ From the home screen, look in the options to the left for <span class="menuItems
 
 To leave the Language Settings screen, click on the diamond “OpenRefine” logo.
 
-:::info
+:::info Help us Translate OpenRefine
 We use Weblate to provide translations for the interface. You can check [our profile on Weblate](https://hosted.weblate.org/projects/openrefine/translations/) to see which languages are in the process of being supported. See [our technical reference if you are interested in contributing translation work](https://docs.openrefine.org/technical-reference/translating) to make OpenRefine accessible to people in other languages.
 :::
 
@@ -492,7 +492,7 @@ OpenRefine has no built-in security or version control for multi-user scenarios.
 
 Some users may wish to employ OpenRefine for batch processing as part of a larger automated pipeline. Not all OpenRefine features can work without human supervision and advancement (such as clustering), but many data transformation tasks can be automated. 
 
-:::info
+:::caution
 The following are all third-party extensions and code; the OpenRefine team does not maintain them and cannot guarantee that any of them work. 
 :::
 

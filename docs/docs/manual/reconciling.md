@@ -19,7 +19,7 @@ You may wish to reconcile in order to:
 
 Reconciliation is semi-automated: OpenRefine matches your cell values to the reconciliation information as best it can, but human judgment is required to review and approve the results. Reconciling happens by default through string searching, so typos, whitespace, and extraneous characters will have an effect on the results. You may wish to [clean and cluster](cellediting) your data before reconciliaton.
 
-:::info
+:::info Working iteratively
 We recommend planning your reconciliation operations as iterative: reconcile multiple times with different settings, and with different subgroups of your data. 
 :::
 

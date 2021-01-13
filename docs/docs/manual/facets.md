@@ -96,7 +96,7 @@ Whereas a text facet groups unique text values into groups, a numeric facet sort
 
 You will be offered the option to include blank, non-numeric, and error values in your numeric visualization; these will appear in the visual range as “0” values.
 
-:::info
+:::info Numbers as text
 You can create a text facet on numeric data, which will treat each entry as a string. This can be useful if you wish, for example, to manually include facets instead of selecting a range, or sort by count, or copy that count.
 :::
 
