@@ -43,7 +43,7 @@ To transform data from one type to another, see [Transforming data](cellediting#
 
 ### Dates
 
-A “date” type is created when a column is [transformed into dates](transforming#to-date), when an expression is used to [convert cells to dates](grelfunctions#todateo-b-monthfirst-s-format1-s-format2-) or when individual cells are set to have the data type “date.” 
+A “date” type is created when a column is [transformed into dates](transforming#to-date), when an expression is used to [convert cells to dates](grelfunctions#todateo-b-monthfirst-s-format1-s-format2-) or when individual cells are set to have the data type “date”. 
 
 Date-formatted data in OpenRefine relies on a number of conversion tools and standards. For something to be considered a date in OpenRefine, it will be converted into the ISO-8601-compliant extended format with time in UTC: YYYY-MM-DDTHH:MM:SSZ.
 
