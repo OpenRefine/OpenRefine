@@ -6,7 +6,7 @@ on:
       - master
 
 jobs:
-  cypress_tests:
+  ui_tests:
     runs-on: ubuntu-latest
 
     strategy:
@@ -29,6 +29,11 @@ jobs:
       with:
           java-version: 8
 
+    - name: Setup Node
+      uses: actions/setup-node@v2
+      with:
+        node-version: '12'
+
     - name: Install Edge
       if: matrix.browser == 'edge'
       run: | 
@@ -45,7 +50,11 @@ jobs:
     - name: Restore Tests dependency cache
       uses: actions/cache@v2.1.3
       with:
-          path: '**/node_modules'
+          path: |
+            ~/cache
+            ~/.cache
+            **/node_modules
+            !~/cache/exclude
           key: ${{ runner.os }}-modules-${{ hashFiles('**/yarn.lock') }}
           restore-keys: |
               ${{ runner.os }}-yarn
@@ -53,6 +62,8 @@ jobs:
     - name: Install test dependencies
       run: |
           cd ./main/tests/cypress
+          npm cache clean --force
+          npm i -g yarn
           yarn install
 
     - name: Test with Cypress on ${{ matrix.browser }}
