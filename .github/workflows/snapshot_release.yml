@@ -62,7 +62,6 @@ jobs:
     - name: Install test dependencies
       run: |
           cd ./main/tests/cypress
-          npm cache clean --force
           npm i -g yarn
           yarn install
 
