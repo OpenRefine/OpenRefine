@@ -456,7 +456,7 @@ Not all operations can be extracted. Edits to a single cell, for example, can’
 ### Running as a server
 
 :::caution
-Please note that if your machine has an external IP (is exposed to the Internet), you should not do this, or should protect it behind a proxy or firewall, such as nginx. Proceed at your own risk.
+Please note that exposing an OpenRefine instance to the Internet is dangerous, as it gives anyone the ability to read and modify your projects and run arbitrary code on your computer. OpenRefine should at least be protected by an authenticating proxy.
 :::
 
 By default (and for security reasons), OpenRefine only listens to TCP requests coming from localhost (127.0.0.1) on port 3333. If you want to share your OpenRefine instance with colleagues and respond to TCP requests to any IP address of the machine, start it from the command line like this:
