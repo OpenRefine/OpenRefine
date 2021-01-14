@@ -5,7 +5,6 @@ title: OpenRefine user manual
 sidebar_label: Introduction
 ---
 
-## Welcome to OpenRefine
 
 This manual is designed to comprehensively walk through every aspect of setting up and using OpenRefine 3.4.1, including every interface function and feature. 
 
