@@ -72,8 +72,8 @@
     display: inline-block;
     border: 2px solid #4dc6e1;
     border-radius: var(--ifm-code-border-radius);
-    margin: 0;
-    padding: 1px var(--ifm-code-padding-horizontal);
+    margin: 1px 0px;
+    padding: 0px 4px;
   }
 
   .markdown img {
