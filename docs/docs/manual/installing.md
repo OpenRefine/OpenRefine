@@ -392,31 +392,11 @@ You can change this when you run OpenRefine from the terminal, by pointing to th
 
 ### Logs
 
-OpenRefine does not currently output an error log, but because the OpenRefine console window is always open while OpenRefine runs in your browser, you can copy information from the console if an error occurs. 
+OpenRefine does not currently output an error log, but because the OpenRefine console window is always open (on Linux and Windows) while OpenRefine runs in your browser, you can copy information from the console if an error occurs. 
 
-<Tabs
-  groupId="operating-systems"
-  defaultValue="win"
-  values={[
-    {label: 'Mac', value: 'mac'}
-  ]
-}>
-
-<TabItem value="mac">
-
-You can access OpenRefine server logs from the terminal on Mac:
-
-*   Find the OpenRefine app/icon in Finder
-*   control-click on the icon and select “Show Package Contents” from the context menu that displays
-*   This should open a new Finder menu showing a folder called “Contents” - navigate into this folder then into the “MacOS” folder
-*   control-click on “JavaAppLauncher”
-*   Choose “Open With” from the menu, and select “Terminal”
+Using a Mac, you can [run OpenRefine using the terminal](running#starting-and-exiting) in order to capture errors.
 
 ---
-
-</TabItem>
-
-</Tabs>
 
 ## Increasing memory allocation
 

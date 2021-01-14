@@ -65,7 +65,7 @@ Through the <span class="menuItems">Add column by fetching URLs</span> function,
 If you have a column of URLs and want to fetch the information that they point to, you can simply run the expression as `value`. If your column has, for example, unique identifiers for Wikidata entities (numerical values starting with Q), you can download the JSON-formatted metadata about each entity with
 
 ```
-“https://www.wikidata.org/wiki/Special:EntityData/” + value + “.json”
+"https://www.wikidata.org/wiki/Special:EntityData/" + value + ".json"
 ```
 
 or whatever metadata format you prefer. Information about the format options in Wikidata can be found [here](https://www.wikidata.org/wiki/Wikidata:Data_access). The service you are fetching data from may have similar documentation on its provided options.

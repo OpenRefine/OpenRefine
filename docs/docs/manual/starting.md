@@ -179,6 +179,8 @@ OpenRefine [saves all of your actions](running#history-undoredo) (everything you
 
 It doesn’t, however, save your facets, filters, or any kind of view you may have in place while you work. This includes the number of rows showing, and any sorting or column collapsing you may have done. A good rule of thumb is: if it’s not showing in <span class="tabLabels">Undo/Redo</span>, you will lose it when you leave the project workspace. 
 
+Autosaving happens by default every five minutes. You can [change this preference by following these directions](running#jvm-preferences).
+
 You can only save and share facets and filters, not any other type of view. To save current facets and filters, click <span class="menuItems">Permalink</span>. The project will reload with a different URL, which you can then copy and save elsewhere. This permalink will save both the facets and filters you’ve set, and the settings for each one (such as sorting by count rather than by name). 
 
 ### Deleting projects
