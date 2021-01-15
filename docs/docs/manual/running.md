@@ -106,13 +106,12 @@ If you are having problems connecting to OpenRefine with your browser, [check ou
 
 When you run OpenRefine from a command line, you can change a number of default settings. 
 
-You cannot start the Mac version with modifications using Terminal, but you can modify the way the application starts with [settings within files](#modifications-set-within-files).
-
 <Tabs
   groupId="operating-systems"
   defaultValue="win"
   values={[
     {label: 'Windows', value: 'win'},
+    {label: 'Mac', value: 'mac'},
     {label: 'Linux', value: 'linux'}
   ]
 }>
@@ -135,6 +134,12 @@ Get a list of all the commands with `refine /?`.
 |/i|Interface (IP address, or IP and port)|refine /i 127.0.0.2:3334|
 |/d|Enable debugging (on port 8000)|refine /d|
 |/x|Enable JMX monitoring for Jconsole and JvisualVM|refine /x|
+
+</TabItem>
+
+<TabItem value="mac">
+
+You cannot start the Mac version with modifications using Terminal, but you can modify the way the application starts with [settings within files](#modifications-set-within-files).
 
 </TabItem>
 
