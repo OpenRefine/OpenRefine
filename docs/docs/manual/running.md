@@ -111,7 +111,6 @@ When you run OpenRefine from a command line, you can change a number of default 
   defaultValue="win"
   values={[
     {label: 'Windows', value: 'win'},
-    {label: 'Mac', value: 'mac'},
     {label: 'Linux', value: 'linux'}
   ]
 }>
@@ -134,25 +133,6 @@ Get a list of all the commands with `refine /?`.
 |/i|Interface (IP address, or IP and port)|refine /i 127.0.0.2:3334|
 |/d|Enable debugging (on port 8000)|refine /d|
 |/x|Enable JMX monitoring for Jconsole and JvisualVM|refine /x|
-
-</TabItem>
-
-<TabItem value="mac">
-
-To see the full list of command-line options, run `./refine -h`. 
-
-|Command|Use|Syntax example|
-|---|---|---|
-|-w|Path to the webapp|./refine -w /path/to/openrefine|
-|-d|Path to the workspace|./refine -d /where/you/want/the/workspace|
-|-m|Memory maximum heap|./refine -m 6000M|
-|-p|Port|./refine -p 3334|
-|-i|Interface (IP address, or IP and port)|./refine -i 127.0.0.2:3334|
-|-k|Add a Google API key|./refine -k YOUR_API_KEY|
-|-v|Verbosity (from low to high: error,warn,info,debug,trace)|./refine -v info|
-|-x|Additional configuration parameters||
-|--debug|Enable debugging (on port 8000)|./refine --debug|
-|--jmx|Enable JMX monitoring for Jconsole and JvisualVM|./refine --jmx|
 
 </TabItem>
 
