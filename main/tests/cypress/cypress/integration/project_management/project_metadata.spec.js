@@ -4,7 +4,7 @@ describe(__filename, function () {
 		cy.loadProject('food.mini.csv', projectName);
 		cy.visitOpenRefine();
 		cy.navigateTo('Open Project');
-        cy.contains('td', projectName)   
+        	cy.contains('td', projectName)   
   		  .siblings()  
   		  .contains('a', 'About')
   		  .click()
@@ -17,7 +17,7 @@ describe(__filename, function () {
 		cy.loadProject('food.mini.csv', projectName);
 		cy.visitOpenRefine();
 		cy.navigateTo('Open Project');
-        cy.contains('td', projectName)   
+        	cy.contains('td', projectName)   
   		  .siblings()  
   		  .contains('a', 'About')
   		  .click()
