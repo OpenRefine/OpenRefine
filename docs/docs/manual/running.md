@@ -106,6 +106,8 @@ If you are having problems connecting to OpenRefine with your browser, [check ou
 
 When you run OpenRefine from a command line, you can change a number of default settings. 
 
+You cannot start the Mac version with modifications using Terminal, but you can modify the way the application starts with [settings within files](#modifications-set-within-files).
+
 <Tabs
   groupId="operating-systems"
   defaultValue="win"
