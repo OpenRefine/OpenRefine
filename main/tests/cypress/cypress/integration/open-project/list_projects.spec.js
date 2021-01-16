@@ -4,7 +4,7 @@ describe(__filename, function () {
 		cy.loadProject('food.mini.csv', projectName);
 		cy.visitOpenRefine();
 		cy.navigateTo('Open Project');
-		cy.get('#projects-list table').contains(projectName);
+		cy.get('#projects-list table').should('contain',projectName);
 	});
 
 	it('Visit a project from the Open project page, ensure link is working', function () {
@@ -13,7 +13,7 @@ describe(__filename, function () {
 		cy.visitOpenRefine();
 		cy.navigateTo('Open Project');
 		cy.get('#projects-list table').contains(projectName).click();
-		cy.get('#project-name-button').contains(projectName);
+		cy.get('#project-name-button').should('contain',projectName);
 	});
 	it('Ensure projects are sorted on basis of names', function () {
 		const projectName = "projectA";
@@ -23,9 +23,9 @@ describe(__filename, function () {
 		cy.visitOpenRefine();
 		cy.navigateTo('Open Project');
 		cy.get('#projects-list table').contains("Name").click();
-		cy.get('#projects-list tbody>tr').eq(1).contains('projectA');
+		cy.get('#projects-list tbody>tr').eq(1).should('contain','projectA');
 		cy.get('#projects-list table').contains("Name").click();
-		cy.get('#projects-list tbody>tr').eq(1).contains('projectZ'); 
+		cy.get('#projects-list tbody>tr').eq(1).should('contain', 'projectZ'); 
 	});
 	it('Ensure project is deleted from database as well as UI', function () {
 		const projectName = Date.now();
