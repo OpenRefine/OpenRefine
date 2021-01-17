@@ -26,7 +26,7 @@ Cypress.Commands.add('cleanupProjects', () => {
 					body: { project: projectId },
 					form: true,
 				}).then((resp) => {
-					console.log(resp);
+					// console.log(resp);
 					cy.log('Deleted OR project' + projectId);
 				});
 			}
@@ -69,6 +69,7 @@ Cypress.Commands.add('loadProject', (fixture, projectName) => {
 				cy.log('Created OR project', projectId);
 
 				cy.get('@loadedProjectIds', { log: false }).then((loadedProjectIds) => {
+					console.log(loadedProjectIds.length);
 					loadedProjectIds.push(projectId);
 					cy.wrap(loadedProjectIds, { log: false })
 						.as('loadedProjectIds')
