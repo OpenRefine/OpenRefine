@@ -23,9 +23,9 @@ describe(__filename, function () {
 		cy.visitOpenRefine();
 		cy.navigateTo('Open Project');
 		cy.get('#projects-list table').contains("Name").click();
-		cy.get('#projects-list tbody>tr').eq(1).should('contain','projectA');
+		cy.get('#projects-list tbody>tr').eq(0).should('contain','projectA');
 		cy.get('#projects-list table').contains("Name").click();
-		cy.get('#projects-list tbody>tr').eq(1).should('contain', 'projectZ'); 
+		cy.get('#projects-list tbody>tr').eq(0).should('contain', 'projectZ'); 
 	});
 	it('Ensure project is deleted from database as well as UI', function () {
 		const projectName = Date.now();
@@ -33,7 +33,7 @@ describe(__filename, function () {
 		cy.visitOpenRefine();
 		cy.navigateTo('Open Project');
 		cy.contains('td', projectName).siblings().find('.delete-project').click();
-		cy.get('#projects-list table>tbody>tr').should('not.contain', projectName);
+		cy.get('#projects-list').should('not.contain', projectName);
 		cy.request('GET', 'http://127.0.0.1:3333/command/core/get-all-project-metadata').then((response) => {
 			var responseText = JSON.stringify(response.body);
 			expect(responseText).to.not.have.string(projectName);

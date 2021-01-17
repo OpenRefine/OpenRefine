@@ -26,6 +26,7 @@ Cypress.Commands.add('cleanupProjects', () => {
 					body: { project: projectId },
 					form: true,
 				}).then((resp) => {
+					console.log(resp);
 					cy.log('Deleted OR project' + projectId);
 				});
 			}
