@@ -108,6 +108,7 @@ Refine.SeparatorBasedParserUI.prototype.getOptions = function() {
     options.limit = -1;
   }
   options.storeBlankRows = this._optionContainerElmts.storeBlankRowsCheckbox[0].checked;
+  options.storeBlankColumns = this._optionContainerElmts.storeBlankColumnsCheckbox[0].checked;
 
   options.guessCellValueTypes = this._optionContainerElmts.guessCellValueTypesCheckbox[0].checked;
   options.processQuotes = this._optionContainerElmts.processQuoteMarksCheckbox[0].checked;
@@ -163,6 +164,7 @@ Refine.SeparatorBasedParserUI.prototype._initialize = function() {
   $('#or-import-quote').html($.i18n('core-index-parser/use-quote'));
   $('#or-import-quote-character').html($.i18n('core-index-parser/quote-delimits-cells'));
   $('#or-import-blank').text($.i18n('core-index-parser/store-blank'));
+  $('#or-import-blank-col').text($.i18n('core-index-parser/store-blank-col'));
   $('#or-import-null').text($.i18n('core-index-parser/store-nulls'));
   $('#or-import-source').html($.i18n('core-index-parser/store-source'));
   $('#or-import-archive').html($.i18n('core-index-parser/store-archive'));
@@ -224,6 +226,9 @@ Refine.SeparatorBasedParserUI.prototype._initialize = function() {
   }
   if (this._config.storeBlankRows) {
     this._optionContainerElmts.storeBlankRowsCheckbox.prop("checked", true);
+  }
+  if (this._config.storeBlankColumns) {
+      this._optionContainerElmts.storeBlankColumnsCheckbox.prop("checked", true);
   }
 
   if (this._config.guessCellValueTypes) {

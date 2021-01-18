@@ -63,6 +63,7 @@ abstract public class TabularImportingParserBase extends ImportingParserBase {
         
         JSONUtilities.safePut(options, "skipDataLines", 0); // number of initial data lines to skip
         JSONUtilities.safePut(options, "storeBlankRows", true);
+        JSONUtilities.safePut(options, "storeBlankColumns", true);
         JSONUtilities.safePut(options, "storeBlankCellsAsNulls", true);
         
         return options;
@@ -124,10 +125,12 @@ abstract public class TabularImportingParserBase extends ImportingParserBase {
         boolean guessCellValueTypes = JSONUtilities.getBoolean(options, "guessCellValueTypes", false);
         
         boolean storeBlankRows = JSONUtilities.getBoolean(options, "storeBlankRows", true);
+        boolean storeBlankColumns = JSONUtilities.getBoolean(options, "storeBlankColumns", true);
         boolean storeBlankCellsAsNulls = JSONUtilities.getBoolean(options, "storeBlankCellsAsNulls", true);
         boolean trimStrings = JSONUtilities.getBoolean(options, "trimStrings", false);
 
         List<String> columnNames = new ArrayList<String>();
+        List<Boolean> columnsWithData = new ArrayList<Boolean>();
         boolean hasOurOwnColumnNames = headerLines > 0;
         
         List<Object> cells = null;
@@ -170,6 +173,7 @@ abstract public class TabularImportingParserBase extends ImportingParserBase {
                     
                     if (skipDataLines <= 0 || rowsWithData > skipDataLines) {
                         boolean rowHasData = false;
+                        ImporterUtilities.ensureColumnsWithDataExpands(columnsWithData, cells.size());
                         for (int c = 0; c < cells.size(); c++) {
                             Column column = ImporterUtilities.getOrAllocateColumn(
                                 project, columnNames, c, hasOurOwnColumnNames);
@@ -178,6 +182,7 @@ abstract public class TabularImportingParserBase extends ImportingParserBase {
                             if (value instanceof Cell) {
                                 row.setCell(column.getCellIndex(), (Cell) value);
                                 rowHasData = true;
+                                columnsWithData.set(c, true);
                             } else if (ExpressionUtils.isNonBlankData(value)) {
                                 Serializable storedValue;
                                 if (value instanceof String) {
@@ -193,6 +198,7 @@ abstract public class TabularImportingParserBase extends ImportingParserBase {
                                 
                                 row.setCell(column.getCellIndex(), new Cell(storedValue, null));
                                 rowHasData = true;
+                                columnsWithData.set(c, true);
                             } else if (!storeBlankCellsAsNulls) {
                                 row.setCell(column.getCellIndex(), new Cell("", null));
                             } else {
@@ -209,6 +215,9 @@ abstract public class TabularImportingParserBase extends ImportingParserBase {
                         }
                     }
                 }
+            }
+            if(!storeBlankColumns) {
+                ImporterUtilities.deleteEmptyColumns(columnsWithData, project);
             }
         } catch (IOException e) {
             exceptions.add(e);

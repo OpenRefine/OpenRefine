@@ -44,8 +44,10 @@ import java.util.Map;
 import java.util.Properties;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.google.refine.history.Change;
 import com.google.refine.importing.ImportingJob;
 import com.google.refine.importing.ImportingUtilities;
+import com.google.refine.model.changes.ColumnRemovalChange;
 import com.google.refine.model.Column;
 import com.google.refine.model.ModelException;
 import com.google.refine.model.Project;
@@ -123,7 +125,13 @@ public class ImporterUtilities {
             columnNames.add("");
         }
     }
-    
+
+    static public void ensureColumnsWithDataExpands(List<Boolean> columnsWithData, int rowSize) {
+        while (rowSize > columnsWithData.size()) {
+            columnsWithData.add(false);
+        }
+    }
+
     static public Column getOrAllocateColumn(Project project, List<String> currentFileColumnNames,
             int index, boolean hasOurOwnColumnNames) {
         if (index < currentFileColumnNames.size()) {
@@ -192,7 +200,18 @@ public class ImporterUtilities {
             }
         }
     }
-    
+
+    static public void deleteEmptyColumns(List<Boolean> columnsWithData, Project project){
+        int deletedSoFar = 0;
+        for (int c = 0; c < columnsWithData.size(); c++) {
+            if (columnsWithData.get(c) == false) {
+                Change change = new ColumnRemovalChange(c - deletedSoFar);
+                change.apply(project);
+                deletedSoFar++;
+            }
+        }
+    }
+
     static public interface MultiFileReadingProgress {
         public void startFile(String fileSource);
         public void readingFile(String fileSource, long bytesRead);
