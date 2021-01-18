@@ -242,7 +242,6 @@ Refine.OpenProjectUI.prototype._renderProjects = function(data) {
       .text($.i18n('core-index-open/edit-meta-data'))
       .addClass("secondary")
       .attr("href", "javascript:{}")
-      .attr("data-cy", "about-metadata")
       .click(function() {
           new EditMetadataDialog(project, $(this).parent().parent());
       })
