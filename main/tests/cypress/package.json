@@ -12,5 +12,8 @@
         "dotenv": "^8.2.0",
         "fs-extra": "^9.0.1",
         "uniqid": "^5.2.0"
+    },
+    "devDependencies": {
+        "prettier": "2.2.1"
     }
 }
