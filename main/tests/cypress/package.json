@@ -6,7 +6,7 @@
     "author": "OpenRefine",
     "private": true,
     "dependencies": {
-        "cypress": "6.2.1",
+        "cypress": "6.3.0",
         "cypress-file-upload": "^5.0.0",
         "cypress-wait-until": "^1.7.1",
         "dotenv": "^8.2.0",
