@@ -1,6 +1,6 @@
 describe(__filename, function () {
     it('Ensure the Edit button is visible on mouse over a cell', function () {
-        cy.loadAndVisitProject('food.mini.csv')
+        cy.loadAndVisitProject('food.mini')
 
         cy.getCell(1, 'Water').trigger('mouseover')
         cy.getCell(1, 'Water')
@@ -9,7 +9,7 @@ describe(__filename, function () {
     })
 
     it('Ensure the Edit button opens a popup', function () {
-        cy.loadAndVisitProject('food.mini.csv')
+        cy.loadAndVisitProject('food.mini')
         cy.getCell(1, 'Shrt_Desc')
             .trigger('mouseover')
             .find('a.data-table-cell-edit')
@@ -22,7 +22,7 @@ describe(__filename, function () {
     })
 
     it('Test a simple edit', function () {
-        cy.loadAndVisitProject('food.mini.csv')
+        cy.loadAndVisitProject('food.mini')
         cy.getCell(1, 'Shrt_Desc')
             .trigger('mouseover')
             .find('a.data-table-cell-edit')
@@ -38,7 +38,7 @@ describe(__filename, function () {
     })
 
     it('Test a simple edit, using keyboard shortcut', function () {
-        cy.loadAndVisitProject('food.mini.csv')
+        cy.loadAndVisitProject('food.mini')
         cy.getCell(1, 'Shrt_Desc')
             .trigger('mouseover')
             .find('a.data-table-cell-edit')
@@ -53,7 +53,7 @@ describe(__filename, function () {
     })
 
     it('Test the cancel button', function () {
-        cy.loadAndVisitProject('food.mini.csv')
+        cy.loadAndVisitProject('food.mini')
         cy.getCell(1, 'Shrt_Desc')
             .trigger('mouseover')
             .find('a.data-table-cell-edit')
@@ -69,7 +69,7 @@ describe(__filename, function () {
     })
 
     it('Test the cancel button, using keyboard shortcut', function () {
-        cy.loadAndVisitProject('food.mini.csv')
+        cy.loadAndVisitProject('food.mini')
         cy.getCell(1, 'Shrt_Desc')
             .trigger('mouseover')
             .find('a.data-table-cell-edit')
@@ -85,7 +85,7 @@ describe(__filename, function () {
     })
 
     it('Test edit all identical cells', function () {
-        cy.loadAndVisitProject('food.mini.csv')
+        cy.loadAndVisitProject('food.mini')
         cy.getCell(1, 'Water')
             .trigger('mouseover')
             .find('a.data-table-cell-edit')
@@ -104,7 +104,7 @@ describe(__filename, function () {
     })
 
     it('Test edit all identical cells, using the shortcut', function () {
-        cy.loadAndVisitProject('food.mini.csv')
+        cy.loadAndVisitProject('food.mini')
         cy.getCell(1, 'Water')
             .trigger('mouseover')
             .find('a.data-table-cell-edit')

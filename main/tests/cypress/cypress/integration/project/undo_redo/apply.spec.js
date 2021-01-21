@@ -1,6 +1,6 @@
 describe(__filename, function () {
     it('Apply a JSON', function () {
-        cy.loadAndVisitProject('food.mini.csv')
+        cy.loadAndVisitProject('food.mini')
 
         cy.get('#or-proj-undoRedo').click()
         cy.get('#refine-tabs-history .history-panel-controls')
