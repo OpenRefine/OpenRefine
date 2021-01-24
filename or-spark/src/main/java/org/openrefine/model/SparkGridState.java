@@ -218,7 +218,7 @@ public class SparkGridState implements GridState {
         }
         if (sortingConfig.equals(SortingConfig.NO_SORTING)) {
             // Without sorting, we can rely on row ids to paginate
-            return RDDUtils.paginate(grid.filter(wrapRowFilter(filter)), start, limit)
+            return RDDUtils.paginate(filteredGrid, start, limit)
                .stream()
                .map(tuple -> new IndexedRow(tuple._1, tuple._2))
                .collect(Collectors.toList());
@@ -482,6 +482,7 @@ public class SparkGridState implements GridState {
 		File gridFile = new File(file, GRID_PATH);
 		getGrid().map(r -> serializeIndexedRow(r)).saveAsTextFile(gridFile.getAbsolutePath(), GzipCodec.class);
 		
+		// TODO serialize the metadata object instead!
 		ParsingUtilities.saveWriter.writeValue(metadataFile, this);
 	}
 	
