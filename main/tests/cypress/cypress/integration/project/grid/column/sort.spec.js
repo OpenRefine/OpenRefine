@@ -1,6 +1,6 @@
 describe(__filename, function () {
     it('Perform a basic sort', function () {
-        cy.loadAndVisitProject('food.mini.csv')
+        cy.loadAndVisitProject('food.mini')
 
         // sort and confirm
         cy.columnActionClick('Shrt_Desc', ['Sort'])
@@ -16,7 +16,7 @@ describe(__filename, function () {
     })
 
     it('Perform a basic sort + Reverse', function () {
-        cy.loadAndVisitProject('food.mini.csv')
+        cy.loadAndVisitProject('food.mini')
 
         // sort and confirm
         cy.columnActionClick('Shrt_Desc', ['Sort'])
@@ -42,7 +42,7 @@ describe(__filename, function () {
     })
 
     it('Perform a basic sort + Remove Sort', function () {
-        cy.loadAndVisitProject('food.mini.csv')
+        cy.loadAndVisitProject('food.mini')
 
         // sort and confirm
         cy.columnActionClick('Shrt_Desc', ['Sort'])

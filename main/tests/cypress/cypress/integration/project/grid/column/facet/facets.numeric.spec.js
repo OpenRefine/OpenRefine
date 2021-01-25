@@ -1,6 +1,6 @@
 describe(__filename, function () {
     it('A numeric facet must be casted first', function () {
-        cy.loadAndVisitProject('food.small.csv')
+        cy.loadAndVisitProject('food.small')
         cy.columnActionClick('Water', ['Facet', 'Numeric facet'])
         cy.get('#refine-tabs-facets .facets-container li:first-child').contains(
             'No numeric value present.'
@@ -8,7 +8,7 @@ describe(__filename, function () {
     })
 
     it('Changing the type of the column for numeric', function () {
-        cy.loadAndVisitProject('food.small.csv')
+        cy.loadAndVisitProject('food.small')
         cy.columnActionClick('Water', ['Facet', 'Numeric facet'])
         cy.get('#refine-tabs-facets .facets-container li:first-child').contains(
             'No numeric value present.'

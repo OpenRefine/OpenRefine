@@ -1,6 +1,6 @@
 describe(__filename, function () {
     it('Ensure the Undo button is visible after deleting a column', function () {
-        cy.loadAndVisitProject('food.mini.csv')
+        cy.loadAndVisitProject('food.mini')
         cy.deleteColumn('NDB_No')
 
         cy.get('#notification-container')
@@ -12,7 +12,7 @@ describe(__filename, function () {
     })
 
     it('Ensure the Undo button is effectively working', function () {
-        cy.loadAndVisitProject('food.mini.csv')
+        cy.loadAndVisitProject('food.mini')
 
         cy.deleteColumn('NDB_No')
         // ensure that the column is back in the grid
@@ -24,7 +24,7 @@ describe(__filename, function () {
     })
 
     it('Delete 3 columns, then successively undo and redo the modifications using the Undo/Redo panel', function () {
-        cy.loadAndVisitProject('food.mini.csv')
+        cy.loadAndVisitProject('food.mini')
 
         // delete NDB_No
         cy.deleteColumn('NDB_No')
@@ -106,7 +106,7 @@ describe(__filename, function () {
     // Very long test to run
     // it('Ensure the Undo button dissapear after timeout after deleting a column', function () {
     // 	const ORNotificationTimeout = 15000;
-    // cy.loadAndVisitProject('food.mini.csv');
+    // cy.loadAndVisitProject('food.mini');
     // 	cy.columnActionClick('NDB_No', ['Edit column', 'Remove this column']);
     // 	cy.get('#notification-container', { timeout: ORNotificationTimeout }).should('not.be.visible');
     // });
