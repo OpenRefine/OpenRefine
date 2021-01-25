@@ -18,7 +18,6 @@
     <jee.path>/</jee.path>
     <jee.port>3333</jee.port>
     <refine.data>/tmp/refine</refine.data>
-    <jetty.version>9.4.26.v20200117</jetty.version>
   </properties>
 
   <scm>

@@ -31,6 +31,7 @@ import org.openrefine.sorting.RowSorter;
 import org.openrefine.sorting.SortingConfig;
 import org.openrefine.util.ParsingUtilities;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreType;
 import com.fasterxml.jackson.core.JsonProcessingException;
 
 /**
@@ -39,6 +40,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
  * @author Antonin Delpeuch
  *
  */
+@JsonIgnoreType
 public class LocalGridState implements GridState {
     
     protected final LocalDatamodelRunner runner;

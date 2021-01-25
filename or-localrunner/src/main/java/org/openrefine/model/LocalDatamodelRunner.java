@@ -25,8 +25,10 @@ import org.openrefine.model.local.Tuple2;
 import org.openrefine.overlay.OverlayModel;
 import org.openrefine.util.ParsingUtilities;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreType;
 import com.google.common.util.concurrent.MoreExecutors;
 
+@JsonIgnoreType
 public class LocalDatamodelRunner implements DatamodelRunner {
     
     final static protected String METADATA_PATH = "metadata.json";
@@ -35,12 +37,20 @@ public class LocalDatamodelRunner implements DatamodelRunner {
     protected final PLLContext pllContext;
     protected int numPartitions;
     
-    public LocalDatamodelRunner() throws IOException {
+    public LocalDatamodelRunner(Integer defaultParallelism) {
         Configuration fsConf = new Configuration();
         fsConf.set("fs.file.impl", OrderedLocalFileSystem.class.getName());
-        pllContext = new PLLContext(MoreExecutors.listeningDecorator(
-                Executors.newCachedThreadPool()), LocalFileSystem.get(fsConf));
-        numPartitions = 4;
+        try {
+            pllContext = new PLLContext(MoreExecutors.listeningDecorator(
+                    Executors.newCachedThreadPool()), LocalFileSystem.get(fsConf));
+        } catch (IOException e) {
+            throw new UncheckedIOException(e);
+        }
+        numPartitions = defaultParallelism;
+    }
+
+    public LocalDatamodelRunner() {
+        this(4);
     }
     
     public PLLContext getPLLContext() {
