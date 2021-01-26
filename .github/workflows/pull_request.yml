@@ -79,7 +79,7 @@ jobs:
   ui_tests:
     strategy:
       matrix:
-          browser: ['chrome', 'firefox']
+          browser: ['chrome']
     runs-on: ubuntu-latest
 
     steps:
@@ -123,11 +123,6 @@ jobs:
           cd ./main/tests/cypress
           npm i -g yarn
           yarn install
-
-    - name: Disable multi-process on firefox
-      if: matrix.browser == 'firefox'
-      run: |
-        export MOZ_FORCE_DISABLE_E10S=1
  
     - name: Test with Cypress on ${{ matrix.browser }}
       run: | 
