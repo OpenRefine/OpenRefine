@@ -45,7 +45,7 @@ Cypress.Commands.add('cleanupProjects', () => {
     })
 })
 
-Cypress.Commands.add('loadProject', (fixture, projectName) => {
+Cypress.Commands.add('loadProject', (fixture, projectName, tagName) => {
     const openRefineUrl = Cypress.env('OPENREFINE_URL')
     const openRefineProjectName = projectName ? projectName : 'cypress-test'
 
@@ -68,20 +68,35 @@ Cypress.Commands.add('loadProject', (fixture, projectName) => {
 
         // the following code can be used to inject tags in created projects
         // It's conflicting though, breaking up the CSV files
-        // const options = { projectTags: ['OpenRefineTesting'] };
+        const options = { projectTags: [tagName] }
         // '\r\n------BOUNDARY\r\nContent-Disposition: form-data; name="options"\r\n\r\n' +
         // JSON.stringify(options) +
-
-        var postData =
-            '------BOUNDARY\r\nContent-Disposition: form-data; name="project-file"; filename="' +
-            fixture +
-            '"\r\nContent-Type: "text/csv"\r\n\r\n' +
-            content +
-            '\r\n------BOUNDARY\r\nContent-Disposition: form-data; name="project-name"\r\n\r\n' +
-            openRefineProjectName +
-            '\r\n------BOUNDARY\r\nContent-Disposition: form-data; name="format"\r\n\r\n' +
-            openRefineFormat +
-            '\r\n------BOUNDARY--'
+        var postData
+        if (tagName == undefined) {
+            postData =
+                '------BOUNDARY\r\nContent-Disposition: form-data; name="project-file"; filename="' +
+                fixture +
+                '"\r\nContent-Type: "text/csv"\r\n\r\n' +
+                content +
+                '\r\n------BOUNDARY\r\nContent-Disposition: form-data; name="project-name"\r\n\r\n' +
+                openRefineProjectName +
+                '\r\n------BOUNDARY\r\nContent-Disposition: form-data; name="format"\r\n\r\n' +
+                openRefineFormat +
+                '\r\n------BOUNDARY--'
+        } else {
+            postData =
+                '------BOUNDARY\r\nContent-Disposition: form-data; name="project-file"; filename="' +
+                fixture +
+                '"\r\nContent-Type: "text/csv"\r\n\r\n' +
+                content +
+                '\r\n------BOUNDARY\r\nContent-Disposition: form-data; name="project-name"\r\n\r\n' +
+                openRefineProjectName +
+                '\r\n------BOUNDARY\r\nContent-Disposition: form-data; name="options"\r\n\r\n' +
+                JSON.stringify(options) +
+                '\r\n------BOUNDARY\r\nContent-Disposition: form-data; name="format"\r\n\r\n' +
+                openRefineFormat +
+                '\r\n------BOUNDARY--'
+        }
 
         cy.request({
             method: 'POST',
