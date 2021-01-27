@@ -22,7 +22,7 @@
     <!-- org.odftoolkit:odfdom-java:jar:0.9.0-RC1 bundles Jena 3.9.0 so we should match that
          Jena 3.15.0 doesn't work. Versions through 3.14.0 appear to, but we'll be conservative
     -->
-    <jena.version>3.9.0</jena.version>
+    <jena.version>3.17.0</jena.version>
     <okhttp.version>4.9.0</okhttp.version>
   </properties>
 
@@ -315,6 +315,7 @@
       <artifactId>joda-time</artifactId>
       <version>2.10.9</version>
     </dependency>
+
     <dependency>
       <groupId>org.apache.jena</groupId>
       <artifactId>jena-arq</artifactId>
@@ -334,6 +335,12 @@
       <groupId>org.apache.jena</groupId>
       <artifactId>jena-core</artifactId>
       <version>${jena.version}</version>
+    </dependency>
+    <!-- v1.15 is needed for Jena 3.14+ - copied from org.apache.jena:jena:pom -->
+    <dependency>
+      <groupId>commons-codec</groupId>
+      <artifactId>commons-codec</artifactId>
+      <version>1.15</version>
     </dependency>
     <dependency>
       <groupId>commons-io</groupId>
