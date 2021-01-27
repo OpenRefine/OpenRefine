@@ -23,7 +23,6 @@ module.exports = {
       items: ['manual/expressions', 'manual/grelfunctions'],
     },
       'manual/exporting',
-      'manual/glossary',
       'manual/troubleshooting'
     ],
     'Technical Reference': [
