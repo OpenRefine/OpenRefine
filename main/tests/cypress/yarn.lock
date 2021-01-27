@@ -365,10 +365,10 @@ cross-spawn@^7.0.0:
     shebang-command "^2.0.0"
     which "^2.0.1"
 
-cypress-file-upload@^5.0.1:
-  version "5.0.1"
-  resolved "https://registry.yarnpkg.com/cypress-file-upload/-/cypress-file-upload-5.0.1.tgz#ecdb1ed270427c618ccc2f8868086e40d6acf7e0"
-  integrity sha512-VZMAe2BjqS07NS4csSwXIxpPUp67t5BPo2Ar33w+MznAp8V5IjS40nC8BhzoFEQVsRFo8kp033lnQZGQ+7WaHw==
+cypress-file-upload@^5.0.2:
+  version "5.0.2"
+  resolved "https://registry.yarnpkg.com/cypress-file-upload/-/cypress-file-upload-5.0.2.tgz#538722e64747b5bf309399a7df26b470431859cb"
+  integrity sha512-QRPnQPeEaW+HMVB62/htIsKh7Kd/x2uzoHKEQxh7LCD+4IaG0rAjLZupCIjjUh+JnRymgfir8wOYtFSJCNWlpA==
   dependencies:
     mime "^2.5.0"
 
