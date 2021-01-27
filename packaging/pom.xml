@@ -9,7 +9,7 @@
   <parent>
     <groupId>org.openrefine</groupId>
     <artifactId>openrefine</artifactId>
-    <version>3.4-SNAPSHOT</version>
+    <version>3.5-SNAPSHOT</version>
   </parent>
   <properties>
     <rootdir>${basedir}/..</rootdir>
@@ -205,13 +205,13 @@
       <plugin> <!-- necessary for launch4j -->
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-antrun-plugin</artifactId>
-        <version>1.4</version>
+        <version>3.0.0</version>
         <executions>
           <execution>
             <phase>generate-test-resources</phase>
             <configuration>
 
-              <tasks>
+              <target>
                 <mkdir dir="./target/"/>
 
                 <mkdir dir="${built.webapp.dir}" />
@@ -261,7 +261,7 @@
                         <replacefilter token="../../extensions" value="extensions"/>
                     </replace>
 
-              </tasks>
+              </target>
 
             </configuration>
             <goals>
@@ -290,7 +290,7 @@
           <dependency>
             <groupId>com.thoughtworks.xstream</groupId>
             <artifactId>xstream</artifactId>
-          <version>1.4.9</version>
+          <version>1.4.12</version>
         </dependency>
         </dependencies>
         <executions>
@@ -379,7 +379,7 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-assembly-plugin</artifactId>
-          <version>3.1.0</version>
+          <version>3.3.0</version>
           <executions>
             <execution>
               <id>package-distributions</id>
@@ -401,9 +401,11 @@
           <version>1.2.0</version>
           <dependencies>
             <dependency>
+              <!-- dependency upgraded to >4.0 to fix runtime issues with some JRE versions:
+                   https://stackoverflow.com/questions/53696439/appbundle-maven-plugin-fails-on-mac-osx-with-java-10 -->
               <groupId>org.codehaus.plexus</groupId>
               <artifactId>plexus-archiver</artifactId>
-              <version>4.0.0</version>
+              <version>4.2.3</version>
             </dependency>
             <dependency>
               <groupId>org.apache.velocity</groupId>
@@ -476,5 +478,4 @@
     </dependency>
   </dependencies>
 </project>
-
 

@@ -168,19 +168,6 @@ public class GrelTests extends RefineTest {
     }
 
     @Test
-    public void testGetJsonFieldExists() throws ParsingException {
-        String test[] = { "\"[{\\\"one\\\": \\\"1\\\"}]\".parseJson()[0].one", "1" };
-        parseEval(bindings, test);
-    }
-
-    @Test
-    public void testGetJsonFieldAbsent() throws ParsingException {
-        String test =  "\"[{\\\"one\\\": \\\"1\\\"}]\".parseJson()[0].two";
-        Evaluable eval = MetaParser.parse("grel:" + test);
-        Assert.assertNull(eval.evaluate(bindings));
-    }
-    
-    @Test
     public void testJoinJsonArray() throws ParsingException {
         String test[] = { "\"{\\\"values\\\":[\\\"one\\\",\\\"two\\\",\\\"three\\\"]}\".parseJson().values.join(\",\")", "one,two,three" };
         parseEval(bindings, test);
@@ -205,14 +192,6 @@ public class GrelTests extends RefineTest {
             } catch (ParsingException e) {
                 Assert.fail("Unexpected parse failure for cross function: " + test);                
             }
-    }
-    
-    private void parseEval(Properties bindings, String[] test)
-    throws ParsingException {
-        Evaluable eval = MetaParser.parse("grel:" + test[0]);
-        Object result = eval.evaluate(bindings);
-        Assert.assertEquals(result.toString(), test[1], 
-                            "Wrong result for expression: "+test[0]);
     }
 
 }

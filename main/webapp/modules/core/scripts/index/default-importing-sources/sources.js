@@ -91,7 +91,9 @@ UrlImportingSourceUI.prototype.attachUI = function(bodyDiv) {
 
   this._elmts.form.submit(function(evt){
     evt.preventDefault();
-    if(!isUrlValid(self._elmts.urlInput[0].value)) {
+    var importUrl = self._elmts.urlInput[0].value.trim(); 
+    self._elmts.urlInput[0].value = importUrl;
+    if(!isUrlValid(importUrl)) {
       window.alert($.i18n('core-index-import/warning-web-address'));
     } else {
       self._controller.startImportJob(self._elmts.form, $.i18n('core-index-import/downloading-data'));

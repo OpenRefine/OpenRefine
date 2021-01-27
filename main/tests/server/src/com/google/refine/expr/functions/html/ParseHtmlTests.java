@@ -33,15 +33,10 @@ import java.util.Properties;
 
 import org.slf4j.LoggerFactory;
 import org.testng.Assert;
-import org.testng.annotations.AfterMethod;
-import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.BeforeTest;
 
 import com.google.refine.RefineTest;
 import com.google.refine.expr.EvalError;
-import com.google.refine.expr.functions.html.ParseHtml;
-import com.google.refine.grel.ControlFunctionRegistry;
-import com.google.refine.grel.Function;
 import com.google.refine.util.TestUtils;
 
 public class ParseHtmlTests extends RefineTest  {
@@ -56,6 +51,13 @@ public class ParseHtmlTests extends RefineTest  {
                         "            <p>para1 <strong>strong text</strong></p>\n" +
                         "            <p>para2</p>\n" +
                         "        </div>\n" +
+                        "        <div class=\"commentthread_comment_text\" id=\"comment_content_257769\">\n" +
+                                 "  Me : Make a 2nd game ?\n" +
+                                 " <br>Dev : Nah man , too much work.\n" +
+                                 " <br>Me : So what's it gonna be ?\n" +
+                                 " <br>Dev : REMASTER !!!!\n" +
+                                 " <br>" +
+                                 "</div>" +
                         "    </body>\n" +
                         "</html>";
     
@@ -65,32 +67,6 @@ public class ParseHtmlTests extends RefineTest  {
         logger = LoggerFactory.getLogger(this.getClass());
     }
 
-    @BeforeMethod
-    public void SetUp() {
-        bindings = new Properties();
-    }
-
-    @AfterMethod
-    public void TearDown() {
-        bindings = null;
-    }
-
-    /**
-     * Lookup a control function by name and invoke it with a variable number of args
-     */
-    private static Object invoke(String name,Object... args) {
-        // registry uses static initializer, so no need to set it up
-        Function function = ControlFunctionRegistry.getFunction(name);
-        if (function == null) {
-            throw new IllegalArgumentException("Unknown function "+name);
-        }
-        if (args == null) {
-            return function.call(bindings,new Object[0]);
-        } else {
-            return function.call(bindings,args);
-        }
-    }
-    
     @Test
     public void serializeParseHtml() {
         String json = "{\"description\":\"Parses a string as HTML\",\"params\":\"string s\",\"returns\":\"HTML object\"}";
@@ -107,6 +83,8 @@ public class ParseHtmlTests extends RefineTest  {
         Assert.assertEquals(invoke("htmlAttr",Jsoup.parse(h).select("div").first(),"class"),"class1");
         Assert.assertEquals(invoke("htmlText",Jsoup.parse(h).select("div").first()),"para1 strong text para2");
         Assert.assertEquals(invoke("ownText",Jsoup.parse(h).select("p").first()),"para1");
+        Assert.assertTrue(invoke("wholeText",Jsoup.parse(h).select("div.commentthread_comment_text").first()) instanceof String);
+        Assert.assertEquals(invoke("wholeText",Jsoup.parse(h).select("div.commentthread_comment_text").first()),"\n  Me : Make a 2nd game ?\n Dev : Nah man , too much work.\n Me : So what's it gonna be ?\n Dev : REMASTER !!!!\n ");
     }
 }
 

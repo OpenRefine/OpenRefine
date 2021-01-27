@@ -28,7 +28,6 @@ package com.google.refine.expr.functions.strings;
 
 import org.testng.annotations.Test;
 
-import com.google.refine.expr.functions.strings.LastIndexOf;
 import com.google.refine.util.TestUtils;
 
 public class LastIndexOfTests {

@@ -43,7 +43,6 @@ import org.testng.annotations.BeforeTest;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
-import com.google.refine.importers.SeparatorBasedImporter;
 import com.google.refine.util.ParsingUtilities;
 
 public class TsvCsvImporterTests extends ImporterTest {
@@ -579,7 +578,7 @@ public class TsvCsvImporterTests extends ImporterTest {
         String input = "data1" + inputSeparator + "data2" + inputSeparator + "data3\n";
         
         try {
-            prepareOptions(sep, -1, 0, 0, 1, false, false,"\"","[\"col1\",\"col2\",\"col3\"]");
+            prepareOptions(sep, -1, 0, 0, 1, false, false,"\"","[\"col1\",\"col2\",\"col3\"]", false);
             parseOneFile(SUT, new StringReader(input));
         } catch (Exception e) {
             Assert.fail("Exception during file parse",e);
@@ -655,7 +654,7 @@ public class TsvCsvImporterTests extends ImporterTest {
         String sep, int limit, int skip, int ignoreLines,
         int headerLines, boolean guessValueType, boolean ignoreQuotes, String quoteCharacter) {
         
-        prepareOptions(sep, limit, skip, ignoreLines, headerLines, guessValueType, ignoreQuotes, quoteCharacter,"[]");      
+        prepareOptions(sep, limit, skip, ignoreLines, headerLines, guessValueType, ignoreQuotes, quoteCharacter,"[]", false);
     }
 
     protected void prepareOptions(
@@ -673,7 +672,7 @@ public class TsvCsvImporterTests extends ImporterTest {
     
     protected void prepareOptions(
             String sep, int limit, int skip, int ignoreLines,
-            int headerLines, boolean guessValueType, boolean ignoreQuotes, String quoteCharacter, String columnNames) {
+            int headerLines, boolean guessValueType, boolean ignoreQuotes, String quoteCharacter, String columnNames, boolean includeArchiveFileName) {
             
             whenGetStringOption("separator", options, sep);
             whenGetStringOption("quoteCharacter", options, quoteCharacter);
@@ -685,5 +684,6 @@ public class TsvCsvImporterTests extends ImporterTest {
             whenGetBooleanOption("processQuotes", options, !ignoreQuotes);
             whenGetBooleanOption("storeBlankCellsAsNulls", options, true);
             whenGetArrayOption("columnNames", options, ParsingUtilities.evaluateJsonStringToArrayNode(columnNames));
+            whenGetBooleanOption("includeArchiveFileName", options, includeArchiveFileName);
         }
 }

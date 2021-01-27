@@ -120,7 +120,8 @@
     "core-index-parser/parse-references": "Trekk ut referanser i ekstra kolonner",
     "core-index-parser/wiki-base-url": "Avstem mot wiki med rotnettadresse:",
     "core-index-parser/invalid-wikitext": "Ingen tabell kunne fortolkes. Er du sikker på at dette er en gyldig wikitabell?",
-    "core-index-parser/store-source": "Lagre filkilde<br/>(filnavn, URL-er)<br/>i hver rad",
+    "core-index-parser/store-source": "Lagre filkilde",
+    "core-index-parser/store-archive": "Gem arkivfil",
     "core-index-parser/preserve-empty": "Bevar tomme strenger",
     "core-index-parser/trim": "Fjern innledende og avsluttende tomrom fra strenger",
     "core-index-parser/col-separated-by": "Kolonner adskilles av",
@@ -400,7 +401,7 @@
     "core-buttons/deselect-all": "Avvelg alt",
     "core-buttons/select": "Velg",
     "core-buttons/unselect": "Avvelg",
-    "core-buttons/next": "Neste",
+    "core-buttons/next": "Neste &raquo;",
     "core-buttons/add-url": "Legg til enda en nettadresse",
     "core-buttons/close": "Lukk",
     "core-buttons/reset-template": "Tilbakestill mal",
@@ -417,5 +418,9 @@
     "core-index/homepage": "Hjemmeside:",
     "core-index/image": "Bilde:",
     "core-dialogs/scatterplot-matrix": "Spredningsplott-matrise",
-    "core-dialogs/lb-formats-quotation": "Alltid siter tekst"
+    "core-dialogs/lb-formats-quotation": "Alltid siter tekst",
+    "core-index-import/match-count": "$1 {{plural:$1|treff|treff}}",
+    "core-index/prefs-loading-failed": "Klarte ikke å laste inn innstillingene.",
+    "core-index-import/files-selected": "$1 av $2 {{plural:$2|fil|filer}} valgt",
+    "core-index-import/file-count": "$1 {{plural:$1|fil|filer}}"
 }

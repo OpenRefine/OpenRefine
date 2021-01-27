@@ -41,7 +41,9 @@ public class CommonDescriptionScrutinizer extends DescriptionScrutinizer {
         labels.addAll(update.getLabelsIfNew()); // merge
         for (MonolingualTextValue label : labels) {
             String labelText = label.getText();
-            if (labelText == null) continue;
+            if (labelText == null) {
+                continue;
+            }
             labelText = labelText.trim();
             if (labelText.equals(descText)) {
                 QAWarning issue = new QAWarning(descIdenticalWithLabel, null, QAWarning.Severity.WARNING, 1);
@@ -55,4 +57,8 @@ public class CommonDescriptionScrutinizer extends DescriptionScrutinizer {
         }
     }
 
+    @Override
+    public boolean prepareDependencies() {
+        return true;
+    }
 }

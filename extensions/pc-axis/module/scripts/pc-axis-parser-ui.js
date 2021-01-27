@@ -31,6 +31,24 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
  */
 
+//Internationalization init
+
+var dictionary = {};
+$.ajax({
+url : "command/core/load-language?",
+type : "POST",
+async : false,
+data : {
+module : "pc-axis",
+},
+success : function(data) {
+dictionary = data['dictionary'];
+lang = data['lang'];
+}
+});
+$.i18n().load(dictionary, lang);
+// End internationalization
+
 Refine.PCAxisParserUI = function(controller, jobID, job, format, config,
     dataContainerElmt, progressContainerElmt, optionContainerElmt) {
 
@@ -89,6 +107,7 @@ Refine.PCAxisParserUI.prototype.getOptions = function() {
     options.skipDataLines = -1;
   }
   options.includeFileSources = this._optionContainerElmts.includeFileSourcesCheckbox[0].checked;
+  options.includeArchiveFileName = this._optionContainerElmts.includeArchiveFileCheckbox[0].checked;
 
   return options;
 };
@@ -102,7 +121,7 @@ Refine.PCAxisParserUI.prototype._initialize = function() {
   this._optionContainerElmts.previewButton.click(function() { self._updatePreview(); });
 
   this._optionContainerElmts.encodingInput
-    .attr('value', this._config.encoding || '')
+    .val(this._config.encoding || '')
     .click(function() {
       Encoding.selectEncoding($(this), function() {
         self._updatePreview();
@@ -119,6 +138,9 @@ Refine.PCAxisParserUI.prototype._initialize = function() {
   }
   if (this._config.includeFileSources) {
     this._optionContainerElmts.includeFileSourcesCheckbox.prop("checked", true);
+  }
+  if (this._config.includeArchiveFileName) {
+    this._optionContainerElmts.includeArchiveFileCheckbox.prop("checked", true);
   }
 
   var onChange = function() {

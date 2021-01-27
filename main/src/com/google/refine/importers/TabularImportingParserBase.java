@@ -34,7 +34,6 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package com.google.refine.importers;
 
 import java.io.IOException;
-import java.io.Reader;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -76,13 +75,36 @@ abstract public class TabularImportingParserBase extends ImportingParserBase {
     protected TabularImportingParserBase(boolean useInputStream) {
         super(useInputStream);
     }
+
+    /**
+     * @param project
+     * @param metadata
+     * @param job
+     * @param reader
+     * @param fileSource
+     * @param limit
+     * @param options
+     * @param exceptions
+     * @deprecated 2020-07-23 Use {@link TabularImportingParserBase#readTable(Project, ImportingJob, TableDataReader, int, ObjectNode, List)}
+     */
+    @Deprecated
+    static public void readTable(
+            Project project,
+            ProjectMetadata metadata,
+            ImportingJob job,
+            TableDataReader reader,
+            String fileSource,
+            int limit,
+            ObjectNode options,
+            List<Exception> exceptions
+        ) {
+        readTable(project, job, reader, limit, options, exceptions);
+    }
     
     static public void readTable(
         Project project,
-        ProjectMetadata metadata,
         ImportingJob job,
         TableDataReader reader,
-        String fileSource,
         int limit,
         ObjectNode options,
         List<Exception> exceptions
@@ -103,14 +125,8 @@ abstract public class TabularImportingParserBase extends ImportingParserBase {
         
         boolean storeBlankRows = JSONUtilities.getBoolean(options, "storeBlankRows", true);
         boolean storeBlankCellsAsNulls = JSONUtilities.getBoolean(options, "storeBlankCellsAsNulls", true);
-        boolean includeFileSources = JSONUtilities.getBoolean(options, "includeFileSources", false);
         boolean trimStrings = JSONUtilities.getBoolean(options, "trimStrings", false);
 
-        int filenameColumnIndex = -1;
-        if (includeFileSources) {
-            filenameColumnIndex = addFilenameColumn(project);
-        }
-        
         List<String> columnNames = new ArrayList<String>();
         boolean hasOurOwnColumnNames = headerLines > 0;
         
@@ -146,11 +162,9 @@ abstract public class TabularImportingParserBase extends ImportingParserBase {
                         ImporterUtilities.setupColumns(project, columnNames);
                     }
                 } else { // data lines
-                    Row row = new Row(columnNames.size());
+                    Row row = new Row(cells.size());
 
-                    if (storeBlankRows) {
-                        rowsWithData++;
-                    } else if (cells.size() > 0) {
+                    if (storeBlankRows || cells.size() > 0) {
                         rowsWithData++;
                     }
                     
@@ -167,7 +181,7 @@ abstract public class TabularImportingParserBase extends ImportingParserBase {
                             } else if (ExpressionUtils.isNonBlankData(value)) {
                                 Serializable storedValue;
                                 if (value instanceof String) {
-                                	if(trimStrings) {
+                                    if(trimStrings) {
                                         value = ((String) value).trim();
                                     }
                                     storedValue = guessCellValueTypes ?
@@ -185,16 +199,11 @@ abstract public class TabularImportingParserBase extends ImportingParserBase {
                                 row.setCell(column.getCellIndex(), null);
                             }
                         }
-                        
+
                         if (rowHasData || storeBlankRows) {
-                            if (includeFileSources && filenameColumnIndex >= 0) {
-                                row.setCell(
-                                    filenameColumnIndex,
-                                    new Cell(fileSource, null));
-                            }
                             project.rows.add(row);
                         }
-                        
+
                         if (limit2 > 0 && project.rows.size() >= limit2) {
                             break;
                         }
@@ -204,10 +213,5 @@ abstract public class TabularImportingParserBase extends ImportingParserBase {
         } catch (IOException e) {
             exceptions.add(e);
         }
-    }
-
-    public void parseOneFile(Project project, ProjectMetadata metadata, ImportingJob job, String fileSource,
-            Reader dataReader, int limit, ObjectNode options, List<Exception> exceptions) {
-        super.parseOneFile(project, metadata, job, fileSource, dataReader, limit, options, exceptions);
     }
 }

@@ -24,6 +24,7 @@
 package org.openrefine.wikidata.schema;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.apache.commons.lang.Validate;
@@ -77,7 +78,7 @@ public class WbReferenceExpr implements WbExpression<Reference> {
 
     @JsonProperty("snaks")
     public List<WbSnakExpr> getSnaks() {
-        return snakExprs;
+        return Collections.unmodifiableList(snakExprs);
     }
 
     @Override
