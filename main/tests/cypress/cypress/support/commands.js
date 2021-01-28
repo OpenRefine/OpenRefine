@@ -10,10 +10,35 @@
 
 import 'cypress-file-upload'
 import 'cypress-wait-until'
-// const fs = require('fs-extra');
-// var uniqid = require('uniqid');
-//
-//
+
+/**
+ * Return the .facets-container for a given facet name
+ */
+Cypress.Commands.add('getFacetContainer', (facetName) => {
+    return cy
+        .get(
+            `#refine-tabs-facets .facets-container .facet-container span[bind="titleSpan"]:contains("${facetName}")`,
+            { log: false }
+        )
+        .parentsUntil('.facets-container', { log: false })
+})
+
+/**
+ * Edit a cell, for a given row index, a column name and a value
+ */
+Cypress.Commands.add('editCell', (rowIndex, columnName, value) => {
+    cy.getCell(rowIndex, columnName)
+        .trigger('mouseover')
+        .find('a.data-table-cell-edit')
+        .click()
+    cy.get('.menu-container.data-table-cell-editor').should('exist')
+    cy.get('.menu-container.data-table-cell-editor textarea').type(value)
+    cy.get('.menu-container button[bind="okButton"]').click()
+    // ensure value has been changed in the grid
+    cy.get('.menu-container.data-table-cell-editor').should('not.exist')
+    cy.assertCellEquals(rowIndex, columnName, value)
+})
+
 Cypress.Commands.add('assertTextareaHaveJsonValue', (selector, json) => {
     cy.get(selector).then((el) => {
         // expected json needs to be parsed / restringified, to avoid inconsitencies about spaces and tabs
