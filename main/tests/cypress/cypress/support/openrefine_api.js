@@ -1,3 +1,5 @@
+const fixtures = require('../fixtures/fixtures.js')
+
 Cypress.Commands.add('setPreference', (preferenceName, preferenceValue) => {
     const openRefineUrl = Cypress.env('OPENREFINE_URL')
     cy.request(openRefineUrl + '/command/core/get-csrf-token').then(
@@ -45,53 +47,67 @@ Cypress.Commands.add('cleanupProjects', () => {
 
 Cypress.Commands.add('loadProject', (fixture, projectName) => {
     const openRefineUrl = Cypress.env('OPENREFINE_URL')
-    const openRefineProjectName = projectName ? projectName : fixture
-    cy.fixture(fixture).then((content) => {
-        cy.get('@token', { log: false }).then((token) => {
-            // cy.request(Cypress.env('OPENREFINE_URL')+'/command/core/get-csrf-token').then((response) => {
-            const openRefineFormat = 'text/line-based/*sv'
-            // const options = { projectTags: ['OpenRefineTesting'] };
-            // '\r\n------BOUNDARY\r\nContent-Disposition: form-data; name="options"\r\n\r\n' +
-            // JSON.stringify(options) +
+    const openRefineProjectName = projectName ? projectName : 'cypress-test'
 
-            var postData =
-                '------BOUNDARY\r\nContent-Disposition: form-data; name="project-file"; filename="' +
-                fixture +
-                '"\r\nContent-Type: "text/csv"\r\n\r\n' +
-                content +
-                '\r\n------BOUNDARY\r\nContent-Disposition: form-data; name="project-name"\r\n\r\n' +
-                openRefineProjectName +
-                '\r\n------BOUNDARY\r\nContent-Disposition: form-data; name="format"\r\n\r\n' +
-                openRefineFormat +
-                '\r\n------BOUNDARY--'
+    let jsonFixture
+    if (typeof fixture == 'string') {
+        jsonFixture = fixtures[fixture]
+    } else {
+        jsonFixture = fixture
+    }
 
-            cy.request({
-                method: 'POST',
-                url:
-                    `${openRefineUrl}/command/core/create-project-from-upload?csrf_token=` +
-                    token,
-                body: postData,
-                headers: {
-                    'content-type':
-                        'multipart/form-data; boundary=----BOUNDARY',
-                },
-            }).then((resp) => {
-                const location =
-                    resp.allRequestResponses[0]['Response Headers'].location
-                const projectId = location.split('=').slice(-1)[0]
-                cy.log('Created OR project', projectId)
+    const csv = []
+    jsonFixture.forEach((item) => {
+        csv.push('"' + item.join('","') + '"')
+    })
+    const content = csv.join('\n')
 
-                cy.get('@loadedProjectIds', { log: false }).then(
-                    (loadedProjectIds) => {
-                        loadedProjectIds.push(projectId)
-                        cy.wrap(loadedProjectIds, { log: false })
-                            .as('loadedProjectIds')
-                            .then(() => {
-                                return projectId
-                            })
-                    }
-                )
-            })
+    cy.get('@token', { log: false }).then((token) => {
+        // cy.request(Cypress.env('OPENREFINE_URL')+'/command/core/get-csrf-token').then((response) => {
+        const openRefineFormat = 'text/line-based/*sv'
+
+        // the following code can be used to inject tags in created projects
+        // It's conflicting though, breaking up the CSV files
+        // const options = { projectTags: ['OpenRefineTesting'] };
+        // '\r\n------BOUNDARY\r\nContent-Disposition: form-data; name="options"\r\n\r\n' +
+        // JSON.stringify(options) +
+
+        var postData =
+            '------BOUNDARY\r\nContent-Disposition: form-data; name="project-file"; filename="' +
+            fixture +
+            '"\r\nContent-Type: "text/csv"\r\n\r\n' +
+            content +
+            '\r\n------BOUNDARY\r\nContent-Disposition: form-data; name="project-name"\r\n\r\n' +
+            openRefineProjectName +
+            '\r\n------BOUNDARY\r\nContent-Disposition: form-data; name="format"\r\n\r\n' +
+            openRefineFormat +
+            '\r\n------BOUNDARY--'
+
+        cy.request({
+            method: 'POST',
+            url:
+                `${openRefineUrl}/command/core/create-project-from-upload?csrf_token=` +
+                token,
+            body: postData,
+            headers: {
+                'content-type': 'multipart/form-data; boundary=----BOUNDARY',
+            },
+        }).then((resp) => {
+            const location =
+                resp.allRequestResponses[0]['Response Headers'].location
+            const projectId = location.split('=').slice(-1)[0]
+            cy.log('Created OR project', projectId)
+
+            cy.get('@loadedProjectIds', { log: false }).then(
+                (loadedProjectIds) => {
+                    loadedProjectIds.push(projectId)
+                    cy.wrap(loadedProjectIds, { log: false })
+                        .as('loadedProjectIds')
+                        .then(() => {
+                            return projectId
+                        })
+                }
+            )
         })
     })
 })

@@ -1,6 +1,6 @@
 describe(__filename, function () {
     it('Test select/unselect all', function () {
-        cy.loadAndVisitProject('food.mini.csv')
+        cy.loadAndVisitProject('food.mini')
         cy.deleteColumn('NDB_No')
         cy.deleteColumn('Shrt_Desc')
 
@@ -50,7 +50,7 @@ describe(__filename, function () {
     })
 
     it('Test select/unselect individual entries', function () {
-        cy.loadAndVisitProject('food.mini.csv')
+        cy.loadAndVisitProject('food.mini')
         cy.deleteColumn('NDB_No')
         cy.deleteColumn('Shrt_Desc')
         cy.get('#or-proj-undoRedo').click()
@@ -119,7 +119,7 @@ describe(__filename, function () {
     })
 
     it('Test the close button', function () {
-        cy.loadAndVisitProject('food.mini.csv')
+        cy.loadAndVisitProject('food.mini')
         cy.deleteColumn('NDB_No')
         cy.get('#or-proj-undoRedo').click()
         cy.get('#refine-tabs-history .history-panel-controls')
@@ -132,7 +132,7 @@ describe(__filename, function () {
     })
 
     it('Ensure action are recorded in the extract panel', function () {
-        cy.loadAndVisitProject('food.mini.csv')
+        cy.loadAndVisitProject('food.mini')
         cy.deleteColumn('NDB_No')
         cy.deleteColumn('Shrt_Desc')
 

@@ -1,6 +1,6 @@
 describe(__filename, function () {
     it('Test the facets text (no facets yet)', function () {
-        cy.loadAndVisitProject('food.small.csv')
+        cy.loadAndVisitProject('food.small')
         cy.columnActionClick('Water', ['Facet', 'Text facet'])
         cy.get('#refine-tabs-facets')
             .should('exist')
@@ -8,7 +8,7 @@ describe(__filename, function () {
     })
 
     it('Create a simple text facet', function () {
-        cy.loadAndVisitProject('food.small.csv')
+        cy.loadAndVisitProject('food.small')
         cy.columnActionClick('Water', ['Facet', 'Text facet'])
         cy.get('#refine-tabs-facets').should('exist')
 
@@ -28,7 +28,7 @@ describe(__filename, function () {
     })
 
     it('Create a facet, Sort by count', function () {
-        cy.loadAndVisitProject('food.small.csv')
+        cy.loadAndVisitProject('food.small')
         cy.columnActionClick('Water', ['Facet', 'Text facet'])
         cy.get('#refine-tabs-facets').should('exist')
 
@@ -46,7 +46,7 @@ describe(__filename, function () {
     })
 
     it('Create a facet, Sort by count, then by name', function () {
-        cy.loadAndVisitProject('food.small.csv')
+        cy.loadAndVisitProject('food.small')
         cy.columnActionClick('Water', ['Facet', 'Text facet'])
         cy.get('#refine-tabs-facets').should('exist')
 
@@ -70,7 +70,7 @@ describe(__filename, function () {
     })
 
     it('Test the display of multiple facets', function () {
-        cy.loadAndVisitProject('food.small.csv')
+        cy.loadAndVisitProject('food.small')
         cy.columnActionClick('NDB_No', ['Facet', 'Text facet'])
         cy.columnActionClick('Shrt_Desc', ['Facet', 'Text facet'])
         cy.columnActionClick('Water', ['Facet', 'Text facet'])
@@ -89,7 +89,7 @@ describe(__filename, function () {
     // it('Test collapsing facet panels', function () {
     // The following test does not work
     // Because the facet panels uses soem weird CSS with overflow:hidden, Cypress can not detect it
-    // //// # cy.loadAndVisitProject('food.small.csv');
+    // //// # cy.loadAndVisitProject('food.small');
     // //// # cy.columnActionClick('NDB_No', ['Facet', 'Text facet']);
     // //// # ensure facet inner panel is visible
     // //// # cy.get('#refine-tabs-facets .facets-container li:nth-child(1) .facet-body-inner').should('be.visible');
@@ -99,7 +99,7 @@ describe(__filename, function () {
     // });
 
     it('Test editing a facet', function () {
-        cy.loadAndVisitProject('food.small.csv')
+        cy.loadAndVisitProject('food.small')
         cy.columnActionClick('NDB_No', ['Facet', 'Text facet'])
         cy.get(
             '#refine-tabs-facets .facets-container li:nth-child(1) a[bind="changeButton"]'
@@ -113,7 +113,7 @@ describe(__filename, function () {
     })
 
     it('Test editing a facet / Preview', function () {
-        cy.loadAndVisitProject('food.small.csv')
+        cy.loadAndVisitProject('food.small')
         cy.columnActionClick('NDB_No', ['Facet', 'Text facet'])
         cy.get(
             '#refine-tabs-facets .facets-container li:nth-child(1) a[bind="changeButton"]'
@@ -129,7 +129,7 @@ describe(__filename, function () {
     })
 
     it('Test editing a facet / History', function () {
-        cy.loadAndVisitProject('food.small.csv')
+        cy.loadAndVisitProject('food.small')
         cy.columnActionClick('NDB_No', ['Facet', 'Text facet'])
         cy.get(
             '#refine-tabs-facets .facets-container li:nth-child(1) a[bind="changeButton"]'
@@ -147,7 +147,7 @@ describe(__filename, function () {
     })
 
     it('Test editing a facet / Starred', function () {
-        cy.loadAndVisitProject('food.small.csv')
+        cy.loadAndVisitProject('food.small')
         cy.columnActionClick('NDB_No', ['Facet', 'Text facet'])
         cy.get(
             '#refine-tabs-facets .facets-container li:nth-child(1) a[bind="changeButton"]'
@@ -165,7 +165,7 @@ describe(__filename, function () {
     })
 
     it('Test editing a facet / Help', function () {
-        cy.loadAndVisitProject('food.small.csv')
+        cy.loadAndVisitProject('food.small')
         cy.columnActionClick('NDB_No', ['Facet', 'Text facet'])
         cy.get(
             '#refine-tabs-facets .facets-container li:nth-child(1) a[bind="changeButton"]'
