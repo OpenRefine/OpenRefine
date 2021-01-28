@@ -9,6 +9,11 @@ init:
 
 clone_depth: 5
 skip_branch_with_pr: true
+skip_commits:
+  files:
+    - docs/
+    - '**/*.md'
+    - '**/*.html'
 
 environment:
   JAVA_HOME: C:\Program Files (x86)\Java\jdk1.8.0
