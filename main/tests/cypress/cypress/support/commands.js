@@ -13,7 +13,19 @@ import 'cypress-wait-until'
 // const fs = require('fs-extra');
 // var uniqid = require('uniqid');
 //
-//
+
+/**
+ * Edit a cell, for a given row index, a column name and a value
+ */
+Cypress.Commands.add('editCell', (rowIndex, columnName, value) => {
+    cy.getCell(rowIndex, columnName)
+        .trigger('mouseover')
+        .find('a.data-table-cell-edit')
+        .click()
+    cy.get('.menu-container.data-table-cell-editor textarea').type(value)
+    cy.get('.menu-container button[bind="okButton"]').click()
+})
+
 Cypress.Commands.add('assertTextareaHaveJsonValue', (selector, json) => {
     cy.get(selector).then((el) => {
         // expected json needs to be parsed / restringified, to avoid inconsitencies about spaces and tabs
@@ -78,7 +90,12 @@ Cypress.Commands.add('assertCellEquals', (rowIndex, columnName, value) => {
         cy.get(
             `table.data-table tbody tr:nth-child(${cssRowIndex}) td:nth-child(${columnIndex}) div.data-table-cell-content > span`
         ).should(($cellSpan) => {
-            expect($cellSpan.text()).equals(value)
+            if (value == null) {
+                // weird, "null" is returned as a string in this case, bug in Chai ?
+                expect($cellSpan.text()).equals('null')
+            } else {
+                expect($cellSpan.text()).equals(value)
+            }
         })
     })
 })
@@ -133,5 +150,18 @@ Cypress.Commands.add(
                 Cypress.env('OPENREFINE_URL') + '/project?project=' + projectId
             )
         })
+    }
+)
+
+Cypress.Commands.add('assertNotificationContainingText', (text) => {
+    cy.get('#notification').should('to.contain', text)
+})
+
+Cypress.Commands.add(
+    'assertCellNotString',
+    (rowIndex, columnName, expectedType) => {
+        cy.getCell(rowIndex, columnName)
+            .find('.data-table-value-nonstring')
+            .should('to.exist')
     }
 )
