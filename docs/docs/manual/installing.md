@@ -39,7 +39,7 @@ If you wish to use an extension that is only compatible with an earlier version 
 
 If you need a recently developed function, and are willing to risk some untested code, you can look at [the most recent items in the list](https://github.com/OpenRefine/OpenRefine/releases) and see what changes appeal to you. 
 
-“Beta” and “release candidate” versions may both have unreported bugs and are most suitable for people who are wiling to help us troubleshoot these versions by [creating bug reports](https://github.com/OpenRefine/OpenRefine/issues).  
+“Beta” and “release candidate” versions may both have unreported bugs and are most suitable for people who are willing to help us troubleshoot these versions by [creating bug reports](https://github.com/OpenRefine/OpenRefine/issues).  
 
 For the absolute latest development updates, see the [snapshot releases](https://github.com/OpenRefine/OpenRefine-snapshot-releases/releases). These are created with every commit. 
 
