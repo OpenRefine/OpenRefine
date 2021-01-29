@@ -31,12 +31,8 @@ Cypress.Commands.add('editCell', (rowIndex, columnName, value) => {
         .trigger('mouseover')
         .find('a.data-table-cell-edit')
         .click()
-    cy.get('.menu-container.data-table-cell-editor').should('exist')
     cy.get('.menu-container.data-table-cell-editor textarea').type(value)
     cy.get('.menu-container button[bind="okButton"]').click()
-    // ensure value has been changed in the grid
-    cy.get('.menu-container.data-table-cell-editor').should('not.exist')
-    cy.assertCellEquals(rowIndex, columnName, value)
 })
 
 Cypress.Commands.add('assertTextareaHaveJsonValue', (selector, json) => {
