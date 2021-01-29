@@ -15,7 +15,7 @@ function typeExpression(expression) {
 }
 
 describe(__filename, function () {
-	it('test the layout of the expression panel', function () {
+	it('Test the layout of the expression panel', function () {
 		cy.loadAndVisitProject('food.mini')
 		loadExpressionPanel()
 
@@ -124,8 +124,7 @@ describe(__filename, function () {
 			'jython'
 		)
 		typeExpression('return value.thisPythonFunctionDoesNotExists()')
-		// This should be expected, see #
-		// cy.get('.expression-preview-parsing-status').contains('Parsing error');
+
 		cy.get(
 			'.expression-preview-table-wrapper tr:nth-child(2) td:last-child'
 		).should('to.contain', 'Error: Traceback')
@@ -189,21 +188,22 @@ describe(__filename, function () {
 		)
 	})
 
-	it('Test the history', function () {
+	it('Test the history behavior, ensure expressions are stored', function () {
 		cy.loadAndVisitProject('food.mini')
-		// because history is shared across projects, we need to use an expression that is unique
-		// use a first unique expression
+		// Because history is shared across projects, we need to use an expression that is unique
+
+		// Use a first unique expression
 		const uniqueExpression = 'value.testing_One_' + Date.now() + '()'
 		loadExpressionPanel()
 		typeExpression(uniqueExpression)
 		cy.get('.dialog-footer button').contains('OK').click()
-		// ensure the (invalid) function has been added to the facet
+		// ensure the function has been added to the facet
 		cy.get('#refine-tabs-facets').contains(
 			uniqueExpression.replace('()', '')
 		)
 
 		// Reload and review history
-		// Ensure the previously used expression is there
+		// Ensure the previously used expression is listed
 		loadExpressionPanel()
 		cy.get('#expression-preview-tabs li').contains('History').click()
 		cy.get('#expression-preview-tabs-history')
@@ -213,7 +213,7 @@ describe(__filename, function () {
 
 	it('Test the reuse of expressions from the history', function () {
 		cy.loadAndVisitProject('food.mini')
-		// because history is shared across projects, we need to build and use an expression that is unique
+		// Because history is shared across projects, we need to build and use an expression that is unique
 		const uniqueExpression = 'value.testing_One_' + Date.now() + '()'
 		loadExpressionPanel()
 		typeExpression(uniqueExpression)
@@ -224,6 +224,7 @@ describe(__filename, function () {
 
 		// Reload and review history
 		// Ensure the previously used expression is there
+		// Use it
 		loadExpressionPanel()
 		cy.get('#expression-preview-tabs li').contains('History').click()
 		cy.get('#expression-preview-tabs-history tr td')
@@ -233,7 +234,7 @@ describe(__filename, function () {
 			.contains('Reuse')
 			.click()
 
-		// expression must be populated in the textarea, after clicking on 'reuse'
+		// Expression must be populated in the textarea, after clicking on 'reuse'
 		cy.get('textarea.expression-preview-code').should(
 			'have.value',
 			uniqueExpression
@@ -246,7 +247,7 @@ describe(__filename, function () {
 		// Cleanup step
 		// Because starred expression are shared across projects, see #3499
 		// We need to un-star all previously starred expressions
-		cy.columnActionClick('Shrt_Desc', ['Facet', 'Custom text facet'])
+		loadExpressionPanel()
 		cy.get('#expression-preview-tabs li').contains('Starred').click()
 		cy.get(
 			'#expression-preview-tabs-starred .expression-preview-table-wrapper table'
@@ -267,14 +268,14 @@ describe(__filename, function () {
 		cy.get('.dialog-footer button').contains('Cancel').click()
 		// End cleanup
 
-		// load an expression
-		cy.columnActionClick('Shrt_Desc', ['Facet', 'Custom text facet'])
+		// Load an expression
+		loadExpressionPanel()
 		const uniqueExpression = 'value.testing_One_' + Date.now() + '()'
 		typeExpression(uniqueExpression)
 		cy.get('.dialog-footer button').contains('OK').click()
 
 		// Star the expression
-		cy.columnActionClick('Shrt_Desc', ['Facet', 'Custom text facet'])
+		loadExpressionPanel()
 		cy.get('#expression-preview-tabs li').contains('History').click()
 		cy.get('.expression-preview-table-wrapper tr td')
 			.contains(uniqueExpression)
@@ -282,21 +283,21 @@ describe(__filename, function () {
 			.find('a.data-table-star-off')
 			.click()
 
-		// List starred expressions, en ensure we find back the expression
+		// List starred expressions, en ensure the expression is listed
 		cy.get('#expression-preview-tabs li').contains('Starred').click()
 		cy.get(
 			'#expression-preview-tabs-starred .expression-preview-table-wrapper table'
 		).contains(uniqueExpression)
 	})
 
-	it('Test applying the expression and closing the panel', function () {
+	it('Simple test to ensure the expression panel can be closed with OK', function () {
 		cy.loadAndVisitProject('food.mini')
 		loadExpressionPanel()
 		cy.get('.dialog-footer button').contains('OK').click()
 		cy.get('.dialog-container').should('not.to.exist')
 	})
 
-	it('Test cancelling and closing the panel', function () {
+	it('Simple test to ensure the expression panel can be closed with Cancel', function () {
 		cy.loadAndVisitProject('food.mini')
 		loadExpressionPanel()
 		cy.get('.dialog-footer button').contains('Cancel').click()
