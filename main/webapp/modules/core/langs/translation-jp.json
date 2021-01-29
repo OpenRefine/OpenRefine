@@ -10,7 +10,7 @@
     "core-index/preferences": "設定",
     "core-index/creator": "作成者:",
     "core-index/no-proj": "プロジェクトは存在しません。新しいプロジェクトをつくるために、左側にある「プロジェクトをつくる」を選択してください。",
-    "core-index/version": "バージョン",
+    "core-index/version": "バージョン:",
     "core-index/error-rename": "プロジェクト名の変更に失敗しました:",
     "core-index/pref-key": "設定値:",
     "core-index/change-metadata-value": "メタデータのキーの値を変更",
@@ -791,5 +791,6 @@
     "core-import-formats/text/line-based/fixed-width": "固定長テキスト",
     "core-import-formats/text/line-based/*sv": "文字区切りテキスト(CSV/TSV)",
     "core-import-formats/text/line-based": "行単位のテキスト",
-    "core-dialogs/unstar-expression": "星削除式?"
+    "core-dialogs/unstar-expression": "星削除式?",
+    "core-index/refine-version": "バージョン $1"
 }
