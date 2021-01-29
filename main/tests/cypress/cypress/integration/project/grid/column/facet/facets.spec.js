@@ -219,7 +219,7 @@ describe(__filename, function () {
 		cy.getCell(0, 'Shrt_Desc').should('to.contain', 'ALLSPICE,GROUND')
 		cy.get('#tool-panel').contains('1 matching rows')
 
-		// OR ir refreshing facets, need to show the toggle again
+		// OR is refreshing facets, need to show the toggle again
 		cy.waitForOrOperation()
 		cy.getFacetContainer('Shrt_Desc')
 			.find('.facet-choice-toggle')
