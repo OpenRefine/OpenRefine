@@ -284,7 +284,7 @@ describe(__filename, function () {
 		cy.getCell(0, 'Shrt_Desc').should('to.contain', 'ALLSPICE,GROUND')
 		cy.get('#tool-panel').contains('1 matching rows')
 
-		// now invert, expect 198
+		// now invert, expect 198 rows
 		cy.getFacetContainer('Shrt_Desc').find('a[bind="invertButton"]').click()
 		cy.waitForOrOperation()
 		cy.get('#tool-panel').contains('198 matching rows')
