@@ -3,7 +3,7 @@
  * It's using "text facet" as it is the most simple facet
  */
 describe(__filename, function () {
-	it('Test the facets panel (no facets yet)', function () {
+	it('Verify facets panel (left-panel) appears with no facets yet', function () {
 		cy.loadAndVisitProject('food.small')
 		cy.columnActionClick('Water', ['Facet', 'Text facet'])
 		cy.get('#refine-tabs-facets')
