@@ -58,6 +58,16 @@ DataTableCellUI.previewMatchedCells = true;
   });
 })();
 
+function validURL(str) {
+  var pattern = new RegExp('^(https?:\\/\\/)?'+ // protocol
+    '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|'+ // domain name
+    '((\\d{1,3}\\.){3}\\d{1,3}))'+ // OR ip (v4) address
+    '(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*'+ // port and path
+    '(\\?[;&a-z\\d%_.~+=-]*)?'+ // query string
+    '(\\#[-a-z\\d_]*)?$','i'); // fragment locator
+  return !!pattern.test(str);
+}
+
 DataTableCellUI.prototype._render = function() {
   var self = this;
   var cell = this._cell;
@@ -96,13 +106,15 @@ DataTableCellUI.prototype._render = function() {
       nonstringSpan.className = 'data-table-value-nonstring';
       nonstringSpan.textContent = cell.v;
       divContent.appendChild(nonstringSpan);
-    } else if (URL.looksLikeUrl(cell.v)) {
+    } 
+    else if (validURL(cell.v)) {
       var url = document.createElement('a');
       url.textContent = cell.v;
       url.setAttribute('href', cell.v);
       url.setAttribute('target', '_blank');
       divContent.appendChild(url);
-    } else {
+    } 
+    else {
       var span = document.createElement('span');
       span.textContent = cell.v;
       divContent.appendChild(span);
