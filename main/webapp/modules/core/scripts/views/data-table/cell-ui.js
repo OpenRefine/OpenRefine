@@ -58,6 +58,8 @@ DataTableCellUI.previewMatchedCells = true;
   });
 })();
 
+
+
 DataTableCellUI.prototype._render = function() {
   var self = this;
   var cell = this._cell;
@@ -97,11 +99,24 @@ DataTableCellUI.prototype._render = function() {
       nonstringSpan.textContent = cell.v;
       divContent.appendChild(nonstringSpan);
     } else if (URL.looksLikeUrl(cell.v)) {
-      var url = document.createElement('a');
-      url.textContent = cell.v;
-      url.setAttribute('href', cell.v);
-      url.setAttribute('target', '_blank');
-      divContent.appendChild(url);
+      var arr = cell.v.split(" ");
+      console.log(arr.length);
+      for( var i=0;i<arr.length;i++){
+        if(URL.looksLikeUrl(arr[i])){
+          console.log(arr[i]+"url");
+          var url = document.createElement('a');
+          url.textContent = arr[i];
+          url.setAttribute('href', arr[i]);
+          url.setAttribute('target', '_blank');
+          divContent.appendChild(url);
+        }
+        else{
+          console.log(arr[i]+"span")
+          var span = document.createElement('span');
+          span.textContent = arr[i];
+          divContent.appendChild(span);
+        }
+      }
     } else {
       var span = document.createElement('span');
       span.textContent = cell.v;
