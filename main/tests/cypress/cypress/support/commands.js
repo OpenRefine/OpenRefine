@@ -57,6 +57,18 @@ Cypress.Commands.add('doCreateProjectThroughUserInterface', () => {
     })
 })
 
+Cypress.Commands.add('castColumnTo', (selector, target) => {
+    cy.get(
+        '.data-table th:contains("' + selector + '") .column-header-menu'
+    ).click()
+
+    const targetAction = 'To ' + target
+
+    cy.get('body > .menu-container').eq(0).contains('Edit cells').click()
+    cy.get('body > .menu-container').eq(1).contains('Common transforms').click()
+    cy.get('body > .menu-container').eq(2).contains(targetAction).click()
+})
+
 Cypress.Commands.add('getCell', (rowIndex, columnName) => {
     const cssRowIndex = rowIndex + 1
     // first get the header, to know the cell index
