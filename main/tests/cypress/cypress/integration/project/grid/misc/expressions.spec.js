@@ -14,6 +14,13 @@ function typeExpression(expression) {
 	cy.wait(250)
 }
 
+/**
+ * Generate a unique GREL expression to be used for testing
+ */
+function generateUniqueExpression() {
+	return `value+${Date.now()}`
+}
+
 describe(__filename, function () {
 	it('Test the layout of the expression panel', function () {
 		cy.loadAndVisitProject('food.mini')
@@ -193,7 +200,7 @@ describe(__filename, function () {
 		// Because history is shared across projects, we need to use an expression that is unique
 
 		// Use a first unique expression
-		const uniqueExpression = 'value.testing_One_' + Date.now() + '()'
+		const uniqueExpression = generateUniqueExpression()
 		loadExpressionPanel()
 		typeExpression(uniqueExpression)
 		cy.get('.dialog-footer button').contains('OK').click()
@@ -214,7 +221,7 @@ describe(__filename, function () {
 	it('Test the reuse of expressions from the history', function () {
 		cy.loadAndVisitProject('food.mini')
 		// Because history is shared across projects, we need to build and use an expression that is unique
-		const uniqueExpression = 'value.testing_One_' + Date.now() + '()'
+		const uniqueExpression = generateUniqueExpression()
 		loadExpressionPanel()
 		typeExpression(uniqueExpression)
 		cy.get('.dialog-footer button').contains('OK').click()
@@ -270,7 +277,7 @@ describe(__filename, function () {
 
 		// Load an expression
 		loadExpressionPanel()
-		const uniqueExpression = 'value.testing_One_' + Date.now() + '()'
+		const uniqueExpression = generateUniqueExpression()
 		typeExpression(uniqueExpression)
 		cy.get('.dialog-footer button').contains('OK').click()
 
