@@ -5,6 +5,11 @@
     "license": "BSD-3-Clause",
     "author": "OpenRefine",
     "private": true,
+    "scripts": {
+        "test": "cypress run --browser electron --headless --quiet",
+        "lint": "prettier --write .",
+        "check-lint": "prettier --check ."
+      },
     "dependencies": {
         "cypress": "6.2.1",
         "cypress-file-upload": "^5.0.2",
