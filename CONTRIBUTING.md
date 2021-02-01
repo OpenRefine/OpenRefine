@@ -6,7 +6,7 @@ Our issue list is only for reporting specific bugs and requesting specific featu
 - try the [documentation wiki](https://github.com/OpenRefine/OpenRefine/wiki/Documentation-For-Users)
 - ask on the [OpenRefine mailing list](https://groups.google.com/d/forum/openrefine).
 
-If you really want to file a bug or request a feature, go to this [issue list](https://github.com/OpenRefine/OpenRefine/issues). Please use the search function first to make sure a similar issue doesn't already exist. 
+If you really want to report a bug or request a feature, go to this [issue list](https://github.com/OpenRefine/OpenRefine/issues). Please use the search function first to make sure a similar issue doesn't already exist. 
 
 ## Promote OpenRefine
 
