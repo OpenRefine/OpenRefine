@@ -3,9 +3,9 @@ name: Snapshot release
 on:
   push:
     branches:
-      - master
-    paths:
-      - '!docs/**'
+      - 'master'
+    paths-ignore:
+      - 'docs/**'
 
 jobs:
   ui_tests:
