@@ -78,6 +78,18 @@ Cypress.Commands.add('doCreateProjectThroughUserInterface', () => {
     })
 })
 
+Cypress.Commands.add('castColumnTo', (selector, target) => {
+    cy.get(
+        '.data-table th:contains("' + selector + '") .column-header-menu'
+    ).click()
+
+    const targetAction = 'To ' + target
+
+    cy.get('body > .menu-container').eq(0).contains('Edit cells').click()
+    cy.get('body > .menu-container').eq(1).contains('Common transforms').click()
+    cy.get('body > .menu-container').eq(2).contains(targetAction).click()
+})
+
 Cypress.Commands.add('getCell', (rowIndex, columnName) => {
     const cssRowIndex = rowIndex + 1
     // first get the header, to know the cell index
@@ -99,7 +111,12 @@ Cypress.Commands.add('assertCellEquals', (rowIndex, columnName, value) => {
         cy.get(
             `table.data-table tbody tr:nth-child(${cssRowIndex}) td:nth-child(${columnIndex}) div.data-table-cell-content > span`
         ).should(($cellSpan) => {
-            expect($cellSpan.text()).equals(value)
+            if (value == null) {
+                // weird, "null" is returned as a string in this case, bug in Chai ?
+                expect($cellSpan.text()).equals('null')
+            } else {
+                expect($cellSpan.text()).equals(value)
+            }
         })
     })
 })
@@ -154,5 +171,18 @@ Cypress.Commands.add(
                 Cypress.env('OPENREFINE_URL') + '/project?project=' + projectId
             )
         })
+    }
+)
+
+Cypress.Commands.add('assertNotificationContainingText', (text) => {
+    cy.get('#notification').should('to.contain', text)
+})
+
+Cypress.Commands.add(
+    'assertCellNotString',
+    (rowIndex, columnName, expectedType) => {
+        cy.getCell(rowIndex, columnName)
+            .find('.data-table-value-nonstring')
+            .should('to.exist')
     }
 )

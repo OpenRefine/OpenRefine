@@ -4,6 +4,8 @@ on:
   push:
     branches:
       - master
+    paths:
+      - '!docs/**'
 
 jobs:
   ui_tests:
