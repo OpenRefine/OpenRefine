@@ -70,7 +70,7 @@ Take note of the [extensions](#installing-extensions) you have currently install
 
 [Java Development Kit (JDK)](https://jdk.java.net/) is required to run OpenRefine and should be installed first. [OpenRefine installation packages for Mac and Windows come bundled with JDK](https://openrefine.org/download.html), so you do not need to install it separately if you use those bundles. 
 
-There are JDK packages for Mac, Windows, and Linux. We recommend you install the latest “Ready for use” version. At the time of writing, this is [JDK 14.0.1](https://jdk.java.net/14/). 
+There are JDK packages for Mac, Windows, and Linux. We recommend you install the latest “Ready for use” version. At the time of writing, this is [JDK 15.0.2](https://jdk.java.net/15/). 
 
 Download the archive (either a `.tar.gz` or a `.zip`) to your computer and then extract its contents to a location of your choice. There is no installation process, so you may wish to extract this folder directly into a place where you put program files, or another stable folder. 
 
