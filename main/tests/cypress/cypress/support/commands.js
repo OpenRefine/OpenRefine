@@ -10,9 +10,18 @@
 
 import 'cypress-file-upload'
 import 'cypress-wait-until'
-// const fs = require('fs-extra');
-// var uniqid = require('uniqid');
-//
+
+/**
+ * Return the .facets-container for a given facet name
+ */
+Cypress.Commands.add('getFacetContainer', (facetName) => {
+    return cy
+        .get(
+            `#refine-tabs-facets .facets-container .facet-container span[bind="titleSpan"]:contains("${facetName}")`,
+            { log: false }
+        )
+        .parentsUntil('.facets-container', { log: false })
+})
 
 /**
  * Edit a cell, for a given row index, a column name and a value
