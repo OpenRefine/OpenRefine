@@ -159,5 +159,12 @@
     "warnings-messages/early-gregorian-date/title": "Dates anciennes en calendrier Grégorien",
     "wikibase-schema/label": "Libellé",
     "wikibase-extension/wikibase-schema": "Schéma Wikidata",
-    "wikibase-extension/wikibase-edits": "Contributions Wikidata…"
+    "wikibase-extension/wikibase-edits": "Contributions Wikidata…",
+    "warnings-messages/item-description-end-by-punctuation-sign/title": "La description finit par une signe de ponctuation",
+    "wikibase-addition/add-wikibase": "Ajouter une Wikibase",
+    "wikibase-addition/cancel": "Annuler",
+    "wikibase-management/add-wikibase": "Ajouter une Wikibase",
+    "wikibase-management/close": "Fermer",
+    "wikibase-management/dialog-header": "Sélectionnez une instance de Wikibase",
+    "wikibase-extension/select-wikibase-instance": "Sélectionnez une instance de Wikibase"
 }
