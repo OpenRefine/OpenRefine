@@ -113,7 +113,12 @@ DataTableCellUI.prototype._render = function() {
           url.textContent = arr[i];
           url.setAttribute('href', arr[i]);
           url.setAttribute('target', '_blank');
-          divContent.appendChild(url).appendChild(document.createTextNode('\u00A0'));
+          if(i == arr.length-1){
+            divContent.appendChild(url);
+          }
+          else{
+            divContent.appendChild(url).appendChild(document.createTextNode('\u00A0'));
+          }
         }
         else{
           spanArr.push(arr[i]);
