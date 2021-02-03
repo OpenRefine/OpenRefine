@@ -415,7 +415,7 @@
             </dependency>
           </dependencies>
           <configuration>
-            <mainClass>com.google.refine.Refine</mainClass>
+            <mainClass>org.openrefine.Refine</mainClass>
             <bundleName>OpenRefine</bundleName>
             <buildDirectory>target/OpenRefine ${project.version}</buildDirectory>
             <iconFile>${icon.path}</iconFile>
