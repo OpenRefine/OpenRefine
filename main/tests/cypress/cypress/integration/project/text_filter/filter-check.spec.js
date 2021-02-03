@@ -1,9 +1,9 @@
 /**
  * Test for text_filter
  */
- 
+
  describe('Checks Text-filter + Case Sensitive + Regex', () => {
-  it('an exact string, check the number of occurrences', () => {
+  it('Test Exact string, check the number of occurrences', () => {
       cy.loadAndVisitProject('food.small')
        	cy.columnActionClick('Shrt_Desc', ['Text filter'])
        	cy.get('.input-container > input')
@@ -11,9 +11,9 @@
        		.type("CHEESE")
        	cy.get('#summary-bar > span')
        		.should('have.text', '65 matching rows (199 total)')
-      
+
   })
-    it('an exact string, check case sensitive', () => {
+    it('Test Exact String with case sensitive', () => {
       cy.loadAndVisitProject('food.small')
        	cy.columnActionClick('Shrt_Desc', ['Text filter'])
        	cy.get('.input-container > input')
@@ -26,10 +26,10 @@
        		.click()
        	cy.get('#summary-bar > span')
        		.should('have.text', '0 matching rows (199 total)')
-      
+
   })
-  
-     it('an partial string, check case sensitive', () => {
+
+     it('Test Partial String with case sensitive', () => {
       cy.loadAndVisitProject('food.small')
        	cy.columnActionClick('Shrt_Desc', ['Text filter'])
        	cy.get('.input-container > input')
@@ -37,11 +37,11 @@
        		.type("CHE")
        	cy.get('#summary-bar > span')
        		.should('have.text', '70 matching rows (199 total)')
-       	cy.get('#caseSensitiveCheckbox0').click()    
+       	cy.get('#caseSensitiveCheckbox0').click()
        	cy.get('#summary-bar > span')
        		.should('have.text', '70 matching rows (199 total)')
   })
-  
+
    it('check Regex option', () => {
       cy.loadAndVisitProject('food.small')
        	cy.columnActionClick('Shrt_Desc', ['Text filter'])
@@ -52,10 +52,10 @@
        		.should('have.text', '0 matching rows (199 total)')
        	cy.get('#regexCheckbox0').click()
        	cy.get('#summary-bar > span')
-       		.should('have.text', '15 matching rows (199 total)')    
+       		.should('have.text', '15 matching rows (199 total)')
   })
-  
-  
+
+
    it('check Invert option and Reset Option', () => {
       cy.loadAndVisitProject('food.small')
        	cy.columnActionClick('Shrt_Desc', ['Text filter'])
@@ -64,31 +64,18 @@
        		.type("Cheese")
        cy.get('#facet-0 > div.facet-title.ui-sortable-handle > div > table > tbody > tr > td:nth-child(3) > a:nth-child(2)')
        		.should('be.visible')
-       		.click()		
+       		.click()
        cy.get('#summary-bar > span')
        		.should('have.text', '134 matching rows (199 total)')
-       		
+
        cy.get("#facet-0 > div.facet-title.ui-sortable-handle > div > table > tbody > tr > td:nth-child(3) > a:nth-child(1)")
   			.should('be.visible')
   			.click()
-  	
- 		cy.get('.input-container > input').should('have.value','') 			
-    
+
+ 		cy.get('.input-container > input').should('have.value','')
+
   })
-  
-  		
-  /* it('check Reset option', () => {
-       	cy.columnActionClick('Shrt_Desc', ['Text filter'])
-       	cy.get('.input-container > input')
-       		.should('be.visible')
-       		.type('Cheese')
-       	cy.get("#facet-0 > div.facet-title.ui-sortable-handle > div > table > tbody > tr > td:nth-child(3) > a:nth-child(1)")
-  			.should('be.visible')
-  			.click()
-  	
- 		cy.get('.input-container > input').should('have.value','') 				
-       		    
-  })*/
-  
-  
+
+
+
 })
