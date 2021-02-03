@@ -1,5 +1,5 @@
-describe(__filename, function() {
-  it('Ensure it reverses and reorders text sort', function() {
+describe(__filename, function () {
+  it('Ensure it reverses and reorders text sort', function () {
     cy.loadAndVisitProject('food.sort');
 
     cy.columnActionClick('Shrt_Desc', ['Sort']);
@@ -19,7 +19,7 @@ describe(__filename, function() {
     cy.getCell(0, 'Shrt_Desc').should('to.contain', 'BUTTER,WITH SALT');
     cy.getCell(1, 'Shrt_Desc').should('to.contain', 'BUTTER,WHIPPED,WITH SALT');
   });
-  it('Ensure it reverses and reorders number sort', function() {
+  it('Ensure it reverses and reorders number sort', function () {
     cy.loadAndVisitProject('food.sort');
 
     cy.castColumnTo('NDB_No', 'number');
@@ -44,7 +44,7 @@ describe(__filename, function() {
     cy.getCell(0, 'NDB_No').should('to.contain', 1001);
     cy.getCell(1, 'NDB_No').should('to.contain', 1002);
   });
-  it('Ensure it reverses and reorders date sort', function() {
+  it('Ensure it reverses and reorders date sort', function () {
     cy.loadAndVisitProject('food.sort');
 
     cy.castColumnTo('Date', 'date');
@@ -70,22 +70,22 @@ describe(__filename, function() {
     cy.getCell(0, 'Date').should('to.contain', '2020-08-17T00:00:00Z');
     cy.getCell(1, 'Date').should('to.contain', '2020-12-17T00:00:00Z');
   });
-  it('Ensure it reverses and reorders bool sort', function() {
+  it('Ensure it reverses and reorders bool sort', function () {
     cy.loadAndVisitProject('food.sort');
 
     cy.getCell(0, 'Fat')
-        .trigger('mouseover')
-        .within(() => {
-          cy.get('a.data-table-cell-edit').click();
-        });
+      .trigger('mouseover')
+      .within(() => {
+        cy.get('a.data-table-cell-edit').click();
+      });
     cy.get('select').select('boolean');
     cy.get('button').contains(new RegExp('Apply', 'g')).click();
 
     cy.getCell(1, 'Fat')
-        .trigger('mouseover')
-        .within(() => {
-          cy.get('a.data-table-cell-edit').click();
-        });
+      .trigger('mouseover')
+      .within(() => {
+        cy.get('a.data-table-cell-edit').click();
+      });
     cy.get('select').select('boolean');
     cy.get('button').contains(new RegExp('Apply', 'g')).click();
 

@@ -9170,7 +9170,7 @@ const fixture = [
   ],
   [
     '01193',
-    'KRAFT BREAKSTONE\'S RED FAT SOUR CRM',
+    "KRAFT BREAKSTONE'S RED FAT SOUR CRM",
     '76.2',
     '152',
     '4.5',
@@ -9223,7 +9223,7 @@ const fixture = [
   ],
   [
     '01194',
-    'KRAFT BREAKSTONE\'S FREE FAT FREE SOUR CRM',
+    "KRAFT BREAKSTONE'S FREE FAT FREE SOUR CRM",
     '77.7',
     '91',
     '4.7',
@@ -9329,7 +9329,7 @@ const fixture = [
   ],
   [
     '01196',
-    'KRAFT BREYERS LT N\' LVLY LOWFAT STR\'BERY YOGURT (1% MILKFAT)',
+    "KRAFT BREYERS LT N' LVLY LOWFAT STR'BERY YOGURT (1% MILKFAT)",
     '73.3',
     '108',
     '3.2',
@@ -9382,7 +9382,7 @@ const fixture = [
   ],
   [
     '01197',
-    'KRAFT BREYERS SMOTH&CRMY LOWFAT STR\'BERY YOGURT (1% MILKFAT)',
+    "KRAFT BREYERS SMOTH&CRMY LOWFAT STR'BERY YOGURT (1% MILKFAT)",
     '74.8',
     '102',
     '3.8',
@@ -9435,7 +9435,7 @@ const fixture = [
   ],
   [
     '01198',
-    'KRAFT BREYERS LT NONFAT STR\'BERY YOGURT (W/ASPRT&FRUCT SW\'T)',
+    "KRAFT BREYERS LT NONFAT STR'BERY YOGURT (W/ASPRT&FRUCT SW'T)",
     '86',
     '55',
     '3.4',

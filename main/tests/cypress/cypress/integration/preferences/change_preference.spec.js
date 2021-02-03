@@ -1,5 +1,5 @@
-describe(__filename, function() {
-  it('Edit a preference', function() {
+describe(__filename, function () {
+  it('Edit a preference', function () {
     cy.visitOpenRefine();
     const testPreferenceName = 'PreferenceName_' + Date.now();
     const testPreferenceValue = 'PreferenceValue_' + Date.now();
@@ -12,16 +12,16 @@ describe(__filename, function() {
     cy.window().then(($win) => {
       cy.stub($win, 'prompt').returns(testPreferenceValue + '_Edited');
       cy.get('table.preferences tr')
-          .contains(testPreferenceName)
-          .parentsUntil('tbody')
-          .find('td:last-child button:first-child')
-          .click();
+        .contains(testPreferenceName)
+        .parentsUntil('tbody')
+        .find('td:last-child button:first-child')
+        .click();
     });
 
     cy.get('table.preferences tr').contains(testPreferenceValue + '_Edited');
   });
 
-  it('Add a new preference', function() {
+  it('Add a new preference', function () {
     cy.visitOpenRefine();
     cy.get('#project-links a').contains('Preferences').click();
 
@@ -33,7 +33,7 @@ describe(__filename, function() {
     });
 
     cy.get('table.preferences tr:nth-last-child(2)').contains(
-        testPreferenceName,
+      testPreferenceName
     );
   });
 });

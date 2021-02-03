@@ -1,5 +1,5 @@
-describe(__filename, function() {
-  it('List an existing project tag, ensure a newly created project tag is created and displayed', function() {
+describe(__filename, function () {
+  it('List an existing project tag, ensure a newly created project tag is created and displayed', function () {
     const projectName = Date.now();
     cy.loadProject('food.mini', projectName, 'TestTag');
     cy.visitOpenRefine();
@@ -7,7 +7,7 @@ describe(__filename, function() {
     cy.get('#projects-list table').contains(projectName);
     cy.get('#projects-list table').contains('TestTag');
   });
-  it('Ensure all project tags are created and displayed as filter', function() {
+  it('Ensure all project tags are created and displayed as filter', function () {
     const project1 = 'Project A';
     const project2 = 'Project B';
     cy.loadProject('food.mini', project1, 'TestTagOne');
@@ -20,7 +20,7 @@ describe(__filename, function() {
     cy.get('#projectTags ul').children().should('contain', 'TestTagTwo');
   });
 
-  it('Ensure projects are being filtered through tags', function() {
+  it('Ensure projects are being filtered through tags', function () {
     const project1 = 'Project A';
     const project2 = 'Project B';
     cy.loadProject('food.mini', project1, 'TestTagOne');

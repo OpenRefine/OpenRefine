@@ -1,5 +1,5 @@
-describe(__filename, function() {
-  it('Ensure some cells are converted to numbers, and some remains untouched (int)', function() {
+describe(__filename, function () {
+  it('Ensure some cells are converted to numbers, and some remains untouched (int)', function () {
     const fixture = [
       ['NDB_No', 'A Number'],
       ['01001', 'This is not a number'],
@@ -26,7 +26,7 @@ describe(__filename, function() {
     cy.assertCellNotString(2, 'A Number');
   });
 
-  it('Ensure toNumber works with floats', function() {
+  it('Ensure toNumber works with floats', function () {
     const fixture = [
       ['NDB_No', 'A Number'],
       ['01001', '42.2'],

@@ -1,5 +1,5 @@
-describe(__filename, function() {
-  it('Ensure multiple whitespaces are collapsed', function() {
+describe(__filename, function () {
+  it('Ensure multiple whitespaces are collapsed', function () {
     const fixture = [
       ['NDB_No', 'Shrt_Desc'],
       ['01001', 'THIS    IS A     TEST'],

@@ -2,16 +2,16 @@
  * Those tests are generic test to ensure the general behavior of the various facets components
  * It's using "text facet" as it is the most simple facet
  */
-describe(__filename, function() {
-  it('Verify facets panel (left-panel) appears with no facets yet', function() {
+describe(__filename, function () {
+  it('Verify facets panel (left-panel) appears with no facets yet', function () {
     cy.loadAndVisitProject('food.small');
     cy.columnActionClick('Water', ['Facet', 'Text facet']);
     cy.get('#refine-tabs-facets')
-        .should('exist')
-        .contains('Using facets and filters');
+      .should('exist')
+      .contains('Using facets and filters');
   });
 
-  it('Test the display of multiple facets', function() {
+  it('Test the display of multiple facets', function () {
     cy.loadAndVisitProject('food.small');
     cy.columnActionClick('NDB_No', ['Facet', 'Text facet']);
     cy.columnActionClick('Shrt_Desc', ['Facet', 'Text facet']);
@@ -22,62 +22,62 @@ describe(__filename, function() {
     cy.getFacetContainer('Water').should('exist');
   });
 
-  it('Test the Remove All button', function() {
+  it('Test the Remove All button', function () {
     cy.loadAndVisitProject('food.small');
     cy.columnActionClick('NDB_No', ['Facet', 'Text facet']);
     cy.columnActionClick('Shrt_Desc', ['Facet', 'Text facet']);
     cy.get('#refine-tabs-facets .facets-container .facet-container').should(
-        'have.length',
-        2,
+      'have.length',
+      2
     );
 
     cy.get('#refine-tabs-facets a').contains('Remove All').click();
     cy.get('#refine-tabs-facets .facets-container .facet-container').should(
-        'have.length',
-        0,
+      'have.length',
+      0
     );
     cy.get('#refine-tabs-facets')
-        .should('exist')
-        .contains('Using facets and filters');
+      .should('exist')
+      .contains('Using facets and filters');
   });
 
-  it('Test the Reset All button', function() {
+  it('Test the Reset All button', function () {
     cy.loadAndVisitProject('food.small');
     cy.columnActionClick('Water', ['Facet', 'Text facet']);
     cy.columnActionClick('Energ_Kcal', ['Facet', 'Text facet']);
     cy.get('#refine-tabs-facets .facets-container .facet-container').should(
-        'have.length',
-        2,
+      'have.length',
+      2
     );
 
     // Click to facet 1, select first value
     cy.getFacetContainer('Water')
-        .find('.facet-choice:first-child .facet-choice-label')
-        .click();
+      .find('.facet-choice:first-child .facet-choice-label')
+      .click();
     cy.getFacetContainer('Water')
-        .find('.facet-choice:first-child')
-        .should('have.class', 'facet-choice-selected');
+      .find('.facet-choice:first-child')
+      .should('have.class', 'facet-choice-selected');
 
     // Click to facet 2, select first value
     cy.getFacetContainer('Energ_Kcal')
-        .find('.facet-choice:first-child .facet-choice-label')
-        .click();
+      .find('.facet-choice:first-child .facet-choice-label')
+      .click();
     cy.getFacetContainer('Energ_Kcal')
-        .find('.facet-choice:first-child')
-        .should('have.class', 'facet-choice-selected');
+      .find('.facet-choice:first-child')
+      .should('have.class', 'facet-choice-selected');
 
     cy.get('#refine-tabs-facets a').contains('Reset All').click();
 
     // all facets selections should be gone
     cy.getFacetContainer('Water')
-        .find('.facet-choice:first-child')
-        .should('not.have.class', 'facet-choice-selected');
+      .find('.facet-choice:first-child')
+      .should('not.have.class', 'facet-choice-selected');
     cy.getFacetContainer('Energ_Kcal')
-        .find('.facet-choice:first-child')
-        .should('not.have.class', 'facet-choice-selected');
+      .find('.facet-choice:first-child')
+      .should('not.have.class', 'facet-choice-selected');
   });
 
-  it('Create a simple text facet, check various elements in a Facet', function() {
+  it('Create a simple text facet, check various elements in a Facet', function () {
     cy.loadAndVisitProject('food.small');
     cy.columnActionClick('Water', ['Facet', 'Text facet']);
     cy.get('#refine-tabs-facets').should('exist');
@@ -88,7 +88,7 @@ describe(__filename, function() {
     cy.getFacetContainer('Water').contains('Cluster');
   });
 
-  it('Delete a facet', function() {
+  it('Delete a facet', function () {
     cy.loadAndVisitProject('food.small');
     cy.columnActionClick('Water', ['Facet', 'Text facet']);
 
@@ -96,34 +96,34 @@ describe(__filename, function() {
     cy.getFacetContainer('Water').should('not.exist');
   });
 
-  it('Test editing a facet ("change")', function() {
+  it('Test editing a facet ("change")', function () {
     cy.loadAndVisitProject('food.small');
     cy.columnActionClick('NDB_No', ['Facet', 'Text facet']);
     cy.getFacetContainer('NDB_No')
-        .find('a[bind="changeButton"]')
-        .contains('change');
+      .find('a[bind="changeButton"]')
+      .contains('change');
     cy.getFacetContainer('NDB_No').find('a[bind="changeButton"]').click();
     cy.get('.dialog-container .dialog-header').contains(
-        `Edit Facet's Expression`,
+      `Edit Facet's Expression`
     );
   });
 
-  it('Test editing a facet / Preview', function() {
+  it('Test editing a facet / Preview', function () {
     cy.loadAndVisitProject('food.small');
     cy.columnActionClick('NDB_No', ['Facet', 'Text facet']);
 
     // test the tab
     cy.getFacetContainer('NDB_No').find('a[bind="changeButton"]').click();
     cy.get('.dialog-container #expression-preview-tabs-preview').should(
-        'be.visible',
+      'be.visible'
     );
     // test the content
     cy.get('.dialog-container #expression-preview-tabs-preview').contains(
-        'row',
+      'row'
     );
   });
 
-  it('Test editing a facet / History', function() {
+  it('Test editing a facet / History', function () {
     cy.loadAndVisitProject('food.small');
     cy.columnActionClick('NDB_No', ['Facet', 'Text facet']);
     cy.getFacetContainer('NDB_No').find('a[bind="changeButton"]').click();
@@ -131,15 +131,15 @@ describe(__filename, function() {
     // test the tab
     cy.get('.dialog-container a[bind="or_dialog_history"]').click();
     cy.get('.dialog-container #expression-preview-tabs-history').should(
-        'be.visible',
+      'be.visible'
     );
     // test the content
     cy.get('.dialog-container #expression-preview-tabs-history').contains(
-        'Expression',
+      'Expression'
     );
   });
 
-  it('Test editing a facet / Starred', function() {
+  it('Test editing a facet / Starred', function () {
     cy.loadAndVisitProject('food.small');
     cy.columnActionClick('NDB_No', ['Facet', 'Text facet']);
     cy.getFacetContainer('NDB_No').find('a[bind="changeButton"]').click();
@@ -147,15 +147,15 @@ describe(__filename, function() {
     // test the tab
     cy.get('.dialog-container a[bind="or_dialog_starred"]').click();
     cy.get('.dialog-container #expression-preview-tabs-starred').should(
-        'be.visible',
+      'be.visible'
     );
     // test the content
     cy.get('.dialog-container #expression-preview-tabs-starred').contains(
-        'Expression',
+      'Expression'
     );
   });
 
-  it('Test editing a facet / Help', function() {
+  it('Test editing a facet / Help', function () {
     cy.loadAndVisitProject('food.small');
     cy.columnActionClick('NDB_No', ['Facet', 'Text facet']);
     cy.getFacetContainer('NDB_No').find('a[bind="changeButton"]').click();
@@ -163,15 +163,15 @@ describe(__filename, function() {
     // test the tab
     cy.get('.dialog-container a[bind="or_dialog_help"]').click();
     cy.get('.dialog-container #expression-preview-tabs-help').should(
-        'be.visible',
+      'be.visible'
     );
     // test the content
     cy.get('.dialog-container #expression-preview-tabs-help').contains(
-        'Variables',
+      'Variables'
     );
   });
 
-  it('Create a facet, Sorts, by count', function() {
+  it('Create a facet, Sorts, by count', function () {
     cy.loadAndVisitProject('food.small');
     cy.columnActionClick('Water', ['Facet', 'Text facet']);
     cy.get('#refine-tabs-facets').should('exist');
@@ -183,7 +183,7 @@ describe(__filename, function() {
     cy.getFacetContainer('Water').contains('15.87');
   });
 
-  it('Create a facet, Sorts multiple', function() {
+  it('Create a facet, Sorts multiple', function () {
     cy.loadAndVisitProject('food.small');
     cy.columnActionClick('Water', ['Facet', 'Text facet']);
     cy.get('#refine-tabs-facets').should('exist');
@@ -197,7 +197,7 @@ describe(__filename, function() {
     cy.getFacetContainer('Water').contains('0.24');
   });
 
-  it('Test include/exlude filters', function() {
+  it('Test include/exlude filters', function () {
     // Because the toggle of include/exclude buttons is unstable
     // we force include/exclude to be visible
     // This test focus solely on ensuring that filters are effectively applied to the grid
@@ -206,81 +206,81 @@ describe(__filename, function() {
 
     // force visibility
     cy.getFacetContainer('Shrt_Desc')
-        .find('.facet-choice-toggle')
-        .invoke('attr', 'style', 'visibility:visible');
+      .find('.facet-choice-toggle')
+      .invoke('attr', 'style', 'visibility:visible');
 
     // include ALLSPICE,GROUND, and check rows
     cy.getFacetContainer('Shrt_Desc')
-        .find('.facet-choice')
-        .contains('ALLSPICE,GROUND')
-        .parent()
-        .find('.facet-choice-toggle')
-        .click();
+      .find('.facet-choice')
+      .contains('ALLSPICE,GROUND')
+      .parent()
+      .find('.facet-choice-toggle')
+      .click();
     cy.getCell(0, 'Shrt_Desc').should('to.contain', 'ALLSPICE,GROUND');
     cy.get('#tool-panel').contains('1 matching rows');
 
     // OR is refreshing facets, need to show the toggle again
     cy.waitForOrOperation();
     cy.getFacetContainer('Shrt_Desc')
-        .find('.facet-choice-toggle')
-        .invoke('attr', 'style', 'visibility:visible');
+      .find('.facet-choice-toggle')
+      .invoke('attr', 'style', 'visibility:visible');
 
     // include CELERY SEED, and check rows
     cy.getFacetContainer('Shrt_Desc')
-        .find('.facet-choice')
-        .contains('ANISE SEED')
-        .parent()
-        .find('.facet-choice-toggle')
-        .click();
+      .find('.facet-choice')
+      .contains('ANISE SEED')
+      .parent()
+      .find('.facet-choice-toggle')
+      .click();
     cy.getCell(1, 'Shrt_Desc').should('to.contain', 'ANISE SEED');
     cy.get('#tool-panel').contains('2 matching rows');
 
     // OR ir refreshing facets, need to show the toggle again
     cy.waitForOrOperation();
     cy.getFacetContainer('Shrt_Desc')
-        .find('.facet-choice-toggle')
-        .invoke('attr', 'style', 'visibility:visible');
+      .find('.facet-choice-toggle')
+      .invoke('attr', 'style', 'visibility:visible');
 
     // include a third one, CELERY SEED, and check rows
     cy.getFacetContainer('Shrt_Desc')
-        .find('.facet-choice')
-        .contains('BUTTER OIL,ANHYDROUS')
-        .parent()
-        .find('.facet-choice-toggle')
-        .click();
+      .find('.facet-choice')
+      .contains('BUTTER OIL,ANHYDROUS')
+      .parent()
+      .find('.facet-choice-toggle')
+      .click();
     cy.getCell(0, 'Shrt_Desc').should('to.contain', 'BUTTER OIL,ANHYDROUS'); // this row is added first
     cy.get('#tool-panel').contains('3 matching rows');
 
     // OR ir refreshing facets, need to show the toggle again
     cy.waitForOrOperation();
     cy.getFacetContainer('Shrt_Desc')
-        .find('.facet-choice-toggle')
-        .invoke('attr', 'style', 'visibility:visible');
+      .find('.facet-choice-toggle')
+      .invoke('attr', 'style', 'visibility:visible');
 
     // EXCLUDE ALLSPICE,GROUND
     cy.getFacetContainer('Shrt_Desc')
-        .find('.facet-choice')
-        .contains('ALLSPICE,GROUND')
-        .parent()
-        .find('.facet-choice-toggle')
-        .click();
+      .find('.facet-choice')
+      .contains('ALLSPICE,GROUND')
+      .parent()
+      .find('.facet-choice-toggle')
+      .click();
     cy.get('#tool-panel').contains('2 matching rows');
   });
 
-  it('Test include/exclude, invert', function() {
+  it('Test include/exclude, invert', function () {
     cy.loadAndVisitProject('food.small');
     cy.columnActionClick('Shrt_Desc', ['Facet', 'Text facet']);
 
     // do a basic facetting, expect 1 row
     cy.getFacetContainer('Shrt_Desc')
-        .find('.facet-choice-toggle')
-        .invoke('attr', 'style', 'visibility:visible');
+      .find('.facet-choice-toggle')
+      .invoke('attr', 'style', 'visibility:visible');
     cy.getFacetContainer('Shrt_Desc')
-        .find('.facet-choice')
-        .contains('ALLSPICE,GROUND')
-        .parent()
-        .find('.facet-choice-toggle')
-        .click();
+      .find('.facet-choice')
+      .contains('ALLSPICE,GROUND')
+      .parent()
+      .find('.facet-choice-toggle')
+      .click();
     cy.getCell(0, 'Shrt_Desc').should('to.contain', 'ALLSPICE,GROUND');
     cy.get('#tool-panel').contains('1 matching rows');
 
@@ -289,8 +289,8 @@ describe(__filename, function() {
     cy.waitForOrOperation();
     cy.get('#tool-panel').contains('198 matching rows');
     cy.getFacetContainer('Shrt_Desc')
-        .find('a[bind="invertButton"]')
-        .should('have.class', 'facet-mode-inverted');
+      .find('a[bind="invertButton"]')
+      .should('have.class', 'facet-mode-inverted');
 
     // remove invert
     cy.getFacetContainer('Shrt_Desc').find('a[bind="invertButton"]').click();
@@ -298,31 +298,31 @@ describe(__filename, function() {
     cy.get('#tool-panel').contains('1 matching rows');
   });
 
-  it('Test facet reset', function() {
+  it('Test facet reset', function () {
     cy.loadAndVisitProject('food.small');
     cy.columnActionClick('Shrt_Desc', ['Facet', 'Text facet']);
 
     // do a basic facetting, expect 1 row
     cy.getFacetContainer('Shrt_Desc')
-        .find('.facet-choice-toggle')
-        .invoke('attr', 'style', 'visibility:visible');
+      .find('.facet-choice-toggle')
+      .invoke('attr', 'style', 'visibility:visible');
     cy.getFacetContainer('Shrt_Desc')
-        .find('.facet-choice')
-        .contains('ALLSPICE,GROUND')
-        .parent()
-        .find('.facet-choice-toggle')
-        .click();
+      .find('.facet-choice')
+      .contains('ALLSPICE,GROUND')
+      .parent()
+      .find('.facet-choice-toggle')
+      .click();
     cy.get('#tool-panel').contains('1 matching rows');
 
     // now reset, expect 199
     cy.getFacetContainer('Shrt_Desc')
-        .find('a[bind="resetButton"]')
-        .contains('reset')
-        .click();
+      .find('a[bind="resetButton"]')
+      .contains('reset')
+      .click();
     cy.get('#tool-panel').contains('199 rows');
     cy.getFacetContainer('Shrt_Desc')
-        .find('a[bind="resetButton"]')
-        .should('not.be.visible');
+      .find('a[bind="resetButton"]')
+      .should('not.be.visible');
   });
 
   /**
@@ -330,7 +330,7 @@ describe(__filename, function() {
    * The grid is updated with a duplicate on "BUTTER,WITH SALT"
    * Then we ensure the number of occurences is respected
    */
-  it('Test refresh reset', function() {
+  it('Test refresh reset', function () {
     cy.loadAndVisitProject('food.mini');
     cy.columnActionClick('Shrt_Desc', ['Facet', 'Text facet']);
 
@@ -340,39 +340,39 @@ describe(__filename, function() {
 
     cy.editCell(1, 'Shrt_Desc', 'BUTTER,WITH SALT');
     cy.get('#refine-tabs-facets .browsing-panel-controls-refresh')
-        .contains('Refresh')
-        .click();
+      .contains('Refresh')
+      .click();
     cy.get('.facet-choice').should('have.length', 1);
     cy.get('.facet-choice:first-child').contains('BUTTER,WITH SALT');
     cy.getFacetContainer('Shrt_Desc').find('.facet-choice-count').contains(2);
   });
 
-  it('Test facet by choice count', function() {
+  it('Test facet by choice count', function () {
     cy.loadAndVisitProject('food.small');
     cy.columnActionClick('Shrt_Desc', ['Facet', 'Text facet']);
     cy.getFacetContainer('Shrt_Desc')
-        .find('.facet-body-controls')
-        .contains('Facet by choice counts')
-        .click();
+      .find('.facet-body-controls')
+      .contains('Facet by choice counts')
+      .click();
 
     cy.get(`#refine-tabs-facets .facets-container .facet-container#facet-1`)
-        .should('exist')
-        .contains('Shrt_Desc');
+      .should('exist')
+      .contains('Shrt_Desc');
   });
 
-  it('Test the mass edit from a Facet', function() {
+  it('Test the mass edit from a Facet', function () {
     cy.loadAndVisitProject('food.small');
     cy.columnActionClick('Water', ['Facet', 'Text facet']);
 
     cy.getFacetContainer('Water').within(() => {
       cy.get('.facet-choice')
-          .contains('15.87')
-          .parent()
-          .trigger('mouseover')
-          .find('a.facet-choice-edit')
-          .contains('edit')
-          .should('be.visible')
-          .click();
+        .contains('15.87')
+        .parent()
+        .trigger('mouseover')
+        .find('a.facet-choice-edit')
+        .contains('edit')
+        .should('be.visible')
+        .click();
     });
 
     // mass edit all cells that have Water = 15.87

@@ -1,5 +1,5 @@
-describe(__filename, function() {
-  it('Ensure cells are blanked down', function() {
+describe(__filename, function () {
+  it('Ensure cells are blanked down', function () {
     const fixture = [
       ['a', 'b', 'c'],
 

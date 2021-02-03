@@ -1,5 +1,5 @@
-describe(__filename, function() {
-  it('Ensure multiple leading/tailing whitespaces are trimmed', function() {
+describe(__filename, function () {
+  it('Ensure multiple leading/tailing whitespaces are trimmed', function () {
     const fixture = [
       ['NDB_No', 'A column'],
       ['01001', 'TEST'],

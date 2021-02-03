@@ -1,5 +1,5 @@
-describe(__filename, function() {
-  it('Ensure escaped html entities are unescaped', function() {
+describe(__filename, function () {
+  it('Ensure escaped html entities are unescaped', function () {
     const fixture = [
       ['NDB_No', 'A column'],
       ['01001', '<img src="test" />'],

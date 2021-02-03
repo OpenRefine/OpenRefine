@@ -27,9 +27,9 @@ beforeEach(() => {
     },
   });
 
-  cy.wrap(token, {log: false}).as('token');
-  cy.wrap(token, {log: false}).as('deletetoken');
-  cy.wrap([], {log: false}).as('loadedProjectIds');
+  cy.wrap(token, { log: false }).as('token');
+  cy.wrap(token, { log: false }).as('deletetoken');
+  cy.wrap([], { log: false }).as('loadedProjectIds');
 });
 
 afterEach(() => {
@@ -38,7 +38,7 @@ afterEach(() => {
 
 before(() => {
   cy.request(
-      Cypress.env('OPENREFINE_URL') + '/command/core/get-csrf-token',
+    Cypress.env('OPENREFINE_URL') + '/command/core/get-csrf-token'
   ).then((response) => {
     // store one unique token for block of runs
     token = response.body.token;

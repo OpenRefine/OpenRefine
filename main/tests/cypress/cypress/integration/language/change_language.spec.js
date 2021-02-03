@@ -1,5 +1,5 @@
-describe(__filename, function() {
-  it('Check elements on the langage page', function() {
+describe(__filename, function () {
+  it('Check elements on the langage page', function () {
     cy.visitOpenRefine();
     cy.get('.main-layout-panel').contains('Select preferred language');
     cy.get('select#langDD').should('exist');

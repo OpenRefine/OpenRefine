@@ -1,5 +1,5 @@
-describe(__filename, function() {
-  it('Ensure only some cells are converted to dates', function() {
+describe(__filename, function () {
+  it('Ensure only some cells are converted to dates', function () {
     const fixture = [
       ['NDB_No', 'A Date'],
       ['01001', '2021-01-01'],

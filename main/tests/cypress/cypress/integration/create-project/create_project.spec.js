@@ -1,12 +1,12 @@
-describe(__filename, function() {
-  it('Test the create project page', function() {
+describe(__filename, function () {
+  it('Test the create project page', function () {
     cy.visitOpenRefine();
     cy.navigateTo('Create Project');
     cy.get('#create-project-ui-source-selection-tabs > div')
-        .contains('This Computer')
-        .click();
+      .contains('This Computer')
+      .click();
     cy.get('.create-project-ui-source-selection-tab-body.selected').contains(
-        'Locate one or more files on your computer to upload',
+      'Locate one or more files on your computer to upload'
     );
 
     // load a file
@@ -15,32 +15,32 @@ describe(__filename, function() {
       mimeType: 'application/csv',
     };
     cy.get(
-        '.create-project-ui-source-selection-tab-body.selected input[type="file"]',
+      '.create-project-ui-source-selection-tab-body.selected input[type="file"]'
     ).attachFile(csvFile);
     cy.get(
-        '.create-project-ui-source-selection-tab-body.selected button.button-primary',
+      '.create-project-ui-source-selection-tab-body.selected button.button-primary'
     ).click();
     cy.get(
-        '.default-importing-wizard-header input[bind="projectNameInput"]',
+      '.default-importing-wizard-header input[bind="projectNameInput"]'
     ).should('have.value', 'food mini csv');
 
     // then ensure we are on the preview page
     cy.get('.create-project-ui-panel').contains('Configure Parsing Options');
   });
 
-  it('Test project naming', function() {
+  it('Test project naming', function () {
     cy.visitOpenRefine();
     cy.createProjectThroughUserInterface('food.mini.csv');
     cy.get('.create-project-ui-panel').contains('Configure Parsing Options');
     cy.get(
-        '.default-importing-wizard-header input[bind="projectNameInput"]',
+      '.default-importing-wizard-header input[bind="projectNameInput"]'
     ).type('this is a test');
     cy.doCreateProjectThroughUserInterface();
 
     cy.get('#project-name-button').contains('this is a test');
   });
 
-  it('Test project tagging', function() {
+  it('Test project tagging', function () {
     cy.visitOpenRefine();
     cy.createProjectThroughUserInterface('food.mini.csv');
     cy.get('.create-project-ui-panel').contains('Configure Parsing Options');
@@ -49,7 +49,7 @@ describe(__filename, function() {
     const uniqueTagName2 = 'tag2_' + Date.now();
 
     cy.get(
-        '.default-importing-wizard-header input[bind="projectNameInput"]',
+      '.default-importing-wizard-header input[bind="projectNameInput"]'
     ).type(uniqueProjectName);
     // triger the select input
     cy.get('#project-tags-container').click();
@@ -64,18 +64,18 @@ describe(__filename, function() {
     cy.visitOpenRefine();
     cy.navigateTo('Open Project');
     cy.get('#projects-list')
-        .contains(uniqueProjectName)
-        .parent()
-        .parent()
-        .contains(uniqueTagName1);
+      .contains(uniqueProjectName)
+      .parent()
+      .parent()
+      .contains(uniqueTagName1);
     cy.get('#projects-list')
-        .contains(uniqueProjectName)
-        .parent()
-        .parent()
-        .contains(uniqueTagName2);
+      .contains(uniqueProjectName)
+      .parent()
+      .parent()
+      .contains(uniqueTagName2);
   });
 
-  it('E2E, Creates a simple project, based on a CSV', function() {
+  it('E2E, Creates a simple project, based on a CSV', function () {
     // navigate to the create page
     cy.visitOpenRefine();
     cy.navigateTo('Create Project');
@@ -85,15 +85,15 @@ describe(__filename, function() {
       mimeType: 'application/csv',
     };
     cy.get(
-        '.create-project-ui-source-selection-tab-body.selected input[type="file"]',
+      '.create-project-ui-source-selection-tab-body.selected input[type="file"]'
     ).attachFile(csvFile);
     cy.get(
-        '.create-project-ui-source-selection-tab-body.selected button.button-primary',
+      '.create-project-ui-source-selection-tab-body.selected button.button-primary'
     ).click();
 
     // preview and click next
     cy.get(
-        '.default-importing-wizard-header button[bind="nextButton"]',
+      '.default-importing-wizard-header button[bind="nextButton"]'
     ).click();
     cy.get('#create-project-progress-message').contains('Done.');
 
@@ -102,7 +102,7 @@ describe(__filename, function() {
     cy.get('h2').contains('HTTP ERROR 404');
     cy.location().should((location) => {
       expect(location.href).contains(
-          Cypress.env('OPENREFINE_URL') + '/__/project?',
+        Cypress.env('OPENREFINE_URL') + '/__/project?'
       );
     });
 
