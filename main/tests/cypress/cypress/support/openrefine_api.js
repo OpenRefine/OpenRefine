@@ -69,7 +69,24 @@ Cypress.Commands.add('loadProject', (fixture, projectName, tagName) => {
         // the following code can be used to inject tags in created projects
         // It's conflicting though, breaking up the CSV files
         // It is a hack to parse out CSV files in the openrefine while creating a project with tags
-        const options = {"encoding":"US-ASCII","separator":",","ignoreLines":-1,"headerLines":1,"skipDataLines":0,"limit":-1,"storeBlankRows":true,"guessCellValueTypes":false,"processQuotes":true,"quoteCharacter":"\"","storeBlankCellsAsNulls":true,"includeFileSources":false,"includeArchiveFileName":false,"trimStrings":false,"projectName":openRefineProjectName,"projectTags": [tagName]}
+        const options = {
+            encoding: 'US-ASCII',
+            separator: ',',
+            ignoreLines: -1,
+            headerLines: 1,
+            skipDataLines: 0,
+            limit: -1,
+            storeBlankRows: true,
+            guessCellValueTypes: false,
+            processQuotes: true,
+            quoteCharacter: '"',
+            storeBlankCellsAsNulls: true,
+            includeFileSources: false,
+            includeArchiveFileName: false,
+            trimStrings: false,
+            projectName: openRefineProjectName,
+            projectTags: [tagName],
+        }
         var postData
         if (tagName == undefined) {
             postData =

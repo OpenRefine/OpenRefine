@@ -31,7 +31,7 @@ describe(__filename, function () {
     it('Ensure it reverses and reorders number sort', function () {
         cy.loadAndVisitProject('food.sort')
 
-        cy.castColumnTo('NDB_No','number')
+        cy.castColumnTo('NDB_No', 'number')
         cy.columnActionClick('NDB_No', ['Sort'])
 
         cy.waitForDialogPanel()
@@ -56,7 +56,7 @@ describe(__filename, function () {
     it('Ensure it reverses and reorders date sort', function () {
         cy.loadAndVisitProject('food.sort')
 
-        cy.castColumnTo('Date','date')
+        cy.castColumnTo('Date', 'date')
         cy.columnActionClick('Date', ['Sort'])
 
         cy.waitForDialogPanel()

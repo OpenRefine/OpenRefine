@@ -13,9 +13,9 @@ describe(__filename, function () {
             'BUTTER,WHIPPED,WITH SALT'
         )
         cy.getCell(1, 'Shrt_Desc').should('to.contain', 'BUTTER,WITH SALT')
-        
+
         cy.columnActionClick('Shrt_Desc', ['Sort', 'Reverse'])
-        
+
         cy.getCell(0, 'Shrt_Desc').should('to.contain', 'BUTTER,WITH SALT')
         cy.getCell(1, 'Shrt_Desc').should(
             'to.contain',
@@ -33,7 +33,7 @@ describe(__filename, function () {
     it('Perform a number sort + Reverse + Remove', function () {
         cy.loadAndVisitProject('food.sort')
 
-        cy.castColumnTo('NDB_No','number')
+        cy.castColumnTo('NDB_No', 'number')
         cy.columnActionClick('NDB_No', ['Sort'])
 
         cy.waitForDialogPanel()
@@ -54,7 +54,7 @@ describe(__filename, function () {
     it('Perform a date sort + Reverse + Remove', function () {
         cy.loadAndVisitProject('food.sort')
 
-        cy.castColumnTo('Date','date')
+        cy.castColumnTo('Date', 'date')
         cy.columnActionClick('Date', ['Sort'])
 
         cy.waitForDialogPanel()
@@ -65,7 +65,7 @@ describe(__filename, function () {
         // ensure sorting is active
         cy.getCell(0, 'Date').should('to.contain', '2020-12-17T00:00:00Z')
         cy.getCell(1, 'Date').should('to.contain', '2020-08-17T00:00:00Z')
-        
+
         cy.columnActionClick('Date', ['Sort', 'Reverse'])
 
         cy.getCell(0, 'Date').should('to.contain', '2020-08-17T00:00:00Z')
@@ -74,7 +74,6 @@ describe(__filename, function () {
         cy.columnActionClick('Date', ['Sort', 'Remove sort'])
         cy.getCell(0, 'Date').should('to.contain', '2020-12-17T00:00:00Z')
         cy.getCell(1, 'Date').should('to.contain', '2020-08-17T00:00:00Z')
-
     })
     it('Perform a bool sort + Reverse + Remove', function () {
         cy.loadAndVisitProject('food.sort')
