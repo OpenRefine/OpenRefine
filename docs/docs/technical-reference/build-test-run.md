@@ -9,13 +9,128 @@ import useBaseUrl from '@docusaurus/useBaseUrl';
 
 You will need:
 * [OpenRefine source code](https://github.com/OpenRefine/OpenRefine)
-* [Java JDK](http://java.sun.com/javase/downloads/index.jsp)
+* [Java JDK](http://java.sun.com/javase/downloads/index.jsp) (Get [OpenJDK from here](https://jdk.java.net/15/).)
 * [Apache Maven](https://maven.apache.org)  (OPTIONAL)
 * A Unix/Linux shell environment OR the Windows command line
 
 From the top level directory in the OpenRefine application you can build, test and run OpenRefine using the `./refine` shell script (if you are working in a \*nix shell), or using the `refine.bat` script from the Windows command line. Note that the `refine.bat` on Windows only supports a subset of the functionality, supported by the `refine` shell script. The example commands below are using the `./refine` shell script, and you will need to use `refine.bat` if you are working from the Windows command line.
 
-If you are working from the Windows command line you must also install a Java JDK, and [set the JAVA_HOME environment variable](https://confluence.atlassian.com/doc/setting-the-java_home-variable-in-windows-8895.html) (please ensure it points to the JDK, and not the JRE)
+### Set up JDK
+
+You must [install JDK](https://jdk.java.net/15/) and set the JAVA_HOME environment variable (please ensure it points to the JDK, and not the JRE).
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+<Tabs
+  groupId="operating-systems"
+  defaultValue="win"
+  values={[
+    {label: 'Windows', value: 'win'},
+    {label: 'Mac', value: 'mac'},
+    {label: 'Linux', value: 'linux'}
+  ]
+}>
+
+<TabItem value="win">
+
+1. On Windows 10, click the Start Menu button, type `env`, and look at the search results. Click <span class="buttonLabels">Edit the system environment variables</span>. (If you are using an earlier version of Windows, use the “Search” or “Search programs and files” box in the Start Menu.)
+
+![A screenshot of the search results for 'env'.](/img/env.png "A screenshot of the search results for 'env'.")
+
+2. Click <span class="buttonLabels">Environment Variables…</span> at the bottom of the <span class="tabLabels">Advanced</span> window.
+3. In the <span class="tabLabels">Environment Variables</span> window that appears, click <span class="buttonLabels">New…</span> and create a variable with the key `JAVA_HOME`. You can set the variable for only your user account, as in the screenshot below, or set it as a system variable - it will work either way.
+
+![A screenshot of 'Environment Variables'.](/img/javahome.png "A screenshot of 'Environment Variables'.")
+
+4. Set the `Value` to the folder where you installed JDK, in the format `D:\Programs\OpenJDK`. You can locate this folder with the <span class="buttonLabels">Browse directory...</span> button.
+
+</TabItem>
+
+<TabItem value="mac">
+
+First, find where Java is on your computer with this command:
+
+```
+which java
+```
+
+Check the environment variable `JAVA_HOME` with:
+
+```
+$JAVA_HOME/bin/java --version
+```
+
+To set the environment variable for the current Java version of your MacOS:
+
+```
+export JAVA_HOME="$(/usr/libexec/java_home)"
+```
+
+Or, for Java 13.x:
+
+```
+export JAVA_HOME="$(/usr/libexec/java_home -v 13)"
+```
+
+</TabItem>
+
+<TabItem value="linux">
+
+##### With the terminal
+
+Enter the following:
+
+```
+sudo apt install default-jre
+```
+
+This probably won’t install the latest JDK package available on the Java website, but it is faster and more straightforward. (At the time of writing, it installs OpenJDK 11.0.7.)
+
+##### Manually
+
+First, [extract the JDK package](https://openjdk.java.net/install/) to the new directory `usr/lib/jvm`:
+
+```
+sudo mkdir -p /usr/lib/jvm
+sudo tar -x -C /usr/lib/jvm -f /tmp/openjdk-14.0.1_linux-x64_bin.tar.gz
+```
+
+Then, navigate to this folder and confirm the final path (in this case, `usr/lib/jvm/jdk-14.0.1`). Open a terminal and type
+
+```
+sudo gedit /etc/profile
+```
+
+In the text window that opens, insert the following lines at the end of the `profile` file, using the path above:
+
+```
+JAVA_HOME=/usr/lib/jvm/jdk-14.0.1
+PATH=$PATH:$HOME/bin:$JAVA_HOME/bin
+export JAVA_HOME
+export PATH
+```
+
+Save and close the file. When you are back in the terminal, type
+
+```
+source /etc/environment
+```
+
+Exit the terminal and restart your system. You can then check that `JAVA_HOME` is set properly by opening another terminal and typing
+```
+echo $JAVA_HOME
+```
+
+It should show the path you set above. 
+
+</TabItem>
+
+</Tabs>
+
+---
+
+
 
 ### Maven (Optional)
 OpenRefine's build script will download Maven for you and use it, if not found already locally installed.
