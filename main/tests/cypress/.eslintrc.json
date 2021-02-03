@@ -9,6 +9,7 @@
     "sourceType": "module"
   },
   "rules": {
-    "max-len": ["error", { "code": 150 }]
+    "max-len": ["error", { "code": 150 }],
+    "valid-jsdoc": "off"
   }
 }
