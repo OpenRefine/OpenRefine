@@ -18,7 +18,7 @@ If you have cloned this repository to your computer, you can run OpenRefine with
 * `./refine` on Mac OS and Linux
 * `refine.bat` on Windows
 
-This requires [JDK 8](https://www.oracle.com/in/java/technologies/javase-downloads.html) and [Apache Maven](https://maven.apache.org/).
+This requires [JDK 8](https://jdk.java.net) and [Apache Maven](https://maven.apache.org/).
 
 Documentation and Videos
 -------------------------
