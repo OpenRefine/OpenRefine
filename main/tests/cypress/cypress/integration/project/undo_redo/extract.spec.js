@@ -11,7 +11,7 @@ describe(__filename, function () {
 
     // unselect all
     cy.get('.dialog-container button[bind="unselectAllButton"]').click();
-    cy.wait(500);
+    cy.get('body[ajax_in_progress="false"]');
     cy.get(
       '.history-extract-dialog-entries tr:nth-child(1) td:first-child input'
     ).should('not.to.be.checked');
@@ -25,7 +25,7 @@ describe(__filename, function () {
 
     // // reselect all
     cy.get('.dialog-container button[bind="selectAllButton"]').click();
-    cy.wait(500);
+    cy.get('body[ajax_in_progress="false"]');
     cy.get(
       '.history-extract-dialog-entries tr:nth-child(1) td:first-child input'
     ).should('be.checked');

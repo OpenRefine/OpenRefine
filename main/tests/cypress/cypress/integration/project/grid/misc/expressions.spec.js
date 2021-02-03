@@ -11,7 +11,7 @@ function loadExpressionPanel() {
  */
 function typeExpression(expression) {
   cy.get('textarea.expression-preview-code').type(expression);
-  cy.wait(250);
+  cy.get('body[ajax_in_progress="false"]');
 }
 
 /**
