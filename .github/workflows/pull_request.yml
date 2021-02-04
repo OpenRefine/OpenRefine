@@ -130,6 +130,11 @@ jobs:
           npm i -g yarn
           yarn install
 
+    - name: Lint with Prettier
+      run: |
+          cd ./main/tests/cypress
+          yarn check-lint
+
     - name: Test with Cypress on ${{ matrix.browser }}
       run: | 
         echo REFINE_MIN_MEMORY=1400M >> ./refine.ini
