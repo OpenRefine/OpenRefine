@@ -88,6 +88,7 @@ Cypress.Commands.add('castColumnTo', (selector, target) => {
     cy.get('body > .menu-container').eq(0).contains('Edit cells').click()
     cy.get('body > .menu-container').eq(1).contains('Common transforms').click()
     cy.get('body > .menu-container').eq(2).contains(targetAction).click()
+    cy.get('body[ajax_in_progress="false"]')
 })
 
 Cypress.Commands.add('getCell', (rowIndex, columnName) => {
