@@ -33,12 +33,12 @@ Contributors abide by the project’s [Code of Conduct](https://github.com/OpenR
 
 How to become an OpenRefine contributor? You will find more details in our [contributing guideline](https://github.com/OpenRefine/OpenRefine/blob/master/CONTRIBUTING.md)
 
-### Comitters 
-If you make regular contribution to OpenRefine, you will most likely become a comitter. 
+### Committers 
+If you make regular contribution to OpenRefine, you will most likely become a Committer. 
 
-Comitters have no more authorities than contributors, and they should engage with the community through the [developer discussion list](https://groups.google.com/forum/?fromgroups#!forum/openrefine-dev) or the [issue list](https://github.com/OpenRefine/OpenRefine/issues?state=open) regarding their intention. However, Comitters have earned enough trust from the community to have direct access to the project code base without having to submit pull request. Comitter seek approval after the contribution is made, rather than before.
+Committers have no more authorities than contributors, and they should engage with the community through the [developer discussion list](https://groups.google.com/forum/?fromgroups#!forum/openrefine-dev) or the [issue list](https://github.com/OpenRefine/OpenRefine/issues?state=open) regarding their intention. However, Committers have earned enough trust from the community to have direct access to the project code base without having to submit pull request. Committer seek approval after the contribution is made, rather than before.
 
-Therefore Comitters:
+Therefore Committers:
 
 - Help contributors via the [developer discussion list](https://groups.google.com/forum/?fromgroups#!forum/openrefine-dev).
 - Manage tag, rename and organize issues, pull requests and [projects](https://github.com/OpenRefine/OpenRefine/projects)
@@ -47,12 +47,12 @@ Therefore Comitters:
 - Merge pull requests submitted by contributors
 - Are part of the OpenRefine organization and have the OpenRefine badge on their GitHub profile
 
-Comitter abide by the project’s [Code of Conduct](https://github.com/OpenRefine/OpenRefine/blob/master/CODE_OF_CONDUCT.md)
+Committer abide by the project’s [Code of Conduct](https://github.com/OpenRefine/OpenRefine/blob/master/CODE_OF_CONDUCT.md)
 
-#### How to be part of the Comitter?  
-Be a contributor and be nominated as a Comitter. Current comitter selects and elects new comitter. You may nominate yourself. Nomination should be sent to the [developer discussion list](https://groups.google.com/forum/?fromgroups#!forum/openrefine-dev)
+#### How to be part of the Committer?  
+Be a contributor and be nominated as a Committer. Current Committer selects and elects new Committer. You may nominate yourself. Nomination should be sent to the [developer discussion list](https://groups.google.com/forum/?fromgroups#!forum/openrefine-dev)
 
-#### Current List of Comitter 
+#### Current List of Committer 
 The list is available here: https://github.com/orgs/OpenRefine/people. 
 
 ### Release Manager
