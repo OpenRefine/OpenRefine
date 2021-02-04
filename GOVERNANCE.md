@@ -99,7 +99,7 @@ Advisory Committee members:
 * Participate in at least one call per quarter;
 * Help advocate for the Project;
 * Help the Project build connections and partnerships;
-* Are part of the Admin team for the project on Github
+* Can be part of the Admin team for the project on GitHub
 
 #### Conflict of Interest 
 In the event of any conflict of interest (a Committee Member, their family member, or someone with whom the Committee Member has a close academic or employment relationship is involved in a decision), the Committee Member must immediately notify other Committee Members. The Committee Member will be asked to recuse themselves from ongoing conversations, and decision process regarding the Transaction.  
