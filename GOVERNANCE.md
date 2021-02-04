@@ -3,7 +3,7 @@
 ## Summary / Overview 
 OpenRefine is a free, open-source, powerful tool for working with messy data. OpenRefine has a plugin architecture and is distributed under the [new BSD license](http://opensource.org/licenses/BSD-3-Clause) allowing modification, distribution and name changes. 
 
-## Roles And Responsibilities
+## Roles and responsibilities
 OpenRefine development is based on user consensus and open discussion between users. Decision making must be done in a transparent, open fashion (ie. using discussion list and issue list). No decisions about the project’s direction, bug fixes or features may be done in private without community involvement and participation. Discussions must begin at the earliest possible point on a topic; the community’s participation is vital during the entire decision-making process.
 
 Anyone with an interest in the project can join the community, contribute to the project design, and participate in the decision making process. This document describes how that participation takes place.
@@ -11,48 +11,47 @@ Anyone with an interest in the project can join the community, contribute to the
 ### Users
 Users are community members who have a need for the project. Through their usage, they give the project a purpose. Users are encouraged to participate in the project life by providing feedback on how their needs are satisfied. 
 
-Users activities include (but are not limited to):
+Users can help the project by:
 
-- Evangelisation and advocating for the project
-- Informing developers of strengths and weaknesses from a new user perspective through the [user discussion list](https://groups.google.com/forum/?fromgroups#!forum/openrefine) or the [issue list](https://github.com/OpenRefine/OpenRefine/issues?state=open)
+- Advertising and advocating for the project
+- Informing developers of strengths and weaknesses of the tool through the [user discussion list](https://groups.google.com/forum/?fromgroups#!forum/openrefine) or the [issue list](https://github.com/OpenRefine/OpenRefine/issues?state=open)
 - Providing moral support (a ‘thank you’ goes a long way)
 - Writing tutorials
 
 How to become an OpenRefine user? [Download OpenRefine](http://openrefine.org/download.html) and start refining!
 
 ### Contributors
-Contributors are users contributing in concrete ways to the project. They are one-time participation or are new contributors to the project. Contribution can take place in many ways:
+Contributors are users getting involved in the project more closely. Contributions can take many forms:
 
 - Supporting new users via the [user discussion list](https://groups.google.com/forum/?fromgroups#!forum/openrefine)
-- Submitting patches to fix bugs or add features via pull request
-- Identifying requirements
-- Providing graphics and web design
+- Submitting patches to fix bugs or add features via pull requests
+- Maintaining and improving the [website](https://openrefine.org/)
 - Writing and maintaining the [documentation](https://github.com/OpenRefine/OpenRefine/tree/master/docs)
 
 Contributors abide by the project’s [Code of Conduct](https://github.com/OpenRefine/OpenRefine/blob/master/CODE_OF_CONDUCT.md)
 
 How to become an OpenRefine contributor? You will find more details in our [contributing guideline](https://github.com/OpenRefine/OpenRefine/blob/master/CONTRIBUTING.md)
 
-### Committers 
+### Committers
 If you make regular contribution to OpenRefine, you will most likely become a Committer. 
 
-Committers have no more authorities than contributors, and they should engage with the community through the [developer discussion list](https://groups.google.com/forum/?fromgroups#!forum/openrefine-dev) or the [issue list](https://github.com/OpenRefine/OpenRefine/issues?state=open) regarding their intention. However, Committers have earned enough trust from the community to have direct access to the project code base without having to submit pull request. Committer seek approval after the contribution is made, rather than before.
+Committers have no more authorities than contributors, and they should engage with the community through the [developer discussion list](https://groups.google.com/forum/?fromgroups#!forum/openrefine-dev) or the [issue list](https://github.com/OpenRefine/OpenRefine/issues?state=open) regarding their intention. However, Committers have earned enough trust from the community to review and merge pull requests.
 
 Therefore Committers:
-
 - Help contributors via the [developer discussion list](https://groups.google.com/forum/?fromgroups#!forum/openrefine-dev).
-- Manage tag, rename and organize issues, pull requests and [projects](https://github.com/OpenRefine/OpenRefine/projects)
+- Triage issues, pull requests and [projects](https://github.com/OpenRefine/OpenRefine/projects)
 - Have direct access to the code base to create new branches
 - Organize the wiki
-- Merge pull requests submitted by contributors
+- Review and merge pull requests submitted by contributors
 - Are part of the OpenRefine organization and have the OpenRefine badge on their GitHub profile
 
-Committer abide by the project’s [Code of Conduct](https://github.com/OpenRefine/OpenRefine/blob/master/CODE_OF_CONDUCT.md)
+Committers abide by the project’s [Code of Conduct](https://github.com/OpenRefine/OpenRefine/blob/master/CODE_OF_CONDUCT.md)
 
-#### How to be part of the Committer?  
+#### How to become a Committer?  
+
 Be a contributor and be nominated as a Committer. Current Committer selects and elects new Committer. You may nominate yourself. Nomination should be sent to the [developer discussion list](https://groups.google.com/forum/?fromgroups#!forum/openrefine-dev)
 
-#### Current List of Committer 
+#### Current list of Committers
 The list is available here: https://github.com/orgs/OpenRefine/people. 
 
 ### Release Manager
@@ -74,7 +73,7 @@ The steering committee oversees the general direction of the project and initate
 #### How to be part of the Steering Committee
 Steering Committee are invited by the Advisory Committee
 
-#### Current List of Steering Committee Members
+#### Current list of Steering Committee members
 * Chris Erdmann (University of North Carolina, RENCI)
 * Alicia Fagerving (Wikimedia Sverige)
 * Sandra Fauconnier (Wikimedia Foundation)
@@ -104,7 +103,7 @@ Advisory Committee members:
 #### Conflict of Interest 
 In the event of any conflict of interest (a Committee Member, their family member, or someone with whom the Committee Member has a close academic or employment relationship is involved in a decision), the Committee Member must immediately notify other Committee Members. The Committee Member will be asked to recuse themselves from ongoing conversations, and decision process regarding the Transaction.  
 
-#### Current List of Advisory Committee Members
+#### Current list of Advisory Committee members
 * Martin Magdinier
 * Thad Guidry 
 * Antonin Delpeuch. 
@@ -115,7 +114,7 @@ Since January 2020, OpenRefine is a member project of the Code For Science and S
 
 CS&S provides administrative and fiscal infrastructure to receive and manage funds under CS&S Fiscal Sponsorship Agreement. CS&S is a USA based organization qualified as exempt from federal income tax under Section 501(c)(3) of the Internal Revenue Code (IRC) and classified as a public charity under IRC Sections 509(a)(1) and 170(b)(1)(A)(vi). 
 
-### Manage Funds 
+### Manage funds 
 
 While the vast majority of OpenRefine contributors are volunteers, we recognize the need to attract and retain contributors to help:
 - perform time critical maintenance tasks for the project (for example release management, security update, pull request review and comments)
