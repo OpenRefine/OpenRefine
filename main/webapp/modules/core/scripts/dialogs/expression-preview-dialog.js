@@ -132,9 +132,7 @@ ExpressionPreviewDialog.Widget = function(
         })
         .select()
         .focus();
-
-    this._tabContentWidth = this._elmts.expressionPreviewPreviewContainer.width() + "px";
-
+    
     this._elmts.or_dialog_expr.html($.i18n('core-dialogs/expression'));
     this._elmts.or_dialog_lang.html($.i18n('core-dialogs/language'));
     this._elmts.or_dialog_preview.html($.i18n('core-dialogs/preview'));
