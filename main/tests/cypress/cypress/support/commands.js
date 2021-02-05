@@ -35,6 +35,9 @@ Cypress.Commands.add('editCell', (rowIndex, columnName, value) => {
     cy.get('.menu-container button[bind="okButton"]').click()
 })
 
+/**
+ * Ensure a textarea have a value that id equal to the JSON given as parameter
+ */
 Cypress.Commands.add('assertTextareaHaveJsonValue', (selector, json) => {
     cy.get(selector).then((el) => {
         // expected json needs to be parsed / restringified, to avoid inconsitencies about spaces and tabs
@@ -42,6 +45,10 @@ Cypress.Commands.add('assertTextareaHaveJsonValue', (selector, json) => {
         cy.expect(JSON.stringify(present)).to.equal(JSON.stringify(json))
     })
 })
+
+/**
+ * Open OpenRefine
+ */
 Cypress.Commands.add('visitOpenRefine', (options) => {
     cy.visit(Cypress.env('OPENREFINE_URL'), options)
 })
@@ -78,6 +85,9 @@ Cypress.Commands.add('doCreateProjectThroughUserInterface', () => {
     })
 })
 
+/**
+ * Cast a whole column to the given type, using Edit Cell / Common transform / To {type}
+ */
 Cypress.Commands.add('castColumnTo', (selector, target) => {
     cy.get(
         '.data-table th:contains("' + selector + '") .column-header-menu'
@@ -90,6 +100,9 @@ Cypress.Commands.add('castColumnTo', (selector, target) => {
     cy.get('body > .menu-container').eq(2).contains(targetAction).click()
 })
 
+/**
+ * Return the td element for a given row index and column name
+ */
 Cypress.Commands.add('getCell', (rowIndex, columnName) => {
     const cssRowIndex = rowIndex + 1
     // first get the header, to know the cell index
@@ -102,6 +115,9 @@ Cypress.Commands.add('getCell', (rowIndex, columnName) => {
     })
 })
 
+/**
+ * Make an assertion about the content of a cell, for a given row index and column name
+ */
 Cypress.Commands.add('assertCellEquals', (rowIndex, columnName, value) => {
     const cssRowIndex = rowIndex + 1
     // first get the header, to know the cell index
@@ -121,25 +137,40 @@ Cypress.Commands.add('assertCellEquals', (rowIndex, columnName, value) => {
     })
 })
 
+/**
+ * Navigate to one of the entries of the main left menu of OpenRefine (Create Project, Open Project, Import Project, Language Settings)
+ */
 Cypress.Commands.add('navigateTo', (target) => {
     cy.get('#action-area-tabs li').contains(target).click()
 })
 
+/**
+ * Wait for OpenRefine to finish an Ajax load
+ */
 Cypress.Commands.add('waitForOrOperation', () => {
     cy.get('body[ajax_in_progress="true"]')
     cy.get('body[ajax_in_progress="false"]')
 })
 
+/**
+ * Delete a column from the grid
+ */
 Cypress.Commands.add('deleteColumn', (columnName) => {
     cy.get('.data-table th[title="' + columnName + '"]').should('exist')
     cy.columnActionClick(columnName, ['Edit column', 'Remove this column'])
     cy.get('.data-table th[title="' + columnName + '"]').should('not.exist')
 })
 
+/**
+ * Wait until a dialog panel appear
+ */
 Cypress.Commands.add('waitForDialogPanel', () => {
     cy.get('body > .dialog-container > .dialog-frame').should('be.visible')
 })
 
+/**
+ * Click on the OK button of a dialog panel
+ */
 Cypress.Commands.add('confirmDialogPanel', () => {
     cy.get(
         'body > .dialog-container > .dialog-frame .dialog-footer button[bind="okButton"]'
@@ -147,6 +178,9 @@ Cypress.Commands.add('confirmDialogPanel', () => {
     cy.get('body > .dialog-container > .dialog-frame').should('not.exist')
 })
 
+/**
+ * Will click on a menu entry for a given column name
+ */
 Cypress.Commands.add('columnActionClick', (columnName, actions) => {
     cy.get(
         '.data-table th:contains("' + columnName + '") .column-header-menu'
@@ -158,11 +192,20 @@ Cypress.Commands.add('columnActionClick', (columnName, actions) => {
     cy.get('body[ajax_in_progress="false"]')
 })
 
+/**
+ * Go to a project, given it's id
+ */
 Cypress.Commands.add('visitProject', (projectId) => {
     cy.visit(Cypress.env('OPENREFINE_URL') + '/project?project=' + projectId)
     cy.get('#project-title').should('exist')
 })
 
+/**
+ * Load a new project in OpenRefine, and open the project
+ * The fixture can be
+ *   * an arbitrary array that will be loaded in the grid. The first row is for the columns names
+ *   * a file referenced in fixtures.js (food.mini | food.small)
+ */
 Cypress.Commands.add(
     'loadAndVisitProject',
     (fixture, projectName = Date.now()) => {
