@@ -6,6 +6,8 @@ OpenRefine is a free, open-source, powerful tool for working with messy data. Op
 ## Roles and responsibilities
 OpenRefine development is based on user consensus and open discussion between users. Decision making must be done in a transparent, open fashion (ie. using discussion list and issue list). No decisions about the project’s direction, bug fixes or features may be done in private without community involvement and participation. Discussions must begin at the earliest possible point on a topic; the community’s participation is vital during the entire decision-making process.
 
+All project participants abide by the [Code of Conduct](https://github.com/OpenRefine/OpenRefine/blob/master/CODE_OF_CONDUCT.md).
+
 Anyone with an interest in the project can join the community, contribute to the project design, and participate in the decision making process. This document describes how that participation takes place.
 
 ### Users
@@ -28,8 +30,6 @@ Contributors are users getting involved in the project more closely. Contributio
 - Maintaining and improving the [website](https://openrefine.org/)
 - Writing and maintaining the [documentation](https://github.com/OpenRefine/OpenRefine/tree/master/docs)
 
-Contributors abide by the project’s [Code of Conduct](https://github.com/OpenRefine/OpenRefine/blob/master/CODE_OF_CONDUCT.md)
-
 How to become an OpenRefine contributor? You will find more details in our [contributing guideline](https://github.com/OpenRefine/OpenRefine/blob/master/CONTRIBUTING.md)
 
 ### Committers
@@ -44,8 +44,6 @@ Therefore Committers:
 - Organize the wiki
 - Review and merge pull requests submitted by contributors
 - Are part of the OpenRefine organization and have the OpenRefine badge on their GitHub profile
-
-Committers abide by the project’s [Code of Conduct](https://github.com/OpenRefine/OpenRefine/blob/master/CODE_OF_CONDUCT.md)
 
 #### How to become a Committer?  
 
