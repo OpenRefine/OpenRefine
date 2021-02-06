@@ -1,5 +1,5 @@
 describe(__filename, function () {
-    it('proper tag assingnment to each text snippet', function () {
+    it('verify <a>href tags created for URLs within cell text', function () {
         const fixture = [
             ['tests'],
             ['2021-01-31https://www.google.com'],
