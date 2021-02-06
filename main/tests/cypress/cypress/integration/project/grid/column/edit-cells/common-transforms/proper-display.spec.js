@@ -1,5 +1,5 @@
 describe(__filename, function () {
-    it('Ensure multiple whitespaces are collapsed', function () {
+    it('proper tag assingnment to each text snippet', function () {
         const fixture = [
             ['tests'],
             ['2021-01-31https://www.google.com'],
