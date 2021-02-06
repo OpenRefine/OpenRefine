@@ -24,7 +24,7 @@ This requires JDK 8 and Apache Maven.
 
 ## Documentation and Videos
 
-* [Documentation Wiki](https://github.com/OpenRefine/OpenRefine/wiki/Documentation-For-Users)
+* [User Manual](https://docs.openrefine.org)
 * [FAQ](https://github.com/OpenRefine/OpenRefine/wiki/FAQ)
 * [Official Website and tutorial videos](http://openrefine.org)
 

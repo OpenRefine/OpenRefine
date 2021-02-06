@@ -13,7 +13,35 @@ If you need to file a bug or request a feature, [create an Issue in the OpenRefi
 - [Try the user manual](/)
 - [post to our OpenRefine mailing list](http://groups.google.com/group/openrefine/)
 
-## Your first pull request
+## Contributing to the documentation
+
+We use [Docusaurus](https://docusaurus.io/) for our docs. For small documentation changes, you should be able to edit the Markdown files directly and submit them as a pull request. A preview of the docs will be generated automatically. But it is also
+possible to preview your changes locally. Assuming you have [Node.js](https://nodejs.org/en/download/) installed (which includes npm), you can install Docusaurus with:
+
+You will need to install [Yarn](https://yarnpkg.com/getting-started/install) before you can build the site.
+```sh
+npm install -g yarn
+```
+
+Once you have installed yarn, navigate to docs directory & set-up the dependencies.
+
+```sh
+cd docs
+yarn
+```
+
+Once this is done, generate the docs with:
+
+```sh
+yarn build
+```
+
+You can also spin a local web server to serve the docs for you, with auto-refresh when you edit the source files, with:
+```sh
+yarn start
+```
+
+## Your first code pull request
 
 This describes the overall steps to your first code contribution in OpenRefine. If you have trouble with any of these steps feel free to reach out on the [developer mailing list](https://groups.google.com/forum/#!forum/openrefine-dev) or the [Gitter channel](https://gitter.im/OpenRefine/OpenRefine).
 

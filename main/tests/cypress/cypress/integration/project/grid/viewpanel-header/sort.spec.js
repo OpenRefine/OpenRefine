@@ -1,36 +1,34 @@
 describe(__filename, function () {
-    it('Perform a text sort + Reverse + Remove', function () {
+    it('Ensure it reverses and reorders text sort', function () {
         cy.loadAndVisitProject('food.sort')
 
-        // sort and confirm
         cy.columnActionClick('Shrt_Desc', ['Sort'])
         cy.waitForDialogPanel()
         cy.confirmDialogPanel()
 
-        // ensure sorting is active
         cy.getCell(0, 'Shrt_Desc').should(
             'to.contain',
             'BUTTER,WHIPPED,WITH SALT'
         )
         cy.getCell(1, 'Shrt_Desc').should('to.contain', 'BUTTER,WITH SALT')
-
-        cy.columnActionClick('Shrt_Desc', ['Sort', 'Reverse'])
-
+        cy.get('.viewpanel-sorting a').contains('Sort').click()
+        cy.get('.menu-container').contains('By Shrt_Desc').trigger('mouseover')
+        cy.get('.menu-item').contains('Reverse').click()
         cy.getCell(0, 'Shrt_Desc').should('to.contain', 'BUTTER,WITH SALT')
         cy.getCell(1, 'Shrt_Desc').should(
             'to.contain',
             'BUTTER,WHIPPED,WITH SALT'
         )
-
-        cy.columnActionClick('Shrt_Desc', ['Sort', 'Remove sort'])
-
+        cy.get('.viewpanel-sorting a').contains('Sort').click()
+        cy.get('.menu-container').contains('Reorder rows permanently').click()
+        cy.reload()
         cy.getCell(0, 'Shrt_Desc').should('to.contain', 'BUTTER,WITH SALT')
         cy.getCell(1, 'Shrt_Desc').should(
             'to.contain',
             'BUTTER,WHIPPED,WITH SALT'
         )
     })
-    it('Perform a number sort + Reverse + Remove', function () {
+    it('Ensure it reverses and reorders number sort', function () {
         cy.loadAndVisitProject('food.sort')
 
         cy.castColumnTo('NDB_No', 'number')
@@ -41,17 +39,21 @@ describe(__filename, function () {
         cy.get('[type="radio"]').check('reverse')
         cy.confirmDialogPanel()
 
-        // ensure sorting is active
         cy.getCell(0, 'NDB_No').should('to.contain', 1002)
         cy.getCell(1, 'NDB_No').should('to.contain', 1001)
-        cy.columnActionClick('NDB_No', ['Sort', 'Reverse'])
+
+        cy.get('.viewpanel-sorting a').contains('Sort').click()
+        cy.get('.menu-container').contains('By NDB_No').trigger('mouseover')
+        cy.get('.menu-item').contains('Reverse').click()
         cy.getCell(0, 'NDB_No').should('to.contain', 1001)
         cy.getCell(1, 'NDB_No').should('to.contain', 1002)
-        cy.columnActionClick('NDB_No', ['Sort', 'Remove sort'])
+        cy.get('.viewpanel-sorting a').contains('Sort').click()
+        cy.get('.menu-container').contains('Reorder rows permanently').click()
+        cy.reload()
         cy.getCell(0, 'NDB_No').should('to.contain', 1001)
         cy.getCell(1, 'NDB_No').should('to.contain', 1002)
     })
-    it('Perform a date sort + Reverse + Remove', function () {
+    it('Ensure it reverses and reorders date sort', function () {
         cy.loadAndVisitProject('food.sort')
 
         cy.castColumnTo('Date', 'date')
@@ -62,20 +64,22 @@ describe(__filename, function () {
         cy.get('[type="radio"]').check('reverse')
         cy.confirmDialogPanel()
 
-        // ensure sorting is active
         cy.getCell(0, 'Date').should('to.contain', '2020-12-17T00:00:00Z')
         cy.getCell(1, 'Date').should('to.contain', '2020-08-17T00:00:00Z')
 
-        cy.columnActionClick('Date', ['Sort', 'Reverse'])
-
+        cy.get('.viewpanel-sorting a').contains('Sort').click()
+        cy.get('.menu-container').contains('By Date').trigger('mouseover')
+        cy.get('.menu-item').contains('Reverse').click()
         cy.getCell(0, 'Date').should('to.contain', '2020-08-17T00:00:00Z')
         cy.getCell(1, 'Date').should('to.contain', '2020-12-17T00:00:00Z')
 
-        cy.columnActionClick('Date', ['Sort', 'Remove sort'])
-        cy.getCell(0, 'Date').should('to.contain', '2020-12-17T00:00:00Z')
-        cy.getCell(1, 'Date').should('to.contain', '2020-08-17T00:00:00Z')
+        cy.get('.viewpanel-sorting a').contains('Sort').click()
+        cy.get('.menu-container').contains('Reorder rows permanently').click()
+        cy.reload()
+        cy.getCell(0, 'Date').should('to.contain', '2020-08-17T00:00:00Z')
+        cy.getCell(1, 'Date').should('to.contain', '2020-12-17T00:00:00Z')
     })
-    it('Perform a bool sort + Reverse + Remove', function () {
+    it('Ensure it reverses and reorders bool sort', function () {
         cy.loadAndVisitProject('food.sort')
 
         cy.getCell(0, 'Fat')
@@ -102,13 +106,15 @@ describe(__filename, function () {
 
         cy.getCell(0, 'Fat').should('to.contain', 'false')
         cy.getCell(1, 'Fat').should('to.contain', 'true')
-
-        cy.columnActionClick('Fat', ['Sort', 'Reverse'])
+        cy.get('.viewpanel-sorting a').contains('Sort').click()
+        cy.get('.menu-container').contains('By Fat').trigger('mouseover')
+        cy.get('.menu-item').contains('Reverse').click()
         cy.getCell(0, 'Fat').should('to.contain', 'true')
         cy.getCell(1, 'Fat').should('to.contain', 'false')
-
-        cy.columnActionClick('Fat', ['Sort', 'Remove sort'])
-        cy.getCell(0, 'Fat').should('to.contain', 'false')
-        cy.getCell(1, 'Fat').should('to.contain', 'true')
+        cy.get('.viewpanel-sorting a').contains('Sort').click()
+        cy.get('.menu-container').contains('Reorder rows permanently').click()
+        cy.reload()
+        cy.getCell(0, 'Fat').should('to.contain', 'true')
+        cy.getCell(1, 'Fat').should('to.contain', 'false')
     })
 })
