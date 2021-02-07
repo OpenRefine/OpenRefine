@@ -16,12 +16,12 @@ Cypress tests can be ran
 -   using the Cypress test runner (development mode)
 -   using a command line (CI/CD mode)
 
-If you are writing tests, the cypress test runner is good enough, and the command-line is mainly used by the CI/CD platform (Github actions)
+If you are writing tests, the Cypress test runner is good enough, and the command-line is mainly used by the CI/CD platform (Github actions)
 
 ## Cypress brief overview
 
 Cypress operates insides a browser, it's internally using NodeJS.
-That's a key difference with tools such as selenium.
+That's a key difference with tools such as Selenium.
 
 **From the Cypress documentation:**
 
@@ -38,7 +38,7 @@ The general workflow of a Cypress test is to
 
 ## Getting started
 
-If that's the first time you use Cypress, it is recommended for you to get familiar with the tool.
+If this is the first time you use Cypress, it is recommended for you to get familiar with the tool.
 
 -   [Cypress overview](https://docs.cypress.io/guides/overview/why-cypress.html)
 -   [Cypress examples of tests and syntax](https://example.cypress.io/)
@@ -53,7 +53,7 @@ You will need:
 
 To install Cypress and dependencies, run :
 
-```
+```shell
 cd ./main/tests/cypress
 yarn install
 ```
@@ -81,7 +81,7 @@ Click on one of them and the test will start.
 
 ### 4. Add your first test
 
--   Add a `test.spec.js` into the cypress/integration folder.
+-   Add a `test.spec.js` into the `main/tests/cypress/cypress/integration` folder.
 -   The test is instantly available in the list
 -   Click on the test
 -   Start to add some code
@@ -151,8 +151,8 @@ The fixture parameter can be
 
 -   A referenced dataset: `food.small` or `food.mini`  
     Most of the time, tests does not require any specific grid values  
-    Use food.mini as much as possible, it loads 2 rows a very few columns in the grid  
-    Use food.small if the test requires a few hundreds of rows in the grid
+    Use food.mini as much as possible, it loads 2 rows and very few columns in the grid  
+    Use food.small if the test requires a few hundred rows in the grid
 
     Those datasets live in `cypress/fixtures`
 
@@ -163,7 +163,7 @@ See the [Cypress documentation](https://docs.cypress.io/guides/guides/launching-
 
 ### Folder organization
 
-Tests are located in main/tests/cypress.
+Tests are located in `main/tests/cypress/cypress` folder.
 The test should not use any file outside the cypress folder.
 
 -   `/fixtures` contains CSVs and OpenRefine project files used by the tests
@@ -180,7 +180,7 @@ Available variables are
 
 -   OPENREFINE_URL, determine on which scheme://url:port to access OpenRefine, default to http://localhost:333
 
-Cypress contains and [exaustive documentation](https://docs.cypress.io/guides/guides/environment-variables.html#Setting) about configuration, but here are two simple ways to configure the execution of the tests:
+Cypress contains [exaustive documentation](https://docs.cypress.io/guides/guides/environment-variables.html#Setting) about configuration, but here are two simple ways to configure the execution of the tests:
 
 #### Overriding with a cypress.env.json file
 
@@ -190,13 +190,13 @@ This file is ignored by Git, and you can use it to configure Cypress locally
 
 You can pass variables at the command-line level
 
-```
+```shell
 yarn --cwd ./main/tests/cypress run cypress open --env OPENREFINE_URL="http://localhost:1234"
 ```
 
 ## CI/CD
 
-In CI/CD, tests are runned headless, with the following command-line
+In CI/CD, tests are run headless, with the following command-line
 
 ```shell
 ./refine ui_test chrome
