@@ -11,7 +11,7 @@ function loadExpressionPanel() {
  */
 function typeExpression(expression) {
   cy.get('textarea.expression-preview-code').type(expression);
-  cy.get('body[ajax_in_progress="false"]');
+  cy.wait(250) // eslint-disable-line
 }
 
 /**
