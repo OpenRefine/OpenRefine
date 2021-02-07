@@ -1,6 +1,6 @@
 {
     "name": "Português (Brasil)",
-    "core-index/definition" : "",
+    "core-index/definition" : "OpenRefine é uma ferramenta elétrica para trabalhar com dados pouco claros. Use-o para melhorar a consistência dos dados, vincule-os a artigos de dados como o Wikidata, aprimore-os com dados de outras fontes, use outras ferramentas, converta-os para outros formatos e leve-os de volta às suas fontes originais. O OpenSify não é um serviço da web, mas um aplicativo de desktop que é executado em seu próprio computador para que você possa lidar com dados confidenciais com privacidade.",
     "core-index/contributor" : "Colaboradores (em ordem cronológica)",
     "core-index/history-1" : "OpenRefine foi originalmente desenvolvido como 'Freebase Gridworks' por",
     "core-index/history-2"  : ". Metaweb foi adquirida por",
