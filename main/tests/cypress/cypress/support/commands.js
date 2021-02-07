@@ -190,6 +190,7 @@ Cypress.Commands.add('columnActionClick', (columnName, actions) => {
   for (let i = 0; i < actions.length; i++) {
     cy.get('body > .menu-container').eq(i).contains(actions[i]).click();
   }
+  cy.get('body[ajax_in_progress="false"]');
 });
 
 /**
