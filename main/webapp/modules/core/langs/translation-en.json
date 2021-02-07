@@ -1,6 +1,15 @@
 {
     "name": "English",
     "core-index/slogan": "A power tool for working with messy data",
+
+   "core-index/definition" : "OpenRefine is a power tool for working with messy data. Use it to improve data consistency,link it to data registries like Wikidata, augment it with data from other sources, transform it into different formats for other tools to consume, and contribute it to back to the original sources. OpenRefine is not a web service but a desktop app that runs on your own computer,so you can process sensitive data with privacy.",
+   "core-index/contributor" : "ontributors (in chronological order)",
+   "core-index/history-1"  : "OpenRefine was originally developed as 'Freebase Gridworks' by ",
+   "core-index/history-2" : ". Metaweb was acquired by",
+   "core-index/history-3" : "in July 2010 and they renamed the product Google Refine. In October, 2012, the product was renamed OpenRefine as it transitioned to a community supported project.",
+   
+   "core-index/thanks" : "Special Thanks",
+   
     "core-index/help": "Help",
     "core-index/about": "About",
     "core-index/version": "Version:",
@@ -39,6 +48,7 @@
     "core-index/metaDatas": "Project metadata",
     "core-index/customMetadata": "Custom metadata (JSON):",
     "core-index/id": "Project ID:",
+    
     "core-index/importOptionMetadata": "Import option metadata (JSON):",
     "core-index-create/create-proj": "Create Project",
     "core-index-create/starting": "Starting",

@@ -1,6 +1,13 @@
 {
     "name": "Nederlands",
     "core-index/slogan": "Een krachtig hulpmiddel voor het werken met slordige data",
+    "core-index/definition" : "OpenRefine is een elektrisch hulpmiddel om met onoverzichtelijke gegevens te werken. Gebruik het om de consistentie van gegevens te verbeteren, koppel het aan gegevensartikelen zoals Wikidata, verbeter het met gegevens uit andere bronnen, gebruik andere tools, converteer het naar andere formaten en draag het terug naar de oorspronkelijke bronnen. OpenSify is geen webservice maar een desktop-app die op uw eigen computer draait, zodat u gevoelige gegevens met privacy kunt verwerken.",
+    "core-index/contributor" : "Medewerkers (in chronologische volgorde)",
+    "core-index/history-1" : "OpenRefine is oorspronkelijk ontwikkeld als 'Freebase Gridworks' door",
+    "core-index/history-2"  : ". Metaweb is overgenomen door",
+    "core-index/history-3" : "in juli 2010 en ze noemden het product Google Refine. In oktober 2012 werd het product omgedoopt tot OpenRefine toen het overging op een door de gemeenschap ondersteund project.",
+    "core-index/thanks" : "Speciale dank",
+
     "core-index/help": "Hulp",
     "core-index/about": "Over",
     "core-index/version": "Versie",

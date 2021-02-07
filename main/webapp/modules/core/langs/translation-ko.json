@@ -1,6 +1,12 @@
 {
     "name": "한국어",
     "core-index/slogan": "복잡한 데이터를 처리할 수 있는 강력한 도구",
+    "core-index/definition" : "OpenRefine 는 복잡한 데이터 작업을위한 강력한 도구입니다. 이를 사용하여 데이터 일관성을 개선하고, Wikidata와 같은 데이터 기사에 연결하고, 다른 소스의 데이터로 개선하고, 다른 도구를 사용하고, 다른 형식으로 변환하고, 원래 소스에 다시 기여할 수 있습니다. OpenSify는 웹 서비스가 아니라 자신의 컴퓨터에서 실행되는 데스크톱 앱이므로 개인 정보를 사용하여 민감한 데이터를 처리 할 수 ​​있습니다.",
+    "core-index/contributor" : "기여자 (시간순)",
+    "core-index/history-1" : "OpenRefine은 원래 'Freebase Gridworks'로 개발되었습니다.",
+    "core-index/history-2"  : ". Metaweb 인수",
+    "core-index/history-3" : "2010 년 7 월에 Google Refine 제품으로 이름이 변경되었습니다. 2012 년 10 월 제품은 커뮤니티 지원 프로젝트로 전환되면서 OpenRefine으로 이름이 변경되었습니다.",
+    "core-index/thanks" : "특별한 감사",
     "core-index/help": "도움말",
     "core-index/about": "관하여",
     "core-index/version": "버전",

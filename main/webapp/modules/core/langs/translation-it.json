@@ -1,5 +1,12 @@
 {
     "name": "Italiano",
+    "core-index/definition" : "OpenSify è uno strumento potente per lavorare con dati disordinati. Usalo per migliorare la coerenza dei dati, collegarlo ad articoli di dati come Wikidata, migliorarlo con dati da altre fonti, consumare altri strumenti, convertirlo in diversi formati e contribuire di nuovo alle fonti originali. OpenSify non è un servizio Web ma un'app desktop che viene eseguita sul tuo computer, quindi puoi elaborare dati sensibili con privacy.",
+    "core-index/contributor" : "Collaboratori (in ordine cronologico)",
+    "core-index/history-1" : "OpenRefine è stato originariamente sviluppato come 'Freebase Gridworks' da",
+    "core-index/history-2"  : ". Metaweb è stata acquisita da",
+    "core-index/history-3" : "nel luglio 2010 e hanno ribattezzato il prodotto Google Refine. Nell'ottobre 2012, il prodotto è stato rinominato OpenRefine durante la transizione a un progetto supportato dalla comunità.",
+    "core-index/thanks" : "Ringraziamenti speciali",
+
     "core-index/help": "Aiuto",
     "core-index/contributors": "Contributori:",
     "core-index/new-proj-name": "Nuovo nome del progetto:",

@@ -1,5 +1,11 @@
 {
     "name": "Português (Brasil)",
+    "core-index/definition" : "",
+    "core-index/contributor" : "Colaboradores (em ordem cronológica)",
+    "core-index/history-1" : "OpenRefine foi originalmente desenvolvido como 'Freebase Gridworks' por",
+    "core-index/history-2"  : ". Metaweb foi adquirida por",
+    "core-index/history-3" : "em julho de 2010 e eles renomearam o produto Google Refine. Em outubro de 2012, o produto foi renomeado como OpenRefine, uma vez que fez a transição para um projeto apoiado pela comunidade.",
+    "core-index/thanks" :  "Agradecimentos especiais",
     "core-index/help": "Ajuda",
     "core-index/contributors": "Contribuidores:",
     "core-index/new-proj-name": "Nome do novo projeto:",

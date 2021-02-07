@@ -1,6 +1,13 @@
 {
     "name": "日本語",
     "core-index/help": "ヘルプ",
+    "core-index/definition" : "OpenRefine 是用于处理混乱数据的强大工具。使用它可以提高数据的一致性，将其链接到Wikidata之类的数据文章，用其他来源的数据进行增强，使用其他工具，将其转换为不同的格式，并将其贡献回原始来源。 OpenSify不是Web服务，而是在您自己的计算机上运行的桌面应用程序，因此您可以私密地处理敏感数据。",
+    "core-index/contributor" : "贡献者（按时间顺序）",
+    "core-index/history-1" : "OpenRefine最初是由“ Freebase Gridworks”开发的",
+    "core-index/history-2"  : "。 Metaweb被收购",
+    "core-index/history-3" : "在2010年7月，他们将产品重命名为Google Refine。 2012年10月，该产品在过渡到社区支持的项目时被重命名为OpenRefine。",
+    "core-index/thanks" : "特别感谢",
+
     "core-index/contributors": "協力者:",
     "core-index/new-proj-name": "新しいプロジェクト名:",
     "core-index/download": "ダウンロード",

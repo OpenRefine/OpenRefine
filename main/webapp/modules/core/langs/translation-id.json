@@ -10,6 +10,14 @@
     "core-index/version": "Versi $1",
     "core-index/about": "Tentang",
     "core-index/help": "Bantuan",
+    
+    "core-index/definition" : "OpenSify adalah alat yang ampuh untuk bekerja dengan data yang berantakan. Gunakan untuk meningkatkan konsistensi data, menautkannya ke artikel data seperti Wikidata, menyempurnakannya dengan data dari sumber lain, menggunakan alat lain, mengonversinya ke format berbeda, dan menyumbangkannya kembali ke sumber asli. OpenSify bukanlah layanan web tetapi aplikasi desktop yang berjalan di komputer Anda sendiri, sehingga Anda dapat memproses data sensitif dengan privasi.",
+    "core-index/contributor" : "Kontributor (dalam urutan kronologis)",
+    "core-index/history-1" : "OpenRefine awalnya dikembangkan sebagai 'Freebase Gridworks' oleh",
+    "core-index/history-2"  : ". Metaweb diakuisisi oleh",
+    "core-index/history-3" : "pada Juli 2010 dan mereka mengganti nama produk Google Refine. Pada Oktober 2012, produk diubah namanya menjadi OpenRefine saat dialihkan ke proyek yang didukung komunitas.",
+    "core-index/thanks" : "Terima kasih khusus",
+
     "core-index/slogan": "Sebuah alat canggih untuk bekerja dengan data yang berantakan",
     "name": "Bahasa Inggris"
 }

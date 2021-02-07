@@ -1,5 +1,11 @@
 {
     "core-views/text-filter": "Textový filtr",
+    "core-index/definition" : "OpenSify je elektrický nástroj pro práci s přeplněnými daty. Použijte jej ke zlepšení konzistence dat, propojení s datovými články, jako je Wikidata, rozšíření o data z jiných zdrojů, využití dalších nástrojů, převod do různých formátů a jejich vrácení zpět k původním zdrojům. OpenSify není webová služba, ale desktopová aplikace, která běží na vašem vlastním počítači, takže můžete zpracovávat citlivá data s ochranou osobních údajů.",
+    "core-index/contributor" : "Přispěvatelé (v chronologickém pořadí)",
+    "core-index/history-1" : "Přispěvatelé (v chronologickém pořadí)",
+    "core-index/history-2"  : ". Metaweb získal",
+    "core-index/history-3" : "v červenci 2010 přejmenovali produkt Google Refine. V říjnu 2012 byl produkt přejmenován na OpenRefine při přechodu na projekt podporovaný komunitou.",
+    "core-index/thanks" : "Zvláštní poděkování",
     "core-views/all": "Vše",
     "core-views/last": "poslední",
     "core-views/next": "další",

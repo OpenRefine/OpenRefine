@@ -1,5 +1,12 @@
 {
     "name": "Filipino",
+    "core-index/definition" : "Ang OpenSify ay isang tool sa kuryente para sa pagtatrabaho sa kalat na data. Gamitin ito upang mapabuti ang pagkakapare-pareho ng data, i-link ito sa mga artikulo ng data tulad ng Wikidata, pagbutihin ito sa data mula sa iba pang mga mapagkukunan, ubusin ang iba pang mga tool, i-convert ito sa iba't ibang mga format, at ibigay ito pabalik sa mga orihinal na mapagkukunan. Ang OpenSify ay hindi isang serbisyo sa web ngunit isang desktop app na tumatakbo sa iyong sariling computer, upang maproseso mo ang sensitibong data nang may privacy.",
+    "core-index/contributor" : "Mga Nag-ambag (ayon sa pagkakasunud-sunod)",
+    "core-index/history-1" : "Ang OpenRefine ay orihinal na binuo bilang 'Freebase Gridworks' ni",
+    "core-index/history-2"  : ". Ang Metaweb ay nakuha ni",
+    "core-index/history-3" : "noong Hulyo 2010 at pinangalanan nila ang produktong Google Refine. Noong Oktubre, 2012, ang produkto ay pinalitan ng pangalan na OpenRefine dahil lumipat ito sa isang proyekto na suportado ng komunidad.",
+    "core-index/thanks" : "Espesyal na pasasalamat",
+
     "core-index/help": "Tulong",
     "core-index/contributors": "Mga kontribyutor:",
     "core-index/new-proj-name": "Pangalan ng bagong proyekto:",

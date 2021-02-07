@@ -1,5 +1,13 @@
 {
     "name": "Cebuano",
+
+    "core-index/definition" : "Ang OpenSify usa ka gamit sa kuryente alang sa pagtrabaho kauban ang daghang data. Gamita kini aron mapaayo ang pagkamakanunayon sa datos, i-link kini sa mga artikulo sa datos sama sa Wikidata, pauswagon kini sa datos gikan sa ubang mga gigikanan, ut-uton ang ubang mga gamit, ibalhin kini sa lainlaing mga format, ug ihatag kini balik sa orihinal nga mga gigikanan. Ang OpenSify dili serbisyo sa web apan usa ka desktop app nga gipadagan sa imong kaugalingon nga kompyuter, aron maproseso nimo ang sensitibo nga datos nga adunay pribasiya.",
+    "core-index/contributor" : "Mga naghatag)",
+    "core-index/history-1" : "Ang OpenRefine orihinal nga naugmad ingon 'Freebase Gridworks' ni",
+    "core-index/history-2"  : ". Ang Metaweb nakuha ni",
+    "core-index/history-3" : "kaniadtong Hulyo 2010 ug giilisan nila ngalan ang produkto nga Google Refine. Kaniadtong Oktubre, 2012, ang produkto ginganlan og OpenRefine tungod kay ningbalhin kini sa usa ka proyekto nga gisuportahan sa komunidad.",
+    "core-index/thanks" : "Espesyal nga Salamat",
+
     "core-index/help": "Tabang",
     "core-index/contributors": "Kontribyutors:",
     "core-index/creator": "Ang naggama:",
