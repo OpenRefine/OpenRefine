@@ -183,7 +183,7 @@ ExpressionPreviewDialog.Widget.prototype._renderHelpTab = function() {
 };
 
 ExpressionPreviewDialog.Widget.prototype._renderHelp = function(data) {
-    var elmt = this._elmts.expressionPreviewHelpTabBody.empty().width("700px");
+    var elmt = this._elmts.expressionPreviewHelpTabBody.empty();
     $('<h3></h3>').text("Variables").appendTo(elmt);
     var varTable = $('<table cellspacing="5"></table>').appendTo(elmt)[0];
     var vars = [
