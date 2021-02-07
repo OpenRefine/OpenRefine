@@ -182,6 +182,7 @@ Cypress.Commands.add('confirmDialogPanel', () => {
  * Will click on a menu entry for a given column name
  */
 Cypress.Commands.add('columnActionClick', (columnName, actions) => {
+  cy.get('body[ajax_in_progress="false"]'); // OR must not be loading at the moment, column headers will be detached from the dom
   cy.get(
     '.data-table th:contains("' + columnName + '") .column-header-menu'
   ).click();
@@ -189,7 +190,6 @@ Cypress.Commands.add('columnActionClick', (columnName, actions) => {
   for (let i = 0; i < actions.length; i++) {
     cy.get('body > .menu-container').eq(i).contains(actions[i]).click();
   }
-  cy.get('body[ajax_in_progress="false"]');
 });
 
 /**
