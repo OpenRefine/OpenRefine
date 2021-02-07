@@ -46,7 +46,7 @@ jobs:
         repository: ${{ github.event.pull_request.head.repo.full_name }}
 
     - name: Restore dependency cache
-      uses: actions/cache@v2.1.3
+      uses: actions/cache@v2.1.4
       with:
         path: ~/.m2/repository
         key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
@@ -92,7 +92,7 @@ jobs:
         repository: ${{ github.event.pull_request.head.repo.full_name }}
 
     - name: Restore dependency cache
-      uses: actions/cache@v2.1.3
+      uses: actions/cache@v2.1.4
       with:
           path: ~/.m2/repository
           key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
@@ -113,7 +113,7 @@ jobs:
         node-version: '12'
 
     - name: Restore Tests dependency cache
-      uses: actions/cache@v2.1.3
+      uses: actions/cache@v2.1.4
       with:
           path: |
             ~/cache
