@@ -1,10 +1,8 @@
 {
     "name": "Magyar",
-    "core-index/definition" : "Az OpenSify egy elektromos eszköz a túlterhelt adatok kezeléséhez. Használja az adatok konzisztenciájának javításához, az olyan cikkekhez, mint a Wikidata, az egyéb forrásokból származó adatokhoz való továbbfejlesztéshez, egyéb eszközök fogyasztásához, különböző formátumokká konvertálásához és az eredeti forrásokhoz való visszacsatoláshoz. Az OpenSify nem webszolgáltatás, hanem egy asztali alkalmazás, amely a saját számítógépén fut, így a bizalmas adatokat privát módon feldolgozhatja.",
+    "core-index/definition" : "Az OpenRefine egy elektromos eszköz a túlterhelt adatok kezeléséhez. Használja az adatok konzisztenciájának javításához, az olyan cikkekhez, mint a Wikidata, az egyéb forrásokból származó adatokhoz való továbbfejlesztéshez, egyéb eszközök fogyasztásához, különböző formátumokká konvertálásához és az eredeti forrásokhoz való visszacsatoláshoz. Az OpenRefine nem webszolgáltatás, hanem egy asztali alkalmazás, amely a saját számítógépén fut, így a bizalmas adatokat privát módon feldolgozhatja.",
     "core-index/contributor" : "Közreműködők (időrendben)",
-    "core-index/history-1" : "Az OpenRefine-t eredetileg Freebase Gridworks néven fejlesztette ki",
-    "core-index/history-2"  : ". A Metawebet megszerezte",
-    "core-index/history-3" : "2010 júliusában átnevezték a Google Refine terméket. 2012 októberében a terméket átnevezték OpenRefine-re, amikor egy közösségi támogatott projektre váltott.",
+    "core-index/history" : "Az OpenRefine-t eredetileg „Freebase Gridworks” néven fejlesztette ki a <a href='$1'>$1</a> Metaweb Technologies, Inc.. Az Metawebet 2010 júliusában a <a href='$2'>$2</a> Google vásárolta meg, és átnevezték a Google Refine terméket. 2012 októberében a terméket átnevezték OpenRefine-re, amikor egy közösségi támogatott projektre váltott.",
     "core-index/thanks" : "Külön köszönet",
 
     "core-index/help": "Súgó",

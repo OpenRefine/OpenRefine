@@ -2,11 +2,9 @@
     "name": "Deutsch",
     
     "core-index/help": "Hilfe",
-    "core-index/definition" : "OpenSify ist ein Elektrowerkzeug für die Arbeit mit überfüllten Daten. Verwenden Sie es, um die Datenkonsistenz zu verbessern, es mit Datenartikeln wie Wikidata zu verknüpfen, es mit Daten aus anderen Quellen zu erweitern, andere Tools zu verwenden, es in andere Formate zu konvertieren und es wieder in die ursprünglichen Quellen einzubringen. OpenSify ist kein Webdienst, sondern eine Desktop-App, die auf Ihrem eigenen Computer ausgeführt wird, sodass Sie vertrauliche Daten vertraulich verarbeiten können.",
+    "core-index/definition" : "OpenRefine ist ein Elektrowerkzeug für die Arbeit mit überfüllten Daten. Verwenden Sie es, um die Datenkonsistenz zu verbessern, es mit Datenartikeln wie Wikidata zu verknüpfen, es mit Daten aus anderen Quellen zu erweitern, andere Tools zu verwenden, es in andere Formate zu konvertieren und es wieder in die ursprünglichen Quellen einzubringen. OpenRefine ist kein Webdienst, sondern eine Desktop-App, die auf Ihrem eigenen Computer ausgeführt wird, sodass Sie vertrauliche Daten vertraulich verarbeiten können.",
     "core-index/contributor" : "Mitwirkende (in chronologischer Reihenfolge)",
-    "core-index/history-1" : "OpenRefine wurde ursprünglich als 'Freebase Gridworks' von entwickelt",
-    "core-index/history-2"  : ". Metaweb wurde von erworben",
-    "core-index/history-3" : "im Juli 2010 und sie benannten das Produkt Google Refine um. Im Oktober 2012 wurde das Produkt in OpenRefine umbenannt, als es in ein von der Community unterstütztes Projekt überging.",
+    "core-index/history" : "OpenRefine wurde ursprünglich von <a href='$1'>$1</a> Metaweb Technologies, Inc. als 'Freebase Gridworks' entwickelt. Metaweb wurde im Juli 2010 von <a href='$2'>$2</a> Google übernommen und das Produkt in Google Refine umbenannt. Im Oktober 2012 wurde das Produkt in OpenRefine umbenannt, als es in ein von der Community unterstütztes Projekt überging.",
     "core-index/thanks" : "Besonderen Dank",
     "core-index/contributors": "Mitwirkende:",
     "core-index/new-proj-name": "Neuer Projektname:",

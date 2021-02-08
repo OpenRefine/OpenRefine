@@ -1,10 +1,8 @@
 {
     "name": "Română",
-    "core-index/definition" : "OpenRefine este un instrument electric pentru lucrul cu date aglomerate. Folosiți-l pentru a îmbunătăți consistența datelor, pentru a le conecta la articole de date precum Wikidata, pentru a le îmbunătăți cu date din alte surse, pentru a consuma alte instrumente, pentru a le converti în diferite formate și pentru a le contribui înapoi la sursele originale. OpenSify nu este un serviciu web, ci o aplicație desktop care rulează pe propriul computer, astfel încât să puteți procesa date sensibile cu confidențialitate.",
+    "core-index/definition" : "OpenRefine este un instrument electric pentru lucrul cu date aglomerate. Folosiți-l pentru a îmbunătăți consistența datelor, pentru a le conecta la articole de date precum Wikidata, pentru a le îmbunătăți cu date din alte surse, pentru a consuma alte instrumente, pentru a le converti în diferite formate și pentru a le contribui înapoi la sursele originale. OpenRefine nu este un serviciu web, ci o aplicație desktop care rulează pe propriul computer, astfel încât să puteți procesa date sensibile cu confidențialitate.",
     "core-index/contributor" : "Colaboratori (în ordine cronologică)",
-    "core-index/history-1" : "OpenRefine a fost dezvoltat inițial ca „Freebase Gridworks” de către",
-    "core-index/history-2"  : ". Metaweb a fost achiziționat de",
-    "core-index/history-3" : "în iulie 2010 și au redenumit produsul Google Refine. În octombrie 2012, produsul a fost redenumit OpenRefine pe măsură ce trecea la un proiect susținut de comunitate.",
+    "core-index/history" : "OpenRefine a fost dezvoltat inițial ca „Freebase Gridworks” de <a href='$1'>$1</a> Metaweb Technologies, Inc. Metaweb a fost achiziționat de <a href='$2'>$2</a> Google în iulie 2010 și au redenumit produsul Google Refine. În octombrie 2012, produsul a fost redenumit OpenRefine pe măsură ce trecea la un proiect susținut de comunitate.", 
     "core-index/thanks" :  "Multumiri speciale",
 
     "core-index/help": "Ajutor",

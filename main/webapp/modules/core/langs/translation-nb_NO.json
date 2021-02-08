@@ -1,10 +1,8 @@
 {
     "name": "Norsk (bokmål)",
-    "core-index/definition" : "OpenRefine er et verktøy for å jobbe med rotete data. Bruk den til å forbedre datakonsistensen, lenke den til dateartikler som Wikidata, forbedre den med data fra andre kilder, konsumere andre verktøy, konvertere den til forskjellige formater og bidra med den tilbake til de originale kildene. OpenSify er ikke en nettjeneste, men en stasjonær app som kjører på din egen datamaskin, slik at du kan behandle sensitive data med privatliv.",
+    "core-index/definition" : "OpenRefine er et verktøy for å jobbe med rotete data. Bruk den til å forbedre datakonsistensen, lenke den til dateartikler som Wikidata, forbedre den med data fra andre kilder, konsumere andre verktøy, konvertere den til forskjellige formater og bidra med den tilbake til de originale kildene. OpenRefine er ikke en nettjeneste, men en stasjonær app som kjører på din egen datamaskin, slik at du kan behandle sensitive data med privatliv.",
     "core-index/contributor" : "Bidragsytere (i kronologisk rekkefølge)",
-    "core-index/history-1" : "OpenRefine ble opprinnelig utviklet som 'Freebase Gridworks' av",
-    "core-index/history-2"  : ". Metaweb ble kjøpt opp av",
-    "core-index/history-3" : "i juli 2010, og de ga nytt navn til produktet Google Refine. I oktober 2012 ble produktet omdøpt til OpenRefine da det gikk over til et fellesskapsstøttet prosjekt.",
+    "core-index/history" : "OpenRefine ble opprinnelig utviklet som 'Freebase Gridworks' av <a href='$1'>$1</a> Metaweb Technologies, Inc. Metaweb ble kjøpt opp av <a href='$2'>$2</a> Google i juli 2010, og de ga nytt navn til produktet Google Refine. I oktober 2012 ble produktet omdøpt til OpenRefine da det gikk over til et fellesskapsstøttet prosjekt.",
     "core-index/thanks" : "Spesiell takk",
 
     "core-index/slogan": "Et kraftig verktøy for å jobbe med rotete data",

@@ -1,10 +1,8 @@
 {
     "name": "Svenska",
-    "core-index/definition" : "OpenRefine är ett elverktyg för att arbeta med röriga data. Använd den för att förbättra datakonsistensen, länka den till dataartiklar som Wikidata, förbättra den med data från andra källor, konsumera andra verktyg, konvertera den till olika format och bidra tillbaka till de ursprungliga källorna. OpenSify är inte en webbtjänst utan en stationär app som körs på din egen dator så att du kan behandla känslig data med sekretess.",
+    "core-index/definition" : "OpenRefine är ett elverktyg för att arbeta med röriga data. Använd den för att förbättra datakonsistensen, länka den till dataartiklar som Wikidata, förbättra den med data från andra källor, konsumera andra verktyg, konvertera den till olika format och bidra tillbaka till de ursprungliga källorna. OpenRefine är inte en webbtjänst utan en stationär app som körs på din egen dator så att du kan behandla känslig data med sekretess.",
     "core-index/contributor" : "Bidragsgivare (i kronologisk ordning)",
-    "core-index/history-1" : "OpenRefine utvecklades ursprungligen som 'Freebase Gridworks' av",
-    "core-index/history-2"  : ". Metaweb förvärvades av",
-    "core-index/history-3" : "i juli 2010 och de döpte om produkten Google Refine. I oktober 2012 döptes produkten om till OpenRefine när den övergick till ett projekt som stöds av samhället.",
+    "core-index/history" : "OpenRefine utvecklades ursprungligen som 'Freebase Gridworks' av <a href='$1'>$1</a> Metaweb Technologies, Inc. Metaweb förvärvades av <a href='$2'>$2</a> Google i juli 2010 och de döpte om produkten Google Refine. I oktober 2012 döptes produkten om till OpenRefine när den övergick till ett projekt som stöds av samhället.",
     "core-index/thanks" : "Speciellt tack",
 
     "core-index/slogan": "Ett kraftverktyg för att arbeta med röriga data",
