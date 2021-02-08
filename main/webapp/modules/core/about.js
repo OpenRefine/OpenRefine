@@ -1,9 +1,9 @@
 
 $("#about-openrefine").text($.i18n('core-index/about') + " OpenRefine");
-$("#contributor").text($.i18n('core-index/contributor'));
-$("#definition").text($.i18n('core-index/definition'));
-$("#history-openrefine").html($.i18n('core-index/history' ,'http://www.metaweb.com/' , 'http://www.google.com/' ));
-$("#thanks").text($.i18n('core-index/thanks'));
+$("#contributors").text($.i18n('core-about/contributors'));
+$("#definition").text($.i18n('core-about/definition'));
+$("#history-openrefine").html($.i18n('core-about/history' ,'http://www.metaweb.com/' ,'Metaweb Technologies,Inc.', 'http://www.google.com/','Google' ));
+$("#thanks").text($.i18n('core-about/thanks'));
 
 
  
