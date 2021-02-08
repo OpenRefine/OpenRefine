@@ -96,8 +96,7 @@ DataTableCellUI.prototype._render = function() {
       nonstringSpan.className = 'data-table-value-nonstring';
       nonstringSpan.textContent = cell.v;
       divContent.appendChild(nonstringSpan);
-    } 
-    else{
+    } else {
       var arr = cell.v.split(" ");
       var spanArr =[];
       for (var i=0; i<arr.length; i++) {
