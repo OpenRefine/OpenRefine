@@ -100,7 +100,7 @@ DataTableCellUI.prototype._render = function() {
     else{
       var arr = cell.v.split(" ");
       var spanArr =[];
-      for( var i=0;i<arr.length;i++){
+      for (var i=0; i<arr.length; i++) {
         if(URL.looksLikeUrl(arr[i])){
           if(spanArr.length !=0 ){
             var span = document.createElement('span');
