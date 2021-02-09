@@ -55,12 +55,12 @@ public class Chomp implements Function {
     
     @Override
     public String getDescription() {
-        return "Removes separator from the end of str if it's there, otherwise leave it alone.";
+        return "Returns a copy of string s with the string sep removed from the end if s ends with sep; otherwise, just returns s. For example, "barely".chomp("ly") and "bare".chomp("ly") both return the string “bare”.";
     }
     
     @Override
     public String getParams() {
-        return "string str, string separator";
+        return "string s, string sep";
     }
     
     @Override

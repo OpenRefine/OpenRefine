@@ -70,12 +70,12 @@ public class Length implements Function {
 
     @Override
     public String getDescription() {
-        return "Returns the length of o";
+        return "Returns the length of string s or array a as a number.";
     }
     
     @Override
     public String getParams() {
-        return "array or string o";
+        return "array a or string s";
     }
     
     @Override

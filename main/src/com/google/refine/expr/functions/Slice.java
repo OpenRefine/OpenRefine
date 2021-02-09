@@ -125,18 +125,18 @@ public class Slice implements Function {
     @Override
     public String getDescription() {
         return 
-            "If o is an array, returns o[from, to]. " +
-            "if o is a string, returns o.substring(from, to)"
+            "Returns the substring of o starting from character or array index from, and up to (excluding) character or array index to. If the to argument is omitted, slice will output to the end of s. For example, "profound".slice(3) returns the string “found”, and "profound".slice(2, 4) returns the string “of”. Remember that character indices start from zero. A negative character index counts from the end of the string. For example, "profound".slice(0, -1) returns the string “profoun”." +
+            "If o is an array, returns o[from, to]. "
         ;
     }
     
     @Override
     public String getParams() {
-        return "o, number from, optional number to";
+        return "string or array o, number from, number to (optional)";
     }
     
     @Override
     public String getReturns() {
-        return "Depends on actual arguments";
+        return "string, array, or array item (number, string, etc.)";
     }
 }

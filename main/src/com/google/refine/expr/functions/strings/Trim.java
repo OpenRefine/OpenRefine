@@ -53,7 +53,7 @@ public class Trim implements Function {
     }
     @Override
     public String getDescription() {
-        return "Returns copy of the string, with leading and trailing whitespace omitted.";
+        return "Returns a copy of the string s with leading and trailing whitespace removed. For example, " island ".trim() returns the string “island”. Identical to strip().";
     }
     
     @Override
