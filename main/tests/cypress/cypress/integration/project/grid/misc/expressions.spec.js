@@ -11,7 +11,6 @@ function loadExpressionPanel() {
  */
 function typeExpression(expression) {
   cy.get('textarea.expression-preview-code').type(expression);
-  cy.wait(250); // eslint-disable-line
 }
 
 /**

@@ -5,6 +5,7 @@
     "runMode": 3,
     "openMode": 0
   },
+  "defaultCommandTimeout": 7000,
   "env": {
     "OPENREFINE_URL": "http://localhost:3333"
   }

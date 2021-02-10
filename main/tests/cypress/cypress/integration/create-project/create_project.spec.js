@@ -125,4 +125,65 @@ describe(__filename, function () {
     // preview and click next
     cy.doCreateProjectThroughUserInterface();
   });
+  it('Test the create project from Web URL based on CSV', function () {
+    // navigate to the create page
+    cy.visitOpenRefine();
+    cy.navigateTo('Create Project');
+    cy.get('#create-project-ui-source-selection-tabs > div')
+      .contains('Web Addresses (URLs)')
+      .click();
+    cy.get('#or-import-enterurl').should(
+      'to.contain',
+      'Enter one or more web addresses (URLs) pointing to data to download:'
+    );
+    // add file
+    const csvURL = "https://people.sc.fsu.edu/~jburkardt/data/csv/addresses.csv";
+    cy.get('input[bind="urlInput"]').filter(':visible').type(csvURL);
+    cy.get(
+      '.create-project-ui-source-selection-tab-body.selected button.button-primary'
+    )
+      .contains('Next »')
+      .click();
+    cy.get(
+      '.default-importing-wizard-header input[bind="projectNameInput"]'
+    ).should('have.value', 'addresses csv');
+
+    // then ensure we are on the preview page
+    cy.get('.create-project-ui-panel').contains('Configure Parsing Options');
+
+    // preview and click next
+    cy.doCreateProjectThroughUserInterface();
+  });
+  it('Test the create project from Multiple Web URLs based on CSV', function () {
+    // navigate to the create page
+    cy.visitOpenRefine();
+    cy.navigateTo('Create Project');
+    cy.get('#create-project-ui-source-selection-tabs > div')
+      .contains('Web Addresses (URLs)')
+      .click();
+    cy.get('#or-import-enterurl').should(
+      'to.contain',
+      'Enter one or more web addresses (URLs) pointing to data to download:'
+    );
+    // add file
+    const csvURL = "https://people.sc.fsu.edu/~jburkardt/data/csv/addresses.csv";
+    cy.get('input[bind="urlInput"]').filter(':visible').type(csvURL);
+    cy.get('button[bind="addButton"]').contains('Add Another URL').click();
+    
+    cy.get(
+      '.create-project-ui-source-selection-tab-body.selected button.button-primary'
+    )
+      .contains('Next »')
+      .click();
+    cy.get('.create-project-ui-panel').contains('Configure Parsing Options »').click()
+    cy.get(
+      '.default-importing-wizard-header input[bind="projectNameInput"]'
+    ).should('have.value', 'addresses csv');
+
+    // then ensure we are on the preview page
+    cy.get('.create-project-ui-panel').contains('Configure Parsing Options');
+
+    // preview and click next
+    cy.doCreateProjectThroughUserInterface();
+  });
 });
