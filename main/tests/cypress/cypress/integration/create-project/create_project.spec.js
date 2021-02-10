@@ -156,7 +156,6 @@ describe(__filename, function () {
   });
   it('Test the create project from Multiple Web URLs based on CSV', function () {
     // navigate to the create page
-    Cypress.config('defaultCommandTimeout', 7500)
     cy.visitOpenRefine();
     cy.navigateTo('Create Project');
     cy.get('#create-project-ui-source-selection-tabs > div')
@@ -176,7 +175,7 @@ describe(__filename, function () {
     )
       .contains('Next »')
       .click();
-    cy.get('.create-project-ui-panel').contains('Configure Parsing Options »').click()
+    cy.get('.create-project-ui-panel',{timeout: 7500}).contains('Configure Parsing Options »').click()
     cy.get(
       '.default-importing-wizard-header input[bind="projectNameInput"]'
     ).should('have.value', 'addresses csv');
