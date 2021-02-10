@@ -20,7 +20,7 @@ module.exports = {
 	    {
       type: 'category',
       label: 'Expressions',
-      items: ['manual/expressions', 'manual/grelfunctions'],
+      items: ['manual/expressions', 'manual/grel', 'manual/grelfunctions', 'manual/jythonclojure'],
     },
       'manual/exporting',
       'manual/troubleshooting'
