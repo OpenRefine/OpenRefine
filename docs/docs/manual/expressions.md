@@ -1,7 +1,7 @@
 ﻿---
 id: expressions
 title: Expressions
-sidebar_label: Expressions
+sidebar_label: Overview
 ---
 
 ## Overview
@@ -200,7 +200,9 @@ A `row.record` object encapsulates one or more rows that are grouped together, w
 |Field|Meaning |
 |-|-|
 | `row.record.index` | The index of the current record (starting at 0) |
-| `row.record.cells` | The cells of the row |
+| `row.record.cells` | An array of the [cells](#cells) in the given column of the record |
 | `row.record.fromRowIndex` | The row index of the first row in the record |
-| `row.record.toRowIndex` | The row index of the last row in the record + 1 (i.e. the next row) |
+| `row.record.toRowIndex` | The row index of the last row in the record + 1 (i.e. the next record) |
 | `row.record.rowCount` | A count of the number of rows in the record |
+
+For example, you can facet by number of rows in each record by creating a <span class="menuItems">Custom Numeric Facet</span> (or a <span class="menuItems">Custom Text Facet</span>) and entering `row.record.rowCount`. 
