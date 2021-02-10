@@ -1,4 +1,4 @@
----
+﻿---
 id: grelfunctions
 title: GREL functions
 sidebar_label: GREL functions
@@ -116,7 +116,7 @@ Identical to substring() in relation to strings. Also works with arrays; see [Ar
 
 ###### get(s, n from, n to (optional))
 
-Identical to substring() in relation to strings. Also works with named fields. Also works with arrays; see [Array functions section](#geta-n-or-s-from-n-to-optional).
+Identical to substring() in relation to strings. Also works with named fields. Also works with arrays; see [Array functions section](#geta-n-from-n-to-optional).
 
 #### Find and replace
 
