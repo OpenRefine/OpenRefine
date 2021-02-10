@@ -30,7 +30,7 @@ These languages have some syntax differences but support many of the same [varia
 
 This page is a general reference for available functions, variables, and syntax. For examples that use these expressions for common data tasks, look at the [Recipes section on the Wiki](https://github.com/OpenRefine/OpenRefine/wiki/Documentation-For-Users#recipes-and-worked-examples). 
 
-### Expressions
+## Expressions
 
 There are significant differences between OpenRefine's expressions and the spreadsheet formulas you may be used to using for data manipulation. OpenRefine does not store formulas in cells and display output dynamically: OpenRefine’s transformations are one-time operations that can change column contents or generate new columns. These are applied using variables such as `value` or `cell` to perform the same modification to each cell in a column. 
 
@@ -53,7 +53,7 @@ For another example, if you were to create a new column based on your data using
 
 Note that an expression is typically based on one particular column in the data - the column whose drop-down menu is first selected. Many variables are created to stand for things about the cell in that “base column” of the current row on which the expression is evaluated. There are also variables about rows, which you can use to access cells in other columns.
 
-### The expressions editor
+## The expressions editor
 
 When you select a function that accepts expressions, you will see a window overlay the screen with what we call the expressions editor. 
 
@@ -72,13 +72,13 @@ Starring formulas you’ve used in the past can be helpful for repetitive tasks 
 
 You can also choose how formula errors are handled: replicate the original cell value, output an error message into the cell, or ouput a blank cell.
 
-### Regular expressions
+## Regular expressions
 
 OpenRefine offers several fields that support the use of regular expressions (regex), such as in a <span class="menuItems">Text filter</span> or a <span class="menuItems">Replace…</span> operation. GREL and other expressions can also use regular expression markup to extend their functionality. 
 
 If this is your first time working with regex, you may wish to read [this tutorial specific to the Java syntax that OpenRefine supports](https://docs.oracle.com/javase/tutorial/essential/regex/). We also recommend this [testing and learning tool](https://regexr.com/).
 
-#### GREL-supported regex
+### GREL-supported regex
 
 To write a regular expression inside a GREL expression, wrap it between a pair of forward slashes (/) much like the way you would in Javascript. For example, in
 
@@ -100,7 +100,7 @@ On the [GREL functions](#grel-general-refine-expression-language) page, function
 *   [split](grelfunctions#splits-s-or-p-sep)
 *   [smartSplit](grelfunctions#smartsplits-s-or-p-sep-optional)
 
-#### Jython-supported regex
+### Jython-supported regex
 
 You can also use [regex with Jython expressions](http://www.jython.org/docs/library/re.html), instead of GREL, for example with a <span class="menuItems">Custom Text Facet</span>: 
 
@@ -108,7 +108,7 @@ You can also use [regex with Jython expressions](http://www.jython.org/docs/libr
 python import re g = re.search(ur"\u2014 (.*),\s*BWV", value) return g.group(1)
 ```
 
-#### Clojure-supported regex
+### Clojure-supported regex
 
 [Clojure](https://clojure.org/reference/reader) uses the same regex engine as Java, and can be invoked with [re-find](http://clojure.github.io/clojure/clojure.core-api.html#clojure.core/re-find), [re-matches](http://clojure.github.io/clojure/clojure.core-api.html#clojure.core/re-matches), etc. You can use the #"pattern" reader macro as described [in the Clojure documentation](https://clojure.org/reference/other_functions#regex). For example, to get the nth element of a returned sequence, you can use the nth function:
 
