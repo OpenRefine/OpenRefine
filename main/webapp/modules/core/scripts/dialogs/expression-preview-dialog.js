@@ -36,7 +36,7 @@ function ExpressionPreviewDialog(title, cellIndex, rowIndices, values, expressio
 
     var self = this;
     var frame = DialogSystem.createDialog();
-    
+    frame.css("min-width", "700px")
     var header = $('<div></div>').addClass("dialog-header").text(title).appendTo(frame);
     var body = $('<div></div>').addClass("dialog-body").appendTo(frame);
     var footer = $('<div></div>').addClass("dialog-footer").appendTo(frame);
