@@ -99,31 +99,32 @@ DataTableCellUI.prototype._render = function() {
     } else {
       var arr = cell.v.split(" ");
       var spanArr = [];
-      for (var i=0; i<arr.length; i++) {
+      for (var i=0; i<arr.length; i++){
         if (URL.looksLikeUrl(arr[i])) {
-          if (spanArr.length != 0 ) {
+          if (spanArr.length != 0) {
             var span = document.createElement('span');
             span.textContent = spanArr.join(" ");
             divContent.appendChild(span).appendChild(document.createTextNode('\u00A0'));
             spanArr = [];
-          } var url = document.createElement('a');
-            url.textContent = arr[i];
-            url.setAttribute('href', arr[i]);
-            url.setAttribute('target', '_blank');
-            divContent.appendChild(url);
-            if (i == arr.length-1) {
-             divContent.appendChild(url)
-            } else {
-            divContent.appendChild(url).appendChild(document.createTextNode('\u00A0'));
-            }
+          }
+          var url = document.createElement('a');
+          url.textContent = arr[i];
+          url.setAttribute('href', arr[i]);
+          url.setAttribute('target', '_blank');
+          if (i == arr.length-1){
+            divContent.appendChild(url)
           } else {
+            divContent.appendChild(url).appendChild(document.createTextNode('\u00A0'));
+          }
+        } else {
           spanArr.push(arr[i]);
-          } 
-      } if (spanArr.length != 0) {
-         var span = document.createElement('span');
-         span.textContent = spanArr.join(" ");
-         divContent.appendChild(span);
         }
+      }
+      if (spanArr.length != 0) {
+        var span = document.createElement('span');
+        span.textContent = spanArr.join(" ");
+        divContent.appendChild(span);
+      }
     }  
   } else {
     var divContentRecon = $(divContent);
