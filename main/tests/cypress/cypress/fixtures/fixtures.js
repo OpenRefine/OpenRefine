@@ -1,7 +1,7 @@
 const foodMini = require('./food.mini.js');
 const foodSmall = require('./food.small.js');
 const foodSort = require('./food.sort.js');
-const sweetsJson = require('./sweets.json.js')
+const sweetsJson = require('./sweets.json.js');
 
 const fixtures = {
   'food.mini': foodMini,

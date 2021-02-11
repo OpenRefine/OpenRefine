@@ -247,19 +247,24 @@ Cypress.Commands.add(
     cy.get('#create-project-ui-source-selection-tabs > div')
       .contains('Clipboard')
       .click();
-      cy.get('textarea').invoke('val', fixtures[fixture]);
-      cy.get(
-        '.create-project-ui-source-selection-tab-body.selected button.button-primary'
-      )
-        .contains('Next »')
-        .click();
-        cy.get(
-          '.default-importing-wizard-header input[bind="projectNameInput"]'
-        ).clear();
-      cy.get(
-        '.default-importing-wizard-header input[bind="projectNameInput"]'
-      ).type(projectName);
-      cy.get('[data-cy=element0]').first().scrollIntoView().click({force: true})
-      cy.doCreateProjectThroughUserInterface();
+    cy.get('textarea').invoke('val', fixtures[fixture]);
+    cy.get(
+      '.create-project-ui-source-selection-tab-body.selected button.button-primary'
+    )
+      .contains('Next »')
+      .click();
+    cy.get(
+      '.default-importing-wizard-header input[bind="projectNameInput"]'
+    ).clear();
+    cy.get(
+      '.default-importing-wizard-header input[bind="projectNameInput"]'
+    ).type(projectName);
+    // need to disable es-lint as force is required to true, if not then
+    // cypress won't detect the element due to `position:fixed` and overlays
+    cy.get('[data-cy=element0]') // eslint-disable-line
+      .first()
+      .scrollIntoView()
+      .click({ force: true });
+    cy.doCreateProjectThroughUserInterface();
   }
 );
