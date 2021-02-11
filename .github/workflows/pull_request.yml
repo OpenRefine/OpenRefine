@@ -133,7 +133,7 @@ jobs:
     - name: Lint with Prettier
       run: |
           cd ./main/tests/cypress
-          yarn check-lint
+          yarn lint
 
     - name: Test with Cypress on ${{ matrix.browser }}
       run: | 
