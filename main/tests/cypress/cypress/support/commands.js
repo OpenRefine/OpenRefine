@@ -66,7 +66,9 @@ Cypress.Commands.add('createProjectThroughUserInterface', (fixtureFile) => {
 });
 
 Cypress.Commands.add('doCreateProjectThroughUserInterface', () => {
-  cy.get('.default-importing-wizard-header button[bind="nextButton"]').contains("Create Project »").click();
+  cy.get('.default-importing-wizard-header button[bind="nextButton"]')
+    .contains('Create Project »')
+    .click();
   cy.get('#create-project-progress-message').contains('Done.');
 
   // workaround to ensure project is loaded

@@ -137,7 +137,8 @@ describe(__filename, function () {
       'Enter one or more web addresses (URLs) pointing to data to download:'
     );
     // add file
-    const csvURL = "https://people.sc.fsu.edu/~jburkardt/data/csv/addresses.csv";
+    const csvURL =
+      'https://people.sc.fsu.edu/~jburkardt/data/csv/addresses.csv';
     cy.get('input[bind="urlInput"]').filter(':visible').type(csvURL);
     cy.get(
       '.create-project-ui-source-selection-tab-body.selected button.button-primary'
@@ -166,16 +167,19 @@ describe(__filename, function () {
       'Enter one or more web addresses (URLs) pointing to data to download:'
     );
     // add file
-    const csvURL = "https://people.sc.fsu.edu/~jburkardt/data/csv/addresses.csv";
+    const csvURL =
+      'https://people.sc.fsu.edu/~jburkardt/data/csv/addresses.csv';
     cy.get('input[bind="urlInput"]').filter(':visible').type(csvURL);
     cy.get('button[bind="addButton"]').contains('Add Another URL').click();
-    
+
     cy.get(
       '.create-project-ui-source-selection-tab-body.selected button.button-primary'
     )
       .contains('Next »')
       .click();
-    cy.get('.create-project-ui-panel',{timeout: 7500}).contains('Configure Parsing Options »').click()
+    cy.get('.create-project-ui-panel', { timeout: 7500 })
+      .contains('Configure Parsing Options »')
+      .click();
     cy.get(
       '.default-importing-wizard-header input[bind="projectNameInput"]'
     ).should('have.value', 'addresses csv');
