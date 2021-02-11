@@ -45,13 +45,12 @@ Refine.GDataSourceUI.prototype.attachUI = function(body) {
   $('#gdata-import').html($.i18n('gdata-import/import-by-url'));
   $('#gdata-next').html($.i18n('gdata-import/next->'));
   $('#gdata-auth-doc').text($.i18n('gdata-import/auth-doc'));
-  $('#gdata-please').text($.i18n('gdata-import/please'));
+  $('#gdata-please-signin').text($.i18n('gdata-import/please-signin'));
   $('#gdata-signin-btn').text($.i18n('gdata-import/sign-in'));
-  $('#gdata-access-data').text($.i18n('gdata-import/access-data'));
   $('#gdata-retrieving').text($.i18n('gdata-import/retrieving'));
   $('#gdata-signout').text($.i18n('gdata-import/sign-out'));
-  $('#gdata-resignin').text($.i18n('gdata-import/re-sign-in'));
-  $('#gdata-another-account').text($.i18n('gdata-import/another-account'));
+  $('#gdata-resignin').text($.i18n('gdata-import/sign-in'));
+  $('#gdata-re-signin-another').text($.i18n('gdata-import/re-sign-in-another'));
   
   var self = this;
   this._body.find('.gdata-signin.button').click(function() {
