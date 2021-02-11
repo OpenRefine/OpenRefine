@@ -11,6 +11,8 @@
 import 'cypress-file-upload';
 import 'cypress-wait-until';
 
+const fixtures = require('../fixtures/fixtures.js');
+
 /**
  * Return the .facets-container for a given facet name
  */
@@ -82,6 +84,14 @@ Cypress.Commands.add('doCreateProjectThroughUserInterface', () => {
     const projectId = location.href.split('=').slice(-1)[0];
     cy.visitProject(projectId);
     cy.wrap(projectId).as('createdProjectId');
+    cy.get('@loadedProjectIds', { log: false }).then((loadedProjectIds) => {
+      loadedProjectIds.push(projectId);
+      cy.wrap(loadedProjectIds, { log: false })
+        .as('loadedProjectIds')
+        .then(() => {
+          return projectId;
+        });
+    });
   });
 });
 
@@ -226,5 +236,30 @@ Cypress.Commands.add(
     cy.getCell(rowIndex, columnName)
       .find('.data-table-value-nonstring')
       .should('to.exist');
+  }
+);
+
+Cypress.Commands.add(
+  'loadAndVisitSampleJSONProject',
+  (projectName, fixture) => {
+    cy.visitOpenRefine();
+    cy.navigateTo('Create Project');
+    cy.get('#create-project-ui-source-selection-tabs > div')
+      .contains('Clipboard')
+      .click();
+      cy.get('textarea').invoke('val', fixtures[fixture]);
+      cy.get(
+        '.create-project-ui-source-selection-tab-body.selected button.button-primary'
+      )
+        .contains('Next »')
+        .click();
+        cy.get(
+          '.default-importing-wizard-header input[bind="projectNameInput"]'
+        ).clear();
+      cy.get(
+        '.default-importing-wizard-header input[bind="projectNameInput"]'
+      ).type(projectName);
+      cy.get('[data-cy=element0]').first().scrollIntoView().click({force: true})
+      cy.doCreateProjectThroughUserInterface();
   }
 );
