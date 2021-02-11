@@ -130,7 +130,7 @@ jobs:
           npm i -g yarn
           yarn install
 
-    - name: Lint with Prettier
+    - name: Lint with ES-Lint & Prettier
       run: |
           cd ./main/tests/cypress
           yarn lint
