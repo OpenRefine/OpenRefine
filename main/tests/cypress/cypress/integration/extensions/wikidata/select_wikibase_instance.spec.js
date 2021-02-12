@@ -45,7 +45,8 @@ describe(__filename, function () {
       .click();
 
     // ad a manifest
-    cy.get('.add-wikibase-dialog input[bind="manifestURLInput"]').type(
+    cy.get('.add-wikibase-dialog input[bind="manifestURLInput"]').invoke(
+      'val',
       'https://raw.githubusercontent.com/OpenRefine/wikibase-manifests/master/openrefine-wikibase-test-manifest.json'
     );
     cy.get('.add-wikibase-dialog button').contains('Add Wikibase').click();
@@ -68,7 +69,7 @@ describe(__filename, function () {
       .contains('Add Wikibase')
       .click();
 
-    // ad a manifest
+    // add a manifest
     const manifest = {
       version: '1.0',
       mediawiki: {
@@ -93,11 +94,10 @@ describe(__filename, function () {
         endpoint: 'https://or-wikibase-test.reconci.link/${lang}/api',
       },
     };
-    cy.get('.add-wikibase-dialog textarea').type(JSON.stringify(manifest), {
-      parseSpecialCharSequences: false,
-      delay: 0,
-      waitForAnimations: false,
-    });
+    cy.get('.add-wikibase-dialog textarea').invoke(
+      'val',
+      JSON.stringify(manifest)
+    );
     cy.get('.add-wikibase-dialog button').contains('Add Wikibase').click();
 
     // ensure the new Wikibase is listed
@@ -118,7 +118,7 @@ describe(__filename, function () {
       .contains('Add Wikibase')
       .click();
 
-    cy.get('.add-wikibase-dialog textarea').type('thisIsAnInvalidManifest');
+    cy.get('.add-wikibase-dialog textarea').type('This is an invalid manifest');
     cy.get('.add-wikibase-dialog button').contains('Add Wikibase').click();
     cy.get('.add-wikibase-dialog p.invalid-manifest')
       .should('be.visible')
