@@ -645,6 +645,7 @@
     "core-views/to-number": "To number",
     "core-views/to-date": "To date",
     "core-views/to-text": "To text",
+    "core-views/to-boolean": "To boolean",
     "core-views/blank-out": "To null",
     "core-views/blank-out-empty": "To empty string",
     "core-views/replace": "Replace",
