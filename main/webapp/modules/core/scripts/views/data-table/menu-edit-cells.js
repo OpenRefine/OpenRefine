@@ -454,7 +454,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
         {
           id: "core/to-boolean",
           label: $.i18n('core-views/to-boolean'),
-          click: function() { doTextTransform("if(value != 'true' , 'false' , 'true')", "keep-original", false, ""); }
+          click: function() { doTextTransform("(true == value).or('true' == value)", "keep-original", false, ""); }
         },
         {
           id: "core/to-blank",
