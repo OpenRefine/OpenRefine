@@ -9,11 +9,7 @@ describe(__filename, function () {
     cy.loadAndVisitProject(fixture);
 
     // Update grid
-    cy.columnActionClick('A Date', [
-      'Edit cells',
-      'Common transforms',
-      'To date',
-    ]);
+    cy.columnActionClick('A Date', ['Edit cells', 'Common transforms', 'To date']);
 
     // Check notification and cell content
     cy.assertNotificationContainingText('Text transform on 2 cells');

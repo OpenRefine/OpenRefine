@@ -6,9 +6,7 @@ describe(__filename, function () {
     cy.navigateTo('Open Project');
     cy.contains('td', projectName).siblings().contains('a', 'About').click();
     cy.get('h1').contains('Project metadata');
-    cy.get(
-      'body > .dialog-container > .dialog-frame .dialog-footer button[bind="closeButton"]'
-    ).click();
+    cy.get('body > .dialog-container > .dialog-frame .dialog-footer button[bind="closeButton"]').click();
     cy.get('body > .dialog-container > .dialog-frame').should('not.exist');
   });
   it('Ensures project-metadata has correct details', function () {
@@ -30,10 +28,7 @@ describe(__filename, function () {
     });
     cy.navigateTo('Open Project');
     cy.contains('td', projectName).siblings().contains('a', 'About').click();
-    cy.contains('td', 'Project name:')
-      .siblings()
-      .contains('button', 'Edit')
-      .click();
+    cy.contains('td', 'Project name:').siblings().contains('button', 'Edit').click();
     cy.get('#metadata-body tbody>tr').eq(3).contains('Project name');
     cy.get('#metadata-body tbody>tr').eq(3).contains('testProject');
   });
@@ -75,10 +70,7 @@ describe(__filename, function () {
     });
     cy.navigateTo('Open Project');
     cy.contains('td', projectName).siblings().contains('a', 'About').click();
-    cy.contains('td', 'Contributors:')
-      .siblings()
-      .contains('button', 'Edit')
-      .click();
+    cy.contains('td', 'Contributors:').siblings().contains('button', 'Edit').click();
     cy.get('#metadata-body tbody>tr').eq(6).contains('Contributors');
     cy.get('#metadata-body tbody>tr').eq(6).contains('testcontributor');
   });
@@ -120,10 +112,7 @@ describe(__filename, function () {
     });
     cy.navigateTo('Open Project');
     cy.contains('td', projectName).siblings().contains('a', 'About').click();
-    cy.contains('td', 'Homepage:')
-      .siblings()
-      .contains('button', 'Edit')
-      .click();
+    cy.contains('td', 'Homepage:').siblings().contains('button', 'Edit').click();
     cy.get('#metadata-body tbody>tr').eq(13).contains('Homepage');
     cy.get('#metadata-body tbody>tr').eq(13).contains('openrefine.org');
   });

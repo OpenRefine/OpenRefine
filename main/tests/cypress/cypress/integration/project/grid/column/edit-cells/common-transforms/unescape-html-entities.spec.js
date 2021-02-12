@@ -8,11 +8,7 @@ describe(__filename, function () {
 
     cy.loadAndVisitProject(fixture, 'ok');
 
-    cy.columnActionClick('A column', [
-      'Edit cells',
-      'Common transforms',
-      'Unescape HTML entities',
-    ]);
+    cy.columnActionClick('A column', ['Edit cells', 'Common transforms', 'Unescape HTML entities']);
 
     // ensure notification and cell content
     cy.assertNotificationContainingText('Text transform on 1 cells');

@@ -32,8 +32,6 @@ describe(__filename, function () {
       cy.get('table.preferences tr:last-child button.button').click();
     });
 
-    cy.get('table.preferences tr:nth-last-child(2)').contains(
-      testPreferenceName
-    );
+    cy.get('table.preferences tr:nth-last-child(2)').contains(testPreferenceName);
   });
 });

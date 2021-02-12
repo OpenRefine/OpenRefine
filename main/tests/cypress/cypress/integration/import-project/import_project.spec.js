@@ -13,9 +13,7 @@ describe(__filename, function () {
       filePath: 'food-small-csv.openrefine.tar.zip',
       mimeType: 'application/gzip',
     };
-    cy.get('#project-upload-form input#project-tar-file-input').attachFile(
-      projectFile
-    );
+    cy.get('#project-upload-form input#project-tar-file-input').attachFile(projectFile);
     cy.get('#project-upload-form').submit();
 
     // ensure is loaded
@@ -30,9 +28,7 @@ describe(__filename, function () {
       filePath: 'food-small-csv.openrefine.tar.zip',
       mimeType: 'application/gzip',
     };
-    cy.get('#project-upload-form input#project-tar-file-input').attachFile(
-      projectFile
-    );
+    cy.get('#project-upload-form input#project-tar-file-input').attachFile(projectFile);
 
     // rename
     const projectName = Date.now();

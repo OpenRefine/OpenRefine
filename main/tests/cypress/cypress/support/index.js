@@ -37,9 +37,7 @@ afterEach(() => {
 });
 
 before(() => {
-  cy.request(
-    Cypress.env('OPENREFINE_URL') + '/command/core/get-csrf-token'
-  ).then((response) => {
+  cy.request(Cypress.env('OPENREFINE_URL') + '/command/core/get-csrf-token').then((response) => {
     // store one unique token for block of runs
     token = response.body.token;
   });

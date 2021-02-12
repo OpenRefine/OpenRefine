@@ -3,9 +3,7 @@ describe(__filename, function () {
     cy.loadAndVisitProject('food.mini');
 
     cy.get('#or-proj-undoRedo').click();
-    cy.get('#refine-tabs-history .history-panel-controls')
-      .contains('Apply')
-      .click();
+    cy.get('#refine-tabs-history .history-panel-controls').contains('Apply').click();
 
     cy.get('table.data-table thead th[title="Shrt_Desc"]').should('exist');
     cy.get('table.data-table thead th[title="Water"]').should('exist');
@@ -24,19 +22,14 @@ describe(__filename, function () {
       },
     ];
 
-    cy.get('.dialog-container .history-operation-json').type(
-      JSON.stringify(operations),
-      {
-        parseSpecialCharSequences: false,
-        delay: 0,
-        waitForAnimations: false,
-      }
-    );
+    cy.get('.dialog-container .history-operation-json').type(JSON.stringify(operations), {
+      parseSpecialCharSequences: false,
+      delay: 0,
+      waitForAnimations: false,
+    });
     cy.get('.dialog-container button[bind="applyButton"]').click();
 
-    cy.get('table.data-table thead th[title="Shrt_Desc"]').should(
-      'not.to.exist'
-    );
+    cy.get('table.data-table thead th[title="Shrt_Desc"]').should('not.to.exist');
     cy.get('table.data-table thead th[title="Water"]').should('not.to.exist');
   });
 });

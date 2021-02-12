@@ -8,11 +8,7 @@ describe(__filename, function () {
     cy.loadAndVisitProject(fixture);
     cy.editCell(0, 'A column', '  TEST  ');
 
-    cy.columnActionClick('A column', [
-      'Edit cells',
-      'Common transforms',
-      'Trim leading and trailing whitespace',
-    ]);
+    cy.columnActionClick('A column', ['Edit cells', 'Common transforms', 'Trim leading and trailing whitespace']);
 
     // ensure notification and cell content
     cy.assertNotificationContainingText('Text transform on 1 cells');

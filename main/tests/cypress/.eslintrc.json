@@ -6,12 +6,7 @@
     "cypress/globals": true
   },
   "plugins": ["cypress"],
-  "extends": [
-    "google",
-    "eslint:recommended",
-    "plugin:cypress/recommended",
-    "prettier"
-  ],
+  "extends": ["google", "eslint:recommended", "plugin:cypress/recommended", "prettier"],
   "parserOptions": {
     "ecmaVersion": 12,
     "sourceType": "module"

@@ -61,10 +61,7 @@ describe(__filename, function () {
     cy.navigateTo('Open Project');
     cy.contains('td', projectName).siblings().find('.delete-project').click();
     cy.get('#projects-list').should('not.contain', projectName);
-    cy.request(
-      'GET',
-      'http://127.0.0.1:3333/command/core/get-all-project-metadata'
-    ).then((response) => {
+    cy.request('GET', 'http://127.0.0.1:3333/command/core/get-all-project-metadata').then((response) => {
       const responseText = JSON.stringify(response.body);
       expect(responseText).to.not.have.string(projectName);
     });

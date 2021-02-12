@@ -16,10 +16,9 @@ import 'cypress-wait-until';
  */
 Cypress.Commands.add('getFacetContainer', (facetName) => {
   return cy
-    .get(
-      `#refine-tabs-facets .facets-container .facet-container span[bind="titleSpan"]:contains("${facetName}")`,
-      { log: false }
-    )
+    .get(`#refine-tabs-facets .facets-container .facet-container span[bind="titleSpan"]:contains("${facetName}")`, {
+      log: false,
+    })
     .parentsUntil('.facets-container', { log: false });
 });
 
@@ -27,10 +26,7 @@ Cypress.Commands.add('getFacetContainer', (facetName) => {
  * Edit a cell, for a given row index, a column name and a value
  */
 Cypress.Commands.add('editCell', (rowIndex, columnName, value) => {
-  cy.getCell(rowIndex, columnName)
-    .trigger('mouseover')
-    .find('a.data-table-cell-edit')
-    .click();
+  cy.getCell(rowIndex, columnName).trigger('mouseover').find('a.data-table-cell-edit').click();
   cy.get('.menu-container.data-table-cell-editor textarea').type(value);
   cy.get('.menu-container button[bind="okButton"]').click();
 });
@@ -57,12 +53,8 @@ Cypress.Commands.add('createProjectThroughUserInterface', (fixtureFile) => {
   cy.navigateTo('Create Project');
 
   const uploadFile = { filePath: fixtureFile, mimeType: 'application/csv' };
-  cy.get(
-    '.create-project-ui-source-selection-tab-body.selected input[type="file"]'
-  ).attachFile(uploadFile);
-  cy.get(
-    '.create-project-ui-source-selection-tab-body.selected button.button-primary'
-  ).click();
+  cy.get('.create-project-ui-source-selection-tab-body.selected input[type="file"]').attachFile(uploadFile);
+  cy.get('.create-project-ui-source-selection-tab-body.selected button.button-primary').click();
 });
 
 Cypress.Commands.add('doCreateProjectThroughUserInterface', () => {
@@ -73,9 +65,7 @@ Cypress.Commands.add('doCreateProjectThroughUserInterface', () => {
   // cypress does not support window.location = ...
   cy.get('h2').contains('HTTP ERROR 404');
   cy.location().should((location) => {
-    expect(location.href).contains(
-      Cypress.env('OPENREFINE_URL') + '/__/project?'
-    );
+    expect(location.href).contains(Cypress.env('OPENREFINE_URL') + '/__/project?');
   });
 
   cy.location().then((location) => {
@@ -89,9 +79,7 @@ Cypress.Commands.add('doCreateProjectThroughUserInterface', () => {
  * Cast a whole column to the given type, using Edit Cell / Common transform / To {type}
  */
 Cypress.Commands.add('castColumnTo', (selector, target) => {
-  cy.get(
-    '.data-table th:contains("' + selector + '") .column-header-menu'
-  ).click();
+  cy.get('.data-table th:contains("' + selector + '") .column-header-menu').click();
 
   const targetAction = 'To ' + target;
 
@@ -109,9 +97,7 @@ Cypress.Commands.add('getCell', (rowIndex, columnName) => {
   cy.get(`table.data-table thead th[title="${columnName}"]`).then(($elem) => {
     // there are 3 td at the beginning of each row
     const columnIndex = $elem.index() + 3;
-    return cy.get(
-      `table.data-table tbody tr:nth-child(${cssRowIndex}) td:nth-child(${columnIndex})`
-    );
+    return cy.get(`table.data-table tbody tr:nth-child(${cssRowIndex}) td:nth-child(${columnIndex})`);
   });
 });
 
@@ -172,9 +158,7 @@ Cypress.Commands.add('waitForDialogPanel', () => {
  * Click on the OK button of a dialog panel
  */
 Cypress.Commands.add('confirmDialogPanel', () => {
-  cy.get(
-    'body > .dialog-container > .dialog-frame .dialog-footer button[bind="okButton"]'
-  ).click();
+  cy.get('body > .dialog-container > .dialog-frame .dialog-footer button[bind="okButton"]').click();
   cy.get('body > .dialog-container > .dialog-frame').should('not.exist');
 });
 
@@ -183,9 +167,7 @@ Cypress.Commands.add('confirmDialogPanel', () => {
  */
 Cypress.Commands.add('columnActionClick', (columnName, actions) => {
   cy.get('body[ajax_in_progress="false"]'); // OR must not be loading at the moment, column headers will be detached from the dom
-  cy.get(
-    '.data-table th:contains("' + columnName + '") .column-header-menu'
-  ).click();
+  cy.get('.data-table th:contains("' + columnName + '") .column-header-menu').click();
 
   for (let i = 0; i < actions.length; i++) {
     cy.get('body > .menu-container').eq(i).contains(actions[i]).click();
@@ -207,24 +189,16 @@ Cypress.Commands.add('visitProject', (projectId) => {
  *   * an arbitrary array that will be loaded in the grid. The first row is for the columns names
  *   * a file referenced in fixtures.js (food.mini | food.small)
  */
-Cypress.Commands.add(
-  'loadAndVisitProject',
-  (fixture, projectName = Date.now()) => {
-    cy.loadProject(fixture, projectName).then((projectId) => {
-      cy.visit(Cypress.env('OPENREFINE_URL') + '/project?project=' + projectId);
-    });
-  }
-);
+Cypress.Commands.add('loadAndVisitProject', (fixture, projectName = Date.now()) => {
+  cy.loadProject(fixture, projectName).then((projectId) => {
+    cy.visit(Cypress.env('OPENREFINE_URL') + '/project?project=' + projectId);
+  });
+});
 
 Cypress.Commands.add('assertNotificationContainingText', (text) => {
   cy.get('#notification').should('to.contain', text);
 });
 
-Cypress.Commands.add(
-  'assertCellNotString',
-  (rowIndex, columnName, expectedType) => {
-    cy.getCell(rowIndex, columnName)
-      .find('.data-table-value-nonstring')
-      .should('to.exist');
-  }
-);
+Cypress.Commands.add('assertCellNotString', (rowIndex, columnName, expectedType) => {
+  cy.getCell(rowIndex, columnName).find('.data-table-value-nonstring').should('to.exist');
+});

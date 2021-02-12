@@ -28,17 +28,11 @@ describe(__filename, function () {
 
     cy.get('.dialog-container').within(() => {
       cy.get('td[bind="or_dialog_expr"]').contains('Expression');
-      cy.get('select[bind="expressionPreviewLanguageSelect"] option').should(
-        'have.length',
-        3
-      );
+      cy.get('select[bind="expressionPreviewLanguageSelect"] option').should('have.length', 3);
       cy.get('textarea.expression-preview-code').should('exist');
 
       cy.get('.dialog-footer button:nth-child(1)').should('to.contain', 'OK');
-      cy.get('.dialog-footer button:nth-child(2)').should(
-        'to.contain',
-        'Cancel'
-      );
+      cy.get('.dialog-footer button:nth-child(2)').should('to.contain', 'Cancel');
     });
   });
 
@@ -47,9 +41,7 @@ describe(__filename, function () {
     loadExpressionPanel();
     typeExpression('value.toLowercase()');
     cy.get('.expression-preview-parsing-status').contains('No syntax error.');
-    cy.get(
-      '.expression-preview-table-wrapper tr:nth-child(2) td:last-child'
-    ).should('to.contain', 'butter,with salt');
+    cy.get('.expression-preview-table-wrapper tr:nth-child(2) td:last-child').should('to.contain', 'butter,with salt');
   });
 
   it('Test a valid Python expression', function () {
@@ -58,9 +50,7 @@ describe(__filename, function () {
     cy.get('select[bind="expressionPreviewLanguageSelect"]').select('jython');
     typeExpression('return value.lower()');
     cy.get('.expression-preview-parsing-status').contains('No syntax error.');
-    cy.get(
-      '.expression-preview-table-wrapper tr:nth-child(2) td:last-child'
-    ).should('to.contain', 'butter,with salt');
+    cy.get('.expression-preview-table-wrapper tr:nth-child(2) td:last-child').should('to.contain', 'butter,with salt');
   });
 
   it('Test a valid Clojure expression', function () {
@@ -69,9 +59,7 @@ describe(__filename, function () {
     cy.get('select[bind="expressionPreviewLanguageSelect"]').select('clojure');
     typeExpression('(.. value (toLowerCase) )');
     cy.get('.expression-preview-parsing-status').contains('No syntax error.');
-    cy.get(
-      '.expression-preview-table-wrapper tr:nth-child(2) td:last-child'
-    ).should('to.contain', 'butter,with salt');
+    cy.get('.expression-preview-table-wrapper tr:nth-child(2) td:last-child').should('to.contain', 'butter,with salt');
   });
 
   it('Test a Grel syntax error', function () {
@@ -94,18 +82,14 @@ describe(__filename, function () {
     loadExpressionPanel();
     cy.get('select[bind="expressionPreviewLanguageSelect"]').select('clojure');
     typeExpression('(;)');
-    cy.get('.expression-preview-parsing-status').contains(
-      'Syntax error reading source'
-    );
+    cy.get('.expression-preview-parsing-status').contains('Syntax error reading source');
   });
 
   it('Test a Grel language error', function () {
     cy.loadAndVisitProject('food.mini');
     loadExpressionPanel();
     typeExpression('value.thisGrelFunctionDoesNotExists()');
-    cy.get('.expression-preview-parsing-status').contains(
-      'Unknown function thisGrelFunctionDoesNotExists'
-    );
+    cy.get('.expression-preview-parsing-status').contains('Unknown function thisGrelFunctionDoesNotExists');
   });
 
   it('Test a Python language error', function () {
@@ -114,9 +98,7 @@ describe(__filename, function () {
     cy.get('select[bind="expressionPreviewLanguageSelect"]').select('jython');
     typeExpression('return value.thisPythonFunctionDoesNotExists()');
 
-    cy.get(
-      '.expression-preview-table-wrapper tr:nth-child(2) td:last-child'
-    ).should('to.contain', 'Error: Traceback');
+    cy.get('.expression-preview-table-wrapper tr:nth-child(2) td:last-child').should('to.contain', 'Error: Traceback');
   });
 
   it('Test a Clojure language error', function () {
@@ -124,9 +106,10 @@ describe(__filename, function () {
     loadExpressionPanel();
     cy.get('select[bind="expressionPreviewLanguageSelect"]').select('clojure');
     typeExpression('(.. value (thisClojureFunctionDoesNotExists) )');
-    cy.get(
-      '.expression-preview-table-wrapper tr:nth-child(2) td:last-child'
-    ).should('to.contain', 'Error: No matching method');
+    cy.get('.expression-preview-table-wrapper tr:nth-child(2) td:last-child').should(
+      'to.contain',
+      'Error: No matching method'
+    );
   });
 
   it('Test switching from one langage to another', function () {
@@ -134,16 +117,10 @@ describe(__filename, function () {
     loadExpressionPanel();
     typeExpression('(.. value (toLowerCase) )');
     // error is expected, this is clojure language
-    cy.get('.expression-preview-parsing-status').should(
-      'to.contain',
-      'Parsing error'
-    );
+    cy.get('.expression-preview-parsing-status').should('to.contain', 'Parsing error');
     // switching to clojure
     cy.get('select[bind="expressionPreviewLanguageSelect"]').select('clojure');
-    cy.get('.expression-preview-parsing-status').should(
-      'not.to.contain',
-      'Parsing error'
-    );
+    cy.get('.expression-preview-parsing-status').should('not.to.contain', 'Parsing error');
   });
 
   it('Test the preview (GREL)', function () {
@@ -151,15 +128,15 @@ describe(__filename, function () {
     loadExpressionPanel();
     typeExpression('value.toLowercase()');
 
-    cy.get(
-      '.expression-preview-table-wrapper tr:nth-child(1) td:last-child'
-    ).should('to.contain', 'value.toLowercase()');
-    cy.get(
-      '.expression-preview-table-wrapper tr:nth-child(2) td:last-child'
-    ).should('to.contain', 'butter,with salt');
-    cy.get(
-      '.expression-preview-table-wrapper tr:nth-child(3) td:last-child'
-    ).should('to.contain', 'butter,whipped,with salt');
+    cy.get('.expression-preview-table-wrapper tr:nth-child(1) td:last-child').should(
+      'to.contain',
+      'value.toLowercase()'
+    );
+    cy.get('.expression-preview-table-wrapper tr:nth-child(2) td:last-child').should('to.contain', 'butter,with salt');
+    cy.get('.expression-preview-table-wrapper tr:nth-child(3) td:last-child').should(
+      'to.contain',
+      'butter,whipped,with salt'
+    );
   });
 
   it('Test the help tab', function () {
@@ -189,9 +166,7 @@ describe(__filename, function () {
     // Ensure the previously used expression is listed
     loadExpressionPanel();
     cy.get('#expression-preview-tabs li').contains('History').click();
-    cy.get('#expression-preview-tabs-history')
-      .should('be.visible')
-      .should('to.contain', uniqueExpression);
+    cy.get('#expression-preview-tabs-history').should('be.visible').should('to.contain', uniqueExpression);
   });
 
   it('Test the reuse of expressions from the history', function () {
@@ -216,10 +191,7 @@ describe(__filename, function () {
       .click();
 
     // Expression must be populated in the textarea, after clicking on 'reuse'
-    cy.get('textarea.expression-preview-code').should(
-      'have.value',
-      uniqueExpression
-    );
+    cy.get('textarea.expression-preview-code').should('have.value', uniqueExpression);
   });
 
   it('Test the history, star', function () {
@@ -230,19 +202,13 @@ describe(__filename, function () {
     // We need to un-star all previously starred expressions
     loadExpressionPanel();
     cy.get('#expression-preview-tabs li').contains('Starred').click();
-    cy.get(
-      '#expression-preview-tabs-starred .expression-preview-table-wrapper table'
-    ).then(($table) => {
+    cy.get('#expression-preview-tabs-starred .expression-preview-table-wrapper table').then(($table) => {
       if ($table.find('tr').length > 1) {
-        cy.get(
-          '#expression-preview-tabs-starred .expression-preview-table-wrapper table a'
-        )
+        cy.get('#expression-preview-tabs-starred .expression-preview-table-wrapper table a')
           .contains('Remove')
           .each(($btn) => {
             cy.wrap($btn).click();
-            cy.get('.dialog-container:last-child button')
-              .contains('OK')
-              .click();
+            cy.get('.dialog-container:last-child button').contains('OK').click();
           });
       }
     });
@@ -266,9 +232,7 @@ describe(__filename, function () {
 
     // List starred expressions, en ensure the expression is listed
     cy.get('#expression-preview-tabs li').contains('Starred').click();
-    cy.get(
-      '#expression-preview-tabs-starred .expression-preview-table-wrapper table'
-    ).contains(uniqueExpression);
+    cy.get('#expression-preview-tabs-starred .expression-preview-table-wrapper table').contains(uniqueExpression);
   });
 
   it('Simple test to ensure the expression panel can be closed with OK', function () {

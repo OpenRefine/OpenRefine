@@ -53,11 +53,7 @@ describe(__filename, function () {
     cy.get('.viewpanel-paging').find('a').contains('next').click();
     cy.get('#viewpanel-paging-current-input').should('have.value', 2);
     cy.assertCellEquals(0, 'Shrt_Desc', 'CHEESE,MOZZARELLA,WHL MILK');
-    cy.assertCellEquals(
-      24,
-      'Shrt_Desc',
-      'CREAM,FLUID,LT (COFFEE CRM OR TABLE CRM)'
-    );
+    cy.assertCellEquals(24, 'Shrt_Desc', 'CREAM,FLUID,LT (COFFEE CRM OR TABLE CRM)');
   });
   it('Ensure it redirects to next-page when pagesize is 50', function () {
     cy.loadAndVisitProject('food.small');
@@ -111,11 +107,7 @@ describe(__filename, function () {
     cy.get('.viewpanel-paging').find('a').contains('previous').click();
     cy.get('#viewpanel-paging-current-input').should('have.value', 1);
     cy.assertCellEquals(0, 'Shrt_Desc', 'BUTTER,WITH SALT');
-    cy.assertCellEquals(
-      49,
-      'Shrt_Desc',
-      'CREAM,FLUID,LT (COFFEE CRM OR TABLE CRM)'
-    );
+    cy.assertCellEquals(49, 'Shrt_Desc', 'CREAM,FLUID,LT (COFFEE CRM OR TABLE CRM)');
   });
   it('Ensure last button redirects to last-page when pagesize is 5', function () {
     cy.loadAndVisitProject('food.small');
@@ -141,11 +133,7 @@ describe(__filename, function () {
     cy.get('.viewpanel-pagesize').find('a').contains('25').click();
     cy.get('.viewpanel-paging').find('a').contains('last').click();
     cy.get('#viewpanel-paging-current-input').should('have.value', 8);
-    cy.assertCellEquals(
-      0,
-      'Shrt_Desc',
-      "KRAFT BREYERS LT N' LVLY LOWFAT STR'BERY YOGURT (1% MILKFAT)"
-    );
+    cy.assertCellEquals(0, 'Shrt_Desc', "KRAFT BREYERS LT N' LVLY LOWFAT STR'BERY YOGURT (1% MILKFAT)");
     cy.assertCellEquals(23, 'Shrt_Desc', 'CLOVES,GROUND');
   });
   it('Ensure last button redirects to last-page when pagesize is 50', function () {
@@ -199,11 +187,7 @@ describe(__filename, function () {
     cy.get('.viewpanel-paging').find('a').contains('first').click();
     cy.get('#viewpanel-paging-current-input').should('have.value', 1);
     cy.assertCellEquals(0, 'Shrt_Desc', 'BUTTER,WITH SALT');
-    cy.assertCellEquals(
-      49,
-      'Shrt_Desc',
-      'CREAM,FLUID,LT (COFFEE CRM OR TABLE CRM)'
-    );
+    cy.assertCellEquals(49, 'Shrt_Desc', 'CREAM,FLUID,LT (COFFEE CRM OR TABLE CRM)');
   });
   it('Ensure page-number input redirects to correct-page when pagesize is 5', function () {
     cy.loadAndVisitProject('food.small');
@@ -231,11 +215,7 @@ describe(__filename, function () {
     cy.get('#viewpanel-paging-current-input').should('have.value', 2);
 
     cy.assertCellEquals(0, 'Shrt_Desc', 'CHEESE,MOZZARELLA,WHL MILK');
-    cy.assertCellEquals(
-      24,
-      'Shrt_Desc',
-      'CREAM,FLUID,LT (COFFEE CRM OR TABLE CRM)'
-    );
+    cy.assertCellEquals(24, 'Shrt_Desc', 'CREAM,FLUID,LT (COFFEE CRM OR TABLE CRM)');
   });
   it('Ensure page-number input redirects to correct-page when pagesize is 50', function () {
     cy.loadAndVisitProject('food.small');

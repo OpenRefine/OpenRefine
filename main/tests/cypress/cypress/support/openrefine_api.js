@@ -2,23 +2,19 @@ const fixtures = require('../fixtures/fixtures.js');
 
 Cypress.Commands.add('setPreference', (preferenceName, preferenceValue) => {
   const openRefineUrl = Cypress.env('OPENREFINE_URL');
-  cy.request(openRefineUrl + '/command/core/get-csrf-token').then(
-    (response) => {
-      cy.request({
-        method: 'POST',
-        url: `${openRefineUrl}/command/core/set-preference`,
-        body: `name=${preferenceName}&value="${preferenceValue}"&csrf_token=${response.body.token}`,
-        form: false,
-        headers: {
-          'content-type': 'application/x-www-form-urlencoded; charset=UTF-8',
-        },
-      }).then((resp) => {
-        cy.log(
-          'Set preference ' + preferenceName + ' with value ' + preferenceValue
-        );
-      });
-    }
-  );
+  cy.request(openRefineUrl + '/command/core/get-csrf-token').then((response) => {
+    cy.request({
+      method: 'POST',
+      url: `${openRefineUrl}/command/core/set-preference`,
+      body: `name=${preferenceName}&value="${preferenceValue}"&csrf_token=${response.body.token}`,
+      form: false,
+      headers: {
+        'content-type': 'application/x-www-form-urlencoded; charset=UTF-8',
+      },
+    }).then((resp) => {
+      cy.log('Set preference ' + preferenceName + ' with value ' + preferenceValue);
+    });
+  });
 });
 
 Cypress.Commands.add('cleanupProjects', () => {
@@ -28,8 +24,7 @@ Cypress.Commands.add('cleanupProjects', () => {
       for (const projectId of loadedProjectIds) {
         cy.request({
           method: 'POST',
-          url:
-            `${openRefineUrl}/command/core/delete-project?csrf_token=` + token,
+          url: `${openRefineUrl}/command/core/delete-project?csrf_token=` + token,
           body: { project: projectId },
           form: true,
         }).then((resp) => {
@@ -111,9 +106,7 @@ Cypress.Commands.add('loadProject', (fixture, projectName, tagName) => {
 
     cy.request({
       method: 'POST',
-      url:
-        `${openRefineUrl}/command/core/create-project-from-upload?csrf_token=` +
-        token,
+      url: `${openRefineUrl}/command/core/create-project-from-upload?csrf_token=` + token,
       body: postData,
       headers: {
         'content-type': 'multipart/form-data; boundary=----BOUNDARY',

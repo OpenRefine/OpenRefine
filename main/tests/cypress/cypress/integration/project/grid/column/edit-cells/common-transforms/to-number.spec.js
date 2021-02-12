@@ -9,11 +9,7 @@ describe(__filename, function () {
     cy.loadAndVisitProject(fixture);
 
     // click
-    cy.columnActionClick('A Number', [
-      'Edit cells',
-      'Common transforms',
-      'To number',
-    ]);
+    cy.columnActionClick('A Number', ['Edit cells', 'Common transforms', 'To number']);
 
     // Ensure notification and cell content
     cy.assertNotificationContainingText('Text transform on 2 cells');
@@ -37,11 +33,7 @@ describe(__filename, function () {
     cy.loadAndVisitProject(fixture);
 
     // click
-    cy.columnActionClick('A Number', [
-      'Edit cells',
-      'Common transforms',
-      'To number',
-    ]);
+    cy.columnActionClick('A Number', ['Edit cells', 'Common transforms', 'To number']);
 
     // Ensure cell content
     cy.assertCellEquals(0, 'A Number', '42.2');
