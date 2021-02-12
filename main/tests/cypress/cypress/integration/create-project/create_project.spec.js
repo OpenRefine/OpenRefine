@@ -42,7 +42,7 @@ describe(__filename, function () {
     );
     // add file
     const tsvFile = {
-      filePath: 'param.tsv',
+      filePath: 'shop.mini.tsv',
       mimeType: 'text/tab-separated-values',
     };
     cy.get(
@@ -53,7 +53,7 @@ describe(__filename, function () {
     ).click();
     cy.get(
       '.default-importing-wizard-header input[bind="projectNameInput"]'
-    ).should('have.value', 'param tsv');
+    ).should('have.value', 'shop mini tsv');
 
     // then ensure we are on the preview page
     cy.get('.create-project-ui-panel').contains('Configure Parsing Options');
@@ -138,7 +138,7 @@ describe(__filename, function () {
     );
     // add file
     const csvURL =
-      'https://people.sc.fsu.edu/~jburkardt/data/csv/addresses.csv';
+      'https://raw.githubusercontent.com/OpenRefine/OpenRefine/master/main/tests/cypress/cypress/fixtures/food.mini.csv';
     cy.get('input[bind="urlInput"]').filter(':visible').type(csvURL);
     cy.get(
       '.create-project-ui-source-selection-tab-body.selected button.button-primary'
@@ -147,7 +147,7 @@ describe(__filename, function () {
       .click();
     cy.get(
       '.default-importing-wizard-header input[bind="projectNameInput"]'
-    ).should('have.value', 'addresses csv');
+    ).should('have.value', 'food mini csv');
 
     // then ensure we are on the preview page
     cy.get('.create-project-ui-panel').contains('Configure Parsing Options');
@@ -168,7 +168,7 @@ describe(__filename, function () {
     );
     // add file
     const csvURL =
-      'https://people.sc.fsu.edu/~jburkardt/data/csv/addresses.csv';
+      'https://raw.githubusercontent.com/OpenRefine/OpenRefine/master/main/tests/cypress/cypress/fixtures/food.mini.csv';
     cy.get('input[bind="urlInput"]').filter(':visible').type(csvURL);
     cy.get('button[bind="addButton"]').contains('Add Another URL').click();
 
@@ -182,7 +182,7 @@ describe(__filename, function () {
       .click();
     cy.get(
       '.default-importing-wizard-header input[bind="projectNameInput"]'
-    ).should('have.value', 'addresses csv');
+    ).should('have.value', 'food mini csv');
 
     // then ensure we are on the preview page
     cy.get('.create-project-ui-panel').contains('Configure Parsing Options');
