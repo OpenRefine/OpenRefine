@@ -116,6 +116,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
     );
   };
 
+
   var doJoinMultiValueCells = function(separator) {
     var defaultValue = Refine.getPreference("ui.cell.rowSplitDefaultSeparator", ",");
     var separator = window.prompt($.i18n('core-views/enter-separator'), defaultValue);
@@ -451,7 +452,11 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
           label: $.i18n('core-views/to-text'),
           click: function() { doTextTransform("value.toString()", "keep-original", false, ""); }
         },
-        {},
+        {
+          id: "core/to-boolean",
+          label: $.i18n('core-views/to-boolean'),
+          click: function() { doTextTransform("value[0].replace(/[^true]/, 'false')", "keep-original", false, ""); } ,
+        },
         {
           id: "core/to-blank",
           label: $.i18n('core-views/blank-out'),
