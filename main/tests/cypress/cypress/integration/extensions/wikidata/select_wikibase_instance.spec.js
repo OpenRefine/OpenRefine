@@ -1,3 +1,7 @@
+/**
+ * Delete all previsouly added wikibase instances
+ * They are shared across project, therefore some cleanup is required to ensure a wikibase instance doesn't come from another test
+ */
 function cleanupWikibases() {
   cy.get('#extension-bar-menu-container').contains('Wikidata').click();
   cy.get('.menu-container a').contains('Select Wikibase instance').click();
@@ -21,7 +25,7 @@ describe(__filename, function () {
       'Select Wikibase instance'
     );
 
-    //click add
+    // click add
     cy.get('.dialog-container .wikibase-dialog button')
       .contains('Add Wikibase')
       .click();
@@ -179,7 +183,7 @@ describe(__filename, function () {
       'OpenRefine Wikibase Test'
     );
 
-    //wikidata should still be there
+    // wikidata should still be there
     cy.get('.wikibase-dialog').should('to.contain', 'Wikidata');
   });
 });
