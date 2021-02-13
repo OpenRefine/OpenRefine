@@ -85,16 +85,28 @@ abstract public class GoogleAPIExtension {
         StringBuffer sb = new StringBuffer(module.getMountPoint().getMountPoint());
         sb.append("authorized");
     
-        URL thisUrl = new URL(request.getRequestURL().toString());
+        URL thisUrl = new URL(getRequestURLWithForwardedScheme(request).toString());
         URL authorizedUrl = new URL(thisUrl, sb.toString());
 
         return authorizedUrl.toExternalForm();
     }
 
+    // Jetty 6 doesn't honor the X-Forwarded-Proto headers in the `request`.
+    // Upon upgrading to Jetty 7+, the `SocketConnector` should be replaced by
+    // an `HTTPConnector` with `setForwarded(true)` so the `request` correctly
+    // has the client's scheme set.
+    private static StringBuffer getRequestURLWithForwardedScheme(HttpServletRequest request) {
+        StringBuffer fixedUrl = request.getRequestURL();
+        if ("https".equalsIgnoreCase(request.getHeader("x-forwarded-proto"))) {
+            fixedUrl = new StringBuffer(fixedUrl.toString().replaceFirst("^http://", "https://"));
+        }
+        return fixedUrl;
+    }
+
     static public String getTokenFromCode(ButterflyModule module, HttpServletRequest request) 
             throws IOException {
         String redirectUrl = makeRedirectUrl(module, request);
-        StringBuffer fullUrlBuf = request.getRequestURL();
+        StringBuffer fullUrlBuf = getRequestURLWithForwardedScheme(request);
         if (request.getQueryString() != null) {
           fullUrlBuf.append('?').append(request.getQueryString());
         }
