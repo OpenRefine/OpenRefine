@@ -29,7 +29,7 @@ import org.wikidata.wdtk.datamodel.helpers.Datamodel;
 import org.wikidata.wdtk.datamodel.interfaces.ItemIdValue;
 
 import org.openrefine.model.Cell;
-import org.openrefine.model.Recon.Judgment;
+import org.openrefine.model.recon.Recon.Judgment;
 import org.openrefine.wikidata.qa.QAWarning;
 import org.openrefine.wikidata.schema.entityvalues.ReconItemIdValue;
 import org.openrefine.wikidata.schema.exceptions.SkipSchemaExpressionException;

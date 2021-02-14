@@ -26,7 +26,7 @@ package org.openrefine.wikidata.schema.entityvalues;
 
 import org.wikidata.wdtk.datamodel.interfaces.ItemIdValue;
 
-import org.openrefine.model.Recon;
+import org.openrefine.model.recon.Recon;
 
 public class ReconItemIdValue extends ReconEntityIdValue implements ItemIdValue {
 

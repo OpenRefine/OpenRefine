@@ -26,8 +26,24 @@ package org.openrefine.wikidata.qa.scrutinizers;
 
 import org.testng.annotations.Test;
 import org.wikidata.wdtk.datamodel.helpers.Datamodel;
+import org.wikidata.wdtk.datamodel.interfaces.ItemIdValue;
+import org.wikidata.wdtk.datamodel.interfaces.PropertyIdValue;
+import org.wikidata.wdtk.datamodel.interfaces.Value;
 
 public class FormatScrutinizerTest extends ValueScrutinizerTest {
+
+    public static final String FORMAT_CONSTRAINT_QID = "Q21502404";
+    public static final String FORMAT_REGEX_PID = "P1793";
+
+    public static PropertyIdValue propertyIdValue = Datamodel.makeWikidataPropertyIdValue("P18");
+    public static Value completeMatchValue = Datamodel.makeStringValue("image.png");
+    public static Value noMatchValue = Datamodel.makeStringValue("image");
+    public static Value incompleteMatchValue = Datamodel.makeStringValue(".jpg");
+    public static String regularExpression = "(?i).+\\.(jpg|jpeg|jpe|png|svg|tif|tiff|gif|xcf|pdf|djvu|webp)";
+
+    public static ItemIdValue entityIdValue = Datamodel.makeWikidataItemIdValue(FORMAT_CONSTRAINT_QID);
+    public static PropertyIdValue regularExpressionParameter = Datamodel.makeWikidataPropertyIdValue(FORMAT_REGEX_PID);
+    public static Value regularExpressionFormat = Datamodel.makeStringValue(regularExpression);
 
     @Override
     public EditScrutinizer getScrutinizer() {

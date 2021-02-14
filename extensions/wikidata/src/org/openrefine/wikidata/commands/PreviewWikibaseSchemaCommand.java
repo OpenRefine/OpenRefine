@@ -71,7 +71,7 @@ public class PreviewWikibaseSchemaCommand extends Command {
                     return;
                 }
             } else {
-                schema = (WikibaseSchema) project.overlayModels.get("wikibaseSchema");
+                schema = (WikibaseSchema) project.getCurrentGridState().getOverlayModels().get("wikibaseSchema");
             }
             if (schema == null) {
                 respondError(response, "No Wikibase schema provided.");
@@ -82,7 +82,7 @@ public class PreviewWikibaseSchemaCommand extends Command {
 
             // Evaluate project
             Engine engine = getEngine(request, project);
-            List<ItemUpdate> editBatch = schema.evaluate(project, engine, warningStore);
+            List<ItemUpdate> editBatch = schema.evaluate(project.getCurrentGridState(), engine, warningStore);
 
             // Inspect the edits and generate warnings
             EditInspector inspector = new EditInspector(warningStore);

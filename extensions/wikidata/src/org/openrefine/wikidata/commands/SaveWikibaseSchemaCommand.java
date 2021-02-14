@@ -27,7 +27,6 @@ package org.openrefine.wikidata.commands;
 import static org.openrefine.wikidata.commands.CommandUtilities.respondError;
 
 import java.io.IOException;
-import java.util.Properties;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -35,7 +34,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.openrefine.commands.Command;
 import org.openrefine.model.Project;
-import org.openrefine.operations.AbstractOperation;
+import org.openrefine.operations.Operation;
 import org.openrefine.process.Process;
 import org.openrefine.util.ParsingUtilities;
 import org.openrefine.wikidata.operations.SaveWikibaseSchemaOperation;
@@ -62,8 +61,8 @@ public class SaveWikibaseSchemaCommand extends Command {
 
             WikibaseSchema schema = ParsingUtilities.mapper.readValue(jsonString, WikibaseSchema.class);
 
-            AbstractOperation op = new SaveWikibaseSchemaOperation(schema);
-            Process process = op.createProcess(project, new Properties());
+            Operation op = new SaveWikibaseSchemaOperation(schema);
+            Process process = op.createProcess(project.getHistory(), project.getProcessManager());
 
             performProcessAndRespond(request, response, project, process);
 

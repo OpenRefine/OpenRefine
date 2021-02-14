@@ -124,6 +124,7 @@ public class DatabaseImportController implements ImportingController {
     }
 
     /**
+     * https://mamot.fr/web/getting-started
      * 
      * @param request
      * @param response

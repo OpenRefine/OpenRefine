@@ -26,21 +26,23 @@ package org.openrefine.wikidata.schema;
 
 import java.io.IOException;
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 
+import org.openrefine.RefineTest;
 import org.openrefine.model.Cell;
 import org.openrefine.model.ModelException;
 import org.openrefine.model.Project;
-import org.openrefine.model.Recon;
 import org.openrefine.model.Row;
+import org.openrefine.model.recon.Recon;
 import org.openrefine.wikidata.qa.QAWarningStore;
 import org.openrefine.wikidata.schema.exceptions.SkipSchemaExpressionException;
 import org.openrefine.wikidata.testing.TestingData;
-import org.openrefine.wikidata.testing.WikidataRefineTest;
 
-public class WbExpressionTest<T> extends WikidataRefineTest {
+public class WbExpressionTest<T> extends RefineTest {
 
     protected Project project;
     protected Row row;
@@ -50,11 +52,14 @@ public class WbExpressionTest<T> extends WikidataRefineTest {
     @BeforeMethod
     public void createProject()
             throws IOException, ModelException {
-        project = createCSVProject("Wikidata variable test project",
-                "column A,column B,column C,column D,column E\n" + "value A,value B,value C,value D,value E");
+        project = createProject("Wikidata variable test project",
+                new String[] { "column A", "column B", "column C", "column D", "column E" },
+                new Serializable[][] {
+                        { "value A", "value B", "value C", "value D", "value E" } });
         warningStore = new QAWarningStore();
-        row = project.rows.get(0);
-        ctxt = new ExpressionContext("http://www.wikidata.org/entity/", 0, row, project.columnModel, warningStore);
+        row = project.getCurrentGridState().getRow(0);
+        ctxt = new ExpressionContext("http://www.wikidata.org/entity/", 0,
+                row, project.getCurrentGridState().getColumnModel(), warningStore);
     }
 
     /**
@@ -98,17 +103,24 @@ public class WbExpressionTest<T> extends WikidataRefineTest {
      *            the list of row values. They can be cells or cell values.
      */
     public void setRow(Object... rowValues) {
-        Row row = new Row(rowValues.length);
+        List<Cell> cells = new ArrayList<>();
         for (int i = 0; i != rowValues.length; i++) {
             Object val = rowValues[i];
-            if (Cell.class.isInstance(val)) {
-                row.cells.add((Cell) val);
+            if (val instanceof Cell) {
+                cells.add((Cell) val);
             } else {
                 Cell cell = new Cell((Serializable) val, (Recon) null);
-                row.cells.add(cell);
+                cells.add(cell);
             }
         }
-        ctxt = new ExpressionContext("http://www.wikidata.org/entity/", 0, row, project.columnModel, warningStore);
+        setRow(new Row(cells));
+    }
+
+    public void setRow(Row row) {
+        this.row = row;
+        ctxt = new ExpressionContext("http://www.wikidata.org/entity/", 0,
+                row, project.getCurrentGridState().getColumnModel(), warningStore);
+
     }
 
     /**

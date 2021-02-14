@@ -24,37 +24,36 @@
 
 package org.openrefine.wikidata.operations;
 
-import java.io.IOException;
 import java.io.LineNumberReader;
+import java.io.Serializable;
 import java.io.StringReader;
 import java.io.StringWriter;
-import java.util.Properties;
 
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-import org.openrefine.history.Change;
+import org.openrefine.RefineTest;
 import org.openrefine.model.Project;
-import org.openrefine.operations.AbstractOperation;
+import org.openrefine.operations.Operation;
 import org.openrefine.operations.OperationRegistry;
 import org.openrefine.util.ParsingUtilities;
 import org.openrefine.util.TestUtils;
-import org.openrefine.wikidata.testing.WikidataRefineTest;
 
-public abstract class OperationTest extends WikidataRefineTest {
+public abstract class OperationTest extends RefineTest {
 
     protected Project project = null;
 
     @BeforeMethod
     public void setUp() {
-        project = createCSVProject("a,b\nc,d");
+        project = createProject(new String[] { "a", "b" },
+                new Serializable[] { "c", "d" });
     }
 
     protected void registerOperation(String name, Class klass) {
         OperationRegistry.registerOperation("wikidata", name, klass);
     }
 
-    public abstract AbstractOperation reconstruct()
+    public abstract Operation reconstruct()
             throws Exception;
 
     public abstract String getJson()
@@ -64,7 +63,7 @@ public abstract class OperationTest extends WikidataRefineTest {
     public void testReconstruct()
             throws Exception {
         String json = getJson();
-        AbstractOperation op = reconstruct();
+        Operation op = reconstruct();
         StringWriter writer = new StringWriter();
         ParsingUtilities.defaultWriter.writeValue(writer, op);
         TestUtils.assertEqualAsJson(json, writer.toString());
@@ -73,13 +72,6 @@ public abstract class OperationTest extends WikidataRefineTest {
     protected LineNumberReader makeReader(String input) {
         StringReader reader = new StringReader(input);
         return new LineNumberReader(reader);
-    }
-
-    protected String saveChange(Change change)
-            throws IOException {
-        StringWriter writer = new StringWriter();
-        change.save(writer, new Properties());
-        return writer.toString();
     }
 
 }

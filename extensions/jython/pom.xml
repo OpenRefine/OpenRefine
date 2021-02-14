@@ -5,7 +5,7 @@
   <groupId>org.openrefine</groupId>
   <artifactId>jython</artifactId>
   <packaging>jar</packaging>
-  <version>3.4-SNAPSHOT</version>
+  <version>spark</version>
 
   <name>OpenRefine - Jython extension</name>
   <description>OpenRefine integration of Python as an expression language</description>
@@ -13,7 +13,7 @@
   <parent>
     <groupId>org.openrefine</groupId>
     <artifactId>extensions</artifactId>
-    <version>3.4-SNAPSHOT</version>
+    <version>spark</version>
   </parent>
 
   <build>
@@ -108,14 +108,8 @@
   <dependencies>
     <dependency>
       <groupId>${project.groupId}</groupId>
-      <artifactId>main</artifactId>
+      <artifactId>or-model</artifactId>
       <version>${project.version}</version>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>javax.servlet</groupId>
-      <artifactId>javax.servlet-api</artifactId>
-      <version>${servlet-api.version}</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
@@ -127,7 +121,7 @@
     <dependency>
       <groupId>org.testng</groupId>
       <artifactId>testng</artifactId>
-      <version>6.9.10</version>
+      <version>${testng.version}</version>
       <scope>test</scope>
     </dependency>
 

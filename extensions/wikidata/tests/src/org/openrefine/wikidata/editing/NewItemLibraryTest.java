@@ -25,22 +25,16 @@
 package org.openrefine.wikidata.editing;
 
 import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertTrue;
-
-import java.util.Collections;
 
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
+import org.openrefine.RefineTest;
 import org.openrefine.model.Cell;
-import org.openrefine.model.Project;
-import org.openrefine.model.Recon;
-import org.openrefine.model.recon.StandardReconConfig;
+import org.openrefine.model.recon.Recon;
 import org.openrefine.wikidata.testing.JacksonSerializationTest;
-import org.openrefine.wikidata.testing.TestingData;
-import org.openrefine.wikidata.testing.WikidataRefineTest;
 
-public class NewItemLibraryTest extends WikidataRefineTest {
+public class NewItemLibraryTest extends RefineTest {
 
     private NewItemLibrary library;
 
@@ -54,32 +48,6 @@ public class NewItemLibraryTest extends WikidataRefineTest {
     @Test
     public void testRetrieveItem() {
         assertEquals("Q345", library.getQid(1234L));
-    }
-
-    @Test
-    public void testUpdateReconciledCells() {
-        Project project = createCSVProject(TestingData.inceptionWithNewCsv);
-        StandardReconConfig config = new StandardReconConfig("http://my.endpoint",
-                "http://my.schema", "http://my.schema", "Q5", "human", true, Collections.emptyList());
-        project.columnModel.getColumns().get(0).setReconConfig(config);
-
-        project.rows.get(0).cells.set(0, TestingData.makeNewItemCell(3289L, "University of Ljubljana"));
-        project.rows.get(1).cells.set(0, TestingData.makeMatchedCell("Q865528", "University of Warwick"));
-        project.rows.get(2).cells.set(0, TestingData.makeNewItemCell(1234L, "new uni"));
-        isNewTo(3289L, project.rows.get(0).cells.get(0));
-        isMatchedTo("Q865528", project.rows.get(1).cells.get(0));
-        isNewTo(1234L, project.rows.get(2).cells.get(0));
-        library.updateReconciledCells(project, false);
-        Cell firstCell = project.rows.get(0).cells.get(0);
-        isMatchedTo("Q384", firstCell);
-        assertTrue((Boolean) firstCell.recon.getFeature(Recon.Feature_nameMatch));
-        isMatchedTo("Q865528", project.rows.get(1).cells.get(0));
-        isMatchedTo("Q345", project.rows.get(2).cells.get(0));
-        assertTrue(project.rows.get(2).cells.get(0).recon.getFeature(Recon.Feature_nameLevenshtein).equals(0));
-        library.updateReconciledCells(project, true);
-        isNewTo(3289L, project.rows.get(0).cells.get(0));
-        isMatchedTo("Q865528", project.rows.get(1).cells.get(0));
-        isNewTo(1234L, project.rows.get(2).cells.get(0));
     }
 
     @Test

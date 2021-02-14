@@ -59,17 +59,21 @@ import org.openrefine.expr.ParsingException;
 
 public class JythonEvaluable implements Evaluable {
 
+    private static final long serialVersionUID = -3876851358431764559L;
+
     static public LanguageSpecificParser createParser() {
         return new LanguageSpecificParser() {
 
             @Override
-            public Evaluable parse(String s) throws ParsingException {
-                return new JythonEvaluable(s);
+            public Evaluable parse(String source, String languagePrefix) throws ParsingException {
+                return new JythonEvaluable(source, languagePrefix);
             }
         };
     }
 
-    private final String s_functionName;
+    private final String functionName;
+    private final String source;
+    private final String languagePrefix;
 
     private static PythonInterpreter _engine;
 
@@ -97,15 +101,17 @@ public class JythonEvaluable implements Evaluable {
         _engine = new PythonInterpreter();
     }
 
-    public JythonEvaluable(String s) {
-        this.s_functionName = String.format("__temp_%d__", Math.abs(s.hashCode()));
+    public JythonEvaluable(String source, String languagePrefix) {
+        this.functionName = String.format("__temp_%d__", Math.abs(source.hashCode()));
+        this.source = source;
+        this.languagePrefix = languagePrefix;
 
         // indent and create a function out of the code
-        String[] lines = s.split("\r\n|\r|\n");
+        String[] lines = source.split("\r\n|\r|\n");
 
         StringBuffer sb = new StringBuffer(1024);
         sb.append("def ");
-        sb.append(s_functionName);
+        sb.append(functionName);
         sb.append("(value, cell, cells, row, rowIndex):");
         for (String line : lines) {
             sb.append("\n  ");
@@ -119,7 +125,7 @@ public class JythonEvaluable implements Evaluable {
     public Object evaluate(Properties bindings) {
         try {
             // call the temporary PyFunction directly
-            Object result = ((PyFunction) _engine.get(s_functionName)).__call__(
+            Object result = ((PyFunction) _engine.get(functionName)).__call__(
                     new PyObject[] {
                             Py.java2py(bindings.get("value")),
                             new JythonHasFieldsWrapper((HasFields) bindings.get("cell"), bindings),
@@ -180,5 +186,15 @@ public class JythonEvaluable implements Evaluable {
         // TODO
         // potentially analyze the AST to isolate which columns are used
         return null;
+    }
+
+    @Override
+    public String getSource() {
+        return source;
+    }
+
+    @Override
+    public String getLanguagePrefix() {
+        return languagePrefix;
     }
 }

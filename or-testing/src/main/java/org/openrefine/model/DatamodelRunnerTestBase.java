@@ -732,12 +732,12 @@ public abstract class DatamodelRunnerTestBase {
 
         @Override
         public String serialize(String changeDataItem) {
-            return changeDataItem.strip();
+            return changeDataItem.trim();
         }
 
         @Override
         public String deserialize(String serialized) throws IOException {
-            return serialized.strip();
+            return serialized.trim();
         }
 
     };

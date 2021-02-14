@@ -24,8 +24,8 @@
 
 package org.openrefine.wikidata.commands;
 
+import java.io.*;
 import java.io.IOException;
-import java.io.Writer;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;

@@ -36,11 +36,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import org.openrefine.browsing.Engine;
-import org.openrefine.browsing.FilteredRows;
-import org.openrefine.browsing.RowVisitor;
+import org.openrefine.model.GridState;
+import org.openrefine.model.IndexedRow;
 import org.openrefine.model.Project;
-import org.openrefine.model.Row;
 import org.openrefine.overlay.OverlayModel;
+import org.openrefine.sorting.SortingConfig;
 import org.openrefine.util.ParsingUtilities;
 import org.openrefine.wikidata.qa.QAWarningStore;
 import org.openrefine.wikidata.schema.exceptions.SkipSchemaExpressionException;
@@ -125,54 +125,33 @@ public class WikibaseSchema implements OverlayModel {
      * (such as invalid formats for dates). Issues detected on candidate statements (such as constraint violations) are
      * not included at this stage.
      * 
-     * @param project
-     *            the project on which the schema should be evaluated
+     * @param grid
+     *            the grid on which the schema should be evaluated
      * @param engine
      *            the engine, which gives access to the current facets
      * @param warningStore
      *            a store in which issues will be emitted
      * @return item updates are stored in their generating order (not merged yet).
      */
-    public List<ItemUpdate> evaluate(Project project, Engine engine, QAWarningStore warningStore) {
+    public List<ItemUpdate> evaluate(GridState grid, Engine engine, QAWarningStore warningStore) {
         List<ItemUpdate> result = new ArrayList<>();
-        FilteredRows filteredRows = engine.getAllFilteredRows();
-        filteredRows.accept(project, new EvaluatingRowVisitor(result, warningStore));
+        for (IndexedRow indexedRow : grid.iterateRows(engine.combinedRowFilters(), SortingConfig.NO_SORTING)) {
+            ExpressionContext ctxt = new ExpressionContext(
+                    baseIri,
+                    indexedRow.getIndex(),
+                    indexedRow.getRow(),
+                    grid.getColumnModel(),
+                    warningStore);
+            result.addAll(evaluateItemDocuments(ctxt));
+        }
         return result;
     }
 
     /**
      * Same as above, ignoring any warnings.
      */
-    public List<ItemUpdate> evaluate(Project project, Engine engine) {
-        return evaluate(project, engine, null);
-    }
-
-    protected class EvaluatingRowVisitor implements RowVisitor {
-
-        private List<ItemUpdate> result;
-        private QAWarningStore warningStore;
-
-        public EvaluatingRowVisitor(List<ItemUpdate> result, QAWarningStore warningStore) {
-            this.result = result;
-            this.warningStore = warningStore;
-        }
-
-        @Override
-        public void start(Project project) {
-            ;
-        }
-
-        @Override
-        public boolean visit(Project project, int rowIndex, Row row) {
-            ExpressionContext ctxt = new ExpressionContext(baseIri, rowIndex, row, project.columnModel, warningStore);
-            result.addAll(evaluateItemDocuments(ctxt));
-            return false;
-        }
-
-        @Override
-        public void end(Project project) {
-            ;
-        }
+    public List<ItemUpdate> evaluate(GridState grid, Engine engine) {
+        return evaluate(grid, engine, null);
     }
 
     static public WikibaseSchema reconstruct(String json) throws IOException {

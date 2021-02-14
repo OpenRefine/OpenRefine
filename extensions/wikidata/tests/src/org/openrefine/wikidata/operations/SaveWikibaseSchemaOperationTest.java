@@ -24,16 +24,16 @@
 
 package org.openrefine.wikidata.operations;
 
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertNull;
+import static org.mockito.Mockito.mock;
 
-import java.io.LineNumberReader;
-
+import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-import org.openrefine.history.Change;
-import org.openrefine.operations.AbstractOperation;
+import org.openrefine.model.GridState;
+import org.openrefine.model.changes.Change;
+import org.openrefine.model.changes.ChangeContext;
+import org.openrefine.operations.Operation;
 import org.openrefine.util.ParsingUtilities;
 import org.openrefine.wikidata.schema.WikibaseSchema;
 import org.openrefine.wikidata.testing.TestingData;
@@ -46,7 +46,7 @@ public class SaveWikibaseSchemaOperationTest extends OperationTest {
     }
 
     @Override
-    public AbstractOperation reconstruct()
+    public Operation reconstruct()
             throws Exception {
         return ParsingUtilities.mapper.readValue(getJson(), SaveWikibaseSchemaOperation.class);
     }
@@ -58,24 +58,14 @@ public class SaveWikibaseSchemaOperationTest extends OperationTest {
     }
 
     @Test
-    public void testLoadChange()
+    public void testApply()
             throws Exception {
-        String schemaJson = TestingData.jsonFromFile("schema/inception.json");
-        String changeString = "newSchema=" + schemaJson + "\n" + "oldSchema=\n" + "/ec/";
-        WikibaseSchema schema = WikibaseSchema.reconstruct(schemaJson);
+        Operation operation = reconstruct();
+        Change change = operation.createChange();
+        ChangeContext context = mock(ChangeContext.class);
 
-        LineNumberReader reader = makeReader(changeString);
-        Change change = SaveWikibaseSchemaOperation.WikibaseSchemaChange.load(reader);
+        GridState applied = change.apply(project.getCurrentGridState(), context);
 
-        change.apply(project);
-
-        assertEquals(schema,
-                project.overlayModels.get(SaveWikibaseSchemaOperation.WikibaseSchemaChange.overlayModelKey));
-
-        change.revert(project);
-
-        assertNull(project.overlayModels.get(SaveWikibaseSchemaOperation.WikibaseSchemaChange.overlayModelKey));
-
-        saveChange(change); // not checking for equality because JSON serialization varies
+        Assert.assertTrue(applied.getOverlayModels().get("wikibaseSchema") instanceof WikibaseSchema);
     }
 }

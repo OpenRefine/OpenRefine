@@ -27,36 +27,45 @@ package org.openrefine.wikidata.schema;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNull;
 
+import java.io.Serializable;
+import java.util.List;
+import java.util.stream.Collectors;
+
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-import org.openrefine.model.Project;
-import org.openrefine.wikidata.testing.WikidataRefineTest;
+import org.openrefine.RefineTest;
+import org.openrefine.model.GridState;
+import org.openrefine.model.IndexedRow;
+import org.openrefine.model.Row;
 
-public class ExpressionContextTest extends WikidataRefineTest {
+public class ExpressionContextTest extends RefineTest {
 
-    Project project = null;
+    GridState grid = null;
+    List<Row> rows = null;
 
     @BeforeMethod
     public void setUp() {
-        project = createCSVProject("a,b\nc\nd,e");
+        grid = createGrid(new String[] { "a", "b" },
+                new Serializable[][] { { "c", null }, { "d", "e" } });
+        rows = grid.collectRows().stream().map(IndexedRow::getRow).collect(Collectors.toList());
     }
 
     @Test
     public void testGetCellByColumnName() {
-        ExpressionContext ctxt = new ExpressionContext("foo:", 1, project.rows.get(1), project.columnModel, null);
+        ExpressionContext ctxt = new ExpressionContext("foo:", 1, rows.get(1), grid.getColumnModel(), null);
         assertEquals("e", ctxt.getCellByName("b").value);
     }
 
     @Test
     public void testNonExistentColumn() {
-        ExpressionContext ctxt = new ExpressionContext("foo:", 1, project.rows.get(1), project.columnModel, null);
+        ExpressionContext ctxt = new ExpressionContext("foo:", 1, rows.get(1), grid.getColumnModel(), null);
         assertNull(ctxt.getCellByName("auie"));
     }
 
     @Test
     public void testGetRowId() {
-        ExpressionContext ctxt = new ExpressionContext("foo:", 1, project.rows.get(1), project.columnModel, null);
+        ExpressionContext ctxt = new ExpressionContext("foo:", 1, rows.get(1), grid.getColumnModel(), null);
         assertEquals(1, ctxt.getRowId());
     }
 }

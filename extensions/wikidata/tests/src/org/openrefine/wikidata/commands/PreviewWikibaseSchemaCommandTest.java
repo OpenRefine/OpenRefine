@@ -34,11 +34,15 @@ import javax.servlet.ServletException;
 
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import org.openrefine.util.ParsingUtilities;
+import org.openrefine.wikidata.qa.EditInspector;
+import org.openrefine.wikidata.utils.EntityCache;
 
+@PrepareForTest({ EditInspector.class, EntityCache.class })
 public class PreviewWikibaseSchemaCommandTest extends SchemaCommandTest {
 
     @BeforeMethod
@@ -56,7 +60,7 @@ public class PreviewWikibaseSchemaCommandTest extends SchemaCommandTest {
 
         ObjectNode response = ParsingUtilities.evaluateJsonStringToObjectNode(writer.toString());
         ArrayNode edits = (ArrayNode) response.get("edits_preview");
-        assertEquals(3, edits.size());
+        assertEquals(edits.size(), 3);
     }
 
 }

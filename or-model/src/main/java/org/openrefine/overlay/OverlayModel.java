@@ -33,9 +33,6 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package org.openrefine.overlay;
 
-import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import com.fasterxml.jackson.databind.annotation.JsonTypeIdResolver;
-
 import org.openrefine.model.Project;
 
 /**
@@ -43,16 +40,6 @@ import org.openrefine.model.Project;
  * deserialization time by adding the corresponding parameter to the JSON creator with @JacksonInject("project").
  *
  */
-@JsonTypeInfo(use = JsonTypeInfo.Id.CUSTOM, include = JsonTypeInfo.As.PROPERTY, property = "overlayModelType", visible = true) // for
-                                                                                                                               // UnknownOverlayModel,
-                                                                                                                               // which
-                                                                                                                               // needs
-                                                                                                                               // to
-                                                                                                                               // read
-                                                                                                                               // its
-                                                                                                                               // own
-                                                                                                                               // id
-@JsonTypeIdResolver(OverlayModelResolver.class)
 public interface OverlayModel {
 
     public default void onBeforeSave(Project project) {

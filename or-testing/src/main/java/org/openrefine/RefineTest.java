@@ -244,14 +244,8 @@ public class RefineTest extends PowerMockTestCase {
      */
     @AfterMethod
     protected void cleanupProjectsAndJobs() {
-        for (Project project1 : ProjectManager.singleton._projects.values()) {
-            if (project1 != null) {
-                project1.dispose();
-            }
-        }
-
-        ProjectManager.singleton._projects.clear();
-        ProjectManager.singleton._projectsMetadata.clear();
+        ProjectManager projectManager = ProjectManager.singleton;
+        projectManager.dispose();
     }
 
     protected Recon testRecon(String name, String id, Recon.Judgment judgment) {

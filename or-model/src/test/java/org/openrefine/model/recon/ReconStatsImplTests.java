@@ -30,6 +30,7 @@ package org.openrefine.model.recon;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import java.util.Arrays;
 import java.util.Collections;
 
 import org.mockito.Mockito;
@@ -60,6 +61,33 @@ public class ReconStatsImplTests {
         when(state.getColumnModel()).thenReturn(new ColumnModel(Collections.singletonList(new ColumnMetadata("some column"))));
 
         Assert.assertEquals(ReconStatsImpl.create(state, "some column"), rs);
+    }
+
+    @Test
+    public void testCreateMultipleColumns() {
+        ReconConfig reconConfig = mock(ReconConfig.class);
+        ColumnModel initialColumnModel = new ColumnModel(Arrays.asList(
+                new ColumnMetadata("foo").withReconConfig(reconConfig),
+                new ColumnMetadata("bar"),
+                new ColumnMetadata("hey").withReconConfig(reconConfig)));
+        GridState state = mock(GridState.class);
+        when(state.aggregateRows(Mockito.any(), Mockito.any())).thenReturn(new ReconStatsImpl.MultiReconStats(
+                Arrays.asList(
+                        new ReconStatsImpl(3, 1, 2),
+                        new ReconStatsImpl(8, 3, 4))));
+        when(state.getColumnModel()).thenReturn(initialColumnModel);
+
+        ColumnModel expectedColumnModel = initialColumnModel
+                .withReconStats(0, new ReconStatsImpl(3, 1, 2))
+                .withReconStats(2, new ReconStatsImpl(8, 3, 4));
+        GridState expectedGridState = mock(GridState.class);
+        when(expectedGridState.getColumnModel()).thenReturn(expectedColumnModel);
+        when(state.withColumnModel(expectedColumnModel))
+                .thenReturn(expectedGridState);
+
+        GridState updatedGrid = ReconStatsImpl.updateReconStats(state);
+        ColumnModel columnModel = updatedGrid.getColumnModel();
+        Assert.assertEquals(columnModel, expectedColumnModel);
     }
 
     @Test

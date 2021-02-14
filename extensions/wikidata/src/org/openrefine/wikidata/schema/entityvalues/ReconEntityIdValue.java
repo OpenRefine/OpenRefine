@@ -35,7 +35,7 @@ import org.wikidata.wdtk.datamodel.helpers.Hash;
 import org.wikidata.wdtk.datamodel.interfaces.EntityIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.ValueVisitor;
 
-import org.openrefine.model.Recon;
+import org.openrefine.model.recon.Recon;
 
 /**
  * An EntityIdValue that holds not just the id but also the label as fetched by either the reconciliation interface or

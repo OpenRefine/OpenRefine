@@ -24,6 +24,8 @@
 
 package org.openrefine.wikidata.qa.scrutinizers;
 
+import static org.mockito.ArgumentMatchers.any;
+
 import org.testng.annotations.Test;
 
 import org.openrefine.wikidata.testing.TestingData;

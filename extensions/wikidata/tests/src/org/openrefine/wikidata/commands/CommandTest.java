@@ -29,6 +29,7 @@ import static org.mockito.Mockito.when;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.io.Serializable;
 import java.io.StringWriter;
 
 import javax.servlet.http.HttpServletRequest;
@@ -37,12 +38,12 @@ import javax.servlet.http.HttpServletResponse;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 
+import org.openrefine.RefineTest;
 import org.openrefine.commands.Command;
 import org.openrefine.model.Project;
 import org.openrefine.wikidata.testing.TestingData;
-import org.openrefine.wikidata.testing.WikidataRefineTest;
 
-public abstract class CommandTest extends WikidataRefineTest {
+public abstract class CommandTest extends RefineTest {
 
     protected Project project = null;
     protected HttpServletRequest request = null;
@@ -53,14 +54,19 @@ public abstract class CommandTest extends WikidataRefineTest {
 
     @BeforeMethod(alwaysRun = true)
     public void setUpProject() {
-        project = createCSVProject(TestingData.inceptionWithNewCsv);
-        TestingData.reconcileInceptionCells(project);
+        project = createProject(
+                new String[] { "subject", "inception", "reference" },
+                new Serializable[] {
+                        TestingData.makeMatchedCell("Q1377", "University of Ljubljana"), "1919",
+                        "http://www.ljubljana-slovenia.com/university-ljubljana",
+                        TestingData.makeMatchedCell("Q865528", "University of Warwick"), "1965", "",
+                        TestingData.makeNewItemCell(1234L, "new uni"), "2016", "http://new-uni.com/" });
         request = mock(HttpServletRequest.class);
         response = mock(HttpServletResponse.class);
         writer = new StringWriter();
         PrintWriter printWriter = new PrintWriter(writer);
 
-        when(request.getParameter("project")).thenReturn(String.valueOf(project.id));
+        when(request.getParameter("project")).thenReturn(String.valueOf(project.getId()));
 
         try {
             when(response.getWriter()).thenReturn(printWriter);

@@ -466,7 +466,16 @@ public class SparkGridState implements GridState {
         File gridFile = new File(file, GRID_PATH);
         getGrid().map(r -> serializeIndexedRow(r)).saveAsTextFile(gridFile.getAbsolutePath(), GzipCodec.class);
 
-        ParsingUtilities.saveWriter.writeValue(metadataFile, this);
+        Metadata metadata = new Metadata();
+        metadata.columnModel = columnModel;
+        metadata.overlayModels = overlayModels;
+        if (cachedRowCount >= 0) {
+            metadata.rowCount = cachedRowCount;
+        }
+        if (cachedRecordCount >= 0) {
+            metadata.recordCount = cachedRecordCount;
+        }
+        ParsingUtilities.saveWriter.writeValue(metadataFile, metadata);
     }
 
     protected static String serializeIndexedRow(Tuple2<Long, Row> indexedRow) throws JsonProcessingException {

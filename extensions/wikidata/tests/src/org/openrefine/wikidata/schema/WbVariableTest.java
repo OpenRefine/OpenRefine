@@ -71,7 +71,7 @@ public abstract class WbVariableTest<T> extends WbExpressionTest<T> {
      *            the cell used by the variable
      */
     public void evaluatesTo(T expected, Cell cell) {
-        row.setCell(0, cell);
+        setRow(row.withCell(0, cell));
         evaluatesTo(expected, variable);
     }
 
@@ -92,7 +92,7 @@ public abstract class WbVariableTest<T> extends WbExpressionTest<T> {
      * @param cell
      */
     protected void isSkipped(Cell cell) {
-        row.setCell(0, cell);
+        setRow(row.withCell(0, cell));
         isSkipped(variable);
     }
 }

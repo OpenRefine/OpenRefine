@@ -37,9 +37,9 @@ import org.wikidata.wdtk.datamodel.interfaces.Statement;
 import org.wikidata.wdtk.datamodel.interfaces.StatementRank;
 
 import org.openrefine.model.Cell;
-import org.openrefine.model.Project;
-import org.openrefine.model.Recon;
-import org.openrefine.model.ReconCandidate;
+import org.openrefine.model.recon.Recon;
+import org.openrefine.model.recon.Recon.Judgment;
+import org.openrefine.model.recon.ReconCandidate;
 import org.openrefine.wikidata.schema.WbLanguageConstant;
 import org.openrefine.wikidata.schema.WbMonolingualExpr;
 import org.openrefine.wikidata.schema.WbStringConstant;
@@ -48,11 +48,6 @@ import org.openrefine.wikidata.schema.entityvalues.ReconPropertyIdValue;
 
 public class TestingData {
 
-    public static final String inceptionCsv = "subject,inception,reference\n"
-            + "Q1377,1919,http://www.ljubljana-slovenia.com/university-ljubljana\n" + "Q865528,1965,";
-    public static final String inceptionWithNewCsv = "subject,inception,reference\n"
-            + "Q1377,1919,http://www.ljubljana-slovenia.com/university-ljubljana\n" + "Q865528,1965,\n"
-            + "new uni,2016,http://new-uni.com/";
     public static final String inceptionWithNewQS = "Q1377\tP571\t+1919-01-01T00:00:00Z/9"
             + "\tS854\t\"http://www.ljubljana-slovenia.com/university-ljubljana\""
             + "\tS813\t+2018-02-28T00:00:00Z/11\n" + "Q865528\tP571\t+1965-01-01T00:00:00Z/9"
@@ -68,24 +63,27 @@ public class TestingData {
 
     public static class ReconStub extends Recon {
 
-        public ReconStub(long id, long judgmentHistoryEntry) {
-            super(id, judgmentHistoryEntry);
+        private static final long serialVersionUID = -8141740928448038842L;
+
+        public ReconStub(long judgmentHistoryEntry, String identifierSpace, String schemaSpace) {
+            super(judgmentHistoryEntry, identifierSpace, schemaSpace);
         }
     }
 
     public static Recon makeNewItemRecon(long id) {
-        Recon recon = new ReconStub(id, 382398L); // we keep the same judgment id because it is ignored
-        recon.identifierSpace = "http://www.wikidata.org/entity/";
-        recon.schemaSpace = "http://www.wikidata.org/prop/direct/";
-        recon.judgment = Recon.Judgment.New;
+        // we keep the same judgment id because it is ignored
+        Recon recon = new ReconStub(382398L, "http://www.wikidata.org/entity/", "http://www.wikidata.org/prop/direct/")
+                .withId(id)
+                .withJudgment(Judgment.New);
         return recon;
     }
 
     public static Recon makeMatchedRecon(String qid, String name, String[] types) {
-        Recon recon = Recon.makeWikidataRecon(123456L);
-        recon.match = new ReconCandidate(qid, name, types, 100.0);
-        recon.candidates = Collections.singletonList(recon.match);
-        recon.judgment = Recon.Judgment.Matched;
+        ReconCandidate candidate = new ReconCandidate(qid, name, types, 100.0);
+        Recon recon = Recon.makeWikidataRecon(123456L)
+                .withMatch(candidate)
+                .withCandidates(Collections.singletonList(candidate))
+                .withJudgment(Judgment.Matched);
         return recon;
     }
 
@@ -135,12 +133,6 @@ public class TestingData {
         InputStream f = TestingData.class.getClassLoader().getResourceAsStream(filename);
         String decoded = IOUtils.toString(f);
         return decoded.trim();
-    }
-
-    public static void reconcileInceptionCells(Project project) {
-        project.rows.get(0).cells.set(0, TestingData.makeMatchedCell("Q1377", "University of Ljubljana"));
-        project.rows.get(1).cells.set(0, TestingData.makeMatchedCell("Q865528", "University of Warwick"));
-        project.rows.get(2).cells.set(0, TestingData.makeNewItemCell(1234L, "new uni"));
     }
 
 }

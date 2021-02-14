@@ -8,10 +8,6 @@ import org.testng.annotations.Test;
 
 import org.openrefine.expr.Evaluable;
 import org.openrefine.expr.HasFields;
-import org.openrefine.jython.JythonEvaluable;
-import org.openrefine.jython.JythonHasFieldsWrapper;
-import org.openrefine.model.Cell;
-import org.openrefine.model.Row;
 
 public class JythonAttributeTest {
 
@@ -34,10 +30,6 @@ public class JythonAttributeTest {
 
     @Test
     public void testWrappedObjectsHaveAttributes() {
-        Row row = new Row(2);
-        row.setCell(0, new Cell("sunshine", null));
-        row.setCell(1, new Cell("hammock", null));
-
         Properties props = new Properties();
 
         MyFieldObject obj = new MyFieldObject();
@@ -46,7 +38,7 @@ public class JythonAttributeTest {
 
         props.put("cell", obj);
 
-        Evaluable eval = new JythonEvaluable("return cell.sunshine");
+        Evaluable eval = new JythonEvaluable("return cell.sunshine", "jython");
         String result = (String) eval.evaluate(props).toString();
         Assert.assertEquals(result, "hammock");
     }
