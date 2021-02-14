@@ -1,11 +1,11 @@
 package org.openrefine.wikidata.manifests;
 
-import org.openrefine.wikidata.testing.TestingData;
-import org.testng.annotations.Test;
+import static org.testng.AssertJUnit.assertEquals;
 
 import java.io.IOException;
 
-import static org.testng.AssertJUnit.assertEquals;
+import org.openrefine.wikidata.testing.TestingData;
+import org.testng.annotations.Test;
 
 public class ManifestV1Test {
 

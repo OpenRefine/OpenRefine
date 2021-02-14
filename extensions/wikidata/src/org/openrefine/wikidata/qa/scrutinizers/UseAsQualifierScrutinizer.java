@@ -1,5 +1,10 @@
 package org.openrefine.wikidata.qa.scrutinizers;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.openrefine.wikidata.qa.QAWarning;
 import org.openrefine.wikidata.updates.ItemUpdate;
 import org.wikidata.wdtk.datamodel.helpers.Datamodel;
@@ -8,11 +13,6 @@ import org.wikidata.wdtk.datamodel.interfaces.Snak;
 import org.wikidata.wdtk.datamodel.interfaces.SnakGroup;
 import org.wikidata.wdtk.datamodel.interfaces.Statement;
 import org.wikidata.wdtk.datamodel.interfaces.Value;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 public class UseAsQualifierScrutinizer extends EditScrutinizer {
 

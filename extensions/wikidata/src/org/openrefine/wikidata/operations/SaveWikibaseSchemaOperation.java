@@ -23,23 +23,22 @@
  ******************************************************************************/
 package org.openrefine.wikidata.operations;
 
-import java.io.IOException;
-import java.io.LineNumberReader;
-import java.io.Writer;
-import java.util.Properties;
+import java.util.HashMap;
+import java.util.Map;
 
-import org.openrefine.history.Change;
-import org.openrefine.history.HistoryEntry;
-import org.openrefine.model.Project;
-import org.openrefine.operations.AbstractOperation;
-import org.openrefine.util.ParsingUtilities;
+import org.openrefine.history.dag.DagSlice;
+import org.openrefine.model.GridState;
+import org.openrefine.model.changes.Change;
+import org.openrefine.model.changes.ChangeContext;
+import org.openrefine.operations.Operation;
+import org.openrefine.overlay.OverlayModel;
 import org.openrefine.wikidata.schema.WikibaseSchema;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-public class SaveWikibaseSchemaOperation extends AbstractOperation {
+public class SaveWikibaseSchemaOperation implements Operation {
 
     @JsonIgnore
     final public static String operationDescription = "Save Wikibase schema";
@@ -54,20 +53,16 @@ public class SaveWikibaseSchemaOperation extends AbstractOperation {
 
     }
 
-    @Override
-    protected String getBriefDescription(Project project) {
-        return operationDescription;
-    }
-
-    @Override
-    protected HistoryEntry createHistoryEntry(Project project, long historyEntryID)
-            throws Exception {
-        String description = operationDescription;
-
-        Change change = new WikibaseSchemaChange(_schema);
-
-        return new HistoryEntry(historyEntryID, project, description, SaveWikibaseSchemaOperation.this, change);
-    }
+	@Override
+	public String getDescription() {
+		return operationDescription;
+	}
+	
+	@Override
+	public Change createChange() {
+		Change change = new WikibaseSchemaChange(_schema);
+		return change;
+	}
 
     static public class WikibaseSchemaChange implements Change {
 
@@ -78,64 +73,26 @@ public class SaveWikibaseSchemaOperation extends AbstractOperation {
         public WikibaseSchemaChange(WikibaseSchema newSchema) {
             _newSchema = newSchema;
         }
+        
 
-        public void apply(Project project) {
-            synchronized (project) {
-                _oldSchema = (WikibaseSchema) project.overlayModels.get(overlayModelKey);
-                project.overlayModels.put(overlayModelKey, _newSchema);
-            }
-        }
+		@Override
+		public GridState apply(GridState projectState, ChangeContext context) throws DoesNotApplyException {
+			Map<String, OverlayModel> newModels = new HashMap<>(projectState.getOverlayModels());
+			newModels.put(overlayModelKey, _newSchema);
+			return projectState.withOverlayModels(newModels);
+		}
 
-        public void revert(Project project) {
-            synchronized (project) {
-                if (_oldSchema == null) {
-                    project.overlayModels.remove(overlayModelKey);
-                } else {
-                    project.overlayModels.put(overlayModelKey, _oldSchema);
-                }
-            }
-        }
+		@Override
+		public boolean isImmediate() {
+			return true;
+		}
 
-        public void save(Writer writer, Properties options)
-                throws IOException {
-            writer.write("newSchema=");
-            writeWikibaseSchema(_newSchema, writer);
-            writer.write('\n');
-            writer.write("oldSchema=");
-            writeWikibaseSchema(_oldSchema, writer);
-            writer.write('\n');
-            writer.write("/ec/\n"); // end of change marker
-        }
+		@Override
+		public DagSlice getDagSlice() {
+			// TODO Auto-generated method stub
+			return null;
+		}
 
-        static public Change load(LineNumberReader reader)
-                throws Exception {
-            WikibaseSchema oldSchema = null;
-            WikibaseSchema newSchema = null;
-
-            String line;
-            while ((line = reader.readLine()) != null && !"/ec/".equals(line)) {
-                int equal = line.indexOf('=');
-                CharSequence field = line.subSequence(0, equal);
-                String value = line.substring(equal + 1);
-
-                if ("oldSchema".equals(field) && value.length() > 0) {
-                    oldSchema = ParsingUtilities.mapper.readValue(value, WikibaseSchema.class);
-                } else if ("newSchema".equals(field) && value.length() > 0) {
-                    newSchema = ParsingUtilities.mapper.readValue(value, WikibaseSchema.class);
-                }
-            }
-
-            WikibaseSchemaChange change = new WikibaseSchemaChange(newSchema);
-            change._oldSchema = oldSchema;
-
-            return change;
-        }
-
-        static protected void writeWikibaseSchema(WikibaseSchema s, Writer writer)
-                throws IOException {
-            if (s != null) {
-                ParsingUtilities.defaultWriter.writeValue(writer, s);
-            }
-        }
     }
+
 }

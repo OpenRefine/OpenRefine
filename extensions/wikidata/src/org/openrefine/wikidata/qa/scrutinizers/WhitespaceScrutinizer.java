@@ -23,15 +23,15 @@
  ******************************************************************************/
 package org.openrefine.wikidata.qa.scrutinizers;
 
-import org.openrefine.wikidata.qa.QAWarning;
-import org.wikidata.wdtk.datamodel.interfaces.MonolingualTextValue;
-import org.wikidata.wdtk.datamodel.interfaces.StringValue;
-import org.wikidata.wdtk.datamodel.interfaces.Value;
-
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.regex.Pattern;
+
+import org.openrefine.wikidata.qa.QAWarning;
+import org.wikidata.wdtk.datamodel.interfaces.MonolingualTextValue;
+import org.wikidata.wdtk.datamodel.interfaces.StringValue;
+import org.wikidata.wdtk.datamodel.interfaces.Value;
 
 /**
  * Scrutinizes strings for trailing / leading whitespace, and others

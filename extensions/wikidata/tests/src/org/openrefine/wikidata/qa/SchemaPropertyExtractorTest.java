@@ -1,6 +1,9 @@
 package org.openrefine.wikidata.qa;
 
-import org.openrefine.wikidata.commands.CommandTest;
+import java.io.IOException;
+import java.util.HashSet;
+import java.util.Set;
+
 import org.openrefine.wikidata.schema.WikibaseSchema;
 import org.openrefine.wikidata.testing.TestingData;
 import org.testng.Assert;
@@ -8,10 +11,6 @@ import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 import org.wikidata.wdtk.datamodel.helpers.Datamodel;
 import org.wikidata.wdtk.datamodel.interfaces.PropertyIdValue;
-
-import java.io.IOException;
-import java.util.HashSet;
-import java.util.Set;
 
 public class SchemaPropertyExtractorTest {
 

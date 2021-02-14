@@ -1,5 +1,11 @@
 package org.openrefine.wikidata.qa.scrutinizers;
 
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
+import java.util.ArrayList;
+import java.util.List;
+
 import org.openrefine.wikidata.qa.ConstraintFetcher;
 import org.openrefine.wikidata.testing.TestingData;
 import org.openrefine.wikidata.updates.ItemUpdate;
@@ -12,12 +18,6 @@ import org.wikidata.wdtk.datamodel.interfaces.PropertyIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.Snak;
 import org.wikidata.wdtk.datamodel.interfaces.Statement;
 import org.wikidata.wdtk.datamodel.interfaces.Value;
-
-import java.util.ArrayList;
-import java.util.List;
-
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 public class MultiValueScrutinizerTest extends ScrutinizerTest {
 

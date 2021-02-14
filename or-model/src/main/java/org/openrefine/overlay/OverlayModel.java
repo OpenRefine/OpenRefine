@@ -45,12 +45,6 @@ import com.fasterxml.jackson.databind.annotation.JsonTypeIdResolver;
  * @JacksonInject("project").
  *
  */
-@JsonTypeInfo(
-        use=JsonTypeInfo.Id.CUSTOM,
-        include=JsonTypeInfo.As.PROPERTY,
-        property="overlayModelType",
-        visible=true) // for UnknownOverlayModel, which needs to read its own id
-@JsonTypeIdResolver(OverlayModelResolver.class)
 public interface OverlayModel {
 	
     public default void onBeforeSave(Project project) {

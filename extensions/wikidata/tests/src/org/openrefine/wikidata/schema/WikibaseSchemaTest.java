@@ -23,24 +23,24 @@
  ******************************************************************************/
 package org.openrefine.wikidata.schema;
 
-import org.testng.Assert;
 import static org.testng.Assert.assertEquals;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import org.openrefine.RefineTest;
 import org.openrefine.browsing.Engine;
 import org.openrefine.browsing.EngineConfig;
 import org.openrefine.browsing.facets.FacetConfigResolver;
 import org.openrefine.browsing.facets.TextSearchFacet.TextSearchFacetConfig;
-import org.openrefine.model.Project;
+import org.openrefine.model.GridState;
 import org.openrefine.util.ParsingUtilities;
 import org.openrefine.util.TestUtils;
 import org.openrefine.wikidata.testing.TestingData;
-import org.openrefine.wikidata.testing.WikidataRefineTest;
 import org.openrefine.wikidata.updates.ItemUpdate;
 import org.openrefine.wikidata.updates.ItemUpdateBuilder;
 import org.testng.annotations.BeforeMethod;
@@ -56,7 +56,7 @@ import org.wikidata.wdtk.datamodel.interfaces.StatementRank;
 import org.wikidata.wdtk.datamodel.interfaces.StringValue;
 import org.wikidata.wdtk.datamodel.interfaces.TimeValue;
 
-public class WikibaseSchemaTest extends WikidataRefineTest {
+public class WikibaseSchemaTest extends RefineTest {
 
     private ItemIdValue qid1 = Datamodel.makeWikidataItemIdValue("Q1377");
     private ItemIdValue qid2 = Datamodel.makeWikidataItemIdValue("Q865528");
@@ -85,13 +85,15 @@ public class WikibaseSchemaTest extends WikidataRefineTest {
             Collections.singletonList(Datamodel.makeReference(Collections.singletonList(retrievedSnakGroup))),
             StatementRank.NORMAL, "");
 
-    private Project project;
+    private GridState grid;
 
     @BeforeMethod
     public void setUpProject() {
-        project = this.createCSVProject(TestingData.inceptionCsv);
-        project.rows.get(0).cells.set(0, TestingData.makeMatchedCell("Q1377", "University of Ljubljana"));
-        project.rows.get(1).cells.set(0, TestingData.makeMatchedCell("Q865528", "University of Warwick"));
+        grid = this.createGrid(
+        		new String[] { "subject", "inception", "reference" },
+        		new Serializable[][] {
+			{TestingData.makeMatchedCell("Q1377", "University of Ljubljana"), "1919", "http://www.ljubljana-slovenia.com/university-ljubljana" },
+			{TestingData.makeMatchedCell("Q865528", "University of Warwick"), "1965", ""}});
         FacetConfigResolver.registerFacetConfig("core", "text", TextSearchFacetConfig.class);
     }
 
@@ -117,8 +119,8 @@ public class WikibaseSchemaTest extends WikidataRefineTest {
             throws IOException {
         String serialized = TestingData.jsonFromFile("schema/inception.json");
         WikibaseSchema schema = WikibaseSchema.reconstruct(serialized);
-        Engine engine = new Engine(project);
-        List<ItemUpdate> updates = schema.evaluate(project, engine);
+        Engine engine = new Engine(grid, EngineConfig.ALL_ROWS);
+        List<ItemUpdate> updates = schema.evaluate(grid, engine);
         List<ItemUpdate> expected = new ArrayList<>();
         ItemUpdate update1 = new ItemUpdateBuilder(qid1).addStatement(statement1).build();
         expected.add(update1);
@@ -139,7 +141,6 @@ public class WikibaseSchemaTest extends WikidataRefineTest {
             throws IOException {
         String serialized = TestingData.jsonFromFile("schema/inception.json");
         WikibaseSchema schema = WikibaseSchema.reconstruct(serialized);
-        Engine engine = new Engine(project);
         EngineConfig engineConfig = EngineConfig.reconstruct("{\n"
                 + "      \"mode\": \"row-based\",\n" 
                 + "      \"facets\": [\n"
@@ -154,8 +155,8 @@ public class WikibaseSchemaTest extends WikidataRefineTest {
                 + "        }\n"
                 + "      ]\n"
                 + "    }");
-        engine.initializeFromConfig(engineConfig);
-        List<ItemUpdate> updates = schema.evaluate(project, engine);
+        Engine engine = new Engine(grid, engineConfig);
+        List<ItemUpdate> updates = schema.evaluate(grid, engine);
         List<ItemUpdate> expected = new ArrayList<>();
         ItemUpdate update1 = new ItemUpdateBuilder(qid1).addStatement(statement1).build();
         expected.add(update1);

@@ -23,16 +23,31 @@
  ******************************************************************************/
 package org.openrefine.wikidata.operations;
 
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 import static org.testng.Assert.assertEquals;
 
-import java.io.LineNumberReader;
+import java.io.Serializable;
+import java.util.Arrays;
+import java.util.Collections;
 
+import org.mockito.Mockito;
 import org.openrefine.browsing.EngineConfig;
-import org.openrefine.history.Change;
-import org.openrefine.model.Recon;
-import org.openrefine.operations.AbstractOperation;
+import org.openrefine.model.ColumnMetadata;
+import org.openrefine.model.ColumnModel;
+import org.openrefine.model.GridState;
+import org.openrefine.model.Row;
+import org.openrefine.model.changes.Change;
+import org.openrefine.model.changes.ChangeContext;
+import org.openrefine.model.changes.ChangeData;
+import org.openrefine.model.changes.IndexedData;
+import org.openrefine.model.recon.Recon;
+import org.openrefine.model.recon.ReconConfig;
+import org.openrefine.operations.Operation;
 import org.openrefine.util.ParsingUtilities;
+import org.openrefine.wikidata.operations.PerformWikibaseEditsOperation.RowNewReconUpdate;
 import org.openrefine.wikidata.testing.TestingData;
+import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
@@ -44,7 +59,7 @@ public class PerformWikibaseEditsOperationTest extends OperationTest {
     }
 
     @Override
-    public AbstractOperation reconstruct()
+    public Operation reconstruct()
             throws Exception {
         return ParsingUtilities.mapper.readValue(getJson(), PerformWikibaseEditsOperation.class);
     }
@@ -61,24 +76,36 @@ public class PerformWikibaseEditsOperationTest extends OperationTest {
     }
 
     @Test
-    public void testLoadChange()
+    public void testChange()
             throws Exception {
-        String changeString = "newItems={\"qidMap\":{\"1234\":\"Q789\"}}\n" + "/ec/\n";
-        LineNumberReader reader = makeReader(changeString);
-        Change change = PerformWikibaseEditsOperation.PerformWikibaseEditsChange.load(reader);
+    	
+    	ReconConfig reconConfig = mock(ReconConfig.class);
+    	ColumnModel columnModel = new ColumnModel(
+    			Arrays.asList(new ColumnMetadata("foo").withReconConfig(reconConfig),
+    		    new ColumnMetadata("bar")));
+    	GridState grid = createGrid(
+    			new String[] {"foo", "bar"},
+    			new Serializable[][] {
+    				{ TestingData.makeNewItemCell(1234L, "my new item"), "hey" }
+    			})
+    			.withColumnModel(columnModel);
+    	
+        Change change = new PerformWikibaseEditsOperation.PerformWikibaseEditsChange();
+        ChangeContext context = mock(ChangeContext.class);
+        RowNewReconUpdate rowNewReconUpdate = new RowNewReconUpdate(Collections.singletonMap(0, "Q789"));
+        ChangeData<RowNewReconUpdate> changeData = runner().create(
+        		Collections.singletonList(new IndexedData<RowNewReconUpdate>(0L, rowNewReconUpdate)));
+        
+        when(context.<RowNewReconUpdate>getChangeData(Mockito.eq(PerformWikibaseEditsOperation.changeDataId), Mockito.any()))
+        	.thenReturn(changeData);
+        
+        GridState applied = change.apply(grid, context);
 
-        project.rows.get(0).cells.set(0, TestingData.makeNewItemCell(1234L, "my new item"));
-
-        change.apply(project);
-
-        assertEquals(Recon.Judgment.Matched, project.rows.get(0).cells.get(0).recon.judgment);
-        assertEquals("Q789", project.rows.get(0).cells.get(0).recon.match.id);
-
-        change.revert(project);
-
-        assertEquals(Recon.Judgment.New, project.rows.get(0).cells.get(0).recon.judgment);
-
-        assertEquals(changeString, saveChange(change));
+        Row row = applied.getRow(0L);
+        assertEquals(row.getCell(0).recon.judgment, Recon.Judgment.Matched);
+        assertEquals(row.getCell(0).recon.match.id, "Q789");
+        
+        Assert.assertEquals(applied.getColumnModel().getColumnByIndex(0).getReconStats().getMatchedTopics(), 1L);
     }
 
 }

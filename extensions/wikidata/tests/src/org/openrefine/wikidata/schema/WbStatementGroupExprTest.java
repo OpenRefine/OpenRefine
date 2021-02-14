@@ -24,11 +24,9 @@
 package org.openrefine.wikidata.schema;
 
 import java.util.Collections;
-import java.util.List;
 
 import org.openrefine.wikidata.schema.exceptions.SkipSchemaExpressionException;
 import org.openrefine.wikidata.testing.JacksonSerializationTest;
-import org.testng.Assert;
 import org.testng.annotations.Test;
 import org.wikidata.wdtk.datamodel.helpers.Datamodel;
 import org.wikidata.wdtk.datamodel.interfaces.ItemIdValue;

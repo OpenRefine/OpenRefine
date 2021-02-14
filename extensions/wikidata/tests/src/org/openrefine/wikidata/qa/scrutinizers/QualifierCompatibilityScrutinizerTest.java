@@ -23,6 +23,14 @@
  ******************************************************************************/
 package org.openrefine.wikidata.qa.scrutinizers;
 
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.stream.Collectors;
+
 import org.openrefine.wikidata.qa.ConstraintFetcher;
 import org.openrefine.wikidata.testing.TestingData;
 import org.openrefine.wikidata.updates.ItemUpdate;
@@ -36,14 +44,6 @@ import org.wikidata.wdtk.datamodel.interfaces.Snak;
 import org.wikidata.wdtk.datamodel.interfaces.SnakGroup;
 import org.wikidata.wdtk.datamodel.interfaces.Statement;
 import org.wikidata.wdtk.datamodel.interfaces.StatementRank;
-
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.stream.Collectors;
-
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 public class QualifierCompatibilityScrutinizerTest extends StatementScrutinizerTest {
 

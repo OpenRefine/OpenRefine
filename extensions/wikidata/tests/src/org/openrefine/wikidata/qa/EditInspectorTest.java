@@ -1,11 +1,11 @@
 package org.openrefine.wikidata.qa;
 
+import static org.testng.Assert.assertEquals;
+
 import org.openrefine.wikidata.manifests.Manifest;
 import org.openrefine.wikidata.manifests.ManifestParser;
 import org.openrefine.wikidata.testing.TestingData;
 import org.testng.annotations.Test;
-
-import static org.testng.Assert.assertEquals;
 
 public class EditInspectorTest {
 

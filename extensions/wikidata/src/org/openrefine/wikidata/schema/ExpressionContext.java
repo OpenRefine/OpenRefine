@@ -25,7 +25,6 @@ package org.openrefine.wikidata.schema;
 
 import org.apache.commons.lang.Validate;
 import org.openrefine.model.Cell;
-import org.openrefine.model.ColumnMetadata;
 import org.openrefine.model.ColumnModel;
 import org.openrefine.model.Row;
 import org.openrefine.wikidata.qa.QAWarning;
@@ -42,7 +41,7 @@ public class ExpressionContext {
 
     private String baseIRI;
     private String mediaWikiApiEndpoint;
-    private int rowId;
+    private long rowId;
     private Row row;
     private ColumnModel columnModel;
     private QAWarningStore warningStore;
@@ -54,7 +53,7 @@ public class ExpressionContext {
      *            the siteIRI of the schema
      * @param mediaWikiApiEndpoint
      *            the MediaWiki API endpoint of the Wikibase
-     * @param rowId
+     * @param rowID
      *            the id of the row currently visited
      * @param row
      *            the row itself
@@ -64,11 +63,11 @@ public class ExpressionContext {
      *            where to store the issues encountered when evaluating (can be set
      *            to null if these issues should be ignored)
      */
-    public ExpressionContext(String baseIRI, String mediaWikiApiEndpoint, int rowId, Row row, ColumnModel columnModel, QAWarningStore warningStore) {
+    public ExpressionContext(String baseIRI, String mediaWikiApiEndpoint, long rowID, Row row, ColumnModel columnModel, QAWarningStore warningStore) {
         Validate.notNull(baseIRI);
         this.baseIRI = baseIRI;
         this.mediaWikiApiEndpoint = mediaWikiApiEndpoint;
-        this.rowId = rowId;
+        this.rowId = rowID;
         Validate.notNull(row);
         this.row = row;
         Validate.notNull(columnModel);
@@ -93,16 +92,15 @@ public class ExpressionContext {
      * @return the cell
      */
     public Cell getCellByName(String name) {
-        ColumnMetadata column = columnModel.getColumnByName(name);
-        if (column != null) {
-            int idx = column.getCellIndex();
+        int idx = columnModel.getColumnIndexByName(name);
+        if (idx != -1) {
             return row.getCell(idx);
         } else {
             return null;
         }
     }
 
-    public int getRowId() {
+    public long getRowId() {
         return rowId;
     }
 

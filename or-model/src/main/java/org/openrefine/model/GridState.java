@@ -16,9 +16,12 @@ import org.openrefine.model.changes.RowChangeDataFlatJoiner;
 import org.openrefine.model.changes.RowChangeDataJoiner;
 import org.openrefine.model.changes.RowChangeDataProducer;
 import org.openrefine.overlay.OverlayModel;
+import org.openrefine.overlay.OverlayModelResolver;
 import org.openrefine.sorting.SortingConfig;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.fasterxml.jackson.databind.annotation.JsonTypeIdResolver;
 
 /**
  * Immutable object which represents the state of the project grid
@@ -498,10 +501,19 @@ public interface GridState {
     public static class Metadata {
         @JsonProperty("columnModel")
         protected ColumnModel columnModel;
+        
         @JsonProperty("overlayModels")
+        @JsonTypeInfo(
+                use=JsonTypeInfo.Id.NAME,
+                include=JsonTypeInfo.As.PROPERTY,
+                property="overlayModelType",
+                visible=true) // for UnknownOverlayModel, which needs to read its own id
+        @JsonTypeIdResolver(OverlayModelResolver.class)
         Map<String, OverlayModel> overlayModels;
+        
         @JsonProperty("rowCount")
         long rowCount = -1;
+        
         @JsonProperty("recordCount")
         long recordCount = -1;
     }

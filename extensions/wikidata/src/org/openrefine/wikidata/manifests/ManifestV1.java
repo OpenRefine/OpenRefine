@@ -1,10 +1,10 @@
 package org.openrefine.wikidata.manifests;
 
-import com.fasterxml.jackson.databind.JsonNode;
-
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+
+import com.fasterxml.jackson.databind.JsonNode;
 
 public class ManifestV1 implements Manifest {
 

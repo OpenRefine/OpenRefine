@@ -29,9 +29,10 @@ import java.util.List;
 import java.util.Properties;
 import java.util.Set;
 
+import org.openrefine.ProjectMetadata;
 import org.openrefine.browsing.Engine;
 import org.openrefine.exporters.WriterExporter;
-import org.openrefine.model.Project;
+import org.openrefine.model.GridState;
 import org.openrefine.wikidata.schema.WikibaseSchema;
 import org.openrefine.wikidata.updates.ItemUpdate;
 import org.openrefine.wikidata.updates.scheduler.ImpossibleSchedulingException;
@@ -62,22 +63,22 @@ public class QuickStatementsExporter implements WriterExporter {
     public String getContentType() {
         return "text/plain";
     }
-
-    @Override
-    public void export(Project project, Properties options, Engine engine, Writer writer)
-            throws IOException {
-        WikibaseSchema schema = (WikibaseSchema) project.overlayModels.get("wikibaseSchema");
+    
+	@Override
+	public void export(GridState grid, ProjectMetadata projectMetadata, Properties options, Engine engine,
+			Writer writer) throws IOException {
+        WikibaseSchema schema = (WikibaseSchema) grid.getOverlayModels().get("wikibaseSchema");
         if (schema == null) {
             writer.write(noSchemaErrorMessage);
         } else {
-            translateSchema(project, engine, schema, writer);
+            translateSchema(grid, engine, schema, writer);
         }
     }
 
     /**
      * Exports a project and a schema to a QuickStatements file
      * 
-     * @param project
+     * @param grid
      *            the project to translate
      * @param engine
      *            the engine used for evaluation of the edits
@@ -87,9 +88,9 @@ public class QuickStatementsExporter implements WriterExporter {
      *            the writer to which the QS should be written
      * @throws IOException
      */
-    public void translateSchema(Project project, Engine engine, WikibaseSchema schema, Writer writer)
+    public void translateSchema(GridState grid, Engine engine, WikibaseSchema schema, Writer writer)
             throws IOException {
-        List<ItemUpdate> items = schema.evaluate(project, engine);
+        List<ItemUpdate> items = schema.evaluate(grid, engine);
         translateItemList(items, writer);
     }
 

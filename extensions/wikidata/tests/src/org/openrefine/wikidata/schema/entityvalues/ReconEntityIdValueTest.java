@@ -30,7 +30,7 @@ import static org.testng.Assert.assertTrue;
 
 import java.util.Collections;
 
-import org.openrefine.model.Recon;
+import org.openrefine.model.recon.Recon;
 import org.openrefine.wikidata.testing.TestingData;
 import org.testng.annotations.Test;
 import org.wikidata.wdtk.datamodel.helpers.Datamodel;

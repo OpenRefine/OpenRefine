@@ -23,6 +23,12 @@
  ******************************************************************************/
 package org.openrefine.wikidata.qa.scrutinizers;
 
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
+import java.util.Collections;
+import java.util.List;
+
 import org.openrefine.wikidata.qa.ConstraintFetcher;
 import org.openrefine.wikidata.testing.TestingData;
 import org.openrefine.wikidata.updates.ItemUpdate;
@@ -37,12 +43,6 @@ import org.wikidata.wdtk.datamodel.interfaces.SnakGroup;
 import org.wikidata.wdtk.datamodel.interfaces.Statement;
 import org.wikidata.wdtk.datamodel.interfaces.Value;
 import org.wikidata.wdtk.datamodel.interfaces.ValueSnak;
-
-import java.util.Collections;
-import java.util.List;
-
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 public class FormatScrutinizerTest extends ScrutinizerTest {
 

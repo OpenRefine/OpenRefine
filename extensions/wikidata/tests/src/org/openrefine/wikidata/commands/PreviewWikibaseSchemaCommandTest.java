@@ -25,11 +25,16 @@ package org.openrefine.wikidata.commands;
 
 import static org.mockito.Mockito.when;
 import static org.openrefine.wikidata.testing.TestingData.jsonFromFile;
-import org.openrefine.wikidata.utils.EntityCache;
 import static org.testng.Assert.assertEquals;
 
-import org.openrefine.wikidata.qa.EditInspector;
+import java.io.IOException;
+
+import javax.servlet.ServletException;
+
+import org.openrefine.util.ParsingUtilities;
 import org.openrefine.wikidata.qa.ConstraintFetcher;
+import org.openrefine.wikidata.qa.EditInspector;
+import org.openrefine.wikidata.utils.EntityCache;
 import org.openrefine.wikidata.utils.EntityCacheStub;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
@@ -38,9 +43,6 @@ import org.testng.annotations.Test;
 
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-
-import javax.servlet.ServletException;
-import java.io.IOException;
 
 @PrepareForTest({EditInspector.class, EntityCache.class})
 public class PreviewWikibaseSchemaCommandTest extends SchemaCommandTest {
@@ -66,7 +68,7 @@ public class PreviewWikibaseSchemaCommandTest extends SchemaCommandTest {
 
         ObjectNode response = ParsingUtilities.evaluateJsonStringToObjectNode(writer.toString());
         ArrayNode edits = (ArrayNode) response.get("edits_preview");
-        assertEquals(3, edits.size());
+        assertEquals(edits.size(), 3);
     }
 
     @Test

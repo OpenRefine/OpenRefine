@@ -1,5 +1,7 @@
 package org.openrefine.wikidata.qa.scrutinizers;
 
+import java.util.List;
+
 import org.openrefine.wikidata.qa.QAWarning;
 import org.wikidata.wdtk.datamodel.helpers.Datamodel;
 import org.wikidata.wdtk.datamodel.interfaces.EntityIdValue;
@@ -7,8 +9,6 @@ import org.wikidata.wdtk.datamodel.interfaces.PropertyIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.Snak;
 import org.wikidata.wdtk.datamodel.interfaces.SnakGroup;
 import org.wikidata.wdtk.datamodel.interfaces.Statement;
-
-import java.util.List;
 
 
 public class EntityTypeScrutinizer extends SnakScrutinizer {

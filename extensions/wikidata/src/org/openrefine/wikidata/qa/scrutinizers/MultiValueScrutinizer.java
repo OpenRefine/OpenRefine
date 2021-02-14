@@ -1,13 +1,13 @@
 package org.openrefine.wikidata.qa.scrutinizers;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.openrefine.wikidata.qa.QAWarning;
 import org.openrefine.wikidata.updates.ItemUpdate;
 import org.wikidata.wdtk.datamodel.interfaces.PropertyIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.Statement;
-
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 public class MultiValueScrutinizer extends EditScrutinizer {
 

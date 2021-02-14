@@ -23,13 +23,13 @@
  ******************************************************************************/
 package org.openrefine.wikidata.qa.scrutinizers;
 
+import java.util.List;
+
 import org.openrefine.wikidata.qa.QAWarning;
 import org.openrefine.wikidata.updates.ItemUpdate;
 import org.wikidata.wdtk.datamodel.interfaces.PropertyIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.Reference;
 import org.wikidata.wdtk.datamodel.interfaces.Statement;
-
-import java.util.List;
 
 /**
  * A scrutinizer checking for unsourced statements

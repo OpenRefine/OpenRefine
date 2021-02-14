@@ -27,11 +27,11 @@
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package com.google.refine.extension.database.sqlite;
+package org.openrefine.extension.database.sqlite;
 
-import com.google.refine.extension.database.DatabaseConfiguration;
-import com.google.refine.extension.database.DatabaseServiceException;
-import com.google.refine.extension.database.SQLType;
+import org.openrefine.extension.database.DatabaseConfiguration;
+import org.openrefine.extension.database.DatabaseServiceException;
+import org.openrefine.extension.database.SQLType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

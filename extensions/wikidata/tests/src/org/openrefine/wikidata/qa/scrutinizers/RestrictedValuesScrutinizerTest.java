@@ -1,5 +1,13 @@
 package org.openrefine.wikidata.qa.scrutinizers;
 
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
+import java.util.ArrayList;
+import java.util.List;
+
 import org.openrefine.wikidata.qa.ConstraintFetcher;
 import org.openrefine.wikidata.testing.TestingData;
 import org.testng.annotations.Test;
@@ -10,14 +18,6 @@ import org.wikidata.wdtk.datamodel.interfaces.PropertyIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.Snak;
 import org.wikidata.wdtk.datamodel.interfaces.SnakGroup;
 import org.wikidata.wdtk.datamodel.interfaces.Statement;
-
-import java.util.ArrayList;
-import java.util.List;
-
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 public class RestrictedValuesScrutinizerTest extends SnakScrutinizerTest {
 

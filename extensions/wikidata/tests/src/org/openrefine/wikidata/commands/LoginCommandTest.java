@@ -1,22 +1,32 @@
 package org.openrefine.wikidata.commands;
 
-import com.google.refine.ProjectManager;
-import com.google.refine.commands.Command;
-import com.google.refine.preference.PreferenceStore;
-import com.google.refine.util.ParsingUtilities;
-import org.mockito.ArgumentCaptor;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.testng.annotations.BeforeClass;
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.Test;
-import org.wikidata.wdtk.wikibaseapi.BasicApiConnection;
-import org.wikidata.wdtk.wikibaseapi.LoginFailedException;
-import org.wikidata.wdtk.wikibaseapi.OAuthApiConnection;
-import org.wikidata.wdtk.wikibaseapi.apierrors.AssertUserFailedException;
-import org.wikidata.wdtk.wikibaseapi.apierrors.MediaWikiApiErrorException;
+import static org.mockito.ArgumentMatchers.anyMap;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.verify;
+import static org.openrefine.util.TestUtils.assertEqualAsJson;
+import static org.openrefine.wikidata.commands.LoginCommand.ACCESS_SECRET;
+import static org.openrefine.wikidata.commands.LoginCommand.ACCESS_TOKEN;
+import static org.openrefine.wikidata.commands.LoginCommand.API_ENDPOINT;
+import static org.openrefine.wikidata.commands.LoginCommand.CONSUMER_SECRET;
+import static org.openrefine.wikidata.commands.LoginCommand.CONSUMER_TOKEN;
+import static org.openrefine.wikidata.commands.LoginCommand.PASSWORD;
+import static org.openrefine.wikidata.commands.LoginCommand.USERNAME;
+import static org.openrefine.wikidata.commands.LoginCommand.WIKIBASE_COOKIE_PREFIX;
+import static org.openrefine.wikidata.commands.LoginCommand.getCookieValue;
+import static org.openrefine.wikidata.commands.LoginCommand.removeCRLF;
+import static org.powermock.api.mockito.PowerMockito.doNothing;
+import static org.powermock.api.mockito.PowerMockito.doThrow;
+import static org.powermock.api.mockito.PowerMockito.mock;
+import static org.powermock.api.mockito.PowerMockito.mockStatic;
+import static org.powermock.api.mockito.PowerMockito.when;
+import static org.powermock.api.mockito.PowerMockito.whenNew;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertFalse;
+import static org.testng.Assert.assertNotEquals;
+import static org.testng.Assert.assertNotNull;
+import static org.testng.Assert.assertNull;
+import static org.testng.Assert.assertTrue;
 
-import javax.servlet.ServletException;
-import javax.servlet.http.Cookie;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -28,13 +38,23 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static com.google.refine.util.TestUtils.assertEqualAsJson;
-import static org.mockito.ArgumentMatchers.anyMap;
-import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.verify;
-import static org.openrefine.wikidata.commands.LoginCommand.*;
-import static org.powermock.api.mockito.PowerMockito.*;
-import static org.testng.Assert.*;
+import javax.servlet.ServletException;
+import javax.servlet.http.Cookie;
+
+import org.mockito.ArgumentCaptor;
+import org.openrefine.ProjectManager;
+import org.openrefine.commands.Command;
+import org.openrefine.preference.PreferenceStore;
+import org.openrefine.util.ParsingUtilities;
+import org.powermock.core.classloader.annotations.PrepareForTest;
+import org.testng.annotations.BeforeClass;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Test;
+import org.wikidata.wdtk.wikibaseapi.BasicApiConnection;
+import org.wikidata.wdtk.wikibaseapi.LoginFailedException;
+import org.wikidata.wdtk.wikibaseapi.OAuthApiConnection;
+import org.wikidata.wdtk.wikibaseapi.apierrors.AssertUserFailedException;
+import org.wikidata.wdtk.wikibaseapi.apierrors.MediaWikiApiErrorException;
 
 @PrepareForTest(ConnectionManager.class)
 public class LoginCommandTest extends CommandTest {

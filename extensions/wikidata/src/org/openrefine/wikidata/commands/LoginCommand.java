@@ -23,14 +23,9 @@
  ******************************************************************************/
 package org.openrefine.wikidata.commands;
 
-import org.openrefine.commands.Command;
-import org.wikidata.wdtk.wikibaseapi.ApiConnection;
-import org.wikidata.wdtk.wikibaseapi.BasicApiConnection;
+import static org.apache.commons.lang.StringUtils.isBlank;
+import static org.apache.commons.lang.StringUtils.isNotBlank;
 
-import javax.servlet.ServletException;
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.HttpCookie;
@@ -41,13 +36,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.openrefine.commands.Command;
-import org.openrefine.util.ParsingUtilities;
-import org.openrefine.wikidata.editing.ConnectionManager;
+import javax.servlet.ServletException;
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
-import com.fasterxml.jackson.core.JsonGenerator;
-import static org.apache.commons.lang.StringUtils.isBlank;
-import static org.apache.commons.lang.StringUtils.isNotBlank;
+import org.openrefine.commands.Command;
+import org.wikidata.wdtk.wikibaseapi.ApiConnection;
+import org.wikidata.wdtk.wikibaseapi.BasicApiConnection;
 
 /**
  * Handles login.

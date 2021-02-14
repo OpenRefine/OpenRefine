@@ -1,5 +1,9 @@
 package org.openrefine.wikidata.qa.scrutinizers;
 
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
+
 import org.openrefine.wikidata.qa.QAWarning;
 import org.wikidata.wdtk.datamodel.interfaces.EntityIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.PropertyIdValue;
@@ -7,10 +11,6 @@ import org.wikidata.wdtk.datamodel.interfaces.Snak;
 import org.wikidata.wdtk.datamodel.interfaces.SnakGroup;
 import org.wikidata.wdtk.datamodel.interfaces.Statement;
 import org.wikidata.wdtk.datamodel.interfaces.Value;
-
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 
 public class RestrictedValuesScrutinizer extends SnakScrutinizer {

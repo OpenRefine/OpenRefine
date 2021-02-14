@@ -23,19 +23,19 @@
  ******************************************************************************/
 package org.openrefine.wikidata.qa.scrutinizers;
 
-import org.openrefine.wikidata.qa.QAWarning;
-import org.wikidata.wdtk.datamodel.interfaces.EntityIdValue;
-import org.wikidata.wdtk.datamodel.interfaces.PropertyIdValue;
-import org.wikidata.wdtk.datamodel.interfaces.SnakGroup;
-import org.wikidata.wdtk.datamodel.interfaces.Statement;
-import org.wikidata.wdtk.datamodel.interfaces.Value;
-
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
+
+import org.openrefine.wikidata.qa.QAWarning;
+import org.wikidata.wdtk.datamodel.interfaces.EntityIdValue;
+import org.wikidata.wdtk.datamodel.interfaces.PropertyIdValue;
+import org.wikidata.wdtk.datamodel.interfaces.SnakGroup;
+import org.wikidata.wdtk.datamodel.interfaces.Statement;
+import org.wikidata.wdtk.datamodel.interfaces.Value;
 
 /**
  * A scrutinizer that checks the compatibility of the qualifiers and the

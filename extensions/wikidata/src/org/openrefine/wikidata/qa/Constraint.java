@@ -1,14 +1,14 @@
 package org.openrefine.wikidata.qa;
 
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
 import org.wikidata.wdtk.datamodel.interfaces.EntityIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.ItemIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.Snak;
 import org.wikidata.wdtk.datamodel.interfaces.SnakGroup;
 import org.wikidata.wdtk.datamodel.interfaces.Statement;
-
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
 
 /**
  * Constraint class is defined to parse the common parameters of property constraints

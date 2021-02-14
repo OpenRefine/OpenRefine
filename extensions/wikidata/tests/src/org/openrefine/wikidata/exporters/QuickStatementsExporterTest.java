@@ -26,23 +26,32 @@ package org.openrefine.wikidata.exporters;
 import static org.testng.Assert.assertEquals;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.io.StringWriter;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Properties;
 
+import org.openrefine.ProjectMetadata;
+import org.openrefine.RefineTest;
 import org.openrefine.browsing.Engine;
-import org.openrefine.model.Project;
+import org.openrefine.browsing.EngineConfig;
+import org.openrefine.model.GridState;
 import org.openrefine.wikidata.schema.WikibaseSchema;
 import org.openrefine.wikidata.testing.TestingData;
-import org.openrefine.wikidata.testing.WikidataRefineTest;
 import org.openrefine.wikidata.updates.ItemUpdate;
 import org.openrefine.wikidata.updates.ItemUpdateBuilder;
 import org.testng.annotations.Test;
 import org.wikidata.wdtk.datamodel.helpers.Datamodel;
-import org.wikidata.wdtk.datamodel.interfaces.*;
+import org.wikidata.wdtk.datamodel.interfaces.Claim;
+import org.wikidata.wdtk.datamodel.interfaces.ItemIdValue;
+import org.wikidata.wdtk.datamodel.interfaces.Reference;
+import org.wikidata.wdtk.datamodel.interfaces.Snak;
+import org.wikidata.wdtk.datamodel.interfaces.SnakGroup;
+import org.wikidata.wdtk.datamodel.interfaces.Statement;
+import org.wikidata.wdtk.datamodel.interfaces.StatementRank;
 
-public class QuickStatementsExporterTest extends WikidataRefineTest {
+public class QuickStatementsExporterTest extends RefineTest {
 
     private QuickStatementsExporter exporter = new QuickStatementsExporter();
     private ItemIdValue newIdA = TestingData.newIdA;
@@ -60,17 +69,21 @@ public class QuickStatementsExporterTest extends WikidataRefineTest {
     @Test
     public void testSimpleProject()
             throws IOException {
-        Project project = this.createCSVProject(TestingData.inceptionWithNewCsv);
-        TestingData.reconcileInceptionCells(project);
+        GridState grid = createGrid(
+        		new String[] { "subject", "inception", "reference" },
+        		new Serializable[][] {
+		  {TestingData.makeMatchedCell("Q1377", "University of Ljubljana"),"1919","http://www.ljubljana-slovenia.com/university-ljubljana" },
+		  {TestingData.makeMatchedCell("Q865528", "University of Warwick"),"1965",""},
+		  {TestingData.makeNewItemCell(1234L, "new uni"),"2016","http://new-uni.com/"}});
         String serialized = TestingData.jsonFromFile("schema/inception.json");
         WikibaseSchema schema = WikibaseSchema.reconstruct(serialized);
-        project.overlayModels.put("wikibaseSchema", schema);
-        Engine engine = new Engine(project);
+        grid = grid.withOverlayModels(Collections.singletonMap("wikibaseSchema", schema));
+        Engine engine = new Engine(grid, EngineConfig.ALL_ROWS);
 
         StringWriter writer = new StringWriter();
         Properties properties = new Properties();
-        exporter.export(project, properties, engine, writer);
-        assertEquals(TestingData.inceptionWithNewQS, writer.toString());
+        exporter.export(grid, new ProjectMetadata(), properties, engine, writer);
+        assertEquals(writer.toString(), TestingData.inceptionWithNewQS);
     }
 
     @Test
@@ -165,11 +178,13 @@ public class QuickStatementsExporterTest extends WikidataRefineTest {
     @Test
     public void testNoSchema()
             throws IOException {
-        Project project = this.createCSVProject("a,b\nc,d");
-        Engine engine = new Engine(project);
+        GridState grid = this.createGrid(
+        		new String[] {"a", "b"},
+        		new Serializable[][] {{"c","d"}});
+        Engine engine = new Engine(grid, EngineConfig.ALL_ROWS);
         StringWriter writer = new StringWriter();
         Properties properties = new Properties();
-        exporter.export(project, properties, engine, writer);
+        exporter.export(grid, new ProjectMetadata(), properties, engine, writer);
         assertEquals(QuickStatementsExporter.noSchemaErrorMessage, writer.toString());
     }
 

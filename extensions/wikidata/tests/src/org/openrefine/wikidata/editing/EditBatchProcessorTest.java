@@ -37,8 +37,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import org.openrefine.RefineTest;
 import org.openrefine.wikidata.testing.TestingData;
-import org.openrefine.wikidata.testing.WikidataRefineTest;
 import org.openrefine.wikidata.updates.ItemUpdate;
 import org.openrefine.wikidata.updates.ItemUpdateBuilder;
 import org.testng.annotations.BeforeMethod;
@@ -53,7 +53,7 @@ import org.wikidata.wdtk.wikibaseapi.WikibaseDataEditor;
 import org.wikidata.wdtk.wikibaseapi.WikibaseDataFetcher;
 import org.wikidata.wdtk.wikibaseapi.apierrors.MediaWikiApiErrorException;
 
-public class EditBatchProcessorTest extends WikidataRefineTest {
+public class EditBatchProcessorTest extends RefineTest {
 
     private WikibaseDataFetcher fetcher = null;
     private WikibaseDataEditor editor = null;

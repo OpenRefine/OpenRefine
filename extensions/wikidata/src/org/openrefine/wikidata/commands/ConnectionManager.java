@@ -23,10 +23,16 @@
  ******************************************************************************/
 package org.openrefine.wikidata.commands;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.refine.ProjectManager;
-import com.google.refine.preference.PreferenceStore;
+import java.io.IOException;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.servlet.http.Cookie;
+
+import org.openrefine.ProjectManager;
+import org.openrefine.preference.PreferenceStore;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wikidata.wdtk.wikibaseapi.ApiConnection;
@@ -35,12 +41,7 @@ import org.wikidata.wdtk.wikibaseapi.LoginFailedException;
 import org.wikidata.wdtk.wikibaseapi.OAuthApiConnection;
 import org.wikidata.wdtk.wikibaseapi.apierrors.MediaWikiApiErrorException;
 
-import javax.servlet.http.Cookie;
-import java.io.IOException;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
  * Manages a connection to the current Wikibase instance.
@@ -164,8 +165,9 @@ public class ConnectionManager {
 
     /**
      * For testability.
+     * @throws IOException 
      */
-    static BasicApiConnection convertToBasicApiConnection(Map<String, Object> map) throws JsonProcessingException {
+    static BasicApiConnection convertToBasicApiConnection(Map<String, Object> map) throws IOException {
         ObjectMapper mapper = new ObjectMapper();
         String json = mapper.writeValueAsString(map);
         return mapper.readValue(json, BasicApiConnection.class);

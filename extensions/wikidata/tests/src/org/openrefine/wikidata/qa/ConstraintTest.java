@@ -1,5 +1,14 @@
 package org.openrefine.wikidata.qa;
 
+import static org.openrefine.wikidata.qa.Constraint.CONSTRAINT_EXCEPTIONS;
+import static org.openrefine.wikidata.qa.Constraint.CONSTRAINT_STATUS;
+
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -14,15 +23,6 @@ import org.wikidata.wdtk.datamodel.interfaces.SnakGroup;
 import org.wikidata.wdtk.datamodel.interfaces.Statement;
 import org.wikidata.wdtk.datamodel.interfaces.StatementRank;
 import org.wikidata.wdtk.datamodel.interfaces.Value;
-
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
-import static org.openrefine.wikidata.qa.Constraint.CONSTRAINT_EXCEPTIONS;
-import static org.openrefine.wikidata.qa.Constraint.CONSTRAINT_STATUS;
 
 public class ConstraintTest {
 

@@ -1,11 +1,13 @@
 package org.openrefine.wikidata.manifests;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import java.io.IOException;
+
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 public final class ManifestParser {
 
@@ -17,7 +19,7 @@ public final class ManifestParser {
         JsonNode root;
         try {
             root = mapper.readTree(manifestJson);
-        } catch (JsonProcessingException e) {
+        } catch (IOException e) {
             throw new ManifestException("invalid manifest format", e);
         }
 
