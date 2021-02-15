@@ -27,19 +27,23 @@
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package com.google.refine.extension.database.sqlite;
-
-import com.google.refine.extension.database.DBExtensionTests;
-import com.google.refine.extension.database.DatabaseConfiguration;
-import com.google.refine.extension.database.DatabaseService;
-import com.google.refine.extension.database.DatabaseServiceException;
-import org.mockito.MockitoAnnotations;
-import org.testng.Assert;
-import org.testng.annotations.*;
+package org.openrefine.extension.database.sqlite;
 
 import java.io.File;
 import java.sql.Connection;
 import java.sql.SQLException;
+
+import org.mockito.MockitoAnnotations;
+import org.openrefine.extension.database.DBExtensionTests;
+import org.openrefine.extension.database.DatabaseConfiguration;
+import org.openrefine.extension.database.DatabaseService;
+import org.openrefine.extension.database.DatabaseServiceException;
+import org.testng.Assert;
+import org.testng.annotations.AfterTest;
+import org.testng.annotations.BeforeTest;
+import org.testng.annotations.Optional;
+import org.testng.annotations.Parameters;
+import org.testng.annotations.Test;
 
 @Test(groups = { "requiresSQLite" })
 public class SQLiteConnectionManagerTest extends DBExtensionTests {

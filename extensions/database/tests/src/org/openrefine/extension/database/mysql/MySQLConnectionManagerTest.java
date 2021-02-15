@@ -8,8 +8,6 @@ import org.openrefine.extension.database.DBExtensionTests;
 import org.openrefine.extension.database.DatabaseConfiguration;
 import org.openrefine.extension.database.DatabaseService;
 import org.openrefine.extension.database.DatabaseServiceException;
-import org.openrefine.extension.database.mysql.MySQLConnectionManager;
-import org.openrefine.extension.database.mysql.MySQLDatabaseService;
 import org.testng.Assert;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Optional;

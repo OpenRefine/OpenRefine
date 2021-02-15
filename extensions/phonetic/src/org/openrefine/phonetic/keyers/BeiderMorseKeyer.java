@@ -17,7 +17,7 @@ public class BeiderMorseKeyer extends Keyer {
              * encodings, separated by |.
              * Ideally the Keyer interface should be changed to allow
              * for multiple values to be returned (and the clustering code
-             * should be adapted accourdingly).
+             * should be adapted accordingly).
              * 
              * As a simple workaround we only return the first value.
              * We could also return the entire list but it would make

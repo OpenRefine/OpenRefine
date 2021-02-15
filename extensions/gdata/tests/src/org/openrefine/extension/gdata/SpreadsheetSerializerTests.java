@@ -1,4 +1,4 @@
-package com.google.refine.extension.gdata;
+package org.openrefine.extension.gdata;
 
 import static org.mockito.Mockito.mock;
 import static org.testng.Assert.assertEquals;
@@ -20,7 +20,7 @@ import com.google.api.services.sheets.v4.model.AppendDimensionRequest;
 import com.google.api.services.sheets.v4.model.ExtendedValue;
 import com.google.api.services.sheets.v4.model.Request;
 import com.google.api.services.sheets.v4.model.RowData;
-import com.google.refine.exporters.TabularSerializer.CellData;
+import org.openrefine.exporters.TabularSerializer.CellData;
 
 public class SpreadsheetSerializerTests {
 

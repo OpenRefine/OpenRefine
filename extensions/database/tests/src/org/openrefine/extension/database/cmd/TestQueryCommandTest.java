@@ -12,11 +12,12 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.openrefine.commands.Command;
 import org.openrefine.extension.database.DBExtensionTests;
 import org.openrefine.extension.database.DatabaseConfiguration;
 import org.openrefine.extension.database.DatabaseService;
-import org.openrefine.extension.database.cmd.TestQueryCommand;
 import org.openrefine.extension.database.mysql.MySQLDatabaseService;
+import org.openrefine.util.ParsingUtilities;
 import org.testng.Assert;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Optional;
@@ -24,8 +25,6 @@ import org.testng.annotations.Parameters;
 import org.testng.annotations.Test;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import org.openrefine.commands.Command;
-import org.openrefine.util.ParsingUtilities;
 
 @Test(groups = { "requiresMySQL" })
 public class TestQueryCommandTest extends DBExtensionTests {

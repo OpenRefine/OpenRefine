@@ -39,36 +39,41 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.openrefine.ProjectManager;
+import org.openrefine.ProjectMetadata;
+import org.openrefine.RefineServlet;
+import org.openrefine.commands.HttpUtilities;
 import org.openrefine.extension.database.model.DatabaseColumn;
 import org.openrefine.extension.database.model.DatabaseQueryInfo;
+import org.openrefine.importers.TabularParserHelper;
+import org.openrefine.importing.ImportingController;
+import org.openrefine.importing.ImportingJob;
+import org.openrefine.importing.ImportingManager;
+import org.openrefine.model.GridState;
+import org.openrefine.model.Project;
+import org.openrefine.model.changes.ChangeDataStore;
+import org.openrefine.model.changes.LazyChangeDataStore;
+import org.openrefine.util.JSONUtilities;
+import org.openrefine.util.ParsingUtilities;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import org.openrefine.ProjectManager;
-import org.openrefine.ProjectMetadata;
-import org.openrefine.RefineServlet;
-import org.openrefine.commands.HttpUtilities;
-import org.openrefine.importers.TabularImportingParserBase;
-import org.openrefine.importing.ImportingController;
-import org.openrefine.importing.ImportingJob;
-import org.openrefine.importing.ImportingManager;
-import org.openrefine.model.Project;
-import org.openrefine.util.JSONUtilities;
-import org.openrefine.util.ParsingUtilities;
 
 
 public class DatabaseImportController implements ImportingController {
     
     private static final Logger logger = LoggerFactory.getLogger("DatabaseImportController");
     protected RefineServlet servlet;
+    protected TabularParserHelper tabularParserHelper;
     public static int DEFAULT_PREVIEW_LIMIT = 100; 
     public static String OPTIONS_KEY = "options";
     
     @Override
     public void init(RefineServlet servlet) {
         this.servlet = servlet;
+        tabularParserHelper = new TabularParserHelper(RefineServlet.getDatamodelRunner());
     }
 
     @Override
@@ -124,7 +129,7 @@ public class DatabaseImportController implements ImportingController {
         return message;
     }
 
-    /**https://mamot.fr/web/getting-started
+    /**
      * 
      * @param request
      * @param response
@@ -194,12 +199,9 @@ public class DatabaseImportController implements ImportingController {
                     request.getParameter("options"));
                 
                 List<Exception> exceptions = new LinkedList<Exception>();
-                
-                job.prepareNewProject();
-                
+
                 parsePreview(
                     databaseQueryInfo,
-                    job.project,
                     job.metadata,
                     job,
                     DEFAULT_PREVIEW_LIMIT ,
@@ -211,7 +213,6 @@ public class DatabaseImportController implements ImportingController {
                 try {
                     writer.writeStartObject();
                     if (exceptions.size() == 0) {
-                        job.project.update(); // update all internal models, indexes, caches, etc.
                         writer.writeStringField("status", "ok");
                     } else {
                         writer.writeStringField("status", "error");
@@ -257,9 +258,8 @@ public class DatabaseImportController implements ImportingController {
      * @param exceptions
      * @throws DatabaseServiceException
      */
-    private static void parsePreview(
+    private void parsePreview(
             DatabaseQueryInfo dbQueryInfo, 
-            Project project, 
             ProjectMetadata metadata,
             final ImportingJob job, 
             int limit, 
@@ -278,17 +278,20 @@ public class DatabaseImportController implements ImportingController {
         JSONUtilities.safePut(options, "ignoreLines", 0); // number of blank lines at the beginning to ignore
         JSONUtilities.safePut(options, "headerLines", 1); // number of header lines
 
-        
-        TabularImportingParserBase.readTable(
-                project,
-                metadata,
-                job,
-                new DBQueryResultPreviewReader(job, databaseService, querySource, columns, dbQueryInfo, 100),
-                querySource,
-                limit,
-                options,
-                exceptions
-            );
+        try {
+            GridState grid = tabularParserHelper.parseOneFile(
+                    metadata,
+                    job,
+                    querySource, // fileSource
+                    "", // archiveFileName
+                    new DBQueryResultImportReader(job, databaseService, querySource, columns, dbQueryInfo, 100),
+                    limit,
+                    options);
+            // this is just a preview so no changes will be applied to this project
+            job.setProject(new Project(grid, new LazyChangeDataStore()));
+        } catch (Exception e) {
+            exceptions.add(e);
+        }
         
         setProgress(job, querySource, 100);
        
@@ -327,8 +330,6 @@ public class DatabaseImportController implements ImportingController {
                 final List<Exception> exceptions = new LinkedList<Exception>();
                 
                 job.setState("creating-project");
-                
-                final Project project = new Project();
               
                 new Thread() {
                     @Override
@@ -340,7 +341,6 @@ public class DatabaseImportController implements ImportingController {
                         try {
                             parseCreate(
                                 databaseQueryInfo,
-                                project,
                                 pm,
                                 job,
                                 -1,
@@ -355,11 +355,10 @@ public class DatabaseImportController implements ImportingController {
                         if (!job.canceled) {
                             if (exceptions.size() > 0) {
                                 job.setError(exceptions);
-                            } else {
-                                project.update(); // update all internal models, indexes, caches, etc.             
-                                ProjectManager.singleton.registerProject(project, pm);                               
+                            } else {             
+                                ProjectManager.singleton.registerProject(job.getProject(), pm);                               
                                 job.setState("created-project");
-                                job.setProjectID(project.id);
+                                job.setProjectID(job.getProject().getId());
                                // logger.info("DatabaseImportController::doCreateProject:::run::projectID :{}", project.id);
                             }
                             
@@ -386,9 +385,8 @@ public class DatabaseImportController implements ImportingController {
      * @param exceptions
      * @throws DatabaseServiceException
      */
-    private static void parseCreate(
+    private void parseCreate(
             DatabaseQueryInfo dbQueryInfo, 
-            Project project, 
             ProjectMetadata metadata,
             final ImportingJob job, 
             int limit, 
@@ -408,16 +406,22 @@ public class DatabaseImportController implements ImportingController {
     
         long startTime = System.currentTimeMillis() ;
         
-        TabularImportingParserBase.readTable(
-                project,
-                metadata,
-                job,
-                new DBQueryResultImportReader(job, databaseService, querySource, columns, dbQueryInfo, getCreateBatchSize()),
-                querySource,
-                limit,
-                options,
-                exceptions
-            );
+        try {
+            GridState grid = tabularParserHelper.parseOneFile(
+                    metadata,
+                    job,
+                    querySource, // fileSource
+                    "", // archiveFileName
+                    new DBQueryResultImportReader(job, databaseService, querySource, columns, dbQueryInfo, getCreateBatchSize()),
+                    limit,
+                    options);
+            long projectId = Project.generateID();
+            ChangeDataStore dataStore = ProjectManager.singleton.getChangeDataStore(projectId);
+            job.setProject(new Project(projectId, grid, dataStore));
+        } catch (Exception e) {
+            exceptions.add(e);
+        }
+
         
         long endTime = System.currentTimeMillis() ;
         if(logger.isDebugEnabled()) {

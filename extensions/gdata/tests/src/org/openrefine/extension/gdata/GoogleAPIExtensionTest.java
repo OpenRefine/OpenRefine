@@ -1,6 +1,6 @@
-package com.google.refine.extension.gdata;
+package org.openrefine.extension.gdata;
 
-import com.google.refine.ProjectManager;
+import org.openrefine.ProjectManager;
 import org.testng.annotations.Test;
 
 import static org.mockito.Mockito.mock;

@@ -1,6 +1,5 @@
 package org.openrefine.extension.database;
 
-import org.openrefine.extension.database.SimpleTextEncryptor;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 

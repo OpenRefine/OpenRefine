@@ -173,10 +173,10 @@
     </dependency>
     
     <dependency>
-	    <groupId>org.owasp.encoder</groupId>
-	    <artifactId>encoder</artifactId>
-	    <version>1.2.3</version>
-	</dependency>
+      <groupId>org.owasp.encoder</groupId>
+      <artifactId>encoder</artifactId>
+      <version>1.2.3</version>
+    </dependency>
 
   
 
@@ -190,6 +190,12 @@
       <groupId>org.mockito</groupId>
       <artifactId>mockito-core</artifactId>
       <version>3.6.28</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>or-testing</artifactId>
+      <version>${project.version}</version>
       <scope>test</scope>
     </dependency>
 

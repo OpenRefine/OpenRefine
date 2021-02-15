@@ -52,6 +52,7 @@ import org.openrefine.commands.project.ExportRowsCommand;
 import org.openrefine.exporters.CustomizableTabularExporterUtilities;
 import org.openrefine.io.FileProjectManager;
 import org.openrefine.model.Project;
+import org.openrefine.sorting.SortingConfig;
 import org.openrefine.util.ParsingUtilities;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -208,7 +209,7 @@ public class UploadCommand extends Command {
                     exceptions);
             
             CustomizableTabularExporterUtilities.exportRows(
-                    project, engine, params, serializer);
+                    project.getCurrentGridState(), engine, params, serializer, SortingConfig.NO_SORTING);
             
             return serializer.getUrl();
         } catch (IOException e) {

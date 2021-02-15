@@ -12,7 +12,6 @@ import org.openrefine.extension.database.DatabaseServiceException;
 import org.openrefine.extension.database.model.DatabaseColumn;
 import org.openrefine.extension.database.model.DatabaseInfo;
 import org.openrefine.extension.database.model.DatabaseRow;
-import org.openrefine.extension.database.mysql.MySQLDatabaseService;
 import org.testng.Assert;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Optional;

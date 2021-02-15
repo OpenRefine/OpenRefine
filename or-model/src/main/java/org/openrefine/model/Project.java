@@ -41,12 +41,10 @@ import org.openrefine.ProjectMetadata;
 import org.openrefine.history.History;
 import org.openrefine.model.changes.ChangeDataStore;
 import org.openrefine.overlay.OverlayModel;
+import org.openrefine.overlay.OverlayModelResolver;
 import org.openrefine.process.ProcessManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
  * A project is a table with overlay models and full edit history. This is the central
@@ -157,5 +155,15 @@ public class Project {
      */
     public Map<String, OverlayModel> getOverlayModels() {
         return history.getCurrentGridState().getOverlayModels();
+    }
+    
+    /**
+     * @deprecated use {@link org.openrefine.overlay.OverlayModelResolver}
+     * @param name
+     * @param klass
+     */
+    @Deprecated
+    public static void registerOverlayModel(String name, Class<? extends OverlayModel> klass) {
+        OverlayModelResolver.registerOverlayModel(name, klass);
     }
 }

@@ -4,9 +4,6 @@ package org.openrefine.extension.database;
 import java.sql.Connection;
 import java.util.List;
 
-import org.openrefine.extension.database.DatabaseConfiguration;
-import org.openrefine.extension.database.DatabaseService;
-import org.openrefine.extension.database.DatabaseServiceException;
 import org.openrefine.extension.database.mariadb.MariaDBDatabaseService;
 import org.openrefine.extension.database.model.DatabaseColumn;
 import org.openrefine.extension.database.model.DatabaseInfo;
@@ -14,7 +11,6 @@ import org.openrefine.extension.database.model.DatabaseRow;
 import org.openrefine.extension.database.mysql.MySQLDatabaseService;
 import org.openrefine.extension.database.pgsql.PgSQLDatabaseService;
 import org.openrefine.extension.database.sqlite.SQLiteDatabaseService;
-
 import org.testng.Assert;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Optional;

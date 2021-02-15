@@ -53,7 +53,11 @@ import org.openrefine.importing.DefaultImportingController;
 import org.openrefine.importing.ImportingController;
 import org.openrefine.importing.ImportingJob;
 import org.openrefine.importing.ImportingManager;
+import org.openrefine.model.DatamodelRunner;
+import org.openrefine.model.GridState;
 import org.openrefine.model.Project;
+import org.openrefine.model.changes.ChangeDataStore;
+import org.openrefine.model.changes.LazyChangeDataStore;
 import org.openrefine.util.JSONUtilities;
 import org.openrefine.util.ParsingUtilities;
 import org.slf4j.Logger;
@@ -73,10 +77,12 @@ import com.google.api.services.sheets.v4.model.Spreadsheet;
 public class GDataImportingController implements ImportingController {
     private static final Logger logger = LoggerFactory.getLogger("GDataImportingController");
     protected RefineServlet servlet;
+    protected DatamodelRunner runner;
     
     @Override
     public void init(RefineServlet servlet) {
         this.servlet = servlet;
+        runner = RefineServlet.getDatamodelRunner();
     }
 
     @Override
@@ -245,24 +251,27 @@ public class GDataImportingController implements ImportingController {
         
         List<Exception> exceptions = new LinkedList<Exception>();
         
-        job.prepareNewProject();
-        
-        GDataImporter.parse(
-            token,
-            job.project,
-            job.metadata,
-            job,
-            100,
-            optionObj,
-            exceptions
-        );
+        GridState grid = null;
+        try {
+            grid = GDataImporter.parse(
+                runner,
+                token,
+                job.metadata,
+                job,
+                100,
+                optionObj
+            );
+            // this is just a preview so there will not be any changes applied on the project.
+            job.setProject(new Project(grid, new LazyChangeDataStore()));
+        } catch (Exception e1) {
+            exceptions.add(e1);
+        }
         
         Writer w = response.getWriter();
         JsonGenerator writer = ParsingUtilities.mapper.getFactory().createGenerator(w);
         try {
             writer.writeStartObject();
             if (exceptions.size() == 0) {
-                job.project.update(); // update all internal models, indexes, caches, etc.
                 
                 writer.writeStringField("status", "ok");
             } else {
@@ -306,7 +315,6 @@ public class GDataImportingController implements ImportingController {
         
         job.setState("creating-project");
         
-        final Project project = new Project();
         new Thread() {
             @Override
             public void run() {
@@ -314,30 +322,33 @@ public class GDataImportingController implements ImportingController {
                 pm.setName(JSONUtilities.getString(optionObj, "projectName", "Untitled"));
                 pm.setEncoding(JSONUtilities.getString(optionObj, "encoding", "UTF-8"));
                 
+                GridState grid = null;
                 try {
-                    GDataImporter.parse(
+                    grid = GDataImporter.parse(
+                        runner,
                         token,
-                        project,
                         pm,
                         job,
                         -1,
-                        optionObj,
-                        exceptions
+                        optionObj
                     );
-                } catch (IOException e) {
-                    logger.error(ExceptionUtils.getStackTrace(e));
+                } catch (Exception e) {
+                    exceptions.add(e);
                 }
                 
                 if (!job.canceled) {
                     if (exceptions.size() > 0) {
                         job.setError(exceptions);
                     } else {
-                        project.update(); // update all internal models, indexes, caches, etc.
+                        long projectId = Project.generateID();
+                        ChangeDataStore changeDataStore = ProjectManager.singleton.getChangeDataStore(projectId);
+                        Project project = new Project(projectId, grid, changeDataStore);
+                        job.setProject(project);
                         
                         ProjectManager.singleton.registerProject(project, pm);
                         
                         job.setState("created-project");
-                        job.setProjectID(project.id);
+                        job.setProjectID(job.getProject().getId());
                     }
                     
                     job.touch();
