@@ -944,7 +944,9 @@ add_option "-Dpython.cachedir=$HOME/.local/share/google/refine/cachedir"
 
 if [ ! -z "$GDATA_CLIENT_ID" ] ; then
     if [ ! -z "$GDATA_CLIENT_SECRET" ] ; then
-        add_option "-Dext.gdata.clientid=$GDATA_CLIENT_ID" "-Dext.gdata.clientsecret=$GDATA_CLIENT_SECRET"
+        if [ ! -z "$GDATA_API_KEY" ] ; then
+            add_option "-Dext.gdata.clientid=$GDATA_CLIENT_ID" "-Dext.gdata.clientsecret=$GDATA_CLIENT_SECRET" "-Dext.gdata.apikey=$GDATA_API_KEY"
+        fi
     fi
 fi
 
