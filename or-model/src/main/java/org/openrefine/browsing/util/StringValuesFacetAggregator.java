@@ -26,6 +26,7 @@ public class StringValuesFacetAggregator extends ExpressionValueFacetAggregator<
      *      the list of columns of the table where this facet is being applied
      * @param cellIndex
      *      the index of the base column where the evaluable is run
+     *      (-1 if no base column is used, for instance for the flag/star facets)
      * @param evaluable
      *      the evaluable which generates the values held by this facet
      * @param selected
@@ -71,7 +72,7 @@ public class StringValuesFacetAggregator extends ExpressionValueFacetAggregator<
                     null :
                     new ExpressionEqualRowFilter(
                         _eval, 
-                        _columnModel.getColumns().get(_cellIndex).getName(),
+                        _cellIndex == -1 ? null : _columnModel.getColumns().get(_cellIndex).getName(),
                         _cellIndex, 
                         _selected, 
                         _selectBlanks, 

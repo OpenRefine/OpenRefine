@@ -96,7 +96,7 @@ public class FillDownTests extends RefineTest {
 			{ "",   "b", "d" },
 			{ "e",  "b", "f" },
 			{ null, "g", "h" },
-			{ null, "g", "i"}
+			{ null, "g", "i" }
 		});
 		
 		assertGridEquals(applied, expectedGrid);

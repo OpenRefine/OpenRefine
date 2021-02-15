@@ -61,7 +61,7 @@ public abstract class DatamodelRunnerTestBase {
     
     protected DatamodelRunner SUT;
     
-    protected GridState simpleGrid, gridToSort;
+    protected GridState simpleGrid, longerGrid, gridToSort;
     protected ChangeData<String> simpleChangeData;
     protected List<Row> expectedRows;
     protected List<Record> expectedRecords;
@@ -124,6 +124,15 @@ public abstract class DatamodelRunnerTestBase {
             { "a", "b" },
             { "", 1 },
             { "c", true },
+            { null, 123123123123L }
+        });
+        longerGrid = createGrid(new String[] { "foo", "bar" },
+                new Serializable[][] {
+            { "a", "b" },
+            { "", "d" },
+            { "", 1 },
+            { "c", true },
+            { "e", "f" },
             { null, 123123123123L }
         });
         gridToSort = createGrid(new String[] { "foo", "bar" },
@@ -645,13 +654,16 @@ public abstract class DatamodelRunnerTestBase {
     
     @Test
     public void testStatefullyMapRows() {
-        GridState mapped = simpleGrid.mapRows(
+        GridState mapped = longerGrid.mapRows(
                 statefulRowMapper, simpleGrid.getColumnModel());
         
         List<IndexedRow> rows = mapped.collectRows();
         Assert.assertEquals(rows.get(0).getRow().getCellValue(1), "b");
-        Assert.assertEquals(rows.get(1).getRow().getCellValue(1), "b1");
-        Assert.assertEquals(rows.get(2).getRow().getCellValue(1), "b1true");
+        Assert.assertEquals(rows.get(1).getRow().getCellValue(1), "bd");
+        Assert.assertEquals(rows.get(2).getRow().getCellValue(1), "bd1");
+        Assert.assertEquals(rows.get(3).getRow().getCellValue(1), "bd1true");
+        Assert.assertEquals(rows.get(4).getRow().getCellValue(1), "bd1truef");  
+        Assert.assertEquals(rows.get(5).getRow().getCellValue(1), "bd1truef123123123123");
     }
     
     

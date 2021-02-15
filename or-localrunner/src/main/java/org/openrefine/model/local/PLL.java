@@ -355,7 +355,7 @@ public abstract class PLL<T> {
             public U next() {
                 T element = iterator.next();
                 U result = map.apply(currentState, element);
-                currentState = feed.apply(element);
+                currentState = combine.apply(currentState, feed.apply(element));
                 return result;
             }
             
