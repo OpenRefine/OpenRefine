@@ -11,8 +11,6 @@
 import 'cypress-file-upload';
 import 'cypress-wait-until';
 
-const fixtures = require('../fixtures/fixtures.js');
-
 /**
  * Return the .facets-container for a given facet name
  */
@@ -247,7 +245,8 @@ Cypress.Commands.add(
     cy.get('#create-project-ui-source-selection-tabs > div')
       .contains('Clipboard')
       .click();
-    cy.get('textarea').invoke('val', fixtures[fixture]);
+
+    cy.get('textarea').invoke('val', fixture);
     cy.get(
       '.create-project-ui-source-selection-tab-body.selected button.button-primary'
     )
