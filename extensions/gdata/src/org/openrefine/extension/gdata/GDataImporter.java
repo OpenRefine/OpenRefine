@@ -2,7 +2,6 @@
 package org.openrefine.extension.gdata;
 
 import java.io.IOException;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.List;
 
@@ -11,52 +10,51 @@ import com.google.api.services.sheets.v4.Sheets;
 import com.google.api.services.sheets.v4.model.Sheet;
 import com.google.api.services.sheets.v4.model.Spreadsheet;
 import com.google.api.services.sheets.v4.model.ValueRange;
-import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import org.openrefine.ProjectMetadata;
-import org.openrefine.importers.TabularImportingParserBase;
-import org.openrefine.importers.TabularImportingParserBase.TableDataReader;
+import org.openrefine.importers.TabularParserHelper;
+import org.openrefine.importers.TabularParserHelper.TableDataReader;
 import org.openrefine.importing.ImportingJob;
-import org.openrefine.model.Project;
+import org.openrefine.model.DatamodelRunner;
+import org.openrefine.model.GridState;
 import org.openrefine.util.JSONUtilities;
 
 public class GDataImporter {
 
     static final Logger logger = LoggerFactory.getLogger("GDataImporter");
 
-    static public void parse(
+    static public GridState parse(
+            DatamodelRunner runner,
             String token,
-            Project project,
             ProjectMetadata metadata,
             final ImportingJob job,
             int limit,
-            ObjectNode options,
-            List<Exception> exceptions) throws IOException {
+            ObjectNode options) throws Exception {
 
         String docType = JSONUtilities.getString(options, "docType", null);
         if ("spreadsheet".equals(docType)) {
             Sheets service = GoogleAPIExtension.getSheetsService(token);
-            parse(
+            return parse(
+                    runner,
                     service,
-                    project,
                     metadata,
                     job,
                     limit,
-                    options,
-                    exceptions);
+                    options);
+        } else {
+            throw new IllegalArgumentException(String.format("Unsupported docType \"%s\"", docType));
         }
     }
 
-    static public void parse(
+    static public GridState parse(
+            DatamodelRunner runner,
             Sheets service,
-            Project project,
             ProjectMetadata metadata,
             final ImportingJob job,
             int limit,
-            ObjectNode options,
-            List<Exception> exceptions) {
+            ObjectNode options) throws Exception {
 
         String docUrlString = JSONUtilities.getString(options, "docUrl", null);
         String worksheetUrlString = JSONUtilities.getString(options, "sheetUrl", null);
@@ -65,63 +63,53 @@ public class GDataImporter {
         int worksheetIndex = JSONUtilities.getInt(options, "worksheetIndex", 0);
 
         if (docUrlString != null && worksheetUrlString != null) {
-            try {
-                parseOneWorkSheet(
-                        service,
-                        project,
-                        metadata,
-                        job,
-                        new URL(docUrlString),
-                        worksheetIndex,
-                        limit,
-                        options,
-                        exceptions);
-            } catch (MalformedURLException e) {
-                e.printStackTrace();
-                exceptions.add(e);
-            }
+            return parseOneWorkSheet(
+                    runner,
+                    service,
+                    metadata,
+                    job,
+                    new URL(docUrlString),
+                    worksheetIndex,
+                    limit,
+                    options);
+        } else {
+            throw new IllegalArgumentException("docUrl and sheetUrl are required");
         }
     }
 
-    static public void parseOneWorkSheet(
+    static public GridState parseOneWorkSheet(
+            DatamodelRunner runner,
             Sheets service,
-            Project project,
             ProjectMetadata metadata,
             final ImportingJob job,
             URL docURL,
             int worksheetIndex,
             int limit,
-            ObjectNode options,
-            List<Exception> exceptions) {
+            ObjectNode options) throws Exception {
 
-        try {
-            String spreadsheetId = GoogleAPIExtension.extractSpreadSheetId(docURL.toString());
+        String spreadsheetId = GoogleAPIExtension.extractSpreadSheetId(docURL.toString());
 
-            Spreadsheet response = service.spreadsheets().get(spreadsheetId)
-                    .setIncludeGridData(true)
-                    .execute();
-            Sheet worksheetEntry = response.getSheets().get(worksheetIndex);
+        Spreadsheet response = service.spreadsheets().get(spreadsheetId)
+                .setIncludeGridData(true)
+                .execute();
+        Sheet worksheetEntry = response.getSheets().get(worksheetIndex);
 
-            String spreadsheetName = docURL.toExternalForm();
+        String spreadsheetName = docURL.toExternalForm();
 
-            String fileSource = spreadsheetName + " # " +
-                    worksheetEntry.getProperties().getTitle();
+        String fileSource = spreadsheetName + " # " +
+                worksheetEntry.getProperties().getTitle();
 
-            setProgress(job, fileSource, 0);
-            TabularImportingParserBase.readTable(
-                    project,
-                    metadata,
-                    job,
-                    new WorksheetBatchRowReader(job, fileSource, service, spreadsheetId, worksheetEntry),
-                    fileSource,
-                    limit,
-                    options,
-                    exceptions);
-            setProgress(job, fileSource, 100);
-        } catch (IOException e) {
-            logger.error(ExceptionUtils.getStackTrace(e));
-            exceptions.add(e);
-        }
+        setProgress(job, fileSource, 0);
+        TabularParserHelper tabularParsingHelper = new TabularParserHelper(runner);
+        GridState grid = tabularParsingHelper.parseOneFile(
+                metadata,
+                job,
+                fileSource,
+                new WorksheetBatchRowReader(job, fileSource, service, spreadsheetId, worksheetEntry),
+                limit,
+                options);
+        setProgress(job, fileSource, 100);
+        return grid;
     }
 
     static private void setProgress(ImportingJob job, String fileSource, int percent) {

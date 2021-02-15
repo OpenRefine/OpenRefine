@@ -31,14 +31,16 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
  */
 
+var runner = Packages.org.openrefine.RefineServlet.getDatamodelRunner();
+
 /*
  * Function invoked to initialize the extension.
  */
 function init() {
-  var IM = Packages.org.openrefine.importing.ImportingManager;
-  IM.registerFormat("text/line-based/pc-axis", "PC-Axis text files", "PCAxisParserUI",
-      new Packages.org.openrefine.pcaxis.PCAxisImporter());
-  IM.registerExtension(".px", "text/line-based/pc-axis");
+  var FR = Packages.org.openrefine.importing.FormatRegistry;
+  FR.registerFormat("text/line-based/pc-axis", "pc-axis-import-format/text/line-based/pc-axis", "PCAxisParserUI",
+      new Packages.org.openrefine.pcaxis.PCAxisImporter(runner));
+  FR.registerExtension(".px", "text/line-based/pc-axis");
 
   var ClientSideResourceManager = Packages.org.openrefine.ClientSideResourceManager;
   

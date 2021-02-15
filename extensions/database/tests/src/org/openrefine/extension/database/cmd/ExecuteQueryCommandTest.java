@@ -24,8 +24,6 @@ import org.openrefine.commands.Command;
 import org.openrefine.extension.database.DBExtensionTests;
 import org.openrefine.extension.database.DatabaseConfiguration;
 import org.openrefine.extension.database.DatabaseService;
-import org.openrefine.extension.database.cmd.ConnectCommand;
-import org.openrefine.extension.database.cmd.ExecuteQueryCommand;
 import org.openrefine.extension.database.mysql.MySQLDatabaseService;
 import org.openrefine.util.ParsingUtilities;
 

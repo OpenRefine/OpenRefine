@@ -15,8 +15,6 @@ import org.openrefine.extension.database.DBExtensionTests;
 import org.openrefine.extension.database.DatabaseConfiguration;
 import org.openrefine.extension.database.DatabaseService;
 import org.openrefine.extension.database.DatabaseServiceException;
-import org.openrefine.extension.database.mariadb.MariaDBConnectionManager;
-import org.openrefine.extension.database.mariadb.MariaDBDatabaseService;
 
 @Test(groups = { "requiresMariaDB" })
 public class MariaDBConnectionManagerTest extends DBExtensionTests {

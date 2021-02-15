@@ -35,25 +35,9 @@
                 <exclude name="requiresPgSQL"/>
                 <exclude name="requiresMariaDB" />
             </run>
-        </groups> <!--
-        <classes>
-            <class name="org.openrefine.extension.database.DatabaseImportControllerTest"/>
-            <class name="org.openrefine.extension.database.DatabaseServiceTest"/>
-            <class name="org.openrefine.extension.database.SimpleTextEncryptorTest"/>
-            <class name="org.openrefine.extension.database.cmd.ConnectCommandTest"/>
-            <class name="org.openrefine.extension.database.cmd.ExecuteQueryCommandTest"/>
-            <class name="org.openrefine.extension.database.cmd.SavedConnectionCommandTest"/>
-            <class name="org.openrefine.extension.database.cmd.TestConnectCommandTest"/>
-            <class name="org.openrefine.extension.database.cmd.TestQueryCommandTest"/>
-            <class name="org.openrefine.extension.database.mariadb.MariaDBConnectionManagerTest"/>
-            <class name="org.openrefine.extension.database.mariadb.MariaDBDatabaseServiceTest"/>
-            <class name="org.openrefine.extension.database.mysql.MySQLConnectionManagerTest"/>
-            <class name="org.openrefine.extension.database.mysql.MySQLDatabaseServiceTest"/>
-            <class name="org.openrefine.extension.database.pgsql.PgSQLConnectionManagerTest"/>
-            <class name="org.openrefine.extension.database.pgsql.PgSQLDatabaseServiceTest" />
-        </classes> -->
+        </groups>
         <packages>
-          <package name="org.openrefine.wikidata.*" />
+          <package name="org.openrefine.extension.database.*" />
         </packages>
 
     </test>

@@ -39,7 +39,7 @@ import org.slf4j.LoggerFactory;
 import org.openrefine.extension.database.model.DatabaseColumn;
 import org.openrefine.extension.database.model.DatabaseQueryInfo;
 import org.openrefine.extension.database.model.DatabaseRow;
-import org.openrefine.importers.TabularImportingParserBase.TableDataReader;
+import org.openrefine.importers.TabularParserHelper.TableDataReader;
 import org.openrefine.importing.ImportingJob;
 
 public class DBQueryResultImportReader implements TableDataReader {

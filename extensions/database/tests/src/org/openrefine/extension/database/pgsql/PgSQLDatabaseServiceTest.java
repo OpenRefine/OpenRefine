@@ -19,7 +19,6 @@ import org.openrefine.extension.database.DatabaseServiceException;
 import org.openrefine.extension.database.model.DatabaseColumn;
 import org.openrefine.extension.database.model.DatabaseInfo;
 import org.openrefine.extension.database.model.DatabaseRow;
-import org.openrefine.extension.database.pgsql.PgSQLDatabaseService;
 
 @Test(groups = { "requiresPgSQL" })
 public class PgSQLDatabaseServiceTest extends DBExtensionTests {

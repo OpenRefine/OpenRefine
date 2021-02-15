@@ -29,20 +29,18 @@ import org.testng.annotations.Optional;
 import org.testng.annotations.Parameters;
 import org.testng.annotations.Test;
 
-import org.openrefine.ProjectManager;
-import org.openrefine.ProjectMetadata;
 import org.openrefine.RefineServlet;
 import org.openrefine.commands.Command;
 import org.openrefine.extension.database.DBExtensionTestUtils;
 import org.openrefine.extension.database.DBExtensionTests;
 import org.openrefine.extension.database.DatabaseConfiguration;
 import org.openrefine.extension.database.DatabaseService;
-import org.openrefine.extension.database.cmd.SavedConnectionCommand;
 import org.openrefine.extension.database.mysql.MySQLDatabaseService;
 import org.openrefine.extension.database.stub.RefineDbServletStub;
 import org.openrefine.importing.ImportingManager;
 import org.openrefine.io.FileProjectManager;
-import org.openrefine.model.Project;
+import org.openrefine.model.DatamodelRunner;
+import org.openrefine.model.TestingDatamodelRunner;
 import org.openrefine.util.ParsingUtilities;
 
 public class SavedConnectionCommandTest extends DBExtensionTests {
@@ -55,8 +53,6 @@ public class SavedConnectionCommandTest extends DBExtensionTests {
 
     private DatabaseConfiguration testDbConfig;
 
-    private Project project;
-    private ProjectMetadata metadata;
     // private ImportingJob job;
     private RefineServlet servlet;
 
@@ -70,16 +66,12 @@ public class SavedConnectionCommandTest extends DBExtensionTests {
         MockitoAnnotations.initMocks(this);
 
         File dir = DBExtensionTestUtils.createTempDirectory("OR_DBExtension_Test_WorkspaceDir");
-        FileProjectManager.initialize(dir);
+        DatamodelRunner runner = new TestingDatamodelRunner();
+        FileProjectManager.initialize(runner, dir);
 
         servlet = new RefineDbServletStub();
         ImportingManager.initialize(servlet);
-        project = new Project();
-        metadata = new ProjectMetadata();
-        // job = ImportingManager.createJob();
 
-        metadata.setName("Save DB Config  Test Project");
-        ProjectManager.singleton.registerProject(project, metadata);
         SUT = new SavedConnectionCommand();
 
     }
@@ -89,11 +81,6 @@ public class SavedConnectionCommandTest extends DBExtensionTests {
         SUT = null;
         request = null;
         response = null;
-        project = null;
-        metadata = null;
-        // ImportingManager.disposeJob(job.id);
-        // job = null;
-        // options = null;
     }
 
     @BeforeTest

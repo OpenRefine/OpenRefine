@@ -43,7 +43,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import org.openrefine.importers.TabularImportingParserBase.TableDataReader;
+import org.openrefine.importers.TabularParserHelper.TableDataReader;
 
 public class PCAxisTableDataReader implements TableDataReader {
 

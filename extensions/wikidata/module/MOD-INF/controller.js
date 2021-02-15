@@ -19,7 +19,7 @@ function init() {
     /*
      *  Attach a Wikibase schema to each project.
      */
-    Packages.org.openrefine.model.Project.registerOverlayModel(
+    Packages.org.openrefine.overlay.OverlayModelResolver.registerOverlayModel(
         "wikibaseSchema",
         Packages.org.openrefine.wikidata.schema.WikibaseSchema);
     

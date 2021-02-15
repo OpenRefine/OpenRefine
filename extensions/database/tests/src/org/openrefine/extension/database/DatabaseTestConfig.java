@@ -5,8 +5,6 @@ import java.sql.SQLException;
 
 import org.testng.annotations.*;
 
-import org.openrefine.extension.database.DatabaseConfiguration;
-import org.openrefine.extension.database.DatabaseServiceException;
 import org.openrefine.extension.database.mariadb.MariaDBDatabaseService;
 import org.openrefine.extension.database.mysql.MySQLDatabaseService;
 import org.openrefine.extension.database.pgsql.PgSQLDatabaseService;

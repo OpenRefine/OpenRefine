@@ -35,6 +35,7 @@ package org.openrefine.pcaxis;
 
 import java.io.LineNumberReader;
 import java.io.Reader;
+import java.util.ArrayList;
 import java.util.List;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -42,23 +43,29 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import org.openrefine.ProjectMetadata;
-import org.openrefine.importers.TabularImportingParserBase;
+import org.openrefine.importers.ReaderImporter;
+import org.openrefine.importers.TabularParserHelper;
+import org.openrefine.importers.TabularParserHelper.TableDataReader;
+import org.openrefine.importing.ImportingFileRecord;
 import org.openrefine.importing.ImportingJob;
-import org.openrefine.model.Project;
+import org.openrefine.model.DatamodelRunner;
+import org.openrefine.model.GridState;
 import org.openrefine.util.JSONUtilities;
 import org.openrefine.util.ParsingUtilities;
 
-public class PCAxisImporter extends TabularImportingParserBase {
+public class PCAxisImporter extends ReaderImporter {
 
     static final Logger logger = LoggerFactory.getLogger(PCAxisImporter.class);
 
-    public PCAxisImporter() {
-        super(false);
+    public PCAxisImporter(DatamodelRunner runner) {
+        super(runner);
     }
 
     @Override
     public ObjectNode createParserUIInitializationData(
-            ImportingJob job, List<ObjectNode> fileRecords, String format) {
+            ImportingJob job,
+            List<ImportingFileRecord> fileRecords,
+            String format) {
         ObjectNode options = ParsingUtilities.mapper.createObjectNode();
         JSONUtilities.safePut(options, "includeFileSources", fileRecords.size() > 1);
         JSONUtilities.safePut(options, "skipDataLines", 0);
@@ -67,16 +74,14 @@ public class PCAxisImporter extends TabularImportingParserBase {
     }
 
     @Override
-    public void parseOneFile(
-            Project project,
+    public GridState parseOneFile(
             ProjectMetadata metadata,
             ImportingJob job,
             String fileSource,
             Reader reader,
-            int limit,
-            ObjectNode options,
-            List<Exception> exceptions) {
+            long limit, ObjectNode options) throws Exception {
         LineNumberReader lnReader = new LineNumberReader(reader);
+        List<Exception> exceptions = new ArrayList<>();
         TableDataReader dataReader = new PCAxisTableDataReader(lnReader, exceptions);
 
         // Stuff these settings to get TabularImportingParserBase.readTable
@@ -86,10 +91,13 @@ public class PCAxisImporter extends TabularImportingParserBase {
         JSONUtilities.safePut(options, "storeBlankRows", true);
         JSONUtilities.safePut(options, "storeBlankCellsAsNulls", true);
 
-        TabularImportingParserBase.readTable(
-                project, metadata, job, dataReader,
-                fileSource, limit, options, exceptions);
-
-        super.parseOneFile(project, metadata, job, fileSource, reader, limit, options, exceptions);
+        TabularParserHelper tabularParsingHelper = new TabularParserHelper(runner);
+        GridState grid = tabularParsingHelper.parseOneFile(
+                metadata, job, fileSource, dataReader,
+                limit, options);
+        if (!exceptions.isEmpty()) {
+            throw exceptions.get(0);
+        }
+        return grid;
     }
 }

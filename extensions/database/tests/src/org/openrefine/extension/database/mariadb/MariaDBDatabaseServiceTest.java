@@ -16,7 +16,6 @@ import org.openrefine.extension.database.DBExtensionTests;
 import org.openrefine.extension.database.DatabaseConfiguration;
 import org.openrefine.extension.database.DatabaseService;
 import org.openrefine.extension.database.DatabaseServiceException;
-import org.openrefine.extension.database.mariadb.MariaDBDatabaseService;
 import org.openrefine.extension.database.model.DatabaseColumn;
 import org.openrefine.extension.database.model.DatabaseInfo;
 import org.openrefine.extension.database.model.DatabaseRow;

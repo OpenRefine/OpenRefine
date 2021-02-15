@@ -4,8 +4,6 @@ package org.openrefine.extension.database;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
-import org.openrefine.extension.database.SimpleTextEncryptor;
-
 public class SimpleTextEncryptorTest {
 
     @Test
