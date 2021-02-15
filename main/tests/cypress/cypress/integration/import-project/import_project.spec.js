@@ -39,8 +39,6 @@ describe(__filename, function () {
     cy.get('#project-name-input').type(projectName);
     cy.get('#project-upload-form').submit();
 
-    cy.getCell(1, 'Water').trigger('mouseover').trigger('somethingelse');
-
     // ensure is loaded
     cy.get('#project-name-button').contains(projectName);
   });
