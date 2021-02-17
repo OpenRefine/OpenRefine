@@ -57,7 +57,7 @@ public class SplitByCharType implements Function {
     
     @Override
     public String getDescription() {
-        return "Returns an array of strings obtained by splitting s into groups of consecutive characters each time the characters change Unicode categories. For example, \"HenryCTaylor\".splitByCharType() will result in an array of [ \"H\", \"enry\", "\CT\", \"aylor\" ].";
+        return "Returns an array of strings obtained by splitting s into groups of consecutive characters each time the characters change Unicode categories.";
     }
     
     @Override

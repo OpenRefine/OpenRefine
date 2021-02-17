@@ -60,7 +60,7 @@ public class ReplaceChars implements Function {
     
     @Override
     public String getDescription() {
-        return "Returns the string obtained by replacing a character in s, identified by find, with the corresponding character identified in replace. For example, \"Téxt thát was optícálly recógnízéd\".replaceChars(\"áéíóú\", \"aeiou\") returns the string “Text that was optically recognized”. You cannot use this to replace a single character with more than one character.";
+        return "Returns the string obtained by replacing a character in s, identified by find, with the corresponding character identified in replace. You cannot use this to replace a single character with more than one character.";
     }
     
     @Override
