@@ -124,10 +124,8 @@ public class Slice implements Function {
 
     @Override
     public String getDescription() {
-        return 
-            "Given a string, returns the substring starting from character index from, and up to (excluding) character index to. If the to argument is omitted, will output to the end of s. Remember that character indices start from zero. " +
-            "Given an array, returns a sub-array, from the first index provided and up to and excluding the optional last index provided. If the to value is omitted, it is understood to be the end of the array. (Slice only.)."
-        ;
+        return "Given a string, returns the substring starting from character index from, and up to character index to. If the to argument is omitted, will output to the end of s. Remember character indices start from zero. Given an array, returns a sub-array from the first index provided up to and including the last index provided. If the to value is omitted, it is understood to be the end of the array. Slice only.";
+
     }
     
     @Override

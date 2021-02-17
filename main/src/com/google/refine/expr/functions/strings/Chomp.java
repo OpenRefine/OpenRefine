@@ -55,7 +55,7 @@ public class Chomp implements Function {
     
     @Override
     public String getDescription() {
-        return "Returns a copy of string s with the string sep removed from the end if s ends with sep; otherwise, just returns s.";
+        return "Returns a copy of string s with string sep remoed from the end if s ends with sep; otherwies, returns s.";
     }
     
     @Override

@@ -70,7 +70,7 @@ public class ToString implements Function {
     
     @Override
     public String getDescription() {
-        return "Takes any value type (string, number, date, boolean, error, null) and gives a string version of that value. You can use toString() to convert numbers to strings with rounding, using an optional string format. See https://docs.oracle.com/javase/8/docs/api/java/util/Formatter.html. You can also convert dates to strings, using date parsing syntax.";
+        return "Takes any value type (string, number, date, boolean, error, null) and gives a string version of that value. You can convert numbers to strings with rounding, using an optional string format. See https://docs.oracle.com/javase/8/docs/api/java/util/Formatter.html. You can also convert dates to strings using date parsing syntax. See https://docs.openrefine.org/manual/grelfunctions/#date-functions.";
     }
     
     @Override
