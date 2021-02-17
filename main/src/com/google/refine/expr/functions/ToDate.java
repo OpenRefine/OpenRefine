@@ -196,7 +196,7 @@ public class ToDate implements Function {
     
     @Override
     public String getDescription() {
-        return "Returns o converted to a date object, you can hint if the day or the month is listed first, or give an ordered list of possible formats using this syntax: http://docs.oracle.com/javase/7/docs/api/java/text/SimpleDateFormat.html";
+        return "Returns o converted to a date object, you can hint if the day or the month is listed first, or give an ordered list of possible formats using this syntax: <a href=\"http://docs.oracle.com/javase/7/docs/api/java/text/SimpleDateFormat.html\">SimpleDateFormat</a>";
     }
     
     @Override
