@@ -1,4 +1,4 @@
-/*
+﻿/*
 
 Copyright 2010, Google Inc.
 All rights reserved.
@@ -53,7 +53,7 @@ public class Trim implements Function {
     }
     @Override
     public String getDescription() {
-        return "Returns a copy of the string s with leading and trailing whitespace removed. For example, " island ".trim() returns the string “island”. Identical to strip().";
+        return "Returns a copy of the string s with leading and trailing whitespace removed.";
     }
     
     @Override

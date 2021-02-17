@@ -1,4 +1,4 @@
-/*
+﻿/*
 
 Copyright 2010, Google Inc.
 All rights reserved.
@@ -70,7 +70,7 @@ public class ToString implements Function {
     
     @Override
     public String getDescription() {
-        return "Takes any value type (string, number, date, boolean, error, null) and gives a string version of that value. You can use toString() to convert numbers to strings with rounding, using an optional string format. See https://docs.oracle.com/javase/8/docs/api/java/util/Formatter.html. You can also convert dates to strings, using date parsing syntax. For example, value.toString("MMM-dd-yyyy") would convert the date value [2024-10-15T00:00:00Z] to “Oct-15-2024”.";
+        return "Takes any value type (string, number, date, boolean, error, null) and gives a string version of that value. You can use toString() to convert numbers to strings with rounding, using an optional string format. See https://docs.oracle.com/javase/8/docs/api/java/util/Formatter.html. You can also convert dates to strings, using date parsing syntax. For example, value.toString(\"MMM-dd-yyyy\") would convert the date value [2024-10-15T00:00:00Z] to “Oct-15-2024”.";
     }
     
     @Override

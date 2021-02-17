@@ -1,4 +1,4 @@
-/*
+﻿/*
 
 Copyright 2010, Google Inc.
 All rights reserved.
@@ -63,7 +63,7 @@ public class ToTitlecase implements Function {
     
     @Override
     public String getDescription() {
-        return "Returns string s converted into titlecase: a capital letter starting each word, and the rest of the letters lowercase. For example, "Once upon a midnight DREARY".toTitlecase() returns the string “Once Upon A Midnight Dreary”.";
+        return "Returns string s converted into titlecase: a capital letter starting each word, and the rest of the letters lowercase. For example, \"Once upon a midnight DREARY\".toTitlecase() returns the string “Once Upon A Midnight Dreary”.";
     }
     
     @Override

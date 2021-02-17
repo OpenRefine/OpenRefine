@@ -62,7 +62,7 @@ public class Contains implements Function {
     }
     @Override
     public String getDescription() {
-        return "Returns a boolean indicating whether s contains sub, which is either a substring or a regex pattern. For example, "food".contains("oo") returns true whereas "food".contains("ee") returns false.";
+        return "Returns a boolean indicating whether s contains sub, which is either a substring or a regex pattern. For example, \"food\".contains(\"oo\") returns true.";
     }
     
     @Override

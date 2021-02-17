@@ -70,7 +70,7 @@ public class Length implements Function {
 
     @Override
     public String getDescription() {
-        return "Returns the length of string s or array a as a number.";
+        return "Returns the length of string s as a number, or the size of array a, meaning the number of objects inside it. Arrays can be empty, in which case length() will return 0.";
     }
     
     @Override

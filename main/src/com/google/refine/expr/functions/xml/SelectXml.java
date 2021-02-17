@@ -63,12 +63,12 @@ public class SelectXml implements Function {
 
     @Override
     public String getDescription() {
-        return "Selects an element from an XML or HTML elementn using selector syntax.";
+        return "Returns an array of all the desired elements from an HTML or XML document, if the element exists. Elements are identified using the Jsoup selector syntax: https://jsoup.org/apidocs/org/jsoup/select/Selector.html. For example, value.parseHtml().select(\"img.portrait\")[0] would return the entirety of the first “img” tag with the “portrait” class found in the parsed HTML inside value.";
     }
     
     @Override
     public String getParams() {
-        return "Element e, String s";
+        return "string s, element e";
     }
     
     @Override
