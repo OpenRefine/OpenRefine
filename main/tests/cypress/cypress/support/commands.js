@@ -82,6 +82,14 @@ Cypress.Commands.add('doCreateProjectThroughUserInterface', () => {
     const projectId = location.href.split('=').slice(-1)[0];
     cy.visitProject(projectId);
     cy.wrap(projectId).as('createdProjectId');
+    cy.get('@loadedProjectIds', { log: false }).then((loadedProjectIds) => {
+      loadedProjectIds.push(projectId);
+      cy.wrap(loadedProjectIds, { log: false })
+        .as('loadedProjectIds')
+        .then(() => {
+          return projectId;
+        });
+    });
   });
 });
 
@@ -226,5 +234,36 @@ Cypress.Commands.add(
     cy.getCell(rowIndex, columnName)
       .find('.data-table-value-nonstring')
       .should('to.exist');
+  }
+);
+
+Cypress.Commands.add(
+  'loadAndVisitSampleJSONProject',
+  (projectName, fixture) => {
+    cy.visitOpenRefine();
+    cy.navigateTo('Create Project');
+    cy.get('#create-project-ui-source-selection-tabs > div')
+      .contains('Clipboard')
+      .click();
+
+    cy.get('textarea').invoke('val', fixture);
+    cy.get(
+      '.create-project-ui-source-selection-tab-body.selected button.button-primary'
+    )
+      .contains('Next »')
+      .click();
+    cy.get(
+      '.default-importing-wizard-header input[bind="projectNameInput"]'
+    ).clear();
+    cy.get(
+      '.default-importing-wizard-header input[bind="projectNameInput"]'
+    ).type(projectName);
+    // need to disable es-lint as force is required to true, if not then
+    // cypress won't detect the element due to `position:fixed` and overlays
+    cy.get('[data-cy=element0]') // eslint-disable-line
+      .first()
+      .scrollIntoView()
+      .click({ force: true });
+    cy.doCreateProjectThroughUserInterface();
   }
 );
