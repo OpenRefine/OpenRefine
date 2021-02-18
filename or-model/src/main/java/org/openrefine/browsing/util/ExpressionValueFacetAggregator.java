@@ -6,12 +6,9 @@ import java.util.Properties;
 
 import org.openrefine.browsing.facets.FacetAggregator;
 import org.openrefine.browsing.facets.FacetState;
-import org.openrefine.browsing.filters.AllRowsRecordFilter;
-import org.openrefine.browsing.filters.AnyRowRecordFilter;
 import org.openrefine.expr.ExpressionUtils;
-import org.openrefine.model.RecordFilter;
+import org.openrefine.model.Record;
 import org.openrefine.model.Row;
-import org.openrefine.model.RowFilter;
 
 /**
  * Base class for facet aggregators which update their state by evaluating an expression and aggregating its result. If
@@ -21,7 +18,7 @@ import org.openrefine.model.RowFilter;
  *
  * @param <T>
  */
-public abstract class ExpressionValueFacetAggregator<T extends FacetState> implements FacetAggregator<T> {
+public abstract class ExpressionValueFacetAggregator<T extends FacetState> extends FacetAggregator<T> {
 
     private static final long serialVersionUID = -7981845701085329558L;
     protected final boolean _invert;
@@ -53,17 +50,17 @@ public abstract class ExpressionValueFacetAggregator<T extends FacetState> imple
     protected abstract T withValue(T state, Object value, boolean inView);
 
     @Override
-    public T withRow(T state, long rowId, Row row) {
+    public T withRow(T state, long rowId, Row row, Record record) {
         Properties bindings = ExpressionUtils.createBindings();
-        Object value = _eval.eval(rowId, row, bindings);
+        Object value = _eval.eval(rowId, row, record, bindings);
 
         return withRawValue(state, value, true);
     }
 
     @Override
-    public T withRowOutsideView(T state, long rowId, Row row) {
+    public T withRowOutsideView(T state, long rowId, Row row, Record record) {
         Properties bindings = ExpressionUtils.createBindings();
-        Object value = _eval.eval(rowId, row, bindings);
+        Object value = _eval.eval(rowId, row, record, bindings);
 
         return withRawValue(state, value, false);
     }
@@ -84,15 +81,6 @@ public abstract class ExpressionValueFacetAggregator<T extends FacetState> imple
         }
 
         return newState;
-    }
-
-    @Override
-    public RecordFilter getRecordFilter() {
-        RowFilter rowFilter = getRowFilter();
-        if (rowFilter == null) {
-            return null;
-        }
-        return _invert ? new AllRowsRecordFilter(rowFilter) : new AnyRowRecordFilter(rowFilter);
     }
 
 }

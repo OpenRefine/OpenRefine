@@ -12,6 +12,7 @@ import org.testng.annotations.Test;
 import org.openrefine.browsing.util.RowEvaluable;
 import org.openrefine.expr.EvalError;
 import org.openrefine.model.Cell;
+import org.openrefine.model.Record;
 import org.openrefine.model.Row;
 
 public class ExpressionNumberComparisonRowFilterTests {
@@ -19,7 +20,7 @@ public class ExpressionNumberComparisonRowFilterTests {
     RowEvaluable rowEvaluable = new RowEvaluable() {
 
         @Override
-        public Object eval(long rowIndex, Row row, Properties bindings) {
+        public Object eval(long rowIndex, Row row, Record record, Properties bindings) {
             return row.getCellValue(0);
         }
 
@@ -31,7 +32,7 @@ public class ExpressionNumberComparisonRowFilterTests {
 
         public NumberRowFilter(RowEvaluable rowEvaluable, boolean selectNumeric, boolean selectNonNumeric,
                 boolean selectBlank, boolean selectError) {
-            super(rowEvaluable, selectNumeric, selectNonNumeric, selectBlank, selectError);
+            super(rowEvaluable, selectNumeric, selectNonNumeric, selectBlank, selectError, false);
         }
 
         @Override

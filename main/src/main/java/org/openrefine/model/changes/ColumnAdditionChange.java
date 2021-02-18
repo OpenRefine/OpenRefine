@@ -39,9 +39,10 @@ import org.openrefine.model.ColumnMetadata;
 import org.openrefine.model.ColumnModel;
 import org.openrefine.model.GridState;
 import org.openrefine.model.ModelException;
+import org.openrefine.model.Record;
 import org.openrefine.model.Row;
 import org.openrefine.model.RowCellMapper;
-import org.openrefine.model.RowMapper;
+import org.openrefine.model.RowInRecordMapper;
 
 public abstract class ColumnAdditionChange extends RowMapChange {
 
@@ -73,17 +74,17 @@ public abstract class ColumnAdditionChange extends RowMapChange {
     }
 
     @Override
-    public RowMapper getPositiveRowMapper(GridState state, ChangeContext context) {
+    public RowInRecordMapper getPositiveRowMapper(GridState state, ChangeContext context) {
         return wrapMapper(getRowCellMapper(state.getColumnModel()), _columnIndex);
     }
 
-    public static RowMapper wrapMapper(RowCellMapper mapper, int columnIndex) {
-        return new RowMapper() {
+    public static RowInRecordMapper wrapMapper(RowCellMapper mapper, int columnIndex) {
+        return new RowInRecordMapper() {
 
             private static final long serialVersionUID = 1L;
 
             @Override
-            public Row call(long rowId, Row row) {
+            public Row call(Record record, long rowId, Row row) {
                 Cell cell = mapper.apply(rowId, row);
                 return row.insertCell(columnIndex, cell);
             }

@@ -9,7 +9,6 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import org.openrefine.commands.CommandTestBase;
-import org.openrefine.commands.cell.TransposeRowsIntoColumnsCommand;
 
 public class TransposeRowsIntoColumnsCommandTests extends CommandTestBase {
 

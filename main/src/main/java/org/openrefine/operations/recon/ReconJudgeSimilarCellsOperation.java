@@ -42,8 +42,9 @@ import org.openrefine.browsing.EngineConfig;
 import org.openrefine.expr.ExpressionUtils;
 import org.openrefine.model.Cell;
 import org.openrefine.model.GridState;
+import org.openrefine.model.Record;
 import org.openrefine.model.Row;
-import org.openrefine.model.RowMapper;
+import org.openrefine.model.RowInRecordMapper;
 import org.openrefine.model.changes.Change.DoesNotApplyException;
 import org.openrefine.model.changes.ChangeContext;
 import org.openrefine.model.changes.ColumnNotFoundException;
@@ -127,7 +128,7 @@ public class ReconJudgeSimilarCellsOperation extends ImmediateRowMapOperation {
     }
 
     @Override
-    public RowMapper getPositiveRowMapper(GridState grid, ChangeContext context) throws DoesNotApplyException {
+    public RowInRecordMapper getPositiveRowMapper(GridState grid, ChangeContext context) throws DoesNotApplyException {
         int columnIndex = grid.getColumnModel().getColumnIndexByName(_columnName);
         if (columnIndex == -1) {
             throw new ColumnNotFoundException(_columnName);
@@ -158,13 +159,13 @@ public class ReconJudgeSimilarCellsOperation extends ImmediateRowMapOperation {
         return LazyReconStats.updateReconStats(newState, _columnName);
     }
 
-    protected static RowMapper rowMapperShareNewTopics(int columnIndex, String similarValue, Recon sharedRecon) {
-        return new RowMapper() {
+    protected static RowInRecordMapper rowMapperShareNewTopics(int columnIndex, String similarValue, Recon sharedRecon) {
+        return new RowInRecordMapper() {
 
             private static final long serialVersionUID = 2587023425253722417L;
 
             @Override
-            public Row call(long rowId, Row row) {
+            public Row call(Record record, long rowId, Row row) {
                 Cell cell = row.getCell(columnIndex);
                 if (cell != null && ExpressionUtils.isNonBlankData(cell.value)) {
                     String value = cell.value instanceof String ? ((String) cell.value) : cell.value.toString();
@@ -179,14 +180,14 @@ public class ReconJudgeSimilarCellsOperation extends ImmediateRowMapOperation {
         };
     }
 
-    protected static RowMapper rowMapper(int columnIndex, String similarValue, Judgment judgment, ReconCandidate match,
+    protected static RowInRecordMapper rowMapper(int columnIndex, String similarValue, Judgment judgment, ReconCandidate match,
             long historyEntryId) {
-        return new RowMapper() {
+        return new RowInRecordMapper() {
 
             private static final long serialVersionUID = -3622231157543742155L;
 
             @Override
-            public Row call(long rowId, Row row) {
+            public Row call(Record record, long rowId, Row row) {
                 Cell cell = row.getCell(columnIndex);
                 if (cell != null && ExpressionUtils.isNonBlankData(cell.value)) {
                     String value = cell.value instanceof String ? ((String) cell.value) : cell.value.toString();

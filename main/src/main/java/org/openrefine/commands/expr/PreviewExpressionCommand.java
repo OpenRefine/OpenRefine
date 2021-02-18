@@ -64,9 +64,11 @@ import org.openrefine.expr.ParsingException;
 import org.openrefine.expr.WrappedCell;
 import org.openrefine.expr.WrappedRow;
 import org.openrefine.model.Cell;
+import org.openrefine.model.ColumnModel;
 import org.openrefine.model.GridState;
 import org.openrefine.model.IndexedRow;
 import org.openrefine.model.Project;
+import org.openrefine.model.Record;
 import org.openrefine.model.Row;
 import org.openrefine.util.ParsingUtilities;
 
@@ -164,6 +166,7 @@ public class PreviewExpressionCommand extends Command {
             });
             int length = rowIndices.size();
             GridState state = project.getCurrentGridState();
+            ColumnModel columnModel = state.getColumnModel();
 
             try {
                 Evaluable eval = MetaParser.parse(expression);
@@ -179,13 +182,15 @@ public class PreviewExpressionCommand extends Command {
                     try {
                         Row row = rows.get(i).getRow();
                         Cell cell = row.getCell(cellIndex);
-                        ExpressionUtils.bind(bindings, null, row, rowIndex, columnName, cell);
+                        Record record = null; // TODO enable records mode for this operation after changing the API
+                        // to supply engineConfig and limit rather than rowIds
+                        ExpressionUtils.bind(bindings, columnModel, row, rowIndex, record, columnName, cell);
                         result = eval.evaluate(bindings);
 
                         if (repeat) {
                             for (int r = 0; r < repeatCount && ExpressionUtils.isStorable(result); r++) {
                                 Cell newCell = new Cell((Serializable) result, (cell != null) ? cell.recon : null);
-                                ExpressionUtils.bind(bindings, null, row, rowIndex, columnName, newCell);
+                                ExpressionUtils.bind(bindings, null, row, rowIndex, record, columnName, newCell);
 
                                 Object newResult = eval.evaluate(bindings);
                                 if (ExpressionUtils.isError(newResult)) {

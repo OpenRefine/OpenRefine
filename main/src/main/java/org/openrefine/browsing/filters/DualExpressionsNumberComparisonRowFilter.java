@@ -38,14 +38,15 @@ import java.util.Properties;
 
 import org.openrefine.browsing.util.RowEvaluable;
 import org.openrefine.expr.ExpressionUtils;
+import org.openrefine.model.Record;
 import org.openrefine.model.Row;
-import org.openrefine.model.RowFilter;
+import org.openrefine.model.RowInRecordFilter;
 
 /**
  * Judge if a row matches by evaluating two given expressions on the row, based on two different columns and checking
  * the results. It's a match if the result satisfies some numeric comparisons.
  */
-abstract public class DualExpressionsNumberComparisonRowFilter implements RowFilter {
+abstract public class DualExpressionsNumberComparisonRowFilter extends RowInRecordFilter {
 
     private static final long serialVersionUID = 8056332324847967312L;
     final protected RowEvaluable _evalX;
@@ -53,18 +54,20 @@ abstract public class DualExpressionsNumberComparisonRowFilter implements RowFil
 
     public DualExpressionsNumberComparisonRowFilter(
             RowEvaluable evaluableX,
-            RowEvaluable evaluableY) {
+            RowEvaluable evaluableY,
+            boolean invert) {
+        super(!invert);
         _evalX = evaluableX;
         _evalY = evaluableY;
     }
 
     @Override
-    public boolean filterRow(long rowIndex, Row row) {
+    public boolean filterRow(long rowIndex, Row row, Record record) {
         Properties x_bindings = ExpressionUtils.createBindings();
-        Object x_value = _evalX.eval(rowIndex, row, x_bindings);
+        Object x_value = _evalX.eval(rowIndex, row, record, x_bindings);
 
         Properties y_bindings = ExpressionUtils.createBindings();
-        Object y_value = _evalY.eval(rowIndex, row, y_bindings);
+        Object y_value = _evalY.eval(rowIndex, row, record, y_bindings);
 
         if (x_value != null && y_value != null) {
             if (x_value.getClass().isArray() || y_value.getClass().isArray()) {

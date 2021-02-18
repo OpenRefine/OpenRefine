@@ -49,7 +49,6 @@ import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
 import org.openrefine.RefineTest;
-import org.openrefine.importers.ImporterUtilities;
 import org.openrefine.model.GridState;
 
 public class ImporterUtilitiesTests extends RefineTest {

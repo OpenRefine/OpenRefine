@@ -35,8 +35,6 @@ package org.openrefine.expr;
 
 import java.util.List;
 
-import org.apache.commons.lang3.NotImplementedException;
-
 import org.openrefine.model.Cell;
 import org.openrefine.model.ColumnModel;
 import org.openrefine.model.Record;
@@ -47,11 +45,35 @@ public class WrappedRow implements HasFields {
     final public ColumnModel columnModel;
     final public long rowIndex;
     final public Row row;
+    final public Record record;
 
+    /**
+     * Constructor to be used when the wrapped row is used in rows mode, where no record is available.
+     * 
+     * @param columnModel
+     * @param rowIndex
+     * @param row
+     */
     public WrappedRow(ColumnModel columnModel, long rowIndex, Row row) {
         this.columnModel = columnModel;
         this.rowIndex = rowIndex;
         this.row = row;
+        this.record = null;
+    }
+
+    /**
+     * Constructor to be used when the wrapped row is used in records mode, when the enclosing record is available.
+     * 
+     * @param columnModel
+     * @param rowIndex
+     * @param row
+     * @param record
+     */
+    public WrappedRow(ColumnModel columnModel, long rowIndex, Row row, Record record) {
+        this.columnModel = columnModel;
+        this.rowIndex = rowIndex;
+        this.row = row;
+        this.record = record;
     }
 
     @Override
@@ -61,8 +83,11 @@ public class WrappedRow implements HasFields {
         } else if ("index".equals(name)) {
             return rowIndex;
         } else if ("record".equals(name)) {
-            throw new NotImplementedException("records mode is not implemented");
-            // return new WrappedRecord(project.recordModel.getRecordOfRow(rowIndex));
+            if (record == null) {
+                return null;
+            } else {
+                return new WrappedRecord(record);
+            }
         } else if ("columnNames".equals(name)) {
             return columnModel.getColumnNames();
         } else {

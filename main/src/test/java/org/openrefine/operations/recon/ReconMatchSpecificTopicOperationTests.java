@@ -49,7 +49,6 @@ import org.openrefine.model.changes.ChangeContext;
 import org.openrefine.model.recon.Recon;
 import org.openrefine.model.recon.ReconStats;
 import org.openrefine.operations.OperationRegistry;
-import org.openrefine.operations.recon.ReconMatchSpecificTopicOperation;
 import org.openrefine.operations.recon.ReconMatchSpecificTopicOperation.ReconItem;
 import org.openrefine.util.ParsingUtilities;
 import org.openrefine.util.TestUtils;

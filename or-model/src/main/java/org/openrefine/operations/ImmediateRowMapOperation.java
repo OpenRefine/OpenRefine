@@ -4,7 +4,7 @@ package org.openrefine.operations;
 import org.openrefine.browsing.EngineConfig;
 import org.openrefine.model.ColumnModel;
 import org.openrefine.model.GridState;
-import org.openrefine.model.RowMapper;
+import org.openrefine.model.RowInRecordMapper;
 import org.openrefine.model.changes.Change;
 import org.openrefine.model.changes.Change.DoesNotApplyException;
 import org.openrefine.model.changes.ChangeContext;
@@ -30,10 +30,10 @@ abstract public class ImmediateRowMapOperation extends EngineDependentOperation 
      * @return
      * @throws DoesNotApplyException
      */
-    protected abstract RowMapper getPositiveRowMapper(GridState state, ChangeContext context) throws DoesNotApplyException;
+    protected abstract RowInRecordMapper getPositiveRowMapper(GridState state, ChangeContext context) throws DoesNotApplyException;
 
-    protected RowMapper getNegativeRowMapper(GridState state, ChangeContext context) throws DoesNotApplyException {
-        return RowMapper.IDENTITY;
+    protected RowInRecordMapper getNegativeRowMapper(GridState state, ChangeContext context) throws DoesNotApplyException {
+        return RowInRecordMapper.IDENTITY;
     }
 
     protected ColumnModel getNewColumnModel(GridState state, ChangeContext context) throws DoesNotApplyException {
@@ -53,12 +53,12 @@ abstract public class ImmediateRowMapOperation extends EngineDependentOperation 
         return new RowMapChange(getEngineConfig()) {
 
             @Override
-            public RowMapper getPositiveRowMapper(GridState state, ChangeContext context) throws DoesNotApplyException {
+            public RowInRecordMapper getPositiveRowMapper(GridState state, ChangeContext context) throws DoesNotApplyException {
                 return ImmediateRowMapOperation.this.getPositiveRowMapper(state, context);
             }
 
             @Override
-            public RowMapper getNegativeRowMapper(GridState state, ChangeContext context) throws DoesNotApplyException {
+            public RowInRecordMapper getNegativeRowMapper(GridState state, ChangeContext context) throws DoesNotApplyException {
                 return ImmediateRowMapOperation.this.getNegativeRowMapper(state, context);
             }
 

@@ -1,18 +1,17 @@
 
 package org.openrefine.browsing.facets;
 
-import org.openrefine.browsing.filters.AnyRowRecordFilter;
-import org.openrefine.model.RecordFilter;
+import org.openrefine.model.Record;
 import org.openrefine.model.Row;
-import org.openrefine.model.RowFilter;
+import org.openrefine.model.RowInRecordFilter;
 
-public class FacetAggregatorStub implements FacetAggregator<FacetStateStub> {
+public class FacetAggregatorStub extends FacetAggregator<FacetStateStub> {
 
     private static final long serialVersionUID = 1L;
 
-    RowFilter rowFilter;
+    RowInRecordFilter rowFilter;
 
-    public FacetAggregatorStub(RowFilter rowFilter) {
+    public FacetAggregatorStub(RowInRecordFilter rowFilter) {
         this.rowFilter = rowFilter;
     }
 
@@ -22,7 +21,7 @@ public class FacetAggregatorStub implements FacetAggregator<FacetStateStub> {
     }
 
     @Override
-    public FacetStateStub withRow(FacetStateStub state, long rowId, Row row) {
+    public FacetStateStub withRow(FacetStateStub state, long rowId, Row row, Record record) {
         if (rowFilter.filterRow(rowId, row)) {
             return new FacetStateStub(state.matching + 1, state.mismatching);
         } else {
@@ -31,13 +30,7 @@ public class FacetAggregatorStub implements FacetAggregator<FacetStateStub> {
     }
 
     @Override
-    public RowFilter getRowFilter() {
+    public RowInRecordFilter getRowFilter() {
         return rowFilter;
     }
-
-    @Override
-    public RecordFilter getRecordFilter() {
-        return new AnyRowRecordFilter(rowFilter);
-    }
-
 }

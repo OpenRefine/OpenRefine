@@ -11,6 +11,7 @@ import org.openrefine.model.Record;
 import org.openrefine.model.RecordFilter;
 import org.openrefine.model.Row;
 import org.openrefine.model.RowFilter;
+import org.openrefine.model.RowInRecordFilter;
 
 /**
  * Internal aggregator to compute the state of all facets in one pass over the grid.
@@ -20,26 +21,23 @@ import org.openrefine.model.RowFilter;
  * @author Antonin Delpeuch
  *
  */
-public class AllFacetsAggregator implements RowAggregator<AllFacetsState>, RecordAggregator<AllFacetsState> {
+public class AllFacetsAggregator extends RowInRecordAggregator<AllFacetsState> {
 
     private static final long serialVersionUID = -8277361327137906882L;
 
     protected final List<FacetAggregator<?>> _facetAggregators;
-    protected final List<RowFilter> _rowFilters;
-    protected final List<RecordFilter> _recordFilters;
+    protected final List<RowInRecordFilter> _rowFilters;
 
     public AllFacetsAggregator(List<FacetAggregator<?>> facetAggregators) {
         _facetAggregators = facetAggregators;
         _rowFilters = new ArrayList<>(facetAggregators.size());
-        _recordFilters = new ArrayList<>(facetAggregators.size());
         for (FacetAggregator<?> aggregator : facetAggregators) {
             _rowFilters.add(aggregator == null ? null : aggregator.getRowFilter());
-            _recordFilters.add(aggregator == null ? null : aggregator.getRecordFilter());
         }
     }
 
     @Override
-    public AllFacetsState withRow(AllFacetsState states, long rowId, Row row) {
+    public AllFacetsState withRow(AllFacetsState states, long rowId, Row row, Record record) {
         if (states.size() != _facetAggregators.size()) {
             throw new IllegalArgumentException("Incompatible list of facet states and facet aggregators");
         }
@@ -59,7 +57,7 @@ public class AllFacetsAggregator implements RowAggregator<AllFacetsState>, Recor
         Builder<FacetState> newStates = ImmutableList.<FacetState> builder();
         for (int i = 0; i != states.size(); i++) {
             // Rows are only seen by facets if they are selected by all other facets
-            newStates.add(incrementHelper(_facetAggregators.get(i), states.get(i), rowId, row,
+            newStates.add(incrementHelper(_facetAggregators.get(i), states.get(i), rowId, row, record,
                     allMatching || (numberOfMismatches == 1 && !matching[i])));
         }
         return new AllFacetsState(newStates.build(), states.getAggregatedCount() + 1,
@@ -75,7 +73,7 @@ public class AllFacetsAggregator implements RowAggregator<AllFacetsState>, Recor
         boolean[] matching = new boolean[_facetAggregators.size()];
         int numberOfMismatches = 0;
         for (int i = 0; i != _facetAggregators.size(); i++) {
-            RecordFilter filter = _recordFilters.get(i);
+            RecordFilter filter = _rowFilters.get(i);
             matching[i] = filter == null || filter.filterRecord(record);
             if (!matching[i]) {
                 numberOfMismatches++;
@@ -96,7 +94,8 @@ public class AllFacetsAggregator implements RowAggregator<AllFacetsState>, Recor
             if (allMatching || !matching[i]) {
                 FacetState currentState = states.get(i);
                 for (int j = 0; j != rows.size(); j++) {
-                    currentState = incrementHelper(_facetAggregators.get(i), currentState, record.getStartRowId() + j, rows.get(j), true);
+                    currentState = incrementHelper(_facetAggregators.get(i), currentState, record.getStartRowId() + j, rows.get(j), record,
+                            true);
                 }
                 newStates.add(currentState);
             } else {
@@ -124,13 +123,13 @@ public class AllFacetsAggregator implements RowAggregator<AllFacetsState>, Recor
 
     @SuppressWarnings("unchecked")
     private static <T extends FacetState> T incrementHelper(FacetAggregator<T> aggregator, FacetState state, long rowId, Row row,
-            boolean insideView) {
+            Record record, boolean insideView) {
         if (aggregator == null) {
             return (T) state;
         } else if (insideView) {
             return aggregator.withRow((T) state, rowId, row);
         } else {
-            return aggregator.withRowOutsideView((T) state, rowId, row);
+            return aggregator.withRowOutsideView((T) state, rowId, row, record);
         }
     }
 

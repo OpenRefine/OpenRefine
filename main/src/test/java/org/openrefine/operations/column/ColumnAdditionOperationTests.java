@@ -85,7 +85,7 @@ public class ColumnAdditionOperationTests extends RefineTest {
     }
 
     @Test
-    public void testAddColumn() throws DoesNotApplyException {
+    public void testAddColumnRowsMode() throws DoesNotApplyException {
         Change change = new ColumnAdditionOperation(
                 EngineConfig.ALL_ROWS,
                 "bar",
@@ -105,6 +105,31 @@ public class ColumnAdditionOperationTests extends RefineTest {
                         { "", "b", "_b", "h" },
                         { new EvalError("error"), "a", null, "i" },
                         { "v1", "b", "v1_b", "j" }
+                });
+        assertGridEquals(applied, expected);
+    }
+
+    @Test
+    public void testAddColumnRecordsMode() throws DoesNotApplyException {
+        Change change = new ColumnAdditionOperation(
+                EngineConfig.ALL_RECORDS,
+                "bar",
+                "grel:length(row.record.cells['hello'])",
+                OnError.SetToBlank,
+                "newcolumn",
+                2).createChange();
+
+        GridState applied = change.apply(initialState, mock(ChangeContext.class));
+
+        GridState expected = createGrid(
+                new String[] { "foo", "bar", "newcolumn", "hello" },
+                new Serializable[][] {
+                        { "v1", "a", 1, "d" },
+                        { "v3", "a", 4, "f" },
+                        { "", "a", 4, "g" },
+                        { "", "b", 4, "h" },
+                        { new EvalError("error"), "a", 4, "i" },
+                        { "v1", "b", 1, "j" }
                 });
         assertGridEquals(applied, expected);
     }

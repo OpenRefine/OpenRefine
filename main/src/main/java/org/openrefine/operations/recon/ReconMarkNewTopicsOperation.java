@@ -44,9 +44,10 @@ import org.openrefine.browsing.EngineConfig;
 import org.openrefine.browsing.facets.RowAggregator;
 import org.openrefine.model.Cell;
 import org.openrefine.model.GridState;
+import org.openrefine.model.Record;
 import org.openrefine.model.Row;
 import org.openrefine.model.RowFilter;
-import org.openrefine.model.RowMapper;
+import org.openrefine.model.RowInRecordMapper;
 import org.openrefine.model.changes.Change.DoesNotApplyException;
 import org.openrefine.model.changes.ChangeContext;
 import org.openrefine.model.changes.ColumnNotFoundException;
@@ -92,7 +93,7 @@ public class ReconMarkNewTopicsOperation extends ImmediateRowMapOperation {
     }
 
     @Override
-    public RowMapper getPositiveRowMapper(GridState state, ChangeContext context) throws DoesNotApplyException {
+    public RowInRecordMapper getPositiveRowMapper(GridState state, ChangeContext context) throws DoesNotApplyException {
         int columnIndex = state.getColumnModel().getColumnIndexByName(_columnName);
         if (columnIndex == -1) {
             throw new ColumnNotFoundException(_columnName);
@@ -116,14 +117,14 @@ public class ReconMarkNewTopicsOperation extends ImmediateRowMapOperation {
         }
     }
 
-    protected static RowMapper rowMapperWithSharing(int columnIndex, ReconConfig reconConfig, long historyEntryId,
+    protected static RowInRecordMapper rowMapperWithSharing(int columnIndex, ReconConfig reconConfig, long historyEntryId,
             ImmutableMap<String, Long> valueToId) {
-        return new RowMapper() {
+        return new RowInRecordMapper() {
 
             private static final long serialVersionUID = -2838679493823196821L;
 
             @Override
-            public Row call(long rowId, Row row) {
+            public Row call(Record record, long rowId, Row row) {
                 Cell cell = row.getCell(columnIndex);
                 if (cell != null) {
                     Recon recon = reconConfig.createNewRecon(historyEntryId)
@@ -149,13 +150,13 @@ public class ReconMarkNewTopicsOperation extends ImmediateRowMapOperation {
         return LazyReconStats.updateReconStats(newState, _columnName);
     }
 
-    protected static RowMapper rowMapperNoSharing(int columnIndex, ReconConfig reconConfig, long historyEntryId) {
-        return new RowMapper() {
+    protected static RowInRecordMapper rowMapperNoSharing(int columnIndex, ReconConfig reconConfig, long historyEntryId) {
+        return new RowInRecordMapper() {
 
             private static final long serialVersionUID = 5224856110246957223L;
 
             @Override
-            public Row call(long rowId, Row row) {
+            public Row call(Record record, long rowId, Row row) {
                 Cell cell = row.getCell(columnIndex);
                 if (cell != null) {
                     Recon recon = cell.recon == null ? reconConfig.createNewRecon(historyEntryId) : cell.recon.dup(historyEntryId);

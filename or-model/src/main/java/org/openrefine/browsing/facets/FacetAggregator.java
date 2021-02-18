@@ -1,28 +1,24 @@
 
 package org.openrefine.browsing.facets;
 
-import org.openrefine.model.RecordFilter;
+import org.openrefine.model.Record;
 import org.openrefine.model.Row;
-import org.openrefine.model.RowFilter;
+import org.openrefine.model.RowInRecordFilter;
 
 /**
- * Small serializable object which embeds everything that is required to compute facet statistics. Subclasses are
- * serialized by Spark and sent to executors.
+ * Small serializable object which embeds everything that is required to compute facet statistics.
  * 
  * @author Antonin Delpeuch
  *
  */
-public interface FacetAggregator<T extends FacetState> extends RowAggregator<T> {
+public abstract class FacetAggregator<T extends FacetState> extends RowInRecordAggregator<T> {
+
+    private static final long serialVersionUID = -1678991606989282519L;
 
     /**
      * @return a row filter which determines if a row matches this facet.
      */
-    public RowFilter getRowFilter();
-
-    /**
-     * @return a record filter which determines if a record matches this facet.
-     */
-    public RecordFilter getRecordFilter();
+    public abstract RowInRecordFilter getRowFilter();
 
     /**
      * Like {@link RowAggregator.withRow} except that this method is called on rows that are excluded by at least two
@@ -34,9 +30,12 @@ public interface FacetAggregator<T extends FacetState> extends RowAggregator<T> 
      *            the row id of the row to ingest
      * @param row
      *            the row to ingest
+     * @param record
+     *            the enclosing record of the row if available, null otherwise
      * @return the facet state updated with this row
      */
-    public default T withRowOutsideView(T state, long rowId, Row row) {
+    public T withRowOutsideView(T state, long rowId, Row row, Record record) {
         return state;
     }
+
 }

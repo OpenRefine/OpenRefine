@@ -39,8 +39,9 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import org.openrefine.browsing.EngineConfig;
 import org.openrefine.model.Cell;
 import org.openrefine.model.GridState;
+import org.openrefine.model.Record;
 import org.openrefine.model.Row;
-import org.openrefine.model.RowMapper;
+import org.openrefine.model.RowInRecordMapper;
 import org.openrefine.model.changes.Change.DoesNotApplyException;
 import org.openrefine.model.changes.ChangeContext;
 import org.openrefine.model.recon.LazyReconStats;
@@ -80,7 +81,7 @@ public class ReconDiscardJudgmentsOperation extends ImmediateRowMapOperation {
     }
 
     @Override
-    public RowMapper getPositiveRowMapper(GridState projectState, ChangeContext context) throws DoesNotApplyException {
+    public RowInRecordMapper getPositiveRowMapper(GridState projectState, ChangeContext context) throws DoesNotApplyException {
         int columnIndex = projectState.getColumnModel().getColumnIndexByName(_columnName);
         if (columnIndex == -1) {
             throw new DoesNotApplyException(String.format("The column '%s' does not exist", _columnName));
@@ -93,13 +94,13 @@ public class ReconDiscardJudgmentsOperation extends ImmediateRowMapOperation {
         return LazyReconStats.updateReconStats(newState, _columnName);
     }
 
-    protected static RowMapper rowMapper(int columnIndex, boolean clearData, long historyEntryId) {
-        return new RowMapper() {
+    protected static RowInRecordMapper rowMapper(int columnIndex, boolean clearData, long historyEntryId) {
+        return new RowInRecordMapper() {
 
             private static final long serialVersionUID = 5930949875518485010L;
 
             @Override
-            public Row call(long rowId, Row row) {
+            public Row call(Record record, long rowId, Row row) {
                 Cell cell = row.getCell(columnIndex);
                 if (cell != null && cell.recon != null) {
                     Recon newRecon = cell.recon

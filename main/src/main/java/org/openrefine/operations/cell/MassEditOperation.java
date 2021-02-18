@@ -50,8 +50,9 @@ import org.openrefine.expr.MetaParser;
 import org.openrefine.expr.ParsingException;
 import org.openrefine.model.Cell;
 import org.openrefine.model.GridState;
+import org.openrefine.model.Record;
 import org.openrefine.model.Row;
-import org.openrefine.model.RowMapper;
+import org.openrefine.model.RowInRecordMapper;
 import org.openrefine.model.changes.Change;
 import org.openrefine.model.changes.ChangeContext;
 import org.openrefine.model.changes.RowMapChange;
@@ -185,7 +186,7 @@ public class MassEditOperation extends EngineDependentOperation {
         }
 
         @Override
-        public RowMapper getPositiveRowMapper(GridState state, ChangeContext context) throws DoesNotApplyException {
+        public RowInRecordMapper getPositiveRowMapper(GridState state, ChangeContext context) throws DoesNotApplyException {
             int columnIdx = columnIndex(state.getColumnModel(), _columnName);
             return mapper(columnIdx, _evaluable, _columnName, _fromTo, _fromBlankTo, _fromErrorTo);
         }
@@ -197,19 +198,19 @@ public class MassEditOperation extends EngineDependentOperation {
 
     }
 
-    private static RowMapper mapper(int columnIdx, Evaluable evaluable, String columnName,
+    private static RowInRecordMapper mapper(int columnIdx, Evaluable evaluable, String columnName,
             Map<String, Serializable> fromTo, Serializable fromBlankTo, Serializable fromErrorTo) {
-        return new RowMapper() {
+        return new RowInRecordMapper() {
 
             private static final long serialVersionUID = 6383816657756293719L;
 
             @Override
-            public Row call(long rowIndex, Row row) {
+            public Row call(Record record, long rowIndex, Row row) {
                 Cell cell = row.getCell(columnIdx);
                 Cell newCell = cell;
 
                 Properties bindings = ExpressionUtils.createBindings();
-                ExpressionUtils.bind(bindings, null, row, rowIndex, columnName, cell);
+                ExpressionUtils.bind(bindings, null, row, rowIndex, record, columnName, cell);
 
                 Object v = evaluable.evaluate(bindings);
                 if (ExpressionUtils.isError(v)) {

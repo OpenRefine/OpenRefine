@@ -9,9 +9,9 @@ import org.testng.Assert;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
-import org.openrefine.browsing.filters.AllRowsRecordFilter;
 import org.openrefine.expr.EvalError;
 import org.openrefine.model.Cell;
+import org.openrefine.model.Record;
 import org.openrefine.model.Row;
 import org.openrefine.model.RowFilter;
 
@@ -29,7 +29,7 @@ public class NumericFacetAggregatorTests {
     RowEvaluable evaluable = new RowEvaluable() {
 
         @Override
-        public Object eval(long rowIndex, Row row, Properties bindings) {
+        public Object eval(long rowIndex, Row row, Record record, Properties bindings) {
             return row.getCellValue(0);
         }
 
@@ -52,7 +52,7 @@ public class NumericFacetAggregatorTests {
 
     @Test
     public void testWithRowOutsideView() {
-        NumericFacetState withRow = SUT.withRowOutsideView(new NumericFacetState(empty, empty), 1234L, row(4.0));
+        NumericFacetState withRow = SUT.withRowOutsideView(new NumericFacetState(empty, empty), 1234L, row(4.0), null);
         Assert.assertEquals(withRow, new NumericFacetState(emptyWith4, empty));
     }
 
@@ -147,10 +147,5 @@ public class NumericFacetAggregatorTests {
         RowFilter filter = SUT.getRowFilter();
         Assert.assertTrue(filter.filterRow(1234L, row(57.9)));
         Assert.assertFalse(filter.filterRow(1245L, row(-34.3)));
-    }
-
-    @Test
-    public void testRecordFilter() {
-        Assert.assertTrue(SUT.getRecordFilter() instanceof AllRowsRecordFilter);
     }
 }

@@ -41,7 +41,7 @@ import org.openrefine.browsing.EngineConfig;
 import org.openrefine.model.ColumnModel;
 import org.openrefine.model.GridState;
 import org.openrefine.model.ModelException;
-import org.openrefine.model.RowMapper;
+import org.openrefine.model.RowInRecordMapper;
 import org.openrefine.model.changes.Change.DoesNotApplyException;
 import org.openrefine.model.changes.ChangeContext;
 import org.openrefine.operations.ImmediateRowMapOperation;
@@ -88,8 +88,8 @@ public class ColumnRenameOperation extends ImmediateRowMapOperation {
     }
 
     @Override
-    protected RowMapper getPositiveRowMapper(GridState state, ChangeContext context) throws DoesNotApplyException {
-        return RowMapper.IDENTITY;
+    protected RowInRecordMapper getPositiveRowMapper(GridState state, ChangeContext context) throws DoesNotApplyException {
+        return RowInRecordMapper.IDENTITY;
     }
 
     // engine config is never useful, so we remove it from the JSON serialization

@@ -8,7 +8,7 @@ import java.util.Set;
 import org.openrefine.browsing.filters.ExpressionEqualRowFilter;
 import org.openrefine.expr.ExpressionUtils;
 import org.openrefine.model.ColumnModel;
-import org.openrefine.model.RowFilter;
+import org.openrefine.model.RowInRecordFilter;
 import org.openrefine.util.StringUtils;
 
 public class StringValuesFacetAggregator extends ExpressionValueFacetAggregator<StringValuesFacetState> {
@@ -68,7 +68,7 @@ public class StringValuesFacetAggregator extends ExpressionValueFacetAggregator<
     }
 
     @Override
-    public RowFilter getRowFilter() {
+    public RowInRecordFilter getRowFilter() {
         return _eval == null ||
                 (_selected.size() == 0 && !_selectBlanks && !_selectErrors) ? null
                         : new ExpressionEqualRowFilter(

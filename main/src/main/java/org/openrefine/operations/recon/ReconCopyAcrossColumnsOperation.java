@@ -49,8 +49,9 @@ import org.openrefine.browsing.EngineConfig;
 import org.openrefine.browsing.facets.RowAggregator;
 import org.openrefine.model.Cell;
 import org.openrefine.model.GridState;
+import org.openrefine.model.Record;
 import org.openrefine.model.Row;
-import org.openrefine.model.RowMapper;
+import org.openrefine.model.RowInRecordMapper;
 import org.openrefine.model.changes.Change.DoesNotApplyException;
 import org.openrefine.model.changes.ChangeContext;
 import org.openrefine.model.recon.Recon;
@@ -99,7 +100,7 @@ public class ReconCopyAcrossColumnsOperation extends ImmediateRowMapOperation {
     }
 
     @Override
-    public RowMapper getPositiveRowMapper(GridState projectState, ChangeContext context) throws DoesNotApplyException {
+    public RowInRecordMapper getPositiveRowMapper(GridState projectState, ChangeContext context) throws DoesNotApplyException {
         int columnIndex = projectState.getColumnModel().getColumnIndexByName(_fromColumnName);
         List<Integer> targetColumnIndices = _toColumnNames
                 .stream()
@@ -153,14 +154,14 @@ public class ReconCopyAcrossColumnsOperation extends ImmediateRowMapOperation {
         };
     }
 
-    protected static RowMapper getRowMapper(List<Integer> columnIndices, Map<Serializable, Recon> valueToRecon,
+    protected static RowInRecordMapper getRowMapper(List<Integer> columnIndices, Map<Serializable, Recon> valueToRecon,
             boolean applyToJudgedCells) {
-        return new RowMapper() {
+        return new RowInRecordMapper() {
 
             private static final long serialVersionUID = -6427575427288421446L;
 
             @Override
-            public Row call(long rowId, Row row) {
+            public Row call(Record record, long rowId, Row row) {
                 Row result = row;
                 for (Integer columnIndex : columnIndices) {
                     Cell cell = row.getCell(columnIndex);

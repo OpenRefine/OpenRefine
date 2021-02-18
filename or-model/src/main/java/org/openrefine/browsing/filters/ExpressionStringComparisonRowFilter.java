@@ -42,14 +42,17 @@ import org.openrefine.expr.Evaluable;
 import org.openrefine.expr.ExpressionUtils;
 import org.openrefine.expr.util.JsonValueConverter;
 import org.openrefine.model.Cell;
+import org.openrefine.model.Record;
 import org.openrefine.model.Row;
-import org.openrefine.model.RowFilter;
+import org.openrefine.model.RowInRecordFilter;
 
 /**
  * Judge if a row matches by evaluating a given expression on the row, based on a particular column, and checking the
  * result. It's a match if the result satisfies some string comparisons.
  */
-abstract public class ExpressionStringComparisonRowFilter implements RowFilter {
+abstract public class ExpressionStringComparisonRowFilter extends RowInRecordFilter {
+
+    private static final long serialVersionUID = 3006866971552488098L;
 
     final protected Evaluable _evaluable;
     final protected Boolean _invert;
@@ -57,6 +60,7 @@ abstract public class ExpressionStringComparisonRowFilter implements RowFilter {
     final protected int _cellIndex;
 
     public ExpressionStringComparisonRowFilter(Evaluable evaluable, Boolean invert, String columnName, int cellIndex) {
+        super(!invert);
         _evaluable = evaluable;
         _invert = invert;
         _columnName = columnName;
@@ -64,11 +68,11 @@ abstract public class ExpressionStringComparisonRowFilter implements RowFilter {
     }
 
     @Override
-    public boolean filterRow(long rowIndex, Row row) {
+    public boolean filterRow(long rowIndex, Row row, Record record) {
         Cell cell = _cellIndex < 0 ? null : row.getCell(_cellIndex);
 
         Properties bindings = ExpressionUtils.createBindings();
-        ExpressionUtils.bind(bindings, null, row, rowIndex, _columnName, cell);
+        ExpressionUtils.bind(bindings, null, row, rowIndex, record, _columnName, cell);
         Boolean invert = _invert;
         Object value = _evaluable.evaluate(bindings);
         if (value != null) {

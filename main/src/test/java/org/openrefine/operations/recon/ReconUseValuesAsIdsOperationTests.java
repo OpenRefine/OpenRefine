@@ -45,7 +45,6 @@ import org.openrefine.model.Row;
 import org.openrefine.model.changes.ChangeContext;
 import org.openrefine.model.recon.StandardReconConfig;
 import org.openrefine.operations.OperationRegistry;
-import org.openrefine.operations.recon.ReconUseValuesAsIdentifiersOperation;
 import org.openrefine.util.ParsingUtilities;
 import org.openrefine.util.TestUtils;
 

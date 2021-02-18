@@ -48,8 +48,9 @@ public class ScatterplotRowFilter extends DualExpressionsNumberComparisonRowFilt
             Dimension dimX,
             Dimension dimY,
             double l,
-            Rotation rotation) {
-        super(evaluableX, evaluableY);
+            Rotation rotation,
+            boolean invert) {
+        super(evaluableX, evaluableY, invert);
         _minX = minX;
         _maxX = maxX;
         _minY = minY;

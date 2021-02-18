@@ -39,8 +39,9 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import org.openrefine.browsing.EngineConfig;
 import org.openrefine.model.Cell;
 import org.openrefine.model.GridState;
+import org.openrefine.model.Record;
 import org.openrefine.model.Row;
-import org.openrefine.model.RowMapper;
+import org.openrefine.model.RowInRecordMapper;
 import org.openrefine.model.changes.Change.DoesNotApplyException;
 import org.openrefine.model.changes.ChangeContext;
 import org.openrefine.model.recon.LazyReconStats;
@@ -78,7 +79,7 @@ public class ReconClearSimilarCellsOperation extends ImmediateRowMapOperation {
     }
 
     @Override
-    protected RowMapper getPositiveRowMapper(GridState state, ChangeContext context) throws DoesNotApplyException {
+    protected RowInRecordMapper getPositiveRowMapper(GridState state, ChangeContext context) throws DoesNotApplyException {
         int cellIndex = columnIndex(state.getColumnModel(), _columnName);
         return rowMapper(cellIndex, _similarValue);
     }
@@ -88,13 +89,13 @@ public class ReconClearSimilarCellsOperation extends ImmediateRowMapOperation {
         return LazyReconStats.updateReconStats(newState, _columnName);
     }
 
-    protected static RowMapper rowMapper(int cellIndex, String _similarValue) {
-        return new RowMapper() {
+    protected static RowInRecordMapper rowMapper(int cellIndex, String _similarValue) {
+        return new RowInRecordMapper() {
 
             private static final long serialVersionUID = -7567386480566899008L;
 
             @Override
-            public Row call(long rowId, Row row) {
+            public Row call(Record record, long rowId, Row row) {
                 Cell cell = row.getCell(cellIndex);
                 if (cell != null && cell.recon != null) {
                     String value = cell.value instanceof String ? ((String) cell.value) : cell.value.toString();

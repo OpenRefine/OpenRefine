@@ -13,10 +13,10 @@ import org.testng.annotations.Test;
 
 import org.openrefine.browsing.facets.FacetConfigResolver;
 import org.openrefine.browsing.facets.ScatterplotFacet.ScatterplotFacetConfig;
-import org.openrefine.browsing.filters.AnyRowRecordFilter;
 import org.openrefine.expr.MetaParser;
 import org.openrefine.grel.Parser;
 import org.openrefine.model.Cell;
+import org.openrefine.model.Record;
 import org.openrefine.model.Row;
 import org.openrefine.model.RowFilter;
 import org.openrefine.util.ParsingUtilities;
@@ -62,7 +62,7 @@ public class ScatterplotFacetAggregatorTests {
             private static final long serialVersionUID = 1L;
 
             @Override
-            public Object eval(long rowIndex, Row row, Properties bindings) {
+            public Object eval(long rowIndex, Row row, Record record, Properties bindings) {
                 return row.getCellValue(0);
             }
 
@@ -72,7 +72,7 @@ public class ScatterplotFacetAggregatorTests {
             private static final long serialVersionUID = 1L;
 
             @Override
-            public Object eval(long rowIndex, Row row, Properties bindings) {
+            public Object eval(long rowIndex, Row row, Record record, Properties bindings) {
                 return row.getCellValue(1);
             }
 
@@ -100,7 +100,7 @@ public class ScatterplotFacetAggregatorTests {
     @Test
     public void testWithRowOutsideView() {
         ScatterplotFacetState state = SUT.withRowOutsideView(genericState, 1234L,
-                new Row(Arrays.asList(new Cell(23.3, null), new Cell(-7, null))));
+                new Row(Arrays.asList(new Cell(23.3, null), new Cell(-7, null))), null);
 
         ScatterplotFacetState expectedState = new ScatterplotFacetState(
                 new double[] { 3.45, 89.7, -37, 23.3 },
@@ -144,11 +144,6 @@ public class ScatterplotFacetAggregatorTests {
 
         Assert.assertTrue(filter.filterRow(1234L, new Row(Arrays.asList(new Cell(23.3, null), new Cell(-7, null)))));
         Assert.assertFalse(filter.filterRow(1234L, new Row(Arrays.asList(new Cell(-8, null), new Cell(200, null)))));
-    }
-
-    @Test
-    public void testRecordFilter() {
-        Assert.assertTrue(SUT.getRecordFilter() instanceof AnyRowRecordFilter);
     }
 
     @Test

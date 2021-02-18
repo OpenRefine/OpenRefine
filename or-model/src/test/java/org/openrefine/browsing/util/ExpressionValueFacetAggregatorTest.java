@@ -14,11 +14,10 @@ import org.testng.annotations.Test;
 
 import org.openrefine.browsing.facets.FacetResult;
 import org.openrefine.browsing.facets.FacetState;
-import org.openrefine.browsing.filters.AllRowsRecordFilter;
-import org.openrefine.browsing.filters.AnyRowRecordFilter;
 import org.openrefine.model.Cell;
+import org.openrefine.model.Record;
 import org.openrefine.model.Row;
-import org.openrefine.model.RowFilter;
+import org.openrefine.model.RowInRecordFilter;
 
 public class ExpressionValueFacetAggregatorTest {
 
@@ -53,8 +52,8 @@ public class ExpressionValueFacetAggregatorTest {
         }
 
         @Override
-        public RowFilter getRowFilter() {
-            return RowFilter.ANY_ROW;
+        public RowInRecordFilter getRowFilter() {
+            return RowInRecordFilter.ANY_ROW_IN_RECORD;
         }
 
         @Override
@@ -85,7 +84,7 @@ public class ExpressionValueFacetAggregatorTest {
             private static final long serialVersionUID = 7910046832222123009L;
 
             @Override
-            public Object eval(long rowIndex, Row row, Properties bindings) {
+            public Object eval(long rowIndex, Row row, Record record, Properties bindings) {
                 return row.getCellValue(0);
             }
 
@@ -120,15 +119,5 @@ public class ExpressionValueFacetAggregatorTest {
                 new Cell((Serializable) Arrays.<Object> asList("foo", 12345L), null))));
 
         Assert.assertEquals(state._values, Arrays.asList("hey", "foo", 12345L));
-    }
-
-    @Test
-    public void testRecordFilter() {
-        Assert.assertTrue(SUT.getRecordFilter() instanceof AnyRowRecordFilter);
-    }
-
-    @Test
-    public void testRecordFilterInvert() {
-        Assert.assertTrue(new AggregatorStub(true, eval).getRecordFilter() instanceof AllRowsRecordFilter);
     }
 }

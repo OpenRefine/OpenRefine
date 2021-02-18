@@ -48,8 +48,9 @@ import org.openrefine.model.Cell;
 import org.openrefine.model.ColumnMetadata;
 import org.openrefine.model.ColumnModel;
 import org.openrefine.model.GridState;
+import org.openrefine.model.Record;
 import org.openrefine.model.Row;
-import org.openrefine.model.RowMapper;
+import org.openrefine.model.RowInRecordMapper;
 import org.openrefine.model.changes.Change.DoesNotApplyException;
 import org.openrefine.model.changes.ChangeContext;
 import org.openrefine.operations.ImmediateRowMapOperation;
@@ -94,7 +95,7 @@ public class ColumnReorderOperation extends ImmediateRowMapOperation {
     }
 
     @Override
-    public RowMapper getPositiveRowMapper(GridState state, ChangeContext context) throws DoesNotApplyException {
+    public RowInRecordMapper getPositiveRowMapper(GridState state, ChangeContext context) throws DoesNotApplyException {
         // Build a map from new indices to original ones
         List<Integer> origIndex = new ArrayList<>(_columnNames.size());
         for (int i = 0; i != _columnNames.size(); i++) {
@@ -104,13 +105,13 @@ public class ColumnReorderOperation extends ImmediateRowMapOperation {
         return mapper(origIndex);
     }
 
-    protected static RowMapper mapper(List<Integer> origIndex) {
-        return new RowMapper() {
+    protected static RowInRecordMapper mapper(List<Integer> origIndex) {
+        return new RowInRecordMapper() {
 
             private static final long serialVersionUID = 7653347685611673401L;
 
             @Override
-            public Row call(long rowId, Row row) {
+            public Row call(Record record, long rowId, Row row) {
                 List<Cell> newCells = origIndex.stream()
                         .map(i -> row.getCell(i))
                         .collect(Collectors.toList());

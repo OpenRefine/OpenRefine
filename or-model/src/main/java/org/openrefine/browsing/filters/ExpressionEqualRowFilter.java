@@ -42,8 +42,9 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import org.openrefine.browsing.util.RowEvaluable;
 import org.openrefine.expr.ExpressionUtils;
 import org.openrefine.expr.util.JsonValueConverter;
+import org.openrefine.model.Record;
 import org.openrefine.model.Row;
-import org.openrefine.model.RowFilter;
+import org.openrefine.model.RowInRecordFilter;
 import org.openrefine.util.StringUtils;
 
 /**
@@ -51,7 +52,7 @@ import org.openrefine.util.StringUtils;
  * result. It's a match if the result is any one of a given list of values, or if the result is blank or error and we
  * want blank or error values.
  */
-public class ExpressionEqualRowFilter implements RowFilter {
+public class ExpressionEqualRowFilter extends RowInRecordFilter {
 
     private static final long serialVersionUID = 1L;
 
@@ -75,6 +76,7 @@ public class ExpressionEqualRowFilter implements RowFilter {
             boolean selectBlank,
             boolean selectError,
             boolean invert) {
+        super(!invert);
         _evaluable = evaluable;
         _columnName = columnName;
         _cellIndex = cellIndex;
@@ -85,15 +87,15 @@ public class ExpressionEqualRowFilter implements RowFilter {
     }
 
     @Override
-    public boolean filterRow(long rowIndex, Row row) {
+    public boolean filterRow(long rowIndex, Row row, Record record) {
         return _invert ^
-                internalFilterRow(rowIndex, row);
+                internalFilterRow(rowIndex, row, record);
     }
 
-    public boolean internalFilterRow(long rowIndex, Row row) {
+    public boolean internalFilterRow(long rowIndex, Row row, Record record) {
         Properties bindings = ExpressionUtils.createBindings();
 
-        Object value = _evaluable.eval(rowIndex, row, bindings);
+        Object value = _evaluable.eval(rowIndex, row, record, bindings);
         if (value != null) {
             if (value.getClass().isArray()) {
                 Object[] a = (Object[]) value;

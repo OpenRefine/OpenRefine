@@ -48,8 +48,9 @@ import org.openrefine.expr.WrappedCell;
 import org.openrefine.model.Cell;
 import org.openrefine.model.ColumnModel;
 import org.openrefine.model.GridState;
+import org.openrefine.model.Record;
 import org.openrefine.model.Row;
-import org.openrefine.model.RowMapper;
+import org.openrefine.model.RowInRecordMapper;
 import org.openrefine.model.changes.Change.DoesNotApplyException;
 import org.openrefine.model.changes.ChangeContext;
 import org.openrefine.operations.ImmediateRowMapOperation;
@@ -110,7 +111,7 @@ public class TextTransformOperation extends ImmediateRowMapOperation {
     }
 
     @Override
-    protected RowMapper getPositiveRowMapper(GridState state, ChangeContext context) throws DoesNotApplyException {
+    protected RowInRecordMapper getPositiveRowMapper(GridState state, ChangeContext context) throws DoesNotApplyException {
         int columnIndex = columnIndex(state.getColumnModel(), _columnName);
         Evaluable eval;
         try {
@@ -124,20 +125,20 @@ public class TextTransformOperation extends ImmediateRowMapOperation {
         return rowMapper(columnIndex, _columnName, state.getColumnModel(), eval, _onError, _repeat ? _repeatCount : 0);
     }
 
-    protected static RowMapper rowMapper(int columnIndex, String columnName, ColumnModel columnModel, Evaluable eval, OnError onError,
-            int repeatCount) {
-        return new RowMapper() {
+    protected static RowInRecordMapper rowMapper(int columnIndex, String columnName, ColumnModel columnModel, Evaluable eval,
+            OnError onError, int repeatCount) {
+        return new RowInRecordMapper() {
 
             private static final long serialVersionUID = 2272064171042189466L;
 
             @Override
-            public Row call(long rowId, Row row) {
+            public Row call(Record record, long rowId, Row row) {
                 Cell cell = row.getCell(columnIndex);
                 Cell newCell = null;
 
                 Object oldValue = cell != null ? cell.value : null;
                 Properties bindings = new Properties();
-                ExpressionUtils.bind(bindings, columnModel, row, rowId, columnName, cell);
+                ExpressionUtils.bind(bindings, columnModel, row, rowId, record, columnName, cell);
 
                 Object o = eval.evaluate(bindings);
                 if (o == null) {
@@ -161,7 +162,7 @@ public class TextTransformOperation extends ImmediateRowMapOperation {
                             newCell = new Cell(newValue, (cell != null) ? cell.recon : null);
 
                             for (int i = 0; i < repeatCount; i++) {
-                                ExpressionUtils.bind(bindings, null, row, rowId, columnName, newCell);
+                                ExpressionUtils.bind(bindings, null, row, rowId, record, columnName, newCell);
 
                                 newValue = ExpressionUtils.wrapStorable(eval.evaluate(bindings));
                                 if (ExpressionUtils.isError(newValue)) {

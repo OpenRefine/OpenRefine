@@ -46,7 +46,6 @@ import org.openrefine.model.changes.Change.DoesNotApplyException;
 import org.openrefine.model.changes.ChangeContext;
 import org.openrefine.model.recon.Recon;
 import org.openrefine.operations.OperationRegistry;
-import org.openrefine.operations.recon.ReconCopyAcrossColumnsOperation;
 import org.openrefine.util.ParsingUtilities;
 import org.openrefine.util.TestUtils;
 

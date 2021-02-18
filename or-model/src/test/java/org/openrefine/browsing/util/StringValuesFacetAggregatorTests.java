@@ -13,6 +13,7 @@ import org.openrefine.expr.EvalError;
 import org.openrefine.model.Cell;
 import org.openrefine.model.ColumnMetadata;
 import org.openrefine.model.ColumnModel;
+import org.openrefine.model.Record;
 import org.openrefine.model.Row;
 
 public class StringValuesFacetAggregatorTests {
@@ -24,7 +25,7 @@ public class StringValuesFacetAggregatorTests {
         private static final long serialVersionUID = -5844679178529098676L;
 
         @Override
-        public Object eval(long rowIndex, Row row, Properties bindings) {
+        public Object eval(long rowIndex, Row row, Record record, Properties bindings) {
             return row.getCellValue(0);
         }
     };

@@ -6,7 +6,7 @@ import java.time.OffsetDateTime;
 import org.openrefine.browsing.facets.TimeRangeFacet.TimeRangeFacetConfig;
 import org.openrefine.browsing.filters.ExpressionTimeComparisonRowFilter;
 import org.openrefine.expr.ExpressionUtils;
-import org.openrefine.model.RowFilter;
+import org.openrefine.model.RowInRecordFilter;
 
 public class TimeRangeFacetAggregator extends ExpressionValueFacetAggregator<TimeRangeFacetState> {
 
@@ -27,10 +27,10 @@ public class TimeRangeFacetAggregator extends ExpressionValueFacetAggregator<Tim
     }
 
     @Override
-    public RowFilter getRowFilter() {
+    public RowInRecordFilter getRowFilter() {
         if (_eval != null && !_config.isNeutral()) {
             return new ExpressionTimeComparisonRowFilter(
-                    _eval, _config.getSelectTime(), _config.getSelectNonTime(), _config.getSelectBlank(), _config.getSelectError()) {
+                    _eval, _config.getSelectTime(), _config.getSelectNonTime(), _config.getSelectBlank(), _config.getSelectError(), false) {
 
                 private static final long serialVersionUID = 122258850633903894L;
 

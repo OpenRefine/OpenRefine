@@ -43,14 +43,12 @@ import java.util.regex.Pattern;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import org.openrefine.browsing.filters.AllRowsRecordFilter;
-import org.openrefine.browsing.filters.AnyRowRecordFilter;
 import org.openrefine.browsing.filters.ExpressionStringComparisonRowFilter;
 import org.openrefine.expr.Evaluable;
 import org.openrefine.model.ColumnModel;
-import org.openrefine.model.RecordFilter;
+import org.openrefine.model.Record;
 import org.openrefine.model.Row;
-import org.openrefine.model.RowFilter;
+import org.openrefine.model.RowInRecordFilter;
 import org.openrefine.util.PatternSyntaxExceptionParser;
 
 public class TextSearchFacet implements Facet {
@@ -209,7 +207,7 @@ public class TextSearchFacet implements Facet {
         // No state to be kept
     }
 
-    public static class TextSearchAggregator implements FacetAggregator<TextSearchFacetState> {
+    public static class TextSearchAggregator extends FacetAggregator<TextSearchFacetState> {
 
         /**
          * 
@@ -226,7 +224,7 @@ public class TextSearchFacet implements Facet {
         }
 
         @Override
-        public TextSearchFacetState withRow(TextSearchFacetState state, long rowId, Row row) {
+        public TextSearchFacetState withRow(TextSearchFacetState state, long rowId, Row row, Record record) {
             return state;
         }
 
@@ -236,7 +234,7 @@ public class TextSearchFacet implements Facet {
         }
 
         @Override
-        public RowFilter getRowFilter() {
+        public RowInRecordFilter getRowFilter() {
             if (_config.isNeutral() || _cellIndex < 0) {
                 return null;
             } else if ("regex".equals(_config._mode) && _pattern == null) {
@@ -291,15 +289,6 @@ public class TextSearchFacet implements Facet {
                     };
                 };
             }
-        }
-
-        @Override
-        public RecordFilter getRecordFilter() {
-            RowFilter rowFilter = getRowFilter();
-            if (rowFilter == null) {
-                return null;
-            }
-            return _config._invert ? new AllRowsRecordFilter(rowFilter) : new AnyRowRecordFilter(rowFilter);
         }
 
     }

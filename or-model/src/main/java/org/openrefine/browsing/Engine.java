@@ -256,7 +256,7 @@ public class Engine {
     private List<RecordFilter> facetRecordFilters() {
         return _facets.stream()
                 .map(facet -> facet.getAggregator())
-                .map(aggregator -> aggregator == null ? null : aggregator.getRecordFilter())
+                .map(aggregator -> aggregator == null ? null : aggregator.getRowFilter())
                 .filter(filter -> filter != null)
                 .collect(Collectors.toList());
     }

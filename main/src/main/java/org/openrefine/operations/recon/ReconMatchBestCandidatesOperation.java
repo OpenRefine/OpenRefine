@@ -39,8 +39,9 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import org.openrefine.browsing.EngineConfig;
 import org.openrefine.model.Cell;
 import org.openrefine.model.GridState;
+import org.openrefine.model.Record;
 import org.openrefine.model.Row;
-import org.openrefine.model.RowMapper;
+import org.openrefine.model.RowInRecordMapper;
 import org.openrefine.model.changes.ChangeContext;
 import org.openrefine.model.changes.ColumnNotFoundException;
 import org.openrefine.model.recon.LazyReconStats;
@@ -77,7 +78,7 @@ public class ReconMatchBestCandidatesOperation extends ImmediateRowMapOperation 
     }
 
     @Override
-    public RowMapper getPositiveRowMapper(GridState state, ChangeContext context) throws ColumnNotFoundException {
+    public RowInRecordMapper getPositiveRowMapper(GridState state, ChangeContext context) throws ColumnNotFoundException {
         int columnIndex = state.getColumnModel().getColumnIndexByName(_columnName);
         if (columnIndex == -1) {
             throw new ColumnNotFoundException(_columnName);
@@ -86,13 +87,13 @@ public class ReconMatchBestCandidatesOperation extends ImmediateRowMapOperation 
         return rowMapper(columnIndex, historyEntryId);
     }
 
-    protected static RowMapper rowMapper(int columnIndex, long historyEntryId) {
-        return new RowMapper() {
+    protected static RowInRecordMapper rowMapper(int columnIndex, long historyEntryId) {
+        return new RowInRecordMapper() {
 
             private static final long serialVersionUID = -3427425768110168923L;
 
             @Override
-            public Row call(long rowId, Row row) {
+            public Row call(Record record, long rowId, Row row) {
                 Cell cell = row.cells.get(columnIndex);
                 if (cell != null && cell.recon != null) {
                     ReconCandidate candidate = cell.recon.getBestCandidate();

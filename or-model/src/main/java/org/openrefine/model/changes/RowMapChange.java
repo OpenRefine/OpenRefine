@@ -11,6 +11,7 @@ import org.openrefine.model.GridState;
 import org.openrefine.model.RecordFilter;
 import org.openrefine.model.RecordMapper;
 import org.openrefine.model.RowFilter;
+import org.openrefine.model.RowInRecordMapper;
 import org.openrefine.model.RowMapper;
 import org.openrefine.overlay.OverlayModel;
 
@@ -40,14 +41,14 @@ public abstract class RowMapChange extends EngineDependentChange {
     public static class GridMap {
 
         protected final ColumnModel columnModel;
-        protected final RowMapper positiveMapper;
-        protected final RowMapper negativeMapper;
+        protected final RowInRecordMapper positiveMapper;
+        protected final RowInRecordMapper negativeMapper;
         protected final Map<String, OverlayModel> overlayModels;
 
         public GridMap(
                 ColumnModel columnModel,
-                RowMapper positiveMapper,
-                RowMapper negativeMapper,
+                RowInRecordMapper positiveMapper,
+                RowInRecordMapper negativeMapper,
                 Map<String, OverlayModel> overlayModels) {
             this.columnModel = columnModel;
             this.positiveMapper = positiveMapper;
@@ -107,8 +108,8 @@ public abstract class RowMapChange extends EngineDependentChange {
      * @return
      * @throws DoesNotApplyException
      */
-    protected RowMapper getPositiveRowMapper(GridState state, ChangeContext context) throws DoesNotApplyException {
-        return RowMapper.IDENTITY;
+    protected RowInRecordMapper getPositiveRowMapper(GridState state, ChangeContext context) throws DoesNotApplyException {
+        return RowInRecordMapper.IDENTITY;
     }
 
     /**
@@ -119,8 +120,8 @@ public abstract class RowMapChange extends EngineDependentChange {
      * @return
      * @throws DoesNotApplyException
      */
-    protected RowMapper getNegativeRowMapper(GridState state, ChangeContext context) throws DoesNotApplyException {
-        return RowMapper.IDENTITY;
+    protected RowInRecordMapper getNegativeRowMapper(GridState state, ChangeContext context) throws DoesNotApplyException {
+        return RowInRecordMapper.IDENTITY;
     }
 
     /**
@@ -149,8 +150,8 @@ public abstract class RowMapChange extends EngineDependentChange {
     public GridState apply(GridState projectState, ChangeContext context) throws DoesNotApplyException {
         Engine engine = getEngine(projectState);
         GridMap gridMap = getGridMap(projectState, context);
-        RowMapper positiveMapper = gridMap.positiveMapper;
-        RowMapper negativeMapper = gridMap.negativeMapper;
+        RowInRecordMapper positiveMapper = gridMap.positiveMapper;
+        RowInRecordMapper negativeMapper = gridMap.negativeMapper;
         ColumnModel newColumnModel = gridMap.columnModel;
         Map<String, OverlayModel> newOverlayModels = gridMap.overlayModels;
         GridState mappedState;
@@ -159,10 +160,8 @@ public abstract class RowMapChange extends EngineDependentChange {
             mappedState = projectState.mapRows(RowMapper.conditionalMapper(rowFilter, positiveMapper, negativeMapper), newColumnModel);
         } else {
             RecordFilter recordFilter = engine.combinedRecordFilters();
-            RecordMapper recordMapper = RecordMapper.rowWiseRecordMapper(positiveMapper);
-            RecordMapper negativeRecordMapper = RecordMapper.rowWiseRecordMapper(negativeMapper);
             mappedState = projectState.mapRecords(
-                    RecordMapper.conditionalMapper(recordFilter, recordMapper, negativeRecordMapper),
+                    RecordMapper.conditionalMapper(recordFilter, positiveMapper, negativeMapper),
                     newColumnModel);
         }
         return postTransform(mappedState.withOverlayModels(newOverlayModels), context);

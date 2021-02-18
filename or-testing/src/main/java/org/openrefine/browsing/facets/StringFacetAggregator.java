@@ -5,12 +5,11 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.openrefine.browsing.filters.AnyRowRecordFilter;
-import org.openrefine.model.RecordFilter;
+import org.openrefine.model.Record;
 import org.openrefine.model.Row;
-import org.openrefine.model.RowFilter;
+import org.openrefine.model.RowInRecordFilter;
 
-public class StringFacetAggregator implements FacetAggregator<StringFacetState> {
+public class StringFacetAggregator extends FacetAggregator<StringFacetState> {
 
     private static final long serialVersionUID = 3209825226374715166L;
     private int columnIdx;
@@ -31,7 +30,7 @@ public class StringFacetAggregator implements FacetAggregator<StringFacetState> 
     }
 
     @Override
-    public StringFacetState withRow(StringFacetState state, long rowId, Row row) {
+    public StringFacetState withRow(StringFacetState state, long rowId, Row row, Record record) {
         Object cellValue = row.getCellValue(columnIdx);
         String stringValue = cellValue == null ? "null" : cellValue.toString();
         Map<String, Long> counts = new HashMap<>(state.occurences);
@@ -40,13 +39,13 @@ public class StringFacetAggregator implements FacetAggregator<StringFacetState> 
     }
 
     @Override
-    public RowFilter getRowFilter() {
-        return new RowFilter() {
+    public RowInRecordFilter getRowFilter() {
+        return new RowInRecordFilter(true) {
 
             private static final long serialVersionUID = 1L;
 
             @Override
-            public boolean filterRow(long rowIndex, Row row) {
+            public boolean filterRow(long rowIndex, Row row, Record record) {
                 if (selected == null) {
                     return true;
                 }
@@ -56,11 +55,6 @@ public class StringFacetAggregator implements FacetAggregator<StringFacetState> 
             }
 
         };
-    }
-
-    @Override
-    public RecordFilter getRecordFilter() {
-        return new AnyRowRecordFilter(getRowFilter());
     }
 
 }

@@ -1,12 +1,9 @@
 
 package org.openrefine.browsing.util;
 
-import org.openrefine.browsing.filters.AllRowsRecordFilter;
-import org.openrefine.browsing.filters.AnyRowRecordFilter;
 import org.openrefine.browsing.filters.ExpressionNumberComparisonRowFilter;
 import org.openrefine.expr.ExpressionUtils;
-import org.openrefine.model.RecordFilter;
-import org.openrefine.model.RowFilter;
+import org.openrefine.model.RowInRecordFilter;
 
 public class NumericFacetAggregator extends ExpressionValueFacetAggregator<NumericFacetState> {
 
@@ -169,10 +166,12 @@ public class NumericFacetAggregator extends ExpressionValueFacetAggregator<Numer
     }
 
     @Override
-    public RowFilter getRowFilter() {
+    public RowInRecordFilter getRowFilter() {
         if (_selected) {
             return new ExpressionNumberComparisonRowFilter(
-                    _eval, _selectNumeric, _selectNonNumeric, _selectBlank, _selectError) {
+                    _eval, _selectNumeric, _selectNonNumeric, _selectBlank, _selectError, _invert) {
+
+                private static final long serialVersionUID = -6573143667811094944L;
 
                 @Override
                 protected boolean checkValue(double d) {
@@ -182,15 +181,6 @@ public class NumericFacetAggregator extends ExpressionValueFacetAggregator<Numer
         } else {
             return null;
         }
-    }
-
-    @Override
-    public RecordFilter getRecordFilter() {
-        RowFilter rowFilter = getRowFilter();
-        if (rowFilter == null) {
-            return null;
-        }
-        return _invert ? new AllRowsRecordFilter(rowFilter) : new AnyRowRecordFilter(rowFilter);
     }
 
 }

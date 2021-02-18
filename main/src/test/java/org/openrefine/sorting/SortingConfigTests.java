@@ -31,7 +31,6 @@ import java.io.IOException;
 
 import org.testng.annotations.Test;
 
-import org.openrefine.sorting.SortingConfig;
 import org.openrefine.util.ParsingUtilities;
 import org.openrefine.util.TestUtils;
 

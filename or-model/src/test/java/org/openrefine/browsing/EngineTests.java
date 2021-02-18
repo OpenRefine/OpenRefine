@@ -52,8 +52,9 @@ import org.openrefine.model.ColumnMetadata;
 import org.openrefine.model.ColumnModel;
 import org.openrefine.model.GridState;
 import org.openrefine.model.IndexedRow;
+import org.openrefine.model.Record;
 import org.openrefine.model.Row;
-import org.openrefine.model.RowFilter;
+import org.openrefine.model.RowInRecordFilter;
 import org.openrefine.sorting.SortingConfig;
 
 public class EngineTests {
@@ -63,16 +64,16 @@ public class EngineTests {
     private GridState initialState;
     private EngineConfig engineConfig;
     private EngineConfig engineConfigPartial;
-    protected static RowFilter filterA = new RowFilter() {
+    protected static RowInRecordFilter filterA = new RowInRecordFilter(true) {
 
         private static final long serialVersionUID = -609451600084843923L;
 
         @Override
-        public boolean filterRow(long rowIndex, Row row) {
+        public boolean filterRow(long rowIndex, Row row, Record record) {
             return "a".equals(row.getCellValue(0));
         }
     };
-    protected static RowFilter noFilter = RowFilter.ANY_ROW;
+    protected static RowInRecordFilter noFilter = RowInRecordFilter.ANY_ROW_IN_RECORD;
     private AllFacetsState allRowsState = new AllFacetsState(ImmutableList.of(new FacetStateStub(65, 35), new FacetStateStub(100, 0)), 100,
             65);
     private AllFacetsState partialState = new AllFacetsState(ImmutableList.of(new FacetStateStub(8, 2), new FacetStateStub(10, 0)), 10, 8);
