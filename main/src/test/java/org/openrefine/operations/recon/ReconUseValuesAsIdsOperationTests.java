@@ -26,9 +26,9 @@
  ******************************************************************************/
 package org.openrefine.operations.recon;
 
+import static org.mockito.Mockito.mock;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNull;
-import static org.mockito.Mockito.mock;
 
 import java.io.Serializable;
 import java.util.List;
@@ -41,7 +41,6 @@ import org.openrefine.model.Row;
 import org.openrefine.model.changes.ChangeContext;
 import org.openrefine.model.recon.StandardReconConfig;
 import org.openrefine.operations.OperationRegistry;
-import org.openrefine.operations.recon.ReconUseValuesAsIdentifiersOperation;
 import org.openrefine.util.ParsingUtilities;
 import org.openrefine.util.TestUtils;
 import org.testng.annotations.BeforeSuite;

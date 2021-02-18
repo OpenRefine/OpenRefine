@@ -48,7 +48,9 @@ import org.openrefine.model.Cell;
 import org.openrefine.model.ColumnMetadata;
 import org.openrefine.model.ColumnModel;
 import org.openrefine.model.GridState;
+import org.openrefine.model.Record;
 import org.openrefine.model.Row;
+import org.openrefine.model.RowInRecordMapper;
 import org.openrefine.model.RowMapper;
 import org.openrefine.model.changes.Change;
 import org.openrefine.model.changes.ChangeContext;
@@ -286,13 +288,13 @@ public class ColumnSplitOperation extends EngineDependentOperation {
    
     }
     
-   	protected static RowMapper negativeMapper(int columnIdx, int nbColumns, boolean removeOrigColumn) {
-		return new RowMapper() {
+   	protected static RowInRecordMapper negativeMapper(int columnIdx, int nbColumns, boolean removeOrigColumn) {
+		return new RowInRecordMapper() {
 
 			private static final long serialVersionUID = 467330557649346821L;
 
 			@Override
-			public Row call(long rowId, Row row) {
+			public Row call(Record record, long rowId, Row row) {
 				Row newRow = row.insertCells(columnIdx + 1, Collections.nCopies(nbColumns, null));
 				if (removeOrigColumn) {
 					newRow = newRow.removeCell(columnIdx);
@@ -303,13 +305,13 @@ public class ColumnSplitOperation extends EngineDependentOperation {
 		};
 	}
 	
-	protected static RowMapper mapper(CellValueSplitter splitter, int columnIdx, int nbColumns, boolean removeOrigColumn, boolean guessCellType) {
-		return new RowMapper() {
+	protected static RowInRecordMapper mapper(CellValueSplitter splitter, int columnIdx, int nbColumns, boolean removeOrigColumn, boolean guessCellType) {
+		return new RowInRecordMapper() {
 
 			private static final long serialVersionUID = -5552242219011530334L;
 
 			@Override
-			public Row call(long rowId, Row row) {
+			public Row call(Record record, long rowId, Row row) {
 				// Split the cell
 				Serializable value = row.getCellValue(columnIdx);
 				List<String> split;

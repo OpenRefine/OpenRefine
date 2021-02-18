@@ -55,10 +55,6 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
-import static org.mockito.Mockito.when;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-
 public class XlsExporterTests extends RefineTest {
 
     private static final String TEST_PROJECT_NAME = "xls exporter test project";

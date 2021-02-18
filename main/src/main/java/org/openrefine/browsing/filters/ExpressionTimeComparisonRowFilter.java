@@ -46,7 +46,8 @@ import org.openrefine.expr.ExpressionUtils;
  */
 abstract public class ExpressionTimeComparisonRowFilter extends ExpressionNumberComparisonRowFilter {
 
-    final protected boolean _selectTime;
+	private static final long serialVersionUID = -6229230283796629749L;
+	final protected boolean _selectTime;
     final protected boolean _selectNonTime;
     
     public ExpressionTimeComparisonRowFilter(
@@ -54,9 +55,10 @@ abstract public class ExpressionTimeComparisonRowFilter extends ExpressionNumber
             boolean selectTime,
             boolean selectNonTime,
             boolean selectBlank,
-            boolean selectError
+            boolean selectError,
+            boolean invert
     ) {
-        super(rowEvaluable, selectTime, selectNonTime, selectBlank, selectError);
+        super(rowEvaluable, selectTime, selectNonTime, selectBlank, selectError, invert);
         _selectTime = selectTime;
         _selectNonTime = selectNonTime;
     }

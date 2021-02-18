@@ -47,6 +47,7 @@ import java.nio.charset.Charset;
 import java.util.zip.GZIPInputStream;
 
 import org.apache.commons.io.FileUtils;
+import org.openrefine.importing.FormatGuesser;
 import org.slf4j.LoggerFactory;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
@@ -54,7 +55,6 @@ import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
 import com.google.common.io.PatternFilenameFilter;
-import org.openrefine.importing.FormatGuesser;
 
 
 public class TextFormatGuesserTests extends ImporterTest {

@@ -1,10 +1,9 @@
 package org.openrefine.commands.row;
-import org.openrefine.commands.CommandTestBase;
 import java.io.IOException;
 
 import javax.servlet.ServletException;
 
-import org.openrefine.commands.row.AnnotateOneRowCommand;
+import org.openrefine.commands.CommandTestBase;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 

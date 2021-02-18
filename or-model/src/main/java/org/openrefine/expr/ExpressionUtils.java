@@ -44,6 +44,7 @@ import java.util.Set;
 import org.openrefine.model.Cell;
 import org.openrefine.model.ColumnModel;
 import org.openrefine.model.Project;
+import org.openrefine.model.Record;
 import org.openrefine.model.Row;
 
 import com.fasterxml.jackson.databind.node.ArrayNode;
@@ -71,9 +72,9 @@ public class ExpressionUtils {
         return bindings;
     }
 
-    static public void bind(Properties bindings, ColumnModel columnModel, Row row, long rowIndex, String columnName, Cell cell) {
+    static public void bind(Properties bindings, ColumnModel columnModel, Row row, long rowIndex, Record record, String columnName, Cell cell) {
         bindings.put("rowIndex", rowIndex);
-        bindings.put("row", new WrappedRow(columnModel, rowIndex, row));
+        bindings.put("row", new WrappedRow(columnModel, rowIndex, row, record));
 		bindings.put("cells", new CellTuple(columnModel, row));
 
         if (columnName != null) {

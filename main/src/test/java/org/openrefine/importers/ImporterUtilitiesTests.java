@@ -40,17 +40,11 @@ import static org.mockito.Mockito.when;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
 
 import org.openrefine.RefineTest;
-import org.openrefine.importers.ImporterUtilities;
-import org.openrefine.importing.ImportingUtilities;
-import org.openrefine.model.Cell;
 import org.openrefine.model.GridState;
-import org.openrefine.model.Project;
-import org.openrefine.model.Row;
 import org.slf4j.LoggerFactory;
 import org.testng.Assert;
 import org.testng.annotations.BeforeTest;

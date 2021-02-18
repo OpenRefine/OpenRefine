@@ -33,10 +33,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package org.openrefine.importers;
 
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
 import java.io.StringReader;
-import java.io.UnsupportedEncodingException;
 
 import org.openrefine.model.ColumnModel;
 import org.openrefine.model.GridState;

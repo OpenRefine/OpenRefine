@@ -35,7 +35,6 @@ package org.openrefine.expr;
 
 import org.openrefine.model.Cell;
 import org.openrefine.model.ColumnModel;
-import org.openrefine.model.Project;
 import org.openrefine.model.Row;
 
 public class CellTuple implements HasFields {

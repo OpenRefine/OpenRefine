@@ -28,10 +28,9 @@ package org.openrefine.importing;
 
 import static org.testng.Assert.assertEquals;
 
+import org.openrefine.importers.ImporterTest;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
-
-import org.openrefine.importers.ImporterTest;
 
 public class FormatRegistryTests extends ImporterTest {
 

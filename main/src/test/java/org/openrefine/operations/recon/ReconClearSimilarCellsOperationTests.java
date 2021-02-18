@@ -25,9 +25,10 @@
  * POSSIBILITY OF SUCH DAMAGE.
  ******************************************************************************/
 package org.openrefine.operations.recon;
+import static org.mockito.Mockito.mock;
+
 import java.io.Serializable;
 
-import static org.mockito.Mockito.mock;
 import org.openrefine.RefineTest;
 import org.openrefine.browsing.EngineConfig;
 import org.openrefine.model.Cell;

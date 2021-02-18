@@ -4,11 +4,9 @@ import java.io.IOException;
 
 import javax.servlet.ServletException;
 
-import org.openrefine.commands.cell.TransposeColumnsIntoRowsCommand;
+import org.openrefine.commands.CommandTestBase;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
-
-import org.openrefine.commands.CommandTestBase;
 
 public class TransposeColumnsIntoRowsCommandTests extends CommandTestBase {
 	@BeforeMethod

@@ -40,7 +40,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.openrefine.RefineTest;
 import org.openrefine.commands.Command;
-import org.openrefine.commands.expr.PreviewExpressionCommand;
 import org.openrefine.model.Project;
 import org.openrefine.util.TestUtils;
 import org.testng.annotations.BeforeMethod;

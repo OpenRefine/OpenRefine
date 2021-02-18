@@ -6,6 +6,7 @@ import java.util.List;
 import org.openrefine.model.Cell;
 import org.openrefine.model.Row;
 import org.openrefine.model.RowFilter;
+import org.openrefine.model.RowInRecordFilter;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -47,9 +48,9 @@ public class AllFacetsAggregatorTests {
 	
 	@BeforeMethod
 	public void setUpAllFacetsState() {
-	    aggregatorRowId = new FacetAggregatorStub(filterRowId);
-	    aggregatorFoo = new FacetAggregatorStub(filterFoo);
-	    aggregatorBar = new FacetAggregatorStub(filterBar);
+	    aggregatorRowId = new FacetAggregatorStub(RowInRecordFilter.fromRowFilter(filterRowId));
+	    aggregatorFoo = new FacetAggregatorStub(RowInRecordFilter.fromRowFilter(filterFoo));
+	    aggregatorBar = new FacetAggregatorStub(RowInRecordFilter.fromRowFilter(filterBar));
 		SUT = new AllFacetsAggregator(
 				Arrays.asList(
 				aggregatorRowId,

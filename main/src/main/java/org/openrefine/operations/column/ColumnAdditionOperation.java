@@ -48,7 +48,9 @@ import org.openrefine.model.ColumnMetadata;
 import org.openrefine.model.ColumnModel;
 import org.openrefine.model.GridState;
 import org.openrefine.model.ModelException;
+import org.openrefine.model.Record;
 import org.openrefine.model.Row;
+import org.openrefine.model.RowInRecordMapper;
 import org.openrefine.model.RowMapper;
 import org.openrefine.model.changes.CellAtRow;
 import org.openrefine.model.changes.Change.DoesNotApplyException;
@@ -143,7 +145,7 @@ public class ColumnAdditionOperation extends ImmediateRowMapOperation {
     }
     
 	@Override
-	protected RowMapper getPositiveRowMapper(GridState state, ChangeContext context) throws DoesNotApplyException {
+	protected RowInRecordMapper getPositiveRowMapper(GridState state, ChangeContext context) throws DoesNotApplyException {
 		ColumnModel columnModel = state.getColumnModel();
 		int columnIndex = columnIndex(columnModel, _baseColumnName);
 		Evaluable eval;
@@ -159,22 +161,22 @@ public class ColumnAdditionOperation extends ImmediateRowMapOperation {
 	}
 	
 	@Override
-	protected RowMapper getNegativeRowMapper(GridState state, ChangeContext context) throws DoesNotApplyException {
+	protected RowInRecordMapper getNegativeRowMapper(GridState state, ChangeContext context) throws DoesNotApplyException {
 		return negativeMapper(_columnInsertIndex);
 	}
 	
-	protected static RowMapper mapper(int columnIndex, String baseColumnName, int columnInsertIndex, OnError onError, Evaluable eval, ColumnModel columnModel) {
-		return new RowMapper() {
+	protected static RowInRecordMapper mapper(int columnIndex, String baseColumnName, int columnInsertIndex, OnError onError, Evaluable eval, ColumnModel columnModel) {
+		return new RowInRecordMapper() {
 
 			private static final long serialVersionUID = 897585827026825498L;
 
 			@Override
-			public Row call(long rowId, Row row) {
+			public Row call(Record record, long rowId, Row row) {
                 Cell cell = row.getCell(columnIndex);
                 Cell newCell = null;
 
                 Properties bindings = new Properties();
-                ExpressionUtils.bind(bindings, columnModel, row, rowId, baseColumnName, cell);
+                ExpressionUtils.bind(bindings, columnModel, row, rowId, record, baseColumnName, cell);
                 
                 Object o = eval.evaluate(bindings);
                 if (o != null) {
@@ -203,13 +205,13 @@ public class ColumnAdditionOperation extends ImmediateRowMapOperation {
 		};
 	}
 	
-	protected static RowMapper negativeMapper(int columnInsertIndex) {
-		return new RowMapper() {
+	protected static RowInRecordMapper negativeMapper(int columnInsertIndex) {
+		return new RowInRecordMapper() {
 
 			private static final long serialVersionUID = -4885450470285627722L;
 
 			@Override
-			public Row call(long rowId, Row row) {
+			public Row call(Record record, long rowId, Row row) {
 				return row.insertCell(columnInsertIndex, null);
 			}
 			

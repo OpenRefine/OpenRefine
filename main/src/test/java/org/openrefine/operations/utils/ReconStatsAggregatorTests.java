@@ -1,18 +1,18 @@
 package org.openrefine.operations.utils;
 
+import static org.mockito.Mockito.mock;
+
 import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import static org.mockito.Mockito.mock;
-
 import org.openrefine.RefineTest;
 import org.openrefine.model.Cell;
 import org.openrefine.model.ColumnModel;
 import org.openrefine.model.GridState;
-import org.openrefine.model.recon.Recon.Judgment;
 import org.openrefine.model.recon.Recon;
+import org.openrefine.model.recon.Recon.Judgment;
 import org.openrefine.model.recon.ReconConfig;
 import org.openrefine.model.recon.ReconStats;
 import org.testng.Assert;

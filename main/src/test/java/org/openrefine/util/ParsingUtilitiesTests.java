@@ -38,11 +38,10 @@ package org.openrefine.util;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.util.zip.GZIPOutputStream;
-
 import java.time.OffsetDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.TimeZone;
+import java.util.zip.GZIPOutputStream;
 
 import org.openrefine.RefineTest;
 import org.slf4j.LoggerFactory;

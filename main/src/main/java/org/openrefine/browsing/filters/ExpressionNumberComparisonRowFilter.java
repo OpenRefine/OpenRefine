@@ -39,8 +39,10 @@ import java.util.Properties;
 import org.openrefine.browsing.util.RowEvaluable;
 import org.openrefine.expr.ExpressionUtils;
 import org.openrefine.expr.util.JsonValueConverter;
+import org.openrefine.model.Record;
 import org.openrefine.model.Row;
 import org.openrefine.model.RowFilter;
+import org.openrefine.model.RowInRecordFilter;
 
 import com.fasterxml.jackson.databind.node.ArrayNode;
 
@@ -50,7 +52,7 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
  * or if the result is non-numeric or blank or error and we want non-numeric or blank or error 
  * values. 
  */
-abstract public class ExpressionNumberComparisonRowFilter implements RowFilter {
+abstract public class ExpressionNumberComparisonRowFilter extends RowInRecordFilter {
     final protected RowEvaluable _rowEvaluable;
     final protected boolean _selectNumeric;
     final protected boolean _selectNonNumeric;
@@ -62,8 +64,10 @@ abstract public class ExpressionNumberComparisonRowFilter implements RowFilter {
             boolean selectNumeric,
             boolean selectNonNumeric,
             boolean selectBlank,
-            boolean selectError
+            boolean selectError,
+            boolean invert
     ) {
+    	super(!invert);
         _rowEvaluable = rowEvaluable;
         _selectNumeric = selectNumeric;
         _selectNonNumeric = selectNonNumeric;
@@ -72,10 +76,10 @@ abstract public class ExpressionNumberComparisonRowFilter implements RowFilter {
     }
 
     @Override
-    public boolean filterRow(long rowIndex, Row row) {
+    public boolean filterRow(long rowIndex, Row row, Record record) {
         Properties bindings = ExpressionUtils.createBindings();
         
-        Object value = _rowEvaluable.eval(rowIndex, row, bindings);
+        Object value = _rowEvaluable.eval(rowIndex, row, record, bindings);
         if (value != null) {
             if (value.getClass().isArray()) {
                 Object[] a = (Object[]) value;

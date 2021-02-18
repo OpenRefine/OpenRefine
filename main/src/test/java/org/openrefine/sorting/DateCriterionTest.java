@@ -28,7 +28,6 @@ package org.openrefine.sorting;
 
 import java.io.IOException;
 
-import org.openrefine.sorting.Criterion;
 import org.openrefine.util.ParsingUtilities;
 import org.openrefine.util.TestUtils;
 import org.testng.annotations.Test;

@@ -41,8 +41,8 @@ import java.util.stream.Collectors;
 
 import org.openrefine.RefineTest;
 import org.openrefine.browsing.Engine;
-import org.openrefine.browsing.EngineConfig;
 import org.openrefine.browsing.Engine.Mode;
+import org.openrefine.browsing.EngineConfig;
 import org.openrefine.browsing.facets.TextSearchFacet.TextSearchFacetConfig;
 import org.openrefine.model.GridState;
 import org.openrefine.model.ModelException;
