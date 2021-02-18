@@ -31,10 +31,5 @@ import org.testng.annotations.Test;
 import com.google.refine.util.TestUtils;
 
 public class ToUppercaseTests {
-    @Test
-    public void serializeToUppercase() {
-        String json = "{\"description\":\"Returns s converted to uppercase\",\"params\":\"string s\",\"returns\":\"string\"}";
-        TestUtils.isSerializedTo(new ToUppercase(), json);
-    }
 }
 
