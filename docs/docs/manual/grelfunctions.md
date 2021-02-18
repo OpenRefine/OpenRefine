@@ -6,9 +6,9 @@ sidebar_label: GREL functions
 
 ## Reading this reference
 
-For the reference below, the function is given in full-length notation and the in-text examples are written in dot notation. Shorthands are used to indicate the kind of [data type](exploring#data-types) used in each function: s for string, b for boolean, n for number, d for date, a for array, p for a regex pattern, and o for any data type, as well as “null” and “error” data types. 
+For the reference below, the function is given in full-length notation and the in-text examples are written in dot notation. Shorthands are used to indicate the kind of [data type](exploring#data-types) used in each function: s for string, b for boolean, n for number, d for date, a for array, p for a regex pattern, and o for object (meaning any data type), as well as “null” and “error” data types. 
 
-If a function can take more than one kind of data as input or can output more than one kind of data, that is indicated with more than one letter (as with “s or a”) or with o for object. 
+If a function can take more than one kind of data as input or can output more than one kind of data, that is indicated with more than one letter (as with “s or a”) or with o for object, meaning it can take any type of data (string, boolean, date, number, etc.). 
 
 We also use shorthands for substring (“sub”) and separator string (“sep”). 
 Optional arguments will say “(optional)”.

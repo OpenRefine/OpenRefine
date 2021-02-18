@@ -58,7 +58,7 @@ public class Coalesce implements Function {
 
     @Override
     public String getDescription() {
-        return "Returns the first non-null from a series of objects.";
+        return "Returns the first non-null from a series of objects (meaning any data type - string, date, number, boolean, etc.).";
     }
     
     @Override
