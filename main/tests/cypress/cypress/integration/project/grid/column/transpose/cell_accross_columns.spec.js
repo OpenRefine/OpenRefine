@@ -47,10 +47,10 @@ describe(__filename, function () {
       .type('Address');
 
     cy.confirmDialogPanel();
+    cy.waitForOrOperation();
     cy.assertNotificationContainingText(
       'Transpose cells in columns starting with Street'
     );
-    cy.waitForOrOperation();
 
     cy.assertGridEquals([
       ['Name', 'Address'],
@@ -70,7 +70,7 @@ describe(__filename, function () {
   /**
    * https://docs.openrefine.org/manual/transposing/#two-columns
    */
-  it('Transpose cells across columns into rows (Two column)', function () {
+  it('Transpose cells across columns into rows (Two columns)', function () {
     const fixture = [
       ['Name', 'Street', 'City', 'State/Province', 'Country', 'Postal code'],
 
@@ -101,10 +101,10 @@ describe(__filename, function () {
     );
 
     cy.confirmDialogPanel();
+    cy.waitForOrOperation();
     cy.assertNotificationContainingText(
       'Transpose cells in columns starting with Street'
     );
-    cy.waitForOrOperation();
 
     cy.assertGridEquals([
       ['Name', 'Address part', 'Address'],
