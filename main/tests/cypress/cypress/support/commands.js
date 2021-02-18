@@ -138,6 +138,56 @@ Cypress.Commands.add('assertCellEquals', (rowIndex, columnName, value) => {
 });
 
 /**
+ * Make an assertion about the content of the whole grid
+ * The values parameter is the same as the one provided in fixtures
+ * Example
+ * cy.assertGridEquals(
+ *   [
+ *     ['Column A', 'Column B', 'Column C'],
+ *     ['Row 0 A', 'Row 0 B', 'Row 0 C'],
+ *     ['Row 1 A', 'Row 1 B', 'Row 1 C']
+ *   ]
+ * )
+ */
+Cypress.Commands.add('assertGridEquals', (values) => {
+  // 1. Collect headers first
+  const columnNames = [];
+  cy.get('.data-table thead th.column-header', { log: false }).then(
+    ($headers) => {
+      cy.wrap($headers, { log: false }).each(($header) => {
+        const columnName = $header.text().trim();
+        if (columnName != 'All') {
+          columnNames.push(columnName);
+        }
+      });
+    }
+  );
+  // 2. Collect grid content and make one single assertion with deep.equal
+  const gridValues = [];
+  cy.get('.data-table tbody tr', { log: false })
+    .each(($row) => {
+      // cy.log($row.index());
+      const rowIndex = $row.index();
+      gridValues[rowIndex] = [];
+      cy.wrap($row, { log: false })
+        .find('td', { log: false })
+        .each(($td) => {
+          // cy.log($td.index());
+          if ($td.index() > 2) {
+            gridValues[rowIndex][$td.index() - 3] = $td.text().trim();
+            if (gridValues[rowIndex][$td.index() - 3] == 'null') {
+              gridValues[rowIndex][$td.index() - 3] = '';
+            }
+          }
+        });
+    })
+    .then(() => {
+      gridValues.unshift(columnNames);
+      expect(gridValues).to.deep.equal(values);
+    });
+});
+
+/**
  * Navigate to one of the entries of the main left menu of OpenRefine (Create Project, Open Project, Import Project, Language Settings)
  */
 Cypress.Commands.add('navigateTo', (target) => {
@@ -217,7 +267,7 @@ Cypress.Commands.add(
 );
 
 Cypress.Commands.add('assertNotificationContainingText', (text) => {
-  cy.get('#notification').should('to.contain', text);
+  cy.get('#notification').should('to.contain', text).should('be.visible');
 });
 
 Cypress.Commands.add(
