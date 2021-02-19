@@ -75,7 +75,7 @@ public class Refine {
         
     static private int port;
     static private String host;
-	static private String iface;
+    static private String iface;
 
     final static Logger logger = LoggerFactory.getLogger("refine");
         
@@ -98,7 +98,7 @@ public class Refine {
 
         port = Configurations.getInteger("refine.port",DEFAULT_PORT);
         host = Configurations.get("refine.host",DEFAULT_HOST);
-		iface = Configurations.get("refine.interface",host);
+        iface = Configurations.get("refine.interface",host);
 
         Refine refine = new Refine();
         
@@ -107,9 +107,9 @@ public class Refine {
 
     public void init(String[] args) throws Exception {
 
-		boolean validateHost = Configurations.getBoolean("refine.host.validate", true);
-		RefineServer server = new RefineServer();
-		server.init(iface, port, validateHost ? host : null);
+        boolean validateHost = Configurations.getBoolean("refine.host.validate", true);
+        RefineServer server = new RefineServer();
+        server.init(iface, port, validateHost ? host : null);
 
         boolean headless = Configurations.getBoolean("refine.headless",false);
         if (headless) {
@@ -193,7 +193,7 @@ class RefineServer extends Server {
             wrapper.setHandler(context);
             this.setHandler(wrapper);
         }
-		
+        
         this.setStopAtShutdown(true);
         this.setSendServerVersion(true);
 
@@ -473,8 +473,8 @@ class RefineClient extends JFrame implements ActionListener {
     
     public void init(String host, int port) throws Exception {
 
-    	String cleanedHost = host;
-    	if("0.0.0.0".equals(host)) {
+        String cleanedHost = host;
+        if("0.0.0.0".equals(host)) {
             cleanedHost = "localhost";
         }
         uri = new URI("http://" + cleanedHost + ":" + port + "/");
