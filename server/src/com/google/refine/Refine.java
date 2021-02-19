@@ -75,6 +75,7 @@ public class Refine {
         
     static private int port;
     static private String host;
+	static private String iface;
 
     final static Logger logger = LoggerFactory.getLogger("refine");
         
@@ -97,6 +98,7 @@ public class Refine {
 
         port = Configurations.getInteger("refine.port",DEFAULT_PORT);
         host = Configurations.get("refine.host",DEFAULT_HOST);
+		iface = Configurations.get("refine.interface",host);
 
         Refine refine = new Refine();
         
@@ -106,8 +108,8 @@ public class Refine {
     public void init(String[] args) throws Exception {
 
 		boolean validateHost = Configurations.getBoolean("refine.host.validate", true);
-        RefineServer server = new RefineServer();
-        server.init(host, port, validateHost);
+		RefineServer server = new RefineServer();
+		server.init(iface, port, validateHost ? host : null);
 
         boolean headless = Configurations.getBoolean("refine.headless",false);
         if (headless) {
@@ -139,8 +141,8 @@ class RefineServer extends Server {
         
     private ThreadPoolExecutor threadPool;
     
-    public void init(String host, int port, boolean validateHost) throws Exception {
-        logger.info("Starting Server bound to '" + host + ":" + port + "'");
+    public void init(String iface, int port, String host) throws Exception {
+        logger.info("Starting Server bound to '" + iface + ":" + port + "'");
 
         String memory = Configurations.get("refine.memory");
         if (memory != null) {
@@ -159,7 +161,7 @@ class RefineServer extends Server {
         
         Connector connector = new SocketConnector();
         connector.setPort(port);
-        connector.setHost(host);
+        connector.setHost(iface);
         connector.setMaxIdleTime(Configurations.getInteger("refine.connection.max_idle_time",60000));
         connector.setStatsOn(false);
         this.addConnector(connector);
@@ -184,7 +186,7 @@ class RefineServer extends Server {
         WebAppContext context = new WebAppContext(webapp.getAbsolutePath(), contextPath);
         context.setMaxFormContentSize(maxFormContentSize);
 
-        if (!validateHost || "0.0.0.0".equals(host)) {
+        if (host == null || "0.0.0.0".equals(host)) {
             this.setHandler(context);
         } else {
             ValidateHostHandler wrapper = new ValidateHostHandler(host);
