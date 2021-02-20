@@ -82,6 +82,14 @@ Cypress.Commands.add('doCreateProjectThroughUserInterface', () => {
     const projectId = location.href.split('=').slice(-1)[0];
     cy.visitProject(projectId);
     cy.wrap(projectId).as('createdProjectId');
+    cy.get('@loadedProjectIds', { log: false }).then((loadedProjectIds) => {
+      loadedProjectIds.push(projectId);
+      cy.wrap(loadedProjectIds, { log: false })
+        .as('loadedProjectIds')
+        .then(() => {
+          return projectId;
+        });
+    });
   });
 });
 
@@ -135,6 +143,56 @@ Cypress.Commands.add('assertCellEquals', (rowIndex, columnName, value) => {
       }
     });
   });
+});
+
+/**
+ * Make an assertion about the content of the whole grid
+ * The values parameter is the same as the one provided in fixtures
+ * Example
+ * cy.assertGridEquals(
+ *   [
+ *     ['Column A', 'Column B', 'Column C'],
+ *     ['Row 0 A', 'Row 0 B', 'Row 0 C'],
+ *     ['Row 1 A', 'Row 1 B', 'Row 1 C']
+ *   ]
+ * )
+ */
+Cypress.Commands.add('assertGridEquals', (values) => {
+  // 1. Collect headers first
+  const columnNames = [];
+  cy.get('.data-table thead th.column-header', { log: false }).then(
+    ($headers) => {
+      cy.wrap($headers, { log: false }).each(($header) => {
+        const columnName = $header.text().trim();
+        if (columnName != 'All') {
+          columnNames.push(columnName);
+        }
+      });
+    }
+  );
+  // 2. Collect grid content and make one single assertion with deep.equal
+  const gridValues = [];
+  cy.get('.data-table tbody tr', { log: false })
+    .each(($row) => {
+      // cy.log($row.index());
+      const rowIndex = $row.index();
+      gridValues[rowIndex] = [];
+      cy.wrap($row, { log: false })
+        .find('td', { log: false })
+        .each(($td) => {
+          // cy.log($td.index());
+          if ($td.index() > 2) {
+            gridValues[rowIndex][$td.index() - 3] = $td.text().trim();
+            if (gridValues[rowIndex][$td.index() - 3] == 'null') {
+              gridValues[rowIndex][$td.index() - 3] = '';
+            }
+          }
+        });
+    })
+    .then(() => {
+      gridValues.unshift(columnNames);
+      expect(gridValues).to.deep.equal(values);
+    });
 });
 
 /**
@@ -217,7 +275,7 @@ Cypress.Commands.add(
 );
 
 Cypress.Commands.add('assertNotificationContainingText', (text) => {
-  cy.get('#notification').should('to.contain', text);
+  cy.get('#notification').should('to.contain', text).should('be.visible');
 });
 
 Cypress.Commands.add(
@@ -226,5 +284,36 @@ Cypress.Commands.add(
     cy.getCell(rowIndex, columnName)
       .find('.data-table-value-nonstring')
       .should('to.exist');
+  }
+);
+
+Cypress.Commands.add(
+  'loadAndVisitSampleJSONProject',
+  (projectName, fixture) => {
+    cy.visitOpenRefine();
+    cy.navigateTo('Create Project');
+    cy.get('#create-project-ui-source-selection-tabs > div')
+      .contains('Clipboard')
+      .click();
+
+    cy.get('textarea').invoke('val', fixture);
+    cy.get(
+      '.create-project-ui-source-selection-tab-body.selected button.button-primary'
+    )
+      .contains('Next »')
+      .click();
+    cy.get(
+      '.default-importing-wizard-header input[bind="projectNameInput"]'
+    ).clear();
+    cy.get(
+      '.default-importing-wizard-header input[bind="projectNameInput"]'
+    ).type(projectName);
+    // need to disable es-lint as force is required to true, if not then
+    // cypress won't detect the element due to `position:fixed` and overlays
+    cy.get('[data-cy=element0]') // eslint-disable-line
+      .first()
+      .scrollIntoView()
+      .click({ force: true });
+    cy.doCreateProjectThroughUserInterface();
   }
 );

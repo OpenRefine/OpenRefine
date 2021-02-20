@@ -185,7 +185,8 @@ set REFINE_LIB_DIR=server\target\lib
 
 if "%GDATA_CLIENT_ID%" == "" goto skipGDataCredentials
 if "%GDATA_CLIENT_SECRET%" == "" goto skipGDataCredentials
-set OPTS=%OPTS% -Dext.gdata.clientid=%GDATA_CLIENT_ID% -Dext.gdata.clientsecret=%GDATA_CLIENT_SECRET%
+if "%GDATA_API_KEY%" == "" goto skipGDataCredentials
+set OPTS=%OPTS% -Dext.gdata.clientid=%GDATA_CLIENT_ID% -Dext.gdata.clientsecret=%GDATA_CLIENT_SECRET% -Dext.gdata.apikey=%GDATA_API_KEY%
 :skipGDataCredentials
 
 rem ----- Respond to the action ----------------------------------------------------------

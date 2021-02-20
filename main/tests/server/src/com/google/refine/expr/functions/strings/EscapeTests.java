@@ -36,12 +36,6 @@ import com.google.refine.util.TestUtils;
 
 public class EscapeTests extends RefineTest {
     @Test
-    public void serializeEscape() {
-        String json = "{\"description\":\"Escapes a string depending on the given escaping mode.\",\"params\":\"string s, string mode ['html','xml','csv','url','javascript']\",\"returns\":\"string\"}";
-        TestUtils.isSerializedTo(new Escape(), json);
-    }
-
-    @Test
     public void testEscape() {
         assertNull(invoke("escape"));
         assertEquals(invoke("escape",null,"xml"), "");
