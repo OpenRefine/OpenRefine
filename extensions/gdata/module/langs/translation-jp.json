@@ -6,7 +6,7 @@
     "gdata-import/next->": "次へ &raquo;",
     "gdata-import/auth-doc": "制限付き文書（authorized document）",
     "gdata-import/please": "まず",
-    "gdata-import/sign-in": "サインインして認証",
+    "gdata-import/sign-in": "サインイン",
     "gdata-import/sign-out": "サインアウト",
     "gdata-import/access-data": "してから、あなたのGoogle文書にアクセスします.",
     "gdata-import/retrieving": "Google Docsを取り込んでいます…",
@@ -46,5 +46,7 @@
     "gdata-exporter/google-sheets": "Googleシート",
     "gdata-exporter/upload-google-sheets-success": "Google Driveにアップロードされたプロジェクト ",
     "gdata-exporter/upload-google-drive-success": "Google Driveにアップロードされたプロジェクト ",
-    "gdata-exporter/export-to-google-drive": "プロジェクトをGoogle Driveへ…"
+    "gdata-exporter/export-to-google-drive": "プロジェクトをGoogle Driveへ…",
+    "gdata-import/re-sign-in-another": "別のアカウントでサインイン",
+    "gdata-import/please-signin": "サインしてGoogleのアクセス権限を認証してください"
 }

@@ -6,3 +6,4 @@ cypress/screenshots
 cypress/downloads
 npm-debug.log
 cypress.env.json
+out

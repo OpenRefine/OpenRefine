@@ -51,12 +51,12 @@ public class Cosh implements Function {
 
     @Override
     public String getDescription() {
-        return "Returns the hyperbolic cosine of a value";
+        return "Returns the hyperbolic cosine of a value.";
     }
     
     @Override
     public String getParams() {
-        return "number d";
+        return "number n";
     }
     
     @Override

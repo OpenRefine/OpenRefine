@@ -105,10 +105,4 @@ public class IncTests extends RefineTest {
         Assert.assertTrue(invoke("inc", source.toInstant().toEpochMilli(), 99, "h") instanceof EvalError);
     }
     
-    @Test
-    public void serializeInc() {
-        String json = "{\"description\":\"Returns a date changed by the given amount in the given unit of time\",\"params\":\"date d, number value, string unit (default to 'hour')\",\"returns\":\"date\"}";
-        TestUtils.isSerializedTo(new Inc(), json);
-    }
-
 }
