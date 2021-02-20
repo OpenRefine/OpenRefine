@@ -184,6 +184,11 @@ ExpressionPreviewDialog.Widget.prototype._renderHelpTab = function() {
 
 ExpressionPreviewDialog.Widget.prototype._renderHelp = function(data) {
     var elmt = this._elmts.expressionPreviewHelpTabBody.empty();
+    $("<a />", {
+        href: "https://docs.openrefine.org/manual/grelfunctions",
+        text: $.i18n('core-dialogs/help/grelreference'),
+        target: "_blank",
+      }).appendTo(elmt);
     $('<h3></h3>').text("Variables").appendTo(elmt);
     var varTable = $('<table cellspacing="5"></table>').appendTo(elmt)[0];
     var vars = [
