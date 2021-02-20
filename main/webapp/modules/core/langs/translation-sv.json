@@ -206,7 +206,7 @@
     "core-dialogs/cell-fields": "Den aktuella cellen. Den har några fält: 'value', 'recon' och 'errorMessage'.",
     "core-dialogs/cell-value": "Den aktuella cellens värde. Detta är en genväg för 'cell.value'.",
     "core-dialogs/row-fields": "Den aktuella raden. Den har 5 fält: 'flagged', 'starred', 'index', 'cells' och 'record'.",
-    "core-dialogs/cells-of-row": "Cellerna i den aktuella raden. Detta är en genväg för 'row.cells'. En särskild cell kan hämtas med 'cells.<kolumnnamn>'om <kolumnnamn> är ett enda ord, eller annars med 'cells[\"<kolumnnamn>\"]'.",
+    "core-dialogs/cells-of-row": "Cellerna i den aktuella raden. Detta är en genväg för 'row.cells'. En särskild cell kan hämtas med 'cells.&lt;kolumnnamn>'om &lt;kolumnnamn> är ett enda ord, eller annars med 'cells[\"&lt;kolumnnamn>\"]'.",
     "core-dialogs/row-index": "Den aktuella radens index. Detta är en genväg för 'row.index'.",
     "core-dialogs/returns": "returnerar",
     "core-dialogs/from": "Från",
@@ -444,5 +444,5 @@
     "core-index/license": "Licens:",
     "core-index/homepage": "Hemsida:",
     "core-index/image": "Bild:",
-    "core-dialogs/record-fields": "En eller flera rader grupperas till en post; objektet har flera fält, detaljerna redovisas på https://github.com/OpenRefine/OpenRefine/wiki/Variables#record"
+    "core-dialogs/record-fields": "En eller flera rader grupperas till en post; objektet har flera fält, detaljerna redovisas på <a href=\"https://github.com/OpenRefine/OpenRefine/wiki/Variables#record\">Records</a>"
 }
