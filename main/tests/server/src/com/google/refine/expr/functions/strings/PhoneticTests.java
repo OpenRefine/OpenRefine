@@ -32,12 +32,7 @@ import com.google.refine.util.TestUtils;
 import com.google.refine.expr.EvalError;
 
 public class PhoneticTests extends RefineTest {
-    @Test
-    public void serializePhonetic() {
-        String json = "{\"description\":\"Returns the a phonetic encoding of s (optionally indicating which encoding to use')\",\"params\":\"string s, string encoding (optional, defaults to 'metaphone3')\",\"returns\":\"string\"}";
-        TestUtils.isSerializedTo(new Phonetic(), json);
-    }
-    
+   
     @Test
     public void testtoPhoneticInvalidParams() {
 	Assert.assertTrue(invoke("phonetic") instanceof EvalError);                            //if no arguments are provided

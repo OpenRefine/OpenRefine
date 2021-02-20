@@ -199,7 +199,8 @@ Refine.JsonParserUI.prototype._showPickRecordNodesUI = function() {
       if (elementNode !== null) {
         $('<span>').addClass('punctuation').text(',').appendTo(elementNode);
       }
-      elementNode = $('<div>').addClass('node').addClass('indented').appendTo(container);
+      var dataCy = "element" + i;
+      elementNode = $('<div>').addClass('node').addClass('indented').attr('data-cy', dataCy).appendTo(container);
 
       renderNode(a[i], elementNode, parentPath2);
     }
