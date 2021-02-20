@@ -35,12 +35,6 @@ import com.google.refine.util.TestUtils;
 
 public class ToLowercaseTests extends RefineTest {
     @Test
-    public void serializeToLowercase() {
-        String json = "{\"description\":\"Returns s converted to lowercase\",\"params\":\"string s\",\"returns\":\"string\"}";
-        TestUtils.isSerializedTo(new ToLowercase(), json);
-    }
-
-    @Test
     public void testtoLowercaseInvalidParams() {
         Assert.assertTrue(invoke("toLowercase") instanceof EvalError);
         Assert.assertTrue(invoke("toLowercase", (Object[])null) instanceof EvalError);

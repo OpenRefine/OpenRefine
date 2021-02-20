@@ -31,10 +31,5 @@ import org.testng.annotations.Test;
 import com.google.refine.util.TestUtils;
 
 public class NGramTests {
-    @Test
-    public void serializeNGram() {
-        String json = "{\"description\":\"Returns an array of the word ngrams of s\",\"params\":\"string s, number n\",\"returns\":\"array of strings\"}";
-        TestUtils.isSerializedTo(new NGram(), json);
-    }
 }
 

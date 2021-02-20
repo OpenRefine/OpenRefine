@@ -68,12 +68,6 @@ public class ParseXmlTests extends RefineTest {
     }
 
     @Test
-    public void serializeParseXml() {
-        String json = "{\"description\":\"Parses a string as XML\",\"params\":\"string s\",\"returns\":\"XML object\"}";
-        TestUtils.isSerializedTo(new ParseXml(), json);
-    }
-    
-    @Test
     public void testParseXml() {
         Assert.assertTrue(invoke("parseXml") instanceof EvalError);
         Assert.assertTrue(invoke("parseXml","x") instanceof org.jsoup.nodes.Document);

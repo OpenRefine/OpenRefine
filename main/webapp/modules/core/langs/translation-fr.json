@@ -774,5 +774,9 @@
     "core-views/by-number": "par le passage des chiffres aux lettres",
     "core-views/by-case": "par le passage des minuscules aux majuscules",
     "core-dialogs/unstar-expression": "Désétoiler l’expression ?",
-    "core-index/refine-version": "Version $1"
+    "core-index/refine-version": "Version $1",
+    "core-about/contributors": "Contributeurs (par ordre chronologique)",
+    "core-about/thanks": "Remerciements spéciaux",
+    "core-about/history": "OpenRefine a été initialement développé sous le nom de «&nbsp;Freebase Gridworks&nbsp;» par <a href='$1'>$2</a>. Metaweb a été acquis par <a href='$3'>$4</a> en juillet 2010 et ils ont renommé le produit Google Refine. En octobre 2012, le produit a été renommé OpenRefine lors de sa transition vers un projet soutenu par la communauté.",
+    "core-about/definition": "OpenRefine est un outil puissant pour travailler avec des données désordonnées. Utilisez-le pour améliorer la cohérence des données, liez-le à des registres de données tels que Wikidata, augmentez-le avec des données provenant d'autres sources, transformez-les en différents formats pour que d'autres outils puissent les utiliser et contribuez-les aux sources d'origine. OpenRefine n'est pas un service Web mais une application de bureau qui s'exécute sur votre propre ordinateur, vous pouvez donc traiter les données sensibles en toute confidentialité."
 }

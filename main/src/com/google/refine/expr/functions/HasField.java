@@ -61,7 +61,7 @@ public class HasField implements Function {
 
     @Override
     public String getDescription() {
-        return "Returns whether o has field name";
+        return "Returns a boolean indicating whether o has a member field called name.";
     }
     
     @Override

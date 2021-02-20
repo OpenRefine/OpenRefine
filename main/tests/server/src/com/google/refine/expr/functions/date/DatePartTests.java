@@ -116,11 +116,5 @@ public class DatePartTests extends RefineTest {
         calendar.setTime(date);
         return calendar;
     }
-    
-    @Test
-    public void serializeDatePart() {
-        String json = "{\"description\":\"Returns part of a date\",\"params\":\"date d, string part\",\"returns\":\"date\"}";
-        TestUtils.isSerializedTo(new DatePart(), json);
-    }
 
 }

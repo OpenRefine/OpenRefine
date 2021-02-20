@@ -171,6 +171,18 @@
     "wikibase-addition/dialog-header": "Ajouter un manifeste de Wikibase",
     "wikibase-management/error-contact": "Erreur lors de la lecture du service",
     "wikibase-management/contact-service": "Lecture du service",
-    "wikibase-management/current-selected-wikibase": "Wikibase sélectionnée : <a href=\"$1\" target=\"_blank\">$2</a>",
-    "wikibase-management/explain-select-wikibase": "Sélectionnez une Wikibase cible. Cela supprimera tout schéma existant. Une fois la Wikibase sélectionnée, il est nécessaire de réconcilier vos données avec cette Wikibase avant de créer un schéma."
+    "wikibase-management/current-selected-wikibase": "Wikibase courante sélectionnée : <a href=\"$1\" target=\"_blank\">$2</a>",
+    "wikibase-management/explain-select-wikibase": "Cliquez sur un élément ci-dessous pour le sélectionner comme Wikibase cible sur laquelle travailler. Cela effacera tout schéma existant. Après être passé à la Wikibase cible, vous devez réconcilier vos données avec celle-ci avant de modifier le schéma.",
+    "wikibase-account/owner-only-consumer-remember-me-title": "Les informations d'identification de consommateur sont stockées non cryptées dans les cookies. Ne cochez pas cette case si votre ordinateur est public.",
+    "wikibase-account/password-remember-me-title": "Votre mot de passe ne sera pas enregistré. Ne cochez pas cette case si votre ordinateur est public.",
+    "wikibase-account/remember-me": "Se souvenir de moi",
+    "wikibase-account/consumer-token-placeholder": "jeton consommateur",
+    "wikibase-account/consumer-token-label": "Jeton consommateur :",
+    "wikibase-account/password-placeholder": "mot de passe",
+    "wikibase-account/username-placeholder": "nom d'utilisateur",
+    "wikibase-account/invalid-credentials": "Informations d'identification non valides",
+    "wikibase-account/explain-owner-only-consumer-login": "Vous pouvez également <a>vous connecter avec votre consommateur uniquement propriétaire.</a>",
+    "wikibase-account/explain-password-login": "Vous pouvez également <a>vous connecter avec votre nom d'utilisateur / mot de passe.</a>",
+    "wikibase-account/explain-owner-only-consumer-wiki": "Vous devez d'abord enregistrer un consommateur uniquement propriétaire <a href=\"$1\" target=\"_blank\">ici</a> si vous n'en avez pas. Consultez ce <a href=\"https://github.com/OpenRefine/OpenRefine/wiki/Wikidata-owner-only-consumer\" target=\"_blank\">wiki</a> pour savoir comment en obtenir un.",
+    "wikibase-account/bot-passwords-alert": "Vous semblez utiliser votre mot de passe principal pour vous connecter. Nous vous encourageons à utiliser le mot de passe du bot pour vous connecter. Pour le mot de passe du bot, le nom d'utilisateur doit être sous la forme « votrenomutilisateurwikidata@votrenomrobot »."
 }

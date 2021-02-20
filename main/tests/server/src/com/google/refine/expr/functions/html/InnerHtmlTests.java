@@ -31,10 +31,5 @@ import org.testng.annotations.Test;
 import com.google.refine.util.TestUtils;
 
 public class InnerHtmlTests {
-    @Test
-    public void serializeInnerHtml() {
-        String json = "{\"description\":\"The innerHtml of an HTML element\",\"params\":\"Element e\",\"returns\":\"String innerHtml\"}";
-        TestUtils.isSerializedTo(new InnerHtml(), json);
-    }
 }
 

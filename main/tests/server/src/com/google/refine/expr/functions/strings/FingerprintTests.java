@@ -82,11 +82,4 @@ public class FingerprintTests extends RefineTest {
         }
     }
     
-    @Test
-    public void serializeFingerprint() {
-        String json = "{\"description\":\"Returns the fingerprint of s, a derived string that aims to be a more canonical form of it (this is mostly useful for finding clusters of strings related to the same information).\",\"params\":\"string s\",\"returns\":\"string\"}";
-        TestUtils.isSerializedTo(new Fingerprint(), json);
-    }
-
-
 }

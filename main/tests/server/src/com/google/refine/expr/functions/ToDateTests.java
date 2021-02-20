@@ -42,12 +42,6 @@ import com.google.refine.util.TestUtils;
 
 public class ToDateTests extends RefineTest {
     @Test
-    public void serializeToDate() {
-        String json = "{\"description\":\"Returns o converted to a date object, you can hint if the day or the month is listed first, or give an ordered list of possible formats using this syntax: <a href=\\\"http://docs.oracle.com/javase/7/docs/api/java/text/SimpleDateFormat.html\\\">SimpleDateFormat</a>\",\"params\":\"o, boolean month_first / format1, format2, ... (all optional)\",\"returns\":\"date\"}";
-        TestUtils.isSerializedTo(new ToDate(), json);
-    }
-
-    @Test
     public void testToDate() throws CalendarParserException {
         TimeZone originalTimeZone = TimeZone.getDefault();
         try {
