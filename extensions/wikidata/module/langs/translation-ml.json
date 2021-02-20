@@ -1,1 +1,6 @@
-{}
+{
+    "wikibase-extension/manage-wikibase-account": "വിക്കിബേസ് അക്കൗണ്ട് കൈകാരംചെയ്യുക",
+    "wikibase-extension/import-wikibase-schema": "രൂപരേഖ ഇറക്കുമതി",
+    "wikibase-extension/select-wikibase-instance": "വിക്കിബേസ് തരം തിരഞ്ഞെടുക്കുക",
+    "wikibase-extension/menu-label": "വിക്കിഡാറ്റ"
+}
