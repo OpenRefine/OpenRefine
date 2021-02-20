@@ -29,6 +29,7 @@ package com.google.refine.importing;
 import static org.mockito.Mockito.when;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertTrue;
+import static org.testng.Assert.fail;
 
 import java.io.File;
 import java.io.IOException;
@@ -98,8 +99,6 @@ public class ImportingUtilitiesTests extends ImporterTest {
     public void urlImporting() throws IOException {
 
         String RESPONSE_BODY = "{code:401,message:Unauthorised}";
-        String MESSAGE = String.format("HTTP error %d : %s | %s", 401,
-                "Client Error", RESPONSE_BODY);
 
         MockWebServer server = new MockWebServer();
         MockResponse mockResponse = new MockResponse();
@@ -108,6 +107,8 @@ public class ImportingUtilitiesTests extends ImporterTest {
         server.start();
         server.enqueue(mockResponse);
         HttpUrl url = server.url("/random");
+        String MESSAGE = String.format("HTTP error %d : %s for URL %s", 401,
+                "Client Error", url);
 
         MultipartEntityBuilder builder = MultipartEntityBuilder.create();
         StringBody stringBody = new StringBody(url.toString(), ContentType.MULTIPART_FORM_DATA);
@@ -145,9 +146,9 @@ public class ImportingUtilitiesTests extends ImporterTest {
                     return job.canceled;
                 }
             });
-            Assert.fail("No Exception was thrown");
+            fail("No Exception was thrown");
         } catch (Exception exception) {
-            Assert.assertEquals(MESSAGE, exception.getMessage());
+            assertEquals(exception.getMessage(), MESSAGE);
         } finally {
             server.close();
         }

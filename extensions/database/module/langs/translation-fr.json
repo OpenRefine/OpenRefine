@@ -56,5 +56,9 @@
     "database-parsing/limit-next": "Charger au plus",
     "database-parsing/limit": "ligne(s) de données",
     "database-parsing/store-row": "Stocker les lignes vides",
-    "database-parsing/store-cell": "Enregistrer les cellules vides comme des valeurs nulles"
+    "database-parsing/store-cell": "Enregistrer les cellules vides comme des valeurs nulles",
+    "database-source/alert-db-port-invalid-character": "Erreur de port de base de données : caractère illégal en entrée. Seules les valeurs numériques sont autorisées.",
+    "database-source/alert-db-user-invalid-character": "Erreur de l'utilisateur de la base de données : caractère illégal en entrée. Seuls les caractères alphanumériques sont autorisés",
+    "database-source/alert-db-host-invalid-character": "Erreur de l'hôte de la base de données : caractère non autorisé en entrée. Seuls les caractères alphanumériques sont autorisés",
+    "database-source/alert-conn-name-invalid-character": "Erreur de saisie du nom de connexion : caractère non autorisé en entrée. Uniquement [a-zA-Z0-9 ._-] Autorisé"
 }

@@ -17,13 +17,13 @@ Imagine personal data with addresses in this format:
 |Jacques Cousteau|23, quai de Conti|Paris||France|75270|
 |Emmy Noether|010 N Merion Avenue|Bryn Mawr|Pennsylvania|USA|19010|
 
-You can transpose the address information from this format into multiple rows. Go to the “Street” column and select “Transpose” → “Transpose cells across columns into rows.” From there you can select all of the five columns, starting with “Street” and ending with “Postal code,” that correspond to address information. Once you begin, you should put your project into [records mode](exploring#rows-vs-records) to associate the subsequent rows with “Name” as the key column. 
+You can transpose the address information from this format into multiple rows. Go to the “Street” column and select <span class="menuItems">Transpose</span> → <span class="menuItems">Transpose cells across columns into rows</span>. From there you can select all of the five columns, starting with “Street” and ending with “Postal code,” that correspond to address information. Once you begin, you should put your project into [records mode](exploring#rows-vs-records) to associate the subsequent rows with “Name” as the key column. 
 
 ![A screenshot of the transpose across columns window.](/img/transpose1.png)
 
 ### One column
 
-You can transpose the multiple address columns into a series of rows instead:
+You can transpose the multiple address columns into a series of rows:
 
 |Name|Address|
 |---|---|
@@ -37,7 +37,7 @@ You can transpose the multiple address columns into a series of rows instead:
 ||USA|
 ||19010|
 
-You can include the column-name information in each cell by prepending it to the value, with or without a separator:
+You can choose one column and include the column-name information in each cell by prepending it to the value, with or without a separator:
 
 |Name|Address|
 |---|---|
@@ -53,7 +53,7 @@ You can include the column-name information in each cell by prepending it to the
 
 ### Two columns
 
-You can retain the column names as separate cell values, by selecting “Two new columns” and naming the key and value columns.
+You can retain the column names as separate cell values, by selecting <span class="fieldLabels">Two new columns</span> and naming the key and value columns.
 
 |Name|Address part|Address|
 |---|---|---|
@@ -91,7 +91,7 @@ The goal is to sort out all of the information contained in one column into sepa
 |Joe Khoury                |Junior analyst       |Beirut|
 |Samantha Martinez               |CTO      |Tokyo|
 
-By selecting “Transpose” → “Transpose cells in rows into columns...” a window will appear that simply asks how many rows to transpose. In this case, each employee record has three rows, so input “3” (do not subtract one for the original column). The original column will disappear and be replaced with three columns, with the name of the original column plus a number appended.
+By selecting <span class="menuItems">Transpose</span> → <span class="menuItems">Transpose cells in rows into columns...</span> a window will appear that simply asks how many rows to transpose. In this case, each employee record has three rows, so input “3” (do not subtract one for the original column). The original column will disappear and be replaced with three columns, with the name of the original column plus a number appended.
 
 |Column 1 |Column 2    |Column 3|
 |---|---|---|
@@ -99,13 +99,17 @@ By selecting “Transpose” → “Transpose cells in rows into columns...” a
 |Employee: Joe Khoury                |Job title: Junior analyst       |Office: Beirut|
 |Employee: Samantha Martinez               |Job title: CTO      |Office: Tokyo|
 
-From here you can use “Cell editing” → “Replace” to remove “Employee: ”, “Job title: ”, and “Office: ”, or use [GREL functions](expressions#grel) with “Edit cells” → “Transform...” to clean out the extraneous characters: `value.replace('Employee: ', '')`, etc.
+From here you can use <span class="menuItems">Cell editing</span> → <span class="menuItems">Replace</span> to remove “Employee: ”, “Job title: ”, and “Office: ” if you wish, or use [expressions](expressions) with <span class="menuItems">Edit cells</span> → <span class="menuItems">Transform...</span> to clean out the extraneous characters: 
 
-If your dataset doesn't have a predictable number of cells per intended row, such that you cannot specify easily how many columns to create, try “Columnize by key/value columns.“
+```
+value.replace("Employee: ", "")
+```
+
+If your dataset doesn't have a predictable number of cells per intended row, such that you cannot specify easily how many columns to create, try <span class="menuItems">Columnize by key/value columns</span>.
 
 ## Columnize by key/value columns
 
-This operation can be used to reshape a dataset that contains key and value columns: the repeating strings in the key column become new column names, and the contents of the value column are moved to new columns. This operation can be found at “Transpose” → “Columnize by key/value columns.”
+This operation can be used to reshape a dataset that contains key and value columns: the repeating strings in the key column become new column names, and the contents of the value column are moved to new columns. This operation can be found at <span class="menuItems">Transpose</span> → <span class="menuItems">Columnize by key/value columns</span>.
 
 ![A screenshot of the Columnize window.](/img/transpose2.png) 
 
@@ -120,7 +124,7 @@ Consider the following example, with flowers, their colours, and their Internati
 |Color   |Yellow            	|
 |IUCN ID |161899            	|
 
-In this format, each flower species is described by multiple attributes on consecutive rows. The “Field” column contains the keys and the “Data” column contains the values. In the “Columnize by key/value columns” window you can select each of these from the available columns. It transforms the table as follows:
+In this format, each flower species is described by multiple attributes on consecutive rows. The “Field” column contains the keys and the “Data” column contains the values. In the <span class="menuItems">Columnize by key/value columns</span> window you can select each of these from the available columns. It transforms the table as follows:
 
 | Name              	| Color	| IUCN ID |
 |-----------------------|----------|---------|
@@ -227,4 +231,4 @@ This will be transformed to:
 
 This actually changes the operation: OpenRefine no longer looks for the first key (“Name”) but simply pivots all information based on the first extra column's values. Every old row with the same value gets transposed into one new row. If you have more than one extra column, they are pivoted as well but not used as the new key. 
 
-You can use [“Fill down”](cellediting#fill-down) to put identical values in the extra columns if you need to.
+You can use <span class="menuItems">[Fill down](cellediting#fill-down-and-blank-down)</span> to put identical values in the extra columns if you need to.

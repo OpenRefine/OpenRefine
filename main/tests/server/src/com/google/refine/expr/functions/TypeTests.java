@@ -79,11 +79,5 @@ public class TypeTests extends RefineTest {
         Assert.assertEquals(invoke("type", dateTimeValue), "date");
         Assert.assertEquals(invoke("type", listArray), "array");
     }
-
-    @Test
-    public void serializeType() {
-        String json = "{\"description\":\"Returns the type of o as a string ('string', 'date', 'number', 'array', 'boolean' or a class name)\",\"params\":\"object o\",\"returns\":\"string\"}";
-        TestUtils.isSerializedTo(new Type(), json);
-    }
 }
 

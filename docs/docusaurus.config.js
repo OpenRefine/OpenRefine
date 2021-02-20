@@ -31,6 +31,11 @@ module.exports = {
         },
       ],
     },
+    algolia: {
+	    apiKey: '591fc612419d2e5b6bee6822cc17064f',
+	    indexName: 'openrefine',
+	    contextualSearch: true,
+    },
     footer: {
       logo: {
         alt: 'OpenRefine diamond logo',
