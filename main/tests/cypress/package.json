@@ -16,7 +16,7 @@
         "cypress-wait-until": "^1.7.1",
         "dotenv": "^8.2.0",
         "fs-extra": "^9.1.0",
-        "uniqid": "^5.2.0"
+        "uniqid": "^5.3.0"
     },
     "devDependencies": {
         "eslint": "^7.20.0",
