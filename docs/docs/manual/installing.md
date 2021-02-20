@@ -78,6 +78,9 @@ If you are upgrading an existing OpenRefine installation, you can delete the old
 If you have extensions installed, do not delete the `webapp\extensions` folder where you installed them. You may wish to install extensions into the workspace directory instead of the program directory. There is no guarantee that extensions will be forward-compatible with new versions of OpenRefine, and we do not maintain extensions.
 :::
 
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
 <Tabs
   groupId="operating-systems"
   defaultValue="win"
