@@ -98,7 +98,7 @@ public class Cross implements Function {
         return "Looks up the given value in the target column of the target project, returns an array of matched rows. Two values match if and only if they have the same string representation. " +
                 "The first argument will be interpreted as cell.value if set to cell. " +
                 "The second argument will be interpreted as the current project name if omitted or set to \"\". " +
-                "The third argument will be interpreted as the index (starts from 0) column if omitted or set to \"\"";
+                "The third argument will be interpreted as the index (starts from 0) column if omitted or set to \"\".";
     }
 
     @Override

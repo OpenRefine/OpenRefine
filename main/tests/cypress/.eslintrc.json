@@ -1,0 +1,28 @@
+{
+  "env": {
+    "browser": true,
+    "node": true,
+    "es2021": true,
+    "cypress/globals": true
+  },
+  "plugins": ["cypress"],
+  "extends": [
+    "google",
+    "eslint:recommended",
+    "plugin:cypress/recommended",
+    "prettier"
+  ],
+  "parserOptions": {
+    "ecmaVersion": 12,
+    "sourceType": "module"
+  },
+  "rules": {
+    "max-len": ["error", { "code": 150 }],
+    "valid-jsdoc": "off",
+    "cypress/no-assigning-return-values": "error",
+    "cypress/no-unnecessary-waiting": "error",
+    "cypress/assertion-before-screenshot": "warn",
+    "cypress/no-force": "warn",
+    "cypress/no-async-tests": "error"
+  }
+}

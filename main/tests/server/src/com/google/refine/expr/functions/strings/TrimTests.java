@@ -97,10 +97,4 @@ public class TrimTests extends RefineTest {
         }
 
     }
-    
-    @Test
-    public void serializeTrim() {
-        String json = "{\"description\":\"Returns copy of the string, with leading and trailing whitespace omitted.\",\"params\":\"string s\",\"returns\":\"string\"}";
-        TestUtils.isSerializedTo(new Trim(), json);
-    }
 }

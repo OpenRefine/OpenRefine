@@ -117,10 +117,4 @@ public class SmartSplitTests {
         }
     }
 
-    @Test
-    public void serializeSmartSplit() {
-        String json = "{\"description\":\"Returns the array of strings obtained by splitting s with separator sep. Handles quotes properly. Guesses tab or comma separator if \\\"sep\\\" is not given.\",\"params\":\"string s, optional string sep\",\"returns\":\"array\"}";
-        TestUtils.isSerializedTo(new SmartSplit(), json);
-    }
-
 }
