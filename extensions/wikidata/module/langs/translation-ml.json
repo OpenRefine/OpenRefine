@@ -5,5 +5,8 @@
     "wikibase-extension/menu-label": "വിക്കിഡാറ്റ",
     "wikibase-management/close": "ക്ലോസ് ചെയ്യുക",
     "wikibase-extension/quickstatements-export-name": "ക്വിക്ക്സ്റ്റേറ്റ്മെന്റ്സ്",
-    "wikibase-extension/qs-file": "ക്വിക്ക്സ്റ്റേറ്റ്മെൻറ്സ് ഫയൽ"
+    "wikibase-extension/qs-file": "ക്വിക്ക്സ്റ്റേറ്റ്മെൻറ്സ് ഫയൽ",
+    "import-wikibase-schema/import": "ഇറക്കുമതി ചെയ്യുക",
+    "wikibase-account/password-placeholder": "രഹസ്യവാക്ക്",
+    "wikibase-account/password-label": "രഹസ്യവാക്ക്:"
 }
