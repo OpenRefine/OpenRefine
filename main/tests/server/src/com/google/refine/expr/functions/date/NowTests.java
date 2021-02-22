@@ -56,11 +56,5 @@ public class NowTests extends RefineTest {
         Assert.assertTrue(invoke("now") instanceof OffsetDateTime);
         Assert.assertTrue(((OffsetDateTime)invoke("now")).isAfter(source));
     }
-
-    @Test
-    public void serializeNow() {
-        String json = "{\"description\":\"Returns the current time\",\"returns\":\"date\"}";
-        TestUtils.isSerializedTo(new Now(), json);
-    }
-    
+   
 }

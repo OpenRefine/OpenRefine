@@ -36,8 +36,7 @@ function ExpressionPreviewDialog(title, cellIndex, rowIndices, values, expressio
 
     var self = this;
     var frame = DialogSystem.createDialog();
-    frame.width("700px");
-    
+    frame.css("min-width", "700px")
     var header = $('<div></div>').addClass("dialog-header").text(title).appendTo(frame);
     var body = $('<div></div>').addClass("dialog-body").appendTo(frame);
     var footer = $('<div></div>').addClass("dialog-footer").appendTo(frame);
@@ -133,9 +132,7 @@ ExpressionPreviewDialog.Widget = function(
         })
         .select()
         .focus();
-        
-    this._tabContentWidth = this._elmts.expressionPreviewPreviewContainer.width() + "px";
-    
+
     this._elmts.or_dialog_expr.html($.i18n('core-dialogs/expression'));
     this._elmts.or_dialog_lang.html($.i18n('core-dialogs/language'));
     this._elmts.or_dialog_preview.html($.i18n('core-dialogs/preview'));
@@ -186,8 +183,7 @@ ExpressionPreviewDialog.Widget.prototype._renderHelpTab = function() {
 };
 
 ExpressionPreviewDialog.Widget.prototype._renderHelp = function(data) {
-    var elmt = this._elmts.expressionPreviewHelpTabBody.empty().width(this._tabContentWidth);
-    
+    var elmt = this._elmts.expressionPreviewHelpTabBody.empty();
     $('<h3></h3>').text("Variables").appendTo(elmt);
     var varTable = $('<table cellspacing="5"></table>').appendTo(elmt)[0];
     var vars = [
@@ -214,7 +210,7 @@ ExpressionPreviewDialog.Widget.prototype._renderHelp = function(data) {
         var variable = vars[i];
         var tr = varTable.insertRow(varTable.rows.length);
         $(tr.insertCell(0)).addClass("expression-preview-doc-item-title").text(variable.name);
-        $(tr.insertCell(1)).addClass("expression-preview-doc-item-desc").text(variable.description);
+        $(tr.insertCell(1)).addClass("expression-preview-doc-item-desc").html(variable.description);
     }
     
     var renderEntry = function(table, name, entry) {
@@ -229,7 +225,7 @@ ExpressionPreviewDialog.Widget.prototype._renderHelp = function(data) {
         $(tr1.insertCell(1)).addClass("expression-preview-doc-item-returns").text($.i18n('core-dialogs/returns')+": " + entry.returns);
         
         $(tr2.insertCell(0));
-        $(tr2.insertCell(1)).addClass("expression-preview-doc-item-desc").text(entry.description);
+        $(tr2.insertCell(1)).addClass("expression-preview-doc-item-desc").html(entry.description);
     };
     var renderEntries = function(table, map) {
         var names = [];
@@ -245,7 +241,7 @@ ExpressionPreviewDialog.Widget.prototype._renderHelp = function(data) {
             renderEntry(table, name, map[name]);
         }
     };
-    
+
     $('<h3></h3>').text("Functions").appendTo(elmt);
     var functionTable = $('<table width="100%" cellspacing="5"></table>').appendTo(elmt)[0];
     renderEntries(functionTable, data.functions);
@@ -269,7 +265,7 @@ ExpressionPreviewDialog.Widget.prototype._renderExpressionHistoryTab = function(
 
 ExpressionPreviewDialog.Widget.prototype._renderExpressionHistory = function(data) {
     var self = this;
-    var elmt = this._elmts.expressionPreviewHistoryContainer.empty().width(this._tabContentWidth);
+    var elmt = this._elmts.expressionPreviewHistoryContainer.empty();
     
     var table = $(
         '<table>' +
@@ -337,7 +333,7 @@ ExpressionPreviewDialog.Widget.prototype._renderStarredExpressionsTab = function
 
 ExpressionPreviewDialog.Widget.prototype._renderStarredExpressions = function(data) {
     var self = this;
-    var elmt = this._elmts.expressionPreviewStarredContainer.empty().width(this._tabContentWidth);
+    var elmt = this._elmts.expressionPreviewStarredContainer.empty();
     
     var table = $(
         '<table>' +
@@ -436,7 +432,7 @@ ExpressionPreviewDialog.Widget.prototype._prepareUpdate = function(params) {
 };
 
 ExpressionPreviewDialog.Widget.prototype._renderPreview = function(expression, data) {
-    var container = this._elmts.expressionPreviewPreviewContainer.empty().width(this._tabContentWidth);
+    var container = this._elmts.expressionPreviewPreviewContainer.empty();
     
     var table = $('<table></table>').appendTo(
         $('<div>').addClass("expression-preview-table-wrapper").appendTo(container))[0];

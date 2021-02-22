@@ -35,7 +35,7 @@ var GdataExtension = {};
 
 GdataExtension.isAuthorized = function() {
   // TODO: Unreliable - just means that we were authorized at one point
-  return Cookies.get('oauth2_token') !== null;
+  return Cookies.get('oauth2_token') != null;
 };
 
 GdataExtension.showAuthorizationDialog = function(onAuthorized, onNotAuthorized) {
