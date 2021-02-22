@@ -70,7 +70,7 @@ import com.google.util.threads.ThreadPoolExecutorAdapter;
  */
 public class Refine {
     
-    static private final String DEFAULT_HOST = "127.0.0.1";
+    static private final String DEFAULT_IFACE = "127.0.0.1";
     static private final int DEFAULT_PORT = 3333;
         
     static private int port;
@@ -96,9 +96,12 @@ public class Refine {
         // set the log verbosity level
         org.apache.log4j.Logger.getRootLogger().setLevel(Level.toLevel(Configurations.get("refine.verbosity","info")));
 
-        port = Configurations.getInteger("refine.port",DEFAULT_PORT);
-        host = Configurations.get("refine.host",DEFAULT_HOST);
-        iface = Configurations.get("refine.interface",host);
+        port = Configurations.getInteger("refine.port", DEFAULT_PORT);
+        iface = Configurations.get("refine.interface", DEFAULT_IFACE);
+        host = Configurations.get("refine.host", iface);
+        if ("0.0.0.0".equals(host)) {
+            host = "*";
+        }
 
         Refine refine = new Refine();
         
@@ -107,9 +110,8 @@ public class Refine {
 
     public void init(String[] args) throws Exception {
 
-        boolean validateHost = Configurations.getBoolean("refine.host.validate", true);
         RefineServer server = new RefineServer();
-        server.init(iface, port, validateHost ? host : null);
+        server.init(iface, port, host);
 
         boolean headless = Configurations.getBoolean("refine.headless",false);
         if (headless) {
@@ -118,7 +120,16 @@ public class Refine {
         } else {
             try {
                 RefineClient client = new RefineClient();
-                client.init(host,port);
+                if ("*".equals(host)) {
+                    if ("0.0.0.0".equals(iface)) {
+                        logger.warn("No refine.host specified while binding to interface 0.0.0.0, guessing localhost.");
+                        client.init("localhost",port);
+                    } else { 
+                        client.init(iface,port);
+                    }
+                } else {
+                    client.init(host,port);
+                }
             } catch (Exception e) {
                 logger.warn("Sorry, some error prevented us from launching the browser for you.\n\n Point your browser to http://" + host + ":" + port + "/ to start using Refine.");
             }
@@ -186,7 +197,7 @@ class RefineServer extends Server {
         WebAppContext context = new WebAppContext(webapp.getAbsolutePath(), contextPath);
         context.setMaxFormContentSize(maxFormContentSize);
 
-        if (host == null || "0.0.0.0".equals(host)) {
+        if ("*".equals(host)) {
             this.setHandler(context);
         } else {
             ValidateHostHandler wrapper = new ValidateHostHandler(host);
@@ -472,12 +483,7 @@ class RefineClient extends JFrame implements ActionListener {
     private URI uri;
     
     public void init(String host, int port) throws Exception {
-
-        String cleanedHost = host;
-        if("0.0.0.0".equals(host)) {
-            cleanedHost = "localhost";
-        }
-        uri = new URI("http://" + cleanedHost + ":" + port + "/");
+        uri = new URI("http://" + host + ":" + port + "/");
         openBrowser();
     }
     
