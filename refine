@@ -34,8 +34,11 @@ where [options] include:
   -p <port> the port that OpenRefine will listen to
      default: 3333
 
-  -i <interface> the host interface OpenRefine should bind to
+  -i <interface> the network interface OpenRefine should bind to
      default: 127.0.0.1
+	 
+  -h <host> the expected value for the Host header (set to * to disable checks)
+     default: <interface>
 
   -w <path> path to the webapp
      default: main/webapp
