@@ -25,6 +25,8 @@ module.exports = {
       'manual/exporting',
       'manual/troubleshooting'
     ],
+   'GREL Reference': [
+	   'manual/grelfunctions'],
     'Technical Reference': [
       'technical-reference/technical-reference-index',
       'technical-reference/architecture',

@@ -12,7 +12,7 @@ Python code that depends on C bindings will not work in OpenRefine, which uses J
 
 You will need to restart OpenRefine, so that new Jython or Python libraries are initialized during startup.
 
-OpenRefine now has [most of the Jsoup.org library built into GREL functions](#jsoup-xml-and-html-parsing-functions) for parsing and working with HTML and XML elements.
+OpenRefine now has [most of the Jsoup.org library built into GREL functions](grelfunctions#jsoup-xml-and-html-parsing-functions) for parsing and working with HTML and XML elements.
 
 ### Syntax
 
@@ -55,7 +55,7 @@ Full documentation on the Jython language can be found on its official site: [ht
 
 ## Clojure
 
-Clojure 1.10.1 comes bundled with the default installation of OpenRefine 3.4.1. At this time, not all [variables](#variables) can be used with Clojure expressions: only `value`, `row`, `rowIndex`, `cell`, and `cells` are available.
+Clojure 1.10.1 comes bundled with the default installation of OpenRefine 3.4.1. At this time, not all [variables](expressions#variables) can be used with Clojure expressions: only `value`, `row`, `rowIndex`, `cell`, and `cells` are available.
 
 For example, functions can take the form 
 ```

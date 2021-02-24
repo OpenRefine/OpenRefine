@@ -20,7 +20,7 @@ Note that the operator for string concatenation is `+` (not “&” as is used i
 
 Evaluating conditions uses symbols such as <, >, *, /, etc. To check whether two objects are equal, use two equal signs (`value=="true"`).
 
-See the [next page for a thorough reference](grelfunctions) on each function and its inputs and outputs. Read on below for more about the general nature of GREL expressions.
+See the [GREL functions page for a thorough reference](grelfunctions) on each function and its inputs and outputs. Read on below for more about the general nature of GREL expressions.
 
 ## Syntax
 
@@ -37,7 +37,7 @@ The second form is a shorthand to make expressions easier to read. It simply pul
 
 So, in the dot shorthand, the functions occur from left to right in the order of calling, rather than in the reverse order with parentheses. This allows you to string together multiple functions in a readable order.
 
-The dot notation can also be used to access the member fields of [variables](#variables). For referring to column names that contain spaces (anything not a continuous string), use square brackets instead of dot notation:
+The dot notation can also be used to access the member fields of [variables](expressions#variables). For referring to column names that contain spaces (anything not a continuous string), use square brackets instead of dot notation:
 
 |Example |Description |
 |-|-|

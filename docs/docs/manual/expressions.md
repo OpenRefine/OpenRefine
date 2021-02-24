@@ -24,11 +24,11 @@ You can use expressions in multiple places in OpenRefine to extend data cleanup 
     *   <span class="menuItems">Add column based on this column</span>
     *   <span class="menuItems">Add column by fetching URLs</span>.
 
-In the expressions editor window you have the opportunity to select a supported language. The default is [GREL (General Refine Expression Language)](#grel-general-refine-expression-language); OpenRefine also comes with support for [Clojure](#clojure) and [Jython](#jython). Extensions may offer support for more expressions languages. 
+In the expressions editor window you have the opportunity to select a supported language. The default is [GREL (General Refine Expression Language)](grel); OpenRefine also comes with support for [Clojure](jythonclojure#clojure) and [Jython](jythonclojure#jython). Extensions may offer support for more expressions languages. 
 
 These languages have some syntax differences but support many of the same [variables](#variables). For example, the GREL expression `value.split(" ")[1]` would be written in Jython as `return value.split(" ")[1]`.
 
-This page is a general reference for available functions, variables, and syntax. For examples that use these expressions for common data tasks, look at the [Recipes section on the Wiki](https://github.com/OpenRefine/OpenRefine/wiki/Documentation-For-Users#recipes-and-worked-examples). 
+This page is a general reference for available functions, variables, and syntax. For examples that use these expressions for common data tasks, look at the [Recipes section on the wiki](https://github.com/OpenRefine/OpenRefine/wiki/Documentation-For-Users#recipes-and-worked-examples). 
 
 ## Expressions
 
@@ -90,7 +90,7 @@ the regular expression is `\s+`, and the syntax used in the expression wraps it 
 
 Do not use slashes to wrap regular expressions outside of a GREL expression.
 
-On the [GREL functions](#grel-general-refine-expression-language) page, functions that support regex will indicate that with a “p” for “pattern.” The GREL functions that support regex are:
+On the [GREL functions](grelfunctions) page, functions that support regex will indicate that with a “p” for “pattern.” The GREL functions that support regex are:
 *   [contains](grelfunctions#containss-sub-or-p)
 *   [replace](grelfunctions#replaces-s-or-p-find-s-replace)
 *   [find](grelfunctions#finds-sub-or-p)
