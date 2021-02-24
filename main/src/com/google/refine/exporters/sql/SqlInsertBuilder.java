@@ -179,9 +179,19 @@ public class SqlInsertBuilder {
         }
 
         boolean trimColNames = options == null ? false : JSONUtilities.getBoolean(options, "trimColumnNames", false);
-        String colNamesWithSep = columns.stream().map(col -> col.replaceAll("\\s", "")).collect(Collectors.joining(","));
+        String colNamesWithSep;
+        if(SqlCreateBuilder.dbType.equals("PostgreSQL")) {
+        	colNamesWithSep = columns.stream().map(col -> col.replaceAll("\\s", "")).map(col->col.replaceAll("'", "''")).collect(Collectors.joining("\",\""));	
+        }else {
+        	colNamesWithSep = columns.stream().map(col -> col.replaceAll("\\s", "")).collect(Collectors.joining("`,`"));
+        }
+        
         if(!trimColNames) {
-           colNamesWithSep = columns.stream().collect(Collectors.joining(","));  
+        	if(SqlCreateBuilder.dbType.equals("PostgreSQL")) {
+        		colNamesWithSep = columns.stream().map(col->col.replaceAll("'", "''")).collect(Collectors.joining("\",\"")); 
+            }else {
+            	colNamesWithSep = columns.stream().collect(Collectors.joining("`,`")); 
+            } 
         }
 
         String valuesString = values.toString();
@@ -191,7 +201,11 @@ public class SqlInsertBuilder {
 
         sql.append("INSERT INTO ").append(table);
         sql.append(" (");
-        sql.append(colNamesWithSep);
+        if(SqlCreateBuilder.dbType.equals("PostgreSQL")) {
+        	sql.append("\""+colNamesWithSep +"\""); 
+        }else {
+        	sql.append("`"+colNamesWithSep +"`"); 
+        } 
         sql.append(") VALUES ").append("\n");
         sql.append(valuesString);
         

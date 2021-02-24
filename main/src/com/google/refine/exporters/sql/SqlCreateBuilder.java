@@ -45,6 +45,7 @@ public class SqlCreateBuilder {
     private String table;
     private List<String> columns;
     private JsonNode options;
+    public static String dbType="";
 
 
     public SqlCreateBuilder(String table, List<String> columns, JsonNode sqlOptions) {
@@ -82,13 +83,21 @@ public class SqlCreateBuilder {
       
                 
                 if (name != null) {
-                    if(trimColNames) {
+                	if(trimColNames) {
                         String trimmedCol = name.replaceAll("\\s", "");
-                        createSB.append( trimmedCol + " ");
-                    }else{
-                        createSB.append(name + " ");
-                    }
-                   
+                        if(dbType.equals("PostgreSQL")) {
+                    	       createSB.append("\"" +trimmedCol.replaceAll("'","''")+ "\" ");
+                    	   }else {
+                    		   createSB.append("`"+trimmedCol+"`" + " ");
+                    	   }
+                     }else{
+                     	if(dbType.equals("PostgreSQL")) {
+                     	    createSB.append("\"" +name.replaceAll("'","''")+ "\" ");
+                     	}else {
+                     		createSB.append("`"+name+"` ");	
+                     	}
+                     }
+                	
                     if (type.equals(SqlData.SQL_TYPE_VARCHAR)) {
                         if (size.isEmpty()) {
                             size = "255";

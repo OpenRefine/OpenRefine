@@ -47,6 +47,7 @@ import com.google.refine.extension.database.SQLType;
 import com.google.refine.extension.database.model.DatabaseColumn;
 import com.google.refine.extension.database.model.DatabaseInfo;
 import com.google.refine.extension.database.model.DatabaseRow;
+import com.google.refine.exporters.sql.SqlCreateBuilder;
 
 public class PgSQLDatabaseService extends DatabaseService {
     private static final Logger logger = LoggerFactory.getLogger("PgSQLDatabaseService");
@@ -135,6 +136,7 @@ public class PgSQLDatabaseService extends DatabaseService {
                 int dbMinorVersion = metadata.getDatabaseMinorVersion();
                 String dbProductVersion = metadata.getDatabaseProductVersion();
                 String dbProductName = metadata.getDatabaseProductName();
+                SqlCreateBuilder.dbType=dbProductName;
                 DatabaseInfo dbInfo = new DatabaseInfo();
                 dbInfo.setDatabaseMajorVersion(dbMajorVersion);
                 dbInfo.setDatabaseMinorVersion(dbMinorVersion);
