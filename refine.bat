@@ -31,8 +31,8 @@ echo.
 echo  "/i <interface>" the network interface OpenRefine should bind to
 echo     default: 127.0.0.1
 echo.
-echo  "/h <host>" the expected value for the Host header (set to * to disable checks)
-echo     default: <interface>
+echo  "/H <host>" the expected value for the Host header (set to * to disable checks)
+echo     default: ^<interface^>
 echo.
 echo  "/w <path>" path to the webapp
 echo     default src\main\webapp
@@ -102,9 +102,10 @@ rem --- Argument parsing --------------------------------------------
 :loop
 if ""%1"" == """" goto endArgumentParsing
 if ""%1"" == ""/?"" goto usage
+if ""%1"" == ""/h"" goto usage
 if ""%1"" == ""/p"" goto arg-p
 if ""%1"" == ""/i"" goto arg-i
-if ""%1"" == ""/h"" goto arg-h
+if ""%1"" == ""/H"" goto arg-H
 if ""%1"" == ""/w"" goto arg-w
 if ""%1"" == ""/d"" goto arg-d
 if ""%1"" == ""/m"" goto arg-m
@@ -119,7 +120,7 @@ goto shift2loop
 set REFINE_INTERFACE=%2
 goto shift2loop
 
-:arg-h
+:arg-H
 set REFINE_HOST=%2
 goto shift2loop
 

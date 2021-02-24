@@ -37,7 +37,7 @@ where [options] include:
   -i <interface> the network interface OpenRefine should bind to
      default: 127.0.0.1
 	 
-  -h <host> the expected value for the Host header (set to * to disable checks)
+  -H <host> the expected value for the Host header (set to * to disable checks)
      default: <interface>
 
   -w <path> path to the webapp
@@ -831,8 +831,9 @@ checkJavaMajorVersion
 
 while [ $# -ne 0 ] ; do
   case "$1" in
+	-h) usage;;
     -p) shift; REFINE_PORT="$1"; shift; continue;;
-    -h) shift; REFINE_HOST="$1"; shift; continue;;
+    -H) shift; REFINE_HOST="$1"; shift; continue;;
     -i) shift; REFINE_INTERFACE="$1"; shift; continue;;
     -w) shift; REFINE_WEBAPP="$1"; shift; continue;;
     -d) shift; REFINE_DATA_DIR="$1"; shift; continue;;
@@ -848,7 +849,6 @@ while [ $# -ne 0 ] ; do
       fi;;
     -v) shift; REFINE_VERBOSITY="$1"; shift; continue;;
     -x) shift; REFINE_EXTRA_OPTS="$1"; shift; continue;;
-    --help) usage;;
     --debug) shift; add_option '-Xdebug' '-Xrunjdwp:transport=dt_socket,address=8000,server=y,suspend=n'; continue;;
     --jmx) shift; add_option '-Dcom.sun.management.jmxremote'; continue;;
     -*) fail "Invalid option: $1";;
