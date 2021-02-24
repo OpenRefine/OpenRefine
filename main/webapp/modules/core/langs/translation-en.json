@@ -244,6 +244,7 @@
     "core-dialogs/history": "History",
     "core-dialogs/starred": "Starred",
     "core-dialogs/help": "Help",
+    "core-dialogs/help/grelreference" : "View the GREL reference in the OpenRefine User Manual for further details",
     "core-dialogs/opt-code-applied": "Option code successfully applied.",
     "core-dialogs/error-apply-code": "Error applying option code",
     "core-dialogs/sql-exporter": "SQL Exporter",
