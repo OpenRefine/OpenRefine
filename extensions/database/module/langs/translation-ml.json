@@ -8,5 +8,8 @@
     "database-source/databaseTypeLabel": "തരം:",
     "database-source/connectionNameLabel": "പേര്:",
     "database-import/title": "ഡാറ്റാബേസ് സെർവറുകൾ",
-    "database-import/importer-name": "ഡാറ്റാബേസ്"
+    "database-import/importer-name": "ഡാറ്റാബേസ്",
+    "database-parsing/start-over": "&laquo; ആദ്യം മുതൽ തുടങ്ങുക",
+    "database-source/databaseHostLabel": "ഹോസ്റ്റ്:",
+    "database-import/preparing": "ഫലം തയ്യാറാക്കുന്നു…"
 }
