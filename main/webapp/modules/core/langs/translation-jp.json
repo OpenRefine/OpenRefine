@@ -190,7 +190,7 @@
     "core-dialogs/rows-in-cluster": "# クラスタ内の行数",
     "core-dialogs/content": "内容",
     "core-dialogs/use-this-val": "この値を使う",
-    "core-dialogs/cells-of-row": "現在の行のcells: row.cellsの別名です。特定のセルは、cells.<column name>かcells[column name]でアクセスできます.",
+    "core-dialogs/cells-of-row": "現在の行のcells: row.cellsの別名です。特定のセルは、cells.&lt;column name>かcells[column name]でアクセスできます.",
     "core-dialogs/for-include-drop-statement-checkbox": "Drop文を含める",
     "core-dialogs/ngram-radius": "半径&nbsp;",
     "core-dialogs/processing": "処理中…",
@@ -727,7 +727,7 @@
     "core-index/license": "ライセンス:",
     "core-index/homepage": "ホームページ:",
     "core-index/image": "写真:",
-    "core-dialogs/record-fields": "１行以上の列がレコードを構成します。詳しくは、https://github.com/OpenRefine/OpenRefine/wiki/Variables#record",
+    "core-dialogs/record-fields": "１行以上の列がレコードを構成します。詳しくは、<a href=\"https://github.com/OpenRefine/OpenRefine/wiki/Variables#record\">Records</a>",
     "core-views/join-col": "カラムの結合",
     "core-views/column-join": "カラムの結合",
     "core-views/column-join-before-column-picker": "結合するカラムの選択",
@@ -792,5 +792,10 @@
     "core-import-formats/text/line-based/*sv": "文字区切りテキスト(CSV/TSV)",
     "core-import-formats/text/line-based": "行単位のテキスト",
     "core-dialogs/unstar-expression": "星削除式?",
-    "core-index/refine-version": "バージョン $1"
+    "core-index/refine-version": "バージョン $1",
+    "core-about/history": "OpenRefineは、もともとFreebase Gridworksとして<a href='$1'>$2</a> によって開発されました、Metawebは <a href='$3'>$4</a>  に2010年6月に買収され、Google Refineと改名されました。2012年10月、コミュニティサポートのプロジェクトしてOpenRefineに改名されました。",
+    "core-about/thanks": "謝意",
+    "core-about/contributors": "協力者（時系列順）",
+    "core-about/definition": "OpenRefineは、乱雑なデータを処理するためのパワーツールです。データの一貫性を高めたり、Wikidataのようなレジストリにデータをリンクさせたり、あるいは、他のソースを使ってデータを拡張したり、他のツールで使うためにフォーマットを変換し、再びオリジナルソースに還元したり、さまざまな用途があります。OpenRefineは、ウェブサービスではなく、あなたのPC上で動くデスクトップアプリです。したがって、プライバシーに関わるセンシティブなデータも安全に処理できます。",
+    "core-dialogs/help/grelreference": "GRELの詳細は、OpenRefineユーザーマニュアルを参照してください"
 }

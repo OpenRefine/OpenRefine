@@ -81,7 +81,7 @@ public class Reverse implements Function {
 
     @Override
     public String getDescription() {
-        return "Reverses array a";
+        return "Reverses array a.";
     }
     
     @Override
