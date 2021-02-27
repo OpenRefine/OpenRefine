@@ -35,7 +35,7 @@ How to become an OpenRefine contributor? You will find more details in our [cont
 ### Committers
 If you make regular contribution to OpenRefine, you will most likely become a Committer. 
 
-Committers have no more authorities than contributors, and they should engage with the community through the [developer discussion list](https://groups.google.com/forum/?fromgroups#!forum/openrefine-dev) or the [issue list](https://github.com/OpenRefine/OpenRefine/issues?state=open) regarding their intention. However, Committers have earned enough trust from the community to review and merge pull requests.
+Committers have earned enough trust from the community to review and merge pull requests.
 
 Therefore Committers:
 - Help contributors via the [developer discussion list](https://groups.google.com/forum/?fromgroups#!forum/openrefine-dev).
