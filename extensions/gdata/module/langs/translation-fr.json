@@ -6,8 +6,8 @@
     "gdata-import/next->": "Suivant &raquo;",
     "gdata-import/auth-doc": "Documents autorisés",
     "gdata-import/please": "Merci",
-    "gdata-import/sign-in": "de se connecter et d’autoriser",
-    "gdata-import/sign-out": "se déconnecter",
+    "gdata-import/sign-in": "Se connecter",
+    "gdata-import/sign-out": "Se déconnecter",
     "gdata-import/access-data": "l’accès à vos données Google.",
     "gdata-import/retrieving": "Récupération des documents de Google Docs…",
     "gdata-import/re-sign-in": "se reconnecter",
@@ -47,5 +47,6 @@
     "gdata-exporter/upload-google-drive-success": "Projet téléversé sur Google Drive ",
     "gdata-exporter/google-sheets": "Google Sheets",
     "gdata-import/re-sign-in-another": "Connectez-vous avec un autre compte",
-    "gdata-import/please-signin": "Veuillez vous connecter et autoriser l'accès à vos données Google"
+    "gdata-import/please-signin": "Veuillez vous connecter et autoriser l'accès à vos données Google",
+    "gdata-exporter/export-to-google-drive": "Projet OpenRefine archivé dans Google Drive…"
 }
