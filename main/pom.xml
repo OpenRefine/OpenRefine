@@ -23,7 +23,7 @@
          Jena 3.15.0 doesn't work. Versions through 3.14.0 appear to, but we'll be conservative
     -->
     <jena.version>3.17.0</jena.version>
-    <okhttp.version>4.9.0</okhttp.version>
+    <okhttp.version>4.9.1</okhttp.version>
   </properties>
 
   <scm>
@@ -313,7 +313,7 @@
     <dependency>
       <groupId>joda-time</groupId>
       <artifactId>joda-time</artifactId>
-      <version>2.10.9</version>
+      <version>2.10.10</version>
     </dependency>
 
     <dependency>
