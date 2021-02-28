@@ -132,6 +132,11 @@
       <version>${wdtk.version}</version>
     </dependency>
     <dependency>
+      <groupId>com.fasterxml.jackson.core</groupId>
+      <artifactId>jackson-core</artifactId>
+      <version>${jackson.version}</version>
+    </dependency>
+    <dependency>
       <groupId>org.openrefine.dependencies.wdtk</groupId>
       <artifactId>wdtk-datamodel</artifactId>
       <version>${wdtk.version}</version>
