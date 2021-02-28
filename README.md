@@ -36,6 +36,8 @@ Contact us
 ----------
 * [Mailing List](https://groups.google.com/forum/#!forum/openrefine)
 * [Twitter](http://www.twitter.com/openrefine)
+* [Gitter](https://gitter.im/OpenRefine/OpenRefine)
+* [Matrix (bridged from Gitter)](https://matrix.to/#/#OpenRefine_OpenRefine:gitter.im)
 
 Licensing and legal issues
 --------------------------
