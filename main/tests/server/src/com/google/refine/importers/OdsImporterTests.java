@@ -110,7 +110,7 @@ public class OdsImporterTests extends ImporterTest {
         Row row = project.rows.get(0);
         assertEquals(row.cells.size(), COLUMNS);
         assertEquals((String)row.getCellValue(1),"2 Days In New York");
-        assertEquals(((OffsetDateTime)row.getCellValue(3)).toString().substring(0, 10),"2012-03-28");
+        assertEquals(((OffsetDateTime)row.getCellValue(3)).toString().substring(0, 10),"2012-03-27");
         assertEquals(((Number)row.getCellValue(5)).doubleValue(), 4.5, EPSILON);
 
         assertFalse((Boolean)row.getCellValue(7));
