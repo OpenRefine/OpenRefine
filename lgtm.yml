@@ -2,7 +2,7 @@ extraction:
   java:
     index:
       build_command:
-      - mvn clean test
+      - mvn clean test-compile
 
 queries:
   - exclude: java/insecure-cookie
