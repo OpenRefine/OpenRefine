@@ -454,7 +454,27 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
         {
           id: "core/to-boolean",
           label: $.i18n('core-views/to-boolean'),
-          click: function() { doTextTransform("(true == value).or('true' == value)", "keep-original", false, ""); }
+          
+          submenu: [
+            {
+              id: "",
+              label: "Python Truthy Values",
+              click: function() { doTextTransform("('false' != value).and(0 != value).and('' != value).and('zero' != value).and('none' != value).and('0' != value).and(false != value) ", "keep-original", false, ""); }
+              
+            },
+            {
+              id: "",
+              label: "JavaScript Truthy Values",
+              click: function() { doTextTransform("('false' != value).and(0 != value).and('' != value).and('NaN' != value).and('undefined' != value).and('null' != value).and('0' != value).and(false != value) ", "keep-original", false, ""); }
+              
+            },
+            {
+              id: "",
+              label: "SQL Truthy Values",
+              click: function() { doTextTransform("('false' != value).and(0 != value).and('0' != value).and(false != value)", "keep-original", false, ""); }
+              
+            }
+          ]  
         },
         {
           id: "core/to-blank",
