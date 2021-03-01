@@ -1,7 +1,7 @@
 name: Continuous Integration
 
 on:
-  pull_request_target:
+  pull_request:
     paths-ignore:
       - 'docs/**'
 
@@ -75,7 +75,7 @@ jobs:
       run: mvn jacoco:prepare-agent test
 
     - name: Submit test coverage to Coveralls
-      if: ${{ secrets.COVERALLS_TOKEN }}
+      if: ${{ secrets.COVERALLS_TOKEN }} != ""
       run: |
         mvn prepare-package -DskipTests=true
         mvn jacoco:report coveralls:report -DrepoToken=${{ secrets.COVERALLS_TOKEN }} -DpullRequest=${{ github.event.number }}
@@ -137,12 +137,11 @@ jobs:
           yarn lint
 
     - name: Set up Cypress dashboard project
-      if: {{ secrets.CYPRESS_RECORD_KEY }}
+      if: {{ secrets.CYPRESS_RECORD_KEY }} != ""
       run: echo "CYPRESS_PROJECT=s5du3k" >> $GITHUB_ENV
 
     - name: Test with Cypress on ${{ matrix.browser }}
       run: | 
         echo REFINE_MIN_MEMORY=1400M >> ./refine.ini
         echo REFINE_MEMORY=4096M >> ./refine.ini
-        ./refine ui_test ${{ matrix.browser }} ${{ env.CYPRESS_PROJECT }}  "${{ secrets.CYPRESS_RECORD_KEY }}"
-
+        ./refine ui_test ${{ matrix.browser }} "${{ env.CYPRESS_PROJECT }}"  "${{ secrets.CYPRESS_RECORD_KEY }}"
