@@ -14,7 +14,7 @@ describe(__filename, function () {
       'Replace Smart quotes with ascii',
     ]);
 
-    //Check notification and cell content
+    //  Check notification and cell content
     cy.assertNotificationContainingText(
       'Text transform on 2 cells in column Smartquotes'
     );
@@ -27,7 +27,7 @@ describe(__filename, function () {
       'Replace Smart quotes with ascii',
     ]);
 
-    //Check notification and cell content
+    //  Check notification and cell content
     cy.assertNotificationContainingText(
       'Text transform on 0 cells in column ascii'
     );
