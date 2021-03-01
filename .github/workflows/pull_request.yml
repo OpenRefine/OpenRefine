@@ -75,7 +75,7 @@ jobs:
       run: mvn jacoco:prepare-agent test
 
     - name: Submit test coverage to Coveralls
-      if: ${{ secrets.COVERALLS_TOKEN }} != ""
+      if: ${{ secrets.COVERALLS_TOKEN }}
       run: |
         mvn prepare-package -DskipTests=true
         mvn jacoco:report coveralls:report -DrepoToken=${{ secrets.COVERALLS_TOKEN }} -DpullRequest=${{ github.event.number }}
@@ -137,7 +137,7 @@ jobs:
           yarn lint
 
     - name: Set up Cypress dashboard project
-      if: {{ secrets.CYPRESS_RECORD_KEY }} != ""
+      if: {{ secrets.CYPRESS_RECORD_KEY }}
       run: echo "CYPRESS_PROJECT=s5du3k" >> $GITHUB_ENV
 
     - name: Test with Cypress on ${{ matrix.browser }}
