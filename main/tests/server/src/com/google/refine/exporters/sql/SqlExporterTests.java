@@ -362,12 +362,13 @@ public class SqlExporterTests extends RefineTest {
         String result = writer.toString();
         logger.debug("\nresult:={} ", result);
         
-       // if(SqlCreateBuilder.dbType.equals("PostgreSQL")) {
-//        	Assert.assertTrue(result.contains("INSERT INTO sql_table_test (column0,column1,column2,column3) VALUES \n" + 
-//            		"( 'It''s row0cell0','It''s row0cell1','It''s row0cell2','It''s row0cell3' )"));
-        	//Assert.assertTrue(result.contains("INSERT INTO sql_table_test (column0,column1,column2,column3) VALUES \n" + 
-      //      		"( 'It''s row0cell0','It''s row0cell1','It''s row0cell2','It''s row0cell3' )"));
-       // }
+        if(SqlCreateBuilder.dbType.equals("PostgreSQL")) {
+        	Assert.assertTrue(result.contains("INSERT INTO sql_table_test (\"column0\",\"column1\",\"column2\",\"column3\") VALUES \n" + 
+            		"( 'It''s row0cell0','It''s row0cell1','It''s row0cell2','It''s row0cell3' )"));
+          }else {
+        	  Assert.assertTrue(result.contains("INSERT INTO sql_table_test (`column0`,`column1`,`column2`,`column3`) VALUES \n" + 
+              		"( 'It''s row0cell0','It''s row0cell1','It''s row0cell2','It''s row0cell3' )"));
+          }
 
     }
   
