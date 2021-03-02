@@ -1,0 +1,15 @@
+{
+    "database-source/databaseSaveButton": "സേവ് ചെയ്യുക",
+    "database-source/databaseTestButton": "പരീക്ഷണം",
+    "database-source/databaseNamePlaceholder": "ഡാറ്റാബേസിന്റെ പേര് ചേർക്കുക",
+    "database-source/databaseNameLabel": "ഡാറ്റാബേസിന്റെ പേര്:",
+    "database-source/databasePasswordLabel": "രഹസ്യവാക്ക്:",
+    "database-source/databasePortLabel": "പോർട്ട്:",
+    "database-source/databaseTypeLabel": "തരം:",
+    "database-source/connectionNameLabel": "പേര്:",
+    "database-import/title": "ഡാറ്റാബേസ് സെർവറുകൾ",
+    "database-import/importer-name": "ഡാറ്റാബേസ്",
+    "database-parsing/start-over": "&laquo; ആദ്യം മുതൽ തുടങ്ങുക",
+    "database-source/databaseHostLabel": "ഹോസ്റ്റ്:",
+    "database-import/preparing": "ഫലം തയ്യാറാക്കുന്നു…"
+}
