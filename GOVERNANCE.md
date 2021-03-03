@@ -81,7 +81,6 @@ Steering Committee are invited by the Advisory Committee
 * Juliane Schneider (Harvard Catalyst, Clinical and Translational Science Center)
 * Wesley Sherperd (Unifyd Insights)
 * Fabio Tacchelli (Siren Solutions)
-* Ruben Verborgh (University of Ghent)
 
 ### Advisory Committee
 The Advisory Committee runs the adminstrative aspect of the project on a day to day basis with the support of Code for Science and Society (CS&S). Its member are bound by the  fiscal sponsorship agreement with Code for Science and Society. They meet once per month with Code for Science and Society. 
