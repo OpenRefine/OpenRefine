@@ -34,12 +34,6 @@ import com.google.refine.util.TestUtils;
 
 public class UniquesTests extends RefineTest {
     @Test
-    public void serializeUniques() {
-        String json = "{\"description\":\"Returns array a with duplicates removed\",\"params\":\"array a\",\"returns\":\"array\"}";
-        TestUtils.isSerializedTo(new Uniques(), json);
-    }
-
-    @Test
     public void uniquesJsonArray() throws ParsingException {
         String[] test = {"'{a:[2,1,1,3]}'.parseJson().a.uniques().toString()", "[2, 1, 3]"};
         parseEval(bindings, test);
