@@ -1,8 +1,14 @@
 describe(__filename, function () {
-  it('Ensure text is converted to Uppercase', function () {
+  it('Ensure number is converted to text', function () {
     cy.loadAndVisitProject('food.mini');
 
-    cy.columnActionClick('Shrt_Desc', [
+    cy.columnActionClick('NDB_No', [
+      'Edit cells',
+      'Common transforms',
+      'To number',
+    ]);
+
+    cy.columnActionClick('NDB_No', [
       'Edit cells',
       'Common transforms',
       'To text',
@@ -10,9 +16,10 @@ describe(__filename, function () {
 
     // Check notification and cell content
     cy.assertNotificationContainingText(
-      'Text transform on 0 cells in column Shrt_Desc: value.toString()'
+      'Text transform on 2 cells in column NDB_No: value.toString()'
     );
-    cy.assertCellEquals(0, 'Shrt_Desc', 'BUTTER,WITH SALT');
-    cy.assertCellEquals(1, 'Shrt_Desc', 'BUTTER,WHIPPED,WITH SALT');
+
+    cy.assertCellEquals(0, 'NDB_No', '1001');
+    cy.assertCellEquals(1, 'NDB_No', '1002');
   });
 });
