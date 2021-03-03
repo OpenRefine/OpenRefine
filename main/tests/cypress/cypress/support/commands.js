@@ -205,6 +205,25 @@ Cypress.Commands.add('navigateTo', (target) => {
 });
 
 /**
+ * Navigate to project preview page and check its contents
+ */
+Cypress.Commands.add('navigateToProjectPreview', () => {
+  cy.visitOpenRefine();
+  cy.createProjectThroughUserInterface('food.mini.csv');
+  cy.get('.create-project-ui-panel').contains('Configure Parsing Options');
+  cy.contains('1.')
+    .parent()
+    .parent()
+    .within(() => {
+      cy.get('td').eq(0).contains('1.');
+      cy.get('td').eq(1).contains('01001');
+      cy.get('td').eq(2).contains('BUTTER,WITH SALT');
+      cy.get('td').eq(3).contains('15.87');
+      cy.get('td').eq(4).contains('717');
+    });
+});
+
+/**
  * Wait for OpenRefine to finish an Ajax load
  */
 Cypress.Commands.add('waitForOrOperation', () => {
