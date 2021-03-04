@@ -2,11 +2,7 @@ describe(__filename, function () {
   it('Ensure number is converted to text', function () {
     cy.loadAndVisitProject('food.mini');
 
-    cy.columnActionClick('NDB_No', [
-      'Edit cells',
-      'Common transforms',
-      'To number',
-    ]);
+    cy.castColumnTo('NDB_No', 'number');
 
     cy.columnActionClick('NDB_No', [
       'Edit cells',
