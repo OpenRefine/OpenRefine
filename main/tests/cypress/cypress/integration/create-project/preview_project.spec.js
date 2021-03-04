@@ -1,4 +1,61 @@
 describe(__filename, function () {
+  it('Tests Parsing Options related to column seperation', function () {
+    cy.visitOpenRefine();
+    cy.createProjectThroughUserInterface('food.mini.csv');
+    cy.get('.create-project-ui-panel').contains('Configure Parsing Options');
+
+    cy.get('[type="radio"]').check('tab');
+    cy.waitForImportUpdate();
+
+    cy.contains('1.')
+      .parent()
+      .parent()
+      .within(() => {
+        cy.get('td').eq(0).contains('1.');
+        cy.get('td').eq(1).contains('01001","BUTTER,WITH SALT","15.87","717');
+      });
+
+    cy.get('input[bind="columnSeparatorInput"]').type('{backspace};');
+    cy.get('[type="radio"]').check('custom');
+    cy.waitForImportUpdate();
+
+    cy.contains('1.')
+      .parent()
+      .parent()
+      .within(() => {
+        cy.get('td').eq(0).contains('1.');
+        cy.get('td').eq(1).contains('01001","BUTTER,WITH SALT","15.87","717');
+      });
+
+    cy.get('[type="radio"]').check('comma');
+
+    cy.waitForImportUpdate();
+
+    cy.contains('1.')
+      .parent()
+      .parent()
+      .within(() => {
+        cy.get('td').eq(0).contains('1.');
+        cy.get('td').eq(1).contains('01001');
+        cy.get('td').eq(2).contains('BUTTER,WITH SALT');
+        cy.get('td').eq(3).contains('15.87');
+        cy.get('td').eq(4).contains('717');
+      });
+
+    cy.get('input[bind="columnNamesCheckbox"]').check();
+
+    cy.waitForImportUpdate();
+    cy.contains('1.')
+      .parent()
+      .parent()
+      .within(() => {
+        cy.get('td').eq(0).contains('1.');
+        cy.get('td').eq(1).contains('NDB_No');
+        cy.get('td').eq(2).contains('Shrt_Desc');
+        cy.get('td').eq(3).contains('Water');
+        cy.get('td').eq(4).contains('Energ_Kcal');
+      });
+  });
   it('Ensures navigation works from project-preview page', function () {
     cy.visitOpenRefine();
     cy.createProjectThroughUserInterface('food.mini.csv');
@@ -47,65 +104,6 @@ describe(__filename, function () {
     cy.get('#project-name-button').contains('this is a test');
   });
 
-  it('Tests Parsing Options related to column seperation', function () {
-    cy.visitOpenRefine();
-    cy.createProjectThroughUserInterface('food.mini.csv');
-    cy.get('.create-project-ui-panel').contains('Configure Parsing Options');
-
-    cy.get('[type="radio"]').check('tab');
-    // wait condiition is required as their is ajax reload in the project-preview table
-    cy.wait(1000); // eslint-disable-line
-
-    cy.contains('1.')
-      .parent()
-      .parent()
-      .within(() => {
-        cy.get('td').eq(0).contains('1.');
-        cy.get('td').eq(1).contains('01001","BUTTER,WITH SALT","15.87","717');
-      });
-
-    cy.get('input[bind="columnSeparatorInput"]').type('{backspace};');
-    cy.get('[type="radio"]').check('custom');
-    // wait condiition is required as their is ajax reload in the project-preview table
-    cy.wait(1000); // eslint-disable-line
-
-    cy.contains('1.')
-      .parent()
-      .parent()
-      .within(() => {
-        cy.get('td').eq(0).contains('1.');
-        cy.get('td').eq(1).contains('01001","BUTTER,WITH SALT","15.87","717');
-      });
-
-    cy.get('[type="radio"]').check('comma');
-    // wait condiition is required as their is ajax reload in the project-preview table
-    cy.wait(1000); // eslint-disable-line
-
-    cy.contains('1.')
-      .parent()
-      .parent()
-      .within(() => {
-        cy.get('td').eq(0).contains('1.');
-        cy.get('td').eq(1).contains('01001');
-        cy.get('td').eq(2).contains('BUTTER,WITH SALT');
-        cy.get('td').eq(3).contains('15.87');
-        cy.get('td').eq(4).contains('717');
-      });
-
-    cy.get('input[bind="columnNamesCheckbox"]').check();
-    // wait condiition is required as their is ajax reload in the project-preview table
-    cy.wait(1000); // eslint-disable-line
-    cy.contains('1.')
-      .parent()
-      .parent()
-      .within(() => {
-        cy.get('td').eq(0).contains('1.');
-        cy.get('td').eq(1).contains('NDB_No');
-        cy.get('td').eq(2).contains('Shrt_Desc');
-        cy.get('td').eq(3).contains('Water');
-        cy.get('td').eq(4).contains('Energ_Kcal');
-      });
-  });
   it('Test project tagging by adding various tags', function () {
     cy.visitOpenRefine();
     cy.createProjectThroughUserInterface('food.mini.csv');
@@ -153,7 +151,7 @@ describe(__filename, function () {
 
     cy.get('input[bind="ignoreInput"]').type('{backspace}1');
     cy.get('input[bind="ignoreCheckbox"]').check();
-    cy.wait(1000); // eslint-disable-line
+    cy.waitForImportUpdate();
     cy.contains('1.')
       .parent()
       .parent()
@@ -168,10 +166,10 @@ describe(__filename, function () {
   it('Tests parse-next of parsing options', function () {
     cy.navigateToProjectPreview();
     cy.get('input[bind="headerLinesCheckbox"]').uncheck();
-    cy.wait(1000); // eslint-disable-line
+    cy.waitForImportUpdate();
     cy.get('input[bind="headerLinesInput"]').type('{backspace}0');
     cy.get('input[bind="headerLinesCheckbox"]').check();
-    cy.wait(1000); // eslint-disable-line
+    cy.waitForImportUpdate();
     cy.contains('1.')
       .parent()
       .parent()
@@ -187,7 +185,7 @@ describe(__filename, function () {
     cy.navigateToProjectPreview();
     cy.get('input[bind="skipInput"]').type('{backspace}1');
     cy.get('input[bind="skipCheckbox"]').check();
-    cy.wait(1000); // eslint-disable-line
+    cy.waitForImportUpdate();
     cy.contains('1.')
       .parent()
       .parent()
@@ -203,7 +201,7 @@ describe(__filename, function () {
     cy.navigateToProjectPreview();
     cy.get('input[bind="limitInput"]').type('{backspace}1');
     cy.get('input[bind="limitCheckbox"]').check();
-    cy.wait(1000); // eslint-disable-line
+    cy.waitForImportUpdate();
     cy.contains('1.')
       .parent()
       .parent()
@@ -218,7 +216,7 @@ describe(__filename, function () {
   it('Tests attempt to parse into numbers of parsing options', function () {
     cy.navigateToProjectPreview();
     cy.get('input[bind="guessCellValueTypesCheckbox"]').check();
-    cy.wait(1000); // eslint-disable-line
+    cy.waitForImportUpdate();
     cy.contains('1.')
       .parent()
       .parent()

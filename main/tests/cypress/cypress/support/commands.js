@@ -232,6 +232,14 @@ Cypress.Commands.add('waitForOrOperation', () => {
 });
 
 /**
+ * Wait for OpenRefine parsing options to be updated
+ */
+Cypress.Commands.add('waitForImportUpdate', () => {
+  cy.get('#or-import-updating').should('be.visible');
+  cy.get('#or-import-updating').should('not.be.visible');
+});
+
+/**
  * Delete a column from the grid
  */
 Cypress.Commands.add('deleteColumn', (columnName) => {
