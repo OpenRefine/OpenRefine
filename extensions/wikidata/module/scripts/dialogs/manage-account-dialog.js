@@ -79,6 +79,10 @@ ManageAccountDialog.displayPasswordLogin = function (onSuccess) {
   const frame = $(DOM.loadHTML("wikidata", "scripts/dialogs/password-login-dialog.html"));
   const elmts = DOM.bind(frame);
   ManageAccountDialog.initCommon(elmts);
+  WikibaseManager.getSelectedWikibaseLogoURL(function(data) {
+	elmts.wikibaseLogoImg.attr("src", data);
+  });
+  elmts.wikibaseMainPage.attr("href", WikibaseManager.getSelectedWikibaseMainPage());
   elmts.explainBotPasswords.html($.i18n('wikibase-account/explain-bot-passwords', WikibaseManager.getSelectedWikibaseRoot() + 'Special:BotPasswords'));
   elmts.explainOwnerOnlyConsumerLogin.html($.i18n('wikibase-account/explain-owner-only-consumer-login'));
   elmts.invalidCredentials.text($.i18n('wikibase-account/invalid-credentials'));

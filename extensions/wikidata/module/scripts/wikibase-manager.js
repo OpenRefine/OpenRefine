@@ -188,3 +188,30 @@ WikibaseManager.fetchManifestFromURL = function (manifestURL, onSuccess, onError
   });
 };
 
+WikibaseManager.getSelectedWikibaseSiteInfo = function(onSuccess, onError) {
+  var params = {
+    action: 'query',
+    meta: 'siteinfo',
+    format: 'json'
+  };
+  return $.ajax({
+    url: WikibaseManager.getSelectedWikibase().mediawiki.api,
+    data: params,
+    dataType: "jsonp",
+    success: function(response) {
+      onSuccess(response.query);
+    },
+    error: onError
+  });
+};
+
+WikibaseManager.getSelectedWikibaseLogoURL = function(onDone) {
+  let logoURL = "extension/wikidata/images/Wikibase_logo.png";
+  WikibaseManager.getSelectedWikibaseSiteInfo(function(data) {
+    logoURL = data.general.logo;
+    onDone(logoURL);
+  }, function(data) {
+    onDone(logoURL);
+  });
+};
+
