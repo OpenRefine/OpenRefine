@@ -213,6 +213,15 @@ Cypress.Commands.add('waitForOrOperation', () => {
 });
 
 /**
+ * Utility method to fill something into the expression input
+ * Need to wait for OpenRefine to preview the result, hence the cy.wait
+ */
+Cypress.Commands.add('typeExpression', (expression) => {
+  cy.get('textarea.expression-preview-code').type(expression);
+  cy.wait(250); // eslint-disable-line
+});
+
+/**
  * Delete a column from the grid
  */
 Cypress.Commands.add('deleteColumn', (columnName) => {
