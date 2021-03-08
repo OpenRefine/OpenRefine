@@ -188,14 +188,16 @@ WikibaseManager.fetchManifestFromURL = function (manifestURL, onSuccess, onError
   });
 };
 
-WikibaseManager.getSelectedWikibaseSiteInfo = function(onSuccess, onError) {
+// Retrives the wikibaseName instance site info, if wikibaseName is empty returns the selected wikibase site info
+WikibaseManager.getSelectedWikibaseSiteInfo = function(onSuccess, onError, wikibaseName) {
   var params = {
     action: 'query',
     meta: 'siteinfo',
     format: 'json'
   };
+  let wikibase = (wikibaseName) ? WikibaseManager.wikibases[wikibaseName] : WikibaseManager.getSelectedWikibase();
   return $.ajax({
-    url: WikibaseManager.getSelectedWikibase().mediawiki.api,
+    url: wikibase.mediawiki.api,
     data: params,
     dataType: "jsonp",
     success: function(response) {
@@ -205,13 +207,14 @@ WikibaseManager.getSelectedWikibaseSiteInfo = function(onSuccess, onError) {
   });
 };
 
-WikibaseManager.getSelectedWikibaseLogoURL = function(onDone) {
+// Retrives the logo url of wikibaseName, if wikibaseName is empty returns the selected wikibase logo url
+WikibaseManager.getSelectedWikibaseLogoURL = function(onDone, wikibaseName) {
   let logoURL = "extension/wikidata/images/Wikibase_logo.png";
   WikibaseManager.getSelectedWikibaseSiteInfo(function(data) {
     logoURL = data.general.logo;
     onDone(logoURL);
   }, function(data) {
     onDone(logoURL);
-  });
+  }, wikibaseName);
 };
 
