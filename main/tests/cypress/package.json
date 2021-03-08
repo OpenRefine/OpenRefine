@@ -9,7 +9,7 @@
         "test": "cypress run --browser electron --headless --quiet",
         "fix-lint": "prettier --write . && eslint --fix .",
         "lint": "prettier --check . && eslint ."
-      },
+    },
     "dependencies": {
         "cypress": "6.5.0",
         "cypress-file-upload": "^5.0.2",
