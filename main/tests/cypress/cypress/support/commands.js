@@ -292,13 +292,10 @@ Cypress.Commands.add(
 /**
  * Performs drag and drop on target and source item
  */
- Cypress.Commands.add('dragAndDrop', (sourceSelector, targetSelector) => {
-  cy.get(sourceSelector)
-  .trigger("mousedown", { which: 1 })
+Cypress.Commands.add('dragAndDrop', (sourceSelector, targetSelector) => {
+  cy.get(sourceSelector).trigger('mousedown', { which: 1 });
 
-cy.get(targetSelector)
-  .trigger("mousemove")
-  .trigger("mouseup")
+  cy.get(targetSelector).trigger('mousemove').trigger('mouseup');
 });
 
 Cypress.Commands.add(
