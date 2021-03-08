@@ -237,6 +237,7 @@ Cypress.Commands.add('waitForOrOperation', () => {
 Cypress.Commands.add('waitForImportUpdate', () => {
   cy.get('#or-import-updating').should('be.visible');
   cy.get('#or-import-updating').should('not.be.visible');
+  cy.wait(500); // eslint-disable-line
 });
 
 /**

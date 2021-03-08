@@ -7,54 +7,40 @@ describe(__filename, function () {
     cy.get('[type="radio"]').check('tab');
     cy.waitForImportUpdate();
 
-    cy.contains('1.')
-      .parent()
-      .parent()
-      .within(() => {
-        cy.get('td').eq(0).contains('1.');
-        cy.get('td').eq(1).contains('01001","BUTTER,WITH SALT","15.87","717');
-      });
+    cy.get('table.data-table tr').eq(1).should('to.contain', '1.');
+    cy.get('table.data-table tr')
+      .eq(1)
+      .should('to.contain', '01001","BUTTER,WITH SALT","15.87","717');
 
     cy.get('input[bind="columnSeparatorInput"]').type('{backspace};');
     cy.get('[type="radio"]').check('custom');
     cy.waitForImportUpdate();
 
-    cy.contains('1.')
-      .parent()
-      .parent()
-      .within(() => {
-        cy.get('td').eq(0).contains('1.');
-        cy.get('td').eq(1).contains('01001","BUTTER,WITH SALT","15.87","717');
-      });
+    cy.get('table.data-table tr').eq(1).should('to.contain', '1.');
+    cy.get('table.data-table tr')
+      .eq(1)
+      .should('to.contain', '01001","BUTTER,WITH SALT","15.87","717');
 
     cy.get('[type="radio"]').check('comma');
 
     cy.waitForImportUpdate();
 
-    cy.contains('1.')
-      .parent()
-      .parent()
-      .within(() => {
-        cy.get('td').eq(0).contains('1.');
-        cy.get('td').eq(1).contains('01001');
-        cy.get('td').eq(2).contains('BUTTER,WITH SALT');
-        cy.get('td').eq(3).contains('15.87');
-        cy.get('td').eq(4).contains('717');
-      });
+    cy.get('table.data-table tr').eq(1).should('to.contain', '1.');
+    cy.get('table.data-table tr').eq(1).should('to.contain', '01001');
+    cy.get('table.data-table tr').eq(1).should('to.contain', '15.87');
+    cy.get('table.data-table tr').eq(1).should('to.contain', '717');
+    cy.get('table.data-table tr')
+      .eq(1)
+      .should('to.contain', 'BUTTER,WITH SALT');
 
     cy.get('input[bind="columnNamesCheckbox"]').check();
 
     cy.waitForImportUpdate();
-    cy.contains('1.')
-      .parent()
-      .parent()
-      .within(() => {
-        cy.get('td').eq(0).contains('1.');
-        cy.get('td').eq(1).contains('NDB_No');
-        cy.get('td').eq(2).contains('Shrt_Desc');
-        cy.get('td').eq(3).contains('Water');
-        cy.get('td').eq(4).contains('Energ_Kcal');
-      });
+    cy.get('table.data-table tr').eq(1).should('to.contain', '1.');
+    cy.get('table.data-table tr').eq(1).should('to.contain', 'NDB_No');
+    cy.get('table.data-table tr').eq(1).should('to.contain', 'Shrt_Desc');
+    cy.get('table.data-table tr').eq(1).should('to.contain', 'Water');
+    cy.get('table.data-table tr').eq(1).should('to.contain', 'Energ_Kcal');
   });
   it('Ensures navigation works from project-preview page', function () {
     cy.visitOpenRefine();
@@ -138,30 +124,26 @@ describe(__filename, function () {
     cy.visitOpenRefine();
     cy.createProjectThroughUserInterface('food.mini.csv');
     cy.get('.create-project-ui-panel').contains('Configure Parsing Options');
-    cy.contains('1.')
-      .parent()
-      .parent()
-      .within(() => {
-        cy.get('td').eq(0).contains('1.');
-        cy.get('td').eq(1).contains('01001');
-        cy.get('td').eq(2).contains('BUTTER,WITH SALT');
-        cy.get('td').eq(3).contains('15.87');
-        cy.get('td').eq(4).contains('717');
-      });
+
+    cy.get('table.data-table tr').eq(1).should('to.contain', '1.');
+    cy.get('table.data-table tr').eq(1).should('to.contain', '01001');
+    cy.get('table.data-table tr')
+      .eq(1)
+      .should('to.contain', 'BUTTER,WITH SALT');
+    cy.get('table.data-table tr').eq(1).should('to.contain', '15.87');
+    cy.get('table.data-table tr').eq(1).should('to.contain', '717');
 
     cy.get('input[bind="ignoreInput"]').type('{backspace}1');
     cy.get('input[bind="ignoreCheckbox"]').check();
     cy.waitForImportUpdate();
-    cy.contains('1.')
-      .parent()
-      .parent()
-      .within(() => {
-        cy.get('td').eq(0).contains('1.');
-        cy.get('td').eq(1).contains('01002');
-        cy.get('td').eq(2).contains('BUTTER,WHIPPED,WITH SALT');
-        cy.get('td').eq(3).contains('15.87');
-        cy.get('td').eq(4).contains('717');
-      });
+
+    cy.get('table.data-table tr').eq(1).should('to.contain', '1.');
+    cy.get('table.data-table tr').eq(1).should('to.contain', '01002');
+    cy.get('table.data-table tr')
+      .eq(1)
+      .should('to.contain', 'BUTTER,WHIPPED,WITH SALT');
+    cy.get('table.data-table tr').eq(1).should('to.contain', '15.87');
+    cy.get('table.data-table tr').eq(1).should('to.contain', '717');
   });
   it('Tests parse-next of parsing options', function () {
     cy.navigateToProjectPreview();
@@ -170,59 +152,47 @@ describe(__filename, function () {
     cy.get('input[bind="headerLinesInput"]').type('{backspace}0');
     cy.get('input[bind="headerLinesCheckbox"]').check();
     cy.waitForImportUpdate();
-    cy.contains('1.')
-      .parent()
-      .parent()
-      .within(() => {
-        cy.get('td').eq(0).contains('1.');
-        cy.get('td').eq(1).contains('NDB_No');
-        cy.get('td').eq(2).contains('Shrt_Desc');
-        cy.get('td').eq(3).contains('Water');
-        cy.get('td').eq(4).contains('Energ_Kcal');
-      });
+
+    cy.get('table.data-table tr').eq(1).should('to.contain', '1.');
+    cy.get('table.data-table tr').eq(1).should('to.contain', 'NDB_No');
+    cy.get('table.data-table tr').eq(1).should('to.contain', 'Shrt_Desc');
+    cy.get('table.data-table tr').eq(1).should('to.contain', 'Water');
+    cy.get('table.data-table tr').eq(1).should('to.contain', 'Energ_Kcal');
   });
   it('Tests discard-initial of parsing options', function () {
     cy.navigateToProjectPreview();
     cy.get('input[bind="skipInput"]').type('{backspace}1');
     cy.get('input[bind="skipCheckbox"]').check();
     cy.waitForImportUpdate();
-    cy.contains('1.')
-      .parent()
-      .parent()
-      .within(() => {
-        cy.get('td').eq(0).contains('1.');
-        cy.get('td').eq(1).contains('01002');
-        cy.get('td').eq(2).contains('BUTTER,WHIPPED,WITH SALT');
-        cy.get('td').eq(3).contains('15.87');
-        cy.get('td').eq(4).contains('717');
-      });
+
+    cy.get('table.data-table tr').eq(1).should('to.contain', '1.');
+    cy.get('table.data-table tr').eq(1).should('to.contain', '01002');
+    cy.get('table.data-table tr')
+      .eq(1)
+      .should('to.contain', 'BUTTER,WHIPPED,WITH SALT');
+    cy.get('table.data-table tr').eq(1).should('to.contain', '15.87');
+    cy.get('table.data-table tr').eq(1).should('to.contain', '717');
   });
-  it('Tests discard-initial of parsing options', function () {
+  it('Tests load-at-most of parsing options', function () {
     cy.navigateToProjectPreview();
     cy.get('input[bind="limitInput"]').type('{backspace}1');
     cy.get('input[bind="limitCheckbox"]').check();
     cy.waitForImportUpdate();
-    cy.contains('1.')
-      .parent()
-      .parent()
-      .within(() => {
-        cy.get('td').eq(0).contains('1.');
-        cy.get('td').eq(1).contains('01001');
-        cy.get('td').eq(2).contains('BUTTER,WITH SALT');
-        cy.get('td').eq(3).contains('15.87');
-        cy.get('td').eq(4).contains('717');
-      });
+
+    cy.get('table.data-table tr').eq(1).should('to.contain', '1.');
+    cy.get('table.data-table tr').eq(1).should('to.contain', '01001');
+    cy.get('table.data-table tr')
+      .eq(1)
+      .should('to.contain', 'BUTTER,WITH SALT');
+    cy.get('table.data-table tr').eq(1).should('to.contain', '15.87');
+    cy.get('table.data-table tr').eq(1).should('to.contain', '717');
   });
   it('Tests attempt to parse into numbers of parsing options', function () {
     cy.navigateToProjectPreview();
     cy.get('input[bind="guessCellValueTypesCheckbox"]').check();
     cy.waitForImportUpdate();
-    cy.contains('1.')
-      .parent()
-      .parent()
-      .within(() => {
-        cy.get('td').eq(3).contains('15.87');
-        cy.get('td').eq(4).contains('717');
-      });
+
+    cy.get('table.data-table tr').eq(1).should('to.contain', '15.87');
+    cy.get('table.data-table tr').eq(1).should('to.contain', '717');
   });
 });
