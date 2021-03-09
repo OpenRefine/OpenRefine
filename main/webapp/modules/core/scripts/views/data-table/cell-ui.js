@@ -495,8 +495,8 @@ DataTableCellUI.prototype._previewCandidateTopic = function(candidate, elmt, pre
     return; // no preview service available
   }
 
-  MenuSystem.positionMenuLeftRight(fakeMenu, $(elmt));
   fakeMenu.appendTo(elmt);
+  MenuSystem.positionMenuLeftRight(fakeMenu, $(elmt));
 
   var dismissMenu = function() {
      fakeMenu.remove();
