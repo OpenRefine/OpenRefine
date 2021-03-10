@@ -163,11 +163,10 @@ Cypress.Commands.add('assertGridEquals', (values) => {
   /**
    * This assertion is performed inside a should() method
    * So it will be retried until the timeout expires
+   * "Should()" expect assertions to be made, so promises can't be used
+   * Hence the use of Jquery with the Cypress.$ wrapper, to collect values for headers and grid cells
    */
   cy.get('table.data-table').should((table) => {
-    console.log('testing');
-    console.log('---');
-
     var headers = Cypress.$('table.data-table th')
       .filter(function () {
         return this.innerText != 'All';
@@ -190,8 +189,6 @@ Cypress.Commands.add('assertGridEquals', (values) => {
       })
       .get();
     var fullTable = [headers, ...cells];
-    console.log(fullTable);
-    console.log(values);
     expect(fullTable).to.deep.equal(values);
   });
 });
