@@ -167,28 +167,28 @@ Cypress.Commands.add('assertGridEquals', (values) => {
    * Hence the use of Jquery with the Cypress.$ wrapper, to collect values for headers and grid cells
    */
   cy.get('table.data-table').should((table) => {
-    var headers = Cypress.$('table.data-table th')
+    const headers = Cypress.$('table.data-table th')
       .filter(function () {
-        return this.innerText != 'All';
+        return this.innerText != 'All'; // eslint-disable-line
       })
       .map(function () {
-        return this.innerText;
+        return this.innerText; // eslint-disable-line
       })
       .get();
 
-    var cells = Cypress.$('table.data-table tbody tr')
+    const cells = Cypress.$('table.data-table tbody tr')
       .map(function () {
         return [
-          Cypress.$('td', this)
+          Cypress.$('td', this) // eslint-disable-line
             .filter((index) => index > 2)
             .map(function (index) {
-              return this.innerText;
+              return this.innerText; // eslint-disable-line
             })
             .get(),
         ];
       })
       .get();
-    var fullTable = [headers, ...cells];
+    const fullTable = [headers, ...cells];
     expect(fullTable).to.deep.equal(values);
   });
 });
