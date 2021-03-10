@@ -14,6 +14,7 @@ describe(__filename, function () {
     cy.get('.dialog-container label').contains('by separator').click();
     cy.get('.dialog-container input[bind="separatorInput"]').type('***');
     cy.confirmDialogPanel();
+    cy.waitForOrOperation();
     cy.assertNotificationContainingText(
       'Split multi-valued cells in column A column'
     );
@@ -42,6 +43,7 @@ describe(__filename, function () {
     cy.get('.dialog-container label').contains('regular expression').click();
     cy.confirmDialogPanel();
 
+    cy.waitForOrOperation();
     cy.assertNotificationContainingText(
       'Split multi-valued cells in column A column'
     );
@@ -68,6 +70,7 @@ describe(__filename, function () {
     cy.get('.dialog-container textarea[bind="lengthsTextarea"]').type('2,4,8');
     cy.get('.dialog-container label').contains('by field lengths').click();
     cy.confirmDialogPanel();
+    cy.waitForOrOperation();
     cy.assertNotificationContainingText(
       'Split multi-valued cells in column A column'
     );
@@ -85,6 +88,7 @@ describe(__filename, function () {
     ]);
     cy.get('.dialog-container input[value="cases"]').check();
     cy.confirmDialogPanel();
+    cy.waitForOrOperation();
     cy.assertNotificationContainingText(
       'Split multi-valued cells in column A column'
     );
@@ -103,6 +107,7 @@ describe(__filename, function () {
 
     cy.get('.dialog-container input[value="number"]').check();
     cy.confirmDialogPanel();
+    cy.waitForOrOperation();
     cy.assertNotificationContainingText(
       'Split multi-valued cells in column A column'
     );
