@@ -6,15 +6,6 @@ function loadExpressionPanel() {
 }
 
 /**
- * Utility method to fill something into the expression input
- * Need to wait for OpenRefine to preview the result, hence the cy.wait
- */
-function typeExpression(expression) {
-  cy.get('textarea.expression-preview-code').type(expression);
-  cy.wait(250); // eslint-disable-line
-}
-
-/**
  * Generate a unique GREL expression to be used for testing
  */
 function generateUniqueExpression() {
@@ -45,7 +36,7 @@ describe(__filename, function () {
   it('Test a valid Grel expression', function () {
     cy.loadAndVisitProject('food.mini');
     loadExpressionPanel();
-    typeExpression('value.toLowercase()');
+    cy.typeExpression('value.toLowercase()');
     cy.get('.expression-preview-parsing-status').contains('No syntax error.');
     cy.get(
       '.expression-preview-table-wrapper tr:nth-child(2) td:last-child'
@@ -56,7 +47,7 @@ describe(__filename, function () {
     cy.loadAndVisitProject('food.mini');
     loadExpressionPanel();
     cy.get('select[bind="expressionPreviewLanguageSelect"]').select('jython');
-    typeExpression('return value.lower()');
+    cy.typeExpression('return value.lower()');
     cy.get('.expression-preview-parsing-status').contains('No syntax error.');
     cy.get(
       '.expression-preview-table-wrapper tr:nth-child(2) td:last-child'
@@ -67,7 +58,7 @@ describe(__filename, function () {
     cy.loadAndVisitProject('food.mini');
     loadExpressionPanel();
     cy.get('select[bind="expressionPreviewLanguageSelect"]').select('clojure');
-    typeExpression('(.. value (toLowerCase) )');
+    cy.typeExpression('(.. value (toLowerCase) )');
     cy.get('.expression-preview-parsing-status').contains('No syntax error.');
     cy.get(
       '.expression-preview-table-wrapper tr:nth-child(2) td:last-child'
@@ -77,7 +68,7 @@ describe(__filename, function () {
   it('Test a Grel syntax error', function () {
     cy.loadAndVisitProject('food.mini');
     loadExpressionPanel();
-    typeExpression('()');
+    cy.typeExpression('()');
     cy.get('.expression-preview-parsing-status').contains('Parsing error');
   });
 
@@ -85,7 +76,7 @@ describe(__filename, function () {
     cy.loadAndVisitProject('food.mini');
     loadExpressionPanel();
     cy.get('select[bind="expressionPreviewLanguageSelect"]').select('jython');
-    typeExpression('(;)');
+    cy.typeExpression('(;)');
     cy.get('.expression-preview-parsing-status').contains('Internal error');
   });
 
@@ -93,7 +84,7 @@ describe(__filename, function () {
     cy.loadAndVisitProject('food.mini');
     loadExpressionPanel();
     cy.get('select[bind="expressionPreviewLanguageSelect"]').select('clojure');
-    typeExpression('(;)');
+    cy.typeExpression('(;)');
     cy.get('.expression-preview-parsing-status').contains(
       'Syntax error reading source'
     );
@@ -102,7 +93,7 @@ describe(__filename, function () {
   it('Test a Grel language error', function () {
     cy.loadAndVisitProject('food.mini');
     loadExpressionPanel();
-    typeExpression('value.thisGrelFunctionDoesNotExists()');
+    cy.typeExpression('value.thisGrelFunctionDoesNotExists()');
     cy.get('.expression-preview-parsing-status').contains(
       'Unknown function thisGrelFunctionDoesNotExists'
     );
@@ -112,7 +103,7 @@ describe(__filename, function () {
     cy.loadAndVisitProject('food.mini');
     loadExpressionPanel();
     cy.get('select[bind="expressionPreviewLanguageSelect"]').select('jython');
-    typeExpression('return value.thisPythonFunctionDoesNotExists()');
+    cy.typeExpression('return value.thisPythonFunctionDoesNotExists()');
 
     cy.get(
       '.expression-preview-table-wrapper tr:nth-child(2) td:last-child'
@@ -123,7 +114,7 @@ describe(__filename, function () {
     cy.loadAndVisitProject('food.mini');
     loadExpressionPanel();
     cy.get('select[bind="expressionPreviewLanguageSelect"]').select('clojure');
-    typeExpression('(.. value (thisClojureFunctionDoesNotExists) )');
+    cy.typeExpression('(.. value (thisClojureFunctionDoesNotExists) )');
     cy.get(
       '.expression-preview-table-wrapper tr:nth-child(2) td:last-child'
     ).should('to.contain', 'Error: No matching method');
@@ -132,7 +123,7 @@ describe(__filename, function () {
   it('Test switching from one langage to another', function () {
     cy.loadAndVisitProject('food.mini');
     loadExpressionPanel();
-    typeExpression('(.. value (toLowerCase) )');
+    cy.typeExpression('(.. value (toLowerCase) )');
     // error is expected, this is clojure language
     cy.get('.expression-preview-parsing-status').should(
       'to.contain',
@@ -149,7 +140,7 @@ describe(__filename, function () {
   it('Test the preview (GREL)', function () {
     cy.loadAndVisitProject('food.mini');
     loadExpressionPanel();
-    typeExpression('value.toLowercase()');
+    cy.typeExpression('value.toLowercase()');
 
     cy.get(
       '.expression-preview-table-wrapper tr:nth-child(1) td:last-child'
@@ -180,7 +171,7 @@ describe(__filename, function () {
     // Use a first unique expression
     const uniqueExpression = generateUniqueExpression();
     loadExpressionPanel();
-    typeExpression(uniqueExpression);
+    cy.typeExpression(uniqueExpression);
     cy.get('.dialog-footer button').contains('OK').click();
     // ensure the function has been added to the facet
     cy.get('#refine-tabs-facets').contains(uniqueExpression.replace('()', ''));
@@ -199,7 +190,7 @@ describe(__filename, function () {
     // Because history is shared across projects, we need to build and use an expression that is unique
     const uniqueExpression = generateUniqueExpression();
     loadExpressionPanel();
-    typeExpression(uniqueExpression);
+    cy.typeExpression(uniqueExpression);
     cy.get('.dialog-footer button').contains('OK').click();
     cy.get('#refine-tabs-facets').contains(uniqueExpression.replace('()', ''));
 
@@ -252,7 +243,7 @@ describe(__filename, function () {
     // Load an expression
     loadExpressionPanel();
     const uniqueExpression = generateUniqueExpression();
-    typeExpression(uniqueExpression);
+    cy.typeExpression(uniqueExpression);
     cy.get('.dialog-footer button').contains('OK').click();
 
     // Star the expression

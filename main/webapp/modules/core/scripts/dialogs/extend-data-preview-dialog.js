@@ -323,7 +323,6 @@ ExtendReconciledDataPreviewDialog.prototype._constrainProperty = function(id) {
   var property = this._findProperty(id);
 
   var frame = DialogSystem.createDialog();
-  frame.width("500px");
 
   var header = $('<div></div>').addClass("dialog-header").text("Settings for " + id).appendTo(frame);
   var body = $('<div></div>').addClass("dialog-body").appendTo(frame);

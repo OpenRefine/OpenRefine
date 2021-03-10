@@ -193,7 +193,7 @@
     "core-dialogs/rows-in-cluster": "# Lignes dans le groupe",
     "core-dialogs/content": "Contenu",
     "core-dialogs/use-this-val": "Utiliser cette valeur",
-    "core-dialogs/cells-of-row": "Les cellules de la ligne en cours. C’est un alias de 'row.cells'. Une cellule spécifique peut être retrouvée avec 'cells.<nom de la colonne>' lorsque <nom de la colonne > est un mot simple et avec 'cells.[\"<nom de la colonne>\"]' dans les autres cas.",
+    "core-dialogs/cells-of-row": "Les cellules de la ligne en cours. C’est un alias de 'row.cells'. Une cellule spécifique peut être retrouvée avec 'cells.&lt;nom de la colonne>' lorsque &lt;nom de la colonne > est un mot simple et avec 'cells.[\"&lt;nom de la colonne>\"]' dans les autres cas.",
     "core-dialogs/for-include-drop-statement-checkbox": "Inclure les instructions DROP",
     "core-dialogs/ngram-radius": "Rayon&nbsp;",
     "core-dialogs/processing": "Traitement…",
@@ -735,7 +735,7 @@
     "core-views/column-join-copy-to-new-column": "Ecrire le résultat dans une nouvelle colonne nommée…",
     "core-views/column-join-delete-joined-columns": "Supprimer les colonnes jointes.",
     "core-views/column-join-dont-escape": "Dans les séparateurs et les substituts de valeurs nulles, utiliser \\n pour une nouvelle ligne, \\t pour une tabulation, \\\\n pour \\n, \\\\t pour \\t.",
-    "core-dialogs/record-fields": "un groupe d'une ou plusieurs lignes forme une entrée ; l'objet a plus d'attributs, voir les détails sur https://github.com/OpenRefine/OpenRefine/wiki/Variables#record",
+    "core-dialogs/record-fields": "un groupe d'une ou plusieurs lignes forme une entrée ; l'objet a plus d'attributs, voir les détails sur <a href=\"https://github.com/OpenRefine/OpenRefine/wiki/Variables#record\">Records</a>",
     "core-views/blank-values": "Valeurs vides par colonne",
     "core-views/blank-records": "Entrées vides par colonne",
     "core-views/add-id-column": "Ajouter une colonne d'identifiants d'entités",
@@ -774,5 +774,10 @@
     "core-views/by-number": "par le passage des chiffres aux lettres",
     "core-views/by-case": "par le passage des minuscules aux majuscules",
     "core-dialogs/unstar-expression": "Désétoiler l’expression ?",
-    "core-index/refine-version": "Version $1"
+    "core-index/refine-version": "Version $1",
+    "core-about/contributors": "Contributeurs (par ordre chronologique)",
+    "core-about/thanks": "Remerciements spéciaux",
+    "core-about/history": "OpenRefine a été initialement développé sous le nom de «&nbsp;Freebase Gridworks&nbsp;» par <a href='$1'>$2</a>. Metaweb a été acquis par <a href='$3'>$4</a> en juillet 2010 et ils ont renommé le produit Google Refine. En octobre 2012, le produit a été renommé OpenRefine lors de sa transition vers un projet soutenu par la communauté.",
+    "core-about/definition": "OpenRefine est un outil puissant pour travailler avec des données désordonnées. Utilisez-le pour améliorer la cohérence des données, liez-le à des registres de données tels que Wikidata, augmentez-le avec des données provenant d'autres sources, transformez-les en différents formats pour que d'autres outils puissent les utiliser et contribuez-les aux sources d'origine. OpenRefine n'est pas un service Web mais une application de bureau qui s'exécute sur votre propre ordinateur, vous pouvez donc traiter les données sensibles en toute confidentialité.",
+    "core-dialogs/help/grelreference": "Consultez la référence GREL dans le manuel de l'utilisateur d'OpenRefine pour plus de détails"
 }

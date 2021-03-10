@@ -55,12 +55,12 @@ public class RandomNumber implements Function {
 
     @Override
     public String getDescription() {
-        return "Returns a pseudo-random integer between the lower and upper bound (inclusive)";
+        return "Returns a random integer in the interval between the lower and upper bounds (inclusively). Will output a different random number in each cell in a column.";
     }
     
     @Override
     public String getParams() {
-        return "number lower bound, number upper bound";
+        return "number lowerBound, number upperBound";
     }
     
     @Override
