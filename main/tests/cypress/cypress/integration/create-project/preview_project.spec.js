@@ -1,3 +1,16 @@
+/**
+ * Navigate to project preview page and check its contents
+ */
+function navigateToProjectPreview() {
+  cy.visitOpenRefine();
+  cy.createProjectThroughUserInterface('food.mini.csv');
+  cy.get('.create-project-ui-panel').contains('Configure Parsing Options');
+  cy.get('table.data-table tr').eq(1).should('to.contain', '1.');
+  cy.get('table.data-table tr').eq(1).should('to.contain', '01001');
+  cy.get('table.data-table tr').eq(1).should('to.contain', 'BUTTER,WITH SALT');
+  cy.get('table.data-table tr').eq(1).should('to.contain', '15.87');
+  cy.get('table.data-table tr').eq(1).should('to.contain', '717');
+}
 describe(__filename, function () {
   it('Tests Parsing Options related to column seperation', function () {
     cy.visitOpenRefine();
@@ -146,7 +159,7 @@ describe(__filename, function () {
     cy.get('table.data-table tr').eq(1).should('to.contain', '717');
   });
   it('Tests parse-next of parsing options', function () {
-    cy.navigateToProjectPreview();
+    navigateToProjectPreview();
     cy.get('input[bind="headerLinesCheckbox"]').uncheck();
     cy.waitForImportUpdate();
     cy.get('input[bind="headerLinesInput"]').type('{backspace}0');
@@ -160,7 +173,7 @@ describe(__filename, function () {
     cy.get('table.data-table tr').eq(1).should('to.contain', 'Energ_Kcal');
   });
   it('Tests discard-initial of parsing options', function () {
-    cy.navigateToProjectPreview();
+    navigateToProjectPreview();
     cy.get('input[bind="skipInput"]').type('{backspace}1');
     cy.get('input[bind="skipCheckbox"]').check();
     cy.waitForImportUpdate();
@@ -174,7 +187,7 @@ describe(__filename, function () {
     cy.get('table.data-table tr').eq(1).should('to.contain', '717');
   });
   it('Tests load-at-most of parsing options', function () {
-    cy.navigateToProjectPreview();
+    navigateToProjectPreview();
     cy.get('input[bind="limitInput"]').type('{backspace}1');
     cy.get('input[bind="limitCheckbox"]').check();
     cy.waitForImportUpdate();
@@ -188,7 +201,7 @@ describe(__filename, function () {
     cy.get('table.data-table tr').eq(1).should('to.contain', '717');
   });
   it('Tests attempt to parse into numbers of parsing options', function () {
-    cy.navigateToProjectPreview();
+    navigateToProjectPreview();
     cy.get('input[bind="guessCellValueTypesCheckbox"]').check();
     cy.waitForImportUpdate();
 
