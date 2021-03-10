@@ -168,21 +168,21 @@ Cypress.Commands.add('assertGridEquals', (values) => {
    */
   cy.get('table.data-table').should((table) => {
     const headers = Cypress.$('table.data-table th')
-      .filter(function () {
-        return this.innerText != 'All'; // eslint-disable-line
+      .filter(function (index, element) {
+        return element.innerText != 'All';
       })
-      .map(function () {
-        return this.innerText; // eslint-disable-line
+      .map(function (index, element) {
+        return element.innerText;
       })
       .get();
 
     const cells = Cypress.$('table.data-table tbody tr')
-      .map(function () {
+      .map(function (i, el) {
         return [
-          Cypress.$('td', this) // eslint-disable-line
+          Cypress.$('td', el)
             .filter((index) => index > 2)
-            .map(function (index) {
-              return this.innerText; // eslint-disable-line
+            .map(function (index, element) {
+              return element.innerText;
             })
             .get(),
         ];
