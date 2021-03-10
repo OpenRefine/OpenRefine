@@ -14,6 +14,9 @@ describe(__filename, function () {
     cy.get('.dialog-container label').contains('by separator').click();
     cy.get('.dialog-container input[bind="separatorInput"]').type('***');
     cy.confirmDialogPanel();
+    cy.assertNotificationContainingText(
+      'Split multi-valued cells in column A column'
+    );
 
     cy.assertGridEquals([
       ['A column'],
@@ -39,6 +42,10 @@ describe(__filename, function () {
     cy.get('.dialog-container label').contains('regular expression').click();
     cy.confirmDialogPanel();
 
+    cy.assertNotificationContainingText(
+      'Split multi-valued cells in column A column'
+    );
+
     cy.assertGridEquals([
       ['A column'],
       ['a'],
@@ -61,9 +68,9 @@ describe(__filename, function () {
     cy.get('.dialog-container textarea[bind="lengthsTextarea"]').type('2,4,8');
     cy.get('.dialog-container label').contains('by field lengths').click();
     cy.confirmDialogPanel();
-    cy.assertCellEquals(0, 'A column', 'BU');
-    cy.assertCellEquals(1, 'A column', 'TTER');
-    cy.assertCellEquals(2, 'A column', ',WITH SA');
+    cy.assertNotificationContainingText(
+      'Split multi-valued cells in column A column'
+    );
 
     cy.assertGridEquals([['A column'], ['BU'], ['TTER'], [',WITH SA']]);
   });
@@ -78,6 +85,9 @@ describe(__filename, function () {
     ]);
     cy.get('.dialog-container input[value="cases"]').check();
     cy.confirmDialogPanel();
+    cy.assertNotificationContainingText(
+      'Split multi-valued cells in column A column'
+    );
 
     cy.assertGridEquals([['A column'], ['11Abc'], ['Def22']]);
   });
@@ -93,6 +103,9 @@ describe(__filename, function () {
 
     cy.get('.dialog-container input[value="number"]').check();
     cy.confirmDialogPanel();
+    cy.assertNotificationContainingText(
+      'Split multi-valued cells in column A column'
+    );
 
     cy.assertGridEquals([['A column'], ['Abcdef1'], ['Abcdef2'], ['Abcdef3']]);
   });
