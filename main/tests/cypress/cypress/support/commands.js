@@ -160,41 +160,40 @@ Cypress.Commands.add('assertCellEquals', (rowIndex, columnName, value) => {
  * )
  */
 Cypress.Commands.add('assertGridEquals', (values) => {
-  // 1. Collect headers first
-  const columnNames = [];
-  cy.get('.data-table thead th.column-header', { log: false }).then(
-    ($headers) => {
-      cy.wrap($headers, { log: false }).each(($header) => {
-        const columnName = $header.text().trim();
-        if (columnName != 'All') {
-          columnNames.push(columnName);
-        }
-      });
-    }
-  );
-  // 2. Collect grid content and make one single assertion with deep.equal
-  const gridValues = [];
-  cy.get('.data-table tbody tr', { log: false })
-    .each(($row) => {
-      // cy.log($row.index());
-      const rowIndex = $row.index();
-      gridValues[rowIndex] = [];
-      cy.wrap($row, { log: false })
-        .find('td', { log: false })
-        .each(($td) => {
-          // cy.log($td.index());
-          if ($td.index() > 2) {
-            gridValues[rowIndex][$td.index() - 3] = $td.text().trim();
-            if (gridValues[rowIndex][$td.index() - 3] == 'null') {
-              gridValues[rowIndex][$td.index() - 3] = '';
-            }
-          }
-        });
-    })
-    .then(() => {
-      gridValues.unshift(columnNames);
-      expect(gridValues).to.deep.equal(values);
-    });
+  /**
+   * This assertion is performed inside a should() method
+   * So it will be retried until the timeout expires
+   */
+  cy.get('table.data-table').should((table) => {
+    console.log('testing');
+    console.log('---');
+
+    var headers = Cypress.$('table.data-table th')
+      .filter(function () {
+        return this.innerText != 'All';
+      })
+      .map(function () {
+        return this.innerText;
+      })
+      .get();
+
+    var cells = Cypress.$('table.data-table tbody tr')
+      .map(function () {
+        return [
+          Cypress.$('td', this)
+            .filter((index) => index > 2)
+            .map(function (index) {
+              return this.innerText;
+            })
+            .get(),
+        ];
+      })
+      .get();
+    var fullTable = [headers, ...cells];
+    console.log(fullTable);
+    console.log(values);
+    expect(fullTable).to.deep.equal(values);
+  });
 });
 
 /**

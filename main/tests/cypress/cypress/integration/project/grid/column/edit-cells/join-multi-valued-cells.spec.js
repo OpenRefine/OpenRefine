@@ -21,7 +21,6 @@ describe(__filename, function () {
       'Edit cells',
       'Join multi-valued cells...',
     ]);
-    cy.waitForOrOperation();
 
     cy.assertGridEquals([
       ['Column A', 'Column B'],
