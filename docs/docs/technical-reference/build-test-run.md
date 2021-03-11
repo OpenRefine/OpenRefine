@@ -218,7 +218,7 @@ Choose the root directory of your clone of the repository. You get to choose whi
 <img alt="Screenshot of Select maven projects to import" src={useBaseUrl('img/eclipse-import-maven-project-2.png')} />
 
 To run and debug OpenRefine from Eclipse, you will need to add an execution configuration on the `server` sub-project.
-Right click on the `server` subproject, click `Run as...` and `Run configurations...`. Just pick the root directory of the project and use `exec:java` as a Maven goal.
+Right click on the `server` subproject, click `Run as...` and `Run configurations...` and create a new `Maven Build` run configuration.  Rename the run configuration `OpenRefine`.  Enter the root directory of the project as `Base directory` and use `exec:java` as a Maven goal.
 
 ![Screenshot of Add a run configuration with the exec:java goal](/img/eclipse-exec-config.png)
 
