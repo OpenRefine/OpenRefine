@@ -200,21 +200,22 @@ WikibaseManager.getSelectedWikibaseSiteInfo = function(onSuccess, onError, wikib
     url: wikibase.mediawiki.api,
     data: params,
     dataType: "jsonp",
+    timeout: 750,
     success: function(response) {
       onSuccess(response.query);
     },
-    error: onError
+    error: function(xhr, status, error) {
+      onError(xhr, status, error);
+	},
   });
 };
 
 // Retrives the logo url of wikibaseName, if wikibaseName is empty returns the selected wikibase logo url
 WikibaseManager.getSelectedWikibaseLogoURL = function(onDone, wikibaseName) {
-  let logoURL = "extension/wikidata/images/Wikibase_logo.png";
   WikibaseManager.getSelectedWikibaseSiteInfo(function(data) {
-    logoURL = data.general.logo;
-    onDone(logoURL);
-  }, function(data) {
-    onDone(logoURL);
+    onDone(data.general.logo);
+  }, function(xhr, status, error) {
+    onDone("extension/wikidata/images/Wikibase_logo.png");
   }, wikibaseName);
 };
 
