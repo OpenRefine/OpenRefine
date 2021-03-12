@@ -223,7 +223,7 @@ Cypress.Commands.add('waitForImportUpdate', () => {
  */
 Cypress.Commands.add('typeExpression', (expression) => {
   cy.get('textarea.expression-preview-code').type(expression);
-  cy.wait(250); // eslint-disable-line
+  cy.wait(500); // eslint-disable-line
 });
 
 /**
