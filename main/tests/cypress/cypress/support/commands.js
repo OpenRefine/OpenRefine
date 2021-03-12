@@ -209,12 +209,21 @@ Cypress.Commands.add('waitForOrOperation', () => {
 });
 
 /**
+ * Wait for OpenRefine parsing options to be updated
+ */
+Cypress.Commands.add('waitForImportUpdate', () => {
+  cy.get('#or-import-updating').should('be.visible');
+  cy.get('#or-import-updating').should('not.be.visible');
+  cy.wait(500); // eslint-disable-line
+});
+
+/**
  * Utility method to fill something into the expression input
  * Need to wait for OpenRefine to preview the result, hence the cy.wait
  */
 Cypress.Commands.add('typeExpression', (expression) => {
   cy.get('textarea.expression-preview-code').type(expression);
-  cy.wait(250); // eslint-disable-line
+  cy.wait(500); // eslint-disable-line
 });
 
 /**
