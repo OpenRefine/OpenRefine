@@ -10,7 +10,6 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import com.google.refine.RefineTest;
-import com.google.refine.history.HistoryEntry;
 import com.google.refine.io.FileHistoryEntryManager;
 import com.google.refine.model.Project;
 import com.google.refine.operations.OperationRegistry;

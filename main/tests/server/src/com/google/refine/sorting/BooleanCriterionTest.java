@@ -30,7 +30,6 @@ import java.io.IOException;
 
 import org.testng.annotations.Test;
 
-import com.google.refine.sorting.Criterion;
 import com.google.refine.util.ParsingUtilities;
 import com.google.refine.util.TestUtils;
 

@@ -1,6 +1,10 @@
 /*
+* Derived from Portfolio filterable.js by Joel Sutherland
+*
 * Copyright (C) 2009 Joel Sutherland.
 * Liscenced under the MIT liscense
+*
+* Modified for OpenRefine by Simone Povoscania
 */
 
 (function($) {
@@ -22,7 +26,7 @@
                 listElement.bind("filter", function( e, tagToShow ){
                         if(settings.useTags){
                                 $(settings.tagSelector).removeClass(settings.selectedTagClass);
-                                $(settings.tagSelector + '[href=' + tagToShow + ']').addClass(settings.selectedTagClass);
+                                $(settings.tagSelector + '[href="' + tagToShow + '"]').addClass(settings.selectedTagClass);
                         }
                         $(this).trigger("filterMyList", [ tagToShow.substr(1) ]);
                 });

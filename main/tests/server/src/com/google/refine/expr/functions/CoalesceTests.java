@@ -44,15 +44,11 @@ import org.testng.annotations.Test;
 
 import com.google.refine.RefineTest;
 import com.google.refine.expr.EvalError;
-import com.google.refine.expr.functions.Coalesce;
-import com.google.refine.grel.ControlFunctionRegistry;
-import com.google.refine.grel.Function;
 import com.google.refine.util.TestUtils;
 
 
 public class CoalesceTests extends RefineTest {
 
-    private static Properties bindings;
     private static final Integer[] ZERO_TO_TWO = new Integer[] {0, 1, 2};
 
     @Override
@@ -71,22 +67,6 @@ public class CoalesceTests extends RefineTest {
         bindings = null;
     }
     
-    /**
-     * Lookup a control function by name and invoke it with a variable number of args
-     */
-    private static Object invoke(String name,Object... args) {
-        // registry uses static initializer, so no need to set it up
-        Function function = ControlFunctionRegistry.getFunction(name);
-        if (function == null) {
-            throw new IllegalArgumentException("Unknown function "+name);
-        }
-        if (args == null) {
-            return function.call(bindings,new Object[0]);
-        } else {
-            return function.call(bindings,args);
-        }
-    }
-    
     @Test
     public void testCoalesceInvalidParams() {        
         Assert.assertTrue(invoke("coalesce") instanceof EvalError);
@@ -100,12 +80,6 @@ public class CoalesceTests extends RefineTest {
         Assert.assertEquals(invoke("coalesce", (Object) null, (Object) null, "string"),"string");
         Assert.assertEquals(invoke("coalesce", (Object) null, 1),1);
         Assert.assertEquals(invoke("coalesce", (Object) null, ZERO_TO_TWO),ZERO_TO_TWO);
-    }
-    
-    @Test
-    public void serializeCoalesce() {
-        String json = "{\"description\":\"Returns the first non-null from a series of values\",\"params\":\"two or more objects\",\"returns\":\"object or null\"}";
-        TestUtils.isSerializedTo(new Coalesce(), json);
     }
     
 }

@@ -75,7 +75,7 @@ public class Unescape implements Function {
     
     @Override
     public String getDescription() {
-        return "Unescapes all escaped parts of the string depending on the given escaping mode.";
+        return "Unescapes s in the given escaping mode. The mode can be one of: 'html', 'xml', 'csv', 'url', 'javascript'. Note that quotes are required around your mode. ";
     }
     
     @Override

@@ -33,7 +33,6 @@ import org.testng.annotations.Test;
 
 import com.google.refine.RefineTest;
 import com.google.refine.operations.OperationRegistry;
-import com.google.refine.operations.row.RowRemovalOperation;
 import com.google.refine.util.ParsingUtilities;
 import com.google.refine.util.TestUtils;
 

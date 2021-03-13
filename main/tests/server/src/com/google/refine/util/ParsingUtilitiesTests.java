@@ -1,6 +1,8 @@
 /*
 
 Copyright 2010, Google Inc.
+Copyright 2013,2020 OpenRefine contributors
+
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -33,23 +35,22 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.util;
 
-import java.io.*;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.util.zip.GZIPOutputStream;
 
 import java.time.OffsetDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.TimeZone;
 
-import org.apache.commons.lang3.text.StrSubstitutor;
 import org.slf4j.LoggerFactory;
 import org.testng.Assert;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
 import com.google.refine.RefineTest;
-import com.google.refine.util.ParsingUtilities;
+
 
 public class ParsingUtilitiesTests extends RefineTest {
     
@@ -92,44 +93,26 @@ public class ParsingUtilitiesTests extends RefineTest {
         Assert.assertEquals(2017, ParsingUtilities.stringToLocalDate("2017-04-03T08:09:43.123Z").getYear());
         Assert.assertEquals(2017, ParsingUtilities.stringToLocalDate("2017-04-03T08:09:43+00:00").getYear());
     }
-    
+
     /**
      * Converting between string and local time must be reversible, no matter the timezone.
      */
     @Test
     public void stringToLocalDateNonUTC() {
-    	TimeZone.setDefault(TimeZone.getTimeZone("JST"));
-    	try {
-    		Assert.assertEquals(ParsingUtilities.stringToLocalDate("2001-08-12T00:00:00Z").getHour(), 9);
-    		Assert.assertEquals(ParsingUtilities.localDateToString(
-    				ParsingUtilities.stringToLocalDate("2001-08-12T00:00:00Z")),
-    				"2001-08-12T00:00:00Z");
-    		
-    	} finally {
-    		TimeZone.setDefault(TimeZone.getTimeZone("UTC"));
-    	}
+        TimeZone originalTimeZone = TimeZone.getDefault();
+        try {
+            TimeZone.setDefault(TimeZone.getTimeZone("JST"));
+            Assert.assertEquals(ParsingUtilities.stringToLocalDate("2001-08-12T00:00:00Z").getHour(), 9);
+            // TODO: This doesn't really make sense since a LocalDate, by definition, doesn't have timezone info
+            Assert.assertEquals(ParsingUtilities.localDateToString(
+                    ParsingUtilities.stringToLocalDate("2001-08-12T00:00:00Z")),
+                    "2001-08-12T00:00:00Z");
+
+        } finally {
+            TimeZone.setDefault(originalTimeZone);
+        }
     }
-    
-    @Test
-    public void parseProjectModifiedBeforeJDK8() {
-        String modified = "2014-01-15T21:46:25Z";
-        Assert.assertNotEquals(ParsingUtilities.stringToLocalDate(modified).toString(), 
-                modified);
-    }
-    
-    @Test
-    public void strSubstitutorTest() {
-        Map<String, String> data = new HashMap<String, String>(6);
-        
-        data.put("value", "1234");
-        data.put("field_format", "String");
-        
-        StrSubstitutor sub = new StrSubstitutor(data);
-        String message = "The value ${value} in row ${row_number} and column ${column_number} is not type ${field_type} and format ${field_format}";
-        String result = sub.replace(message);
-        Assert.assertTrue(result.contains("1234"));
-    }
-    
+
     @Test
     public void testParseGZIPInutstream() throws IOException {
         // Test decompressing gzip

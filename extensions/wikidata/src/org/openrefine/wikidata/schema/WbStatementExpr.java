@@ -134,12 +134,12 @@ public class WbStatementExpr {
 
     @JsonProperty("qualifiers")
     public List<WbSnakExpr> getQualifiers() {
-        return qualifierExprs;
+        return Collections.unmodifiableList(qualifierExprs);
     }
 
     @JsonProperty("references")
     public List<WbReferenceExpr> getReferences() {
-        return referenceExprs;
+        return Collections.unmodifiableList(referenceExprs);
     }
 
     @Override

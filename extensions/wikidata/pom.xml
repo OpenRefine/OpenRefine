@@ -15,7 +15,7 @@
   </parent>
 
   <properties>
-    <powermock.version>2.0.7</powermock.version>
+    <powermock.version>2.0.9</powermock.version>
     <wdtk.version>0.12.0-SNAPSHOT</wdtk.version>
   </properties>
 
@@ -66,7 +66,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-resources-plugin</artifactId>
-        <version>3.1.0</version>
+        <version>3.2.0</version>
         <configuration>
           <encoding>UTF-8</encoding>
         </configuration>
@@ -132,6 +132,11 @@
       <version>${wdtk.version}</version>
     </dependency>
     <dependency>
+      <groupId>com.fasterxml.jackson.core</groupId>
+      <artifactId>jackson-core</artifactId>
+      <version>${jackson.version}</version>
+    </dependency>
+    <dependency>
       <groupId>org.openrefine.dependencies.wdtk</groupId>
       <artifactId>wdtk-datamodel</artifactId>
       <version>${wdtk.version}</version>
@@ -161,13 +166,7 @@
     <dependency>
       <groupId>org.testng</groupId>
       <artifactId>testng</artifactId>
-      <version>7.1.0</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.mockito</groupId>
-      <artifactId>mockito-core</artifactId>
-      <version>3.3.3</version>
+      <version>7.4.0</version>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -181,7 +180,13 @@
       <artifactId>powermock-api-mockito2</artifactId>
       <version>${powermock.version}</version>
       <scope>test</scope>
-     </dependency> 
+     </dependency>
+    <dependency>
+      <groupId>com.squareup.okhttp3</groupId>
+      <artifactId>mockwebserver</artifactId>
+      <version>4.9.1</version>
+      <scope>test</scope>
+    </dependency>
   </dependencies>
 
 </project>

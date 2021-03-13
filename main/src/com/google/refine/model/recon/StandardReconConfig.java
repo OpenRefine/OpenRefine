@@ -33,12 +33,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.model.recon;
 
-import java.io.DataOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.StringWriter;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -70,6 +66,7 @@ import com.google.refine.model.ReconCandidate;
 import com.google.refine.model.ReconType;
 import com.google.refine.model.RecordModel.RowDependency;
 import com.google.refine.model.Row;
+import com.google.refine.util.HttpClient;
 import com.google.refine.util.ParsingUtilities;
 
 public class StandardReconConfig extends ReconConfig {
@@ -153,6 +150,9 @@ public class StandardReconConfig extends ReconConfig {
     final public List<ColumnDetail> columnDetails;
     @JsonProperty("limit")
     final private int limit;
+
+    // initialized lazily
+    private HttpClient httpClient = null;
 
     @JsonCreator
     public StandardReconConfig(
@@ -422,12 +422,29 @@ public class StandardReconConfig extends ReconConfig {
         try {
             job.code = ParsingUtilities.defaultWriter.writeValueAsString(query);
         } catch (JsonProcessingException e) {
+            // FIXME: This error will get lost
             e.printStackTrace();
             return null; // TODO: Throw exception instead?
         }
         return job;
     }
     
+    private HttpClient getHttpClient() {
+        if (httpClient == null) {
+            httpClient = new HttpClient();
+        }
+        return httpClient;
+    }
+
+    private String postQueries(String url, String queriesString) throws IOException {
+        try {
+            return getHttpClient().postNameValue(url, "queries", queriesString);
+
+        } catch (IOException e) {
+            throw new IOException("Failed to batch recon with load:\n" + queriesString, e);
+        }
+    }
+
     @Override
     public List<Recon> batchRecon(List<ReconJob> jobs, long historyEntryID) {
         List<Recon> recons = new ArrayList<Recon>(jobs.size());
@@ -447,71 +464,40 @@ public class StandardReconConfig extends ReconConfig {
         String queriesString = stringWriter.toString();
         
         try {
-            URL url = new URL(service);
-            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-            {
-                connection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
-                connection.setConnectTimeout(30000); // TODO parameterize
-                connection.setDoOutput(true);
-                
-                DataOutputStream dos = new DataOutputStream(connection.getOutputStream());
-                try {
-                    String body = "queries=" + ParsingUtilities.encode(queriesString);
-                    
-                    dos.writeBytes(body);
-                } finally {
-                    dos.flush();
-                    dos.close();
-                }
-                
-                connection.connect();
-            }
-            
-            if (connection.getResponseCode() >= 400) {
-                InputStream is = connection.getErrorStream();
-                String msg = is == null ? "" : ParsingUtilities.inputStreamToString(is);
-                logger.error("Failed  - code: "
-                        + Integer.toString(connection.getResponseCode())
-                        + " message: " + msg);
+            String responseString = postQueries(service, queriesString);
+            ObjectNode o = ParsingUtilities.evaluateJsonStringToObjectNode(responseString);
+
+            if (o == null) { // utility method returns null instead of throwing
+                logger.error("Failed to parse string as JSON: " + responseString);
             } else {
-                InputStream is = connection.getInputStream();
-                try {
-                    String s = ParsingUtilities.inputStreamToString(is);
-                    ObjectNode o = ParsingUtilities.evaluateJsonStringToObjectNode(s);
-                    if (o == null) { // utility method returns null instead of throwing
-                        logger.error("Failed to parse string as JSON: " + s);
-                    } else {
-                        for (int i = 0; i < jobs.size(); i++) {
-                            StandardReconJob job = (StandardReconJob) jobs.get(i);
-                            Recon recon = null;
+                for (int i = 0; i < jobs.size(); i++) {
+                    StandardReconJob job = (StandardReconJob) jobs.get(i);
+                    Recon recon = null;
 
-                            String text = job.text;
-                            String key = "q" + i;
-                            if (o.has(key) && o.get(key) instanceof ObjectNode) {
-                                ObjectNode o2 = (ObjectNode) o.get(key);
-                                if (o2.has("result") && o2.get("result") instanceof ArrayNode) {
-                                    ArrayNode results = (ArrayNode) o2.get("result");
+                    String text = job.text;
+                    String key = "q" + i;
+                    if (o.has(key) && o.get(key) instanceof ObjectNode) {
+                        ObjectNode o2 = (ObjectNode) o.get(key);
+                        if (o2.has("result") && o2.get("result") instanceof ArrayNode) {
+                            ArrayNode results = (ArrayNode) o2.get("result");
 
-                                    recon = createReconServiceResults(text, results, historyEntryID);
-                                } else {
-                                    logger.warn("Service error for text: " + text + "\n  Job code: " + job.code + "\n  Response: " + o2.toString());
-                                }
-                            } else {
-                                // TODO: better error reporting
-                                logger.warn("Service error for text: " + text + "\n  Job code: " + job.code);
-                            }
-
-                            if (recon != null) {
-                                recon.service = service;
-                            }
-                            recons.add(recon);
+                            recon = createReconServiceResults(text, results, historyEntryID);
+                        } else {
+                            // TODO: better error reporting
+                            logger.warn("Service error for text: " + text + "\n  Job code: " + job.code + "\n  Response: " + o2.toString());
                         }
+                    } else {
+                        // TODO: better error reporting
+                        logger.warn("Service error for text: " + text + "\n  Job code: " + job.code);
                     }
-                } finally {
-                    is.close();
+
+                    if (recon != null) {
+                        recon.service = service;
+                    }
+                    recons.add(recon);
                 }
             }
-        } catch (Exception e) {
+        } catch (IOException e) {
             logger.error("Failed to batch recon with load:\n" + queriesString, e);
         }
 
@@ -527,7 +513,7 @@ public class StandardReconConfig extends ReconConfig {
         
         return recons;
     }
-    
+
     @Override
     public Recon createNewRecon(long historyEntryID) {
         Recon recon = new Recon(historyEntryID, identifierSpace, schemaSpace);
@@ -535,7 +521,7 @@ public class StandardReconConfig extends ReconConfig {
         return recon;
     }
 
-    protected Recon createReconServiceResults(String text, ArrayNode resultsList, long historyEntryID) throws IOException {
+    protected Recon createReconServiceResults(String text, ArrayNode resultsList, long historyEntryID)  {
         Recon recon = new Recon(historyEntryID, identifierSpace, schemaSpace);
         List<ReconResult> results = ParsingUtilities.mapper.convertValue(resultsList, new TypeReference<List<ReconResult>>() {});
         

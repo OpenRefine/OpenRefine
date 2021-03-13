@@ -38,7 +38,7 @@ $.ajax({
     },
     success : function(data) {
         dictionary = data['dictionary'];
-        dictionary = data['lang'];
+        lang = data['lang'];
     }
 });
 $.i18n().load(dictionary, lang);

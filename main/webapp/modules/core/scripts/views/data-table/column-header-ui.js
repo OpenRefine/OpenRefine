@@ -76,7 +76,7 @@ DataTableColumnHeaderUI.prototype._render = function() {
       var newPercent = Math.ceil(100 * stats.newTopics / stats.nonBlanks);
       var matchPercent = Math.ceil(100 * stats.matchedTopics / stats.nonBlanks);
       var unreconciledPercent = Math.ceil(100 * (stats.nonBlanks - stats.matchedTopics - stats.newTopics) / stats.nonBlanks);
-      var title = matchPercent + "% "+$.i18n('core-views/matched')+", " + newPercent + "% "+$.i18n('core-views/new')+", " + unreconciledPercent + "% "+$.i18n('core-views/to-be-recon');
+      var title = $.i18n('core-views/recon-stats', matchPercent, newPercent, unreconciledPercent);
 
       var whole = $('<div>')
       .addClass("column-header-recon-stats-bar")
@@ -266,7 +266,7 @@ DataTableColumnHeaderUI.prototype._showSortingCriterion = function(criterion, ha
 
   elmts.valueTypeOptions
   .find("input[type='radio'][value='" + criterion.valueType + "']")
-  .attr("checked", "checked");
+  .prop('checked', true);
 
   var setValueType = function(valueType) {
     var forward = elmts.directionForwardLabel;
@@ -292,12 +292,12 @@ DataTableColumnHeaderUI.prototype._showSortingCriterion = function(criterion, ha
   });
 
   if (criterion.valueType == "string" && criterion.caseSensitive) {
-    elmts.caseSensitiveCheckbox.attr("checked", "checked");
+    elmts.caseSensitiveCheckbox.prop('checked', true);
   }
 
   elmts.directionOptions
   .find("input[type='radio'][value='" + (criterion.reverse ? "reverse" : "forward") + "']")
-  .attr("checked", "checked");
+  .prop('checked', true);
 
   if (hasOtherCriteria) {
     elmts.sortAloneContainer.show();

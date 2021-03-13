@@ -28,7 +28,6 @@ package com.google.refine.grel.controls;
 
 import org.testng.annotations.Test;
 
-import com.google.refine.grel.controls.IsNumeric;
 import com.google.refine.util.TestUtils;
 
 public class IsNumericTests {

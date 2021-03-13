@@ -290,7 +290,7 @@
           <dependency>
             <groupId>com.thoughtworks.xstream</groupId>
             <artifactId>xstream</artifactId>
-          <version>1.4.9</version>
+          <version>1.4.12</version>
         </dependency>
         </dependencies>
         <executions>
@@ -401,11 +401,11 @@
           <version>1.2.0</version>
           <dependencies>
             <dependency>
-              <!-- dependency upgraded to a newer version to fix runtime issues with some JRE versions:
+              <!-- dependency upgraded to >4.0 to fix runtime issues with some JRE versions:
                    https://stackoverflow.com/questions/53696439/appbundle-maven-plugin-fails-on-mac-osx-with-java-10 -->
               <groupId>org.codehaus.plexus</groupId>
               <artifactId>plexus-archiver</artifactId>
-              <version>4.2.2</version>
+              <version>4.2.4</version>
             </dependency>
             <dependency>
               <groupId>org.apache.velocity</groupId>
@@ -478,5 +478,4 @@
     </dependency>
   </dependencies>
 </project>
-
 

@@ -57,4 +57,8 @@ public class CommonDescriptionScrutinizer extends DescriptionScrutinizer {
         }
     }
 
+    @Override
+    public boolean prepareDependencies() {
+        return true;
+    }
 }

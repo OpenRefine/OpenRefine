@@ -1,6 +1,6 @@
 # OpenRefine
-
-[![Join the chat at https://gitter.im/OpenRefine/OpenRefine](https://badges.gitter.im/OpenRefine/OpenRefine.svg)](https://gitter.im/OpenRefine/OpenRefine?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge) [![Build Status](https://travis-ci.org/OpenRefine/OpenRefine.svg?branch=master)](https://travis-ci.org/OpenRefine/OpenRefine) [![Coverage Status](https://coveralls.io/repos/github/OpenRefine/OpenRefine/badge.svg?branch=master)](https://coveralls.io/github/OpenRefine/OpenRefine?branch=master) [![Translation progress](https://hosted.weblate.org/widgets/openrefine/-/svg-badge.svg)](https://hosted.weblate.org/engage/openrefine/?utm_source=widget) [![Total alerts](https://img.shields.io/lgtm/alerts/g/OpenRefine/OpenRefine.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/OpenRefine/OpenRefine/alerts/)
+[![DOI](https://zenodo.org/badge/6220644.svg)](https://zenodo.org/badge/latestdoi/6220644)
+[![Join the chat at https://gitter.im/OpenRefine/OpenRefine](https://badges.gitter.im/OpenRefine/OpenRefine.svg)](https://gitter.im/OpenRefine/OpenRefine) ![Java CI](https://github.com/OpenRefine/OpenRefine/workflows/Java%20CI/badge.svg) [![Coverage Status](https://coveralls.io/repos/github/OpenRefine/OpenRefine/badge.svg?branch=master)](https://coveralls.io/github/OpenRefine/OpenRefine?branch=master) [![Translation progress](https://hosted.weblate.org/widgets/openrefine/-/svg-badge.svg)](https://hosted.weblate.org/engage/openrefine/?utm_source=widget) [![Total alerts](https://img.shields.io/lgtm/alerts/g/OpenRefine/OpenRefine.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/OpenRefine/OpenRefine/alerts/)
 
 OpenRefine is a Java-based power tool that allows you to load data, understand it,
 clean it up, reconcile it, and augment it with data coming from
@@ -22,7 +22,7 @@ This requires JDK 8 and Apache Maven.
 
 Documentation and Videos
 -------------------------
-* [Documentation Wiki](https://github.com/OpenRefine/OpenRefine/wiki/Documentation-For-Users)
+* [User Manual](https://docs.openrefine.org)
 * [FAQ](https://github.com/OpenRefine/OpenRefine/wiki/FAQ)
 * [Official Website and tutorial videos](http://openrefine.org)
 
@@ -36,6 +36,8 @@ Contact us
 ----------
 * [Mailing List](https://groups.google.com/forum/#!forum/openrefine)
 * [Twitter](http://www.twitter.com/openrefine)
+* [Gitter](https://gitter.im/OpenRefine/OpenRefine)
+* [Matrix (bridged from Gitter)](https://matrix.to/#/#OpenRefine_OpenRefine:gitter.im)
 
 Licensing and legal issues
 --------------------------

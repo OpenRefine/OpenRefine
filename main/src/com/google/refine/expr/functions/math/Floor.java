@@ -51,12 +51,12 @@ public class Floor implements Function {
     
     @Override
     public String getDescription() {
-        return "Returns the floor of a number as an integer";
+        return "Returns the floor of a number.";
     }
     
     @Override
     public String getParams() {
-        return "number d";
+        return "number n";
     }
     
     @Override

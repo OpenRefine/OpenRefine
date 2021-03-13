@@ -496,7 +496,7 @@
     "core-views/spec-separator": "Palihug hinganli ang separator sa tunga sa orihinal nga ngalan sa mga kolum ug bili sa cells.",
     "core-views/milli": "millisegundo",
     "core-views/by": "Pinaagi sa",
-    "core-views/true-fasle": "tinuod nga bakak",
+    "core-views/true-false": "tinuod nga bakak",
     "core-views/move-to-end": "Ibalhin ang kolum sa katapusan",
     "core-views/before-val": "gikan sa bili sa cells",
     "core-views/dates": "mga petsa",

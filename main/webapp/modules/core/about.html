@@ -43,20 +43,18 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
         margin-bottom: 10em;
       }
     </style>
-    <script type="text/javascript" src="scripts/version.js"></script>
-    <script type="text/javascript" src="externals/jquery-1.11.1.js"></script>
-    <script>
-      $(function() {
-        if (OpenRefineVersion && OpenRefineVersion.version) {
-          if (OpenRefineVersion.version != "$VERSION") {
-            $("#version").text("Version " + OpenRefineVersion.version + " [" + OpenRefineVersion.revision + "]").show();
-          }
-          else {
-            $("#version").text("Version <trunk>").show();
-          }
-        }
-      });
-    </script>
+    <script type="text/javascript" src="externals/jquery-1.12.4.min.js"></script>
+    <script type="text/javascript" src="externals/CLDRPluralRuleParser.js"></script>
+    <script type="text/javascript" src="externals/jquery.i18n.js"></script>
+    <script type="text/javascript" src="externals/jquery.i18n.messagestore.js"></script>
+    <script type="text/javascript" src="externals/jquery.i18n.fallbacks.js"></script>
+    <script type="text/javascript" src="externals/jquery.i18n.parser.js"></script>
+    <script type="text/javascript" src="externals/jquery.i18n.emitter.js"></script>
+    <script type="text/javascript" src="externals/jquery.i18n.language.js"></script>
+    <script type="text/javascript" src="externals/languages/fi.js"></script>
+    <script type="text/javascript" src="externals/languages/ru.js"></script>
+    <script type="text/javascript" src="scripts/index.js"></script>
+
   </head>
   <body>
     <div id="header">
@@ -64,28 +62,20 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     </div>
 
     <div id="body-info">
-      <h1>About OpenRefine</h1>
-      <h2 id="version" style="display: none"></h2>
+      <h1 id="about-openrefine"></h1>
+      <!-- The following two IDs must match those in index.vt/index.js -->
+      <h2 id="openrefine-version"></h2>
+      <h3 id="java-runtime-version"></h3>
       
-      <p>
-        OpenRefine is a power tool for working with messy data. Use it to improve data consistency,
-        link it to data registries like Wikidata, augment it with data from other sources, transform it
-        into different formats for other tools to consume, and contribute it to back to the original
-        sources. OpenRefine is not a web service but a desktop app that runs on your own computer,
-        so you can process sensitive data with privacy.
+      <p id="definition">
       </p>
 
-      <p>
-        OpenRefine was originally developed as "Freebase Gridworks" by
-        <a href="http://www.metaweb.com/">Metaweb Technologies, Inc.</a>. Metaweb was acquired by
-        <a href="http://www.google.com/">Google</a> in July 2010 and they renamed the product
-        Google Refine. In October, 2012, the product was renamed OpenRefine as it transitioned to
-        a community supported project.
+      <p id="history-openrefine">
       </p>
       
       <table cellspacing="0" cellpadding="0"><tr>
         <td width="300">
-          <h2>Contributors (in chronological order)</h2>
+          <h2 id="contributors"></h2>
           <ul>
             <li><a href="http://www.freebase.com/view/en/david_francois_huynh">David Huynh</a></li>
             <li><a href="http://www.freebase.com/view/en/stefano_mazzocchi">Stefano Mazzocchi</a></li>
@@ -107,7 +97,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
           </ul>
         </td>
         <td>
-          <h2>Special Thanks</h2>
+          <h2 id="thanks"></h2>
           <ul>
             <li><a href="http://www.paolociccarese.info/">Paolo Ciccarese</a></li>
             <li>Thad Guidry</li>
@@ -126,7 +116,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       <h2>OpenRefine License</h2>
             
 <pre class="license">
-Copyright 2010-2012, Google Inc. and contributors
+Copyright 2010-2020, Google Inc. and contributors
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -236,12 +226,9 @@ licenses/json.LICENSE.txt
 
 licenses/mockito.LICENSE.txt
     mockito
-
-
-Flag icon based on an icon from Silk Icons:
-    http://www.famfamfam.com/lab/icons/silk/
 </pre>
         
     </div>
+  <script src="about.js"></script> 
   </body>
 </html>

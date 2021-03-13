@@ -28,7 +28,6 @@ package com.google.refine.grel.controls;
 
 import org.testng.annotations.Test;
 
-import com.google.refine.grel.controls.ForNonBlank;
 import com.google.refine.util.TestUtils;
 
 public class ForNonBlankTests {

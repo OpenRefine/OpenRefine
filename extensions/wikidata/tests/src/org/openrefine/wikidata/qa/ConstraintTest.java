@@ -21,12 +21,17 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import static org.openrefine.wikidata.qa.Constraint.CONSTRAINT_EXCEPTIONS;
+import static org.openrefine.wikidata.qa.Constraint.CONSTRAINT_STATUS;
+
 public class ConstraintTest {
 
-    public static ItemIdValue itemIdValue = Datamodel.makeWikidataItemIdValue("Q19474404");
-    public static PropertyIdValue constraintException = Datamodel.makeWikidataPropertyIdValue("P2303");
+    public static final String SINGLE_VALUE_CONSTRAINT_QID = "Q19474404";
+
+    public static ItemIdValue itemIdValue = Datamodel.makeWikidataItemIdValue(SINGLE_VALUE_CONSTRAINT_QID);
+    public static PropertyIdValue constraintException = Datamodel.makeWikidataPropertyIdValue(CONSTRAINT_EXCEPTIONS);
     public static Value exceptionValue = Datamodel.makeWikidataItemIdValue("Q7409772");
-    public static PropertyIdValue constraintStatus = Datamodel.makeWikidataPropertyIdValue("P2316");
+    public static PropertyIdValue constraintStatus = Datamodel.makeWikidataPropertyIdValue(CONSTRAINT_STATUS);
     public static Value statusValue = Datamodel.makeWikidataItemIdValue("Q62026391");
 
     public static Constraint constraint;
