@@ -51,8 +51,8 @@ class Facet {
 
   _editTitle() {
     var currentFacetTitle = this._config.name;
-  
-    var promptText = "The current name of the facet is: "+ currentFacetTitle +".\n What name do you want now?";
+    
+    var promptText = $.i18n('core-facets/facet-current-title', currentFacetTitle);    
     var newFacetTitle = prompt(promptText, currentFacetTitle);
 
     if (newFacetTitle != null) {
