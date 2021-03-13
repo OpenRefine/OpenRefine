@@ -171,7 +171,7 @@ class ListFacet extends Facet {
     );
     this._elmts = DOM.bind(this._div);
 
-    this._elmts.titleSpan.text(this._config.name);
+    this._elmts.facetTitle.text(this._config.name);
     this._elmts.changeButton.attr("title",$.i18n('core-facets/current-exp')+": " + this._config.expression).click(function() {
       self._elmts.expressionDiv.slideToggle(100, function() {
         if (self._elmts.expressionDiv.css("display") != "none") {
