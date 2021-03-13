@@ -184,6 +184,7 @@ class ListFacet extends Facet {
     this._elmts.removeButton.click(function() { self._remove(); });
     this._elmts.minimizeButton.click(function() { self._minimize(); });
     this._elmts.resetButton.click(function() { self._reset(); });
+    this._elmts.titleSpan.click(function() { self._editTitle(); });
     this._elmts.invertButton.click(function() { self._invert(); });
 
     this._elmts.choiceCountContainer.click(function() { self._copyChoices(); });

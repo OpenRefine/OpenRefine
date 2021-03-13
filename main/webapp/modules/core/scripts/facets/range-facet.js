@@ -169,6 +169,7 @@ class RangeFacet extends Facet {
       self._updateRest();
     });
     
+    this._elmts.titleSpan.click(function() { self._editTitle(); });
     this._elmts.removeButton.click(function() { self._remove(); });
     this._elmts.minimizeButton.click(function() { self._minimize(); });
 

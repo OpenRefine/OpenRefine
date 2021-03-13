@@ -169,6 +169,7 @@ class TimeRangeFacet extends Facet{
     
     this._elmts.removeButton.click(function() { self._remove(); });
     this._elmts.minimizeButton.click(function() { self._minimize(); });
+    this._elmts.titleSpan.click(function() { self._editTitle(); });
 
     this._histogram = new HistogramWidget(this._elmts.histogramDiv, { binColors: [ "#ccccff", "#6666ff" ] });
     this._sliderWidget = new SliderWidget(this._elmts.sliderWidgetDiv);
