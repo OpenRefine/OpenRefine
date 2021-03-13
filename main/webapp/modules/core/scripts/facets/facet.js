@@ -49,6 +49,18 @@ class Facet {
   	this._minimizeState = !this._minimizeState;
   };
 
+  _editTitle() {
+    var currentFacetTitle = this._config.name;
+  
+    var promptText = "The current name of the facet is: "+ currentFacetTitle +".\n What name do you want now?";
+    var newFacetTitle = prompt(promptText, currentFacetTitle);
+
+    if (newFacetTitle != null) {
+      this._config.name = newFacetTitle;
+      this._elmts.titleSpan.text(this._config.name);
+    }
+  };
+
   _remove() {
   	ui.browsingEngine.removeFacet(this);
 
