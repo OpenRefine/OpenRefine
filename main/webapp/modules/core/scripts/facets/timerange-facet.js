@@ -31,7 +31,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
  */
 
-class TimeRangeFacet extends Facet{
+class TimeRangeFacet extends Facet {
   constructor(div, config, options) {
     super(div, config, options);
 
@@ -134,7 +134,7 @@ class TimeRangeFacet extends Facet{
           '<td>' +
             '<a href="javascript:{}" class="facet-choice-link" bind="resetButton">'+$.i18n('core-facets/reset')+'</a>' +
             '<a href="javascript:{}" class="facet-choice-link" bind="changeButton">'+$.i18n('core-facets/change')+'</a>' +
-            '<span bind="facetTitle"></span>' +
+            '<span class="facet-title-span" bind="facetTitle" title="'+$.i18n('core-facets/edit-facet-title')+'"></span>' +
           '</td>' +
         '</tr></table></div>' +
       '</div>' +
@@ -169,7 +169,7 @@ class TimeRangeFacet extends Facet{
     
     this._elmts.removeButton.click(function() { self._remove(); });
     this._elmts.minimizeButton.click(function() { self._minimize(); });
-    this._elmts.titleSpan.click(function() { self._editTitle(); });
+    this._elmts.facetTitle.click(function() { self._editTitle(); });
 
     this._histogram = new HistogramWidget(this._elmts.histogramDiv, { binColors: [ "#ccccff", "#6666ff" ] });
     this._sliderWidget = new SliderWidget(this._elmts.sliderWidgetDiv);

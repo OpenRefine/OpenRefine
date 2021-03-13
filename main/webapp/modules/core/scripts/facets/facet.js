@@ -57,7 +57,7 @@ class Facet {
 
     if (newFacetTitle != null) {
       this._config.name = newFacetTitle;
-      this._elmts.titleSpan.text(this._config.name);
+      this._elmts.facetTitle.text(this._config.name);
     }
   };
 

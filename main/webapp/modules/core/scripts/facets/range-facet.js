@@ -136,7 +136,7 @@ class RangeFacet extends Facet {
           '<td>' +
             '<a href="javascript:{}" class="facet-choice-link" bind="resetButton">'+$.i18n('core-facets/reset')+'</a>' +
             '<a href="javascript:{}" class="facet-choice-link" bind="changeButton">'+$.i18n('core-facets/change')+'</a>' +
-            '<span bind="facetTitle"></span>' +
+            '<span class="facet-title-span" bind="facetTitle" title="'+$.i18n('core-facets/edit-facet-title')+'"></span>' +
           '</td>' +
         '</tr></table></div>' +
       '</div>' +
@@ -169,7 +169,7 @@ class RangeFacet extends Facet {
       self._updateRest();
     });
     
-    this._elmts.titleSpan.click(function() { self._editTitle(); });
+    this._elmts.facetTitle.click(function() { self._editTitle(); });
     this._elmts.removeButton.click(function() { self._remove(); });
     this._elmts.minimizeButton.click(function() { self._minimize(); });
 

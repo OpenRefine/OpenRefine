@@ -152,7 +152,7 @@ class ListFacet extends Facet {
             '<a href="javascript:{}" class="facet-choice-link" bind="resetButton">'+$.i18n('core-facets/reset')+'</a>' +
             '<a href="javascript:{}" class="facet-choice-link" bind="invertButton">'+$.i18n('core-facets/invert')+'</a>' +
             '<a href="javascript:{}" class="facet-choice-link" bind="changeButton">'+$.i18n('core-facets/change')+'</a>' +
-            '<span class="facet-title-span" bind="titleSpan" title="'+$.i18n('core-facets/edit-facet-title')+'"></span>' +
+            '<span class="facet-title-span" bind="facetTitle" title="'+$.i18n('core-facets/edit-facet-title')+'"></span>' +
           '</td>' +
         '</tr></table></div>' +
       '</div>' +
@@ -184,7 +184,7 @@ class ListFacet extends Facet {
     this._elmts.removeButton.click(function() { self._remove(); });
     this._elmts.minimizeButton.click(function() { self._minimize(); });
     this._elmts.resetButton.click(function() { self._reset(); });
-    this._elmts.titleSpan.click(function() { self._editTitle(); });
+    this._elmts.facetTitle.click(function() { self._editTitle(); });
     this._elmts.invertButton.click(function() { self._invert(); });
 
     this._elmts.choiceCountContainer.click(function() { self._copyChoices(); });

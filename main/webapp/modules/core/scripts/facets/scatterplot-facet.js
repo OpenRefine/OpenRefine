@@ -96,7 +96,7 @@ class ScatterplotFacet extends Facet {
           '</td>' +
           '<td>' +
             '<a href="javascript:{}" class="facet-choice-link" bind="resetButton">'+$.i18n('core-facets/reset')+'</a>' +
-            '<span bind="titleSpan"></span>' +
+            '<span class="facet-title-span" bind="facetTitle" title="'+$.i18n('core-facets/edit-facet-title')+'"></span>' +
           '</td>' +
         '</tr></table></div>' +
       '</div>' +
@@ -136,10 +136,10 @@ class ScatterplotFacet extends Facet {
     );
     this._elmts = DOM.bind(this._div);
 
-    this._elmts.titleSpan.text(this._config.name);
+    this._elmts.facetTitle.text(this._config.name);
     this._elmts.removeButton.click(function() { self._remove(); });
     this._elmts.minimizeButton.click(function() { self._minimize(); });
-    this._elmts.titleSpan.click(function() { self._editTitle(); });
+    this._elmts.facetTitle.click(function() { self._editTitle(); });
     
     this._elmts.resetButton.click(function() {
       self.reset();
