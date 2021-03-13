@@ -51,10 +51,21 @@ li.facet-container {
   padding: 3px 5px;
   background: @chrome_primary;
   font-weight: bold;
-  cursor: move;
+  cursor: text;
   border-bottom: 1px solid @chrome_primary;
   .rounded_corners_top(6px);
-  
+  }
+
+span.facet-title-span {
+  padding: 3px;
+  border: 1px solid @chrome_primary;
+  border-top: 1px solid @chrome_primary;
+  }
+
+span.facet-title-span:hover {
+  background: @fill_editable;
+  border: 1px solid #ccc;
+  border-top: 1px solid #aaa;
   }
 
 .facet-title-inverted {
