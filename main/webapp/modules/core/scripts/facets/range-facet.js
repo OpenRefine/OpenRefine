@@ -125,7 +125,7 @@ class RangeFacet extends Facet {
     .empty()
     .show()
     .html(
-      '<div class="facet-title" bind="headerDiv">' +
+      '<div class="facet-title" bind="facetTitle">' +
         '<div class="grid-layout layout-tightest layout-full"><table><tr>' +
           '<td width="1%">' +
             '<a href="javascript:{}" title="'+$.i18n('core-facets/remove-facet')+'" class="facet-title-remove" bind="removeButton">&nbsp;</a>' +

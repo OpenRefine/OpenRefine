@@ -82,7 +82,7 @@ class TextSearchFacet extends Facet {
     var self = this;
     var counter = this._uniqueIdForLabels();
     this._div.empty().show().html(
-      '<div class="facet-title" bind="titleSpan">' + 
+      '<div class="facet-title" bind="facetTitle">' + 
         '<div class="grid-layout layout-tightest layout-full"><table><tr>' +
           '<td width="1%">' +
             '<a href="javascript:{}" title="'+$.i18n('core-facets/remove-facet')+'" class="facet-title-remove" bind="removeButton">&nbsp;</a>' +
@@ -181,10 +181,10 @@ class TextSearchFacet extends Facet {
   _update() {
     var invert = this._config.invert;
     if (invert) {
-      this._elmts.titleSpan.addClass("facet-title-inverted");
+      this._elmts.facetTitle.addClass("facet-title-inverted");
       this._elmts.invertButton.addClass("facet-mode-inverted");
     } else {
-      this._elmts.titleSpan.removeClass("facet-title-inverted");
+      this._elmts.facetTitle.removeClass("facet-title-inverted");
       this._elmts.invertButton.removeClass("facet-mode-inverted");
     }
   };

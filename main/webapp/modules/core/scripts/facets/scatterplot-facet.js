@@ -86,7 +86,7 @@ class ScatterplotFacet extends Facet {
     var facet_id = container.attr("id");
 
     this._div.empty().show().html(
-      '<div class="facet-title">' +
+      '<div class="facet-title" bind="facetTitle">' +
         '<div class="grid-layout layout-tightest layout-full"><table><tr>' +
           '<td width="1%">' +
             '<a href="javascript:{}" title="'+$.i18n('core-facets/remove-facet')+'" class="facet-title-remove" bind="removeButton">&nbsp;</a>' +
