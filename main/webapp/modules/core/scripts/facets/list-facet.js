@@ -77,13 +77,15 @@ class ListFacet extends Facet {
         type: "list",
         name: this._config.name,
         columnName: this._config.columnName,
+        source: this._config.source,
+        nameAtCreation: this._config.nameAtCreation,
         expression: this._config.expression,
         omitBlank: "omitBlank" in this._config ? this._config.omitBlank : false,
-            omitError: "omitError" in this._config ? this._config.omitError : false,
-                selection: [],
-                selectBlank: this._blankChoice !== null && this._blankChoice.s,
-                selectError: this._errorChoice !== null && this._errorChoice.s,
-                invert: this._config.invert
+        omitError: "omitError" in this._config ? this._config.omitError : false,
+        selection: [],
+        selectBlank: this._blankChoice !== null && this._blankChoice.s,
+        selectError: this._errorChoice !== null && this._errorChoice.s,
+        invert: this._config.invert
     };
     for (var i = 0; i < this._selection.length; i++) {
       var choice = {
@@ -152,7 +154,7 @@ class ListFacet extends Facet {
             '<a href="javascript:{}" class="facet-choice-link" bind="resetButton">'+$.i18n('core-facets/reset')+'</a>' +
             '<a href="javascript:{}" class="facet-choice-link" bind="invertButton">'+$.i18n('core-facets/invert')+'</a>' +
             '<a href="javascript:{}" class="facet-choice-link" bind="changeButton">'+$.i18n('core-facets/change')+'</a>' +
-            '<span class="facet-title-span" bind="titleSpan" title="'+$.i18n('core-facets/edit-facet-title', this._config.columnName)+'"></span>' +
+            '<span class="facet-title-span" bind="titleSpan" title="'+$.i18n('core-facets/edit-facet-title', this._config.source)+'"></span>' +
           '</td>' +
         '</tr></table></div>' +
       '</div>' +

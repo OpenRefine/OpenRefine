@@ -66,6 +66,8 @@ class TextSearchFacet extends Facet {
         type: "text",
         name: this._config.name,
         columnName: this._config.columnName,
+        source: this._config.source,
+        nameAtCreation: this._config.nameAtCreation,
         mode: this._config.mode,
         caseSensitive: this._config.caseSensitive,
         invert: this._config.invert,
@@ -93,7 +95,7 @@ class TextSearchFacet extends Facet {
           '<td>' +
             '<a href="javascript:{}" class="facet-choice-link" bind="resetButton">'+$.i18n('core-facets/reset')+'</a>' +
             '<a href="javascript:{}" class="facet-choice-link" bind="invertButton">'+$.i18n('core-facets/invert')+'</a>' +
-            '<span class="facet-title-span" bind="titleSpan" title="'+$.i18n('core-facets/edit-facet-title', this._config.columnName)+'"></span>' +
+            '<span class="facet-title-span" bind="titleSpan" title="'+$.i18n('core-facets/edit-facet-title', this._config.source)+'"></span>' +
           '</td>' +
         '</tr></table></div>' +
       '</div>' +

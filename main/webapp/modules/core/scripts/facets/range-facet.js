@@ -94,6 +94,8 @@ class RangeFacet extends Facet {
         name: this._config.name,
         expression: this._config.expression,
         columnName: this._config.columnName,
+        source: this._config.source,
+        nameAtCreation: this._config.nameAtCreation,
         selectNumeric: this._selectNumeric,
         selectNonNumeric: this._selectNonNumeric,
         selectBlank: this._selectBlank,
@@ -136,7 +138,7 @@ class RangeFacet extends Facet {
           '<td>' +
             '<a href="javascript:{}" class="facet-choice-link" bind="resetButton">'+$.i18n('core-facets/reset')+'</a>' +
             '<a href="javascript:{}" class="facet-choice-link" bind="changeButton">'+$.i18n('core-facets/change')+'</a>' +
-            '<span class="facet-title-span" bind="titleSpan" title="'+$.i18n('core-facets/edit-facet-title', this._config.columnName)+'"></span>' +
+            '<span class="facet-title-span" bind="titleSpan" title="'+$.i18n('core-facets/edit-facet-title', this._config.source)+'"></span>' +
           '</td>' +
         '</tr></table></div>' +
       '</div>' +

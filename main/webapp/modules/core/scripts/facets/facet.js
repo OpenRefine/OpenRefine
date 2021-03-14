@@ -35,6 +35,13 @@ class Facet {
   constructor(div, config, options) {
   	this._div = div;
   	this._config = config;
+  	
+  	if(this._config.nameAtCreation == "" || this._config.nameAtCreation == null)
+  	  this._config.nameAtCreation = config.name;
+  	  
+  	if(this._config.source == "" || this._config.source == null)
+  	  this._config.source = config.columnName;
+  	
   	this._options = options || {};
   	this._minimizeState = false;
   };
@@ -54,7 +61,7 @@ class Facet {
     var newFacetTitle = prompt(promptText, this._config.name);
 
     if (newFacetTitle == null || newFacetTitle == "") 
-      newFacetTitle = this._config.columnName;
+      newFacetTitle = this._config.nameAtCreation;
     
     this._config.name = newFacetTitle;
     this._elmts.titleSpan.text(newFacetTitle);

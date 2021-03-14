@@ -68,6 +68,7 @@ class ScatterplotFacet extends Facet {
   getJSON() {
     this._config.type = "scatterplot";
     var dot = this._config.dot;
+
     if (typeof dot == 'number') this._config.dot.toFixed(2);
     return this._config;
   };
@@ -96,7 +97,7 @@ class ScatterplotFacet extends Facet {
           '</td>' +
           '<td>' +
             '<a href="javascript:{}" class="facet-choice-link" bind="resetButton">'+$.i18n('core-facets/reset')+'</a>' +
-            '<span class="facet-title-span" bind="titleSpan" title="'+$.i18n('core-facets/edit-facet-title', this._config.columnName)+'"></span>' +
+            '<span class="facet-title-span" bind="titleSpan" title="'+$.i18n('core-facets/edit-facet-title', this._config.source)+'"></span>' +
           '</td>' +
         '</tr></table></div>' +
       '</div>' +
