@@ -9,9 +9,9 @@
         "test": "cypress run --browser electron --headless --quiet",
         "fix-lint": "prettier --write . && eslint --fix .",
         "lint": "prettier --check . && eslint ."
-      },
+    },
     "dependencies": {
-        "cypress": "6.5.0",
+        "cypress": "6.6.0",
         "cypress-file-upload": "^5.0.2",
         "cypress-wait-until": "^1.7.1",
         "dotenv": "^8.2.0",
@@ -21,7 +21,7 @@
     "devDependencies": {
         "eslint": "^7.20.0",
         "eslint-config-google": "^0.14.0",
-        "eslint-config-prettier": "^7.2.0",
+        "eslint-config-prettier": "^8.1.0",
         "eslint-plugin-cypress": "^2.11.2",
         "jsdoc": "^3.6.6",
         "prettier": "2.2.1"

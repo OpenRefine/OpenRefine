@@ -182,6 +182,11 @@ Refine._showHideLeftPanel = function() {
   resizeAll();
 };
 
+Refine.showLeftPanel = function() {
+  $('div#body').removeClass("hide-left-panel");
+  resizeAll();
+};
+
 Refine.setTitle = function(status) {
   var title = theProject.metadata.name + " - OpenRefine";
   if (status) {
