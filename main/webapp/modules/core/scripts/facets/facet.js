@@ -56,6 +56,7 @@ class Facet {
     if (newFacetTitle == null || newFacetTitle == "") 
       newFacetTitle = this._config.columnName;
     
+    this._config.name = newFacetTitle;
     this._elmts.titleSpan.text(newFacetTitle);
   };
 
