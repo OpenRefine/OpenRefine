@@ -140,7 +140,7 @@ class ListFacet extends Facet {
     var facet_id = this._div.attr("id");
 
     this._div.empty().show().html(
-      '<div class="facet-title" bind="facetTitle">' +
+      '<div class="facet-title" bind="titleSpan">' +
         '<div class="grid-layout layout-tightest layout-full"><table><tr>' +
           '<td width="1%">' +
             '<a href="javascript:{}" title="'+$.i18n('core-facets/remove-facet')+'" class="facet-title-remove" bind="removeButton">&nbsp;</a>' +
@@ -152,7 +152,7 @@ class ListFacet extends Facet {
             '<a href="javascript:{}" class="facet-choice-link" bind="resetButton">'+$.i18n('core-facets/reset')+'</a>' +
             '<a href="javascript:{}" class="facet-choice-link" bind="invertButton">'+$.i18n('core-facets/invert')+'</a>' +
             '<a href="javascript:{}" class="facet-choice-link" bind="changeButton">'+$.i18n('core-facets/change')+'</a>' +
-            '<span class="facet-title-span" bind="facetTitle" title="'+$.i18n('core-facets/edit-facet-title', this._config.name)+'"></span>' +
+            '<span class="facet-title-span" bind="titleSpan" title="'+$.i18n('core-facets/edit-facet-title', this._config.name)+'"></span>' +
           '</td>' +
         '</tr></table></div>' +
       '</div>' +
@@ -171,7 +171,7 @@ class ListFacet extends Facet {
     );
     this._elmts = DOM.bind(this._div);
 
-    this._elmts.facetTitle.text(this._config.name);
+    this._elmts.titleSpan.text(this._config.name);
     this._elmts.changeButton.attr("title",$.i18n('core-facets/current-exp')+": " + this._config.expression).click(function() {
       self._elmts.expressionDiv.slideToggle(100, function() {
         if (self._elmts.expressionDiv.css("display") != "none") {
@@ -184,7 +184,7 @@ class ListFacet extends Facet {
     this._elmts.removeButton.click(function() { self._remove(); });
     this._elmts.minimizeButton.click(function() { self._minimize(); });
     this._elmts.resetButton.click(function() { self._reset(); });
-    this._elmts.facetTitle.click(function() { self._editTitle(); });
+    this._elmts.titleSpan.click(function() { self._editTitle(); });
     this._elmts.invertButton.click(function() { self._invert(); });
 
     this._elmts.choiceCountContainer.click(function() { self._copyChoices(); });
@@ -261,11 +261,11 @@ class ListFacet extends Facet {
 
     var invert = this._config.invert;
     if (invert) {
-      this._elmts.facetTitle.addClass("facet-title-inverted");
+      this._elmts.titleSpan.addClass("facet-title-inverted");
       this._elmts.bodyInnerDiv.addClass("facet-mode-inverted");
       this._elmts.invertButton.addClass("facet-mode-inverted");
     } else {
-      this._elmts.facetTitle.removeClass("facet-title-inverted");
+      this._elmts.titleSpan.removeClass("facet-title-inverted");
       this._elmts.bodyInnerDiv.removeClass("facet-mode-inverted");
       this._elmts.invertButton.removeClass("facet-mode-inverted");
     }

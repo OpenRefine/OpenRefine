@@ -136,7 +136,7 @@ class RangeFacet extends Facet {
           '<td>' +
             '<a href="javascript:{}" class="facet-choice-link" bind="resetButton">'+$.i18n('core-facets/reset')+'</a>' +
             '<a href="javascript:{}" class="facet-choice-link" bind="changeButton">'+$.i18n('core-facets/change')+'</a>' +
-            '<span class="facet-title-span" bind="facetTitle" title="'+$.i18n('core-facets/edit-facet-title')+'"></span>' +
+            '<span class="facet-title-span" bind="titleSpan" title="'+$.i18n('core-facets/edit-facet-title')+'"></span>' +
           '</td>' +
         '</tr></table></div>' +
       '</div>' +
@@ -152,7 +152,7 @@ class RangeFacet extends Facet {
     );
     this._elmts = DOM.bind(this._div);
 
-    this._elmts.facetTitle.text(this._config.name);
+    this._elmts.titleSpan.text(this._config.name);
     this._elmts.changeButton.attr("title",$.i18n('core-facets/current-expression')+": " + this._config.expression).click(function() {
       self._elmts.expressionDiv.slideToggle(100, function() {
         if (self._elmts.expressionDiv.css("display") != "none") {
@@ -169,7 +169,7 @@ class RangeFacet extends Facet {
       self._updateRest();
     });
     
-    this._elmts.facetTitle.click(function() { self._editTitle(); });
+    this._elmts.titleSpan.click(function() { self._editTitle(); });
     this._elmts.removeButton.click(function() { self._remove(); });
     this._elmts.minimizeButton.click(function() { self._minimize(); });
 

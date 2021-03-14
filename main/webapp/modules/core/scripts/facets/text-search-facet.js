@@ -82,7 +82,7 @@ class TextSearchFacet extends Facet {
     var self = this;
     var counter = this._uniqueIdForLabels();
     this._div.empty().show().html(
-      '<div class="facet-title" bind="facetTitle">' + 
+      '<div class="facet-title" bind="titleSpan">' + 
         '<div class="grid-layout layout-tightest layout-full"><table><tr>' +
           '<td width="1%">' +
             '<a href="javascript:{}" title="'+$.i18n('core-facets/remove-facet')+'" class="facet-title-remove" bind="removeButton">&nbsp;</a>' +
@@ -93,7 +93,7 @@ class TextSearchFacet extends Facet {
           '<td>' +
             '<a href="javascript:{}" class="facet-choice-link" bind="resetButton">'+$.i18n('core-facets/reset')+'</a>' +
             '<a href="javascript:{}" class="facet-choice-link" bind="invertButton">'+$.i18n('core-facets/invert')+'</a>' +
-            '<span class="facet-title-span" bind="facetTitle" title="'+$.i18n('core-facets/edit-facet-title')+'"></span>' +
+            '<span class="facet-title-span" bind="titleSpan" title="'+$.i18n('core-facets/edit-facet-title')+'"></span>' +
           '</td>' +
         '</tr></table></div>' +
       '</div>' +
@@ -110,7 +110,7 @@ class TextSearchFacet extends Facet {
 
     this._elmts = DOM.bind(this._div);
 
-    this._elmts.facetTitle.text(this._config.name);
+    this._elmts.titleSpan.text(this._config.name);
     if (this._config.caseSensitive) {
       this._elmts.caseSensitiveCheckbox.prop('checked', true);
     }
@@ -122,7 +122,7 @@ class TextSearchFacet extends Facet {
     this._elmts.minimizeButton.click(function() { self._minimize(); });
     this._elmts.resetButton.click(function() { self._reset(); });
     this._elmts.invertButton.click(function() { self._invert(); });
-    this._elmts.facetTitle.click(function() { self._editTitle(); });
+    this._elmts.titleSpan.click(function() { self._editTitle(); });
 
     this._elmts.caseSensitiveCheckbox.bind("change", function() {
       self._config.caseSensitive = this.checked;
@@ -181,10 +181,10 @@ class TextSearchFacet extends Facet {
   _update() {
     var invert = this._config.invert;
     if (invert) {
-      this._elmts.facetTitle.addClass("facet-title-inverted");
+      this._elmts.titleSpan.addClass("facet-title-inverted");
       this._elmts.invertButton.addClass("facet-mode-inverted");
     } else {
-      this._elmts.facetTitle.removeClass("facet-title-inverted");
+      this._elmts.titleSpan.removeClass("facet-title-inverted");
       this._elmts.invertButton.removeClass("facet-mode-inverted");
     }
   };
