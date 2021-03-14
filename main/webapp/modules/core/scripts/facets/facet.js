@@ -53,10 +53,10 @@ class Facet {
     var promptText = $.i18n('core-facets/facet-current-title', this._config.name);    
     var newFacetTitle = prompt(promptText, this._config.name);
 
-    if (newFacetTitle == null || newFacetTitle == "") return;
+    if (newFacetTitle == null || newFacetTitle == "") 
+      newFacetTitle = this._config.columnName;
     
-    this._config.name = newFacetTitle;
-    this._elmts.titleSpan.text(this._config.name);
+    this._elmts.titleSpan.text(newFacetTitle);
   };
 
   _remove() {
