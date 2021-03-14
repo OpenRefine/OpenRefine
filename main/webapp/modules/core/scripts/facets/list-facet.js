@@ -152,7 +152,7 @@ class ListFacet extends Facet {
             '<a href="javascript:{}" class="facet-choice-link" bind="resetButton">'+$.i18n('core-facets/reset')+'</a>' +
             '<a href="javascript:{}" class="facet-choice-link" bind="invertButton">'+$.i18n('core-facets/invert')+'</a>' +
             '<a href="javascript:{}" class="facet-choice-link" bind="changeButton">'+$.i18n('core-facets/change')+'</a>' +
-            '<span class="facet-title-span" bind="titleSpan" title="'+$.i18n('core-facets/edit-facet-title', this._config.name)+'"></span>' +
+            '<span class="facet-title-span" bind="titleSpan" title="'+$.i18n('core-facets/edit-facet-title', this._config.columnName)+'"></span>' +
           '</td>' +
         '</tr></table></div>' +
       '</div>' +

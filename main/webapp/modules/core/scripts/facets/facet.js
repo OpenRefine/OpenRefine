@@ -50,15 +50,13 @@ class Facet {
   };
 
   _editTitle() {
-    var currentFacetTitle = this._config.name;
-    
-    var promptText = $.i18n('core-facets/facet-current-title', currentFacetTitle);    
-    var newFacetTitle = prompt(promptText, currentFacetTitle);
+    var promptText = $.i18n('core-facets/facet-current-title', this._config.name);    
+    var newFacetTitle = prompt(promptText, this._config.name);
 
-    if (newFacetTitle != null) {
-      this._config.name = newFacetTitle;
-      this._elmts.facetTitle.text(this._config.name);
-    }
+    if (newFacetTitle == null || newFacetTitle == "") return;
+    
+    this._config.name = newFacetTitle;
+    this._elmts.titleSpan.text(this._config.name);
   };
 
   _remove() {
