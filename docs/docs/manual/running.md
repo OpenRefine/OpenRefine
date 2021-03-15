@@ -333,9 +333,9 @@ In the bottom left corner of the screen, look for <span class="menuItems">Prefer
 |Timeout for Google Drive import|googleReadTimeOut|Number (microseconds)|180000|500000|—|
 |Timeout for Google Drive authorization|googleConnectTimeOut|Number (microseconds)|180000|500000|—|
 |Maximum lag for Wikidata edit retries|wikibase.upload.maxLag|Number (seconds)|5|10|—|
+|Display of the reconciliation preview|cell-ui.previewMatchedCells|Boolean|true|false|v3.2|
 |Values for the choice of the number of rows to display|ui.browsing.pageSize|Array of number (JSON)|[ 5, 10, 25, 50 ]|[ 100,500,1000 ]|v3.4|
 |Width of the panel for facets/history|ui.browsing.facetsHistoryPanelWidth|Number (pixel)|300|500|v3.5|
-
 
 To leave the Preferences screen, click on the diamond “OpenRefine” logo.
 
