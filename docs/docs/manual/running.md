@@ -326,13 +326,16 @@ We use Weblate to provide translations for the interface. You can check [our pro
 
 In the bottom left corner of the screen, look for <span class="menuItems">Preferences</span>. At this time you can set preferences using a key/value pair: that is, selecting one of the keys below and setting a value for it. 
 
-|Setting|Key|Value syntax|Default|Example|
-|---|---|---|---|---|
-|Interface language|userLang|[ISO 639-1](https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes) two-digit code|en|fr|
-|Maximum facets|ui.browsing.listFacet.limit|Number|2000|5000|
-|Timeout for Google Drive import|googleReadTimeOut|Number (microseconds)|180000|500000|
-|Timeout for Google Drive authorization|googleConnectTimeOut|Number (microseconds)|180000|500000|
-|Maximum lag for Wikidata edit retries|wikibase.upload.maxLag|Number (seconds)|5|10|
+|Setting|Key|Value syntax|Default|Example|Version|
+|---|---|---|---|---|---|
+|Interface language|userLang|[ISO 639-1](https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes) two-digit code|en|fr|—|
+|Maximum facets|ui.browsing.listFacet.limit|Number|2000|5000|—|
+|Timeout for Google Drive import|googleReadTimeOut|Number (microseconds)|180000|500000|—|
+|Timeout for Google Drive authorization|googleConnectTimeOut|Number (microseconds)|180000|500000|—|
+|Maximum lag for Wikidata edit retries|wikibase.upload.maxLag|Number (seconds)|5|10|—|
+|Values for the choice of the number of rows to display|ui.browsing.pageSize|Array of number (JSON)|[ 5, 10, 25, 50 ]|[ 100,500,1000 ]|v3.4|
+|Width of the panel for facets/history|ui.browsing.facetsHistoryPanelWidth|Number (pixel)|300|500|v3.5|
+
 
 To leave the Preferences screen, click on the diamond “OpenRefine” logo.
 
