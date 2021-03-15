@@ -38,6 +38,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.regex.Pattern;
+import java.util.regex.PatternSyntaxException;
 
 /**
  * A scrutinizer that detects incorrect formats in text values (mostly
@@ -97,9 +98,13 @@ public class FormatScrutinizer extends SnakScrutinizer {
                 String regex = constraint.regularExpressionFormat;
                 Pattern pattern = null;
                 if (regex != null) {
-                    pattern = Pattern.compile(regex);
+                    try {
+                        pattern = Pattern.compile(regex);
+                        patterns.add(pattern);
+                    } catch(PatternSyntaxException e) {
+                        ; // silently ignore the regex error - it is not up to the OpenRefine user to fix the regex
+                    }
                 }
-                patterns.add(pattern);
             }
             _patterns.put(pid, patterns);
             return patterns;
