@@ -61,6 +61,16 @@ public class WbDateVariableTest extends WbVariableTest<TimeValue> {
         isSkipped("  2018-XX");
         isSkipped("invalid format");
     }
+    
+    @Test
+    public void testNullStringValue() {
+        isSkipped((String) null);
+    }
+    
+    @Test
+    public void testNullCell() {
+        isSkipped((Cell) null);
+    }
 
     @Test
     public void testNumber() {
