@@ -184,6 +184,7 @@ Refine._showHideLeftPanel = function() {
 
 Refine.showLeftPanel = function() {
   $('div#body').removeClass("hide-left-panel");
+  if(ui.browsingEngine == undefined || ui.browsingEngine.resize == undefined) return;
   resizeAll();
 };
 
