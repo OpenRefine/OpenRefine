@@ -503,8 +503,10 @@ ui_test() {
     add_option "-Drefine.headless=true"
     add_option "-Drefine.autoreload=false"
     add_option "-Dbutterfly.autoreload=false"
+    
+    find . | grep RefineServlet
  
-    run fork > /dev/null
+    run fork
     
     echo "Waiting for OpenRefine to load..."
     sleep 5
