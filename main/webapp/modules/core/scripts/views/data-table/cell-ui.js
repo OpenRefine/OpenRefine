@@ -149,7 +149,7 @@ DataTableCellUI.prototype._render = function() {
       .appendTo(divContentRecon);
 
       if (service && (service.view) && (service.view.url)) {
-        a.attr("href", encodeURI(service.view.url.replace("{{id}}", match.id)));
+        a.attr("href", service.view.url.replace("{{id}}", encodeURIComponent(match.id)));
       }
 
       if (DataTableCellUI.previewMatchedCells) {
@@ -196,7 +196,7 @@ DataTableCellUI.prototype._render = function() {
             .appendTo(liSpan);
 
             if ((service) && (service.view) && (service.view.url)) {
-              a.attr("href", encodeURI(service.view.url.replace("{{id}}", candidate.id)));
+              a.attr("href", service.view.url.replace("{{id}}", encodeURIComponent(candidate.id)));
             }
 
             self._previewOnHover(service, candidate, liSpan.parent(), liSpan, true);
@@ -485,7 +485,7 @@ DataTableCellUI.prototype._previewCandidateTopic = function(candidate, elmt, pre
   }
 
   if (preview && preview.url) { // Service has a preview URL associated with it
-    var url = encodeURI(preview.url.replace("{{id}}", id));
+    var url = preview.url.replace("{{id}}", encodeURIComponent(id));
     var iframe = $('<iframe></iframe>')
     .width(preview.width)
     .height(preview.height)
