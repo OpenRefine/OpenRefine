@@ -210,8 +210,16 @@ DataTableCellUI.prototype._render = function() {
             $('<span></span>').addClass("data-table-recon-score").text("(" + score + ")").appendTo(liSpan);
           };
 
+          bestScoreFacets = ui.browsingEngine.getJSON().facets.filter( facet => facet.expression == 'cell.recon.best.score' );
           for (var i = 0; i < candidates.length; i++) {
-            renderCandidate(candidates[i], i);
+            var score = candidates[i].score;
+            var renderIt = true;
+            for ( var j = 0; j < bestScoreFacets.length; j++ ) {
+              if ((score < bestScoreFacets[j].from) || (score > bestScoreFacets[j].to))
+                renderIt = false;
+            }
+            if ( renderIt )
+              renderCandidate(candidates[i], i);
           }
         }
 
