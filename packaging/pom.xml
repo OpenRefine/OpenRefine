@@ -285,7 +285,7 @@
             <groupId>net.sf.launch4j</groupId>
             <artifactId>launch4j</artifactId>
             <classifier>core</classifier>
-            <version>3.13-SNAPSHOT</version>
+            <version>3.14</version>
           </dependency>
           <dependency>
             <groupId>com.thoughtworks.xstream</groupId>
