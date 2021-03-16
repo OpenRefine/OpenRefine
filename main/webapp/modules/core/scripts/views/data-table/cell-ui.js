@@ -210,7 +210,7 @@ DataTableCellUI.prototype._render = function() {
             $('<span></span>').addClass("data-table-recon-score").text("(" + score + ")").appendTo(liSpan);
           };
 
-          bestScoreFacets = ui.browsingEngine.getJSON().facets.filter( facet => facet.expression == 'cell.recon.best.score' );
+          var bestScoreFacets = ui.browsingEngine.getJSON().facets.filter( facet => facet.expression == 'cell.recon.best.score' );
           for (var i = 0; i < candidates.length; i++) {
             var score = candidates[i].score;
             var renderIt = true;
