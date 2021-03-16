@@ -171,16 +171,17 @@ ScatterplotDialog.prototype._renderMatrix = function() {
             
             container.find("a").click(function() {
                 var options = {
-                    "name" : $(this).attr("title"),
-                    "cx" : $(this).attr("cx"), 
-                    "cy" : $(this).attr("cy"), 
-                    "l" : 150,
-                    "ex" : "value",
-                    "ey" : "value",
-                    "dot" : self._dot_size,
+                    "name" :  $(this).attr("title"),
+                    "cx" :    $(this).attr("cx"), 
+                    "cy" :    $(this).attr("cy"), 
+                    "l" :     150,
+                    "ex" :    "value",
+                    "ey" :    "value",
+                    "dot" :   self._dot_size,
                     "dim_x" : self._plot_method,
                     "dim_y" : self._plot_method,
-                    'r': self._rotation
+                    'r':      self._rotation,
+                    'id':     27
                 };
                 ui.browsingEngine.addFacet("scatterplot", options);
                 self._dismiss();

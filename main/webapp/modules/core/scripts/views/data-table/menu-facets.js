@@ -41,7 +41,8 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
         var config = {
           "name" : column.name,
           "columnName" : column.name, 
-          "expression" : expression
+          "expression" : expression,
+          "id" : (type == "list" ? 9 : 10)
         };
         if (type == "range") {
           config.mode = "range";
@@ -62,7 +63,8 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
             {
               "name": column.name,
               "columnName": column.name,
-              "expression": "value"
+              "expression": "value",
+              "id": 11
             }
         );
       }
@@ -77,7 +79,8 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
               "name": column.name,
               "columnName": column.name,
               "expression": "value",
-              "mode": "range"
+              "mode": "range",
+              "id": 12
             }
         );
       }
@@ -92,7 +95,8 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
               "name": column.name,
               "columnName": column.name,
               "expression": "value",
-              "mode": "range"
+              "mode": "range",
+              "id": 13
             }
         );
       }
@@ -132,7 +136,8 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
                 {
                   "name": column.name,
                   "columnName": column.name,
-                  "expression": "value.split(' ')"
+                  "expression": "value.split(' ')",
+                  "id": 14
                 }
             );
           }
@@ -147,8 +152,8 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
                 {
                   "name": column.name,
                   "columnName": column.name,
-                  "expression": "facetCount(value, 'value', '" +
-                  column.name + "') > 1"
+                  "expression": "facetCount(value, 'value', '" + column.name + "') > 1",
+                  "id": 15
                 }
             );
           }
@@ -164,7 +169,8 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
                   "name": column.name,
                   "columnName": column.name,
                   "expression": "value.log()",
-                  "mode": "range"
+                  "mode": "range",
+                  "id": 16
                 }
             );
           }
@@ -179,7 +185,8 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
                   "name": column.name,
                   "columnName": column.name,
                   "expression": "log(max(1, value))",
-                  "mode": "range"
+                  "mode": "range",
+                  "id": 17
                 }
             );
           }
@@ -195,7 +202,8 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
                   "name": column.name,
                   "columnName": column.name,
                   "expression": "value.length()",
-                  "mode": "range"
+                  "mode": "range",
+                  "id": 18
                 }
             );
           }
@@ -210,7 +218,8 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
                   "name": column.name,
                   "columnName": column.name,
                   "expression": "value.length().log()",
-                  "mode": "range"
+                  "mode": "range",
+                  "id": 19
                 }
             );
           }
@@ -225,7 +234,8 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
                   "name": column.name,
                   "columnName": column.name,
                   "expression": "value.unicode()",
-                  "mode": "range"
+                  "mode": "range",
+                  "id": 20
                 }
             );
           }
@@ -240,7 +250,8 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
                 {
                   "name": column.name,
                   "columnName": column.name,
-                  "expression": "isError(value)"
+                  "expression": "isError(value)",
+                  "id": 21
                 }
             );
           }
@@ -254,7 +265,8 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
                 {
                   "name": column.name,
                   "columnName": column.name,
-                  "expression": "isNull(value)"
+                  "expression": "isNull(value)",
+                  "id": 22
                 }
             );
           }
@@ -268,7 +280,8 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
                 {
                   "name": column.name,
                   "columnName": column.name,
-                  "expression": "isEmptyString(value)"
+                  "expression": "isEmptyString(value)",
+                  "id": 23
                 }
             );
           }
@@ -282,7 +295,8 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
                 {
                   "name": column.name,
                   "columnName": column.name,
-                  "expression": "isBlank(value)"
+                  "expression": "isBlank(value)",
+                  "id": 24
                 }
             );
           }
@@ -296,12 +310,13 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
       label: $.i18n('core-views/text-filter'),
       click: function() {
         ui.browsingEngine.addFacet(
-            "text", 
+            "text",
             {
               "name" : column.name,
-              "columnName" : column.name, 
+              "columnName" : column.name,
               "mode" : "text",
-              "caseSensitive" : false
+              "caseSensitive" : false,
+              "id" : 25
             }
         );
       }

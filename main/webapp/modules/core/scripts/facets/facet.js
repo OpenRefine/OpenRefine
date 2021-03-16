@@ -36,16 +36,51 @@ class Facet {
   	this._div = div;
   	this._config = config;
   	
-  	if(this._config.nameAtCreation == "" || this._config.nameAtCreation == null)
-  	  this._config.nameAtCreation = config.name;
-  	  
-  	if(this._config.source == "" || this._config.source == null)
-  	  this._config.source = config.columnName;
+  	if(this._config.id == null || this._config.id == "") {
+  	  this.id = 0;
+  	} else {
+  	  this.id = this._config.id;
+  	}
+  	delete this._config.id;
   	
+  	if(Facet.references[this.id].snfcn) {
+  	  this.nameAtCreation = $.i18n(Facet.references[this.id].label);
+  	} else {
+  	  this.nameAtCreation = this._config.columnName;
+  	}
+  	
+  	this.source = Facet.references[this.id].source;
+  	this._buildToolTipText();
+
   	this._options = options || {};
   	this._minimizeState = false;
   };
-
+  
+  _buildToolTipText() {
+    var sourceText = this.source ? this.source : $.i18n('core-facets/column-tooltip', this._config.columnName);
+  	
+    this.facetToolTipText = $.i18n('core-facets/edit-facet-title', sourceText);
+    
+    if(!this._config.expression && this._config.name == this.nameAtCreation)
+      return;
+    
+    this.facetToolTipText += "\n";
+    
+    if(this._config.expression) 
+      this.facetToolTipText += "\n" + $.i18n('core-facets/expr-tooltip', this._config.expression);    
+    
+    if(this._config.name != this.nameAtCreation)
+      this.facetToolTipText += "\n" + $.i18n('core-facets/original-name-tooltip', this.nameAtCreation);
+  }
+  
+  getJSONByID() {
+    var o = this.getJSON();
+    
+    o.id = this.id;
+    
+    return o
+  }
+  
   _minimize() {
   	if(!this._minimizeState) {
   		this._div.addClass("facet-state-minimize");
@@ -64,6 +99,8 @@ class Facet {
       newFacetTitle = this._config.nameAtCreation;
     
     this._config.name = newFacetTitle;
+    this._buildToolTipText();
+    this._elmts.titleSpan.attr("title", this.facetToolTipText);
     this._elmts.titleSpan.text(newFacetTitle);
   };
 
@@ -82,4 +119,34 @@ class Facet {
 
   dispose() {
   };
+};
+
+Facet.references = {
+   0: { source: "<unknown>",           label: 'core-views/unknown-facet-id',     snfcn: true,  type: '' },
+   2: { source: "<stars>",             label: 'core-views/starred-rows',         snfcn: true,  type: 'list' },
+   3: { source: "<flags>",             label: 'core-views/flagged-rows',         snfcn: true,  type: 'list' },
+   4: { source: "<blank-rows>",        label: 'core-views/blank-rows',           snfcn: true,  type: 'list' },
+   5: { source: "<blank-values>",      label: 'core-views/blank-values',         snfcn: true,  type: 'list' },
+   6: { source: "<blank-records>",     label: 'core-views/blank-records',        snfcn: true,  type: 'list' },
+   7: { source: "<non-blank-values>",  label: 'core-views/non-blank-values',     snfcn: true,  type: 'list' },
+   8: { source: "<non-blank-records>", label: 'core-views/non-blank-records',    snfcn: true,  type: 'list' },
+   9: { source: "",                    label: 'core-views/custom-facet',         snfcn: false, type: 'list' },
+  10: { source: "",                    label: 'core-views/custom-numeric-label', snfcn: false, type: '' },
+  11: { source: "",                    label: 'core-views/text-facet',           snfcn: false, type: 'list' },
+  12: { source: "",                    label: 'core-views/numeric-facet',        snfcn: false, type: 'range' },
+  13: { source: "",                    label: 'core-views/timeline-facet',       snfcn: false, type: 'list' },
+  14: { source: "",                    label: 'core-views/word-facet',           snfcn: false, type: 'list' },
+  15: { source: "",                    label: 'core-views/duplicates-facet',     snfcn: false, type: 'list' },
+  16: { source: "",                    label: 'core-views/numeric-log-facet',    snfcn: false, type: 'range' },
+  17: { source: "",                    label: 'core-views/bounded-log-facet',    snfcn: false, type: 'range' },
+  18: { source: "",                    label: 'core-views/text-length-facet',    snfcn: false, type: 'range' },
+  19: { source: "",                    label: 'core-views/log-length-facet',     snfcn: false, type: 'range' },
+  20: { source: "",                    label: 'core-views/unicode-facet',        snfcn: false, type: 'range' },
+  21: { source: "",                    label: 'core-views/facet-error',          snfcn: false, type: 'list' },
+  22: { source: "",                    label: 'core-views/facet-null',           snfcn: false, type: 'list' },
+  23: { source: "",                    label: 'core-views/facet-empty-string',   snfcn: false, type: 'list' },
+  24: { source: "",                    label: 'core-views/facet-blank',          snfcn: false, type: 'list' },
+  25: { source: "",                    label: 'core-views/text-filter',          snfcn: false, type: 'list' },
+  26: { source: "",                    label: 'core-views/facet-by-count',       snfcn: false, type: 'range' },
+  27: { source: "",                    label: 'core-views/scatterplot-facet',    snfcn: false, type: 'scatterplot' }
 };

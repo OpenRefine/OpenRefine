@@ -54,7 +54,7 @@ class TextSearchFacet extends Facet {
 
   getUIState() {
     var json = {
-        c: this.getJSON(),
+        c: this.getJSONByID(),
         o: this._options
     };
 
@@ -66,8 +66,6 @@ class TextSearchFacet extends Facet {
         type: "text",
         name: this._config.name,
         columnName: this._config.columnName,
-        source: this._config.source,
-        nameAtCreation: this._config.nameAtCreation,
         mode: this._config.mode,
         caseSensitive: this._config.caseSensitive,
         invert: this._config.invert,
@@ -87,15 +85,15 @@ class TextSearchFacet extends Facet {
       '<div class="facet-title" bind="facetTitle">' + 
         '<div class="grid-layout layout-tightest layout-full"><table><tr>' +
           '<td width="1%">' +
-            '<a href="javascript:{}" title="'+$.i18n('core-facets/remove-facet')+'" class="facet-title-remove" bind="removeButton">&nbsp;</a>' +
+            '<a href="javascript:{}" class="facet-title-remove" bind="removeButton">&nbsp;</a>' +
           '</td>' +
           '<td width="1%">' +
-            '<a href="javascript:{}" title="'+$.i18n('core-facets/minimize-facet')+'" class="facet-title-minimize" bind="minimizeButton">&nbsp;</a>' +
+            '<a href="javascript:{}" class="facet-title-minimize" bind="minimizeButton">&nbsp;</a>' +
           '</td>' +
           '<td>' +
             '<a href="javascript:{}" class="facet-choice-link" bind="resetButton">'+$.i18n('core-facets/reset')+'</a>' +
             '<a href="javascript:{}" class="facet-choice-link" bind="invertButton">'+$.i18n('core-facets/invert')+'</a>' +
-            '<span class="facet-title-span" bind="titleSpan" title="'+$.i18n('core-facets/edit-facet-title', this._config.source)+'"></span>' +
+            '<span class="facet-title-span" bind="titleSpan"></span>' +
           '</td>' +
         '</tr></table></div>' +
       '</div>' +
@@ -112,7 +110,12 @@ class TextSearchFacet extends Facet {
 
     this._elmts = DOM.bind(this._div);
 
+    this._elmts.removeButton.attr("title",$.i18n('core-facets/remove-facet'));
+    this._elmts.minimizeButton.attr("title",$.i18n('core-facets/minimize-facet'));
+    this._elmts.titleSpan.attr("title",$.i18n('core-facets/edit-facet-title', this.facetToolTipText));
+
     this._elmts.titleSpan.text(this._config.name);
+    
     if (this._config.caseSensitive) {
       this._elmts.caseSensitiveCheckbox.prop('checked', true);
     }
