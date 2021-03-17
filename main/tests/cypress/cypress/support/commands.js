@@ -11,6 +11,10 @@
 import 'cypress-file-upload';
 import 'cypress-wait-until';
 
+import { addMatchImageSnapshotCommand } from 'cypress-image-snapshot/command';
+
+addMatchImageSnapshotCommand({ customDiffDir: 'cypress/snapshots_diffs' });
+
 /**
  * Return the .facets-container for a given facet name
  */
