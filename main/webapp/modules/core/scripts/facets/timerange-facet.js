@@ -176,9 +176,9 @@ class TimeRangeFacet extends Facet {
       self._updateRest();
     });
     
-    this._elmts.removeButton.click(function() { self._remove(); });
-    this._elmts.minimizeButton.click(function() { self._minimize(); });
-    this._elmts.titleSpan.click(function() { self._editTitle(); });
+    this._elmts.removeButton.on('click',function() { self._remove(); });
+    this._elmts.minimizeButton.on('click',function() { self._minimize(); });
+    this._elmts.titleSpan.on('click',function() { self._editTitle(); });
 
     this._histogram = new HistogramWidget(this._elmts.histogramDiv, { binColors: [ "#ccccff", "#6666ff" ] });
     this._sliderWidget = new SliderWidget(this._elmts.sliderWidgetDiv);

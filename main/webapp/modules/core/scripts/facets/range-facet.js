@@ -161,15 +161,15 @@ class RangeFacet extends Facet {
     
     this._elmts.titleSpan.text(this._config.name);
     
-    this._elmts.changeButton.click(function() {
+    this._elmts.changeButton.on('click',function() {
       self._elmts.expressionDiv.slideToggle(100, function() {
         if (self._elmts.expressionDiv.css("display") != "none") {
           self._editExpression();
         }
       });
     });
-    
-    this._elmts.expressionDiv.text(this._config.expression).click(function() { 
+
+    this._elmts.expressionDiv.text(this._config.expression).on('click',function() { 
       self._editExpression(); 
     }).hide();
 
@@ -178,9 +178,9 @@ class RangeFacet extends Facet {
       self._updateRest();
     });
     
-    this._elmts.titleSpan.click(function() { self._editTitle(); });
-    this._elmts.removeButton.click(function() { self._remove(); });
-    this._elmts.minimizeButton.click(function() { self._minimize(); });
+    this._elmts.removeButton.on('click',function() { self._remove(); });
+    this._elmts.minimizeButton.on('click',function() { self._minimize(); });
+    this._elmts.titleSpan.on('click',function() { self._editTitle(); });
 
     this._histogram = new HistogramWidget(this._elmts.histogramDiv, { binColors: [ "#bbccff", "#88aaee" ] });
     this._sliderWidget = new SliderWidget(this._elmts.sliderWidgetDiv);
