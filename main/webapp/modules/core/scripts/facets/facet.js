@@ -111,18 +111,18 @@ _remove() {
 };
 
 Facet.references = {
-   "row.starred": 
-     { source: "<stars>", label: 'core-views/starred-rows' },
-   "row.flagged": 
-     { source: "<flags>", label: 'core-views/flagged-rows' },
-   "(filter(row.columnNames,cn,isNonBlank(cells[cn].value)).length()==0).toString()": 
-     { source: "<blank-rows>", label: 'core-views/blank-rows' },
-   "filter(row.columnNames,cn,isBlank(cells[cn].value))": 
-     { source: "<blank-values>", label: 'core-views/blank-values' },
-   "filter(row.columnNames,cn,isBlank(if(row.record.fromRowIndex==row.index,row.record.cells[cn].value.join(\"\"),true)))": 
-     { source: "<blank-records>", label: 'core-views/blank-records' },
-   "filter(row.columnNames,cn,isNonBlank(cells[cn].value))": 
-     { source: "<non-blank-values>", label: 'core-views/non-blank-values' },
-   "filter(row.columnNames,cn,isNonBlank(if(row.record.fromRowIndex==row.index,row.record.cells[cn].value.join(\"\"),null)))": 
-     { source: "<non-blank-records>", label: 'core-views/non-blank-records' }
-}   
+  "row.starred": 
+    { source: "<stars>", label: 'core-views/starred-rows' },
+  "row.flagged": 
+    { source: "<flags>", label: 'core-views/flagged-rows' },
+  "(filter(row.columnNames,cn,isNonBlank(cells[cn].value)).length()==0).toString()": 
+    { source: "<blank-rows>", label: 'core-views/blank-rows' },
+  "filter(row.columnNames,cn,isBlank(cells[cn].value))": 
+    { source: "<blank-values>", label: 'core-views/blank-values' },
+  "filter(row.columnNames,cn,isBlank(if(row.record.fromRowIndex==row.index,row.record.cells[cn].value.join(\"\"),true)))": 
+    { source: "<blank-records>", label: 'core-views/blank-records' },
+  "filter(row.columnNames,cn,isNonBlank(cells[cn].value))": 
+    { source: "<non-blank-values>", label: 'core-views/non-blank-values' },
+  "filter(row.columnNames,cn,isNonBlank(if(row.record.fromRowIndex==row.index,row.record.cells[cn].value.join(\"\"),null)))": 
+    { source: "<non-blank-records>", label: 'core-views/non-blank-records' }
+}
