@@ -17,7 +17,7 @@ describe(__filename, function () {
   // });
 
   it('Verify the scatterplot matrix order of elements', function () {
-  	cy.loadAndVisitProject('food.small', 'food-small');
+    cy.loadAndVisitProject('food.small', 'food-small');
 
     cy.castColumnTo('Water', 'number');
     cy.castColumnTo('Energ_Kcal', 'number');
@@ -25,25 +25,29 @@ describe(__filename, function () {
 
     cy.columnActionClick('Protein', ['Facet', 'Scatterplot facet']);
 
-    cy.get('.scatterplot-matrix-table').within(()=>{
+    cy.get('.scatterplot-matrix-table').within(() => {
+      // Check row headers
+      cy.get('tr:first-child .column_header').should('to.contain', 'Water');
+      cy.get('tr:nth-child(2) .column_header').should(
+        'to.contain',
+        'Energ_Kcal'
+      );
+      cy.get('tr:nth-child(3) .column_header').should('to.contain', 'Protein');
 
-    	// Check row headers
-    	cy.get('tr:first-child .column_header').should('to.contain', 'Water');
-    	cy.get('tr:nth-child(2) .column_header').should('to.contain', 'Energ_Kcal');
-    	cy.get('tr:nth-child(3) .column_header').should('to.contain', 'Protein');
-
-
-    	// check first row
-    	cy.get('tr:first-child td:nth-child(2) a').invoke('attr', 'title').should('eq', 'Water (x) vs. Energ_Kcal (y)');
-      cy.get('tr:first-child td:nth-child(3) a').invoke('attr', 'title').should('eq', 'Water (x) vs. Protein (y)');
+      // check first row
+      cy.get('tr:first-child td:nth-child(2) a')
+        .invoke('attr', 'title')
+        .should('eq', 'Water (x) vs. Energ_Kcal (y)');
+      cy.get('tr:first-child td:nth-child(3) a')
+        .invoke('attr', 'title')
+        .should('eq', 'Water (x) vs. Protein (y)');
 
       // check second row
-      cy.get('tr:nth-child(2) td:nth-child(2) a').invoke('attr', 'title').should('eq', 'Energ_Kcal (x) vs. Protein (y)');
-    })
+      cy.get('tr:nth-child(2) td:nth-child(2) a')
+        .invoke('attr', 'title')
+        .should('eq', 'Energ_Kcal (x) vs. Protein (y)');
+    });
   });
-
-
-
 
   it('Visual testing for the lin/log options', function () {
     cy.loadAndVisitProject('food.small', 'food-small');
@@ -56,10 +60,14 @@ describe(__filename, function () {
 
     // test against the linear screenshot
     cy.get('.scatterplot-selectors label').contains('lin').click();
-    cy.get('.scatterplot-matrix-table').matchImageSnapshot('scatterplot-lin', { failureThreshold: 5});
+    cy.get('.scatterplot-matrix-table').matchImageSnapshot('scatterplot-lin', {
+      failureThreshold: 5,
+    });
 
     // test against the linear screenshot
     cy.get('.scatterplot-selectors label').contains('log').click();
-    cy.get('.scatterplot-matrix-table').matchImageSnapshot('scatterplot-log', { failureThreshold: 5});
+    cy.get('.scatterplot-matrix-table').matchImageSnapshot('scatterplot-log', {
+      failureThreshold: 5,
+    });
   });
 });
