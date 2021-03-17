@@ -54,7 +54,19 @@ li.facet-container {
   cursor: move;
   border-bottom: 1px solid @chrome_primary;
   .rounded_corners_top(6px);
-  
+  }
+
+span.facet-title-span {
+  padding: 3px;
+  cursor: text;
+  border: 1px solid @chrome_primary;
+  border-top: 1px solid @chrome_primary;
+  }
+
+span.facet-title-span:hover {
+  background: @fill_editable;
+  border: 1px solid #ccc;
+  border-top: 1px solid #aaa;
   }
 
 .facet-title-inverted {
@@ -185,12 +197,12 @@ li.facet-state-minimize a.facet-title-minimize:hover {
   font-weight: bold;
   color: #ff6a00;
   }
-  
+
 .facet-mode-inverted .facet-choice-selected .facet-choice-label {
   text-decoration: line-through;
   color: black;
   }
-  
+
 .facet-choice-link.facet-mode-inverted {
   text-decoration: line-through;
   color: black;

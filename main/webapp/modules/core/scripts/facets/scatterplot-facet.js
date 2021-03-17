@@ -68,6 +68,7 @@ class ScatterplotFacet extends Facet {
   getJSON() {
     this._config.type = "scatterplot";
     var dot = this._config.dot;
+
     if (typeof dot == 'number') this._config.dot.toFixed(2);
     return this._config;
   };
@@ -86,17 +87,17 @@ class ScatterplotFacet extends Facet {
     var facet_id = container.attr("id");
 
     this._div.empty().show().html(
-      '<div class="facet-title">' +
+      '<div class="facet-title" bind="facetTitle">' +
         '<div class="grid-layout layout-tightest layout-full"><table><tr>' +
           '<td width="1%">' +
-            '<a href="javascript:{}" title="'+$.i18n('core-facets/remove-facet')+'" class="facet-title-remove" bind="removeButton">&nbsp;</a>' +
+            '<a href="javascript:{}" class="facet-title-remove" bind="removeButton">&nbsp;</a>' +
           '</td>' +
           '<td width="1%">' +
-            '<a href="javascript:{}" title="'+$.i18n('core-facets/minimize-facet')+'" class="facet-title-minimize" bind="minimizeButton">&nbsp;</a>' +
+            '<a href="javascript:{}" class="facet-title-minimize" bind="minimizeButton">&nbsp;</a>' +
           '</td>' +
           '<td>' +
             '<a href="javascript:{}" class="facet-choice-link" bind="resetButton">'+$.i18n('core-facets/reset')+'</a>' +
-            '<span bind="titleSpan"></span>' +
+            '<span class="facet-title-span" bind="titleSpan"></span>' +
           '</td>' +
         '</tr></table></div>' +
       '</div>' +
@@ -134,11 +135,17 @@ class ScatterplotFacet extends Facet {
         '<div class="facet-scatterplot-status" bind="statusDiv"></div>' +
       '</div>'
     );
+    
     this._elmts = DOM.bind(this._div);
+
+    this._elmts.removeButton.attr("title",$.i18n('core-facets/remove-facet'));
+    this._elmts.minimizeButton.attr("title",$.i18n('core-facets/minimize-facet'));
+    this._elmts.titleSpan.attr("title",$.i18n('core-facets/edit-facet-title', this.facetToolTipText));
 
     this._elmts.titleSpan.text(this._config.name);
     this._elmts.removeButton.click(function() { self._remove(); });
     this._elmts.minimizeButton.click(function() { self._minimize(); });
+    this._elmts.titleSpan.click(function() { self._editTitle(); });
     
     this._elmts.resetButton.click(function() {
       self.reset();

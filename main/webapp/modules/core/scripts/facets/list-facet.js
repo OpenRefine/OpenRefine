@@ -79,11 +79,11 @@ class ListFacet extends Facet {
         columnName: this._config.columnName,
         expression: this._config.expression,
         omitBlank: "omitBlank" in this._config ? this._config.omitBlank : false,
-            omitError: "omitError" in this._config ? this._config.omitError : false,
-                selection: [],
-                selectBlank: this._blankChoice !== null && this._blankChoice.s,
-                selectError: this._errorChoice !== null && this._errorChoice.s,
-                invert: this._config.invert
+        omitError: "omitError" in this._config ? this._config.omitError : false,
+        selection: [],
+        selectBlank: this._blankChoice !== null && this._blankChoice.s,
+        selectError: this._errorChoice !== null && this._errorChoice.s,
+        invert: this._config.invert
     };
     for (var i = 0; i < this._selection.length; i++) {
       var choice = {
@@ -143,20 +143,20 @@ class ListFacet extends Facet {
       '<div class="facet-title" bind="facetTitle">' +
         '<div class="grid-layout layout-tightest layout-full"><table><tr>' +
           '<td width="1%">' +
-            '<a href="javascript:{}" title="'+$.i18n('core-facets/remove-facet')+'" class="facet-title-remove" bind="removeButton">&nbsp;</a>' +
+            '<a href="javascript:{}"  class="facet-title-remove" bind="removeButton">&nbsp;</a>' +
           '</td>' +
           '<td width="1%">' +
-            '<a href="javascript:{}" title="'+$.i18n('core-facets/minimize-facet')+'" class="facet-title-minimize" bind="minimizeButton">&nbsp;</a>' +
+            '<a href="javascript:{}" class="facet-title-minimize" bind="minimizeButton">&nbsp;</a>' +
           '</td>' +
           '<td>' +
             '<a href="javascript:{}" class="facet-choice-link" bind="resetButton">'+$.i18n('core-facets/reset')+'</a>' +
             '<a href="javascript:{}" class="facet-choice-link" bind="invertButton">'+$.i18n('core-facets/invert')+'</a>' +
             '<a href="javascript:{}" class="facet-choice-link" bind="changeButton">'+$.i18n('core-facets/change')+'</a>' +
-          '<span class="facet-title-span" bind="titleSpan" title="Click here to edit the name of the facet"></span>' +
+            '<span class="facet-title-span" bind="titleSpan"></span>' +
           '</td>' +
         '</tr></table></div>' +
       '</div>' +
-      '<div class="facet-expression" bind="expressionDiv" title="'+$.i18n('core-facets/click-to-edit')+'"></div>' +
+      '<div class="facet-expression" bind="expressionDiv"></div>' +
       '<div class="facet-controls" bind="controlsDiv" style="display:none;">' +
         '<a bind="choiceCountContainer" class="action" href="javascript:{}"></a> ' +
         '<span class="facet-controls-sortControls" bind="sortGroup">'+$.i18n('core-facets/sort-by')+': ' +
@@ -169,10 +169,18 @@ class ListFacet extends Facet {
         '<div class="facet-body-inner" bind="bodyInnerDiv"></div>' +
       '</div>'
     );
+    
     this._elmts = DOM.bind(this._div);
+    
+    this._elmts.removeButton.attr("title", $.i18n('core-facets/remove-facet'));
+    this._elmts.minimizeButton.attr("title", $.i18n('core-facets/minimize-facet'));
+    this._elmts.titleSpan.attr("title", this.facetToolTipText);
+    this._elmts.expressionDiv.attr("title", $.i18n('core-facets/click-to-edit'));
+    this._elmts.changeButton.attr("title", $.i18n('core-facets/current-exp')+": " + this._config.expression);
 
     this._elmts.titleSpan.text(this._config.name);
-    this._elmts.changeButton.attr("title",$.i18n('core-facets/current-exp')+": " + this._config.expression).click(function() {
+    
+    this._elmts.changeButton.click(function() {
       self._elmts.expressionDiv.slideToggle(100, function() {
         if (self._elmts.expressionDiv.css("display") != "none") {
           self._editExpression();
@@ -184,6 +192,7 @@ class ListFacet extends Facet {
     this._elmts.removeButton.click(function() { self._remove(); });
     this._elmts.minimizeButton.click(function() { self._minimize(); });
     this._elmts.resetButton.click(function() { self._reset(); });
+    this._elmts.titleSpan.click(function() { self._editTitle(); });
     this._elmts.invertButton.click(function() { self._invert(); });
 
     this._elmts.choiceCountContainer.click(function() { self._copyChoices(); });

@@ -31,7 +31,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
  */
 
-class TimeRangeFacet extends Facet{
+class TimeRangeFacet extends Facet {
   constructor(div, config, options) {
     super(div, config, options);
 
@@ -123,22 +123,22 @@ class TimeRangeFacet extends Facet{
     .empty()
     .show()
     .html(
-      '<div class="facet-title" bind="headerDiv">' +
+      '<div class="facet-title" bind="facetTitle">' +
         '<div class="grid-layout layout-tightest layout-full"><table><tr>' +
           '<td width="1%">' +
-            '<a href="javascript:{}" title="'+$.i18n('core-facets/remove-facet')+'" class="facet-title-remove" bind="removeButton">&nbsp;</a>' +
+            '<a href="javascript:{}" class="facet-title-remove" bind="removeButton">&nbsp;</a>' +
           '</td>' +
           '<td width="1%">' +
-            '<a href="javascript:{}" title="'+$.i18n('core-facets/minimize-facet')+'" class="facet-title-minimize" bind="minimizeButton">&nbsp;</a>' +
+            '<a href="javascript:{}" class="facet-title-minimize" bind="minimizeButton">&nbsp;</a>' +
           '</td>' +
           '<td>' +
             '<a href="javascript:{}" class="facet-choice-link" bind="resetButton">'+$.i18n('core-facets/reset')+'</a>' +
             '<a href="javascript:{}" class="facet-choice-link" bind="changeButton">'+$.i18n('core-facets/change')+'</a>' +
-            '<span bind="facetTitle"></span>' +
+            '<span class="facet-title-span" bind="titleSpan"></span>' +
           '</td>' +
         '</tr></table></div>' +
       '</div>' +
-      '<div class="facet-expression" bind="expressionDiv" title="'+$.i18n('core-facets/click-to-edit')+'"></div>' +
+      '<div class="facet-expression" bind="expressionDiv"></div>' +
       '<div class="facet-range-body">' +
         '<div class="facet-range-message" bind="messageDiv">'+$.i18n('core-facets/loading')+'</div>' +
         '<div class="facet-range-slider" bind="sliderWidgetDiv">' +
@@ -148,16 +148,25 @@ class TimeRangeFacet extends Facet{
         '<div class="facet-range-other-choices" bind="otherChoicesDiv"></div>' +
       '</div>'
     );
+    
     this._elmts = DOM.bind(this._div);
 
-    this._elmts.facetTitle.text(this._config.name);
-    this._elmts.changeButton.attr("title",$.i18n('core-facets/current-exp')+": " + this._config.expression).click(function() {
+    this._elmts.removeButton.attr("title",$.i18n('core-facets/remove-facet'));
+    this._elmts.minimizeButton.attr("title",$.i18n('core-facets/minimize-facet'));
+    this._elmts.titleSpan.attr("title",$.i18n('core-facets/edit-facet-title', this.facetToolTipText));
+    this._elmts.expressionDiv.attr("title",$.i18n('core-facets/click-to-edit'));
+    this._elmts.changeButton.attr("title",$.i18n('core-facets/current-exp')+": " + this._config.expression);
+
+    this._elmts.titleSpan.text(this._config.name);
+
+    this._elmts.changeButton.click(function() {
       self._elmts.expressionDiv.slideToggle(100, function() {
         if (self._elmts.expressionDiv.css("display") != "none") {
           self._editExpression();
         }
       });
     });
+    
     this._elmts.expressionDiv.text(this._config.expression).click(function() { 
       self._editExpression(); 
     }).hide();
@@ -169,6 +178,7 @@ class TimeRangeFacet extends Facet{
     
     this._elmts.removeButton.click(function() { self._remove(); });
     this._elmts.minimizeButton.click(function() { self._minimize(); });
+    this._elmts.titleSpan.click(function() { self._editTitle(); });
 
     this._histogram = new HistogramWidget(this._elmts.histogramDiv, { binColors: [ "#ccccff", "#6666ff" ] });
     this._sliderWidget = new SliderWidget(this._elmts.sliderWidgetDiv);
