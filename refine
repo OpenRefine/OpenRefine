@@ -504,7 +504,7 @@ ui_test() {
     add_option "-Drefine.autoreload=false"
     add_option "-Dbutterfly.autoreload=false"
     
-    run fork
+    run fork > /dev/null
     
     echo "Waiting for OpenRefine to load..."
     sleep 5
