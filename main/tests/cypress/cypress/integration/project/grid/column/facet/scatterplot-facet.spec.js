@@ -125,7 +125,7 @@ describe(__filename, function () {
     });
   });
 
-  it('Test image rendering inside the facet', function () {
+  it('Test image rendering inside the facet (visual testing)', function () {
     cy.loadAndVisitProject('food.small', 'food-small');
     cy.castColumnTo('Water', 'number');
     cy.castColumnTo('Energ_Kcal', 'number');
