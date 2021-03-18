@@ -286,6 +286,9 @@ Cypress.Commands.add(
   (fixture, projectName = Date.now()) => {
     cy.loadProject(fixture, projectName).then((projectId) => {
       cy.visit(Cypress.env('OPENREFINE_URL') + '/project?project=' + projectId);
+
+      cy.get('#left-panel', { log: false }).should('be.visible');
+      cy.get('#right-panel', { log: false }).should('be.visible');
     });
   }
 );
