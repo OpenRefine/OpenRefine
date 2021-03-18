@@ -1,3 +1,10 @@
+// Common configuration for scatterplot snapshots
+// 5% is required, there are some differences between a local run and the images on ubuntu (github actions)
+const matchImageSnapshotOptions = {
+  failureThreshold: 5,
+  failureThresholdType: 'percent',
+};
+
 /**
  * Those tests are generic test to ensure the general behavior of the various facets components
  * It's using "text facet" as it is the most simple facet
@@ -10,7 +17,8 @@ describe(__filename, function () {
     cy.castColumnTo('Protein', 'number');
     cy.columnActionClick('Protein', ['Facet', 'Scatterplot facet']);
     cy.get('.scatterplot-matrix-table').matchImageSnapshot(
-      'scatterplot-default'
+      'scatterplot-default',
+      matchImageSnapshotOptions
     );
   });
 
@@ -53,49 +61,34 @@ describe(__filename, function () {
     cy.get('.scatterplot-selectors label').contains('lin').click();
     cy.get('.scatterplot-matrix-table').matchImageSnapshot(
       'scatterplot-matrix-lin',
-      {
-        failureThreshold: 5,
-        failureThresholdType: 'percent',
-      }
+      matchImageSnapshotOptions
     );
     // test log rendering
     cy.get('.scatterplot-selectors label').contains('log').click();
     cy.get('.scatterplot-matrix-table').matchImageSnapshot(
       'scatterplot-matrix-log',
-      {
-        failureThreshold: 5,
-        failureThresholdType: 'percent',
-      }
+      matchImageSnapshotOptions
     );
 
     // test the small dots rendering
     cy.get('label[title="Small Dot Size"]').click();
     cy.get('.scatterplot-matrix-table').matchImageSnapshot(
       'scatterplot-matrix-small-dot',
-      {
-        failureThreshold: 5,
-        failureThresholdType: 'percent',
-      }
+      matchImageSnapshotOptions
     );
 
     // test the regular dots rendering
     cy.get('label[title="Regular Dot Size"]').click();
     cy.get('.scatterplot-matrix-table').matchImageSnapshot(
       'scatterplot-matrix-regulat-dot',
-      {
-        failureThreshold: 5,
-        failureThresholdType: 'percent',
-      }
+      matchImageSnapshotOptions
     );
 
     // test the big dots rendering
     cy.get('label[title="Big Dot Size"]').click();
     cy.get('.scatterplot-matrix-table').matchImageSnapshot(
       'scatterplot-matrix-big-dot',
-      {
-        failureThreshold: 5,
-        failureThresholdType: 'percent',
-      }
+      matchImageSnapshotOptions
     );
   });
 
@@ -141,49 +134,34 @@ describe(__filename, function () {
     cy.get('#left-panel .scatterplot-selectors label').contains('lin').click();
     cy.get('#left-panel .facet-scatterplot-plot-container').matchImageSnapshot(
       'scatterplot-facet-lin',
-      {
-        failureThreshold: 5,
-        failureThresholdType: 'percent',
-      }
+      matchImageSnapshotOptions
     );
     // test log rendering
     cy.get('#left-panel .scatterplot-selectors label').contains('log').click();
     cy.get('#left-panel .facet-scatterplot-plot-container').matchImageSnapshot(
       'scatterplot-facet-log',
-      {
-        failureThreshold: 5,
-        failureThresholdType: 'percent',
-      }
+      matchImageSnapshotOptions
     );
 
     // test the small dots rendering
     cy.get('#left-panel label[title="Small Dot Size"]').click();
     cy.get('#left-panel .facet-scatterplot-plot-container').matchImageSnapshot(
       'scatterplot-facet-small-dot',
-      {
-        failureThreshold: 5,
-        failureThresholdType: 'percent',
-      }
+      matchImageSnapshotOptions
     );
 
     // test the regular dots rendering
     cy.get('#left-panel label[title="Regular Dot Size"]').click();
     cy.get('#left-panel .facet-scatterplot-plot-container').matchImageSnapshot(
       'scatterplot-facet-regulat-dot',
-      {
-        failureThreshold: 5,
-        failureThresholdType: 'percent',
-      }
+      matchImageSnapshotOptions
     );
 
     // test the big dots rendering
     cy.get('#left-panel label[title="Big Dot Size"]').click();
     cy.get('#left-panel .facet-scatterplot-plot-container').matchImageSnapshot(
       'scatterplot-facet-big-dot',
-      {
-        failureThreshold: 5,
-        failureThresholdType: 'percent',
-      }
+      matchImageSnapshotOptions
     );
   });
 });
