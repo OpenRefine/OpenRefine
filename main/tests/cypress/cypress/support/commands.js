@@ -103,6 +103,7 @@ Cypress.Commands.add('doCreateProjectThroughUserInterface', () => {
  * Cast a whole column to the given type, using Edit Cell / Common transform / To {type}
  */
 Cypress.Commands.add('castColumnTo', (selector, target) => {
+  cy.get('body[ajax_in_progress="false"]');
   cy.get(
     '.data-table th:contains("' + selector + '") .column-header-menu'
   ).click();
