@@ -66,6 +66,7 @@ import com.google.refine.util.JSONUtilities;
 import com.google.refine.util.ParsingUtilities;
 import com.google.refine.util.TestUtils;
 
+import javax.servlet.ReadListener;
 import javax.servlet.ServletInputStream;
 import javax.servlet.http.HttpServletRequest;
 
@@ -166,6 +167,21 @@ public class ImportingUtilitiesTests extends ImporterTest {
         public int read() throws IOException {
             return delegate.read();
         }
+
+		@Override
+		public boolean isFinished() {
+			return false;
+		}
+
+		@Override
+		public boolean isReady() {
+			return true;
+		}
+
+		@Override
+		public void setReadListener(ReadListener readListener) {
+			
+		}
 
     }
 
