@@ -77,7 +77,7 @@ Cypress.Commands.add('doCreateProjectThroughUserInterface', () => {
 
   // workaround to ensure project is loaded
   // cypress does not support window.location = ...
-  cy.get('h2').contains('HTTP ERROR 404');
+  cy.get('h2', { timeout: 6000 }).contains('HTTP ERROR 404');
   cy.location().should((location) => {
     expect(location.href).contains(
       Cypress.env('OPENREFINE_URL') + '/__/project?'
@@ -291,6 +291,9 @@ Cypress.Commands.add(
   (fixture, projectName = Date.now()) => {
     cy.loadProject(fixture, projectName).then((projectId) => {
       cy.visit(Cypress.env('OPENREFINE_URL') + '/project?project=' + projectId);
+
+      cy.get('#left-panel', { log: false }).should('be.visible');
+      cy.get('#right-panel', { log: false }).should('be.visible');
     });
   }
 );

@@ -2,7 +2,7 @@ describe(__filename, function () {
   it('Apply a JSON', function () {
     cy.loadAndVisitProject('food.mini');
 
-    cy.get('#or-proj-undoRedo').click();
+    cy.get('#or-proj-undoRedo').should('to.exist').should('be.visible').click();
     cy.get('#refine-tabs-history .history-panel-controls')
       .contains('Apply')
       .click();

@@ -12,7 +12,7 @@ describe(__filename, function () {
     cy.typeExpression('value.toLowercase()');
     cy.get(
       '.expression-preview-table-wrapper tr:nth-child(2) td:last-child'
-    ).contains('butter,with salt');
+    ).should('to.contain', 'butter,with salt');
     cy.confirmDialogPanel();
 
     cy.assertCellEquals(0, 'Test_GREL_toLower', 'butter,with salt');
@@ -32,7 +32,7 @@ describe(__filename, function () {
     cy.typeExpression('return value.lower()');
     cy.get(
       '.expression-preview-table-wrapper tr:nth-child(2) td:last-child'
-    ).contains('butter,with salt');
+    ).should('to.contain', 'butter,with salt');
     cy.confirmDialogPanel();
 
     cy.assertCellEquals(0, 'Test_Python_toLower', 'butter,with salt');
@@ -52,7 +52,7 @@ describe(__filename, function () {
     cy.typeExpression('(.. value (toLowerCase) )');
     cy.get(
       '.expression-preview-table-wrapper tr:nth-child(2) td:last-child'
-    ).contains('butter,with salt');
+    ).should('to.contain', 'butter,with salt');
     cy.confirmDialogPanel();
 
     cy.assertCellEquals(0, 'Test_Clojure_toLower', 'butter,with salt');
