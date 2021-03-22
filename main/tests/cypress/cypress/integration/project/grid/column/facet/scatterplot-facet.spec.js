@@ -128,14 +128,14 @@ describe(__filename, function () {
       '.scatterplot-matrix-table a[title="Water (x) vs. Protein (y)"]'
     ).click();
 
-    // verify that all the buttons to change the scatterplot look&feel are there + export button
-    // cy.getFacetContainer('Water (x) vs. Protein (y)').within(() => {
-    // test linear rendering
-    cy.get('#left-panel .scatterplot-selectors label').contains('lin').click();
-    cy.get('#left-panel .facet-scatterplot-plot-container').matchImageSnapshot(
-      'scatterplot-facet-lin',
-      matchImageSnapshotOptions
-    );
+    // // verify that all the buttons to change the scatterplot look&feel are there + export button
+    // // cy.getFacetContainer('Water (x) vs. Protein (y)').within(() => {
+    // // test linear rendering
+    // cy.get('#left-panel .scatterplot-selectors label').contains('lin').click();
+    // cy.get('#left-panel .facet-scatterplot-plot-container').matchImageSnapshot(
+    //   'scatterplot-facet-lin',
+    //   matchImageSnapshotOptions
+    // );
     // test log rendering
     cy.get('#left-panel .scatterplot-selectors label').contains('log').click();
     cy.get('#left-panel .facet-scatterplot-plot-container').matchImageSnapshot(
