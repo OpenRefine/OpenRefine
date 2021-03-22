@@ -182,9 +182,8 @@ class RefineServer extends Server {
         HttpConnectionFactory httpFactory = new HttpConnectionFactory(httpConfig);
         ServerConnector connector = new ServerConnector(this, httpFactory);
         connector.setPort(port);
-        connector.setHost(host);
-        connector.setMaxIdleTime(Configurations.getInteger("refine.connection.max_idle_time",60000));
-        connector.setStatsOn(false);
+        connector.setHost(iface);
+        connector.setIdleTimeout(Configurations.getInteger("server.connection.max_idle_time",60000));
         this.addConnector(connector);
 
         File webapp = new File(Configurations.get("refine.webapp","main/webapp"));

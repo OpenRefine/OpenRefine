@@ -32,7 +32,8 @@ import java.util.regex.Pattern;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import org.mortbay.jetty.handler.HandlerWrapper;
+import org.eclipse.jetty.server.handler.HandlerWrapper;
+import org.eclipse.jetty.server.Request;
 
 /**
  * Validate the Host header of the HTTP request to see if it matches either a loopback IP
@@ -88,11 +89,11 @@ class ValidateHostHandler extends HandlerWrapper {
     }
 
     @Override
-    public void handle(String target, HttpServletRequest request, HttpServletResponse response, int dispatch)
+    public void handle(String target, Request baseRequest, HttpServletRequest request, HttpServletResponse response)
             throws IOException, ServletException {
         String host = request.getHeader("Host");
         if (isValidHost(host)) {
-            super.handle(target, request, response, dispatch);
+            super.handle(target, baseRequest, request, response);
         } else {
             // Return HTTP 404 Not Found, since we are
             // not serving content for the requested URL
