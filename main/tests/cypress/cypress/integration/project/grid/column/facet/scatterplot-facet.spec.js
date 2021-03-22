@@ -1,7 +1,7 @@
 // Common configuration for scatterplot snapshots
 // 5% is required, there are some differences between a local run and the images on ubuntu (github actions)
 const matchImageSnapshotOptions = {
-  failureThreshold: 5,
+  failureThreshold: 0.05,
   failureThresholdType: 'percent',
 };
 
