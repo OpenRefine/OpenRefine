@@ -123,7 +123,7 @@
     <dependency>
       <groupId>org.postgresql</groupId>
       <artifactId>postgresql</artifactId>
-      <version>42.2.18</version>
+      <version>42.2.19</version>
     </dependency>
     <dependency>
       <groupId>org.apache.httpcomponents</groupId>
@@ -133,7 +133,7 @@
     <dependency>
       <groupId>com.google.http-client</groupId>
       <artifactId>google-http-client-jackson2</artifactId>
-      <version>1.38.1</version>
+      <version>1.39.0</version>
     </dependency>
     <dependency>
       <groupId>mysql</groupId>
@@ -183,13 +183,13 @@
     <dependency>
       <groupId>org.testng</groupId>
       <artifactId>testng</artifactId>
-      <version>7.3.0</version>
+      <version>7.4.0</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.mockito</groupId>
       <artifactId>mockito-core</artifactId>
-      <version>3.7.7</version>
+      <version>3.8.0</version>
       <scope>test</scope>
     </dependency>
 

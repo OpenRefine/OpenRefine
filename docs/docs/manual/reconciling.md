@@ -35,6 +35,12 @@ OpenRefine includes Wikidata reconciliation in the installation package - see th
 
 Each source will have its own documentation on how it provides reconciliation. The table on [the reconciliation API list](https://reconciliation-api.github.io/testbench/) indicates whether your chosen service supports the features described below. Refer to the service's documentation if you have questions about its behaviors and which OpenRefine features it supports. 
 
+In addition to the reconciliation services mentioned above, you may also choose to build your own service.  You can either start from scratch using the [API specification](https://reconciliation-api.github.io/specs/latest/) or use one of the frameworks mentioned in the [Reconciliation census](https://reconciliation-api.github.io/census/services/).
+
+Of particular note is [reconcile-csv](http://okfnlabs.org/reconcile-csv/) which allows you to build a reconciliation service from a simple CSV file.  Thus if you wanted to reconcile one OpenRefine project against another, you'd simply need to export the target project as a CSV, point `reconcile-csv` at it and you're good to go.  A somewhat newer port of this project written in Python can be found at [csv-reconcile](https://github.com/gitonthescene/csv-reconcile) which is more configurable and defaults to parsing tab separated files for convenience.
+
+Similiarly, you may choose to export some SPARQL output to a TSV to limit the scope of values you're reconciling against and/or for better peformance.
+
 ## Getting started
 
 Choose a column to reconcile and use its dropdown menu to select <span class="menuItems">Reconcile</span> → <span class="menuItems">Start reconciling</span>. If you want to reconcile only some cells in that column, first use filters and facets to isolate them.
