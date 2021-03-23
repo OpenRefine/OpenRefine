@@ -355,7 +355,7 @@
     <dependency>
       <groupId>com.google.guava</groupId>
       <artifactId>guava</artifactId>
-      <version>30.1-jre</version>
+      <version>30.1.1-jre</version>
     </dependency>
     <dependency>
       <groupId>javax.xml.bind</groupId>
