@@ -312,7 +312,9 @@ Cypress.Commands.add(
 Cypress.Commands.add('dragAndDrop', (sourceSelector, targetSelector) => {
   cy.get(sourceSelector).trigger('mousedown', { which: 1 });
 
-  cy.get(targetSelector).trigger('mousemove').trigger('mouseup');
+  cy.get(targetSelector)
+    .trigger('mousemove')
+    .trigger('mouseup', { force: true });
 });
 
 Cypress.Commands.add(
