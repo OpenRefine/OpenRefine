@@ -172,7 +172,7 @@
     "core-dialogs/rotated-counter-clock": "הוסב ב-45 מעלות בניגוד ללכיוון השעון",
     "core-dialogs/no-rotation": "ללא סיבוב",
     "core-dialogs/rotated-clock": "הוסב ב־45 מעלות עם כיוון השעון",
-    "core-dialogs/small-dot": "גודל הנקודה הקטנה",
+    "core-dialogs/small-dot": "גודל נקודה קטנה",
     "core-dialogs/regular-dot": "גודל נקודה רגילה",
     "core-dialogs/big-dot": "גודל נקודה גדולה",
     "core-dialogs/cell-fields": "בתא הנוכחי, יש מספר שדות: ‚value’,‏ ‚recon’ ו־‚errorMessage’.",

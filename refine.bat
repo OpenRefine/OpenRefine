@@ -1,5 +1,4 @@
-rem Changing this for debugging on Appveyor
-rem @echo off
+@echo off
 rem
 rem Configuration variables
 rem
@@ -29,8 +28,11 @@ echo.
 echo  "/p <port>" the port that OpenRefine will listen to
 echo     default: 3333
 echo.
-echo  "/i <interface>" the host interface OpenRefine should bind to
+echo  "/i <interface>" the network interface OpenRefine should bind to
 echo     default: 127.0.0.1
+echo.
+echo  "/H <host>" the expected value for the Host header (set to * to disable checks)
+echo     default: ^<interface^>
 echo.
 echo  "/w <path>" path to the webapp
 echo     default src\main\webapp
@@ -99,10 +101,11 @@ rem --- Argument parsing --------------------------------------------
 
 :loop
 if ""%1"" == """" goto endArgumentParsing
-if ""%1"" == ""/h"" goto usage
 if ""%1"" == ""/?"" goto usage
+if ""%1"" == ""/h"" goto usage
 if ""%1"" == ""/p"" goto arg-p
 if ""%1"" == ""/i"" goto arg-i
+if ""%1"" == ""/H"" goto arg-H
 if ""%1"" == ""/w"" goto arg-w
 if ""%1"" == ""/d"" goto arg-d
 if ""%1"" == ""/m"" goto arg-m
@@ -114,6 +117,10 @@ set REFINE_PORT=%2
 goto shift2loop
 
 :arg-i
+set REFINE_INTERFACE=%2
+goto shift2loop
+
+:arg-H
 set REFINE_HOST=%2
 goto shift2loop
 
@@ -165,10 +172,17 @@ set REFINE_PORT=3333
 :gotPort
 set OPTS=%OPTS% -Drefine.port=%REFINE_PORT%
 
+if not "%REFINE_INTERFACE%" == "" goto gotInterface
+set REFINE_INTERFACE=127.0.0.1
+:gotInterface
+set OPTS=%OPTS% -Drefine.interface=%REFINE_INTERFACE%
+
 if not "%REFINE_HOST%" == "" goto gotHost
-set REFINE_HOST=127.0.0.1
+if "%REFINE_INTERFACE%" == "" goto skipHost
+set REFINE_HOST=%REFINE_INTERFACE%
 :gotHost
 set OPTS=%OPTS% -Drefine.host=%REFINE_HOST%
+:skipHost
 
 if not "%REFINE_WEBAPP%" == "" goto gotWebApp
 set REFINE_WEBAPP=main\webapp
