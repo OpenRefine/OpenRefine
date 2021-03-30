@@ -118,50 +118,50 @@ describe(__filename, function () {
     });
   });
 
-  it('Test image rendering inside the facet (visual testing)', function () {
-    cy.loadAndVisitProject('food.small', 'food-small');
-    cy.castColumnTo('Water', 'number');
-    cy.castColumnTo('Energ_Kcal', 'number');
-    cy.castColumnTo('Protein', 'number');
-    cy.columnActionClick('Protein', ['Facet', 'Scatterplot facet']);
-    cy.get(
-      '.scatterplot-matrix-table a[title="Water (x) vs. Protein (y)"]'
-    ).click();
+  // it('Test image rendering inside the facet (visual testing)', function () {
+  //   cy.loadAndVisitProject('food.small', 'food-small');
+  //   cy.castColumnTo('Water', 'number');
+  //   cy.castColumnTo('Energ_Kcal', 'number');
+  //   cy.castColumnTo('Protein', 'number');
+  //   cy.columnActionClick('Protein', ['Facet', 'Scatterplot facet']);
+  //   cy.get(
+  //     '.scatterplot-matrix-table a[title="Water (x) vs. Protein (y)"]'
+  //   ).click();
 
-    // // verify that all the buttons to change the scatterplot look&feel are there + export button
-    // // cy.getFacetContainer('Water (x) vs. Protein (y)').within(() => {
-    // // test linear rendering
-    // cy.get('#left-panel .scatterplot-selectors label').contains('lin').click();
-    // cy.get('#left-panel .facet-scatterplot-plot-container').matchImageSnapshot(
-    //   'scatterplot-facet-lin',
-    //   matchImageSnapshotOptions
-    // );
-    // test log rendering
-    cy.get('#left-panel .scatterplot-selectors label').contains('log').click();
-    cy.get('#left-panel .facet-scatterplot-plot-container').matchImageSnapshot(
-      'scatterplot-facet-log',
-      matchImageSnapshotOptions
-    );
+  //   // // verify that all the buttons to change the scatterplot look&feel are there + export button
+  //   // // cy.getFacetContainer('Water (x) vs. Protein (y)').within(() => {
+  //   // // test linear rendering
+  //   // cy.get('#left-panel .scatterplot-selectors label').contains('lin').click();
+  //   // cy.get('#left-panel .facet-scatterplot-plot-container').matchImageSnapshot(
+  //   //   'scatterplot-facet-lin',
+  //   //   matchImageSnapshotOptions
+  //   // );
+  //   // test log rendering
+  //   cy.get('#left-panel .scatterplot-selectors label').contains('log').click();
+  //   cy.get('#left-panel .facet-scatterplot-plot-container').matchImageSnapshot(
+  //     'scatterplot-facet-log',
+  //     matchImageSnapshotOptions
+  //   );
 
-    // test the small dots rendering
-    cy.get('#left-panel label[title="Small Dot Size"]').click();
-    cy.get('#left-panel .facet-scatterplot-plot-container').matchImageSnapshot(
-      'scatterplot-facet-small-dot',
-      matchImageSnapshotOptions
-    );
+  //   // test the small dots rendering
+  //   cy.get('#left-panel label[title="Small Dot Size"]').click();
+  //   cy.get('#left-panel .facet-scatterplot-plot-container').matchImageSnapshot(
+  //     'scatterplot-facet-small-dot',
+  //     matchImageSnapshotOptions
+  //   );
 
-    // test the regular dots rendering
-    cy.get('#left-panel label[title="Regular Dot Size"]').click();
-    cy.get('#left-panel .facet-scatterplot-plot-container').matchImageSnapshot(
-      'scatterplot-facet-regulat-dot',
-      matchImageSnapshotOptions
-    );
+  //   // test the regular dots rendering
+  //   cy.get('#left-panel label[title="Regular Dot Size"]').click();
+  //   cy.get('#left-panel .facet-scatterplot-plot-container').matchImageSnapshot(
+  //     'scatterplot-facet-regulat-dot',
+  //     matchImageSnapshotOptions
+  //   );
 
-    // test the big dots rendering
-    cy.get('#left-panel label[title="Big Dot Size"]').click();
-    cy.get('#left-panel .facet-scatterplot-plot-container').matchImageSnapshot(
-      'scatterplot-facet-big-dot',
-      matchImageSnapshotOptions
-    );
-  });
+  //   // test the big dots rendering
+  //   cy.get('#left-panel label[title="Big Dot Size"]').click();
+  //   cy.get('#left-panel .facet-scatterplot-plot-container').matchImageSnapshot(
+  //     'scatterplot-facet-big-dot',
+  //     matchImageSnapshotOptions
+  //   );
+  // });
 });
