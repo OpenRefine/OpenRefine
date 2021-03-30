@@ -191,7 +191,7 @@ describe('Base reconciliation tests', () => {
     addReconService();
     cy.get('.dialog-container button').contains('Start Reconciling...').click();
     gridShouldHaveReconData();
-    return;
+
     // over on a candidate (Lineus longissimus)
     cy.getCell(0, 'species')
       .find('a')
