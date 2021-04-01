@@ -28,9 +28,6 @@ public class ManifestV1 implements Manifest {
         JsonNode mediawiki = manifest.path("mediawiki");
         name = mediawiki.path("name").textValue();
         mediaWikiApiEndpoint = mediawiki.path("api").textValue();
-        if (mediaWikiApiEndpoint == null || mediaWikiApiEndpoint.isEmpty()) {
-            mediaWikiApiEndpoint = ApiConnection.URL_WIKIDATA_API;
-        }
 
         JsonNode wikibase = manifest.path("wikibase");
         siteIri = wikibase.path("site_iri").textValue();
