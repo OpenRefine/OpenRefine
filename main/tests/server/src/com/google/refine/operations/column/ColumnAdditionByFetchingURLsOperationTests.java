@@ -337,7 +337,7 @@ public class ColumnAdditionByFetchingURLsOperationTests extends RefineTest {
             }
 
             // Use 503 Server Unavailable with no Retry-After header this time
-            for (int i = 0; i < 5; i++) {
+            for (int i = 0; i < 4; i++) {
                 server.enqueue(new MockResponse()
                         .setResponseCode(503)
                         .setBody(Integer.toString(i,10)));
