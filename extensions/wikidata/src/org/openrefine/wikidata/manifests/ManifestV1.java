@@ -6,6 +6,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
+import org.wikidata.wdtk.wikibaseapi.ApiConnection;
+
 public class ManifestV1 implements Manifest {
 
     private String version;
@@ -16,6 +18,7 @@ public class ManifestV1 implements Manifest {
     private String subclassOfPid;
     private String mediaWikiApiEndpoint;
     private String reconServiceEndpoint;
+    private String editGroupsUrlSchema;
 
     private Map<String, String> constraintsRelatedIdMap = new HashMap<>();
 
@@ -25,6 +28,9 @@ public class ManifestV1 implements Manifest {
         JsonNode mediawiki = manifest.path("mediawiki");
         name = mediawiki.path("name").textValue();
         mediaWikiApiEndpoint = mediawiki.path("api").textValue();
+        if (mediaWikiApiEndpoint == null || mediaWikiApiEndpoint.isBlank()) {
+            mediaWikiApiEndpoint = ApiConnection.URL_WIKIDATA_API;
+        }
 
         JsonNode wikibase = manifest.path("wikibase");
         siteIri = wikibase.path("site_iri").textValue();
@@ -44,6 +50,9 @@ public class ManifestV1 implements Manifest {
 
         JsonNode reconciliation = manifest.path("reconciliation");
         reconServiceEndpoint = reconciliation.path("endpoint").textValue();
+        
+        JsonNode editGroups = manifest.path("editgroups");
+        editGroupsUrlSchema = editGroups.path("url_schema").textValue();
     }
 
     @Override
@@ -89,6 +98,11 @@ public class ManifestV1 implements Manifest {
     @Override
     public String getConstraintsRelatedId(String name) {
         return constraintsRelatedIdMap.get(name);
+    }
+
+    @Override
+    public String getEditGroupsUrlSchema() {
+        return editGroupsUrlSchema;
     }
 
 }
