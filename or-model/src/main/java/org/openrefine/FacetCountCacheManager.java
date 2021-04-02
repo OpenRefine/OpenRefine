@@ -14,6 +14,7 @@ import org.openrefine.expr.MetaParser;
 import org.openrefine.expr.ParsingException;
 import org.openrefine.history.History;
 import org.openrefine.history.HistoryEntry;
+import org.openrefine.model.ColumnModel;
 import org.openrefine.model.GridState;
 import org.openrefine.model.Project;
 import org.openrefine.util.FacetCountException;
@@ -58,19 +59,20 @@ public class FacetCountCacheManager {
     }
 
     protected FacetCount computeFacetCount(GridState grid, String columnName, String expression, long changeId) throws FacetCountException {
-        int cellIndex = grid.getColumnModel().getColumnIndexByName(columnName);
+        ColumnModel columnModel = grid.getColumnModel();
+        int cellIndex = columnModel.getColumnIndexByName(columnName);
         if (cellIndex == -1) {
             throw new FacetCountException(String.format("The column '%s' could not be found", columnName));
         }
 
         RowEvaluable evaluable;
         try {
-            evaluable = new ExpressionBasedRowEvaluable(columnName, cellIndex, MetaParser.parse(expression));
+            evaluable = new ExpressionBasedRowEvaluable(columnName, cellIndex, MetaParser.parse(expression), columnModel);
         } catch (ParsingException e) {
             throw new FacetCountException(String.format("The expression '%s' is invalid: %s", expression, e.getMessage()));
         }
         StringValuesFacetAggregator aggregator = new StringValuesFacetAggregator(
-                grid.getColumnModel(), cellIndex, evaluable, Collections.emptySet(), false, false, false);
+                columnModel, cellIndex, evaluable, Collections.emptySet(), false, false, false);
         StringValuesFacetState initialState = new StringValuesFacetState();
         StringValuesFacetState result = grid.aggregateRows(aggregator, initialState);
         return new FacetCount(result, changeId);

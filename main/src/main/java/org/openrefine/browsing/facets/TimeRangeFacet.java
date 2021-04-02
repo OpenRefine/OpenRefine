@@ -123,7 +123,7 @@ public class TimeRangeFacet implements Facet {
         @Override
         public TimeRangeFacet apply(ColumnModel columnModel) {
             int cellIndex = columnModel.getColumnIndexByName(_columnName);
-            return new TimeRangeFacet(this, cellIndex);
+            return new TimeRangeFacet(this, cellIndex, columnModel);
         }
 
         @Override
@@ -213,11 +213,13 @@ public class TimeRangeFacet implements Facet {
      */
     protected int _cellIndex;
     protected String _errorMessage;
+    protected ColumnModel _columnModel;
 
-    public TimeRangeFacet(TimeRangeFacetConfig config, int cellIndex) {
+    public TimeRangeFacet(TimeRangeFacetConfig config, int cellIndex, ColumnModel columnModel) {
         _config = config;
         _cellIndex = cellIndex;
         _errorMessage = cellIndex == -1 ? "No column named " + _config._columnName : config._errorMessage;
+        _columnModel = columnModel;
     }
 
     @Override
@@ -238,7 +240,7 @@ public class TimeRangeFacet implements Facet {
             return new TimeRangeFacetAggregator(
                     _config,
                     false,
-                    new ExpressionBasedRowEvaluable(_config._columnName, _cellIndex, _config._evaluable));
+                    new ExpressionBasedRowEvaluable(_config._columnName, _cellIndex, _config._evaluable, _columnModel));
         } else {
             return null;
         }

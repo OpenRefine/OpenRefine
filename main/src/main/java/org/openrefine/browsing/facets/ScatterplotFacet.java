@@ -296,7 +296,8 @@ public class ScatterplotFacet implements Facet {
         public ScatterplotFacet apply(ColumnModel columnModel) {
             return new ScatterplotFacet(this,
                     columnModel.getColumnIndexByName(columnName_x),
-                    columnModel.getColumnIndexByName(columnName_y));
+                    columnModel.getColumnIndexByName(columnName_y),
+                    columnModel);
         }
 
         @JsonIgnore
@@ -321,10 +322,11 @@ public class ScatterplotFacet implements Facet {
     protected Evaluable eval_y;
     protected String errorMessage_x;
     protected String errorMessage_y;
+    protected ColumnModel columnModel;
 
     final static Logger logger = LoggerFactory.getLogger("scatterplot_facet");
 
-    public ScatterplotFacet(ScatterplotFacetConfig config, int cellIndexX, int cellIndexY) {
+    public ScatterplotFacet(ScatterplotFacetConfig config, int cellIndexX, int cellIndexY, ColumnModel columnModel) {
         this.config = config;
 
         columnIndex_x = cellIndexX;
@@ -339,6 +341,7 @@ public class ScatterplotFacet implements Facet {
         } else {
             errorMessage_y = config.errorMessageY;
         }
+        this.columnModel = columnModel;
     }
 
     private static double s_rotateScale = 1 / Math.sqrt(2.0);
@@ -410,8 +413,8 @@ public class ScatterplotFacet implements Facet {
     public FacetAggregator<ScatterplotFacetState> getAggregator() {
         if (config.evaluableX != null && config.evaluableY != null) {
             return new ScatterplotFacetAggregator(config,
-                    new ExpressionBasedRowEvaluable(config.columnName_x, columnIndex_x, config.evaluableX),
-                    new ExpressionBasedRowEvaluable(config.columnName_y, columnIndex_y, config.evaluableY));
+                    new ExpressionBasedRowEvaluable(config.columnName_x, columnIndex_x, config.evaluableX, columnModel),
+                    new ExpressionBasedRowEvaluable(config.columnName_y, columnIndex_y, config.evaluableY, columnModel));
         } else {
             return null;
         }

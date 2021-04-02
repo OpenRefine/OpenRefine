@@ -38,6 +38,7 @@ import java.util.Properties;
 import org.openrefine.expr.Evaluable;
 import org.openrefine.expr.ExpressionUtils;
 import org.openrefine.model.Cell;
+import org.openrefine.model.ColumnModel;
 import org.openrefine.model.Record;
 import org.openrefine.model.Row;
 
@@ -47,13 +48,15 @@ public class ExpressionBasedRowEvaluable implements RowEvaluable {
     final protected String _columnName;
     final protected int _cellIndex;
     final protected Evaluable _eval;
+    final protected ColumnModel _columnModel;
 
     public ExpressionBasedRowEvaluable(
-            String columnName, int cellIndex, Evaluable eval) {
+            String columnName, int cellIndex, Evaluable eval, ColumnModel columnModel) {
 
         _columnName = columnName;
         _cellIndex = cellIndex;
         _eval = eval;
+        _columnModel = columnModel;
     }
 
     @Override
@@ -62,7 +65,7 @@ public class ExpressionBasedRowEvaluable implements RowEvaluable {
 
         Cell cell = row.getCell(_cellIndex);
 
-        ExpressionUtils.bind(bindings, null, row, rowIndex, record, _columnName, cell);
+        ExpressionUtils.bind(bindings, _columnModel, row, rowIndex, record, _columnName, cell);
 
         return _eval.evaluate(bindings);
     }

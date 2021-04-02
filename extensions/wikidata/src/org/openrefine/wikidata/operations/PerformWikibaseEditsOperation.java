@@ -165,7 +165,7 @@ public class PerformWikibaseEditsOperation extends EngineDependentOperation {
             this._engine = engine;
             this._schema = (WikibaseSchema) grid.getOverlayModels().get("wikibaseSchema");
             this._summary = summary;
-            String tag = "openrefine";
+            String tag = "openrefine-3.5";
             Pattern pattern = Pattern.compile("^(\\d+\\.\\d+).*$");
             Matcher matcher = pattern.matcher(RefineModel.VERSION);
             if (matcher.matches()) {
