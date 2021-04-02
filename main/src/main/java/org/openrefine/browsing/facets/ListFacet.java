@@ -238,7 +238,7 @@ public class ListFacet implements Facet {
 	@Override
 	public FacetAggregator<StringValuesFacetState> getAggregator() {
 		if (_errorMessage == null) {
-			return new StringValuesFacetAggregator(_columnModel, _cellIndex, new ExpressionBasedRowEvaluable(_config.columnName, _cellIndex, _eval),
+			return new StringValuesFacetAggregator(_columnModel, _cellIndex, new ExpressionBasedRowEvaluable(_config.columnName, _cellIndex, _eval, _columnModel),
 					Arrays.stream(createMatches()).map(o -> StringUtils.toString(o))
 					.collect(Collectors.toSet()), _config.selectBlank, _config.selectError, _config.invert);
 		} else {
