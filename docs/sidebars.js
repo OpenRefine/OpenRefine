@@ -41,7 +41,17 @@ module.exports = {
       'technical-reference/writing-extensions',
       'technical-reference/migrating-older-extensions',
       'technical-reference/translating',
-      'technical-reference/functional-tests'
+      'technical-reference/functional-tests',
+      {
+        type: 'category',
+        label: 'Workflow execution',
+        items: [
+          'technical-reference/workflow-execution/workflow-execution-overview',
+          'technical-reference/workflow-execution/runner-interface',
+          'technical-reference/workflow-execution/local-runner',
+          'technical-reference/workflow-execution/spark-runner'
+        ]
+     }
   ]
   },
 };
