@@ -114,6 +114,10 @@ public interface GridState {
      * Iterate over rows matched by a filter, in the order determined by a sorting configuration. This might not require
      * loading all rows in memory at once, but might be less efficient than {@link collectRows()} if all rows are to be
      * stored in memory downstream.
+     * 
+     * @todo users of this method might actually be required to iterate up to the end of the iterator to avoid resource
+     *       leaks with some implementations. This should be clarified by the interface. Consider exposing a closeable
+     *       iterable instead.
      */
     public Iterable<IndexedRow> iterateRows(RowFilter filter, SortingConfig sortingConfig);
 

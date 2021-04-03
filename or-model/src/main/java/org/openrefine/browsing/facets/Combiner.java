@@ -15,7 +15,8 @@ public interface Combiner<T> extends Serializable {
 
     /**
      * Merges two facet statistics from the same facet, computed on different sets of rows. This generally amounts to
-     * summing all the statistics internally.
+     * summing all the statistics internally. This function is required to be associative: sum(a, sum(b, c)) ==
+     * sum(sum(a, b), c)
      *
      * @param other
      *            the other facet statistics to add to the current instance. It is required to stem from the same facet
