@@ -69,6 +69,8 @@ public class RefineServlet extends Butterfly {
     static public String FULL_VERSION = "";
     static public String FULLNAME = "OpenRefine ";
 
+    static final private String DEFAULT_DATAMODEL_RUNNER_CLASS_NAME = "org.openrefine.model.LocalDatamodelRunner";
+
     static final long serialVersionUID = 2386057901503517403L;
 
     static private final String JAVAX_SERVLET_CONTEXT_TEMPDIR = "javax.servlet.context.tempdir";
@@ -109,8 +111,13 @@ public class RefineServlet extends Butterfly {
             ;
         }
 
+        String runnerClassName = getInitParameter("refine.runnerClass");
+        if (runnerClassName == null || runnerClassName.isEmpty()) {
+            runnerClassName = DEFAULT_DATAMODEL_RUNNER_CLASS_NAME;
+        }
         try {
-            Class<?> runnerClass = this.getClass().getClassLoader().loadClass("org.openrefine.model.LocalDatamodelRunner");
+            logger.info(String.format("Starting datamodel runner '%s'", runnerClassName));
+            Class<?> runnerClass = this.getClass().getClassLoader().loadClass(runnerClassName);
             s_runner = (DatamodelRunner) runnerClass.getConstructor(Integer.class).newInstance(Integer.valueOf(defaultParallelism));
         } catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException
                 | NoSuchMethodException | SecurityException | ClassNotFoundException e1) {
