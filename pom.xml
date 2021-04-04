@@ -64,7 +64,7 @@
     <servlet-api.version>3.1.0</servlet-api.version>
     <butterfly.version>1.1.1</butterfly.version>
     <slf4j.version>1.7.30</slf4j.version>
-    <jetty.version>9.4.26.v20200117</jetty.version>
+    <jetty.version>11.0.2</jetty.version>
   </properties>
 
 
