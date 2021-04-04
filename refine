@@ -47,6 +47,9 @@ where [options] include:
      default: 1024M
      Values less than 256M not allowed
 
+  -r <className> class name of the runner to use
+     default: org.openrefine.model.LocalDatamodelRunner
+
   -v <level> verbosity level [from low to high: error,warn,info,debug,trace]
      default: info
 
@@ -604,6 +607,10 @@ run() {
         add_option "-Drefine.autosave=$REFINE_AUTOSAVE_PERIOD"
     fi
 
+    if [ "$REFINE_RUNNER_CLASSNAME" ]; then
+        add_option "-Drefine.runnerClass=$REFINE_RUNNER_CLASSNAME"
+    fi
+
     CLASSPATH="$REFINE_CLASSES_DIR${SEP}$REFINE_LIB_DIR/*"
 
     RUN_CMD=("$JAVA" -cp "$CLASSPATH" "${OPTS[@]}" "org.openrefine.Refine")
@@ -839,6 +846,7 @@ while [ $# -ne 0 ] ; do
         shift;
         continue;
       fi;;
+    -r) shift; REFINE_RUNNER_CLASSNAME="$1"; shift; continue;;
     -v) shift; REFINE_VERBOSITY="$1"; shift; continue;;
     -x) shift; REFINE_EXTRA_OPTS="$1"; shift; continue;;
     --debug) shift; add_option '-Xdebug' '-Xrunjdwp:transport=dt_socket,address=8000,server=y,suspend=n'; continue;;

@@ -46,7 +46,7 @@ module.exports = {
         type: 'category',
         label: 'Workflow execution',
         items: [
-          'technical-reference/workflow-execution/workflow-execution-overview',
+          'technical-reference/workflow-execution/overview',
           'technical-reference/workflow-execution/runner-interface',
           'technical-reference/workflow-execution/local-runner',
           'technical-reference/workflow-execution/spark-runner'

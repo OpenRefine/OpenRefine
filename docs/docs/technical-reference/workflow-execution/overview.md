@@ -1,5 +1,5 @@
 ---
-id: workflow-execution-overview
+id: overview
 title: Overview of the workflow execution architecture
 sidebar_label: Overview of the architecture
 ---
@@ -17,7 +17,11 @@ lower-level layer, the runner, which deals with the logistics: how data is store
 
 ## Runner selection
 
-The runner is currently instantiated in the `RefineServlet` class. It is foreseen that we introduce command-line options to let the user select which runner an OpenRefine instance uses, but it is not currently configurable.
+The runner can be configured on the command-line with the `-r` option (`/r` on Windows), by providing the class name of the data model runner to use. In the `refine.ini` configuration file, the corresponding option is `refine.runnerClass`.
+The class names of the available runners are:
+* `org.openrefine.model.LocalDatamodelRunner` for the local runner (default)
+* `org.openrefine.model.SparkDatamodelRunner` for the Spark-based runner
+* `org.openrefine.model.TestingDatamodelRunner` for the testing runner
 
 ## Creating a new runner
 

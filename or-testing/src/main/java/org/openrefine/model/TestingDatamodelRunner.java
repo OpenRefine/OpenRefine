@@ -40,6 +40,19 @@ import org.testng.Assert;
  *
  */
 public class TestingDatamodelRunner implements DatamodelRunner {
+    
+    public TestingDatamodelRunner() {
+        
+    }
+    
+    /**
+     * Constructor provided to match the expected signature of datamodel runners.
+     * 
+     * @param defaultParallelism
+     */
+    public TestingDatamodelRunner(Integer defaultParallelism) {
+        
+    }
 
     /**
      * Asserts that an object is serializable using Java serialization.

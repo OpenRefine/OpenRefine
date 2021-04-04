@@ -40,6 +40,9 @@ echo.
 echo  "/m <memory>" max memory heap size to use
 echo     default: 1024M
 echo.
+echo  "/r <runner>" class name of the runner to use
+echo     default: org.openrefine.model.LocalDatamodelRunner
+echo.
 echo  "/x" enable JMX monitoring (for jconsole and friends)
 echo.
 echo "and <action> is one of
@@ -129,6 +132,10 @@ goto shift2loop
 set OPTS=%OPTS% -Xdebug -Xrunjdwp:transport=dt_socket,address=8000,server=y,suspend=n
 goto shift2loop
 
+:arg-r
+set REFINE_RUNNER_CLASSNAME=%2
+goto shift2loop
+
 :arg-x
 set OPTS=%OPTS% -Dcom.sun.management.jmxremote
 goto shift2loop
@@ -182,6 +189,10 @@ set REFINE_CLASSES_DIR=server\classes
 if not "%REFINE_LIB_DIR%" == "" goto gotLibDir
 set REFINE_LIB_DIR=server\target\lib
 :gotLibDir
+
+if not "%REFINE_RUNNER_CLASSNAME%" == "" goto gotRunnerClassName
+set OPTS=%OPTS% -Drefine.runnerClass=%REFINE_RUNNER_CLASSNAME%
+:gotRunnerClassName
 
 if "%GDATA_CLIENT_ID%" == "" goto skipGDataCredentials
 if "%GDATA_CLIENT_SECRET%" == "" goto skipGDataCredentials

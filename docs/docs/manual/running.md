@@ -116,7 +116,8 @@ Get a list of all the commands with `refine /?`.
 |/m|Memory maximum heap|refine /m 6000M|
 |/p|Port|refine /p 3334|
 |/i|Interface (IP address, or IP and port)|refine /i 127.0.0.2:3334|
-|/d|Enable debugging (on port 8000)|refine /d|
+|/d|Enable debugging of the JVM (on port 8000)|refine /d|
+|/r|Sets the [data model runner](../technical-reference/workflow-execution/overview#available-runners) to use|refine /r org.openrefine.model.LocalDatamodelRunner|
 |/x|Enable JMX monitoring for Jconsole and JvisualVM|refine /x|
 
 
@@ -133,6 +134,7 @@ To see the full list of command-line options, run `./refine -h`.
 |-m|Memory maximum heap|./refine -m 6000M|
 |-p|Port|./refine -p 3334|
 |-i|Interface (IP address, or IP and port)|./refine -i 127.0.0.2:3334|
+|-r|Changes the [data model runner](../technical-reference/workflow-execution/overview#available-runners) |./refine -r org.openrefine.model.LocalDatamodelRunner|
 |-k|Add a Google API key|_need an example_|
 |-v|Verbosity (from low to high)|error,warn,info,debug,trace|
 |-x|Additional configuration parameters|_need an example_|
@@ -152,6 +154,7 @@ To see the full list of command-line options, run `./refine -h`.
 |-m|Memory maximum heap|./refine -m 6000M|
 |-p|Port|./refine -p 3334|
 |-i|Interface (IP address, or IP and port)|./refine -i 127.0.0.2:3334|
+|-r|Changes the [data model runner](../technical-reference/workflow-execution/overview#available-runners) |./refine -r org.openrefine.model.LocalDatamodelRunner|
 |-k|Add a Google API key|_need an example_|
 |-v|Verbosity (from low to high)|error,warn,info,debug,trace|
 |-x|Additional configuration parameters|_need an example_|
@@ -176,6 +179,7 @@ These JVM preferences are different options and have different syntax than the k
 *   -Drefine.host (127.0.0.1)
 *   -Drefine.port (3333)
 *   -Drefine.webapp (main/webapp)
+*   -Drefine.runnerClass (org.openrefine.model.LocalDatamodelRunner)
 
 The syntax within the `.ini` files is as follows:
 
