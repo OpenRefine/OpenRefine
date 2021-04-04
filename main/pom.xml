@@ -288,7 +288,7 @@
     <dependency>
       <groupId>org.clojure</groupId>
       <artifactId>clojure</artifactId>
-      <version>1.10.2</version>
+      <version>1.10.3</version>
     </dependency>
     <dependency>
       <groupId>org.apache.httpcomponents.client5</groupId>
