@@ -85,9 +85,8 @@ Cypress.Commands.add('loadProject', (fixture, projectName, tagName) => {
     let postData;
     if (tagName == undefined) {
       postData =
-        '------BOUNDARY\r\nContent-Disposition: form-data; name="project-file"; filename="' +
-        fixture +
-        '"\r\nContent-Type: "text/csv"\r\n\r\n' +
+        '------BOUNDARY\r\nContent-Disposition: form-data; name="project-file"; filename="test.csv"' +
+        '\r\nContent-Type: "text/csv"\r\n\r\n' +
         content +
         '\r\n------BOUNDARY\r\nContent-Disposition: form-data; name="project-name"\r\n\r\n' +
         openRefineProjectName +
@@ -96,9 +95,8 @@ Cypress.Commands.add('loadProject', (fixture, projectName, tagName) => {
         '\r\n------BOUNDARY--';
     } else {
       postData =
-        '------BOUNDARY\r\nContent-Disposition: form-data; name="project-file"; filename="' +
-        fixture +
-        '"\r\nContent-Type: "text/csv"\r\n\r\n' +
+        '------BOUNDARY\r\nContent-Disposition: form-data; name="project-file"; filename="test.csv"' +
+        '\r\nContent-Type: "text/csv"\r\n\r\n' +
         content +
         '\r\n------BOUNDARY\r\nContent-Disposition: form-data; name="project-name"\r\n\r\n' +
         openRefineProjectName +
