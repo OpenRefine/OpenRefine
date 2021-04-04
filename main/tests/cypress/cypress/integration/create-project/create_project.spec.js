@@ -19,10 +19,12 @@ describe(__filename, function () {
     ).attachFile(csvFile);
     cy.get(
       '.create-project-ui-source-selection-tab-body.selected button.button-primary'
-    ).click();
-    cy.get(
-      '.default-importing-wizard-header input[bind="projectNameInput"]'
-    ).should('have.value', 'food mini csv');
+    )
+      .contains('Next »')
+      .click();
+    cy.get('.default-importing-wizard-header input[bind="projectNameInput"]', {
+      timeout: 6000,
+    }).should('have.value', 'food mini csv');
 
     // then ensure we are on the preview page
     cy.get('.create-project-ui-panel').contains('Configure Parsing Options');
@@ -50,10 +52,12 @@ describe(__filename, function () {
     ).attachFile(tsvFile);
     cy.get(
       '.create-project-ui-source-selection-tab-body.selected button.button-primary'
-    ).click();
-    cy.get(
-      '.default-importing-wizard-header input[bind="projectNameInput"]'
-    ).should('have.value', 'shop mini tsv');
+    )
+      .contains('Next »')
+      .click();
+    cy.get('.default-importing-wizard-header input[bind="projectNameInput"]', {
+      timeout: 6000,
+    }).should('have.value', 'shop mini tsv');
 
     // then ensure we are on the preview page
     cy.get('.create-project-ui-panel').contains('Configure Parsing Options');
@@ -85,9 +89,9 @@ describe(__filename, function () {
     )
       .contains('Next »')
       .click();
-    cy.get(
-      '.default-importing-wizard-header input[bind="projectNameInput"]'
-    ).should('have.value', 'Clipboard');
+    cy.get('.default-importing-wizard-header input[bind="projectNameInput"]', {
+      timeout: 6000,
+    }).should('have.value', 'Clipboard');
 
     // then ensure we are on the preview page
     cy.get('.create-project-ui-panel').contains('Configure Parsing Options');
@@ -115,9 +119,9 @@ describe(__filename, function () {
     )
       .contains('Next »')
       .click();
-    cy.get(
-      '.default-importing-wizard-header input[bind="projectNameInput"]'
-    ).should('have.value', 'Clipboard');
+    cy.get('.default-importing-wizard-header input[bind="projectNameInput"]', {
+      timeout: 6000,
+    }).should('have.value', 'Clipboard');
 
     // then ensure we are on the preview page
     cy.get('.create-project-ui-panel').contains('Configure Parsing Options');
@@ -145,9 +149,9 @@ describe(__filename, function () {
     )
       .contains('Next »')
       .click();
-    cy.get(
-      '.default-importing-wizard-header input[bind="projectNameInput"]'
-    ).should('have.value', 'food mini csv');
+    cy.get('.default-importing-wizard-header input[bind="projectNameInput"]', {
+      timeout: 6000,
+    }).should('have.value', 'food mini csv');
 
     // then ensure we are on the preview page
     cy.get('.create-project-ui-panel').contains('Configure Parsing Options');
@@ -177,7 +181,7 @@ describe(__filename, function () {
     )
       .contains('Next »')
       .click();
-    cy.get('.create-project-ui-panel', { timeout: 7500 })
+    cy.get('.create-project-ui-panel', { timeout: 10000 })
       .contains('Configure Parsing Options »')
       .click();
     cy.get(

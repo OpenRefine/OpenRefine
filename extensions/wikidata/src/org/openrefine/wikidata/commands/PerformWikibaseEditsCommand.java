@@ -40,7 +40,8 @@ public class PerformWikibaseEditsCommand extends EngineDependentCommand {
         String summary = request.getParameter("summary");
         String maxlagStr = request.getParameter("maxlag");
         int maxlag = maxlagStr == null ? 5 : Integer.parseInt(maxlagStr);
-        return new PerformWikibaseEditsOperation(engineConfig, summary, maxlag);
+        String editGroupsUrlSchema = request.getParameter("editGroupsUrlSchema");
+        return new PerformWikibaseEditsOperation(engineConfig, summary, maxlag, editGroupsUrlSchema);
     }
 
 }
