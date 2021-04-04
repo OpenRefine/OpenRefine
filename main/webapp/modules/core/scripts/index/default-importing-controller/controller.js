@@ -95,7 +95,7 @@ Refine.DefaultImportingController.prototype.startImportJob = function(form, prog
             "subCommand": "load-raw-data",
             "csrf_token": token
             }));
-            form[0].trigger('submit');
+            form.trigger('submit');
 
             var start = new Date();
             var timerID = window.setInterval(

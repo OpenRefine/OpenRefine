@@ -257,7 +257,7 @@ HistoryPanel.prototype._showExtractOperationsDialog = function(json) {
 
   var level = DialogSystem.showDialog(frame);
 
-  elmts.textarea[0].trigger('select');
+  elmts.textarea.trigger('select');
 };
 
 HistoryPanel.prototype._showApplyOperationsDialog = function() {
