@@ -15,6 +15,9 @@ public interface RecordAggregator<T> extends Combiner<T> {
      * Given that states are expected to be immutable, this 
      * returns a new aggregation state object.
      * 
+     * This function is required to be associative with the combining function:
+     * combine(a, withRecord(b, record)) == withRecord(combine(a, b), record)
+     * 
      * @param state
      *      the current aggregation state
      * @param record

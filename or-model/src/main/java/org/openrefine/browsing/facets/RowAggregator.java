@@ -15,6 +15,9 @@ public interface RowAggregator<T> extends Combiner<T> {
      * Given that states are expected to be immutable, this 
      * returns a aggregation state object.
      * 
+     * This function is required to be associative with the combining function:
+     * combine(a, withRow(b, rowId, row)) == withRow(combine(a, b), rowId, row)
+     * 
      * @param rowId
      *      the row id of the row to ingest
      * @param row
