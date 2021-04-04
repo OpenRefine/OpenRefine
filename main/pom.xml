@@ -136,7 +136,7 @@
     <plugin>
         <groupId>pl.project13.maven</groupId>
         <artifactId>git-commit-id-plugin</artifactId>
-        <version>4.0.3</version>
+        <version>4.0.4</version>
         <executions>
             <execution>
                 <id>get-the-git-infos</id>
@@ -171,14 +171,14 @@
   <dependencies>
     <dependency>
       <groupId>javax.servlet</groupId>
-      <artifactId>servlet-api</artifactId>
-      <version>2.5</version>
+      <artifactId>javax.servlet-api</artifactId>
+      <version>${servlet-api.version}</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.openrefine.dependencies</groupId>
       <artifactId>butterfly</artifactId>
-      <version>1.0.4</version>
+      <version>${butterfly.version}</version>
     </dependency>
     <dependency>
       <groupId>org.mozilla</groupId>
@@ -355,7 +355,7 @@
     <dependency>
       <groupId>com.google.guava</groupId>
       <artifactId>guava</artifactId>
-      <version>30.1-jre</version>
+      <version>30.1.1-jre</version>
     </dependency>
     <dependency>
       <groupId>javax.xml.bind</groupId>
@@ -367,13 +367,18 @@
       <artifactId>juniversalchardet</artifactId>
       <version>2.4.0</version>
     </dependency>
+    <dependency>
+      <groupId>org.eclipse.jetty</groupId>
+      <artifactId>jetty-servlets</artifactId>
+      <version>${jetty.version}</version>
+    </dependency>
 
     <!-- test dependencies -->
 
     <dependency>
       <groupId>org.testng</groupId>
       <artifactId>testng</artifactId>
-      <version>7.3.0</version>
+      <version>7.4.0</version>
       <scope>test</scope>
     </dependency>
     <dependency>
