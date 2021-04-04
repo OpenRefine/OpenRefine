@@ -100,34 +100,43 @@ ExtendReconciledDataPreviewDialog.getAllProperties = function(url, typeID, onDon
     onDone([]);
   } else {
     var done = false;
-    $.getJSON(
-        url +"?type=" + typeID + "&callback=?",
-        null,
-        function(data) {
-        if (done) return;
-        done = true;
+    var onSuccess = function (data) {
+      if (done) return;
+      done = true;
+      var allProperties = [];
+      for (var i = 0; i < data.properties.length; i++) {
+        var property = data.properties[i];
+        var property2 = {
+          id: property.id,
+          name: property.name,
+        };
+        allProperties.push(property2);
+      }
+      allProperties.sort(function (a, b) {
+        return a.name.localeCompare(b.name);
+      });
 
-        var allProperties = [];
-        for (var i = 0; i < data.properties.length; i++) {
-            var property = data.properties[i];
-            var property2 = {
-                id: property.id,
-                name: property.name
-            };
-            allProperties.push(property2);
-        }
-        allProperties.sort(function(a, b) { return a.name.localeCompare(b.name); });
+      onDone(allProperties);
+    };
 
-        onDone(allProperties);
-        }
-    );
+    $.ajax(url + "?type=" + typeID, {
+      dataType: "json",
+      success: onSuccess,
+      timeout: 7000,
+      error: function () {
+        $.ajax(url + "?type=" + typeID, {
+          dataType: "jsonp",
+          success: onSuccess,
+          timeout: 7000,
+          error: function () {
+            if (done) return;
 
-    window.setTimeout(function() {
-        if (done) return;
-
-        done = true;
-        onDone([]);
-    }, 7000); // time to give up?
+            done = true;
+            onDone([]);
+          }
+        });
+      },
+    });
   }
 };
 
@@ -158,7 +167,7 @@ ExtendReconciledDataPreviewDialog.prototype._show = function(properties) {
     renderSuggestedProperty(properties[i]);
   }
 
-  var suggestConfig = $.extend({}, this._serviceMetadata.suggest.property);
+  var suggestConfig = $.extend({}, this._serviceMetadata.suggest && this._serviceMetadata.suggest.property);
   suggestConfig.key = null;
   suggestConfig.query_param_name = "prefix";
 
@@ -323,7 +332,6 @@ ExtendReconciledDataPreviewDialog.prototype._constrainProperty = function(id) {
   var property = this._findProperty(id);
 
   var frame = DialogSystem.createDialog();
-  frame.width("500px");
 
   var header = $('<div></div>').addClass("dialog-header").text("Settings for " + id).appendTo(frame);
   var body = $('<div></div>').addClass("dialog-body").appendTo(frame);

@@ -182,6 +182,12 @@ Refine._showHideLeftPanel = function() {
   resizeAll();
 };
 
+Refine.showLeftPanel = function() {
+  $('div#body').removeClass("hide-left-panel");
+  if(ui.browsingEngine == undefined || ui.browsingEngine.resize == undefined) return;
+  resizeAll();
+};
+
 Refine.setTitle = function(status) {
   var title = theProject.metadata.name + " - OpenRefine";
   if (status) {

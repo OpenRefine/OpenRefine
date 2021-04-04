@@ -45,13 +45,6 @@ public class InArrayTests extends RefineTest {
     static final List<String> listArray = Arrays.asList("v1", "v2", "v3");
     static final String stringArray[] = {"v1","v2","v3"};
     
-    
-    @Test
-    public void serializeInArray() {
-        String json = "{\"description\":\"Checks if array a contains string s\",\"params\":\"array a, string s\",\"returns\":\"boolean\"}";
-        TestUtils.isSerializedTo(new InArray(), json);
-    }
-    
     @Test
     public void testInArrayParameters() {
         Assert.assertTrue(invoke("inArray") instanceof EvalError);

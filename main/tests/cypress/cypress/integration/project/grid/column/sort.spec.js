@@ -1,54 +1,105 @@
 describe(__filename, function () {
-	it('Perform a basic sort', function () {
-		cy.loadAndVisitProject('food.mini.csv');
+  it('Perform a text sort + Reverse + Remove', function () {
+    cy.loadAndVisitProject('food.sort');
 
-		// sort and confirm
-		cy.columnActionClick('Shrt_Desc', ['Sort']);
-		cy.waitForDialogPanel();
-		cy.confirmDialogPanel();
+    // sort and confirm
+    cy.columnActionClick('Shrt_Desc', ['Sort']);
+    cy.waitForDialogPanel();
+    cy.confirmDialogPanel();
 
-		// ensure sorting is active
-		cy.getCell(0, 'Shrt_Desc').should('to.contain', 'BUTTER,WHIPPED,WITH SALT')
-		cy.getCell(1, 'Shrt_Desc').should('to.contain', 'BUTTER,WITH SALT');
-	});
+    // ensure sorting is active
+    cy.getCell(0, 'Shrt_Desc').should('to.contain', 'BUTTER,WHIPPED,WITH SALT');
+    cy.getCell(1, 'Shrt_Desc').should('to.contain', 'BUTTER,WITH SALT');
 
-	it('Perform a basic sort + Reverse', function () {
-		cy.loadAndVisitProject('food.mini.csv');
+    cy.columnActionClick('Shrt_Desc', ['Sort', 'Reverse']);
 
-		// sort and confirm
-		cy.columnActionClick('Shrt_Desc', ['Sort']);
-		cy.waitForDialogPanel();
-		cy.confirmDialogPanel();
+    cy.getCell(0, 'Shrt_Desc').should('to.contain', 'BUTTER,WITH SALT');
+    cy.getCell(1, 'Shrt_Desc').should('to.contain', 'BUTTER,WHIPPED,WITH SALT');
 
-		// check the sorting
-		cy.getCell(0, 'Shrt_Desc').should('to.contain', 'BUTTER,WHIPPED,WITH SALT');
-		cy.getCell(1, 'Shrt_Desc').should('to.contain', 'BUTTER,WITH SALT');
+    cy.columnActionClick('Shrt_Desc', ['Sort', 'Remove sort']);
 
-		// do a reverse sort
-		cy.columnActionClick('Shrt_Desc', ['Sort', 'Reverse']);
+    cy.getCell(0, 'Shrt_Desc').should('to.contain', 'BUTTER,WITH SALT');
+    cy.getCell(1, 'Shrt_Desc').should('to.contain', 'BUTTER,WHIPPED,WITH SALT');
+  });
+  it('Perform a number sort + Reverse + Remove', function () {
+    cy.loadAndVisitProject('food.sort');
 
-		// re-check the sorting
-		cy.getCell(0, 'Shrt_Desc').should('to.contain', 'BUTTER,WITH SALT');
-		cy.getCell(1, 'Shrt_Desc').should('to.contain', 'BUTTER,WHIPPED,WITH SALT');
-	});
+    cy.castColumnTo('NDB_No', 'number');
+    cy.columnActionClick('NDB_No', ['Sort']);
 
-	it('Perform a basic sort + Remove Sort', function () {
-		cy.loadAndVisitProject('food.mini.csv');
+    cy.waitForDialogPanel();
+    cy.get('[type="radio"]').check('number');
+    cy.get('[type="radio"]').check('reverse');
+    cy.confirmDialogPanel();
 
-		// sort and confirm
-		cy.columnActionClick('Shrt_Desc', ['Sort']);
-		cy.waitForDialogPanel();
-		cy.confirmDialogPanel();
+    // ensure sorting is active
+    cy.getCell(0, 'NDB_No').should('to.contain', 1002);
+    cy.getCell(1, 'NDB_No').should('to.contain', 1001);
+    cy.columnActionClick('NDB_No', ['Sort', 'Reverse']);
+    cy.getCell(0, 'NDB_No').should('to.contain', 1001);
+    cy.getCell(1, 'NDB_No').should('to.contain', 1002);
+    cy.columnActionClick('NDB_No', ['Sort', 'Remove sort']);
+    cy.getCell(0, 'NDB_No').should('to.contain', 1001);
+    cy.getCell(1, 'NDB_No').should('to.contain', 1002);
+  });
+  it('Perform a date sort + Reverse + Remove', function () {
+    cy.loadAndVisitProject('food.sort');
 
-		// check the sorting
-		cy.getCell(0, 'Shrt_Desc').should('to.contain', 'BUTTER,WHIPPED,WITH SALT');
-		cy.getCell(1, 'Shrt_Desc').should('to.contain', 'BUTTER,WITH SALT');
+    cy.castColumnTo('Date', 'date');
+    cy.columnActionClick('Date', ['Sort']);
 
-		// remove
-		cy.columnActionClick('Shrt_Desc', ['Sort', 'Remove sort']);
+    cy.waitForDialogPanel();
+    cy.get('[type="radio"]').check('date');
+    cy.get('[type="radio"]').check('reverse');
+    cy.confirmDialogPanel();
 
-		// re-check the sorting
-		cy.getCell(0, 'Shrt_Desc').should('to.contain', 'BUTTER,WITH SALT');
-		cy.getCell(1, 'Shrt_Desc').should('to.contain', 'BUTTER,WHIPPED,WITH SALT');
-	});
+    // ensure sorting is active
+    cy.getCell(0, 'Date').should('to.contain', '2020-12-17T00:00:00Z');
+    cy.getCell(1, 'Date').should('to.contain', '2020-08-17T00:00:00Z');
+
+    cy.columnActionClick('Date', ['Sort', 'Reverse']);
+
+    cy.getCell(0, 'Date').should('to.contain', '2020-08-17T00:00:00Z');
+    cy.getCell(1, 'Date').should('to.contain', '2020-12-17T00:00:00Z');
+
+    cy.columnActionClick('Date', ['Sort', 'Remove sort']);
+    cy.getCell(0, 'Date').should('to.contain', '2020-12-17T00:00:00Z');
+    cy.getCell(1, 'Date').should('to.contain', '2020-08-17T00:00:00Z');
+  });
+  it('Perform a bool sort + Reverse + Remove', function () {
+    cy.loadAndVisitProject('food.sort');
+
+    cy.getCell(0, 'Fat')
+      .trigger('mouseover')
+      .within(() => {
+        cy.get('a.data-table-cell-edit').click();
+      });
+    cy.get('select').select('boolean');
+    cy.get('button').contains(new RegExp('Apply', 'g')).click();
+
+    cy.getCell(1, 'Fat')
+      .trigger('mouseover')
+      .within(() => {
+        cy.get('a.data-table-cell-edit').click();
+      });
+    cy.get('select').select('boolean');
+    cy.get('button').contains(new RegExp('Apply', 'g')).click();
+
+    cy.columnActionClick('Fat', ['Sort']);
+
+    cy.waitForDialogPanel();
+    cy.get('[type="radio"]').check('boolean');
+    cy.confirmDialogPanel();
+
+    cy.getCell(0, 'Fat').should('to.contain', 'false');
+    cy.getCell(1, 'Fat').should('to.contain', 'true');
+
+    cy.columnActionClick('Fat', ['Sort', 'Reverse']);
+    cy.getCell(0, 'Fat').should('to.contain', 'true');
+    cy.getCell(1, 'Fat').should('to.contain', 'false');
+
+    cy.columnActionClick('Fat', ['Sort', 'Remove sort']);
+    cy.getCell(0, 'Fat').should('to.contain', 'false');
+    cy.getCell(1, 'Fat').should('to.contain', 'true');
+  });
 });
