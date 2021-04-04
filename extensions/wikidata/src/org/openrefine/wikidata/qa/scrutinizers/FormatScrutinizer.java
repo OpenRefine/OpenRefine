@@ -24,6 +24,8 @@
 package org.openrefine.wikidata.qa.scrutinizers;
 
 import org.openrefine.wikidata.qa.QAWarning;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.wikidata.wdtk.datamodel.interfaces.EntityIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.PropertyIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.Snak;
@@ -48,6 +50,8 @@ import java.util.regex.PatternSyntaxException;
  *
  */
 public class FormatScrutinizer extends SnakScrutinizer {
+
+    private static final Logger logger = LoggerFactory.getLogger(FormatScrutinizer.class);
 
     public static final String type = "add-statements-with-invalid-format";
     public String formatConstraintQid;
@@ -102,7 +106,8 @@ public class FormatScrutinizer extends SnakScrutinizer {
                         pattern = Pattern.compile(regex);
                         patterns.add(pattern);
                     } catch(PatternSyntaxException e) {
-                        ; // silently ignore the regex error - it is not up to the OpenRefine user to fix the regex
+                        logger.info(String.format("Ignoring invalid format constraint for property %s. Regex %s is invalid: %s",
+                                pid.getId(), regex, e.getMessage()));
                     }
                 }
             }
