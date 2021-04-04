@@ -67,10 +67,10 @@ public class CellChange implements Change {
     		@JsonProperty("columnName")
     		String columnName,
     		@JsonProperty("newCellValue")
-    		Serializable newCellValue) {
+    		Object newCellValue) {
         this.row = row;
         this.columnName = columnName;
-        this.newCellValue = newCellValue;
+        this.newCellValue = (Serializable)newCellValue;
     }
     
 

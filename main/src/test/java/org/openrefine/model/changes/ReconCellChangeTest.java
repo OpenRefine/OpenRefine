@@ -3,6 +3,7 @@ package org.openrefine.model.changes;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import java.io.IOException;
 import java.io.Serializable;
 import java.util.Arrays;
 
@@ -19,6 +20,9 @@ import org.openrefine.util.TestUtils;
 import org.testng.Assert;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
+
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.databind.JsonMappingException;
 
 public class ReconCellChangeTest extends RefineTest {
 	
@@ -81,6 +85,12 @@ public class ReconCellChangeTest extends RefineTest {
 		Recon newRecon = testRecon("e", "f", Judgment.Matched);
 		ReconStats newStats = ReconStats.create(3L, 2L, 1L);
 		Change change = new ReconCellChange(0L, "foo", newRecon, newStats);
+		TestUtils.isSerializedTo(change, serializedChange, ParsingUtilities.defaultWriter);
+	}
+	
+	@Test
+	public void testDeserialize() throws JsonParseException, JsonMappingException, IOException {
+		Change change = ParsingUtilities.mapper.readValue(serializedChange, Change.class);
 		TestUtils.isSerializedTo(change, serializedChange, ParsingUtilities.defaultWriter);
 	}
 }

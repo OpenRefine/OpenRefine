@@ -2,6 +2,7 @@ package org.openrefine.model.changes;
 
 import static org.mockito.Mockito.mock;
 
+import java.io.IOException;
 import java.io.Serializable;
 import java.util.Arrays;
 
@@ -16,6 +17,9 @@ import org.openrefine.util.TestUtils;
 import org.testng.Assert;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
+
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.databind.JsonMappingException;
 
 public class CellChangeTest extends RefineTest {
 	
@@ -58,8 +62,9 @@ public class CellChangeTest extends RefineTest {
 	}
 	
 	@Test
-	public void testSerialize() {
-		Change change = new CellChange(14L, "bar", "changed");
+	public void testRoundTripSerialize() throws JsonParseException, JsonMappingException, IOException {
+		Change change = ParsingUtilities.mapper.readValue(serializedChange, Change.class);
 		TestUtils.isSerializedTo(change, serializedChange, ParsingUtilities.defaultWriter);
+		Assert.assertTrue(change instanceof CellChange);
 	}
 }
