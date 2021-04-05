@@ -211,7 +211,7 @@ Refine.CreateProjectUI.prototype.pollImportJob = function(start, jobID, timerID,
           callback(jobID, job);
         }
       } else {
-        var progress = job.config.progress;
+        var progress = job.config.progress || 0;
         if (progress.percent > 0) {
           var secondsSpent = (new Date().getTime() - start.getTime()) / 1000;
           var secondsRemaining = (100 / progress.percent) * secondsSpent - secondsSpent;
