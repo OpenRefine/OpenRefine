@@ -480,7 +480,11 @@ Refine.wrapCSRF = function(onCSRF) {
          onCSRF(response['token']);
       },
       "json"
-   );
+   )
+   .fail(function(jqXHR, textStatus, errorThrown ) {
+      alert('GET for wrapCSRF in project.js failed - ' + textStatus);
+   });
+
 };
 
 // Performs a POST request where an additional CSRF token
@@ -494,7 +498,10 @@ Refine.postCSRF = function(url, data, success, dataType) {
       } else {
          fullData['csrf_token'] = token;
       }
-      $.post(url, fullData, success, dataType);
+      $.post(url, fullData, success, dataType)
+          .fail(function(jqXHR, textStatus, errorThrown ) {
+            alert('postCSRF in project.js failed - ' + textStatus);
+          });
    });
 };
 
