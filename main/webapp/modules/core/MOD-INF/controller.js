@@ -335,8 +335,8 @@ function init() {
   registerImporting();
 
   var commonModules = [
-    "externals/jquery-3.5.1.js",
-    "externals/jquery-migrate-3.3.1.js",
+    "externals/jquery-3.6.0.js",
+    "externals/jquery-migrate-3.3.2.js",
       "externals/jquery-ui/jquery-ui.js",
       "externals/js.cookie.js",
       "externals/underscore-min.js",
