@@ -56,12 +56,15 @@ public class ToggleStarredExpressionCommand extends Command {
             starredExpressions.add(expression);
         }
 
+        Object result = "{}"; // We always need to have something to make AJAX JSON parser happy
         if(request.getParameter("returnList") != null) {
-            try {
-                respondJSON(response, GetStarredExpressionsCommand.getExpressionsList());
-            } catch (Exception e) {
-                respondException(response, e);
-            }
+            result = GetStarredExpressionsCommand.getExpressionsList();
         }
+        try {
+            respondJSON(response, result);
+        } catch (Exception e) {
+            respondException(response, e);
+        }
+
     }
 }
