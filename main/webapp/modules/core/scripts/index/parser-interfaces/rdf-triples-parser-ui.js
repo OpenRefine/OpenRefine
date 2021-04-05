@@ -63,7 +63,7 @@ Refine.RdfTriplesParserUI.prototype.dispose = function() {
 
 Refine.RdfTriplesParserUI.prototype.getOptions = function() {
   var options = {
-    encoding: $.trim(this._optionContainerElmts.encodingInput[0].value)
+    encoding: this._optionContainerElmts.encodingInput[0].value.trim()
   };
   return options;
 };

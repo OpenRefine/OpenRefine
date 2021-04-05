@@ -408,7 +408,7 @@ ExpressionPreviewDialog.Widget.prototype._scheduleUpdate = function() {
 
 ExpressionPreviewDialog.Widget.prototype.update = function() {
     var self = this;
-    var expression = this.expression = $.trim(this._elmts.expressionPreviewTextarea[0].value);
+    var expression = this.expression = this._elmts.expressionPreviewTextarea[0].value.trim();
     var params = {
         project: theProject.id,
         cellIndex: this._cellIndex

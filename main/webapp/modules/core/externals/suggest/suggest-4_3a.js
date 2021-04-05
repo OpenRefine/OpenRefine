@@ -1027,7 +1027,7 @@
             qstr = qstr.replace(m[0], "");
             m = regex.exec(str);
         }
-        qstr = $.trim(qstr.replace(/\s+/g, " "));
+        qstr = qstr.replace(/\s+/g, " ").trim();
         return [qstr, filters, overrides];
     },
 

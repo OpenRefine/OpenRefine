@@ -302,7 +302,7 @@ ReconStandardServicePanel.prototype.start = function() {
           }
         });
       } else {
-        var property = $.trim(this.value);
+        var property = this.value.trim();
         if (property && include[index].checked) {
           columnDetails.push({
             column: this.getAttribute("columnName"),

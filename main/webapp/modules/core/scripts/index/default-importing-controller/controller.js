@@ -280,7 +280,7 @@ Refine.DefaultImportingController.prototype.getPreviewData = function(callback, 
 
 Refine.DefaultImportingController.prototype._createProject = function() {
   if ((this._formatParserUI) && this._formatParserUI.confirmReadyToCreateProject()) {
-    var projectName = $.trim(this._parsingPanelElmts.projectNameInput[0].value);
+    var projectName = this._parsingPanelElmts.projectNameInput[0].value.trim();
     if (projectName.length === 0) {
       window.alert($.i18n('core-index-import/warning-name'));
       this._parsingPanelElmts.projectNameInput.trigger('focus');

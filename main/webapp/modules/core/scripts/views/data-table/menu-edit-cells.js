@@ -541,8 +541,8 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
 
       var mode = dialog.find('input[name="transpose-dialog-column-choices"]:checked')[0].value;
       if (mode == "2") {
-        config.keyColumnName = $.trim(elmts.keyColumnNameInput[0].value);
-        config.valueColumnName = $.trim(elmts.valueColumnNameInput[0].value);
+        config.keyColumnName = elmts.keyColumnNameInput[0].value.trim();
+        config.valueColumnName = elmts.valueColumnNameInput[0].value.trim();
         if (config.keyColumnName == "") {
           alert($.i18n('core-views/spec-new-name'));
           return;
@@ -551,7 +551,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
           return;
         }
       } else {
-        config.combinedColumnName = $.trim(elmts.combinedColumnNameInput[0].value);
+        config.combinedColumnName = elmts.combinedColumnNameInput[0].value.trim();
         config.prependColumnName = elmts.prependColumnNameCheckbox[0].checked;
         config.separator = elmts.separatorInput[0].value;
         if (config.combinedColumnName == "") {

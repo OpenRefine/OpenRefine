@@ -140,7 +140,7 @@ HistoryPanel.prototype._render = function() {
     elmts.helpDiv.hide();
 
     elmts.filterInput.bind("keyup change input",function() {
-      var filter = $.trim(this.value.toLowerCase());
+      var filter = this.value.toLowerCase().trim();
       if (filter.length === 0) {
         elmts.bodyDiv.find(".history-entry").removeClass("filtered-out");
       } else {

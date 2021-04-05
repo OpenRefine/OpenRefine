@@ -107,7 +107,7 @@ ExporterManager.prototype._initializeUI = function() {
 ExporterManager.stripNonFileChars = function(name) {
     // prohibited characters in file name of linux (/) and windows (\/:*?"<>|)
     // and MacOS https://stackoverflow.com/a/47455094/167425
-    return $.trim(name.replace(/[\\*\/:;,?"<>|#]/g, ' ')).replace(/\s+/g, '-');
+    return name.replace(/[\\*\/:;,?"<>|#]/g, ' ').trim().replace(/\s+/g, '-');
 };
 
 ExporterManager.handlers.exportRows = function(format, ext) {

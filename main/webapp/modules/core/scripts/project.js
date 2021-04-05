@@ -280,7 +280,7 @@ Refine._renameProject = function() {
     return;
   }
 
-  name = $.trim(name);
+  name = name.trim();
   if (theProject.metadata.name == name || name.length === 0) {
     return;
   }

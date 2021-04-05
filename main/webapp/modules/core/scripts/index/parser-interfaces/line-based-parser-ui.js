@@ -63,7 +63,7 @@ Refine.LineBasedParserUI.prototype.dispose = function() {
 
 Refine.LineBasedParserUI.prototype.getOptions = function() {
   var options = {
-    encoding: $.trim(this._optionContainerElmts.encodingInput[0].value),
+    encoding: this._optionContainerElmts.encodingInput[0].value.trim(),
     recordPath: this._config.recordPath
   };
 
