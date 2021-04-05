@@ -53,6 +53,7 @@ import java.util.stream.Collectors;
 
 import au.com.bytecode.opencsv.CSVParser;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.text.StringEscapeUtils;
 
 import org.openrefine.ProjectMetadata;
@@ -91,6 +92,7 @@ public class SeparatorBasedImporter extends LineBasedImporterBase {
         JSONUtilities.safePut(options, "processQuotes", true);
         JSONUtilities.safePut(options, "quoteCharacter", String.valueOf(CSVParser.DEFAULT_QUOTE_CHARACTER));
         JSONUtilities.safePut(options, "trimStrings", true);
+        JSONUtilities.safePut(options, "multiLine", false);
 
         return options;
     }
@@ -101,10 +103,14 @@ public class SeparatorBasedImporter extends LineBasedImporterBase {
             throws Exception {
         boolean processQuotes = JSONUtilities.getBoolean(options, "processQuotes", true);
 
+        // the default 'multiLine' setting is set to true for backwards-compatibility
+        // although the UI now proposes 'false' by default for performance reasons (similarly to Spark)
+        boolean multiLine = JSONUtilities.getBoolean(options, "multiLine", true);
+
         // If we use quotes, then a line of the original file does not necessarily correspond
         // to a row in the grid, so we unfortunately cannot use the logic from LineBasedImporterBase.
         // We resort to loading the whole file in memory.
-        if (processQuotes) {
+        if (processQuotes && multiLine) {
             GridState lines = limit > 0 ? runner.loadTextFile(sparkURI, limit) : runner.loadTextFile(sparkURI);
             TableDataReader dataReader = createTableDataReader(metadata, job, lines, options);
             return tabularParserHelper.parseOneFile(metadata, job, fileSource, archiveFileName, dataReader, limit, options);
@@ -245,7 +251,7 @@ public class SeparatorBasedImporter extends LineBasedImporterBase {
     }
 
     /**
-     * Row mapper used to split lines when parsing without quote handling.
+     * Row mapper used to split lines when parsing without quote handling or without multi-line support
      */
     static protected class RowParser implements RowMapper {
 
@@ -279,9 +285,21 @@ public class SeparatorBasedImporter extends LineBasedImporterBase {
             CSVParser parser = getCSVParser();
             String[] cellStrings;
             try {
-                cellStrings = parser.parseLine((String) row.getCellValue(0));
+                if (_processQuotes) {
+                    cellStrings = parser.parseLineMulti((String) row.getCellValue(0));
+                    if (parser.isPending()) {
+                        // the last cell value was unterminated
+                        // we retrieve the cell content by artificially parsing a line containing an escape character
+                        // only
+                        String[] remainingCell = parser.parseLineMulti(_quoteCharacter);
+                        cellStrings = ArrayUtils.addAll(cellStrings, remainingCell);
+                    }
+                } else {
+                    cellStrings = parser.parseLine((String) row.getCellValue(0));
+                }
             } catch (IOException e) {
-                // should not happen: IOException can only be thrown when quoting is enabled
+                // this can only happen when a quoted cell is unterminated:
+                // we have reached the end of the line without a terminating quote character
                 throw new IllegalStateException(e);
             }
             return new Row(Arrays.asList(cellStrings).stream().map(s -> new Cell(s, null)).collect(Collectors.toList()));

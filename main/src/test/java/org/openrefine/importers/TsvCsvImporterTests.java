@@ -75,13 +75,12 @@ public class TsvCsvImporterTests extends ImporterTest {
         super.tearDown();
     }
 
-    @Test(dataProvider = "CSV-TSV-AutoDetermine")
-    public void readJustColumns(String sep) throws Exception {
+    @Test(dataProvider = "separator-and-multiline")
+    public void readJustColumns(String sep, boolean multiLine) throws Exception {
         // create input to test with
-        String inputSeparator = sep == null ? "\t" : sep;
-        String input = "col1" + inputSeparator + "col2" + inputSeparator + "col3";
+        String input = "col1" + sep + "col2" + sep + "col3";
 
-        prepareOptions(sep, -1, 0, 0, 1, false, false);
+        prepareOptions(sep, -1, 0, 0, 1, false, false, "\"", "[]", multiLine);
         GridState state = parseOneString(SUT, input);
 
         Assert.assertEquals(state.getColumnModel().getColumns().size(), 3);
@@ -90,14 +89,13 @@ public class TsvCsvImporterTests extends ImporterTest {
         Assert.assertEquals(state.getColumnModel().getColumns().get(2).getName(), "col3");
     }
 
-    @Test(dataProvider = "CSV-TSV-AutoDetermine")
-    public void readSimpleData_CSV_1Header_1Row(String sep) throws Exception {
+    @Test(dataProvider = "separator-and-multiline")
+    public void readSimpleData_CSV_1Header_1Row(String sep, boolean multiLine) throws Exception {
         // create input to test with
-        String inputSeparator = sep == null ? "\t" : sep;
-        String input = "col1" + inputSeparator + "col2" + inputSeparator + "col3\n" +
-                "data1" + inputSeparator + "data2" + inputSeparator + "data3";
+        String input = "col1" + sep + "col2" + sep + "col3\n" +
+                "data1" + sep + "data2" + sep + "data3";
 
-        prepareOptions(sep, -1, 0, 0, 1, false, false);
+        prepareOptions(sep, -1, 0, 0, 1, false, false, "\"", "[]", multiLine);
         GridState state = parseOneString(SUT, input);
 
         Assert.assertEquals(state.getColumnModel().getColumns().size(), 3);
@@ -112,14 +110,13 @@ public class TsvCsvImporterTests extends ImporterTest {
         Assert.assertEquals(row0.getCell(2).value, "data3");
     }
 
-    @Test(dataProvider = "CSV-TSV-AutoDetermine")
-    public void readSimpleData_CSV_1Header_1Row_GuessValues(String sep) throws Exception {
+    @Test(dataProvider = "separator-and-multiline")
+    public void readSimpleData_CSV_1Header_1Row_GuessValues(String sep, boolean multiLine) throws Exception {
         // create input to test with
-        String inputSeparator = sep == null ? "\t" : sep;
-        String input = "col1" + inputSeparator + "col2" + inputSeparator + "col3\n" +
-                "data1" + inputSeparator + "234" + inputSeparator + "data3";
+        String input = "col1" + sep + "col2" + sep + "col3\n" +
+                "data1" + sep + "234" + sep + "data3";
 
-        prepareOptions(sep, -1, 0, 0, 1, true, false);
+        prepareOptions(sep, -1, 0, 0, 1, true, false, "\"", "[]", multiLine);
         GridState state = parseOneString(SUT, input);
 
         Assert.assertEquals(state.getColumnModel().getColumns().size(), 3);
@@ -135,13 +132,12 @@ public class TsvCsvImporterTests extends ImporterTest {
         Assert.assertEquals(row0.getCell(2).value, "data3");
     }
 
-    @Test(dataProvider = "CSV-TSV-AutoDetermine")
-    public void readSimpleData_0Header_1Row(String sep) throws Exception {
+    @Test(dataProvider = "separator-and-multiline")
+    public void readSimpleData_0Header_1Row(String sep, boolean multiLine) throws Exception {
         // create input to test with
-        String inputSeparator = sep == null ? "\t" : sep;
-        String input = "data1" + inputSeparator + "data2" + inputSeparator + "data3";
+        String input = "data1" + sep + "data2" + sep + "data3";
 
-        prepareOptions(sep, -1, 0, 0, 0, false, false);
+        prepareOptions(sep, -1, 0, 0, 0, false, false, "\"", "[]", multiLine);
         GridState state = parseOneString(SUT, input);
 
         Assert.assertEquals(state.getColumnModel().getColumns().size(), 3);
@@ -156,13 +152,12 @@ public class TsvCsvImporterTests extends ImporterTest {
         Assert.assertEquals(row0.getCell(2).value, "data3");
     }
 
-    @Test(groups = {}, dataProvider = "CSV-TSV-AutoDetermine")
-    public void readDoesNotTrimLeadingTrailingWhitespace(String sep) throws Exception {
+    @Test(groups = {}, dataProvider = "separator-and-multiline")
+    public void readDoesNotTrimLeadingTrailingWhitespace(String sep, boolean multiLine) throws Exception {
         // create input to test with
-        String inputSeparator = sep == null ? "\t" : sep;
-        String input = " data1 " + inputSeparator + " 3.4 " + inputSeparator + " data3 ";
+        String input = " data1 " + sep + " 3.4 " + sep + " data3 ";
 
-        prepareOptions(sep, -1, 0, 0, 0, false, false);
+        prepareOptions(sep, -1, 0, 0, 0, false, false, "\"", "[]", multiLine);
         GridState state = parseOneString(SUT, input);
 
         Assert.assertEquals(state.getColumnModel().getColumns().size(), 3);
@@ -174,13 +169,12 @@ public class TsvCsvImporterTests extends ImporterTest {
         Assert.assertEquals(row0.getCell(2).value, " data3 ");
     }
 
-    @Test(dataProvider = "CSV-TSV-AutoDetermine")
-    public void readDoesNotTrimLeadingWhitespace(String sep) throws Exception {
+    @Test(dataProvider = "separator-and-multiline")
+    public void readDoesNotTrimLeadingWhitespace(String sep, boolean multiLine) throws Exception {
         // create input to test with
-        String inputSeparator = sep == null ? "\t" : sep;
-        String input = " data1" + inputSeparator + " 12" + inputSeparator + " data3";
+        String input = " data1" + sep + " 12" + sep + " data3";
 
-        prepareOptions(sep, -1, 0, 0, 0, true, false);
+        prepareOptions(sep, -1, 0, 0, 0, true, false, "\"", "[]", multiLine);
         GridState state = parseOneString(SUT, input);
 
         Assert.assertEquals(state.getColumnModel().getColumns().size(), 3);
@@ -192,13 +186,13 @@ public class TsvCsvImporterTests extends ImporterTest {
         Assert.assertEquals(row0.getCell(2).value, " data3");
     }
 
-    @Test(groups = {}, dataProvider = "CSV-TSV-AutoDetermine")
-    public void readTrimsLeadingTrailingWhitespaceOnTrimStrings(String sep) throws Exception {
+    @Test(groups = {}, dataProvider = "separator-and-multiline")
+    public void readTrimsLeadingTrailingWhitespaceOnTrimStrings(String sep, boolean multiLine) throws Exception {
         // create input to test with
-        String inputSeparator = sep == null ? "\t" : sep;
-        String input = " data1 " + inputSeparator + " 3.4 " + inputSeparator + " data3 ";
+        String input = " data1 " + sep + " 3.4 " + sep + " data3 ";
 
-        prepareOptions(sep, -1, 0, 0, 0, false, false, true);
+        prepareOptions(sep, -1, 0, 0, 0, false, false, "\"", "[]", false);
+        options.put("trimStrings", true);
         GridState state = parseOneString(SUT, input);
 
         Assert.assertEquals(state.getColumnModel().getColumns().size(), 3);
@@ -210,13 +204,13 @@ public class TsvCsvImporterTests extends ImporterTest {
         Assert.assertEquals(row0.getCellValue(2), "data3");
     }
 
-    @Test(groups = {}, dataProvider = "CSV-TSV-AutoDetermine")
-    public void readDoesNotTrimLeadingTrailingWhitespaceOnNoTrimStrings(String sep) throws Exception {
+    @Test(groups = {}, dataProvider = "separator-and-multiline")
+    public void readDoesNotTrimLeadingTrailingWhitespaceOnNoTrimStrings(String sep, boolean multiLine) throws Exception {
         // create input to test with
-        String inputSeparator = sep == null ? "\t" : sep;
-        String input = " data1 " + inputSeparator + " 3.4 " + inputSeparator + " data3 ";
+        String input = " data1 " + sep + " 3.4 " + sep + " data3 ";
 
-        prepareOptions(sep, -1, 0, 0, 0, false, false, false);
+        prepareOptions(sep, -1, 0, 0, 0, false, false, "\"", "[]", multiLine);
+        options.put("trimStrings", false);
         GridState state = parseOneString(SUT, input);
 
         Assert.assertEquals(state.getColumnModel().getColumns().size(), 3);
@@ -228,13 +222,13 @@ public class TsvCsvImporterTests extends ImporterTest {
         Assert.assertEquals(row0.getCellValue(2), " data3 ");
     }
 
-    @Test(groups = {}, dataProvider = "CSV-TSV-AutoDetermine")
-    public void trimAndAutodetectDatatype(String sep) throws Exception {
+    @Test(groups = {}, dataProvider = "separator-and-multiline")
+    public void trimAndAutodetectDatatype(String sep, boolean multiLine) throws Exception {
         // create input to test with
-        String inputSeparator = sep == null ? "\t" : sep;
-        String input = " data1 " + inputSeparator + " 3.4 " + inputSeparator + " data3 ";
+        String input = " data1 " + sep + " 3.4 " + sep + " data3 ";
 
-        prepareOptions(sep, -1, 0, 0, 0, true, false, true);
+        prepareOptions(sep, -1, 0, 0, 0, true, false, "\"", "[]", multiLine);
+        options.put("trimStrings", true);
         GridState state = parseOneString(SUT, input);
 
         Assert.assertEquals(state.getColumnModel().getColumns().size(), 3);
@@ -246,13 +240,12 @@ public class TsvCsvImporterTests extends ImporterTest {
         Assert.assertEquals(row0.getCellValue(2), "data3");
     }
 
-    @Test(dataProvider = "CSV-TSV-AutoDetermine")
-    public void readCanAddNull(String sep) throws Exception {
+    @Test(dataProvider = "separator-and-multiline")
+    public void readCanAddNull(String sep, boolean multiLine) throws Exception {
         // create input to test with
-        String inputSeparator = sep == null ? "\t" : sep;
-        String input = " data1" + inputSeparator + inputSeparator + " data3";
+        String input = " data1" + sep + sep + " data3";
 
-        prepareOptions(sep, -1, 0, 0, 0, true, false);
+        prepareOptions(sep, -1, 0, 0, 0, true, false, "\"", "[]", false);
         GridState state = parseOneString(SUT, input);
 
         Assert.assertEquals(state.getColumnModel().getColumns().size(), 3);
@@ -264,15 +257,14 @@ public class TsvCsvImporterTests extends ImporterTest {
         Assert.assertEquals(row0.getCell(2).value, " data3");
     }
 
-    @Test(dataProvider = "CSV-TSV-AutoDetermine")
-    public void readSimpleData_2Header_1Row(String sep) throws Exception {
+    @Test(dataProvider = "separator-and-multiline")
+    public void readSimpleData_2Header_1Row(String sep, boolean multiLine) throws Exception {
         // create input to test with
-        String inputSeparator = sep == null ? "\t" : sep;
-        String input = "col1" + inputSeparator + "col2" + inputSeparator + "col3\n" +
-                "sub1" + inputSeparator + "sub2" + inputSeparator + "sub3\n" +
-                "data1" + inputSeparator + "data2" + inputSeparator + "data3";
+        String input = "col1" + sep + "col2" + sep + "col3\n" +
+                "sub1" + sep + "sub2" + sep + "sub3\n" +
+                "data1" + sep + "data2" + sep + "data3";
 
-        prepareOptions(sep, -1, 0, 0, 2, false, false);
+        prepareOptions(sep, -1, 0, 0, 2, false, false, "\"", "[]", false);
         GridState state = parseOneString(SUT, input);
 
         Assert.assertEquals(state.getColumnModel().getColumns().size(), 3);
@@ -287,15 +279,13 @@ public class TsvCsvImporterTests extends ImporterTest {
         Assert.assertEquals(row0.getCell(2).value, "data3");
     }
 
-    @Test(dataProvider = "CSV-TSV-AutoDetermine")
-    public void readSimpleData_RowLongerThanHeader(String sep) throws Exception {
+    @Test(dataProvider = "separator-and-multiline")
+    public void readSimpleData_RowLongerThanHeader(String sep, boolean multiLine) throws Exception {
         // create input
-        String inputSeparator = sep == null ? "\t" : sep;
-        String input = "col1" + inputSeparator + "col2" + inputSeparator + "col3\n" +
-                "data1" + inputSeparator + "data2" + inputSeparator + "data3" + inputSeparator + "data4" + inputSeparator + "data5"
-                + inputSeparator + "data6";
+        String input = "col1" + sep + "col2" + sep + "col3\n" +
+                "data1" + sep + "data2" + sep + "data3" + sep + "data4" + sep + "data5" + sep + "data6";
 
-        prepareOptions(sep, -1, 0, 0, 1, false, false);
+        prepareOptions(sep, -1, 0, 0, 1, false, false, "\"", "[]", multiLine);
         GridState state = parseOneString(SUT, input);
 
         Assert.assertEquals(state.getColumnModel().getColumns().size(), 6);
@@ -316,14 +306,13 @@ public class TsvCsvImporterTests extends ImporterTest {
         Assert.assertEquals(row0.getCell(5).value, "data6");
     }
 
-    @Test(groups = {}, dataProvider = "CSV-TSV-AutoDetermine")
-    public void readQuotedData(String sep) throws Exception {
+    @Test(groups = {}, dataProvider = "separator-and-multiline")
+    public void readQuotedData(String sep, boolean multiLine) throws Exception {
         // create input
-        String inputSeparator = sep == null ? "\t" : sep;
-        String input = "col1" + inputSeparator + "col2" + inputSeparator + "col3\n" +
-                "\"\"\"To Be\"\" is often followed by \"\"or not To Be\"\"\"" + inputSeparator + "data2";
+        String input = "col1" + sep + "col2" + sep + "col3\n" +
+                "\"\"\"To Be\"\" is often followed by \"\"or not To Be\"\"\"" + sep + "data2";
 
-        prepareOptions(sep, -1, 0, 0, 1, false, false);
+        prepareOptions(sep, -1, 0, 0, 1, false, false, "\"", "[]", multiLine);
         GridState state = parseOneString(SUT, input);
 
         Assert.assertEquals(state.getColumnModel().getColumns().size(), 3);
@@ -337,15 +326,14 @@ public class TsvCsvImporterTests extends ImporterTest {
         Assert.assertEquals(row0.getCell(1).value, "data2");
     }
 
-    @Test(dataProvider = "CSV-TSV-AutoDetermine")
-    public void readIgnoreFirstLine(String sep) throws Exception {
+    @Test(dataProvider = "separator-and-multiline")
+    public void readIgnoreFirstLine(String sep, boolean multiLine) throws Exception {
         // create input
-        String inputSeparator = sep == null ? "\t" : sep;
         String input = "ignore1\n" +
-                "col1" + inputSeparator + "col2" + inputSeparator + "col3\n" +
-                "data1" + inputSeparator + "data2" + inputSeparator + "data3";
+                "col1" + sep + "col2" + sep + "col3\n" +
+                "data1" + sep + "data2" + sep + "data3";
 
-        prepareOptions(sep, -1, 0, 1, 1, false, false);
+        prepareOptions(sep, -1, 0, 1, 1, false, false, "\"", "[]", multiLine);
         GridState state = parseOneString(SUT, input);
 
         Assert.assertEquals(state.getColumnModel().getColumns().size(), 3);
@@ -360,15 +348,14 @@ public class TsvCsvImporterTests extends ImporterTest {
         Assert.assertEquals(row0.getCell(2).value, "data3");
     }
 
-    @Test(dataProvider = "CSV-TSV-AutoDetermine")
-    public void readSkipFirstDataLine(String sep) throws Exception {
+    @Test(dataProvider = "separator-and-multiline")
+    public void readSkipFirstDataLine(String sep, boolean multiLine) throws Exception {
         // create input
-        String inputSeparator = sep == null ? "\t" : sep;
-        String input = "col1" + inputSeparator + "col2" + inputSeparator + "col3\n" +
+        String input = "col1" + sep + "col2" + sep + "col3\n" +
                 "skip1\n" +
-                "data1" + inputSeparator + "data2" + inputSeparator + "data3";
+                "data1" + sep + "data2" + sep + "data3";
 
-        prepareOptions(sep, -1, 1, 0, 1, false, false);
+        prepareOptions(sep, -1, 1, 0, 1, false, false, "\"", "[]", multiLine);
         GridState state = parseOneString(SUT, input);
 
         Assert.assertEquals(state.getColumnModel().getColumns().size(), 3);
@@ -383,19 +370,18 @@ public class TsvCsvImporterTests extends ImporterTest {
         Assert.assertEquals(row0.getCell(2).value, "data3");
     }
 
-    @Test(dataProvider = "CSV-TSV-AutoDetermine")
-    public void readIgnore3_Header2_Skip1(String sep) throws Exception {
+    @Test(dataProvider = "separator-and-multiline")
+    public void readIgnore3_Header2_Skip1(String sep, boolean multiLine) throws Exception {
         // create input
-        String inputSeparator = sep == null ? "\t" : sep;
         String input = "ignore1\n" +
                 "ignore2\n" +
                 "ignore3\n" +
-                "col1" + inputSeparator + "col2" + inputSeparator + "col3\n" +
-                "sub1" + inputSeparator + "sub2" + inputSeparator + "sub3\n" +
+                "col1" + sep + "col2" + sep + "col3\n" +
+                "sub1" + sep + "sub2" + sep + "sub3\n" +
                 "skip1\n" +
-                "data1" + inputSeparator + "data2" + inputSeparator + "data3";
+                "data1" + sep + "data2" + sep + "data3";
 
-        prepareOptions(sep, -1, 1, 3, 2, false, false);
+        prepareOptions(sep, -1, 1, 3, 2, false, false, "\"", "[]", multiLine);
         GridState state = parseOneString(SUT, input);
 
         Assert.assertEquals(state.getColumnModel().getColumns().size(), 3);
@@ -410,24 +396,22 @@ public class TsvCsvImporterTests extends ImporterTest {
         Assert.assertEquals(row0.getCell(2).value, "data3");
     }
 
-    @Test(groups = {}, dataProvider = "CSV-TSV-AutoDetermine")
-    public void readIgnore3_Header2_Skip2_limit2(String sep) throws Exception {
+    @Test(groups = {}, dataProvider = "separator-and-multiline")
+    public void readIgnore3_Header2_Skip2_limit2(String sep, boolean multiLine) throws Exception {
         // create input
-        String inputSeparator = sep == null ? "\t" : sep;
         String input = "ignore1\n" +
                 "ignore2\n" +
                 "ignore3\n" +
-                "col1" + inputSeparator + "col2" + inputSeparator + "col3\n" +
-                "sub1" + inputSeparator + "sub2" + inputSeparator + "sub3\n" +
+                "col1" + sep + "col2" + sep + "col3\n" +
+                "sub1" + sep + "sub2" + sep + "sub3\n" +
                 "skip1\n" +
                 "skip2\n" +
-                "data-row1-cell1" + inputSeparator + "data-row1-cell2" + inputSeparator + "data-row1-cell3\n" +
-                "data-row2-cell1" + inputSeparator + "data-row2-cell2" + inputSeparator + "\n" + // missing last data
-                                                                                                 // point of this row on
-                                                                                                 // purpose
-                "data-row3-cell1" + inputSeparator + "data-row3-cell2" + inputSeparator + "data-row1-cell3";
+                "data-row1-cell1" + sep + "data-row1-cell2" + sep + "data-row1-cell3\n" +
+                "data-row2-cell1" + sep + "data-row2-cell2" + sep + "\n" + // missing last data point of this row on
+                                                                           // purpose
+                "data-row3-cell1" + sep + "data-row3-cell2" + sep + "data-row1-cell3";
 
-        prepareOptions(sep, 2, 2, 3, 2, false, false);
+        prepareOptions(sep, 2, 2, 3, 2, false, false, "\"", "[]", multiLine);
         GridState state = parseOneString(SUT, input);
 
         Assert.assertEquals(state.getColumnModel().getColumns().size(), 3);
@@ -447,13 +431,12 @@ public class TsvCsvImporterTests extends ImporterTest {
         Assert.assertNull(row1.getCell(2));
     }
 
-    @Test(dataProvider = "CSV-TSV-AutoDetermine")
-    public void ignoreQuotes(String sep) throws Exception {
+    @Test(dataProvider = "separator-and-multiline")
+    public void ignoreQuotes(String sep, boolean multiLine) throws Exception {
         // create input
-        String inputSeparator = sep == null ? "\t" : sep;
-        String input = "data1" + inputSeparator + "data2\"" + inputSeparator + "data3" + inputSeparator + "data4";
+        String input = "data1" + sep + "data2\"" + sep + "data3" + sep + "data4";
 
-        prepareOptions(sep, -1, 0, 0, 0, false, true);
+        prepareOptions(sep, -1, 0, 0, 0, false, true, "\"", "[]", multiLine);
         GridState state = parseOneString(SUT, input);
 
         Assert.assertEquals(state.getColumnModel().getColumns().size(), 4);
@@ -472,7 +455,7 @@ public class TsvCsvImporterTests extends ImporterTest {
         String input = "col1" + inputSeparator + "col2" + inputSeparator + "col3\n" +
                 "\"\"\"To\n Be\"\" is often followed by \"\"or not To\n Be\"\"\"" + inputSeparator + "data2";
 
-        prepareOptions(sep, -1, 0, 0, 1, false, false);
+        prepareOptions(sep, -1, 0, 0, 1, false, false, "\"", "[]", true);
         GridState state = parseOneString(SUT, input);
 
         Assert.assertEquals(state.getColumnModel().getColumns().size(), 3);
@@ -493,7 +476,7 @@ public class TsvCsvImporterTests extends ImporterTest {
         String input = "col1" + inputSeparator + "col2" + inputSeparator + "col3\n" +
                 "\"A line with many \n\n\n\n\n empty lines\"" + inputSeparator + "data2";
 
-        prepareOptions(sep, -1, 0, 0, 1, false, false);
+        prepareOptions(sep, -1, 0, 0, 1, false, false, "\"", "[]", true);
         GridState state = parseOneString(SUT, input);
 
         Assert.assertEquals(state.getColumnModel().getColumns().size(), 3);
@@ -507,14 +490,56 @@ public class TsvCsvImporterTests extends ImporterTest {
         Assert.assertEquals(row0.getCell(1).value, "data2");
     }
 
-    @Test(dataProvider = "CSV-TSV-AutoDetermine")
-    public void customQuoteCharacter(String sep) throws Exception {
-        // create input to test with
+    @Test(groups = {}, dataProvider = "CSV-TSV-AutoDetermine")
+    public void readWithMultiLinedQuotedDataInSingleLineMode(String sep) throws Exception {
+        // create input
         String inputSeparator = sep == null ? "\t" : sep;
-        String input = "'col1'" + inputSeparator + "'col2'" + inputSeparator + "'col3'\n" +
-                "'data1'" + inputSeparator + "'data2'" + inputSeparator + "'data3'";
+        String input = "col1" + inputSeparator + "col2" + inputSeparator + "col3\n" +
+                "\"\"\"To\n Be\"\" is often followed by \"\"or not To\n Be\"\"\"" + inputSeparator + "data2";
 
-        prepareOptions(sep, -1, 0, 0, 1, false, false, "'");
+        prepareOptions(sep, -1, 0, 0, 1, false, false, "\"", "[]", false);
+        GridState state = parseOneString(SUT, input);
+
+        Assert.assertEquals(state.getColumnModel().getColumns().size(), 3);
+        Assert.assertEquals(state.getColumnModel().getColumns().get(0).getName(), "col1");
+        Assert.assertEquals(state.getColumnModel().getColumns().get(1).getName(), "col2");
+        Assert.assertEquals(state.getColumnModel().getColumns().get(2).getName(), "col3");
+        Assert.assertEquals(state.rowCount(), 3);
+        Row row0 = state.getRow(0);
+        Assert.assertEquals(row0.cells.size(), 3);
+        Assert.assertEquals(row0.getCellValue(0), "\"To\n");
+        Row row1 = state.getRow(1);
+        Assert.assertEquals(row1.getCellValue(0), " Be\" is often followed by \"or not To");
+        Assert.assertNull(row1.getCellValue(1));
+    }
+
+    @Test(groups = {}, dataProvider = "CSV-TSV-AutoDetermine")
+    public void readWithMultiLinedQuotedDataAndBlankLinesInSingleLineMode(String sep) throws Exception {
+        // create input
+        String inputSeparator = sep == null ? "\t" : sep;
+        String input = "col1" + inputSeparator + "col2" + inputSeparator + "col3\n" +
+                "\"A line with many \n\n\n\n\n empty lines\"" + inputSeparator + "data2";
+
+        prepareOptions(sep, -1, 0, 0, 1, false, false, "\"", "[]", false);
+        GridState state = parseOneString(SUT, input);
+
+        Assert.assertEquals(state.getColumnModel().getColumns().size(), 3);
+        Assert.assertEquals(state.getColumnModel().getColumns().get(0).getName(), "col1");
+        Assert.assertEquals(state.getColumnModel().getColumns().get(1).getName(), "col2");
+        Assert.assertEquals(state.getColumnModel().getColumns().get(2).getName(), "col3");
+        Assert.assertEquals(state.rowCount(), 6);
+        Row row0 = state.getRow(0);
+        Assert.assertEquals(row0.cells.size(), 3);
+        Assert.assertEquals(row0.getCell(0).value, "A line with many \n");
+    }
+
+    @Test(dataProvider = "separator-and-multiline")
+    public void customQuoteCharacter(String sep, boolean multiLine) throws Exception {
+        // create input to test with
+        String input = "'col1'" + sep + "'col2'" + sep + "'col3'\n" +
+                "'data1'" + sep + "'data2'" + sep + "'data3'";
+
+        prepareOptions(sep, -1, 0, 0, 1, false, false, "'", "[]", multiLine);
         GridState state = parseOneString(SUT, input);
 
         Assert.assertEquals(state.getColumnModel().getColumns().size(), 3);
@@ -529,13 +554,12 @@ public class TsvCsvImporterTests extends ImporterTest {
         Assert.assertEquals(row0.getCell(2).value, "data3");
     }
 
-    @Test(dataProvider = "CSV-TSV-AutoDetermine")
-    public void readCustomColumnNames(String sep) throws Exception {
+    @Test(dataProvider = "separator-and-multiline")
+    public void readCustomColumnNames(String sep, boolean multiLine) throws Exception {
         // create input
-        String inputSeparator = sep == null ? "\t" : sep;
-        String input = "data1" + inputSeparator + "data2" + inputSeparator + "data3\n";
+        String input = "data1" + sep + "data2" + sep + "data3\n";
 
-        prepareOptions(sep, -1, 0, 0, 1, false, false, "\"", "[\"col1\",\"col2\",\"col3\"]");
+        prepareOptions(sep, -1, 0, 0, 1, false, false, "\"", "[\"col1\",\"col2\",\"col3\"]", multiLine);
         GridState state = parseOneString(SUT, input);
 
         Assert.assertEquals(state.getColumnModel().getColumns().size(), 3);
@@ -552,7 +576,7 @@ public class TsvCsvImporterTests extends ImporterTest {
     @Test
     public void readCsvWithProperties() throws Exception {
 
-        prepareOptions(",", -1, 0, 0, 0, true, true);
+        prepareOptions(",", -1, 0, 0, 0, true, true, "\"", "[]", false);
 
         GridState state = parseOneString(SUT, SAMPLE_ROW);
 
@@ -568,7 +592,7 @@ public class TsvCsvImporterTests extends ImporterTest {
     public void readCsvWithPropertiesIgnoreQuotes() throws Exception {
         String input = "data1,data2\",data3,data4";
 
-        prepareOptions(",", -1, 0, 0, 0, true, true);
+        prepareOptions(",", -1, 0, 0, 0, true, true, "\"", "[]", false);
 
         GridState state = parseOneString(SUT, input);
 
@@ -592,29 +616,21 @@ public class TsvCsvImporterTests extends ImporterTest {
         };
     }
 
-    protected void prepareOptions(
-            String sep, int limit, int skip, int ignoreLines,
-            int headerLines, boolean guessValueType, boolean ignoreQuotes) {
-        prepareOptions(sep, limit, skip, ignoreLines, headerLines, guessValueType, ignoreQuotes, "\"");
+    /**
+     * In addition to the separator, we also vary the multi-line mode for the tests where it should not make a
+     * difference, since this option switches between two very different implementations.
+     */
+    @DataProvider(name = "separator-and-multiline")
+    public Object[][] separatorAndMultiLine() {
+        return new Object[][] {
+                { ",", true }, { ",", false }, { "\t", true }, { "\t", false }
+        };
     }
 
     protected void prepareOptions(
             String sep, int limit, int skip, int ignoreLines,
-            int headerLines, boolean guessValueType, boolean ignoreQuotes, boolean trimStrings) {
-        prepareOptions(sep, limit, skip, ignoreLines, headerLines, guessValueType, ignoreQuotes, "\"");
-        options.put("trimStrings", trimStrings);
-    }
-
-    private void prepareOptions(
-            String sep, int limit, int skip, int ignoreLines,
-            int headerLines, boolean guessValueType, boolean ignoreQuotes, String quoteCharacter) {
-
-        prepareOptions(sep, limit, skip, ignoreLines, headerLines, guessValueType, ignoreQuotes, quoteCharacter, "[]");
-    }
-
-    protected void prepareOptions(
-            String sep, int limit, int skip, int ignoreLines,
-            int headerLines, boolean guessValueType, boolean ignoreQuotes, String quoteCharacter, String columnNames) {
+            int headerLines, boolean guessValueType, boolean ignoreQuotes,
+            String quoteCharacter, String columnNames, boolean multiLine) {
 
         options.put("separator", sep);
         options.put("quoteCharacter", quoteCharacter);
@@ -626,5 +642,6 @@ public class TsvCsvImporterTests extends ImporterTest {
         options.put("processQuotes", !ignoreQuotes);
         options.put("storeBlankCellsAsNulls", true);
         options.set("columnNames", ParsingUtilities.evaluateJsonStringToArrayNode(columnNames));
+        options.put("multiLine", multiLine);
     }
 }
