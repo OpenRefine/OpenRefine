@@ -152,7 +152,7 @@ TemplatingExporterDialog.prototype._export = function() {
         .attr("target", "refine-export");
         
     var appendField = function(name, value) {
-        $('<textarea />')
+        $('<textarea></textarea>')
             .attr("name", name)
             .val(value)
             .appendTo(form);

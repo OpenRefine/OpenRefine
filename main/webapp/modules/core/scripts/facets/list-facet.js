@@ -228,7 +228,7 @@ class ListFacet extends Facet {
     var body = $('<div></div>').addClass("dialog-body").appendTo(frame);
     var footer = $('<div></div>').addClass("dialog-footer").appendTo(frame);
 
-    body.html('<textarea disabled wrap="off" bind="textarea" style="display: block; width: 100%; height: 400px;" />');
+    body.html('<textarea disabled wrap="off" bind="textarea" style="display: block; width: 100%; height: 400px;"></textarea>');
     var elmts = DOM.bind(body);
 
   $('<button class="button"></button>').text($.i18n('core-buttons/close')).on('click', function() {
@@ -521,7 +521,7 @@ class ListFacet extends Facet {
 
     var menu = MenuSystem.createMenu().addClass("data-table-cell-editor").width("400px");
     menu.html(
-        '<textarea class="data-table-cell-editor-editor" bind="textarea" />' +
+        '<textarea class="data-table-cell-editor-editor" bind="textarea"></textarea>' +
         '<div id="data-table-cell-editor-actions">' +
           '<div class="data-table-cell-editor-action">' +
             '<button class="button" bind="okButton">'+$.i18n('core-buttons/apply')+'</button>' +
