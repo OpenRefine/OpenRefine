@@ -152,22 +152,13 @@ ExporterManager.prepareExportRowsForm = function(format, includeEngine, ext) {
 };
 
 ExporterManager.handlers.exportProjectToLocal = function() {
-  var name = encodeURI(ExporterManager.stripNonFileChars(theProject.metadata.name));
-  var form = document.createElement("form");
-  $(form)
-  .css("display", "none")
-  .attr("method", "post")
-  .attr("action", "command/core/export-project/" + name + ".openrefine.tar.gz")
-  .attr("target", "refine-export");
-  $('<input />')
-  .attr("name", "project")
-  .val(theProject.id)
-  .appendTo(form);
+  const name = encodeURI(ExporterManager.stripNonFileChars(theProject.metadata.name));
+  const form = $('<form style="display:none" method="post" target="refine-export" ' +
+    'action="command/core/export-project/' + name + '.openrefine.tar.gz" >' +
+    '<input type="hidden" name="project" value="' + theProject.id + '"/> </form>');
 
-  document.body.appendChild(form);
-
+  $('body').append(form);
   window.open(" ", "refine-export");
   form.trigger('submit');
-
-  document.body.removeChild(form);
+  form.remove();
 };
