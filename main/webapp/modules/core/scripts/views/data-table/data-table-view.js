@@ -654,6 +654,76 @@ DataTableView.prototype._createMenuForAllColumns = function(elmt) {
         },
     {},
     {
+      id: "core/common-transforms",
+      label: $.i18n('core-views/common-transform'),
+      submenu: [
+        {
+          id: "core/trim-whitespace",
+          label: $.i18n('core-views/trim-all'),
+          click: function() { new commonTransformDialog("value.trim()", "keep-original", false, ""); }
+        },
+        {
+          id: "core/collapse-whitespace",
+          label: $.i18n('core-views/collapse-white'),
+          click: function() { new commonTransformDialog("value.replace(/\\s+/,' ')", "keep-original", false, ""); }
+        },
+        {},
+        {
+          id: "core/unescape-html-entities",
+          label: $.i18n('core-views/unescape-html'),
+          click: function() { new commonTransformDialog("value.unescape('html')", "keep-original", true, 10); }
+        },
+        {
+          id: "core/replace-smartquotes",
+          label: $.i18n('core-views/replace-smartquotes'),
+          click: function() { new commonTransformDialog("value.replace(/[\u2018\u2019\u201A\u201B\u2039\u203A\u201A]/,\"\\\'\").replace(/[\u201C\u201D\u00AB\u00BB\u201E]/,\"\\\"\")", "keep-original", false, ""); }
+        },
+        {},
+        {
+          id: "core/to-titlecase",
+          label: $.i18n('core-views/titlecase'),
+          click: function() { new commonTransformDialog("value.toTitlecase()", "keep-original", false, ""); }
+        },
+        {
+          id: "core/to-uppercase",
+          label: $.i18n('core-views/uppercase'),
+          click: function() { new commonTransformDialog("value.toUppercase()", "keep-original", false, ""); }
+        },
+        {
+          id: "core/to-lowercase",
+          label: $.i18n('core-views/lowercase'),
+          click: function() { new commonTransformDialog("value.toLowercase()", "keep-original", false, ""); }
+        },
+        {},
+        {
+          id: "core/to-number",
+          label: $.i18n('core-views/to-number'),
+          click: function() { new commonTransformDialog("value.toNumber()", "keep-original", false, ""); }
+        },
+        {
+          id: "core/to-date",
+          label: $.i18n('core-views/to-date'),
+          click: function() { new commonTransformDialog("value.toDate()", "keep-original", false, ""); }
+        },
+        {
+          id: "core/to-text",
+          label: $.i18n('core-views/to-text'),
+          click: function() { new commonTransformDialog("value.toString()", "keep-original", false, ""); }
+        },
+        {},
+        {
+          id: "core/to-blank",
+          label: $.i18n('core-views/blank-out'),
+          click: function() { new commonTransformDialog("null", "keep-original", false, ""); }
+        },
+        {
+          id: "core/to-empty",
+          label: $.i18n('core-views/blank-out-empty'),
+          click: function() { new commonTransformDialog("\"\"", "keep-original", false, ""); }
+        }
+      ]
+    },
+    {
       label: $.i18n('core-views/facet'),
       id: "core/facets",
       width: "200px",
