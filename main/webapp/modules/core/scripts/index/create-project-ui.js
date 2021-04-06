@@ -211,38 +211,40 @@ Refine.CreateProjectUI.prototype.pollImportJob = function(start, jobID, timerID,
           callback(jobID, job);
         }
       } else {
-        var progress = job.config.progress || 0;
-        if (progress.percent > 0) {
-          var secondsSpent = (new Date().getTime() - start.getTime()) / 1000;
-          var secondsRemaining = (100 / progress.percent) * secondsSpent - secondsSpent;
+        if ('progress' in job.config) {
+          var progress = job.config.progress;
+          if (progress.percent > 0) {
+            var secondsSpent = (new Date().getTime() - start.getTime()) / 1000;
+            var secondsRemaining = (100 / progress.percent) * secondsSpent - secondsSpent;
 
-          $('#create-project-progress-bar-body')
-          .removeClass('indefinite')
-          .css("width", progress.percent + "%");
+            $('#create-project-progress-bar-body')
+              .removeClass('indefinite')
+              .css("width", progress.percent + "%");
 
-          if (secondsRemaining > 1) {
-            if (secondsRemaining > 60) {
-              $('#create-project-progress-timing').text(
+            if (secondsRemaining > 1) {
+              if (secondsRemaining > 60) {
+                $('#create-project-progress-timing').text(
                   $.i18n('core-index-create/min-remaining', Math.ceil(secondsRemaining / 60)));
+              } else {
+                $('#create-project-progress-timing').text(
+                  $.i18n('core-index-create/sec-remaining', Math.ceil(secondsRemaining)));
+              }
             } else {
-              $('#create-project-progress-timing').text(
-                  $.i18n('core-index-create/sec-remaining', Math.ceil(secondsRemaining) ));
+              $('#create-project-progress-timing').text($.i18n('core-index-create/almost-done'));
             }
           } else {
-            $('#create-project-progress-timing').text($.i18n('core-index-create/almost-done'));
+            $('#create-project-progress-bar-body').addClass('indefinite');
+            $('#create-project-progress-timing').empty();
           }
-        } else {
-          $('#create-project-progress-bar-body').addClass('indefinite');
-          $('#create-project-progress-timing').empty();
-        }
-        $('#create-project-progress-message').text(progress.message);
-        if ('memory' in progress) {
-          var percent = Math.ceil(progress.memory * 100.0 / progress.maxmemory);
-          $('#create-project-progress-memory').text($.i18n('core-index-create/memory-usage', percent, progress.memory, progress.maxmemory));
-          if (percent > 90) {
-            $('#create-project-progress-memory').addClass('warning');
-          } else {
-            $('#create-project-progress-memory').removeClass('warning');
+          $('#create-project-progress-message').text(progress.message);
+          if ('memory' in progress) {
+            var percent = Math.ceil(progress.memory * 100.0 / progress.maxmemory);
+            $('#create-project-progress-memory').text($.i18n('core-index-create/memory-usage', percent, progress.memory, progress.maxmemory));
+            if (percent > 90) {
+              $('#create-project-progress-memory').addClass('warning');
+            } else {
+              $('#create-project-progress-memory').removeClass('warning');
+            }
           }
         }
       }
