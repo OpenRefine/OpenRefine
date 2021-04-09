@@ -73,7 +73,7 @@ Cypress.Commands.add('doCreateProjectThroughUserInterface', () => {
 
   // workaround to ensure project is loaded
   // cypress does not support window.location = ...
-  cy.get('h2', { timeout: 6000 }).contains('HTTP ERROR 404');
+  cy.get('h2').should('to.contain', 'HTTP ERROR 404');
   cy.location().should((location) => {
     expect(location.href).contains(
       Cypress.env('OPENREFINE_URL') + '/__/project?'
