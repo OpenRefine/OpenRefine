@@ -3,6 +3,10 @@ extraction:
     index:
       build_command:
       - mvn clean test-compile
+  javascript:
+    index:
+      exclude:
+        - main/webapp/modules/core/externals
 
 queries:
   - exclude: java/insecure-cookie
