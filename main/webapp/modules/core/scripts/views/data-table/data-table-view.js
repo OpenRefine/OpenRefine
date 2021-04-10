@@ -655,7 +655,7 @@ DataTableView.prototype._createMenuForAllColumns = function(elmt) {
     {},
     {
       id: "core/common-transforms",
-      label: $.i18n('core-views/common-transform'),
+      label: $.i18n('core-views/edit-all-columns'),
       submenu: [
         {
           id: "core/trim-whitespace",
