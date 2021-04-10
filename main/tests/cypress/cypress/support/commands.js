@@ -70,6 +70,11 @@ Cypress.Commands.add('doCreateProjectThroughUserInterface', () => {
     .contains('Create Project »')
     .click();
   cy.get('#create-project-progress-message').contains('Done.');
+  Cypress.on('uncaught:exception', (err, runnable) => {
+    // returning false here prevents Cypress from
+    // failing the test due to the uncaught exception caused by the window failure
+    return false;
+  });
 
   // workaround to ensure project is loaded
   // cypress does not support window.location = ...
