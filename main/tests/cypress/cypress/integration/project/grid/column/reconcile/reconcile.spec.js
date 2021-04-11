@@ -10,15 +10,11 @@ const fixture = [
   ['24', '2015-05-01', 'West Virginia', 'Faciolela oxyrynca'],
 ];
 
-const reconEndpoint = 'http://localhost:8000/reconcile';
-
-const gridShouldHaveReconData = () => {
-  cy.get(
-    'table.data-table thead th[title="species"] div.column-header-recon-stats-matched'
-  ).should('to.exist');
-};
-
-const addReconService = () => {
+/**
+ * Utility method used by several tests of this scenario
+ * It adds the CSV reconciliation service in the interface
+ */
+const addReconciliationService = () => {
   cy.get('.recon-dialog-service-list', { log: false }).then(($list) => {
     if ($list.find('.recon-dialog-service-selector').length > 1) {
       // cy.get('.recon-dialog-service-selector-remove').click({ multiple: true });
@@ -37,7 +33,7 @@ const addReconService = () => {
     .click({ log: false });
   cy.get('.dialog-container:last-child input', {
     log: false,
-  }).type(reconEndpoint, { log: false });
+  }).type('http://localhost:8000/reconcile', { log: false });
 
   cy.get('.dialog-container:last-child button', { log: false })
     .contains('Add Service', { log: false })
@@ -46,13 +42,15 @@ const addReconService = () => {
   cy.get('.recon-dialog-service-selector:last-child', { log: false }).click({
     log: false,
   });
+
+  cy.get('.recon-dialog-service-list').should('to.have.css', 'display', 'none');
 };
 
 describe('Base reconciliation tests', () => {
   it('Load the reconciliation panel, test the layout', () => {
     cy.loadAndVisitProject(fixture);
     cy.columnActionClick('species', ['Reconcile', 'Start reconciling']);
-    addReconService();
+    addReconciliationService();
     cy.get('.dialog-header').should('to.contain', 'Reconcile column "species"');
     cy.get('.dialog-body').should(
       'to.contain',
@@ -68,11 +66,10 @@ describe('Base reconciliation tests', () => {
     );
   });
 
-  it('Automatch / no automatch', () => {
-    // No automatch, rows should not have a link to the recon service
+  it('Reconcile with automatch disabled', () => {
     cy.loadAndVisitProject(fixture);
     cy.columnActionClick('species', ['Reconcile', 'Start reconciling']);
-    addReconService();
+    addReconciliationService();
 
     cy.get('.dialog-container span')
       .contains('Auto-match')
@@ -80,34 +77,34 @@ describe('Base reconciliation tests', () => {
       .uncheck();
     cy.get('.dialog-container button').contains('Start Reconciling...').click();
     cy.assertNotificationContainingText('Reconcile cells in column species');
-    gridShouldHaveReconData();
-    //
-    // no links means it's not been matched
-    cy.get(
-      '.data-table-cell-content > a[href^="http://localhost:8000/"]'
-    ).should('not.to.exist');
+    cy.assertColumnIsReconcilied('species');
 
-    // AUTOMATCH
-    cy.columnActionClick('species', ['Reconcile', 'Start reconciling']);
-    cy.get('.recon-dialog-service-selector:last-child').click();
-    cy.get('.recon-dialog-service-list').should(
-      'to.have.css',
-      'display',
-      'none'
+    // "Choose new match" appear when there is a match, if it's not there it means nothing is matched
+    cy.get('table.data-table td .data-table-cell-content').should(
+      'not.to.contain',
+      'Choose new match'
     );
-    // .check('none');
+  });
+
+  it('Reconcile with automatch enabled', () => {
+    cy.loadAndVisitProject(fixture);
+    cy.columnActionClick('species', ['Reconcile', 'Start reconciling']);
+    addReconciliationService();
+
     cy.get('.dialog-container span')
       .contains('Auto-match')
       .siblings('input')
       .check();
     cy.get('.dialog-container button').contains('Start Reconciling...').click();
-    // cy.assertNotificationContainingText('Reconcile cells in column species');
-    gridShouldHaveReconData();
-    // only 4 rows are matched automatically, other are candidates
+    cy.assertNotificationContainingText('Reconcile cells in column species');
+    cy.assertColumnIsReconcilied('species');
+
+    // 4 rows should have been automatched
     cy.get(
-      '.data-table-cell-content > a[href^="http://localhost:8000/"]'
+      'table.data-table td .data-table-cell-content:contains("Choose new match")'
     ).should('have.length', 4);
   });
+
   it('Max number of candidates', () => {
     const fixture = [
       ['record_id', 'date', 'location', 'species'],
@@ -115,30 +112,21 @@ describe('Base reconciliation tests', () => {
     ];
     cy.loadAndVisitProject(fixture);
     cy.columnActionClick('species', ['Reconcile', 'Start reconciling']);
-    addReconService();
+    addReconciliationService();
     cy.get('.dialog-container input[bind="maxCandidates"]').type(2);
     cy.get('.dialog-container button').contains('Start Reconciling...').click();
-    gridShouldHaveReconData();
+    cy.assertColumnIsReconcilied('species');
     cy.get('.data-table-cell-content .data-table-recon-topic').should(
       'have.length',
       2
     );
   });
-  // // // it('[Placeholder] additional columns', () => {
-  // //  // cy.loadAndVisitProject('species');
-  // // // });
-  // // // it('[Placeholder] Specific type', () => {
-  // //  // to test the autocomplete and dropdown of types
-  // //  // cy.loadAndVisitProject('species');
-  // // // });
+
   it('Test reconciliation, in the grid', () => {
     cy.loadAndVisitProject(fixture);
-    cy.columnActionClick('species', ['Reconcile', 'Start reconciling']);
-    addReconService();
-    cy.get('.dialog-container button').contains('Start Reconciling...').click();
-    cy.assertNotificationContainingText('Reconcile cells in column species');
-    gridShouldHaveReconData();
-    // Test 1, there is a match
+    cy.reconcileColumn('species');
+    cy.assertColumnIsReconcilied('species');
+    // Test 1, when there is a match
     // simple assertion to ensure the content of the iframe is loaded for row 0 / species
     // (recon loads match details from the recon endpoint in an iframe)
     cy.getCell(0, 'species').within(() => {
@@ -150,7 +138,7 @@ describe('Base reconciliation tests', () => {
       cy.get('iframe').its('0.contentDocument').should('exist');
     });
 
-    // Test 2, there are candidates
+    // Test 2, when there are candidates
     // ensure the first one loads an iframe on hover
     cy.getCell(3, 'species').within(() => {
       cy.get(
@@ -187,10 +175,8 @@ describe('Base reconciliation tests', () => {
     ];
 
     cy.loadAndVisitProject(fixture);
-    cy.columnActionClick('species', ['Reconcile', 'Start reconciling']);
-    addReconService();
-    cy.get('.dialog-container button').contains('Start Reconciling...').click();
-    gridShouldHaveReconData();
+    cy.reconcileColumn('species');
+    cy.assertColumnIsReconcilied('species');
 
     // over on a candidate (Lineus longissimus)
     cy.getCell(0, 'species')
@@ -217,11 +203,8 @@ describe('Base reconciliation tests', () => {
       ['16', '2018-09-06', 'West Virginia', 'Bos taurus'],
     ];
     cy.loadAndVisitProject(fixture);
-    cy.columnActionClick('species', ['Reconcile', 'Start reconciling']);
-    addReconService();
-
-    cy.get('.dialog-container button').contains('Start Reconciling...').click();
-    gridShouldHaveReconData();
+    cy.reconcileColumn('species');
+    cy.assertColumnIsReconcilied('species');
 
     // ensure both rows have candidates
     cy.getCell(0, 'species')

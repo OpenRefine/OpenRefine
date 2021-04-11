@@ -12,6 +12,58 @@ import 'cypress-file-upload';
 import 'cypress-wait-until';
 
 /**
+ * Reconcile a column
+ * Internally using the "apply" behavior for not having to go through the whole user interface
+ */
+Cypress.Commands.add('reconcileColumn', (columnName, autoMatch = true) => {
+  const apply = [
+    {
+      op: 'core/recon',
+      engineConfig: {
+        facets: [],
+        mode: 'row-based',
+      },
+      columnName: columnName,
+      config: {
+        mode: 'standard-service',
+        service: 'http://localhost:8000/reconcile',
+        identifierSpace: 'http://localhost:8000/',
+        schemaSpace: 'http://localhost:8000/',
+        type: {
+          id: '/csv-recon',
+          name: 'CSV-recon',
+        },
+        autoMatch: autoMatch,
+        columnDetails: [],
+        limit: 0,
+      },
+      description: `Reconcile cells in column ${columnName} to type /csv-recon`,
+    },
+  ];
+
+  cy.get('a#or-proj-undoRedo').click();
+  cy.get('#refine-tabs-history .history-panel-controls')
+    .contains('Apply')
+    .click();
+  cy.get('.dialog-container .history-operation-json').invoke(
+    'val',
+    JSON.stringify(apply)
+  );
+  cy.get('.dialog-container button[bind="applyButton"]').click();
+  // cy.assertColumnIsReconcilied(columnName);
+});
+
+/**
+ * Reconcile a column
+ * Internally using the "apply" behavior for not having to go through the whole user interface
+ */
+Cypress.Commands.add('assertColumnIsReconcilied', (columnName) => {
+  cy.get(
+    `table.data-table thead th[title="${columnName}"] div.column-header-recon-stats-matched`
+  ).should('to.exist');
+});
+
+/**
  * Return the .facets-container for a given facet name
  */
 Cypress.Commands.add('getFacetContainer', (facetName) => {
