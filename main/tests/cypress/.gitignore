@@ -4,6 +4,7 @@ node_modules
 cypress/videos
 cypress/screenshots
 cypress/downloads
+cypress/snapshots_diffs
 npm-debug.log
 cypress.env.json
 out
