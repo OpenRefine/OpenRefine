@@ -34,10 +34,11 @@ describe('Copy reconciliation data', () => {
       'Copy 3 recon judgments from column species_original to species_copy'
     );
 
-    // ensure  rows are matched based on the identifier
+    // ensure 5 rows are matched based on the identifier
+    // 2 on the original column, 3 on the copy
     cy.get(
       'table.data-table td .data-table-cell-content:contains("Choose new match")'
-    ).should('have.length', 3);
+    ).should('have.length', 5);
 
     return;
   });
