@@ -1,5 +1,5 @@
 describe('Facet by judgment', () => {
-  it('Test clearing reconciliation for a reconcilied dataset', () => {
+  it('Test clearing reconciliation for a reconciled dataset', () => {
     const fixture = [
       ['record_id', 'date', 'location', 'species'],
       ['1', '2017-06-23', 'Maryland', 'Hypsibius dujardini'],
@@ -12,7 +12,7 @@ describe('Facet by judgment', () => {
 
     cy.loadAndVisitProject(fixture);
     cy.reconcileColumn('species');
-    cy.assertColumnIsReconcilied('species');
+    cy.assertColumnIsReconciled('species');
 
     // cleanup automatic facets before doing any testing
     cy.get('#or-proj-facFil').click();

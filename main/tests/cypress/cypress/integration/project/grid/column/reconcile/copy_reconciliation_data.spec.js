@@ -9,7 +9,7 @@ describe('Copy reconciliation data', () => {
 
     cy.loadAndVisitProject(fixture);
     cy.reconcileColumn('species_original');
-    cy.assertColumnIsReconcilied('species_original');
+    cy.assertColumnIsReconciled('species_original');
 
     cy.columnActionClick('species_original', [
       'Reconcile',
@@ -26,7 +26,7 @@ describe('Copy reconciliation data', () => {
     );
 
     //
-    // cy.assertColumnIsReconcilied('species_copy');
+    // cy.assertColumnIsReconciled('species_copy');
 
     cy.get('.dialog-container .dialog-footer button').contains('Copy').click();
 

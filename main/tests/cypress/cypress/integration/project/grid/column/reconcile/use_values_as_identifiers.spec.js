@@ -1,5 +1,5 @@
 describe('Use values as identifiers', () => {
-  it('Test clearing reconciliation for a reconcilied dataset', () => {
+  it('Test clearing reconciliation for a reconciled dataset', () => {
     const fixture = [
       ['identifier'],
       ['2253634'],
@@ -19,8 +19,8 @@ describe('Use values as identifiers', () => {
 
     cy.get('.dialog-container .dialog-footer button').contains('OK').click();
 
-    // ensure column is reconcilied
-    cy.assertColumnIsReconcilied('identifier');
+    // ensure column is reconciled
+    cy.assertColumnIsReconciled('identifier');
 
     // ensure 4 rows are matched based on the identifier
     cy.get(

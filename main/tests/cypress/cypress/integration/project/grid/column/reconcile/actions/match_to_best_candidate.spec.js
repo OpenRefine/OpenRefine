@@ -13,7 +13,7 @@ describe('Match each cell to its best candidate', () => {
     cy.loadAndVisitProject(fixture);
     // here reconcileColumn is called with automatch = false
     cy.reconcileColumn('species', false);
-    cy.assertColumnIsReconcilied('species');
+    cy.assertColumnIsReconciled('species');
 
     // before matching, ensure we have no matches
     cy.get(

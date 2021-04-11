@@ -12,7 +12,7 @@ describe('Add entity identifiers', () => {
 
     cy.loadAndVisitProject(fixture);
     cy.reconcileColumn('species');
-    cy.assertColumnIsReconcilied('species');
+    cy.assertColumnIsReconciled('species');
 
     cy.columnActionClick('species', [
       'Reconcile',

@@ -77,7 +77,7 @@ describe('Base reconciliation tests', () => {
       .uncheck();
     cy.get('.dialog-container button').contains('Start Reconciling...').click();
     cy.assertNotificationContainingText('Reconcile cells in column species');
-    cy.assertColumnIsReconcilied('species');
+    cy.assertColumnIsReconciled('species');
 
     // "Choose new match" appear when there is a match, if it's not there it means nothing is matched
     cy.get('table.data-table td .data-table-cell-content').should(
@@ -97,7 +97,7 @@ describe('Base reconciliation tests', () => {
       .check();
     cy.get('.dialog-container button').contains('Start Reconciling...').click();
     cy.assertNotificationContainingText('Reconcile cells in column species');
-    cy.assertColumnIsReconcilied('species');
+    cy.assertColumnIsReconciled('species');
 
     // 4 rows should have been automatched
     cy.get(
@@ -115,7 +115,7 @@ describe('Base reconciliation tests', () => {
     addReconciliationService();
     cy.get('.dialog-container input[bind="maxCandidates"]').type(2);
     cy.get('.dialog-container button').contains('Start Reconciling...').click();
-    cy.assertColumnIsReconcilied('species');
+    cy.assertColumnIsReconciled('species');
     cy.get('.data-table-cell-content .data-table-recon-topic').should(
       'have.length',
       2
@@ -125,7 +125,7 @@ describe('Base reconciliation tests', () => {
   it('Test reconciliation, in the grid', () => {
     cy.loadAndVisitProject(fixture);
     cy.reconcileColumn('species');
-    cy.assertColumnIsReconcilied('species');
+    cy.assertColumnIsReconciled('species');
     // Test 1, when there is a match
     // simple assertion to ensure the content of the iframe is loaded for row 0 / species
     // (recon loads match details from the recon endpoint in an iframe)
@@ -176,7 +176,7 @@ describe('Base reconciliation tests', () => {
 
     cy.loadAndVisitProject(fixture);
     cy.reconcileColumn('species');
-    cy.assertColumnIsReconcilied('species');
+    cy.assertColumnIsReconciled('species');
 
     // over on a candidate (Lineus longissimus)
     cy.getCell(0, 'species')
@@ -204,7 +204,7 @@ describe('Base reconciliation tests', () => {
     ];
     cy.loadAndVisitProject(fixture);
     cy.reconcileColumn('species');
-    cy.assertColumnIsReconcilied('species');
+    cy.assertColumnIsReconciled('species');
 
     // ensure both rows have candidates
     cy.getCell(0, 'species')

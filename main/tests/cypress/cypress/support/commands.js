@@ -57,7 +57,7 @@ Cypress.Commands.add('reconcileColumn', (columnName, autoMatch = true) => {
  * Reconcile a column
  * Internally using the "apply" behavior for not having to go through the whole user interface
  */
-Cypress.Commands.add('assertColumnIsReconcilied', (columnName) => {
+Cypress.Commands.add('assertColumnIsReconciled', (columnName) => {
   cy.get(
     `table.data-table thead th[title="${columnName}"] div.column-header-recon-stats-matched`
   ).should('to.exist');

@@ -1,5 +1,5 @@
 describe('Clear reconciliation data', () => {
-  it('Test clearing reconciliation for a reconcilied dataset', () => {
+  it('Test clearing reconciliation for a reconciled dataset', () => {
     const fixture = [
       ['record_id', 'date', 'location', 'species'],
       ['1', '2017-06-23', 'Maryland', 'Hypsibius dujardini'],
@@ -12,7 +12,7 @@ describe('Clear reconciliation data', () => {
 
     cy.loadAndVisitProject(fixture);
     cy.reconcileColumn('species');
-    cy.assertColumnIsReconcilied('species');
+    cy.assertColumnIsReconciled('species');
 
     cy.columnActionClick('species', [
       'Reconcile',
