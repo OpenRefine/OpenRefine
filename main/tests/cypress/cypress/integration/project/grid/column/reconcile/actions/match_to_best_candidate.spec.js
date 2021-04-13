@@ -26,6 +26,10 @@ describe('Match each cell to its best candidate', () => {
       'Match each cell to its best candidate',
     ]);
 
+    cy.assertNotificationContainingText(
+      'Match each of 6 cells to its best candidate'
+    );
+
     cy.get(
       'table.data-table td .data-table-cell-content:contains("Choose new match")'
     ).should('have.length', 6);

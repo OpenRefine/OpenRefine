@@ -1,5 +1,5 @@
 describe('Discard reconciliation judgments', () => {
-  it('Test clearing reconciliation for a reconciled dataset', () => {
+  it('Test discard existing reconciliation judgments', () => {
     const fixture = [
       ['record_id', 'date', 'location', 'species'],
       ['1', '2017-06-23', 'Maryland', 'Hypsibius dujardini'],
@@ -19,6 +19,8 @@ describe('Discard reconciliation judgments', () => {
       'Actions',
       'Discard reconciliation judgments',
     ]);
+
+    cy.assertNotificationContainingText('Discard recon judgments for 6 cells');
 
     // Check that all matches are gone (they contains Choose new match )
     cy.get('table.data-table td .data-table-cell-content').should(
