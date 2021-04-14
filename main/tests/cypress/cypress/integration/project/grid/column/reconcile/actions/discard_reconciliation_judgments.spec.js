@@ -28,9 +28,13 @@ describe('Discard reconciliation judgments', () => {
       'Choose new match'
     );
 
-    // check that we have 6 elements with Search for match (means they are not matched)
-    cy.get(
-      'table.data-table td .data-table-cell-content:contains("Search for match")'
-    ).should('have.length', 6);
+    // ensure none of the cells contains 'Search for match'
+    // which means they are not matched and reconciliation judgments are gone
+    cy.getCell(0, 'species').should('to.contain', 'Search for match');
+    cy.getCell(1, 'species').should('to.contain', 'Search for match');
+    cy.getCell(2, 'species').should('to.contain', 'Search for match');
+    cy.getCell(3, 'species').should('to.contain', 'Search for match');
+    cy.getCell(4, 'species').should('to.contain', 'Search for match');
+    cy.getCell(5, 'species').should('to.contain', 'Search for match');
   });
 });

@@ -16,9 +16,12 @@ describe('Match each cell to its best candidate', () => {
     cy.assertColumnIsReconciled('species');
 
     // before matching, ensure we have no matches
-    cy.get(
-      'table.data-table td .data-table-cell-content:contains("Search for match")'
-    ).should('have.length', 6);
+    cy.getCell(0, 'species').should('to.contain', 'Search for match');
+    cy.getCell(1, 'species').should('to.contain', 'Search for match');
+    cy.getCell(2, 'species').should('to.contain', 'Search for match');
+    cy.getCell(3, 'species').should('to.contain', 'Search for match');
+    cy.getCell(4, 'species').should('to.contain', 'Search for match');
+    cy.getCell(5, 'species').should('to.contain', 'Search for match');
 
     cy.columnActionClick('species', [
       'Reconcile',
@@ -30,8 +33,13 @@ describe('Match each cell to its best candidate', () => {
       'Match each of 6 cells to its best candidate'
     );
 
-    cy.get(
-      'table.data-table td .data-table-cell-content:contains("Choose new match")'
-    ).should('have.length', 6);
+    // ensure all cells contains 'Choose new match'
+    // which means they are matched
+    cy.getCell(0, 'species').should('to.contain', 'Choose new match');
+    cy.getCell(1, 'species').should('to.contain', 'Choose new match');
+    cy.getCell(2, 'species').should('to.contain', 'Choose new match');
+    cy.getCell(3, 'species').should('to.contain', 'Choose new match');
+    cy.getCell(4, 'species').should('to.contain', 'Choose new match');
+    cy.getCell(5, 'species').should('to.contain', 'Choose new match');
   });
 });
