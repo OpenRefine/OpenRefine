@@ -5,11 +5,49 @@ import org.openrefine.wikidata.updates.ItemUpdate;
 import org.wikidata.wdtk.datamodel.interfaces.*;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class DifferenceWithinRangeScrutinizer extends EditScrutinizer {
 
     public static final String type = "difference-of-the-properties-is-not-within-the-specified-range";
+    public String differenceWithinRangeConstraintQid;
+    public String differenceWithinRangeConstraintPid;
+    public String minimumValuePid;
+    public String maximumValuePid;
+
+    class DifferenceWithinRangeConstraint {
+        PropertyIdValue lowerPropertyIdValue;
+        QuantityValue minRangeValue, maxRangeValue;
+
+        DifferenceWithinRangeConstraint(Statement statement) {
+            List<SnakGroup> specs = statement.getClaim().getQualifiers();
+            if (specs != null) {
+                List<Value> lowerValueProperty = findValues(specs, differenceWithinRangeConstraintPid);
+                List<Value> minValue = findValues(specs, minimumValuePid);
+                List<Value> maxValue = findValues(specs, maximumValuePid);
+                if (!lowerValueProperty.isEmpty()) {
+                    lowerPropertyIdValue = (PropertyIdValue) lowerValueProperty.get(0);
+                }
+                if (!minValue.isEmpty()) {
+                    minRangeValue = (QuantityValue) minValue.get(0);
+                }
+                if (!maxValue.isEmpty()) {
+                    maxRangeValue = (QuantityValue) maxValue.get(0);
+                }
+            }
+        }
+    }
+
+    @Override
+    public boolean prepareDependencies() {
+        differenceWithinRangeConstraintQid = getConstraintsRelatedId("difference_within_range_constraint_qid");
+        differenceWithinRangeConstraintPid = getConstraintsRelatedId("property_pid");
+        minimumValuePid = getConstraintsRelatedId("minimum_value_pid");
+        maximumValuePid = getConstraintsRelatedId("maximum_value_pid");
+        return _fetcher != null && differenceWithinRangeConstraintQid != null && differenceWithinRangeConstraintPid != null
+                && minimumValuePid != null && maximumValuePid != null;
+    }
 
     @Override
     public void scrutinize(ItemUpdate update) {
@@ -21,15 +59,16 @@ public class DifferenceWithinRangeScrutinizer extends EditScrutinizer {
         }
 
         for(PropertyIdValue propertyId : propertyIdValueValueMap.keySet()){
-            if (_fetcher.hasDiffWithinRange(propertyId)){
-                PropertyIdValue lowerPropertyId = _fetcher.getLowerPropertyId(propertyId);
-                QuantityValue minRangeValue = _fetcher.getMinimumValue(propertyId);
-                QuantityValue maxRangeValue = _fetcher.getMaximumValue(propertyId);
+            List<Statement> statementList = _fetcher.getConstraintsByType(propertyId, differenceWithinRangeConstraintQid);
+            if (!statementList.isEmpty()){
+                DifferenceWithinRangeConstraint constraint = new DifferenceWithinRangeConstraint(statementList.get(0));
+                PropertyIdValue lowerPropertyId = constraint.lowerPropertyIdValue;
+                QuantityValue minRangeValue = constraint.minRangeValue;
+                QuantityValue maxRangeValue = constraint.maxRangeValue;
 
                 if (propertyIdValueValueMap.containsKey(lowerPropertyId)){
                     Value startingValue = propertyIdValueValueMap.get(lowerPropertyId);
                     Value endingValue = propertyIdValueValueMap.get(propertyId);
-
                     if (startingValue instanceof TimeValue && endingValue instanceof TimeValue){
                         TimeValue lowerDate = (TimeValue)startingValue;
                         TimeValue upperDate = (TimeValue)endingValue;

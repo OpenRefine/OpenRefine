@@ -52,12 +52,12 @@ public class Pow implements Function {
 
     @Override
     public String getDescription() {
-        return "Returns a^b";
+        return "Returns n1 raised to the power of n2.";
     }
     
     @Override
     public String getParams() {
-        return "number a, number b";
+        return "number n1, number n2";
     }
     
     @Override

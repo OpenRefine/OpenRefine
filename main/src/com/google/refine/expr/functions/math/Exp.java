@@ -49,7 +49,7 @@ public class Exp implements Function {
 
     @Override
     public String getDescription() {
-        return "Returns e^n";
+        return "Returns e to the power of n.";
     }
     
     @Override

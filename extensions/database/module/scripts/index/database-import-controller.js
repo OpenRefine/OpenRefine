@@ -52,7 +52,7 @@ Refine.DatabaseImportController = function(createProjectUI) {
   this._parsingPanel = createProjectUI.addCustomPanel();
 
   createProjectUI.addSourceSelectionUI({
-    label: "Database",
+    label: $.i18n('database-import/importer-name'),
     id: "database-source",
     ui: new Refine.DatabaseSourceUI(this)
   });

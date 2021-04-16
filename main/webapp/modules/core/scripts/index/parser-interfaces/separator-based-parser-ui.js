@@ -168,7 +168,7 @@ Refine.SeparatorBasedParserUI.prototype._initialize = function() {
   $('#or-import-archive').html($.i18n('core-index-parser/store-archive'));
 
   this._optionContainerElmts.encodingInput
-    .attr('value', this._config.encoding || '')
+    .val(this._config.encoding || '')
     .click(function() {
       Encoding.selectEncoding($(this), function() {
         self._updatePreview();
@@ -244,7 +244,7 @@ Refine.SeparatorBasedParserUI.prototype._initialize = function() {
     this._optionContainerElmts.includeArchiveFileCheckbox.prop("checked", true);
   }
   if (this._config.trimStrings) {
-    this._optionContainerElmts.trimStringsCheckbox.attr("checked", "unchecked");
+    this._optionContainerElmts.trimStringsCheckbox.prop('checked', false);
   }
 
   var onChange = function() {

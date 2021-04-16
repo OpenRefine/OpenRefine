@@ -24,14 +24,23 @@
 package org.openrefine.wikidata.qa.scrutinizers;
 
 import org.openrefine.wikidata.qa.QAWarning;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.wikidata.wdtk.datamodel.interfaces.EntityIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.PropertyIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.Snak;
+import org.wikidata.wdtk.datamodel.interfaces.SnakGroup;
+import org.wikidata.wdtk.datamodel.interfaces.Statement;
 import org.wikidata.wdtk.datamodel.interfaces.StringValue;
+import org.wikidata.wdtk.datamodel.interfaces.Value;
 
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.regex.Pattern;
+import java.util.regex.PatternSyntaxException;
 
 /**
  * A scrutinizer that detects incorrect formats in text values (mostly
@@ -42,12 +51,36 @@ import java.util.regex.Pattern;
  */
 public class FormatScrutinizer extends SnakScrutinizer {
 
+    private static final Logger logger = LoggerFactory.getLogger(FormatScrutinizer.class);
+
     public static final String type = "add-statements-with-invalid-format";
+    public String formatConstraintQid;
+    public String formatRegexPid;
 
-    private Map<PropertyIdValue, Pattern> _patterns;
+    private Map<PropertyIdValue, Set<Pattern>> _patterns;
 
+    class FormatConstraint {
+        String regularExpressionFormat = null;
+
+        FormatConstraint(Statement statement) {
+            List<SnakGroup> constraint = statement.getClaim().getQualifiers();
+            if (constraint != null) {
+                List<Value> regexes = findValues(constraint, formatRegexPid);
+                if (!regexes.isEmpty()) {
+                    regularExpressionFormat = ((StringValue) regexes.get(0)).getString();
+                }
+            }
+        }
+    }
     public FormatScrutinizer() {
         _patterns = new HashMap<>();
+    }
+
+    @Override
+    public boolean prepareDependencies() {
+        formatConstraintQid = getConstraintsRelatedId("format_constraint_qid");
+        formatRegexPid = getConstraintsRelatedId("format_as_a_regular_expression_pid");
+        return _fetcher != null && formatConstraintQid != null && formatRegexPid != null;
     }
 
     /**
@@ -58,17 +91,28 @@ public class FormatScrutinizer extends SnakScrutinizer {
      *            the id of the property to fetch the constraints for
      * @return
      */
-    protected Pattern getPattern(PropertyIdValue pid) {
+    protected Set<Pattern> getPattern(PropertyIdValue pid) {
         if (_patterns.containsKey(pid)) {
             return _patterns.get(pid);
         } else {
-            String regex = _fetcher.getFormatRegex(pid);
-            Pattern pattern = null;
-            if (regex != null) {
-                pattern = Pattern.compile(regex);
+            List<Statement> statementList = _fetcher.getConstraintsByType(pid, formatConstraintQid);
+            Set<Pattern> patterns = new HashSet<>();
+            for (Statement statement: statementList) {
+                FormatConstraint constraint = new FormatConstraint(statement);
+                String regex = constraint.regularExpressionFormat;
+                Pattern pattern = null;
+                if (regex != null) {
+                    try {
+                        pattern = Pattern.compile(regex);
+                        patterns.add(pattern);
+                    } catch(PatternSyntaxException e) {
+                        logger.info(String.format("Ignoring invalid format constraint for property %s. Regex %s is invalid: %s",
+                                pid.getId(), regex, e.getMessage()));
+                    }
+                }
             }
-            _patterns.put(pid, pattern);
-            return pattern;
+            _patterns.put(pid, patterns);
+            return patterns;
         }
     }
 
@@ -77,20 +121,19 @@ public class FormatScrutinizer extends SnakScrutinizer {
         if (snak.getValue() instanceof StringValue) {
             String value = ((StringValue) snak.getValue()).getString();
             PropertyIdValue pid = snak.getPropertyId();
-            Pattern pattern = getPattern(pid);
-            if (pattern == null) {
-                return;
-            }
-            if (!pattern.matcher(value).matches()) {
-                if (added) {
-                    QAWarning issue = new QAWarning(type, pid.getId(), QAWarning.Severity.IMPORTANT, 1);
-                    issue.setProperty("property_entity", pid);
-                    issue.setProperty("regex", pattern.toString());
-                    issue.setProperty("example_value", value);
-                    issue.setProperty("example_item_entity", entityId);
-                    addIssue(issue);
-                } else {
-                    info("remove-statements-with-invalid-format");
+            Set<Pattern> patterns = getPattern(pid);
+            for (Pattern pattern : patterns) {
+                if (!pattern.matcher(value).matches()) {
+                    if (added) {
+                        QAWarning issue = new QAWarning(type, pid.getId(), QAWarning.Severity.IMPORTANT, 1);
+                        issue.setProperty("property_entity", pid);
+                        issue.setProperty("regex", pattern.toString());
+                        issue.setProperty("example_value", value);
+                        issue.setProperty("example_item_entity", entityId);
+                        addIssue(issue);
+                    } else {
+                        info("remove-statements-with-invalid-format");
+                    }
                 }
             }
         }

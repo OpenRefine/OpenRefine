@@ -6,12 +6,20 @@ import org.wikidata.wdtk.datamodel.interfaces.PropertyIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.Statement;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class MultiValueScrutinizer extends EditScrutinizer {
 
     public static final String new_type = "multi-valued-property-is-required-for-new-item";
     public static final String existing_type = "multi-valued-property-is-required-for-existing-item";
+    public String multiValueConstraintQid;
+
+    @Override
+    public boolean prepareDependencies() {
+        multiValueConstraintQid = getConstraintsRelatedId("multi_value_constraint_qid");
+        return _fetcher != null && multiValueConstraintQid != null;
+    }
 
     @Override
     public void scrutinize(ItemUpdate update) {
@@ -19,9 +27,10 @@ public class MultiValueScrutinizer extends EditScrutinizer {
 
         for (Statement statement : update.getAddedStatements()) {
             PropertyIdValue pid = statement.getClaim().getMainSnak().getPropertyId();
+            List<Statement> statementList = _fetcher.getConstraintsByType(pid, multiValueConstraintQid);
             if (propertyCount.containsKey(pid)) {
                 propertyCount.put(pid, propertyCount.get(pid) + 1);
-            } else if (_fetcher.hasMultiValue(pid)) {
+            } else if (!statementList.isEmpty()) {
                 propertyCount.put(pid, 1);
             }
         }

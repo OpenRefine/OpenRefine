@@ -8,7 +8,6 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import com.google.refine.commands.CommandTestBase;
-import com.google.refine.commands.cell.JoinMultiValueCellsCommand;
 
 public class JoinMultiValueCellsCommandTests extends CommandTestBase {
 	

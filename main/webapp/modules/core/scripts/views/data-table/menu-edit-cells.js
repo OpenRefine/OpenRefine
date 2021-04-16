@@ -116,8 +116,9 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
     );
   };
 
-  var doJoinMultiValueCells = function() {
-    var separator = window.prompt($.i18n('core-views/enter-separator'), ", ");
+  var doJoinMultiValueCells = function(separator) {
+    var defaultValue = Refine.getPreference("ui.cell.rowSplitDefaultSeparator", ",");
+    var separator = window.prompt($.i18n('core-views/enter-separator'), defaultValue);
     if (separator !== null) {
       Refine.postCoreProcess(
         "join-multi-value-cells",
@@ -129,6 +130,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
         null,
         { rowsChanged: true }
       );
+      Refine.setPreference("ui.cell.rowSplitDefaultSeparator", separator);
     }
   };
 
@@ -143,13 +145,13 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
       // but javascript Regexp accepts it and auto escape it
       var pos = p.replace(/\\\//g,'').indexOf("/");
       if (pos != -1) {
-        alert($.i18n('core-views/warning-regex') + " : " + p);
+        alert($.i18n('core-views/warning-regex',p));
         return 0;}
       try {
         var pattern = new RegExp(p);
         return 1;
         } catch (e) {
-          alert($.i18n('core-views/warning-regex') + " : " + p);
+          alert($.i18n('core-views/warning-regex', p));
         return 0;}
     }
     function escapeInputString(s) {
@@ -247,7 +249,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
     var level = DialogSystem.showDialog(frame);
     var dismiss = function() { DialogSystem.dismissUntil(level - 1); };
     elmts.cancelButton.click(dismiss);
-	elmts.text_to_findInput.focus();
+    elmts.text_to_findInput.focus();
     elmts.okButton.click(function() {
       var text_to_find = elmts.text_to_findInput[0].value;
       var replacement_text = elmts.replacement_textInput[0].value;
@@ -315,6 +317,8 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
     var level = DialogSystem.showDialog(frame);
     var dismiss = function() { DialogSystem.dismissUntil(level - 1); };
     
+    var defaultValue = Refine.getPreference("ui.cell.rowSplitDefaultSeparator", ",");
+    elmts.separatorInput[0].value = defaultValue;
     elmts.separatorInput.focus().select();
     
     elmts.cancelButton.click(dismiss);
@@ -333,7 +337,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
         }
 
         config.regex = elmts.regexInput[0].checked;
-
+        Refine.setPreference("ui.cell.rowSplitDefaultSeparator", config.separator);
       } else if (mode === "lengths") {
         var s = "[" + elmts.lengthsTextarea[0].value + "]";
         try {
@@ -572,9 +576,9 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
 
     for (var i = 0; i < columns.length; i++) {
       var column2 = columns[i];
-      var option = $('<option>').attr("value", column2.name).text(column2.name).appendTo(elmts.fromColumnSelect);
+      var option = $('<option>').val(column2.name).text(column2.name).appendTo(elmts.fromColumnSelect);
       if (column2.name == column.name) {
-        option.attr("selected", "true");
+        option.prop("selected", "true");
       }
     }
 
@@ -593,12 +597,12 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
 
       for (var k = j + 1; k < columns.length; k++) {
         var column2 = columns[k];
-        $('<option>').attr("value", k - j + 1).text(column2.name).appendTo(elmts.toColumnSelect);
+        $('<option>').val(k - j + 1).text(column2.name).appendTo(elmts.toColumnSelect);
       }
 
       $('<option>')
-        .attr("value", "-1")
-        .attr("selected", "true")
+        .val("-1")
+        .prop("selected", "true")
         .text("(last column)")
         .appendTo(elmts.toColumnSelect);
     };
@@ -690,18 +694,18 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
     for (var i = 0; i < columns.length; i++) {
       var column2 = columns[i];
 
-      var keyOption = $('<option>').attr("value", column2.name).text(column2.name).appendTo(elmts.keyColumnSelect);
+      var keyOption = $('<option>').val(column2.name).text(column2.name).appendTo(elmts.keyColumnSelect);
       if (column2.name == column.name) {
-        keyOption.attr("selected", "true");
+        keyOption.prop("selected", "true");
         valueColumnIndex = i + 1;
       }
 
-      var valueOption = $('<option>').attr("value", column2.name).text(column2.name).appendTo(elmts.valueColumnSelect);
+      var valueOption = $('<option>').val(column2.name).text(column2.name).appendTo(elmts.valueColumnSelect);
       if (i === valueColumnIndex) {
-        valueOption.attr("selected", "true");
+        valueOption.prop("selected", "true");
       }
 
-      $('<option>').attr("value", column2.name).text(column2.name).appendTo(elmts.noteColumnSelect);
+      $('<option>').val(column2.name).text(column2.name).appendTo(elmts.noteColumnSelect);
     }
 
     var currentHeight = dialog.outerHeight();

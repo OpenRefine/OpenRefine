@@ -41,7 +41,6 @@ import com.google.refine.model.AbstractOperation;
 import com.google.refine.model.Cell;
 import com.google.refine.model.Project;
 import com.google.refine.operations.OperationRegistry;
-import com.google.refine.operations.row.RowReorderOperation;
 import com.google.refine.process.Process;
 import com.google.refine.sorting.SortingConfig;
 import com.google.refine.util.ParsingUtilities;

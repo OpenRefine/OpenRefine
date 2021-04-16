@@ -44,6 +44,7 @@ import java.io.Reader;
 import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.nio.charset.Charset;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -68,17 +69,13 @@ import org.apache.commons.fileupload.ProgressListener;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.apache.commons.fileupload.util.Streams;
-import org.apache.http.HttpEntity;
-import org.apache.http.auth.AuthScope;
-import org.apache.http.auth.UsernamePasswordCredentials;
-import org.apache.http.client.CredentialsProvider;
-import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.BasicCredentialsProvider;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClientBuilder;
-import org.apache.http.impl.client.HttpClients;
-import org.apache.http.util.EntityUtils;
+import org.apache.hc.client5.http.ClientProtocolException;
+import org.apache.hc.core5.http.ClassicHttpResponse;
+import org.apache.hc.core5.http.ContentType;
+import org.apache.hc.core5.http.HttpEntity;
+import org.apache.hc.core5.http.HttpStatus;
+import org.apache.hc.core5.http.io.HttpClientResponseHandler;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -86,10 +83,10 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.refine.ProjectManager;
 import com.google.refine.ProjectMetadata;
-import com.google.refine.RefineServlet;
 import com.google.refine.importing.ImportingManager.Format;
 import com.google.refine.importing.UrlRewriter.Result;
 import com.google.refine.model.Project;
+import com.google.refine.util.HttpClient;
 import com.google.refine.util.JSONUtilities;
 import com.google.refine.util.ParsingUtilities;
 import java.util.stream.Collectors;
@@ -144,6 +141,8 @@ public class ImportingUtilities {
         
         ArrayNode fileSelectionIndexes = ParsingUtilities.mapper.createArrayNode();
         JSONUtilities.safePut(config, "fileSelection", fileSelectionIndexes);
+        
+        EncodingGuesser.guess(job);
         
         String bestFormat = ImportingUtilities.autoSelectFiles(job, retrievalRecord, fileSelectionIndexes);
         bestFormat = ImportingUtilities.guessBetterFormat(job, bestFormat);
@@ -282,55 +281,56 @@ public class ImportingUtilities {
                     }
 
                     if ("http".equals(url.getProtocol()) || "https".equals(url.getProtocol())) {
-                        HttpClientBuilder clientbuilder = HttpClients.custom()
-                                .setUserAgent(RefineServlet.getUserAgent());
-//                                .setConnectionBackoffStrategy(ConnectionBackoffStrategy)
+                        final URL lastUrl = url;
+                        final HttpClientResponseHandler<String> responseHandler = new HttpClientResponseHandler<String>() {
 
-                        String userinfo = url.getUserInfo();
-                        // HTTPS only - no sending password in the clear over HTTP
-                        if ("https".equals(url.getProtocol()) && userinfo != null) {
-                            int s = userinfo.indexOf(':');
-                            if (s > 0) {
-                                String user = userinfo.substring(0, s);
-                                String pw = userinfo.substring(s + 1, userinfo.length());
-                                CredentialsProvider credsProvider = new BasicCredentialsProvider();
-                                credsProvider.setCredentials(new AuthScope(url.getHost(), 443),
-                                        new UsernamePasswordCredentials(user, pw));
-                                clientbuilder = clientbuilder.setDefaultCredentialsProvider(credsProvider);
-                            }
-                        }
+                            @Override
+                            public String handleResponse(final ClassicHttpResponse response) throws IOException {
+                                final int status = response.getCode();
+                                if (status >= HttpStatus.SC_SUCCESS && status < HttpStatus.SC_REDIRECTION) {
+                                    final HttpEntity entity = response.getEntity();
+                                    if (entity == null) {
+                                        throw new IOException("No content found in " + lastUrl.toExternalForm());
+                                    }
 
-                        CloseableHttpClient httpclient = clientbuilder.build();
-                        HttpGet httpGet = new HttpGet(url.toURI());
-                        CloseableHttpResponse response = httpclient.execute(httpGet);
+                                    try {
+                                    InputStream stream2 = entity.getContent();
 
-                        try {
-                            response.getStatusLine();
-                            HttpEntity entity = response.getEntity();
-                            if (entity == null) {
-                                throw new Exception("No content found in " + url.toString());
+                                    String mimeType = null;
+                                    String charset = null;
+                                    ContentType contentType = ContentType.parse(entity.getContentType());
+                                    if (contentType != null) {
+                                        mimeType = contentType.getMimeType();
+                                        Charset cs = contentType.getCharset();
+                                        if (cs != null) {
+                                            charset = cs.toString();
+                                        }
+                                    }
+                                    JSONUtilities.safePut(fileRecord, "declaredMimeType", mimeType);
+                                    JSONUtilities.safePut(fileRecord, "declaredEncoding", charset);
+                                    if (saveStream(stream2, lastUrl, rawDataDir, progress, update,
+                                            fileRecord, fileRecords,
+                                            entity.getContentLength())) {
+                                        return "saved"; // signal to increment archive count
+                                    }
+
+                                    } catch (final IOException ex) {
+                                        throw new ClientProtocolException(ex);
+                                    }
+                                    return null;
+                                } else {
+                                    // String errorBody = EntityUtils.toString(response.getEntity());
+                                    throw new ClientProtocolException(String.format("HTTP error %d : %s for URL %s", status,
+                                            response.getReasonPhrase(), lastUrl.toExternalForm()));
+                                }
                             }
-                            InputStream stream2 = entity.getContent();
-                            String encoding = null;
-                            if (entity.getContentEncoding() != null) {
-                                encoding = entity.getContentEncoding().getValue();
-                            }
-                            JSONUtilities.safePut(fileRecord, "declaredEncoding", encoding);
-                            String contentType = null;
-                            if (entity.getContentType() != null) {
-                                contentType = entity.getContentType().getValue();
-                            }
-                            JSONUtilities.safePut(fileRecord, "declaredMimeType", contentType);
-                            if (saveStream(stream2, url, rawDataDir, progress, update, 
-                                    fileRecord, fileRecords,
-                                    entity.getContentLength())) {
-                                archiveCount++;
-                            }
-                            downloadCount++;
-                            EntityUtils.consume(entity);
-                        } finally {
-                            httpGet.reset();
-                        }
+                        };
+
+                        HttpClient httpClient = new HttpClient();
+                        if (httpClient.getResponse(urlString, null, responseHandler) != null) {
+                            archiveCount++;
+                        };
+                        downloadCount++;
                     } else {
                         // Fallback handling for non HTTP connections (only FTP?)
                         URLConnection urlConnection = url.openConnection();
@@ -378,6 +378,7 @@ public class ImportingUtilities {
                         calculateProgressPercent(update.totalExpectedSize, update.totalRetrievedSize));
                     
                     JSONUtilities.safePut(fileRecord, "size", saveStreamToFile(stream, file, null));
+                    // TODO: This needs to be refactored to be able to test import from archives
                     if (postProcessRetrievedFile(rawDataDir, file, fileRecord, fileRecords, progress)) {
                         archiveCount++;
                     }
@@ -402,7 +403,7 @@ public class ImportingUtilities {
 
     private static boolean saveStream(InputStream stream, URL url, File rawDataDir, final Progress progress,
             final SavingUpdate update, ObjectNode fileRecord, ArrayNode fileRecords, long length)
-            throws IOException, Exception {
+            throws IOException {
         String localname = url.getPath();
         if (localname.isEmpty() || localname.endsWith("/")) {
             localname = localname + "temp";
@@ -420,7 +421,7 @@ public class ImportingUtilities {
         long actualLength = saveStreamToFile(stream, file, update);
         JSONUtilities.safePut(fileRecord, "size", actualLength);
         if (actualLength == 0) {
-            throw new Exception("No content found in " + url.toString());
+            throw new IOException("No content found in " + url.toString());
         } else if (length >= 0) {
             update.totalExpectedSize += (actualLength - length);
         } else {
@@ -442,13 +443,13 @@ public class ImportingUtilities {
             name = name.substring(0, q);
         }
         
-        File file = new File(dir, name);     
+        File file = new File(dir, name);
         // For CVE-2018-19859, issue #1840
-        if (!file.toPath().normalize().startsWith(dir.toPath().normalize())) {
-        	throw new IllegalArgumentException("Zip archives with files escaping their root directory are not allowed.");
+        if (!file.toPath().normalize().startsWith(dir.toPath().normalize() + File.separator)) {
+            throw new IllegalArgumentException("Zip archives with files escaping their root directory are not allowed.");
         }
         
-        int dot = name.indexOf('.');
+        int dot = name.lastIndexOf('.');
         String prefix = dot < 0 ? name : name.substring(0, dot);
         String suffix = dot < 0 ? "" : name.substring(dot);
         int index = 2;
@@ -626,6 +627,7 @@ public class ImportingUtilities {
         return null;
     }
     
+    // FIXME: This is wasteful of space and time. We should try to process on the fly
     static public boolean explodeArchive(
         File rawDataDir,
         InputStream archiveIS,
@@ -801,8 +803,9 @@ public class ImportingUtilities {
             }
         });
         
-        // Default to text/line-based to to avoid parsing as binary/excel.
-        String bestFormat = formats.size() > 0 ? formats.get(0) : "text/line-based";
+        // Default to "text" to to avoid parsing as "binary/excel".
+        // "text" is more general than "text/line-based", so a better starting point
+        String bestFormat = formats.size() > 0 ? formats.get(0) : "text";
         if (JSONUtilities.getInt(retrievalRecord, "archiveCount", 0) == 0) {
             // If there's no archive, then select everything
             for (int i = 0; i < count; i++) {

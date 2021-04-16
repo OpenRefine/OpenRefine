@@ -205,13 +205,13 @@
       <plugin> <!-- necessary for launch4j -->
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-antrun-plugin</artifactId>
-        <version>1.4</version>
+        <version>3.0.0</version>
         <executions>
           <execution>
             <phase>generate-test-resources</phase>
             <configuration>
 
-              <tasks>
+              <target>
                 <mkdir dir="./target/"/>
 
                 <mkdir dir="${built.webapp.dir}" />
@@ -261,7 +261,7 @@
                         <replacefilter token="../../extensions" value="extensions"/>
                     </replace>
 
-              </tasks>
+              </target>
 
             </configuration>
             <goals>
@@ -273,7 +273,7 @@
       <plugin>
         <groupId>com.akathist.maven.plugins.launch4j</groupId>
         <artifactId>launch4j-maven-plugin</artifactId>
-        <version>1.7.25</version>
+        <version>2.1.0</version>
 
             <!-- This is a clean snapshot of launch4j's master branch,
                 which includes fixes to Java discovery that we need
@@ -285,12 +285,12 @@
             <groupId>net.sf.launch4j</groupId>
             <artifactId>launch4j</artifactId>
             <classifier>core</classifier>
-            <version>3.13-SNAPSHOT</version>
+            <version>3.14</version>
           </dependency>
           <dependency>
             <groupId>com.thoughtworks.xstream</groupId>
             <artifactId>xstream</artifactId>
-          <version>1.4.9</version>
+          <version>1.4.12</version>
         </dependency>
         </dependencies>
         <executions>
@@ -401,9 +401,11 @@
           <version>1.2.0</version>
           <dependencies>
             <dependency>
+              <!-- dependency upgraded to >4.0 to fix runtime issues with some JRE versions:
+                   https://stackoverflow.com/questions/53696439/appbundle-maven-plugin-fails-on-mac-osx-with-java-10 -->
               <groupId>org.codehaus.plexus</groupId>
               <artifactId>plexus-archiver</artifactId>
-              <version>4.0.0</version>
+              <version>4.2.4</version>
             </dependency>
             <dependency>
               <groupId>org.apache.velocity</groupId>
@@ -476,5 +478,4 @@
     </dependency>
   </dependencies>
 </project>
-
 

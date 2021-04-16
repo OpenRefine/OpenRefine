@@ -46,14 +46,14 @@ public class Trim implements Function {
         if (args.length == 1) {
             Object s1 = args[0];
             if (s1 != null && s1 instanceof String) {
-                return CharMatcher.WHITESPACE.trimFrom((String) s1);
+                return CharMatcher.whitespace().trimFrom((String) s1);
             }
         }
         return new EvalError("Invalid parameters");
     }
     @Override
     public String getDescription() {
-        return "Returns copy of the string, with leading and trailing whitespace omitted.";
+        return "Returns a copy of string s with leading and trailing whitespace removed.";
     }
     
     @Override

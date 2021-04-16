@@ -69,6 +69,7 @@ Refine.DatabaseSourceUI.prototype.attachUI = function(body) {
   if (self._defaultDatabaseType == "") { self._defaultDatabaseType = "mysql"; }
   
   $('#database-title').text($.i18n('database-import/title')); 
+  $('#new-connection-legend').text($.i18n('database-source/new-connection-legend'));
   $('#connectionNameLabel').html($.i18n('database-source/connectionNameLabel'));
   $('#databaseTypeLabel').html($.i18n('database-source/databaseTypeLabel'));
   $('#databaseHostLabel').text($.i18n('database-source/databaseHostLabel'));
@@ -91,7 +92,7 @@ Refine.DatabaseSourceUI.prototype.attachUI = function(body) {
   $('input#initialDatabase').attr('placeholder', $.i18n('database-source/databaseNamePlaceholder'));
   $('input#initialSchema').attr('placeholder', $.i18n('database-source/databaseSchemaPlaceholder'));
 
-  $('input#connectionName').attr('value', $.i18n('database-source/connectionNameDefaultValue'));
+  $('input#connectionName').val($.i18n('database-source/connectionNameDefaultValue'));
 
   this._elmts.newConnectionButton.click(function(evt) {
       self._resetDatabaseImportForm();
@@ -513,7 +514,7 @@ Refine.DatabaseSourceUI.prototype._resetDatabaseImportForm = function() {
   
   $( "#databaseHost" ).val(self._defaultDatabaseHost);
 
-  $('input#connectionName').attr('value', $.i18n('database-source/connectionNameDefaultValue'));
+  $('input#connectionName').val($.i18n('database-source/connectionNameDefaultValue'));
   $( "select#databaseTypeSelect" ).val(self._defaultDatabaseType);
   self._updateDatabaseType(self._defaultDatabaseType);
   

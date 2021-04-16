@@ -42,7 +42,6 @@ import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
 import com.google.refine.RefineTest;
-import com.google.refine.util.PatternSyntaxExceptionParser;
 
 public class PatternSyntaxExceptionParserTests extends RefineTest {
     

@@ -29,7 +29,7 @@ ImportSchemaDialog.launch = function() {
         elmts.schemaTextarea.val(evt.target.result);
         elmts.schemaTextarea.hide();
         elmts.schemaLabel.hide();
-     }
+     };
      freader.readAsText(file);
   });
 
@@ -37,6 +37,13 @@ ImportSchemaDialog.launch = function() {
     var schema = null;
     try {
        schema = JSON.parse(elmts.schemaTextarea.val());
+
+       // If Wikibase related information is not included in the schema,
+       // fall back to Wikidata.
+       if (!schema.siteIri || !schema.mediaWikiApiEndpoint) {
+         schema.siteIri = WikidataManifestV1_0.wikibase.site_iri;
+         schema.mediaWikiApiEndpoint = WikidataManifestV1_0.mediawiki.api;
+       }
     } catch(e) {
        elmts.invalidSchema.text($.i18n('import-wikibase-schema/invalid-schema'));
        return;
@@ -51,7 +58,7 @@ ImportSchemaDialog.launch = function() {
         {   
         onDone: function() {
             theProject.overlayModels.wikibaseSchema = schema;
-            SchemaAlignmentDialog._discardChanges();
+            SchemaAlignment._discardChanges();
             dismiss();
         },
         onError: function(e) {

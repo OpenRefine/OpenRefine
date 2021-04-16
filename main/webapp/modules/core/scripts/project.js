@@ -150,7 +150,7 @@ function initializeUI(uiState) {
   ui.extensionBar = new ExtensionBar(ui.extensionBarDiv); // construct the menu first so we can resize everything else
   ui.exporterManager = new ExporterManager($("#export-button"));
 
-  ui.leftPanelTabs.tabs({ selected: 0 });
+  ui.leftPanelTabs.tabs();
   resize();
   resizeTabs();
 
@@ -183,6 +183,12 @@ function initializeUI(uiState) {
 
 Refine._showHideLeftPanel = function() {
   $('div#body').toggleClass("hide-left-panel");
+  resizeAll();
+};
+
+Refine.showLeftPanel = function() {
+  $('div#body').removeClass("hide-left-panel");
+  if(ui.browsingEngine == undefined || ui.browsingEngine.resize == undefined) return;
   resizeAll();
 };
 

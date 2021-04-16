@@ -43,7 +43,6 @@ import org.testng.annotations.BeforeTest;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
-import com.google.refine.importers.SeparatorBasedImporter;
 import com.google.refine.util.ParsingUtilities;
 
 public class TsvCsvImporterTests extends ImporterTest {
@@ -116,27 +115,6 @@ public class TsvCsvImporterTests extends ImporterTest {
         Assert.assertEquals(project.rows.get(0).cells.get(0).value, "data1");
         Assert.assertEquals(project.rows.get(0).cells.get(1).value, "data2");
         Assert.assertEquals(project.rows.get(0).cells.get(2).value, "data3");
-    }
-
-    @Test(dataProvider = "CSV-TSV-AutoDetermine")
-    public void readSimpleData_CSV_fromArchiveFileName(String sep){
-        //create input to test with
-        String inputSeparator =  sep == null ? "\t" : sep;
-        String input = "col1" + inputSeparator + "col2" + inputSeparator + "col3\n" +
-                "data1" + inputSeparator + "data2" + inputSeparator + "data3";
-
-
-        try {
-            prepareOptions(sep, -1, 0, 0, 1, false, false,"\"","[]", true);
-            parseOneFile(SUT, new StringReader(input));
-        } catch (Exception e) {
-            Assert.fail("Exception during file parse",e);
-        }
-
-        Assert.assertEquals(project.columnModel.columns.size(), 4);
-        Assert.assertEquals(project.columnModel.columns.get(0).getName(), "Archive");
-        Assert.assertEquals(project.rows.get(0).cells.size(), 4);
-        Assert.assertEquals(project.rows.get(0).cells.get(0).value, "archive-file");
     }
 
     @Test(dataProvider = "CSV-TSV-AutoDetermine")

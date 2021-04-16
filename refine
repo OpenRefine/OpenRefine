@@ -34,8 +34,11 @@ where [options] include:
   -p <port> the port that OpenRefine will listen to
      default: 3333
 
-  -i <interface> the host interface OpenRefine should bind to
+  -i <interface> the network interface OpenRefine should bind to
      default: 127.0.0.1
+	 
+  -H <host> the expected value for the Host header (set to * to disable checks)
+     default: <interface>
 
   -w <path> path to the webapp
      default: main/webapp
@@ -46,8 +49,6 @@ where [options] include:
   -m <memory> max memory heap size to use
      default: 1024M
      Values less than 256M not allowed
-
-  -k <google api key> a server API key for calling Google APIs
 
   -v <level> verbosity level [from low to high: error,warn,info,debug,trace]
      default: info
@@ -66,7 +67,7 @@ and <action> is one of
 
    test ................................ Run all OpenRefine tests
    server_test ......................... Run only the server tests
-   ui_test ............................. Run only the UI tests
+   ui_test <browser> <id> <key> ........ Run only the UI tests (If passing a project Id and a Record Key, tests will be recorded in Cypress.io Dashboard)
    extensions_test ..................... Run only the extensions tests
 
    broker .............................. Run OpenRefine Broker
@@ -153,7 +154,7 @@ check_pywin32() {
 
 check_running() {
     check_downloaders
-    URL="http://${REFINE_HOST}:${REFINE_PORT}/"
+    URL="http://${REFINE_HOST_INTERNAL}:${REFINE_PORT}/"
     CHECK_STR="<title>OpenRefine</title>"
 
     if [ "$CURL" ] ; then
@@ -217,7 +218,7 @@ get_revision() {
     elif [ -d ".git" ] ; then
         INFO=`git describe`
         REVISION=`echo $INFO`
-	REVISION=${REVISION:4}
+    REVISION=${REVISION:4}
     else
         error "cannot obtain revision, exiting!"
     fi
@@ -260,7 +261,7 @@ tool_download() {
 load_data() {
     FILE=$1
     NAME=$2
-    URL="http://${REFINE_HOST}:${REFINE_PORT}/command/core/create-project-from-upload"
+    URL="http://${REFINE_HOST_INTERNAL}:${REFINE_PORT}/command/core/create-project-from-upload"
     CURL="`which curl 2> /dev/null`"
     
     if [ -z "$CURL" ] ; then
@@ -274,11 +275,11 @@ load_data() {
 display() {
     FILE=$1
     if [ "$OS" = "macosx" ] ; then
-	open $FILE
+    open $FILE
     elif [ "$OS" = "linux" ] ; then
-	gnome-open $FILE
+    gnome-open $FILE
     else
-	notepad $FILE
+    notepad $FILE
     fi  
 
 }
@@ -482,15 +483,31 @@ test() {
 }
 
 ui_test() {
-    INTERACTIVE=$1
+    get_revision
+
+    BROWSER="$1"
+    CYPRESS_PROJECT_ID="$2"
+    CYPRESS_RECORD_KEY="$3"
+    CYPRESS_RECORD=0
+
+    if [ -z "$BROWSER" ] ; then
+        BROWSER="electron"
+    fi
     
-    windmill_prepare
+    if [ ! -z "$CYPRESS_PROJECT_ID" ] && [ ! -z "$CYPRESS_RECORD_KEY" ] ; then
+        CYPRESS_RECORD=1
+        echo "Tests will be recorded in Cypress Dashboard"
+    elif [ ! -z "$CYPRESS_PROJECT_ID" ] && [ -z "$CYPRESS_RECORD_KEY" ] ; then
+        fail "Found a Cypress project id but no record key"
+    fi
 
     REFINE_DATA_DIR="${TMPDIR:=/tmp}/openrefine-tests"
     
     add_option "-Drefine.headless=true"
+    add_option "-Drefine.autoreload=false"
+    add_option "-Dbutterfly.autoreload=false"
     
-    run fork
+    run fork > /dev/null
     
     echo "Waiting for OpenRefine to load..."
     sleep 5
@@ -500,16 +517,26 @@ ui_test() {
     fi
     echo "... proceed with the tests."
     echo ""
-    
-    load_data "$REFINE_TEST_DIR/data/food.csv" "Food"
-    sleep 3
-    echo ""
-    
-    echo "Starting Windmill..."
-    if [ -z "$INTERACTIVE" ] ; then
-        "$WINDMILL" firefox firebug loglevel=WARN http://${REFINE_HOST}:${REFINE_PORT}/ jsdir=$REFINE_TEST_DIR/client/src exit
+
+    echo "Starting Cypress..."
+    CYPRESS_RUN_CMD="yarn --cwd ./main/tests/cypress run cypress run --browser $BROWSER --headless --quiet --reporter list --env OPENREFINE_URL=http://$REFINE_HOST_INTERNAL:$REFINE_PORT"
+    if [ "$CYPRESS_RECORD" = "1" ] ; then
+        # if tests are recorded, project id is added to env vars, and --record flag is added to the cmd-line
+        export CYPRESS_PROJECT_ID=$CYPRESS_PROJECT_ID
+        CYPRESS_RUN_CMD="$CYPRESS_RUN_CMD --record --key $CYPRESS_RECORD_KEY --tag $BROWSER,$REVISION"
+    fi
+    export MOZ_FORCE_DISABLE_E10S=1
+    echo $CYPRESS_RUN_CMD
+    $CYPRESS_RUN_CMD
+
+    if [ "$?" = "0" ] ; then
+        UI_TEST_SUCCESS="1"
     else
-        "$WINDMILL" firefox firebug loglevel=WARN http://${REFINE_HOST}:${REFINE_PORT}/
+        UI_TEST_SUCCESS="0"
+    fi
+
+    if [ "$CYPRESS_RECORD" = "1" ] ; then
+        echo "You can review tests on Cypress.io: https://dashboard.cypress.io/projects/$CYPRESS_PROJECT_ID/runs"
     fi
     
     echo ""
@@ -517,6 +544,10 @@ ui_test() {
     /bin/kill -9 $REFINE_PID
     echo "Cleaning up"
     rm -rf "$REFINE_DATA_DIR"
+
+    if [ "$UI_TEST_SUCCESS" = "0" ] ; then
+        error "The UI test suite failed."
+    fi
 }
 
 server_test() {
@@ -568,12 +599,12 @@ run() {
         add_option "-Drefine.port=$REFINE_PORT"
     fi
     
+    if [ "$REFINE_INTERFACE" ] ; then
+        add_option "-Drefine.interface=$REFINE_INTERFACE"
+    fi
+    
     if [ "$REFINE_HOST" ] ; then
         add_option "-Drefine.host=$REFINE_HOST"
-    fi
-
-    if [ "$REFINE_GOOGLE_API_KEY" ] ; then
-        add_option "-Drefine.google_api_key=$REFINE_GOOGLE_API_KEY"
     fi
 
     if [ "$REFINE_AUTOSAVE_PERIOD" ] ; then
@@ -585,7 +616,7 @@ run() {
     RUN_CMD=("$JAVA" -cp "$CLASSPATH" "${OPTS[@]}" "com.google.refine.Refine")
     echo "${RUN_CMD[@]}"
 
-    echo "Starting OpenRefine at 'http://${REFINE_HOST}:${REFINE_PORT}/'"
+    echo "Starting OpenRefine at 'http://${REFINE_HOST_INTERNAL}:${REFINE_PORT}/'"
     echo ""
 
     if [ -z "$FORK" ] ; then
@@ -630,7 +661,7 @@ broker_run() {
     #echo "$RUN_CMD"
     #echo ""
   
-    echo "Starting OpenRefine Broker at 'http://${REFINE_HOST}:${REFINE_PORT}/'"
+    echo "Starting OpenRefine Broker at 'http://0.0.0.0:${REFINE_PORT}/'"
     echo ""
 
     if [ -z "$FORK" ] ; then
@@ -778,8 +809,8 @@ fi
 
 if [ "$OS" = "macosx" ] ; then
     if [ -z "$JAVA_HOME" ] ; then
-	# We need want recent Java because we're bundling JRE - may want to warn and force developer to set JAVA_HOME
-	# The /usr/libexec/java_home utility may be tied to the Java prefs app, so could go away when Apple removes it
+    # We need want recent Java because we're bundling JRE - may want to warn and force developer to set JAVA_HOME
+    # The /usr/libexec/java_home utility may be tied to the Java prefs app, so could go away when Apple removes it
         export JAVA_HOME=$(/usr/libexec/java_home)
     fi
 fi
@@ -800,9 +831,10 @@ checkJavaMajorVersion
 
 while [ $# -ne 0 ] ; do
   case "$1" in
-    -h) usage;;
+	-h) usage;;
     -p) shift; REFINE_PORT="$1"; shift; continue;;
-    -i) shift; REFINE_HOST="$1"; shift; continue;;
+    -H) shift; REFINE_HOST="$1"; shift; continue;;
+    -i) shift; REFINE_INTERFACE="$1"; shift; continue;;
     -w) shift; REFINE_WEBAPP="$1"; shift; continue;;
     -d) shift; REFINE_DATA_DIR="$1"; shift; continue;;
     -m) 
@@ -815,7 +847,6 @@ while [ $# -ne 0 ] ; do
         shift;
         continue;
       fi;;
-    -k) shift; REFINE_GOOGLE_API_KEY="$1"; shift; continue;;
     -v) shift; REFINE_VERBOSITY="$1"; shift; continue;;
     -x) shift; REFINE_EXTRA_OPTS="$1"; shift; continue;;
     --debug) shift; add_option '-Xdebug' '-Xrunjdwp:transport=dt_socket,address=8000,server=y,suspend=n'; continue;;
@@ -850,15 +881,15 @@ add_option "-Xms$REFINE_MIN_MEMORY" "-Xmx$REFINE_MEMORY" "-Drefine.memory=$REFIN
 
 freeRam=UNKNOWN
 if [ "$OS" = "macosx" ] ; then
-	freeRam=$(top -l 1 | grep PhysMem | awk '{print $6}' | tr -d M)
+    freeRam=$(top -l 1 | grep PhysMem | awk '{print $6}' | tr -d M)
 elif [ "$OS" = "linux" ] ; then
-	freeRam=$(free -m | grep -oP '\d+' | head -n 1)
+    freeRam=$(free -m | grep -oP '\d+' | head -n 1)
 fi
 
 echo You have "$freeRam"M of free memory. 
 echo Your current configuration is set to use $REFINE_MEMORY of memory.
 echo OpenRefine can run better when given more memory. Read our FAQ on how to allocate more memory here:
-echo https://github.com/OpenRefine/OpenRefine/wiki/FAQ:-Allocate-More-Memory
+echo https://github.com/OpenRefine/OpenRefine/wiki/FAQ-Allocate-More-Memory
 
 if [ -z "$REFINE_MAX_FORM_CONTENT_SIZE" ] ; then
     REFINE_MAX_FORM_CONTENT_SIZE="1048576"
@@ -869,8 +900,23 @@ if [ -z "$REFINE_PORT" ] ; then
     REFINE_PORT="3333"
 fi
 
+if [ -z "$REFINE_INTERFACE" ] ; then
+    REFINE_INTERFACE="127.0.0.1"
+fi
+
 if [ -z "$REFINE_HOST" ] ; then
-    REFINE_HOST="127.0.0.1"
+    if [ "$REFINE_INTERFACE" = "0.0.0.0" ] ; then
+        REFINE_HOST='*'
+    else
+        REFINE_HOST="$REFINE_INTERFACE"
+    fi
+fi
+
+if [ "$REFINE_HOST" = '*' ] ; then
+    echo No host specified while binding to interface 0.0.0.0, guessing localhost.
+    REFINE_HOST_INTERNAL="localhost"
+else
+    REFINE_HOST_INTERNAL="$REFINE_HOST"
 fi
 
 if [ -z "$REFINE_WEBAPP" ] ; then
@@ -921,7 +967,9 @@ add_option "-Dpython.cachedir=$HOME/.local/share/google/refine/cachedir"
 
 if [ ! -z "$GDATA_CLIENT_ID" ] ; then
     if [ ! -z "$GDATA_CLIENT_SECRET" ] ; then
-        add_option "-Dext.gdata.clientid=$GDATA_CLIENT_ID" "-Dext.gdata.clientsecret=$GDATA_CLIENT_SECRET"
+        if [ ! -z "$GDATA_API_KEY" ] ; then
+            add_option "-Dext.gdata.clientid=$GDATA_CLIENT_ID" "-Dext.gdata.clientsecret=$GDATA_CLIENT_SECRET" "-Dext.gdata.apikey=$GDATA_API_KEY"
+        fi
     fi
 fi
 
@@ -933,8 +981,8 @@ case "$ACTION" in
   distclean) mvn distclean;;
   test) test $1;;  
   tests) test $1;;  
-  ui_test) ui_test $1;;  
-  ui_tests) ui_test $1;;  
+  ui_test) ui_test $1 $2 $3;;  
+  ui_tests) ui_test $1 $2 $3;;  
   server_test) server_test $1;;  
   server_tests) server_test $1;;  
   extensions_test) extensions_test $1;;

@@ -400,7 +400,7 @@
     "core-views/earliest-first": "从早到晚",
     "core-views/latest-first": "从晚到早",
     "core-views/false-true": "先假后真",
-    "core-views/true-fasle": "先真后假",
+    "core-views/true-false": "先真后假",
     "core-views/valid-values": "合法值",
     "core-views/blanks": "空白",
     "core-views/errors": "错误",

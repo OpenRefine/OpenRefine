@@ -34,6 +34,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.commons.lang.Validate;
+import org.apache.commons.lang3.StringUtils;
 import org.openrefine.wikidata.commands.ConnectionManager;
 import org.openrefine.wikidata.editing.EditBatchProcessor;
 import org.openrefine.wikidata.editing.NewItemLibrary;
@@ -63,20 +64,42 @@ import com.google.refine.util.Pool;
 public class PerformWikibaseEditsOperation extends EngineDependentOperation {
 
     static final Logger logger = LoggerFactory.getLogger(PerformWikibaseEditsOperation.class);
+    
+    // only used for backwards compatibility, these things are configurable through
+    // the manifest now.
+    static final private String WIKIDATA_EDITGROUPS_URL_SCHEMA = "([[:toollabs:editgroups/b/OR/${batch_id}|details]])";
 
     @JsonProperty("summary")
     private String summary;
+
+    @JsonProperty("maxlag")
+    private int maxlag;
+
+    @JsonProperty("editGroupsUrlSchema")
+    private String editGroupsUrlSchema;
 
     @JsonCreator
     public PerformWikibaseEditsOperation(
     		@JsonProperty("engineConfig")
     		EngineConfig engineConfig,
     		@JsonProperty("summary")
-    		String summary) {
+    		String summary,
+            @JsonProperty("maxlag")
+            Integer maxlag,
+            @JsonProperty("editGroupsUrlSchema")
+            String editGroupsUrlSchema) {
         super(engineConfig);
         Validate.notNull(summary, "An edit summary must be provided.");
         Validate.notEmpty(summary, "An edit summary must be provided.");
         this.summary = summary;
+        if (maxlag == null) {
+            // For backward compatibility, if the maxlag parameter is not included
+            // in the serialized JSON text, set it to 5.
+            maxlag = 5;
+        }
+        this.maxlag = maxlag;
+        // a fallback to Wikidata for backwards compatibility is done later on
+        this.editGroupsUrlSchema = editGroupsUrlSchema;
     }
 
     @Override
@@ -87,7 +110,12 @@ public class PerformWikibaseEditsOperation extends EngineDependentOperation {
     @Override
     public Process createProcess(Project project, Properties options)
             throws Exception {
-        return new PerformEditsProcess(project, createEngine(project), getBriefDescription(project), summary);
+        return new PerformEditsProcess(
+                project,
+                createEngine(project),
+                getBriefDescription(project),
+                editGroupsUrlSchema,
+                summary);
     }
 
     static public class PerformWikibaseEditsChange implements Change {
@@ -146,11 +174,12 @@ public class PerformWikibaseEditsOperation extends EngineDependentOperation {
         protected Project _project;
         protected Engine _engine;
         protected WikibaseSchema _schema;
+        protected String _editGroupsUrlSchema;
         protected String _summary;
         protected List<String> _tags;
         protected final long _historyEntryID;
 
-        protected PerformEditsProcess(Project project, Engine engine, String description, String summary) {
+        protected PerformEditsProcess(Project project, Engine engine, String description, String editGroupsUrlSchema, String summary) {
             super(description);
             this._project = project;
             this._engine = engine;
@@ -164,6 +193,13 @@ public class PerformWikibaseEditsOperation extends EngineDependentOperation {
             }
             this._tags = Arrays.asList(tag);
             this._historyEntryID = HistoryEntry.allocateID();
+            if (editGroupsUrlSchema == null &&
+                    ApiConnection.URL_WIKIDATA_API.equals(_schema.getMediaWikiApiEndpoint())) {
+                // For backward compatibility, if no editGroups schema is provided
+                // and we edit Wikidata, then add Wikidata's editGroups schema
+                editGroupsUrlSchema = WIKIDATA_EDITGROUPS_URL_SCHEMA;
+            }
+            this._editGroupsUrlSchema = editGroupsUrlSchema;
         }
 
         @Override
@@ -171,23 +207,28 @@ public class PerformWikibaseEditsOperation extends EngineDependentOperation {
 
             WebResourceFetcherImpl.setUserAgent("OpenRefine Wikidata extension");
             ConnectionManager manager = ConnectionManager.getInstance();
-            if (!manager.isLoggedIn()) {
+            String mediaWikiApiEndpoint = _schema.getMediaWikiApiEndpoint();
+            if (!manager.isLoggedIn(mediaWikiApiEndpoint)) {
                 return;
             }
-            ApiConnection connection = manager.getConnection();
+            ApiConnection connection = manager.getConnection(mediaWikiApiEndpoint);
 
-            WikibaseDataFetcher wbdf = new WikibaseDataFetcher(connection, _schema.getBaseIri());
-            WikibaseDataEditor wbde = new WikibaseDataEditor(connection, _schema.getBaseIri());
-            
-            // Generate batch token
-            long token = (new Random()).nextLong();
-            // The following replacement is a fix for: https://github.com/Wikidata/editgroups/issues/4
-            // Because commas and colons are used by Wikibase to separate the auto-generated summaries
-            // from the user-supplied ones, we replace these separators by similar unicode characters to
-            // make sure they can be told apart.
-            String summaryWithoutCommas = _summary.replaceAll(", ","ꓹ ").replaceAll(": ","։ ");
-            String summary = summaryWithoutCommas + String.format(" ([[:toollabs:editgroups/b/OR/%s|details]])",
-                    (Long.toHexString(token).substring(0, 11)));
+            WikibaseDataFetcher wbdf = new WikibaseDataFetcher(connection, _schema.getSiteIri());
+            WikibaseDataEditor wbde = new WikibaseDataEditor(connection, _schema.getSiteIri());
+
+            String summary;
+            if (StringUtils.isBlank(_editGroupsUrlSchema)) {
+                summary = _summary;
+            } else {
+                // Generate batch id
+                String batchId = Long.toHexString((new Random()).nextLong()).substring(0, 11);
+                // The following replacement is a fix for: https://github.com/Wikidata/editgroups/issues/4
+                // Because commas and colons are used by Wikibase to separate the auto-generated summaries
+                // from the user-supplied ones, we replace these separators by similar unicode characters to
+                // make sure they can be told apart.
+                String summaryWithoutCommas = _summary.replaceAll(", ","ꓹ ").replaceAll(": ","։ ");
+                summary = summaryWithoutCommas + " " + _editGroupsUrlSchema.replace("${batch_id}", batchId);
+            }
 
             // Evaluate the schema
             List<ItemUpdate> itemDocuments = _schema.evaluate(_project, _engine);
@@ -195,7 +236,7 @@ public class PerformWikibaseEditsOperation extends EngineDependentOperation {
             // Prepare the edits
             NewItemLibrary newItemLibrary = new NewItemLibrary();
             EditBatchProcessor processor = new EditBatchProcessor(wbdf, wbde, itemDocuments, newItemLibrary, summary,
-                    _tags, 50);
+                    maxlag, _tags, 50);
 
             // Perform edits
             logger.info("Performing edits");
