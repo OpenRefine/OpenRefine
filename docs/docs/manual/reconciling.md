@@ -17,7 +17,7 @@ You may wish to reconcile in order to:
 * add to an editable platform such as [Wikidata](https://www.wikidata.org)
 * or see whether entities in your project appear in some specific list, such as the [Panama Papers](https://aleph.occrp.org/datasets/734).
 
-Reconciliation is semi-automated: OpenRefine matches your cell values to the reconciliation information as best it can, but human judgment is required to review and approve the results. Reconciling happens by default through string searching, so typos, whitespace, and extraneous characters will have an effect on the results. You may wish to [clean and cluster](cellediting) your data before reconciliaton.
+Reconciliation is semi-automated: OpenRefine matches your cell values to the reconciliation information as best it can, but human judgment is required to review and approve the results. Reconciling happens by default through string searching, so typos, whitespace, and extraneous characters will have an effect on the results. You may wish to [clean and cluster](https://docs.openrefine.org/manual/cellediting) your data before reconciliaton.
 
 :::info Working iteratively
 We recommend planning your reconciliation operations as iterative: reconcile multiple times with different settings, and with different subgroups of your data. 
