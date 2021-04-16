@@ -103,7 +103,7 @@ The `init()` function in `controller.js` allows the extension to register variou
 
 The Extensions are loaded by the Butterfly framework. Butterfly refers to these as 'modules'. [The location of modules is set in the `main/webapp/butterfly.properties` file](https://github.com/OpenRefine/OpenRefine/blob/master/main/webapp/WEB-INF/butterfly.properties#L27). Butterfly simply descends into each of those paths and looks for any `MOD-INF` directories.
 
-For more information, see [Extension Points](Extension-Points).
+For more information, see [Extension Points](https://github.com/OpenRefine/OpenRefine/wiki/Extension-Points).
 
 ## Extension points
 
@@ -222,7 +222,7 @@ Your command will then be accessible at [http://127.0.0.1:3333/command/my-extens
 
 ### Server-side: Operations
 
-Most commands change the project's data. Most of them do so by creating abstract operations. See the Changes, History, Processes, and Operations section of the [Server Side Architecture](Server-side+Architecture) document.
+Most commands change the project's data. Most of them do so by creating abstract operations. See the Changes, History, Processes, and Operations section of the [Server Side Architecture](https://github.com/OpenRefine/OpenRefine/wiki/Server-Side-Architecture) document.
 
 You can register an operation **class** in the `init` function as follows:
 

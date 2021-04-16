@@ -6,7 +6,7 @@ sidebar_label: Reconciliation API
 
 _This page is kept for the record. [A cleaner version of this specification](https://reconciliation-api.github.io/specs/0.1/) was written by the [W3C Entity Reconciliation Community Group](https://www.w3.org/community/reconciliation/), which has been formed to improve and promote this API. Join the community group to get involved!_
 
-_This is a technical description of the mechanisms behind the reconciliation system in OpenRefine. For usage instructions, see [Reconciliation](Reconciliation)._
+_This is a technical description of the mechanisms behind the reconciliation system in OpenRefine. For usage instructions, see [Reconciliation](/manual/reconciling)._
 
 ## Introduction
 
