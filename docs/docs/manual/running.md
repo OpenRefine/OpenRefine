@@ -499,7 +499,7 @@ The following are all third-party extensions and code; the OpenRefine team does 
 
 Some examples:
 
-* This project allows OpenRefine to be run from the command line using [operations saved in a JSON file](running#reusing-operations): [OpenRefine batch processing](https://github.com/opencultureconsulting/openrefine-batch)
+* This project allows OpenRefine to be run from the command line using [operations saved in a JSON file](#reusing-operations): [OpenRefine batch processing](https://github.com/opencultureconsulting/openrefine-batch)
 * A Python project for applying a JSON file of operations to a data file, outputting the new file, and deleting the temporary project, written by David Huynh and Max Ogden: [Python client library for Google Refine](https://github.com/maxogden/refine-python)
 * And the same in Ruby: [Refine-Ruby](https://github.com/maxogden/refine-ruby)
 * Another Python client library, by Paul Makepeace: [OpenRefine Python Client Library](https://github.com/PaulMakepeace/refine-client-py) 
