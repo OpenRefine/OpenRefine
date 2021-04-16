@@ -64,12 +64,19 @@ import com.google.refine.util.Pool;
 public class PerformWikibaseEditsOperation extends EngineDependentOperation {
 
     static final Logger logger = LoggerFactory.getLogger(PerformWikibaseEditsOperation.class);
+    
+    // only used for backwards compatibility, these things are configurable through
+    // the manifest now.
+    static final private String WIKIDATA_EDITGROUPS_URL_SCHEMA = "([[:toollabs:editgroups/b/OR/${batch_id}|details]])";
 
     @JsonProperty("summary")
     private String summary;
 
     @JsonProperty("maxlag")
     private int maxlag;
+
+    @JsonProperty("editGroupsUrlSchema")
+    private String editGroupsUrlSchema;
 
     @JsonCreator
     public PerformWikibaseEditsOperation(
@@ -78,7 +85,9 @@ public class PerformWikibaseEditsOperation extends EngineDependentOperation {
     		@JsonProperty("summary")
     		String summary,
             @JsonProperty("maxlag")
-            Integer maxlag) {
+            Integer maxlag,
+            @JsonProperty("editGroupsUrlSchema")
+            String editGroupsUrlSchema) {
         super(engineConfig);
         Validate.notNull(summary, "An edit summary must be provided.");
         Validate.notEmpty(summary, "An edit summary must be provided.");
@@ -89,6 +98,8 @@ public class PerformWikibaseEditsOperation extends EngineDependentOperation {
             maxlag = 5;
         }
         this.maxlag = maxlag;
+        // a fallback to Wikidata for backwards compatibility is done later on
+        this.editGroupsUrlSchema = editGroupsUrlSchema;
     }
 
     @Override
@@ -99,7 +110,12 @@ public class PerformWikibaseEditsOperation extends EngineDependentOperation {
     @Override
     public Process createProcess(Project project, Properties options)
             throws Exception {
-        return new PerformEditsProcess(project, createEngine(project), getBriefDescription(project), summary);
+        return new PerformEditsProcess(
+                project,
+                createEngine(project),
+                getBriefDescription(project),
+                editGroupsUrlSchema,
+                summary);
     }
 
     static public class PerformWikibaseEditsChange implements Change {
@@ -158,11 +174,12 @@ public class PerformWikibaseEditsOperation extends EngineDependentOperation {
         protected Project _project;
         protected Engine _engine;
         protected WikibaseSchema _schema;
+        protected String _editGroupsUrlSchema;
         protected String _summary;
         protected List<String> _tags;
         protected final long _historyEntryID;
 
-        protected PerformEditsProcess(Project project, Engine engine, String description, String summary) {
+        protected PerformEditsProcess(Project project, Engine engine, String description, String editGroupsUrlSchema, String summary) {
             super(description);
             this._project = project;
             this._engine = engine;
@@ -176,6 +193,13 @@ public class PerformWikibaseEditsOperation extends EngineDependentOperation {
             }
             this._tags = Arrays.asList(tag);
             this._historyEntryID = HistoryEntry.allocateID();
+            if (editGroupsUrlSchema == null &&
+                    ApiConnection.URL_WIKIDATA_API.equals(_schema.getMediaWikiApiEndpoint())) {
+                // For backward compatibility, if no editGroups schema is provided
+                // and we edit Wikidata, then add Wikidata's editGroups schema
+                editGroupsUrlSchema = WIKIDATA_EDITGROUPS_URL_SCHEMA;
+            }
+            this._editGroupsUrlSchema = editGroupsUrlSchema;
         }
 
         @Override
@@ -193,7 +217,7 @@ public class PerformWikibaseEditsOperation extends EngineDependentOperation {
             WikibaseDataEditor wbde = new WikibaseDataEditor(connection, _schema.getSiteIri());
 
             String summary;
-            if (StringUtils.isBlank(_schema.getEditGroupsURLSchema())) {
+            if (StringUtils.isBlank(_editGroupsUrlSchema)) {
                 summary = _summary;
             } else {
                 // Generate batch id
@@ -203,7 +227,7 @@ public class PerformWikibaseEditsOperation extends EngineDependentOperation {
                 // from the user-supplied ones, we replace these separators by similar unicode characters to
                 // make sure they can be told apart.
                 String summaryWithoutCommas = _summary.replaceAll(", ","ꓹ ").replaceAll(": ","։ ");
-                summary = summaryWithoutCommas + " " + _schema.getEditGroupsURLSchema().replace("${batch_id}", batchId);
+                summary = summaryWithoutCommas + " " + _editGroupsUrlSchema.replace("${batch_id}", batchId);
             }
 
             // Evaluate the schema
