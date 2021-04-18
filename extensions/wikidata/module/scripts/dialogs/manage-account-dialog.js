@@ -83,7 +83,7 @@ ManageAccountDialog.displayPasswordLogin = function (onSuccess) {
 	elmts.wikibaseLogoImg.attr("src", data);
   });
   elmts.wikibaseMainPage.attr("href", WikibaseManager.getSelectedWikibaseMainPage());
-  elmts.wikibaseLogoImg.attr("alt", WikibaseManager.getSelectedWikibaseName() + " Logo");
+  elmts.wikibaseLogoImg.attr("alt", $.i18n('wikibase-account/logo-alt-text', WikibaseManager.getSelectedWikibaseName()));
   elmts.explainBotPasswords.html($.i18n('wikibase-account/explain-bot-passwords', WikibaseManager.getSelectedWikibaseRoot() + 'Special:BotPasswords'));
   elmts.explainOwnerOnlyConsumerLogin.html($.i18n('wikibase-account/explain-owner-only-consumer-login'));
   elmts.invalidCredentials.text($.i18n('wikibase-account/invalid-credentials'));

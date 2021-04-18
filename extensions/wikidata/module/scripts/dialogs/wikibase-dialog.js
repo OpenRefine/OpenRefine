@@ -31,7 +31,7 @@ WikibaseDialog.populateDialog = function () {
     WikibaseManager.getSelectedWikibaseLogoURL(function(data) {
       if (wikibases.hasOwnProperty(wikibaseName)) {
         let item = "<tr onclick=\"WikibaseDialog.selectWikibase('" + wikibaseName + "')\">";
-        item += "<td class=\"wikibase-dialog-wikibase-logo\">" + "<img src=\""+ data + "\" alt=\"" + wikibaseName + " Logo\"/>" + "</td>";
+        item += "<td class=\"wikibase-dialog-wikibase-logo\">" + "<img src=\""+ data + "\" alt=\"" + $.i18n('wikibase-account/logo-alt-text', wikibaseName) + "\"/>" + "</td>";
         item += "<td>" + wikibaseName + "</td>";
         if (wikibaseName.toLowerCase() === WikibaseManager.getSelectedWikibaseName().toLowerCase()) {
           item += "<td><a class=\"wikibase-dialog-selector-remove wikibase-selected\" onclick=\"void(0)\"></a></td>";
