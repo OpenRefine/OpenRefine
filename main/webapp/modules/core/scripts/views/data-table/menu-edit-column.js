@@ -484,6 +484,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
         .appendTo(elmts.column_join_columnPicker);
       $('<input>').
         attr('type', 'checkbox')
+        .attr("column", colName)
         .prop('checked',(i == columnIndex) ? true : false)
         .appendTo(div);
       $('<span>')
