@@ -215,7 +215,6 @@ WikibaseManager.retrieveLogoUrlFromSiteInfo = function(onSuccess, onError, wikib
     url: url,
     data: params,
     dataType: "jsonp",
-	cache: true,
     timeout: 1000,
     cache: true,
     beforeSend: function () {
