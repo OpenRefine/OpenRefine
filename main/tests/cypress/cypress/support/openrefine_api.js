@@ -53,8 +53,11 @@ Cypress.Commands.add('loadProject', (fixture, projectName, tagName) => {
       content = value;
     });
   } else {
-    jsonFixture = fixtures[fixture];
-
+    if (typeof fixture == 'string') {
+      jsonFixture = fixtures[fixture];
+    } else {
+      jsonFixture = fixture;
+    }
     jsonFixture.forEach((item) => {
       csv.push('"' + item.join('","') + '"');
     });
