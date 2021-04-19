@@ -103,19 +103,19 @@ function deDupUserMetaData(arrObj)  {
     return JSON.stringify(result).replace(/"/g, '\"');
 }
 
-function PreferenceUI(tr, key, value) {
+function PreferenceUI(tr, key, initialValue) {
   var self = this;
 
   var td0 = tr.insertCell(0);
   $(td0).text(key);
 
   var td1 = tr.insertCell(1);
-  $(td1).text((value !== null) ? value : "");
+  $(td1).text((initialValue !== null) ? initialValue : "");
 
   var td2 = tr.insertCell(2);
 
   $('<button class="button">').text($.i18n('core-index/edit')).appendTo(td2).click(function() {
-    var newValue = window.prompt($.i18n('core-index/change-value')+" " + key, value);
+    var newValue = window.prompt($.i18n('core-index/change-value')+" " + key, $(td1).text());
     if (newValue !== null) {
       if (key === "userMetadata")  {
           newValue = deDupUserMetaData(newValue);

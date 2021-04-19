@@ -20,12 +20,13 @@ module.exports = {
 	    {
       type: 'category',
       label: 'Expressions',
-      items: ['manual/expressions', 'manual/grelfunctions'],
+      items: ['manual/expressions', 'manual/grel', 'manual/grelfunctions', 'manual/jythonclojure'],
     },
       'manual/exporting',
-      'manual/glossary',
       'manual/troubleshooting'
     ],
+   'GREL Reference': [
+	   'manual/grelfunctions'],
     'Technical Reference': [
       'technical-reference/technical-reference-index',
       'technical-reference/architecture',

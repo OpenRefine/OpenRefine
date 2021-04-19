@@ -61,7 +61,7 @@ public class Jsonize implements Function {
     
     @Override
     public String getParams() {
-        return "value";
+        return "o";
     }
     
     @Override

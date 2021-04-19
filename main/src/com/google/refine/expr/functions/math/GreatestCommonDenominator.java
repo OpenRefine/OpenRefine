@@ -56,12 +56,12 @@ public class GreatestCommonDenominator implements Function {
 
     @Override
     public String getDescription() {
-        return "Returns the greatest common denominator of the two numbers";
+        return "Returns the greatest common denominator of two numbers.";
     }
     
     @Override
     public String getParams() {
-        return "number d, number e";
+        return "number n1, number n2";
     }
     
     @Override
