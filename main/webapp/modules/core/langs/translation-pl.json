@@ -144,5 +144,9 @@
     "core-import-formats/binary/text/xml/xls/xlsx": "Pliki Excel",
     "core-import-formats/text": "Pliki tekstowe",
     "core-index-import/parsing-options": "Konfiguruj opcje sprawdzania",
-    "core-index-import/warning-clipboard": "Musisz wkleić jakieś dane aby je zaimportować."
+    "core-index-import/warning-clipboard": "Musisz wkleić jakieś dane aby je zaimportować.",
+    "core-index-import/warning-web-address": "Musisz określić prawidłowy adres sieciowy (URL) aby zaimportować.",
+    "core-index-import/inspecting-files": "Sprawdzanie<br/>wybranych plików…",
+    "core-index-import/mime-type": "Typ mediów",
+    "core-index-import/inspecting": "Sprawdzanie wybranych plików …"
 }
