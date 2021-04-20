@@ -135,5 +135,14 @@
     "core-index-open/creator": "Twórca",
     "core-index-open/del-title": "Usuń ten projekt",
     "core-index-open/description": "Opis",
-    "core-index-open/open-proj": "Otwórz Projekt"
+    "core-index-open/open-proj": "Otwórz Projekt",
+    "core-index-import/sel-by-extension": "Wybierz według rozszerzenia",
+    "core-index-import/several-file": "Dostępnych jest kilka plików. Wybierz te do zaimportowania.",
+    "core-index-import/web-address": "Adresy sieciowe (URL)",
+    "core-views/ignore-blank": "Ignoruj puste komórki",
+    "core-import-formats/text/xml/ods": "Arkusze kalkulacyjne Open Document Format (.ods)",
+    "core-import-formats/binary/text/xml/xls/xlsx": "Pliki Excel",
+    "core-import-formats/text": "Pliki tekstowe",
+    "core-index-import/parsing-options": "Konfiguruj opcje sprawdzania",
+    "core-index-import/warning-clipboard": "Musisz wkleić jakieś dane aby je zaimportować."
 }
