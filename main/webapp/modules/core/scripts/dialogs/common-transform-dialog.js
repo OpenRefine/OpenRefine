@@ -31,16 +31,16 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 */
 
-function commonTransformDialog(expression) {
-    this._createDialog(expression);
+function commonTransformDialog(expression,label) {
+    this._createDialog(expression,label);
+    
 }
 
-commonTransformDialog.prototype._createDialog = function(expression) {
+commonTransformDialog.prototype._createDialog = function(expression,label) {
     var self = this;
     var dialog = $(DOM.loadHTML("core", "scripts/dialogs/common-transform-dialog.html"));
     this._elmts = DOM.bind(dialog);
-
-    this._elmts.dialogHeader.html($.i18n('core-views/common-transform'));
+    this._elmts.dialogHeader.html($.i18n(label));
     this._elmts.selectAllButton.html($.i18n('core-buttons/select-all'));
     this._elmts.deselectAllButton.html($.i18n('core-buttons/deselect-all'));
     this._elmts.okButton.html($.i18n('core-buttons/ok'));
@@ -54,7 +54,7 @@ commonTransformDialog.prototype._createDialog = function(expression) {
         var colName = col.name;
         var columnIndex = Refine.columnNameToColumnIndex(col.name);
         var div = $('<div>').
-          addClass("column-reordering-dialog-column")
+          addClass("all-column-transform-dialog-container")
           .attr("column", colName)
           .appendTo(this._elmts.columnContainer);
         $('<input>').
@@ -68,10 +68,10 @@ commonTransformDialog.prototype._createDialog = function(expression) {
       }
       
       this._elmts.columnContainer
-      .find('.column-reordering-dialog-column')
+      .find('.all-column-transform-dialog-container')
       .click(function() {
         container
-        .find('.column-reordering-dialog-column')
+        .find('.all-column-transform-dialog-container')
         .removeClass('selected');
         $(this).addClass('selected');
       });
