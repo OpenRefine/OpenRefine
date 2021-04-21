@@ -148,5 +148,16 @@
     "core-index-import/warning-web-address": "Musisz określić prawidłowy adres sieciowy (URL) aby zaimportować.",
     "core-index-import/inspecting-files": "Sprawdzanie<br/>wybranych plików…",
     "core-index-import/mime-type": "Typ mediów",
-    "core-index-import/inspecting": "Sprawdzanie wybranych plików …"
+    "core-index-import/inspecting": "Sprawdzanie wybranych plików …",
+    "core-index-import/locate-files": "Zlokalizuj jeden lub więcej plików na Twoim komputerze do przesłania:",
+    "core-index-import/warning-data-file": "Musisz określić plik z danymi do importu.",
+    "core-index-import/warning-import-file": "Musisz określić plik projektu.",
+    "core-index-import/project-name": "Nazwa&nbsp;projektu",
+    "core-index-import/uploading-pasted-data": "Przesyłanie wklejonych danych…",
+    "core-index-open/rename": "Zmień nazwę",
+    "core-index-import/clipboard-label": "Wklej dane ze schowka tutaj:",
+    "core-index-import/updating-preview": "Aktualizacja podglądu…",
+    "core-index-import/parse-as": "Przeanalizuj dane jako",
+    "core-buttons/start-recon": "Rozpocznij Uspójnianie...",
+    "core-views/start-recon": "Rozpocznij uspójnianie"
 }
