@@ -1,13 +1,9 @@
 name: Continuous Integration
 
 on:
-  pull_request:
+  pull_request_target:
     paths-ignore:
       - 'docs/**'
-    if: !( contains( github.event.pull_request.labels.*.name, 'trusted PR') )
-  pull_request_target:
-    types: [ labeled, edited ]
-    if: contains( github.event.pull_request.labels.*.name, 'trusted PR')
 
 jobs:
   server_tests:
@@ -45,17 +41,9 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2.3.4
-      if: github.event_name == 'pull_request_target'
       with:
         ref: ${{ github.event.pull_request.head.ref }}
         repository: ${{ github.event.pull_request.head.repo.full_name }}
-    - uses: actions/checkout@v2.3.4
-      if: github.event_name == 'pull_request'
-      with:
-        ref: ${{ github.event.pull_request.head.ref }}
-        repository: ${{ github.event.pull_request.head.repo.full_name }}
-
-
 
     - name: Restore dependency cache
       uses: actions/cache@v2.1.5
@@ -88,7 +76,6 @@ jobs:
       run: mvn jacoco:prepare-agent test
 
     - name: Submit test coverage to Coveralls
-      if: ${{ secrets.COVERALLS_TOKEN }}
       run: |
         mvn prepare-package -DskipTests=true
         mvn jacoco:report coveralls:report -DrepoToken=${{ secrets.COVERALLS_TOKEN }} -DpullRequest=${{ github.event.number }}
@@ -150,12 +137,9 @@ jobs:
           cd ./main/tests/cypress
           yarn lint
 
-    - name: Set up Cypress dashboard project
-      if: {{ secrets.CYPRESS_RECORD_KEY }}
-      run: echo "CYPRESS_PROJECT=s5du3k" >> $GITHUB_ENV
-
     - name: Test with Cypress on ${{ matrix.browser }}
       run: | 
         echo REFINE_MIN_MEMORY=1400M >> ./refine.ini
         echo REFINE_MEMORY=4096M >> ./refine.ini
-        ./refine ui_test ${{ matrix.browser }} "${{ env.CYPRESS_PROJECT }}"  "${{ secrets.CYPRESS_RECORD_KEY }}"
+        ./refine ui_test ${{ matrix.browser }} s5du3k "${{ secrets.CYPRESS_RECORD_KEY }}"
+
