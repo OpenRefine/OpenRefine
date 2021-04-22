@@ -359,6 +359,7 @@ class RefineServer extends Server {
                 // e.g., C:\Users\[userid]\AppData\Roaming
                 parentDir = new File(appData);
             } else {
+                // TODO migrate to System.getProperty("user.home")?
                 String userProfile = System.getenv("USERPROFILE");
                 if (userProfile != null && userProfile.length() > 0) {
                     // e.g., C:\Users\[userid]
