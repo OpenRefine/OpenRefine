@@ -5,6 +5,8 @@ on:
     paths-ignore:
       - 'docs/**'
 
+permissions: read-all
+
 jobs:
   server_tests:
     strategy:
