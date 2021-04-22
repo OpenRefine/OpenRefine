@@ -174,11 +174,6 @@
     </dependency>
     <dependency>
       <groupId>org.openrefine.dependencies</groupId>
-      <artifactId>jdatapath</artifactId>
-      <version>alpha2</version>
-    </dependency>
-    <dependency>
-      <groupId>org.openrefine.dependencies</groupId>
       <artifactId>butterfly</artifactId>
       <version>${butterfly.version}</version>
     </dependency>
