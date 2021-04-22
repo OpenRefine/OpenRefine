@@ -719,7 +719,7 @@ DataTableView.prototype._createMenuForAllColumns = function(elmt) {
         {
           id: "core/to-empty",
           label: $.i18n('core-views/blank-out-empty'),
-          click: function() { new commonTransformDialog("\"\"","ore-views/blank-out-empty" ); }
+          click: function() { new commonTransformDialog("\"\"","core-views/blank-out-empty" ); }
         }
       ]
     },
