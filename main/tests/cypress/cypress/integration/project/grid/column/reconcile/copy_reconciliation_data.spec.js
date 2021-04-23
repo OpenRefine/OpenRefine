@@ -39,7 +39,5 @@ describe('Copy reconciliation data', () => {
     cy.get(
       'table.data-table td .data-table-cell-content:contains("Choose new match")'
     ).should('have.length', 5);
-
-    return;
   });
 });

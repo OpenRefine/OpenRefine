@@ -56,7 +56,7 @@ Cypress.Commands.add('reconcileColumn', (columnName, autoMatch = true) => {
           facets: [],
           mode: 'row-based',
         },
-        columnName: 'species',
+        columnName: columnName,
         config: {
           mode: 'standard-service',
           service: 'http://localhost:8000/reconcile',
@@ -73,7 +73,6 @@ Cypress.Commands.add('reconcileColumn', (columnName, autoMatch = true) => {
         description: 'Reconcile cells in column species to type /csv-recon',
       },
     ];
-
     cy.get('a#or-proj-undoRedo').click();
     cy.get('#refine-tabs-history .history-panel-controls')
       .contains('Apply')
