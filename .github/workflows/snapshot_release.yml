@@ -13,7 +13,7 @@ jobs:
 
     strategy:
       matrix:
-          browser: ['edge', 'chrome']
+          browser: ['edge', 'chrome', 'firefox']
 
     steps:
     - uses: actions/checkout@v2.3.4
@@ -67,6 +67,11 @@ jobs:
           cd ./main/tests/cypress
           npm i -g yarn
           yarn install
+
+    - name: Disable multi-process on firefox
+      if: matrix.browser == 'firefox'
+      run: |
+        export MOZ_FORCE_DISABLE_E10S=1
 
     - name: Lint with ES-Lint & Prettier
       run: |
