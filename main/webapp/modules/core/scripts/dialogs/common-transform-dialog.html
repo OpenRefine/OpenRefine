@@ -1,12 +1,15 @@
 <div class="dialog-frame" style="width: 400px;">
     <div class="dialog-header" bind="dialogHeader"></div>
-    <div class="dialog-body" bind="dialogBody"><div class="grid-layout grid-layout-for-ui layout-normal layout-full"> 
-    <td width="100%"><div id="checkedColumn" class="column-reordering-dialog-column-container" bind="columnContainer"></div></td>
-    <div  class="all-column-transform-dialog-container dialog-footer" bind="dialogFooter" style="font-size: small;" >
-      <button class="button" style="margin-left: 20px;" bind="selectAllButton"></button>
-      <button class="button" style="margin-left: 20px;" bind="deselectAllButton"></button>
-      <button class="button" style="margin-left: 20px;" bind="okButton"></button>
-      <button class="button" style="margin-left: 20px;" bind="cancelButton"></button>
+    <div class="dialog-body" bind="dialogBody">
+        <td width="100%">
+          <div id="checkedColumn" class="column-reordering-dialog-column-container" bind="columnContainer"></div>
+        </td>
+    </div>
+    <div  class="all-column-transform-dialog-container dialog-footer" bind="dialogFooter">
+      <button class="button"  bind="selectAllButton"></button>
+      <button class="button"  bind="deselectAllButton"></button>
+      <button class="button"  bind="okButton"></button>
+      <button class="button"  bind="cancelButton"></button>
     </div>
 </div>
    
