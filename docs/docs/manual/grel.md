@@ -103,7 +103,7 @@ Evaluates expression e1 to an array. Then for each array element, binds its valu
 
 #### forEach(e1, v, e2)
 
-Evaluates expression e1 to an array. Then for each array element, binds its value to variable v, evaluates expression e2, and pushes the result onto the result array.
+Evaluates expression e1 to an array. Then for each array element, binds its value to variable v, evaluates expression e2, and pushes the result onto the result array. When e1 is a JSON object, `forEach` iterates over its keys.
 
 | Expression                             	| Result          	|
 | ------------------------------------------ | ------------------- |
