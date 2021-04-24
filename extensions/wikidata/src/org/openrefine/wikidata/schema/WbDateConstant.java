@@ -104,7 +104,7 @@ public class WbDateConstant implements WbExpression<TimeValue> {
         Date bestDate = null;
         int precision = 0; // default precision (will be overridden if successfully parsed)
         int maxLength = 0; // the maximum length parsed
-        Boolean bceFlag = false; // judge whether this is a BCE year
+        boolean bceFlag = false; // judge whether this is a BCE year
         String calendarIri = TimeValue.CM_GREGORIAN_PRO; // Gregorian calendar is assumed by default
         
         String trimmedDatestamp = datestamp.trim();
