@@ -47,6 +47,7 @@ public class WbDateConstantTest extends WbExpressionTest<TimeValue> {
     private WbDateConstant julianYear = new WbDateConstant("1324_Q1985786");
     private WbDateConstant julianDecade = new WbDateConstant("1320D_Q1985786");
 
+    private WbDateConstant BCE = new WbDateConstant("-1100");
     
     @Test
     public void testSerialize() {
@@ -88,7 +89,13 @@ public class WbDateConstantTest extends WbExpressionTest<TimeValue> {
         evaluatesTo(Datamodel.makeTimeValue(1324, (byte) 2, (byte) 27, (byte) 0, (byte) 0, (byte) 0, (byte) 11, 0, 0, 0,
                 TimeValue.CM_JULIAN_PRO), julianDay);
     }
-    
+
+    @Test
+    public void testEvaluateBCE() {
+        evaluatesTo(Datamodel.makeTimeValue(-1100, (byte) 1, (byte) 1, (byte) 0, (byte) 0, (byte) 0, (byte) 9, 0, 0, 0,
+                TimeValue.CM_GREGORIAN_PRO), BCE);
+    }
+
     @Test
     public void testToday() {
     	Calendar calendar = Calendar.getInstance();

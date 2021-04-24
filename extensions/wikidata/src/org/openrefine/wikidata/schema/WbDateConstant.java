@@ -104,9 +104,15 @@ public class WbDateConstant implements WbExpression<TimeValue> {
         Date bestDate = null;
         int precision = 0; // default precision (will be overridden if successfully parsed)
         int maxLength = 0; // the maximum length parsed
+        Boolean bceFlag = false; // judge whether this is a BCE year
         String calendarIri = TimeValue.CM_GREGORIAN_PRO; // Gregorian calendar is assumed by default
         
         String trimmedDatestamp = datestamp.trim();
+
+        if(trimmedDatestamp.startsWith("-")){
+            trimmedDatestamp = trimmedDatestamp.replace("-", "");
+            bceFlag = true;
+        }
         
         if("TODAY".equals(trimmedDatestamp)) {
 	        Calendar calendar = Calendar.getInstance();
@@ -155,7 +161,10 @@ public class WbDateConstant implements WbExpression<TimeValue> {
             Calendar calendar = Calendar.getInstance();
             calendar = Calendar.getInstance();
             calendar.setTime(bestDate);
-            return Datamodel.makeTimeValue(calendar.get(Calendar.YEAR), (byte) (calendar.get(Calendar.MONTH) + 1), 
+            long year = calendar.get(Calendar.YEAR);
+            if(bceFlag)
+                year = -1*year;
+            return Datamodel.makeTimeValue(year, (byte) (calendar.get(Calendar.MONTH) + 1),
                     (byte) calendar.get(Calendar.DAY_OF_MONTH), (byte) calendar.get(Calendar.HOUR_OF_DAY),
                     (byte) calendar.get(Calendar.MINUTE), (byte) calendar.get(Calendar.SECOND), (byte) precision, 0, 0,
                     0, calendarIri);
