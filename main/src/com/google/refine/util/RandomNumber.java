@@ -1,4 +1,6 @@
 
+package com.google.refine.util;
+
 public class RandomNumber {
 	
 	// This function will return a value from 0.0-1.0 (in close interval, for 1 decimal)
