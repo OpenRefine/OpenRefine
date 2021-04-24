@@ -321,12 +321,6 @@ Returns a string of the text from within an HTML element (including all child el
 ###### xmlText(element)
 Returns a string of the text from within an XML element (including all child elements). Functions the same way htmlText() is described above. Use it in conjunction with parseXml() and select() to provide an element.
 
-###### wholeText(element)
-
-_Works from OpenRefine 3.4.1 beta 644 onwards only_
-
-Selects the (unencoded) text of an element and its children, including any new lines and spaces, and returns a string of unencoded, un-normalized text. Use it in conjunction with parseHtml() and select() to provide an element as in the following example: `value.parseHtml().select("div.footer")[0].wholeText()`.
-
 ###### innerHtml(element)
 Returns the [inner HTML](https://developer.mozilla.org/en-US/docs/Web/API/Element/innerHTML) of an HTML element. This will include text and children elements within the element selected. Use it in conjunction with parseHtml() and select() to provide an element.
 
