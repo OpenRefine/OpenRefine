@@ -11,6 +11,10 @@
 import 'cypress-file-upload';
 import 'cypress-wait-until';
 
+import { addMatchImageSnapshotCommand } from 'cypress-image-snapshot/command';
+
+addMatchImageSnapshotCommand({ customDiffDir: 'cypress/snapshots_diffs' });
+
 /**
  * Return the .facets-container for a given facet name
  */
@@ -70,6 +74,11 @@ Cypress.Commands.add('doCreateProjectThroughUserInterface', () => {
     .contains('Create Project »')
     .click();
   cy.get('#create-project-progress-message').contains('Done.');
+  Cypress.on('uncaught:exception', (err, runnable) => {
+    // returning false here prevents Cypress from
+    // failing the test due to the uncaught exception caused by the window failure
+    return false;
+  });
 
   // workaround to ensure project is loaded
   // cypress does not support window.location = ...
@@ -99,6 +108,7 @@ Cypress.Commands.add('doCreateProjectThroughUserInterface', () => {
  * Cast a whole column to the given type, using Edit Cell / Common transform / To {type}
  */
 Cypress.Commands.add('castColumnTo', (selector, target) => {
+  cy.get('body[ajax_in_progress="false"]');
   cy.get(
     '.data-table th:contains("' + selector + '") .column-header-menu'
   ).click();
@@ -312,7 +322,9 @@ Cypress.Commands.add(
 Cypress.Commands.add('dragAndDrop', (sourceSelector, targetSelector) => {
   cy.get(sourceSelector).trigger('mousedown', { which: 1 });
 
-  cy.get(targetSelector).trigger('mousemove').trigger('mouseup');
+  cy.get(targetSelector)
+    .trigger('mousemove')
+    .trigger('mouseup', { force: true });
 });
 
 Cypress.Commands.add(
