@@ -108,11 +108,6 @@ public class WbDateConstant implements WbExpression<TimeValue> {
         String calendarIri = TimeValue.CM_GREGORIAN_PRO; // Gregorian calendar is assumed by default
         
         String trimmedDatestamp = datestamp.trim();
-
-        if(trimmedDatestamp.startsWith("-")){
-            trimmedDatestamp = trimmedDatestamp.replace("-", "");
-            bceFlag = true;
-        }
         
         if("TODAY".equals(trimmedDatestamp)) {
 	        Calendar calendar = Calendar.getInstance();
@@ -123,7 +118,11 @@ public class WbDateConstant implements WbExpression<TimeValue> {
 	    			(byte)0, (byte)0, (byte)0, (byte)11, 0,0,0, TimeValue.CM_GREGORIAN_PRO);
 	    	return todaysDate;
         }
-        
+
+        if(trimmedDatestamp.startsWith("-")){
+            trimmedDatestamp = trimmedDatestamp.substring(1);
+            bceFlag = true;
+        }
     	
         for (Entry<SimpleDateFormat, Integer> entry : acceptedFormats.entrySet()) {
             ParsePosition position = new ParsePosition(0);
