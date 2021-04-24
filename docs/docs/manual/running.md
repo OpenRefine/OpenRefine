@@ -132,6 +132,7 @@ Get a list of all the commands with `refine /?`.
 |/m|Memory maximum heap|refine /m 6000M|
 |/p|Port|refine /p 3334|
 |/i|Interface (IP address, or IP and port)|refine /i 127.0.0.2:3334|
+|/H|HTTP host to expect on incoming requests|refine /H openrefine.internal|
 |/d|Enable debugging (on port 8000)|refine /d|
 |/x|Enable JMX monitoring for Jconsole and JvisualVM|refine /x|
 
@@ -154,6 +155,7 @@ To see the full list of command-line options, run `./refine -h`.
 |-m|Memory maximum heap|./refine -m 6000M|
 |-p|Port|./refine -p 3334|
 |-i|Interface (IP address, or IP and port)|./refine -i 127.0.0.2:3334|
+|-H|HTTP host to expect on incoming requests|./refine -H openrefine.internal|
 |-k|Add a Google API key|./refine -k YOUR_API_KEY|
 |-v|Verbosity (from low to high: error,warn,info,debug,trace)|./refine -v info|
 |-x|Additional Java configuration parameters (see Java documentation)||
