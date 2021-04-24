@@ -92,7 +92,7 @@ public class WbDateConstantTest extends WbExpressionTest<TimeValue> {
                 TimeValue.CM_GREGORIAN_PRO), secondz);
 
         evaluatesTo(Datamodel.makeTimeValue(2018, (byte) 2, (byte) 27, (byte) 0, (byte) 0, (byte) 0, (byte) 11, 0, 0, 0,
-                TimeValue.CM_GREGORIAN_PRO), BCEwhitespace);
+                TimeValue.CM_GREGORIAN_PRO), whitespace);
         
         evaluatesTo(Datamodel.makeTimeValue(1320, (byte) 1, (byte) 1, (byte) 0, (byte) 0, (byte) 0, (byte) 8, 0, 0, 0,
                 TimeValue.CM_JULIAN_PRO), julianDecade);
