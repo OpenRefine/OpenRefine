@@ -10,12 +10,12 @@ This page explains how to connect OpenRefine to any Wikibase instance. If you ju
 
 All you need to configure OpenRefine to work with a Wikibase instance is a *manifest* for that instance, which provides some metadata and links required for the integration to work.
 
-We offer some off-the-shelf manifests for some public Wikibase instances in the [wikibase-manifests](https://github.com/OpenRefine/wikibase-manifests) repository. 
-
+We offer some off-the-shelf manifests for some public Wikibase instances in the [wikibase-manifests](https://github.com/OpenRefine/wikibase-manifests) repository. But the administrators of your Wikibase instance should provide one that is potentially more
+up to date, so it makes sense to request it to them first.
 
 ## For Wikibase administrators
 
-To let your users contribute to your Wikibase instance with OpenRefine, you will need to write a manifest as described above. This section explains how to do so.
+To let your users contribute to your Wikibase instance with OpenRefine, you will need to write a manifest as described above. There is currently no canonical location where this manifest should be hosted - just make sure can be found easily by your users. This section explains the format of the manifest.
 
 ### Requirements
 

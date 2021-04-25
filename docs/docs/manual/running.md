@@ -334,7 +334,7 @@ In the bottom left corner of the screen, look for <span class="menuItems">Prefer
 |Maximum facets|ui.browsing.listFacet.limit|Number|2000|5000|—|
 |Timeout for Google Drive import|googleReadTimeOut|Number (microseconds)|180000|500000|—|
 |Timeout for Google Drive authorization|googleConnectTimeOut|Number (microseconds)|180000|500000|—|
-|Maximum lag for Wikidata edit retries|wikibase.upload.maxLag|Number (seconds)|5|10|—|
+|Maximum lag for Wikibase edit retries|wikibase.upload.maxLag|Number (seconds)|5|10|—|
 |Display of the reconciliation preview on hover|cell-ui.previewMatchedCells|Boolean|true|false|v3.2|
 |Values for the choice of the number of rows to display|ui.browsing.pageSize|Array of number (JSON)|[ 5, 10, 25, 50 ]|[ 100,500,1000 ]|v3.4|
 |Width of the panel for facets/history|ui.browsing.facetsHistoryPanelWidth|Number (pixel)|300|500|v3.5|
@@ -381,7 +381,7 @@ To the right of the rows/records selection is the array of options for how many 
 
 ### Extensions
 
-The <span class="menuItems">Extensions</span> dropdown offers you options for extending your data - most commonly by uploading your edited statements to Wikidata, or by importing or exporting schema. You can learn more about these functions on the [Wikidata page](wikidata). Other extensions may also add functions to this dropdown menu.
+The <span class="menuItems">Extensions</span> dropdown offers you options for extending your data - most commonly by uploading your edited statements to Wikidata, or by importing or exporting schema. You can learn more about these functions on the [Wikibase section](wikibase/overview). Other extensions may also add functions to this dropdown menu.
 
 ### The grid 
 

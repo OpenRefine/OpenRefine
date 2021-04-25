@@ -6,23 +6,13 @@ sidebar_label: Overview
 
 [Wikibase](https://wikiba.se/) is a platform for collaborative knowledge base editing. Its flagship instance [Wikidata](https://www.wikidata.org/) offers structured data about the world and can be edited by anyone. OpenRefine provides powerful ways to both pull data from Wikibase and add data to it. 
 
-* [Connecting OpenRefine to Wikibase](./configuration)
-* [Reconciling with Wikibase](./reconciling)
-* [Schema alignment](./schema-alignment)
-* [Advanced schemas](./advanced-schemas)
-* [New items](./new-entities)
-* [Quality assurance](./quality-assurance)
-* [Uploading to Wikibase](./uploading)
-
-You do not need a Wikidata account to reconcile your local OpenRefine project to Wikidata. If you wish to [upload your cleaned dataset to Wikidata](#editing-wikidata-with-openrefine), you will need an [autoconfirmed](https://www.wikidata.org/wiki/Wikidata:Autoconfirmed_users) account, and you must [authorize OpenRefine with that account](#manage-wikidata-account). 
-
-OpenRefine’s connections to Wikidata were formerly an optional extension, but are now included automatically with installation. The Wikidata extension can be removed manually by navigating to your OpenRefine installation folder, and then looking inside `webapp/extensions/` and deleting the `wikidata` folder found there. 
+OpenRefine's Wikibase integration is provided by an extension which is available by default in OpenRefine. In this page, we present the functionalities for Wikidata, but [any Wikibase instance can be connected to OpenRefine](./configuration) to obtain a similar integration.
 
 ## Editing Wikidata with OpenRefine
 
-The best resource is the [Editing section](https://www.wikidata.org/wiki/Wikidata:Tools/OpenRefine/Editing) on Wikidata.
-
 As a user-maintained data source, Wikidata can be edited by anyone. OpenRefine makes it simple to upload information in bulk. You simply need to get your information into the correct format, and ensure that it is new (not redundant to information already on Wikidata) and does not conflict with existing Wikidata information.
+
+You do not need a Wikidata account to reconcile your local OpenRefine project to Wikidata, but to upload your cleaned dataset to Wikidata, you will need an [autoconfirmed](https://www.wikidata.org/wiki/Wikidata:Autoconfirmed_users) account, and you must [authorize OpenRefine with that account](#manage-wikidata-account). 
 
 Wikidata is built by creating entities (such as people, organizations, or places, identified with unique numbers starting with Q), defining properties (unique numbers starting with P), and using properties to define relationships between entities (a Q has a property P, with a value of another Q). 
 
@@ -30,7 +20,7 @@ For example, you may wish to create entities for local authors and the books the
 
 To do this with OpenRefine, you'll need a column of publication titles that you have reconciled (and create new items where needed); each publication will have one or more locations in a “setting” column, which is also reconciled to municipalities or regions where they exist (and create new items where needed). Then you can add those new relationships, and create new entities for authors, books, and places where needed. You do not need columns for properties; those are defined later, in the creation of your [schema](#edit-wikidata-schema).
 
-There is a list of [tutorials and walkthroughs on Wikidata](https://www.wikidata.org/wiki/Wikidata:Tools/OpenRefine/Editing) that will allow you to see the full process. You can save your schemas and drafts in OpenRefine, and your progress stays in draft until you are ready to upload it to Wikidata. You can also find information on [how to design a schema](https://www.wikidata.org/wiki/Wikidata:Tools/OpenRefine/Editing/Schema_alignment) and [how OpenRefine evaluates your proposed edits for issues](https://www.wikidata.org/wiki/Wikidata:Tools/OpenRefine/Editing/Quality_assurance).
+There is a list of [tutorials and walkthroughs on Wikidata](https://www.wikidata.org/wiki/Wikidata:Tools/OpenRefine/Editing) that will allow you to see the full process. You can save your schemas and drafts in OpenRefine, and your progress stays in draft until you are ready to upload it to Wikidata. 
 
 Batches of edits to Wikidata that are created with OpenRefine can be undone. You can test out the uploading process by reconciling to several “sandbox” entities created specifically for drafting edits and learning about Wikidata:
 * https://www.wikidata.org/wiki/Q4115189
@@ -42,9 +32,7 @@ If you upload edits that are redundant (that is, all the statements you want to 
 
 You can use OpenRefine's reconciliation preview to look at the target Wikidata elements and see what information they already have, and whether the elements' histories have had similar edits reverted in the past. 
 
-### Edit Wikidata schema
-
-The best resource is the [Schema alignment page](https://www.wikidata.org/wiki/Wikidata:Tools/OpenRefine/Editing/Schema_alignment) on Wikidata.
+### Wikidata schema
 
 A [schema](https://en.wikipedia.org/wiki/Database_schema) is a plan for how to structure information in a database. In OpenRefine, the schema operates as a template for how Wikidata edits should be applied: how to translate your tabular data into statements. With a schema, you can:
 *   preview the Wikidata edits and inspect them manually;
@@ -62,7 +50,7 @@ OpenRefine presents you with an easy visual way to map out the relationships in 
 
 ![A screenshot of the schema construction window in OpenRefine.](/img/wikidata-schema.png)
 
-You may wish to refer to [this Wikidata tutorial on how OpenRefine handles Wikidata schema](https://www.wikidata.org/wiki/Wikidata:Tools/OpenRefine/Editing/Tutorials/Basic_editing).
+You may wish to refer to [this Wikidata tutorial on how OpenRefine handles Wikidata schema](https://www.wikidata.org/wiki/Wikidata:Tools/OpenRefine/Editing/Tutorials/Basic_editing). For details about how each data type is handled in the Wikibase schema, see [Schema alignment](./schema-alignment).
 
 #### Editing terms with your schema
 
@@ -118,9 +106,7 @@ You can import a schema using <span class="menuItems">Extensions</span> → <spa
 
 ### Upload edits to Wikidata
 
-The best resource is the [Uploading page](https://www.wikidata.org/wiki/Wikidata:Tools/OpenRefine/Editing/Uploading) on Wikidata.
-
-There are two menu options in OpenRefine for applying your edits to Wikidata. Under <span class="menuItems">Export</span> you will see <span class="menuItems">Wikidata edits...</span> and under <span class="menuItems">Extensions</span> you will see <span class="menuItems">Upload edits to Wikidata</span>. Both will bring up the same window for you to [log in with a Wikidata account](#manage-wikidata-account). 
+There are two menu options in OpenRefine for applying your edits to Wikidata, and the details of the differences between the two can be found in the [Uploading page](./uploading). Under <span class="menuItems">Export</span> you will see <span class="menuItems">Wikidata edits...</span> and under <span class="menuItems">Extensions</span> you will see <span class="menuItems">Upload edits to Wikidata</span>. Both will bring up the same window for you to [log in with a Wikidata account](#manage-wikidata-account). 
 
 Once you are authorized, you will see a window with any outstanding issues. You can ignore these issues, but we recommend you resolve them. 
 
@@ -139,13 +125,9 @@ In order to use QuickStatements, you must authorize it with a Wikidata account t
 Follow the [steps listed on this page](https://www.wikidata.org/wiki/Help:QuickStatements#Running_QuickStatements). 
 To prepare your OpenRefine data into QuickStatements, select <span class="menuItems">Export</span> → <span class="menuItems">QuickStatements file</span>, or <span class="menuItems">Extensions</span> → <span class="menuItems">Export to QuickStatements</span>. Exporting your schema from OpenRefine will generate a text file called `statements.txt` by default. Paste the contents of the text file into a new QuickStatements batch using version 1. You can find [version 1 of the tool (no longer maintained) here](https://wikidata-todo.toolforge.org/quick_statements.php). The text commands will be processed into Wikidata edits and previewed for you to review before submitting. 
 
-### Schema alignment
-
-The best resource is the [Schema alignment page](https://www.wikidata.org/wiki/Wikidata:Tools/OpenRefine/Editing/Schema_alignment) on Wikidata.
-
 ### Issue detection
 
-The best resource is the [Quality assurance page](https://www.wikidata.org/wiki/Wikidata:Tools/OpenRefine/Editing/Quality_assurance) on Wikidata.
+This section is an overview of the [Quality assurance page](./quality-assurance).
 
 OpenRefine will analyze your schema and make suggestions. It does not check for conflicts in your proposed edits, or tell you about redundancies. 
 

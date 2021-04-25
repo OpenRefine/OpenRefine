@@ -20,7 +20,7 @@ module.exports = {
         type: 'category',
         label: 'Wikibase',
         items: ['manual/wikibase/overview', 'manual/wikibase/configuration', 'manual/wikibase/reconciling', 'manual/wikibase/schema-alignment',
-                'manual/wikibase/new-entities', 'manual/wikibase/uploading'],
+                'manual/wikibase/new-entities', 'manual/wikibase/quality-assurance', 'manual/wikibase/uploading'],
       },
 	    {
       type: 'category',
