@@ -23,3 +23,9 @@ Finally we discuss what to do with your improved dataset, whether [exporting](ma
 If you're stuck on any aspect and can't find an answer in the manual, try the [Troubleshooting page](manual/troubleshooting) for links to various places to find help. 
 
 If you are new and want to learn how to use OpenRefine using an example dataset, you may wish to start with a user-contributed tutorial from our [recommendations list](https://github.com/OpenRefine/OpenRefine/wiki/External-Resources).
+
+Bot passwords allow applications or bots to log in with a simple username-password combination even if the wiki employs some extra authorization steps that the bot framework could not handle; they also allow limiting the permissions given to the bot (e.g. the bot might be allowed to edit articles but not to create new ones). Clients using bot passwords can only access the API, not the normal web interface. The functionality is roughly equivalent to what some other sites like Google call "app passwords".
+
+New bot passwords can be created and existing ones managed via Special:BotPasswords. Login happens via the login API module. When the user’s real password changes, bot passwords will not work until they’re reset; Special:BotPasswords will show a warning on each password that hasn’t been reset yet.
+
+This is a simpler alternative to OAuth, meant for bots which do not support that. If the wiki and the bot support OAuth, use that instead; it is more secure, especially on wikis without robust HTTPS support.
