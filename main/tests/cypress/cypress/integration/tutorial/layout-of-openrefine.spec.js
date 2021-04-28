@@ -1,4 +1,4 @@
-// This spec is implementation for chapter 03 of following tutorial https://librarycarpentry.org/lc-open-refine/02-importing-data/index.html
+// librarycarpentry.org/lc-open-refine/03-working-with-data/index.html
 
 describe(__filename, function () {
   it('Working with rows and records in openrefine', function () {

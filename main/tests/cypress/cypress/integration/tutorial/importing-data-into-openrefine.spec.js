@@ -38,5 +38,8 @@ describe(__filename, function () {
 
     // create the project and ensure its successful
     cy.doCreateProjectThroughUserInterface();
+
+    // ensure that the project data is loaded completely
+    cy.get('#summary-bar').should('to.contain', '1001 rows');
   });
 });
