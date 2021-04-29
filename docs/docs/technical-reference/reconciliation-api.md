@@ -24,7 +24,7 @@ Informally, the main function of any reconciliation service is to find good cand
 
 A standard reconciliation service is a HTTP-based RESTful JSON-formatted API. It consists of various endpoints, each of which fulfills a specific function. Only the first one is mandatory.
 
-* The root URL. This is the URL that users will need to add the service to OpenRefine. For instance, the Wikidata reconciliation interface in English has the following URL: [https://tools.wmflabs.org/openrefine-wikidata/en/api](https://tools.wmflabs.org/openrefine-wikidata/en/api)
+* The root URL. This is the URL that users will need to add the service to OpenRefine. For instance, the Wikidata reconciliation interface in English has the following URL: [https://wikidata.reconci.link/en/api](https://wikidata.reconci.link/en/api)
 * _Optional._ The suggest API, which enables autocompletion at various places in OpenRefine;
 * _Optional._ The preview API, which lets users preview the reconciled items directly from OpenRefine;
 * _Optional._ The data extension API, which lets users add columns from reconciled values based on the properties of the items in the reconciliation service.
@@ -63,7 +63,7 @@ The last two parameters are mainly useful to assert that the identifiers returne
 
 Here are two live examples:
 
-1. [https://tools.wmflabs.org/openrefine-wikidata/en/api](https://tools.wmflabs.org/openrefine-wikidata/en/api)
+1. [https://wikidata.reconci.link/en/api](https://wikidata.reconci.link/en/api)
 2. [http://refine.codefork.com/reconcile/viaf](http://refine.codefork.com/reconcile/viaf)
 
 ```json
@@ -118,8 +118,8 @@ A call to a reconciliation service API for a single query looks like either of t
 
 If the query parameter is a string, then it's an abbreviation of `query={"query":...string...}`. Here are two live examples:
 
-1. [https://tools.wmflabs.org/openrefine-wikidata/en/api?query=boston](https://tools.wmflabs.org/openrefine-wikidata/en/api?query=boston)
-2. [https://tools.wmflabs.org/openrefine-wikidata/en/api?query={%22query%22:%22boston%22,%22type%22:%22Q515%22}](https://tools.wmflabs.org/openrefine-wikidata/en/api?query={%22query%22:%22boston%22,%22type%22:%22Q515%22})
+1. [https://wikidata.reconci.link/en/api?query=boston](https://wikidata.reconci.link/en/api?query=boston)
+2. [https://wikidata.reconci.link/en/api?query={%22query%22:%22boston%22,%22type%22:%22Q515%22}](https://wikidata.reconci.link/en/api?query={%22query%22:%22boston%22,%22type%22:%22Q515%22})
 
 ### Query JSON Object
 
