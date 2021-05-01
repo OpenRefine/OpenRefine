@@ -53,7 +53,7 @@ This describes the overall steps to your first code contribution in OpenRefine. 
 
 - Reproduce the issue locally, by following the steps described in the issue. You might need to locate a particular dialog, use a specific importer on a sample file, or follow any other user workflow. If you have followed all the steps described in the issue and cannot observe the issue mentioned, write a comment on the issue explaining that you are not able to reproduce it (perhaps it was fixed by another change).
 
-- Locate the code that is relevant for the issue you want to solve. Text search across files is often useful for that. For instance, if the issue you want to solve is about a dialog entitled "Columnize by key/values", you can search for "Columnize" in the entire source code.
+- Locate the code that is relevant for the issue you want to solve. Text search across files is often useful for that. For instance, if the issue you want to solve is about a dialog entitled "Columnize by key/values", you can search for "Columnize" in the entire source code. For more details about this technique, see [this comment](https://github.com/OpenRefine/OpenRefine/issues/3137#issuecomment-691649962).
 
 - Study how the current code works. You might want to use a debugger to put breakpoints at the relevant locations (for inspecting the backend, use your IDE's debugger, for the frontend, use your browser's developer tools).
 
@@ -64,6 +64,5 @@ This describes the overall steps to your first code contribution in OpenRefine. 
 - commit your changes, using a message that contains "closes #1234" or "fixes #1234", this will link the commit to the issue you are working on.
 
 - push your branch to your fork and create a pull request for it, explaining the approach you have used, any design decisions you have made.
-
 
 Thank you!

@@ -32,8 +32,6 @@ module.exports = {
       'technical-reference/architecture',
       'technical-reference/openrefine-api',
       'technical-reference/reconciliation-api',
-      'technical-reference/suggest-api',
-      'technical-reference/data-extension-api',
       'technical-reference/contributing',
       'technical-reference/build-test-run',
       'technical-reference/development-roadmap',
