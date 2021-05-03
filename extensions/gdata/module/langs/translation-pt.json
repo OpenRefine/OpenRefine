@@ -1,7 +1,7 @@
 {
     "gdata-source/title": "Título",
     "gdata-exporter/upload-error": "Erro no carregamento: ",
-    "gdata-import/sign-out": "sair",
+    "gdata-import/sign-out": "Sair",
     "gdata-exporter/enter-spreadsheet": "Digite um nome para a nova planilha do Google",
     "gdata-import/retrieving": "Recuperando documentos do Google Docs …",
     "gdata-auth/authorized-label": "Processo de autorização concluído. Feche esta janela e retorne ao OpenRefine.",
@@ -45,5 +45,7 @@
     "gdata-exporter/google-sheets": "Planilhas Google",
     "gdata-parsing/discard-next": "Descartar primeira(s)",
     "gdata-parsing/updating-preview": "Atualizando pré-visualização …",
-    "gdata-parsing/limit-next": "Carregar ao menos"
+    "gdata-parsing/limit-next": "Carregar ao menos",
+    "gdata-import/re-sign-in-another": "Faça login com conta diferente",
+    "gdata-import/please-signin": "Faça login e autorize o acesso aos seus dados do Google"
 }
