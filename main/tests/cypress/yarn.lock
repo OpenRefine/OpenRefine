@@ -619,10 +619,10 @@ doctrine@^3.0.0:
   dependencies:
     esutils "^2.0.2"
 
-dotenv@^8.2.0:
-  version "8.2.0"
-  resolved "https://registry.yarnpkg.com/dotenv/-/dotenv-8.2.0.tgz"
-  integrity sha512-8sJ78ElpbDJBHNeBzUbUVLsqKdccaa/BXF1uPTw3GrvQTBgrQrtObr2mUrE38vzYd8cEv+m/JBfDLioYcfXoaw==
+dotenv@^8.5.0:
+  version "8.5.0"
+  resolved "https://registry.yarnpkg.com/dotenv/-/dotenv-8.5.0.tgz#8169c05469a60ccd9e8bd81056438db46312a021"
+  integrity sha512-vRlOiNG7p4iPlnX4wgjPbmhnHDOoUH+TgbGOC09de/lwz/Iv1OK1Gj2qC3+cW2V32uN4KFU6mTLyYsvSAHHMCw==
 
 ecc-jsbn@~0.1.1:
   version "0.1.2"
