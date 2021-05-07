@@ -23,7 +23,7 @@
         "eslint": "^7.24.0",
         "eslint-config-google": "^0.14.0",
         "eslint-config-prettier": "^8.2.0",
-        "eslint-plugin-cypress": "^2.11.2",
+        "eslint-plugin-cypress": "^2.11.3",
         "jsdoc": "^3.6.6",
         "prettier": "2.2.1"
     }
