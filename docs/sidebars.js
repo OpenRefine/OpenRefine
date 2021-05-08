@@ -16,7 +16,12 @@ module.exports = {
       items: ['manual/transforming', 'manual/cellediting','manual/columnediting','manual/transposing'],
     },
       'manual/reconciling',
-      'manual/wikidata',
+      {
+        type: 'category',
+        label: 'Wikibase',
+        items: ['manual/wikibase/overview', 'manual/wikibase/configuration', 'manual/wikibase/reconciling', 'manual/wikibase/schema-alignment',
+                'manual/wikibase/new-entities', 'manual/wikibase/quality-assurance', 'manual/wikibase/uploading'],
+      },
 	    {
       type: 'category',
       label: 'Expressions',
