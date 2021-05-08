@@ -4,7 +4,7 @@ title: Data extension API
 sidebar_label: Data extension API
 ---
 
-This page describes a new optional API for reconciliation services, allowing clients to pull properties of reconciled records. It is supported from OpenRefine 2.8 onwards. A sample server implementation is available in the [Wikidata reconciliation interface](https://wikidata.reconci.link/).
+This page describes a new optional API for reconciliation services, allowing clients to pull properties of reconciled records. It is supported from OpenRefine 2.8 onwards. A sample server implementation is available in the [Wikidata reconciliation interface](https://tools.wmflabs.org/openrefine-wikidata/).
 
 ## Overview of the workflow
 
@@ -33,7 +33,7 @@ Example service metadata:
 ```json
     "extend": {
       "propose_properties": {
-        "service_url": "https://wikidata.reconci.link/",
+        "service_url": "https://tools.wmflabs.org/openrefine-wikidata",
         "service_path": "/en/propose_properties"
       },
       "property_settings": []
@@ -47,7 +47,7 @@ The role of the property proposal endpoint is to suggest a list of properties to
 
 The type is specified by its id in the `type` GET parameter of the endpoint, as follows:
 
-https://wikidata.reconci.link/en/propose_properties?type=Q3354859&limit=3
+https://tools.wmflabs.org/openrefine-wikidata/en/propose_properties?type=Q3354859&limit=3
 
 The endpoint returns a JSON response as follows:
 

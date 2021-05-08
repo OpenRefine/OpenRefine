@@ -321,10 +321,6 @@ Returns a string of the text from within an HTML element (including all child el
 ###### xmlText(element)
 Returns a string of the text from within an XML element (including all child elements). Functions the same way htmlText() is described above. Use it in conjunction with parseXml() and select() to provide an element.
 
-###### wholeText(element)
-
-Selects the (unencoded) text of an element and its children, including any new lines and spaces, and returns a string of unencoded, un-normalized text. Use it in conjunction with parseHtml() and select() to provide an element as in the following example: `value.parseHtml().select("div.footer")[0].wholeText()`.
-
 ###### innerHtml(element)
 Returns the [inner HTML](https://developer.mozilla.org/en-US/docs/Web/API/Element/innerHTML) of an HTML element. This will include text and children elements within the element selected. Use it in conjunction with parseHtml() and select() to provide an element.
 
@@ -520,7 +516,7 @@ Returns a boolean indicating whether o has a member field called [name](expressi
 ###### coalesce(o1, o2, o3, ...)
 Returns the first non-null from a series of objects. For example, `coalesce(value, "")` would return an empty string “” if `value` was null, but otherwise return `value`.
 
-###### cross(cell, s projectName (optional), s columnName (optional))
+###### cross(cell, s projectName, s columnName)
 Returns an array of zero or more rows in the project projectName for which the cells in their column columnName have the same content as the cell in your chosen column. For example, if two projects contained matching names, and you wanted to pull addresses for people by their names from a project called “People” you would apply the following expression to your column of names: 
 ```
 cell.cross("People","Name").cells["Address"].value[0]
@@ -530,6 +526,6 @@ This would match your current column to the “Name” column in “People” an
 
 You may need to do some data preparation with cross(), such as using trim() on your key columns or deduplicating values.
 
-The first argument will be interpreted as `cell.value` if set to `cell`. If you omit projectName and columnName, they will default to the current project and index column (number 0). 
+The first argument will be interpreted as `cell.value` if set to `cell`.
 
 Recipes and more examples for using cross() can be found [on our wiki](https://github.com/OpenRefine/OpenRefine/wiki/Recipes#combining-datasets).

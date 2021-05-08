@@ -56,7 +56,7 @@ The Suggest API should return results as JSON (JSONP must also be supported). Th
 
 Here is an example of a minimal request and response using the Suggest API layered over [Wikidata](https://www.wikidata.org):
 
-URL: https://wikidata.reconci.link/en/suggest/entity?prefix=A5
+URL: https://tools.wmflabs.org/openrefine-wikidata/en/suggest/entity?prefix=A5
 JSON response:
 
 ```json
@@ -88,7 +88,7 @@ The `flyout` entry point takes a single URL parameter: `id`, which is the identi
 
 Here is an example of a minimal request and response using the Suggest API layered over [[Wikidata](https://www.wikidata.org) with only the required fields in each case:
 
-URL: https://wikidata.reconci.link/en/flyout/entity?id=Q786288
+URL: https://tools.wmflabs.org/openrefine-wikidata/en/flyout/entity?id=Q786288
 JSON response:
 
 ```json
