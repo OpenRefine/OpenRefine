@@ -71,6 +71,7 @@ public class QuickStatementsExporterTest extends WikidataRefineTest {
         StringWriter writer = new StringWriter();
         Properties properties = new Properties();
         exporter.export(project, properties, engine, writer);
+        System.out.println(TestingData.inceptionWithNewQS);
         assertEquals(TestingData.inceptionWithNewQS, writer.toString());
     }
 
