@@ -797,5 +797,6 @@
     "core-about/thanks": "謝意",
     "core-about/contributors": "協力者（時系列順）",
     "core-about/definition": "OpenRefineは、乱雑なデータを処理するためのパワーツールです。データの一貫性を高めたり、Wikidataのようなレジストリにデータをリンクさせたり、あるいは、他のソースを使ってデータを拡張したり、他のツールで使うためにフォーマットを変換し、再びオリジナルソースに還元したり、さまざまな用途があります。OpenRefineは、ウェブサービスではなく、あなたのPC上で動くデスクトップアプリです。したがって、プライバシーに関わるセンシティブなデータも安全に処理できます。",
-    "core-dialogs/help/grelreference": "GRELの詳細は、OpenRefineユーザーマニュアルを参照してください"
+    "core-dialogs/help/grelreference": "GRELの詳細は、OpenRefineユーザーマニュアルを参照してください",
+    "core-views/edit-all-columns": "全カラム編集"
 }
