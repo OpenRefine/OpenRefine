@@ -9,9 +9,11 @@
     "start": "docusaurus start",
     "build": "docusaurus build",
     "swizzle": "docusaurus swizzle",
-    "deploy": "docusaurus deploy"
+    "deploy": "docusaurus deploy",
+    "crowdin": "crowdin"
   },
   "dependencies": {
+    "@crowdin/cli": "3",
     "@docusaurus/core": "^2.0.0-alpha.74",
     "@docusaurus/preset-classic": "^2.0.0-alpha.75",
     "clsx": "^1.1.1",
