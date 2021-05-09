@@ -7,7 +7,7 @@ sidebar_label: New items
 OpenRefine can create new items. This page explains how they are
 generated.
 
-## Words of caution
+## Words of caution {#words-of-caution}
 
 -   The fact that OpenRefine does not propose any item when reconciling
     a cell does not mean that the item is not present in the Wikibase instance:
@@ -21,7 +21,7 @@ generated.
     edit group that includes new items in Wikidata, you will need to ask an
     administrator to do it.
 
-## Workflow overview
+## Workflow overview {#workflow-overview}
 
 Here is how you would typically create new items with OpenRefine:
 
@@ -57,7 +57,7 @@ an item in a Wikibase schema.
 You can also perform the edits with QuickStatements - in this case, your
 OpenRefine project will not be updated with the newly created Qids.
 
-## Adding labels to new items
+## Adding labels to new items {#adding-labels-to-new-items}
 
 The text that is in a cell reconciled to \"new\" is not automatically
 used as label for the newly-created item. This is because OpenRefine has
@@ -73,7 +73,7 @@ issues will be raised if insufficient basic information is added on the
 items (but these other warnings will not prevent you from performing the
 edits).
 
-## Marking multiple cells as identical items
+## Marking multiple cells as identical items {#marking-multiple-cells-as-identical-items}
 
 If you mark individual cells as new items, one new item per cell will be
 created. Sometimes multiple rows refer to the same item. OpenRefine
@@ -87,7 +87,7 @@ If these two conditions are met, then isolate these cells with facets
 and go to **Reconcile** → **Actions** → **Create one item for similar
 cells**. This will mark the cells as new and referring to the same item.
 
-## Retrieving the Qids of the newly-created items
+## Retrieving the Qids of the newly-created items {#retrieving-the-qids-of-the-newly-created-items}
 
 Once you have performed your edits with OpenRefine, any new cells
 covered by the facet will be updated with their new Qids. You can
