@@ -158,7 +158,6 @@ public class WikibaseSchemaTest extends WikidataRefineTest {
         List<ItemUpdate> expected = new ArrayList<>();
         ItemUpdate update1 = new ItemUpdateBuilder(qid1).addStatement(statement1).build();
         expected.add(update1);
-        System.out.println(expected);
         assertEquals(expected, updates);
     }
 

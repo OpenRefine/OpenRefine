@@ -124,8 +124,6 @@ public class WbDateConstant implements WbExpression<TimeValue> {
             bceFlag = true;
         }
 
-        int segment = trimmedDatestamp.split("-").length;  // judge whether the precision is smaller than year, month or day
-
         for (Entry<SimpleDateFormat, Integer> entry : acceptedFormats.entrySet()) {
             ParsePosition position = new ParsePosition(0);
             Date date = entry.getKey().parse(trimmedDatestamp, position);
@@ -163,8 +161,8 @@ public class WbDateConstant implements WbExpression<TimeValue> {
             calendar = Calendar.getInstance();
             calendar.setTime(bestDate);
             long year = calendar.get(Calendar.YEAR);
-            int month = segment > 1 ? calendar.get(Calendar.MONTH) + 1: 0;
-            int day_of_month = segment > 2 ? calendar.get(Calendar.DAY_OF_MONTH) : 0;
+            int month = precision < 10 ? 0 : calendar.get(Calendar.MONTH) + 1;
+            int day_of_month = precision < 11 ? 0 : calendar.get(Calendar.DAY_OF_MONTH);
             if(bceFlag)
                 year = -1*year;
             return Datamodel.makeTimeValue(year, (byte) month,
