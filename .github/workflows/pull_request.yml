@@ -16,7 +16,7 @@ jobs:
           ref: ${{ github.event.pull_request.head.ref }}
           repository: ${{ github.event.pull_request.head.repo.full_name }}
       - id: set-matrix
-        run: /bin/bash ./src/main/tests/cypress/build-test-matrix.sh
+        run: /bin/bash ./main/tests/cypress/build-test-matrix.sh
   ui_test:
     needs: prepare_ui_test_matrix
     runs-on: ubuntu-latest
