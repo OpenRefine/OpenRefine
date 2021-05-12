@@ -41,9 +41,9 @@ for (file of allSpecFiles) {
 	}
 }
 
-if (missedFiles.length) {
-	merged_groups.push(missedFiles.join(','));
-}
+// if (missedFiles.length) {
+// 	merged_groups.push(missedFiles.join(','));
+// }
 
 const browsers = process.env.browsers.split(',');
 
