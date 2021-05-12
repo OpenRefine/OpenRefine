@@ -15,8 +15,12 @@ jobs:
         with:
           ref: ${{ github.event.pull_request.head.ref }}
           repository: ${{ github.event.pull_request.head.repo.full_name }}
+      - name: Setup Node
+        uses: actions/setup-node@v2
+        with:
+          node-version: '12'
       - id: set-matrix
-        run: /bin/bash ./main/tests/cypress/build-test-matrix.sh
+        run: node main/tests/cypress/build-test-matrix.js
   ui_test:
     needs: prepare_ui_test_matrix
     runs-on: ubuntu-latest
