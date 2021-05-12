@@ -21,6 +21,8 @@ jobs:
           node-version: '12'
       - id: set-matrix
         run: npm install --save glob && node main/tests/cypress/build-test-matrix.js
+        with:
+          browsers: chrome,edge,somethingelse
   ui_test:
     needs: prepare_ui_test_matrix
     runs-on: ubuntu-latest

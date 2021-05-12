@@ -10,7 +10,7 @@ const glob = require('glob');
 
 const groups = [
 	{
-		specs: ['integration/open-project/*.spec.js', 'b'],
+		specs: ['integration/open-project/*.spec.js'],
 	},
 ];
 
@@ -40,21 +40,8 @@ for (file of allSpecFiles) {
 if (missedFiles.length) {
 	merged_groups.push(missedFiles.join(','));
 }
-// console.log(matchedFiles);
-// console.log('---');
-// console.log(missedFiles);
-// matchedFiles.push(...missedFiles);
 
-// glob(
-// 	`main/tests/cypress/cypress/integration/open-project/*.spec.js`,
-// 	{},
-// 	(err, files) => {
-// 		console.log(...files);
-// 		// matchedFiles.push(...files);
-// 	}
-// );
-// console.log(matchedFiles);
-const browsers = ['chrome', 'edge'];
+const browsers = process.env.browsers.split(',');
 
 console.log(
 	`::set-output name=matrix::{"browser":${JSON.stringify(
