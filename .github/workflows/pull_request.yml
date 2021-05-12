@@ -20,7 +20,7 @@ jobs:
         with:
           node-version: '12'
       - id: set-matrix
-        run: node main/tests/cypress/build-test-matrix.js
+        run: npm install --save glob && node main/tests/cypress/build-test-matrix.js
   ui_test:
     needs: prepare_ui_test_matrix
     runs-on: ubuntu-latest
