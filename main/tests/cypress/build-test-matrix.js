@@ -8,9 +8,13 @@
 
 const glob = require('glob');
 
+// Those specs paths are glob patterns
 const groups = [
 	{
-		specs: ['integration/open-project/*.spec.js'],
+		specs: ['integration/language/*.spec.js'],
+	},
+	{
+		specs: ['integration/preferences/*.spec.js'],
 	},
 ];
 
@@ -46,5 +50,5 @@ const browsers = process.env.browsers.split(',');
 console.log(
 	`::set-output name=matrix::{"browser":${JSON.stringify(
 		browsers
-	)}, "machines":${JSON.stringify(merged_groups)}}`
+	)}, "specs":${JSON.stringify(merged_groups)}}`
 );
