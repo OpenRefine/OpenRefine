@@ -39,12 +39,13 @@ const groups = [
 		specs: [
 			'cypress/integration/project/grid/column/transpose/**/*.spec.js',
 			'cypress/integration/project/grid/column/view/**/*.spec.js',
+			'cypress/integration/project/grid/misc/**/*.spec.js',
+			'cypress/integration/project/grid/row/**/*.spec.js',
 		],
 	},
 	{
 		specs: [
-			'cypress/integration/project/grid/misc/**/*.spec.js',
-			'cypress/integration/project/grid/row/**/*.spec.js',
+			'cypress/integration/project/grid/viewpanel-header/**/*.spec.js',
 			'cypress/integration/project/project-header/**/*.spec.js',
 			'cypress/integration/project/undo_redo/**/*.spec.js',
 		],
