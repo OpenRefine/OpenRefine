@@ -24,7 +24,7 @@ const groups = [
 	{
 		specs: [
 			'cypress/integration/project/grid/all-column/**/*.spec.js',
-			'cypress/integration/project/grid/column/**/*.spec.js',
+			'cypress/integration/project/grid/column/*.spec.js',
 			'cypress/integration/project/grid/column/edit-cells/**/*.spec.js',
 		],
 	},
@@ -35,13 +35,20 @@ const groups = [
 			'cypress/integration/project/grid/column/facet/reconcile/**/*.spec.js',
 		],
 	},
-	// {
-	// 	specs: [
-	// 		'cypress/integration/project/grid/column/transpose/*.spec.js',
-	// 		'cypress/integration/project/grid/column/facet/*.spec.js',
-	// 		'cypress/integration/project/grid/column/facet/reconcile.spec.js',
-	// 	],
-	// },
+	{
+		specs: [
+			'cypress/integration/project/grid/column/transpose/**/*.spec.js',
+			'cypress/integration/project/grid/column/view/**/*.spec.js',
+		],
+	},
+	{
+		specs: [
+			'cypress/integration/project/grid/misc/**/*.spec.js',
+			'cypress/integration/project/grid/row/**/*.spec.js',
+			'cypress/integration/project/project-header/**/*.spec.js',
+			'cypress/integration/project/undo_redo/**/*.spec.js',
+		],
+	},
 ];
 
 const mergedGroups = groups.map((group) => group.specs.join(','));
