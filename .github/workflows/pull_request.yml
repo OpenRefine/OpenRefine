@@ -107,4 +107,4 @@ jobs:
           CYPRESS_PROJECT_ID: ${{ secrets.CYPRESS_PROJECT_ID }}
           # Recommended: pass the GitHub token lets this action correctly
           # determine the unique run id necessary to re-run the checks
-          # GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
