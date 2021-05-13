@@ -98,15 +98,20 @@ jobs:
           spec: ${{ matrix.specs }}
           wait-on: 'http://localhost:3333'
           record: true
-          # group: '${{ matrix.browser }}-${{ github.run_id }}'
+          group: '${{ matrix.browser }}-${{ github.run_id }}'
           # parallel: true
           # ci-build-id: '${{ github.run_id }}'
           ci-build-id: '${{ github.sha }}-${{ github.workflow }}-${{ github.event_name }}'
+          config:
+            ci-build-id: '${{ github.sha }}-${{ github.workflow }}-${{ github.event_name }}'
+
         env:
           # pass the Dashboard record key as an environment variable
           CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
           CYPRESS_PROJECT_ID: ${{ secrets.CYPRESS_PROJECT_ID }}
           CYPRESS_BUILD_ID: '${{ github.sha }}-${{ github.workflow }}-${{ github.event_name }}'
+          CYPRESS_CI_BUILD_ID: '${{ github.sha }}-${{ github.workflow }}-${{ github.event_name }}'
+
 
           # Recommended: pass the GitHub token lets this action correctly
           # determine the unique run id necessary to re-run the checks
