@@ -11,10 +11,18 @@ const glob = require('glob');
 // Those specs paths are glob patterns
 const groups = [
 	{
-		specs: ['cypress/integration/language/*.spec.js'],
+		specs: [
+			'cypress/integration/create-project/*.spec.js',
+			'cypress/integration/extensions/*.spec.js',
+			'cypress/integration/import-project/*.spec.js',
+			'cypress/integration/language/*.spec.js',
+			'cypress/integration/open-project/*.spec.js',
+			'cypress/integration/preferences/*.spec.js',
+			'cypress/integration/project-management/*.spec.js',
+		],
 	},
 	{
-		specs: ['cypress/integration/preferences/*.spec.js'],
+		// specs: ['cypress/integration/preferences/*.spec.js'],
 	},
 ];
 
