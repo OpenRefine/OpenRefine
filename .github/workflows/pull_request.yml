@@ -102,8 +102,7 @@ jobs:
           # parallel: true
           # ci-build-id: '${{ github.run_id }}'
           ci-build-id: '${{ github.sha }}-${{ github.workflow }}-${{ github.event_name }}'
-          config:
-            ci-build-id: '${{ github.sha }}-${{ github.workflow }}-${{ github.event_name }}'
+          config: ci-build-id=${{ github.sha }}-${{ github.workflow }}-${{ github.event_name }}
 
         env:
           # pass the Dashboard record key as an environment variable
