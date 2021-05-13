@@ -98,7 +98,7 @@ jobs:
           spec: ${{ matrix.specs }}
           wait-on: 'http://localhost:3333'
           record: true
-          group: '${{ matrix.browser }}-${{ github.run_id }}'
+          # group: '${{ matrix.browser }}-${{ github.run_id }}'
           # parallel: true
           ci-build-id: '${{ github.run_id }}'
         env:
