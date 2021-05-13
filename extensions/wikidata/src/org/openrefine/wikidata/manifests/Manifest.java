@@ -20,4 +20,5 @@ public interface Manifest {
 
     String getConstraintsRelatedId(String name);
 
+    String getEditGroupsUrlSchema();
 }

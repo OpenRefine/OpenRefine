@@ -2,23 +2,28 @@ const fixtures = require('../fixtures/fixtures.js');
 
 Cypress.Commands.add('setPreference', (preferenceName, preferenceValue) => {
   const openRefineUrl = Cypress.env('OPENREFINE_URL');
-  cy.request(openRefineUrl + '/command/core/get-csrf-token').then(
-    (response) => {
-      cy.request({
-        method: 'POST',
-        url: `${openRefineUrl}/command/core/set-preference`,
-        body: `name=${preferenceName}&value="${preferenceValue}"&csrf_token=${response.body.token}`,
-        form: false,
-        headers: {
-          'content-type': 'application/x-www-form-urlencoded; charset=UTF-8',
-        },
-      }).then((resp) => {
-        cy.log(
-          'Set preference ' + preferenceName + ' with value ' + preferenceValue
-        );
-      });
-    }
-  );
+  return cy
+    .request(openRefineUrl + '/command/core/get-csrf-token')
+    .then((response) => {
+      return cy
+        .request({
+          method: 'POST',
+          url: `${openRefineUrl}/command/core/set-preference`,
+          body: `name=${preferenceName}&value=${preferenceValue}&csrf_token=${response.body.token}`,
+          form: false,
+          headers: {
+            'content-type': 'application/x-www-form-urlencoded; charset=UTF-8',
+          },
+        })
+        .then((resp) => {
+          cy.log(
+            'Set preference ' +
+              preferenceName +
+              ' with value ' +
+              preferenceValue
+          );
+        });
+    });
 });
 
 Cypress.Commands.add('cleanupProjects', () => {
@@ -85,9 +90,8 @@ Cypress.Commands.add('loadProject', (fixture, projectName, tagName) => {
     let postData;
     if (tagName == undefined) {
       postData =
-        '------BOUNDARY\r\nContent-Disposition: form-data; name="project-file"; filename="' +
-        fixture +
-        '"\r\nContent-Type: "text/csv"\r\n\r\n' +
+        '------BOUNDARY\r\nContent-Disposition: form-data; name="project-file"; filename="test.csv"' +
+        '\r\nContent-Type: "text/csv"\r\n\r\n' +
         content +
         '\r\n------BOUNDARY\r\nContent-Disposition: form-data; name="project-name"\r\n\r\n' +
         openRefineProjectName +
@@ -96,9 +100,8 @@ Cypress.Commands.add('loadProject', (fixture, projectName, tagName) => {
         '\r\n------BOUNDARY--';
     } else {
       postData =
-        '------BOUNDARY\r\nContent-Disposition: form-data; name="project-file"; filename="' +
-        fixture +
-        '"\r\nContent-Type: "text/csv"\r\n\r\n' +
+        '------BOUNDARY\r\nContent-Disposition: form-data; name="project-file"; filename="test.csv"' +
+        '\r\nContent-Type: "text/csv"\r\n\r\n' +
         content +
         '\r\n------BOUNDARY\r\nContent-Disposition: form-data; name="project-name"\r\n\r\n' +
         openRefineProjectName +

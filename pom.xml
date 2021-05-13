@@ -60,8 +60,11 @@
     <surefire.version>2.22.2</surefire.version>
     <surefireArgs/>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <jackson.version>2.12.1</jackson.version>
+    <jackson.version>2.12.3</jackson.version>
+    <servlet-api.version>4.0.1</servlet-api.version>
+    <butterfly.version>1.1.1</butterfly.version>
     <slf4j.version>1.7.30</slf4j.version>
+    <jetty.version>9.4.26.v20200117</jetty.version>
   </properties>
 
 
@@ -138,7 +141,7 @@
       <plugin>
         <groupId>org.jacoco</groupId>
         <artifactId>jacoco-maven-plugin</artifactId>
-        <version>0.8.6</version>
+        <version>0.8.7</version>
         <executions>
             <execution>
                 <id>prepare-agent</id>

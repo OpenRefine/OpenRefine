@@ -132,6 +132,7 @@ Get a list of all the commands with `refine /?`.
 |/m|Memory maximum heap|refine /m 6000M|
 |/p|Port|refine /p 3334|
 |/i|Interface (IP address, or IP and port)|refine /i 127.0.0.2:3334|
+|/H|HTTP host to expect on incoming requests|refine /H openrefine.internal|
 |/d|Enable debugging (on port 8000)|refine /d|
 |/x|Enable JMX monitoring for Jconsole and JvisualVM|refine /x|
 
@@ -154,6 +155,7 @@ To see the full list of command-line options, run `./refine -h`.
 |-m|Memory maximum heap|./refine -m 6000M|
 |-p|Port|./refine -p 3334|
 |-i|Interface (IP address, or IP and port)|./refine -i 127.0.0.2:3334|
+|-H|HTTP host to expect on incoming requests|./refine -H openrefine.internal|
 |-k|Add a Google API key|./refine -k YOUR_API_KEY|
 |-v|Verbosity (from low to high: error,warn,info,debug,trace)|./refine -v info|
 |-x|Additional Java configuration parameters (see Java documentation)||
@@ -326,13 +328,16 @@ We use Weblate to provide translations for the interface. You can check [our pro
 
 In the bottom left corner of the screen, look for <span class="menuItems">Preferences</span>. At this time you can set preferences using a key/value pair: that is, selecting one of the keys below and setting a value for it. 
 
-|Setting|Key|Value syntax|Default|Example|
-|---|---|---|---|---|
-|Interface language|userLang|[ISO 639-1](https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes) two-digit code|en|fr|
-|Maximum facets|ui.browsing.listFacet.limit|Number|2000|5000|
-|Timeout for Google Drive import|googleReadTimeOut|Number (microseconds)|180000|500000|
-|Timeout for Google Drive authorization|googleConnectTimeOut|Number (microseconds)|180000|500000|
-|Maximum lag for Wikidata edit retries|wikibase.upload.maxLag|Number (seconds)|5|10|
+|Setting|Key|Value syntax|Default|Example|Version|
+|---|---|---|---|---|---|
+|Interface language|userLang|[ISO 639-1](https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes) two-digit code|en|fr|—|
+|Maximum facets|ui.browsing.listFacet.limit|Number|2000|5000|—|
+|Timeout for Google Drive import|googleReadTimeOut|Number (microseconds)|180000|500000|—|
+|Timeout for Google Drive authorization|googleConnectTimeOut|Number (microseconds)|180000|500000|—|
+|Maximum lag for Wikibase edit retries|wikibase.upload.maxLag|Number (seconds)|5|10|—|
+|Display of the reconciliation preview on hover|cell-ui.previewMatchedCells|Boolean|true|false|v3.2|
+|Values for the choice of the number of rows to display|ui.browsing.pageSize|Array of number (JSON)|[ 5, 10, 25, 50 ]|[ 100,500,1000 ]|v3.4|
+|Width of the panel for facets/history|ui.browsing.facetsHistoryPanelWidth|Number (pixel)|300|500|v3.5|
 
 To leave the Preferences screen, click on the diamond “OpenRefine” logo.
 
@@ -376,7 +381,7 @@ To the right of the rows/records selection is the array of options for how many 
 
 ### Extensions
 
-The <span class="menuItems">Extensions</span> dropdown offers you options for extending your data - most commonly by uploading your edited statements to Wikidata, or by importing or exporting schema. You can learn more about these functions on the [Wikidata page](wikidata). Other extensions may also add functions to this dropdown menu.
+The <span class="menuItems">Extensions</span> dropdown offers you options for extending your data - most commonly by uploading your edited statements to Wikidata, or by importing or exporting schema. You can learn more about these functions on the [Wikibase section](wikibase/overview). Other extensions may also add functions to this dropdown menu.
 
 ### The grid 
 
@@ -496,7 +501,7 @@ The following are all third-party extensions and code; the OpenRefine team does 
 
 Some examples:
 
-* This project allows OpenRefine to be run from the command line using [operations saved in a JSON file](running#reusing-operations): [OpenRefine batch processing](https://github.com/opencultureconsulting/openrefine-batch)
+* This project allows OpenRefine to be run from the command line using [operations saved in a JSON file](#reusing-operations): [OpenRefine batch processing](https://github.com/opencultureconsulting/openrefine-batch)
 * A Python project for applying a JSON file of operations to a data file, outputting the new file, and deleting the temporary project, written by David Huynh and Max Ogden: [Python client library for Google Refine](https://github.com/maxogden/refine-python)
 * And the same in Ruby: [Refine-Ruby](https://github.com/maxogden/refine-ruby)
 * Another Python client library, by Paul Makepeace: [OpenRefine Python Client Library](https://github.com/PaulMakepeace/refine-client-py) 

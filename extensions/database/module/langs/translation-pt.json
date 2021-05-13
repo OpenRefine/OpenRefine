@@ -59,5 +59,6 @@
     "database-source/databaseHostLabel": "Host:",
     "database-import/title": "Servidores de banco de dados",
     "database-source/databaseSaveButton": "Gravar",
-    "database-parsing/ignore": "linhas(s) no começo do ficheiro"
+    "database-parsing/ignore": "linhas(s) no começo do ficheiro",
+    "database-import/importer-name": "Banco de dados"
 }
