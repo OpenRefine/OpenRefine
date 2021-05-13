@@ -21,9 +21,10 @@ const groups = [
 			'cypress/integration/project-management/*.spec.js',
 		],
 	},
-	{
-		// specs: ['cypress/integration/preferences/*.spec.js'],
-	},
+	// ,
+	// {
+	// 	// specs: ['cypress/integration/preferences/*.spec.js'],
+	// },
 ];
 
 const merged_groups = groups.map((group) => group.specs.join(','));
