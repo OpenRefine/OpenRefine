@@ -106,6 +106,7 @@
     "core-index-import/warning-record-path": "Please specify a record path first.",
     "core-index-import/pick-nodes": "Pick Record Nodes",
     "core-index-import/char-encoding": "Character&nbsp;encoding",
+    "core-index-import/http-headers": "HTTP headers to be used to download data from URLs: ",
     "core-index-open/open-proj": "Open Project",
     "core-index-open/name": "Name",
     "core-index-open/rename": "Rename",

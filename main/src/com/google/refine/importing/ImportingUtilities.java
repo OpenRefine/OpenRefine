@@ -53,6 +53,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.stream.Collectors;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
@@ -72,10 +73,12 @@ import org.apache.commons.fileupload.util.Streams;
 import org.apache.hc.client5.http.ClientProtocolException;
 import org.apache.hc.core5.http.ClassicHttpResponse;
 import org.apache.hc.core5.http.ContentType;
+import org.apache.hc.core5.http.Header;
 import org.apache.hc.core5.http.HttpEntity;
+import org.apache.hc.core5.http.HttpHeaders;
 import org.apache.hc.core5.http.HttpStatus;
 import org.apache.hc.core5.http.io.HttpClientResponseHandler;
-
+import org.apache.hc.core5.http.message.BasicHeader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -89,7 +92,6 @@ import com.google.refine.model.Project;
 import com.google.refine.util.HttpClient;
 import com.google.refine.util.JSONUtilities;
 import com.google.refine.util.ParsingUtilities;
-import java.util.stream.Collectors;
 
 public class ImportingUtilities {
     final static protected Logger logger = LoggerFactory.getLogger("importing-utilities");
@@ -327,7 +329,11 @@ public class ImportingUtilities {
                         };
 
                         HttpClient httpClient = new HttpClient();
-                        if (httpClient.getResponse(urlString, null, responseHandler) != null) {
+                        Header acceptHeader = new BasicHeader(HttpHeaders.ACCEPT, parameters.get("accept"));
+                        Header userAgentHeader = new BasicHeader(HttpHeaders.USER_AGENT, parameters.get("user-agent"));
+                        Header authorizationHeader = new BasicHeader(HttpHeaders.AUTHORIZATION, parameters.get("authorization"));
+                        Header[] headers = { acceptHeader, userAgentHeader, authorizationHeader };
+                        if (httpClient.getResponse(urlString, headers, responseHandler) != null) {
                             archiveCount++;
                         };
                         downloadCount++;

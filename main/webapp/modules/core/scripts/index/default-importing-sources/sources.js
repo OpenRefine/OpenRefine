@@ -81,17 +81,51 @@ Refine.DefaultImportingController.sources.push({
 UrlImportingSourceUI.prototype.attachUI = function(bodyDiv) {
   var self = this;
 
-  bodyDiv.html(DOM.loadHTML("core", "scripts/index/default-importing-sources/import-from-web-form.html"));
+  var httpheaderOptions = [];
+
+  $.ajax({
+    url : "command/core/get-httpheaders?",
+    type : "GET",
+    async : false,
+    success : function(data) {
+      for (var headerLabel in data.httpHeaders) {
+	    var info = data.httpHeaders[headerLabel];
+	    httpheaderOptions.push('<label for="' +
+                                    headerLabel +
+                                    '">' +
+                                    info.header +
+                                    ': </label><input type="text" id="' +
+                                    headerLabel +
+                                    '" name="' +
+                                    headerLabel +
+                                    '" value="' +
+                                    info.defaultValue +
+                                    '" /></option><br />');
+	  }
+    }
+  });
+
+  bodyDiv.html(DOM.loadHTML("core", "scripts/index/default-importing-sources/import-from-web-form.html").replace("$HTTP_HEADER_OPTIONS$", httpheaderOptions.join("")));
 
   this._elmts = DOM.bind(bodyDiv);
-  
   $('#or-import-enterurl').text($.i18n('core-index-import/enter-url'));
   this._elmts.addButton.html($.i18n('core-buttons/add-url'));
   this._elmts.nextButton.html($.i18n('core-buttons/next'));
+  this._elmts.or_views_httpHeaders.text($.i18n('core-index-import/http-headers'));
+  this._elmts.or_views_httpHeadersShowHide.text($.i18n('core-views/show'));
+  this._elmts.or_views_httpHeadersShowHide.click(function() {
+    $( ".set-httpheaders-container" ).toggle( "slow", function() {
+      if ($(this).is(':visible')) {
+        self._elmts.or_views_httpHeadersShowHide.text($.i18n('core-views/hide'));
+      } else {
+        self._elmts.or_views_httpHeadersShowHide.text($.i18n('core-views/show'));
+      }
+    });
+  });
 
   this._elmts.form.submit(function(evt){
     evt.preventDefault();
-    var importUrl = self._elmts.urlInput[0].value.trim(); 
+    var importUrl = self._elmts.urlInput[0].value.trim();
     self._elmts.urlInput[0].value = importUrl;
     if(!isUrlValid(importUrl)) {
       window.alert($.i18n('core-index-import/warning-web-address'));

@@ -1,6 +1,12 @@
 <form bind="form"><div class="grid-layout layout-normal"><table>
   <tr><td colspan="2" id="or-import-enterurl"></td></tr>
   <tr bind="urlRow"><td colspan="2"><input bind="urlInput" name="download" class="default-importing-web-url" /></td></tr>
+  <tr  bind="showViewRow"><td colspan="4"><span bind="or_views_httpHeaders"></span>
+    <span class="toggle-text" bind="or_views_httpHeadersShowHide"></span>
+  </td></tr>
+  <tr bind="httpheadersRow"><td colspan="2">
+    <div class="set-httpheaders-container" bind="setHttpHeadersContainer">$HTTP_HEADER_OPTIONS$</div>
+  </td></tr>
   <tr bind="buttons">
     <td width="1"><button bind="addButton" class="button" type="button"></button></td>
     <td><button type="submit" bind="nextButton" class="button button-primary" type="button"></button></td>
