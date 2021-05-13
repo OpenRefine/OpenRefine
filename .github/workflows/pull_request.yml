@@ -6,18 +6,7 @@ on:
       - 'docs/**'
 
 jobs:
-  test_env_vars:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2.3.4
-        with:
-          ref: ${{ github.event.pull_request.head.ref }}
-          repository: ${{ github.event.pull_request.head.repo.full_name }}
-      - id: test
-        run: sh ./test.sh
-        env:
-          browsers: chrome
-          test: hello
+
   prepare_ui_test_matrix:
     runs-on: ubuntu-latest
     outputs:
@@ -63,12 +52,6 @@ jobs:
       - name: Build OpenRefine
         run: ./refine build
 
-      - name: Start OpenRefine
-        run: |
-          echo REFINE_MIN_MEMORY=1400M >> ./refine.ini
-          echo REFINE_MEMORY=4096M >> ./refine.ini
-          ./refine run_test
-
       - name: Setup Node
         uses: actions/setup-node@v2
         with:
@@ -102,6 +85,19 @@ jobs:
           npm i -g yarn
           yarn install
 
+      - name: Test with Cypress on ${{ matrix.browser }}
+        run: | 
+          echo REFINE_MIN_MEMORY=1400M >> ./refine.ini
+          echo REFINE_MEMORY=4096M >> ./refine.ini
+          ./refine ui_test
+        env:
+          CYPRESS_BROWSER: ${{ matrix.browser }}
+          CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
+          CYPRESS_PROJECT_ID: ${{ secrets.CYPRESS_PROJECT_ID }}
+          CYPRESS_CI_BUILD_ID: '${{ github.run_id }}'
+          CYPRESS_SPECS: ${{ matrix.specs }}
+
+
       # - name: Cypress run
       #   uses: cypress-io/github-action@v2
         # with:
@@ -116,12 +112,12 @@ jobs:
         #   ci-build-id: '${{ github.run_id }}'
         #   config: ciBuildId=${{ github.run_id }}
 
-        env:
-          # pass the Dashboard record key as an environment variable
-          CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
-          CYPRESS_PROJECT_ID: ${{ secrets.CYPRESS_PROJECT_ID }}
-          CYPRESS_BUILD_ID: '${{ github.run_id }}'
-          CYPRESS_CI_BUILD_ID: '${{ github.run_id }}'
+        # env:
+        #   # pass the Dashboard record key as an environment variable
+        #   CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
+        #   CYPRESS_PROJECT_ID: ${{ secrets.CYPRESS_PROJECT_ID }}
+        #   CYPRESS_BUILD_ID: '${{ github.run_id }}'
+        #   CYPRESS_CI_BUILD_ID: '${{ github.run_id }}'
 
 
           # Recommended: pass the GitHub token lets this action correctly
