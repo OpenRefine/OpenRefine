@@ -68,7 +68,7 @@ and <action> is one of
    test ................................ Run all OpenRefine tests
    server_test ......................... Run only the server tests
    extensions_test ..................... Run only the extensions tests
-   ui_test ............................. Run only the UI tests
+   ui_tests ............................ Run only the UI tests
    
    broker .............................. Run OpenRefine Broker
    
@@ -482,7 +482,7 @@ test() {
     $MVN test
 }
 
-ui_test() {
+ui_tests() {
     get_revision
 
     CYPRESS_PROJECT_ID="$2"
@@ -997,7 +997,7 @@ case "$ACTION" in
   distclean) mvn distclean;;
   test) test $1;;  
   tests) test $1;;  
-  ui_tests) ui_test;;    
+  ui_tests) ui_tests;;    
   server_test) server_test $1;;  
   server_tests) server_test $1;;  
   extensions_test) extensions_test $1;;
