@@ -98,9 +98,9 @@ jobs:
           spec: ${{ matrix.specs }}
           wait-on: 'http://localhost:3333'
           record: true
-          # group: ${{ matrix.browser }}
+          group: ${{ github.run_id }}
           # parallel: true
-          ci-build-id: '${{ github.run_id }}'
+          ci-build-id: ${{ github.run_id }}
         env:
           # pass the Dashboard record key as an environment variable
           CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
