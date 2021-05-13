@@ -100,7 +100,7 @@ jobs:
           record: true
           # group: ${{ matrix.browser }}
           # parallel: true
-          ci-build-id: '${{ github.sha }}-${{ github.workflow }}-${{ github.event_name }}'
+          ci-build-id: '${{ github.run_id }}'
         env:
           # pass the Dashboard record key as an environment variable
           CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
