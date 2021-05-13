@@ -133,7 +133,7 @@
     <dependency>
       <groupId>com.google.http-client</groupId>
       <artifactId>google-http-client-jackson2</artifactId>
-      <version>1.39.2</version>
+      <version>1.39.2-sp.1</version>
     </dependency>
     <dependency>
       <groupId>mysql</groupId>
