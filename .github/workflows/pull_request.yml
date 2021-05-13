@@ -97,14 +97,14 @@ jobs:
           working-directory: ./main/tests/cypress
           spec: ${{ matrix.specs }}
           wait-on: 'http://localhost:3333'
-          # record: true
+          record: true
           # group: ${{ matrix.browser }}
           # parallel: true
-          # ci-build-id: '${{ github.sha }}-${{ github.workflow }}-${{ github.event_name }}'
-        # env:
-        #   # pass the Dashboard record key as an environment variable
-        #   CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
-        #   CYPRESS_PROJECT_ID: ${{ secrets.CYPRESS_PROJECT_ID }}
-        #   # Recommended: pass the GitHub token lets this action correctly
-        #   # determine the unique run id necessary to re-run the checks
-        #   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          ci-build-id: '${{ github.sha }}-${{ github.workflow }}-${{ github.event_name }}'
+        env:
+          # pass the Dashboard record key as an environment variable
+          CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
+          CYPRESS_PROJECT_ID: ${{ secrets.CYPRESS_PROJECT_ID }}
+          # Recommended: pass the GitHub token lets this action correctly
+          # determine the unique run id necessary to re-run the checks
+          # GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
