@@ -39,12 +39,6 @@ import com.google.refine.util.TestUtils;
 
 public class ToStringTests extends RefineTest {
     @Test
-    public void serializeToString() {
-        String json = "{\"description\":\"Returns o converted to a string\",\"params\":\"o, string format (optional)\",\"returns\":\"string\"}";
-        TestUtils.isSerializedTo(new ToString(), json);
-    }
-
-    @Test
     public void testToString() throws CalendarParserException {
         assertTrue(invoke("toString") instanceof EvalError);
         assertEquals(invoke("toString", (Object) null), "");

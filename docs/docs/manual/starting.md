@@ -57,7 +57,7 @@ For whichever method you choose to start your project, when you click <span clas
 
 Click on <span class="menuItems">Browse…</span> and select a file (or several) on your hard drive. All files will be shown, not just compatible ones. 
 
-If you import an archive file (something with the extension `.zip`, `.tar.gz`, `.tgz`, `.tar.bz2`, `.gz`, or `.bz2`), OpenRefine detects the files inside it, shows you a preview screen, and allows you to select which ones to load. This does not work with `.rar` files. 
+If you import an archive file (something with the extension `.zip`, `.tar.gz`, `.tgz`, `.tar.bz2`, `.gz`, or `.bz2`), OpenRefine detects the files inside it, shows you a preview screen, and allows you to select which ones to load. This does not work with `.rar` files. When importing multiple archives you can store the name of the archive each file was extracted from by ticking the `Store archive file` option upon import. 
 
 ### Web addresses (URLs)
 

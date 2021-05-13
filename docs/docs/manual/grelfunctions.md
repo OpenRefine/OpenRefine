@@ -1,4 +1,4 @@
----
+﻿---
 id: grelfunctions
 title: GREL functions
 sidebar_label: GREL functions
@@ -6,9 +6,9 @@ sidebar_label: GREL functions
 
 ## Reading this reference
 
-For the reference below, the function is given in full-length notation and the in-text examples are written in dot notation. Shorthands are used to indicate the kind of [data type](exploring#data-types) used in each function: s for string, b for boolean, n for number, d for date, a for array, p for a regex pattern, and o for any data type, as well as “null” and “error” data types. 
+For the reference below, the function is given in full-length notation and the in-text examples are written in dot notation. Shorthands are used to indicate the kind of [data type](exploring#data-types) used in each function: s for string, b for boolean, n for number, d for date, a for array, p for a regex pattern, and o for object (meaning any data type), as well as “null” and “error” data types. 
 
-If a function can take more than one kind of data as input or can output more than one kind of data, that is indicated with more than one letter (as with “s or a”) or with o for object. 
+If a function can take more than one kind of data as input or can output more than one kind of data, that is indicated with more than one letter (as with “s or a”) or with o for object, meaning it can take any type of data (string, boolean, date, number, etc.). 
 
 We also use shorthands for substring (“sub”) and separator string (“sep”). 
 Optional arguments will say “(optional)”.
@@ -116,7 +116,7 @@ Identical to substring() in relation to strings. Also works with arrays; see [Ar
 
 ###### get(s, n from, n to (optional))
 
-Identical to substring() in relation to strings. Also works with named fields. Also works with arrays; see [Array functions section](#geta-n-or-s-from-n-to-optional).
+Identical to substring() in relation to strings. Also works with named fields. Also works with arrays; see [Array functions section](#geta-n-from-n-to-optional).
 
 #### Find and replace
 
@@ -170,9 +170,9 @@ For example, if `value` is “hello 123456 goodbye”, the following would occur
 
 Returns a string converted to a number. Will attempt to convert other formats into a string, then into a number. If the value is already a number, it will return the number.
 
-###### split(s, s or p sep)
+###### split(s, s or p sep, b preserveTokens (optional))
 
-Returns the array of strings obtained by splitting s by sep. The separator can be either a string or a regex pattern. For example, `"fire, water, earth, air".split(",")` returns an array of 4 strings: [ "fire", " water", " earth", " air" ]. Note that the space characters are retained but the separator is removed.
+Returns the array of strings obtained by splitting s by sep. The separator can be either a string or a regex pattern. For example, `"fire, water, earth, air".split(",")` returns an array of 4 strings: [ "fire", " water", " earth", " air" ]. Note that the space characters are retained but the separator is removed. If you include “true” for the preserveTokens boolean, empty segments are preserved.
 
 ###### splitByLengths(s, n1, n2, ...)
 
@@ -226,9 +226,9 @@ Returns the [SHA-1 hash](https://en.wikipedia.org/wiki/SHA-1) of an object. If f
 
 Returns a phonetic encoding of a string, based on an available phonetic algorithm. See the [section on phonetic clustering](cellediting#clustering-methods) for more information. Can be one of the following supported phonetic methods: [metaphone, doublemetaphone, metaphone3](https://www.wikipedia.org/wiki/Metaphone), [soundex](https://en.wikipedia.org/wiki/Soundex), [cologne](https://en.wikipedia.org/wiki/Cologne_phonetics). Quotes are required around your encoding method. For example, `"Ruth Prawer Jhabvala".phonetic("metaphone")` outputs the string “R0PRWRJHBFL”.  
 
-###### reinterpret(s, s encoder)
+###### reinterpret(s, s encoderTarget, s encoderSource)
 
-Returns s reinterpreted through the given character encoder. You must supply one of the [supported encodings](http://java.sun.com/j2se/1.5.0/docs/guide/intl/encoding.doc.html). Note that quotes are required around your character encoder.
+Returns s reinterpreted through the given character encoders. You must supply one of the [supported encodings](http://java.sun.com/j2se/1.5.0/docs/guide/intl/encoding.doc.html) for each of the original source and the target output. Note that quotes are required around your character encoder.
 
 When an OpenRefine project is started, data is imported and interpreted. A specific character encoding is identified or manually selected at that time (such as UTF-8). You can reinterpret a column into another specificed encoding using this function. This function may not fix your data; it may be better to use this in conjunction with new projects to test the interpretation, and pre-format your data as needed. 
 
@@ -323,8 +323,6 @@ Returns a string of the text from within an XML element (including all child ele
 
 ###### wholeText(element)
 
-_Works from OpenRefine 3.4.1 beta 644 onwards only_
-
 Selects the (unencoded) text of an element and its children, including any new lines and spaces, and returns a string of unencoded, un-normalized text. Use it in conjunction with parseHtml() and select() to provide an element as in the following example: `value.parseHtml().select("div.footer")[0].wholeText()`.
 
 ###### innerHtml(element)
@@ -332,9 +330,6 @@ Returns the [inner HTML](https://developer.mozilla.org/en-US/docs/Web/API/Elemen
 
 ###### innerXml(element)
 Returns the inner XML elements of an XML element. Does not return the text directly inside your chosen XML element - only the contents of its children. To select the direct text, use ownText(). To select both, use xmlText(). Use it in conjunction with parseXml() and select() to provide an element.
-
-###### outerHtml(element)
-Returns the [outer HTML](https://developer.mozilla.org/en-US/docs/Web/API/Element/outerHTML) of an HTML element. outerHtml includes the start and end tags of the current element. Use it in conjunction with parseHtml() and select() to provide an element.
 
 ###### ownText(element)
 Returns the text directly inside the selected XML or HTML element only, ignoring text inside children elements (for this, use innerXml()). Use it in conjunction with a parser and select() to provide an element.
@@ -468,13 +463,13 @@ Some of these math functions don't recognize integers when supplied as the first
 |Function|Use|Example|
 |-|-|-|
 |`abs(n)`|Returns the absolute value of a number.|`abs(-6)` returns 6.|
-|`acos(n)`|Returns the arc cosine of an angle, in the range 0 through PI.|`acos(0.345)` returns 1.218557541697832.|
-|`asin(n)`|Returns the arc sine of an angle in the range of -PI/2 through [PI](https://docs.oracle.com/javase/8/docs/api/java/lang/Math.html#PI)/2.|`asin(0.345)` returns 0.35223878509706474.|
+|`acos(n)`|Returns the arc cosine of an angle, in the range 0 through [PI](https://docs.oracle.com/javase/8/docs/api/java/lang/Math.html#PI).|`acos(0.345)` returns 1.218557541697832.|
+|`asin(n)`|Returns the arc sine of an angle in the range of -PI/2 through PI/2.|`asin(0.345)` returns 0.35223878509706474.|
 |`atan(n)`|Returns the arc tangent of an angle in the range of -PI/2 through PI/2.|`atan(0.345)` returns 0.3322135507465967.|
-|`atan2(n1, n2)`|Converts rectangular coordinates (n1, n2) to polar (r, theta). Returns number theta.|`atan2(0.345,0.6)` returns 	0.5218342798144103.|
+|`atan2(n1, n2)`|Converts rectangular coordinates (n1, n2) to polar (r, theta). Returns number theta.|`atan2(0.345,0.6)` returns 0.5218342798144103.|
 |`ceil(n)`|Returns the ceiling of a number.|`3.7.ceil()` returns 4 and `-3.7.ceil()` returns -3.|
 |`combin(n1, n2)`|Returns the number of combinations for n2 elements as divided into n1.|`combin(20,2)` returns 190.|
-|`cos(n)`|Returns the trigonometric cosine of an angle.|`cos(5)` returns 0.28366218546322625.|
+|`cos(n)`|Returns the trigonometric cosine of a value.|`cos(5)` returns 0.28366218546322625.|
 |`cosh(n)`|Returns the hyperbolic cosine of a value.|`cosh(5)` returns 74.20994852478785.|
 |`degrees(n)`|Converts an angle from radians to degrees.|`degrees(5)` returns 286.4788975654116.|
 |`even(n)`|Rounds the number up to the nearest even integer.|`even(5)` returns 6.|
@@ -482,7 +477,7 @@ Some of these math functions don't recognize integers when supplied as the first
 |`fact(n)`|Returns the factorial of a number, starting from 1.|`fact(5)` returns 120.|
 |`factn(n1, n2)`|Returns the factorial of n1, starting from n2.|`factn(10,3)` returns 280.|
 |`floor(n)`|Returns the floor of a number.|`3.7.floor()` returns 3 and `-3.7.floor()` returns -4.|
-|`gcd(n1, n2)`|Returns the greatest common denominator of the two numbers.|`gcd(95,135)` returns 5.|
+|`gcd(n1, n2)`|Returns the greatest common denominator of two numbers.|`gcd(95,135)` returns 5.|
 |`lcm(n1, n2)`|Returns the least common multiple of two numbers.|`lcm(95,135)` returns 2565.|
 |`ln(n)`|Returns the natural logarithm of n.|`ln(5)` returns 1.6094379124341003.|
 |`log(n)`|Returns the base 10 logarithm of n.|`log(5)` returns 0.6989700043360189.|
@@ -494,7 +489,7 @@ Some of these math functions don't recognize integers when supplied as the first
 |`pow(n1, n2)`|Returns n1 raised to the power of n2. Note: value.pow(3)` will work, whereas `2.pow(3)` will not work.|`pow(2, 3)` returns 8 (2 cubed) and `pow(3, 2)` returns 9 (3 squared). The square root of any numeric value can be called with `value.pow(0.5)`.|
 |`quotient(n1, n2)`|Returns the integer portion of a division (truncated, not rounded), when supplied with a numerator and denominator.|`quotient(9,2)` returns 4.|
 |`radians(n)`|Converts an angle in degrees to radians.|`radians(10)` returns 0.17453292519943295.|
-|`randomNumber(n lower_bound, n upper_bound)`|Returns a random integer in the interval between the lower and upper bounds (inclusively). Will output a different random number in each cell in a column.|
+|`randomNumber(n lowerBound, n upperBound)`|Returns a random integer in the interval between the lower and upper bounds (inclusively). Will output a different random number in each cell in a column.|
 |`round(n)`|Rounds a number to the nearest integer.|`3.7.round()` returns 4 and `-3.7.round()` returns -4.|
 |`sin(n)`|Returns the trigonometric sine of an angle.|`sin(10)` returns -0.5440211108893698.|
 |`sinh(n)`|Returns the hyperbolic sine of an angle.|`sinh(10)` returns 11013.232874703393.|
@@ -525,7 +520,7 @@ Returns a boolean indicating whether o has a member field called [name](expressi
 ###### coalesce(o1, o2, o3, ...)
 Returns the first non-null from a series of objects. For example, `coalesce(value, "")` would return an empty string “” if `value` was null, but otherwise return `value`.
 
-###### cross(cell, s projectName, s columnName)
+###### cross(cell, s projectName (optional), s columnName (optional))
 Returns an array of zero or more rows in the project projectName for which the cells in their column columnName have the same content as the cell in your chosen column. For example, if two projects contained matching names, and you wanted to pull addresses for people by their names from a project called “People” you would apply the following expression to your column of names: 
 ```
 cell.cross("People","Name").cells["Address"].value[0]
@@ -534,5 +529,7 @@ cell.cross("People","Name").cells["Address"].value[0]
 This would match your current column to the “Name” column in “People” and, using those matches, pull the respective “Address” value into your current project. 
 
 You may need to do some data preparation with cross(), such as using trim() on your key columns or deduplicating values.
+
+The first argument will be interpreted as `cell.value` if set to `cell`. If you omit projectName and columnName, they will default to the current project and index column (number 0). 
 
 Recipes and more examples for using cross() can be found [on our wiki](https://github.com/OpenRefine/OpenRefine/wiki/Recipes#combining-datasets).

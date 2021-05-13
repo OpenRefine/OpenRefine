@@ -11,6 +11,90 @@
 import 'cypress-file-upload';
 import 'cypress-wait-until';
 
+import { addMatchImageSnapshotCommand } from 'cypress-image-snapshot/command';
+
+addMatchImageSnapshotCommand({ customDiffDir: 'cypress/snapshots_diffs' });
+
+/**
+ * Reconcile a column
+ * Internally using the "apply" behavior for not having to go through the whole user interface
+ */
+Cypress.Commands.add('reconcileColumn', (columnName, autoMatch = true) => {
+  cy.setPreference(
+    'reconciliation.standardServices',
+    encodeURIComponent(
+      JSON.stringify([
+        {
+          name: 'CSV Reconciliation service',
+          identifierSpace: 'http://localhost:8000/',
+          schemaSpace: 'http://localhost:8000/',
+          defaultTypes: [],
+          view: { url: 'http://localhost:8000/view/{{id}}' },
+          preview: {
+            width: 500,
+            url: 'http://localhost:8000/view/{{id}}',
+            height: 350,
+          },
+          suggest: {
+            entity: {
+              service_url: 'http://localhost:8000',
+              service_path: '/suggest',
+              flyout_service_url: 'http://localhost:8000',
+              flyout_sercice_path: '/flyout',
+            },
+          },
+          url: 'http://localhost:8000/reconcile',
+          ui: { handler: 'ReconStandardServicePanel', access: 'jsonp' },
+        },
+      ])
+    )
+  ).then(() => {
+    const apply = [
+      {
+        op: 'core/recon',
+        engineConfig: {
+          facets: [],
+          mode: 'row-based',
+        },
+        columnName: columnName,
+        config: {
+          mode: 'standard-service',
+          service: 'http://localhost:8000/reconcile',
+          identifierSpace: 'http://localhost:8000/',
+          schemaSpace: 'http://localhost:8000/',
+          type: {
+            id: '/csv-recon',
+            name: 'CSV-recon',
+          },
+          autoMatch: autoMatch,
+          columnDetails: [],
+          limit: 0,
+        },
+        description: 'Reconcile cells in column species to type /csv-recon',
+      },
+    ];
+    cy.get('a#or-proj-undoRedo').click();
+    cy.get('#refine-tabs-history .history-panel-controls')
+      .contains('Apply')
+      .click();
+    cy.get('.dialog-container .history-operation-json').invoke(
+      'val',
+      JSON.stringify(apply)
+    );
+    cy.get('.dialog-container button[bind="applyButton"]').click();
+  });
+});
+
+/**
+ * Reconcile a column
+ * Internally using the "apply" behavior for not having to go through the whole user interface
+ */
+Cypress.Commands.add('assertColumnIsReconciled', (columnName) => {
+  cy.get(
+    `table.data-table thead th[title="${columnName}"] div.column-header-recon-stats-matched`
+  ).should('to.exist');
+});
+
 /**
  * Return the .facets-container for a given facet name
  */
@@ -66,12 +150,19 @@ Cypress.Commands.add('createProjectThroughUserInterface', (fixtureFile) => {
 });
 
 Cypress.Commands.add('doCreateProjectThroughUserInterface', () => {
-  cy.get('.default-importing-wizard-header button[bind="nextButton"]').click();
+  cy.get('.default-importing-wizard-header button[bind="nextButton"]')
+    .contains('Create Project »')
+    .click();
   cy.get('#create-project-progress-message').contains('Done.');
+  Cypress.on('uncaught:exception', (err, runnable) => {
+    // returning false here prevents Cypress from
+    // failing the test due to the uncaught exception caused by the window failure
+    return false;
+  });
 
   // workaround to ensure project is loaded
   // cypress does not support window.location = ...
-  cy.get('h2').contains('HTTP ERROR 404');
+  cy.get('h2').should('to.contain', 'HTTP ERROR 404');
   cy.location().should((location) => {
     expect(location.href).contains(
       Cypress.env('OPENREFINE_URL') + '/__/project?'
@@ -82,6 +173,14 @@ Cypress.Commands.add('doCreateProjectThroughUserInterface', () => {
     const projectId = location.href.split('=').slice(-1)[0];
     cy.visitProject(projectId);
     cy.wrap(projectId).as('createdProjectId');
+    cy.get('@loadedProjectIds', { log: false }).then((loadedProjectIds) => {
+      loadedProjectIds.push(projectId);
+      cy.wrap(loadedProjectIds, { log: false })
+        .as('loadedProjectIds')
+        .then(() => {
+          return projectId;
+        });
+    });
   });
 });
 
@@ -89,6 +188,7 @@ Cypress.Commands.add('doCreateProjectThroughUserInterface', () => {
  * Cast a whole column to the given type, using Edit Cell / Common transform / To {type}
  */
 Cypress.Commands.add('castColumnTo', (selector, target) => {
+  cy.get('body[ajax_in_progress="false"]');
   cy.get(
     '.data-table th:contains("' + selector + '") .column-header-menu'
   ).click();
@@ -138,6 +238,52 @@ Cypress.Commands.add('assertCellEquals', (rowIndex, columnName, value) => {
 });
 
 /**
+ * Make an assertion about the content of the whole grid
+ * The values parameter is the same as the one provided in fixtures
+ * Example
+ * cy.assertGridEquals(
+ *   [
+ *     ['Column A', 'Column B', 'Column C'],
+ *     ['Row 0 A', 'Row 0 B', 'Row 0 C'],
+ *     ['Row 1 A', 'Row 1 B', 'Row 1 C']
+ *   ]
+ * )
+ */
+Cypress.Commands.add('assertGridEquals', (values) => {
+  /**
+   * This assertion is performed inside a should() method
+   * So it will be retried until the timeout expires
+   * "Should()" expect assertions to be made, so promises can't be used
+   * Hence the use of Jquery with the Cypress.$ wrapper, to collect values for headers and grid cells
+   */
+  cy.get('table.data-table').should((table) => {
+    const headers = Cypress.$('table.data-table th')
+      .filter(function (index, element) {
+        return element.innerText != 'All';
+      })
+      .map(function (index, element) {
+        return element.innerText;
+      })
+      .get();
+
+    const cells = Cypress.$('table.data-table tbody tr')
+      .map(function (i, el) {
+        return [
+          Cypress.$('td', el)
+            .filter((index) => index > 2)
+            .map(function (index, element) {
+              return element.innerText;
+            })
+            .get(),
+        ];
+      })
+      .get();
+    const fullTable = [headers, ...cells];
+    expect(fullTable).to.deep.equal(values);
+  });
+});
+
+/**
  * Navigate to one of the entries of the main left menu of OpenRefine (Create Project, Open Project, Import Project, Language Settings)
  */
 Cypress.Commands.add('navigateTo', (target) => {
@@ -150,6 +296,24 @@ Cypress.Commands.add('navigateTo', (target) => {
 Cypress.Commands.add('waitForOrOperation', () => {
   cy.get('body[ajax_in_progress="true"]');
   cy.get('body[ajax_in_progress="false"]');
+});
+
+/**
+ * Wait for OpenRefine parsing options to be updated
+ */
+Cypress.Commands.add('waitForImportUpdate', () => {
+  cy.get('#or-import-updating').should('be.visible');
+  cy.get('#or-import-updating').should('not.be.visible');
+  cy.wait(500); // eslint-disable-line
+});
+
+/**
+ * Utility method to fill something into the expression input
+ * Need to wait for OpenRefine to preview the result, hence the cy.wait
+ */
+Cypress.Commands.add('typeExpression', (expression) => {
+  cy.get('textarea.expression-preview-code').type(expression);
+  cy.wait(500); // eslint-disable-line
 });
 
 /**
@@ -212,12 +376,15 @@ Cypress.Commands.add(
   (fixture, projectName = Date.now()) => {
     cy.loadProject(fixture, projectName).then((projectId) => {
       cy.visit(Cypress.env('OPENREFINE_URL') + '/project?project=' + projectId);
+
+      cy.get('#left-panel', { log: false }).should('be.visible');
+      cy.get('#right-panel', { log: false }).should('be.visible');
     });
   }
 );
 
 Cypress.Commands.add('assertNotificationContainingText', (text) => {
-  cy.get('#notification').should('to.contain', text);
+  cy.get('#notification').should('to.contain', text).should('be.visible');
 });
 
 Cypress.Commands.add(
@@ -226,5 +393,47 @@ Cypress.Commands.add(
     cy.getCell(rowIndex, columnName)
       .find('.data-table-value-nonstring')
       .should('to.exist');
+  }
+);
+
+/**
+ * Performs drag and drop on target and source item
+ */
+Cypress.Commands.add('dragAndDrop', (sourceSelector, targetSelector) => {
+  cy.get(sourceSelector).trigger('mousedown', { which: 1 });
+
+  cy.get(targetSelector)
+    .trigger('mousemove')
+    .trigger('mouseup', { force: true });
+});
+
+Cypress.Commands.add(
+  'loadAndVisitSampleJSONProject',
+  (projectName, fixture) => {
+    cy.visitOpenRefine();
+    cy.navigateTo('Create Project');
+    cy.get('#create-project-ui-source-selection-tabs > div')
+      .contains('Clipboard')
+      .click();
+
+    cy.get('textarea').invoke('val', fixture);
+    cy.get(
+      '.create-project-ui-source-selection-tab-body.selected button.button-primary'
+    )
+      .contains('Next »')
+      .click();
+    cy.get(
+      '.default-importing-wizard-header input[bind="projectNameInput"]'
+    ).clear();
+    cy.get(
+      '.default-importing-wizard-header input[bind="projectNameInput"]'
+    ).type(projectName);
+    // need to disable es-lint as force is required to true, if not then
+    // cypress won't detect the element due to `position:fixed` and overlays
+    cy.get('[data-cy=element0]') // eslint-disable-line
+      .first()
+      .scrollIntoView()
+      .click({ force: true });
+    cy.doCreateProjectThroughUserInterface();
   }
 );
