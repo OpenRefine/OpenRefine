@@ -21,10 +21,13 @@ const groups = [
 			'cypress/integration/project-management/*.spec.js',
 		],
 	},
-	// ,
-	// {
-	// 	// specs: ['cypress/integration/preferences/*.spec.js'],
-	// },
+	,
+	{
+		specs: [
+			'project/grid/all-column/*.spec.js',
+			'project/grid/column/edit-cells/*.spec.js',
+		],
+	},
 ];
 
 const merged_groups = groups.map((group) => group.specs.join(','));
