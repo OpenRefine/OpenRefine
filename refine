@@ -67,9 +67,9 @@ and <action> is one of
 
    test ................................ Run all OpenRefine tests
    server_test ......................... Run only the server tests
-   ui_test <browser> <id> <key> ........ Run only the UI tests (If passing a project Id and a Record Key, tests will be recorded in Cypress.io Dashboard)
    extensions_test ..................... Run only the extensions tests
-
+   run_test ............................ Run OpenRefine for the frontend tests
+   
    broker .............................. Run OpenRefine Broker
    
    broker_appengine_run <id> <ver> ..... Run OpenRefine Broker for Google App Engine in local server
@@ -482,25 +482,8 @@ test() {
     $MVN test
 }
 
-ui_test() {
-    get_revision
-
-    BROWSER="$1"
-    CYPRESS_PROJECT_ID="$2"
-    CYPRESS_RECORD_KEY="$3"
-    CYPRESS_RECORD=0
-
-    if [ -z "$BROWSER" ] ; then
-        BROWSER="electron"
-    fi
-    
-    if [ ! -z "$CYPRESS_PROJECT_ID" ] && [ ! -z "$CYPRESS_RECORD_KEY" ] ; then
-        CYPRESS_RECORD=1
-        echo "Tests will be recorded in Cypress Dashboard"
-    elif [ ! -z "$CYPRESS_PROJECT_ID" ] && [ -z "$CYPRESS_RECORD_KEY" ] ; then
-        fail "Found a Cypress project id but no record key"
-    fi
-
+# Run OpenRefine for tests
+run_test() {
     REFINE_DATA_DIR="${TMPDIR:=/tmp}/openrefine-tests"
     
     add_option "-Drefine.headless=true"
@@ -512,43 +495,8 @@ ui_test() {
     echo "Waiting for OpenRefine to load..."
     sleep 5
     check_running
-    if [ -z "$RUNNING" ] ; then
-        sleep 10
-    fi
-    echo "... proceed with the tests."
-    echo ""
-
-    echo "Starting Cypress..."
-    CYPRESS_RUN_CMD="yarn --cwd ./main/tests/cypress run cypress run --browser $BROWSER --headless --quiet --reporter list --env OPENREFINE_URL=http://$REFINE_HOST_INTERNAL:$REFINE_PORT"
-    if [ "$CYPRESS_RECORD" = "1" ] ; then
-        # if tests are recorded, project id is added to env vars, and --record flag is added to the cmd-line
-        export CYPRESS_PROJECT_ID=$CYPRESS_PROJECT_ID
-        CYPRESS_RUN_CMD="$CYPRESS_RUN_CMD --record --key $CYPRESS_RECORD_KEY --tag $BROWSER,$REVISION"
-    fi
-    export MOZ_FORCE_DISABLE_E10S=1
-    echo $CYPRESS_RUN_CMD
-    $CYPRESS_RUN_CMD
-
-    if [ "$?" = "0" ] ; then
-        UI_TEST_SUCCESS="1"
-    else
-        UI_TEST_SUCCESS="0"
-    fi
-
-    if [ "$CYPRESS_RECORD" = "1" ] ; then
-        echo "You can review tests on Cypress.io: https://dashboard.cypress.io/projects/$CYPRESS_PROJECT_ID/runs"
-    fi
-    
-    echo ""
-    echo "Killing OpenRefine"
-    /bin/kill -9 $REFINE_PID
-    echo "Cleaning up"
-    rm -rf "$REFINE_DATA_DIR"
-
-    if [ "$UI_TEST_SUCCESS" = "0" ] ; then
-        error "The UI test suite failed."
-    fi
 }
+
 
 server_test() {
     mvn_prepare
@@ -981,8 +929,7 @@ case "$ACTION" in
   distclean) mvn distclean;;
   test) test $1;;  
   tests) test $1;;  
-  ui_test) ui_test $1 $2 $3;;  
-  ui_tests) ui_test $1 $2 $3;;  
+  run_test) run_test;;   
   server_test) server_test $1;;  
   server_tests) server_test $1;;  
   extensions_test) extensions_test $1;;
