@@ -6,6 +6,18 @@ on:
       - 'docs/**'
 
 jobs:
+  test_env_vars:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2.3.4
+        with:
+          ref: ${{ github.event.pull_request.head.ref }}
+          repository: ${{ github.event.pull_request.head.repo.full_name }}
+      - id: test
+        run: sh ./test.sh
+        env:
+          browsers: chrome
+          test: hello
   prepare_ui_test_matrix:
     runs-on: ubuntu-latest
     outputs:
@@ -90,19 +102,19 @@ jobs:
           npm i -g yarn
           yarn install
 
-      - name: Cypress run
-        uses: cypress-io/github-action@v2
-        with:
-          browser: ${{ matrix.browser }}
-          working-directory: ./main/tests/cypress
-          spec: ${{ matrix.specs }}
-          wait-on: 'http://localhost:3333'
-          record: true
-          # group: '${{ matrix.browser }}-${{ github.run_id }}'
-          # parallel: true
-          # ci-build-id: '${{ github.run_id }}'
-          ci-build-id: '${{ github.run_id }}'
-          config: ciBuildId=${{ github.run_id }}
+      # - name: Cypress run
+      #   uses: cypress-io/github-action@v2
+        # with:
+        #   browser: ${{ matrix.browser }}
+        #   working-directory: ./main/tests/cypress
+        #   spec: ${{ matrix.specs }}
+        #   wait-on: 'http://localhost:3333'
+        #   record: true
+        #   # group: '${{ matrix.browser }}-${{ github.run_id }}'
+        #   # parallel: true
+        #   # ci-build-id: '${{ github.run_id }}'
+        #   ci-build-id: '${{ github.run_id }}'
+        #   config: ciBuildId=${{ github.run_id }}
 
         env:
           # pass the Dashboard record key as an environment variable
