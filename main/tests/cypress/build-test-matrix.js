@@ -18,7 +18,7 @@ const groups = [
 			'cypress/integration/language/**/*.spec.js',
 			'cypress/integration/open-project/**/*.spec.js',
 			'cypress/integration/preferences/**/*.spec.js',
-			'cypress/integration/project-management/**/*.spec.js',
+			'cypress/integration/project_management/**/*.spec.js',
 		],
 	},
 	{
