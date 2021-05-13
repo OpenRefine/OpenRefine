@@ -11,10 +11,10 @@ const glob = require('glob');
 // Those specs paths are glob patterns
 const groups = [
 	{
-		specs: ['integration/language/*.spec.js'],
+		specs: ['cypress/integration/language/*.spec.js'],
 	},
 	{
-		specs: ['integration/preferences/*.spec.js'],
+		specs: ['cypress/integration/preferences/*.spec.js'],
 	},
 ];
 
@@ -24,7 +24,7 @@ const merged_groups = groups.map((group) => group.specs.join(','));
 const matchedFiles = [];
 groups.forEach((group) => {
 	group.specs.forEach((pattern) => {
-		const files = glob.sync(`main/tests/cypress/cypress/${pattern}`);
+		const files = glob.sync(`main/tests/cypress/${pattern}`);
 		matchedFiles.push(...files);
 	});
 });
