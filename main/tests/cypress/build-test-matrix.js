@@ -75,12 +75,11 @@ for (file of allSpecFiles) {
 	}
 }
 
-// if (missedFiles.length) {
-// 	mergedGroups.push(missedFiles.join(','));
-// }
+if (missedFiles.length) {
+	mergedGroups.push(missedFiles.join(','));
+}
 
-// const browsers = process.env.browsers.split(',');
-const browsers = ['chrome'];
+const browsers = process.env.browsers.split(',');
 console.log(
 	`::set-output name=matrix::{"browser":${JSON.stringify(
 		browsers
