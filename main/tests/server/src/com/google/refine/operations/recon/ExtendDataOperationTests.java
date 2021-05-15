@@ -249,7 +249,7 @@ public class ExtendDataOperationTests extends RefineTest {
       		  "{"
   			+ "\"rows\": {"
   			+ "    \"Q794\": {\"P297\": [{\"str\": \"IR\"}]},"
-  			+ "    \"Q863\": {\"P297\": [{\"str\": \"TJ\"}]},"
+  			+ "    \"Q863\": {\"P297\": []},"
   			+ "    \"Q30\": {\"P297\": [{\"str\": \"US\"}]},"
   			+ "    \"Q17\": {\"P297\": [{\"str\": \"JP\"}]}"
   			+ "},"
@@ -270,7 +270,7 @@ public class ExtendDataOperationTests extends RefineTest {
         // Inspect rows
         Assert.assertTrue("IR".equals(project.rows.get(0).getCellValue(1)), "Bad country code for Iran.");
         Assert.assertTrue("JP".equals(project.rows.get(1).getCellValue(1)), "Bad country code for Japan.");
-        Assert.assertTrue("TJ".equals(project.rows.get(2).getCellValue(1)), "Bad country code for Tajikistan.");
+        Assert.assertNull(project.rows.get(2).getCell(1), "Expected a null country code.");
         Assert.assertTrue("US".equals(project.rows.get(3).getCellValue(1)), "Bad country code for United States.");
 
         // Make sure we did not create any recon stats for that column (no reconciled value)
