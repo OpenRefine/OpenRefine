@@ -210,5 +210,13 @@ public class HttpClient {
             }
             return interval;
         }
+        
+        /**
+         * Even our POST requests should be retried, they are deemed idempotent
+         */
+        @Override
+        public boolean handleAsIdempotent(final HttpRequest request) {
+            return true;
+        }
     }
 }
