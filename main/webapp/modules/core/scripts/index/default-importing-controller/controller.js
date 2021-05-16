@@ -94,9 +94,6 @@ Refine.DefaultImportingController.prototype.startImportJob = function(form, prog
             "jobID": jobID,
             "subCommand": "load-raw-data",
             "csrf_token": token,
-            "accept": $(form).find('input[name="accept"]').val(),
-            "user-agent": $(form).find('input[name="user-agent"]').val(),
-            "authorization": $(form).find('input[name="authorization"]').val(),
             }));
             form[0].submit();
 

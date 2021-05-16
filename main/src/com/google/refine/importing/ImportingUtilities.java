@@ -86,6 +86,7 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.refine.ProjectManager;
 import com.google.refine.ProjectMetadata;
+import com.google.refine.commands.HttpHeadersSupport;
 import com.google.refine.importing.ImportingManager.Format;
 import com.google.refine.importing.UrlRewriter.Result;
 import com.google.refine.model.Project;
@@ -329,11 +330,12 @@ public class ImportingUtilities {
                         };
 
                         HttpClient httpClient = new HttpClient();
-                        Header acceptHeader = new BasicHeader(HttpHeaders.ACCEPT, parameters.get("accept"));
-                        Header userAgentHeader = new BasicHeader(HttpHeaders.USER_AGENT, parameters.get("user-agent"));
-                        Header authorizationHeader = new BasicHeader(HttpHeaders.AUTHORIZATION, parameters.get("authorization"));
-                        Header[] headers = { acceptHeader, userAgentHeader, authorizationHeader };
-                        if (httpClient.getResponse(urlString, headers, responseHandler) != null) {
+                        List<Header> headers = new ArrayList<Header>();
+                        for (String headerLabel : HttpHeadersSupport.getHttpHeaderLabels()) {
+                          final Integer headerCount = new Integer(downloadCount + archiveCount);
+                          headers.add(new BasicHeader(headerLabel, getRequestHeaderValue(tempFiles, headerLabel, headerCount)));
+                        }
+                        if (httpClient.getResponse(urlString, headers.toArray(new Header[headers.size()]), responseHandler) != null) {
                             archiveCount++;
                         };
                         downloadCount++;
@@ -405,6 +407,18 @@ public class ImportingUtilities {
         JSONUtilities.safePut(retrievalRecord, "downloadCount", downloadCount);
         JSONUtilities.safePut(retrievalRecord, "clipboardCount", clipboardCount);
         JSONUtilities.safePut(retrievalRecord, "archiveCount", archiveCount);
+    }
+    
+    private static String getRequestHeaderValue(List<FileItem> tempFiles, String headerLabel, final int requestNumber)
+                    throws IOException {
+        for (FileItem fileItem : tempFiles) {
+            InputStream stream = fileItem.getInputStream();
+            String name = fileItem.getFieldName().toLowerCase();
+            if (name.equalsIgnoreCase(headerLabel + Integer.toString(requestNumber))) {
+                    return Streams.asString(stream);
+            }
+        }
+        return "";
     }
 
     private static boolean saveStream(InputStream stream, URL url, File rawDataDir, final Progress progress,

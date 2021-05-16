@@ -1,6 +1,6 @@
 /*
 
-Copyright 2021, sjathin
+Copyright 2021, OpenRefine
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
