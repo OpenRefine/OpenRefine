@@ -3,7 +3,7 @@ For exporting to a database, other code can be found under folder `OpenRefine/ma
 
 INSTALL
 
-1. Before installing this extension download OpenRefine code from http://github.com/OpenRefine/OpenRefine 
+1. Before installing this extension download OpenRefine code from https://github.com/OpenRefine/OpenRefine 
 
 2. Pull this extension's code into folder `/database` under folder `/extensions`. 
 For more information on how to write OpenRefine extensions and where to put the files see https://docs.openrefine.org/technical-reference/writing-extensions#introduction
