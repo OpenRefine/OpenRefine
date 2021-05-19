@@ -74,15 +74,15 @@ public class WbDateConstantTest extends WbExpressionTest<TimeValue> {
     @Test
     public void testEvaluate() {
         
-        evaluatesTo(Datamodel.makeTimeValue(1001, (byte) 1, (byte) 1, (byte) 0, (byte) 0, (byte) 0, (byte) 6, 0, 0, 0,
+        evaluatesTo(Datamodel.makeTimeValue(1001, (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 6, 0, 0, 0,
                 TimeValue.CM_GREGORIAN_PRO), millenium);
-        evaluatesTo(Datamodel.makeTimeValue(1701, (byte) 1, (byte) 1, (byte) 0, (byte) 0, (byte) 0, (byte) 7, 0, 0, 0,
+        evaluatesTo(Datamodel.makeTimeValue(1701, (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 7, 0, 0, 0,
                 TimeValue.CM_GREGORIAN_PRO), century);
-        evaluatesTo(Datamodel.makeTimeValue(1990, (byte) 1, (byte) 1, (byte) 0, (byte) 0, (byte) 0, (byte) 8, 0, 0, 0,
+        evaluatesTo(Datamodel.makeTimeValue(1990, (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 8, 0, 0, 0,
                 TimeValue.CM_GREGORIAN_PRO), decade);
-        evaluatesTo(Datamodel.makeTimeValue(2018, (byte) 1, (byte) 1, (byte) 0, (byte) 0, (byte) 0, (byte) 9, 0, 0, 0,
+        evaluatesTo(Datamodel.makeTimeValue(2018, (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 9, 0, 0, 0,
                 TimeValue.CM_GREGORIAN_PRO), year);
-        evaluatesTo(Datamodel.makeTimeValue(2018, (byte) 2, (byte) 1, (byte) 0, (byte) 0, (byte) 0, (byte) 10, 0, 0, 0,
+        evaluatesTo(Datamodel.makeTimeValue(2018, (byte) 2, (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 10, 0, 0, 0,
                 TimeValue.CM_GREGORIAN_PRO), month);
         evaluatesTo(Datamodel.makeTimeValue(2018, (byte) 2, (byte) 27, (byte) 0, (byte) 0, (byte) 0, (byte) 11, 0, 0, 0,
                 TimeValue.CM_GREGORIAN_PRO), day);
@@ -94,11 +94,11 @@ public class WbDateConstantTest extends WbExpressionTest<TimeValue> {
         evaluatesTo(Datamodel.makeTimeValue(2018, (byte) 2, (byte) 27, (byte) 0, (byte) 0, (byte) 0, (byte) 11, 0, 0, 0,
                 TimeValue.CM_GREGORIAN_PRO), whitespace);
         
-        evaluatesTo(Datamodel.makeTimeValue(1320, (byte) 1, (byte) 1, (byte) 0, (byte) 0, (byte) 0, (byte) 8, 0, 0, 0,
+        evaluatesTo(Datamodel.makeTimeValue(1320, (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 8, 0, 0, 0,
                 TimeValue.CM_JULIAN_PRO), julianDecade);
-        evaluatesTo(Datamodel.makeTimeValue(1324, (byte) 1, (byte) 1, (byte) 0, (byte) 0, (byte) 0, (byte) 9, 0, 0, 0,
+        evaluatesTo(Datamodel.makeTimeValue(1324, (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 9, 0, 0, 0,
                 TimeValue.CM_JULIAN_PRO), julianYear);
-        evaluatesTo(Datamodel.makeTimeValue(1324, (byte) 2, (byte) 1, (byte) 0, (byte) 0, (byte) 0, (byte) 10, 0, 0, 0,
+        evaluatesTo(Datamodel.makeTimeValue(1324, (byte) 2, (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 10, 0, 0, 0,
                 TimeValue.CM_JULIAN_PRO), julianMonth);
         evaluatesTo(Datamodel.makeTimeValue(1324, (byte) 2, (byte) 27, (byte) 0, (byte) 0, (byte) 0, (byte) 11, 0, 0, 0,
                 TimeValue.CM_JULIAN_PRO), julianDay);
@@ -106,15 +106,15 @@ public class WbDateConstantTest extends WbExpressionTest<TimeValue> {
 
     @Test
     public void testEvaluateBCE() {
-        evaluatesTo(Datamodel.makeTimeValue(-1001, (byte) 1, (byte) 1, (byte) 0, (byte) 0, (byte) 0, (byte) 6, 0, 0, 0,
+        evaluatesTo(Datamodel.makeTimeValue(-1001, (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 6, 0, 0, 0,
                 TimeValue.CM_GREGORIAN_PRO), BCEmillenium);
-        evaluatesTo(Datamodel.makeTimeValue(-1701, (byte) 1, (byte) 1, (byte) 0, (byte) 0, (byte) 0, (byte) 7, 0, 0, 0,
+        evaluatesTo(Datamodel.makeTimeValue(-1701, (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 7, 0, 0, 0,
                 TimeValue.CM_GREGORIAN_PRO), BCEcentury);
-        evaluatesTo(Datamodel.makeTimeValue(-1990, (byte) 1, (byte) 1, (byte) 0, (byte) 0, (byte) 0, (byte) 8, 0, 0, 0,
+        evaluatesTo(Datamodel.makeTimeValue(-1990, (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 8, 0, 0, 0,
                 TimeValue.CM_GREGORIAN_PRO), BCEdecade);
-        evaluatesTo(Datamodel.makeTimeValue(-2018, (byte) 1, (byte) 1, (byte) 0, (byte) 0, (byte) 0, (byte) 9, 0, 0, 0,
+        evaluatesTo(Datamodel.makeTimeValue(-2018, (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 9, 0, 0, 0,
                 TimeValue.CM_GREGORIAN_PRO), BCEyear);
-        evaluatesTo(Datamodel.makeTimeValue(-2018, (byte) 2, (byte) 1, (byte) 0, (byte) 0, (byte) 0, (byte) 10, 0, 0, 0,
+        evaluatesTo(Datamodel.makeTimeValue(-2018, (byte) 2, (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 10, 0, 0, 0,
                 TimeValue.CM_GREGORIAN_PRO), BCEmonth);
         evaluatesTo(Datamodel.makeTimeValue(-2018, (byte) 2, (byte) 27, (byte) 0, (byte) 0, (byte) 0, (byte) 11, 0, 0, 0,
                 TimeValue.CM_GREGORIAN_PRO), BCEday);
@@ -126,11 +126,11 @@ public class WbDateConstantTest extends WbExpressionTest<TimeValue> {
         evaluatesTo(Datamodel.makeTimeValue(-2018, (byte) 2, (byte) 27, (byte) 0, (byte) 0, (byte) 0, (byte) 11, 0, 0, 0,
                 TimeValue.CM_GREGORIAN_PRO), BCEwhitespace);
 
-        evaluatesTo(Datamodel.makeTimeValue(-1320, (byte) 1, (byte) 1, (byte) 0, (byte) 0, (byte) 0, (byte) 8, 0, 0, 0,
+        evaluatesTo(Datamodel.makeTimeValue(-1320, (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 8, 0, 0, 0,
                 TimeValue.CM_JULIAN_PRO), BCEjulianDecade);
-        evaluatesTo(Datamodel.makeTimeValue(-1324, (byte) 1, (byte) 1, (byte) 0, (byte) 0, (byte) 0, (byte) 9, 0, 0, 0,
+        evaluatesTo(Datamodel.makeTimeValue(-1324, (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 9, 0, 0, 0,
                 TimeValue.CM_JULIAN_PRO), BCEjulianYear);
-        evaluatesTo(Datamodel.makeTimeValue(-1324, (byte) 2, (byte) 1, (byte) 0, (byte) 0, (byte) 0, (byte) 10, 0, 0, 0,
+        evaluatesTo(Datamodel.makeTimeValue(-1324, (byte) 2, (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 10, 0, 0, 0,
                 TimeValue.CM_JULIAN_PRO), BCEjulianMonth);
         evaluatesTo(Datamodel.makeTimeValue(-1324, (byte) 2, (byte) 27, (byte) 0, (byte) 0, (byte) 0, (byte) 11, 0, 0, 0,
                 TimeValue.CM_JULIAN_PRO), BCEjulianDay);

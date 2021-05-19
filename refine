@@ -483,6 +483,14 @@ test() {
 }
 
 ui_test() {
+    download http://okfnlabs.org/reconcile-csv/dist/reconcile-csv-0.1.2.jar ./tools/reconcile-csv-0.1.2.jar
+    RECONCILE_SERVER_CMD="$JAVA -Xmx2g -jar ./tools/reconcile-csv-0.1.2.jar  ./main/tests/cypress/cypress/fixtures/csv-reconcile-species.csv scientific_name taxon_id"
+    echo "Starting reconcile-csv-0.1.2 ..."
+    $RECONCILE_SERVER_CMD 2>&1 &
+    RECONCILE_SERVER_PID="$!"
+    
+
+
     get_revision
 
     BROWSER="$1"
@@ -542,6 +550,8 @@ ui_test() {
     echo ""
     echo "Killing OpenRefine"
     /bin/kill -9 $REFINE_PID
+    echo "Killing Reconciliation Server"
+    /bin/kill -9 $RECONCILE_SERVER_PID
     echo "Cleaning up"
     rm -rf "$REFINE_DATA_DIR"
 
