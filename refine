@@ -485,8 +485,8 @@ test() {
 ui_tests() {
     get_revision
 
-    CYPRESS_PROJECT_ID="$2"
-    CYPRESS_RECORD_KEY="$3"
+    # CYPRESS_PROJECT_ID="$2"
+    # CYPRESS_RECORD_KEY="$3"
     CYPRESS_RECORD=0
 
     if [ -z "$CYPRESS_BROWSER" ] ; then
@@ -526,27 +526,27 @@ ui_tests() {
     fi
     export MOZ_FORCE_DISABLE_E10S=1
     echo $CYPRESS_RUN_CMD
-    # $CYPRESS_RUN_CMD
+    $CYPRESS_RUN_CMD
 
-    # if [ "$?" = "0" ] ; then
-    #     UI_TEST_SUCCESS="1"
-    # else
-    #     UI_TEST_SUCCESS="0"
-    # fi
+    if [ "$?" = "0" ] ; then
+        UI_TEST_SUCCESS="1"
+    else
+        UI_TEST_SUCCESS="0"
+    fi
 
-    # if [ "$CYPRESS_RECORD" = "1" ] ; then
-    #     echo "You can review tests on Cypress.io: https://dashboard.cypress.io/projects/$CYPRESS_PROJECT_ID/runs"
-    # fi
+    if [ "$CYPRESS_RECORD" = "1" ] ; then
+        echo "You can review tests on Cypress.io: https://dashboard.cypress.io/projects/$CYPRESS_PROJECT_ID/runs"
+    fi
     
-    # echo ""
-    # echo "Killing OpenRefine"
-    # /bin/kill -9 $REFINE_PID
-    # echo "Cleaning up"
-    # rm -rf "$REFINE_DATA_DIR"
+    echo ""
+    echo "Killing OpenRefine"
+    /bin/kill -9 $REFINE_PID
+    echo "Cleaning up"
+    rm -rf "$REFINE_DATA_DIR"
 
-    # if [ "$UI_TEST_SUCCESS" = "0" ] ; then
-    #     error "The UI test suite failed."
-    # fi
+    if [ "$UI_TEST_SUCCESS" = "0" ] ; then
+        error "The UI test suite failed."
+    fi
 }
 
 
