@@ -490,8 +490,6 @@ ui_tests() {
     $RECONCILE_SERVER_CMD 2>&1 &
     RECONCILE_SERVER_PID="$!"
     
-
-
     get_revision
 
     # CYPRESS_PROJECT_ID="$2"
