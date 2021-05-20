@@ -39,6 +39,8 @@ const groups = [
 		specs: [
 			'cypress/integration/project/grid/column/transpose/**/*.spec.js',
 			'cypress/integration/project/grid/column/view/**/*.spec.js',
+			'cypress/integration/project/grid/column/reconcile/**/*.spec.js',
+
 			'cypress/integration/project/grid/misc/**/*.spec.js',
 			'cypress/integration/project/grid/row/**/*.spec.js',
 		],
@@ -49,6 +51,9 @@ const groups = [
 			'cypress/integration/project/project-header/**/*.spec.js',
 			'cypress/integration/project/undo_redo/**/*.spec.js',
 		],
+	},
+	{
+		specs: ['cypress/integration/tutorial/*.spec.js'],
 	},
 ];
 
@@ -65,19 +70,25 @@ groups.forEach((group) => {
 // console.log('matched', matchedFiles);
 
 // step2 , add a last group that contains missed files
-const allSpecFiles = glob.sync(`cypress/integration/**/*.spec.js`);
+const allSpecFiles = glob.sync(
+	`./main/tests/cypress/cypress/integration/**/*.spec.js`
+);
 const missedFiles = [];
 // console.log(allSpecFiles);
 for (file of allSpecFiles) {
-	if (!matchedFiles.includes(file)) {
-		missedFiles.push(file);
+	const relativeFile = file.substring('./main/tests/cypress/'.length);
+	// console.log(file);
+	if (!matchedFiles.includes(file.substring(2))) {
+		missedFiles.push(relativeFile);
 	}
 }
+// console.log(matchedFiles);
+// console.log(missedFiles);
 
 if (missedFiles.length) {
 	mergedGroups.push(missedFiles.join(','));
 }
-
+// const browsers = 'chrome';
 const browsers = process.env.browsers.split(',');
 console.log(
 	`::set-output name=matrix::{"browser":${JSON.stringify(
