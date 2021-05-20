@@ -518,7 +518,8 @@ ui_tests() {
     echo ""
 
     echo "Starting Cypress..."
-    CYPRESS_RUN_CMD="yarn --cwd ./main/tests/cypress run cypress run --spec "$CYPRESS_SPECS" --browser $CYPRESS_BROWSER --headless --quiet --reporter list --env OPENREFINE_URL=http://$REFINE_HOST_INTERNAL:$REFINE_PORT"
+    CYPRESS_GROUP=$(echo $CYPRESS_SPECS | shasum)
+    CYPRESS_RUN_CMD="yarn --cwd ./main/tests/cypress run cypress run --spec "$CYPRESS_SPECS" --browser $CYPRESS_BROWSER --group "$CYPRESS_GROUP" --headless --quiet --reporter list --env OPENREFINE_URL=http://$REFINE_HOST_INTERNAL:$REFINE_PORT"
     if [ "$CYPRESS_RECORD" = "1" ] ; then
         # if tests are recorded, project id is added to env vars, and --record flag is added to the cmd-line
         export CYPRESS_PROJECT_ID=$CYPRESS_PROJECT_ID
