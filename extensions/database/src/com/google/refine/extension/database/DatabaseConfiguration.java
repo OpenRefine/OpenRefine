@@ -43,7 +43,6 @@ public class DatabaseConfiguration {
     //optional parameters
     private boolean useSSL;
     
-    
     public String getConnectionName() {
         return connectionName;
     }
