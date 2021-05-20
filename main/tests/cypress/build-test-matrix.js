@@ -65,9 +65,7 @@ groups.forEach((group) => {
 // console.log('matched', matchedFiles);
 
 // step2 , add a last group that contains missed files
-const allSpecFiles = glob.sync(
-	`main/tests/cypress/cypress/integration/**/*.spec.js`
-);
+const allSpecFiles = glob.sync(`cypress/integration/**/*.spec.js`);
 const missedFiles = [];
 // console.log(allSpecFiles);
 for (file of allSpecFiles) {
