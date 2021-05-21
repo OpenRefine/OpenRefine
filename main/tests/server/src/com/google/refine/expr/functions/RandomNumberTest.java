@@ -38,6 +38,7 @@ import com.google.refine.expr.EvalError;
 import com.google.refine.grel.Function;
 import com.google.refine.util.TestUtils;
 import com.google.refine.expr.functions.*;
+import com.google.refine.expr.functions.math.*;
 
 public class RandomNumberTest extends RefineTest {
 
@@ -58,7 +59,7 @@ public class RandomNumberTest extends RefineTest {
         for(int i = 1; i<=100; i++) {
             Object a = rn.call(bindings, new Object[]{1, 10, "long"});
             assertTrue(a.getClass() == Long.class);
-            assertTrue(a>=1 && a<10);
+            assertTrue((long)a>=1 && (long)a<10);
         }
     }
 
@@ -68,7 +69,7 @@ public class RandomNumberTest extends RefineTest {
         for(int i = 1; i<=100; i++) {
             Object a = rn.call(bindings, new Object[]{1, 10, "double"});
             assertTrue(a.getClass() == Double.class);
-            assertTrue(a>=1 && a<=10);
+            assertTrue((double)a>=1 && (double)a<=10);
         }
     }
 
