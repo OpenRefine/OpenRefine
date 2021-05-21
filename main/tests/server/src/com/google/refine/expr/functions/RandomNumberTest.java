@@ -53,7 +53,7 @@ public class RandomNumberTest extends RefineTest {
     }
 
     @Test
-    public void testRandomNumberWithThreeParam() {
+    public void testRandomNumberWithThreeParamLongType() {
         RandomNumber rn = new RandomNumber();
         for(int i = 1; i<=100; i++) {
             Object a = rn.call(bindings, new Object[]{1, 10, "long"});
@@ -63,7 +63,7 @@ public class RandomNumberTest extends RefineTest {
     }
 
     @Test
-    public void testRandomNumberWithThreeParam() {
+    public void testRandomNumberWithThreeParamDoubleType() {
         RandomNumber rn = new RandomNumber();
         for(int i = 1; i<=100; i++) {
             Object a = rn.call(bindings, new Object[]{1, 10, "double"});
