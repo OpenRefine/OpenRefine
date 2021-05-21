@@ -1,11 +1,3 @@
-// !/usr/bin/env bash
-// set -e
-
-// GROUP1=cypress/integration/open-project/*.spec.js
-// GROUP2=cypress/integration/language/*.spec.js
-// BROWSERS=
-// echo
-
 const glob = require('glob');
 
 // Those specs paths are glob patterns
@@ -68,28 +60,24 @@ groups.forEach((group) => {
 		matchedFiles.push(...files);
 	});
 });
-// console.log('matched', matchedFiles);
 
 // step2 , add a last group that contains missed files
 const allSpecFiles = glob.sync(
 	`./main/tests/cypress/cypress/integration/**/*.spec.js`
 );
 const missedFiles = [];
-// console.log(allSpecFiles);
+
 for (file of allSpecFiles) {
 	const relativeFile = file.substring('./main/tests/cypress/'.length);
-	// console.log(file);
 	if (!matchedFiles.includes(file.substring(2))) {
 		missedFiles.push(relativeFile);
 	}
 }
-// console.log(matchedFiles);
-// console.log(missedFiles);
 
 if (missedFiles.length) {
 	mergedGroups.push(missedFiles.join(','));
 }
-// const browsers = 'chrome';
+
 const browsers = process.env.browsers.split(',');
 console.log(
 	`::set-output name=matrix::{"browser":${JSON.stringify(
