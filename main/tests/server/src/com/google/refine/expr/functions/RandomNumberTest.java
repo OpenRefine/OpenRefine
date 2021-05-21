@@ -48,7 +48,7 @@ public class RandomNumberTest extends RefineTest {
     public void testRandomNumberWithTwoParam() {
         RandomNumber rn = new RandomNumber();
         for(int i = 1; i<=100; i++) {
-            int a = rn.call(bindings, new Object[]{1, 10});
+            int a = rn.call(bindings, new Object[]{Long.valueOf(1), Long.valueOf(10)});
             assertTrue(a>=1 && a<10);
         }
     }
@@ -57,7 +57,7 @@ public class RandomNumberTest extends RefineTest {
     public void testRandomNumberWithThreeParamLongType() {
         RandomNumber rn = new RandomNumber();
         for(int i = 1; i<=100; i++) {
-            Object a = rn.call(bindings, new Object[]{1, 10, "long"});
+            Object a = rn.call(bindings, new Object[]{Long.valueOf(1), Long.valueOf(10), "long"});
             assertTrue(a.getClass() == Long.class);
             assertTrue((long)a>=1 && (long)a<10);
         }
@@ -67,7 +67,7 @@ public class RandomNumberTest extends RefineTest {
     public void testRandomNumberWithThreeParamDoubleType() {
         RandomNumber rn = new RandomNumber();
         for(int i = 1; i<=100; i++) {
-            Object a = rn.call(bindings, new Object[]{1, 10, "double"});
+            Object a = rn.call(bindings, new Object[]{Long.valueOf(1), Long.valueOf(10), "double"});
             assertTrue(a.getClass() == Double.class);
             assertTrue((double)a>=1 && (double)a<=10);
         }
