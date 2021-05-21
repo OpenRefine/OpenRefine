@@ -48,7 +48,7 @@ public class RandomNumberTest extends RefineTest {
     public void testRandomNumberWithTwoParam() {
         RandomNumber rn = new RandomNumber();
         for(int i = 1; i<=100; i++) {
-            int a = rn.call(bindings, new Object[]{Long.valueOf(1), Long.valueOf(10)});
+            int a = (int)rn.call(bindings, new Object[]{Long.valueOf(1), Long.valueOf(10)});
             assertTrue(a>=1 && a<10);
         }
     }
