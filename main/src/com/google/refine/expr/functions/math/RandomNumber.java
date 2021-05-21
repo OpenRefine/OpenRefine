@@ -57,7 +57,7 @@ public class RandomNumber implements Function {
                 if (o3 != null && o3 instanceof String) {
                     String type = ((String ) o3).toLowerCase();
                     if(type == "long"){
-                        return randomNum;
+                        return (long)randomNum;
                     } else if(type == "double"){
                         double randomDoubleNum = 1.0 * Math.round(100 * (low + Math.random()*(high - low))) / 100;
                         return randomDoubleNum;
