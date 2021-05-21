@@ -39,7 +39,7 @@ import com.google.refine.grel.Function;
 import com.google.refine.util.TestUtils;
 import com.google.refine.expr.functions.*;
 
-public class ToNumberTests extends RefineTest {
+public class RandomNumberTest extends RefineTest {
 
     static Properties bindings = new Properties();
 
