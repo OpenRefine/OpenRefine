@@ -492,8 +492,6 @@ ui_tests() {
     
     get_revision
 
-    # CYPRESS_PROJECT_ID="$2"
-    # CYPRESS_RECORD_KEY="$3"
     CYPRESS_RECORD=0
 
     if [ -z "$CYPRESS_BROWSER" ] ; then
@@ -525,6 +523,8 @@ ui_tests() {
     echo ""
 
     echo "Starting Cypress..."
+    # Cypress needs a unique group id
+    # We're hashing the list of files to generate such Group Id
     CYPRESS_GROUP=$(echo $CYPRESS_BROWSER$CYPRESS_SPECS | shasum)
     CYPRESS_RUN_CMD="yarn --cwd ./main/tests/cypress run cypress run --spec "$CYPRESS_SPECS" --browser $CYPRESS_BROWSER --group "$CYPRESS_GROUP" --headless --quiet --reporter list --env OPENREFINE_URL=http://$REFINE_HOST_INTERNAL:$REFINE_PORT"
     if [ "$CYPRESS_RECORD" = "1" ] ; then
