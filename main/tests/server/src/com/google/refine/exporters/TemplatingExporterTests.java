@@ -125,6 +125,29 @@ public class TemplatingExporterTests extends RefineTest {
 
         Assert.assertEquals(writer.toString(), prefix + suffix);
     }
+
+    @Test
+    public void exportCurlyBracesTemplate(){
+        CreateGrid(1,1);
+        String template = "{{\"\\}\\}\"}}";
+//        template="{{jsonize(cells[\"_ - version\"].value)}}";
+        when(options.getProperty("template")).thenReturn(template);
+        when(options.getProperty("prefix")).thenReturn(prefix);
+        when(options.getProperty("suffix")).thenReturn(suffix);
+        when(options.getProperty("separator")).thenReturn(rowSeparator);
+//        when(options.getProperty("preview")).thenReturn("false"); // optional true|false
+
+        try {
+            SUT.export(project, options, engine, writer);
+        } catch (IOException e) {
+            Assert.fail();
+        }
+        System.out.println(writer.toString());
+        Assert.assertEquals(writer.toString(),
+                prefix
+                        + "}}"
+                        + suffix);
+    }
     
     @Test
     public void exportSimpleTemplate(){
