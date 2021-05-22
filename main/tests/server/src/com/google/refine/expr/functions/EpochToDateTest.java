@@ -49,7 +49,7 @@ public class EpochToDateTest extends RefineTest {
     public void testEpoch2DateOneParam() {
         long epoch1 = epoch / 1000;
         EpochToDate etd = new EpochToDate();
-        assertTrue(etd.call(bindings, new Object[]{epoch}), "2017-01-22T11:23:42-06:00");
+        assertEquals(etd.call(bindings, new Object[]{epoch}), "2017-01-22T11:23:42-06:00");
     }
 
     @Test
@@ -58,9 +58,9 @@ public class EpochToDateTest extends RefineTest {
         long epochMilliSecond = epoch;
         long epochMicroSecond = epoch * 1000;
         EpochToDate etd = new EpochToDate();
-        assertTrue(etd.call(bindings, new Object[]{epochSecond, "second"}), "2017-01-22T11:23:42-06:00");
-        assertTrue(etd.call(bindings, new Object[]{epochMilliSecond, "millisecond"}), "2017-01-22T11:23:42-06:00");
-        assertTrue(etd.call(bindings, new Object[]{epochMicroSecond, "microsecond"}), "2017-01-22T11:23:42-06:00");
+        assertEquals(etd.call(bindings, new Object[]{epochSecond, "second"}), "2017-01-22T11:23:42-06:00");
+        assertEquals(etd.call(bindings, new Object[]{epochMilliSecond, "millisecond"}), "2017-01-22T11:23:42-06:00");
+        assertEquals(etd.call(bindings, new Object[]{epochMicroSecond, "microsecond"}), "2017-01-22T11:23:42-06:00");
     }
 
 }
