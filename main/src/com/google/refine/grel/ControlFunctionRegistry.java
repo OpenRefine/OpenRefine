@@ -50,7 +50,6 @@ import com.google.refine.expr.functions.Slice;
 import com.google.refine.expr.functions.ToDate;
 import com.google.refine.expr.functions.ToNumber;
 import com.google.refine.expr.functions.ToString;
-import com.google.refine.expr.functions.EpochToDate;
 import com.google.refine.expr.functions.Type;
 import com.google.refine.expr.functions.arrays.InArray;
 import com.google.refine.expr.functions.arrays.Join;
@@ -207,7 +206,6 @@ public class ControlFunctionRegistry {
         registerFunction("toString", new ToString());
         registerFunction("toNumber", new ToNumber());
         registerFunction("toDate", new ToDate());
-        registerFunction("epochToDate", new EpochToDate());
 
         registerFunction("toUppercase", new ToUppercase());
         registerFunction("toLowercase", new ToLowercase());
