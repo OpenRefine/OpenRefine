@@ -145,7 +145,7 @@ public class GetScatterplotCommand extends Command {
         @JsonProperty(ScatterplotFacet.ROTATION)
         public void setRotation(Object rotation) {
         	try {
-        		this.rotation = Integer.parseInt(rotation.toString());
+        		this.rotation = ScatterplotFacet.ScatterplotFacetConfig.getRotation(rotation.toString());
         	} catch(NumberFormatException e) {
         		;
         	}
