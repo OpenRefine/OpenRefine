@@ -43,10 +43,11 @@ import com.google.refine.expr.functions.*;
 public class EpochToDateTest extends RefineTest {
 
     long epoch = 0;
-    try {
-	epoch = new java.text.SimpleDateFormat("MM/dd/yyyy HH:mm:ss").parse("01/23/2017 01:23:42").getTime();
-    } catch(ParseException e) {
-	System.out.println(e);
+    try{
+        epoch = new java.text.SimpleDateFormat("MM/dd/yyyy HH:mm:ss")
+                .parse("01/23/2017 01:23:42").getTime();
+    }catch (ParseException e){
+        System.out.println(e);
     }
     static Properties bindings = new Properties();
 
