@@ -68,4 +68,4 @@ public class RandomNumber implements Function {
         return "number";
     }
     
-}
+} 
