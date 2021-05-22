@@ -42,19 +42,24 @@ import com.google.refine.expr.functions.*;
 
 public class EpochToDateTest extends RefineTest {
 
-    long epoch = new java.text.SimpleDateFormat("MM/dd/yyyy HH:mm:ss")
-            .parse("01/23/2017 01:23:42").getTime();
+    long epoch = 0;
+	try {
+		epoch = new java.text.SimpleDateFormat("MM/dd/yyyy HH:mm:ss")
+			.parse("01/23/2017 01:23:42").getTime();
+	} catch(ParseException e) {
+		System.out.println(e);
+	}
     static Properties bindings = new Properties();
 
     @Test
-    public void testEpoch2DateOneParam() throws ParseException {
+    public void testEpoch2DateOneParam() {
         long epoch1 = epoch / 1000;
         EpochToDate etd = new EpochToDate();
         assertEquals(etd.call(bindings, new Object[]{epoch}), "2017-01-22T11:23:42-06:00");
     }
 
     @Test
-    public void testEpoch2DateTwoParam() throws ParseException {
+    public void testEpoch2DateTwoParam() {
         long epochSecond = epoch / 1000;
         long epochMilliSecond = epoch;
         long epochMicroSecond = epoch * 1000;
