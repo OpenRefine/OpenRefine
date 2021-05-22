@@ -439,6 +439,7 @@
     "core-views/facet": "Facet",
     "core-views/edit-cells": "Edit cells",
     "core-views/edit-column": "Edit column",
+    "core-views/edit-all-columns": "Edit all columns",
     "core-views/transpose": "Transpose",
     "core-views/sort": "Sort",
     "core-views/collapse-expand": "Collapse/expand columns to make viewing the data more convenient",

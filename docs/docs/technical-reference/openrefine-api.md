@@ -6,6 +6,10 @@ sidebar_label: OpenRefine API
 
 This is a generic API reference for interacting with OpenRefine's HTTP API.
 
+**NOTE:** This protocol is subject to change without warning at any time (and has in the past) and is not versioned. Use at your own risk!
+
+For OpenRefine 3.3 and later, all POST requests need to include a CSRF token as described here: https://github.com/OpenRefine/OpenRefine/wiki/Changes-for-3.3#csrf-protection-changes
+
 ## Create project:
 
 > **Command:** _POST /command/core/create-project-from-upload_

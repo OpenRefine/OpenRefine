@@ -28,6 +28,8 @@ import org.testng.annotations.Test;
 import org.wikidata.wdtk.datamodel.helpers.Datamodel;
 import org.wikidata.wdtk.datamodel.interfaces.GlobeCoordinatesValue;
 
+import com.google.refine.model.Cell;
+
 public class WbLocationVariableTest extends WbVariableTest<GlobeCoordinatesValue> {
 
     @Override
@@ -61,6 +63,15 @@ public class WbLocationVariableTest extends WbVariableTest<GlobeCoordinatesValue
     @Test
     public void testEmpty() {
         isSkipped("");
+    }
+    
+    @Test
+    public void testNullStringValue() {
+        isSkipped((String) null);
+    }
+    
+    public void testNullCell() {
+        isSkipped((Cell) null);
     }
 
     @Test

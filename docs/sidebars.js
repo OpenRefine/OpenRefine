@@ -16,7 +16,12 @@ module.exports = {
       items: ['manual/transforming', 'manual/cellediting','manual/columnediting','manual/transposing'],
     },
       'manual/reconciling',
-      'manual/wikidata',
+      {
+        type: 'category',
+        label: 'Wikibase',
+        items: ['manual/wikibase/overview', 'manual/wikibase/configuration', 'manual/wikibase/reconciling', 'manual/wikibase/schema-alignment',
+                'manual/wikibase/new-entities', 'manual/wikibase/quality-assurance', 'manual/wikibase/uploading'],
+      },
 	    {
       type: 'category',
       label: 'Expressions',
@@ -32,8 +37,6 @@ module.exports = {
       'technical-reference/architecture',
       'technical-reference/openrefine-api',
       'technical-reference/reconciliation-api',
-      'technical-reference/suggest-api',
-      'technical-reference/data-extension-api',
       'technical-reference/contributing',
       'technical-reference/build-test-run',
       'technical-reference/development-roadmap',
@@ -42,7 +45,8 @@ module.exports = {
       'technical-reference/writing-extensions',
       'technical-reference/migrating-older-extensions',
       'technical-reference/translating',
-      'technical-reference/functional-tests'
+      'technical-reference/functional-tests',
+      'technical-reference/maintainer-guidelines'
   ]
   },
 };
