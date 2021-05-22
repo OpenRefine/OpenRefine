@@ -49,7 +49,7 @@ public class EpochToDateTest extends RefineTest {
     public void testEpoch2DateOneParam() {
         long epoch1 = epoch / 1000;
         EpochToDate etd = new EpochToDate();
-        assertEquals(etd.call(bindings, new Object[]{epoch}), "2017-01-22T11:23:42-06:00");
+        assertEquals(etd.call(bindings, new Object[]{epoch1}), "2017-01-22T11:23:42-06:00");
     }
 
     @Test
