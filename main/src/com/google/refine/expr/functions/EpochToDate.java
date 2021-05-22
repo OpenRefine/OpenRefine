@@ -94,4 +94,21 @@ public class EpochToDate implements Function{
                 "expect two argument, the first is a epoch time(second, millisecond, microsecond), the second " +
                 "is the type");
     }
+   
+   @Override
+    public String getDescription() {
+        return "Returns a number converted to a date. Can parse one parameter or two parameters. When parsing one parameter, the number is the epoch second." + 
+           "When parsing two parameters, the first is the number, the second is the numbers type, such as second, millisecond, microsecond.";
+    }
+    
+    @Override
+    public String getParams() {
+        return "A number of epoch second, millisecond, microsecond. The second parameter is not necessary, is the input number's type";
+    }
+    
+    @Override
+    public String getReturns() {
+        return "date(OffsetDateTime)";
+    }
+   
 }
