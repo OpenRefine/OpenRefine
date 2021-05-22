@@ -46,14 +46,14 @@ public class EpochToDateTest extends RefineTest {
     static Properties bindings = new Properties();
 
     @Test
-    public void testEpoch2DateOneParam() {
+    public void testEpoch2DateOneParam() throws ParseException {
         long epoch1 = epoch / 1000;
         EpochToDate etd = new EpochToDate();
         assertEquals(etd.call(bindings, new Object[]{epoch}), "2017-01-22T11:23:42-06:00");
     }
 
     @Test
-    public void testEpoch2DateTwoParam() {
+    public void testEpoch2DateTwoParam() throws ParseException {
         long epochSecond = epoch / 1000;
         long epochMilliSecond = epoch;
         long epochMicroSecond = epoch * 1000;
