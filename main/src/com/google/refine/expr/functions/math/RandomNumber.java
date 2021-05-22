@@ -82,6 +82,6 @@ public class RandomNumber implements Function {
     @Override
     public String getReturns() {
         return "number";
-    } 
+    }
     
 }
