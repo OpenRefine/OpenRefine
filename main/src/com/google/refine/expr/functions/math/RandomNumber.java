@@ -76,7 +76,7 @@ public class RandomNumber implements Function {
     
     @Override
     public String getParams() {
-        return "number lowerBound, number upperBound";
+        return "number lowerBound, number upperBound, or an optional parameter to determine the return type.";
     }
     
     @Override
