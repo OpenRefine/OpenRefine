@@ -30,6 +30,7 @@ import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertTrue;
 
 import java.util.Properties;
+import java.text.ParseException;
 
 import org.testng.annotations.Test;
 
