@@ -42,7 +42,7 @@ import com.google.refine.expr.functions.*;
 
 public class EpochToDateTest extends RefineTest {
 
-    long epoch = 1485105822000; //2017-01-22T11:23:42-06:00
+    long epoch = 1485105822000L; //2017-01-22T11:23:42-06:00
     static Properties bindings = new Properties();
 
     @Test
