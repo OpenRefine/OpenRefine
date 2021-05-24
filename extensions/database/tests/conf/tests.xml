@@ -8,7 +8,7 @@
         this database will then run.
     -->
 
-    <parameter name = "mySqlDbName" value="test_db"/> 
+    <parameter name = "mySqlDbName" value="test_db"/>
     <parameter name = "mySqlDbHost" value="127.0.0.1"/> 
     <parameter name = "mySqlDbPort" value="3306"/> 
     <parameter name = "mySqlDbUser" value="root"/>

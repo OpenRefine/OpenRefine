@@ -85,7 +85,7 @@ public class MySQLDatabaseServiceTest extends DBExtensionTests{
      }
      
      @Test
-     public void testExecuteQuery() throws DatabaseServiceException {
+     public void testTestExecuteQuery() throws DatabaseServiceException {
 
          MySQLDatabaseService pgSqlService = (MySQLDatabaseService) DatabaseService
                  .get(MySQLDatabaseService.DB_NAME);
@@ -127,7 +127,18 @@ public class MySQLDatabaseServiceTest extends DBExtensionTests{
 
          Assert.assertNotNull(dbColumns);
      }
-     
+
+
+    @Test
+    public void testExecuteQuery() throws DatabaseServiceException {
+        MySQLDatabaseService mySqlService = (MySQLDatabaseService) DatabaseService
+                .get(MySQLDatabaseService.DB_NAME);
+        DatabaseInfo databaseInfo = mySqlService.executeQuery(testDbConfig, "SELECT * FROM " + testTable);
+        System.out.println(databaseInfo.getColumns());
+
+        Assert.assertNotNull(databaseInfo);
+    }
+
 
 
 }
