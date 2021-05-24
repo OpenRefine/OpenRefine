@@ -6,6 +6,10 @@ sidebar_label: OpenRefine API
 
 This is a generic API reference for interacting with OpenRefine's HTTP API.
 
+**NOTE:** This protocol is subject to change without warning at any time (and has in the past) and is not versioned. Use at your own risk!
+
+For OpenRefine 3.3 and later, all POST requests need to include a CSRF token as described here: https://github.com/OpenRefine/OpenRefine/wiki/Changes-for-3.3#csrf-protection-changes
+
 ## Create project:
 
 > **Command:** _POST /command/core/create-project-from-upload_
@@ -17,7 +21,7 @@ multipart form-data:
       'project-file' : file contents
       'project-name' : project name
       'format' : format of data in project-file (e.g. 'text/line-based/*sv') [optional]
-      'options' : json object containing options relevant to the file format [optional]
+      'options' : json object containing options relevant to the file format [optional - however, some importers may have required options, such as `recordPath` for the JSON & XML importers].
 
 The formats supported will depend on the version of OpenRefine you are using and any Extensions you have installed. The common formats include:
 
@@ -159,9 +163,14 @@ On success returns JSON response
 
 > **Command:** _POST /command/core/export-rows_
 
-      'project' : project id
-      'engine' : JSON string... (e.g. '{"facets":[],"mode":"row-based"}')
+In the parameter
+
+      'project' : project id      
       'format' : format... (e.g 'tsv', 'csv')
+
+In the form data
+
+      'engine' : JSON string... (e.g. '{"facets":[],"mode":"row-based"}')
       
 Returns exported row data in the specified format. The formats supported will depend on the version of OpenRefine you are using and any Extensions you have installed. The common formats include:
 

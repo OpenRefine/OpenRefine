@@ -1,4 +1,5 @@
 {
+    "database-import/importer-name": "Database",
     "database-import/title": "Database Servers",
     "database-import/preparing": "Preparing result …",
     "database-import/checking": "Validating query …",

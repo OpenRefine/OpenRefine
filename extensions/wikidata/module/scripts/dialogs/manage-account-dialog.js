@@ -79,6 +79,12 @@ ManageAccountDialog.displayPasswordLogin = function (onSuccess) {
   const frame = $(DOM.loadHTML("wikidata", "scripts/dialogs/password-login-dialog.html"));
   const elmts = DOM.bind(frame);
   ManageAccountDialog.initCommon(elmts);
+  WikibaseManager.getSelectedWikibaseLogoURL(function(data) {
+	elmts.wikibaseLogoImg.attr("src", data);
+  });
+  elmts.wikibaseMainPage.attr("href", WikibaseManager.getSelectedWikibaseMainPage());
+  elmts.wikibaseLogoImg.attr("alt", $.i18n('wikibase-account/logo-alt-text', WikibaseManager.getSelectedWikibaseName()));
+  elmts.explainBotPasswords.html($.i18n('wikibase-account/explain-bot-passwords', WikibaseManager.getSelectedWikibaseRoot() + 'Special:BotPasswords'));
   elmts.explainOwnerOnlyConsumerLogin.html($.i18n('wikibase-account/explain-owner-only-consumer-login'));
   elmts.invalidCredentials.text($.i18n('wikibase-account/invalid-credentials'));
   elmts.invalidCredentials.hide();
@@ -113,6 +119,10 @@ ManageAccountDialog.displayPasswordLogin = function (onSuccess) {
   elmts.loginForm.submit(function (e) {
     frame.hide();
     let formArr = elmts.loginForm.serializeArray();
+    let username = elmts.usernameInput.val();
+    if (!username.contains("@")) {
+      alert($.i18n('wikibase-account/bot-passwords-alert'));
+    }
     formArr.push({name: "wb-api-endpoint", value: WikibaseManager.getSelectedWikibaseApi()});
     Refine.postCSRF(
         "command/wikidata/login",

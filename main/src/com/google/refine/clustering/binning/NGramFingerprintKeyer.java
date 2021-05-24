@@ -33,13 +33,22 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.clustering.binning;
 
-import java.util.Iterator;
 import java.util.TreeSet;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
+
+/**
+ * Fingerprint keyer which generates a fingerprint from a sorted list of
+ * unique character N-grams after removing all whitespace, control characters,
+ * and punctuation. N-grams are concatenated to form a single output key.
+ *
+ */
 public class NGramFingerprintKeyer extends FingerprintKeyer {
 
-    static final Pattern alphanum = Pattern.compile("\\p{Punct}|\\p{Cntrl}|\\p{Space}");
+    static final Pattern ctrlspace = Pattern.compile("\\p{Cntrl}|\\p{Space}", Pattern.UNICODE_CHARACTER_CLASS);
     
     @Override
     public String key(String s, Object... o) {
@@ -47,24 +56,36 @@ public class NGramFingerprintKeyer extends FingerprintKeyer {
         if (o != null && o.length > 0 && o[0] instanceof Number) {
             ngram_size = (Integer) o[0];
         }
-        s = s.toLowerCase(); // then lowercase it
-        s = alphanum.matcher(s).replaceAll(""); // then remove all punctuation and control chars
-        s = asciify(s); // find ASCII equivalent to characters
-        TreeSet<String> set = ngram_split(s,ngram_size);
-        StringBuffer b = new StringBuffer();
-        Iterator<String> i = set.iterator();
-        while (i.hasNext()) { // join ordered fragments back together
-            b.append(i.next());
-        }
-        return b.toString();
+        s = normalize(s, true);
+        s = ctrlspace.matcher(s).replaceAll(""); // then remove all control chars & whitespace
+        return sorted_ngrams(s, ngram_size).collect(Collectors.joining());
     }
 
+    /**
+     * Generate a stream of sorted unique character N-grams from a string
+     * 
+     * @param s String to generate N-grams from
+     * @param size number of characters per N-gram
+     * @return a stream of sorted unique N-gram Strings
+     */
+    protected Stream<String> sorted_ngrams(String s, int size) {
+        return IntStream.rangeClosed(0, s.length() - size)
+        .mapToObj(i -> s.substring(i,  i+size))
+        .sorted()
+        .distinct();
+    }
+
+    /**
+     * @deprecated 2020-10-17 by tfmorris. Use {@link #sorted_ngrams(String, int)}
+     */
+    @Deprecated
     protected TreeSet<String> ngram_split(String s, int size) {
         TreeSet<String> set = new TreeSet<String>();
-        char[] chars = s.toCharArray();
-        for (int i = 0; i + size <= chars.length; i++) {
-            set.add(new String(chars,i,size));
+        int length = s.length();
+        for (int i = 0; i + size <= length; i++) {
+            set.add(s.substring(i, i + size));
         }
         return set;
     }
+
 }

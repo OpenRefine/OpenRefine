@@ -25,6 +25,7 @@ package org.openrefine.wikidata.commands;
 
 import static org.mockito.Mockito.when;
 import static org.openrefine.wikidata.testing.TestingData.jsonFromFile;
+import org.openrefine.wikidata.utils.EntityCache;
 import static org.testng.Assert.assertEquals;
 
 import org.openrefine.wikidata.qa.EditInspector;
@@ -42,7 +43,7 @@ import com.google.refine.util.ParsingUtilities;
 import javax.servlet.ServletException;
 import java.io.IOException;
 
-@PrepareForTest(EditInspector.class)
+@PrepareForTest({EditInspector.class, EntityCache.class})
 public class PreviewWikibaseSchemaCommandTest extends SchemaCommandTest {
 
     @BeforeMethod
@@ -52,8 +53,10 @@ public class PreviewWikibaseSchemaCommandTest extends SchemaCommandTest {
 
     @Test
     public void testValidSchema() throws Exception {
-        ConstraintFetcher fetcher = new ConstraintFetcher(new EntityCacheStub(), "P2302");
+        EntityCacheStub entityCacheStub = new EntityCacheStub();
+        ConstraintFetcher fetcher = new ConstraintFetcher(entityCacheStub, "P2302");
         PowerMockito.whenNew(ConstraintFetcher.class).withAnyArguments().thenReturn(fetcher);
+        PowerMockito.whenNew(EntityCache.class).withAnyArguments().thenReturn(entityCacheStub);
 
         String schemaJson = jsonFromFile("schema/inception.json");
         String manifestJson = jsonFromFile("manifest/wikidata-manifest-v1.0.json");

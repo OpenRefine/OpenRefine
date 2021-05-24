@@ -5,21 +5,38 @@ module.exports = {
       'manual/installing',
       'manual/running',
       'manual/starting',
-      'manual/exploring',
-      'manual/transforming',
-      'manual/expressions',
-      'manual/wikidata',
+	        {
+      type: 'category',
+      label: 'Exploring data',
+      items: ['manual/exploring', 'manual/facets', 'manual/sortview'],
+    },
+	    {
+      type: 'category',
+      label: 'Transforming data',
+      items: ['manual/transforming', 'manual/cellediting','manual/columnediting','manual/transposing'],
+    },
+      'manual/reconciling',
+      {
+        type: 'category',
+        label: 'Wikibase',
+        items: ['manual/wikibase/overview', 'manual/wikibase/configuration', 'manual/wikibase/reconciling', 'manual/wikibase/schema-alignment',
+                'manual/wikibase/new-entities', 'manual/wikibase/quality-assurance', 'manual/wikibase/uploading'],
+      },
+	    {
+      type: 'category',
+      label: 'Expressions',
+      items: ['manual/expressions', 'manual/grel', 'manual/grelfunctions', 'manual/jythonclojure'],
+    },
       'manual/exporting',
-      'manual/glossary',
       'manual/troubleshooting'
     ],
+   'GREL Reference': [
+	   'manual/grelfunctions'],
     'Technical Reference': [
       'technical-reference/technical-reference-index',
       'technical-reference/architecture',
       'technical-reference/openrefine-api',
       'technical-reference/reconciliation-api',
-      'technical-reference/suggest-api',
-      'technical-reference/data-extension-api',
       'technical-reference/contributing',
       'technical-reference/build-test-run',
       'technical-reference/development-roadmap',
@@ -28,6 +45,8 @@ module.exports = {
       'technical-reference/writing-extensions',
       'technical-reference/migrating-older-extensions',
       'technical-reference/translating',
+      'technical-reference/functional-tests',
+      'technical-reference/maintainer-guidelines'
   ]
   },
 };

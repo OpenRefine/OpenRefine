@@ -15,7 +15,7 @@
   </parent>
 
   <properties>
-    <powermock.version>2.0.7</powermock.version>
+    <powermock.version>2.0.9</powermock.version>
     <wdtk.version>0.12.0-SNAPSHOT</wdtk.version>
   </properties>
 
@@ -132,6 +132,11 @@
       <version>${wdtk.version}</version>
     </dependency>
     <dependency>
+      <groupId>com.fasterxml.jackson.core</groupId>
+      <artifactId>jackson-core</artifactId>
+      <version>${jackson.version}</version>
+    </dependency>
+    <dependency>
       <groupId>org.openrefine.dependencies.wdtk</groupId>
       <artifactId>wdtk-datamodel</artifactId>
       <version>${wdtk.version}</version>
@@ -161,7 +166,7 @@
     <dependency>
       <groupId>org.testng</groupId>
       <artifactId>testng</artifactId>
-      <version>7.3.0</version>
+      <version>7.4.0</version>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -179,7 +184,7 @@
     <dependency>
       <groupId>com.squareup.okhttp3</groupId>
       <artifactId>mockwebserver</artifactId>
-      <version>4.8.1</version>
+      <version>4.9.1</version>
       <scope>test</scope>
     </dependency>
   </dependencies>

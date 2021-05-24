@@ -210,12 +210,10 @@ abstract public class TreeImportingParserBase extends ImportingParserBase {
         boolean trimStrings = JSONUtilities.getBoolean(options, "trimStrings", true);
         boolean storeEmptyStrings = JSONUtilities.getBoolean(options, "storeEmptyStrings", false);
         boolean guessCellValueTypes = JSONUtilities.getBoolean(options, "guessCellValueTypes", true);
-        boolean includeFileSources = JSONUtilities.getBoolean(options, "includeFileSources", false);
 
         try {
             XmlImportUtilities.importTreeData(treeParser, project, recordPath, rootColumnGroup, limit2,
-                    new ImportParameters(trimStrings, storeEmptyStrings, guessCellValueTypes, includeFileSources,
-                            fileSource));
+                    trimStrings, storeEmptyStrings, guessCellValueTypes);
         } catch (Exception e){
             exceptions.add(e);
         }

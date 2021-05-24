@@ -31,10 +31,5 @@ import org.testng.annotations.Test;
 import com.google.refine.util.TestUtils;
 
 public class UnicodeTests {
-    @Test
-    public void serializeUnicode() {
-        String json = "{\"description\":\"Returns an array of strings describing each character of s in their full unicode notation\",\"params\":\"string s\",\"returns\":\"string\"}";
-        TestUtils.isSerializedTo(new Unicode(), json);
-    }
 }
 

@@ -107,8 +107,8 @@ public class PreviewWikibaseSchemaCommand extends Command {
 
             // Inspect the edits and generate warnings
             EditInspector inspector = new EditInspector(warningStore, manifest);
-            inspector.inspect(editBatch);
-
+            inspector.inspect(editBatch, schema);
+            
             // Dump the first 10 edits, scheduled with the default scheduler
             WikibaseAPIUpdateScheduler scheduler = new WikibaseAPIUpdateScheduler();
             List<ItemUpdate> nonNullEdits = scheduler.schedule(editBatch).stream()

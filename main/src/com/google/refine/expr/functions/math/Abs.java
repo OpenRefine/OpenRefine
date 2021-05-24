@@ -51,12 +51,12 @@ public class Abs implements Function {
 
     @Override
     public String getDescription() {
-        return "Returns the absolute value of a number";
+        return "Returns the absolute value of a number.";
     }
     
     @Override
     public String getParams() {
-        return "number d";
+        return "number n";
     }
     
     @Override

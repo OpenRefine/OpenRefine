@@ -204,33 +204,33 @@ function registerImporting() {
    *    they also generate defaults for the client-side UIs to initialize.
    */
 
-  IM.registerFormat("text", "Text files"); // generic format, no parser to handle it
-  IM.registerFormat("text/line-based", "Line-based text files", "LineBasedParserUI",
+  IM.registerFormat("text", "core-import-formats/text" ); // generic format, no parser to handle it
+  IM.registerFormat("text/line-based", "core-import-formats/text/line-based", "LineBasedParserUI",
       new Packages.com.google.refine.importers.LineBasedImporter());
-  IM.registerFormat("text/line-based/*sv", "CSV / TSV / separator-based files", "SeparatorBasedParserUI",
+  IM.registerFormat("text/line-based/*sv", "core-import-formats/text/line-based/*sv", "SeparatorBasedParserUI",
       new Packages.com.google.refine.importers.SeparatorBasedImporter());
-  IM.registerFormat("text/line-based/fixed-width", "Fixed-width field text files", "FixedWidthParserUI",
+  IM.registerFormat("text/line-based/fixed-width", "core-import-formats/text/line-based/fixed-width", "FixedWidthParserUI",
       new Packages.com.google.refine.importers.FixedWidthImporter());
 
-  IM.registerFormat("text/rdf/nt", "RDF/N-Triples files", "RdfTriplesParserUI", 
+  IM.registerFormat("text/rdf/nt", "core-import-formats/text/rdf/nt", "RdfTriplesParserUI", 
               new Packages.com.google.refine.importers.RdfTripleImporter(Packages.com.google.refine.importers.RdfTripleImporter.Mode.NT));
-  IM.registerFormat("text/rdf/n3", "RDF/N3 files", "RdfTriplesParserUI", 
+  IM.registerFormat("text/rdf/n3", "core-import-formats/text/rdf/n3", "RdfTriplesParserUI", 
           new Packages.com.google.refine.importers.RdfTripleImporter(Packages.com.google.refine.importers.RdfTripleImporter.Mode.N3));
-  IM.registerFormat("text/rdf/ttl", "RDF/Turtle files", "RdfTriplesParserUI", 
+  IM.registerFormat("text/rdf/ttl", "core-import-formats/text/rdf/ttl", "RdfTriplesParserUI", 
                   new Packages.com.google.refine.importers.RdfTripleImporter(Packages.com.google.refine.importers.RdfTripleImporter.Mode.TTL));
-  IM.registerFormat("text/rdf/xml", "RDF/XML files", "RdfTriplesParserUI", new Packages.com.google.refine.importers.RdfXmlTripleImporter());
-  IM.registerFormat("text/rdf/ld+json", "JSON-LD files", "RdfTriplesParserUI", new Packages.com.google.refine.importers.RdfJsonldTripleImporter());
+  IM.registerFormat("text/rdf/xml", "core-import-formats/text/rdf/xml", "RdfTriplesParserUI", new Packages.com.google.refine.importers.RdfXmlTripleImporter());
+  IM.registerFormat("text/rdf/ld+json", "core-import-formats/text/rdf/ld+json", "RdfTriplesParserUI", new Packages.com.google.refine.importers.RdfJsonldTripleImporter());
 
-  IM.registerFormat("text/xml", "XML files", "XmlParserUI", new Packages.com.google.refine.importers.XmlImporter());
-  IM.registerFormat("binary/text/xml/xls/xlsx", "Excel files", "ExcelParserUI", new Packages.com.google.refine.importers.ExcelImporter());
-  IM.registerFormat("text/xml/ods", "Open Document Format spreadsheets (.ods)", "ExcelParserUI", new Packages.com.google.refine.importers.OdsImporter());
-  IM.registerFormat("text/json", "JSON files", "JsonParserUI", new Packages.com.google.refine.importers.JsonImporter());
-  IM.registerFormat("text/marc", "MARC files", "XmlParserUI", new Packages.com.google.refine.importers.MarcImporter());
-  IM.registerFormat("text/wiki", "Wikitext", "WikitextParserUI", new Packages.com.google.refine.importers.WikitextImporter());
+  IM.registerFormat("text/xml", "core-import-formats/text/xml", "XmlParserUI", new Packages.com.google.refine.importers.XmlImporter());
+  IM.registerFormat("binary/text/xml/xls/xlsx", "core-import-formats/binary/text/xml/xls/xlsx", "ExcelParserUI", new Packages.com.google.refine.importers.ExcelImporter());
+  IM.registerFormat("text/xml/ods", "core-import-formats/text/xml/ods", "ExcelParserUI", new Packages.com.google.refine.importers.OdsImporter());
+  IM.registerFormat("text/json", "core-import-formats/text/json", "JsonParserUI", new Packages.com.google.refine.importers.JsonImporter());
+  IM.registerFormat("text/marc", "core-import-formats/text/marc", "XmlParserUI", new Packages.com.google.refine.importers.MarcImporter());
+  IM.registerFormat("text/wiki", "core-import-formats/text/wiki", "WikitextParserUI", new Packages.com.google.refine.importers.WikitextImporter());
 
-  IM.registerFormat("binary", "Binary files"); // generic format, no parser to handle it
+  IM.registerFormat("binary", "core-import-formats/binary"); // generic format, no parser to handle it
 
-  IM.registerFormat("service", "Services"); // generic format, no parser to handle it
+  IM.registerFormat("service", "core-import-formats/service"); // generic format, no parser to handle it
 
   /*
    *  Extension to format mappings
@@ -492,6 +492,7 @@ function init() {
       "scripts/dialogs/scatterplot-dialog.js",
       "scripts/dialogs/templating-exporter-dialog.js",
       "scripts/dialogs/column-reordering-dialog.js",
+      "scripts/dialogs/common-transform-dialog.js",
       "scripts/dialogs/custom-tabular-exporter-dialog.js",
       "scripts/dialogs/sql-exporter-dialog.js",
       "scripts/dialogs/expression-column-dialog.js",
@@ -592,7 +593,11 @@ function process(path, request, response) {
       var output = response.getWriter();
       try {
         var paths = ClientSideResourceManager.getPaths(lastSegment + "/scripts");
-        for each (var qualifiedPath in paths) {
+        for (var key in paths) {
+          if (!paths.hasOwnProperty(key)) {
+            continue;
+          }
+          var qualifiedPath = paths[key];
           var input = null;
           try {
             var url = qualifiedPath.module.getResource(qualifiedPath.path);
@@ -637,9 +642,12 @@ function process(path, request, response) {
         
         var styles = ClientSideResourceManager.getPaths(lastSegment + "/styles");
         var styleInjection = [];
-        for each (var qualifiedPath in styles) {
-          styleInjection.push(
-              '<link type="text/css" rel="stylesheet" href="' + qualifiedPath.fullPath.substring(1) + '" />');
+        for (var key in styles) {
+          if (styles.hasOwnProperty(key)) {
+            var qualifiedPath = styles[key];
+            styleInjection.push(
+                '<link type="text/css" rel="stylesheet" href="' + qualifiedPath.fullPath.substring(1) + '" />');
+          }
         }
         context.styleInjection = styleInjection.join("\n");
 
@@ -648,9 +656,12 @@ function process(path, request, response) {
         } else {
           var scripts = ClientSideResourceManager.getPaths(lastSegment + "/scripts");
           var scriptInjection = [];
-          for each (var qualifiedPath in scripts) {
-            scriptInjection.push(
-                '<script type="text/javascript" src="' + qualifiedPath.fullPath.substring(1) + '"></script>');
+          for (var key in scripts) {
+            if (scripts.hasOwnProperty(key)) {
+              var qualifiedPath = scripts[key];
+              scriptInjection.push(
+                  '<script type="text/javascript" src="' + qualifiedPath.fullPath.substring(1) + '"></script>');
+            }
           }
           context.scriptInjection = scriptInjection.join("\n");
         }
@@ -659,11 +670,19 @@ function process(path, request, response) {
           var encodings = [];
           
           var sortedCharsetMap = Packages.java.nio.charset.Charset.availableCharsets();
-          for each (var code in sortedCharsetMap.keySet().toArray()) {
+          var keySetArray = sortedCharsetMap.keySet().toArray();
+          for (var key in keySetArray) {
+            if (!keySetArray.hasOwnProperty(key)) {
+              continue;
+            }
+            var code = keySetArray[key];
             var charset = sortedCharsetMap.get(code);
+            var aliasesArray = charset.aliases().toArray();
             var aliases = [];
-            for each (var alias in charset.aliases().toArray()) {
-              aliases.push(alias);
+            for (var key1 in aliasesArray) {
+              if (aliasesArray.hasOwnProperty(key1)) {
+                aliases.push(aliasesArray[key1]);
+              }
             }
             
             encodings.push({

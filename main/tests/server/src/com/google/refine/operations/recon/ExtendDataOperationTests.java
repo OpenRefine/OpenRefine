@@ -38,9 +38,7 @@ import static org.mockito.Mockito.mock;
 import static org.powermock.api.mockito.PowerMockito.mockStatic;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.StringWriter;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -49,7 +47,6 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 
-import org.apache.commons.io.IOUtils;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 import org.powermock.api.mockito.PowerMockito;
@@ -225,7 +222,6 @@ public class ExtendDataOperationTests extends RefineTest {
      * Test to fetch simple strings
      * @throws Exception 
      */
-    
     @BeforeMethod
     public void mockHttpCalls() throws Exception {
     	mockStatic(ReconciledDataExtensionJob.class);
@@ -236,9 +232,9 @@ public class ExtendDataOperationTests extends RefineTest {
 				return fakeHttpCall(invocation.getArgument(0), invocation.getArgument(1));
 			}
     	};
-    	PowerMockito.doAnswer(mockedResponse).when(ReconciledDataExtensionJob.class, "performQuery", anyString(), anyString());
+    	PowerMockito.doAnswer(mockedResponse).when(ReconciledDataExtensionJob.class, "postExtendQuery", anyString(), anyString());
     }
-    
+
     @AfterMethod
     public void cleanupHttpMocks() {
     	mockedResponses.clear();
@@ -253,7 +249,7 @@ public class ExtendDataOperationTests extends RefineTest {
       		  "{"
   			+ "\"rows\": {"
   			+ "    \"Q794\": {\"P297\": [{\"str\": \"IR\"}]},"
-  			+ "    \"Q863\": {\"P297\": [{\"str\": \"TJ\"}]},"
+  			+ "    \"Q863\": {\"P297\": []},"
   			+ "    \"Q30\": {\"P297\": [{\"str\": \"US\"}]},"
   			+ "    \"Q17\": {\"P297\": [{\"str\": \"JP\"}]}"
   			+ "},"
@@ -274,7 +270,7 @@ public class ExtendDataOperationTests extends RefineTest {
         // Inspect rows
         Assert.assertTrue("IR".equals(project.rows.get(0).getCellValue(1)), "Bad country code for Iran.");
         Assert.assertTrue("JP".equals(project.rows.get(1).getCellValue(1)), "Bad country code for Japan.");
-        Assert.assertTrue("TJ".equals(project.rows.get(2).getCellValue(1)), "Bad country code for Tajikistan.");
+        Assert.assertNull(project.rows.get(2).getCell(1), "Expected a null country code.");
         Assert.assertTrue("US".equals(project.rows.get(3).getCellValue(1)), "Bad country code for United States.");
 
         // Make sure we did not create any recon stats for that column (no reconciled value)

@@ -270,7 +270,7 @@ public class DataExtensionChange implements Change {
                 }
                 cell = new Cell(rc.name, recon);
             } else {
-                cell = new Cell((Serializable) value, null);
+                cell = value == null ? null : new Cell((Serializable) value, null);
             }
             
             row.setCell(_firstNewCellIndex + c, cell);

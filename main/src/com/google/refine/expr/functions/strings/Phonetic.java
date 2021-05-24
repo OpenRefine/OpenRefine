@@ -72,7 +72,10 @@ public class Phonetic implements Function {
                     return new EvalError(ControlFunctionRegistry.getFunctionName(this)
                             + " expects a string for the second argument");
                 }
-            }
+            } else {
+                return new EvalError(ControlFunctionRegistry.getFunctionName(this)
+                        + " expects a string for the second argument, the phonetic encoding to use.");
+            }     
         }
         if (args.length < 3) {
             if ("doublemetaphone".equalsIgnoreCase(encoding)) {
@@ -98,7 +101,7 @@ public class Phonetic implements Function {
     
     @Override
     public String getDescription() {
-        return "Returns the a phonetic encoding of s (optionally indicating which encoding to use')";
+        return "Returns a phonetic encoding of a string, based on an available phonetic algorithm. Can be one of the following supported phonetic methods: metaphone, doublemetaphone, metaphone3, soundex, cologne. Defaults to 'metaphone3'.";
     }
     
     @Override
