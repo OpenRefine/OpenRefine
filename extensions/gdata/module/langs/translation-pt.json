@@ -21,7 +21,7 @@
     "gdata-import/title": "Documentos públicos",
     "gdata-parsing/limit": "linhas(s) de dados",
     "gdata-exporter/export-to-google-drive": "Ficheiro de projeto do OpenRefine para Google Drive…",
-    "gdata-import/sign-in": "entrar e autorizar",
+    "gdata-import/sign-in": "Iniciar sessão",
     "gdata-import/import-by-url": "Importar uma Planilha Google <em>pública</em> a partir de sua URL:",
     "gdata-parsing/ignore-first": "Ignorar primeira(s)",
     "gdata-auth/authorize-label": "OpenRefine - Autorização",

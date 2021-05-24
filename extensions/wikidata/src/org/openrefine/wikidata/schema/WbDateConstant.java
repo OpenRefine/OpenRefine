@@ -123,7 +123,7 @@ public class WbDateConstant implements WbExpression<TimeValue> {
             trimmedDatestamp = trimmedDatestamp.substring(1);
             bceFlag = true;
         }
-    	
+
         for (Entry<SimpleDateFormat, Integer> entry : acceptedFormats.entrySet()) {
             ParsePosition position = new ParsePosition(0);
             Date date = entry.getKey().parse(trimmedDatestamp, position);
@@ -161,10 +161,12 @@ public class WbDateConstant implements WbExpression<TimeValue> {
             calendar = Calendar.getInstance();
             calendar.setTime(bestDate);
             long year = calendar.get(Calendar.YEAR);
+            int month = precision < 10 ? 0 : calendar.get(Calendar.MONTH) + 1;
+            int day_of_month = precision < 11 ? 0 : calendar.get(Calendar.DAY_OF_MONTH);
             if(bceFlag)
                 year = -1*year;
-            return Datamodel.makeTimeValue(year, (byte) (calendar.get(Calendar.MONTH) + 1),
-                    (byte) calendar.get(Calendar.DAY_OF_MONTH), (byte) calendar.get(Calendar.HOUR_OF_DAY),
+            return Datamodel.makeTimeValue(year, (byte) month,
+                    (byte) day_of_month, (byte) calendar.get(Calendar.HOUR_OF_DAY),
                     (byte) calendar.get(Calendar.MINUTE), (byte) calendar.get(Calendar.SECOND), (byte) precision, 0, 0,
                     0, calendarIri);
         }
