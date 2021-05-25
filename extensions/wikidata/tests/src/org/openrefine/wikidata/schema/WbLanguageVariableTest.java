@@ -49,6 +49,11 @@ public class WbLanguageVariableTest extends WbVariableTest<String> {
         isSkipped((String) null);
         isSkipped("");
     }
+    
+    @Test
+    public void testNullCell() {
+        isSkipped((Cell) null);
+    }
 
     @Test
     public void testNullCell() {

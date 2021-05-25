@@ -4,7 +4,7 @@ title: Transforming data
 sidebar_label: Overview
 ---
 
-## Overview {#overview}
+## Overview
 
 OpenRefine gives you powerful ways to clean, correct, codify, and extend your data. Without ever needing to type inside a single cell, you can automatically fix typos, convert things to the right format, and add structured categories from trusted sources. 
 
@@ -17,7 +17,7 @@ This section of ways to improve data are organized by their appearance in the me
 *   [add new columns](columnediting) based on existing data, with fetching new information, or through [reconciliation](reconciling)
 *   convert your rows of data into [multi-row records](exploring#rows-vs-records).
 
-## Edit rows {#edit-rows}
+## Edit rows
 
 Moving rows around is a permanent change to your data. 
 

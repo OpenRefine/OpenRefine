@@ -65,6 +65,15 @@ public class WbLocationVariableTest extends WbVariableTest<GlobeCoordinatesValue
     public void testEmpty() {
         isSkipped("");
     }
+    
+    @Test
+    public void testNullStringValue() {
+        isSkipped((String) null);
+    }
+    
+    public void testNullCell() {
+        isSkipped((Cell) null);
+    }
 
     @Test
     public void testNullStringValue() {

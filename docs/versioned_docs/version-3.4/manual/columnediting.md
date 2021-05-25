@@ -4,15 +4,15 @@ title: Column editing
 sidebar_label: Column editing
 ---
 
-## Overview {#overview}
+## Overview
 
 Column editing contains some of the most powerful data-improvement methods in OpenRefine. The operations in the <span class="menuItems">Edit column</span> menu involve using one column of data to add entirely new columns and fields to your dataset. 
 
-## Splitting or joining {#splitting-or-joining}
+## Splitting or joining
 
 Many users find that they frequently need to make their data more granular: for example, splitting a “Firstname Lastname” column into two columns, one for first names and one for last names. The reverse is also often true: you may have several columns of category values that you want to join into one “category” column. 
 .
-### Split into several columns {#split-into-several-columns}
+### Split into several columns
 
 ![A screenshot of the settings window for splitting columns.](/img/columnsplit.png)
 
@@ -22,7 +22,7 @@ You can also specify a maximum number of new columns to be made: separator chara
 
 New columns will be named after the original column, with a number: “Location 1,” “Location 2,” etc. You can choose to remove the original column with this operation, and you can have [data types](exploring#data-types) identified where possible. This function will work best with converting strings to numbers, and may not work with [dates](exploring#dates).
 
-### Join columns {#join-columns}
+### Join columns
 
 ![A screenshot of the settings window for joining columns.](/img/columnjoin.png)
 
@@ -30,7 +30,7 @@ You can join columns by selecting <span class="menuItems">Edit column</span> →
 
 The joined data will appear in the column you originally selected, or you can create a new column for this content and specify a name. You can delete all the columns that were used in this join operation. 
 
-## Add column based on this column {#add-column-based-on-this-column}
+## Add column based on this column
 
 Selecting <span class="menuItems">Edit column</span> → <span class="menuItems">Add column based on this column...</span> will open up an [expressions](expressions) window where you can transform the data from this column (using `value`), or write a more complex expression that takes information from any number of columns or from external sources. 
 
@@ -58,7 +58,7 @@ row.record.cells.Column1.value + row.record.cells.Column2.value
 
 You may wish to add separators or spaces, or modify your input during this operation with more advanced expressions. 
 
-## Add column by fetching URLs {#add-column-by-fetching-urls}
+## Add column by fetching URLs
 
 Through the <span class="menuItems">Add column by fetching URLs</span> function, OpenRefine supports the ability to fetch HTML or data from web pages or services. In this operation you will be building URL strings based on your column of data, by using `value` to insert a relevant substring. Your chosen column needs to contains parts of paths to valid HTML pages or files online. 
 
@@ -85,7 +85,7 @@ Note the following:
   * [Accept](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Accept)
   * [Authorization](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Authorization)
 
-### Common errors {#common-errors}
+### Common errors
 
 When OpenRefine attempts to fetch information from a web service, it can fail in a variety of ways. The following information is meant to help troubleshoot and fix problems encountered when using this function.
 
@@ -116,7 +116,7 @@ Note that for Mac users and for Windows users with the OpenRefine installation w
 * On Mac, it will look something like `/Applications/OpenRefine.app/Contents/PlugIns/jdk1.8.0_60.jdk/Contents/Home/jre/lib/security/cacerts`.
 * On Windows: `\server\target\jre\lib\security\`.
 
-## Renaming, removing, and moving {#renaming-removing-and-moving}
+## Renaming, removing, and moving
 
 Every column's <span class="menuItems">Edit column</span> dropdown contains options to move it (to the beginning, end, left, or right), rename it, and delete it. 
 These operations can be undone, but a removed column cannot be restored later if you keep modifying your data. If you wish to temporarily hide a column, go to <span class="menuItems">[View](sortview#view)</span> → <span class="menuItems">Collapse this column</span> instead. 

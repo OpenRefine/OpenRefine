@@ -60,9 +60,9 @@
     "wikibase-extension/wikibase-edits": "Mengedit Wikibase…",
     "wikibase-extension/qs-file": "file QuickStatements",
     "wikibase-extension/export-to-qs": "Ekspor ke QuickStatements",
-    "wikibase-extension/perform-edits-on-wikibase": "Unggah hasil suntingan ke Wikibase…",
-    "wikibase-extension/manage-wikibase-account": "Kelola akun Wikibase…",
-    "wikibase-extension/import-wikibase-schema": "Impor skema…",
+    "wikibase-extension/perform-edits-on-wikibase": "Unggah hasil suntingan ke Wikibase",
+    "wikibase-extension/manage-wikibase-account": "Kelola akun Wikibase",
+    "wikibase-extension/import-wikibase-schema": "Impor skema",
     "wikibase-extension/edit-wikibase-schema": "Sunting skema Wikibase",
-    "wikibase-extension/select-wikibase-instance": "Pilih contoh Wikibase…"
+    "wikibase-extension/select-wikibase-instance": "Pilih contoh Wikibase"
 }

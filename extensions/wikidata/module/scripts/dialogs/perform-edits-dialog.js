@@ -56,9 +56,7 @@ PerformEditsDialog.launch = function(logged_in_username, max_severity) {
       {
         summary: elmts.editSummary.val(),
         maxlag: elmts.maxlag.val(),
-        editGroupsUrlSchema: WikibaseManager.getSelectedWikibaseEditGroupsURLSchema(),
-        tag: WikibaseManager.getSelectedWikibaseTagTemplate(),
-        maxEditsPerMinute: WikibaseManager.getSelectedWikibaseMaxEditsPerMinute()
+        editGroupsUrlSchema: WikibaseManager.getSelectedWikibaseEditGroupsURLSchema()
       },
       { includeEngine: true, cellsChanged: true, columnStatsChanged: true },
       { onDone: function() { dismiss(); } }

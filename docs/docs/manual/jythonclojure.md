@@ -4,7 +4,7 @@ title: Jython & Clojure
 sidebar_label: Jython & Clojure
 ---
 
-## Jython {#jython}
+## Jython
 
 Jython 2.7.2 comes bundled with the default installation of OpenRefine 3.4.1. You can add libraries and code by following [this tutorial](https://github.com/OpenRefine/OpenRefine/wiki/Extending-Jython-with-pypi-modules). A large number of Python files (`.py` or `.pyc`) are compatible. 
 
@@ -14,7 +14,7 @@ You will need to restart OpenRefine, so that new Jython or Python libraries are 
 
 OpenRefine now has [most of the Jsoup.org library built into GREL functions](grelfunctions#jsoup-xml-and-html-parsing-functions) for parsing and working with HTML and XML elements.
 
-### Syntax {#syntax}
+### Syntax
 
 Expressions in Jython must have a `return` statement:
 
@@ -47,13 +47,13 @@ To return the lower case of `value` (if the value is not null):
     return None
 ```
 
-### Tutorials {#tutorials}
+### Tutorials
 - [Extending Jython with pypi modules](https://github.com/OpenRefine/OpenRefine/wiki/Extending-Jython-with-pypi-modules)
 - [Working with phone numbers using Java libraries inside Python](https://github.com/OpenRefine/OpenRefine/wiki/Jython#tutorial---working-with-phone-numbers-using-java-libraries-inside-python)
 
 Full documentation on the Jython language can be found on its official site: [http://www.jython.org](http://www.jython.org).
 
-## Clojure {#clojure}
+## Clojure
 
 Clojure 1.10.1 comes bundled with the default installation of OpenRefine 3.4.1. At this time, not all [variables](expressions#variables) can be used with Clojure expressions: only `value`, `row`, `rowIndex`, `cell`, and `cells` are available.
 

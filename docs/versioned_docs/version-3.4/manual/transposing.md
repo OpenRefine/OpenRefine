@@ -4,11 +4,11 @@ title: Transposing
 sidebar_label: Transposing
 ---
 
-## Overview {#overview}
+## Overview
 
 These functions were created to solve common problems with reshaping your data: pivoting cells from a row into a column, or pivoting cells from a column into a row. You can also transpose from a repeated set of values into multiple columns.
 
-## Transpose cells across columns into rows {#transpose-cells-across-columns-into-rows}
+## Transpose cells across columns into rows
 
 Imagine personal data with addresses in this format:
 
@@ -21,7 +21,7 @@ You can transpose the address information from this format into multiple rows. G
 
 ![A screenshot of the transpose across columns window.](/img/transpose1.png)
 
-### One column {#one-column}
+### One column
 
 You can transpose the multiple address columns into a series of rows:
 
@@ -51,7 +51,7 @@ You can choose one column and include the column-name information in each cell b
 ||Country: USA|
 ||Postal code: 19010|
 
-### Two columns {#two-columns}
+### Two columns
 
 You can retain the column names as separate cell values, by selecting <span class="fieldLabels">Two new columns</span> and naming the key and value columns.
 
@@ -67,7 +67,7 @@ You can retain the column names as separate cell values, by selecting <span clas
 ||Country|USA|
 ||Postal code|19010|
 
-## Transpose cells in rows into columns {#transpose-cells-in-rows-into-columns}
+## Transpose cells in rows into columns
 
 Imagine employee data in this format: 
 
@@ -107,7 +107,7 @@ value.replace("Employee: ", "")
 
 If your dataset doesn't have a predictable number of cells per intended row, such that you cannot specify easily how many columns to create, try <span class="menuItems">Columnize by key/value columns</span>.
 
-## Columnize by key/value columns {#columnize-by-keyvalue-columns}
+## Columnize by key/value columns
 
 This operation can be used to reshape a dataset that contains key and value columns: the repeating strings in the key column become new column names, and the contents of the value column are moved to new columns. This operation can be found at <span class="menuItems">Transpose</span> → <span class="menuItems">Columnize by key/value columns</span>.
 
@@ -131,7 +131,7 @@ In this format, each flower species is described by multiple attributes on conse
 | Galanthus nivalis 	| White	| 162168  |
 | Narcissus cyclamineus | Yellow   | 161899  |
 
-### Entries with multiple values in the same column {#entries-with-multiple-values-in-the-same-column}
+### Entries with multiple values in the same column
 
 If a new row would have multiple values for a given key, then these values will be grouped on consecutive rows, to form a [record structure](exploring#rows-vs-records).
 
@@ -157,7 +157,7 @@ This table is transformed by the Columnize operation to:
 
 The first key encountered by the operation serves as the record key, so the “Green” value is attached to the “Galanthus nivalis” name. See the [Row order](#row-order) section for more details about the influence of row order on the results of the operation.
 
-### Notes column {#notes-column}
+### Notes column
 
 In addition to the key and value columns, you can optionally add a column for notes. This can be used to store extra metadata associated to a key/value pair.
 
@@ -181,7 +181,7 @@ If the “Source” column is selected as the notes column, this table is transf
 
 Notes columns can therefore be used to preserve provenance or other context about a particular key/value pair.
 
-### Row order {#row-order}
+### Row order
 
 The order in which the key/value pairs appear matters. The Columnize operation will use the first key it encounters as the delimiter for entries: every time it encounters this key again, it will produce a new row, and add the following key/value pairs to that row.
 
@@ -207,7 +207,7 @@ The occurrences of the “Name” value in the “Field” column define the bou
 
 This sensitivity to order is removed if there are extra columns: in that case, the first extra column will serve as the key for the new rows.
 
-### Extra columns {#extra-columns}
+### Extra columns
 
 If your dataset contains extra columns, that are not being used as the key, value, or notes columns, they can be preserved by the operation. For this to work, they must have the same value in all old rows corresponding to a new row. 
 

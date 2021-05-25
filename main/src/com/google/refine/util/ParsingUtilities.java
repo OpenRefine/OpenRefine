@@ -99,7 +99,7 @@ public class ParsingUtilities {
     public static final ObjectWriter defaultWriter = mapper.writerWithView(JsonViews.NonSaveMode.class).with(defaultFilters);
 
     public static final DateTimeFormatter ISO8601 = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss'Z'");
-    private static final ZoneId defaultZone = ZoneId.systemDefault();
+    private static final ZoneOffset defaultTimeOffset = OffsetDateTime.now().getOffset();
                 
     static public Properties parseUrlParameters(HttpServletRequest request) {
         Properties options = new Properties();
@@ -248,26 +248,26 @@ public class ParsingUtilities {
 
     /**
      * Converts an old-style Java Date to an OffsetDateTime,
-     * assuming the date is represented in the current default system zone
+     * assuming the date is represented in the current default system timezone
      * (which is what you get if the date was parsed using `Calendar.getDefault()`).
      * 
      * @param date
      * @return
      */
     public static OffsetDateTime toDate(Date date) {
-        return date.toInstant().atZone(defaultZone).toOffsetDateTime();
+        return date.toInstant().atOffset(defaultTimeOffset);
     }
 
     /**
      * Converts an old-style Java Calendar to an OffsetDateTime,
-     * assuming the date is represented in the current default system zone
+     * assuming the date is represented in the current default system timezone
      * (which is what you get if the date was parsed using `Calendar.getDefault()`).
      * 
      * @param date
      * @return
      */
     public static OffsetDateTime toDate(Calendar date) {
-        return date.toInstant().atZone(defaultZone).toOffsetDateTime();
+        return date.toInstant().atOffset(defaultTimeOffset);
     }
 
 	public static ObjectNode evaluateJsonStringToObjectNode(String optionsString) {

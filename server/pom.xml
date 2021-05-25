@@ -11,7 +11,7 @@
   <parent>
     <groupId>org.openrefine</groupId>
     <artifactId>openrefine</artifactId>
-    <version>3.6-SNAPSHOT</version>
+    <version>3.5-SNAPSHOT</version>
   </parent>
 
   <properties>
@@ -37,7 +37,7 @@
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>build-helper-maven-plugin</artifactId>
-	<version>${build-helper-maven-plugin.version}</version>
+        <version>3.2.0</version>
         <executions>
           <execution>
             <phase>generate-sources</phase>
@@ -55,10 +55,10 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
-	<version>${maven-compiler-plugin.version}</version>
+        <version>3.8.1</version>
         <configuration>
-          <source>${java.minversion}</source>
-          <target>${java.minversion}</target>
+          <source>1.8</source>
+          <target>1.8</target>
           <encoding>UTF-8</encoding>
           <showDeprecation>false</showDeprecation>
         </configuration>
@@ -66,7 +66,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-resources-plugin</artifactId>
-	<version>${maven-resources-plugin.version}</version>
+        <version>3.2.0</version>
         <configuration>
           <encoding>UTF-8</encoding>
         </configuration>
@@ -74,7 +74,7 @@
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>exec-maven-plugin</artifactId>
-	<version>${exec-maven-plugin.version}</version>
+        <version>3.0.0</version>
         <configuration>
           <mainClass>com.google.refine.Refine</mainClass>
           <commandlineArgs>-Drefine.headless=true -Drefine.autoreload=true -Dbutterfly.autoreload=true -Drefine.memory=1400M -Drefine.port=3333 -Drefine.host=127.0.0.1</commandlineArgs>
@@ -84,7 +84,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
-	<version>${surefire.version}</version>
+        <version>2.22.0</version>
         <configuration>
           <skip>true</skip>
         </configuration>
@@ -95,7 +95,7 @@
         <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-dependency-plugin</artifactId>
-	    <version>${maven-dendency-plugin.version}</version>
+            <version>3.1.2</version>
             <configuration>
                 <includeScope>runtime</includeScope>
             </configuration>
@@ -174,28 +174,28 @@
     </dependency>
     <dependency>
       <groupId>org.openrefine.dependencies</groupId>
+      <artifactId>jdatapath</artifactId>
+      <version>alpha2</version>
+    </dependency>
+    <dependency>
+      <groupId>org.openrefine.dependencies</groupId>
       <artifactId>butterfly</artifactId>
       <version>${butterfly.version}</version>
     </dependency>
     <dependency>
-      <groupId>org.apache.logging.log4j</groupId>
-      <artifactId>log4j-slf4j-impl</artifactId>
-      <version>${log4j.version}</version>
+      <groupId>org.mozilla</groupId>
+      <artifactId>rhino-runtime</artifactId>
+      <version>1.7.13</version>
+    </dependency>
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-log4j12</artifactId>
+      <version>${slf4j.version}</version>
     </dependency>
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-api</artifactId>
       <version>${slf4j.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.logging.log4j</groupId>
-      <artifactId>log4j-core</artifactId>
-      <version>${log4j.version}</version>
-    </dependency>
-    <dependency> <!-- used in Refine.java, but apparently also needed by velocity? -->
-      <groupId>org.apache.logging.log4j</groupId>
-      <artifactId>log4j-1.2-api</artifactId>
-      <version>${log4j.version}</version>
     </dependency>
   </dependencies>
 </project>

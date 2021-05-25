@@ -4,69 +4,55 @@ on:
   push:
     branches:
       - 'master'
-      - '4.0'
     paths-ignore:
       - 'docs/**'
 
 jobs:
-  prepare_ui_test_matrix:
+  ui_tests:
     runs-on: ubuntu-latest
-    outputs:
-      matrix: ${{ steps.set-matrix.outputs.matrix }}
-    steps:
-      - uses: actions/checkout@v3
-        with:
-          ref: ${{ github.event.pull_request.head.ref }}
-          repository: ${{ github.event.pull_request.head.repo.full_name }}
-      - name: Setup Node
-        uses: actions/setup-node@v3.1.1
-        with:
-          node-version: '12'
-      - id: set-matrix
-        run: npm install --save glob && node main/tests/cypress/build-test-matrix.js
-        env:
-          browsers: chrome
-  ui_test:
-    needs: prepare_ui_test_matrix
-    runs-on: ubuntu-latest
+
     strategy:
-      matrix: ${{fromJSON(needs.prepare_ui_test_matrix.outputs.matrix)}}
+      matrix:
+          browser: ['edge', 'chrome']
+
     steps:
-      - uses: actions/checkout@v3
-        with:
-          ref: ${{ github.event.pull_request.head.ref }}
-          repository: ${{ github.event.pull_request.head.repo.full_name }}
+    - uses: actions/checkout@v2.3.4
 
-      - name: Set up secrets
-        run: |
-          echo "CYPRESS_RECORD_KEY=$(echo YzE3ZDU4OGItZTBkOC00ZjJmLTg4NjYtNzJmNmFmYmRhNGQxCg== | base64 -d)" >> $GITHUB_ENV
-          echo "CYPRESS_PROJECT_ID=s5du3k" >> $GITHUB_ENV
-
-      - name: Restore dependency cache
-        uses: actions/cache@v3
-        with:
+    - name: Restore dependency cache
+      uses: actions/cache@v2.1.5
+      with:
           path: ~/.m2/repository
           key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
           restore-keys: |
-            ${{ runner.os }}-maven-
+              ${{ runner.os }}-maven-
 
-      - name: Set up Java 11
-        uses: actions/setup-java@v3
-        with:
+    - name: Set up Java 8
+      uses: actions/setup-java@v2
+      with:
           distribution: 'adopt'
-          java-version: 11
+          java-version: 8
 
-      - name: Build OpenRefine
-        run: ./refine build
+    - name: Setup Node
+      uses: actions/setup-node@v2
+      with:
+        node-version: '12'
 
-      - name: Setup Node
-        uses: actions/setup-node@v3.1.1
-        with:
-          node-version: '12'
+    - name: Install Edge
+      if: matrix.browser == 'edge'
+      run: | 
+        sudo curl https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > microsoft.gpg
+        sudo install -o root -g root -m 644 microsoft.gpg /etc/apt/trusted.gpg.d/
+        sudo sh -c 'echo "deb [arch=amd64] https://packages.microsoft.com/repos/edge stable main" > /etc/apt/sources.list.d/microsoft-edge-dev.list'
+        sudo rm microsoft.gpg
+        sudo apt-get update
+        sudo apt-get install microsoft-edge-dev
 
-      - name: Restore Tests dependency cache
-        uses: actions/cache@v3
-        with:
+    - name: Build OpenRefine
+      run: ./refine build
+
+    - name: Restore Tests dependency cache
+      uses: actions/cache@v2.1.5
+      with:
           path: |
             ~/cache
             ~/.cache
@@ -74,26 +60,24 @@ jobs:
             !~/cache/exclude
           key: ${{ runner.os }}-modules-${{ hashFiles('**/yarn.lock') }}
           restore-keys: |
-            ${{ runner.os }}-yarn
+              ${{ runner.os }}-yarn
 
-      - name: Install test dependencies
-        run: |
+    - name: Install test dependencies
+      run: |
           cd ./main/tests/cypress
           npm i -g yarn
           yarn install
 
-      - name: Test with Cypress on ${{ matrix.browser }}
-        run: | 
-          echo REFINE_MIN_MEMORY=1400M >> ./refine.ini
-          echo REFINE_MEMORY=4096M >> ./refine.ini
-          ./refine ui_tests
-        env:
-          CYPRESS_BROWSER: ${{ matrix.browser }}
-          CYPRESS_RECORD_KEY: ${{ env.CYPRESS_RECORD_KEY }}
-          CYPRESS_PROJECT_ID: ${{ env.CYPRESS_PROJECT_ID }}
-          CYPRESS_CI_BUILD_ID: '${{ github.run_id }}'
-          CYPRESS_SPECS: ${{ matrix.specs }}
+    - name: Lint with ES-Lint & Prettier
+      run: |
+          cd ./main/tests/cypress
+          yarn lint
 
+    - name: Test with Cypress on ${{ matrix.browser }}
+      run: | 
+        echo REFINE_MIN_MEMORY=1400M >> ./refine.ini
+        echo REFINE_MEMORY=4096M >> ./refine.ini
+        ./refine ui_test ${{ matrix.browser }} s5du3k "${{ secrets.CYPRESS_RECORD_KEY }}"
 
   build:
 
@@ -126,30 +110,23 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v2.3.4
       with:
         fetch-depth: 0 # This is wasteful, but needed for git describe
 
-    - name: Set up secrets
-      run: |
-        echo "COVERALLS_TOKEN=$(echo eUVUVGRHOFJhQm9GMFJBYTNibjVhcWFEblpac1lmMlE3Cg== | base64 -d)" >> $GITHUB_ENV
-
     - name: Restore dependency cache
-      uses: actions/cache@v3
+      uses: actions/cache@v2.1.5
       with:
         path: ~/.m2/repository
         key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
         restore-keys: |
             ${{ runner.os }}-maven-
 
-    - name: Set up Java 11
-      uses: actions/setup-java@v3
+    - name: Set up Java 8
+      uses: actions/setup-java@v2
       with:
         distribution: 'adopt'
-        java-version: 11
-        server-id: ossrh
-        server-username: OSSRH_USER
-        server-password: OSSRH_PASS
+        java-version: 8
 
     - name: Install genisoimage and jq
       run: sudo apt-get install genisoimage jq
@@ -167,70 +144,79 @@ jobs:
       env:
         PGPASSWORD: postgres
 
-    - name: Install webapp dependencies
-      run: cd main/webapp && npm install
-      
     - name: Build and test with Maven
       run: mvn jacoco:prepare-agent test
 
     - name: Submit test coverage to Coveralls
       run: |
-        mvn jacoco:report coveralls:report -DrepoToken=${{ env.COVERALLS_TOKEN }} -DpullRequest=${{ github.event.number }} -DserviceName="GitHub Actions" -DserviceBuildNumber=${{ env.GITHUB_RUN_ID }} -Dbranch=master
+        mvn prepare-package -DskipTests=true
+        mvn jacoco:report coveralls:report -DrepoToken=${{ secrets.COVERALLS_TOKEN }} -DpullRequest=${{ github.event.number }} -DserviceName="GitHub Actions" -DserviceBuildNumber=${{ env.GITHUB_RUN_ID }} -Dbranch=master
 
-    - name: Install webapp dependencies
-      run: cd main/webapp && npm install
+    - name: Get the OpenRefine snapshot version
+      run: echo ::set-env name=OR_VERSION::$(cat ./main/webapp/WEB-INF/classes/git.properties | jq -r '.["git.commit.id.describe"]')
+      env:
+        ACTIONS_ALLOW_UNSECURE_COMMANDS: true
 
     - name: Generate dist files
-      run: mvn package -DskipTests=true
+      run: ./refine dist ${{ env.OR_VERSION }}
 
-  mac_test_and_deploy:
-    runs-on: macos-latest
+    - name: Create Release
+      if: github.repository == 'OpenRefine/OpenRefine'
+      id: create_release
+      run: echo ::set-env name=API_RELEASE::$(./.github/workflows/release_manager.sh)
+      env:
+        ACTIONS_ALLOW_UNSECURE_COMMANDS: true
+        OR_VERSION: ${{ env.OR_VERSION }}
+        RELEASE_REPO_OWNER: OpenRefine
+        RELEASE_REPO_TOKEN: ${{ secrets.RELEASE_REPO_TOKEN }}
 
-    steps:
-    - uses: actions/checkout@v3
-
-    - name: Restore dependency cache
-      uses: actions/cache@v3
+    - name: Upload Release Asset Windows
+      id: upload-release-asset-win
+      if: github.repository == 'OpenRefine/OpenRefine'
+      uses: actions/upload-release-asset@v1.0.2
+      env:
+        GITHUB_TOKEN: ${{ secrets.RELEASE_REPO_TOKEN }}
       with:
-        path: ~/.m2/repository
-        key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
-        restore-keys: |
-            ${{ runner.os }}-maven-
+        upload_url: ${{ env.API_RELEASE }}
+        asset_path: ./packaging/target/openrefine-win-${{ env.OR_VERSION }}.zip
+        asset_name: openrefine-win-${{ env.OR_VERSION }}.zip
+        asset_content_type: application/zip
 
-    - name: Set up Java 17
-      uses: actions/setup-java@v3
+    - name: Upload Release Asset Linux
+      id: upload-release-asset-linux
+      if: github.repository == 'OpenRefine/OpenRefine'
+      uses: actions/upload-release-asset@v1.0.2
+      env:
+        GITHUB_TOKEN: ${{ secrets.RELEASE_REPO_TOKEN }}
       with:
-        distribution: 'adopt'
-        java-version: 17
-        server-id: ossrh
-        server-username: OSSRH_USER
-        server-password: OSSRH_PASS
-        gpg-private-key: ${{ secrets.GPG_PRIVATE_KEY }}
-        gpg-passphrase: GPG_PASSPHRASE
+        upload_url: ${{ env.API_RELEASE }}
+        asset_path: ./packaging/target/openrefine-linux-${{ env.OR_VERSION }}.tar.gz
+        asset_name: openrefine-linux-${{ env.OR_VERSION }}.tar.gz
+        asset_content_type: application/tar+gzip
 
-    - name: Decrypt Apple certificates
-      run: |
-        gpg --pinentry-mode loopback --passphrase "${{ secrets.GPG_PASSPHRASE }}" --output .github/workflows/release/apple_cert.cer --decrypt packaging/apple_certs/apple_cert.cer.enc
-        gpg --pinentry-mode loopback --passphrase "${{ secrets.GPG_PASSPHRASE }}" --output .github/workflows/release/apple_cert.p12 --decrypt packaging/apple_certs/apple_cert.p12.enc
-        .github/workflows/release/add_apple_keys.sh
+    - name: Upload Release Asset Mac
+      id: upload-release-asset-mac
+      if: github.repository == 'OpenRefine/OpenRefine'
+      uses: actions/upload-release-asset@v1.0.2
       env:
-        P12_PASSPHRASE: ${{ secrets.APPLE_P12_PASSPHRASE }}
+        GITHUB_TOKEN: ${{ secrets.RELEASE_REPO_TOKEN }}
+      with:
+        upload_url: ${{ env.API_RELEASE }}
+        asset_path: ./packaging/target/openrefine-mac-${{ env.OR_VERSION }}.dmg
+        asset_name: openrefine-mac-${{ env.OR_VERSION }}.dmg
+        asset_content_type: application/x-apple-diskimage
 
-    - name: Install webapp dependencies
-      run: cd main/webapp && npm install
-      
-    - name: Build, test and package
-      run: mvn package -Dapple.notarization.username=$APPLE_USERNAME -Dapple.notarization.password=$APPLE_PASSWORD -Dapple.notarization.team.id=$APPLE_TEAM_ID
+    - name: Delete older releases
+      id: delete-older-releases
+      if: github.repository == 'OpenRefine/OpenRefine'
+      uses: dev-drprasad/delete-older-releases@v0.2.0
+      with:
+        repo: OpenRefine/OpenRefine-snapshot-releases
+        # Specifies number of latest releases (sorted by created_at) to keep. Pass 0 if you want to delete all releases
+        keep_latest: 10
+        # Specifies whether to delete tags associated to older releases or not.
+        # Older tags without any associated releases will not be deleted
+        delete_tags: true  
       env:
-        GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
-        APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
-        APPLE_USERNAME: ${{ secrets.APPLE_USERNAME }}
-        APPLE_PASSWORD: ${{ secrets.APPLE_PASSWORD }}
-
-    - name: Upload snapshot releases to OSSRH
-      run: mvn deploy -DskipTests=true
-      env:
-        OSSRH_USER: ${{ secrets.OSSRH_USER }}
-        OSSRH_PASS: ${{ secrets.OSSRH_PASS }}
-        GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
+        GITHUB_TOKEN: ${{ secrets.RELEASE_REPO_TOKEN }}
 

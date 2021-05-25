@@ -11,13 +11,19 @@
   <parent>
     <groupId>org.openrefine</groupId>
     <artifactId>openrefine</artifactId>
-    <version>3.6-SNAPSHOT</version>
+    <version>3.5-SNAPSHOT</version>
   </parent>
 
   <properties>
     <jee.path>/</jee.path>
     <jee.port>3333</jee.port>
     <refine.data>/tmp/refine</refine.data>
+    <powermock.version>2.0.9</powermock.version>
+    <!-- org.odftoolkit:odfdom-java:jar:0.9.0-RC1 bundles Jena 3.9.0 so we should match that
+         Jena 3.15.0 doesn't work. Versions through 3.14.0 appear to, but we'll be conservative
+    -->
+    <jena.version>3.17.0</jena.version>
+    <okhttp.version>4.9.1</okhttp.version>
   </properties>
 
   <scm>
@@ -43,7 +49,7 @@
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>build-helper-maven-plugin</artifactId>
-	<version>${build-helper-maven-plugin.version}</version>
+        <version>3.2.0</version>
         <executions>
           <execution>
             <phase>generate-sources</phase>
@@ -60,6 +66,24 @@
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <version>3.8.1</version>
+        <configuration>
+	  <!--release>11</release-->
+          <encoding>UTF-8</encoding>
+          <showDeprecation>false</showDeprecation>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-resources-plugin</artifactId>
+        <version>3.2.0</version>
+        <configuration>
+          <encoding>UTF-8</encoding>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
         <version>${surefire.version}</version>
         <configuration>
@@ -71,7 +95,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-dependency-plugin</artifactId>
-	<version>${maven-dependency-plugin.version}</version>
+        <version>3.1.2</version>
         <executions>
             <execution>
             <phase>compile</phase>
@@ -88,7 +112,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-jar-plugin</artifactId>
-	<version>${maven-jar-plugin.version}</version>
+        <version>3.2.0</version>
         <executions>
           <execution>
             <goals>
@@ -100,7 +124,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-clean-plugin</artifactId>
-	<version>${maven-clean-plugin.version}</version>
+        <version>3.1.0</version>
         <configuration>
           <filesets>
             <fileset>
@@ -112,7 +136,7 @@
     <plugin>
         <groupId>pl.project13.maven</groupId>
         <artifactId>git-commit-id-plugin</artifactId>
-	<version>${git-commit-id-plugin.version}</version>
+        <version>4.0.4</version>
         <executions>
             <execution>
                 <id>get-the-git-infos</id>
@@ -155,20 +179,11 @@
       <groupId>org.openrefine.dependencies</groupId>
       <artifactId>butterfly</artifactId>
       <version>${butterfly.version}</version>
-      <exclusions>
-	<exclusion>
-          <groupId>org.apache.logging.log4j</groupId>
-	  <artifactId>log4j-1.2-api</artifactId>
-	</exclusion>
-	<exclusion>
-          <groupId>org.apache.logging.log4j</groupId>
-	  <artifactId>log4j-slf4j-impl</artifactId>
-	</exclusion>
-	<exclusion>
-          <groupId>org.apache.logging.log4j</groupId>
-	  <artifactId>log4j-core</artifactId>
-	</exclusion>
-      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>org.mozilla</groupId>
+      <artifactId>rhino-runtime</artifactId>
+      <version>1.7.13</version>
     </dependency>
     <dependency>
       <groupId>com.fasterxml.jackson.core</groupId>
@@ -182,134 +197,138 @@
     </dependency>
     <dependency>
       <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-log4j12</artifactId>
+      <version>${slf4j.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.slf4j</groupId>
       <artifactId>slf4j-api</artifactId>
       <version>${slf4j.version}</version>
-      <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.apache.commons</groupId>
       <artifactId>commons-lang3</artifactId>
-      <version>${commons-lang3.version}</version>
+      <version>3.12.0</version>
     </dependency>
     <dependency>
       <groupId>commons-fileupload</groupId>
       <artifactId>commons-fileupload</artifactId>
-      <version>${commons-fileupload.version}</version>
+      <version>1.4</version>
     </dependency>
     <dependency>
       <groupId>commons-collections</groupId>
       <artifactId>commons-collections</artifactId>
-      <version>${commons-collections.version}</version>
+      <version>3.2.2</version>
     </dependency>
     <dependency>
         <groupId>org.apache.commons</groupId>
         <artifactId>commons-text</artifactId>
-	<version>${commons-text.version}</version>
+        <version>1.9</version>
     </dependency>
     <dependency>
       <groupId>commons-validator</groupId>
       <artifactId>commons-validator</artifactId>
-      <version>${commons-validator.version}</version>
+      <version>1.7</version>
     </dependency>
     <dependency>
       <groupId>velocity</groupId>
       <artifactId>velocity</artifactId>
-      <version>${velocity.version}</version>
+      <version>1.5</version>
     </dependency>
     <dependency>
       <groupId>org.marc4j</groupId>
       <artifactId>marc4j</artifactId>
-      <version>${marc4j.version}</version>
+      <version>2.9.1</version>
     </dependency>
     <dependency>
       <groupId>org.apache.commons</groupId>
       <artifactId>commons-compress</artifactId>
-      <version>${commons-compress.version}</version>
+      <version>1.20</version>
     </dependency>
     <dependency>
       <groupId>org.jsoup</groupId>
       <artifactId>jsoup</artifactId>
-      <version>${jsoup.version}</version>
+      <version>1.13.1</version>
     </dependency>
     <dependency>
       <groupId>org.openrefine.dependencies</groupId>
       <artifactId>opencsv-multichar</artifactId>
-      <version>${opencsv-multichar.version}</version>
+      <version>2.4</version>
     </dependency>
     <dependency>
       <groupId>org.apache.poi</groupId>
       <artifactId>poi</artifactId>
-      <version>${poi.version}</version>
-      <exclusions>
-	<exclusion>
-          <groupId>org.apache.logging.log4j</groupId>
-	  <artifactId>log4j-api</artifactId>
-	</exclusion>
-      </exclusions>
+      <version>4.1.2</version>
     </dependency>
     <dependency>
       <groupId>org.apache.poi</groupId>
       <artifactId>poi-ooxml</artifactId>
-      <version>${poi.version}</version>
-      <exclusions>
-	<exclusion>
-          <groupId>org.apache.logging.log4j</groupId>
-	  <artifactId>log4j-api</artifactId>
-	</exclusion>
-      </exclusions>
+      <version>4.1.2</version>
     </dependency>
     <dependency>
       <groupId>org.odftoolkit</groupId>
       <artifactId>odfdom-java</artifactId>
-      <version>${odfdom-java.version}</version>
-      <!-- workaround for https://github.com/tdf/odftoolkit/issues/131,
-	 which is unfortunately still not solved after
-         https://github.com/tdf/odftoolkit/pull/132
-	 because xml-apis remains an indirect dependency of this library
-	 through xercesImpl.
-      -->
-      <exclusions>
-        <exclusion>
-          <groupId>xml-apis</groupId>
-          <artifactId>xml-apis</artifactId>
-        </exclusion>
-      </exclusions>
+      <version>0.9.0-RC1</version>
     </dependency>
     <dependency>
       <groupId>org.openrefine.dependencies</groupId>
       <artifactId>vicino</artifactId>
-      <version>${vicino.version}</version>
-      <exclusions>
-	<exclusion>
-	  <groupId>log4j</groupId>
-	  <artifactId>log4j</artifactId>
-	</exclusion>
-      </exclusions>
+      <version>1.2</version>
+    </dependency>
+    <dependency>
+      <groupId>oauth.signpost</groupId>
+      <artifactId>signpost-core</artifactId>
+      <version>2.1.1</version>
+    </dependency>
+    <dependency>
+      <groupId>oauth.signpost</groupId>
+      <artifactId>signpost-commonshttp4</artifactId>
+      <version>2.1.1</version>
     </dependency>
     <dependency>
       <groupId>org.clojure</groupId>
       <artifactId>clojure</artifactId>
-      <version>${clojure.version}</version>
+      <version>1.10.3</version>
     </dependency>
     <dependency>
       <groupId>org.apache.httpcomponents.client5</groupId>
       <artifactId>httpclient5</artifactId>
-      <version>${httpclient5.version}</version>
+      <version>5.0.3</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.httpcomponents</groupId>
+      <artifactId>httpclient</artifactId>
+      <version>4.5.13</version>
     </dependency>
     <dependency>
       <groupId>org.apache.httpcomponents</groupId>
       <artifactId>httpcore</artifactId>
-      <version>${httpcore.version}</version>
+      <version>4.4.14</version>
     </dependency>
     <dependency>
       <groupId>org.sweble.wikitext</groupId>
       <artifactId>swc-parser-lazy</artifactId>
-      <version>${swc-parser-lazy.version}</version>
+      <version>3.1.9</version>
+    </dependency>
+    <dependency>
+      <groupId>joda-time</groupId>
+      <artifactId>joda-time</artifactId>
+      <version>2.10.10</version>
     </dependency>
 
-    <dependency> <!-- reported as unused by dependency:analyze, but tests fail without -->
+    <dependency>
       <groupId>org.apache.jena</groupId>
       <artifactId>jena-arq</artifactId>
+      <version>${jena.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.jena</groupId>
+      <artifactId>jena-base</artifactId>
+      <version>${jena.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.jena</groupId>
+      <artifactId>jena-cmds</artifactId>
       <version>${jena.version}</version>
     </dependency>
     <dependency>
@@ -317,32 +336,38 @@
       <artifactId>jena-core</artifactId>
       <version>${jena.version}</version>
     </dependency>
+    <!-- v1.15 is needed for Jena 3.14+ - copied from org.apache.jena:jena:pom -->
     <dependency>
       <groupId>commons-codec</groupId>
       <artifactId>commons-codec</artifactId>
-      <version>${commons-codec.version}</version>
+      <version>1.15</version>
     </dependency>
     <dependency>
       <groupId>commons-io</groupId>
       <artifactId>commons-io</artifactId>
-      <version>${commons-io.version}</version>
+      <version>2.8.0</version>
+    </dependency>
+    <dependency>
+      <groupId>com.metaweb</groupId>
+      <artifactId>lessen</artifactId>
+      <version>1.0</version>
     </dependency>
     <dependency>
       <groupId>com.google.guava</groupId>
       <artifactId>guava</artifactId>
-      <version>${guava.version}</version>
+      <version>30.1.1-jre</version>
     </dependency>
     <dependency>
       <groupId>javax.xml.bind</groupId>
       <artifactId>jaxb-api</artifactId>
-      <version>${jaxb-api.version}</version>
+      <version>2.3.1</version>
     </dependency>
     <dependency>
       <groupId>com.github.albfernandez</groupId>
       <artifactId>juniversalchardet</artifactId>
-      <version>${juniversalchardet.version}</version>
+      <version>2.4.0</version>
     </dependency>
-    <dependency> <!-- reported as unused by dependency:analyze, but broken without it -->
+    <dependency>
       <groupId>org.eclipse.jetty</groupId>
       <artifactId>jetty-servlets</artifactId>
       <version>${jetty.version}</version>
@@ -353,7 +378,19 @@
     <dependency>
       <groupId>org.testng</groupId>
       <artifactId>testng</artifactId>
-      <version>${testng.version}</version>
+      <version>7.4.0</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.powermock</groupId>
+      <artifactId>powermock-module-testng</artifactId>
+      <version>${powermock.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.powermock</groupId>
+      <artifactId>powermock-api-mockito2</artifactId>
+      <version>${powermock.version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -361,23 +398,11 @@
       <artifactId>mockwebserver</artifactId>
       <version>${okhttp.version}</version>
       <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.mockito</groupId>
-      <artifactId>mockito-core</artifactId>
-      <version>${mockito.version}</version>
-      <scope>test</scope>
-    </dependency>
+     </dependency>
     <dependency>
       <groupId>org.apache.httpcomponents</groupId>
       <artifactId>httpmime</artifactId>
-      <version>${httpmime.version}</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.logging.log4j</groupId>
-      <artifactId>log4j-core</artifactId>
-      <version>${log4j.version}</version>
+      <version>4.5.13</version>
       <scope>test</scope>
     </dependency>
   </dependencies>

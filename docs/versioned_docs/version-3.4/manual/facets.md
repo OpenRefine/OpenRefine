@@ -4,7 +4,7 @@ title: Exploring facets
 sidebar_label: Facets
 ---
 
-## Overview {#overview}
+## Overview
 
 Facets are one of OpenRefine’s strongest features - that’s where the diamond logo comes from! 
 
@@ -15,7 +15,7 @@ Faceted browsing gives you a big-picture look at your data (do they agree or dis
 Typically, you create a facet on a particular column. That facet selection appears on the left, in the <span class="tabLabels">Facet/Filter</span> tab, and you can click on a displayed facet to view all the records that match. You can also “exclude” the facet, to view every record that does _not_ match, and you can select more than one facet by clicking “include.”
 
 
-### An example {#an-example}
+### An example
 
 You can learn about facets and filtering with the following example. You can copy the following table and paste it using the <span class="menuItems">Clipboard</span> method of starting a project if you would like to try it yourself.
 
@@ -62,7 +62,7 @@ When you look back at the text facet display of country names, you should see a 
 
 We can combine these facets - say, by narrowing to only the Chinese cities with populations greater than 20 million - simply by clicking in both. You should see 2 matching rows for both these criteria. 
 
-### Things to know about facets {#things-to-know-about-facets}
+### Things to know about facets
 
 When you have facets applied, you will see “matching rows” in the [project grid header](running#project-grid-header). If you click <span class="menuItems">Export</span> and copy your data out of OpenRefine while facets are active, many of the exporting options will only export the matching rows, not all the rows in your project. 
 
@@ -74,7 +74,7 @@ You can modify any facet expression by clicking the “change” button to the r
 
 Facet boxes that appear in the sidebar can be resized and rearranged. You can drag and drop the title bar of each box to reorder them, and drag on the bottom bar of text facet boxes. 
 
-## Text facet {#text-facet}
+## Text facet
 
 A text facet can be generated on any column with the “text” data type. Select the column dropdown and go to <span class="menuItems">Facet</span> → <span class="menuItems">Text facet</span>. The created facet will be sorted alphabetically, and can be sorted by count. 
 
@@ -88,7 +88,7 @@ The choices and counts displayed in each facet can be copied as tab-separated va
 
 ![A column of years faceted as text and numbers, and with the count ready to be copied.](/img/yeardata.png)
 
-## Numeric facet {#numeric-facet}
+## Numeric facet
 
 ![A screenshot of an example numeric facet.](/img/numericfacet.png)
 
@@ -100,7 +100,7 @@ You will be offered the option to include blank, non-numeric, and error values i
 You can create a text facet on numeric data, which will treat each entry as a string. This can be useful if you wish, for example, to manually include facets instead of selecting a range, or sort by count, or copy that count.
 :::
 
-## Timeline facet {#timeline-facet}
+## Timeline facet
 
 ![A screenshot of an example timeline facet.](/img/timelinefacet.png)
 
@@ -108,7 +108,7 @@ Much like a numeric facet, a timeline facet will display as a small histogram wi
 
 The facet appears with a count of blank cells and those with errors, which can help you analyze whether your date cells are correctly converted.
 
-## Scatterplot facet {#scatterplot-facet}
+## Scatterplot facet
 
 A scatterplot is a visual representation of two related sets of numeric data. 
 
@@ -124,7 +124,7 @@ If you have multiple facets applied, plotted points in your scatterplot displays
 
 If you would like to export a scatterplot, OpenRefine will open a new tab with a generated PNG file that you can save. 
 
-## Custom text facet {#custom-text-facet}
+## Custom text facet
 
 You may want to explore your textual data with modifications that aren't permanent. Creating custom text facets will load your column into memory, transform the data temporarily, and store those transformations inside the facet. 
 
@@ -156,7 +156,7 @@ That expression will look for the first letter (the character at index 0) of eac
 
 You can learn more about text-modification functions on the [Expressions page](expressions). 
 
-## Custom numeric facet {#custom-numeric-facet}
+## Custom numeric facet
 
 You may want to explore your numerical data with modifications that aren't permanent. You can also use custom numeric facets to analyze textual data, such as by getting the length of text strings (with `value.length()`), or by analyzing it as though it were formatted as numbers (with `toNumber(value)`). 
 
@@ -188,13 +188,13 @@ mod(value, 7)
 
 You can learn more about numeric-modification functions on the [Expressions page](expressions). 
 
-## Customized facets {#customized-facets}
+## Customized facets
 
 Customized facets have been added to expand the number of default facets users can apply with a single click. They represent some common and useful functions you shouldn’t have to work out using an [expression](expressions).
 
 All facets that display in the <span class="tabLabels">Facet/Filter</span> tab can be edited by clicking on the “change” button to the right of the column title. This brings up the expressions window that will allow you to modify and preview the expression being used. 
 
-### Word facet {#word-facet}
+### Word facet
 
 A <span class="menuItems">Word facet</span> is a simple version of a text facet: it splits up the content of the cells based on spaces, and outputs each character string as a facet:
 
@@ -206,7 +206,7 @@ This can be useful for exploring the language used in a corpus, looking for comm
 
 Word facet is case-sensitive and only splits by spaces, not by line breaks or other natural divisions. 
 
-### Duplicates facet {#duplicates-facet}
+### Duplicates facet
 
 A <span class="menuItems">Duplicates facet</span> will return only rows that have non-unique values in the column you’ve selected. It will create a facet of “true” and “false” values - true being cells that are not unique, and “false” being cells that are. The actual expression being used is
 
@@ -220,7 +220,7 @@ Duplicates facets are case-sensitive and you may wish to filter out things like 
 facetCount(trim(toLowercase(value)), 'trim(toLowercase(value))', 'cityLabel') > 1
 ```
 
-### Numeric log facet {#numeric-log-facet}
+### Numeric log facet 
 
 Logarithmic scales reduce wide-ranging quantities to more compact and manageable ranges. A log transformation can be used to make highly skewed distributions less skewed. If your numerical data is unevenly distributed (say, lots of values in one range, and then a long tail extending off into different magnitudes), a <span class="menuItems">Numeric log facet</span> can represent that range better than a simple numeric facet. It will break these values down into more navigable segments than the buckets of a numeric facet. This facet can make patterns in your data more visible. OpenRefine uses a base-10 log, the “common logarithm.”
 
@@ -248,7 +248,7 @@ Most values will be clustered in the 0-100 range, but 35,000 is many magnitudes 
 
 A 1-bounded numeric log facet can be used if you'd like to exclude all the values below 1 (including zero and negative numbers). 
 
-### Text-length facet {#text-length-facet}
+### Text-length facet
 
 The <span class="menuItems">Text-length facet</span> returns a numerical value for each cell and plots it on a numeric facet chart. The expression used is
 
@@ -261,7 +261,7 @@ This can be useful to, for example, look for values that did not successfully sp
 You can also employ a <span class="menuItems">Log of text-length facet</span> that allows you to navigate more easily a wide range of string lengths. This can be useful in the case of web-scraping, where lots of textual data is loaded into single cells and needs to be parsed out. 
 
 
-### Unicode character-code facet {#unicode-character-code-facet}
+### Unicode character-code facet
 
 ![A screenshot of the Unicode facet.](/img/unicodefacet.png)
 
@@ -269,7 +269,7 @@ The Unicode facet identifies and returns [Unicode decimal values](https://en.wik
 
 This facet creates a numerical chart, which offers you the ability to narrow down to a range of numbers. For example, lowercase characters are numbers 97-122, uppercase characters are numbers 65-90, and numerical digits are numbers 48-57. 
 
-### Facet by error {#facet-by-error}
+### Facet by error
 
 An error is a data type created by OpenRefine in the process of transforming data. For example, say you had converted a column to the number data type. If one cell had text characters in it, OpenRefine could either output the original text string unchanged or output an error. If you allow errors to be created, you can facet by them later to search for them and fix them. 
 
@@ -277,7 +277,7 @@ An error is a data type created by OpenRefine in the process of transforming dat
 
 To store errors in cells, ensure that you have <span class="fieldLabels">store error</span> selected for the “On error” option in the expressions window. 
 
-### Facet by null, empty, or blank {#facet-by-null-empty-or-blank}
+### Facet by null, empty, or blank
 
 Any column can be faceted for [null and/or empty cells](#cell-data-types). These can help you find cells where you want to manually enter content. 
 
@@ -285,7 +285,7 @@ Any column can be faceted for [null and/or empty cells](#cell-data-types). These
 
 An empty cell is a cell that is set to contain a string, but doesn’t have any characters in it (a zero-length string). This can be left over from an operation that removed characters, or from manually editing a cell and deleting its contents.
 
-### Facet by star or flag {#facet-by-star-or-flag}
+### Facet by star or flag
 
 Stars and flags offer you the opportunity to mark specific rows for yourself for later focus. Stars and flags persist through closing and opening your project, and thus can provide a different function than using a permalink to persist your facets. Stars and flags can be used in any way you want, although they are designed to help you flag errors and star rows of particular importance. 
 
@@ -304,7 +304,7 @@ You may wish to create a custom subset of your data through a series of separate
 
 You can also create a text facet on any column with the expression `row.starred` or `row.flagged`.
 
-## Text filter {#text-filter}
+## Text filter
 
 Filters allow you to narrow down your data based on whether a given column includes a text string. 
 

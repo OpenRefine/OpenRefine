@@ -35,7 +35,6 @@ module.exports = {
     'Technical Reference': [
       'technical-reference/technical-reference-index',
       'technical-reference/architecture',
-      'technical-reference/clustering-in-depth',
       'technical-reference/openrefine-api',
       'technical-reference/reconciliation-api',
       'technical-reference/contributing',
@@ -45,11 +44,9 @@ module.exports = {
       'technical-reference/homebrew-cask-process',
       'technical-reference/writing-extensions',
       'technical-reference/migrating-older-extensions',
-      'technical-reference/translating-ui',
-      'technical-reference/translating-docs',
+      'technical-reference/translating',
       'technical-reference/functional-tests',
-      'technical-reference/maintainer-guidelines',
-      'technical-reference/wikibase/architecture'
+      'technical-reference/maintainer-guidelines'
   ]
   },
 };

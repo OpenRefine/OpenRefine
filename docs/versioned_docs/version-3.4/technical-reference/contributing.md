@@ -6,14 +6,14 @@ sidebar_label: Contributing
 
 Please read the general [guidelines on contributing to OpenRefine](https://github.com/OpenRefine/OpenRefine/blob/master/CONTRIBUTING.md) first, then review the information on [reporting and tracking issues](#reporting-and-tracking-issues), and on making your [first pull request](#your-first-pull-request) below)
 
-## Reporting and tracking issues {#reporting-and-tracking-issues}
+## Reporting and tracking issues
 
 If you need to file a bug or request a feature, [create an Issue in the OpenRefine Github repository](https://github.com/OpenRefine/OpenRefine/issues). Github issues should be used for reporting specific bugs and requesting specific features. If you just don't know how to do something using OpenRefine, or want to discuss some ideas, please:
 
 - [Try the user manual](/)
 - [post to our OpenRefine mailing list](http://groups.google.com/group/openrefine/)
 
-## Contributing to the documentation {#contributing-to-the-documentation}
+## Contributing to the documentation
 
 We use [Docusaurus](https://docusaurus.io/) for our docs. For small documentation changes, you should be able to edit the Markdown files directly and submit them as a pull request. A preview of the docs will be generated automatically. But it is also
 possible to preview your changes locally. Assuming you have [Node.js](https://nodejs.org/en/download/) installed (which includes npm), you can install Docusaurus with:
@@ -41,7 +41,7 @@ You can also spin a local web server to serve the docs for you, with auto-refres
 yarn start
 ```
 
-## Your first code pull request {#your-first-code-pull-request}
+## Your first code pull request
 
 This describes the overall steps to your first code contribution in OpenRefine. If you have trouble with any of these steps feel free to reach out on the [developer mailing list](https://groups.google.com/forum/#!forum/openrefine-dev) or the [Gitter channel](https://gitter.im/OpenRefine/OpenRefine).
 

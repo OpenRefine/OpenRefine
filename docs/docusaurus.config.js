@@ -1,6 +1,6 @@
 module.exports = {
-  onBrokenLinks: 'throw',
-  onBrokenMarkdownLinks: 'throw',
+  onBrokenLinks: 'error',
+  onBrokenMarkdownLinks: 'error',
   title: 'OpenRefine',
   tagline: 'A power tool for working with messy data.',
   url: 'https://docs.openrefine.org/',
@@ -8,10 +8,6 @@ module.exports = {
   favicon: 'img/openrefine_logo.png',
   organizationName: 'OpenRefine', // Usually your GitHub org/user name.
   projectName: 'OpenRefine', // Usually your repo name.
-  i18n: {
-    defaultLocale: 'en',
-    locales: ['en', 'jp', 'fr'],
-  },
   themeConfig: {
     navbar: {
       title: 'OpenRefine Documentation',
@@ -26,19 +22,12 @@ module.exports = {
           label: 'User Manual',
           position: 'left',
         },
-        {
-          to: 'technical-reference/technical-reference-index',
-          label: 'Technical Reference',
-          position: 'left'
-        },
-        {
-          type: 'localeDropdown',
-          position: 'right',
-        },
+        {to: 'technical-reference/technical-reference-index',
+         label: 'Technical Reference',
+         position: 'left'},
         {
           href: 'https://github.com/OpenRefine/OpenRefine/edit/master/docs',
-          'aria-label': 'GitHub',
-          className: 'header-github-link',
+          label: 'GitHub',
           position: 'right',
         },
       ],

@@ -4,13 +4,13 @@ title: Exploring data
 sidebar_label: Overview
 ---
 
-## Overview {#overview}
+## Overview
 
 OpenRefine offers lots of features to help you learn about your dataset, even if you don’t change a single character. In this section we cover different ways for sorting through, filtering, and viewing your data. 
 
 Unlike spreadsheets, OpenRefine doesn’t store formulas and display the output of those calculations; it only shows the value inside each cell. It doesn’t support cell colors or text formatting. 
 
-## Data types {#data-types}
+## Data types
 
 Each piece of information (each cell) in OpenRefine is assigned a data type. Some file formats, when imported, can set data types that are recognized by OpenRefine. Cells without an associated data type on import will be considered a “string” at first, but you can have OpenRefine convert cell contents into other data types later. This is set at the cell level, not at the column level. 
 
@@ -41,7 +41,7 @@ Changing a cell's data type is not the same operation as transforming its conten
 To transform data from one type to another, see [Transforming data](cellediting#data-type-transforms) for information on using common tranforms, and see [Expressions](expressions) for information on using [toString()](grelfunctions#tostringo-string-format-optional), [toDate()](grelfunctions#todateo-b-monthfirst-s-format1-s-format2-), and other functions. 
 
 
-### Dates {#dates}
+### Dates
 
 A “date” type is created when a column is [transformed into dates](transforming#to-date), when an expression is used to [convert cells to dates](grelfunctions#todateo-b-monthfirst-s-format1-s-format2-) or when individual cells are set to have the data type “date”. 
 
@@ -74,7 +74,7 @@ The following table shows some example [date and time formatting styles for the 
 |Long	|June 30, 2009 7:03:47 AM PDT 	|30 juin 2009 07:03:47 PDT|
 |Full 	|Tuesday, June 30, 2009 7:03:47 AM PDT 	|mardi 30 juin 2009 07 h 03 PDT|
 
-## Rows vs. records {#rows-vs-records}
+## Rows vs. records
 
 A row is a simple way to organize data: a series of cells, one cell per column. Sometimes there are multiple pieces of information in one cell, such as when a survey respondent can select more than one response. 
 

@@ -4,7 +4,7 @@ title: Sort and view
 sidebar_label: Sort and view
 ---
 
-## Sort {#sort}
+## Sort
 
 You can temporarily sort your rows by one column. You can sort based on [data type](exploring#data-types):
 *   text alphabetically or reverse
@@ -24,11 +24,11 @@ If you have multiple sorting methods applied, they will work in the order you ap
 
 When the sorting method you've applied is temporary, you will see that the rows retain their original numbering. When you make that sorting method permanent, by selecting <span class="menuItems">Reorder rows permanently</span>, the row numbers will change and the <span class="menuItems">Sort</span> menu in the project grid header will disappear. This will apply all current sorting methods. 
 
-## View {#view}
+## View
 
 You can control what data you view in the grid. On each column, you will see a <span class="menuItems">View</span> menu option. From there, you can “collapse” (hide) that specific column, all other columns, all columns to the left, and all columns to the right. Using the <span class="menuItems">View</span> option that appears in the <span class="menuItems">All</span> column’s dropdown menu, you can collapse all columns, and expand all the columns that you previously collapsed.
 
-### Show/hide “null” {#showhide-null}
+### Show/hide “null” 
 
 You can find, under <span class="menuItems">All</span> → <span class="menuItems">View</span>, the option to show and hide [“null” values](exploring#data-types). A small grey “null” will appear in each applicable cell. Remember that a null cell is not the same thing as an empty cell. 
 

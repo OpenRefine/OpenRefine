@@ -8,7 +8,7 @@ OpenRefine is a web application, but is designed to be run locally on your own m
 
 This architecture provides a good separation of concerns (data vs. UI); allows the use of familiar web technologies (HTML, CSS, Javascript) to implement user interface features; and enables the server side to be called by third-party software through standard GET and POST operations.
 
-## Technology stack {#technology-stack}
+## Technology stack
 
 The server-side part of OpenRefine is implemented in Java as one single servlet which is executed by the [Jetty](http://jetty.codehaus.org/jetty/) web server + servlet container. The use of Java strikes a balance between performance and portability across operating systems (there is very little OS-specific code and has mostly to do with starting the application).
 
@@ -27,7 +27,7 @@ String clustering is provided by the [SIMILE Vicino](http://code.google.com/p/si
 
 OAuth functionality is provided by the [Signpost](https://github.com/mttkay/signpost) project.
 
-## Server-side architecture {#server-side-architecture}
+## Server-side architecture
 
 OpenRefine's server-side is written entirely in Java (`main/src/`) and its entry point is the Java servlet `com.google.refine.RefineServlet`. By default, the servlet is hosted in the lightweight Jetty web server instantiated by `server/src/com.google.refine.Refine`. Note that the server class itself is under `server/src/`, not `main/src/`; this separation leaves the possibility of hosting `RefineServlet` in a different servlet container.
 
@@ -35,7 +35,7 @@ The web server configuration is in `main/webapp/WEB-INF/web.xml`; that's where `
 
 As mentioned before, the server-side maintains states of the data, and the primary class involved is `com.google.refine.ProjectManager`.
 
-### Projects {#projects}
+### Projects
 
 In OpenRefine there's the concept of a workspace similar to that in Eclipse. When you run OpenRefine it manages projects within a single workspace, and the workspace is embodied in a file directory with sub-directories. The default workspace directories are listed in the [FAQs](https://github.com/OpenRefine/OpenRefine/wiki/FAQ-Where-Is-Data-Stored). You can get OpenRefine to use a different directory by specifying a -d parameter at the command line.
 
@@ -45,14 +45,14 @@ A project's _actual_ data includes the columns, rows, cells, reconciliation reco
 
 A project is loaded into memory when it needs to be displayed or modified, and it remains in memory until 1 hour after the last time it gets modified. Periodically the project manager tries to save modified projects, and it saves as many modified projects as possible within 30 seconds.
 
-### Data Model {#data-model}
+### Data Model
 
 A project's data consists of
 
 - _raw data_: a list of rows, each row consisting of a list of cells
 - _models_ on top of that raw data that give high-level presentation or interpretation of that data. This design lets the same raw data be viewed in different ways by different models, and let the models be changed without costly changes to the raw data.
 
-#### Column Model {#column-model}
+#### Column Model
 
 Cells in rows are not named and can only be addressed by their list position indices. So, a _column model_ is needed to give a name to each list position. The column model also stores other metadata for each column, including the type that cells in the column have been reconciled to and the overall reconciliation statistics of those cells.
 
@@ -60,7 +60,7 @@ Each column also acts as a cache for data computed from the raw data related to 
 
 Columns in the column model can be removed and re-ordered without changing the raw data--the cells in the rows. This makes column removal and ordering operations really quick.
 
-##### Column Groups {#column-groups}
+##### Column Groups
 
 Consider the following data:
 
@@ -74,7 +74,7 @@ Blank cells play a very important role. The blank cell in a key column of a row 
 
 Currently (as of 12th December 2017) only the XML and JSON importers create column groups, and while the data table view does display column groups but it doesn't support modifying them.
 
-### Changes, History, Processes, and Operations {#changes-history-processes-and-operations}
+### Changes, History, Processes, and Operations
 
 All changes to the project's data are tracked (N.B. this does not include changes to a project's metadata - such as the project name.)
 
@@ -98,17 +98,17 @@ In summary,
 - some processes are long-running and some are immediate; processes are run sequentially in a queue
 - generalizable processes can be re-constructed from abstract operations
 
-## Client-side architecture {#client-side-architecture}
+## Client-side architecture
 The client-side part of OpenRefine is implemented in HTML, CSS and Javascript and uses the following Javascript libraries:
 * [jQuery](http://jquery.com/)
 * [jQueryUI](http:jqueryui.com/)
 * [Recurser jquery-i18n](https://github.com/recurser/jquery-i18n)
 
-### Importing architecture {#importing-architecture}
+### Importing architecture
 
 OpenRefine has a sophisticated architecture for accommodating a diverse and extensible set of importable file formats and work flows. The formats range from simple CSV, TSV to fixed-width fields to line-based records to hierarchical XML and JSON. The work flows allow the user to preview and tweak many different import settings before creating the project. In some cases, such as XML and JSON, the user also has to select which elements in the data file to import. Additionally, a data file can also be an archive file (e.g., .zip) that contains many files inside; the user can select which of those files to import. Finally, extensions to OpenRefine can inject functionalities into any part of this architecture.
 
-### The Index Page and Action Areas {#the-index-page-and-action-areas}
+### The Index Page and Action Areas
 
 The opening screen of OpenRefine is implemented by the file refine/main/webapp/modules/core/index.vt and will be referred to here as the index page. Its default implementation contains 3 finger tabs labeled Create Project, Open Project, and Import Project. Each tab selects an "action area". The 3 default action areas are for, obviously, creating a new project, opening an existing project, and importing a project .tar file.
 
@@ -126,13 +126,13 @@ The UI class is a constructor function that takes one argument, a jQuery-wrapped
 
 If your extension requires a very unique importing work flow, or a very novel feature that should be exposed on the index page, then add a new action area. Otherwise, try to use the existing work flows as much as possible.
 
-### The Create Project Action Area {#the-create-project-action-area}
+### The Create Project Action Area
 
 The Create Project action area is itself extensible. Initially, it embeds a set of finger tabs corresponding to a variety of "source selection UIs": you can select a source of data by specifying a file on your computer, or you can specify the URL to a publicly accessible data file or data feed, or you can paste in from the clipboard a chunk of data.
 
 There are actually 3 points of extension in the Create Project action area, and the first is invisible.
 
-#### Importing Controllers {#importing-controllers}
+#### Importing Controllers
 
 The Create Project action area manages a list of "importing controllers". Each controller follows a particular work flow (in UI terms, think "wizard"). Refine comes with a "default importing controller" (refine/main/webapp/modules/core/scripts/index/default-importing-controller/controller.js) and its work flow assumes that the data can be retrieved and cached in whole before getting processed in order to generate a preview for the user to inspect. (If the data cannot be retrieved and cached in whole before previewing, then another importing controller is needed.)
 
@@ -153,7 +153,7 @@ Refine.CreateProjectUI.controllers.push(Refine.DefaultImportingController); // r
 
 We will cover the server-side code below.
 
-#### Data Source Selection UIs {#data-source-selection-uis}
+#### Data Source Selection UIs
 
 Data source selection UIs are another point of extensibility in the Create Project action area. As mentioned previously, by default there are 3 data source UIs. Those are added by the default importing controller.
 
@@ -192,34 +192,34 @@ The argument `form` is a jQuery-wrapped FORM element that will get submitted to 
 
 See refine/main/webapp/modules/core/scripts/index/default-importing-sources/sources.js for examples of such source selection UIs. While we write about source selection UIs managed by the default importing controller here, chances are your own extension will not be adding such a new source selection UI. Your extension probably adds with a new importing controller as well as a new source selection UI that work together.
 
-#### File Selection Panel {#file-selection-panel}
+#### File Selection Panel
 Documentation not currently available
 
-#### Parsing UI Panel {#parsing-ui-panel}
+#### Parsing UI Panel
 Documentation not currently available
 
-### Server-side Components {#server-side-components}
+### Server-side Components
 
-#### ImportingController {#importingcontroller}
+#### ImportingController
 Documentation not currently available
 
-#### UrlRewriter {#urlrewriter}
+#### UrlRewriter
 Documentation not currently available
 
-#### FormatGuesser {#formatguesser}
+#### FormatGuesser
 Documentation not currently available
 
-#### ImportingParser {#importingparser}
+#### ImportingParser
 Documentation not currently available
 
 
-## Faceted browsing architecture {#faceted-browsing-architecture}
+## Faceted browsing architecture
 
 Faceted browsing support is core to OpenRefine as it is the primary and only mechanism for filtering to a subset of rows on which to do something _en masse_ (ie in bulk). Without faceted browsing or an equivalent querying/browsing mechanism, you can only change one thing at a time (one cell or row) or else change everything all at once; both kinds of editing are practically useless when dealing with large data sets.
 
 In OpenRefine, different components of the code need to know which rows to process from the faceted browsing state (how the facets are constrained). For example, when the user applies some facet selections and then exports the data, the exporter serializes only the matching rows, not all rows in the project. Thus, faceted browsing isn't only hooked up to the data view for displaying data to the user, but it is also hooked up to almost all other parts of the system.
 
-### Engine Configuration {#engine-configuration}
+### Engine Configuration
 
 As OpenRefine is a web app, there might be several browser windows opened on the same project, each in a different faceted browsing state. It is best to maintain the faceted browsing state in each browser window while keeping the server side completely stateless with regard to faceted browsing. Whenever the client-side needs something done by the server, it transfers the entire faceted browsing state over to the server-side. The faceted browsing state behaves much like the `WHERE` clause in a SQL query, telling the server-side how to select the rows to process.
 
@@ -267,7 +267,7 @@ In the code, the faceted browsing state, or faceted browsing query, is actually 
   }
 ```
 
-### Server-Side Subsystem {#server-side-subsystem}
+### Server-Side Subsystem
 
 From an engine configuration like the one above, the server-side faceted browsing subsystem is capable of producing:
 
@@ -278,6 +278,6 @@ When the engine config JSON arrives in an HTTP request on the server-side, a `co
 
 To produce information on how to render a particular facet in the UI, the engine follows the same procedure described in the previous except it skips over the facet in question. In other words, it produces an iteration over all rows constrained by the other facets. Then it feeds that iteration to the facet in question by calling the facet's `computeChoices()` method. This gives the method a chance to compute the rendering information for its UI counterpart on the client-side. When all facets have been given a chance to compute their rendering information, the engine calls all facets to serialize their information as JSON and returns the JSON to the client-side. Only one HTTP call is needed to compute all facets.
 
-### Client-side subsystem {#client-side-subsystem}
+### Client-side subsystem
 
 On the client-side there is also an engine object (implemented in Javascript rather than Java) and zero or more facet objects (also in Javascript, obviously). The engine is responsible for distributing the rendering information computed on the server-side to the right facets, and when the user interacts with a facet, the facet tells the engine to update the whole UI. To do so, the engine gathers the configuration of each facet and composes the whole engine config as a single JSON object. Two separate AJAX calls are made with that engine config, one to retrieve the rows to render, and one to re-compute the rendering information for the facets because changing one facet does affect all the other facets.
