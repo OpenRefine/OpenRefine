@@ -23,8 +23,8 @@
     </dependency>
     <dependency>
       <groupId>javax.servlet</groupId>
-      <artifactId>servlet-api</artifactId>
-      <version>2.5</version>
+      <artifactId>javax.servlet-api</artifactId>
+      <version>${servlet-api.version}</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
@@ -48,7 +48,7 @@
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <jmh.version>1.27</jmh.version>
+    <jmh.version>1.31</jmh.version>
     <javac.target>1.8</javac.target>
     <uberjar.name>openrefine-benchmarks</uberjar.name>
   </properties>
@@ -127,7 +127,7 @@
         </plugin>
         <plugin>
           <artifactId>maven-javadoc-plugin</artifactId>
-          <version>3.2.0</version>
+          <version>3.3.0</version>
         </plugin>
         <plugin>
           <artifactId>maven-resources-plugin</artifactId>

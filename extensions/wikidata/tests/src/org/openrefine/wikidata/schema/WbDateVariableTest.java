@@ -32,7 +32,7 @@ import com.google.refine.model.Cell;
 
 public class WbDateVariableTest extends WbVariableTest<TimeValue> {
 
-    private TimeValue year = Datamodel.makeTimeValue(2018, (byte) 1, (byte) 1, (byte) 0, (byte) 0, (byte) 0, (byte) 9,
+    private TimeValue year = Datamodel.makeTimeValue(2018, (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 9,
             0, 0, 0, TimeValue.CM_GREGORIAN_PRO);
     private TimeValue day = Datamodel.makeTimeValue(2018, (byte) 2, (byte) 27, (byte) 0, (byte) 0, (byte) 0, (byte) 11,
             0, 0, 0,  TimeValue.CM_GREGORIAN_PRO);
@@ -60,6 +60,16 @@ public class WbDateVariableTest extends WbVariableTest<TimeValue> {
     public void testSkipped() {
         isSkipped("  2018-XX");
         isSkipped("invalid format");
+    }
+    
+    @Test
+    public void testNullStringValue() {
+        isSkipped((String) null);
+    }
+    
+    @Test
+    public void testNullCell() {
+        isSkipped((Cell) null);
     }
 
     @Test

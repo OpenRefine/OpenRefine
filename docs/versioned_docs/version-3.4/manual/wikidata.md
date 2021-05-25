@@ -32,7 +32,7 @@ For the most part, Wikidata reconciliation behaves the same way other reconcilia
 
 You can install a version of the Wikidata reconciliation service that uses your language. First, you need the language code: this is the [two-letter code found on this list](https://en.wikipedia.org/wiki/List_of_Wikipedias), or in the domain name of the desired Wikipedia/Wikidata (for instance, “fr” if your Wikipedia is https://fr.wikipedia.org/wiki/).
 
-Then, open the reconciliation window (under <span class="menuItems">Reconcile</span> → <span class="menuItems">Start reconciling...</span>) and click <span class="menuItems">Add Standard Service</span>. The URL to enter is `https://openrefine-wikidata.toolforge.org/fr/api`, where “fr” is your desired language code.
+Then, open the reconciliation window (under <span class="menuItems">Reconcile</span> → <span class="menuItems">Start reconciling...</span>) and click <span class="menuItems">Add Standard Service</span>. The URL to enter is `https://wikidata.reconci.link/fr/api`, where “fr” is your desired language code.
 
 When reconciling using this interface, items and properties will be displayed in your chosen language if the label is available. The matching score of the reconciliation is not influenced by your choice of language for the service: items are matched by considering all labels and returning the best possible match. The language of your dataset is also irrelevant to your choice of language for the reconciliation service; it simply determines which language labels to return based on the entity chosen.
 

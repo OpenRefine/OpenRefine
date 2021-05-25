@@ -51,18 +51,23 @@ import java.util.concurrent.TimeUnit;
 import javax.swing.JFrame;
 
 import org.apache.log4j.Level;
-import org.mortbay.jetty.Connector;
-import org.mortbay.jetty.Server;
-import org.mortbay.jetty.bio.SocketConnector;
-import org.mortbay.jetty.servlet.ServletHolder;
-import org.mortbay.jetty.webapp.WebAppContext;
-import org.mortbay.util.Scanner;
+import org.eclipse.jetty.server.HttpConfiguration;
+import org.eclipse.jetty.server.HttpConnectionFactory;
+import org.eclipse.jetty.server.Server;
+import org.eclipse.jetty.server.ServerConnector;
+import org.eclipse.jetty.server.handler.StatisticsHandler;
+import org.eclipse.jetty.servlet.ServletHolder;
+import org.eclipse.jetty.webapp.WebAppContext;
+import org.eclipse.jetty.util.Scanner;
+import org.eclipse.jetty.util.thread.ThreadPool;
+import com.google.util.threads.ThreadPoolExecutorAdapter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.codeberry.jdatapath.DataPath;
 import com.codeberry.jdatapath.JDataPathSystem;
-import com.google.util.threads.ThreadPoolExecutorAdapter;
+
+import com.google.refine.Configurations;
 
 /**
  * Main class for Refine server application.  Starts an instance of the
@@ -70,11 +75,12 @@ import com.google.util.threads.ThreadPoolExecutorAdapter;
  */
 public class Refine {
     
-    static private final String DEFAULT_HOST = "127.0.0.1";
+    static private final String DEFAULT_IFACE = "127.0.0.1";
     static private final int DEFAULT_PORT = 3333;
         
     static private int port;
     static private String host;
+    static private String iface;
 
     final static Logger logger = LoggerFactory.getLogger("refine");
         
@@ -82,7 +88,7 @@ public class Refine {
         
         // tell jetty to use SLF4J for logging instead of its own stuff
         System.setProperty("VERBOSE","false");
-        System.setProperty("org.mortbay.log.class","org.mortbay.log.Slf4jLog");
+        System.setProperty("org.eclipse.jetty.log.class","org.eclipse.jetty.util.log.Slf4jLog");
         
         // tell macosx to keep the menu associated with the screen and what the app title is
         System.setProperty("apple.laf.useScreenMenuBar", "true");  
@@ -95,8 +101,12 @@ public class Refine {
         // set the log verbosity level
         org.apache.log4j.Logger.getRootLogger().setLevel(Level.toLevel(Configurations.get("refine.verbosity","info")));
 
-        port = Configurations.getInteger("refine.port",DEFAULT_PORT);
-        host = Configurations.get("refine.host",DEFAULT_HOST);
+        port = Configurations.getInteger("refine.port", DEFAULT_PORT);
+        iface = Configurations.get("refine.interface", DEFAULT_IFACE);
+        host = Configurations.get("refine.host", iface);
+        if ("0.0.0.0".equals(host)) {
+            host = "*";
+        }
 
         Refine refine = new Refine();
         
@@ -106,7 +116,7 @@ public class Refine {
     public void init(String[] args) throws Exception {
 
         RefineServer server = new RefineServer();
-        server.init(host,port);
+        server.init(iface, port, host);
 
         boolean headless = Configurations.getBoolean("refine.headless",false);
         if (headless) {
@@ -115,7 +125,16 @@ public class Refine {
         } else {
             try {
                 RefineClient client = new RefineClient();
-                client.init(host,port);
+                if ("*".equals(host)) {
+                    if ("0.0.0.0".equals(iface)) {
+                        logger.warn("No refine.host specified while binding to interface 0.0.0.0, guessing localhost.");
+                        client.init("localhost",port);
+                    } else { 
+                        client.init(iface,port);
+                    }
+                } else {
+                    client.init(host,port);
+                }
             } catch (Exception e) {
                 logger.warn("Sorry, some error prevented us from launching the browser for you.\n\n Point your browser to http://" + host + ":" + port + "/ to start using Refine.");
             }
@@ -135,32 +154,36 @@ public class Refine {
 class RefineServer extends Server {
     
     final static Logger logger = LoggerFactory.getLogger("refine_server");
+    
+    public RefineServer() {
+        super(createThreadPool());
+    }
+    
+    private static ThreadPool createThreadPool() {
+        int maxThreads = Configurations.getInteger("refine.queue.size", 30);
+        int maxQueue = Configurations.getInteger("refine.queue.max_size", 300);
+        long keepAliveTime = Configurations.getInteger("refine.queue.idle_time", 60);
+        LinkedBlockingQueue<Runnable> queue = new LinkedBlockingQueue<Runnable>(maxQueue);
+        return new ThreadPoolExecutorAdapter(new ThreadPoolExecutor(maxThreads, maxQueue, keepAliveTime, TimeUnit.SECONDS, queue));
+    }
         
     private ThreadPoolExecutor threadPool;
     
-    public void init(String host, int port) throws Exception {
-        logger.info("Starting Server bound to '" + host + ":" + port + "'");
+    public void init(String iface, int port, String host) throws Exception {
+        logger.info("Starting Server bound to '" + iface + ":" + port + "'");
 
         String memory = Configurations.get("refine.memory");
         if (memory != null) {
             logger.info("refine.memory size: " + memory + " JVM Max heap: " + Runtime.getRuntime().maxMemory());
         }
         
-        int maxThreads = Configurations.getInteger("refine.queue.size", 30);
-        int maxQueue = Configurations.getInteger("refine.queue.max_size", 300);
-        long keepAliveTime = Configurations.getInteger("refine.queue.idle_time", 60);
-
-        LinkedBlockingQueue<Runnable> queue = new LinkedBlockingQueue<Runnable>(maxQueue);
-        
-        threadPool = new ThreadPoolExecutor(maxThreads, maxQueue, keepAliveTime, TimeUnit.SECONDS, queue);
-
-        this.setThreadPool(new ThreadPoolExecutorAdapter(threadPool));
-        
-        Connector connector = new SocketConnector();
+        HttpConfiguration httpConfig = new HttpConfiguration();
+        httpConfig.setSendServerVersion(false);
+        HttpConnectionFactory httpFactory = new HttpConnectionFactory(httpConfig);
+        ServerConnector connector = new ServerConnector(this, httpFactory);
         connector.setPort(port);
-        connector.setHost(host);
-        connector.setMaxIdleTime(Configurations.getInteger("refine.connection.max_idle_time",60000));
-        connector.setStatsOn(false);
+        connector.setHost(iface);
+        connector.setIdleTimeout(Configurations.getInteger("server.connection.max_idle_time",60000));
         this.addConnector(connector);
 
         File webapp = new File(Configurations.get("refine.webapp","main/webapp"));
@@ -183,9 +206,26 @@ class RefineServer extends Server {
         WebAppContext context = new WebAppContext(webapp.getAbsolutePath(), contextPath);
         context.setMaxFormContentSize(maxFormContentSize);
 
-        this.setHandler(context);
+        if ("*".equals(host)) {
+            this.setHandler(context);
+        } else {
+            ValidateHostHandler wrapper = new ValidateHostHandler(host);
+            wrapper.setHandler(context);
+            this.setHandler(wrapper);
+        }
+        
         this.setStopAtShutdown(true);
-        this.setSendServerVersion(true);
+        StatisticsHandler handler = new StatisticsHandler();
+        handler.setServer(this);
+        handler.setHandler(this.getHandler());
+        this.addBean(handler);
+        // Tell the server we want to try and shutdown gracefully
+        // this means that the server will stop accepting new connections
+        // right away but it will continue to process the ones that
+        // are in execution for the given timeout before attempting to stop
+        // NOTE: this is *not* a blocking method, it just sets a parameter
+        //       that _server.stop() will rely on
+        this.setStopTimeout(30000);
 
         // Enable context autoreloading
         if (Configurations.getBoolean("refine.autoreload",false)) {
@@ -210,7 +250,7 @@ class RefineServer extends Server {
             if (threadPool != null) {
                 threadPool.shutdown();
             }
-            
+            Thread.sleep(3000);
             // then let the parent stop
             super.doStop();
         } catch (InterruptedException e) {
@@ -260,7 +300,11 @@ class RefineServer extends Server {
             }
         });
 
-        scanner.start();
+        try {
+            scanner.start();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
     
     static private void findFiles(final String extension, File baseDir, final Collection<File> found) {
@@ -462,12 +506,7 @@ class RefineClient extends JFrame implements ActionListener {
     private URI uri;
     
     public void init(String host, int port) throws Exception {
-
-    	String cleanedHost = host;
-    	if("0.0.0.0".equals(host)) {
-            cleanedHost = "localhost";
-        }
-        uri = new URI("http://" + cleanedHost + ":" + port + "/");
+        uri = new URI("http://" + host + ":" + port + "/");
         openBrowser();
     }
     
@@ -501,14 +540,6 @@ class ShutdownSignalHandler implements Runnable {
 
     @Override
     public void run() {
-
-        // Tell the server we want to try and shutdown gracefully
-        // this means that the server will stop accepting new connections
-        // right away but it will continue to process the ones that
-        // are in execution for the given timeout before attempting to stop
-        // NOTE: this is *not* a blocking method, it just sets a parameter
-        //       that _server.stop() will rely on
-        _server.setGracefulShutdown(3000);
 
         try {
             _server.stop();
