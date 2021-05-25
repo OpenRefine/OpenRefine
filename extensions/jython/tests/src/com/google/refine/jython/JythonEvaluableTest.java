@@ -23,7 +23,7 @@ import com.google.refine.model.Row;
  */
 public class JythonEvaluableTest {
 
-
+  @Test
   public void pyObjectTest(){
     Properties props = new Properties();
     Project project = new Project();
