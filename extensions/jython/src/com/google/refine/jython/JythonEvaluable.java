@@ -134,10 +134,10 @@ public class JythonEvaluable implements Evaluable {
         }
     }
 
-    public Object evaluateTest(Properties bindings) {
+    public Object evaluatePyobjectTest(Properties bindings) {
         try {
             // call the temporary PyFunction directly
-            Object result = ((PyFunction)_engine.get(s_functionName)).__call__(
+            PyObject result = ((PyFunction)_engine.get(s_functionName)).__call__(
                     new PyObject[] {
                             Py.java2py( bindings.get("value") ),
                             new JythonHasFieldsWrapper((HasFields) bindings.get("cell"), bindings),
@@ -146,17 +146,7 @@ public class JythonEvaluable implements Evaluable {
                             Py.java2py( bindings.get("rowIndex") )
                     }
             );
-            PyObject result2 = ((PyFunction)_engine.get(s_functionName)).__call__(
-                    new PyObject[] {
-                            Py.java2py( bindings.get("value") ),
-                            new JythonHasFieldsWrapper((HasFields) bindings.get("cell"), bindings),
-                            new JythonHasFieldsWrapper((HasFields) bindings.get("cells"), bindings),
-                            new JythonHasFieldsWrapper((HasFields) bindings.get("row"), bindings),
-                            Py.java2py( bindings.get("rowIndex") )
-                    }
-            );
-            return unwrap(result2);
-            //return unwrap(result);
+            return unwrap(result);
         } catch (PyException e) {
             return new EvalError(e.toString());
         }

@@ -44,13 +44,13 @@ public class JythonEvaluableTest {
 
     JythonEvaluable eval1 = new JythonEvaluable("a = value\nreturn a * 2");
     //Long value1 = (Long) eval1.evaluateTest(props);
-    double value1 = (double) eval1.evaluateTest(props);
+    double value1 = (double) eval1.evaluatePyobjectTest(props);
 
     // create some unrelated evaluable
     new JythonEvaluable("a = value\nreturn a * 10");
 
     // repeat same previous test
-    double value2 = (double) eval1.evaluateTest(props);
+    double value2 = (double) eval1.evaluatePyobjectTest(props);
     Assert.assertEquals(value1, value2);
   }
 
