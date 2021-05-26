@@ -511,7 +511,7 @@ ui_test() {
 
     REFINE_DATA_DIR="${TMPDIR:=/tmp}/openrefine-tests"
     
-    add_option "-Drefine.headless=true"
+    add_option "-x refine.headless=true"
     add_option "-Drefine.autoreload=false"
     add_option "-Dbutterfly.autoreload=false"
     
@@ -658,7 +658,7 @@ broker_run() {
     fi
 
     add_option "-Drefine.webapp=broker/core"
-    add_option "-Drefine.headless=true"
+    add_option "-x refine.headless=true"
 
     add_option "-Drefine.port=$REFINE_PORT"
     add_option "-Drefine.host=0.0.0.0"
