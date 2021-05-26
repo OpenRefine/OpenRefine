@@ -85,7 +85,7 @@ public class MySQLDatabaseServiceTest extends DBExtensionTests{
      }
      
      @Test
-     public void testTestExecuteQuery() throws DatabaseServiceException {
+     public void testTestQuery() throws DatabaseServiceException {
 
          MySQLDatabaseService pgSqlService = (MySQLDatabaseService) DatabaseService
                  .get(MySQLDatabaseService.DB_NAME);

@@ -43,7 +43,7 @@ public class DBExtensionTests {
     protected final String DEFAULT_MYSQL_HOST = "127.0.0.1";
     protected final String DEFAULT_MYSQL_PORT = "3306";
     protected final String DEFAULT_MYSQL_USER = "root";
-    protected final String DEFAULT_MYSQL_PASSWORD = "as2188988";
+    protected final String DEFAULT_MYSQL_PASSWORD = "";
     protected final String DEFAULT_MYSQL_DB_NAME = "testdb";
     
     protected final String PGSQL_DB_NAME = "postgresql";
