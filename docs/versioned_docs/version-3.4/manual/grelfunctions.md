@@ -178,6 +178,10 @@ Returns the array of strings obtained by splitting s by sep. The separator can b
 
 Returns the array of strings obtained by splitting s into substrings with the given lengths. For example, `"internationalization".splitByLengths(5, 6, 3)` returns an array of 3 strings: [ "inter", "nation", "ali" ]. Excess characters are discarded.
 
+###### splitByLengths(s, n1, n2, ...)[i1,i2]
+
+Returns the array of strings obtained, between i1 and i2 - 1, by splitting s into substrings with the given lengths. For example, `"internationalization".splitByLengths(5, 6, 3)[0,2]` returns an array of 2 strings: [ "inter", "nation" ]. Excess characters are discarded.
+
 ###### smartSplit(s, s or p sep (optional))
 
 Returns the array of strings obtained by splitting s by sep, or by guessing either tab or comma separation if there is no sep given. Handles quotes properly and understands cancelled characters. The separator can be either a string or a regex pattern. For example, `value.smartSplit("\n")` will split at a carriage return or a new-line character.
