@@ -73,6 +73,7 @@ public class JythonEvaluableTest {
     }
   }
 
+  // Version with a test case which only calls the existing evaluate method
   @Test
   public void unwrapPyObjectTest(){
     Properties props = new Properties();
@@ -91,18 +92,13 @@ public class JythonEvaluableTest {
     props.put("call", "number");
     props.put("PI", "3.141592654");
     props.put("cells", new CellTuple(project, row));
+    //String funcExpression ="a = value\nreturn a * 2";
+    String funcExpression = "return [true, 13, {\"a\":3}]";
 
-    String funcExpression = "a = value\nreturn a * 2";
-    JythonEvaluable eval1 = new JythonEvaluable("a = value\nreturn a * 2");
-    //Long value1 = (Long) eval1.evaluateTest(props);
-    double value1 = (double) evaluatePyobjectTest(props,eval1,funcExpression);
+    JythonEvaluable eval1 = new JythonEvaluable(funcExpression);
+    eval1.evaluate(props);
+    //evaluatePyobjectTest(props,eval1,funcExpression);
 
-    // create some unrelated evaluable
-    new JythonEvaluable("a = value\nreturn a * 10");
-
-    // repeat same previous test
-    double value2 = (double) evaluatePyobjectTest(props,eval1,funcExpression);;
-    Assert.assertEquals(value1, value2);
   }
 
   @Test
