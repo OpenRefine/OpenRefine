@@ -57,6 +57,6 @@ public class WbLanguageConstantTest extends WbExpressionTest<String> {
 
     @Test
     public void testFallbackLangCodes() {
-        assertEquals("de", WbLanguageConstant.normalizeLanguageCode("de", "http://not.exist/w/api.php"));
+        assertEquals(null, WbLanguageConstant.normalizeLanguageCode("de", "http://not.exist/w/api.php"));
     }
 }
