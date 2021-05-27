@@ -44,7 +44,6 @@ public class JythonEvaluableTest {
     String funcExpression = "class Foo(object):\n      pass\n\nreturn Foo()";
     JythonEvaluable eval1 = new JythonEvaluable(funcExpression);
     eval1.evaluate(props);
-
   }
 
   @Test
