@@ -35,17 +35,26 @@ package com.google.refine.templating;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Properties;
+import java.util.regex.PatternSyntaxException;
 
+import com.google.refine.expr.Evaluable;
 import com.google.refine.expr.MetaParser;
 import com.google.refine.expr.ParsingException;
 import com.google.refine.grel.ast.FieldAccessorExpr;
 import com.google.refine.grel.ast.VariableExpr;
 
 public class Parser {
-    static public Template parse(String s) throws ParsingException {
+    static public Template parse(String s, Properties bindings) throws ParsingException {
         List<Fragment> fragments = new ArrayList<Fragment>();
 
         int start = 0, current = 0;
+        
+        if(s.indexOf('{') >= 0) {
+        	fragments.add(new StaticFragment(s.substring(0, s.indexOf('{') + 1)));
+        	start = current = s.indexOf('{') + 1;
+        }
+        
         while (current < s.length() - 1) {
             char c = s.charAt(current);
             char c2 = s.charAt(current + 1);
@@ -86,13 +95,21 @@ public class Parser {
                     String expression = s.substring(current + 2, closeBrace);
 
                     if (current > start) {
+                    	if (!s.substring(start, current).matches("\\s*,?\\s*\\\"*[a-zA-Z0-9() ]*\\\"\\s*:\\s*")) {
+                    		throw new ParsingException("Missing or bad template");
+                    	}
                         fragments.add(new StaticFragment(s.substring(start, current)));
                     }
                     start = current = closeBrace + 2;
 
+                    Evaluable exprEval = MetaParser.parse(expression);
+                    
+                    if (exprEval.evaluate(bindings) == null) {
+                    	throw new ParsingException("Missing or bad template");
+                    }
+
                     fragments.add(
-                            new DynamicFragment(
-                                    MetaParser.parse(expression)));
+                            new DynamicFragment(exprEval));
 
                     continue;
                 }
