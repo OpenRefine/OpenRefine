@@ -26,6 +26,7 @@ package org.openrefine.wikidata.operations;
 import static org.testng.Assert.assertEquals;
 
 import java.io.LineNumberReader;
+import java.util.Properties;
 
 import org.openrefine.wikidata.testing.TestingData;
 import org.testng.annotations.BeforeMethod;
@@ -55,10 +56,19 @@ public class PerformWikibaseEditsOperationTest extends OperationTest {
             throws Exception {
         return TestingData.jsonFromFile("operations/perform-edits.json");
     }
+
+
     
     @Test(expectedExceptions=IllegalArgumentException.class)
     public void testConstructor() {
         new PerformWikibaseEditsOperation(EngineConfig.reconstruct("{}"), "", 5, "");
+    }
+
+    @Test
+    public void testCreateProcess() throws Exception{
+        PerformWikibaseEditsOperation p = new PerformWikibaseEditsOperation(EngineConfig.reconstruct("{}"), "test", 5, "");
+        project.rows.get(0).cells.set(0, TestingData.makeNewItemCell(1234L, "new item"));
+        p.createProcess(project, new Properties());
     }
 
     @Test
@@ -81,5 +91,8 @@ public class PerformWikibaseEditsOperationTest extends OperationTest {
 
         assertEquals(changeString, saveChange(change));
     }
+
+
+
 
 }
