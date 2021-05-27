@@ -134,23 +134,6 @@ public class JythonEvaluable implements Evaluable {
         }
     }
 
-    public Object evaluatePyobjectTest(Properties bindings) {
-        try {
-            // call the temporary PyFunction directly
-            PyObject result = ((PyFunction)_engine.get(s_functionName)).__call__(
-                    new PyObject[] {
-                            Py.java2py( bindings.get("value") ),
-                            new JythonHasFieldsWrapper((HasFields) bindings.get("cell"), bindings),
-                            new JythonHasFieldsWrapper((HasFields) bindings.get("cells"), bindings),
-                            new JythonHasFieldsWrapper((HasFields) bindings.get("row"), bindings),
-                            Py.java2py( bindings.get("rowIndex") )
-                    }
-            );
-            return unwrap(result);
-        } catch (PyException e) {
-            return new EvalError(e.toString());
-        }
-    }
     
     protected Object unwrap(Object result) {
         if (result != null) {
