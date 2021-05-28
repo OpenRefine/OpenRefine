@@ -48,7 +48,7 @@ jobs:
         repository: ${{ github.event.pull_request.head.repo.full_name }}
 
     - name: Restore dependency cache
-      uses: actions/cache@v2.1.5
+      uses: actions/cache@v2.1.6
       with:
         path: ~/.m2/repository
         key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
@@ -111,7 +111,7 @@ jobs:
           repository: ${{ github.event.pull_request.head.repo.full_name }}
 
       - name: Restore dependency cache
-        uses: actions/cache@v2.1.4
+        uses: actions/cache@v2.1.6
         with:
           path: ~/.m2/repository
           key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
@@ -143,7 +143,7 @@ jobs:
           sudo apt-get install microsoft-edge-dev
 
       - name: Restore Tests dependency cache
-        uses: actions/cache@v2.1.4
+        uses: actions/cache@v2.1.6
         with:
           path: |
             ~/cache
