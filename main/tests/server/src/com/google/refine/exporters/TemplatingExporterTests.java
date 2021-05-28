@@ -130,12 +130,10 @@ public class TemplatingExporterTests extends RefineTest {
     public void exportCurlyBracesTemplate(){
         CreateGrid(1,1);
         String template = "{{\"\\}\\}\"}}";
-//        template="{{jsonize(cells[\"_ - version\"].value)}}";
         when(options.getProperty("template")).thenReturn(template);
         when(options.getProperty("prefix")).thenReturn(prefix);
         when(options.getProperty("suffix")).thenReturn(suffix);
         when(options.getProperty("separator")).thenReturn(rowSeparator);
-//        when(options.getProperty("preview")).thenReturn("false"); // optional true|false
 
         try {
             SUT.export(project, options, engine, writer);

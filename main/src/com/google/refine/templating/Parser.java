@@ -82,7 +82,7 @@ public class Parser {
                 }
             } else if (c == '{' && c2 == '{') {
                 int closeBrace = s.indexOf("}}", current + 2);
-                if (closeBrace > current + 1 && closeBrace < s.length() - 1 && s.charAt(closeBrace + 1) == '}') {
+                if (closeBrace > current + 1) {
                     String expression = s.substring(current + 2, closeBrace);
 
                     if (current > start) {
