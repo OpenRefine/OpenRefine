@@ -41,9 +41,13 @@ public class JythonEvaluableTest {
     props.put("call", "number");
     props.put("PI", "3.141592654");
     props.put("cells", new CellTuple(project, row));
-    String funcExpression = "class Foo(object):\n      pass\n\nreturn Foo()";
+    String funcExpression ="class Foo(object):\n" +
+            "    bar = 1\n" +
+            "\n" +
+            "return Foo()";
     JythonEvaluable eval1 = new JythonEvaluable(funcExpression);
-    eval1.evaluate(props);
+    PyObject po = (PyObject) eval1.evaluate(props);
+    Assert.assertEquals(po.__getattr__("bar").toString(),"1");
   }
 
   @Test
