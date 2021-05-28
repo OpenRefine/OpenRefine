@@ -36,9 +36,7 @@ package com.google.refine.templating;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
-import java.util.regex.PatternSyntaxException;
 
-import com.google.refine.expr.Evaluable;
 import com.google.refine.expr.MetaParser;
 import com.google.refine.expr.ParsingException;
 import com.google.refine.grel.ast.FieldAccessorExpr;
@@ -102,14 +100,9 @@ public class Parser {
                     }
                     start = current = closeBrace + 2;
 
-                    Evaluable exprEval = MetaParser.parse(expression);
-                    
-                    if (exprEval.evaluate(bindings) == null) {
-                    	throw new ParsingException("Missing or bad template");
-                    }
-
                     fragments.add(
-                            new DynamicFragment(exprEval));
+                            new DynamicFragment(
+                                    MetaParser.parse(expression)));
 
                     continue;
                 }
