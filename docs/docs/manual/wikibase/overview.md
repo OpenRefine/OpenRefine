@@ -8,7 +8,7 @@ sidebar_label: Overview
 
 OpenRefine's Wikibase integration is provided by an extension which is available by default in OpenRefine. In this page, we present the functionalities for Wikidata, but [any Wikibase instance can be connected to OpenRefine](./configuration) to obtain a similar integration.
 
-## Editing Wikidata with OpenRefine
+## Editing Wikidata with OpenRefine {#editing-wikidata-with-openrefine}
 
 As a user-maintained data source, Wikidata can be edited by anyone. OpenRefine makes it simple to upload information in bulk. You simply need to get your information into the correct format, and ensure that it is new (not redundant to information already on Wikidata) and does not conflict with existing Wikidata information.
 
@@ -32,7 +32,7 @@ If you upload edits that are redundant (that is, all the statements you want to 
 
 You can use OpenRefine's reconciliation preview to look at the target Wikidata elements and see what information they already have, and whether the elements' histories have had similar edits reverted in the past. 
 
-### Wikidata schema
+### Wikidata schema {#wikidata-schema}
 
 A [schema](https://en.wikipedia.org/wiki/Database_schema) is a plan for how to structure information in a database. In OpenRefine, the schema operates as a template for how Wikidata edits should be applied: how to translate your tabular data into statements. With a schema, you can:
 *   preview the Wikidata edits and inspect them manually;
@@ -52,7 +52,7 @@ OpenRefine presents you with an easy visual way to map out the relationships in 
 
 You may wish to refer to [this Wikidata tutorial on how OpenRefine handles Wikidata schema](https://www.wikidata.org/wiki/Wikidata:Tools/OpenRefine/Editing/Tutorials/Basic_editing). For details about how each data type is handled in the Wikibase schema, see [Schema alignment](./schema-alignment).
 
-#### Editing terms with your schema
+#### Editing terms with your schema {#editing-terms-with-your-schema}
 
 With OpenRefine, you can edit the terms (labels, aliases, descriptions, or sitelinks) of Wikidata entities as well as establish relationships between entities. For example, you may wish to upload pseudonyms, pen names, maiden names, or married names for authors. 
 
@@ -77,7 +77,7 @@ You could upload the “Translated titles” to “Label” with the language sp
 
 ![Constructing a schema with aliases and languages.](/img/wikidata-translated.png)
 
-### Manage Wikidata account
+### Manage Wikidata account {#manage-wikidata-account}
 
 To edit Wikidata directly from OpenRefine, you must log in with a Wikidata account. OpenRefine can only upload edits with Wikidata user accounts that are “[autoconfirmed](https://www.wikidata.org/wiki/Wikidata:Autoconfirmed_users)” - at this time, that means accounts that have more than 50 edits and have existed for longer than four days. 
 
@@ -96,7 +96,7 @@ If your account or your bot is not properly authorized, OpenRefine will not disp
 
 You can store your unencrypted username and password in OpenRefine, saved locally to your computer and available for future use. For security reasons, you may wish to leave this box unchecked. You can also save your OpenRefine-specific bot password in your browser or with a password management tool. 
 
-### Import and export schema
+### Import and export schema {#import-and-export-schema}
 
 You can save time on repetitive processes by defining a schema on one project, then exporting it and importing for use on new datasets in the future. Or you and your colleagues can share a schema with each other to coordinate your work. 
 
@@ -104,7 +104,7 @@ You can export a schema from a project using <span class="menuItems">Export</spa
 
 You can import a schema using <span class="menuItems">Extensions</span> → <span class="menuItems">Import schema</span>. You can upload a JSON file, or paste JSON statements directly into a field in the window. An imported schema will look for columns with the same names, and you will see an error message if your project doesn't contain matching columns.
 
-### Upload edits to Wikidata
+### Upload edits to Wikidata {#upload-edits-to-wikidata}
 
 There are two menu options in OpenRefine for applying your edits to Wikidata, and the details of the differences between the two can be found in the [Uploading page](./uploading). Under <span class="menuItems">Export</span> you will see <span class="menuItems">Wikidata edits...</span> and under <span class="menuItems">Extensions</span> you will see <span class="menuItems">Upload edits to Wikidata</span>. Both will bring up the same window for you to [log in with a Wikidata account](#manage-wikidata-account). 
 
@@ -114,7 +114,7 @@ If you are ready to upload your edits, you can provide an “Edit summary” - a
 
 If your edits have been successful, you will see them listed on [your Wikidata user contributions page](https://www.wikidata.org/wiki/Special:Contributions/), and on the [Edit groups page](https://editgroups.toolforge.org/). All edits can be undone from this second interface.
 
-### QuickStatements export
+### QuickStatements export {#quickstatements-export}
 
 Your OpenRefine data can be exported in a format recognized by [QuickStatements](https://www.wikidata.org/wiki/Help:QuickStatements), a tool that creates Wikidata edits using text commands. OpenRefine generates “version 1” QuickStatements commands. 
 
@@ -125,7 +125,7 @@ In order to use QuickStatements, you must authorize it with a Wikidata account t
 Follow the [steps listed on this page](https://www.wikidata.org/wiki/Help:QuickStatements#Running_QuickStatements). 
 To prepare your OpenRefine data into QuickStatements, select <span class="menuItems">Export</span> → <span class="menuItems">QuickStatements file</span>, or <span class="menuItems">Extensions</span> → <span class="menuItems">Export to QuickStatements</span>. Exporting your schema from OpenRefine will generate a text file called `statements.txt` by default. Paste the contents of the text file into a new QuickStatements batch using version 1. You can find [version 1 of the tool (no longer maintained) here](https://wikidata-todo.toolforge.org/quick_statements.php). The text commands will be processed into Wikidata edits and previewed for you to review before submitting. 
 
-### Issue detection
+### Issue detection {#issue-detection}
 
 This section is an overview of the [Quality assurance page](./quality-assurance).
 
