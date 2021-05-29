@@ -35,7 +35,6 @@ package com.google.refine.templating;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Properties;
 
 import com.google.refine.expr.MetaParser;
 import com.google.refine.expr.ParsingException;
@@ -43,7 +42,7 @@ import com.google.refine.grel.ast.FieldAccessorExpr;
 import com.google.refine.grel.ast.VariableExpr;
 
 public class Parser {
-    static public Template parse(String s, Properties bindings) throws ParsingException {
+    static public Template parse(String s) throws ParsingException {
         List<Fragment> fragments = new ArrayList<Fragment>();
 
         int start = 0, current = 0;
@@ -105,6 +104,8 @@ public class Parser {
                                     MetaParser.parse(expression)));
 
                     continue;
+                } else {
+                	throw new ParsingException("Missing or bad template");
                 }
             }
 
