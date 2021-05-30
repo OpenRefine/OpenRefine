@@ -65,110 +65,106 @@ import com.google.refine.util.ParsingUtilities;
 public class GetScatterplotCommand extends Command {
 
     final static Logger logger = LoggerFactory.getLogger("get-scatterplot_command");
-    
+
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        
+
         try {
             long start = System.currentTimeMillis();
-            
+
             Project project = getProject(request);
             Engine engine = getEngine(request, project);
             PlotterConfig conf = ParsingUtilities.mapper.readValue(
-            		request.getParameter("plotter"),
-            		PlotterConfig.class);
-            
+                    request.getParameter("plotter"),
+                    PlotterConfig.class);
+
             response.setHeader("Content-Type", "image/png");
-            
+
             ServletOutputStream sos = null;
-            
+
             try {
                 sos = response.getOutputStream();
                 draw(sos, project, engine, conf);
             } finally {
                 sos.close();
             }
-            
+
             logger.trace("Drawn scatterplot in {} ms", Long.toString(System.currentTimeMillis() - start));
         } catch (Exception e) {
             e.printStackTrace();
             respondException(response, e);
         }
     }
-    
+
     protected static class PlotterConfig {
-    	@JsonProperty(ScatterplotFacet.SIZE)
-    	public int size = 100;
-    	@JsonProperty(ScatterplotFacet.DOT)
-    	double dot = 100;
-    	@JsonIgnore
-    	public int dim_x = ScatterplotFacet.LIN;
-    	@JsonIgnore
-    	public int dim_y = ScatterplotFacet.LIN;
-    	@JsonProperty(ScatterplotFacet.ROTATION)
-    	public int rotation = ScatterplotFacet.NO_ROTATION;
-    	@JsonProperty(ScatterplotFacet.COLOR)
-    	public String color_str = "000000";
-    	@JsonProperty(ScatterplotFacet.BASE_COLOR)
-    	public String base_color_str = null;
-    	@JsonProperty(ScatterplotFacet.X_COLUMN_NAME)
-    	public String columnName_x = "";
-    	@JsonProperty(ScatterplotFacet.X_EXPRESSION)
-    	public String expression_x = "value";
-    	@JsonProperty(ScatterplotFacet.Y_COLUMN_NAME)
-    	public String columnName_y = "";
-    	@JsonProperty(ScatterplotFacet.Y_EXPRESSION)
-    	public String expression_y = "value";
-    	
+        @JsonProperty(ScatterplotFacet.SIZE)
+        public int size = 100;
+        @JsonProperty(ScatterplotFacet.DOT)
+        double dot = 100;
+        @JsonIgnore
+        public int dim_x = ScatterplotFacet.LIN;
+        @JsonIgnore
+        public int dim_y = ScatterplotFacet.LIN;
+        @JsonProperty(ScatterplotFacet.ROTATION)
+        public int rotation = ScatterplotFacet.NO_ROTATION;
+        @JsonProperty(ScatterplotFacet.COLOR)
+        public String color_str = "000000";
+        @JsonProperty(ScatterplotFacet.BASE_COLOR)
+        public String base_color_str = null;
+        @JsonProperty(ScatterplotFacet.X_COLUMN_NAME)
+        public String columnName_x = "";
+        @JsonProperty(ScatterplotFacet.X_EXPRESSION)
+        public String expression_x = "value";
+        @JsonProperty(ScatterplotFacet.Y_COLUMN_NAME)
+        public String columnName_y = "";
+        @JsonProperty(ScatterplotFacet.Y_EXPRESSION)
+        public String expression_y = "value";
+
         @JsonProperty(ScatterplotFacet.DIM_X)
         public String getDimX() {
             return dim_x == ScatterplotFacet.LIN ? "lin" : "log";
         }
-        
+
         @JsonProperty(ScatterplotFacet.DIM_Y)
         public String getDimY() {
             return dim_y == ScatterplotFacet.LIN ? "lin" : "log";
         }
-        
+
         @JsonProperty(ScatterplotFacet.DIM_X)
         public void setDimX(String dim) {
-        	dim_x = dim.equals("lin") ? ScatterplotFacet.LIN : ScatterplotFacet.LOG;
+            dim_x = dim.equals("lin") ? ScatterplotFacet.LIN : ScatterplotFacet.LOG;
         }
-        
+
         @JsonProperty(ScatterplotFacet.DIM_Y)
         public void setDimY(String dim) {
-        	dim_y = dim.equals("lin") ? ScatterplotFacet.LIN : ScatterplotFacet.LOG;
+            dim_y = dim.equals("lin") ? ScatterplotFacet.LIN : ScatterplotFacet.LOG;
         }
-        
+
         // rotation can be set to "none" (a JSON string) in which case it should be ignored
         @JsonProperty(ScatterplotFacet.ROTATION)
         public void setRotation(Object rotation) {
-        	try {
-        		this.rotation = Integer.parseInt(rotation.toString());
-        	} catch(NumberFormatException e) {
-        		;
-        	}
+            this.rotation = ScatterplotFacet.ScatterplotFacetConfig.getRotation(rotation.toString());
         }
     }
-    
+
     public void draw(OutputStream output, Project project, Engine engine, PlotterConfig o) throws IOException {
 
         double min_x = 0;
         double min_y = 0;
         double max_x = 0;
         double max_y = 0;
-        
+
         int columnIndex_x = 0;
         int columnIndex_y = 0;
-        
+
         Evaluable eval_x = null;
         Evaluable eval_y = null;
-        
-        Color color = new Color(Integer.parseInt(o.color_str,16));
-        
-        Color base_color = o.base_color_str != null ? new Color(Integer.parseInt(o.base_color_str,16)) : null;
-        
+
+        Color color = new Color(Integer.parseInt(o.color_str, 16));
+
+        Color base_color = o.base_color_str != null ? new Color(Integer.parseInt(o.base_color_str, 16)) : null;
+
         if (o.columnName_x.length() > 0) {
             Column x_column = project.columnModel.getColumnByName(o.columnName_x);
             if (x_column != null) {
@@ -177,13 +173,13 @@ public class GetScatterplotCommand extends Command {
         } else {
             columnIndex_x = -1;
         }
-        
+
         try {
             eval_x = MetaParser.parse(o.expression_x);
         } catch (ParsingException e) {
             logger.warn("error parsing expression", e);
         }
-        
+
         if (o.columnName_y.length() > 0) {
             Column y_column = project.columnModel.getColumnByName(o.columnName_y);
             if (y_column != null) {
@@ -192,16 +188,16 @@ public class GetScatterplotCommand extends Command {
         } else {
             columnIndex_y = -1;
         }
-        
+
         try {
             eval_y = MetaParser.parse(o.expression_y);
         } catch (ParsingException e) {
             logger.warn("error parsing expression", e);
         }
-        
+
         NumericBinIndex index_x = null;
         NumericBinIndex index_y = null;
-        
+
         Column column_x = project.columnModel.getColumnByName(o.columnName_x);
         if (column_x != null) {
             columnIndex_x = column_x.getCellIndex();
@@ -217,32 +213,32 @@ public class GetScatterplotCommand extends Command {
             min_y = index_y.getMin();
             max_y = index_y.getMax();
         }
-        
+
         if (index_x != null && index_y != null && index_x.isNumeric() && index_y.isNumeric()) {
             ScatterplotDrawingRowVisitor drawer = new ScatterplotDrawingRowVisitor(
-                columnIndex_x, columnIndex_y, min_x, max_x, min_y, max_y, 
-                o.size, o.dim_x, o.dim_y, o.rotation, o.dot, color
+                    columnIndex_x, columnIndex_y, min_x, max_x, min_y, max_y,
+                    o.size, o.dim_x, o.dim_y, o.rotation, o.dot, color
             );
-            
+
             if (base_color != null) {
                 drawer.setColor(base_color);
-                
+
                 FilteredRows filteredRows = engine.getAllRows();
                 filteredRows.accept(project, drawer);
-                
+
                 drawer.setColor(color);
             }
-            
+
             {
                 FilteredRows filteredRows = engine.getAllFilteredRows();
                 filteredRows.accept(project, drawer);
             }
-            
+
             ImageIO.write(drawer.getImage(), "png", output);
         } else {
             ImageIO.write(new BufferedImage(1, 1, BufferedImage.TYPE_4BYTE_ABGR), "png", output);
         }
-        
+
     }
-    
+
 }
