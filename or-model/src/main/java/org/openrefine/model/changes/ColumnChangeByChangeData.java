@@ -142,7 +142,11 @@ public class ColumnChangeByChangeData implements Change {
             if (_add) {
                 return row.insertCell(_columnIndex, cell);
             } else {
-                return row.withCell(_columnIndex, cell);
+                if (cell != null) {
+                    return row.withCell(_columnIndex, cell);
+                } else {
+                    return row;
+                }
             }
         }
         

@@ -1,6 +1,7 @@
 package org.openrefine.model.changes;
 
 import java.io.Serializable;
+import java.util.Optional;
 
 import org.openrefine.model.Row;
 
