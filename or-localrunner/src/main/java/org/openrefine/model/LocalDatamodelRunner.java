@@ -10,6 +10,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Executors;
+import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreType;
 import com.google.common.util.concurrent.MoreExecutors;
@@ -108,7 +109,7 @@ public class LocalDatamodelRunner implements DatamodelRunner {
                 })
                 .mapToPair(indexedData -> Tuple2.of(indexedData.getId(), indexedData.getData()));
         pll = PairPLL.assumeSorted(pll);
-        return new LocalChangeData<T>(this, pll);
+        return new LocalChangeData<T>(this, pll, null);
     }
 
     @Override
@@ -143,12 +144,18 @@ public class LocalDatamodelRunner implements DatamodelRunner {
 
     @Override
     public <T extends Serializable> ChangeData<T> create(List<IndexedData<T>> changeData) {
+        // We do this filtering on the list itself rather than on the PLL
+        // so that the PLL has known partition sizes
+        List<IndexedData<T>> withoutNulls = changeData
+                .stream()
+                .filter(id -> id.getData() != null)
+                .collect(Collectors.toList());
+
         PairPLL<Long, T> pll = pllContext
-                .parallelize(numPartitions, changeData)
-                .mapToPair(indexedData -> Tuple2.of(indexedData.getId(), indexedData.getData()))
-                .filter(tuple -> tuple.getValue() != null);
+                .parallelize(numPartitions, withoutNulls)
+                .mapToPair(indexedData -> Tuple2.of(indexedData.getId(), indexedData.getData()));
         pll = PairPLL.assumeSorted(pll);
-        return new LocalChangeData<T>(this, pll);
+        return new LocalChangeData<T>(this, pll, null); // no need for parent partition sizes, since pll has cached ones
     }
 
 }

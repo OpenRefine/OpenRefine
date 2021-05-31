@@ -15,19 +15,19 @@ import org.openrefine.process.ProgressReporter;
  * @author Antonin Delpeuch
  *
  */
-class ConcurrentProgressReporter {
+public class ConcurrentProgressReporter {
 
     long maxElements;
     ProgressReporter parentReporter;
     AtomicLong seenElements;
 
-    protected ConcurrentProgressReporter(ProgressReporter parentReporter, long maxElements) {
+    public ConcurrentProgressReporter(ProgressReporter parentReporter, long maxElements) {
         this.maxElements = maxElements;
         this.parentReporter = parentReporter;
         this.seenElements = new AtomicLong(0L);
     }
 
-    protected void increment(long summand) {
+    public void increment(long summand) {
         long seen = seenElements.addAndGet(summand);
         // TODO this is not fully thread-safe: the progress could be updated to a lower value
         // but that's not critical. It is probably not worth using a lock instead because of

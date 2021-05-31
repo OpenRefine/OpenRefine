@@ -449,7 +449,10 @@ public class LocalGridState implements GridState {
                     .mapToPair(indexedData -> indexedData)
                     .withPartitioner(grid.getPartitioner());
         }
-        return new LocalChangeData<T>(runner, data.filter(tuple -> tuple.getValue() != null));
+        return new LocalChangeData<T>(
+                runner,
+                data.filter(tuple -> tuple.getValue() != null),
+                grid.hasCachedPartitionSizes() ? grid.getPartitionSizes() : null);
     }
 
     protected static <T extends Serializable> Stream<Tuple2<Long, T>> applyRowChangeDataMapper(RowChangeDataProducer<T> rowMapper,
@@ -481,7 +484,10 @@ public class LocalGridState implements GridState {
                     .mapToPair(tuple -> tuple)
                     .withPartitioner(filteredRecords.getPartitioner());
         }
-        return new LocalChangeData<T>(runner, data.filter(tuple -> tuple.getValue() != null));
+        return new LocalChangeData<T>(
+                runner,
+                data.filter(tuple -> tuple.getValue() != null),
+                grid.hasCachedPartitionSizes() ? grid.getPartitionSizes() : null);
     }
 
     protected static <T extends Serializable> Stream<Tuple2<Long, T>> applyRecordChangeDataMapper(

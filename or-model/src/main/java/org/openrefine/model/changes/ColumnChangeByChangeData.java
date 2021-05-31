@@ -18,7 +18,8 @@ import org.openrefine.model.recon.ReconStats;
 
 /**
  * Adds a new column based on data fetched from an external process. If no column name is supplied, then the change will
- * replace the column at the given index instead.
+ * replace the column at the given index instead (merging with existing contents in rows not covered by the change
+ * data).
  * 
  * New recon config and stats can be supplied for the column changed or created. If a recon config and no recon stats
  * are provided, the change computes the new recon stats on the fly.
