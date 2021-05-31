@@ -285,7 +285,8 @@ public class TextSearchFacet implements Facet {
 
                     @Override
                     protected boolean checkValue(String s) {
-                        return (_config._caseSensitive ? s : s.toLowerCase()).contains(_config._query);
+                        return (_config._caseSensitive ? s : s.toLowerCase())
+                                .contains(_config._caseSensitive ? _config._query : _config._query.toLowerCase());
                     };
                 };
             }

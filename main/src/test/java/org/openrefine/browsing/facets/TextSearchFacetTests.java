@@ -198,6 +198,26 @@ public class TextSearchFacetTests extends RefineTest {
     }
 
     @Test
+    public void testCaseInsensitiveFilterWithUpperCaseQuery() throws Exception {
+        // Apply case-sensitive filter "A"
+
+        configureFilter("{\"type\":\"core/text\","
+                + "\"name\":\"Value\","
+                + "\"columnName\":\"Value\","
+                + "\"mode\":\"text\","
+                + "\"caseSensitive\":false,"
+                + "\"invert\":false,"
+                + "\"query\":\"A\"}");
+
+        // Check each row in the project against the filter
+        // Expect to retrieve one row containing "Abc"
+        Assert.assertEquals(rowFilter.filterRow(0, rows.get(0)), true);
+        Assert.assertEquals(rowFilter.filterRow(1, rows.get(1)), false);
+        Assert.assertEquals(rowFilter.filterRow(2, rows.get(2)), true);
+        Assert.assertEquals(rowFilter.filterRow(3, rows.get(3)), true);
+    }
+
+    @Test
     public void serializeTextSearchFacetConfig() throws JsonParseException, JsonMappingException, IOException {
         TextSearchFacetConfig config = ParsingUtilities.mapper.readValue(sensitiveConfigJson, TextSearchFacetConfig.class);
         TestUtils.isSerializedTo(config, sensitiveConfigJson, ParsingUtilities.defaultWriter);
