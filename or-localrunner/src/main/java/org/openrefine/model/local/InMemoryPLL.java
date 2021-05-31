@@ -5,8 +5,11 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
+import org.openrefine.process.ProgressReporter;
 
 /**
  * A PLL which is created out of a regular Java collection. The collection is split into contiguous partitions which can
@@ -39,6 +42,16 @@ public class InMemoryPLL<T> extends PLL<T> {
     @Override
     public List<? extends Partition> getPartitions() {
         return partitions;
+    }
+
+    @Override
+    public void cache(Optional<ProgressReporter> progressReporter) {
+        cachedPartitions = partitions.stream()
+                .map(p -> list.subList(p.offset, p.offset + p.length))
+                .collect(Collectors.toList());
+        if (progressReporter.isPresent()) {
+            progressReporter.get().reportProgress(100);
+        }
     }
 
     protected static class InMemoryPartition implements Partition {

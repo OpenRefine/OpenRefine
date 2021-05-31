@@ -32,6 +32,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Optional;
 import java.util.Random;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -230,7 +231,8 @@ public class PerformWikibaseEditsOperation extends EngineDependentOperation {
             NewReconChangeDataProducer rowMapper = new NewReconChangeDataProducer(newItemLibrary);
             ChangeData<RowNewReconUpdate> changeData = _grid.mapRows(RowFilter.ANY_ROW, rowMapper);
             try {
-                _history.getChangeDataStore().store(changeData, _historyEntryID, changeDataId, new RowNewReconUpdateSerializer());
+                _history.getChangeDataStore().store(changeData, _historyEntryID, changeDataId, new RowNewReconUpdateSerializer(),
+                        Optional.empty());
 
                 _progress = 100;
 

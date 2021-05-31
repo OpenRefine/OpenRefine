@@ -7,11 +7,13 @@ import java.io.Serializable;
 import java.io.UncheckedIOException;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Optional;
 
 import org.openrefine.model.changes.ChangeData;
 import org.openrefine.model.changes.ChangeDataSerializer;
 import org.openrefine.model.changes.IndexedData;
 import org.openrefine.model.local.PairPLL;
+import org.openrefine.process.ProgressReporter;
 
 public class LocalChangeData<T extends Serializable> implements ChangeData<T> {
 
@@ -56,8 +58,8 @@ public class LocalChangeData<T extends Serializable> implements ChangeData<T> {
         return runner;
     }
 
-    @Override
-    public void saveToFile(File file, ChangeDataSerializer<T> serializer) throws IOException {
+    protected void saveToFile(File file, ChangeDataSerializer<T> serializer, Optional<ProgressReporter> progressReporter)
+            throws IOException {
         grid.map(r -> {
             try {
                 return (new IndexedData<T>(r.getKey(), r.getValue()).writeAsString(serializer));
@@ -65,7 +67,15 @@ public class LocalChangeData<T extends Serializable> implements ChangeData<T> {
                 throw new UncheckedIOException(e);
             }
         })
-                .saveAsTextFile(file.getAbsolutePath());
+                .saveAsTextFile(file.getAbsolutePath(), progressReporter);
+    }
+
+    public void saveToFile(File file, ChangeDataSerializer<T> serializer) throws IOException {
+        saveToFile(file, serializer, Optional.empty());
+    }
+
+    public void saveToFile(File file, ChangeDataSerializer<T> serializer, ProgressReporter progressReporter) throws IOException {
+        saveToFile(file, serializer, Optional.ofNullable(progressReporter));
     }
 
     public PairPLL<Long, T> getPLL() {

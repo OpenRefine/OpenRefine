@@ -3,6 +3,9 @@ package org.openrefine.model.changes;
 
 import java.io.IOException;
 import java.io.Serializable;
+import java.util.Optional;
+
+import org.openrefine.process.ProgressReporter;
 
 /**
  * Stores and retrieves {@link ChangeData} objects keyed by a pair: - the id of the change it belongs to - a string id
@@ -28,6 +31,8 @@ public interface ChangeDataStore {
      *            the id of the dataset within the change
      * @param serializer
      *            to serialize the data to a file, for instance
+     * @param progressReporter
+     *            reports the progress of the change data computation and serialization
      * @throws IOException
      *             if serialization failed
      */
@@ -35,7 +40,8 @@ public interface ChangeDataStore {
             ChangeData<T> data,
             long historyEntryId,
             String dataId,
-            ChangeDataSerializer<T> serializer)
+            ChangeDataSerializer<T> serializer,
+            Optional<ProgressReporter> progressReporter)
             throws IOException;
 
     /**

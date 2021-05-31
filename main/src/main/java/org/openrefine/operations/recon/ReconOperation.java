@@ -40,6 +40,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
@@ -201,7 +202,8 @@ public class ReconOperation extends EngineDependentOperation {
             ChangeData<Cell> changeData = state.mapRows(combined, rowMapper);
 
             try {
-                _history.getChangeDataStore().store(changeData, _historyEntryID, "recon", new CellChangeDataSerializer());
+                _history.getChangeDataStore().store(changeData, _historyEntryID, "recon", new CellChangeDataSerializer(),
+                        Optional.of(_reporter));
 
                 if (!_canceled) {
                     Change reconChange = new ColumnChangeByChangeData(

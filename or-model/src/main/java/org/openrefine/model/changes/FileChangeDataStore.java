@@ -4,8 +4,10 @@ package org.openrefine.model.changes;
 import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
+import java.util.Optional;
 
 import org.openrefine.model.DatamodelRunner;
+import org.openrefine.process.ProgressReporter;
 
 public class FileChangeDataStore implements ChangeDataStore {
 
@@ -30,10 +32,14 @@ public class FileChangeDataStore implements ChangeDataStore {
 
     @Override
     public <T extends Serializable> void store(ChangeData<T> data, long historyEntryId, String dataId,
-            ChangeDataSerializer<T> serializer) throws IOException {
+            ChangeDataSerializer<T> serializer, Optional<ProgressReporter> progressReporter) throws IOException {
         File file = idsToFile(historyEntryId, dataId);
         file.mkdirs();
-        data.saveToFile(file, serializer);
+        if (progressReporter.isPresent()) {
+            data.saveToFile(file, serializer, progressReporter.get());
+        } else {
+            data.saveToFile(file, serializer);
+        }
     }
 
     @Override

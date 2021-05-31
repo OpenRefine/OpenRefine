@@ -135,4 +135,5 @@ public class InMemoryPLLTests extends PLLTestsBase {
         Assert.assertEquals(noPartitions.collect(), Collections.emptyList());
         Assert.assertFalse(noPartitions.stream().iterator().hasNext());
     }
+
 }

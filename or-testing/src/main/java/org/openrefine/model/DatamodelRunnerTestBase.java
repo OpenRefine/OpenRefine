@@ -43,6 +43,7 @@ import org.openrefine.model.changes.RowChangeDataFlatJoiner;
 import org.openrefine.model.changes.RowChangeDataJoiner;
 import org.openrefine.model.changes.RowChangeDataProducer;
 import org.openrefine.overlay.OverlayModel;
+import org.openrefine.process.ProgressReporterStub;
 import org.openrefine.sorting.NumberCriterion;
 import org.openrefine.sorting.SortingConfig;
 import org.openrefine.sorting.StringCriterion;
@@ -447,10 +448,27 @@ public abstract class DatamodelRunnerTestBase {
     }
 
     @Test
-    public void testRoundTripSerialization() throws IOException {
-        File tempFile = new File(tempDir, "testgrid");
+    public void testRoundTripSerializationNoProgress() throws IOException {
+        File tempFile = new File(tempDir, "testgrid_no_progress");
 
         simpleGrid.saveToFile(tempFile);
+
+        GridState loaded = SUT.loadGridState(tempFile);
+
+        Assert.assertEquals(loaded.rowCount(), 4L);
+        List<Row> actualRows = loaded.collectRows().stream().map(r -> r.getRow()).collect(Collectors.toList());
+        Assert.assertEquals(actualRows, expectedRows);
+        Assert.assertEquals(loaded.recordCount(), 2L);
+        Assert.assertEquals(loaded.collectRecords(), expectedRecords);
+    }
+
+    @Test
+    public void testRoundTripSerializationWithProgress() throws IOException {
+        File tempFile = new File(tempDir, "testgrid_progress");
+        ProgressReporterStub reporter = new ProgressReporterStub();
+
+        simpleGrid.saveToFile(tempFile, reporter);
+        Assert.assertEquals(reporter.getPercentage(), 100);
 
         GridState loaded = SUT.loadGridState(tempFile);
 
@@ -786,8 +804,8 @@ public abstract class DatamodelRunnerTestBase {
     };
 
     @Test
-    public void testSerializeChangeData() throws IOException {
-        File tempFile = new File(tempDir, "testchangedata");
+    public void testSerializeChangeDataNoProgress() throws IOException {
+        File tempFile = new File(tempDir, "test_change_data");
 
         simpleChangeData.saveToFile(new File(tempFile, "data"), stringSerializer);
 
@@ -801,8 +819,25 @@ public abstract class DatamodelRunnerTestBase {
     }
 
     @Test
+    public void testSerializeChangeDataWithProgress() throws IOException {
+        File tempFile = new File(tempDir, "test_change_data_with_progress");
+        ProgressReporterStub progress = new ProgressReporterStub();
+
+        simpleChangeData.saveToFile(new File(tempFile, "data"), stringSerializer, progress);
+        Assert.assertEquals(progress.getPercentage(), 100);
+
+        ChangeData<String> loaded = SUT.loadChangeData(new File(tempFile, "data"), stringSerializer);
+
+        Assert.assertNotNull(loaded.getDatamodelRunner());
+        Assert.assertEquals(loaded.get(0L), "first");
+        Assert.assertNull(loaded.get(1L)); // not included in changedata
+        Assert.assertEquals(loaded.get(2L), "third");
+        Assert.assertNull(loaded.get(3L)); // null from creation
+    }
+
+    @Test
     public void testSerializeChangeDataDirAlreadyExists() throws IOException {
-        File tempFile = TestUtils.createTempDirectory("testchangedata");
+        File tempFile = TestUtils.createTempDirectory("test_change_data_already_exists");
 
         simpleChangeData.saveToFile(tempFile, stringSerializer);
 
@@ -1155,11 +1190,20 @@ public abstract class DatamodelRunnerTestBase {
     }
 
     @Test
-    public void testCaching() {
+    public void testCachingWithoutProgress() {
         Assert.assertFalse(simpleGrid.isCached());
         simpleGrid.cache();
         Assert.assertTrue(simpleGrid.isCached());
         simpleGrid.uncache();
         Assert.assertFalse(simpleGrid.isCached());
+    }
+
+    @Test
+    public void testCachingWithProgress() {
+        ProgressReporterStub reporter = new ProgressReporterStub();
+        Assert.assertFalse(simpleGrid.isCached());
+        simpleGrid.cache(reporter);
+        Assert.assertTrue(simpleGrid.isCached());
+        Assert.assertEquals(reporter.getPercentage(), 100);
     }
 }

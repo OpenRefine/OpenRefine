@@ -30,12 +30,14 @@ import org.apache.spark.api.java.function.Function2;
 import org.apache.spark.api.java.function.PairFunction;
 import org.apache.spark.rdd.RDD;
 import org.apache.spark.storage.StorageLevel;
+import org.apache.spark.util.DoubleAccumulator;
 import scala.Tuple2;
 import scala.reflect.ClassManifestFactory;
 
 import org.openrefine.browsing.facets.Combiner;
 import org.openrefine.browsing.facets.RecordAggregator;
 import org.openrefine.browsing.facets.RowAggregator;
+import org.openrefine.io.IOUtils;
 import org.openrefine.model.changes.ChangeData;
 import org.openrefine.model.changes.RecordChangeDataJoiner;
 import org.openrefine.model.changes.RecordChangeDataProducer;
@@ -47,6 +49,7 @@ import org.openrefine.model.rdd.RecordRDD;
 import org.openrefine.model.rdd.ScanMapRDD;
 import org.openrefine.model.rdd.SortedRDD;
 import org.openrefine.overlay.OverlayModel;
+import org.openrefine.process.ProgressReporter;
 import org.openrefine.sorting.RecordSorter;
 import org.openrefine.sorting.RowSorter;
 import org.openrefine.sorting.SortingConfig;
@@ -473,7 +476,15 @@ public class SparkGridState implements GridState {
     public void saveToFile(File file) throws IOException {
         File metadataFile = new File(file, METADATA_PATH);
         File gridFile = new File(file, GRID_PATH);
-        getGrid().map(r -> serializeIndexedRow(r)).saveAsTextFile(gridFile.getAbsolutePath(), GzipCodec.class);
+        IOUtils.deleteDirectoryIfExists(file);
+        DoubleAccumulator accumulator = grid.context().doubleAccumulator();
+        grid
+                .map(r -> serializeIndexedRow(r))
+                .map(r -> {
+                    accumulator.add(1L);
+                    return r;
+                })
+                .saveAsTextFile(gridFile.getAbsolutePath(), GzipCodec.class);
 
         Metadata metadata = new Metadata();
         metadata.columnModel = columnModel;
@@ -485,6 +496,12 @@ public class SparkGridState implements GridState {
             metadata.recordCount = cachedRecordCount;
         }
         ParsingUtilities.saveWriter.writeValue(metadataFile, metadata);
+    }
+
+    @Override
+    public void saveToFile(File file, ProgressReporter progressReporter) throws IOException {
+        saveToFile(file);
+        progressReporter.reportProgress(100);
     }
 
     protected static String serializeIndexedRow(Tuple2<Long, Row> indexedRow) throws JsonProcessingException {
@@ -1114,6 +1131,14 @@ public class SparkGridState implements GridState {
     public boolean cache() {
         grid.persist(StorageLevel.MEMORY_ONLY());
         return isCached();
+    }
+
+    @Override
+    public boolean cache(ProgressReporter progressReporter) {
+        boolean isCached = cache();
+        // TODO more granular progress reporting?
+        progressReporter.reportProgress(100);
+        return isCached;
     }
 
 }

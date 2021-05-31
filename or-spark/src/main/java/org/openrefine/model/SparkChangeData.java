@@ -15,6 +15,7 @@ import org.openrefine.io.IOUtils;
 import org.openrefine.model.changes.ChangeData;
 import org.openrefine.model.changes.ChangeDataSerializer;
 import org.openrefine.model.changes.IndexedData;
+import org.openrefine.process.ProgressReporter;
 
 /**
  * Stores change data in a rowid-indexed RDD.
@@ -70,7 +71,18 @@ public class SparkChangeData<T extends Serializable> implements ChangeData<T> {
     @Override
     public void saveToFile(File file, ChangeDataSerializer<T> serializer) throws IOException {
         IOUtils.deleteDirectoryIfExists(file);
-        data.map(r -> serializeIndexedData(serializer, r)).saveAsTextFile(file.getAbsolutePath(), GzipCodec.class);
+        data
+                .map(r -> serializeIndexedData(serializer, r))
+                .saveAsTextFile(file.getAbsolutePath(), GzipCodec.class);
+    }
+
+    @Override
+    public void saveToFile(File file, ChangeDataSerializer<T> serializer, ProgressReporter progressReporter) throws IOException {
+        saveToFile(file, serializer);
+        // TODO more granular progress reporting? this requires knowing the expected size of the RDD,
+        // which should probably be passed when constructing the object (so that it can be inferred from
+        // the parent GridState)
+        progressReporter.reportProgress(100);
     }
 
     protected static <T extends Serializable> String serializeIndexedData(ChangeDataSerializer<T> serializer, Tuple2<Long, T> data)

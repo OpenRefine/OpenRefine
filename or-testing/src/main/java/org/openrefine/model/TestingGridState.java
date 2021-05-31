@@ -11,6 +11,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
@@ -29,6 +30,7 @@ import org.openrefine.model.changes.RowChangeDataFlatJoiner;
 import org.openrefine.model.changes.RowChangeDataJoiner;
 import org.openrefine.model.changes.RowChangeDataProducer;
 import org.openrefine.overlay.OverlayModel;
+import org.openrefine.process.ProgressReporter;
 import org.openrefine.sorting.RecordSorter;
 import org.openrefine.sorting.RowSorter;
 import org.openrefine.sorting.SortingConfig;
@@ -212,6 +214,15 @@ public class TestingGridState implements GridState {
 
     @Override
     public void saveToFile(File file) throws IOException {
+        saveToFile(file, Optional.empty());
+    }
+
+    @Override
+    public void saveToFile(File file, ProgressReporter progressReporter) throws IOException {
+        saveToFile(file, Optional.ofNullable(progressReporter));
+    }
+
+    protected void saveToFile(File file, Optional<ProgressReporter> progressReporter) throws IOException {
         File gridPath = new File(file, GridState.GRID_PATH);
         File metadataPath = new File(file, GridState.METADATA_PATH);
 
@@ -234,8 +245,15 @@ public class TestingGridState implements GridState {
                 fos.close();
             }
         }
+        if (progressReporter.isPresent()) {
+            // just for the sake of having a more incremental progress report
+            progressReporter.get().reportProgress(90);
+        }
 
         ParsingUtilities.saveWriter.writeValue(metadataPath, this);
+        if (progressReporter.isPresent()) {
+            progressReporter.get().reportProgress(100);
+        }
     }
 
     @Override
@@ -606,6 +624,13 @@ public class TestingGridState implements GridState {
     @Override
     public void uncache() {
         isCached = false;
+    }
+
+    @Override
+    public boolean cache(ProgressReporter progressReporter) {
+        isCached = true;
+        progressReporter.reportProgress(100);
+        return true;
     }
 
     @Override

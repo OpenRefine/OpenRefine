@@ -10,6 +10,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
@@ -30,6 +31,7 @@ import org.openrefine.model.local.PairPLL;
 import org.openrefine.model.local.RecordPLL;
 import org.openrefine.model.local.Tuple2;
 import org.openrefine.overlay.OverlayModel;
+import org.openrefine.process.ProgressReporter;
 import org.openrefine.sorting.RecordSorter;
 import org.openrefine.sorting.RowSorter;
 import org.openrefine.sorting.SortingConfig;
@@ -283,13 +285,22 @@ public class LocalGridState implements GridState {
     }
 
     @Override
+    public void saveToFile(File file, ProgressReporter progressReporter) throws IOException {
+        saveToFile(file, Optional.ofNullable(progressReporter));
+    }
+
+    @Override
     public void saveToFile(File file) throws IOException {
+        saveToFile(file, Optional.empty());
+    }
+
+    protected void saveToFile(File file, Optional<ProgressReporter> progressReporter) throws IOException {
         File metadataFile = new File(file, METADATA_PATH);
         File gridFile = new File(file, GRID_PATH);
 
         grid
                 .map(LocalGridState::serializeIndexedRow)
-                .saveAsTextFile(gridFile.getAbsolutePath());
+                .saveAsTextFile(gridFile.getAbsolutePath(), progressReporter);
 
         ParsingUtilities.saveWriter.writeValue(metadataFile, getMetadata());
     }
@@ -553,8 +564,17 @@ public class LocalGridState implements GridState {
     }
 
     @Override
+    public boolean cache(ProgressReporter progressReporter) {
+        return cache(Optional.of(progressReporter));
+    }
+
+    @Override
     public boolean cache() {
-        grid.cache();
+        return cache(Optional.empty());
+    }
+
+    protected boolean cache(Optional<ProgressReporter> progressReporter) {
+        grid.cache(progressReporter);
         return grid.isCached();
     }
 

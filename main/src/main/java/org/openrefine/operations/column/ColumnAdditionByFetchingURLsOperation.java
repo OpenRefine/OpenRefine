@@ -40,6 +40,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 
@@ -434,7 +435,8 @@ public class ColumnAdditionByFetchingURLsOperation extends EngineDependentOperat
             ChangeData<Cell> changeData = state.mapRows(_engine.combinedRowFilters(), changeProducer);
 
             try {
-                _history.getChangeDataStore().store(changeData, _historyEntryID, urlChangeDataId, new CellChangeDataSerializer());
+                _history.getChangeDataStore().store(changeData, _historyEntryID, urlChangeDataId, new CellChangeDataSerializer(),
+                        Optional.of(_reporter));
 
                 if (!_canceled) {
                     HistoryEntry historyEntry = new HistoryEntry(

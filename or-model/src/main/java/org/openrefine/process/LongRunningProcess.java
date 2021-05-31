@@ -50,9 +50,12 @@ abstract public class LongRunningProcess extends Process {
     protected int _progress; // out of 100
     @JsonIgnore
     protected boolean _canceled;
+    @JsonIgnore
+    protected ProgressReporter _reporter;
 
     protected LongRunningProcess(String description) {
         _description = description;
+        _reporter = new Reporter();
     }
 
     @Override
@@ -99,4 +102,13 @@ abstract public class LongRunningProcess extends Process {
     }
 
     abstract protected Runnable getRunnable();
+
+    protected class Reporter implements ProgressReporter {
+
+        @Override
+        public void reportProgress(int percentage) {
+            _progress = percentage;
+        }
+
+    }
 }

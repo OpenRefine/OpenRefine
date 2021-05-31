@@ -5,6 +5,9 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
+
+import org.openrefine.process.ProgressReporter;
 
 /**
  * A {@link ChangeDataStore} which does not persist its change data, meaning that they do not have to be computed
@@ -31,7 +34,7 @@ public class LazyChangeDataStore implements ChangeDataStore {
 
     @Override
     public <T extends Serializable> void store(ChangeData<T> data, long historyEntryId, String dataId,
-            ChangeDataSerializer<T> serializer) throws IOException {
+            ChangeDataSerializer<T> serializer, Optional<ProgressReporter> progressReporter) throws IOException {
         _changeData.put(idPairToString(historyEntryId, dataId), data);
     }
 

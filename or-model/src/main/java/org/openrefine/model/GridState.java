@@ -22,6 +22,7 @@ import org.openrefine.model.changes.RowChangeDataJoiner;
 import org.openrefine.model.changes.RowChangeDataProducer;
 import org.openrefine.overlay.OverlayModel;
 import org.openrefine.overlay.OverlayModelResolver;
+import org.openrefine.process.ProgressReporter;
 import org.openrefine.sorting.SortingConfig;
 
 /**
@@ -247,6 +248,17 @@ public interface GridState {
      * @throws IOException
      */
     public void saveToFile(File file) throws IOException;
+
+    /**
+     * Saves the grid state to a specified directory, following OpenRefine's format for grid storage.
+     * 
+     * @param file
+     *            the directory where to save the grid state
+     * @param progressReporter
+     *            reports the progress of the writing process
+     * @throws IOException
+     */
+    public void saveToFile(File file, ProgressReporter progressReporter) throws IOException;
 
     // Aggregations
 
@@ -514,6 +526,15 @@ public interface GridState {
      * @return whether the grid was actually cached in memory.
      */
     public boolean cache();
+
+    /**
+     * Attempt to cache this grid in memory. If the grid is too big, this can fail.
+     * 
+     * @param progressReporter
+     *            callback to report the progress of the storage of the values
+     * @return whether the grid was actually cached in memory.
+     */
+    public boolean cache(ProgressReporter progressReporter);
 
     /**
      * Utility class to represent the outcome of a partial count: the number of records/rows processed, and how many of

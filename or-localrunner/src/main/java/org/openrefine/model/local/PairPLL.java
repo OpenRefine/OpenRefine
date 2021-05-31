@@ -314,6 +314,16 @@ public class PairPLL<K, V> extends PLL<Tuple2<K, V>> {
     }
 
     /**
+     * Returns a copy of this PairPLL with the given partition sizes, when they are externally known.
+     */
+    public PairPLL<K, V> withCachedPartitionSizes(List<Long> newCachedPartitionSizes) {
+        if (newCachedPartitionSizes.size() != pll.numPartitions()) {
+            throw new IllegalArgumentException("Invalid number of partition sizes provided");
+        }
+        return new PairPLL<K, V>(pll, partitioner, newCachedPartitionSizes);
+    }
+
+    /**
      * Assuming both PairPLLs are ordered by key, and each key appears at most once in each dataset, returns an ordered
      * PairPLL with the inner join of both PLLs.
      */
