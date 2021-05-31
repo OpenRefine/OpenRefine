@@ -39,6 +39,8 @@ import java.io.InputStream;
 import java.io.Reader;
 import java.util.List;
 
+import com.google.refine.model.Cell;
+import com.google.refine.model.Row;
 import org.apache.commons.lang.NotImplementedException;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -111,11 +113,24 @@ abstract public class TreeImportingParserBase extends ImportingParserBase {
     ) throws IOException {
         final File file = ImportingUtilities.getFile(job, fileRecord);
         final String fileSource = ImportingUtilities.getFileSource(fileRecord);
+        final String archiveFileName = ImportingUtilities.getArchiveFileName(fileRecord);
+        int filenameColumnIndex = -1;
+        int archiveColumnIndex = -1;
+        int startingRowCount = project.rows.size();
         
         progress.startFile(fileSource);
         try {
             InputStream inputStream = ImporterUtilities.openAndTrackFile(fileSource, file, progress);
             try {
+
+                if (JSONUtilities.getBoolean(options, "includeArchiveFileName", false)
+                        && archiveFileName != null) {
+                    archiveColumnIndex = addArchiveColumn(project);
+                }
+                if (JSONUtilities.getBoolean(options, "includeFileSources", false)) {
+                    filenameColumnIndex = addFilenameColumn(project, archiveColumnIndex >=0);
+                }
+
                 if (useInputStream) {
                     parseOneFile(project, metadata, job, fileSource, inputStream,
                             rootColumnGroup, limit, options, exceptions);
@@ -128,6 +143,18 @@ abstract public class TreeImportingParserBase extends ImportingParserBase {
                     Reader reader = ImportingUtilities.getFileReader(file, fileRecord, commonEncoding);
                     parseOneFile(project, metadata, job, fileSource, reader,
                             rootColumnGroup, limit, options, exceptions);
+                }
+
+//                 Fill in filename and archive name column for all rows added from this file
+                int endingRowCount = project.rows.size();
+                for (int i = startingRowCount; i < endingRowCount; i++) {
+                    Row row = project.rows.get(i);
+                    if (archiveColumnIndex >= 0) {
+                        row.setCell(archiveColumnIndex, new Cell(archiveFileName, null));
+                    }
+                    if (filenameColumnIndex >= 0) {
+                        row.setCell(filenameColumnIndex, new Cell(fileSource, null));
+                    }
                 }
             } finally {
                 inputStream.close();
