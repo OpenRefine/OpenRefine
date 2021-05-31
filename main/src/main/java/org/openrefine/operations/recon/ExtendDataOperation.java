@@ -39,6 +39,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 
 import org.openrefine.browsing.Engine;
@@ -204,7 +205,7 @@ public class ExtendDataOperation extends EngineDependentOperation {
             DataExtensionProducer producer = new DataExtensionProducer(_job, _cellIndex, rowFilter);
             ChangeData<RecordDataExtension> changeData = state.mapRecords(engine.combinedRecordFilters(), producer);
             
-            _history.getChangeDataStore().store(changeData, _historyEntryID, "extend", new DataExtensionSerializer());
+            _history.getChangeDataStore().store(changeData, _historyEntryID, "extend", new DataExtensionSerializer(), Optional.of(_reporter));
 
             if (!_canceled) {
                 HistoryEntry historyEntry = new HistoryEntry(

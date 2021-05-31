@@ -21,6 +21,7 @@ import java.util.stream.Stream;
 import java.util.zip.GZIPOutputStream;
 
 import org.apache.commons.lang.Validate;
+import org.openrefine.process.ProgressReporter;
 
 import com.google.common.collect.Iterators;
 import com.google.common.collect.Streams;
@@ -124,7 +125,7 @@ public abstract class PLL<T> {
      * @return the list of all elements in the list, retrieved in memory.
      */
     public List<T> collect() {
-        List<List<T>> partitionLists = collectPartitions();
+        List<List<T>> partitionLists = collectPartitions(Optional.empty());
         
         return partitionLists.stream()
                 .flatMap(Collection::stream)
@@ -135,7 +136,7 @@ public abstract class PLL<T> {
      * @return the list of all elements in this collection, retrieved in an ArrayList
      */
     protected ArrayList<T> collectToArrayList() {
-        List<List<T>> partitionLists = collectPartitions();
+        List<List<T>> partitionLists = collectPartitions(Optional.empty());
         int size = partitionLists.stream().mapToInt(p -> p.size()).sum();
         
         return partitionLists.stream()
@@ -147,13 +148,29 @@ public abstract class PLL<T> {
      * Retrieves the contents of all partitions. This does not
      * store them in the local cache, so two successive calls
      * to this method will enumerate the contents of the PLL twice.
+     * @param progressReporter reports the progress of computing the whole contents.
+     *        If the sizes of the partitions are not known, progress will jump from 0 to 100 directly 
      */
-    protected List<List<T>> collectPartitions() {
+    protected List<List<T>> collectPartitions(Optional<ProgressReporter> progressReporter) {
         List<List<T>> results;
         if (cachedPartitions != null) {
             results = cachedPartitions;
         } else {
-            results = runOnPartitions(p -> iterate(p).collect(Collectors.toList()));
+            if (progressReporter.isPresent() && cachedPartitionSizes != null) {
+                ConcurrentProgressReporter concurrentReporter = new ConcurrentProgressReporter(progressReporter.get(), count());
+                results = runOnPartitions(p ->
+                    concurrentReporter.wrapStream(
+                            iterate(p),
+                            100, // number of elements each thread reads before updating progress
+                            p.getIndex()*5) // offset which depends on the partition index so that not all threads report progress at the same time
+                    .collect(Collectors.toList()));
+            } else {
+                results = runOnPartitions(p -> iterate(p).collect(Collectors.toList()));
+            }
+        }
+        
+        if (progressReporter.isPresent()) {
+            progressReporter.get().reportProgress(100);
         }
         
         if (cachedPartitionSizes == null) {
@@ -446,12 +463,8 @@ public abstract class PLL<T> {
     /**
      * Loads the contents of all partitions in memory.
      */
-    public void cache() {
-        cachedPartitions = collectPartitions();
-        cachedPartitionSizes = cachedPartitions
-                .stream()
-                .map(p -> (long)p.size())
-                .collect(Collectors.toList());
+    public void cache(Optional<ProgressReporter> progressReporter) {
+        cachedPartitions = collectPartitions(progressReporter);
     }
     
     /**
@@ -481,9 +494,10 @@ public abstract class PLL<T> {
      * Write the PLL to a directory, containing one file for each partition.
      * 
      * @param path
+     * @param progressReporter optionally reports progress of the write operation 
      * @throws IOException
      */
-    public void saveAsTextFile(String path) throws IOException {
+    public void saveAsTextFile(String path, Optional<ProgressReporter> progressReporter) throws IOException {
         // Using the Hadoop API:
         /*
         OutputFormat<NullWritable, Text> outputFormat = new TextOutputFormat<NullWritable, Text>();
@@ -496,15 +510,25 @@ public abstract class PLL<T> {
         */
         File gridPath = new File(path);
         gridPath.mkdirs();
+        
+        Optional<ConcurrentProgressReporter> concurrentProgressReporter = (
+                (progressReporter.isPresent() && cachedPartitionSizes != null) ? 
+                        Optional.of(new ConcurrentProgressReporter(progressReporter.get(), count())) : Optional.empty());
+
         runOnPartitions(p -> { try {
-            writePartition(p, gridPath);
+            writePartition(p, gridPath, concurrentProgressReporter);
         } catch (IOException e) {
             throw new UncheckedIOException(e);
         } return false; });
         
+        if (progressReporter.isPresent()) {
+            // to make sure we reach the end even if the partition sizes have not been computed yet
+            progressReporter.get().reportProgress(100);
+        }
+        
     }
     
-    protected void writePartition(Partition partition, File directory) throws IOException {
+    protected void writePartition(Partition partition, File directory, Optional<ConcurrentProgressReporter> progressReporter) throws IOException {
         String filename = String.format("part-%05d.gz", partition.getIndex());
         File partFile = new File(directory, filename);
         FileOutputStream fos = null;
@@ -513,7 +537,11 @@ public abstract class PLL<T> {
             fos = new FileOutputStream(partFile);
             gos = new GZIPOutputStream(fos);
             Writer writer = new OutputStreamWriter(gos);
-            iterate(partition).forEachOrdered(row -> {
+            Stream<T> stream = iterate(partition);
+            if (progressReporter.isPresent()) {
+                stream = progressReporter.get().wrapStream(stream, 10, partition.getIndex());
+            }
+            stream.forEachOrdered(row -> {
                 try {
                     writer.write(row.toString());
                     writer.write('\n');

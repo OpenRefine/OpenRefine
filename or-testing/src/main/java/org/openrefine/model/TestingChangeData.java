@@ -9,12 +9,14 @@ import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.zip.GZIPOutputStream;
 
 import org.openrefine.model.changes.ChangeData;
 import org.openrefine.model.changes.ChangeDataSerializer;
 import org.openrefine.model.changes.IndexedData;
+import org.openrefine.process.ProgressReporter;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -37,8 +39,7 @@ public class TestingChangeData<T extends Serializable> implements ChangeData<T> 
         return new TestingDatamodelRunner();
     }
 
-    @Override
-    public void saveToFile(File file, ChangeDataSerializer<T> serializer) throws IOException {
+    protected void saveToFile(File file, ChangeDataSerializer<T> serializer, Optional<ProgressReporter> progressReporter) throws IOException {
         
         file.mkdirs();
         File partFile = new File(file, "part-00000.gz");
@@ -64,7 +65,19 @@ public class TestingChangeData<T extends Serializable> implements ChangeData<T> 
                 fos.close();
             }
         }
+        if (progressReporter.isPresent()) {
+            progressReporter.get().reportProgress(100);
+        }
     }
+    
+    public void saveToFile(File file, ChangeDataSerializer<T> serializer) throws IOException {
+        saveToFile(file, serializer, Optional.empty());
+    }
+    
+    public void saveToFile(File file, ChangeDataSerializer<T> serializer, ProgressReporter progressReporter) throws IOException {
+        saveToFile(file, serializer, Optional.ofNullable(progressReporter));
+    }
+
 
     @Override
     public Iterator<IndexedData<T>> iterator() {

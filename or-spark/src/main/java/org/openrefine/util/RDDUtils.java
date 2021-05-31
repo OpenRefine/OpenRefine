@@ -1,10 +1,8 @@
 package org.openrefine.util;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.apache.spark.Partitioner;
 import org.apache.spark.api.java.JavaPairRDD;
@@ -16,7 +14,6 @@ import org.apache.spark.api.java.function.PairFlatMapFunction;
 import org.apache.spark.rdd.OrderedRDDFunctions;
 import org.openrefine.model.Row;
 import org.openrefine.model.rdd.PartitionedRDD;
-import org.openrefine.model.rdd.SortedRDD;
 import org.openrefine.model.rdd.SortedRDD.SortedPartitioner;
 import org.openrefine.model.rdd.ZippedWithIndexRDD;
 
