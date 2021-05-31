@@ -256,4 +256,4 @@ Some examples of reconciliation services which have made code available include:
   * based on Apache Stanbol ([implementation details](https://github.com/fadmaa/grefine-rdf-extension/pull/59))
 * [Sunlight Labs](https://github.com/sunlightlabs) implemented a reconciliation service using Piston on Django for their [Influence Explorer](https://sunlightlabs.github.io/datacommons/). [The code is available](https://github.com/sunlightlabs/datacommons/blob/master/dcapi/reconcile/handlers.py)
 
-Also look at the [[Reconcilable Data Sources]] page for other examples of available reconciliation services that are compatible with Refine. Not all of them are open source, but they might spark some ideas.
+Also look at the [Reconcilable Data Sources](Reconcilable-Data-Sources) page for other examples of available reconciliation services that are compatible with Refine. Not all of them are open source, but they might spark some ideas.
