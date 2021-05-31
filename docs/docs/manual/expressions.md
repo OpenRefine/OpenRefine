@@ -92,12 +92,12 @@ Do not use slashes to wrap regular expressions outside of a GREL expression.
 
 On the [GREL functions](grelfunctions) page, functions that support regex will indicate that with a “p” for “pattern.” The GREL functions that support regex are:
 *   [contains](grelfunctions#containss-sub-or-p)
-*   [replace](grelfunctions#replaces-s-or-p-find-s-replace)
-*   [find](grelfunctions#finds-sub-or-p)
+*   [replace](grelfunctions#find-and-replace)
+*   [find](grelfunctions#find-and-replace)
 *   [match](grelfunctions#matchs-p)
 *   [partition](grelfunctions#partitions-s-or-p-fragment-b-omitfragment-optional)
 *   [rpartition](grelfunctions#rpartitions-s-or-p-fragment-b-omitfragment-optional)
-*   [split](grelfunctions#splits-s-or-p-sep)
+*   [split](grelfunctions#splits-s-or-p-sep-b-preservetokens-optional)
 *   [smartSplit](grelfunctions#smartsplits-s-or-p-sep-optional)
 
 ### Jython-supported regex
