@@ -233,7 +233,7 @@ Refer to [the Suggest API documentation](suggest-api) for further details.
 
 ## Data Extension {#data-extension}
 
-From OpenRefine 2.8 it is possible to fetch values from reconcilied sources natively. This is only possible for the reconciliation endpoints that support this additional feature, described in the [Data Extension API documentation](Data-Extension-API).
+From OpenRefine 2.8 it is possible to fetch values from reconcilied sources natively. This is only possible for the reconciliation endpoints that support this additional feature, described in the [Data Extension API documentation](https://docs.openrefine.org/technical-reference/reconciliation-api).
 
 ## Examples {#examples}
 
