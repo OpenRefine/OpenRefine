@@ -123,7 +123,7 @@ public class PairPLLTests extends PLLTestsBase {
     
     @Test
     public void testAssumeIndexedPartitioner() {
-        PairPLL<Long, Integer> indexed = parallelize(3, Arrays.asList(3, 8, 1, -3, 9, 10, 22, 15, 4))
+        PairPLL<Long, Integer> indexed = parallelize(3, Arrays.asList(3, 8, 1, -3, 9, 10, 22, 15, 4, 5))
                 .zipWithIndex();
         Assert.assertTrue(indexed.getPartitioner().isPresent());
         
@@ -133,7 +133,7 @@ public class PairPLLTests extends PLLTestsBase {
     
     @Test
     public void testAssumeIndexedNoPartitionerNoCount() {
-        PairPLL<Long, Integer> indexed = parallelize(3, Arrays.asList(3, 8, 1, -3, 9, 10, 22, 15, 4))
+        PairPLL<Long, Integer> indexed = parallelize(3, Arrays.asList(3, 8, 1, -3, 9, 10, 22, 15, 4, 5))
                 .zipWithIndex();
         List<Optional<Long>> expectedFirstKeys = ((RangePartitioner<Long>)indexed.getPartitioner().get()).getFirstKeys();
         indexed = indexed.withPartitioner(Optional.empty());
@@ -147,16 +147,17 @@ public class PairPLLTests extends PLLTestsBase {
     
     @Test
     public void testAssumeIndexedNoPartitionerCount() {
-        PLL<Integer> list = parallelize(3, Arrays.asList(3, 8, 1, -3, 9, 10, 22, 15, 4));
+        PLL<Integer> list = parallelize(3, Arrays.asList(3, 8, 1, -3, 9, 10, 22, 15, 4, 5));
+        List<Long> partitionSizes = list.getPartitionSizes();
         PairPLL<Long, Integer> indexed = list.zipWithIndex();
         List<Optional<Long>> expectedFirstKeys = ((RangePartitioner<Long>)indexed.getPartitioner().get()).getFirstKeys();
         indexed = indexed.withPartitioner(Optional.empty());
         
-        PairPLL<Long, Integer> doublyIndexed = PairPLL.assumeIndexed(indexed, 9L);
+        PairPLL<Long, Integer> doublyIndexed = PairPLL.assumeIndexed(indexed, 10L);
         Assert.assertTrue(doublyIndexed.getPartitioner().get() instanceof RangePartitioner<?>);
         RangePartitioner<Long> partitioner = (RangePartitioner<Long>) doublyIndexed.getPartitioner().get();
         Assert.assertEquals(partitioner.getFirstKeys(), expectedFirstKeys);
-        Assert.assertNotNull(doublyIndexed.cachedPartitionSizes);
+        Assert.assertEquals(doublyIndexed.cachedPartitionSizes, partitionSizes);
     }
     
     @Test

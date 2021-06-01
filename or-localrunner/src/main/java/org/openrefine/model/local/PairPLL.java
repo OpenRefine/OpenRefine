@@ -1,6 +1,7 @@
 package org.openrefine.model.local;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
@@ -262,6 +263,7 @@ public class PairPLL<K,V> extends PLL<Tuple2<K, V>> {
                     lastIndexSeen = firstKey;
                 }
             }
+            Collections.reverse(partitionSizes);
             return new PairPLL<Long, T>(pairPLL, Optional.of(partitioner), partitionSizes);
         } else {
             return new PairPLL<Long, T>(pairPLL, Optional.of(partitioner));
