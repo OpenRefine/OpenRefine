@@ -18,10 +18,16 @@ public class PLLTestsBase {
     @BeforeTest
     public void setUpPool() throws IOException {
         if (context == null) {
+            Configuration conf = new Configuration();
+            // these values are purposely very low for testing purposes,
+            // so that we can check the partitioning strategy without using large files
+            conf.setLong("mapreduce.input.fileinputformat.split.minsize", 128L);
+            conf.setLong("mapreduce.input.fileinputformat.split.minsize", 1024L);
             context = new PLLContext(
                     MoreExecutors.listeningDecorator(
                             Executors.newCachedThreadPool()),
-                    LocalFileSystem.get(new Configuration()));
+                    LocalFileSystem.get(new Configuration()),
+                    4);
         }
     }
 

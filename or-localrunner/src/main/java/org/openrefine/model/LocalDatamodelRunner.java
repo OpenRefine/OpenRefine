@@ -37,18 +37,30 @@ public class LocalDatamodelRunner implements DatamodelRunner {
     final static protected String GRID_PATH = "grid";
 
     protected final PLLContext pllContext;
-    protected int numPartitions;
 
-    public LocalDatamodelRunner(Integer defaultParallelism) {
+    // Partitioning strategy settings
+    protected int defaultParallelism;
+    protected long minSplitSize;
+    protected long maxSplitSize;
+
+    public LocalDatamodelRunner(Integer defaultParallelism, long minSplitSize, long maxSplitSize) {
         Configuration fsConf = new Configuration();
         fsConf.set("fs.file.impl", OrderedLocalFileSystem.class.getName());
+        fsConf.set("mapreduce.input.fileinputformat.split.minsize", Long.toString(minSplitSize));
+        fsConf.set("mapreduce.input.fileinputformat.split.maxsize", Long.toString(maxSplitSize));
         try {
             pllContext = new PLLContext(MoreExecutors.listeningDecorator(
-                    Executors.newCachedThreadPool()), LocalFileSystem.get(fsConf));
+                    Executors.newCachedThreadPool()),
+                    LocalFileSystem.get(fsConf),
+                    defaultParallelism);
         } catch (IOException e) {
             throw new UncheckedIOException(e);
         }
-        numPartitions = defaultParallelism;
+        this.defaultParallelism = defaultParallelism;
+    }
+
+    public LocalDatamodelRunner(Integer defaultParallelism) {
+        this(defaultParallelism, 4096, 16777216 /* 16 MB */);
     }
 
     public LocalDatamodelRunner() {
@@ -90,7 +102,7 @@ public class LocalDatamodelRunner implements DatamodelRunner {
     @Override
     public GridState create(ColumnModel columnModel, List<Row> rows, Map<String, OverlayModel> overlayModels) {
         // the call to zipWithIndex is efficient as the first PLL is in memory already
-        PairPLL<Long, Row> pll = pllContext.parallelize(numPartitions, rows)
+        PairPLL<Long, Row> pll = pllContext.parallelize(defaultParallelism, rows)
                 .zipWithIndex();
         return new LocalGridState(this, pll, columnModel, overlayModels);
     }
@@ -152,7 +164,7 @@ public class LocalDatamodelRunner implements DatamodelRunner {
                 .collect(Collectors.toList());
 
         PairPLL<Long, T> pll = pllContext
-                .parallelize(numPartitions, withoutNulls)
+                .parallelize(defaultParallelism, withoutNulls)
                 .mapToPair(indexedData -> Tuple2.of(indexedData.getId(), indexedData.getData()));
         pll = PairPLL.assumeSorted(pll);
         return new LocalChangeData<T>(this, pll, null); // no need for parent partition sizes, since pll has cached ones

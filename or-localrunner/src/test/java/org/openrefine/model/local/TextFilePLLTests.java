@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Optional;
 
 import org.apache.commons.io.FileUtils;
@@ -20,12 +21,24 @@ public class TextFilePLLTests extends PLLTestsBase {
 
     File tempDir;
     File textFile;
+    File longerTextFile;
+    File veryLongTextFile;
 
     @BeforeTest
     public void setUp() throws IOException {
         tempDir = TestUtils.createTempDirectory("datamodelrunnertest");
+
         textFile = new File(tempDir, "textfile.txt");
         createTestTextFile(textFile, "foo\nbar\nbaz");
+
+        // this file will have 9 * 64 - 1 = 575 characters, which is enough to be split in 4 partitions of more than 128
+        // bytes
+        longerTextFile = new File(tempDir, "longertextfile.txt");
+        createTestTextFile(longerTextFile, String.join("\n", Collections.nCopies(64, "aaaaaaaa")));
+
+        // this file will have 9 * 2048 - 1 = 18431 characters, which is too much to be split in 4 partitions only
+        veryLongTextFile = new File(tempDir, "longertextfile.txt");
+        createTestTextFile(veryLongTextFile, String.join("\n", Collections.nCopies(2048, "aaaaaaaa")));
     }
 
     @AfterTest
@@ -37,10 +50,22 @@ public class TextFilePLLTests extends PLLTestsBase {
     @Test
     public void testLoadTextFile() throws IOException {
         PLL<String> pll = new TextFilePLL(context, textFile.getAbsolutePath());
+        // this text file is too small to be split
+        Assert.assertEquals(pll.getPartitions().size(), 1);
 
         Assert.assertEquals(pll.collect(), Arrays.asList("foo", "bar", "baz"));
         // Iterate a second time
         Assert.assertEquals(pll.collect(), Arrays.asList("foo", "bar", "baz"));
+    }
+
+    @Test
+    public void testMorePartitions() throws IOException {
+        PLL<String> pll = new TextFilePLL(context, longerTextFile.getAbsolutePath());
+        Assert.assertEquals(pll.getPartitions().size(), context.getDefaultParallelism());
+
+        pll = new TextFilePLL(context, longerTextFile.getAbsolutePath());
+        int nbPartitions = pll.getPartitions().size();
+        Assert.assertTrue(nbPartitions > context.getDefaultParallelism());
     }
 
     @Test

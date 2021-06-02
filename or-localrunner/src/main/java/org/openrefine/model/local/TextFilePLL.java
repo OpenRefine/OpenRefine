@@ -9,6 +9,7 @@ import java.util.NoSuchElementException;
 import java.util.stream.Stream;
 
 import com.google.common.collect.Streams;
+import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.Text;
@@ -26,6 +27,15 @@ import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
 import org.apache.hadoop.mapreduce.lib.input.TextInputFormat;
 import org.apache.hadoop.mapreduce.task.TaskAttemptContextImpl;
 
+/**
+ * A PLL whose contents are read from a set of text files. The text files are partitioned using Hadoop, using new lines
+ * as boundaries.
+ * 
+ * This class aims at producing a certain number of partitions determined by the default parallelism of the PLL context.
+ * 
+ * @author Antonin Delpeuch
+ *
+ */
 public class TextFilePLL extends PLL<String> {
 
     private final List<HadoopPartition> partitions;
@@ -41,7 +51,8 @@ public class TextFilePLL extends PLL<String> {
         FileSystem fs = context.getFileSystem();
 
         // Setup the job to compute the splits
-        Job job = Job.getInstance(fs.getConf());
+        Configuration conf = new Configuration(fs.getConf());
+        Job job = Job.getInstance(conf);
         FileInputFormat.setInputPaths(job, path);
         JobID jobId = new JobID();
         JobContext jobContext = new JobContextImpl((JobConf) job.getConfiguration(), jobId);
@@ -49,7 +60,29 @@ public class TextFilePLL extends PLL<String> {
         List<InputSplit> splits;
         partitions = new ArrayList<>();
         try {
+            // First attempt to get splits using the default parameters
             splits = inputFormat.getSplits(jobContext);
+
+            // If there are too few splits compared to the default parallelism,
+            // and at least one split is large enough to be split again, then
+            // we split again with lower maximum split size.
+            if (splits.size() < context.getDefaultParallelism()) {
+                long maxSplitSize = 0;
+                for (InputSplit split : splits) {
+                    maxSplitSize = Math.max(split.getLength(), maxSplitSize);
+                }
+                if (maxSplitSize > context.getMinSplitSize() * context.getDefaultParallelism()) {
+                    // re-split with lower maximum split size
+                    long newMaxSplitSize = maxSplitSize / context.getDefaultParallelism();
+                    conf.set("mapreduce.input.fileinputformat.split.maxsize", Long.toString(newMaxSplitSize));
+                    job.close();
+                    job = Job.getInstance(conf);
+                    FileInputFormat.setInputPaths(job, path);
+                    jobContext = new JobContextImpl((JobConf) job.getConfiguration(), jobId);
+                    splits = inputFormat.getSplits(jobContext);
+                }
+            }
+
             for (int i = 0; i != splits.size(); i++) {
                 partitions.add(new HadoopPartition(i, splits.get(i)));
             }

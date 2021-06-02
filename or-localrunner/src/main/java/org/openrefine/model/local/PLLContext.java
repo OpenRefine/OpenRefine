@@ -17,10 +17,19 @@ public class PLLContext {
 
     private final ListeningExecutorService executorService;
     private final FileSystem fileSystem;
+    private final int defaultParallelism;
+    private final long minSplitSize;
+    private final long maxSplitSize;
 
-    public PLLContext(ListeningExecutorService executorService, FileSystem fileSystem) {
+    public PLLContext(
+            ListeningExecutorService executorService,
+            FileSystem fileSystem,
+            int defaultParallelism) {
         this.executorService = executorService;
         this.fileSystem = fileSystem;
+        this.defaultParallelism = defaultParallelism;
+        this.minSplitSize = fileSystem.getConf().getLong("mapreduce.input.fileinputformat.split.minsize", 1048576);
+        this.maxSplitSize = fileSystem.getConf().getLong("mapreduce.input.fileinputformat.split.maxsize", Long.MAX_VALUE);
     }
 
     /**
@@ -68,5 +77,28 @@ public class PLLContext {
      */
     public <T> PLL<T> parallelize(int numPartitions, List<T> rows) {
         return new InMemoryPLL<T>(this, rows, numPartitions);
+    }
+
+    /**
+     * Returns the default number of partitions that text files should be split into
+     */
+    protected int getDefaultParallelism() {
+        return defaultParallelism;
+    }
+
+    /**
+     * Returns the minimum size of a partition in bytes
+     */
+    protected long getMinSplitSize() {
+        return minSplitSize;
+    }
+
+    /**
+     * Returns the maximum size of a partition in bytes
+     * 
+     * @return
+     */
+    protected long getMaxSplitSize() {
+        return maxSplitSize;
     }
 }
