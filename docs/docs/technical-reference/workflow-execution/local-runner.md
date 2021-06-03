@@ -6,7 +6,7 @@ sidebar_label: Local runner
 
 ## Overview
 
-The local runner is the default one, as it is designed to be efficient in OpenRefine's intended usage conditions: running locally on the machine where the data cleaning is being done. Its designed is inspired by Spark. Spark itself could not be used in
+The local runner is the default one, as it is designed to be efficient in OpenRefine's intended usage conditions: running locally on the machine where the data cleaning is being done. Its design is inspired by Spark. Spark itself could not be used in
 place of this runner because its support for distributed computations and redundancy adds significant overheads which make the tool less responsive when run locally.
 
 ## Partitioned Lazy Lists
@@ -20,7 +20,7 @@ In contrast to RDDs, PLLs are:
 - not distributed: all of the data must be locally accessible, all the computations are happening in the same JVM
 - not resilient: there is no support for redundancy.
 
-The concurrency in PLLs is implemented with Java threads. When instantiated, the local runner starts a thread pool which is used on demand when computations are executed.
+The concurrency in PLLs is implemented with Java threads. When instantiated, the local runner starts a thread pool which is used on demand when [computations](runner-interface#main-operations) are executed.
 
 ## Runner architecture
 

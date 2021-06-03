@@ -19,8 +19,8 @@ lower-level layer, the runner, which deals with the logistics: how data is store
 
 The runner can be configured on the command-line with the `-r` option (`/r` on Windows), by providing the class name of the data model runner to use. In the `refine.ini` configuration file, the corresponding option is `refine.runnerClass`.
 The class names of the available runners are:
-* `org.openrefine.model.LocalDatamodelRunner` for the local runner (default)
-* `org.openrefine.model.SparkDatamodelRunner` for the Spark-based runner
+* `org.openrefine.model.LocalDatamodelRunner` for the [local runner](local-runner) (default)
+* `org.openrefine.model.SparkDatamodelRunner` for the [Spark-based runner](spark-runner)
 * `org.openrefine.model.TestingDatamodelRunner` for the testing runner
 
 ## Creating a new runner
