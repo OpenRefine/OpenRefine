@@ -16,6 +16,9 @@ import org.openrefine.overlay.OverlayModel;
  * Encapsulates the context required to implement,
  * read and execute operations on {@link GridState} objects.
  * 
+ * Implementations should have a constructor with a single parameter,
+ * a {@link RunnerConfiguration} object, which is used to initialize the datamodel runner.
+ * 
  * @author Antonin Delpeuch
  *
  */
@@ -75,5 +78,4 @@ public interface DatamodelRunner {
      * indexed data. The list is required to be sorted.
      */
     public <T extends Serializable> ChangeData<T> create(List<IndexedData<T>> changeData);
-
 }

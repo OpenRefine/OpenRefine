@@ -6,27 +6,29 @@ import java.util.concurrent.Executors;
 
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.LocalFileSystem;
+import org.testng.annotations.AfterClass;
 import org.testng.annotations.AfterTest;
+import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeTest;
 
 import com.google.common.util.concurrent.MoreExecutors;
 
 public class PLLTestsBase {
     
-    static PLLContext context = null;
+    PLLContext context = null;
     
-    @BeforeTest
+    @BeforeClass
     public void setUpPool() throws IOException {
         if (context == null) {
             Configuration conf = new Configuration();
             // these values are purposely very low for testing purposes,
             // so that we can check the partitioning strategy without using large files
             conf.setLong("mapreduce.input.fileinputformat.split.minsize", 128L);
-            conf.setLong("mapreduce.input.fileinputformat.split.minsize", 1024L);
+            conf.setLong("mapreduce.input.fileinputformat.split.maxsize", 1024L);
             context = new PLLContext(
                     MoreExecutors.listeningDecorator(
                     Executors.newCachedThreadPool()),
-                    LocalFileSystem.get(new Configuration()),
+                    LocalFileSystem.get(conf),
                     4);
         }
     }
@@ -35,7 +37,7 @@ public class PLLTestsBase {
         return new InMemoryPLL<T>(context, elements, numPartitions);
     }
     
-    @AfterTest
+    @AfterClass
     public void tearDownPool() throws IOException {
         if (context != null) {
             context.shutdown();

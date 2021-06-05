@@ -9,6 +9,17 @@ sidebar_label: Local runner
 The local runner is the default one, as it is designed to be efficient in OpenRefine's intended usage conditions: running locally on the machine where the data cleaning is being done. Its design is inspired by Spark. Spark itself could not be used in
 place of this runner because its support for distributed computations and redundancy adds significant overheads which make the tool less responsive when run locally.
 
+This runner can be selected by setting the `refine.runner.class` option to `org.openrefine.model.LocalDatamodelRunner`.
+
+## Options
+
+The following configuration parameters can be used with this runner:
+|Configuration key|Default value|Description|
+|---|---|---|
+| `refine.runner.defaultParallelism` | 4 | how many partitions datasets should generally be split, unless they are very small or very big |
+| `refine.runner.minSplitSize` | 4096 |  minimum size of a partition in bytes. Datasets which are smaller than this value will not be split at all. |
+| `refine.runner.maxSplitSize` | 16777216 | maximum size of a partition in bytes. Datasets which are larger than `defaultParallelism * maxSplitSize` will be split in more partitions than the default parallelism. |
+
 ## Partitioned Lazy Lists
 
 Partitioned Lazy Lists (PLL) are a lightweight version of Spark's [Resilient Distributed Datasets (RDD)](https://spark.apache.org/docs/latest/rdd-programming-guide.html). They are:
@@ -26,3 +37,5 @@ The concurrency in PLLs is implemented with Java threads. When instantiated, the
 
 With this runner, grids are represented by PLLs of rows, which can be grouped into records.
 Data transformantions are forwarded to the PLL API, which basically mirrors the GridState interface.
+
+

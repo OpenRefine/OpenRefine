@@ -8,6 +8,7 @@ import java.util.stream.Collectors;
 
 import org.openrefine.model.local.partitioning.LongRangePartitioner;
 import org.testng.Assert;
+import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
@@ -18,7 +19,7 @@ public class InMemoryPLLTests extends PLLTestsBase {
     InMemoryPLL<Integer> SUT;
     InMemoryPLL<Integer> emptySUT;
     
-    @BeforeTest
+    @BeforeClass
     public void setUpPLL() {
         SUT = new InMemoryPLL<Integer>(context, list, 4);
         emptySUT = new InMemoryPLL<Integer>(context, Collections.emptyList(), 4);

@@ -179,7 +179,7 @@ These JVM preferences are different options and have different syntax than the k
 *   -Drefine.host (127.0.0.1)
 *   -Drefine.port (3333)
 *   -Drefine.webapp (main/webapp)
-*   -Drefine.runnerClass (org.openrefine.model.LocalDatamodelRunner)
+*   -Drefine.runner.class (org.openrefine.model.LocalDatamodelRunner)
 
 The syntax within the `.ini` files is as follows:
 
