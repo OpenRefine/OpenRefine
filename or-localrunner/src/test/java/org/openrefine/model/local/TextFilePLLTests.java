@@ -37,7 +37,7 @@ public class TextFilePLLTests extends PLLTestsBase {
         createTestTextFile(longerTextFile, String.join("\n", Collections.nCopies(64, "aaaaaaaa")));
 
         // this file will have 9 * 2048 - 1 = 18431 characters, which is too much to be split in 4 partitions only
-        veryLongTextFile = new File(tempDir, "longertextfile.txt");
+        veryLongTextFile = new File(tempDir, "verylongtextfile.txt");
         createTestTextFile(veryLongTextFile, String.join("\n", Collections.nCopies(2048, "aaaaaaaa")));
     }
 
@@ -63,7 +63,7 @@ public class TextFilePLLTests extends PLLTestsBase {
         PLL<String> pll = new TextFilePLL(context, longerTextFile.getAbsolutePath());
         Assert.assertEquals(pll.getPartitions().size(), context.getDefaultParallelism());
 
-        pll = new TextFilePLL(context, longerTextFile.getAbsolutePath());
+        pll = new TextFilePLL(context, veryLongTextFile.getAbsolutePath());
         int nbPartitions = pll.getPartitions().size();
         Assert.assertTrue(nbPartitions > context.getDefaultParallelism());
     }

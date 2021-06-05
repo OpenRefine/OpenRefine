@@ -48,8 +48,8 @@ public class SparkDatamodelRunner implements DatamodelRunner {
     private JavaSparkContext context;
     private int defaultParallelism;
 
-    public SparkDatamodelRunner(Integer defaultParallelism) {
-        this.defaultParallelism = defaultParallelism;
+    public SparkDatamodelRunner(RunnerConfiguration configuration) {
+        this.defaultParallelism = configuration.getIntParameter("defaultParallelism", 4);
 
         Thread.currentThread().setContextClassLoader(JavaSparkContext.class.getClassLoader());
 

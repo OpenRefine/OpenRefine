@@ -48,10 +48,8 @@ public class TestingDatamodelRunner implements DatamodelRunner {
 
     /**
      * Constructor provided to match the expected signature of datamodel runners.
-     * 
-     * @param defaultParallelism
      */
-    public TestingDatamodelRunner(Integer defaultParallelism) {
+    public TestingDatamodelRunner(RunnerConfiguration configuration) {
 
     }
 

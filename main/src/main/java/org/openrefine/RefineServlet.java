@@ -59,6 +59,7 @@ import org.openrefine.commands.Command;
 import org.openrefine.importing.ImportingManager;
 import org.openrefine.io.FileProjectManager;
 import org.openrefine.model.DatamodelRunner;
+import org.openrefine.model.RunnerConfiguration;
 
 public class RefineServlet extends Butterfly {
 
@@ -103,22 +104,15 @@ public class RefineServlet extends Butterfly {
     public void init() throws ServletException {
         super.init();
 
-        int defaultParallelism = 4;
-        try {
-            String parallelism = getInitParameter("refine.defaultParallelism");
-            defaultParallelism = Integer.parseInt(parallelism == null ? "" : parallelism);
-        } catch (NumberFormatException e) {
-            ;
-        }
-
-        String runnerClassName = getInitParameter("refine.runnerClass");
+        String runnerClassName = getInitParameter("refine.runner.class");
         if (runnerClassName == null || runnerClassName.isEmpty()) {
             runnerClassName = DEFAULT_DATAMODEL_RUNNER_CLASS_NAME;
         }
         try {
             logger.info(String.format("Starting datamodel runner '%s'", runnerClassName));
             Class<?> runnerClass = this.getClass().getClassLoader().loadClass(runnerClassName);
-            s_runner = (DatamodelRunner) runnerClass.getConstructor(Integer.class).newInstance(Integer.valueOf(defaultParallelism));
+            RunnerConfiguration runnerConfiguration = new ServletRunnerConfiguration();
+            s_runner = (DatamodelRunner) runnerClass.getConstructor(RunnerConfiguration.class).newInstance(runnerConfiguration);
         } catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException
                 | NoSuchMethodException | SecurityException | ClassNotFoundException e1) {
             e1.printStackTrace();
@@ -358,6 +352,16 @@ public class RefineServlet extends Butterfly {
 
     static public DatamodelRunner getDatamodelRunner() {
         return s_runner;
+    }
+
+    private class ServletRunnerConfiguration extends RunnerConfiguration {
+
+        @Override
+        public String getParameter(String key, String defaultValue) {
+            String value = getInitParameter("refine.runner." + key);
+            return value == null ? defaultValue : value;
+        }
+
     }
 
 }

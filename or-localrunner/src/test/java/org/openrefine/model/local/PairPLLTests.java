@@ -9,7 +9,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.testng.Assert;
-import org.testng.annotations.BeforeTest;
+import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import org.openrefine.model.local.partitioning.Partitioner;
@@ -20,7 +20,7 @@ public class PairPLLTests extends PLLTestsBase {
     PairPLL<Integer, String> SUT;
     PairPLL<Integer, String> noPartitionerSUT;
 
-    @BeforeTest
+    @BeforeClass
     public void setUpPLL() {
         List<Tuple2<Integer, String>> list = Arrays.asList(
                 Tuple2.of(1, "foo"),

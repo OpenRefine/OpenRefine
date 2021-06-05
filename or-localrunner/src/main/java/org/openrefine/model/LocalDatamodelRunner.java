@@ -43,7 +43,10 @@ public class LocalDatamodelRunner implements DatamodelRunner {
     protected long minSplitSize;
     protected long maxSplitSize;
 
-    public LocalDatamodelRunner(Integer defaultParallelism, long minSplitSize, long maxSplitSize) {
+    public LocalDatamodelRunner(RunnerConfiguration configuration) {
+        defaultParallelism = configuration.getIntParameter("defaultParallelism", 4);
+        minSplitSize = configuration.getLongParameter("minSplitSize", 4096L);
+        maxSplitSize = configuration.getLongParameter("maxSplitSize", 16777216L);
         Configuration fsConf = new Configuration();
         fsConf.set("fs.file.impl", OrderedLocalFileSystem.class.getName());
         fsConf.set("mapreduce.input.fileinputformat.split.minsize", Long.toString(minSplitSize));
@@ -56,15 +59,10 @@ public class LocalDatamodelRunner implements DatamodelRunner {
         } catch (IOException e) {
             throw new UncheckedIOException(e);
         }
-        this.defaultParallelism = defaultParallelism;
-    }
-
-    public LocalDatamodelRunner(Integer defaultParallelism) {
-        this(defaultParallelism, 4096, 16777216 /* 16 MB */);
     }
 
     public LocalDatamodelRunner() {
-        this(4);
+        this(RunnerConfiguration.empty);
     }
 
     public PLLContext getPLLContext() {
