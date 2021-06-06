@@ -397,5 +397,17 @@
     "core-about/thanks": "Speciální díky",
     "core-about/history": "OpenRefine vytvořil na počátku <a href='$1'> $ 2 </a> pod názvem „Freebase Gridworks“. V červenci 2010 přešel Metaweb pod firmu <a href='$3'> $ 4 </a>, která přejmenovala aplikaci na „Google Refine“. V prosinci 2012 se název produktu změnil na OpenRefine, neboť se z něj stal projekt podporovaný komunitou.",
     "core-about/contributors": "Přispěvatelé (v chronologickém pořadí)",
-    "core-about/definition": "OpenRefine je zdatný pomocník pro práci s neuspořádanými daty. Můžete ho využít pro opravu spojitosti dat, k jejich propojení s registry, jakými jsou např. Wikidata, k doplnění dat z jiných zdrojů, k transformaci do jiných formátů, vyžadovaných jinými nástroji a nakonec je vrátit do původních zdrojů. OpenRefine není webová služba, ale webová aplikace, která běží lokálně na vašem počítači, takže můžete pracovat i s citlivými daty."
+    "core-about/definition": "OpenRefine je zdatný pomocník pro práci s neuspořádanými daty. Můžete ho využít pro opravu spojitosti dat, k jejich propojení s registry, jakými jsou např. Wikidata, k doplnění dat z jiných zdrojů, k transformaci do jiných formátů, vyžadovaných jinými nástroji a nakonec je vrátit do původních zdrojů. OpenRefine není webová služba, ale webová aplikace, která běží lokálně na vašem počítači, takže můžete pracovat i s citlivými daty.",
+    "core-facets/no-rotation": "Bez rotace",
+    "core-facets/logar-plot-abbr": "log",
+    "core-facets/logar-plot": "Logaritmický graf",
+    "core-facets/linear-plot-abbr": "lin.",
+    "core-facets/linear-plot": "Lineární graf",
+    "core-facets/blank": "Prázdné",
+    "core-facets/non-time": "Bez-čas",
+    "core-facets/time": "Čas",
+    "core-facets/case-sensitive": "rozlišovat velikost písmen",
+    "core-facets/set-max-choices": "Určit maximální počet voleb viditelný pro každou textovou fasetu (velký počet aplikaci zpomalí)",
+    "core-facets/edit-facet-exp": "Upravit výraz pro fasetu",
+    "core-facets/edit-based-col": "Upravit pro fasetu výraz vázaný na sloupec"
 }
