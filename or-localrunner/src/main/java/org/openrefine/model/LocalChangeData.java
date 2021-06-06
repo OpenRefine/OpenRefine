@@ -81,7 +81,7 @@ public class LocalChangeData<T extends Serializable> implements ChangeData<T> {
         return runner;
     }
 
-    protected void saveToFile(File file, ChangeDataSerializer<T> serializer, Optional<ProgressReporter> progressReporter) throws IOException {
+    protected void saveToFile(File file, ChangeDataSerializer<T> serializer, Optional<ProgressReporter> progressReporter) throws IOException, InterruptedException {
         
         PLL<Tuple2<Long, T>> gridWithReporting;
         boolean useNativeProgressReporting = progressReporter.isEmpty() || grid.hasCachedPartitionSizes() || parentPartitionFirstIndices == null;
@@ -113,11 +113,11 @@ public class LocalChangeData<T extends Serializable> implements ChangeData<T> {
         }
     }
     
-    public void saveToFile(File file, ChangeDataSerializer<T> serializer) throws IOException {
+    public void saveToFile(File file, ChangeDataSerializer<T> serializer) throws IOException, InterruptedException {
         saveToFile(file, serializer, Optional.empty());
     }
     
-    public void saveToFile(File file, ChangeDataSerializer<T> serializer, ProgressReporter progressReporter) throws IOException {
+    public void saveToFile(File file, ChangeDataSerializer<T> serializer, ProgressReporter progressReporter) throws IOException, InterruptedException {
         saveToFile(file, serializer, Optional.ofNullable(progressReporter));
     }
     

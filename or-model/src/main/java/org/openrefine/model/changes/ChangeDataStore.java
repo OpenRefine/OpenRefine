@@ -54,5 +54,13 @@ public interface ChangeDataStore {
             String dataId,
             ChangeDataSerializer<T> serializer)
                     throws IOException;
+    
+    /**
+     * Discards all change data objects which belong to a given history entry id.
+     * 
+     * @param historyEntryId
+     * @throws IOException 
+     */
+    public void discardAll(long historyEntryId);
 
 }

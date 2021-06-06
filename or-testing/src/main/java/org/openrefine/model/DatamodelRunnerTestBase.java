@@ -449,7 +449,7 @@ public abstract class DatamodelRunnerTestBase {
     }
     
     @Test
-    public void testRoundTripSerializationNoProgress() throws IOException {
+    public void testRoundTripSerializationNoProgress() throws IOException, InterruptedException {
         File tempFile = new File(tempDir, "testgrid_no_progress");
         
         simpleGrid.saveToFile(tempFile);
@@ -464,7 +464,7 @@ public abstract class DatamodelRunnerTestBase {
     }
     
     @Test
-    public void testRoundTripSerializationWithProgress() throws IOException {
+    public void testRoundTripSerializationWithProgress() throws IOException, InterruptedException {
         File tempFile = new File(tempDir, "testgrid_progress");
         ProgressReporterStub reporter = new ProgressReporterStub();
         
@@ -803,7 +803,7 @@ public abstract class DatamodelRunnerTestBase {
     };
     
     @Test
-    public void testSerializeChangeDataNoProgress() throws IOException {
+    public void testSerializeChangeDataNoProgress() throws IOException, InterruptedException {
         File tempFile = new File(tempDir, "test_change_data");
         
         simpleChangeData.saveToFile(new File(tempFile, "data"), stringSerializer);
@@ -818,7 +818,7 @@ public abstract class DatamodelRunnerTestBase {
     }
     
     @Test
-    public void testSerializeChangeDataWithProgress() throws IOException {
+    public void testSerializeChangeDataWithProgress() throws IOException, InterruptedException {
         File tempFile = new File(tempDir, "test_change_data_with_progress");
         ProgressReporterStub progress = new ProgressReporterStub();
         
@@ -835,7 +835,7 @@ public abstract class DatamodelRunnerTestBase {
     }
     
     @Test
-    public void testSerializeChangeDataDirAlreadyExists() throws IOException {
+    public void testSerializeChangeDataDirAlreadyExists() throws IOException, InterruptedException {
         File tempFile = TestUtils.createTempDirectory("test_change_data_already_exists");
         
         simpleChangeData.saveToFile(tempFile, stringSerializer);
