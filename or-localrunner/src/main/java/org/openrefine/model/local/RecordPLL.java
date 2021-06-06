@@ -53,8 +53,8 @@ public class RecordPLL extends PLL<Tuple2<Long, Record>> {
         this.keyColumnIndex = keyColumnIndex;
         List<? extends Partition> parentPartitions = grid.getPartitions();
         Stream<? extends Partition> lastPartitions = parentPartitions.stream().skip(1L);
-        List<RecordEnd> recordEnds = grid.runOnPartitions(partition -> extractRecordEnd(grid.iterate(partition), keyColumnIndex),
-                lastPartitions);
+        List<RecordEnd> recordEnds = grid
+                .runOnPartitionsWithoutInterruption(partition -> extractRecordEnd(grid.iterate(partition), keyColumnIndex), lastPartitions);
         parent = grid;
         partitions = new ArrayList<>(parentPartitions.size());
         for (int i = 0; i != parentPartitions.size(); i++) {

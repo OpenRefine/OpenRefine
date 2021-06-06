@@ -43,8 +43,9 @@ public interface ChangeData<T extends Serializable> extends Iterable<IndexedData
      * @param serializer
      *            the serializer used to convert the items to strings
      * @throws IOException
+     * @throws InterruptedException
      */
-    public void saveToFile(File file, ChangeDataSerializer<T> serializer) throws IOException;
+    public void saveToFile(File file, ChangeDataSerializer<T> serializer) throws IOException, InterruptedException;
 
     /**
      * Saves the change data to a specified directory, following OpenRefine's format for change data.
@@ -56,7 +57,9 @@ public interface ChangeData<T extends Serializable> extends Iterable<IndexedData
      * @param progressReporter
      *            callback to report the progress of the writing process
      * @throws IOException
+     * @throws InterruptedException
      */
-    public void saveToFile(File file, ChangeDataSerializer<T> serializer, ProgressReporter progressReporter) throws IOException;
+    public void saveToFile(File file, ChangeDataSerializer<T> serializer, ProgressReporter progressReporter)
+            throws IOException, InterruptedException;
 
 }

@@ -25,6 +25,7 @@ import com.google.common.collect.Iterators;
 import com.google.common.collect.Streams;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.Validate;
 
 import org.openrefine.process.ProgressReporter;
@@ -113,7 +114,7 @@ public abstract class PLL<T> {
      */
     public List<Long> getPartitionSizes() {
         if (cachedPartitionSizes == null) {
-            cachedPartitionSizes = runOnPartitions(p -> iterate(p).count());
+            cachedPartitionSizes = runOnPartitionsWithoutInterruption(p -> iterate(p).count());
         }
         return cachedPartitionSizes;
     }
@@ -156,14 +157,14 @@ public abstract class PLL<T> {
         } else {
             if (progressReporter.isPresent() && cachedPartitionSizes != null) {
                 ConcurrentProgressReporter concurrentReporter = new ConcurrentProgressReporter(progressReporter.get(), count());
-                results = runOnPartitions(p -> concurrentReporter.wrapStream(
+                results = runOnPartitionsWithoutInterruption(p -> concurrentReporter.wrapStream(
                         iterate(p),
                         100, // number of elements each thread reads before updating progress
                         p.getIndex() * 5) // offset which depends on the partition index so that not all threads report
                                           // progress at the same time
                         .collect(Collectors.toList()));
             } else {
-                results = runOnPartitions(p -> iterate(p).collect(Collectors.toList()));
+                results = runOnPartitionsWithoutInterruption(p -> iterate(p).collect(Collectors.toList()));
             }
         }
 
@@ -240,7 +241,7 @@ public abstract class PLL<T> {
      * @return the aggregated value over the entire list
      */
     public <U> U aggregate(U initialValue, BiFunction<U, T, U> map, BiFunction<U, U, U> combine) {
-        List<U> states = runOnPartitions(partition -> aggregateStream(initialValue, map, combine, iterate(partition)));
+        List<U> states = runOnPartitionsWithoutInterruption(partition -> aggregateStream(initialValue, map, combine, iterate(partition)));
         return aggregateStream(initialValue, combine, combine, states.stream());
     }
 
@@ -334,7 +335,7 @@ public abstract class PLL<T> {
     public <S, U> PLL<U> scanMap(S initialState, Function<T, S> feed, BiFunction<S, S, S> combine, BiFunction<S, T, U> map) {
         // Compute the initial states at the beginning of each partition
         List<? extends Partition> partitions = getPartitions();
-        List<S> partitionStates = runOnPartitions(partition -> aggregateStream(
+        List<S> partitionStates = runOnPartitionsWithoutInterruption(partition -> aggregateStream(
                 initialState,
                 (s, t) -> combine.apply(s, feed.apply(t)), combine, iterate(partition)),
                 partitions.stream().limit(partitions.size() - 1));
@@ -494,8 +495,9 @@ public abstract class PLL<T> {
      * @param progressReporter
      *            optionally reports progress of the write operation
      * @throws IOException
+     * @throws InterruptedException
      */
-    public void saveAsTextFile(String path, Optional<ProgressReporter> progressReporter) throws IOException {
+    public void saveAsTextFile(String path, Optional<ProgressReporter> progressReporter) throws IOException, InterruptedException {
         // Using the Hadoop API:
         /*
          * OutputFormat<NullWritable, Text> outputFormat = new TextOutputFormat<NullWritable, Text>();
@@ -510,14 +512,20 @@ public abstract class PLL<T> {
                 ? Optional.of(new ConcurrentProgressReporter(progressReporter.get(), count()))
                 : Optional.empty());
 
-        runOnPartitions(p -> {
-            try {
-                writePartition(p, gridPath, concurrentProgressReporter);
-            } catch (IOException e) {
-                throw new UncheckedIOException(e);
-            }
-            return false;
-        });
+        try {
+            runOnPartitions(p -> {
+                try {
+                    writePartition(p, gridPath, concurrentProgressReporter);
+                } catch (IOException e) {
+                    throw new UncheckedIOException(e);
+                }
+                return false;
+            });
+        } catch (InterruptedException e) {
+            // if the operation was interrupted, we remove all the files we were writing
+            FileUtils.deleteDirectory(gridPath);
+            throw e;
+        }
 
         if (progressReporter.isPresent()) {
             // to make sure we reach the end even if the partition sizes have not been computed yet
@@ -569,9 +577,26 @@ public abstract class PLL<T> {
      * @param partitionFunction
      *            the function to be applied to all partitions
      * @return
+     * @throws InterruptedException
      */
-    public <U> List<U> runOnPartitions(Function<Partition, U> partitionFunction) {
+    public <U> List<U> runOnPartitions(Function<Partition, U> partitionFunction) throws InterruptedException {
         return runOnPartitions(partitionFunction, getPartitions().stream());
+    }
+
+    /**
+     * Same as {@link #runOnPartitions(Function)} but wrapping any {@link InterruptedException} in an unchecked
+     * {@link PLLExecutionError}.
+     * 
+     * @param <U>
+     * @param partitionFunction
+     * @return
+     */
+    public <U> List<U> runOnPartitionsWithoutInterruption(Function<Partition, U> partitionFunction) {
+        try {
+            return runOnPartitions(partitionFunction);
+        } catch (InterruptedException e) {
+            throw new PLLExecutionError(e);
+        }
     }
 
     /**
@@ -584,14 +609,39 @@ public abstract class PLL<T> {
      * @param partitions
      *            the partitions to apply the function on
      * @return
+     * @throws InterruptedException
      */
-    protected <U> List<U> runOnPartitions(Function<Partition, U> partitionFunction, Stream<? extends Partition> partitions) {
+    protected <U> List<U> runOnPartitions(Function<Partition, U> partitionFunction, Stream<? extends Partition> partitions)
+            throws InterruptedException {
         List<ListenableFuture<U>> tasks = partitions
                 .map(partition -> context.getExecutorService().submit(() -> partitionFunction.apply(partition)))
                 .collect(Collectors.toList());
+        ListenableFuture<List<U>> listFuture = Futures.allAsList(tasks);
         try {
-            return Futures.allAsList(tasks).get();
-        } catch (InterruptedException | ExecutionException e) {
+            return listFuture.get();
+        } catch (InterruptedException e) {
+            listFuture.cancel(true);
+            throw e;
+        } catch (ExecutionException e) {
+            listFuture.cancel(true);
+            throw new PLLExecutionError(e);
+        }
+    }
+
+    /**
+     * Same as {@link #runOnPartitions(Function, Stream)} but wrapping any {@link InterruptedException} as an unchecked
+     * {@link PLLExecutionError}.
+     * 
+     * @param <U>
+     * @param partitionFunction
+     * @param partitions
+     * @return
+     */
+    protected <U> List<U> runOnPartitionsWithoutInterruption(Function<Partition, U> partitionFunction,
+            Stream<? extends Partition> partitions) {
+        try {
+            return runOnPartitions(partitionFunction, partitions);
+        } catch (InterruptedException e) {
             throw new PLLExecutionError(e);
         }
     }

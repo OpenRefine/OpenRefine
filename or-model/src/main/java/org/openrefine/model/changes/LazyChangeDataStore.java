@@ -4,6 +4,7 @@ package org.openrefine.model.changes;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Optional;
 
@@ -47,6 +48,17 @@ public class LazyChangeDataStore implements ChangeDataStore {
             throw new IllegalArgumentException(String.format("Change data with id %s does not exist", key));
         }
         return (ChangeData<T>) _changeData.get(key);
+    }
+
+    @Override
+    public void discardAll(long historyEntryId) {
+        Iterator<String> keySet = _changeData.keySet().iterator();
+        while (keySet.hasNext()) {
+            String key = keySet.next();
+            if (key.startsWith(Long.toString(historyEntryId) + "/")) {
+                keySet.remove();
+            }
+        }
     }
 
 }

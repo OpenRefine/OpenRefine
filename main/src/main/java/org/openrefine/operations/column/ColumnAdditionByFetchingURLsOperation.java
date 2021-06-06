@@ -454,7 +454,11 @@ public class ColumnAdditionByFetchingURLsOperation extends EngineDependentOperat
                     _processManager.onDoneProcess(this);
                 }
             } catch (Exception e) {
-                _processManager.onFailedProcess(this, e);
+                if (_canceled) {
+                    _history.getChangeDataStore().discardAll(_historyEntryID);
+                } else {
+                    _processManager.onFailedProcess(this, e);
+                }
             }
         }
     }

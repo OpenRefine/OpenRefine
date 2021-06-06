@@ -285,16 +285,16 @@ public class LocalGridState implements GridState {
     }
 
     @Override
-    public void saveToFile(File file, ProgressReporter progressReporter) throws IOException {
+    public void saveToFile(File file, ProgressReporter progressReporter) throws IOException, InterruptedException {
         saveToFile(file, Optional.ofNullable(progressReporter));
     }
 
     @Override
-    public void saveToFile(File file) throws IOException {
+    public void saveToFile(File file) throws IOException, InterruptedException {
         saveToFile(file, Optional.empty());
     }
 
-    protected void saveToFile(File file, Optional<ProgressReporter> progressReporter) throws IOException {
+    protected void saveToFile(File file, Optional<ProgressReporter> progressReporter) throws IOException, InterruptedException {
         File metadataFile = new File(file, METADATA_PATH);
         File gridFile = new File(file, GRID_PATH);
 

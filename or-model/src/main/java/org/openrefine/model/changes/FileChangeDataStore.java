@@ -6,6 +6,8 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.util.Optional;
 
+import org.apache.commons.io.FileUtils;
+
 import org.openrefine.model.DatamodelRunner;
 import org.openrefine.process.ProgressReporter;
 
@@ -27,7 +29,14 @@ public class FileChangeDataStore implements ChangeDataStore {
      * @return
      */
     private File idsToFile(long historyEntryId, String dataId) {
-        return new File(new File(_baseDirectory, Long.toString(historyEntryId)), dataId);
+        return new File(historyEntryIdToFile(historyEntryId), dataId);
+    }
+
+    /**
+     * Directory where all change data belonging to a given history entry id should be stored.
+     */
+    private File historyEntryIdToFile(long historyEntryId) {
+        return new File(_baseDirectory, Long.toString(historyEntryId));
     }
 
     @Override
@@ -35,10 +44,15 @@ public class FileChangeDataStore implements ChangeDataStore {
             ChangeDataSerializer<T> serializer, Optional<ProgressReporter> progressReporter) throws IOException {
         File file = idsToFile(historyEntryId, dataId);
         file.mkdirs();
-        if (progressReporter.isPresent()) {
-            data.saveToFile(file, serializer, progressReporter.get());
-        } else {
-            data.saveToFile(file, serializer);
+        try {
+            if (progressReporter.isPresent()) {
+                data.saveToFile(file, serializer, progressReporter.get());
+            } else {
+                data.saveToFile(file, serializer);
+            }
+        } catch (InterruptedException e) {
+            FileUtils.deleteDirectory(file);
+            throw new IOException(e);
         }
     }
 
@@ -47,6 +61,18 @@ public class FileChangeDataStore implements ChangeDataStore {
             ChangeDataSerializer<T> serializer) throws IOException {
         File file = idsToFile(historyEntryId, dataId);
         return _runner.loadChangeData(file, serializer);
+    }
+
+    @Override
+    public void discardAll(long historyEntryId) {
+        File file = historyEntryIdToFile(historyEntryId);
+        if (file.exists()) {
+            try {
+                FileUtils.deleteDirectory(file);
+            } catch (IOException e) {
+                ;
+            }
+        }
     }
 
 }

@@ -216,8 +216,11 @@ public class ExtendDataOperation extends EngineDependentOperation {
                     _processManager.onDoneProcess(this);
                 }
             } catch (Exception e) {
-                e.printStackTrace();
-                _processManager.onFailedProcess(this, e);
+                if (_canceled) {
+                    _history.getChangeDataStore().discardAll(_historyEntryID);
+                } else {
+                    _processManager.onFailedProcess(this, e);
+                }
             }
         }
     }

@@ -68,7 +68,7 @@ public class OrderedJoinPLL<K, V, W> extends PLL<Tuple2<K, Tuple2<V, W>>> {
             RangePartitioner<K> partitioner = (RangePartitioner<K>) getPartitioner().get();
             firstKeys = (List<Optional<K>>) partitioner.getFirstKeys();
         } else {
-            firstKeys = first.runOnPartitions(partition -> first.iterate(partition)
+            firstKeys = first.runOnPartitionsWithoutInterruption(partition -> first.iterate(partition)
                     .map(tuple -> tuple.getKey())
                     .findFirst())
                     .stream()

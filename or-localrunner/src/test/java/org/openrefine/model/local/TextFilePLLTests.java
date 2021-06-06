@@ -69,7 +69,7 @@ public class TextFilePLLTests extends PLLTestsBase {
     }
 
     @Test
-    public void testRoundTripSerialization() throws IOException {
+    public void testRoundTripSerialization() throws IOException, InterruptedException {
         PLL<String> pll = parallelize(2, Arrays.asList("foo", "bar", "baz"));
         File tempFile = new File(tempDir, "roundtrip.txt");
         pll.saveAsTextFile(tempFile.getAbsolutePath(), Optional.empty());
@@ -80,7 +80,7 @@ public class TextFilePLLTests extends PLLTestsBase {
     }
 
     @Test
-    public void testSaveWithoutCachedPartitionSizes() throws IOException {
+    public void testSaveWithoutCachedPartitionSizes() throws IOException, InterruptedException {
         PLL<String> pll = parallelize(2, Arrays.asList("foo", "bar", "baz"));
         // artificially discard partition sizes
         pll.cachedPartitionSizes = null;
@@ -94,7 +94,7 @@ public class TextFilePLLTests extends PLLTestsBase {
     }
 
     @Test
-    public void testSaveWithCachedPartitionSizes() throws IOException {
+    public void testSaveWithCachedPartitionSizes() throws IOException, InterruptedException {
         PLL<String> pll = parallelize(2, Arrays.asList("foo", "bar", "baz"));
         // the sizes of the partitions are known
         Assert.assertNotNull(pll.cachedPartitionSizes);

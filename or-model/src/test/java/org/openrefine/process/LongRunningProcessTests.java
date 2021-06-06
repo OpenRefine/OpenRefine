@@ -29,7 +29,6 @@ package org.openrefine.process;
 
 import org.testng.annotations.Test;
 
-import org.openrefine.process.LongRunningProcess;
 import org.openrefine.util.ParsingUtilities;
 import org.openrefine.util.TestUtils;
 

@@ -74,7 +74,11 @@ public class HistoryEntryManager {
         File metadataFile = new File(dir, METADATA_FILENAME);
         // Save the initial grid if does not exist yet (it is immutable)
         if (!gridFile.exists()) {
-            history.getInitialGridState().saveToFile(gridFile);
+            try {
+                history.getInitialGridState().saveToFile(gridFile);
+            } catch (InterruptedException e) {
+                throw new IOException(e);
+            }
         }
         Metadata metadata = new Metadata();
         metadata.entries = history.getEntries();

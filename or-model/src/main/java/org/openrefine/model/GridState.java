@@ -246,8 +246,9 @@ public interface GridState {
      * @param file
      *            the directory where to save the grid state
      * @throws IOException
+     * @throws InterruptedException
      */
-    public void saveToFile(File file) throws IOException;
+    public void saveToFile(File file) throws IOException, InterruptedException;
 
     /**
      * Saves the grid state to a specified directory, following OpenRefine's format for grid storage.
@@ -257,8 +258,9 @@ public interface GridState {
      * @param progressReporter
      *            reports the progress of the writing process
      * @throws IOException
+     * @throws InterruptedException
      */
-    public void saveToFile(File file, ProgressReporter progressReporter) throws IOException;
+    public void saveToFile(File file, ProgressReporter progressReporter) throws IOException, InterruptedException;
 
     // Aggregations
 
