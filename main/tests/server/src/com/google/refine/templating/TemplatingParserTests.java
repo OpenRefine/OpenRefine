@@ -26,16 +26,18 @@ public class TemplatingParserTests extends RefineTest {
     }
 
     @Test
-    public void testInvalidSyntax(){
+    public void testInvalidTemplate(){
         String tests[] = {
-            "    {\n      \"U{RN\" : {{json{ize(cells[\"URN\"].value)}},\\n      \"LA (name)\" : {{jsonize(cells[\"LA (name)\"].value)}}\n}",
+            "    {\n      \"URN\" : {{jsonize(cells[\"URN\"].value)}},\\n      \"LA (name)\" : {{json{ize(cells[\"LA (name)\"].value)}}\n}",
             "    {\n      {\"URN\" : {{jsonize(cells[\"URN\"].value)}},\\n      \"LA (name)\" : {{jsonize(cells[\"LA (name)\"].value)}}\n}",
             "    {\n      \"URN\"} : {{jsonize(cells[\"URN\"].value)}},\\n      \"LA (name)\" : {{jsonize(cells[\"LA (name)\"].value)}}\n}",
             "    {\n      \"URN\" : {{jsonize(cells[\"URN\"].value)}},\\n      \"LA (name)\" : {{{jsonize(cells[\"LA (name)\"].value)}}\n}",
             "    {\n      \"URN\" : {{jsonize(cells[\"URN\"].value)}error},\\n      \"LA (name)\" : {{jsonize(cells[\"LA (name)\"].value)}}\n}",
             "    {\n      \"URN\" : {{json}ize(cells[\"URN\"].value)}}    \n}",
             "    {\n      \"URN\" : {{{jsonize(cells[\"URN\"].value)}}    \n}",
-            "{\"URN\" : {{jsoni{ze(cells[\"URN\"].value)}}}"
+            "{\"URN\" : {{jsoni{ze(cells[\"URN\"].value)}}}",
+            "{error\"URN\" : {{jsoni{ze(cells[\"URN\"].value)}}}",
+            "{\"URN\" error : {{jsoni{ze(cells[\"URN\"].value)}}}"
         };
         for (String test : tests) {
             try{
@@ -49,9 +51,12 @@ public class TemplatingParserTests extends RefineTest {
     }
 
     @Test
-    public void testCorrectFunctions(){
+    public void testValidTemplate(){
         String tests[] = {
-            "    {\n      \"URN\" : {{jsonize(cells[\"URN\"].value)}}    \n}"
+            "    {\n      \"URN\" : {{jsonize(cells[\"URN\"].value)}}    \n}",
+            " \n   {\n      \"URN\" : {{jsonize(cells[\"URN\"].value)}}    \n}",
+            ",   {\"URN\" : {{jsonize(cells[\"URN\"].value)}}}",
+            ", \n  {\"URN\" : {{jsonize(cells[\"URN\"].value)}}}"
         };
         for (String test : tests) {
             try{

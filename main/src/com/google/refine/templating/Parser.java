@@ -92,7 +92,8 @@ public class Parser {
                     String expression = s.substring(current + 2, closeBrace);
 
                     if (current > start) {
-                    	if (!s.substring(start, current).matches("\\s*,?\\s*\\\"*[a-zA-Z0-9() ]*\\\"\\s*:\\s*")) {
+                    	// Regex to match invalid keys of the template exporter 
+                    	if (!s.substring(start, current).matches("^\\s*,?\\s*\".*\"\\s*:\\s*$")) {
                     		throw new ParsingException("Missing or bad template");
                     	}
                         fragments.add(new StaticFragment(s.substring(start, current)));
