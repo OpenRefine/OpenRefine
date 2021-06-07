@@ -23,11 +23,13 @@ The following configuration parameters can be used with this runner:
 ## Partitioned Lazy Lists
 
 Partitioned Lazy Lists (PLL) are a lightweight version of Spark's [Resilient Distributed Datasets (RDD)](https://spark.apache.org/docs/latest/rdd-programming-guide.html). They are:
+
 - lists, because they represent ordered collections of objects
 - lazy, because by default they do not store their contents as explicit objects in memory. Instead, the elements are computed on-demand, when they are accessed.
 - partitioned, because they divide their contents into contiguous groups of elements called partitions. Each partition can be enumerated from independently, making it possible to run processes in parallel on different parts of the list.
 
 In contrast to RDDs, PLLs are:
+
 - not distributed: all of the data must be locally accessible, all the computations are happening in the same JVM
 - not resilient: there is no support for redundancy.
 
@@ -36,6 +38,4 @@ The concurrency in PLLs is implemented with Java threads. When instantiated, the
 ## Runner architecture
 
 With this runner, grids are represented by PLLs of rows, which can be grouped into records.
-Data transformantions are forwarded to the PLL API, which basically mirrors the GridState interface.
-
-
+Data transformations are forwarded to the PLL API, which basically mirrors the GridState interface.
