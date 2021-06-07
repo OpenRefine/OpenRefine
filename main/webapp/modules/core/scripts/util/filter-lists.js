@@ -23,7 +23,7 @@
                 var listElement = $(this);
                 
                 /* FILTER: select a tag and filter */
-                listElement.bind("filter", function( e, tagToShow ){
+                listElement.on("filter", function( e, tagToShow ){
                         if(settings.useTags){
                                 $(settings.tagSelector).removeClass(settings.selectedTagClass);
                                 $(settings.tagSelector + '[href="' + tagToShow + '"]').addClass(settings.selectedTagClass);
@@ -32,23 +32,27 @@
                 });
         
                 /* FILTERPORTFOLIO: pass in a class to show, all others will be hidden */
-                listElement.bind("filterMyList", function( e, classToShow ){
+                listElement.on("filterMyList", function( e, classToShow ){
                         if(classToShow === settings.allTag){
+                                $(this).trigger("unshow");
                                 $(this).trigger("show");
                         }else{
+
+                               // $(this).trigger("unbind");
                                 $(this).trigger("show", [ '.' + classToShow ] );
                                 $(this).trigger("hide", [ ':not(.' + classToShow + ')' ] );
                         }
                 });
-                
-                /* SHOW: show a single class*/
-                $(this).bind("show", function( e, selectorToShow ){
+
+                $(this).off("show").on("show", function( e, selectorToShow ){
                         listElement.children(selectorToShow).animate(settings.show, settings.animationSpeed);
+                        console.log("show execute")
+
                 });
-                
-                /* SHOW: hide a single class*/
-                $(this).bind("hide", function( e, selectorToHide ){
-                        listElement.children(selectorToHide).animate(settings.hide, settings.animationSpeed * 0.6);     
+
+                $(this).off("hide").on("hide", function( e, selectorToHide ){
+                        listElement.children(selectorToHide).animate(settings.hide, settings.animationSpeed * 0.6);
+                        console.log("hide execute")
                 });
                 
                 /* ============ Setup Tags ====================*/

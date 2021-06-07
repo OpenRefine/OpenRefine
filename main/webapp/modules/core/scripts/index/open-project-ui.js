@@ -101,15 +101,54 @@ Refine.OpenProjectUI.prototype._fetchProjects = function() {
 };
 
 Refine.OpenProjectUI.prototype._buildTagsAndFetchProjects = function() {
+    this._buildProjectSearchPanel();
     this._buildTagsListPanel();
     this._fetchProjects();
 };
+
+Refine.OpenProjectUI.prototype._buildProjectSearchPanel = function(){
+    var self = this;
+    self._allTags = Refine.TagsManager._getAllProjectTags();
+    var container = self._elmts.projectTags.empty();
+    // Add search menu item
+    var div = $('<div/>')
+    .attr('id','divSearch')
+    .appendTo(container)
+    // Add form to the div on the left
+    var form = $('<div/>')
+    .attr('id','formSearch')
+    .appendTo(div);
+    // Add div for image in the form
+    var divImage = $('<div/>')
+    .attr('id','divImage')
+    .appendTo(form)
+    // Add img to the form
+    $('<div/>')
+    .html('<svg xmlns="http://www.w3.org/2000/svg" height="100%" viewBox="0 0 24 24" width="100%"><path d="M0 0h24v24H0z" fill="none"/><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>')
+    .attr('id', 'searchIcon')
+    .addClass("magnifying_glass")
+    .appendTo(divImage);
+
+    // Add div for input, in the form
+    var divImage = $('<div/>')
+    .attr('id','divInput')
+    .appendTo(form)
+    // Add input to the div
+    $('<input/>')
+    .attr('type', 'text')
+    .attr('id','searchInProjects')
+    .addClass("header-search-box").text('Search').appendTo(divImage);
+
+    self._searchAnimation();
+    self._searchInput();
+}
+
 
 Refine.OpenProjectUI.prototype._buildTagsListPanel = function() {
     var self = this;
     self._allTags = Refine.TagsManager._getAllProjectTags();
 
-    var container = self._elmts.projectTags.empty();
+    var container = self._elmts.projectTags;
     var ul = $("<ul/>").attr('id', 'tagsUl').appendTo(container);
 
     // Add 'all' menu item
@@ -132,19 +171,62 @@ Refine.OpenProjectUI.prototype._addTagsListAnimation = function() {
     });
 };
 
-Refine.OpenProjectUI.prototype._fetchProjects = function() {
-    var self = this;
-    $.ajax({
-            type : 'GET',
-            url : "command/core/get-all-project-metadata",
-            dataType : 'json',
-            success : function(data) {
-                    self._renderProjects(data);
-                    self.resize();
-            },
-            data : {},
-            async : false
+Refine.OpenProjectUI.prototype._searchAnimation = function() {
+    var search = $('#searchIcon');
+    var form = $('.header-search-box');
+    var icon = $('.magnifying_glass');
+    search.click(function () {
+        if (form.is(':hidden'))
+        {
+            $("#tagsUl").hide()
+            $("#divInput").show()
+            icon.addClass("magnifying-glass-open")
+            form.show()
+            form.focus()
+        }
+        var widthFormOpen = Math.floor($('#right-panel-body').width() * 2 / 3);
+        form.animate({
+            'width': form.width() == widthFormOpen ? '0px' : widthFormOpen + "px"
+        }, 'fast', function () {
+            if (form.width() == 0) {
+                form.hide()
+                form.val('')
+                icon.removeClass("magnifying-glass-open")
+                $("#divInput").hide()
+                $("#tagsUl").show()
+            }
+        });
     });
+};
+
+Refine.OpenProjectUI.prototype._searchInput = function() {
+    var search = $('#searchInProjects');
+    // search dynamically
+    search.on("keyup",function (e) {
+        // when enter is pressed
+        // if (e.keyCode == '13')
+        // {
+        //     event.preventDefault();
+        //     var text = ''
+        //     text = search.val();
+        //     // get the text, get back the projects that contains the text in the metadata
+        //     $("#tableBody").filterListSearch(text);
+        // }
+        var keyEvent=event || window.event;
+        var keyCode=keyEvent.keyCode;
+        if((keyCode>=48&&keyCode<=57)||(keyCode>=65&&keyCode<=90)||keyCode==8||keyCode==13||keyCode==32||keyCode==46){
+                event.preventDefault();
+                var text = ''
+                text = search.val();
+                // get the text, get back the projects that contains the text in the metadata
+                $("#tableBody").filterListSearch(text);
+                console.log("searchInputExecute");
+                e.stopPropagation();
+        }
+
+    }
+
+    );
 };
 
 Refine.OpenProjectUI.prototype._renderProjects = function(data) {
@@ -167,7 +249,7 @@ Refine.OpenProjectUI.prototype._renderProjects = function(data) {
                   if (!found) {
                       project.userMetadata.push({
                           name: data.customMetadataColumns[m].name,
-                          dispay: data.customMetadataColumns[m].display,
+                          display: data.customMetadataColumns[m].display,
                           value: ""
                       });
                   }
@@ -346,7 +428,6 @@ Refine.OpenProjectUI.prototype._onClickUploadFileButton = function(evt) {
 };
 
 Refine.OpenProjectUI.refreshProject = function(tr, metaData, project) {
-    
     var refreshMetaField = function(data, index) {
         if (index === 3) {
             $('a', $('td', tr).eq(index))
