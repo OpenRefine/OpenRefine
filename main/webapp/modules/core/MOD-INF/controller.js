@@ -492,6 +492,7 @@ function init() {
       "scripts/dialogs/scatterplot-dialog.js",
       "scripts/dialogs/templating-exporter-dialog.js",
       "scripts/dialogs/column-reordering-dialog.js",
+      "scripts/dialogs/common-transform-dialog.js",
       "scripts/dialogs/custom-tabular-exporter-dialog.js",
       "scripts/dialogs/sql-exporter-dialog.js",
       "scripts/dialogs/expression-column-dialog.js",

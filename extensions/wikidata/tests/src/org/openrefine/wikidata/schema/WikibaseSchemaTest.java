@@ -58,9 +58,9 @@ public class WikibaseSchemaTest extends WikidataRefineTest {
 
     private ItemIdValue qid1 = Datamodel.makeWikidataItemIdValue("Q1377");
     private ItemIdValue qid2 = Datamodel.makeWikidataItemIdValue("Q865528");
-    private TimeValue date1 = Datamodel.makeTimeValue(1919, (byte) 1, (byte) 1, (byte) 0, (byte) 0, (byte) 0, (byte) 9,
+    private TimeValue date1 = Datamodel.makeTimeValue(1919, (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 9,
             (byte) 0, (byte) 0, (byte) 0, TimeValue.CM_GREGORIAN_PRO);
-    private TimeValue date2 = Datamodel.makeTimeValue(1965, (byte) 1, (byte) 1, (byte) 0, (byte) 0, (byte) 0, (byte) 9,
+    private TimeValue date2 = Datamodel.makeTimeValue(1965, (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 9,
             (byte) 0, (byte) 0, (byte) 0, TimeValue.CM_GREGORIAN_PRO);
     private StringValue url = Datamodel.makeStringValue("http://www.ljubljana-slovenia.com/university-ljubljana");
     private PropertyIdValue inceptionPid = Datamodel.makeWikidataPropertyIdValue("P571");
