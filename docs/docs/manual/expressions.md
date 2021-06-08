@@ -9,30 +9,30 @@ sidebar_label: Overview
 You can use expressions in multiple places in OpenRefine to extend data cleanup and transformation. Expressions are available with the following functions:
 * <span class="menuItems">Facet</span>:
 
-    *   <span class="menuItems">Custom text facet...</span>
-    *   <span class="menuItems">Custom numeric facet…</span>
-    *   <span class="menuItems">Customized facets</span> (click “change” after they have been created to bring up an expressions window)
-* <span class="menuItems">Edit cells</span>: 
+  *   <span class="menuItems">Custom text facet...</span>
+  *   <span class="menuItems">Custom numeric facet…</span>
+  *   <span class="menuItems">Customized facets</span> (click “change” after they have been created to bring up an expressions window)
+* <span class="menuItems">Edit cells</span>:
 
-    *   <span class="menuItems">Transform…</span>
-    *   <span class="menuItems">Split multi-valued cells…</span>
-    *   <span class="menuItems">Join multi-valued cells…</span>
-* <span class="menuItems">Edit column</span>: 
+  *   <span class="menuItems">Transform…</span>
+  *   <span class="menuItems">Split multi-valued cells…</span>
+  *   <span class="menuItems">Join multi-valued cells…</span>
+* <span class="menuItems">Edit column</span>:
 
-    *   <span class="menuItems">Split</span>
-    *   <span class="menuItems">Join</span>
-    *   <span class="menuItems">Add column based on this column</span>
-    *   <span class="menuItems">Add column by fetching URLs</span>.
+  *   <span class="menuItems">Split</span>
+  *   <span class="menuItems">Join</span>
+  *   <span class="menuItems">Add column based on this column</span>
+  *   <span class="menuItems">Add column by fetching URLs</span>.
 
-In the expressions editor window you have the opportunity to select a supported language. The default is [GREL (General Refine Expression Language)](grel); OpenRefine also comes with support for [Clojure](jythonclojure#clojure) and [Jython](jythonclojure#jython). Extensions may offer support for more expressions languages. 
+In the expressions editor window you have the opportunity to select a supported language. The default is [GREL (General Refine Expression Language)](grel); OpenRefine also comes with support for [Clojure](jythonclojure#clojure) and [Jython](jythonclojure#jython). Extensions may offer support for more expressions languages.
 
 These languages have some syntax differences but support many of the same [variables](#variables). For example, the GREL expression `value.split(" ")[1]` would be written in Jython as `return value.split(" ")[1]`.
 
-This page is a general reference for available functions, variables, and syntax. For examples that use these expressions for common data tasks, look at the [Recipes section on the wiki](https://github.com/OpenRefine/OpenRefine/wiki/Documentation-For-Users#recipes-and-worked-examples). 
+This page is a general reference for available functions, variables, and syntax. For examples that use these expressions for common data tasks, look at the [Recipes section on the wiki](https://github.com/OpenRefine/OpenRefine/wiki/Documentation-For-Users#recipes-and-worked-examples).
 
 ## Expressions
 
-There are significant differences between OpenRefine's expressions and the spreadsheet formulas you may be used to using for data manipulation. OpenRefine does not store formulas in cells and display output dynamically: OpenRefine’s transformations are one-time operations that can change column contents or generate new columns. These are applied using variables such as `value` or `cell` to perform the same modification to each cell in a column. 
+There are significant differences between OpenRefine's expressions and the spreadsheet formulas you may be used to using for data manipulation. OpenRefine does not store formulas in cells and display output dynamically: OpenRefine’s transformations are one-time operations that can change column contents or generate new columns. These are applied using variables such as `value` or `cell` to perform the same modification to each cell in a column.
 
 Take the following example:
 
@@ -49,32 +49,32 @@ Were you to apply a transformation to the “friend” column with the expressio
 
 OpenRefine would work through each row, splitting the “friend” values based on a space character. The `value` for row 1 is “John Smith” so the output would be “Smith” (as "[1]" selects the second part of the created output); the `value` for row 2 is “Jane Doe” so the output would be “Doe”. Using variables, a single expression yields different results for different rows. The old information would be discarded; you couldn't get "John" and "Jane" back unless you undid the operation in the [History](running#history-undoredo) tab.
 
-For another example, if you were to create a new column based on your data using the expression `row.starred`, it would generate a column of true and false values based on whether your rows were starred at that moment. If you were to then star more rows and unstar some rows, that data would not dynamically update - you would need to run the operation again to have current true/false values. 
+For another example, if you were to create a new column based on your data using the expression `row.starred`, it would generate a column of true and false values based on whether your rows were starred at that moment. If you were to then star more rows and unstar some rows, that data would not dynamically update - you would need to run the operation again to have current true/false values.
 
 Note that an expression is typically based on one particular column in the data - the column whose drop-down menu is first selected. Many variables are created to stand for things about the cell in that “base column” of the current row on which the expression is evaluated. There are also variables about rows, which you can use to access cells in other columns.
 
 ## The expressions editor
 
-When you select a function that accepts expressions, you will see a window overlay the screen with what we call the expressions editor. 
+When you select a function that accepts expressions, you will see a window overlay the screen with what we call the expressions editor.
 
 ![The expressions editor window with a simple expression: value + 10.](/img/expression-editor.png)
 
-The expressions editor offers you a field for entering your formula and shows you a preview of its transformation on your first few rows of cells. 
+The expressions editor offers you a field for entering your formula and shows you a preview of its transformation on your first few rows of cells.
 
-There is a dropdown menu from which you can choose an expression language. The default at first is GREL; if you begin working with another language, that selection will persist across OpenRefine. Jython and Clojure are also offered with the installation package, and you may be able to add more language support with third-party extensions and customizations. 
+There is a dropdown menu from which you can choose an expression language. The default at first is GREL; if you begin working with another language, that selection will persist across OpenRefine. Jython and Clojure are also offered with the installation package, and you may be able to add more language support with third-party extensions and customizations.
 
 There are also tabs for:
 *   <span class="tabLabels">History</span>, which shows you formulas you’ve recently used from across all your projects
 *   <span class="tabLabels">Starred</span>, which shows you formulas from your History that you’ve starred for reuse
 *   <span class="tabLabels">Help</span>, a quick reference to GREL functions.
 
-Starring formulas you’ve used in the past can be helpful for repetitive tasks you’re performing in batches. 
+Starring formulas you’ve used in the past can be helpful for repetitive tasks you’re performing in batches.
 
 You can also choose how formula errors are handled: replicate the original cell value, output an error message into the cell, or ouput a blank cell.
 
 ## Regular expressions
 
-OpenRefine offers several fields that support the use of regular expressions (regex), such as in a <span class="menuItems">Text filter</span> or a <span class="menuItems">Replace…</span> operation. GREL and other expressions can also use regular expression markup to extend their functionality. 
+OpenRefine offers several fields that support the use of regular expressions (regex), such as in a <span class="menuItems">Text filter</span> or a <span class="menuItems">Replace…</span> operation. GREL and other expressions can also use regular expression markup to extend their functionality.
 
 If this is your first time working with regex, you may wish to read [this tutorial specific to the Java syntax that OpenRefine supports](https://docs.oracle.com/javase/tutorial/essential/regex/). We also recommend this [testing and learning tool](https://regexr.com/).
 
@@ -90,19 +90,19 @@ the regular expression is `\s+`, and the syntax used in the expression wraps it 
 
 Do not use slashes to wrap regular expressions outside of a GREL expression.
 
-On the [GREL functions](grelfunctions) page, functions that support regex will indicate that with a “p” for “pattern.” The GREL functions that support regex are:
-*   [contains](grelfunctions#containss-sub-or-p)
-*   [replace](grelfunctions#replaces-s-or-p-find-s-replace)
-*   [find](grelfunctions#finds-sub-or-p)
-*   [match](grelfunctions#matchs-p)
-*   [partition](grelfunctions#partitions-s-or-p-fragment-b-omitfragment-optional)
-*   [rpartition](grelfunctions#rpartitions-s-or-p-fragment-b-omitfragment-optional)
-*   [split](grelfunctions#splits-s-or-p-sep)
-*   [smartSplit](grelfunctions#smartsplits-s-or-p-sep-optional)
+On the [GREL functions](https://docs.openrefine.org/manual/grelfunctions) page, functions that support regex will indicate that with a “p” for “pattern.” The GREL functions that support regex are:
+*   [contains](https://docs.openrefine.org/manual/grelfunctions/#containss-sub-or-p)
+*   [replace](https://docs.openrefine.org/manual/grelfunctions/#replaces-s-or-p-find-s-replace)
+*   [find](https://docs.openrefine.org/manual/grelfunctions/#finds-sub-or-p)
+*   [match](https://docs.openrefine.org/manual/grelfunctions/#matchs-p)
+*   [partition](https://docs.openrefine.org/manual/grelfunctions/#partitions-s-or-p-fragment-b-omitfragment-optional)
+*   [rpartition](https://docs.openrefine.org/manual/grelfunctions/#rpartitions-s-or-p-fragment-b-omitfragment-optional)
+*   [split](https://docs.openrefine.org/manual/grelfunctions/#splits-s-or-p-sep)
+*   [smartSplit](https://docs.openrefine.org/manual/grelfunctions/#smartsplits-s-or-p-sep-optional)
 
 ### Jython-supported regex
 
-You can also use [regex with Jython expressions](http://www.jython.org/docs/library/re.html), instead of GREL, for example with a <span class="menuItems">Custom Text Facet</span>: 
+You can also use [regex with Jython expressions](http://www.jython.org/docs/library/re.html), instead of GREL, for example with a <span class="menuItems">Custom Text Facet</span>:
 
 ```
 python import re g = re.search(ur"\u2014 (.*),\s*BWV", value) return g.group(1)
@@ -179,14 +179,14 @@ Several of the fields here provide the data used in [reconciliation facets](reco
 | `cell.recon.matched` | A boolean, true if judgment is “matched” |  |
 | `cell.recon.match` | The recon candidate that has been matched against this cell (or null) | .id, .name, .type |
 | `cell.recon.best` | The highest scoring recon candidate from the reconciliation service (or null) | .id, .name, .type, .score |
-| `cell.recon.features` | An array of reconciliation features to help you assess the accuracy of your matches | .typeMatch, .nameMatch, .nameLevenshtein, .nameWordDistance | 
+| `cell.recon.features` | An array of reconciliation features to help you assess the accuracy of your matches | .typeMatch, .nameMatch, .nameLevenshtein, .nameWordDistance |
 | `cell.recon.features.typeMatch`  | A boolean, true if your chosen type is “matched” and false if not (or “(no type)” if unreconciled) |  |
 | `cell.recon.features.nameMatch` | A boolean, true if the cell and candidate strings are identical and false if not (or “(unreconciled)”) |  |
-| `cell.recon.features.nameLevenshtein` | A number representing the [Levenshtein distance](https://en.wikipedia.org/wiki/Levenshtein_distance): larger if the difference is greater between value and candidate |  | 
+| `cell.recon.features.nameLevenshtein` | A number representing the [Levenshtein distance](https://en.wikipedia.org/wiki/Levenshtein_distance): larger if the difference is greater between value and candidate |  |
 | `cell.recon.features.nameWordDistance` | A number based on the [word similarity](reconciling#reconciliation-facets) |  |
 | `cell.recon.candidates` | An array of the top 3 candidates (default) | .id, .name, .type, .score |
 
-The `cell.recon.candidates` and `cell.recon.best` objects have a few deeper fields: `id`, `name`, `type`, and `score`. `type` is an array of type identifiers for a list of candidates, or a single string for the best candidate. 
+The `cell.recon.candidates` and `cell.recon.best` objects have a few deeper fields: `id`, `name`, `type`, and `score`. `type` is an array of type identifiers for a list of candidates, or a single string for the best candidate.
 
 Arrays such as `cell.recon.candidates` and `cell.recon.candidates.type` can be joined into lists and stored as strings with something like:
 ```
@@ -195,7 +195,7 @@ forEach(cell.recon.candidates,v,v.name).join("; ")
 
 ### Record
 
-A `row.record` object encapsulates one or more rows that are grouped together, when your project is in records mode. You must call it as `row.record`; `record` will not return values. 
+A `row.record` object encapsulates one or more rows that are grouped together, when your project is in records mode. You must call it as `row.record`; `record` will not return values.
 
 |Field|Meaning |
 |-|-|
