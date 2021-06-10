@@ -363,7 +363,6 @@ function init() {
       "externals/tablesorter/jquery.tablesorter.min.js",
       "externals/moment-with-locales.min.js",
       "externals/select2/select2.min.js",
-      "externals/jquery.lavalamp.min.js",
 
       "scripts/util/misc.js",
       "scripts/util/url.js",
