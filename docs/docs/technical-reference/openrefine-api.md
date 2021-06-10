@@ -6,7 +6,11 @@ sidebar_label: OpenRefine API
 
 This is a generic API reference for interacting with OpenRefine's HTTP API.
 
-## Create project:
+**NOTE:** This protocol is subject to change without warning at any time (and has in the past) and is not versioned. Use at your own risk!
+
+For OpenRefine 3.3 and later, all POST requests need to include a CSRF token as described here: https://github.com/OpenRefine/OpenRefine/wiki/Changes-for-3.3#csrf-protection-changes
+
+## Create project: {#create-project}
 
 > **Command:** _POST /command/core/create-project-from-upload_
 
@@ -37,7 +41,7 @@ If the project creation is successful, you will be redirected to a URL of the fo
 
 From the project parameter you can extract the project id for use in future API calls. The content of the response is the HTML for the OpenRefine interface for viewing the project.
 
-### Get project models:
+### Get project models: {#get-project-models}
     
 > **Command:** _GET /command/core/get-models?_
 
@@ -45,7 +49,7 @@ From the project parameter you can extract the project id for use in future API 
 
 Recovers the models for the specific project. This includes  columns, records, overlay models, scripting. In the columnModel a list of the columns is displayed, key index and name, and column groupings.
     
-### Response:
+### Response: {#response}
 **On success:**
 ```JSON
 {  
@@ -108,7 +112,7 @@ Recovers the models for the specific project. This includes  columns, records, o
 
 
 
-## Apply operations
+## Apply operations {#apply-operations}
 
 > **Command:** _POST /command/core/apply-operations?_
 
@@ -155,7 +159,7 @@ Example of a Valid JSON **Array**
 On success returns JSON response
 `{ "code" : "ok" }`
     
-## Export rows
+## Export rows {#export-rows}
 
 > **Command:** _POST /command/core/export-rows_
 
@@ -177,7 +181,7 @@ Returns exported row data in the specified format. The formats supported will de
 * ods
 * html
     
-## Delete project
+## Delete project {#delete-project}
 
 > **Command:** _POST /command/core/delete-project_
 
@@ -185,7 +189,7 @@ Returns exported row data in the specified format. The formats supported will de
       
 Returns JSON response
     
-## Check status of async processes
+## Check status of async processes {#check-status-of-async-processes}
 
 > **Command:** _GET /command/core/get-processes_
 
@@ -193,13 +197,13 @@ Returns JSON response
       
 Returns JSON response
 
-## Get all projects metadata:
+## Get all projects metadata: {#get-all-projects-metadata}
     
 > **Command:** _GET /command/core/get-all-project-metadata_
 
 Recovers the meta data for all projects. This includes the project's id, name, time of creation and last time of modification.
     
-### Response:
+### Response: {#response-1}
 ```json
 {
     "projects":{
@@ -213,12 +217,12 @@ Recovers the meta data for all projects. This includes the project's id, name, t
 }
 ```
     
-## Expression Preview
+## Expression Preview {#expression-preview}
 > **Command:** _POST /command/core/preview-expression_
 
 Pass some expression (GREL or otherwise) to the server where it will be executed on selected columns and the result returned.
 
-### Parameters:
+### Parameters: {#parameters}
 * **cellIndex**: _[column]_  
 The cell/column you wish to execute the expression on.
 * **rowIndices**: _[rows]_
@@ -232,7 +236,7 @@ A boolean value (true/false) indicating whether or not this command should be re
 * **repeatCount**: _[repeatCount]_  
 The maximum amount of times a command will be repeated.
 
-### Response:
+### Response: {#response-2}
 **On success:**
 ```json
 {
@@ -252,30 +256,30 @@ The result array will hold up to ten results, depending on how many rows there a
 }
 ```
 
-## Third-party software libraries 
+## Third-party software libraries {#third-party-software-libraries}
 Libraries using the [OpenRefine API](openrefine-api):
 
-### Python
+### Python {#python}
 * [refine-client-py](https://github.com/PaulMakepeace/refine-client-py/)
   * Or this fork of the above with an extended CLI [openrefine-client](https://github.com/felixlohmeier/openrefine-client)
 * [refine-python](https://github.com/maxogden/refine-python)
 
-### Ruby
+### Ruby {#ruby}
 * [refine-ruby](https://github.com/distillytics/refine-ruby)
   * The above is a maintained fork of [google-refine](https://github.com/maxogden/refine-ruby)
 * [google_refine](https://github.com/chengguangnan/google_refine)
 
-### NodeJS
+### NodeJS {#nodejs}
 * [node-openrefine](https://github.com/pm5/node-openrefine)
 
-### R
+### R {#r}
 * [rrefine](https://cran.r-project.org/web/packages/rrefine/index.html)
 
-### PHP
+### PHP {#php}
 * [openrefine-php-client](https://github.com/keboola/openrefine-php-client)
 
-### Java
+### Java {#java}
 * [refine-java](https://github.com/dtap-gmbh/refine-java)
 
-### Bash
+### Bash {#bash}
 * [bash-refine.sh](https://gist.github.com/felixlohmeier/d76bd27fbc4b8ab6d683822cdf61f81d) (templates for shell scripts)

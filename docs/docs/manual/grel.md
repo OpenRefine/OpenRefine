@@ -4,7 +4,7 @@ title: General Refine Expression Language
 sidebar_label: General Refine Expression Language
 ---
 
-## Basics
+## Basics {#basics}
 
 GREL (General Refine Expression Language) is designed to resemble Javascript. Formulas use variables and depend on data types to do things like string manipulation or mathematical calculations:
 
@@ -22,7 +22,7 @@ Evaluating conditions uses symbols such as <, >, *, /, etc. To check whether two
 
 See the [GREL functions page for a thorough reference](grelfunctions) on each function and its inputs and outputs. Read on below for more about the general nature of GREL expressions.
 
-## Syntax
+## Syntax {#syntax}
 
 In GREL, functions can use either of these two forms:
 *   functionName(arg0, arg1, ...)
@@ -56,13 +56,13 @@ Any function that outputs an array can use square brackets to select only one pa
 
 For example, [partition()](grelfunctions#partitions-s-or-p-fragment-b-omitfragment-optional) would normally output an array of three items: the part before your chosen fragment, the fragment you've identified, and the part after. Selecting only the third part with `"internationalization".partition("nation")[2]` will output “alization” (and so will [-1], indicating the final item in the array).
 
-## Controls
+## Controls {#controls}
 
 GREL offers controls to support branching and looping (that is, “if” and “for” functions), but unlike functions, their arguments don't all get evaluated before they get run. A control can decide which part of the code to execute and can affect the environment bindings. Functions, on the other hand, can't do either. Each control decides which of their arguments to evaluate to `value`, and how.
 
 Please note that the GREL control names are case-sensitive: for example, the isError() control can't be called with iserror().
 
-#### if(e, eTrue, eFalse)
+#### if(e, eTrue, eFalse) {#ife-etrue-efalse}
 
 Expression e is evaluated to a value. If that value is true, then expression eTrue is evaluated and the result is the value of the whole if() expression. Otherwise, expression eFalse is evaluated and that result is the value.
 
@@ -83,7 +83,7 @@ Nested if (switch case) example:
 
 	null)))
 
-#### with(e1, variable v, e2)
+#### with(e1, variable v, e2) {#withe1-variable-v-e2}
 
 Evaluates expression e1 and binds its value to variable v. Then evaluates expression e2 and returns that result.
 
@@ -93,7 +93,7 @@ Evaluates expression e1 and binds its value to variable v. Then evaluates expres
 | `with("european union".split(" "), a, forEach(a, v, v.length()))`                	| [ 8, 5 ] |
 | `with("european union".split(" "), a, forEach(a, v, v.length()).sum() / a.length())` | 6.5  	|
 
-#### filter(e1, v, e test)
+#### filter(e1, v, e test) {#filtere1-v-e-test}
 
 Evaluates expression e1 to an array. Then for each array element, binds its value to variable v, evaluates expression test - which should return a boolean. If the boolean is true, pushes v onto the result array.
 
@@ -101,15 +101,15 @@ Evaluates expression e1 to an array. Then for each array element, binds its valu
 | ---------------------------------------------- | ------------- |
 | `filter([ 3, 4, 8, 7, 9 ], v, mod(v, 2) == 1)` | [ 3, 7, 9 ] |
 
-#### forEach(e1, v, e2)
+#### forEach(e1, v, e2) {#foreache1-v-e2}
 
-Evaluates expression e1 to an array. Then for each array element, binds its value to variable v, evaluates expression e2, and pushes the result onto the result array.
+Evaluates expression e1 to an array. Then for each array element, binds its value to variable v, evaluates expression e2, and pushes the result onto the result array. When e1 is a JSON object, `forEach` iterates over its keys.
 
 | Expression                             	| Result          	|
 | ------------------------------------------ | ------------------- |
 | `forEach([ 3, 4, 8, 7, 9 ], v, mod(v, 2))` | [ 1, 0, 0, 1, 1 ] |
 
-#### forEachIndex(e1, i, v, e2)
+#### forEachIndex(e1, i, v, e2) {#foreachindexe1-i-v-e2}
 
 Evaluates expression e1 to an array. Then for each array element, binds its index to variable i and its value to variable v, evaluates expression e2, and pushes the result onto the result array.
 
@@ -117,17 +117,17 @@ Evaluates expression e1 to an array. Then for each array element, binds its inde
 | ------------------------------------------------------------------------------- | --------------------------- |
 | `forEachIndex([ "anne", "ben", "cindy" ], i, v, (i + 1) + ". " + v).join(", ")` | 1. anne, 2. ben, 3. cindy |
 
-#### forRange(n from, n to, n step, v, e)
+#### forRange(n from, n to, n step, v, e) {#forrangen-from-n-to-n-step-v-e}
 
 Iterates over the variable v starting at from, incrementing by the value of step each time while less than to. At each iteration, evaluates expression e, and pushes the result onto the result array.
 
-#### forNonBlank(e, v, eNonBlank, eBlank)
+#### forNonBlank(e, v, eNonBlank, eBlank) {#fornonblanke-v-enonblank-eblank}
 
 Evaluates expression e. If it is non-blank, forNonBlank() binds its value to variable v, evaluates expression eNonBlank and returns the result. Otherwise (if e evaluates to blank), forNonBlank() evaluates expression eBlank and returns that result instead.
 
 Unlike other GREL functions beginning with “for,” forNonBlank() is not iterative. forNonBlank() essentially offers a shorter syntax to achieving the same outcome by using the isNonBlank() function within an “if” statement.
 
-#### isBlank(e), isNonBlank(e), isNull(e), isNotNull(e), isNumeric(e), isError(e)
+#### isBlank(e), isNonBlank(e), isNull(e), isNotNull(e), isNumeric(e), isError(e) {#isblanke-isnonblanke-isnulle-isnotnulle-isnumerice-iserrore}
 
 Evaluates the expression e, and returns a boolean based on the named evaluation.
 
@@ -146,7 +146,7 @@ Examples:
 
 Remember that these are controls and not functions: you can’t use dot notation (for example, the format `e.isX()` will not work).
 
-## Constants
+## Constants {#constants}
 |Name |Meaning |
 |-|-|
 | true | The boolean constant true |
