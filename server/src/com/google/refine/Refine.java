@@ -360,7 +360,7 @@ class RefineServer extends Server {
                 parentDir = new File(appData);
             } else {
                 // TODO migrate to System.getProperty("user.home")?
-                String userProfile = System.getenv("USERPROFILE");
+                String userProfile = System.getProperty("user.home");
                 if (userProfile != null && userProfile.length() > 0) {
                     // e.g., C:\Users\[userid]
                     parentDir = new File(userProfile);
