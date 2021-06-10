@@ -6,7 +6,7 @@
   <parent>
     <artifactId>openrefine</artifactId>
     <groupId>org.openrefine</groupId>
-    <version>3.5-SNAPSHOT</version>
+    <version>3.6-SNAPSHOT</version>
   </parent>
 
   <artifactId>benchmark</artifactId>
@@ -48,7 +48,7 @@
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <jmh.version>1.29</jmh.version>
+    <jmh.version>1.32</jmh.version>
     <javac.target>1.8</javac.target>
     <uberjar.name>openrefine-benchmarks</uberjar.name>
   </properties>
@@ -127,7 +127,7 @@
         </plugin>
         <plugin>
           <artifactId>maven-javadoc-plugin</artifactId>
-          <version>3.2.0</version>
+          <version>3.3.0</version>
         </plugin>
         <plugin>
           <artifactId>maven-resources-plugin</artifactId>

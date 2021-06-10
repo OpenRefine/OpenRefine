@@ -6,7 +6,7 @@ sidebar_label: Data extension API
 
 This page describes a new optional API for reconciliation services, allowing clients to pull properties of reconciled records. It is supported from OpenRefine 2.8 onwards. A sample server implementation is available in the [Wikidata reconciliation interface](https://tools.wmflabs.org/openrefine-wikidata/).
 
-## Overview of the workflow
+## Overview of the workflow {#overview-of-the-workflow}
 
 1. Reconcile a column with a standard reconciliation service
 
@@ -21,7 +21,7 @@ property. The user can run data extension again from that column.
 
 [GIF Screencast](http://pintoch.ulminfo.fr/92dcdd20f3/recorded.gif)
 
-## Specification
+## Specification {#specification}
 
 Services supporting data extension must add an `extend` field in their service metadata. This field is expected to have the following subfields, all optional:
 * `propose_properties` stores the endpoint of an API which will be used to suggest properties to fetch (see specification below). The field contains an object with a `service_url` and `service_path` which will be concatenated to obtain the URL where the endpoint is available, just like the other services in the metadata. If this field is not provided, no property will be suggested in the dialog (the user will have to input them manually).
@@ -39,7 +39,7 @@ Example service metadata:
       "property_settings": []
     }
 ```
-### Property proposal protocol
+### Property proposal protocol {#property-proposal-protocol}
 
 The role of the property proposal endpoint is to suggest a list of properties to fetch. As only input, it accepts GET parameters:
 * the `type` of a column was reconciled against. If no type is provided, it should suggest properties for a column reconciled against no type.
@@ -73,7 +73,7 @@ The endpoint returns a JSON response as follows:
 ```
 This endpoint must support JSONP via the `callback` parameter (just like all other endpoints of the reconciliation service).
 
-### Data extension protocol
+### Data extension protocol {#data-extension-protocol}
 
 After calling the property proposal endpoint, the consumer (OpenRefine) calls the service endpoint with a JSON object in the `extend` parameter, containing the following fields:
 * `ids` is a list of strings, each of which being an identifier of a record as returned by the reconciliation method. These are the records whose properties should be retrieved.
@@ -204,7 +204,7 @@ Example of a full response (for the example query above):
       ]
     }
 ```
-### Settings specification
+### Settings specification {#settings-specification}
 
 The `property_settings` field in the service metadata allows the service to declare it accepts some settings for the properties it fetches. They are specified as a list of JSON objects which define the fields which should be exposed to the user.
 

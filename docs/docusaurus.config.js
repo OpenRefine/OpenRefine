@@ -1,5 +1,6 @@
 module.exports = {
   onBrokenLinks: 'error',
+  onBrokenMarkdownLinks: 'error',
   title: 'OpenRefine',
   tagline: 'A power tool for working with messy data.',
   url: 'https://docs.openrefine.org/',
@@ -106,5 +107,12 @@ module.exports = {
         },
       },
     ],
+  ],
+  scripts: [
+    {
+      src: '/js/fix-location.js',
+      async: false,
+      defer: false,
+    },
   ],
 };
