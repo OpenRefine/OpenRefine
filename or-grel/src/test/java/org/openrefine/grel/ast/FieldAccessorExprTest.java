@@ -5,7 +5,6 @@ import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertNull;
 
-import org.openrefine.grel.ast.FieldAccessorExpr;
 import org.testng.annotations.Test;
 
 public class FieldAccessorExprTest extends ExprTestBase {

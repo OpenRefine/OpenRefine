@@ -26,17 +26,6 @@
  ******************************************************************************/
 package org.openrefine.expr.functions.strings;
 
-import org.openrefine.expr.functions.strings.MD5;
-import org.testng.annotations.Test;
-
-import org.openrefine.util.ParsingUtilities;
-import org.openrefine.util.TestUtils;
-
 public class MD5Tests {
-    @Test
-    public void serializeMD5() {
-        String json = "{\"description\":\"Returns the MD5 hash of s\",\"params\":\"string s\",\"returns\":\"string\"}";
-        TestUtils.isSerializedTo(new MD5(), json, ParsingUtilities.defaultWriter);
-    }
 }
 

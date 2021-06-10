@@ -30,8 +30,6 @@ import java.time.OffsetDateTime;
 import java.time.format.DateTimeFormatter;
 
 import org.openrefine.grel.FunctionTestBase;
-import org.openrefine.util.ParsingUtilities;
-import org.openrefine.util.TestUtils;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
@@ -49,10 +47,4 @@ public class NowTests extends FunctionTestBase {
         Assert.assertTrue(((OffsetDateTime)invoke("now")).isAfter(source));
     }
 
-    @Test
-    public void serializeNow() {
-        String json = "{\"description\":\"Returns the current time\",\"returns\":\"date\"}";
-        TestUtils.isSerializedTo(new Now(), json, ParsingUtilities.defaultWriter);
-    }
-    
 }

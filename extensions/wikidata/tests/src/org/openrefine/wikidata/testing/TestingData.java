@@ -46,10 +46,10 @@ import org.wikidata.wdtk.datamodel.interfaces.StatementRank;
 
 public class TestingData {
 
-    public static final String inceptionWithNewQS = "Q1377\tP571\t+1919-01-01T00:00:00Z/9"
+    public static final String inceptionWithNewQS = "Q1377\tP571\t+1919-00-00T00:00:00Z/9"
             + "\tS854\t\"http://www.ljubljana-slovenia.com/university-ljubljana\""
-            + "\tS813\t+2018-02-28T00:00:00Z/11\n" + "Q865528\tP571\t+1965-01-01T00:00:00Z/9"
-            + "\tS813\t+2018-02-28T00:00:00Z/11\n" + "CREATE\n" + "LAST\tP571\t+2016-01-01T00:00:00Z/9"
+            + "\tS813\t+2018-02-28T00:00:00Z/11\n" + "Q865528\tP571\t+1965-00-00T00:00:00Z/9"
+            + "\tS813\t+2018-02-28T00:00:00Z/11\n" + "CREATE\n" + "LAST\tP571\t+2016-00-00T00:00:00Z/9"
             + "\tS854\t\"http://new-uni.com/\"" + "\tS813\t+2018-02-28T00:00:00Z/11\n";
 
     public static ItemIdValue newIdA = makeNewItemIdValue(1234L, "new item A");

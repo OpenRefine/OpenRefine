@@ -26,17 +26,6 @@
  ******************************************************************************/
 package org.openrefine.expr.functions.math;
 
-import org.openrefine.expr.functions.math.Tan;
-import org.testng.annotations.Test;
-
-import org.openrefine.util.ParsingUtilities;
-import org.openrefine.util.TestUtils;
-
 public class TanTests {
-    @Test
-    public void serializeTan() {
-        String json = "{\"description\":\"Returns the trigonometric tangent of an angle\",\"params\":\"number d\",\"returns\":\"number\"}";
-        TestUtils.isSerializedTo(new Tan(), json, ParsingUtilities.defaultWriter);
-    }
 }
 

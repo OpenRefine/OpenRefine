@@ -26,17 +26,6 @@
  ******************************************************************************/
 package org.openrefine.expr.functions.strings;
 
-import org.openrefine.expr.functions.strings.NGramFingerprint;
-import org.testng.annotations.Test;
-
-import org.openrefine.util.ParsingUtilities;
-import org.openrefine.util.TestUtils;
-
 public class NGramFingerprintTests {
-    @Test
-    public void serializeNGramFingerprint() {
-        String json = "{\"description\":\"Returns the n-gram fingerprint of s\",\"params\":\"string s, number n\",\"returns\":\"string\"}";
-        TestUtils.isSerializedTo(new NGramFingerprint(), json, ParsingUtilities.defaultWriter);
-    }
 }
 

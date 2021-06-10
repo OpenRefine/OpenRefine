@@ -28,19 +28,10 @@ package org.openrefine.expr.functions.arrays;
 
 import org.openrefine.RefineTest;
 import org.openrefine.expr.ParsingException;
-import org.openrefine.expr.functions.arrays.Join;
 import org.testng.annotations.Test;
 
-import org.openrefine.util.ParsingUtilities;
-import org.openrefine.util.TestUtils;
-
 public class JoinTests extends RefineTest {
-    @Test
-    public void serializeJoin() {
-        String json = "{\"description\":\"Returns the string obtained by joining the array a with the separator sep\",\"params\":\"array a, string sep\",\"returns\":\"string\"}";
-        TestUtils.isSerializedTo(new Join(), json, ParsingUtilities.defaultWriter);
-    }
-
+    
     @Test
     public void joinArray() throws ParsingException {
         String[] test = {"[2,1,3].join('|')", "2|1|3"};

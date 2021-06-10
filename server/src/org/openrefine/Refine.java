@@ -57,9 +57,9 @@ import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.ServerConnector;
 import org.eclipse.jetty.server.handler.StatisticsHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
-import org.eclipse.jetty.webapp.WebAppContext;
 import org.eclipse.jetty.util.Scanner;
 import org.eclipse.jetty.util.thread.ThreadPool;
+import org.eclipse.jetty.webapp.WebAppContext;
 import org.openrefine.util.threads.ThreadPoolExecutorAdapter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -67,7 +67,6 @@ import org.slf4j.LoggerFactory;
 import com.codeberry.jdatapath.DataPath;
 import com.codeberry.jdatapath.JDataPathSystem;
 
-import org.openrefine.Configurations;
 
 /**
  * Main class for Refine server application.  Starts an instance of the
@@ -75,11 +74,12 @@ import org.openrefine.Configurations;
  */
 public class Refine {
     
-    static private final String DEFAULT_HOST = "127.0.0.1";
+    static private final String DEFAULT_IFACE = "127.0.0.1";
     static private final int DEFAULT_PORT = 3333;
         
     static private int port;
     static private String host;
+    static private String iface;
 
     final static Logger logger = LoggerFactory.getLogger("refine");
         
@@ -100,8 +100,12 @@ public class Refine {
         // set the log verbosity level
         org.apache.log4j.Logger.getRootLogger().setLevel(Level.toLevel(Configurations.get("refine.verbosity","info")));
 
-        port = Configurations.getInteger("refine.port",DEFAULT_PORT);
-        host = Configurations.get("refine.host",DEFAULT_HOST);
+        port = Configurations.getInteger("refine.port", DEFAULT_PORT);
+        iface = Configurations.get("refine.interface", DEFAULT_IFACE);
+        host = Configurations.get("refine.host", iface);
+        if ("0.0.0.0".equals(host)) {
+            host = "*";
+        }
 
         Refine refine = new Refine();
         
@@ -111,7 +115,7 @@ public class Refine {
     public void init(String[] args) throws Exception {
 
         RefineServer server = new RefineServer();
-        server.init(host,port);
+        server.init(iface, port, host);
 
         boolean headless = Configurations.getBoolean("refine.headless",false);
         if (headless) {
@@ -120,7 +124,16 @@ public class Refine {
         } else {
             try {
                 RefineClient client = new RefineClient();
-                client.init(host,port);
+                if ("*".equals(host)) {
+                    if ("0.0.0.0".equals(iface)) {
+                        logger.warn("No refine.host specified while binding to interface 0.0.0.0, guessing localhost.");
+                        client.init("localhost",port);
+                    } else { 
+                        client.init(iface,port);
+                    }
+                } else {
+                    client.init(host,port);
+                }
             } catch (Exception e) {
                 logger.warn("Sorry, some error prevented us from launching the browser for you.\n\n Point your browser to http://" + host + ":" + port + "/ to start using Refine.");
             }
@@ -155,8 +168,8 @@ class RefineServer extends Server {
         
     private ThreadPoolExecutor threadPool;
     
-    public void init(String host, int port) throws Exception {
-        logger.info("Starting Server bound to '" + host + ":" + port + "'");
+    public void init(String iface, int port, String host) throws Exception {
+        logger.info("Starting Server bound to '" + iface + ":" + port + "'");
 
         String memory = Configurations.get("refine.memory");
         if (memory != null) {
@@ -168,8 +181,9 @@ class RefineServer extends Server {
         HttpConnectionFactory httpFactory = new HttpConnectionFactory(httpConfig);
         ServerConnector connector = new ServerConnector(this, httpFactory);
         connector.setPort(port);
-        connector.setHost(host);
+        connector.setHost(iface);
         connector.setIdleTimeout(Configurations.getInteger("server.connection.max_idle_time",60000));
+
         this.addConnector(connector);
 
         File webapp = new File(Configurations.get("refine.webapp","main/webapp"));
@@ -192,7 +206,14 @@ class RefineServer extends Server {
         WebAppContext context = new WebAppContext(webapp.getAbsolutePath(), contextPath);
         context.setMaxFormContentSize(maxFormContentSize);
 
-        this.setHandler(context);
+        if ("*".equals(host)) {
+            this.setHandler(context);
+        } else {
+            ValidateHostHandler wrapper = new ValidateHostHandler(host);
+            wrapper.setHandler(context);
+            this.setHandler(wrapper);
+        }
+        
         this.setStopAtShutdown(true);
         StatisticsHandler handler = new StatisticsHandler();
         handler.setServer(this);
@@ -487,12 +508,7 @@ class RefineClient extends JFrame implements ActionListener {
     private URI uri;
     
     public void init(String host, int port) throws Exception {
-
-    	String cleanedHost = host;
-    	if("0.0.0.0".equals(host)) {
-            cleanedHost = "localhost";
-        }
-        uri = new URI("http://" + cleanedHost + ":" + port + "/");
+        uri = new URI("http://" + host + ":" + port + "/");
         openBrowser();
     }
     

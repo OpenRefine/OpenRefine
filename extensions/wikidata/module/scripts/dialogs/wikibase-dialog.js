@@ -28,17 +28,20 @@ WikibaseDialog.populateDialog = function () {
 
   WikibaseDialog.elmts.wikibaseList.empty();
   for (let wikibaseName in wikibases) {
-    if (wikibases.hasOwnProperty(wikibaseName)) {
-      let item = "<tr onclick=\"WikibaseDialog.selectWikibase('" + wikibaseName + "')\">";
-      item += "<td>" + wikibaseName + "</td>";
-      if (wikibaseName.toLowerCase() === WikibaseManager.getSelectedWikibaseName().toLowerCase()) {
-        item += "<td><a class=\"wikibase-dialog-selector-remove wikibase-selected\" onclick=\"void(0)\"></a></td>";
-      } else {
-        item += "<td><a class=\"wikibase-dialog-selector-remove\" onclick=\"WikibaseDialog.removeWikibase(event, '" + wikibaseName + "')\"></a></td>";
+    WikibaseManager.getSelectedWikibaseLogoURL(function(data) {
+      if (wikibases.hasOwnProperty(wikibaseName)) {
+        let item = "<tr onclick=\"WikibaseDialog.selectWikibase('" + wikibaseName + "')\">";
+        item += "<td class=\"wikibase-dialog-wikibase-logo\">" + "<img src=\""+ data + "\" alt=\"" + $.i18n('wikibase-account/logo-alt-text', wikibaseName) + "\"/>" + "</td>";
+        item += "<td>" + wikibaseName + "</td>";
+        if (wikibaseName.toLowerCase() === WikibaseManager.getSelectedWikibaseName().toLowerCase()) {
+          item += "<td><a class=\"wikibase-dialog-selector-remove wikibase-selected\" onclick=\"void(0)\"></a></td>";
+        } else {
+	      item += "<td><a class=\"wikibase-dialog-selector-remove\" onclick=\"WikibaseDialog.removeWikibase(event, '" + wikibaseName + "')\"></a></td>";
+        }
+        item += "</tr>";
+        WikibaseDialog.elmts.wikibaseList.append(item);
       }
-      item += "</tr>";
-      WikibaseDialog.elmts.wikibaseList.append(item);
-    }
+	}, wikibaseName);
   }
 };
 

@@ -1,16 +1,30 @@
 {
-    "name": "OpenRefine-Cypress-Test-Suite",
+    "name": "openrefine-cypress-test-suite",
     "version": "1.0.0",
     "description": "Cypress tests for OpenRefine",
     "license": "BSD-3-Clause",
     "author": "OpenRefine",
     "private": true,
+    "scripts": {
+        "test": "cypress run --browser electron --headless --quiet",
+        "fix-lint": "prettier --write . && eslint --fix .",
+        "lint": "prettier --check . && eslint ."
+    },
     "dependencies": {
-        "cypress": "6.0.1",
-        "cypress-file-upload": "^4.1.1",
+        "cypress": "7.2.0",
+        "cypress-image-snapshot": "^4.0.1",
+        "cypress-file-upload": "^5.0.7",
         "cypress-wait-until": "^1.7.1",
-        "dotenv": "^8.2.0",
-        "fs-extra": "^9.0.1",
-        "uniqid": "^5.2.0"
+        "dotenv": "^10.0.0",
+        "fs-extra": "^10.0.0",
+        "uniqid": "^5.3.0"
+    },
+    "devDependencies": {
+        "eslint": "^7.28.0",
+        "eslint-config-google": "^0.14.0",
+        "eslint-config-prettier": "^8.2.0",
+        "eslint-plugin-cypress": "^2.11.3",
+        "jsdoc": "^3.6.7",
+        "prettier": "2.3.1"
     }
 }

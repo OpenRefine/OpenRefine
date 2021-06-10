@@ -52,7 +52,7 @@ public class Round extends PureFunction {
     
     @Override
     public String getDescription() {
-        return "Returns n rounded";
+        return "Rounds a number to the nearest integer.";
     }
     
     @Override

@@ -45,13 +45,19 @@ public class HttpClient {
     private HttpClientBuilder httpClientBuilder;
     private CloseableHttpClient httpClient;
     private int _delay;
+    private int _retryInterval; // delay between original request and first retry, in ms
     
     public HttpClient() {
         this(0);
     }
     
     public HttpClient(int delay) {
+        this(delay, Math.max(delay, 200));
+    }
+    
+    public HttpClient(int delay, int retryInterval) {   
         _delay = delay;
+        _retryInterval = retryInterval;
         // Create a connection manager with a custom socket timeout
         PoolingHttpClientConnectionManager connManager = new PoolingHttpClientConnectionManager();
         final SocketConfig socketConfig = SocketConfig.custom()
@@ -69,7 +75,7 @@ public class HttpClient {
                 .setDefaultRequestConfig(defaultRequestConfig)
                 .setConnectionManager(connManager)
                 // Default Apache HC retry is 1x @1 sec (or the value in Retry-Header)
-                .setRetryStrategy(new ExponentialBackoffRetryStrategy(3, TimeValue.ofMilliseconds(_delay)))
+                .setRetryStrategy(new ExponentialBackoffRetryStrategy(3, TimeValue.ofMilliseconds(_retryInterval)))
 //                .setRedirectStrategy(new LaxRedirectStrategy()) // TODO: No longer needed since default doesn't exclude POST?
 //               .setConnectionBackoffStrategy(ConnectionBackoffStrategy)
                 .addRequestInterceptorFirst(new HttpRequestInterceptor() {
@@ -197,11 +203,19 @@ public class HttpClient {
             // If it's the same as the default, there was no Retry-After, so use binary
             // exponential backoff
             if (interval.compareTo(defaultInterval) == 0) {
-                interval = TimeValue.of(((Double) (Math.pow(2, execCount) * defaultInterval.getDuration())).longValue(),
+                interval = TimeValue.of(((Double) (Math.pow(2, execCount - 1) * defaultInterval.getDuration())).longValue(),
                        defaultInterval.getTimeUnit() );
                 return interval;
             }
             return interval;
+        }
+        
+        /**
+         * Even our POST requests should be retried, they are deemed idempotent
+         */
+        @Override
+        public boolean handleAsIdempotent(final HttpRequest request) {
+            return true;
         }
     }
 }

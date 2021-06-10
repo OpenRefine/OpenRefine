@@ -26,17 +26,7 @@
  ******************************************************************************/
 package org.openrefine.expr.functions.strings;
 
-import org.openrefine.expr.functions.strings.RPartition;
-import org.testng.annotations.Test;
-
-import org.openrefine.util.ParsingUtilities;
-import org.openrefine.util.TestUtils;
-
 public class RPartitionTests {
-    @Test
-    public void serializeRPartition() {
-        String json = "{\"description\":\"Returns an array of strings [a,frag,b] where a is the string part before the last occurrence of frag in s and b is what's left. If omitFragment is true, frag is not returned.\",\"params\":\"string s, string or regex frag, optional boolean omitFragment\",\"returns\":\"array\"}";
-        TestUtils.isSerializedTo(new RPartition(), json, ParsingUtilities.defaultWriter);
-    }
+
 }
 

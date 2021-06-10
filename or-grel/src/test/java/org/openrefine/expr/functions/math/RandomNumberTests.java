@@ -28,18 +28,10 @@ package org.openrefine.expr.functions.math;
 
 import org.openrefine.expr.EvalError;
 import org.openrefine.grel.FunctionTestBase;
-import org.openrefine.util.ParsingUtilities;
-import org.openrefine.util.TestUtils;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
 public class RandomNumberTests extends FunctionTestBase {
-
-    @Test
-    public void serializeRandomNumber() {
-        String json = "{\"description\":\"Returns a pseudo-random integer between the lower and upper bound (inclusive)\",\"params\":\"number lower bound, number upper bound\",\"returns\":\"number\"}";
-        TestUtils.isSerializedTo(new RandomNumber(), json, ParsingUtilities.defaultWriter);
-    }
     
     @Test
     public void testRandomNumberParameters() {

@@ -26,17 +26,7 @@
  ******************************************************************************/
 package org.openrefine.expr.functions.html;
 
-import org.openrefine.expr.functions.html.InnerHtml;
-import org.testng.annotations.Test;
-
-import org.openrefine.util.ParsingUtilities;
-import org.openrefine.util.TestUtils;
-
 public class InnerHtmlTests {
-    @Test
-    public void serializeInnerHtml() {
-        String json = "{\"description\":\"The innerHtml of an HTML element\",\"params\":\"Element e\",\"returns\":\"String innerHtml\"}";
-        TestUtils.isSerializedTo(new InnerHtml(), json, ParsingUtilities.defaultWriter);
-    }
+
 }
 

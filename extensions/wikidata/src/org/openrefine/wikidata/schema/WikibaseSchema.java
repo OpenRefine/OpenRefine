@@ -40,9 +40,9 @@ import org.openrefine.wikidata.schema.exceptions.SkipSchemaExpressionException;
 import org.openrefine.wikidata.updates.ItemUpdate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.wikidata.wdtk.wikibaseapi.ApiConnection;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -67,9 +67,6 @@ public class WikibaseSchema implements OverlayModel {
     @JsonProperty("mediaWikiApiEndpoint")
     protected String mediaWikiApiEndpoint;
 
-    @JsonIgnore
-    protected String editGroupsURLSchema;
-
     /**
      * Constructor.
      */
@@ -83,12 +80,10 @@ public class WikibaseSchema implements OverlayModel {
     @JsonCreator
     public WikibaseSchema(@JsonProperty("itemDocuments") List<WbItemDocumentExpr> exprs,
                           @JsonProperty("siteIri") String siteIri,
-                          @JsonProperty("mediaWikiApiEndpoint") String mediaWikiApiEndpoint,
-                          @JsonProperty("editGroupsURLSchema") String editGroupsURLSchema) {
+                          @JsonProperty("mediaWikiApiEndpoint") String mediaWikiApiEndpoint) {
         this.itemDocumentExprs = exprs;
         this.siteIri = siteIri;
-        this.mediaWikiApiEndpoint = mediaWikiApiEndpoint;
-        this.editGroupsURLSchema = editGroupsURLSchema;
+        this.mediaWikiApiEndpoint = mediaWikiApiEndpoint != null ? mediaWikiApiEndpoint : ApiConnection.URL_WIKIDATA_API;
     }
 
     /**
@@ -110,11 +105,6 @@ public class WikibaseSchema implements OverlayModel {
     @JsonProperty("mediaWikiApiEndpoint")
     public String getMediaWikiApiEndpoint() {
         return mediaWikiApiEndpoint;
-    }
-
-    @JsonIgnore
-    public String getEditGroupsURLSchema() {
-        return editGroupsURLSchema;
     }
 
     /**

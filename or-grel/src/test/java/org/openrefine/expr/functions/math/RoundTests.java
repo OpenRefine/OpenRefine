@@ -26,17 +26,6 @@
  ******************************************************************************/
 package org.openrefine.expr.functions.math;
 
-import org.openrefine.expr.functions.math.Round;
-import org.testng.annotations.Test;
-
-import org.openrefine.util.ParsingUtilities;
-import org.openrefine.util.TestUtils;
-
 public class RoundTests {
-    @Test
-    public void serializeRound() {
-        String json = "{\"description\":\"Returns n rounded\",\"params\":\"number n\",\"returns\":\"number\"}";
-        TestUtils.isSerializedTo(new Round(), json, ParsingUtilities.defaultWriter);
-    }
 }
 

@@ -26,17 +26,6 @@
  ******************************************************************************/
 package org.openrefine.expr.functions.math;
 
-import org.openrefine.expr.functions.math.Ln;
-import org.testng.annotations.Test;
-
-import org.openrefine.util.ParsingUtilities;
-import org.openrefine.util.TestUtils;
-
 public class LnTests {
-    @Test
-    public void serializeLn() {
-        String json = "{\"description\":\"Returns the natural log of n\",\"params\":\"number n\",\"returns\":\"number\"}";
-        TestUtils.isSerializedTo(new Ln(), json, ParsingUtilities.defaultWriter);
-    }
 }
 

@@ -1,9 +1,10 @@
 package org.openrefine.util;
 
+import java.time.OffsetDateTime;
+
 import org.openrefine.RefineTest;
 import org.testng.Assert;
 import org.testng.annotations.Test;
-import java.time.OffsetDateTime;
 
 public class StringUtilsTests extends RefineTest {
 

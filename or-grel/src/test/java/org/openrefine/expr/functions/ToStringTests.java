@@ -26,27 +26,16 @@
  ******************************************************************************/
 package org.openrefine.expr.functions;
 
-import org.openrefine.expr.EvalError;
-import org.openrefine.expr.functions.ToString;
-import org.openrefine.expr.util.CalendarParser;
-import org.openrefine.expr.util.CalendarParserException;
-import org.openrefine.grel.FunctionTestBase;
-
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertTrue;
 
+import org.openrefine.expr.EvalError;
+import org.openrefine.expr.util.CalendarParser;
+import org.openrefine.expr.util.CalendarParserException;
+import org.openrefine.grel.FunctionTestBase;
 import org.testng.annotations.Test;
 
-import org.openrefine.util.ParsingUtilities;
-import org.openrefine.util.TestUtils;
-
 public class ToStringTests extends FunctionTestBase {
-    @Test
-    public void serializeToString() {
-        String json = "{\"description\":\"Returns o converted to a string\",\"params\":\"o, string format (optional)\",\"returns\":\"string\"}";
-        TestUtils.isSerializedTo(new ToString(), json, ParsingUtilities.defaultWriter);
-    }
-
     @Test
     public void testToString() throws CalendarParserException {
         assertTrue(invoke("toString") instanceof EvalError);

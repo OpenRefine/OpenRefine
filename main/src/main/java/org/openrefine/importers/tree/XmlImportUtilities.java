@@ -265,7 +265,7 @@ public class XmlImportUtilities extends TreeImportUtilities {
         ) throws TreeReaderException{
         importTreeData(parser, columnIndexAllocator, rows, recordPath, rootColumnGroup, limit,
         		parameters.trimStrings, parameters.storeEmptyStrings, parameters.guessDataType,
-        		parameters.includeFileSources, parameters.fileSource);
+        		parameters.includeFileSources, parameters.fileSource, false, null);
     }
     
     static public void importTreeData(
@@ -279,7 +279,9 @@ public class XmlImportUtilities extends TreeImportUtilities {
         boolean storeEmptyStrings,
         boolean guessDataTypes,
         boolean includeFileSources,
-        String fileSource
+        String fileSource,
+        boolean includeArchiveName,
+        String archiveFileName
     ) throws TreeReaderException{
         if (logger.isTraceEnabled()) {
             logger.trace("importTreeData(TreeReader, Project, String[], ImportColumnGroup)");
@@ -289,7 +291,7 @@ public class XmlImportUtilities extends TreeImportUtilities {
                 Token eventType = parser.next();
                 if (eventType == Token.StartEntity) {
                     findRecord(columnIndexAllocator, rows, parser, recordPath, 0, rootColumnGroup, limit--, trimStrings, storeEmptyStrings,
-                            guessDataTypes, includeFileSources, fileSource);
+                            guessDataTypes, includeFileSources, fileSource, includeArchiveName, archiveFileName);
                 }
             }
         } catch (TreeReaderException e) {
@@ -321,7 +323,7 @@ public class XmlImportUtilities extends TreeImportUtilities {
             ImportParameters parameters
         ) throws TreeReaderException {
             findRecord(allocator, rows, parser, recordPath, pathIndex, rootColumnGroup, limit, parameters.trimStrings,
-                    parameters.storeEmptyStrings, parameters.guessDataType, parameters.includeFileSources, parameters.fileSource);
+                    parameters.storeEmptyStrings, parameters.guessDataType, parameters.includeFileSources, parameters.fileSource, false, null);
         }
 
     /**
@@ -334,6 +336,8 @@ public class XmlImportUtilities extends TreeImportUtilities {
      * @param trimStrings trim whitespace from strings if true
      * @param storeEmptyStrings store empty strings if true
      * @param guessDataTypes guess whether strings represent numbers and convert
+     * @param archiveFileName 
+     * @param includeArchiveName 
      * @throws TreeReaderException
      */
     static protected void findRecord(
@@ -348,7 +352,9 @@ public class XmlImportUtilities extends TreeImportUtilities {
         boolean storeEmptyStrings,
         boolean guessDataTypes,
         boolean includeFileSource,
-        String fileSource
+        String fileSource,
+        boolean includeArchiveName,
+        String archiveFileName
     ) throws TreeReaderException {
         if (logger.isTraceEnabled()) {
             logger.trace("findRecord(Project, TreeReader, String[], int, ImportColumnGroup - path:"+Arrays.toString(recordPath));
@@ -368,7 +374,7 @@ public class XmlImportUtilities extends TreeImportUtilities {
                     Token eventType = parser.next();
                     if (eventType == Token.StartEntity) {
                         findRecord(columnIndexAllocator, rows, parser, recordPath, pathIndex + 1, rootColumnGroup, limit--,
-                                trimStrings, storeEmptyStrings, guessDataTypes, includeFileSource, fileSource);
+                                trimStrings, storeEmptyStrings, guessDataTypes, includeFileSource, fileSource, includeArchiveName, archiveFileName);
                     } else if (eventType == Token.EndEntity) {
                         break;
                     } else if (eventType == Token.Value) {
@@ -377,13 +383,13 @@ public class XmlImportUtilities extends TreeImportUtilities {
                             String desiredFieldName = recordPath[pathIndex + 1];
                             String currentFieldName = parser.getFieldName();
                             if (desiredFieldName.equals(currentFieldName)) {
-                                processFieldAsRecord(columnIndexAllocator, rows, parser, rootColumnGroup, trimStrings, storeEmptyStrings, guessDataTypes, includeFileSource, fileSource);
+                                processFieldAsRecord(columnIndexAllocator, rows, parser, rootColumnGroup, trimStrings, storeEmptyStrings, guessDataTypes, includeFileSource, fileSource, includeArchiveName, archiveFileName);
                             }
                         }
                     }
                 }
             } else {
-                processRecord(columnIndexAllocator, rows, parser, rootColumnGroup, trimStrings, storeEmptyStrings, guessDataTypes, includeFileSource, fileSource);
+                processRecord(columnIndexAllocator, rows, parser, rootColumnGroup, trimStrings, storeEmptyStrings, guessDataTypes, includeFileSource, fileSource, includeArchiveName, archiveFileName);
             }
         } else {
             skip(parser);
@@ -420,7 +426,7 @@ public class XmlImportUtilities extends TreeImportUtilities {
         processRecord(allocator, rows, parser, rootColumnGroup,
         		parameter.trimStrings, parameter.storeEmptyStrings,
         		parameter.guessDataType, parameter.includeFileSources,
-        	    parameter.fileSource);
+        	    parameter.fileSource, false, null);
     }
     
     /**
@@ -429,6 +435,8 @@ public class XmlImportUtilities extends TreeImportUtilities {
      * @param project
      * @param parser
      * @param rootColumnGroup
+     * @param archiveFileName 
+     * @param includeArchiveName 
      * @throws ServletException
      */
     static protected void processRecord(
@@ -440,7 +448,9 @@ public class XmlImportUtilities extends TreeImportUtilities {
         boolean storeEmptyStrings,
         boolean guessDataTypes,
         boolean includeFileSources,
-        String fileSource
+        String fileSource,
+        boolean includeArchiveName,
+        String archiveFileName
     ) throws TreeReaderException {
         if (logger.isTraceEnabled()) {
             logger.trace("processRecord(Project,TreeReader,ImportColumnGroup)");
@@ -448,7 +458,7 @@ public class XmlImportUtilities extends TreeImportUtilities {
         ImportRecord record = new ImportRecord();
 
         processSubRecord(columnIndexAllocator, rows, parser, rootColumnGroup, record, 0, trimStrings, storeEmptyStrings, guessDataTypes);
-        addImportRecordToProject(record, rows, includeFileSources, fileSource);
+        addImportRecordToProject(record, rows, includeFileSources, fileSource, includeArchiveName, archiveFileName);
     }
 
     /**
@@ -468,7 +478,9 @@ public class XmlImportUtilities extends TreeImportUtilities {
         boolean storeEmptyStrings,
         boolean guessDataType,
         boolean includeFileSources,
-        String fileSource
+        String fileSource,
+        boolean includeArchiveName,
+        String archiveFileName
     ) throws TreeReaderException {
         if (logger.isTraceEnabled()) {
             logger.trace("processFieldAsRecord(Project,TreeReader,ImportColumnGroup)");
@@ -503,23 +515,19 @@ public class XmlImportUtilities extends TreeImportUtilities {
             );
         }
         if (record != null) {
-            addImportRecordToProject(record, rows, includeFileSources, fileSource); 
+            addImportRecordToProject(record, rows, includeFileSources, fileSource, includeArchiveName, archiveFileName); 
         }
     }
-
-    @Deprecated
-    static protected void addImportRecordToProject(ImportRecord record, List<Row> project,
-            boolean includeFileSources, String fileSource, boolean includeArchiveFileName, String archiveFileName) {
-    	// TODO pass on archiveFileName too
-        addImportRecordToProject(record, project, includeFileSources, fileSource);
-    }
     
-    static protected void addImportRecordToProject(ImportRecord record, List<Row> project, boolean includeFileSources, String fileSource) {
+    static protected void addImportRecordToProject(ImportRecord record, List<Row> project, boolean includeFileSources, String fileSource, boolean includeArchiveName, String archiveName) {
         for (List<Cell> row : record.rows) {
             if (row.size() > 0) {
                 Row realRow = new Row(row, false, false);
                 if (includeFileSources) {
-                	realRow = realRow.withCell(0, new Cell(fileSource, null));
+                	realRow = realRow.insertCell(0, new Cell(fileSource, null));
+                }
+                if (includeArchiveName) {
+                	realRow = realRow.insertCell(0, new Cell(archiveName, null));
                 }
                 project.add(realRow);
             }

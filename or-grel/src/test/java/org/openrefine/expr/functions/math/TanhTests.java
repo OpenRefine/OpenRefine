@@ -26,17 +26,6 @@
  ******************************************************************************/
 package org.openrefine.expr.functions.math;
 
-import org.openrefine.expr.functions.math.Tanh;
-import org.testng.annotations.Test;
-
-import org.openrefine.util.ParsingUtilities;
-import org.openrefine.util.TestUtils;
-
 public class TanhTests {
-    @Test
-    public void serializeTanh() {
-        String json = "{\"description\":\"Returns the hyperbolic tangent of a value\",\"params\":\"number d\",\"returns\":\"number\"}";
-        TestUtils.isSerializedTo(new Tanh(), json, ParsingUtilities.defaultWriter);
-    }
 }
 

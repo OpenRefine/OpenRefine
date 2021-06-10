@@ -26,17 +26,6 @@
  ******************************************************************************/
 package org.openrefine.expr.functions.math;
 
-import org.openrefine.expr.functions.math.Ceil;
-import org.testng.annotations.Test;
-
-import org.openrefine.util.ParsingUtilities;
-import org.openrefine.util.TestUtils;
-
 public class CeilTests {
-    @Test
-    public void serializeCeil() {
-        String json = "{\"description\":\"Returns the ceiling of a number\",\"params\":\"number d\",\"returns\":\"number\"}";
-        TestUtils.isSerializedTo(new Ceil(), json, ParsingUtilities.defaultWriter);
-    }
 }
 

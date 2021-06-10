@@ -33,8 +33,6 @@ import java.util.List;
 
 import org.openrefine.expr.EvalError;
 import org.openrefine.grel.FunctionTestBase;
-import org.openrefine.util.ParsingUtilities;
-import org.openrefine.util.TestUtils;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
@@ -56,12 +54,6 @@ public class TypeTests extends FunctionTestBase {
         Assert.assertEquals(invoke("type", "a string"),"string");
         Assert.assertEquals(invoke("type", dateTimeValue), "date");
         Assert.assertEquals(invoke("type", listArray), "array");
-    }
-
-    @Test
-    public void serializeType() {
-        String json = "{\"description\":\"Returns the type of o as a string ('string', 'date', 'number', 'array', 'boolean' or a class name)\",\"params\":\"object o\",\"returns\":\"string\"}";
-        TestUtils.isSerializedTo(new Type(), json, ParsingUtilities.defaultWriter);
     }
 }
 

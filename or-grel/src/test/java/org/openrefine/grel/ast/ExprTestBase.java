@@ -9,8 +9,6 @@ import java.util.stream.Collectors;
 
 import org.testng.annotations.BeforeMethod;
 
-import org.openrefine.expr.Evaluable;
-
 /**
  * Base class to test expression classes.
  * Contains utilities to test column dependency extraction.

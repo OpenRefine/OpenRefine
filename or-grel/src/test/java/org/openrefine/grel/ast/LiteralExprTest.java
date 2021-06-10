@@ -31,7 +31,6 @@ import static org.testng.Assert.assertTrue;
 
 import java.util.Collections;
 
-import org.openrefine.grel.ast.LiteralExpr;
 import org.testng.annotations.Test;
 
 public class LiteralExprTest extends ExprTestBase {

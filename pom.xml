@@ -68,15 +68,16 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <jackson.version>2.6.7</jackson.version>
     <powermock.version>2.0.9</powermock.version>
-    <guava.version>30.1-jre</guava.version>
+    <guava.version>30.1.1-jre</guava.version>
     <servlet-api.version>3.1.0</servlet-api.version>
     <butterfly.version>1.1.1</butterfly.version>
+    <servlet-api.version>4.0.1</servlet-api.version>
     <slf4j.version>1.7.30</slf4j.version>
     <hadoop.version>3.2.0</hadoop.version>
     <jetty.version>9.4.26.v20200117</jetty.version>
-    <testng.version>7.3.0</testng.version>
+    <testng.version>7.4.0</testng.version>
     <mockito.version>3.7.7</mockito.version>
-    <commons-io.version>2.8.0</commons-io.version>
+    <commons-io.version>2.9.0</commons-io.version>
     <commons-codec.version>1.13</commons-codec.version>
   </properties>
 
@@ -150,7 +151,7 @@
       <plugin>
         <groupId>org.jacoco</groupId>
         <artifactId>jacoco-maven-plugin</artifactId>
-        <version>0.8.6</version>
+        <version>0.8.7</version>
         <executions>
             <execution>
                 <id>prepare-agent</id>

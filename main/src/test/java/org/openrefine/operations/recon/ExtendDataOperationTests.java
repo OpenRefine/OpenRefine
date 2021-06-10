@@ -98,7 +98,7 @@ public class ExtendDataOperationTests extends RefineTest {
     private static final String responseP297 = "{"
 	+ "\"rows\": {"
 	+ "    \"Q794\": {\"P297\": [{\"str\": \"IR\"}]},"
-	+ "    \"Q863\": {\"P297\": [{\"str\": \"TJ\"}]},"
+	+ "    \"Q863\": {\"P297\": []},"
 	+ "    \"Q30\": {\"P297\": [{\"str\": \"US\"}]},"
 	+ "    \"Q17\": {\"P297\": [{\"str\": \"JP\"}]}"
 	+ "},"
@@ -292,7 +292,7 @@ public class ExtendDataOperationTests extends RefineTest {
         				Collections.singletonList(Collections.singletonList(new Cell("JP", null))))));
         RecordDataExtension dataExtension3 = new RecordDataExtension(
         		Collections.singletonMap(2L, new DataExtension(
-        				Collections.singletonList(Collections.singletonList(new Cell("TJ", null))))));
+        				Collections.emptyList())));
         RecordDataExtension dataExtension4 = new RecordDataExtension(
         		Collections.singletonMap(3L, new DataExtension(
         				Collections.singletonList(Collections.singletonList(new Cell("US", null))))));
@@ -338,7 +338,7 @@ public class ExtendDataOperationTests extends RefineTest {
         				Collections.singletonList(Collections.singletonList(new Cell("JP", null))))));
         RecordDataExtension dataExtension3 = new RecordDataExtension(
         		Collections.singletonMap(4L, new DataExtension(
-        				Collections.singletonList(Collections.singletonList(new Cell("TJ", null))))));
+        				Collections.emptyList())));
         RecordDataExtension dataExtension4 = new RecordDataExtension(
         		Collections.singletonMap(5L, new DataExtension(
         				Collections.singletonList(Collections.singletonList(new Cell("US", null))))));
@@ -364,10 +364,10 @@ public class ExtendDataOperationTests extends RefineTest {
         process.run();
 
         // Inspect rows
-        List<IndexedRow> rows = project.getCurrentGridState().collectRows();
-        Assert.assertTrue("IR".equals(rows.get(0).getRow().getCellValue(1)), "Bad country code for Iran.");
-        Assert.assertTrue("JP".equals(rows.get(1).getRow().getCellValue(1)), "Bad country code for Japan.");
-        Assert.assertTrue("TJ".equals(rows.get(2).getRow().getCellValue(1)), "Bad country code for Tajikistan.");
+		List<IndexedRow> rows = project.getCurrentGridState().collectRows();
+		Assert.assertTrue("IR".equals(rows.get(0).getRow().getCellValue(1)), "Bad country code for Iran.");
+		Assert.assertTrue("JP".equals(rows.get(1).getRow().getCellValue(1)), "Bad country code for Japan.");
+        Assert.assertNull(rows.get(2).getRow().getCell(1), "Expected a null country code.");
         Assert.assertTrue("US".equals(rows.get(3).getRow().getCellValue(1)), "Bad country code for United States.");
 
         // Make sure we did not create any recon stats for that column (no reconciled value)

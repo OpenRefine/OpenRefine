@@ -58,6 +58,8 @@ import org.openrefine.model.Project;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.net.PercentEscaper;
+
 public class ExportRowsCommand extends Command {
     private  static final Logger logger = LoggerFactory.getLogger("ExportRowsCommand");
     
@@ -105,7 +107,9 @@ public class ExportRowsCommand extends Command {
             if (!"true".equals(preview)) {
                 String path = request.getPathInfo();
                 String filename = path.substring(path.lastIndexOf('/') + 1);
-                response.setHeader("Content-Disposition", "attachment; filename=" + filename);
+                PercentEscaper escaper = new PercentEscaper("", false);
+                filename = escaper.escape(filename);
+                response.setHeader("Content-Disposition", "attachment; filename=" +filename+"; filename*=utf-8' '" + filename);
             }
             
             if (exporter instanceof WriterExporter) {

@@ -26,17 +26,6 @@
  ******************************************************************************/
 package org.openrefine.expr.functions.math;
 
-import org.openrefine.expr.functions.math.Radians;
-import org.testng.annotations.Test;
-
-import org.openrefine.util.ParsingUtilities;
-import org.openrefine.util.TestUtils;
-
 public class RadiansTests {
-    @Test
-    public void serializeRadians() {
-        String json = "{\"description\":\"Converts an angle in degrees to radians\",\"params\":\"number d\",\"returns\":\"number\"}";
-        TestUtils.isSerializedTo(new Radians(), json, ParsingUtilities.defaultWriter);
-    }
 }
 

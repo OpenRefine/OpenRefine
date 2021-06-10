@@ -27,21 +27,11 @@
 package org.openrefine.expr.functions.strings;
 
 import org.openrefine.expr.EvalError;
-import org.openrefine.expr.functions.strings.ToLowercase;
 import org.openrefine.grel.FunctionTestBase;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
-import org.openrefine.util.ParsingUtilities;
-import org.openrefine.util.TestUtils;
-
 public class ToLowercaseTests extends FunctionTestBase {
-    @Test
-    public void serializeToLowercase() {
-        String json = "{\"description\":\"Returns s converted to lowercase\",\"params\":\"string s\",\"returns\":\"string\"}";
-        TestUtils.isSerializedTo(new ToLowercase(), json, ParsingUtilities.defaultWriter);
-    }
-
     @Test
     public void testtoLowercaseInvalidParams() {
         Assert.assertTrue(invoke("toLowercase") instanceof EvalError);

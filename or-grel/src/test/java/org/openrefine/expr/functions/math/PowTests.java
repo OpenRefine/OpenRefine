@@ -26,17 +26,6 @@
  ******************************************************************************/
 package org.openrefine.expr.functions.math;
 
-import org.openrefine.expr.functions.math.Pow;
-import org.testng.annotations.Test;
-
-import org.openrefine.util.ParsingUtilities;
-import org.openrefine.util.TestUtils;
-
 public class PowTests {
-    @Test
-    public void serializePow() {
-        String json = "{\"description\":\"Returns a^b\",\"params\":\"number a, number b\",\"returns\":\"number\"}";
-        TestUtils.isSerializedTo(new Pow(), json, ParsingUtilities.defaultWriter);
-    }
 }
 

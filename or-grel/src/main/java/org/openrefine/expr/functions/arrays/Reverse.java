@@ -81,7 +81,7 @@ public class Reverse extends PureFunction {
 
     @Override
     public String getDescription() {
-        return "Reverses array a";
+        return "Reverses array a.";
     }
     
     @Override

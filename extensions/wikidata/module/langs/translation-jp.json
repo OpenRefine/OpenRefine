@@ -252,5 +252,6 @@
     "wikibase-management/dialog-header": "Wikibaseインスタンスを選択",
     "wikibase-extension/select-wikibase-instance": "Wikibaseインスタンスを選択",
     "wikibase-account/bot-passwords-alert": "メイン・パスワードを使用してログインしているようですが、ボット・パスワードの使用をお勧めします。その際は\"yourwikidatausername@yourbotname\"の形式のユーザー名を使用する必要があります。",
-    "wikibase-account/explain-bot-passwords": "<a href=\"$1\" target=\"_blank\">ボット・パスワード</a>でログインすることをお勧めします。詳しくは、<a href=\"https://docs.openrefine.org/manual/wikidata#manage-wikidata-account\" target=\"_blank\">wiki page</a>を参照してください。"
+    "wikibase-account/explain-bot-passwords": "<a href=\"$1\" target=\"_blank\">ボット・パスワード</a>でログインすることをお勧めします。詳しくは、<a href=\"https://docs.openrefine.org/manual/wikidata#manage-wikidata-account\" target=\"_blank\">wiki page</a>を参照してください。",
+    "wikibase-account/logo-alt-text": "$1 ロゴ"
 }

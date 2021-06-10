@@ -29,12 +29,9 @@ package org.openrefine.expr.functions.strings;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertTrue;
 
-import org.openrefine.expr.functions.strings.SmartSplit;
+import org.openrefine.expr.EvalError;
 import org.openrefine.grel.FunctionTestBase;
 import org.testng.annotations.Test;
-import org.openrefine.expr.EvalError;
-import org.openrefine.util.ParsingUtilities;
-import org.openrefine.util.TestUtils;
 
 public class SmartSplitTests extends FunctionTestBase {
 
@@ -81,12 +78,6 @@ public class SmartSplitTests extends FunctionTestBase {
         String testString = "teststring1#@$teststring2#@$teststring3#@$teststring4";
         Object actual = invoke("smartSplit", testString, "#@$");
         assertTrue(actual instanceof EvalError);
-    }
-
-    @Test
-    public void serializeSmartSplit() {
-        String json = "{\"description\":\"Returns the array of strings obtained by splitting s with separator sep. Handles quotes properly. Guesses tab or comma separator if \\\"sep\\\" is not given.\",\"params\":\"string s, optional string sep\",\"returns\":\"array\"}";
-        TestUtils.isSerializedTo(new SmartSplit(), json, ParsingUtilities.defaultWriter);
     }
 
 }

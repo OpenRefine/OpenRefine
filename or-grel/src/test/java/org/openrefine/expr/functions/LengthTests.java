@@ -26,17 +26,6 @@
  ******************************************************************************/
 package org.openrefine.expr.functions;
 
-import org.openrefine.expr.functions.Length;
-import org.testng.annotations.Test;
-
-import org.openrefine.util.ParsingUtilities;
-import org.openrefine.util.TestUtils;
-
 public class LengthTests {
-    @Test
-    public void serializeLength() {
-        String json = "{\"description\":\"Returns the length of o\",\"params\":\"array or string o\",\"returns\":\"number\"}";
-        TestUtils.isSerializedTo(new Length(), json, ParsingUtilities.defaultWriter);
-    }
 }
 

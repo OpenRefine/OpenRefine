@@ -26,17 +26,6 @@
  ******************************************************************************/
 package org.openrefine.expr.functions.math;
 
-import org.openrefine.expr.functions.math.Abs;
-import org.testng.annotations.Test;
-
-import org.openrefine.util.ParsingUtilities;
-import org.openrefine.util.TestUtils;
-
 public class AbsTests {
-    @Test
-    public void serializeAbs() {
-        String json = "{\"description\":\"Returns the absolute value of a number\",\"params\":\"number d\",\"returns\":\"number\"}";
-        TestUtils.isSerializedTo(new Abs(), json, ParsingUtilities.defaultWriter);
-    }
 }
 

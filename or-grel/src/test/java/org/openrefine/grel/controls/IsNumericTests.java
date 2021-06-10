@@ -26,11 +26,9 @@
  ******************************************************************************/
 package org.openrefine.grel.controls;
 
-import org.openrefine.grel.controls.IsNumeric;
-import org.testng.annotations.Test;
-
 import org.openrefine.util.ParsingUtilities;
 import org.openrefine.util.TestUtils;
+import org.testng.annotations.Test;
 
 public class IsNumericTests {
     @Test

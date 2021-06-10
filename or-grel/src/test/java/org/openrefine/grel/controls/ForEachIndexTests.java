@@ -26,11 +26,9 @@
  ******************************************************************************/
 package org.openrefine.grel.controls;
 
-import org.openrefine.grel.controls.ForEachIndex;
-import org.testng.annotations.Test;
-
 import org.openrefine.util.ParsingUtilities;
 import org.openrefine.util.TestUtils;
+import org.testng.annotations.Test;
 
 public class ForEachIndexTests {
     @Test

@@ -9,7 +9,6 @@ import static org.testng.Assert.assertTrue;
 
 import org.openrefine.grel.Function;
 import org.openrefine.grel.PureFunction;
-import org.openrefine.grel.ast.FunctionCallExpr;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 

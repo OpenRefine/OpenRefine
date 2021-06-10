@@ -26,17 +26,6 @@
  ******************************************************************************/
 package org.openrefine.expr.functions.strings;
 
-import org.openrefine.expr.functions.strings.SplitByCharType;
-import org.testng.annotations.Test;
-
-import org.openrefine.util.ParsingUtilities;
-import org.openrefine.util.TestUtils;
-
 public class SplitByCharTypeTests {
-    @Test
-    public void serializeSplitByCharType() {
-        String json = "{\"description\":\"Returns an array of strings obtained by splitting s grouping consecutive chars by their unicode type\",\"params\":\"string s\",\"returns\":\"array\"}";
-        TestUtils.isSerializedTo(new SplitByCharType(), json, ParsingUtilities.defaultWriter);
-    }
 }
 

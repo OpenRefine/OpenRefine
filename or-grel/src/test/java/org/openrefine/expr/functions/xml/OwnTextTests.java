@@ -26,15 +26,6 @@
  ******************************************************************************/
 package org.openrefine.expr.functions.xml;
 
-import org.openrefine.util.ParsingUtilities;
-import org.openrefine.util.TestUtils;
-import org.testng.annotations.Test;
-
 public class OwnTextTests {
-    @Test
-    public void serializeOwnText() {
-        String json = "{\"description\":\"Gets the text owned by this XML/HTML element only; does not get the combined text of all children.\",\"params\":\"Element e\",\"returns\":\"String ownText\"}";
-        TestUtils.isSerializedTo(new OwnText(), json, ParsingUtilities.defaultWriter);
-    }
 }
 

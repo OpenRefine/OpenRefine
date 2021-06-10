@@ -26,17 +26,6 @@
  ******************************************************************************/
 package org.openrefine.expr.functions.math;
 
-import org.openrefine.expr.functions.math.Even;
-import org.testng.annotations.Test;
-
-import org.openrefine.util.ParsingUtilities;
-import org.openrefine.util.TestUtils;
-
 public class EvenTests {
-    @Test
-    public void serializeEven() {
-        String json = "{\"description\":\"Rounds the number up to the nearest even integer\",\"params\":\"number d\",\"returns\":\"number\"}";
-        TestUtils.isSerializedTo(new Even(), json, ParsingUtilities.defaultWriter);
-    }
 }
 

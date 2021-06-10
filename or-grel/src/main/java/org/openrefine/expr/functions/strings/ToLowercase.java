@@ -53,7 +53,7 @@ public class ToLowercase extends PureFunction {
     
     @Override
     public String getDescription() {
-        return "Returns s converted to lowercase";
+        return "Returns string s converted to all lowercase characters.";
     }
     
     @Override

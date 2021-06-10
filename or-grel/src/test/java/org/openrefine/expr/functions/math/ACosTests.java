@@ -26,17 +26,6 @@
  ******************************************************************************/
 package org.openrefine.expr.functions.math;
 
-import org.openrefine.expr.functions.math.ACos;
-import org.testng.annotations.Test;
-
-import org.openrefine.util.ParsingUtilities;
-import org.openrefine.util.TestUtils;
-
 public class ACosTests {
-    @Test
-    public void serializeACos() {
-        String json = "{\"description\":\"Returns the arc cosine of an angle, in the range 0 through PI\",\"params\":\"number d\",\"returns\":\"number\"}";
-        TestUtils.isSerializedTo(new ACos(), json, ParsingUtilities.defaultWriter);
-    }
 }
 

@@ -139,6 +139,7 @@ public class JythonEvaluable implements Evaluable {
             return new EvalError(e.toString());
         }
     }
+
     
     protected Object unwrap(Object result) {
         if (result != null) {

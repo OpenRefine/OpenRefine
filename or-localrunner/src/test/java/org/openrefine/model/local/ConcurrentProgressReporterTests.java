@@ -1,12 +1,10 @@
 package org.openrefine.model.local;
 
-import org.junit.Test;
 import org.openrefine.process.ProgressReporter;
+import org.testng.annotations.Test;
 
 public class ConcurrentProgressReporterTests {
-    
-    
-    
+
     @Test
     public void testIncrements() {
         

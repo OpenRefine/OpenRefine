@@ -26,17 +26,6 @@
  ******************************************************************************/
 package org.openrefine.expr.functions.math;
 
-import org.openrefine.expr.functions.math.Sin;
-import org.testng.annotations.Test;
-
-import org.openrefine.util.ParsingUtilities;
-import org.openrefine.util.TestUtils;
-
 public class SinTests {
-    @Test
-    public void serializeSin() {
-        String json = "{\"description\":\"Returns the trigonometric sine of an angle\",\"params\":\"number d\",\"returns\":\"number\"}";
-        TestUtils.isSerializedTo(new Sin(), json, ParsingUtilities.defaultWriter);
-    }
 }
 

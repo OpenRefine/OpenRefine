@@ -26,17 +26,6 @@
  ******************************************************************************/
 package org.openrefine.expr.functions.booleans;
 
-import org.openrefine.expr.functions.booleans.Xor;
-import org.testng.annotations.Test;
-
-import org.openrefine.util.ParsingUtilities;
-import org.openrefine.util.TestUtils;
-
 public class XorTests {
-    @Test
-    public void serializeXor() {
-        String json = "{\"description\":\"XORs two or more boolean values\",\"params\":\"boolean a, boolean b\",\"returns\":\"boolean\"}";
-        TestUtils.isSerializedTo(new Xor(), json, ParsingUtilities.defaultWriter);
-    }
 }
 

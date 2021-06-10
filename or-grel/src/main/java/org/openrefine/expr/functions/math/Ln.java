@@ -52,7 +52,7 @@ public class Ln extends PureFunction {
 
     @Override
     public String getDescription() {
-        return "Returns the natural log of n";
+        return "Returns the natural logarithm of n.";
     }
     
     @Override

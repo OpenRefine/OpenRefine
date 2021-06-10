@@ -26,21 +26,19 @@
  ******************************************************************************/
 package org.openrefine.grel.controls;
 
-import org.openrefine.RefineTest;
-import org.openrefine.expr.EvalError;
-import org.openrefine.expr.Evaluable;
-import org.openrefine.expr.MetaParser;
-import org.openrefine.expr.ParsingException;
-import org.openrefine.grel.controls.ForEach;
 import static org.testng.Assert.assertTrue;
 import static org.testng.Assert.fail;
 
 import java.util.Properties;
 
-import org.testng.annotations.Test;
-
+import org.openrefine.RefineTest;
+import org.openrefine.expr.EvalError;
+import org.openrefine.expr.Evaluable;
+import org.openrefine.expr.MetaParser;
+import org.openrefine.expr.ParsingException;
 import org.openrefine.util.ParsingUtilities;
 import org.openrefine.util.TestUtils;
+import org.testng.annotations.Test;
 
 public class ForEachTests extends RefineTest {
     @Test

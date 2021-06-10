@@ -26,17 +26,6 @@
  ******************************************************************************/
 package org.openrefine.expr.functions.math;
 
-import org.openrefine.expr.functions.math.GreatestCommonDenominator;
-import org.testng.annotations.Test;
-
-import org.openrefine.util.ParsingUtilities;
-import org.openrefine.util.TestUtils;
-
 public class GreatestCommonDenominatorTests {
-    @Test
-    public void serializeGreatestCommonDenominator() {
-        String json = "{\"description\":\"Returns the greatest common denominator of the two numbers\",\"params\":\"number d, number e\",\"returns\":\"number\"}";
-        TestUtils.isSerializedTo(new GreatestCommonDenominator(), json, ParsingUtilities.defaultWriter);
-    }
 }
 

@@ -56,7 +56,7 @@ public class WbStringVariable extends WbVariableExpr<StringValue> {
     @Override
     public StringValue fromCell(Cell cell, ExpressionContext ctxt)
             throws SkipSchemaExpressionException {
-        if (!cell.value.toString().isEmpty()) {
+        if (cell != null && !cell.value.toString().isEmpty()) {
         	String stringValue = cell.value.toString();
         	if (cell.value instanceof Double && ((Double)cell.value) % 1 == 0) {
         		stringValue = Long.toString(((Double)cell.value).longValue());

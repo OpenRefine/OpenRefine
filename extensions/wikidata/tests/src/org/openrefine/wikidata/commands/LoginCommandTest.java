@@ -14,6 +14,7 @@ import static org.openrefine.wikidata.commands.LoginCommand.USERNAME;
 import static org.openrefine.wikidata.commands.LoginCommand.WIKIBASE_COOKIE_PREFIX;
 import static org.openrefine.wikidata.commands.LoginCommand.getCookieValue;
 import static org.openrefine.wikidata.commands.LoginCommand.removeCRLF;
+import static org.openrefine.wikidata.commands.LoginCommand.sanitizeCookieKey;
 import static org.powermock.api.mockito.PowerMockito.doNothing;
 import static org.powermock.api.mockito.PowerMockito.doThrow;
 import static org.powermock.api.mockito.PowerMockito.mock;
@@ -60,7 +61,7 @@ import org.wikidata.wdtk.wikibaseapi.apierrors.MediaWikiApiErrorException;
 public class LoginCommandTest extends CommandTest {
 
     private static final String apiEndpoint = "https://www.wikidata.org/w/api.php";
-    private static final String apiEndpointPrefix = apiEndpoint + "-";
+    private static final String apiEndpointPrefix = sanitizeCookieKey(apiEndpoint) + "-";
 
     private static final String username = "my_username";
     private static final String password = "my_password";
@@ -586,5 +587,10 @@ public class LoginCommandTest extends CommandTest {
     public void testRemoveCRLF() {
         assertEquals(removeCRLF("a\rb\nc\r\n\r\nd"), "abcd");
         assertEquals(removeCRLF(null), "");
+    }
+    
+    @Test
+    public void testSanitizeCookieKey() {
+        assertEquals(sanitizeCookieKey("https://www.wikidata.org/"), "https---www.wikidata.org-");
     }
 }
