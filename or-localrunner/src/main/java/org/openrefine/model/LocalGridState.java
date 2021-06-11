@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
 import java.io.UncheckedIOException;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -139,6 +140,16 @@ public class LocalGridState implements GridState {
                     .map(tuple -> tuple.getValue())
                     .collect(Collectors.toList());
         }
+    }
+    
+    @Override
+    public List<IndexedRow> getRows(List<Long> rowIndices) {
+        Map<Long, IndexedRow> results = grid.getByKeys(rowIndices.stream().collect(Collectors.toSet()))
+                .stream()
+                .collect(Collectors.toMap(t -> t.getKey(), t -> new IndexedRow(t.getKey(), t.getValue())));
+        return rowIndices.stream()
+                .map(i -> results.get(i))
+                .collect(Collectors.toList());
     }
 
     @Override
