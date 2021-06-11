@@ -2,10 +2,14 @@
 package org.openrefine.model.local;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.function.BiFunction;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -125,6 +129,52 @@ public class PairPLL<K, V> extends PLL<Tuple2<K, V>> {
         Stream<Tuple2<K, V>> stream = streamFromKey(from, comparator);
         return stream
                 .limit(limit).collect(Collectors.toList());
+    }
+
+    /**
+     * Returns the list of elements whose keys match one of the supplied keys.
+     * 
+     * @param keys
+     *            the keys to look up
+     * @return the list of elements in the order they appear in the PLL
+     */
+    public List<Tuple2<K, V>> getByKeys(Set<K> keys) {
+        if (partitioner.isEmpty() || !(partitioner.get() instanceof LongRangePartitioner)) {
+            return this.filter(t -> keys.contains(t.getKey())).collect();
+        } else {
+            // if the PLL is sorted by keys then we can only scan the partitions
+            // where the keys would go, and stop scanning those partitions as soon
+            // as a greater element is found
+            LongRangePartitioner sortedPartitioner = (LongRangePartitioner) partitioner.get();
+            Set<Long> longKeys = keys.stream().map(k -> (Long) k).collect(Collectors.toSet());
+
+            // Compute the largest key to look for in each partition
+            Map<Integer, Long> maxKey = new HashMap<>();
+            for (Long key : longKeys) {
+                int partitionId = sortedPartitioner.getPartition(key);
+                long newMax = key;
+                if (maxKey.containsKey(partitionId)) {
+                    newMax = Math.max(maxKey.get(partitionId), key);
+                }
+                maxKey.put(partitionId, newMax);
+            }
+
+            // Stream in each partition where we could find any of the supplied keys
+            List<List<Tuple2<K, V>>> partitionResults = runOnPartitionsWithoutInterruption(
+                    partition -> {
+                        long max = maxKey.get(partition.getIndex());
+                        return iterate(partition)
+                                .takeWhile(tuple -> (long) tuple.getKey() <= max)
+                                .filter(tuple -> longKeys.contains(tuple.getKey()))
+                                .collect(Collectors.toList());
+                    },
+                    getPartitions().stream()
+                            .filter(partition -> maxKey.containsKey(partition.getIndex())));
+
+            return partitionResults.stream()
+                    .flatMap(Collection::stream)
+                    .collect(Collectors.toList());
+        }
     }
 
     /**

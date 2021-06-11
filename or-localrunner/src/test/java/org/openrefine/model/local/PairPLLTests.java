@@ -4,8 +4,10 @@ package org.openrefine.model.local;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.testng.Assert;
@@ -110,6 +112,49 @@ public class PairPLLTests extends PLLTestsBase {
                 Arrays.asList(
                         Tuple2.of(3L, 13),
                         Tuple2.of(4L, 14)));
+    }
+
+    @Test
+    public void testGetByKeysWithPartitioner() {
+        PairPLL<Long, Integer> zipped = parallelize(4, Arrays.asList(10, 11, 12, 13, 14, 15, 16, 17, 18, 19)).zipWithIndex();
+
+        Assert.assertEquals(
+                zipped.getByKeys(Collections.emptySet()),
+                Collections.emptyList());
+
+        Assert.assertEquals(
+                zipped.getByKeys(Collections.singleton(4L)),
+                Collections.singletonList(Tuple2.of(4L, 14)));
+
+        Set<Long> keys = new HashSet<>();
+        keys.add(3L);
+        keys.add(4L);
+        keys.add(9L);
+        Assert.assertEquals(
+                zipped.getByKeys(keys),
+                Arrays.asList(Tuple2.of(3L, 13), Tuple2.of(4L, 14), Tuple2.of(9L, 19)));
+    }
+
+    @Test
+    public void testGetByKeysWithoutPartitioner() {
+        PairPLL<Long, Integer> zipped = new PairPLL<Long, Integer>(
+                parallelize(4, Arrays.asList(10, 11, 12, 13, 14, 15, 16, 17, 18, 19)).zipWithIndex().toPLL(), Optional.empty());
+
+        Assert.assertEquals(
+                zipped.getByKeys(Collections.emptySet()),
+                Collections.emptyList());
+
+        Assert.assertEquals(
+                zipped.getByKeys(Collections.singleton(4L)),
+                Collections.singletonList(Tuple2.of(4L, 14)));
+
+        Set<Long> keys = new HashSet<>();
+        keys.add(3L);
+        keys.add(4L);
+        keys.add(9L);
+        Assert.assertEquals(
+                zipped.getByKeys(keys),
+                Arrays.asList(Tuple2.of(3L, 13), Tuple2.of(4L, 14), Tuple2.of(9L, 19)));
     }
 
     @Test
