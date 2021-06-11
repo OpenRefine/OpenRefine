@@ -35,7 +35,6 @@ package org.openrefine.commands.recon;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -45,24 +44,26 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.openrefine.browsing.Engine;
+import org.openrefine.browsing.EngineConfig;
 import org.openrefine.commands.Command;
 import org.openrefine.model.Cell;
 import org.openrefine.model.ColumnMetadata;
 import org.openrefine.model.ColumnModel;
 import org.openrefine.model.GridState;
+import org.openrefine.model.IndexedRow;
 import org.openrefine.model.Project;
 import org.openrefine.model.Row;
 import org.openrefine.model.recon.ReconCandidate;
 import org.openrefine.model.recon.ReconConfig;
 import org.openrefine.model.recon.ReconciledDataExtensionJob;
-import org.openrefine.model.recon.StandardReconConfig;
 import org.openrefine.model.recon.ReconciledDataExtensionJob.ColumnInfo;
 import org.openrefine.model.recon.ReconciledDataExtensionJob.DataExtension;
 import org.openrefine.model.recon.ReconciledDataExtensionJob.DataExtensionConfig;
-import org.openrefine.util.ParsingUtilities;
+import org.openrefine.model.recon.StandardReconConfig;
+import org.openrefine.sorting.SortingConfig;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.core.type.TypeReference;
 
 public class PreviewExtendDataCommand extends Command {
     
@@ -91,17 +92,20 @@ public class PreviewExtendDataCommand extends Command {
             Project project = getProject(request);
             String columnName = request.getParameter("columnName");
             
-            String rowIndicesString = request.getParameter("rowIndices");
-            if (rowIndicesString == null) {
-                respond(response, "{ \"code\" : \"error\", \"message\" : \"No row indices specified\" }");
-                return;
-            }
-            
             String jsonString = request.getParameter("extension");
             DataExtensionConfig config = DataExtensionConfig.reconstruct(jsonString);
             
-            List<Integer> rowIndices = ParsingUtilities.mapper.readValue(rowIndicesString, new TypeReference<List<Integer>>() {});
-            int length = rowIndices.size();
+            EngineConfig engineConfig = getEngineConfig(request);
+            String limitString = request.getParameter("limit");
+            int limit = 10;
+            try {
+            	if (limitString != null) {
+            		limit = Integer.parseInt(limitString);
+            	}
+            } catch(NumberFormatException e) {
+            	throw new IllegalArgumentException("Invalid limit specified", e);
+            }
+            SortingConfig sortingConfig = getSortingConfig(request);
             ColumnModel model = project.getColumnModel();
             ColumnMetadata column = model.getColumnByName(columnName);
             int cellIndex = model.getColumnIndexByName(columnName);
@@ -128,10 +132,11 @@ public class PreviewExtendDataCommand extends Command {
             Set<String> ids = new HashSet<String>();
             
             GridState state = project.getCurrentGridState();
-            for (int i = 0; i < length; i++) {
-                int rowIndex = rowIndices.get(i);
+            Engine engine = new Engine(state, engineConfig);
+            List<IndexedRow> previewRows = state.getRows(engine.combinedRowFilters(), sortingConfig, 0, limit);
+            for (IndexedRow indexedRow : previewRows) {
                 try {
-                    Row row = state.getRow(rowIndex);
+                    Row row = indexedRow.getRow();
                     Cell cell = row.getCell(cellIndex);
                     if (cell != null && cell.recon != null && cell.recon.match != null) {
                         topicNames.add(cell.recon.match.name);

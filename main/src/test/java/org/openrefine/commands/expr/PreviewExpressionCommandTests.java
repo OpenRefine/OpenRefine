@@ -40,6 +40,8 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.openrefine.RefineTest;
 import org.openrefine.commands.Command;
+import org.openrefine.expr.MetaParser;
+import org.openrefine.grel.Parser;
 import org.openrefine.model.Project;
 import org.openrefine.util.TestUtils;
 import org.testng.annotations.BeforeMethod;
@@ -69,6 +71,8 @@ public class PreviewExpressionCommandTests extends RefineTest {
         		{"e","f"},
         		{"g","h"}
         		});
+        
+        MetaParser.registerLanguageParser("grel", "GREL", Parser.grelParser, "value");
     }
     
     @Test
@@ -76,12 +80,22 @@ public class PreviewExpressionCommandTests extends RefineTest {
 
         when(request.getParameter("project")).thenReturn(Long.toString(project.getId()));
         when(request.getParameter("cellIndex")).thenReturn("1");
+        when(request.getParameter("limit")).thenReturn("2");
         when(request.getParameter("expression")).thenReturn("grel:value + \"_u\"");
-        when(request.getParameter("rowIndices")).thenReturn("[0,2]");
+        when(request.getParameter("engine")).thenReturn("{\"mode\":\"row-based\",\"facets\":[]}");
 
         String json = "{\n" + 
                 "       \"code\" : \"ok\",\n" + 
-                "       \"results\" : [ \"d_u\", \"h_u\" ]\n" + 
+                "       \"results\" : [ {"
+                + "          \"rowIndex\": 0,"
+                + "          \"value\": \"d\","
+                + "          \"result\":\"d_u\""
+                + "		},"
+                + "	    {"
+                + "          \"rowIndex\": 1,"
+                + "          \"value\": \"f\","
+                + "          \"result\": \"f_u\""
+                + "     }]\n" + 
                 "     }";
         command.doPost(request, response);
         TestUtils.assertEqualsAsJson(writer.toString(), json);
@@ -92,8 +106,9 @@ public class PreviewExpressionCommandTests extends RefineTest {
 
         when(request.getParameter("project")).thenReturn(Long.toString(project.getId()));
         when(request.getParameter("cellIndex")).thenReturn("1");
+        when(request.getParameter("limit")).thenReturn("2");
         when(request.getParameter("expression")).thenReturn("grel:value +");
-        when(request.getParameter("rowIndices")).thenReturn("[0,2]");
+        when(request.getParameter("engine")).thenReturn("{\"mode\":\"row-based\",\"facets\":[]}");
 
         String json = "{\n" + 
                 "       \"code\" : \"error\",\n" + 

@@ -33,10 +33,6 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package org.openrefine;
 
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
 import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
@@ -70,11 +66,7 @@ import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.BeforeSuite;
 
-import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.fasterxml.jackson.databind.node.BooleanNode;
-import com.fasterxml.jackson.databind.node.IntNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.fasterxml.jackson.databind.node.TextNode;
 
 /**
  * A base class containing various utilities to help testing Refine.
@@ -169,12 +161,16 @@ public class RefineTest extends PowerMockTestCase {
      * @return
      */
     protected Project createProject(String projectName, String[] columns, Serializable[][] rows) {
-    	ProjectMetadata meta = new ProjectMetadata();
-    	meta.setName(projectName);
     	GridState state = createGrid(columns, rows);
-    	Project project = new Project(state, new LazyChangeDataStore());
-    	ProjectManager.singleton.registerProject(project, meta);
-    	return project;
+    	return createProject(projectName, state);
+    }
+    
+    protected Project createProject(String projectName, GridState grid) {
+        ProjectMetadata meta = new ProjectMetadata();
+        meta.setName(projectName);
+        Project project = new Project(grid, new LazyChangeDataStore());
+        ProjectManager.singleton.registerProject(project, meta);
+        return project;
     }
     
     protected GridState createGrid(String[] columns, Serializable[][] rows) {

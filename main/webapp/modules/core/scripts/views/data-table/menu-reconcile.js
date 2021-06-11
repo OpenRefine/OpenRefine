@@ -203,8 +203,6 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
     var level = DialogSystem.showDialog(frame);
     var dismiss = function() { DialogSystem.dismissUntil(level - 1); };
 
-    var o = DataTableView.sampleVisibleRows(column);
-    
     elmts.cancelButton.click(dismiss);
     elmts.form.submit(function(event) {
       event.preventDefault();

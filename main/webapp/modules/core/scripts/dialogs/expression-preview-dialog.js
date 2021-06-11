@@ -31,7 +31,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 */
 
-function ExpressionPreviewDialog(title, cellIndex, rowIndices, values, expression, onDone) {
+function ExpressionPreviewDialog(title, cellIndex, engineConfig, sortingConfig, limit, expression, onDone) {
     this._onDone = onDone;
 
     var self = this;
@@ -57,8 +57,9 @@ function ExpressionPreviewDialog(title, cellIndex, rowIndices, values, expressio
     this._previewWidget = new ExpressionPreviewDialog.Widget(
         this._elmts, 
         cellIndex,
-        rowIndices,
-        values,
+        engineConfig,
+        sortingConfig,
+        limit,
         expression
     );
 }
@@ -80,8 +81,9 @@ ExpressionPreviewDialog.generateWidgetHtml = function() {
 ExpressionPreviewDialog.Widget = function(
     elmts, 
     cellIndex,
-    rowIndices,
-    values,
+    engineConfig,
+    sortingConfig,
+    limit,
     expression
 ) {
     var language = "grel";
@@ -110,8 +112,9 @@ ExpressionPreviewDialog.Widget = function(
     
     this._elmts = elmts;
     this._cellIndex = cellIndex;
-    this._rowIndices = rowIndices;
-    this._values = values;
+    this._engineConfig = engineConfig;
+    this._sortingConfig = sortingConfig;
+    this._limit = limit;
     
     this._results = null;
     this._timerID = null;
@@ -418,8 +421,10 @@ ExpressionPreviewDialog.Widget.prototype.update = function() {
     $.post(
         "command/core/preview-expression?" + $.param(params), 
         {
-        	expression: this._getLanguage() + ":" + expression,
-            rowIndices: JSON.stringify(this._rowIndices) 
+            expression: this._getLanguage() + ":" + expression,
+            engine: JSON.stringify(this._engineConfig),
+            sortingConfig: JSON.stringify(this._sortingConfig),
+            limit: this._limit
         },
         function(data) {
             if (data.code != "error") {
@@ -468,16 +473,16 @@ ExpressionPreviewDialog.Widget.prototype._renderPreview = function(expression, d
         this._elmts.expressionPreviewParsingStatus.empty().addClass("error").text(message);
     }
     
-    for (var i = 0; i < this._values.length; i++) {
+    for (var i = 0; i < this._results.length; i++) {
         var tr = table.insertRow(table.rows.length);
         
-        $(tr.insertCell(0)).attr("width", "1%").html((this._rowIndices[i] + 1) + ".");
+        $(tr.insertCell(0)).attr("width", "1%").html((this._results[i].rowIndex + 1) + ".");
         
-        renderValue($(tr.insertCell(1)).addClass("expression-preview-value"), this._values[i]);
+        renderValue($(tr.insertCell(1)).addClass("expression-preview-value"), this._results[i].value);
         
         var tdValue = $(tr.insertCell(2)).addClass("expression-preview-value");
         if (this._results !== null) {
-            var v = this._results[i];
+            var v = this._results[i].result;
             renderValue(tdValue, v);
         }
     }

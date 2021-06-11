@@ -55,6 +55,7 @@ import org.openrefine.browsing.EngineConfig;
 import org.openrefine.history.HistoryEntry;
 import org.openrefine.model.Project;
 import org.openrefine.process.Process;
+import org.openrefine.sorting.SortingConfig;
 import org.openrefine.util.ParsingUtilities;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -419,7 +420,20 @@ public abstract class Command {
         }
     }
 
-    static protected void redirect(HttpServletResponse response, String url) throws IOException {
+    protected SortingConfig getSortingConfig(HttpServletRequest request) {
+	    SortingConfig sortingConfig = SortingConfig.NO_SORTING;
+		try {
+	        String sortingJson = request.getParameter("sorting");
+	        if (sortingJson != null) {
+	            sortingConfig = SortingConfig.reconstruct(sortingJson);
+	        }
+	        return sortingConfig;
+	    } catch (IOException e) {
+	    	throw new IllegalArgumentException("Invalid sorting configuration provided", e);
+	    }
+	}
+
+	static protected void redirect(HttpServletResponse response, String url) throws IOException {
         response.sendRedirect(url);
     }
 

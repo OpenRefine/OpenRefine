@@ -77,12 +77,13 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
       dismiss();
     });
 
-    var o = DataTableView.sampleVisibleRows(column);
+    var o = DataTableView.sampleVisibleRows();
     var previewWidget = new ExpressionPreviewDialog.Widget(
       elmts,
       Refine.columnNameToColumnIndex(column.name),
-      o.rowIndices,
-      o.values,
+      o.engineConfig,
+      o.sortingConfig,
+      o.limit,
       null
     );
     previewWidget._prepareUpdate = function(params) {
