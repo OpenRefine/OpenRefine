@@ -31,10 +31,12 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
  */
 
-function ExtendReconciledDataPreviewDialog(column, columnIndex, rowIndices, onDone) {
+function ExtendReconciledDataPreviewDialog(column, columnIndex, engineConfig, sortingConfig, limit, onDone) {
   this._column = column;
   this._columnIndex = columnIndex;
-  this._rowIndices = rowIndices;
+  this._engineConfig = engineConfig;
+  this._sortingConfig = sortingConfig;
+  this._limit = limit;
   this._onDone = onDone;
   this._extension = { properties: [] };
 
@@ -203,7 +205,9 @@ ExtendReconciledDataPreviewDialog.prototype._update = function() {
     Refine.postCSRF(
         "command/core/preview-extend-data?" + $.param(params),
         {
-        rowIndices: JSON.stringify(this._rowIndices),
+        engine: JSON.stringify(this._engineConfig),
+        sorting: JSON.stringify(this._sortingConfig),
+        limit: this._limit,
         extension: JSON.stringify(this._extension)
         },
         function(data) {

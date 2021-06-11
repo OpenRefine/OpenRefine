@@ -60,6 +60,7 @@ import org.openrefine.browsing.EngineConfig;
 import org.openrefine.history.HistoryEntry;
 import org.openrefine.model.Project;
 import org.openrefine.process.Process;
+import org.openrefine.sorting.SortingConfig;
 import org.openrefine.util.ParsingUtilities;
 
 /**
@@ -410,6 +411,19 @@ public abstract class Command {
 
         } catch (Exception e1) {
             e1.printStackTrace();
+        }
+    }
+
+    protected SortingConfig getSortingConfig(HttpServletRequest request) {
+        SortingConfig sortingConfig = SortingConfig.NO_SORTING;
+        try {
+            String sortingJson = request.getParameter("sorting");
+            if (sortingJson != null) {
+                sortingConfig = SortingConfig.reconstruct(sortingJson);
+            }
+            return sortingConfig;
+        } catch (IOException e) {
+            throw new IllegalArgumentException("Invalid sorting configuration provided", e);
         }
     }
 

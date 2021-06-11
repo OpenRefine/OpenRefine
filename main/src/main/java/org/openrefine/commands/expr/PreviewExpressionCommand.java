@@ -50,10 +50,11 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonValue;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
+import org.openrefine.browsing.Engine;
+import org.openrefine.browsing.EngineConfig;
 import org.openrefine.commands.Command;
 import org.openrefine.expr.EvalError;
 import org.openrefine.expr.Evaluable;
@@ -70,6 +71,7 @@ import org.openrefine.model.IndexedRow;
 import org.openrefine.model.Project;
 import org.openrefine.model.Record;
 import org.openrefine.model.Row;
+import org.openrefine.sorting.SortingConfig;
 import org.openrefine.util.ParsingUtilities;
 
 public class PreviewExpressionCommand extends Command {
@@ -102,6 +104,22 @@ public class PreviewExpressionCommand extends Command {
         }
     }
 
+    protected static class RowResult {
+
+        @JsonProperty("rowIndex")
+        long rowIndex;
+        @JsonProperty("value")
+        ExpressionValue value;
+        @JsonProperty("result")
+        ExpressionValue result;
+
+        public RowResult(long rowIndex, ExpressionValue value, ExpressionValue result) {
+            this.rowIndex = rowIndex;
+            this.value = value;
+            this.result = result;
+        }
+    }
+
     protected static class PreviewResult {
 
         @JsonProperty("code")
@@ -114,7 +132,7 @@ public class PreviewExpressionCommand extends Command {
         protected String type;
         @JsonProperty("results")
         @JsonInclude(Include.NON_NULL)
-        List<ExpressionValue> results;
+        List<RowResult> results;
 
         public PreviewResult(String code, String message, String type) {
             this.code = code;
@@ -123,7 +141,7 @@ public class PreviewExpressionCommand extends Command {
             this.results = null;
         }
 
-        public PreviewResult(List<ExpressionValue> evaluated) {
+        public PreviewResult(List<RowResult> evaluated) {
             this.code = "ok";
             this.message = null;
             this.type = null;
@@ -146,11 +164,17 @@ public class PreviewExpressionCommand extends Command {
             String columnName = cellIndex < 0 ? "" : project.getColumnModel().getColumns().get(cellIndex).getName();
 
             String expression = request.getParameter("expression");
-            String rowIndicesString = request.getParameter("rowIndices");
-            if (rowIndicesString == null) {
-                respondJSON(response, new PreviewResult("error", "No row indices specified", null));
-                return;
+            EngineConfig engineConfig = getEngineConfig(request);
+            String limitString = request.getParameter("limit");
+            int limit = 10;
+            try {
+                if (limitString != null) {
+                    limit = Integer.parseInt(limitString);
+                }
+            } catch (NumberFormatException e) {
+                throw new IllegalArgumentException("Invalid limit specified", e);
             }
+            SortingConfig sortingConfig = getSortingConfig(request);
 
             boolean repeat = "true".equals(request.getParameter("repeat"));
             int repeatCount = 10;
@@ -162,29 +186,28 @@ public class PreviewExpressionCommand extends Command {
                 }
             }
 
-            List<Long> rowIndices = ParsingUtilities.mapper.readValue(rowIndicesString, new TypeReference<List<Long>>() {
-            });
-            int length = rowIndices.size();
             GridState state = project.getCurrentGridState();
             ColumnModel columnModel = state.getColumnModel();
+            Engine engine = new Engine(state, engineConfig);
 
             try {
                 Evaluable eval = MetaParser.parse(expression);
 
-                List<ExpressionValue> evaluated = new ArrayList<>();
+                List<RowResult> evaluated = new ArrayList<>();
                 Properties bindings = ExpressionUtils.createBindings();
-                List<IndexedRow> rows = state.getRows(rowIndices);
-                for (int i = 0; i < length; i++) {
+                List<IndexedRow> rows = state.getRows(engine.combinedRowFilters(), sortingConfig, 0, limit);
+                for (IndexedRow indexedRow : rows) {
                     Object result = null;
 
-                    Long rowIndex = rowIndices.get(i);
+                    Long rowIndex = indexedRow.getIndex();
+
+                    Row row = indexedRow.getRow();
+                    Cell cell = row.getCell(cellIndex);
+                    Record record = null; // TODO enable records mode for this
+                    ExpressionUtils.bind(bindings, columnModel, row, rowIndex, record, columnName, cell);
 
                     try {
-                        Row row = rows.get(i).getRow();
-                        Cell cell = row.getCell(cellIndex);
-                        Record record = null; // TODO enable records mode for this operation after changing the API
-                        // to supply engineConfig and limit rather than rowIds
-                        ExpressionUtils.bind(bindings, columnModel, row, rowIndex, record, columnName, cell);
+
                         result = eval.evaluate(bindings);
 
                         if (repeat) {
@@ -206,22 +229,26 @@ public class PreviewExpressionCommand extends Command {
                         // ignore
                     }
 
+                    ExpressionValue origCellValue = new SuccessfulEvaluation(cell == null ? "null" : cell.value.toString());
+                    ExpressionValue expressionResult;
                     if (result == null) {
-                        evaluated.add(null);
+                        expressionResult = null;
                     } else if (ExpressionUtils.isError(result)) {
-                        evaluated.add(new ErrorMessage(((EvalError) result).message));
+                        expressionResult = new ErrorMessage(((EvalError) result).message);
                     } else {
                         StringBuffer sb = new StringBuffer();
 
                         writeValue(sb, result, false);
 
-                        evaluated.add(new SuccessfulEvaluation(sb.toString()));
+                        expressionResult = new SuccessfulEvaluation(sb.toString());
                     }
+                    evaluated.add(new RowResult(rowIndex, origCellValue, expressionResult));
                 }
                 respondJSON(response, new PreviewResult(evaluated));
             } catch (ParsingException e) {
                 respondJSON(response, new PreviewResult("error", e.getMessage(), "parser"));
             } catch (Exception e) {
+                e.printStackTrace();
                 respondJSON(response, new PreviewResult("error", e.getMessage(), "other"));
             }
         } catch (Exception e) {

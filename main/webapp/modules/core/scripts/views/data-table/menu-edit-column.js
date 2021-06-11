@@ -68,12 +68,13 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
     var level = DialogSystem.showDialog(frame);
     var dismiss = function() { DialogSystem.dismissUntil(level - 1); };
 
-    var o = DataTableView.sampleVisibleRows(column);
+    var o = DataTableView.sampleVisibleRows();
     var previewWidget = new ExpressionPreviewDialog.Widget(
       elmts, 
       Refine.columnNameToColumnIndex(column.name),
-      o.rowIndices,
-      o.values,
+      o.engineConfig,
+      o.sortingConfig,
+      o.limit,
       null
     );
     
@@ -139,7 +140,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
     var level = DialogSystem.showDialog(frame);
     var dismiss = function() { DialogSystem.dismissUntil(level - 1); };
 
-    var o = DataTableView.sampleVisibleRows(column);
+    var o = DataTableView.sampleVisibleRows();
     var previewWidget = new ExpressionPreviewDialog.Widget(
       elmts, 
       Refine.columnNameToColumnIndex(column.name),
@@ -178,11 +179,13 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
 
   var doAddColumnByReconciliation = function() {
     var columnIndex = Refine.columnNameToColumnIndex(column.name);
-    var o = DataTableView.sampleVisibleRows(column);
+    var o = DataTableView.sampleVisibleRows();
     new ExtendReconciledDataPreviewDialog(
       column, 
       columnIndex, 
-      o.rowIndices,
+      o.engineConfig,
+      o.sortingConfig,
+      o.limit,
       function(extension, endpoint, identifierSpace, schemaSpace) {
         Refine.postProcess(
             "core",

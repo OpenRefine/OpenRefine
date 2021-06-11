@@ -157,10 +157,14 @@ public class RefineTest extends PowerMockTestCase {
      * @return
      */
     protected Project createProject(String projectName, String[] columns, Serializable[][] rows) {
+        GridState state = createGrid(columns, rows);
+        return createProject(projectName, state);
+    }
+
+    protected Project createProject(String projectName, GridState grid) {
         ProjectMetadata meta = new ProjectMetadata();
         meta.setName(projectName);
-        GridState state = createGrid(columns, rows);
-        Project project = new Project(state, new LazyChangeDataStore());
+        Project project = new Project(grid, new LazyChangeDataStore());
         ProjectManager.singleton.registerProject(project, meta);
         return project;
     }

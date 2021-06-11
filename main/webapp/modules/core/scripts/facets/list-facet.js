@@ -674,13 +674,14 @@ class ListFacet extends Facet {
           $.i18n('core-facets/edit-facet-exp');
 
     var column = Refine.columnNameToColumn(this._config.columnName);
-    var o = DataTableView.sampleVisibleRows(column);
+    var o = DataTableView.sampleVisibleRows();
 
     new ExpressionPreviewDialog(
       title,
       column ? Refine.columnNameToColumnIndex(column.name) : -1, 
-      o.rowIndices,
-      o.values,
+      o.engineConfig,
+      o.sortingConfig,
+      o.limit,
       this._config.expression, 
       function(expr) {
         if (expr != self._config.expression) {

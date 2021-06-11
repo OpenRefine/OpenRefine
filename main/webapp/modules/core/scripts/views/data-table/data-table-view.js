@@ -1026,36 +1026,16 @@ DataTableView.prototype._updateCell = function(rowIndex, cellIndex, cell) {
   }
 };
 
-DataTableView.sampleVisibleRows = function(column) {
-  var rowIndices = [];
-  var values = [];
-
-  var cellIndex = Refine.columnNameToColumnIndex(column.name);
-
-  var rows = theProject.rowModel.rows;
-  for (var r = 0; r < rows.length; r++) {
-    var row = rows[r];
-
-    rowIndices.push(row.i);
-
-    var v = null;
-    if (cellIndex < row.cells.length) {
-      var cell = row.cells[cellIndex];
-      if (cell !== null) {
-        v = cell.v;
-      }
-    }
-    values.push(v);
-  }
-
+DataTableView.sampleVisibleRows = function() {
   return {
-    rowIndices: rowIndices,
-    values: values
+     sortingConfig: {}, // add sorting config here if we want it to be respected by previews (more expensive)
+     engineConfig: ui.browsingEngine.getJSON(),
+     limit: 10
   };
 };
 
 DataTableView.promptExpressionOnVisibleRows = function(column, title, expression, onDone) {
-  var o = DataTableView.sampleVisibleRows(column);
+  var o = DataTableView.sampleVisibleRows();
 
   var cellIndex = Refine.columnNameToColumnIndex(column.name);
 
@@ -1063,8 +1043,9 @@ DataTableView.promptExpressionOnVisibleRows = function(column, title, expression
   new ExpressionPreviewDialog(
     title,
     cellIndex, 
-    o.rowIndices, 
-    o.values,
+    o.engineConfig,
+    o.sortingConfig,
+    o.limit,
     expression,
     onDone
   );
