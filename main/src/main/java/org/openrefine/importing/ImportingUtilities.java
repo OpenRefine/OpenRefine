@@ -88,7 +88,9 @@ import org.openrefine.model.GridState;
 import org.openrefine.model.Project;
 import org.openrefine.model.Row;
 import org.openrefine.model.RowMapper;
+import org.openrefine.model.changes.CachedGridStore;
 import org.openrefine.model.changes.ChangeDataStore;
+import org.openrefine.model.changes.LazyCachedGridStore;
 import org.openrefine.model.changes.LazyChangeDataStore;
 import org.openrefine.util.HttpClient;
 import org.openrefine.util.JSONUtilities;
@@ -795,7 +797,7 @@ public class ImportingUtilities {
 	            optionObj
 	        );
 	        // this is a preview, so we will not need to store any change data on this project
-	        job.setProject(new Project(state, new LazyChangeDataStore()));
+	        job.setProject(new Project(state, new LazyChangeDataStore(), new LazyCachedGridStore()));
         } catch(Exception e) {
         	exceptions.add(e);
         }
@@ -851,7 +853,8 @@ public class ImportingUtilities {
 	            optionObj
 	        );
 	        ChangeDataStore dataStore = ProjectManager.singleton.getChangeDataStore(projectId);
-	        newProject = new Project(projectId, state, dataStore);
+	        CachedGridStore gridStore = ProjectManager.singleton.getCachedGridStore(projectId);
+	        newProject = new Project(projectId, state, dataStore, gridStore);
 			job.setProject(newProject);
         } catch(Exception e) {
         	exceptions.add(e);
