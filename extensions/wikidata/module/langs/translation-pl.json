@@ -50,5 +50,6 @@
     "perform-wikibase-edits/cancel": "Anuluj",
     "wikibase-addition/cancel": "Anuluj",
     "wikibase-management/add-wikibase": "Dodaj Wikibase",
-    "wikibase-extension/edit-wikibase-schema": "Edytuj schemat Wikibase"
+    "wikibase-extension/edit-wikibase-schema": "Edytuj schemat Wikibase",
+    "wikibase-extension/manage-wikibase-account": "Zarządzaj kontem Wikibase"
 }
