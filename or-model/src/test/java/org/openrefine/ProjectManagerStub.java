@@ -41,7 +41,9 @@ import org.apache.commons.compress.archivers.tar.TarArchiveOutputStream;
 import org.openrefine.history.HistoryEntryManager;
 import org.openrefine.model.DatamodelRunner;
 import org.openrefine.model.Project;
+import org.openrefine.model.changes.CachedGridStore;
 import org.openrefine.model.changes.ChangeDataStore;
+import org.openrefine.model.changes.LazyCachedGridStore;
 import org.openrefine.model.changes.LazyChangeDataStore;
 
 /**
@@ -119,6 +121,11 @@ public class ProjectManagerStub extends ProjectManager {
     @Override
     public ChangeDataStore getChangeDataStore(long projectID) {
         return new LazyChangeDataStore();
+    }
+
+    @Override
+    public CachedGridStore getCachedGridStore(long projectId) {
+        return new LazyCachedGridStore();
     }
 
 }

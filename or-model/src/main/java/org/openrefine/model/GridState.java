@@ -248,7 +248,7 @@ public interface GridState {
      * @throws IOException
      * @throws InterruptedException
      */
-    public void saveToFile(File file) throws IOException, InterruptedException;
+    public void saveToFile(File file) throws IOException;
 
     /**
      * Saves the grid state to a specified directory, following OpenRefine's format for grid storage.

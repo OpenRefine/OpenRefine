@@ -61,6 +61,7 @@ import org.openrefine.history.History;
 import org.openrefine.history.HistoryEntryManager;
 import org.openrefine.model.DatamodelRunner;
 import org.openrefine.model.Project;
+import org.openrefine.model.changes.CachedGridStore;
 import org.openrefine.model.changes.Change.DoesNotApplyException;
 import org.openrefine.model.changes.ChangeDataStore;
 import org.openrefine.preference.PreferenceStore;
@@ -496,6 +497,11 @@ public class FileProjectManager extends ProjectManager {
     @Override
     public ChangeDataStore getChangeDataStore(long projectID) {
         return _historyEntryManager.getChangeDataStore(getProjectDir(projectID));
+    }
+
+    @Override
+    public CachedGridStore getCachedGridStore(long projectId) {
+        return _historyEntryManager.getCachedGridStore(getProjectDir(projectId));
     }
 
     @Override

@@ -69,7 +69,9 @@ import org.openrefine.importing.ImportingManager;
 import org.openrefine.model.DatamodelRunner;
 import org.openrefine.model.GridState;
 import org.openrefine.model.Project;
+import org.openrefine.model.changes.CachedGridStore;
 import org.openrefine.model.changes.ChangeDataStore;
+import org.openrefine.model.changes.LazyCachedGridStore;
 import org.openrefine.model.changes.LazyChangeDataStore;
 import org.openrefine.util.JSONUtilities;
 import org.openrefine.util.ParsingUtilities;
@@ -261,7 +263,7 @@ public class GDataImportingController implements ImportingController {
                     100,
                     optionObj);
             // this is just a preview so there will not be any changes applied on the project.
-            job.setProject(new Project(grid, new LazyChangeDataStore()));
+            job.setProject(new Project(grid, new LazyChangeDataStore(), new LazyCachedGridStore()));
         } catch (Exception e1) {
             exceptions.add(e1);
         }
@@ -341,7 +343,8 @@ public class GDataImportingController implements ImportingController {
                     } else {
                         long projectId = Project.generateID();
                         ChangeDataStore changeDataStore = ProjectManager.singleton.getChangeDataStore(projectId);
-                        Project project = new Project(projectId, grid, changeDataStore);
+                        CachedGridStore cachedGridStore = ProjectManager.singleton.getCachedGridStore(projectId);
+                        Project project = new Project(projectId, grid, changeDataStore, cachedGridStore);
                         job.setProject(project);
 
                         ProjectManager.singleton.registerProject(project, pm);

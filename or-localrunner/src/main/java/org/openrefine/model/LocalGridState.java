@@ -300,8 +300,12 @@ public class LocalGridState implements GridState {
     }
 
     @Override
-    public void saveToFile(File file) throws IOException, InterruptedException {
-        saveToFile(file, Optional.empty());
+    public void saveToFile(File file) throws IOException {
+        try {
+            saveToFile(file, Optional.empty());
+        } catch (InterruptedException e) {
+            throw new IOException("The operation was interrupted", e);
+        }
     }
 
     protected void saveToFile(File file, Optional<ProgressReporter> progressReporter) throws IOException, InterruptedException {

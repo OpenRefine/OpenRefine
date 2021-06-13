@@ -56,6 +56,7 @@ import org.slf4j.LoggerFactory;
 
 import org.openrefine.history.HistoryEntryManager;
 import org.openrefine.model.Project;
+import org.openrefine.model.changes.CachedGridStore;
 import org.openrefine.model.changes.ChangeDataStore;
 import org.openrefine.preference.PreferenceStore;
 import org.openrefine.preference.TopList;
@@ -161,6 +162,14 @@ public abstract class ProjectManager {
      * @param projectId
      */
     public abstract ChangeDataStore getChangeDataStore(long projectID);
+
+    /**
+     * Return the cached grid store for a given project
+     * 
+     * @param projectId
+     * @return
+     */
+    public abstract CachedGridStore getCachedGridStore(long projectId);
 
     /**
      * Load project metadata from data storage

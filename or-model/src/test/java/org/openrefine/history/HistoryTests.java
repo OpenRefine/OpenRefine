@@ -40,7 +40,9 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.io.IOException;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import org.testng.Assert;
@@ -48,6 +50,7 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import org.openrefine.model.GridState;
+import org.openrefine.model.changes.CachedGridStore;
 import org.openrefine.model.changes.Change;
 import org.openrefine.model.changes.Change.DoesNotApplyException;
 import org.openrefine.model.changes.ChangeDataStore;
@@ -55,6 +58,7 @@ import org.openrefine.model.changes.ChangeDataStore;
 public class HistoryTests {
 
     ChangeDataStore dataStore;
+    CachedGridStore gridStore;
 
     GridState initialState;
     GridState intermediateState;
@@ -78,6 +82,7 @@ public class HistoryTests {
     @BeforeMethod
     public void setUp() throws DoesNotApplyException {
         dataStore = mock(ChangeDataStore.class);
+        gridStore = mock(CachedGridStore.class);
         initialState = mock(GridState.class);
         intermediateState = mock(GridState.class);
         newState = mock(GridState.class);
@@ -107,53 +112,75 @@ public class HistoryTests {
 
     @Test
     public void testConstruct() throws DoesNotApplyException {
-
-        History history = new History(initialState, dataStore, entries, 1);
-
+        when(gridStore.listCachedGridIds()).thenReturn(Collections.emptySet());
+        
+        History history = new History(initialState, dataStore, gridStore, entries, 1);
+        
         Assert.assertEquals(history.getPosition(), 1);
         Assert.assertEquals(history.getCurrentGridState(), intermediateState);
         Assert.assertEquals(history.getEntries(), entries);
-
+        
         history.undoRedo(secondChangeId);
-
+        
         Assert.assertEquals(history.getPosition(), 2);
         Assert.assertEquals(history.getCurrentGridState(), finalState);
         Assert.assertEquals(history.getEntries(), entries);
-
+        
         history.undoRedo(0);
-
+        
         Assert.assertEquals(history.getPosition(), 0);
         Assert.assertEquals(history.getCurrentGridState(), initialState);
         Assert.assertEquals(history.getEntries(), entries);
-
+        
         // All changes were called only once
         verify(firstChange, times(1)).apply(eq(initialState), any());
         verify(secondChange, times(1)).apply(eq(intermediateState), any());
     }
 
     @Test
-    public void testSaveAndLoad() {
+    public void testConstructWithCachedGrids() throws DoesNotApplyException, IOException {
+        HistoryEntry thirdEntry = mock(HistoryEntry.class);
+        Change thirdChange = mock(Change.class);
+        GridState thirdState = mock(GridState.class);
+        GridState fourthState = mock(GridState.class);
 
+        when(gridStore.listCachedGridIds()).thenReturn(Collections.singleton(secondChangeId));
+        when(gridStore.getCachedGrid(secondChangeId)).thenReturn(thirdState);
+        when(thirdEntry.getChange()).thenReturn(thirdChange);
+        when(thirdChange.apply(eq(thirdState), any())).thenReturn(fourthState);
+
+        List<HistoryEntry> fullEntries = Arrays.asList(firstEntry, secondEntry, thirdEntry);
+        History history = new History(initialState, dataStore, gridStore, fullEntries, 3);
+
+        // Inspect the states which are loaded and those which aren't
+        Assert.assertEquals(history._states.get(0), initialState);
+        Assert.assertNull(history._states.get(1));
+        Assert.assertEquals(history._states.get(2), thirdState); // loaded from cache
+        Assert.assertEquals(history._states.get(3), fourthState);
     }
 
     @Test(expectedExceptions = IllegalArgumentException.class)
     public void testUnknownChangeId() throws DoesNotApplyException {
-        History history = new History(initialState, dataStore, entries, 1);
-
+        when(gridStore.listCachedGridIds()).thenReturn(Collections.emptySet());
+        
+        History history = new History(initialState, dataStore, gridStore, entries, 1);
+        
         history.undoRedo(34782L);
     }
 
     @Test
     public void testEraseUndoneChanges() throws DoesNotApplyException {
-        History history = new History(initialState, dataStore, entries, 1);
-
+        when(gridStore.listCachedGridIds()).thenReturn(Collections.emptySet());
+        
+        History history = new History(initialState, dataStore, gridStore, entries, 1);
+        
         Assert.assertEquals(history.getPosition(), 1);
         Assert.assertEquals(history.getCurrentGridState(), intermediateState);
         Assert.assertEquals(history.getEntries(), entries);
-
+        
         // Adding an entry when there are undone changes erases those changes
         history.addEntry(newEntry);
-
+        
         Assert.assertEquals(history.getPosition(), 2);
         Assert.assertEquals(history.getCurrentGridState(), newState);
         Assert.assertEquals(history.getEntries(), newEntries);

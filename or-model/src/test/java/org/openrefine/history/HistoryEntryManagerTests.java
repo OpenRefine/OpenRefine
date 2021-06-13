@@ -7,6 +7,7 @@ import static org.mockito.Mockito.when;
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import org.mockito.Mockito;
@@ -19,6 +20,7 @@ import org.openrefine.model.ColumnModel;
 import org.openrefine.model.DatamodelRunner;
 import org.openrefine.model.GridState;
 import org.openrefine.model.RowMapper;
+import org.openrefine.model.changes.CachedGridStore;
 import org.openrefine.model.changes.Change;
 import org.openrefine.model.changes.Change.DoesNotApplyException;
 import org.openrefine.model.changes.ChangeContext;
@@ -32,6 +34,7 @@ public class HistoryEntryManagerTests {
     HistoryEntryManager sut;
     History history;
     DatamodelRunner runner;
+    CachedGridStore gridStore;
 
     static RowMapper mapper = mock(RowMapper.class);
 
@@ -69,7 +72,9 @@ public class HistoryEntryManagerTests {
         Change change = new MyChange();
         HistoryEntry entry = new HistoryEntry(1234L, "some description",
                 new UnknownOperation("my-op", "some desc"), change);
-        history = new History(gridState, mock(ChangeDataStore.class));
+        gridStore = mock(CachedGridStore.class);
+        when(gridStore.listCachedGridIds()).thenReturn(Collections.emptySet());
+        history = new History(gridState, mock(ChangeDataStore.class), gridStore);
         history.addEntry(entry);
         sut = new HistoryEntryManager(runner);
     }

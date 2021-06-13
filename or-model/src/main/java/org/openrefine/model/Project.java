@@ -42,6 +42,7 @@ import org.slf4j.LoggerFactory;
 import org.openrefine.ProjectManager;
 import org.openrefine.ProjectMetadata;
 import org.openrefine.history.History;
+import org.openrefine.model.changes.CachedGridStore;
 import org.openrefine.model.changes.ChangeDataStore;
 import org.openrefine.overlay.OverlayModel;
 import org.openrefine.overlay.OverlayModelResolver;
@@ -70,8 +71,8 @@ public class Project {
      * @param initialState
      *            the initial state of the project.
      */
-    public Project(GridState initialState, ChangeDataStore dataStore) {
-        this(generateID(), new History(initialState, dataStore));
+    public Project(GridState initialState, ChangeDataStore dataStore, CachedGridStore gridStore) {
+        this(generateID(), new History(initialState, dataStore, gridStore));
     }
 
     /**
@@ -82,8 +83,8 @@ public class Project {
      * @param initialState
      *            the initial state of the project
      */
-    public Project(long projectId, GridState initialState, ChangeDataStore dataStore) {
-        this(projectId, new History(initialState, dataStore));
+    public Project(long projectId, GridState initialState, ChangeDataStore dataStore, CachedGridStore gridStore) {
+        this(projectId, new History(initialState, dataStore, gridStore));
     }
 
     /**

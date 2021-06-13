@@ -41,8 +41,10 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import org.openrefine.model.DatamodelRunner;
 import org.openrefine.model.GridState;
+import org.openrefine.model.changes.CachedGridStore;
 import org.openrefine.model.changes.Change.DoesNotApplyException;
 import org.openrefine.model.changes.ChangeDataStore;
+import org.openrefine.model.changes.FileCachedGridStore;
 import org.openrefine.model.changes.FileChangeDataStore;
 import org.openrefine.util.ParsingUtilities;
 
@@ -55,6 +57,7 @@ public class HistoryEntryManager {
     protected static final String INITIAL_GRID_SUBDIR = "initial";
     protected static final String METADATA_FILENAME = "history.json";
     protected static final String CHANGE_SUBDIR = "changes";
+    protected static final String GRID_CACHE_SUBDIR = "cache";
 
     private final DatamodelRunner runner;
 
@@ -74,11 +77,7 @@ public class HistoryEntryManager {
         File metadataFile = new File(dir, METADATA_FILENAME);
         // Save the initial grid if does not exist yet (it is immutable)
         if (!gridFile.exists()) {
-            try {
-                history.getInitialGridState().saveToFile(gridFile);
-            } catch (InterruptedException e) {
-                throw new IOException(e);
-            }
+            history.getInitialGridState().saveToFile(gridFile);
         }
         Metadata metadata = new Metadata();
         metadata.entries = history.getEntries();
@@ -94,7 +93,12 @@ public class HistoryEntryManager {
         Metadata metadata = ParsingUtilities.mapper.readValue(metadataFile, Metadata.class);
         // Load the initial grid
         GridState gridState = runner.loadGridState(gridFile);
-        return new History(gridState, getChangeDataStore(dir), metadata.entries, metadata.position);
+        return new History(
+                gridState,
+                getChangeDataStore(dir),
+                getCachedGridStore(dir),
+                metadata.entries,
+                metadata.position);
     }
 
     /**
@@ -106,6 +110,16 @@ public class HistoryEntryManager {
      */
     public ChangeDataStore getChangeDataStore(File projectDir) {
         return new FileChangeDataStore(runner, new File(projectDir, CHANGE_SUBDIR));
+    }
+
+    /**
+     * The place where to store cached intermediate grid states
+     * 
+     * @param projectDir
+     * @return
+     */
+    public CachedGridStore getCachedGridStore(File projectDir) {
+        return new FileCachedGridStore(runner, new File(projectDir, GRID_CACHE_SUBDIR));
     }
 
     /**

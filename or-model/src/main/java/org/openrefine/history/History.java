@@ -33,14 +33,19 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package org.openrefine.history;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import org.openrefine.RefineModel;
 import org.openrefine.model.GridState;
+import org.openrefine.model.changes.CachedGridStore;
 import org.openrefine.model.changes.Change;
 import org.openrefine.model.changes.Change.DoesNotApplyException;
 import org.openrefine.model.changes.ChangeContext;
@@ -54,6 +59,8 @@ import org.openrefine.model.changes.ChangeDataStore;
  */
 public class History {
 
+    private static final Logger logger = LoggerFactory.getLogger(History.class);
+
     @JsonProperty("entries")
     protected List<HistoryEntry> _entries;
     @JsonProperty("position")
@@ -63,6 +70,8 @@ public class History {
     protected List<GridState> _states;
     @JsonIgnore
     protected ChangeDataStore _dataStore;
+    @JsonIgnore
+    protected CachedGridStore _gridStore;
 
     /**
      * Creates an empty on an initial grid state.
@@ -71,14 +80,17 @@ public class History {
      *            the initial state of the project
      * @param dataStore
      *            where to store change data
+     * @param gridStore
+     *            where to store intermediate cached grids
      */
-    public History(GridState initialGrid, ChangeDataStore dataStore) {
+    public History(GridState initialGrid, ChangeDataStore dataStore, CachedGridStore gridStore) {
         _entries = new ArrayList<>();
         _states = new ArrayList<>();
         _states.add(initialGrid);
         initialGrid.cache();
         _position = 0;
         _dataStore = dataStore;
+        _gridStore = gridStore;
     }
 
     /**
@@ -91,12 +103,27 @@ public class History {
     public History(
             GridState initialGrid,
             ChangeDataStore dataStore,
+            CachedGridStore gridStore,
             List<HistoryEntry> entries,
             int position) throws DoesNotApplyException {
-        this(initialGrid, dataStore);
+        this(initialGrid, dataStore, gridStore);
+        Set<Long> availableCachedStates = gridStore.listCachedGridIds();
         for (HistoryEntry entry : entries) {
-            addEntry(entry);
+            GridState grid = null;
+            if (availableCachedStates.contains(entry.getId())) {
+                try {
+                    grid = gridStore.getCachedGrid(entry.getId());
+                } catch (IOException e) {
+                    logger.warn(String.format("Ignoring cached grid for history entry %d as it cannot be loaded:", entry.getId()));
+                    e.printStackTrace();
+                }
+            }
+            _states.add(grid);
+            _entries.add(entry);
         }
+
+        // ensure the grid state of the current position is computed (invariant)
+        getGridState(position);
         _position = position;
     }
 
@@ -107,17 +134,50 @@ public class History {
      */
     @JsonIgnore
     public GridState getCurrentGridState() {
+        // the current state is always assumed to be computed already
+        if (_states.get(_position) == null) {
+            throw new IllegalStateException("The current grid state has not been computed yet");
+        }
         return _states.get(_position);
     }
 
     /**
-     * Returns the state of the table at a certain index in the history.
+     * Returns the state of the grid at before any operation was applied on it
      * 
      * @return
      */
     @JsonIgnore
     public GridState getInitialGridState() {
+        // the initial state is always assumed to be computed already
+        if (_states.get(0) == null) {
+            throw new IllegalStateException("The initial grid state has not been computed yet");
+        }
         return _states.get(0);
+    }
+
+    /**
+     * Returns the state of the grid at a given index in the history
+     * 
+     * @param position
+     *            a 0-based index in the list of successive grid states
+     * @return
+     */
+    protected GridState getGridState(int position) throws DoesNotApplyException {
+        GridState grid = _states.get(position);
+        if (grid != null) {
+            return grid;
+        } else {
+            // this state has not been computed yet,
+            // so we compute it recursively from the previous one.
+            // we know for sure that position > 0 because the initial grid
+            // is always present
+            GridState previous = getGridState(position - 1);
+            HistoryEntry entry = _entries.get(position - 1);
+            ChangeContext context = ChangeContext.create(entry.getId(), _dataStore);
+            GridState newState = entry.getChange().apply(previous, context);
+            _states.set(position, newState);
+            return newState;
+        }
     }
 
     @JsonProperty("position")
@@ -133,6 +193,11 @@ public class History {
     @JsonIgnore
     public ChangeDataStore getChangeDataStore() {
         return _dataStore;
+    }
+
+    @JsonIgnore
+    public CachedGridStore getCachedGridStore() {
+        return _gridStore;
     }
 
     /**
@@ -165,13 +230,14 @@ public class History {
         }
     }
 
-    synchronized public void undoRedo(long lastDoneEntryID) {
+    synchronized public void undoRedo(long lastDoneEntryID) throws DoesNotApplyException {
         if (lastDoneEntryID == 0) {
             _position = 0;
         } else {
             for (int i = 0; i < _entries.size(); i++) {
                 if (_entries.get(i).getId() == lastDoneEntryID) {
                     _position = i + 1;
+                    getGridState(_position);
                     return;
                 }
             }
