@@ -123,7 +123,7 @@
     <dependency>
       <groupId>org.postgresql</groupId>
       <artifactId>postgresql</artifactId>
-      <version>42.2.20</version>
+      <version>42.2.22</version>
     </dependency>
     <dependency>
       <groupId>org.apache.httpcomponents</groupId>
