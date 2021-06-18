@@ -330,7 +330,7 @@ public class LocalGridState implements GridState {
 
     protected static String serializeIndexedRow(Tuple2<Long, Row> tuple) {
         try {
-            return ParsingUtilities.mapper.writeValueAsString(new IndexedRow(tuple.getKey(), tuple.getValue()));
+            return ParsingUtilities.saveWriter.writeValueAsString(new IndexedRow(tuple.getKey(), tuple.getValue()));
         } catch (JsonProcessingException e) {
             throw new UncheckedIOException(e);
         }

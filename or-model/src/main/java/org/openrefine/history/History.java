@@ -68,6 +68,9 @@ public class History {
 
     @JsonIgnore
     protected List<GridState> _states;
+    // stores whether the grid state at the same index is read directly from disk or not
+    @JsonIgnore
+    protected List<Boolean> _cachedOnDisk;
     @JsonIgnore
     protected ChangeDataStore _dataStore;
     @JsonIgnore
@@ -86,7 +89,9 @@ public class History {
     public History(GridState initialGrid, ChangeDataStore dataStore, CachedGridStore gridStore) {
         _entries = new ArrayList<>();
         _states = new ArrayList<>();
+        _cachedOnDisk = new ArrayList<>();
         _states.add(initialGrid);
+        _cachedOnDisk.add(true);
         initialGrid.cache();
         _position = 0;
         _dataStore = dataStore;
@@ -119,6 +124,7 @@ public class History {
                 }
             }
             _states.add(grid);
+            _cachedOnDisk.add(grid != null);
             _entries.add(entry);
         }
 
@@ -176,6 +182,7 @@ public class History {
             ChangeContext context = ChangeContext.create(entry.getId(), _dataStore);
             GridState newState = entry.getChange().apply(previous, context);
             _states.set(position, newState);
+            _cachedOnDisk.set(position, false);
             return newState;
         }
     }
@@ -209,16 +216,66 @@ public class History {
     public void addEntry(HistoryEntry entry) throws DoesNotApplyException {
         // Any new change will clear all future entries.
         if (_position != _entries.size()) {
-            // TODO uncache all the grid states that we are removing
+
+            // uncache all the grid states that we are removing
+            for (int i = _position; i < _entries.size(); i++) {
+                HistoryEntry oldEntry = _entries.get(i);
+                _dataStore.discardAll(oldEntry.getId());
+                if (_cachedOnDisk.get(i)) {
+                    try {
+                        _gridStore.uncacheGrid(oldEntry.getId());
+                    } catch (IOException e) {
+                        logger.warn("Ignoring deletion of unreachable cached grid state because it failed:");
+                        e.printStackTrace();
+                    }
+                }
+            }
             _entries = _entries.subList(0, _position);
             _states = _states.subList(0, _position + 1);
+            _cachedOnDisk = _cachedOnDisk.subList(0, _position + 1);
         }
 
         ChangeContext context = ChangeContext.create(entry.getId(), _dataStore);
         GridState newState = entry.getChange().apply(getCurrentGridState(), context);
         _states.add(newState);
+        _cachedOnDisk.add(false);
         _entries.add(entry);
         _position++;
+    }
+
+    /**
+     * Makes sure the current grid state is cached on disk, to make project loading faster
+     * 
+     * @throws DoesNotApplyException
+     * @throws IOException
+     */
+    public void cacheCurrentGridState() throws IOException {
+        if (_position > 0 && !_cachedOnDisk.get(_position)) {
+            try {
+                cacheIntermediateGrid(_entries.get(_position - 1).getId());
+            } catch (DoesNotApplyException e) {
+                // cannot happen, since we assume that the current grid state is always computed
+                throw new IllegalStateException("Current grid state is not computed");
+            }
+        }
+    }
+
+    protected void cacheIntermediateGrid(long historyEntryID) throws DoesNotApplyException, IOException {
+        int historyEntryIndex = entryIndex(historyEntryID);
+        // first, ensure that the grid is computed
+        GridState grid = getGridState(historyEntryIndex + 1);
+        long historyEntryId = _entries.get(historyEntryIndex).getId();
+        GridState cached = _gridStore.cacheGrid(historyEntryId, grid);
+        synchronized (this) {
+            _states.set(historyEntryIndex + 1, cached);
+            _cachedOnDisk.set(historyEntryIndex + 1, true);
+            // invalidate the following states until the next cached grid
+            for (int i = historyEntryIndex + 2; i < _states.size() && !_cachedOnDisk.get(i); i++) {
+                _states.set(i, null);
+            }
+            // make sure the current position is computed
+            getGridState(_position);
+        }
     }
 
     public List<HistoryEntry> getLastPastEntries(int count) {
@@ -234,14 +291,8 @@ public class History {
         if (lastDoneEntryID == 0) {
             _position = 0;
         } else {
-            for (int i = 0; i < _entries.size(); i++) {
-                if (_entries.get(i).getId() == lastDoneEntryID) {
-                    _position = i + 1;
-                    getGridState(_position);
-                    return;
-                }
-            }
-            throw new IllegalArgumentException(String.format("History entry id %d not found", lastDoneEntryID));
+            _position = entryIndex(lastDoneEntryID) + 1;
+            getGridState(_position);
         }
     }
 
@@ -249,22 +300,30 @@ public class History {
         if (entryID == 0) {
             return -1;
         } else {
-            for (int i = 0; i < _entries.size(); i++) {
-                if (_entries.get(i).getId() == entryID) {
-                    return i == 0 ? 0 : _entries.get(i - 1).getId();
-                }
+            try {
+                int index = entryIndex(entryID);
+                return index == 0 ? 0 : _entries.get(index - 1).getId();
+            } catch (IllegalArgumentException e) {
+                return -1;
             }
         }
-        return -1;
     }
 
     protected HistoryEntry getEntry(long entryID) {
+        try {
+            return _entries.get(entryIndex(entryID));
+        } catch (IllegalArgumentException e) {
+            return null;
+        }
+    }
+
+    protected int entryIndex(long entryID) {
         for (int i = 0; i < _entries.size(); i++) {
             if (_entries.get(i).getId() == entryID) {
-                return _entries.get(i);
+                return i;
             }
         }
-        return null;
+        throw new IllegalArgumentException(String.format("History entry with id %d not found", entryID));
     }
 
     @SuppressWarnings("unchecked")

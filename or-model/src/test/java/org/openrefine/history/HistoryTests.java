@@ -125,7 +125,7 @@ public class HistoryTests {
         Assert.assertEquals(history.getPosition(), 2);
         Assert.assertEquals(history.getCurrentGridState(), finalState);
         Assert.assertEquals(history.getEntries(), entries);
-        
+
         history.undoRedo(0);
         
         Assert.assertEquals(history.getPosition(), 0);
@@ -135,6 +135,12 @@ public class HistoryTests {
         // All changes were called only once
         verify(firstChange, times(1)).apply(eq(initialState), any());
         verify(secondChange, times(1)).apply(eq(intermediateState), any());
+        
+        // Test some getters too
+        Assert.assertEquals(history.getEntry(firstChangeId), firstEntry);
+        Assert.assertEquals(history.getPrecedingEntryID(secondChangeId), firstChangeId);
+        Assert.assertEquals(history.getPrecedingEntryID(firstChangeId), 0L);
+        Assert.assertEquals(history.getPrecedingEntryID(0L), -1L);
     }
 
     @Test
@@ -157,6 +163,38 @@ public class HistoryTests {
         Assert.assertNull(history._states.get(1));
         Assert.assertEquals(history._states.get(2), thirdState); // loaded from cache
         Assert.assertEquals(history._states.get(3), fourthState);
+    }
+
+    @Test
+    public void testCacheIntermediateGrid() throws DoesNotApplyException, IOException {
+        HistoryEntry thirdEntry = mock(HistoryEntry.class);
+        Change thirdChange = mock(Change.class);
+        GridState fourthState = mock(GridState.class);
+        GridState cachedSecondState = mock(GridState.class);
+        GridState rederivedThirdState = mock(GridState.class);
+        long thirdEntryId = 39827L;
+
+        when(gridStore.listCachedGridIds()).thenReturn(Collections.emptySet());
+        when(gridStore.cacheGrid(firstChangeId, intermediateState)).thenReturn(cachedSecondState);
+        when(thirdEntry.getChange()).thenReturn(thirdChange);
+        when(thirdChange.apply(eq(finalState), any())).thenReturn(fourthState);
+        when(thirdEntry.getId()).thenReturn(thirdEntryId);
+        when(secondChange.apply(eq(cachedSecondState), any())).thenReturn(rederivedThirdState);
+
+        List<HistoryEntry> fullEntries = Arrays.asList(firstEntry, secondEntry, thirdEntry);
+        History history = new History(initialState, dataStore, gridStore, fullEntries, 3);
+        // make sure all changes have been derived
+        Assert.assertEquals(history._states.get(3), fourthState);
+
+        history.cacheIntermediateGrid(firstChangeId);
+
+        // the state was cached
+        Assert.assertEquals(history._states.get(1), cachedSecondState);
+        // the current state was rederived from the cached state
+        Assert.assertEquals(history._states.get(2), rederivedThirdState);
+        // any further non-cached state is discarded
+        Assert.assertNull(history._states.get(3));
+
     }
 
     @Test(expectedExceptions = IllegalArgumentException.class)
@@ -184,6 +222,7 @@ public class HistoryTests {
         Assert.assertEquals(history.getPosition(), 2);
         Assert.assertEquals(history.getCurrentGridState(), newState);
         Assert.assertEquals(history.getEntries(), newEntries);
+        verify(dataStore, times(1)).discardAll(secondChangeId);
     }
 
 }

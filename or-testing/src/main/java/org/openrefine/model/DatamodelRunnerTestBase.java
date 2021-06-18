@@ -42,6 +42,9 @@ import org.openrefine.model.changes.RecordChangeDataProducer;
 import org.openrefine.model.changes.RowChangeDataFlatJoiner;
 import org.openrefine.model.changes.RowChangeDataJoiner;
 import org.openrefine.model.changes.RowChangeDataProducer;
+import org.openrefine.model.recon.Recon;
+import org.openrefine.model.recon.Recon.Judgment;
+import org.openrefine.model.recon.ReconCandidate;
 import org.openrefine.overlay.OverlayModel;
 import org.openrefine.process.ProgressReporterStub;
 import org.openrefine.sorting.NumberCriterion;
@@ -477,6 +480,25 @@ public abstract class DatamodelRunnerTestBase {
         Assert.assertEquals(actualRows, expectedRows);
         Assert.assertEquals(loaded.recordCount(), 2L);
         Assert.assertEquals(loaded.collectRecords(), expectedRecords);
+    }
+
+    @Test
+    public void testReconSerialization() throws IOException {
+        ColumnModel columnModel = new ColumnModel(Collections.singletonList(new ColumnMetadata("foo")));
+        ReconCandidate candidate = new ReconCandidate("Q2334", "Hello World", new String[] {}, 89.3);
+        Recon recon = new Recon(
+                1234L, 5678L, Judgment.Matched, candidate, new Object[] {},
+                Collections.singletonList(candidate), "http://my.service/api",
+                "http://my.service/space", "http://my.service/schema", "batch", 0);
+        Cell cell = new Cell("value", recon);
+        List<Row> rows = Arrays.asList(new Row(Arrays.asList(cell)));
+        GridState grid = SUT.create(columnModel, rows, Collections.emptyMap());
+
+        File tempFile = new File(tempDir, "testgrid_recon");
+        grid.saveToFile(tempFile);
+
+        GridState loaded = SUT.loadGridState(tempFile);
+        Assert.assertEquals(loaded.collectRows(), grid.collectRows());
     }
 
     @Test

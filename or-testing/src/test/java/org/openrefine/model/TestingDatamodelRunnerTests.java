@@ -6,10 +6,6 @@ import java.io.Serializable;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
-import org.openrefine.model.DatamodelRunner;
-import org.openrefine.model.DatamodelRunnerTestBase;
-import org.openrefine.model.TestingDatamodelRunner;
-
 public class TestingDatamodelRunnerTests extends DatamodelRunnerTestBase {
 
     /**

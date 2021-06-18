@@ -234,7 +234,7 @@ public class TestingGridState implements GridState {
             fos = new FileOutputStream(partFile);
             gos = new GZIPOutputStream(fos);
             for (IndexedRow row : indexedRows()) {
-                ParsingUtilities.mapper.writeValue(gos, row);
+                ParsingUtilities.saveWriter.writeValue(gos, row);
                 gos.write('\n');
             }
         } finally {

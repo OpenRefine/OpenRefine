@@ -505,7 +505,7 @@ public class SparkGridState implements GridState {
     }
 
     protected static String serializeIndexedRow(Tuple2<Long, Row> indexedRow) throws JsonProcessingException {
-        return ParsingUtilities.mapper.writeValueAsString(new IndexedRow(indexedRow._1, indexedRow._2));
+        return ParsingUtilities.saveWriter.writeValueAsString(new IndexedRow(indexedRow._1, indexedRow._2));
     }
 
     public static SparkGridState loadFromFile(JavaSparkContext context, File file) throws IOException {
