@@ -1,9 +1,6 @@
 package org.openrefine.model;
 import java.io.Serializable;
 
-import org.openrefine.model.DatamodelRunner;
-import org.openrefine.model.DatamodelRunnerTestBase;
-import org.openrefine.model.TestingDatamodelRunner;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
