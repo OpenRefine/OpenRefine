@@ -298,7 +298,7 @@ BrowsingEngine.prototype.update = function(onDone) {
         self._elmts.help.show();
       }
 
-      if (data.aggregatedCount >= self._defaultAggregationLimit) {
+      if (data.limitReached) {
         self._elmts.aggregation.show();
       } else {
 	self._elmts.aggregation.css("display", "none");

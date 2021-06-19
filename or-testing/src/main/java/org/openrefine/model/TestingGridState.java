@@ -186,7 +186,7 @@ public class TestingGridState implements GridState {
                 .limit(limit)
                 .filter(tuple -> filter.filterRow(tuple.getIndex(), tuple.getRow()))
                 .count();
-        return new ApproxCount(Math.min(limit, rows.size()), matching);
+        return new ApproxCount(Math.min(limit, rows.size()), matching, limit <= rows.size());
     }
 
     @Override
@@ -204,7 +204,7 @@ public class TestingGridState implements GridState {
                 .limit(limit)
                 .filter(record -> filter.filterRecord(record))
                 .count();
-        return new ApproxCount(Math.min(limit, records.size()), matching);
+        return new ApproxCount(Math.min(limit, records.size()), matching, limit <= records.size());
     }
 
     @Override
@@ -258,16 +258,16 @@ public class TestingGridState implements GridState {
 
     @Override
     public <T extends Serializable> T aggregateRows(RowAggregator<T> aggregator, T initialState) {
-        return aggregateRowsApprox(aggregator, initialState, rows.size());
+        return aggregateRowsApprox(aggregator, initialState, rows.size()).getState();
     }
 
     @Override
     public <T extends Serializable> T aggregateRecords(RecordAggregator<T> aggregator, T initialState) {
-        return aggregateRecordsApprox(aggregator, initialState, records.size());
+        return aggregateRecordsApprox(aggregator, initialState, records.size()).getState();
     }
 
     @Override
-    public <T extends Serializable> T aggregateRowsApprox(RowAggregator<T> aggregator, T initialState, long maxRows) {
+    public <T extends Serializable> PartialAggregation<T> aggregateRowsApprox(RowAggregator<T> aggregator, T initialState, long maxRows) {
         initialState = TestingDatamodelRunner.serializeAndDeserialize(initialState);
         aggregator = TestingDatamodelRunner.serializeAndDeserialize(aggregator);
         // Artificially split the grid in two, in order to use the `sum` method
@@ -288,11 +288,11 @@ public class TestingGridState implements GridState {
             count += 1;
         }
 
-        return aggregator.sum(statesA, statesB);
+        return new PartialAggregation<T>(aggregator.sum(statesA, statesB), count, count == maxRows);
     }
 
     @Override
-    public <T extends Serializable> T aggregateRecordsApprox(RecordAggregator<T> aggregator, T initialState,
+    public <T extends Serializable> PartialAggregation<T> aggregateRecordsApprox(RecordAggregator<T> aggregator, T initialState,
             long maxRecords) {
         initialState = TestingDatamodelRunner.serializeAndDeserialize(initialState);
         aggregator = TestingDatamodelRunner.serializeAndDeserialize(aggregator);
@@ -314,7 +314,7 @@ public class TestingGridState implements GridState {
             count += 1;
         }
 
-        return aggregator.sum(statesA, statesB);
+        return new PartialAggregation<T>(aggregator.sum(statesA, statesB), count, count == maxRecords);
     }
 
     @Override

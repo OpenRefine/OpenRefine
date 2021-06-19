@@ -30,6 +30,7 @@ package org.openrefine.browsing;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import java.io.Serializable;
 import java.util.Arrays;
 import java.util.List;
 
@@ -51,6 +52,7 @@ import org.openrefine.model.Cell;
 import org.openrefine.model.ColumnMetadata;
 import org.openrefine.model.ColumnModel;
 import org.openrefine.model.GridState;
+import org.openrefine.model.GridState.PartialAggregation;
 import org.openrefine.model.IndexedRow;
 import org.openrefine.model.Record;
 import org.openrefine.model.Row;
@@ -77,6 +79,7 @@ public class EngineTests {
     private AllFacetsState allRowsState = new AllFacetsState(ImmutableList.of(new FacetStateStub(65, 35), new FacetStateStub(100, 0)), 100,
             65);
     private AllFacetsState partialState = new AllFacetsState(ImmutableList.of(new FacetStateStub(8, 2), new FacetStateStub(10, 0)), 10, 8);
+    private PartialAggregation<Serializable> partialStateWrapped = new PartialAggregation<Serializable>(partialState, 10, true);
 
     @SuppressWarnings("unchecked")
     @BeforeMethod
@@ -103,7 +106,7 @@ public class EngineTests {
         when((FacetAggregator<FacetStateStub>) facetA.getAggregator()).thenReturn(new FacetAggregatorStub(filterA));
         when((FacetAggregator<FacetStateStub>) facetAll.getAggregator()).thenReturn(new FacetAggregatorStub(noFilter));
         when(initialState.aggregateRows(Mockito.any(), Mockito.any())).thenReturn(allRowsState);
-        when(initialState.aggregateRowsApprox(Mockito.any(), Mockito.any(), Mockito.anyLong())).thenReturn(partialState);
+        when(initialState.aggregateRowsApprox(Mockito.any(), Mockito.any(), Mockito.anyLong())).thenReturn(partialStateWrapped);
 
         List<FacetConfig> facetConfigs = Arrays.asList(
                 facetConfigA, facetConfigAll);
@@ -122,16 +125,20 @@ public class EngineTests {
 
     @Test
     public void testFacetStates() {
-        AllFacetsState facetStates = engine.getFacetsState();
+        PartialAggregation<AllFacetsState> facetStates = engine.getFacetsState();
 
-        Assert.assertEquals(facetStates, allRowsState);
+        Assert.assertEquals(facetStates.getState(), allRowsState);
+        Assert.assertEquals(facetStates.getProcessed(), 100L);
+        Assert.assertFalse(facetStates.limitReached());
     }
 
     @Test
     public void testFacetStatesApprox() {
-        AllFacetsState facetStates = enginePartial.getFacetsState();
+        PartialAggregation<AllFacetsState> facetStates = enginePartial.getFacetsState();
 
-        Assert.assertEquals(facetStates, partialState);
+        Assert.assertEquals(facetStates.getState(), partialState);
+        Assert.assertEquals(facetStates.getProcessed(), 10L);
+        Assert.assertTrue(facetStates.limitReached());
     }
 
     @Test
@@ -151,6 +158,12 @@ public class EngineTests {
     public void testFilteredCount() {
         Assert.assertEquals(engine.getFilteredCount(), 65);
         Assert.assertEquals(enginePartial.getFilteredCount(), 8);
+    }
+
+    @Test
+    public void testLimitReached() {
+        Assert.assertFalse(engine.limitReached());
+        Assert.assertTrue(enginePartial.limitReached());
     }
 
     @Test

@@ -34,6 +34,7 @@ import org.openrefine.browsing.facets.RowAggregator;
 import org.openrefine.browsing.facets.StringFacet;
 import org.openrefine.browsing.facets.StringFacetState;
 import org.openrefine.model.GridState.ApproxCount;
+import org.openrefine.model.GridState.PartialAggregation;
 import org.openrefine.model.changes.ChangeData;
 import org.openrefine.model.changes.ChangeDataSerializer;
 import org.openrefine.model.changes.IndexedData;
@@ -612,17 +613,39 @@ public abstract class DatamodelRunnerTestBase {
     }
 
     @Test
-    public void testAggregateRowsApprox() {
+    public void testAggregateRowsApproxPartialResult() {
         RowCounter aggregator = new RowCounter();
-        Assert.assertTrue(simpleGrid.aggregateRowsApprox(aggregator, BoxedLong.zero, 2L).value <= 2L);
-        Assert.assertEquals(simpleGrid.aggregateRowsApprox(aggregator, BoxedLong.zero, 8L).value, 4L);
+        PartialAggregation<BoxedLong> partialResult = simpleGrid.aggregateRowsApprox(aggregator, BoxedLong.zero, 2L);
+        Assert.assertTrue(partialResult.getState().value <= 2L);
+        Assert.assertTrue(partialResult.limitReached());
+        Assert.assertTrue(partialResult.getProcessed() <= 2L);
     }
 
     @Test
-    public void testAggregateRecordsApprox() {
+    public void testAggregateRowsApproxFullResult() {
         RowCounter aggregator = new RowCounter();
-        Assert.assertTrue(gridToSort.aggregateRecordsApprox(aggregator, BoxedLong.zero, 2L).value <= 2L);
-        Assert.assertEquals(gridToSort.aggregateRecordsApprox(aggregator, BoxedLong.zero, 8L).value, 3L);
+        PartialAggregation<BoxedLong> fullResult = simpleGrid.aggregateRowsApprox(aggregator, BoxedLong.zero, 8L);
+        Assert.assertEquals(fullResult.getState().value, 4L);
+        Assert.assertFalse(fullResult.limitReached());
+        Assert.assertEquals(fullResult.getProcessed(), 4L);
+    }
+
+    @Test
+    public void testAggregateRecordsApproxPartialResult() {
+        RowCounter aggregator = new RowCounter();
+        PartialAggregation<BoxedLong> partialResult = gridToSort.aggregateRecordsApprox(aggregator, BoxedLong.zero, 2L);
+        Assert.assertTrue(partialResult.getState().value <= 2L);
+        Assert.assertTrue(partialResult.limitReached());
+        Assert.assertTrue(partialResult.getProcessed() <= 2L);
+    }
+
+    @Test
+    public void testAggregateRecordsApproxFullResult() {
+        RowCounter aggregator = new RowCounter();
+        PartialAggregation<BoxedLong> fullResult = gridToSort.aggregateRecordsApprox(aggregator, BoxedLong.zero, 8L);
+        Assert.assertEquals(fullResult.getState().value, 3L);
+        Assert.assertEquals(fullResult.getProcessed(), 3L);
+        Assert.assertFalse(fullResult.limitReached());
     }
 
     public static RowMapper concatRowMapper = new RowMapper() {

@@ -278,13 +278,14 @@ public interface GridState {
      * Computes the result of a row aggregator on the grid, reading at most a fixed number of rows. The rows read should
      * be deterministic for a given implementation.
      */
-    public <T extends Serializable> T aggregateRowsApprox(RowAggregator<T> aggregator, T initialState, long maxRows);
+    public <T extends Serializable> PartialAggregation<T> aggregateRowsApprox(RowAggregator<T> aggregator, T initialState, long maxRows);
 
     /**
      * Computes the result of a row aggregator on the grid, reading at most a fixed number of records. The records read
      * should be deterministic for a given implementation.
      */
-    public <T extends Serializable> T aggregateRecordsApprox(RecordAggregator<T> aggregator, T initialState, long maxRecords);
+    public <T extends Serializable> PartialAggregation<T> aggregateRecordsApprox(RecordAggregator<T> aggregator, T initialState,
+            long maxRecords);
 
     // Transformations
 
@@ -540,17 +541,20 @@ public interface GridState {
 
     /**
      * Utility class to represent the outcome of a partial count: the number of records/rows processed, and how many of
-     * these fulfilled the condition.
+     * these fulfilled the condition. The limitReached flag indicates whether the aggregation stopped because the limit
+     * was reached or the underlying collection was exhausted.
      */
     public static class ApproxCount implements Serializable {
 
         private static final long serialVersionUID = -6472934740385946264L;
         private final long _processed;
         private final long _matched;
+        private final boolean _limitReached;
 
-        public ApproxCount(long processed, long matched) {
+        public ApproxCount(long processed, long matched, boolean limitReached) {
             _processed = processed;
             _matched = matched;
+            _limitReached = limitReached;
         }
 
         public long getProcessed() {
@@ -559,6 +563,39 @@ public interface GridState {
 
         public long getMatched() {
             return _matched;
+        }
+
+        public boolean limitReached() {
+            return _limitReached;
+        }
+    }
+
+    /**
+     * Utility class to represent the result of a partial aggregation
+     */
+    public static class PartialAggregation<T extends Serializable> implements Serializable {
+
+        private static final long serialVersionUID = -3669547386094478153L;
+        private final T _state;
+        private final long _processed;
+        private final boolean _limitReached;
+
+        public PartialAggregation(T state, long processed, boolean limitReached) {
+            _state = state;
+            _processed = processed;
+            _limitReached = limitReached;
+        }
+
+        public T getState() {
+            return _state;
+        }
+
+        public long getProcessed() {
+            return _processed;
+        }
+
+        public boolean limitReached() {
+            return _limitReached;
         }
     }
 

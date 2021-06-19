@@ -184,12 +184,19 @@ public class LocalGridState implements GridState {
 
     @Override
     public ApproxCount countMatchingRowsApprox(RowFilter filter, long limit) {
+        long partitionLimit = limit / grid.numPartitions();
+        ApproxCount initialState = new ApproxCount(0, 0, partitionLimit == 0);
         return grid
-                .limitPartitions(limit / grid.numPartitions())
-                .aggregate(new ApproxCount(0, 0),
-                        (ac, tuple) -> new ApproxCount(ac.getProcessed() + 1,
-                                ac.getMatched() + (filter.filterRow(tuple.getKey(), tuple.getValue()) ? 1 : 0)),
-                        (ac1, ac2) -> new ApproxCount(ac1.getProcessed() + ac2.getProcessed(), ac1.getMatched() + ac2.getMatched()));
+                .limitPartitions(partitionLimit)
+                .aggregate(initialState,
+                        (ac, tuple) -> new ApproxCount(
+                                ac.getProcessed() + 1,
+                                ac.getMatched() + (filter.filterRow(tuple.getKey(), tuple.getValue()) ? 1 : 0),
+                                ac.limitReached() || ac.getProcessed() + 1 == partitionLimit),
+                        (ac1, ac2) -> new ApproxCount(
+                                ac1.getProcessed() + ac2.getProcessed(),
+                                ac1.getMatched() + ac2.getMatched(),
+                                ac1.limitReached() || ac2.limitReached()));
     }
 
     @Override
@@ -266,12 +273,19 @@ public class LocalGridState implements GridState {
     @Override
     public ApproxCount countMatchingRecordsApprox(RecordFilter filter, long limit) {
         PairPLL<Long, Record> records = records();
+        long partitionLimit = limit / records.numPartitions();
+        ApproxCount initialState = new ApproxCount(0, 0, partitionLimit == 0);
         return records
-                .limitPartitions(limit / records.numPartitions())
-                .aggregate(new ApproxCount(0, 0),
-                        (ac, tuple) -> new ApproxCount(ac.getProcessed() + 1,
-                                ac.getMatched() + (filter.filterRecord(tuple.getValue()) ? 1 : 0)),
-                        (ac1, ac2) -> new ApproxCount(ac1.getProcessed() + ac2.getProcessed(), ac1.getMatched() + ac2.getMatched()));
+                .limitPartitions(partitionLimit)
+                .aggregate(initialState,
+                        (ac, tuple) -> new ApproxCount(
+                                ac.getProcessed() + 1,
+                                ac.getMatched() + (filter.filterRecord(tuple.getValue()) ? 1 : 0),
+                                ac.limitReached() || (ac.getProcessed() + 1 == partitionLimit)),
+                        (ac1, ac2) -> new ApproxCount(
+                                ac1.getProcessed() + ac2.getProcessed(),
+                                ac1.getMatched() + ac2.getMatched(),
+                                ac1.limitReached() || ac2.limitReached()));
     }
 
     @Override
@@ -351,22 +365,38 @@ public class LocalGridState implements GridState {
     }
 
     @Override
-    public <T extends Serializable> T aggregateRowsApprox(RowAggregator<T> aggregator, T initialState, long maxRows) {
+    public <T extends Serializable> PartialAggregation<T> aggregateRowsApprox(RowAggregator<T> aggregator, T initialState, long maxRows) {
+        long partitionLimit = maxRows / grid.numPartitions();
+        PartialAggregation<T> initialPartialState = new PartialAggregation<T>(initialState, 0, partitionLimit == 0);
         return grid
-                .limitPartitions(maxRows / grid.numPartitions())
-                .aggregate(initialState,
-                        (s, t) -> aggregator.withRow(s, t.getKey(), t.getValue()),
-                        (s1, s2) -> aggregator.sum(s1, s2));
+                .limitPartitions(partitionLimit)
+                .aggregate(initialPartialState,
+                        (s, t) -> new PartialAggregation<T>(
+                                aggregator.withRow(s.getState(), t.getKey(), t.getValue()),
+                                s.getProcessed() + 1,
+                                s.limitReached() || s.getProcessed() + 1 == partitionLimit),
+                        (s1, s2) -> new PartialAggregation<T>(
+                                aggregator.sum(s1.getState(), s2.getState()),
+                                s1.getProcessed() + s2.getProcessed(),
+                                s1.limitReached() || s2.limitReached()));
     }
 
     @Override
-    public <T extends Serializable> T aggregateRecordsApprox(RecordAggregator<T> aggregator, T initialState,
+    public <T extends Serializable> PartialAggregation<T> aggregateRecordsApprox(RecordAggregator<T> aggregator, T initialState,
             long maxRecords) {
+        long partitionLimit = maxRecords / grid.numPartitions();
+        PartialAggregation<T> initialPartialState = new PartialAggregation<T>(initialState, 0, partitionLimit == 0);
         return records()
-                .limitPartitions(maxRecords / grid.numPartitions())
-                .aggregate(initialState,
-                        (s, t) -> aggregator.withRecord(s, t.getValue()),
-                        (s1, s2) -> aggregator.sum(s1, s2));
+                .limitPartitions(partitionLimit)
+                .aggregate(initialPartialState,
+                        (s, t) -> new PartialAggregation<T>(
+                                aggregator.withRecord(s.getState(), t.getValue()),
+                                s.getProcessed() + 1,
+                                s.limitReached() || s.getProcessed() + 1 == partitionLimit),
+                        (s1, s2) -> new PartialAggregation<T>(
+                                aggregator.sum(s1.getState(), s2.getState()),
+                                s1.getProcessed() + s2.getProcessed(),
+                                s1.limitReached() || s2.limitReached()));
     }
 
     @Override

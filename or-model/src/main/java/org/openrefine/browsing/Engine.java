@@ -51,6 +51,7 @@ import org.openrefine.browsing.facets.FacetState;
 import org.openrefine.browsing.facets.RecordAggregator;
 import org.openrefine.browsing.facets.RowAggregator;
 import org.openrefine.model.GridState;
+import org.openrefine.model.GridState.PartialAggregation;
 import org.openrefine.model.IndexedRow;
 import org.openrefine.model.Record;
 import org.openrefine.model.RecordFilter;
@@ -78,7 +79,7 @@ public class Engine {
     protected final GridState _state;
     protected final List<Facet> _facets;
     protected final EngineConfig _config;
-    protected AllFacetsState _facetsState;
+    protected PartialAggregation<AllFacetsState> _facetsState;
 
     static public String modeToString(Mode mode) {
         return mode == Mode.RowBased ? MODE_ROW_BASED : MODE_RECORD_BASED;
@@ -114,10 +115,14 @@ public class Engine {
     }
 
     @JsonIgnore
-    protected AllFacetsState getFacetsState() {
+    protected PartialAggregation<AllFacetsState> getFacetsState() {
         if (_facetsState == null) {
             if (_config.getAggregationLimit() == null) {
-                _facetsState = _state.aggregateRows(allFacetsAggregator(), allFacetsInitialState());
+                AllFacetsState aggregated = _state.aggregateRows(allFacetsAggregator(), allFacetsInitialState());
+                _facetsState = new PartialAggregation<AllFacetsState>(
+                        aggregated,
+                        aggregated.getAggregatedCount(),
+                        false);
             } else {
                 _facetsState = _state.aggregateRowsApprox(allFacetsAggregator(), allFacetsInitialState(), _config.getAggregationLimit());
             }
@@ -127,7 +132,7 @@ public class Engine {
 
     @JsonProperty("facets")
     public ImmutableList<FacetResult> getFacetResults() {
-        AllFacetsState states = getFacetsState();
+        AllFacetsState states = getFacetsState().getState();
 
         Builder<FacetResult> facetResults = ImmutableList.<FacetResult> builder();
         for (int i = 0; i != states.size(); i++) {
@@ -138,12 +143,17 @@ public class Engine {
 
     @JsonProperty("aggregatedCount")
     public long getAggregatedCount() {
-        return getFacetsState().getAggregatedCount();
+        return getFacetsState().getProcessed();
     }
 
     @JsonProperty("filteredCount")
     public long getFilteredCount() {
-        return getFacetsState().getFilteredCount();
+        return getFacetsState().getState().getFilteredCount();
+    }
+
+    @JsonProperty("limitReached")
+    public boolean limitReached() {
+        return getFacetsState().limitReached();
     }
 
     /**

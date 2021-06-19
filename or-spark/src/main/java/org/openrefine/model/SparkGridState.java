@@ -296,9 +296,10 @@ public class SparkGridState implements GridState {
 
     @Override
     public ApproxCount countMatchingRowsApprox(RowFilter filter, long limit) {
-        ApproxCount initialState = new ApproxCount(0L, 0L);
-        return RDDUtils.limitPartitions(grid, limit / grid.getNumPartitions())
-                .aggregate(initialState, approxRowFilterAggregator(filter), approxCountSum());
+        long partitionLimit = limit / grid.getNumPartitions();
+        ApproxCount initialState = new ApproxCount(0L, 0L, partitionLimit == 0);
+        return RDDUtils.limitPartitions(grid, partitionLimit)
+                .aggregate(initialState, approxRowFilterAggregator(filter, partitionLimit), approxCountSum());
     }
 
     private static Function2<ApproxCount, ApproxCount, ApproxCount> approxCountSum() {
@@ -308,13 +309,16 @@ public class SparkGridState implements GridState {
 
             @Override
             public ApproxCount call(ApproxCount v1, ApproxCount v2) throws Exception {
-                return new ApproxCount(v1.getProcessed() + v2.getProcessed(), v1.getMatched() + v2.getMatched());
+                return new ApproxCount(
+                        v1.getProcessed() + v2.getProcessed(),
+                        v1.getMatched() + v2.getMatched(),
+                        v1.limitReached() || v2.limitReached());
             }
 
         };
     }
 
-    private static Function2<ApproxCount, Tuple2<Long, Row>, ApproxCount> approxRowFilterAggregator(RowFilter filter) {
+    private static Function2<ApproxCount, Tuple2<Long, Row>, ApproxCount> approxRowFilterAggregator(RowFilter filter, long rowLimit) {
         return new Function2<ApproxCount, Tuple2<Long, Row>, ApproxCount>() {
 
             private static final long serialVersionUID = -54284705503006433L;
@@ -322,7 +326,7 @@ public class SparkGridState implements GridState {
             @Override
             public ApproxCount call(ApproxCount count, Tuple2<Long, Row> tuple) throws Exception {
                 long matched = count.getMatched() + (filter.filterRow(tuple._1, tuple._2) ? 1 : 0);
-                return new ApproxCount(count.getProcessed() + 1, matched);
+                return new ApproxCount(count.getProcessed() + 1, matched, count.limitReached() || count.getProcessed() + 1 == rowLimit);
             }
 
         };
@@ -443,12 +447,14 @@ public class SparkGridState implements GridState {
 
     @Override
     public ApproxCount countMatchingRecordsApprox(RecordFilter filter, long limit) {
-        ApproxCount initialState = new ApproxCount(0L, 0L);
-        return RDDUtils.limitPartitions(getRecords(), limit / grid.getNumPartitions())
-                .aggregate(initialState, approxRecordFilterAggregator(filter), approxCountSum());
+        long partitionLimit = limit / grid.getNumPartitions();
+        ApproxCount initialState = new ApproxCount(0L, 0L, partitionLimit == 0);
+        return RDDUtils.limitPartitions(getRecords(), partitionLimit)
+                .aggregate(initialState, approxRecordFilterAggregator(filter, partitionLimit), approxCountSum());
     }
 
-    private static Function2<ApproxCount, Tuple2<Long, Record>, ApproxCount> approxRecordFilterAggregator(RecordFilter filter) {
+    private static Function2<ApproxCount, Tuple2<Long, Record>, ApproxCount> approxRecordFilterAggregator(RecordFilter filter,
+            long partitionLimit) {
         return new Function2<ApproxCount, Tuple2<Long, Record>, ApproxCount>() {
 
             private static final long serialVersionUID = 1266194909791433973L;
@@ -456,7 +462,8 @@ public class SparkGridState implements GridState {
             @Override
             public ApproxCount call(ApproxCount count, Tuple2<Long, Record> tuple) throws Exception {
                 long matched = count.getMatched() + (filter.filterRecord(tuple._2) ? 1 : 0);
-                return new ApproxCount(count.getProcessed() + 1, matched);
+                return new ApproxCount(count.getProcessed() + 1, matched,
+                        count.limitReached() || count.getProcessed() + 1 == partitionLimit);
             }
 
         };
@@ -553,17 +560,21 @@ public class SparkGridState implements GridState {
     }
 
     @Override
-    public <T extends Serializable> T aggregateRowsApprox(RowAggregator<T> aggregator, T initialState, long maxRows) {
-        return RDDUtils.limitPartitions(grid, maxRows / grid.getNumPartitions())
-                .aggregate(initialState, rowSeqOp(aggregator), facetCombineOp(aggregator));
+    public <T extends Serializable> PartialAggregation<T> aggregateRowsApprox(RowAggregator<T> aggregator, T initialState, long maxRows) {
+        long partitionLimit = maxRows / grid.getNumPartitions();
+        PartialAggregation<T> initialPartialState = new PartialAggregation<T>(initialState, 0, partitionLimit == 0);
+        return RDDUtils.limitPartitions(grid, partitionLimit)
+                .aggregate(initialPartialState, rowSeqOpPartial(aggregator, partitionLimit), facetCombineOpPartial(aggregator));
     }
 
     @Override
-    public <T extends Serializable> T aggregateRecordsApprox(RecordAggregator<T> aggregator, T initialState,
+    public <T extends Serializable> PartialAggregation<T> aggregateRecordsApprox(RecordAggregator<T> aggregator, T initialState,
             long maxRecords) {
         JavaPairRDD<Long, Record> records = getRecords();
-        return RDDUtils.limitPartitions(records, maxRecords / records.getNumPartitions())
-                .aggregate(initialState, recordSeqOp(aggregator), facetCombineOp(aggregator));
+        long partitionLimit = maxRecords / records.getNumPartitions();
+        PartialAggregation<T> initialPartialState = new PartialAggregation<T>(initialState, 0, partitionLimit == 0);
+        return RDDUtils.limitPartitions(records, partitionLimit)
+                .aggregate(initialPartialState, recordSeqOpPartial(aggregator, partitionLimit), facetCombineOpPartial(aggregator));
     }
 
     private static <T> Function2<T, Tuple2<Long, Row>, T> rowSeqOp(RowAggregator<T> aggregator) {
@@ -574,6 +585,21 @@ public class SparkGridState implements GridState {
             @Override
             public T call(T states, Tuple2<Long, Row> rowTuple) throws Exception {
                 return aggregator.withRow(states, rowTuple._1, rowTuple._2);
+            }
+        };
+    }
+
+    private static <T extends Serializable> Function2<PartialAggregation<T>, Tuple2<Long, Row>, PartialAggregation<T>> rowSeqOpPartial(
+            RowAggregator<T> aggregator, long limit) {
+        return new Function2<PartialAggregation<T>, Tuple2<Long, Row>, PartialAggregation<T>>() {
+
+            private static final long serialVersionUID = 2188564367142265354L;
+
+            @Override
+            public PartialAggregation<T> call(PartialAggregation<T> states, Tuple2<Long, Row> rowTuple) throws Exception {
+                T newState = aggregator.withRow(states.getState(), rowTuple._1, rowTuple._2);
+                return new PartialAggregation<T>(newState, states.getProcessed() + 1,
+                        states.limitReached() || (states.getProcessed() + 1 == limit));
             }
         };
     }
@@ -591,6 +617,22 @@ public class SparkGridState implements GridState {
         };
     }
 
+    private static <T extends Serializable> Function2<PartialAggregation<T>, Tuple2<Long, Record>, PartialAggregation<T>> recordSeqOpPartial(
+            RecordAggregator<T> aggregator, long limit) {
+        return new Function2<PartialAggregation<T>, Tuple2<Long, Record>, PartialAggregation<T>>() {
+
+            private static final long serialVersionUID = 6349675935547753918L;
+
+            @Override
+            public PartialAggregation<T> call(PartialAggregation<T> states, Tuple2<Long, Record> tuple) throws Exception {
+                T newState = aggregator.withRecord(states.getState(), tuple._2);
+                return new PartialAggregation<T>(newState, states.getProcessed() + 1,
+                        states.limitReached() || states.getProcessed() + 1 == limit);
+            }
+
+        };
+    }
+
     private static <T> Function2<T, T, T> facetCombineOp(Combiner<T> aggregator) {
         return new Function2<T, T, T>() {
 
@@ -599,6 +641,22 @@ public class SparkGridState implements GridState {
             @Override
             public T call(T statesA, T statesB) throws Exception {
                 return aggregator.sum(statesA, statesB);
+            }
+        };
+    }
+
+    private static <T extends Serializable> Function2<PartialAggregation<T>, PartialAggregation<T>, PartialAggregation<T>> facetCombineOpPartial(
+            Combiner<T> aggregator) {
+        return new Function2<PartialAggregation<T>, PartialAggregation<T>, PartialAggregation<T>>() {
+
+            private static final long serialVersionUID = 1L;
+
+            @Override
+            public PartialAggregation<T> call(PartialAggregation<T> statesA, PartialAggregation<T> statesB) throws Exception {
+                T newState = aggregator.sum(statesA.getState(), statesB.getState());
+                return new PartialAggregation<T>(newState,
+                        statesA.getProcessed() + statesB.getProcessed(),
+                        statesA.limitReached() || statesB.limitReached());
             }
         };
     }
