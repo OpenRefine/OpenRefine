@@ -51,7 +51,7 @@ public final class SortingConfig {
     @JsonCreator
     public SortingConfig(
             @JsonProperty("criteria") List<Criterion> criteria) {
-        _criteria = criteria;
+        _criteria = criteria == null ? Collections.emptyList() : criteria;
     }
 
     @JsonProperty("criteria")

@@ -51,4 +51,11 @@ public class SortingConfigTests {
                 "    }";
         TestUtils.isSerializedTo(SortingConfig.reconstruct(json), json, ParsingUtilities.defaultWriter);
     }
+
+    @Test
+    public void deserializeEmptySortingConfig() throws IOException {
+        String json = "{}";
+        String serialized = "{\"criteria\":[]}";
+        TestUtils.isSerializedTo(SortingConfig.reconstruct(json), serialized, ParsingUtilities.defaultWriter);
+    }
 }

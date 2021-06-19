@@ -144,8 +144,9 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
     var previewWidget = new ExpressionPreviewDialog.Widget(
       elmts, 
       Refine.columnNameToColumnIndex(column.name),
-      o.rowIndices,
-      o.values,
+      o.engineConfig,
+      o.sortingConfig,
+      o.limit,
       null
     );
 
