@@ -19,6 +19,7 @@ import org.apache.spark.api.java.function.Function;
 import org.apache.spark.storage.StorageLevel;
 import org.apache.spark.util.ShutdownHookManager;
 import org.openrefine.ProjectManager;
+import org.openrefine.importers.MultiFileReadingProgress;
 import org.openrefine.io.OrderedLocalFileSystem;
 import org.openrefine.model.changes.ChangeData;
 import org.openrefine.model.changes.ChangeDataSerializer;
@@ -166,12 +167,12 @@ public class SparkDatamodelRunner implements DatamodelRunner {
     }
 
     @Override
-    public GridState loadTextFile(String path) throws IOException {
-        return loadTextFile(path, -1);
+    public GridState loadTextFile(String path, MultiFileReadingProgress progress) throws IOException {
+        return loadTextFile(path, progress, -1);
     }
 
     @Override
-    public GridState loadTextFile(String path, long limit) throws IOException {
+    public GridState loadTextFile(String path, MultiFileReadingProgress progress, long limit) throws IOException {
         JavaRDD<String> lines = context.textFile(path);
         ColumnModel columnModel = new ColumnModel(Collections.singletonList(new ColumnMetadata("Column")));
         JavaRDD<Row> rows = lines.map(s -> new Row(Collections.singletonList(new Cell(s, null))));
@@ -186,6 +187,7 @@ public class SparkDatamodelRunner implements DatamodelRunner {
             // that exceed the desired row count
             indexedRows = RDDUtils.limit(indexedRows, limit);
         }
+        // TODO add progress support?
         return new SparkGridState(columnModel, indexedRows, Collections.emptyMap(), this);
     } 
 

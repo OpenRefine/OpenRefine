@@ -6,6 +6,8 @@ import java.io.IOException;
 import org.apache.hadoop.fs.ContentSummary;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -19,6 +21,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  *
  */
 public class ImportingFileRecord {
+    
+    private final static Logger logger = LoggerFactory.getLogger(ImportingFileRecord.class);
 	
 	private final String _sparkURI;
 	private String _location;
@@ -192,17 +196,21 @@ public class ImportingFileRecord {
 	 * @return the length of the file in bytes
 	 */
 	public long getSize(File rawDataDir, FileSystem hdfs) {
+	    logger.warn("Computing size of file");
 		if (_size > 0) {
+		    logger.warn("Already cached: {}", _size);
 			return _size;
 		}
 		if (_sparkURI == null) {
 			File localFile = getFile(rawDataDir);
 			_size = localFile.length();
+			logger.warn("Using native FS .length(): {}", _size);
 		} else {
 			Path path = new Path(getDerivedSparkURI(rawDataDir));
 			try {
 				ContentSummary summary = hdfs.getContentSummary(path);
 				_size = summary.getLength();
+				logger.warn("Using Hadoop FS: {}", _size);
 			} catch(IOException e) {
 				_size = 0;
 			}

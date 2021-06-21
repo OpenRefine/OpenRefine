@@ -6,8 +6,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.stream.Stream;
-import java.util.Optional;
-import java.util.OptionalLong;
 
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FileSystem;
@@ -26,6 +24,9 @@ import org.apache.hadoop.mapreduce.TaskAttemptID;
 import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
 import org.apache.hadoop.mapreduce.lib.input.TextInputFormat;
 import org.apache.hadoop.mapreduce.task.TaskAttemptContextImpl;
+import org.openrefine.importers.MultiFileReadingProgress;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Streams;
 
@@ -41,15 +42,19 @@ import com.google.common.collect.Streams;
  */
 public class TextFilePLL extends PLL<String> {
     
+    private final static Logger logger = LoggerFactory.getLogger(TextFilePLL.class);
+    
     private final List<HadoopPartition> partitions;
     private final String path;
     private final PLLContext context;
     private final InputFormat<LongWritable, Text> inputFormat = new TextInputFormat();
+    private ReadingProgressReporter progress;
 
     public TextFilePLL(PLLContext context, String path) throws IOException {
         super(context);
         this.path = path;
         this.context = context;
+        this.progress = null;
         
         FileSystem fs = context.getFileSystem();
         
@@ -95,12 +100,17 @@ public class TextFilePLL extends PLL<String> {
         }
         
     }
+    
+    public void setProgressHandler(MultiFileReadingProgress progress) {
+        this.progress = progress == null ? null : new ReadingProgressReporter(progress, path);
+    }
 
     @Override
     protected Stream<String> compute(Partition partition) {
         HadoopPartition hadoopPartition = (HadoopPartition)partition;
         TaskAttemptID attemptId = new TaskAttemptID();
         TaskAttemptContext taskAttemptContext = new TaskAttemptContextImpl(context.getFileSystem().getConf(), attemptId);
+        int reportBatchSize = 64;
         try {
             RecordReader<LongWritable, Text> reader = inputFormat.createRecordReader(hadoopPartition.getSplit(), taskAttemptContext);
             reader.initialize(hadoopPartition.getSplit(), taskAttemptContext);
@@ -108,6 +118,10 @@ public class TextFilePLL extends PLL<String> {
                 
                 boolean finished = false;
                 boolean havePair = false;
+                long lastOffsetReported = -1;
+                long lastOffsetSeen = -1;
+                long totalIncrement = 0; // TODO delete this, for debugging only
+                int lastReport = 0;
 
                 @Override
                 public boolean hasNext() {
@@ -120,6 +134,9 @@ public class TextFilePLL extends PLL<String> {
                         }
                         havePair = !finished;
                     }
+                    if (finished && lastOffsetSeen > lastOffsetReported) {
+                        reportProgress();
+                    }
                     return !finished;
                 }
 
@@ -131,12 +148,35 @@ public class TextFilePLL extends PLL<String> {
                     String line = null;
                     try {
                         line = reader.getCurrentValue().toString();
+                        lastOffsetSeen = reader.getCurrentKey().get();
+                        if (lastReport >= reportBatchSize) {
+                            reportProgress();
+                        }
+                        lastReport++;
+                        if (lastOffsetReported == -1) {
+                            if (progress != null) {
+                                logger.warn("Partition {} starting at offset {}", partition.getIndex(), lastOffsetSeen);
+                            }
+                            lastOffsetReported = lastOffsetSeen;
+                        }
                     } catch (IOException | InterruptedException e) {
                         finished = true;
                         e.printStackTrace();
                     }
                     havePair = false;
                     return line;
+                }
+
+                private void reportProgress() {
+                    if (progress != null) {
+                        if (finished) {
+                            logger.warn("Partition {} reporting progress {} - {} = {}, with total increment of {}", partition.getIndex(), lastOffsetSeen, lastOffsetReported, lastOffsetSeen - lastOffsetReported, totalIncrement);
+                        }
+                        progress.increment(lastOffsetSeen - lastOffsetReported);
+                        totalIncrement += lastOffsetSeen - lastOffsetReported;
+                        lastReport = 0;
+                        lastOffsetReported = lastOffsetSeen;
+                    }
                 }
                 
             };

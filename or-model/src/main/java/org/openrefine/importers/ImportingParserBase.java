@@ -41,7 +41,6 @@ import java.util.List;
 
 import org.apache.hadoop.fs.FileSystem;
 import org.openrefine.ProjectMetadata;
-import org.openrefine.importers.ImporterUtilities.MultiFileReadingProgress;
 import org.openrefine.importing.ImportingFileRecord;
 import org.openrefine.importing.ImportingJob;
 import org.openrefine.importing.ImportingParser;
@@ -142,7 +141,7 @@ abstract public class ImportingParserBase implements ImportingParser {
         pushImportingOptions(metadata, fileSource, archiveFileName, optionsCopy);
        
     	if (this instanceof HDFSImporter) {
-    		return ((HDFSImporter)this).parseOneFile(metadata, job, fileSource, archiveFileName, fileRecord.getDerivedSparkURI(job.getRawDataDir()), limit, options);
+    		return ((HDFSImporter)this).parseOneFile(metadata, job, fileSource, archiveFileName, fileRecord.getDerivedSparkURI(job.getRawDataDir()), limit, options, progress);
     	} else {
     		final File file = fileRecord.getFile(job.getRawDataDir());
     		try {

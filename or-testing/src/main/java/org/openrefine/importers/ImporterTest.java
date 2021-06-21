@@ -144,7 +144,8 @@ public abstract class ImporterTest extends RefineTest {
             "archive-file-name",
             sparkURI,
             -1,
-            options
+            options,
+            mock(MultiFileReadingProgress.class)
         );
     }
     
