@@ -13,7 +13,7 @@
     "dependencies": {
         "cypress": "7.2.0",
         "cypress-image-snapshot": "^4.0.1",
-        "cypress-file-upload": "^5.0.7",
+        "cypress-file-upload": "^5.0.8",
         "cypress-wait-until": "^1.7.1",
         "dotenv": "^10.0.0",
         "fs-extra": "^10.0.0",
