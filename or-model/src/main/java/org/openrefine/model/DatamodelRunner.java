@@ -9,6 +9,7 @@ import java.util.Map;
 
 import org.apache.hadoop.fs.FileSystem;
 
+import org.openrefine.importers.MultiFileReadingProgress;
 import org.openrefine.model.changes.ChangeData;
 import org.openrefine.model.changes.ChangeDataSerializer;
 import org.openrefine.model.changes.IndexedData;
@@ -62,7 +63,7 @@ public interface DatamodelRunner {
      * Loads a text file as a {@link GridState} with a single column named "Column" and whose contents are the lines in
      * the file, parsed as strings.
      */
-    public GridState loadTextFile(String path) throws IOException;
+    public GridState loadTextFile(String path, MultiFileReadingProgress progress) throws IOException;
 
     /**
      * Loads a text file as a {@link GridState} with a single column named "Column" and whose contents are the lines in
@@ -73,7 +74,7 @@ public interface DatamodelRunner {
      * @param limit
      *            the maximum number of lines to read
      */
-    public GridState loadTextFile(String path, long limit) throws IOException;
+    public GridState loadTextFile(String path, MultiFileReadingProgress progress, long limit) throws IOException;
 
     /**
      * Creates a {@link ChangeData} from an in-memory list of indexed data. The list is required to be sorted.

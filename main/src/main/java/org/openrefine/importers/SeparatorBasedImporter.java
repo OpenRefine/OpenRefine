@@ -98,25 +98,26 @@ public class SeparatorBasedImporter extends LineBasedImporterBase {
     }
 
     @Override
-    public GridState parseOneFile(ProjectMetadata metadata, ImportingJob job, String fileSource, String archiveFileName, String sparkURI,
-            long limit, ObjectNode options)
+    public GridState parseOneFile(ProjectMetadata metadata, ImportingJob job, String fileSource, String archiveFileName,
+            String sparkURI, long limit, ObjectNode options, MultiFileReadingProgress progress)
             throws Exception {
         boolean processQuotes = JSONUtilities.getBoolean(options, "processQuotes", true);
 
         // the default 'multiLine' setting is set to true for backwards-compatibility
         // although the UI now proposes 'false' by default for performance reasons (similarly to Spark)
         boolean multiLine = JSONUtilities.getBoolean(options, "multiLine", true);
+        logger.warn("Parsing TSV/CSV in multiline mode: {}", multiLine);
 
         // If we use quotes, then a line of the original file does not necessarily correspond
         // to a row in the grid, so we unfortunately cannot use the logic from LineBasedImporterBase.
         // We resort to loading the whole file in memory.
         if (processQuotes && multiLine) {
-            GridState lines = limit > 0 ? runner.loadTextFile(sparkURI, limit) : runner.loadTextFile(sparkURI);
+            GridState lines = limit > 0 ? runner.loadTextFile(sparkURI, progress, limit) : runner.loadTextFile(sparkURI, progress);
             TableDataReader dataReader = createTableDataReader(metadata, job, lines, options);
             return tabularParserHelper.parseOneFile(metadata, job, fileSource, archiveFileName, dataReader, limit, options);
         } else {
             // otherwise, go for the efficient route, using line-based parsing
-            return super.parseOneFile(metadata, job, fileSource, archiveFileName, sparkURI, limit, options);
+            return super.parseOneFile(metadata, job, fileSource, archiveFileName, sparkURI, limit, options, progress);
         }
     }
 

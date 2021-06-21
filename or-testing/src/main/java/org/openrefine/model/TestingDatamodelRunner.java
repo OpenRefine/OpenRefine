@@ -27,6 +27,7 @@ import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.LocalFileSystem;
 import org.testng.Assert;
 
+import org.openrefine.importers.MultiFileReadingProgress;
 import org.openrefine.model.GridState.Metadata;
 import org.openrefine.model.changes.ChangeData;
 import org.openrefine.model.changes.ChangeDataSerializer;
@@ -208,12 +209,12 @@ public class TestingDatamodelRunner implements DatamodelRunner {
     }
 
     @Override
-    public GridState loadTextFile(String path) throws IOException {
-        return loadTextFile(path, Long.MAX_VALUE);
+    public GridState loadTextFile(String path, MultiFileReadingProgress progress) throws IOException {
+        return loadTextFile(path, progress, Long.MAX_VALUE);
     }
 
     @Override
-    public GridState loadTextFile(String path, long limit) throws IOException {
+    public GridState loadTextFile(String path, MultiFileReadingProgress progress, long limit) throws IOException {
         FileReader reader = null;
         try {
             reader = new FileReader(new File(path));

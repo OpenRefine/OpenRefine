@@ -45,8 +45,8 @@ import org.apache.commons.lang.NotImplementedException;
 
 import org.openrefine.ProjectMetadata;
 import org.openrefine.importers.ImporterUtilities;
-import org.openrefine.importers.ImporterUtilities.MultiFileReadingProgress;
 import org.openrefine.importers.ImportingParserBase;
+import org.openrefine.importers.MultiFileReadingProgress;
 import org.openrefine.importers.tree.TreeImportUtilities.ColumnIndexAllocator;
 import org.openrefine.importing.ImportingFileRecord;
 import org.openrefine.importing.ImportingJob;

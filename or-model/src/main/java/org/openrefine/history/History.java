@@ -92,7 +92,7 @@ public class History {
         _cachedOnDisk = new ArrayList<>();
         _states.add(initialGrid);
         _cachedOnDisk.add(true);
-        initialGrid.cache();
+        // initialGrid.cache();
         _position = 0;
         _dataStore = dataStore;
         _gridStore = gridStore;

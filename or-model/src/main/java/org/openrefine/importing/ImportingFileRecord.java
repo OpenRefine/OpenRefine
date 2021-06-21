@@ -10,6 +10,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import org.apache.hadoop.fs.ContentSummary;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Represents a file to import in an importing job. Multiple files can be imported to form the same project.
@@ -18,6 +20,8 @@ import org.apache.hadoop.fs.Path;
  *
  */
 public class ImportingFileRecord {
+
+    private final static Logger logger = LoggerFactory.getLogger(ImportingFileRecord.class);
 
     private final String _sparkURI;
     private String _location;

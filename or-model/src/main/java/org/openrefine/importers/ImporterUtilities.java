@@ -161,15 +161,6 @@ public class ImporterUtilities {
 
     }
 
-    static public interface MultiFileReadingProgress {
-
-        public void startFile(String fileSource);
-
-        public void readingFile(String fileSource, long bytesRead);
-
-        public void endFile(String fileSource, long bytesRead);
-    }
-
     static public MultiFileReadingProgress createMultiFileReadingProgress(
             final ImportingJob job,
             List<ImportingFileRecord> fileRecords,
@@ -185,7 +176,7 @@ public class ImporterUtilities {
             long totalBytesRead = 0;
 
             void setProgress(String fileSource, long bytesRead) {
-                job.setProgress(totalSize2 == 0 ? -1 : (int) (100 * (totalBytesRead + bytesRead) / totalSize2),
+                job.setProgress(totalSize2 == 0 ? -1 : (int) (100 * (totalBytesRead + bytesRead) / (3 * totalSize2)),
                         "Reading " + fileSource);
             }
 

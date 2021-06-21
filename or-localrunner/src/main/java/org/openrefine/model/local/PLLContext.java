@@ -53,7 +53,7 @@ public class PLLContext {
      * @return
      * @throws IOException
      */
-    public PLL<String> textFile(String path) throws IOException {
+    public TextFilePLL textFile(String path) throws IOException {
         return new TextFilePLL(this, path);
     }
 

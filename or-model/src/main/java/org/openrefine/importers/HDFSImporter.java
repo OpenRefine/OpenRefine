@@ -37,9 +37,11 @@ public abstract class HDFSImporter extends ImportingParserBase {
      *            the maximum number of rows to read
      * @param options
      *            any options passed to the importer as a JSON payload
+     * @param progress
+     *            a callback for tracking the progress of reading this file
      * @return a parsed GridState
      */
     public abstract GridState parseOneFile(ProjectMetadata metadata, ImportingJob job, String fileSource,
-            String archiveFileName, String uri, long limit, ObjectNode options) throws Exception;
+            String archiveFileName, String uri, long limit, ObjectNode options, MultiFileReadingProgress progress) throws Exception;
 
 }

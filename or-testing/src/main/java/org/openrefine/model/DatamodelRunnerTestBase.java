@@ -1,6 +1,8 @@
 
 package org.openrefine.model;
 
+import static org.mockito.Mockito.mock;
+
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -33,6 +35,8 @@ import org.openrefine.browsing.facets.RecordAggregator;
 import org.openrefine.browsing.facets.RowAggregator;
 import org.openrefine.browsing.facets.StringFacet;
 import org.openrefine.browsing.facets.StringFacetState;
+import org.openrefine.importers.MultiFileReadingProgress;
+import org.openrefine.importers.MultiFileReadingProgressStub;
 import org.openrefine.model.GridState.ApproxCount;
 import org.openrefine.model.GridState.PartialAggregation;
 import org.openrefine.model.changes.ChangeData;
@@ -1167,7 +1171,7 @@ public abstract class DatamodelRunnerTestBase {
         File tempFile = new File(tempDir, "textfile.txt");
         createTestTextFile(tempFile, "foo\nbar\nbaz");
 
-        GridState textGrid = SUT.loadTextFile(tempFile.getAbsolutePath());
+        GridState textGrid = SUT.loadTextFile(tempFile.getAbsolutePath(), mock(MultiFileReadingProgress.class));
 
         GridState expected = createGrid(new String[] { "Column" },
                 new Serializable[][] {
@@ -1180,11 +1184,25 @@ public abstract class DatamodelRunnerTestBase {
     }
 
     @Test
+    public void testLoadTextFileWithProgress() throws IOException {
+        File tempFile = new File(tempDir, "textfile.txt");
+        createTestTextFile(tempFile, "foo\nbar\nbaz\nhello\nworld\nwelcome\nto\nopenrefine");
+
+        MultiFileReadingProgressStub progress = new MultiFileReadingProgressStub();
+        GridState textGrid = SUT.loadTextFile(tempFile.getAbsolutePath(), progress);
+
+        Assert.assertTrue(progress.bytesRead <= 0L);
+        // read the whole file
+        textGrid.collectRows();
+        Assert.assertTrue(progress.bytesRead >= 30);
+    }
+
+    @Test
     public void testLoadTextFileLimit() throws IOException {
         File tempFile = new File(tempDir, "longtextfile.txt");
         createTestTextFile(tempFile, "foo\nbar\nbaz\nhello\nworld\nwelcome\nto\nopenrefine");
 
-        GridState textGrid = SUT.loadTextFile(tempFile.getAbsolutePath(), 7);
+        GridState textGrid = SUT.loadTextFile(tempFile.getAbsolutePath(), mock(MultiFileReadingProgress.class), 7);
 
         GridState expected = createGrid(new String[] { "Column" },
                 new Serializable[][] {
@@ -1205,7 +1223,7 @@ public abstract class DatamodelRunnerTestBase {
         File tempFile = new File(tempDir, "textfileWithNewline.txt");
         createTestTextFile(tempFile, "foo\nbar\nbaz\n");
 
-        GridState textGrid = SUT.loadTextFile(tempFile.getAbsolutePath());
+        GridState textGrid = SUT.loadTextFile(tempFile.getAbsolutePath(), mock(MultiFileReadingProgress.class));
 
         GridState expected = createGrid(new String[] { "Column" },
                 new Serializable[][] {
@@ -1219,7 +1237,7 @@ public abstract class DatamodelRunnerTestBase {
 
     @Test(expectedExceptions = IOException.class)
     public void testLoadTextFileDoesNotExist() throws IOException {
-        SUT.loadTextFile(new File(tempDir, "doesNotExist.txt").getAbsolutePath());
+        SUT.loadTextFile(new File(tempDir, "doesNotExist.txt").getAbsolutePath(), mock(MultiFileReadingProgress.class));
     }
 
     protected void createTestTextFile(File file, String contents) throws IOException {

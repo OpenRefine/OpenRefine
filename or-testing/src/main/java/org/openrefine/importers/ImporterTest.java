@@ -142,7 +142,8 @@ public abstract class ImporterTest extends RefineTest {
                 "archive-file-name",
                 sparkURI,
                 -1,
-                options);
+                options,
+                mock(MultiFileReadingProgress.class));
     }
 
     protected GridState parseOneFile(ImportingParser parser, File file, ObjectNode options) throws Exception {

@@ -26,6 +26,10 @@ import org.apache.hadoop.mapreduce.TaskAttemptID;
 import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
 import org.apache.hadoop.mapreduce.lib.input.TextInputFormat;
 import org.apache.hadoop.mapreduce.task.TaskAttemptContextImpl;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import org.openrefine.importers.MultiFileReadingProgress;
 
 /**
  * A PLL whose contents are read from a set of text files. The text files are partitioned using Hadoop, using new lines
@@ -38,15 +42,19 @@ import org.apache.hadoop.mapreduce.task.TaskAttemptContextImpl;
  */
 public class TextFilePLL extends PLL<String> {
 
+    private final static Logger logger = LoggerFactory.getLogger(TextFilePLL.class);
+
     private final List<HadoopPartition> partitions;
     private final String path;
     private final PLLContext context;
     private final InputFormat<LongWritable, Text> inputFormat = new TextInputFormat();
+    private ReadingProgressReporter progress;
 
     public TextFilePLL(PLLContext context, String path) throws IOException {
         super(context);
         this.path = path;
         this.context = context;
+        this.progress = null;
 
         FileSystem fs = context.getFileSystem();
 
@@ -93,11 +101,16 @@ public class TextFilePLL extends PLL<String> {
 
     }
 
+    public void setProgressHandler(MultiFileReadingProgress progress) {
+        this.progress = progress == null ? null : new ReadingProgressReporter(progress, path);
+    }
+
     @Override
     protected Stream<String> compute(Partition partition) {
         HadoopPartition hadoopPartition = (HadoopPartition) partition;
         TaskAttemptID attemptId = new TaskAttemptID();
         TaskAttemptContext taskAttemptContext = new TaskAttemptContextImpl(context.getFileSystem().getConf(), attemptId);
+        int reportBatchSize = 64;
         try {
             RecordReader<LongWritable, Text> reader = inputFormat.createRecordReader(hadoopPartition.getSplit(), taskAttemptContext);
             reader.initialize(hadoopPartition.getSplit(), taskAttemptContext);
@@ -105,6 +118,9 @@ public class TextFilePLL extends PLL<String> {
 
                 boolean finished = false;
                 boolean havePair = false;
+                long lastOffsetReported = -1;
+                long lastOffsetSeen = -1;
+                int lastReport = 0;
 
                 @Override
                 public boolean hasNext() {
@@ -117,6 +133,9 @@ public class TextFilePLL extends PLL<String> {
                         }
                         havePair = !finished;
                     }
+                    if (finished && lastOffsetSeen > lastOffsetReported) {
+                        reportProgress();
+                    }
                     return !finished;
                 }
 
@@ -128,12 +147,28 @@ public class TextFilePLL extends PLL<String> {
                     String line = null;
                     try {
                         line = reader.getCurrentValue().toString();
+                        lastOffsetSeen = reader.getCurrentKey().get();
+                        if (lastReport >= reportBatchSize) {
+                            reportProgress();
+                        }
+                        lastReport++;
+                        if (lastOffsetReported == -1) {
+                            lastOffsetReported = lastOffsetSeen;
+                        }
                     } catch (IOException | InterruptedException e) {
                         finished = true;
                         e.printStackTrace();
                     }
                     havePair = false;
                     return line;
+                }
+
+                private void reportProgress() {
+                    if (progress != null) {
+                        progress.increment(lastOffsetSeen - lastOffsetReported);
+                        lastReport = 0;
+                        lastOffsetReported = lastOffsetSeen;
+                    }
                 }
 
             };

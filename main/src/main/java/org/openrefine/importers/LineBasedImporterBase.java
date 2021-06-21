@@ -59,8 +59,8 @@ public abstract class LineBasedImporterBase extends HDFSImporter {
     }
 
     @Override
-    public GridState parseOneFile(ProjectMetadata metadata, ImportingJob job, String fileSource, String archiveFileName, String sparkURI,
-            long limit, ObjectNode options)
+    public GridState parseOneFile(ProjectMetadata metadata, ImportingJob job, String fileSource,
+            String archiveFileName, String sparkURI, long limit, ObjectNode options, MultiFileReadingProgress progress)
             throws Exception {
         int ignoreLines = Math.max(JSONUtilities.getInt(options, "ignoreLines", -1), 0);
         int headerLines = Math.max(JSONUtilities.getInt(options, "headerLines", 0), 0);
@@ -82,8 +82,8 @@ public abstract class LineBasedImporterBase extends HDFSImporter {
         }
 
         RowMapper rowMapper = getRowMapper(options);
-        GridState rawCells = limit2 > 0 ? runner.loadTextFile(sparkURI, limit2 + ignoreLines + headerLines + skipDataLines)
-                : runner.loadTextFile(sparkURI);
+        GridState rawCells = limit2 > 0 ? runner.loadTextFile(sparkURI, progress, limit2 + ignoreLines + headerLines + skipDataLines)
+                : runner.loadTextFile(sparkURI, progress);
 
         // Compute the maximum number of cells in the entire grid
         int maxColumnNb = getColumnCount(rawCells, rowMapper, options);

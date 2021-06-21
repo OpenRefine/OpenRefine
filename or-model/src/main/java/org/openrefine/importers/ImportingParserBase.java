@@ -45,7 +45,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import org.openrefine.ProjectMetadata;
-import org.openrefine.importers.ImporterUtilities.MultiFileReadingProgress;
 import org.openrefine.importing.ImportingFileRecord;
 import org.openrefine.importing.ImportingJob;
 import org.openrefine.importing.ImportingParser;
@@ -143,7 +142,7 @@ abstract public class ImportingParserBase implements ImportingParser {
 
         if (this instanceof HDFSImporter) {
             return ((HDFSImporter) this).parseOneFile(metadata, job, fileSource, archiveFileName,
-                    fileRecord.getDerivedSparkURI(job.getRawDataDir()), limit, options);
+                    fileRecord.getDerivedSparkURI(job.getRawDataDir()), limit, options, progress);
         } else {
             final File file = fileRecord.getFile(job.getRawDataDir());
             try {

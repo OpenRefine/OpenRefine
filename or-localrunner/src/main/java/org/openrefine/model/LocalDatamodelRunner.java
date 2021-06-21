@@ -17,7 +17,10 @@ import com.google.common.util.concurrent.MoreExecutors;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.LocalFileSystem;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import org.openrefine.importers.MultiFileReadingProgress;
 import org.openrefine.io.OrderedLocalFileSystem;
 import org.openrefine.model.GridState.Metadata;
 import org.openrefine.model.changes.ChangeData;
@@ -26,12 +29,15 @@ import org.openrefine.model.changes.IndexedData;
 import org.openrefine.model.local.PLL;
 import org.openrefine.model.local.PLLContext;
 import org.openrefine.model.local.PairPLL;
+import org.openrefine.model.local.TextFilePLL;
 import org.openrefine.model.local.Tuple2;
 import org.openrefine.overlay.OverlayModel;
 import org.openrefine.util.ParsingUtilities;
 
 @JsonIgnoreType
 public class LocalDatamodelRunner implements DatamodelRunner {
+
+    final static private Logger logger = LoggerFactory.getLogger(LocalDatamodelRunner.class);
 
     final static protected String METADATA_PATH = "metadata.json";
     final static protected String GRID_PATH = "grid";
@@ -123,19 +129,22 @@ public class LocalDatamodelRunner implements DatamodelRunner {
     }
 
     @Override
-    public GridState loadTextFile(String path) throws IOException {
-        return loadTextFile(path, -1);
+    public GridState loadTextFile(String path, MultiFileReadingProgress progress) throws IOException {
+        return loadTextFile(path, progress, -1);
     }
 
     @Override
-    public GridState loadTextFile(String path, long limit) throws IOException {
-        PLL<Row> rows = pllContext.textFile(path)
+    public GridState loadTextFile(String path, MultiFileReadingProgress progress, long limit) throws IOException {
+        logger.warn("Reading text file {}", path);
+        TextFilePLL textPLL = pllContext.textFile(path);
+        PLL<Row> rows = textPLL
                 .map(s -> new Row(Arrays.asList(new Cell(s, null))));
         if (limit >= 0) {
             // this generally leaves more rows than necessary, but is the best thing
             // we can do so far without reading the dataset to add row indices
             rows = rows.limitPartitions(limit);
         }
+        logger.warn("Zipping with indices");
         PairPLL<Long, Row> pll = rows
                 .zipWithIndex();
         if (limit >= 0) {
@@ -145,6 +154,14 @@ public class LocalDatamodelRunner implements DatamodelRunner {
             // assuming that a RangePartitioner is present, but it's a marginal optimization
             pll = pll.filter(tuple -> tuple.getKey() < limit);
         }
+        // Set up progress tracking only after doing `.zipWithIndex()` since that also triggers
+        // a full scan of the dataset. We choose not to report the progress for that operation
+        // but instead focus on the following scan, which will be the actual import of the grid
+        // into the workspace.
+        // TODO: perhaps it is actually worth track progress before too? The computation of the progress
+        // proportion would need to be adjusted since each file will be read twice
+        logger.warn("Returning grid state");
+        textPLL.setProgressHandler(progress);
         return new LocalGridState(
                 this,
                 pll,
