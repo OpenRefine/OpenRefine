@@ -120,7 +120,6 @@ public class TextFilePLL extends PLL<String> {
                 boolean havePair = false;
                 long lastOffsetReported = -1;
                 long lastOffsetSeen = -1;
-                long totalIncrement = 0; // TODO delete this, for debugging only
                 int lastReport = 0;
 
                 @Override
@@ -154,9 +153,6 @@ public class TextFilePLL extends PLL<String> {
                         }
                         lastReport++;
                         if (lastOffsetReported == -1) {
-                            if (progress != null) {
-                                logger.warn("Partition {} starting at offset {}", partition.getIndex(), lastOffsetSeen);
-                            }
                             lastOffsetReported = lastOffsetSeen;
                         }
                     } catch (IOException | InterruptedException e) {
@@ -169,11 +165,7 @@ public class TextFilePLL extends PLL<String> {
 
                 private void reportProgress() {
                     if (progress != null) {
-                        if (finished) {
-                            logger.warn("Partition {} reporting progress {} - {} = {}, with total increment of {}", partition.getIndex(), lastOffsetSeen, lastOffsetReported, lastOffsetSeen - lastOffsetReported, totalIncrement);
-                        }
                         progress.increment(lastOffsetSeen - lastOffsetReported);
-                        totalIncrement += lastOffsetSeen - lastOffsetReported;
                         lastReport = 0;
                         lastOffsetReported = lastOffsetSeen;
                     }

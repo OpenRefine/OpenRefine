@@ -196,21 +196,17 @@ public class ImportingFileRecord {
 	 * @return the length of the file in bytes
 	 */
 	public long getSize(File rawDataDir, FileSystem hdfs) {
-	    logger.warn("Computing size of file");
 		if (_size > 0) {
-		    logger.warn("Already cached: {}", _size);
 			return _size;
 		}
 		if (_sparkURI == null) {
 			File localFile = getFile(rawDataDir);
 			_size = localFile.length();
-			logger.warn("Using native FS .length(): {}", _size);
 		} else {
 			Path path = new Path(getDerivedSparkURI(rawDataDir));
 			try {
 				ContentSummary summary = hdfs.getContentSummary(path);
 				_size = summary.getLength();
-				logger.warn("Using Hadoop FS: {}", _size);
 			} catch(IOException e) {
 				_size = 0;
 			}
