@@ -15,6 +15,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.openrefine.model.local.partitioning.Partitioner;
+import org.openrefine.model.local.partitioning.CroppedPartitioner;
 import org.openrefine.model.local.partitioning.LongRangePartitioner;
 
 /**
@@ -39,6 +40,7 @@ public class PairPLL<K,V> extends PLL<Tuple2<K, V>> {
         }
         this.partitioner = partitioner;
         this.pll = pll;
+        this.cachedPartitionSizes = pll.cachedPartitionSizes;
     }
     
     protected PairPLL(PLL<Tuple2<K, V>> pll, Optional<Partitioner<K>> partitioner, List<Long> partitionSizes) {
@@ -47,8 +49,8 @@ public class PairPLL<K,V> extends PLL<Tuple2<K, V>> {
             throw new IllegalArgumentException("The partitioner and PLL are incompatible as they do not have the same number of partitions");
         }
         this.partitioner = partitioner;
-        this.pll = pll;
-        this.cachedPartitionSizes = partitionSizes;
+        this.pll = partitionSizes == null ? pll : pll.withCachedPartitionSizes(partitionSizes);
+        this.cachedPartitionSizes = partitionSizes == null ? pll.cachedPartitionSizes : partitionSizes;
     }
 
     /**
@@ -56,6 +58,17 @@ public class PairPLL<K,V> extends PLL<Tuple2<K, V>> {
      */
     public Optional<Partitioner<K>> getPartitioner() {
         return partitioner;
+    }
+    
+    // bypass local cache and make sure we are hitting that of the upstream PLL
+    @Override
+    public List<Long> getPartitionSizes() {
+        if (cachedPartitionSizes == null) {
+            cachedPartitionSizes = pll.getPartitionSizes();
+        } else if (cachedPartitionSizes != null && pll.cachedPartitionSizes == null) {
+            pll.cachedPartitionSizes = cachedPartitionSizes;
+        }
+        return cachedPartitionSizes;
     }
     
     /**
@@ -85,7 +98,7 @@ public class PairPLL<K,V> extends PLL<Tuple2<K, V>> {
     public <W> PairPLL<K, W> mapValues(BiFunction<K, V, W> mapFunction) {
         PLL<Tuple2<K,W>> mapped = pll.map(
                 tuple -> new Tuple2<>(tuple.getKey(), mapFunction.apply(tuple.getKey(), tuple.getValue())));
-        return new PairPLL<K, W>(mapped, partitioner, cachedPartitionSizes);
+        return new PairPLL<K, W>(mapped, partitioner);
     }
     
     /**
@@ -248,6 +261,40 @@ public class PairPLL<K,V> extends PLL<Tuple2<K, V>> {
     public PairPLL<K, V> limitPartitions(long limit) {
         return new PairPLL<K,V>(pll.limitPartitions(limit), partitioner);
     }
+
+    /**
+     * Drops the first n elements at the beginning of the collection.
+     * This also adapts any partitioner to work on the cropped collection.
+     * 
+     * @param n the number of elements to remove
+     * @return
+     */
+    @Override
+    public PairPLL<K,V> dropFirstElements(long n) {
+        PLL<Tuple2<K, V>> croppedPLL = pll.dropFirstElements(n);
+        Optional<Partitioner<K>> newPartitioner = Optional.empty();
+        if (partitioner.isPresent()) {
+            newPartitioner = Optional.of(CroppedPartitioner.crop(partitioner.get(), pll.numPartitions() - croppedPLL.numPartitions(), false));
+        }
+        return new PairPLL<K,V>(croppedPLL, newPartitioner);
+    }
+    
+    /**
+     * Drops the first n elements at the end of the collection.
+     * This also adapts any partitioner to work on the cropped collection.
+     * 
+     * @param n the number of elements to remove
+     * @return
+     */
+    @Override
+    public PairPLL<K,V> dropLastElements(long n) {
+        PLL<Tuple2<K, V>> croppedPLL = pll.dropLastElements(n);
+        Optional<Partitioner<K>> newPartitioner = Optional.empty();
+        if (partitioner.isPresent()) {
+            newPartitioner = Optional.of(CroppedPartitioner.crop(partitioner.get(), pll.numPartitions() - croppedPLL.numPartitions(), true));
+        }
+        return new PairPLL<K,V>(croppedPLL, newPartitioner);
+    }
     
     public PairPLL<K, V> concatenate(PairPLL<K, V> other) {
         return new PairPLL<K,V>(pll.concatenate(other), Optional.empty());
@@ -348,7 +395,7 @@ public class PairPLL<K,V> extends PLL<Tuple2<K, V>> {
      * @return
      */
     public PairPLL<K, V> withPartitioner(Optional<Partitioner<K>> partitioner) {
-        return new PairPLL<K, V>(pll, partitioner, cachedPartitionSizes);
+        return new PairPLL<K, V>(pll, partitioner);
     }
     
     /**
@@ -356,9 +403,6 @@ public class PairPLL<K,V> extends PLL<Tuple2<K, V>> {
      * are externally known.
      */
     public PairPLL<K, V> withCachedPartitionSizes(List<Long> newCachedPartitionSizes) {
-        if (newCachedPartitionSizes.size() != pll.numPartitions()) {
-            throw new IllegalArgumentException("Invalid number of partition sizes provided");
-        }
         return new PairPLL<K, V>(pll, partitioner, newCachedPartitionSizes);
     }
     
@@ -381,6 +425,7 @@ public class PairPLL<K,V> extends PLL<Tuple2<K, V>> {
         OrderedJoinPLL<K, V, W> joined = new OrderedJoinPLL<K, V, W>(this, other, comparator, false);
         return new PairPLL<K, Tuple2<V, W>>(joined, joined.getPartitioner());
     }
+
 
     /*
     public void saveAsHadoopFile(String path, Class<K> keyClass, Class<V> valueClass, OutputFormat<K, V> outputFormat, Class<? extends CompressionCodec> codec) throws IOException {
