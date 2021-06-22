@@ -29,4 +29,9 @@ public class LineBasedImporter extends LineBasedImporterBase {
         return 1;
     }
 
+    @Override
+    protected int getPassesNeededToComputeColumnCount(ObjectNode options) {
+        return 0;
+    }
+
 }

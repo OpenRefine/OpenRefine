@@ -46,6 +46,9 @@ public abstract class LineBasedImporterBase extends HDFSImporter {
      * By default this computes the maximum of the row lengths returned by the row mapper. If this number is known in
      * advance from the importing options, it is worth overriding the method to avoid a pass on the dataset.
      * 
+     * If you override this then you should also override {@link #getPassesNeededToComputeColumnCount(ObjectNode)} which
+     * predicts how many scans of the dataset will be required to run this method.
+     * 
      * @param rawCells
      *            the lines of the text file represented as a grid
      * @param rowMapper
@@ -56,6 +59,19 @@ public abstract class LineBasedImporterBase extends HDFSImporter {
      */
     protected int getColumnCount(GridState rawCells, RowMapper rowMapper, ObjectNode options) {
         return countMaxColumnNb(rawCells, rowMapper);
+    }
+
+    /**
+     * Returns the number of passes done on the dataset when computing the column count. Override this if you override
+     * {@link #getColumnCount(GridState, RowMapper, ObjectNode)} so that progress reporting is appropriately adapted.
+     * 
+     * @param rawCells
+     * @param rowMapper
+     * @param options
+     * @return
+     */
+    protected int getPassesNeededToComputeColumnCount(ObjectNode options) {
+        return 1;
     }
 
     @Override
@@ -81,9 +97,22 @@ public abstract class LineBasedImporterBase extends HDFSImporter {
             }
         }
 
+        // Predict the number of passes we are going to do on the file
+        int passes = 2; // corresponds to the initial indexing of the grid (1 pass) and of
+        // the saving of the grid in the workspace (another pass)
+
+        // add any other passes which might be required by the importer
+        passes += getPassesNeededToComputeColumnCount(options);
+
+        MultiFileReadingProgress scaledProgress = new ScaledProgress(progress, passes);
+
         RowMapper rowMapper = getRowMapper(options);
-        GridState rawCells = limit2 > 0 ? runner.loadTextFile(sparkURI, progress, limit2 + ignoreLines + headerLines + skipDataLines)
-                : runner.loadTextFile(sparkURI, progress);
+        GridState rawCells;
+        if (limit2 > 0) {
+            rawCells = runner.loadTextFile(sparkURI, scaledProgress, limit2 + ignoreLines + headerLines + skipDataLines);
+        } else {
+            rawCells = runner.loadTextFile(sparkURI, scaledProgress);
+        }
 
         // Compute the maximum number of cells in the entire grid
         int maxColumnNb = getColumnCount(rawCells, rowMapper, options);
@@ -112,8 +141,10 @@ public abstract class LineBasedImporterBase extends HDFSImporter {
         while (columnModel.getColumns().size() < maxColumnNb) {
             columnModel = ImporterUtilities.expandColumnModelIfNeeded(columnModel, columnModel.getColumns().size());
         }
-        GridState grid = rawCells.dropRows(ignoreLines + headerLines + skipDataLines)
-                .mapRows(rowMapperWithPadding(rowMapper, maxColumnNb), columnModel);
+        if (ignoreLines + headerLines + skipDataLines > 0) {
+            rawCells = rawCells.dropRows(ignoreLines + headerLines + skipDataLines);
+        }
+        GridState grid = rawCells.mapRows(rowMapperWithPadding(rowMapper, maxColumnNb), columnModel);
 
         if (trimStrings || guessCellValueTypes || storeBlankCellsAsNulls) {
             grid = grid.mapRows(cellValueCleaningMapper(guessCellValueTypes, trimStrings, storeBlankCellsAsNulls), columnModel);
@@ -204,6 +235,39 @@ public abstract class LineBasedImporterBase extends HDFSImporter {
             }
 
         };
+    }
+
+    /**
+     * Utility class to report progress in a scaled fashion, when we know how many passes on the file we will need to
+     * do.
+     * 
+     * @author Antonin Delpeuch
+     *
+     */
+    protected class ScaledProgress implements MultiFileReadingProgress {
+
+        private MultiFileReadingProgress parent;
+        private int factor;
+
+        protected ScaledProgress(MultiFileReadingProgress parent, int factor) {
+            this.parent = parent;
+            this.factor = factor;
+        }
+
+        @Override
+        public void startFile(String fileSource) {
+            parent.startFile(fileSource);
+        }
+
+        @Override
+        public void readingFile(String fileSource, long bytesRead) {
+            parent.readingFile(fileSource, bytesRead / factor);
+        }
+
+        @Override
+        public void endFile(String fileSource, long bytesRead) {
+            parent.endFile(fileSource, bytesRead / factor);
+        }
     }
 
 }

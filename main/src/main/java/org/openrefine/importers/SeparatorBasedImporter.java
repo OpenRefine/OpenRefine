@@ -106,7 +106,6 @@ public class SeparatorBasedImporter extends LineBasedImporterBase {
         // the default 'multiLine' setting is set to true for backwards-compatibility
         // although the UI now proposes 'false' by default for performance reasons (similarly to Spark)
         boolean multiLine = JSONUtilities.getBoolean(options, "multiLine", true);
-        logger.warn("Parsing TSV/CSV in multiline mode: {}", multiLine);
 
         // If we use quotes, then a line of the original file does not necessarily correspond
         // to a row in the grid, so we unfortunately cannot use the logic from LineBasedImporterBase.
