@@ -15,6 +15,7 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import org.openrefine.model.local.partitioning.Partitioner;
+import org.openrefine.model.local.partitioning.PartitionerTestUtils;
 import org.openrefine.model.local.partitioning.RangePartitioner;
 
 public class PairPLLTests extends PLLTestsBase {
@@ -253,5 +254,27 @@ public class PairPLLTests extends PLLTestsBase {
         PLL<Integer> list = parallelize(3, Arrays.asList(3, 8, 1, -3, 9, 10, 22, 15, 4));
         PairPLL<Long, Integer> indexed = list.zipWithIndex();
         indexed.withCachedPartitionSizes(Arrays.asList(2L, 3L));
+    }
+
+    @Test
+    public void testDropLeft() {
+        PLL<Integer> list = parallelize(3, Arrays.asList(3, 8, 1, -3, 9, 10, 22, 15, 4));
+        PairPLL<Long, Integer> indexed = list.zipWithIndex();
+
+        PairPLL<Long, Integer> dropped = indexed.dropFirstElements(5);
+        Assert.assertEquals(dropped.collect(), Arrays.asList(Tuple2.of(5L, 10), Tuple2.of(6L, 22), Tuple2.of(7L, 15), Tuple2.of(8L, 4)));
+        Assert.assertTrue(dropped.partitioner.isPresent());
+        PartitionerTestUtils.checkPartitionerAdequacy(dropped.partitioner.get(), dropped);
+    }
+
+    @Test
+    public void testDropRight() {
+        PLL<Integer> list = parallelize(3, Arrays.asList(3, 8, 1, -3, 9, 10, 22, 15, 4));
+        PairPLL<Long, Integer> indexed = list.zipWithIndex();
+
+        PairPLL<Long, Integer> dropped = indexed.dropLastElements(5);
+        Assert.assertEquals(dropped.collect(), Arrays.asList(Tuple2.of(0L, 3), Tuple2.of(1L, 8), Tuple2.of(2L, 1), Tuple2.of(3L, -3)));
+        Assert.assertTrue(dropped.partitioner.isPresent());
+        PartitionerTestUtils.checkPartitionerAdequacy(dropped.partitioner.get(), dropped);
     }
 }

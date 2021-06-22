@@ -28,8 +28,8 @@ public class RangePartitioner<T> implements Partitioner<T> {
      * @param firstKeys
      *            list of (n-1) values, where n is the number of partitions. The first element of the list is the first
      *            key value in the second partition. If a partition is empty, null is used.
-     * @param the
-     *            comparator used to compare the keys
+     * @param comparator
+     *            the comparator used to compare the keys
      */
     public RangePartitioner(int nbPartitions, List<T> firstKeys, Comparator<T> comparator) {
         this.numPartitions = nbPartitions;

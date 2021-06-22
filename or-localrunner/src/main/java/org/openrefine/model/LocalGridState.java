@@ -30,6 +30,8 @@ import org.openrefine.model.local.PLL;
 import org.openrefine.model.local.PairPLL;
 import org.openrefine.model.local.RecordPLL;
 import org.openrefine.model.local.Tuple2;
+import org.openrefine.model.local.partitioning.LongRangePartitioner;
+import org.openrefine.model.local.partitioning.Partitioner;
 import org.openrefine.overlay.OverlayModel;
 import org.openrefine.process.ProgressReporter;
 import org.openrefine.sorting.RecordSorter;
@@ -532,6 +534,41 @@ public class LocalGridState implements GridState {
                 runner,
                 data.filter(tuple -> tuple.getValue() != null),
                 grid.hasCachedPartitionSizes() ? grid.getPartitionSizes() : null);
+    }
+
+    /**
+     * Only keep the first rows. Overridden for efficiency when a partitioner is known.
+     * 
+     * @param rowLimit
+     *            the number of rows to keep
+     * @return the limited grid
+     */
+    @Override
+    public GridState limitRows(long rowLimit) {
+        return removeRows(RowFilter.limitFilter(rowLimit));
+    }
+
+    /**
+     * Drop the first rows. Overridden for efficiency when partition sizes are known.
+     * 
+     * @param rowsToDrop
+     *            the number of rows to drop
+     * @return the grid consisting of the last rows
+     */
+    @Override
+    public GridState dropRows(long rowsToDrop) {
+        // We force the computation of partition sizes
+        // because they would be computed anyway to re-index
+        // the rows after the drop.
+        grid.getPartitionSizes();
+        PairPLL<Long, Row> dropped = grid.dropFirstElements(rowsToDrop);
+        Optional<Partitioner<Long>> partitioner = dropped.getPartitioner();
+        if (partitioner.isPresent() && partitioner.get() instanceof LongRangePartitioner) {
+            partitioner = partitioner.map(p -> ((LongRangePartitioner) p).shiftKeys(-rowsToDrop));
+        }
+        PairPLL<Long, Row> shifted = dropped.mapToPair(tuple -> Tuple2.of(tuple.getKey() - rowsToDrop, tuple.getValue()))
+                .withPartitioner(partitioner);
+        return new LocalGridState(runner, shifted, columnModel, overlayModels);
     }
 
     protected static <T extends Serializable> Stream<Tuple2<Long, T>> applyRecordChangeDataMapper(

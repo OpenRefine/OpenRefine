@@ -456,6 +456,49 @@ public abstract class PLL<T> {
         return new MapPartitionsPLL<T, T>(this, map, newCachedPartitionSizes);
     }
 
+    /**
+     * Drops the first n elements at the beginning of the collection.
+     * 
+     * @param n
+     *            the number of elements to remove
+     * @return
+     */
+    public PLL<T> dropFirstElements(long n) {
+        List<Long> partitionSizes = getPartitionSizes();
+        long remainingToSkip = n;
+        int partitionsToSkip = 0;
+        while (partitionsToSkip < numPartitions() && partitionSizes.get(partitionsToSkip) < remainingToSkip) {
+            remainingToSkip -= partitionSizes.get(partitionsToSkip);
+            partitionsToSkip++;
+        }
+        List<Long> newPartitionSizes = new ArrayList<>(partitionSizes.subList(partitionsToSkip, partitionSizes.size()));
+        if (!newPartitionSizes.isEmpty()) {
+            newPartitionSizes.set(0, newPartitionSizes.get(0) - remainingToSkip);
+        }
+        return new CroppedPLL<T>(this, newPartitionSizes, partitionsToSkip, remainingToSkip, false);
+    }
+
+    /**
+     * Drops the last n elements at the end of the collection.
+     * 
+     * @param n
+     *            the number of elements to remove at the end
+     */
+    public PLL<T> dropLastElements(long n) {
+        List<Long> partitionSizes = getPartitionSizes();
+        long remainingToSkip = n;
+        int partitionsToSkip = 0;
+        while (partitionsToSkip < partitionSizes.size() && partitionSizes.get(numPartitions() - 1 - partitionsToSkip) < remainingToSkip) {
+            remainingToSkip -= partitionSizes.get(numPartitions() - 1 - partitionsToSkip);
+            partitionsToSkip++;
+        }
+        List<Long> newPartitionSizes = new ArrayList<>(partitionSizes.subList(0, partitionSizes.size() - partitionsToSkip));
+        if (!newPartitionSizes.isEmpty()) {
+            newPartitionSizes.set(newPartitionSizes.size() - 1, newPartitionSizes.get(newPartitionSizes.size() - 1) - remainingToSkip);
+        }
+        return new CroppedPLL<T>(this, newPartitionSizes, partitionsToSkip, remainingToSkip, true);
+    }
+
     // Memory management
 
     /**
@@ -484,6 +527,18 @@ public abstract class PLL<T> {
      */
     public boolean hasCachedPartitionSizes() {
         return cachedPartitionSizes != null;
+    }
+
+    /**
+     * Sets the partition sizes if they are already known by the user.
+     * 
+     * @param partitionSizes
+     * @return
+     */
+    public PLL<T> withCachedPartitionSizes(List<Long> partitionSizes) {
+        Validate.isTrue(partitionSizes.size() == numPartitions());
+        cachedPartitionSizes = partitionSizes;
+        return this;
     }
 
     // Writing out

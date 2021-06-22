@@ -147,12 +147,11 @@ public class LocalDatamodelRunner implements DatamodelRunner {
         logger.warn("Zipping with indices");
         PairPLL<Long, Row> pll = rows
                 .zipWithIndex();
-        if (limit >= 0) {
+        long rowCount = pll.count(); // this is already known thanks to zipWithIndex
+        if (limit >= 0 && rowCount > limit) {
             // enforce limit properly by removing any rows from the following partitions
             // that exceed the desired row count
-            // TODO: we could add a PLL API method which does this more efficiently,
-            // assuming that a RangePartitioner is present, but it's a marginal optimization
-            pll = pll.filter(tuple -> tuple.getKey() < limit);
+            pll = pll.dropLastElements(rowCount - limit);
         }
         // Set up progress tracking only after doing `.zipWithIndex()` since that also triggers
         // a full scan of the dataset. We choose not to report the progress for that operation
