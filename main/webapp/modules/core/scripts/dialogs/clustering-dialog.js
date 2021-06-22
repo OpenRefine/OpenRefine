@@ -227,7 +227,7 @@ ClusteringDialog.prototype._renderTable = function(clusters) {
                 var choice = choices[c];
                 var li = document.createElement('li');
                 var entry = entryTemplate.cloneNode();
-                entry.textContent = choice.v.toString();
+                entry.textContent = choice.v.toString().replaceAll(' ', '\xa0');
                 entry.addEventListener('click', onClick);
                 li.append(entry);
                 if (choice.c > 1) {
