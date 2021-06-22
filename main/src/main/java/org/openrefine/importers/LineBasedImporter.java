@@ -28,5 +28,10 @@ public class LineBasedImporter extends LineBasedImporterBase {
 	protected int getColumnCount(GridState rawCells, RowMapper rowMapper, ObjectNode options) {
 		return 1;
 	}
+	
+	@Override
+	protected int getPassesNeededToComputeColumnCount(ObjectNode options) {
+		return 0;
+	}
 
 }

@@ -132,8 +132,8 @@ public class LocalDatamodelRunner implements DatamodelRunner {
 
     @Override
     public GridState loadTextFile(String path, MultiFileReadingProgress progress, long limit) throws IOException {
-        logger.warn("Reading text file {}", path);
         TextFilePLL textPLL = pllContext.textFile(path);
+        textPLL.setProgressHandler(progress);
         PLL<Row> rows = textPLL
                 .map(s -> new Row(Arrays.asList(new Cell(s, null))));
         if (limit >= 0) {
@@ -141,7 +141,6 @@ public class LocalDatamodelRunner implements DatamodelRunner {
             // we can do so far without reading the dataset to add row indices
             rows = rows.limitPartitions(limit);
         }
-        logger.warn("Zipping with indices");
         PairPLL<Long, Row> pll = rows
                 .zipWithIndex();
         long rowCount = pll.count(); // this is already known thanks to zipWithIndex
@@ -150,14 +149,6 @@ public class LocalDatamodelRunner implements DatamodelRunner {
             // that exceed the desired row count
             pll = pll.dropLastElements(rowCount - limit);
         }
-        // Set up progress tracking only after doing `.zipWithIndex()` since that also triggers
-        // a full scan of the dataset. We choose not to report the progress for that operation
-        // but instead focus on the following scan, which will be the actual import of the grid
-        // into the workspace.
-        // TODO: perhaps it is actually worth track progress before too? The computation of the progress
-        // proportion would need to be adjusted since each file will be read twice
-        logger.warn("Returning grid state");
-        textPLL.setProgressHandler(progress);
         return new LocalGridState(
                 this,
                 pll,
