@@ -1,6 +1,7 @@
 
 package org.openrefine.model.local;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -102,7 +103,15 @@ public class TextFilePLL extends PLL<String> {
     }
 
     public void setProgressHandler(MultiFileReadingProgress progress) {
-        this.progress = progress == null ? null : new ReadingProgressReporter(progress, path);
+        // Try to extract the filename of the supplied path, fallback on the full path otherwise
+        String filename = path;
+        try {
+            File file = new File(path);
+            filename = file.getName();
+        } catch (Exception e) {
+            ;
+        }
+        this.progress = progress == null ? null : new ReadingProgressReporter(progress, filename);
     }
 
     @Override
