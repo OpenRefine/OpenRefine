@@ -349,7 +349,7 @@ Cypress.Commands.add(
 );
 
 Cypress.Commands.add('assertNotificationContainingText', (text) => {
-  cy.get('#notification').should('to.contain', text).should('be.visible');
+  cy.get('#notification').should('be.visible').should('to.contain', text);
 });
 
 Cypress.Commands.add(
