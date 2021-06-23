@@ -236,7 +236,9 @@ Refine.DefaultImportingController.prototype.updateFormatAndOptions = function(op
             $.each(o.errors, function() { messages.push(this.message); });
             alert(messages.join('\n\n'));
             }
-            finallyCallBack();
+            if(finallyCallBack){
+              finallyCallBack();
+            }
         } else {
             callback(o);
         }

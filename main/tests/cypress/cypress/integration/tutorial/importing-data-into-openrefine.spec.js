@@ -1,4 +1,4 @@
-// This spec is implementation for chapter 02 of following tutorial https://librarycarpentry.org/lc-open-refine/02-importing-data/index.html
+  // This spec is implementation for chapter 02 of following tutorial https://librarycarpentry.org/lc-open-refine/02-importing-data/index.html
 
 describe(__filename, function () {
   it('Create your first OpenRefine project (using provided data)', function () {
@@ -27,6 +27,9 @@ describe(__filename, function () {
       .contains('Next »')
       .click();
 
+
+
+
     // then ensure we are on the preview page
     cy.get('.create-project-ui-panel').contains('Configure Parsing Options');
     // Step-3 Click in the Character encoding box and set it to UTF-8
@@ -37,6 +40,8 @@ describe(__filename, function () {
     cy.get('input[bind="trimStringsCheckbox"]').check();
 
     // create the project and ensure its successful
+    // wait until the grid appear, this ensure the job is ready 
+    cy.get('div[bind="dataPanel"] table.data-table').should('to.exist');
     cy.get('.default-importing-wizard-header button[bind="nextButton"]')
       .contains('Create Project »')
       .click();
