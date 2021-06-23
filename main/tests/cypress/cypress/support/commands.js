@@ -399,6 +399,12 @@ Cypress.Commands.add(
       .first()
       .scrollIntoView()
       .click({ force: true });
-    cy.doCreateProjectThroughUserInterface();
+    
+    // wait for preview and click next to create the project
+    cy.get('div[bind="dataPanel"] table.data-table').should('to.exist');
+    cy.get('.default-importing-wizard-header button[bind="nextButton"]')
+      .contains('Create Project »')
+      .click();
+    cy.get('#create-project-progress-message').contains('Done.');
   }
 );
