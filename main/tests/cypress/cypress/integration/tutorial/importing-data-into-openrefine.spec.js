@@ -37,7 +37,10 @@ describe(__filename, function () {
     cy.get('input[bind="trimStringsCheckbox"]').check();
 
     // create the project and ensure its successful
-    cy.doCreateProjectThroughUserInterface();
+    cy.get('.default-importing-wizard-header button[bind="nextButton"]')
+      .contains('Create Project »')
+      .click();
+    cy.get('#create-project-progress-message').contains('Done.');
 
     // ensure that the project data is loaded completely
     cy.get('#summary-bar').should('to.contain', '1001 rows');

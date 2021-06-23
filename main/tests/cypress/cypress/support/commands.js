@@ -149,41 +149,6 @@ Cypress.Commands.add('createProjectThroughUserInterface', (fixtureFile) => {
   ).click();
 });
 
-Cypress.Commands.add('doCreateProjectThroughUserInterface', () => {
-  cy.get('.default-importing-wizard-header button[bind="nextButton"]')
-    .contains('Create Project »')
-    .click();
-  cy.get('#create-project-progress-message').contains('Done.');
-  Cypress.on('uncaught:exception', (err, runnable) => {
-    // returning false here prevents Cypress from
-    // failing the test due to the uncaught exception caused by the window failure
-    return false;
-  });
-
-  // workaround to ensure project is loaded
-  // cypress does not support window.location = ...
-  cy.get('h2').should('to.contain', 'HTTP ERROR 404');
-  cy.location().should((location) => {
-    expect(location.href).contains(
-      Cypress.env('OPENREFINE_URL') + '/__/project?'
-    );
-  });
-
-  cy.location().then((location) => {
-    const projectId = location.href.split('=').slice(-1)[0];
-    cy.visitProject(projectId);
-    cy.wrap(projectId).as('createdProjectId');
-    cy.get('@loadedProjectIds', { log: false }).then((loadedProjectIds) => {
-      loadedProjectIds.push(projectId);
-      cy.wrap(loadedProjectIds, { log: false })
-        .as('loadedProjectIds')
-        .then(() => {
-          return projectId;
-        });
-    });
-  });
-});
-
 /**
  * Cast a whole column to the given type, using Edit Cell / Common transform / To {type}
  */
