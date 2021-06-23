@@ -15,32 +15,34 @@ const fixture = [
  * It adds the CSV reconciliation service in the interface
  */
 const addReconciliationService = () => {
-  cy.get('.recon-dialog-service-list', { log: false }).then(($list) => {
+  cy.get('.recon-dialog-service-list', { log: true }).then(($list) => {
     if ($list.find('.recon-dialog-service-selector').length > 1) {
       // cy.get('.recon-dialog-service-selector-remove').click({ multiple: true });
 
-      cy.get('.recon-dialog-service-selector', { log: false }).each(($btn) => {
+      cy.get('.recon-dialog-service-selector', { log: true }).each(($btn) => {
         cy.get(
           '.recon-dialog-service-selector:first-child .recon-dialog-service-selector-remove',
-          { log: false }
-        ).click({ log: false });
+          { log: true }
+        ).click({ log: true });
       });
     }
   });
 
-  cy.get('.dialog-container button', { log: false })
-    .contains('Add Standard Service...', { log: false })
-    .click({ log: false });
+  cy.get('.dialog-container button', { log: true })
+    .contains('Add Standard Service...', { log: true })
+    .click({ log: true });
   cy.get('.dialog-container:last-child input', {
-    log: false,
-  }).type('http://localhost:8000/reconcile', { log: false });
+    log: true,
+  }).type('http://localhost:8000/reconcile', { log: true });
 
-  cy.get('.dialog-container:last-child button', { log: false })
-    .contains('Add Service', { log: false })
-    .click({ log: false });
+  cy.get('.dialog-container:last-child button', { log: true })
+    .contains('Add Service', { log: true })
+    .click({ log: true });
 
-  cy.get('.recon-dialog-service-selector:last-child', { log: false }).click({
-    log: false,
+  cy.get('.recon-dialog-service-selector:last-child').should('to.contain', 'CSV Reconciliation service')
+
+  cy.get('.recon-dialog-service-selector:last-child', { log: true }).click({
+    log: true,
   });
 
   cy.get('.recon-dialog-service-list').should('to.have.css', 'display', 'none');
@@ -66,179 +68,179 @@ describe('Base reconciliation tests', () => {
     );
   });
 
-  it('Reconcile with automatch disabled', () => {
-    cy.loadAndVisitProject(fixture);
-    cy.columnActionClick('species', ['Reconcile', 'Start reconciling']);
-    addReconciliationService();
+  // it('Reconcile with automatch disabled', () => {
+  //   cy.loadAndVisitProject(fixture);
+  //   cy.columnActionClick('species', ['Reconcile', 'Start reconciling']);
+  //   addReconciliationService();
 
-    cy.get('.dialog-container span')
-      .contains('Auto-match')
-      .siblings('input')
-      .uncheck();
-    cy.get('.dialog-container button').contains('Start Reconciling...').click();
-    cy.assertNotificationContainingText('Reconcile cells in column species');
-    cy.assertColumnIsReconciled('species');
+  //   cy.get('.dialog-container span')
+  //     .contains('Auto-match')
+  //     .siblings('input')
+  //     .uncheck();
+  //   cy.get('.dialog-container button').contains('Start Reconciling...').click();
+  //   cy.assertNotificationContainingText('Reconcile cells in column species');
+  //   cy.assertColumnIsReconciled('species');
 
-    // "Choose new match" appear when there is a match, if it's not there it means nothing is matched
-    cy.get('table.data-table td .data-table-cell-content').should(
-      'not.to.contain',
-      'Choose new match'
-    );
-  });
+  //   // "Choose new match" appear when there is a match, if it's not there it means nothing is matched
+  //   cy.get('table.data-table td .data-table-cell-content').should(
+  //     'not.to.contain',
+  //     'Choose new match'
+  //   );
+  // });
 
-  it('Reconcile with automatch enabled', () => {
-    cy.loadAndVisitProject(fixture);
-    cy.columnActionClick('species', ['Reconcile', 'Start reconciling']);
-    addReconciliationService();
+  // it('Reconcile with automatch enabled', () => {
+  //   cy.loadAndVisitProject(fixture);
+  //   cy.columnActionClick('species', ['Reconcile', 'Start reconciling']);
+  //   addReconciliationService();
 
-    cy.get('.dialog-container span')
-      .contains('Auto-match')
-      .siblings('input')
-      .check();
-    cy.get('.dialog-container button').contains('Start Reconciling...').click();
-    cy.assertNotificationContainingText('Reconcile cells in column species');
-    cy.assertColumnIsReconciled('species');
+  //   cy.get('.dialog-container span')
+  //     .contains('Auto-match')
+  //     .siblings('input')
+  //     .check();
+  //   cy.get('.dialog-container button').contains('Start Reconciling...').click();
+  //   cy.assertNotificationContainingText('Reconcile cells in column species');
+  //   cy.assertColumnIsReconciled('species');
 
-    // 4 rows should have been automatched
-    cy.get(
-      'table.data-table td .data-table-cell-content:contains("Choose new match")'
-    ).should('have.length', 4);
-  });
+  //   // 4 rows should have been automatched
+  //   cy.get(
+  //     'table.data-table td .data-table-cell-content:contains("Choose new match")'
+  //   ).should('have.length', 4);
+  // });
 
-  it('Max number of candidates', () => {
-    const fixture = [
-      ['record_id', 'date', 'location', 'species'],
-      ['15', '2018-09-06', 'West Virginia', 'Bos taurus'],
-    ];
-    cy.loadAndVisitProject(fixture);
-    cy.columnActionClick('species', ['Reconcile', 'Start reconciling']);
-    addReconciliationService();
-    cy.get('.dialog-container input[bind="maxCandidates"]').type(2);
-    cy.get('.dialog-container button').contains('Start Reconciling...').click();
-    cy.assertColumnIsReconciled('species');
-    cy.get('.data-table-cell-content .data-table-recon-topic').should(
-      'have.length',
-      2
-    );
-  });
+  // it('Max number of candidates', () => {
+  //   const fixture = [
+  //     ['record_id', 'date', 'location', 'species'],
+  //     ['15', '2018-09-06', 'West Virginia', 'Bos taurus'],
+  //   ];
+  //   cy.loadAndVisitProject(fixture);
+  //   cy.columnActionClick('species', ['Reconcile', 'Start reconciling']);
+  //   addReconciliationService();
+  //   cy.get('.dialog-container input[bind="maxCandidates"]').type(2);
+  //   cy.get('.dialog-container button').contains('Start Reconciling...').click();
+  //   cy.assertColumnIsReconciled('species');
+  //   cy.get('.data-table-cell-content .data-table-recon-topic').should(
+  //     'have.length',
+  //     2
+  //   );
+  // });
 
-  it('Test reconciliation, in the grid', () => {
-    cy.loadAndVisitProject(fixture);
-    cy.reconcileColumn('species');
-    cy.assertColumnIsReconciled('species');
-    // Test 1, when there is a match
-    // simple assertion to ensure the content of the iframe is loaded for row 0 / species
-    // (recon loads match details from the recon endpoint in an iframe)
-    cy.getCell(0, 'species').within(() => {
-      cy.get('a[href^="http://localhost:8000/"]').trigger('mouseover');
-      cy.get(
-        'a[href^="http://localhost:8000/"] .data-table-topic-popup'
-      ).should('to.exist');
+  // it('Test reconciliation, in the grid', () => {
+  //   cy.loadAndVisitProject(fixture);
+  //   cy.reconcileColumn('species');
+  //   cy.assertColumnIsReconciled('species');
+  //   // Test 1, when there is a match
+  //   // simple assertion to ensure the content of the iframe is loaded for row 0 / species
+  //   // (recon loads match details from the recon endpoint in an iframe)
+  //   cy.getCell(0, 'species').within(() => {
+  //     cy.get('a[href^="http://localhost:8000/"]').trigger('mouseover');
+  //     cy.get(
+  //       'a[href^="http://localhost:8000/"] .data-table-topic-popup'
+  //     ).should('to.exist');
 
-      cy.get('iframe').its('0.contentDocument').should('exist');
-    });
+  //     cy.get('iframe').its('0.contentDocument').should('exist');
+  //   });
 
-    // Test 2, when there are candidates
-    // ensure the first one loads an iframe on hover
-    cy.getCell(3, 'species').within(() => {
-      cy.get(
-        '.data-table-recon-candidate:first-child .data-table-recon-topic'
-      ).trigger('mouseover');
-      cy.get(
-        '.data-table-recon-candidate:first-child .data-table-topic-popup'
-      ).should('to.exist');
+  //   // Test 2, when there are candidates
+  //   // ensure the first one loads an iframe on hover
+  //   cy.getCell(3, 'species').within(() => {
+  //     cy.get(
+  //       '.data-table-recon-candidate:first-child .data-table-recon-topic'
+  //     ).trigger('mouseover');
+  //     cy.get(
+  //       '.data-table-recon-candidate:first-child .data-table-topic-popup'
+  //     ).should('to.exist');
 
-      cy.get(
-        '.data-table-recon-candidate:first-child .data-table-topic-popup iframe'
-      )
-        .its('0.contentDocument')
-        .should('exist');
+  //     cy.get(
+  //       '.data-table-recon-candidate:first-child .data-table-topic-popup iframe'
+  //     )
+  //       .its('0.contentDocument')
+  //       .should('exist');
 
-      // verify the three buttons inside the popup
-      cy.get(
-        '.data-table-recon-candidate:first-child .data-table-topic-popup'
-      ).within(() => {
-        cy.get('button').contains('Match this Cell').should('to.exist');
-        cy.get('button')
-          .contains('Match All Identical Cells')
-          .should('to.exist');
-        cy.get('button').contains('Cancel').should('to.exist');
-      });
-    });
-  });
+  //     // verify the three buttons inside the popup
+  //     cy.get(
+  //       '.data-table-recon-candidate:first-child .data-table-topic-popup'
+  //     ).within(() => {
+  //       cy.get('button').contains('Match this Cell').should('to.exist');
+  //       cy.get('button')
+  //         .contains('Match All Identical Cells')
+  //         .should('to.exist');
+  //       cy.get('button').contains('Cancel').should('to.exist');
+  //     });
+  //   });
+  // });
 
-  it('Match this cell', () => {
-    const fixture = [
-      ['record_id', 'date', 'location', 'species'],
-      ['15', '2018-09-06', 'West Virginia', 'Bos taurus'],
-      ['3', '2018-06-09', 'West Virginia', 'Monstera deliciosa'],
-    ];
+  // it('Match this cell', () => {
+  //   const fixture = [
+  //     ['record_id', 'date', 'location', 'species'],
+  //     ['15', '2018-09-06', 'West Virginia', 'Bos taurus'],
+  //     ['3', '2018-06-09', 'West Virginia', 'Monstera deliciosa'],
+  //   ];
 
-    cy.loadAndVisitProject(fixture);
-    cy.reconcileColumn('species');
-    cy.assertColumnIsReconciled('species');
+  //   cy.loadAndVisitProject(fixture);
+  //   cy.reconcileColumn('species');
+  //   cy.assertColumnIsReconciled('species');
 
-    // over on a candidate (Lineus longissimus)
-    cy.getCell(0, 'species')
-      .find('a')
-      .contains('Lineus longissimus')
-      .trigger('mouseover');
+  //   // over on a candidate (Lineus longissimus)
+  //   cy.getCell(0, 'species')
+  //     .find('a')
+  //     .contains('Lineus longissimus')
+  //     .trigger('mouseover');
 
-    // click on match
-    cy.getCell(0, 'species').find('button').contains('Match this Cell').click();
+  //   // click on match
+  //   cy.getCell(0, 'species').find('button').contains('Match this Cell').click();
 
-    // check notification
-    cy.assertNotificationContainingText('Match Lineus longissimus');
+  //   // check notification
+  //   cy.assertNotificationContainingText('Match Lineus longissimus');
 
-    // check that candidates have disappeared, means matched
-    cy.getCell(0, 'species')
-      .find('.data-table-recon-candidates')
-      .should('not.to.exist');
-  });
+  //   // check that candidates have disappeared, means matched
+  //   cy.getCell(0, 'species')
+  //     .find('.data-table-recon-candidates')
+  //     .should('not.to.exist');
+  // });
 
-  it('Match All identical cell', () => {
-    const fixture = [
-      ['record_id', 'date', 'location', 'species'],
-      ['15', '2018-09-06', 'West Virginia', 'Bos taurus'],
-      ['16', '2018-09-06', 'West Virginia', 'Bos taurus'],
-    ];
-    cy.loadAndVisitProject(fixture);
-    cy.reconcileColumn('species');
-    cy.assertColumnIsReconciled('species');
+  // it('Match All identical cell', () => {
+  //   const fixture = [
+  //     ['record_id', 'date', 'location', 'species'],
+  //     ['15', '2018-09-06', 'West Virginia', 'Bos taurus'],
+  //     ['16', '2018-09-06', 'West Virginia', 'Bos taurus'],
+  //   ];
+  //   cy.loadAndVisitProject(fixture);
+  //   cy.reconcileColumn('species');
+  //   cy.assertColumnIsReconciled('species');
 
-    // ensure both rows have candidates
-    cy.getCell(0, 'species')
-      .find('.data-table-recon-candidate')
-      .should('have.length', 6);
+  //   // ensure both rows have candidates
+  //   cy.getCell(0, 'species')
+  //     .find('.data-table-recon-candidate')
+  //     .should('have.length', 6);
 
-    cy.getCell(1, 'species')
-      .find('.data-table-recon-candidate')
-      .should('have.length', 6);
+  //   cy.getCell(1, 'species')
+  //     .find('.data-table-recon-candidate')
+  //     .should('have.length', 6);
 
-    // over on a candidate (Lineus longissimus)
-    cy.getCell(0, 'species')
-      .find('a')
-      .contains('Lineus longissimus')
-      .trigger('mouseover');
+  //   // over on a candidate (Lineus longissimus)
+  //   cy.getCell(0, 'species')
+  //     .find('a')
+  //     .contains('Lineus longissimus')
+  //     .trigger('mouseover');
 
-    // click on match all
-    cy.getCell(0, 'species')
-      .find('button')
-      .contains('Match All Identical Cells')
-      .click();
+  //   // click on match all
+  //   cy.getCell(0, 'species')
+  //     .find('button')
+  //     .contains('Match All Identical Cells')
+  //     .click();
 
-    // check notification
-    cy.assertNotificationContainingText(
-      'Match item Lineus longissimus (2508430) for 2 cells'
-    );
+  //   // check notification
+  //   cy.assertNotificationContainingText(
+  //     'Match item Lineus longissimus (2508430) for 2 cells'
+  //   );
 
-    // check that candidates have disappeared on both rows, means matched all
-    cy.getCell(0, 'species')
-      .find('.data-table-recon-candidates')
-      .should('not.to.exist');
+  //   // check that candidates have disappeared on both rows, means matched all
+  //   cy.getCell(0, 'species')
+  //     .find('.data-table-recon-candidates')
+  //     .should('not.to.exist');
 
-    cy.getCell(1, 'species')
-      .find('.data-table-recon-candidates')
-      .should('not.to.exist');
-  });
+  //   cy.getCell(1, 'species')
+  //     .find('.data-table-recon-candidates')
+  //     .should('not.to.exist');
+  // });
 });
