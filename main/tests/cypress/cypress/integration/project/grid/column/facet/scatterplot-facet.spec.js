@@ -10,17 +10,17 @@ const matchImageSnapshotOptions = {
  * It's using "text facet" as it is the most simple facet
  */
 describe(__filename, function () {
-  it('Test and verify the matrix against a snapshot (3 integer columns)', function () {
-    cy.loadAndVisitProject('food.small', 'food-small');
-    cy.castColumnTo('Water', 'number');
-    cy.castColumnTo('Energ_Kcal', 'number');
-    cy.castColumnTo('Protein', 'number');
-    cy.columnActionClick('Protein', ['Facet', 'Scatterplot facet']);
-    cy.get('.scatterplot-matrix-table').matchImageSnapshot(
-      'scatterplot-default',
-      matchImageSnapshotOptions
-    );
-  });
+  // it('Test and verify the matrix against a snapshot (3 integer columns)', function () {
+  //   cy.loadAndVisitProject('food.small', 'food-small');
+  //   cy.castColumnTo('Water', 'number');
+  //   cy.castColumnTo('Energ_Kcal', 'number');
+  //   cy.castColumnTo('Protein', 'number');
+  //   cy.columnActionClick('Protein', ['Facet', 'Scatterplot facet']);
+  //   cy.get('.scatterplot-matrix-table').matchImageSnapshot(
+  //     'scatterplot-default',
+  //     matchImageSnapshotOptions
+  //   );
+  // });
 
   it('Verify the scatterplot matrix order of elements', function () {
     cy.loadAndVisitProject('food.small', 'food-small');
@@ -50,47 +50,47 @@ describe(__filename, function () {
     });
   });
 
-  it('Test the rendering options (lin, log, dot sizes) (visual testing)', function () {
-    cy.loadAndVisitProject('food.small', 'food-small');
-    cy.castColumnTo('Water', 'number');
-    cy.castColumnTo('Energ_Kcal', 'number');
-    cy.castColumnTo('Protein', 'number');
-    cy.columnActionClick('Protein', ['Facet', 'Scatterplot facet']);
+  // it('Test the rendering options (lin, log, dot sizes) (visual testing)', function () {
+  //   cy.loadAndVisitProject('food.small', 'food-small');
+  //   cy.castColumnTo('Water', 'number');
+  //   cy.castColumnTo('Energ_Kcal', 'number');
+  //   cy.castColumnTo('Protein', 'number');
+  //   cy.columnActionClick('Protein', ['Facet', 'Scatterplot facet']);
 
-    // test linear rendering
-    cy.get('.scatterplot-selectors label').contains('lin').click();
-    cy.get('.scatterplot-matrix-table').matchImageSnapshot(
-      'scatterplot-matrix-lin',
-      matchImageSnapshotOptions
-    );
-    // test log rendering
-    cy.get('.scatterplot-selectors label').contains('log').click();
-    cy.get('.scatterplot-matrix-table').matchImageSnapshot(
-      'scatterplot-matrix-log',
-      matchImageSnapshotOptions
-    );
+  //   // test linear rendering
+  //   cy.get('.scatterplot-selectors label').contains('lin').click();
+  //   cy.get('.scatterplot-matrix-table').matchImageSnapshot(
+  //     'scatterplot-matrix-lin',
+  //     matchImageSnapshotOptions
+  //   );
+  //   // test log rendering
+  //   cy.get('.scatterplot-selectors label').contains('log').click();
+  //   cy.get('.scatterplot-matrix-table').matchImageSnapshot(
+  //     'scatterplot-matrix-log',
+  //     matchImageSnapshotOptions
+  //   );
 
-    // test the small dots rendering
-    cy.get('label[title="Small Dot Size"]').click();
-    cy.get('.scatterplot-matrix-table').matchImageSnapshot(
-      'scatterplot-matrix-small-dot',
-      matchImageSnapshotOptions
-    );
+  //   // test the small dots rendering
+  //   cy.get('label[title="Small Dot Size"]').click();
+  //   cy.get('.scatterplot-matrix-table').matchImageSnapshot(
+  //     'scatterplot-matrix-small-dot',
+  //     matchImageSnapshotOptions
+  //   );
 
-    // test the regular dots rendering
-    cy.get('label[title="Regular Dot Size"]').click();
-    cy.get('.scatterplot-matrix-table').matchImageSnapshot(
-      'scatterplot-matrix-regulat-dot',
-      matchImageSnapshotOptions
-    );
+  //   // test the regular dots rendering
+  //   cy.get('label[title="Regular Dot Size"]').click();
+  //   cy.get('.scatterplot-matrix-table').matchImageSnapshot(
+  //     'scatterplot-matrix-regulat-dot',
+  //     matchImageSnapshotOptions
+  //   );
 
-    // test the big dots rendering
-    cy.get('label[title="Big Dot Size"]').click();
-    cy.get('.scatterplot-matrix-table').matchImageSnapshot(
-      'scatterplot-matrix-big-dot',
-      matchImageSnapshotOptions
-    );
-  });
+  //   // test the big dots rendering
+  //   cy.get('label[title="Big Dot Size"]').click();
+  //   cy.get('.scatterplot-matrix-table').matchImageSnapshot(
+  //     'scatterplot-matrix-big-dot',
+  //     matchImageSnapshotOptions
+  //   );
+  // });
 
   it('Test facet created from the scatterplot matrix', function () {
     cy.loadAndVisitProject('food.small', 'food-small');
