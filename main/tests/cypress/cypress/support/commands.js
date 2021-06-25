@@ -367,7 +367,7 @@ Cypress.Commands.add(
 Cypress.Commands.add('dragAndDrop', (sourceSelector, targetSelector) => {
   cy.get(sourceSelector).trigger('mousedown', { which: 1 });
 
-  cy.get(targetSelector)
+  cy.get(targetSelector) // eslint-disable-line
     .trigger('mousemove')
     .trigger('mouseup', { force: true });
 });
@@ -399,7 +399,7 @@ Cypress.Commands.add(
       .first()
       .scrollIntoView()
       .click({ force: true });
-    
+
     // wait for preview and click next to create the project
     cy.get('div[bind="dataPanel"] table.data-table').should('to.exist');
     cy.get('.default-importing-wizard-header button[bind="nextButton"]')
