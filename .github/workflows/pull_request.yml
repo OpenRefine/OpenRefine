@@ -1,7 +1,7 @@
 name: Continuous Integration
 
 on:
-  push:
+  pull_request_target:
     paths-ignore:
       - 'docs/**'
 
