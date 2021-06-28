@@ -1,0 +1,11 @@
+{
+    "wikibase-extension/wikibase-edits": "Změny Wikibase…",
+    "wikibase-extension/qs-file": "Soubor QuickStatements",
+    "wikibase-extension/export-to-qs": "Exportovat do QuickStatements",
+    "wikibase-extension/perform-edits-on-wikibase": "Nahrát změny do Wikibase",
+    "wikibase-extension/manage-wikibase-account": "Spravovat účet Wikibase",
+    "wikibase-extension/import-wikibase-schema": "Import schématu",
+    "wikibase-extension/edit-wikibase-schema": "Upravit schéma Wikibase",
+    "wikibase-extension/select-wikibase-instance": "Vybrat instanci Wikibase",
+    "wikibase-extension/menu-label": "Wikidata"
+}

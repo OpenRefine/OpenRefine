@@ -11,7 +11,7 @@
   <parent>
     <groupId>org.openrefine</groupId>
     <artifactId>extensions</artifactId>
-    <version>3.5-SNAPSHOT</version>
+    <version>3.6-SNAPSHOT</version>
   </parent>
 
   <properties>
@@ -84,7 +84,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-dependency-plugin</artifactId>
-        <version>3.1.2</version>
+        <version>3.2.0</version>
         <executions>
             <execution>
             <phase>compile</phase>
@@ -149,7 +149,7 @@
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-api</artifactId>
-      <version>1.7.30</version>
+      <version>1.7.31</version>
       <scope>provided</scope>
     </dependency>
 

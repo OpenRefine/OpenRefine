@@ -98,7 +98,12 @@ describe(__filename, function () {
     cy.get(
       '.default-importing-wizard-header input[bind="projectNameInput"]'
     ).type('this is a test');
-    cy.doCreateProjectThroughUserInterface();
+
+    // click next to create the project, and wait until it's loaded
+    cy.get('.default-importing-wizard-header button[bind="nextButton"]')
+      .contains('Create Project »')
+      .click();
+    cy.get('#create-project-progress-message').contains('Done.');
 
     cy.get('#project-name-button').contains('this is a test');
   });
@@ -118,7 +123,12 @@ describe(__filename, function () {
     cy.get('#project-tags-container .select2-input').type(uniqueTagName2);
     cy.get('body').type('{enter}');
     cy.get('#or-import-parsopt').click();
-    cy.doCreateProjectThroughUserInterface();
+
+    // click next to create the project, and wait until it's loaded
+    cy.get('.default-importing-wizard-header button[bind="nextButton"]')
+      .contains('Create Project »')
+      .click();
+    cy.get('#create-project-progress-message').contains('Done.');
 
     cy.visitOpenRefine();
     cy.navigateTo('Open Project');
@@ -133,6 +143,7 @@ describe(__filename, function () {
       .parent()
       .contains(uniqueTagName2);
   });
+
   it('Tests ignore-first of parsing options', function () {
     cy.visitOpenRefine();
     cy.createProjectThroughUserInterface('food.mini.csv');

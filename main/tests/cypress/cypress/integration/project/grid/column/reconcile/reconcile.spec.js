@@ -39,6 +39,11 @@ const addReconciliationService = () => {
     .contains('Add Service', { log: false })
     .click({ log: false });
 
+  cy.get('.recon-dialog-service-selector:last-child').should(
+    'to.contain',
+    'CSV Reconciliation service'
+  );
+
   cy.get('.recon-dialog-service-selector:last-child', { log: false }).click({
     log: false,
   });

@@ -149,41 +149,6 @@ Cypress.Commands.add('createProjectThroughUserInterface', (fixtureFile) => {
   ).click();
 });
 
-Cypress.Commands.add('doCreateProjectThroughUserInterface', () => {
-  cy.get('.default-importing-wizard-header button[bind="nextButton"]')
-    .contains('Create Project »')
-    .click();
-  cy.get('#create-project-progress-message').contains('Done.');
-  Cypress.on('uncaught:exception', (err, runnable) => {
-    // returning false here prevents Cypress from
-    // failing the test due to the uncaught exception caused by the window failure
-    return false;
-  });
-
-  // workaround to ensure project is loaded
-  // cypress does not support window.location = ...
-  cy.get('h2').should('to.contain', 'HTTP ERROR 404');
-  cy.location().should((location) => {
-    expect(location.href).contains(
-      Cypress.env('OPENREFINE_URL') + '/__/project?'
-    );
-  });
-
-  cy.location().then((location) => {
-    const projectId = location.href.split('=').slice(-1)[0];
-    cy.visitProject(projectId);
-    cy.wrap(projectId).as('createdProjectId');
-    cy.get('@loadedProjectIds', { log: false }).then((loadedProjectIds) => {
-      loadedProjectIds.push(projectId);
-      cy.wrap(loadedProjectIds, { log: false })
-        .as('loadedProjectIds')
-        .then(() => {
-          return projectId;
-        });
-    });
-  });
-});
-
 /**
  * Cast a whole column to the given type, using Edit Cell / Common transform / To {type}
  */
@@ -384,7 +349,7 @@ Cypress.Commands.add(
 );
 
 Cypress.Commands.add('assertNotificationContainingText', (text) => {
-  cy.get('#notification').should('to.contain', text).should('be.visible');
+  cy.get('#notification').should('be.visible').should('to.contain', text);
 });
 
 Cypress.Commands.add(
@@ -402,7 +367,7 @@ Cypress.Commands.add(
 Cypress.Commands.add('dragAndDrop', (sourceSelector, targetSelector) => {
   cy.get(sourceSelector).trigger('mousedown', { which: 1 });
 
-  cy.get(targetSelector)
+  cy.get(targetSelector) // eslint-disable-line
     .trigger('mousemove')
     .trigger('mouseup', { force: true });
 });
@@ -434,6 +399,12 @@ Cypress.Commands.add(
       .first()
       .scrollIntoView()
       .click({ force: true });
-    cy.doCreateProjectThroughUserInterface();
+
+    // wait for preview and click next to create the project
+    cy.get('div[bind="dataPanel"] table.data-table').should('to.exist');
+    cy.get('.default-importing-wizard-header button[bind="nextButton"]')
+      .contains('Create Project »')
+      .click();
+    cy.get('#create-project-progress-message').contains('Done.');
   }
 );

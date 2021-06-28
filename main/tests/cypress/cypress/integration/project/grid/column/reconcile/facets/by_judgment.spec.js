@@ -16,7 +16,11 @@ describe('Facet by judgment', () => {
 
     // cleanup automatic facets before doing any testing
     cy.get('#or-proj-facFil').click();
-    cy.get('#refine-tabs-facets a').contains('Remove All').click();
+    cy.get('div.browsing-panel-controls').should('be.visible');
+    cy.get('#refine-tabs-facets a')
+      .contains('Remove All')
+      .should('be.visible')
+      .click();
 
     cy.columnActionClick('species', ['Reconcile', 'Facets', 'By judgment']);
 
