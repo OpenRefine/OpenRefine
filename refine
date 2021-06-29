@@ -625,7 +625,7 @@ run() {
     fi
 
     if [ "$REFINE_RUNNER_CLASSNAME" ]; then
-        add_option "-Drefine.runnerClass=$REFINE_RUNNER_CLASSNAME"
+        add_option "-Drefine.runner.class=$REFINE_RUNNER_CLASSNAME"
     fi
 
     CLASSPATH="$REFINE_CLASSES_DIR${SEP}$REFINE_LIB_DIR/*"

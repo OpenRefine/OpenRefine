@@ -5,7 +5,7 @@
   <groupId>org.openrefine</groupId>
   <artifactId>extensions</artifactId>
   <packaging>pom</packaging>
-  <version>spark</version>
+  <version>4.0-SNAPSHOT</version>
 
   <name>OpenRefine - extensions</name>
   <description>Extensions add importers, exporters and other sorts of features to OpenRefine</description>
@@ -14,7 +14,7 @@
   <parent>
     <groupId>org.openrefine</groupId>
     <artifactId>openrefine</artifactId>
-    <version>spark</version>
+    <version>4.0-SNAPSHOT</version>
   </parent>
 
   <modules>
