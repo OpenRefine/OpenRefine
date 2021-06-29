@@ -26,7 +26,14 @@ yarn
 yarn start
 ```
 
-This command starts a local development server and opens up a browser window. Most changes are reflected live without having to restart the server.
+This command starts a local development server and opens up a browser window. Usually at the URL http://localhost:3000
+Most changes are reflected live without having to restart the server.
+
+### Next version of OpenRefine docs
+If you wish to work on the next version of docs for OpenRefine (`master` branch) then you will need to:
+1. Git checkout our `master` branch
+2. Edit files under `docs/docs/`
+3. Preview changes with the URL kept pointing to http://localhost:3000/next which will automatically show changes live with yarn after you save a file.
 
 ### Build
 
