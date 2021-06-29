@@ -63,7 +63,7 @@ import org.openrefine.model.RunnerConfiguration;
 
 public class RefineServlet extends Butterfly {
 
-    static private String ASSIGNED_VERSION = "3.6-SNAPSHOT";
+    static private String ASSIGNED_VERSION = "4.0-SNAPSHOT";
 
     static public String VERSION = "";
     static public String REVISION = "";
@@ -104,7 +104,7 @@ public class RefineServlet extends Butterfly {
     public void init() throws ServletException {
         super.init();
 
-        String runnerClassName = getInitParameter("refine.runner.class");
+        String runnerClassName = System.getProperty("refine.runner.class");
         if (runnerClassName == null || runnerClassName.isEmpty()) {
             runnerClassName = DEFAULT_DATAMODEL_RUNNER_CLASS_NAME;
         }
@@ -116,7 +116,7 @@ public class RefineServlet extends Butterfly {
         } catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException
                 | NoSuchMethodException | SecurityException | ClassNotFoundException e1) {
             e1.printStackTrace();
-            throw new ServletException("Unable to initialize the datamodel runner.");
+            throw new ServletException("Unable to initialize the datamodel runner.", e1);
         }
 
         VERSION = getInitParameter("refine.version");
@@ -358,7 +358,7 @@ public class RefineServlet extends Butterfly {
 
         @Override
         public String getParameter(String key, String defaultValue) {
-            String value = getInitParameter("refine.runner." + key);
+            String value = System.getProperty("refine.runner." + key);
             return value == null ? defaultValue : value;
         }
 
