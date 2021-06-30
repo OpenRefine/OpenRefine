@@ -127,3 +127,73 @@ Combined with CS&S, the Steering and Advisory committees have experience applyin
 ### Other assets 
 
 CS&S owns and manages the domain openrefine.org 
+
+### Use of official OpenRefine accounts
+
+1. Use of any official OpenRefine accounts (social media, funding, banking, code repository, domain, etc.) for the purpose of promotion of another entity must always be discussed prior with the Advisory committee or optionally Steering committee.
+2. "promotion" includes any and all types such as funding, crowdfunding, partnerships, internships.
+
+Any language that gives the impression that the OpenRefine organization approves, authorizes or otherwise supports a project, person or company is not permissible without written authorization from the Advisory Committee or optionally Steering committee.
+
+### Tweeting
+
+General guidelines for OpenRefine admins using our official Twitter account and looking to represent an organization or project ("the entity"). 
+
+#### Setup
+
+- Add a photo, ideally a logo of the entity that is readable.
+- Add a background photo or pick a color that looks good with the logo
+- Follow people and organizations relevant to the entity
+- It's nice if they follow you back but don't worry if they don't
+
+#### Tweeting
+
+- A Twitter account - or any social medial - does two things:
+1. it let's other users know what's happening
+2. establishes a tone or voice of an entity
+- 2 is unavoidable! So don't pretend it's not happening
+
+#### Tweeting with OpenRefine account
+
+- The OpenRefine account can be thought of as a relentlessly positive bot that is only paying attention to its "work friends" and is only here to promote, congratulate, or advocate for causes very close to its work.
+    - The OpenRefine account is not your personal account - we comment as individuals on injustice, tragedy, and politics. However, the OpenRefine account does not comment on these issues.
+    - Exceptions: Racism, sexism, and other exclusionary practices in science, data science, etc. We will RT the work of DeEtta Jones,  April Hathcock, OpenCon, and other entities who work in this space. CS&S has in the past and may again commission work on this topic, which we will announce and promote.
+- **Ideal tone: Professional, friendly, and inclusive.**
+    - **Overall guidelines:**
+        - Keep tweets to the point.
+        - Announce, promote, hashtag, followup link
+        - Use
+            - y'all, folks, community, friends
+        - Do not use
+            - guys, lads, ladies
+            - curse words
+            - exclusionary words and phrases
+                - "blind spot", "lame",
+    - **How to @**
+        - @ the orgs you are mentioning in a quote tweet or new tweet
+            - Example: "Congratulations @thecarpentries on this exciting initiative!"
+        - Do not @ an org or person not directly related to the work being shared (like, say Elon Musk or Trump), or @ a high profile person to draw attention to our work
+    - **How to retweet (RT)**
+        - RT promotional things from sponsored projects, collaborators, friendly orgs (The Carpentries, Open Knowledge Foundation, Mozilla Foundation)
+        - With or without comment
+    - **How to #**
+        - Hashtagging moves your tweet out of your circle of followers.
+            - Hastags we use:
+                -  #opendata #openscience #opensource #publicinteresttech #civictech #openaccess
+                - Generally shorter, generic hastags are best
+                - Sometimes we are trying to make sure an announcement reaches a specific population (an interest group, people attending a conference), in these situations we will research and find tags or reputable accounts that will reach that population
+                    - [https://twitter.com/sacnas](https://twitter.com/sacnas) or #scanas
+                    - #opencon2018
+                    - #blackandSTEM
+                    - #BAI2019
+        - Obviously never use hashtags that are derogatory, have curse words in them, or similar - even if the spirit of that hashtag is empowering
+    - **Do not respond**
+        - to reply tweets or random comments from regular people the entity does not know directly
+        - to tweets from famous people the entity does not know directly
+        - ***never engage in a back and forth or argument using OpenRefine's twitter account - turn off your computer and take a walk***
+    - **Blocking**
+        - Reply-guys, trolls, and other annoying creatures exist!
+        - Mute, ignore, block whenever you want to
+        - You do not owe anyone your time and consideration
+- 
+-
