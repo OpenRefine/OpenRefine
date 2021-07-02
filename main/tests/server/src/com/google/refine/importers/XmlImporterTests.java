@@ -33,12 +33,14 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.importers;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
+import java.io.*;
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
 
+import com.google.refine.importers.tree.ImportColumnGroup;
+import org.apache.commons.io.FileUtils;
 import org.slf4j.LoggerFactory;
 import org.testng.Assert;
 import org.testng.annotations.AfterMethod;
@@ -197,6 +199,41 @@ public class XmlImporterTests extends ImporterTest {
         Assert.assertNull(cg0.parentGroup);
         Assert.assertEquals(cg0.subgroups.size(),0);
         Assert.assertEquals(cg0.columnSpan,2);
+    }
+
+    @Test
+    public void testAddFileColumn() throws Exception {
+        final String FILE = "xml-sample-format-1.xml";
+        String filename = ClassLoader.getSystemResource(FILE).getPath();
+        // File is assumed to be in job.getRawDataDir(), so copy it there
+        FileUtils.copyFile(new File(filename), new File(job.getRawDataDir(), FILE));
+        List<ObjectNode> fileRecords = new ArrayList<>();
+        fileRecords.add(ParsingUtilities.evaluateJsonStringToObjectNode(String.format("{\"location\": \"%s\",\"fileName\": \"%s\"}", FILE, "xml-sample-format-1.xml")));
+
+        ObjectNode options = SUT.createParserUIInitializationData(
+                job, new LinkedList<>(), "text/json");
+        ArrayNode path = ParsingUtilities.mapper.createArrayNode();
+        JSONUtilities.append(path, "library");
+        JSONUtilities.safePut(options, "recordPath", path);
+        JSONUtilities.safePut(options, "trimStrings", false);
+        JSONUtilities.safePut(options, "storeEmptyStrings", true);
+        JSONUtilities.safePut(options, "guessCellValueTypes", false);
+        JSONUtilities.safePut(options,"includeFileSources",true);
+
+        List<Exception> exceptions = new ArrayList<Exception>();
+
+        SUT.parse(
+                project,
+                metadata,
+                job,
+                fileRecords,
+                "text/json",
+                -1,
+                options,
+                exceptions
+        );
+        Assert.assertNotNull(project.columnModel.getColumnByName("File"));
+        Assert.assertEquals(project.rows.get(0).getCell(0).value,"xml-sample-format-1.xml");
     }
 
     //------------helper methods---------------

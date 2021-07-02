@@ -163,7 +163,7 @@ abstract public class GoogleAPIExtension {
     public static Sheets getSheetsService(String token) throws IOException {
         final Credential credential;
         if (token != null) {
-            credential =  new Credential.Builder(null).build().setAccessToken(token);
+            credential =  new Credential.Builder(BearerToken.authorizationHeaderAccessMethod()).build().setAccessToken(token);
         } else {
             credential = null;
         }

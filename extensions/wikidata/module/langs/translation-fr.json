@@ -219,5 +219,6 @@
     "perform-wikibase-edits/maxlag-label": "latence maximale (maxlag)",
     "wikibase-account/access-token-label": "Jeton d'accès :",
     "wikibase-addition/explain-paste-manifest": "Ou collez directement le texte JSON du manifeste (les manifestes de certaines Wikibases publiques peuvent être trouvés <a href=\"https://github.com/OpenRefine/wikibase-manifests\" target=\"_blank\">ici</a>, vous pouvez également en écrire un vous-même en suivant ce <a href=\"https://github.com/OpenRefine/OpenRefine/wiki/Write-a-Wikibase-manifest\" target=\"_blank\">tutoriel</a>) :",
-    "wikibase-addition/explain-add-manifest-via-url": "Entrez l'URL du manifeste Wikibase (recommandé, cela est utile pour garder une trace du dernier manifeste) :"
+    "wikibase-addition/explain-add-manifest-via-url": "Entrez l'URL du manifeste Wikibase (recommandé, cela est utile pour garder une trace du dernier manifeste) :",
+    "wikibase-account/logo-alt-text": "$1 Logo"
 }

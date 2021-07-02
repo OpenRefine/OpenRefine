@@ -46,6 +46,9 @@ public class WbLocationVariable extends WbVariableExpr<GlobeCoordinatesValue> {
     @Override
     public GlobeCoordinatesValue fromCell(Cell cell, ExpressionContext ctxt)
             throws SkipSchemaExpressionException {
+        if (cell == null || cell.value == null) {
+            throw new SkipSchemaExpressionException();
+        }
         String expr = cell.value.toString();
         try {
             return WbLocationConstant.parse(expr);
