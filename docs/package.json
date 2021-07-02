@@ -10,7 +10,9 @@
     "build": "docusaurus build",
     "swizzle": "docusaurus swizzle",
     "deploy": "docusaurus deploy",
-    "crowdin": "crowdin"
+    "crowdin": "crowdin",
+    "netlify:build:production": "docusaurus write-translations && crowdin upload && crowdin download && yarn build",
+    "netlify:build:deployPreview": "docusaurus write-translations && yarn build"
   },
   "dependencies": {
     "@crowdin/cli": "3",
