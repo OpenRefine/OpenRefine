@@ -7,7 +7,7 @@ explains how to work around these cases.
 Sometimes your source provides data in a structured format, such as XML,
 JSON or RDF. OpenRefine can import these files and will convert them to
 tables. These tables will reflect some of the hierarchy in the file by
-means of null cells, using the [records mode](manual/exploring#rows-vs-records).
+means of null cells, using the [records mode](/manual/exploring#rows-vs-records).
 
 The Wikibase extension always works in rows mode, so if we want to add
 statements which reference both the artist and the song, we need to fill
