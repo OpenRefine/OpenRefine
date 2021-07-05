@@ -1,6 +1,6 @@
 module.exports = {
-  onBrokenLinks: 'error',
-  onBrokenMarkdownLinks: 'error',
+  onBrokenLinks: 'throw',
+  onBrokenMarkdownLinks: 'throw',
   title: 'OpenRefine',
   tagline: 'A power tool for working with messy data.',
   url: 'https://docs.openrefine.org/',
