@@ -7,7 +7,7 @@
   },
   "env": {
     "OPENREFINE_URL": "http://localhost:3333",
-    "DISABLE_PROJECT_CLEANUP": 1
+    "DISABLE_PROJECT_CLEANUP": 0
 
   }
 }
