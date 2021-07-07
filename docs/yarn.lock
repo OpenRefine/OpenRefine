@@ -1108,9 +1108,9 @@
     to-fast-properties "^2.0.0"
 
 "@crowdin/cli@3":
-  version "3.6.0"
-  resolved "https://registry.yarnpkg.com/@crowdin/cli/-/cli-3.6.0.tgz#67a882c1f15403da0d4492091b812d15ca593234"
-  integrity sha512-vXycSWnt45bRrV7u6KvvlN0hUm7pXMKlYYDKdRjvvcIFGB3km7WkVXvft9lYOpCH1wHmR7TqjsZQPPQRWqppyA==
+  version "3.6.3"
+  resolved "https://registry.yarnpkg.com/@crowdin/cli/-/cli-3.6.3.tgz#091a836c9308054e411acd8f325a5cfb3cb75121"
+  integrity sha512-//0EY1RaMoxG3fb9tVPHDhqxtY+7Z5e9E5CxE6vw5LDrwi5dRJCYrVYrW66fp2BghQaXTVuj12lryV2VoiZ2mg==
   dependencies:
     shelljs "^0.8.4"
 
