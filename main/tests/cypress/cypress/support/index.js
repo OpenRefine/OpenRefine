@@ -44,3 +44,16 @@ before(() => {
     token = response.body.token;
   });
 });
+
+
+// See https://docs.cypress.io/api/events/catalog-of-events#Uncaught-Exceptions
+// We want to catch some Javascript exception that we consider harmless
+Cypress.on('uncaught:exception', (err, runnable) => {
+  // This message occasionally appears with edge
+  // Doesn't seems like a blocket, and the test should not fail 
+  if (err.message.includes("Cannot read property 'offsetTop' of undefined")) {
+    return false
+  }
+  // we still want to ensure there are no other unexpected
+  // errors, so we let them fail the test
+})
