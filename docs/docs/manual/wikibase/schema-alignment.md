@@ -36,7 +36,7 @@ Do not worry about the ordering of items in the schema or the order of
 your rows, as OpenRefine will rearrange your edits to optimize their
 upload. If your project makes edits on the same item across multiple
 rows, these edits will be merged together and performed in one edit. See
-[Uploading your changes](./upload) about that.
+[Uploading your changes](./uploading) about that.
 
 ## Terms {#terms}
 

@@ -26,7 +26,14 @@ yarn
 yarn start
 ```
 
-This command starts a local development server and opens up a browser window. Most changes are reflected live without having to restart the server.
+This command starts a local development server and opens up a browser window. Usually at the URL http://localhost:3000
+Most changes are reflected live without having to restart the server.
+
+### Next version of OpenRefine docs
+If you wish to work on the next version of docs for OpenRefine (`master` branch) then you will need to:
+1. Git checkout our `master` branch
+2. Edit files under `docs/docs/`
+3. Preview changes with the URL kept pointing to http://localhost:3000/next which will automatically show changes live with yarn after you save a file.
 
 ### Build
 
@@ -43,3 +50,18 @@ GIT_USER=<Your GitHub username> USE_SSH=true yarn deploy
 ```
 
 If you are using GitHub pages for hosting, this command is a convenient way to build the website and push to the `gh-pages` branch.
+
+### Translations
+
+It is now possible to translate the [OpenRefine docs](https://docs.openrefine.org/) via the
+Crowdin platform:
+
+https://crowdin.com/project/openrefine
+
+Unfortunately, unlike Weblate, we need to manually invite anyone who
+wants to contribute translations. Feel free to request an invite by emailing us at openrefine-dev@googlegroups.com
+We can also add languages, depending on interest.
+
+Your translations will not be immediately published on https://docs.openrefine.org, it will take a few days (at the next commit on the master branch) and the translated pages will first appear under https://docs.openrefine.org/next/ (the documentation for the development version).
+When we publish a version, the translations for that version, we will take a snapshot of the translations during that time.
+We will trial this process for 3.5.
