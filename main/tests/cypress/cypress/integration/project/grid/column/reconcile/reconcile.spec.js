@@ -16,7 +16,7 @@ const fixture = [
  */
 const addReconciliationService = () => {
   cy.get('.recon-dialog-service-list', { log: false }).then(($list) => {
-    if ($list.find('.recon-dialog-service-selector').length > 1) {
+    if ($list.find('.recon-dialog-service-selector').length > 0) {
       // cy.get('.recon-dialog-service-selector-remove').click({ multiple: true });
 
       cy.get('.recon-dialog-service-selector', { log: false }).each(($btn) => {
@@ -27,6 +27,8 @@ const addReconciliationService = () => {
       });
     }
   });
+  // Checking that the list is empty ensure the deletion of all previous services is completed
+  cy.get('.recon-dialog-service-list', { log: false }).should('be.empty');
 
   cy.get('.dialog-container button', { log: false })
     .contains('Add Standard Service...', { log: false })
@@ -38,6 +40,9 @@ const addReconciliationService = () => {
   cy.get('.dialog-container:last-child button', { log: false })
     .contains('Add Service', { log: false })
     .click({ log: false });
+
+  // Checking that the list have only one service ensures that the services has been added
+  cy.get('.recon-dialog-service-selector', { log: false }).should('have.length', 1);
 
   cy.get('.recon-dialog-service-selector:last-child').should(
     'to.contain',
@@ -56,6 +61,7 @@ describe('Base reconciliation tests', () => {
     cy.loadAndVisitProject(fixture);
     cy.columnActionClick('species', ['Reconcile', 'Start reconciling']);
     addReconciliationService();
+    cy.get('.recon-dialog-service-panel.recon-dialog-standard-service-panel').should('be.visible');
     cy.get('.dialog-header').should('to.contain', 'Reconcile column "species"');
     cy.get('.dialog-body').should(
       'to.contain',
@@ -76,6 +82,8 @@ describe('Base reconciliation tests', () => {
     cy.columnActionClick('species', ['Reconcile', 'Start reconciling']);
     addReconciliationService();
 
+    cy.get('.recon-dialog-service-panel.recon-dialog-standard-service-panel').should('be.visible');
+
     cy.get('.dialog-container span')
       .contains('Auto-match')
       .siblings('input')
@@ -95,6 +103,7 @@ describe('Base reconciliation tests', () => {
     cy.loadAndVisitProject(fixture);
     cy.columnActionClick('species', ['Reconcile', 'Start reconciling']);
     addReconciliationService();
+    cy.get('.recon-dialog-service-panel.recon-dialog-standard-service-panel').should('be.visible');
 
     cy.get('.dialog-container span')
       .contains('Auto-match')
@@ -118,6 +127,7 @@ describe('Base reconciliation tests', () => {
     cy.loadAndVisitProject(fixture);
     cy.columnActionClick('species', ['Reconcile', 'Start reconciling']);
     addReconciliationService();
+    cy.get('.recon-dialog-service-panel.recon-dialog-standard-service-panel').should('be.visible');
     cy.get('.dialog-container input[bind="maxCandidates"]').type(2);
     cy.get('.dialog-container button').contains('Start Reconciling...').click();
     cy.assertColumnIsReconciled('species');
