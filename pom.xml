@@ -63,7 +63,7 @@
     <jackson.version>2.12.4</jackson.version>
     <servlet-api.version>4.0.1</servlet-api.version>
     <butterfly.version>1.1.1</butterfly.version>
-    <slf4j.version>1.7.31</slf4j.version>
+    <slf4j.version>1.7.32</slf4j.version>
     <jetty.version>9.4.41.v20210516</jetty.version>
   </properties>
 
