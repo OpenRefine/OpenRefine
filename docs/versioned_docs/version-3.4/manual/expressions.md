@@ -150,8 +150,6 @@ For array objects such as `row.columnNames` you can preview the array using the 
 forEach(row.columnNames,v,v).join("; ")
 ```
 
-It might be non-obvious, but `row.index` can be used for creating unique row ids when joining, or help with [Faceting](#facets).  If you need to add Row numbers into a column, so you can Facet numerically, add a new column with the expression `row.index+1`.
-
 ### Cells {#cells}
 
 The `cells` object is used to call information from the columns in your project. For example, `cells.Foo` returns a [cell](#cell) object representing the cell in the column named “Foo” of the current row. If the column name has spaces, use square brackets, e.g., `cells["Postal Code"]`. To get the corresponding column's value inside the `cells` variable, use `.value` at the end, for example, `cells["Postal Code"].value`. There is no `cells.value` - it can only be used with member fields.
