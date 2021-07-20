@@ -187,7 +187,7 @@ mod(value, 7)
 ```
 
 :::info Faceting Row numbers
-It might be non-obvious, but the GREL [expression](expressions) `row.index` can be used in many ways for creating unique row ids when joining, or help with faceting.  Add a new column with the expression `row.index+1` and then use a Custom Numeric Facet.  Or apply a Custom Numeric Facet on a column to group by clusters of row numbers, for example with an expression `row.index/100` or `row.index/1000`.
+It might be non-obvious, but the GREL [expression](expressions) `row.index` can be used in many ways for creating unique row ids when joining, or help with faceting.  Apply a Custom Numeric Facet on a column to group by clusters of row numbers, for example with an expression `row.index/100` or `row.index/1000`.
 
 You can learn more about numeric-modification functions on the [Expressions page](expressions). 
 
