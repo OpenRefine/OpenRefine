@@ -100,6 +100,10 @@ You will be offered the option to include blank, non-numeric, and error values i
 You can create a text facet on numeric data, which will treat each entry as a string. This can be useful if you wish, for example, to manually include facets instead of selecting a range, or sort by count, or copy that count.
 :::
 
+:::info Faceting customization
+As mentioned in the overview, facets can be modified or customized by GREL [expressions](expressions) in many ways.  For example, to facet by clusters of [row](expressions#variables) numbers with `row.index/100` or better visualizing numbers greater than 1000 with `max(row.index, 1000)`.
+:::
+
 ## Timeline facet {#timeline-facet}
 
 ![A screenshot of an example timeline facet.](/img/timelinefacet.png)
@@ -185,9 +189,6 @@ If the values are periodic you could take the modulus by the period to understan
 ```
 mod(value, 7)
 ```
-
-:::info Faceting Row numbers
-It might be non-obvious, but the GREL [expression](expressions) `row.index` can be used in many ways for creating unique row ids when joining, or help with faceting.  Apply a Custom Numeric Facet on a column to group by clusters of row numbers, for example with an expression `row.index/100` or `row.index/1000`.
 
 You can learn more about numeric-modification functions on the [Expressions page](expressions). 
 
