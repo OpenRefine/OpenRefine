@@ -83,8 +83,8 @@
     "wikibase-schema/unsaved-warning": "Olet tehnyt tallentamattomia muutoksia Wikidata-skeemaan. Suljetaanko silti?",
     "wikibase-schema/incomplete-schema-could-not-be-saved": "Skeemasi on keskeneräinen, eikä sitä voi vielä tallentaa.",
     "wikibase-schema/discard-schema-changes-alt": "Hylkää skeemaan tehdyt muutokset.",
-    "wikibase-schema/save-schema-alt": "Tallenna skeema OpenRefineen. Muutoksia ei vielä ladata Wikidataan.",
-    "wikibase-schema/unsaved-changes-alt": "Olet tehnyt tallentamattomia muutoksia Wikidata-skeemaan.",
+    "wikibase-schema/save-schema-alt": "Tallenna skeema OpenRefineen. Muutoksia ei vielä ladata Wikibaseen.",
+    "wikibase-schema/unsaved-changes-alt": "Olet tehnyt tallentamattomia muutoksia Wikibase-skeemaan.",
     "wikibase-schema/close-button": "Sulje",
     "wikibase-schema/save-button": "Tallenna skeema",
     "wikibase-schema/discard-button": "Hylkää muutokset",
@@ -112,5 +112,6 @@
     "wikibase-management/add-wikibase": "Lisää Wikibase",
     "wikibase-management/current-selected-wikibase": "Käytössä oleva Wikibase: <a href=\"$1\" target=\"_blank\">$2</a>",
     "wikibase-management/dialog-header": "Valitse Wikibase-instanssi",
-    "wikibase-extension/select-wikibase-instance": "Valitse Wikibase-instanssi"
+    "wikibase-extension/select-wikibase-instance": "Valitse Wikibase-instanssi",
+    "wikibase-account/logo-alt-text": "$1 Logo"
 }
