@@ -115,6 +115,8 @@ if ""%1"" == ""/m"" goto arg-m
 if ""%1"" == ""/x"" goto arg-x
 goto endArgumentParsing
 
+rem --- Set Arguments ----------------------------------------------
+
 :arg-p
 set REFINE_PORT=%2
 goto shift2loop
