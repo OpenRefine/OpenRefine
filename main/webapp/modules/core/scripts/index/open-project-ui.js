@@ -175,7 +175,7 @@ Refine.OpenProjectUI.prototype._searchAnimation = function() {
       form.show()
             form.focus()
     }
-    var widthFormOpen = Math.floor($('#right-panel-body').width() * 2 / 3);
+        var widthFormOpen = Math.floor($('#right-panel-body').width() * 4 / 5);
     form.animate({
       'width': form.width() == widthFormOpen ? '0px' : widthFormOpen + "px"
     }, 'fast', function () {
@@ -183,6 +183,7 @@ Refine.OpenProjectUI.prototype._searchAnimation = function() {
         form.hide()
                 form.val('')
                 icon.removeClass("magnifying-glass-open")
+                $("#tableBody").filterListSearch("")
                 $("#divInput").hide()
         $("#tagsUl").show()
       }
