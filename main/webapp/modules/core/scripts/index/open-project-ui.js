@@ -192,19 +192,29 @@ Refine.OpenProjectUI.prototype._searchAnimation = function() {
 
 Refine.OpenProjectUI.prototype._searchInput = function() {
     var search = $('#searchInProjects');
-    // search dynamically
-    search.keypress(function (e) {
-        // when enter is pressed
-        if (e.keyCode == '13')
-        {
-            event.preventDefault();
-            var text = ''
-            text = search.val();
-            // get the text, get back the projects that contains the text in the metadata
-            $("#tableBody").filterListSearch(text);
-        }
+    //setup before functions
+    var typingTimer;                //timer identifier
+    var doneTypingInterval = 2000;  //time in ms, 2 seconds
+    // search when done typing interval is over when not typing anymore
 
+    //on keyup, start the countdown
+    search.on('keyup', function () {
+      clearTimeout(typingTimer);
+      typingTimer = setTimeout(doneTyping, doneTypingInterval);
     });
+
+    //on keydown, clear the countdown
+    search.on('keydown', function () {
+      clearTimeout(typingTimer);
+    });
+
+    //user is "finished typing," do something
+    function doneTyping () {
+        var text = ''
+        text = search.val();
+        // get the text, get back the projects that contains the text in the metadata
+        $("#tableBody").filterListSearch(text);
+    }
 };
 
 // FIXME: This is overwriting an earlier function definition
