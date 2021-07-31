@@ -33,7 +33,11 @@ beforeEach(() => {
 });
 
 afterEach(() => {
-  cy.cleanupProjects();
+  // DISABLE_PROJECT_CLEANUP is used to disable projects deletion
+  // Mostly used in CI/CD for performances
+  if(parseInt(Cypress.env('DISABLE_PROJECT_CLEANUP')) != 1){
+    cy.cleanupProjects();
+  }
 });
 
 before(() => {

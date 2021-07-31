@@ -4,7 +4,7 @@ title: Starting a project
 sidebar_label: Starting a project
 ---
 
-## Overview
+## Overview {#overview}
 
 An OpenRefine project is started by importing in some existing data - OpenRefine doesn’t allow you to create a dataset from nothing.
 
@@ -14,7 +14,7 @@ The data and all of your edits are [automatically saved](#autosaving) inside the
 
 You can also receive and open other people’s projects, or send them yours, by [exporting a project archive](exporting#export-a-project) and [importing it](#import-a-project). 
 
-## Create a project by importing data
+## Create a project by importing data {#create-a-project-by-importing-data}
 
 When you start OpenRefine, you’ll be taken to the <span class="menuItems">Create Project</span> screen. You’ll see on the left side of the screen that your options are to: 
 
@@ -53,13 +53,13 @@ You cannot combine two datasets into one project by appending data within rows. 
 
 For whichever method you choose to start your project, when you click <span class="menuItems">Next >></span> you will be given a preview and a chance to configure the way OpenRefine interprets the data you input.
 
-### Get data from this computer
+### Get data from this computer {#get-data-from-this-computer}
 
 Click on <span class="menuItems">Browse…</span> and select a file (or several) on your hard drive. All files will be shown, not just compatible ones. 
 
-If you import an archive file (something with the extension `.zip`, `.tar.gz`, `.tgz`, `.tar.bz2`, `.gz`, or `.bz2`), OpenRefine detects the files inside it, shows you a preview screen, and allows you to select which ones to load. This does not work with `.rar` files. 
+If you import an archive file (something with the extension `.zip`, `.tar.gz`, `.tgz`, `.tar.bz2`, `.gz`, or `.bz2`), OpenRefine detects the files inside it, shows you a preview screen, and allows you to select which ones to load. This does not work with `.rar` files. When importing multiple archives you can store the name of the archive each file was extracted from by ticking the `Store archive file` option upon import. 
 
-### Web addresses (URLs)
+### Web addresses (URLs) {#web-addresses-urls}
 
 Type or paste the URL to a data file into the field provided. You can add as many fields as you want. OpenRefine will download the file and preview the project for you. 
 
@@ -67,7 +67,7 @@ If you supply two or more file URLs, OpenRefine will identify each one and ask y
 
 Do not use this form to load a Google Sheet by its link; use [the Google Data form instead](#google-data). 
 
-### Clipboard
+### Clipboard {#clipboard}
 
 You can copy and paste in data from anywhere. OpenRefine will recognize comma-separated, tab-separated, or table-formatted information copied from sources such as word-processing documents, spreadsheets, and tables in PDFs. You can also just paste in a list of items that you want to turn into rows. OpenRefine recognizes each new text line as a row. 
 
@@ -75,7 +75,7 @@ This can be useful if you want to pre-select a specific number of rows from your
 
 This can also be useful if you would like to paste in a list of URLs, which you can use later to [fetch more data](columnediting). 
 
-### Database (SQL)
+### Database (SQL) {#database-sql}
 
 If you are an administrator or have SQL access to a database of information, you may want to pull the latest dataset directly from there. This could include an online catalogue, a content management system, or a digital repository or collection management system. You can also load a database (`.db`) file saved locally. You will need to use an [SQL query](https://www.w3schools.com/sql/) to import your intended data.
 
@@ -91,13 +91,13 @@ You can either connect just once to gather data, or save the connection to use i
 
 If your connection is successful, you will see a Query Editor where you can run your SQL query. OpenRefine will give you an error if you write a statement that tries to modify the source database in any way.
 
-### Google data
+### Google data {#google-data}
 
 You have two ways to load in data from Google Sheets:
 *   providing a link to an accessible Google Sheet (that is, one with link-sharing turned on), and
 *   selecting a Google Sheet in your Google Drive.
 
-#### Google Sheet by URL
+#### Google Sheet by URL {#google-sheet-by-url}
 
 You can import data from any Google Sheet that has link-sharing turned on. Paste in a URL that looks something like
 
@@ -107,7 +107,7 @@ https://docs.google.com/spreadsheets/………/edit?usp=sharing
 
 This will only work with Sheets, not with any other Google Drive file that might have an available link, including `.xls` and other valid files that are hosted in Google Drive. These links will not work when attempting to start a project [by URL](#web-addresses-urls) either, so you need to download those files to your computer.
 
-#### Google Sheet from Drive
+#### Google Sheet from Drive {#google-sheet-from-drive}
 
 You can authorize OpenRefine to access your Google Drive data and import data from any Google Sheet it finds there. This will include Sheets that belong to you and Sheets that are shared with you, as well as Sheets that are in your trash. 
 
@@ -120,7 +120,7 @@ OpenRefine will generate a list of all Sheets it finds, with the most recently m
 When you click <span class="buttonLabels">Preview</span> the Sheet will open in a new browser tab. When you click the Sheet title, OpenRefine will begin to process the data.
 
 
-## Project preview
+## Project preview {#project-preview}
 
 Once OpenRefine is ready to import the data, you will see a screen with <span class="menuItems">Configure Parsing Options</span> at the top. You’ll see a preview of the first 100 rows and all identified columns. 
 
@@ -141,7 +141,7 @@ Look for character encoding issues at this stage. You may want to manually selec
 You should create a project name at this stage. You can also supply tags to keep your projects organized. When you’re happy with the preview, click <span class="buttonLabels">Create Project</span>.
 
 
-## Import a project
+## Import a project {#import-a-project}
 
 Because OpenRefine only runs locally on your computer, you can’t have a project accessible to more than one person at the same time. 
 
@@ -163,17 +163,17 @@ Then, click <span class="buttonLabels">Import Project</span>. Your project shoul
 OpenRefine will store the project in its own workspace directory, so you can now delete the original file that was sent to you. 
 
 
-## Project management
+## Project management {#project-management}
 
 You can access all of your created projects by clicking on <span class="menuItems">Open Project</span>. Your project list can be organized by modification date, title, row count, and other metadata you can supply (such as subject, descripton, tags, or creator). To edit the fields you see here, click <span class="menuItems">About</span> to the left of each project. There you can edit a number of available fields. You can also see the project ID that corresponds to the name of the folder in your work directory.  
 
-### Naming projects 
+### Naming projects {#naming-projects}
 
 You may have multiple projects from the same dataset, or multiple versions from sharing a project with another person. OpenRefine automatically generates a project name from the imported file, or “clipboard” when you use <span class="menuItems">Clipboard</span> importing. Project names don’t have to be unique, and OpenRefine will create many projects with the same name unless you intervene. 
 
 You can edit a project's name when you create it or import it, and you can rename a project later by opening it and clicking on the project name at the top of the screen. 
 
-### Autosaving 
+### Autosaving {#autosaving}
 
 OpenRefine [saves all of your actions](running#history-undoredo) (everything you can see in the <span class="tabLabels">Undo/Redo</span> panel). That includes flagging and starring rows.
 
@@ -183,12 +183,12 @@ Autosaving happens by default every five minutes. You can [change this preferenc
 
 You can only save and share facets and filters, not any other type of view. To save current facets and filters, click <span class="menuItems">Permalink</span>. The project will reload with a different URL, which you can then copy and save elsewhere. This permalink will save both the facets and filters you’ve set, and the settings for each one (such as sorting by count rather than by name). 
 
-### Deleting projects
+### Deleting projects {#deleting-projects}
 
 You can delete projects, which will erase the project files from the workspace directory on your computer. This is immediate and cannot be undone.
 
 Go to <span class="menuItems">Open Project</span> and find the project you want to delete. Click on the <span class="menuItems">X</span> to the left of the project name. There will be a confirmation dialog. 
 
-### Project files
+### Project files {#project-files}
 
 You can find all of your raw project files in your work directory. They will be named according to the unique “Project ID” that OpenRefine has assigned them, which you can find on the <span class="menuItems">Open Project</span> screen, under the “About” link for each project. 

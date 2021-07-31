@@ -6,14 +6,14 @@ sidebar_label: Contributing
 
 Please read the general [guidelines on contributing to OpenRefine](https://github.com/OpenRefine/OpenRefine/blob/master/CONTRIBUTING.md) first, then review the information on [reporting and tracking issues](#reporting-and-tracking-issues), and on making your [first pull request](#your-first-pull-request) below)
 
-## Reporting and tracking issues
+## Reporting and tracking issues {#reporting-and-tracking-issues}
 
 If you need to file a bug or request a feature, [create an Issue in the OpenRefine Github repository](https://github.com/OpenRefine/OpenRefine/issues). Github issues should be used for reporting specific bugs and requesting specific features. If you just don't know how to do something using OpenRefine, or want to discuss some ideas, please:
 
 - [Try the user manual](/)
 - [post to our OpenRefine mailing list](http://groups.google.com/group/openrefine/)
 
-## Contributing to the documentation
+## Contributing to the documentation {#contributing-to-the-documentation}
 
 We use [Docusaurus](https://docusaurus.io/) for our docs. For small documentation changes, you should be able to edit the Markdown files directly and submit them as a pull request. A preview of the docs will be generated automatically. But it is also
 possible to preview your changes locally. Assuming you have [Node.js](https://nodejs.org/en/download/) installed (which includes npm), you can install Docusaurus with:
@@ -41,7 +41,7 @@ You can also spin a local web server to serve the docs for you, with auto-refres
 yarn start
 ```
 
-## Your first code pull request
+## Your first code pull request {#your-first-code-pull-request}
 
 This describes the overall steps to your first code contribution in OpenRefine. If you have trouble with any of these steps feel free to reach out on the [developer mailing list](https://groups.google.com/forum/#!forum/openrefine-dev) or the [Gitter channel](https://gitter.im/OpenRefine/OpenRefine).
 
@@ -53,7 +53,7 @@ This describes the overall steps to your first code contribution in OpenRefine. 
 
 - Reproduce the issue locally, by following the steps described in the issue. You might need to locate a particular dialog, use a specific importer on a sample file, or follow any other user workflow. If you have followed all the steps described in the issue and cannot observe the issue mentioned, write a comment on the issue explaining that you are not able to reproduce it (perhaps it was fixed by another change).
 
-- Locate the code that is relevant for the issue you want to solve. Text search across files is often useful for that. For instance, if the issue you want to solve is about a dialog entitled "Columnize by key/values", you can search for "Columnize" in the entire source code.
+- Locate the code that is relevant for the issue you want to solve. Text search across files is often useful for that. For instance, if the issue you want to solve is about a dialog entitled "Columnize by key/values", you can search for "Columnize" in the entire source code. For more details about this technique, see [this comment](https://github.com/OpenRefine/OpenRefine/issues/3137#issuecomment-691649962).
 
 - Study how the current code works. You might want to use a debugger to put breakpoints at the relevant locations (for inspecting the backend, use your IDE's debugger, for the frontend, use your browser's developer tools).
 
@@ -64,6 +64,5 @@ This describes the overall steps to your first code contribution in OpenRefine. 
 - commit your changes, using a message that contains "closes #1234" or "fixes #1234", this will link the commit to the issue you are working on.
 
 - push your branch to your fork and create a pull request for it, explaining the approach you have used, any design decisions you have made.
-
 
 Thank you!

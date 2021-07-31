@@ -1,8 +1,8 @@
 describe(__filename, function () {
   it('Edit a preference', function () {
     cy.visitOpenRefine();
-    const testPreferenceName = 'PreferenceName_' + Date.now();
-    const testPreferenceValue = 'PreferenceValue_' + Date.now();
+    const testPreferenceName = `PreferenceName_${Date.now()}`;
+    const testPreferenceValue = `"PreferenceValue_${Date.now()}"`;
 
     cy.setPreference(testPreferenceName, testPreferenceValue);
 

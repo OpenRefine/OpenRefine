@@ -67,9 +67,9 @@ and <action> is one of
 
    test ................................ Run all OpenRefine tests
    server_test ......................... Run only the server tests
-   ui_test <browser> <id> <key> ........ Run only the UI tests (If passing a project Id and a Record Key, tests will be recorded in Cypress.io Dashboard)
    extensions_test ..................... Run only the extensions tests
-
+   ui_tests ............................ Run only the UI tests
+   
    broker .............................. Run OpenRefine Broker
    
    broker_appengine_run <id> <ver> ..... Run OpenRefine Broker for Google App Engine in local server
@@ -482,16 +482,20 @@ test() {
     $MVN test
 }
 
-ui_test() {
+
+ui_tests() {
+    download http://okfnlabs.org/reconcile-csv/dist/reconcile-csv-0.1.2.jar ./tools/reconcile-csv-0.1.2.jar
+    RECONCILE_SERVER_CMD="$JAVA -Xmx2g -jar ./tools/reconcile-csv-0.1.2.jar  ./main/tests/cypress/cypress/fixtures/csv-reconcile-species.csv scientific_name taxon_id"
+    echo "Starting reconcile-csv-0.1.2 ..."
+    $RECONCILE_SERVER_CMD 2>&1 &
+    RECONCILE_SERVER_PID="$!"
+    
     get_revision
 
-    BROWSER="$1"
-    CYPRESS_PROJECT_ID="$2"
-    CYPRESS_RECORD_KEY="$3"
     CYPRESS_RECORD=0
 
-    if [ -z "$BROWSER" ] ; then
-        BROWSER="electron"
+    if [ -z "$CYPRESS_BROWSER" ] ; then
+        CYPRESS_BROWSER="electron"
     fi
     
     if [ ! -z "$CYPRESS_PROJECT_ID" ] && [ ! -z "$CYPRESS_RECORD_KEY" ] ; then
@@ -519,11 +523,14 @@ ui_test() {
     echo ""
 
     echo "Starting Cypress..."
-    CYPRESS_RUN_CMD="yarn --cwd ./main/tests/cypress run cypress run --browser $BROWSER --headless --quiet --reporter list --env OPENREFINE_URL=http://$REFINE_HOST_INTERNAL:$REFINE_PORT"
+    # Cypress needs a unique group id
+    # We're hashing the list of files to generate such Group Id
+    CYPRESS_GROUP=$(echo $CYPRESS_BROWSER$CYPRESS_SPECS | shasum)
+    CYPRESS_RUN_CMD="yarn --cwd ./main/tests/cypress run cypress run --spec "$CYPRESS_SPECS" --browser $CYPRESS_BROWSER --group "$CYPRESS_GROUP" --headless --quiet --reporter list --env DISABLE_PROJECT_CLEANUP=1,OPENREFINE_URL=http://$REFINE_HOST_INTERNAL:$REFINE_PORT"
     if [ "$CYPRESS_RECORD" = "1" ] ; then
         # if tests are recorded, project id is added to env vars, and --record flag is added to the cmd-line
         export CYPRESS_PROJECT_ID=$CYPRESS_PROJECT_ID
-        CYPRESS_RUN_CMD="$CYPRESS_RUN_CMD --record --key $CYPRESS_RECORD_KEY --tag $BROWSER,$REVISION"
+        CYPRESS_RUN_CMD="$CYPRESS_RUN_CMD --record --key $CYPRESS_RECORD_KEY --ci-build-id=$CYPRESS_CI_BUILD_ID --tag $CYPRESS_BROWSER"
     fi
     export MOZ_FORCE_DISABLE_E10S=1
     echo $CYPRESS_RUN_CMD
@@ -542,6 +549,8 @@ ui_test() {
     echo ""
     echo "Killing OpenRefine"
     /bin/kill -9 $REFINE_PID
+    echo "Killing Reconciliation Server"
+    /bin/kill -9 $RECONCILE_SERVER_PID
     echo "Cleaning up"
     rm -rf "$REFINE_DATA_DIR"
 
@@ -549,6 +558,7 @@ ui_test() {
         error "The UI test suite failed."
     fi
 }
+
 
 server_test() {
     mvn_prepare
@@ -981,8 +991,7 @@ case "$ACTION" in
   distclean) mvn distclean;;
   test) test $1;;  
   tests) test $1;;  
-  ui_test) ui_test $1 $2 $3;;  
-  ui_tests) ui_test $1 $2 $3;;  
+  ui_tests) ui_tests;;    
   server_test) server_test $1;;  
   server_tests) server_test $1;;  
   extensions_test) extensions_test $1;;

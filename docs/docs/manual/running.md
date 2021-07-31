@@ -4,7 +4,7 @@ title: Running OpenRefine
 sidebar_label: Running
 ---
 
-## Starting and exiting
+## Starting and exiting {#starting-and-exiting}
 
 OpenRefine does not require internet access to run its basic functions. Once you download and install it, it runs as a small web server on your own computer, and you access that local web server by using your browser. 
 
@@ -37,18 +37,18 @@ import TabItem from '@theme/TabItem';
 
 <TabItem value="win">
 
-#### With openrefine.exe
+#### With openrefine.exe {#with-openrefineexe}
 You can run OpenRefine by double-clicking `openrefine.exe` or calling it from the command line. 
 
 If you want to [modify the way `openrefine.exe` opens](#starting-with-modifications), you can edit the `openrefine.l4j.ini` file.  
 
-#### With refine.bat
+#### With refine.bat {#with-refinebat}
 On Windows, OpenRefine can also be run by using the file `refine.bat` in the program directory. If you start OpenRefine using `refine.bat`, you can do so by opening the file itself, or by calling it from the command line. 
 
 If you call `refine.bat` from the command line, you can [start OpenRefine with modifications](#starting-with-modifications). 
 If you want to modify the way `refine.bat` opens through double-clicking or using a shortcut, you can edit the `refine.ini` file. 
 
-#### Exiting
+#### Exiting {#exiting}
 
 To exit OpenRefine, close all the browser tabs or windows, then navigate to the command line window. To close this window and ensure OpenRefine exits properly, hold down `Control` and press `C` on your keyboard. This will save any last changes to your projects. 
 
@@ -98,11 +98,11 @@ If you see this error, you need to [install and configure a JDK package](install
 
 ---
 
-### Troubleshooting
+### Troubleshooting {#troubleshooting}
 
 If you are having problems connecting to OpenRefine with your browser, [check our Wiki for information about browser settings and operating-system issues](https://github.com/OpenRefine/OpenRefine/wiki/FAQ#i-am-having-trouble-connecting-to-openrefine-with-my-browser).
 
-### Starting with modifications
+### Starting with modifications {#starting-with-modifications}
 
 When you run OpenRefine from a command line, you can change a number of default settings. 
 
@@ -132,6 +132,7 @@ Get a list of all the commands with `refine /?`.
 |/m|Memory maximum heap|refine /m 6000M|
 |/p|Port|refine /p 3334|
 |/i|Interface (IP address, or IP and port)|refine /i 127.0.0.2:3334|
+|/H|HTTP host to expect on incoming requests|refine /H openrefine.internal|
 |/d|Enable debugging (on port 8000)|refine /d|
 |/x|Enable JMX monitoring for Jconsole and JvisualVM|refine /x|
 
@@ -154,6 +155,7 @@ To see the full list of command-line options, run `./refine -h`.
 |-m|Memory maximum heap|./refine -m 6000M|
 |-p|Port|./refine -p 3334|
 |-i|Interface (IP address, or IP and port)|./refine -i 127.0.0.2:3334|
+|-H|HTTP host to expect on incoming requests|./refine -H openrefine.internal|
 |-k|Add a Google API key|./refine -k YOUR_API_KEY|
 |-v|Verbosity (from low to high: error,warn,info,debug,trace)|./refine -v info|
 |-x|Additional Java configuration parameters (see Java documentation)||
@@ -166,7 +168,7 @@ To see the full list of command-line options, run `./refine -h`.
 
 ---
 
-#### Modifications set within files
+#### Modifications set within files {#modifications-set-within-files}
 
 On Windows, you can modify the way `openrefine.exe` runs by editing `openrefine.l4j.ini`; you can modify the way `refine.bat` runs by editing `refine.ini`. 
 
@@ -192,7 +194,7 @@ REFINE_MIN_MEMORY=1400M
 ...
 ```
 
-##### JVM preferences 
+##### JVM preferences {#jvm-preferences}
 
 Further modifications can be performed by using JVM preferences. These JVM preferences are different options and have different syntax than the key/value descriptions used on the command line. 
 
@@ -291,13 +293,13 @@ JAVA_OPTIONS=-Drefine.data_dir=usr/lib/OpenRefineWorkspace
 
 Refer to the [official Java documentation](https://docs.oracle.com/javase/8/docs/technotes/tools/windows/java.html) for more preferences that can be set.
 
-## The home screen
+## The home screen {#the-home-screen}
 
 When you first launch OpenRefine, you will see a screen with a menu on the left hand side that includes <span class="menuItems">Create Project</span>, <span class="menuItems">Open Project</span>, <span class="menuItems">Import Project</span>, and <span class="menuItems">Language Settings</span>. This is called the “home screen,” where you can manage your projects and general settings. 
 
 In the lower left-hand corner of the screen, you'll see <span class="menuItems">Preferences</span>, <span class="menuItems">Help</span>, and <span class="menuItems">About</span>.
 
-### Language settings
+### Language settings {#language-settings}
 
 From the home screen, look in the options to the left for <span class="menuItems">Language Settings</span>. You can set your preferred interface language here. This language setting will persist until you change it again in the future. Languages are translated as a community effort; some languages are partially complete and default back to English where unfinished. Currently OpenRefine supports the following languages for 75% or more of the interface: 
 
@@ -322,7 +324,7 @@ To leave the Language Settings screen, click on the diamond “OpenRefine” log
 We use Weblate to provide translations for the interface. You can check [our profile on Weblate](https://hosted.weblate.org/projects/openrefine/translations/) to see which languages are in the process of being supported. See [our technical reference if you are interested in contributing translation work](https://docs.openrefine.org/technical-reference/translating) to make OpenRefine accessible to people in other languages.
 :::
 
-### Preferences
+### Preferences {#preferences}
 
 In the bottom left corner of the screen, look for <span class="menuItems">Preferences</span>. At this time you can set preferences using a key/value pair: that is, selecting one of the keys below and setting a value for it. 
 
@@ -332,7 +334,7 @@ In the bottom left corner of the screen, look for <span class="menuItems">Prefer
 |Maximum facets|ui.browsing.listFacet.limit|Number|2000|5000|—|
 |Timeout for Google Drive import|googleReadTimeOut|Number (microseconds)|180000|500000|—|
 |Timeout for Google Drive authorization|googleConnectTimeOut|Number (microseconds)|180000|500000|—|
-|Maximum lag for Wikidata edit retries|wikibase.upload.maxLag|Number (seconds)|5|10|—|
+|Maximum lag for Wikibase edit retries|wikibase.upload.maxLag|Number (seconds)|5|10|—|
 |Display of the reconciliation preview on hover|cell-ui.previewMatchedCells|Boolean|true|false|v3.2|
 |Values for the choice of the number of rows to display|ui.browsing.pageSize|Array of number (JSON)|[ 5, 10, 25, 50 ]|[ 100,500,1000 ]|v3.4|
 |Width of the panel for facets/history|ui.browsing.facetsHistoryPanelWidth|Number (pixel)|300|500|v3.5|
@@ -341,13 +343,13 @@ To leave the Preferences screen, click on the diamond “OpenRefine” logo.
 
 If the preference you’re looking for isn’t here, look at the options you can set from the [command line or in an `.ini` file](#starting-with-modifications).
 
-## The project screen
+## The project screen {#the-project-screen}
 
 The project screen (or work screen) is where you will spend most of your time once you have [begun to work on a project](starting). This is a quick walkthrough of the parts of the interface you should familiarize yourself with.
 
 ![A screenshot of the project screen.](/img/projectscreen.png)
 
-### The project bar
+### The project bar {#the-project-bar}
 
 The project bar runs across the very top of the project screen. It contains the the OpenRefine logo, the project title, and the project control buttons on the right side. 
 
@@ -367,7 +369,7 @@ The <span class="menuItems">Open…</span> button will open up a new browser tab
 
 <span class="menuItems">Help</span> will open up a new browser tab and bring you to this user manual on the web.
 
-### The grid header
+### The grid header {#the-grid-header}
 
 The grid header sits below the project bar and above the project grid (where the data of your project is displayed). The grid header will tell you the total number of rows or records in your project, and indicate whether you are in [rows or records mode](exploring#rows-vs-records). 
 
@@ -377,11 +379,11 @@ Directly below the row number, you have the ability to switch between [row mode 
 
 To the right of the rows/records selection is the array of options for how many rows/records to view on screen at one time. At the far right of the screen you can navigate through your entire dataset one page at a time. 
 
-### Extensions
+### Extensions {#extensions}
 
-The <span class="menuItems">Extensions</span> dropdown offers you options for extending your data - most commonly by uploading your edited statements to Wikidata, or by importing or exporting schema. You can learn more about these functions on the [Wikidata page](wikidata). Other extensions may also add functions to this dropdown menu.
+The <span class="menuItems">Extensions</span> dropdown offers you options for extending your data - most commonly by uploading your edited statements to Wikidata, or by importing or exporting schema. You can learn more about these functions on the [Wikibase section](wikibase/overview). Other extensions may also add functions to this dropdown menu.
 
-### The grid 
+### The grid {#the-grid}
 
 The area of the project screen that displays your dataset is called the “grid” (or the “data grid,” or the “project grid”). The grid presents data in a tabular format, which may look like a normal spreadsheet program to you. 
 
@@ -395,7 +397,7 @@ The project grid may display with both vertical and horizontal scrolling, depend
 
 Mousing over individual cells will allow you to [edit cells individually](cellediting#edit-one-cell-at-a-time).
 
-### Facet/Filter
+### Facet/Filter {#facetfilter}
 
 The <span class="tabLabels">Facet/Filter</span> tab is one of the main ways of exploring your data: displaying the patterns and trends in your data, and helping you narrow your focus and modify that data. [Facets](facets) and [filters](facets#text-filter) are explained more in [Exploring data](exploring).
 
@@ -411,7 +413,7 @@ Removing your facets will clear out the sidebar entirely. If you have written cu
 
 You can preserve your facets and filters for future use by copying a <span class="menuItems">[Permalink](#the-project-bar)</span>.
 
-### History (Undo/Redo)
+### History (Undo/Redo) {#history-undoredo}
 
 In OpenRefine, any activity that changes the data can be undone. Changes are tracked from the very beginning, when a project is first created. The change history of each project is saved with the project's data, so quitting OpenRefine does not erase the steps you've taken. When you restart OpenRefine, you can view and undo changes that you made before you quit OpenRefine. OpenRefine [autosaves](starting#autosaving) your actions every five minutes by default, and when you close OpenRefine properly (using Ctrl + C). You can [change this interval](running#jvm-preferences).
 
@@ -438,7 +440,7 @@ If you have moved back one or more states, and then you perform a new operation 
 
 The Undo/Redo tab will indicate which step you’re on, and if you’re about to risk erasing work - by saying something like “4/5" or “1/7” at the end.
 
-#### Reusing operations
+#### Reusing operations {#reusing-operations}
 
 Operations that you perform in OpenRefine can be reused. For example, a formula you wrote inside one project can be copied and applied to another project later. 
 
@@ -448,13 +450,13 @@ Move to the second project, go to the <span class="tabLabels">Undo/Redo</span> t
 
 Not all operations can be extracted. Edits to a single cell, for example, can’t be replicated.
 
-## Advanced OpenRefine uses
+## Advanced OpenRefine uses {#advanced-openrefine-uses}
 
-### Running OpenRefine's Linux version on a Mac
+### Running OpenRefine's Linux version on a Mac {#running-openrefines-linux-version-on-a-mac}
 
 You can run OpenRefine from the command line in Mac by using the Linux installation package. We do not promise support for this method. Follow the instructions in the Linux section.
 
-### Running as a server
+### Running as a server {#running-as-a-server}
 
 :::caution
 Please note that if your machine has an external IP (is exposed to the Internet), you should not do this, or should protect it behind a proxy or firewall, such as nginx. Proceed at your own risk.
@@ -489,7 +491,7 @@ On Mac, you can add a specific entry to the `Info.plist` file located within the
 OpenRefine has no built-in security or version control for multi-user scenarios. OpenRefine has a single data model that is not shared, so there is a risk of data operations being overwritten by other users. Care must be taken by users. 
 :::
 
-### Automating OpenRefine
+### Automating OpenRefine {#automating-openrefine}
 
 Some users may wish to employ OpenRefine for batch processing as part of a larger automated pipeline. Not all OpenRefine features can work without human supervision and advancement (such as clustering), but many data transformation tasks can be automated. 
 

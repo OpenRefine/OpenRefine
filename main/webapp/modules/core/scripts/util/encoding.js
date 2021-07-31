@@ -74,7 +74,7 @@ Encoding.selectEncoding = function(input, onDone) {
     });
   };
   generateEncodingList(elmts.commonList,
-    { 'US-ASCII':1, 'ISO-8859-1':1, 'UTF-8':1, 'UTF-16BE':1, 'UTF-16LE':1, 'UTF-16':1 });
+    { 'US-ASCII':1, 'ISO-8859-1':1, 'UTF-8':1, 'UTF-16BE':1, 'UTF-16LE':1, 'UTF-16':1, 'windows-1252':1 });
   generateEncodingList(elmts.allList, null);
   
   elmts.cancelButton.click(function() {

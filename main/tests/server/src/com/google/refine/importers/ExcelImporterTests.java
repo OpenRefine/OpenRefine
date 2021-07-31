@@ -45,6 +45,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.time.Month;
+import java.time.OffsetDateTime;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -198,6 +200,39 @@ public class ExcelImporterTests extends ImporterTest {
         } catch (Exception e) {
             Assert.fail(e.getMessage());
         }
+    }
+    
+    @Test
+    public void readExcelDates() throws FileNotFoundException, IOException {
+        ArrayNode sheets = ParsingUtilities.mapper.createArrayNode();
+        sheets.add(ParsingUtilities.mapper.readTree("{name: \"file-source#Test Sheet 0\", fileNameAndSheetIndex: \"file-source#0\", rows: 31, selected: true}"));
+        whenGetArrayOption("sheets", options, sheets);
+
+        whenGetIntegerOption("ignoreLines", options, 0);
+        whenGetIntegerOption("headerLines", options, 0);
+        whenGetIntegerOption("skipDataLines", options, 0);
+        whenGetIntegerOption("limit", options, -1);
+        whenGetBooleanOption("storeBlankCellsAsNulls", options, true);
+
+        InputStream stream = ClassLoader.getSystemResourceAsStream("dates.xls");
+
+        parseOneFile(SUT, stream);
+        
+        // The original value reads 2021-04-18 in the Excel file.
+        // We make sure it is not shifted by a day because of timezone handling
+        Object cellValue = project.rows.get(0).getCellValue(0);
+        Assert.assertTrue(cellValue instanceof OffsetDateTime);
+        OffsetDateTime date = (OffsetDateTime) cellValue;
+        Assert.assertEquals(date.getYear(), 2021);
+        Assert.assertEquals(date.getMonth(), Month.APRIL);
+        Assert.assertEquals(date.getDayOfMonth(), 18);
+        // Same, with January 1st (in winter / no DST)
+        Object cellValue2 = project.rows.get(1).getCellValue(0);
+        Assert.assertTrue(cellValue instanceof OffsetDateTime);
+        OffsetDateTime date2 = (OffsetDateTime) cellValue2;
+        Assert.assertEquals(date2.getYear(), 2021);
+        Assert.assertEquals(date2.getMonth(), Month.JANUARY);
+        Assert.assertEquals(date2.getDayOfMonth(), 1);
     }
 
     @Test

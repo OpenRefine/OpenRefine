@@ -188,3 +188,60 @@ WikibaseManager.fetchManifestFromURL = function (manifestURL, onSuccess, onError
   });
 };
 
+var wikibaseLogoURLCache = {
+  data: {},
+  exist: function (url) {
+    return wikibaseLogoURLCache.data.hasOwnProperty(url);
+  },
+  get: function (url) {
+    return wikibaseLogoURLCache.data[url];
+  },
+  set: function (url, cachedData) {
+    wikibaseLogoURLCache.data[url] = cachedData.responseJSON.query.general.logo;
+  }
+};
+
+
+// Retrives the wikibaseName instance site info, if wikibaseName is empty returns the selected wikibase site info
+WikibaseManager.retrieveLogoUrlFromSiteInfo = function(onSuccess, onError, wikibaseName) {
+  var params = {
+    action: 'query',
+    meta: 'siteinfo',
+    format: 'json'
+  };
+  let wikibase = (wikibaseName) ? WikibaseManager.wikibases[wikibaseName] : WikibaseManager.getSelectedWikibase();
+  const url = wikibase.mediawiki.api;
+  return $.ajax({
+    url: url,
+    data: params,
+    dataType: "jsonp",
+    timeout: 1000,
+    cache: true,
+    beforeSend: function () {
+      if (wikibaseLogoURLCache.exist(url)) {
+        onSuccess(wikibaseLogoURLCache.get(url));
+        return false;
+      }
+      return true;
+    },
+    complete: function (jqXHR, textStatus) {
+      wikibaseLogoURLCache.set(url, jqXHR);
+    },
+    success: function(response) {
+      onSuccess(response.query.general.logo);
+    },
+    error: function(xhr, status, error) {
+      onError(xhr, status, error);
+	},
+  });
+};
+
+// Retrives the logo url of wikibaseName, if wikibaseName is empty returns the selected wikibase logo url
+WikibaseManager.getSelectedWikibaseLogoURL = function(onDone, wikibaseName) {
+  WikibaseManager.retrieveLogoUrlFromSiteInfo(function(data) {
+    onDone(data);
+  }, function(xhr, status, error) {
+    onDone("extension/wikidata/images/Wikibase_logo.png");
+  }, wikibaseName);
+};
+

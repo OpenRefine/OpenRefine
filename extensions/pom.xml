@@ -5,7 +5,7 @@
   <groupId>org.openrefine</groupId>
   <artifactId>extensions</artifactId>
   <packaging>pom</packaging>
-  <version>3.5-SNAPSHOT</version>
+  <version>3.6-SNAPSHOT</version>
 
   <name>OpenRefine - extensions</name>
   <description>Extensions add importers, exporters and other sorts of features to OpenRefine</description>
@@ -14,7 +14,7 @@
   <parent>
     <groupId>org.openrefine</groupId>
     <artifactId>openrefine</artifactId>
-    <version>3.5-SNAPSHOT</version>
+    <version>3.6-SNAPSHOT</version>
   </parent>
 
   <modules>
@@ -32,7 +32,7 @@
       <plugin>
         <groupId>org.jacoco</groupId>
         <artifactId>jacoco-maven-plugin</artifactId>
-        <version>0.8.6</version>
+        <version>0.8.7</version>
         <executions>
             <execution>
                 <id>prepare-agent</id>

@@ -4,9 +4,9 @@ title: Reconciling
 sidebar_label: Reconciling
 ---
 
-## Overview
+## Overview {#overview}
 
-Reconciliation is the process of matching your dataset with that of an external source. Datasets for comparison might be produced by libraries, archives, museums, academic organizations, scientific institutions, non-profits, or interest groups. You can also reconcile against user-edited data on [Wikidata](wikidata), or reconcile against [a local dataset that you yourself supply](https://github.com/OpenRefine/OpenRefine/wiki/Reconcilable-Data-Sources#local-services). 
+Reconciliation is the process of matching your dataset with that of an external source. Datasets for comparison might be produced by libraries, archives, museums, academic organizations, scientific institutions, non-profits, or interest groups. You can also reconcile against user-edited data on [Wikidata or other Wikibase instances](wikibase/reconciling), or reconcile against [a local dataset that you yourself supply](https://github.com/OpenRefine/OpenRefine/wiki/Reconcilable-Data-Sources#local-services). 
 
 To reconcile your OpenRefine project against an external dataset, that dataset must offer a web service that conforms to the [Reconciliation Service API standards](https://reconciliation-api.github.io/specs/0.1/). 
 
@@ -23,7 +23,7 @@ Reconciliation is semi-automated: OpenRefine matches your cell values to the rec
 We recommend planning your reconciliation operations as iterative: reconcile multiple times with different settings, and with different subgroups of your data. 
 :::
 
-## Sources
+## Sources {#sources}
 
 Start with [this current list of reconcilable authorities](https://reconciliation-api.github.io/testbench/), which includes instructions for adding new services via Wikidata editing if you have one to add. 
 
@@ -31,7 +31,7 @@ OpenRefine maintains a [further list of sources on the wiki](https://github.com/
 
 Other services may exist that are not yet listed in these two places: for example, the [310 datasets hosted by the Organized Crime and Corruption Reporting Project (OCCRP)](https://aleph.occrp.org/datasets/) each have their own reconciliation URL, or you can reconcile against their entire database with the URL [shared on the reconciliation API list](https://reconciliation-api.github.io/testbench/). For another example, you can reconcile against the entire Virtual International Authority File (VIAF) dataset, or [only the contributions from certain institutions](http://refine.codefork.com/). Search online to see if the authority you wish to reconcile against has an available service, or whether you can download a copy to reconcile against locally.
 
-OpenRefine includes Wikidata reconciliation in the installation package - see the [Wikidata](wikidata) page for more information particular to that service. Extensions can add reconciliation services, and can also add enhanced reconciliation capacities. Check the list of extensions on the [Downloads page](https://openrefine.org/download.html) for more information.
+OpenRefine includes Wikidata reconciliation in the installation package - see the [Wikibase](wikibase/reconciling) page for more information particular to that service. Extensions can add reconciliation services, and can also add enhanced reconciliation capacities. Check the list of extensions on the [Downloads page](https://openrefine.org/download.html) for more information.
 
 Each source will have its own documentation on how it provides reconciliation. The table on [the reconciliation API list](https://reconciliation-api.github.io/testbench/) indicates whether your chosen service supports the features described below. Refer to the service's documentation if you have questions about its behaviors and which OpenRefine features it supports. 
 
@@ -41,7 +41,7 @@ Of particular note is [reconcile-csv](http://okfnlabs.org/reconcile-csv/) which 
 
 Similiarly, you may choose to export some SPARQL output to a TSV to limit the scope of values you're reconciling against and/or for better peformance.
 
-## Getting started
+## Getting started {#getting-started}
 
 Choose a column to reconcile and use its dropdown menu to select <span class="menuItems">Reconcile</span> → <span class="menuItems">Start reconciling</span>. If you want to reconcile only some cells in that column, first use filters and facets to isolate them.
 
@@ -75,9 +75,9 @@ Hovering over the suggestion will also offer the two matching options as buttons
 
 For matched values (those appearing as dark blue links), the underlying cell value has not been altered - the cell is storing both the original string and the matched entity link at the same time. If you were to copy your column to a new column at this point using `value`, for example, the reconcilation data would not transfer - only the original strings. You can learn more about how OpenRefine stores different pieces of information in each cell in [the Variables section specific to reconciliation data](expressions#reconciliation).
 
-For each cell, you can manually “Create new item,” which will take the cell’s original value and apply it, as though it is a match. This will not become a dark blue link, because at this time there is nothing to link to: it is a draft entity stored only in your project. You can use this feature to prepare these entries for eventual upload to an editable service such as [Wikidata](wikidata), but most services do not yet support this feature. 
+For each cell, you can manually “Create new item,” which will take the cell’s original value and apply it, as though it is a match. This will not become a dark blue link, because at this time there is nothing to link to: it is a draft entity stored only in your project. You can use this feature to prepare these entries for eventual upload to an editable service such as [Wikibase](wikibase/overview), but most services do not yet support this feature. 
 
-### Reconciliation facets
+### Reconciliation facets {#reconciliation-facets}
 
 Under <span class="menuItems">Reconcile</span> → <span class="menuItems">Facets</span> there are a number of reconciliation-specific faceting options. OpenRefine automatically creates two facets when you reconcile some cells. 
 
@@ -105,7 +105,7 @@ You can also look at each best candidate’s:
 
 These facets are useful for doing successive reconciliation attempts, against different types, and with different supplementary information. The information represented by these facets are held in the cells themselves and can be called using the [reconciliation variables](expressions#reconciliation) available in expressions.
 
-### Reconciliation actions
+### Reconciliation actions {#reconciliation-actions}
 
 You can use the <span class="menuItems">Reconcile</span> → <span class="menuItems">Actions</span> menu options to perform bulk changes (which will apply only to your currently viewed set of rows or records):
 *   <span class="menuItems">Match each cell to its best candidate</span> (by highest score)
@@ -120,7 +120,7 @@ The other options available under <span class="menuItems">Reconcile</span> are:
 *   [<span class="menuItems">Use values as identifiers</span>](#reconciling-with-unique-identifiers) (if you are reconciling with unique identifiers instead of by doing string searches)
 *   [<span class="menuItems">Add entity identifiers column</span>](#add-entity-identifiers-column).
 
-## Reconciling with unique identifiers
+## Reconciling with unique identifiers {#reconciling-with-unique-identifiers}
 
 Reconciliation services use unique identifiers for their entities. For example, the 14th Dalai Lama has the VIAF ID [38242123](https://viaf.org/viaf/38242123/) and the Wikidata ID [Q17293](https://www.wikidata.org/wiki/Q37349). You can supply these identifiers directly to your chosen reconciliation service in order to pull more data, but these strings will not be “reconciled” against the external dataset. 
 
@@ -132,7 +132,7 @@ You may get false positives, which you will need to hover over or click on to id
 
 ![Hovering over an error.](/img/reconcileIDerror.png)
 
-## Reconciling by type
+## Reconciling by type {#reconciling-by-type}
 
 Reconciliation services, once added to OpenRefine, may suggest types from their databases. These types will usually be whatever the service specializes in: people, events, places, buildings, tools, plants, animals, organizations, etc.
 
@@ -150,7 +150,7 @@ If your column doesn’t fit one specific type offered, you can <span class="fie
 
 We recommend working in batches and reconciling against different types, moving from specific to broad. You can create a facet for <span class="menuItems">Best candidate’s types</span> facet to see which types are being represented. Some candidates may return more than one type, depending on the service. Types may appear in facets by their unique IDs, rather than by their semantic labels (for example, Q5 for “human” in Wikidata). 
 
-## Reconciling with additional columns
+## Reconciling with additional columns {#reconciling-with-additional-columns}
 
 Some of your cells may be ambiguous, in the sense that a string can point to more than one entity: there are dozens of places called “Paris” and many characters, people, and pieces of culture, too. Selecting non-geographic or more localized types can help narrow that down, but if your chosen service doesn't provide a useful type, you can include more properties that make it clear whether you're looking for Paris, France. 
 
@@ -164,7 +164,7 @@ Some services will not be able to search for the exact name of your desired <spa
 
 ![Including a birth-date type.](/img/reconcile-with-property.png)
 
-## Fetching more data
+## Fetching more data {#fetching-more-data}
 
 One reason to reconcile to some external service is that it allows you to pull data from that service into your OpenRefine project. There are three ways to do this:
 
@@ -172,11 +172,11 @@ One reason to reconcile to some external service is that it allows you to pull d
 * Add columns from reconciled values
 * Add column by fetching URLs.
 
-### Add entity identifiers column
+### Add entity identifiers column {#add-entity-identifiers-column}
 
 Once you have selected matches for your cells, you can retrieve the unique identifiers for those cells and create a new column for these, with <span class="menuItems">Reconcile</span> → <span class="menuItems">Add entity identifiers column</span>. You will be asked to supply a column name. New items and other unmatched cells will generate null values in this column.
 
-### Add columns from reconciled values
+### Add columns from reconciled values {#add-columns-from-reconciled-values}
 
 If the reconciliation service supports [data extension](https://reconciliation-api.github.io/testbench/), then you can augment your reconciled data with new columns using <span class="menuItems">Edit column</span> → <span class="menuItems">Add columns from reconciled values...</span>. 
 
@@ -194,7 +194,7 @@ If you have left any values unreconciled in your column, you will see “&lt;not
 
 This process may pull more than one property per row in your data (such as multiple occupations), so you may need to switch into records mode after you've added columns.
 
-### Add columns by fetching URLs
+### Add columns by fetching URLs {#add-columns-by-fetching-urls}
 
 If the reconciliation service cannot extend data, look for a generic web API for that data source, or a structured URL that points to their dataset entities via unique IDs (such as “https&#58;//viaf.org/viaf/000000”). You can use the <span class="menuItems">Edit column</span> → <span class="menuItems">[Add column by fetching URLs](columnediting#add-column-by-fetching-urls)</span> operation to call this API or URL with the IDs obtained from the reconciliation process. This will require using [expressions](expressions).
 
@@ -206,7 +206,7 @@ Alternatively, you can insert the ID directly from the matched column's reconcil
 
 Remember to set an appropriate throttle and to refer to the service documentation to ensure your compliance with their terms. See [the section about this operation](columnediting#add-column-by-fetching-urls) to learn more about the fetching process. 
 
-## Keep all the suggestions made
+## Keep all the suggestions made {#keep-all-the-suggestions-made}
 
 To generate a list of each suggestion made, rather than only the best candidate, you can use a [GREL expression](expressions#GREL). Go to <span class="menuItems">Edit column</span> → <span class="menuItems">Add column based on this column</span>. To create a list of all the possible matches, use something like
 
@@ -222,7 +222,7 @@ forEach(cell.recon.candidates,c,c.id).join(", ")
 
 This information is stored as a string, without any attached reconciliation information. 
 
-## Writing reconciliation expressions
+## Writing reconciliation expressions {#writing-reconciliation-expressions}
 
 OpenRefine supplies a number of variables related specifically to reconciled values. These can be used in GREL and Jython expressions. For example, some of the reconciliation variables are:
 
@@ -235,8 +235,8 @@ OpenRefine supplies a number of variables related specifically to reconciled val
 
 You can find out more in the [reconciliaton variables](expressions#reconciliaton-variables) section. 
 
-## Exporting reconciled data
+## Exporting reconciled data {#exporting-reconciled-data}
 
-Once you have data that is reconciled to existing entities online, you may wish to export that data to a user-editable service such as Wikidata. See the section on [uploading your edits to Wikidata](wikidata#upload-edits-to-wikidata) for more information, or the section on [exporting](exporting) to see other formats OpenRefine can produce.
+Once you have data that is reconciled to existing entities online, you may wish to export that data to a user-editable service such as Wikidata. See the section on [uploading your edits to Wikidata or other Wikibase instances](wikibase/uploading) for more information, or the section on [exporting](exporting) to see other formats OpenRefine can produce.
 
-You can share reconciled data in progress through a [project export or import](exporting#export-a-project), with some preparation. The importing user needs to have the appropriate reconciliation services installed on their OpenRefine instance (by going to <span class="menuItems">Start reconciling</span> and clicking on <span class="buttonLabels">Add Standard Service...</span>) in advance of opening the project, in order to use candidate and match links. Otherwise, the links will be broken and the user will need to add the reconciliation service and re-reconcile the columns in question. [Wikidata](wikidata) reconciliation data can be shared more easily as the service comes bundled with OpenRefine.
+You can share reconciled data in progress through a [project export or import](exporting#export-a-project), with some preparation. The importing user needs to have the appropriate reconciliation services installed on their OpenRefine instance (by going to <span class="menuItems">Start reconciling</span> and clicking on <span class="buttonLabels">Add Standard Service...</span>) in advance of opening the project, in order to use candidate and match links. Otherwise, the links will be broken and the user will need to add the reconciliation service and re-reconcile the columns in question. [Wikidata](wikibase/reconciling) reconciliation data can be shared more easily as the service comes bundled with OpenRefine.

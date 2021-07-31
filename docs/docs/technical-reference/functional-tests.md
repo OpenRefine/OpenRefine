@@ -6,7 +6,7 @@ sidebar_label: Functional tests
 
 import useBaseUrl from '@docusaurus/useBaseUrl';
 
-## Introduction
+## Introduction {#introduction}
 
 OpenRefine interface is tested with the [Cypress framework](https://www.cypress.io/).  
 With Cypress, tests are performing assertions using a real browser, the same way a real user would use the software.
@@ -18,7 +18,7 @@ Cypress tests can be ran
 
 If you are writing tests, the Cypress test runner is good enough, and the command-line is mainly used by the CI/CD platform (Github actions)
 
-## Cypress brief overview
+## Cypress brief overview {#cypress-brief-overview}
 
 Cypress operates insides a browser, it's internally using NodeJS.
 That's a key difference with tools such as Selenium.
@@ -36,14 +36,14 @@ The general workflow of a Cypress test is to
 - Trigger user actions
 - Assert that the DOM contains expected texts and elements using selectors
 
-## Getting started
+## Getting started {#getting-started}
 
 If this is the first time you use Cypress, it is recommended for you to get familiar with the tool.
 
 - [Cypress overview](https://docs.cypress.io/guides/overview/why-cypress.html)
 - [Cypress examples of tests and syntax](https://example.cypress.io/)
 
-### 1. Install Cypress
+### 1. Install Cypress {#1-install-cypress}
 
 You will need:
 
@@ -58,7 +58,7 @@ cd ./main/tests/cypress
 yarn install
 ```
 
-### 2. Start the test runner
+### 2. Start the test runner {#2-start-the-test-runner}
 
 The test runner assumes that OpenRefine is up and running on the local machine, the tests themselves do not launch OpenRefine, nor restarts it.
 
@@ -74,21 +74,21 @@ Then start Cypress
 yarn --cwd ./main/tests/cypress run cypress open
 ```
 
-### 3. Run the existing tests
+### 3. Run the existing tests {#3-run-the-existing-tests}
 
 Once the test runner is up, you can choose to run one or several tests by selecting them from the interface.  
 Click on one of them and the test will start.
 
-### 4. Add your first test
+### 4. Add your first test {#4-add-your-first-test}
 
 - Add a `test.spec.js` into the `main/tests/cypress/cypress/integration` folder.
 - The test is instantly available in the list
 - Click on the test
 - Start to add some code
 
-## Tests technical documentation
+## Tests technical documentation {#tests-technical-documentation}
 
-### A typical test
+### A typical test {#a-typical-test}
 
 A typical OpenRefine test starts with the following code
 
@@ -117,14 +117,14 @@ For example
 
 See below on the dedicated section 'Testing utilities'
 
-### Testing guidelines
+### Testing guidelines {#testing-guidelines}
 
 - `cy.wait` should be used in the last resort scenario. It's considered a bad practice, though sometimes there is no other choice
 - Tests should remain isolated from each other. It's best to try one feature at the time
 - A test should always start with a fresh project
 - The name of the files should mirror the OpenRefine UI organization
 
-### Testing utilities
+### Testing utilities {#testing-utilities}
 
 OpenRefine contributors have added some utility methods on the top of the Cypress framework.
 Those methods perform some common actions or assertions on OpenRefine, to avoid code duplication.
@@ -156,12 +156,12 @@ The fixture parameter can be
 
   Those datasets live in `cypress/fixtures`
 
-### Browsers
+### Browsers {#browsers}
 
 In terms of browsers, Cypress is using what is installed on your operating system.
 See the [Cypress documentation](https://docs.cypress.io/guides/guides/launching-browsers.html#Browsers) for a list of supported browsers
 
-### Folder organization
+### Folder organization {#folder-organization}
 
 Tests are located in `main/tests/cypress/cypress` folder.
 The test should not use any file outside the cypress folder.
@@ -172,21 +172,23 @@ The test should not use any file outside the cypress folder.
 - `/screenshots` and `/videos` contains the recording of the tests, Git ignored
 - `/support` is a custom library of assertion and common user actions, to avoid code duplication in the tests themselves
 
-### Configuration
+### Configuration {#configuration}
 
 Cypress execution can be configured with environment variables, they can be declared at the OS level, or when running the test
 
 Available variables are
 
 - OPENREFINE_URL, determine on which scheme://url:port to access OpenRefine, default to http://localhost:333
+- DISABLE_PROJECT_CLEANUP, If set to 1, projects will not be deleted after each run. Default to 0 to keep the OpenRefine instance clean
+
 
 Cypress contains [exaustive documentation](https://docs.cypress.io/guides/guides/environment-variables.html#Setting) about configuration, but here are two simple ways to configure the execution of the tests:
 
-#### Overriding with a cypress.env.json file
+#### Overriding with a cypress.env.json file {#overriding-with-a-cypressenvjson-file}
 
 This file is ignored by Git, and you can use it to configure Cypress locally
 
-#### Command-line
+#### Command-line {#command-line}
 
 You can pass variables at the command-line level
 
@@ -194,7 +196,7 @@ You can pass variables at the command-line level
 yarn --cwd ./main/tests/cypress run cypress open --env OPENREFINE_URL="http://localhost:1234"
 ```
 
-### Visual testing
+### Visual testing {#visual-testing}
 
 Tests generally ensure application behavior by making assertions against the DOM, to ensure specific texts or css attributes are present in the document body.  
 Visual testing, on the contrary, is a way to test applications by comparing images.
@@ -212,7 +214,7 @@ Identified cases are so far:
 Reference screenshots (Called snapshots), are stored in /cypress/snapshots.
 And a snapshot can be taken for the whole page, or just a single part of the page.
 
-#### When a visual test fails
+#### When a visual test fails {#when-a-visual-test-fails}
 
 First, Cypress will display the following error message:
 
@@ -223,7 +225,7 @@ The diff images shows the reference image on the left, the image that was taken 
 
 ![Diff image when a visual test fails](/img/failed-visual-test.png)
 
-## CI/CD
+## CI/CD {#cicd}
 
 In CI/CD, tests are run headless, with the following command-line
 
@@ -233,7 +235,7 @@ In CI/CD, tests are run headless, with the following command-line
 
 Results are displayed in the standard output
 
-## Resources
+## Resources {#resources}
 
 [Cypress command line options](https://docs.cypress.io/guides/guides/command-line.html#Installation)
 [Lots of good Cypress examples](https://example.cypress.io/)

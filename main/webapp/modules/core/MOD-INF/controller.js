@@ -363,7 +363,6 @@ function init() {
       "externals/tablesorter/jquery.tablesorter.min.js",
       "externals/moment-with-locales.min.js",
       "externals/select2/select2.min.js",
-      "externals/jquery.lavalamp.min.js",
 
       "scripts/util/misc.js",
       "scripts/util/url.js",
@@ -493,6 +492,7 @@ function init() {
       "scripts/dialogs/scatterplot-dialog.js",
       "scripts/dialogs/templating-exporter-dialog.js",
       "scripts/dialogs/column-reordering-dialog.js",
+      "scripts/dialogs/common-transform-dialog.js",
       "scripts/dialogs/custom-tabular-exporter-dialog.js",
       "scripts/dialogs/sql-exporter-dialog.js",
       "scripts/dialogs/expression-column-dialog.js",
