@@ -89,7 +89,6 @@ describe('Base reconciliation tests', () => {
       .siblings('input')
       .uncheck();
     cy.get('.dialog-container button').contains('Start Reconciling...').click();
-    cy.assertNotificationContainingText('Reconcile cells in column species');
     cy.assertColumnIsReconciled('species');
 
     // "Choose new match" appear when there is a match, if it's not there it means nothing is matched
@@ -110,7 +109,6 @@ describe('Base reconciliation tests', () => {
       .siblings('input')
       .check();
     cy.get('.dialog-container button').contains('Start Reconciling...').click();
-    cy.assertNotificationContainingText('Reconcile cells in column species');
     cy.assertColumnIsReconciled('species');
 
     // 4 rows should have been automatched
