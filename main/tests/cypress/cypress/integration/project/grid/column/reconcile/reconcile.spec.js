@@ -89,6 +89,7 @@ describe('Base reconciliation tests', () => {
       .siblings('input')
       .uncheck();
     cy.get('.dialog-container button').contains('Start Reconciling...').click();
+    cy.wait(10000); // eslint-disable-line
     cy.assertColumnIsReconciled('species');
 
     // "Choose new match" appear when there is a match, if it's not there it means nothing is matched
@@ -109,6 +110,7 @@ describe('Base reconciliation tests', () => {
       .siblings('input')
       .check();
     cy.get('.dialog-container button').contains('Start Reconciling...').click();
+    cy.wait(10000); // eslint-disable-line
     cy.assertColumnIsReconciled('species');
 
     // 4 rows should have been automatched
@@ -128,6 +130,7 @@ describe('Base reconciliation tests', () => {
     cy.get('.recon-dialog-service-panel.recon-dialog-standard-service-panel').should('be.visible');
     cy.get('.dialog-container input[bind="maxCandidates"]').type(2);
     cy.get('.dialog-container button').contains('Start Reconciling...').click();
+    cy.wait(10000); // eslint-disable-line
     cy.assertColumnIsReconciled('species');
     cy.get('.data-table-cell-content .data-table-recon-topic').should(
       'have.length',
