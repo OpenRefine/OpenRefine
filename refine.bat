@@ -227,7 +227,7 @@ rem --- Log for troubleshooting ------------------------------------------
 echo Getting Java Version...
 java -version 2^>^&1
 echo.=====================================================
-for /f "tokens=*" %%a in ('java -version 2^>^&1 ^| find "version"') do (set JVERSION=%%a)
+for /f "tokens=*" %%a in ('java -version 2^>^&1 ^| findstr "version"') do (set JVERSION=%%a)
 echo Getting Free Ram...
 
 for /f "tokens=2 delims=:" %%i in ('systeminfo ^| findstr /C:"Available Physical Memory"') do (set freeRam=%%i)
