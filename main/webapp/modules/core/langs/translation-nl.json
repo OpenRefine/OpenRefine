@@ -427,5 +427,10 @@
     "core-about/thanks": "Speciale dank aan",
     "core-about/history": "OpenRefine werd oorspronkelijk ontwikkeld door <a href='$1'>$2</a> onder de naam 'Freebase Gridworks'  . Metaweb werd in juli 2010 overgenomen door <a href='$3'>$4</a>, dat de software de naam 'Google Refine' gaf. In oktober 2012 tenslotte is het product hernoemd naar  OpenRefine, omdat het vanaf dat moment een communityproject werd.",
     "core-about/contributors": "Bijdragers (in chronologische volgorde)",
-    "core-about/definition": "OpenRefine is een krachtige tool om data te bewerken en op te schonen. Je kan OpenRefine gebruiken om data meer consistent te maken, om links te maken met kennisbanken als Wikidata, om data te verrijken via andere bronnen, om te zetten naar verschillende formaten, en om verbeterde data terug naar de originele bron te publiceren. OpenRefine is geen online of cloud service, maar een desktop-applicatie op je eigen computer. Daardoor kan je met OpenRefine gevoelige data bewerken in alle privacy."
+    "core-about/definition": "OpenRefine is een krachtige tool om data te bewerken en op te schonen. Je kan OpenRefine gebruiken om data meer consistent te maken, om links te maken met kennisbanken als Wikidata, om data te verrijken via andere bronnen, om te zetten naar verschillende formaten, en om verbeterde data terug naar de originele bron te publiceren. OpenRefine is geen online of cloud service, maar een desktop-applicatie op je eigen computer. Daardoor kan je met OpenRefine gevoelige data bewerken in alle privacy.",
+    "clustering-distances/levenshtein": "levenshtein",
+    "clustering-keyers/cologne-phonetic": "cologne-phonetic",
+    "clustering-keyers/metaphone3": "metaphone3",
+    "core-index-parser/wiki-base-url": "Stem af met wiki met de basis-URL:",
+    "core-index-import/files-selected": "$1 van $2 {{plural:$2|bestand|bestanden}} geselecteerd"
 }
