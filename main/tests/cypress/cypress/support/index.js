@@ -55,7 +55,9 @@ before(() => {
 Cypress.on('uncaught:exception', (err, runnable) => {
   // This message occasionally appears with edge
   // Doesn't seems like a blocket, and the test should not fail 
-  if (err.message.includes("Cannot read property 'offsetTop' of undefined")) {
+  if (err.message.includes("Cannot read property 'offsetTop' of undefined")
+      || err.message.includes("Cannot read properties of undefined (reading 'offsetTop')")
+    ) {
     return false
   }
   // we still want to ensure there are no other unexpected
