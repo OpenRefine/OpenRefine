@@ -204,11 +204,4 @@ describe(__filename, function () {
       );
     });
   });
-
-  // ✓ Layout
-  // ✓ select all / unselect
-  // Issue-4004
-  // ✓ Change method -> expected inputs
-  // ✓ Merge & Close (multiple merge)
-  // ✓ Merge & Re-cluster
 });
