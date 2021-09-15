@@ -140,7 +140,9 @@ describe(__filename, function () {
         cy.navigateTo('Open Project');
         cy.contains('td', projectName).siblings().contains('a', 'About').click();
         cy.contains('td', 'Title:').siblings().contains('button', 'Edit').click();
-        cy.get(".dialog-overlay").matchImageSnapshot("close-button",{clip: { x:0, y:500, width: 500, height: 500 },});
+        cy.get(".dialog-overlay").matchImageSnapshot("close-button",
+          {failureThreshold: 0.04,failureThresholdType: 'percent',clip: { x:0, y:500, width:120, height: 400 }}
+        );
   });
 
 
