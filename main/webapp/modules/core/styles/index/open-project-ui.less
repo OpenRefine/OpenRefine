@@ -121,21 +121,40 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #metadata-body tr:nth-child(even) {background: #f2f2f2}
 #metadata-body tr:nth-child(odd) {background: #FFF}
 
-#metadata-body > table {
+#metadata-body table {
   table-layout: fixed;
 }
 
-#metadata-body > table > tbody > tr > td {
+#metadata-body  table > tbody > tr > td {
   word-wrap: break-word;
 }
 
-#metadata-body > table > tbody > tr:nth-child(1) > th:nth-child(2) {
+#metadata-body table > tbody > tr:nth-child(1) > th:nth-child(2) {
  width: 80%
  }
 
-#metadata-body > table > tbody > tr:nth-child(1) > th:nth-child(3) {
+#metadata-body table > tbody > tr:nth-child(1) > th:nth-child(3) {
  width: 4%
  }
+
+
+/* Making table scrollable*/
+.scrollable-table{
+	max-height: 70vh;
+	overflow-y: auto;
+	overflow-x: hidden;
+}
+
+/* Making table header sticky and darker*/
+#metadata-body table > tbody > tr >th{
+	position: -webkit-sticky;
+	position:sticky;
+	top:0;
+	color:black;
+	background:#b7b7b7;
+}
+
+
  
  /* Project Tags */
 #projectTags {

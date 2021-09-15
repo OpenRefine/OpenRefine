@@ -127,4 +127,21 @@ describe(__filename, function () {
     cy.get('#metadata-body tbody>tr').eq(13).contains('Homepage');
     cy.get('#metadata-body tbody>tr').eq(13).contains('openrefine.org');
   });
+
+  /*Visual test for close button */
+    it('Ensure close button is visible', function () {
+        const projectName = Date.now();
+        cy.loadProject('food.mini', projectName);
+        cy.visit(Cypress.env('OPENREFINE_URL'), {
+          onBeforeLoad(win) {
+            cy.stub(win, 'prompt').returns("a".repeat(5000));
+          },
+        });
+        cy.navigateTo('Open Project');
+        cy.contains('td', projectName).siblings().contains('a', 'About').click();
+        cy.contains('td', 'Title:').siblings().contains('button', 'Edit').click();
+        cy.get(".dialog-overlay").matchImageSnapshot("close-button",{clip: { x:0, y:500, width: 500, height: 500 },});
+  });
+
+
 });
