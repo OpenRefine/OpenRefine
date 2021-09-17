@@ -1388,4 +1388,3 @@ SchemaAlignment._updateWarnings = function(warnings, totalCount) {
         countsElem.show();
    }
 };
-
