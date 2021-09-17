@@ -4,8 +4,7 @@ describe(__filename, function () {
     cy.deleteColumn('NDB_No');
     cy.deleteColumn('Shrt_Desc');
 
-    cy.get('#or-proj-undoRedo').should('to.exist').should('be.visible').click();
-    cy.get('#refine-tabs-history').should('be.visible');
+    cy.get('#or-proj-undoRedo').click();
     cy.get('#refine-tabs-history .history-panel-controls')
       .contains('Extract')
       .click();
@@ -55,7 +54,6 @@ describe(__filename, function () {
     cy.deleteColumn('NDB_No');
     cy.deleteColumn('Shrt_Desc');
     cy.get('#or-proj-undoRedo').click();
-    cy.get('#refine-tabs-history').should('be.visible');
     cy.get('#refine-tabs-history .history-panel-controls')
       .contains('Extract')
       .click();
@@ -124,7 +122,6 @@ describe(__filename, function () {
     cy.loadAndVisitProject('food.mini');
     cy.deleteColumn('NDB_No');
     cy.get('#or-proj-undoRedo').click();
-    cy.get('#refine-tabs-history').should('be.visible');
     cy.get('#refine-tabs-history .history-panel-controls')
       .contains('Extract')
       .click();
@@ -140,7 +137,7 @@ describe(__filename, function () {
     cy.deleteColumn('Shrt_Desc');
 
     cy.get('#or-proj-undoRedo').click();
-    cy.get('#refine-tabs-history').should('be.visible');
+
     cy.get('#refine-tabs-history .history-panel-controls')
       .contains('Extract')
       .click();

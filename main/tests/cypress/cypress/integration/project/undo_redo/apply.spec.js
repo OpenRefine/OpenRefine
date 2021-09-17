@@ -3,7 +3,6 @@ describe(__filename, function () {
     cy.loadAndVisitProject('food.mini');
 
     cy.get('#or-proj-undoRedo').should('to.exist').should('be.visible').click();
-    cy.get('#refine-tabs-history').should('be.visible');
     cy.get('#refine-tabs-history .history-panel-controls')
       .contains('Apply')
       .click();
