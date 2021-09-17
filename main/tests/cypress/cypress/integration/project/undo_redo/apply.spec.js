@@ -9,6 +9,7 @@ describe(__filename, function () {
 
     // find the "apply" button
     cy.get('#or-proj-undoRedo').click();
+    cy.wait(500); // eslint-disable-line
     cy.get('#refine-tabs-history .history-panel-controls')
       .contains('Apply')
       .click();
