@@ -13,9 +13,7 @@ describe(__filename, function () {
     cy.get('#refine-tabs-history .history-panel-controls')
       .contains('Apply')
       .click();
-    
-    cy.get('#refine-tabs-history a[bind="applyLink"]').should('be.visible').click();
-
+      
     // JSON for operations that will be applied
     const operations = [
       {
