@@ -8,9 +8,10 @@ describe(__filename, function () {
 
 
     // find the "apply" button
-    cy.get('#or-proj-undoRedo').should('to.exist').should('be.visible').click();
-    cy.get('#refine-tabs-history').should('be.visible');
-    cy.get('#history-panel-controls').should('be.visible');
+    cy.get('#or-proj-undoRedo').click();
+    cy.get('#refine-tabs-history .history-panel-controls')
+      .contains('Apply')
+      .click();
     
     cy.get('#refine-tabs-history a[bind="applyLink"]').should('be.visible').click();
 
