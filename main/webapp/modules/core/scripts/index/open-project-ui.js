@@ -310,9 +310,9 @@ Refine.OpenProjectUI.prototype._renderProjects = function(data) {
           
           return htmlDisplay;
       })() +     
-      '</tr></thead><tbody id="tableBody"> </tbody></table>  <div id="no-results-message"> No Results </div>'
+      '</tr></thead><tbody id="tableBody"> </tbody></table>  <div id="no-results-message">'
+      +$.i18n('core-index-open/no-results-message')+'</div>'
     ).appendTo(projectsUl)[0];
-
     var renderProject = function(project) {
       var tr = table.getElementsByTagName('tbody')[0].insertRow(table.rows.length - 1);
       tr.className = "project";

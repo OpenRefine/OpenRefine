@@ -159,6 +159,7 @@
     "core-index-open/tags": "Tags",
     "core-index-open/edit-tags": "Edit project tags",
     "core-index-open/edit-tags-desc": "Edit project tags (space and comma are delimiters):",
+    "core-index-open/no-results-message": "No results",
     "core-index-lang/lang-settings": "Language settings",
     "core-index-lang/label": "Select preferred language",
     "core-index-lang/send-req": "Change language",
