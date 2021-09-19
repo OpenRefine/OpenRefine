@@ -2,7 +2,7 @@
 * Derived from Portfolio filterable.js by Joel Sutherland
 *
 * Copyright (C) 2009 Joel Sutherland.
-* Liscenced under the MIT liscense
+* Licensed under the MIT license
 *
 * Modified for OpenRefine by Simone Povoscania
 * Modified for OpenRefine by Lucero Garcia
