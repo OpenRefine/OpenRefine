@@ -18,11 +18,19 @@
             /* FILTER: select a text and filter */
             listElements.bind("filterSearch", function( e, text ) {
                 // get each project row
-                $(this).find("tr").filter(function() {
+                var projects = $(this).find("tr");
+                var projectsWithText = projects.filter(function() {
                         $(this).removeClass(settings.selectedTagClass);
                         return $(this).text().toLowerCase().contains(text)
-                }).addClass(settings.selectedTagClass);
+                });
+                projectsWithText.addClass(settings.selectedTagClass);
                 $(this).trigger("filterSearchList",[ settings.selectedTagClass ]);
+                var message = $('#no-results-message');
+                if(projectsWithText.length === 0) {
+                    message.show();
+                } else if(message.is(':visible')) {
+                    message.hide();
+                }
             });
 
             /* FILTERPORTFOLIO: pass in a class to show, all others will be hidden */

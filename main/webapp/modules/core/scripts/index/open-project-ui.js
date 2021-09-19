@@ -285,7 +285,7 @@ Refine.OpenProjectUI.prototype._renderProjects = function(data) {
           
           return htmlDisplay;
       })() +     
-      '</tr></thead><tbody id="tableBody"></tbody></table>'
+      '</tr></thead><tbody id="tableBody"> </tbody></table>  <div id="no-results-message"> No Results </div>'
     ).appendTo(projectsUl)[0];
 
     var renderProject = function(project) {
@@ -365,7 +365,7 @@ Refine.OpenProjectUI.prototype._renderProjects = function(data) {
     for(var i in data)
     {
          if (data[i].display === true) {
-             appendMetaField(data[i].value); 
+             appendMetaField(data[i].value);
          }
     }
         
