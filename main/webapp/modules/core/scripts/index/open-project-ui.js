@@ -195,13 +195,19 @@ Refine.OpenProjectUI.prototype._searchInput = function() {
     var search = $('#searchInProjects');
     //setup before functions
     var typingTimer;                //timer identifier
-    var doneTypingInterval = 2000;  //time in ms, 2 seconds
+    var doneTypingInterval = 1000;  //time in ms, 2 seconds
     // search when done typing interval is over when not typing anymore
 
     //on keyup, start the countdown
-    search.on('keyup', function () {
-      clearTimeout(typingTimer);
-      typingTimer = setTimeout(doneTyping, doneTypingInterval);
+    search.on('keyup', function (e) {
+        clearTimeout(typingTimer);
+        if (e.keyCode == '13')
+        {
+            e.preventDefault();
+            doneTyping();
+        } else {
+            typingTimer = setTimeout(doneTyping, doneTypingInterval);
+        }
     });
 
     //on keydown, clear the countdown
