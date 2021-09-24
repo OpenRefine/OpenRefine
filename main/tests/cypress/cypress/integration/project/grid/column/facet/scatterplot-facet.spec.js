@@ -47,13 +47,13 @@ describe(__filename, function () {
     cy.getFacetContainer('Water (x) vs. Protein (y)').within(() => {
       cy.get('label').contains('lin').should('to.exist');
       cy.get('label').contains('log').should('to.exist');
-      cy.get('label[title="Rotated 45° Counter-Clockwise"]').should('to.exist');
+      cy.get('label[title="Rotated 45° counter-clockwise"]').should('to.exist');
       cy.get('label[title="No rotation"]').should('to.exist');
-      cy.get('label[title="Rotated 45° Clockwise"]').should('to.exist');
-      cy.get('label[title="Small Dot Size"]').should('to.exist');
-      cy.get('label[title="Regular Dot Size"]').should('to.exist');
-      cy.get('label[title="Big Dot Size"]').should('to.exist');
-      cy.get('a').contains('export plot').should('to.exist');
+      cy.get('label[title="Rotated 45° clockwise"]').should('to.exist');
+      cy.get('label[title="Small dot size"]').should('to.exist');
+      cy.get('label[title="Regular dot size"]').should('to.exist');
+      cy.get('label[title="Big dot size"]').should('to.exist');
+      cy.get('a').contains('Export plot').should('to.exist');
     });
   });
 });

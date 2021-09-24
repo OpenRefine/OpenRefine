@@ -3,7 +3,7 @@ describe(__filename, function () {
     const projectName = Date.now();
     cy.loadProject('food.mini', projectName);
     cy.visitOpenRefine();
-    cy.navigateTo('Open Project');
+    cy.navigateTo('Open project');
     cy.get('#projects-list table').should('contain', projectName);
   });
 
@@ -11,7 +11,7 @@ describe(__filename, function () {
     const projectName = Date.now();
     cy.loadProject('food.mini', projectName);
     cy.visitOpenRefine();
-    cy.navigateTo('Open Project');
+    cy.navigateTo('Open project');
     cy.get('#projects-list table').contains(projectName).click();
     cy.get('#project-name-button').should('contain', projectName);
   });
@@ -23,7 +23,7 @@ describe(__filename, function () {
     cy.loadProject('food.mini', projectName);
     cy.loadProject('food.mini', projectName2);
     cy.visitOpenRefine();
-    cy.navigateTo('Open Project');
+    cy.navigateTo('Open project');
     cy.get('#projects-list table').contains('Name').click();
     // cy.get('#projects-list tbody>tr').eq(0).should('contain','projectA');
     // cy.get('#projects-list table').contains("Name").click();
@@ -58,7 +58,7 @@ describe(__filename, function () {
     const projectName = Date.now();
     cy.loadProject('food.mini', projectName);
     cy.visitOpenRefine();
-    cy.navigateTo('Open Project');
+    cy.navigateTo('Open project');
     cy.contains('td', projectName).siblings().find('.delete-project').click();
     cy.get('#projects-list').should('not.contain', projectName);
     cy.request(
