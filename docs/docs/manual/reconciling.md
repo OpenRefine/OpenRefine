@@ -6,7 +6,7 @@ sidebar_label: Reconciling
 
 ## Overview {#overview}
 
-Reconciliation is the process of matching your dataset with that of an external source. Datasets for comparison might be produced by libraries, archives, museums, academic organizations, scientific institutions, non-profits, or interest groups. You can also reconcile against user-edited data on [Wikidata](wikidata), or reconcile against [a local dataset that you yourself supply](https://github.com/OpenRefine/OpenRefine/wiki/Reconcilable-Data-Sources#local-services). 
+Reconciliation is the process of matching your dataset with that of an external source. Datasets for comparison might be produced by libraries, archives, museums, academic organizations, scientific institutions, non-profits, or interest groups. You can also reconcile against user-edited data on [Wikidata or other Wikibase instances](wikibase/reconciling), or reconcile against [a local dataset that you yourself supply](https://github.com/OpenRefine/OpenRefine/wiki/Reconcilable-Data-Sources#local-services). 
 
 To reconcile your OpenRefine project against an external dataset, that dataset must offer a web service that conforms to the [Reconciliation Service API standards](https://reconciliation-api.github.io/specs/0.1/). 
 
@@ -31,7 +31,7 @@ OpenRefine maintains a [further list of sources on the wiki](https://github.com/
 
 Other services may exist that are not yet listed in these two places: for example, the [310 datasets hosted by the Organized Crime and Corruption Reporting Project (OCCRP)](https://aleph.occrp.org/datasets/) each have their own reconciliation URL, or you can reconcile against their entire database with the URL [shared on the reconciliation API list](https://reconciliation-api.github.io/testbench/). For another example, you can reconcile against the entire Virtual International Authority File (VIAF) dataset, or [only the contributions from certain institutions](http://refine.codefork.com/). Search online to see if the authority you wish to reconcile against has an available service, or whether you can download a copy to reconcile against locally.
 
-OpenRefine includes Wikidata reconciliation in the installation package - see the [Wikidata](wikidata) page for more information particular to that service. Extensions can add reconciliation services, and can also add enhanced reconciliation capacities. Check the list of extensions on the [Downloads page](https://openrefine.org/download.html) for more information.
+OpenRefine includes Wikidata reconciliation in the installation package - see the [Wikibase](wikibase/reconciling) page for more information particular to that service. Extensions can add reconciliation services, and can also add enhanced reconciliation capacities. Check the list of extensions on the [Downloads page](https://openrefine.org/download.html) for more information.
 
 Each source will have its own documentation on how it provides reconciliation. The table on [the reconciliation API list](https://reconciliation-api.github.io/testbench/) indicates whether your chosen service supports the features described below. Refer to the service's documentation if you have questions about its behaviors and which OpenRefine features it supports. 
 
@@ -75,7 +75,7 @@ Hovering over the suggestion will also offer the two matching options as buttons
 
 For matched values (those appearing as dark blue links), the underlying cell value has not been altered - the cell is storing both the original string and the matched entity link at the same time. If you were to copy your column to a new column at this point using `value`, for example, the reconcilation data would not transfer - only the original strings. You can learn more about how OpenRefine stores different pieces of information in each cell in [the Variables section specific to reconciliation data](expressions#reconciliation).
 
-For each cell, you can manually “Create new item,” which will take the cell’s original value and apply it, as though it is a match. This will not become a dark blue link, because at this time there is nothing to link to: it is a draft entity stored only in your project. You can use this feature to prepare these entries for eventual upload to an editable service such as [Wikidata](wikidata), but most services do not yet support this feature. 
+For each cell, you can manually “Create new item,” which will take the cell’s original value and apply it, as though it is a match. This will not become a dark blue link, because at this time there is nothing to link to: it is a draft entity stored only in your project. You can use this feature to prepare these entries for eventual upload to an editable service such as [Wikibase](wikibase/overview), but most services do not yet support this feature. 
 
 ### Reconciliation facets {#reconciliation-facets}
 
@@ -237,6 +237,6 @@ You can find out more in the [reconciliaton variables](expressions#reconciliaton
 
 ## Exporting reconciled data {#exporting-reconciled-data}
 
-Once you have data that is reconciled to existing entities online, you may wish to export that data to a user-editable service such as Wikidata. See the section on [uploading your edits to Wikidata](wikidata#upload-edits-to-wikidata) for more information, or the section on [exporting](exporting) to see other formats OpenRefine can produce.
+Once you have data that is reconciled to existing entities online, you may wish to export that data to a user-editable service such as Wikidata. See the section on [uploading your edits to Wikidata or other Wikibase instances](wikibase/uploading) for more information, or the section on [exporting](exporting) to see other formats OpenRefine can produce.
 
-You can share reconciled data in progress through a [project export or import](exporting#export-a-project), with some preparation. The importing user needs to have the appropriate reconciliation services installed on their OpenRefine instance (by going to <span class="menuItems">Start reconciling</span> and clicking on <span class="buttonLabels">Add Standard Service...</span>) in advance of opening the project, in order to use candidate and match links. Otherwise, the links will be broken and the user will need to add the reconciliation service and re-reconcile the columns in question. [Wikidata](wikidata) reconciliation data can be shared more easily as the service comes bundled with OpenRefine.
+You can share reconciled data in progress through a [project export or import](exporting#export-a-project), with some preparation. The importing user needs to have the appropriate reconciliation services installed on their OpenRefine instance (by going to <span class="menuItems">Start reconciling</span> and clicking on <span class="buttonLabels">Add Standard Service...</span>) in advance of opening the project, in order to use candidate and match links. Otherwise, the links will be broken and the user will need to add the reconciliation service and re-reconcile the columns in question. [Wikidata](wikibase/reconciling) reconciliation data can be shared more easily as the service comes bundled with OpenRefine.

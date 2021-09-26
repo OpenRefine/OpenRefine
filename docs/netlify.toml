@@ -1,0 +1,9 @@
+
+# Note: this file's config overrides the Netlify UI admin config
+
+[context.production]
+  command = "yarn netlify:build:production"
+
+[context.deploy-preview]
+  command = "yarn netlify:build:deployPreview"
+

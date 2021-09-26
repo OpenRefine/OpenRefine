@@ -67,3 +67,6 @@ refine-dev.ini
 
 # STS (Spring Tool Suite)
 .springBeans
+
+# Ignore Node modules that might inadvertently install at current path instead of user or configured env var NODE_PATH 
+node_modules/

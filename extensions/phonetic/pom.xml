@@ -5,7 +5,7 @@
   <groupId>org.openrefine</groupId>
   <artifactId>phonetic</artifactId>
   <packaging>jar</packaging>
-  <version>3.5-SNAPSHOT</version>
+  <version>3.6-SNAPSHOT</version>
 
   <name>OpenRefine - Phonetic clustering extension</name>
   <description>Adds a few advanced phonetic clustering methods</description>
@@ -13,7 +13,7 @@
   <parent>
     <groupId>org.openrefine</groupId>
     <artifactId>extensions</artifactId>
-    <version>3.5-SNAPSHOT</version>
+    <version>3.6-SNAPSHOT</version>
   </parent>
 
   <build>
@@ -76,7 +76,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-dependency-plugin</artifactId>
-        <version>3.1.2</version>
+        <version>3.2.0</version>
         <executions>
             <execution>
             <phase>compile</phase>
