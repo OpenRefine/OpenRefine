@@ -9,6 +9,8 @@ import json
 # list of labels that should not be transferred to PRs
 do_not_transfer = [
     'good first issue',
+    'good second issue',
+    'imported from old code repo',
     'help wanted',
     'duplicate',
     'invalid',
