@@ -140,6 +140,7 @@ import com.google.refine.expr.functions.xml.SelectXml;
 import com.google.refine.expr.functions.xml.WholeText;
 import com.google.refine.expr.functions.xml.XmlAttr;
 import com.google.refine.expr.functions.xml.XmlText;
+import com.google.refine.expr.functions.xml.Parent;
 import com.google.refine.grel.controls.Filter;
 import com.google.refine.grel.controls.ForEach;
 import com.google.refine.grel.controls.ForEachIndex;
@@ -258,6 +259,7 @@ public class ControlFunctionRegistry {
         registerFunction("innerHtml", new InnerHtml());
         registerFunction("ownText", new OwnText());
         registerFunction("wholeText", new WholeText());
+        registerFunction("parent", new Parent());
 
         registerFunction("indexOf", new IndexOf());
         registerFunction("lastIndexOf", new LastIndexOf());
