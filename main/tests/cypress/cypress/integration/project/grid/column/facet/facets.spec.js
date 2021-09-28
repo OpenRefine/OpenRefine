@@ -387,17 +387,31 @@ describe(__filename, function () {
     cy.getCell(2, 'Water').should('to.contain', 0.24);
   });
 
+  it('Test opening the clustering from a facet', function () {
+    cy.loadAndVisitProject('food.mini');
+    cy.columnActionClick('Shrt_Desc', ['Facet', 'Text facet']);
+    cy.getFacetContainer('Shrt_Desc')
+      .find('button')
+      .contains('Cluster')
+      .click();
+
+    cy.get('.dialog-container .dialog-header').should(
+      'to.contain',
+      'Cluster & Edit column "Shrt_Desc"'
+    );
+  });
+
   // // This test is unstable, mouseover behavior is unpredictable
   // // This might be because the element is detached from the DOM in the middle
   // // it('Test include/exlude toggle', function () {
-  // // 	cy.loadAndVisitProject('food.small');
-  // // 	cy.columnActionClick('NDB_No', ['Facet', 'Text facet']);
-  // // 	cy.getFacetContainer('NDB_No').find('.facet-choice[choiceindex="0"]').trigger('mouseover');
-  // // 	cy.getFacetContainer('NDB_No').find('.facet-choice[choiceindex="0"] a.facet-choice-toggle').contains('include').should('be.visible');
-  // // 	cy.getFacetContainer('NDB_No').find('.facet-choice[choiceindex="0"] a.facet-choice-toggle').click();
-  // // 	cy.getFacetContainer('NDB_No').find('.facet-choice[choiceindex="0"] a.facet-choice-toggle').contains('exclude');
-  // // 	cy.getFacetContainer('NDB_No').find('.facet-choice[choiceindex="0"] a.facet-choice-toggle').click();
-  // // 	cy.getFacetContainer('NDB_No').find('.facet-choice[choiceindex="0"] a.facet-choice-toggle').contains('include');
+  // //   cy.loadAndVisitProject('food.small');
+  // //   cy.columnActionClick('NDB_No', ['Facet', 'Text facet']);
+  // //   cy.getFacetContainer('NDB_No').find('.facet-choice[choiceindex="0"]').trigger('mouseover');
+  // //   cy.getFacetContainer('NDB_No').find('.facet-choice[choiceindex="0"] a.facet-choice-toggle').contains('include').should('be.visible');
+  // //   cy.getFacetContainer('NDB_No').find('.facet-choice[choiceindex="0"] a.facet-choice-toggle').click();
+  // //   cy.getFacetContainer('NDB_No').find('.facet-choice[choiceindex="0"] a.facet-choice-toggle').contains('exclude');
+  // //   cy.getFacetContainer('NDB_No').find('.facet-choice[choiceindex="0"] a.facet-choice-toggle').click();
+  // //   cy.getFacetContainer('NDB_No').find('.facet-choice[choiceindex="0"] a.facet-choice-toggle').contains('include');
   // // });
 
   // it('Test collapsing facet panels', function () {
