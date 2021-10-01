@@ -44,6 +44,7 @@ public class ParseHtmlTests extends RefineTest  {
     static Properties bindings;
     static String h =   "<html>\n" +
                         "<head>\n" +
+                        "<script type=\"application/json\">One Two</script>" +
                         "</head>\n" +
                         "    <body>\n" +
                         "        <h1>head1</h1>\n" +
@@ -79,6 +80,9 @@ public class ParseHtmlTests extends RefineTest  {
         Assert.assertEquals(invoke("ownText",Jsoup.parse(h).select("p").first()),"para1");
         Assert.assertTrue(invoke("wholeText",Jsoup.parse(h).select("div.commentthread_comment_text").first()) instanceof String);
         Assert.assertEquals(invoke("wholeText",Jsoup.parse(h).select("div.commentthread_comment_text").first()),"\n  Me : Make a 2nd game ?\n Dev : Nah man , too much work.\n Me : So what's it gonna be ?\n Dev : REMASTER !!!!\n ");
+        Assert.assertEquals(invoke("data",Jsoup.parse(h).select("script").first()),"One Two");
+        Assert.assertEquals(invoke("data",Jsoup.parse(h).select("h1").first()), "");
+        Assert.assertTrue(invoke("data",Jsoup.parse(h).select("p")) instanceof EvalError);
     }
 }
 
