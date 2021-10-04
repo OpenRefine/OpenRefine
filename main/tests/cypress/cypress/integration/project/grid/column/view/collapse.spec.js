@@ -1,5 +1,5 @@
 describe(__filename, function () {
-const fixture = [
+  const fixture = [
         ['a', 'b', 'c'],
 
         ['0a', '0b', '0c'],
@@ -7,11 +7,8 @@ const fixture = [
       ];
   it('it collapses all columns', function () {
     cy.loadAndVisitProject(fixture);
-    cy.columnActionClick('All', ['View', 'Collapse all columns']);
+    cy.columnActionClick('a', ['View', 'Collapse this column']);
 
     cy.get('[title="a"]').should('to.contain', '');
-    cy.get('[title="b"]').should('to.contain', '');
-    cy.get('[title="c"]').should('to.contain', '');
-
   });
 });
