@@ -45,5 +45,15 @@
     "database-parsing/limit-next": "Ladda max",
     "database-parsing/limit": "rad(er) med data",
     "database-parsing/store-row": "Spara tomma rader",
-    "database-parsing/store-cell": "Spara tomma celler som nullvärden"
+    "database-parsing/store-cell": "Spara tomma celler som nullvärden",
+    "database-source/connectionNameDefaultValue": "Nytt namn på kopplingen",
+    "database-source/databaseSchemaPlaceholder": "Mata in det initiala databas-schemat",
+    "database-source/databaseFileNamePlaceholder": "Mata in databasfilens fullständiga adress",
+    "database-source/databaseNamePlaceholder": "Mata in databasens namn",
+    "database-source/databasePasswordPlaceholder": "Mata in databas lösenord",
+    "database-source/databaseUserPlaceholder": "Mata in databas användarnamn",
+    "database-source/databasePortPlaceholder": "Mata in databas-port, ex.vis 3306",
+    "database-source/databaseHostPlaceholder": "Mata in databas-domän eller IP-adress",
+    "database-source/connectionNamePlaceholder": "Mata in ett nytt namn på kopplingen",
+    "database-import/importer-name": "Databas"
 }
