@@ -12,6 +12,13 @@ describe(__filename, function () {
 
     cy.columnActionClick('b', ['Edit cells', 'Transform']);
 
-    cy.get('.dialog-container textarea[bind="expressionPreviewTextarea"]').type('value.type()');
+    cy.get('.dialog-container textarea[bind="expressionPreviewTextarea"]').type('replace(value,"change","a")');
+    cy.wait(400);
+    cy.confirmDialogPanel();
+
+    cy.get('.odd td:nth-child(5)').should('to.contain', 'a');
+    cy.get('.even td:nth-child(5)').should('to.contain', 'a');
+
+    cy.wait(400);
   });
 });

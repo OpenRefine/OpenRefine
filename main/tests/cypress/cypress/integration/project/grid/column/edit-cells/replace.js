@@ -14,12 +14,11 @@ describe(__filename, function () {
 
     cy.get('.dialog-container input[bind="text_to_findInput"]').type("change");
     cy.get('.dialog-container input[bind="replacement_textInput"]').type("a");
-    cy.get('.dialog-container button[bind="okButton"]').click();
+    cy.confirmDialogPanel();
 
     cy.get('.odd td:nth-child(5)').should('to.contain', 'a');
-
     cy.get('.even td:nth-child(5)').should('to.contain', 'a');
 
-
+    cy.wait(400);
   });
 });
