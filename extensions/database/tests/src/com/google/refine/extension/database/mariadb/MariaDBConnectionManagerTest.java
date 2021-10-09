@@ -24,7 +24,7 @@ public class MariaDBConnectionManagerTest extends DBExtensionTests {
    
     
     @BeforeTest
-    @Parameters({ "mariaDbName", "mariaDbHost", "mariaDbPort", "mariaDbUser", "mariaDbPassword", "mariaDbTestTable"})
+    @Parameters({ "mariadbDbName", "mariadbDbHost", "mariadbDbPort", "mariadbDbUser", "mariadbDbPassword", "mariaTestTable"})
     public void beforeTest(@Optional(DEFAULT_MARIADB_NAME) String mariaDbName,  @Optional(DEFAULT_MARIADB_HOST) String mariaDbHost, 
            @Optional(DEFAULT_MARIADB_PORT)    String mariaDbPort,     @Optional(DEFAULT_MARIADB_USER) String mariaDbUser,
            @Optional(DEFAULT_MARIADB_PASSWORD)  String mariaDbPassword, @Optional(DEFAULT_TEST_TABLE)  String mariaDbTestTable) {

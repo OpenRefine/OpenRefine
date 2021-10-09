@@ -31,10 +31,5 @@ import org.testng.annotations.Test;
 import com.google.refine.util.TestUtils;
 
 public class OrTests {
-    @Test
-    public void serializeOr() {
-        String json = "{\"description\":\"OR two or more booleans to yield a boolean\",\"params\":\"boolean a, boolean b\",\"returns\":\"boolean\"}";
-        TestUtils.isSerializedTo(new Or(), json);
-    }
 }
 

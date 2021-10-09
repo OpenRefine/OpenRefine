@@ -313,10 +313,4 @@ public class RangeTests extends RefineTest {
         Assert.assertEquals(((Integer[]) (invoke("range", 5, "1", "-2"))), FIVE_AND_THREE);
     }
 
-    @Test
-    public void serializeRange() {
-        String json = "{\"description\":\"Returns an array where a and b are the start and the end of the range respectively and c is the step (increment).\",\"params\":\"A single string 'a', 'a, b' or 'a, b, c' or one, two or three integers a or a, b or a, b, c\",\"returns\":\"array\"}";
-        TestUtils.isSerializedTo(new Range(), json);
-    }
-
 }

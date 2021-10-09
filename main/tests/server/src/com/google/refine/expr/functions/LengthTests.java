@@ -31,10 +31,5 @@ import org.testng.annotations.Test;
 import com.google.refine.util.TestUtils;
 
 public class LengthTests {
-    @Test
-    public void serializeLength() {
-        String json = "{\"description\":\"Returns the length of o\",\"params\":\"array or string o\",\"returns\":\"number\"}";
-        TestUtils.isSerializedTo(new Length(), json);
-    }
 }
 

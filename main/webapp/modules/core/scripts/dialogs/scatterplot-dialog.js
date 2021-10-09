@@ -81,6 +81,11 @@ ScatterplotDialog.prototype._createDialog = function() {
     
     this._level = DialogSystem.showDialog(dialog);
     this._renderMatrix();
+    //the function buttonset() groups the input buttons into one but in doing so it creates icon on the input button
+    //the icon is created using checkboxradio() 
+    //to get rid of the icon a class "no-icon" is directly applied to input button and checkboxradio() is called again with option :- icon=false  
+    $(".no-icon").checkboxradio("option", "icon", false);
+    //this function only works after initialisation
 };
 
 ScatterplotDialog.prototype._renderMatrix = function() {

@@ -11,11 +11,11 @@
   <parent>
     <groupId>org.openrefine</groupId>
     <artifactId>extensions</artifactId>
-    <version>3.5-SNAPSHOT</version>
+    <version>3.6-SNAPSHOT</version>
   </parent>
 
   <properties>
-    <powermock.version>2.0.7</powermock.version>
+    <powermock.version>2.0.9</powermock.version>
     <wdtk.version>0.12.0-SNAPSHOT</wdtk.version>
   </properties>
 
@@ -84,7 +84,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-dependency-plugin</artifactId>
-        <version>3.1.2</version>
+        <version>3.2.0</version>
         <executions>
             <execution>
             <phase>compile</phase>
@@ -132,6 +132,11 @@
       <version>${wdtk.version}</version>
     </dependency>
     <dependency>
+      <groupId>com.fasterxml.jackson.core</groupId>
+      <artifactId>jackson-core</artifactId>
+      <version>${jackson.version}</version>
+    </dependency>
+    <dependency>
       <groupId>org.openrefine.dependencies.wdtk</groupId>
       <artifactId>wdtk-datamodel</artifactId>
       <version>${wdtk.version}</version>
@@ -144,7 +149,7 @@
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-api</artifactId>
-      <version>1.7.30</version>
+      <version>1.7.32</version>
       <scope>provided</scope>
     </dependency>
 
@@ -161,7 +166,7 @@
     <dependency>
       <groupId>org.testng</groupId>
       <artifactId>testng</artifactId>
-      <version>7.3.0</version>
+      <version>7.4.0</version>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -179,7 +184,7 @@
     <dependency>
       <groupId>com.squareup.okhttp3</groupId>
       <artifactId>mockwebserver</artifactId>
-      <version>4.9.0</version>
+      <version>4.9.2</version>
       <scope>test</scope>
     </dependency>
   </dependencies>

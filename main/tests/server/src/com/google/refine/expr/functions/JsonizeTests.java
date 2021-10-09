@@ -31,10 +31,5 @@ import org.testng.annotations.Test;
 import com.google.refine.util.TestUtils;
 
 public class JsonizeTests {
-    @Test
-    public void serializeJsonize() {
-        String json = "{\"description\":\"Quotes a value as a JSON literal value\",\"params\":\"value\",\"returns\":\"JSON literal value\"}";
-        TestUtils.isSerializedTo(new Jsonize(), json);
-    }
 }
 

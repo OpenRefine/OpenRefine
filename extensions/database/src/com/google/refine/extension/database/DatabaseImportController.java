@@ -466,7 +466,8 @@ public class DatabaseImportController implements ImportingController {
         }
         if (jdbcConfig.getDatabaseHost() == null || jdbcConfig.getDatabaseName() == null
                 || jdbcConfig.getDatabasePassword() == null || jdbcConfig.getDatabaseType() == null
-                || jdbcConfig.getDatabaseUser() == null || query == null || jdbcConfig.getDatabasePort() == 0) {
+                || jdbcConfig.getDatabaseUser() == null || query == null
+                || (jdbcConfig.getDatabasePort() == 0 &&  !"SQLite".equalsIgnoreCase(jdbcConfig.getDatabaseType()))) {
             if(logger.isDebugEnabled()) {
                 logger.debug("Missing Database Configuration::{}", jdbcConfig);
             }

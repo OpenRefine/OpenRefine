@@ -44,12 +44,6 @@ public class ToNumberTests extends RefineTest {
     static Properties bindings = new Properties();
 
     @Test
-    public void serializeToNumber() {
-        String json = "{\"description\":\"Returns o converted to a number\",\"params\":\"o\",\"returns\":\"number\"}";
-        TestUtils.isSerializedTo(new ToNumber(), json);
-    }
-
-    @Test
     public void testConversions() {
         Function f = new ToNumber();
         assertEquals(f.call(bindings, new Object[] {Long.valueOf(11)}), Long.valueOf(11));

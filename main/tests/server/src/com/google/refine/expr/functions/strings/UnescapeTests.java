@@ -35,12 +35,6 @@ import com.google.refine.util.TestUtils;
 
 public class UnescapeTests extends RefineTest {
     @Test
-    public void serializeUnescape() {
-        String json = "{\"description\":\"Unescapes all escaped parts of the string depending on the given escaping mode.\",\"params\":\"string s, string mode ['html','xml','csv','url','javascript']\",\"returns\":\"string\"}";
-        TestUtils.isSerializedTo(new Unescape(), json);
-    }
-
-    @Test
     public void testUnescape() {
         assertEquals(invoke("unescape", "&Auml;", "html"), "Ä");
         assertEquals(invoke("unescape", "\\u00C4", "javascript"), "Ä");

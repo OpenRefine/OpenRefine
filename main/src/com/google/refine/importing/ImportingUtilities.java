@@ -69,19 +69,13 @@ import org.apache.commons.fileupload.ProgressListener;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.apache.commons.fileupload.util.Streams;
-import org.apache.http.HttpEntity;
-import org.apache.http.auth.AuthScope;
-import org.apache.http.auth.UsernamePasswordCredentials;
-import org.apache.http.client.CredentialsProvider;
-import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.entity.ContentType;
-import org.apache.http.impl.client.BasicCredentialsProvider;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClientBuilder;
-import org.apache.http.impl.client.HttpClients;
-import org.apache.http.util.EntityUtils;
-import org.apache.http.StatusLine;
+import org.apache.hc.client5.http.ClientProtocolException;
+import org.apache.hc.core5.http.ClassicHttpResponse;
+import org.apache.hc.core5.http.ContentType;
+import org.apache.hc.core5.http.HttpEntity;
+import org.apache.hc.core5.http.HttpStatus;
+import org.apache.hc.core5.http.io.HttpClientResponseHandler;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -89,10 +83,10 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.refine.ProjectManager;
 import com.google.refine.ProjectMetadata;
-import com.google.refine.RefineServlet;
 import com.google.refine.importing.ImportingManager.Format;
 import com.google.refine.importing.UrlRewriter.Result;
 import com.google.refine.model.Project;
+import com.google.refine.util.HttpClient;
 import com.google.refine.util.JSONUtilities;
 import com.google.refine.util.ParsingUtilities;
 import java.util.stream.Collectors;
@@ -287,65 +281,56 @@ public class ImportingUtilities {
                     }
 
                     if ("http".equals(url.getProtocol()) || "https".equals(url.getProtocol())) {
-                        HttpClientBuilder clientbuilder = HttpClients.custom()
-                                .setUserAgent(RefineServlet.getUserAgent());
-//                                .setConnectionBackoffStrategy(ConnectionBackoffStrategy)
+                        final URL lastUrl = url;
+                        final HttpClientResponseHandler<String> responseHandler = new HttpClientResponseHandler<String>() {
 
-                        String userinfo = url.getUserInfo();
-                        // HTTPS only - no sending password in the clear over HTTP
-                        if ("https".equals(url.getProtocol()) && userinfo != null) {
-                            int s = userinfo.indexOf(':');
-                            if (s > 0) {
-                                String user = userinfo.substring(0, s);
-                                String pw = userinfo.substring(s + 1, userinfo.length());
-                                CredentialsProvider credsProvider = new BasicCredentialsProvider();
-                                credsProvider.setCredentials(new AuthScope(url.getHost(), 443),
-                                        new UsernamePasswordCredentials(user, pw));
-                                clientbuilder = clientbuilder.setDefaultCredentialsProvider(credsProvider);
-                            }
-                        }
+                            @Override
+                            public String handleResponse(final ClassicHttpResponse response) throws IOException {
+                                final int status = response.getCode();
+                                if (status >= HttpStatus.SC_SUCCESS && status < HttpStatus.SC_REDIRECTION) {
+                                    final HttpEntity entity = response.getEntity();
+                                    if (entity == null) {
+                                        throw new IOException("No content found in " + lastUrl.toExternalForm());
+                                    }
 
-                        CloseableHttpClient httpclient = clientbuilder.build();
-                        HttpGet httpGet = new HttpGet(url.toURI());
-                        CloseableHttpResponse response = httpclient.execute(httpGet);
+                                    try {
+                                    InputStream stream2 = entity.getContent();
 
-                        try {
-                            HttpEntity entity = response.getEntity();
-                            if (entity == null) {
-                                throw new Exception("No content found in " + url.toString());
-                            }
-                            StatusLine status = response.getStatusLine();
-                            int statusCode = response.getStatusLine().getStatusCode();
-                            if (statusCode >= 400) {
-                                String errorString = ParsingUtilities.inputStreamToString(entity.getContent());
-                                String message = String.format("HTTP error %d : %s | %s", statusCode,
-                                        status.getReasonPhrase(), errorString);
-                                throw new Exception(message);
-                            }
-                            InputStream stream2 = entity.getContent();
+                                    String mimeType = null;
+                                    String charset = null;
+                                    ContentType contentType = ContentType.parse(entity.getContentType());
+                                    if (contentType != null) {
+                                        mimeType = contentType.getMimeType();
+                                        Charset cs = contentType.getCharset();
+                                        if (cs != null) {
+                                            charset = cs.toString();
+                                        }
+                                    }
+                                    JSONUtilities.safePut(fileRecord, "declaredMimeType", mimeType);
+                                    JSONUtilities.safePut(fileRecord, "declaredEncoding", charset);
+                                    if (saveStream(stream2, lastUrl, rawDataDir, progress, update,
+                                            fileRecord, fileRecords,
+                                            entity.getContentLength())) {
+                                        return "saved"; // signal to increment archive count
+                                    }
 
-                            String mimeType = null;
-                            String charset = null;
-                            ContentType contentType = ContentType.get(entity);
-                            if (contentType != null) {
-                                mimeType = contentType.getMimeType();
-                                Charset cs = contentType.getCharset();
-                                if (cs != null) {
-                                    charset = cs.toString();
+                                    } catch (final IOException ex) {
+                                        throw new ClientProtocolException(ex);
+                                    }
+                                    return null;
+                                } else {
+                                    // String errorBody = EntityUtils.toString(response.getEntity());
+                                    throw new ClientProtocolException(String.format("HTTP error %d : %s for URL %s", status,
+                                            response.getReasonPhrase(), lastUrl.toExternalForm()));
                                 }
                             }
-                            JSONUtilities.safePut(fileRecord, "declaredMimeType", mimeType);
-                            JSONUtilities.safePut(fileRecord, "declaredEncoding", charset);
-                            if (saveStream(stream2, url, rawDataDir, progress, update,
-                                    fileRecord, fileRecords,
-                                    entity.getContentLength())) {
-                                archiveCount++;
-                            }
-                            downloadCount++;
-                            EntityUtils.consume(entity);
-                        } finally {
-                            httpGet.reset();
-                        }
+                        };
+
+                        HttpClient httpClient = new HttpClient();
+                        if (httpClient.getResponse(urlString, null, responseHandler) != null) {
+                            archiveCount++;
+                        };
+                        downloadCount++;
                     } else {
                         // Fallback handling for non HTTP connections (only FTP?)
                         URLConnection urlConnection = url.openConnection();
@@ -418,7 +403,7 @@ public class ImportingUtilities {
 
     private static boolean saveStream(InputStream stream, URL url, File rawDataDir, final Progress progress,
             final SavingUpdate update, ObjectNode fileRecord, ArrayNode fileRecords, long length)
-            throws IOException, Exception {
+            throws IOException {
         String localname = url.getPath();
         if (localname.isEmpty() || localname.endsWith("/")) {
             localname = localname + "temp";
@@ -436,7 +421,7 @@ public class ImportingUtilities {
         long actualLength = saveStreamToFile(stream, file, update);
         JSONUtilities.safePut(fileRecord, "size", actualLength);
         if (actualLength == 0) {
-            throw new Exception("No content found in " + url.toString());
+            throw new IOException("No content found in " + url.toString());
         } else if (length >= 0) {
             update.totalExpectedSize += (actualLength - length);
         } else {

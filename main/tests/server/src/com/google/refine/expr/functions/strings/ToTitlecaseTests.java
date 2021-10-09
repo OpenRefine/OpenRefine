@@ -35,12 +35,6 @@ import com.google.refine.util.TestUtils;
 
 public class ToTitlecaseTests extends RefineTest {
     @Test
-    public void serializeToTitlecase() {
-        String json = "{\"description\":\"Returns s converted to titlecase\",\"params\":\"string s\",\"returns\":\"string\"}";
-        TestUtils.isSerializedTo(new ToTitlecase(), json);
-    }
-
-    @Test
     public void testToTitlecaseInvalidParams() {
         Assert.assertTrue(invoke("toTitlecase") instanceof EvalError);
         Assert.assertTrue(invoke("toTitlecase", "one","two","three") instanceof EvalError);

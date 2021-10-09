@@ -45,18 +45,6 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.http.Consts;
-import org.apache.http.NameValuePair;
-import org.apache.http.StatusLine;
-import org.apache.http.client.config.RequestConfig;
-import org.apache.http.client.entity.UrlEncodedFormEntity;
-import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClientBuilder;
-import org.apache.http.impl.client.HttpClients;
-import org.apache.http.impl.client.LaxRedirectStrategy;
-import org.apache.http.message.BasicNameValuePair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -69,7 +57,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.google.refine.RefineServlet;
 import com.google.refine.expr.ExpressionUtils;
 import com.google.refine.model.Cell;
 import com.google.refine.model.Project;
@@ -79,6 +66,7 @@ import com.google.refine.model.ReconCandidate;
 import com.google.refine.model.ReconType;
 import com.google.refine.model.RecordModel.RowDependency;
 import com.google.refine.model.Row;
+import com.google.refine.util.HttpClient;
 import com.google.refine.util.ParsingUtilities;
 
 public class StandardReconConfig extends ReconConfig {
@@ -164,7 +152,7 @@ public class StandardReconConfig extends ReconConfig {
     final private int limit;
 
     // initialized lazily
-    private CloseableHttpClient httpClient = null;
+    private HttpClient httpClient = null;
 
     @JsonCreator
     public StandardReconConfig(
@@ -434,29 +422,29 @@ public class StandardReconConfig extends ReconConfig {
         try {
             job.code = ParsingUtilities.defaultWriter.writeValueAsString(query);
         } catch (JsonProcessingException e) {
+            // FIXME: This error will get lost
             e.printStackTrace();
             return null; // TODO: Throw exception instead?
         }
         return job;
     }
     
-    private CloseableHttpClient getHttpClient() {
-        if (httpClient != null) {
-            return httpClient;
+    private HttpClient getHttpClient() {
+        if (httpClient == null) {
+            httpClient = new HttpClient();
         }
-        RequestConfig defaultRequestConfig = RequestConfig.custom()
-                .setConnectTimeout(30 * 1000)
-                .setSocketTimeout(60 * 1000)
-                .build();
-
-        HttpClientBuilder httpClientBuilder = HttpClients.custom()
-                .setUserAgent(RefineServlet.getUserAgent())
-                .setRedirectStrategy(new LaxRedirectStrategy())
-                .setDefaultRequestConfig(defaultRequestConfig);
-        httpClient = httpClientBuilder.build();
         return httpClient;
     }
-    
+
+    private String postQueries(String url, String queriesString) throws IOException {
+        try {
+            return getHttpClient().postNameValue(url, "queries", queriesString);
+
+        } catch (IOException e) {
+            throw new IOException("Failed to batch recon with load:\n" + queriesString, e);
+        }
+    }
+
     @Override
     public List<Recon> batchRecon(List<ReconJob> jobs, long historyEntryID) {
         List<Recon> recons = new ArrayList<Recon>(jobs.size());
@@ -475,51 +463,41 @@ public class StandardReconConfig extends ReconConfig {
         stringWriter.write("}");
         String queriesString = stringWriter.toString();
         
-        HttpPost request = new HttpPost(service);
-        List<NameValuePair> body = Collections.singletonList(
-                new BasicNameValuePair("queries", queriesString));
-        request.setEntity(new UrlEncodedFormEntity(body, Consts.UTF_8));
-        
-        try (CloseableHttpResponse response = getHttpClient().execute(request)) {
-            StatusLine statusLine = response.getStatusLine();
-            if (statusLine.getStatusCode() >= 400) {
-                logger.error("Failed  - code: "
-                        + Integer.toString(statusLine.getStatusCode())
-                        + " message: " + statusLine.getReasonPhrase());
+        try {
+            String responseString = postQueries(service, queriesString);
+            ObjectNode o = ParsingUtilities.evaluateJsonStringToObjectNode(responseString);
+
+            if (o == null) { // utility method returns null instead of throwing
+                logger.error("Failed to parse string as JSON: " + responseString);
             } else {
-                String s = ParsingUtilities.inputStreamToString(response.getEntity().getContent());
-                ObjectNode o = ParsingUtilities.evaluateJsonStringToObjectNode(s);
-                if (o == null) { // utility method returns null instead of throwing
-                    logger.error("Failed to parse string as JSON: " + s);
-                } else {
-                    for (int i = 0; i < jobs.size(); i++) {
-                        StandardReconJob job = (StandardReconJob) jobs.get(i);
-                        Recon recon = null;
+                for (int i = 0; i < jobs.size(); i++) {
+                    StandardReconJob job = (StandardReconJob) jobs.get(i);
+                    Recon recon = null;
 
-                        String text = job.text;
-                        String key = "q" + i;
-                        if (o.has(key) && o.get(key) instanceof ObjectNode) {
-                            ObjectNode o2 = (ObjectNode) o.get(key);
-                            if (o2.has("result") && o2.get("result") instanceof ArrayNode) {
-                                ArrayNode results = (ArrayNode) o2.get("result");
+                    String text = job.text;
+                    String key = "q" + i;
+                    if (o.has(key) && o.get(key) instanceof ObjectNode) {
+                        ObjectNode o2 = (ObjectNode) o.get(key);
+                        if (o2.has("result") && o2.get("result") instanceof ArrayNode) {
+                            ArrayNode results = (ArrayNode) o2.get("result");
 
-                                recon = createReconServiceResults(text, results, historyEntryID);
-                            } else {
-                                logger.warn("Service error for text: " + text + "\n  Job code: " + job.code + "\n  Response: " + o2.toString());
-                            }
+                            recon = createReconServiceResults(text, results, historyEntryID);
                         } else {
                             // TODO: better error reporting
-                            logger.warn("Service error for text: " + text + "\n  Job code: " + job.code);
+                            logger.warn("Service error for text: " + text + "\n  Job code: " + job.code + "\n  Response: " + o2.toString());
                         }
-
-                        if (recon != null) {
-                            recon.service = service;
-                        }
-                        recons.add(recon);
+                    } else {
+                        // TODO: better error reporting
+                        logger.warn("Service error for text: " + text + "\n  Job code: " + job.code);
                     }
+
+                    if (recon != null) {
+                        recon.service = service;
+                    }
+                    recons.add(recon);
                 }
             }
-        } catch (Exception e) {
+        } catch (IOException e) {
             logger.error("Failed to batch recon with load:\n" + queriesString, e);
         }
 
@@ -535,7 +513,7 @@ public class StandardReconConfig extends ReconConfig {
         
         return recons;
     }
-    
+
     @Override
     public Recon createNewRecon(long historyEntryID) {
         Recon recon = new Recon(historyEntryID, identifierSpace, schemaSpace);
@@ -543,7 +521,7 @@ public class StandardReconConfig extends ReconConfig {
         return recon;
     }
 
-    protected Recon createReconServiceResults(String text, ArrayNode resultsList, long historyEntryID) throws IOException {
+    protected Recon createReconServiceResults(String text, ArrayNode resultsList, long historyEntryID)  {
         Recon recon = new Recon(historyEntryID, identifierSpace, schemaSpace);
         List<ReconResult> results = ParsingUtilities.mapper.convertValue(resultsList, new TypeReference<List<ReconResult>>() {});
         

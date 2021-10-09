@@ -11,7 +11,7 @@
   <parent>
     <groupId>org.openrefine</groupId>
     <artifactId>extensions</artifactId>
-    <version>3.5-SNAPSHOT</version>
+    <version>3.6-SNAPSHOT</version>
   </parent>
 
   <build>
@@ -89,7 +89,7 @@
         <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-dependency-plugin</artifactId>
-            <version>3.1.2</version>
+            <version>3.2.0</version>
             <executions>
                 <execution>
                 <phase>compile</phase>
@@ -124,17 +124,17 @@
     <dependency>
       <groupId>org.apache.httpcomponents</groupId>
       <artifactId>httpclient</artifactId>
-      <version>4.5.12</version>
+      <version>4.5.13</version>
     </dependency>
     <dependency>
       <groupId>com.google.apis</groupId>
       <artifactId>google-api-services-drive</artifactId>
-      <version>v3-rev20200813-1.30.10</version>
+      <version>v3-rev20210315-1.31.0</version>
     </dependency>
     <dependency>
       <groupId>com.google.apis</groupId>
       <artifactId>google-api-services-sheets</artifactId>
-      <version>v4-rev20200922-1.30.10</version>
+      <version>v4-rev20210629-1.32.1</version>
     </dependency>
     <dependency>
       <groupId>com.fasterxml.jackson.core</groupId>
@@ -145,13 +145,13 @@
     <dependency>
       <groupId>org.testng</groupId>
       <artifactId>testng</artifactId>
-      <version>7.3.0</version>
+      <version>7.4.0</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.mockito</groupId>
       <artifactId>mockito-core</artifactId>
-      <version>3.5.13</version>
+      <version>4.0.0</version>
       <scope>test</scope>
     </dependency>
 

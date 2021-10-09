@@ -75,6 +75,42 @@ public class ScatterplotDrawCommandTests {
     		+ "\"from_y\":0,"
     		+ "\"to_y\":0,"
     		+ "\"color\":\"ff6a00\"}";
+
+	public static String configJsonWithCW = "{"
+			+ "\"name\":\"b (x) vs. y (y)\","
+			+ "\"cx\":\"b\","
+			+ "\"cy\":\"y\","
+			+ "\"l\":150,"
+			+ "\"ex\":\"value\","
+			+ "\"ey\":\"value\","
+			+ "\"dot\":1.4,"
+			+ "\"dim_x\":\"lin\","
+			+ "\"dim_y\":\"lin\","
+			+ "\"r\":\"cw\","
+			+ "\"type\":\"scatterplot\","
+			+ "\"from_x\":0,"
+			+ "\"to_x\":0,"
+			+ "\"from_y\":0,"
+			+ "\"to_y\":0,"
+			+ "\"color\":\"ff6a00\"}";
+
+	public static String configJsonWithCCW = "{"
+			+ "\"name\":\"b (x) vs. y (y)\","
+			+ "\"cx\":\"b\","
+			+ "\"cy\":\"y\","
+			+ "\"l\":150,"
+			+ "\"ex\":\"value\","
+			+ "\"ey\":\"value\","
+			+ "\"dot\":1.4,"
+			+ "\"dim_x\":\"lin\","
+			+ "\"dim_y\":\"lin\","
+			+ "\"r\":\"ccw\","
+			+ "\"type\":\"scatterplot\","
+			+ "\"from_x\":0,"
+			+ "\"to_x\":0,"
+			+ "\"from_y\":0,"
+			+ "\"to_y\":0,"
+			+ "\"color\":\"ff6a00\"}";
     
     @Test
     public void testParseConfig() throws JsonParseException, JsonMappingException, IOException {
@@ -88,7 +124,19 @@ public class ScatterplotDrawCommandTests {
     @Test
     public void testParseConfigWithNone() throws JsonParseException, JsonMappingException, IOException {
     	GetScatterplotCommand.PlotterConfig config = ParsingUtilities.mapper.readValue(configJsonWithNone, GetScatterplotCommand.PlotterConfig.class);
-    	Assert.assertEquals(0, config.rotation);
+    	Assert.assertEquals(ScatterplotFacet.NO_ROTATION, config.rotation);
     }
+
+	@Test
+	public void testParseConfigWithCW() throws JsonParseException, JsonMappingException, IOException {
+		GetScatterplotCommand.PlotterConfig config = ParsingUtilities.mapper.readValue(configJsonWithCW, GetScatterplotCommand.PlotterConfig.class);
+		Assert.assertEquals(ScatterplotFacet.ROTATE_CW, config.rotation);
+	}
+
+	@Test
+	public void testParseConfigWithCCW() throws JsonParseException, JsonMappingException, IOException {
+		GetScatterplotCommand.PlotterConfig config = ParsingUtilities.mapper.readValue(configJsonWithCCW, GetScatterplotCommand.PlotterConfig.class);
+		Assert.assertEquals(ScatterplotFacet.ROTATE_CCW, config.rotation);
+	}
 	
 }

@@ -73,9 +73,4 @@ public class FindTests extends RefineTest {
         Assert.assertEquals(matches[1], "123456");
     }
     
-    @Test
-    public void serializeFind() {
-        String json = "{\"description\":\"Returns all the occurances of match given regular expression\",\"params\":\"string or regexp\",\"returns\":\"array of strings\"}";
-        TestUtils.isSerializedTo(new Find(), json);
-    }
 }

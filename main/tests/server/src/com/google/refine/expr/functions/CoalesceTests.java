@@ -82,10 +82,4 @@ public class CoalesceTests extends RefineTest {
         Assert.assertEquals(invoke("coalesce", (Object) null, ZERO_TO_TWO),ZERO_TO_TWO);
     }
     
-    @Test
-    public void serializeCoalesce() {
-        String json = "{\"description\":\"Returns the first non-null from a series of values\",\"params\":\"two or more objects\",\"returns\":\"object or null\"}";
-        TestUtils.isSerializedTo(new Coalesce(), json);
-    }
-    
 }

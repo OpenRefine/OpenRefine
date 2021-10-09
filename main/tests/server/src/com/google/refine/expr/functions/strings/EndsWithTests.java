@@ -36,12 +36,6 @@ import com.google.refine.util.TestUtils;
 
 public class EndsWithTests extends RefineTest {
     @Test
-    public void serializeEndsWith() {
-        String json = "{\"description\":\"Returns whether s ends with sub\",\"params\":\"string s, string sub\",\"returns\":\"boolean\"}";
-        TestUtils.isSerializedTo(new EndsWith(), json);
-    }
-
-    @Test
     public void testStartsWith() {
         assertTrue((Boolean) invoke("endsWith", "testString", "ing"));
         assertFalse((Boolean) invoke("startsWith", "testString", "banana"));

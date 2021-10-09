@@ -8,7 +8,7 @@ ImportSchemaDialog.launch = function() {
   this._elmts.dialogHeader.text($.i18n('import-wikibase-schema/dialog-header'));
   this._elmts.fileLabel.html($.i18n('import-wikibase-schema/file-label'));
   this._elmts.schemaLabel.text($.i18n('import-wikibase-schema/schema-label'));
-  this._elmts.cancelButton.text($.i18n('core-project/cancel'));
+  this._elmts.cancelButton.text($.i18n('core-buttons/cancel'));
   this._elmts.importButton.text($.i18n('import-wikibase-schema/import'));
 
   this._level = DialogSystem.showDialog(frame);
@@ -43,7 +43,6 @@ ImportSchemaDialog.launch = function() {
        if (!schema.siteIri || !schema.mediaWikiApiEndpoint) {
          schema.siteIri = WikidataManifestV1_0.wikibase.site_iri;
          schema.mediaWikiApiEndpoint = WikidataManifestV1_0.mediawiki.api;
-         schema.editGroupsURLSchema = WikidataManifestV1_0.editgroups.url_schema;
        }
     } catch(e) {
        elmts.invalidSchema.text($.i18n('import-wikibase-schema/invalid-schema'));
@@ -59,7 +58,9 @@ ImportSchemaDialog.launch = function() {
         {   
         onDone: function() {
             theProject.overlayModels.wikibaseSchema = schema;
-            SchemaAlignment._discardChanges();
+            if (SchemaAlignment._isSetUp) {
+            	SchemaAlignment._discardChanges();
+            }
             dismiss();
         },
         onError: function(e) {

@@ -51,12 +51,12 @@ public class Sin implements Function {
 
     @Override
     public String getDescription() {
-        return "Returns the trigonometric sine of an angle";
+        return "Returns the trigonometric sine of an angle.";
     }
     
     @Override
     public String getParams() {
-        return "number d";
+        return "number n";
     }
     
     @Override

@@ -1,0 +1,31 @@
+# Documentation for all configuration options:
+# https://help.github.com/github/administering-a-repository/configuration-options-for-dependency-updates
+
+version: 2
+updates:
+# For openrefine java deps
+- package-ecosystem: maven
+  directory: "/"
+  schedule:
+    interval: daily
+  open-pull-requests-limit: 10
+  ignore:
+  - dependency-name: com.thoughtworks.xstream:xstream
+    versions:
+    - "> 1.4.12"
+    - "< 2"
+# For documentation website
+- package-ecosystem: "npm" # For Yarn
+  directory: "docs/"
+  schedule:
+    interval: "daily"
+# For github actions
+- package-ecosystem: "github-actions"
+  directory: "/"
+  schedule:
+    interval: "daily"
+# For cypress test_suite
+- package-ecosystem: "npm"
+  directory: "main/tests/cypress"
+  schedule:
+    interval: "daily"

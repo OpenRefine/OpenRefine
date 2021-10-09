@@ -201,7 +201,7 @@ Refine.DefaultImportingController.prototype._renderFileSelectionPanelControlPane
   var renderExtension = function(extension) {
     var tr = table.insertRow(table.rows.length);
     $('<td>').text(extension.extension).appendTo(tr);
-    $('<td>').text($.i18n('core-index-import/file-count'), extension.count).appendTo(tr);
+    $('<td>').text($.i18n('core-index-import/file-count', extension.count)).appendTo(tr);
     $('<button>')
     .text($.i18n('core-buttons/select'))
     .addClass("button")

@@ -51,7 +51,7 @@ public class Round implements Function {
     
     @Override
     public String getDescription() {
-        return "Returns n rounded";
+        return "Rounds a number to the nearest integer.";
     }
     
     @Override

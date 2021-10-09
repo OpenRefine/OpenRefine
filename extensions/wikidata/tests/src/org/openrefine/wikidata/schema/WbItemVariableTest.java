@@ -82,6 +82,16 @@ public class WbItemVariableTest extends WbVariableTest<ItemIdValue> {
     public void testUnreconciledCell() {
         isSkipped("some value");
     }
+    
+    @Test
+    public void testNullCell() {
+        isSkipped((Cell) null);
+    }
+    
+    @Test
+    public void testNullStringValue() {
+        isSkipped((String) null);
+    }
 
     @Test
     public void testSerialize() {

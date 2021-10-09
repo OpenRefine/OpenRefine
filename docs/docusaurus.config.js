@@ -1,4 +1,6 @@
 module.exports = {
+  onBrokenLinks: 'throw',
+  onBrokenMarkdownLinks: 'throw',
   title: 'OpenRefine',
   tagline: 'A power tool for working with messy data.',
   url: 'https://docs.openrefine.org/',
@@ -6,6 +8,10 @@ module.exports = {
   favicon: 'img/openrefine_logo.png',
   organizationName: 'OpenRefine', // Usually your GitHub org/user name.
   projectName: 'OpenRefine', // Usually your repo name.
+  i18n: {
+    defaultLocale: 'en',
+    locales: ['en', 'jp', 'fr'],
+  },
   themeConfig: {
     navbar: {
       title: 'OpenRefine Documentation',
@@ -13,22 +19,34 @@ module.exports = {
         alt: 'OpenRefine diamond logo',
         src: 'img/openrefine_logo.png',
       },
-      links: [
+      items: [
         {
           to: '/',
           activeBasePath: 'docs',
           label: 'User Manual',
           position: 'left',
         },
-        {to: 'technical-reference/technical-reference-index',
-         label: 'Technical Reference',
-         position: 'left'},
+        {
+          to: 'technical-reference/technical-reference-index',
+          label: 'Technical Reference',
+          position: 'left'
+        },
+        {
+          type: 'localeDropdown',
+          position: 'right',
+        },
         {
           href: 'https://github.com/OpenRefine/OpenRefine/edit/master/docs',
-          label: 'GitHub',
+          'aria-label': 'GitHub',
+          className: 'header-github-link',
           position: 'right',
         },
       ],
+    },
+    algolia: {
+	    apiKey: '591fc612419d2e5b6bee6822cc17064f',
+	    indexName: 'openrefine',
+	    contextualSearch: true,
     },
     footer: {
       logo: {
@@ -38,23 +56,6 @@ module.exports = {
       },
       style: 'dark',
       links: [
-        {
-          title: 'Docs',
-          items: [
-            {
-              label: 'Style Guide',
-              to: 'docs/styleguide',
-            },
-            {
-              label: 'Technical Reference',
-              to: 'docs/tech',
-            },
-            {
-              label: 'Contributors',
-              to: 'docs/contrib',
-            },
-          ],
-        },
         {
           title: 'Community',
           items: [
@@ -104,7 +105,6 @@ module.exports = {
           editUrl: 'https://github.com/OpenRefine/OpenRefine/edit/master/docs',
           // Equivalent to `docsUrl`.
           routeBasePath: '/',
-          homePageId: 'index',
           // Remark and Rehype plugins passed to MDX. Replaces `markdownOptions` and `markdownPlugins`.
           remarkPlugins: [],
           rehypePlugins: [],
@@ -118,5 +118,12 @@ module.exports = {
         },
       },
     ],
+  ],
+  scripts: [
+    {
+      src: '/js/fix-location.js',
+      async: false,
+      defer: false,
+    },
   ],
 };

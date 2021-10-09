@@ -37,12 +37,6 @@ import com.google.refine.util.TestUtils;
 
 public class ReplaceTests extends RefineTest {
     @Test
-    public void serializeReplace() {
-        String json = "{\"description\":\"Returns the string obtained by replacing f with r in s\",\"params\":\"string s, string or regex f, string r\",\"returns\":\"string\"}";
-        TestUtils.isSerializedTo(new Replace(), json);
-    }
-
-    @Test
     public void testReplace() {
         assertTrue(invoke("replace") instanceof EvalError);
         assertTrue(invoke("replace", "test") instanceof EvalError);

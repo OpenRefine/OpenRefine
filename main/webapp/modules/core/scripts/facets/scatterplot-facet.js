@@ -114,18 +114,18 @@ class ScatterplotFacet extends Facet {
           '<td class="facet-scatterplot-selectors-container" width="100%">' +
             '<div class="scatterplot-selectors" bind="selectors">' +
               '<div class="buttonset scatterplot-dim-selector">' +
-                '<input type="radio" id="' + facet_id + '-dim-lin" name="' + facet_id + '-dim" value="lin"/><label class="dim-lin-label" for="' + facet_id + '-dim-lin" title="'+$.i18n('core-facets/linear-plot')+'">'+$.i18n('core-facets/linear-plot-abbr')+'</label>' +
-                '<input type="radio" id="' + facet_id + '-dim-log" name="' + facet_id + '-dim" value="log"/><label class="dim-log-label" for="' + facet_id + '-dim-log" title="'+$.i18n('core-facets/logar-plot')+'">'+$.i18n('core-facets/logar-plot-abbr')+'</label>' +
+                '<input class="no-icon" type="radio" id="' + facet_id + '-dim-lin" name="' + facet_id + '-dim" value="lin"/><label class="dim-lin-label" for="' + facet_id + '-dim-lin" title="'+$.i18n('core-facets/linear-plot')+'">'+$.i18n('core-facets/linear-plot-abbr')+'</label>' +
+                '<input class="no-icon" type="radio" id="' + facet_id + '-dim-log" name="' + facet_id + '-dim" value="log"/><label class="dim-log-label" for="' + facet_id + '-dim-log" title="'+$.i18n('core-facets/logar-plot')+'">'+$.i18n('core-facets/logar-plot-abbr')+'</label>' +
               '</div>' + 
               '<div class="buttonset scatterplot-rot-selector">' +
-                '<input type="radio" id="' + facet_id + '-rot-ccw"  name="' + facet_id + '-rot" value="ccw"/><label class="rot-ccw-label" for="' + facet_id + '-rot-ccw" title="'+$.i18n('core-facets/rotated-counter-clock')+'">&nbsp;</label>' +
-                '<input type="radio" id="' + facet_id + '-rot-none" name="' + facet_id + '-rot" value="none"/><label class="rot-none-label" for="' + facet_id + '-rot-none" title="'+$.i18n('core-facets/no-rotation')+'">&nbsp;</label>' +
-                '<input type="radio" id="' + facet_id + '-rot-cw"   name="' + facet_id + '-rot" value="cw"/><label class="rot-cw-label" for="' + facet_id + '-rot-cw" title="'+$.i18n('core-facets/rotated-clock')+'">&nbsp;</label>' +
+                '<input class="no-icon" type="radio" id="' + facet_id + '-rot-ccw"  name="' + facet_id + '-rot" value="ccw"/><label class="rot-ccw-label" for="' + facet_id + '-rot-ccw" title="'+$.i18n('core-facets/rotated-counter-clock')+'">&nbsp;</label>' +
+                '<input class="no-icon" type="radio" id="' + facet_id + '-rot-none" name="' + facet_id + '-rot" value="none"/><label class="rot-none-label" for="' + facet_id + '-rot-none" title="'+$.i18n('core-facets/no-rotation')+'">&nbsp;</label>' +
+                '<input class="no-icon" type="radio" id="' + facet_id + '-rot-cw"   name="' + facet_id + '-rot" value="cw"/><label class="rot-cw-label" for="' + facet_id + '-rot-cw" title="'+$.i18n('core-facets/rotated-clock')+'">&nbsp;</label>' +
               '</div>' +
               '<div class="buttonset scatterplot-dot-selector">' +
-                '<input type="radio" id="' + facet_id + '-dot-small"   name="' + facet_id + '-dot" value="small"/><label class="dot-small-label" for="' + facet_id + '-dot-small" title="'+$.i18n('core-facets/small-dot')+'">&nbsp;</label>' +
-                '<input type="radio" id="' + facet_id + '-dot-regular" name="' + facet_id + '-dot" value="regular"/><label class="dot-regular-label" for="' + facet_id + '-dot-regular" title="'+$.i18n('core-facets/regular-dot')+'">&nbsp;</label>' +
-                '<input type="radio" id="' + facet_id + '-dot-big"     name="' + facet_id + '-dot" value="big"/><label class="dot-big-label" for="' + facet_id + '-dot-big" title="'+$.i18n('core-facets/big-dot')+'">&nbsp;</label>' +
+                '<input class="no-icon" type="radio" id="' + facet_id + '-dot-small"   name="' + facet_id + '-dot" value="small"/><label class="dot-small-label" for="' + facet_id + '-dot-small" title="'+$.i18n('core-facets/small-dot')+'">&nbsp;</label>' +
+                '<input class="no-icon" type="radio" id="' + facet_id + '-dot-regular" name="' + facet_id + '-dot" value="regular"/><label class="dot-regular-label" for="' + facet_id + '-dot-regular" title="'+$.i18n('core-facets/regular-dot')+'">&nbsp;</label>' +
+                '<input class="no-icon" type="radio" id="' + facet_id + '-dot-big"     name="' + facet_id + '-dot" value="big"/><label class="dot-big-label" for="' + facet_id + '-dot-big" title="'+$.i18n('core-facets/big-dot')+'">&nbsp;</label>' +
               '</div>' +
               '<div class="scatterplot-export-plot"><a bind="exportPlotLink" class="action" target="_blank">'+$.i18n('core-facets/export-plot')+'</a></div>' +
             '</div>' +
@@ -218,6 +218,12 @@ class ScatterplotFacet extends Facet {
     });
 
     this._elmts.selectors.find(".buttonset").buttonset();
+    
+    //the function buttonset() groups the input buttons into one but in doing so it creates icon on the input button
+    //the icon is created using checkboxradio() 
+    //to get rid of the icon a class "no-icon" is directly applied to input button and checkboxradio() is called again with option :- icon=false  
+    $(".no-icon").checkboxradio("option", "icon", false);
+    //this function only works after initialisation
   };
 
   _fillSelectionOptions(ops) {

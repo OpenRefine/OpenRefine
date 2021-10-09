@@ -68,12 +68,6 @@ public class ParseHtmlTests extends RefineTest  {
     }
 
     @Test
-    public void serializeParseHtml() {
-        String json = "{\"description\":\"Parses a string as HTML\",\"params\":\"string s\",\"returns\":\"HTML object\"}";
-        TestUtils.isSerializedTo(new ParseHtml(), json);
-    }
-    
-    @Test
     public void testParseHtml() {
         Assert.assertTrue(invoke("parseHtml") instanceof EvalError);
         Assert.assertTrue(invoke("parseHtml","h") instanceof org.jsoup.nodes.Document);

@@ -31,10 +31,5 @@ import org.testng.annotations.Test;
 import com.google.refine.util.TestUtils;
 
 public class MD5Tests {
-    @Test
-    public void serializeMD5() {
-        String json = "{\"description\":\"Returns the MD5 hash of s\",\"params\":\"string s\",\"returns\":\"string\"}";
-        TestUtils.isSerializedTo(new MD5(), json);
-    }
 }
 

@@ -34,12 +34,6 @@ import com.google.refine.util.TestUtils;
 
 public class JoinTests extends RefineTest {
     @Test
-    public void serializeJoin() {
-        String json = "{\"description\":\"Returns the string obtained by joining the array a with the separator sep\",\"params\":\"array a, string sep\",\"returns\":\"string\"}";
-        TestUtils.isSerializedTo(new Join(), json);
-    }
-
-    @Test
     public void joinArray() throws ParsingException {
         String[] test = {"[2,1,3].join('|')", "2|1|3"};
         parseEval(bindings, test);

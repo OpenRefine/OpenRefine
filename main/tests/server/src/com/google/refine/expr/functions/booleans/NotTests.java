@@ -31,10 +31,5 @@ import org.testng.annotations.Test;
 import com.google.refine.util.TestUtils;
 
 public class NotTests {
-    @Test
-    public void serializeNot() {
-        String json = "{\"description\":\"Returns the opposite of b\",\"params\":\"boolean b\",\"returns\":\"boolean\"}";
-        TestUtils.isSerializedTo(new Not(), json);
-    }
 }
 

@@ -35,6 +35,7 @@ package com.google.refine.importers;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
@@ -553,6 +554,96 @@ public class XmlImportUtilitiesTests extends RefineTest {
 
     }
 
+    /**
+     * Validates the output records data with Input as Xml containing whitespaces
+     * <p>
+     * Fix: Issue#1095 :: Open XML file from URL generates lots of empty lines
+     */
+    @Test
+    public void processRecordsFromXmlWithWhiteSpacesBeforeTagsTest() throws IOException {
+        loadData(_getXmlDataFromFile("xml-sample-format-1.xml"));
+        createXmlParser();
+        ParserSkip();
+        try {
+            SUT.processRecordWrapper(project, parser, columnGroup, false, false, false);
+        } catch (Exception e) {
+            Assert.fail("Failed to parse records from the given XML Data. Reason: " + e.getMessage(), e);
+        }
+        Assert.assertNotNull(project.rows, "Checks the record count of project");
+        Assert.assertEquals(project.rows.size(), 3, "Checks the number of records parsed from Xml");
+        Row row = project.rows.get(0);
+        Assert.assertNotNull(row, "Checks the row instance with index '0'");
+        Assert.assertEquals(row.cells.size(), 4, "Checks the row cells count");
+        Assert.assertNotNull(row.getCell(1), "Checks the cell instance at index '1'");
+        Assert.assertEquals(row.getCell(1).value, "author1", "Checks the value for 'author-name'");
+        Assert.assertNotNull(row.getCell(2), "Checks the cell instance at index '2'");
+        Assert.assertEquals(row.getCell(2).value, "a date", "Checks the value for 'author-dob'");
+    }
+
+    @Test
+    public void processRecordsFromComplexXmlWithTagsHavingWhitespaces() throws IOException {
+        loadData(_getXmlDataFromFile("xml-sample-format-2.xml"));
+        createXmlParser();
+        ParserSkip();
+        try {
+            SUT.processRecordWrapper(project, parser, columnGroup, false, false, false);
+        } catch (Exception e) {
+            Assert.fail("Failed to parse records from the given XML Data. Reason: " + e.getMessage(), e);
+        }
+        Assert.assertNotNull(project.rows, "Checks the record count of project");
+        Assert.assertEquals(project.rows.size(), 3, "Checks the number of records parsed from Xml");
+        Row row = project.rows.get(0);
+        Assert.assertNotNull(row, "Checks the row instance with index '0'");
+        Assert.assertEquals(row.cells.size(), 4, "Checks the row cells count");
+        Assert.assertNotNull(row.getCell(1), "Checks the cell instance at index '1'");
+        Assert.assertEquals(row.getCell(1).value, "author1", "Checks the value for first item");
+        Assert.assertNotNull(row.getCell(2), "Checks the cell instance at index '2'");
+        Assert.assertEquals(row.getCell(2).value, "a date", "Checks the value for 'author-dob'");
+    }
+
+    @Test
+    public void processRecordsFromXMLWithDataHavingWhitespaces() throws IOException {
+        loadData(_getXmlDataFromFile("xml-sample-format-3.xml"));
+        createXmlParser();
+        ParserSkip();
+        try {
+            SUT.processRecordWrapper(project, parser, columnGroup, false, false, false);
+        } catch (Exception e) {
+            Assert.fail("Failed to parse records from the given XML Data. Reason: " + e.getMessage(), e);
+        }
+        Assert.assertNotNull(project.rows, "Checks the record count of project");
+        Assert.assertEquals(project.rows.size(), 3, "Checks the number of records parsed from Xml");
+        Row row = project.rows.get(0);
+        Assert.assertNotNull(row, "Checks the row instance with index '0'");
+        Assert.assertEquals(row.cells.size(), 4, "Checks the row cells count");
+        Assert.assertNotNull(row.getCell(1), "Checks the cell instance at index '1'");
+        Assert.assertEquals(row.getCell(1).value.toString().substring(2, 9), "author1", "Checks the value for first item");
+        Assert.assertNotNull(row.getCell(2), "Checks the cell instance at index '2'");
+        Assert.assertEquals(row.getCell(2).value.toString().substring(2, 8), "a date", "Checks the value for 'author-dob'");
+
+    }
+
+    @Test
+    public void processRecordsFromComplexXmlStructure() throws IOException {
+        loadData(_getXmlDataFromFile("xml-sample-format-4.xml"));
+        createXmlParser();
+        ParserSkip();
+        try {
+            SUT.processRecordWrapper(project, parser, columnGroup, false, false, false);
+        } catch (Exception e) {
+            Assert.fail("Failed to parse records from the given XML Data. Reason: " + e.getMessage(), e);
+        }
+        Assert.assertNotNull(project.rows, "Checks the record count of project");
+        Assert.assertEquals(project.rows.size(), 50, "Checks the number of records parsed from Xml");
+        Row row = project.rows.get(0);
+        Assert.assertNotNull(row, "Checks the row instance with index '0'");
+        Assert.assertEquals(row.cells.size(), 14, "Checks the row cells count");
+        Assert.assertNotNull(row.getCell(1), "Checks the cell instance at index '1'");
+        Assert.assertEquals(row.getCell(1).value, "11", "Checks the value for 'pages'");
+        Assert.assertNotNull(row.getCell(2), "Checks the cell instance at index '2'");
+        Assert.assertEquals(row.getCell(2).value, "50", "Checks the value for 'per-page'");
+    }
+
     //----------------helpers-------------
     public void loadSampleXml(){
         loadData( XmlImporterTests.getSample() );
@@ -593,5 +684,12 @@ public class XmlImportUtilitiesTests extends RefineTest {
     public TreeReader createJsonParser(){
         parser = new JSONTreeReader(inputStream);
         return parser;
+    }
+
+    private String _getXmlDataFromFile(String fileName) throws IOException {
+        InputStream in = this.getClass().getClassLoader()
+                .getResourceAsStream(fileName);
+        String content = org.apache.commons.io.IOUtils.toString(in, "UTF-8");
+        return content;
     }
 }

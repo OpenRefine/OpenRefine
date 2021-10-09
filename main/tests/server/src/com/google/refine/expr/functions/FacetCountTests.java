@@ -31,10 +31,5 @@ import org.testng.annotations.Test;
 import com.google.refine.util.TestUtils;
 
 public class FacetCountTests {
-    @Test
-    public void serializeFacetCount() {
-        String json = "{\"description\":\"Returns the facet count corresponding to the given choice value\",\"params\":\"choiceValue, string facetExpression, string columnName\",\"returns\":\"number\"}";
-        TestUtils.isSerializedTo(new FacetCount(), json);
-    }
 }
 

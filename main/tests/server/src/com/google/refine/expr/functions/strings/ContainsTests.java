@@ -61,10 +61,5 @@ public class ContainsTests extends RefineTest {
         Assert.assertEquals(invoke("contains", value, Pattern.compile("\\s+")),true);
     }
 
-    @Test
-    public void serializeContains() {
-        String json = "{\"description\":\"Returns whether s contains frag\",\"params\":\"string s, string frag\",\"returns\":\"boolean\"}";
-        TestUtils.isSerializedTo(new Contains(), json);
-    }
 }
 

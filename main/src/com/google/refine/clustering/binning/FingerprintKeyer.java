@@ -34,26 +34,35 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package com.google.refine.clustering.binning;
 
 import java.text.Normalizer;
-import java.util.Iterator;
-import java.util.TreeSet;
 import java.util.regex.Pattern;
-
-import org.apache.commons.lang.StringUtils;
+import java.util.stream.Collectors;
 
 import com.google.common.collect.ImmutableMap;
 
+/**
+ * Fingerprint keyer where fingerprint is sorted list of unique words
+ * after case and diacritic folding and removing all punctuation. Word boundary
+ * is any whitespace character, while output key has words joined with a single
+ * ASCII space character.
+ *
+ */
 public class FingerprintKeyer extends Keyer {
 
-    // Punctuation and control characters (except for TAB which we need for split to work)
-    static final Pattern punctctrl = Pattern.compile("\\p{Punct}|[\\x00-\\x08\\x0A-\\x1F\\x7F]",
+    // Punctuation plus C0 & C1 controls (except for whitespace characters which we need for split to work)
+    // Added LF, VT, FF, CR, NEL to the control characters not stripped - tfm 2020-10-17
+    static final Pattern punctctrl =
+            Pattern.compile("\\p{Punct}|[\\x00-\\x08\\x0E-\\x1F\\x7F\\x80-\\x84\\x86-\\x9F]",
             Pattern.UNICODE_CHARACTER_CLASS);
 
     public static final Pattern DIACRITICS_AND_FRIENDS = Pattern
+            // Lm = modifier letter, Sk = modifier symbol
             .compile("[\\p{InCombiningDiacriticalMarks}\\p{IsLm}\\p{IsSk}]+");
 
+    private static final Pattern WHITESPACE = Pattern.compile("\\s+",
+            Pattern.UNICODE_CHARACTER_CLASS);
     // First part of table based on https://stackoverflow.com/a/1453284/167425 by Andreas Petersson
     private static final ImmutableMap<String, String> NONDIACRITICS = ImmutableMap.<String, String>builder()
-            //Replace non-diacritics as their equivalent characters
+            //Replace non-diacritics with their equivalent characters
             .put("ß", "ss")
             .put("æ", "ae")
             .put("ø", "oe")
@@ -63,6 +72,7 @@ public class FingerprintKeyer extends Keyer {
             .put("\u0111", "d") // Small letter D with stroke
             .put("\u0256", "d") // Small letter African D
             .put("\u00FE", "th") // Lower case Icelandic thorn þ
+            .put("ƿ","w") // Lower case Wynn from Old English modernly transliterated to w
             // Visually similar replacements from our private former asciify() method
             // (only need lower case forms since we're already downcased)
             .put("\u0127", "h") // small H with stroke
@@ -84,32 +94,32 @@ public class FingerprintKeyer extends Keyer {
         if (s == null || o !=null && o.length > 0) {
             throw new IllegalArgumentException("Fingerprint keyer accepts a single string parameter");
         }
-        s = s.trim(); // first off, remove whitespace around the string
-        s = s.toLowerCase(); // TODO: This is using the default locale. Is that what we want?
-        s = normalize(s);
-        s = punctctrl.matcher(s).replaceAll(""); // decomposition can generate punctuation so strip it after
-        String[] frags = StringUtils.split(s); // split by whitespace (excluding supplementary characters)
-        TreeSet<String> set = new TreeSet<String>();
-        for (String ss : frags) {
-            set.add(ss); // order fragments and dedupe
-        }
-        StringBuffer b = new StringBuffer();
-        Iterator<String> i = set.iterator();
-        while (i.hasNext()) {  // join ordered fragments back together
-            b.append(i.next());
-            if (i.hasNext()) {
-                b.append(' ');
-            }
-        }
-        return b.toString();
+        return WHITESPACE.splitAsStream(normalize(s, true)).sorted().distinct().collect(Collectors.joining(" "));
     }
 
     protected String normalize(String s) {
-        s = stripDiacritics(s);
-        s = stripNonDiacritics(s);
+        s = normalize(s, false); // letter transforms only for backward compatibility
         return s;
     }
 
+    protected String normalize(String s, boolean strong) {
+        if (strong) {
+            s = s.trim(); // first off, remove whitespace around the string
+            s = s.toLowerCase(); // TODO: This is using the default locale. Is that what we want?
+        }
+        s = stripDiacritics(s);
+        s = stripNonDiacritics(s);
+        if (strong) {
+            // TODO: Should these be converted to spaces instead of being removed?
+            s = punctctrl.matcher(s).replaceAll("");
+        }
+        return s;
+    }
+
+    /**
+     * @deprecated by tfmorris 2020-07-07 Use {@link #normalize(String)} or
+     *             {{@link #normalize(String, boolean)}
+     */
     @Deprecated
     protected String asciify(String s) {
         return normalize(s);
@@ -127,7 +137,7 @@ public class FingerprintKeyer extends Keyer {
         for (int i = 0; i < orig.length(); i++) {
             String source = orig.substring(i, i + 1);
             String replace = NONDIACRITICS.get(source);
-            result.append(replace == null ? String.valueOf(source) : replace);
+            result.append(replace == null ? source : replace);
         }
         return result.toString();
     }

@@ -36,12 +36,6 @@ import com.google.refine.util.TestUtils;
 
 public class StartsWithTests extends RefineTest {
     @Test
-    public void serializeStartsWith() {
-        String json = "{\"description\":\"Returns whether s starts with sub\",\"params\":\"string s, string sub\",\"returns\":\"boolean\"}";
-        TestUtils.isSerializedTo(new StartsWith(), json);
-    }
-
-    @Test
     public void testStartsWith() {
         assertTrue((Boolean) invoke("startsWith", "testString", "test"));
         assertFalse((Boolean) invoke("startsWith", "testString", "banana"));

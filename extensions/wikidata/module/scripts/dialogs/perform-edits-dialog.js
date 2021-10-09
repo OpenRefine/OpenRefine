@@ -53,7 +53,11 @@ PerformEditsDialog.launch = function(logged_in_username, max_severity) {
       "wikidata",
       "perform-wikibase-edits",
       {},
-      { summary: elmts.editSummary.val(), maxlag: elmts.maxlag.val() },
+      {
+        summary: elmts.editSummary.val(),
+        maxlag: elmts.maxlag.val(),
+        editGroupsUrlSchema: WikibaseManager.getSelectedWikibaseEditGroupsURLSchema()
+      },
       { includeEngine: true, cellsChanged: true, columnStatsChanged: true },
       { onDone: function() { dismiss(); } }
     );

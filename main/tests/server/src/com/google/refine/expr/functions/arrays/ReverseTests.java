@@ -34,12 +34,6 @@ import com.google.refine.util.TestUtils;
 
 public class ReverseTests extends RefineTest {
     @Test
-    public void serializeReverse() {
-        String json = "{\"description\":\"Reverses array a\",\"params\":\"array a\",\"returns\":\"array\"}";
-        TestUtils.isSerializedTo(new Reverse(), json);
-    }
-
-    @Test
     public void reverseJsonArray() throws ParsingException {
         String[] test = {"'[2,1,3]'.parseJson().reverse().toString()", "[3, 1, 2]"};
         parseEval(bindings, test);
