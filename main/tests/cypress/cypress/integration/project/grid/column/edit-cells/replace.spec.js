@@ -16,9 +16,8 @@ describe(__filename, function () {
     cy.get('.dialog-container input[bind="replacement_textInput"]').type("a");
     cy.confirmDialogPanel();
 
-    cy.get('.odd td:nth-child(5)').should('to.contain', 'a');
-    cy.get('.even td:nth-child(5)').should('to.contain', 'a');
-
-    cy.wait(400);
+    cy.assertCellEquals(0, 'b', 'a');
+    cy.assertCellEquals(1, 'b', 'a');
+    cy.assertCellEquals(2, 'b', 'a');
   });
 });

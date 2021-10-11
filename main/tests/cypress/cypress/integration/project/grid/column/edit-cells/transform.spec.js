@@ -12,13 +12,11 @@ describe(__filename, function () {
 
     cy.columnActionClick('b', ['Edit cells', 'Transform']);
 
-    cy.get('.dialog-container textarea[bind="expressionPreviewTextarea"]').type('replace(value,"change","a")');
-    cy.wait(400);
+    cy.typeExpression('replace(value,"change","a")');
     cy.confirmDialogPanel();
 
-    cy.get('.odd td:nth-child(5)').should('to.contain', 'a');
-    cy.get('.even td:nth-child(5)').should('to.contain', 'a');
-
-    cy.wait(400);
+    cy.assertCellEquals(0, 'b', 'a');
+    cy.assertCellEquals(1, 'b', 'a');
+    cy.assertCellEquals(2, 'b', 'a');
   });
 });
