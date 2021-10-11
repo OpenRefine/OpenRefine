@@ -409,3 +409,4 @@ Cypress.Commands.add(
     cy.get('#create-project-progress-message').contains('Done.');
   }
 );
+require('cypress-downloadfile/lib/downloadFileCommand');
