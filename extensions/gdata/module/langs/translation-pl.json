@@ -1,0 +1,18 @@
+{
+    "gdata-parsing/start-over": "&laquo;Zacznij od nowa",
+    "gdata-import/re-sign-in-another": "Zaloguj się za pomocą innego konta",
+    "gdata-parsing/create-proj": "Utwórz projekt &raquo;",
+    "gdata-parsing/updating-preview": "Aktualizacja podglądu …",
+    "gdata-import/title": "Publiczne dokumenty",
+    "gdata-import/next->": "Następny&raquo;",
+    "gdata-import/auth-doc": "Autoryzowane Dokumenty",
+    "gdata-import/please-signin": "Proszę zaloguj się i autoryzuj, aby otrzymać dostęp do twoich danych Google",
+    "gdata-import/preparing": "Przygotowanie…",
+    "gdata-import/creating": "Tworzenie projektu…",
+    "gdata-import/sign-in": "Zaloguj się",
+    "gdata-import/sign-out": "Wyloguj się",
+    "gdata-import/retrieving": "Pobieranie dokumentów Google Docs …",
+    "gdata-parsing/ignore-first": "Najpierw zignoruj",
+    "gdata-parsing/conf-pars": "Konfiguracja opcji parsowania",
+    "gdata-parsing/option": "Opcje"
+}
