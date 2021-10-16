@@ -15,7 +15,7 @@ describe(__filename, function () {
       .click();
 
     cy.get('.app-path-section').invoke('text').then((name)=>{
-      cy.readFile(`cypress/downloads/${name}.openrefine.tar.gz`).should('exist');
+      cy.readFile(`cypress/downloads/${name}.openrefine.tar.gz`).should('not.be.empty');
     });
 
   });
@@ -29,7 +29,7 @@ describe(__filename, function () {
       .click();
 
     cy.get('.app-path-section').invoke('text').then((name)=>{
-      cy.readFile(`cypress/downloads/${name}.tsv`).should('exist');
+      cy.readFile(`cypress/downloads/${name}.tsv`).should('not.be.empty');
     });
 
   });
@@ -43,7 +43,7 @@ describe(__filename, function () {
       .click();
 
     cy.get('.app-path-section').invoke('text').then((name)=>{
-      cy.readFile(`cypress/downloads/${name}.csv`).should('exist');
+      cy.readFile(`cypress/downloads/${name}.csv`).should('not.be.empty');
     });
 
   });
@@ -57,7 +57,7 @@ describe(__filename, function () {
       .click();
 
     cy.get('.app-path-section').invoke('text').then((name)=>{
-      cy.readFile(`cypress/downloads/${name}.html`).should('exist');
+      cy.readFile(`cypress/downloads/${name}.html`).should('not.be.empty');
     });
 
   });
@@ -71,7 +71,7 @@ describe(__filename, function () {
       .click();
 
     cy.get('.app-path-section').invoke('text').then((name)=>{
-      cy.readFile(`cypress/downloads/${name}.xls`).should('exist');
+      cy.readFile(`cypress/downloads/${name}.xls`).should('not.be.empty');
     });
 
   });
@@ -85,7 +85,7 @@ describe(__filename, function () {
       .click();
 
     cy.get('.app-path-section').invoke('text').then((name)=>{
-      cy.readFile(`cypress/downloads/${name}.xlsx`).should('exist');
+      cy.readFile(`cypress/downloads/${name}.xlsx`).should('not.be.empty');
     });
 
   });
@@ -99,7 +99,7 @@ describe(__filename, function () {
       .click();
 
     cy.get('.app-path-section').invoke('text').then((name)=>{
-      cy.readFile(`cypress/downloads/${name}.ods`).should('exist');
+      cy.readFile(`cypress/downloads/${name}.ods`).should('not.be.empty');
     });
 
   });
@@ -115,7 +115,7 @@ describe(__filename, function () {
     cy.get('button[bind="downloadButton"]').click();
 
     cy.get('.app-path-section').invoke('text').then((name)=>{
-      cy.readFile(`cypress/downloads/${name}.tsv`).should('exist');
+      cy.readFile(`cypress/downloads/${name}.tsv`).should('not.be.empty');
     });
 
   });
@@ -131,7 +131,7 @@ describe(__filename, function () {
     cy.get('button[bind="downloadButton"]').click();
 
     cy.get('.app-path-section').invoke('text').then((name)=>{
-      cy.readFile(`cypress/downloads/${name}.sql`).should('exist');
+      cy.readFile(`cypress/downloads/${name}.sql`).should('not.be.empty');
     });
 
   });
@@ -146,7 +146,7 @@ describe(__filename, function () {
     cy.get('button[bind="exportButton"]').click();
 
     cy.get('.app-path-section').invoke('text').then((name)=>{
-      cy.readFile(`cypress/downloads/${name}.txt`).should('exist');
+      cy.readFile(`cypress/downloads/${name}.txt`).should('not.be.empty');
     });
 
   });
