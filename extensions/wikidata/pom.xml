@@ -16,7 +16,7 @@
 
   <properties>
     <powermock.version>2.0.9</powermock.version>
-    <wdtk.version>0.12.0-SNAPSHOT</wdtk.version>
+    <wdtk.version>0.12.1</wdtk.version>
   </properties>
 
   <build>
