@@ -27,7 +27,11 @@ import static org.testng.Assert.assertEquals;
 
 import java.io.LineNumberReader;
 
+import java.util.Properties;
+
+import com.google.refine.process.ProcessManager;
 import org.openrefine.wikidata.testing.TestingData;
+import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
@@ -36,6 +40,7 @@ import com.google.refine.history.Change;
 import com.google.refine.model.AbstractOperation;
 import com.google.refine.model.Recon;
 import com.google.refine.util.ParsingUtilities;
+import com.google.refine.process.Process;
 
 public class PerformWikibaseEditsOperationTest extends OperationTest {
 
@@ -82,4 +87,22 @@ public class PerformWikibaseEditsOperationTest extends OperationTest {
         assertEquals(changeString, saveChange(change));
     }
 
+    @Test
+    public void testCreateProcess()
+            throws Exception{
+        PerformWikibaseEditsOperation operation = new PerformWikibaseEditsOperation(EngineConfig.reconstruct("{}"), "test", 5, "");
+        project.rows.get(0).cells.set(0, TestingData.makeNewItemCell(12345, "new item haha"));
+        Properties prob = new Properties();
+        Process process = operation.createProcess(project, prob);
+        assertEquals(process.getId(),process.hashCode());
+        ProcessManager pm = project.getProcessManager();
+        process.startPerforming(pm);
+        Assert.assertTrue(process.isRunning());
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            Assert.fail("Test interrupted");
+        }
+        Assert.assertFalse(process.isRunning());
+    }
 }
