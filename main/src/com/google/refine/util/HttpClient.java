@@ -62,13 +62,13 @@ public class HttpClient {
         // Create a connection manager with a custom socket timeout
         PoolingHttpClientConnectionManager connManager = new PoolingHttpClientConnectionManager();
         final SocketConfig socketConfig = SocketConfig.custom()
-            .setSoTimeout(10, TimeUnit.SECONDS)
+            .setSoTimeout(60, TimeUnit.SECONDS)
             .build();
         connManager.setDefaultSocketConfig(socketConfig);
 
         defaultRequestConfig = RequestConfig.custom()
-                .setConnectTimeout(30, TimeUnit.SECONDS)
-                .setConnectionRequestTimeout(30, TimeUnit.SECONDS) // TODO: 60 seconds in some places in old code
+                .setConnectTimeout(60, TimeUnit.SECONDS)
+                .setConnectionRequestTimeout(60, TimeUnit.SECONDS)
                 .build();
 
         httpClientBuilder = HttpClients.custom()
