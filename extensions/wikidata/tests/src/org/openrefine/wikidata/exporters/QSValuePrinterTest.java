@@ -92,25 +92,25 @@ public class QSValuePrinterTest {
 
     @Test
     public void printSimpleQuantityValue() {
-        assertPrints("10.00", Datamodel.makeQuantityValue(new BigDecimal("10.00"), null, null, "1"));
+        assertPrints("10.00", Datamodel.makeQuantityValue(new BigDecimal("10.00")));
     }
 
     @Test
     public void printQuantityValueWithUnit() {
-        assertPrints("10.00U11573", Datamodel.makeQuantityValue(new BigDecimal("10.00"), null, null,
-                "http://www.wikidata.org/entity/Q11573"));
+        assertPrints("10.00U11573", Datamodel.makeQuantityValue(new BigDecimal("10.00"),
+                Datamodel.makeWikidataItemIdValue("Q11573")));
     }
 
     @Test
     public void printQuantityValueWithBounds() {
         assertPrints("10.00[9.0,11.05]", Datamodel.makeQuantityValue(new BigDecimal("10.00"), new BigDecimal("9.0"),
-                new BigDecimal("11.05"), "1"));
+                new BigDecimal("11.05")));
     }
 
     @Test
     public void printFullQuantity() {
         assertPrints("10.00[9.0,11.05]U11573", Datamodel.makeQuantityValue(new BigDecimal("10.00"),
-                new BigDecimal("9.0"), new BigDecimal("11.05"), "http://www.wikidata.org/entity/Q11573"));
+                new BigDecimal("9.0"), new BigDecimal("11.05"), Datamodel.makeWikidataItemIdValue("Q11573")));
     }
 
     // String values
