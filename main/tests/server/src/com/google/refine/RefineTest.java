@@ -72,6 +72,8 @@ import com.google.refine.model.Column;
 import com.google.refine.model.ModelException;
 import com.google.refine.model.Project;
 import com.google.refine.model.Row;
+import com.google.refine.process.Process;
+import com.google.refine.process.ProcessManager;
 import com.google.refine.util.TestUtils;
 
 import edu.mit.simile.butterfly.ButterflyModule;
@@ -374,5 +376,20 @@ public class RefineTest extends PowerMockTestCase {
         ButterflyModule coreModule = mock(ButterflyModule.class);
         when(coreModule.getName()).thenReturn("core");
         return coreModule;
+    }
+
+    protected void runAndWait(ProcessManager processManager, Process process, int timeout) {
+        process.startPerforming(processManager);
+        Assert.assertTrue(process.isRunning());
+        int time = 0;
+        try {
+            while (process.isRunning() && time < timeout) {
+                Thread.sleep(200);
+                time += 200;
+            }
+        } catch (InterruptedException e) {
+            Assert.fail("Test interrupted");
+        }
+        Assert.assertFalse(process.isRunning(),"Process failed to complete within timeout " + timeout);
     }
 }

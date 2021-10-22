@@ -102,7 +102,6 @@ In the event of any conflict of interest (a Committee Member, their family membe
 
 #### Current list of Advisory Committee members
 * Martin Magdinier
-* Thad Guidry 
 * Antonin Delpeuch. 
 
 ## Code For Science and Society 
