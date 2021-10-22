@@ -132,16 +132,6 @@ jobs:
         with:
           node-version: '12'
 
-      - name: Install Edge
-        if: matrix.browser == 'edge'
-        run: |
-          sudo curl https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > microsoft.gpg
-          sudo install -o root -g root -m 644 microsoft.gpg /etc/apt/trusted.gpg.d/
-          sudo sh -c 'echo "deb [arch=amd64] https://packages.microsoft.com/repos/edge stable main" > /etc/apt/sources.list.d/microsoft-edge-dev.list'
-          sudo rm microsoft.gpg
-          sudo apt-get update
-          sudo apt-get install microsoft-edge-dev
-
       - name: Restore Tests dependency cache
         uses: actions/cache@v2.1.6
         with:

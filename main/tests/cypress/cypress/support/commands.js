@@ -138,7 +138,7 @@ Cypress.Commands.add('visitOpenRefine', (options) => {
 });
 
 Cypress.Commands.add('createProjectThroughUserInterface', (fixtureFile) => {
-  cy.navigateTo('Create Project');
+  cy.navigateTo('Create project');
 
   const uploadFile = { filePath: fixtureFile, mimeType: 'application/csv' };
   cy.get(
@@ -249,7 +249,7 @@ Cypress.Commands.add('assertGridEquals', (values) => {
 });
 
 /**
- * Navigate to one of the entries of the main left menu of OpenRefine (Create Project, Open Project, Import Project, Language Settings)
+ * Navigate to one of the entries of the main left menu of OpenRefine (Create project, Open Project, Import Project, Language Settings)
  */
 Cypress.Commands.add('navigateTo', (target) => {
   cy.get('#action-area-tabs li').contains(target).click();
@@ -349,6 +349,7 @@ Cypress.Commands.add(
 );
 
 Cypress.Commands.add('assertNotificationContainingText', (text) => {
+  cy.get('#notification-container').should('be.visible');
   cy.get('#notification').should('be.visible').should('to.contain', text);
 });
 
@@ -376,7 +377,7 @@ Cypress.Commands.add(
   'loadAndVisitSampleJSONProject',
   (projectName, fixture) => {
     cy.visitOpenRefine();
-    cy.navigateTo('Create Project');
+    cy.navigateTo('Create project');
     cy.get('#create-project-ui-source-selection-tabs > div')
       .contains('Clipboard')
       .click();
@@ -403,7 +404,7 @@ Cypress.Commands.add(
     // wait for preview and click next to create the project
     cy.get('div[bind="dataPanel"] table.data-table').should('to.exist');
     cy.get('.default-importing-wizard-header button[bind="nextButton"]')
-      .contains('Create Project »')
+      .contains('Create project »')
       .click();
     cy.get('#create-project-progress-message').contains('Done.');
   }

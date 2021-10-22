@@ -179,6 +179,8 @@ Cypress execution can be configured with environment variables, they can be decl
 Available variables are
 
 - OPENREFINE_URL, determine on which scheme://url:port to access OpenRefine, default to http://localhost:333
+- DISABLE_PROJECT_CLEANUP, If set to 1, projects will not be deleted after each run. Default to 0 to keep the OpenRefine instance clean
+
 
 Cypress contains [exaustive documentation](https://docs.cypress.io/guides/guides/environment-variables.html#Setting) about configuration, but here are two simple ways to configure the execution of the tests:
 
