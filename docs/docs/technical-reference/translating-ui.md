@@ -1,5 +1,5 @@
 ---
-id: translating
+id: translating-ui
 title: Translate OpenRefine's interface
 sidebar_label: Translate OpenRefine's interface
 ---

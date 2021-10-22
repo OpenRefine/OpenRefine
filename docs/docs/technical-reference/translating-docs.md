@@ -1,5 +1,5 @@
 ---
-id: translating
+id: translating-docs
 title: Translate OpenRefine's documentation
 sidebar_label: Translate OpenRefine's documentation
 ---
