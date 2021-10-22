@@ -133,6 +133,30 @@ public class QuickStatementsExporterTest extends WikidataRefineTest {
 
         assertEquals("Q1377\tP38\tQ865528\tP38\tQ1377\n", export(update));
     }
+    
+    @Test
+    public void testSomeValue()
+            throws IOException {
+        PropertyIdValue pid = Datamodel.makeWikidataPropertyIdValue("P123");
+        Claim claim = Datamodel.makeClaim(qid1, Datamodel.makeSomeValueSnak(pid), Collections.emptyList());
+        Statement statement = Datamodel.makeStatement(claim, Collections.emptyList(), StatementRank.NORMAL, "");
+
+        ItemUpdate update = new ItemUpdateBuilder(qid1).addStatement(statement).build();
+
+        assertEquals("Q1377\tP123\tsomevalue\n", export(update));
+    }
+    
+    @Test
+    public void testNoValue()
+            throws IOException {
+        PropertyIdValue pid = Datamodel.makeWikidataPropertyIdValue("P123");
+        Claim claim = Datamodel.makeClaim(qid1, Datamodel.makeNoValueSnak(pid), Collections.emptyList());
+        Statement statement = Datamodel.makeStatement(claim, Collections.emptyList(), StatementRank.NORMAL, "");
+
+        ItemUpdate update = new ItemUpdateBuilder(qid1).addStatement(statement).build();
+
+        assertEquals("Q1377\tP123\tnovalue\n", export(update));
+    }
 
     /**
      * issue #2320
