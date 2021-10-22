@@ -73,7 +73,7 @@ public class PointerExtractorTest {
         assertEmpty(Datamodel.makeMonolingualTextValue("srtu", "en"));
         assertEmpty(Datamodel.makeWikidataPropertyIdValue("P78"));
         assertEmpty(Datamodel.makeQuantityValue(new BigDecimal("898")));
-        assertEmpty(Datamodel.makeQuantityValue(new BigDecimal("7.87"), "http://www.wikidata.org/entity/Q34"));
+        assertEmpty(Datamodel.makeQuantityValue(new BigDecimal("7.87"), Datamodel.makeWikidataItemIdValue("Q34")));
         assertEmpty(Datamodel.makeTimeValue(1898, (byte) 2, (byte) 3, TimeValue.CM_GREGORIAN_PRO));
         assertEmpty(mock(UnsupportedValue.class));
     }
