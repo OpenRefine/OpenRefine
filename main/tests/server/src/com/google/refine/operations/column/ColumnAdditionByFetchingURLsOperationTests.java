@@ -121,20 +121,9 @@ public class ColumnAdditionByFetchingURLsOperationTests extends RefineTest {
     private void runAndWait(EngineDependentOperation op, int timeout) throws Exception {
         ProcessManager pm = project.getProcessManager();
         Process process = op.createProcess(project, options);
-        process.startPerforming(pm);
-        Assert.assertTrue(process.isRunning());
-        int time = 0;
-        try {
-            while (process.isRunning() && time < timeout) {
-                Thread.sleep(200);
-                time += 200;
-            }
-        } catch (InterruptedException e) {
-            Assert.fail("Test interrupted");
-        }
-        Assert.assertFalse(process.isRunning(),"Process failed to complete within timeout " + timeout);
+        runAndWait(pm, process, timeout);
     }
-
+    
     @Test
     public void serializeColumnAdditionByFetchingURLsOperation() throws Exception {
         TestUtils.isSerializedTo(ParsingUtilities.mapper.readValue(json, ColumnAdditionByFetchingURLsOperation.class), json);
