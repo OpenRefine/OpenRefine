@@ -25,6 +25,7 @@
     <windows.package.jre.directory>null</windows.package.jre.directory>
     <windows.package.jre.outputDirectory>jre</windows.package.jre.outputDirectory>
     <windows.package.jre.prefix></windows.package.jre.prefix>
+    <windows.package.jre.bundledAsFallback>false</windows.package.jre.bundledAsFallback>
   </properties>
 
   <profiles>
@@ -214,7 +215,7 @@
               <jre>
                 <path>${windows.package.jre.path}</path>
                 <minVersion>1.8.0</minVersion>
-                <bundledJreAsFallback>true</bundledJreAsFallback>
+                <bundledJreAsFallback>${windows.package.jre.bundledAsFallback}</bundledJreAsFallback>
                 <initialHeapSize>512</initialHeapSize>
                 <maxHeapSize>2048</maxHeapSize>
                 <opts>
