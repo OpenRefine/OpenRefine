@@ -306,8 +306,8 @@ tools_prepare() {
 mvn_prepare() {
     tools_prepare
 
-    MVN_VERSION="3.6.3"
-    MVN_URL="https://www-us.apache.org/dist/maven/maven-3/${MVN_VERSION}/binaries/apache-maven-${MVN_VERSION}-bin.tar.gz"
+    MVN_VERSION="3.8.3"
+    MVN_URL="https://dlcdn.apache.org/maven/maven-3/${MVN_VERSION}/binaries/apache-maven-${MVN_VERSION}-bin.tar.gz"
     MVN_FILE=`echo $MVN_URL | sed 's|.*/||'`
     MVN_DIR="apache-maven-${MVN_VERSION}"
 
@@ -526,7 +526,7 @@ ui_tests() {
     # Cypress needs a unique group id
     # We're hashing the list of files to generate such Group Id
     CYPRESS_GROUP=$(echo $CYPRESS_BROWSER$CYPRESS_SPECS | shasum)
-    CYPRESS_RUN_CMD="yarn --cwd ./main/tests/cypress run cypress run --spec "$CYPRESS_SPECS" --browser $CYPRESS_BROWSER --group "$CYPRESS_GROUP" --headless --quiet --reporter list --env OPENREFINE_URL=http://$REFINE_HOST_INTERNAL:$REFINE_PORT"
+    CYPRESS_RUN_CMD="yarn --cwd ./main/tests/cypress run cypress run --spec "$CYPRESS_SPECS" --browser $CYPRESS_BROWSER --group "$CYPRESS_GROUP" --headless --quiet --reporter list --env DISABLE_PROJECT_CLEANUP=1,OPENREFINE_URL=http://$REFINE_HOST_INTERNAL:$REFINE_PORT"
     if [ "$CYPRESS_RECORD" = "1" ] ; then
         # if tests are recorded, project id is added to env vars, and --record flag is added to the cmd-line
         export CYPRESS_PROJECT_ID=$CYPRESS_PROJECT_ID

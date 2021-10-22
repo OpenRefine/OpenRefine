@@ -7,6 +7,7 @@ import org.wikidata.wdtk.datamodel.interfaces.Snak;
 import org.wikidata.wdtk.datamodel.interfaces.SnakGroup;
 import org.wikidata.wdtk.datamodel.interfaces.Statement;
 import org.wikidata.wdtk.datamodel.interfaces.Value;
+import org.wikidata.wdtk.datamodel.interfaces.ValueSnak;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -35,11 +36,14 @@ public class ItemRequiresScrutinizer extends EditScrutinizer {
             this.itemList = new ArrayList<>();
             for(SnakGroup group : specs) {
                 for (Snak snak : group.getSnaks()) {
+                    if (! (snak instanceof ValueSnak)) {
+                        continue;
+                    }
                     if (group.getProperty().getId().equals(itemRequiresPropertyPid)){
-                        pid = (PropertyIdValue) snak.getValue();
+                        pid = (PropertyIdValue) ((ValueSnak)snak).getValue();
                     }
                     if (group.getProperty().getId().equals(itemOfPropertyConstraintPid)){
-                        this.itemList.add(snak.getValue());
+                        this.itemList.add(((ValueSnak)snak).getValue());
                     }
                 }
             }
@@ -60,10 +64,11 @@ public class ItemRequiresScrutinizer extends EditScrutinizer {
     public void scrutinize(ItemUpdate update) {
         Map<PropertyIdValue, Set<Value>> propertyIdValueValueMap = new HashMap<>();
         for (Statement statement : update.getAddedStatements()) {
-            PropertyIdValue pid = statement.getClaim().getMainSnak().getPropertyId();
-            Value value = statement.getClaim().getMainSnak().getValue();
+            Snak mainSnak = statement.getClaim().getMainSnak();
+            PropertyIdValue pid = mainSnak.getPropertyId();
             Set<Value> values;
-            if (value != null) {
+            if (mainSnak instanceof ValueSnak) {
+                Value value = ((ValueSnak)mainSnak).getValue();
                 if (propertyIdValueValueMap.containsKey(pid)) {
                     values = propertyIdValueValueMap.get(pid);
                 } else {
