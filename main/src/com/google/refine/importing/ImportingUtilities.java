@@ -45,6 +45,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.nio.charset.Charset;
+import java.nio.file.Path;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -53,6 +54,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.stream.Collectors;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
@@ -75,7 +77,6 @@ import org.apache.hc.core5.http.ContentType;
 import org.apache.hc.core5.http.HttpEntity;
 import org.apache.hc.core5.http.HttpStatus;
 import org.apache.hc.core5.http.io.HttpClientResponseHandler;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -89,7 +90,6 @@ import com.google.refine.model.Project;
 import com.google.refine.util.HttpClient;
 import com.google.refine.util.JSONUtilities;
 import com.google.refine.util.ParsingUtilities;
-import java.util.stream.Collectors;
 
 public class ImportingUtilities {
     final static protected Logger logger = LoggerFactory.getLogger("importing-utilities");
@@ -444,17 +444,20 @@ public class ImportingUtilities {
         }
         
         File file = new File(dir, name);
+        Path normalizedFile = file.toPath().normalize();
         // For CVE-2018-19859, issue #1840
-        if (!file.toPath().normalize().startsWith(dir.toPath().normalize() + File.separator)) {
+        if (!normalizedFile.startsWith(dir.toPath().normalize() + File.separator)) {
             throw new IllegalArgumentException("Zip archives with files escaping their root directory are not allowed.");
         }
         
-        int dot = name.lastIndexOf('.');
-        String prefix = dot < 0 ? name : name.substring(0, dot);
-        String suffix = dot < 0 ? "" : name.substring(dot);
+        Path normalizedParent = normalizedFile.getParent();
+        String fileName = normalizedFile.getFileName().toString();
+        int dot = fileName.lastIndexOf('.');
+        String prefix = dot < 0 ? fileName : fileName.substring(0, dot);
+        String suffix = dot < 0 ? "" : fileName.substring(dot);
         int index = 2;
         while (file.exists()) {
-            file = new File(dir, prefix + "-" + index++ + suffix);
+            file = normalizedParent.resolve(prefix + "-" + index++ + suffix).toFile();
         }
         
         file.getParentFile().mkdirs();
