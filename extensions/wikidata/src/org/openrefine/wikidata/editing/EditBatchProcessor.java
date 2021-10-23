@@ -239,7 +239,7 @@ public class EditBatchProcessor {
                 Thread.sleep(sleepTime);
             }
         }
-        if (currentDocs == null) {
+        if (currentDocs == null && !qidsToFetch.isEmpty()) {
             logger.warn("Giving up on fetching documents to edit. Skipping "+remainingEdits()+" remaining edits.");
             globalCursor = scheduled.size();
         }
