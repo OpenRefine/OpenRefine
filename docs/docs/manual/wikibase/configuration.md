@@ -56,7 +56,7 @@ Here is the manifest of Wikidata:
     "registration_page": "https://meta.wikimedia.org/wiki/Special:OAuthConsumerRegistration/propose"
   },
   "reconciliation": {
-    "endpoint": "https://wdreconcile.toolforge.org/${lang}/api"
+    "endpoint": "https://wikidata.reconci.link/${lang}/api"
   },
   "editgroups": {
     "url_schema": "([[:toollabs:editgroups/b/OR/${batch_id}|details]])"
@@ -132,7 +132,7 @@ The Wikibase instance must have at least a reconciliation service endpoint linke
 
 ##### endpoint {#endpoint}
 
-The default reconciliation service endpoint of the Wikibase instance. The endpoint must contain the "${lang}" variable such as "https://wdreconcile.toolforge.org/${lang}/api", since the reconciliation service is expected to work for different languages.
+The default reconciliation service endpoint of the Wikibase instance. The endpoint must contain the "${lang}" variable such as "https://wikidata.reconci.link/${lang}/api", since the reconciliation service is expected to work for different languages.
 
 #### editgroups {#editgroups}
 

@@ -72,7 +72,7 @@ public class ParseXmlTests extends RefineTest {
         Assert.assertTrue(invoke("parseXml") instanceof EvalError);
         Assert.assertTrue(invoke("parseXml","x") instanceof org.jsoup.nodes.Document);
         Assert.assertTrue(invoke("select",Jsoup.parse(x,"",Parser.xmlParser()),"foaf|Person") instanceof org.jsoup.select.Elements);
-        Assert.assertEquals(invoke("innerXml",Jsoup.parse(x,"",Parser.xmlParser()).select("foaf|Person").first()),"<foaf:name>\n John Doe\n</foaf:name>\n<head>\n head1\n</head>\n<head>\n head2\n</head>\n<BODY>\n body1\n</BODY>\n<foaf:homepage rdf:resource=\"http://www.example.com\" />");
+        Assert.assertEquals(invoke("innerXml",Jsoup.parse(x,"",Parser.xmlParser()).select("foaf|Person").first()),"<foaf:name>John Doe</foaf:name>\n<head>head1</head>\n<head>head2</head>\n<BODY>body1</BODY>\n<foaf:homepage rdf:resource=\"http://www.example.com\" />");
         Assert.assertEquals(invoke("xmlAttr",Jsoup.parse(x,"",Parser.xmlParser()).select("foaf|homepage").first(),"rdf:resource"),"http://www.example.com");
         Assert.assertEquals(invoke("ownText",Jsoup.parse(x,"",Parser.xmlParser()).select("BODY").first()),"body1");
         Assert.assertEquals(invoke("xmlText",Jsoup.parse(x,"",Parser.xmlParser()).select("foaf|Person").first()),"John Doe head1 head2 body1");

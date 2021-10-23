@@ -105,6 +105,9 @@ function process(path, request, response) {
     context.state = request.getParameter("state");
     
     (function() {
+      if (Packages.com.google.refine.extension.gdata.TokenCookie.getToken(request) !== null) {
+          return;
+      }
       var tokenAndExpiresInSeconds =  Packages.com.google.refine.extension.gdata.GoogleAPIExtension.getTokenFromCode(module,request);
       if (tokenAndExpiresInSeconds) {
         var tokenInfo = tokenAndExpiresInSeconds.split(",");
