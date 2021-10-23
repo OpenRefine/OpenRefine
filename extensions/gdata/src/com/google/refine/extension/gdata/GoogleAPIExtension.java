@@ -21,7 +21,7 @@ import com.google.api.client.http.HttpRequestInitializer;
 import com.google.api.client.http.HttpTransport;
 import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.json.JsonFactory;
-import com.google.api.client.json.jackson2.JacksonFactory;
+import com.google.api.client.json.gson.GsonFactory;
 import com.google.api.services.drive.Drive;
 import com.google.api.services.drive.DriveScopes;
 import com.google.api.services.sheets.v4.Sheets;
@@ -46,7 +46,7 @@ abstract public class GoogleAPIExtension {
     protected static final HttpTransport HTTP_TRANSPORT = new NetHttpTransport();
 
     /** Global instance of the JSON factory. */
-    protected static final JsonFactory JSON_FACTORY = new JacksonFactory();
+    protected static final JsonFactory JSON_FACTORY = new GsonFactory();
 
     private static final String[] SCOPES = {DriveScopes.DRIVE, SheetsScopes.SPREADSHEETS};
     
