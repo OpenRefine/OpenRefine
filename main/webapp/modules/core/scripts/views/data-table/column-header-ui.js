@@ -180,6 +180,37 @@ DataTableColumnHeaderUI.prototype._createMenuForColumnHeader = function(elmt) {
             }
             self._dataTableView.render();
           }
+        },
+        {
+          label: $.i18n('core-views/expand-other'),
+          click: function() {
+            var collapsedColumnNames = {};
+            for (var i = 0; i < theProject.columnModel.columns.length; i++) {
+              if (i != self._columnIndex) {
+                delete collapsedColumnNames[theProject.columnModel.columns[i].name];
+              }
+            }
+            self._dataTableView._collapsedColumnNames = [];
+            self._dataTableView.render();
+          }
+        },
+        {
+          label: $.i18n('core-views/expand-left'),
+          click: function() {
+            for (var i = 0; i < self._columnIndex; i++) {
+              delete self._dataTableView._collapsedColumnNames[theProject.columnModel.columns[i].name];
+            }
+            self._dataTableView.render();
+          }
+        },
+        {
+          label: $.i18n('core-views/expand-right'),
+          click: function() {
+            for (var i = self._columnIndex + 1; i < theProject.columnModel.columns.length; i++) {
+              delete self._dataTableView._collapsedColumnNames[theProject.columnModel.columns[i].name];
+            }
+            self._dataTableView.render();
+          }
         }
       ]
     },
