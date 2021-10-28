@@ -79,8 +79,7 @@ public class FacetCount implements Function {
 
             return grouper.getChoiceValueCountMultiple(choiceValue);
         }
-        return new EvalError(ControlFunctionRegistry.getFunctionName(this) + 
-            " expects a choice value, an expression as a string, and a column name");
+        return new EvalError(ControlFunctionRegistry.getFunctionName(this) + "() cannot work with this '" + new Type().call(bindings, args) + "' and expects a choice value, an expression as a string, and a column name");
     }
 
     @Override

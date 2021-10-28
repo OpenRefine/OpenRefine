@@ -37,6 +37,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.util.Properties;
 
+import com.google.refine.expr.functions.Type;
 import org.apache.commons.text.StringEscapeUtils;
 
 import com.google.refine.expr.EvalError;
@@ -66,7 +67,7 @@ public class Unescape implements Function {
                         return URLDecoder.decode(s,"UTF-8");
                     } catch (UnsupportedEncodingException e) {}
                 } else {
-                    return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " does not recognize mode '" + mode + "'.");
+                    return new EvalError(ControlFunctionRegistry.getFunctionName(this) + "() cannot work with this '" + new Type().call(bindings, args) + "' and does not recognize mode '" + mode + "'.");
                 }
             }
         }

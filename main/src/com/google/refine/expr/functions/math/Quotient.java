@@ -36,6 +36,7 @@ package com.google.refine.expr.functions.math;
 import java.util.Properties;
 
 import com.google.refine.expr.EvalError;
+import com.google.refine.expr.functions.Type;
 import com.google.refine.grel.ControlFunctionRegistry;
 import com.google.refine.grel.Function;
 
@@ -47,7 +48,7 @@ public class Quotient implements Function {
                 && args[1] != null && args[1] instanceof Number) {
             return Math.floor((((Number) args[0]).doubleValue() / ((Number) args[1]).doubleValue()));
         }
-        return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects two numbers");
+        return new EvalError(ControlFunctionRegistry.getFunctionName(this) + "() cannot work with this '" + new Type().call(bindings, args) + "' and expects two numbers");
     }
 
     @Override

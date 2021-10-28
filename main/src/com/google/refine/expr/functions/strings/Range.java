@@ -31,6 +31,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import com.google.refine.expr.EvalError;
+import com.google.refine.expr.functions.Type;
 import com.google.refine.grel.ControlFunctionRegistry;
 import com.google.refine.grel.Function;
 
@@ -66,8 +67,8 @@ public class Range implements Function {
             return createRangeWithThreeGivenArguments(args);
         }
 
-        return new EvalError(ControlFunctionRegistry.getFunctionName(this) 
-                + " expects a string of the form 'a, b, c' or integers a, b, c where a and b "
+        return new EvalError(ControlFunctionRegistry.getFunctionName(this)
+                + "() cannot work with this '" + new Type().call(bindings, args) + "' and expects a string of the form 'a, b, c' or integers a, b, c where a and b "
                 + "are the start and the end of the range respectively and c is the step (increment)");
     }
 

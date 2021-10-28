@@ -67,7 +67,7 @@ public class Type implements Function {
             }
             return "undefined";
         }
-        return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects one argument");
+        return new EvalError(ControlFunctionRegistry.getFunctionName(this) + "() cannot work with this '" + new Type().call(bindings, args) + "' and expects one argument");
     }
 
     @Override

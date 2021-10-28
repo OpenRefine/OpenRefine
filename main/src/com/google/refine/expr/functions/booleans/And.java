@@ -36,6 +36,7 @@ package com.google.refine.expr.functions.booleans;
 import java.util.Properties;
 
 import com.google.refine.expr.EvalError;
+import com.google.refine.expr.functions.Type;
 import com.google.refine.grel.ControlFunctionRegistry;
 import com.google.refine.grel.Function;
 
@@ -51,7 +52,7 @@ public class And implements Function {
             }
             return true;
         }
-        return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects two or more booleans");
+        return new EvalError(ControlFunctionRegistry.getFunctionName(this) + "() cannot work with this '" + new Type().call(bindings, args) + "' and expects two or more booleans");
     }
 
     @Override

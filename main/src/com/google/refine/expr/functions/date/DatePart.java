@@ -44,6 +44,7 @@ import java.util.Properties;
 import java.util.TimeZone;
 
 import com.google.refine.expr.EvalError;
+import com.google.refine.expr.functions.Type;
 import com.google.refine.grel.ControlFunctionRegistry;
 import com.google.refine.grel.Function;
 
@@ -65,7 +66,7 @@ public class DatePart implements Function {
                 return getPart((OffsetDateTime) args[0], part);
             }
         }
-        return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects a date and a string");
+        return new EvalError(ControlFunctionRegistry.getFunctionName(this) + "() cannot work with this '" + new Type().call(bindings, args) + "' and expects a date and a string");
     }
     
     private Object getPart(OffsetDateTime offsetDateTime, String part) {

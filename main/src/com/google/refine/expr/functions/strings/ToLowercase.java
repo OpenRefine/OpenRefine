@@ -36,6 +36,7 @@ package com.google.refine.expr.functions.strings;
 import java.util.Properties;
 
 import com.google.refine.expr.EvalError;
+import com.google.refine.expr.functions.Type;
 import com.google.refine.grel.ControlFunctionRegistry;
 import com.google.refine.grel.Function;
 
@@ -47,7 +48,7 @@ public class ToLowercase implements Function {
             Object o = args[0];
             return (o instanceof String ? (String) o : o.toString()).toLowerCase();
         }
-        return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects a string");
+        return new EvalError(ControlFunctionRegistry.getFunctionName(this) + "() cannot work with this '" + new Type().call(bindings, args) + "' and expects a string");
     }
     
     @Override

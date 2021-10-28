@@ -35,6 +35,7 @@ package com.google.refine.expr.functions.xml;
 
 import java.util.Properties;
 
+import com.google.refine.expr.functions.Type;
 import org.jsoup.Jsoup;
 import org.jsoup.parser.Parser;
 
@@ -58,11 +59,11 @@ public class ParseXml implements Function {
                 } else if (mode.equals("xml")) {
                     return Jsoup.parse(o1.toString(), "",Parser.xmlParser());
                 } else {
-                    return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " unable to identify which parser to use");
+                    return new EvalError(ControlFunctionRegistry.getFunctionName(this) + "() cannot work with this '" + new Type().call(bindings, args) + "' because unable to identify which parser to use");
                 }
             }
         }
-        return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects a single String as an argument");
+        return new EvalError(ControlFunctionRegistry.getFunctionName(this) + "() cannot work with this '" + new Type().call(bindings, args) + "' and expects a single String as an argument");
     }
 
 

@@ -36,6 +36,7 @@ package com.google.refine.expr.functions.math;
 import java.util.Properties;
 
 import com.google.refine.expr.EvalError;
+import com.google.refine.expr.functions.Type;
 import com.google.refine.grel.ControlFunctionRegistry;
 import com.google.refine.grel.Function;
 
@@ -44,13 +45,13 @@ public class FactN implements Function {
     @Override
     public Object call(Properties bindings, Object[] args) {
         if (args.length != 2) {
-            return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects two numbers");
+            return new EvalError(ControlFunctionRegistry.getFunctionName(this) + "() cannot work with this '" + new Type().call(bindings, args) + "' and expects two numbers");
         }
         if (args[0] == null || !(args[0] instanceof Number)) {
-            return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects the first parameter to be a number");
+            return new EvalError(ControlFunctionRegistry.getFunctionName(this) + "() cannot work with this '" + new Type().call(bindings, args) + "' and expects the first parameter to be a number");
         }
         if (args[1] == null || !(args[1] instanceof Number)) {
-            return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects the second parameter to be a number");
+            return new EvalError(ControlFunctionRegistry.getFunctionName(this) + "() cannot work with this '" + new Type().call(bindings, args) + "' and expects the second parameter to be a number");
         }
 
         return FactN.factorial(((Number) args[0]).intValue(), ((Number) args[1]).intValue());

@@ -38,6 +38,7 @@ import java.util.Properties;
 
 import com.google.refine.expr.EvalError;
 import com.google.refine.expr.ExpressionUtils;
+import com.google.refine.expr.functions.Type;
 import com.google.refine.grel.ControlFunctionRegistry;
 import com.google.refine.grel.Function;
 
@@ -75,7 +76,7 @@ public class Sum implements Function {
                 return total;
             }
         }
-        return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects an array of numbers");
+        return new EvalError(ControlFunctionRegistry.getFunctionName(this) + "() cannot work with this '" + new Type().call(bindings, args) + "' and expects an array of numbers");
     }
 
     @Override

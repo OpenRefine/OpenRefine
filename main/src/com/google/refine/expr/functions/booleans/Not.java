@@ -36,6 +36,7 @@ package com.google.refine.expr.functions.booleans;
 import java.util.Properties;
 
 import com.google.refine.expr.EvalError;
+import com.google.refine.expr.functions.Type;
 import com.google.refine.grel.ControlFunctionRegistry;
 import com.google.refine.grel.Function;
 
@@ -46,7 +47,7 @@ public class Not implements Function {
         if (args.length == 1 && args[0] instanceof Boolean) {
             return !objectToBoolean(args[0]);
         }
-        return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects a boolean");
+        return new EvalError(ControlFunctionRegistry.getFunctionName(this) + "() cannot work with this '" + new Type().call(bindings, args) + "' and expects a boolean");
     }
 
     public static boolean objectToBoolean(Object o) {

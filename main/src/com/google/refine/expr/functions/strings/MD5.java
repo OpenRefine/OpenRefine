@@ -35,6 +35,7 @@ package com.google.refine.expr.functions.strings;
 
 import java.util.Properties;
 
+import com.google.refine.expr.functions.Type;
 import org.apache.commons.codec.digest.DigestUtils;
 
 import com.google.refine.expr.EvalError;
@@ -50,7 +51,7 @@ public class MD5 implements Function {
             String s = (o instanceof String) ? (String) o : o.toString();
             return DigestUtils.md5Hex(s);
         }
-        return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects a string");
+        return new EvalError(ControlFunctionRegistry.getFunctionName(this) + "() cannot work with this '" + new Type().call(bindings, args) + "' and expects a string");
     }
     
     @Override

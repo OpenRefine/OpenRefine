@@ -36,6 +36,7 @@ package com.google.refine.expr.functions.math;
 import java.util.Properties;
 
 import com.google.refine.expr.EvalError;
+import com.google.refine.expr.functions.Type;
 import com.google.refine.grel.ControlFunctionRegistry;
 import com.google.refine.grel.Function;
 
@@ -51,7 +52,7 @@ public class Mod implements Function {
             
             return a % b;
         }
-        return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects 2 numbers");
+        return new EvalError(ControlFunctionRegistry.getFunctionName(this) + "() cannot work with this '" + new Type().call(bindings, args) + "' and expects 2 numbers");
     }
 
     @Override

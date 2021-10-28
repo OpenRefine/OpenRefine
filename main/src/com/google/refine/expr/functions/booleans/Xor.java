@@ -28,6 +28,7 @@ package com.google.refine.expr.functions.booleans;
 import java.util.Properties;
 
 import com.google.refine.expr.EvalError;
+import com.google.refine.expr.functions.Type;
 import com.google.refine.grel.ControlFunctionRegistry;
 import com.google.refine.grel.Function;
 
@@ -38,7 +39,7 @@ public class Xor implements Function {
         if (args.length >= 2 && args[0] instanceof Boolean && args[1] instanceof Boolean) {
             return (Boolean) args[0] ^ (Boolean) args[1];
         }
-        return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects 2 or more booleans");
+        return new EvalError(ControlFunctionRegistry.getFunctionName(this) + "() cannot work with this '" + new Type().call(bindings, args) + "' and expects 2 or more booleans");
     }
 
     @Override

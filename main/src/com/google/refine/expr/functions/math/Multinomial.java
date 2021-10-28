@@ -36,6 +36,7 @@ package com.google.refine.expr.functions.math;
 import java.util.Properties;
 
 import com.google.refine.expr.EvalError;
+import com.google.refine.expr.functions.Type;
 import com.google.refine.grel.ControlFunctionRegistry;
 import com.google.refine.grel.Function;
 
@@ -44,13 +45,13 @@ public class Multinomial implements Function {
     @Override
     public Object call(Properties bindings, Object[] args) {
         if (args.length < 1) {
-            return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects one or more numbers");
+            return new EvalError(ControlFunctionRegistry.getFunctionName(this) + "() cannot work with this '" + new Type().call(bindings, args) + "' and expects one or more numbers");
         }
         int sum = 0;
         int product = 1;
         for (int i = 0; i < args.length; i++){
             if (args[i] == null || !(args[i] instanceof Number)) {
-                return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects parameter " + (i + 1) + " to be a number");
+                return new EvalError(ControlFunctionRegistry.getFunctionName(this) + "() cannot work with this '" + new Type().call(bindings, args) + "' and expects parameter " + (i + 1) + " to be a number");
             }
             int num = ((Number) args[i]).intValue();
             sum += num;

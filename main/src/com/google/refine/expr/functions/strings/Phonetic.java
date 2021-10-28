@@ -41,6 +41,7 @@ import com.google.refine.clustering.binning.Metaphone3Keyer;
 import com.google.refine.clustering.binning.MetaphoneKeyer;
 import com.google.refine.clustering.binning.SoundexKeyer;
 import com.google.refine.expr.EvalError;
+import com.google.refine.expr.functions.Type;
 import com.google.refine.grel.ControlFunctionRegistry;
 import com.google.refine.grel.Function;
 
@@ -60,7 +61,7 @@ public class Phonetic implements Function {
             Object o1 = args[0];
             str = (o1 instanceof String) ? (String) o1 : o1.toString();
         } else {
-            return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects at least one argument");
+            return new EvalError(ControlFunctionRegistry.getFunctionName(this) + "() cannot work with this '" + new Type().call(bindings, args) + "' and expects at least one argument");
         }
         String encoding = "metaphone3";
         if (args.length > 1) {
@@ -70,11 +71,11 @@ public class Phonetic implements Function {
                     encoding = ((String) o2).toLowerCase();
                 } else {
                     return new EvalError(ControlFunctionRegistry.getFunctionName(this)
-                            + " expects a string for the second argument");
+                            + "() cannot work with this '" + new Type().call(bindings, args) + "' and expects a string for the second argument");
                 }
             } else {
                 return new EvalError(ControlFunctionRegistry.getFunctionName(this)
-                        + " expects a string for the second argument, the phonetic encoding to use.");
+                        + "() cannot work with this '" + new Type().call(bindings, args) + "' and expects a string for the second argument, the phonetic encoding to use.");
             }     
         }
         if (args.length < 3) {
@@ -95,7 +96,7 @@ public class Phonetic implements Function {
             }
         } else {
             return new EvalError(ControlFunctionRegistry.getFunctionName(this)
-                    + " expects one or two string arguments");   
+                    + "() cannot work with this '" + new Type().call(bindings, args) + "' and expects one or two string arguments");
         }
     }
     

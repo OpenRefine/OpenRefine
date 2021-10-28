@@ -68,7 +68,7 @@ public class ToNumber implements Function {
                 return new EvalError("Unable to parse as number");
             }
         } else {
-            return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects one non-null argument");
+            return new EvalError(ControlFunctionRegistry.getFunctionName(this) + "() cannot work with this '" + new Type().call(bindings, args) + "' and expects one non-null argument");
         }
     }
 

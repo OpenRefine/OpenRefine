@@ -39,6 +39,7 @@ import java.util.Properties;
 import com.google.refine.ProjectManager;
 import com.google.refine.ProjectMetadata;
 import com.google.refine.expr.EvalError;
+import com.google.refine.expr.functions.Type;
 import com.google.refine.grel.ControlFunctionRegistry;
 import com.google.refine.grel.Function;
 import com.google.refine.model.Project;
@@ -66,7 +67,7 @@ public class Reinterpret implements Function {
                 return reinterpret(str, decoder, encoder);
             }
         }
-        return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects String to reinterpret with a given target encoding and optional source encoding");
+        return new EvalError(ControlFunctionRegistry.getFunctionName(this)+ "() cannot work with this '" + new Type().call(bindings, args) + "' and expects String to reinterpret with a given target encoding and optional source encoding");
     }
 
     private Object reinterpret(String str, String decoder, String encoder) {

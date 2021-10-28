@@ -36,6 +36,7 @@ package com.google.refine.expr.functions.math;
 import java.util.Properties;
 
 import com.google.refine.expr.EvalError;
+import com.google.refine.expr.functions.Type;
 import com.google.refine.grel.ControlFunctionRegistry;
 import com.google.refine.grel.Function;
 
@@ -46,7 +47,7 @@ public class Odd implements Function {
         if (args.length == 1 && args[0] != null && args[0] instanceof Number) {
             return Odd.roundUpToOdd(((Number) args[0]).doubleValue());
         }
-        return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects a number");
+        return new EvalError(ControlFunctionRegistry.getFunctionName(this) + "() cannot work with this '" + new Type().call(bindings, args) + "' and expects a number");
     }
 
     public static double roundUpToOdd(double d){

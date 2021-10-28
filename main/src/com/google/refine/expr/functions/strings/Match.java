@@ -38,6 +38,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import com.google.refine.expr.EvalError;
+import com.google.refine.expr.functions.Type;
 import com.google.refine.grel.ControlFunctionRegistry;
 import com.google.refine.grel.Function;
 
@@ -71,7 +72,7 @@ public class Match implements Function {
             
             return null;
         }
-        return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects regex");
+        return new EvalError(ControlFunctionRegistry.getFunctionName(this) + "() cannot work with this '" + new Type().call(bindings, args) + "' and expects regex");
     }
     
     @Override

@@ -36,6 +36,7 @@ package com.google.refine.expr.functions.strings;
 import java.util.Properties;
 
 import com.google.refine.expr.EvalError;
+import com.google.refine.expr.functions.Type;
 import com.google.refine.grel.ControlFunctionRegistry;
 import com.google.refine.grel.Function;
 
@@ -64,7 +65,7 @@ public class SplitByLengths implements Function {
             
             return results;
         }
-        return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects 1 string and 1 or more numbers");
+        return new EvalError(ControlFunctionRegistry.getFunctionName(this) + "() cannot work with this '" + new Type().call(bindings, args) + "' and expects 1 string and 1 or more numbers");
     }
     
     @Override

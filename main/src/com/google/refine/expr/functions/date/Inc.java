@@ -39,6 +39,7 @@ import java.time.temporal.TemporalUnit;
 import java.util.Properties;
 
 import com.google.refine.expr.EvalError;
+import com.google.refine.expr.functions.Type;
 import com.google.refine.grel.ControlFunctionRegistry;
 import com.google.refine.grel.Function;
 
@@ -57,7 +58,7 @@ public class Inc implements Function {
             
             return date.plus(amount, getField(unit));
         }
-        return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects a date, a number and a string");
+        return new EvalError(ControlFunctionRegistry.getFunctionName(this) + "() cannot work with this '" + new Type().call(bindings, args) + "' and expects a date, a number and a string");
     }
 
     private TemporalUnit getField(String unit) {

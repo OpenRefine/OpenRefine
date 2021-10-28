@@ -53,7 +53,7 @@ public class Coalesce implements Function {
             }
             return null;
         }
-        return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects at least two arguments");
+        return new EvalError(ControlFunctionRegistry.getFunctionName(this) + "() cannot work with this '" + new Type().call(bindings, args) + "' and expects at least two arguments");
     }
 
     @Override

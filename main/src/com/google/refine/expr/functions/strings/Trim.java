@@ -37,6 +37,8 @@ import java.util.Properties;
 
 import com.google.common.base.CharMatcher;
 import com.google.refine.expr.EvalError;
+import com.google.refine.expr.functions.Type;
+import com.google.refine.grel.ControlFunctionRegistry;
 import com.google.refine.grel.Function;
 
 public class Trim implements Function {
@@ -49,7 +51,7 @@ public class Trim implements Function {
                 return CharMatcher.whitespace().trimFrom((String) s1);
             }
         }
-        return new EvalError("Invalid parameters");
+        return new EvalError(ControlFunctionRegistry.getFunctionName(this) + "() cannot work with this '" + new Type().call(bindings, args) + "' and expects a string");
     }
     @Override
     public String getDescription() {

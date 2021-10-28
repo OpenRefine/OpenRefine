@@ -37,6 +37,7 @@ import java.io.IOException;
 import java.util.Properties;
 
 import com.google.refine.expr.EvalError;
+import com.google.refine.expr.functions.Type;
 import com.google.refine.grel.ControlFunctionRegistry;
 import com.google.refine.grel.Function;
 
@@ -94,10 +95,10 @@ public class SmartSplit implements Function {
             try {
                 return parser.parseLine(s);
             } catch (IOException e) {
-                return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " error: " + e.getMessage());
+                return new EvalError(ControlFunctionRegistry.getFunctionName(this) + "() cannot work with this '" + new Type().call(bindings, args) + "' with error: " + e.getMessage());
             }
         }
-        return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects 1 or 2 strings");
+        return new EvalError(ControlFunctionRegistry.getFunctionName(this) + "() cannot work with this '" + new Type().call(bindings, args) + "' and expects 1 or 2 strings");
     }
     
     @Override

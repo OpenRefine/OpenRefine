@@ -35,6 +35,7 @@ package com.google.refine.expr.functions.strings;
 
 import java.util.Properties;
 
+import com.google.refine.expr.functions.Type;
 import org.apache.commons.lang3.StringUtils;
 
 import com.google.refine.expr.EvalError;
@@ -52,7 +53,7 @@ public class SplitByCharType implements Function {
                 return StringUtils.splitByCharacterType(s);
             }
         }
-        return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects 2 strings");
+        return new EvalError(ControlFunctionRegistry.getFunctionName(this) + "() cannot work with this '" + new Type().call(bindings, args) + "' and expects 2 strings");
     }
     
     @Override

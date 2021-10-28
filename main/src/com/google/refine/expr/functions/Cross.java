@@ -90,7 +90,7 @@ public class Cross implements Function {
             }
         }
 
-        return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects a cell or value, a project name to look up (optional), and a column name in that project (optional)");
+        return new EvalError(ControlFunctionRegistry.getFunctionName(this) + "() cannot work with this '" + new Type().call(bindings, args) + "' and expects a cell or value, a project name to look up (optional), and a column name in that project (optional)");
     }
 
     @Override

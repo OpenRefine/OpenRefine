@@ -67,7 +67,7 @@ public class ToDate implements Function {
         
         //Check there is at least one argument
         if (args.length == 0) {
-            return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects at least one argument");
+            return new EvalError(ControlFunctionRegistry.getFunctionName(this) + "() cannot work with this '" + new Type().call(bindings, args) + "' and expects at least one argument");
         } else {
             Object arg0 = args[0];
             //check the first argument is something that can be parsed as a date

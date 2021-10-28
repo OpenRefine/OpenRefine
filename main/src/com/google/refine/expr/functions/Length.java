@@ -65,7 +65,7 @@ public class Length implements Function {
                 }
             }
         }
-        return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects an array or a string");
+        return new EvalError(ControlFunctionRegistry.getFunctionName(this) + "() cannot work with this '" + new Type().call(bindings, args) + "' and expects an array or a string");
     }
 
     @Override

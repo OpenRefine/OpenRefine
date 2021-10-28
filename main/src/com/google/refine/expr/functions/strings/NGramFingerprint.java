@@ -39,6 +39,7 @@ import java.util.TreeSet;
 import com.google.refine.clustering.binning.Keyer;
 import com.google.refine.clustering.binning.NGramFingerprintKeyer;
 import com.google.refine.expr.EvalError;
+import com.google.refine.expr.functions.Type;
 import com.google.refine.grel.ControlFunctionRegistry;
 import com.google.refine.grel.Function;
 
@@ -60,7 +61,7 @@ public class NGramFingerprint implements Function {
             }
             return null;
         }
-        return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects at least a string");
+        return new EvalError(ControlFunctionRegistry.getFunctionName(this) + "() cannot work with this '" + new Type().call(bindings, args) + "' and expects at least a string");
     }
 
     protected TreeSet<String> ngram_split(String s, int size) {

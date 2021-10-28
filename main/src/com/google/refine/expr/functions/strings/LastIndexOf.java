@@ -36,6 +36,7 @@ package com.google.refine.expr.functions.strings;
 import java.util.Properties;
 
 import com.google.refine.expr.EvalError;
+import com.google.refine.expr.functions.Type;
 import com.google.refine.grel.ControlFunctionRegistry;
 import com.google.refine.grel.Function;
 
@@ -50,7 +51,7 @@ public class LastIndexOf implements Function {
                 return ((String) s1).lastIndexOf((String) s2);
             }
         }
-        return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects 2 strings");
+        return new EvalError(ControlFunctionRegistry.getFunctionName(this) + "() cannot work with this '" + new Type().call(bindings, args) + "' and expects 2 strings");
     }
     
     @Override

@@ -38,6 +38,7 @@ import java.util.Properties;
 import java.util.concurrent.ThreadLocalRandom;
 
 import com.google.refine.expr.EvalError;
+import com.google.refine.expr.functions.Type;
 import com.google.refine.grel.ControlFunctionRegistry;
 import com.google.refine.grel.Function;
 
@@ -50,7 +51,7 @@ public class RandomNumber implements Function {
             int randomNum = ThreadLocalRandom.current().nextInt(((Number) args[0]).intValue(), ((Number) args[1]).intValue()+1);
             return randomNum;
         }
-        return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects two numbers, the first must be less than the second");
+        return new EvalError(ControlFunctionRegistry.getFunctionName(this) + "() cannot work with this '" + new Type().call(bindings, args) + "' and expects two numbers, the first must be less than the second");
     }
 
     @Override
