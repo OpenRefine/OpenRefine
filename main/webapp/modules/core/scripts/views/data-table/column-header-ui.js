@@ -182,7 +182,7 @@ DataTableColumnHeaderUI.prototype._createMenuForColumnHeader = function(elmt) {
           }
         },
         {
-          label: $.i18n('core-views/expand-other'),
+          label: $.i18n('core-views/expand-all'),
           click: function() {
             self._dataTableView._collapsedColumnNames = [];
             self._dataTableView.render();
