@@ -184,12 +184,6 @@ DataTableColumnHeaderUI.prototype._createMenuForColumnHeader = function(elmt) {
         {
           label: $.i18n('core-views/expand-other'),
           click: function() {
-            var collapsedColumnNames = {};
-            for (var i = 0; i < theProject.columnModel.columns.length; i++) {
-              if (i != self._columnIndex) {
-                delete collapsedColumnNames[theProject.columnModel.columns[i].name];
-              }
-            }
             self._dataTableView._collapsedColumnNames = [];
             self._dataTableView.render();
           }
