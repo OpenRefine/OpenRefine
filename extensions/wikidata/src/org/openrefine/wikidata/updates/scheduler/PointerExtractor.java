@@ -40,6 +40,7 @@ import org.wikidata.wdtk.datamodel.interfaces.StringValue;
 import org.wikidata.wdtk.datamodel.interfaces.TimeValue;
 import org.wikidata.wdtk.datamodel.interfaces.UnsupportedValue;
 import org.wikidata.wdtk.datamodel.interfaces.Value;
+import org.wikidata.wdtk.datamodel.interfaces.ValueSnak;
 import org.wikidata.wdtk.datamodel.interfaces.ValueVisitor;
 
 /**
@@ -101,7 +102,9 @@ public class PointerExtractor implements ValueVisitor<Set<ReconItemIdValue>> {
     public Set<ReconItemIdValue> extractPointers(Snak snak) {
         Set<ReconItemIdValue> result = new HashSet<>();
         result.addAll(extractPointers(snak.getPropertyId()));
-        result.addAll(extractPointers(snak.getValue()));
+        if (snak instanceof ValueSnak) {
+            result.addAll(extractPointers(((ValueSnak)snak).getValue()));
+        }
         return result;
     }
 

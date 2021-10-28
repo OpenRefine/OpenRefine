@@ -223,7 +223,7 @@ public class EditBatchProcessor {
         int backoff = 2;
         int sleepTime = 5000;
         // TODO: remove currentDocs.isEmpty() once https://github.com/Wikidata/Wikidata-Toolkit/issues/402 is solved
-        while ((currentDocs == null || currentDocs.isEmpty()) && retries > 0) {
+        while ((currentDocs == null || currentDocs.isEmpty()) && retries > 0 && !qidsToFetch.isEmpty()) {
             try {
                 currentDocs = fetcher.getEntityDocuments(qidsToFetch);
             } catch (MediaWikiApiErrorException e) {
@@ -234,12 +234,12 @@ public class EditBatchProcessor {
 			}
             retries--;
             sleepTime *= backoff;
-            if ((currentDocs == null || currentDocs.isEmpty()) && retries > 0) {
+            if ((currentDocs == null || currentDocs.isEmpty()) && retries > 0 && !qidsToFetch.isEmpty()) {
                 logger.warn("Retrying in " + sleepTime + " ms");
                 Thread.sleep(sleepTime);
             }
         }
-        if (currentDocs == null) {
+        if (currentDocs == null && !qidsToFetch.isEmpty()) {
             logger.warn("Giving up on fetching documents to edit. Skipping "+remainingEdits()+" remaining edits.");
             globalCursor = scheduled.size();
         }

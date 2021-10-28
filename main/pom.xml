@@ -248,7 +248,7 @@
     <dependency>
       <groupId>org.jsoup</groupId>
       <artifactId>jsoup</artifactId>
-      <version>1.13.1</version>
+      <version>1.14.2</version>
     </dependency>
     <dependency>
       <groupId>org.openrefine.dependencies</groupId>
@@ -293,7 +293,7 @@
     <dependency>
       <groupId>org.apache.httpcomponents.client5</groupId>
       <artifactId>httpclient5</artifactId>
-      <version>5.1</version>
+      <version>5.1.1</version>
     </dependency>
     <dependency>
       <groupId>org.apache.httpcomponents</groupId>
@@ -313,7 +313,7 @@
     <dependency>
       <groupId>joda-time</groupId>
       <artifactId>joda-time</artifactId>
-      <version>2.10.12</version>
+      <version>2.10.13</version>
     </dependency>
 
     <dependency>
@@ -355,7 +355,7 @@
     <dependency>
       <groupId>com.google.guava</groupId>
       <artifactId>guava</artifactId>
-      <version>31.0-jre</version>
+      <version>31.0.1-jre</version>
     </dependency>
     <dependency>
       <groupId>javax.xml.bind</groupId>

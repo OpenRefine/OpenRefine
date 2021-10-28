@@ -26,6 +26,11 @@
  ******************************************************************************/
 package com.google.refine.model;
 
+import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.LongStream;
+
+import org.testng.Assert;
 import org.testng.annotations.Test;
 
 import com.google.refine.model.Recon.Judgment;
@@ -95,6 +100,24 @@ public class ReconTests {
         r.match = null;
         r.judgment = Judgment.None;
         TestUtils.isSerializedTo(r, json);
+    }
+    
+    /**
+     * Test for issue https://github.com/OpenRefine/OpenRefine/issues/3785.
+     * Generating many recon objects within a short amount of time leads
+     * to collisions in id generation.
+     */
+    @Test
+    public void randomIdGeneration() {
+        long numberOfSamples = 100000L;
+        String space = "http://some.url/";
+        long judgmentHistoryId = 1234L;
+        Set<Long> ids = LongStream.range(0L, numberOfSamples)
+                .mapToObj(i -> new Recon(judgmentHistoryId, space, space).id)
+                .collect(Collectors.toSet());
+        // make sure we generated as many ids as Recon objects (if ids.size() is smaller,
+        // then we have had some collisions)
+        Assert.assertEquals(ids.size(), numberOfSamples);
     }
 
 }

@@ -35,7 +35,7 @@ function DataTableView(div) {
   this._div = div;
 
   this._gridPagesSizes = JSON.parse(Refine.getPreference("ui.browsing.pageSize", null));
-  this._gridPagesSizes = this._checkPaginationSize(this._gridPagesSizes, [ 5, 10, 25, 50 ]);
+  this._gridPagesSizes = this._checkPaginationSize(this._gridPagesSizes, [ 5, 10, 25, 50, 100, 500, 1000 ]);
   this._pageSize = ( this._gridPagesSizes[0] < 10 ) ? 10 : this._gridPagesSizes[0];
 
   this._showRecon = true;
@@ -217,7 +217,7 @@ DataTableView.prototype._renderPagingControls = function(pageSizeControls, pagin
   }
 
   $('<span>'+$.i18n('core-views/show')+': </span>').appendTo(pageSizeControls);
-  
+
   var renderPageSize = function(index) {
     var pageSize = self._gridPagesSizes[index];
     var a = $('<a href="javascript:{}"></a>')

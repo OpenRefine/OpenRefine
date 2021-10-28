@@ -5,6 +5,11 @@ sidebar_label: Reconciling
 ---
 
 ## Overview {#overview}
+:::info
+If you are interested in reconciling with Wikidata, see also [our page about Wikidata](wikidata).
+
+This page covers the general handling in OpenRefine for any reconciliation service.
+:::
 
 Reconciliation is the process of matching your dataset with that of an external source. Datasets for comparison might be produced by libraries, archives, museums, academic organizations, scientific institutions, non-profits, or interest groups. You can also reconcile against user-edited data on [Wikidata](wikidata), or reconcile against [a local dataset that you yourself supply](https://github.com/OpenRefine/OpenRefine/wiki/Reconcilable-Data-Sources#local-services). 
 
