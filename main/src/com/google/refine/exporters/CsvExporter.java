@@ -99,7 +99,7 @@ public class CsvExporter implements WriterExporter {
 //        int asciiValue = 9;
 //        char convertedChar = (char) asciiValue;
 //        System.out.println(convertedChar);
-        
+
 //        if (separator.charAt(0) == '\t') {
 //            System.out.println("YEP to Char");
 //        }
@@ -140,10 +140,12 @@ public class CsvExporter implements WriterExporter {
         csvWriter.close();
     }
 
-    public CSVWriter createWriter(Writer writer, char delimiter, String lineSeparator) {
+    /**
+     *
+     */
+    private CSVWriter createWriter(Writer writer, char delimiter, String lineSeparator) {
         final CSVWriter csvWriter;
         if (delimiter == '\t') {
-            System.out.println("MADE IT HERE");
             csvWriter =
                     new CSVWriter(writer, delimiter, CSVWriter.NO_QUOTE_CHARACTER, CSVWriter.NO_ESCAPE_CHARACTER, lineSeparator);
         } else {
