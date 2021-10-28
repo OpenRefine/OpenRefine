@@ -84,12 +84,7 @@ public class CsvExporter implements WriterExporter {
             }
         }
         if (options.separator == null) {
-            System.out.println("NULL SEPARATOR");
-            System.out.println(options.separator);
             options.separator = Character.toString(separator);
-            System.out.println(options.separator);
-        } else {
-            System.out.println(options.separator);
         }
 
         final String separator = options.separator;
@@ -101,29 +96,19 @@ public class CsvExporter implements WriterExporter {
                         Boolean.parseBoolean(params.getProperty("printColumnHeader")) :
                         true;
 
-        // This is for TSV files
-        System.out.println(separator);
-        System.out.println(separator.charAt(0));
-        System.out.println("IDENTIFIER");
+//        int asciiValue = 9;
+//        char convertedChar = (char) asciiValue;
+//        System.out.println(convertedChar);
+        
+//        if (separator.charAt(0) == '\t') {
+//            System.out.println("YEP to Char");
+//        }
 
-        int asciiValue = 9;
-
-        char convertedChar = (char) asciiValue;
-        System.out.println(convertedChar);
+        final CSVWriter csvWriter = createWriter(writer, separator.charAt(0), lineSeparator);
 
 
 //        final CSVWriter csvWriter =
-//                new CSVWriter(writer, convertedChar, CSVWriter.NO_QUOTE_CHARACTER, CSVWriter.NO_ESCAPE_CHARACTER, lineSeparator);
-
-        if (separator.charAt(0) == '\t') {
-            System.out.println("YEP");
-        }
-        if (separator.charAt(0) == convertedChar) {
-            System.out.println("YEP to Char");
-        }
-
-        final CSVWriter csvWriter =
-                new CSVWriter(writer, separator.charAt(0), CSVWriter.DEFAULT_QUOTE_CHARACTER, lineSeparator);
+//                new CSVWriter(writer, separator.charAt(0), CSVWriter.DEFAULT_QUOTE_CHARACTER, lineSeparator);
 
         TabularSerializer serializer = new TabularSerializer() {
             @Override
@@ -154,6 +139,20 @@ public class CsvExporter implements WriterExporter {
 
         csvWriter.close();
     }
+
+    public CSVWriter createWriter(Writer writer, char delimiter, String lineSeparator) {
+        final CSVWriter csvWriter;
+        if (delimiter == '\t') {
+            System.out.println("MADE IT HERE");
+            csvWriter =
+                    new CSVWriter(writer, delimiter, CSVWriter.NO_QUOTE_CHARACTER, CSVWriter.NO_ESCAPE_CHARACTER, lineSeparator);
+        } else {
+            csvWriter =
+                    new CSVWriter(writer, delimiter, CSVWriter.DEFAULT_QUOTE_CHARACTER, lineSeparator);
+        }
+        return csvWriter;
+    }
+
 
     @Override
     public String getContentType() {
