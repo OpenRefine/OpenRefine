@@ -368,7 +368,7 @@ public class CrossTests extends RefineTest {
     @Test
     public void crossFunctionNonLiteralValue() throws Exception {
         Assert.assertEquals(((EvalError) invoke("cross", null, "My Address Book", "friend")).message,
-                "cross expects a cell or value, a project name to look up (optional), and a column name in that project (optional)");
+                "cross() cannot work with this 'null expects one argument' and expects a cell or value, a project name to look up (optional), and a column name in that project (optional)");
     }
     
 }
