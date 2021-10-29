@@ -351,7 +351,7 @@ public class CrossTests extends RefineTest {
 
     /**
      * If no match, return null.
-     * 
+     * replace expects 3 strings
      * But if user still apply grel:value.cross("My Address Book", "friend")[0].cells["address"].value, 
      * from the "Preview", the target cell shows "Error: java.lang.IndexOutOfBoundsException: Index: 0, Size: 0".
      * It will still end up with blank if the onError set so.
