@@ -34,7 +34,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package com.google.refine.expr.functions.xml;
 
 import java.util.Properties;
-mport com.google.refine.expr.functions.Type;
+import com.google.refine.expr.functions.Type;
 
 import org.jsoup.nodes.Element;
 
@@ -58,8 +58,6 @@ public class WholeText implements Function {
         }
         return new EvalError(ControlFunctionRegistry.getFunctionName(this) + "() cannot work with this '" + new Type().call(bindings, args) + "' and expects a single XML or HTML element as an argument");
     }
-    }
-
 
     @Override
     public String getDescription() {
