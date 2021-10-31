@@ -12,7 +12,7 @@ describe(__filename, function () {
 
     cy.columnActionClick('b', ['Edit cells', 'Transform']);
 
-    cy.typeExpression('value.ParseHtml()');
+    cy.typeExpression('value.parseHtml()');
     cy.get('label[bind="or_views_storeErr"]').click();
     cy.confirmDialogPanel();
 
@@ -37,7 +37,7 @@ describe(__filename, function () {
 
     cy.columnActionClick('b', ['Edit cells', 'Transform']);
 
-    cy.typeExpression('value.ParseXml()');
+    cy.typeExpression('value.parseXml()');
     cy.get('label[bind="or_views_storeErr"]').click();
     cy.confirmDialogPanel();
 
@@ -60,7 +60,7 @@ describe(__filename, function () {
 
     cy.columnActionClick('a', ['Edit cells', 'Transform']);
 
-    cy.typeExpression('value.WholeText()');
+    cy.typeExpression('value.wholeText()');
     cy.get('label[bind="or_views_storeErr"]').click();
     cy.confirmDialogPanel();
 
