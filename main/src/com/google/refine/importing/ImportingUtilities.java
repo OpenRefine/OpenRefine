@@ -58,6 +58,7 @@ import java.util.stream.Collectors;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
+import java.util.zip.ZipException;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -542,6 +543,8 @@ public class ImportingUtilities {
                 }
             }
             return length;
+        } catch (ZipException aException) {
+            throw new IOException("PPMd compression not supported!")
         } finally {
             fos.close();
         }
