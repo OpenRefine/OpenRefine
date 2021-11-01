@@ -544,7 +544,7 @@ public class ImportingUtilities {
             }
             return length;
         } catch (ZipException aException) {
-            throw new IOException("PPMd compression not supported!")
+            throw new IOException("PPMd compression not supported!");
         } finally {
             fos.close();
         }
