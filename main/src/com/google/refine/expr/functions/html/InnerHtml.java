@@ -51,10 +51,10 @@ public class InnerHtml implements Function {
             if (o1 != null && o1 instanceof Element) {
                 return new InnerXml().call(bindings, args, "html");
             }else{
-                return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " failed as the first parameter is not an HTML Element.  Please first use parseHtml(string) and select(query) prior to using this function");
+                return new EvalError(ControlFunctionRegistry.getFunctionName(this) + "() cannot work with this '" + new Type().call(bindings, args) + "'. The first parameter is not an HTML Element.  Please first use parseHtml(string) and select(query) prior to using this function");
             }
         }
-        return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects a single String as an argument");
+        return new EvalError(ControlFunctionRegistry.getFunctionName(this) + "() cannot work with this '" + new Type().call(bindings, args) + "' and expects a single String as an argument");
     }
 
 

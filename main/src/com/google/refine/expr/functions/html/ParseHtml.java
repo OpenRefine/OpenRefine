@@ -51,7 +51,7 @@ public class ParseHtml implements Function {
                 return new ParseXml().call(bindings,args,"html");
             }
         }
-        return new EvalError(ControlFunctionRegistry.getFunctionName(this) + "() cannot work with this '" + new Type().call(bindings, args) + "' and expects a single String as an argument");
+        return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects a single String as an argument");
     }
 
 
