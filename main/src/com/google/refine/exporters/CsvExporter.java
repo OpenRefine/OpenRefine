@@ -96,7 +96,16 @@ public class CsvExporter implements WriterExporter {
                         Boolean.parseBoolean(params.getProperty("printColumnHeader")) :
                         true;
 
+//        int asciiValue = 9;
+//        char convertedChar = (char) asciiValue;
+//        System.out.println(convertedChar);
+
+//        if (separator.charAt(0) == '\t') {
+//            System.out.println("YEP to Char");
+//        }
+
         final CSVWriter csvWriter = createWriter(writer, separator.charAt(0), lineSeparator);
+
 
 //        final CSVWriter csvWriter =
 //                new CSVWriter(writer, separator.charAt(0), CSVWriter.DEFAULT_QUOTE_CHARACTER, lineSeparator);
@@ -116,38 +125,30 @@ public class CsvExporter implements WriterExporter {
                     String[] strings = new String[cells.size()];
                     for (int i = 0; i < strings.length; i++) {
                         CellData cellData = cells.get(i);
-                        // If file is tsv and cell text contains internal tabs, then manually escape tabs
-                        if (separator.charAt(0) == '\t' && cellData.text.contains("\t")) {
-                            String tabFormattedString = cellData.text.replace("\t", "\\t");
-                            strings[i] = tabFormattedString;
-                        }
-                        // If file is tsv and cell text contains internal newlines, then manually escape newlines
-                        else if (separator.charAt(0) == '\t' && cellData.text.contains("\n")) {
-                            String tabFormattedString = cellData.text.replace("\n", "\\n");
-                            strings[i] = tabFormattedString;
-                        } else {
-                            strings[i] =
-                                    (cellData != null && cellData.text != null) ?
-                                            cellData.text :
-                                            "";
-                        }
+                        strings[i] =
+                                (cellData != null && cellData.text != null) ?
+                                        cellData.text :
+                                        "";
                     }
+                    // This is where I need to implement the "manual" tab escape
+                    // HERE!
+                    // HERE!!!
+                    // System.out.println(str.contains("\t"));
+                    // System.out.println(str.indexOf("\t"));
+                    // public String replace(char oldChar, char newChar)
+
                     csvWriter.writeNext(strings, quoteAll);
                 }
             }
         };
+
         CustomizableTabularExporterUtilities.exportRows(project, engine, params, serializer);
+
         csvWriter.close();
     }
 
     /**
-     * Method that creates a csv writer if a csv file is specified and a tsv writer if a tsv file is specified
-     * This distinction is necessary because tsv files should not escape any characters besides tabs and newlines
      *
-     * @param writer        Writer originally passed to the export method of the CsvExporter class
-     * @param delimiter     Delimiter originally passed to the CsvExporter and stored as separator
-     * @param lineSeparator Line terminator, has the value of CSVWriter.DEFAULT_LINE_END
-     * @return csvWriter    Writer properly configured for either csv or tsv files
      */
     private CSVWriter createWriter(Writer writer, char delimiter, String lineSeparator) {
         final CSVWriter csvWriter;
@@ -160,6 +161,7 @@ public class CsvExporter implements WriterExporter {
         }
         return csvWriter;
     }
+
 
     @Override
     public String getContentType() {
