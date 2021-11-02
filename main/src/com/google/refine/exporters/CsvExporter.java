@@ -23,8 +23,8 @@ LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
 A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
 OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
 SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
-LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
-DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,           
+DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY           
 THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
@@ -33,33 +33,35 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.exporters;
 
-import au.com.bytecode.opencsv.CSVWriter;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.google.refine.browsing.Engine;
-import com.google.refine.model.Project;
-import com.google.refine.util.ParsingUtilities;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.io.IOException;
 import java.io.Writer;
 import java.util.List;
 import java.util.Properties;
 
-public class CsvExporter implements WriterExporter {
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.google.refine.browsing.Engine;
+import com.google.refine.model.Project;
+import com.google.refine.util.ParsingUtilities;
+
+import au.com.bytecode.opencsv.CSVWriter;
+
+public class CsvExporter implements WriterExporter{
 
     final static Logger logger = LoggerFactory.getLogger("CsvExporter");
     char separator;
 
     public CsvExporter() {
-        separator = ',';      //Comma separated-value is default
+        separator = ','; //Comma separated-value is default
     }
 
     public CsvExporter(char separator) {
         this.separator = separator;
     }
-
+    
     private static class Configuration {
         @JsonProperty("separator")
         protected String separator = null;
@@ -72,7 +74,7 @@ public class CsvExporter implements WriterExporter {
     @Override
     public void export(Project project, Properties params, Engine engine, final Writer writer)
             throws IOException {
-
+        
         String optionsString = (params == null) ? null : params.getProperty("options");
         Configuration options = new Configuration();
         if (optionsString != null) {
@@ -84,47 +86,21 @@ public class CsvExporter implements WriterExporter {
             }
         }
         if (options.separator == null) {
-            System.out.println("NULL SEPARATOR");
-            System.out.println(options.separator);
             options.separator = Character.toString(separator);
-            System.out.println(options.separator);
-        } else {
-            System.out.println(options.separator);
         }
-
+        
         final String separator = options.separator;
         final String lineSeparator = options.lineSeparator;
         final boolean quoteAll = options.quoteAll;
-
+        
         final boolean printColumnHeader =
-                (params != null && params.getProperty("printColumnHeader") != null) ?
-                        Boolean.parseBoolean(params.getProperty("printColumnHeader")) :
-                        true;
-
-        // This is for TSV files
-        System.out.println(separator);
-        System.out.println(separator.charAt(0));
-        System.out.println("IDENTIFIER");
-
-        int asciiValue = 9;
-
-        char convertedChar = (char) asciiValue;
-        System.out.println(convertedChar);
-
-
-//        final CSVWriter csvWriter =
-//                new CSVWriter(writer, convertedChar, CSVWriter.NO_QUOTE_CHARACTER, CSVWriter.NO_ESCAPE_CHARACTER, lineSeparator);
-
-        if (separator.charAt(0) == '\t') {
-            System.out.println("YEP");
-        }
-        if (separator.charAt(0) == convertedChar) {
-            System.out.println("YEP to Char");
-        }
-
-        final CSVWriter csvWriter =
-                new CSVWriter(writer, separator.charAt(0), CSVWriter.DEFAULT_QUOTE_CHARACTER, lineSeparator);
-
+            (params != null && params.getProperty("printColumnHeader") != null) ?
+                Boolean.parseBoolean(params.getProperty("printColumnHeader")) :
+                true;
+        
+        final CSVWriter csvWriter = 
+            new CSVWriter(writer, separator.charAt(0), CSVWriter.DEFAULT_QUOTE_CHARACTER, lineSeparator);
+        
         TabularSerializer serializer = new TabularSerializer() {
             @Override
             public void startFile(JsonNode options) {
@@ -141,17 +117,17 @@ public class CsvExporter implements WriterExporter {
                     for (int i = 0; i < strings.length; i++) {
                         CellData cellData = cells.get(i);
                         strings[i] =
-                                (cellData != null && cellData.text != null) ?
-                                        cellData.text :
-                                        "";
+                            (cellData != null && cellData.text != null) ?
+                            cellData.text :
+                            "";
                     }
                     csvWriter.writeNext(strings, quoteAll);
                 }
             }
         };
-
+        
         CustomizableTabularExporterUtilities.exportRows(project, engine, params, serializer);
-
+        
         csvWriter.close();
     }
 
