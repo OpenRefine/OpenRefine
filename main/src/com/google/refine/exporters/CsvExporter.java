@@ -130,13 +130,6 @@ public class CsvExporter implements WriterExporter {
                                         cellData.text :
                                         "";
                     }
-                    // This is where I need to implement the "manual" tab escape
-                    // HERE!
-                    // HERE!!!
-                    // System.out.println(str.contains("\t"));
-                    // System.out.println(str.indexOf("\t"));
-                    // public String replace(char oldChar, char newChar)
-
                     csvWriter.writeNext(strings, quoteAll);
                 }
             }
