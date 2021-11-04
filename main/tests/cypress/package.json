@@ -11,16 +11,16 @@
         "lint": "prettier --check . && eslint ."
     },
     "dependencies": {
-        "cypress": "8.6.0",
+        "cypress": "8.7.0",
         "cypress-image-snapshot": "^4.0.1",
         "cypress-file-upload": "^5.0.8",
-        "cypress-wait-until": "^1.7.1",
+        "cypress-wait-until": "^1.7.2",
         "dotenv": "^10.0.0",
         "fs-extra": "^10.0.0",
         "uniqid": "^5.4.0"
     },
     "devDependencies": {
-        "eslint": "^8.0.1",
+        "eslint": "^8.1.0",
         "eslint-config-google": "^0.14.0",
         "eslint-config-prettier": "^8.2.0",
         "eslint-plugin-cypress": "^2.12.1",

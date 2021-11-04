@@ -100,6 +100,10 @@ You will be offered the option to include blank, non-numeric, and error values i
 You can create a text facet on numeric data, which will treat each entry as a string. This can be useful if you wish, for example, to manually include facets instead of selecting a range, or sort by count, or copy that count.
 :::
 
+:::info Faceting customization
+As mentioned in the overview, facets can be modified or customized by GREL [expressions](expressions) in many ways.  For example, to facet by clusters of [row](expressions#variables) numbers with `row.index/100` or better visualizing numbers greater than 1000 with `max(row.index, 1000)`.
+:::
+
 ## Timeline facet {#timeline-facet}
 
 ![A screenshot of an example timeline facet.](/img/timelinefacet.png)
