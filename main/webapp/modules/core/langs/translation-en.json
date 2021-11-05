@@ -131,6 +131,7 @@
     "core-index-lang/label": "Select preferred language",
     "core-index-lang/send-req": "Change language",
     "core-index-lang/page-reload": "The page will be refreshed to apply the change.",
+    "core-index-parser/disable-auto-preview": "Disable auto preview",
     "core-index-parser/ignore-first": "Ignore first",
     "core-index-parser/lines-beg": "line(s) at beginning of file",
     "core-index-parser/parse-next": "Parse next",
