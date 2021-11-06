@@ -61,7 +61,7 @@ This describes the overall steps to your first code contribution in OpenRefine. 
 
 - Make changes to the code to fix the issue. If you are changing backend code, it would be great if you could also write a test in Java to demonstrate the fix. You can imitate existing tests for that. We currently do not have frontend tests.
 
-- commit your changes, using a message that contains the issue number, e.g. "closes #1234" or "fixes #1234", this will link the commit to the issue you are working on.
+- commit your changes, using a message that contains one of the special words "closes" and "fixes" which are detected by Github, and the issue number, e.g. "closes #1234" or "fixes #1234", this will link the commit to the issue you are working on.
 
 - push your branch to your fork and create a pull request for it, explaining the approach you have used, any design decisions you have made.
 
