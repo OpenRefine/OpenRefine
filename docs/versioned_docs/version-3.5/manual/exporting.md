@@ -29,9 +29,9 @@ To export data from a project, click the <span class="menuItems">Export</span> d
 
 You can also export reconciled data to Wikidata, or export your Wikidata schema for future use with other OpenRefine projects:
 
-*   [Upload edits to Wikidata](wikidata#upload-edits-to-wikidata)
-*   [Export to QuickStatements](wikidata#quickstatements-export) (version 1)
-*   [Export Wikidata schema](wikidata#import-and-export-schema)
+*   [Upload edits to Wikidata](wikibase/uploading#uploading-with-openrefine)
+*   [Export to QuickStatements](wikibase/uploading#uploading-with-quickstatements) (version 1)
+*   [Export Wikidata schema](wikibase/overview#import-and-export-schema)
 
 ### Custom tabular exporter {#custom-tabular-exporter}
 

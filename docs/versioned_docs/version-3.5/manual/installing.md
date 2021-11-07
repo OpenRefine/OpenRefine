@@ -20,7 +20,7 @@ OpenRefine is designed to work with **Windows**, **Mac**, and **Linux** operatin
 
 If you install and start OpenRefine on a Windows computer without Java, it will automatically open up a browser window to the [Java downloads page](https://java.com/en/download/), and you can simply follow the instructions there.
 
-We recommend you [download](https://java.com/en/download/) and install Java before proceeding with the OpenRefine installation.
+We recommend you [download](https://java.com/en/download/) and install Java before proceeding with the OpenRefine installation. Please note that OpenRefine works with Java 8 to Java 15 but not Java 16 or later versions.
 
 #### Compatible browser {#compatible-browser}
 
@@ -49,7 +49,7 @@ For the absolute latest development updates, see the [snapshot releases](https:/
 
 #### What’s changed {#whats-changed}
 
-Our [latest version is OpenRefine 3.4.1](https://github.com/OpenRefine/OpenRefine/releases/tag/3.4.1), released September 24th 2020. The major changes in this version are listed on the [3.4.1 release page](https://github.com/OpenRefine/OpenRefine/releases/tag/3.4.1) with the downloadable packages.
+Our [latest version is OpenRefine 3.5.0](https://github.com/OpenRefine/OpenRefine/releases/tag/3.5.0), released November 7th 2021. The major changes in this version are listed on the [3.5.0 release page](https://github.com/OpenRefine/OpenRefine/releases/tag/3.5.0) with the downloadable packages.
 
 You can find information about all OpenRefine versions on the [Releases page on Github](https://github.com/OpenRefine/OpenRefine/releases).
 
@@ -187,7 +187,7 @@ If you had previously installed the `openrefine-dev` cask (containing a release 
 Once you have downloaded the `.tar.gz` file, open a shell, navigate to the folder containing the download, and type:
 
 ```
-tar xzf openrefine-linux-3.4.tar.gz
+tar xzf openrefine-linux-3.5.0.tar.gz
 ```
 
 </TabItem>
