@@ -15,6 +15,10 @@ You will need:
 
 From the top level directory in the OpenRefine application you can build, test and run OpenRefine using the `./refine` shell script (if you are working in a \*nix shell), or using the `refine.bat` script from the Windows command line. Note that the `refine.bat` on Windows only supports a subset of the functionality, supported by the `refine` shell script. The example commands below are using the `./refine` shell script, and you will need to use `refine.bat` if you are working from the Windows command line.
 
+### Get OpenRefine source code
+
+With Git installed, use the `git clone` command to download the [project's repo](https://github.com/OpenRefine/OpenRefine) to a directory of your choice.
+
 ### Set up JDK {#set-up-jdk}
 
 You must [install JDK](https://jdk.java.net/15/) and set the JAVA_HOME environment variable (please ensure it points to the JDK, and not the JRE).
@@ -110,6 +114,8 @@ PATH=$PATH:$HOME/bin:$JAVA_HOME/bin
 export JAVA_HOME
 export PATH
 ```
+
+Note: OpenRefine on Linux currently supports jdk versions 8 to 15. Reference: [Issue 4106](https://github.com/OpenRefine/OpenRefine/issues/4106).
 
 Save and close the file. When you are back in the terminal, type
 
