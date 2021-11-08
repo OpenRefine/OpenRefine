@@ -54,6 +54,8 @@
 
 
   <properties>
+    <java.minversion>11</java.minversion>
+    <java.maxversion>15</java.maxversion>
     <jee.path>/</jee.path>
     <jee.port>3333</jee.port>
     <refine.data>/tmp/refine</refine.data>
@@ -99,8 +101,8 @@
         <artifactId>maven-compiler-plugin</artifactId>
         <version>3.8.1</version>
         <configuration>
-          <source>1.8</source>
-          <target>1.8</target>
+          <source>${java.minversion}</source>
+          <target>${java.minversion}</target>
           <encoding>UTF-8</encoding>
           <showDeprecation>false</showDeprecation>
         </configuration>
