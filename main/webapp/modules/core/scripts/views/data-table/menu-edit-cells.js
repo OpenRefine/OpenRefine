@@ -32,6 +32,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
+  var self = this;
   var doTextTransform = function(expression, onError, repeat, repeatCount) {
     Refine.postCoreProcess(
       "text-transform",
@@ -468,12 +469,28 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
     {
       id: "core/fill-down",
       label: $.i18n('core-views/fill-down'),
-      click: doFillDown
+      click: function () {
+        var cont = true;
+        if (columnHeaderUI._dataTableView._getSortingCriteriaCount() > 0) {
+           columnHeaderUI._dataTableView._createPendingSortWarningDialog(doFillDown);
+        }
+        else {
+           doFillDown();
+        }
+      }
     },
     {
       id: "core/blank-down",
       label: $.i18n('core-views/blank-down'),
-      click: doBlankDown
+      click: function () {
+        var cont = true;
+        if (columnHeaderUI._dataTableView._getSortingCriteriaCount() > 0) {
+           columnHeaderUI._dataTableView._createPendingSortWarningDialog(doBlankDown);
+        }
+        else {
+           doBlankDown();
+        }
+      }
     },
     {},
     {

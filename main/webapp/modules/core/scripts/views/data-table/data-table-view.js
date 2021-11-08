@@ -910,12 +910,28 @@ DataTableView.prototype._createMenuForAllColumns = function(elmt) {
         {
           label: $.i18n('core-views/fill-down'),
           id: "core/fill-down",
-          click: doAllFillDown
+          click: function () {
+          var cont = true;
+            if (self._getSortingCriteriaCount() > 0) {
+                self._createPendingSortWarningDialog(doAllFillDown);
+            }
+            else {
+                doAllFillDown();
+            }
+          }
         },
         {
           label: $.i18n('core-views/blank-down'),
           id: "core/blank-down",
-          click: doAllBlankDown
+          click: function () {
+          var cont = true;
+            if (self._getSortingCriteriaCount() > 0) {
+                self._createPendingSortWarningDialog(doAllBlankDown);
+            }
+            else {
+                doAllBlankDown();
+            }
+          }
         }
       ]
     },
@@ -1116,4 +1132,29 @@ DataTableView.promptExpressionOnVisibleRows = function(column, title, expression
     expression,
     onDone
   );
+};
+
+
+DataTableView.prototype._createPendingSortWarningDialog = function(func) {
+  var self = this;
+  var frame = $(DOM.loadHTML("core", "scripts/views/data-table/warn-of-pending-sort.html"));
+  var elmts = DOM.bind(frame);
+
+  elmts.or_views_warning.text($.i18n('core-views/warn-of-pending-sort'));
+  elmts.dialogHeader.text($.i18n('core-views/warning'));
+  elmts.okButton.html($.i18n('core-buttons/ok'));
+  elmts.cancelButton.text($.i18n('core-buttons/cancel'));
+
+  var level = DialogSystem.showDialog(frame);
+  var dismiss = function() { DialogSystem.dismissLevel(level - 1); };
+
+  elmts.cancelButton.click( function () {
+     dismiss();
+  });
+
+  elmts.okButton.click( function () {
+     func();
+     dismiss();
+  });
+
 };
