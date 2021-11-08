@@ -911,7 +911,6 @@ DataTableView.prototype._createMenuForAllColumns = function(elmt) {
           label: $.i18n('core-views/fill-down'),
           id: "core/fill-down",
           click: function () {
-          var cont = true;
             if (self._getSortingCriteriaCount() > 0) {
                 self._createPendingSortWarningDialog(doAllFillDown);
             }
@@ -924,7 +923,6 @@ DataTableView.prototype._createMenuForAllColumns = function(elmt) {
           label: $.i18n('core-views/blank-down'),
           id: "core/blank-down",
           click: function () {
-          var cont = true;
             if (self._getSortingCriteriaCount() > 0) {
                 self._createPendingSortWarningDialog(doAllBlankDown);
             }
@@ -1134,9 +1132,10 @@ DataTableView.promptExpressionOnVisibleRows = function(column, title, expression
   );
 };
 
-
+//This function takes a function as a parameter and creates a dialog window
+//If the ok button is pressed, the function is executed
+//If the cancel button is pressed instead, the window is dismissed and the function is not executed
 DataTableView.prototype._createPendingSortWarningDialog = function(func) {
-  var self = this;
   var frame = $(DOM.loadHTML("core", "scripts/views/data-table/warn-of-pending-sort.html"));
   var elmts = DOM.bind(frame);
 
