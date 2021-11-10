@@ -251,8 +251,8 @@ Refine.SeparatorBasedParserUI.prototype._initialize = function() {
   }
 
   if (this._config.disableAutoPreview) {
-      this._optionContainerElmts.disableAutoPreviewCheckbox.prop('checked', true);
-    }
+    this._optionContainerElmts.disableAutoPreviewCheckbox.prop('checked', true);
+  }
 
   // ??TODO This is it below, along with other parser type files
   // ADD if not holdOffCheckboxChecked around update
