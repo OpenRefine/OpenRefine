@@ -48,4 +48,35 @@ public class StringUtils {
             return o.toString();
         }
     }
+
+    /**
+     * String formatting method for the array of objects which keep the json array format
+     * @param o an array of objects to be converted to a string
+     * @return string representing array of objects
+     */
+    public static String JSONtoString(Object[] o){
+        if(o.length == 0){
+            return "[ ]";
+        }
+        String result = "[ ";
+        for(int i = 0; i < o.length; i++){
+            if(i != 0){
+                result += ", ";
+            }
+            String partialResult = "";
+            if(o[i] instanceof String){
+                partialResult = "\"" +o[i].toString()+ "\"";
+            }else if(o[i] instanceof Object[]){
+                partialResult = JSONtoString((Object[]) o[i]);
+            }else if (o[i] == null) {
+                partialResult = "null";
+            } 
+            else{
+                partialResult = o[i].toString();
+            }
+            result += partialResult;
+        } 
+        result += " ]";
+        return result;
+    }
 }

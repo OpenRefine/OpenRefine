@@ -59,5 +59,14 @@ public class ToStringTests extends RefineTest {
         assertEquals(invoke("toString", CalendarParser.parseAsOffsetDateTime(inputDateTime), "yyyy-MM-dd HH:mm:ss"), "2013-06-01 13:12:11");
     }
 
+    @Test
+    public void testToStringKeepJson() {
+        Object[] StringArray = {"one", "two", "three"};
+        Object o = StringArray;
+        // keep json structure
+        assertEquals(invoke("toString", o,true), "[ \"one\", \"two\", \"three\" ]");
+        // not keep json structure
+        assertEquals(invoke("toString", o), "[one, two, three]");
+    }
 }
 
