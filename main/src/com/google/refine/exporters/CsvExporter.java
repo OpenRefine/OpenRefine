@@ -39,8 +39,6 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.google.refine.browsing.Engine;
 import com.google.refine.model.Project;
 import com.google.refine.util.ParsingUtilities;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.io.Writer;
@@ -49,7 +47,6 @@ import java.util.Properties;
 
 public class CsvExporter implements WriterExporter {
 
-    final static Logger logger = LoggerFactory.getLogger("CsvExporter");
     char separator;
 
     public CsvExporter() {
@@ -74,10 +71,10 @@ public class CsvExporter implements WriterExporter {
             throws IOException {
 
         String optionsString = (params == null) ? null : params.getProperty("options");
-        Configuration options = new Configuration();
+        com.google.refine.exporters.CsvExporter.Configuration options = new com.google.refine.exporters.CsvExporter.Configuration();
         if (optionsString != null) {
             try {
-                options = ParsingUtilities.mapper.readValue(optionsString, Configuration.class);
+                options = ParsingUtilities.mapper.readValue(optionsString, com.google.refine.exporters.CsvExporter.Configuration.class);
             } catch (IOException e) {
                 // Ignore and keep options null.
                 e.printStackTrace();
@@ -115,13 +112,13 @@ public class CsvExporter implements WriterExporter {
                         CellData cellData = cells.get(i);
                         // If file is tsv and cell text contains internal tabs, then manually escape tabs
                         if (separator.charAt(0) == '\t' && cellData != null && cellData.text != null && cellData.text.contains("\t")) {
-                            String tabFormattedString = cellData.text.replace("\t", "\\t");
-                            strings[i] = tabFormattedString;
+                            final String tabString = cellData.text.replace("\t", "\\t");
+                            strings[i] = tabString;
                         }
                         // If file is tsv and cell text contains internal newlines, then manually escape newlines
                         else if (separator.charAt(0) == '\t' && cellData != null && cellData.text != null && cellData.text.contains("\n")) {
-                            String tabFormattedString = cellData.text.replace("\n", "\\n");
-                            strings[i] = tabFormattedString;
+                            final String lineString = cellData.text.replace("\n", "\\n");
+                            strings[i] = lineString;
                         } else {
                             strings[i] =
                                     (cellData != null && cellData.text != null) ?
@@ -146,8 +143,8 @@ public class CsvExporter implements WriterExporter {
      * @param lineSeparator Line terminator, has value of CSVWriter.DEFAULT_LINE_END
      * @return csvWriter    Writer properly configured for csv or tsv file export
      */
-    private CSVWriter createWriter(Writer writer, char delimiter, String lineSeparator) {
-        final CSVWriter csvWriter;
+    private CSVWriter createWriter(final Writer writer, final char delimiter, final String lineSeparator) {
+        CSVWriter csvWriter;
         if (delimiter == '\t') {
             csvWriter =
                     new CSVWriter(writer, delimiter, CSVWriter.NO_QUOTE_CHARACTER, CSVWriter.NO_ESCAPE_CHARACTER, lineSeparator);
