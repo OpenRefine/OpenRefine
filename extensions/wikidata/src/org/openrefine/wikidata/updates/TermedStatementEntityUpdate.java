@@ -55,9 +55,9 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  * 
  * @author Antonin Delpeuch
  */
-public class ItemUpdate {
+public class TermedStatementEntityUpdate {
 
-    private final ItemIdValue qid;
+    private final EntityIdValue qid;
     private final List<Statement> addedStatements;
     private final Set<Statement> deletedStatements;
     private final Map<String, MonolingualTextValue> labels;
@@ -70,7 +70,7 @@ public class ItemUpdate {
      * Constructor.
      * 
      * @param qid
-     *            the subject of the document. It can be a reconciled item value for
+     *            the subject of the document. It can be a reconciled entity value for
      *            new items.
      * @param addedStatements
      *            the statements to add on the item. They should be distinct. They
@@ -91,7 +91,7 @@ public class ItemUpdate {
      *            so this is just kept as a set for simplicity.
      */
     @JsonCreator
-    public ItemUpdate(@JsonProperty("subject") ItemIdValue qid,
+    public TermedStatementEntityUpdate(@JsonProperty("subject") EntityIdValue qid,
             @JsonProperty("addedStatements") List<Statement> addedStatements,
             @JsonProperty("deletedStatements") Set<Statement> deletedStatements,
             @JsonProperty("labels") Set<MonolingualTextValue> labels,
@@ -143,8 +143,8 @@ public class ItemUpdate {
      * @param aliases
      *      the aliases to add
      */
-    private ItemUpdate(
-    		ItemIdValue qid,
+    private TermedStatementEntityUpdate(
+    		EntityIdValue qid,
     		List<Statement> addedStatements,
     		Set<Statement> deletedStatements,
     		Map<String, MonolingualTextValue> labels,
@@ -166,7 +166,7 @@ public class ItemUpdate {
      * @return the subject of the item
      */
     @JsonProperty("subject")
-    public ItemIdValue getItemId() {
+    public EntityIdValue getItemId() {
         return qid;
     }
 
@@ -260,7 +260,7 @@ public class ItemUpdate {
      * @param other
      *            the other change that should be merged
      */
-    public ItemUpdate merge(ItemUpdate other) {
+    public TermedStatementEntityUpdate merge(TermedStatementEntityUpdate other) {
         Validate.isTrue(qid.equals(other.getItemId()));
         List<Statement> newAddedStatements = new ArrayList<>(addedStatements);
         for (Statement statement : other.getAddedStatements()) {
@@ -287,7 +287,7 @@ public class ItemUpdate {
         		aliases.add(alias);
         	}
         }
-        return new ItemUpdate(qid, newAddedStatements, newDeletedStatements, newLabels, newLabelsIfNew, newDescriptions, newDescriptionsIfNew, newAliases);
+        return new TermedStatementEntityUpdate(qid, newAddedStatements, newDeletedStatements, newLabels, newLabelsIfNew, newDescriptions, newDescriptionsIfNew, newAliases);
     }    
 
     /**
@@ -325,22 +325,22 @@ public class ItemUpdate {
     }
 
     /**
-     * Group a list of ItemUpdates by subject: this is useful to make one single
+     * Group a list of TermedStatementEntityUpdates by subject: this is useful to make one single
      * edit per item.
      * 
      * @param itemDocuments
-     * @return a map from item ids to merged ItemUpdate for that id
+     * @return a map from item ids to merged TermedStatementEntityUpdate for that id
      */
-    public static Map<EntityIdValue, ItemUpdate> groupBySubject(List<ItemUpdate> itemDocuments) {
-        Map<EntityIdValue, ItemUpdate> map = new HashMap<>();
-        for (ItemUpdate update : itemDocuments) {
+    public static Map<EntityIdValue, TermedStatementEntityUpdate> groupBySubject(List<TermedStatementEntityUpdate> itemDocuments) {
+        Map<EntityIdValue, TermedStatementEntityUpdate> map = new HashMap<>();
+        for (TermedStatementEntityUpdate update : itemDocuments) {
             if (update.isNull()) {
                 continue;
             }
 
-            ItemIdValue qid = update.getItemId();
+            EntityIdValue qid = update.getItemId();
             if (map.containsKey(qid)) {
-                ItemUpdate oldUpdate = map.get(qid);
+            	TermedStatementEntityUpdate oldUpdate = map.get(qid);
                 map.put(qid, oldUpdate.merge(update));
             } else {
                 map.put(qid, update);
@@ -361,7 +361,7 @@ public class ItemUpdate {
      * This should only be used when creating a new item. This ensures that we never
      * add an alias without adding a label in the same language.
      */
-    public ItemUpdate normalizeLabelsAndAliases() {
+    public TermedStatementEntityUpdate normalizeLabelsAndAliases() {
         // Ensure that we are only adding aliases with labels
         Set<MonolingualTextValue> filteredAliases = new HashSet<>();
         Map<String, MonolingualTextValue> newLabels = new HashMap<>(labelsIfNew);
@@ -375,17 +375,17 @@ public class ItemUpdate {
         }
         Map<String, MonolingualTextValue> newDescriptions = new HashMap<>(descriptionsIfNew);
         newDescriptions.putAll(descriptions);
-        return new ItemUpdate(qid, addedStatements, deletedStatements,
+        return new TermedStatementEntityUpdate(qid, addedStatements, deletedStatements,
         		newLabels, Collections.emptyMap(), newDescriptions, Collections.emptyMap(),
         		constructTermListMap(filteredAliases));
     }
 
     @Override
     public boolean equals(Object other) {
-        if (other == null || !ItemUpdate.class.isInstance(other)) {
+        if (other == null || !TermedStatementEntityUpdate.class.isInstance(other)) {
             return false;
         }
-        ItemUpdate otherUpdate = (ItemUpdate) other;
+        TermedStatementEntityUpdate otherUpdate = (TermedStatementEntityUpdate) other;
         return qid.equals(otherUpdate.getItemId()) && addedStatements.equals(otherUpdate.getAddedStatements())
                 && deletedStatements.equals(otherUpdate.getDeletedStatements())
                 && getLabels().equals(otherUpdate.getLabels())
