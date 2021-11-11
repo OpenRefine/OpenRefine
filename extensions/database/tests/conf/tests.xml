@@ -42,7 +42,6 @@
                 <exclude name="requiresMySQL"/>
                 <exclude name="requiresPgSQL"/>
                 <exclude name="requiresMariaDB" />
-                <exclude name="requiresSQLite" />
             </run>
         </groups>
         <packages>

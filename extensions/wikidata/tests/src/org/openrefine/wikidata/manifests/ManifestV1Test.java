@@ -20,7 +20,7 @@ public class ManifestV1Test {
         assertEquals(5, manifest.getMaxlag());
         assertEquals("P31", manifest.getInstanceOfPid());
         assertEquals("P279", manifest.getSubclassOfPid());
-        assertEquals("https://wdreconcile.toolforge.org/${lang}/api", manifest.getReconServiceEndpoint());
+        assertEquals("https://wikidata.reconci.link/${lang}/api", manifest.getReconServiceEndpoint());
         assertEquals("P2302", manifest.getConstraintsRelatedId("property_constraint_pid"));
         assertEquals("Q19474404", manifest.getConstraintsRelatedId("single_value_constraint_qid"));
         assertEquals("([[:toollabs:editgroups/b/OR/${batch_id}|details]])", manifest.getEditGroupsUrlSchema());

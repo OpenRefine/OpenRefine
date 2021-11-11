@@ -1,4 +1,4 @@
-package org.openrefine.extension.database;
+package com.google.refine.extension.database;
 
 import java.sql.SQLException;
 
@@ -6,7 +6,9 @@ import org.testng.annotations.AfterSuite;
 import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.Optional;
 import org.testng.annotations.Parameters;
+import org.testng.annotations.Test;
 
+@Test(groups = { "requiresMariaDB" })
 public class InitSQLiteTestDatabase extends DBExtensionTests {
 
     private DatabaseConfiguration sqliteDbConfig;
@@ -19,13 +21,12 @@ public class InitSQLiteTestDatabase extends DBExtensionTests {
 
         sqliteDbConfig = new DatabaseConfiguration();
         sqliteDbConfig.setDatabaseName(sqliteDbName);
-    
-        //DBExtensionTestUtils.initTestData(sqliteDbConfig);
+
+        DBExtensionTestUtils.initTestData(sqliteDbConfig);
     }
   
     @AfterSuite
     public void afterSuite() {
-        // DBExtensionTestUtils.cleanUpTestData(sqliteDbConfig);
+        DBExtensionTestUtils.cleanUpTestData(sqliteDbConfig);
     }
-
 }

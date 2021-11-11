@@ -469,12 +469,26 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
     {
       id: "core/fill-down",
       label: $.i18n('core-views/fill-down'),
-      click: doFillDown
+      click: function () {
+        if (columnHeaderUI._dataTableView._getSortingCriteriaCount() > 0) {
+           columnHeaderUI._dataTableView._createPendingSortWarningDialog(doFillDown);
+        }
+        else {
+           doFillDown();
+        }
+      }
     },
     {
       id: "core/blank-down",
       label: $.i18n('core-views/blank-down'),
-      click: doBlankDown
+      click: function () {
+        if (columnHeaderUI._dataTableView._getSortingCriteriaCount() > 0) {
+           columnHeaderUI._dataTableView._createPendingSortWarningDialog(doBlankDown);
+        }
+        else {
+           doBlankDown();
+        }
+      }
     },
     {},
     {

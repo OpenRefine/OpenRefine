@@ -45,12 +45,10 @@ import java.net.URLConnection;
 import java.nio.charset.Charset;
 import java.text.NumberFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Properties;
+import java.util.stream.Collectors;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
@@ -67,7 +65,6 @@ import org.apache.commons.fileupload.ProgressListener;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.apache.commons.fileupload.util.Streams;
-
 import org.apache.hadoop.fs.Path;
 import org.apache.hc.client5.http.ClientProtocolException;
 import org.apache.hc.core5.http.ClassicHttpResponse;
@@ -77,17 +74,11 @@ import org.apache.hc.core5.http.HttpStatus;
 import org.apache.hc.core5.http.io.HttpClientResponseHandler;
 import org.openrefine.ProjectManager;
 import org.openrefine.ProjectMetadata;
-import org.openrefine.RefineServlet;
 import org.openrefine.importers.ImporterUtilities;
 import org.openrefine.importing.ImportingJob.ImportingJobConfig;
 import org.openrefine.importing.ImportingJob.RetrievalRecord;
-import org.openrefine.model.Cell;
-import org.openrefine.model.ColumnMetadata;
-import org.openrefine.model.ColumnModel;
 import org.openrefine.model.GridState;
 import org.openrefine.model.Project;
-import org.openrefine.model.Row;
-import org.openrefine.model.RowMapper;
 import org.openrefine.model.changes.CachedGridStore;
 import org.openrefine.model.changes.ChangeDataStore;
 import org.openrefine.model.changes.LazyCachedGridStore;
@@ -97,9 +88,8 @@ import org.openrefine.util.JSONUtilities;
 import org.openrefine.util.ParsingUtilities;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.apache.http.StatusLine;
+
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import java.util.stream.Collectors;
 
 public class ImportingUtilities {
     final static protected Logger logger = LoggerFactory.getLogger("importing-utilities");
@@ -484,17 +474,20 @@ public class ImportingUtilities {
         }
         
         File file = new File(dir, name);
+        java.nio.file.Path normalizedFile = file.toPath().normalize();
         // For CVE-2018-19859, issue #1840
-        if (!file.toPath().normalize().startsWith(dir.toPath().normalize() + File.separator)) {
+        if (!normalizedFile.startsWith(dir.toPath().normalize() + File.separator)) {
             throw new IllegalArgumentException("Zip archives with files escaping their root directory are not allowed.");
         }
         
-        int dot = name.lastIndexOf('.');
-        String prefix = dot < 0 ? name : name.substring(0, dot);
-        String suffix = dot < 0 ? "" : name.substring(dot);
+        java.nio.file.Path normalizedParent = normalizedFile.getParent();
+        String fileName = normalizedFile.getFileName().toString();
+        int dot = fileName.lastIndexOf('.');
+        String prefix = dot < 0 ? fileName : fileName.substring(0, dot);
+        String suffix = dot < 0 ? "" : fileName.substring(dot);
         int index = 2;
         while (file.exists()) {
-            file = new File(dir, prefix + "-" + index++ + suffix);
+            file = normalizedParent.resolve(prefix + "-" + index++ + suffix).toFile();
         }
         
         file.getParentFile().mkdirs();

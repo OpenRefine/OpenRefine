@@ -33,6 +33,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package org.openrefine.expr.functions.xml;
 
+import org.openrefine.expr.functions.Type;
 import org.jsoup.Jsoup;
 import org.jsoup.parser.Parser;
 import org.openrefine.grel.ControlFunctionRegistry;

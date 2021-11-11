@@ -45,7 +45,7 @@ public class QuantityScrutinizerTest extends ValueScrutinizerTest{
             new BigDecimal("1.545"));
     
     private QuantityValue wrongUnitValue = Datamodel.makeQuantityValue(
-            new BigDecimal("1.234"), "Q346721");
+            new BigDecimal("1.234"), Datamodel.makeWikidataItemIdValue("Q346721"));
     
     private QuantityValue goodUnitValue = Datamodel.makeQuantityValue(
             new BigDecimal("1.234"), (ItemIdValue) allowedUnit);

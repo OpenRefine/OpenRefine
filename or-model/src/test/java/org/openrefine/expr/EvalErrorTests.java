@@ -26,15 +26,17 @@
  ******************************************************************************/
 package org.openrefine.expr;
 
-import org.openrefine.expr.EvalError;
 import org.openrefine.util.ParsingUtilities;
 import org.openrefine.util.TestUtils;
 import org.testng.annotations.Test;
 
+
 public class EvalErrorTests {
+
     @Test
     public void serializeEvalError() {
         EvalError e = new EvalError("This is a critical error");
         TestUtils.isSerializedTo(e, "{\"type\":\"error\",\"message\":\"This is a critical error\"}", ParsingUtilities.defaultWriter);
     }
+
 }

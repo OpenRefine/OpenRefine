@@ -40,6 +40,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import org.mockito.Mockito;
 import org.openrefine.RefineTest;
 import org.openrefine.browsing.EngineConfig;
 import org.openrefine.model.Cell;
@@ -243,4 +244,30 @@ public class ReconOperationTests extends RefineTest {
         
         assertGridEquals(project.getCurrentGridState(), expectedGrid);
     }
+
+    @Test
+    public void testFailingRecon() throws Exception {
+        StandardReconConfig reconConfig = mock(StandardReconConfig.class);
+        List<Recon> reconList = Arrays.asList((Recon)null, (Recon)null, (Recon)null, (Recon)null);
+        ReconJob reconJob = mock(ReconJob.class);
+        when(reconConfig.batchRecon(Mockito.any(), Mockito.anyLong())).thenReturn(reconList);
+        when(reconConfig.getBatchSize()).thenReturn(10);
+        when(reconConfig.createJob(Mockito.eq(project.getColumnModel()), Mockito.anyLong(), Mockito.any(), Mockito.any(), Mockito.any()))
+            .thenReturn(reconJob);
+          
+        ReconOperation op = new ReconOperation(EngineConfig.reconstruct("{}"), "column", reconConfig);
+            
+        Process process = op.createProcess(project.getHistory(), project.getProcessManager());
+        runAndWait(project.getProcessManager(), process, 1000);
+        
+        ColumnMetadata column = project.getColumnModel().getColumnByIndex(0);
+        Assert.assertNotNull(column.getReconStats());
+        Assert.assertEquals(column.getReconStats().getMatchedTopics(), 0);
+        
+        GridState grid = project.getCurrentGridState();
+        Assert.assertNull(grid.getRow(0).getCell(0).recon);
+        Assert.assertNull(grid.getRow(1).getCell(0).recon);
+        Assert.assertNull(grid.getRow(2).getCell(0).recon);
+       }
+
 }

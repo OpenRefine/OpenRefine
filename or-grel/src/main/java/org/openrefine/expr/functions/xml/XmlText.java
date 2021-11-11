@@ -34,13 +34,13 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package org.openrefine.expr.functions.xml;
 
 import org.jsoup.nodes.Element;
+import org.openrefine.expr.functions.Type;
 import org.openrefine.grel.ControlFunctionRegistry;
 import org.openrefine.grel.PureFunction;
 
 import org.openrefine.expr.EvalError;
 
 public class XmlText extends PureFunction {
-
     private static final long serialVersionUID = 8194362960147608680L;
 
     @Override
@@ -51,11 +51,11 @@ public class XmlText extends PureFunction {
                 Element e1 = (Element)o1;
                 return e1.text();
 
-            }else{
-                return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " failed as the first parameter is not an XML or HTML Element.  Please first use parseXml() or parseHtml() and select(query) prior to using this function");
+            } else {
+                return new EvalError(ControlFunctionRegistry.getFunctionName(this) + "() cannot work with this '" + new Type().call(args) + "' and failed as the first parameter is not an XML or HTML Element.  Please first use parseXml() or parseHtml() and select(query) prior to using this function");
             }
         }
-        return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects a single XML or HTML element as an argument");
+        return new EvalError(ControlFunctionRegistry.getFunctionName(this) + "() cannot work with this '" + new Type().call(args) + "' and expects a single XML or HTML element as an argument");
     }
 
 

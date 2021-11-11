@@ -47,8 +47,8 @@
         <artifactId>maven-compiler-plugin</artifactId>
         <version>3.8.1</version>
         <configuration>
-          <source>1.8</source>
-          <target>1.8</target>
+          <source>${java.minversion}</source>
+          <target>${java.minversion}</target>
           <encoding>UTF-8</encoding>
           <showDeprecation>false</showDeprecation>
         </configuration>
@@ -89,7 +89,7 @@
         <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-dependency-plugin</artifactId>
-            <version>3.1.2</version>
+            <version>3.2.0</version>
             <executions>
                 <execution>
                 <phase>compile</phase>
@@ -123,7 +123,7 @@
     <dependency>
       <groupId>org.postgresql</groupId>
       <artifactId>postgresql</artifactId>
-      <version>42.2.20</version>
+      <version>42.3.1</version>
     </dependency>
     <dependency>
       <groupId>org.apache.httpcomponents</groupId>
@@ -133,12 +133,12 @@
     <dependency>
       <groupId>com.google.http-client</groupId>
       <artifactId>google-http-client-jackson2</artifactId>
-      <version>1.39.2</version>
+      <version>1.40.1</version>
     </dependency>
     <dependency>
       <groupId>mysql</groupId>
       <artifactId>mysql-connector-java</artifactId>
-      <version>8.0.25</version>
+      <version>8.0.27</version>
     </dependency>
     <dependency>
       <groupId>org.jasypt</groupId>
@@ -148,12 +148,12 @@
     <dependency>
       <groupId>org.mariadb.jdbc</groupId>
       <artifactId>mariadb-java-client</artifactId>
-      <version>2.7.3</version>
+      <version>2.7.4</version>
     </dependency>
     <dependency>
       <groupId>org.xerial</groupId>
       <artifactId>sqlite-jdbc</artifactId>
-      <version>3.34.0</version>
+      <version>3.36.0.3</version>
     </dependency>
     <dependency>
       <groupId>com.fasterxml.jackson.core</groupId>
@@ -202,7 +202,7 @@
     <dependency>
       <groupId>org.mockito</groupId>
       <artifactId>mockito-core</artifactId>
-      <version>3.11.0</version>
+      <version>4.0.0</version>
       <scope>test</scope>
     </dependency>
     <dependency>
