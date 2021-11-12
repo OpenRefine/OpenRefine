@@ -329,8 +329,8 @@ public class PairPLL<K,V> extends PLL<Tuple2<K, V>> {
      * and the total number of elements, creating an appropriate RangePartitioner
      * and adding it to the PLL.
      * 
-     * If the total row count is unknown (negative) then the more expensive equivalent
-     * is used: pairPLL.values().zipWithIndex().
+     * If the total row count is unknown (negative) then partition sizes are not
+     * inferred.
      * 
      * @param pairPLL the new PLL with the derived partitioner
      * @param totalRowCount the known row count

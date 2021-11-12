@@ -10,6 +10,7 @@ import java.io.InputStreamReader;
 import java.io.LineNumberReader;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.io.Reader;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -32,6 +33,8 @@ import org.openrefine.model.changes.IndexedData;
 import org.openrefine.overlay.OverlayModel;
 import org.openrefine.util.ParsingUtilities;
 import org.testng.Assert;
+
+import com.google.common.io.CountingInputStream;
 
 /**
  * A massively inefficient but very simple implementation of the datamodel,
@@ -216,14 +219,18 @@ public class TestingDatamodelRunner implements DatamodelRunner {
 
     @Override
     public GridState loadTextFile(String path, MultiFileReadingProgress progress, long limit) throws IOException {
-        FileReader reader = null;
+        LineNumberReader reader = null;
         try {
-            reader = new FileReader(new File(path));
-            LineNumberReader lineReader = new LineNumberReader(reader);
-            List<Row> rows = lineReader.lines()
+            File file = new File(path);
+            CountingInputStream inputStream = new CountingInputStream(new FileInputStream(file));
+            progress.readingFile(file.getName(), inputStream.getCount());
+            reader = new LineNumberReader(new InputStreamReader(inputStream));
+            List<Row> rows = reader.lines()
                     .map(line -> new Row(Collections.singletonList(new Cell(line, null))))
                     .limit(limit)
                     .collect(Collectors.toList());
+            progress.readingFile(file.getName(), inputStream.getCount());
+            
             
             ColumnModel columnModel = new ColumnModel(Collections.singletonList(new ColumnMetadata("Column")));
             return new TestingGridState(columnModel, rows, Collections.emptyMap());

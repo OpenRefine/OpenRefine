@@ -12,6 +12,8 @@ import org.wikidata.wdtk.datamodel.interfaces.SnakGroup;
 import org.wikidata.wdtk.datamodel.interfaces.Statement;
 import org.wikidata.wdtk.datamodel.interfaces.TimeValue;
 import org.wikidata.wdtk.datamodel.interfaces.Value;
+import org.wikidata.wdtk.datamodel.interfaces.ValueSnak;
+import org.wikidata.wdtk.datamodel.interfaces.Snak;
 
 public class DifferenceWithinRangeScrutinizer extends EditScrutinizer {
 
