@@ -80,4 +80,10 @@ public interface DatamodelRunner {
      * Creates a {@link ChangeData} from an in-memory list of indexed data. The list is required to be sorted.
      */
     public <T extends Serializable> ChangeData<T> create(List<IndexedData<T>> changeData);
+
+    /**
+     * Indicates whether this implementation supports progress reporting. If not, progress objects will be left
+     * untouched when passed to methods in this interface.
+     */
+    public boolean supportsProgressReporting();
 }

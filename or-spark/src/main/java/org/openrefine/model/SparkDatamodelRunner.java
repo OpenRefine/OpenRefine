@@ -19,7 +19,6 @@ import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.JavaSparkContext;
 import org.apache.spark.api.java.function.Function;
 import org.apache.spark.storage.StorageLevel;
-import org.apache.spark.util.LongAccumulator;
 import org.apache.spark.util.ShutdownHookManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -175,16 +174,7 @@ public class SparkDatamodelRunner implements DatamodelRunner {
 
     @Override
     public GridState loadTextFile(String path, MultiFileReadingProgress progress, long limit) throws IOException {
-        LongAccumulator progressAccumulator = progress == null ? null : context.sc().longAccumulator();
         JavaRDD<String> lines = context.textFile(path);
-        if (progress != null) {
-            lines = lines.map(line -> {
-                System.out.println("Adding to the accumulator " + Integer.toString(line.length()));
-                progressAccumulator.add(line.length()); // TODO this should really be the number of bytes, not
-                                                        // characters
-                return line;
-            });
-        }
         ColumnModel columnModel = new ColumnModel(Collections.singletonList(new ColumnMetadata("Column")));
         JavaRDD<Row> rows = lines.map(s -> new Row(Collections.singletonList(new Cell(s, null))));
         if (limit >= 0) {
@@ -198,10 +188,13 @@ public class SparkDatamodelRunner implements DatamodelRunner {
             // that exceed the desired row count
             indexedRows = RDDUtils.limit(indexedRows, limit);
         }
-        if (progress != null) {
-            progress.readingFile(path, progressAccumulator.sum());
-        }
         return new SparkGridState(columnModel, indexedRows, Collections.emptyMap(), this);
+    }
+
+    @Override
+    public boolean supportsProgressReporting() {
+        // TODO add support for progress reporting
+        return false;
     }
 
 }

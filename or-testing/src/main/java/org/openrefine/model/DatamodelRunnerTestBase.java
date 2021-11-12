@@ -476,7 +476,9 @@ public abstract class DatamodelRunnerTestBase {
         ProgressReporterStub reporter = new ProgressReporterStub();
 
         simpleGrid.saveToFile(tempFile, reporter);
-        Assert.assertEquals(reporter.getPercentage(), 100);
+        if (SUT.supportsProgressReporting()) {
+            Assert.assertEquals(reporter.getPercentage(), 100);
+        }
 
         GridState loaded = SUT.loadGridState(tempFile);
 
@@ -1193,9 +1195,11 @@ public abstract class DatamodelRunnerTestBase {
 
         // read the whole file
         textGrid.collectRows();
-        // Depending on the implementation, at least one pass was done on the whole file
-        // so the progress must be at least the number of bytes in the file
-        Assert.assertTrue(progress.bytesRead >= 35);
+        if (SUT.supportsProgressReporting()) {
+            // Depending on the implementation, at least one pass was done on the whole file
+            // so the progress must be at least the number of bytes in the file
+            Assert.assertTrue(progress.bytesRead >= 35);
+        }
     }
 
     @Test

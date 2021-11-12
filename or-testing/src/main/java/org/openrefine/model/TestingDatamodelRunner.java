@@ -236,4 +236,9 @@ public class TestingDatamodelRunner implements DatamodelRunner {
         }
     }
 
+    @Override
+    public boolean supportsProgressReporting() {
+        return true;
+    }
+
 }

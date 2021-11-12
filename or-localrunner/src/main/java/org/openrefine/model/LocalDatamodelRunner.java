@@ -175,4 +175,9 @@ public class LocalDatamodelRunner implements DatamodelRunner {
         return new LocalChangeData<T>(this, pll, null); // no need for parent partition sizes, since pll has cached ones
     }
 
+    @Override
+    public boolean supportsProgressReporting() {
+        return true;
+    }
+
 }
