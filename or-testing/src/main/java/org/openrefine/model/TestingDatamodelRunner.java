@@ -4,13 +4,11 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.LineNumberReader;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.io.Reader;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -239,6 +237,11 @@ public class TestingDatamodelRunner implements DatamodelRunner {
                 reader.close();
             }
         }
+    }
+
+    @Override
+    public boolean supportsProgressReporting() {
+        return true;
     }
 
 }
