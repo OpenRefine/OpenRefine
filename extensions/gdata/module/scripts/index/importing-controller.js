@@ -157,6 +157,8 @@ Refine.GDataImportingController.prototype.getOptions = function() {
   options.storeBlankRows = this._parsingPanelElmts.storeBlankRowsCheckbox[0].checked;
   options.storeBlankCellsAsNulls = this._parsingPanelElmts.storeBlankCellsAsNullsCheckbox[0].checked;
 
+  options.disableAutoPreview = this._parsingPanelElmts.disableAutoPreviewCheckbox[0].checked;
+
   return options;
 };
 
@@ -177,9 +179,9 @@ Refine.GDataImportingController.prototype._showParsingPanel = function() {
   this._parsingPanelElmts.gdata_proj_name.html($.i18n('gdata-parsing/proj-name'));
   this._parsingPanelElmts.createProjectButton.html($.i18n('gdata-parsing/create-proj'));
   this._parsingPanelElmts.gdata_options.html($.i18n('gdata-parsing/option'));
-  this._parsingPanelElmts.gdata_disable_auto_preview.html($.i18n('gdata-parsing/disable-auto-preview'));
+  this._parsingPanelElmts.gdata_disable_auto_preview.text($.i18n('gdata-parsing/disable-auto-preview'));
   this._parsingPanelElmts.previewButton.html($.i18n('gdata-parsing/preview-button'));
-  this._parsingPanelElmts.gdata_updating.html($.i18n('gdata-parsing/updating-preview')); // ??TODO
+  this._parsingPanelElmts.gdata_updating.html($.i18n('gdata-parsing/updating-preview'));
   this._parsingPanelElmts.gdata_discard_next.html($.i18n('gdata-parsing/discard-next'));
   this._parsingPanelElmts.gdata_discard.html($.i18n('gdata-parsing/discard'));
   this._parsingPanelElmts.gdata_limit_next.html($.i18n('gdata-parsing/limit-next'));
@@ -287,8 +289,15 @@ Refine.GDataImportingController.prototype._showParsingPanel = function() {
     this._parsingPanelElmts.storeBlankCellsAsNullsCheckbox.prop("checked", true);
   }
 
+  if (this._options.disableAutoPreview) {
+    this._parsingPanelElmts.disableAutoPreviewCheckbox.prop('checked', true);
+  }
+
   var onChange = function() {
-    self._scheduleUpdatePreview();
+    if (!self._parsingPanelElmts.disableAutoPreviewCheckbox[0].checked)
+    {
+        self._scheduleUpdatePreview();
+    }
   };
   this._parsingPanel.find("input").bind("change", onChange);
   this._parsingPanel.find("select").bind("change", onChange);
