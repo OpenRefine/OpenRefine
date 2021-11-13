@@ -672,32 +672,27 @@ public class ImportingUtilities {
             return true;
         } else if (archiveIS instanceof ZipInputStream) {
             ZipInputStream zis = (ZipInputStream) archiveIS;
-            try {
-                ZipEntry ze;
-                while (!progress.isCanceled() && (ze = zis.getNextEntry()) != null) {
-                    if (!ze.isDirectory()) {
-                        String fileName2 = ze.getName();
-                        File file2 = allocateFile(rawDataDir, fileName2);
-                        
-                        progress.setProgress("Extracting " + fileName2, -1);
-                        
-                        ObjectNode fileRecord2 = ParsingUtilities.mapper.createObjectNode();
-                        JSONUtilities.safePut(fileRecord2, "origin", JSONUtilities.getString(archiveFileRecord, "origin", null));
-                        JSONUtilities.safePut(fileRecord2, "declaredEncoding", (String) null);
-                        JSONUtilities.safePut(fileRecord2, "declaredMimeType", (String) null);
-                        JSONUtilities.safePut(fileRecord2, "fileName", fileName2);
-                        JSONUtilities.safePut(fileRecord2, "archiveFileName", JSONUtilities.getString(archiveFileRecord, "fileName", null));
-                        JSONUtilities.safePut(fileRecord2, "location", getRelativePath(file2, rawDataDir));
+            ZipEntry ze;
+            while (!progress.isCanceled() && (ze = zis.getNextEntry()) != null) {
+                if (!ze.isDirectory()) {
+                    String fileName2 = ze.getName();
+                    File file2 = allocateFile(rawDataDir, fileName2);
 
-                        JSONUtilities.safePut(fileRecord2, "size", saveStreamToFile(zis, file2, null));
-                        postProcessSingleRetrievedFile(file2, fileRecord2);
-                        
-                        JSONUtilities.append(fileRecords, fileRecord2);
-                    }
+                    progress.setProgress("Extracting " + fileName2, -1);
+
+                    ObjectNode fileRecord2 = ParsingUtilities.mapper.createObjectNode();
+                    JSONUtilities.safePut(fileRecord2, "origin", JSONUtilities.getString(archiveFileRecord, "origin", null));
+                    JSONUtilities.safePut(fileRecord2, "declaredEncoding", (String) null);
+                    JSONUtilities.safePut(fileRecord2, "declaredMimeType", (String) null);
+                    JSONUtilities.safePut(fileRecord2, "fileName", fileName2);
+                    JSONUtilities.safePut(fileRecord2, "archiveFileName", JSONUtilities.getString(archiveFileRecord, "fileName", null));
+                    JSONUtilities.safePut(fileRecord2, "location", getRelativePath(file2, rawDataDir));
+
+                    JSONUtilities.safePut(fileRecord2, "size", saveStreamToFile(zis, file2, null));
+                    postProcessSingleRetrievedFile(file2, fileRecord2);
+
+                    JSONUtilities.append(fileRecords, fileRecord2);
                 }
-            } catch (IOException e) {
-                e.printStackTrace();
-                throw new IOException(e.getMessage());
             }
             return true;
         }
