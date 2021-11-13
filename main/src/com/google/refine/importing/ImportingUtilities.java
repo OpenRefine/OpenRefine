@@ -57,6 +57,7 @@ import java.util.Properties;
 import java.util.stream.Collectors;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.ZipEntry;
+import java.util.zip.ZipException;
 import java.util.zip.ZipInputStream;
 
 import javax.servlet.ServletException;
@@ -67,6 +68,7 @@ import org.apache.commons.compress.archivers.tar.TarArchiveEntry;
 import org.apache.commons.compress.archivers.tar.TarArchiveInputStream;
 import org.apache.commons.compress.compressors.bzip2.BZip2CompressorInputStream;
 import org.apache.commons.fileupload.FileItem;
+import org.apache.commons.fileupload.FileUploadException;
 import org.apache.commons.fileupload.ProgressListener;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
@@ -136,7 +138,7 @@ public class ImportingUtilities {
             JSONUtilities.safePut(config, "state", "error");
             JSONUtilities.safePut(config, "error", "Error uploading data");
             JSONUtilities.safePut(config, "errorDetails", e.getLocalizedMessage());
-            return;
+            throw new IOException(e.getMessage());
         }
         
         ArrayNode fileSelectionIndexes = ParsingUtilities.mapper.createArrayNode();
@@ -173,7 +175,7 @@ public class ImportingUtilities {
         File rawDataDir,
         ObjectNode retrievalRecord,
         final Progress progress
-    ) throws Exception {
+    ) throws IOException, FileUploadException {
         ArrayNode fileRecords = ParsingUtilities.mapper.createArrayNode();
         JSONUtilities.safePut(retrievalRecord, "files", fileRecords);
         
@@ -526,7 +528,8 @@ public class ImportingUtilities {
         abstract public void savedMore();
         abstract public boolean isCanceled();
     }
-    static public long saveStreamToFile(InputStream stream, File file, SavingUpdate update) throws IOException {
+
+    static private long saveStreamToFile(InputStream stream, File file, SavingUpdate update) throws IOException {
         long length = 0;
         FileOutputStream fos = new FileOutputStream(file);
         try {
@@ -542,13 +545,15 @@ public class ImportingUtilities {
                 }
             }
             return length;
+        } catch (ZipException e) {
+            throw new IOException("Compression format not supported, " + e.getMessage());
         } finally {
             fos.close();
         }
     }
     
     static public boolean postProcessRetrievedFile(
-            File rawDataDir, File file, ObjectNode fileRecord, ArrayNode fileRecords, final Progress progress) {
+            File rawDataDir, File file, ObjectNode fileRecord, ArrayNode fileRecords, final Progress progress) throws IOException {
         
         String mimeType = JSONUtilities.getString(fileRecord, "declaredMimeType", null);
         String contentEncoding = JSONUtilities.getString(fileRecord, "declaredEncoding", null);
@@ -631,13 +636,13 @@ public class ImportingUtilities {
     }
     
     // FIXME: This is wasteful of space and time. We should try to process on the fly
-    static public boolean explodeArchive(
+    static private boolean explodeArchive(
         File rawDataDir,
         InputStream archiveIS,
         ObjectNode archiveFileRecord,
         ArrayNode fileRecords,
         final Progress progress
-    ) {
+    ) throws IOException {
         if (archiveIS instanceof TarArchiveInputStream) {
             TarArchiveInputStream tis = (TarArchiveInputStream) archiveIS;
             try {
@@ -670,32 +675,27 @@ public class ImportingUtilities {
             return true;
         } else if (archiveIS instanceof ZipInputStream) {
             ZipInputStream zis = (ZipInputStream) archiveIS;
-            try {
-                ZipEntry ze;
-                while (!progress.isCanceled() && (ze = zis.getNextEntry()) != null) {
-                    if (!ze.isDirectory()) {
-                        String fileName2 = ze.getName();
-                        File file2 = allocateFile(rawDataDir, fileName2);
-                        
-                        progress.setProgress("Extracting " + fileName2, -1);
-                        
-                        ObjectNode fileRecord2 = ParsingUtilities.mapper.createObjectNode();
-                        JSONUtilities.safePut(fileRecord2, "origin", JSONUtilities.getString(archiveFileRecord, "origin", null));
-                        JSONUtilities.safePut(fileRecord2, "declaredEncoding", (String) null);
-                        JSONUtilities.safePut(fileRecord2, "declaredMimeType", (String) null);
-                        JSONUtilities.safePut(fileRecord2, "fileName", fileName2);
-                        JSONUtilities.safePut(fileRecord2, "archiveFileName", JSONUtilities.getString(archiveFileRecord, "fileName", null));
-                        JSONUtilities.safePut(fileRecord2, "location", getRelativePath(file2, rawDataDir));
+            ZipEntry ze;
+            while (!progress.isCanceled() && (ze = zis.getNextEntry()) != null) {
+                if (!ze.isDirectory()) {
+                    String fileName2 = ze.getName();
+                    File file2 = allocateFile(rawDataDir, fileName2);
 
-                        JSONUtilities.safePut(fileRecord2, "size", saveStreamToFile(zis, file2, null));
-                        postProcessSingleRetrievedFile(file2, fileRecord2);
-                        
-                        JSONUtilities.append(fileRecords, fileRecord2);
-                    }
+                    progress.setProgress("Extracting " + fileName2, -1);
+
+                    ObjectNode fileRecord2 = ParsingUtilities.mapper.createObjectNode();
+                    JSONUtilities.safePut(fileRecord2, "origin", JSONUtilities.getString(archiveFileRecord, "origin", null));
+                    JSONUtilities.safePut(fileRecord2, "declaredEncoding", (String) null);
+                    JSONUtilities.safePut(fileRecord2, "declaredMimeType", (String) null);
+                    JSONUtilities.safePut(fileRecord2, "fileName", fileName2);
+                    JSONUtilities.safePut(fileRecord2, "archiveFileName", JSONUtilities.getString(archiveFileRecord, "fileName", null));
+                    JSONUtilities.safePut(fileRecord2, "location", getRelativePath(file2, rawDataDir));
+
+                    JSONUtilities.safePut(fileRecord2, "size", saveStreamToFile(zis, file2, null));
+                    postProcessSingleRetrievedFile(file2, fileRecord2);
+
+                    JSONUtilities.append(fileRecords, fileRecord2);
                 }
-            } catch (IOException e) {
-                // TODO: what to do?
-                e.printStackTrace();
             }
             return true;
         }
