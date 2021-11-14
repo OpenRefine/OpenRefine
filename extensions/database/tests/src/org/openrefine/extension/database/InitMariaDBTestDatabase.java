@@ -1,4 +1,4 @@
-package com.google.refine.extension.database;
+package org.openrefine.extension.database;
 
 import java.sql.SQLException;
 
@@ -8,7 +8,7 @@ import org.testng.annotations.Optional;
 import org.testng.annotations.Parameters;
 import org.testng.annotations.Test;
 
-import com.google.refine.extension.database.mariadb.MariaDBDatabaseService;
+import org.openrefine.extension.database.mariadb.MariaDBDatabaseService;
 
 @Test(groups = { "requiresMariaDB" })
 public class InitMariaDBTestDatabase extends DBExtensionTests {

@@ -1,4 +1,4 @@
-package com.google.refine.extension.database;
+package org.openrefine.extension.database;
 
 import java.sql.SQLException;
 
