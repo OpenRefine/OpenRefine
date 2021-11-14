@@ -40,10 +40,11 @@ import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.testng.Assert;
+import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.BeforeSuite;
-import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
 import org.openrefine.RefineTest;
@@ -136,7 +137,7 @@ public class ReconOperationTests extends RefineTest {
         ReconConfig.registerReconConfig("core", "standard-service", StandardReconConfig.class);
     }
 
-    @BeforeTest
+    @BeforeMethod
     public void setUpDependencies() {
         project = createProject("test project",
                 new String[] { "column" },
@@ -244,4 +245,65 @@ public class ReconOperationTests extends RefineTest {
 
         assertGridEquals(project.getCurrentGridState(), expectedGrid);
     }
+
+    private static class ReconConfigStub extends ReconConfig {
+
+        @Override
+        public int getBatchSize() {
+            return 10;
+        }
+
+        @Override
+        public String getBriefDescription(String columnName) {
+            return null;
+        }
+
+        @Override
+        public ReconJob createJob(ColumnModel columnModel, long rowIndex, Row row, String columnName, Cell cell) {
+            ReconJob reconJob = mock(ReconJob.class, withSettings().serializable());
+            when(reconJob.getCellValue()).thenReturn(cell.getValue().toString());
+            return reconJob;
+        }
+
+        @Override
+        public List<Recon> batchRecon(List<ReconJob> jobs, long historyEntryID) {
+            return jobs.stream().map(j -> (Recon) null).collect(Collectors.toList());
+        }
+
+        @Override
+        public Recon createNewRecon(long historyEntryID) {
+            return null;
+        }
+
+        @Override
+        public String getMode() {
+            return null;
+        }
+
+    }
+
+    @Test
+    public void testFailingRecon() throws Exception {
+        ReconConfig reconConfig = new ReconConfigStub();
+
+        ReconOperation op = new ReconOperation(EngineConfig.reconstruct("{}"), "column", reconConfig);
+
+        Process process = op.createProcess(project.getHistory(), project.getProcessManager());
+        runAndWait(project.getProcessManager(), process, 1000);
+        /*
+         * process.startPerforming(project.getProcessManager()); Assert.assertTrue(process.isRunning()); try {
+         * Thread.sleep(60000); } catch (InterruptedException e) { Assert.fail("Test interrupted"); }
+         * Assert.assertFalse(process.isRunning());
+         */
+
+        ColumnMetadata column = project.getColumnModel().getColumnByIndex(0);
+        Assert.assertNotNull(column.getReconStats());
+        Assert.assertEquals(column.getReconStats().getMatchedTopics(), 0);
+
+        GridState grid = project.getCurrentGridState();
+        Assert.assertNull(grid.getRow(0).getCell(0).recon);
+        Assert.assertNull(grid.getRow(1).getCell(0).recon);
+        Assert.assertNull(grid.getRow(2).getCell(0).recon);
+    }
+
 }

@@ -55,6 +55,7 @@ import org.openrefine.ProjectMetadata;
 import org.openrefine.RefineTest;
 import org.openrefine.importing.ImportingFileRecord;
 import org.openrefine.importing.ImportingJob;
+import org.openrefine.importing.ImportingJob.ImportingJobConfig;
 import org.openrefine.importing.ImportingJob.RetrievalRecord;
 import org.openrefine.importing.ImportingParser;
 import org.openrefine.model.GridState;
@@ -89,6 +90,7 @@ public abstract class ImporterTest extends RefineTest {
         job = mock(ImportingJob.class);
         when(job.getRetrievalRecord()).thenReturn(new RetrievalRecord());
         when(job.getRawDataDir()).thenReturn(importerTestDir);
+        when(job.getJsonConfig()).thenReturn(new ImportingJobConfig());
 
         options = ParsingUtilities.mapper.createObjectNode();
     }

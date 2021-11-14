@@ -1,5 +1,5 @@
 
-package com.google.refine.extension.database;
+package org.openrefine.extension.database;
 
 import java.sql.SQLException;
 
@@ -9,7 +9,7 @@ import org.testng.annotations.Optional;
 import org.testng.annotations.Parameters;
 import org.testng.annotations.Test;
 
-import com.google.refine.extension.database.pgsql.PgSQLDatabaseService;
+import org.openrefine.extension.database.pgsql.PgSQLDatabaseService;
 
 @Test(groups = { "requiresPgSQL" })
 public class InitPostgresTestDatabase extends DBExtensionTests {
