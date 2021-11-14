@@ -28,9 +28,7 @@ package org.openrefine.importing;
 
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertTrue;
-import static org.testng.Assert.fail;
+import static org.testng.Assert.*;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -49,6 +47,7 @@ import javax.servlet.ServletInputStream;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.collections.IteratorUtils;
+import org.apache.commons.fileupload.FileUploadBase;
 import org.apache.commons.io.FileUtils;
 import org.apache.http.HttpEntity;
 import org.apache.http.entity.ContentType;
@@ -76,9 +75,20 @@ import org.testng.annotations.Test;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
+<<<<<<< HEAD:main/src/test/java/org/openrefine/importing/ImportingUtilitiesTests.java
 import okhttp3.HttpUrl;
 import okhttp3.mockwebserver.MockResponse;
 import okhttp3.mockwebserver.MockWebServer;
+||||||| 8d06810af:main/tests/server/src/com/google/refine/importing/ImportingUtilitiesTests.java
+import javax.servlet.ReadListener;
+import javax.servlet.ServletInputStream;
+import javax.servlet.http.HttpServletRequest;
+=======
+import javax.servlet.ReadListener;
+import javax.servlet.ServletInputStream;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+>>>>>>> master:main/tests/server/src/com/google/refine/importing/ImportingUtilitiesTests.java
 
 public class ImportingUtilitiesTests extends ImporterTest {
 
@@ -163,7 +173,7 @@ public class ImportingUtilitiesTests extends ImporterTest {
         entity.writeTo(os);
         ByteArrayInputStream is = new ByteArrayInputStream(os.toByteArray());
 
-        HttpServletRequest req = Mockito.mock(HttpServletRequest.class);
+        HttpServletRequest req = mock(HttpServletRequest.class);
         when(req.getContentType()).thenReturn(entity.getContentType().getValue());
         when(req.getParameter("download")).thenReturn(url.toString());
         when(req.getMethod()).thenReturn("POST");
@@ -312,6 +322,42 @@ public class ImportingUtilitiesTests extends ImporterTest {
     public void testExtractFilenameFromSparkURI() {
     	Assert.assertEquals(ImportingUtilities.extractFilenameFromSparkURI("hdfs:///data/records"), "records");
     	Assert.assertNull(ImportingUtilities.extractFilenameFromSparkURI("////"));
+    }
+
+    @Test
+    public void importUnsupportedZipFile() throws IOException{
+        String filename = "unsupportedPPMD.zip";
+        String filepath = ClassLoader.getSystemResource(filename).getPath();
+        // Make a copy in our data directory where it's expected
+        File tmp = File.createTempFile("openrefine-test-unsupportedPPMD", ".zip", job.getRawDataDir());
+        tmp.deleteOnExit();
+        FileUtils.copyFile(new File(filepath), tmp);
+
+        Progress dummyProgress = new Progress() {
+            @Override
+            public void setProgress(String message, int percent) {}
+
+            @Override
+            public boolean isCanceled() {
+                return false;
+            }
+        };
+
+        ArrayNode fileRecords = ParsingUtilities.mapper.createArrayNode();
+        ObjectNode fileRecord = ParsingUtilities.mapper.createObjectNode();
+        JSONUtilities.safePut(fileRecord, "origin", "upload");
+        JSONUtilities.safePut(fileRecord, "declaredEncoding", "UTF-8");
+        JSONUtilities.safePut(fileRecord, "declaredMimeType", "application/x-zip-compressed");
+        JSONUtilities.safePut(fileRecord, "fileName", filename);
+        JSONUtilities.safePut(fileRecord, "location", tmp.getName());
+
+        HttpServletRequest request = mock(HttpServletRequest.class);
+        HttpServletResponse response = mock(HttpServletResponse.class);
+
+        assertThrows(IOException.class, () -> ImportingUtilities.postProcessRetrievedFile(job.getRawDataDir(), tmp, fileRecord, fileRecords, dummyProgress));
+        assertThrows(FileUploadBase.InvalidContentTypeException.class, () -> ImportingUtilities.retrieveContentFromPostRequest(request, new Properties(), job.getRawDataDir(), fileRecord, dummyProgress));
+        assertThrows(IOException.class, () -> ImportingUtilities.loadDataAndPrepareJob(request, response, new Properties(), job, fileRecord));
+
     }
 
 }

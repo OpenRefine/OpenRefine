@@ -51,6 +51,7 @@ import java.util.Properties;
 import java.util.stream.Collectors;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.ZipEntry;
+import java.util.zip.ZipException;
 import java.util.zip.ZipInputStream;
 
 import javax.servlet.ServletException;
@@ -61,6 +62,7 @@ import org.apache.commons.compress.archivers.tar.TarArchiveEntry;
 import org.apache.commons.compress.archivers.tar.TarArchiveInputStream;
 import org.apache.commons.compress.compressors.bzip2.BZip2CompressorInputStream;
 import org.apache.commons.fileupload.FileItem;
+import org.apache.commons.fileupload.FileUploadException;
 import org.apache.commons.fileupload.ProgressListener;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
@@ -136,7 +138,7 @@ public class ImportingUtilities {
             config.state = "error";
             config.error = "Error uploading data";
             config.errorDetails = e.getLocalizedMessage();
-            return;
+            throw new IOException(e.getMessage());
         }
 
         config.fileSelection = new ArrayList<>();
@@ -159,7 +161,7 @@ public class ImportingUtilities {
         File rawDataDir,
         RetrievalRecord retrievalRecord,
         final Progress progress
-    ) throws Exception {
+    ) throws IOException, FileUploadException {
         List<ImportingFileRecord> fileRecords = new ArrayList<>();
         retrievalRecord.files = fileRecords;
         
@@ -525,7 +527,8 @@ public class ImportingUtilities {
         abstract public void savedMore();
         abstract public boolean isCanceled();
     }
-    static public long saveStreamToFile(InputStream stream, File file, SavingUpdate update) throws IOException {
+
+    static private long saveStreamToFile(InputStream stream, File file, SavingUpdate update) throws IOException {
         long length = 0;
         FileOutputStream fos = new FileOutputStream(file);
         try {
@@ -541,13 +544,15 @@ public class ImportingUtilities {
                 }
             }
             return length;
+        } catch (ZipException e) {
+            throw new IOException("Compression format not supported, " + e.getMessage());
         } finally {
             fos.close();
         }
     }
     
     static public boolean postProcessRetrievedFile(
-            File rawDataDir, File file, ImportingFileRecord fileRecord, List<ImportingFileRecord> fileRecords, final Progress progress) {
+            File rawDataDir, File file, ImportingFileRecord fileRecord, List<ImportingFileRecord> fileRecords, final Progress progress) throws IOException {
         
         String mimeType = fileRecord.getDeclaredMimeType();
         String contentEncoding = fileRecord.getDeclaredEncoding();
@@ -630,13 +635,13 @@ public class ImportingUtilities {
     }
     
     // FIXME: This is wasteful of space and time. We should try to process on the fly
-    static public boolean explodeArchive(
+    static private boolean explodeArchive(
         File rawDataDir,
         InputStream archiveIS,
         ImportingFileRecord archiveFileRecord,
         List<ImportingFileRecord> fileRecords,
         final Progress progress
-    ) {
+    ) throws IOException {
         if (archiveIS instanceof TarArchiveInputStream) {
             TarArchiveInputStream tis = (TarArchiveInputStream) archiveIS;
             try {
@@ -672,35 +677,30 @@ public class ImportingUtilities {
             return true;
         } else if (archiveIS instanceof ZipInputStream) {
             ZipInputStream zis = (ZipInputStream) archiveIS;
-            try {
-                ZipEntry ze;
-                while (!progress.isCanceled() && (ze = zis.getNextEntry()) != null) {
-                    if (!ze.isDirectory()) {
-                        String fileName2 = ze.getName();
-                        File file2 = allocateFile(rawDataDir, fileName2);
-                        
-                        progress.setProgress("Extracting " + fileName2, -1);
-                        
-                        ImportingFileRecord fileRecord2 = new ImportingFileRecord(
-                        		null, // sparkURI
-                        		getRelativePath(file2, rawDataDir), // location
-                        		fileName2, // fileName
-                        		saveStreamToFile(zis, file2, null), // size
-                        		archiveFileRecord.getOrigin(), // origin
-                        		null, // declaredMimeType
-                        		null, // mimeType
-                        		null, // url
-                        		null, // encoding
-                        		null, // declaredEncoding
-                        		null, // format
-                        		archiveFileRecord.getFileName());
-                        
-                        fileRecords.add(fileRecord2);
-                    }
+            ZipEntry ze;
+            while (!progress.isCanceled() && (ze = zis.getNextEntry()) != null) {
+                if (!ze.isDirectory()) {
+                    String fileName2 = ze.getName();
+                    File file2 = allocateFile(rawDataDir, fileName2);
+                    
+                    progress.setProgress("Extracting " + fileName2, -1);
+                    
+                    ImportingFileRecord fileRecord2 = new ImportingFileRecord(
+                                    null, // sparkURI
+                                    getRelativePath(file2, rawDataDir), // location
+                                    fileName2, // fileName
+                                    saveStreamToFile(zis, file2, null), // size
+                                    archiveFileRecord.getOrigin(), // origin
+                                    null, // declaredMimeType
+                                    null, // mimeType
+                                    null, // url
+                                    null, // encoding
+                                    null, // declaredEncoding
+                                    null, // format
+                                    archiveFileRecord.getFileName());
+                    
+                    fileRecords.add(fileRecord2);
                 }
-            } catch (IOException e) {
-                // TODO: what to do?
-                e.printStackTrace();
             }
             return true;
         }
