@@ -15,7 +15,7 @@ describe(__filename, function () {
     cy.typeExpression('replace(value,"change","a")');
     cy.confirmDialogPanel();
 
-    cy.assertNotificationContainingText('Text transform on 3 cells');
+    cy.assertNotificationContainingText('Text transform on cells in column b');
 
     cy.assertCellEquals(0, 'b', 'a');
     cy.assertCellEquals(1, 'b', 'a');
@@ -38,7 +38,7 @@ describe(__filename, function () {
     cy.get('label[bind="or_views_setBlank"]').click();
     cy.confirmDialogPanel();
 
-    cy.assertNotificationContainingText('Text transform on 3 cells');
+    cy.assertNotificationContainingText('Text transform on cells in column b');
 
     cy.assertCellEquals(0, 'b', '');
     cy.assertCellEquals(1, 'b', '');
@@ -61,7 +61,7 @@ describe(__filename, function () {
     cy.get('label[bind="or_views_storeErr"]').click();
     cy.confirmDialogPanel();
 
-    cy.assertNotificationContainingText('Text transform on 3 cells');
+    cy.assertNotificationContainingText('Text transform on cells in column b');
 
     cy.assertCellEquals(0, 'b', 'replace expects 3 strings, or 1 string, 1 regex, and 1 string');
     cy.assertCellEquals(1, 'b', 'replace expects 3 strings, or 1 string, 1 regex, and 1 string');

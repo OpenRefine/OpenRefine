@@ -15,7 +15,7 @@ describe(__filename, function () {
     ]);
 
     // ensure notification and cell content
-    cy.assertNotificationContainingText('Text transform on 1 cells');
+    cy.assertNotificationContainingText('Text transform on cells in column A column');
     cy.assertCellEquals(0, 'A column', '<img src="test" />');
     cy.assertCellEquals(1, 'A column', '<img src="test" />');
   });

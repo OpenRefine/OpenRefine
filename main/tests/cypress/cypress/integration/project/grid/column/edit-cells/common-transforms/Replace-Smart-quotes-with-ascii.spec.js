@@ -16,7 +16,7 @@ describe(__filename, function () {
 
     //  Check notification and cell content
     cy.assertNotificationContainingText(
-      'Text transform on 2 cells in column Smartquotes'
+      'Text transform on cells in column Smartquotes'
     );
     cy.assertCellEquals(0, 'Smartquotes', '"0a"');
     cy.assertCellEquals(1, 'Smartquotes', "'1a'");
@@ -29,7 +29,7 @@ describe(__filename, function () {
 
     //  Check notification and cell content
     cy.assertNotificationContainingText(
-      'Text transform on 0 cells in column ascii'
+      'Text transform on cells in column ascii'
     );
     cy.assertCellEquals(0, 'ascii', "'0b'");
     cy.assertCellEquals(1, 'ascii', "'1b'");

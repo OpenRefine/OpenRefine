@@ -16,7 +16,7 @@ describe(__filename, function () {
     ]);
 
     // Check notification and cell content
-    cy.assertNotificationContainingText('Text transform on 2 cells');
+    cy.assertNotificationContainingText('Text transform on cells in column A Date');
     cy.assertCellEquals(0, 'A Date', '2021-01-01T00:00:00Z');
     cy.assertCellEquals(1, 'A Date', '2021-01-01T05:35:15Z');
     cy.assertCellEquals(2, 'A Date', 'THIS SHOULD NOT BE TOUCHED');

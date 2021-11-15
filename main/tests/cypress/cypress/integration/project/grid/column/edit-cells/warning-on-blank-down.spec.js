@@ -45,7 +45,7 @@ describe(__filename, function () {
     cy.confirmDialogPanel();
 
     // ensure notification and cell content
-    cy.assertNotificationContainingText('Blank down 3 cells');
+    cy.assertNotificationContainingText('Blank down cells in column b');
     cy.assertCellEquals(0, 'b', '2b');
     cy.assertCellEquals(1, 'b', 'also identical');
     cy.assertCellEquals(2, 'b', 'identical');

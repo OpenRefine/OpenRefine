@@ -17,7 +17,7 @@ describe(__filename, function () {
     cy.columnActionClick('b', ['Edit cells', 'Blank down']);
 
     // ensure notification and cell content
-    cy.assertNotificationContainingText('Blank down 3 cells');
+    cy.assertNotificationContainingText('Blank down cells in column b');
     cy.assertCellEquals(0, 'b', 'identical'); // untouched
     cy.assertCellEquals(1, 'b', null); // blanked
     cy.assertCellEquals(2, 'b', '2b'); // untouched

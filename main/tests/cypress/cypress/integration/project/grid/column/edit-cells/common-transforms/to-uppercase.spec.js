@@ -10,7 +10,7 @@ describe(__filename, function () {
 
     // Check notification and cell content
     cy.assertNotificationContainingText(
-      'Text transform on 0 cells in column Shrt_Desc: value.toUppercase()'
+      'Text transform on cells in column Shrt_Desc using expression value.toUppercase()'
     );
     cy.assertCellEquals(0, 'Shrt_Desc', 'BUTTER,WITH SALT');
     cy.assertCellEquals(1, 'Shrt_Desc', 'BUTTER,WHIPPED,WITH SALT');
