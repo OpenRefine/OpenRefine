@@ -16,7 +16,7 @@ describe(__filename, function () {
     cy.get('.dialog-container input[bind="replacement_textInput"]').type("a");
     cy.confirmDialogPanel();
 
-    cy.assertNotificationContainingText('Text transform on 1 cell');
+    cy.assertNotificationContainingText('Text transform on cells in column b');
 
     cy.assertCellEquals(0, 'b', 'a');
     cy.assertCellEquals(1, 'b', 'Change');
@@ -40,7 +40,7 @@ describe(__filename, function () {
     cy.get('label[bind="or_views_find_case_insensitive"]').click();
     cy.confirmDialogPanel();
 
-    cy.assertNotificationContainingText('Text transform on 3 cells');
+    cy.assertNotificationContainingText('Text transform on cells in column b');
 
     cy.assertCellEquals(0, 'b', 'a');
     cy.assertCellEquals(1, 'b', 'a');
@@ -64,7 +64,7 @@ describe(__filename, function () {
     cy.get('label[bind="or_views_find_whole_word"]').click();
     cy.confirmDialogPanel();
 
-    cy.assertNotificationContainingText('Text transform on 1 cells');
+    cy.assertNotificationContainingText('Text transform on cells in column b');
 
     cy.assertCellEquals(0, 'b', 'a');
     cy.assertCellEquals(1, 'b', 'change1');
@@ -88,7 +88,7 @@ describe(__filename, function () {
     cy.get('label[bind="or_views_find_regExp"]').click();
     cy.confirmDialogPanel();
 
-    cy.assertNotificationContainingText('Text transform on 2 cells');
+    cy.assertNotificationContainingText('Text transform on cells in column b');
 
     cy.assertCellEquals(0, 'b', 'a');
     cy.assertCellEquals(1, 'b', 'a');
@@ -112,7 +112,7 @@ describe(__filename, function () {
     cy.get('label[bind="or_views_replace_dont_escape"]').click();
     cy.confirmDialogPanel();
 
-    cy.assertNotificationContainingText('Text transform on 2 cells');
+    cy.assertNotificationContainingText('Text transform on cells in column b');
 
     cy.assertCellEquals(0, 'b', 'first_name\nsecond_name');
     cy.assertCellEquals(1, 'b', 'first_name\nsecond_name');
@@ -136,7 +136,7 @@ describe(__filename, function () {
     cy.get('label[bind="or_views_replace_dont_escape"]').click();
     cy.confirmDialogPanel();
 
-    cy.assertNotificationContainingText('Text transform on 2 cells');
+    cy.assertNotificationContainingText('Text transform on cells in column b');
 
     cy.assertCellEquals(0, 'b', 'first_name\\nsecond_name');
     cy.assertCellEquals(1, 'b', 'first_name\\nsecond_name');

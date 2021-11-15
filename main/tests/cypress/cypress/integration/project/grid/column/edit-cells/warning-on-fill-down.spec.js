@@ -45,7 +45,7 @@ describe(__filename, function () {
     cy.confirmDialogPanel();
 
     // ensure notification and cell content
-    cy.assertNotificationContainingText('Fill down 3 cells in column b');
+    cy.assertNotificationContainingText('Fill down cells in column b');
     cy.assertCellEquals(0, 'b', '0b'); // untouched
     cy.assertCellEquals(1, 'b', '0b'); // filled
     cy.assertCellEquals(2, 'b', '2b'); // untouched

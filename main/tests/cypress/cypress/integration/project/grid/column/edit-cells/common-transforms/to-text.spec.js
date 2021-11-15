@@ -12,7 +12,7 @@ describe(__filename, function () {
 
     // Check notification and cell content
     cy.assertNotificationContainingText(
-      'Text transform on 2 cells in column NDB_No: value.toString()'
+      'Text transform on cells in column NDB_No using expression value.toString()'
     );
 
     cy.assertCellEquals(0, 'NDB_No', '1001');

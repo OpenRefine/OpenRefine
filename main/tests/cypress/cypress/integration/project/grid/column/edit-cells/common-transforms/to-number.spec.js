@@ -16,7 +16,7 @@ describe(__filename, function () {
     ]);
 
     // Ensure notification and cell content
-    cy.assertNotificationContainingText('Text transform on 2 cells');
+    cy.assertNotificationContainingText('Text transform on cells in column');
     cy.assertCellEquals(0, 'A Number', 'This is not a number');
     cy.assertCellEquals(1, 'A Number', '42');
     cy.assertCellEquals(2, 'A Number', '43');
@@ -42,6 +42,7 @@ describe(__filename, function () {
       'Common transforms',
       'To number',
     ]);
+    cy.assertNotificationContainingText('Text transform on cells in column');
 
     // Ensure cell content
     cy.assertCellEquals(0, 'A Number', '42.2');
