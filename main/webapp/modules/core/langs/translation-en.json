@@ -455,6 +455,8 @@
     "core-views/remove-sort": "Remove sort",
     "core-views/sort-by": "Sort by",
     "core-views/sort-cell": "Sort cell values as",
+    "core-views/warn-of-pending-sort": "There is a sort pending. The data visible on screen may not reflect the data this operation will act on.",
+    "core-views/warning": "Warning",
     "core-views/pos-blank": "Position blanks and errors",
     "core-views/text": "text",
     "core-views/case-sensitive": "case-sensitive",
