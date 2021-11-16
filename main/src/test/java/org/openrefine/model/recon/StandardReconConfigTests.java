@@ -256,7 +256,7 @@ public class StandardReconConfigTests extends RefineTest {
                     "        ]}";
             StandardReconConfig config = StandardReconConfig.reconstruct(configJson);
             ReconOperation op = new ReconOperation(EngineConfig.ALL_ROWS, "director", config);
-            Process process = op.createProcess(project.getHistory(), project.getProcessManager());
+            Process process = op.createProcess(project);
             ProcessManager pm = project.getProcessManager();
             process.startPerforming(pm);
             Assert.assertTrue(process.isRunning());
@@ -364,7 +364,7 @@ public class StandardReconConfigTests extends RefineTest {
                     "        ]}";
             StandardReconConfig config = StandardReconConfig.reconstruct(configJson);
             ReconOperation op = new ReconOperation(EngineConfig.reconstruct(null), "director", config);
-            Process process = op.createProcess(project.getHistory(), project.getProcessManager());
+            Process process = op.createProcess(project);
             ProcessManager pm = project.getProcessManager();
             process.startPerforming(pm);
             Assert.assertTrue(process.isRunning());

@@ -188,7 +188,7 @@ public class ReconOperationTests extends RefineTest {
     @Test
     public void serializeReconProcess() throws Exception {
         ReconOperation op = ParsingUtilities.mapper.readValue(json, ReconOperation.class);
-        org.openrefine.process.Process process = op.createProcess(project.getHistory(), project.getProcessManager());
+        org.openrefine.process.Process process = op.createProcess(project);
         TestUtils.isSerializedTo(process, String.format(processJson, process.hashCode()), ParsingUtilities.defaultWriter);
     }
 
@@ -202,8 +202,8 @@ public class ReconOperationTests extends RefineTest {
                 new IndexedRow(3L, row3));
 
         ReconChangeDataProducer producer = new ReconChangeDataProducer("column", 0, reconConfig, 1234L, project.getColumnModel());
-        List<Cell> results1 = producer.call(batch1);
-        List<Cell> results2 = producer.call(batch2);
+        List<Cell> results1 = producer.callRowBatch(batch1);
+        List<Cell> results2 = producer.callRowBatch(batch2);
 
         Assert.assertEquals(results1, Arrays.asList(new Cell("value1", recon1), new Cell("value2", recon2)));
         Assert.assertEquals(results2, Arrays.asList(new Cell("value1", recon1), new Cell("value3", recon3)));
@@ -217,7 +217,7 @@ public class ReconOperationTests extends RefineTest {
     @Test
     public void testFullChange() throws Exception {
         ReconOperation operation = new ReconOperation(EngineConfig.ALL_ROWS, "column", reconConfig);
-        Process process = operation.createProcess(project.getHistory(), project.getProcessManager());
+        Process process = operation.createProcess(project);
         process.startPerforming(project.getProcessManager());
         Assert.assertTrue(process.isRunning());
         try {
@@ -288,7 +288,7 @@ public class ReconOperationTests extends RefineTest {
 
         ReconOperation op = new ReconOperation(EngineConfig.reconstruct("{}"), "column", reconConfig);
 
-        Process process = op.createProcess(project.getHistory(), project.getProcessManager());
+        Process process = op.createProcess(project);
         runAndWait(project.getProcessManager(), process, 1000);
         /*
          * process.startPerforming(project.getProcessManager()); Assert.assertTrue(process.isRunning()); try {

@@ -15,7 +15,7 @@ import org.openrefine.model.Row;
  *
  * @param <T>
  */
-public interface RecordChangeDataJoiner<T extends Serializable> extends Serializable {
+public interface RecordChangeDataJoiner<T> extends Serializable {
 
     /**
      * Given a record and the pre-computed change data for this record, return the new rows in the record after the

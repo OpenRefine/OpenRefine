@@ -2,7 +2,6 @@
 package org.openrefine.model.changes;
 
 import java.io.IOException;
-import java.io.Serializable;
 
 public class ChangeContextImpl implements ChangeContext {
 
@@ -20,7 +19,7 @@ public class ChangeContextImpl implements ChangeContext {
     }
 
     @Override
-    public <T extends Serializable> ChangeData<T> getChangeData(String dataId, ChangeDataSerializer<T> serializer) throws IOException {
+    public <T> ChangeData<T> getChangeData(String dataId, ChangeDataSerializer<T> serializer) throws IOException {
         return _dataStore.retrieve(_historyEntryId, dataId, serializer);
     }
 

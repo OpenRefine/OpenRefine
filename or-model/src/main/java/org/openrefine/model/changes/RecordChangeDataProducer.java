@@ -15,7 +15,7 @@ import org.openrefine.model.Record;
  *
  * @param <T>
  */
-public interface RecordChangeDataProducer<T extends Serializable> extends Serializable {
+public interface RecordChangeDataProducer<T> extends Serializable {
 
     /**
      * Compute the change data on a given row.
@@ -34,7 +34,7 @@ public interface RecordChangeDataProducer<T extends Serializable> extends Serial
      *            the list of records to fetch change data on
      * @return a list of the same size
      */
-    public default List<T> call(List<Record> records) {
+    public default List<T> callRecordBatch(List<Record> records) {
         return records.stream()
                 .map(record -> call(record))
                 .collect(Collectors.toList());

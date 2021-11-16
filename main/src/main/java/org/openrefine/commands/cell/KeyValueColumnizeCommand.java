@@ -65,7 +65,7 @@ public class KeyValueColumnizeCommand extends Command {
             Operation op = new KeyValueColumnizeOperation(
                     keyColumnName, valueColumnName, noteColumnName);
 
-            Process process = op.createProcess(project.getHistory(), project.getProcessManager());
+            Process process = op.createProcess(project);
 
             performProcessAndRespond(request, response, project, process);
         } catch (Exception e) {

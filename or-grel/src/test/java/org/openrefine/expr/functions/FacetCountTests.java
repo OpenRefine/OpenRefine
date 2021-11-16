@@ -51,7 +51,7 @@ public class FacetCountTests extends FunctionTestBase {
                 { "a" }, { "a" }, { "a" }, { 1 }, { 1 }, { true }
         });
         bindings = new Properties();
-        bindings.put("project", project);
+        bindings.put("project_id", project.getId());
     }
 
     @Test

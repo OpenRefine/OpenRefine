@@ -62,7 +62,7 @@ public class RenameColumnCommand extends Command {
             String newColumnName = request.getParameter("newColumnName");
 
             Operation op = new ColumnRenameOperation(oldColumnName, newColumnName);
-            Process process = op.createProcess(project.getHistory(), project.getProcessManager());
+            Process process = op.createProcess(project);
 
             performProcessAndRespond(request, response, project, process);
         } catch (Exception e) {

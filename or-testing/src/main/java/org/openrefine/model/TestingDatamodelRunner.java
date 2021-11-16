@@ -10,7 +10,6 @@ import java.io.InputStreamReader;
 import java.io.LineNumberReader;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -141,7 +140,7 @@ public class TestingDatamodelRunner implements DatamodelRunner {
     }
 
     @Override
-    public <T extends Serializable> ChangeData<T> loadChangeData(File path, ChangeDataSerializer<T> serializer) throws IOException {
+    public <T> ChangeData<T> loadChangeData(File path, ChangeDataSerializer<T> serializer) throws IOException {
         Map<Long, T> data = new HashMap<>();
         List<File> files = sortedListFiles(path);
         for (File partitionFile : files) {
@@ -202,7 +201,7 @@ public class TestingDatamodelRunner implements DatamodelRunner {
     }
 
     @Override
-    public <T extends Serializable> ChangeData<T> create(List<IndexedData<T>> changeData) {
+    public <T> ChangeData<T> create(List<IndexedData<T>> changeData) {
         return new TestingChangeData<T>(changeData.stream()
                 .filter(id -> id.getData() != null)
                 .collect(Collectors.toMap(IndexedData::getId, IndexedData::getData)));

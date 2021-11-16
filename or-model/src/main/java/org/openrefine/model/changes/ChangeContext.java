@@ -2,7 +2,6 @@
 package org.openrefine.model.changes;
 
 import java.io.IOException;
-import java.io.Serializable;
 
 /**
  * Stores information that changes can rely on when modifying the project grid.
@@ -33,5 +32,5 @@ public interface ChangeContext {
      * Retrieves a {@link ChangeData} from the underlying {@link ChangeDataStore}. It must have been registered in the
      * store before hand.
      */
-    public <T extends Serializable> ChangeData<T> getChangeData(String dataId, ChangeDataSerializer<T> serializer) throws IOException;
+    public <T> ChangeData<T> getChangeData(String dataId, ChangeDataSerializer<T> serializer) throws IOException;
 }

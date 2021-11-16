@@ -212,7 +212,7 @@ public class ExtendDataOperationTests extends RefineTest {
     @Test
     public void serializeExtendDataProcess() throws Exception {
         Process p = ParsingUtilities.mapper.readValue(operationJson, ExtendDataOperation.class)
-                .createProcess(project.getHistory(), project.getProcessManager());
+                .createProcess(project);
         TestUtils.isSerializedTo(p, String.format(processJson, p.hashCode()), ParsingUtilities.defaultWriter);
     }
 
@@ -289,7 +289,7 @@ public class ExtendDataOperationTests extends RefineTest {
         DataExtensionProducer producer = new DataExtensionProducer(
                 new ReconciledDataExtensionJob(extension, RECON_SERVICE, RECON_IDENTIFIER_SPACE, RECON_SCHEMA_SPACE), 0, RowFilter.ANY_ROW);
 
-        List<RecordDataExtension> dataExtensions = producer.call(project.getCurrentGridState().collectRecords());
+        List<RecordDataExtension> dataExtensions = producer.callRecordBatch(project.getCurrentGridState().collectRecords());
         RecordDataExtension dataExtension1 = new RecordDataExtension(
                 Collections.singletonMap(0L, new DataExtension(
                         Collections.singletonList(Collections.singletonList(new Cell("IR", null))))));
@@ -336,7 +336,7 @@ public class ExtendDataOperationTests extends RefineTest {
         DataExtensionProducer producer = new DataExtensionProducer(
                 new ReconciledDataExtensionJob(extension, RECON_SERVICE, RECON_IDENTIFIER_SPACE, RECON_SCHEMA_SPACE), 1, filter);
 
-        List<RecordDataExtension> dataExtensions = producer.call(state.collectRecords());
+        List<RecordDataExtension> dataExtensions = producer.callRecordBatch(state.collectRecords());
         RecordDataExtension dataExtension1 = new RecordDataExtension(
                 Collections.singletonMap(0L, new DataExtension(
                         Collections.singletonList(Collections.singletonList(new Cell("IR", null))))));
@@ -368,7 +368,7 @@ public class ExtendDataOperationTests extends RefineTest {
                 RECON_SCHEMA_SPACE,
                 extension,
                 1);
-        LongRunningProcessStub process = new LongRunningProcessStub(op.createProcess(project.getHistory(), project.getProcessManager()));
+        LongRunningProcessStub process = new LongRunningProcessStub(op.createProcess(project));
         process.run();
 
         // Inspect rows
@@ -420,7 +420,7 @@ public class ExtendDataOperationTests extends RefineTest {
                 extension,
                 1);
 
-        LongRunningProcessStub process = new LongRunningProcessStub(op.createProcess(project.getHistory(), project.getProcessManager()));
+        LongRunningProcessStub process = new LongRunningProcessStub(op.createProcess(project));
         process.run();
 
         // Test to be updated as countries change currencies!
@@ -465,7 +465,7 @@ public class ExtendDataOperationTests extends RefineTest {
                 RECON_SCHEMA_SPACE,
                 extension,
                 1);
-        LongRunningProcessStub process = new LongRunningProcessStub(op.createProcess(project.getHistory(), project.getProcessManager()));
+        LongRunningProcessStub process = new LongRunningProcessStub(op.createProcess(project));
         process.run();
 
         /*
@@ -514,7 +514,7 @@ public class ExtendDataOperationTests extends RefineTest {
                 RECON_SCHEMA_SPACE,
                 extension,
                 1);
-        LongRunningProcessStub process = new LongRunningProcessStub(op.createProcess(project.getHistory(), project.getProcessManager()));
+        LongRunningProcessStub process = new LongRunningProcessStub(op.createProcess(project));
         process.run();
 
         /*

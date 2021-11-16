@@ -16,7 +16,7 @@ import org.openrefine.model.Row;
  *
  * @param <T>
  */
-public interface RowChangeDataProducer<T extends Serializable> extends Serializable {
+public interface RowChangeDataProducer<T> extends Serializable {
 
     /**
      * Compute the change data on a given row.
@@ -35,7 +35,7 @@ public interface RowChangeDataProducer<T extends Serializable> extends Serializa
      *            the list of rows to fetch change data on
      * @return a list of the same size
      */
-    public default List<T> call(List<IndexedRow> rows) {
+    public default List<T> callRowBatch(List<IndexedRow> rows) {
         return rows.stream()
                 .map(ir -> call(ir.getIndex(), ir.getRow()))
                 .collect(Collectors.toList());

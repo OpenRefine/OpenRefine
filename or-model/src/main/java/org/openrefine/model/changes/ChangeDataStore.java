@@ -2,7 +2,6 @@
 package org.openrefine.model.changes;
 
 import java.io.IOException;
-import java.io.Serializable;
 import java.util.Optional;
 
 import org.openrefine.process.ProgressReporter;
@@ -36,7 +35,7 @@ public interface ChangeDataStore {
      * @throws IOException
      *             if serialization failed
      */
-    public <T extends Serializable> void store(
+    public <T> void store(
             ChangeData<T> data,
             long historyEntryId,
             String dataId,
@@ -54,7 +53,7 @@ public interface ChangeDataStore {
      * @return
      * @throws IOException
      */
-    public <T extends Serializable> ChangeData<T> retrieve(
+    public <T> ChangeData<T> retrieve(
             long historyEntryId,
             String dataId,
             ChangeDataSerializer<T> serializer)

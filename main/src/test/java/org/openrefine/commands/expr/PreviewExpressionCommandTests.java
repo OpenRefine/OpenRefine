@@ -71,7 +71,7 @@ public class PreviewExpressionCommandTests extends RefineTest {
         project = createProject(new String[] { "a", "b" },
                 new Serializable[][] {
                         { "c", "d" },
-                        { "e", "f" },
+                        { null, "f" },
                         { "g", "h" }
                 });
 
@@ -100,6 +100,38 @@ public class PreviewExpressionCommandTests extends RefineTest {
                 + "          \"result\": \"f_u\""
                 + "     }]\n" + 
                 "     }";
+        command.doPost(request, response);
+        TestUtils.assertEqualsAsJson(writer.toString(), json);
+    }
+
+    @Test
+    public void testRecordsMode() throws ServletException, IOException {
+
+        when(request.getParameter("project")).thenReturn(Long.toString(project.getId()));
+        when(request.getParameter("cellIndex")).thenReturn("1");
+        when(request.getParameter("limit")).thenReturn("3");
+        when(request.getParameter("expression")).thenReturn("grel:row.record.rowCount");
+        when(request.getParameter("engine")).thenReturn("{\"mode\":\"record-based\",\"facets\":[]}");
+
+        String json = "{\n" + 
+                "       \"code\" : \"ok\",\n" + 
+                "       \"results\" : [ {"
+                + "          \"rowIndex\": 0,"
+                + "          \"value\": \"d\","
+                + "          \"result\":\"2\""
+                + "		},"
+                + "	    {"
+                + "          \"rowIndex\": 1,"
+                + "          \"value\": \"f\","
+                + "          \"result\": \"2\""
+                + "     },"
+                + "	    {"
+                + "          \"rowIndex\": 2,"
+                + "          \"value\": \"h\","
+                + "          \"result\": \"1\""
+                + "     }"
+                + " ]\n"
+                + "     }";
         command.doPost(request, response);
         TestUtils.assertEqualsAsJson(writer.toString(), json);
     }

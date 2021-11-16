@@ -3,7 +3,6 @@ package org.openrefine.model;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.Serializable;
 import java.io.UncheckedIOException;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -22,7 +21,7 @@ import org.openrefine.model.local.PairPLL;
 import org.openrefine.model.local.Tuple2;
 import org.openrefine.process.ProgressReporter;
 
-public class LocalChangeData<T extends Serializable> implements ChangeData<T> {
+public class LocalChangeData<T> implements ChangeData<T> {
 
     private final LocalDatamodelRunner runner;
     private final PairPLL<Long, T> grid;

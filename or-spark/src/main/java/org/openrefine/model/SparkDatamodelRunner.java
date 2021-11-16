@@ -3,7 +3,6 @@ package org.openrefine.model;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.Serializable;
 import java.lang.reflect.Type;
 import java.util.Collections;
 import java.util.List;
@@ -121,7 +120,7 @@ public class SparkDatamodelRunner implements DatamodelRunner {
     }
 
     @Override
-    public <T extends Serializable> ChangeData<T> loadChangeData(File path, ChangeDataSerializer<T> serializer)
+    public <T> ChangeData<T> loadChangeData(File path, ChangeDataSerializer<T> serializer)
             throws IOException {
         /*
          * The text files corresponding to each partition are read in the correct order thanks to our dedicated file
@@ -136,7 +135,7 @@ public class SparkDatamodelRunner implements DatamodelRunner {
         return new SparkChangeData<T>(data, this);
     }
 
-    protected static <T extends Serializable> Function<String, Tuple2<Long, T>> parseIndexedData(Type expectedType) {
+    protected static <T> Function<String, Tuple2<Long, T>> parseIndexedData(Type expectedType) {
 
         return new Function<String, Tuple2<Long, T>>() {
 
@@ -158,7 +157,7 @@ public class SparkDatamodelRunner implements DatamodelRunner {
     }
 
     @Override
-    public <T extends Serializable> ChangeData<T> create(List<IndexedData<T>> changeData) {
+    public <T> ChangeData<T> create(List<IndexedData<T>> changeData) {
         List<Tuple2<Long, T>> tuples = changeData.stream()
                 .filter(id -> id.getData() != null)
                 .map(i -> new Tuple2<Long, T>(i.getId(), i.getData()))

@@ -3,7 +3,6 @@ package org.openrefine.model;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.Serializable;
 import java.io.UncheckedIOException;
 import java.util.Arrays;
 import java.util.Collections;
@@ -112,7 +111,7 @@ public class LocalDatamodelRunner implements DatamodelRunner {
     }
 
     @Override
-    public <T extends Serializable> ChangeData<T> loadChangeData(File path, ChangeDataSerializer<T> serializer)
+    public <T> ChangeData<T> loadChangeData(File path, ChangeDataSerializer<T> serializer)
             throws IOException {
         PairPLL<Long, T> pll = pllContext
                 .textFile(path.getAbsolutePath())
@@ -160,7 +159,7 @@ public class LocalDatamodelRunner implements DatamodelRunner {
     }
 
     @Override
-    public <T extends Serializable> ChangeData<T> create(List<IndexedData<T>> changeData) {
+    public <T> ChangeData<T> create(List<IndexedData<T>> changeData) {
         // We do this filtering on the list itself rather than on the PLL
         // so that the PLL has known partition sizes
         List<IndexedData<T>> withoutNulls = changeData

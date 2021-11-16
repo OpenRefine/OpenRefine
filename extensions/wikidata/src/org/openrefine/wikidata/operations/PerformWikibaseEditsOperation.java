@@ -56,6 +56,7 @@ import org.openrefine.history.History;
 import org.openrefine.history.HistoryEntry;
 import org.openrefine.model.Cell;
 import org.openrefine.model.GridState;
+import org.openrefine.model.Project;
 import org.openrefine.model.Row;
 import org.openrefine.model.RowFilter;
 import org.openrefine.model.changes.Change;
@@ -125,12 +126,12 @@ public class PerformWikibaseEditsOperation extends EngineDependentOperation {
     }
 
     @Override
-    public Process createProcess(History history, ProcessManager processManager)
+    public Process createProcess(Project project)
             throws Exception {
-        GridState currentGridState = history.getCurrentGridState();
+        GridState currentGridState = project.getCurrentGridState();
         return new PerformEditsProcess(
-                history,
-                processManager,
+                project.getHistory(),
+                project.getProcessManager(),
                 currentGridState,
                 createEngine(currentGridState),
                 editGroupsUrlSchema,

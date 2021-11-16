@@ -55,6 +55,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import org.openrefine.browsing.Engine;
+import org.openrefine.browsing.Engine.Mode;
 import org.openrefine.browsing.EngineConfig;
 import org.openrefine.history.History;
 import org.openrefine.history.HistoryEntry;
@@ -62,6 +63,7 @@ import org.openrefine.model.Cell;
 import org.openrefine.model.ColumnModel;
 import org.openrefine.model.GridState;
 import org.openrefine.model.IndexedRow;
+import org.openrefine.model.Project;
 import org.openrefine.model.Row;
 import org.openrefine.model.RowFilter;
 import org.openrefine.model.changes.CellChangeDataSerializer;
@@ -100,11 +102,11 @@ public class ReconOperation extends EngineDependentOperation {
     }
 
     @Override
-    public Process createProcess(History history, ProcessManager manager) throws Exception {
+    public Process createProcess(Project project) throws Exception {
         return new ReconProcess(
-                history,
-                manager,
-                new Engine(history.getCurrentGridState(), getEngineConfig()),
+                project.getHistory(),
+                project.getProcessManager(),
+                new Engine(project.getCurrentGridState(), getEngineConfig()),
                 getDescription());
     }
 
@@ -210,6 +212,7 @@ public class ReconOperation extends EngineDependentOperation {
                             "recon",
                             columnIndex,
                             null,
+                            Mode.RowBased,
                             _reconConfig,
                             null);
 
@@ -283,11 +286,11 @@ public class ReconOperation extends EngineDependentOperation {
 
         @Override
         public Cell call(long rowId, Row row) {
-            return call(Collections.singletonList(new IndexedRow(rowId, row))).get(0);
+            return callRowBatch(Collections.singletonList(new IndexedRow(rowId, row))).get(0);
         }
 
         @Override
-        public List<Cell> call(List<IndexedRow> rows) {
+        public List<Cell> callRowBatch(List<IndexedRow> rows) {
             if (cache == null) {
                 initCache();
             }

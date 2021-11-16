@@ -3,7 +3,6 @@ package org.openrefine.model.changes;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.Serializable;
 
 import org.openrefine.model.DatamodelRunner;
 import org.openrefine.process.ProgressReporter;
@@ -20,7 +19,7 @@ import org.openrefine.process.ProgressReporter;
  * @param <T>
  *            the type of data to store for each row. It should be serializable with Jackson.
  */
-public interface ChangeData<T extends Serializable> extends Iterable<IndexedData<T>> {
+public interface ChangeData<T> extends Iterable<IndexedData<T>> {
 
     /**
      * Returns the change data at a given row.

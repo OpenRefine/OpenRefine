@@ -430,7 +430,7 @@ public interface GridState {
      *             if the row mapper returns a batch of results with a different size than the batch of rows it was
      *             called on
      */
-    public <T extends Serializable> ChangeData<T> mapRows(RowFilter filter, RowChangeDataProducer<T> rowMapper);
+    public <T> ChangeData<T> mapRows(RowFilter filter, RowChangeDataProducer<T> rowMapper);
 
     /**
      * Extract change data by applying a function to each filtered record. The calls to the change data producer are
@@ -447,7 +447,7 @@ public interface GridState {
      *             if the record mapper returns a batch of results with a different size than the batch of records it
      *             was called on
      */
-    public <T extends Serializable> ChangeData<T> mapRecords(RecordFilter filter, RecordChangeDataProducer<T> recordMapper);
+    public <T> ChangeData<T> mapRecords(RecordFilter filter, RecordChangeDataProducer<T> recordMapper);
 
     /**
      * Joins pre-computed change data with the current grid data, row by row.
@@ -462,7 +462,7 @@ public interface GridState {
      *            the column model to apply to the new grid
      * @return
      */
-    public <T extends Serializable> GridState join(ChangeData<T> changeData, RowChangeDataJoiner<T> rowJoiner, ColumnModel newColumnModel);
+    public <T> GridState join(ChangeData<T> changeData, RowChangeDataJoiner<T> rowJoiner, ColumnModel newColumnModel);
 
     /**
      * Joins pre-computed change data with the current grid data, with a joiner function that can return multiple rows
@@ -478,8 +478,7 @@ public interface GridState {
      *            the column model to apply to the new grid
      * @return
      */
-    public <T extends Serializable> GridState join(ChangeData<T> changeData, RowChangeDataFlatJoiner<T> rowJoiner,
-            ColumnModel newColumnModel);
+    public <T> GridState join(ChangeData<T> changeData, RowChangeDataFlatJoiner<T> rowJoiner, ColumnModel newColumnModel);
 
     /**
      * Joins pre-computed change data with the current grid data, record by record.
@@ -494,8 +493,7 @@ public interface GridState {
      *            the column model to apply to the new grid
      * @return
      */
-    public <T extends Serializable> GridState join(ChangeData<T> changeData, RecordChangeDataJoiner<T> recordJoiner,
-            ColumnModel newColumnModel);
+    public <T> GridState join(ChangeData<T> changeData, RecordChangeDataJoiner<T> recordJoiner, ColumnModel newColumnModel);
 
     // Union of grid states
 

@@ -9,9 +9,8 @@ import com.fasterxml.jackson.annotation.JsonAnySetter;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import org.openrefine.history.History;
+import org.openrefine.model.Project;
 import org.openrefine.process.Process;
-import org.openrefine.process.ProcessManager;
 
 /**
  * An operation that is unknown to the current OpenRefine instance, but might be interpretable by another instance (for
@@ -61,7 +60,7 @@ public class UnknownOperation implements Operation {
     }
 
     @Override
-    public Process createProcess(History history, ProcessManager manager) throws Exception {
+    public Process createProcess(Project project) throws Exception {
         throw new IllegalStateException("An unknown operation cannot be executed");
     }
 }

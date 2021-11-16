@@ -14,7 +14,7 @@ import org.openrefine.model.Row;
  *
  * @param <T>
  */
-public interface RowChangeDataJoiner<T extends Serializable> extends Serializable {
+public interface RowChangeDataJoiner<T> extends Serializable {
 
     /**
      * Given a row, its id and the pre-computed change data for this row, return the new row after the change.

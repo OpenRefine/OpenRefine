@@ -86,7 +86,7 @@ public class ApplyOperationsCommand extends Command {
         Operation operation = ParsingUtilities.mapper.convertValue(obj, Operation.class);
         if (operation != null && !(operation instanceof UnknownOperation)) {
             try {
-                Process process = operation.createProcess(project.getHistory(), project.getProcessManager());
+                Process process = operation.createProcess(project);
 
                 project.getProcessManager().queueProcess(process);
             } catch (Exception e) {

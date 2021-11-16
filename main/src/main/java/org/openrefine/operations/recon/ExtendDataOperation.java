@@ -54,6 +54,7 @@ import org.openrefine.model.Cell;
 import org.openrefine.model.ColumnModel;
 import org.openrefine.model.GridState;
 import org.openrefine.model.IndexedRow;
+import org.openrefine.model.Project;
 import org.openrefine.model.Record;
 import org.openrefine.model.Row;
 import org.openrefine.model.RowFilter;
@@ -113,10 +114,10 @@ public class ExtendDataOperation extends EngineDependentOperation {
     }
 
     @Override
-    public Process createProcess(History history, ProcessManager manager) throws Exception {
+    public Process createProcess(Project project) throws Exception {
         return new ExtendDataProcess(
-                history,
-                manager,
+                project.getHistory(),
+                project.getProcessManager(),
                 getEngineConfig(),
                 getDescription(),
                 _identifierSpace,
@@ -240,11 +241,11 @@ public class ExtendDataOperation extends EngineDependentOperation {
 
         @Override
         public RecordDataExtension call(Record record) {
-            return call(Collections.singletonList(record)).get(0);
+            return callRecordBatch(Collections.singletonList(record)).get(0);
         }
 
         @Override
-        public List<RecordDataExtension> call(List<Record> records) {
+        public List<RecordDataExtension> callRecordBatch(List<Record> records) {
 
             Set<String> ids = new HashSet<>();
 

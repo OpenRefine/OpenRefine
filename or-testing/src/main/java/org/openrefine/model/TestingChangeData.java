@@ -5,7 +5,6 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
-import java.io.Serializable;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
@@ -21,7 +20,7 @@ import org.openrefine.model.changes.ChangeDataSerializer;
 import org.openrefine.model.changes.IndexedData;
 import org.openrefine.process.ProgressReporter;
 
-public class TestingChangeData<T extends Serializable> implements ChangeData<T> {
+public class TestingChangeData<T> implements ChangeData<T> {
 
     private Map<Long, T> data;
 

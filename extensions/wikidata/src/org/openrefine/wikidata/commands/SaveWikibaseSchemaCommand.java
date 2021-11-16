@@ -62,7 +62,7 @@ public class SaveWikibaseSchemaCommand extends Command {
             WikibaseSchema schema = ParsingUtilities.mapper.readValue(jsonString, WikibaseSchema.class);
 
             Operation op = new SaveWikibaseSchemaOperation(schema);
-            Process process = op.createProcess(project.getHistory(), project.getProcessManager());
+            Process process = op.createProcess(project);
 
             performProcessAndRespond(request, response, project, process);
 

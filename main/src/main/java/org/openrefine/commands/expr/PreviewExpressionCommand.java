@@ -54,6 +54,7 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import org.openrefine.browsing.Engine;
+import org.openrefine.browsing.Engine.Mode;
 import org.openrefine.browsing.EngineConfig;
 import org.openrefine.commands.Command;
 import org.openrefine.expr.EvalError;
@@ -195,55 +196,26 @@ public class PreviewExpressionCommand extends Command {
 
                 List<RowResult> evaluated = new ArrayList<>();
                 Properties bindings = ExpressionUtils.createBindings();
-                List<IndexedRow> rows = state.getRows(engine.combinedRowFilters(), sortingConfig, 0, limit);
-                for (IndexedRow indexedRow : rows) {
-                    Object result = null;
 
-                    Long rowIndex = indexedRow.getIndex();
-
-                    Row row = indexedRow.getRow();
-                    Cell cell = row.getCell(cellIndex);
-                    Record record = null; // TODO enable records mode for this
-                    ExpressionUtils.bind(bindings, columnModel, row, rowIndex, record, columnName, cell);
-
-                    try {
-
-                        result = eval.evaluate(bindings);
-
-                        if (repeat) {
-                            for (int r = 0; r < repeatCount && ExpressionUtils.isStorable(result); r++) {
-                                Cell newCell = new Cell((Serializable) result, (cell != null) ? cell.recon : null);
-                                ExpressionUtils.bind(bindings, null, row, rowIndex, record, columnName, newCell);
-
-                                Object newResult = eval.evaluate(bindings);
-                                if (ExpressionUtils.isError(newResult)) {
-                                    break;
-                                } else if (ExpressionUtils.sameValue(result, newResult)) {
-                                    break;
-                                } else {
-                                    result = newResult;
-                                }
-                            }
+                if (Mode.RowBased.equals(engine.getMode())) {
+                    List<IndexedRow> rows = state.getRows(engine.combinedRowFilters(), sortingConfig, 0, limit);
+                    for (IndexedRow indexedRow : rows) {
+                        Cell cell = indexedRow.getRow().getCell(cellIndex);
+                        Record record = null;
+                        evaluated.add(evaluate(bindings, columnModel, indexedRow, record, columnName, cell, project.getId(), eval, repeat,
+                                repeatCount));
+                    }
+                } else {
+                    List<Record> records = state.getRecords(engine.combinedRecordFilters(), sortingConfig, 0, limit);
+                    for (Record record : records) {
+                        for (IndexedRow indexedRow : record.getIndexedRows()) {
+                            Cell cell = indexedRow.getRow().getCell(cellIndex);
+                            evaluated.add(evaluate(bindings, columnModel, indexedRow, record, columnName, cell, project.getId(), eval,
+                                    repeat, repeatCount));
                         }
-                    } catch (Exception e) {
-                        // ignore
                     }
-
-                    ExpressionValue origCellValue = new SuccessfulEvaluation(cell == null ? "null" : cell.value.toString());
-                    ExpressionValue expressionResult;
-                    if (result == null) {
-                        expressionResult = null;
-                    } else if (ExpressionUtils.isError(result)) {
-                        expressionResult = new ErrorMessage(((EvalError) result).message);
-                    } else {
-                        StringBuffer sb = new StringBuffer();
-
-                        writeValue(sb, result, false);
-
-                        expressionResult = new SuccessfulEvaluation(sb.toString());
-                    }
-                    evaluated.add(new RowResult(rowIndex, origCellValue, expressionResult));
                 }
+
                 respondJSON(response, new PreviewResult(evaluated));
             } catch (ParsingException e) {
                 respondJSON(response, new PreviewResult("error", e.getMessage(), "parser"));
@@ -254,6 +226,61 @@ public class PreviewExpressionCommand extends Command {
         } catch (Exception e) {
             respondException(response, e);
         }
+    }
+
+    static protected RowResult evaluate(
+            Properties bindings,
+            ColumnModel columnModel,
+            IndexedRow indexedRow,
+            Record record,
+            String columnName,
+            Cell cell,
+            long projectId,
+            Evaluable eval,
+            boolean repeat,
+            int repeatCount) {
+        Row row = indexedRow.getRow();
+        long rowIndex = indexedRow.getIndex();
+        ExpressionUtils.bind(bindings, columnModel, row, rowIndex, record, columnName, cell);
+        bindings.put("project_id", projectId);
+        Object result = null;
+        try {
+
+            result = eval.evaluate(bindings);
+
+            if (repeat) {
+                for (int r = 0; r < repeatCount && ExpressionUtils.isStorable(result); r++) {
+                    Cell newCell = new Cell((Serializable) result, (cell != null) ? cell.recon : null);
+                    ExpressionUtils.bind(bindings, null, row, rowIndex, record, columnName, newCell);
+
+                    Object newResult = eval.evaluate(bindings);
+                    if (ExpressionUtils.isError(newResult)) {
+                        break;
+                    } else if (ExpressionUtils.sameValue(result, newResult)) {
+                        break;
+                    } else {
+                        result = newResult;
+                    }
+                }
+            }
+        } catch (Exception e) {
+            // ignore
+        }
+
+        ExpressionValue origCellValue = new SuccessfulEvaluation(cell == null || cell.value == null ? "null" : cell.value.toString());
+        ExpressionValue expressionResult;
+        if (result == null) {
+            expressionResult = null;
+        } else if (ExpressionUtils.isError(result)) {
+            expressionResult = new ErrorMessage(((EvalError) result).message);
+        } else {
+            StringBuffer sb = new StringBuffer();
+
+            writeValue(sb, result, false);
+
+            expressionResult = new SuccessfulEvaluation(sb.toString());
+        }
+        return new RowResult(rowIndex, origCellValue, expressionResult);
     }
 
     static protected void writeValue(StringBuffer sb, Object v, boolean quote) {

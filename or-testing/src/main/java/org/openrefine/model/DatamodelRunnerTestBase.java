@@ -936,7 +936,7 @@ public abstract class DatamodelRunnerTestBase {
         private static final long serialVersionUID = -2137895769820170019L;
 
         @Override
-        public List<String> call(List<IndexedRow> rows) {
+        public List<String> callRowBatch(List<IndexedRow> rows) {
             String val = "";
             List<String> results = new ArrayList<>();
             for (IndexedRow ir : rows) {
@@ -971,7 +971,7 @@ public abstract class DatamodelRunnerTestBase {
         private static final long serialVersionUID = -2137895769820170019L;
 
         @Override
-        public List<String> call(List<IndexedRow> rows) {
+        public List<String> callRowBatch(List<IndexedRow> rows) {
             // it is incorrect to return a list of a different size than the argument
             return Collections.emptyList();
         }
@@ -1035,7 +1035,7 @@ public abstract class DatamodelRunnerTestBase {
         private static final long serialVersionUID = -2137895769820170019L;
 
         @Override
-        public List<String> call(List<Record> records) {
+        public List<String> callRecordBatch(List<Record> records) {
             // it is incorrect to return a list of a different size than the argument
             return Collections.emptyList();
         }

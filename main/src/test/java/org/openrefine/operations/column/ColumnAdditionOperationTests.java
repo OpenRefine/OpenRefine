@@ -39,12 +39,16 @@ import org.openrefine.RefineTest;
 import org.openrefine.browsing.EngineConfig;
 import org.openrefine.expr.EvalError;
 import org.openrefine.expr.MetaParser;
+import org.openrefine.expr.ParsingException;
 import org.openrefine.grel.Parser;
 import org.openrefine.model.GridState;
+import org.openrefine.model.Project;
 import org.openrefine.model.changes.Change;
 import org.openrefine.model.changes.Change.DoesNotApplyException;
 import org.openrefine.model.changes.ChangeContext;
 import org.openrefine.operations.OnError;
+import org.openrefine.operations.Operation;
+import org.openrefine.operations.Operation.NotImmediateOperationException;
 import org.openrefine.operations.OperationRegistry;
 import org.openrefine.util.ParsingUtilities;
 import org.openrefine.util.TestUtils;
@@ -56,12 +60,13 @@ public class ColumnAdditionOperationTests extends RefineTest {
         OperationRegistry.registerOperation("core", "column-addition", ColumnAdditionOperation.class);
     }
 
+    protected Project project;
     protected GridState initialState;
 
     @BeforeMethod
     public void setUpInitialState() {
         MetaParser.registerLanguageParser("grel", "GREL", Parser.grelParser, "value");
-        initialState = createGrid(new String[] { "foo", "bar", "hello" },
+        project = createProject(new String[] { "foo", "bar", "hello" },
                 new Serializable[][] {
                         { "v1", "a", "d" },
                         { "v3", "a", "f" },
@@ -70,6 +75,7 @@ public class ColumnAdditionOperationTests extends RefineTest {
                         { new EvalError("error"), "a", "i" },
                         { "v1", "b", "j" }
                 });
+        initialState = project.getCurrentGridState();
     }
 
     @Test
@@ -85,7 +91,7 @@ public class ColumnAdditionOperationTests extends RefineTest {
     }
 
     @Test
-    public void testAddColumnRowsMode() throws DoesNotApplyException {
+    public void testAddColumnRowsMode() throws DoesNotApplyException, NotImmediateOperationException, ParsingException {
         Change change = new ColumnAdditionOperation(
                 EngineConfig.ALL_ROWS,
                 "bar",
@@ -110,7 +116,7 @@ public class ColumnAdditionOperationTests extends RefineTest {
     }
 
     @Test
-    public void testAddColumnRecordsMode() throws DoesNotApplyException {
+    public void testAddColumnRecordsMode() throws DoesNotApplyException, NotImmediateOperationException, ParsingException {
         Change change = new ColumnAdditionOperation(
                 EngineConfig.ALL_RECORDS,
                 "bar",
@@ -132,5 +138,57 @@ public class ColumnAdditionOperationTests extends RefineTest {
                         { "v1", "b", 1, "j" }
                 });
         assertGridEquals(applied, expected);
+    }
+
+    @Test
+    public void testAddColumnRowsModeNotLocal() throws Exception {
+        Operation operation = new ColumnAdditionOperation(
+                EngineConfig.ALL_ROWS,
+                "bar",
+                "grel:facetCount(value, 'value', 'bar')",
+                OnError.SetToBlank,
+                "newcolumn",
+                2);
+
+        org.openrefine.process.Process process = operation.createProcess(project);
+        ((Runnable) process).run();
+
+        GridState expected = createGrid(
+                new String[] { "foo", "bar", "newcolumn", "hello" },
+                new Serializable[][] {
+                        { "v1", "a", 4L, "d" },
+                        { "v3", "a", 4L, "f" },
+                        { "", "a", 4L, "g" },
+                        { "", "b", 2L, "h" },
+                        { new EvalError("error"), "a", 4L, "i" },
+                        { "v1", "b", 2L, "j" }
+                });
+        assertGridEquals(project.getCurrentGridState(), expected);
+    }
+
+    @Test
+    public void testAddColumnRecordsModeNotLocal() throws Exception {
+        Operation operation = new ColumnAdditionOperation(
+                EngineConfig.ALL_RECORDS,
+                "bar",
+                "grel:facetCount(value, 'value', 'bar')",
+                OnError.SetToBlank,
+                "newcolumn",
+                2);
+
+        org.openrefine.process.Process process = operation.createProcess(project);
+        ((Runnable) process).run();
+
+        GridState expected = createGrid(
+                new String[] { "foo", "bar", "newcolumn", "hello" },
+                new Serializable[][] {
+                        { "v1", "a", 4L, "d" },
+                        { "v3", "a", 4L, "f" },
+                        { "", "a", 4L, "g" },
+                        { "", "b", 2L, "h" },
+                        { new EvalError("error"), "a", 4L, "i" },
+                        { "v1", "b", 2L, "j" }
+                });
+        assertGridEquals(project.getCurrentGridState(), expected);
     }
 }

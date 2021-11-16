@@ -3,7 +3,6 @@ package org.openrefine.model.changes;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.Serializable;
 import java.util.Optional;
 
 import org.apache.commons.io.FileUtils;
@@ -40,7 +39,7 @@ public class FileChangeDataStore implements ChangeDataStore {
     }
 
     @Override
-    public <T extends Serializable> void store(ChangeData<T> data, long historyEntryId, String dataId,
+    public <T> void store(ChangeData<T> data, long historyEntryId, String dataId,
             ChangeDataSerializer<T> serializer, Optional<ProgressReporter> progressReporter) throws IOException {
         File file = idsToFile(historyEntryId, dataId);
         file.mkdirs();
@@ -57,7 +56,7 @@ public class FileChangeDataStore implements ChangeDataStore {
     }
 
     @Override
-    public <T extends Serializable> ChangeData<T> retrieve(long historyEntryId, String dataId,
+    public <T> ChangeData<T> retrieve(long historyEntryId, String dataId,
             ChangeDataSerializer<T> serializer) throws IOException {
         File file = idsToFile(historyEntryId, dataId);
         return _runner.loadChangeData(file, serializer);
