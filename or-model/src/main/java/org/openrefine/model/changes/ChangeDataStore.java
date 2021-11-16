@@ -31,7 +31,7 @@ public interface ChangeDataStore {
      * @param progressReporter reports the progress of the change data computation and serialization
      * @throws IOException if serialization failed
      */
-    public <T extends Serializable> void store(
+    public <T> void store(
             ChangeData<T> data,
             long historyEntryId,
             String dataId,
@@ -49,7 +49,7 @@ public interface ChangeDataStore {
      * @return
      * @throws IOException 
      */
-    public <T extends Serializable> ChangeData<T> retrieve(
+    public <T> ChangeData<T> retrieve(
             long historyEntryId,
             String dataId,
             ChangeDataSerializer<T> serializer)

@@ -48,6 +48,7 @@ import org.apache.hc.core5.http.Header;
 import org.apache.hc.core5.http.message.BasicHeader;
 import org.openrefine.browsing.Engine;
 import org.openrefine.browsing.EngineConfig;
+import org.openrefine.browsing.Engine.Mode;
 import org.openrefine.expr.EvalError;
 import org.openrefine.expr.Evaluable;
 import org.openrefine.expr.ExpressionUtils;
@@ -59,6 +60,7 @@ import org.openrefine.model.Cell;
 import org.openrefine.model.ColumnMetadata;
 import org.openrefine.model.ColumnModel;
 import org.openrefine.model.GridState;
+import org.openrefine.model.Project;
 import org.openrefine.model.Record;
 import org.openrefine.model.Row;
 import org.openrefine.model.changes.CellAtRow;
@@ -221,14 +223,14 @@ public class ColumnAdditionByFetchingURLsOperation extends EngineDependentOperat
 
 
     @Override
-    public Process createProcess(History history, ProcessManager manager) throws Exception {
-        Engine engine = createEngine(history.getCurrentGridState());
+    public Process createProcess(Project project) throws Exception {
+        Engine engine = createEngine(project.getCurrentGridState());
 
         Evaluable eval = MetaParser.parse(_urlExpression);
 
         return new ColumnAdditionByFetchingURLsProcess(
-            history,
-            manager,
+            project.getHistory(),
+            project.getProcessManager(),
             engine,
             eval,
             getDescription(),
@@ -460,6 +462,7 @@ public class ColumnAdditionByFetchingURLsOperation extends EngineDependentOperat
 	                        urlChangeDataId,
 	                        _columnInsertIndex,
 	                        _newColumnName,
+	                        Mode.RowBased,
 	                        null,
 	                        null)
 	                );

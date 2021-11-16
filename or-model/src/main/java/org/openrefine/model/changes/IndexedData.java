@@ -3,9 +3,7 @@ package org.openrefine.model.changes;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
-import java.io.PrintWriter;
 import java.io.Serializable;
-import java.io.StringWriter;
 
 /**
  * Helper class to represent an item in the map from
@@ -16,7 +14,7 @@ import java.io.StringWriter;
  *
  * @param <T>
  */
-public class IndexedData<T extends Serializable> implements Serializable {
+public class IndexedData<T> implements Serializable {
 
     private static final long serialVersionUID = 6928586351690626940L;
     
@@ -53,7 +51,7 @@ public class IndexedData<T extends Serializable> implements Serializable {
         return new String(baos.toByteArray()).strip();
     }
     
-    public static <T extends Serializable> IndexedData<T> read(String line, ChangeDataSerializer<T> serializer) throws IOException {
+    public static <T> IndexedData<T> read(String line, ChangeDataSerializer<T> serializer) throws IOException {
         int index = line.indexOf(',');
         if (index == -1) {
             throw new IOException("Unexpected change data line: no comma");

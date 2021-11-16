@@ -70,7 +70,7 @@ public class Cross implements Function {
 
             if (v != null && targetProjectName instanceof String && targetColumnName instanceof String) {
                 try {
-                    targetProjectID = isCurrentProject ? ((Project) bindings.get("project")).getId() :
+                    targetProjectID = isCurrentProject ? ((long) bindings.get("project_id")) :
                             ProjectManager.singleton.getProjectID((String) targetProjectName);
                 } catch (GetProjectIDException e) {
                     return new EvalError(e.getMessage());

@@ -505,7 +505,7 @@ public class TestingGridState implements GridState {
     }
 
     @Override
-    public <T extends Serializable> ChangeData<T> mapRows(RowFilter filter, RowChangeDataProducer<T> rowMapper) {
+    public <T> ChangeData<T> mapRows(RowFilter filter, RowChangeDataProducer<T> rowMapper) {
         // Check that the mapper is serializable as it is required by the interface,
         // even if this implementation does not rely on it.
         RowChangeDataProducer<T> deserializedMapper = TestingDatamodelRunner.serializeAndDeserialize(rowMapper);
@@ -520,7 +520,7 @@ public class TestingGridState implements GridState {
             Iterator<List<IndexedRow>> batches = Iterators.partition(filteredRows.iterator(), deserializedMapper.getBatchSize());
             while (batches.hasNext()) {
                 List<IndexedRow> batch = batches.next();
-                List<T> results = deserializedMapper.call(batch);
+                List<T> results = deserializedMapper.callRowBatch(batch);
                 if (results.size() != batch.size()) {
                     throw new IllegalStateException(String.format("Change data producer returned %d results on a batch of %d rows", results.size(), batch.size()));
                 }
@@ -533,7 +533,7 @@ public class TestingGridState implements GridState {
     }
     
     @Override
-    public <T extends Serializable> ChangeData<T> mapRecords(RecordFilter filter, RecordChangeDataProducer<T> recordMapper) {
+    public <T> ChangeData<T> mapRecords(RecordFilter filter, RecordChangeDataProducer<T> recordMapper) {
         // Check that the mapper is serializable as it is required by the interface,
         // even if this implementation does not rely on it.
         RecordChangeDataProducer<T> deserializedMapper = TestingDatamodelRunner.serializeAndDeserialize(recordMapper);
@@ -548,7 +548,7 @@ public class TestingGridState implements GridState {
             Iterator<List<Record>> batches = Iterators.partition(filteredRecords.iterator(), deserializedMapper.getBatchSize());
             while (batches.hasNext()) {
                 List<Record> batch = batches.next();
-                List<T> results = deserializedMapper.call(batch);
+                List<T> results = deserializedMapper.callRecordBatch(batch);
                 if (results.size() != batch.size()) {
                     throw new IllegalStateException(String.format("Change data producer returned %d results on a batch of %d rows", results.size(), batch.size()));
                 }
@@ -561,7 +561,7 @@ public class TestingGridState implements GridState {
     }
 
     @Override
-    public <T extends Serializable> GridState join(ChangeData<T> changeData, RowChangeDataJoiner<T> rowJoiner,
+    public <T> GridState join(ChangeData<T> changeData, RowChangeDataJoiner<T> rowJoiner,
             ColumnModel newColumnModel) {
         // Check that the joiner is serializable as it is required by the interface,
         // even if this implementation does not rely on it.
@@ -575,7 +575,7 @@ public class TestingGridState implements GridState {
     }
 
     @Override
-    public <T extends Serializable> GridState join(ChangeData<T> changeData, RowChangeDataFlatJoiner<T> rowJoiner,
+    public <T> GridState join(ChangeData<T> changeData, RowChangeDataFlatJoiner<T> rowJoiner,
             ColumnModel newColumnModel) {
         // Check that the joiner is serializable as it is required by the interface,
         // even if this implementation does not rely on it.
@@ -589,7 +589,7 @@ public class TestingGridState implements GridState {
     }
 
     @Override
-    public <T extends Serializable> GridState join(ChangeData<T> changeData, RecordChangeDataJoiner<T> recordJoiner,
+    public <T> GridState join(ChangeData<T> changeData, RecordChangeDataJoiner<T> recordJoiner,
             ColumnModel newColumnModel) {
         // Check that the joiner is serializable as it is required by the interface,
         // even if this implementation does not rely on it.
@@ -601,7 +601,7 @@ public class TestingGridState implements GridState {
                 .collect(Collectors.toList());
         return new TestingGridState(newColumnModel, rows, overlayModels);
     }
-
+   
     @Override
     public GridState concatenate(GridState other) {
         ColumnModel merged = columnModel.merge(other.getColumnModel());

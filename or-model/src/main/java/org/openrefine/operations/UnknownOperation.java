@@ -3,10 +3,8 @@ package org.openrefine.operations;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.openrefine.history.History;
-import org.openrefine.model.changes.ChangeDataStore;
+import org.openrefine.model.Project;
 import org.openrefine.process.Process;
-import org.openrefine.process.ProcessManager;
 
 import com.fasterxml.jackson.annotation.JsonAnyGetter;
 import com.fasterxml.jackson.annotation.JsonAnySetter;
@@ -64,7 +62,7 @@ public class UnknownOperation implements Operation {
     }
 
     @Override
-    public Process createProcess(History history, ProcessManager manager) throws Exception {
+    public Process createProcess(Project project) throws Exception {
         throw new IllegalStateException("An unknown operation cannot be executed");
     }
 }

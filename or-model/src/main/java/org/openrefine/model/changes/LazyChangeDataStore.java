@@ -36,14 +36,14 @@ public class LazyChangeDataStore implements ChangeDataStore {
     }
 
     @Override
-    public <T extends Serializable> void store(ChangeData<T> data, long historyEntryId, String dataId,
+    public <T> void store(ChangeData<T> data, long historyEntryId, String dataId,
             ChangeDataSerializer<T> serializer, Optional<ProgressReporter> progressReporter) throws IOException {
         _changeData.put(idPairToString(historyEntryId, dataId), data);
     }
 
     @SuppressWarnings("unchecked")
     @Override
-    public <T extends Serializable> ChangeData<T> retrieve(long historyEntryId, String dataId,
+    public <T> ChangeData<T> retrieve(long historyEntryId, String dataId,
             ChangeDataSerializer<T> serializer) throws IOException {
         String key = idPairToString(historyEntryId, dataId);
         if (!_changeData.containsKey(key)) {

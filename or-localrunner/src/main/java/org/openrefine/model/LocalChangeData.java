@@ -2,7 +2,6 @@ package org.openrefine.model;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.Serializable;
 import java.io.UncheckedIOException;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -21,7 +20,7 @@ import org.openrefine.process.ProgressReporter;
 
 import com.google.common.collect.Streams;
 
-public class LocalChangeData<T extends Serializable> implements ChangeData<T> {
+public class LocalChangeData<T> implements ChangeData<T> {
     
     private final LocalDatamodelRunner runner;
     private final PairPLL<Long, T> grid;

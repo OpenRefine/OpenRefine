@@ -2,7 +2,6 @@ package org.openrefine.model;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 
@@ -42,7 +41,7 @@ public interface DatamodelRunner {
      * @param path the directory where the ChangeData is stored
      * @throws IOException when loading the grid failed
      */
-    public <T extends Serializable> ChangeData<T> loadChangeData(File path, ChangeDataSerializer<T> serializer) throws IOException;
+    public <T> ChangeData<T> loadChangeData(File path, ChangeDataSerializer<T> serializer) throws IOException;
     
     /**
      * Returns a file system used by the implementation to read
@@ -78,7 +77,7 @@ public interface DatamodelRunner {
      * Creates a {@link ChangeData} from an in-memory list of
      * indexed data. The list is required to be sorted.
      */
-    public <T extends Serializable> ChangeData<T> create(List<IndexedData<T>> changeData);
+    public <T> ChangeData<T> create(List<IndexedData<T>> changeData);
     
     /**
      * Indicates whether this implementation supports progress reporting. If not,

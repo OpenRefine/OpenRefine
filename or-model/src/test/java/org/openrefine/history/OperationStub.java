@@ -1,8 +1,8 @@
 package org.openrefine.history;
 
+import org.openrefine.model.Project;
 import org.openrefine.operations.Operation;
 import org.openrefine.process.Process;
-import org.openrefine.process.ProcessManager;
 
 public class OperationStub implements Operation {
 	public String getDescription() {
@@ -10,7 +10,7 @@ public class OperationStub implements Operation {
     }
 
     @Override
-    public Process createProcess(History history, ProcessManager manager) throws Exception {
+    public Process createProcess(Project project) throws Exception {
         return null;
     }
 }

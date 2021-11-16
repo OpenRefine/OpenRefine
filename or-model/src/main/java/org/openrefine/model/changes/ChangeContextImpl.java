@@ -20,7 +20,7 @@ public class ChangeContextImpl implements ChangeContext {
 	
 
     @Override
-    public <T extends Serializable> ChangeData<T> getChangeData(String dataId, ChangeDataSerializer<T> serializer) throws IOException {
+    public <T> ChangeData<T> getChangeData(String dataId, ChangeDataSerializer<T> serializer) throws IOException {
         return _dataStore.retrieve(_historyEntryId, dataId, serializer);
     }
 

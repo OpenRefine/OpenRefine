@@ -481,7 +481,7 @@ public class LocalGridState implements GridState {
     }
 
     @Override
-    public <T extends Serializable> ChangeData<T> mapRows(RowFilter filter, RowChangeDataProducer<T> rowMapper) {
+    public <T> ChangeData<T> mapRows(RowFilter filter, RowChangeDataProducer<T> rowMapper) {
         PairPLL<Long, Row> filteredGrid = grid.filter(tuple -> filter.filterRow(tuple.getKey(), tuple.getValue()));
         PairPLL<Long, T> data;
         if (rowMapper.getBatchSize() == 1) {
@@ -500,8 +500,8 @@ public class LocalGridState implements GridState {
                 grid.hasCachedPartitionSizes() ? grid.getPartitionSizes() : null);
     }
     
-    protected static <T extends Serializable> Stream<Tuple2<Long,T>> applyRowChangeDataMapper(RowChangeDataProducer<T> rowMapper, List<Tuple2<Long, Row>> rowBatch) {
-        List<T> changeData = rowMapper.call(
+    protected static <T> Stream<Tuple2<Long,T>> applyRowChangeDataMapper(RowChangeDataProducer<T> rowMapper, List<Tuple2<Long, Row>> rowBatch) {
+        List<T> changeData = rowMapper.callRowBatch(
                 rowBatch.stream()
                 .map(tuple -> new IndexedRow(tuple.getKey(), tuple.getValue()))
                 .collect(Collectors.toList()));
@@ -513,7 +513,7 @@ public class LocalGridState implements GridState {
     }
 
     @Override
-    public <T extends Serializable> ChangeData<T> mapRecords(RecordFilter filter,
+    public <T> ChangeData<T> mapRecords(RecordFilter filter,
             RecordChangeDataProducer<T> recordMapper) {
         PairPLL<Long, Record> filteredRecords = records().filter(tuple -> filter.filterRecord(tuple.getValue()));
         PairPLL<Long, T> data;
@@ -568,10 +568,10 @@ public class LocalGridState implements GridState {
         return new LocalGridState(runner, shifted, columnModel, overlayModels);
     }
     
-    protected static <T extends Serializable> Stream<Tuple2<Long,T>> applyRecordChangeDataMapper(
+    protected static <T> Stream<Tuple2<Long,T>> applyRecordChangeDataMapper(
             RecordChangeDataProducer<T> recordMapper,
             List<Tuple2<Long, Record>> recordBatch) {
-        List<T> changeData = recordMapper.call(
+        List<T> changeData = recordMapper.callRecordBatch(
                 recordBatch.stream()
                 .map(tuple -> tuple.getValue())
                 .collect(Collectors.toList()));
@@ -584,7 +584,7 @@ public class LocalGridState implements GridState {
     }
 
     @Override
-    public <T extends Serializable> GridState join(ChangeData<T> changeData, RowChangeDataJoiner<T> rowJoiner,
+    public <T> GridState join(ChangeData<T> changeData, RowChangeDataJoiner<T> rowJoiner,
             ColumnModel newColumnModel) {
         if(!(changeData instanceof LocalChangeData<?>)) {
             throw new IllegalArgumentException("A LocalGridState can only be joined with a LocalChangeData");
@@ -596,7 +596,7 @@ public class LocalGridState implements GridState {
     }
 
     @Override
-    public <T extends Serializable> GridState join(ChangeData<T> changeData, RowChangeDataFlatJoiner<T> rowJoiner,
+    public <T> GridState join(ChangeData<T> changeData, RowChangeDataFlatJoiner<T> rowJoiner,
             ColumnModel newColumnModel) {
         if(!(changeData instanceof LocalChangeData<?>)) {
             throw new IllegalArgumentException("A LocalGridState can only be joined with a LocalChangeData");
@@ -609,7 +609,7 @@ public class LocalGridState implements GridState {
     }
 
     @Override
-    public <T extends Serializable> GridState join(ChangeData<T> changeData, RecordChangeDataJoiner<T> recordJoiner,
+    public <T> GridState join(ChangeData<T> changeData, RecordChangeDataJoiner<T> recordJoiner,
             ColumnModel newColumnModel) {
         if(!(changeData instanceof LocalChangeData<?>)) {
             throw new IllegalArgumentException("A LocalGridState can only be joined with a LocalChangeData");

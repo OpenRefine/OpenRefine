@@ -34,5 +34,5 @@ public interface ChangeContext {
      * {@link ChangeDataStore}. It must have been registered
      * in the store before hand.
      */
-    public <T extends Serializable> ChangeData<T> getChangeData(String dataId, ChangeDataSerializer<T> serializer) throws IOException;
+    public <T> ChangeData<T> getChangeData(String dataId, ChangeDataSerializer<T> serializer) throws IOException;
 }

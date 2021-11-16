@@ -962,7 +962,7 @@ public class SparkGridState implements GridState {
         };
     }
     
-    private static <T extends Serializable> Function2<Long, Row, T> rowMap(RowChangeDataProducer<T> mapper) {
+    private static <T> Function2<Long, Row, T> rowMap(RowChangeDataProducer<T> mapper) {
         return new Function2<Long, Row, T>() {
             
             private static final long serialVersionUID = 429225090136968798L;
@@ -975,7 +975,7 @@ public class SparkGridState implements GridState {
     }
 
     @Override
-    public <T extends Serializable> ChangeData<T> mapRows(RowFilter filter, RowChangeDataProducer<T> rowMapper) {
+    public <T> ChangeData<T> mapRows(RowFilter filter, RowChangeDataProducer<T> rowMapper) {
         JavaPairRDD<Long, T> data;
         JavaPairRDD<Long, Row> filteredGrid = grid.filter(wrapRowFilter(filter));
         if (rowMapper.getBatchSize() == 1) {
@@ -988,14 +988,14 @@ public class SparkGridState implements GridState {
         return new SparkChangeData<T>(data.filter(t -> t._2 != null), runner);
     }
    
-    private static <T extends Serializable> FlatMapFunction<List<IndexedRow>, Tuple2<Long, T>> batchedRowMap(RowChangeDataProducer<T> rowMapper) {
+    private static <T> FlatMapFunction<List<IndexedRow>, Tuple2<Long, T>> batchedRowMap(RowChangeDataProducer<T> rowMapper) {
         return new FlatMapFunction<List<IndexedRow>, Tuple2<Long, T>>() {
 
             private static final long serialVersionUID = 1L;
 
             @Override
             public Iterator<Tuple2<Long, T>> call(List<IndexedRow> rows) throws Exception {
-                List<T> results = rowMapper.call(rows);
+                List<T> results = rowMapper.callRowBatch(rows);
                 if (rows.size() != results.size()) {
                     throw new IllegalStateException(String.format("Change data producer returned %d results on a batch of %d rows", results.size(), rows.size()));
                 }
@@ -1007,7 +1007,7 @@ public class SparkGridState implements GridState {
         };
     }
     
-    private static <T extends Serializable> Function2<Long, Record, T> recordMap(RecordChangeDataProducer<T> mapper) {
+    private static <T> Function2<Long, Record, T> recordMap(RecordChangeDataProducer<T> mapper) {
         return new Function2<Long, Record, T>() {
 
             private static final long serialVersionUID = -4886309570396715048L;
@@ -1020,7 +1020,7 @@ public class SparkGridState implements GridState {
     }
 
     @Override
-    public <T extends Serializable> ChangeData<T> mapRecords(RecordFilter filter,
+    public <T> ChangeData<T> mapRecords(RecordFilter filter,
             RecordChangeDataProducer<T> recordMapper) {
         JavaPairRDD<Long, T> data;
         JavaPairRDD<Long, Record> filteredGrid = getRecords().filter(wrapRecordFilter(filter));
@@ -1034,14 +1034,14 @@ public class SparkGridState implements GridState {
         return new SparkChangeData<T>(data.filter(t -> t._2 != null), runner);
     }
     
-    private static <T extends Serializable> FlatMapFunction<List<Record>, Tuple2<Long, T>> batchedRecordMap(RecordChangeDataProducer<T> recordMapper) {
+    private static <T> FlatMapFunction<List<Record>, Tuple2<Long, T>> batchedRecordMap(RecordChangeDataProducer<T> recordMapper) {
         return new FlatMapFunction<List<Record>, Tuple2<Long, T>>() {
 
             private static final long serialVersionUID = 1L;
 
             @Override
             public Iterator<Tuple2<Long, T>> call(List<Record> records) throws Exception {
-                List<T> results = recordMapper.call(records);
+                List<T> results = recordMapper.callRecordBatch(records);
                 if (records.size() != results.size()) {
                     throw new IllegalStateException(String.format("Change data producer returned %d results on a batch of %d records", results.size(), records.size()));
                 }
@@ -1054,7 +1054,7 @@ public class SparkGridState implements GridState {
     }
 
     @Override
-    public <T extends Serializable> GridState join(ChangeData<T> changeData, RowChangeDataJoiner<T> rowJoiner,
+    public <T> GridState join(ChangeData<T> changeData, RowChangeDataJoiner<T> rowJoiner,
             ColumnModel newColumnModel) {
         if (!(changeData instanceof SparkChangeData)) {
             throw new IllegalArgumentException("A Spark grid state can only be joined with Spark change data");
@@ -1069,7 +1069,7 @@ public class SparkGridState implements GridState {
         return new SparkGridState(newColumnModel, newGrid, overlayModels, runner);
     }
     
-    private static <T extends Serializable> Function2<Long, Tuple2<Row,Optional<T>>, Row> wrapJoiner(RowChangeDataJoiner<T> joiner) {
+    private static <T> Function2<Long, Tuple2<Row,Optional<T>>, Row> wrapJoiner(RowChangeDataJoiner<T> joiner) {
         
         return new Function2<Long, Tuple2<Row,Optional<T>>, Row>() {
 
@@ -1083,7 +1083,7 @@ public class SparkGridState implements GridState {
     }
 
     @Override
-    public <T extends Serializable> GridState join(ChangeData<T> changeData, RowChangeDataFlatJoiner<T> rowJoiner,
+    public <T> GridState join(ChangeData<T> changeData, RowChangeDataFlatJoiner<T> rowJoiner,
             ColumnModel newColumnModel) {
         if (!(changeData instanceof SparkChangeData)) {
             throw new IllegalArgumentException("A Spark grid state can only be joined with Spark change data");
@@ -1098,7 +1098,7 @@ public class SparkGridState implements GridState {
         return new SparkGridState(newColumnModel, flattened, overlayModels, runner);
     }
     
-    private static <T extends Serializable> Function2<Long, Tuple2<Row,Optional<T>>, List<Row>> wrapFlatJoiner(RowChangeDataFlatJoiner<T> joiner) {
+    private static <T> Function2<Long, Tuple2<Row,Optional<T>>, List<Row>> wrapFlatJoiner(RowChangeDataFlatJoiner<T> joiner) {
         
         return new Function2<Long, Tuple2<Row,Optional<T>>, List<Row>>() {
 
@@ -1112,7 +1112,7 @@ public class SparkGridState implements GridState {
     }
 
     @Override
-    public <T extends Serializable> GridState join(ChangeData<T> changeData, RecordChangeDataJoiner<T> recordJoiner,
+    public <T> GridState join(ChangeData<T> changeData, RecordChangeDataJoiner<T> recordJoiner,
             ColumnModel newColumnModel) {
         if (!(changeData instanceof SparkChangeData)) {
             throw new IllegalArgumentException("A Spark grid state can only be joined with Spark change data");
@@ -1127,7 +1127,7 @@ public class SparkGridState implements GridState {
         return new SparkGridState(newColumnModel, flattened, overlayModels, runner);
     }
     
-    private static <T extends Serializable> Function<Tuple2<Long, Tuple2<Record,Optional<T>>>, List<Row>> wrapRecordJoiner(RecordChangeDataJoiner<T> joiner) {
+    private static <T> Function<Tuple2<Long, Tuple2<Record,Optional<T>>>, List<Row>> wrapRecordJoiner(RecordChangeDataJoiner<T> joiner) {
         return new Function<Tuple2<Long, Tuple2<Record,Optional<T>>>, List<Row>>() {
 
             private static final long serialVersionUID = -8170813739798353133L;

@@ -126,7 +126,7 @@ public class ColumnAdditionByFetchingURLsOperationTests extends RefineTest {
 
     private void runAndWait(EngineDependentOperation op, int timeout) throws Exception {
         ProcessManager pm = project.getProcessManager();
-        Process process = op.createProcess(project.getHistory(), project.getProcessManager());
+        Process process = op.createProcess(project);
         runAndWait(pm, process, timeout);
     }
     
@@ -143,7 +143,7 @@ public class ColumnAdditionByFetchingURLsOperationTests extends RefineTest {
         	{"bar"}
         });
         Operation op = ParsingUtilities.mapper.readValue(json, ColumnAdditionByFetchingURLsOperation.class);
-        Process process = op.createProcess(project.getHistory(), project.getProcessManager());
+        Process process = op.createProcess(project);
         TestUtils.isSerializedTo(process, String.format(processJson, process.hashCode()), ParsingUtilities.defaultWriter);
     }
     
@@ -230,7 +230,7 @@ public class ColumnAdditionByFetchingURLsOperationTests extends RefineTest {
                     true,
                     null);
 
-            LongRunningProcessStub process = new LongRunningProcessStub(op.createProcess(project.getHistory(), project.getProcessManager()));
+            LongRunningProcessStub process = new LongRunningProcessStub(op.createProcess(project));
             process.run();
 
             GridState grid = project.getCurrentGridState();
@@ -275,7 +275,7 @@ public class ColumnAdditionByFetchingURLsOperationTests extends RefineTest {
                 50,
                 true,
                 headers);
-            LongRunningProcessStub process = new LongRunningProcessStub(op.createProcess(project.getHistory(), project.getProcessManager()));
+            LongRunningProcessStub process = new LongRunningProcessStub(op.createProcess(project));
             process.run();
 
             // Inspect rows
@@ -323,7 +323,7 @@ public class ColumnAdditionByFetchingURLsOperationTests extends RefineTest {
 
             // 6 requests (4 retries @1 sec) + final response
             long start = System.currentTimeMillis();
-            LongRunningProcessStub process = new LongRunningProcessStub(op.createProcess(project.getHistory(), project.getProcessManager()));
+            LongRunningProcessStub process = new LongRunningProcessStub(op.createProcess(project));
             process.run();
 
             // Make sure that our Retry-After headers were obeyed (4*1 sec vs 4*100msec)
@@ -372,7 +372,7 @@ public class ColumnAdditionByFetchingURLsOperationTests extends RefineTest {
 
             // 6 requests (4 retries 200, 400, 800, 200 msec) + final response
             long start = System.currentTimeMillis();
-            LongRunningProcessStub process = new LongRunningProcessStub(op.createProcess(project.getHistory(), project.getProcessManager()));
+            LongRunningProcessStub process = new LongRunningProcessStub(op.createProcess(project));
             process.run();
 
             // Make sure that our exponential back off is working

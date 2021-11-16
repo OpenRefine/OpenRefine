@@ -55,10 +55,9 @@ public class FacetCount implements Function {
             String facetExpression = (String) args[1];
             String columnName = (String) args[2];
 
-            Project project = (Project) bindings.get("project");
+            long projectId = (long) bindings.get("project_id");
             try {
                 FacetCountCacheManager facetCountCache = ProjectManager.singleton.getFacetCountCache();
-                long projectId = project.getId();
                 StringValuesFacetState facetState = facetCountCache.getFacetState(projectId, facetExpression, columnName);
                 return facetState.getCounts().getOrDefault(choiceValue, 0L);
             } catch(FacetCountException e) {

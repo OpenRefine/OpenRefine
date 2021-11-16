@@ -2,7 +2,6 @@ package org.openrefine.model;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.Serializable;
 import java.util.Iterator;
 import java.util.List;
 
@@ -23,7 +22,7 @@ import scala.Tuple2;
  *
  * @param <T>
  */
-public class SparkChangeData<T extends Serializable> implements ChangeData<T> {
+public class SparkChangeData<T> implements ChangeData<T> {
     
     private final JavaPairRDD<Long, T> data;
     private final SparkDatamodelRunner runner;
@@ -84,7 +83,7 @@ public class SparkChangeData<T extends Serializable> implements ChangeData<T> {
         progressReporter.reportProgress(100);
     }
     
-    protected static <T extends Serializable> String serializeIndexedData(ChangeDataSerializer<T> serializer, Tuple2<Long, T> data) throws IOException {
+    protected static <T> String serializeIndexedData(ChangeDataSerializer<T> serializer, Tuple2<Long, T> data) throws IOException {
         String serialized = (new IndexedData<T>(data._1, data._2)).writeAsString(serializer);
         return serialized;
     }

@@ -81,7 +81,7 @@ public class TransposeColumnsIntoRowsCommand extends Command {
                     keyColumnName, valueColumnName);
             }
             
-            Process process = op.createProcess(project.getHistory(), project.getProcessManager());
+            Process process = op.createProcess(project);
             
             performProcessAndRespond(request, response, project, process);
         } catch (Exception e) {

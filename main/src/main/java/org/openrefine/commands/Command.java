@@ -71,7 +71,7 @@ public abstract class Command {
 
     final static protected Logger logger = LoggerFactory.getLogger("command");
     
-    final static public CSRFTokenFactory csrfFactory = new CSRFTokenFactory(3600, 32);
+    final static public CSRFTokenFactory csrfFactory = new CSRFTokenFactory(3600*5, 32);
 
     protected RefineServlet servlet;
     

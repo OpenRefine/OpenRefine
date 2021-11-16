@@ -20,7 +20,7 @@ import org.openrefine.process.ProgressReporter;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
-public class TestingChangeData<T extends Serializable> implements ChangeData<T> {
+public class TestingChangeData<T> implements ChangeData<T> {
     
     private Map<Long, T> data;
     
