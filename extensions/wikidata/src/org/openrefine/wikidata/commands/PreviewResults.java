@@ -4,7 +4,7 @@ import java.util.List;
 
 import org.openrefine.wikidata.qa.QAWarning;
 import org.openrefine.wikidata.qa.QAWarning.Severity;
-import org.openrefine.wikidata.updates.ItemUpdate;
+import org.openrefine.wikidata.updates.TermedStatementEntityUpdate;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -16,7 +16,7 @@ public class PreviewResults {
     protected Severity maxSeverity;
     protected int nbWarnings;
     protected int editCount;
-    protected List<ItemUpdate> editsPreview;
+    protected List<TermedStatementEntityUpdate> editsPreview;
     
     @JsonProperty("warnings")
     public List<QAWarning> getWarnings() {
@@ -39,7 +39,7 @@ public class PreviewResults {
     }
     
     @JsonProperty("edits_preview")
-    public List<ItemUpdate> getEditsPreview() {
+    public List<TermedStatementEntityUpdate> getEditsPreview() {
     	return editsPreview;
     }
     
@@ -48,7 +48,7 @@ public class PreviewResults {
             Severity maxSeverity,
             int nbWarnings,
             int editCount,
-            List<ItemUpdate> editsPreview) {
+            List<TermedStatementEntityUpdate> editsPreview) {
         this.warnings = warnings;
         this.maxSeverity = maxSeverity;
         this.nbWarnings = nbWarnings;
