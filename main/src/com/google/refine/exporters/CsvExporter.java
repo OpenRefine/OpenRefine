@@ -45,9 +45,12 @@ import java.io.Writer;
 import java.util.List;
 import java.util.Properties;
 
+/**
+ * CsvExporter class
+ */
 public class CsvExporter implements WriterExporter {
 
-    char separator;
+    private char separator;
 
     public CsvExporter() {
         separator = ',';      //Comma separated-value is default
@@ -89,7 +92,7 @@ public class CsvExporter implements WriterExporter {
         final boolean quoteAll = options.quoteAll;
 
         final boolean printColumnHeader =
-                (params != null && params.getProperty("printColumnHeader") != null) ?
+                params != null && params.getProperty("printColumnHeader") != null ?
                         Boolean.parseBoolean(params.getProperty("printColumnHeader")) :
                         true;
 
@@ -115,13 +118,13 @@ public class CsvExporter implements WriterExporter {
                             final String tabString = cellData.text.replace("\t", "\\t");
                             strings[i] = tabString;
                         }
-                        // If file is tsv and cell text contains internal newlines, then manually escape newlines
+                        // If file is tsv & cell contains internal newlines, manually escape newlines
                         else if (separator.charAt(0) == '\t' && cellData != null && cellData.text != null && cellData.text.contains("\n")) {
                             final String lineString = cellData.text.replace("\n", "\\n");
                             strings[i] = lineString;
                         } else {
                             strings[i] =
-                                    (cellData != null && cellData.text != null) ?
+                                    cellData != null && cellData.text != null ?
                                             cellData.text :
                                             "";
                         }
@@ -138,10 +141,11 @@ public class CsvExporter implements WriterExporter {
      * Create csv writer if csv file specified or tsv writer if tsv file specified
      * tsv files only escape tabs and newlines
      *
-     * @param writer        Writer originally passed to export method of CsvExporter class
-     * @param delimiter     Delimiter originally passed to CsvExporter and stored as separator
+     * @param writer        Writer originally passed to export method of CsvExporter
+     * @param delimiter     Delimiter originally passed to CsvExporter
      * @param lineSeparator Line terminator, has value of CSVWriter.DEFAULT_LINE_END
      * @return csvWriter    Writer properly configured for csv or tsv file export
+     * @author John Fox
      */
     private CSVWriter createWriter(final Writer writer, final char delimiter, final String lineSeparator) {
         CSVWriter csvWriter;
