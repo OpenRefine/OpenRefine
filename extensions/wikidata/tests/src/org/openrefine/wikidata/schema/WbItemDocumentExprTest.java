@@ -32,6 +32,7 @@ import org.openrefine.wikidata.updates.ItemUpdateBuilder;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 import org.wikidata.wdtk.datamodel.helpers.Datamodel;
+import org.wikidata.wdtk.datamodel.interfaces.EntityIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.ItemIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.MonolingualTextValue;
 import org.wikidata.wdtk.datamodel.interfaces.Statement;
@@ -39,7 +40,7 @@ import org.wikidata.wdtk.datamodel.interfaces.Statement;
 public class WbItemDocumentExprTest extends WbExpressionTest<TermedStatementEntityUpdate> {
 
     public WbItemDocumentExpr expr;
-    ItemIdValue subject = Datamodel.makeWikidataItemIdValue("Q23");
+    EntityIdValue subject = Datamodel.makeWikidataItemIdValue("Q23");
     MonolingualTextValue alias = Datamodel.makeMonolingualTextValue("my alias", "en");
     Statement fullStatement;
 
