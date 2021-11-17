@@ -308,6 +308,16 @@ Cypress.Commands.add('confirmDialogPanel', () => {
 });
 
 /**
+ * Click on the Cancel button of a dialog panel
+ */
+ Cypress.Commands.add('cancelDialogPanel', () => {
+   cy.get(
+     'body > .dialog-container > .dialog-frame .dialog-footer button[bind="cancelButton"]'
+   ).click();
+   cy.get('body > .dialog-container > .dialog-frame').should('not.exist');
+ });
+
+/**
  * Will click on a menu entry for a given column name
  */
 Cypress.Commands.add('columnActionClick', (columnName, actions) => {
