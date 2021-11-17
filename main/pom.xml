@@ -22,8 +22,9 @@
     <!-- org.odftoolkit:odfdom-java:jar:0.9.0-RC1 bundles Jena 3.9.0 so we should match that
          Jena 3.15.0 doesn't work. Versions through 3.14.0 appear to, but we'll be conservative
     -->
-    <jena.version>3.17.0</jena.version>
+    <jena.version>4.2.0</jena.version>
     <okhttp.version>4.9.2</okhttp.version>
+    <poi.version>5.1.0</poi.version>
   </properties>
 
   <scm>
@@ -258,17 +259,26 @@
     <dependency>
       <groupId>org.apache.poi</groupId>
       <artifactId>poi</artifactId>
-      <version>4.1.2</version>
+      <version>${poi.version}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.poi</groupId>
       <artifactId>poi-ooxml</artifactId>
-      <version>4.1.2</version>
+      <version>${poi.version}</version>
     </dependency>
     <dependency>
       <groupId>org.odftoolkit</groupId>
       <artifactId>odfdom-java</artifactId>
       <version>0.9.0-RC1</version>
+      <!-- workaround for https://github.com/tdf/odftoolkit/issues/131 
+         can be removed as soon as this library is updated to a newer version with
+         https://github.com/tdf/odftoolkit/pull/132 in it. -->
+      <exclusions>
+        <exclusion>
+          <groupId>xml-apis</groupId>
+          <artifactId>xml-apis</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
     <dependency>
       <groupId>org.openrefine.dependencies</groupId>
