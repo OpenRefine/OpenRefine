@@ -55,28 +55,28 @@ public class StringUtils {
      * @return string representing array of objects
      */
     public static String JSONtoString(Object[] o){
+        StringBuffer result = new StringBuffer("[ ");
         if(o.length == 0){
-            return "[ ]";
-        }
-        String result = "[ ";
-        for(int i = 0; i < o.length; i++){
-            if(i != 0){
-                result += ", ";
-            }
-            String partialResult = "";
-            if(o[i] instanceof String){
-                partialResult = "\"" +o[i].toString()+ "\"";
-            }else if(o[i] instanceof Object[]){
-                partialResult = JSONtoString((Object[]) o[i]);
-            }else if (o[i] == null) {
-                partialResult = "null";
+        	result.append(']');
+        }else {
+        	for(int i = 0; i < o.length; i++){
+                if(i != 0){
+                	result.append(", ");
+                }
+                String partialResult;
+                if(o[i] instanceof String){
+                    partialResult = "\"" +o[i].toString()+ "\"";
+                } else if(o[i] instanceof Object[]){
+                    partialResult = JSONtoString((Object[]) o[i]);
+                } else if (o[i] == null) {
+                    partialResult = "null";
+                } else{
+                    partialResult = o[i].toString();
+                }
+                result.append(partialResult);
             } 
-            else{
-                partialResult = o[i].toString();
-            }
-            result += partialResult;
-        } 
-        result += " ]";
-        return result;
+        	result.append(" ]");
+        }
+        return result.toString();
     }
 }
