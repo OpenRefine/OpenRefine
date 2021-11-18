@@ -47,8 +47,7 @@ where [options] include:
      default: OS dependent
 
   -m <memory> max memory heap size to use
-     default: 1024M
-     Values less than 256M not allowed
+     default: 1400M
 
   -v <level> verbosity level [from low to high: error,warn,info,debug,trace]
      default: info
@@ -847,16 +846,8 @@ while [ $# -ne 0 ] ; do
     -i) shift; REFINE_INTERFACE="$1"; shift; continue;;
     -w) shift; REFINE_WEBAPP="$1"; shift; continue;;
     -d) shift; REFINE_DATA_DIR="$1"; shift; continue;;
-    -m) 
-      shift;
-      if [ $1 -le 256 ]
-      then
-        fail "Value of -m less than 256 not allowed";
-      else
-        REFINE_MEMORY="$1";
-        shift;
-        continue;
-      fi;;
+    -m) shift; REFINE_MEMORY="$1"; REFINE_MIN_MEMORY="$1"; shift; continue;;
+    -k) shift; REFINE_GOOGLE_API_KEY="$1"; shift; continue;;
     -v) shift; REFINE_VERBOSITY="$1"; shift; continue;;
     -x) shift; REFINE_EXTRA_OPTS="$1"; shift; continue;;
     --debug) shift; add_option '-Xdebug' '-Xrunjdwp:transport=dt_socket,address=8000,server=y,suspend=n'; continue;;
