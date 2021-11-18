@@ -87,6 +87,7 @@ Refine.SeparatorBasedParserUI.prototype.getOptions = function() {
     }
     return def;
   };
+
   if (this._optionContainerElmts.ignoreCheckbox[0].checked) {
     options.ignoreLines = parseIntDefault(this._optionContainerElmts.ignoreInput[0].value, -1);
   } else {
@@ -131,6 +132,7 @@ Refine.SeparatorBasedParserUI.prototype.getOptions = function() {
 };
 
 Refine.SeparatorBasedParserUI.prototype._initialize = function() {
+	
   var self = this;
 
   this._optionContainer.unbind().empty().html(
@@ -205,7 +207,6 @@ Refine.SeparatorBasedParserUI.prototype._initialize = function() {
   this._optionContainer.find(
       "input[name='column-separator'][value='" + columnSeparatorValue + "']").prop("checked", true);
   this._optionContainerElmts.columnSeparatorInput[0].value = this._config.separator;
-
   if (this._config.ignoreLines > 0) {
     this._optionContainerElmts.ignoreCheckbox.prop("checked", true);
     this._optionContainerElmts.ignoreInput[0].value = this._config.ignoreLines.toString();
@@ -247,8 +248,31 @@ Refine.SeparatorBasedParserUI.prototype._initialize = function() {
     this._optionContainerElmts.trimStringsCheckbox.prop('checked', false);
   }
 
-  var onChange = function() {
-    self._scheduleUpdatePreview();
+  var onChange = function(event) {
+	eventBind = $(event.target).attr('bind'); //get the bind of changed event 
+	checkboxs = self._checkboxValues(self.getOptions()); //helper function to get checkbox values
+	if (eventBind=="ignoreInput" && checkboxs[0]) {
+		self._scheduleUpdatePreview();
+	}
+	if (eventBind=="headerLinesInput" && checkboxs[1]) {
+		self._scheduleUpdatePreview();
+	}
+	if (eventBind=="skipInput" && checkboxs[2]) {
+		self._scheduleUpdatePreview();
+	}
+	if (eventBind=="limitInput" && checkboxs[3]) {
+		self._scheduleUpdatePreview();
+	}
+	if (eventBind=="quoteCharacterInput" && checkboxs[4]) {
+		self._scheduleUpdatePreview();
+	}
+	if (eventBind==undefined) {
+		self._scheduleUpdatePreview();
+	} else {
+		if (eventBind.substring(eventBind.length-3,eventBind.length)=="box") {
+			self._scheduleUpdatePreview();
+		}
+	}
   };
   this._optionContainer.find("input").bind("change", onChange);
   this._optionContainer.find("select").bind("change", onChange);
@@ -268,6 +292,17 @@ Refine.SeparatorBasedParserUI.prototype._scheduleUpdatePreview = function() {
   }, 500); // 0.5 second
 };
 
+Refine.SeparatorBasedParserUI.prototype._checkboxValues = function(options) {
+	checkboxs = [];
+	checkboxs.push(this._optionContainerElmts.ignoreCheckbox[0].checked);
+	checkboxs.push(this._optionContainerElmts.headerLinesCheckbox[0].checked);
+	checkboxs.push(this._optionContainerElmts.skipCheckbox[0].checked);
+	checkboxs.push(this._optionContainerElmts.limitCheckbox[0].checked);
+	checkboxs.push(this._optionContainerElmts.processQuoteMarksCheckbox[0].checked);
+	
+	return checkboxs;
+};
+
 Refine.SeparatorBasedParserUI.prototype._updatePreview = function() {
   var self = this;
 
@@ -277,7 +312,6 @@ Refine.SeparatorBasedParserUI.prototype._updatePreview = function() {
     if (result.status == "ok") {
       self._controller.getPreviewData(function(projectData) {
         self._progressContainer.hide();
-
         new Refine.PreviewTable(projectData, self._dataContainer.unbind().empty());
       });
     }
