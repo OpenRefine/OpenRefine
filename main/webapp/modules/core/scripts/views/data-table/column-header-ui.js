@@ -191,6 +191,7 @@ DataTableColumnHeaderUI.prototype._createMenuForColumnHeader = function(elmt) {
         {
           label: $.i18n('core-views/expand-left'),
           click: function() {
+            //by deleting these entries from collapsedColumnNames, they won't render on the dataTableView
             for (var i = 0; i < self._columnIndex; i++) {
               delete self._dataTableView._collapsedColumnNames[theProject.columnModel.columns[i].name];
             }
@@ -200,6 +201,7 @@ DataTableColumnHeaderUI.prototype._createMenuForColumnHeader = function(elmt) {
         {
           label: $.i18n('core-views/expand-right'),
           click: function() {
+            //by deleting these entries from collapsedColumnNames, they won't render on the dataTableView
             for (var i = self._columnIndex + 1; i < theProject.columnModel.columns.length; i++) {
               delete self._dataTableView._collapsedColumnNames[theProject.columnModel.columns[i].name];
             }
