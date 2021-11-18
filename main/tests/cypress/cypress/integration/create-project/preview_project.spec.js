@@ -219,4 +219,41 @@ describe(__filename, function () {
     cy.get('table.data-table tr').eq(1).should('to.contain', '15.87');
     cy.get('table.data-table tr').eq(1).should('to.contain', '717');
   });
+
+  it('Tests disabling of automatic preview', function () {
+    navigateToProjectPreview();
+    // **Testing ignore feature with auto preview enabled** //
+    cy.get('input[bind="ignoreInput"]').type('{backspace}1');
+    cy.get('input[bind="ignoreCheckbox"]').check();
+    cy.waitForImportUpdate();
+    // Look for automatic preview update
+    cy.get('table.data-table tr').eq(1).should('to.contain', '1.');
+    cy.get('table.data-table tr').eq(1).should('to.contain', '01002');
+    cy.get('table.data-table tr').eq(1).should('to.contain', 'BUTTER,WHIPPED,WITH SALT');
+    cy.get('table.data-table tr').eq(1).should('to.contain', '15.87');
+    cy.get('table.data-table tr').eq(1).should('to.contain', '717');
+
+    cy.get('input[bind="ignoreCheckbox"]').uncheck();
+    cy.waitForImportUpdate();
+
+    // **Testing ignore feature with auto preview disabled** //
+    cy.get('input[bind="disableAutoPreviewCheckbox"]').check();
+    // Verify no auto update
+    cy.get('input[bind="ignoreCheckbox"]').check();
+    cy.wait(5000); // 5 second wait to be safe
+    cy.get('table.data-table tr').eq(1).should('to.contain', '1.');
+    cy.get('table.data-table tr').eq(1).should('to.contain', '01001');
+    cy.get('table.data-table tr').eq(1).should('to.contain', 'BUTTER,WITH SALT');
+    cy.get('table.data-table tr').eq(1).should('to.contain', '15.87');
+    cy.get('table.data-table tr').eq(1).should('to.contain', '717');
+    // Verify update on button click
+    cy.get('button[bind="previewButton"]').click();
+    cy.waitForImportUpdate();
+    cy.get('table.data-table tr').eq(1).should('to.contain', '1.');
+    cy.get('table.data-table tr').eq(1).should('to.contain', '01002');
+    cy.get('table.data-table tr').eq(1).should('to.contain', 'BUTTER,WHIPPED,WITH SALT');
+    cy.get('table.data-table tr').eq(1).should('to.contain', '15.87');
+    cy.get('table.data-table tr').eq(1).should('to.contain', '717');
+    cy.get('input[bind="disableAutoPreviewCheckbox"]').uncheck();
+  });
 });
