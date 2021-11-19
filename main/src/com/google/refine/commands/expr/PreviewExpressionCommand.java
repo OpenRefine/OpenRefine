@@ -2,11 +2,9 @@
 
 Copyright 2010, Google Inc.
 All rights reserved.
-
 Redistribution and use in source and binary forms, with or without
 modification, are permitted provided that the following conditions are
 met:
-
     * Redistributions of source code must retain the above copyright
 notice, this list of conditions and the following disclaimer.
     * Redistributions in binary form must reproduce the above
@@ -16,7 +14,6 @@ distribution.
     * Neither the name of Google Inc. nor the names of its
 contributors may be used to endorse or promote products derived from
 this software without specific prior written permission.
-
 THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
 "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
 LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
@@ -28,7 +25,6 @@ DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
 THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-
 */
 
 package com.google.refine.commands.expr;
@@ -60,7 +56,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.Serializable;
-import java.text.DecimalFormat;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -265,26 +260,10 @@ public class PreviewExpressionCommand extends Command {
                     }
                 } else if (v instanceof Double || v instanceof Float) {
                     Number n = (Number) v;
-                    double minNonNotation;
-                    double maxNonNotation;
-                    minNonNotation = 0.000001;
-                    maxNonNotation = 1000000000000000000000.0;
-                    DecimalFormat df = new DecimalFormat("0"); //, DecimalFormatSymbols.getInstance(Locale.ENGLISH));
-                    df.setMaximumFractionDigits(15);
-                    df.setMaximumIntegerDigits(22);
-                    double formattedNum;
-                    formattedNum = n.doubleValue();
                     if (n.doubleValue() - n.longValue() == 0.0) {
-                        //System.out.println("Made it to long");
                         sb.append(n.longValue());
                     } else {
-                        if (n.doubleValue() >= minNonNotation && n.doubleValue() <= maxNonNotation) {
-                            //System.out.println("Made it to double");
-                            sb.append(df.format(formattedNum));
-                        } else {
-                            //System.out.println("Not in range");
-                            sb.append(n.doubleValue());
-                        }
+                        sb.append(n.doubleValue());
                     }
                 } else {
                     sb.append(v.toString());
