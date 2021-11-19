@@ -23,8 +23,8 @@ LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
 A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
 OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
 SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
-LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,           
-DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY           
+LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
 THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
@@ -32,17 +32,6 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
 package com.google.refine.commands.expr;
-
-import java.io.IOException;
-import java.io.Serializable;
-import java.time.OffsetDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Properties;
-
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
@@ -66,25 +55,41 @@ import com.google.refine.model.Project;
 import com.google.refine.model.Row;
 import com.google.refine.util.ParsingUtilities;
 
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.io.Serializable;
+import java.text.DecimalFormat;
+import java.time.OffsetDateTime;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Properties;
+
 public class PreviewExpressionCommand extends Command {
-    
-    protected static interface ExpressionValue  { }
+
+    protected static interface ExpressionValue {
+    }
+
     protected static class ErrorMessage implements ExpressionValue {
         @JsonProperty("message")
         protected String message;
+
         public ErrorMessage(String m) {
             message = m;
         }
     }
+
     protected static class SuccessfulEvaluation implements ExpressionValue {
         @JsonValue
         protected String value;
+
         protected SuccessfulEvaluation(String value) {
             this.value = value;
         }
     }
-    
-    protected static class PreviewResult  {
+
+    protected static class PreviewResult {
         @JsonProperty("code")
         protected String code;
         @JsonProperty("message")
@@ -95,8 +100,8 @@ public class PreviewExpressionCommand extends Command {
         protected String type;
         @JsonProperty("results")
         @JsonInclude(Include.NON_NULL)
-        List<ExpressionValue> results; 
-        
+        List<ExpressionValue> results;
+
         public PreviewResult(String code, String message, String type) {
             this.code = code;
             this.message = message;
@@ -111,28 +116,29 @@ public class PreviewExpressionCommand extends Command {
             this.results = evaluated;
         }
     }
+
     /**
      * The command uses POST but does not actually modify any state so it does
      * not require CSRF.
      */
-    
+
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        
+
         try {
             Project project = getProject(request);
-            
+
             int cellIndex = Integer.parseInt(request.getParameter("cellIndex"));
             String columnName = cellIndex < 0 ? "" : project.columnModel.getColumnByCellIndex(cellIndex).getName();
-            
+
             String expression = request.getParameter("expression");
             String rowIndicesString = request.getParameter("rowIndices");
             if (rowIndicesString == null) {
                 respondJSON(response, new PreviewResult("error", "No row indices specified", null));
                 return;
             }
-            
+
             boolean repeat = "true".equals(request.getParameter("repeat"));
             int repeatCount = 10;
             if (repeat) {
@@ -142,32 +148,33 @@ public class PreviewExpressionCommand extends Command {
                 } catch (Exception e) {
                 }
             }
-            
-            List<Integer> rowIndices = ParsingUtilities.mapper.readValue(rowIndicesString, new TypeReference<List<Integer>>() {});
+
+            List<Integer> rowIndices = ParsingUtilities.mapper.readValue(rowIndicesString, new TypeReference<List<Integer>>() {
+            });
             int length = rowIndices.size();
-            
+
             try {
                 Evaluable eval = MetaParser.parse(expression);
-                
+
                 List<ExpressionValue> evaluated = new ArrayList<>();
                 Properties bindings = ExpressionUtils.createBindings(project);
                 for (int i = 0; i < length; i++) {
                     Object result = null;
-                    
+
                     int rowIndex = rowIndices.get(i);
                     if (rowIndex >= 0 && rowIndex < project.rows.size()) {
                         Row row = project.rows.get(rowIndex);
                         Cell cell = row.getCell(cellIndex);
-                            
+
                         try {
                             ExpressionUtils.bind(bindings, row, rowIndex, columnName, cell);
                             result = eval.evaluate(bindings);
-                            
+
                             if (repeat) {
                                 for (int r = 0; r < repeatCount && ExpressionUtils.isStorable(result); r++) {
                                     Cell newCell = new Cell((Serializable) result, (cell != null) ? cell.recon : null);
                                     ExpressionUtils.bind(bindings, row, rowIndex, columnName, newCell);
-                                    
+
                                     Object newResult = eval.evaluate(bindings);
                                     if (ExpressionUtils.isError(newResult)) {
                                         break;
@@ -182,16 +189,16 @@ public class PreviewExpressionCommand extends Command {
                             // ignore
                         }
                     }
-                    
+
                     if (result == null) {
                         evaluated.add(null);
                     } else if (ExpressionUtils.isError(result)) {
                         evaluated.add(new ErrorMessage(((EvalError) result).message));
                     } else {
                         StringBuffer sb = new StringBuffer();
-                        
+
                         writeValue(sb, result, false);
-                        
+
                         evaluated.add(new SuccessfulEvaluation(sb.toString()));
                     }
                 }
@@ -205,7 +212,7 @@ public class PreviewExpressionCommand extends Command {
             respondException(response, e);
         }
     }
-    
+
     static protected void writeValue(StringBuffer sb, Object v, boolean quote) {
         if (ExpressionUtils.isError(v)) {
             sb.append("[error: " + ((EvalError) v).message + "]");
@@ -218,7 +225,7 @@ public class PreviewExpressionCommand extends Command {
                 } else if (v instanceof WrappedRow) {
                     sb.append("[object Row]");
                 } else if (v instanceof ObjectNode) {
-                   sb.append(((ObjectNode) v).toString());
+                    sb.append(((ObjectNode) v).toString());
                 } else if (v instanceof ArrayNode) {
                     sb.append(((ArrayNode) v).toString());
                 } else if (ExpressionUtils.isArray(v)) {
@@ -244,24 +251,40 @@ public class PreviewExpressionCommand extends Command {
                 } else if (v instanceof HasFields) {
                     sb.append("[object " + v.getClass().getSimpleName() + "]");
                 } else if (v instanceof OffsetDateTime) {
-                    sb.append("[date " + 
-                            ParsingUtilities.dateToString((OffsetDateTime) v) +"]");
+                    sb.append("[date " +
+                            ParsingUtilities.dateToString((OffsetDateTime) v) + "]");
                 } else if (v instanceof String) {
                     if (quote) {
                         try {
-							sb.append(ParsingUtilities.mapper.writeValueAsString(((String) v)));
-						} catch (JsonProcessingException e) {
-							// will not happen
-						}
+                            sb.append(ParsingUtilities.mapper.writeValueAsString(((String) v)));
+                        } catch (JsonProcessingException e) {
+                            // will not happen
+                        }
                     } else {
                         sb.append((String) v);
                     }
                 } else if (v instanceof Double || v instanceof Float) {
                     Number n = (Number) v;
+                    double minNonNotation;
+                    double maxNonNotation;
+                    minNonNotation = 0.000001;
+                    maxNonNotation = 1000000000000000000000.0;
+                    DecimalFormat df = new DecimalFormat("0"); //, DecimalFormatSymbols.getInstance(Locale.ENGLISH));
+                    df.setMaximumFractionDigits(15);
+                    df.setMaximumIntegerDigits(22);
+                    double formattedNum;
+                    formattedNum = n.doubleValue();
                     if (n.doubleValue() - n.longValue() == 0.0) {
+                        //System.out.println("Made it to long");
                         sb.append(n.longValue());
                     } else {
-                        sb.append(n.doubleValue());
+                        if (n.doubleValue() >= minNonNotation && n.doubleValue() <= maxNonNotation) {
+                            //System.out.println("Made it to double");
+                            sb.append(df.format(formattedNum));
+                        } else {
+                            //System.out.println("Not in range");
+                            sb.append(n.doubleValue());
+                        }
                     }
                 } else {
                     sb.append(v.toString());
