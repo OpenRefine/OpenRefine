@@ -58,10 +58,10 @@ public final class EncodingGuesser {
      * @param fileRecords
      * @param options
      */
-    public final static void guessInitialEncoding(final List<ObjectNode> fileRecords, final ObjectNode options) {
+    public final static void guessInitialEncoding(final List<ImportingFileRecord> fileRecords, final ObjectNode options) {
         if (fileRecords != null) {
-            for (ObjectNode record : fileRecords) {
-                String encoding = JSONUtilities.getString(record, "encoding", null);
+            for (ImportingFileRecord record : fileRecords) {
+                String encoding = record.getEncoding();
                 if (!StringUtils.isBlank(encoding)) {
                     JSONUtilities.safePut(options, "encoding", encoding);
                     break;

@@ -201,7 +201,7 @@ public class KeyValueColumnizeOperation implements Operation {
                 if (unchangedColumns.size() > 0) {
                     StringBuffer sb = new StringBuffer();
                     for (int c = 0; c < unchangedColumns.size(); c++) {
-                        Object cellValue = oldRow.getCellValue(c);
+                        Object cellValue = oldRow.getCellValue(unchangedColumns.get(c));
                         if (c > 0) {
                             sb.append('\0');
                         }

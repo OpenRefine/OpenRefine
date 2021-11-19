@@ -11,6 +11,8 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.openrefine.ProjectMetadata;
 import org.openrefine.browsing.facets.RowAggregator;
 import org.openrefine.expr.ExpressionUtils;
+import org.openrefine.importing.EncodingGuesser;
+import org.openrefine.importing.ImportingFileRecord;
 import org.openrefine.importing.ImportingJob;
 import org.openrefine.model.Cell;
 import org.openrefine.model.ColumnModel;
@@ -72,6 +74,14 @@ public abstract class LineBasedImporterBase extends HDFSImporter {
      */
     protected int getPassesNeededToComputeColumnCount(ObjectNode options) {
         return 1;
+    }
+
+    @Override
+    public ObjectNode createParserUIInitializationData(
+            ImportingJob job, List<ImportingFileRecord> fileRecords, String format) {
+        ObjectNode options = super.createParserUIInitializationData(job, fileRecords, format);
+        EncodingGuesser.guessInitialEncoding(fileRecords, options);
+        return options;
     }
 
     @Override

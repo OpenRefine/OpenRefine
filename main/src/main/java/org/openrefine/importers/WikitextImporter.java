@@ -85,6 +85,7 @@ import org.sweble.wikitext.parser.utils.SimpleParserConfig;
 
 import org.openrefine.ProjectMetadata;
 import org.openrefine.importers.TabularParserHelper.TableDataReader;
+import org.openrefine.importing.EncodingGuesser;
 import org.openrefine.importing.ImportingFileRecord;
 import org.openrefine.importing.ImportingJob;
 import org.openrefine.model.Cell;
@@ -111,7 +112,7 @@ public class WikitextImporter extends ReaderImporter {
     public ObjectNode createParserUIInitializationData(ImportingJob job,
             List<ImportingFileRecord> fileRecords, String format) {
         ObjectNode options = super.createParserUIInitializationData(job, fileRecords, format);
-
+        EncodingGuesser.guessInitialEncoding(fileRecords, options);
         JSONUtilities.safePut(options, "guessCellValueTypes", false);
         JSONUtilities.safePut(options, "blankSpanningCells", true);
         JSONUtilities.safePut(options, "includeRawTemplates", false);

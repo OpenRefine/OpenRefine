@@ -125,7 +125,7 @@ public class ExportRowsCommand extends Command {
                 response.setCharacterEncoding("UTF-8");
 
                 OutputStream stream = response.getOutputStream();
-                ((StreamExporter) exporter).export(project.getCurrentGridState(), null, params, engine, stream);
+                ((StreamExporter) exporter).export(project.getCurrentGridState(), projectMetadata, params, engine, stream);
                 stream.close();
 //          } else if (exporter instanceof UrlExporter) {
 //              ((UrlExporter) exporter).export(project, options, engine);

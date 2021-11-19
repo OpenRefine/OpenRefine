@@ -73,7 +73,6 @@ abstract public class ImportingParserBase implements ImportingParser {
             List<ImportingFileRecord> fileRecords, String format) {
         ObjectNode options = ParsingUtilities.mapper.createObjectNode();
         JSONUtilities.safePut(options, "includeFileSources", fileRecords.size() > 1);
-
         return options;
     }
 

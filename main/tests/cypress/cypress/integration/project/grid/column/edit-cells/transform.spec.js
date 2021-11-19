@@ -40,9 +40,9 @@ describe(__filename, function () {
 
     cy.assertNotificationContainingText('Text transform on cells in column b');
 
-    cy.assertCellEquals(0, 'b', '');
-    cy.assertCellEquals(1, 'b', '');
-    cy.assertCellEquals(2, 'b', '');
+    cy.assertCellEquals(0, 'b', null);
+    cy.assertCellEquals(1, 'b', null);
+    cy.assertCellEquals(2, 'b', null);
   });
   it('Ensure cells cells contains error message when error occurs', function () {
     const fixture = [

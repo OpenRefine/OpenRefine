@@ -213,6 +213,35 @@ public class KeyValueColumnizeTests extends RefineTest {
     }
 
     @Test
+    public void testKeyValueColumnizeIdenticalValues() throws Exception {
+        GridState grid = createGrid(
+                new String[] { "Key", "Value", "wd" },
+                new Serializable[][] {
+                        { "merchant", "Katie", "34" },
+                        { "fruit", "apple", "34" },
+                        { "price", "1.2", "34" },
+                        { "merchant", "John", "56" },
+                        { "fruit", "banana", "56" },
+                        { "price", "3.1", "56" }
+                });
+
+        Change change = new KeyValueColumnizeOperation(
+                "Key",
+                "Value",
+                null).createChange();
+        GridState applied = change.apply(grid, mock(ChangeContext.class));
+
+        GridState expected = createGrid(
+                new String[] { "wd", "merchant", "fruit", "price" },
+                new Serializable[][] {
+                        { "34", "Katie", "apple", "1.2" },
+                        { "56", "John", "banana", "3.1" }
+                });
+
+        assertGridEquals(applied, expected);
+    }
+
+    @Test
     public void testCopyRowsWithNoKeys() throws DoesNotApplyException {
         // when a key cell is empty, if there are other columns around, we simply copy those
         GridState grid = createGrid(
