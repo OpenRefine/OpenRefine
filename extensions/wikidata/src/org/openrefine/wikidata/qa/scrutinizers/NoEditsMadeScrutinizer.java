@@ -23,7 +23,7 @@
  ******************************************************************************/
 package org.openrefine.wikidata.qa.scrutinizers;
 
-import org.openrefine.wikidata.updates.ItemUpdate;
+import org.openrefine.wikidata.updates.TermedStatementEntityUpdate;
 
 public class NoEditsMadeScrutinizer extends EditScrutinizer {
 
@@ -42,7 +42,7 @@ public class NoEditsMadeScrutinizer extends EditScrutinizer {
     }
 
     @Override
-    public void scrutinize(ItemUpdate edit) {
+    public void scrutinize(TermedStatementEntityUpdate edit) {
         nonNullUpdateSeen = true;
     }
     
