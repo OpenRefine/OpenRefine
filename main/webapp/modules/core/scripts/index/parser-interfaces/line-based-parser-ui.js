@@ -171,6 +171,7 @@ Refine.LineBasedParserUI.prototype._initialize = function() {
     this._optionContainerElmts.disableAutoPreviewCheckbox.prop('checked', true);
   }
 
+  // If disableAutoPreviewCheckbox is not checked, we will schedule an automatic update
   var onChange = function() {
     if (!self._optionContainerElmts.disableAutoPreviewCheckbox[0].checked)
     {

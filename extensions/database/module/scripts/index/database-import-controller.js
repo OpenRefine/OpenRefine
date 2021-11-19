@@ -227,6 +227,7 @@ Refine.DatabaseImportController.prototype._showParsingPanel = function() {
       this._parsingPanelElmts.disableAutoPreviewCheckbox.prop('checked', true);
     }
 
+    // If disableAutoPreviewCheckbox is not checked, we will schedule an automatic update
     var onChange = function() {
       if (!self._parsingPanelElmts.disableAutoPreviewCheckbox[0].checked)
       {

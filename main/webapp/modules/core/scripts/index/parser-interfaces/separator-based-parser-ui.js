@@ -254,15 +254,14 @@ Refine.SeparatorBasedParserUI.prototype._initialize = function() {
     this._optionContainerElmts.disableAutoPreviewCheckbox.prop('checked', true);
   }
 
-  // ??TODO This is it below, along with other parser type files
-  // ADD if not holdOffCheckboxChecked around update
+  // If disableAutoPreviewCheckbox is not checked, we will schedule an automatic update
   var onChange = function() {
     if (!self._optionContainerElmts.disableAutoPreviewCheckbox[0].checked)
     {
         self._scheduleUpdatePreview();
     }
   };
-  // ADD check for input change being for selected parameter
+
   this._optionContainer.find("input").bind("change", onChange);
   this._optionContainer.find("select").bind("change", onChange);
   this._optionContainerElmts.columnNamesInput.bind("keyup",onChange);
@@ -280,7 +279,7 @@ Refine.SeparatorBasedParserUI.prototype._scheduleUpdatePreview = function() {
     self._updatePreview();
   }, 500); // 0.5 second
 };
-// ??TODO Here is where we update
+
 Refine.SeparatorBasedParserUI.prototype._updatePreview = function() {
   var self = this;
 

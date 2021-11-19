@@ -220,6 +220,11 @@ describe(__filename, function () {
     cy.get('table.data-table tr').eq(1).should('to.contain', '717');
   });
 
+  /*
+  The test case below uses the ignore feature to test the disable automatic preview update checkbox
+  We first test with automatic preview updates enabled
+  Then, we test with automatic preview updates disabled, which requires the update button to change the preview
+  */
   it('Tests disabling of automatic preview', function () {
     navigateToProjectPreview();
     // **Testing ignore feature with auto preview enabled** //
