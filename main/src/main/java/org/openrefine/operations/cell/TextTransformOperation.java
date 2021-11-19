@@ -39,11 +39,10 @@ import java.util.Properties;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import org.openrefine.browsing.Engine.Mode;
 import org.openrefine.browsing.EngineConfig;
 import org.openrefine.expr.Evaluable;
 import org.openrefine.expr.ExpressionUtils;
-import org.openrefine.expr.MetaParser;
-import org.openrefine.expr.ParsingException;
 import org.openrefine.expr.WrappedCell;
 import org.openrefine.model.Cell;
 import org.openrefine.model.ColumnModel;
@@ -51,19 +50,16 @@ import org.openrefine.model.GridState;
 import org.openrefine.model.Record;
 import org.openrefine.model.Row;
 import org.openrefine.model.RowInRecordMapper;
+import org.openrefine.model.changes.Change;
 import org.openrefine.model.changes.Change.DoesNotApplyException;
 import org.openrefine.model.changes.ChangeContext;
-import org.openrefine.operations.ImmediateRowMapOperation;
+import org.openrefine.model.changes.ColumnChangeByChangeData;
+import org.openrefine.model.changes.RowMapChange;
+import org.openrefine.operations.ExpressionBasedOperation;
 import org.openrefine.operations.OnError;
 
-public class TextTransformOperation extends ImmediateRowMapOperation {
+public class TextTransformOperation extends ExpressionBasedOperation {
 
-    @JsonProperty("columnName")
-    final protected String _columnName;
-    @JsonProperty("expression")
-    final protected String _expression;
-    @JsonProperty("onError")
-    final protected OnError _onError;
     @JsonProperty("repeat")
     final protected boolean _repeat;
     @JsonProperty("repeatCount")
@@ -97,32 +93,47 @@ public class TextTransformOperation extends ImmediateRowMapOperation {
             @JsonProperty("onError") OnError onError,
             @JsonProperty("repeat") boolean repeat,
             @JsonProperty("repeatCount") int repeatCount) {
-        super(engineConfig);
-        _columnName = columnName;
-        _expression = expression;
-        _onError = onError;
+        super(engineConfig, expression, columnName, onError);
         _repeat = repeat;
         _repeatCount = repeatCount;
     }
 
-    @Override
-    public String getDescription() {
-        return "Text transform on cells in column " + _columnName + " using expression " + _expression;
+    @JsonProperty("columnName")
+    public String getColumnName() {
+        return _baseColumnName;
+    }
+
+    @JsonProperty("expression")
+    public String getExpression() {
+        return _expression;
+    }
+
+    @JsonProperty("onError")
+    public OnError getOnError() {
+        return _onError;
     }
 
     @Override
-    protected RowInRecordMapper getPositiveRowMapper(GridState state, ChangeContext context) throws DoesNotApplyException {
-        int columnIndex = columnIndex(state.getColumnModel(), _columnName);
-        Evaluable eval;
-        try {
-            eval = MetaParser.parse(_expression);
-            if (!eval.isLocal()) {
-                throw new IllegalArgumentException("Non-local expressions are not supported yet");
-            }
-        } catch (ParsingException e) {
-            throw new DoesNotApplyException(e.getMessage());
-        }
-        return rowMapper(columnIndex, _columnName, state.getColumnModel(), eval, _onError, _repeat ? _repeatCount : 0);
+    public String getDescription() {
+        return "Text transform on cells in column " + _baseColumnName + " using expression " + _expression;
+    }
+
+    @Override
+    protected RowInRecordMapper getPositiveRowMapper(GridState state, ChangeContext context, Evaluable eval) throws DoesNotApplyException {
+        int columnIndex = RowMapChange.columnIndex(state.getColumnModel(), _baseColumnName);
+        return rowMapper(columnIndex, _baseColumnName, state.getColumnModel(), eval, _onError, _repeat ? _repeatCount : 0);
+    }
+
+    @Override
+    protected Change getChangeForNonLocalExpression(String changeDataId, Evaluable evaluable, int columnIndex,
+            Mode engineMode) {
+        return new ColumnChangeByChangeData(
+                "eval",
+                columnIndex,
+                null,
+                engineMode,
+                null,
+                null);
     }
 
     protected static RowInRecordMapper rowMapper(int columnIndex, String columnName, ColumnModel columnModel, Evaluable eval,
@@ -175,13 +186,9 @@ public class TextTransformOperation extends ImmediateRowMapOperation {
                             }
                         }
                     }
-
-                    if (newCell != null) {
-                        return row.withCell(columnIndex, newCell);
-                    }
                 }
 
-                return row;
+                return row.withCell(columnIndex, newCell);
             }
 
         };
