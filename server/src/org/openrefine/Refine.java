@@ -351,8 +351,6 @@ class RefineServer extends Server {
         }
 
         File dataDir = null;
-        File grefineDir = null;
-        File gridworksDir = null;
 
         String os = System.getProperty("os.name").toLowerCase();
         if (os.contains("windows")) {
@@ -362,7 +360,6 @@ class RefineServer extends Server {
                 // e.g., C:\Users\[userid]\AppData\Roaming
                 parentDir = new File(appData);
             } else {
-                // TODO migrate to System.getProperty("user.home")?
                 String userProfile = System.getProperty("user.home");
                 if (userProfile != null && userProfile.length() > 0) {
                     // e.g., C:\Users\[userid]
@@ -374,21 +371,13 @@ class RefineServer extends Server {
                 parentDir = new File(".");
             }
 
-            dataDir = new File(parentDir, "OpenRefine");
-            grefineDir = new File(new File(parentDir, "Google"), "Refine");
-            gridworksDir = new File(parentDir, "Gridworks");
+            dataDir = new File(parentDir, "OpenRefine4");
         } else if (os.contains("os x")) {
             // on macosx, use "~/Library/Application Support"
             String home = System.getProperty("user.home");
 
-            String data_home = (home != null) ? home + "/Library/Application Support/OpenRefine" : ".openrefine";
+            String data_home = (home != null) ? home + "/Library/Application Support/OpenRefine4" : ".openrefine4";
             dataDir = new File(data_home);
-
-            String grefine_home = (home != null) ? home + "/Library/Application Support/Google/Refine" : ".google-refine";
-            grefineDir = new File(grefine_home);
-
-            String gridworks_home = (home != null) ? home + "/Library/Application Support/Gridworks" : ".gridworks";
-            gridworksDir = new File(gridworks_home);
         } else { // most likely a UNIX flavor
             // start with the XDG environment
             // see http://standards.freedesktop.org/basedir-spec/basedir-spec-latest.html
@@ -401,36 +390,7 @@ class RefineServer extends Server {
                 data_home = home + "/.local/share";
             }
 
-            dataDir = new File(data_home + "/openrefine");
-            grefineDir = new File(data_home + "/google/refine");
-            gridworksDir = new File(data_home + "/gridworks");
-        }
-
-        // If refine data dir doesn't exist, try to find and move Google Refine or Gridworks data dir over
-        if (!dataDir.exists()) {
-            if (grefineDir.exists()) {
-                if (gridworksDir.exists()) {
-                    logger.warn("Found both Gridworks: " + gridworksDir
-                            + " & Googld Refine dirs " + grefineDir);
-                }
-                if (grefineDir.renameTo(dataDir)) {
-                    logger.info("Renamed Google Refine directory " + grefineDir
-                            + " to " + dataDir);
-                } else {
-                    logger.error("FAILED to rename Google Refine directory "
-                            + grefineDir
-                            + " to " + dataDir);
-                }
-            } else if (gridworksDir.exists()) {
-                if (gridworksDir.renameTo(dataDir)) {
-                    logger.info("Renamed Gridworks directory " + gridworksDir
-                            + " to " + dataDir);
-                } else {
-                    logger.error("FAILED to rename Gridworks directory "
-                            + gridworksDir
-                            + " to " + dataDir);
-                }
-            }
+            dataDir = new File(data_home + "/openrefine4");
         }
 
         // Either rename failed or nothing to rename - create a new one
@@ -442,30 +402,6 @@ class RefineServer extends Server {
         }
 
         return dataDir.getAbsolutePath();
-    }
-
-    /**
-     * For Windows file paths that contain user IDs with non ASCII characters, those characters might get replaced with
-     * ?. We need to use the environment APPDATA value to substitute back the original user ID.
-     */
-    static private String fixWindowsUnicodePath(String path) {
-        int q = path.indexOf('?');
-        if (q < 0) {
-            return path;
-        }
-        int pathSep = path.indexOf(File.separatorChar, q);
-
-        String goodPath = System.getenv("APPDATA");
-        if (goodPath == null || goodPath.length() == 0) {
-            goodPath = System.getenv("USERPROFILE");
-            if (!goodPath.endsWith(File.separator)) {
-                goodPath = goodPath + File.separator;
-            }
-        }
-
-        int goodPathSep = goodPath.indexOf(File.separatorChar, q);
-
-        return path.substring(0, q) + goodPath.substring(q, goodPathSep) + path.substring(pathSep);
     }
 
 }
