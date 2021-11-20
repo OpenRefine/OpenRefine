@@ -140,8 +140,20 @@ Refine.XmlParserUI.prototype._initialize = function() {
     self._showPickRecordElementsUI();
   });
 
-  var onChange = function() {
-    self._scheduleUpdatePreview();
+  var onChange = function(event) {
+	eventBind = $(event.target).attr('bind'); //get the bind of changed event 
+	checkboxs = self._checkboxValues(self.getOptions()); //helper function to get checkbox values
+	
+	if (eventBind=="limitInput" && checkboxs[0]) {
+		self._scheduleUpdatePreview();
+	}
+	if (eventBind==undefined) {
+		self._scheduleUpdatePreview();
+	} else {
+		if (eventBind.substring(eventBind.length-3,eventBind.length)=="box") {
+			self._scheduleUpdatePreview();
+		}
+	}
   };
   this._optionContainer.find("input").bind("change", onChange);
   this._optionContainer.find("select").bind("change", onChange);
@@ -254,6 +266,13 @@ Refine.XmlParserUI.prototype._scheduleUpdatePreview = function() {
     self._timerID = null;
     self._updatePreview();
   }, 500); // 0.5 second
+};
+
+Refine.XmlParserUI.prototype._checkboxValues = function(options) {
+	checkboxs = [];
+	checkboxs.push(this._optionContainerElmts.limitCheckbox[0].checked);
+
+	return checkboxs;
 };
 
 Refine.XmlParserUI.prototype._setRecordPath = function(path) {
