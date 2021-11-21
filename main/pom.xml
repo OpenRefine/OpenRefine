@@ -19,9 +19,6 @@
     <jee.port>3333</jee.port>
     <refine.data>/tmp/refine</refine.data>
     <powermock.version>2.0.9</powermock.version>
-    <!-- org.odftoolkit:odfdom-java:jar:0.9.0-RC1 bundles Jena 3.9.0 so we should match that
-         Jena 3.15.0 doesn't work. Versions through 3.14.0 appear to, but we'll be conservative
-    -->
     <jena.version>4.2.0</jena.version>
     <okhttp.version>4.9.2</okhttp.version>
     <poi.version>5.1.0</poi.version>
@@ -182,11 +179,6 @@
       <version>${butterfly.version}</version>
     </dependency>
     <dependency>
-      <groupId>org.mozilla</groupId>
-      <artifactId>rhino-runtime</artifactId>
-      <version>1.7.13</version>
-    </dependency>
-    <dependency>
       <groupId>com.fasterxml.jackson.core</groupId>
       <artifactId>jackson-databind</artifactId>
       <version>${jackson.version}</version>
@@ -307,11 +299,6 @@
     </dependency>
     <dependency>
       <groupId>org.apache.httpcomponents</groupId>
-      <artifactId>httpclient</artifactId>
-      <version>4.5.13</version>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.httpcomponents</groupId>
       <artifactId>httpcore</artifactId>
       <version>4.4.14</version>
     </dependency>
@@ -320,25 +307,10 @@
       <artifactId>swc-parser-lazy</artifactId>
       <version>3.1.9</version>
     </dependency>
-    <dependency>
-      <groupId>joda-time</groupId>
-      <artifactId>joda-time</artifactId>
-      <version>2.10.13</version>
-    </dependency>
 
-    <dependency>
+    <dependency> <!-- reported as unused by dependency:analyze, but tests fail without -->
       <groupId>org.apache.jena</groupId>
       <artifactId>jena-arq</artifactId>
-      <version>${jena.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.jena</groupId>
-      <artifactId>jena-base</artifactId>
-      <version>${jena.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.jena</groupId>
-      <artifactId>jena-cmds</artifactId>
       <version>${jena.version}</version>
     </dependency>
     <dependency>
@@ -358,11 +330,6 @@
       <version>2.11.0</version>
     </dependency>
     <dependency>
-      <groupId>com.metaweb</groupId>
-      <artifactId>lessen</artifactId>
-      <version>1.0</version>
-    </dependency>
-    <dependency>
       <groupId>com.google.guava</groupId>
       <artifactId>guava</artifactId>
       <version>31.0.1-jre</version>
@@ -377,7 +344,7 @@
       <artifactId>juniversalchardet</artifactId>
       <version>2.4.0</version>
     </dependency>
-    <dependency>
+    <dependency> <!-- reported as unused by dependency:analyze, but broken without it -->
       <groupId>org.eclipse.jetty</groupId>
       <artifactId>jetty-servlets</artifactId>
       <version>${jetty.version}</version>
