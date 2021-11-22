@@ -1,7 +1,7 @@
 ---
-id: translating
-title: Translate the OpenRefine interface 
-sidebar_label: Translate the OpenRefine interface
+id: translating-ui
+title: Translate OpenRefine's interface
+sidebar_label: Translate OpenRefine's interface
 ---
 
 Currently supported languages include English, Spanish, Chinese, French, Hebrew, Italian and Japanese.
@@ -12,11 +12,11 @@ You can help translate OpenRefine into your language by visiting [Weblate](https
 
 Click to help translate --> [Weblate](https://hosted.weblate.org/engage/openrefine/?utm_source=widget)
 
-## User entry of language data ## {#user-entry-of-language-data-}
+## Manual translation process {#manual-translation-process}
  
 Localized strings are entered in a .json file, one per language. They are located in the folder `main/webapp/modules/core/langs/` in a file named `translation-xx`.json, where xx is the language code (i.e. fr for French).
 
-### Simple case of localized string ### {#simple-case-of-localized-string-}
+### Simple case of localized string {#simple-case-of-localized-string}
 This is an example of a simple string, with the start of the JSON file. This example is for French.
 ```
 {
@@ -28,18 +28,18 @@ This is an example of a simple string, with the start of the JSON file. This exa
 
 So the key `core-index/help` will render as `"Aide"` in French.
 
-### Localization with a parameterized value ### {#localization-with-a-parameterized-value-}
+### Localization with a parameterized value {#localization-with-a-parameterized-value}
 In this example, the name of the column (represented by `$1` in this example), will be substituted with the string of the name of the column.
 
 `"core-facets/edit-facet-title": "Cliquez ici pour éditer le nom de la facette\nColonne : $1",`
 
-### Localization with a singular/plural value ### {#localization-with-a-singularplural-value-}
+### Localization with a singular/plural value {#localization-with-a-singularplural-value}
 In this example, one of the parameter will have a different string depending if the value is 1 or another value.
 In this example, the string for page, the second parameter, `$2`, will have an « s » or not depending on the value of `$2`.
 
 `"core-views/goto-page": "$1 de $2 {{plural:$2|page|pages}}"`
 
-## Front End Coding {#front-end-coding}
+## Front-end development {#front-end-development}
 
 The OpenRefine front end has been localized using the [Wikidata jquery.i18n library](https://github.com/OpenRefine/OpenRefine/pull/1285. The localized text is stored in a JSON dictionary on the server and retrieved with a new OpenRefine command.
 
@@ -79,7 +79,7 @@ The language dictionaries are stored in the `langs` subdirectory for the module 
 * https://github.com/OpenRefine/OpenRefine/tree/master/extensions/database/module/langs for database via JDBC
 * https://github.com/OpenRefine/OpenRefine/tree/master/extensions/wikidata/module/langs for Wikidata
 
-To add support for a new language, copy `translation-en.json` to `translation-<locale>.json` and have your translator translate all the value strings (ie right hand side).
+To add support for a new language, the easiest way is to do it directly in Weblate. To do it manually, copy `translation-en.json` to `translation-<locale>.json` and have your translator translate all the value strings (ie right hand side).
 
 #### Main interface {#main-interface}
  The translation is best done [with Weblate](https://hosted.weblate.org/engage/openrefine/?utm_source=widget). Files are periodically merged by the developer team.
@@ -100,6 +100,6 @@ To support a new language file, the developer should add a corresponding entry t
 <option value="<locale>">[Language Label]</option>
 ```
 
-## Server / Backend Coding {#server--backend-coding}
+## Server-side localisation {#server--backend-coding}
 
 Currently no back end functions are translated, so things like error messages, undo history, etc may appear in English form. Rather than sending raw error text to the front end, it's better to send an error code which is translated into text on the front end. This allows for multiple languages to be supported.

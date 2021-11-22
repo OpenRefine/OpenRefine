@@ -37,11 +37,15 @@ import org.apache.hc.core5.http.io.entity.EntityUtils;
 import org.apache.hc.core5.http.message.BasicNameValuePair;
 import org.apache.hc.core5.http.protocol.HttpContext;
 import org.apache.hc.core5.util.TimeValue;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.refine.RefineServlet;
 
 
 public class HttpClient {
+    final static Logger logger = LoggerFactory.getLogger("http-client");
+    
     final private RequestConfig defaultRequestConfig;
     private HttpClientBuilder httpClientBuilder;
     private CloseableHttpClient httpClient;
@@ -206,8 +210,10 @@ public class HttpClient {
             if (interval.compareTo(defaultInterval) == 0) {
                 interval = TimeValue.of(((Double) (Math.pow(2, execCount - 1) * defaultInterval.getDuration())).longValue(),
                        defaultInterval.getTimeUnit() );
+                logger.warn("Retrying HTTP request after "+interval.toString());
                 return interval;
             }
+            logger.warn("Retrying HTTP request after "+interval.toString());
             return interval;
         }
         

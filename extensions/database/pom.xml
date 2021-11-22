@@ -47,8 +47,8 @@
         <artifactId>maven-compiler-plugin</artifactId>
         <version>3.8.1</version>
         <configuration>
-          <source>1.8</source>
-          <target>1.8</target>
+          <source>${java.minversion}</source>
+          <target>${java.minversion}</target>
           <encoding>UTF-8</encoding>
           <showDeprecation>false</showDeprecation>
         </configuration>
@@ -123,7 +123,7 @@
     <dependency>
       <groupId>org.postgresql</groupId>
       <artifactId>postgresql</artifactId>
-      <version>42.3.0</version>
+      <version>42.3.1</version>
     </dependency>
     <dependency>
       <groupId>org.apache.httpcomponents</groupId>
@@ -148,7 +148,7 @@
     <dependency>
       <groupId>org.mariadb.jdbc</groupId>
       <artifactId>mariadb-java-client</artifactId>
-      <version>2.7.3</version>
+      <version>2.7.4</version>
     </dependency>
     <dependency>
       <groupId>org.xerial</groupId>
@@ -189,7 +189,7 @@
     <dependency>
       <groupId>org.mockito</groupId>
       <artifactId>mockito-core</artifactId>
-      <version>4.0.0</version>
+      <version>4.1.0</version>
       <scope>test</scope>
     </dependency>
 

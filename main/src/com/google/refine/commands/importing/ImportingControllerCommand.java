@@ -65,7 +65,11 @@ public class ImportingControllerCommand extends Command {
         if (controller != null) {
         	response.setCharacterEncoding("UTF-8");
             response.setHeader("Content-Type", "application/json");
-            controller.doPost(request, response);
+            try {
+                controller.doPost(request, response);
+            } catch (IOException e) {
+                HttpUtilities.respond(response, "error", e.getMessage());
+            }
         } else {
             HttpUtilities.respond(response, "error", "No such import controller");
         }

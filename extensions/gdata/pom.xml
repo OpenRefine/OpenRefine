@@ -47,8 +47,8 @@
         <artifactId>maven-compiler-plugin</artifactId>
         <version>3.8.1</version>
         <configuration>
-          <source>1.8</source>
-          <target>1.8</target>
+          <source>${java.minversion}</source>
+          <target>${java.minversion}</target>
           <encoding>UTF-8</encoding>
           <showDeprecation>false</showDeprecation>
         </configuration>
@@ -129,7 +129,7 @@
     <dependency>
       <groupId>com.google.apis</groupId>
       <artifactId>google-api-services-drive</artifactId>
-      <version>v3-rev20210315-1.31.0</version>
+      <version>v3-rev20211107-1.32.1</version>
     </dependency>
     <dependency>
       <groupId>com.google.apis</groupId>
@@ -151,7 +151,7 @@
     <dependency>
       <groupId>org.mockito</groupId>
       <artifactId>mockito-core</artifactId>
-      <version>4.0.0</version>
+      <version>4.1.0</version>
       <scope>test</scope>
     </dependency>
 

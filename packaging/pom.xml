@@ -214,7 +214,8 @@
               </classPath>
               <jre>
                 <path>${windows.package.jre.path}</path>
-                <minVersion>1.8.0</minVersion>
+                <minVersion>${java.minversion}</minVersion>
+                <maxVersion>${java.maxversion}</maxVersion>
                 <bundledJreAsFallback>${windows.package.jre.bundledAsFallback}</bundledJreAsFallback>
                 <initialHeapSize>512</initialHeapSize>
                 <maxHeapSize>2048</maxHeapSize>
@@ -307,7 +308,7 @@
                    https://stackoverflow.com/questions/53696439/appbundle-maven-plugin-fails-on-mac-osx-with-java-10 -->
               <groupId>org.codehaus.plexus</groupId>
               <artifactId>plexus-archiver</artifactId>
-              <version>4.2.5</version>
+              <version>4.2.6</version>
             </dependency>
             <dependency>
               <groupId>org.apache.velocity</groupId>
