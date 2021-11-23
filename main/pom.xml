@@ -20,7 +20,6 @@
     <refine.data>/tmp/refine</refine.data>
     <powermock.version>2.0.9</powermock.version>
     <jena.version>4.2.0</jena.version>
-    <okhttp.version>4.9.2</okhttp.version>
     <poi.version>5.1.0</poi.version>
   </properties>
 
