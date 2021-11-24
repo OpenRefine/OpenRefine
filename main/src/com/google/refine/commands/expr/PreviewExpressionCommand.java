@@ -66,12 +66,23 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
+/**
+ * PreviewExpressionCommand class
+ */
 public class PreviewExpressionCommand extends Command {
-
+    /**
+     * ExpressionValue interface
+     */
     protected static interface ExpressionValue {
     }
 
+    /**
+     * ErrorMessage class
+     */
     protected static class ErrorMessage implements ExpressionValue {
+        /**
+         * ErrorMessage fields
+         */
         @JsonProperty("message")
         protected String message;
 
@@ -80,16 +91,31 @@ public class PreviewExpressionCommand extends Command {
         }
     }
 
+    /**
+     * SuccessfulEvaluation class
+     */
     protected static class SuccessfulEvaluation implements ExpressionValue {
+        /**
+         * SuccessfulEvaluation fields
+         */
         @JsonValue
         protected String value;
 
+        /**
+         * SuccessfulEvaluation constructor
+         */
         protected SuccessfulEvaluation(String value) {
             this.value = value;
         }
     }
 
+    /**
+     * PreviewResult class
+     */
     protected static class PreviewResult {
+        /**
+         * PreviewResult fields
+         */
         @JsonProperty("code")
         protected String code;
         @JsonProperty("message")
@@ -265,24 +291,19 @@ public class PreviewExpressionCommand extends Command {
                     }
                 } else if (v instanceof Double || v instanceof Float) {
                     Number n = (Number) v;
-                    double minNonNotation;
-                    double maxNonNotation;
-                    minNonNotation = 0.000001;
-                    maxNonNotation = 1000000000000000000000.0;
-                    DecimalFormat df = new DecimalFormat("0"); //, DecimalFormatSymbols.getInstance(Locale.ENGLISH));
-                    df.setMaximumFractionDigits(15);
-                    df.setMaximumIntegerDigits(22);
-                    double formattedNum;
-                    formattedNum = n.doubleValue();
+                    //CS427 Issue Link: https://github.com/OpenRefine/OpenRefine/issues/3102
+                    final double minNonSciNotation = 0.000_001;
+                    final double maxNonSciNotation = 1_000_000_000_000_000_000_000.0;
+                    final DecimalFormat decimalFormat = new DecimalFormat("0"); //, DecimalFormatSymbols.getInstance(Locale.ENGLISH));
+                    decimalFormat.setMaximumFractionDigits(15);
+                    decimalFormat.setMaximumIntegerDigits(22);
+                    final double formattedNum = n.doubleValue();
                     if (n.doubleValue() - n.longValue() == 0.0) {
-                        //System.out.println("Made it to long");
                         sb.append(n.longValue());
                     } else {
-                        if (n.doubleValue() >= minNonNotation && n.doubleValue() <= maxNonNotation) {
-                            //System.out.println("Made it to double");
-                            sb.append(df.format(formattedNum));
+                        if (n.doubleValue() >= minNonSciNotation && n.doubleValue() <= maxNonSciNotation) {
+                            sb.append(decimalFormat.format(formattedNum));
                         } else {
-                            //System.out.println("Not in range");
                             sb.append(n.doubleValue());
                         }
                     }
