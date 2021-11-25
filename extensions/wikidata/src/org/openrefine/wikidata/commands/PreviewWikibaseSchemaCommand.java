@@ -40,7 +40,7 @@ import org.openrefine.wikidata.manifests.ManifestParser;
 import org.openrefine.wikidata.qa.EditInspector;
 import org.openrefine.wikidata.qa.QAWarningStore;
 import org.openrefine.wikidata.schema.WikibaseSchema;
-import org.openrefine.wikidata.updates.ItemUpdate;
+import org.openrefine.wikidata.updates.TermedStatementEntityUpdate;
 import org.openrefine.wikidata.updates.scheduler.WikibaseAPIUpdateScheduler;
 
 import com.google.refine.browsing.Engine;
@@ -103,7 +103,7 @@ public class PreviewWikibaseSchemaCommand extends Command {
 
             // Evaluate project
             Engine engine = getEngine(request, project);
-            List<ItemUpdate> editBatch = schema.evaluate(project, engine, warningStore);
+            List<TermedStatementEntityUpdate> editBatch = schema.evaluate(project, engine, warningStore);
 
             // Inspect the edits and generate warnings
             EditInspector inspector = new EditInspector(warningStore, manifest);
@@ -111,10 +111,10 @@ public class PreviewWikibaseSchemaCommand extends Command {
             
             // Dump the first 10 edits, scheduled with the default scheduler
             WikibaseAPIUpdateScheduler scheduler = new WikibaseAPIUpdateScheduler();
-            List<ItemUpdate> nonNullEdits = scheduler.schedule(editBatch).stream()
+            List<TermedStatementEntityUpdate> nonNullEdits = scheduler.schedule(editBatch).stream()
                     .filter(e -> !e.isNull())
                     .collect(Collectors.toList());
-            List<ItemUpdate> firstEdits = nonNullEdits.stream()
+            List<TermedStatementEntityUpdate> firstEdits = nonNullEdits.stream()
                     .limit(10)
                     .collect(Collectors.toList());
 

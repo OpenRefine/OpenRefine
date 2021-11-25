@@ -24,7 +24,7 @@ jobs:
       - id: set-matrix
         run: npm install --save glob && node main/tests/cypress/build-test-matrix.js
         env:
-          browsers: chrome,edge
+          browsers: chrome
   ui_test:
     needs: prepare_ui_test_matrix
     runs-on: ubuntu-latest
@@ -37,18 +37,18 @@ jobs:
           repository: ${{ github.event.pull_request.head.repo.full_name }}
 
       - name: Restore dependency cache
-        uses: actions/cache@v2.1.6
+        uses: actions/cache@v2.1.7
         with:
           path: ~/.m2/repository
           key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
           restore-keys: |
             ${{ runner.os }}-maven-
 
-      - name: Set up Java 8
+      - name: Set up Java 11
         uses: actions/setup-java@v2
         with:
           distribution: 'adopt'
-          java-version: 8
+          java-version: 11
 
       - name: Build OpenRefine
         run: ./refine build
@@ -58,18 +58,8 @@ jobs:
         with:
           node-version: '12'
 
-      - name: Install Edge
-        if: matrix.browser == 'edge'
-        run: |
-          sudo curl https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > microsoft.gpg
-          sudo install -o root -g root -m 644 microsoft.gpg /etc/apt/trusted.gpg.d/
-          sudo sh -c 'echo "deb [arch=amd64] https://packages.microsoft.com/repos/edge stable main" > /etc/apt/sources.list.d/microsoft-edge-dev.list'
-          sudo rm microsoft.gpg
-          sudo apt-get update
-          sudo apt-get install microsoft-edge-dev
-
       - name: Restore Tests dependency cache
-        uses: actions/cache@v2.1.6
+        uses: actions/cache@v2.1.7
         with:
           path: |
             ~/cache
@@ -135,18 +125,18 @@ jobs:
         fetch-depth: 0 # This is wasteful, but needed for git describe
 
     - name: Restore dependency cache
-      uses: actions/cache@v2.1.6
+      uses: actions/cache@v2.1.7
       with:
         path: ~/.m2/repository
         key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
         restore-keys: |
             ${{ runner.os }}-maven-
 
-    - name: Set up Java 8
+    - name: Set up Java 11
       uses: actions/setup-java@v2
       with:
         distribution: 'adopt'
-        java-version: 8
+        java-version: 11
 
     - name: Install genisoimage and jq
       run: sudo apt-get install genisoimage jq

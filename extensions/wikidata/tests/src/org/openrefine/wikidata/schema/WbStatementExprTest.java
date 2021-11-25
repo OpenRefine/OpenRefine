@@ -36,8 +36,8 @@ import org.openrefine.wikidata.testing.JacksonSerializationTest;
 import org.testng.annotations.Test;
 import org.wikidata.wdtk.datamodel.helpers.Datamodel;
 import org.wikidata.wdtk.datamodel.interfaces.Claim;
+import org.wikidata.wdtk.datamodel.interfaces.EntityIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.GlobeCoordinatesValue;
-import org.wikidata.wdtk.datamodel.interfaces.ItemIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.PropertyIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.Reference;
 import org.wikidata.wdtk.datamodel.interfaces.Snak;
@@ -63,7 +63,7 @@ public class WbStatementExprTest extends WbExpressionTest<Statement> {
             Arrays.asList(qualifierExpr, constantQualifierExpr),
             Collections.singletonList(refExpr));
 
-    public ItemIdValue subject = Datamodel.makeWikidataItemIdValue("Q23");
+    public EntityIdValue subject = Datamodel.makeWikidataItemIdValue("Q23");
     private PropertyIdValue property = Datamodel.makeWikidataPropertyIdValue("P908");
     private Reference reference = Datamodel.makeReference(Collections.singletonList(Datamodel.makeSnakGroup(
             Collections.singletonList(Datamodel.makeValueSnak(Datamodel.makeWikidataPropertyIdValue("P43"),

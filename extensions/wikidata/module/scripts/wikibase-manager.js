@@ -47,7 +47,7 @@ WikibaseManager.getSelectedWikibaseEditGroupsURLSchema = function() {
 
 /**
  * Returns the default reconciliation service URL of the Wikibase,
- * such as "https://wdreconcile.toolforge.org/${lang}/api".
+ * such as "https://wikidata.reconci.link/${lang}/api".
  *
  * Notice that there is a "${lang}" variable in the URL, which should
  * be replaced with the actual language code.

@@ -286,29 +286,21 @@ public class ReconOperation extends EngineDependentOperation {
                     JobGroup group = jobToGroup.get(job);
                     List<ReconEntry> entries = group.entries;
 
-                    /*
-                     * TODO: Not sure what this retry is meant to handle, but it's currently
-                     * non-functional due the code at the end of StandardReconConfig#batchRecon()
-                     * which tops up any missing entries.
-                     */
-                    if (recon == null) {
-                        group.trials++;
-                        if (group.trials < 3) {
-                            logger.warn("Re-trying job including cell containing: " + entries.get(0).cell.value);
-                            continue; // try again next time
-                        }
-                        String msg = "Failed after 3 trials for job including cell containing: " + entries.get(0).cell.value;
-                        logger.warn(msg);
-                        recon = _reconConfig.createNewRecon(_historyEntryID);
-                    }
-
                     jobToGroup.remove(job);
                     jobs.remove(j);
                     done++;
 
-                    recon.judgmentBatchSize = entries.size();
+                    if (recon != null) {
+                        recon.judgmentBatchSize = entries.size();
+                    }
                     
                     for (ReconEntry entry : entries) {
+                        if (recon == null) {
+                            // TODO add EvalError instead? That is not so convenient
+                            // for users because they would lose the cell contents.
+                            // Better leave the cell unreconciled so they can be reconciled again later.
+                            continue;
+                        }
                         Cell oldCell = entry.cell;
                         Cell newCell = new Cell(oldCell.value, recon);
                         

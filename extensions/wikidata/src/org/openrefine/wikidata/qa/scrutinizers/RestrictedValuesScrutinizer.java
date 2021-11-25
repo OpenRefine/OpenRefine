@@ -7,6 +7,7 @@ import org.wikidata.wdtk.datamodel.interfaces.Snak;
 import org.wikidata.wdtk.datamodel.interfaces.SnakGroup;
 import org.wikidata.wdtk.datamodel.interfaces.Statement;
 import org.wikidata.wdtk.datamodel.interfaces.Value;
+import org.wikidata.wdtk.datamodel.interfaces.ValueSnak;
 
 import java.util.List;
 import java.util.Set;
@@ -57,7 +58,10 @@ public class RestrictedValuesScrutinizer extends SnakScrutinizer {
     @Override
     public void scrutinize(Snak snak, EntityIdValue entityId, boolean added) {
         PropertyIdValue pid = snak.getPropertyId();
-        Value value = snak.getValue();
+        Value value = null;
+        if (snak instanceof ValueSnak) {
+            value = ((ValueSnak)snak).getValue();
+        }
         List<Statement> allowedValueConstraintDefinitions = _fetcher.getConstraintsByType(pid, allowedValuesConstraintQid);
         List<Statement> disallowedValueConstraintDefinitions = _fetcher.getConstraintsByType(pid, disallowedValuesConstraintQid);
         Set<Value> allowedValues = null, disallowedValues = null;
