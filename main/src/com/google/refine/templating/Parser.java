@@ -46,12 +46,6 @@ public class Parser {
         List<Fragment> fragments = new ArrayList<Fragment>();
 
         int start = 0, current = 0;
-        
-        if(s.indexOf('{') >= 0) {
-        	fragments.add(new StaticFragment(s.substring(0, s.indexOf('{') + 1)));
-        	start = current = s.indexOf('{') + 1;
-        }
-        
         while (current < s.length() - 1) {
             char c = s.charAt(current);
             char c2 = s.charAt(current + 1);
@@ -92,10 +86,6 @@ public class Parser {
                     String expression = s.substring(current + 2, closeBrace);
 
                     if (current > start) {
-                    	// Regex to match invalid keys of the template exporter 
-                    	if (!s.substring(start, current).matches("^\\s*,?\\s*\".*\"\\s*:\\s*$")) {
-                    		throw new ParsingException("Missing or bad template");
-                    	}
                         fragments.add(new StaticFragment(s.substring(start, current)));
                     }
                     start = current = closeBrace + 2;
@@ -105,8 +95,6 @@ public class Parser {
                                     MetaParser.parse(expression)));
 
                     continue;
-                } else {
-                	throw new ParsingException("Missing or bad template");
                 }
             }
 
