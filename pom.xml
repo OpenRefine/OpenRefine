@@ -54,17 +54,20 @@
 
 
   <properties>
+    <java.minversion>11</java.minversion>
+    <java.maxversion>15</java.maxversion>
     <jee.path>/</jee.path>
     <jee.port>3333</jee.port>
     <refine.data>/tmp/refine</refine.data>
     <surefire.version>2.22.2</surefire.version>
     <surefireArgs/>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <jackson.version>2.12.3</jackson.version>
+    <jackson.version>2.13.0</jackson.version>
     <servlet-api.version>4.0.1</servlet-api.version>
-    <butterfly.version>1.1.1</butterfly.version>
-    <slf4j.version>1.7.30</slf4j.version>
-    <jetty.version>9.4.26.v20200117</jetty.version>
+    <butterfly.version>1.2.0</butterfly.version>
+    <slf4j.version>1.7.32</slf4j.version>
+    <jetty.version>9.4.41.v20210516</jetty.version>
+    <okhttp.version>4.9.3</okhttp.version>
   </properties>
 
 
@@ -99,8 +102,8 @@
         <artifactId>maven-compiler-plugin</artifactId>
         <version>3.8.1</version>
         <configuration>
-          <source>1.8</source>
-          <target>1.8</target>
+          <source>${java.minversion}</source>
+          <target>${java.minversion}</target>
           <encoding>UTF-8</encoding>
           <showDeprecation>false</showDeprecation>
         </configuration>
@@ -125,7 +128,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-dependency-plugin</artifactId>
-        <version>3.1.2</version>
+        <version>3.2.0</version>
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
