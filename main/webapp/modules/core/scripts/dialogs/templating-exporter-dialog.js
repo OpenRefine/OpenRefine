@@ -139,7 +139,11 @@ TemplatingExporterDialog.prototype._updatePreview = function() {
             self._elmts.previewTextarea[0].value = data;
         },
         "text"
-    );
+    ).fail(function (jqXhr, textStatus, errorMessage) {
+        if (jqXhr.status === 500) {
+            self._elmts.previewTextarea[0].value = $.i18n('core-dialogs/missing-bad-template');
+        }
+    });
 };
 
 TemplatingExporterDialog.prototype._export = function() {
