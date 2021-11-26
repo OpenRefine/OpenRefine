@@ -33,7 +33,7 @@ import java.util.List;
 
 import org.openrefine.wikidata.testing.TestingData;
 import org.openrefine.wikidata.testing.WikidataRefineTest;
-import org.openrefine.wikidata.updates.ItemUpdate;
+import org.openrefine.wikidata.updates.TermedStatementEntityUpdate;
 import org.openrefine.wikidata.updates.ItemUpdateBuilder;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -117,11 +117,11 @@ public class WikibaseSchemaTest extends WikidataRefineTest {
         String serialized = TestingData.jsonFromFile("schema/inception.json");
         WikibaseSchema schema = WikibaseSchema.reconstruct(serialized);
         Engine engine = new Engine(project);
-        List<ItemUpdate> updates = schema.evaluate(project, engine);
-        List<ItemUpdate> expected = new ArrayList<>();
-        ItemUpdate update1 = new ItemUpdateBuilder(qid1).addStatement(statement1).build();
+        List<TermedStatementEntityUpdate> updates = schema.evaluate(project, engine);
+        List<TermedStatementEntityUpdate> expected = new ArrayList<>();
+        TermedStatementEntityUpdate update1 = new ItemUpdateBuilder(qid1).addStatement(statement1).build();
         expected.add(update1);
-        ItemUpdate update2 = new ItemUpdateBuilder(qid2).addStatement(statement2).build();
+        TermedStatementEntityUpdate update2 = new ItemUpdateBuilder(qid2).addStatement(statement2).build();
         expected.add(update2);
         assertEquals(expected, updates);
     }
@@ -154,9 +154,9 @@ public class WikibaseSchemaTest extends WikidataRefineTest {
                 + "      ]\n"
                 + "    }");
         engine.initializeFromConfig(engineConfig);
-        List<ItemUpdate> updates = schema.evaluate(project, engine);
-        List<ItemUpdate> expected = new ArrayList<>();
-        ItemUpdate update1 = new ItemUpdateBuilder(qid1).addStatement(statement1).build();
+        List<TermedStatementEntityUpdate> updates = schema.evaluate(project, engine);
+        List<TermedStatementEntityUpdate> expected = new ArrayList<>();
+        TermedStatementEntityUpdate update1 = new ItemUpdateBuilder(qid1).addStatement(statement1).build();
         expected.add(update1);
         assertEquals(expected, updates);
     }
