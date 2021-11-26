@@ -735,7 +735,7 @@
     "core-buttons/next": "Next &raquo;",
     "core-buttons/previous": "Back",
     "core-buttons/add-url": "Add another URL",
-    "core-buttons/update-preview": "Update&nbsp;Preview",
+    "core-buttons/update-preview": "Update&nbsp;preview",
     "core-buttons/pick-record": "Pick record elements",
     "core-buttons/merge-cluster": "Merge selected &amp; re-cluster",
     "core-buttons/merge-close": "Merge selected &amp; Close",
