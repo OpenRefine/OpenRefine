@@ -3,6 +3,7 @@ package org.openrefine.importers;
 import java.io.Serializable;
 
 import org.openrefine.model.GridState;
+import org.openrefine.util.JSONUtilities;
 import org.openrefine.util.ParsingUtilities;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
@@ -39,6 +40,31 @@ public class LineBasedImporterTests extends ImporterTest {
 			{ "foo" },
 			{ "bar" },
 			{ "baz" }
+		});
+		
+		assertGridEquals(parsed, expected);
+	}
+	
+	@Test
+	public void testLinesPerRow() throws Exception {
+		String contents = ""
+				+ "a\n"
+				+ "b\n"
+				+ "c\n"
+				+ "d\n"
+				+ "e\n"
+				+ "f\n";
+		
+		ObjectNode options = ParsingUtilities.mapper.createObjectNode();
+		JSONUtilities.safePut(options, "linesPerRow", 2);
+		
+		GridState parsed = parseOneString(SUT, contents, options);
+		
+		GridState expected = createGrid(new String[] { "Column 1", "Column 2" },
+				new Serializable[][] {
+			{ "a", "b" },
+			{ "c", "d" },
+			{ "e", "f" }
 		});
 		
 		assertGridEquals(parsed, expected);
