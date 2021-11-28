@@ -23,6 +23,13 @@ import org.openrefine.model.Row;
 import org.openrefine.model.RowMapper;
 import org.openrefine.util.JSONUtilities;
 
+/**
+ * Base class for importers which work by reading files line by line, and mapping a line of the file to a row of the
+ * corresponding project.
+ * 
+ * @author Antonin Delpeuch
+ *
+ */
 public abstract class LineBasedImporterBase extends HDFSImporter {
 
     protected LineBasedImporterBase(DatamodelRunner runner) {
@@ -81,6 +88,35 @@ public abstract class LineBasedImporterBase extends HDFSImporter {
             ImportingJob job, List<ImportingFileRecord> fileRecords, String format) {
         ObjectNode options = super.createParserUIInitializationData(job, fileRecords, format);
         EncodingGuesser.guessInitialEncoding(fileRecords, options);
+        return options;
+    }
+
+    /**
+     * Hook to let the subclass perform any other transformation on the grid after its parsing as a line-based file.
+     * 
+     * By default, it returns the grid unchanged.
+     * 
+     * @param parsed
+     *            the parsed grid
+     * @param options
+     *            the parsing options
+     * @return the final grid state
+     */
+    protected GridState postTransform(GridState parsed, ObjectNode options) {
+        return parsed;
+    }
+
+    @Override
+    public ObjectNode createParserUIInitializationData(ImportingJob job,
+            List<ImportingFileRecord> fileRecords, String format) {
+        ObjectNode options = super.createParserUIInitializationData(job, fileRecords, format);
+        JSONUtilities.safePut(options, "ignoreLines", -1); // number of blank lines at the beginning to ignore
+        JSONUtilities.safePut(options, "headerLines", 1); // number of header lines
+
+        JSONUtilities.safePut(options, "skipDataLines", 0); // number of initial data lines to skip
+        JSONUtilities.safePut(options, "storeBlankRows", true);
+        JSONUtilities.safePut(options, "storeBlankCellsAsNulls", true);
+        JSONUtilities.safePut(options, "includeArchiveFileName", false);
         return options;
     }
 
@@ -165,7 +201,7 @@ public abstract class LineBasedImporterBase extends HDFSImporter {
         if (includeArchiveFileName) {
             grid = TabularParserHelper.prependColumn("Archive", archiveFileName, grid);
         }
-        return grid;
+        return postTransform(grid, options);
     }
 
     /**
@@ -193,6 +229,13 @@ public abstract class LineBasedImporterBase extends HDFSImporter {
         };
     }
 
+    /**
+     * Counts the maximum number of cells in a row returned by a {@link RowMapper}, by evaluating it on the entire grid.
+     * 
+     * @param grid
+     * @param rowMapper
+     * @return
+     */
     protected static int countMaxColumnNb(GridState grid, RowMapper rowMapper) {
         RowAggregator<Integer> aggregator = new RowAggregator<Integer>() {
 
