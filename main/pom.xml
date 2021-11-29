@@ -260,7 +260,7 @@
     <dependency>
       <groupId>org.odftoolkit</groupId>
       <artifactId>odfdom-java</artifactId>
-      <version>0.9.0</version>
+      <version>0.10.0</version>
       <!-- workaround for https://github.com/tdf/odftoolkit/issues/131,
 	 which is unfortunately still not solved after
          https://github.com/tdf/odftoolkit/pull/132
