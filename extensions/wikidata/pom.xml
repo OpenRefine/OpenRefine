@@ -16,7 +16,7 @@
 
   <properties>
     <powermock.version>2.0.9</powermock.version>
-    <wdtk.version>0.12.1</wdtk.version>
+    <wdtk.version>0.12.1-SNAPSHOT</wdtk.version>
   </properties>
 
   <build>
@@ -78,7 +78,7 @@
       <scope>provided</scope>
     </dependency>
     <dependency>
-      <groupId>org.wikidata.wdtk</groupId>
+      <groupId>org.openrefine.dependencies.wdtk</groupId>
       <artifactId>wdtk-wikibaseapi</artifactId>
       <version>${wdtk.version}</version>
     </dependency>
@@ -88,12 +88,12 @@
       <version>${jackson.version}</version>
     </dependency>
     <dependency>
-      <groupId>org.wikidata.wdtk</groupId>
+      <groupId>org.openrefine.dependencies.wdtk</groupId>
       <artifactId>wdtk-datamodel</artifactId>
       <version>${wdtk.version}</version>
     </dependency>
     <dependency>
-      <groupId>org.wikidata.wdtk</groupId>
+      <groupId>org.openrefine.dependencies.wdtk</groupId>
       <artifactId>wdtk-util</artifactId>
       <version>${wdtk.version}</version>
     </dependency>
