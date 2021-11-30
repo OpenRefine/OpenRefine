@@ -73,7 +73,7 @@ public class Parser {
             char c = s.charAt(current);
             char c2 = s.charAt(current + 1);
             if (c == '\\') {
-                if (c2 == '\\' || c2 == '{' || c2 == '$' || c2 == '}') {
+                if (c2 == '\\' || c2 == '{' || c2 == '$') {
                     fragments.add(new StaticFragment(s.substring(start, current).concat(Character.toString(c2))));
                     start = current += 2;
                 } else {
