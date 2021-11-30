@@ -41,18 +41,30 @@ import com.google.refine.grel.ast.VariableExpr;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Parser class
+ */
 public class Parser {
 
-    private static int findEndBrace(String expression, int lowIndex) {
+    /**
+     * findEndBrace method
+     * Finds the first true ending brace in a cell, ignoring escaped end braces
+     *
+     * @param expression string that will be interrogated for first true end brace
+     * @param lowIndex   index from which the interrogation will start
+     * @return index of the first true end brace
+     */
+    private static int findEndBrace(final String expression, final int lowIndex) {
         int closeBrace = expression.indexOf('}', lowIndex);
         if (expression.charAt(closeBrace - 1) == '\\') {
-            return findEndBrace(expression, closeBrace + 1);
-        } else {
-            return closeBrace;
+            closeBrace = findEndBrace(expression, closeBrace + 1);
         }
+        return closeBrace;
     }
 
-
+    /**
+     * Parse method
+     */
     static public Template parse(String s) throws ParsingException {
         List<Fragment> fragments = new ArrayList<Fragment>();
 
