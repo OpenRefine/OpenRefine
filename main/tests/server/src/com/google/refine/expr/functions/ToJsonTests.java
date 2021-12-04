@@ -44,19 +44,14 @@ public class ToJsonTests extends RefineTest {
         assertTrue(invoke("toJson") instanceof EvalError);
 
         Object[] emptyArray = {};
-        assertEquals(invoke("toJson", (Object) emptyArray), "[]");
+        assertEquals(invoke("toJson", (Object) emptyArray), "[ ]");
 
         Object[] objArray = {4, "hello", true, 0.01, null};
-        assertEquals(invoke("toJson", (Object) objArray), "[4, \"hello\", true, 0.01, null]");
+        assertEquals(invoke("toJson", (Object) objArray), "[ 4, \"hello\", true, 0.01, null ]");
 
         Object[][] multiArray = {{"OpenRefine", 12}, {13, 4.6}, {"data", "mining"}};
-        assertEquals(invoke("toJson", (Object) multiArray), "[[\"OpenRefine\", 12], [13, 4.6], [\"data\", \"mining\"]]");
+        assertEquals(invoke("toJson", (Object) multiArray), "[ [ \"OpenRefine\", 12 ], [ 13, 4.6 ], [ \"data\", \"mining\" ] ]");
 
-        Object[] numArray = {4.5, 3.25, 6.78, 5.558};
-        assertEquals(invoke("toJson", (Object) numArray, "%.1f"), "[4.5, 3.3, 6.8, 5.6]");
-
-        Object[] dateArray = {CalendarParser.parseAsOffsetDateTime("2013-06-01"), CalendarParser.parseAsOffsetDateTime("2016-11-12")};
-        assertEquals(invoke("toJson", (Object) dateArray, "dd"), "[01, 12]");
     }
 }
 

@@ -48,52 +48,26 @@ public class ToJson implements Function {
     @Override
     /**
      * Transfor an array of objects into a json array format string
-     * Has an optional format argument, can parse an array of numbers or dates in the given format
      * @param args the user input
      *        args[0] is an array of objects
-     *        args[1] is optional, it is a string which indicates the format
      * @return string representing array of objects in json array format
      */
     public Object call(Properties bindings, Object[] args) {
-        String error_message = " accepts an array of objects and one optional format argument";
+        String error_message = " accepts an array of objects";
         Object result = new EvalError(ControlFunctionRegistry.getFunctionName(this) + error_message);
-        if (args.length >= 1 && args[0] instanceof Object[]) {
+        if (args.length == 1 && args[0] instanceof Object[]) {
             Object[] array = (Object[]) args[0];
-            int arraySize = array.length;
-            String format = null;
-            // get format
-            if(args.length == 2 && args[1] instanceof String){
-                format = (String) args[1];
-            }
-            // parse format
-            boolean[] formatFlag = new boolean[arraySize];
-            for (int i = 0; i < arraySize; i++){
-                Object element = array[i];
-                if (element instanceof OffsetDateTime && format != null) {
-                    OffsetDateTime odt = (OffsetDateTime) element;
-                    element = (Object) odt.format(DateTimeFormatter.ofPattern(format));
-                    formatFlag[i] = true;
-                }
-                if (element instanceof Number && format != null) {
-                    element = String.format(format, (Number) element);
-                    formatFlag[i] = true;
-                }
-                array[i] = element;
-            }
             try{
                 result = ParsingUtilities.mapper.writeValueAsString(array);
-                String[] elements = ((String) result).split(",");
-                for(int i = 0; i < arraySize; i++){
-                    if(formatFlag[i]){
-                        elements[i] = elements[i].replace("\"","");
-                    }
-                }
-                result = String.join(", ", elements);
+                String result_str = (String) result;
+                // add whitespace based on formatting
+                result_str = result_str.replace(",",", ").replace("[","[ ").replace("]"," ]").replace("[  ]","[ ]");
+                result = (Object) result_str;
             }catch(JsonProcessingException e){
             	e.printStackTrace();
             }
         }
-        return result;
+        return (Object) result;
     }
 
     @Override
