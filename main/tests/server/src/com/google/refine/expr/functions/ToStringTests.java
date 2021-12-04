@@ -60,3 +60,4 @@ public class ToStringTests extends RefineTest {
     }
 
 }
+

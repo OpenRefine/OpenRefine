@@ -47,37 +47,33 @@ public class ToJson implements Function {
 
     @Override
     /**
-     * Transfor an array of objects into a json array format string
+     * Transfer an object into a json format string
      * @param args the user input
-     *        args[0] is an array of objects
-     * @return string representing array of objects in json array format
+     *        args[0] is the object
+     * @return string representing an object in json array format
      */
     public Object call(Properties bindings, Object[] args) {
-        String error_message = " accepts an array of objects";
+        String error_message = " accepts an object";
         Object result = new EvalError(ControlFunctionRegistry.getFunctionName(this) + error_message);
         if (args.length == 1 && args[0] instanceof Object[]) {
-            Object[] array = (Object[]) args[0];
+            Object obj = args[0];
             try{
-                result = ParsingUtilities.mapper.writeValueAsString(array);
-                String result_str = (String) result;
-                // add whitespace based on formatting
-                result_str = result_str.replace(",",", ").replace("[","[ ").replace("]"," ]").replace("[  ]","[ ]");
-                result = (Object) result_str;
+                result = ParsingUtilities.mapper.writerWithDefaultPrettyPrinter().writeValueAsString(obj);
             }catch(JsonProcessingException e){
             	e.printStackTrace();
             }
         }
-        return (Object) result;
+        return result;
     }
 
     @Override
     public String getDescription() {
-        return "Takes an array of any value type (string, number, date, boolean, another array, null) and gives a string of the array following the json array format (https://www.json.org/json-en.html). You can convert numbers to strings with rounding, using an optional string format. See https://docs.oracle.com/javase/8/docs/api/java/util/Formatter.html. You can also convert dates to strings using date parsing syntax. See https://docs.openrefine.org/manual/grelfunctions/#date-functions.";
+        return "Takes an object and gives a string of this object in json array format (https://www.json.org/json-en.html). ";
     }
     
     @Override
     public String getParams() {
-        return "object o, string format (optional)";
+        return "object o";
     }
     
     @Override
