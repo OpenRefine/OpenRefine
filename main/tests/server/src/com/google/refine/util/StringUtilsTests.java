@@ -21,14 +21,4 @@ public class StringUtilsTests extends RefineTest {
         Assert.assertEquals("[[OpenRefine, 12], [13, 4.6], [data, mining]]", StringUtils.toString(multiArray));
         Assert.assertEquals("2017-01-02T01:02:03Z", StringUtils.toString(time));
     }
-
-    @Test
-    public void JSONArrayToString() {
-        Object[] emptyArray = {};
-        Object[] objArray = {4, "hello", true, 0.01, null};
-        Object[][] multiArray = {{"OpenRefine", 12}, {13, 4.6}, {"data", "mining"}};
-        Assert.assertEquals("[ ]", StringUtils.JSONtoString(emptyArray));
-        Assert.assertEquals("[ 4, \"hello\", true, 0.01, null ]", StringUtils.JSONtoString(objArray));
-        Assert.assertEquals("[ [ \"OpenRefine\", 12 ], [ 13, 4.6 ], [ \"data\", \"mining\" ] ]", StringUtils.JSONtoString(multiArray));
-    }
 }

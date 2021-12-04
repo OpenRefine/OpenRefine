@@ -37,26 +37,26 @@ import com.google.refine.expr.util.CalendarParser;
 import com.google.refine.expr.util.CalendarParserException;
 import com.google.refine.util.TestUtils;
 
-public class ToStringTests extends RefineTest {
+public class ToJsonTests extends RefineTest {
     @Test
     public void testToString() throws CalendarParserException {
-        assertTrue(invoke("toString") instanceof EvalError);
-        assertEquals(invoke("toString", (Object) null), "");
-        assertEquals(invoke("toString", Long.valueOf(100)), "100");
-        assertEquals(invoke("toString", Double.valueOf(100.0)), "100.0");
-        assertEquals(invoke("toString", Double.valueOf(100.0),"%.0f"), "100");
+       
+        assertTrue(invoke("toJson") instanceof EvalError);
 
-        String inputDate = "2013-06-01";
-        assertEquals(invoke("toString", CalendarParser.parseAsOffsetDateTime(inputDate)), "2013-06-01T00:00:00Z");
-        assertEquals(invoke("toString", CalendarParser.parseAsOffsetDateTime(inputDate), "yyyy-MM-dd"), "2013-06-01");
-        assertEquals(invoke("toString", CalendarParser.parseAsOffsetDateTime(inputDate), "yyyy/dd/MM"), "2013/01/06");
-        assertEquals(invoke("toString", CalendarParser.parseAsOffsetDateTime(inputDate), "yyyy-MM-dd hh:mm:ss"), "2013-06-01 12:00:00");
+        Object[] emptyArray = {};
+        assertEquals(invoke("toJson", (Object) emptyArray), "[]");
 
-        String inputDateTime = "2013-06-01 13:12:11";
-        assertEquals(invoke("toString", CalendarParser.parseAsOffsetDateTime(inputDateTime)), "2013-06-01T13:12:11Z");
-        assertEquals(invoke("toString", CalendarParser.parseAsOffsetDateTime(inputDateTime), "yyyy-MM-dd"), "2013-06-01");
-        assertEquals(invoke("toString", CalendarParser.parseAsOffsetDateTime(inputDateTime), "yyyy-MM-dd hh:mm:ss"), "2013-06-01 01:12:11");
-        assertEquals(invoke("toString", CalendarParser.parseAsOffsetDateTime(inputDateTime), "yyyy-MM-dd HH:mm:ss"), "2013-06-01 13:12:11");
+        Object[] objArray = {4, "hello", true, 0.01, null};
+        assertEquals(invoke("toJson", (Object) objArray), "[4, \"hello\", true, 0.01, null]");
+
+        Object[][] multiArray = {{"OpenRefine", 12}, {13, 4.6}, {"data", "mining"}};
+        assertEquals(invoke("toJson", (Object) multiArray), "[[\"OpenRefine\", 12], [13, 4.6], [\"data\", \"mining\"]]");
+
+        Object[] numArray = {4.5, 3.25, 6.78, 5.558};
+        assertEquals(invoke("toJson", (Object) numArray, "%.1f"), "[4.5, 3.3, 6.8, 5.6]");
+
+        Object[] dateArray = {CalendarParser.parseAsOffsetDateTime("2013-06-01"), CalendarParser.parseAsOffsetDateTime("2016-11-12")};
+        assertEquals(invoke("toJson", (Object) dateArray, "dd"), "[01, 12]");
     }
 }
 
