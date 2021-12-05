@@ -50,7 +50,6 @@ import com.google.refine.expr.functions.Slice;
 import com.google.refine.expr.functions.ToDate;
 import com.google.refine.expr.functions.ToNumber;
 import com.google.refine.expr.functions.ToString;
-import com.google.refine.expr.functions.ToJson;
 import com.google.refine.expr.functions.Type;
 import com.google.refine.expr.functions.arrays.InArray;
 import com.google.refine.expr.functions.arrays.Join;
@@ -205,7 +204,6 @@ public class ControlFunctionRegistry {
         registerFunction("type", new Type());
 
         registerFunction("toString", new ToString());
-        registerFunction("toJson", new ToJson());
         registerFunction("toNumber", new ToNumber());
         registerFunction("toDate", new ToDate());
 
