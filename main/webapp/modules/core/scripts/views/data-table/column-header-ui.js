@@ -183,6 +183,9 @@ DataTableColumnHeaderUI.prototype._createMenuForColumnHeader = function(elmt) {
         },
         {
           label: $.i18n('core-views/expand-all'),
+          /**
+           * This function expands all the columns in the project
+           */
           click: function() {
             self._dataTableView._collapsedColumnNames = [];
             self._dataTableView.render();
