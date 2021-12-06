@@ -38,6 +38,7 @@ import java.util.Properties;
 import org.jsoup.nodes.Element;
 
 import com.google.refine.expr.EvalError;
+import com.google.refine.expr.functions.Type;
 import com.google.refine.grel.ControlFunctionRegistry;
 import com.google.refine.grel.Function;
 
@@ -54,10 +55,16 @@ public class XmlAttr implements Function {
                     return e1.attr(o2.toString());
                 }
             }else{
-                return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " failed as the first parameter is not an XML or HTML Element.  Please first use parseXml() or parseHtml() and select() prior to using this function");
+                return new EvalError(ControlFunctionRegistry.getFunctionName(this) 
+                		+ "() cannot work with this '"
+                		+ new Type().call(bindings, args) 
+                		+ "'. The first parameter is not an XML or HTML Element.  Please first use parseXml() or parseHtml() and select() prior to using this function");
             }
         }
-        return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects two arguments");
+        return new EvalError(ControlFunctionRegistry.getFunctionName(this)
+        		+ "() cannot work with this '"
+        		+ new Type().call(bindings, args) 
+        		+ "', but instead expects two arguments");
     }
 
 

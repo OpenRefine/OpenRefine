@@ -41,6 +41,7 @@ import com.google.refine.expr.EvalError;
 import com.google.refine.expr.functions.xml.InnerXml;
 import com.google.refine.grel.ControlFunctionRegistry;
 import com.google.refine.grel.Function;
+import com.google.refine.expr.functions.Type;
 
 public class InnerHtml implements Function {
 
@@ -51,10 +52,16 @@ public class InnerHtml implements Function {
             if (o1 != null && o1 instanceof Element) {
                 return new InnerXml().call(bindings, args, "html");
             }else{
-                return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " failed as the first parameter is not an HTML Element.  Please first use parseHtml(string) and select(query) prior to using this function");
+                return new EvalError(ControlFunctionRegistry.getFunctionName(this) 
+                		+ "() cannot work with this '"
+                		+ new Type().call(bindings, args)  
+                		+ "'. The first parameter is not an HTML Element.  Please first use parseHtml(string) and select(query) prior to using this function");
             }
         }
-        return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects a single String as an argument");
+        return new EvalError(ControlFunctionRegistry.getFunctionName(this) 
+        		+ "() cannot work with this '"
+        		+ new Type().call(bindings, args) 
+        		+ "', but instead expects a single String as an argument");
     }
 
 

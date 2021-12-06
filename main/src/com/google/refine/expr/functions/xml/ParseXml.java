@@ -39,6 +39,7 @@ import org.jsoup.Jsoup;
 import org.jsoup.parser.Parser;
 
 import com.google.refine.expr.EvalError;
+import com.google.refine.expr.functions.Type;
 import com.google.refine.grel.ControlFunctionRegistry;
 import com.google.refine.grel.Function;
 
@@ -58,11 +59,17 @@ public class ParseXml implements Function {
                 } else if (mode.equals("xml")) {
                     return Jsoup.parse(o1.toString(), "",Parser.xmlParser());
                 } else {
-                    return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " unable to identify which parser to use");
+                    return new EvalError(ControlFunctionRegistry.getFunctionName(this) 
+                    		+ "() cannot work with this '"
+                    		+ new Type().call(bindings, args) 
+                    		+ "'. Unable to identify which parser to use");
                 }
             }
         }
-        return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects a single String as an argument");
+        return new EvalError(ControlFunctionRegistry.getFunctionName(this) 
+        		+ "() cannot work with this '"
+        		+ new Type().call(bindings, args) 
+        		+ "', but instead expects a single String as an argument");
     }
 
 
