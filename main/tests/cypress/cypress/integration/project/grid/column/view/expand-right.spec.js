@@ -1,3 +1,4 @@
+// CS427 Issue Link: https://github.com/OpenRefine/OpenRefine/issues/4067
 describe(__filename, function () {
 const fixture = [
         ['a', 'b', 'c'],
@@ -7,17 +8,17 @@ const fixture = [
       ];
   it('it collapses all columns to right', function () {
     cy.loadAndVisitProject(fixture);
-    //Start by collapsing columns
+    // Start by collapsing columns
     cy.columnActionClick('a', ['View', 'Collapse all columns to right']);
 
-    //Verify collapse
+    // Verify collapse
     cy.get('[title="b"]').should('to.contain', '');
     cy.get('[title="c"]').should('to.contain', '');
 
-    //Expand columns
+    // Expand columns
     cy.columnActionClick('a', ['View', 'Expand all columns to the right']);
 
-    //Verify expansion
+    // Verify expansion
     cy.get('[title="b"]').should('to.contain', 'b');
     cy.get('[title="c"]').should('to.contain', 'c');
 
