@@ -4,7 +4,6 @@ import java.io.Reader;
 import java.util.List;
 
 import org.openrefine.ProjectMetadata;
-import org.openrefine.importing.EncodingGuesser;
 import org.openrefine.importing.ImportingFileRecord;
 import org.openrefine.importing.ImportingJob;
 import org.openrefine.model.DatamodelRunner;

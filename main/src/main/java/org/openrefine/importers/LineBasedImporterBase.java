@@ -82,14 +82,6 @@ public abstract class LineBasedImporterBase extends HDFSImporter {
 	protected int getPassesNeededToComputeColumnCount(ObjectNode options) {
 		return 1;
 	}
-	
-    @Override
-    public ObjectNode createParserUIInitializationData(
-            ImportingJob job, List<ImportingFileRecord> fileRecords, String format) {
-        ObjectNode options = super.createParserUIInitializationData(job, fileRecords, format);
-        EncodingGuesser.guessInitialEncoding(fileRecords, options);
-        return options;
-    }
 
 	/**
 	 * Hook to let the subclass perform any other transformation on the grid after
@@ -109,6 +101,7 @@ public abstract class LineBasedImporterBase extends HDFSImporter {
     public ObjectNode createParserUIInitializationData(ImportingJob job,
             List<ImportingFileRecord> fileRecords, String format) {
         ObjectNode options = super.createParserUIInitializationData(job, fileRecords, format);
+        EncodingGuesser.guessInitialEncoding(fileRecords, options);
         JSONUtilities.safePut(options, "ignoreLines", -1); // number of blank lines at the beginning to ignore
         JSONUtilities.safePut(options, "headerLines", 1); // number of header lines
         
