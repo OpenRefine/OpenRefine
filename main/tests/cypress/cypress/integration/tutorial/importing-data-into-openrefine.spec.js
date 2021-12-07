@@ -45,6 +45,6 @@ describe(__filename, function () {
     cy.get('#create-project-progress-message').contains('Done.');
 
     // ensure that the project data is loaded completely
-    cy.get('#summary-bar').should('to.contain', '1001 rows');
+    cy.get('#summary-bar').should('to.contain', '1,001 rows');
   });
 });

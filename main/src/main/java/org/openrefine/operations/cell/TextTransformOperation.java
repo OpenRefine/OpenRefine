@@ -192,13 +192,9 @@ public class TextTransformOperation extends ExpressionBasedOperation {
                             }
                         }
                     }
-                    
-                    if (newCell != null) {
-                        return row.withCell(columnIndex, newCell);
-                    }
                 }
                 
-                return row;
+                return row.withCell(columnIndex, newCell);
 			}
 			
 		};

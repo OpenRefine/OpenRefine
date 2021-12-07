@@ -13,7 +13,7 @@ describe(__filename, function () {
     cy.confirmDialogPanel();
     cy.get('body[ajax_in_progress="false"]');
     cy.assertNotificationContainingText(
-      'Split 2 cell(s) in column Shrt_Desc into several columns by separator '
+      'Split column Shrt_Desc by separator'
     );
 
     cy.get('.data-table-header').find('th').should('have.length', 7);
@@ -40,7 +40,7 @@ describe(__filename, function () {
     cy.confirmDialogPanel();
     cy.get('body[ajax_in_progress="false"]');
     cy.assertNotificationContainingText(
-      'Split 2 cell(s) in column Shrt_Desc into several columns by separator '
+      'Split column Shrt_Desc by separator'
     );
 
     cy.get('.data-table-header').find('th').should('have.length', 8);
@@ -68,7 +68,7 @@ describe(__filename, function () {
     cy.confirmDialogPanel();
     cy.get('body[ajax_in_progress="false"]');
     cy.assertNotificationContainingText(
-      'Split 2 cell(s) in column Shrt_Desc into several columns by field lengths'
+      'Split column Shrt_Desc by field lengths'
     );
 
     cy.get('.data-table-header').find('th').should('have.length', 7);
@@ -96,7 +96,7 @@ describe(__filename, function () {
     cy.confirmDialogPanel();
     cy.get('body[ajax_in_progress="false"]');
     cy.assertNotificationContainingText(
-      'Split 2 cell(s) in column Shrt_Desc into several columns by field lengths'
+      'Split column Shrt_Desc by field lengths'
     );
 
     cy.get('.data-table-header').find('th').should('have.length', 9);

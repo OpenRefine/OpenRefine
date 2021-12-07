@@ -129,8 +129,8 @@ describe(__filename, function () {
       'Paste data from clipboard here:'
     );
     // add file
-    const tsvFile = `Some parameter Other parameter Last parameter
-    CONST 123456  12.45`;
+    const tsvFile = `Some parameter	Other parameter	Last parameter
+         CONST	123456	12.45`;
     cy.get('textarea').invoke('val', tsvFile);
     cy.get(
       '.create-project-ui-source-selection-tab-body.selected button.button-primary'

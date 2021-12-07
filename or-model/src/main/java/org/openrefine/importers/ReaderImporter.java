@@ -1,8 +1,11 @@
 package org.openrefine.importers;
 
 import java.io.Reader;
+import java.util.List;
 
 import org.openrefine.ProjectMetadata;
+import org.openrefine.importing.EncodingGuesser;
+import org.openrefine.importing.ImportingFileRecord;
 import org.openrefine.importing.ImportingJob;
 import org.openrefine.model.DatamodelRunner;
 import org.openrefine.model.GridState;
@@ -52,5 +55,5 @@ public abstract class ReaderImporter extends ImportingParserBase {
 	        Reader reader,
 	        long limit, ObjectNode options
 	    ) throws Exception;
-
+    
 }
