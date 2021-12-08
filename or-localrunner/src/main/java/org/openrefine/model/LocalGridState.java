@@ -104,13 +104,17 @@ public class LocalGridState implements GridState {
 
     @Override
     public Row getRow(long id) {
-        List<Row> rows = grid.get(id);
+        // because `get` does not assume that the PLL is sorted,
+        // it must actually scan at least one entire partition,
+        // which is unnecessary since we know it is sorted and there
+        // is at most one result. So we use `getRange` instead.
+        List<Tuple2<Long, Row>> rows = grid.getRange(id, 1, Comparator.naturalOrder());
         if (rows.size() == 0) {
             throw new IndexOutOfBoundsException(String.format("Row id %d not found", id));
         } else if (rows.size() > 1) {
             throw new IllegalStateException(String.format("Found %d rows at index %d", rows.size(), id));
         } else {
-            return rows.get(0);
+            return rows.get(0).getValue();
         }
     }
 
