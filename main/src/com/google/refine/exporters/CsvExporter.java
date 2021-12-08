@@ -146,6 +146,7 @@ public class CsvExporter implements WriterExporter {
      * @param lineSeparator Line terminator, has value of CSVWriter.DEFAULT_LINE_END
      * @return csvWriter    Writer properly configured for csv or tsv file export
      * @author John Fox
+     * CS427 Issue Link: https://github.com/OpenRefine/OpenRefine/issues/2071
      */
     private CSVWriter createWriter(final Writer writer, final char delimiter, final String lineSeparator) {
         CSVWriter csvWriter;
