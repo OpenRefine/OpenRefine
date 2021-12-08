@@ -116,23 +116,31 @@ public class Template {
                 // ignore
             }
         }
-
+        /**
+         * This method is modified for issue 3955
+         * Issue link: https://github.com/OpenRefine/OpenRefine/issues/3955
+         * The modification is to remove the self-increasing of total 
+         * and move it to method internalVisit
+         */
         @Override
         public boolean visit(Project project, int rowIndex, Row row) {
             if (limit <= 0 || total < limit) {
                 internalVisit(project, rowIndex, row);
             }
-            total++;
 
             return limit > 0 && total >= limit;
         }
-
+        /**
+         * This method is modified for issue 3955
+         * Issue link: https://github.com/OpenRefine/OpenRefine/issues/3955
+         * The modification is to remove the self-increasing of total 
+         * and move it to method internalVisit
+         */
         @Override
         public boolean visit(Project project, Record record) {
             if (limit <= 0 || total < limit) {
                 internalVisit(project, record);
             }
-            total++;
 
             return limit > 0 && total >= limit;
         }
@@ -150,12 +158,17 @@ public class Template {
             }
         }
 
+        /**
+         * This method is modified for issue 3955
+         * Issue link: https://github.com/OpenRefine/OpenRefine/issues/3955
+         * The modification is to put the self-increasing of total here
+         */
         public boolean internalVisit(Project project, int rowIndex, Row row) {
             try {
                 if (total > 0 && _separator != null) {
                     writer.write(_separator);
                 }
-
+                total++;
                 ExpressionUtils.bind(bindings, row, rowIndex, null, null);
                 for (Fragment f : _fragments) {
                     if (f instanceof StaticFragment) {
