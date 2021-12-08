@@ -94,30 +94,10 @@ public class ReconClearOneCellCommand extends Command {
             if (column == null) {
                 throw new Exception("No such column");
             }
-
-            Judgment oldJudgment = cell.recon == null ? Judgment.None : cell.recon.judgment;
-
+            
             Cell newCell = new Cell(cell.value, null);
 
-            ReconStats stats = column.getReconStats();
-            if (stats == null) {
-                stats = new LazyReconStats(state, column.getName());
-            } else {
-                int newChange = 0;
-                int matchChange = 0;
-
-                if (oldJudgment == Judgment.New) {
-                    newChange--;
-                }
-                if (oldJudgment == Judgment.Matched) {
-                    matchChange--;
-                }
-
-                stats = ReconStats.create(
-                    stats.getNonBlanks() + 1,
-                    stats.getNewTopics() + newChange,
-                    stats.getMatchedTopics() + matchChange);
-            }
+            ReconStats stats = new LazyReconStats(state, column.getName());
 
             String description =
                 "Clear recon data for single cell on row " + (rowIndex + 1) +

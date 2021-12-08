@@ -9,6 +9,7 @@ import static org.mockito.Mockito.when;
 
 import org.openrefine.model.ColumnModel;
 import org.openrefine.model.GridState;
+import org.openrefine.model.GridState.PartialAggregation;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
@@ -18,7 +19,8 @@ public class LazyReconStatsTests {
     public void testCreateLazyReconStats() {
         GridState grid = mock(GridState.class);
         ColumnModel columnModel = mock(ColumnModel.class);
-        when(grid.aggregateRows(any(), eq(ReconStats.ZERO))).thenReturn(new ReconStatsImpl(1L, 2L, 3L));
+        when(grid.aggregateRowsApprox(any(), eq(ReconStats.ZERO), eq(ReconStats.SAMPLING_SIZE)))
+        	.thenReturn(new PartialAggregation<ReconStats>(new ReconStatsImpl(1L, 2L, 3L), 80L, false));
         when(grid.getColumnModel()).thenReturn(columnModel);
         when(columnModel.getColumnIndexByName("foo")).thenReturn(2);
         
@@ -34,6 +36,6 @@ public class LazyReconStatsTests {
         Assert.assertEquals(reconStats, new ReconStatsImpl(1L, 2L, 3L));
         
         // the aggregation was done only once
-        verify(grid, times(1)).aggregateRows(any(), eq(ReconStats.ZERO));
+        verify(grid, times(1)).aggregateRowsApprox(any(), eq(ReconStats.ZERO), eq(ReconStats.SAMPLING_SIZE));
     }
 }

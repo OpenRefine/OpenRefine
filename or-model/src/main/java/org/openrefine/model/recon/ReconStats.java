@@ -36,6 +36,7 @@ package org.openrefine.model.recon;
 import java.io.Serializable;
 
 import org.openrefine.model.Row;
+import org.openrefine.model.recon.ReconStatsImpl;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -48,6 +49,15 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 public interface ReconStats extends Serializable {   
 
     public static final ReconStats ZERO = new ReconStatsImpl(0L, 0L, 0L);
+    
+    /*
+     * Recon statistics are created by looking at most that many rows.
+     * TODO make this configurable by the user, by removing recon stats
+     * from the backend altogether, and computing them as facets on the
+     * frontend.
+     * See issue: https://github.com/OpenRefine/OpenRefine/issues/4350
+     */
+    public static final long SAMPLING_SIZE = 10000L;
     
     @JsonCreator
     public static ReconStats create(

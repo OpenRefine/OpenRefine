@@ -110,8 +110,8 @@ public class ReconStatsImpl implements ReconStats {
      * @return the statistics of cell reconciliation in the column
      */
     static public ReconStats create(GridState state, String columnName) {
-        Aggregator aggregator = new Aggregator(state.getColumnModel().getColumnIndexByName(columnName)); 
-        return state.aggregateRows(aggregator, ZERO);
+        Aggregator aggregator = new Aggregator(state.getColumnModel().getColumnIndexByName(columnName));
+        return state.aggregateRowsApprox(aggregator, ZERO, ReconStats.SAMPLING_SIZE).getState();
     }
     
     /**
@@ -134,7 +134,7 @@ public class ReconStatsImpl implements ReconStats {
                 .stream()
                 .map(i -> ReconStats.ZERO)
                 .collect(Collectors.toList());
-        MultiReconStats multiReconStats = state.aggregateRows(aggregator, new MultiReconStats(initialState));
+        MultiReconStats multiReconStats = state.aggregateRowsApprox(aggregator, new MultiReconStats(initialState), ReconStats.SAMPLING_SIZE).getState();
         
         ColumnModel columnModel = state.getColumnModel();
         for (int i = 0; i != columnIndices.size(); i++) {
