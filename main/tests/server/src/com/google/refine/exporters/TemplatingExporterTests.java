@@ -216,6 +216,7 @@ public class TemplatingExporterTests extends RefineTest {
 
     /**
      * Testing that curly braces are properly escaped.
+     * CS427 Issue Link: https://github.com/OpenRefine/OpenRefine/issues/3381
      */
     @Test
     public void exportTemplateWithProperEscaping() {
