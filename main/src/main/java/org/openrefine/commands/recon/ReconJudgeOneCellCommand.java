@@ -160,31 +160,7 @@ public class ReconJudgeOneCellCommand extends Command {
                     cell.value,
                     newRecon);
 
-            ReconStats stats = column.getReconStats();
-            if (stats == null) {
-                stats = new LazyReconStats(state, column.getName());
-            } else {
-                int newChange = 0;
-                int matchChange = 0;
-
-                if (oldJudgment == Judgment.New) {
-                    newChange--;
-                }
-                if (oldJudgment == Judgment.Matched) {
-                    matchChange--;
-                }
-                if (newRecon.judgment == Judgment.New) {
-                    newChange++;
-                }
-                if (newRecon.judgment == Judgment.Matched) {
-                    matchChange++;
-                }
-
-                stats = ReconStats.create(
-                        stats.getNonBlanks(),
-                        stats.getNewTopics() + newChange,
-                        stats.getMatchedTopics() + matchChange);
-            }
+            ReconStats stats = new LazyReconStats(state, column.getName());
 
             Change change = new ReconCellChange(rowIndex, column.getName(), newRecon, stats);
 

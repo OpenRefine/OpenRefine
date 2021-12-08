@@ -39,6 +39,7 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import org.openrefine.model.Row;
+import org.openrefine.model.recon.ReconStatsImpl;
 
 /**
  * Stores statistics about the judgment of reconciled cells in a column.
@@ -49,6 +50,13 @@ import org.openrefine.model.Row;
 public interface ReconStats extends Serializable {
 
     public static final ReconStats ZERO = new ReconStatsImpl(0L, 0L, 0L);
+
+    /*
+     * Recon statistics are created by looking at most that many rows. TODO make this configurable by the user, by
+     * removing recon stats from the backend altogether, and computing them as facets on the frontend. See issue:
+     * https://github.com/OpenRefine/OpenRefine/issues/4350
+     */
+    public static final long SAMPLING_SIZE = 10000L;
 
     @JsonCreator
     public static ReconStats create(

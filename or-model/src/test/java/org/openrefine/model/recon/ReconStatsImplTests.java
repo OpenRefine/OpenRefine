@@ -27,6 +27,8 @@
 
 package org.openrefine.model.recon;
 
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -40,8 +42,7 @@ import org.testng.annotations.Test;
 import org.openrefine.model.ColumnMetadata;
 import org.openrefine.model.ColumnModel;
 import org.openrefine.model.GridState;
-import org.openrefine.model.recon.ReconStats;
-import org.openrefine.model.recon.ReconStatsImpl;
+import org.openrefine.model.GridState.PartialAggregation;
 import org.openrefine.util.ParsingUtilities;
 import org.openrefine.util.TestUtils;
 
@@ -57,7 +58,8 @@ public class ReconStatsImplTests {
     public void testCreateFromColumn() {
         ReconStats rs = new ReconStatsImpl(3, 1, 2);
         GridState state = mock(GridState.class);
-        when(state.aggregateRows(Mockito.any(), Mockito.eq(ReconStats.ZERO))).thenReturn(rs);
+        when(state.aggregateRowsApprox(any(), eq(ReconStats.ZERO), eq(ReconStats.SAMPLING_SIZE)))
+                .thenReturn(new PartialAggregation<ReconStats>(rs, 34L, true));
         when(state.getColumnModel()).thenReturn(new ColumnModel(Collections.singletonList(new ColumnMetadata("some column"))));
 
         Assert.assertEquals(ReconStatsImpl.create(state, "some column"), rs);
@@ -71,10 +73,13 @@ public class ReconStatsImplTests {
                 new ColumnMetadata("bar"),
                 new ColumnMetadata("hey").withReconConfig(reconConfig)));
         GridState state = mock(GridState.class);
-        when(state.aggregateRows(Mockito.any(), Mockito.any())).thenReturn(new ReconStatsImpl.MultiReconStats(
-                Arrays.asList(
-                        new ReconStatsImpl(3, 1, 2),
-                        new ReconStatsImpl(8, 3, 4))));
+        when(state.<ReconStatsImpl.MultiReconStats> aggregateRowsApprox(Mockito.any(), Mockito.any(), Mockito.anyLong())).thenReturn(
+                new PartialAggregation<ReconStatsImpl.MultiReconStats>(
+                        new ReconStatsImpl.MultiReconStats(
+                                Arrays.asList(
+                                        new ReconStatsImpl(3, 1, 2),
+                                        new ReconStatsImpl(8, 3, 4))),
+                        34L, true));
         when(state.getColumnModel()).thenReturn(initialColumnModel);
 
         ColumnModel expectedColumnModel = initialColumnModel
