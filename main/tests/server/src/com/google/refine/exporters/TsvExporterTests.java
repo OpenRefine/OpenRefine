@@ -139,7 +139,7 @@ public class TsvExporterTests extends RefineTest {
                 "row1cell0\tline\\n\\n\\nbreak\trow1cell2\n" +
                 "row2cell0\trow2cell1\trow2cell2\n");
     }
-
+   // CS427 Issue Link: https://github.com/OpenRefine/OpenRefine/issues/2071
     @Test
     public void exportTsvWithTab() {
         CreateGrid(3, 3);
@@ -156,7 +156,7 @@ public class TsvExporterTests extends RefineTest {
                 "row1cell0\twith\\t tab\trow1cell2\n" +
                 "row2cell0\trow2cell1\trow2cell2\n");
     }
-
+   // CS427 Issue Link: https://github.com/OpenRefine/OpenRefine/issues/2071
     @Test
     public void exportTsvWithQuote() {
         CreateGrid(3, 3);
@@ -173,7 +173,7 @@ public class TsvExporterTests extends RefineTest {
                 "row1cell0\tline has \"quote\"\trow1cell2\n" +
                 "row2cell0\trow2cell1\trow2cell2\n");
     }
-
+   // CS427 Issue Link: https://github.com/OpenRefine/OpenRefine/issues/2071
     @Test
     public void exportTsvWithOutsideQuotes() {
         CreateGrid(3, 3);
