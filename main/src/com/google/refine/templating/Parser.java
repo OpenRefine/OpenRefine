@@ -53,6 +53,7 @@ public class Parser {
      * @param expression string that will be interrogated for first true end brace
      * @param lowIndex   index from which the interrogation will start
      * @return index of the first true end brace
+     * CS427 Issue Link: https://github.com/OpenRefine/OpenRefine/issues/3381
      */
     private static int findEndBrace(final String expression, final int lowIndex) {
         int closeBrace = expression.indexOf('}', lowIndex);
