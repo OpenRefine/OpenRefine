@@ -114,6 +114,7 @@
     <maven-jar-plugin.version>3.2.0</maven-jar-plugin.version>
     <maven-clean-plugin.version>3.1.0</maven-clean-plugin.version>
     <git-commit-id-plugin.version>4.9.10</git-commit-id-plugin.version>
+    <maven-deploy-plugin.version>3.0.0-M1</maven-deploy-plugin.version>
   </properties>
 
 
@@ -125,24 +126,6 @@
     <resources>
     </resources>
     <plugins>
-      <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>build-helper-maven-plugin</artifactId>
-	<version>${build-helper-maven-plugin.version}</version>
-        <executions>
-          <execution>
-            <phase>generate-sources</phase>
-            <goals>
-              <goal>add-source</goal>
-            </goals>
-            <configuration>
-              <sources>
-                <source>server/src</source>
-              </sources>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
@@ -261,6 +244,77 @@
           </sourceDirectories>
         </configuration>
        </plugin>
+       <plugin>
+	  <groupId>org.codehaus.mojo</groupId>
+	  <artifactId>build-helper-maven-plugin</artifactId>
+	  <version>${build-helper-maven-plugin.version}</version>
+	  <inherited>false</inherited>
+	  <executions>
+	    <!-- Attach tar.gz artifact for linux -->
+	    <execution>
+		<id>attach-linux</id>
+		<phase>package</phase>
+		<goals>
+		    <goal>attach-artifact</goal>
+		</goals>
+		<configuration>
+		    <artifacts>
+			<artifact>
+			    <file>packaging/target/${project.build.finalName}-linux-${project.version}.tar.gz</file>
+			    <type>tar.gz</type>
+			    <classifier>linux</classifier>
+			</artifact>
+		    </artifacts>
+		</configuration>
+	    </execution>
+	    
+	    <!-- Attach the zip file for windows -->
+	    <execution>
+		<id>attach-win</id>
+		<phase>package</phase>
+		<goals>
+		    <goal>attach-artifact</goal>
+		</goals>
+		<configuration>
+		    <skipAttach>${skipCreateExe}</skipAttach>
+		    <artifacts>
+			<artifact>
+			    <file>packaging/target/${project.build.finalName}-win-${project.version}.zip</file>
+			    <type>zip</type>
+			    <classifier>win</classifier>
+			</artifact>
+		    </artifacts>
+		</configuration>
+	    </execution>
+	    
+	    <!-- Attach the final DMG for MacOS -->
+	    <execution>
+		<id>attach-dmg</id>
+		<phase>package</phase>
+		<goals>
+		    <goal>attach-artifact</goal>
+		</goals>
+		<configuration>
+		    <artifacts>
+			<artifact>
+		            <file>packaging/target/${project.build.finalName}-mac-${project.version}.dmg</file>
+			    <type>dmg</type>
+			    <classifier>mac</classifier>
+			</artifact>
+		    </artifacts>
+		</configuration>
+	      </execution>
+	    </executions>
+          </plugin>
+
+       <plugin>
+	 <groupId>org.apache.maven.plugins</groupId>
+	 <artifactId>maven-deploy-plugin</artifactId>
+	 <version>${maven-deploy-plugin.version}</version>
+	 <configuration>
+            <deployAtEnd>true</deployAtEnd>
+	 </configuration>
+       </plugin>
     </plugins>
   </build>
 
@@ -284,4 +338,12 @@
     </repository>
   </repositories>
 
+  <!-- Locations of the artifacts published -->
+  <distributionManagement>
+     <snapshotRepository>
+       <id>ossrh</id>
+       <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+     </snapshotRepository>
+  </distributionManagement>
+ 
 </project>
