@@ -164,13 +164,8 @@ jobs:
         mvn prepare-package -DskipTests=true
         mvn jacoco:report coveralls:report -DrepoToken=${{ secrets.COVERALLS_TOKEN }} -DpullRequest=${{ github.event.number }} -DserviceName="GitHub Actions" -DserviceBuildNumber=${{ env.GITHUB_RUN_ID }} -Dbranch=master
 
-    - name: Get the OpenRefine snapshot version
-      run: echo ::set-env name=OR_VERSION::$(cat ./main/webapp/WEB-INF/classes/git.properties | jq -r '.["git.commit.id.describe"]')
-      env:
-        ACTIONS_ALLOW_UNSECURE_COMMANDS: true
-
     - name: Generate dist files
-      run: ./refine dist ${{ env.OR_VERSION }}
+      run: mvn package -DskipTests=true
 
     - name: Upload snapshot releases to OSSRH
       run: mvn deploy -DskipTests=true
