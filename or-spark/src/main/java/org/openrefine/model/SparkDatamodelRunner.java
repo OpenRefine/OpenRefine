@@ -2,7 +2,6 @@ package org.openrefine.model;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.Serializable;
 import java.lang.reflect.Type;
 import java.util.Collections;
 import java.util.List;

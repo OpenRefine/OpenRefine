@@ -1,5 +1,7 @@
 package org.openrefine;
 
+import java.io.File;
+import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -10,11 +12,27 @@ import org.apache.spark.api.java.JavaSparkContext;
 import org.openrefine.io.OrderedLocalFileSystem;
 import org.openrefine.model.Cell;
 import org.openrefine.model.Row;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.testng.annotations.AfterSuite;
 
 import scala.Tuple2;
 
 public class SparkBasedTest {
+	
+    static final Logger logger = LoggerFactory.getLogger(SparkBasedTest.class);
+	
+	static {
+        // set up Hadoop on Windows
+        String os = System.getProperty("os.name").toLowerCase();
+        if (os.contains("windows")) {
+            try {
+                System.setProperty("hadoop.home.dir", new File("server/target/lib/native/windows/hadoop").getCanonicalPath());
+            } catch (IOException e) {
+                logger.warn("unable to locate Windows Hadoop binaries, this will leave temporary files behind");
+            }
+        }
+	}
     
     protected static SparkConf sparkConf = new SparkConf().setAppName("SparkBasedTest").setMaster("local");
     public static JavaSparkContext context = new JavaSparkContext(sparkConf);
