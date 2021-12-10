@@ -8,7 +8,7 @@ sidebar_label: Facets
 
 Facets are one of OpenRefine’s strongest features - that’s where the diamond logo comes from! 
 
-Faceting allows you to look for patterns and trends. Facets are essentially aspects or angles of data variance in a given column. For example, if you had survey data where respondents indicated one of five responses from “Strongly agree” to “Strongly disagree,” those five responses make up a text facet, showing how many people selected each option.  
+Faceting allows you to look for patterns and trends. Facets are essential aspects or angles of data variance in a given column. For example, if you had survey data where respondents indicated one of five responses from “Strongly agree” to “Strongly disagree,” those five responses make up a text facet, showing how many people selected each option.  
 
 Faceted browsing gives you a big-picture look at your data (do they agree or disagree?) and also allows you to filter down to a specific subset to explore it more (what do people who disagree say in other responses?). 
 
