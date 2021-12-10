@@ -62,7 +62,7 @@ import org.testng.annotations.BeforeTest;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.common.io.ByteStreams;
 
-public abstract class ImporterTest extends RefineTest {
+public class ImporterTest extends RefineTest {
     //mock dependencies
     protected ProjectMetadata metadata;
     protected ImportingJob job;
