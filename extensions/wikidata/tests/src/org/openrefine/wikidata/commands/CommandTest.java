@@ -41,7 +41,7 @@ import org.openrefine.wikidata.testing.TestingData;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 
-public abstract class CommandTest extends RefineTest {
+public class CommandTest extends RefineTest {
 
     protected Project project = null;
     protected HttpServletRequest request = null;
