@@ -35,11 +35,7 @@
         <activeByDefault>true</activeByDefault>
       </activation>
       <build>
-        <plugins>
-          <plugin>
-            <groupId>sh.tak.appbundler</groupId>
-            <artifactId>appbundle-maven-plugin</artifactId>
-          </plugin>
+	<plugins>
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-assembly-plugin</artifactId>
@@ -296,77 +292,6 @@
                 <!-- TBD -->
                 </descriptors>
               </configuration>
-            </execution>
-          </executions>
-        </plugin>
-        <plugin>
-          <groupId>sh.tak.appbundler</groupId>
-          <artifactId>appbundle-maven-plugin</artifactId>
-          <version>1.2.0</version>
-          <dependencies>
-            <dependency>
-              <!-- dependency upgraded to >4.0 to fix runtime issues with some JRE versions:
-                   https://stackoverflow.com/questions/53696439/appbundle-maven-plugin-fails-on-mac-osx-with-java-10 -->
-              <groupId>org.codehaus.plexus</groupId>
-              <artifactId>plexus-archiver</artifactId>
-              <version>4.2.6</version>
-            </dependency>
-            <dependency>
-              <groupId>org.apache.velocity</groupId>
-              <artifactId>velocity-tools</artifactId>
-              <version>2.0</version>
-            </dependency>
-          </dependencies>
-          <configuration>
-            <mainClass>org.openrefine.Refine</mainClass>
-            <bundleName>OpenRefine</bundleName>
-            <buildDirectory>target/OpenRefine ${project.version}</buildDirectory>
-            <iconFile>${icon.path}</iconFile>
-            <generateDiskImageFile>true</generateDiskImageFile>
-            <diskImageFile>
-              ${project.build.directory}/${project.build.finalName}-mac-${project.version}.dmg
-            </diskImageFile>
-            <jvmVersion>1.8</jvmVersion>
-            <jrePath>${mac.jre.path}</jrePath>
-            <jvmOptions>
-              <param>-Xms512M</param>
-              <param>-Xmx2048M</param>
-              <param>-Drefine.version=${project.version}</param>
-              <param>-Drefine.webapp=$APP_ROOT/Contents/Resources/webapp</param>
-            </jvmOptions>
-            <additionalResources>
-              <fileSet>
-                <directory>target</directory>
-                <includes>
-                  <include>OpenRefine.app/Contents/Resources/webapp/**/**</include>
-                </includes>
-              </fileSet>
-            </additionalResources>
-            <additionalBundledClasspathResources>
-              <fileSet>
-                <directory>${rootdir}/server/target/lib/</directory>
-                <includes>
-                  <include>*.jar</include>
-                </includes>
-              </fileSet>
-              <fileSet>
-                <directory>${rootdir}/server/target</directory>
-                <includes>
-                  <include>openrefine-${project.version}-server.jar</include>
-                </includes>
-                <excludes>
-                  <exclude>**/lib/**</exclude>
-                  <exclude>**/org/**</exclude>
-                </excludes>
-              </fileSet>
-            </additionalBundledClasspathResources>
-          </configuration>
-          <executions>
-            <execution>
-              <phase>package</phase>
-              <goals>
-                <goal>bundle</goal>
-              </goals>
             </execution>
           </executions>
         </plugin>
