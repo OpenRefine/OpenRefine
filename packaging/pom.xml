@@ -318,6 +318,7 @@
             </dependency>
           </dependencies>
           <configuration>
+            <skip>true</skip>
             <mainClass>org.openrefine.Refine</mainClass>
             <bundleName>OpenRefine</bundleName>
             <buildDirectory>target/OpenRefine ${project.version}</buildDirectory>
