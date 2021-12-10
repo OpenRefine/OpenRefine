@@ -57,7 +57,7 @@ public class SparkDatamodelRunner implements DatamodelRunner {
         String os = System.getProperty("os.name").toLowerCase();
         if (os.contains("windows")) {
             try {
-                System.setProperty("hadoop.home.dir", new File("server/target/lib/native/windows/hadoop/bin").getCanonicalPath());
+                System.setProperty("hadoop.home.dir", new File("server/target/lib/native/windows/hadoop").getCanonicalPath());
             } catch (IOException e) {
                 logger.warn("unable to locate Windows Hadoop binaries, this will leave temporary files behind");
             }
