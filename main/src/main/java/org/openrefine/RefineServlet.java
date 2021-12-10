@@ -354,6 +354,12 @@ public class RefineServlet extends Butterfly {
         return s_runner;
     }
 
+    // introduced for testing purposes (to avoid stubbing a static method)
+    // TODO To be refactored.
+    public DatamodelRunner getCurrentDatamodelRunner() {
+        return s_runner;
+    }
+
     private class ServletRunnerConfiguration extends RunnerConfiguration {
 
         @Override
