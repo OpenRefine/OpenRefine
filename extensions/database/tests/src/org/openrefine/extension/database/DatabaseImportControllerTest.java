@@ -71,7 +71,7 @@ public class DatabaseImportControllerTest extends DBExtensionTests {
         job = ImportingManager.createJob();
         
         SUT = new DatabaseImportController();
-      
+        SUT.init(servlet);
     }
     
     @AfterMethod

@@ -75,7 +75,7 @@ public class DatabaseImportController implements ImportingController {
     @Override
     public void init(RefineServlet servlet) {
         this.servlet = servlet;
-        tabularParserHelper = new TabularParserHelper(RefineServlet.getDatamodelRunner());
+        tabularParserHelper = new TabularParserHelper(servlet.getCurrentDatamodelRunner());
     }
 
     @Override
@@ -293,6 +293,7 @@ public class DatabaseImportController implements ImportingController {
             job.setProject(new Project(grid, new LazyChangeDataStore(), new LazyCachedGridStore()));
         } catch (Exception e) {
             exceptions.add(e);
+            e.printStackTrace();
         }
         
         setProgress(job, querySource, 100);
