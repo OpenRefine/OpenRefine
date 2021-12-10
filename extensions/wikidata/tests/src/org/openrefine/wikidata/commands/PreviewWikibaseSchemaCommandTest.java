@@ -39,6 +39,7 @@ import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
+import org.openrefine.commands.Command;
 import org.openrefine.util.ParsingUtilities;
 import org.openrefine.wikidata.qa.ConstraintFetcher;
 import org.openrefine.wikidata.qa.EditInspector;
@@ -46,7 +47,7 @@ import org.openrefine.wikidata.utils.EntityCache;
 import org.openrefine.wikidata.utils.EntityCacheStub;
 
 @PrepareForTest({ EditInspector.class, EntityCache.class })
-public class PreviewWikibaseSchemaCommandTest extends SchemaCommandTest {
+public class PreviewWikibaseSchemaCommandTest extends CommandTest {
 
     @BeforeMethod
     public void SetUp() {
@@ -93,5 +94,24 @@ public class PreviewWikibaseSchemaCommandTest extends SchemaCommandTest {
 
         assertEquals(writer.toString(),
                 "{\"code\":\"error\",\"message\":\"Wikibase manifest could not be parsed. Error message: invalid manifest format\"}");
+    }
+
+    @Test
+    public void testNoSchema()
+            throws ServletException, IOException {
+    	when(request.getParameter("csrf_token")).thenReturn(Command.csrfFactory.getFreshToken());
+    	
+        command.doPost(request, response);
+
+        assertEquals(writer.toString(), "{\"code\":\"error\",\"message\":\"No Wikibase schema provided.\"}");
+    }
+
+    @Test
+    public void testInvalidSchema()
+            throws ServletException, IOException {
+        when(request.getParameter("schema")).thenReturn("{bogus json");
+        command.doPost(request, response);
+
+        assertEquals("error", ParsingUtilities.mapper.readTree(writer.toString()).get("code").asText());
     }
 }

@@ -26,6 +26,7 @@ package org.openrefine.wikidata.commands;
 
 import static org.mockito.Mockito.when;
 import static org.openrefine.wikidata.testing.TestingData.jsonFromFile;
+import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertTrue;
 
 import java.io.IOException;
@@ -36,9 +37,10 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import org.openrefine.commands.Command;
+import org.openrefine.util.ParsingUtilities;
 import org.openrefine.util.TestUtils;
 
-public class SaveWikibaseSchemaCommandTest extends SchemaCommandTest {
+public class SaveWikibaseSchemaCommandTest extends CommandTest {
 
     @BeforeMethod
     public void setUp() {
@@ -78,5 +80,24 @@ public class SaveWikibaseSchemaCommandTest extends SchemaCommandTest {
 
         command.doPost(request, response);
         TestUtils.assertEqualAsJson("{\"code\":\"error\",\"message\":\"Missing or invalid csrf_token parameter\"}", writer.toString());
+    }
+
+    @Test
+    public void testNoSchema()
+            throws ServletException, IOException {
+    	when(request.getParameter("csrf_token")).thenReturn(Command.csrfFactory.getFreshToken());
+    	
+        command.doPost(request, response);
+
+        assertEquals(writer.toString(), "{\"code\":\"error\",\"message\":\"No Wikibase schema provided.\"}");
+    }
+
+    @Test
+    public void testInvalidSchemaJson()
+            throws ServletException, IOException {
+        when(request.getParameter("schema")).thenReturn("{bogus json");
+        command.doPost(request, response);
+
+        assertEquals("error", ParsingUtilities.mapper.readTree(writer.toString()).get("code").asText());
     }
 }

@@ -43,7 +43,7 @@ import org.openrefine.commands.Command;
 import org.openrefine.model.Project;
 import org.openrefine.wikidata.testing.TestingData;
 
-public abstract class CommandTest extends RefineTest {
+public class CommandTest extends RefineTest {
 
     protected Project project = null;
     protected HttpServletRequest request = null;
