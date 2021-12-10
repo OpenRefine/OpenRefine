@@ -1969,9 +1969,9 @@
     to-fast-properties "^2.0.0"
 
 "@crowdin/cli@3":
-  version "3.7.1"
-  resolved "https://registry.yarnpkg.com/@crowdin/cli/-/cli-3.7.1.tgz#41807cff11d3e07bc07cae9bfe012332f31dfd3b"
-  integrity sha512-UJrppchjYW2Gyl/2Tl9C2txYsyA44lJkrx04BhmaihvsJT82x5YKvvvUuvvfCUukG4+3relo0EoQG846PZX3ng==
+  version "3.7.2"
+  resolved "https://registry.yarnpkg.com/@crowdin/cli/-/cli-3.7.2.tgz#709597ead041359b213e0804d4c8b9f8f8a14dcd"
+  integrity sha512-dM7pQLHo10XnHvi0RAkOFAwqn/LB4NE42njn4dHSu8O30zLgsVbCEq4KvUajE2aFz0mDeAzMgxjEDJSssFUf2Q==
   dependencies:
     shelljs "^0.8.4"
 
@@ -2909,9 +2909,9 @@ ajv@^6.12.2, ajv@^6.12.4, ajv@^6.12.5:
     uri-js "^4.2.2"
 
 algoliasearch-helper@^3.5.5:
-  version "3.6.1"
-  resolved "https://registry.yarnpkg.com/algoliasearch-helper/-/algoliasearch-helper-3.6.1.tgz#b2964de29f69d8266d714e74cf097c06447ffaf2"
-  integrity sha512-uJkB/t/bU0tYE88ZoJJCGCNSD+9mTdsp/Yp5dG+qviIBYoUUZfKWwFcZBhW+eiqpO+EadTu7Xj3RYYnrvBOUyA==
+  version "3.6.2"
+  resolved "https://registry.yarnpkg.com/algoliasearch-helper/-/algoliasearch-helper-3.6.2.tgz#45e19b12589cfa0c611b573287f65266ea2cc14a"
+  integrity sha512-Xx0NOA6k4ySn+R2l3UMSONAaMkyfmrZ3AP1geEMo32MxDJQJesZABZYsldO9fa6FKQxH91afhi4hO1G0Zc2opg==
   dependencies:
     events "^1.1.1"
 

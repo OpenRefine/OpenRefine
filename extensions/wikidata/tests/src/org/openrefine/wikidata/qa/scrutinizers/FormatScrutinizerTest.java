@@ -31,7 +31,7 @@ import java.util.List;
 
 import org.openrefine.wikidata.qa.ConstraintFetcher;
 import org.openrefine.wikidata.testing.TestingData;
-import org.openrefine.wikidata.updates.ItemUpdate;
+import org.openrefine.wikidata.updates.TermedStatementEntityUpdate;
 import org.openrefine.wikidata.updates.ItemUpdateBuilder;
 import org.testng.annotations.Test;
 import org.wikidata.wdtk.datamodel.helpers.Datamodel;
@@ -71,7 +71,7 @@ public class FormatScrutinizerTest extends ScrutinizerTest {
         ItemIdValue idA = TestingData.existingId;
         ValueSnak value = Datamodel.makeValueSnak(propertyIdValue, noMatchValue);
         Statement statement = new StatementImpl("P18", value, idA);
-        ItemUpdate updateA = new ItemUpdateBuilder(idA).addStatement(statement).build();
+        TermedStatementEntityUpdate updateA = new ItemUpdateBuilder(idA).addStatement(statement).build();
 
         List<Statement> constraintDefinitions = generateFormatConstraint(regularExpression);
 
@@ -87,7 +87,7 @@ public class FormatScrutinizerTest extends ScrutinizerTest {
         ItemIdValue idA = TestingData.existingId;
         ValueSnak value = Datamodel.makeValueSnak(propertyIdValue, completeMatchValue);
         Statement statement = new StatementImpl("P18", value, idA);
-        ItemUpdate updateA = new ItemUpdateBuilder(idA).addStatement(statement).build();
+        TermedStatementEntityUpdate updateA = new ItemUpdateBuilder(idA).addStatement(statement).build();
 
         List<Statement> constraintDefinitions = generateFormatConstraint(regularExpression);
 
@@ -103,7 +103,7 @@ public class FormatScrutinizerTest extends ScrutinizerTest {
         ItemIdValue idA = TestingData.existingId;
         ValueSnak value = Datamodel.makeValueSnak(propertyIdValue, incompleteMatchValue);
         Statement statement = new StatementImpl("P18", value, idA);
-        ItemUpdate updateA = new ItemUpdateBuilder(idA).addStatement(statement).build();
+        TermedStatementEntityUpdate updateA = new ItemUpdateBuilder(idA).addStatement(statement).build();
 
         List<Statement> constraintDefinitions = generateFormatConstraint(regularExpression);
 
@@ -119,7 +119,7 @@ public class FormatScrutinizerTest extends ScrutinizerTest {
         ItemIdValue idA = TestingData.existingId;
         ValueSnak value = Datamodel.makeValueSnak(propertyIdValue, incompleteMatchValue);
         Statement statement = new StatementImpl("P18", value, idA);
-        ItemUpdate updateA = new ItemUpdateBuilder(idA).addStatement(statement).build();
+        TermedStatementEntityUpdate updateA = new ItemUpdateBuilder(idA).addStatement(statement).build();
         
         List<Statement> constraintDefinitions = generateFormatConstraint(invalidRegularExpression);
 

@@ -31,7 +31,7 @@ import java.util.List;
 
 import org.openrefine.wikidata.qa.ConstraintFetcher;
 import org.openrefine.wikidata.testing.TestingData;
-import org.openrefine.wikidata.updates.ItemUpdate;
+import org.openrefine.wikidata.updates.TermedStatementEntityUpdate;
 import org.openrefine.wikidata.updates.ItemUpdateBuilder;
 import org.testng.annotations.Test;
 import org.wikidata.wdtk.datamodel.helpers.Datamodel;
@@ -64,7 +64,7 @@ public class SingleValueScrutinizerTest extends ScrutinizerTest {
         Snak snak2 = Datamodel.makeValueSnak(propertyIdValue, value2);
         Statement statement1 = new StatementImpl("P21", snak1, idA);
         Statement statement2 = new StatementImpl("P21", snak2, idA);
-        ItemUpdate update = new ItemUpdateBuilder(idA).addStatement(statement1).addStatement(statement2).build();
+        TermedStatementEntityUpdate update = new ItemUpdateBuilder(idA).addStatement(statement1).addStatement(statement2).build();
 
         List<Statement> statementList = constraintParameterStatementList(entityIdValue, new ArrayList<>());
 
@@ -80,7 +80,7 @@ public class SingleValueScrutinizerTest extends ScrutinizerTest {
         ItemIdValue idA = TestingData.existingId;
         Snak snak1 = Datamodel.makeValueSnak(propertyIdValue, value1);
         Statement statement1 = new StatementImpl("P21", snak1, idA);
-        ItemUpdate updateA = new ItemUpdateBuilder(idA).addStatement(statement1).build();
+        TermedStatementEntityUpdate updateA = new ItemUpdateBuilder(idA).addStatement(statement1).build();
 
         List<Statement> statementList = constraintParameterStatementList(entityIdValue, new ArrayList<>());
 

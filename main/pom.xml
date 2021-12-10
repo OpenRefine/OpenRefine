@@ -18,12 +18,6 @@
     <jee.path>/</jee.path>
     <jee.port>3333</jee.port>
     <refine.data>/tmp/refine</refine.data>
-    <!-- org.odftoolkit:odfdom-java:jar:0.9.0-RC1 bundles Jena 3.9.0 so we should match that
-         Jena 3.15.0 doesn't work. Versions through 3.14.0 appear to, but we'll be conservative
-    -->
-    <jena.version>4.2.0</jena.version>
-    <okhttp.version>4.9.2</okhttp.version>
-    <poi.version>5.1.0</poi.version>
   </properties>
 
   <scm>
@@ -35,10 +29,10 @@
     <finalName>openrefine-main</finalName>
     <outputDirectory>webapp/WEB-INF/classes</outputDirectory>
     <plugins>
-      <plugin>
+	    <!-- <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>build-helper-maven-plugin</artifactId>
-        <version>3.2.0</version>
+	<version>${build-helper-maven-plugin.version}</version>
         <executions>
           <execution>
             <phase>generate-sources</phase>
@@ -47,25 +41,7 @@
             </goals>
           </execution>
         </executions>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-compiler-plugin</artifactId>
-        <version>3.8.1</version>
-        <configuration>
-	  <!--release>11</release-->
-          <encoding>UTF-8</encoding>
-          <showDeprecation>false</showDeprecation>
-        </configuration>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-resources-plugin</artifactId>
-        <version>3.2.0</version>
-        <configuration>
-          <encoding>UTF-8</encoding>
-        </configuration>
-      </plugin>
+</plugin> -->
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
@@ -79,7 +55,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-dependency-plugin</artifactId>
-        <version>3.2.0</version>
+	<version>${maven-dependency-plugin.version}</version>
         <executions>
             <execution>
             <phase>compile</phase>
@@ -96,7 +72,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-jar-plugin</artifactId>
-        <version>3.2.0</version>
+	<version>${maven-jar-plugin.version}</version>
         <executions>
           <execution>
             <goals>
@@ -108,7 +84,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-clean-plugin</artifactId>
-        <version>3.1.0</version>
+	<version>${maven-clean-plugin.version}</version>
         <configuration>
           <filesets>
             <fileset>
@@ -120,7 +96,7 @@
     <plugin>
         <groupId>pl.project13.maven</groupId>
         <artifactId>git-commit-id-plugin</artifactId>
-        <version>4.9.10</version>
+	<version>${git-commit-id-plugin.version}</version>
         <executions>
             <execution>
                 <id>get-the-git-infos</id>
@@ -187,11 +163,6 @@
       <version>${butterfly.version}</version>
     </dependency>
     <dependency>
-      <groupId>org.mozilla</groupId>
-      <artifactId>rhino-runtime</artifactId>
-      <version>1.7.13</version>
-    </dependency>
-    <dependency>
       <groupId>com.fasterxml.jackson.core</groupId>
       <artifactId>jackson-core</artifactId>
       <version>${jackson.version}</version>
@@ -227,52 +198,52 @@
     <dependency>
       <groupId>org.apache.commons</groupId>
       <artifactId>commons-lang3</artifactId>
-      <version>3.12.0</version>
+      <version>${commons-lang3.version}</version>
     </dependency>
     <dependency>
       <groupId>commons-fileupload</groupId>
       <artifactId>commons-fileupload</artifactId>
-      <version>1.4</version>
+      <version>${commons-fileupload.version}</version>
     </dependency>
     <dependency>
       <groupId>commons-collections</groupId>
       <artifactId>commons-collections</artifactId>
-      <version>3.2.2</version>
+      <version>${commons-collections.version}</version>
     </dependency>
     <dependency>
         <groupId>org.apache.commons</groupId>
         <artifactId>commons-text</artifactId>
-        <version>1.9</version>
+	<version>${commons-text.version}</version>
     </dependency>
     <dependency>
       <groupId>commons-validator</groupId>
       <artifactId>commons-validator</artifactId>
-      <version>1.7</version>
+      <version>${commons-validator.version}</version>
     </dependency>
     <dependency>
       <groupId>velocity</groupId>
       <artifactId>velocity</artifactId>
-      <version>1.5</version>
+      <version>${velocity.version}</version>
     </dependency>
     <dependency>
       <groupId>org.marc4j</groupId>
       <artifactId>marc4j</artifactId>
-      <version>2.9.2</version>
+      <version>${marc4j.version}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.commons</groupId>
       <artifactId>commons-compress</artifactId>
-      <version>1.21</version>
+      <version>${commons-compress.version}</version>
     </dependency>
     <dependency>
       <groupId>org.jsoup</groupId>
       <artifactId>jsoup</artifactId>
-      <version>1.14.2</version>
+      <version>${jsoup.version}</version>
     </dependency>
     <dependency>
       <groupId>org.openrefine.dependencies</groupId>
       <artifactId>opencsv-multichar</artifactId>
-      <version>2.4</version>
+      <version>${opencsv-multichar.version}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.poi</groupId>
@@ -287,67 +258,59 @@
     <dependency>
       <groupId>org.odftoolkit</groupId>
       <artifactId>odfdom-java</artifactId>
-      <version>0.9.0-RC1</version>
+      <version>${odfdom-java.version}</version>
+      <!-- workaround for https://github.com/tdf/odftoolkit/issues/131,
+	 which is unfortunately still not solved after
+         https://github.com/tdf/odftoolkit/pull/132
+	 because xml-apis remains an indirect dependency of this library
+	 through xercesImpl.
+      -->
+      <exclusions>
+        <exclusion>
+          <groupId>xml-apis</groupId>
+          <artifactId>xml-apis</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
     <dependency>
       <groupId>org.openrefine.dependencies</groupId>
       <artifactId>vicino</artifactId>
-      <version>1.2</version>
+      <version>${vicino.version}</version>
     </dependency>
     <dependency>
       <groupId>oauth.signpost</groupId>
       <artifactId>signpost-core</artifactId>
-      <version>2.1.1</version>
+      <version>${signpost.version}</version>
     </dependency>
     <dependency>
       <groupId>oauth.signpost</groupId>
       <artifactId>signpost-commonshttp4</artifactId>
-      <version>2.1.1</version>
+      <version>${signpost.version}</version>
     </dependency>
     <dependency>
       <groupId>org.clojure</groupId>
       <artifactId>clojure</artifactId>
-      <version>1.10.3</version>
+      <version>${clojure.version}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.httpcomponents.client5</groupId>
       <artifactId>httpclient5</artifactId>
-      <version>5.1.1</version>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.httpcomponents</groupId>
-      <artifactId>httpclient</artifactId>
-      <version>4.5.13</version>
+      <version>${httpclient5.version}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.httpcomponents</groupId>
       <artifactId>httpcore</artifactId>
-      <version>4.4.14</version>
+      <version>${httpcore.version}</version>
     </dependency>
     <dependency>
       <groupId>org.sweble.wikitext</groupId>
       <artifactId>swc-parser-lazy</artifactId>
-      <version>3.1.9</version>
-    </dependency>
-    <dependency>
-      <groupId>joda-time</groupId>
-      <artifactId>joda-time</artifactId>
-      <version>2.10.13</version>
+      <version>${swc-parser-lazy.version}</version>
     </dependency>
 
-    <dependency>
+    <dependency> <!-- reported as unused by dependency:analyze, but tests fail without -->
       <groupId>org.apache.jena</groupId>
       <artifactId>jena-arq</artifactId>
-      <version>${jena.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.jena</groupId>
-      <artifactId>jena-base</artifactId>
-      <version>${jena.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.jena</groupId>
-      <artifactId>jena-cmds</artifactId>
       <version>${jena.version}</version>
     </dependency>
     <dependency>
@@ -355,11 +318,10 @@
       <artifactId>jena-core</artifactId>
       <version>${jena.version}</version>
     </dependency>
-    <!-- v1.15 is needed for Jena 3.14+ - copied from org.apache.jena:jena:pom -->
     <dependency>
       <groupId>commons-codec</groupId>
       <artifactId>commons-codec</artifactId>
-      <version>1.15</version>
+      <version>${commons-codec.version}</version>
     </dependency>
     <dependency>
       <groupId>commons-io</groupId>
@@ -367,14 +329,9 @@
       <version>${commons-io.version}</version>
     </dependency>
     <dependency>
-      <groupId>com.metaweb</groupId>
-      <artifactId>lessen</artifactId>
-      <version>1.0</version>
-    </dependency>
-    <dependency>
       <groupId>javax.xml.bind</groupId>
       <artifactId>jaxb-api</artifactId>
-      <version>2.3.1</version>
+      <version>${jaxb-api.version}</version>
     </dependency>
     <dependency>
       <groupId>com.google.guava</groupId>
@@ -384,9 +341,9 @@
     <dependency>
       <groupId>com.github.albfernandez</groupId>
       <artifactId>juniversalchardet</artifactId>
-      <version>2.4.0</version>
+      <version>${juniversalchardet.version}</version>
     </dependency>
-    <dependency>
+    <dependency> <!-- reported as unused by dependency:analyze, but broken without it -->
       <groupId>org.eclipse.jetty</groupId>
       <artifactId>jetty-servlets</artifactId>
       <version>${jetty.version}</version>
@@ -433,7 +390,7 @@
     <dependency>
       <groupId>org.apache.httpcomponents</groupId>
       <artifactId>httpmime</artifactId>
-      <version>4.5.13</version>
+      <version>${httpmime.version}</version>
       <scope>test</scope>
     </dependency>
   </dependencies>

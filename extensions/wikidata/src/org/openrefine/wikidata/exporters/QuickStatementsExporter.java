@@ -34,13 +34,13 @@ import org.openrefine.browsing.Engine;
 import org.openrefine.exporters.WriterExporter;
 import org.openrefine.model.GridState;
 import org.openrefine.wikidata.schema.WikibaseSchema;
-import org.openrefine.wikidata.updates.ItemUpdate;
+import org.openrefine.wikidata.updates.TermedStatementEntityUpdate;
 import org.openrefine.wikidata.updates.scheduler.ImpossibleSchedulingException;
 import org.openrefine.wikidata.updates.scheduler.QuickStatementsUpdateScheduler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wikidata.wdtk.datamodel.interfaces.Claim;
-import org.wikidata.wdtk.datamodel.interfaces.ItemIdValue;
+import org.wikidata.wdtk.datamodel.interfaces.EntityIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.MonolingualTextValue;
 import org.wikidata.wdtk.datamodel.interfaces.Reference;
 import org.wikidata.wdtk.datamodel.interfaces.Snak;
@@ -93,16 +93,16 @@ public class QuickStatementsExporter implements WriterExporter {
      */
     public void translateSchema(GridState grid, Engine engine, WikibaseSchema schema, Writer writer)
             throws IOException {
-        List<ItemUpdate> items = schema.evaluate(grid, engine);
+        List<TermedStatementEntityUpdate> items = schema.evaluate(grid, engine);
         translateItemList(items, writer);
     }
 
-    public void translateItemList(List<ItemUpdate> updates, Writer writer)
+    public void translateItemList(List<TermedStatementEntityUpdate> updates, Writer writer)
             throws IOException {
         QuickStatementsUpdateScheduler scheduler = new QuickStatementsUpdateScheduler();
         try {
-            List<ItemUpdate> scheduled = scheduler.schedule(updates);
-            for (ItemUpdate item : scheduled) {
+            List<TermedStatementEntityUpdate> scheduled = scheduler.schedule(updates);
+            for (TermedStatementEntityUpdate item : scheduled) {
                 translateItem(item, writer);
             }
         } catch (ImpossibleSchedulingException e) {
@@ -111,7 +111,7 @@ public class QuickStatementsExporter implements WriterExporter {
 
     }
 
-    protected void translateNameDescr(String qid, Set<MonolingualTextValue> values, String prefix, ItemIdValue id,
+    protected void translateNameDescr(String qid, Set<MonolingualTextValue> values, String prefix, EntityIdValue id,
             Writer writer)
             throws IOException {
         for (MonolingualTextValue value : values) {
@@ -124,7 +124,7 @@ public class QuickStatementsExporter implements WriterExporter {
         }
     }
 
-    protected void translateItem(ItemUpdate item, Writer writer)
+    protected void translateItem(TermedStatementEntityUpdate item, Writer writer)
             throws IOException {
         String qid = item.getItemId().getId();
         if (item.isNew()) {

@@ -393,13 +393,13 @@
     "core-util-enc/working": "Veuillez patienter",
     "core-util-enc/encoding": "Encodage",
     "core-util-enc/months-ago": "{{plural $1|mois dernier|$1 mois avant}}",
-    "core-util-enc/yesterday": "hier $1",
+    "core-util-enc/yesterday": "Hier à $1",
     "core-util-enc/invalid-date": "Chaîne de date incorrecte",
     "core-util-enc/days-ago": "$1 jours avant",
     "core-util-enc/common": "Encodage courants",
     "core-util-enc/select-enc": "Choisir l’encodage",
     "core-util-enc/weeks-ago": "{{plural $1|semaine dernière|$1 semaines avant}}",
-    "core-util-enc/today": "aujourd’hui $1",
+    "core-util-enc/today": "Aujourd’hui à $1",
     "core-util-enc/aliases": "Alias",
     "core-views/all": "Toutes",
     "core-views/custom-facet": "Facette personnalisée sur la colonne",
@@ -780,5 +780,9 @@
     "core-about/history": "OpenRefine a été initialement développé sous le nom de «&nbsp;Freebase Gridworks&nbsp;» par <a href='$1'>$2</a>. Metaweb a été acquis par <a href='$3'>$4</a> en juillet 2010 et ils ont renommé le produit Google Refine. En octobre 2012, le produit a été renommé OpenRefine lors de sa transition vers un projet soutenu par la communauté.",
     "core-about/definition": "OpenRefine est un outil puissant pour travailler avec des données désordonnées. Utilisez-le pour améliorer la cohérence des données, liez-le à des registres de données tels que Wikidata, augmentez-le avec des données provenant d'autres sources, transformez-les en différents formats pour que d'autres outils puissent les utiliser et contribuez-les aux sources d'origine. OpenRefine n'est pas un service Web mais une application de bureau qui s'exécute sur votre propre ordinateur, vous pouvez donc traiter les données sensibles en toute confidentialité.",
     "core-dialogs/help/grelreference": "Consultez la référence GREL dans le manuel de l'utilisateur d'OpenRefine pour plus de détails",
-    "core-views/edit-all-columns": "Modifier toutes les colonnes"
+    "core-views/edit-all-columns": "Modifier toutes les colonnes",
+    "core-views/warning": "Attention",
+    "core-views/warn-of-pending-sort": "Il y a un tri en attente. Les données visibles à l'écran peuvent ne pas refléter les données sur lesquelles cette opération agira.",
+    "core-index-parser/disable-auto-preview": "Désactiver l'aperçu automatique",
+    "core-dialogs/missing-bad-template": "Modèle manquant ou incorrect"
 }

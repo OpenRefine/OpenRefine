@@ -65,22 +65,64 @@
     <jee.path>/</jee.path>
     <jee.port>3333</jee.port>
     <refine.data>/tmp/refine</refine.data>
-    <surefire.version>2.22.2</surefire.version>
     <surefireArgs/>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <!-- dependency versions -->
     <jackson.version>2.6.7</jackson.version>
-    <powermock.version>2.0.9</powermock.version>
     <guava.version>30.1.1-jre</guava.version>
-    <servlet-api.version>3.1.0</servlet-api.version>
+    <servlet-api.version>4.0.1</servlet-api.version>
     <butterfly.version>1.2.0</butterfly.version>
     <servlet-api.version>4.0.1</servlet-api.version>
     <slf4j.version>1.7.32</slf4j.version>
     <hadoop.version>3.2.0</hadoop.version>
     <jetty.version>9.4.41.v20210516</jetty.version>
+    <okhttp.version>4.9.3</okhttp.version>
+    <jena.version>4.2.0</jena.version>
+    <poi.version>5.1.0</poi.version>
+    <powermock.version>2.0.9</powermock.version>
+    <commons-lang3.version>3.12.0</commons-lang3.version>
+    <commons-fileupload.version>1.4</commons-fileupload.version>
+    <commons-collections.version>3.2.2</commons-collections.version>
+    <commons-text.version>1.9</commons-text.version>
+    <commons-validator.version>1.7</commons-validator.version>
+    <!-- v1.15 of commons-codec is needed for Jena 3.14+ - copied from org.apache.jena:jena:pom -->
+    <commons-codec.version>1.15</commons-codec.version>
+    <commons-compress.version>1.21</commons-compress.version>
+    <velocity.version>1.5</velocity.version>
+    <marc4j.version>2.9.2</marc4j.version>
+    <jsoup.version>1.14.2</jsoup.version>
+    <odfdom-java.version>0.10.0</odfdom-java.version>
+    <vicino.version>1.2</vicino.version>
+    <signpost.version>2.1.1</signpost.version>
+    <clojure.version>1.10.3</clojure.version>
+    <httpclient.version>4.5.13</httpclient.version>
+    <httpclient5.version>5.1.2</httpclient5.version>
+    <httpcore.version>4.4.14</httpcore.version>
+    <opencsv-multichar.version>2.4</opencsv-multichar.version>
+    <swc-parser-lazy.version>3.1.9</swc-parser-lazy.version>
+    <commons-io.version>2.11.0</commons-io.version>
+    <guava.version>31.0.1-jre</guava.version>
+    <jaxb-api.version>2.3.1</jaxb-api.version>
+    <juniversalchardet.version>2.4.0</juniversalchardet.version>
     <testng.version>7.4.0</testng.version>
+    <httpmime.version>4.5.13</httpmime.version>
+    <owasp-encoder.version>1.2.3</owasp-encoder.version>
+    <jasypt.version>1.9.3</jasypt.version>
     <mockito.version>3.7.7</mockito.version>
-    <commons-io.version>2.9.0</commons-io.version>
-    <commons-codec.version>1.13</commons-codec.version>
+
+    <!-- plugin versions -->
+    <build-helper-maven-plugin.version>3.2.0</build-helper-maven-plugin.version>
+    <maven-compiler-plugin.version>3.8.1</maven-compiler-plugin.version>
+    <maven-resources-plugin.version>3.2.0</maven-resources-plugin.version>
+    <exec-maven-plugin.version>3.0.0</exec-maven-plugin.version>
+    <maven-dependency-plugin.version>3.2.0</maven-dependency-plugin.version>
+    <jacoco-maven-plugin.version>0.8.7</jacoco-maven-plugin.version>
+    <coveralls-maven-plugin.version>4.3.0</coveralls-maven-plugin.version>
+    <surefire.version>2.22.2</surefire.version>
+    <maven-jar-plugin.version>3.2.0</maven-jar-plugin.version>
+    <maven-clean-plugin.version>3.1.0</maven-clean-plugin.version>
+    <git-commit-id-plugin.version>4.9.10</git-commit-id-plugin.version>
+    <maven-deploy-plugin.version>3.0.0-M1</maven-deploy-plugin.version>
   </properties>
 
 
@@ -89,27 +131,9 @@
     <defaultGoal>install</defaultGoal>
     <plugins>
       <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>build-helper-maven-plugin</artifactId>
-        <version>3.2.0</version>
-        <executions>
-          <execution>
-            <phase>generate-sources</phase>
-            <goals>
-              <goal>add-source</goal>
-            </goals>
-            <configuration>
-              <sources>
-                <source>server/src</source>
-              </sources>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
-      <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
-        <version>3.8.1</version>
+	<version>${maven-compiler-plugin.version}</version>
         <configuration>
           <source>${java.minversion}</source>
           <target>${java.minversion}</target>
@@ -120,7 +144,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-resources-plugin</artifactId>
-        <version>3.2.0</version>
+	<version>${maven-resources-plugin.version}</version>
         <configuration>
           <encoding>UTF-8</encoding>
         </configuration>
@@ -128,7 +152,7 @@
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>exec-maven-plugin</artifactId>
-        <version>3.0.0</version>
+	<version>${exec-maven-plugin.version}</version>
         <configuration>
           <skip>true</skip>
           <mainClass>none</mainClass>
@@ -137,7 +161,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-dependency-plugin</artifactId>
-        <version>3.2.0</version>
+	<version>${maven-dependency-plugin.version}</version>
       </plugin>
       <!-- <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -153,7 +177,7 @@
       <plugin>
         <groupId>org.jacoco</groupId>
         <artifactId>jacoco-maven-plugin</artifactId>
-        <version>0.8.7</version>
+	<version>${jacoco-maven-plugin.version}</version>
         <executions>
             <execution>
                 <id>prepare-agent</id>
@@ -205,7 +229,7 @@
       <plugin>
         <groupId>org.eluder.coveralls</groupId>
         <artifactId>coveralls-maven-plugin</artifactId>
-        <version>4.3.0</version>
+	<version>${coveralls-maven-plugin.version}</version>
         <dependencies>
           <dependency>
             <groupId>javax.xml.bind</groupId>
@@ -223,6 +247,77 @@
              <sourceDirectory>extensions/gdata/src</sourceDirectory>
           </sourceDirectories>
         </configuration>
+       </plugin>
+       <plugin>
+	  <groupId>org.codehaus.mojo</groupId>
+	  <artifactId>build-helper-maven-plugin</artifactId>
+	  <version>${build-helper-maven-plugin.version}</version>
+	  <inherited>false</inherited>
+	  <executions>
+	    <!-- Attach tar.gz artifact for linux -->
+	    <execution>
+		<id>attach-linux</id>
+		<phase>package</phase>
+		<goals>
+		    <goal>attach-artifact</goal>
+		</goals>
+		<configuration>
+		    <artifacts>
+			<artifact>
+			    <file>packaging/target/${project.build.finalName}-linux-${project.version}.tar.gz</file>
+			    <type>tar.gz</type>
+			    <classifier>linux</classifier>
+			</artifact>
+		    </artifacts>
+		</configuration>
+	    </execution>
+	    
+	    <!-- Attach the zip file for windows -->
+	    <execution>
+		<id>attach-win</id>
+		<phase>package</phase>
+		<goals>
+		    <goal>attach-artifact</goal>
+		</goals>
+		<configuration>
+		    <skipAttach>${skipCreateExe}</skipAttach>
+		    <artifacts>
+			<artifact>
+			    <file>packaging/target/${project.build.finalName}-win-${project.version}.zip</file>
+			    <type>zip</type>
+			    <classifier>win</classifier>
+			</artifact>
+		    </artifacts>
+		</configuration>
+	    </execution>
+	    
+	    <!-- Attach the final DMG for MacOS -->
+	    <execution>
+		<id>attach-dmg</id>
+		<phase>package</phase>
+		<goals>
+		    <goal>attach-artifact</goal>
+		</goals>
+		<configuration>
+		    <artifacts>
+			<artifact>
+		            <file>packaging/target/${project.build.finalName}-mac-${project.version}.dmg</file>
+			    <type>dmg</type>
+			    <classifier>mac</classifier>
+			</artifact>
+		    </artifacts>
+		</configuration>
+	      </execution>
+	    </executions>
+          </plugin>
+
+       <plugin>
+	 <groupId>org.apache.maven.plugins</groupId>
+	 <artifactId>maven-deploy-plugin</artifactId>
+	 <version>${maven-deploy-plugin.version}</version>
+	 <configuration>
+            <deployAtEnd>true</deployAtEnd>
+	 </configuration>
        </plugin>
     </plugins>
   </build>
@@ -247,4 +342,12 @@
     </repository>
   </repositories>
 
+  <!-- Locations of the artifacts published -->
+  <distributionManagement>
+     <snapshotRepository>
+       <id>ossrh</id>
+       <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+     </snapshotRepository>
+  </distributionManagement>
+ 
 </project>

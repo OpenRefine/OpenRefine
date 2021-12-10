@@ -38,7 +38,7 @@
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>build-helper-maven-plugin</artifactId>
-        <version>3.2.0</version>
+	<version>${build-helper-maven-plugin.version}</version>
         <executions>
           <execution>
             <phase>generate-sources</phase>
@@ -56,7 +56,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
-        <version>3.8.1</version>
+	<version>${maven-compiler-plugin.version}</version>
         <configuration>
           <source>${java.minversion}</source>
           <target>${java.minversion}</target>
@@ -67,7 +67,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-resources-plugin</artifactId>
-        <version>3.2.0</version>
+	<version>${maven-resources-plugin.version}</version>
         <configuration>
           <encoding>UTF-8</encoding>
         </configuration>
@@ -75,7 +75,7 @@
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>exec-maven-plugin</artifactId>
-        <version>3.0.0</version>
+	<version>${exec-maven-plugin.version}</version>
         <configuration>
           <mainClass>org.openrefine.Refine</mainClass>
           <commandlineArgs>-Drefine.headless=true -Drefine.autoreload=true -Dbutterfly.autoreload=true -Drefine.memory=1400M -Drefine.port=3333 -Drefine.host=127.0.0.1</commandlineArgs>
@@ -85,7 +85,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
-        <version>2.22.0</version>
+	<version>${surefire.version}</version>
         <configuration>
           <skip>true</skip>
         </configuration>
@@ -96,7 +96,7 @@
         <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-dependency-plugin</artifactId>
-            <version>3.2.0</version>
+	    <version>${maven-dendency-plugin.version}</version>
             <configuration>
                 <includeScope>runtime</includeScope>
             </configuration>
@@ -177,11 +177,6 @@
       <groupId>org.openrefine.dependencies</groupId>
       <artifactId>butterfly</artifactId>
       <version>${butterfly.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.mozilla</groupId>
-      <artifactId>rhino-runtime</artifactId>
-      <version>1.7.13</version>
     </dependency>
     <dependency>
       <groupId>org.slf4j</groupId>

@@ -65,6 +65,9 @@ Refine.RdfTriplesParserUI.prototype.getOptions = function() {
   var options = {
     encoding: $.trim(this._optionContainerElmts.encodingInput[0].value)
   };
+
+  options.disableAutoPreview = this._optionContainerElmts.disableAutoPreviewCheckbox[0].checked;
+
   return options;
 };
 
@@ -77,6 +80,7 @@ Refine.RdfTriplesParserUI.prototype._initialize = function() {
   this._optionContainerElmts.previewButton.click(function() { self._updatePreview(); });
   
   this._optionContainerElmts.previewButton.html($.i18n('core-buttons/update-preview'));
+  $('#or-disable-auto-preview').text($.i18n('core-index-parser/disable-auto-preview'));
   $('#or-import-encoding').html($.i18n('core-index-import/char-encoding'));
 
   this._optionContainerElmts.encodingInput
@@ -87,8 +91,16 @@ Refine.RdfTriplesParserUI.prototype._initialize = function() {
       });
     });
 
+  if (this._config.disableAutoPreview) {
+    this._optionContainerElmts.disableAutoPreviewCheckbox.prop('checked', true);
+  }
+
+  // If disableAutoPreviewCheckbox is not checked, we will schedule an automatic update
   var onChange = function() {
-    self._scheduleUpdatePreview();
+    if (!self._optionContainerElmts.disableAutoPreviewCheckbox[0].checked)
+    {
+        self._scheduleUpdatePreview();
+    }
   };
   this._optionContainer.find("input").bind("change", onChange);
   this._optionContainer.find("select").bind("change", onChange);

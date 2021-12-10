@@ -68,7 +68,7 @@ import org.openrefine.wikidata.commands.ConnectionManager;
 import org.openrefine.wikidata.editing.EditBatchProcessor;
 import org.openrefine.wikidata.editing.NewItemLibrary;
 import org.openrefine.wikidata.schema.WikibaseSchema;
-import org.openrefine.wikidata.updates.ItemUpdate;
+import org.openrefine.wikidata.updates.TermedStatementEntityUpdate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wikidata.wdtk.util.WebResourceFetcherImpl;
@@ -240,7 +240,7 @@ public class PerformWikibaseEditsOperation extends EngineDependentOperation {
             }
 
             // Evaluate the schema
-            List<ItemUpdate> itemDocuments = _schema.evaluate(_grid, _engine);
+            List<TermedStatementEntityUpdate> itemDocuments = _schema.evaluate(_grid, _engine);
 
             // Prepare the edits
             NewItemLibrary newItemLibrary = new NewItemLibrary();

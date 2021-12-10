@@ -21,45 +21,21 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  ******************************************************************************/
-package org.openrefine.wikidata.qa.scrutinizers;
+package org.openrefine.wikidata.schema.entityvalues;
 
-import org.openrefine.wikidata.updates.TermedStatementEntityUpdate;
 import org.wikidata.wdtk.datamodel.interfaces.EntityIdValue;
-import org.wikidata.wdtk.datamodel.interfaces.MonolingualTextValue;
-import org.wikidata.wdtk.datamodel.interfaces.Snak;
-import org.wikidata.wdtk.datamodel.interfaces.Value;
-import org.wikidata.wdtk.datamodel.interfaces.ValueSnak;
+import org.wikidata.wdtk.datamodel.interfaces.MediaInfoIdValue;
 
-/**
- * A scrutinizer that inspects the values of snaks and terms
- * 
- * @author Antonin Delpeuch
- *
- */
-public abstract class ValueScrutinizer extends SnakScrutinizer {
+import org.openrefine.model.recon.Recon;
 
-    @Override
-    public void scrutinize(TermedStatementEntityUpdate update) {
-        super.scrutinize(update);
+public class ReconMediaInfoIdValue extends ReconEntityIdValue implements MediaInfoIdValue {
 
-        for (MonolingualTextValue label : update.getLabels()) {
-            scrutinize(label);
-        }
-        for (MonolingualTextValue alias : update.getAliases()) {
-            scrutinize(alias);
-        }
-        for (MonolingualTextValue description : update.getDescriptions()) {
-            scrutinize(description);
-        }
+    public ReconMediaInfoIdValue(Recon recon, String cellValue) {
+        super(recon, cellValue);
     }
 
-    public abstract void scrutinize(Value value);
-
     @Override
-    public void scrutinize(Snak snak, EntityIdValue entityId, boolean added) {
-        if (snak instanceof ValueSnak) {
-            scrutinize(((ValueSnak)snak).getValue());
-        }
+    public String getEntityType() {
+        return EntityIdValue.ET_MEDIA_INFO;
     }
-
 }
