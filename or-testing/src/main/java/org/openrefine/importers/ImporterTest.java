@@ -62,7 +62,7 @@ import org.openrefine.model.GridState;
 import org.openrefine.util.ParsingUtilities;
 import org.openrefine.util.TestUtils;
 
-public abstract class ImporterTest extends RefineTest {
+public class ImporterTest extends RefineTest {
 
     // mock dependencies
     protected ProjectMetadata metadata;
