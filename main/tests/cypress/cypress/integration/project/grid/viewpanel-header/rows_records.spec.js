@@ -145,9 +145,9 @@ describe(__filename, function () {
     const projectName = Date.now();
     cy.loadAndVisitSampleJSONProject(projectName, jsonValue);
     cy.get('span[bind="modeSelectors"]').contains('records').click();
-    for (let i = 1; i <= 3; i++) {
-      cy.get('tr td:nth-child(3)').should('to.contain', i);
-    }
+    cy.get('tr td:nth-child(3)').should('to.contain', '1');
+    cy.get('tr td:nth-child(3)').should('not.to.contain', '2');
+    cy.get('tr td:nth-child(3)').should('to.contain', '8');
     cy.get('span[bind="modeSelectors"]').contains('row').click();
     for (let i = 1; i <= 10; i++) {
       cy.get('tr td:nth-child(3)').should('to.contain', i);
