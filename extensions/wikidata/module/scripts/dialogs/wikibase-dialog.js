@@ -72,7 +72,6 @@ WikibaseDialog.addWikibaseManifest = function () {
   elmts.cancelButton.text($.i18n("wikibase-addition/cancel"));
   elmts.addButton.text($.i18n("wikibase-addition/add-wikibase"));
   elmts.invalidManifest.hide();
-  elmts.invalidManifest.text($.i18n("wikibase-addition/invalid-manifest"));
 
   let level = DialogSystem.showDialog(frame);
 
@@ -104,6 +103,7 @@ WikibaseDialog.addWikibaseManifest = function () {
       } catch (e) {
         console.error(e);
         elmts.invalidManifest.show();
+        elmts.invalidManifest.text($.i18n(e.toString()));
       }
     }
   });

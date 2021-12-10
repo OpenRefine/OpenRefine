@@ -118,9 +118,9 @@ describe(__filename, function () {
 
     cy.get('#project-tags-container').click();
     // Type and Validate the tag, pressing enter
-    cy.get('#project-tags-container .select2-input').type(uniqueTagName1);
+    cy.get('#project-tags-container .select2-input').type(uniqueTagName1, { force: true });
     cy.get('body').type('{enter}');
-    cy.get('#project-tags-container .select2-input').type(uniqueTagName2);
+    cy.get('#project-tags-container .select2-input').type(uniqueTagName2, { force: true });
     cy.get('body').type('{enter}');
     cy.get('#or-import-parsopt').click();
 
