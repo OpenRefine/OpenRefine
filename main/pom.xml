@@ -131,23 +131,23 @@
   <dependencies>
     <dependency>
       <groupId>${project.groupId}</groupId>
-      <artifactId>or-model</artifactId>
+      <artifactId>refine-model</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>${project.groupId}</groupId>
-      <artifactId>or-grel</artifactId>
+      <artifactId>refine-grel</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>${project.groupId}</groupId>
-      <artifactId>or-localrunner</artifactId>
+      <artifactId>refine-local-runner</artifactId>
       <version>${project.version}</version>
       <scope>runtime</scope> <!-- To ensure that we do not rely on any local runner-specific feature unless dynamically loaded -->
     </dependency>
     <dependency>
       <groupId>${project.groupId}</groupId>
-      <artifactId>or-spark</artifactId>
+      <artifactId>refine-spark-runner</artifactId>
       <version>${project.version}</version>
       <scope>runtime</scope> <!-- To ensure that we do not rely on any Spark-specific feature unless dynamically loaded -->
     </dependency>
@@ -353,7 +353,7 @@
 
     <dependency>
       <groupId>${project.groupId}</groupId>
-      <artifactId>or-testing</artifactId>
+      <artifactId>refine-testing</artifactId>
       <version>${project.version}</version>
       <scope>test</scope>
     </dependency> 
@@ -377,7 +377,7 @@
     </dependency> 
     <dependency>
       <groupId>${project.groupId}</groupId>
-      <artifactId>or-util</artifactId>
+      <artifactId>refine-util</artifactId>
       <version>${project.version}</version>
       <scope>test</scope>
     </dependency>

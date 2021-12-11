@@ -45,12 +45,12 @@
   </issueManagement>
 
   <modules>
-        <module>or-model</module>
-        <module>or-grel</module>
-        <module>or-util</module>
-        <module>or-testing</module>
-        <module>or-spark</module>
-        <module>or-localrunner</module>
+        <module>refine-model</module>
+        <module>refine-grel</module>
+        <module>refine-util</module>
+        <module>refine-testing</module>
+        <module>refine-spark-runner</module>
+        <module>refine-local-runner</module>
         <module>main</module>
         <module>server</module>
         <module>extensions</module>

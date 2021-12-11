@@ -2,7 +2,7 @@
 	 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
-  <artifactId>or-localrunner</artifactId>
+  <artifactId>refine-local-runner</artifactId>
   <packaging>jar</packaging>
 
   <name>OpenRefine - Local runner</name>
@@ -57,12 +57,12 @@
   <dependencies>
     <dependency>
       <groupId>${project.groupId}</groupId>
-      <artifactId>or-model</artifactId>
+      <artifactId>refine-model</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>${project.groupId}</groupId>
-      <artifactId>or-util</artifactId>
+      <artifactId>refine-util</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
@@ -121,7 +121,7 @@
 
     <dependency>
       <groupId>${project.groupId}</groupId>
-      <artifactId>or-testing</artifactId>
+      <artifactId>refine-testing</artifactId>
       <version>${project.version}</version>
       <scope>test</scope>
     </dependency> 

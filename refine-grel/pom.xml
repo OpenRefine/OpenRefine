@@ -2,7 +2,7 @@
 	 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
-  <artifactId>or-grel</artifactId>
+  <artifactId>refine-grel</artifactId>
   <packaging>jar</packaging>
 
   <name>OpenRefine - GREL</name>
@@ -57,7 +57,7 @@
   <dependencies>
     <dependency>
       <groupId>${project.groupId}</groupId>
-      <artifactId>or-model</artifactId>
+      <artifactId>refine-model</artifactId>
       <version>${project.version}</version>
       <scope>provided</scope>
     </dependency>
@@ -112,13 +112,13 @@
 
      <dependency>
       <groupId>${project.groupId}</groupId>
-      <artifactId>or-testing</artifactId>
+      <artifactId>refine-testing</artifactId>
       <version>${project.version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>${project.groupId}</groupId>
-      <artifactId>or-util</artifactId>
+      <artifactId>refine-util</artifactId>
       <version>${project.version}</version>
       <scope>test</scope>
     </dependency>
