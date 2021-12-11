@@ -264,7 +264,7 @@
 		<configuration>
 		    <artifacts>
 			<artifact>
-			    <file>packaging/target/${project.build.finalName}-linux-${project.version}.tar.gz</file>
+			    <file>packaging/target/${project.artifactId}-linux-${project.version}.tar.gz</file>
 			    <type>tar.gz</type>
 			    <classifier>linux</classifier>
 			</artifact>
@@ -283,7 +283,7 @@
 		    <skipAttach>${skipCreateExe}</skipAttach>
 		    <artifacts>
 			<artifact>
-			    <file>packaging/target/${project.build.finalName}-win-${project.version}.zip</file>
+			    <file>packaging/target/${project.artifactId}-win-${project.version}.zip</file>
 			    <type>zip</type>
 			    <classifier>win</classifier>
 			</artifact>
@@ -292,6 +292,8 @@
 	    </execution>
 	    
 	    <!-- Attach the final DMG for MacOS -->
+	    <!-- temporarily disabled while we fix DMG generation -->
+	    <!--
 	    <execution>
 		<id>attach-dmg</id>
 		<phase>package</phase>
@@ -308,6 +310,7 @@
 		    </artifacts>
 		</configuration>
 	      </execution>
+            -->
 	    </executions>
           </plugin>
 
