@@ -51,6 +51,7 @@
         <module>refine-testing</module>
         <module>refine-spark-runner</module>
         <module>refine-local-runner</module>
+	<module>refine-workflow</module>
         <module>main</module>
         <module>server</module>
         <module>extensions</module>
