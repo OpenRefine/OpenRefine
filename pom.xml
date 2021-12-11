@@ -310,8 +310,8 @@
 		    </artifacts>
 		</configuration>
 	      </execution>
-	    </executions>
             -->
+	    </executions>
           </plugin>
 
        <plugin>
