@@ -169,21 +169,19 @@ public class TextTransformOperation extends ExpressionBasedOperation {
                             }
                         }
 
-                        if (!ExpressionUtils.sameValue(oldValue, newValue)) {
-                            newCell = new Cell(newValue, (cell != null) ? cell.recon : null);
+                        newCell = new Cell(newValue, (cell != null) ? cell.recon : null);
 
-                            for (int i = 0; i < repeatCount; i++) {
-                                ExpressionUtils.bind(bindings, null, row, rowId, record, columnName, newCell);
+                        for (int i = 0; i < repeatCount; i++) {
+                            ExpressionUtils.bind(bindings, null, row, rowId, record, columnName, newCell);
 
-                                newValue = ExpressionUtils.wrapStorable(eval.evaluate(bindings));
-                                if (ExpressionUtils.isError(newValue)) {
-                                    break;
-                                } else if (ExpressionUtils.sameValue(newCell.value, newValue)) {
-                                    break;
-                                }
-
-                                newCell = new Cell(newValue, newCell.recon);
+                            newValue = ExpressionUtils.wrapStorable(eval.evaluate(bindings));
+                            if (ExpressionUtils.isError(newValue)) {
+                                break;
+                            } else if (ExpressionUtils.sameValue(newCell.value, newValue)) {
+                                break;
                             }
+
+                            newCell = new Cell(newValue, newCell.recon);
                         }
                     }
                 }

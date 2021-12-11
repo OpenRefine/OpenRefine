@@ -92,6 +92,20 @@ public class TextTransformTests extends RefineTest {
     }
 
     @Test
+    public void testTransformIdentity() throws DoesNotApplyException, NotImmediateOperationException {
+        Change change = new TextTransformOperation(
+                EngineConfig.ALL_ROWS,
+                "bar",
+                "grel:value",
+                OnError.SetToBlank,
+                false, 0).createChange();
+
+        GridState applied = change.apply(initialState, mock(ChangeContext.class));
+
+        assertGridEquals(applied, initialState);
+    }
+
+    @Test
     public void testTransformColumnInRecordsMode() throws DoesNotApplyException, NotImmediateOperationException {
         Change change = new TextTransformOperation(
                 EngineConfig.ALL_RECORDS,
