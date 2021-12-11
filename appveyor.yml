@@ -41,6 +41,8 @@ before_test:
 
     copy extensions\database\tests\conf\appveyor_tests.xml extensions\database\tests\conf\tests.xml
     copy packaging\test_pom.xml packaging\pom.xml
+
+    HADOOP_HOME=C:\projects\openrefine\server\lib-local\native\windows\hadoop
 - cmd: |-
     mvn process-resources
     mvn package -DskipTests=true -Dmaven.javadoc.skip=true -B -V
