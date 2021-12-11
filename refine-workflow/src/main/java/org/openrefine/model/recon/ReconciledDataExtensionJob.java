@@ -48,7 +48,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import org.openrefine.RefineServlet;
 import org.openrefine.expr.functions.ToDate;
 import org.openrefine.model.Cell;
 import org.openrefine.model.recon.Recon.Judgment;
