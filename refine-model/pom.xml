@@ -2,7 +2,7 @@
 	 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
-  <artifactId>or-model</artifactId>
+  <artifactId>refine-model</artifactId>
   <packaging>jar</packaging>
 
   <name>OpenRefine - model</name>
@@ -144,7 +144,7 @@
 
     <dependency>
       <groupId>${project.groupId}</groupId>
-      <artifactId>or-util</artifactId>
+      <artifactId>refine-util</artifactId>
       <version>${project.version}</version>
       <scope>test</scope>
     </dependency>

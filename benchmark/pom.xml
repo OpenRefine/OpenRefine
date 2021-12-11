@@ -23,13 +23,13 @@
     </dependency>
     <dependency>
       <groupId>${project.groupId}</groupId>
-      <artifactId>or-grel</artifactId>
+      <artifactId>refine-grel</artifactId>
       <version>${project.version}</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>${project.groupId}</groupId>
-      <artifactId>or-model</artifactId>
+      <artifactId>refine-model</artifactId>
       <version>${project.version}</version>
       <scope>provided</scope>
     </dependency>
