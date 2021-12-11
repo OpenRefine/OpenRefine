@@ -42,6 +42,11 @@ public class UnescapeTests extends FunctionTestBase {
         assertEquals(invoke("unescape", "\"\n\"", "csv"), "\n");
         assertEquals(invoke("unescape", "\"a, b\"", "csv"), "a, b");
     }
+    
+    @Test
+    public void testUnescapeHTMLTwice() {
+    	assertEquals(invoke("unescape", "<br />", "html"), "<br />");
+    }
 
 }
 
