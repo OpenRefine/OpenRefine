@@ -4,6 +4,9 @@ on:
   pull_request_target:
     paths-ignore:
       - 'docs/**'
+    branches:
+      - master
+      - '4.0'
 
 permissions: read-all
 
