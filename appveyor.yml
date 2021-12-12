@@ -54,7 +54,7 @@ test_script:
 
     path
 
-    mvn test -X
+    mvn test
 
 on_failure:
 - cmd: |-

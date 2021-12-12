@@ -53,6 +53,9 @@
           <suiteXmlFiles>
             <suiteXmlFile>src/test/conf/suite.xml</suiteXmlFile>
           </suiteXmlFiles>
+	  <!-- errors should be shown in the console directly -->
+	  <useFile>false</useFile>
+	  <trimStackTrace>false</trimStackTrace>
         </configuration>
       </plugin>
     </plugins>
