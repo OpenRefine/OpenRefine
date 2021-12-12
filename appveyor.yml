@@ -54,7 +54,7 @@ test_script:
 
     path
 
-    refine test
+    mvn test -e
 
 on_failure:
 - cmd: |-
