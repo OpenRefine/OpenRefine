@@ -259,16 +259,6 @@
       <version>${vicino.version}</version>
     </dependency>
     <dependency>
-      <groupId>oauth.signpost</groupId>
-      <artifactId>signpost-core</artifactId>
-      <version>${signpost.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>oauth.signpost</groupId>
-      <artifactId>signpost-commonshttp4</artifactId>
-      <version>${signpost.version}</version>
-    </dependency>
-    <dependency>
       <groupId>org.clojure</groupId>
       <artifactId>clojure</artifactId>
       <version>${clojure.version}</version>
