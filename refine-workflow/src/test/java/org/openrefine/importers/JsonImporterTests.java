@@ -33,14 +33,19 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package org.openrefine.importers;
 
-import java.io.*;
-import java.util.ArrayList;
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.Serializable;
+import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
-
+import org.apache.commons.io.Charsets;
+import org.apache.commons.io.FileUtils;
 import org.openrefine.importers.JsonImporter.JSONTreeReader;
 import org.openrefine.importers.tree.ImportColumnGroup;
 import org.openrefine.importers.tree.TreeImportUtilities.ColumnIndexAllocator;
@@ -52,8 +57,6 @@ import org.openrefine.model.GridState;
 import org.openrefine.model.Row;
 import org.openrefine.util.JSONUtilities;
 import org.openrefine.util.ParsingUtilities;
-import org.apache.commons.io.Charsets;
-import org.apache.commons.io.FileUtils;
 import org.slf4j.LoggerFactory;
 import org.testng.Assert;
 import org.testng.ITestResult;
@@ -154,8 +157,10 @@ public class JsonImporterTests extends ImporterTest {
 	        );
 	        Assert.fail("Parsing should have thrown an error");
         } catch(Exception exception) {
-        	Assert.assertEquals("Unexpected character (';' (code 59)): was expecting comma to separate OBJECT entries",
-                exception.getMessage());
+        	Assert.assertEquals(
+        			exception.getMessage(),
+        			"Unexpected character (';' (code 59)): was expecting comma to separate Object entries"
+                );
         }
     }
 

@@ -15,7 +15,7 @@
   </parent>
 
   <properties>
-    <spark.version>2.4.5</spark.version>
+    <spark.version>3.2.0</spark.version>
   </properties>
 
   <!-- We need to create the .jar at compilation stage because
@@ -53,6 +53,9 @@
           <suiteXmlFiles>
             <suiteXmlFile>src/test/conf/suite.xml</suiteXmlFile>
           </suiteXmlFiles>
+	  <!-- errors should be shown in the console directly -->
+	  <useFile>false</useFile>
+	  <trimStackTrace>false</trimStackTrace>
         </configuration>
       </plugin>
     </plugins>
@@ -70,11 +73,6 @@
       <version>${spark.version}</version>
     </dependency>
     <dependency>
-      <groupId>org.apache.spark</groupId>
-      <artifactId>spark-sql_2.12</artifactId>
-      <version>${spark.version}</version>
-    </dependency>
-    <dependency>
       <groupId>com.fasterxml.jackson.core</groupId>
       <artifactId>jackson-core</artifactId>
       <version>${jackson.version}</version>
@@ -88,6 +86,11 @@
       <groupId>com.fasterxml.jackson.core</groupId>
       <artifactId>jackson-annotations</artifactId>
       <version>${jackson.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.commons</groupId>
+      <artifactId>commons-lang3</artifactId>
+      <version>${commons-lang3.version}</version>
     </dependency>
     <dependency>
       <groupId>org.slf4j</groupId>

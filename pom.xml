@@ -69,13 +69,13 @@
     <surefireArgs/>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <!-- dependency versions -->
-    <jackson.version>2.6.7</jackson.version>
+    <jackson.version>2.12.3</jackson.version> <!-- to match Spark's dependencies -->
     <guava.version>30.1.1-jre</guava.version>
     <servlet-api.version>4.0.1</servlet-api.version>
     <butterfly.version>1.2.0</butterfly.version>
     <servlet-api.version>4.0.1</servlet-api.version>
     <slf4j.version>1.7.32</slf4j.version>
-    <hadoop.version>3.2.0</hadoop.version>
+    <hadoop.version>3.3.1</hadoop.version>
     <jetty.version>9.4.41.v20210516</jetty.version>
     <okhttp.version>4.9.3</okhttp.version>
     <jena.version>4.2.0</jena.version>

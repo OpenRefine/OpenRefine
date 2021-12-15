@@ -51,7 +51,18 @@ public class LocalDatamodelRunner implements DatamodelRunner {
         defaultParallelism = configuration.getIntParameter("defaultParallelism", 4);
         minSplitSize = configuration.getLongParameter("minSplitSize", 4096L);
         maxSplitSize = configuration.getLongParameter("maxSplitSize", 16777216L);
+        
         Configuration fsConf = new Configuration();
+        // set up Hadoop on Windows
+        String os = System.getProperty("os.name").toLowerCase();
+        if (os.contains("windows")) {
+            try {
+                System.setProperty("hadoop.home.dir", new File("../server/lib-local/native/windows/hadoop").getCanonicalPath());
+            } catch (IOException e) {
+                logger.warn("unable to locate Windows Hadoop binaries, this will leave temporary files behind");
+            }
+        }
+        
         fsConf.set("fs.file.impl", OrderedLocalFileSystem.class.getName());
         fsConf.set("mapreduce.input.fileinputformat.split.minsize", Long.toString(minSplitSize));
         fsConf.set("mapreduce.input.fileinputformat.split.maxsize", Long.toString(maxSplitSize));
