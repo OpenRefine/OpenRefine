@@ -154,8 +154,10 @@ public class JsonImporterTests extends ImporterTest {
 	        );
 	        Assert.fail("Parsing should have thrown an error");
         } catch(Exception exception) {
-        	Assert.assertEquals("Unexpected character (';' (code 59)): was expecting comma to separate OBJECT entries",
-                exception.getMessage());
+        	Assert.assertEquals(
+        			exception.getMessage(),
+        			"Unexpected character (';' (code 59)): was expecting comma to separate Object entries"
+                );
         }
     }
 
