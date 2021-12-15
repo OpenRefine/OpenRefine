@@ -319,8 +319,7 @@ public class StandardReconConfig extends ReconConfig {
 
         // Only send limit if it's non-default (default = 0) to preserve backward
         // compatibility with services which might choke on this (pre-2013)
-        @JsonProperty("limit")
-        @JsonInclude(Include.NON_EMPTY)
+        @JsonIgnore
         protected int limit;
 
         public ReconQuery() {
@@ -350,6 +349,12 @@ public class StandardReconConfig extends ReconConfig {
             } catch (JsonProcessingException e) {
                 return super.toString();
             }
+        }
+
+        @JsonProperty("limit")
+        @JsonInclude(Include.NON_NULL)
+        public Integer getLimit() {
+            return limit == 0 ? null : limit;
         }
     }
 

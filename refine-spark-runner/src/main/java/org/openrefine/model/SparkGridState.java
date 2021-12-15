@@ -783,17 +783,18 @@ public class SparkGridState implements GridState {
                 runner);
     }
 
-    private static Function<Record, Iterable<Tuple2<Long, Row>>> rowPreservingRecordMap(RecordMapper mapper) {
-        return new Function<Record, Iterable<Tuple2<Long, Row>>>() {
+    private static FlatMapFunction<Record, Tuple2<Long, Row>> rowPreservingRecordMap(RecordMapper mapper) {
+        return new FlatMapFunction<Record, Tuple2<Long, Row>>() {
 
             private static final long serialVersionUID = 7501726558696862638L;
 
             @Override
-            public Iterable<Tuple2<Long, Row>> call(Record record) throws Exception {
+            public Iterator<Tuple2<Long, Row>> call(Record record) throws Exception {
                 List<Row> result = mapper.call(record);
                 return IntStream.range(0, result.size())
                         .mapToObj(i -> new Tuple2<Long, Row>(record.getStartRowId() + i, result.get(i)))
-                        .collect(Collectors.toList());
+                        .collect(Collectors.toList())
+                        .iterator();
             }
 
         };

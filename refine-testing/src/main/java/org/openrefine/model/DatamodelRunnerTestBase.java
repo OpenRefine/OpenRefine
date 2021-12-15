@@ -87,9 +87,13 @@ public abstract class DatamodelRunnerTestBase {
     }
 
     @AfterTest
-    public void tearDown() throws IOException {
+    public void tearDown() {
         SUT = null;
-        FileUtils.deleteDirectory(tempDir);
+        try {
+            FileUtils.deleteDirectory(tempDir);
+        } catch (IOException e) {
+            ;
+        }
         tempDir = null;
     }
 

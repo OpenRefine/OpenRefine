@@ -42,9 +42,13 @@ public class TextFilePLLTests extends PLLTestsBase {
     }
 
     @AfterTest
-    public void tearDown() throws IOException {
-        FileUtils.deleteDirectory(tempDir);
-        tempDir = null;
+    public void tearDown() {
+        try {
+            FileUtils.deleteDirectory(tempDir);
+        } catch (IOException e) {
+            e.printStackTrace();
+            tempDir = null;
+        }
     }
 
     @Test

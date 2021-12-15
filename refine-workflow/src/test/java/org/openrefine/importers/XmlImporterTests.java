@@ -33,7 +33,10 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package org.openrefine.importers;
 
-import java.io.*;
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.IOException;
+import java.io.Serializable;
 import java.util.Collections;
 
 import com.fasterxml.jackson.databind.node.ArrayNode;

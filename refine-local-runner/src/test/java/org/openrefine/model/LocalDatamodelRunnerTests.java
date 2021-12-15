@@ -25,6 +25,9 @@ public class LocalDatamodelRunnerTests extends DatamodelRunnerTestBase {
         // so that we can check the partitioning strategy without using large files
         map.put("minSplitSize", "128");
         map.put("maxSplitSize", "1024");
+
+        map.put("hadoopHomeDir", "../server/lib-local/native/windows/hadoop");
+
         RunnerConfiguration runnerConf = new RunnerConfigurationImpl(map);
         return new LocalDatamodelRunner(runnerConf);
     }

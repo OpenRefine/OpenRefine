@@ -33,7 +33,12 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package org.openrefine.importers;
 
-import java.io.*;
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.Serializable;
+import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -150,8 +155,9 @@ public class JsonImporterTests extends ImporterTest {
                     options);
             Assert.fail("Parsing should have thrown an error");
         } catch (Exception exception) {
-            Assert.assertEquals("Unexpected character (';' (code 59)): was expecting comma to separate OBJECT entries",
-                    exception.getMessage());
+            Assert.assertEquals(
+                    exception.getMessage(),
+                    "Unexpected character (';' (code 59)): was expecting comma to separate Object entries");
         }
     }
 
