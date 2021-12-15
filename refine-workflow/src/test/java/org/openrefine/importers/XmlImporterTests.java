@@ -33,22 +33,20 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package org.openrefine.importers;
 
-import java.io.*;
-import java.util.ArrayList;
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.IOException;
+import java.io.Serializable;
 import java.util.Collections;
-import java.util.LinkedList;
-import java.util.List;
 
+import org.apache.commons.io.Charsets;
+import org.apache.commons.io.FileUtils;
 import org.openrefine.importers.tree.TreeImportingParserBase;
 import org.openrefine.importing.ImportingJob;
 import org.openrefine.model.GridState;
 import org.openrefine.model.Row;
 import org.openrefine.util.JSONUtilities;
 import org.openrefine.util.ParsingUtilities;
-
-import org.openrefine.importers.tree.ImportColumnGroup;
-import org.apache.commons.io.Charsets;
-import org.apache.commons.io.FileUtils;
 import org.slf4j.LoggerFactory;
 import org.testng.Assert;
 import org.testng.annotations.AfterMethod;
