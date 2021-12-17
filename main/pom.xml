@@ -155,6 +155,20 @@
       <groupId>org.openrefine.dependencies</groupId>
       <artifactId>butterfly</artifactId>
       <version>${butterfly.version}</version>
+      <exclusions>
+	<exclusion>
+          <groupId>org.apache.logging.log4j</groupId>
+	  <artifactId>log4j-1.2-api</artifactId>
+	</exclusion>
+	<exclusion>
+          <groupId>org.apache.logging.log4j</groupId>
+	  <artifactId>log4j-slf4j-impl</artifactId>
+	</exclusion>
+	<exclusion>
+          <groupId>org.apache.logging.log4j</groupId>
+	  <artifactId>log4j-core</artifactId>
+	</exclusion>
+      </exclusions>
     </dependency>
     <dependency>
       <groupId>com.fasterxml.jackson.core</groupId>
@@ -168,13 +182,9 @@
     </dependency>
     <dependency>
       <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-log4j12</artifactId>
-      <version>${slf4j.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.slf4j</groupId>
       <artifactId>slf4j-api</artifactId>
       <version>${slf4j.version}</version>
+      <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.apache.commons</groupId>
@@ -230,11 +240,23 @@
       <groupId>org.apache.poi</groupId>
       <artifactId>poi</artifactId>
       <version>${poi.version}</version>
+      <exclusions>
+	<exclusion>
+          <groupId>org.apache.logging.log4j</groupId>
+	  <artifactId>log4j-api</artifactId>
+	</exclusion>
+      </exclusions>
     </dependency>
     <dependency>
       <groupId>org.apache.poi</groupId>
       <artifactId>poi-ooxml</artifactId>
       <version>${poi.version}</version>
+      <exclusions>
+	<exclusion>
+          <groupId>org.apache.logging.log4j</groupId>
+	  <artifactId>log4j-api</artifactId>
+	</exclusion>
+      </exclusions>
     </dependency>
     <dependency>
       <groupId>org.odftoolkit</groupId>
@@ -257,6 +279,12 @@
       <groupId>org.openrefine.dependencies</groupId>
       <artifactId>vicino</artifactId>
       <version>${vicino.version}</version>
+      <exclusions>
+	<exclusion>
+	  <groupId>log4j</groupId>
+	  <artifactId>log4j</artifactId>
+	</exclusion>
+      </exclusions>
     </dependency>
     <dependency>
       <groupId>org.clojure</groupId>

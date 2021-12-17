@@ -65,8 +65,9 @@
     <!-- dependency versions -->
     <jackson.version>2.13.0</jackson.version>
     <servlet-api.version>4.0.1</servlet-api.version>
-    <butterfly.version>1.2.0</butterfly.version>
+    <butterfly.version>1.2.1</butterfly.version>
     <slf4j.version>1.7.32</slf4j.version>
+    <log4j.version>2.16.0</log4j.version>
     <jetty.version>9.4.41.v20210516</jetty.version>
     <okhttp.version>4.9.3</okhttp.version>
     <jena.version>4.3.1</jena.version>
