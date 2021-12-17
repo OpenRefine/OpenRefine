@@ -25,6 +25,7 @@ package org.openrefine.wikidata.editing;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -42,8 +43,12 @@ import org.wikidata.wdtk.datamodel.interfaces.EntityDocument;
 import org.wikidata.wdtk.datamodel.interfaces.EntityIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.ItemDocument;
 import org.wikidata.wdtk.datamodel.interfaces.ItemIdValue;
+import org.wikidata.wdtk.datamodel.interfaces.MediaInfoDocument;
 import org.wikidata.wdtk.datamodel.interfaces.MediaInfoIdValue;
+import org.wikidata.wdtk.datamodel.interfaces.MediaInfoUpdate;
 import org.wikidata.wdtk.datamodel.interfaces.MonolingualTextValue;
+import org.wikidata.wdtk.datamodel.interfaces.StatementUpdate;
+import org.wikidata.wdtk.datamodel.interfaces.TermUpdate;
 import org.wikidata.wdtk.wikibaseapi.WikibaseDataEditor;
 import org.wikidata.wdtk.wikibaseapi.WikibaseDataFetcher;
 import org.wikidata.wdtk.wikibaseapi.apierrors.MediaWikiApiErrorException;
@@ -186,7 +191,16 @@ public class EditBatchProcessor {
 	                        update.getDeletedStatements().stream().collect(Collectors.toList()),
 	                        summary, tags);
                 } else if (newCell instanceof MediaInfoIdValue) {
-                    throw new NotImplementedException();
+                    MediaInfoDocument currentDocument = (MediaInfoDocument) currentDocs.get(update.getItemId().getId());
+	                List<MonolingualTextValue> labels = update.getLabels().stream().collect(Collectors.toList());
+	                labels.addAll(update.getLabelsIfNew().stream()
+	                      .filter(label -> !currentDocument.getLabels().containsKey(label.getLanguageCode())).collect(Collectors.toList()));
+	                TermUpdate labelUpdate = Datamodel.makeTermUpdate(labels, Collections.emptyList());
+	                StatementUpdate statementUpdate = Datamodel.makeStatementUpdate(update.getAddedStatements(), update.getDeletedStatements(),
+                            Collections.emptyList());
+	                MediaInfoUpdate updatesCollection = Datamodel.makeMediaInfoUpdate((MediaInfoIdValue) update.getItemId(),
+                            currentDocument.getRevisionId(), labelUpdate, statementUpdate);
+	                editor.editEntityDocument(updatesCollection, false, summary, tags);
                 }
             }
         } catch (MediaWikiApiErrorException e) {
