@@ -313,6 +313,7 @@
               <jre>
                 <path>${windows.package.jre.path}</path>
                 <minVersion>1.8.0</minVersion>
+                <maxVersion>17</maxVersion>
                 <bundledJreAsFallback>true</bundledJreAsFallback>
                 <initialHeapSize>512</initialHeapSize>
                 <maxHeapSize>2048</maxHeapSize>
