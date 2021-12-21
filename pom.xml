@@ -70,7 +70,7 @@
     <log4j.version>2.17.0</log4j.version>
     <jetty.version>9.4.41.v20210516</jetty.version>
     <okhttp.version>4.9.3</okhttp.version>
-    <jena.version>4.3.1</jena.version>
+    <jena.version>4.3.2</jena.version>
     <poi.version>5.1.0</poi.version>
     <powermock.version>2.0.9</powermock.version>
     <commons-lang3.version>3.12.0</commons-lang3.version>
