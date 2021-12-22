@@ -74,7 +74,7 @@ public class CsvExporter implements WriterExporter {
             throws IOException {
 
         String optionsString = (params == null) ? null : params.getProperty("options");
-        com.google.refine.exporters.CsvExporter.Configuration options = new com.google.refine.exporters.CsvExporter.Configuration();
+        Configuration options = new Configuration();
         if (optionsString != null) {
             try {
                 options = ParsingUtilities.mapper.readValue(optionsString, com.google.refine.exporters.CsvExporter.Configuration.class);
