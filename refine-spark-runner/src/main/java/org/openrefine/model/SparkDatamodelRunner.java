@@ -46,10 +46,12 @@ public class SparkDatamodelRunner implements DatamodelRunner {
     static final Logger logger = LoggerFactory.getLogger(SparkDatamodelRunner.class);
 
     private JavaSparkContext context;
-    private int defaultParallelism;
+    private final int defaultParallelism;
+    private final String sparkMasterURI;
 
     public SparkDatamodelRunner(RunnerConfiguration configuration) {
         this.defaultParallelism = configuration.getIntParameter("defaultParallelism", 4);
+        this.sparkMasterURI = configuration.getParameter("sparkMasterURI", String.format("local[%d]", defaultParallelism));
 
         Thread.currentThread().setContextClassLoader(JavaSparkContext.class.getClassLoader());
 
@@ -66,7 +68,7 @@ public class SparkDatamodelRunner implements DatamodelRunner {
         context = new JavaSparkContext(
                 new SparkConf()
                         .setAppName("OpenRefine")
-                        .setMaster(String.format("local[%d]", defaultParallelism)));
+                        .setMaster(sparkMasterURI));
         context.setLogLevel("WARN");
         context.hadoopConfiguration().set("fs.file.impl", OrderedLocalFileSystem.class.getName());
 
@@ -78,6 +80,7 @@ public class SparkDatamodelRunner implements DatamodelRunner {
     public SparkDatamodelRunner(JavaSparkContext context) {
         this.context = context;
         this.defaultParallelism = context.defaultParallelism();
+        this.sparkMasterURI = null;
     }
 
     public JavaSparkContext getContext() {

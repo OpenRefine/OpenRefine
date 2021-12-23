@@ -87,6 +87,14 @@
       <version>${hadoop.version}</version>
     </dependency>
     <dependency>
+      <!-- added to override the version of this dependency through hadoop-common. -->
+      <!-- as of hadoop-common:3.3.1, it depends on paranamer 2.3, which fails at runtime. -->
+      <!-- therefore upgrading to paranamer 2.8 -->
+      <groupId>com.thoughtworks.paranamer</groupId>
+      <artifactId>paranamer</artifactId>
+      <version>2.8</version>
+    </dependency>
+    <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-api</artifactId>
       <version>${slf4j.version}</version>
