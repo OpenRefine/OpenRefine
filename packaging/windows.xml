@@ -13,22 +13,16 @@
     <include>**</include>
     </includes>
    </fileSet>
-    <fileSet>
+   <fileSet>
       <directory>${rootdir}/server/target/lib</directory>
       <outputDirectory>server/target/lib</outputDirectory>
       <includes>
 	<include>*.jar</include>
       </includes>
     </fileSet>
-    <fileSet>
-      <directory>${rootdir}/server/lib-local/native</directory>
-      <outputDirectory>server/target/lib/native</outputDirectory>
-      <includes>
-	<include>**/*.dll</include>
-	<include>**/*.exe</include>
-	<include>**/*.lib</include>
-	<include>**/*.cmd</include>
-      </includes>
+   <fileSet>
+      <directory>${rootdir}/server/lib-local/native/windows/hadoop/bin</directory>
+      <outputDirectory>server/lib-local/native/windows/hadoop/bin</outputDirectory>
     </fileSet>
     <fileSet>
       <directory>${rootdir}/main/webapp</directory>
