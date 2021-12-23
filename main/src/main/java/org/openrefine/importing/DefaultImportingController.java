@@ -37,7 +37,6 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.io.Writer;
-import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Properties;
@@ -48,6 +47,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import org.openrefine.RefineServlet;
@@ -138,8 +138,9 @@ public class DefaultImportingController implements ImportingController {
             return;
         }
 
-        List<Integer> fileSelectionArray = Arrays.asList((Integer[]) JSONUtilities.toArray(ParsingUtilities.evaluateJsonStringToArrayNode(
-                request.getParameter("fileSelection"))));
+        String selection = request.getParameter("fileSelection");
+        List<Integer> fileSelectionArray = ParsingUtilities.mapper.readValue(selection, new TypeReference<List<Integer>>() {
+        });
 
         job.setFileSelection(fileSelectionArray);
 
