@@ -55,6 +55,7 @@ import org.openrefine.util.ParsingUtilities;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
@@ -140,8 +141,8 @@ public class DefaultImportingController implements ImportingController {
             return;
         }
         
-        List<Integer> fileSelectionArray = Arrays.asList((Integer[])JSONUtilities.toArray(ParsingUtilities.evaluateJsonStringToArrayNode(
-                request.getParameter("fileSelection"))));
+        String selection = request.getParameter("fileSelection");
+        List<Integer> fileSelectionArray = ParsingUtilities.mapper.readValue(selection, new TypeReference<List<Integer>>() { });
         
         job.setFileSelection(fileSelectionArray);
 		
