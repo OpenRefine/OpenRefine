@@ -112,6 +112,7 @@ if ""%1"" == ""/H"" goto arg-H
 if ""%1"" == ""/w"" goto arg-w
 if ""%1"" == ""/d"" goto arg-d
 if ""%1"" == ""/m"" goto arg-m
+if ""%1"" == ""/r"" goto arg-r
 if ""%1"" == ""/x"" goto arg-x
 goto endArgumentParsing
 
