@@ -15,5 +15,6 @@ The Spark runner uses [Apache Spark](https://spark.apache.org/) to execute workf
 The following configuration parameters can be used with this runner:
 |Configuration key|Default value|Description|
 |---|---|---|
-| `refine.runner.defaultParallelism` | 4 | how many partitions datasets should generally be split, unless they are very small or very big |
+| `refine.runner.defaultParallelism` | `4` | how many partitions datasets should generally be split, unless they are very small or very big |
+| `refine.runner.sparkMasterURI` | `local[4]` | a Spark URI, such as `spark://host:port` or `mesos://host:port`, to connect to an external Spark cluster for the execution of workflows. |
 

@@ -210,6 +210,8 @@ Some of the most common keys (with their defaults) are:
 *   The application folder: `-Drefine.webapp` (main/webapp)
 *   The datamodel runner: `-Drefine.runner.class (org.openrefine.model.LocalDatamodelRunner)`
 
+In addition to those settings, each [data model runner](../technical-reference/workflow-execution/overview#available-runners) can accept further parameters, defined in a similar way.
+
 The syntax is as follows:
 
 <Tabs
