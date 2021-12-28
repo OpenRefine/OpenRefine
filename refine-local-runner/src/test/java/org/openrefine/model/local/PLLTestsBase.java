@@ -27,16 +27,6 @@ public class PLLTestsBase {
         if (context == null) {
             Configuration conf = new Configuration();
             
-            // set up Hadoop on Windows
-            String os = System.getProperty("os.name").toLowerCase();
-            if (os.contains("windows")) {
-                try {
-                    System.setProperty("hadoop.home.dir", new File("../server/lib-local/native/windows/hadoop").getCanonicalPath());
-                } catch (IOException e) {
-                    logger.warn("unable to locate Windows Hadoop binaries, this will leave temporary files behind");
-                }
-            }
-            
             // these values are purposely very low for testing purposes,
             // so that we can check the partitioning strategy without using large files
             conf.set("fs.file.impl", OrderedLocalFileSystem.class.getName());

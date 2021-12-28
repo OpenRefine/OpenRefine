@@ -22,18 +22,6 @@ public class SparkBasedTest {
 	
     static final Logger logger = LoggerFactory.getLogger(SparkBasedTest.class);
 	
-	static {
-        // set up Hadoop on Windows
-        String os = System.getProperty("os.name").toLowerCase();
-        if (os.contains("windows")) {
-            try {
-                System.setProperty("hadoop.home.dir", new File("../server/lib-local/native/windows/hadoop").getCanonicalPath());
-            } catch (IOException e) {
-                logger.warn("unable to locate Windows Hadoop binaries, this will leave temporary files behind");
-            }
-        }
-	}
-    
     protected static SparkConf sparkConf = new SparkConf().setAppName("SparkBasedTest").setMaster("local");
     public static JavaSparkContext context = new JavaSparkContext(sparkConf);
     static {

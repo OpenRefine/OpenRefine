@@ -216,9 +216,6 @@
                 <bundledJreAsFallback>${windows.package.jre.bundledAsFallback}</bundledJreAsFallback>
                 <initialHeapSize>512</initialHeapSize>
                 <maxHeapSize>2048</maxHeapSize>
-                <opts>
-                  <opt>-Djava.library.path=server/lib-local/native/windows/hadoop/bin</opt>
-                </opts>
               </jre>
               <versionInfo>
                 <fileVersion>${fullversion}</fileVersion>
