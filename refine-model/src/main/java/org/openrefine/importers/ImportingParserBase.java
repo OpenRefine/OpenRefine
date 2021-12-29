@@ -39,7 +39,6 @@ import java.io.Reader;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.hadoop.fs.FileSystem;
 import org.openrefine.ProjectMetadata;
 import org.openrefine.importing.ImportingFileRecord;
 import org.openrefine.importing.ImportingJob;
@@ -79,8 +78,7 @@ abstract public class ImportingParserBase implements ImportingParser {
     public GridState parse(ProjectMetadata metadata,
             final ImportingJob job, List<ImportingFileRecord> fileRecords, String format,
             long limit, ObjectNode options) throws Exception {
-    	FileSystem hdfs = runner.getFileSystem();
-        MultiFileReadingProgress progress = ImporterUtilities.createMultiFileReadingProgress(job, fileRecords, hdfs);
+        MultiFileReadingProgress progress = ImporterUtilities.createMultiFileReadingProgress(job, fileRecords);
         List<GridState> gridStates = new ArrayList<>(fileRecords.size());
         
         if (fileRecords.isEmpty()) {

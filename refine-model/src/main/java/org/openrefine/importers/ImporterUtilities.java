@@ -53,7 +53,6 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.stream.Collectors;
 
-import org.apache.hadoop.fs.FileSystem;
 import org.openrefine.importing.ImportingFileRecord;
 import org.openrefine.importing.ImportingJob;
 import org.openrefine.model.Cell;
@@ -164,11 +163,10 @@ public class ImporterUtilities {
     
     static public MultiFileReadingProgress createMultiFileReadingProgress(
             final ImportingJob job,
-            List<ImportingFileRecord> fileRecords,
-            FileSystem hdfs) {
+            List<ImportingFileRecord> fileRecords) {
         long totalSize = 0;
         for (ImportingFileRecord fileRecord : fileRecords) {
-			totalSize += fileRecord.getSize(job.getRawDataDir(), hdfs);
+			totalSize += fileRecord.getSize(job.getRawDataDir());
         }
         
         final long totalSize2 = totalSize;

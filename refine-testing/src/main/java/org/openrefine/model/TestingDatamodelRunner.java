@@ -9,7 +9,6 @@ import java.io.InputStreamReader;
 import java.io.LineNumberReader;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -21,8 +20,6 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.zip.GZIPInputStream;
 
-import org.apache.hadoop.fs.FileSystem;
-import org.apache.hadoop.fs.LocalFileSystem;
 import org.openrefine.importers.MultiFileReadingProgress;
 import org.openrefine.model.GridState.Metadata;
 import org.openrefine.model.changes.ChangeData;
@@ -196,11 +193,6 @@ public class TestingDatamodelRunner implements DatamodelRunner {
     @Override
     public GridState create(ColumnModel columnModel, List<Row> rows, Map<String,OverlayModel> overlayModels) {
         return new TestingGridState(columnModel, rows, overlayModels);
-    }
-
-    @Override
-    public FileSystem getFileSystem() throws IOException {
-        return new LocalFileSystem();
     }
 
     @Override

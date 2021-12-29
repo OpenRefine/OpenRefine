@@ -4,10 +4,6 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.openrefine.io.OrderedLocalFileSystem;
-import org.testng.Assert;
-import org.testng.annotations.Test;
-
 /**
  * Tests for this datamodel implementation are taken from the standard
  * test suite, in {@link DatamodelRunnerTestBase}.
@@ -25,15 +21,8 @@ public class LocalDatamodelRunnerTests extends DatamodelRunnerTestBase {
     	map.put("minSplitSize", "128");
     	map.put("maxSplitSize", "1024");
     	
-    	map.put("hadoopHomeDir", "../server/lib-local/native/windows/hadoop");
-    	
     	RunnerConfiguration runnerConf = new RunnerConfigurationImpl(map);
         return new LocalDatamodelRunner(runnerConf);
-    }
-    
-    @Test
-    public void testOrderedFileSystem() throws IOException {
-        Assert.assertTrue(SUT.getFileSystem() instanceof OrderedLocalFileSystem);
     }
 
 }
