@@ -1,30 +1,34 @@
 package org.openrefine.model.local;
 
+import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.LineNumberReader;
+import java.io.InputStream;
 import java.io.UncheckedIOException;
 import java.nio.channels.FileChannel;
+import java.nio.charset.Charset;
 import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.stream.Stream;
 
+import org.apache.commons.compress.compressors.gzip.GzipCompressorInputStream;
 import org.openrefine.importers.MultiFileReadingProgress;
+import org.openrefine.model.local.util.LineReader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Streams;
+import com.google.common.io.CountingInputStream;
 
 /**
  * A PLL whose contents are read from a set of text files.
- * The text files are partitioned using Hadoop, using new lines as boundaries.
+ * The text files are partitioned using a method similar to that of Hadoop, using new lines as boundaries.
  * 
  * This class aims at producing a certain number of partitions determined by the
  * default parallelism of the PLL context.
@@ -44,21 +48,45 @@ public class TextFilePLL extends PLL<String> {
         this.path = path;
         this.progress = null;
         
-        Path file = Paths.get(path);
-        long size = Files.size(file);
-        
+        File file = new File(path);
         partitions = new ArrayList<>();
-        if (size < context.getMinSplitSize() * context.getDefaultParallelism()) {
+        if (file.isDirectory()) {
+            List<File> files = Arrays.asList(file.listFiles());
+            files.sort(new Comparator<File>() {
+                @Override
+                public int compare(File arg0, File arg1) {
+                    return arg0.getPath().compareTo(arg1.getPath());
+                } 
+            });
+            
+            for(File subFile : files) {
+                addPartitionsForFile(subFile);
+            }
+        } else {
+            addPartitionsForFile(file);
+        }
+    }
+    
+    private static boolean isGzipped(File file) {
+        return file.getName().endsWith(".gz");
+    }
+    
+    private void addPartitionsForFile(File file) throws IOException {
+        long size = Files.size(file.toPath());
+        if (size < context.getMinSplitSize() * context.getDefaultParallelism() || isGzipped(file)) {
             // a single split
-            partitions.add(new TextFilePartition(0, 0L, size));
+            partitions.add(new TextFilePartition(file, partitions.size(), 0L, size));
         } else {
             // defaultParallelism many splits, unless that makes splits too big
-            long splitSize = Math.min(size / context.getDefaultParallelism(), context.getMaxSplitSize());
+            long splitSize = Math.min((size / context.getDefaultParallelism()) + 1, context.getMaxSplitSize());
             int numSplits = (int) (size / splitSize);
-            for (int i = 0; i != numSplits; i++) {
-                partitions.add(new TextFilePartition(i, splitSize*i, Math.min(splitSize*(i+1), size)));
+            if (numSplits * splitSize < size) {
+                numSplits++;
             }
-        }    
+            for (int i = 0; i != numSplits; i++) {
+                partitions.add(new TextFilePartition(file, partitions.size(), splitSize*i, Math.min(splitSize*(i+1), size)));
+            }
+        }
     }
     
     public void setProgressHandler(MultiFileReadingProgress progress) {
@@ -79,13 +107,26 @@ public class TextFilePLL extends PLL<String> {
        
         int reportBatchSize = 64;
         try {
-            FileInputStream stream = new FileInputStream(new File(path));
+            FileInputStream stream = new FileInputStream(textPartition.getPath());
             FileChannel channel = stream.getChannel();
-            if (textPartition.getIndex() > 0) {
+            if (textPartition.getStart() > 0L) {
                 channel.position(textPartition.start);
             }
-            InputStreamReader reader = new InputStreamReader(stream); // TODO pass charset
-            LineNumberReader linesReader = new LineNumberReader(reader);
+            InputStream bufferedIs = new BufferedInputStream(stream);
+            if (isGzipped(textPartition.getPath())) {
+                bufferedIs = new GzipCompressorInputStream(bufferedIs);
+            }
+            CountingInputStream countingIs = new CountingInputStream(bufferedIs);
+            LineReader lineReader = new LineReader(countingIs, Charset.forName("UTF-8")); // TODO make charset configurable
+            
+            // if we are not reading from the first partition of the given file,
+            // we need to ignore the first "line" because it might be incomplete
+            // (it might have started before the split).
+            // The reading of the previous partition will take care of reading that line fully
+            // (so it can go beyond the planned end of the split).
+            if (textPartition.getStart() > 0) {
+                lineReader.readLine();
+            }
             
             Iterator<String> iterator = new Iterator<String>() {
                 
@@ -99,9 +140,9 @@ public class TextFilePLL extends PLL<String> {
                 public boolean hasNext() {
                     long currentPosition;
                     try {
-                        currentPosition = channel.position();
+                        currentPosition = textPartition.start + countingIs.getCount();
                         if (!nextLineAttempted && currentPosition <= textPartition.getEnd()) {
-                            nextLine = linesReader.readLine();
+                            nextLine = lineReader.readLine();
                             nextLineAttempted = true;
                             lastOffsetSeen = currentPosition;
                         }
@@ -144,7 +185,7 @@ public class TextFilePLL extends PLL<String> {
             Stream<String> lineStream = Streams.stream(iterator)
                     .onClose(() -> {
                         try {
-                            reader.close();
+                            lineReader.close();
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
@@ -163,6 +204,7 @@ public class TextFilePLL extends PLL<String> {
     
     protected static class TextFilePartition implements Partition {
         
+        private final File path;
         private final int index;
         private final long start;
         private final long end;
@@ -170,14 +212,23 @@ public class TextFilePLL extends PLL<String> {
         /**
          * Represents a split in an uncompressed text file.
          * 
+         * @param path  the path to the file being read
          * @param index position of the split in the file
          * @param start starting byte where to read from in the file
          * @param end   first byte not to be read after the end of the file
          */
-        protected TextFilePartition(int index, long start, long end) {
+        protected TextFilePartition(File path, int index, long start, long end) {
+            this.path = path;
             this.index = index;
             this.start = start;
             this.end = end;
+            if (isGzipped(path) && start > 0) {
+                throw new IllegalArgumentException("Unable to split a gzip file");
+            }
+        }
+        
+        public File getPath() {
+            return path;
         }
 
         @Override

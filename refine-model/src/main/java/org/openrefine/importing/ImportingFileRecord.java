@@ -2,10 +2,8 @@ package org.openrefine.importing;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
 
-import org.apache.hadoop.fs.ContentSummary;
-import org.apache.hadoop.fs.FileSystem;
-import org.apache.hadoop.fs.Path;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -195,7 +193,7 @@ public class ImportingFileRecord {
 	 *     the Hadoop file system, to read Spark URIs
 	 * @return the length of the file in bytes
 	 */
-	public long getSize(File rawDataDir, FileSystem hdfs) {
+	public long getSize(File rawDataDir) {
 		if (_size > 0) {
 			return _size;
 		}
@@ -203,13 +201,11 @@ public class ImportingFileRecord {
 			File localFile = getFile(rawDataDir);
 			_size = localFile.length();
 		} else {
-			Path path = new Path(getDerivedSparkURI(rawDataDir));
-			try {
-				ContentSummary summary = hdfs.getContentSummary(path);
-				_size = summary.getLength();
-			} catch(IOException e) {
-				_size = 0;
-			}
+		    try {
+                _size = Files.size(new File(_sparkURI).toPath());
+            } catch (IOException e) {
+                _size = 0;
+            }
 		}
 		return _size;
 	}

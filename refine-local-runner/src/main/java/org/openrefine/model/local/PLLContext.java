@@ -3,8 +3,6 @@ package org.openrefine.model.local;
 import java.io.IOException;
 import java.util.List;
 
-import org.apache.hadoop.fs.FileSystem;
-
 import com.google.common.util.concurrent.ListeningExecutorService;
 
 /**
@@ -16,20 +14,19 @@ import com.google.common.util.concurrent.ListeningExecutorService;
 public class PLLContext {
     
     private final ListeningExecutorService executorService;
-    private final FileSystem fileSystem;
     private final int defaultParallelism;
     private final long minSplitSize;
     private final long maxSplitSize;
     
     public PLLContext(
             ListeningExecutorService executorService,
-            FileSystem fileSystem,
-            int defaultParallelism) {
+            int defaultParallelism,
+            long minSplitSize,
+            long maxSplitSize) {
         this.executorService = executorService;
-        this.fileSystem = fileSystem;
         this.defaultParallelism = defaultParallelism;
-        this.minSplitSize = fileSystem.getConf().getLong("mapreduce.input.fileinputformat.split.minsize", 1048576);
-        this.maxSplitSize = fileSystem.getConf().getLong("mapreduce.input.fileinputformat.split.maxsize", Long.MAX_VALUE);
+        this.minSplitSize = minSplitSize;
+        this.maxSplitSize = maxSplitSize;
     }
     
     /**
@@ -37,13 +34,6 @@ public class PLLContext {
      */
     public ListeningExecutorService getExecutorService() {
         return executorService;
-    }
-    
-    /**
-     * Returns the Hadoop filesystem used in this context
-     */
-    public FileSystem getFileSystem() {
-        return fileSystem;
     }
     
     /**
@@ -63,7 +53,6 @@ public class PLLContext {
      */
     public void shutdown() throws IOException {
         executorService.shutdown();
-        fileSystem.close();
     }
 
     /**

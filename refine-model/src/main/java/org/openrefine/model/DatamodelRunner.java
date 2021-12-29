@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.hadoop.fs.FileSystem;
 import org.openrefine.importers.MultiFileReadingProgress;
 import org.openrefine.model.changes.ChangeData;
 import org.openrefine.model.changes.ChangeDataSerializer;
@@ -42,13 +41,6 @@ public interface DatamodelRunner {
      * @throws IOException when loading the grid failed
      */
     public <T> ChangeData<T> loadChangeData(File path, ChangeDataSerializer<T> serializer) throws IOException;
-    
-    /**
-     * Returns a file system used by the implementation to read
-     * files to import.
-     * @throws IOException 
-     */
-    public FileSystem getFileSystem() throws IOException;
     
     /**
      * Creates a {@link GridState} from an in-memory list of rows,

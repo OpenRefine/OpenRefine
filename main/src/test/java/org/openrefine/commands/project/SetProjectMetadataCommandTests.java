@@ -46,7 +46,6 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.codehaus.jettison.json.JSONException;
 import org.openrefine.ProjectManager;
 import org.openrefine.ProjectMetadata;
 import org.openrefine.commands.Command;
@@ -152,7 +151,6 @@ public class SetProjectMetadataCommandTests {
     
     /**
      *  set a user defined metadata field
-     * @throws JSONException 
      */
     @Test
     public void setUserMetadataFieldTest() {

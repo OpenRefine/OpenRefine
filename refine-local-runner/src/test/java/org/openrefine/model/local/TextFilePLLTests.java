@@ -65,11 +65,6 @@ public class TextFilePLLTests extends PLLTestsBase {
     public void testMorePartitions() throws IOException {
         PLL<String> pll = new TextFilePLL(context, longerTextFile.getAbsolutePath());
         Assert.assertEquals(pll.getPartitions().size(), context.getDefaultParallelism());
-        long firstPartitionCount = pll.iterate(pll.getPartitions().get(0)).count();
-        long secondPartitionCount = pll.iterate(pll.getPartitions().get(1)).count();
-        long thirdPartitionCount = pll.iterate(pll.getPartitions().get(2)).count();
-        long fourthPartitionCount = pll.iterate(pll.getPartitions().get(3)).count();
-
         Assert.assertEquals(pll.count(), 64L);
         
         pll = new TextFilePLL(context, veryLongTextFile.getAbsolutePath());
