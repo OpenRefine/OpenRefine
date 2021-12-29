@@ -23,24 +23,28 @@
  ******************************************************************************/
 package org.openrefine.wikidata.schema.entityvalues;
 
-import org.wikidata.wdtk.datamodel.interfaces.ItemIdValue;
+import org.wikidata.wdtk.datamodel.helpers.ToString;
+import org.wikidata.wdtk.datamodel.interfaces.MediaInfoIdValue;
 
-import com.google.refine.model.Recon;
+public class SuggestedMediaInfoIdValue extends SuggestedEntityIdValue implements MediaInfoIdValue {
 
-public class ReconItemIdValue extends ReconEntityIdValue implements ItemIdValue {
-
-    public ReconItemIdValue(Recon recon, String cellValue) {
-        super(recon, cellValue);
+    public SuggestedMediaInfoIdValue(String id, String siteIRI, String label) {
+        super(id, siteIRI, label);
     }
 
 	@Override
 	public boolean isPlaceholder() {
-		return isNew();
+		return false;
 	}
 
     @Override
     public String getEntityType() {
-        return ET_ITEM;
+        return ET_MEDIA_INFO;
+    }
+
+    @Override
+    public String toString() {
+        return "suggested " + ToString.toString(this) + " (\"" + getLabel() + "\")";
     }
 
 }
