@@ -26,7 +26,7 @@ build: off
 before_test:
 - cmd: echo Running scripts before build...
 - cmd: |-
-    PATH=C:\projects\openrefine\server\lib-local\native\windows\hadoop\bin;C:\Program Files\PostgreSQL\9.6\bin\;C:\Program Files\MySQL\MySQL Server 5.7\bin\;%PATH%
+    PATH=C:\projects\openrefine\refine-spark-runner\hadoop\bin;C:\Program Files\PostgreSQL\9.6\bin\;C:\Program Files\MySQL\MySQL Server 5.7\bin\;%PATH%
     SET MYSQL_PWD=Password12!
     mysql -u root --password=Password12! -e "create database test_db;"
     mysql -u root test_db --password=Password12! < extensions\database\tests\conf\test-mysql.sql
@@ -42,7 +42,7 @@ before_test:
     copy extensions\database\tests\conf\appveyor_tests.xml extensions\database\tests\conf\tests.xml
     copy packaging\test_pom.xml packaging\pom.xml
 
-    SET HADOOP_HOME=C:\projects\openrefine\server\lib-local\native\windows\hadoop
+    SET HADOOP_HOME=C:\projects\openrefine\refine-spark-runner\hadoop
 - cmd: |-
     mvn process-resources
     mvn package -DskipTests=true -Dmaven.javadoc.skip=true -B -V
