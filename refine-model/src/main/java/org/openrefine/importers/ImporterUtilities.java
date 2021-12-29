@@ -55,7 +55,6 @@ import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import org.apache.hadoop.fs.FileSystem;
 
 import org.openrefine.importing.ImportingFileRecord;
 import org.openrefine.importing.ImportingJob;
@@ -163,11 +162,10 @@ public class ImporterUtilities {
 
     static public MultiFileReadingProgress createMultiFileReadingProgress(
             final ImportingJob job,
-            List<ImportingFileRecord> fileRecords,
-            FileSystem hdfs) {
+            List<ImportingFileRecord> fileRecords) {
         long totalSize = 0;
         for (ImportingFileRecord fileRecord : fileRecords) {
-            totalSize += fileRecord.getSize(job.getRawDataDir(), hdfs);
+            totalSize += fileRecord.getSize(job.getRawDataDir());
         }
 
         final long totalSize2 = totalSize;

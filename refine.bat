@@ -255,7 +255,7 @@ echo -----------------------
 ) > support.log
 
 set CLASSPATH="%REFINE_CLASSES_DIR%;%REFINE_LIB_DIR%\*"
-"%JAVA_HOME%\bin\java.exe" -cp %CLASSPATH% %OPTS% -Djava.library.path=server/lib-local/native/windows/hadoop/bin org.openrefine.Refine
+"%JAVA_HOME%\bin\java.exe" -cp %CLASSPATH% %OPTS% org.openrefine.Refine
 goto end
 
 :doMvn

@@ -82,7 +82,7 @@ abstract public class TreeImportingParserBase extends ImportingParserBase {
     public GridState parse(ProjectMetadata metadata,
             final ImportingJob job, List<ImportingFileRecord> fileRecords, String format,
             long limit, ObjectNode options) throws Exception {
-        MultiFileReadingProgress progress = ImporterUtilities.createMultiFileReadingProgress(job, fileRecords, runner.getFileSystem());
+        MultiFileReadingProgress progress = ImporterUtilities.createMultiFileReadingProgress(job, fileRecords);
         ImportColumnGroup rootColumnGroup = new ImportColumnGroup();
 
         List<Row> rows = new ArrayList<>();

@@ -13,14 +13,10 @@ import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreType;
 import com.google.common.util.concurrent.MoreExecutors;
-import org.apache.hadoop.conf.Configuration;
-import org.apache.hadoop.fs.FileSystem;
-import org.apache.hadoop.fs.LocalFileSystem;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import org.openrefine.importers.MultiFileReadingProgress;
-import org.openrefine.io.OrderedLocalFileSystem;
 import org.openrefine.model.GridState.Metadata;
 import org.openrefine.model.changes.ChangeData;
 import org.openrefine.model.changes.ChangeDataSerializer;
@@ -52,30 +48,10 @@ public class LocalDatamodelRunner implements DatamodelRunner {
         defaultParallelism = configuration.getIntParameter("defaultParallelism", 4);
         minSplitSize = configuration.getLongParameter("minSplitSize", 4096L);
         maxSplitSize = configuration.getLongParameter("maxSplitSize", 16777216L);
-        String hadoopDir = configuration.getParameter("hadoopHomeDir", "server/lib-local/native/windows/hadoop");
 
-        Configuration fsConf = new Configuration();
-        // set up Hadoop on Windows
-        String os = System.getProperty("os.name").toLowerCase();
-        if (os.contains("windows")) {
-            try {
-                System.setProperty("hadoop.home.dir", new File(hadoopDir).getCanonicalPath());
-            } catch (IOException e) {
-                logger.warn("unable to locate Windows Hadoop binaries, this will leave temporary files behind");
-            }
-        }
-
-        fsConf.set("fs.file.impl", OrderedLocalFileSystem.class.getName());
-        fsConf.set("mapreduce.input.fileinputformat.split.minsize", Long.toString(minSplitSize));
-        fsConf.set("mapreduce.input.fileinputformat.split.maxsize", Long.toString(maxSplitSize));
-        try {
-            pllContext = new PLLContext(MoreExecutors.listeningDecorator(
-                    Executors.newCachedThreadPool()),
-                    LocalFileSystem.get(fsConf),
-                    defaultParallelism);
-        } catch (IOException e) {
-            throw new UncheckedIOException(e);
-        }
+        pllContext = new PLLContext(MoreExecutors.listeningDecorator(
+                Executors.newCachedThreadPool()),
+                defaultParallelism, minSplitSize, maxSplitSize);
     }
 
     public LocalDatamodelRunner() {
@@ -107,11 +83,6 @@ public class LocalDatamodelRunner implements DatamodelRunner {
             throw new UncheckedIOException(e);
         }
         return new Tuple2<Long, Row>(id.getIndex(), id.getRow());
-    }
-
-    @Override
-    public FileSystem getFileSystem() throws IOException {
-        return pllContext.getFileSystem();
     }
 
     @Override

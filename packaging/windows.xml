@@ -20,10 +20,6 @@
 	<include>*.jar</include>
       </includes>
     </fileSet>
-   <fileSet>
-      <directory>${rootdir}/server/lib-local/native/windows/hadoop/bin</directory>
-      <outputDirectory>server/lib-local/native/windows/hadoop/bin</outputDirectory>
-    </fileSet>
     <fileSet>
       <directory>${rootdir}/main/webapp</directory>
       <outputDirectory>webapp</outputDirectory>

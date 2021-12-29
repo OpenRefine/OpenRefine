@@ -1,40 +1,35 @@
 
 package org.openrefine.model.local;
 
+import java.io.BufferedInputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.UncheckedIOException;
+import java.nio.channels.FileChannel;
+import java.nio.charset.Charset;
+import java.nio.file.Files;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.stream.Stream;
 
 import com.google.common.collect.Streams;
-import org.apache.hadoop.conf.Configuration;
-import org.apache.hadoop.fs.FileSystem;
-import org.apache.hadoop.io.LongWritable;
-import org.apache.hadoop.io.Text;
-import org.apache.hadoop.mapred.JobConf;
-import org.apache.hadoop.mapred.JobContext;
-import org.apache.hadoop.mapred.JobContextImpl;
-import org.apache.hadoop.mapreduce.InputFormat;
-import org.apache.hadoop.mapreduce.InputSplit;
-import org.apache.hadoop.mapreduce.Job;
-import org.apache.hadoop.mapreduce.JobID;
-import org.apache.hadoop.mapreduce.RecordReader;
-import org.apache.hadoop.mapreduce.TaskAttemptContext;
-import org.apache.hadoop.mapreduce.TaskAttemptID;
-import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
-import org.apache.hadoop.mapreduce.lib.input.TextInputFormat;
-import org.apache.hadoop.mapreduce.task.TaskAttemptContextImpl;
+import com.google.common.io.CountingInputStream;
+import org.apache.commons.compress.compressors.gzip.GzipCompressorInputStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import org.openrefine.importers.MultiFileReadingProgress;
+import org.openrefine.model.local.util.LineReader;
 
 /**
- * A PLL whose contents are read from a set of text files. The text files are partitioned using Hadoop, using new lines
- * as boundaries.
+ * A PLL whose contents are read from a set of text files. The text files are partitioned using a method similar to that
+ * of Hadoop, using new lines as boundaries.
  * 
  * This class aims at producing a certain number of partitions determined by the default parallelism of the PLL context.
  * 
@@ -44,62 +39,55 @@ import org.openrefine.importers.MultiFileReadingProgress;
 public class TextFilePLL extends PLL<String> {
 
     private final static Logger logger = LoggerFactory.getLogger(TextFilePLL.class);
-
-    private final List<HadoopPartition> partitions;
+    private final List<TextFilePartition> partitions;
     private final String path;
-    private final PLLContext context;
-    private final InputFormat<LongWritable, Text> inputFormat = new TextInputFormat();
     private ReadingProgressReporter progress;
 
     public TextFilePLL(PLLContext context, String path) throws IOException {
         super(context);
         this.path = path;
-        this.context = context;
         this.progress = null;
 
-        FileSystem fs = context.getFileSystem();
-
-        // Setup the job to compute the splits
-        Configuration conf = new Configuration(fs.getConf());
-        Job job = Job.getInstance(conf);
-        FileInputFormat.setInputPaths(job, path);
-        JobID jobId = new JobID();
-        JobContext jobContext = new JobContextImpl((JobConf) job.getConfiguration(), jobId);
-
-        List<InputSplit> splits;
+        File file = new File(path);
         partitions = new ArrayList<>();
-        try {
-            // First attempt to get splits using the default parameters
-            splits = inputFormat.getSplits(jobContext);
+        if (file.isDirectory()) {
+            List<File> files = Arrays.asList(file.listFiles());
+            files.sort(new Comparator<File>() {
 
-            // If there are too few splits compared to the default parallelism,
-            // and at least one split is large enough to be split again, then
-            // we split again with lower maximum split size.
-            if (splits.size() < context.getDefaultParallelism()) {
-                long maxSplitSize = 0;
-                for (InputSplit split : splits) {
-                    maxSplitSize = Math.max(split.getLength(), maxSplitSize);
+                @Override
+                public int compare(File arg0, File arg1) {
+                    return arg0.getPath().compareTo(arg1.getPath());
                 }
-                if (maxSplitSize > context.getMinSplitSize() * context.getDefaultParallelism()) {
-                    // re-split with lower maximum split size
-                    long newMaxSplitSize = maxSplitSize / context.getDefaultParallelism();
-                    conf.set("mapreduce.input.fileinputformat.split.maxsize", Long.toString(newMaxSplitSize));
-                    job.close();
-                    job = Job.getInstance(conf);
-                    FileInputFormat.setInputPaths(job, path);
-                    jobContext = new JobContextImpl((JobConf) job.getConfiguration(), jobId);
-                    splits = inputFormat.getSplits(jobContext);
-                }
-            }
+            });
 
-            for (int i = 0; i != splits.size(); i++) {
-                partitions.add(new HadoopPartition(i, splits.get(i)));
+            for (File subFile : files) {
+                addPartitionsForFile(subFile);
             }
-        } catch (InterruptedException e) {
-            partitions.clear();
-            e.printStackTrace();
+        } else {
+            addPartitionsForFile(file);
         }
+    }
 
+    private static boolean isGzipped(File file) {
+        return file.getName().endsWith(".gz");
+    }
+
+    private void addPartitionsForFile(File file) throws IOException {
+        long size = Files.size(file.toPath());
+        if (size < context.getMinSplitSize() * context.getDefaultParallelism() || isGzipped(file)) {
+            // a single split
+            partitions.add(new TextFilePartition(file, partitions.size(), 0L, size));
+        } else {
+            // defaultParallelism many splits, unless that makes splits too big
+            long splitSize = Math.min((size / context.getDefaultParallelism()) + 1, context.getMaxSplitSize());
+            int numSplits = (int) (size / splitSize);
+            if (numSplits * splitSize < size) {
+                numSplits++;
+            }
+            for (int i = 0; i != numSplits; i++) {
+                partitions.add(new TextFilePartition(file, partitions.size(), splitSize * i, Math.min(splitSize * (i + 1), size)));
+            }
+        }
     }
 
     public void setProgressHandler(MultiFileReadingProgress progress) {
@@ -116,36 +104,57 @@ public class TextFilePLL extends PLL<String> {
 
     @Override
     protected Stream<String> compute(Partition partition) {
-        HadoopPartition hadoopPartition = (HadoopPartition) partition;
-        TaskAttemptID attemptId = new TaskAttemptID();
-        TaskAttemptContext taskAttemptContext = new TaskAttemptContextImpl(context.getFileSystem().getConf(), attemptId);
+        TextFilePartition textPartition = (TextFilePartition) partition;
+
         int reportBatchSize = 64;
         try {
-            RecordReader<LongWritable, Text> reader = inputFormat.createRecordReader(hadoopPartition.getSplit(), taskAttemptContext);
-            reader.initialize(hadoopPartition.getSplit(), taskAttemptContext);
+            FileInputStream stream = new FileInputStream(textPartition.getPath());
+            FileChannel channel = stream.getChannel();
+            if (textPartition.getStart() > 0L) {
+                channel.position(textPartition.start);
+            }
+            InputStream bufferedIs = new BufferedInputStream(stream);
+            if (isGzipped(textPartition.getPath())) {
+                bufferedIs = new GzipCompressorInputStream(bufferedIs);
+            }
+            CountingInputStream countingIs = new CountingInputStream(bufferedIs);
+            LineReader lineReader = new LineReader(countingIs, Charset.forName("UTF-8")); // TODO make charset
+                                                                                          // configurable
+
+            // if we are not reading from the first partition of the given file,
+            // we need to ignore the first "line" because it might be incomplete
+            // (it might have started before the split).
+            // The reading of the previous partition will take care of reading that line fully
+            // (so it can go beyond the planned end of the split).
+            if (textPartition.getStart() > 0) {
+                lineReader.readLine();
+            }
+
             Iterator<String> iterator = new Iterator<String>() {
 
-                boolean finished = false;
-                boolean havePair = false;
+                boolean nextLineAttempted = false;
+                String nextLine = null;
                 long lastOffsetReported = -1;
                 long lastOffsetSeen = -1;
                 int lastReport = 0;
 
                 @Override
                 public boolean hasNext() {
-                    if (!finished && !havePair) {
-                        try {
-                            finished = !reader.nextKeyValue();
-                        } catch (IOException | InterruptedException e) {
-                            finished = true;
-                            e.printStackTrace();
+                    long currentPosition;
+                    try {
+                        currentPosition = textPartition.start + countingIs.getCount();
+                        if (!nextLineAttempted && currentPosition <= textPartition.getEnd()) {
+                            nextLine = lineReader.readLine();
+                            nextLineAttempted = true;
+                            lastOffsetSeen = currentPosition;
                         }
-                        havePair = !finished;
+                        if (nextLine == null && lastOffsetSeen > lastOffsetReported) {
+                            reportProgress();
+                        }
+                    } catch (IOException e) {
+                        throw new UncheckedIOException(e);
                     }
-                    if (finished && lastOffsetSeen > lastOffsetReported) {
-                        reportProgress();
-                    }
-                    return !finished;
+                    return nextLine != null;
                 }
 
                 @Override
@@ -153,22 +162,16 @@ public class TextFilePLL extends PLL<String> {
                     if (!hasNext()) {
                         throw new NoSuchElementException("End of stream");
                     }
-                    String line = null;
-                    try {
-                        line = reader.getCurrentValue().toString();
-                        lastOffsetSeen = reader.getCurrentKey().get();
-                        if (lastReport >= reportBatchSize) {
-                            reportProgress();
-                        }
-                        lastReport++;
-                        if (lastOffsetReported == -1) {
-                            lastOffsetReported = lastOffsetSeen;
-                        }
-                    } catch (IOException | InterruptedException e) {
-                        finished = true;
-                        e.printStackTrace();
+                    if (lastReport >= reportBatchSize) {
+                        reportProgress();
                     }
-                    havePair = false;
+                    lastReport++;
+                    if (lastOffsetReported == -1) {
+                        lastOffsetReported = lastOffsetSeen;
+                    }
+                    String line = nextLine;
+                    nextLine = null;
+                    nextLineAttempted = false;
                     return line;
                 }
 
@@ -181,16 +184,16 @@ public class TextFilePLL extends PLL<String> {
                 }
 
             };
-            Stream<String> stream = Streams.stream(iterator)
+            Stream<String> lineStream = Streams.stream(iterator)
                     .onClose(() -> {
                         try {
-                            reader.close();
+                            lineReader.close();
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
                     });
-            return stream;
-        } catch (IOException | InterruptedException e) {
+            return lineStream;
+        } catch (IOException e) {
             e.printStackTrace();
             return Stream.empty();
         }
@@ -201,14 +204,37 @@ public class TextFilePLL extends PLL<String> {
         return partitions;
     }
 
-    protected static class HadoopPartition implements Partition {
+    protected static class TextFilePartition implements Partition {
 
+        private final File path;
         private final int index;
-        private final InputSplit split;
+        private final long start;
+        private final long end;
 
-        protected HadoopPartition(int index, InputSplit split) {
+        /**
+         * Represents a split in an uncompressed text file.
+         * 
+         * @param path
+         *            the path to the file being read
+         * @param index
+         *            position of the split in the file
+         * @param start
+         *            starting byte where to read from in the file
+         * @param end
+         *            first byte not to be read after the end of the file
+         */
+        protected TextFilePartition(File path, int index, long start, long end) {
+            this.path = path;
             this.index = index;
-            this.split = split;
+            this.start = start;
+            this.end = end;
+            if (isGzipped(path) && start > 0) {
+                throw new IllegalArgumentException("Unable to split a gzip file");
+            }
+        }
+
+        public File getPath() {
+            return path;
         }
 
         @Override
@@ -221,8 +247,12 @@ public class TextFilePLL extends PLL<String> {
             return null;
         }
 
-        protected InputSplit getSplit() {
-            return split;
+        public long getStart() {
+            return start;
+        }
+
+        public long getEnd() {
+            return end;
         }
 
     }

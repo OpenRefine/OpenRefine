@@ -22,8 +22,6 @@ import java.util.stream.Collectors;
 import java.util.zip.GZIPInputStream;
 
 import com.google.common.io.CountingInputStream;
-import org.apache.hadoop.fs.FileSystem;
-import org.apache.hadoop.fs.LocalFileSystem;
 import org.testng.Assert;
 
 import org.openrefine.importers.MultiFileReadingProgress;
@@ -193,11 +191,6 @@ public class TestingDatamodelRunner implements DatamodelRunner {
     @Override
     public GridState create(ColumnModel columnModel, List<Row> rows, Map<String, OverlayModel> overlayModels) {
         return new TestingGridState(columnModel, rows, overlayModels);
-    }
-
-    @Override
-    public FileSystem getFileSystem() throws IOException {
-        return new LocalFileSystem();
     }
 
     @Override

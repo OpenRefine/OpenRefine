@@ -68,7 +68,6 @@ import org.apache.commons.fileupload.ProgressListener;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.apache.commons.fileupload.util.Streams;
-import org.apache.hadoop.fs.Path;
 import org.apache.hc.client5.http.ClientProtocolException;
 import org.apache.hc.core5.http.ClassicHttpResponse;
 import org.apache.hc.core5.http.ContentType;
@@ -433,7 +432,7 @@ public class ImportingUtilities {
      * @return null if it does not succeed, or if there is no final name in the path
      */
     protected static String extractFilenameFromSparkURI(String uri) {
-        Path url = new Path(uri);
+        File url = new File(uri);
         if (url.getName().length() > 0) {
             return url.getName();
         } else {

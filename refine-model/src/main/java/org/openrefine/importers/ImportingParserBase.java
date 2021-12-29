@@ -40,7 +40,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import org.apache.hadoop.fs.FileSystem;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -80,8 +79,7 @@ abstract public class ImportingParserBase implements ImportingParser {
     public GridState parse(ProjectMetadata metadata,
             final ImportingJob job, List<ImportingFileRecord> fileRecords, String format,
             long limit, ObjectNode options) throws Exception {
-        FileSystem hdfs = runner.getFileSystem();
-        MultiFileReadingProgress progress = ImporterUtilities.createMultiFileReadingProgress(job, fileRecords, hdfs);
+        MultiFileReadingProgress progress = ImporterUtilities.createMultiFileReadingProgress(job, fileRecords);
         List<GridState> gridStates = new ArrayList<>(fileRecords.size());
 
         if (fileRecords.isEmpty()) {

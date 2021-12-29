@@ -48,7 +48,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import org.codehaus.jettison.json.JSONException;
 import org.testng.Assert;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
@@ -152,7 +151,6 @@ public class SetProjectMetadataCommandTests {
 
     /**
      *  set a user defined metadata field
-     * @throws JSONException 
      */
     @Test
     public void setUserMetadataFieldTest() {

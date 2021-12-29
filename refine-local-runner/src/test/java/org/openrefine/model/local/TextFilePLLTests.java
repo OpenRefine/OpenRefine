@@ -6,6 +6,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 
 import org.apache.commons.io.FileUtils;
@@ -57,19 +58,22 @@ public class TextFilePLLTests extends PLLTestsBase {
         // this text file is too small to be split
         Assert.assertEquals(pll.getPartitions().size(), 1);
 
-        Assert.assertEquals(pll.collect(), Arrays.asList("foo", "bar", "baz"));
+        List<String> elements = pll.collect();
+        Assert.assertEquals(elements, Arrays.asList("foo", "bar", "baz"));
         // Iterate a second time
-        Assert.assertEquals(pll.collect(), Arrays.asList("foo", "bar", "baz"));
+        Assert.assertEquals(elements, Arrays.asList("foo", "bar", "baz"));
     }
 
     @Test
     public void testMorePartitions() throws IOException {
         PLL<String> pll = new TextFilePLL(context, longerTextFile.getAbsolutePath());
         Assert.assertEquals(pll.getPartitions().size(), context.getDefaultParallelism());
+        Assert.assertEquals(pll.count(), 64L);
 
         pll = new TextFilePLL(context, veryLongTextFile.getAbsolutePath());
         int nbPartitions = pll.getPartitions().size();
         Assert.assertTrue(nbPartitions > context.getDefaultParallelism());
+        Assert.assertEquals(pll.count(), 2048L);
     }
 
     @Test
