@@ -114,12 +114,19 @@ public class TextFilePLL extends PLL<String> {
                 channel.position(textPartition.start);
             }
             InputStream bufferedIs = new BufferedInputStream(stream);
+            CountingInputStream countingIs;
+            LineReader lineReader;
             if (isGzipped(textPartition.getPath())) {
+                // if we decompress, we count the bytes before decompression (since that is how the file size was
+                // computed).
+                countingIs = new CountingInputStream(bufferedIs);
                 bufferedIs = new GzipCompressorInputStream(bufferedIs);
+                lineReader = new LineReader(bufferedIs, Charset.forName("UTF-8")); // TODO make charset configurable
+
+            } else {
+                countingIs = new CountingInputStream(bufferedIs);
+                lineReader = new LineReader(countingIs, Charset.forName("UTF-8")); // TODO make charset configurable
             }
-            CountingInputStream countingIs = new CountingInputStream(bufferedIs);
-            LineReader lineReader = new LineReader(countingIs, Charset.forName("UTF-8")); // TODO make charset
-                                                                                          // configurable
 
             // if we are not reading from the first partition of the given file,
             // we need to ignore the first "line" because it might be incomplete

@@ -88,6 +88,19 @@ public class TextFilePLLTests extends PLLTestsBase {
     }
 
     @Test
+    public void testLargerRoundTripSerialization() throws IOException, InterruptedException {
+        PLL<String> pll = new TextFilePLL(context, veryLongTextFile.getAbsolutePath());
+        int nbPartitions = pll.getPartitions().size();
+
+        File tempFile = new File(tempDir, "largerroundtrip.txt");
+        pll.saveAsTextFile(tempFile.getAbsolutePath(), Optional.empty());
+
+        PLL<String> deserializedPLL = new TextFilePLL(context, tempFile.getAbsolutePath());
+        Assert.assertEquals(deserializedPLL.getPartitions().size(), nbPartitions);
+        Assert.assertEquals(deserializedPLL.count(), 2048L);
+    }
+
+    @Test
     public void testSaveWithoutCachedPartitionSizes() throws IOException, InterruptedException {
         PLL<String> pll = parallelize(2, Arrays.asList("foo", "bar", "baz"));
         // artificially discard partition sizes
