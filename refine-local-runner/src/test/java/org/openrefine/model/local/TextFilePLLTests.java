@@ -3,6 +3,7 @@ package org.openrefine.model.local;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.charset.Charset;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -22,6 +23,7 @@ public  class TextFilePLLTests extends PLLTestsBase {
     File textFile;
     File longerTextFile;
     File veryLongTextFile;
+    Charset utf8 = Charset.forName("UTF-8");
     
     @BeforeTest
     public void setUp() throws IOException {
@@ -51,7 +53,7 @@ public  class TextFilePLLTests extends PLLTestsBase {
     
     @Test
     public void testLoadTextFile() throws IOException {
-        PLL<String> pll = new TextFilePLL(context, textFile.getAbsolutePath());
+        PLL<String> pll = new TextFilePLL(context, textFile.getAbsolutePath(), utf8);
         // this text file is too small to be split
         Assert.assertEquals(pll.getPartitions().size(), 1);
         
@@ -63,11 +65,11 @@ public  class TextFilePLLTests extends PLLTestsBase {
     
     @Test
     public void testMorePartitions() throws IOException {
-        PLL<String> pll = new TextFilePLL(context, longerTextFile.getAbsolutePath());
+        PLL<String> pll = new TextFilePLL(context, longerTextFile.getAbsolutePath(), utf8);
         Assert.assertEquals(pll.getPartitions().size(), context.getDefaultParallelism());
         Assert.assertEquals(pll.count(), 64L);
         
-        pll = new TextFilePLL(context, veryLongTextFile.getAbsolutePath());
+        pll = new TextFilePLL(context, veryLongTextFile.getAbsolutePath(), utf8);
         int nbPartitions = pll.getPartitions().size();
         Assert.assertTrue(nbPartitions > context.getDefaultParallelism());
         Assert.assertEquals(pll.count(), 2048L);
@@ -79,20 +81,20 @@ public  class TextFilePLLTests extends PLLTestsBase {
         File tempFile = new File(tempDir, "roundtrip.txt");
         pll.saveAsTextFile(tempFile.getAbsolutePath(), Optional.empty());
         
-        PLL<String> deserializedPLL = new TextFilePLL(context, tempFile.getAbsolutePath());
+        PLL<String> deserializedPLL = new TextFilePLL(context, tempFile.getAbsolutePath(), utf8);
         
         Assert.assertEquals(pll.collect(), deserializedPLL.collect());
     }
     
     @Test
     public void testLargerRoundTripSerialization() throws IOException, InterruptedException {
-        PLL<String> pll = new TextFilePLL(context, veryLongTextFile.getAbsolutePath());
+        PLL<String> pll = new TextFilePLL(context, veryLongTextFile.getAbsolutePath(), utf8);
         int nbPartitions = pll.getPartitions().size();
         
         File tempFile = new File(tempDir, "largerroundtrip.txt");
         pll.saveAsTextFile(tempFile.getAbsolutePath(), Optional.empty());
         
-        PLL<String> deserializedPLL = new TextFilePLL(context, tempFile.getAbsolutePath());
+        PLL<String> deserializedPLL = new TextFilePLL(context, tempFile.getAbsolutePath(), utf8);
         Assert.assertEquals(deserializedPLL.getPartitions().size(), nbPartitions);
         Assert.assertEquals(deserializedPLL.count(), 2048L);
     }
@@ -127,7 +129,7 @@ public  class TextFilePLLTests extends PLLTestsBase {
     
     @Test
     public void testCacheWithProgressReporting() throws IOException {
-        PLL<String> pll = new TextFilePLL(context, textFile.getAbsolutePath());
+        PLL<String> pll = new TextFilePLL(context, textFile.getAbsolutePath(), utf8);
         // partition sizes are not known
         Assert.assertNull(pll.cachedPartitionSizes);
         
@@ -138,7 +140,7 @@ public  class TextFilePLLTests extends PLLTestsBase {
     
     @Test
     public void testCacheWithProgressReportingAndPrecomputedPartitionSizes() throws IOException {
-        PLL<String> pll = new TextFilePLL(context, textFile.getAbsolutePath());
+        PLL<String> pll = new TextFilePLL(context, textFile.getAbsolutePath(), utf8);
         pll.count();
         // partition sizes are known
         Assert.assertNotNull(pll.cachedPartitionSizes);

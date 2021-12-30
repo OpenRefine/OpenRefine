@@ -3,6 +3,7 @@ package org.openrefine.model;
 import java.io.File;
 import java.io.IOException;
 import java.io.UncheckedIOException;
+import java.nio.charset.Charset;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -68,7 +69,7 @@ public class LocalDatamodelRunner implements DatamodelRunner {
         
         Metadata metadata = ParsingUtilities.mapper.readValue(metadataFile, Metadata.class);
         PairPLL<Long, Row> rows = pllContext
-                .textFile(gridFile.getAbsolutePath())
+                .textFile(gridFile.getAbsolutePath(), GRID_ENCODING)
                 .mapToPair(s -> parseIndexedRow(s));
         rows = PairPLL.assumeIndexed(rows, metadata.rowCount);
         return new LocalGridState(this, rows, metadata.columnModel, metadata.overlayModels);
@@ -96,7 +97,7 @@ public class LocalDatamodelRunner implements DatamodelRunner {
     public <T> ChangeData<T> loadChangeData(File path, ChangeDataSerializer<T> serializer)
             throws IOException {
         PairPLL<Long, T> pll = pllContext
-                .textFile(path.getAbsolutePath())
+                .textFile(path.getAbsolutePath(), GRID_ENCODING)
                 .map(line -> {try {
                     return IndexedData.<T>read(line, serializer);
                 } catch (IOException e) {
@@ -108,13 +109,13 @@ public class LocalDatamodelRunner implements DatamodelRunner {
     }
 
     @Override
-    public GridState loadTextFile(String path, MultiFileReadingProgress progress) throws IOException {
-        return loadTextFile(path, progress, -1);
+    public GridState loadTextFile(String path, MultiFileReadingProgress progress, Charset encoding) throws IOException {
+        return loadTextFile(path, progress, encoding, -1);
     }
 
     @Override
-    public GridState loadTextFile(String path, MultiFileReadingProgress progress, long limit) throws IOException {
-        TextFilePLL textPLL = pllContext.textFile(path);
+    public GridState loadTextFile(String path, MultiFileReadingProgress progress, Charset encoding, long limit) throws IOException {
+        TextFilePLL textPLL = pllContext.textFile(path, encoding);
         textPLL.setProgressHandler(progress);
         PLL<Row> rows = textPLL
                 .map(s -> new Row(Arrays.asList(new Cell(s, null))));

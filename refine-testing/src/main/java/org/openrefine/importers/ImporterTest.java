@@ -138,7 +138,7 @@ public class ImporterTest extends RefineTest {
         );
     }
     
-    protected GridState parseOneFile(HDFSImporter parser, String sparkURI) throws Exception {
+    protected GridState parseOneFile(URIImporter parser, String sparkURI) throws Exception {
         return parser.parseOneFile(
             metadata,
             job,
