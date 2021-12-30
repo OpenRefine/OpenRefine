@@ -62,7 +62,7 @@
 
   <properties>
     <java.minversion>11</java.minversion>
-    <java.maxversion>15</java.maxversion>
+    <java.maxversion>17</java.maxversion>
     <jee.path>/</jee.path>
     <jee.port>3333</jee.port>
     <refine.data>/tmp/refine</refine.data>
@@ -72,14 +72,13 @@
     <jackson.version>2.12.3</jackson.version> <!-- to match Spark's dependencies -->
     <guava.version>30.1.1-jre</guava.version>
     <servlet-api.version>4.0.1</servlet-api.version>
-    <butterfly.version>1.2.0</butterfly.version>
+    <butterfly.version>1.2.2</butterfly.version>
     <servlet-api.version>4.0.1</servlet-api.version>
     <slf4j.version>1.7.32</slf4j.version>
-    <hadoop.version>3.3.1</hadoop.version>
-    <paranamer.version>2.8</paranamer.version>
+    <log4j.version>2.17.1</log4j.version>
     <jetty.version>9.4.41.v20210516</jetty.version>
     <okhttp.version>4.9.3</okhttp.version>
-    <jena.version>4.2.0</jena.version>
+    <jena.version>4.3.2</jena.version>
     <poi.version>5.1.0</poi.version>
     <powermock.version>2.0.9</powermock.version>
     <commons-lang3.version>3.12.0</commons-lang3.version>
@@ -95,11 +94,10 @@
     <jsoup.version>1.14.2</jsoup.version>
     <odfdom-java.version>0.10.0</odfdom-java.version>
     <vicino.version>1.2</vicino.version>
-    <signpost.version>2.1.1</signpost.version>
     <clojure.version>1.10.3</clojure.version>
     <httpclient.version>4.5.13</httpclient.version>
     <httpclient5.version>5.1.2</httpclient5.version>
-    <httpcore.version>4.4.14</httpcore.version>
+    <httpcore.version>4.4.15</httpcore.version>
     <opencsv-multichar.version>2.4</opencsv-multichar.version>
     <swc-parser-lazy.version>3.1.9</swc-parser-lazy.version>
     <commons-io.version>2.11.0</commons-io.version>
@@ -111,7 +109,6 @@
     <owasp-encoder.version>1.2.3</owasp-encoder.version>
     <jasypt.version>1.9.3</jasypt.version>
     <mockito.version>3.7.7</mockito.version>
-
     <!-- plugin versions -->
     <build-helper-maven-plugin.version>3.2.0</build-helper-maven-plugin.version>
     <maven-compiler-plugin.version>3.8.1</maven-compiler-plugin.version>

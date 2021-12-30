@@ -24,11 +24,11 @@
 package org.openrefine.wikidata.schema.entityvalues;
 
 import org.wikidata.wdtk.datamodel.helpers.ToString;
-import org.wikidata.wdtk.datamodel.interfaces.PropertyIdValue;
+import org.wikidata.wdtk.datamodel.interfaces.MediaInfoIdValue;
 
-public class SuggestedPropertyIdValue extends SuggestedEntityIdValue implements PropertyIdValue {
+public class SuggestedMediaInfoIdValue extends SuggestedEntityIdValue implements MediaInfoIdValue {
 
-    public SuggestedPropertyIdValue(String id, String siteIRI, String label) {
+    public SuggestedMediaInfoIdValue(String id, String siteIRI, String label) {
         super(id, siteIRI, label);
     }
 
@@ -39,11 +39,12 @@ public class SuggestedPropertyIdValue extends SuggestedEntityIdValue implements 
 
     @Override
     public String getEntityType() {
-        return ET_PROPERTY;
+        return ET_MEDIA_INFO;
     }
 
     @Override
     public String toString() {
         return "suggested " + ToString.toString(this) + " (\"" + getLabel() + "\")";
     }
+
 }

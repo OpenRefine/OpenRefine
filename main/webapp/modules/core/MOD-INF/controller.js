@@ -148,8 +148,6 @@ function registerCommands() {
   RS.registerCommand(module, "set-preference", new Packages.org.openrefine.commands.SetPreferenceCommand());
   RS.registerCommand(module, "open-workspace-dir", new Packages.org.openrefine.commands.OpenWorkspaceDirCommand());
   
-  RS.registerCommand(module, "authorize", new Packages.org.openrefine.commands.auth.AuthorizeCommand());
-  RS.registerCommand(module, "deauthorize", new Packages.org.openrefine.commands.auth.DeAuthorizeCommand());
 
 }
 

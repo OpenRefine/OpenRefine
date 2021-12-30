@@ -17,8 +17,8 @@ the web. All from a web browser and the comfort and privacy of your own computer
 
 Latest development version, packaged for:
 * [Linux](https://oss.sonatype.org/service/local/artifact/maven/content?r=snapshots&g=org.openrefine&a=openrefine&v=3.6-SNAPSHOT&c=linux&p=tar.gz)
-* [Windows](https://oss.sonatype.org/service/local/artifact/maven/content?r=snapshots&g=org.openrefine&a=openrefine&v=3.6-SNAPSHOT&c=mac&p=dmg)
-* [MacOS](https://oss.sonatype.org/service/local/artifact/maven/content?r=snapshots&g=org.openrefine&a=openrefine&v=3.6-SNAPSHOT&c=win&p=zip)
+* [MacOS](https://oss.sonatype.org/service/local/artifact/maven/content?r=snapshots&g=org.openrefine&a=openrefine&v=3.6-SNAPSHOT&c=mac&p=dmg)
+* [Windows](https://oss.sonatype.org/service/local/artifact/maven/content?r=snapshots&g=org.openrefine&a=openrefine&v=3.6-SNAPSHOT&c=win&p=zip)
 
 ## Run from source
 

@@ -630,10 +630,6 @@ run() {
     CLASSPATH="$REFINE_CLASSES_DIR${SEP}$REFINE_LIB_DIR/*"
 
     RUN_CMD=("$JAVA" -cp "$CLASSPATH" "${OPTS[@]}" "org.openrefine.Refine")
-    echo "${RUN_CMD[@]}"
-
-    echo "Starting OpenRefine at 'http://${REFINE_HOST_INTERNAL}:${REFINE_PORT}/'"
-    echo ""
 
     if [ -z "$FORK" ] ; then
         exec "${RUN_CMD[@]}"
@@ -895,10 +891,12 @@ elif [ "$OS" = "linux" ] ; then
     freeRam=$(free -m | grep -oP '\d+' | head -n 1)
 fi
 
+echo "-------------------------------------------------------------------------------------------------"
 echo You have "$freeRam"M of free memory. 
 echo Your current configuration is set to use $REFINE_MEMORY of memory.
 echo OpenRefine can run better when given more memory. Read our FAQ on how to allocate more memory here:
-echo https://github.com/OpenRefine/OpenRefine/wiki/FAQ-Allocate-More-Memory
+echo https://docs.openrefine.org/manual/installing\#increasing-memory-allocation
+echo "-------------------------------------------------------------------------------------------------"
 
 if [ -z "$REFINE_MAX_FORM_CONTENT_SIZE" ] ; then
     REFINE_MAX_FORM_CONTENT_SIZE="1048576"

@@ -60,7 +60,7 @@
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <jmh.version>1.33</jmh.version>
+    <jmh.version>1.34</jmh.version>
     <javac.target>${java.minversion}</javac.target>
     <uberjar.name>openrefine-benchmarks</uberjar.name>
   </properties>
@@ -143,7 +143,7 @@
         </plugin>
         <plugin>
           <artifactId>maven-site-plugin</artifactId>
-          <version>3.9.1</version>
+          <version>3.10.0</version>
         </plugin>
         <plugin>
           <artifactId>maven-source-plugin</artifactId>
