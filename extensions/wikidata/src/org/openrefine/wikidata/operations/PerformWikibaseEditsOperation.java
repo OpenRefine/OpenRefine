@@ -189,7 +189,7 @@ public class PerformWikibaseEditsOperation extends EngineDependentOperation {
             Pattern pattern = Pattern.compile("^(\\d+\\.\\d+).*$");
             Matcher matcher = pattern.matcher(RefineModel.VERSION);
             if (matcher.matches()) {
-                tag += "-" + matcher.group(1);
+                tag += matcher.group(1);
             }
             this._tags = Arrays.asList(tag);
             this._historyEntryID = HistoryEntry.allocateID();
