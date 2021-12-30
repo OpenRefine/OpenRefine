@@ -16,7 +16,7 @@ import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
-public class TextFilePLLTests extends PLLTestsBase {
+public  class TextFilePLLTests extends PLLTestsBase {
     
     File tempDir;
     File textFile;
@@ -82,6 +82,19 @@ public class TextFilePLLTests extends PLLTestsBase {
         PLL<String> deserializedPLL = new TextFilePLL(context, tempFile.getAbsolutePath());
         
         Assert.assertEquals(pll.collect(), deserializedPLL.collect());
+    }
+    
+    @Test
+    public void testLargerRoundTripSerialization() throws IOException, InterruptedException {
+        PLL<String> pll = new TextFilePLL(context, veryLongTextFile.getAbsolutePath());
+        int nbPartitions = pll.getPartitions().size();
+        
+        File tempFile = new File(tempDir, "largerroundtrip.txt");
+        pll.saveAsTextFile(tempFile.getAbsolutePath(), Optional.empty());
+        
+        PLL<String> deserializedPLL = new TextFilePLL(context, tempFile.getAbsolutePath());
+        Assert.assertEquals(deserializedPLL.getPartitions().size(), nbPartitions);
+        Assert.assertEquals(deserializedPLL.count(), 2048L);
     }
 
     @Test
