@@ -10,6 +10,7 @@ import java.io.InputStreamReader;
 import java.io.LineNumberReader;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -201,12 +202,12 @@ public class TestingDatamodelRunner implements DatamodelRunner {
     }
 
     @Override
-    public GridState loadTextFile(String path, MultiFileReadingProgress progress) throws IOException {
-        return loadTextFile(path, progress, Long.MAX_VALUE);
+    public GridState loadTextFile(String path, MultiFileReadingProgress progress, Charset encoding) throws IOException {
+        return loadTextFile(path, progress, GRID_ENCODING, Long.MAX_VALUE);
     }
 
     @Override
-    public GridState loadTextFile(String path, MultiFileReadingProgress progress, long limit) throws IOException {
+    public GridState loadTextFile(String path, MultiFileReadingProgress progress, Charset encoding, long limit) throws IOException {
         LineNumberReader reader = null;
         try {
             File file = new File(path);

@@ -41,6 +41,7 @@ import java.io.InputStreamReader;
 import java.io.LineNumberReader;
 import java.io.Reader;
 import java.io.UnsupportedEncodingException;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -111,7 +112,13 @@ public class SeparatorBasedImporter extends LineBasedImporterBase {
         // to a row in the grid, so we unfortunately cannot use the logic from LineBasedImporterBase.
         // We resort to loading the whole file in memory.
         if (processQuotes && multiLine) {
-            GridState lines = limit > 0 ? runner.loadTextFile(sparkURI, progress, limit) : runner.loadTextFile(sparkURI, progress);
+            Charset charset = Charset.defaultCharset();
+            String encoding = JSONUtilities.getString(options, "encoding", null);
+            if (encoding != null) {
+                charset = Charset.forName(encoding);
+            }
+            GridState lines = limit > 0 ? runner.loadTextFile(sparkURI, progress, charset, limit)
+                    : runner.loadTextFile(sparkURI, progress, charset);
             TableDataReader dataReader = createTableDataReader(metadata, job, lines, options);
             return tabularParserHelper.parseOneFile(metadata, job, fileSource, archiveFileName, dataReader, limit, options);
         } else {

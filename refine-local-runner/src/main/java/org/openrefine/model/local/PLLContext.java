@@ -2,6 +2,7 @@
 package org.openrefine.model.local;
 
 import java.io.IOException;
+import java.nio.charset.Charset;
 import java.util.List;
 
 import com.google.common.util.concurrent.ListeningExecutorService;
@@ -41,11 +42,12 @@ public class PLLContext {
      * Loads a text file as a PLL.
      * 
      * @param path
+     * @param encoding
      * @return
      * @throws IOException
      */
-    public TextFilePLL textFile(String path) throws IOException {
-        return new TextFilePLL(this, path);
+    public TextFilePLL textFile(String path, Charset encoding) throws IOException {
+        return new TextFilePLL(this, path, encoding);
     }
 
     /**

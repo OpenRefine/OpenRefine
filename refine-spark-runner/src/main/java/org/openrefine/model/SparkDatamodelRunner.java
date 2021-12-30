@@ -4,6 +4,7 @@ package org.openrefine.model;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Type;
+import java.nio.charset.Charset;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -169,12 +170,13 @@ public class SparkDatamodelRunner implements DatamodelRunner {
     }
 
     @Override
-    public GridState loadTextFile(String path, MultiFileReadingProgress progress) throws IOException {
-        return loadTextFile(path, progress, -1);
+    public GridState loadTextFile(String path, MultiFileReadingProgress progress, Charset encoding) throws IOException {
+        return loadTextFile(path, progress, encoding, -1);
     }
 
     @Override
-    public GridState loadTextFile(String path, MultiFileReadingProgress progress, long limit) throws IOException {
+    public GridState loadTextFile(String path, MultiFileReadingProgress progress, Charset encoding, long limit) throws IOException {
+        // TODO find a way to pass the encoding here?
         JavaRDD<String> lines = context.textFile(path);
         ColumnModel columnModel = new ColumnModel(Collections.singletonList(new ColumnMetadata("Column")));
         JavaRDD<Row> rows = lines.map(s -> new Row(Collections.singletonList(new Cell(s, null))));

@@ -3,6 +3,7 @@ package org.openrefine.model;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.Charset;
 import java.util.List;
 import java.util.Map;
 
@@ -22,6 +23,9 @@ import org.openrefine.overlay.OverlayModel;
  *
  */
 public interface DatamodelRunner {
+
+    // charset used when writing a grid to a file, in our internal format
+    public static final Charset GRID_ENCODING = Charset.forName("UTF-8");
 
     /**
      * Loads a {@link GridState} serialized at a given location.
@@ -52,8 +56,11 @@ public interface DatamodelRunner {
     /**
      * Loads a text file as a {@link GridState} with a single column named "Column" and whose contents are the lines in
      * the file, parsed as strings.
+     * 
+     * @param encoding
+     *            TODO
      */
-    public GridState loadTextFile(String path, MultiFileReadingProgress progress) throws IOException;
+    public GridState loadTextFile(String path, MultiFileReadingProgress progress, Charset encoding) throws IOException;
 
     /**
      * Loads a text file as a {@link GridState} with a single column named "Column" and whose contents are the lines in
@@ -61,10 +68,12 @@ public interface DatamodelRunner {
      * 
      * @param path
      *            the path to the text file to load
+     * @param encoding
+     *            TODO
      * @param limit
      *            the maximum number of lines to read
      */
-    public GridState loadTextFile(String path, MultiFileReadingProgress progress, long limit) throws IOException;
+    public GridState loadTextFile(String path, MultiFileReadingProgress progress, Charset encoding, long limit) throws IOException;
 
     /**
      * Creates a {@link ChangeData} from an in-memory list of indexed data. The list is required to be sorted.

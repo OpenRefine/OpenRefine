@@ -41,11 +41,13 @@ public class TextFilePLL extends PLL<String> {
     private final static Logger logger = LoggerFactory.getLogger(TextFilePLL.class);
     private final List<TextFilePartition> partitions;
     private final String path;
+    private final Charset encoding;
     private ReadingProgressReporter progress;
 
-    public TextFilePLL(PLLContext context, String path) throws IOException {
+    public TextFilePLL(PLLContext context, String path, Charset encoding) throws IOException {
         super(context);
         this.path = path;
+        this.encoding = encoding;
         this.progress = null;
 
         File file = new File(path);
@@ -121,11 +123,11 @@ public class TextFilePLL extends PLL<String> {
                 // computed).
                 countingIs = new CountingInputStream(bufferedIs);
                 bufferedIs = new GzipCompressorInputStream(bufferedIs);
-                lineReader = new LineReader(bufferedIs, Charset.forName("UTF-8")); // TODO make charset configurable
+                lineReader = new LineReader(bufferedIs, encoding);
 
             } else {
                 countingIs = new CountingInputStream(bufferedIs);
-                lineReader = new LineReader(countingIs, Charset.forName("UTF-8")); // TODO make charset configurable
+                lineReader = new LineReader(countingIs, encoding);
             }
 
             // if we are not reading from the first partition of the given file,

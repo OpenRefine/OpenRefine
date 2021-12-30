@@ -9,19 +9,19 @@ import org.openrefine.model.DatamodelRunner;
 import org.openrefine.model.GridState;
 
 /**
- * A base class for importers which read files via the Hadoop file system (HDFS)
+ * A base class for importers which read files specified by a URI
  * 
  * @author Antonin Delpeuch
  *
  */
-public abstract class HDFSImporter extends ImportingParserBase {
+public abstract class URIImporter extends ImportingParserBase {
 
-    protected HDFSImporter(DatamodelRunner runner) {
+    protected URIImporter(DatamodelRunner runner) {
         super(runner);
     }
 
     /**
-     * Parses one file, designated by a HDFS URI (understood by Spark, Flink…).
+     * Parses one file, designated by an URI (for instance for direct loading by Spark, Flink…).
      * 
      * @param metadata
      *            the project metadata associated with the project to parse (which can be modified by the importer)

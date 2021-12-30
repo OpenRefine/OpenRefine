@@ -2,6 +2,7 @@
 package org.openrefine.importers;
 
 import java.io.Serializable;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -30,7 +31,7 @@ import org.openrefine.util.JSONUtilities;
  * @author Antonin Delpeuch
  *
  */
-public abstract class LineBasedImporterBase extends HDFSImporter {
+public abstract class LineBasedImporterBase extends URIImporter {
 
     protected LineBasedImporterBase(DatamodelRunner runner) {
         super(runner);
@@ -145,12 +146,18 @@ public abstract class LineBasedImporterBase extends HDFSImporter {
 
         MultiFileReadingProgress scaledProgress = new ScaledProgress(progress, passes);
 
+        Charset charset = Charset.defaultCharset();
+        String encoding = JSONUtilities.getString(options, "encoding", null);
+        if (encoding != null) {
+            charset = Charset.forName(encoding);
+        }
+
         RowMapper rowMapper = getRowMapper(options);
         GridState rawCells;
         if (limit2 > 0) {
-            rawCells = runner.loadTextFile(sparkURI, scaledProgress, limit2 + ignoreLines + headerLines + skipDataLines);
+            rawCells = runner.loadTextFile(sparkURI, scaledProgress, charset, limit2 + ignoreLines + headerLines + skipDataLines);
         } else {
-            rawCells = runner.loadTextFile(sparkURI, scaledProgress);
+            rawCells = runner.loadTextFile(sparkURI, scaledProgress, charset);
         }
 
         // Compute the maximum number of cells in the entire grid

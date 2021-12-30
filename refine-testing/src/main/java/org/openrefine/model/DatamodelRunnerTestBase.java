@@ -7,6 +7,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Serializable;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -75,6 +76,7 @@ public abstract class DatamodelRunnerTestBase {
     protected List<Record> expectedRecords;
     protected SortingConfig sortingConfig;
     protected OverlayModel overlayModel;
+    protected Charset utf8 = Charset.forName("UTF-8");
 
     protected File tempDir;
 
@@ -1177,7 +1179,7 @@ public abstract class DatamodelRunnerTestBase {
         File tempFile = new File(tempDir, "textfile.txt");
         createTestTextFile(tempFile, "foo\nbar\nbaz");
 
-        GridState textGrid = SUT.loadTextFile(tempFile.getAbsolutePath(), mock(MultiFileReadingProgress.class));
+        GridState textGrid = SUT.loadTextFile(tempFile.getAbsolutePath(), mock(MultiFileReadingProgress.class), utf8);
 
         GridState expected = createGrid(new String[] { "Column" },
                 new Serializable[][] {
@@ -1195,7 +1197,7 @@ public abstract class DatamodelRunnerTestBase {
         createTestTextFile(tempFile, "foo\nbar\nbaz\nhello\nworld\nwelcome\nto\nopenrefine");
 
         MultiFileReadingProgressStub progress = new MultiFileReadingProgressStub();
-        GridState textGrid = SUT.loadTextFile(tempFile.getAbsolutePath(), progress);
+        GridState textGrid = SUT.loadTextFile(tempFile.getAbsolutePath(), progress, utf8);
 
         // read the whole file
         textGrid.collectRows();
@@ -1211,7 +1213,7 @@ public abstract class DatamodelRunnerTestBase {
         File tempFile = new File(tempDir, "longtextfile.txt");
         createTestTextFile(tempFile, "foo\nbar\nbaz\nhello\nworld\nwelcome\nto\nopenrefine");
 
-        GridState textGrid = SUT.loadTextFile(tempFile.getAbsolutePath(), mock(MultiFileReadingProgress.class), 7);
+        GridState textGrid = SUT.loadTextFile(tempFile.getAbsolutePath(), mock(MultiFileReadingProgress.class), utf8, 7);
 
         GridState expected = createGrid(new String[] { "Column" },
                 new Serializable[][] {
@@ -1232,7 +1234,7 @@ public abstract class DatamodelRunnerTestBase {
         File tempFile = new File(tempDir, "textfileWithNewline.txt");
         createTestTextFile(tempFile, "foo\nbar\nbaz\n");
 
-        GridState textGrid = SUT.loadTextFile(tempFile.getAbsolutePath(), mock(MultiFileReadingProgress.class));
+        GridState textGrid = SUT.loadTextFile(tempFile.getAbsolutePath(), mock(MultiFileReadingProgress.class), utf8);
 
         GridState expected = createGrid(new String[] { "Column" },
                 new Serializable[][] {
@@ -1246,7 +1248,7 @@ public abstract class DatamodelRunnerTestBase {
 
     @Test(expectedExceptions = IOException.class)
     public void testLoadTextFileDoesNotExist() throws IOException {
-        SUT.loadTextFile(new File(tempDir, "doesNotExist.txt").getAbsolutePath(), mock(MultiFileReadingProgress.class));
+        SUT.loadTextFile(new File(tempDir, "doesNotExist.txt").getAbsolutePath(), mock(MultiFileReadingProgress.class), utf8);
     }
 
     protected void createTestTextFile(File file, String contents) throws IOException {

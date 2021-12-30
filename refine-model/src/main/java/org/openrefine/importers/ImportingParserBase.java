@@ -137,8 +137,8 @@ abstract public class ImportingParserBase implements ImportingParser {
         ObjectNode optionsCopy = options.deepCopy();
         pushImportingOptions(metadata, fileSource, archiveFileName, optionsCopy);
 
-        if (this instanceof HDFSImporter) {
-            return ((HDFSImporter) this).parseOneFile(metadata, job, fileSource, archiveFileName,
+        if (this instanceof URIImporter) {
+            return ((URIImporter) this).parseOneFile(metadata, job, fileSource, archiveFileName,
                     fileRecord.getDerivedSparkURI(job.getRawDataDir()), limit, options, progress);
         } else {
             final File file = fileRecord.getFile(job.getRawDataDir());
