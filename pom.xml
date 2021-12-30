@@ -84,7 +84,7 @@
     <velocity.version>1.5</velocity.version>
     <marc4j.version>2.9.2</marc4j.version>
     <jsoup.version>1.14.2</jsoup.version>
-    <odfdom-java.version>0.9.0</odfdom-java.version> <!-- do not update to 0.10.0, see issue #4397 -->
+    <odfdom-java.version>0.10.0</odfdom-java.version> <!-- do not update to 0.10.0, see issue #4397 -->
     <vicino.version>1.2</vicino.version>
     <clojure.version>1.10.3</clojure.version>
     <httpclient.version>4.5.13</httpclient.version>
