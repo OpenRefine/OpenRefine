@@ -146,36 +146,4 @@ ClipboardImportingSourceUI.prototype.focus = function() {
   this._elmts.textInput.focus();
 };
 
-/// Spark import
 
-function SparkImportingSourceUI(controller) {
-  this._controller = controller;
-}
-Refine.DefaultImportingController.sources.push({
-  "label": $.i18n('core-index-import/spark'),
-  "id": "spark",
-  "uiClass": SparkImportingSourceUI
-});
-
-SparkImportingSourceUI.prototype.attachUI = function(bodyDiv) {
-  var self = this;
-  
-  bodyDiv.html(DOM.loadHTML("core", "scripts/index/default-importing-sources/import-from-spark-form.html"));
-
-  this._elmts = DOM.bind(bodyDiv);
-  this._elmts.enterSparkUri.text($.i18n('core-index-import/enter-spark-uri'));
-  this._elmts.addButton.html($.i18n('core-buttons/add-url'));
-  this._elmts.nextButton.html($.i18n('core-buttons/next'));
-
-  this._elmts.nextButton.click(function(evt) {
-    if ($.trim(self._elmts.sparkUriInput[0].value).length === 0) {
-      window.alert($.i18n('core-index-import/warning-spark-uri'));
-    } else {
-      self._controller.startImportJob(self._elmts.form, $.i18n('core-index-import/importing-in-spark'));
-    }
-  });
-};
-
-SparkImportingSourceUI.prototype.focus = function() {
-  this._elmts.sparkUriInput.focus();
-};
