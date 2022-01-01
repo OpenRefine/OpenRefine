@@ -114,7 +114,7 @@
     <maven-jar-plugin.version>3.2.0</maven-jar-plugin.version>
     <maven-clean-plugin.version>3.1.0</maven-clean-plugin.version>
     <git-commit-id-plugin.version>4.9.10</git-commit-id-plugin.version>
-    <maven-deploy-plugin.version>3.0.0-M1</maven-deploy-plugin.version>
+    <maven-deploy-plugin.version>3.0.0-M2</maven-deploy-plugin.version>
   </properties>
 
 
