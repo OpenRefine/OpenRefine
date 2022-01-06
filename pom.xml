@@ -96,7 +96,7 @@
     <guava.version>31.0.1-jre</guava.version>
     <jaxb-api.version>2.3.1</jaxb-api.version>
     <juniversalchardet.version>2.4.0</juniversalchardet.version>
-    <testng.version>7.4.0</testng.version>
+    <testng.version>7.5</testng.version>
     <httpmime.version>4.5.13</httpmime.version>
     <owasp-encoder.version>1.2.3</owasp-encoder.version>
     <jasypt.version>1.9.3</jasypt.version>
