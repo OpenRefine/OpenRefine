@@ -5,7 +5,7 @@
   <groupId>org.openrefine</groupId>
   <artifactId>phonetic</artifactId>
   <packaging>jar</packaging>
-  <version>4.0-alpha1</version>
+  <version>4.0-SNAPSHOT</version>
 
   <name>OpenRefine - Phonetic clustering extension</name>
   <description>Adds a few advanced phonetic clustering methods</description>
@@ -13,7 +13,7 @@
   <parent>
     <groupId>org.openrefine</groupId>
     <artifactId>extensions</artifactId>
-    <version>4.0-alpha1</version>
+    <version>4.0-SNAPSHOT</version>
   </parent>
 
   <build>
