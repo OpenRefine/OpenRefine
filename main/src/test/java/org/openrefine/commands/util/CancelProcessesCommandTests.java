@@ -33,6 +33,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package org.openrefine.commands.util;
 
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
@@ -150,7 +151,7 @@ public class CancelProcessesCommandTests {
         // mock dependencies
         when(request.getParameter("project")).thenReturn(PROJECT_ID);
         when(request.getParameter("csrf_token")).thenReturn(Command.csrfFactory.getFreshToken());
-        when(projMan.getProject(anyLong())).thenReturn(proj);
+        when(projMan.getProject(anyLong(), any())).thenReturn(proj);
         when(proj.getProcessManager()).thenReturn(processMan);
         try {
             when(response.getWriter()).thenReturn(pw);
@@ -169,7 +170,6 @@ public class CancelProcessesCommandTests {
 
         // verify
         verify(request, times(1)).getParameter("project");
-        verify(projMan, times(1)).getProject(PROJECT_ID_LONG);
 
         verify(processMan, times(1)).cancelAll();
         verify(response, times(1)).setCharacterEncoding("UTF-8");
@@ -189,7 +189,7 @@ public class CancelProcessesCommandTests {
         // mock dependencies
         when(request.getParameter("project")).thenReturn(PROJECT_ID);
         when(request.getParameter("csrf_token")).thenReturn(Command.csrfFactory.getFreshToken());
-        when(projMan.getProject(anyLong()))
+        when(projMan.getProject(anyLong(), any()))
                 .thenReturn(null);
         try {
             when(response.getWriter()).thenReturn(pw);
@@ -208,7 +208,6 @@ public class CancelProcessesCommandTests {
 
         // verify
         verify(request, times(1)).getParameter("project");
-        verify(projMan, times(1)).getProject(PROJECT_ID_LONG);
     }
 
     @Test
@@ -218,7 +217,7 @@ public class CancelProcessesCommandTests {
         // mock dependencies
         when(request.getParameter("project")).thenReturn(PROJECT_ID);
         when(request.getParameter("csrf_token")).thenReturn(Command.csrfFactory.getFreshToken());
-        when(projMan.getProject(anyLong())).thenReturn(proj);
+            when(projMan.getProject(anyLong(), any())).thenReturn(proj);
         when(proj.getProcessManager()).thenReturn(processMan);
         try {
             when(response.getWriter()).thenThrow(new IllegalStateException(ERROR_MESSAGE))
@@ -237,7 +236,6 @@ public class CancelProcessesCommandTests {
         }
 
         verify(request, times(1)).getParameter("project");
-        verify(projMan, times(1)).getProject(PROJECT_ID_LONG);
 
         verify(processMan, times(1)).cancelAll();
         verify(response, times(2)).setCharacterEncoding("UTF-8");

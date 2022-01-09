@@ -51,7 +51,9 @@ import org.openrefine.importing.ImportingJob;
 import org.openrefine.importing.ImportingJob.ImportingJobConfig;
 import org.openrefine.importing.ImportingJob.RetrievalRecord;
 import org.openrefine.importing.ImportingParser;
+import org.openrefine.model.DatamodelRunner;
 import org.openrefine.model.GridState;
+import org.openrefine.model.TestingDatamodelRunner;
 import org.openrefine.util.ParsingUtilities;
 import org.openrefine.util.TestUtils;
 import org.testng.annotations.AfterMethod;
@@ -71,6 +73,7 @@ public class ImporterTest extends RefineTest {
 
     protected ObjectNode options;
     protected static File importerTestDir;
+    protected DatamodelRunner runner = new TestingDatamodelRunner();
 
     @BeforeSuite
     public void setUpImporterTestDirectory() throws IOException {
@@ -109,44 +112,48 @@ public class ImporterTest extends RefineTest {
 
     protected GridState parseOneFile(ReaderImporter parser, Reader reader, ObjectNode options) throws Exception {
         return parser.parseOneFile(
-                metadata,
-                job,
-                "file-source",
-                "archive-file-name",
-                reader,
-                -1, options);
+            runner,
+            metadata,
+            job,
+            "file-source",
+            "archive-file-name",
+            reader, -1, options
+        );
     }
 
     protected GridState parseOneFile(InputStreamImporter parser, InputStream inputStream) throws Exception {
         return parser.parseOneFile(
-                metadata,
-                job,
-                "file-source",
-                "archive-file-name",
-                inputStream,
-                -1, options);
+            runner,
+            metadata,
+            job,
+            "file-source",
+            "archive-file-name",
+            inputStream, -1, options
+        );
     }
 
     protected GridState parseOneFile(InputStreamImporter parser, InputStream inputStream, ObjectNode options) throws Exception {
         return parser.parseOneFile(
-                metadata,
-                job,
-                "file-source",
-                "archive-file-name",
-                inputStream,
-                -1, options);
+            runner,
+            metadata,
+            job,
+            "file-source",
+            "archive-file-name",
+            inputStream, -1, options
+        );
     }
 
     protected GridState parseOneFile(URIImporter parser, String sparkURI) throws Exception {
         return parser.parseOneFile(
-                metadata,
-                job,
-                "file-source",
-                "archive-file-name",
-                sparkURI,
-                -1,
-                options,
-                mock(MultiFileReadingProgress.class));
+            runner,
+            metadata,
+            job,
+            "file-source",
+            "archive-file-name",
+            sparkURI,
+            -1,
+            options, mock(MultiFileReadingProgress.class)
+        );
     }
 
     protected GridState parseOneFile(ImportingParser parser, File file, ObjectNode options) throws Exception {
@@ -159,7 +166,7 @@ public class ImporterTest extends RefineTest {
     }
 
     protected GridState parseFiles(ImportingParser parser, List<ImportingFileRecord> files, ObjectNode options) throws Exception {
-        return parser.parse(metadata, job, files, "format", -1, options);
+        return parser.parse(runner, metadata, job, files, "format", -1, options);
     }
 
     protected GridState parseOneString(ImportingParser parser, String contents, ObjectNode options) throws Exception {

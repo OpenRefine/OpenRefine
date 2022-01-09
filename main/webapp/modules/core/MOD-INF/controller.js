@@ -35,7 +35,6 @@ var html = "text/html";
 var encoding = "UTF-8";
 var ClientSideResourceManager = Packages.org.openrefine.ClientSideResourceManager;
 var bundle = true;
-var runner = Packages.org.openrefine.RefineServlet.getDatamodelRunner();
 
 var templatedFiles = {
   // Requests with last path segments mentioned here 
@@ -203,28 +202,28 @@ function registerImporting() {
 
   FR.registerFormat("text", "core-import-formats/text" ); // generic format, no parser to handle it
   FR.registerFormat("text/line-based", "core-import-formats/text/line-based", "LineBasedParserUI",
-      new Packages.org.openrefine.importers.LineBasedImporter(runner));
+      new Packages.org.openrefine.importers.LineBasedImporter());
   FR.registerFormat("text/line-based/*sv", "core-import-formats/text/line-based/*sv", "SeparatorBasedParserUI",
-      new Packages.org.openrefine.importers.SeparatorBasedImporter(runner));
+      new Packages.org.openrefine.importers.SeparatorBasedImporter());
   FR.registerFormat("text/line-based/fixed-width", "core-import-formats/text/line-based/fixed-width", "FixedWidthParserUI",
-      new Packages.org.openrefine.importers.FixedWidthImporter(runner));
+      new Packages.org.openrefine.importers.FixedWidthImporter());
 
   FR.registerFormat("text/rdf/nt", "core-import-formats/text/rdf/nt", "RdfTriplesParserUI", 
-              new Packages.org.openrefine.importers.RdfTripleImporter(runner, Packages.org.openrefine.importers.RdfTripleImporter.Mode.NT));
+              new Packages.org.openrefine.importers.RdfTripleImporter(Packages.org.openrefine.importers.RdfTripleImporter.Mode.NT));
   FR.registerFormat("text/rdf/n3", "core-import-formats/text/rdf/n3", "RdfTriplesParserUI", 
-          new Packages.org.openrefine.importers.RdfTripleImporter(runner, Packages.org.openrefine.importers.RdfTripleImporter.Mode.N3));
+          new Packages.org.openrefine.importers.RdfTripleImporter(Packages.org.openrefine.importers.RdfTripleImporter.Mode.N3));
   FR.registerFormat("text/rdf/ttl", "core-import-formats/text/rdf/ttl", "RdfTriplesParserUI", 
-                  new Packages.org.openrefine.importers.RdfTripleImporter(runner, Packages.org.openrefine.importers.RdfTripleImporter.Mode.TTL));
-  FR.registerFormat("text/rdf/xml", "core-import-formats/text/rdf/xml", "RdfTriplesParserUI", new Packages.org.openrefine.importers.RdfXmlTripleImporter(runner));
-  FR.registerFormat("text/rdf/ld+json", "core-import-formats/text/rdf/ld+json", "RdfTriplesParserUI", new Packages.org.openrefine.importers.RdfJsonldTripleImporter(runner));
+                  new Packages.org.openrefine.importers.RdfTripleImporter(Packages.org.openrefine.importers.RdfTripleImporter.Mode.TTL));
+  FR.registerFormat("text/rdf/xml", "core-import-formats/text/rdf/xml", "RdfTriplesParserUI", new Packages.org.openrefine.importers.RdfXmlTripleImporter());
+  FR.registerFormat("text/rdf/ld+json", "core-import-formats/text/rdf/ld+json", "RdfTriplesParserUI", new Packages.org.openrefine.importers.RdfJsonldTripleImporter());
 
-  FR.registerFormat("text/xml", "core-import-formats/text/xml", "XmlParserUI", new Packages.org.openrefine.importers.XmlImporter(runner));
-  FR.registerFormat("binary/text/xml/xls/xlsx", "core-import-formats/binary/text/xml/xls/xlsx", "ExcelParserUI", new Packages.org.openrefine.importers.ExcelImporter(runner));
-  FR.registerFormat("text/xml/ods", "core-import-formats/text/xml/ods", "ExcelParserUI", new Packages.org.openrefine.importers.OdsImporter(runner));
-  FR.registerFormat("text/json", "core-import-formats/text/json", "JsonParserUI", new Packages.org.openrefine.importers.JsonImporter(runner));
-  FR.registerFormat("text/marc", "core-import-formats/text/marc", "XmlParserUI", new Packages.org.openrefine.importers.MarcImporter(runner));
-  FR.registerFormat("text/wiki", "core-import-formats/text/wiki", "WikitextParserUI", new Packages.org.openrefine.importers.WikitextImporter(runner));
-  FR.registerFormat("openrefine-legacy", null, null, new Packages.org.openrefine.importers.LegacyProjectImporter(runner));
+  FR.registerFormat("text/xml", "core-import-formats/text/xml", "XmlParserUI", new Packages.org.openrefine.importers.XmlImporter());
+  FR.registerFormat("binary/text/xml/xls/xlsx", "core-import-formats/binary/text/xml/xls/xlsx", "ExcelParserUI", new Packages.org.openrefine.importers.ExcelImporter());
+  FR.registerFormat("text/xml/ods", "core-import-formats/text/xml/ods", "ExcelParserUI", new Packages.org.openrefine.importers.OdsImporter());
+  FR.registerFormat("text/json", "core-import-formats/text/json", "JsonParserUI", new Packages.org.openrefine.importers.JsonImporter());
+  FR.registerFormat("text/marc", "core-import-formats/text/marc", "XmlParserUI", new Packages.org.openrefine.importers.MarcImporter());
+  FR.registerFormat("text/wiki", "core-import-formats/text/wiki", "WikitextParserUI", new Packages.org.openrefine.importers.WikitextImporter());
+  FR.registerFormat("openrefine-legacy", null, null, new Packages.org.openrefine.importers.LegacyProjectImporter());
 
   FR.registerFormat("binary", "core-import-formats/binary"); // generic format, no parser to handle it
 

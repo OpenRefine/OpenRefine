@@ -37,15 +37,17 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
+/**
+ * Imports an OpenRefine project from a 3.x project archive.
+ * 
+ * @author Antonin Delpeuch
+ *
+ */
 public class LegacyProjectImporter extends InputStreamImporter {
 
-    public LegacyProjectImporter(DatamodelRunner runner) {
-        super(runner);
-    }
-
     @Override
-    public GridState parseOneFile(ProjectMetadata metadata, ImportingJob job, String fileSource, String archiveFileName,
-            InputStream inputStream, long limit, ObjectNode options) throws Exception {
+	public GridState parseOneFile(DatamodelRunner runner, ProjectMetadata metadata, ImportingJob job, String fileSource,
+			String archiveFileName, InputStream inputStream, long limit, ObjectNode options) throws Exception {
         // open the project archive
         if (!fileSource.endsWith(".tar")) {
             inputStream = new GZIPInputStream(inputStream);

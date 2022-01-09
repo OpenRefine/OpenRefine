@@ -59,11 +59,13 @@ import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.apache.commons.fileupload.util.Streams;
 import org.openrefine.ProjectManager;
 import org.openrefine.ProjectMetadata;
+import org.openrefine.RefineServlet;
 import org.openrefine.commands.Command;
 import org.openrefine.importing.ImportingFileRecord;
 import org.openrefine.importing.ImportingJob;
 import org.openrefine.importing.ImportingManager;
 import org.openrefine.importing.ImportingUtilities;
+import org.openrefine.model.DatamodelRunner;
 import org.openrefine.model.Project;
 import org.openrefine.util.ParsingUtilities;
 import org.slf4j.Logger;
@@ -245,7 +247,8 @@ public class ImportProjectCommand extends Command {
             job.setFileSelection(Collections.singletonList(0));
             List<Exception> exceptions = new ArrayList<>();
             ObjectNode options = ParsingUtilities.mapper.createObjectNode();
-            projectID = ImportingUtilities.createProject(job, "openrefine-legacy", options, exceptions, true);
+        	DatamodelRunner runner = RefineServlet.getDatamodelRunner();
+        	projectID = ImportingUtilities.createProject(job, "openrefine-legacy", options, runner, exceptions, true);
         } else {
             throw new IOException("The supplied file could not be recognized as an OpenRefine project");
         }

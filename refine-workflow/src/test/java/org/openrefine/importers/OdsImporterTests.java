@@ -32,8 +32,7 @@ public class OdsImporterTests extends ImporterTest {
     @BeforeMethod
     public void setUp() {
         super.setUp();
-        DatamodelRunner runner = new TestingDatamodelRunner();
-        SUT = new OdsImporter(runner);
+        SUT = new OdsImporter();
     }
 
     @Test

@@ -96,8 +96,7 @@ public class ExcelImporterTests extends ImporterTest {
     @BeforeMethod
     public void setUp() {
         super.setUp();
-        DatamodelRunner runner = new TestingDatamodelRunner();
-        SUT = new ExcelImporter(runner);
+        SUT = new ExcelImporter();
     }
 
     @Override

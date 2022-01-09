@@ -75,7 +75,7 @@ public class DatabaseImportController implements ImportingController {
     @Override
     public void init(RefineServlet servlet) {
         this.servlet = servlet;
-        tabularParserHelper = new TabularParserHelper(servlet.getCurrentDatamodelRunner());
+        tabularParserHelper = new TabularParserHelper();
     }
 
     @Override
@@ -282,13 +282,13 @@ public class DatabaseImportController implements ImportingController {
 
         try {
             GridState grid = tabularParserHelper.parseOneFile(
+                    RefineServlet.getDatamodelRunner(),
                     metadata,
-                    job,
-                    querySource, // fileSource
-                    "", // archiveFileName
+                    job, // fileSource
+                    querySource, // archiveFileName
+                    "",
                     new DBQueryResultImportReader(job, databaseService, querySource, columns, dbQueryInfo, 100),
-                    limit,
-                    options);
+                    limit, options);
             // this is just a preview so no changes will be applied to this project
             job.setProject(new Project(grid, new LazyChangeDataStore(), new LazyCachedGridStore()));
         } catch (Exception e) {
@@ -411,16 +411,16 @@ public class DatabaseImportController implements ImportingController {
         
         try {
             GridState grid = tabularParserHelper.parseOneFile(
+                    RefineServlet.getDatamodelRunner(),
                     metadata,
-                    job,
-                    querySource, // fileSource
-                    "", // archiveFileName
+                    job, // fileSource
+                    querySource, // archiveFileName
+                    "",
                     new DBQueryResultImportReader(job, databaseService, querySource, columns, dbQueryInfo, getCreateBatchSize()),
-                    limit,
-                    options);
+                    limit, options);
             long projectId = Project.generateID();
-            ChangeDataStore dataStore = ProjectManager.singleton.getChangeDataStore(projectId);
-            CachedGridStore gridStore = ProjectManager.singleton.getCachedGridStore(projectId);
+            ChangeDataStore dataStore = ProjectManager.singleton.getChangeDataStore(projectId, RefineServlet.getDatamodelRunner());
+            CachedGridStore gridStore = ProjectManager.singleton.getCachedGridStore(projectId, RefineServlet.getDatamodelRunner());
             job.setProject(new Project(projectId, grid, dataStore, gridStore));
         } catch (Exception e) {
             exceptions.add(e);

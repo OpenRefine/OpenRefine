@@ -58,8 +58,8 @@ public class MarcImporter extends XmlImporter {
     }
 
     @Override
-    public ObjectNode createParserUIInitializationData(ImportingJob job,
-            List<ImportingFileRecord> fileRecords, String format) {
+    public ObjectNode createParserUIInitializationData(DatamodelRunner runner,
+            ImportingJob job, List<ImportingFileRecord> fileRecords, String format) {
         if (fileRecords.size() > 0) {
             ImportingFileRecord firstFileRecord = fileRecords.get(0);
             File file = firstFileRecord.getFile(job.getRawDataDir());
@@ -98,7 +98,7 @@ public class MarcImporter extends XmlImporter {
                 logger.error("Failed to create temporary XML file from MARC file", e);
             }
         }
-        ObjectNode options = super.createParserUIInitializationData(job, fileRecords, format);
+        ObjectNode options = super.createParserUIInitializationData(runner, job, fileRecords, format);
         return options;
     };
 

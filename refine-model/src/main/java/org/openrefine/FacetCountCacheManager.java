@@ -32,7 +32,7 @@ public class FacetCountCacheManager {
     public StringValuesFacetState getFacetState(long targetProjectId, String expression, String columnName) throws FacetCountException {
         String key = targetProjectId + ";" + columnName + "_" + expression;
 
-        Project project = ProjectManager.singleton.getProject(targetProjectId);
+        Project project = ProjectManager.singleton.getLoadedProject(targetProjectId);
         if (project == null) {
             throw new FacetCountException(String.format("Project %d could not be found", targetProjectId));
         }

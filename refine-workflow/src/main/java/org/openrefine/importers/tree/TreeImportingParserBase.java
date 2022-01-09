@@ -65,14 +65,10 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
  */
 abstract public class TreeImportingParserBase extends ImportingParserBase {
 
-    protected TreeImportingParserBase(DatamodelRunner runner) {
-        super(runner);
-    }
-
     @Override
-    public ObjectNode createParserUIInitializationData(ImportingJob job,
-            List<ImportingFileRecord> fileRecords, String format) {
-        ObjectNode options = super.createParserUIInitializationData(job, fileRecords, format);
+    public ObjectNode createParserUIInitializationData(DatamodelRunner runner,
+            ImportingJob job, List<ImportingFileRecord> fileRecords, String format) {
+        ObjectNode options = super.createParserUIInitializationData(runner, job, fileRecords, format);
 
         JSONUtilities.safePut(options, "trimStrings", false);
         JSONUtilities.safePut(options, "guessCellValueTypes", false);
@@ -81,9 +77,9 @@ abstract public class TreeImportingParserBase extends ImportingParserBase {
     }
 
     @Override
-    public GridState parse(ProjectMetadata metadata,
-            final ImportingJob job, List<ImportingFileRecord> fileRecords, String format,
-            long limit, ObjectNode options) throws Exception {
+    public GridState parse(DatamodelRunner runner,
+            ProjectMetadata metadata, final ImportingJob job, List<ImportingFileRecord> fileRecords,
+            String format, long limit, ObjectNode options) throws Exception {
         MultiFileReadingProgress progress = ImporterUtilities.createMultiFileReadingProgress(job, fileRecords);
         ImportColumnGroup rootColumnGroup = new ImportColumnGroup();
 

@@ -55,7 +55,7 @@ public class FixedWidthImporterTests extends ImporterTest {
     @BeforeMethod
     public void setUp() {
         super.setUp();
-        SUT = new FixedWidthImporter(runner());
+        SUT = new FixedWidthImporter();
     }
 
     @Override

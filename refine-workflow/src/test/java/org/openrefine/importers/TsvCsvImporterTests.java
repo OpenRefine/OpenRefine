@@ -63,8 +63,7 @@ public class TsvCsvImporterTests extends ImporterTest {
     @BeforeMethod
     public void setUp() {
         super.setUp();
-        DatamodelRunner runner = new TestingDatamodelRunner();
-        SUT = new SeparatorBasedImporter(runner);
+        SUT = new SeparatorBasedImporter();
     }
 
     @Override

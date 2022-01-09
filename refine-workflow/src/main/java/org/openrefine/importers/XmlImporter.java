@@ -70,7 +70,7 @@ public class XmlImporter extends TreeImportingParserBase {
     static final Logger logger = LoggerFactory.getLogger(XmlImporter.class);
 
     public XmlImporter(DatamodelRunner runner) {
-        super(runner);
+        super();
     }
 
     static private class PreviewParsingState {
@@ -81,9 +81,9 @@ public class XmlImporter extends TreeImportingParserBase {
     final static private int PREVIEW_PARSING_LIMIT = 1000;
 
     @Override
-    public ObjectNode createParserUIInitializationData(ImportingJob job,
-            List<ImportingFileRecord> fileRecords, String format) {
-        ObjectNode options = super.createParserUIInitializationData(job, fileRecords, format);
+    public ObjectNode createParserUIInitializationData(DatamodelRunner runner,
+            ImportingJob job, List<ImportingFileRecord> fileRecords, String format) {
+        ObjectNode options = super.createParserUIInitializationData(runner, job, fileRecords, format);
         try {
             if (fileRecords.size() > 0) {
                 ImportingFileRecord firstFileRecord = fileRecords.get(0);

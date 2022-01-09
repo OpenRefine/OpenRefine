@@ -37,8 +37,8 @@ import org.openrefine.model.DatamodelRunner;
 
 public class RdfJsonldTripleImporter extends RdfTripleImporter {
 
-    public RdfJsonldTripleImporter(DatamodelRunner runner) {
-        super(runner, RdfTripleImporter.Mode.JSONLD);
+    public RdfJsonldTripleImporter() {
+        super(RdfTripleImporter.Mode.JSONLD);
     }
-
+    
 }

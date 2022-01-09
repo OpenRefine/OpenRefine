@@ -38,8 +38,7 @@ public class LegacyProjectImporterTests extends ImporterTest {
     @BeforeMethod
     public void setUp() {
         super.setUp();
-        DatamodelRunner runner = new TestingDatamodelRunner();
-        SUT = new LegacyProjectImporter(runner);
+        SUT = new LegacyProjectImporter();
         ReconConfig.registerReconConfig("core", "standard-service", StandardReconConfig.class);
     }
 

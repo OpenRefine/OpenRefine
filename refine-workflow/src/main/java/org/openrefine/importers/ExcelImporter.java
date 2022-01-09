@@ -35,8 +35,6 @@ package org.openrefine.importers;
 
 import java.io.BufferedInputStream;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
@@ -44,14 +42,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.poi.ooxml.POIXMLException;
 import org.apache.poi.common.usermodel.Hyperlink;
-import org.apache.poi.ss.usermodel.DateUtil;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.poifs.filesystem.FileMagic;
+import org.apache.poi.ooxml.POIXMLException;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
+import org.apache.poi.poifs.filesystem.FileMagic;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.ss.usermodel.CellType;
+import org.apache.poi.ss.usermodel.DateUtil;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -79,15 +77,14 @@ public class ExcelImporter extends InputStreamImporter {
 
     private final TabularParserHelper tabularParserHelper;
 
-    public ExcelImporter(DatamodelRunner runner) {
-        super(runner);
-        tabularParserHelper = new TabularParserHelper(runner);
+    public ExcelImporter() {
+        tabularParserHelper = new TabularParserHelper();
     }
 
     @Override
-    public ObjectNode createParserUIInitializationData(ImportingJob job,
-            List<ImportingFileRecord> fileRecords, String format) {
-        ObjectNode options = super.createParserUIInitializationData(job, fileRecords, format);
+    public ObjectNode createParserUIInitializationData(DatamodelRunner runner,
+            ImportingJob job, List<ImportingFileRecord> fileRecords, String format) {
+        ObjectNode options = super.createParserUIInitializationData(runner, job, fileRecords, format);
 
         ArrayNode sheetRecords = ParsingUtilities.mapper.createArrayNode();
         JSONUtilities.safePut(options, "sheetRecords", sheetRecords);
@@ -134,8 +131,8 @@ public class ExcelImporter extends InputStreamImporter {
     }
 
     @Override
-    public GridState parseOneFile(ProjectMetadata metadata, ImportingJob job, String fileSource,
-            String archiveFileName, InputStream inputStream, long limit, ObjectNode options) throws Exception {
+    public GridState parseOneFile(DatamodelRunner runner, ProjectMetadata metadata, ImportingJob job,
+                String fileSource, String archiveFileName, InputStream inputStream, long limit, ObjectNode options) throws Exception {
         Workbook wb = null;
         if (!inputStream.markSupported()) {
             inputStream = new BufferedInputStream(inputStream);
@@ -215,12 +212,13 @@ public class ExcelImporter extends InputStreamImporter {
             // TODO: Do we need to preserve the original filename? Take first piece before #?
 //           JSONUtilities.safePut(options, "fileSource", fileSource + "#" + sheet.getSheetName());
             gridStates.add(tabularParserHelper.parseOneFile(
-                    metadata,
-                    job,
-                    fileSource + "#" + sheet.getSheetName(),
-                    archiveFileName,
-                    dataReader,
-                    limit, options));
+                runner,
+                metadata,
+                job,
+                fileSource + "#" + sheet.getSheetName(),
+                archiveFileName,
+                dataReader, limit, options
+            ));
         }
 
         return mergeGridStates(gridStates);

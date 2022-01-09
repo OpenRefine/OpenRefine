@@ -37,7 +37,6 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import org.apache.commons.compress.archivers.tar.TarArchiveOutputStream;
-import org.apache.tools.tar.TarOutputStream;
 import org.openrefine.history.HistoryEntryManager;
 import org.openrefine.model.DatamodelRunner;
 import org.openrefine.model.Project;
@@ -52,7 +51,7 @@ import org.openrefine.model.changes.LazyChangeDataStore;
  */
 public class ProjectManagerStub extends ProjectManager {
 
-    DatamodelRunner runner;
+    private DatamodelRunner runner;
 
     public ProjectManagerStub(DatamodelRunner runner) {
         this.runner = runner;
@@ -66,7 +65,7 @@ public class ProjectManagerStub extends ProjectManager {
 
     @Override
     public HistoryEntryManager getHistoryEntryManager() {
-        return new HistoryEntryManager(runner);
+        return new HistoryEntryManager();
     }
 
     @Override
@@ -75,7 +74,7 @@ public class ProjectManagerStub extends ProjectManager {
     }
 
     @Override
-    protected Project loadProject(long id) {
+    protected Project loadProject(long id, DatamodelRunner runner) {
         // empty
         return null;
     }
@@ -109,7 +108,7 @@ public class ProjectManagerStub extends ProjectManager {
     }
 
     @Override
-    public ChangeDataStore getChangeDataStore(long projectID) {
+    public ChangeDataStore getChangeDataStore(long projectID, DatamodelRunner runner) {
         return new LazyChangeDataStore();
     }
 
@@ -119,13 +118,18 @@ public class ProjectManagerStub extends ProjectManager {
     }
 
     @Override
-    public void reloadProjectFromWorkspace(long id) throws IOException {
+    public void reloadProjectFromWorkspace(long id, DatamodelRunner runner) throws IOException {
         // empty
     }
 
     @Override
-    public CachedGridStore getCachedGridStore(long projectId) {
+    public CachedGridStore getCachedGridStore(long projectId, DatamodelRunner runner) {
         return new LazyCachedGridStore();
+    }
+
+    @Override
+    public DatamodelRunner getLatestDatamodelRunner() {
+        return runner;
     }
 
 }
