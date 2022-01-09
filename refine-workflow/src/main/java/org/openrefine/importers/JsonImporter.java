@@ -73,10 +73,6 @@ public class JsonImporter extends TreeImportingParserBase {
 
     public final static String ANONYMOUS = "_";
 
-    public JsonImporter(DatamodelRunner runner) {
-        super();
-    }
-
     static private class PreviewParsingState {
 
         int tokenCount;

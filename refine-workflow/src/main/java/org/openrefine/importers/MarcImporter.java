@@ -53,10 +53,6 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 
 public class MarcImporter extends XmlImporter {
 
-    public MarcImporter(DatamodelRunner runner) {
-        super(runner);
-    }
-
     @Override
     public ObjectNode createParserUIInitializationData(DatamodelRunner runner,
             ImportingJob job, List<ImportingFileRecord> fileRecords, String format) {
