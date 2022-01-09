@@ -9,9 +9,7 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import org.openrefine.model.Cell;
-import org.openrefine.model.DatamodelRunner;
 import org.openrefine.model.GridState;
-import org.openrefine.model.TestingDatamodelRunner;
 import org.openrefine.model.recon.Recon;
 import org.openrefine.model.recon.Recon.Judgment;
 import org.openrefine.model.recon.ReconCandidate;
@@ -39,8 +37,7 @@ public class LegacyProjectImporterTests extends ImporterTest {
     @BeforeMethod
     public void setUp() {
         super.setUp();
-        DatamodelRunner runner = new TestingDatamodelRunner();
-        SUT = new LegacyProjectImporter(runner);
+        SUT = new LegacyProjectImporter();
         ReconConfig.registerReconConfig("core", "standard-service", StandardReconConfig.class);
     }
 

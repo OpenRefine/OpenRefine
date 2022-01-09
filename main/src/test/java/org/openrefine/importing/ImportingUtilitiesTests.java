@@ -274,9 +274,10 @@ public class ImportingUtilitiesTests extends ImporterTest {
         JSONUtilities.safePut(options, "includeArchiveFileName", true);
         JSONUtilities.safePut(options, "includeFileSources", true);
 
-        ImportingParserBase parser = new SeparatorBasedImporter(runner());
+        ImportingParserBase parser = new SeparatorBasedImporter();
         List<Exception> exceptions = new ArrayList<Exception>();
         GridState grid = parser.parse(
+                runner,
                 metadata,
                 job,
                 IteratorUtils.toList(fileRecords.iterator()),

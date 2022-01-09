@@ -55,6 +55,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import org.openrefine.history.HistoryEntryManager;
+import org.openrefine.model.DatamodelRunner;
 import org.openrefine.model.Project;
 import org.openrefine.model.changes.CachedGridStore;
 import org.openrefine.model.changes.ChangeDataStore;
@@ -121,11 +122,11 @@ public abstract class ProjectManager {
     public void dispose() {
         save(true); // complete save
 
-        // TODO migrate to RDD-based architecture
-
-        /*
-         * for (Project project : _projects.values()) { if (project != null) { project.dispose(); } }
-         */
+        for (Project project : _projects.values()) {
+            if (project != null) {
+                project.dispose();
+            }
+        }
 
         _projects.clear();
         _projectsMetadata.clear();
@@ -159,17 +160,21 @@ public abstract class ProjectManager {
     /**
      * Return the change data store for a given project
      * 
+     * @param runner
+     *            TODO
      * @param projectId
      */
-    public abstract ChangeDataStore getChangeDataStore(long projectID);
+    public abstract ChangeDataStore getChangeDataStore(long projectID, DatamodelRunner runner);
 
     /**
      * Return the cached grid store for a given project
      * 
      * @param projectId
+     * @param runner
+     *            TODO
      * @return
      */
-    public abstract CachedGridStore getCachedGridStore(long projectId);
+    public abstract CachedGridStore getCachedGridStore(long projectId, DatamodelRunner runner);
 
     /**
      * Load project metadata from data storage
@@ -183,10 +188,12 @@ public abstract class ProjectManager {
      * Loads a project from the data store into memory
      * 
      * @param id
+     * @param runner
+     *            TODO
      * @return
      * @throws IOException
      */
-    protected abstract Project loadProject(long id) throws IOException;
+    protected abstract Project loadProject(long id, DatamodelRunner runner) throws IOException;
 
     /**
      * Import project from a Refine archive
@@ -223,7 +230,7 @@ public abstract class ProjectManager {
                 }
             } // FIXME what should be the behaviour if metadata is null? i.e. not found
 
-            Project project = getProject(id);
+            Project project = _projects.get(id);
             if (project != null && metadata != null && metadata.getModified().isAfter(project.getLastSave())) {
                 try {
                     saveProject(project);
@@ -241,9 +248,11 @@ public abstract class ProjectManager {
      * 
      * @param id
      *            the project id to load
+     * @param runner
+     *            TODO
      * @throws IOException
      */
-    public abstract void reloadProjectFromWorkspace(long id) throws IOException;
+    public abstract void reloadProjectFromWorkspace(long id, DatamodelRunner runner) throws IOException;
 
     /**
      * Save project metadata to the data store
@@ -554,16 +563,18 @@ public abstract class ProjectManager {
      * 
      * @param id
      *            the id of the project
+     * @param runner
+     *            the datamodel runner to load the project (if not loaded yet)
      * @return the project with the matching id, or null if it can't be found
      */
-    public Project getProject(long id) {
+    public Project getProject(long id, DatamodelRunner runner) {
         synchronized (this) {
             if (_projects.containsKey(id)) {
                 return _projects.get(id);
             } else {
                 Project project = null;
                 try {
-                    project = loadProject(id);
+                    project = loadProject(id, runner);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -574,6 +585,24 @@ public abstract class ProjectManager {
             }
         }
     }
+
+    /**
+     * Gets the required project, assuming it has already been leaded.
+     * 
+     * @param id
+     *            the id of the project
+     * @return null if the project is not loaded yet.
+     */
+    public Project getLoadedProject(long id) {
+        return _projects.get(id);
+    }
+
+    /**
+     * @return the latest datamodel runner used to load a project
+     * @todo remove this, and create a way to load the datamodel runner that was used last for a given project instead
+     */
+    @JsonIgnore
+    public abstract DatamodelRunner getLatestDatamodelRunner();
 
     /**
      * Gets the preference store

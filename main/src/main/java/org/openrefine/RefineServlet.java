@@ -104,21 +104,6 @@ public class RefineServlet extends Butterfly {
     public void init() throws ServletException {
         super.init();
 
-        String runnerClassName = System.getProperty("refine.runner.class");
-        if (runnerClassName == null || runnerClassName.isEmpty()) {
-            runnerClassName = DEFAULT_DATAMODEL_RUNNER_CLASS_NAME;
-        }
-        try {
-            logger.info(String.format("Starting datamodel runner '%s'", runnerClassName));
-            Class<?> runnerClass = this.getClass().getClassLoader().loadClass(runnerClassName);
-            RunnerConfiguration runnerConfiguration = new ServletRunnerConfiguration();
-            s_runner = (DatamodelRunner) runnerClass.getConstructor(RunnerConfiguration.class).newInstance(runnerConfiguration);
-        } catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException
-                | NoSuchMethodException | SecurityException | ClassNotFoundException e1) {
-            e1.printStackTrace();
-            throw new ServletException("Unable to initialize the datamodel runner.", e1);
-        }
-
         VERSION = getInitParameter("refine.version");
         REVISION = getInitParameter("refine.revision");
 
@@ -351,16 +336,33 @@ public class RefineServlet extends Butterfly {
     }
 
     static public DatamodelRunner getDatamodelRunner() {
+        if (s_runner == null) {
+            // load the datamodel runner
+            String runnerClassName = System.getProperty("refine.runner.class");
+            if (runnerClassName == null || runnerClassName.isEmpty()) {
+                runnerClassName = DEFAULT_DATAMODEL_RUNNER_CLASS_NAME;
+            }
+            try {
+                logger.info(String.format("Starting datamodel runner '%s'", runnerClassName));
+                Class<?> runnerClass = RefineServlet.class.getClassLoader().loadClass(runnerClassName);
+                RunnerConfiguration runnerConfiguration = new ServletRunnerConfiguration();
+                s_runner = (DatamodelRunner) runnerClass.getConstructor(RunnerConfiguration.class).newInstance(runnerConfiguration);
+            } catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException
+                    | NoSuchMethodException | SecurityException | ClassNotFoundException e1) {
+                e1.printStackTrace();
+                throw new IllegalArgumentException("Unable to initialize the datamodel runner.", e1);
+            }
+        }
         return s_runner;
     }
 
     // introduced for testing purposes (to avoid stubbing a static method)
     // TODO To be refactored.
     public DatamodelRunner getCurrentDatamodelRunner() {
-        return s_runner;
+        return getDatamodelRunner();
     }
 
-    private class ServletRunnerConfiguration extends RunnerConfiguration {
+    private static class ServletRunnerConfiguration extends RunnerConfiguration {
 
         @Override
         public String getParameter(String key, String defaultValue) {

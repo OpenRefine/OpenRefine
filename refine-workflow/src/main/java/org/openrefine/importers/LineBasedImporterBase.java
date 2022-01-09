@@ -33,10 +33,6 @@ import org.openrefine.util.JSONUtilities;
  */
 public abstract class LineBasedImporterBase extends URIImporter {
 
-    protected LineBasedImporterBase(DatamodelRunner runner) {
-        super(runner);
-    }
-
     /**
      * Method to be overridden by subclasses to define how each row should be parsed. The row mapper takes a row with
      * only a single string cell as argument and returns a parsed row.
@@ -100,9 +96,9 @@ public abstract class LineBasedImporterBase extends URIImporter {
     }
 
     @Override
-    public ObjectNode createParserUIInitializationData(ImportingJob job,
-            List<ImportingFileRecord> fileRecords, String format) {
-        ObjectNode options = super.createParserUIInitializationData(job, fileRecords, format);
+    public ObjectNode createParserUIInitializationData(DatamodelRunner runner,
+            ImportingJob job, List<ImportingFileRecord> fileRecords, String format) {
+        ObjectNode options = super.createParserUIInitializationData(runner, job, fileRecords, format);
         EncodingGuesser.guessInitialEncoding(fileRecords, options);
         JSONUtilities.safePut(options, "ignoreLines", -1); // number of blank lines at the beginning to ignore
         JSONUtilities.safePut(options, "headerLines", 1); // number of header lines
@@ -115,8 +111,8 @@ public abstract class LineBasedImporterBase extends URIImporter {
     }
 
     @Override
-    public GridState parseOneFile(ProjectMetadata metadata, ImportingJob job, String fileSource,
-            String archiveFileName, String sparkURI, long limit, ObjectNode options, MultiFileReadingProgress progress)
+    public GridState parseOneFile(DatamodelRunner runner, ProjectMetadata metadata, ImportingJob job,
+            String fileSource, String archiveFileName, String sparkURI, long limit, ObjectNode options, MultiFileReadingProgress progress)
             throws Exception {
         int ignoreLines = Math.max(JSONUtilities.getInt(options, "ignoreLines", -1), 0);
         int headerLines = Math.max(JSONUtilities.getInt(options, "headerLines", 0), 0);

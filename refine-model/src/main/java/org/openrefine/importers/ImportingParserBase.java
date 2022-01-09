@@ -59,26 +59,18 @@ abstract public class ImportingParserBase implements ImportingParser {
 
     final static Logger logger = LoggerFactory.getLogger("ImportingParserBase");
 
-    final protected DatamodelRunner runner;
-
-    /**
-     */
-    protected ImportingParserBase(DatamodelRunner runner) {
-        this.runner = runner;
-    }
-
     @Override
-    public ObjectNode createParserUIInitializationData(ImportingJob job,
-            List<ImportingFileRecord> fileRecords, String format) {
+    public ObjectNode createParserUIInitializationData(DatamodelRunner runner,
+            ImportingJob job, List<ImportingFileRecord> fileRecords, String format) {
         ObjectNode options = ParsingUtilities.mapper.createObjectNode();
         JSONUtilities.safePut(options, "includeFileSources", fileRecords.size() > 1);
         return options;
     }
 
     @Override
-    public GridState parse(ProjectMetadata metadata,
-            final ImportingJob job, List<ImportingFileRecord> fileRecords, String format,
-            long limit, ObjectNode options) throws Exception {
+    public GridState parse(DatamodelRunner runner,
+            ProjectMetadata metadata, final ImportingJob job, List<ImportingFileRecord> fileRecords,
+            String format, long limit, ObjectNode options) throws Exception {
         MultiFileReadingProgress progress = ImporterUtilities.createMultiFileReadingProgress(job, fileRecords);
         List<GridState> gridStates = new ArrayList<>(fileRecords.size());
 
@@ -93,7 +85,7 @@ abstract public class ImportingParserBase implements ImportingParser {
             }
 
             long fileLimit = limit < 0 ? limit : Math.max(limit - totalRows, 1L);
-            GridState gridState = parseOneFile(metadata, job, fileRecord, fileLimit, options, progress);
+            GridState gridState = parseOneFile(runner, metadata, job, fileRecord, fileLimit, options, progress);
             gridStates.add(gridState);
             totalRows += gridState.rowCount();
 
@@ -123,12 +115,12 @@ abstract public class ImportingParserBase implements ImportingParser {
     }
 
     public GridState parseOneFile(
+            DatamodelRunner runner,
             ProjectMetadata metadata,
             ImportingJob job,
             ImportingFileRecord fileRecord,
             long limit,
-            ObjectNode options,
-            final MultiFileReadingProgress progress) throws Exception {
+            ObjectNode options, final MultiFileReadingProgress progress) throws Exception {
 
         String fileSource = fileRecord.getFileSource();
         String archiveFileName = fileRecord.getArchiveFileName();
@@ -138,7 +130,7 @@ abstract public class ImportingParserBase implements ImportingParser {
         pushImportingOptions(metadata, fileSource, archiveFileName, optionsCopy);
 
         if (this instanceof URIImporter) {
-            return ((URIImporter) this).parseOneFile(metadata, job, fileSource, archiveFileName,
+            return ((URIImporter) this).parseOneFile(runner, metadata, job, fileSource, archiveFileName,
                     fileRecord.getDerivedSparkURI(job.getRawDataDir()), limit, options, progress);
         } else {
             final File file = fileRecord.getFile(job.getRawDataDir());
@@ -146,8 +138,8 @@ abstract public class ImportingParserBase implements ImportingParser {
                 InputStream inputStream = ImporterUtilities.openAndTrackFile(fileSource, file, progress);
                 try {
                     if (this instanceof InputStreamImporter) {
-                        return ((InputStreamImporter) this).parseOneFile(metadata, job, fileSource, archiveFileName, inputStream, limit,
-                                options);
+                        return ((InputStreamImporter) this).parseOneFile(runner, metadata, job, fileSource, archiveFileName, inputStream,
+                                limit, options);
                     } else {
                         String commonEncoding = JSONUtilities.getString(options, "encoding", null);
                         if (commonEncoding != null && commonEncoding.isEmpty()) {
@@ -157,7 +149,8 @@ abstract public class ImportingParserBase implements ImportingParser {
                         Reader reader = ImporterUtilities.getReaderFromStream(
                                 inputStream, fileRecord, commonEncoding);
 
-                        return ((ReaderImporter) this).parseOneFile(metadata, job, fileSource, archiveFileName, reader, limit, options);
+                        return ((ReaderImporter) this).parseOneFile(runner, metadata, job, fileSource, archiveFileName, reader, limit,
+                                options);
                     }
                 } finally {
                     inputStream.close();

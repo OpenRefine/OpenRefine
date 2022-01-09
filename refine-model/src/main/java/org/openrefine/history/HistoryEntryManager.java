@@ -59,12 +59,6 @@ public class HistoryEntryManager {
     protected static final String CHANGE_SUBDIR = "changes";
     protected static final String GRID_CACHE_SUBDIR = "cache";
 
-    private final DatamodelRunner runner;
-
-    public HistoryEntryManager(DatamodelRunner runner) {
-        this.runner = runner;
-    }
-
     /**
      * Saves the history and the initial grid state to a directory.
      * 
@@ -90,7 +84,7 @@ public class HistoryEntryManager {
         }
     }
 
-    public History load(File dir) throws IOException, DoesNotApplyException {
+    public History load(DatamodelRunner runner, File dir) throws IOException, DoesNotApplyException {
         File gridFile = new File(dir, INITIAL_GRID_SUBDIR);
         File metadataFile = new File(dir, METADATA_FILENAME);
         // Load the metadata
@@ -99,8 +93,8 @@ public class HistoryEntryManager {
         GridState gridState = runner.loadGridState(gridFile);
         return new History(
                 gridState,
-                getChangeDataStore(dir),
-                getCachedGridStore(dir),
+                getChangeDataStore(runner, dir),
+                getCachedGridStore(runner, dir),
                 metadata.entries,
                 metadata.position);
     }
@@ -112,7 +106,7 @@ public class HistoryEntryManager {
      *            the root project directory
      * @return
      */
-    public ChangeDataStore getChangeDataStore(File projectDir) {
+    public ChangeDataStore getChangeDataStore(DatamodelRunner runner, File projectDir) {
         return new FileChangeDataStore(runner, new File(projectDir, CHANGE_SUBDIR));
     }
 
@@ -122,7 +116,7 @@ public class HistoryEntryManager {
      * @param projectDir
      * @return
      */
-    public CachedGridStore getCachedGridStore(File projectDir) {
+    public CachedGridStore getCachedGridStore(DatamodelRunner runner, File projectDir) {
         return new FileCachedGridStore(runner, new File(projectDir, GRID_CACHE_SUBDIR));
     }
 

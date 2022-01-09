@@ -65,18 +65,17 @@ public class RdfTripleImporter extends ReaderImporter {
         RDFXML, NT, N3, TTL, JSONLD
     }
 
-    public RdfTripleImporter(DatamodelRunner runner) {
-        this(runner, Mode.NT);
+    public RdfTripleImporter() {
+        this(Mode.NT);
     }
 
-    public RdfTripleImporter(DatamodelRunner runner, Mode mode) {
-        super(runner);
+    public RdfTripleImporter(Mode mode) {
         this.mode = mode;
     }
 
     @Override
-    public GridState parseOneFile(ProjectMetadata metadata, ImportingJob job, String fileSource, String archiveFileName,
-            Reader input, long limit, ObjectNode options) throws Exception {
+    public GridState parseOneFile(DatamodelRunner runner, ProjectMetadata metadata, ImportingJob job, String fileSource,
+            String archiveFileName, Reader input, long limit, ObjectNode options) throws Exception {
         // create an empty model
         Model model = ModelFactory.createDefaultModel();
 

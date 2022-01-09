@@ -77,15 +77,14 @@ public class ExcelImporter extends InputStreamImporter {
 
     private final TabularParserHelper tabularParserHelper;
 
-    public ExcelImporter(DatamodelRunner runner) {
-        super(runner);
-        tabularParserHelper = new TabularParserHelper(runner);
+    public ExcelImporter() {
+        tabularParserHelper = new TabularParserHelper();
     }
 
     @Override
-    public ObjectNode createParserUIInitializationData(ImportingJob job,
-            List<ImportingFileRecord> fileRecords, String format) {
-        ObjectNode options = super.createParserUIInitializationData(job, fileRecords, format);
+    public ObjectNode createParserUIInitializationData(DatamodelRunner runner,
+            ImportingJob job, List<ImportingFileRecord> fileRecords, String format) {
+        ObjectNode options = super.createParserUIInitializationData(runner, job, fileRecords, format);
 
         ArrayNode sheetRecords = ParsingUtilities.mapper.createArrayNode();
         JSONUtilities.safePut(options, "sheetRecords", sheetRecords);
@@ -132,8 +131,8 @@ public class ExcelImporter extends InputStreamImporter {
     }
 
     @Override
-    public GridState parseOneFile(ProjectMetadata metadata, ImportingJob job, String fileSource,
-            String archiveFileName, InputStream inputStream, long limit, ObjectNode options) throws Exception {
+    public GridState parseOneFile(DatamodelRunner runner, ProjectMetadata metadata, ImportingJob job,
+            String fileSource, String archiveFileName, InputStream inputStream, long limit, ObjectNode options) throws Exception {
         Workbook wb = null;
         if (!inputStream.markSupported()) {
             inputStream = new BufferedInputStream(inputStream);
@@ -213,12 +212,12 @@ public class ExcelImporter extends InputStreamImporter {
             // TODO: Do we need to preserve the original filename? Take first piece before #?
 //           JSONUtilities.safePut(options, "fileSource", fileSource + "#" + sheet.getSheetName());
             gridStates.add(tabularParserHelper.parseOneFile(
+                    runner,
                     metadata,
                     job,
                     fileSource + "#" + sheet.getSheetName(),
                     archiveFileName,
-                    dataReader,
-                    limit, options));
+                    dataReader, limit, options));
         }
 
         return mergeGridStates(gridStates);

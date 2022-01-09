@@ -129,15 +129,15 @@ public class GDataImporter {
                 worksheetEntry.getProperties().getTitle();
 
         setProgress(job, fileSource, 0);
-        TabularParserHelper tabularParsingHelper = new TabularParserHelper(runner);
+        TabularParserHelper tabularParsingHelper = new TabularParserHelper();
         GridState grid = tabularParsingHelper.parseOneFile(
+                runner,
                 metadata,
                 job,
                 fileSource,
                 "",
                 new WorksheetBatchRowReader(job, fileSource, service, spreadsheetId, worksheetEntry),
-                limit,
-                options);
+                limit, options);
         setProgress(job, fileSource, 100);
         return grid;
     }

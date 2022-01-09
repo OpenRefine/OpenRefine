@@ -58,6 +58,7 @@ import org.openrefine.process.ProcessManager;
 
 public class ProjectManagerTests {
 
+    DatamodelRunner runner;
     ProjectManagerStub pm;
     ProjectManagerStub SUT;
     Project project;
@@ -66,7 +67,8 @@ public class ProjectManagerTests {
 
     @BeforeMethod
     public void SetUp() {
-        pm = new ProjectManagerStub(mock(DatamodelRunner.class));
+        runner = mock(DatamodelRunner.class);
+        pm = new ProjectManagerStub(runner);
         SUT = spy(pm);
         project = mock(Project.class);
         metadata = mock(ProjectMetadata.class);
@@ -155,7 +157,7 @@ public class ProjectManagerTests {
 
         whenGetSaveTimes(project, metadata, -10);// already saved (10 seconds before)
         registerProject(project, metadata);
-        Assert.assertSame(SUT.getProject(1234L), project);
+        Assert.assertSame(SUT.getProject(1234L, runner), project);
 
         SUT.save(true);
 
@@ -164,7 +166,7 @@ public class ProjectManagerTests {
         verify(project, times(1)).getProcessManager();
         verify(project, times(2)).getLastSave();
         verify(SUT, never()).saveProject(project);
-        Assert.assertEquals(SUT.getProject(0), null);
+        Assert.assertEquals(SUT.getProject(0, runner), null);
         verify(project, atLeast(1)).getId();
         verify(project, times(1)).dispose();
         verifyNoMoreInteractions(project);
@@ -214,7 +216,7 @@ public class ProjectManagerTests {
     }
 
     protected void AssertProjectRegistered() {
-        Assert.assertEquals(SUT.getProject(project.getId()), project);
+        Assert.assertEquals(SUT.getProject(project.getId(), runner), project);
         Assert.assertEquals(SUT.getProjectMetadata(project.getId()), metadata);
     }
 

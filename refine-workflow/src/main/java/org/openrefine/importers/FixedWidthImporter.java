@@ -54,14 +54,10 @@ import org.openrefine.util.ParsingUtilities;
 
 public class FixedWidthImporter extends LineBasedImporterBase {
 
-    public FixedWidthImporter(DatamodelRunner datamodelRunner) {
-        super(datamodelRunner);
-    }
-
     @Override
     public ObjectNode createParserUIInitializationData(
-            ImportingJob job, List<ImportingFileRecord> fileRecords, String format) {
-        ObjectNode options = super.createParserUIInitializationData(job, fileRecords, format);
+            DatamodelRunner runner, ImportingJob job, List<ImportingFileRecord> fileRecords, String format) {
+        ObjectNode options = super.createParserUIInitializationData(runner, job, fileRecords, format);
         ArrayNode columnWidths = ParsingUtilities.mapper.createArrayNode();
         if (fileRecords.size() > 0) {
             ImportingFileRecord firstFileRecord = fileRecords.get(0);

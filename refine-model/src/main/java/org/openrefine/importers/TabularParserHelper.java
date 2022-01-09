@@ -62,12 +62,6 @@ public class TabularParserHelper {
         public List<Object> getNextRowOfCells() throws IOException;
     }
 
-    protected final DatamodelRunner runner;
-
-    public TabularParserHelper(DatamodelRunner runner) {
-        this.runner = runner;
-    }
-
     public ObjectNode createParserUIInitializationData(ObjectNode options) {
         JSONUtilities.safePut(options, "ignoreLines", -1); // number of blank lines at the beginning to ignore
         JSONUtilities.safePut(options, "headerLines", 1); // number of header lines
@@ -81,9 +75,9 @@ public class TabularParserHelper {
         return options;
     }
 
-    public GridState parseOneFile(ProjectMetadata metadata, ImportingJob job, String fileSource,
-            String archiveFileName, TableDataReader dataReader, long limit,
-            ObjectNode options) throws Exception {
+    public GridState parseOneFile(DatamodelRunner runner, ProjectMetadata metadata, ImportingJob job,
+            String fileSource, String archiveFileName, TableDataReader dataReader,
+            long limit, ObjectNode options) throws Exception {
         int ignoreLines = JSONUtilities.getInt(options, "ignoreLines", -1);
         int headerLines = JSONUtilities.getInt(options, "headerLines", 1);
         int skipDataLines = JSONUtilities.getInt(options, "skipDataLines", 0);

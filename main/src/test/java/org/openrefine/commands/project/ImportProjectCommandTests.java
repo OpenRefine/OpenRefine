@@ -56,8 +56,7 @@ public class ImportProjectCommandTests extends CommandTestBase {
     public void setUpCommand() throws JsonParseException, JsonMappingException, IOException {
         command = new ImportProjectCommand();
         ReconConfig.registerReconConfig("core", "standard-service", StandardReconConfig.class);
-        FormatRegistry.registerFormat("openrefine-legacy", "OpenRefine legacy project file", "uiClass",
-                new LegacyProjectImporter(runner()));
+        FormatRegistry.registerFormat("openrefine-legacy", "OpenRefine legacy project file", "uiClass", new LegacyProjectImporter());
 
         RefineServlet servlet = mock(RefineServlet.class);
         tempDir = TestUtils.createTempDirectory("openrefine-import-project-command-test");
@@ -105,7 +104,7 @@ public class ImportProjectCommandTests extends CommandTestBase {
         ImportProjectCommand SUT = (ImportProjectCommand) command;
         long projectId = SUT.importProject(stream, true);
 
-        GridState grid = ProjectManager.singleton.getProject(projectId).getCurrentGridState();
+        GridState grid = ProjectManager.singleton.getProject(projectId, runner()).getCurrentGridState();
 
         assertGridEquals(grid, expectedGrid);
     }
@@ -119,7 +118,7 @@ public class ImportProjectCommandTests extends CommandTestBase {
         ImportProjectCommand SUT = (ImportProjectCommand) command;
         long projectId = SUT.importProject(stream, true);
 
-        GridState grid = ProjectManager.singleton.getProject(projectId).getCurrentGridState();
+        GridState grid = ProjectManager.singleton.getProject(projectId, runner()).getCurrentGridState();
 
         assertGridEquals(grid, expectedGrid);
     }

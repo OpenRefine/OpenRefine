@@ -251,9 +251,9 @@ public class XmlImporterTests extends ImporterTest {
         return sb.toString();
     }
 
-    public static ObjectNode getOptions(ImportingJob job, TreeImportingParserBase parser) {
+    public ObjectNode getOptions(ImportingJob job, TreeImportingParserBase parser) {
         ObjectNode options = parser.createParserUIInitializationData(
-                job, Collections.emptyList(), "text/xml");
+                runner, job, Collections.emptyList(), "text/xml");
 
         ArrayNode path = ParsingUtilities.mapper.createArrayNode();
         JSONUtilities.append(path, "library");
@@ -263,9 +263,9 @@ public class XmlImporterTests extends ImporterTest {
         return options;
     }
 
-    public static ObjectNode getNestedOptions(ImportingJob job, TreeImportingParserBase parser) {
+    public ObjectNode getNestedOptions(ImportingJob job, TreeImportingParserBase parser) {
         ObjectNode options = parser.createParserUIInitializationData(
-                job, Collections.emptyList(), "text/xml");
+                runner, job, Collections.emptyList(), "text/xml");
 
         ArrayNode path = ParsingUtilities.mapper.createArrayNode();
         JSONUtilities.append(path, "nest");

@@ -174,7 +174,7 @@ public abstract class Command {
         } catch (NumberFormatException e) {
             throw new ServletException("Can't find project: badly formatted id #", e);
         }
-        Project p = ProjectManager.singleton.getProject(id);
+        Project p = ProjectManager.singleton.getProject(id, RefineServlet.getDatamodelRunner());
         if (p != null) {
             return p;
         } else {

@@ -54,7 +54,7 @@ public class FileProjectManagerTests {
     protected class FileProjectManagerStub extends FileProjectManager {
 
         protected FileProjectManagerStub(File dir) {
-            super(mock(DatamodelRunner.class), dir);
+            super(dir, mock(DatamodelRunner.class));
             _projectsMetadata.put(5555L, mock(ProjectMetadata.class));
         }
     }

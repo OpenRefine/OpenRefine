@@ -18,7 +18,7 @@ public class LineBasedImporterTests extends ImporterTest {
 
     @BeforeMethod
     public void setUpImporter() {
-        SUT = new LineBasedImporter(runner());
+        SUT = new LineBasedImporter();
     }
 
     @AfterMethod

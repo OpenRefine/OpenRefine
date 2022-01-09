@@ -47,6 +47,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import org.openrefine.ProjectManager;
+import org.openrefine.RefineServlet;
 import org.openrefine.commands.Command;
 import org.openrefine.commands.HttpUtilities;
 import org.openrefine.importing.FormatRegistry;
@@ -55,6 +56,7 @@ import org.openrefine.importing.ImportingJob;
 import org.openrefine.importing.ImportingJob.ImportingJobConfig;
 import org.openrefine.importing.ImportingManager;
 import org.openrefine.importing.ImportingUtilities;
+import org.openrefine.model.DatamodelRunner;
 import org.openrefine.util.JSONUtilities;
 import org.openrefine.util.ParsingUtilities;
 
@@ -77,6 +79,8 @@ public class CreateProjectCommand extends Command {
             ImportingJobConfig config = job.getJsonConfig();
             ImportingUtilities.loadDataAndPrepareJob(
                     request, response, parameters, job);
+
+            DatamodelRunner runner = RefineServlet.getDatamodelRunner();
 
             String format = parameters.getProperty("format");
 
@@ -117,7 +121,7 @@ public class CreateProjectCommand extends Command {
             } else {
                 ImportingFormat formatRecord = FormatRegistry.getFormatToRecord().get(format);
                 optionObj = formatRecord.parser.createParserUIInitializationData(
-                        job, job.getSelectedFileRecords(), format);
+                        runner, job, job.getSelectedFileRecords(), format);
             }
             adjustLegacyOptions(format, parameters, optionObj);
 
@@ -128,7 +132,7 @@ public class CreateProjectCommand extends Command {
 
             List<Exception> exceptions = new LinkedList<Exception>();
 
-            long projectId = ImportingUtilities.createProject(job, format, optionObj, exceptions, true);
+            long projectId = ImportingUtilities.createProject(job, format, optionObj, runner, exceptions, true);
 
             HttpUtilities.redirect(response, "/project?project=" + projectId);
         } catch (Exception e) {

@@ -76,7 +76,7 @@ public class HistoryEntryManagerTests {
         when(gridStore.listCachedGridIds()).thenReturn(Collections.emptySet());
         history = new History(gridState, mock(ChangeDataStore.class), gridStore);
         history.addEntry(entry);
-        sut = new HistoryEntryManager(runner);
+        sut = new HistoryEntryManager();
     }
 
     @Test
@@ -84,7 +84,7 @@ public class HistoryEntryManagerTests {
         File tempFile = TestUtils.createTempDirectory("testhistory");
         sut.save(history, tempFile);
 
-        History recovered = sut.load(tempFile);
+        History recovered = sut.load(runner, tempFile);
         Assert.assertEquals(recovered.getPosition(), 1);
         GridState state = recovered.getCurrentGridState();
         Assert.assertEquals(state.getColumnModel().getColumns().size(), 2);

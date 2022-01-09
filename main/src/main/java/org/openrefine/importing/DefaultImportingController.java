@@ -54,6 +54,7 @@ import org.openrefine.RefineServlet;
 import org.openrefine.commands.Command;
 import org.openrefine.commands.HttpUtilities;
 import org.openrefine.importing.ImportingJob.ImportingJobConfig;
+import org.openrefine.model.DatamodelRunner;
 import org.openrefine.util.JSONUtilities;
 import org.openrefine.util.ParsingUtilities;
 
@@ -177,7 +178,8 @@ public class DefaultImportingController implements ImportingController {
 
         List<Exception> exceptions = new LinkedList<Exception>();
 
-        ImportingUtilities.previewParse(job, format, optionObj, exceptions);
+        DatamodelRunner runner = RefineServlet.getDatamodelRunner();
+        ImportingUtilities.previewParse(job, format, optionObj, runner, exceptions);
 
         Writer w = response.getWriter();
         JsonGenerator writer = ParsingUtilities.mapper.getFactory().createGenerator(w);
@@ -214,11 +216,13 @@ public class DefaultImportingController implements ImportingController {
             return;
         }
 
+        DatamodelRunner runner = RefineServlet.getDatamodelRunner();
+
         String format = request.getParameter("format");
         ImportingFormat formatRecord = FormatRegistry.getFormatToRecord().get(format);
         if (formatRecord != null && formatRecord.parser != null) {
             ObjectNode options = formatRecord.parser.createParserUIInitializationData(
-                    job, job.getSelectedFileRecords(), format);
+                    runner, job, job.getSelectedFileRecords(), format);
             ObjectNode result = ParsingUtilities.mapper.createObjectNode();
             JSONUtilities.safePut(result, "status", "ok");
             JSONUtilities.safePut(result, "options", options);
@@ -253,7 +257,8 @@ public class DefaultImportingController implements ImportingController {
 
         List<Exception> exceptions = new LinkedList<Exception>();
 
-        ImportingUtilities.createProject(job, format, optionObj, exceptions, false);
+        DatamodelRunner runner = RefineServlet.getDatamodelRunner();
+        ImportingUtilities.createProject(job, format, optionObj, runner, exceptions, false);
 
         HttpUtilities.respond(response, "ok", "done");
     }

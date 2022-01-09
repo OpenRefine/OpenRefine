@@ -33,6 +33,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package org.openrefine.commands.project;
 
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
@@ -56,6 +57,7 @@ import org.testng.annotations.Test;
 import org.openrefine.ProjectManager;
 import org.openrefine.ProjectMetadata;
 import org.openrefine.commands.Command;
+import org.openrefine.model.DatamodelRunner;
 import org.openrefine.model.Project;
 import org.openrefine.util.ParsingUtilities;
 
@@ -70,6 +72,7 @@ public class SetProjectMetadataCommandTests {
     String SUBJECT = "subject for project";
 
     // mocks
+    DatamodelRunner runner = null;
     HttpServletRequest request = null;
     HttpServletResponse response = null;
     ProjectManager projMan = null;
@@ -78,6 +81,7 @@ public class SetProjectMetadataCommandTests {
 
     @BeforeMethod
     public void SetUp() throws IOException {
+        runner = mock(DatamodelRunner.class);
         projMan = mock(ProjectManager.class);
         ProjectManager.singleton = projMan;
         proj = mock(Project.class);
@@ -93,7 +97,7 @@ public class SetProjectMetadataCommandTests {
         // mock dependencies
         when(request.getParameter("project")).thenReturn(PROJECT_ID);
         when(request.getParameter("csrf_token")).thenReturn(Command.csrfFactory.getFreshToken());
-        when(projMan.getProject(anyLong())).thenReturn(proj);
+        when(projMan.getProject(anyLong(), any())).thenReturn(proj);
         when(proj.getMetadata()).thenReturn(metadata);
 
         try {
@@ -134,7 +138,6 @@ public class SetProjectMetadataCommandTests {
 
         // verify
         verify(request, times(2)).getParameter("project");
-        verify(projMan, times(1)).getProject(PROJECT_ID_LONG);
 
         verify(response, times(1))
                 .setHeader("Content-Type", "application/json");
@@ -168,7 +171,6 @@ public class SetProjectMetadataCommandTests {
 
         // verify
         verify(request, times(2)).getParameter("project");
-        verify(projMan, times(1)).getProject(PROJECT_ID_LONG);
 
         verify(response, times(1))
                 .setHeader("Content-Type", "application/json");
@@ -198,6 +200,5 @@ public class SetProjectMetadataCommandTests {
 
         // verify
         verify(request, times(2)).getParameter("project");
-        verify(projMan, times(1)).getProject(PROJECT_ID_LONG);
     }
 }

@@ -103,15 +103,14 @@ public class WikitextImporter extends ReaderImporter {
 
     private TabularParserHelper tabularParserHelper;
 
-    public WikitextImporter(DatamodelRunner runner) {
-        super(runner);
-        tabularParserHelper = new TabularParserHelper(runner);
+    public WikitextImporter() {
+        tabularParserHelper = new TabularParserHelper();
     }
 
     @Override
-    public ObjectNode createParserUIInitializationData(ImportingJob job,
-            List<ImportingFileRecord> fileRecords, String format) {
-        ObjectNode options = super.createParserUIInitializationData(job, fileRecords, format);
+    public ObjectNode createParserUIInitializationData(DatamodelRunner runner,
+            ImportingJob job, List<ImportingFileRecord> fileRecords, String format) {
+        ObjectNode options = super.createParserUIInitializationData(runner, job, fileRecords, format);
         EncodingGuesser.guessInitialEncoding(fileRecords, options);
         JSONUtilities.safePut(options, "guessCellValueTypes", false);
         JSONUtilities.safePut(options, "blankSpanningCells", true);
@@ -692,8 +691,8 @@ public class WikitextImporter extends ReaderImporter {
     }
 
     @Override
-    public GridState parseOneFile(ProjectMetadata metadata, ImportingJob job, String fileSource, String archiveFileName,
-            Reader reader, long limit, ObjectNode options) throws Exception {
+    public GridState parseOneFile(DatamodelRunner runner, ProjectMetadata metadata, ImportingJob job, String fileSource,
+            String archiveFileName, Reader reader, long limit, ObjectNode options) throws Exception {
         // Set-up a simple wiki configuration
         ParserConfig parserConfig = new SimpleParserConfig();
 
@@ -744,7 +743,7 @@ public class WikitextImporter extends ReaderImporter {
             // TODO this does not seem to do anything - maybe we need to pass it to OpenRefine in some other way?
         }
 
-        GridState grid = tabularParserHelper.parseOneFile(metadata, job, fileSource, archiveFileName, dataReader, limit, options);
+        GridState grid = tabularParserHelper.parseOneFile(runner, metadata, job, fileSource, archiveFileName, dataReader, limit, options);
 
         int nbColumns = grid.getColumnModel().getColumnNames().size();
         List<Integer> allColumnIndices = IntStream.range(0, nbColumns)

@@ -57,15 +57,11 @@ public class PCAxisImporter extends ReaderImporter {
 
     static final Logger logger = LoggerFactory.getLogger(PCAxisImporter.class);
 
-    public PCAxisImporter(DatamodelRunner runner) {
-        super(runner);
-    }
-
     @Override
     public ObjectNode createParserUIInitializationData(
+            DatamodelRunner runner,
             ImportingJob job,
-            List<ImportingFileRecord> fileRecords,
-            String format) {
+            List<ImportingFileRecord> fileRecords, String format) {
         ObjectNode options = ParsingUtilities.mapper.createObjectNode();
         JSONUtilities.safePut(options, "includeFileSources", fileRecords.size() > 1);
         JSONUtilities.safePut(options, "skipDataLines", 0);
@@ -75,12 +71,12 @@ public class PCAxisImporter extends ReaderImporter {
 
     @Override
     public GridState parseOneFile(
+            DatamodelRunner runner,
             ProjectMetadata metadata,
             ImportingJob job,
             String fileSource,
             String archiveFileName,
-            Reader reader,
-            long limit, ObjectNode options) throws Exception {
+            Reader reader, long limit, ObjectNode options) throws Exception {
         LineNumberReader lnReader = new LineNumberReader(reader);
         List<Exception> exceptions = new ArrayList<>();
         TableDataReader dataReader = new PCAxisTableDataReader(lnReader, exceptions);
@@ -92,10 +88,10 @@ public class PCAxisImporter extends ReaderImporter {
         JSONUtilities.safePut(options, "storeBlankRows", true);
         JSONUtilities.safePut(options, "storeBlankCellsAsNulls", true);
 
-        TabularParserHelper tabularParsingHelper = new TabularParserHelper(runner);
+        TabularParserHelper tabularParsingHelper = new TabularParserHelper();
         GridState grid = tabularParsingHelper.parseOneFile(
-                metadata, job, fileSource, "", dataReader,
-                limit, options);
+                runner, metadata, job, fileSource, "",
+                dataReader, limit, options);
         if (!exceptions.isEmpty()) {
             throw exceptions.get(0);
         }

@@ -41,10 +41,8 @@ import org.testng.annotations.BeforeTest;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
-import org.openrefine.model.DatamodelRunner;
 import org.openrefine.model.GridState;
 import org.openrefine.model.Row;
-import org.openrefine.model.TestingDatamodelRunner;
 import org.openrefine.util.ParsingUtilities;
 
 public class TsvCsvImporterTests extends ImporterTest {
@@ -64,8 +62,7 @@ public class TsvCsvImporterTests extends ImporterTest {
     @BeforeMethod
     public void setUp() {
         super.setUp();
-        DatamodelRunner runner = new TestingDatamodelRunner();
-        SUT = new SeparatorBasedImporter(runner);
+        SUT = new SeparatorBasedImporter();
     }
 
     @Override

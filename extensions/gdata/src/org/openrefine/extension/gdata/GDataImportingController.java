@@ -80,12 +80,10 @@ public class GDataImportingController implements ImportingController {
 
     private static final Logger logger = LoggerFactory.getLogger("GDataImportingController");
     protected RefineServlet servlet;
-    protected DatamodelRunner runner;
 
     @Override
     public void init(RefineServlet servlet) {
         this.servlet = servlet;
-        runner = RefineServlet.getDatamodelRunner();
     }
 
     @Override
@@ -253,6 +251,7 @@ public class GDataImportingController implements ImportingController {
 
         List<Exception> exceptions = new LinkedList<Exception>();
 
+        DatamodelRunner runner = RefineServlet.getDatamodelRunner();
         GridState grid = null;
         try {
             grid = GDataImporter.parse(
@@ -324,6 +323,7 @@ public class GDataImportingController implements ImportingController {
                 pm.setName(JSONUtilities.getString(optionObj, "projectName", "Untitled"));
                 pm.setEncoding(JSONUtilities.getString(optionObj, "encoding", "UTF-8"));
 
+                DatamodelRunner runner = RefineServlet.getDatamodelRunner();
                 GridState grid = null;
                 try {
                     grid = GDataImporter.parse(
@@ -342,8 +342,8 @@ public class GDataImportingController implements ImportingController {
                         job.setError(exceptions);
                     } else {
                         long projectId = Project.generateID();
-                        ChangeDataStore changeDataStore = ProjectManager.singleton.getChangeDataStore(projectId);
-                        CachedGridStore cachedGridStore = ProjectManager.singleton.getCachedGridStore(projectId);
+                        ChangeDataStore changeDataStore = ProjectManager.singleton.getChangeDataStore(projectId, runner);
+                        CachedGridStore cachedGridStore = ProjectManager.singleton.getCachedGridStore(projectId, runner);
                         Project project = new Project(projectId, grid, changeDataStore, cachedGridStore);
                         job.setProject(project);
 

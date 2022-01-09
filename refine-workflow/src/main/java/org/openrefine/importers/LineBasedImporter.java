@@ -29,10 +29,6 @@ import org.openrefine.util.JSONUtilities;
  */
 public class LineBasedImporter extends LineBasedImporterBase {
 
-    public LineBasedImporter(DatamodelRunner runner) {
-        super(runner);
-    }
-
     @Override
     protected RowMapper getRowMapper(ObjectNode options) {
         return RowMapper.IDENTITY;
@@ -76,14 +72,14 @@ public class LineBasedImporter extends LineBasedImporterBase {
                 columns.add(new ColumnMetadata("Column " + (i + 1)));
             }
             ColumnModel columnModel = new ColumnModel(columns);
-            return runner.create(columnModel, newRows, Collections.emptyMap());
+            return parsed.getDatamodelRunner().create(columnModel, newRows, Collections.emptyMap());
         }
     }
 
     @Override
-    public ObjectNode createParserUIInitializationData(ImportingJob job,
-            List<ImportingFileRecord> fileRecords, String format) {
-        ObjectNode options = super.createParserUIInitializationData(job, fileRecords, format);
+    public ObjectNode createParserUIInitializationData(DatamodelRunner runner,
+            ImportingJob job, List<ImportingFileRecord> fileRecords, String format) {
+        ObjectNode options = super.createParserUIInitializationData(runner, job, fileRecords, format);
         JSONUtilities.safePut(options, "linesPerRow", 1); // number of lines per row
         return options;
     }

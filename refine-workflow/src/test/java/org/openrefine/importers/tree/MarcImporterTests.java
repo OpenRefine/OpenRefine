@@ -70,7 +70,7 @@ public class MarcImporterTests extends ImporterTest {
     @Test
     public void testParseSampleRecord() throws Exception {
         ObjectNode options = parser.createParserUIInitializationData(
-                job, new LinkedList<>(), "text/json");
+                runner, job, new LinkedList<>(), "text/json");
 
         ArrayNode path = ParsingUtilities.mapper.createArrayNode();
         JSONUtilities.append(path, "marc:collection");
@@ -83,7 +83,7 @@ public class MarcImporterTests extends ImporterTest {
         List<ImportingFileRecord> importingFileRecords = Collections.singletonList(
                 new ImportingFileRecord(null, copy.getName(), copy.getName(), 0, null, null, null, null, null, null, null, null));
         // NOTE: This has the side effect of creating sample.mrc.xml
-        parser.createParserUIInitializationData(job, importingFileRecords, "marc");
+        parser.createParserUIInitializationData(runner, job, importingFileRecords, "marc");
 
         GridState grid = parseFiles(parser, importingFileRecords, options);
 
@@ -94,7 +94,7 @@ public class MarcImporterTests extends ImporterTest {
     @Test
     public void testReadMarcFileWithUnicode() throws Exception {
         ObjectNode options = parser.createParserUIInitializationData(
-                job, new LinkedList<>(), "text/json");
+                runner, job, new LinkedList<>(), "text/json");
 
         ArrayNode path = ParsingUtilities.mapper.createArrayNode();
         JSONUtilities.append(path, "marc:collection");
@@ -109,7 +109,7 @@ public class MarcImporterTests extends ImporterTest {
         List<ImportingFileRecord> importingFileRecords = Collections.singletonList(
                 new ImportingFileRecord(null, copy.getName(), copy.getName(), 0, null, null, null, null, null, null, null, null));
         // NOTE: This has the side effect of creating scriblio.mrc.xml
-        parser.createParserUIInitializationData(job, importingFileRecords, "marc");
+        parser.createParserUIInitializationData(runner, job, importingFileRecords, "marc");
 
         GridState grid = parseFiles(parser, importingFileRecords, options);
 
