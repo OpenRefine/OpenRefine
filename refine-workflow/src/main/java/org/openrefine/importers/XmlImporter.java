@@ -69,10 +69,6 @@ public class XmlImporter extends TreeImportingParserBase {
 
     static final Logger logger = LoggerFactory.getLogger(XmlImporter.class);
 
-    public XmlImporter(DatamodelRunner runner) {
-        super();
-    }
-
     static private class PreviewParsingState {
 
         int tokenCount;

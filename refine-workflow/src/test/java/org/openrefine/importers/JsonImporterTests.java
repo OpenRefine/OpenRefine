@@ -85,7 +85,7 @@ public class JsonImporterTests extends ImporterTest {
     @BeforeMethod
     public void setUp(Method method) {
         super.setUp();
-        SUT = new JsonImporter(runner());
+        SUT = new JsonImporter();
         logger.debug("About to run test method: " + method.getName());
     }
 

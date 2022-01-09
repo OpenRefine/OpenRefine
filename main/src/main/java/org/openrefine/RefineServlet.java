@@ -344,7 +344,7 @@ public class RefineServlet extends Butterfly {
             }
             try {
                 logger.info(String.format("Starting datamodel runner '%s'", runnerClassName));
-                Class<?> runnerClass = RefineServlet.class.getClassLoader().loadClass(runnerClassName);
+                Class<?> runnerClass = s_singleton._classLoader.loadClass(runnerClassName);
                 RunnerConfiguration runnerConfiguration = new ServletRunnerConfiguration();
                 s_runner = (DatamodelRunner) runnerClass.getConstructor(RunnerConfiguration.class).newInstance(runnerConfiguration);
             } catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException

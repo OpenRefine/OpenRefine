@@ -1,6 +1,6 @@
 /*
 
-Copyright 2011, Google Inc.
+Copyright 2022, OpenRefine.
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -31,29 +31,5 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
  */
 
-/*
- * Function invoked to initialize the extension.
- */
 function init() {
-  var FR = Packages.org.openrefine.importing.FormatRegistry;
-  FR.registerFormat("text/line-based/pc-axis", "pc-axis-import-format/text/line-based/pc-axis", "PCAxisParserUI",
-      new Packages.org.openrefine.pcaxis.PCAxisImporter());
-  FR.registerExtension(".px", "text/line-based/pc-axis");
-
-  var ClientSideResourceManager = Packages.org.openrefine.ClientSideResourceManager;
-  
-  // Script files to inject into /index page
-  ClientSideResourceManager.addPaths(
-    "index/scripts",
-    module,
-    [
-      "scripts/pc-axis-parser-ui.js"
-    ]
-  );
-}
-
-/*
- * Function invoked to handle each request in a custom way.
- */
-function process(path, request, response) {
 }

@@ -64,7 +64,7 @@ public class MarcImporterTests extends ImporterTest {
     @Override
     public void setUp() {
         super.setUp();
-        parser = new MarcImporter(runner());
+        parser = new MarcImporter();
     }
 
     @Test
