@@ -15,7 +15,7 @@
         "cypress-image-snapshot": "^4.0.1",
         "cypress-file-upload": "^5.0.8",
         "cypress-wait-until": "^1.7.2",
-        "dotenv": "^10.0.0",
+        "dotenv": "^11.0.0",
         "fs-extra": "^10.0.0",
         "uniqid": "^5.4.0"
     },
