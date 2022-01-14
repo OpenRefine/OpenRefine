@@ -1,18 +1,22 @@
 package org.openrefine.wikidata.manifests;
 
-import com.fasterxml.jackson.databind.JsonNode;
-
-import java.util.Arrays;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
-import org.wikidata.wdtk.wikibaseapi.ApiConnection;
-import org.wikidata.wdtk.datamodel.interfaces.EntityIdValue;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.google.refine.util.ParsingUtilities;
 
-public class ManifestV1 implements Manifest {
-
+public class ManifestV2 implements Manifest {
+	
     private String version;
     private String name;
     private String siteIri;
@@ -20,12 +24,13 @@ public class ManifestV1 implements Manifest {
     private String instanceOfPid;
     private String subclassOfPid;
     private String mediaWikiApiEndpoint;
-    private String reconServiceEndpoint;
     private String editGroupsUrlSchema;
-
+    
+    private Map<String, EntityTypeSettings> entityTypeSettings;
+    
     private Map<String, String> constraintsRelatedIdMap = new HashMap<>();
-
-    public ManifestV1(JsonNode manifest) {
+    
+    public ManifestV2(JsonNode manifest) throws JsonParseException, JsonMappingException, IOException {
         version = manifest.path("version").textValue();
 
         JsonNode mediawiki = manifest.path("mediawiki");
@@ -48,13 +53,28 @@ public class ManifestV1 implements Manifest {
             constraintsRelatedIdMap.put(name, value);
         }
 
-        JsonNode reconciliation = manifest.path("reconciliation");
-        reconServiceEndpoint = reconciliation.path("endpoint").textValue();
-        
+        JsonNode entityTypesJson = manifest.path("entity_types");
+        entityTypeSettings = com.google.refine.util.ParsingUtilities.mapper.readValue(
+        		ParsingUtilities.mapper.treeAsTokens(entityTypesJson), 
+        		new TypeReference<Map<String, EntityTypeSettings>>() {});
         JsonNode editGroups = manifest.path("editgroups");
         editGroupsUrlSchema = editGroups.path("url_schema").textValue();
     }
 
+	private static class EntityTypeSettings {
+		
+		protected String siteIri;
+		protected String reconEndpoint;
+		
+		@JsonCreator
+		protected EntityTypeSettings(
+				@JsonProperty("site_iri") String siteIri,
+				@JsonProperty("reconciliation_endpoint") String reconEndpoint) {
+			this.siteIri = siteIri;
+			this.reconEndpoint = reconEndpoint;
+		}
+	}
+	
     @Override
     public String getVersion() {
         return version;
@@ -92,7 +112,7 @@ public class ManifestV1 implements Manifest {
 
     @Override
     public String getReconServiceEndpoint() {
-        return reconServiceEndpoint;
+        return getReconServiceEndpoint(ITEM_TYPE);
     }
 
     @Override
@@ -107,24 +127,24 @@ public class ManifestV1 implements Manifest {
 
 	@Override
 	public String getReconServiceEndpoint(String entityType) {
-		EntityIdValue t;
-		if (ITEM_TYPE.equals(entityType)) {
-			return reconServiceEndpoint;
+		EntityTypeSettings setting = entityTypeSettings.get(entityType);
+		if (setting == null) {
+			return null;
 		}
-		return null;
+		return setting.reconEndpoint;
 	}
 
 	@Override
 	public String getEntityTypeSiteIri(String entityType) {
-		if (ITEM_TYPE.equals(entityType) || PROPERTY_TYPE.equals(entityType)) {
-			return siteIri;
+		EntityTypeSettings setting = entityTypeSettings.get(entityType);
+		if (setting == null) {
+			return null;
 		}
-		return null;
+		return setting.siteIri;
 	}
 
 	@Override
 	public List<String> getAvailableEntityTypes() {
-		return Arrays.asList(ITEM_TYPE, PROPERTY_TYPE);
+		return entityTypeSettings.keySet().stream().collect(Collectors.toList());
 	}
-
 }

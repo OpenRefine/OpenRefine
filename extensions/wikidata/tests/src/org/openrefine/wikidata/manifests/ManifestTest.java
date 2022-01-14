@@ -2,15 +2,18 @@ package org.openrefine.wikidata.manifests;
 
 import org.openrefine.wikidata.testing.TestingData;
 import org.testng.annotations.Test;
+import static org.testng.Assert.assertNull;
+import static org.testng.AssertJUnit.assertEquals;
 
 import java.io.IOException;
+import java.util.Arrays;
 
 import static org.testng.AssertJUnit.assertEquals;
 
-public class ManifestV1Test {
+public class ManifestTest {
 
     @Test
-    public void testGetters() throws IOException, ManifestException {
+    public void testV1() throws IOException, ManifestException {
         String json = TestingData.jsonFromFile("manifest/wikidata-manifest-v1.0.json");
         Manifest manifest = ManifestParser.parse(json);
         assertEquals("1.0", manifest.getVersion());
@@ -21,9 +24,35 @@ public class ManifestV1Test {
         assertEquals("P31", manifest.getInstanceOfPid());
         assertEquals("P279", manifest.getSubclassOfPid());
         assertEquals("https://wikidata.reconci.link/${lang}/api", manifest.getReconServiceEndpoint());
+        assertEquals("https://wikidata.reconci.link/${lang}/api", manifest.getReconServiceEndpoint(Manifest.ITEM_TYPE));
+        assertNull(manifest.getReconServiceEndpoint(Manifest.MEDIAINFO_TYPE));
+        assertEquals(Arrays.asList(Manifest.ITEM_TYPE, Manifest.PROPERTY_TYPE), manifest.getAvailableEntityTypes());
+        assertEquals("http://www.wikidata.org/entity/", manifest.getEntityTypeSiteIri(Manifest.ITEM_TYPE));
+        assertNull(manifest.getEntityTypeSiteIri(Manifest.MEDIAINFO_TYPE));
         assertEquals("P2302", manifest.getConstraintsRelatedId("property_constraint_pid"));
         assertEquals("Q19474404", manifest.getConstraintsRelatedId("single_value_constraint_qid"));
         assertEquals("([[:toollabs:editgroups/b/OR/${batch_id}|details]])", manifest.getEditGroupsUrlSchema());
+    }
+    
+    @Test
+    public void testV2() throws IOException, ManifestException {
+        String json = TestingData.jsonFromFile("manifest/commons-manifest-v2.0.json");
+        Manifest manifest = ManifestParser.parse(json);
+        assertEquals("2.0", manifest.getVersion());
+        assertEquals("Wikimedia Commons", manifest.getName());
+        assertEquals("https://commons.wikimedia.org/w/api.php", manifest.getMediaWikiApiEndpoint());
+        assertEquals("https://commons.wikimedia.org/entity/", manifest.getSiteIri());
+        assertEquals(5, manifest.getMaxlag());
+        assertEquals("P31", manifest.getInstanceOfPid());
+        assertEquals("P279", manifest.getSubclassOfPid());
+        assertEquals("https://commonsreconcile.toolforge.org/${lang}/api", manifest.getReconServiceEndpoint(Manifest.MEDIAINFO_TYPE));
+        assertEquals("https://wikidata.reconci.link/${lang}/api", manifest.getReconServiceEndpoint(Manifest.ITEM_TYPE));
+        assertNull(manifest.getReconServiceEndpoint(Manifest.PROPERTY_TYPE));
+        assertEquals(Arrays.asList(Manifest.ITEM_TYPE, Manifest.PROPERTY_TYPE, Manifest.MEDIAINFO_TYPE), manifest.getAvailableEntityTypes());
+        assertEquals("http://www.wikidata.org/entity/", manifest.getEntityTypeSiteIri(Manifest.ITEM_TYPE));
+        assertEquals("https://commons.wikimedia.org/entity/", manifest.getEntityTypeSiteIri(Manifest.MEDIAINFO_TYPE));
+        assertEquals("P2302", manifest.getConstraintsRelatedId("property_constraint_pid"));
+        assertEquals("([[:toollabs:editgroups-commons/b/OR/${batch_id}|details]])", manifest.getEditGroupsUrlSchema());
     }
 
     @Test
@@ -65,11 +94,11 @@ public class ManifestV1Test {
 
     @Test
     public void testUnsupportedVersion() {
-        String unsupportedVersion = "{\"version\": \"2.0\"}";
+        String unsupportedVersion = "{\"version\": \"3.0\"}";
         try {
             ManifestParser.parse(unsupportedVersion);
         } catch (ManifestException e) {
-            assertEquals("unsupported manifest version: 2.0", e.getMessage());
+            assertEquals("unsupported manifest version: 3.0", e.getMessage());
         }
     }
 
