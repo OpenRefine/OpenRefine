@@ -54,7 +54,10 @@
           var data = {
             action: 'wbsearchentities',
             language: o.language,
-            search: query            
+            search: query,
+            type: entity_type,
+            format: 'json',
+            origin: '*'
           };
 
           if (cursor) {
@@ -88,9 +91,9 @@
               // translate the results of the MediaWiki API to that of the reconciliation API
               var translated = {
                   prefix: val, // keep track of prefix to match up response with input value
-                  results: (data.search || []).map(result => { return {
+                  result: (data.search || []).map(result => { return {
                       id: result.id,
-                      name: result.title,
+                      name: result.label,
                       description: result.description};})
               };
               self.response(translated, cursor ? cursor : -1);
@@ -109,7 +112,7 @@
                 xhr.getResponseHeader("X-Metaweb-TID"));
               }
             },
-            dataType: o.access === undefined ? "jsonp" : o.access,
+            dataType: "json",
             cache: true
           };
 

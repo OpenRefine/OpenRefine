@@ -914,34 +914,29 @@ SchemaAlignment._initPropertyField = function(inputContainer, targetContainer, i
   var input = $('<input></input>').appendTo(inputContainer);
   input.attr("placeholder", $.i18n('wikibase-schema/property-placeholder'));
 
-  // TODO adapt here: do not use the suggest service from the recon endpoint,
-  // but rather the native Wikibase one.
-  if (this._reconService !== null && this._reconService['item'] !== null) {
-    var endpoint = this._reconService.item.suggest.property;
-    var suggestConfig = $.extend({}, endpoint);
-    suggestConfig.key = null;
-    suggestConfig.query_param_name = "prefix";
-
-    if (this._reconService.item.ui && this._reconService.item.ui.access) {
-      suggestConfig.access = this._reconService.item.ui.access;
-    }
-
-    input.suggestP(suggestConfig).bind("fb-select", function(evt, data) {
-        // Fetch the type of this property and add the appropriate target value type
-        SchemaAlignment._getPropertyType(data.id, function(datatype) {
-          inputContainer.data("jsonValue", {
-            type : "wbpropconstant",
-            pid : data.id,
-            label: data.name,
-            datatype: datatype,
-          });
-          SchemaAlignment._addStatement(targetContainer, datatype, null);
-          var addValueButtons = targetContainer.parent().find('.wbs-add-statement');
-          var removeGroupButton = targetContainer.parent().find('.wbs-remove-statement-group');
-          removeGroupButton.hide();
-          addValueButtons.show();
+  var endpoint = WikibaseManager.getSelectedWikibaseApi();
+  var suggestConfig = {
+    mediawiki_endpoint: endpoint,
+    entity_type: 'property',
+    language: $.i18n("core-recon/wd-recon-lang"),
+    view_url: WikibaseManager.getSelectedWikibaseSiteIriForEntityType('property')+'{{id}}'
+  };
+  
+  input.suggestWikibase(suggestConfig).bind("fb-select", function(evt, data) {
+      SchemaAlignment._getPropertyType(data.id, function(datatype) {
+        inputContainer.data("jsonValue", {
+          type : "wbpropconstant",
+          pid : data.id,
+          label: data.name,
+          datatype: datatype,
         });
-        SchemaAlignment._hasChanged();
+        SchemaAlignment._addStatement(targetContainer, datatype, null);
+        var addValueButtons = targetContainer.parent().find('.wbs-add-statement');
+	var removeGroupButton = targetContainer.parent().find('.wbs-remove-statement-group');
+        removeGroupButton.hide();
+        addValueButtons.show();
+      });
+      SchemaAlignment._hasChanged();
     }).bind("fb-textchange", function(evt, data) {
         inputContainer.data("jsonValue", null);
         targetContainer.find('.wbs-statement').remove();
@@ -950,9 +945,8 @@ SchemaAlignment._initPropertyField = function(inputContainer, targetContainer, i
         addValueButtons.hide();
         removeGroupButton.show();
     });
-   // adds tweaks to display the validation status more clearly, like in Wikidata
-   fixSuggestInput(input);
-  }
+  // adds tweaks to display the validation status more clearly, like in Wikidata
+  fixSuggestInput(input);
 
   // Init with the provided initial value.
   if (initialValue) {
@@ -972,67 +966,42 @@ SchemaAlignment._initField = function(inputContainer, mode, initialValue, change
     changedCallback = SchemaAlignment._hasChanged;
   }
 
-  if (this._reconService !== null && (mode === "wikibase-item" || mode === "unit")) {
+  if (this._reconService !== null && (mode === "wikibase-item" || mode === "wikibase-property" || mode === "unit")) {
     if (mode === "wikibase-item") {
         input.attr("placeholder", $.i18n('wikibase-schema/item-or-reconciled-column'));
+    } else if (mode === "wikibase-property") {
+        input.attr("placeholder", $.i18n('wikibase-schema/property-placeholder'));
     } else {
         input.attr("placeholder", $.i18n('wikibase-schema/unit'));
     }
-
+    var entityType = mode === 'wikibase-property' ? 'property' : 'item';
     var endpoint = WikibaseManager.getSelectedWikibaseApi();
-    if (endpoint != null) {
-      var suggestConfig = {
-        mediawiki_endpoint: endpoint,
-        entity_type: 'item',
-        language: $.i18n("core-recon/wd-recon-lang"),
-        view_url: WikibaseManager.getSelectedWikibaseSiteIriForEntityType('item')+'{{id}}',
-        access: 'cors'
-      };
-      
-      input.suggestWikibase(suggestConfig).bind("fb-select", function(evt, data) {
-          inputContainer.data("jsonValue", {
-              type : "wbitemconstant",
-              qid : data.id,
-              label: data.name,
-          });
-          changedCallback();
-      });
-      // adds tweaks to display the validation status more clearly, like in Wikidata
-      fixSuggestInput(input);
-    } else {
-      input.bind('input propertychange', function(evt, data) {
-        inputContainer.data("jsonValue", {
-          type : "wbitemconstant",
-          qid : data.id,
-      });
-      changedCallback();
-      });
-    }
-
-  } else if (this._reconService !== null && mode === "wikibase-property") {
-    // TODO adapt here: use native suggest instead
-    var endpoint = null;
-    endpoint = this._reconService.item.suggest.property;
-    var suggestConfig = $.extend({}, endpoint);
-    suggestConfig.key = null;
-    suggestConfig.query_param_name = "prefix";
-
-    if (this._reconService.item.ui && this._reconService.item.ui.access) {
-      suggestConfig.access = this._reconService.item.ui.access;
-    }
-
-    input.suggestP(suggestConfig).bind("fb-select", function(evt, data) {
-        inputContainer.data("jsonValue", {
-            type : "wbpropconstant",
-            pid : data.id,
-            label: data.name,
-            datatype: "not-important",
-        });
-        changedCallback();
+    var suggestConfig = {
+      mediawiki_endpoint: endpoint,
+      entity_type: entityType,
+      language: $.i18n("core-recon/wd-recon-lang"),
+      view_url: WikibaseManager.getSelectedWikibaseSiteIriForEntityType(entityType)+'{{id}'
+    };
+    
+    input.suggestWikibase(suggestConfig).bind("fb-select", function(evt, data) {
+	if (entityType === 'item') {
+	  inputContainer.data("jsonValue", {
+	      type : "wbitemconstant",
+	      qid : data.id,
+	      label: data.name,
+	  });
+	} else { // (entityType === 'property') 
+	  inputContainer.data("jsonValue", {
+	      type : "wbpropconstant",
+	      pid : data.id,
+	      label: data.name,
+	      datatype: 'not-important' // this property is being used as a value of a statement
+	  });
+        }
+	changedCallback();
     });
     // adds tweaks to display the validation status more clearly, like in Wikidata
     fixSuggestInput(input);
-
   } else if (mode === "time") {
      input.attr("placeholder", "YYYY(-MM(-DD))");
      var propagateValue = function(val) {
