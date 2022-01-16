@@ -1,15 +1,14 @@
 package org.openrefine.wikidata.manifests;
 
-import com.fasterxml.jackson.databind.JsonNode;
-
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import org.wikidata.wdtk.wikibaseapi.ApiConnection;
 import org.wikidata.wdtk.datamodel.interfaces.EntityIdValue;
+
+import com.fasterxml.jackson.databind.JsonNode;
 
 public class ManifestV1 implements Manifest {
 
@@ -107,7 +106,6 @@ public class ManifestV1 implements Manifest {
 
 	@Override
 	public String getReconServiceEndpoint(String entityType) {
-		EntityIdValue t;
 		if (ITEM_TYPE.equals(entityType)) {
 			return reconServiceEndpoint;
 		}

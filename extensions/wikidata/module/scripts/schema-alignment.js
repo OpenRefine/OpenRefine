@@ -121,8 +121,7 @@ SchemaAlignment._rerenderTabs = function() {
   var schemaElmts = this._schemaElmts = DOM.bind(schemaTab);
   schemaElmts.dialogExplanation.html($.i18n('wikibase-schema/dialog-explanation',
       WikibaseManager.getSelectedWikibaseMainPage(),
-      WikibaseManager.getSelectedWikibaseName(),
-      WikibaseManager.getSelectedWikibaseReconEndpoint().replace("${lang}", "en")));
+      WikibaseManager.getSelectedWikibaseName()));
   this._plusButton($.i18n('wikibase-schema/add-item-button'), schemaElmts.addItemButton);
   schemaElmts.addItemButton.click(function(e) {
     SchemaAlignment._addItem();
@@ -162,17 +161,24 @@ SchemaAlignment._rerenderTabs = function() {
   previewElmts.invalidSchemaWarningPreview.text($.i18n('wikibase-schema/invalid-schema-warning-preview'));
   this._previewPanes = $(".schema-alignment-dialog-preview");
 
-  var reconServiceURL = WikibaseManager.getSelectedWikibaseReconEndpoint()
-      .replace("${lang}", $.i18n("core-recon/wd-recon-lang"));
-  ReconciliationManager.getOrRegisterServiceFromUrl(reconServiceURL, function (service)  {
-    SchemaAlignment._reconService = service;
+  // add all recon services for all the entity types of the Wikibase instance
+  var entityTypes = WikibaseManager.getSelectedWikibaseAvailableEntityTypes();
+  SchemaAlignment._reconService = {};
+  for (let entityType of entityTypes) {
+    var reconServiceTemplate = WikibaseManager.getSelectedWikibaseReconEndpoint(entityType);
+    if (reconServiceTemplate !== null) {
+      var reconServiceURL = reconServiceTemplate.replace("${lang}", $.i18n("core-recon/wd-recon-lang"));
+      ReconciliationManager.getOrRegisterServiceFromUrl(reconServiceURL, function (service)  {
+        SchemaAlignment._reconService[entityType] = service;
+      }, false);
+    }
+  }
 
-    // Load the existing schema
-    SchemaAlignment._reset(theProject.overlayModels.wikibaseSchema);
+  // Load the existing schema
+  SchemaAlignment._reset(theProject.overlayModels.wikibaseSchema);
 
-    // Perform initial preview
-    SchemaAlignment.preview();
-  }, false);
+  // Perform initial preview
+  SchemaAlignment.preview();
 };
 
 SchemaAlignment.onWikibaseChange = function() {
@@ -908,14 +914,16 @@ SchemaAlignment._initPropertyField = function(inputContainer, targetContainer, i
   var input = $('<input></input>').appendTo(inputContainer);
   input.attr("placeholder", $.i18n('wikibase-schema/property-placeholder'));
 
-  if (this._reconService !== null) {
-    var endpoint = this._reconService.suggest.property;
+  // TODO adapt here: do not use the suggest service from the recon endpoint,
+  // but rather the native Wikibase one.
+  if (this._reconService !== null && this._reconService['item'] !== null) {
+    var endpoint = this._reconService.item.suggest.property;
     var suggestConfig = $.extend({}, endpoint);
     suggestConfig.key = null;
     suggestConfig.query_param_name = "prefix";
 
-    if (this._reconService.ui && this._reconService.ui.access) {
-      suggestConfig.access = this._reconService.ui.access;
+    if (this._reconService.item.ui && this._reconService.item.ui.access) {
+      suggestConfig.access = this._reconService.item.ui.access;
     }
 
     input.suggestP(suggestConfig).bind("fb-select", function(evt, data) {
@@ -970,20 +978,18 @@ SchemaAlignment._initField = function(inputContainer, mode, initialValue, change
     } else {
         input.attr("placeholder", $.i18n('wikibase-schema/unit'));
     }
-    var endpoint = null;
-    endpoint = this._reconService.suggest.entity;
-    if (endpoint != null) {
-      var suggestConfig = $.extend({}, endpoint);
-      suggestConfig.key = null;
-      suggestConfig.query_param_name = "prefix";
-      if ('view' in this._reconService && 'url' in this._reconService.view && !('view_url' in endpoint)) {
-         suggestConfig.view_url = this._reconService.view.url;
-      }
-      if (this._reconService.ui && this._reconService.ui.access) {
-        suggestConfig.access = this._reconService.ui.access;
-      }
 
-      input.suggest(suggestConfig).bind("fb-select", function(evt, data) {
+    var endpoint = WikibaseManager.getSelectedWikibaseApi();
+    if (endpoint != null) {
+      var suggestConfig = {
+        mediawiki_endpoint: endpoint,
+        entity_type: 'item',
+        language: $.i18n("core-recon/wd-recon-lang"),
+        view_url: WikibaseManager.getSelectedWikibaseSiteIriForEntityType('item')+'{{id}}',
+        access: 'cors'
+      };
+      
+      input.suggestWikibase(suggestConfig).bind("fb-select", function(evt, data) {
           inputContainer.data("jsonValue", {
               type : "wbitemconstant",
               qid : data.id,
@@ -1004,14 +1010,15 @@ SchemaAlignment._initField = function(inputContainer, mode, initialValue, change
     }
 
   } else if (this._reconService !== null && mode === "wikibase-property") {
+    // TODO adapt here: use native suggest instead
     var endpoint = null;
-    endpoint = this._reconService.suggest.property;
+    endpoint = this._reconService.item.suggest.property;
     var suggestConfig = $.extend({}, endpoint);
     suggestConfig.key = null;
     suggestConfig.query_param_name = "prefix";
 
-    if (this._reconService.ui && this._reconService.ui.access) {
-      suggestConfig.access = this._reconService.ui.access;
+    if (this._reconService.item.ui && this._reconService.item.ui.access) {
+      suggestConfig.access = this._reconService.item.ui.access;
     }
 
     input.suggestP(suggestConfig).bind("fb-select", function(evt, data) {

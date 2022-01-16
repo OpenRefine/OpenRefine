@@ -47,13 +47,45 @@ WikibaseManager.getSelectedWikibaseEditGroupsURLSchema = function() {
 
 /**
  * Returns the default reconciliation service URL of the Wikibase,
- * such as "https://wikidata.reconci.link/${lang}/api".
+ * for a given entity type, such as "https://wikidata.reconci.link/${lang}/api".
  *
  * Notice that there is a "${lang}" variable in the URL, which should
  * be replaced with the actual language code.
  */
-WikibaseManager.getSelectedWikibaseReconEndpoint = function () {
-  return WikibaseManager.getSelectedWikibase().reconciliation.endpoint;
+WikibaseManager.getSelectedWikibaseReconEndpoint = function (entityType) {
+  let manifest = WikibaseManager.getSelectedWikibase();
+  // version 1
+  if (manifest.version.split('.')[0] === '1') {
+    if (entityType === 'item') {
+      return manifest.reconciliation.endpoint;
+    }
+    return null;
+  } else { // version 2 or above
+    let record = manifest.entity_types[entityType];
+    return record === undefined ? undefined : record.reconciliation_endpoint;
+  }
+};
+
+WikibaseManager.getSelectedWikibaseSiteIriForEntityType = function (entityType) {
+  let manifest = WikibaseManager.getSelectedWikibase();
+  // version 1
+  if (manifest.version.split('.')[0] === '1') {
+    return manifest.wikibase.site_iri;
+  } else { // version 2 or above
+    let record = manifest.entity_types[entityType];
+    return record === undefined ? undefined : record.site_iri;
+  }
+};
+
+
+WikibaseManager.getSelectedWikibaseAvailableEntityTypes = function () {
+  let manifest = WikibaseManager.getSelectedWikibase();
+  // version 1
+  if (manifest.version.split('.')[0] === '1') {
+    return ['item', 'property'];
+  } else { // version 2 or above
+    return Object.keys(manifest.entity_types);
+  }
 };
 
 WikibaseManager.selectWikibase = function (wikibaseName) {
