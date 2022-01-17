@@ -29,7 +29,7 @@ import java.util.List;
 import org.jsoup.helper.Validate;
 import org.openrefine.wikidata.schema.exceptions.SkipSchemaExpressionException;
 import org.openrefine.wikidata.updates.TermedStatementEntityUpdate;
-import org.openrefine.wikidata.updates.ItemUpdateBuilder;
+import org.openrefine.wikidata.updates.TermedStatementEntityUpdateBuilder;
 import org.wikidata.wdtk.datamodel.interfaces.EntityIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.ItemIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.Statement;
@@ -74,7 +74,7 @@ public class WbItemDocumentExpr implements WbExpression<TermedStatementEntityUpd
     public TermedStatementEntityUpdate evaluate(ExpressionContext ctxt)
             throws SkipSchemaExpressionException {
         EntityIdValue subjectId = getSubject().evaluate(ctxt);
-        ItemUpdateBuilder update = new ItemUpdateBuilder(subjectId);
+        TermedStatementEntityUpdateBuilder update = new TermedStatementEntityUpdateBuilder(subjectId);
         for (WbStatementGroupExpr expr : getStatementGroups()) {
             try {
                 for (Statement s : expr.evaluate(ctxt, subjectId).getStatements()) {

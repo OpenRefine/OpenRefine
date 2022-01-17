@@ -29,7 +29,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.openrefine.wikidata.updates.TermedStatementEntityUpdate;
-import org.openrefine.wikidata.updates.ItemUpdateBuilder;
+import org.openrefine.wikidata.updates.TermedStatementEntityUpdateBuilder;
 import org.testng.annotations.Test;
 
 public class QuickStatementsUpdateSchedulerTest extends UpdateSchedulerTest {
@@ -37,8 +37,8 @@ public class QuickStatementsUpdateSchedulerTest extends UpdateSchedulerTest {
     @Test
     public void testNoNewItem()
             throws ImpossibleSchedulingException {
-    	TermedStatementEntityUpdate updateA = new ItemUpdateBuilder(existingIdA).addStatement(sAtoB).build();
-        TermedStatementEntityUpdate updateB = new ItemUpdateBuilder(existingIdB).addStatement(sBtoA).build();
+        TermedStatementEntityUpdate updateA = new TermedStatementEntityUpdateBuilder(existingIdA).addStatement(sAtoB).build();
+        TermedStatementEntityUpdate updateB = new TermedStatementEntityUpdateBuilder(existingIdB).addStatement(sBtoA).build();
         List<TermedStatementEntityUpdate> scheduled = schedule(updateA, updateB);
         assertEquals(Arrays.asList(updateA, updateB), scheduled);
     }
@@ -46,11 +46,11 @@ public class QuickStatementsUpdateSchedulerTest extends UpdateSchedulerTest {
     @Test
     public void testSplitUpdate()
             throws ImpossibleSchedulingException {
-    	TermedStatementEntityUpdate updateA = new ItemUpdateBuilder(existingIdA).addStatement(sAtoNewA).addStatement(sAtoNewB).build();
-    	TermedStatementEntityUpdate newUpdateA = new ItemUpdateBuilder(newIdA).build();
-        TermedStatementEntityUpdate newUpdateB = new ItemUpdateBuilder(newIdB).build();
-        TermedStatementEntityUpdate splitUpdateA = new ItemUpdateBuilder(existingIdA).addStatement(sAtoNewA).build();
-        TermedStatementEntityUpdate splitUpdateB = new ItemUpdateBuilder(existingIdA).addStatement(sAtoNewB).build();
+        TermedStatementEntityUpdate updateA = new TermedStatementEntityUpdateBuilder(existingIdA).addStatement(sAtoNewA).addStatement(sAtoNewB).build();
+        TermedStatementEntityUpdate newUpdateA = new TermedStatementEntityUpdateBuilder(newIdA).build();
+        TermedStatementEntityUpdate newUpdateB = new TermedStatementEntityUpdateBuilder(newIdB).build();
+        TermedStatementEntityUpdate splitUpdateA = new TermedStatementEntityUpdateBuilder(existingIdA).addStatement(sAtoNewA).build();
+        TermedStatementEntityUpdate splitUpdateB = new TermedStatementEntityUpdateBuilder(existingIdA).addStatement(sAtoNewB).build();
         List<TermedStatementEntityUpdate> scheduled = schedule(updateA);
         assertSetEquals(Arrays.asList(newUpdateA, splitUpdateA, newUpdateB, splitUpdateB), scheduled);
     }
@@ -58,14 +58,14 @@ public class QuickStatementsUpdateSchedulerTest extends UpdateSchedulerTest {
     @Test(expectedExceptions = ImpossibleSchedulingException.class)
     public void testImpossibleForQS()
             throws ImpossibleSchedulingException {
-    	TermedStatementEntityUpdate update = new ItemUpdateBuilder(newIdA).addStatement(sNewAtoNewB).build();
+        TermedStatementEntityUpdate update = new TermedStatementEntityUpdateBuilder(newIdA).addStatement(sNewAtoNewB).build();
         schedule(update);
     }
 
     @Test
     public void testSelfEditOnNewITem()
             throws ImpossibleSchedulingException {
-    	TermedStatementEntityUpdate update = new ItemUpdateBuilder(newIdA).addStatement(sNewAtoNewA).build();
+        TermedStatementEntityUpdate update = new TermedStatementEntityUpdateBuilder(newIdA).addStatement(sNewAtoNewA).build();
         assertEquals(Arrays.asList(update), schedule(update));
     }
 
