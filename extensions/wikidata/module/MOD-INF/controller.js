@@ -58,6 +58,7 @@ function init() {
         "scripts/ajv.min.js",
         "scripts/wikidata-manifest-v1.0.js",
         "scripts/wikibase-manifest-schema-v1.js",
+        "scripts/wikibase-manifest-schema-v2.js",
         "scripts/wikibase-manager.js",
         "scripts/menu-bar-extension.js",
         "scripts/warningsrenderer.js",

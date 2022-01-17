@@ -32,11 +32,6 @@ public class SuggestedPropertyIdValue extends SuggestedEntityIdValue implements 
         super(id, siteIRI, label);
     }
 
-	@Override
-	public boolean isPlaceholder() {
-		return false;
-	}
-
     @Override
     public String getEntityType() {
         return ET_PROPERTY;

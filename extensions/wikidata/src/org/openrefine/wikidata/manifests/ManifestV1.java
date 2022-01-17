@@ -119,6 +119,11 @@ public class ManifestV1 implements Manifest {
 		}
 		return null;
 	}
+	
+	@Override
+	public String getMediaWikiApiEndpoint(String entityType) {
+		return getMediaWikiApiEndpoint();
+	}
 
 	@Override
 	public List<String> getAvailableEntityTypes() {

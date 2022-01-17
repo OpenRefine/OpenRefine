@@ -19,6 +19,7 @@ public class ManifestTest {
         assertEquals("1.0", manifest.getVersion());
         assertEquals("Wikidata", manifest.getName());
         assertEquals("https://www.wikidata.org/w/api.php", manifest.getMediaWikiApiEndpoint());
+        assertEquals("https://www.wikidata.org/w/api.php", manifest.getMediaWikiApiEndpoint("item"));
         assertEquals("http://www.wikidata.org/entity/", manifest.getSiteIri());
         assertEquals(5, manifest.getMaxlag());
         assertEquals("P31", manifest.getInstanceOfPid());
@@ -41,6 +42,7 @@ public class ManifestTest {
         assertEquals("2.0", manifest.getVersion());
         assertEquals("Wikimedia Commons", manifest.getName());
         assertEquals("https://commons.wikimedia.org/w/api.php", manifest.getMediaWikiApiEndpoint());
+        assertEquals("https://www.wikidata.org/w/api.php", manifest.getMediaWikiApiEndpoint("item"));
         assertEquals("https://commons.wikimedia.org/entity/", manifest.getSiteIri());
         assertEquals(5, manifest.getMaxlag());
         assertEquals("P31", manifest.getInstanceOfPid());

@@ -28,10 +28,12 @@
   "entity_types": {
     "item": {
        "site_iri": "http://www.wikidata.org/entity/",
-       "reconciliation_endpoint": "https://wikidata.reconci.link/${lang}/api"
+       "reconciliation_endpoint": "https://wikidata.reconci.link/${lang}/api",
+       "mediawiki_api": "https://www.wikidata.org/w/api.php"
     },
     "property": {
-       "site_iri": "http://www.wikidata.org/entity/"
+       "site_iri": "http://www.wikidata.org/entity/",
+       "mediawiki_api": "https://www.wikidata.org/w/api.php"
     },
     "mediainfo": {
        "site_iri": "https://commons.wikimedia.org/entity/",

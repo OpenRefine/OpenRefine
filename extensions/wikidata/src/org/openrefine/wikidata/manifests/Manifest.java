@@ -66,6 +66,15 @@ public interface Manifest {
     String getReconServiceEndpoint(String entityType);
     
     /**
+     * Get the MediaWiki endpoint of the source Wikibase for the entity type.
+     * This can be different than the MediaWiki endpoint for this Wikibase instance,
+     * when federation is used.
+     * @param entityType
+     * @return null if there is no recon service for this entity type.
+     */
+    String getMediaWikiApiEndpoint(String entityType);
+    
+    /**
      * Gets the site IRI used for a particular entity type.
      * - if the entity type is editable on this Wikibase instance, then it should be identical
      *   to the site IRI for this instance.

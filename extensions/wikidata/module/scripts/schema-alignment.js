@@ -166,7 +166,7 @@ SchemaAlignment._rerenderTabs = function() {
   SchemaAlignment._reconService = {};
   for (let entityType of entityTypes) {
     var reconServiceTemplate = WikibaseManager.getSelectedWikibaseReconEndpoint(entityType);
-    if (reconServiceTemplate !== null) {
+    if (reconServiceTemplate != null) {
       var reconServiceURL = reconServiceTemplate.replace("${lang}", $.i18n("core-recon/wd-recon-lang"));
       ReconciliationManager.getOrRegisterServiceFromUrl(reconServiceURL, function (service)  {
         SchemaAlignment._reconService[entityType] = service;
@@ -196,9 +196,11 @@ SchemaAlignment.updateColumns = function() {
   for (var i = 0; i < columns.length; i++) {
      var column = columns[i];
      var reconConfig = column.reconConfig;
-     // make sure the column was reconciled to the target Wikibase
+     // make sure the column was reconciled.
+     // TODO we could potentially ignore any reconciliation to a siteIRI not
+     // mentioned in the manifest…
      var cell = SchemaAlignment._createDraggableColumn(column.name,
-        reconConfig && reconConfig.identifierSpace === WikibaseManager.getSelectedWikibaseSiteIri() && column.reconStats);
+        reconConfig ? reconConfig.identifierSpace : null);
      this._columnArea.append(cell);
   }
 
@@ -333,9 +335,13 @@ SchemaAlignment._changesCleared = function() {
         .addClass('disabled');
 };
 
-SchemaAlignment._createDraggableColumn = function(name, reconciled) {
+SchemaAlignment._createDraggableColumn = function(name, reconciledSiteIRI) {
   var cell = $("<div></div>").addClass('wbs-draggable-column').text(name);
-  if (reconciled) {
+  cell.data({
+        'columnName': name,
+        'reconciledSiteIRI': reconciledSiteIRI
+  });
+  if (reconciledSiteIRI !== null) {
     cell.addClass('wbs-reconciled-column');
   } else {
     cell.addClass('wbs-unreconciled-column');
@@ -386,7 +392,11 @@ SchemaAlignment._addItem = function(json) {
      e.preventDefault();
   });
   var inputContainer = $('<div></div>').addClass('wbs-item-input').appendTo(item);
-  SchemaAlignment._initField(inputContainer, "wikibase-item", subject);
+  // TODO temporary solution to pick another entity type than item
+  // depending on the Wikibase manifest. To be removed in favour of proper support
+  // for multiple entity types per Wikibase
+  let defaultEntityType = WikibaseManager.getSelectedWikibaseDefaultEntityType();
+  SchemaAlignment._initField(inputContainer, "wikibase-"+defaultEntityType, subject);
   var right = $('<div></div>').addClass('wbs-item-contents').appendTo(item);
 
   // Terms
@@ -914,7 +924,7 @@ SchemaAlignment._initPropertyField = function(inputContainer, targetContainer, i
   var input = $('<input></input>').appendTo(inputContainer);
   input.attr("placeholder", $.i18n('wikibase-schema/property-placeholder'));
 
-  var endpoint = WikibaseManager.getSelectedWikibaseApi();
+  var endpoint = WikibaseManager.getSelectedWikibaseApiForEntityType('property');
   var suggestConfig = {
     mediawiki_endpoint: endpoint,
     entity_type: 'property',
@@ -932,7 +942,7 @@ SchemaAlignment._initPropertyField = function(inputContainer, targetContainer, i
         });
         SchemaAlignment._addStatement(targetContainer, datatype, null);
         var addValueButtons = targetContainer.parent().find('.wbs-add-statement');
-	var removeGroupButton = targetContainer.parent().find('.wbs-remove-statement-group');
+        var removeGroupButton = targetContainer.parent().find('.wbs-remove-statement-group');
         removeGroupButton.hide();
         addValueButtons.show();
       });
@@ -966,16 +976,17 @@ SchemaAlignment._initField = function(inputContainer, mode, initialValue, change
     changedCallback = SchemaAlignment._hasChanged;
   }
 
-  if (this._reconService !== null && (mode === "wikibase-item" || mode === "wikibase-property" || mode === "unit")) {
-    if (mode === "wikibase-item") {
-        input.attr("placeholder", $.i18n('wikibase-schema/item-or-reconciled-column'));
-    } else if (mode === "wikibase-property") {
-        input.attr("placeholder", $.i18n('wikibase-schema/property-placeholder'));
+  // the mode for Wikibase entities has the form "wikibase-{entitytype}", such as "wikibase-item" or "wikibase-property"
+  if (this._reconService !== null && (mode.startsWith("wikibase-") || mode === "unit")) {
+    var entityType = null;
+    if (mode.startsWith("wikibase-")) {
+        input.attr("placeholder", $.i18n('wikibase-schema/entity-or-reconciled-column'));
+	entityType = mode.slice("wikibase-".length);
     } else {
         input.attr("placeholder", $.i18n('wikibase-schema/unit'));
+	entityType = "item";
     }
-    var entityType = mode === 'wikibase-property' ? 'property' : 'item';
-    var endpoint = WikibaseManager.getSelectedWikibaseApi();
+    var endpoint = WikibaseManager.getSelectedWikibaseApiForEntityType(entityType);
     var suggestConfig = {
       mediawiki_endpoint: endpoint,
       entity_type: entityType,
@@ -984,21 +995,12 @@ SchemaAlignment._initField = function(inputContainer, mode, initialValue, change
     };
     
     input.suggestWikibase(suggestConfig).bind("fb-select", function(evt, data) {
-	if (entityType === 'item') {
-	  inputContainer.data("jsonValue", {
-	      type : "wbitemconstant",
-	      qid : data.id,
-	      label: data.name,
-	  });
-	} else { // (entityType === 'property') 
-	  inputContainer.data("jsonValue", {
-	      type : "wbpropconstant",
-	      pid : data.id,
-	      label: data.name,
-	      datatype: 'not-important' // this property is being used as a value of a statement
-	  });
-        }
-	changedCallback();
+        inputContainer.data("jsonValue", {
+            type : "wbentityidvalueconstant",
+            id : data.id,
+            label: data.name,
+        });
+        changedCallback();
     });
     // adds tweaks to display the validation status more clearly, like in Wikidata
     fixSuggestInput(input);
@@ -1172,9 +1174,15 @@ SchemaAlignment._initField = function(inputContainer, mode, initialValue, change
   // Make it droppable
   var acceptClass = ".wbs-draggable-column";
   var wbVariableType = "wbstringvariable";
-  if (mode === "wikibase-item" || mode === "unit") {
+  var entityType = null;
+  if (mode.startsWith("wikibase-") || mode === "unit") {
       acceptClass = ".wbs-reconciled-column";
       wbVariableType = "wbentityvariable";
+      if (mode === "unit") {
+        entityType = "item";
+      } else {
+        entityType = mode.slice("wikibase-".length);
+      }
   } else if (mode === "time") {
       wbVariableType = "wbdatevariable";
   } else if (mode === "globe-coordinate") {
@@ -1190,6 +1198,16 @@ SchemaAlignment._initField = function(inputContainer, mode, initialValue, change
         accept: acceptClass,
     }).on("drop", function (evt, ui) {
         var column = ui.draggable.clone();
+        if (entityType !== null) {
+          // check that the siteIRI of the reconciled column matches
+          // the expected one.
+          var expectedSiteIRI = WikibaseManager.getSelectedWikibaseSiteIriForEntityType(entityType);
+          var actualSiteIRI = ui.draggable.data('reconciledSiteIRI');
+          if (actualSiteIRI !== expectedSiteIRI) {
+            alert($.i18n('wikibase-schema/incompatible-site-iri-reconciled-column', actualSiteIRI, expectedSiteIRI));
+            return false;
+          }
+        }
         acceptDraggableColumn(column);
         inputContainer.data("jsonValue", {
             type : wbVariableType,
@@ -1206,7 +1224,9 @@ SchemaAlignment._initField = function(inputContainer, mode, initialValue, change
 
   // Init with the provided initial value.
   if (initialValue) {
-     if (initialValue.type === "wbitemconstant" || initialValue.type === "wbpropconstant") {
+     if (initialValue.type === "wbentityidvalueconstant" ||
+        /* item for backwards-compatibility purposes */
+        initialValue.type === "wbitemconstant" || initialValue.type === "wbpropconstant") {
         input.val(initialValue.label);
         input.addClass("wbs-validated-input");
      } else if (initialValue.type == "wbentityvariable") {

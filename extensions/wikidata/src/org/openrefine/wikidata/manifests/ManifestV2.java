@@ -65,13 +65,16 @@ public class ManifestV2 implements Manifest {
 		
 		protected String siteIri;
 		protected String reconEndpoint;
+		protected String mediaWikiApi;
 		
 		@JsonCreator
 		protected EntityTypeSettings(
 				@JsonProperty("site_iri") String siteIri,
-				@JsonProperty("reconciliation_endpoint") String reconEndpoint) {
+				@JsonProperty("reconciliation_endpoint") String reconEndpoint,
+				@JsonProperty("mediawiki_api") String mediawikiEndpoint) {
 			this.siteIri = siteIri;
 			this.reconEndpoint = reconEndpoint;
+			this.mediaWikiApi = mediawikiEndpoint;
 		}
 	}
 	
@@ -141,6 +144,15 @@ public class ManifestV2 implements Manifest {
 			return null;
 		}
 		return setting.siteIri;
+	}
+	
+	@Override
+	public String getMediaWikiApiEndpoint(String entityType) {
+		EntityTypeSettings setting = entityTypeSettings.get(entityType);
+		if (setting == null) {
+			return null;
+		}
+		return setting.mediaWikiApi != null ? setting.mediaWikiApi : getMediaWikiApiEndpoint();
 	}
 
 	@Override

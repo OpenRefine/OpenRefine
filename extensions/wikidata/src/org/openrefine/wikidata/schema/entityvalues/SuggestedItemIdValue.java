@@ -31,11 +31,6 @@ public class SuggestedItemIdValue extends SuggestedEntityIdValue implements Item
         super(id, siteIRI, label);
     }
 
-	@Override
-	public boolean isPlaceholder() {
-		return false;
-	}
-
     @Override
     public String getEntityType() {
         return ET_ITEM;
