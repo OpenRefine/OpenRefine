@@ -44,6 +44,7 @@ public class ParseHtmlTests extends RefineTest  {
     static Properties bindings;
     static String h =   "<html>\n" +
                         "<head>\n" +
+                        "<script type=\"application/json\">One Two</script>" +
                         "</head>\n" +
                         "    <body>\n" +
                         "        <h1>head1</h1>\n" +
