@@ -42,7 +42,7 @@ import com.google.refine.grel.ControlFunctionRegistry;
 import com.google.refine.grel.Function;
 import com.google.refine.expr.functions.Type;
 
-public class Data implements Function {
+public class ScriptText implements Function {
 
     @Override
     public Object call(Properties bindings, Object[] args) {
@@ -70,17 +70,17 @@ public class Data implements Function {
     public String getDescription() {
         return "Returns the combined data of an HTML/XML Element. Data is e.g. the inside of a <script> tag.\n"
                 + "Note that data is NOT the text of the element.\n"
-                + "Use text() to get the text that would be visible to a user, and data() for the contents of scripts, comments, CSS styles, etc.\n"
-                + "Use data() in conjunction with parseHtml() and select().";
+                + "Use htmlText() to get the text that would be visible to a user, and scriptText() for the contents of <script>, <style>, etc.\n"
+                + "Use scriptText() in conjunction with parseHtml() and select().";
     }
 
     @Override
     public String getParams() {
-        return "string s, element e";
+        return "element e";
     }
 
     @Override
     public String getReturns() {
-        return "String data";
+        return "string";
     }
 }
