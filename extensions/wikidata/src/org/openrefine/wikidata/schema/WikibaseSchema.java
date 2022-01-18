@@ -27,6 +27,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 import org.openrefine.wikidata.qa.QAWarningStore;
 import org.openrefine.wikidata.schema.exceptions.SkipSchemaExpressionException;
@@ -63,6 +64,9 @@ public class WikibaseSchema implements OverlayModel {
 
     @JsonProperty("siteIri")
     protected String siteIri;
+    
+    @JsonProperty("entityTypeSiteIri")
+    protected Map<String, String> entityTypeSiteIri;
 
     @JsonProperty("mediaWikiApiEndpoint")
     protected String mediaWikiApiEndpoint;
@@ -80,9 +84,11 @@ public class WikibaseSchema implements OverlayModel {
     @JsonCreator
     public WikibaseSchema(@JsonProperty("itemDocuments") List<WbItemDocumentExpr> exprs,
                           @JsonProperty("siteIri") String siteIri,
+                          @JsonProperty("entityTypeSiteIRI") Map<String, String> entityTypeSiteIri,
                           @JsonProperty("mediaWikiApiEndpoint") String mediaWikiApiEndpoint) {
         this.itemDocumentExprs = exprs;
         this.siteIri = siteIri;
+        this.entityTypeSiteIri = entityTypeSiteIri != null ? entityTypeSiteIri : Collections.emptyMap();
         this.mediaWikiApiEndpoint = mediaWikiApiEndpoint != null ? mediaWikiApiEndpoint : ApiConnection.URL_WIKIDATA_API;
     }
 
@@ -92,6 +98,14 @@ public class WikibaseSchema implements OverlayModel {
     @JsonProperty("siteIri")
     public String getSiteIri() {
         return siteIri;
+    }
+    
+    /**
+     * @return the site IRI of the Wikibase instance referenced by this schema
+     */
+    @JsonProperty("entityTypeSiteIri")
+    public Map<String, String> getEntityTypeSiteIri() {
+        return entityTypeSiteIri;
     }
 
     /**
@@ -177,7 +191,7 @@ public class WikibaseSchema implements OverlayModel {
 
         @Override
         public boolean visit(Project project, int rowIndex, Row row) {
-            ExpressionContext ctxt = new ExpressionContext(siteIri, mediaWikiApiEndpoint, rowIndex, row, project.columnModel, warningStore);
+            ExpressionContext ctxt = new ExpressionContext(siteIri, entityTypeSiteIri, mediaWikiApiEndpoint, rowIndex, row, project.columnModel, warningStore);
             result.addAll(evaluateItemDocuments(ctxt));
             return false;
         }

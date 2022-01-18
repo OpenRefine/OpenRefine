@@ -1295,6 +1295,7 @@ SchemaAlignment.getJSON = function() {
     return {
         itemDocuments: list,
         siteIri: WikibaseManager.getSelectedWikibaseSiteIri(),
+        entityTypeSiteIri: Object.fromEntries(WikibaseManager.getSelectedWikibaseAvailableEntityTypes().map(et => [et, WikibaseManager.getSelectedWikibaseSiteIriForEntityType(et)])),
         mediaWikiApiEndpoint: WikibaseManager.getSelectedWikibaseApi()
     };
   } else {

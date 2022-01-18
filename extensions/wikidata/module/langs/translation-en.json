@@ -193,7 +193,7 @@
     "warnings-messages/non-printable-characters/title": "Non-printable characters in strings.",
     "warnings-messages/non-printable-characters/body": "Strings such as <span class=\"wb-issue-preformat\">{example_string}</span> contain non-printable characters.",
     "warnings-messages/invalid-identifier-space/title": "Invalid identifier space for reconciled cells.",
-    "warnings-messages/invalid-identifier-space/body": "Some reconciled cells such as <span class=\"wb-issue-preformat\">{example_cell}</span> were ignored because they are not reconciled to {wikibase_name}.",
+    "warnings-messages/invalid-identifier-space/body": "Some reconciled cells such as <span class=\"wb-issue-preformat\">{example_cell}</span> were ignored because they are not reconciled to <span class=\"wb-issue-preformat\">{expected_site_iri}</span>.",
     "warnings-messages/ignored-language/title": "Invalid language identifiers.",
     "warnings-messages/ignored-language/body": "Some language identifiers are invalid, such as <span class=\"wb-issue-preformat\">{example_value}</span>. See the <a href=\"https://www.wikidata.org/wiki/Wikidata:Tools/OpenRefine/Editing/Schema_alignment#Languages\" target=\"_blank\">allowed values</a>.",
     "warnings-messages/ignored-date/title": "Invalid date formats.",
