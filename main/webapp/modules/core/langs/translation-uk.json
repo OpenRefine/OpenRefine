@@ -1,0 +1,20 @@
+{
+    "core-views/column-join": "Об’єднати стовпці",
+    "core-views/choose-reconciliation-service": "Виберіть службу звірок",
+    "core-views/use-values-as-identifiers": "Використовувати значення як ідентифікатори",
+    "core-views/warning-regex": "Недійсний регулярний вираз: $1",
+    "core-import-formats/text/line-based/*sv": "Файли CSV / TSV / з роздільниками",
+    "core-import-formats/binary": "Бінарні файли",
+    "core-import-formats/service": "Сервіси",
+    "core-index/value": "Значення",
+    "core-index/key": "Ключ",
+    "core-index/preferences": "Налаштування",
+    "core-index/download-now": "Завантажте $1 зараз.",
+    "core-index/refine-version": "Версія $1",
+    "core-index/new-version": "Нова версія",
+    "core-index/version": "Версія:",
+    "core-index/help": "Допомога",
+    "core-about/thanks": "Особлива подяка",
+    "core-about/contributors": "Автори (у хронологічному порядку)",
+    "core-index/slogan": "Потужний інструмент для роботи з брудними даними"
+}

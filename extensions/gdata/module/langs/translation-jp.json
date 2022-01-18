@@ -1,7 +1,7 @@
 {
     "gdata-import/preparing": "準備中…",
     "gdata-import/creating": "プロジェクトを作る…",
-    "gdata-import/title": "一般公開文書(public document)",
+    "gdata-import/title": "一般公開文書（public document）",
     "gdata-import/import-by-url": "一般公開している（<em>public</em>）Google SpreadsheetのURLを入力してください:",
     "gdata-import/next->": "次へ &raquo;",
     "gdata-import/auth-doc": "制限付き文書（authorized document）",

@@ -11,7 +11,7 @@ describe(__filename, function () {
   // If it fails, the interface will remains in German, making subsequent tests fails
   // it('Change the langage', function () {
   // 	cy.visitOpenRefine();
-  // 	cy.navigateTo('Language Settings');
+  // 	cy.navigateTo('Language settings');
   // 	cy.get('#langDD').select('de');
   // 	cy.get('#set-lang-button').click();
   // 	cy.get('#slogan').contains('Ein leistungsstarkes Werkzeug für die Bearbeitung von ungeordneten Daten.');

@@ -1,0 +1,13 @@
+{
+  "library": [
+    {
+      "book1": {
+        "author": {
+          "author-name": "author1",
+          "author-dob": "date"
+        },
+        "genre": "genre1"
+      }
+    }
+  ]
+}

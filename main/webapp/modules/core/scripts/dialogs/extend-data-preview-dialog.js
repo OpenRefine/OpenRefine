@@ -171,6 +171,12 @@ ExtendReconciledDataPreviewDialog.prototype._show = function(properties) {
   suggestConfig.key = null;
   suggestConfig.query_param_name = "prefix";
 
+  // CORS/JSONP support
+  if (this._serviceMetadata.ui && this._serviceMetadata.ui.access) {
+    suggestConfig.access = this._serviceMetadata.ui.access;
+  }
+    
+
   this._elmts.addPropertyInput.suggestP(suggestConfig).bind("fb-select", function(evt, data) {
     self._addProperty({
       id : data.id,

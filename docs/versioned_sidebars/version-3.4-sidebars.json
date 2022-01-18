@@ -1,0 +1,186 @@
+{
+  "version-3.4/docs": [
+    {
+      "collapsed": true,
+      "type": "category",
+      "label": "User Manual",
+      "items": [
+        {
+          "type": "doc",
+          "id": "version-3.4/index"
+        },
+        {
+          "type": "doc",
+          "id": "version-3.4/manual/installing"
+        },
+        {
+          "type": "doc",
+          "id": "version-3.4/manual/running"
+        },
+        {
+          "type": "doc",
+          "id": "version-3.4/manual/starting"
+        },
+        {
+          "collapsed": true,
+          "type": "category",
+          "label": "Exploring data",
+          "items": [
+            {
+              "type": "doc",
+              "id": "version-3.4/manual/exploring"
+            },
+            {
+              "type": "doc",
+              "id": "version-3.4/manual/facets"
+            },
+            {
+              "type": "doc",
+              "id": "version-3.4/manual/sortview"
+            }
+          ]
+        },
+        {
+          "collapsed": true,
+          "type": "category",
+          "label": "Transforming data",
+          "items": [
+            {
+              "type": "doc",
+              "id": "version-3.4/manual/transforming"
+            },
+            {
+              "type": "doc",
+              "id": "version-3.4/manual/cellediting"
+            },
+            {
+              "type": "doc",
+              "id": "version-3.4/manual/columnediting"
+            },
+            {
+              "type": "doc",
+              "id": "version-3.4/manual/transposing"
+            }
+          ]
+        },
+        {
+          "type": "doc",
+          "id": "version-3.4/manual/reconciling"
+        },
+        {
+          "type": "doc",
+          "id": "version-3.4/manual/wikidata"
+        },
+        {
+          "collapsed": true,
+          "type": "category",
+          "label": "Expressions",
+          "items": [
+            {
+              "type": "doc",
+              "id": "version-3.4/manual/expressions"
+            },
+            {
+              "type": "doc",
+              "id": "version-3.4/manual/grel"
+            },
+            {
+              "type": "doc",
+              "id": "version-3.4/manual/grelfunctions"
+            },
+            {
+              "type": "doc",
+              "id": "version-3.4/manual/jythonclojure"
+            }
+          ]
+        },
+        {
+          "type": "doc",
+          "id": "version-3.4/manual/exporting"
+        },
+        {
+          "type": "doc",
+          "id": "version-3.4/manual/troubleshooting"
+        }
+      ]
+    },
+    {
+      "collapsed": true,
+      "type": "category",
+      "label": "GREL Reference",
+      "items": [
+        {
+          "type": "doc",
+          "id": "version-3.4/manual/grelfunctions"
+        }
+      ]
+    },
+    {
+      "collapsed": true,
+      "type": "category",
+      "label": "Technical Reference",
+      "items": [
+        {
+          "type": "doc",
+          "id": "version-3.4/technical-reference/technical-reference-index"
+        },
+        {
+          "type": "doc",
+          "id": "version-3.4/technical-reference/architecture"
+        },
+        {
+          "type": "doc",
+          "id": "version-3.4/technical-reference/openrefine-api"
+        },
+        {
+          "type": "doc",
+          "id": "version-3.4/technical-reference/reconciliation-api"
+        },
+        {
+          "type": "doc",
+          "id": "version-3.4/technical-reference/suggest-api"
+        },
+        {
+          "type": "doc",
+          "id": "version-3.4/technical-reference/data-extension-api"
+        },
+        {
+          "type": "doc",
+          "id": "version-3.4/technical-reference/contributing"
+        },
+        {
+          "type": "doc",
+          "id": "version-3.4/technical-reference/build-test-run"
+        },
+        {
+          "type": "doc",
+          "id": "version-3.4/technical-reference/development-roadmap"
+        },
+        {
+          "type": "doc",
+          "id": "version-3.4/technical-reference/version-release-process"
+        },
+        {
+          "type": "doc",
+          "id": "version-3.4/technical-reference/homebrew-cask-process"
+        },
+        {
+          "type": "doc",
+          "id": "version-3.4/technical-reference/writing-extensions"
+        },
+        {
+          "type": "doc",
+          "id": "version-3.4/technical-reference/migrating-older-extensions"
+        },
+        {
+          "type": "doc",
+          "id": "version-3.4/technical-reference/translating"
+        },
+        {
+          "type": "doc",
+          "id": "version-3.4/technical-reference/functional-tests"
+        }
+      ]
+    }
+  ]
+}

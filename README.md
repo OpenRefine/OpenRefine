@@ -13,6 +13,13 @@ the web. All from a web browser and the comfort and privacy of your own computer
 
 * [OpenRefine Releases](https://github.com/OpenRefine/OpenRefine/releases)
 
+## Snapshot releases
+
+Latest development version, packaged for:
+* [Linux](https://oss.sonatype.org/service/local/artifact/maven/content?r=snapshots&g=org.openrefine&a=openrefine&v=3.6-SNAPSHOT&c=linux&p=tar.gz)
+* [MacOS](https://oss.sonatype.org/service/local/artifact/maven/content?r=snapshots&g=org.openrefine&a=openrefine&v=3.6-SNAPSHOT&c=mac&p=dmg)
+* [Windows](https://oss.sonatype.org/service/local/artifact/maven/content?r=snapshots&g=org.openrefine&a=openrefine&v=3.6-SNAPSHOT&c=win&p=zip)
+
 ## Run from source
 
 If you have cloned this repository to your computer, you can run OpenRefine with:
@@ -20,7 +27,7 @@ If you have cloned this repository to your computer, you can run OpenRefine with
 * `./refine` on Mac OS and Linux
 * `refine.bat` on Windows
 
-This requires JDK 8 and Apache Maven.
+This requires [JDK 8](https://jdk.java.net) and [Apache Maven](https://maven.apache.org/).
 
 ## Documentation and Videos
 

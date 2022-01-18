@@ -19,7 +19,7 @@ describe(__filename, function () {
     cy.waitForDialogPanel();
 
     cy.get('input[column="NDB_No"]').check();
-    cy.dragAndDrop('div[column="NDB_No', 'div[column="Shrt_Desc"]');
+    cy.dragAndDrop('div[column="NDB_No"]', 'div[column="Shrt_Desc"]');
 
     cy.confirmDialogPanel();
 
@@ -46,7 +46,7 @@ describe(__filename, function () {
     cy.columnActionClick('Shrt_Desc', ['Edit column', 'Join columns...']);
     cy.waitForDialogPanel();
 
-    cy.dragAndDrop('div[column="NDB_No', 'div[column="Shrt_Desc"]');
+    cy.dragAndDrop('div[column="NDB_No"]', 'div[column="Shrt_Desc"]');
     cy.get('input[column="NDB_No"]').check();
     cy.get('input[bind="field_separatorInput"]').type(':-:');
 

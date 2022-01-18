@@ -3,11 +3,11 @@
     "database-import/preparing": "Sonuç hazırlanıyor…",
     "database-import/checking": "Sorgu doğrulanıyor…",
     "database-import/creating": "Proje oluşturuluyor…",
-    "database-source/alert-db-port-invalid-character": "Veri Tabanı Bağlantı Noktası Hatası: Girişte Geçersiz Karakter. Sadece sayısal değerlere izin verilir.",
-    "database-source/alert-db-user-invalid-character": "Veri Tabanı Kullanıcısı Hatası: Girişte Geçersiz Karakter. Sadece harflere ve rakamlara izin verilir",
+    "database-source/alert-db-port-invalid-character": "Veri Tabanı Bağlantı Noktası Hatası: Girişte Geçersiz Karakter. Yalnızca rakamlara izin verilir.",
+    "database-source/alert-db-user-invalid-character": "Veri Tabanı Kullanıcısı Hatası: Girişte Geçersiz Karakter. Yalnızca harflere ve rakamlara izin verilir",
     "database-source/connectionNameDefaultValue": "Yeni_Baglanti_Adi",
-    "database-source/alert-db-host-invalid-character": "Veri Tabanı Sunucusu Hatası: Girişte Geçersiz Karakter. Sadece harflere ve rakamlara izin verilir",
-    "database-source/alert-conn-name-invalid-character": "Bağlantı Adı Giriş Hatası: Girişte Geçersiz Karakter. Sadece [a-zA-Z0-9._-] Karakterlerine İzin Verilir",
+    "database-source/alert-db-host-invalid-character": "Veri Tabanı Sunucusu Hatası: Girişte Geçersiz Karakter. Yalnızca harflere ve rakamlara izin verilir",
+    "database-source/alert-conn-name-invalid-character": "Bağlantı Adı Giriş Hatası: Girişte Geçersiz Karakter. Yalnızca [a-zA-Z0-9._-] Karakterlerine İzin Verilir",
     "database-parsing/store-cell": "Boş hücreleri boş (null) olarak kaydet",
     "database-parsing/store-row": "Boş satırları kaydet",
     "database-parsing/limit": "veri satırı",
@@ -18,7 +18,7 @@
     "database-parsing/discard-next": "At, ilk",
     "database-parsing/parse-next": "Ayrıştır, sonraki",
     "database-parsing/ignore-first": "Yok say, ilk",
-    "database-parsing/preview-button": "Ön İzlemeyi&nbsp;Güncelle",
+    "database-parsing/preview-button": "Ön&nbsp;izlemeyi&nbsp;güncelle",
     "database-parsing/option": "Seçenekler",
     "database-parsing/worksheet": "Çalışma sayfaları",
     "database-parsing/updating-preview": "Ön izleme güncelleniyor…",
@@ -60,5 +60,6 @@
     "database-source/alert-user": "Bir veri tabanı kullanıcısı belirtmelisiniz",
     "database-source/alert-port": "Bir veri tabanı bağlantı noktası belirtmelisiniz",
     "database-source/alert-host": "Bir veri tabanı sunucusu belirtmelisiniz",
-    "database-import/importer-name": "Veri tabanı"
+    "database-import/importer-name": "Veri tabanı",
+    "database-parsing/disable-auto-preview": "Otomatik ön izlemeyi devre dışı bırak"
 }

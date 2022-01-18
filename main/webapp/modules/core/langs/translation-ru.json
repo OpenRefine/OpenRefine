@@ -126,7 +126,7 @@
     "core-index-import/char-encoding": "Кодировка&nbsp;символов",
     "core-index-import/mime-type": "тип MIME",
     "core-index-import/creating-proj": "Создание проекта …",
-    "core-index-import/comma-separated": "числа разделенные запятой",
+    "core-index-import/comma-separated": "числа, разделенные запятой",
     "core-index-import/error": "Ошибка:",
     "core-index-import/locate": "Указать путь к файлу проекта OpenRefine (.tar или .tar.gz):",
     "core-index-import/downloading-data": "Загрузка данных…",
@@ -688,5 +688,6 @@
     "core-index/image": "Изображение:",
     "core-index/homepage": "Домашняя страница:",
     "core-index/license": "Лицензия:",
-    "core-index/tags": "Теги:"
+    "core-index/tags": "Теги:",
+    "core-about/thanks": "Специальная благодарность"
 }

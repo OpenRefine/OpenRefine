@@ -1,5 +1,5 @@
 describe(__filename, function () {
-  it('Ensure flag is visible and toggle on/off', function () {
+  it('Ensure star is visible and toggle on/off', function () {
     cy.loadAndVisitProject('food.mini');
     cy.get('.data-table tr:nth-child(1) td:nth-child(1) a')
       .should('have.class', 'data-table-star-off')

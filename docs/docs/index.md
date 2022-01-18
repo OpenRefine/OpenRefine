@@ -18,7 +18,7 @@ The manual then teaches you how to [start a project](manual/starting) by importi
 
 Then we launch into [transforming that data permanently](manual/transforming) through common and custom transformations, clustering, pulling data from the web, [reconciling](manual/reconciling), and [writing expressions](manual/expressions). 
 
-Finally we discuss what to do with your improved dataset, whether [exporting](manual/exporting) it to a file or uploading statements to Wikidata. 
+Finally we discuss what to do with your improved dataset, whether [exporting](manual/exporting) it to a file or [uploading statements to Wikidata or another Wikibase instance](manual/wikibase/overview). 
 
 If you're stuck on any aspect and can't find an answer in the manual, try the [Troubleshooting page](manual/troubleshooting) for links to various places to find help. 
 

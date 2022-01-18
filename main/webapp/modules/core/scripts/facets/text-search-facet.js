@@ -41,11 +41,11 @@ class TextSearchFacet extends Facet {
     this._query = config.query || null;
     this._timerID = null;
 
-    this.textSearchFacetCounterForLabels = 0;
-
     this._initializeUI();
     this._update();
   };
+
+  static textSearchFacetCounterForLabels = 0;
 
   reset() {
     this._query = null;
@@ -203,9 +203,9 @@ class TextSearchFacet extends Facet {
   };
 
   _uniqueIdForLabels() {
-    return this.textSearchFacetCounterForLabels++;
+    return TextSearchFacet.textSearchFacetCounterForLabels++;
   };
-};
+}
 
 
 TextSearchFacet.reconstruct = function(div, uiState) {

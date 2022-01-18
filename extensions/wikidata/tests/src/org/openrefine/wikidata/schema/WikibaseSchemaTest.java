@@ -33,7 +33,7 @@ import java.util.List;
 
 import org.openrefine.wikidata.testing.TestingData;
 import org.openrefine.wikidata.testing.WikidataRefineTest;
-import org.openrefine.wikidata.updates.ItemUpdate;
+import org.openrefine.wikidata.updates.TermedStatementEntityUpdate;
 import org.openrefine.wikidata.updates.ItemUpdateBuilder;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -58,9 +58,9 @@ public class WikibaseSchemaTest extends WikidataRefineTest {
 
     private ItemIdValue qid1 = Datamodel.makeWikidataItemIdValue("Q1377");
     private ItemIdValue qid2 = Datamodel.makeWikidataItemIdValue("Q865528");
-    private TimeValue date1 = Datamodel.makeTimeValue(1919, (byte) 1, (byte) 1, (byte) 0, (byte) 0, (byte) 0, (byte) 9,
+    private TimeValue date1 = Datamodel.makeTimeValue(1919, (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 9,
             (byte) 0, (byte) 0, (byte) 0, TimeValue.CM_GREGORIAN_PRO);
-    private TimeValue date2 = Datamodel.makeTimeValue(1965, (byte) 1, (byte) 1, (byte) 0, (byte) 0, (byte) 0, (byte) 9,
+    private TimeValue date2 = Datamodel.makeTimeValue(1965, (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 9,
             (byte) 0, (byte) 0, (byte) 0, TimeValue.CM_GREGORIAN_PRO);
     private StringValue url = Datamodel.makeStringValue("http://www.ljubljana-slovenia.com/university-ljubljana");
     private PropertyIdValue inceptionPid = Datamodel.makeWikidataPropertyIdValue("P571");
@@ -117,11 +117,11 @@ public class WikibaseSchemaTest extends WikidataRefineTest {
         String serialized = TestingData.jsonFromFile("schema/inception.json");
         WikibaseSchema schema = WikibaseSchema.reconstruct(serialized);
         Engine engine = new Engine(project);
-        List<ItemUpdate> updates = schema.evaluate(project, engine);
-        List<ItemUpdate> expected = new ArrayList<>();
-        ItemUpdate update1 = new ItemUpdateBuilder(qid1).addStatement(statement1).build();
+        List<TermedStatementEntityUpdate> updates = schema.evaluate(project, engine);
+        List<TermedStatementEntityUpdate> expected = new ArrayList<>();
+        TermedStatementEntityUpdate update1 = new ItemUpdateBuilder(qid1).addStatement(statement1).build();
         expected.add(update1);
-        ItemUpdate update2 = new ItemUpdateBuilder(qid2).addStatement(statement2).build();
+        TermedStatementEntityUpdate update2 = new ItemUpdateBuilder(qid2).addStatement(statement2).build();
         expected.add(update2);
         assertEquals(expected, updates);
     }
@@ -154,9 +154,9 @@ public class WikibaseSchemaTest extends WikidataRefineTest {
                 + "      ]\n"
                 + "    }");
         engine.initializeFromConfig(engineConfig);
-        List<ItemUpdate> updates = schema.evaluate(project, engine);
-        List<ItemUpdate> expected = new ArrayList<>();
-        ItemUpdate update1 = new ItemUpdateBuilder(qid1).addStatement(statement1).build();
+        List<TermedStatementEntityUpdate> updates = schema.evaluate(project, engine);
+        List<TermedStatementEntityUpdate> expected = new ArrayList<>();
+        TermedStatementEntityUpdate update1 = new ItemUpdateBuilder(qid1).addStatement(statement1).build();
         expected.add(update1);
         assertEquals(expected, updates);
     }
