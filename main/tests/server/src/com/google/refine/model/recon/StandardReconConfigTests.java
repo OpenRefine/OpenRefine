@@ -45,13 +45,11 @@ import org.testng.annotations.Test;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.node.ArrayNode;
-
 import com.google.refine.RefineTest;
 import com.google.refine.browsing.EngineConfig;
 import com.google.refine.model.Cell;
 import com.google.refine.model.Project;
 import com.google.refine.model.Recon;
-import com.google.refine.model.ReconCandidate;
 import com.google.refine.model.Row;
 import com.google.refine.model.recon.StandardReconConfig.ColumnDetail;
 import com.google.refine.model.recon.StandardReconConfig.ReconResult;
@@ -269,13 +267,13 @@ public class StandardReconConfigTests extends RefineTest {
 
             assertNotNull(request1);
 
-            // We won't have gotten a result, but we want to make sure things didn't die
+            // We won't have gotten a result, but we want to make sure things didn't die.
             Row row = project.rows.get(0);
             Cell cell = row.cells.get(1);
-            assertNotNull(cell.recon);
-            assertEquals(cell.recon.service, url.toString());
-            ReconCandidate candidate = cell.recon.getBestCandidate();
-            assertNull(candidate);
+            assertNotNull(cell.value);
+            assertNull(cell.recon);
+            // the recon object is left null, so that it can be told apart from
+            // empty recon objects (the service legitimally did not return any candidate)
         }
     }
 

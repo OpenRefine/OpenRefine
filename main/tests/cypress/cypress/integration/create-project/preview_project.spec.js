@@ -118,9 +118,9 @@ describe(__filename, function () {
 
     cy.get('#project-tags-container').click();
     // Type and Validate the tag, pressing enter
-    cy.get('#project-tags-container .select2-input').type(uniqueTagName1);
+    cy.get('#project-tags-container .select2-input').type(uniqueTagName1, { force: true });
     cy.get('body').type('{enter}');
-    cy.get('#project-tags-container .select2-input').type(uniqueTagName2);
+    cy.get('#project-tags-container .select2-input').type(uniqueTagName2, { force: true });
     cy.get('body').type('{enter}');
     cy.get('#or-import-parsopt').click();
 
@@ -218,5 +218,38 @@ describe(__filename, function () {
 
     cy.get('table.data-table tr').eq(1).should('to.contain', '15.87');
     cy.get('table.data-table tr').eq(1).should('to.contain', '717');
+  });
+
+  /*
+  The test case below uses the ignore feature to test the disable automatic preview update checkbox
+  We first test with automatic preview updates enabled
+  Then, we test with automatic preview updates disabled, which requires the update button to change the preview
+  */
+  it('Tests disabling of automatic preview', function () {
+    navigateToProjectPreview();
+    // **Testing ignore feature with auto preview enabled** //
+    cy.get('input[bind="ignoreInput"]').type('{backspace}1');
+    cy.get('input[bind="ignoreCheckbox"]').check();
+    cy.waitForImportUpdate();
+    // Look for automatic preview update
+    cy.get('table.data-table tr').eq(1);
+    cy.get('table.data-table tr').eq(1).should('to.contain', '01002');
+
+    cy.get('input[bind="ignoreCheckbox"]').uncheck();
+    cy.waitForImportUpdate();
+
+    // **Testing ignore feature with auto preview disabled** //
+    cy.get('input[bind="disableAutoPreviewCheckbox"]').check();
+    // Verify no auto update
+    cy.get('input[bind="ignoreCheckbox"]').check();
+    cy.wait(5000); // 5 second wait. No choice but to use this here because the dom is not rendered.
+    cy.get('table.data-table tr').eq(1).should('to.contain', '1.');
+    cy.get('table.data-table tr').eq(1).should('to.contain', '01001');
+    // Verify update on button click
+    cy.get('button[bind="previewButton"]').click();
+    cy.waitForImportUpdate();
+    cy.get('table.data-table tr').eq(1).should('to.contain', '1.');
+    cy.get('table.data-table tr').eq(1).should('to.contain', '01002');
+    cy.get('input[bind="disableAutoPreviewCheckbox"]').uncheck();
   });
 });
