@@ -173,8 +173,10 @@ public class EditBatchProcessorTest extends WikidataRefineTest {
             throws MediaWikiApiErrorException, InterruptedException, IOException {
         // Prepare test data
         MonolingualTextValue label = Datamodel.makeMonolingualTextValue("village in Nepal", "en");
+        List<MonolingualTextValue> labels = Collections.singletonList(label);
         StatementGroup statement = Datamodel.makeStatementGroup(Collections.emptyList());
-        TermUpdate labels = Datamodel.makeTermUpdate(null, Collections.emptyList());
+        List<StatementGroup> statements = Collections.singletonList(statement);
+        TermUpdate labelsUpdate = Datamodel.makeTermUpdate(null, Collections.emptyList());
         List<String> ids = new ArrayList<>();
         for (int i = 124; i < 190; i++) {
             ids.add("Q" + String.valueOf(i));
@@ -187,7 +189,7 @@ public class EditBatchProcessorTest extends WikidataRefineTest {
 
         int batchSize = 50;
         List<MediaInfoDocument> fullBatch = mids.stream()
-                .map(mid -> Datamodel.makeMediaInfoDocument(mid, label, statement)
+                .map(mid -> Datamodel.makeMediaInfoDocument(mid, labels, statements).findLabel(label.toString())
                         .build()).collect(Collectors.toList());
         List<MediaInfoDocument> firstBatch = fullBatch.subList(0, batchSize);
         List<MediaInfoDocument> secondBatch = fullBatch.subList(batchSize, fullBatch.size());
@@ -213,7 +215,7 @@ public class EditBatchProcessorTest extends WikidataRefineTest {
             StatementUpdate statementUpdate = Datamodel.makeStatementUpdate(Collections.emptyList(), Collections.emptyList(),
                     Collections.emptyList());
             verify(editor, times(1)).editEntityDocument(Datamodel.makeMediaInfoUpdate((MediaInfoIdValue) doc.getEntityId(),
-                            doc.getRevisionId(), labels, statementUpdate), false, summary, tags);
+                            doc.getRevisionId(), labelsUpdate, statementUpdate), false, summary, tags);
         }
     }
 
