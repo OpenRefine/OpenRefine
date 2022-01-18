@@ -138,6 +138,7 @@ import com.google.refine.expr.functions.xml.OwnText;
 import com.google.refine.expr.functions.xml.ParseXml;
 import com.google.refine.expr.functions.xml.SelectXml;
 import com.google.refine.expr.functions.xml.WholeText;
+import com.google.refine.expr.functions.xml.ScriptText;
 import com.google.refine.expr.functions.xml.XmlAttr;
 import com.google.refine.expr.functions.xml.XmlText;
 import com.google.refine.expr.functions.xml.Parent;
@@ -260,6 +261,7 @@ public class ControlFunctionRegistry {
         registerFunction("ownText", new OwnText());
         registerFunction("wholeText", new WholeText());
         registerFunction("parent", new Parent());
+        registerFunction("scriptText", new ScriptText());
 
         registerFunction("indexOf", new IndexOf());
         registerFunction("lastIndexOf", new LastIndexOf());
