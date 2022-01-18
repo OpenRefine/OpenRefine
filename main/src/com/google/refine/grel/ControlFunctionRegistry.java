@@ -141,6 +141,7 @@ import com.google.refine.expr.functions.xml.WholeText;
 import com.google.refine.expr.functions.xml.ScriptText;
 import com.google.refine.expr.functions.xml.XmlAttr;
 import com.google.refine.expr.functions.xml.XmlText;
+import com.google.refine.expr.functions.xml.Parent;
 import com.google.refine.grel.controls.Filter;
 import com.google.refine.grel.controls.ForEach;
 import com.google.refine.grel.controls.ForEachIndex;
