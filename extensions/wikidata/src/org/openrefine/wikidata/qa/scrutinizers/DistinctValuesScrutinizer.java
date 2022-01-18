@@ -26,8 +26,10 @@ package org.openrefine.wikidata.qa.scrutinizers;
 import org.openrefine.wikidata.qa.QAWarning;
 import org.wikidata.wdtk.datamodel.interfaces.EntityIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.PropertyIdValue;
+import org.wikidata.wdtk.datamodel.interfaces.Snak;
 import org.wikidata.wdtk.datamodel.interfaces.Statement;
 import org.wikidata.wdtk.datamodel.interfaces.Value;
+import org.wikidata.wdtk.datamodel.interfaces.ValueSnak;
 
 import java.util.HashMap;
 import java.util.List;
@@ -59,10 +61,11 @@ public class DistinctValuesScrutinizer extends StatementScrutinizer {
 
     @Override
     public void scrutinize(Statement statement, EntityIdValue entityId, boolean added) {
-        PropertyIdValue pid = statement.getClaim().getMainSnak().getPropertyId();
+        Snak mainSnak = statement.getClaim().getMainSnak();
+        PropertyIdValue pid = mainSnak.getPropertyId();
         List<Statement> statementList = _fetcher.getConstraintsByType(pid, distinctValuesConstraintQid);
-        if (!statementList.isEmpty()) {
-            Value mainSnakValue = statement.getClaim().getMainSnak().getValue();
+        if (!statementList.isEmpty() && mainSnak instanceof ValueSnak) {
+            Value mainSnakValue = ((ValueSnak)mainSnak).getValue();
             Map<Value, EntityIdValue> seen = _seenValues.get(pid);
             if (seen == null) {
                 seen = new HashMap<Value, EntityIdValue>();

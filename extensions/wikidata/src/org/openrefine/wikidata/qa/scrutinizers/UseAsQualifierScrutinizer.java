@@ -1,13 +1,14 @@
 package org.openrefine.wikidata.qa.scrutinizers;
 
 import org.openrefine.wikidata.qa.QAWarning;
-import org.openrefine.wikidata.updates.ItemUpdate;
+import org.openrefine.wikidata.updates.TermedStatementEntityUpdate;
 import org.wikidata.wdtk.datamodel.helpers.Datamodel;
 import org.wikidata.wdtk.datamodel.interfaces.PropertyIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.Snak;
 import org.wikidata.wdtk.datamodel.interfaces.SnakGroup;
 import org.wikidata.wdtk.datamodel.interfaces.Statement;
 import org.wikidata.wdtk.datamodel.interfaces.Value;
+import org.wikidata.wdtk.datamodel.interfaces.ValueSnak;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -30,11 +31,14 @@ public class UseAsQualifierScrutinizer extends EditScrutinizer {
             this.itemList = new ArrayList<>();
             for(SnakGroup group : specs) {
                 for (Snak snak : group.getSnaks()) {
+                    if (! (snak instanceof ValueSnak)) {
+                        continue;
+                    }
                     if (group.getProperty().getId().equals(property)){
-                        pid = (PropertyIdValue) snak.getValue();
+                        pid = (PropertyIdValue) ((ValueSnak)snak).getValue();
                     }
                     if (group.getProperty().getId().equals(itemOfPropertyConstraintPid)){
-                        this.itemList.add(snak.getValue());
+                        this.itemList.add(((ValueSnak)snak).getValue());
                     }
                 }
             }
@@ -51,22 +55,25 @@ public class UseAsQualifierScrutinizer extends EditScrutinizer {
     }
 
     @Override
-    public void scrutinize(ItemUpdate update) {
+    public void scrutinize(TermedStatementEntityUpdate update) {
         for (Statement statement : update.getAddedStatements()) {
             PropertyIdValue pid = statement.getClaim().getMainSnak().getPropertyId();
             Map<PropertyIdValue, List<Value>> qualifiersMap = new HashMap<>();
             List<SnakGroup> qualifiersList = statement.getClaim().getQualifiers();
 
             for(SnakGroup qualifier : qualifiersList) {
-                PropertyIdValue qualifierPid = Datamodel.makeWikidataPropertyIdValue(qualifier.getProperty().getId());
+                PropertyIdValue qualifierPid = qualifier.getProperty();
                 List<Value> itemList;
                 for (Snak snak : qualifier.getSnaks()) {
+                    if (!(snak instanceof ValueSnak)) {
+                        continue;
+                    }
                     if (qualifiersMap.containsKey(qualifierPid)){
                         itemList = qualifiersMap.get(qualifierPid);
-                    }else {
+                    } else {
                         itemList = new ArrayList<>();
                     }
-                    itemList.add(snak.getValue());
+                    itemList.add(((ValueSnak)snak).getValue());
                     qualifiersMap.put(qualifierPid, itemList);
                 }
             }

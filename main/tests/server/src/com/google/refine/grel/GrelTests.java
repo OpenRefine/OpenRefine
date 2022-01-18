@@ -82,6 +82,9 @@ public class GrelTests extends RefineTest {
                 "",
                 "1-1-",
                 "2**3",
+                "value{datePart()",
+                "value}datePart()",
+                "value.datePart{}",
 //                "2^3" // TODO: Should this generate an error?
                 };
         for (String test : tests) {

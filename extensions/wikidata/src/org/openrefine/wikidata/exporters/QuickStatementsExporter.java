@@ -30,20 +30,18 @@ import java.util.Properties;
 import java.util.Set;
 
 import org.openrefine.wikidata.schema.WikibaseSchema;
-import org.openrefine.wikidata.updates.ItemUpdate;
+import org.openrefine.wikidata.updates.TermedStatementEntityUpdate;
 import org.openrefine.wikidata.updates.scheduler.ImpossibleSchedulingException;
 import org.openrefine.wikidata.updates.scheduler.QuickStatementsUpdateScheduler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wikidata.wdtk.datamodel.interfaces.Claim;
-import org.wikidata.wdtk.datamodel.interfaces.ItemIdValue;
+import org.wikidata.wdtk.datamodel.interfaces.EntityIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.MonolingualTextValue;
 import org.wikidata.wdtk.datamodel.interfaces.Reference;
 import org.wikidata.wdtk.datamodel.interfaces.Snak;
 import org.wikidata.wdtk.datamodel.interfaces.SnakGroup;
 import org.wikidata.wdtk.datamodel.interfaces.Statement;
-import org.wikidata.wdtk.datamodel.interfaces.Value;
-import org.wikidata.wdtk.datamodel.interfaces.ValueVisitor;
 
 import com.google.refine.browsing.Engine;
 import com.google.refine.exporters.WriterExporter;
@@ -55,8 +53,13 @@ public class QuickStatementsExporter implements WriterExporter {
 
     public static final String impossibleSchedulingErrorMessage = "This edit batch cannot be performed with QuickStatements due to the structure of its new items.";
     public static final String noSchemaErrorMessage = "No schema was provided. You need to align your project with Wikidata first.";
+    
+    protected final QSSnakPrinter mainSnakPrinter;
+    protected final QSSnakPrinter referenceSnakPrinter;
 
     public QuickStatementsExporter() {
+        mainSnakPrinter = new QSSnakPrinter(false);
+        referenceSnakPrinter = new QSSnakPrinter(true);
     }
 
     @Override
@@ -90,16 +93,16 @@ public class QuickStatementsExporter implements WriterExporter {
      */
     public void translateSchema(Project project, Engine engine, WikibaseSchema schema, Writer writer)
             throws IOException {
-        List<ItemUpdate> items = schema.evaluate(project, engine);
+        List<TermedStatementEntityUpdate> items = schema.evaluate(project, engine);
         translateItemList(items, writer);
     }
 
-    public void translateItemList(List<ItemUpdate> updates, Writer writer)
+    public void translateItemList(List<TermedStatementEntityUpdate> updates, Writer writer)
             throws IOException {
         QuickStatementsUpdateScheduler scheduler = new QuickStatementsUpdateScheduler();
         try {
-            List<ItemUpdate> scheduled = scheduler.schedule(updates);
-            for (ItemUpdate item : scheduled) {
+            List<TermedStatementEntityUpdate> scheduled = scheduler.schedule(updates);
+            for (TermedStatementEntityUpdate item : scheduled) {
                 translateItem(item, writer);
             }
         } catch (ImpossibleSchedulingException e) {
@@ -108,7 +111,7 @@ public class QuickStatementsExporter implements WriterExporter {
 
     }
 
-    protected void translateNameDescr(String qid, Set<MonolingualTextValue> values, String prefix, ItemIdValue id,
+    protected void translateNameDescr(String qid, Set<MonolingualTextValue> values, String prefix, EntityIdValue id,
             Writer writer)
             throws IOException {
         for (MonolingualTextValue value : values) {
@@ -121,7 +124,7 @@ public class QuickStatementsExporter implements WriterExporter {
         }
     }
 
-    protected void translateItem(ItemUpdate item, Writer writer)
+    protected void translateItem(TermedStatementEntityUpdate item, Writer writer)
             throws IOException {
         String qid = item.getItemId().getId();
         if (item.isNew()) {
@@ -148,39 +151,36 @@ public class QuickStatementsExporter implements WriterExporter {
             throws IOException {
         Claim claim = statement.getClaim();
 
-        Value val = claim.getValue();
-        ValueVisitor<String> vv = new QSValuePrinter();
-        String targetValue = val.accept(vv);
-        if (targetValue != null) { // issue #2320
-            if (!add) {
-                // According to: https://www.wikidata.org/wiki/Help:QuickStatements#Removing_statements,
-                // Removing statements won't be followed by qualifiers or references.
-                writer.write("- ");
-                writer.write(qid + "\t" + pid + "\t" + targetValue);
+        Snak mainSnak = claim.getMainSnak();
+        String mainSnakQS = mainSnak.accept(mainSnakPrinter);
+        if (!add) {
+            // According to: https://www.wikidata.org/wiki/Help:QuickStatements#Removing_statements,
+            // Removing statements won't be followed by qualifiers or references.
+            writer.write("- ");
+            writer.write(qid + mainSnakQS);
+            writer.write("\n");
+        } else { // add statements
+            if (statement.getReferences().isEmpty()) {
+                writer.write(qid + mainSnakQS);
+                for (SnakGroup q : claim.getQualifiers()) {
+                    translateSnakGroup(q, false, writer);
+                }
                 writer.write("\n");
-            } else { // add statements
-                if (statement.getReferences().isEmpty()) {
-                    writer.write(qid + "\t" + pid + "\t" + targetValue);
+            } else {
+                // According to: https://www.wikidata.org/wiki/Help:QuickStatements#Add_statement_with_sources
+                // Existing statements with an exact match (property and value) will not be added again;
+                // however additional references might be added to the statement.
+
+                // So, to handle multiple references, we can duplicate the statement just with different references.
+                for (Reference r : statement.getReferences()) {
+                    writer.write(qid + mainSnakQS);
                     for (SnakGroup q : claim.getQualifiers()) {
                         translateSnakGroup(q, false, writer);
                     }
-                    writer.write("\n");
-                } else {
-                    // According to: https://www.wikidata.org/wiki/Help:QuickStatements#Add_statement_with_sources
-                    // Existing statements with an exact match (property and value) will not be added again;
-                    // however additional references might be added to the statement.
-
-                    // So, to handle multiple references, we can duplicate the statement just with different references.
-                    for (Reference r : statement.getReferences()) {
-                        writer.write(qid + "\t" + pid + "\t" + targetValue);
-                        for (SnakGroup q : claim.getQualifiers()) {
-                            translateSnakGroup(q, false, writer);
-                        }
-                        for (SnakGroup g : r.getSnakGroups()) {
-                            translateSnakGroup(g, true, writer);
-                        }
-                        writer.write("\n");
+                    for (SnakGroup g : r.getSnakGroups()) {
+                        translateSnakGroup(g, true, writer);
                     }
+                    writer.write("\n");
                 }
             }
         }
@@ -189,21 +189,11 @@ public class QuickStatementsExporter implements WriterExporter {
     protected void translateSnakGroup(SnakGroup sg, boolean reference, Writer writer)
             throws IOException {
         for (Snak s : sg.getSnaks()) {
-            translateSnak(s, reference, writer);
-        }
-    }
-
-    protected void translateSnak(Snak s, boolean reference, Writer writer)
-            throws IOException {
-        String pid = s.getPropertyId().getId();
-        if (reference) {
-            pid = pid.replace('P', 'S');
-        }
-        Value val = s.getValue();
-        ValueVisitor<String> vv = new QSValuePrinter();
-        String valStr = val.accept(vv);
-        if (valStr != null) {
-            writer.write("\t" + pid + "\t" + valStr);
+            if (reference) {
+                writer.write(s.accept(referenceSnakPrinter));
+            } else {
+                writer.write(s.accept(mainSnakPrinter));
+            }
         }
     }
 

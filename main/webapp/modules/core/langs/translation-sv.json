@@ -3,7 +3,7 @@
     "core-index/slogan": "Ett kraftverktyg för att arbeta med röriga data",
     "core-index/help": "Hjälp",
     "core-index/about": "Om",
-    "core-index/version": "Version",
+    "core-index/version": "Version:",
     "core-index/new-version": "Ny version",
     "core-index/download": "Ladda ned",
     "core-index/now": "nu",
@@ -444,5 +444,18 @@
     "core-index/license": "Licens:",
     "core-index/homepage": "Hemsida:",
     "core-index/image": "Bild:",
-    "core-dialogs/record-fields": "En eller flera rader grupperas till en post; objektet har flera fält, detaljerna redovisas på <a href=\"https://github.com/OpenRefine/OpenRefine/wiki/Variables#record\">Records</a>"
+    "core-dialogs/record-fields": "En eller flera rader grupperas till en post; objektet har flera fält, detaljerna redovisas på <a href=\"https://github.com/OpenRefine/OpenRefine/wiki/Variables#record\">Records</a>",
+    "core-dialogs/clusters-found": "<b>$1</b> {{plural:$1|kluster|kluster}} hittades",
+    "core-index-parser/store-archive": "Lagra arkivfil",
+    "core-index-import/warning-import-file": "Du måste ange en projektfil.",
+    "core-index-import/files-selected": "$1 av $2 {{plural:$2|fil|filer}} valda",
+    "core-index-import/file-count": "$1 {{plural:$1|fil|filer}}",
+    "core-index-import/match-count": "$1 {{plural:$1|träff|träffar}}",
+    "core-index-import/single-project": "OpenRefine kan bara importera flera filer till ett projekt om alla valda filer har samma filformat.",
+    "core-index/tags": "Etiketter:",
+    "core-index/prefs-loading-failed": "Kunde inte ladda inställningarna.",
+    "core-index/download-now": "Ladda nu ner $1.",
+    "core-index/refine-version": "Version $1",
+    "core-about/thanks": "Särskilt tack till",
+    "core-about/contributors": "Bidragsgivare (i kronologisk ordning)"
 }

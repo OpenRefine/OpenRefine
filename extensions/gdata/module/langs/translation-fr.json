@@ -48,5 +48,6 @@
     "gdata-exporter/google-sheets": "Google Sheets",
     "gdata-import/re-sign-in-another": "Connectez-vous avec un autre compte",
     "gdata-import/please-signin": "Veuillez vous connecter et autoriser l'accès à vos données Google",
-    "gdata-exporter/export-to-google-drive": "Projet OpenRefine archivé dans Google Drive…"
+    "gdata-exporter/export-to-google-drive": "Projet OpenRefine archivé dans Google Drive…",
+    "gdata-parsing/disable-auto-preview": "Désactiver l'aperçu automatique"
 }

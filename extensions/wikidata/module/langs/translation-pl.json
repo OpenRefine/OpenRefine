@@ -50,5 +50,12 @@
     "perform-wikibase-edits/cancel": "Anuluj",
     "wikibase-addition/cancel": "Anuluj",
     "wikibase-management/add-wikibase": "Dodaj Wikibase",
-    "wikibase-extension/edit-wikibase-schema": "Edytuj schemat Wikibase"
+    "wikibase-extension/edit-wikibase-schema": "Edytuj schemat Wikibase",
+    "wikibase-extension/manage-wikibase-account": "Zarządzaj kontem Wikibase",
+    "wikibase-extension/select-wikibase-instance": "Wybierz instancję Wikibase",
+    "wikibase-schema/add-value": "dodać wartość",
+    "wikibase-management/dialog-header": "Wybierz instancję Wikibase",
+    "wikibase-extension/wikibase-edits": "Edycje Wikibase…",
+    "wikibase-schema/empty-terms": "nie dodano żadnych etykiet, opisów ani aliasów",
+    "wikibase-schema/add-qualifier": "dodaj kwalifikator"
 }

@@ -1,7 +1,7 @@
 package org.openrefine.wikidata.qa.scrutinizers;
 
 import org.openrefine.wikidata.qa.QAWarning;
-import org.openrefine.wikidata.updates.ItemUpdate;
+import org.openrefine.wikidata.updates.TermedStatementEntityUpdate;
 import org.wikidata.wdtk.datamodel.interfaces.*;
 
 import java.util.HashMap;
@@ -50,12 +50,15 @@ public class DifferenceWithinRangeScrutinizer extends EditScrutinizer {
     }
 
     @Override
-    public void scrutinize(ItemUpdate update) {
+    public void scrutinize(TermedStatementEntityUpdate update) {
         Map<PropertyIdValue, Value> propertyIdValueValueMap = new HashMap<>();
         for (Statement statement : update.getAddedStatements()){
-            PropertyIdValue pid = statement.getClaim().getMainSnak().getPropertyId();
-            Value value = statement.getClaim().getMainSnak().getValue();
-            propertyIdValueValueMap.put(pid, value);
+            Snak mainSnak = statement.getClaim().getMainSnak();
+            if (mainSnak instanceof ValueSnak) {
+                PropertyIdValue pid = mainSnak.getPropertyId();
+                Value value = ((ValueSnak)mainSnak).getValue();
+                propertyIdValueValueMap.put(pid, value);
+            }
         }
 
         for(PropertyIdValue propertyId : propertyIdValueValueMap.keySet()){

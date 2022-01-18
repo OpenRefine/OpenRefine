@@ -149,9 +149,6 @@ function registerCommands() {
   RS.registerCommand(module, "set-preference", new Packages.com.google.refine.commands.SetPreferenceCommand());
   RS.registerCommand(module, "open-workspace-dir", new Packages.com.google.refine.commands.OpenWorkspaceDirCommand());
   
-  RS.registerCommand(module, "authorize", new Packages.com.google.refine.commands.auth.AuthorizeCommand());
-  RS.registerCommand(module, "deauthorize", new Packages.com.google.refine.commands.auth.DeAuthorizeCommand());
-
 }
 
 function registerOperations() {
@@ -363,7 +360,6 @@ function init() {
       "externals/tablesorter/jquery.tablesorter.min.js",
       "externals/moment-with-locales.min.js",
       "externals/select2/select2.min.js",
-      "externals/jquery.lavalamp.min.js",
 
       "scripts/util/misc.js",
       "scripts/util/url.js",

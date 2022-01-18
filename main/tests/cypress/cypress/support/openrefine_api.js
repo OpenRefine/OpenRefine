@@ -50,17 +50,24 @@ Cypress.Commands.add('loadProject', (fixture, projectName, tagName) => {
   const openRefineProjectName = projectName ? projectName : 'cypress-test';
 
   let jsonFixture;
-  if (typeof fixture == 'string') {
-    jsonFixture = fixtures[fixture];
-  } else {
-    jsonFixture = fixture;
-  }
-
+  let content;
   const csv = [];
-  jsonFixture.forEach((item) => {
-    csv.push('"' + item.join('","') + '"');
-  });
-  const content = csv.join('\n');
+
+  if (fixture.includes('.csv')) {
+    cy.fixture(fixture).then((value) => {
+      content = value;
+    });
+  } else {
+    if (typeof fixture == 'string') {
+      jsonFixture = fixtures[fixture];
+    } else {
+      jsonFixture = fixture;
+    }
+    jsonFixture.forEach((item) => {
+      csv.push('"' + item.join('","') + '"');
+    });
+    content = csv.join('\n');
+  }
 
   cy.get('@token', { log: false }).then((token) => {
     // cy.request(Cypress.env('OPENREFINE_URL')+'/command/core/get-csrf-token').then((response) => {

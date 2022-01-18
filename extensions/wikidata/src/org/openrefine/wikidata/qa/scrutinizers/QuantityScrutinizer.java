@@ -9,6 +9,7 @@ import org.wikidata.wdtk.datamodel.interfaces.Snak;
 import org.wikidata.wdtk.datamodel.interfaces.SnakGroup;
 import org.wikidata.wdtk.datamodel.interfaces.Statement;
 import org.wikidata.wdtk.datamodel.interfaces.Value;
+import org.wikidata.wdtk.datamodel.interfaces.ValueSnak;
 
 import java.util.List;
 import java.util.Set;
@@ -58,9 +59,9 @@ public class QuantityScrutinizer extends SnakScrutinizer {
 
     @Override
     public void scrutinize(Snak snak, EntityIdValue entityId, boolean added) {
-        if (snak.getValue() instanceof QuantityValue && added) {
+        if (snak instanceof ValueSnak && ((ValueSnak)snak).getValue() instanceof QuantityValue && added) {
             PropertyIdValue pid = snak.getPropertyId();
-            QuantityValue value = (QuantityValue)snak.getValue();
+            QuantityValue value = (QuantityValue)((ValueSnak)snak).getValue();
 
             if(!_fetcher.getConstraintsByType(pid, noBoundsConstraintQid).isEmpty() && (value.getUpperBound() != null || value.getLowerBound() != null)) {
                 QAWarning issue = new QAWarning(boundsDisallowedType, pid.getId(), QAWarning.Severity.IMPORTANT, 1);

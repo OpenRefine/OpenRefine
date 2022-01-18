@@ -914,6 +914,10 @@ SchemaAlignment._initPropertyField = function(inputContainer, targetContainer, i
     suggestConfig.key = null;
     suggestConfig.query_param_name = "prefix";
 
+    if (this._reconService.ui && this._reconService.ui.access) {
+      suggestConfig.access = this._reconService.ui.access;
+    }
+
     input.suggestP(suggestConfig).bind("fb-select", function(evt, data) {
         // Fetch the type of this property and add the appropriate target value type
         SchemaAlignment._getPropertyType(data.id, function(datatype) {
@@ -968,24 +972,36 @@ SchemaAlignment._initField = function(inputContainer, mode, initialValue, change
     }
     var endpoint = null;
     endpoint = this._reconService.suggest.entity;
-    var suggestConfig = $.extend({}, endpoint);
-    suggestConfig.key = null;
-    suggestConfig.query_param_name = "prefix";
-    if ('view' in this._reconService && 'url' in this._reconService.view && !('view_url' in endpoint)) {
-       suggestConfig.view_url = this._reconService.view.url;
-    }
+    if (endpoint != null) {
+      var suggestConfig = $.extend({}, endpoint);
+      suggestConfig.key = null;
+      suggestConfig.query_param_name = "prefix";
+      if ('view' in this._reconService && 'url' in this._reconService.view && !('view_url' in endpoint)) {
+         suggestConfig.view_url = this._reconService.view.url;
+      }
+      if (this._reconService.ui && this._reconService.ui.access) {
+        suggestConfig.access = this._reconService.ui.access;
+      }
 
-
-    input.suggest(suggestConfig).bind("fb-select", function(evt, data) {
+      input.suggest(suggestConfig).bind("fb-select", function(evt, data) {
+          inputContainer.data("jsonValue", {
+              type : "wbitemconstant",
+              qid : data.id,
+              label: data.name,
+          });
+          changedCallback();
+      });
+      // adds tweaks to display the validation status more clearly, like in Wikidata
+      fixSuggestInput(input);
+    } else {
+      input.bind('input propertychange', function(evt, data) {
         inputContainer.data("jsonValue", {
-            type : "wbitemconstant",
-            qid : data.id,
-            label: data.name,
-        });
-        changedCallback();
-    });
-    // adds tweaks to display the validation status more clearly, like in Wikidata
-    fixSuggestInput(input);
+          type : "wbitemconstant",
+          qid : data.id,
+      });
+      changedCallback();
+      });
+    }
 
   } else if (this._reconService !== null && mode === "wikibase-property") {
     var endpoint = null;
@@ -993,6 +1009,10 @@ SchemaAlignment._initField = function(inputContainer, mode, initialValue, change
     var suggestConfig = $.extend({}, endpoint);
     suggestConfig.key = null;
     suggestConfig.query_param_name = "prefix";
+
+    if (this._reconService.ui && this._reconService.ui.access) {
+      suggestConfig.access = this._reconService.ui.access;
+    }
 
     input.suggestP(suggestConfig).bind("fb-select", function(evt, data) {
         inputContainer.data("jsonValue", {
@@ -1178,7 +1198,7 @@ SchemaAlignment._initField = function(inputContainer, mode, initialValue, change
   var wbVariableType = "wbstringvariable";
   if (mode === "wikibase-item" || mode === "unit") {
       acceptClass = ".wbs-reconciled-column";
-      wbVariableType = "wbitemvariable";
+      wbVariableType = "wbentityvariable";
   } else if (mode === "time") {
       wbVariableType = "wbdatevariable";
   } else if (mode === "globe-coordinate") {
@@ -1213,7 +1233,7 @@ SchemaAlignment._initField = function(inputContainer, mode, initialValue, change
      if (initialValue.type === "wbitemconstant" || initialValue.type === "wbpropconstant") {
         input.val(initialValue.label);
         input.addClass("wbs-validated-input");
-     } else if (initialValue.type == "wbitemvariable") {
+     } else if (initialValue.type == "wbentityvariable") {
         var cell = SchemaAlignment._createDraggableColumn(initialValue.columnName, true);
         acceptDraggableColumn(cell);
      } else if (initialValue.type === "wbstringconstant" ||
@@ -1388,4 +1408,3 @@ SchemaAlignment._updateWarnings = function(warnings, totalCount) {
         countsElem.show();
    }
 };
-
