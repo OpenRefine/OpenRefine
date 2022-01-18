@@ -259,6 +259,7 @@ public class ControlFunctionRegistry {
         registerFunction("innerHtml", new InnerHtml());
         registerFunction("ownText", new OwnText());
         registerFunction("wholeText", new WholeText());
+        registerFunction("parent", new Parent());
         registerFunction("scriptText", new ScriptText());
 
         registerFunction("indexOf", new IndexOf());
