@@ -454,5 +454,8 @@
     "core-dialogs/ignore-facets": "Negeer facetten en filters en exporteer alle rijen",
     "core-dialogs/date-iso": "ISO 8601. Bijvoorbeeld: 2011-08-24T18:36:10+08:00",
     "core-dialogs/help/grelreference": "Voor meer informatie, zie de uitleg over GREL in het OpenRefine-handboek",
-    "core-dialogs/cell-value": "De waarde van de huidige cel. Dit is een shortcut voor 'cell.value'."
+    "core-dialogs/cell-value": "De waarde van de huidige cel. Dit is een shortcut voor 'cell.value'.",
+    "core-dialogs/rotated-counter-clock": "45° tegen de klok gedraaid",
+    "core-dialogs/choice-var-length": "Variatie in lengte van keuzes",
+    "core-index-parser/disable-auto-preview": "Automatische voorbeeldweergave uitschakelen"
 }

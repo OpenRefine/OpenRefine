@@ -40,7 +40,7 @@ echo.
 echo  "/d" enable JVM debugging (on port 8000)
 echo.
 echo  "/m <memory>" max memory heap size to use
-echo     default: 1024M
+echo     default: 1400M
 echo.
 echo  "/x" enable JMX monitoring (for jconsole and friends)
 echo.
@@ -130,6 +130,7 @@ goto shift2loop
 
 :arg-m
 set REFINE_MEMORY=%2
+set REFINE_MIN_MEMORY=%2
 goto shift2loop
 
 :arg-d
@@ -155,7 +156,7 @@ set JAVA_OPTIONS=
 set OPTS=%OPTS% %JAVA_OPTIONS%
 
 if not "%REFINE_MEMORY%" == "" goto gotMemory
-set REFINE_MEMORY=1024M
+set REFINE_MEMORY=1400M
 if not "%REFINE_MIN_MEMORY%" == "" goto gotMemory
 set REFINE_MIN_MEMORY=256M
 

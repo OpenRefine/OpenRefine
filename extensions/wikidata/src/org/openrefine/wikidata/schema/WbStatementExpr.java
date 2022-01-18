@@ -35,6 +35,7 @@ import org.openrefine.wikidata.qa.QAWarning;
 import org.openrefine.wikidata.schema.exceptions.SkipSchemaExpressionException;
 import org.wikidata.wdtk.datamodel.helpers.Datamodel;
 import org.wikidata.wdtk.datamodel.interfaces.Claim;
+import org.wikidata.wdtk.datamodel.interfaces.EntityIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.ItemIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.PropertyIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.Reference;
@@ -90,7 +91,7 @@ public class WbStatementExpr {
                 .collect(Collectors.toList());
     }
 
-    public Statement evaluate(ExpressionContext ctxt, ItemIdValue subject, PropertyIdValue propertyId)
+    public Statement evaluate(ExpressionContext ctxt, EntityIdValue subject, PropertyIdValue propertyId)
             throws SkipSchemaExpressionException {
         Value mainSnakValue = getMainsnak().evaluate(ctxt);
         Snak mainSnak = Datamodel.makeValueSnak(propertyId, mainSnakValue);

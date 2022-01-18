@@ -157,7 +157,7 @@ DataTableView.prototype._renderSortingControls = function(sortingControls) {
   $('<a href="javascript:{}"></a>')
   .addClass("action")
   .text($.i18n('core-views/sort') + " ")
-  .append($('<img>').attr("src", "../images/down-arrow.png"))
+  .append($('<img>').attr("src", "images/down-arrow.png"))
   .appendTo(sortingControls)
   .click(function() {
     self._createSortingMenu(this);
@@ -290,7 +290,7 @@ DataTableView.prototype._renderDataTables = function(table, tableHeader) {
             // See https://github.com/OpenRefine/OpenRefine/blob/master/main/src/com/google/refine/model/ColumnGroup.java
             // and https://github.com/OpenRefine/OpenRefine/tree/master/main/src/com/google/refine/importers/tree
             if (c == keys[k]) {
-              $('<img />').attr("src", "../images/down-arrow.png").appendTo(th);
+              $('<img />').attr("src", "images/down-arrow.png").appendTo(th);
               break;
             }
           }
@@ -910,12 +910,26 @@ DataTableView.prototype._createMenuForAllColumns = function(elmt) {
         {
           label: $.i18n('core-views/fill-down'),
           id: "core/fill-down",
-          click: doAllFillDown
+          click: function () {
+            if (self._getSortingCriteriaCount() > 0) {
+                self._createPendingSortWarningDialog(doAllFillDown);
+            }
+            else {
+                doAllFillDown();
+            }
+          }
         },
         {
           label: $.i18n('core-views/blank-down'),
           id: "core/blank-down",
-          click: doAllBlankDown
+          click: function () {
+            if (self._getSortingCriteriaCount() > 0) {
+                self._createPendingSortWarningDialog(doAllBlankDown);
+            }
+            else {
+                doAllBlankDown();
+            }
+          }
         }
       ]
     },
@@ -1116,4 +1130,30 @@ DataTableView.promptExpressionOnVisibleRows = function(column, title, expression
     expression,
     onDone
   );
+};
+
+//This function takes a function as a parameter and creates a dialog window
+//If the ok button is pressed, the function is executed
+//If the cancel button is pressed instead, the window is dismissed and the function is not executed
+DataTableView.prototype._createPendingSortWarningDialog = function(func) {
+  var frame = $(DOM.loadHTML("core", "scripts/views/data-table/warn-of-pending-sort.html"));
+  var elmts = DOM.bind(frame);
+
+  elmts.or_views_warning.text($.i18n('core-views/warn-of-pending-sort'));
+  elmts.dialogHeader.text($.i18n('core-views/warning'));
+  elmts.okButton.html($.i18n('core-buttons/ok'));
+  elmts.cancelButton.text($.i18n('core-buttons/cancel'));
+
+  var level = DialogSystem.showDialog(frame);
+  var dismiss = function() { DialogSystem.dismissLevel(level - 1); };
+
+  elmts.cancelButton.click( function () {
+     dismiss();
+  });
+
+  elmts.okButton.click( function () {
+     func();
+     dismiss();
+  });
+
 };

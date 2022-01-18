@@ -107,6 +107,15 @@ Cypress.Commands.add('getFacetContainer', (facetName) => {
     .parentsUntil('.facets-container', { log: false });
 });
 
+Cypress.Commands.add('getNumericFacetContainer', (facetName) => {
+  return cy
+    .get(
+      `#refine-tabs-facets .facets-container .facet-container span[bind="facetTitle"]:contains("${facetName}")`,
+      { log: false }
+    )
+    .parentsUntil('.facets-container', { log: false });
+});
+
 /**
  * Edit a cell, for a given row index, a column name and a value
  */
@@ -306,6 +315,16 @@ Cypress.Commands.add('confirmDialogPanel', () => {
   ).click();
   cy.get('body > .dialog-container > .dialog-frame').should('not.exist');
 });
+
+/**
+ * Click on the Cancel button of a dialog panel
+ */
+ Cypress.Commands.add('cancelDialogPanel', () => {
+   cy.get(
+     'body > .dialog-container > .dialog-frame .dialog-footer button[bind="cancelButton"]'
+   ).click();
+   cy.get('body > .dialog-container > .dialog-frame').should('not.exist');
+ });
 
 /**
  * Will click on a menu entry for a given column name
