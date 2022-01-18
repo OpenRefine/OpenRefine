@@ -53,6 +53,7 @@ import org.wikidata.wdtk.datamodel.interfaces.MediaInfoDocument;
 import org.wikidata.wdtk.datamodel.interfaces.MediaInfoIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.MediaInfoUpdate;
 import org.wikidata.wdtk.datamodel.interfaces.MonolingualTextValue;
+import org.wikidata.wdtk.datamodel.interfaces.StatementGroup;
 import org.wikidata.wdtk.datamodel.interfaces.StatementUpdate;
 import org.wikidata.wdtk.datamodel.interfaces.TermUpdate;
 import org.wikidata.wdtk.wikibaseapi.WikibaseDataEditor;
@@ -172,6 +173,7 @@ public class EditBatchProcessorTest extends WikidataRefineTest {
             throws MediaWikiApiErrorException, InterruptedException, IOException {
         // Prepare test data
         MonolingualTextValue label = Datamodel.makeMonolingualTextValue("village in Nepal", "en");
+        StatementGroup statement = Datamodel.makeStatementGroup(Collections.emptyList());
         TermUpdate labels = Datamodel.makeTermUpdate(null, Collections.emptyList());
         List<String> ids = new ArrayList<>();
         for (int i = 124; i < 190; i++) {
@@ -184,13 +186,11 @@ public class EditBatchProcessorTest extends WikidataRefineTest {
                 .collect(Collectors.toList());
 
         int batchSize = 50;
-        List<MediaInfoUpdate> fullBatch = mids.stream()
-                .map(mid -> MediaInfoUpdateBuilder.forEntityId(mid)
-                        .updateStatements(Datamodel.makeStatementUpdate(Collections.emptyList(),
-                                Collections.emptyList(), Collections.emptyList()))
-                        .build()).collect(Collectors.toList());//ditto
-        List<MediaInfoUpdate> firstBatch = fullBatch.subList(0, batchSize);
-        List<MediaInfoUpdate> secondBatch = fullBatch.subList(batchSize, fullBatch.size());
+        List<MediaInfoDocument> fullBatch = mids.stream()
+                .map(mid -> Datamodel.makeMediaInfoDocument(mid, label, statement)
+                        .build()).collect(Collectors.toList());
+        List<MediaInfoDocument> firstBatch = fullBatch.subList(0, batchSize);
+        List<MediaInfoDocument> secondBatch = fullBatch.subList(batchSize, fullBatch.size());
 
         when(fetcher.getEntityDocuments(toMids(firstBatch))).thenReturn(toMapMediaInfo(firstBatch));
         when(fetcher.getEntityDocuments(toMids(secondBatch))).thenReturn(toMapMediaInfo(secondBatch));
@@ -209,11 +209,11 @@ public class EditBatchProcessorTest extends WikidataRefineTest {
         assertEquals(new NewItemLibrary(), library);
         verify(fetcher, times(1)).getEntityDocuments(toMids(firstBatch));
         verify(fetcher, times(1)).getEntityDocuments(toMids(secondBatch));
-        for (MediaInfoUpdate doc : fullBatch) {
+        for (MediaInfoDocument doc : fullBatch) {
             StatementUpdate statementUpdate = Datamodel.makeStatementUpdate(Collections.emptyList(), Collections.emptyList(),
                     Collections.emptyList());
             verify(editor, times(1)).editEntityDocument(Datamodel.makeMediaInfoUpdate((MediaInfoIdValue) doc.getEntityId(),
-                            doc.getBaseRevisionId(), labels, statementUpdate), false, summary, tags);
+                            doc.getRevisionId(), labels, statementUpdate), false, summary, tags);
         }
     }
 
@@ -225,11 +225,11 @@ public class EditBatchProcessorTest extends WikidataRefineTest {
         return docs.stream().map(doc -> doc.getEntityId().getId()).collect(Collectors.toList());
     }
 
-    private Map<String, EntityDocument> toMapMediaInfo(List<MediaInfoUpdate> docs) {
+    private Map<String, EntityDocument> toMapMediaInfo(List<MediaInfoDocument> docs) {
         return docs.stream().collect(Collectors.toMap(doc -> doc.getEntityId().getId(), doc -> doc));
     }
 
-    private List<String> toMids(List<MediaInfoUpdate> firstBatch) {
+    private List<String> toMids(List<MediaInfoDocument> firstBatch) {
         return firstBatch.stream().map(doc -> doc.getEntityId().getId()).collect(Collectors.toList());
     }
 }
