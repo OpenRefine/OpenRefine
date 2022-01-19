@@ -45,14 +45,13 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 import org.wikidata.wdtk.datamodel.helpers.Datamodel;
 import org.wikidata.wdtk.datamodel.helpers.ItemDocumentBuilder;
-import org.wikidata.wdtk.datamodel.helpers.MediaInfoUpdateBuilder;
 import org.wikidata.wdtk.datamodel.interfaces.EntityDocument;
 import org.wikidata.wdtk.datamodel.interfaces.ItemDocument;
 import org.wikidata.wdtk.datamodel.interfaces.ItemIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.MediaInfoDocument;
 import org.wikidata.wdtk.datamodel.interfaces.MediaInfoIdValue;
-import org.wikidata.wdtk.datamodel.interfaces.MediaInfoUpdate;
 import org.wikidata.wdtk.datamodel.interfaces.MonolingualTextValue;
+import org.wikidata.wdtk.datamodel.interfaces.Statement;
 import org.wikidata.wdtk.datamodel.interfaces.StatementGroup;
 import org.wikidata.wdtk.datamodel.interfaces.StatementUpdate;
 import org.wikidata.wdtk.datamodel.interfaces.TermUpdate;
@@ -174,12 +173,10 @@ public class EditBatchProcessorTest extends WikidataRefineTest {
         // Prepare test data
         MonolingualTextValue label = Datamodel.makeMonolingualTextValue("village in Nepal", "en");
         List<MonolingualTextValue> labels = Collections.singletonList(label);
-        StatementGroup statement = Datamodel.makeStatementGroup(Collections.emptyList());
-        List<StatementGroup> statements = Collections.singletonList(statement);
-        TermUpdate labelsUpdate = Datamodel.makeTermUpdate(null, Collections.emptyList());
+        TermUpdate labelsUpdate = Datamodel.makeTermUpdate(labels, Collections.emptyList());
         List<String> ids = new ArrayList<>();
         for (int i = 124; i < 190; i++) {
-            ids.add("Q" + String.valueOf(i));
+            ids.add("M" + String.valueOf(i));
         }
         List<MediaInfoIdValue> mids = ids.stream().map(e -> Datamodel.makeWikimediaCommonsMediaInfoIdValue(e))
                 .collect(Collectors.toList());
@@ -189,8 +186,7 @@ public class EditBatchProcessorTest extends WikidataRefineTest {
 
         int batchSize = 50;
         List<MediaInfoDocument> fullBatch = mids.stream()
-                .map(mid -> Datamodel.makeMediaInfoDocument(mid, labels, statements).findLabel(label.toString())
-                        .build()).collect(Collectors.toList());
+                .map(mid -> Datamodel.makeMediaInfoDocument(mid)).collect(Collectors.toList());
         List<MediaInfoDocument> firstBatch = fullBatch.subList(0, batchSize);
         List<MediaInfoDocument> secondBatch = fullBatch.subList(batchSize, fullBatch.size());
 
