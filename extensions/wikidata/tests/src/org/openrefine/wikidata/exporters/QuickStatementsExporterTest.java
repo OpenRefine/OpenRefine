@@ -35,7 +35,7 @@ import org.openrefine.wikidata.schema.WikibaseSchema;
 import org.openrefine.wikidata.testing.TestingData;
 import org.openrefine.wikidata.testing.WikidataRefineTest;
 import org.openrefine.wikidata.updates.TermedStatementEntityUpdate;
-import org.openrefine.wikidata.updates.ItemUpdateBuilder;
+import org.openrefine.wikidata.updates.TermedStatementEntityUpdateBuilder;
 import org.testng.annotations.Test;
 import org.wikidata.wdtk.datamodel.helpers.Datamodel;
 import org.wikidata.wdtk.datamodel.interfaces.*;
@@ -78,7 +78,7 @@ public class QuickStatementsExporterTest extends WikidataRefineTest {
     public void testImpossibleScheduling()
             throws IOException {
         Statement sNewAtoNewB = TestingData.generateStatement(newIdA, newIdB);
-        TermedStatementEntityUpdate update = new ItemUpdateBuilder(newIdA).addStatement(sNewAtoNewB).build();
+        TermedStatementEntityUpdate update = new TermedStatementEntityUpdateBuilder(newIdA).addStatement(sNewAtoNewB).build();
 
         assertEquals(QuickStatementsExporter.impossibleSchedulingErrorMessage, export(update));
     }
@@ -90,7 +90,7 @@ public class QuickStatementsExporterTest extends WikidataRefineTest {
     	 * Adding labels and description without overriding is not supported by QS, so
     	 * we fall back on adding them with overriding.
     	 */
-    	TermedStatementEntityUpdate update = new ItemUpdateBuilder(qid1)
+        TermedStatementEntityUpdate update = new TermedStatementEntityUpdateBuilder(qid1)
                 .addLabel(Datamodel.makeMonolingualTextValue("some label", "en"), true)
                 .addDescription(Datamodel.makeMonolingualTextValue("some description", "en"), true)
                 .build();
@@ -101,7 +101,7 @@ public class QuickStatementsExporterTest extends WikidataRefineTest {
     @Test
     public void testOptionalNameDesc()
             throws IOException {
-    	TermedStatementEntityUpdate update = new ItemUpdateBuilder(newIdA)
+        TermedStatementEntityUpdate update = new TermedStatementEntityUpdateBuilder(newIdA)
                 .addLabel(Datamodel.makeMonolingualTextValue("my new item", "en"), false)
                 .addDescription(Datamodel.makeMonolingualTextValue("isn't it awesome?", "en"), false)
                 .addAlias(Datamodel.makeMonolingualTextValue("fabitem", "en")).build();
@@ -113,7 +113,7 @@ public class QuickStatementsExporterTest extends WikidataRefineTest {
     @Test
     public void testDeleteStatement()
             throws IOException {
-    	TermedStatementEntityUpdate update = new ItemUpdateBuilder(qid1).deleteStatement(TestingData.generateStatement(qid1, qid2))
+        TermedStatementEntityUpdate update = new TermedStatementEntityUpdateBuilder(qid1).deleteStatement(TestingData.generateStatement(qid1, qid2))
                 .build();
 
         assertEquals("- Q1377\tP38\tQ865528\n", export(update));
@@ -129,7 +129,7 @@ public class QuickStatementsExporterTest extends WikidataRefineTest {
         Claim claim = Datamodel.makeClaim(qid1, baseStatement.getClaim().getMainSnak(),
                 Collections.singletonList(group));
         Statement statement = Datamodel.makeStatement(claim, Collections.emptyList(), StatementRank.NORMAL, "");
-        TermedStatementEntityUpdate update = new ItemUpdateBuilder(qid1).addStatement(statement).build();
+        TermedStatementEntityUpdate update = new TermedStatementEntityUpdateBuilder(qid1).addStatement(statement).build();
 
         assertEquals("Q1377\tP38\tQ865528\tP38\tQ1377\n", export(update));
     }
@@ -141,7 +141,7 @@ public class QuickStatementsExporterTest extends WikidataRefineTest {
         Claim claim = Datamodel.makeClaim(qid1, Datamodel.makeSomeValueSnak(pid), Collections.emptyList());
         Statement statement = Datamodel.makeStatement(claim, Collections.emptyList(), StatementRank.NORMAL, "");
 
-        TermedStatementEntityUpdate update = new ItemUpdateBuilder(qid1).addStatement(statement).build();
+        TermedStatementEntityUpdate update = new TermedStatementEntityUpdateBuilder(qid1).addStatement(statement).build();
 
         assertEquals("Q1377\tP123\tsomevalue\n", export(update));
     }
@@ -153,7 +153,7 @@ public class QuickStatementsExporterTest extends WikidataRefineTest {
         Claim claim = Datamodel.makeClaim(qid1, Datamodel.makeNoValueSnak(pid), Collections.emptyList());
         Statement statement = Datamodel.makeStatement(claim, Collections.emptyList(), StatementRank.NORMAL, "");
 
-        TermedStatementEntityUpdate update = new ItemUpdateBuilder(qid1).addStatement(statement).build();
+        TermedStatementEntityUpdate update = new TermedStatementEntityUpdateBuilder(qid1).addStatement(statement).build();
 
         assertEquals("Q1377\tP123\tnovalue\n", export(update));
     }
@@ -181,7 +181,7 @@ public class QuickStatementsExporterTest extends WikidataRefineTest {
         Reference reference2 = Datamodel.makeReference(Collections.singletonList(group2));
 
         Statement statement = Datamodel.makeStatement(claim, Arrays.asList(reference1, reference2), StatementRank.NORMAL, "");
-        TermedStatementEntityUpdate update = new ItemUpdateBuilder(qid1).addStatement(statement).build();
+        TermedStatementEntityUpdate update = new TermedStatementEntityUpdateBuilder(qid1).addStatement(statement).build();
 
         assertEquals("Q1377\tP38\tQ865528\tP38\tQ1377\tS38\tQ865528\n" +
                 "Q1377\tP38\tQ865528\tP38\tQ1377\tS38\tQ1377\n", export(update));
