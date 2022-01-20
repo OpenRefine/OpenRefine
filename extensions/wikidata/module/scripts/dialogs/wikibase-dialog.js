@@ -36,12 +36,12 @@ WikibaseDialog.populateDialog = function () {
         if (wikibaseName.toLowerCase() === WikibaseManager.getSelectedWikibaseName().toLowerCase()) {
           item += "<td><a class=\"wikibase-dialog-selector-remove wikibase-selected\" onclick=\"void(0)\"></a></td>";
         } else {
-	      item += "<td><a class=\"wikibase-dialog-selector-remove\" onclick=\"WikibaseDialog.removeWikibase(event, '" + wikibaseName + "')\"></a></td>";
+          item += "<td><a class=\"wikibase-dialog-selector-remove\" onclick=\"WikibaseDialog.removeWikibase(event, '" + wikibaseName + "')\"></a></td>";
         }
         item += "</tr>";
         WikibaseDialog.elmts.wikibaseList.append(item);
       }
-	}, wikibaseName);
+    }, wikibaseName);
   }
 };
 
@@ -86,9 +86,14 @@ WikibaseDialog.addWikibaseManifest = function () {
       }
 
       WikibaseManager.addWikibase(manifest);
-      let lang = $.i18n('core-recon/wd-recon-lang');
-      let reconEndpoint = manifest.reconciliation.endpoint.replace("${lang}", lang);
-      ReconciliationManager.getOrRegisterServiceFromUrl(reconEndpoint, function () {}, true);
+
+      // pre-register reconciliation services mentioned by this manifest
+      for (let reconEndpoint of WikibaseManager.getReconciliationEndpoints(manifest)) {
+        let lang = $.i18n('core-recon/wd-recon-lang');
+        let endpoint = reconEndpoint.replace("${lang}", lang);
+        ReconciliationManager.getOrRegisterServiceFromUrl(endpoint, function () {}, true);
+      }
+
       DialogSystem.dismissUntil(level - 1);
       WikibaseDialog.populateDialog();
     };
@@ -113,15 +118,28 @@ WikibaseDialog.validateManifest = function (manifest) {
   if (!WikibaseDialog.ajv) {
     WikibaseDialog.ajv = new Ajv();
     WikibaseDialog.validateWikibaseManifestV1 = WikibaseDialog.ajv.compile(WikibaseManifestSchemaV1);
+    WikibaseDialog.validateWikibaseManifestV2 = WikibaseDialog.ajv.compile(WikibaseManifestSchemaV2);
   }
 
-  if (WikibaseDialog.validateWikibaseManifestV1(manifest)) {
-    return true;
+  if (manifest.version !== undefined && manifest.version.startsWith('1.')) {
+    if (WikibaseDialog.validateWikibaseManifestV1(manifest)) {
+       return true;
+    } else {
+      let errMsg = WikibaseDialog.ajv.errorsText(WikibaseDialog.validateWikibaseManifestV1.errors, {
+        dataVar: "manifest"
+      });
+      alert(errMsg);
+      return false;
+    }
   } else {
-    let errMsg = WikibaseDialog.ajv.errorsText(WikibaseDialog.validateWikibaseManifestV1.errors, {
-      dataVar: "manifest"
-    });
-    alert(errMsg);
-    return false;
+    if (WikibaseDialog.validateWikibaseManifestV2(manifest)) {
+      return true;
+    } else {
+      let errMsg = WikibaseDialog.ajv.errorsText(WikibaseDialog.validateWikibaseManifestV2.errors, {
+        dataVar: "manifest"
+      });
+      alert(errMsg);
+      return false;
+    }
   }
 };
