@@ -25,6 +25,7 @@ package org.openrefine.wikidata.schema;
 
 import java.io.IOException;
 import java.io.Serializable;
+import java.util.Collections;
 
 import okhttp3.mockwebserver.Dispatcher;
 import okhttp3.mockwebserver.MockResponse;
@@ -81,7 +82,7 @@ public class WbExpressionTest<T> extends WikidataRefineTest {
                 "column A,column B,column C,column D,column E\n" + "value A,value B,value C,value D,value E");
         warningStore = new QAWarningStore();
         row = project.rows.get(0);
-        ctxt = new ExpressionContext("http://www.wikidata.org/entity/", server.url("/w/api.php").toString(), 0, row, project.columnModel, warningStore);
+        ctxt = new ExpressionContext("http://www.wikidata.org/entity/", Collections.emptyMap(), server.url("/w/api.php").toString(), 0, row, project.columnModel, warningStore);
     }
 
     /**
@@ -133,7 +134,7 @@ public class WbExpressionTest<T> extends WikidataRefineTest {
                 row.cells.add(cell);
             }
         }
-        ctxt = new ExpressionContext("http://www.wikidata.org/entity/", server.url("/w/api.php").toString(), 0, row, project.columnModel, warningStore);
+        ctxt = new ExpressionContext("http://www.wikidata.org/entity/", null, server.url("/w/api.php").toString(), 0, row, project.columnModel, warningStore);
     }
 
     /**

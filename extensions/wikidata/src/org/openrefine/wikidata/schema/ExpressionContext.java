@@ -23,6 +23,8 @@
  ******************************************************************************/
 package org.openrefine.wikidata.schema;
 
+import java.util.Map;
+
 import org.apache.commons.lang.Validate;
 import org.openrefine.wikidata.qa.QAWarning;
 import org.openrefine.wikidata.qa.QAWarningStore;
@@ -42,6 +44,7 @@ import com.google.refine.model.Row;
 public class ExpressionContext {
 
     private String baseIRI;
+    private Map<String, String> entityTypeIRIs;
     private String mediaWikiApiEndpoint;
     private int rowId;
     private Row row;
@@ -53,6 +56,8 @@ public class ExpressionContext {
      * 
      * @param baseIRI
      *            the siteIRI of the schema
+     * @param entityTypeBaseIRIS
+     *            the siteIRI for specific entity types, falling back on the baseIRI otherwise
      * @param mediaWikiApiEndpoint
      *            the MediaWiki API endpoint of the Wikibase
      * @param rowId
@@ -65,9 +70,17 @@ public class ExpressionContext {
      *            where to store the issues encountered when evaluating (can be set
      *            to null if these issues should be ignored)
      */
-    public ExpressionContext(String baseIRI, String mediaWikiApiEndpoint, int rowId, Row row, ColumnModel columnModel, QAWarningStore warningStore) {
+    public ExpressionContext(
+    		String baseIRI,
+    		Map<String, String> entityTypeBaseIRIs,
+    		String mediaWikiApiEndpoint,
+    		int rowId,
+    		Row row,
+    		ColumnModel columnModel,
+    		QAWarningStore warningStore) {
         Validate.notNull(baseIRI);
         this.baseIRI = baseIRI;
+        this.entityTypeIRIs = entityTypeBaseIRIs;
         this.mediaWikiApiEndpoint = mediaWikiApiEndpoint;
         this.rowId = rowId;
         Validate.notNull(row);
@@ -79,6 +92,10 @@ public class ExpressionContext {
 
     public String getBaseIRI() {
         return baseIRI;
+    }
+    
+    public String getBaseIRIForEntityType(String entityType) {
+    	return entityTypeIRIs.getOrDefault(entityType, baseIRI);
     }
 
     public String getMediaWikiApiEndpoint() {

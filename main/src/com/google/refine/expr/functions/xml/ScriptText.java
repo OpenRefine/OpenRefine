@@ -68,9 +68,10 @@ public class ScriptText implements Function {
 
     @Override
     public String getDescription() {
-        return "Returns the combined data of an HTML/XML Element. Data is e.g. the inside of a <script> tag.\n"
+        // the description needs to be valid HTML.
+        return "Returns the combined data of an HTML/XML Element. Data is e.g. the inside of a &lt;script&gt; tag.\n"
                 + "Note that data is NOT the text of the element.\n"
-                + "Use htmlText() to get the text that would be visible to a user, and scriptText() for the contents of <script>, <style>, etc.\n"
+                + "Use htmlText() to get the text that would be visible to a user, and scriptText() for the contents of &lt;script&gt;, &lt;style&gt;, etc.\n"
                 + "Use scriptText() in conjunction with parseHtml() and select().";
     }
 
