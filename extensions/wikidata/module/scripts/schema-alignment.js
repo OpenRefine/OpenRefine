@@ -200,7 +200,7 @@ SchemaAlignment.updateColumns = function() {
      // TODO we could potentially ignore any reconciliation to a siteIRI not
      // mentioned in the manifest…
      var cell = SchemaAlignment._createDraggableColumn(column.name,
-        reconConfig ? reconConfig.identifierSpace : null);
+        reconConfig && column.reconStats ? reconConfig.identifierSpace : null);
      this._columnArea.append(cell);
   }
 
