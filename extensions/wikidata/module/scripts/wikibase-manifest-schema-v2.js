@@ -1,13 +1,13 @@
-const WikibaseManifestSchemaV1 = {
+const WikibaseManifestSchemaV2 = {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "$id": "https://openrefine.org/schemas/wikibase-manifest-v1.json",
+  "$id": "https://openrefine.org/schemas/wikibase-manifest-v2.json",
   "type": "object",
-  "description": "The schema validates Wikibase manifests with version 1.x. The manifest contains configurations of basic information (e.g. URL of the main page), extensions (e.g. OAuth extension) or external services (e.g. Reconciliation service) of a Wikibase",
+  "description": "The schema validates Wikibase manifests with version 2.x. The manifest contains configurations of basic information (e.g. URL of the main page), extensions (e.g. OAuth extension) or external services (e.g. Reconciliation service) of a Wikibase",
   "properties": {
     "version": {
       "type": "string",
-      "pattern": "^1\\.[0-9]+$",
-      "description": "The version of the Wikibase manifest, in the format of 1.x"
+      "pattern": "^2\\.[0-9]+$",
+      "description": "The version of the Wikibase manifest, in the format of 2.x"
     },
     "mediawiki": {
       "type": "object",
@@ -96,18 +96,34 @@ const WikibaseManifestSchemaV1 = {
       },
       "required": ["registration_page"]
     },
-    "reconciliation": {
+    "entity_types": {
       "type": "object",
-      "description": "The configurations of the default reconciliation service of the Wikibase",
-      "properties": {
-        "endpoint": {
-          "type": "string",
-          "format": "url",
-          "pattern": "^.*\\${lang}.*$",
-          "description": "The default reconciliation API endpoint of the Wikibase, the endpoint should include the language variable '${lang}', such as 'https://wikidata.reconci.link/${lang}/api'"
+      "description": "The available entity types on this Wikibase, with particular settings for each of them. The keys of this object are strings such as 'item', 'property', 'mediainfo' or 'lexeme'",
+      "patternProperties": {
+        "^.*$": {
+          "type": "object",
+          "description": "The settings for the given entity type.",
+          "properties": {
+            "reconciliation_endpoint": {
+              "type": "string",
+              "format": "url",
+              "pattern": "^.*\\${lang}.*$",
+              "description": "The default reconciliation API endpoint of the Wikibase for this entity type, the endpoint should include the language variable '${lang}', such as 'https://wikidata.reconci.link/${lang}/api'"
+            },
+            "site_iri": {
+              "type": "string",
+              "format": "url",
+              "description": "The RDF prefix in which URIs for entities of this type are minted. If entities of this type are edited locally, this should be the global site_iri of the Wikibase. If those entities are drawn from another Wikibase instance, it should be the site_iri of that instance."
+            },
+            "mediawiki_api": {
+              "type": "string",
+              "format": "url",
+              "description": "The MediaWiki API endpoint of the Wikibase, such as 'https://www.wikidata.org/w/api.php'"
+            }
+          },
+          "required": ["site_iri"]
         }
-      },
-      "required": ["endpoint"]
+      }
     },
     "editgroups": {
       "type": "object",
@@ -122,5 +138,5 @@ const WikibaseManifestSchemaV1 = {
       "required": ["url_schema"]
     }
   },
-  "required": ["version", "mediawiki", "wikibase", "reconciliation"]
+  "required": ["version", "mediawiki", "wikibase", "entity_types"]
 };
