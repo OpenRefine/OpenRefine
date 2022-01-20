@@ -65,7 +65,7 @@ public class WikibaseSchema implements OverlayModel {
     @JsonProperty("siteIri")
     protected String siteIri;
     
-    @JsonProperty("entityTypeSiteIri")
+    @JsonProperty("entityTypeSiteIRI")
     protected Map<String, String> entityTypeSiteIri;
 
     @JsonProperty("mediaWikiApiEndpoint")
@@ -73,9 +73,10 @@ public class WikibaseSchema implements OverlayModel {
 
     /**
      * Constructor.
+     * @todo remove this, it does not create a valid schema.
      */
     public WikibaseSchema() {
-
+    	entityTypeSiteIri = Collections.emptyMap();
     }
 
     /**
@@ -103,7 +104,7 @@ public class WikibaseSchema implements OverlayModel {
     /**
      * @return the site IRI of the Wikibase instance referenced by this schema
      */
-    @JsonProperty("entityTypeSiteIri")
+    @JsonProperty("entityTypeSiteIRI")
     public Map<String, String> getEntityTypeSiteIri() {
         return entityTypeSiteIri;
     }
