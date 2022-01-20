@@ -29,6 +29,8 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang.NotImplementedException;
@@ -39,6 +41,7 @@ import org.openrefine.wikidata.updates.scheduler.WikibaseAPIUpdateScheduler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wikidata.wdtk.datamodel.helpers.Datamodel;
+import org.wikidata.wdtk.datamodel.interfaces.AliasUpdate;
 import org.wikidata.wdtk.datamodel.interfaces.EntityDocument;
 import org.wikidata.wdtk.datamodel.interfaces.EntityIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.ItemDocument;
@@ -182,14 +185,19 @@ public class EditBatchProcessor {
 	                List<MonolingualTextValue> descriptions = update.getDescriptions().stream().collect(Collectors.toList());
 	                descriptions.addAll(update.getDescriptionsIfNew().stream()
 	                        .filter(desc -> !currentDocument.getDescriptions().containsKey(desc.getLanguageCode())).collect(Collectors.toList()));
-	                editor.updateTermsStatements(currentDocument,
-                            labels,
-	                        descriptions,
-	                        update.getAliases().stream().collect(Collectors.toList()),
-	                        new ArrayList<MonolingualTextValue>(),
-	                        update.getAddedStatements().stream().collect(Collectors.toList()),
-	                        update.getDeletedStatements().stream().collect(Collectors.toList()),
-	                        summary, tags);
+	                Set<MonolingualTextValue> aliases = update.getAliases();
+	                Map<String, List<MonolingualTextValue>> aliasesMap = aliases.stream()
+	                        .collect(Collectors.groupingBy(MonolingualTextValue::getLanguageCode));
+	                Map<String, AliasUpdate> aliasMap = aliasesMap.entrySet().stream()
+	                        .collect(Collectors.toMap(Entry::getKey, e -> Datamodel.makeAliasUpdate(e.getValue(), Collections.emptyList())));
+	                editor.editEntityDocument(Datamodel.makeItemUpdate((ItemIdValue) update.getItemId(),
+                            currentDocument.getRevisionId(),
+                            Datamodel.makeTermUpdate(labels, Collections.emptyList()),
+                            Datamodel.makeTermUpdate(descriptions, Collections.emptyList()),
+                            aliasMap,
+                            Datamodel.makeStatementUpdate(update.getAddedStatements(), update.getDeletedStatements(), Collections.emptyList()),
+                            Collections.emptyList(), Collections.emptyList()),
+                            false, summary, tags);
                 } else if (newCell instanceof MediaInfoIdValue) {
                     MediaInfoDocument currentDocument = (MediaInfoDocument) currentDocs.get(update.getItemId().getId());
 	                List<MonolingualTextValue> labels = update.getLabels().stream().collect(Collectors.toList());
