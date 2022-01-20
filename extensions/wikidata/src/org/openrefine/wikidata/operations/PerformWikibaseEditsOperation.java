@@ -37,7 +37,7 @@ import org.apache.commons.lang.Validate;
 import org.apache.commons.lang3.StringUtils;
 import org.openrefine.wikidata.commands.ConnectionManager;
 import org.openrefine.wikidata.editing.EditBatchProcessor;
-import org.openrefine.wikidata.editing.NewItemLibrary;
+import org.openrefine.wikidata.editing.NewEntityLibrary;
 import org.openrefine.wikidata.schema.WikibaseSchema;
 import org.openrefine.wikidata.updates.TermedStatementEntityUpdate;
 import org.slf4j.Logger;
@@ -120,9 +120,9 @@ public class PerformWikibaseEditsOperation extends EngineDependentOperation {
 
     static public class PerformWikibaseEditsChange implements Change {
 
-        private NewItemLibrary newItemLibrary;
+        private NewEntityLibrary newItemLibrary;
 
-        public PerformWikibaseEditsChange(NewItemLibrary library) {
+        public PerformWikibaseEditsChange(NewEntityLibrary library) {
             newItemLibrary = library;
         }
 
@@ -152,7 +152,7 @@ public class PerformWikibaseEditsOperation extends EngineDependentOperation {
 
         static public Change load(LineNumberReader reader, Pool pool)
                 throws Exception {
-            NewItemLibrary library = new NewItemLibrary();
+            NewEntityLibrary library = new NewEntityLibrary();
             String line = null;
             while ((line = reader.readLine()) != null && !"/ec/".equals(line)) {
                 int equal = line.indexOf('=');
@@ -161,7 +161,7 @@ public class PerformWikibaseEditsOperation extends EngineDependentOperation {
 
                 if ("newItems".equals(field)) {
                     ObjectMapper mapper = new ObjectMapper();
-                    library = mapper.readValue(value, NewItemLibrary.class);
+                    library = mapper.readValue(value, NewEntityLibrary.class);
                 }
             }
             return new PerformWikibaseEditsChange(library);
@@ -234,7 +234,7 @@ public class PerformWikibaseEditsOperation extends EngineDependentOperation {
             List<TermedStatementEntityUpdate> itemDocuments = _schema.evaluate(_project, _engine);
 
             // Prepare the edits
-            NewItemLibrary newItemLibrary = new NewItemLibrary();
+            NewEntityLibrary newItemLibrary = new NewEntityLibrary();
             EditBatchProcessor processor = new EditBatchProcessor(wbdf, wbde, itemDocuments, newItemLibrary, summary,
                     maxlag, _tags, 50);
 

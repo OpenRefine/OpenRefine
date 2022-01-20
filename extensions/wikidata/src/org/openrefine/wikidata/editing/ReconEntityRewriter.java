@@ -27,11 +27,10 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import org.openrefine.wikidata.schema.entityvalues.ReconEntityIdValue;
 import org.openrefine.wikidata.schema.entityvalues.ReconItemIdValue;
 import org.openrefine.wikidata.schema.entityvalues.ReconMediaInfoIdValue;
 import org.openrefine.wikidata.schema.entityvalues.ReconPropertyIdValue;
-import org.openrefine.wikidata.schema.exceptions.NewItemNotCreatedYetException;
+import org.openrefine.wikidata.schema.exceptions.NewEntityNotCreatedYetException;
 import org.openrefine.wikidata.updates.TermedStatementEntityUpdate;
 import org.wikidata.wdtk.datamodel.helpers.Datamodel;
 import org.wikidata.wdtk.datamodel.helpers.DatamodelConverter;
@@ -45,9 +44,9 @@ import org.wikidata.wdtk.datamodel.interfaces.Statement;
 
 /**
  * A class that rewrites an {@link TermedStatementEntityUpdate}, replacing reconciled entity id
- * values by their concrete values after creation of all the new items involved.
+ * values by their concrete values after creation of all the new entities involved.
  *
- * If an item has not been created yet, an {@link IllegalArgumentException} will
+ * If an entity has not been created yet, an {@link IllegalArgumentException} will
  * be raised.
  *
  * The subject is treated as a special case: it is returned unchanged. This is
@@ -60,21 +59,21 @@ import org.wikidata.wdtk.datamodel.interfaces.Statement;
  */
 public class ReconEntityRewriter extends DatamodelConverter {
 
-	private final NewItemLibrary library;
+	private final NewEntityLibrary library;
 	private final EntityIdValue subject;
 
-	protected static final String notCreatedYetMessage = "Trying to rewrite an update where a new item was not created yet.";
+	protected static final String notCreatedYetMessage = "Trying to rewrite an update where a new entity was not created yet.";
 
 	/**
 	 * Constructor. Sets up a rewriter which uses the provided library to look up
-	 * qids of new items.
+	 * ids of new entities.
 	 *
 	 * @param library
-	 *      the collection of items already created
+	 *      the collection of entities already created
 	 * @param subject
 	 *      the subject id of the entity to rewrite
 	 */
-	public ReconEntityRewriter(NewItemLibrary library, EntityIdValue subject) {
+	public ReconEntityRewriter(NewEntityLibrary library, EntityIdValue subject) {
 		super(new DataObjectFactoryImpl());
 		this.library = library;
 		this.subject = subject;
@@ -146,12 +145,12 @@ public class ReconEntityRewriter extends DatamodelConverter {
 	 *      the update to rewrite
 	 * @return
 	 *      the rewritten update
-	 * @throws NewItemNotCreatedYetException
+	 * @throws NewEntityNotCreatedYetException
 	 *      if any non-subject entity had not been created yet
 	 */
-	public TermedStatementEntityUpdate rewrite(TermedStatementEntityUpdate update) throws NewItemNotCreatedYetException {
+	public TermedStatementEntityUpdate rewrite(TermedStatementEntityUpdate update) throws NewEntityNotCreatedYetException {
 		try {
-			EntityIdValue subject = (EntityIdValue) copyValue(update.getItemId());
+			EntityIdValue subject = (EntityIdValue) copyValue(update.getEntityId());
 			Set<MonolingualTextValue> labels = update.getLabels().stream().map(l -> copy(l)).collect(Collectors.toSet());
 			Set<MonolingualTextValue> labelsIfNew = update.getLabelsIfNew().stream().map(l -> copy(l)).collect(Collectors.toSet());
 			Set<MonolingualTextValue> descriptions = update.getDescriptions().stream().map(l -> copy(l))
@@ -165,7 +164,7 @@ public class ReconEntityRewriter extends DatamodelConverter {
 					.collect(Collectors.toSet());
 			return new TermedStatementEntityUpdate(subject, addedStatements, deletedStatements, labels, labelsIfNew, descriptions, descriptionsIfNew, aliases);
 		} catch(MissingEntityIdFound e) {
-			throw new NewItemNotCreatedYetException(e.value);
+			throw new NewEntityNotCreatedYetException(e.value);
 		}
 	}
 

@@ -26,7 +26,7 @@ package org.openrefine.wikidata.editing;
 
 import static org.testng.Assert.assertEquals;
 
-import org.openrefine.wikidata.schema.exceptions.NewItemNotCreatedYetException;
+import org.openrefine.wikidata.schema.exceptions.NewEntityNotCreatedYetException;
 import org.openrefine.wikidata.testing.TestingData;
 import org.openrefine.wikidata.updates.TermedStatementEntityUpdate;
 import org.openrefine.wikidata.updates.TermedStatementEntityUpdateBuilder;
@@ -38,15 +38,15 @@ import org.wikidata.wdtk.datamodel.interfaces.PropertyIdValue;
 
 public class ReconEntityRewriterTest {
 
-    NewItemLibrary library = null;
-    ReconEntityRewriter rewriter = null;
-    ItemIdValue newlyCreated = Datamodel.makeWikidataItemIdValue("Q1234");
-    PropertyIdValue newlyCreatedProperty = Datamodel.makeWikidataPropertyIdValue("P1234");
+	NewEntityLibrary library = null;
+	ReconEntityRewriter rewriter = null;
+	ItemIdValue newlyCreated = Datamodel.makeWikidataItemIdValue("Q1234");
+	PropertyIdValue newlyCreatedProperty = Datamodel.makeWikidataPropertyIdValue("P1234");
 
-    @BeforeMethod
-    public void setUp() {
-        library = new NewItemLibrary();
-    }
+	@BeforeMethod
+	public void setUp() {
+		library = new NewEntityLibrary();
+	}
 
     @Test(expectedExceptions = ReconEntityRewriter.MissingEntityIdFound.class)
     public void testNotCreatedYet() {
@@ -82,81 +82,81 @@ public class ReconEntityRewriterTest {
         assertEquals(TestingData.matchedId, rewriter.copy(TestingData.matchedId));
     }
 
-    @Test
-    public void testRewriteCreate() throws NewItemNotCreatedYetException {
-        ItemIdValue subject = TestingData.newIdA;
-        rewriter = new ReconEntityRewriter(library, subject);
-        library.setQid(4567L, "Q1234");
-        TermedStatementEntityUpdate update = new TermedStatementEntityUpdateBuilder(subject)
-                .addStatement(TestingData.generateStatement(subject, TestingData.newIdB))
-                .deleteStatement(TestingData.generateStatement(subject, TestingData.existingId))
-                .addLabel(Datamodel.makeMonolingualTextValue("label", "de"), true)
-                .addDescription(Datamodel.makeMonolingualTextValue("beschreibung", "de"), false)
-                .addAlias(Datamodel.makeMonolingualTextValue("darstellung", "de")).build();
-        TermedStatementEntityUpdate rewritten = rewriter.rewrite(update);
-        TermedStatementEntityUpdate expected = new TermedStatementEntityUpdateBuilder(subject)
-                .addStatement(TestingData.generateStatement(subject, newlyCreated))
-                .deleteStatement(TestingData.generateStatement(subject, TestingData.existingId))
-                .addLabel(Datamodel.makeMonolingualTextValue("label", "de"), true)
-                .addDescription(Datamodel.makeMonolingualTextValue("beschreibung", "de"), false)
-                .addAlias(Datamodel.makeMonolingualTextValue("darstellung", "de")).build();
-        assertEquals(rewritten, expected);
-    }
+	@Test
+	public void testRewriteCreate() throws NewEntityNotCreatedYetException {
+		ItemIdValue subject = TestingData.newIdA;
+		rewriter = new ReconEntityRewriter(library, subject);
+		library.setQid(4567L, "Q1234");
+		TermedStatementEntityUpdate update = new TermedStatementEntityUpdateBuilder(subject)
+				.addStatement(TestingData.generateStatement(subject, TestingData.newIdB))
+				.deleteStatement(TestingData.generateStatement(subject, TestingData.existingId))
+				.addLabel(Datamodel.makeMonolingualTextValue("label", "de"), true)
+				.addDescription(Datamodel.makeMonolingualTextValue("beschreibung", "de"), false)
+				.addAlias(Datamodel.makeMonolingualTextValue("darstellung", "de")).build();
+		TermedStatementEntityUpdate rewritten = rewriter.rewrite(update);
+		TermedStatementEntityUpdate expected = new TermedStatementEntityUpdateBuilder(subject)
+				.addStatement(TestingData.generateStatement(subject, newlyCreated))
+				.deleteStatement(TestingData.generateStatement(subject, TestingData.existingId))
+				.addLabel(Datamodel.makeMonolingualTextValue("label", "de"), true)
+				.addDescription(Datamodel.makeMonolingualTextValue("beschreibung", "de"), false)
+				.addAlias(Datamodel.makeMonolingualTextValue("darstellung", "de")).build();
+		assertEquals(rewritten, expected);
+	}
 
-    @Test
-    public void testRewriteUpdateOnPreviouslyCreatedEntity() throws NewItemNotCreatedYetException {
-        ItemIdValue subject = TestingData.newIdA;
-        rewriter = new ReconEntityRewriter(library, subject);
-        library.setQid(4567L, "Q1234");
-        TermedStatementEntityUpdate update = new TermedStatementEntityUpdateBuilder(TestingData.newIdB)
-                .addDescription(Datamodel.makeMonolingualTextValue("beschreibung", "de"), false)
-                .addAlias(Datamodel.makeMonolingualTextValue("darstellung", "de")).build();
-        TermedStatementEntityUpdate rewritten = rewriter.rewrite(update);
-        TermedStatementEntityUpdate expected = new TermedStatementEntityUpdateBuilder(newlyCreated)
-                .addDescription(Datamodel.makeMonolingualTextValue("beschreibung", "de"), false)
-                .addAlias(Datamodel.makeMonolingualTextValue("darstellung", "de")).build();
-        assertEquals(rewritten, expected);
-    }
+	@Test
+	public void testRewriteUpdateOnPreviouslyCreatedEntity() throws NewEntityNotCreatedYetException {
+		ItemIdValue subject = TestingData.newIdA;
+		rewriter = new ReconEntityRewriter(library, subject);
+		library.setQid(4567L, "Q1234");
+		TermedStatementEntityUpdate update = new TermedStatementEntityUpdateBuilder(TestingData.newIdB)
+				.addDescription(Datamodel.makeMonolingualTextValue("beschreibung", "de"), false)
+				.addAlias(Datamodel.makeMonolingualTextValue("darstellung", "de")).build();
+		TermedStatementEntityUpdate rewritten = rewriter.rewrite(update);
+		TermedStatementEntityUpdate expected = new TermedStatementEntityUpdateBuilder(newlyCreated)
+				.addDescription(Datamodel.makeMonolingualTextValue("beschreibung", "de"), false)
+				.addAlias(Datamodel.makeMonolingualTextValue("darstellung", "de")).build();
+		assertEquals(rewritten, expected);
+	}
 
-    @Test
-    public void testRewriteUpdateOnExistingEntity() throws NewItemNotCreatedYetException {
-        ItemIdValue subject = TestingData.matchedId;
-        rewriter = new ReconEntityRewriter(library, subject);
-        library.setQid(4567L, "Q1234");
-        TermedStatementEntityUpdate update = new TermedStatementEntityUpdateBuilder(subject)
-                .addStatement(TestingData.generateStatement(subject, TestingData.newIdB))
-                .deleteStatement(TestingData.generateStatement(subject, TestingData.existingId))
-                .addLabel(Datamodel.makeMonolingualTextValue("label", "de"), true)
-                .addDescription(Datamodel.makeMonolingualTextValue("beschreibung", "de"), false)
-                .addAlias(Datamodel.makeMonolingualTextValue("darstellung", "de")).build();
-        TermedStatementEntityUpdate rewritten = rewriter.rewrite(update);
-        TermedStatementEntityUpdate expected = new TermedStatementEntityUpdateBuilder(subject)
-                .addStatement(TestingData.generateStatement(subject, newlyCreated))
-                .deleteStatement(TestingData.generateStatement(subject, TestingData.existingId))
-                .addLabel(Datamodel.makeMonolingualTextValue("label", "de"), true)
-                .addDescription(Datamodel.makeMonolingualTextValue("beschreibung", "de"), false)
-                .addAlias(Datamodel.makeMonolingualTextValue("darstellung", "de")).build();
-        assertEquals(rewritten, expected);
-    }
+	@Test
+	public void testRewriteUpdateOnExistingEntity() throws NewEntityNotCreatedYetException {
+		ItemIdValue subject = TestingData.matchedId;
+		rewriter = new ReconEntityRewriter(library, subject);
+		library.setQid(4567L, "Q1234");
+		TermedStatementEntityUpdate update = new TermedStatementEntityUpdateBuilder(subject)
+				.addStatement(TestingData.generateStatement(subject, TestingData.newIdB))
+				.deleteStatement(TestingData.generateStatement(subject, TestingData.existingId))
+				.addLabel(Datamodel.makeMonolingualTextValue("label", "de"), true)
+				.addDescription(Datamodel.makeMonolingualTextValue("beschreibung", "de"), false)
+				.addAlias(Datamodel.makeMonolingualTextValue("darstellung", "de")).build();
+		TermedStatementEntityUpdate rewritten = rewriter.rewrite(update);
+		TermedStatementEntityUpdate expected = new TermedStatementEntityUpdateBuilder(subject)
+				.addStatement(TestingData.generateStatement(subject, newlyCreated))
+				.deleteStatement(TestingData.generateStatement(subject, TestingData.existingId))
+				.addLabel(Datamodel.makeMonolingualTextValue("label", "de"), true)
+				.addDescription(Datamodel.makeMonolingualTextValue("beschreibung", "de"), false)
+				.addAlias(Datamodel.makeMonolingualTextValue("darstellung", "de")).build();
+		assertEquals(rewritten, expected);
+	}
 
-    @Test
-    public void testRewritePropertyUpdateOnExistingEntity() throws NewItemNotCreatedYetException {
-        PropertyIdValue subject = TestingData.matchedPropertyID;
-        rewriter = new ReconEntityRewriter(library, subject);
-        library.setQid(7654L, "P1234");
-        TermedStatementEntityUpdate update = new TermedStatementEntityUpdateBuilder(subject)
-                .addStatement(TestingData.generateStatement(subject, TestingData.newPropertyIdB))
-                .deleteStatement(TestingData.generateStatement(subject, TestingData.existingPropertyId))
-                .addLabel(Datamodel.makeMonolingualTextValue("label", "de"), true)
-                .addDescription(Datamodel.makeMonolingualTextValue("beschreibung", "de"), false)
-                .addAlias(Datamodel.makeMonolingualTextValue("darstellung", "de")).build();
-        TermedStatementEntityUpdate rewritten = rewriter.rewrite(update);
-        TermedStatementEntityUpdate expected = new TermedStatementEntityUpdateBuilder(subject)
-                .addStatement(TestingData.generateStatement(subject, newlyCreatedProperty))
-                .deleteStatement(TestingData.generateStatement(subject, TestingData.existingPropertyId))
-                .addLabel(Datamodel.makeMonolingualTextValue("label", "de"), true)
-                .addDescription(Datamodel.makeMonolingualTextValue("beschreibung", "de"), false)
-                .addAlias(Datamodel.makeMonolingualTextValue("darstellung", "de")).build();
-        assertEquals(rewritten, expected);
-    }
+	@Test
+	public void testRewritePropertyUpdateOnExistingEntity() throws NewEntityNotCreatedYetException {
+		PropertyIdValue subject = TestingData.matchedPropertyID;
+		rewriter = new ReconEntityRewriter(library, subject);
+		library.setQid(7654L, "P1234");
+		TermedStatementEntityUpdate update = new TermedStatementEntityUpdateBuilder(subject)
+				.addStatement(TestingData.generateStatement(subject, TestingData.newPropertyIdB))
+				.deleteStatement(TestingData.generateStatement(subject, TestingData.existingPropertyId))
+				.addLabel(Datamodel.makeMonolingualTextValue("label", "de"), true)
+				.addDescription(Datamodel.makeMonolingualTextValue("beschreibung", "de"), false)
+				.addAlias(Datamodel.makeMonolingualTextValue("darstellung", "de")).build();
+		TermedStatementEntityUpdate rewritten = rewriter.rewrite(update);
+		TermedStatementEntityUpdate expected = new TermedStatementEntityUpdateBuilder(subject)
+				.addStatement(TestingData.generateStatement(subject, newlyCreatedProperty))
+				.deleteStatement(TestingData.generateStatement(subject, TestingData.existingPropertyId))
+				.addLabel(Datamodel.makeMonolingualTextValue("label", "de"), true)
+				.addDescription(Datamodel.makeMonolingualTextValue("beschreibung", "de"), false)
+				.addAlias(Datamodel.makeMonolingualTextValue("darstellung", "de")).build();
+		assertEquals(rewritten, expected);
+	}
 }

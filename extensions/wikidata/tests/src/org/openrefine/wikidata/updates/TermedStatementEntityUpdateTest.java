@@ -52,7 +52,7 @@ import org.wikidata.wdtk.datamodel.interfaces.StatementRank;
 
 import com.google.refine.util.TestUtils;
 
-public class ItemUpdateTest {
+public class TermedStatementEntityUpdateTest {
 
     private ItemIdValue existingSubject = Datamodel.makeWikidataItemIdValue("Q34");
     private ItemIdValue newSubject = TestingData.makeNewItemIdValue(1234L, "new item");
@@ -71,7 +71,7 @@ public class ItemUpdateTest {
 
     private Set<StatementGroup> statementGroups;
 
-    public ItemUpdateTest() {
+    public TermedStatementEntityUpdateTest() {
         statementGroups = new HashSet<>();
         statementGroups.add(Datamodel.makeStatementGroup(Collections.singletonList(statement1)));
         statementGroups.add(Datamodel.makeStatementGroup(Collections.singletonList(statement2)));

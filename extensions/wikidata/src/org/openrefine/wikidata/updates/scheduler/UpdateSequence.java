@@ -57,7 +57,7 @@ public class UpdateSequence {
      * @param update
      */
     public void add(TermedStatementEntityUpdate update) {
-        EntityIdValue subject = update.getItemId();
+        EntityIdValue subject = update.getEntityId();
         if (index.containsKey(subject)) {
             int i = index.get(subject);
             TermedStatementEntityUpdate oldUpdate = updates.get(i);

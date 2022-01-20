@@ -25,7 +25,6 @@ package org.openrefine.wikidata.editing;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -35,7 +34,7 @@ import java.util.stream.Collectors;
 
 import org.apache.commons.lang.NotImplementedException;
 import org.openrefine.wikidata.schema.entityvalues.ReconEntityIdValue;
-import org.openrefine.wikidata.schema.exceptions.NewItemNotCreatedYetException;
+import org.openrefine.wikidata.schema.exceptions.NewEntityNotCreatedYetException;
 import org.openrefine.wikidata.updates.TermedStatementEntityUpdate;
 import org.openrefine.wikidata.updates.scheduler.WikibaseAPIUpdateScheduler;
 import org.slf4j.Logger;
@@ -69,7 +68,7 @@ public class EditBatchProcessor {
 
     private WikibaseDataFetcher fetcher;
     private WikibaseDataEditor editor;
-    private NewItemLibrary library;
+    private NewEntityLibrary library;
     private List<TermedStatementEntityUpdate> scheduled;
     private String summary;
     private List<String> tags;
@@ -87,13 +86,13 @@ public class EditBatchProcessor {
      * {@link performOneEdit}.
      * 
      * @param fetcher
-     *            the fetcher to use to retrieve the current state of items
+     *            the fetcher to use to retrieve the current state of entities
      * @param editor
      *            the object to use to perform the edits
      * @param updates
      *            the list of item updates to perform
      * @param library
-     *            the library to use to keep track of new item creation
+     *            the library to use to keep track of new entity creation
      * @param summary
      *            the summary to append to all edits
      * @param tags
@@ -103,7 +102,7 @@ public class EditBatchProcessor {
      *            API
      */
     public EditBatchProcessor(WikibaseDataFetcher fetcher, WikibaseDataEditor editor, List<TermedStatementEntityUpdate> updates,
-            NewItemLibrary library, String summary, int maxLag, List<String> tags, int batchSize) {
+            NewEntityLibrary library, String summary, int maxLag, List<String> tags, int batchSize) {
         this.fetcher = fetcher;
         this.editor = editor;
         editor.setEditAsBot(true); // this will not do anything if the user does not
@@ -147,22 +146,22 @@ public class EditBatchProcessor {
         TermedStatementEntityUpdate update = currentBatch.get(batchCursor);
 
         // Rewrite mentions to new items
-        ReconEntityRewriter rewriter = new ReconEntityRewriter(library, update.getItemId());
+        ReconEntityRewriter rewriter = new ReconEntityRewriter(library, update.getEntityId());
         try {
         	update = rewriter.rewrite(update);
-        } catch (NewItemNotCreatedYetException e) {
-        	logger.warn("Failed to rewrite update on entity "+update.getItemId()+". Missing entity: "+e.getMissingEntity()+". Skipping update.");
+        } catch (NewEntityNotCreatedYetException e) {
+            logger.warn("Failed to rewrite update on entity "+update.getEntityId()+". Missing entity: "+e.getMissingEntity()+". Skipping update.");
         	batchCursor++;
         	return;
         }
 
         try {
-            // New item
+            // New entities
             if (update.isNew()) {
-                ReconEntityIdValue newCell = (ReconEntityIdValue) update.getItemId();
+                ReconEntityIdValue newCell = (ReconEntityIdValue) update.getEntityId();
                 if (newCell instanceof ItemIdValue) {
                     update = update.normalizeLabelsAndAliases();
-	                ItemDocument itemDocument = Datamodel.makeItemDocument((ItemIdValue) update.getItemId(),
+	                ItemDocument itemDocument = Datamodel.makeItemDocument((ItemIdValue) update.getEntityId(),
 	                        update.getLabels().stream().collect(Collectors.toList()),
 	                        update.getDescriptions().stream().collect(Collectors.toList()),
 	                        update.getAliases().stream().collect(Collectors.toList()), update.getAddedStatementGroups(),
@@ -175,10 +174,10 @@ public class EditBatchProcessor {
                     throw new NotImplementedException();
                 }
             } else {
-                // Existing item
-                EntityIdValue newCell = (EntityIdValue) update.getItemId();
+                // Existing entities
+                EntityIdValue newCell = (EntityIdValue) update.getEntityId();
                 if (newCell instanceof ItemIdValue) {
-	                ItemDocument currentDocument = (ItemDocument) currentDocs.get(update.getItemId().getId());
+	                ItemDocument currentDocument = (ItemDocument) currentDocs.get(update.getEntityId().getId());
 	                List<MonolingualTextValue> labels = update.getLabels().stream().collect(Collectors.toList());
 	                labels.addAll(update.getLabelsIfNew().stream()
 	                      .filter(label -> !currentDocument.getLabels().containsKey(label.getLanguageCode())).collect(Collectors.toList()));
@@ -190,7 +189,7 @@ public class EditBatchProcessor {
 	                        .collect(Collectors.groupingBy(MonolingualTextValue::getLanguageCode));
 	                Map<String, AliasUpdate> aliasMap = aliasesMap.entrySet().stream()
 	                        .collect(Collectors.toMap(Entry::getKey, e -> Datamodel.makeAliasUpdate(e.getValue(), Collections.emptyList())));
-	                editor.editEntityDocument(Datamodel.makeItemUpdate((ItemIdValue) update.getItemId(),
+	                editor.editEntityDocument(Datamodel.makeItemUpdate((ItemIdValue) update.getEntityId(),
                             currentDocument.getRevisionId(),
                             Datamodel.makeTermUpdate(labels, Collections.emptyList()),
                             Datamodel.makeTermUpdate(descriptions, Collections.emptyList()),
@@ -199,14 +198,14 @@ public class EditBatchProcessor {
                             Collections.emptyList(), Collections.emptyList()),
                             false, summary, tags);
                 } else if (newCell instanceof MediaInfoIdValue) {
-                    MediaInfoDocument currentDocument = (MediaInfoDocument) currentDocs.get(update.getItemId().getId());
+                    MediaInfoDocument currentDocument = (MediaInfoDocument) currentDocs.get(update.getEntityId().getId());
 	                List<MonolingualTextValue> labels = update.getLabels().stream().collect(Collectors.toList());
 	                labels.addAll(update.getLabelsIfNew().stream()
 	                      .filter(label -> !currentDocument.getLabels().containsKey(label.getLanguageCode())).collect(Collectors.toList()));
 	                TermUpdate labelUpdate = Datamodel.makeTermUpdate(labels, Collections.emptyList());
 	                StatementUpdate statementUpdate = Datamodel.makeStatementUpdate(update.getAddedStatements(), update.getDeletedStatements(),
                             Collections.emptyList());
-	                MediaInfoUpdate updatesCollection = Datamodel.makeMediaInfoUpdate((MediaInfoIdValue) update.getItemId(),
+	                MediaInfoUpdate updatesCollection = Datamodel.makeMediaInfoUpdate((MediaInfoIdValue) update.getEntityId(),
                             currentDocument.getRevisionId(), labelUpdate, statementUpdate);
 	                editor.editEntityDocument(updatesCollection, false, summary, tags);
                 }
@@ -248,7 +247,7 @@ public class EditBatchProcessor {
         } else {
             currentBatch = remainingUpdates.subList(0, batchSize);
         }
-        List<String> qidsToFetch = currentBatch.stream().filter(u -> !u.isNew()).map(u -> u.getItemId().getId())
+        List<String> qidsToFetch = currentBatch.stream().filter(u -> !u.isNew()).map(u -> u.getEntityId().getId())
                 .collect(Collectors.toList());
 
         // Get the current documents for this batch of updates

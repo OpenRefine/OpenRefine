@@ -126,18 +126,18 @@ public class QuickStatementsExporter implements WriterExporter {
 
     protected void translateItem(TermedStatementEntityUpdate item, Writer writer)
             throws IOException {
-        String qid = item.getItemId().getId();
+        String qid = item.getEntityId().getId();
         if (item.isNew()) {
             writer.write("CREATE\n");
             qid = "LAST";
             item = item.normalizeLabelsAndAliases();
         }
 
-        translateNameDescr(qid, item.getLabels(), "L", item.getItemId(), writer);
-        translateNameDescr(qid, item.getLabelsIfNew(), "L", item.getItemId(), writer);
-        translateNameDescr(qid, item.getDescriptions(), "D", item.getItemId(), writer);
-        translateNameDescr(qid, item.getDescriptionsIfNew(), "D", item.getItemId(), writer);
-        translateNameDescr(qid, item.getAliases(), "A", item.getItemId(), writer);
+        translateNameDescr(qid, item.getLabels(), "L", item.getEntityId(), writer);
+        translateNameDescr(qid, item.getLabelsIfNew(), "L", item.getEntityId(), writer);
+        translateNameDescr(qid, item.getDescriptions(), "D", item.getEntityId(), writer);
+        translateNameDescr(qid, item.getDescriptionsIfNew(), "D", item.getEntityId(), writer);
+        translateNameDescr(qid, item.getAliases(), "A", item.getEntityId(), writer);
 
         for (Statement s : item.getAddedStatements()) {
             translateStatement(qid, s, s.getClaim().getMainSnak().getPropertyId().getId(), true, writer);

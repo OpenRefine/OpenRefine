@@ -98,14 +98,14 @@ public class WikibaseAPIUpdateScheduler implements UpdateScheduler {
      * @param update
      */
     protected void splitUpdate(TermedStatementEntityUpdate update) {
-        TermedStatementEntityUpdateBuilder pointerFreeBuilder = new TermedStatementEntityUpdateBuilder(update.getItemId())
+        TermedStatementEntityUpdateBuilder pointerFreeBuilder = new TermedStatementEntityUpdateBuilder(update.getEntityId())
         		.addLabels(update.getLabels(), true)
         		.addLabels(update.getLabelsIfNew(), false)
                 .addDescriptions(update.getDescriptions(), true)
                 .addDescriptions(update.getDescriptionsIfNew(), false)
                 .addAliases(update.getAliases())
                 .deleteStatements(update.getDeletedStatements());
-        TermedStatementEntityUpdateBuilder pointerFullBuilder = new TermedStatementEntityUpdateBuilder(update.getItemId());
+        TermedStatementEntityUpdateBuilder pointerFullBuilder = new TermedStatementEntityUpdateBuilder(update.getEntityId());
 
         for (Statement statement : update.getAddedStatements()) {
             Set<ReconItemIdValue> pointers = extractor.extractPointers(statement);

@@ -57,7 +57,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  */
 public class TermedStatementEntityUpdate {
 
-    private final EntityIdValue qid;
+    private final EntityIdValue id;
     private final List<Statement> addedStatements;
     private final Set<Statement> deletedStatements;
     private final Map<String, MonolingualTextValue> labels;
@@ -100,7 +100,7 @@ public class TermedStatementEntityUpdate {
             @JsonProperty("descriptionsIfNew") Set<MonolingualTextValue> descriptionsIfNew,
             @JsonProperty("addedAliases") Set<MonolingualTextValue> aliases) {
         Validate.notNull(qid);
-        this.qid = qid;
+        this.id = qid;
         if (addedStatements == null) {
             addedStatements = Collections.emptyList();
         }
@@ -152,7 +152,7 @@ public class TermedStatementEntityUpdate {
     		Map<String, MonolingualTextValue> descriptions,
     		Map<String, MonolingualTextValue> descriptionsIfNew,
     		Map<String, List<MonolingualTextValue>> aliases) {
-    	this.qid = qid;
+        this.id = qid;
     	this.addedStatements = addedStatements;
     	this.deletedStatements = deletedStatements;
     	this.labels = labels;
@@ -163,11 +163,11 @@ public class TermedStatementEntityUpdate {
     }
 
     /**
-     * @return the subject of the item
+     * @return the subject of the entity
      */
     @JsonProperty("subject")
-    public EntityIdValue getItemId() {
-        return qid;
+    public EntityIdValue getEntityId() {
+        return id;
     }
 
     /**
@@ -261,7 +261,7 @@ public class TermedStatementEntityUpdate {
      *            the other change that should be merged
      */
     public TermedStatementEntityUpdate merge(TermedStatementEntityUpdate other) {
-        Validate.isTrue(qid.equals(other.getItemId()));
+        Validate.isTrue(id.equals(other.getEntityId()));
         List<Statement> newAddedStatements = new ArrayList<>(addedStatements);
         for (Statement statement : other.getAddedStatements()) {
             if (!newAddedStatements.contains(statement)) {
@@ -287,7 +287,7 @@ public class TermedStatementEntityUpdate {
         		aliases.add(alias);
         	}
         }
-        return new TermedStatementEntityUpdate(qid, newAddedStatements, newDeletedStatements, newLabels, newLabelsIfNew, newDescriptions, newDescriptionsIfNew, newAliases);
+        return new TermedStatementEntityUpdate(id, newAddedStatements, newDeletedStatements, newLabels, newLabelsIfNew, newDescriptions, newDescriptionsIfNew, newAliases);
     }    
 
     /**
@@ -338,7 +338,7 @@ public class TermedStatementEntityUpdate {
                 continue;
             }
 
-            EntityIdValue qid = update.getItemId();
+            EntityIdValue qid = update.getEntityId();
             if (map.containsKey(qid)) {
             	TermedStatementEntityUpdate oldUpdate = map.get(qid);
                 map.put(qid, oldUpdate.merge(update));
@@ -354,7 +354,7 @@ public class TermedStatementEntityUpdate {
      */
     @JsonProperty("new")
     public boolean isNew() {
-        return EntityIdValue.SITE_LOCAL.equals(getItemId().getSiteIri());
+        return EntityIdValue.SITE_LOCAL.equals(getEntityId().getSiteIri());
     }
 
     /**
@@ -375,7 +375,7 @@ public class TermedStatementEntityUpdate {
         }
         Map<String, MonolingualTextValue> newDescriptions = new HashMap<>(descriptionsIfNew);
         newDescriptions.putAll(descriptions);
-        return new TermedStatementEntityUpdate(qid, addedStatements, deletedStatements,
+        return new TermedStatementEntityUpdate(id, addedStatements, deletedStatements,
         		newLabels, Collections.emptyMap(), newDescriptions, Collections.emptyMap(),
         		constructTermListMap(filteredAliases));
     }
@@ -386,7 +386,7 @@ public class TermedStatementEntityUpdate {
             return false;
         }
         TermedStatementEntityUpdate otherUpdate = (TermedStatementEntityUpdate) other;
-        return qid.equals(otherUpdate.getItemId()) && addedStatements.equals(otherUpdate.getAddedStatements())
+        return id.equals(otherUpdate.getEntityId()) && addedStatements.equals(otherUpdate.getAddedStatements())
                 && deletedStatements.equals(otherUpdate.getDeletedStatements())
                 && getLabels().equals(otherUpdate.getLabels())
                 && getDescriptions().equals(otherUpdate.getDescriptions())
@@ -395,7 +395,7 @@ public class TermedStatementEntityUpdate {
 
     @Override
     public int hashCode() {
-        return qid.hashCode() + addedStatements.hashCode() + deletedStatements.hashCode() + labels.hashCode()
+        return id.hashCode() + addedStatements.hashCode() + deletedStatements.hashCode() + labels.hashCode()
                 + descriptions.hashCode() + aliases.hashCode();
     }
 
@@ -403,7 +403,7 @@ public class TermedStatementEntityUpdate {
     public String toString() {
         StringBuilder builder = new StringBuilder();
         builder.append("<Update on ");
-        builder.append(qid);
+        builder.append(id);
         if (!labels.isEmpty()) {
             builder.append("\n  Labels (override): ");
             builder.append(labels);

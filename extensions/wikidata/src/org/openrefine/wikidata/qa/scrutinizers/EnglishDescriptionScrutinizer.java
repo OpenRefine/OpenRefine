@@ -33,7 +33,7 @@ public class EnglishDescriptionScrutinizer extends DescriptionScrutinizer {
         char last = descText.charAt(descText.length() - 1);
         if (punctuationSigns.indexOf(last) != -1) {
             QAWarning issue = new QAWarning(descEndsByPunctuationSign, null, QAWarning.Severity.WARNING, 1);
-            issue.setProperty("example_entity", update.getItemId());
+            issue.setProperty("example_entity", update.getEntityId());
             issue.setProperty("description", descText);
             issue.setProperty("lang", LANG);
             issue.setProperty("punctuation_sign", last);
@@ -48,7 +48,7 @@ public class EnglishDescriptionScrutinizer extends DescriptionScrutinizer {
         char first = descText.charAt(0);
         if ('A' <= first && first <= 'Z') {
             QAWarning issue = new QAWarning(descBeginWithUppercase, null, QAWarning.Severity.INFO, 1);
-            issue.setProperty("example_entity", update.getItemId());
+            issue.setProperty("example_entity", update.getEntityId());
             issue.setProperty("description", descText);
             issue.setProperty("lang", LANG);
             issue.setProperty("uppercase_letter", first);
@@ -63,7 +63,7 @@ public class EnglishDescriptionScrutinizer extends DescriptionScrutinizer {
         String firstWord = descText.split("\\s")[0].toLowerCase();
         if ("a".equals(firstWord) || "an".equals(firstWord) || "the".equals(firstWord)) {
             QAWarning issue = new QAWarning(descBeginWithArticle, null, QAWarning.Severity.WARNING, 1);
-            issue.setProperty("example_entity", update.getItemId());
+            issue.setProperty("example_entity", update.getEntityId());
             issue.setProperty("description", descText);
             issue.setProperty("lang", LANG);
             issue.setProperty("article", firstWord);
