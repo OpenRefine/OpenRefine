@@ -46,7 +46,6 @@ import java.util.List;
 import java.util.Properties;
 
 import org.apache.commons.io.FileUtils;
-import org.powermock.modules.testng.PowerMockTestCase;
 import org.slf4j.Logger;
 import org.testng.Assert;
 import org.testng.annotations.AfterMethod;
@@ -81,7 +80,7 @@ import edu.mit.simile.butterfly.ButterflyModule;
 /**
  * A base class containing various utilities to help testing Refine.
  */
-public class RefineTest extends PowerMockTestCase {
+public class RefineTest {
 
     protected static Properties bindings = null;
 
