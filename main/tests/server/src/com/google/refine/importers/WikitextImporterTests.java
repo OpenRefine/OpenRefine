@@ -44,7 +44,6 @@ import java.util.Map;
 import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
-import org.powermock.api.mockito.PowerMockito;
 import org.slf4j.LoggerFactory;
 import org.testng.Assert;
 import org.testng.annotations.AfterMethod;
@@ -138,28 +137,6 @@ public class WikitextImporterTests extends ImporterTest {
         Assert.assertEquals(project.rows.get(0).cells.size(), 3);
         Assert.assertEquals(project.rows.get(1).cells.get(1).value, "e");
         Assert.assertEquals(project.rows.get(1).cells.get(2).value, "f");
-    }
-    
-    @BeforeMethod
-    public void mockReconCalls() throws Exception {
-        StandardReconConfig cfg = Mockito.spy(new StandardReconConfig(
-                "http://endpoint.com", "http://schemaspace", "http://schemaspace.com", null, true, Collections.emptyList(), 0));
-        PowerMockito.whenNew(StandardReconConfig.class).withAnyArguments().thenReturn(cfg);
-        Answer<List<Recon>> mockedResponse = new Answer<List<Recon>>() {
-            @Override
-            public List<Recon> answer(InvocationOnMock invocation) throws Throwable {
-                return fakeReconCall(invocation.getArgument(0));
-            }
-        };
-        PowerMockito.doAnswer(mockedResponse).when(cfg, "batchRecon", Mockito.any(), Mockito.anyLong());
-    }
-    
-    private List<Recon> fakeReconCall(List<ReconJob> jobs) {
-        List<Recon> result = new ArrayList<>();
-        for(ReconJob job : jobs) {
-            result.add(mockedRecons.get(job.toString()));
-        }
-        return result;
     }
     
     public void readTableWithLinks() throws Exception {
