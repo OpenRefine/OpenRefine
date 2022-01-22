@@ -25,6 +25,7 @@
     <windows.package.jre.directory>null</windows.package.jre.directory>
     <windows.package.jre.outputDirectory>jre</windows.package.jre.outputDirectory>
     <windows.package.jre.prefix></windows.package.jre.prefix>
+    <windows.package.jre.bundledAsFallback>false</windows.package.jre.bundledAsFallback>
   </properties>
 
   <profiles>
@@ -103,106 +104,20 @@
 
   <build>
     <plugins>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-install-plugin</artifactId>
-        <version>2.5.2</version>
+      <plugin> <!-- gathers license files for all dependencies at packaging time -->
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>license-maven-plugin</artifactId>
+        <version>${license-plugin.version}</version>
         <executions>
-            <!-- This is a clean snapshot of launch4j's master branch,
-                which includes fixes to Java discovery that we need
-                to support recent versions of Java. When launch4j-3.13
-                is officially released, remove this and the locally stored
-                jars -->
-            <execution>
-                <id>install-launch4j-core</id>
-                <phase>process-resources</phase>
-                <configuration>
-                    <file>${basedir}/lib-local/launch4j-3.13-SNAPSHOT-core.jar</file>
-                    <repositoryLayout>default</repositoryLayout>
-                    <groupId>net.sf.launch4j</groupId>
-                    <artifactId>launch4j</artifactId>
-                    <classifier>core</classifier>
-                    <version>3.13-SNAPSHOT</version>
-                    <packaging>jar</packaging>
-                    <generatePom>true</generatePom>
-                </configuration>
-                <goals>
-                    <goal>install-file</goal>
-                </goals>
-            </execution>
-            <execution>
-                <id>install-launch4j-linux64</id>
-                <phase>process-resources</phase>
-                <configuration>
-                    <file>${basedir}/lib-local/launch4j-3.13-SNAPSHOT-workdir-linux64.jar</file>
-                    <repositoryLayout>default</repositoryLayout>
-                    <groupId>net.sf.launch4j</groupId>
-                    <artifactId>launch4j</artifactId>
-                    <classifier>workdir-linux64</classifier>
-                    <version>3.13-SNAPSHOT</version>
-                    <packaging>jar</packaging>
-                    <generatePom>true</generatePom>
-                </configuration>
-                <goals>
-                    <goal>install-file</goal>
-                </goals>
-            </execution>
-            <execution>
-                <id>install-launch4j-linux</id>
-                <phase>process-resources</phase>
-                <configuration>
-                    <file>${basedir}/lib-local/launch4j-3.13-SNAPSHOT-workdir-linux.jar</file>
-                    <repositoryLayout>default</repositoryLayout>
-                    <groupId>net.sf.launch4j</groupId>
-                    <artifactId>launch4j</artifactId>
-                    <classifier>workdir-linux</classifier>
-                    <version>3.13-SNAPSHOT</version>
-                    <packaging>jar</packaging>
-                    <generatePom>true</generatePom>
-                </configuration>
-                <goals>
-                    <goal>install-file</goal>
-                </goals>
-            </execution>
-            <execution>
-                <id>install-launch4j-win32</id>
-                <phase>process-resources</phase>
-                <configuration>
-                    <file>${basedir}/lib-local/launch4j-3.13-SNAPSHOT-workdir-win32.jar</file>
-                    <repositoryLayout>default</repositoryLayout>
-                    <groupId>net.sf.launch4j</groupId>
-                    <artifactId>launch4j</artifactId>
-                    <classifier>workdir-win32</classifier>
-                    <version>3.13-SNAPSHOT</version>
-                    <packaging>jar</packaging>
-                    <generatePom>true</generatePom>
-                </configuration>
-                <goals>
-                    <goal>install-file</goal>
-                </goals>
-            </execution>
-            <execution>
-                <id>install-launch4j-mac</id>
-                <phase>process-resources</phase>
-                <configuration>
-                    <file>${basedir}/lib-local/launch4j-3.13-SNAPSHOT-workdir-mac.jar</file>
-                    <repositoryLayout>default</repositoryLayout>
-                    <groupId>net.sf.launch4j</groupId>
-                    <artifactId>launch4j</artifactId>
-                    <classifier>workdir-mac</classifier>
-                    <version>3.13-SNAPSHOT</version>
-                    <packaging>jar</packaging>
-                    <generatePom>true</generatePom>
-                </configuration>
-                <goals>
-                    <goal>install-file</goal>
-                </goals>
-            </execution>
-
-
+          <execution>
+            <phase>generate-test-resources</phase>
+            <goals>
+              <goal>download-licenses</goal>
+            </goals>
+          </execution>
         </executions>
       </plugin>
-      <plugin> <!-- necessary for launch4j -->
+      <plugin> <!-- necessary for Appbundle -->
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-antrun-plugin</artifactId>
         <version>3.0.0</version>
@@ -236,7 +151,18 @@
                         </fileset>
                     </copy>
                     
-                    <!-- <copy file="../server/target/openrefine-${project.version}-server.jar" tofile="${built.webapp.dir}/WEB-INF/lib/openrefine-${project.version}.jar"/> -->
+                    <copy todir="${built.webapp.dir}/licenses/"> <!-- licenses for the backend -->
+                        <fileset dir="${project.build.directory}/generated-resources/">
+                            <include name="licenses.xml" />
+                            <include name="licenses/**/*" />
+                        </fileset>
+                    </copy>
+
+                    <copy todir="${built.webapp.dir}/licenses/licenses/"> <!-- licenses for the frontend -->
+                        <fileset dir="${webapp.dir}/licenses/">
+                            <include name="**/*" />
+                        </fileset>
+                    </copy>
 
                     <copy todir="${built.webapp.dir}/extensions">
                         <fileset dir="../extensions">
@@ -312,8 +238,9 @@
               </classPath>
               <jre>
                 <path>${windows.package.jre.path}</path>
-                <minVersion>1.8.0</minVersion>
-                <bundledJreAsFallback>true</bundledJreAsFallback>
+                <minVersion>${java.minversion}</minVersion>
+                <maxVersion>${java.maxversion}</maxVersion>
+                <bundledJreAsFallback>${windows.package.jre.bundledAsFallback}</bundledJreAsFallback>
                 <initialHeapSize>512</initialHeapSize>
                 <maxHeapSize>2048</maxHeapSize>
                 <opts>
@@ -405,7 +332,7 @@
                    https://stackoverflow.com/questions/53696439/appbundle-maven-plugin-fails-on-mac-osx-with-java-10 -->
               <groupId>org.codehaus.plexus</groupId>
               <artifactId>plexus-archiver</artifactId>
-              <version>4.2.5</version>
+              <version>4.2.7</version>
             </dependency>
             <dependency>
               <groupId>org.apache.velocity</groupId>
@@ -466,6 +393,14 @@
             </execution>
           </executions>
         </plugin>
+         <plugin>
+	   <groupId>org.apache.maven.plugins</groupId>
+	   <artifactId>maven-deploy-plugin</artifactId>
+	   <version>${maven-deploy-plugin.version}</version>
+	   <configuration>
+	    <skip>true</skip>
+	  </configuration>
+         </plugin>
     	</plugins>
     </pluginManagement>
   </build>

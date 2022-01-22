@@ -41,7 +41,7 @@ echo.
 echo  "/d" enable JVM debugging (on port 8000)
 echo.
 echo  "/m <memory>" max memory heap size to use
-echo     default: 1024M
+echo     default: 1400M
 echo.
 echo  "/x" enable JMX monitoring (for jconsole and friends)
 echo.
@@ -120,6 +120,7 @@ goto shift2loop
 
 :arg-m
 set REFINE_MEMORY=%2
+set REFINE_MIN_MEMORY=%2
 goto shift2loop
 
 :arg-d
@@ -144,6 +145,10 @@ goto loop
 rem --- Read ini file -----------------------------------------------
 
 if "%REFINE_INI_PATH%" == "" set REFINE_INI_PATH=refine.ini
+if not exist %REFINE_INI_PATH% (
+	echo The system cannot find the file %REFINE_INI_PATH%
+	exit /B 1
+)
 echo Using %REFINE_INI_PATH% for configuration
 for /f "tokens=1,* delims==" %%a in (%REFINE_INI_PATH%) do (
     set %%a=%%b
@@ -159,7 +164,7 @@ set JAVA_OPTIONS=
 set OPTS=%OPTS% %JAVA_OPTIONS%
 
 if not "%REFINE_MEMORY%" == "" goto gotMemory
-set REFINE_MEMORY=1024M
+set REFINE_MEMORY=1400M
 if not "%REFINE_MIN_MEMORY%" == "" goto gotMemory
 set REFINE_MIN_MEMORY=256M
 

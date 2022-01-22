@@ -2,7 +2,7 @@ describe(__filename, function () {
   it('Test the create project from this computer based on CSV', function () {
     // navigate to the create page
     cy.visitOpenRefine();
-    cy.navigateTo('Create Project');
+    cy.navigateTo('Create project');
     cy.get('#create-project-ui-source-selection-tabs > div')
       .contains('This Computer')
       .click();
@@ -27,11 +27,11 @@ describe(__filename, function () {
     }).should('have.value', 'food mini csv');
 
     // then ensure we are on the preview page
-    cy.get('.create-project-ui-panel').contains('Configure Parsing Options');
+    cy.get('.create-project-ui-panel').contains('Configure parsing options');
 
     // preview and click next
     cy.get('.default-importing-wizard-header button[bind="nextButton"]')
-      .contains('Create Project »')
+      .contains('Create project »')
       .click();
     cy.get('#create-project-progress-message').contains('Done.');
 
@@ -41,7 +41,7 @@ describe(__filename, function () {
   it('Test the create project from this computer based on TSV', function () {
     // navigate to the create page
     cy.visitOpenRefine();
-    cy.navigateTo('Create Project');
+    cy.navigateTo('Create project');
     cy.get('#create-project-ui-source-selection-tabs > div')
       .contains('This Computer')
       .click();
@@ -66,11 +66,11 @@ describe(__filename, function () {
     }).should('have.value', 'shop mini tsv');
 
     // then ensure we are on the preview page
-    cy.get('.create-project-ui-panel').contains('Configure Parsing Options');
+    cy.get('.create-project-ui-panel').contains('Configure parsing options');
 
     // preview and click next
     cy.get('.default-importing-wizard-header button[bind="nextButton"]')
-      .contains('Create Project »')
+      .contains('Create project »')
       .click();
     cy.get('#create-project-progress-message').contains('Done.');
 
@@ -80,7 +80,7 @@ describe(__filename, function () {
   it('Test the create project from clipboard based on CSV', function () {
     // navigate to the create page
     cy.visitOpenRefine();
-    cy.navigateTo('Create Project');
+    cy.navigateTo('Create project');
     cy.get('#create-project-ui-source-selection-tabs > div')
       .contains('Clipboard')
       .click();
@@ -106,11 +106,11 @@ describe(__filename, function () {
     }).should('have.value', 'Clipboard');
 
     // then ensure we are on the preview page
-    cy.get('.create-project-ui-panel').contains('Configure Parsing Options');
+    cy.get('.create-project-ui-panel').contains('Configure parsing options');
 
     // preview and click next
     cy.get('.default-importing-wizard-header button[bind="nextButton"]')
-      .contains('Create Project »')
+      .contains('Create project »')
       .click();
     cy.get('#create-project-progress-message').contains('Done.');
 
@@ -120,7 +120,7 @@ describe(__filename, function () {
   it('Test the create project from clipboard based on TSV', function () {
     // navigate to the create page
     cy.visitOpenRefine();
-    cy.navigateTo('Create Project');
+    cy.navigateTo('Create project');
     cy.get('#create-project-ui-source-selection-tabs > div')
       .contains('Clipboard')
       .click();
@@ -142,11 +142,11 @@ describe(__filename, function () {
     }).should('have.value', 'Clipboard');
 
     // then ensure we are on the preview page
-    cy.get('.create-project-ui-panel').contains('Configure Parsing Options');
+    cy.get('.create-project-ui-panel').contains('Configure parsing options');
 
     // preview and click next
     cy.get('.default-importing-wizard-header button[bind="nextButton"]')
-      .contains('Create Project »')
+      .contains('Create project »')
       .click();
     cy.get('#create-project-progress-message').contains('Done.');
 
@@ -156,7 +156,7 @@ describe(__filename, function () {
   // it('Test the create project from Web URL based on CSV', function () {
   //   // navigate to the create page
   //   cy.visitOpenRefine();
-  //   cy.navigateTo('Create Project');
+  //   cy.navigateTo('Create project');
   //   cy.get('#create-project-ui-source-selection-tabs > div')
   //     .contains('Web Addresses (URLs)')
   //     .click();
@@ -183,11 +183,11 @@ describe(__filename, function () {
   //   }).should('have.value', 'food mini csveuh');
 
   //   // then ensure we are on the preview page
-  //   cy.get('.create-project-ui-panel').contains('Configure Parsing Options');
+  //   cy.get('.create-project-ui-panel').contains('Configure parsing options');
 
   //   // preview and click next
   //   cy.get('.default-importing-wizard-header button[bind="nextButton"]')
-  //     .contains('Create Project »')
+  //     .contains('Create project »')
   //     .click();
   //   cy.get('#create-project-progress-message').contains('Done.');
 
@@ -198,7 +198,7 @@ describe(__filename, function () {
   // it('Test the create project from Multiple Web URLs based on CSV', function () {
   //   // navigate to the create page
   //   cy.visitOpenRefine();
-  //   cy.navigateTo('Create Project');
+  //   cy.navigateTo('Create project');
   //   cy.get('#create-project-ui-source-selection-tabs > div')
   //     .contains('Web Addresses (URLs)')
   //     .click();
@@ -210,7 +210,7 @@ describe(__filename, function () {
   //   const csvURL =
   //     'https://raw.githubusercontent.com/OpenRefine/OpenRefine/master/main/tests/cypress/cypress/fixtures/food.mini.csv';
   //   cy.get('input[bind="urlInput"]').filter(':visible').type(csvURL);
-  //   cy.get('button[bind="addButton"]').contains('Add Another URL').click();
+  //   cy.get('button[bind="addButton"]').contains('Add another URL').click();
 
   //   cy.get(
   //     '.create-project-ui-source-selection-tab-body.selected button.button-primary'
@@ -218,18 +218,18 @@ describe(__filename, function () {
   //     .contains('Next »')
   //     .click();
   //   cy.get('.create-project-ui-panel', { timeout: 10000 })
-  //     .contains('Configure Parsing Options »')
+  //     .contains('Configure parsing options »')
   //     .click();
   //   cy.get(
   //     '.default-importing-wizard-header input[bind="projectNameInput"]'
   //   ).should('have.value', 'food mini csv');
 
   //   // then ensure we are on the preview page
-  //   // cy.get('.create-project-ui-panel').contains('Configure Parsing Options');
+  //   // cy.get('.create-project-ui-panel').contains('Configure parsing options');
 
   //   // preview and click next
   //   cy.get('.default-importing-wizard-header button[bind="nextButton"]')
-  //     .contains('Create Project »')
+  //     .contains('Create project »')
   //     .click();
   //   cy.get('#create-project-progress-message').contains('Donuue.');
 

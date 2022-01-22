@@ -47,8 +47,7 @@ where [options] include:
      default: OS dependent
 
   -m <memory> max memory heap size to use
-     default: 1024M
-     Values less than 256M not allowed
+     default: 1400M
 
   -v <level> verbosity level [from low to high: error,warn,info,debug,trace]
      default: info
@@ -309,8 +308,8 @@ tools_prepare() {
 mvn_prepare() {
     tools_prepare
 
-    MVN_VERSION="3.6.3"
-    MVN_URL="https://www-us.apache.org/dist/maven/maven-3/${MVN_VERSION}/binaries/apache-maven-${MVN_VERSION}-bin.tar.gz"
+    MVN_VERSION="3.8.4"
+    MVN_URL="https://dlcdn.apache.org/maven/maven-3/${MVN_VERSION}/binaries/apache-maven-${MVN_VERSION}-bin.tar.gz"
     MVN_FILE=`echo $MVN_URL | sed 's|.*/||'`
     MVN_DIR="apache-maven-${MVN_VERSION}"
 
@@ -627,9 +626,7 @@ run() {
     CLASSPATH="$REFINE_CLASSES_DIR${SEP}$REFINE_LIB_DIR/*"
 
     RUN_CMD=("$JAVA" -cp "$CLASSPATH" "${OPTS[@]}" "com.google.refine.Refine")
-    echo "${RUN_CMD[@]}"
 
-    echo "Starting OpenRefine at 'http://${REFINE_HOST_INTERNAL}:${REFINE_PORT}/'"
     echo ""
 
     if [ -z "$FORK" ] ; then
@@ -841,16 +838,8 @@ while [ $# -ne 0 ] ; do
     -i) shift; REFINE_INTERFACE="$1"; shift; continue;;
     -w) shift; REFINE_WEBAPP="$1"; shift; continue;;
     -d) shift; REFINE_DATA_DIR="$1"; shift; continue;;
-    -m) 
-      shift;
-      if [ $1 -le 256 ]
-      then
-        fail "Value of -m less than 256 not allowed";
-      else
-        REFINE_MEMORY="$1";
-        shift;
-        continue;
-      fi;;
+    -m) shift; REFINE_MEMORY="$1"; REFINE_MIN_MEMORY="$1"; shift; continue;;
+    -k) shift; REFINE_GOOGLE_API_KEY="$1"; shift; continue;;
     -v) shift; REFINE_VERBOSITY="$1"; shift; continue;;
     -x) shift; REFINE_EXTRA_OPTS="$1"; shift; continue;;
     -c) shift; REFINE_INI_PATH="$1"; shift; continue;;
@@ -900,10 +889,12 @@ elif [ "$OS" = "linux" ] ; then
     freeRam=$(free -m | grep -oP '\d+' | head -n 1)
 fi
 
+echo "-------------------------------------------------------------------------------------------------"
 echo You have "$freeRam"M of free memory. 
 echo Your current configuration is set to use $REFINE_MEMORY of memory.
 echo OpenRefine can run better when given more memory. Read our FAQ on how to allocate more memory here:
-echo https://github.com/OpenRefine/OpenRefine/wiki/FAQ-Allocate-More-Memory
+echo https://docs.openrefine.org/manual/installing\#increasing-memory-allocation
+echo "-------------------------------------------------------------------------------------------------"
 
 if [ -z "$REFINE_MAX_FORM_CONTENT_SIZE" ] ; then
     REFINE_MAX_FORM_CONTENT_SIZE="1048576"
