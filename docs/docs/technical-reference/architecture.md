@@ -4,40 +4,46 @@ title: Architecture
 sidebar_label: Architecture
 ---
 
-OpenRefine is a web application, but is designed to be run locally on your own machine. The server-side maintains states of the data (undo/redo history, long-running processes, etc.) while the client-side maintains states of the user interface (facets and their selections, view pagination, etc.). The client-side makes GET and POST ajax calls to cause changes to the data and to fetch data and data-related states from the server-side.
+OpenRefine is a web application, but is designed to be run locally on your own machine. The server-side maintains states of the data (undo/redo history, long-running processes, etc.) while the client-side maintains states of the user interface (facets and their selections, view pagination, etc.). The client-side makes HTTP calls to the server to cause changes to the data and to fetch data and data-related states from the server-side.
 
-This architecture provides a good separation of concerns (data vs. UI); allows the use of familiar web technologies (HTML, CSS, Javascript) to implement user interface features; and enables the server side to be called by third-party software through standard GET and POST operations.
+This architecture provides a good separation of concerns (data vs. UI); allows the use of familiar web technologies (HTML, CSS, Javascript) to implement user interface features; and enables the server side to be called by third-party software through HTTP requests. That being said, the HTTP API offered by the server comes with no stability guarantees and can evolve freely as the tool improves.
 
 ## Technology stack {#technology-stack}
 
-The server-side part of OpenRefine is implemented in Java as one single servlet which is executed by the [Jetty](http://jetty.codehaus.org/jetty/) web server + servlet container. The use of Java strikes a balance between performance and portability across operating systems (there is very little OS-specific code and has mostly to do with starting the application).
+The server-side part of OpenRefine is implemented in Java as one single servlet which is executed by the [Jetty](http://jetty.codehaus.org/jetty/) web server and servlet container. The use of Java strikes a balance between performance and portability across operating systems (there is very little OS-specific code and has mostly to do with starting the application).
 
-OpenRefine has no database. It uses its own in-memory data-store that is built up-front to be optimized for the operations required by faceted browsing and infinite undo.
+The default data storage transformation runner can work off-disk, making it possible to handle datasets which do not fit in RAM. By implementing a Java API, it is possible to replace this data storage and execution strategy to fit other needs, for instance to execute data transformations in a distributed environment. See [Workflow execution](workflow-execution/overview) for more details about this aspect of the tool.
 
 The client-side part of OpenRefine is implemented in HTML, CSS and Javascript and uses the following libraries:
 * [jQuery](http://jquery.com/)
-* [jQueryUI](http:jqueryui.com/)
+* [jQueryUI](http://jqueryui.com/)
 * [Recurser jquery-i18n](https://github.com/recurser/jquery-i18n)
 
 The functional extensibility of OpenRefine is provided by a fork of the [SIMILE Butterfly](https://github.com/OpenRefine/simile-butterfly) modular web application framework.
+We are considering migrating to another framework since Butterfly is not maintained anymore, except for occasional fixes by the OpenRefine team (typically around security vulnerabilities).
 
-Several projects provide the functionality to read and write custom format files (POI, opencsv, JENA, marc4j).
+Several Java libraries provide the functionality to read and write custom format files (POI, opencsv, JENA, marc4j).
 
 String clustering is provided by the [SIMILE Vicino](http://code.google.com/p/simile-vicino/) project.
 
-OAuth functionality is provided by the [Signpost](https://github.com/mttkay/signpost) project.
-
 ## Server-side architecture {#server-side-architecture}
 
-OpenRefine's server-side is written entirely in Java (`main/src/`) and its entry point is the Java servlet `com.google.refine.RefineServlet`. By default, the servlet is hosted in the lightweight Jetty web server instantiated by `server/src/com.google.refine.Refine`. Note that the server class itself is under `server/src/`, not `main/src/`; this separation leaves the possibility of hosting `RefineServlet` in a different servlet container.
+OpenRefine's server-side is written entirely in Java and is divided into Maven modules:
+* `refine-model` contains the core classes which define the data model of the tool: `Cell`, `Row`, `Project`, `Facet`, `Operation` and the like;
+* `refine-workflow` contains the classes for all core workflow elements of the tool: all of the importers, exporters, operations and facets we provide. Those typically implement interfaces defined in the `refine-model` module;
+* `refine-grel` implements OpenRefine's default expression language, GREL;
+* `refine-local-runner` implements the default data model runner;
+* `refine-spark-runner` implements the runner based on Apache Spark;
+* `main` is the Java servlet for the core application (`org.openrefine.RefineServlet`), which exposes the HTTP API used by the frontend to communicate with the backend;
+* `server` is the HTTP server itself, which hosts the servlet above.
 
-The web server configuration is in `main/webapp/WEB-INF/web.xml`; that's where `RefineServlet` is hooked up. `RefineServlet` itself is simple: it just reacts to requests from the client-side by routing them to the right `Command` class in the packages `com.google.refine.commands.**`.
+The web server configuration is in `main/webapp/WEB-INF/web.xml`; that's where `RefineServlet` is hooked up. `RefineServlet` itself is simple: it just reacts to requests from the client-side by routing them to the right `Command` class in the packages `org.openrefine.commands.**`.
 
-As mentioned before, the server-side maintains states of the data, and the primary class involved is `com.google.refine.ProjectManager`.
+As mentioned before, the server-side maintains states of the data, and the primary class involved is `org.openrefine.ProjectManager`.
 
 ### Projects {#projects}
 
-In OpenRefine there's the concept of a workspace similar to that in Eclipse. When you run OpenRefine it manages projects within a single workspace, and the workspace is embodied in a file directory with sub-directories. The default workspace directories are listed in the [FAQs](https://github.com/OpenRefine/OpenRefine/wiki/FAQ-Where-Is-Data-Stored). You can get OpenRefine to use a different directory by specifying a -d parameter at the command line.
+In OpenRefine there's the concept of a workspace similar to that in Eclipse. When you run OpenRefine it manages projects within a single workspace, and the workspace is embodied in a file directory with sub-directories. The default workspace directories are listed in the [FAQs](https://github.com/OpenRefine/OpenRefine/wiki/FAQ-Where-Is-Data-Stored). You can get OpenRefine to use a different directory by specifying a `-d` parameter at the command line (or `/d` on Windows).
 
 The class `ProjectManager` is what manages the workspace. It keeps in memory the metadata of every project (in the class `ProjectMetadata`). This metadata includes the project's name and last modified date, and any other information necessary to present and let the user interact with the project as a whole. Only when the user decides to look at the project's data would `ProjectManager` load the project's actual data. The separation of project metadata and data is to minimize the amount of stuff loaded into memory.
 
@@ -45,7 +51,7 @@ A project's _actual_ data includes the columns, rows, cells, reconciliation reco
 
 A project is loaded into memory when it needs to be displayed or modified, and it remains in memory until 1 hour after the last time it gets modified. Periodically the project manager tries to save modified projects, and it saves as many modified projects as possible within 30 seconds.
 
-### Data Model {#data-model}
+### Data model {#data-model}
 
 A project's data consists of
 
@@ -78,17 +84,17 @@ Currently (as of 12th December 2017) only the XML and JSON importers create colu
 
 All changes to the project's data are tracked (N.B. this does not include changes to a project's metadata - such as the project name.)
 
-Changes are stored as `com.google.refine.history.Change` objects. `com.google.refine.history.Change` is an interface, and implementing classes are in `com.google.refine.model.changes.**`. Each change object stores enough data to modify the project's data when its `apply()` method is called, and enough data to revert its effect when its `revert()` method is called. It's only supposed to _store_ data, not to actually _compute_ the change. In this way, it's like a .diff patch file for a code base.
+Changes are stored as `org.openrefine.history.Change` objects. `org.openrefine.history.Change` is an interface, and implementing classes are in `org.openrefine.model.changes.**`. Each change object stores enough data to modify the project's data when its `apply()` method is called, and enough data to revert its effect when its `revert()` method is called. It's only supposed to _store_ data, not to actually _compute_ the change. In this way, it's like a .diff patch file for a code base.
 
-Some change objects can be huge, as huge as the project itself. So change objects are not kept in memory except when they are to be applied or reverted. However, since we still need to show the user some information about changes (as displayed in the History panel in the UI), we keep metadata of changes separate from the change objects. For each change object there is one corresponding `com.google.refine.history.HistoryEntry` for storing its metadata, such as the change's human-friendly description and timestamp.
+Some change objects can be huge, as huge as the project itself. So change objects are not kept in memory except when they are to be applied or reverted. However, since we still need to show the user some information about changes (as displayed in the History panel in the UI), we keep metadata of changes separate from the change objects. For each change object there is one corresponding `org.openrefine.history.HistoryEntry` for storing its metadata, such as the change's human-friendly description and timestamp.
 
-Each project has a `com.google.refine.history.History` object that contains an ordered list of all `HistoryEntry` objects storing metadata for all changes that have been done since after the project was created. Actually, there are 2 ordered lists: one for done changes that can be reverted (undone), an done for undone changes that can be re-applied (redone). Changes must be done or redone in their exact orders in these lists because each change makes certain assumptions about the state of the project before and after it is applied. As changes cannot be undone/redone out of order, when one change fails to revert, it blocks the whole history from being reverted to any state preceding that change (as happened in [Issue #2](https://github.com/OpenRefine/OpenRefine/issues/2)).
+Each project has a `org.openrefine.history.History` object that contains an ordered list of all `HistoryEntry` objects storing metadata for all changes that have been done since after the project was created. Actually, there are 2 ordered lists: one for done changes that can be reverted (undone), an done for undone changes that can be re-applied (redone). Changes must be done or redone in their exact orders in these lists because each change makes certain assumptions about the state of the project before and after it is applied. As changes cannot be undone/redone out of order, when one change fails to revert, it blocks the whole history from being reverted to any state preceding that change (as happened in [Issue #2](https://github.com/OpenRefine/OpenRefine/issues/2)).
 
-As mentioned before, a change contains only the diff and does not actually compute that diff. The computation is performed by a `com.google.refine.process.Process` object--every change object is created by a process object. A process can be immediate, producing its change object synchronously within a very short period of time (e.g., starring one row); or a process can be long-running, producing its change object after a long time and a lot of computation, including network calls (e.g., reconciling a column).
+As mentioned before, a change contains only the diff and does not actually compute that diff. The computation is performed by a `org.openrefine.process.Process` object--every change object is created by a process object. A process can be immediate, producing its change object synchronously within a very short period of time (e.g., starring one row); or a process can be long-running, producing its change object after a long time and a lot of computation, including network calls (e.g., reconciling a column).
 
 As the user interacts with the UI on the client-side, their interactions trigger ajax calls to the server-side. Some calls are meant to modify the project. Those are handled by commands that instantiates processes. Processes are queued in a first-in-first-out basis. The first-in process gets run and until it is done all the other processes are stuck in the queue.
 
-A process can effect a change in one thing in the project (e.g., edit one particular cell, star one particular row), or a process can effect changes in _potentially_ many things in the project (e.g., edit zero or more cells sharing the same content, starring all rows filtered by some facets). The latter kind of process is generalizable: it is meaningful to apply them on another similar project. Such a process is associated with an _abstract operation_ `com.google.refine.model.AbstractOperation` that encodes the information necessary to create another instance of that process, but potentially for a different project. When you click "extract" in the History panel, these abstract operations are called to serialize their information to JSON; and when you click "apply" in the History panel, the JSON you paste in is used to re-construct these abstract operations, which in turn create processes, which get run sequentially in a queue to generate change object and history entry pairs.
+A process can effect a change in one thing in the project (e.g., edit one particular cell, star one particular row), or a process can effect changes in _potentially_ many things in the project (e.g., edit zero or more cells sharing the same content, starring all rows filtered by some facets). The latter kind of process is generalizable: it is meaningful to apply them on another similar project. Such a process is associated with an _abstract operation_ `org.openrefine.model.AbstractOperation` that encodes the information necessary to create another instance of that process, but potentially for a different project. When you click "extract" in the History panel, these abstract operations are called to serialize their information to JSON; and when you click "apply" in the History panel, the JSON you paste in is used to re-construct these abstract operations, which in turn create processes, which get run sequentially in a queue to generate change object and history entry pairs.
 
 In summary,
 
@@ -274,7 +280,7 @@ From an engine configuration like the one above, the server-side faceted browsin
 - an iteration over the rows matching the facets' constraints
 - information on how to render the facets (e.g., choice and count pairs for a list facet, histogram for a numeric range facet)
 
-When the engine config JSON arrives in an HTTP request on the server-side, a `com.google.refine.browsing.Engine` object is constructed and initialized with that JSON. It in turns constructs zero or more `com.google.refine.browsing.facets.Facet` objects. Then for each facet, the engine calls its `getRowFilter()` method, which returns `null` if the facet isn't constrained in anyway, or a `com.google.refine.browsing.filters.RowFilter` object. Then, to when iterating over a project's rows, the engine calls on all row filters' `filterRow()` method. If and only if all row filters return `true` the row is considered to match the facets' constraints. How each row filter works depends on the corresponding type of facet.
+When the engine config JSON arrives in an HTTP request on the server-side, a `org.openrefine.browsing.Engine` object is constructed and initialized with that JSON. It in turns constructs zero or more `org.openrefine.browsing.facets.Facet` objects. Then for each facet, the engine calls its `getRowFilter()` method, which returns `null` if the facet isn't constrained in anyway, or a `org.openrefine.browsing.filters.RowFilter` object. Then, to when iterating over a project's rows, the engine calls on all row filters' `filterRow()` method. If and only if all row filters return `true` the row is considered to match the facets' constraints. How each row filter works depends on the corresponding type of facet.
 
 To produce information on how to render a particular facet in the UI, the engine follows the same procedure described in the previous except it skips over the facet in question. In other words, it produces an iteration over all rows constrained by the other facets. Then it feeds that iteration to the facet in question by calling the facet's `computeChoices()` method. This gives the method a chance to compute the rendering information for its UI counterpart on the client-side. When all facets have been given a chance to compute their rendering information, the engine calls all facets to serialize their information as JSON and returns the JSON to the client-side. Only one HTTP call is needed to compute all facets.
 
