@@ -33,12 +33,12 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.operations.recon;
 
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
-import static org.powermock.api.mockito.PowerMockito.mockStatic;
 
 import java.io.IOException;
 import java.io.StringWriter;
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -47,10 +47,6 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 
-import org.mockito.invocation.InvocationOnMock;
-import org.mockito.stubbing.Answer;
-import org.powermock.api.mockito.PowerMockito;
-import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.slf4j.LoggerFactory;
 import org.testng.Assert;
 import org.testng.annotations.AfterMethod;
@@ -77,7 +73,11 @@ import com.google.refine.process.Process;
 import com.google.refine.util.ParsingUtilities;
 import com.google.refine.util.TestUtils;
 
-@PrepareForTest(ReconciledDataExtensionJob.class)
+import okhttp3.mockwebserver.Dispatcher;
+import okhttp3.mockwebserver.MockResponse;
+import okhttp3.mockwebserver.MockWebServer;
+import okhttp3.mockwebserver.RecordedRequest;
+
 public class ExtendDataOperationTests extends RefineTest {
 
     static final String ENGINE_JSON_URLS = "{\"mode\":\"row-based\"}}";
@@ -146,6 +146,9 @@ public class ExtendDataOperationTests extends RefineTest {
     Properties options;
     EngineConfig engine_config;
     Engine engine;
+    
+    // HTTP mocking
+    Dispatcher dispatcher;
 
 
     @BeforeMethod
@@ -171,6 +174,26 @@ public class ExtendDataOperationTests extends RefineTest {
         row = new Row(2);
         row.setCell(0, reconciledCell("United States of America", "Q30"));
         project.rows.add(row);
+        
+        dispatcher = new Dispatcher() {
+
+            @Override
+            public MockResponse dispatch(RecordedRequest request) throws InterruptedException {
+                String json = URLDecoder.decode(request.getBody().readUtf8().split("=")[1], StandardCharsets.UTF_8);
+                JsonNode parsedQuery;
+                try {
+                    parsedQuery = ParsingUtilities.mapper.readTree(json);
+                } catch (IOException e) {
+                    throw new IllegalArgumentException("HTTP call with invalid JSON payload: "+json);
+                }
+                if (mockedResponses.containsKey(parsedQuery)) {
+                      return new MockResponse().setResponseCode(200).setBody(mockedResponses.get(parsedQuery));
+                } else {
+                      throw new IllegalArgumentException("HTTP call not mocked for query: "+json);
+                }
+            }
+            
+        };
     }
     
     @Test
@@ -218,23 +241,6 @@ public class ExtendDataOperationTests extends RefineTest {
        return new Cell(name, rec);
     }
 
-    /**
-     * Test to fetch simple strings
-     * @throws Exception 
-     */
-    @BeforeMethod
-    public void mockHttpCalls() throws Exception {
-    	mockStatic(ReconciledDataExtensionJob.class);
-    	PowerMockito.spy(ReconciledDataExtensionJob.class);
-    	Answer<String> mockedResponse = new Answer<String>() {
-			@Override
-			public String answer(InvocationOnMock invocation) throws Throwable {
-				return fakeHttpCall(invocation.getArgument(0), invocation.getArgument(1));
-			}
-    	};
-    	PowerMockito.doAnswer(mockedResponse).when(ReconciledDataExtensionJob.class, "postExtendQuery", anyString(), anyString());
-    }
-
     @AfterMethod
     public void cleanupHttpMocks() {
     	mockedResponses.clear();
@@ -245,36 +251,41 @@ public class ExtendDataOperationTests extends RefineTest {
   
         DataExtensionConfig extension = DataExtensionConfig.reconstruct("{\"properties\":[{\"id\":\"P297\",\"name\":\"ISO 3166-1 alpha-2 code\"}]}");
         
-        mockHttpCall("{\"ids\":[\"Q863\",\"Q794\",\"Q17\",\"Q30\"],\"properties\":[{\"id\":\"P297\"}]}",
-      		  "{"
-  			+ "\"rows\": {"
-  			+ "    \"Q794\": {\"P297\": [{\"str\": \"IR\"}]},"
-  			+ "    \"Q863\": {\"P297\": []},"
-  			+ "    \"Q30\": {\"P297\": [{\"str\": \"US\"}]},"
-  			+ "    \"Q17\": {\"P297\": [{\"str\": \"JP\"}]}"
-  			+ "},"
-  			+ "\"meta\": ["
-  			+ "   {\"name\": \"ISO 3166-1 alpha-2 code\", \"id\": \"P297\"}"
-  			+ "]}");
+        try (MockWebServer server = new MockWebServer()) {
+            server.start();
+            server.setDispatcher(dispatcher);
+            
+            mockHttpCall("{\"ids\":[\"Q863\",\"Q794\",\"Q17\",\"Q30\"],\"properties\":[{\"id\":\"P297\"}]}",
+          		  "{"
+        		+ "\"rows\": {"
+        		+ "    \"Q794\": {\"P297\": [{\"str\": \"IR\"}]},"
+        		+ "    \"Q863\": {\"P297\": []},"
+        		+ "    \"Q30\": {\"P297\": [{\"str\": \"US\"}]},"
+        		+ "    \"Q17\": {\"P297\": [{\"str\": \"JP\"}]}"
+        		+ "},"
+        		+ "\"meta\": ["
+        		+ "   {\"name\": \"ISO 3166-1 alpha-2 code\", \"id\": \"P297\"}"
+        		+ "]}");
         
-        EngineDependentOperation op = new ExtendDataOperation(engine_config,
-                "country",
-                RECON_SERVICE,
-                RECON_IDENTIFIER_SPACE,
-                RECON_SCHEMA_SPACE,
-                extension,
-                1);
-        LongRunningProcessStub process = new LongRunningProcessStub(op.createProcess(project, options));
-        process.run();
-
-        // Inspect rows
-        Assert.assertTrue("IR".equals(project.rows.get(0).getCellValue(1)), "Bad country code for Iran.");
-        Assert.assertTrue("JP".equals(project.rows.get(1).getCellValue(1)), "Bad country code for Japan.");
-        Assert.assertNull(project.rows.get(2).getCell(1), "Expected a null country code.");
-        Assert.assertTrue("US".equals(project.rows.get(3).getCellValue(1)), "Bad country code for United States.");
-
-        // Make sure we did not create any recon stats for that column (no reconciled value)
-        Assert.assertTrue(project.columnModel.getColumnByName("ISO 3166-1 alpha-2 code").getReconStats() == null);
+            EngineDependentOperation op = new ExtendDataOperation(engine_config,
+                    "country",
+                    server.url("/reconcile").url().toString(),
+                    RECON_IDENTIFIER_SPACE,
+                    RECON_SCHEMA_SPACE,
+                    extension,
+                    1);
+            LongRunningProcessStub process = new LongRunningProcessStub(op.createProcess(project, options));
+            process.run();
+    
+            // Inspect rows
+            Assert.assertTrue("IR".equals(project.rows.get(0).getCellValue(1)), "Bad country code for Iran.");
+            Assert.assertTrue("JP".equals(project.rows.get(1).getCellValue(1)), "Bad country code for Japan.");
+            Assert.assertNull(project.rows.get(2).getCell(1), "Expected a null country code.");
+            Assert.assertTrue("US".equals(project.rows.get(3).getCellValue(1)), "Bad country code for United States.");
+    
+            // Make sure we did not create any recon stats for that column (no reconciled value)
+            Assert.assertTrue(project.columnModel.getColumnByName("ISO 3166-1 alpha-2 code").getReconStats() == null);
+        }
     }
 
      /**
@@ -287,34 +298,39 @@ public class ExtendDataOperationTests extends RefineTest {
                 "{\"properties\":[{\"id\":\"P38\",\"name\":\"currency\",\"settings\":{\"count\":\"on\",\"rank\":\"any\"}}]}");
         
         mockHttpCall("{\"ids\":[\"Q863\",\"Q794\",\"Q17\",\"Q30\"],\"properties\":[{\"id\":\"P38\",\"settings\":{\"count\":\"on\",\"rank\":\"any\"}}]}",
-        		"{"
-        		+ "\"rows\": {"
-        		+ "    \"Q794\": {\"P38\": [{\"float\": 1}]},"
-        		+ "    \"Q863\": {\"P38\": [{\"float\": 2}]},"
-        		+ "    \"Q30\": {\"P38\": [{\"float\": 1}]},"
-        		+ "    \"Q17\": {\"P38\": [{\"float\": 1}]}"
-        		+ "},"
-        		+ "\"meta\": ["
-        		+ "    {\"settings\": {\"count\": \"on\", \"rank\": \"any\"}, \"name\": \"currency\", \"id\": \"P38\"}"
-        		+ "]}");
+                "{"
+                + "\"rows\": {"
+                + "    \"Q794\": {\"P38\": [{\"float\": 1}]},"
+                + "    \"Q863\": {\"P38\": [{\"float\": 2}]},"
+                + "    \"Q30\": {\"P38\": [{\"float\": 1}]},"
+                + "    \"Q17\": {\"P38\": [{\"float\": 1}]}"
+                + "},"
+                + "\"meta\": ["
+                + "    {\"settings\": {\"count\": \"on\", \"rank\": \"any\"}, \"name\": \"currency\", \"id\": \"P38\"}"
+                + "]}");
         
-        EngineDependentOperation op = new ExtendDataOperation(engine_config,
-                "country",
-                RECON_SERVICE,
-                RECON_IDENTIFIER_SPACE,
-                RECON_SCHEMA_SPACE,
-                extension,
-                1);
-        
-        LongRunningProcessStub process = new LongRunningProcessStub(op.createProcess(project, options));
-        process.run();
+        try (MockWebServer server = new MockWebServer()) {
+            server.start();
+            server.setDispatcher(dispatcher); 
 
-        // Test to be updated as countries change currencies!
-        Assert.assertTrue(Math.round((double)project.rows.get(2).getCellValue(1)) == 2, "Incorrect number of currencies returned for Tajikistan.");
-        Assert.assertTrue(Math.round((double)project.rows.get(3).getCellValue(1)) == 1, "Incorrect number of currencies returned for United States.");
-
-        // Make sure we did not create any recon stats for that column (no reconciled value)
-        Assert.assertTrue(project.columnModel.getColumnByName("currency").getReconStats() == null);
+            EngineDependentOperation op = new ExtendDataOperation(engine_config,
+                    "country",
+                    server.url("/reconcile").url().toString(),
+                    RECON_IDENTIFIER_SPACE,
+                    RECON_SCHEMA_SPACE,
+                    extension,
+                    1);
+            
+            LongRunningProcessStub process = new LongRunningProcessStub(op.createProcess(project, options));
+            process.run();
+    
+            // Test to be updated as countries change currencies!
+            Assert.assertTrue(Math.round((double)project.rows.get(2).getCellValue(1)) == 2, "Incorrect number of currencies returned for Tajikistan.");
+            Assert.assertTrue(Math.round((double)project.rows.get(3).getCellValue(1)) == 1, "Incorrect number of currencies returned for United States.");
+    
+            // Make sure we did not create any recon stats for that column (no reconciled value)
+            Assert.assertTrue(project.columnModel.getColumnByName("currency").getReconStats() == null);
+        }
     }
 
     /**
@@ -335,28 +351,34 @@ public class ExtendDataOperationTests extends RefineTest {
         		+ "     {\"settings\": {\"rank\": \"best\"}, \"name\": \"currency\", \"id\": \"P38\"}"
         		+ "]}");
         
-        EngineDependentOperation op = new ExtendDataOperation(engine_config,
-                "country",
-                RECON_SERVICE,
-                RECON_IDENTIFIER_SPACE,
-                RECON_SCHEMA_SPACE,
-                extension,
-                1);
-        LongRunningProcessStub process = new LongRunningProcessStub(op.createProcess(project, options));
-        process.run();
+        try (MockWebServer server = new MockWebServer()) {
+            server.start();
+            server.setDispatcher(dispatcher); 
 
-        /*
-          * Tajikistan has one "preferred" currency and one "normal" one
-          * (in terms of statement ranks).
-          * But thanks to our setting in the extension configuration,
-          * we only fetch the current one, so the one just after it is
-          * the one for the US (USD).
-          */
-        Assert.assertTrue("Tajikistani somoni".equals(project.rows.get(2).getCellValue(1)));
-        Assert.assertTrue("United States dollar".equals(project.rows.get(3).getCellValue(1)));
+            EngineDependentOperation op = new ExtendDataOperation(engine_config,
+                    "country",
+                    server.url("/reconcile").url().toString(),
+                    RECON_IDENTIFIER_SPACE,
+                    RECON_SCHEMA_SPACE,
+                    extension,
+                    1);
 
-        // Make sure all the values are reconciled
-        Assert.assertTrue(project.columnModel.getColumnByName("currency").getReconStats().matchedTopics == 4);
+            LongRunningProcessStub process = new LongRunningProcessStub(op.createProcess(project, options));
+            process.run();
+    
+            /*
+              * Tajikistan has one "preferred" currency and one "normal" one
+              * (in terms of statement ranks).
+              * But thanks to our setting in the extension configuration,
+              * we only fetch the current one, so the one just after it is
+              * the one for the US (USD).
+              */
+            Assert.assertTrue("Tajikistani somoni".equals(project.rows.get(2).getCellValue(1)));
+            Assert.assertTrue("United States dollar".equals(project.rows.get(3).getCellValue(1)));
+    
+            // Make sure all the values are reconciled
+            Assert.assertTrue(project.columnModel.getColumnByName("currency").getReconStats().matchedTopics == 4);
+        }
     }
 
     /**
@@ -378,28 +400,34 @@ public class ExtendDataOperationTests extends RefineTest {
     			+ "    {\"settings\": {\"rank\": \"any\"}, \"name\": \"currency\", \"id\": \"P38\"}"
     			+ "]}");
         
-        EngineDependentOperation op = new ExtendDataOperation(engine_config,
-                "country",
-                RECON_SERVICE,
-                RECON_IDENTIFIER_SPACE,
-                RECON_SCHEMA_SPACE,
-                extension,
-                1);
-        LongRunningProcessStub process = new LongRunningProcessStub(op.createProcess(project, options));
-        process.run();
+        try (MockWebServer server = new MockWebServer()) {
+            server.start();
+            server.setDispatcher(dispatcher); 
 
-        /*
-          * Tajikistan has one "preferred" currency and one "normal" one
-          * (in terms of statement ranks).
-          * The second currency is fetched as well, which creates a record
-          * (the cell to the left of it is left blank).
-          */
-        Assert.assertTrue("Tajikistani somoni".equals(project.rows.get(2).getCellValue(1)), "Bad currency name for Tajikistan");
-        Assert.assertTrue("Tajikistani ruble".equals(project.rows.get(3).getCellValue(1)), "Bad currency name for Tajikistan");
-        Assert.assertTrue(null == project.rows.get(3).getCellValue(0));
+            EngineDependentOperation op = new ExtendDataOperation(engine_config,
+                    "country",
+                    server.url("/reconcile").url().toString(),
+                    RECON_IDENTIFIER_SPACE,
+                    RECON_SCHEMA_SPACE,
+                    extension,
+                    1);
 
-        // Make sure all the values are reconciled
-        Assert.assertTrue(project.columnModel.getColumnByName("currency").getReconStats().matchedTopics == 5);
+            LongRunningProcessStub process = new LongRunningProcessStub(op.createProcess(project, options));
+            process.run();
+    
+            /*
+              * Tajikistan has one "preferred" currency and one "normal" one
+              * (in terms of statement ranks).
+              * The second currency is fetched as well, which creates a record
+              * (the cell to the left of it is left blank).
+              */
+            Assert.assertTrue("Tajikistani somoni".equals(project.rows.get(2).getCellValue(1)), "Bad currency name for Tajikistan");
+            Assert.assertTrue("Tajikistani ruble".equals(project.rows.get(3).getCellValue(1)), "Bad currency name for Tajikistan");
+            Assert.assertTrue(null == project.rows.get(3).getCellValue(0));
+    
+            // Make sure all the values are reconciled
+            Assert.assertTrue(project.columnModel.getColumnByName("currency").getReconStats().matchedTopics == 5);
+        }
     }
 
     private void mockHttpCall(String query, String response) throws IOException {
