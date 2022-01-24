@@ -123,7 +123,7 @@ The long version:
 Install OpenRefine with this command:
 
 ```
-brew cask install openrefine
+brew install --cask openrefine
 ```
 
 You should see output like this:
@@ -146,7 +146,7 @@ If an existing `OpenRefine.app` is found in the Applications folder, Homebrew wi
 To uninstall OpenRefine, paste this command into the Terminal:
 
 ```
- brew cask uninstall openrefine
+ brew uninstall --cask openrefine
 ```
 
 You should see output like this:
@@ -160,7 +160,7 @@ You should see output like this:
 To update to the latest version of OpenRefine, paste this command into the Terminal:
 
 ```
- brew cask reinstall openrefine
+ brew reinstall --cask openrefine
 ```
 
 You should see output like this:
@@ -177,8 +177,8 @@ You should see output like this:
 If you had previously installed the `openrefine-dev` cask (containing a release candidate) and you want to move to the stable release, you need to first uninstall the old cask and then install the new one:
 
 ```
- brew cask uninstall openrefine-dev
- brew cask install openrefine
+ brew uninstall --cask openrefine-dev
+ brew install --cask openrefine
 ```
 </TabItem>
 
