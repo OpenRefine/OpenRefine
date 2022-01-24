@@ -165,7 +165,7 @@ public class ConnectionManager {
     /**
      * For testability.
      */
-    static BasicApiConnection convertToBasicApiConnection(Map<String, Object> map) throws JsonProcessingException {
+    BasicApiConnection convertToBasicApiConnection(Map<String, Object> map) throws JsonProcessingException {
         ObjectMapper mapper = new ObjectMapper();
         String json = mapper.writeValueAsString(map);
         return mapper.readValue(json, BasicApiConnection.class);
