@@ -55,7 +55,7 @@ public class Parser {
      * @return index of the first true end brace
      * CS427 Issue Link: https://github.com/OpenRefine/OpenRefine/issues/3381
      */
-    private static int findEndBrace(final String expression, final int lowIndex) {
+    private static int findEndBrace(final String expression, final int lowIndex) throws ParsingException {
         int closeBrace = expression.indexOf('}', lowIndex);
         if (expression.charAt(closeBrace - 1) == '\\') {
             closeBrace = findEndBrace(expression, closeBrace + 1);
