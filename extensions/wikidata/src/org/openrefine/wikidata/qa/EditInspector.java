@@ -31,7 +31,6 @@ import org.openrefine.wikidata.updates.scheduler.WikibaseAPIUpdateScheduler;
 import org.openrefine.wikidata.utils.EntityCache;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.wikidata.wdtk.datamodel.interfaces.EntityDocument;
 
 import java.util.HashMap;
 import java.util.List;
@@ -110,7 +109,7 @@ public class EditInspector {
             scrutinizers.put(key, scrutinizer);
         } else {
             logger.info("scrutinizer [" + scrutinizer.getClass().getSimpleName() + "] is skipped " +
-                    "due to missing of necessary constraint configurations in the Wikibase manifest");
+                    "due to missing necessary constraint configurations in the Wikibase manifest");
         }
     }
 

@@ -84,7 +84,7 @@ public class ReconEntityRewriter extends DatamodelConverter {
 		if (value instanceof ReconItemIdValue) {
 			ReconItemIdValue recon = (ReconItemIdValue) value;
 			if (recon.isNew()) {
-				String newId = library.getQid(recon.getReconInternalId());
+				String newId = library.getId(recon.getReconInternalId());
 				if (newId == null) {
 					if (subject.equals(recon)) {
 						return (ItemIdValue) subject;
@@ -102,7 +102,7 @@ public class ReconEntityRewriter extends DatamodelConverter {
 		if (value instanceof ReconMediaInfoIdValue) {
 			ReconMediaInfoIdValue recon = (ReconMediaInfoIdValue) value;
 			if (recon.isNew()) {
-				String newId = library.getQid(recon.getReconInternalId());
+				String newId = library.getId(recon.getReconInternalId());
 				if (newId == null) {
 					if (subject.equals(recon)) {
 						return (MediaInfoIdValue) subject;
@@ -121,7 +121,7 @@ public class ReconEntityRewriter extends DatamodelConverter {
 		if (value instanceof ReconPropertyIdValue) {
 			ReconPropertyIdValue recon = (ReconPropertyIdValue) value;
 			if (recon.isNew()) {
-				String newId = library.getQid(recon.getReconInternalId());
+				String newId = library.getId(recon.getReconInternalId());
 				if (newId == null) {
 					if (subject.equals(recon)) {
 						return (PropertyIdValue) subject;
@@ -169,7 +169,7 @@ public class ReconEntityRewriter extends DatamodelConverter {
 	}
 
 	/**
-	 * Unchecked version of {@class NewItemNotCreatedYetException}, for internal use only.
+	 * Unchecked version of {@class NewEntityNotCreatedYetException}, for internal use only.
 	 */
 	protected static class MissingEntityIdFound extends Error {
 		private static final long serialVersionUID = 1L;

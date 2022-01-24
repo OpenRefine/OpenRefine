@@ -120,32 +120,32 @@ public class PerformWikibaseEditsOperation extends EngineDependentOperation {
 
     static public class PerformWikibaseEditsChange implements Change {
 
-        private NewEntityLibrary newItemLibrary;
+        private NewEntityLibrary newEntityLibrary;
 
         public PerformWikibaseEditsChange(NewEntityLibrary library) {
-            newItemLibrary = library;
+            newEntityLibrary = library;
         }
 
         @Override
         public void apply(Project project) {
             // we don't re-run changes on Wikidata
-            newItemLibrary.updateReconciledCells(project, false);
+            newEntityLibrary.updateReconciledCells(project, false);
         }
 
         @Override
         public void revert(Project project) {
             // this does not do anything on Wikibase side -
             // (we don't revert changes on Wikidata either)
-            newItemLibrary.updateReconciledCells(project, true);
+            newEntityLibrary.updateReconciledCells(project, true);
         }
 
         @Override
         public void save(Writer writer, Properties options)
                 throws IOException {
-            if (newItemLibrary != null) {
-                writer.write("newItems=");
+            if (newEntityLibrary != null) {
+                writer.write("newEntities=");
                 ObjectMapper mapper = new ObjectMapper();
-                writer.write(mapper.writeValueAsString(newItemLibrary) + "\n");
+                writer.write(mapper.writeValueAsString(newEntityLibrary) + "\n");
             }
             writer.write("/ec/\n"); // end of change
         }
@@ -159,7 +159,7 @@ public class PerformWikibaseEditsOperation extends EngineDependentOperation {
                 CharSequence field = line.subSequence(0, equal);
                 String value = line.substring(equal + 1);
 
-                if ("newItems".equals(field)) {
+                if ("newEntities".equals(field)) {
                     ObjectMapper mapper = new ObjectMapper();
                     library = mapper.readValue(value, NewEntityLibrary.class);
                 }
@@ -231,11 +231,11 @@ public class PerformWikibaseEditsOperation extends EngineDependentOperation {
             }
 
             // Evaluate the schema
-            List<TermedStatementEntityUpdate> itemDocuments = _schema.evaluate(_project, _engine);
+            List<TermedStatementEntityUpdate> entityDocuments = _schema.evaluate(_project, _engine);
 
             // Prepare the edits
-            NewEntityLibrary newItemLibrary = new NewEntityLibrary();
-            EditBatchProcessor processor = new EditBatchProcessor(wbdf, wbde, itemDocuments, newItemLibrary, summary,
+            NewEntityLibrary newEntityLibrary = new NewEntityLibrary();
+            EditBatchProcessor processor = new EditBatchProcessor(wbdf, wbde, entityDocuments, newEntityLibrary, summary,
                     maxlag, _tags, 50);
 
             // Perform edits
@@ -255,7 +255,7 @@ public class PerformWikibaseEditsOperation extends EngineDependentOperation {
             _progress = 100;
 
             if (!_canceled) {
-                Change change = new PerformWikibaseEditsChange(newItemLibrary);
+                Change change = new PerformWikibaseEditsChange(newEntityLibrary);
 
                 HistoryEntry historyEntry = new HistoryEntry(_historyEntryID, _project, _description,
                         PerformWikibaseEditsOperation.this, change);

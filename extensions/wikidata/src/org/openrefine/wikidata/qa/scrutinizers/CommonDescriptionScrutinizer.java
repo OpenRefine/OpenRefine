@@ -11,8 +11,8 @@ import java.util.Set;
  */
 public class CommonDescriptionScrutinizer extends DescriptionScrutinizer {
 
-    public static final String descTooLongType = "item-description-too-long";
-    public static final String descIdenticalWithLabel = "item-description-identical-with-label";
+    public static final String descTooLongType = "description-too-long";
+    public static final String descIdenticalWithLabel = "description-identical-with-label";
 
     @Override
     public void scrutinize(TermedStatementEntityUpdate update, String descText, String lang) {

@@ -168,7 +168,7 @@ public class EditBatchProcessor {
 	                        Collections.emptyMap());
 
 	                ItemDocument createdDoc = editor.createItemDocument(itemDocument, summary, tags);
-	                library.setQid(newCell.getReconInternalId(), createdDoc.getEntityId().getId());
+	                library.setId(newCell.getReconInternalId(), createdDoc.getEntityId().getId());
                 } else if (newCell instanceof MediaInfoIdValue) {
                     update = update.normalizeLabelsAndAliases();
                     throw new NotImplementedException();
@@ -247,7 +247,7 @@ public class EditBatchProcessor {
         } else {
             currentBatch = remainingUpdates.subList(0, batchSize);
         }
-        List<String> qidsToFetch = currentBatch.stream().filter(u -> !u.isNew()).map(u -> u.getEntityId().getId())
+        List<String> idsToFetch = currentBatch.stream().filter(u -> !u.isNew()).map(u -> u.getEntityId().getId())
                 .collect(Collectors.toList());
 
         // Get the current documents for this batch of updates
@@ -257,9 +257,9 @@ public class EditBatchProcessor {
         int backoff = 2;
         int sleepTime = 5000;
         // TODO: remove currentDocs.isEmpty() once https://github.com/Wikidata/Wikidata-Toolkit/issues/402 is solved
-        while ((currentDocs == null || currentDocs.isEmpty()) && retries > 0 && !qidsToFetch.isEmpty()) {
+        while ((currentDocs == null || currentDocs.isEmpty()) && retries > 0 && !idsToFetch.isEmpty()) {
             try {
-                currentDocs = fetcher.getEntityDocuments(qidsToFetch);
+                currentDocs = fetcher.getEntityDocuments(idsToFetch);
             } catch (MediaWikiApiErrorException e) {
                 logger.warn("MediaWiki error while fetching documents to edit [" + e.getErrorCode()
                                                 + "]: " + e.getErrorMessage());
@@ -268,12 +268,12 @@ public class EditBatchProcessor {
 			}
             retries--;
             sleepTime *= backoff;
-            if ((currentDocs == null || currentDocs.isEmpty()) && retries > 0 && !qidsToFetch.isEmpty()) {
+            if ((currentDocs == null || currentDocs.isEmpty()) && retries > 0 && !idsToFetch.isEmpty()) {
                 logger.warn("Retrying in " + sleepTime + " ms");
                 Thread.sleep(sleepTime);
             }
         }
-        if (currentDocs == null && !qidsToFetch.isEmpty()) {
+        if (currentDocs == null && !idsToFetch.isEmpty()) {
             logger.warn("Giving up on fetching documents to edit. Skipping "+remainingEdits()+" remaining edits.");
             globalCursor = scheduled.size();
         }

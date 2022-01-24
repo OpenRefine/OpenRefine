@@ -47,13 +47,13 @@ public class NewEntityLibraryTest extends WikidataRefineTest {
     @BeforeMethod
     public void setUp() {
         library = new NewEntityLibrary();
-        library.setQid(1234L, "Q345");
-        library.setQid(3289L, "Q384");
+        library.setId(1234L, "Q345");
+        library.setId(3289L, "Q384");
     }
 
     @Test
     public void testRetrieveItem() {
-        assertEquals("Q345", library.getQid(1234L));
+        assertEquals("Q345", library.getId(1234L));
     }
 
     @Test
