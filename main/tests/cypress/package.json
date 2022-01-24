@@ -24,7 +24,7 @@
         "eslint-config-google": "^0.14.0",
         "eslint-config-prettier": "^8.2.0",
         "eslint-plugin-cypress": "^2.12.1",
-        "jsdoc": "^3.6.7",
+        "jsdoc": "^3.6.9",
         "prettier": "2.5.1"
     }
 }
