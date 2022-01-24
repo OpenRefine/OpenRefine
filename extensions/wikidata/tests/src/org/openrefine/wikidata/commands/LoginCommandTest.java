@@ -79,7 +79,7 @@ public class LoginCommandTest extends CommandTest {
 
     // used for mocking singleton
     Constructor<ConnectionManager> constructor;
-
+    
     ConnectionManager connectionManager;
 
     @BeforeMethod
@@ -133,18 +133,18 @@ public class LoginCommandTest extends CommandTest {
     }
 
     @Test
-    public void testUsernamePasswordLogin() throws Exception {
+    public void testUsernamePasswordLogin() throws Exception {       
         when(request.getParameter("csrf_token")).thenReturn(Command.csrfFactory.getFreshToken());
         when(request.getParameter(API_ENDPOINT)).thenReturn(apiEndpoint);
         when(request.getParameter(USERNAME)).thenReturn(username);
         when(request.getParameter(PASSWORD)).thenReturn(password);
-
+        
         when(connectionManager.login(apiEndpoint, username, password)).thenReturn(true);
         when(connectionManager.isLoggedIn(apiEndpoint)).thenReturn(true);
         when(connectionManager.getUsername(apiEndpoint)).thenReturn(username);
 
         command.doPost(request, response);
-
+        
         verify(connectionManager, times(1)).login(apiEndpoint, username, password);
 
         assertLogin();
@@ -165,7 +165,7 @@ public class LoginCommandTest extends CommandTest {
         when(request.getParameter(API_ENDPOINT)).thenReturn(apiEndpoint);
         when(request.getParameter(USERNAME)).thenReturn(username);
         when(request.getParameter(PASSWORD)).thenReturn(password);
-
+        
         when(connectionManager.login(apiEndpoint, username, password)).thenReturn(true);
         when(connectionManager.isLoggedIn(apiEndpoint)).thenReturn(true);
         when(connectionManager.getUsername(apiEndpoint)).thenReturn(username);
@@ -259,7 +259,7 @@ public class LoginCommandTest extends CommandTest {
         when(request.getParameter(ACCESS_TOKEN)).thenReturn(accessToken);
         when(request.getParameter(ACCESS_SECRET)).thenReturn(accessSecret);
         when(request.getCookies()).thenReturn(makeRequestCookies());
-
+        
         when(connectionManager.login(apiEndpoint, consumerToken, consumerSecret, accessToken, accessSecret)).thenReturn(true);
         when(connectionManager.isLoggedIn(apiEndpoint)).thenReturn(true);
         when(connectionManager.getUsername(apiEndpoint)).thenReturn(username);
@@ -300,9 +300,9 @@ public class LoginCommandTest extends CommandTest {
         OAuthApiConnection connection = mock(OAuthApiConnection.class);
         when(connectionManager.getConnection(apiEndpoint)).thenReturn(connection);
         when(connection.getCurrentUser()).thenReturn(username);
-
+        
         command.doPost(request, response);
-
+        
         verify(connectionManager, times(1)).login(apiEndpoint, consumerToken, consumerSecret, accessToken, accessSecret);
 
         assertLogin();
@@ -360,7 +360,7 @@ public class LoginCommandTest extends CommandTest {
         OAuthApiConnection connection = mock(OAuthApiConnection.class);
         when(connectionManager.getConnection(apiEndpoint)).thenReturn(connection);
         when(connection.getCurrentUser()).thenReturn(username);
-
+        
         command.doPost(request, response);
 
         verify(connectionManager).login(apiEndpoint, "malformed consumer token \r\n %?", consumerSecret, accessToken, accessSecret);
@@ -373,7 +373,7 @@ public class LoginCommandTest extends CommandTest {
         when(request.getParameter(API_ENDPOINT)).thenReturn(apiEndpoint);
         when(request.getParameter(USERNAME)).thenReturn(username);
         when(request.getParameter(PASSWORD)).thenReturn(password);
-
+        
         when(connectionManager.login(apiEndpoint, username, password)).thenReturn(true);
         when(connectionManager.isLoggedIn(apiEndpoint)).thenReturn(true);
         when(connectionManager.getUsername(apiEndpoint)).thenReturn(username);
@@ -392,7 +392,7 @@ public class LoginCommandTest extends CommandTest {
         when(request.getCookies()).thenReturn(makeRequestCookies()); // will be cleared
         StringWriter logoutWriter = new StringWriter();
         when(response.getWriter()).thenReturn(new PrintWriter(logoutWriter));
-
+        
         when(connectionManager.isLoggedIn(apiEndpoint)).thenReturn(false);
         when(connectionManager.getUsername(apiEndpoint)).thenReturn(null);
 
@@ -420,7 +420,7 @@ public class LoginCommandTest extends CommandTest {
         // we don't check the username/password here
         when(request.getParameter(USERNAME)).thenReturn(username);
         when(request.getParameter(PASSWORD)).thenReturn(password);
-
+        
         when(connectionManager.login(apiEndpoint, username, password)).thenReturn(false);
         when(connectionManager.isLoggedIn(apiEndpoint)).thenReturn(false);
         when(connectionManager.getUsername(apiEndpoint)).thenReturn(null);
@@ -476,7 +476,7 @@ public class LoginCommandTest extends CommandTest {
         when(request.getParameter(API_ENDPOINT)).thenReturn(apiEndpoint);
         when(request.getParameter(USERNAME)).thenReturn(username);
         when(request.getParameter(PASSWORD)).thenReturn(password);
-
+        
         when(connectionManager.login(apiEndpoint, username, password)).thenReturn(true);
         when(connectionManager.isLoggedIn(apiEndpoint)).thenReturn(true);
         when(connectionManager.getUsername(apiEndpoint)).thenReturn(username);
@@ -488,7 +488,7 @@ public class LoginCommandTest extends CommandTest {
 
         // logout
         when(request.getParameter("logout")).thenReturn("true");
-
+        
         command.doPost(request, response);
 
         // still logged in
