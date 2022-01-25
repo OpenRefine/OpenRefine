@@ -619,7 +619,7 @@
     "core-views/what-separator": "どんな区切り文字で値を分けますか？",
     "core-views/new-col-name": "新しいカラム名",
     "core-views/split-cells": "多値のセルを分割",
-    "core-views/titlecase": "頭だけ大文字に",
+    "core-views/titlecase": "語頭だけ大文字に",
     "core-views/fill-down": "下方向の空白を埋める",
     "core-views/spec-col-name": "新しいカラム名を指定してください。",
     "core-views/search-for": "検索内容",
