@@ -50,7 +50,7 @@ You can directly go to any page within your project. You could do a number of th
    
    ![A screenshot of the Page with 50 Rows Per Page selected.](/img/page50.png)
 
-3. You can directly enter any page number(within the range) to get the Rows of that page.
+3. You can directly enter any page number(within the range) to get the Rows of that page.  Additionally, you can click inside the page number box and then use your keyboard up/down arrow keys to advance/reverse by 1 page.
 
    ![A screenshot of the page entry feature in the box.](/img/current-page.png)
 
