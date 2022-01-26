@@ -36,7 +36,7 @@ You can find, under <span class="menuItems">All</span> → <span class="menuItem
 
 ## Page navigation {#page-navigation}
 
-You can directly go to any page within your project.You could do a number of things here:
+You can directly go to any page within your project. You could do a number of things here:
 
 1. Select the the Row range (Rows per page) display.
 
