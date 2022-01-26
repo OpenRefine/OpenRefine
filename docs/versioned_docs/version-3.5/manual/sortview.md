@@ -34,7 +34,7 @@ You can find, under <span class="menuItems">All</span> → <span class="menuItem
 
 ![A screenshot of what a null value looks like.](/img/null.png)
 
-## Goto {#goto}
+## Page navigation {#page-navigation}
 
 You can directly go to any page within your project.You could do a number of things here:
 
