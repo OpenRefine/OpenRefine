@@ -40,17 +40,10 @@ You can directly go to any page within your project. You could do a number of th
 
 1. Select the Row range (Rows per page) display.
 
-   ![A screenshot of the Total rows of the Projects.](/img/total-rows.png)
 
-2. The page range changes as "Rows Per Page" changes
-
-   ![A screenshot of the Page with 10 Rows Per Page selected.](/img/page10.png)
-   
-   Here you can see that 50 rows per page has been selected which changes the total number of pages displayed.
-   
-   ![A screenshot of the Page with 50 Rows Per Page selected.](/img/page50.png)
+2. The page range changes as "Rows Per Page" changes.
+  
 
 3. You can directly enter any page number(within the range) to get the Rows of that page.  Additionally, you can click inside the page number box and then use your keyboard up/down arrow keys to advance/reverse by 1 page.
-
-   ![A screenshot of the page entry feature in the box.](/img/current-page.png)
-
+ 
+   ![A screenshot of the Page with 50 Rows Per Page selected.](/img/goto.png)
