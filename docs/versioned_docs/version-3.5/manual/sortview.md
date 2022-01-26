@@ -33,3 +33,24 @@ You can control what data you view in the grid. On each column, you will see a <
 You can find, under <span class="menuItems">All</span> → <span class="menuItems">View</span>, the option to show and hide [“null” values](exploring#data-types). A small grey “null” will appear in each applicable cell. Remember that a null cell is not the same thing as an empty cell. 
 
 ![A screenshot of what a null value looks like.](/img/null.png)
+
+## Goto {#goto}
+
+You can directly go to any page within your project.You could do a number of things here:
+
+1. Select the the Row range (Rows per page) display.
+
+   ![A screenshot of the Total rows of the Projects.](/img/total-rows.png)
+
+2. The page range changes as "Rows Per Page" changes
+
+   ![A screenshot of the Page with 10 Rows Per Page selected.](/img/page10.png)
+   
+   Here you can see that 50 rows per page is been selected which changes the total number of pages in the project.
+   
+   ![A screenshot of the Page with 50 Rows Per Page selected.](/img/page50.png)
+
+3. You can directly enter any page number(within the range) to get the Rows of that page.
+
+   ![A screenshot of the page entry feature in the box.](/img/current-page.png)
+
