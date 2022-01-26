@@ -581,10 +581,10 @@ doctrine@^3.0.0:
   dependencies:
     esutils "^2.0.2"
 
-dotenv@^14.3.0:
-  version "14.3.0"
-  resolved "https://registry.yarnpkg.com/dotenv/-/dotenv-14.3.0.tgz#40f537fe90e229d35361c66cf432903e0db49001"
-  integrity sha512-PCTcOQSXVo9FI1dB7AichJXMEvmiGCq0gnCpjfDUc8505uR+2MeLXWe+Ue4PN5UXa2isHSa78sr7L59fk+2mnQ==
+dotenv@^14.3.2:
+  version "14.3.2"
+  resolved "https://registry.yarnpkg.com/dotenv/-/dotenv-14.3.2.tgz#7c30b3a5f777c79a3429cb2db358eef6751e8369"
+  integrity sha512-vwEppIphpFdvaMCaHfCEv9IgwcxMljMw2TnAQBB4VWPvzXQLTb82jwmdOKzlEVUL3gNFT4l4TPKO+Bn+sqcrVQ==
 
 ecc-jsbn@~0.1.1:
   version "0.1.2"
