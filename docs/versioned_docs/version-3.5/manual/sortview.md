@@ -46,7 +46,7 @@ You can directly go to any page within your project. You could do a number of th
 
    ![A screenshot of the Page with 10 Rows Per Page selected.](/img/page10.png)
    
-   Here you can see that 50 rows per page is been selected which changes the total number of pages in the project.
+   Here you can see that 50 rows per page has been selected which changes the total number of pages displayed.
    
    ![A screenshot of the Page with 50 Rows Per Page selected.](/img/page50.png)
 
