@@ -143,7 +143,7 @@ public class PerformWikibaseEditsOperation extends EngineDependentOperation {
         public void save(Writer writer, Properties options)
                 throws IOException {
             if (newEntityLibrary != null) {
-                writer.write("newEntities=");
+                writer.write("newItems=");
                 ObjectMapper mapper = new ObjectMapper();
                 writer.write(mapper.writeValueAsString(newEntityLibrary) + "\n");
             }
@@ -159,7 +159,7 @@ public class PerformWikibaseEditsOperation extends EngineDependentOperation {
                 CharSequence field = line.subSequence(0, equal);
                 String value = line.substring(equal + 1);
 
-                if ("newEntities".equals(field)) {
+                if ("newItems".equals(field)) {
                     ObjectMapper mapper = new ObjectMapper();
                     library = mapper.readValue(value, NewEntityLibrary.class);
                 }
