@@ -38,7 +38,7 @@ You can find, under <span class="menuItems">All</span> → <span class="menuItem
 
 You can directly go to any page within your project. You could do a number of things here:
 
-1. Select the the Row range (Rows per page) display.
+1. Select the Row range (Rows per page) display.
 
    ![A screenshot of the Total rows of the Projects.](/img/total-rows.png)
 
