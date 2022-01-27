@@ -16,6 +16,7 @@
         <windows.package.jre.directory>${windows.jre.home}</windows.package.jre.directory>
         <windows.package.jre.outputDirectory>server/target/jre</windows.package.jre.outputDirectory>
         <windows.package.jre.prefix>with-java-</windows.package.jre.prefix>
+        <windows.package.jre.bundledAsFallback>true</windows.package.jre.bundledAsFallback>
       </properties>
     </profile>
   </profiles>

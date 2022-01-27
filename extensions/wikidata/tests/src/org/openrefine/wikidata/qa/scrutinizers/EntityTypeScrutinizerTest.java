@@ -2,8 +2,8 @@ package org.openrefine.wikidata.qa.scrutinizers;
 
 import org.openrefine.wikidata.qa.ConstraintFetcher;
 import org.openrefine.wikidata.testing.TestingData;
-import org.openrefine.wikidata.updates.ItemUpdate;
-import org.openrefine.wikidata.updates.ItemUpdateBuilder;
+import org.openrefine.wikidata.updates.TermedStatementEntityUpdate;
+import org.openrefine.wikidata.updates.TermedStatementEntityUpdateBuilder;
 import org.testng.annotations.Test;
 import org.wikidata.wdtk.datamodel.helpers.Datamodel;
 import org.wikidata.wdtk.datamodel.implementation.StatementImpl;
@@ -49,7 +49,7 @@ public class EntityTypeScrutinizerTest extends StatementScrutinizerTest {
         ValueSnak mainValueSnak = Datamodel.makeValueSnak(propertyIdValue, propertyValue);
         Statement statement = new StatementImpl("P2302", mainValueSnak, idA);
 
-        ItemUpdate update = new ItemUpdateBuilder(idA).addStatement(statement).build();
+        TermedStatementEntityUpdate update = new TermedStatementEntityUpdateBuilder(idA).addStatement(statement).build();
 
         Snak qualifierSnak = Datamodel.makeValueSnak(itemParameterPID, allowedValue);
         List<Snak> qualifierSnakList = Collections.singletonList(qualifierSnak);
@@ -72,7 +72,7 @@ public class EntityTypeScrutinizerTest extends StatementScrutinizerTest {
         ValueSnak mainValueSnak = Datamodel.makeValueSnak(propertyIdValue, propertyValue);
         Statement statement = new StatementImpl("P2302", mainValueSnak, idA);
 
-        ItemUpdate update = new ItemUpdateBuilder(idA).addStatement(statement).build();
+        TermedStatementEntityUpdate update = new TermedStatementEntityUpdateBuilder(idA).addStatement(statement).build();
 
         Snak qualifierSnak = Datamodel.makeValueSnak(itemParameterPID, itemValue);
         List<Snak> qualifierSnakList = Collections.singletonList(qualifierSnak);

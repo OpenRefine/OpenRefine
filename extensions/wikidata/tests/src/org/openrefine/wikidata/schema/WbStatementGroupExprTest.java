@@ -31,7 +31,7 @@ import org.openrefine.wikidata.testing.JacksonSerializationTest;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 import org.wikidata.wdtk.datamodel.helpers.Datamodel;
-import org.wikidata.wdtk.datamodel.interfaces.ItemIdValue;
+import org.wikidata.wdtk.datamodel.interfaces.EntityIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.StatementGroup;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -41,7 +41,7 @@ public class WbStatementGroupExprTest extends WbExpressionTest<StatementGroup> {
     private WbPropConstant propertyExpr = new WbPropConstant("P908", "myprop", "time");
     public WbStatementGroupExpr expr;
 
-    private ItemIdValue subject;
+    private EntityIdValue subject;
     public StatementGroup statementGroup;
 
     public String jsonRepresentation;

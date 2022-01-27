@@ -44,7 +44,6 @@ import java.util.Map;
 import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
-import org.powermock.api.mockito.PowerMockito;
 import org.slf4j.LoggerFactory;
 import org.testng.Assert;
 import org.testng.annotations.AfterMethod;
@@ -56,6 +55,9 @@ import com.google.refine.model.Recon;
 import com.google.refine.model.ReconCandidate;
 import com.google.refine.model.recon.ReconJob;
 import com.google.refine.model.recon.StandardReconConfig;
+
+import okhttp3.mockwebserver.MockResponse;
+import okhttp3.mockwebserver.MockWebServer;
 
 
 public class WikitextImporterTests extends ImporterTest {
@@ -95,7 +97,7 @@ public class WikitextImporterTests extends ImporterTest {
 		+ "|-\n"
 		+ "|}\n";
     	try {
-    	   prepareOptions(0, 0, true, true, null);
+    	   prepareOptions(0, 0, true, true, null, null);
     	   parse(input);
     	} catch (Exception e) {
     	   Assert.fail("Parsing failed", e);
@@ -125,7 +127,7 @@ public class WikitextImporterTests extends ImporterTest {
                 + "|-\n"
                 + "|}\n";
         try {
-           prepareOptions(0, 0, true, true, null);
+           prepareOptions(0, 0, true, true, null, null);
            parse(input);
         } catch (Exception e) {
            Assert.fail("Parsing failed", e);
@@ -137,43 +139,7 @@ public class WikitextImporterTests extends ImporterTest {
         Assert.assertEquals(project.rows.get(1).cells.get(2).value, "f");
     }
     
-    @BeforeMethod
-    public void mockReconCalls() throws Exception {
-        StandardReconConfig cfg = Mockito.spy(new StandardReconConfig(
-                "http://endpoint.com", "http://schemaspace", "http://schemaspace.com", null, true, Collections.emptyList(), 0));
-        PowerMockito.whenNew(StandardReconConfig.class).withAnyArguments().thenReturn(cfg);
-        Answer<List<Recon>> mockedResponse = new Answer<List<Recon>>() {
-            @Override
-            public List<Recon> answer(InvocationOnMock invocation) throws Throwable {
-                return fakeReconCall(invocation.getArgument(0));
-            }
-        };
-        PowerMockito.doAnswer(mockedResponse).when(cfg, "batchRecon", Mockito.any(), Mockito.anyLong());
-    }
-    
-    private List<Recon> fakeReconCall(List<ReconJob> jobs) {
-        List<Recon> result = new ArrayList<>();
-        for(ReconJob job : jobs) {
-            result.add(mockedRecons.get(job.toString()));
-        }
-        return result;
-    }
-    
-    @Test(enabled = false) // disabled due to flakiness on CI
     public void readTableWithLinks() throws Exception {
-        // This mock is used to avoid real network connection during test
-        Recon ecdvt = Mockito.mock(Recon.class);
-        Mockito.when(ecdvt.getBestCandidate()).thenReturn(
-                new ReconCandidate("Q116214", "European Centre for the Development of Vocational Training", new String[] {"Q392918"}, 100));
-        mockedRecons.put("{\"query\":\"https://de.wikipedia.org/wiki/Europäisches Zentrum für die Förderung der Berufsbildung\"}", ecdvt);
-        Recon efilwc = Mockito.mock(Recon.class);
-        Mockito.when(efilwc.getBestCandidate()).thenReturn(
-                new ReconCandidate("Q1377549", "European Foundation for the Improvement of Living and Working Conditions", new String[] {"Q392918"}, 100));
-        mockedRecons.put("{\"query\":\"https://de.wikipedia.org/wiki/Europäische Stiftung zur Verbesserung der Lebens- und Arbeitsbedingungen\"}", efilwc);
-        Recon emcdda = Mockito.mock(Recon.class);
-        Mockito.when(emcdda.getBestCandidate()).thenReturn(
-                new ReconCandidate("Q1377256", "European Monitoring Centre for Drugs and Drug Addiction", new String[] {"Q392918"}, 100));
-        mockedRecons.put("{\"query\":\"https://de.wikipedia.org/wiki/Europäische Beobachtungsstelle für Drogen und Drogensucht\"}", emcdda);
 
         // Data credits: Wikipedia contributors, https://de.wikipedia.org/w/index.php?title=Agenturen_der_Europäischen_Union&action=edit
         String input = "\n"
@@ -186,28 +152,36 @@ public class WikitextImporterTests extends ImporterTest {
             +"| [[Europäische Beobachtungsstelle für Drogen und Drogensucht]] || EMCDDA || [http://www.emcdda.europa.eu/ europa.eu]\n"
             +"|-\n"
             +"|}\n";
+        
+        try (MockWebServer server = new MockWebServer()) {
+            server.start();
+            String jsonResponse = "{\"q0\":[{\"id\":\"Q1377256\",\"name\":\"Europäische Beobachtungsstelle für Drogen und Drogensucht\"}],"
+                    + "\"q1\":[{\"id\":\"Q1377549\",\"name\":\"European Foundation for the Improvement of Living and Working Conditions\"}],"
+                    + "\"q2\":[{\"id\":\"Q1377256\",\"name\":\"European Monitoring Centre for Drugs and Drug Addiction\"}]}";
+            server.enqueue(new MockResponse().setBody(jsonResponse));
 
-        try {
-           prepareOptions(0, 0, true, true, "https://de.wikipedia.org/wiki/");
-           parse(input);
-        } catch (Exception e) {
-           Assert.fail("Parsing failed", e);
+            try {
+               prepareOptions(0, 0, true, true, "https://de.wikipedia.org/wiki/", server.url("endpoint").url().toString());
+               parse(input);
+            } catch (Exception e) {
+               Assert.fail("Parsing failed", e);
+            }
+            Assert.assertEquals(project.columnModel.columns.size(), 3);
+            Assert.assertEquals(project.rows.size(), 3);
+            Assert.assertEquals(project.rows.get(0).cells.size(), 3);
+            
+            // Reconciled cells
+            Assert.assertEquals(project.rows.get(0).cells.get(1).value, "Cedefop");
+            Assert.assertEquals(project.rows.get(0).cells.get(1).recon, null);
+            Assert.assertEquals(project.rows.get(2).cells.get(0).value, "Europäische Beobachtungsstelle für Drogen und Drogensucht");
+            Assert.assertEquals(project.rows.get(2).cells.get(0).recon.getBestCandidate().id, "Q1377256");
+            
+            // various ways to input external links
+            Assert.assertEquals(project.rows.get(1).cells.get(2).value, "http://www.eurofound.europa.eu/");
+            Assert.assertEquals(project.rows.get(2).cells.get(2).value, "http://www.emcdda.europa.eu/");
+            // Assert.assertEquals(project.rows.get(0).cells.get(2).value, "http://www.cedefop.europa.eu/");
+            // unfortunately the above does not seem to be supported by the parser (parsed as blank instead)
         }
-        Assert.assertEquals(project.columnModel.columns.size(), 3);
-        Assert.assertEquals(project.rows.size(), 3);
-        Assert.assertEquals(project.rows.get(0).cells.size(), 3);
-        
-        // Reconciled cells
-        Assert.assertEquals(project.rows.get(0).cells.get(1).value, "Cedefop");
-        Assert.assertEquals(project.rows.get(0).cells.get(1).recon, null);
-        Assert.assertEquals(project.rows.get(2).cells.get(0).value, "Europäische Beobachtungsstelle für Drogen und Drogensucht");
-        Assert.assertEquals(project.rows.get(2).cells.get(0).recon.getBestCandidate().id, "Q1377256");
-        
-        // various ways to input external links
-        Assert.assertEquals(project.rows.get(1).cells.get(2).value, "http://www.eurofound.europa.eu/");
-        Assert.assertEquals(project.rows.get(2).cells.get(2).value, "http://www.emcdda.europa.eu/");
-        // Assert.assertEquals(project.rows.get(0).cells.get(2).value, "http://www.cedefop.europa.eu/");
-        // unfortunately the above does not seem to be supported by the parser (parsed as blank instead)
     }
 
     @Test
@@ -233,7 +207,7 @@ public class WikitextImporterTests extends ImporterTest {
             +"|}\n";
 
         try {
-           prepareOptions(-1, 1, true, true, null);
+           prepareOptions(-1, 1, true, true, null, null);
            parse(input);
         } catch (Exception e) {
            Assert.fail("Parsing failed", e);
@@ -266,7 +240,7 @@ public class WikitextImporterTests extends ImporterTest {
         +"|}\n";
         
         try {
-           prepareOptions(-1, 1, true, true, null);
+           prepareOptions(-1, 1, true, true, null, null);
            parse(input);
         } catch (Exception e) {
            Assert.fail("Parsing failed", e);
@@ -292,7 +266,7 @@ public class WikitextImporterTests extends ImporterTest {
         +"|}\n";
         
         try {
-           prepareOptions(-1, 1, true, true, null);
+           prepareOptions(-1, 1, true, true, null, null);
            parse(input);
         } catch (Exception e) {
            Assert.fail("Parsing failed", e);
@@ -320,7 +294,7 @@ public class WikitextImporterTests extends ImporterTest {
         +"|}\n";
         
         try {
-           prepareOptions(-1, 1, true, true, null);
+           prepareOptions(-1, 1, true, true, null, null);
            parse(input);
         } catch (Exception e) {
            Assert.fail("Parsing failed", e);
@@ -349,7 +323,7 @@ public class WikitextImporterTests extends ImporterTest {
                 + "|-\n"
                 + "|}\n";
         try {
-           prepareOptions(0, 0, true, true, null);
+           prepareOptions(0, 0, true, true, null, null);
            parse(input);
         } catch (Exception e) {
            Assert.fail("Parsing failed", e);
@@ -369,7 +343,7 @@ public class WikitextImporterTests extends ImporterTest {
 
     private void prepareOptions(
         int limit, int headerLines, boolean blankSpanningCells,
-        boolean guessValueType, String wikiUrl) {
+        boolean guessValueType, String wikiUrl, String reconEndpoint) {
         
         whenGetIntegerOption("limit", options, limit);
         whenGetIntegerOption("headerLines", options, headerLines);
@@ -379,6 +353,6 @@ public class WikitextImporterTests extends ImporterTest {
         whenGetBooleanOption("parseReferences", options, true);
         whenGetBooleanOption("includeRawTemplates", options, true);
         whenGetStringOption("wikiUrl", options, wikiUrl);
-        whenGetStringOption("reconService", options, "https://tools.wmflabs.org/openrefine-wikidata/en/api");
+        whenGetStringOption("reconService", options, reconEndpoint);
     }
 }

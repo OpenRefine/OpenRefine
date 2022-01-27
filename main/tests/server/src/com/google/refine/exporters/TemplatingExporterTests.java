@@ -38,6 +38,7 @@ import com.google.refine.ProjectManagerStub;
 import com.google.refine.ProjectMetadata;
 import com.google.refine.RefineTest;
 import com.google.refine.browsing.Engine;
+import com.google.refine.browsing.Engine.Mode;
 import com.google.refine.model.Cell;
 import com.google.refine.model.Column;
 import com.google.refine.model.ModelException;
@@ -215,32 +216,43 @@ public class TemplatingExporterTests extends RefineTest {
     }
 
     /**
-     * Testing that curly braces are properly escaped.
-     * CS427 Issue Link: https://github.com/OpenRefine/OpenRefine/issues/3381
+     * This test is add for checking the fix for issue 3955.
+     * Issue link: https://github.com/OpenRefine/OpenRefine/issues/3955 
      */
-//     @Test
-//     public void exportTemplateWithProperEscaping() {
-//         CreateGrid(2, 2);
+    @Test
+    public void exportTemplateInRecordMode(){
+        CreateColumns(2);
+        for(int i = 0; i < 2; i++){
+            Row row = new Row(2);
+            for(int j = 0; j < 2; j++){
+                if(i == 1 && j == 0){
+                    row.cells.add(new Cell(null, null));
+                }else{
+                    row.cells.add(new Cell("row" + i + "cell" + j, null));
+                }
+            }
+            project.rows.add(row);
+        }
+        String template = rowPrefix + "${column0}" + cellSeparator + "${column1}";
+        when(options.getProperty("template")).thenReturn(template);
+        when(options.getProperty("prefix")).thenReturn(prefix);
+        when(options.getProperty("suffix")).thenReturn(suffix);
+        when(options.getProperty("separator")).thenReturn(rowSeparator);
+        Engine engine = new Engine(project);
+        engine.setMode(Mode.RecordBased);
+        project.update();
+        try {   
+            SUT.export(project, options, engine, writer);
+        } catch (IOException e) {
+            Assert.fail();
+        }
 
-//         String template = rowPrefix + "{{\"\\}\\}\"}}" + cellSeparator + "{{\"\\}\\}\"}}";
-
-//         when(options.getProperty("template")).thenReturn(template);
-//         when(options.getProperty("prefix")).thenReturn(prefix);
-//         when(options.getProperty("suffix")).thenReturn(suffix);
-//         when(options.getProperty("separator")).thenReturn(rowSeparator);
-
-//         try {
-//             SUT.export(project, options, engine, writer);
-//         } catch (IOException e) {
-//             Assert.fail();
-//         }
-//         System.out.println(writer.toString());
-//         Assert.assertEquals(writer.toString(),
-//                 prefix
-//                         + rowPrefix + "}}" + cellSeparator + "}}" + rowSeparator
-//                         + rowPrefix + "}}" + cellSeparator + "}}"
-//                         + suffix);
-//     }
+        Assert.assertEquals(writer.toString(), 
+                prefix 
+                + rowPrefix + "row0cell0" + cellSeparator + "row0cell1" + rowSeparator
+                + rowPrefix + "null" + cellSeparator + "row1cell1" 
+                + suffix);
+    }
 
     //helper methods
 

@@ -85,5 +85,11 @@
     "warnings-messages/property-found-in-qualifier/body": "U heeft {property_entity} als kwalificatie gebruikt, maar deze is daar niet voor ontworpen.",
     "warnings-messages/property-found-in-reference/title": "{property_entity} gebruikt als bron.",
     "warnings-messages/property-found-in-reference/body": "U heeft {property_entity} gebruikt als bron, maar deze is daar niet voor ontworpen.",
-    "warnings-messages/missing-mandatory-qualifiers/title": "{statement_property_entity} mist een {missing_property_entity}-kwalificatie."
+    "warnings-messages/missing-mandatory-qualifiers/title": "{statement_property_entity} mist een {missing_property_entity}-kwalificatie.",
+    "wikibase-extension/qs-file": "QuickStatements-bestand",
+    "wikibase-extension/wikibase-schema": "Wikibase schema",
+    "wikibase-extension/select-wikibase-instance": "Selecteer Wikibase instance",
+    "wikibase-extension/wikibase-edits": "Wikibase bewerkingen…",
+    "wikibase-extension/export-wikibase-schema": "Wikibase schema exporteren",
+    "wikibase-management/dialog-header": "Selecteer Wikibase instance"
 }

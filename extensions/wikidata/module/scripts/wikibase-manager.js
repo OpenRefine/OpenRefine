@@ -24,6 +24,18 @@ WikibaseManager.getSelectedWikibaseApi = function () {
   return WikibaseManager.getSelectedWikibase().mediawiki.api;
 };
 
+WikibaseManager.getSelectedWikibaseApiForEntityType = function (entityType) {
+  let manifest = WikibaseManager.getSelectedWikibase();
+  // version 1
+  if (manifest.version.split('.')[0] === '1') {
+    return manifest.wikibase.site_iri;
+  } else { // version 2 or above
+    let record = manifest.entity_types[entityType];
+    let api = record === undefined ? undefined : record.mediawiki_api;
+    return api === undefined ? manifest.mediawiki.api : api;
+  }
+};
+
 WikibaseManager.getSelectedWikibaseName = function () {
   return WikibaseManager.selected;
 };
@@ -47,13 +59,81 @@ WikibaseManager.getSelectedWikibaseEditGroupsURLSchema = function() {
 
 /**
  * Returns the default reconciliation service URL of the Wikibase,
- * such as "https://wikidata.reconci.link/${lang}/api".
+ * for a given entity type, such as "https://wikidata.reconci.link/${lang}/api".
  *
  * Notice that there is a "${lang}" variable in the URL, which should
  * be replaced with the actual language code.
  */
-WikibaseManager.getSelectedWikibaseReconEndpoint = function () {
-  return WikibaseManager.getSelectedWikibase().reconciliation.endpoint;
+WikibaseManager.getSelectedWikibaseReconEndpoint = function (entityType) {
+  let manifest = WikibaseManager.getSelectedWikibase();
+  // version 1
+  if (manifest.version.split('.')[0] === '1') {
+    if (entityType === 'item') {
+      return manifest.reconciliation.endpoint;
+    }
+    return null;
+  } else { // version 2 or above
+    let record = manifest.entity_types[entityType];
+    return record === undefined ? undefined : record.reconciliation_endpoint;
+  }
+};
+
+WikibaseManager.getReconciliationEndpoints = function (manifest) {
+  // version 1
+  if (manifest.version.split('.')[0] === '1') {
+    return [manifest.reconciliation.endpoint];
+  } else { // version 2 or above
+    return Object.keys(manifest.entity_types)
+        .map(k => manifest.entity_types[k].reconciliation_endpoint)
+        .filter(endpoint => endpoint != null);
+  }
+};
+
+
+WikibaseManager.getSelectedWikibaseSiteIriForEntityType = function (entityType) {
+  let manifest = WikibaseManager.getSelectedWikibase();
+  // version 1
+  if (manifest.version.split('.')[0] === '1') {
+    return manifest.wikibase.site_iri;
+  } else { // version 2 or above
+    let record = manifest.entity_types[entityType];
+    return record === undefined ? undefined : record.site_iri;
+  }
+};
+
+
+WikibaseManager.getSelectedWikibaseAvailableEntityTypes = function () {
+  let manifest = WikibaseManager.getSelectedWikibase();
+  // version 1
+  if (manifest.version.split('.')[0] === '1') {
+    return ['item', 'property'];
+  } else { // version 2 or above
+    return Object.keys(manifest.entity_types);
+  }
+};
+
+
+/**
+ * TODO temporary function to be removed once we have proper support
+ * for multiple entity types. This one just guesses which item-like
+ * entity type we should let the user edit, based on the manifest.
+ * - for Wikidata it returns 'item'
+ * - for Commons it returns 'mediainfo'
+ */
+WikibaseManager.getSelectedWikibaseDefaultEntityType = function () {
+  let manifest = WikibaseManager.getSelectedWikibase();
+  // version 1
+  if (manifest.version.split('.')[0] === '1') {
+    return 'item';
+  } else { // version 2 or above
+    for (let entityType of ['item', 'property', 'mediainfo']) {
+      if (manifest.entity_types[entityType] !== undefined &&
+          manifest.entity_types[entityType].site_iri === manifest.wikibase.site_iri) {
+        return entityType;
+      }
+    }
+    return 'item'; // by default, as a fallback
+  }
 };
 
 WikibaseManager.selectWikibase = function (wikibaseName) {

@@ -7,7 +7,6 @@ import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.powermock.modules.testng.PowerMockTestCase;
 import org.testng.annotations.BeforeMethod;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -22,7 +21,7 @@ import com.google.refine.importing.ImportingJob;
 import com.google.refine.importing.ImportingManager;
 import com.google.refine.model.Project;
 
-public class WikidataRefineTest extends PowerMockTestCase {
+public class WikidataRefineTest {
 	protected File workspaceDir;
     protected RefineServlet servlet;
     private List<Project> projects = new ArrayList<Project>();
