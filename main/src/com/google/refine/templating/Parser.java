@@ -59,9 +59,7 @@ public class Parser {
         int closeBrace = expression.indexOf('}', lowIndex);
         if (expression.charAt(closeBrace - 1) == '\\') {
             closeBrace = findEndBrace(expression, closeBrace + 1);
-        } else {
-           throw new ParsingException("Could not find end brace");
-        }
+        } 
         return closeBrace;
     }
 
