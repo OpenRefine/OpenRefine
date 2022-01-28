@@ -36,6 +36,6 @@ You can find, under <span class="menuItems">All</span> → <span class="menuItem
 
 ## Page navigation {#page-navigation}
 
-You can go directly to any page by changing the page number on the right-hand side. Using the up and down arrow keys in this input lets you go to the next and previous pages. You can also change the number of rows or records per page on the left-hand side of the menu bar.
+You can go directly to any page by changing the page number on the right-hand side. Using the up and down arrow keys in this input lets you go to the next and previous pages. You can also change the number of rows or records per page on the left-hand side of this view header bar.
  
 ![A screenshot of the Page Navigation Feature.](/img/goto.png)
