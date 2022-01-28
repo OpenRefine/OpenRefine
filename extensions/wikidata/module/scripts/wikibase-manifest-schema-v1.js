@@ -1,6 +1,6 @@
 const WikibaseManifestSchemaV1 = {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "$id": "TBD",
+  "$id": "https://openrefine.org/schemas/wikibase-manifest-v1.json",
   "type": "object",
   "description": "The schema validates Wikibase manifests with version 1.x. The manifest contains configurations of basic information (e.g. URL of the main page), extensions (e.g. OAuth extension) or external services (e.g. Reconciliation service) of a Wikibase",
   "properties": {

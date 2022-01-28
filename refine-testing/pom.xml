@@ -90,16 +90,6 @@
       <artifactId>mockito-core</artifactId>
       <version>${mockito.version}</version>
     </dependency>
-    <dependency>
-      <groupId>org.powermock</groupId>
-      <artifactId>powermock-module-testng</artifactId>
-      <version>${powermock.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.powermock</groupId>
-      <artifactId>powermock-api-mockito2</artifactId>
-      <version>${powermock.version}</version>
-    </dependency> 
   </dependencies>
 </project>
 

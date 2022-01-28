@@ -62,7 +62,6 @@ import org.openrefine.model.recon.ReconCandidate;
 import org.openrefine.process.Process;
 import org.openrefine.process.ProcessManager;
 import org.openrefine.util.TestUtils;
-import org.powermock.modules.testng.PowerMockTestCase;
 import org.slf4j.Logger;
 import org.testng.Assert;
 import org.testng.annotations.AfterMethod;
@@ -74,7 +73,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 /**
  * A base class containing various utilities to help testing Refine.
  */
-public class RefineTest extends PowerMockTestCase {
+public class RefineTest {
 
     protected static Properties bindings = null;
 

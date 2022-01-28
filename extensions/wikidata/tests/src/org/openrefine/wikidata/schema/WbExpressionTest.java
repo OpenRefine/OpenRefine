@@ -27,6 +27,7 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Collections;
 
 import org.openrefine.RefineTest;
 import org.openrefine.model.Cell;
@@ -85,7 +86,7 @@ public class WbExpressionTest<T> extends RefineTest {
         	{"value A","value B","value C","value D","value E"}});
         warningStore = new QAWarningStore();
         row = project.getCurrentGridState().getRow(0);
-        ctxt = new ExpressionContext("http://www.wikidata.org/entity/", server.url("/w/api.php").toString(), 0,
+        ctxt = new ExpressionContext("http://www.wikidata.org/entity/", Collections.emptyMap(), server.url("/w/api.php").toString(), 0,
         		row, project.getCurrentGridState().getColumnModel(), warningStore);
     }
 
@@ -143,7 +144,7 @@ public class WbExpressionTest<T> extends RefineTest {
     
     public void setRow(Row row) {
     	this.row = row;
-        ctxt = new ExpressionContext("http://www.wikidata.org/entity/", server.url("/w/api.php").toString(), 0,
+        ctxt = new ExpressionContext("http://www.wikidata.org/entity/", null, server.url("/w/api.php").toString(), 0,
         		row, project.getCurrentGridState().getColumnModel(), warningStore);
 
     }

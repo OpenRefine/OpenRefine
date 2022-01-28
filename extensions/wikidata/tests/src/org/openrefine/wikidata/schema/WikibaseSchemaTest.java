@@ -42,7 +42,7 @@ import org.openrefine.util.ParsingUtilities;
 import org.openrefine.util.TestUtils;
 import org.openrefine.wikidata.testing.TestingData;
 import org.openrefine.wikidata.updates.TermedStatementEntityUpdate;
-import org.openrefine.wikidata.updates.ItemUpdateBuilder;
+import org.openrefine.wikidata.updates.TermedStatementEntityUpdateBuilder;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 import org.wikidata.wdtk.datamodel.helpers.Datamodel;
@@ -125,9 +125,9 @@ public class WikibaseSchemaTest extends RefineTest {
         Engine engine = new Engine(grid, EngineConfig.ALL_ROWS);
         List<TermedStatementEntityUpdate> updates = schema.evaluate(grid, engine);
         List<TermedStatementEntityUpdate> expected = new ArrayList<>();
-        TermedStatementEntityUpdate update1 = new ItemUpdateBuilder(qid1).addStatement(statement1).build();
+        TermedStatementEntityUpdate update1 = new TermedStatementEntityUpdateBuilder(qid1).addStatement(statement1).build();
         expected.add(update1);
-        TermedStatementEntityUpdate update2 = new ItemUpdateBuilder(qid2).addStatement(statement2).build();
+        TermedStatementEntityUpdate update2 = new TermedStatementEntityUpdateBuilder(qid2).addStatement(statement2).build();
         expected.add(update2);
         assertEquals(expected, updates);
     }
@@ -162,8 +162,7 @@ public class WikibaseSchemaTest extends RefineTest {
         Engine engine = new Engine(grid, engineConfig);
         List<TermedStatementEntityUpdate> updates = schema.evaluate(grid, engine);
         List<TermedStatementEntityUpdate> expected = new ArrayList<>();
-        TermedStatementEntityUpdate update1 = new ItemUpdateBuilder(qid1).addStatement(statement1).build();
-
+        TermedStatementEntityUpdate update1 = new TermedStatementEntityUpdateBuilder(qid1).addStatement(statement1).build();
         expected.add(update1);
         assertEquals(expected, updates);
     }

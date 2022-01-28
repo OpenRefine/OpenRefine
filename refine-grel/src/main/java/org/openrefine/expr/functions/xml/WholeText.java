@@ -31,7 +31,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 */
 
-package org.openrefine.grel.functions.xml;
+package org.openrefine.expr.functions.xml;
 
 import org.jsoup.nodes.Element;
 import org.openrefine.expr.EvalError;

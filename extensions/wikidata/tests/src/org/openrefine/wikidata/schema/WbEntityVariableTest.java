@@ -89,10 +89,12 @@ public class WbEntityVariableTest extends WbVariableTest<EntityIdValue> {
 
     @Test
     public void testInvalidSpace() {
+        ReconCandidate reconCandidate = new ReconCandidate("Q123", "some item", null, 100.0);
         Recon recon = Recon.makeWikidataRecon(34989L)
         		.withIdentifierSpace("http://my.own.wikiba.se/")
         		.withCandidates(Collections.singletonList(new ReconCandidate("Q123", "some item", null, 100.0)))
-        		.withJudgment(Recon.Judgment.Matched);
+        		.withJudgment(Recon.Judgment.Matched)
+                        .withMatch(reconCandidate);
         Cell cell = new Cell("some value", recon);
         isSkipped(cell);
     }
