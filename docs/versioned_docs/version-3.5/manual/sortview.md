@@ -36,14 +36,6 @@ You can find, under <span class="menuItems">All</span> → <span class="menuItem
 
 ## Page navigation {#page-navigation}
 
-You can directly go to any page within your project. You could do a number of things here:
-
-1. Select the Row range (Rows per page) display.
-
-
-2. The page range changes as "Rows Per Page" changes.
-  
-
-3. You can directly enter any page number(within the range) to get the Rows of that page.  Additionally, you can click inside the page number box and then use your keyboard up/down arrow keys to advance/reverse by 1 page.
+You can go directly to any page by changing the page number on the right-hand side. Using the up and down arrow keys in this input lets you go to the next and previous pages. You can also change the number of rows or records per page on the left-hand side of the menu bar.
  
-   ![A screenshot of the Page with 50 Rows Per Page selected.](/img/goto.png)
+![A screenshot of the Page Navigation Feature.](/img/goto.png)
