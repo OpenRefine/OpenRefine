@@ -86,6 +86,12 @@ public class EntityCache {
         return cache.apply(id.getId());
     }
 
+    /**
+     * Get an entity cache for a given Wikibase instance.
+     * @param siteIri
+     * @param mediaWikiApiEndpoint
+     * @return
+     */
     public static EntityCache getEntityCache(String siteIri, String mediaWikiApiEndpoint) {
         EntityCache entityCache = entityCacheMap.get(siteIri);
         if (entityCache == null) {
@@ -93,6 +99,15 @@ public class EntityCache {
             entityCacheMap.put(siteIri, entityCache);
         }
         return entityCache;
+    }
+    
+    /**
+     * Provided for testability.
+     * @param siteIri
+     * @param cache
+     */
+    public static void setEntityCache(String siteIri, EntityCache cache) {
+    	entityCacheMap.put(siteIri, cache);
     }
 
     public List<EntityDocument> getMultipleDocuments(List<EntityIdValue> entityIds) throws ExecutionException {
@@ -103,4 +118,8 @@ public class EntityCache {
     public static EntityDocument getEntityDocument(String entityPrefix, String mediaWikiApiEndpoint, EntityIdValue id) {
         return getEntityCache(entityPrefix, mediaWikiApiEndpoint).get(id);
     }
+
+	public static void removeEntityCache(String siteIri) {
+		entityCacheMap.remove(siteIri);
+	}
 }

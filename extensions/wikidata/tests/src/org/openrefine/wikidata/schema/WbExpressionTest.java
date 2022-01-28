@@ -144,7 +144,7 @@ public class WbExpressionTest<T> extends RefineTest {
     
     public void setRow(Row row) {
     	this.row = row;
-        ctxt = new ExpressionContext("http://www.wikidata.org/entity/", null, server.url("/w/api.php").toString(), 0,
+        ctxt = new ExpressionContext("http://www.wikidata.org/entity/", Collections.emptyMap(), server.url("/w/api.php").toString(), 0,
         		row, project.getCurrentGridState().getColumnModel(), warningStore);
 
     }

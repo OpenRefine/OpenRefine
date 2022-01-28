@@ -74,7 +74,7 @@
     <servlet-api.version>4.0.1</servlet-api.version>
     <butterfly.version>1.2.3</butterfly.version>
     <servlet-api.version>4.0.1</servlet-api.version>
-    <slf4j.version>1.7.33</slf4j.version>
+    <slf4j.version>1.7.35</slf4j.version>
     <log4j.version>2.17.1</log4j.version>
     <jetty.version>9.4.41.v20210516</jetty.version>
     <okhttp.version>4.9.3</okhttp.version>
@@ -107,7 +107,8 @@
     <httpmime.version>4.5.13</httpmime.version>
     <owasp-encoder.version>1.2.3</owasp-encoder.version>
     <jasypt.version>1.9.3</jasypt.version>
-    <mockito.version>3.7.7</mockito.version>
+    <mockito.version>4.3.1</mockito.version>
+
     <!-- plugin versions -->
     <build-helper-maven-plugin.version>3.3.0</build-helper-maven-plugin.version>
     <maven-compiler-plugin.version>3.9.0</maven-compiler-plugin.version>
