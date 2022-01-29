@@ -22,7 +22,7 @@ If you don’t find your problem and solution there, continue on to the resource
     *   Then, if you wish, you can create a Github issue.
 
 ### If you want to contribute: {#if-you-want-to-contribute}
-*   [Help us translate the tool into more languages](../technical-reference/translating-ui), using Weblate
+*   [Help us translate the tool into more languages](../technical-reference/translating), using Weblate
 *   [We have a guide to contributing](../technical-reference/contributing) in the [Technical Reference](../technical-reference/technical-reference-index) section
 *   Contribute your feature requests in the [User forum](https://groups.google.com/g/openrefine) or as [Github issues](https://github.com/OpenRefine/OpenRefine/issues/new/choose)
 *   Join the User Forum and/or the [Developer Forum](https://groups.google.com/g/openrefine-dev)
