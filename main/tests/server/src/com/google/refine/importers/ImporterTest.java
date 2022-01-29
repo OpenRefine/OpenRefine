@@ -24,6 +24,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  ******************************************************************************/
+
 package com.google.refine.importers;
 
 import static org.mockito.Mockito.when;
@@ -52,15 +53,16 @@ import com.google.refine.model.Project;
 import com.google.refine.util.ParsingUtilities;
 
 public abstract class ImporterTest extends RefineTest {
-    //mock dependencies
+
+    // mock dependencies
     protected Project project;
     protected ProjectMetadata metadata;
     protected ImportingJob job;
     protected RefineServlet servlet;
     protected ObjectNode options;
 
-    public void setUp(){
-        //FIXME - should we try and use mock(Project.class); - seems unnecessary complexity
+    public void setUp() {
+        // FIXME - should we try and use mock(Project.class); - seems unnecessary complexity
 
         servlet = new RefineServletStub();
         ImportingManager.initialize(servlet);
@@ -69,48 +71,46 @@ public abstract class ImporterTest extends RefineTest {
         ImportingJob spiedJob = ImportingManager.createJob();
         job = Mockito.spy(spiedJob);
         when(job.getRetrievalRecord()).thenReturn(ParsingUtilities.mapper.createObjectNode());
-        
+
         options = Mockito.mock(ObjectNode.class);
     }
-    
-    public void tearDown(){
+
+    public void tearDown() {
         project = null;
         metadata = null;
-        
+
         ImportingManager.disposeJob(job.id);
         job = null;
-        
+
         options = null;
     }
-    
+
     protected void parseOneFile(ImportingParserBase parser, Reader reader) {
         List<Exception> exceptions = new ArrayList<Exception>();
         parser.parseOneFile(
-            project,
-            metadata,
-            job,
-            "file-source",
-            reader,
-            -1,
-            options,
-            exceptions
-        );
+                project,
+                metadata,
+                job,
+                "file-source",
+                reader,
+                -1,
+                options,
+                exceptions);
         assertEquals(exceptions.size(), 0);
         project.update();
     }
-    
+
     protected void parseOneFile(ImportingParserBase parser, InputStream inputStream) {
         List<Exception> exceptions = new ArrayList<Exception>();
         parser.parseOneFile(
-            project,
-            metadata,
-            job,
-            "file-source",
-            inputStream,
-            -1,
-            options,
-            exceptions
-        );
+                project,
+                metadata,
+                job,
+                "file-source",
+                inputStream,
+                -1,
+                options,
+                exceptions);
         assertEquals(exceptions.size(), 0);
         project.update();
     }
@@ -118,15 +118,14 @@ public abstract class ImporterTest extends RefineTest {
     protected List<Exception> parseOneFileAndReturnExceptions(ImportingParserBase parser, InputStream inputStream) {
         List<Exception> exceptions = new ArrayList<Exception>();
         parser.parseOneFile(
-            project,
-            metadata,
-            job,
-            "file-source",
-            inputStream,
-            -1,
-            options,
-            exceptions
-        );
+                project,
+                metadata,
+                job,
+                "file-source",
+                inputStream,
+                -1,
+                options,
+                exceptions);
         project.update();
         return exceptions;
     }
@@ -135,41 +134,39 @@ public abstract class ImporterTest extends RefineTest {
         ImportColumnGroup rootColumnGroup = new ImportColumnGroup();
         List<Exception> exceptions = new ArrayList<Exception>();
         parser.parseOneFile(
-            project,
-            metadata,
-            job,
-            "file-source",
-            reader,
-            rootColumnGroup,
-            -1,
-            options,
-            exceptions
-        );
+                project,
+                metadata,
+                job,
+                "file-source",
+                reader,
+                rootColumnGroup,
+                -1,
+                options,
+                exceptions);
         assertEquals(exceptions.size(), 0);
         XmlImportUtilities.createColumnsFromImport(project, rootColumnGroup);
         project.columnModel.update();
     }
-    
+
     protected void parseOneFile(TreeImportingParserBase parser, InputStream inputStream, ObjectNode options) {
         parseOneInputStreamAsReader(parser, inputStream, options);
     }
-    
+
     protected void parseOneInputStream(
             TreeImportingParserBase parser, InputStream inputStream, ObjectNode options) {
         ImportColumnGroup rootColumnGroup = new ImportColumnGroup();
         List<Exception> exceptions = new ArrayList<Exception>();
-        
+
         parser.parseOneFile(
-            project,
-            metadata,
-            job,
-            "file-source",
-            inputStream,
-            rootColumnGroup,
-            -1,
-            options,
-            exceptions
-        );
+                project,
+                metadata,
+                job,
+                "file-source",
+                inputStream,
+                rootColumnGroup,
+                -1,
+                options,
+                exceptions);
         postProcessProject(project, rootColumnGroup, exceptions);
     }
 
@@ -177,34 +174,33 @@ public abstract class ImporterTest extends RefineTest {
             TreeImportingParserBase parser, InputStream inputStream, ObjectNode options) {
         ImportColumnGroup rootColumnGroup = new ImportColumnGroup();
         List<Exception> exceptions = new ArrayList<Exception>();
-        
+
         Reader reader = new InputStreamReader(inputStream);
         parser.parseOneFile(
-            project,
-            metadata,
-            job,
-            "file-source",
-            reader,
-            rootColumnGroup,
-            -1,
-            options,
-            exceptions
-        );
+                project,
+                metadata,
+                job,
+                "file-source",
+                reader,
+                rootColumnGroup,
+                -1,
+                options,
+                exceptions);
         postProcessProject(project, rootColumnGroup, exceptions);
-        
+
         try {
             reader.close();
         } catch (IOException e) {
-            //ignore errors on close
+            // ignore errors on close
         }
     }
-    
+
     protected void postProcessProject(
-        Project project, ImportColumnGroup rootColumnGroup, List<Exception> exceptions) {
-        
+            Project project, ImportColumnGroup rootColumnGroup, List<Exception> exceptions) {
+
         XmlImportUtilities.createColumnsFromImport(project, rootColumnGroup);
         project.update();
-        
+
         for (Exception e : exceptions) {
             e.printStackTrace();
         }

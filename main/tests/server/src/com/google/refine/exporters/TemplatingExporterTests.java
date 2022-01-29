@@ -74,14 +74,14 @@ public class TemplatingExporterTests extends RefineTest {
         logger = LoggerFactory.getLogger(this.getClass());
     }
 
-    //dependencies
+    // dependencies
     StringWriter writer;
     ProjectMetadata projectMetadata;
     Project project;
     Engine engine;
     Properties options;
 
-    //System Under Test
+    // System Under Test
     WriterExporter SUT;
 
     @BeforeMethod
@@ -133,7 +133,6 @@ public class TemplatingExporterTests extends RefineTest {
         String template = rowPrefix + "${column0}" + cellSeparator + "${column1}";
 //      String template = "boilerplate${column0}{{4+3}}${column1}";
 
-
 //        when(options.getProperty("limit")).thenReturn("100"); // optional integer
 //        when(options.getProperty("sorting")).thenReturn(""); //optional
         when(options.getProperty("template")).thenReturn(template);
@@ -155,13 +154,14 @@ public class TemplatingExporterTests extends RefineTest {
                         + suffix);
     }
 
-
     @Test()
     public void exportTemplateWithEmptyCells() {
 
 //      when(options.getProperty("limit")).thenReturn("100"); // optional integer
 //      when(options.getProperty("sorting")).thenReturn(""); //optional
         when(options.getProperty("template")).thenReturn(rowPrefix + "${column0}" + cellSeparator + "${column1}" + cellSeparator + "${column2}");
+        when(options.getProperty("template"))
+                .thenReturn(rowPrefix + "${column0}" + cellSeparator + "${column1}" + cellSeparator + "${column2}");
         when(options.getProperty("prefix")).thenReturn(prefix);
         when(options.getProperty("suffix")).thenReturn(suffix);
         when(options.getProperty("separator")).thenReturn(rowSeparator);
@@ -192,7 +192,8 @@ public class TemplatingExporterTests extends RefineTest {
 
         when(options.getProperty("limit")).thenReturn("2"); // optional integer
 //      when(options.getProperty("sorting")).thenReturn(""); //optional
-        when(options.getProperty("template")).thenReturn(rowPrefix + "${column0}" + cellSeparator + "${column1}" + cellSeparator + "${column2}");
+        when(options.getProperty("template"))
+                .thenReturn(rowPrefix + "${column0}" + cellSeparator + "${column1}" + cellSeparator + "${column2}");
         when(options.getProperty("prefix")).thenReturn(prefix);
         when(options.getProperty("suffix")).thenReturn(suffix);
         when(options.getProperty("separator")).thenReturn(rowSeparator);
@@ -216,18 +217,18 @@ public class TemplatingExporterTests extends RefineTest {
     }
 
     /**
-     * This test is add for checking the fix for issue 3955.
-     * Issue link: https://github.com/OpenRefine/OpenRefine/issues/3955 
+     * This test is add for checking the fix for issue 3955. Issue link:
+     * https://github.com/OpenRefine/OpenRefine/issues/3955
      */
     @Test
-    public void exportTemplateInRecordMode(){
+    public void exportTemplateInRecordMode() {
         CreateColumns(2);
-        for(int i = 0; i < 2; i++){
+        for (int i = 0; i < 2; i++) {
             Row row = new Row(2);
-            for(int j = 0; j < 2; j++){
-                if(i == 1 && j == 0){
+            for (int j = 0; j < 2; j++) {
+                if (i == 1 && j == 0) {
                     row.cells.add(new Cell(null, null));
-                }else{
+                } else {
                     row.cells.add(new Cell("row" + i + "cell" + j, null));
                 }
             }
@@ -241,20 +242,20 @@ public class TemplatingExporterTests extends RefineTest {
         Engine engine = new Engine(project);
         engine.setMode(Mode.RecordBased);
         project.update();
-        try {   
+        try {
             SUT.export(project, options, engine, writer);
         } catch (IOException e) {
             Assert.fail();
         }
 
-        Assert.assertEquals(writer.toString(), 
-                prefix 
-                + rowPrefix + "row0cell0" + cellSeparator + "row0cell1" + rowSeparator
-                + rowPrefix + "null" + cellSeparator + "row1cell1" 
-                + suffix);
+        Assert.assertEquals(writer.toString(),
+                prefix
+                        + rowPrefix + "row0cell0" + cellSeparator + "row0cell1" + rowSeparator
+                        + rowPrefix + "null" + cellSeparator + "row1cell1"
+                        + suffix);
     }
 
-    //helper methods
+    // helper methods
 
     protected void CreateColumns(int noOfColumns) {
         for (int i = 0; i < noOfColumns; i++) {

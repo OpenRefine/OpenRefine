@@ -24,6 +24,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  ******************************************************************************/
+
 package com.google.refine.expr.functions.strings;
 
 import org.testng.Assert;
@@ -34,21 +35,21 @@ import com.google.refine.expr.EvalError;
 import com.google.refine.util.TestUtils;
 
 public class ToTitlecaseTests extends RefineTest {
+
     @Test
     public void testToTitlecaseInvalidParams() {
         Assert.assertTrue(invoke("toTitlecase") instanceof EvalError);
-        Assert.assertTrue(invoke("toTitlecase", "one","two","three") instanceof EvalError);
+        Assert.assertTrue(invoke("toTitlecase", "one", "two", "three") instanceof EvalError);
     }
 
     @Test
     public void testToTitlecase() {
-        Assert.assertEquals((String)(invoke("toTitlecase", "one")),"One");
-        Assert.assertEquals((String)(invoke("toTitlecase", "ONE")),"One");
-        Assert.assertEquals((String)(invoke("toTitlecase", "one two three")),"One Two Three");
-        Assert.assertEquals((String)(invoke("toTitlecase", "C.R. SANDIDGE WINES, INC.")),"C.R. Sandidge Wines, Inc.");
-        Assert.assertEquals((String)(invoke("toTitlecase", "C.R. SANDIDGE WINES, INC.",",. ")),"C.R. Sandidge Wines, Inc.");
-        Assert.assertEquals((String)(invoke("toTitlecase", "one-two-three","-")),"One-Two-Three");
+        Assert.assertEquals((String) (invoke("toTitlecase", "one")), "One");
+        Assert.assertEquals((String) (invoke("toTitlecase", "ONE")), "One");
+        Assert.assertEquals((String) (invoke("toTitlecase", "one two three")), "One Two Three");
+        Assert.assertEquals((String) (invoke("toTitlecase", "C.R. SANDIDGE WINES, INC.")), "C.R. Sandidge Wines, Inc.");
+        Assert.assertEquals((String) (invoke("toTitlecase", "C.R. SANDIDGE WINES, INC.", ",. ")), "C.R. Sandidge Wines, Inc.");
+        Assert.assertEquals((String) (invoke("toTitlecase", "one-two-three", "-")), "One-Two-Three");
     }
 
 }
-

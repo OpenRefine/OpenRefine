@@ -41,45 +41,44 @@ import org.testng.annotations.Test;
 import com.google.refine.RefineTest;
 import com.google.refine.util.TestUtils;
 
-
 public class FingerprintTests extends RefineTest {
 
     static Properties bindings;
-    
+
     private static final String[][] testStrings = {
-        {"schön","schon"},  
+            { "schön", "schon" },
 //        {"Ære Øre Åre", "are aere ore"},
 //        {"Straße","strasse"},
-        {"\tABC \t DEF ","abc def"}, // test leading and trailing whitespace
-        {"bbb\taaa","aaa bbb"},
-        {"müller","muller"},
+            { "\tABC \t DEF ", "abc def" }, // test leading and trailing whitespace
+            { "bbb\taaa", "aaa bbb" },
+            { "müller", "muller" },
 //      {"müller","mueller"}, // another possible interpretation
 //        {"ﬁﬂĳ","fiflij"},
 //        {"ﭏ","אל"},
 //        {"œ ӕ","ae oe"},
-        {"",""},
+            { "", "" },
     };
-    
+
     @Override
     @BeforeTest
     public void init() {
         logger = LoggerFactory.getLogger(this.getClass());
     }
-    
+
     @Test
-    public void testInvalidParams() {        
+    public void testInvalidParams() {
         Assert.assertNull(invoke("fingerprint"));
-        Assert.assertNull(invoke("fingerprint", "one","two","three"));
+        Assert.assertNull(invoke("fingerprint", "one", "two", "three"));
         Assert.assertNull(invoke("fingerprint", Long.getLong("1")));
     }
-    
+
     @Test
     public void testNormalize() {
         for (String[] ss : testStrings) {
-            Assert.assertEquals(ss.length,2,"Invalid test"); // Not a valid test
-            Assert.assertEquals((String)(invoke("fingerprint", ss[0])),ss[1],
+            Assert.assertEquals(ss.length, 2, "Invalid test"); // Not a valid test
+            Assert.assertEquals((String) (invoke("fingerprint", ss[0])), ss[1],
                     "Fingerprint for string: " + ss[0] + " failed");
         }
     }
-    
+
 }

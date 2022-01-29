@@ -1,3 +1,4 @@
+
 package com.google.refine.commands.expr;
 
 import static org.mockito.Mockito.when;
@@ -18,32 +19,32 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 public class LogExpressionCommandTests extends CommandTestBase {
-	
-	PreferenceStore prefStore;
-	
-	@BeforeMethod
-	public void setUpCommand() {
-		command = new LogExpressionCommand();
-		ProjectManager.singleton = mock(ProjectManager.class);
-		prefStore = new PreferenceStore();
-		when(ProjectManager.singleton.getPreferenceStore()).thenReturn(prefStore);
-	}
-	
-	@Test
-	public void testCSRFProtection() throws ServletException, IOException {
-		command.doPost(request, response);
-		assertCSRFCheckFailed();
-	}
-	
-	@Test
-	public void testNullExpressions() throws ServletException, IOException {
-		prefStore.put("scripting.expressions", null);
-		when(request.getParameter("csrf_token")).thenReturn(Command.csrfFactory.getFreshToken());
-		when(request.getParameter("expression")).thenReturn("grel:value+'a'");
-		
-		command.doPost(request, response);
-		
-		TopList topList = (TopList)prefStore.get("scripting.expressions");
-		Assert.assertEquals(topList.getList(), Collections.singletonList("grel:value+'a'"));
-	}
+
+    PreferenceStore prefStore;
+
+    @BeforeMethod
+    public void setUpCommand() {
+        command = new LogExpressionCommand();
+        ProjectManager.singleton = mock(ProjectManager.class);
+        prefStore = new PreferenceStore();
+        when(ProjectManager.singleton.getPreferenceStore()).thenReturn(prefStore);
+    }
+
+    @Test
+    public void testCSRFProtection() throws ServletException, IOException {
+        command.doPost(request, response);
+        assertCSRFCheckFailed();
+    }
+
+    @Test
+    public void testNullExpressions() throws ServletException, IOException {
+        prefStore.put("scripting.expressions", null);
+        when(request.getParameter("csrf_token")).thenReturn(Command.csrfFactory.getFreshToken());
+        when(request.getParameter("expression")).thenReturn("grel:value+'a'");
+
+        command.doPost(request, response);
+
+        TopList topList = (TopList) prefStore.get("scripting.expressions");
+        Assert.assertEquals(topList.getList(), Collections.singletonList("grel:value+'a'"));
+    }
 }

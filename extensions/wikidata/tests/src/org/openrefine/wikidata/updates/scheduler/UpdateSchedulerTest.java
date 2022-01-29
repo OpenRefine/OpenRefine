@@ -21,6 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  ******************************************************************************/
+
 package org.openrefine.wikidata.updates.scheduler;
 
 import static org.testng.Assert.assertEquals;
@@ -95,9 +96,11 @@ public abstract class UpdateSchedulerTest {
     @Test
     public void testMergeNew()
             throws ImpossibleSchedulingException {
-        TermedStatementEntityUpdate update1 = new TermedStatementEntityUpdateBuilder(newIdA).addLabel(Datamodel.makeMonolingualTextValue("hello", "fr"), true)
+        TermedStatementEntityUpdate update1 = new TermedStatementEntityUpdateBuilder(newIdA)
+                .addLabel(Datamodel.makeMonolingualTextValue("hello", "fr"), true)
                 .addStatement(sNewAtoB).build();
-        TermedStatementEntityUpdate update2 = new TermedStatementEntityUpdateBuilder(newIdA).addLabel(Datamodel.makeMonolingualTextValue("hello", "fr"), true)
+        TermedStatementEntityUpdate update2 = new TermedStatementEntityUpdateBuilder(newIdA)
+                .addLabel(Datamodel.makeMonolingualTextValue("hello", "fr"), true)
                 .build();
         TermedStatementEntityUpdate merged = update1.merge(update2);
         assertEquals(Collections.singletonList(merged), schedule(update1, update2));

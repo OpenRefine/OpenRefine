@@ -1,3 +1,4 @@
+
 package com.google.refine.commands;
 
 import java.io.IOException;
@@ -13,26 +14,25 @@ import com.google.refine.model.AbstractOperation;
 import com.google.refine.model.Project;
 
 public class EngineDependentCommandTests extends CommandTestBase {
-	
-	private static class EngineDependentCommandStub extends EngineDependentCommand {
 
-		@Override
-		protected AbstractOperation createOperation(Project project, HttpServletRequest request,
-				EngineConfig engineConfig) throws Exception {
-			return null;
-		}
-		
-	}
-	
-	@BeforeMethod
-	public void setUpCommand() {
-		command = new EngineDependentCommandStub();
-	}
-	
-	@Test
-	public void testCSRFProtection() throws ServletException, IOException {
-		command.doPost(request, response);
-		assertCSRFCheckFailed();
-	}
+    private static class EngineDependentCommandStub extends EngineDependentCommand {
+
+        @Override
+        protected AbstractOperation createOperation(Project project, HttpServletRequest request,
+                EngineConfig engineConfig) throws Exception {
+            return null;
+        }
+
+    }
+
+    @BeforeMethod
+    public void setUpCommand() {
+        command = new EngineDependentCommandStub();
+    }
+
+    @Test
+    public void testCSRFProtection() throws ServletException, IOException {
+        command.doPost(request, response);
+        assertCSRFCheckFailed();
+    }
 }
-

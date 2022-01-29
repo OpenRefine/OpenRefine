@@ -24,6 +24,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  ******************************************************************************/
+
 package com.google.refine.grel.controls;
 
 import org.testng.annotations.Test;
@@ -31,10 +32,10 @@ import org.testng.annotations.Test;
 import com.google.refine.util.TestUtils;
 
 public class FilterTests {
+
     @Test
     public void serializeFilter() {
         String json = "{\"description\":\"Evaluates expression a to an array. Then for each array element, binds its value to variable name v, evaluates expression test which should return a boolean. If the boolean is true, pushes v onto the result array.\",\"params\":\"expression a, variable v, expression test\",\"returns\":\"array\"}";
         TestUtils.isSerializedTo(new Filter(), json);
     }
 }
-

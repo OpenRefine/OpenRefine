@@ -24,6 +24,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  ******************************************************************************/
+
 package com.google.refine.expr.functions.date;
 
 import java.time.OffsetDateTime;
@@ -37,10 +38,10 @@ import org.testng.annotations.Test;
 import com.google.refine.RefineTest;
 import com.google.refine.util.TestUtils;
 
-
 public class NowTests extends RefineTest {
-    private  DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd-HH:mm:ss.SSSSSSSSSX");
-    
+
+    private DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd-HH:mm:ss.SSSSSSSSSX");
+
     @Override
     @BeforeTest
     public void init() {
@@ -48,13 +49,13 @@ public class NowTests extends RefineTest {
     }
 
     @Test
-    public void testNow() {        
+    public void testNow() {
         // 2018-4-30 23:55:44
         OffsetDateTime source = OffsetDateTime.parse("20180430-23:55:44.000789000Z",
                 formatter);
-        
+
         Assert.assertTrue(invoke("now") instanceof OffsetDateTime);
-        Assert.assertTrue(((OffsetDateTime)invoke("now")).isAfter(source));
+        Assert.assertTrue(((OffsetDateTime) invoke("now")).isAfter(source));
     }
-   
+
 }

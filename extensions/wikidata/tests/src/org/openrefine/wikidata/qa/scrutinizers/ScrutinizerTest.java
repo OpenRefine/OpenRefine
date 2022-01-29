@@ -21,6 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  ******************************************************************************/
+
 package org.openrefine.wikidata.qa.scrutinizers;
 
 import org.openrefine.wikidata.manifests.Manifest;
@@ -84,8 +85,8 @@ public abstract class ScrutinizerTest {
 
     public void scrutinize(TermedStatementEntityUpdate... updates) {
         scrutinizer.batchIsBeginning();
-        for(TermedStatementEntityUpdate update : Arrays.asList(updates)) {
-            if(!update.isNull()) {
+        for (TermedStatementEntityUpdate update : Arrays.asList(updates)) {
+            if (!update.isNull()) {
                 scrutinizer.scrutinize(update);
             }
         }
@@ -114,14 +115,15 @@ public abstract class ScrutinizerTest {
 
     public List<Statement> constraintParameterStatementList(ItemIdValue itemIdValue, List<SnakGroup> listSnakGroup) {
         PropertyIdValue propertyIdValue = Datamodel.makeWikidataPropertyIdValue("P2302");
-        Snak snakValue = Datamodel.makeValueSnak(propertyIdValue,itemIdValue);
+        Snak snakValue = Datamodel.makeValueSnak(propertyIdValue, itemIdValue);
 
         Claim claim = Datamodel.makeClaim(itemIdValue, snakValue, listSnakGroup);
 
         Reference reference = Datamodel.makeReference(listSnakGroup);
         List<Reference> referenceList = Collections.singletonList(reference);
 
-        Statement statement = Datamodel.makeStatement(claim, referenceList, StatementRank.NORMAL, "P2302$77BD7FE4-C051-4776-855C-543F0CE697D0");
+        Statement statement = Datamodel.makeStatement(claim, referenceList, StatementRank.NORMAL,
+                "P2302$77BD7FE4-C051-4776-855C-543F0CE697D0");
         List<Statement> statements = Collections.singletonList(statement);
 
         return statements;

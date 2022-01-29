@@ -21,6 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  ******************************************************************************/
+
 package org.openrefine.wikidata.schema;
 
 import static org.testng.Assert.assertEquals;
@@ -125,11 +126,11 @@ public class WikibaseSchemaTest extends WikidataRefineTest {
         expected.add(update2);
         assertEquals(expected, updates);
     }
-    
+
     @Test(expectedExceptions = IOException.class)
     public void testDeserializeEmpty() throws IOException {
         String schemaJson = "{\"itemDocuments\":[{\"statementGroups\":[{\"statements\":[]}],"
-                +"\"nameDescs\":[]}],\"siteIri\":\"http://www.wikidata.org/entity/\"}";
+                + "\"nameDescs\":[]}],\"siteIri\":\"http://www.wikidata.org/entity/\"}";
         WikibaseSchema.reconstruct(schemaJson);
     }
 
@@ -140,7 +141,7 @@ public class WikibaseSchemaTest extends WikidataRefineTest {
         WikibaseSchema schema = WikibaseSchema.reconstruct(serialized);
         Engine engine = new Engine(project);
         EngineConfig engineConfig = EngineConfig.reconstruct("{\n"
-                + "      \"mode\": \"row-based\",\n" 
+                + "      \"mode\": \"row-based\",\n"
                 + "      \"facets\": [\n"
                 + "        {\n"
                 + "          \"mode\": \"text\",\n"
