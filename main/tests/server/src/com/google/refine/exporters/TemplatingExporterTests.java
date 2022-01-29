@@ -159,7 +159,8 @@ public class TemplatingExporterTests extends RefineTest {
 
 //      when(options.getProperty("limit")).thenReturn("100"); // optional integer
 //      when(options.getProperty("sorting")).thenReturn(""); //optional
-        when(options.getProperty("template")).thenReturn(rowPrefix + "${column0}" + cellSeparator + "${column1}" + cellSeparator + "${column2}");
+        when(options.getProperty("template"))
+                .thenReturn(rowPrefix + "${column0}" + cellSeparator + "${column1}" + cellSeparator + "${column2}");
         when(options.getProperty("template"))
                 .thenReturn(rowPrefix + "${column0}" + cellSeparator + "${column1}" + cellSeparator + "${column2}");
         when(options.getProperty("prefix")).thenReturn(prefix);
