@@ -64,7 +64,7 @@ jobs:
         distribution: 'adopt'
         java-version: ${{ matrix.java }}
 
-    - name: Check Java linting
+    - name: Check Java linting
       id: java_linting
       run: |
         mvn formatter:validate
