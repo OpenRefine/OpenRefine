@@ -24,6 +24,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  ******************************************************************************/
+
 package com.google.refine.preference;
 
 import java.io.IOException;
@@ -37,6 +38,7 @@ import com.google.refine.util.ParsingUtilities;
 import com.google.refine.util.TestUtils;
 
 public class TopListTests {
+
     @Test
     public void serializeTopList() throws JsonParseException, JsonMappingException, IOException {
         String json = "{"
@@ -54,8 +56,8 @@ public class TopListTests {
         TestUtils.isSerializedTo(
                 prefValue,
                 json);
-        
-        String mapJson = "{\"key\":"+json+"}";
-        TestUtils.isSerializedTo(Collections.singletonMap("key",prefValue), mapJson);
+
+        String mapJson = "{\"key\":" + json + "}";
+        TestUtils.isSerializedTo(Collections.singletonMap("key", prefValue), mapJson);
     }
 }

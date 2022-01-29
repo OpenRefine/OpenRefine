@@ -30,7 +30,7 @@ THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
  */
- 
+
 package com.google.refine.grel;
 
 import static org.testng.Assert.assertEquals;
@@ -59,8 +59,8 @@ import com.google.refine.model.ModelException;
 import com.google.refine.model.Project;
 import com.google.refine.model.Row;
 
-
 public class FunctionTests extends RefineTest {
+
     Project project;
     Engine engine;
 
@@ -69,7 +69,7 @@ public class FunctionTests extends RefineTest {
     public void init() {
         logger = LoggerFactory.getLogger(this.getClass());
     }
-    
+
     @BeforeMethod
     public void SetUp() throws IOException, ModelException {
         project = createProjectWithColumns("FunctionTests", "Column A");
@@ -79,11 +79,10 @@ public class FunctionTests extends RefineTest {
         // Five rows of a's and five of 1s
         for (int i = 0; i < 10; i++) {
             Row row = new Row(1);
-            row.setCell(0, new Cell(i < 5 ? "a":new Integer(1), null));
+            row.setCell(0, new Cell(i < 5 ? "a" : new Integer(1), null));
             project.rows.add(row);
         }
     }
-
 
     @AfterMethod
     public void TearDown() {
@@ -91,17 +90,17 @@ public class FunctionTests extends RefineTest {
     }
 
     @Test
-    public void testInvalidParams() {        
+    public void testInvalidParams() {
         Assert.assertTrue(invoke("facetCount") instanceof EvalError);
-        Assert.assertTrue(invoke("facetCount", "one","two","three") instanceof EvalError);
-        Assert.assertTrue(invoke("facetCount", "one","bad(","Column A") instanceof EvalError);
+        Assert.assertTrue(invoke("facetCount", "one", "two", "three") instanceof EvalError);
+        Assert.assertTrue(invoke("facetCount", "one", "bad(", "Column A") instanceof EvalError);
     }
 
     @Test
-    public void testFacetCount() {        
-        Assert.assertEquals(invoke("facetCount", "a", "value", "Column A"),Integer.valueOf(5));
-        Assert.assertEquals(invoke("facetCount", new Integer(1), "value", "Column A"),Integer.valueOf(5));
-        Assert.assertEquals(invoke("facetCount", new Integer(2), "value+1", "Column A"),Integer.valueOf(5));
+    public void testFacetCount() {
+        Assert.assertEquals(invoke("facetCount", "a", "value", "Column A"), Integer.valueOf(5));
+        Assert.assertEquals(invoke("facetCount", new Integer(1), "value", "Column A"), Integer.valueOf(5));
+        Assert.assertEquals(invoke("facetCount", new Integer(2), "value+1", "Column A"), Integer.valueOf(5));
     }
 
     @Test
@@ -111,8 +110,7 @@ public class FunctionTests extends RefineTest {
         Set<String> returnsNull = new HashSet<>(Arrays.asList("chomp", "contains", "escape", "unescape", "exp",
                 "fingerprint", "get", "parseJson", "partition", "pow", "rpartition",
                 "slice", "substring", // synonyms for Slice
-                "unicode", "unicodeType"
-                ));
+                "unicode", "unicodeType"));
         Set<String> returnsFalse = new HashSet<>(Arrays.asList("hasField"));
 
         for (Entry<String, Function> entry : ControlFunctionRegistry.getFunctionMapping()) {
@@ -134,16 +132,15 @@ public class FunctionTests extends RefineTest {
         Set<String> returnsNull = new HashSet<>(Arrays.asList("chomp", "contains", "coalesce", "escape", "unescape",
                 "exp", "fingerprint", "get", "now", "parseJson", "partition", "pow", "rpartition",
                 "slice", "substring", // synonyms for Slice
-                "unicode", "unicodeType"
-                ));
+                "unicode", "unicodeType"));
         Set<String> returnsFalse = new HashSet<>(Arrays.asList("hasField"));
         Set<String> exempt = new HashSet<>(Arrays.asList(
                 "jsonize" // returns literal string "null"
-                ));
+        ));
         for (Entry<String, Function> entry : ControlFunctionRegistry.getFunctionMapping()) {
             Function func = entry.getValue();
             // No functions take 8 arguments, so they should all error
-            Object result = func.call(bindings, new Object[] {null, null, null, null, null, null, null, null});
+            Object result = func.call(bindings, new Object[] { null, null, null, null, null, null, null, null });
             if (returnsNull.contains(ControlFunctionRegistry.getFunctionName(func))) {
                 assertNull(result, ControlFunctionRegistry.getFunctionName(func) + " didn't return null on 8 args");
             } else if (returnsFalse.contains(ControlFunctionRegistry.getFunctionName(func))) {

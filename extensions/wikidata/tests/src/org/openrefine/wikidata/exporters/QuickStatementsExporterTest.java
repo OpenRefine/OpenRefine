@@ -21,6 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  ******************************************************************************/
+
 package org.openrefine.wikidata.exporters;
 
 import static org.testng.Assert.assertEquals;
@@ -86,10 +87,10 @@ public class QuickStatementsExporterTest extends WikidataRefineTest {
     @Test
     public void testNameDesc()
             throws IOException {
-    	/**
-    	 * Adding labels and description without overriding is not supported by QS, so
-    	 * we fall back on adding them with overriding.
-    	 */
+        /**
+         * Adding labels and description without overriding is not supported by QS, so we fall back on adding them with
+         * overriding.
+         */
         TermedStatementEntityUpdate update = new TermedStatementEntityUpdateBuilder(qid1)
                 .addLabel(Datamodel.makeMonolingualTextValue("some label", "en"), true)
                 .addDescription(Datamodel.makeMonolingualTextValue("some description", "en"), true)
@@ -97,7 +98,7 @@ public class QuickStatementsExporterTest extends WikidataRefineTest {
 
         assertEquals("Q1377\tLen\t\"some label\"\n" + "Q1377\tDen\t\"some description\"\n", export(update));
     }
-    
+
     @Test
     public void testOptionalNameDesc()
             throws IOException {
@@ -113,7 +114,8 @@ public class QuickStatementsExporterTest extends WikidataRefineTest {
     @Test
     public void testDeleteStatement()
             throws IOException {
-        TermedStatementEntityUpdate update = new TermedStatementEntityUpdateBuilder(qid1).deleteStatement(TestingData.generateStatement(qid1, qid2))
+        TermedStatementEntityUpdate update = new TermedStatementEntityUpdateBuilder(qid1)
+                .deleteStatement(TestingData.generateStatement(qid1, qid2))
                 .build();
 
         assertEquals("- Q1377\tP38\tQ865528\n", export(update));
@@ -133,7 +135,7 @@ public class QuickStatementsExporterTest extends WikidataRefineTest {
 
         assertEquals("Q1377\tP38\tQ865528\tP38\tQ1377\n", export(update));
     }
-    
+
     @Test
     public void testSomeValue()
             throws IOException {
@@ -145,7 +147,7 @@ public class QuickStatementsExporterTest extends WikidataRefineTest {
 
         assertEquals("Q1377\tP123\tsomevalue\n", export(update));
     }
-    
+
     @Test
     public void testNoValue()
             throws IOException {
@@ -161,8 +163,7 @@ public class QuickStatementsExporterTest extends WikidataRefineTest {
     /**
      * issue #2320
      *
-     * A statement with different references should be duplicated,
-     * but each with a different reference.
+     * A statement with different references should be duplicated, but each with a different reference.
      */
     @Test
     public void testReferences()

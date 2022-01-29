@@ -1,3 +1,4 @@
+
 package org.openrefine.wikidata.qa.scrutinizers;
 
 import org.openrefine.wikidata.qa.ConstraintFetcher;
@@ -35,13 +36,11 @@ public class EntityTypeScrutinizerTest extends StatementScrutinizerTest {
     public static Value itemValue = Datamodel.makeWikidataItemIdValue("Q29934218");
     public static Value allowedValue = Datamodel.makeWikidataItemIdValue(WIKIBASE_ITEM_QID);
 
-
-
     @Override
     public EditScrutinizer getScrutinizer() {
         return new EntityTypeScrutinizer();
     }
-    
+
     @Test
     public void testAllowed() {
         ItemIdValue idA = TestingData.existingId;
@@ -58,7 +57,7 @@ public class EntityTypeScrutinizerTest extends StatementScrutinizerTest {
         List<Statement> constraintDefinitions = constraintParameterStatementList(entityIdValue, constraintQualifiers);
 
         ConstraintFetcher fetcher = mock(ConstraintFetcher.class);
-        when(fetcher.getConstraintsByType(propertyIdValue,ALLOWED_ENTITY_TYPES_QID)).thenReturn(constraintDefinitions);
+        when(fetcher.getConstraintsByType(propertyIdValue, ALLOWED_ENTITY_TYPES_QID)).thenReturn(constraintDefinitions);
         setFetcher(fetcher);
 
         scrutinize(update);
@@ -81,7 +80,7 @@ public class EntityTypeScrutinizerTest extends StatementScrutinizerTest {
         List<Statement> constraintDefinitions = constraintParameterStatementList(entityIdValue, constraintQualifiers);
 
         ConstraintFetcher fetcher = mock(ConstraintFetcher.class);
-        when(fetcher.getConstraintsByType(propertyIdValue,ALLOWED_ENTITY_TYPES_QID)).thenReturn(constraintDefinitions);
+        when(fetcher.getConstraintsByType(propertyIdValue, ALLOWED_ENTITY_TYPES_QID)).thenReturn(constraintDefinitions);
         setFetcher(fetcher);
 
         scrutinize(update);

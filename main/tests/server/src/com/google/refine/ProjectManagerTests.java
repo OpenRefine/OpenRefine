@@ -57,6 +57,7 @@ import com.google.refine.model.ProjectStub;
 import com.google.refine.process.ProcessManager;
 
 public class ProjectManagerTests extends RefineTest {
+
     ProjectManagerStub pm;
     ProjectManagerStub SUT;
     Project project;
@@ -70,7 +71,7 @@ public class ProjectManagerTests extends RefineTest {
     }
 
     @BeforeMethod
-    public void SetUp(){
+    public void SetUp() {
         pm = new ProjectManagerStub();
         SUT = spy(pm);
         project = mock(Project.class);
@@ -81,7 +82,7 @@ public class ProjectManagerTests extends RefineTest {
     }
 
     @AfterMethod
-    public void TearDown(){
+    public void TearDown() {
         metadata = null;
         project = null;
         SUT = null;
@@ -89,28 +90,28 @@ public class ProjectManagerTests extends RefineTest {
     }
 
     @Test
-    public void canRegisterProject(){
+    public void canRegisterProject() {
 
         SUT.registerProject(project, metadata);
 
-        AssertProjectRegistered();      
+        AssertProjectRegistered();
         verify(metadata, times(1)).getTags();
-        
+
         verifyNoMoreInteractions(project);
         verifyNoMoreInteractions(metadata);
     }
 
-    //TODO test registerProject in race condition
+    // TODO test registerProject in race condition
 
     @Test
-    public void canEnsureProjectSave(){
+    public void canEnsureProjectSave() {
         whenGetSaveTimes(project, metadata);
         registerProject();
 
-        //run test
+        // run test
         SUT.ensureProjectSaved(project.id);
 
-        //assert and verify
+        // assert and verify
         AssertProjectRegistered();
         try {
             verify(SUT, times(1)).saveMetadata(metadata, project.id);
@@ -120,26 +121,26 @@ public class ProjectManagerTests extends RefineTest {
         this.verifySaveTimeCompared(1);
         verify(SUT, times(1)).saveProject(project);
         verify(metadata, times(1)).getTags();
-        
-        //ensure end
+
+        // ensure end
         verifyNoMoreInteractions(project);
         verifyNoMoreInteractions(metadata);
     }
 
-    //TODO test ensureProjectSave in race condition
+    // TODO test ensureProjectSave in race condition
 
     @Test
-    public void canSaveAllModified(){
-        whenGetSaveTimes(project, metadata); //5 minute difference
+    public void canSaveAllModified() {
+        whenGetSaveTimes(project, metadata); // 5 minute difference
         registerProject(project, metadata);
 
-        //add a second project to the cache
+        // add a second project to the cache
         Project project2 = spy(new ProjectStub(2));
         ProjectMetadata metadata2 = mock(ProjectMetadata.class);
-        whenGetSaveTimes(project2, metadata2, 10); //not modified since the last save but within 30 seconds flush limit
+        whenGetSaveTimes(project2, metadata2, 10); // not modified since the last save but within 30 seconds flush limit
         registerProject(project2, metadata2);
 
-        //check that the two projects are not the same
+        // check that the two projects are not the same
         Assert.assertFalse(project.id == project2.id);
 
         SUT.save(true);
@@ -152,9 +153,9 @@ public class ProjectManagerTests extends RefineTest {
     }
 
     @Test
-    public void canFlushFromCache(){
+    public void canFlushFromCache() {
 
-        whenGetSaveTimes(project, metadata, -10 );//already saved (10 seconds before)
+        whenGetSaveTimes(project, metadata, -10);// already saved (10 seconds before)
         registerProject(project, metadata);
         Assert.assertSame(SUT.getProject(0), project);
 
@@ -174,7 +175,7 @@ public class ProjectManagerTests extends RefineTest {
     }
 
     @Test
-    public void cannotSaveWhenBusy(){
+    public void cannotSaveWhenBusy() {
         registerProject();
         SUT.setBusy(true);
 
@@ -187,65 +188,69 @@ public class ProjectManagerTests extends RefineTest {
         verifyNoMoreInteractions(metadata);
     }
 
-    //TODO test canSaveAllModifiedWithRaceCondition
+    // TODO test canSaveAllModifiedWithRaceCondition
 
     @Test
-    public void canSaveSomeModified(){
+    public void canSaveSomeModified() {
         registerProject();
-        whenGetSaveTimes(project, metadata );
+        whenGetSaveTimes(project, metadata);
 
-        SUT.save(false); //not busy
+        SUT.save(false); // not busy
 
         verifySaved(project, metadata);
         verify(SUT, times(1)).saveWorkspace();
 
     }
-    //TODO test canSaveAllModifiedWithRaceCondition
+    // TODO test canSaveAllModifiedWithRaceCondition
 
-    //-------------helpers-------------
+    // -------------helpers-------------
 
-    protected void registerProject(){
+    protected void registerProject() {
         this.registerProject(project, metadata);
     }
-    protected void registerProject(Project proj, ProjectMetadata meta){
+
+    protected void registerProject(Project proj, ProjectMetadata meta) {
         SUT.registerProject(proj, meta);
     }
 
-    protected void AssertProjectRegistered(){
+    protected void AssertProjectRegistered() {
         Assert.assertEquals(SUT.getProject(project.id), project);
         Assert.assertEquals(SUT.getProjectMetadata(project.id), metadata);
     }
 
-    protected void whenGetSaveTimes(Project proj, ProjectMetadata meta){
+    protected void whenGetSaveTimes(Project proj, ProjectMetadata meta) {
         whenGetSaveTimes(proj, meta, 5);
     }
-    protected void whenGetSaveTimes(Project proj, ProjectMetadata meta, int secondsDifference){
+
+    protected void whenGetSaveTimes(Project proj, ProjectMetadata meta, int secondsDifference) {
         whenProjectGetLastSave(proj);
         whenMetadataGetModified(meta, secondsDifference);
     }
 
-    protected void whenProjectGetLastSave(Project proj){
-        LocalDateTime projectLastSaveDate = LocalDateTime.of(1970,01,02,00,30,00);
+    protected void whenProjectGetLastSave(Project proj) {
+        LocalDateTime projectLastSaveDate = LocalDateTime.of(1970, 01, 02, 00, 30, 00);
         when(proj.getLastSave()).thenReturn(projectLastSaveDate);
     }
 
-    protected void whenMetadataGetModified(ProjectMetadata meta){
-        whenMetadataGetModified(meta, 5*60);
+    protected void whenMetadataGetModified(ProjectMetadata meta) {
+        whenMetadataGetModified(meta, 5 * 60);
     }
-    protected void whenMetadataGetModified(ProjectMetadata meta, int secondsDifference){
-        LocalDateTime metadataModifiedDate = LocalDateTime.of(1970,01,02,00, 30 + secondsDifference);
+
+    protected void whenMetadataGetModified(ProjectMetadata meta, int secondsDifference) {
+        LocalDateTime metadataModifiedDate = LocalDateTime.of(1970, 01, 02, 00, 30 + secondsDifference);
         when(meta.getModified()).thenReturn(metadataModifiedDate);
     }
 
-    protected void verifySaveTimeCompared(int times){
+    protected void verifySaveTimeCompared(int times) {
         verifySaveTimeCompared(project, metadata, times);
     }
-    protected void verifySaveTimeCompared(Project project, ProjectMetadata metadata, int times){
+
+    protected void verifySaveTimeCompared(Project project, ProjectMetadata metadata, int times) {
         verify(metadata, times(times)).getModified();
         verify(project, times(times)).getLastSave();
     }
 
-    protected void verifySaved(Project proj, ProjectMetadata meta){
+    protected void verifySaved(Project proj, ProjectMetadata meta) {
         verify(meta, times(1)).getModified();
         verify(proj, times(2)).getLastSave();
         verify(SUT, times(1)).saveProject(proj);

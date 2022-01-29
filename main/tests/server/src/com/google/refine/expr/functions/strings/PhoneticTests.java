@@ -24,7 +24,9 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  ******************************************************************************/
+
 package com.google.refine.expr.functions.strings;
+
 import org.testng.Assert;
 import org.testng.annotations.Test;
 import com.google.refine.RefineTest;
@@ -32,14 +34,18 @@ import com.google.refine.util.TestUtils;
 import com.google.refine.expr.EvalError;
 
 public class PhoneticTests extends RefineTest {
-   
+
     @Test
     public void testtoPhoneticInvalidParams() {
-	Assert.assertTrue(invoke("phonetic") instanceof EvalError);                            //if no arguments are provided
-	Assert.assertTrue(invoke("phonetic",(Object[])null) instanceof EvalError);             //if first argument(value) is null
-	Assert.assertTrue(invoke("phonetic","one",(Object[])null) instanceof EvalError);       //if second argument(encoding type) is null
-	Assert.assertTrue(invoke("phonetic","one","other") instanceof EvalError);              //if second argument(encoding type) is not a valid encoding type
-	Assert.assertTrue(invoke("phonetic","one","metaphone3","three") instanceof EvalError); //if more than 2 arguments are provided
+        Assert.assertTrue(invoke("phonetic") instanceof EvalError); // if no arguments are provided
+        Assert.assertTrue(invoke("phonetic", (Object[]) null) instanceof EvalError); // if first argument(value) is null
+        Assert.assertTrue(invoke("phonetic", "one", (Object[]) null) instanceof EvalError); // if second
+                                                                                            // argument(encoding type)
+                                                                                            // is null
+        Assert.assertTrue(invoke("phonetic", "one", "other") instanceof EvalError); // if second argument(encoding type)
+                                                                                    // is not a valid encoding type
+        Assert.assertTrue(invoke("phonetic", "one", "metaphone3", "three") instanceof EvalError); // if more than 2
+                                                                                                  // arguments are
+                                                                                                  // provided
     }
 }
-

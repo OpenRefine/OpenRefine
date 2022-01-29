@@ -69,7 +69,7 @@ public class SetProjectMetadataCommandTests extends RefineTest {
     public void init() {
         logger = LoggerFactory.getLogger(this.getClass());
     }
-    
+
     // System Under Test
     SetProjectMetadataCommand SUT = null;
 
@@ -95,16 +95,16 @@ public class SetProjectMetadataCommandTests extends RefineTest {
         request = mock(HttpServletRequest.class);
         response = mock(HttpServletResponse.class);
         SUT = new SetProjectMetadataCommand();
-        
+
         ProjectMetadata metadata = new ProjectMetadata();
         metadata.setUserMetadata((ArrayNode) ParsingUtilities.mapper.readTree("[ {name: \"clientID\", display: true} ]"));
-        
+
         // mock dependencies
         when(request.getParameter("project")).thenReturn(PROJECT_ID);
         when(request.getParameter("csrf_token")).thenReturn(Command.csrfFactory.getFreshToken());
         when(projMan.getProject(anyLong())).thenReturn(proj);
         when(proj.getMetadata()).thenReturn(metadata);
-        
+
         try {
             when(response.getWriter()).thenReturn(pw);
         } catch (IOException e1) {
@@ -125,83 +125,18 @@ public class SetProjectMetadataCommandTests extends RefineTest {
     }
 
     /**
-     *  Contract for a complete working post
+     * Contract for a complete working post
      */
     @Test
     public void setMetadataTest() {
         when(request.getParameter("name")).thenReturn("subject");
         when(request.getParameter("value")).thenReturn(SUBJECT);
-        
+
         // run
         try {
             SUT.doPost(request, response);
         } catch (ServletException e) {
             Assert.fail();
-        } catch (IOException e) {
-            Assert.fail();
-        }
-
-        // verify
-        verify(request, times(2)).getParameter("project");      
-        verify(projMan, times(1)).getProject(PROJECT_ID_LONG);
-
-        verify(response, times(1))
-                .setHeader("Content-Type", "application/json");
-        verify(proj, times(1)).getMetadata();
-        try {
-            verify(response, times(1)).getWriter();
-        } catch (IOException e) {
-            Assert.fail();
-        }
-        verify(pw, times(1)).write("{ \"code\" : \"ok\" }");
-        
-        Assert.assertEquals(proj.getMetadata().getSubject(), SUBJECT);
-    }
-    
-    /**
-     *  set a user defined metadata field
-     * @throws JSONException 
-     */
-    @Test
-    public void setUserMetadataFieldTest() {
-        when(request.getParameter("name")).thenReturn("clientID");
-        when(request.getParameter("value")).thenReturn("IBM");
-        
-        // run
-        try {
-            SUT.doPost(request, response);
-        } catch (ServletException e) {
-            Assert.fail();
-        } catch (IOException e) {
-            Assert.fail();
-        }
-
-        // verify
-        verify(request, times(2)).getParameter("project");      
-        verify(projMan, times(1)).getProject(PROJECT_ID_LONG);
-
-        verify(response, times(1))
-                .setHeader("Content-Type", "application/json");
-        verify(proj, times(1)).getMetadata();
-        try {
-            verify(response, times(1)).getWriter();
-        } catch (IOException e) {
-            Assert.fail();
-        }
-        verify(pw, times(1)).write("{ \"code\" : \"ok\" }");
-        
-        ObjectNode obj = (ObjectNode) proj.getMetadata().getUserMetadata().get(0);
-        Assert.assertEquals(obj.get("name").asText(), "clientID");
-        Assert.assertEquals(obj.get("value").asText(), "IBM");
-    }
-    
-     @Test
-     public void doPostThrowsIfCommand_getProjectReturnsNull(){
-        // run
-        try {
-            SUT.doPost(request, response);
-        } catch (ServletException e) {
-            //expected
         } catch (IOException e) {
             Assert.fail();
         }
@@ -209,5 +144,71 @@ public class SetProjectMetadataCommandTests extends RefineTest {
         // verify
         verify(request, times(2)).getParameter("project");
         verify(projMan, times(1)).getProject(PROJECT_ID_LONG);
-     }
+
+        verify(response, times(1))
+                .setHeader("Content-Type", "application/json");
+        verify(proj, times(1)).getMetadata();
+        try {
+            verify(response, times(1)).getWriter();
+        } catch (IOException e) {
+            Assert.fail();
+        }
+        verify(pw, times(1)).write("{ \"code\" : \"ok\" }");
+
+        Assert.assertEquals(proj.getMetadata().getSubject(), SUBJECT);
+    }
+
+    /**
+     * set a user defined metadata field
+     * 
+     * @throws JSONException
+     */
+    @Test
+    public void setUserMetadataFieldTest() {
+        when(request.getParameter("name")).thenReturn("clientID");
+        when(request.getParameter("value")).thenReturn("IBM");
+
+        // run
+        try {
+            SUT.doPost(request, response);
+        } catch (ServletException e) {
+            Assert.fail();
+        } catch (IOException e) {
+            Assert.fail();
+        }
+
+        // verify
+        verify(request, times(2)).getParameter("project");
+        verify(projMan, times(1)).getProject(PROJECT_ID_LONG);
+
+        verify(response, times(1))
+                .setHeader("Content-Type", "application/json");
+        verify(proj, times(1)).getMetadata();
+        try {
+            verify(response, times(1)).getWriter();
+        } catch (IOException e) {
+            Assert.fail();
+        }
+        verify(pw, times(1)).write("{ \"code\" : \"ok\" }");
+
+        ObjectNode obj = (ObjectNode) proj.getMetadata().getUserMetadata().get(0);
+        Assert.assertEquals(obj.get("name").asText(), "clientID");
+        Assert.assertEquals(obj.get("value").asText(), "IBM");
+    }
+
+    @Test
+    public void doPostThrowsIfCommand_getProjectReturnsNull() {
+        // run
+        try {
+            SUT.doPost(request, response);
+        } catch (ServletException e) {
+            // expected
+        } catch (IOException e) {
+            Assert.fail();
+        }
+
+        // verify
+        verify(request, times(2)).getParameter("project");
+        verify(projMan, times(1)).getProject(PROJECT_ID_LONG);
+    }
 }

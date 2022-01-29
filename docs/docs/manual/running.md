@@ -321,7 +321,7 @@ From the home screen, look in the options to the left for <span class="menuItems
 To leave the Language Settings screen, click on the diamond “OpenRefine” logo.
 
 :::info Help us Translate OpenRefine
-We use Weblate to provide translations for the interface. You can check [our profile on Weblate](https://hosted.weblate.org/projects/openrefine/translations/) to see which languages are in the process of being supported. See [our technical reference if you are interested in contributing translation work](https://docs.openrefine.org/technical-reference/translating) to make OpenRefine accessible to people in other languages.
+We use Weblate to provide translations for the interface. You can check [our profile on Weblate](https://hosted.weblate.org/projects/openrefine/translations/) to see which languages are in the process of being supported. See [our technical reference if you are interested in contributing translation work](../technical-reference/translating-ui) to make OpenRefine accessible to people in other languages.
 :::
 
 ### Preferences {#preferences}

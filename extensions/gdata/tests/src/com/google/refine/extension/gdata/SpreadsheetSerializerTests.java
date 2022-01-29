@@ -1,3 +1,4 @@
+
 package com.google.refine.extension.gdata;
 
 import static org.mockito.Mockito.mock;

@@ -24,6 +24,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  ******************************************************************************/
+
 package com.google.refine.expr.functions;
 
 import org.testng.annotations.Test;
@@ -32,4 +33,3 @@ import com.google.refine.util.TestUtils;
 
 public class LengthTests {
 }
-

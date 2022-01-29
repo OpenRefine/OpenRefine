@@ -21,6 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  ******************************************************************************/
+
 package org.openrefine.wikidata.schema;
 
 import java.util.Collections;
@@ -64,7 +65,8 @@ public class WbItemDocumentExprTest extends WbExpressionTest<TermedStatementEnti
     @Test
     public void testEvaluate() {
         setRow(recon("Q3434"), "2010-07-23", "3.898,4.389", "my alias", recon("Q23"));
-        TermedStatementEntityUpdate result = new TermedStatementEntityUpdateBuilder(subject).addAlias(alias).addStatement(fullStatement).build();
+        TermedStatementEntityUpdate result = new TermedStatementEntityUpdateBuilder(subject).addAlias(alias).addStatement(fullStatement)
+                .build();
         evaluatesTo(result, expr);
     }
 

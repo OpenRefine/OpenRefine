@@ -47,27 +47,26 @@ import org.testng.annotations.Test;
 import com.google.refine.util.JSONUtilities;
 
 public class RdfTripleImporterTests extends ImporterTest {
-    
+
     @Override
     @BeforeTest
     public void init() {
         logger = LoggerFactory.getLogger(this.getClass());
     }
-    
-    
-    //System Under Test
+
+    // System Under Test
     RdfTripleImporter SUT = null;
 
     @Override
     @BeforeMethod
-    public void setUp(){
+    public void setUp() {
         super.setUp();
         SUT = new RdfTripleImporter();
         JSONUtilities.safePut(options, "base-url", "http://rdf.freebase.com");
     }
 
-    @Test(enabled=false)
-    public void canParseSingleLineTriple(){
+    @Test(enabled = false)
+    public void canParseSingleLineTriple() {
         String sampleRdf = "<http://rdf.freebase.com/ns/en.bob_dylan> <http://rdf.freebase.com/ns/music.artist.album> <http://rdf.freebase.com/ns/en.blood_on_the_tracks>.";
         StringReader reader = new StringReader(sampleRdf);
 
@@ -88,33 +87,35 @@ public class RdfTripleImporterTests extends ImporterTest {
 
     @Test
     public void canParseMultiLineTriple() throws UnsupportedEncodingException {
-        String sampleRdf = "<http://rdf.freebase.com/ns/en.bob_dylan> <http://rdf.freebase.com/ns/music.artist.album> <http://rdf.freebase.com/ns/en.blood_on_the_tracks>.\n" +
-            "<http://rdf.freebase.com/ns/en.bob_dylan> <http://rdf.freebase.com/ns/music.artist.album> <http://rdf.freebase.com/ns/en.under_the_red_sky>.\n" +
-            "<http://rdf.freebase.com/ns/en.bob_dylan> <http://rdf.freebase.com/ns/music.artist.album> <http://rdf.freebase.com/ns/en.bringing_it_all_back_home>.";
+        String sampleRdf = "<http://rdf.freebase.com/ns/en.bob_dylan> <http://rdf.freebase.com/ns/music.artist.album> <http://rdf.freebase.com/ns/en.blood_on_the_tracks>.\n"
+                +
+                "<http://rdf.freebase.com/ns/en.bob_dylan> <http://rdf.freebase.com/ns/music.artist.album> <http://rdf.freebase.com/ns/en.under_the_red_sky>.\n"
+                +
+                "<http://rdf.freebase.com/ns/en.bob_dylan> <http://rdf.freebase.com/ns/music.artist.album> <http://rdf.freebase.com/ns/en.bringing_it_all_back_home>.";
         InputStream input = new ByteArrayInputStream(sampleRdf.getBytes("UTF-8"));
         parseOneFile(SUT, input);
 
-        //columns
+        // columns
         Assert.assertEquals(project.columnModel.columns.size(), 2);
         Assert.assertEquals(project.columnModel.columns.get(0).getName(), "subject");
         Assert.assertEquals(project.columnModel.columns.get(1).getName(), "http://rdf.freebase.com/ns/music.artist.album");
 
-        //rows
+        // rows
         Assert.assertEquals(project.rows.size(), 3);
-        
-        //row0
+
+        // row0
         Assert.assertEquals(project.rows.get(0).cells.size(), 2);
         Assert.assertEquals(project.rows.get(0).cells.get(0).value, "http://rdf.freebase.com/ns/en.bob_dylan");
-        Assert.assertEquals(project.rows.get(0).cells.get(1).value, "http://rdf.freebase.com/ns/en.bringing_it_all_back_home"); 
+        Assert.assertEquals(project.rows.get(0).cells.get(1).value, "http://rdf.freebase.com/ns/en.bringing_it_all_back_home");
 
-        //row1
+        // row1
         Assert.assertEquals(project.rows.get(1).cells.size(), 2);
         Assert.assertNull(project.rows.get(1).cells.get(0));
         Assert.assertEquals(project.rows.get(1).cells.get(1).value, "http://rdf.freebase.com/ns/en.under_the_red_sky");
         Assert.assertEquals(project.recordModel.getRowDependency(1).cellDependencies[1].rowIndex, 0);
         Assert.assertEquals(project.recordModel.getRowDependency(1).cellDependencies[1].cellIndex, 0);
 
-        //row2
+        // row2
         Assert.assertEquals(project.rows.get(2).cells.size(), 2);
         Assert.assertNull(project.rows.get(2).cells.get(0));
         Assert.assertEquals(project.rows.get(2).cells.get(1).value, "http://rdf.freebase.com/ns/en.blood_on_the_tracks");
@@ -124,40 +125,42 @@ public class RdfTripleImporterTests extends ImporterTest {
 
     @Test
     public void canParseMultiLineMultiPredicatesTriple() throws UnsupportedEncodingException {
-        String sampleRdf = "<http://rdf.freebase.com/ns/en.bob_dylan> <http://rdf.freebase.com/ns/music.artist.album> <http://rdf.freebase.com/ns/en.blood_on_the_tracks>.\n" +
-            "<http://rdf.freebase.com/ns/en.bob_dylan> <http://rdf.freebase.com/ns/music.artist.genre> <http://rdf.freebase.com/ns/en.folk_rock>.\n" +
-            "<http://rdf.freebase.com/ns/en.bob_dylan> <http://rdf.freebase.com/ns/music.artist.album> <http://rdf.freebase.com/ns/en.bringing_it_all_back_home>.";
+        String sampleRdf = "<http://rdf.freebase.com/ns/en.bob_dylan> <http://rdf.freebase.com/ns/music.artist.album> <http://rdf.freebase.com/ns/en.blood_on_the_tracks>.\n"
+                +
+                "<http://rdf.freebase.com/ns/en.bob_dylan> <http://rdf.freebase.com/ns/music.artist.genre> <http://rdf.freebase.com/ns/en.folk_rock>.\n"
+                +
+                "<http://rdf.freebase.com/ns/en.bob_dylan> <http://rdf.freebase.com/ns/music.artist.album> <http://rdf.freebase.com/ns/en.bringing_it_all_back_home>.";
         InputStream input = new ByteArrayInputStream(sampleRdf.getBytes("UTF-8"));
         parseOneFile(SUT, input);
- 
-        //columns
+
+        // columns
         Assert.assertEquals(project.columnModel.columns.size(), 3);
         Assert.assertEquals(project.columnModel.columns.get(0).getName(), "subject");
         Assert.assertEquals(project.columnModel.columns.get(1).getName(), "http://rdf.freebase.com/ns/music.artist.album");
         Assert.assertEquals(project.columnModel.columns.get(2).getName(), "http://rdf.freebase.com/ns/music.artist.genre");
-        
-        //rows
+
+        // rows
         Assert.assertEquals(project.rows.size(), 2);
 
-        //row0
+        // row0
         Assert.assertEquals(project.rows.get(0).cells.size(), 3);
         Assert.assertEquals(project.rows.get(0).cells.get(0).value, "http://rdf.freebase.com/ns/en.bob_dylan");
         Assert.assertEquals(project.rows.get(0).cells.get(1).value, "http://rdf.freebase.com/ns/en.bringing_it_all_back_home");
         Assert.assertEquals(project.rows.get(0).cells.get(2).value, "http://rdf.freebase.com/ns/en.folk_rock");
 
-        //row1
+        // row1
         Assert.assertEquals(project.rows.get(1).cells.size(), 2);
         Assert.assertNull(project.rows.get(1).cells.get(0));
         Assert.assertEquals(project.rows.get(1).cells.get(1).value, "http://rdf.freebase.com/ns/en.blood_on_the_tracks");
         Assert.assertEquals(project.recordModel.getRowDependency(1).cellDependencies[1].rowIndex, 0);
         Assert.assertEquals(project.recordModel.getRowDependency(1).cellDependencies[1].cellIndex, 0);
     }
-    
+
     @Test
     public void canParseTripleWithValue() throws UnsupportedEncodingException {
         String sampleRdf = "<http://rdf.freebase.com/ns/en.bob_dylan> <http://rdf.freebase.com/ns/common.topic.alias>\"Robert Zimmerman\"@en.";
         InputStream input = new ByteArrayInputStream(sampleRdf.getBytes("UTF-8"));
-        
+
         SUT = new RdfTripleImporter(RdfTripleImporter.Mode.N3);
         parseOneFile(SUT, input);
 
@@ -168,8 +171,8 @@ public class RdfTripleImporterTests extends ImporterTest {
         Assert.assertEquals(project.rows.get(0).cells.size(), 2);
         Assert.assertEquals(project.rows.get(0).cells.get(0).value, "http://rdf.freebase.com/ns/en.bob_dylan");
         Assert.assertEquals(project.rows.get(0).cells.get(1).value, "Robert Zimmerman@en");
-    }    
-    
+    }
+
     @Test
     public void canParseRdfXml() throws UnsupportedEncodingException {
         // From W3C spec http://www.w3.org/TR/REC-rdf-syntax/#example8
@@ -206,18 +209,18 @@ public class RdfTripleImporterTests extends ImporterTest {
         Assert.assertEquals(project.rows.get(3).cells.get(1).value, "The Tree@en");
         Assert.assertEquals(project.rows.get(3).cells.get(2).value, "Das Buch ist außergewöhnlich@de");
     }
-    
+
     @Test
     public void canParseN3() throws UnsupportedEncodingException {
-        String sampleRdf = "@prefix p:  <http://www.example.org/personal_details#> .\n" + 
-            "@prefix m:  <http://www.example.org/meeting_organization#> .\n\n" + 
-            "<http://www.example.org/people#fred>\n" + 
-                    "p:GivenName     \"Fred\";\n" + 
-                    "p:hasEmail              <mailto:fred@example.com>;\n" + 
-                    "m:attending     <http://meetings.example.com/cal#m1> .\n";
-                        
+        String sampleRdf = "@prefix p:  <http://www.example.org/personal_details#> .\n" +
+                "@prefix m:  <http://www.example.org/meeting_organization#> .\n\n" +
+                "<http://www.example.org/people#fred>\n" +
+                "p:GivenName     \"Fred\";\n" +
+                "p:hasEmail              <mailto:fred@example.com>;\n" +
+                "m:attending     <http://meetings.example.com/cal#m1> .\n";
+
         InputStream input = new ByteArrayInputStream(sampleRdf.getBytes("UTF-8"));
-        
+
         SUT = new RdfTripleImporter(RdfTripleImporter.Mode.N3);
         parseOneFile(SUT, input);
 
@@ -233,18 +236,18 @@ public class RdfTripleImporterTests extends ImporterTest {
         Assert.assertEquals(project.rows.get(0).cells.get(2).value, "mailto:fred@example.com");
         Assert.assertEquals(project.rows.get(0).cells.get(3).value, "Fred");
     }
-    
+
     @Test
     public void canParseTtl() throws UnsupportedEncodingException {
-        String sampleRdf = "@prefix p:  <http://www.example.org/personal_details#> .\n" + 
-            "@prefix m:  <http://www.example.org/meeting_organization#> .\n\n" + 
-            "<http://www.example.org/people#fred>\n" + 
-                    "p:GivenName     \"Fred\";\n" + 
-                    "p:hasEmail              <mailto:fred@example.com>;\n" + 
-                    "m:attending     <http://meetings.example.com/cal#m1> .\n";
-                        
+        String sampleRdf = "@prefix p:  <http://www.example.org/personal_details#> .\n" +
+                "@prefix m:  <http://www.example.org/meeting_organization#> .\n\n" +
+                "<http://www.example.org/people#fred>\n" +
+                "p:GivenName     \"Fred\";\n" +
+                "p:hasEmail              <mailto:fred@example.com>;\n" +
+                "m:attending     <http://meetings.example.com/cal#m1> .\n";
+
         InputStream input = new ByteArrayInputStream(sampleRdf.getBytes("UTF-8"));
-        
+
         SUT = new RdfTripleImporter(RdfTripleImporter.Mode.TTL);
         parseOneFile(SUT, input);
 
@@ -260,15 +263,16 @@ public class RdfTripleImporterTests extends ImporterTest {
         Assert.assertEquals(project.rows.get(0).cells.get(2).value, "mailto:fred@example.com");
         Assert.assertEquals(project.rows.get(0).cells.get(3).value, "Fred");
     }
-    
+
     @Test
     public void canParseNTriples() throws UnsupportedEncodingException {
-        String sampleRdf = "<http://www.example.org/people#fred> <http://www.example.org/meeting_organization#attending> <http://meetings.example.com/cal#m1> . \n" +
-                           "<http://www.example.org/people#fred> <http://www.example.org/personal_details#hasEmail> <mailto:fred@example.com> . \n" +
-                           "<http://www.example.org/people#fred> <http://www.example.org/personal_details#GivenName> \"Fred\" . ";
-                        
+        String sampleRdf = "<http://www.example.org/people#fred> <http://www.example.org/meeting_organization#attending> <http://meetings.example.com/cal#m1> . \n"
+                +
+                "<http://www.example.org/people#fred> <http://www.example.org/personal_details#hasEmail> <mailto:fred@example.com> . \n" +
+                "<http://www.example.org/people#fred> <http://www.example.org/personal_details#GivenName> \"Fred\" . ";
+
         InputStream input = new ByteArrayInputStream(sampleRdf.getBytes("UTF-8"));
-        
+
         SUT = new RdfTripleImporter(RdfTripleImporter.Mode.NT);
         parseOneFile(SUT, input);
 
@@ -277,7 +281,7 @@ public class RdfTripleImporterTests extends ImporterTest {
         Assert.assertEquals(project.columnModel.columns.get(1).getName(), "http://www.example.org/personal_details#GivenName");
         Assert.assertEquals(project.columnModel.columns.get(2).getName(), "http://www.example.org/personal_details#hasEmail");
         Assert.assertEquals(project.columnModel.columns.get(3).getName(), "http://www.example.org/meeting_organization#attending");
-        
+
         Assert.assertEquals(project.rows.size(), 1);
         Assert.assertEquals(project.rows.get(0).cells.size(), 4);
         Assert.assertEquals(project.rows.get(0).cells.get(0).value, "http://www.example.org/people#fred");
@@ -298,12 +302,12 @@ public class RdfTripleImporterTests extends ImporterTest {
         SUT = new RdfTripleImporter(RdfTripleImporter.Mode.TTL);
         parseOneFile(SUT, input);
 
-        String[] columns = {"subject",
+        String[] columns = { "subject",
                 "http://example.org/data#professor",
                 "http://example.org/data#title",
                 "http://example.org/data#homePage",
                 "http://example.org/data#fullName",
-                };
+        };
 
         Assert.assertEquals(project.columnModel.columns.size(), columns.length);
         for (int i = 0; i < columns.length; i++) {
@@ -320,26 +324,26 @@ public class RdfTripleImporterTests extends ImporterTest {
 
     @Test
     public void canParseJsonld() throws UnsupportedEncodingException {
-        String sampleJsonld = "{\n "+
-        "  \"@context\": {\n "+
-        "    \"m\": \"http://www.example.org/meeting_organization#\",\n "+
-        "    \"p\": \"http://www.example.org/personal_details#\",\n "+
-        "    \"rdf\": \"http://www.w3.org/1999/02/22-rdf-syntax-ns#\",\n "+
-        "    \"rdfs\": \"http://www.w3.org/2000/01/rdf-schema#\",\n "+
-        "    \"xsd\": \"http://www.w3.org/2001/XMLSchema#\"\n "+
-        "  },\n "+
-        "  \"@id\": \"http://www.example.org/people#fred\",\n "+
-        "  \"m:attending\": {\n "+
-        "    \"@id\": \"http://meetings.example.com/cal#m1\"\n "+
-        "  },\n "+
-        "  \"p:GivenName\": \"Fred\",\n "+
-        "  \"p:hasEmail\": {\n "+
-        "    \"@id\": \"mailto:fred@example.com\"\n "+
-        "  }\n "+
-        "}";
-                        
+        String sampleJsonld = "{\n " +
+                "  \"@context\": {\n " +
+                "    \"m\": \"http://www.example.org/meeting_organization#\",\n " +
+                "    \"p\": \"http://www.example.org/personal_details#\",\n " +
+                "    \"rdf\": \"http://www.w3.org/1999/02/22-rdf-syntax-ns#\",\n " +
+                "    \"rdfs\": \"http://www.w3.org/2000/01/rdf-schema#\",\n " +
+                "    \"xsd\": \"http://www.w3.org/2001/XMLSchema#\"\n " +
+                "  },\n " +
+                "  \"@id\": \"http://www.example.org/people#fred\",\n " +
+                "  \"m:attending\": {\n " +
+                "    \"@id\": \"http://meetings.example.com/cal#m1\"\n " +
+                "  },\n " +
+                "  \"p:GivenName\": \"Fred\",\n " +
+                "  \"p:hasEmail\": {\n " +
+                "    \"@id\": \"mailto:fred@example.com\"\n " +
+                "  }\n " +
+                "}";
+
         InputStream input = new ByteArrayInputStream(sampleJsonld.getBytes("UTF-8"));
-        
+
         SUT = new RdfTripleImporter(RdfTripleImporter.Mode.JSONLD);
         parseOneFile(SUT, input);
 
@@ -354,5 +358,5 @@ public class RdfTripleImporterTests extends ImporterTest {
         Assert.assertEquals(project.rows.get(0).cells.get(1).value, "mailto:fred@example.com");
         Assert.assertEquals(project.rows.get(0).cells.get(2).value, "Fred");
         Assert.assertEquals(project.rows.get(0).cells.get(3).value, "http://meetings.example.com/cal#m1");
-    } 
+    }
 }

@@ -24,6 +24,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  ******************************************************************************/
+
 package com.google.refine.browsing;
 
 import static org.mockito.Mockito.mock;
@@ -34,8 +35,8 @@ import com.google.refine.browsing.Engine;
 import com.google.refine.model.Project;
 import com.google.refine.util.TestUtils;
 
-
 public class EngineTests {
+
     @Test
     public void serializeEngine() {
         Project project = mock(Project.class);

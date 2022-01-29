@@ -21,6 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  ******************************************************************************/
+
 package org.openrefine.wikidata.schema;
 
 import java.util.Calendar;
@@ -62,7 +63,6 @@ public class WbDateConstantTest extends WbExpressionTest<TimeValue> {
     private WbDateConstant BCEjulianYear = new WbDateConstant("-1324_Q1985786");
     private WbDateConstant BCEjulianDecade = new WbDateConstant("-1320D_Q1985786");
 
-    
     @Test
     public void testSerialize() {
         JacksonSerializationTest.canonicalSerialization(WbExpression.class, year,
@@ -73,7 +73,7 @@ public class WbDateConstantTest extends WbExpressionTest<TimeValue> {
 
     @Test
     public void testEvaluate() {
-        
+
         evaluatesTo(Datamodel.makeTimeValue(1001, (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 6, 0, 0, 0,
                 TimeValue.CM_GREGORIAN_PRO), millenium);
         evaluatesTo(Datamodel.makeTimeValue(1701, (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 7, 0, 0, 0,
@@ -93,7 +93,7 @@ public class WbDateConstantTest extends WbExpressionTest<TimeValue> {
 
         evaluatesTo(Datamodel.makeTimeValue(2018, (byte) 2, (byte) 27, (byte) 0, (byte) 0, (byte) 0, (byte) 11, 0, 0, 0,
                 TimeValue.CM_GREGORIAN_PRO), whitespace);
-        
+
         evaluatesTo(Datamodel.makeTimeValue(1320, (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 8, 0, 0, 0,
                 TimeValue.CM_JULIAN_PRO), julianDecade);
         evaluatesTo(Datamodel.makeTimeValue(1324, (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 9, 0, 0, 0,
@@ -138,13 +138,13 @@ public class WbDateConstantTest extends WbExpressionTest<TimeValue> {
 
     @Test
     public void testToday() {
-    	Calendar calendar = Calendar.getInstance();
-    	TimeValue expectedDate = Datamodel.makeTimeValue(
-    			calendar.get(Calendar.YEAR),
-    			(byte)(calendar.get(Calendar.MONTH)+1),
-    			(byte)calendar.get(Calendar.DAY_OF_MONTH),
-    			(byte)0, (byte)0, (byte)0, (byte)11, 0,0,0, TimeValue.CM_GREGORIAN_PRO);
-    	evaluatesTo(expectedDate, new WbDateConstant("TODAY"));
+        Calendar calendar = Calendar.getInstance();
+        TimeValue expectedDate = Datamodel.makeTimeValue(
+                calendar.get(Calendar.YEAR),
+                (byte) (calendar.get(Calendar.MONTH) + 1),
+                (byte) calendar.get(Calendar.DAY_OF_MONTH),
+                (byte) 0, (byte) 0, (byte) 0, (byte) 11, 0, 0, 0, TimeValue.CM_GREGORIAN_PRO);
+        evaluatesTo(expectedDate, new WbDateConstant("TODAY"));
     }
 
     @Test(expectedExceptions = IllegalArgumentException.class)
@@ -156,9 +156,9 @@ public class WbDateConstantTest extends WbExpressionTest<TimeValue> {
     public void testPartlyValid() {
         new WbDateConstant("2018-partly valid");
     }
-    
+
     @Test(expectedExceptions = IllegalArgumentException.class)
     public void testInvalidCalendar() {
-    	new WbDateConstant("2018-01-02_P234");
+        new WbDateConstant("2018-01-02_P234");
     }
 }

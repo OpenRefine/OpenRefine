@@ -33,7 +33,6 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.importers;
 
-
 import static org.testng.Assert.assertEquals;
 
 import java.io.File;
@@ -56,7 +55,6 @@ import org.testng.annotations.Test;
 import com.google.common.io.PatternFilenameFilter;
 import com.google.refine.importing.FormatGuesser;
 
-
 public class TextFormatGuesserTests extends ImporterTest {
 
     FormatGuesser guesser;
@@ -76,7 +74,7 @@ public class TextFormatGuesserTests extends ImporterTest {
 
     @Override
     @AfterMethod
-    public void tearDown(){
+    public void tearDown() {
         guesser = null;
         super.tearDown();
     }
@@ -102,7 +100,7 @@ public class TextFormatGuesserTests extends ImporterTest {
         extensionGuesserTests("tsv", "text/line-based");
     }
 
-    @Test(enabled=false) // FIXME: Our JSON guesser doesn't work on small files
+    @Test(enabled = false) // FIXME: Our JSON guesser doesn't work on small files
     public void jsonGuesserTest() {
         extensionGuesserTests("json", "text/json");
     }
@@ -115,7 +113,7 @@ public class TextFormatGuesserTests extends ImporterTest {
     private void extensionGuesserTests(String extension, String expectedFormat) {
         String dir = ClassLoader.getSystemResource("food.csv").getPath();
         dir = dir.substring(0, dir.lastIndexOf('/'));
-        File testDataDir =  new File(dir);
+        File testDataDir = new File(dir);
         for (String testFile : testDataDir.list(new PatternFilenameFilter(".+\\." + extension))) {
             String format = guesser.guess(new File(dir, testFile), "UTF-8", "text");
             assertEquals(format, expectedFormat, "Format guess failed for " + testFile);
@@ -139,8 +137,7 @@ public class TextFormatGuesserTests extends ImporterTest {
         File tmp = File.createTempFile("openrefinetests-textguesser", "");
         OutputStreamWriter writer = new OutputStreamWriter(
                 new FileOutputStream(tmp),
-                Charset.forName("UTF-8").newEncoder()
-                );
+                Charset.forName("UTF-8").newEncoder());
         writer.write(input);
         writer.close();
         String format = guesser.guess(tmp, "UTF-8", "text");
@@ -163,43 +160,45 @@ public class TextFormatGuesserTests extends ImporterTest {
     }
 
     @Test
-    public void guessTableWithLinks() throws FileNotFoundException, IOException  {
+    public void guessTableWithLinks() throws FileNotFoundException, IOException {
 
-        // Data credits: Wikipedia contributors, https://de.wikipedia.org/w/index.php?title=Agenturen_der_Europäischen_Union&action=edit
+        // Data credits: Wikipedia contributors,
+        // https://de.wikipedia.org/w/index.php?title=Agenturen_der_Europäischen_Union&action=edit
         String input = "\n"
-                +"{|\n"
-                +"|-\n"
-                +"| [[Europäisches Zentrum für die Förderung der Berufsbildung|Cedefop]] || Cedefop || http://www.cedefop.europa.eu/\n"
-                +"|-\n"
-                +"| [[Europäische Stiftung zur Verbesserung der Lebens- und Arbeitsbedingungen]] || EUROFOUND || [http://www.eurofound.europa.eu/]\n"
-                +"|-\n"
-                +"| [[Europäische Beobachtungsstelle für Drogen und Drogensucht]] || EMCDDA || [http://www.emcdda.europa.eu/ europa.eu]\n"
-                +"|-\n"
-                +"|}\n";
+                + "{|\n"
+                + "|-\n"
+                + "| [[Europäisches Zentrum für die Förderung der Berufsbildung|Cedefop]] || Cedefop || http://www.cedefop.europa.eu/\n"
+                + "|-\n"
+                + "| [[Europäische Stiftung zur Verbesserung der Lebens- und Arbeitsbedingungen]] || EUROFOUND || [http://www.eurofound.europa.eu/]\n"
+                + "|-\n"
+                + "| [[Europäische Beobachtungsstelle für Drogen und Drogensucht]] || EMCDDA || [http://www.emcdda.europa.eu/ europa.eu]\n"
+                + "|-\n"
+                + "|}\n";
         testWikiTableString(input);
     }
 
     @Test
     public void readStyledTableWithHeader() throws FileNotFoundException, IOException {
-        // Data credits: Wikipedia contributors, https://de.wikipedia.org/w/index.php?title=Agenturen_der_Europäischen_Union&action=edit
+        // Data credits: Wikipedia contributors,
+        // https://de.wikipedia.org/w/index.php?title=Agenturen_der_Europäischen_Union&action=edit
         String input = "\n"
-                +"==Agenturen==\n"
-                +"{| class=\"wikitable sortable\"\n"
-                +"! style=\"text-align:left; width: 60em\" | Offizieller Name\n"
-                +"! style=\"text-align:left; width: 9em\" | Abkürzung\n"
-                +"! style=\"text-align:left; width: 6em\" | Website\n"
-                +"! style=\"text-align:left; width: 15em\" | Standort\n"
-                +"! style=\"text-align:left; width: 18em\" | Staat\n"
-                +"! style=\"text-align:left; width: 6em\" | Gründung\n"
-                +"! style=\"text-align:left; width: 50em\" | Anmerkungen\n"
-                +"|-\n"
-                +"| [[Europäisches Zentrum für die Förderung der Berufsbildung]] || '''Cedefop''' || [http://www.cedefop.europa.eu/] || [[Thessaloniki]] || {{Griechenland}} || 1975 ||\n"
-                +"|-\n"
-                +"| [[Europäische Stiftung zur Verbesserung der Lebens- und Arbeitsbedingungen]] || ''EUROFOUND'' || [http://www.eurofound.europa.eu/] || [[Dublin]] || {{Irland}} || 1975 ||\n"
-                +"|-\n"
-                +"| [[Europäische Beobachtungsstelle für Drogen und Drogensucht]] || EMCDDA || [http://www.emcdda.europa.eu/] || [[Lissabon]] || {{Portugal}} || 1993 ||\n"
-                +"|-\n"
-                +"|}\n";
+                + "==Agenturen==\n"
+                + "{| class=\"wikitable sortable\"\n"
+                + "! style=\"text-align:left; width: 60em\" | Offizieller Name\n"
+                + "! style=\"text-align:left; width: 9em\" | Abkürzung\n"
+                + "! style=\"text-align:left; width: 6em\" | Website\n"
+                + "! style=\"text-align:left; width: 15em\" | Standort\n"
+                + "! style=\"text-align:left; width: 18em\" | Staat\n"
+                + "! style=\"text-align:left; width: 6em\" | Gründung\n"
+                + "! style=\"text-align:left; width: 50em\" | Anmerkungen\n"
+                + "|-\n"
+                + "| [[Europäisches Zentrum für die Förderung der Berufsbildung]] || '''Cedefop''' || [http://www.cedefop.europa.eu/] || [[Thessaloniki]] || {{Griechenland}} || 1975 ||\n"
+                + "|-\n"
+                + "| [[Europäische Stiftung zur Verbesserung der Lebens- und Arbeitsbedingungen]] || ''EUROFOUND'' || [http://www.eurofound.europa.eu/] || [[Dublin]] || {{Irland}} || 1975 ||\n"
+                + "|-\n"
+                + "| [[Europäische Beobachtungsstelle für Drogen und Drogensucht]] || EMCDDA || [http://www.emcdda.europa.eu/] || [[Lissabon]] || {{Portugal}} || 1993 ||\n"
+                + "|-\n"
+                + "|}\n";
         testWikiTableString(input);
     }
 
@@ -207,19 +206,19 @@ public class TextFormatGuesserTests extends ImporterTest {
     public void guessTableWithSpanningCells() throws FileNotFoundException, IOException {
         // inspired from https://www.mediawiki.org/wiki/Help:Tables
         String input = "{| class=\"wikitable\"\n"
-                +"!colspan=\"6\"|Shopping List\n"
-                +"|-\n"
-                +"|Bread & Butter\n"
-                +"|Pie\n"
-                +"|Buns\n"
-                +"|rowspan=\"2\"|Danish\n"
-                +"|colspan=\"2\"|Croissant\n"
-                +"|-\n"
-                +"|Cheese\n"
-                +"|colspan=\"2\"|Ice cream\n"
-                +"|Butter\n"
-                +"|Yogurt\n"
-                +"|}\n";
+                + "!colspan=\"6\"|Shopping List\n"
+                + "|-\n"
+                + "|Bread & Butter\n"
+                + "|Pie\n"
+                + "|Buns\n"
+                + "|rowspan=\"2\"|Danish\n"
+                + "|colspan=\"2\"|Croissant\n"
+                + "|-\n"
+                + "|Cheese\n"
+                + "|colspan=\"2\"|Ice cream\n"
+                + "|Butter\n"
+                + "|Yogurt\n"
+                + "|}\n";
         testWikiTableString(input);
     }
 
@@ -227,15 +226,15 @@ public class TextFormatGuesserTests extends ImporterTest {
     public void guessTableWithReferences() throws FileNotFoundException, IOException {
         // inspired from https://www.mediawiki.org/wiki/Help:Tables
         String input = "{|\n"
-                +"! price\n"
-                +"! fruit\n"
-                +"! merchant\n"
-                +"|-\n"
-                +"| a || b <ref name=\"myref\"> See [http://gnu.org here]</ref>  || c <ref name=\"ms\"> or http://microsoft.com/ </ref>\n"
-                +"|-\n"
-                +"| d || e <ref name=\"ms\"/>|| f <ref name=\"myref\" />\n"
-                +"|-\n"
-                +"|}\n";
+                + "! price\n"
+                + "! fruit\n"
+                + "! merchant\n"
+                + "|-\n"
+                + "| a || b <ref name=\"myref\"> See [http://gnu.org here]</ref>  || c <ref name=\"ms\"> or http://microsoft.com/ </ref>\n"
+                + "|-\n"
+                + "| d || e <ref name=\"ms\"/>|| f <ref name=\"myref\" />\n"
+                + "|-\n"
+                + "|}\n";
         testWikiTableString(input);
     }
 
@@ -243,18 +242,17 @@ public class TextFormatGuesserTests extends ImporterTest {
     public void guessTableWithReferencesTemplates() throws FileNotFoundException, IOException {
         // inspired from https://www.mediawiki.org/wiki/Help:Tables
         String input = "{|\n"
-                +"! price\n"
-                +"! fruit\n"
-                +"! merchant\n"
-                +"|-\n"
-                +"| a || b <ref name=\"myref\">{{cite web|url=http://gnu.org|accessdate=2017-08-30}}</ref>  || c <ref name=\"ms\"> or {{cite journal|url=http://microsoft.com/|title=BLah}} </ref>\n"
-                +"|-\n"
-                +"| d || e <ref name=\"ms\"/>|| f <ref name=\"myref\" />\n"
-                +"|-\n"
-                +"|}\n";
+                + "! price\n"
+                + "! fruit\n"
+                + "! merchant\n"
+                + "|-\n"
+                + "| a || b <ref name=\"myref\">{{cite web|url=http://gnu.org|accessdate=2017-08-30}}</ref>  || c <ref name=\"ms\"> or {{cite journal|url=http://microsoft.com/|title=BLah}} </ref>\n"
+                + "|-\n"
+                + "| d || e <ref name=\"ms\"/>|| f <ref name=\"myref\" />\n"
+                + "|-\n"
+                + "|}\n";
         testWikiTableString(input);
     }
-
 
     @Test
     public void guessTableWithTemplates() throws FileNotFoundException, IOException {

@@ -24,6 +24,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  ******************************************************************************/
+
 package com.google.refine.commands.expr;
 
 import static org.mockito.Mockito.mock;
@@ -46,12 +47,13 @@ import com.google.refine.model.Project;
 import com.google.refine.util.TestUtils;
 
 public class PreviewExpressionCommandTests extends RefineTest {
+
     protected Project project = null;
     protected HttpServletRequest request = null;
     protected HttpServletResponse response = null;
     protected Command command = null;
     protected StringWriter writer = null;
-    
+
     @BeforeMethod
     public void setUpRequestResponse() {
         request = mock(HttpServletRequest.class);
@@ -65,7 +67,7 @@ public class PreviewExpressionCommandTests extends RefineTest {
         command = new PreviewExpressionCommand();
         project = createCSVProject("a,b\nc,d\ne,f\ng,h");
     }
-    
+
     @Test
     public void testJsonResponse() throws ServletException, IOException {
 
@@ -74,14 +76,14 @@ public class PreviewExpressionCommandTests extends RefineTest {
         when(request.getParameter("expression")).thenReturn("grel:value + \"_u\"");
         when(request.getParameter("rowIndices")).thenReturn("[0,2]");
 
-        String json = "{\n" + 
-                "       \"code\" : \"ok\",\n" + 
-                "       \"results\" : [ \"d_u\", \"h_u\" ]\n" + 
+        String json = "{\n" +
+                "       \"code\" : \"ok\",\n" +
+                "       \"results\" : [ \"d_u\", \"h_u\" ]\n" +
                 "     }";
         command.doPost(request, response);
         TestUtils.assertEqualsAsJson(writer.toString(), json);
     }
-    
+
     @Test
     public void testParseError() throws ServletException, IOException {
 
@@ -90,10 +92,10 @@ public class PreviewExpressionCommandTests extends RefineTest {
         when(request.getParameter("expression")).thenReturn("grel:value +");
         when(request.getParameter("rowIndices")).thenReturn("[0,2]");
 
-        String json = "{\n" + 
-                "       \"code\" : \"error\",\n" + 
-                "       \"message\" : \"Parsing error at offset 7: Expecting something more at end of expression\",\n" + 
-                "       \"type\" : \"parser\"\n" + 
+        String json = "{\n" +
+                "       \"code\" : \"error\",\n" +
+                "       \"message\" : \"Parsing error at offset 7: Expecting something more at end of expression\",\n" +
+                "       \"type\" : \"parser\"\n" +
                 "     }";
         command.doPost(request, response);
         TestUtils.assertEqualsAsJson(writer.toString(), json);

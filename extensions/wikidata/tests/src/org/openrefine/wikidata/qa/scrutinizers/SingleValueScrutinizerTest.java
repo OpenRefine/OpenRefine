@@ -21,6 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  ******************************************************************************/
+
 package org.openrefine.wikidata.qa.scrutinizers;
 
 import org.openrefine.wikidata.qa.ConstraintFetcher;
@@ -64,7 +65,8 @@ public class SingleValueScrutinizerTest extends ScrutinizerTest {
         Snak snak2 = Datamodel.makeValueSnak(propertyIdValue, value2);
         Statement statement1 = new StatementImpl("P21", snak1, idA);
         Statement statement2 = new StatementImpl("P21", snak2, idA);
-        TermedStatementEntityUpdate update = new TermedStatementEntityUpdateBuilder(idA).addStatement(statement1).addStatement(statement2).build();
+        TermedStatementEntityUpdate update = new TermedStatementEntityUpdateBuilder(idA).addStatement(statement1).addStatement(statement2)
+                .build();
 
         List<Statement> statementList = constraintParameterStatementList(entityIdValue, new ArrayList<>());
 

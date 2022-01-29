@@ -24,6 +24,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  ******************************************************************************/
+
 package com.google.refine.model;
 
 import static org.mockito.Mockito.mock;
@@ -38,6 +39,7 @@ import com.google.refine.util.TestUtils;
 import edu.mit.simile.butterfly.ButterflyModule;
 
 public class ColumnTests {
+
     @Test
     public void serializeColumn() throws Exception {
         ButterflyModule core = mock(ButterflyModule.class);

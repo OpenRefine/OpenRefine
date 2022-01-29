@@ -21,6 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  ******************************************************************************/
+
 package org.openrefine.wikidata.qa.scrutinizers;
 
 import org.openrefine.wikidata.testing.TestingData;
@@ -37,7 +38,7 @@ public abstract class ValueScrutinizerTest extends SnakScrutinizerTest {
     public void scrutinize(Value value) {
         scrutinize(defaultPid, value);
     }
-    
+
     public void scrutinize(PropertyIdValue pid, Value value) {
         scrutinize(Datamodel.makeValueSnak(pid, value));
     }
