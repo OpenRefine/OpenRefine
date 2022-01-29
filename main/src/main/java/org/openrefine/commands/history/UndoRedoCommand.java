@@ -43,17 +43,17 @@ import org.openrefine.commands.Command;
 import org.openrefine.model.Project;
 
 public class UndoRedoCommand extends Command {
-    
+
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-    	if(!hasValidCSRFToken(request)) {
-    		respondCSRFError(response);
-    		return;
-    	}
-        
+        if (!hasValidCSRFToken(request)) {
+            respondCSRFError(response);
+            return;
+        }
+
         Project project = getProject(request);
-        
+
         long lastDoneID = -1;
         String lastDoneIDString = request.getParameter("lastDoneID");
         if (lastDoneIDString != null) {
@@ -62,14 +62,14 @@ public class UndoRedoCommand extends Command {
             String undoIDString = request.getParameter("undoID");
             if (undoIDString != null) {
                 long undoID = Long.parseLong(undoIDString);
-                
+
                 lastDoneID = project.getHistory().getPrecedingEntryID(undoID);
             }
         }
-        
+
         try {
-        	project.getHistory().undoRedo(lastDoneID);
-            
+            project.getHistory().undoRedo(lastDoneID);
+
             respond(response, "{ \"code\" : \"ok\" }");
         } catch (Exception e) {
             respondException(response, e);

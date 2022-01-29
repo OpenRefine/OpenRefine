@@ -47,35 +47,31 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
- * Holds the metadata for a single column.
- * Fields are immutable, copy the column with the provided
- * methods to change its fields.
+ * Holds the metadata for a single column. Fields are immutable, copy the column with the provided methods to change its
+ * fields.
  *
  */
 public class ColumnMetadata implements Serializable {
+
     private static final long serialVersionUID = 8531948502713567634L;
-    
-    final private String      _originalName;
-    final private String      _name;
+
+    final private String _originalName;
+    final private String _name;
     final private ReconConfig _reconConfig;
-    final private ReconStats  _reconStats;
-    
+    final private ReconStats _reconStats;
+
     @JsonCreator
     public ColumnMetadata(
-            @JsonProperty("originalName")
-            String originalName,
-            @JsonProperty("name")
-            String name,
-            @JsonProperty("reconConfig")
-            ReconConfig reconConfig,
-            @JsonProperty("reconStats")
-            ReconStats reconStats) {
+            @JsonProperty("originalName") String originalName,
+            @JsonProperty("name") String name,
+            @JsonProperty("reconConfig") ReconConfig reconConfig,
+            @JsonProperty("reconStats") ReconStats reconStats) {
         _originalName = originalName;
         _name = name == null ? originalName : name;
         _reconConfig = reconConfig;
         _reconStats = reconStats;
     }
-    
+
     public ColumnMetadata(String name) {
         this(name, name, null, null);
     }
@@ -84,7 +80,7 @@ public class ColumnMetadata implements Serializable {
     public String getOriginalHeaderLabel() {
         return _originalName;
     }
-    
+
     public ColumnMetadata withName(String name) {
         return new ColumnMetadata(_originalName, name, _reconConfig, _reconStats);
     }
@@ -113,7 +109,7 @@ public class ColumnMetadata implements Serializable {
     public ReconStats getReconStats() {
         return _reconStats;
     }
-    
+
     public void save(Writer writer) {
         try {
             ParsingUtilities.defaultWriter.writeValue(writer, this);
@@ -121,16 +117,17 @@ public class ColumnMetadata implements Serializable {
             e.printStackTrace();
         }
     }
-    
+
     static public ColumnMetadata load(String s) throws Exception {
         return ParsingUtilities.mapper.readValue(s, ColumnMetadata.class);
     }
-    
+
     /**
-     * Merges the recon statistics of this column with those of 
-     * another column. The column names of this column are preserved.
+     * Merges the recon statistics of this column with those of another column. The column names of this column are
+     * preserved.
      * 
-     * @param otherMetadata the other column metadata to extract recon statistics from
+     * @param otherMetadata
+     *            the other column metadata to extract recon statistics from
      * @return a new column metadata with the sum of the recon statistics
      */
     public ColumnMetadata merge(ColumnMetadata otherMetadata) {
@@ -142,26 +139,27 @@ public class ColumnMetadata implements Serializable {
         }
         return new ColumnMetadata(_originalName, _name, _reconConfig, newReconStats);
     }
-    
+
     @Override
     public String toString() {
         return String.format("[ColumnMetadata: %s, %s, %s, %s]", _name, _originalName, _reconConfig, _reconStats);
     }
-    
+
     @Override
     public boolean equals(Object other) {
-    	if (other == null || !(other instanceof ColumnMetadata)) {
-    		return false;
-    	}
-    	ColumnMetadata metadata = (ColumnMetadata)other;
-    	return (_name.equals(metadata.getName()) &&
-    			_originalName.equals(metadata.getOriginalHeaderLabel()) &&
-    			((_reconConfig == null && metadata.getReconConfig() == null)
-    					|| (_reconConfig != null && _reconConfig.equals(metadata.getReconConfig()))) &&
-    			((_reconStats == null && metadata.getReconStats() == null)
-    					|| (_reconStats != null && _reconStats.equals(metadata.getReconStats()))));
+        if (other == null || !(other instanceof ColumnMetadata)) {
+            return false;
+        }
+        ColumnMetadata metadata = (ColumnMetadata) other;
+        return (_name.equals(metadata.getName()) &&
+                _originalName.equals(metadata.getOriginalHeaderLabel()) &&
+                ((_reconConfig == null && metadata.getReconConfig() == null)
+                        || (_reconConfig != null && _reconConfig.equals(metadata.getReconConfig())))
+                &&
+                ((_reconStats == null && metadata.getReconStats() == null)
+                        || (_reconStats != null && _reconStats.equals(metadata.getReconStats()))));
     }
-    
+
     @Override
     public int hashCode() {
         return _name.hashCode() + 87 * _originalName.hashCode();

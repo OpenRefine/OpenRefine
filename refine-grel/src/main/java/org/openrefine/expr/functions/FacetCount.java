@@ -60,24 +60,24 @@ public class FacetCount implements Function {
                 FacetCountCacheManager facetCountCache = ProjectManager.singleton.getFacetCountCache();
                 StringValuesFacetState facetState = facetCountCache.getFacetState(projectId, facetExpression, columnName);
                 return facetState.getCounts().getOrDefault(choiceValue, 0L);
-            } catch(FacetCountException e) {
+            } catch (FacetCountException e) {
                 return new EvalError(e.getMessage());
             }
         }
-        return new EvalError(ControlFunctionRegistry.getFunctionName(this) + 
-            " expects a choice value, an expression as a string, and a column name");
+        return new EvalError(ControlFunctionRegistry.getFunctionName(this) +
+                " expects a choice value, an expression as a string, and a column name");
     }
 
     @Override
     public String getDescription() {
         return "Returns the facet count corresponding to the given choice value, by looking for the facetExpression in the choiceValue in columnName.";
     }
-    
+
     @Override
     public String getParams() {
         return "choiceValue, string facetExpression, string columnName";
     }
-    
+
     @Override
     public String getReturns() {
         return "number";

@@ -24,6 +24,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  ******************************************************************************/
+
 package org.openrefine.operations.column;
 
 import static org.mockito.Mockito.mock;
@@ -53,25 +54,24 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.Test;
 
-
 public class ColumnReorderOperationTests extends RefineTest {
-	
-	protected GridState initialState;
-	
-	@BeforeMethod
-	public void setUpInitialState() {
-		MetaParser.registerLanguageParser("grel", "GREL", Parser.grelParser, "value");
-		initialState = createGrid(new String[] {"foo","bar","hello"},
-				new Serializable[][] {
-			{ "v1", "a", "d" },
-			{ "v3", "a", "f" },
-			{ "", "a", "g" },
-			{ "", "b", "h" },
-			{ new EvalError("error"), "a", "i"},
-			{ "v1", "b", "j" }
-		});
-	}
-	
+
+    protected GridState initialState;
+
+    @BeforeMethod
+    public void setUpInitialState() {
+        MetaParser.registerLanguageParser("grel", "GREL", Parser.grelParser, "value");
+        initialState = createGrid(new String[] { "foo", "bar", "hello" },
+                new Serializable[][] {
+                        { "v1", "a", "d" },
+                        { "v3", "a", "f" },
+                        { "", "a", "g" },
+                        { "", "b", "h" },
+                        { new EvalError("error"), "a", "i" },
+                        { "v1", "b", "j" }
+                });
+    }
+
     @BeforeSuite
     public void setUp() {
         OperationRegistry.registerOperation("core", "column-reorder", ColumnReorderOperation.class);
@@ -79,33 +79,33 @@ public class ColumnReorderOperationTests extends RefineTest {
 
     @Test
     public void serializeColumnReorderOperation() {
-        Operation op = new ColumnReorderOperation(Arrays.asList("b","c","a"));
+        Operation op = new ColumnReorderOperation(Arrays.asList("b", "c", "a"));
         TestUtils.isSerializedTo(op, "{\"op\":\"core/column-reorder\","
-		+ "\"description\":\"Reorder columns\","
-		+ "\"columnNames\":[\"b\",\"c\",\"a\"]}", ParsingUtilities.defaultWriter);
+                + "\"description\":\"Reorder columns\","
+                + "\"columnNames\":[\"b\",\"c\",\"a\"]}", ParsingUtilities.defaultWriter);
     }
-    
-	@Test
-	public void testReorder() throws DoesNotApplyException, ParsingException {
-		Change SUT = new ColumnReorderOperation(Arrays.asList("hello", "bar")).createChange();
-		GridState applied = SUT.apply(initialState, mock(ChangeContext.class));
-		
-		List<IndexedRow> rows = applied.collectRows();
-		Assert.assertEquals(applied.getColumnModel().getColumns(),
-					Arrays.asList(new ColumnMetadata("hello"), new ColumnMetadata("bar")));
-			Assert.assertEquals(rows.get(0).getRow().getCells(),
-					Arrays.asList(new Cell("d", null), new Cell("a", null)));
-	}
-	
-	@Test(expectedExceptions = IllegalArgumentException.class)
-	public void testDuplicateFinalNames() throws ParsingException {
-		new ColumnReorderOperation(Arrays.asList("bar", "bar"));
-	}
-	
-	@Test(expectedExceptions = Change.DoesNotApplyException.class)
-	public void testDoesNotExist() throws DoesNotApplyException, ParsingException {
-		Change SUT = new ColumnReorderOperation(Arrays.asList("does_not_exist", "bar")).createChange();
-		SUT.apply(initialState, mock(ChangeContext.class));
-	}
+
+    @Test
+    public void testReorder() throws DoesNotApplyException, ParsingException {
+        Change SUT = new ColumnReorderOperation(Arrays.asList("hello", "bar")).createChange();
+        GridState applied = SUT.apply(initialState, mock(ChangeContext.class));
+
+        List<IndexedRow> rows = applied.collectRows();
+        Assert.assertEquals(applied.getColumnModel().getColumns(),
+                Arrays.asList(new ColumnMetadata("hello"), new ColumnMetadata("bar")));
+        Assert.assertEquals(rows.get(0).getRow().getCells(),
+                Arrays.asList(new Cell("d", null), new Cell("a", null)));
+    }
+
+    @Test(expectedExceptions = IllegalArgumentException.class)
+    public void testDuplicateFinalNames() throws ParsingException {
+        new ColumnReorderOperation(Arrays.asList("bar", "bar"));
+    }
+
+    @Test(expectedExceptions = Change.DoesNotApplyException.class)
+    public void testDoesNotExist() throws DoesNotApplyException, ParsingException {
+        Change SUT = new ColumnReorderOperation(Arrays.asList("does_not_exist", "bar")).createChange();
+        SUT.apply(initialState, mock(ChangeContext.class));
+    }
 
 }

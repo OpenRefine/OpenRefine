@@ -36,28 +36,23 @@ import org.eclipse.jetty.server.handler.HandlerWrapper;
 import org.eclipse.jetty.server.Request;
 
 /**
- * Validate the Host header of the HTTP request to see if it matches either a loopback IP
- * address, localhost or an explicitly specified hostname. This is required to avoid DNS
- * rebinding attacks against users running OpenRefine on their desktop computers.
+ * Validate the Host header of the HTTP request to see if it matches either a loopback IP address, localhost or an
+ * explicitly specified hostname. This is required to avoid DNS rebinding attacks against users running OpenRefine on
+ * their desktop computers.
  */
 class ValidateHostHandler extends HandlerWrapper {
 
     /**
-     * Matches:
-     *  - addresses in the 127.0.0.0/8 subnet
-     *  - IPv4-mapped addresses in the ::ffff:7f00:00/104 subnet
-     *  - different representations of ::1
-     *  - localhost
-     * Matching is a little fuzzy to simplify the regular expression - it expects the Host
-     * header to be well-formed. Some invalid addresses would be accepted, for example:
-     *  - 127.6..64.245
-     *  - 0::0:::0:00:1
-     * This is not a problem however, as these are not valid DNS names either, and should
-     * never be sent by a well-behaved browser - and validating the host header only ever
-     * helps if the browser works as expected and cannot be used to fake the Host header.
+     * Matches: - addresses in the 127.0.0.0/8 subnet - IPv4-mapped addresses in the ::ffff:7f00:00/104 subnet -
+     * different representations of ::1 - localhost Matching is a little fuzzy to simplify the regular expression - it
+     * expects the Host header to be well-formed. Some invalid addresses would be accepted, for example: - 127.6..64.245
+     * - 0::0:::0:00:1 This is not a problem however, as these are not valid DNS names either, and should never be sent
+     * by a well-behaved browser - and validating the host header only ever helps if the browser works as expected and
+     * cannot be used to fake the Host header.
      */
     static private final Pattern LOOPBACK_PATTERN = Pattern
-            .compile("^(?:127\\.[0-9\\.]*|\\[[0\\:]*\\:(?:ffff\\:7f[0-9a-f]{2}:[0-9a-f]{1,4}|0{0,3}1)\\]|localhost)(?:\\:[0-9]+)?$", Pattern.CASE_INSENSITIVE);
+            .compile("^(?:127\\.[0-9\\.]*|\\[[0\\:]*\\:(?:ffff\\:7f[0-9a-f]{2}:[0-9a-f]{1,4}|0{0,3}1)\\]|localhost)(?:\\:[0-9]+)?$",
+                    Pattern.CASE_INSENSITIVE);
 
     private String expectedHost;
 

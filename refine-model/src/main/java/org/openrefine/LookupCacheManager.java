@@ -1,3 +1,4 @@
+
 package org.openrefine;
 
 import org.openrefine.expr.ExpressionUtils;
@@ -29,21 +30,22 @@ public class LookupCacheManager {
     protected final Map<String, ProjectLookup> _lookups = new HashMap<>();
 
     /**
-     * Computes the ProjectLookup based on combination key,
-     * returns the cached one from the HashMap if already computed.
+     * Computes the ProjectLookup based on combination key, returns the cached one from the HashMap if already computed.
      *
-     * @param targetProject the project to look up
-     * @param targetColumn  the column of the target project to look up
+     * @param targetProject
+     *            the project to look up
+     * @param targetColumn
+     *            the column of the target project to look up
      * @return a {@link ProjectLookup} instance of the lookup result
      */
     public ProjectLookup getLookup(long targetProject, String targetColumn) throws LookupException {
         String key = targetProject + ";" + targetColumn;
-        
+
         Project project = ProjectManager.singleton.getProject(targetProject);
         if (project == null) {
             throw new LookupException(String.format("Project %d could not be found", targetProject));
         }
-        
+
         // Retrieve the id of the last entry, used for cache invalidation
         History history = project.getHistory();
         List<HistoryEntry> entries = history.getLastPastEntries(1);
@@ -51,10 +53,10 @@ public class LookupCacheManager {
         if (!entries.isEmpty()) {
             changeId = entries.get(0).getId();
         }
-        
+
         ProjectLookup lookup = _lookups.get(key);
-        
-        if (lookup == null || lookup.getChangeId() != changeId) { 
+
+        if (lookup == null || lookup.getChangeId() != changeId) {
             lookup = new ProjectLookup(project.getCurrentGridState(), targetColumn, changeId, project.getMetadata().getName());
 
             synchronized (_lookups) {
@@ -64,11 +66,11 @@ public class LookupCacheManager {
 
         return lookup;
     }
-    
+
     static public class ProjectLookup implements Serializable {
 
         private static final long serialVersionUID = -7316491331964997894L;
-        private final GridState grid; 
+        private final GridState grid;
         private final long changeId;
         final public String targetColumnName;
 
@@ -78,12 +80,12 @@ public class LookupCacheManager {
             this.grid = grid;
             this.targetColumnName = columnName;
             this.changeId = changeId;
-            
+
             // Populate the index
             // if this is a lookup on the index column
             if (INDEX_COLUMN_NAME.equals(targetColumnName)) {
                 for (long r = 0; r < grid.rowCount(); r++) {
-                    valueToRowIndices.put(String.valueOf(r) , Collections.singletonList(r));
+                    valueToRowIndices.put(String.valueOf(r), Collections.singletonList(r));
                 }
                 return; // return directly
             }

@@ -52,14 +52,13 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import edu.mit.simile.vicino.distances.LevenshteinDistance;
 
-
 public class GetClusteringFunctionsAndDistancesCommandTest {
-	
+
     protected HttpServletRequest request = null;
     protected HttpServletResponse response = null;
-	protected StringWriter writer = null;
-	protected Command command = null;
-	
+    protected StringWriter writer = null;
+    protected Command command = null;
+
     @BeforeMethod
     public void setUp() {
         request = mock(HttpServletRequest.class);
@@ -73,12 +72,12 @@ public class GetClusteringFunctionsAndDistancesCommandTest {
         }
         DistanceFactory.put("levenshtein", new VicinoDistance(new LevenshteinDistance()));
     }
-	
+
     @Test
-	public void testGetFunctionsAndKeyers() throws ServletException, IOException {
-    	command.doGet(request, response);
-    	ObjectNode result = ParsingUtilities.mapper.readValue(writer.toString(), ObjectNode.class);
-    	assertTrue(Arrays.asList(JSONUtilities.getStringArray(result, "keyers")).contains("metaphone3"));
-    	assertTrue(Arrays.asList(JSONUtilities.getStringArray(result, "distances")).contains("levenshtein"));
-	}
+    public void testGetFunctionsAndKeyers() throws ServletException, IOException {
+        command.doGet(request, response);
+        ObjectNode result = ParsingUtilities.mapper.readValue(writer.toString(), ObjectNode.class);
+        assertTrue(Arrays.asList(JSONUtilities.getStringArray(result, "keyers")).contains("metaphone3"));
+        assertTrue(Arrays.asList(JSONUtilities.getStringArray(result, "distances")).contains("levenshtein"));
+    }
 }

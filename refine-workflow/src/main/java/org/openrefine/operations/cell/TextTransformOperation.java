@@ -63,8 +63,8 @@ public class TextTransformOperation extends ExpressionBasedOperation {
     @JsonProperty("repeat")
     final protected boolean _repeat;
     @JsonProperty("repeatCount")
-    final protected int     _repeatCount;
-    
+    final protected int _repeatCount;
+
     static public OnError stringToOnError(String s) {
         if ("set-to-blank".equalsIgnoreCase(s)) {
             return OnError.SetToBlank;
@@ -74,6 +74,7 @@ public class TextTransformOperation extends ExpressionBasedOperation {
             return OnError.KeepOriginal;
         }
     }
+
     static public String onErrorToString(OnError onError) {
         if (onError == OnError.SetToBlank) {
             return "set-to-blank";
@@ -83,73 +84,66 @@ public class TextTransformOperation extends ExpressionBasedOperation {
             return "keep-original";
         }
     }
-    
+
     @JsonCreator
     public TextTransformOperation(
-            @JsonProperty("engineConfig")
-            EngineConfig engineConfig, 
-            @JsonProperty("columnName")
-            String columnName, 
-            @JsonProperty("expression")
-            String expression,
-            @JsonProperty("onError")
-            OnError onError,
-            @JsonProperty("repeat")
-            boolean repeat,
-            @JsonProperty("repeatCount")
-            int repeatCount
-        ) {
+            @JsonProperty("engineConfig") EngineConfig engineConfig,
+            @JsonProperty("columnName") String columnName,
+            @JsonProperty("expression") String expression,
+            @JsonProperty("onError") OnError onError,
+            @JsonProperty("repeat") boolean repeat,
+            @JsonProperty("repeatCount") int repeatCount) {
         super(engineConfig, expression, columnName, onError);
         _repeat = repeat;
         _repeatCount = repeatCount;
     }
-    
+
     @JsonProperty("columnName")
     public String getColumnName() {
-    	return _baseColumnName;
+        return _baseColumnName;
     }
-    
+
     @JsonProperty("expression")
     public String getExpression() {
-    	return _expression;
+        return _expression;
     }
-    
+
     @JsonProperty("onError")
     public OnError getOnError() {
-    	return _onError;
+        return _onError;
     }
 
     @Override
     public String getDescription() {
         return "Text transform on cells in column " + _baseColumnName + " using expression " + _expression;
     }
-    
-	@Override
-	protected RowInRecordMapper getPositiveRowMapper(GridState state, ChangeContext context, Evaluable eval) throws DoesNotApplyException {
-		int columnIndex = RowMapChange.columnIndex(state.getColumnModel(), _baseColumnName);
-		return rowMapper(columnIndex, _baseColumnName, state.getColumnModel(), eval, _onError, _repeat ? _repeatCount : 0);
-	}
-	
-	@Override
-	protected Change getChangeForNonLocalExpression(String changeDataId, Evaluable evaluable, int columnIndex,
-			Mode engineMode) {
-		return new ColumnChangeByChangeData(
-                "eval", 
-                columnIndex, 
+
+    @Override
+    protected RowInRecordMapper getPositiveRowMapper(GridState state, ChangeContext context, Evaluable eval) throws DoesNotApplyException {
+        int columnIndex = RowMapChange.columnIndex(state.getColumnModel(), _baseColumnName);
+        return rowMapper(columnIndex, _baseColumnName, state.getColumnModel(), eval, _onError, _repeat ? _repeatCount : 0);
+    }
+
+    @Override
+    protected Change getChangeForNonLocalExpression(String changeDataId, Evaluable evaluable, int columnIndex,
+            Mode engineMode) {
+        return new ColumnChangeByChangeData(
+                "eval",
+                columnIndex,
                 null,
                 engineMode,
                 null,
-                null
-            );
-	}
-	
-	protected static RowInRecordMapper rowMapper(int columnIndex, String columnName, ColumnModel columnModel, Evaluable eval, OnError onError, int repeatCount) {
-		return new RowInRecordMapper() {
+                null);
+    }
 
-			private static final long serialVersionUID = 2272064171042189466L;
+    protected static RowInRecordMapper rowMapper(int columnIndex, String columnName, ColumnModel columnModel, Evaluable eval,
+            OnError onError, int repeatCount) {
+        return new RowInRecordMapper() {
 
-			@Override
-			public Row call(Record record, long rowId, Row row) {
+            private static final long serialVersionUID = 2272064171042189466L;
+
+            @Override
+            public Row call(Record record, long rowId, Row row) {
                 Cell cell = row.getCell(columnIndex);
                 Cell newCell = null;
 
@@ -174,28 +168,28 @@ public class TextTransformOperation extends ExpressionBasedOperation {
                                 newValue = null;
                             }
                         }
-                        
+
                         newCell = new Cell(newValue, (cell != null) ? cell.recon : null);
-                        
+
                         for (int i = 0; i < repeatCount; i++) {
                             ExpressionUtils.bind(bindings, null, row, rowId, record, columnName, newCell);
-                            
+
                             newValue = ExpressionUtils.wrapStorable(eval.evaluate(bindings));
                             if (ExpressionUtils.isError(newValue)) {
                                 break;
                             } else if (ExpressionUtils.sameValue(newCell.value, newValue)) {
                                 break;
                             }
-                            
+
                             newCell = new Cell(newValue, newCell.recon);
                         }
                     }
                 }
-                
+
                 return row.withCell(columnIndex, newCell);
-			}
-			
-		};
-	}
+            }
+
+        };
+    }
 
 }

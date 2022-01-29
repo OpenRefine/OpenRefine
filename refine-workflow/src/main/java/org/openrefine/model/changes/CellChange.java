@@ -53,66 +53,62 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  *
  */
 public class CellChange implements Change {
-	@JsonProperty("rowId")
-    final public long         row;
-	@JsonProperty("columnName")
-	final public String       columnName;
-	@JsonProperty("newCellValue")
+
+    @JsonProperty("rowId")
+    final public long row;
+    @JsonProperty("columnName")
+    final public String columnName;
+    @JsonProperty("newCellValue")
     final public Serializable newCellValue;
-    
+
     @JsonCreator
     public CellChange(
-    		@JsonProperty("rowId")
-    		long row,
-    		@JsonProperty("columnName")
-    		String columnName,
-    		@JsonProperty("newCellValue")
-    		Object newCellValue) {
+            @JsonProperty("rowId") long row,
+            @JsonProperty("columnName") String columnName,
+            @JsonProperty("newCellValue") Object newCellValue) {
         this.row = row;
         this.columnName = columnName;
-        this.newCellValue = (Serializable)newCellValue;
+        this.newCellValue = (Serializable) newCellValue;
     }
-    
 
-	@Override
-	public GridState apply(GridState projectState, ChangeContext context) throws DoesNotApplyException {
-		int index = projectState.getColumnModel().getColumnIndexByName(columnName);
-		if (index == -1) {
-			throw new DoesNotApplyException(
-					String.format("Column '%s' does not exist", columnName));
-		}
-		// set judgment id on recon if changed
-		return projectState.mapRows(mapFunction(index, row, newCellValue), projectState.getColumnModel());
-	}
-	
+    @Override
+    public GridState apply(GridState projectState, ChangeContext context) throws DoesNotApplyException {
+        int index = projectState.getColumnModel().getColumnIndexByName(columnName);
+        if (index == -1) {
+            throw new DoesNotApplyException(
+                    String.format("Column '%s' does not exist", columnName));
+        }
+        // set judgment id on recon if changed
+        return projectState.mapRows(mapFunction(index, row, newCellValue), projectState.getColumnModel());
+    }
+
     static protected RowMapper mapFunction(int cellIndex, long rowId, Serializable newCellValue) {
-    	return new RowMapper() {
+        return new RowMapper() {
 
-			private static final long serialVersionUID = -5983834950609157341L;
+            private static final long serialVersionUID = -5983834950609157341L;
 
-			@Override
-			public Row call(long currentRowId, Row row) {
-				if (rowId == currentRowId) {
-					Cell oldCell = row.getCell(cellIndex);
-					Cell newCell = newCellValue == null ? null : new Cell(newCellValue, oldCell == null ? null : oldCell.recon);
-					return row.withCell(cellIndex, newCell);
-				} else {
-					return row;
-				}
-			}
-    	};
+            @Override
+            public Row call(long currentRowId, Row row) {
+                if (rowId == currentRowId) {
+                    Cell oldCell = row.getCell(cellIndex);
+                    Cell newCell = newCellValue == null ? null : new Cell(newCellValue, oldCell == null ? null : oldCell.recon);
+                    return row.withCell(cellIndex, newCell);
+                } else {
+                    return row;
+                }
+            }
+        };
     }
 
-	@Override
-	public boolean isImmediate() {
-		// this change has no corresponding operation, so it can not be derived from one
-		return false;
-	}
+    @Override
+    public boolean isImmediate() {
+        // this change has no corresponding operation, so it can not be derived from one
+        return false;
+    }
 
-	@Override
-	public DagSlice getDagSlice() {
-		return new TransformationSlice(columnName, Collections.emptySet());
-	}
-
+    @Override
+    public DagSlice getDagSlice() {
+        return new TransformationSlice(columnName, Collections.emptySet());
+    }
 
 }

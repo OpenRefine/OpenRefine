@@ -48,21 +48,19 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class ColumnRenameOperation extends ImmediateRowMapOperation {
+
     final protected String _oldColumnName;
     final protected String _newColumnName;
 
     @JsonCreator
     public ColumnRenameOperation(
-        @JsonProperty("oldColumnName")
-        String oldColumnName,
-        @JsonProperty("newColumnName")
-        String newColumnName
-    ) {
-    	super(EngineConfig.ALL_ROWS);
+            @JsonProperty("oldColumnName") String oldColumnName,
+            @JsonProperty("newColumnName") String newColumnName) {
+        super(EngineConfig.ALL_ROWS);
         _oldColumnName = oldColumnName;
         _newColumnName = newColumnName;
     }
-    
+
     @JsonProperty("oldColumnName")
     public String getOldColumnName() {
         return _oldColumnName;
@@ -74,31 +72,31 @@ public class ColumnRenameOperation extends ImmediateRowMapOperation {
     }
 
     @Override
-	public String getDescription() {
+    public String getDescription() {
         return "Rename column " + _oldColumnName + " to " + _newColumnName;
     }
 
     @Override
     public ColumnModel getNewColumnModel(GridState state, ChangeContext context) throws DoesNotApplyException {
-    	ColumnModel model = state.getColumnModel();
-    	int index = columnIndex(model, _oldColumnName);
-    	try {
-			return model.renameColumn(index, _newColumnName);
-		} catch (ModelException e) {
-			throw new DoesNotApplyException(
-					String.format("Column '%s' already exists", _newColumnName));
-		}
+        ColumnModel model = state.getColumnModel();
+        int index = columnIndex(model, _oldColumnName);
+        try {
+            return model.renameColumn(index, _newColumnName);
+        } catch (ModelException e) {
+            throw new DoesNotApplyException(
+                    String.format("Column '%s' already exists", _newColumnName));
+        }
     }
 
-	@Override
-	protected RowInRecordMapper getPositiveRowMapper(GridState state, ChangeContext context) throws DoesNotApplyException {
-		return RowInRecordMapper.IDENTITY;
-	}
-	
-	// engine config is never useful, so we remove it from the JSON serialization
-	@Override
-	@JsonIgnore
-	public EngineConfig getEngineConfig() {
-		return super.getEngineConfig();
-	}
+    @Override
+    protected RowInRecordMapper getPositiveRowMapper(GridState state, ChangeContext context) throws DoesNotApplyException {
+        return RowInRecordMapper.IDENTITY;
+    }
+
+    // engine config is never useful, so we remove it from the JSON serialization
+    @Override
+    @JsonIgnore
+    public EngineConfig getEngineConfig() {
+        return super.getEngineConfig();
+    }
 }

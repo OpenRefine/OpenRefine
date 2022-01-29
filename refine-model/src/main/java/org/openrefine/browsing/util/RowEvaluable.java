@@ -40,20 +40,24 @@ import org.openrefine.model.Record;
 import org.openrefine.model.Row;
 
 /**
- * Something that can be evaluated for each row.
- * Optionally the enclosing record may be supplied.
+ * Something that can be evaluated for each row. Optionally the enclosing record may be supplied.
  * 
  * @author Antonin Delpeuch
  *
  */
 public interface RowEvaluable extends Serializable {
+
     /**
      * Evaluate on a given row.
      * 
-     * @param rowIndex the index of the row in the grid
-     * @param row      the row itself
-     * @param record   the enclosing record, if available (in records mode)
-     * @param bindings the map where the evaluation context is stored
+     * @param rowIndex
+     *            the index of the row in the grid
+     * @param row
+     *            the row itself
+     * @param record
+     *            the enclosing record, if available (in records mode)
+     * @param bindings
+     *            the map where the evaluation context is stored
      * @return
      */
     public Object eval(long rowIndex, Row row, Record record, Properties bindings);

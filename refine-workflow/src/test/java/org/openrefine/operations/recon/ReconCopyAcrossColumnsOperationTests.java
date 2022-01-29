@@ -24,7 +24,9 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  ******************************************************************************/
+
 package org.openrefine.operations.recon;
+
 import static org.mockito.Mockito.mock;
 
 import java.io.Serializable;
@@ -47,14 +49,14 @@ import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
 public class ReconCopyAcrossColumnsOperationTests extends RefineTest {
-	
-	GridState initialState;
-	
+
+    GridState initialState;
+
     @BeforeSuite
     public void registerOperation() {
         OperationRegistry.registerOperation("core", "recon-copy-across-columns", ReconCopyAcrossColumnsOperation.class);
     }
-    
+
     @Test
     public void serializeReconCopyAcrossColumnsOperation() throws Exception {
         String json = "{\"op\":\"core/recon-copy-across-columns\","
@@ -64,66 +66,66 @@ public class ReconCopyAcrossColumnsOperationTests extends RefineTest {
                 + "\"toColumnNames\":[\"first\",\"second\"],"
                 + "\"judgments\":[\"matched\",\"new\"],"
                 + "\"applyToJudgedCells\":true}";
-        TestUtils.isSerializedTo(ParsingUtilities.mapper.readValue(json, ReconCopyAcrossColumnsOperation.class), json, ParsingUtilities.defaultWriter);
+        TestUtils.isSerializedTo(ParsingUtilities.mapper.readValue(json, ReconCopyAcrossColumnsOperation.class), json,
+                ParsingUtilities.defaultWriter);
     }
-    
+
     @BeforeTest
     public void setupInitialState() {
-    	initialState = createGrid(
-    			new String[] {"foo", "bar"},
-    			new Serializable[][] {
-    				{"a", "b"},
-    				{"d", new Cell("b", testRecon("e", "h", Recon.Judgment.Matched))},
-    				{"b", new Cell("d", testRecon("b", "j", Recon.Judgment.None))}
-    			});
+        initialState = createGrid(
+                new String[] { "foo", "bar" },
+                new Serializable[][] {
+                        { "a", "b" },
+                        { "d", new Cell("b", testRecon("e", "h", Recon.Judgment.Matched)) },
+                        { "b", new Cell("d", testRecon("b", "j", Recon.Judgment.None)) }
+                });
     }
-    
+
     @Test
     public void testReconCopyAcrossColumns() throws DoesNotApplyException {
-    	Change change = new ReconCopyAcrossColumnsOperation(
-	    			EngineConfig.ALL_ROWS,
-	    			"bar",
-	    			Collections.singletonList("foo"),
-	    			Arrays.asList(Recon.Judgment.Matched, Recon.Judgment.None),
-	    			true
-    			).createChange();
-    	
-    	GridState applied = change.apply(initialState, mock(ChangeContext.class));
-    	
-    	GridState expected = createGrid(
-    			new String[] {"foo", "bar"},
-    			new Serializable[][] {
-    				{"a", "b"},
-    				{new Cell("d", testRecon("b", "j", Recon.Judgment.None)),   new Cell("b", testRecon("e", "h", Recon.Judgment.Matched))},
-    				{new Cell("b", testRecon("e", "h", Recon.Judgment.Matched)), new Cell("d", testRecon("b", "j", Recon.Judgment.None))}
-    			});
-    	
-    	assertGridEquals(applied, expected);
+        Change change = new ReconCopyAcrossColumnsOperation(
+                EngineConfig.ALL_ROWS,
+                "bar",
+                Collections.singletonList("foo"),
+                Arrays.asList(Recon.Judgment.Matched, Recon.Judgment.None),
+                true).createChange();
+
+        GridState applied = change.apply(initialState, mock(ChangeContext.class));
+
+        GridState expected = createGrid(
+                new String[] { "foo", "bar" },
+                new Serializable[][] {
+                        { "a", "b" },
+                        { new Cell("d", testRecon("b", "j", Recon.Judgment.None)),
+                                new Cell("b", testRecon("e", "h", Recon.Judgment.Matched)) },
+                        { new Cell("b", testRecon("e", "h", Recon.Judgment.Matched)),
+                                new Cell("d", testRecon("b", "j", Recon.Judgment.None)) }
+                });
+
+        assertGridEquals(applied, expected);
     }
-    
+
     @Test(expectedExceptions = DoesNotApplyException.class)
     public void testInvalidSourceColumn() throws DoesNotApplyException {
-    	Change change = new ReconCopyAcrossColumnsOperation(
-    			EngineConfig.ALL_ROWS,
-    			"does_not_exist",
-    			Collections.singletonList("foo"),
-    			Arrays.asList(Recon.Judgment.Matched, Recon.Judgment.None),
-    			true
-			).createChange();
-	
-		change.apply(initialState, mock(ChangeContext.class));
+        Change change = new ReconCopyAcrossColumnsOperation(
+                EngineConfig.ALL_ROWS,
+                "does_not_exist",
+                Collections.singletonList("foo"),
+                Arrays.asList(Recon.Judgment.Matched, Recon.Judgment.None),
+                true).createChange();
+
+        change.apply(initialState, mock(ChangeContext.class));
     }
-    
+
     @Test(expectedExceptions = DoesNotApplyException.class)
     public void testInvalidTargetColumn() throws DoesNotApplyException {
-    	Change change = new ReconCopyAcrossColumnsOperation(
-    			EngineConfig.ALL_ROWS,
-    			"bar",
-    			Collections.singletonList("does_not_exist"),
-    			Arrays.asList(Recon.Judgment.Matched, Recon.Judgment.None),
-    			true
-			).createChange();
-	
-		change.apply(initialState, mock(ChangeContext.class));
+        Change change = new ReconCopyAcrossColumnsOperation(
+                EngineConfig.ALL_ROWS,
+                "bar",
+                Collections.singletonList("does_not_exist"),
+                Arrays.asList(Recon.Judgment.Matched, Recon.Judgment.None),
+                true).createChange();
+
+        change.apply(initialState, mock(ChangeContext.class));
     }
 }

@@ -53,21 +53,21 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonView;
 
 /**
- * This is the metadata of a Change. It's small, so we can load it in order to
- * obtain information about a change without actually loading the change.
+ * This is the metadata of a Change. It's small, so we can load it in order to obtain information about a change without
+ * actually loading the change.
  */
 public class HistoryEntry {
-    
+
     final static Logger logger = LoggerFactory.getLogger("HistoryEntry");
-    private final long   id;
+    private final long id;
     private final String description;
-    private final OffsetDateTime   time;
+    private final OffsetDateTime time;
 
     // the abstract operation, if any, that results in the change
     private final Operation operation;
 
     // the actual change
-    
+
     final protected Change change;
 
     // JsonIgnore because it is included later on in special cases, see {@link getJsonChange}.
@@ -79,22 +79,18 @@ public class HistoryEntry {
     static public long allocateID() {
         return Math.round(Math.random() * 1000000) + System.currentTimeMillis();
     }
-    
+
     @JsonCreator
     public HistoryEntry(
-    		@JsonProperty("id")
-    		long id,
-    		@JsonProperty("description")
-    		String description,
-    		@JsonProperty("operation")
-    		Operation operation,
-    		@JsonProperty("change")
-    		Change change) throws NotImmediateOperationException {
-    	this(id,
-    	     description,
-    	     operation,
-    	     OffsetDateTime.now(ZoneId.of("Z")),
-    	     change);
+            @JsonProperty("id") long id,
+            @JsonProperty("description") String description,
+            @JsonProperty("operation") Operation operation,
+            @JsonProperty("change") Change change) throws NotImmediateOperationException {
+        this(id,
+                description,
+                operation,
+                OffsetDateTime.now(ZoneId.of("Z")),
+                change);
     }
 
     protected HistoryEntry(
@@ -121,7 +117,7 @@ public class HistoryEntry {
     }
 
     static public HistoryEntry load(String s) throws IOException {
-    	return ParsingUtilities.mapper.readValue(s, HistoryEntry.class);
+        return ParsingUtilities.mapper.readValue(s, HistoryEntry.class);
     }
 
     @JsonProperty("description")
@@ -133,22 +129,21 @@ public class HistoryEntry {
     public long getId() {
         return id;
     }
-    
+
     @JsonProperty("time")
     public OffsetDateTime getTime() {
         return time;
     }
-    
+
     @JsonProperty("operation")
     @JsonView(JsonViews.SaveMode.class)
     public Operation getOperation() {
         return operation;
     }
-    
+
     /**
-     * Only returns a change if it needs
-     * to be serialized to JSON, i.e. if it is
-     * not directly derived from the operation.
+     * Only returns a change if it needs to be serialized to JSON, i.e. if it is not directly derived from the
+     * operation.
      */
     @JsonProperty("change")
     @JsonView(JsonViews.SaveMode.class)

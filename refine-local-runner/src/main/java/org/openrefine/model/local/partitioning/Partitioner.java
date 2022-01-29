@@ -1,3 +1,4 @@
+
 package org.openrefine.model.local.partitioning;
 
 /**
@@ -16,7 +17,7 @@ public interface Partitioner<T> {
      * @return
      */
     public int getPartition(T key);
-    
+
     /**
      * Returns the number of partitions assumed by this partitioner.
      */

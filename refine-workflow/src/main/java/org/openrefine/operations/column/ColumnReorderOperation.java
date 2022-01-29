@@ -57,75 +57,75 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class ColumnReorderOperation extends ImmediateRowMapOperation {
+
     final protected List<String> _columnNames;
-    
+
     @JsonCreator
     public ColumnReorderOperation(
-            @JsonProperty("columnNames")
-            List<String> columnNames) {
-    	super(EngineConfig.ALL_ROWS);
+            @JsonProperty("columnNames") List<String> columnNames) {
+        super(EngineConfig.ALL_ROWS);
         _columnNames = columnNames;
         Set<String> deduplicated = new HashSet<>(_columnNames);
         if (deduplicated.size() != _columnNames.size()) {
-        	throw new IllegalArgumentException("Duplicates in the list of final column names");
+            throw new IllegalArgumentException("Duplicates in the list of final column names");
         }
     }
-    
+
     @JsonProperty("columnNames")
     public List<String> getColumnNames() {
         return _columnNames;
     }
 
     @Override
-	public String getDescription() {
+    public String getDescription() {
         return "Reorder columns";
     }
-	
-	@Override
-	public ColumnModel getNewColumnModel(GridState grid, ChangeContext context) throws DoesNotApplyException {
-		ColumnModel model = grid.getColumnModel();
-		List<ColumnMetadata> columns = new ArrayList<>(_columnNames.size());
-		for(String columnName : _columnNames) {
-			ColumnMetadata meta = model.getColumnByName(columnName);
-			if (meta == null) {
-				throw new DoesNotApplyException(String.format("Column '%s' does not exist", columnName));
-			}
-			columns.add(meta);
-		}
-		return new ColumnModel(columns);
-	}
 
-	@Override
-	public RowInRecordMapper getPositiveRowMapper(GridState state, ChangeContext context) throws DoesNotApplyException {
-		// Build a map from new indices to original ones
-		List<Integer> origIndex = new ArrayList<>(_columnNames.size());
-		for(int i = 0; i != _columnNames.size(); i++) {
-			origIndex.add(columnIndex(state.getColumnModel(), _columnNames.get(i)));
-		}
-		
-		return mapper(origIndex);
-	}
-	
-	protected static RowInRecordMapper mapper(List<Integer> origIndex) {
-		return new RowInRecordMapper() {
+    @Override
+    public ColumnModel getNewColumnModel(GridState grid, ChangeContext context) throws DoesNotApplyException {
+        ColumnModel model = grid.getColumnModel();
+        List<ColumnMetadata> columns = new ArrayList<>(_columnNames.size());
+        for (String columnName : _columnNames) {
+            ColumnMetadata meta = model.getColumnByName(columnName);
+            if (meta == null) {
+                throw new DoesNotApplyException(String.format("Column '%s' does not exist", columnName));
+            }
+            columns.add(meta);
+        }
+        return new ColumnModel(columns);
+    }
 
-			private static final long serialVersionUID = 7653347685611673401L;
+    @Override
+    public RowInRecordMapper getPositiveRowMapper(GridState state, ChangeContext context) throws DoesNotApplyException {
+        // Build a map from new indices to original ones
+        List<Integer> origIndex = new ArrayList<>(_columnNames.size());
+        for (int i = 0; i != _columnNames.size(); i++) {
+            origIndex.add(columnIndex(state.getColumnModel(), _columnNames.get(i)));
+        }
 
-			@Override
-			public Row call(Record record, long rowId, Row row) {
-				List<Cell> newCells = origIndex.stream()
-						.map(i -> row.getCell(i))
-						.collect(Collectors.toList());
-				return new Row(newCells);
-			}
-			
-		};
-	}
-	
-	// engine config is never useful, so we remove it from the JSON serialization
-	@Override
-	@JsonIgnore
-	public EngineConfig getEngineConfig() {
-		return super.getEngineConfig();
-	}
+        return mapper(origIndex);
+    }
+
+    protected static RowInRecordMapper mapper(List<Integer> origIndex) {
+        return new RowInRecordMapper() {
+
+            private static final long serialVersionUID = 7653347685611673401L;
+
+            @Override
+            public Row call(Record record, long rowId, Row row) {
+                List<Cell> newCells = origIndex.stream()
+                        .map(i -> row.getCell(i))
+                        .collect(Collectors.toList());
+                return new Row(newCells);
+            }
+
+        };
+    }
+
+    // engine config is never useful, so we remove it from the JSON serialization
+    @Override
+    @JsonIgnore
+    public EngineConfig getEngineConfig() {
+        return super.getEngineConfig();
+    }
 }

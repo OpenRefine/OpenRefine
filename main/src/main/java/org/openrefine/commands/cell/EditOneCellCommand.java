@@ -56,8 +56,9 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class EditOneCellCommand extends Command {
-    
+
     protected static class EditResult {
+
         @JsonProperty("code")
         protected String code;
         @JsonProperty("historyEntry")
@@ -66,7 +67,7 @@ public class EditOneCellCommand extends Command {
         @JsonProperty("cell")
         @JsonInclude(Include.NON_NULL)
         protected Cell cell;
-        
+
         protected EditResult(
                 String code,
                 HistoryEntry historyEntry,
@@ -76,14 +77,14 @@ public class EditOneCellCommand extends Command {
             this.cell = cell;
         }
     }
-    
+
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-    	if(!hasValidCSRFToken(request)) {
-    		respondCSRFError(response);
-    		return;
-    	}
+        if (!hasValidCSRFToken(request)) {
+            respondCSRFError(response);
+            return;
+        }
 
         try {
             request.setCharacterEncoding("UTF-8");
@@ -111,37 +112,34 @@ public class EditOneCellCommand extends Command {
             } else {
                 value = valueString;
             }
-            
+
             GridState state = project.getCurrentGridState();
-			Cell cell = state.getRow(rowIndex).getCell(cellIndex);
+            Cell cell = state.getRow(rowIndex).getCell(cellIndex);
             ColumnMetadata column = state.getColumnModel().getColumns().get(cellIndex);
             if (column == null) {
                 throw new Exception("No such column");
             }
 
             Cell newCell = new Cell(
-                value,
-                cell != null ? cell.recon : null
-            );
+                    value,
+                    cell != null ? cell.recon : null);
 
-            String description =
-                "Edit single cell on row " + (rowIndex + 1) +
-                ", column " + column.getName();
+            String description = "Edit single cell on row " + (rowIndex + 1) +
+                    ", column " + column.getName();
 
             Change change = new CellChange(rowIndex, column.getName(), value);
 
             QuickHistoryEntryProcess process = new QuickHistoryEntryProcess(
-                project.getHistory(),
-                description,
-                null,
-                change
-            );
+                    project.getHistory(),
+                    description,
+                    null,
+                    change);
 
             HistoryEntry historyEntry = project.getProcessManager().queueProcess(process);
             if (historyEntry != null) {
                 /*
-                 * If the operation has been done, return the new cell's data
-                 * so the client side can update the cell's rendering right away.
+                 * If the operation has been done, return the new cell's data so the client side can update the cell's
+                 * rendering right away.
                  */
                 respondJSON(response, new EditResult("ok", historyEntry, newCell));
             } else {

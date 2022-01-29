@@ -24,6 +24,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  ******************************************************************************/
+
 package org.openrefine.expr.functions.strings;
 
 import static org.testng.Assert.assertEquals;
@@ -32,21 +33,22 @@ import org.openrefine.grel.FunctionTestBase;
 import org.testng.annotations.Test;
 
 public class UnescapeTests extends FunctionTestBase {
+
     @Test
     public void testUnescape() {
         assertEquals(invoke("unescape", "&Auml;", "html"), "Ä");
         assertEquals(invoke("unescape", "\\u00C4", "javascript"), "Ä");
 
-        assertEquals(invoke("unescape", "\"Test\"", "csv"), "Test"); // Apache TEXT-149 https://github.com/apache/commons-text/pull/119
+        assertEquals(invoke("unescape", "\"Test\"", "csv"), "Test"); // Apache TEXT-149
+                                                                     // https://github.com/apache/commons-text/pull/119
         assertEquals(invoke("unescape", "\"This \"\"is\"\" a test\"", "csv"), "This \"is\" a test");
         assertEquals(invoke("unescape", "\"\n\"", "csv"), "\n");
         assertEquals(invoke("unescape", "\"a, b\"", "csv"), "a, b");
     }
-    
+
     @Test
     public void testUnescapeHTMLTwice() {
-    	assertEquals(invoke("unescape", "<br />", "html"), "<br />");
+        assertEquals(invoke("unescape", "<br />", "html"), "<br />");
     }
 
 }
-

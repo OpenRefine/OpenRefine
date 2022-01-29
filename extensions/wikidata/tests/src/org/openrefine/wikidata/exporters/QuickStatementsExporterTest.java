@@ -21,6 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  ******************************************************************************/
+
 package org.openrefine.wikidata.exporters;
 
 import static org.testng.Assert.assertEquals;
@@ -71,11 +72,12 @@ public class QuickStatementsExporterTest extends RefineTest {
     public void testSimpleProject()
             throws IOException {
         GridState grid = createGrid(
-        		new String[] { "subject", "inception", "reference" },
-        		new Serializable[][] {
-		  {TestingData.makeMatchedCell("Q1377", "University of Ljubljana"),"1919","http://www.ljubljana-slovenia.com/university-ljubljana" },
-		  {TestingData.makeMatchedCell("Q865528", "University of Warwick"),"1965",""},
-		  {TestingData.makeNewItemCell(1234L, "new uni"),"2016","http://new-uni.com/"}});
+                new String[] { "subject", "inception", "reference" },
+                new Serializable[][] {
+                        { TestingData.makeMatchedCell("Q1377", "University of Ljubljana"), "1919",
+                                "http://www.ljubljana-slovenia.com/university-ljubljana" },
+                        { TestingData.makeMatchedCell("Q865528", "University of Warwick"), "1965", "" },
+                        { TestingData.makeNewItemCell(1234L, "new uni"), "2016", "http://new-uni.com/" } });
         String serialized = TestingData.jsonFromFile("schema/inception.json");
         WikibaseSchema schema = WikibaseSchema.reconstruct(serialized);
         grid = grid.withOverlayModels(Collections.singletonMap("wikibaseSchema", schema));
@@ -99,10 +101,10 @@ public class QuickStatementsExporterTest extends RefineTest {
     @Test
     public void testNameDesc()
             throws IOException {
-    	/**
-    	 * Adding labels and description without overriding is not supported by QS, so
-    	 * we fall back on adding them with overriding.
-    	 */
+        /**
+         * Adding labels and description without overriding is not supported by QS, so we fall back on adding them with
+         * overriding.
+         */
         TermedStatementEntityUpdate update = new TermedStatementEntityUpdateBuilder(qid1)
                 .addLabel(Datamodel.makeMonolingualTextValue("some label", "en"), true)
                 .addDescription(Datamodel.makeMonolingualTextValue("some description", "en"), true)
@@ -110,7 +112,7 @@ public class QuickStatementsExporterTest extends RefineTest {
 
         assertEquals("Q1377\tLen\t\"some label\"\n" + "Q1377\tDen\t\"some description\"\n", export(update));
     }
-    
+
     @Test
     public void testOptionalNameDesc()
             throws IOException {
@@ -126,7 +128,8 @@ public class QuickStatementsExporterTest extends RefineTest {
     @Test
     public void testDeleteStatement()
             throws IOException {
-        TermedStatementEntityUpdate update = new TermedStatementEntityUpdateBuilder(qid1).deleteStatement(TestingData.generateStatement(qid1, qid2))
+        TermedStatementEntityUpdate update = new TermedStatementEntityUpdateBuilder(qid1)
+                .deleteStatement(TestingData.generateStatement(qid1, qid2))
                 .build();
 
         assertEquals("- Q1377\tP38\tQ865528\n", export(update));
@@ -146,7 +149,7 @@ public class QuickStatementsExporterTest extends RefineTest {
 
         assertEquals("Q1377\tP38\tQ865528\tP38\tQ1377\n", export(update));
     }
-    
+
     @Test
     public void testSomeValue()
             throws IOException {
@@ -158,7 +161,7 @@ public class QuickStatementsExporterTest extends RefineTest {
 
         assertEquals("Q1377\tP123\tsomevalue\n", export(update));
     }
-    
+
     @Test
     public void testNoValue()
             throws IOException {
@@ -174,8 +177,7 @@ public class QuickStatementsExporterTest extends RefineTest {
     /**
      * issue #2320
      *
-     * A statement with different references should be duplicated,
-     * but each with a different reference.
+     * A statement with different references should be duplicated, but each with a different reference.
      */
     @Test
     public void testReferences()
@@ -204,8 +206,8 @@ public class QuickStatementsExporterTest extends RefineTest {
     public void testNoSchema()
             throws IOException {
         GridState grid = this.createGrid(
-        		new String[] {"a", "b"},
-        		new Serializable[][] {{"c","d"}});
+                new String[] { "a", "b" },
+                new Serializable[][] { { "c", "d" } });
         Engine engine = new Engine(grid, EngineConfig.ALL_ROWS);
         StringWriter writer = new StringWriter();
         Properties properties = new Properties();

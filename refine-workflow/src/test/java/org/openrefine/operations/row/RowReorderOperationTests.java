@@ -24,6 +24,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  ******************************************************************************/
+
 package org.openrefine.operations.row;
 
 import static org.mockito.Mockito.mock;
@@ -48,35 +49,34 @@ import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.Test;
 
 public class RowReorderOperationTests extends RefineTest {
-    
+
     GridState initial;
 
     @BeforeSuite
     public void registerOperation() {
         OperationRegistry.registerOperation("core", "row-reorder", RowReorderOperation.class);
     }
-    
+
     @BeforeMethod
     public void setUp() {
         initial = createGrid(
-                new String[] {"key","first"},
+                new String[] { "key", "first" },
                 new Serializable[][] {
-                	{"8","b"},
-                	{"","d"},
-                	{"2","f"},
-                	{"1","h"}});
+                        { "8", "b" },
+                        { "", "d" },
+                        { "2", "f" },
+                        { "1", "h" } });
     }
-    
+
     @Test
     public void testSortEmptyString() throws Exception {
         String sortingJson = "{\"criteria\":[{\"column\":\"key\",\"valueType\":\"number\",\"reverse\":false,\"blankPosition\":2,\"errorPosition\":1}]}";
         SortingConfig sortingConfig = SortingConfig.reconstruct(sortingJson);
 
-        
         Change change = new RowReorderOperation(Mode.RowBased, sortingConfig).createChange();
         GridState applied = change.apply(initial, mock(ChangeContext.class));
         List<Row> rows = applied.collectRows().stream().map(ir -> ir.getRow()).collect(Collectors.toList());
-        
+
         Assert.assertEquals("h", rows.get(0).cells.get(1).value);
         Assert.assertEquals("f", rows.get(1).cells.get(1).value);
         Assert.assertEquals("b", rows.get(2).cells.get(1).value);
@@ -85,24 +85,23 @@ public class RowReorderOperationTests extends RefineTest {
 
     @Test
     public void serializeRowReorderOperation() throws Exception {
-        String json = "  {\n" + 
-                "    \"op\": \"core/row-reorder\",\n" + 
-                "    \"description\": \"Reorder rows\",\n" + 
-                "    \"mode\": \"record-based\",\n" + 
-                "    \"sorting\": {\n" + 
-                "      \"criteria\": [\n" + 
-                "        {\n" + 
-                "          \"errorPosition\": 1,\n" + 
-                "          \"valueType\": \"number\",\n" + 
-                "          \"column\": \"start_year\",\n" + 
-                "          \"blankPosition\": 2,\n" + 
-                "          \"reverse\": false\n" + 
-                "        }\n" + 
-                "      ]\n" + 
-                "    }\n" + 
+        String json = "  {\n" +
+                "    \"op\": \"core/row-reorder\",\n" +
+                "    \"description\": \"Reorder rows\",\n" +
+                "    \"mode\": \"record-based\",\n" +
+                "    \"sorting\": {\n" +
+                "      \"criteria\": [\n" +
+                "        {\n" +
+                "          \"errorPosition\": 1,\n" +
+                "          \"valueType\": \"number\",\n" +
+                "          \"column\": \"start_year\",\n" +
+                "          \"blankPosition\": 2,\n" +
+                "          \"reverse\": false\n" +
+                "        }\n" +
+                "      ]\n" +
+                "    }\n" +
                 "  }";
         TestUtils.isSerializedTo(ParsingUtilities.mapper.readValue(json, RowReorderOperation.class), json, ParsingUtilities.defaultWriter);
     }
 
 }
-

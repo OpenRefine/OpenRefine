@@ -57,7 +57,6 @@ import org.testng.annotations.Test;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
-
 public class XmlImporterTests extends ImporterTest {
 
     @Override
@@ -65,30 +64,30 @@ public class XmlImporterTests extends ImporterTest {
     public void init() {
         logger = LoggerFactory.getLogger(this.getClass());
     }
-    
-    //dependencies
+
+    // dependencies
     ByteArrayInputStream inputStream = null;
 
-    //System Under Test
+    // System Under Test
     XmlImporter SUT = null;
-   
+
     // Common expected state for many tests
     GridState expectedGrid;
-    
+
     @Override
     @BeforeMethod
-    public void setUp(){
+    public void setUp() {
         super.setUp();
         SUT = new XmlImporter(runner());
         expectedGrid = createGrid(new String[] {
-        		"book - id", "book - author", "book - title", "book - publish_date"
+                "book - id", "book - author", "book - title", "book - publish_date"
         }, new Serializable[][] {
-        	{ "1", "Author 1, The", "Book title 1", "2010-05-26" },
-        	{ "2", "Author 2, The", "Book title 2", "2010-05-26" },
-        	{ "3", "Author 3, The", "Book title 3", "2010-05-26" },
-        	{ "4", "Author 4, The", "Book title 4", "2010-05-26" },
-        	{ "5", "Author 5, The", "Book title 5", "2010-05-26" },
-        	{ "6", "Author 6, The", "Book title 6", "2010-05-26" },
+                { "1", "Author 1, The", "Book title 1", "2010-05-26" },
+                { "2", "Author 2, The", "Book title 2", "2010-05-26" },
+                { "3", "Author 3, The", "Book title 3", "2010-05-26" },
+                { "4", "Author 4, The", "Book title 4", "2010-05-26" },
+                { "5", "Author 5, The", "Book title 5", "2010-05-26" },
+                { "6", "Author 6, The", "Book title 6", "2010-05-26" },
         });
     }
 
@@ -108,31 +107,31 @@ public class XmlImporterTests extends ImporterTest {
     }
 
     @Test
-    public void canParseSample() throws Exception{
+    public void canParseSample() throws Exception {
         GridState grid = RunTest(getSample());
-		
-		assertGridEquals(grid, expectedGrid);
+
+        assertGridEquals(grid, expectedGrid);
     }
-    
+
     @Test
-    public void canParseDeeplyNestedSample() throws Exception{
+    public void canParseDeeplyNestedSample() throws Exception {
         GridState grid = RunTest(getDeeplyNestedSample(), getNestedOptions(job, SUT));
-		
-		assertGridEquals(grid, expectedGrid);
+
+        assertGridEquals(grid, expectedGrid);
     }
-    
+
     @Test
     public void canParseSampleWithMixedElement() throws Exception {
         GridState grid = RunTest(getMixedElementSample(), getNestedOptions(job, SUT));
-		
-		assertGridEquals(grid, expectedGrid);
+
+        assertGridEquals(grid, expectedGrid);
     }
-    
+
     @Test
     public void ignoresDtds() throws Exception {
-    	GridState grid = RunTest(getSampleWithDtd());
-    	
-    	assertGridEquals(grid, expectedGrid);
+        GridState grid = RunTest(getSampleWithDtd());
+
+        assertGridEquals(grid, expectedGrid);
     }
 
     @Test
@@ -153,15 +152,15 @@ public class XmlImporterTests extends ImporterTest {
     public void testCanParseLineBreak() throws Exception {
         GridState grid = RunTest(getSampleWithLineBreak());
 
-		GridState expectedGrid = createGrid(new String[] {
-        		"book - id", "book - author", "book - title", "book - publish_date"
+        GridState expectedGrid = createGrid(new String[] {
+                "book - id", "book - author", "book - title", "book - publish_date"
         }, new Serializable[][] {
-        	{ "1", "Author 1, The", "Book title 1", "2010-05-26" },
-        	{ "2", "Author 2, The", "Book title 2", "2010-05-26" },
-        	{ "3", "Author 3, The", "Book title 3", "2010-05-26" },
-        	{ "4", "With line\n break", "Book title 4", "2010-05-26" },
-        	{ "5", "Author 5, The", "Book title 5", "2010-05-26" },
-        	{ "6", "Author 6, The", "Book title 6", "2010-05-26" },
+                { "1", "Author 1, The", "Book title 1", "2010-05-26" },
+                { "2", "Author 2, The", "Book title 2", "2010-05-26" },
+                { "3", "Author 3, The", "Book title 3", "2010-05-26" },
+                { "4", "With line\n break", "Book title 4", "2010-05-26" },
+                { "5", "Author 5, The", "Book title 5", "2010-05-26" },
+                { "6", "Author 6, The", "Book title 6", "2010-05-26" },
         });
         assertGridEquals(grid, expectedGrid);
     }
@@ -169,16 +168,16 @@ public class XmlImporterTests extends ImporterTest {
     @Test
     public void testElementsWithVaryingStructure() throws Exception {
         GridState grid = RunTest(getSampleWithVaryingStructure());
-        
+
         GridState expected = createGrid(new String[] {
-        		"book - id", "book - author", "book - title", "book - publish_date", "book - genre"
+                "book - id", "book - author", "book - title", "book - publish_date", "book - genre"
         }, new Serializable[][] {
-        	{ "1", "Author 1, The", "Book title 1", "2010-05-26", null },
-        	{ "2", "Author 2, The", "Book title 2", "2010-05-26", null },
-        	{ "3", "Author 3, The", "Book title 3", "2010-05-26", null },
-        	{ "4", "Author 4, The", "Book title 4", "2010-05-26", null },
-        	{ "5", "Author 5, The", "Book title 5", "2010-05-26", null },
-        	{ "6", "Author 6, The", "Book title 6", "2010-05-26", "New element not seen in other records" },
+                { "1", "Author 1, The", "Book title 1", "2010-05-26", null },
+                { "2", "Author 2, The", "Book title 2", "2010-05-26", null },
+                { "3", "Author 3, The", "Book title 3", "2010-05-26", null },
+                { "4", "Author 4, The", "Book title 4", "2010-05-26", null },
+                { "5", "Author 5, The", "Book title 5", "2010-05-26", null },
+                { "6", "Author 6, The", "Book title 6", "2010-05-26", "New element not seen in other records" },
         });
 
         assertGridEquals(grid, expected);
@@ -196,9 +195,9 @@ public class XmlImporterTests extends ImporterTest {
         final String FILE = "xml-sample-format-1.xml";
         String filename = ClassLoader.getSystemResource(FILE).getPath();
         String fileContents = FileUtils.readFileToString(new File(filename), Charsets.UTF_8);
-        		
+
         ObjectNode options = getOptions(job, SUT);
-        JSONUtilities.safePut(options,"includeFileSources", true);
+        JSONUtilities.safePut(options, "includeFileSources", true);
 
         GridState grid = RunTest(fileContents, options);
 
@@ -206,46 +205,46 @@ public class XmlImporterTests extends ImporterTest {
         Assert.assertEquals(grid.getRow(0).getCell(0).value, "file-source");
     }
 
-    //------------helper methods---------------
+    // ------------helper methods---------------
 
-    public static String getTypicalElement(int id){
+    public static String getTypicalElement(int id) {
         return "<book id=\"" + id + "\">" +
-        "<author>Author " + id + ", The</author>" +
-        "<title>Book title " + id + "</title>" +
-        "<publish_date>2010-05-26</publish_date>" +
-        "</book>";
+                "<author>Author " + id + ", The</author>" +
+                "<title>Book title " + id + "</title>" +
+                "<publish_date>2010-05-26</publish_date>" +
+                "</book>";
     }
 
-    public static String getElementWithDuplicateSubElement(int id){
+    public static String getElementWithDuplicateSubElement(int id) {
         return "<book id=\"" + id + "\">" +
-        "<authors>" +
-        "<author>Author " + id + ", The</author>" +
-        "<author>Author " + id + ", Another</author>" +
-        "</authors>" +
-        "<title>Book title " + id + "</title>" +
-        "<publish_date>2010-05-26</publish_date>" +
-        "</book>";
+                "<authors>" +
+                "<author>Author " + id + ", The</author>" +
+                "<author>Author " + id + ", Another</author>" +
+                "</authors>" +
+                "<title>Book title " + id + "</title>" +
+                "<publish_date>2010-05-26</publish_date>" +
+                "</book>";
     }
 
-    public static String getSample(){
+    public static String getSample() {
         StringBuilder sb = new StringBuilder();
         sb.append("<?xml version=\"1.0\"?><library>");
-        for(int i = 1; i < 7; i++){
+        for (int i = 1; i < 7; i++) {
             sb.append(getTypicalElement(i));
         }
         sb.append("</library>");
         return sb.toString();
     }
-    
-    public static String getSampleWithDtd(){
+
+    public static String getSampleWithDtd() {
         StringBuilder sb = new StringBuilder();
         sb.append("<?xml version=\"1.0\"?>");
-        sb.append("<!DOCTYPE library [\n" + 
-    			"<!ENTITY % asd SYSTEM \"http://domain.does.not.exist:4444/ext.dtd\">\n" + 
-    			"%asd;\n" + 
-    			"%c;\n" + 
-    			"]><library>");
-        for(int i = 1; i < 7; i++){
+        sb.append("<!DOCTYPE library [\n" +
+                "<!ENTITY % asd SYSTEM \"http://domain.does.not.exist:4444/ext.dtd\">\n" +
+                "%asd;\n" +
+                "%c;\n" +
+                "]><library>");
+        for (int i = 1; i < 7; i++) {
             sb.append(getTypicalElement(i));
         }
         sb.append("</library>");
@@ -255,46 +254,33 @@ public class XmlImporterTests extends ImporterTest {
     public static ObjectNode getOptions(ImportingJob job, TreeImportingParserBase parser) {
         ObjectNode options = parser.createParserUIInitializationData(
                 job, Collections.emptyList(), "text/xml");
-        
+
         ArrayNode path = ParsingUtilities.mapper.createArrayNode();
         JSONUtilities.append(path, "library");
         JSONUtilities.append(path, "book");
-        
+
         JSONUtilities.safePut(options, "recordPath", path);
         return options;
     }
-    
+
     public static ObjectNode getNestedOptions(ImportingJob job, TreeImportingParserBase parser) {
         ObjectNode options = parser.createParserUIInitializationData(
                 job, Collections.emptyList(), "text/xml");
-        
+
         ArrayNode path = ParsingUtilities.mapper.createArrayNode();
         JSONUtilities.append(path, "nest");
         JSONUtilities.append(path, "nest2");
         JSONUtilities.append(path, "library");
         JSONUtilities.append(path, "book");
-        
+
         JSONUtilities.safePut(options, "recordPath", path);
         return options;
     }
-    
-    public static String getDeeplyNestedSample(){
+
+    public static String getDeeplyNestedSample() {
         StringBuilder sb = new StringBuilder();
         sb.append("<?xml version=\"1.0\"?><nest><nest2><library>");
-        for(int i = 1; i < 7; i++){
-            sb.append(getTypicalElement(i));
-        }
-        sb.append("</library></nest2>");
-        sb.append("<anElement>asdf</anElement></nest>");
-        return sb.toString();
-    }
-    
-    public static String getMixedElementSample(){
-        StringBuilder sb = new StringBuilder();
-        sb.append("<?xml version=\"1.0\"?><nest>");
-        sb.append("somemixeduptext");
-        sb.append("<nest2><library>");
-        for(int i = 1; i < 7; i++){
+        for (int i = 1; i < 7; i++) {
             sb.append(getTypicalElement(i));
         }
         sb.append("</library></nest2>");
@@ -302,10 +288,23 @@ public class XmlImporterTests extends ImporterTest {
         return sb.toString();
     }
 
-    public static String getSampleWithDuplicateNestedElements(){
+    public static String getMixedElementSample() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("<?xml version=\"1.0\"?><nest>");
+        sb.append("somemixeduptext");
+        sb.append("<nest2><library>");
+        for (int i = 1; i < 7; i++) {
+            sb.append(getTypicalElement(i));
+        }
+        sb.append("</library></nest2>");
+        sb.append("<anElement>asdf</anElement></nest>");
+        return sb.toString();
+    }
+
+    public static String getSampleWithDuplicateNestedElements() {
         StringBuilder sb = new StringBuilder();
         sb.append("<?xml version=\"1.0\"?><library>");
-        for(int i = 1; i < 7; i++){
+        for (int i = 1; i < 7; i++) {
             sb.append(getElementWithDuplicateSubElement(i));
         }
         sb.append("</library>");
@@ -313,10 +312,10 @@ public class XmlImporterTests extends ImporterTest {
 
     }
 
-    public static String getSampleWithLineBreak(){
+    public static String getSampleWithLineBreak() {
         StringBuilder sb = new StringBuilder();
         sb.append("<?xml version=\"1.0\"?><library>");
-        for(int i = 1; i < 4; i++){
+        for (int i = 1; i < 4; i++) {
             sb.append(getTypicalElement(i));
         }
         sb.append("<book id=\"4\">" +
@@ -330,10 +329,10 @@ public class XmlImporterTests extends ImporterTest {
         return sb.toString();
     }
 
-    public static String getSampleWithVaryingStructure(){
+    public static String getSampleWithVaryingStructure() {
         StringBuilder sb = new StringBuilder();
         sb.append("<?xml version=\"1.0\"?><library>");
-        for(int i = 1; i < 6; i++){
+        for (int i = 1; i < 6; i++) {
             sb.append(getTypicalElement(i));
         }
         sb.append("<book id=\"6\">" +
@@ -346,10 +345,10 @@ public class XmlImporterTests extends ImporterTest {
         return sb.toString();
     }
 
-    public static String getSampleWithTreeStructure(){
+    public static String getSampleWithTreeStructure() {
         StringBuilder sb = new StringBuilder();
         sb.append("<?xml version=\"1.0\"?><library>");
-        for(int i = 1; i < 7; i++){
+        for (int i = 1; i < 7; i++) {
             sb.append("<book id=\"" + i + "\">" +
                     "<author><author-name>Author " + i + ", The</author-name>" +
                     "<author-dob>1950-0" + i + "-15</author-dob></author>" +
@@ -364,14 +363,14 @@ public class XmlImporterTests extends ImporterTest {
     private GridState RunTest(String testString) throws Exception {
         return RunTest(testString, getOptions(job, SUT));
     }
-    
+
     private GridState RunTest(String testString, ObjectNode objectNode) throws Exception {
         return parseOneString(SUT, testString, objectNode);
     }
-    
+
     private void assertProjectCreated(GridState grid, int nbColumns, int nbRows) {
-    	Assert.assertEquals(grid.getColumnModel().getColumns().size(), nbColumns);
-    	Assert.assertEquals(grid.rowCount(), nbRows);
+        Assert.assertEquals(grid.getColumnModel().getColumns().size(), nbColumns);
+        Assert.assertEquals(grid.rowCount(), nbRows);
     }
 
 }

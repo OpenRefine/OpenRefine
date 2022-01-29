@@ -24,7 +24,9 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  ******************************************************************************/
+
 package org.openrefine.operations.recon;
+
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -50,25 +52,25 @@ import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
 public class ReconMatchBestCandidatesOperationTests extends RefineTest {
-	
-	private GridState initialState;
-	
+
+    private GridState initialState;
+
     @BeforeSuite
     public void registerOperation() {
         OperationRegistry.registerOperation("core", "recon-match-best-candidates", ReconMatchBestCandidatesOperation.class);
     }
-    
+
     @BeforeTest
     public void setupInitialState() throws ModelException {
-    	initialState = createGrid(
-    			new String[] {"foo", "bar"},
-    			new Serializable[][] {
-    				{"a", new Cell("b", testRecon("e", "h", Recon.Judgment.Matched))},
-    				{"c", new Cell("b", testRecon("x", "p", Recon.Judgment.New))},
-    				{"c", new Cell("d", testRecon("b", "j", Recon.Judgment.None))}
-    			});
+        initialState = createGrid(
+                new String[] { "foo", "bar" },
+                new Serializable[][] {
+                        { "a", new Cell("b", testRecon("e", "h", Recon.Judgment.Matched)) },
+                        { "c", new Cell("b", testRecon("x", "p", Recon.Judgment.New)) },
+                        { "c", new Cell("d", testRecon("b", "j", Recon.Judgment.None)) }
+                });
     }
-    
+
     @Test
     public void serializeReconMatchBestCandidatesOperation() throws Exception {
         String json = "{"
@@ -78,45 +80,46 @@ public class ReconMatchBestCandidatesOperationTests extends RefineTest {
                 + "]},"
                 + "\"columnName\":\"organization_name\""
                 + "}";
-        TestUtils.isSerializedTo(ParsingUtilities.mapper.readValue(json, ReconMatchBestCandidatesOperation.class), json, ParsingUtilities.defaultWriter);
+        TestUtils.isSerializedTo(ParsingUtilities.mapper.readValue(json, ReconMatchBestCandidatesOperation.class), json,
+                ParsingUtilities.defaultWriter);
     }
-    
+
     @Test
     public void testReconMatchBestCandidatesOperation() throws ModelException, DoesNotApplyException {
-    	Change change = new ReconMatchBestCandidatesOperation(EngineConfig.ALL_ROWS, "bar").createChange();
-    	
-    	ChangeContext context = mock(ChangeContext.class);
-    	when(context.getHistoryEntryId()).thenReturn(2891L);
-    	
-    	GridState applied = change.apply(initialState, context);
-    	
-    	GridState expected = createGrid(
-    			new String[] {"foo", "bar"},
-    			new Serializable[][] {
-    				{"a", new Cell("b", testRecon("e", "h", Recon.Judgment.Matched)
-    						.withJudgmentHistoryEntry(2891L)
-    						.withMatchRank(0)
-    						.withJudgmentAction("mass"))},
-    				{"c", new Cell("b", testRecon("x", "p", Recon.Judgment.New)
-    						.withJudgmentHistoryEntry(2891L)
-    						.withMatchRank(0)
-    						.withMatch(testRecon("x", "p", Recon.Judgment.New).getBestCandidate())
-    						.withJudgmentAction("mass")
-    						.withJudgment(Recon.Judgment.Matched))},
-    				{"c", new Cell("d", testRecon("b", "j", Recon.Judgment.None)
-    						.withJudgmentHistoryEntry(2891L)
-    						.withMatchRank(0)
-    						.withMatch(testRecon("b", "j", Recon.Judgment.None).getBestCandidate())
-    						.withJudgmentAction("mass")
-    						.withJudgment(Recon.Judgment.Matched))}
-    			});
-    	
-    	// Make sure recon stats are updated too
-    	ReconStats reconStats = ReconStats.create(3, 0, 3);
-    	ColumnModel columnModel = expected.getColumnModel();
-    	ColumnMetadata columnMetadata = columnModel.getColumnByName("bar");
-    	expected = expected.withColumnModel(columnModel.replaceColumn(1, columnMetadata.withReconStats(reconStats)));
-    	
-    	assertGridEquals(applied, expected);
+        Change change = new ReconMatchBestCandidatesOperation(EngineConfig.ALL_ROWS, "bar").createChange();
+
+        ChangeContext context = mock(ChangeContext.class);
+        when(context.getHistoryEntryId()).thenReturn(2891L);
+
+        GridState applied = change.apply(initialState, context);
+
+        GridState expected = createGrid(
+                new String[] { "foo", "bar" },
+                new Serializable[][] {
+                        { "a", new Cell("b", testRecon("e", "h", Recon.Judgment.Matched)
+                                .withJudgmentHistoryEntry(2891L)
+                                .withMatchRank(0)
+                                .withJudgmentAction("mass")) },
+                        { "c", new Cell("b", testRecon("x", "p", Recon.Judgment.New)
+                                .withJudgmentHistoryEntry(2891L)
+                                .withMatchRank(0)
+                                .withMatch(testRecon("x", "p", Recon.Judgment.New).getBestCandidate())
+                                .withJudgmentAction("mass")
+                                .withJudgment(Recon.Judgment.Matched)) },
+                        { "c", new Cell("d", testRecon("b", "j", Recon.Judgment.None)
+                                .withJudgmentHistoryEntry(2891L)
+                                .withMatchRank(0)
+                                .withMatch(testRecon("b", "j", Recon.Judgment.None).getBestCandidate())
+                                .withJudgmentAction("mass")
+                                .withJudgment(Recon.Judgment.Matched)) }
+                });
+
+        // Make sure recon stats are updated too
+        ReconStats reconStats = ReconStats.create(3, 0, 3);
+        ColumnModel columnModel = expected.getColumnModel();
+        ColumnMetadata columnMetadata = columnModel.getColumnByName("bar");
+        expected = expected.withColumnModel(columnModel.replaceColumn(1, columnMetadata.withReconStats(reconStats)));
+
+        assertGridEquals(applied, expected);
     }
 }

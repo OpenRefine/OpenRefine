@@ -24,6 +24,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  ******************************************************************************/
+
 package org.openrefine.expr.functions.date;
 
 import java.time.OffsetDateTime;
@@ -33,18 +34,18 @@ import org.openrefine.grel.FunctionTestBase;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
-
 public class NowTests extends FunctionTestBase {
-    private  DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd-HH:mm:ss.SSSSSSSSSX");
-    
+
+    private DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd-HH:mm:ss.SSSSSSSSSX");
+
     @Test
-    public void testNow() {        
+    public void testNow() {
         // 2018-4-30 23:55:44
         OffsetDateTime source = OffsetDateTime.parse("20180430-23:55:44.000789000Z",
                 formatter);
-        
+
         Assert.assertTrue(invoke("now") instanceof OffsetDateTime);
-        Assert.assertTrue(((OffsetDateTime)invoke("now")).isAfter(source));
+        Assert.assertTrue(((OffsetDateTime) invoke("now")).isAfter(source));
     }
 
 }

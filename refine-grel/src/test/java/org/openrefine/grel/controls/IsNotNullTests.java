@@ -24,6 +24,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  ******************************************************************************/
+
 package org.openrefine.grel.controls;
 
 import org.openrefine.util.ParsingUtilities;
@@ -31,10 +32,10 @@ import org.openrefine.util.TestUtils;
 import org.testng.annotations.Test;
 
 public class IsNotNullTests {
+
     @Test
     public void serializeIsNotNull() {
         String json = "{\"description\":\"Returns whether o is not null\",\"params\":\"expression o\",\"returns\":\"boolean\"}";
         TestUtils.isSerializedTo(new IsNotNull(), json, ParsingUtilities.defaultWriter);
     }
 }
-

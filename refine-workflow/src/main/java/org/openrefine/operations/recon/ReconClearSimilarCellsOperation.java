@@ -49,70 +49,66 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class ReconClearSimilarCellsOperation extends ImmediateRowMapOperation {
+
     final protected String _similarValue;
     final protected String _columnName;
 
     @JsonCreator
     public ReconClearSimilarCellsOperation(
-        @JsonProperty("engineConfig")
-        EngineConfig engineConfig,
-        @JsonProperty("columnName")
-        String     columnName, 
-        @JsonProperty("similarValue")
-        String     similarValue
-    ) {
+            @JsonProperty("engineConfig") EngineConfig engineConfig,
+            @JsonProperty("columnName") String columnName,
+            @JsonProperty("similarValue") String similarValue) {
         super(engineConfig);
         _similarValue = similarValue;
         _columnName = columnName;
     }
-    
+
     @JsonProperty("columnName")
     public String getColumnName() {
         return _columnName;
     }
-    
+
     @JsonProperty("similarValue")
     public String getSimilarValue() {
         return _similarValue;
     }
-    
+
     @Override
     public String getDescription() {
         return "Clear recon data for cells containing \"" +
-            _similarValue + "\" in column " + _columnName;
+                _similarValue + "\" in column " + _columnName;
     }
 
-	@Override
-	protected RowInRecordMapper getPositiveRowMapper(GridState state, ChangeContext context) throws DoesNotApplyException {
-		int cellIndex = columnIndex(state.getColumnModel(), _columnName);
-		return rowMapper(cellIndex, _similarValue);
-	}
-	
-	@Override
-	protected GridState postTransform(GridState newState, ChangeContext context) {
-		return LazyReconStats.updateReconStats(newState, _columnName);
-	}
-	
-	protected static RowInRecordMapper rowMapper(int cellIndex, String _similarValue) {
-		return new RowInRecordMapper() {
+    @Override
+    protected RowInRecordMapper getPositiveRowMapper(GridState state, ChangeContext context) throws DoesNotApplyException {
+        int cellIndex = columnIndex(state.getColumnModel(), _columnName);
+        return rowMapper(cellIndex, _similarValue);
+    }
 
-			private static final long serialVersionUID = -7567386480566899008L;
+    @Override
+    protected GridState postTransform(GridState newState, ChangeContext context) {
+        return LazyReconStats.updateReconStats(newState, _columnName);
+    }
 
-			@Override
-			public Row call(Record record, long rowId, Row row) {
-				Cell cell = row.getCell(cellIndex);
+    protected static RowInRecordMapper rowMapper(int cellIndex, String _similarValue) {
+        return new RowInRecordMapper() {
+
+            private static final long serialVersionUID = -7567386480566899008L;
+
+            @Override
+            public Row call(Record record, long rowId, Row row) {
+                Cell cell = row.getCell(cellIndex);
                 if (cell != null && cell.recon != null) {
-                    String value = cell.value instanceof String ? 
-                            ((String) cell.value) : cell.value.toString();
-                            
+                    String value = cell.value instanceof String ? ((String) cell.value) : cell.value.toString();
+
                     if (_similarValue.equals(value)) {
                         Cell newCell = new Cell(cell.value, null);
                         return row.withCell(cellIndex, newCell);
                     }
                 }
                 return row;
-			}
-			
-		};
-	}
+            }
+
+        };
+    }
 }

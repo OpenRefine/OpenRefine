@@ -24,6 +24,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  ******************************************************************************/
+
 package org.openrefine.sorting;
 
 import java.io.IOException;
@@ -35,43 +36,42 @@ import org.openrefine.util.ParsingUtilities;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-
 /**
  * Stores the configuration of a row/record sorting setup.
+ * 
  * @author Antonin Delpeuch
  *
  */
-public final class SortingConfig  {
-	
-	public static final SortingConfig NO_SORTING = new SortingConfig(Collections.emptyList());
-    
+public final class SortingConfig {
+
+    public static final SortingConfig NO_SORTING = new SortingConfig(Collections.emptyList());
+
     protected final List<Criterion> _criteria;
-    
+
     @JsonCreator
     public SortingConfig(
-            @JsonProperty("criteria")
-            List<Criterion> criteria) {
+            @JsonProperty("criteria") List<Criterion> criteria) {
         _criteria = criteria == null ? Collections.emptyList() : criteria;
     }
-    
+
     @JsonProperty("criteria")
     public List<Criterion> getCriteria() {
         return _criteria;
     }
-    
+
     public static SortingConfig reconstruct(String obj) throws IOException {
         return ParsingUtilities.mapper.readValue(obj, SortingConfig.class);
     }
-    
+
     @Override
     public boolean equals(Object other) {
         if (!(other instanceof SortingConfig)) {
             return false;
         }
-        SortingConfig otherConfig = (SortingConfig)other;
+        SortingConfig otherConfig = (SortingConfig) other;
         return _criteria.equals(otherConfig.getCriteria());
     }
-    
+
     @Override
     public int hashCode() {
         return _criteria.hashCode();

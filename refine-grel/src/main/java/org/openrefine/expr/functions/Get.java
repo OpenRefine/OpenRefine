@@ -54,7 +54,7 @@ public class Get extends PureFunction {
             Object v = args[0];
             Object from = args[1];
             Object to = (args.length == 3) ? args[2] : null;
-            
+
             if (v != null && from != null) {
                 if (v instanceof HasFields && from instanceof String) {
                     return ((HasFields) v).getField((String) from);
@@ -62,13 +62,13 @@ public class Get extends PureFunction {
                     return JsonValueConverter.convert(((ObjectNode) v).get((String) from));
                 } else {
                     if (from instanceof Number && (to == null || to instanceof Number)) {
-                        if (v.getClass().isArray() || 
-                            v instanceof List<?> || 
-                            v instanceof HasFieldsList || 
-                            v instanceof ArrayNode) {
-                            
+                        if (v.getClass().isArray() ||
+                                v instanceof List<?> ||
+                                v instanceof HasFieldsList ||
+                                v instanceof ArrayNode) {
+
                             int length = 0;
-                            if (v.getClass().isArray()) { 
+                            if (v.getClass().isArray()) {
                                 length = ((Object[]) v).length;
                             } else if (v instanceof HasFieldsList) {
                                 length = ((HasFieldsList) v).length();
@@ -77,13 +77,13 @@ public class Get extends PureFunction {
                             } else {
                                 length = ExpressionUtils.toObjectList(v).size();
                             }
-                            
+
                             int start = ((Number) from).intValue();
                             if (start < 0) {
                                 start = length + start;
                             }
                             start = Math.min(length, Math.max(0, start));
-                            
+
                             if (to == null) {
                                 if (v.getClass().isArray()) {
                                     return ((Object[]) v)[start];
@@ -96,27 +96,27 @@ public class Get extends PureFunction {
                                 }
                             } else {
                                 int end = ((Number) to).intValue();
-                                            
+
                                 if (end < 0) {
                                     end = length + end;
                                 }
                                 end = Math.min(length, Math.max(start, end));
-                                
+
                                 if (end > start) {
                                     if (v.getClass().isArray()) {
                                         Object[] a2 = new Object[end - start];
-                                        
+
                                         System.arraycopy(v, start, a2, 0, end - start);
-                                        
+
                                         return a2;
                                     } else if (v instanceof HasFieldsList) {
                                         return ((HasFieldsList) v).getSubList(start, end);
                                     } else if (v instanceof ArrayNode) {
                                         ArrayNode a = (ArrayNode) v;
                                         Object[] a2 = new Object[end - start];
-                                        
+
                                         for (int i = 0; i < a2.length; i++) {
-                                            a2[i] = JsonValueConverter.convert(a.get(start + i)); 
+                                            a2[i] = JsonValueConverter.convert(a.get(start + i));
                                         }
                                         return a2;
                                     } else {
@@ -126,20 +126,20 @@ public class Get extends PureFunction {
                             }
                         } else {
                             String s = (v instanceof String) ? (String) v : v.toString();
-                            
+
                             int start = ((Number) from).intValue();
                             if (start < 0) {
                                 start = s.length() + start;
                             }
                             start = Math.min(s.length(), Math.max(0, start));
-                            
+
                             if (to != null) {
                                 int end = ((Number) to).intValue();
                                 if (end < 0) {
                                     end = s.length() + end;
                                 }
                                 end = Math.min(s.length(), Math.max(start, end));
-                                
+
                                 return s.substring(start, end);
                             } else {
                                 return s.substring(start, start + 1);
@@ -154,18 +154,16 @@ public class Get extends PureFunction {
 
     @Override
     public String getDescription() {
-        return 
-            "If o has named fields, returns the field named 'from' of o. " +
-            "If o is an array, returns a sub-array o[from, to]. " +
-            "if o is a string, returns o.substring(from, to)."
-        ;
+        return "If o has named fields, returns the field named 'from' of o. " +
+                "If o is an array, returns a sub-array o[from, to]. " +
+                "if o is a string, returns o.substring(from, to).";
     }
-    
+
     @Override
     public String getParams() {
         return "o, number or string from, optional number to";
     }
-    
+
     @Override
     public String getReturns() {
         return "Depends on actual arguments";

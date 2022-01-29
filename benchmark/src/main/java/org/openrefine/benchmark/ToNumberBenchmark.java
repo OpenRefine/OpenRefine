@@ -24,6 +24,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  ******************************************************************************/
+
 package org.openrefine.benchmark;
 
 import java.util.Properties;
@@ -53,15 +54,15 @@ public class ToNumberBenchmark {
     @State(Scope.Benchmark)
     public static class ExecutionPlan {
 
-        @Param({"1000", "10000" })
+        @Param({ "1000", "10000" })
         public int iterations;
-        
+
         public ToNumber f;
         String[] args = new String[1];
-        String testData; 
+        String testData;
         String testDataInt;
         Random rnd = new Random();
-        
+
         @Setup(Level.Invocation)
         public void setUp() {
             f = new ToNumber();
@@ -73,8 +74,8 @@ public class ToNumberBenchmark {
     @Benchmark
     @BenchmarkMode(Mode.AverageTime)
     @OutputTimeUnit(TimeUnit.NANOSECONDS)
-	@Warmup(iterations = 3, time = 200, timeUnit = TimeUnit.MILLISECONDS)
-	@Measurement(iterations = 5, time = 200, timeUnit = TimeUnit.MILLISECONDS)
+    @Warmup(iterations = 3, time = 200, timeUnit = TimeUnit.MILLISECONDS)
+    @Measurement(iterations = 5, time = 200, timeUnit = TimeUnit.MILLISECONDS)
     public void toDoubleNew(ExecutionPlan plan, Blackhole blackhole) {
         plan.args[0] = plan.testData;
         blackhole.consume(plan.f.call(bindings, plan.args));
@@ -83,12 +84,11 @@ public class ToNumberBenchmark {
     @Benchmark
     @BenchmarkMode(Mode.AverageTime)
     @OutputTimeUnit(TimeUnit.NANOSECONDS)
-	@Warmup(iterations = 3, time = 200, timeUnit = TimeUnit.MILLISECONDS)
-	@Measurement(iterations = 5, time = 200, timeUnit = TimeUnit.MILLISECONDS)
-	@Fork(1)
+    @Warmup(iterations = 3, time = 200, timeUnit = TimeUnit.MILLISECONDS)
+    @Measurement(iterations = 5, time = 200, timeUnit = TimeUnit.MILLISECONDS)
+    @Fork(1)
     public void toLongNew(ExecutionPlan plan, Blackhole blackhole) {
-            plan.args[0] = plan.testDataInt;
-            blackhole.consume(plan.f.call(bindings, plan.args));
+        plan.args[0] = plan.testDataInt;
+        blackhole.consume(plan.f.call(bindings, plan.args));
     }
 }
-

@@ -1,3 +1,4 @@
+
 package org.openrefine.model;
 
 import java.io.File;
@@ -46,15 +47,15 @@ import com.fasterxml.jackson.core.JsonProcessingException;
  */
 @JsonIgnoreType
 public class LocalGridState implements GridState {
-    
+
     protected final LocalDatamodelRunner runner;
     protected final PairPLL<Long, Row> grid;
     protected final ColumnModel columnModel;
     protected final Map<String, OverlayModel> overlayModels;
-    
+
     // initialized lazily
     protected PairPLL<Long, Record> records;
-    
+
     /**
      * Constructs a grid state, supplying all required fields.
      * 
@@ -74,14 +75,14 @@ public class LocalGridState implements GridState {
         this.overlayModels = overlayModels;
         this.records = null;
     }
-    
+
     protected PairPLL<Long, Record> records() {
         if (records == null) {
             records = RecordPLL.groupIntoRecords(grid, columnModel.getKeyColumnIndex());
         }
         return records;
     }
-    
+
     protected PLL<IndexedRow> indexedRows() {
         return grid.map(tuple -> new IndexedRow(tuple.getKey(), tuple.getValue()));
     }
@@ -103,14 +104,14 @@ public class LocalGridState implements GridState {
 
     @Override
     public Row getRow(long id) {
-    	// because `get` does not assume that the PLL is sorted,
-    	// it must actually scan at least one entire partition,
-    	// which is unnecessary since we know it is sorted and there
-    	// is at most one result. So we use `getRange` instead.
+        // because `get` does not assume that the PLL is sorted,
+        // it must actually scan at least one entire partition,
+        // which is unnecessary since we know it is sorted and there
+        // is at most one result. So we use `getRange` instead.
         List<Tuple2<Long, Row>> rows = grid.getRange(id, 1, Comparator.naturalOrder());
         if (rows.size() == 0) {
             throw new IndexOutOfBoundsException(String.format("Row id %d not found", id));
-        } else if (rows.size() > 1){
+        } else if (rows.size() > 1) {
             throw new IllegalStateException(String.format("Found %d rows at index %d", rows.size(), id));
         } else {
             return rows.get(0).getValue();
@@ -130,10 +131,10 @@ public class LocalGridState implements GridState {
         PairPLL<Long, Row> filteredRows = grid.filter(tuple -> filter.filterRow(tuple.getKey(), tuple.getValue()));
         if (SortingConfig.NO_SORTING.equals(sortingConfig)) {
             return filteredRows
-                .getRange(start, limit, Comparator.naturalOrder())
-                .stream()
-                .map(tuple -> new IndexedRow(tuple.getKey(), tuple.getValue()))
-                .collect(Collectors.toList());
+                    .getRange(start, limit, Comparator.naturalOrder())
+                    .stream()
+                    .map(tuple -> new IndexedRow(tuple.getKey(), tuple.getValue()))
+                    .collect(Collectors.toList());
         } else {
             RowSorter rowSorter = new RowSorter(this, sortingConfig);
             return filteredRows
@@ -146,7 +147,7 @@ public class LocalGridState implements GridState {
                     .collect(Collectors.toList());
         }
     }
-    
+
     @Override
     public List<IndexedRow> getRows(List<Long> rowIndices) {
         Map<Long, IndexedRow> results = grid.getByKeys(rowIndices.stream().collect(Collectors.toSet()))
@@ -178,7 +179,7 @@ public class LocalGridState implements GridState {
                             .iterator();
                 }
             }
-            
+
         };
     }
 
@@ -214,7 +215,7 @@ public class LocalGridState implements GridState {
         List<Record> rows = records().get(id);
         if (rows.size() == 0) {
             throw new IllegalArgumentException(String.format("Record id %d not found", id));
-        } else if (rows.size() > 1){
+        } else if (rows.size() > 1) {
             throw new IllegalStateException(String.format("Found %d records at index %d", rows.size(), id));
         } else {
             return rows.get(0);
@@ -243,15 +244,15 @@ public class LocalGridState implements GridState {
             // memory, and it is trivial to zipWithIndex an InMemoryPLL.
         }
         return records
-            .filter(tuple -> filter.filterRecord(tuple.getValue()))
-            .getRange(start, limit, Comparator.naturalOrder())
-            .stream()
-            .map(tuple -> tuple.getValue())
-            .collect(Collectors.toList());
+                .filter(tuple -> filter.filterRecord(tuple.getValue()))
+                .getRange(start, limit, Comparator.naturalOrder())
+                .stream()
+                .map(tuple -> tuple.getValue())
+                .collect(Collectors.toList());
     }
 
     @Override
-    public Iterable<Record> iterateRecords(RecordFilter filter, SortingConfig sortingConfig) { 
+    public Iterable<Record> iterateRecords(RecordFilter filter, SortingConfig sortingConfig) {
         return new Iterable<Record>() {
 
             @Override
@@ -266,7 +267,7 @@ public class LocalGridState implements GridState {
                         .stream()
                         .iterator();
             }
-            
+
         };
     }
 
@@ -317,7 +318,7 @@ public class LocalGridState implements GridState {
     public void saveToFile(File file, ProgressReporter progressReporter) throws IOException, InterruptedException {
         saveToFile(file, Optional.ofNullable(progressReporter));
     }
-    
+
     @Override
     public void saveToFile(File file) throws IOException {
         try {
@@ -326,18 +327,18 @@ public class LocalGridState implements GridState {
             throw new IOException("The operation was interrupted", e);
         }
     }
-    
+
     protected void saveToFile(File file, Optional<ProgressReporter> progressReporter) throws IOException, InterruptedException {
         File metadataFile = new File(file, METADATA_PATH);
         File gridFile = new File(file, GRID_PATH);
 
         grid
-        .map(LocalGridState::serializeIndexedRow)
-        .saveAsTextFile(gridFile.getAbsolutePath(), progressReporter);
-        
+                .map(LocalGridState::serializeIndexedRow)
+                .saveAsTextFile(gridFile.getAbsolutePath(), progressReporter);
+
         ParsingUtilities.saveWriter.writeValue(metadataFile, getMetadata());
     }
-    
+
     protected Metadata getMetadata() {
         Metadata metadata = new Metadata();
         metadata.columnModel = columnModel;
@@ -346,7 +347,7 @@ public class LocalGridState implements GridState {
         metadata.recordCount = records != null && records.hasCachedPartitionSizes() ? records.count() : -1;
         return metadata;
     }
-    
+
     protected static String serializeIndexedRow(Tuple2<Long, Row> tuple) {
         try {
             return ParsingUtilities.saveWriter.writeValueAsString(new IndexedRow(tuple.getKey(), tuple.getValue()));
@@ -376,14 +377,14 @@ public class LocalGridState implements GridState {
         return grid
                 .limitPartitions(partitionLimit)
                 .aggregate(initialPartialState,
-                (s, t) -> new PartialAggregation<T>(
-                        aggregator.withRow(s.getState(), t.getKey(), t.getValue()),
-                        s.getProcessed() + 1,
-                        s.limitReached() || s.getProcessed() + 1 == partitionLimit),
-                (s1, s2) -> new PartialAggregation<T>(
-                        aggregator.sum(s1.getState(), s2.getState()),
-                        s1.getProcessed() + s2.getProcessed(),
-                        s1.limitReached() || s2.limitReached()));
+                        (s, t) -> new PartialAggregation<T>(
+                                aggregator.withRow(s.getState(), t.getKey(), t.getValue()),
+                                s.getProcessed() + 1,
+                                s.limitReached() || s.getProcessed() + 1 == partitionLimit),
+                        (s1, s2) -> new PartialAggregation<T>(
+                                aggregator.sum(s1.getState(), s2.getState()),
+                                s1.getProcessed() + s2.getProcessed(),
+                                s1.limitReached() || s2.limitReached()));
     }
 
     @Override
@@ -394,14 +395,14 @@ public class LocalGridState implements GridState {
         return records()
                 .limitPartitions(partitionLimit)
                 .aggregate(initialPartialState,
-                (s, t) -> new PartialAggregation<T>(
-                        aggregator.withRecord(s.getState(), t.getValue()),
-                        s.getProcessed() + 1,
-                        s.limitReached() || s.getProcessed() + 1 == partitionLimit),
-                (s1, s2) -> new PartialAggregation<T>(
-                        aggregator.sum(s1.getState(), s2.getState()),
-                        s1.getProcessed() + s2.getProcessed(),
-                        s1.limitReached() || s2.limitReached()));
+                        (s, t) -> new PartialAggregation<T>(
+                                aggregator.withRecord(s.getState(), t.getValue()),
+                                s.getProcessed() + 1,
+                                s.limitReached() || s.getProcessed() + 1 == partitionLimit),
+                        (s1, s2) -> new PartialAggregation<T>(
+                                aggregator.sum(s1.getState(), s2.getState()),
+                                s1.getProcessed() + s2.getProcessed(),
+                                s1.limitReached() || s2.limitReached()));
     }
 
     @Override
@@ -411,7 +412,7 @@ public class LocalGridState implements GridState {
 
     @Override
     public GridState mapRows(RowMapper mapper, ColumnModel newColumnModel) {
-        PairPLL<Long, Row> newGrid = grid.mapValues((i,r) -> mapper.call(i, r));
+        PairPLL<Long, Row> newGrid = grid.mapValues((i, r) -> mapper.call(i, r));
         return new LocalGridState(runner, newGrid, newColumnModel, overlayModels);
     }
 
@@ -419,7 +420,7 @@ public class LocalGridState implements GridState {
     public GridState flatMapRows(RowFlatMapper mapper, ColumnModel newColumnModel) {
         PairPLL<Long, Row> newGrid = grid.flatMap(tuple -> mapper.call(tuple.getKey(), tuple.getValue()).stream()).zipWithIndex();
         return new LocalGridState(runner, newGrid, newColumnModel, overlayModels);
-     }
+    }
 
     @Override
     public <S extends Serializable> GridState mapRows(RowScanMapper<S> mapper, ColumnModel newColumnModel) {
@@ -429,7 +430,7 @@ public class LocalGridState implements GridState {
                 (s1, s2) -> mapper.combine(s1, s2),
                 (s, tuple) -> Tuple2.of(tuple.getKey(), mapper.map(s, tuple.getKey(), tuple.getValue())));
         PairPLL<Long, Row> paired = new PairPLL<>(newGrid, grid.getPartitioner());
-        
+
         return new LocalGridState(runner, paired, newColumnModel, overlayModels);
     }
 
@@ -503,17 +504,19 @@ public class LocalGridState implements GridState {
                 data.filter(tuple -> tuple.getValue() != null),
                 grid.hasCachedPartitionSizes() ? grid.getPartitionSizes() : null);
     }
-    
-    protected static <T> Stream<Tuple2<Long,T>> applyRowChangeDataMapper(RowChangeDataProducer<T> rowMapper, List<Tuple2<Long, Row>> rowBatch) {
+
+    protected static <T> Stream<Tuple2<Long, T>> applyRowChangeDataMapper(RowChangeDataProducer<T> rowMapper,
+            List<Tuple2<Long, Row>> rowBatch) {
         List<T> changeData = rowMapper.callRowBatch(
                 rowBatch.stream()
-                .map(tuple -> new IndexedRow(tuple.getKey(), tuple.getValue()))
-                .collect(Collectors.toList()));
+                        .map(tuple -> new IndexedRow(tuple.getKey(), tuple.getValue()))
+                        .collect(Collectors.toList()));
         if (changeData.size() != rowBatch.size()) {
-            throw new IllegalStateException(String.format("Change data producer returned %d results on a batch of %d rows", changeData.size(), rowBatch.size()));
+            throw new IllegalStateException(
+                    String.format("Change data producer returned %d results on a batch of %d rows", changeData.size(), rowBatch.size()));
         }
         return IntStream.range(0, rowBatch.size())
-            .mapToObj(i -> new Tuple2<Long, T>(rowBatch.get(i).getKey(), changeData.get(i)));
+                .mapToObj(i -> new Tuple2<Long, T>(rowBatch.get(i).getKey(), changeData.get(i)));
     }
 
     @Override
@@ -536,24 +539,24 @@ public class LocalGridState implements GridState {
                 data.filter(tuple -> tuple.getValue() != null),
                 grid.hasCachedPartitionSizes() ? grid.getPartitionSizes() : null);
     }
-    
+
     /**
-     * Only keep the first rows. Overridden for efficiency
-     * when a partitioner is known.
+     * Only keep the first rows. Overridden for efficiency when a partitioner is known.
      * 
-     * @param rowLimit the number of rows to keep
+     * @param rowLimit
+     *            the number of rows to keep
      * @return the limited grid
      */
     @Override
     public GridState limitRows(long rowLimit) {
         return removeRows(RowFilter.limitFilter(rowLimit));
     }
-    
+
     /**
-     * Drop the first rows. Overridden for efficiency
-     * when partition sizes are known.
+     * Drop the first rows. Overridden for efficiency when partition sizes are known.
      * 
-     * @param rowsToDrop the number of rows to drop
+     * @param rowsToDrop
+     *            the number of rows to drop
      * @return the grid consisting of the last rows
      */
     @Override
@@ -565,36 +568,36 @@ public class LocalGridState implements GridState {
         PairPLL<Long, Row> dropped = grid.dropFirstElements(rowsToDrop);
         Optional<Partitioner<Long>> partitioner = dropped.getPartitioner();
         if (partitioner.isPresent() && partitioner.get() instanceof LongRangePartitioner) {
-            partitioner = partitioner.map(p -> ((LongRangePartitioner)p).shiftKeys(- rowsToDrop));
+            partitioner = partitioner.map(p -> ((LongRangePartitioner) p).shiftKeys(-rowsToDrop));
         }
         PairPLL<Long, Row> shifted = dropped.mapToPair(tuple -> Tuple2.of(tuple.getKey() - rowsToDrop, tuple.getValue()))
                 .withPartitioner(partitioner);
         return new LocalGridState(runner, shifted, columnModel, overlayModels);
     }
-    
-    protected static <T> Stream<Tuple2<Long,T>> applyRecordChangeDataMapper(
+
+    protected static <T> Stream<Tuple2<Long, T>> applyRecordChangeDataMapper(
             RecordChangeDataProducer<T> recordMapper,
             List<Tuple2<Long, Record>> recordBatch) {
         List<T> changeData = recordMapper.callRecordBatch(
                 recordBatch.stream()
-                .map(tuple -> tuple.getValue())
-                .collect(Collectors.toList()));
+                        .map(tuple -> tuple.getValue())
+                        .collect(Collectors.toList()));
         if (changeData.size() != recordBatch.size()) {
             throw new IllegalStateException(String.format("Change data producer returned %d results on a batch of %d records",
                     changeData.size(), recordBatch.size()));
         }
         return IntStream.range(0, recordBatch.size())
-            .mapToObj(i -> new Tuple2<Long, T>(recordBatch.get(i).getKey(), changeData.get(i)));
+                .mapToObj(i -> new Tuple2<Long, T>(recordBatch.get(i).getKey(), changeData.get(i)));
     }
 
     @Override
     public <T> GridState join(ChangeData<T> changeData, RowChangeDataJoiner<T> rowJoiner,
             ColumnModel newColumnModel) {
-        if(!(changeData instanceof LocalChangeData<?>)) {
+        if (!(changeData instanceof LocalChangeData<?>)) {
             throw new IllegalArgumentException("A LocalGridState can only be joined with a LocalChangeData");
         }
         PairPLL<Long, Row> joined = grid
-                .outerJoinOrdered(((LocalChangeData<T>)changeData).getPLL(), Comparator.naturalOrder())
+                .outerJoinOrdered(((LocalChangeData<T>) changeData).getPLL(), Comparator.naturalOrder())
                 .mapValues((id, tuple) -> rowJoiner.call(id, tuple.getKey(), tuple.getValue()));
         return new LocalGridState(runner, joined, newColumnModel, overlayModels);
     }
@@ -602,11 +605,11 @@ public class LocalGridState implements GridState {
     @Override
     public <T> GridState join(ChangeData<T> changeData, RowChangeDataFlatJoiner<T> rowJoiner,
             ColumnModel newColumnModel) {
-        if(!(changeData instanceof LocalChangeData<?>)) {
+        if (!(changeData instanceof LocalChangeData<?>)) {
             throw new IllegalArgumentException("A LocalGridState can only be joined with a LocalChangeData");
         }
         PairPLL<Long, Row> joined = grid
-                .outerJoinOrdered(((LocalChangeData<T>)changeData).getPLL(), Comparator.naturalOrder())
+                .outerJoinOrdered(((LocalChangeData<T>) changeData).getPLL(), Comparator.naturalOrder())
                 .flatMap(tuple -> rowJoiner.call(tuple.getKey(), tuple.getValue().getKey(), tuple.getValue().getValue()).stream())
                 .zipWithIndex();
         return new LocalGridState(runner, joined, newColumnModel, overlayModels);
@@ -615,11 +618,11 @@ public class LocalGridState implements GridState {
     @Override
     public <T> GridState join(ChangeData<T> changeData, RecordChangeDataJoiner<T> recordJoiner,
             ColumnModel newColumnModel) {
-        if(!(changeData instanceof LocalChangeData<?>)) {
+        if (!(changeData instanceof LocalChangeData<?>)) {
             throw new IllegalArgumentException("A LocalGridState can only be joined with a LocalChangeData");
         }
         PairPLL<Long, Row> joined = records()
-                .outerJoinOrdered(((LocalChangeData<T>)changeData).getPLL(), Comparator.naturalOrder())
+                .outerJoinOrdered(((LocalChangeData<T>) changeData).getPLL(), Comparator.naturalOrder())
                 .flatMap(tuple -> recordJoiner.call(tuple.getValue().getKey(), tuple.getValue().getValue()).stream())
                 .zipWithIndex();
         return new LocalGridState(runner, joined, newColumnModel, overlayModels);
@@ -650,12 +653,12 @@ public class LocalGridState implements GridState {
     public void uncache() {
         grid.uncache();
     }
-    
+
     @Override
     public boolean cache(ProgressReporter progressReporter) {
         return cache(Optional.of(progressReporter));
     }
-    
+
     @Override
     public boolean cache() {
         return cache(Optional.empty());

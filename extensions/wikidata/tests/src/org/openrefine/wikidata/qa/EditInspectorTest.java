@@ -1,3 +1,4 @@
+
 package org.openrefine.wikidata.qa;
 
 import static org.testng.Assert.assertEquals;

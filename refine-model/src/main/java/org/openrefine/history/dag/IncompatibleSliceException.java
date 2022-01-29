@@ -1,3 +1,4 @@
+
 package org.openrefine.history.dag;
 
 import java.util.List;
@@ -6,8 +7,8 @@ import org.openrefine.model.ColumnMetadata;
 import org.openrefine.model.ColumnModel;
 
 /**
- * Exception indicating that a DAG slice cannot be applied to 
- * a given state (given by the list of column metadata at that stage).
+ * Exception indicating that a DAG slice cannot be applied to a given state (given by the list of column metadata at
+ * that stage).
  * 
  * @author Antonin Delpeuch
  *
@@ -15,7 +16,7 @@ import org.openrefine.model.ColumnModel;
 public class IncompatibleSliceException extends Exception {
 
     private static final long serialVersionUID = -8875879446276064143L;
-    
+
     private DagSlice slice;
     private ColumnModel columns;
 
@@ -23,25 +24,23 @@ public class IncompatibleSliceException extends Exception {
         this.slice = slice;
         this.columns = columns;
     }
-    
+
     /**
-     * @return
-     *    the slice which failed to apply
+     * @return the slice which failed to apply
      */
     public DagSlice getSlice() {
         return slice;
     }
-    
+
     /**
-     * @return
-     *    the columns the slice could not be applied to
+     * @return the columns the slice could not be applied to
      */
     public ColumnModel getColumnModel() {
         return columns;
     }
-    
+
     @Override
     public String getMessage() {
-       return String.format("Slice %s cannot be applied to columns %s", slice, columns); 
+        return String.format("Slice %s cannot be applied to columns %s", slice, columns);
     }
 }

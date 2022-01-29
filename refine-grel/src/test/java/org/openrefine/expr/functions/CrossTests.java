@@ -24,6 +24,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  ******************************************************************************/
+
 package org.openrefine.expr.functions;
 
 import java.io.Serializable;
@@ -43,10 +44,12 @@ import org.openrefine.model.Row;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
+
 /**
  * Test cases for cross function.
  */
 public class CrossTests extends FunctionTestBase {
+
     private static OffsetDateTime dateTimeValue = OffsetDateTime.parse("2017-05-12T05:45:00+00:00", DateTimeFormatter.ISO_OFFSET_DATE_TIME);
 
     // dependencies
@@ -54,65 +57,65 @@ public class CrossTests extends FunctionTestBase {
     Project projectAddress;
     Project projectDuplicate1;
     Project projectDuplicate2;
-    
+
     // data from: https://github.com/OpenRefine/OpenRefine/wiki/GREL-Other-Functions
     @BeforeMethod
     public void SetUp() throws ModelException {
         projectAddress = createProject("My Address Book",
-        		new String[] {"friend","address"},
+                new String[] { "friend", "address" },
                 new Serializable[][] {
-            {"john","120 Main St."},
-            {"mary","50 Broadway Ave."},
-            {"john","999 XXXXXX St."},                     // john's 2nd address
-            {"anne","17 Morning Crescent"},
-            {dateTimeValue,"dateTime"},
-            {1600,"integer"},
-            {123456789123456789L, "long"},
-            {true,"boolean"},
-            {3.14D, "double"}});
-    
+                        { "john", "120 Main St." },
+                        { "mary", "50 Broadway Ave." },
+                        { "john", "999 XXXXXX St." }, // john's 2nd address
+                        { "anne", "17 Morning Crescent" },
+                        { dateTimeValue, "dateTime" },
+                        { 1600, "integer" },
+                        { 123456789123456789L, "long" },
+                        { true, "boolean" },
+                        { 3.14D, "double" } });
+
         projectGift = createProject("Christmas Gifts",
-        		new String[] {"gift","recipient"},
-        		new Serializable[][] {
-        		        {"lamp","mary"},
-        		        {"clock","john"},
-        		        {"dateTime",dateTimeValue},
-        		        {"integer",1600},
-        		        {12345678912345679L, "long"},
-        		        {"boolean",true} });
-    
+                new String[] { "gift", "recipient" },
+                new Serializable[][] {
+                        { "lamp", "mary" },
+                        { "clock", "john" },
+                        { "dateTime", dateTimeValue },
+                        { "integer", 1600 },
+                        { 12345678912345679L, "long" },
+                        { "boolean", true } });
+
         projectDuplicate1 = createProject("Duplicate", new String[] { "Col1", "Col2" }, new Serializable[][] {});
         projectDuplicate2 = createProject("Duplicate", new String[] { "Col1", "Col2" }, new Serializable[][] {});
 
         bindings = new Properties();
         bindings.put("project_id", projectGift.getId());
-        
+
         // add a column address based on column recipient
         bindings.put("columnName", "recipient");
     }
-    
+
     @Test
     public void crossFunctionMissingProject() throws Exception {
         String nonExistentProject = "NOPROJECT";
-        Assert.assertEquals(((EvalError) invoke("cross", "Anne", nonExistentProject, "friend")).message, 
+        Assert.assertEquals(((EvalError) invoke("cross", "Anne", nonExistentProject, "friend")).message,
                 "Unable to find project with name: " + nonExistentProject);
     }
-    
+
     @Test
     public void crossFunctionMultipleProjects() throws Exception {
         String duplicateProjectName = "Duplicate";
-        Assert.assertEquals(((EvalError) invoke("cross", "Anne", duplicateProjectName, "friend")).message, 
+        Assert.assertEquals(((EvalError) invoke("cross", "Anne", duplicateProjectName, "friend")).message,
                 "2 projects found with name: " + duplicateProjectName);
     }
-    
-    @Test  
+
+    @Test
     public void crossFunctionMissingColumn() throws Exception {
         String nonExistentColumn = "NoColumn";
         String projectName = "My Address Book";
-        Assert.assertEquals(((EvalError) invoke("cross", "mary", projectName, nonExistentColumn)).message, 
+        Assert.assertEquals(((EvalError) invoke("cross", "mary", projectName, nonExistentColumn)).message,
                 "Unable to find column " + nonExistentColumn + " in project " + projectName);
     }
-    
+
     @Test
     public void crossFunctionSameColumnTest() throws Exception {
         Cell c = projectGift.getCurrentGridState().getRow(0).cells.get(1);
@@ -184,8 +187,8 @@ public class CrossTests extends FunctionTestBase {
         String address = row.getCell(1).value.toString();
         Assert.assertEquals(address, "50 Broadway Ave.");
     }
-    
-    /**  
+
+    /**
      * To demonstrate that the cross function can look up multiple rows.
      */
     @Test
@@ -194,13 +197,12 @@ public class CrossTests extends FunctionTestBase {
         String address = row.getCell(1).value.toString();
         Assert.assertEquals(address, "999 XXXXXX St.");
     }
-    
 
     @Test
     public void crossFunctionCaseSensitiveTest() throws Exception {
         Assert.assertNull(invoke("cross", "Anne", "My Address Book", "friend"));
     }
-    
+
     @Test
     public void crossFunctionDateTimeTest() throws Exception {
         Cell c = projectGift.getCurrentGridState().getRow(2).cells.get(1);
@@ -209,7 +211,7 @@ public class CrossTests extends FunctionTestBase {
         String address = row.getCell(1).value.toString();
         Assert.assertEquals(address, "dateTime");
     }
-    
+
     @Test
     public void crossFunctionIntegerTest() throws Exception {
         Cell c = projectGift.getCurrentGridState().getRow(3).cells.get(1);
@@ -218,7 +220,7 @@ public class CrossTests extends FunctionTestBase {
         String address = row.getCell(1).value.toString();
         Assert.assertEquals(address, "integer");
     }
-    
+
     @Test
     public void crossFunctionBooleanTest() throws Exception {
         Cell c = projectGift.getCurrentGridState().getRow(5).cells.get(1);
@@ -250,8 +252,8 @@ public class CrossTests extends FunctionTestBase {
     }
 
     /**
-     * Two values will match if and only if they have the same string representation.
-     * In this case, "1600.0" doesn't equal to "1600".
+     * Two values will match if and only if they have the same string representation. In this case, "1600.0" doesn't
+     * equal to "1600".
      */
     @Test
     public void crossFunctionIntegerArgumentTest3() throws Exception {
@@ -324,18 +326,19 @@ public class CrossTests extends FunctionTestBase {
     /**
      * If no match, return null.
      * 
-     * But if user still apply grel:value.cross("My Address Book", "friend")[0].cells["address"].value, 
-     * from the "Preview", the target cell shows "Error: java.lang.IndexOutOfBoundsException: Index: 0, Size: 0".
-     * It will still end up with blank if the onError set so.
+     * But if user still apply grel:value.cross("My Address Book", "friend")[0].cells["address"].value, from the
+     * "Preview", the target cell shows "Error: java.lang.IndexOutOfBoundsException: Index: 0, Size: 0". It will still
+     * end up with blank if the onError set so.
      */
     @Test
     public void crossFunctionMatchNotFoundTest() throws Exception {
         Assert.assertNull(invoke("cross", "NON-EXIST", "My Address Book", "friend"));
     }
-     
+
     /**
-     *  
-     *  rest of cells shows "Error: cross expects a cell or cell value, a project name to look up, and a column name in that project"
+     * 
+     * rest of cells shows "Error: cross expects a cell or cell value, a project name to look up, and a column name in
+     * that project"
      */
     @Test
     public void crossFunctionNonLiteralValue() throws Exception {
@@ -343,4 +346,3 @@ public class CrossTests extends FunctionTestBase {
                 "cross expects a cell or value, a project name to look up (optional), and a column name in that project (optional)");
     }
 }
-

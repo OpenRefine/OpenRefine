@@ -51,7 +51,7 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 public class ExpressionUtils {
-    
+
     static final protected Set<Binder> s_binders = new HashSet<Binder>();
 
     static public void registerBinder(Binder binder) {
@@ -72,10 +72,11 @@ public class ExpressionUtils {
         return bindings;
     }
 
-    static public void bind(Properties bindings, ColumnModel columnModel, Row row, long rowIndex, Record record, String columnName, Cell cell) {
+    static public void bind(Properties bindings, ColumnModel columnModel, Row row, long rowIndex, Record record, String columnName,
+            Cell cell) {
         bindings.put("rowIndex", rowIndex);
         bindings.put("row", new WrappedRow(columnModel, rowIndex, row, record));
-		bindings.put("cells", new CellTuple(columnModel, row));
+        bindings.put("cells", new CellTuple(columnModel, row));
 
         if (columnName != null) {
             bindings.put("columnName", columnName);
@@ -101,28 +102,25 @@ public class ExpressionUtils {
     static public boolean isError(Object o) {
         return o instanceof EvalError;
     }
+
     /*
-    static public boolean isBlank(Object o) {
-        return o == null || (o instanceof String && ((String) o).length() == 0);
-    }
-    */
+     * static public boolean isBlank(Object o) { return o == null || (o instanceof String && ((String) o).length() ==
+     * 0); }
+     */
     static public boolean isNonBlankData(Object o) {
-        return
-            o != null &&
-            !(o instanceof EvalError) &&
-            (!(o instanceof String) || ((String) o).length() > 0);
+        return o != null &&
+                !(o instanceof EvalError) &&
+                (!(o instanceof String) || ((String) o).length() > 0);
     }
 
     static public boolean isTrue(Object o) {
         return o != null &&
-            (o instanceof Boolean ?
-                ((Boolean) o).booleanValue() :
-                Boolean.parseBoolean(o.toString()));
+                (o instanceof Boolean ? ((Boolean) o).booleanValue() : Boolean.parseBoolean(o.toString()));
     }
 
     static public boolean sameValue(Object v1, Object v2) {
         if (v1 == null) {
-            return (v2 == null) ;
+            return (v2 == null);
         } else if (v2 == null) {
             return (v1 == null);
         } else {
@@ -132,11 +130,11 @@ public class ExpressionUtils {
 
     static public boolean isStorable(Object v) {
         return v == null ||
-            v instanceof Number ||
-            v instanceof String ||
-            v instanceof Boolean ||
-            v instanceof OffsetDateTime ||
-            v instanceof EvalError;
+                v instanceof Number ||
+                v instanceof String ||
+                v instanceof Boolean ||
+                v instanceof OffsetDateTime ||
+                v instanceof EvalError;
     }
 
     static public Serializable wrapStorable(Object v) {
@@ -145,9 +143,7 @@ public class ExpressionUtils {
         } else if (v instanceof ObjectNode) {
             return ((ObjectNode) v).toString();
         } else {
-            return isStorable(v) ?
-                (Serializable) v :
-                new EvalError(v.getClass().getSimpleName() + " value not storable");
+            return isStorable(v) ? (Serializable) v : new EvalError(v.getClass().getSimpleName() + " value not storable");
         }
     }
 

@@ -64,28 +64,27 @@ public class CsvExporterTests extends RefineTest {
         logger = LoggerFactory.getLogger(this.getClass());
     }
 
-    //dependencies
+    // dependencies
     StringWriter writer;
     Engine engine;
     GridState grid;
     ProjectMetadata projectMetadata;
     Properties options;
 
-    //System Under Test
+    // System Under Test
     CsvExporter SUT;
-	
 
     @BeforeMethod
-    public void SetUp(){
+    public void SetUp() {
         SUT = new CsvExporter();
         projectMetadata = new ProjectMetadata();
         writer = new StringWriter();
-     
+
         options = mock(Properties.class);
     }
 
     @AfterMethod
-    public void TearDown(){
+    public void TearDown() {
         SUT = null;
         writer = null;
         grid = null;
@@ -94,7 +93,7 @@ public class CsvExporterTests extends RefineTest {
     }
 
     @Test
-    public void exportSimpleCsv(){
+    public void exportSimpleCsv() {
         CreateGrid(2, 2);
 
         try {
@@ -104,12 +103,12 @@ public class CsvExporterTests extends RefineTest {
         }
 
         Assert.assertEquals(writer.toString(), "column0,column1\n" +
-                                               "row0cell0,row0cell1\n" +
-                                               "row1cell0,row1cell1\n");
+                "row0cell0,row0cell1\n" +
+                "row1cell0,row1cell1\n");
     }
 
     @Test
-    public void exportSimpleCsvNoHeader(){
+    public void exportSimpleCsvNoHeader() {
         CreateGrid(2, 2);
         when(options.getProperty("printColumnHeader")).thenReturn("false");
         try {
@@ -119,13 +118,13 @@ public class CsvExporterTests extends RefineTest {
         }
 
         Assert.assertEquals(writer.toString(), "row0cell0,row0cell1\n" +
-                                               "row1cell0,row1cell1\n");
+                "row1cell0,row1cell1\n");
 
-        verify(options,times(2)).getProperty("printColumnHeader");
+        verify(options, times(2)).getProperty("printColumnHeader");
     }
 
     @Test
-    public void exportSimpleCsvCustomLineSeparator(){
+    public void exportSimpleCsvCustomLineSeparator() {
         CreateGrid(2, 2);
         when(options.getProperty("options")).thenReturn("{\"lineSeparator\":\"X\"}");
 
@@ -136,12 +135,12 @@ public class CsvExporterTests extends RefineTest {
         }
 
         Assert.assertEquals(writer.toString(), "column0,column1X" +
-                                               "row0cell0,row0cell1X" +
-                                               "row1cell0,row1cell1X");
+                "row0cell0,row0cell1X" +
+                "row1cell0,row1cell1X");
     }
 
     @Test
-    public void exportSimpleCsvQuoteAll(){
+    public void exportSimpleCsvQuoteAll() {
         CreateGrid(2, 2);
         when(options.getProperty("options")).thenReturn("{\"quoteAll\":\"true\"}");
 
@@ -152,20 +151,20 @@ public class CsvExporterTests extends RefineTest {
         }
 
         Assert.assertEquals(writer.toString(), "\"column0\",\"column1\"\n" +
-                                               "\"row0cell0\",\"row0cell1\"\n" +
-                                               "\"row1cell0\",\"row1cell1\"\n");
+                "\"row0cell0\",\"row0cell1\"\n" +
+                "\"row1cell0\",\"row1cell1\"\n");
     }
 
     @Test
-    public void exportCsvWithLineBreaks(){
+    public void exportCsvWithLineBreaks() {
         Project project = createProject("csv project",
-        		new String[] {"column0","column1","column2"},
-        		new Serializable[][] {
-        	{"row0cell0","row0cell1","row0cell2"},
-        	{"row1cell0","line\n\n\nbreak","row1cell2"},
-        	{"row2cell0","row2cell1","row2cell2"}
-        });
-        
+                new String[] { "column0", "column1", "column2" },
+                new Serializable[][] {
+                        { "row0cell0", "row0cell1", "row0cell2" },
+                        { "row1cell0", "line\n\n\nbreak", "row1cell2" },
+                        { "row2cell0", "row2cell1", "row2cell2" }
+                });
+
         GridState grid = project.getCurrentGridState();
         Engine engine = new Engine(grid, new EngineConfig(Collections.emptyList(), Engine.Mode.RowBased));
         try {
@@ -175,21 +174,21 @@ public class CsvExporterTests extends RefineTest {
         }
 
         Assert.assertEquals(writer.toString(), "column0,column1,column2\n" +
-                                               "row0cell0,row0cell1,row0cell2\n" +
-                                               "row1cell0,\"line\n\n\nbreak\",row1cell2\n" +
-                                               "row2cell0,row2cell1,row2cell2\n");
+                "row0cell0,row0cell1,row0cell2\n" +
+                "row1cell0,\"line\n\n\nbreak\",row1cell2\n" +
+                "row2cell0,row2cell1,row2cell2\n");
     }
 
     @Test
-    public void exportCsvWithComma(){
-    	Project project = createProject("csv project",
-        		new String[] {"column0","column1","column2"},
-        		new Serializable[][] {
-        	{"row0cell0","row0cell1","row0cell2"},
-        	{"row1cell0","with, comma","row1cell2"},
-        	{"row2cell0","row2cell1","row2cell2"}
-        });
-        
+    public void exportCsvWithComma() {
+        Project project = createProject("csv project",
+                new String[] { "column0", "column1", "column2" },
+                new Serializable[][] {
+                        { "row0cell0", "row0cell1", "row0cell2" },
+                        { "row1cell0", "with, comma", "row1cell2" },
+                        { "row2cell0", "row2cell1", "row2cell2" }
+                });
+
         GridState grid = project.getCurrentGridState();
         Engine engine = new Engine(grid, new EngineConfig(Collections.emptyList(), Engine.Mode.RowBased));
         try {
@@ -199,21 +198,21 @@ public class CsvExporterTests extends RefineTest {
         }
 
         Assert.assertEquals(writer.toString(), "column0,column1,column2\n" +
-                                               "row0cell0,row0cell1,row0cell2\n" +
-                                               "row1cell0,\"with, comma\",row1cell2\n" +
-                                               "row2cell0,row2cell1,row2cell2\n");
+                "row0cell0,row0cell1,row0cell2\n" +
+                "row1cell0,\"with, comma\",row1cell2\n" +
+                "row2cell0,row2cell1,row2cell2\n");
     }
 
     @Test
-    public void exportCsvWithQuote(){
-    	Project project = createProject("csv project",
-        		new String[] {"column0","column1","column2"},
-        		new Serializable[][] {
-        	{"row0cell0","row0cell1","row0cell2"},
-        	{"row1cell0","line has \"quote\"","row1cell2"},
-        	{"row2cell0","row2cell1","row2cell2"}
-        });
-        
+    public void exportCsvWithQuote() {
+        Project project = createProject("csv project",
+                new String[] { "column0", "column1", "column2" },
+                new Serializable[][] {
+                        { "row0cell0", "row0cell1", "row0cell2" },
+                        { "row1cell0", "line has \"quote\"", "row1cell2" },
+                        { "row2cell0", "row2cell1", "row2cell2" }
+                });
+
         GridState grid = project.getCurrentGridState();
         Engine engine = new Engine(grid, new EngineConfig(Collections.emptyList(), Engine.Mode.RowBased));
         try {
@@ -223,21 +222,21 @@ public class CsvExporterTests extends RefineTest {
         }
 
         Assert.assertEquals(writer.toString(), "column0,column1,column2\n" +
-                                               "row0cell0,row0cell1,row0cell2\n" +
-                                               "row1cell0,\"line has \"\"quote\"\"\",row1cell2\n" +
-                                               "row2cell0,row2cell1,row2cell2\n");
+                "row0cell0,row0cell1,row0cell2\n" +
+                "row1cell0,\"line has \"\"quote\"\"\",row1cell2\n" +
+                "row2cell0,row2cell1,row2cell2\n");
     }
 
     @Test
-    public void exportCsvWithEmptyCells(){
-    	Project project = createProject("csv project",
-        		new String[] {"column0","column1","column2"},
-        		new Serializable[][] {
-        	{"row0cell0","row0cell1","row0cell2"},
-        	{"row1cell0",null,"row1cell2"},
-        	{null,"row2cell1","row2cell2"}
-        });
-        
+    public void exportCsvWithEmptyCells() {
+        Project project = createProject("csv project",
+                new String[] { "column0", "column1", "column2" },
+                new Serializable[][] {
+                        { "row0cell0", "row0cell1", "row0cell2" },
+                        { "row1cell0", null, "row1cell2" },
+                        { null, "row2cell1", "row2cell2" }
+                });
+
         GridState grid = project.getCurrentGridState();
         Engine engine = new Engine(grid, new EngineConfig(Collections.emptyList(), Engine.Mode.RowBased));
         try {
@@ -247,28 +246,28 @@ public class CsvExporterTests extends RefineTest {
         }
 
         Assert.assertEquals(writer.toString(), "column0,column1,column2\n" +
-                                               "row0cell0,row0cell1,row0cell2\n" +
-                                               "row1cell0,,row1cell2\n" +
-                                               ",row2cell1,row2cell2\n");
+                "row0cell0,row0cell1,row0cell2\n" +
+                "row1cell0,,row1cell2\n" +
+                ",row2cell1,row2cell2\n");
     }
-    
-    //helper methods
 
-    protected void CreateGrid(int noOfRows, int noOfColumns){
-    	String[] columns = new String[noOfColumns];
-		for(int i = 0; i < noOfColumns; i++) {
-			columns[i] = "column" + i;
-		}
-        
+    // helper methods
+
+    protected void CreateGrid(int noOfRows, int noOfColumns) {
+        String[] columns = new String[noOfColumns];
+        for (int i = 0; i < noOfColumns; i++) {
+            columns[i] = "column" + i;
+        }
+
         Serializable[][] cells = new Serializable[noOfRows][];
-        for(int i = 0; i < noOfRows; i++){
+        for (int i = 0; i < noOfRows; i++) {
             cells[i] = new Serializable[noOfColumns];
-            for(int j = 0; j < noOfColumns; j++){
+            for (int j = 0; j < noOfColumns; j++) {
                 cells[i][j] = "row" + i + "cell" + j;
             }
         }
-        
-		grid = createGrid(columns, cells);
-		engine = new Engine(grid, new EngineConfig(Collections.emptyList(), Engine.Mode.RowBased));
+
+        grid = createGrid(columns, cells);
+        engine = new Engine(grid, new EngineConfig(Collections.emptyList(), Engine.Mode.RowBased));
     }
 }

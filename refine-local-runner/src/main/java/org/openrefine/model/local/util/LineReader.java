@@ -1,3 +1,4 @@
+
 package org.openrefine.model.local.util;
 
 import java.io.ByteArrayOutputStream;
@@ -7,25 +8,24 @@ import java.io.InputStream;
 import java.nio.charset.Charset;
 
 /**
- * A class which reads line by line from an {@link java.io.InputStream},
- * making sure it only reads the bytes it needs to complete the current line.
+ * A class which reads line by line from an {@link java.io.InputStream}, making sure it only reads the bytes it needs to
+ * complete the current line.
  * 
- * This makes it possible to track at which byte offset each line starts,
- * when used in combination with a {@link com.google.common.io.CountingInputStream}
- * (see {@link org.openrefine.model.local.TextFilePLL}).
+ * This makes it possible to track at which byte offset each line starts, when used in combination with a
+ * {@link com.google.common.io.CountingInputStream} (see {@link org.openrefine.model.local.TextFilePLL}).
  * 
- * This cannot be achieved with {@link java.io.InputStreamReader} and {@link java.io.LineNumberReader},
- * because {@link java.io.InputStreamReader} can read more bytes than it needs to output characters.
+ * This cannot be achieved with {@link java.io.InputStreamReader} and {@link java.io.LineNumberReader}, because
+ * {@link java.io.InputStreamReader} can read more bytes than it needs to output characters.
  * 
- * Like in {@link java.io.LineNumberReader}, a line is considered to be terminated by any one
- * of a line feed ('\n'), a carriage return ('\r'), or a carriage return followed immediately by a line feed.
+ * Like in {@link java.io.LineNumberReader}, a line is considered to be terminated by any one of a line feed ('\n'), a
+ * carriage return ('\r'), or a carriage return followed immediately by a line feed.
  * 
  * @author Antonin Delpeuch
  */
 public class LineReader implements Closeable {
-    
+
     protected final InputStream inputStream;
-    protected final Charset     charset;
+    protected final Charset charset;
 
     /**
      * Constructs a reader with the supplied input stream and charset.
@@ -37,10 +37,9 @@ public class LineReader implements Closeable {
         this.inputStream = inputStream;
         this.charset = charset;
     }
-    
+
     /**
-     * Reads a single line from the input stream, not reading more
-     * characters beyond the line being read.
+     * Reads a single line from the input stream, not reading more characters beyond the line being read.
      * 
      * @return the line read or null if the input stream was exhausted
      * @throws IOException

@@ -45,24 +45,27 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-public class ProcessManager  {
+public class ProcessManager {
+
     @JsonProperty("processes")
     protected List<Process> _processes = Collections.synchronizedList(new LinkedList<Process>());
     @JsonIgnore
     protected List<Exception> _latestExceptions = null;
-    
+
     public static class ExceptionMessage {
+
         @JsonProperty("message")
         public final String message;
+
         public ExceptionMessage(Exception e) {
             message = e.getLocalizedMessage();
         }
     }
-    
+
     public ProcessManager() {
-        
+
     }
-    
+
     @JsonProperty("exceptions")
     @JsonInclude(Include.NON_NULL)
     public List<ExceptionMessage> getJsonExceptions() {
@@ -80,33 +83,33 @@ public class ProcessManager  {
             return process.performImmediate();
         } else {
             _processes.add(process);
-            
+
             update();
         }
         return null;
     }
-    
+
     public boolean hasPending() {
         return _processes.size() > 0;
     }
-    
+
     public void onDoneProcess(Process p) {
         _processes.remove(p);
         update();
     }
-    
+
     public void onFailedProcess(Process p, Exception exception) {
         List<Exception> exceptions = new LinkedList<Exception>();
         exceptions.add(exception);
         onFailedProcess(p, exceptions);
     }
-    
+
     public void onFailedProcess(Process p, List<Exception> exceptions) {
         _latestExceptions = exceptions;
         _processes.remove(p);
         // Do not call update(); Just pause?
     }
-    
+
     public void cancelAll() {
         for (Process p : _processes) {
             if (!p.isImmediate() && p.isRunning()) {
@@ -116,7 +119,7 @@ public class ProcessManager  {
         _processes.clear();
         _latestExceptions = null;
     }
-    
+
     protected void update() {
         while (_processes.size() > 0) {
             Process p = _processes.get(0);

@@ -45,14 +45,14 @@ import org.openrefine.model.Row;
 public class ExpressionBasedRowEvaluable implements RowEvaluable {
 
     private static final long serialVersionUID = -5124242947059242993L;
-    final protected String         _columnName;
-    final protected int            _cellIndex;
-    final protected Evaluable      _eval;
+    final protected String _columnName;
+    final protected int _cellIndex;
+    final protected Evaluable _eval;
     final protected ColumnModel _columnModel;
-    
+
     public ExpressionBasedRowEvaluable(
-        String columnName, int cellIndex, Evaluable eval, ColumnModel columnModel) {
-    
+            String columnName, int cellIndex, Evaluable eval, ColumnModel columnModel) {
+
         _columnName = columnName;
         _cellIndex = cellIndex;
         _eval = eval;
@@ -62,11 +62,11 @@ public class ExpressionBasedRowEvaluable implements RowEvaluable {
     @Override
     public Object eval(
             long rowIndex, Row row, Record record, Properties bindings) {
-        
+
         Cell cell = row.getCell(_cellIndex);
 
         ExpressionUtils.bind(bindings, _columnModel, row, rowIndex, record, _columnName, cell);
-        
+
         return _eval.evaluate(bindings);
     }
 }

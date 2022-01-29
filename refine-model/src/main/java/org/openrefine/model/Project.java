@@ -48,20 +48,19 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * A project is a table with overlay models and full edit history. This is the central
- * concept of the OpenRefine datamodel - most operations are done within a given
- * project.
+ * A project is a table with overlay models and full edit history. This is the central concept of the OpenRefine
+ * datamodel - most operations are done within a given project.
  */
 public class Project {
-    
+
     // The project identifier, assigned at creation
-    private final long                         id;
+    private final long id;
     // The complete history of transformations executed on this project
-    private final History                      history;
-    
+    private final History history;
+
     transient private ProcessManager processManager = new ProcessManager();
     // by default, the project has never been saved so far.
-    transient private LocalDateTime _lastSave = LocalDateTime.of(1970,01,02,00,30,00);
+    transient private LocalDateTime _lastSave = LocalDateTime.of(1970, 01, 02, 00, 30, 00);
 
     final static Logger logger = LoggerFactory.getLogger("project");
 
@@ -69,20 +68,19 @@ public class Project {
      * Creates a new project from an initial grid.
      * 
      * @param initialState
-     *      the initial state of the project.
+     *            the initial state of the project.
      */
     public Project(GridState initialState, ChangeDataStore dataStore, CachedGridStore gridStore) {
         this(generateID(), new History(initialState, dataStore, gridStore));
     }
-    
+
     /**
-     * Creates a new project from an initial grid
-     * and a project id.
+     * Creates a new project from an initial grid and a project id.
      * 
      * @param projectId
-     *       the project identifier
+     *            the project identifier
      * @param initialState
-     *       the initial state of the project
+     *            the initial state of the project
      */
     public Project(long projectId, GridState initialState, ChangeDataStore dataStore, CachedGridStore gridStore) {
         this(projectId, new History(initialState, dataStore, gridStore));
@@ -101,13 +99,14 @@ public class Project {
         this.history = history;
     }
 
-    public LocalDateTime getLastSave(){
+    public LocalDateTime getLastSave() {
         return this._lastSave;
     }
+
     /**
      * Sets the lastSave time to now
      */
-    public void setLastSave(){
+    public void setLastSave() {
         this._lastSave = LocalDateTime.now();
     }
 
@@ -122,7 +121,7 @@ public class Project {
     public History getHistory() {
         return history;
     }
-    
+
     static public long generateID() {
         return System.currentTimeMillis() + Math.round(Math.random() * 1000000000000L);
     }
@@ -130,19 +129,20 @@ public class Project {
     public long getId() {
         return id;
     }
-    
+
     public void dispose() {
-    	// TODO unload RDDs?
+        // TODO unload RDDs?
     }
 
     /**
      * Convenience function to return the current column model from the history.
+     * 
      * @return
      */
     public ColumnModel getColumnModel() {
         return history.getCurrentGridState().getColumnModel();
     }
-    
+
     /**
      * Convenience function to return the current grid state.
      */
@@ -152,12 +152,13 @@ public class Project {
 
     /**
      * Convenience function to return the current overlay models
+     * 
      * @return
      */
     public Map<String, OverlayModel> getOverlayModels() {
         return history.getCurrentGridState().getOverlayModels();
     }
-    
+
     /**
      * @deprecated use {@link org.openrefine.overlay.OverlayModelResolver}
      * @param name

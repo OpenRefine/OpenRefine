@@ -56,13 +56,14 @@ import org.openrefine.model.recon.ReconStats;
 import org.openrefine.process.QuickHistoryEntryProcess;
 
 public class ReconJudgeOneCellCommand extends Command {
+
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-    	if(!hasValidCSRFToken(request)) {
-    		respondCSRFError(response);
-    		return;
-    	}
+        if (!hasValidCSRFToken(request)) {
+            respondCSRFError(response);
+            return;
+        }
 
         try {
             request.setCharacterEncoding("UTF-8");
@@ -82,15 +83,14 @@ public class ReconJudgeOneCellCommand extends Command {
                 String scoreString = request.getParameter("score");
 
                 match = new ReconCandidate(
-                    id,
-                    request.getParameter("name"),
-                    request.getParameter("types").split(","),
-                    scoreString != null ? Double.parseDouble(scoreString) : 100
-                );
+                        id,
+                        request.getParameter("name"),
+                        request.getParameter("types").split(","),
+                        scoreString != null ? Double.parseDouble(scoreString) : 100);
             }
-            
+
             GridState state = project.getCurrentGridState();
-			Cell cell = state.getRow(rowIndex).getCell(cellIndex);
+            Cell cell = state.getRow(rowIndex).getCell(cellIndex);
             if (cell == null || !ExpressionUtils.isNonBlankData(cell.value)) {
                 throw new Exception("Cell is blank or error");
             }
@@ -101,7 +101,7 @@ public class ReconJudgeOneCellCommand extends Command {
             }
 
             Judgment oldJudgment = cell.recon == null ? Judgment.None : cell.recon.judgment;
-            
+
             // The historyEntryId will be set on the recon by the CellChange
             Recon newRecon = null;
             if (cell.recon != null) {
@@ -113,36 +113,35 @@ public class ReconJudgeOneCellCommand extends Command {
             } else {
                 // This should only happen if we are judging a cell in a column that
                 // has never been reconciled before.
-            	// TODO we should rather throw an exception in this case,
-            	// ReconConfig should be required on the column.
-               newRecon = new Recon(0L, null, null);
+                // TODO we should rather throw an exception in this case,
+                // ReconConfig should be required on the column.
+                newRecon = new Recon(0L, null, null);
             }
 
-            String cellDescription =
-                "single cell on row " + (rowIndex + 1) +
-                ", column " + column.getName() +
-                ", containing \"" + cell.value + "\"";
+            String cellDescription = "single cell on row " + (rowIndex + 1) +
+                    ", column " + column.getName() +
+                    ", containing \"" + cell.value + "\"";
 
             String description = null;
 
             newRecon = newRecon
-            		.withMatchRank(-1)
-            		.withJudgmentAction("single");
+                    .withMatchRank(-1)
+                    .withJudgmentAction("single");
 
             if (judgment == Judgment.None) {
                 newRecon = newRecon.withJudgment(Recon.Judgment.None)
-                		.withMatch(null);
+                        .withMatch(null);
 
                 description = "Discard recon judgment for " + cellDescription;
             } else if (judgment == Judgment.New) {
                 newRecon = newRecon
-                		.withJudgment(Recon.Judgment.New)
-                		.withMatch(null);
+                        .withJudgment(Recon.Judgment.New)
+                        .withMatch(null);
 
                 description = "Mark to create new item for " + cellDescription;
             } else {
                 newRecon = newRecon.withJudgment(Recon.Judgment.Matched)
-                		.withMatch(match);
+                        .withMatch(match);
                 if (newRecon.candidates != null) {
                     for (int m = 0; m < newRecon.candidates.size(); m++) {
                         if (newRecon.candidates.get(m).id.equals(match.id)) {
@@ -151,33 +150,31 @@ public class ReconJudgeOneCellCommand extends Command {
                         }
                     }
                 }
-                
+
                 description = "Match " + match.name +
-                    " (" + match.id + ") to " +
-                    cellDescription;
+                        " (" + match.id + ") to " +
+                        cellDescription;
             }
-            
+
             Cell newCell = new Cell(
                     cell.value,
-                    newRecon
-                );
+                    newRecon);
 
             ReconStats stats = new LazyReconStats(state, column.getName());
 
             Change change = new ReconCellChange(rowIndex, column.getName(), newRecon, stats);
 
             QuickHistoryEntryProcess process = new QuickHistoryEntryProcess(
-                project.getHistory(),
-                description,
-                null,
-                change
-            );
+                    project.getHistory(),
+                    description,
+                    null,
+                    change);
 
             HistoryEntry historyEntry = project.getProcessManager().queueProcess(process);
             if (historyEntry != null) {
                 /*
-                 * If the process is done, write back the cell's data so that the
-                 * client side can update its UI right away.
+                 * If the process is done, write back the cell's data so that the client side can update its UI right
+                 * away.
                  */
                 respondJSON(response, new ReconClearOneCellCommand.CellResponse(historyEntry, newCell));
             } else {

@@ -1,3 +1,4 @@
+
 package org.openrefine.commands;
 
 import java.io.IOException;
@@ -12,26 +13,25 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 public class EngineDependentCommandTests extends CommandTestBase {
-	
-	private static class EngineDependentCommandStub extends EngineDependentCommand {
 
-		@Override
-		protected Operation createOperation(Project project, HttpServletRequest request,
-				EngineConfig engineConfig) throws Exception {
-			return null;
-		}
-		
-	}
-	
-	@BeforeMethod
-	public void setUpCommand() {
-		command = new EngineDependentCommandStub();
-	}
-	
-	@Test
-	public void testCSRFProtection() throws ServletException, IOException {
-		command.doPost(request, response);
-		assertCSRFCheckFailed();
-	}
+    private static class EngineDependentCommandStub extends EngineDependentCommand {
+
+        @Override
+        protected Operation createOperation(Project project, HttpServletRequest request,
+                EngineConfig engineConfig) throws Exception {
+            return null;
+        }
+
+    }
+
+    @BeforeMethod
+    public void setUpCommand() {
+        command = new EngineDependentCommandStub();
+    }
+
+    @Test
+    public void testCSRFProtection() throws ServletException, IOException {
+        command.doPost(request, response);
+        assertCSRFCheckFailed();
+    }
 }
-

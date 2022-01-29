@@ -1,3 +1,4 @@
+
 package org.openrefine.browsing.util;
 
 import java.time.OffsetDateTime;
@@ -9,32 +10,32 @@ import org.openrefine.model.RowFilter;
 import org.openrefine.model.RowInRecordFilter;
 
 public class TimeRangeFacetAggregator extends ExpressionValueFacetAggregator<TimeRangeFacetState> {
-	
-	private TimeRangeFacetConfig _config;
 
-	public TimeRangeFacetAggregator(TimeRangeFacetConfig config, boolean invert, RowEvaluable eval) {
-		super(invert, eval);
-		_config = config;
-	}
+    private TimeRangeFacetConfig _config;
 
-	private static final long serialVersionUID = 7105682295138447249L;
+    public TimeRangeFacetAggregator(TimeRangeFacetConfig config, boolean invert, RowEvaluable eval) {
+        super(invert, eval);
+        _config = config;
+    }
 
-	@Override
-	public TimeRangeFacetState sum(TimeRangeFacetState first, TimeRangeFacetState second) {
-		return new TimeRangeFacetState(
-				first.getGlobalStatistics().sum(second.getGlobalStatistics()),
-				first.getViewStatistics().sum(second.getViewStatistics()));
-	}
+    private static final long serialVersionUID = 7105682295138447249L;
 
-	@Override
-	public RowInRecordFilter getRowFilter() {
-		if (_eval != null && !_config.isNeutral()) {
+    @Override
+    public TimeRangeFacetState sum(TimeRangeFacetState first, TimeRangeFacetState second) {
+        return new TimeRangeFacetState(
+                first.getGlobalStatistics().sum(second.getGlobalStatistics()),
+                first.getViewStatistics().sum(second.getViewStatistics()));
+    }
+
+    @Override
+    public RowInRecordFilter getRowFilter() {
+        if (_eval != null && !_config.isNeutral()) {
             return new ExpressionTimeComparisonRowFilter(
                     _eval, _config.getSelectTime(), _config.getSelectNonTime(), _config.getSelectBlank(), _config.getSelectError(), false) {
-  
-						private static final long serialVersionUID = 122258850633903894L;
 
-				@Override
+                private static final long serialVersionUID = 122258850633903894L;
+
+                @Override
                 protected boolean checkValue(long t) {
                     return t >= _config.getFrom() && t <= _config.getTo();
                 };
@@ -42,27 +43,27 @@ public class TimeRangeFacetAggregator extends ExpressionValueFacetAggregator<Tim
         } else {
             return null;
         }
-	}
+    }
 
-	@Override
-	protected TimeRangeFacetState withValue(TimeRangeFacetState state, Object value, boolean inView) {
+    @Override
+    protected TimeRangeFacetState withValue(TimeRangeFacetState state, Object value, boolean inView) {
         return new TimeRangeFacetState(
-        		withValue(state.getGlobalStatistics(), value),
-        		inView ? withValue(state.getViewStatistics(), value) : state.getViewStatistics());
-	}
+                withValue(state.getGlobalStatistics(), value),
+                inView ? withValue(state.getViewStatistics(), value) : state.getViewStatistics());
+    }
 
-	protected TimeRangeStatistics withValue(TimeRangeStatistics state, Object value) {
-		if (ExpressionUtils.isError(value)) {
+    protected TimeRangeStatistics withValue(TimeRangeStatistics state, Object value) {
+        if (ExpressionUtils.isError(value)) {
             return state.addCounts(0, 0, 1L);
         } else if (ExpressionUtils.isNonBlankData(value)) {
             if (value instanceof OffsetDateTime) {
-            	return state.addTime(((OffsetDateTime) value).toInstant().toEpochMilli());
+                return state.addTime(((OffsetDateTime) value).toInstant().toEpochMilli());
             } else {
                 return state.addCounts(1L, 0, 0);
             }
         } else {
             return state.addCounts(0, 1L, 0);
         }
-	}
+    }
 
 }

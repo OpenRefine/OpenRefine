@@ -1,3 +1,4 @@
+
 package org.openrefine.model.recon;
 
 import java.io.Serializable;
@@ -25,36 +26,33 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  *
  */
 public class ReconStatsImpl implements ReconStats {
-    
+
     private static final long serialVersionUID = -6321424927189309528L;
-    
-    private final long    nonBlanks;
-    private final long    newTopics;
-    private final long    matchedTopics;
-    
+
+    private final long nonBlanks;
+    private final long newTopics;
+    private final long matchedTopics;
+
     /**
      * Creates a summary of reconciliation statistics.
      * 
      * @param nonBlanks
-     *     the number of non blank cells in the column
+     *            the number of non blank cells in the column
      * @param newTopics
-     *     the number of cells matched to a new topic in the column
+     *            the number of cells matched to a new topic in the column
      * @param matchedTopics
-     *     the number of cells matched to an existing topic in the column
+     *            the number of cells matched to an existing topic in the column
      */
     @JsonCreator
     public ReconStatsImpl(
-            @JsonProperty("nonBlanks")
-            long nonBlanks,
-            @JsonProperty("newTopics")
-            long newTopics,
-            @JsonProperty("matchedTopics")
-            long matchedTopics) {
+            @JsonProperty("nonBlanks") long nonBlanks,
+            @JsonProperty("newTopics") long newTopics,
+            @JsonProperty("matchedTopics") long matchedTopics) {
         this.nonBlanks = nonBlanks;
         this.newTopics = newTopics;
         this.matchedTopics = matchedTopics;
     }
-    
+
     @Override
     public long getNonBlanks() {
         return nonBlanks;
@@ -64,7 +62,7 @@ public class ReconStatsImpl implements ReconStats {
     public long getNewTopics() {
         return newTopics;
     }
-    
+
     @Override
     public long getMatchedTopics() {
         return matchedTopics;
@@ -78,7 +76,7 @@ public class ReconStatsImpl implements ReconStats {
         Cell cell = row.getCell(columnIndex);
         if (cell != null && ExpressionUtils.isNonBlankData(cell.value)) {
             nonBlanks++;
-            
+
             if (cell.recon != null) {
                 if (cell.recon.judgment == Judgment.New) {
                     newTopics++;
@@ -100,29 +98,29 @@ public class ReconStatsImpl implements ReconStats {
                 getNewTopics() + other.getNewTopics(),
                 getMatchedTopics() + other.getMatchedTopics());
     }
-    
+
     /**
-     * Creates reconciliation statistics from a column of
-     * cells.
+     * Creates reconciliation statistics from a column of cells.
      * 
-     * @param state the state of the grid
-     * @param columnName the column for which we should gather reconciliation statistics
+     * @param state
+     *            the state of the grid
+     * @param columnName
+     *            the column for which we should gather reconciliation statistics
      * @return the statistics of cell reconciliation in the column
      */
     static public ReconStats create(GridState state, String columnName) {
         Aggregator aggregator = new Aggregator(state.getColumnModel().getColumnIndexByName(columnName));
         return state.aggregateRowsApprox(aggregator, ZERO, ReconStats.SAMPLING_SIZE).getState();
     }
-    
+
     /**
-     * Creates reconciliation statistics for all columns in the grid
-     * where a reconciliation config is set, in a single pass over the grid,
-     * and adds them to the column model accordingly.
+     * Creates reconciliation statistics for all columns in the grid where a reconciliation config is set, in a single
+     * pass over the grid, and adds them to the column model accordingly.
      * 
      * @author Antonin Delpeuch
      */
     static public GridState updateReconStats(GridState state) {
-        
+
         List<ColumnMetadata> columns = state.getColumnModel()
                 .getColumns();
         List<Integer> columnIndices = IntStream.range(0, columns.size())
@@ -134,8 +132,9 @@ public class ReconStatsImpl implements ReconStats {
                 .stream()
                 .map(i -> ReconStats.ZERO)
                 .collect(Collectors.toList());
-        MultiReconStats multiReconStats = state.aggregateRowsApprox(aggregator, new MultiReconStats(initialState), ReconStats.SAMPLING_SIZE).getState();
-        
+        MultiReconStats multiReconStats = state.aggregateRowsApprox(aggregator, new MultiReconStats(initialState), ReconStats.SAMPLING_SIZE)
+                .getState();
+
         ColumnModel columnModel = state.getColumnModel();
         for (int i = 0; i != columnIndices.size(); i++) {
             columnModel = columnModel.withReconStats(columnIndices.get(i), multiReconStats._stats.get(i));
@@ -144,10 +143,10 @@ public class ReconStatsImpl implements ReconStats {
     }
 
     protected static class Aggregator implements RowAggregator<ReconStats> {
-        
+
         private static final long serialVersionUID = -7078589836137133764L;
         int _cellIndex;
-        
+
         protected Aggregator(int cellIndex) {
             _cellIndex = cellIndex;
         }
@@ -165,7 +164,7 @@ public class ReconStatsImpl implements ReconStats {
             Cell cell = row.getCell(_cellIndex);
             if (cell != null && ExpressionUtils.isNonBlankData(cell.value)) {
                 nonBlanks++;
-                
+
                 if (cell.recon != null) {
                     if (cell.recon.getJudgment() == Judgment.New) {
                         newTopics++;
@@ -179,22 +178,24 @@ public class ReconStatsImpl implements ReconStats {
                     stats.getNewTopics() + newTopics,
                     stats.getMatchedTopics() + matchedTopics);
         }
-        
+
     }
-    
+
     protected static class MultiReconStats implements Serializable {
+
         private static final long serialVersionUID = 8308171792561019947L;
         protected final List<ReconStats> _stats;
+
         protected MultiReconStats(List<ReconStats> stats) {
             _stats = stats;
         }
     }
-    
+
     protected static class MultipleAggregator implements RowAggregator<MultiReconStats> {
 
         private static final long serialVersionUID = -8282928695144412185L;
         private final List<Aggregator> _aggregators;
-        
+
         protected MultipleAggregator(List<Integer> columnIndices) {
             _aggregators = columnIndices
                     .stream()
@@ -219,30 +220,29 @@ public class ReconStatsImpl implements ReconStats {
             }
             return new MultiReconStats(reconStats);
         }
-        
+
     }
-    
+
     @Override
     public boolean equals(Object other) {
         if (!(other instanceof ReconStats)) {
             return false;
         }
-        ReconStats rs = (ReconStats)other;
+        ReconStats rs = (ReconStats) other;
         return (rs.getNonBlanks() == getNonBlanks() &&
                 rs.getNewTopics() == getNewTopics() &&
                 rs.getMatchedTopics() == getMatchedTopics());
     }
-    
+
     @Override
     public int hashCode() {
         return (int) (getNonBlanks() + getNewTopics() + getMatchedTopics());
     }
-    
+
     @Override
     public String toString() {
         return String.format("[ReconStats: non-blanks: %d, new: %d, matched: %d]",
                 getNonBlanks(), getNewTopics(), getMatchedTopics());
     }
 
-    
 }

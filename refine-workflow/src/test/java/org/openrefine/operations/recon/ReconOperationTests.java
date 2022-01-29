@@ -24,6 +24,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  ******************************************************************************/
+
 package org.openrefine.operations.recon;
 
 import static org.mockito.ArgumentMatchers.anyLong;
@@ -66,9 +67,9 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.Test;
 
-
 public class ReconOperationTests extends RefineTest {
-    private String json= "{"
+
+    private String json = "{"
             + "\"op\":\"core/recon\","
             + "\"description\":\"Reconcile cells in column researcher to type Q5\","
             + "\"columnName\":\"researcher\","
@@ -85,7 +86,7 @@ public class ReconOperationTests extends RefineTest {
             + "\"engineConfig\":{\"mode\":\"row-based\",\"facets\":[]}}";
     private String identifierSpace = "http://www.wikidata.org/entity/";
     private String schemaSpace = "http://www.wikidata.org/prop/direct/";
-    
+
     private Project project = null;
     private StandardReconConfig reconConfig = null;
     private Row row1 = null;
@@ -97,35 +98,36 @@ public class ReconOperationTests extends RefineTest {
     private ReconJob job1 = null;
     private ReconJob job2 = null;
     private ReconJob job3 = null;
-    
+
     private String processJson = ""
-            + "    {\n" + 
-            "       \"description\" : \"Reconcile cells in column researcher to type Q5\",\n" + 
-            "       \"id\" : %d,\n" + 
-            "       \"immediate\" : false,\n" + 
-            "       \"onDone\" : [ {\n" + 
-            "         \"action\" : \"createFacet\",\n" + 
-            "         \"facetConfig\" : {\n" + 
-            "           \"columnName\" : \"researcher\",\n" + 
-            "           \"expression\" : \"forNonBlank(cell.recon.judgment, v, v, if(isNonBlank(value), \\\"(unreconciled)\\\", \\\"(blank)\\\"))\",\n" + 
-            "           \"name\" : \"researcher: judgment\"\n" + 
-            "         },\n" + 
-            "         \"facetOptions\" : {\n" + 
-            "           \"scroll\" : false\n" + 
-            "         },\n" + 
-            "         \"facetType\" : \"list\"\n" + 
-            "       }, {\n" + 
-            "         \"action\" : \"createFacet\",\n" + 
-            "         \"facetConfig\" : {\n" + 
-            "           \"columnName\" : \"researcher\",\n" + 
-            "           \"expression\" : \"cell.recon.best.score\",\n" + 
-            "           \"mode\" : \"range\",\n" + 
-            "           \"name\" : \"researcher: best candidate's score\"\n" + 
-            "         },\n" + 
-            "         \"facetType\" : \"range\"\n" + 
-            "       } ],\n" + 
-            "       \"progress\" : 0,\n" + 
-            "       \"status\" : \"pending\"\n" + 
+            + "    {\n" +
+            "       \"description\" : \"Reconcile cells in column researcher to type Q5\",\n" +
+            "       \"id\" : %d,\n" +
+            "       \"immediate\" : false,\n" +
+            "       \"onDone\" : [ {\n" +
+            "         \"action\" : \"createFacet\",\n" +
+            "         \"facetConfig\" : {\n" +
+            "           \"columnName\" : \"researcher\",\n" +
+            "           \"expression\" : \"forNonBlank(cell.recon.judgment, v, v, if(isNonBlank(value), \\\"(unreconciled)\\\", \\\"(blank)\\\"))\",\n"
+            +
+            "           \"name\" : \"researcher: judgment\"\n" +
+            "         },\n" +
+            "         \"facetOptions\" : {\n" +
+            "           \"scroll\" : false\n" +
+            "         },\n" +
+            "         \"facetType\" : \"list\"\n" +
+            "       }, {\n" +
+            "         \"action\" : \"createFacet\",\n" +
+            "         \"facetConfig\" : {\n" +
+            "           \"columnName\" : \"researcher\",\n" +
+            "           \"expression\" : \"cell.recon.best.score\",\n" +
+            "           \"mode\" : \"range\",\n" +
+            "           \"name\" : \"researcher: best candidate's score\"\n" +
+            "         },\n" +
+            "         \"facetType\" : \"range\"\n" +
+            "       } ],\n" +
+            "       \"progress\" : 0,\n" +
+            "       \"status\" : \"pending\"\n" +
             "     }";
 
     @BeforeSuite
@@ -133,91 +135,89 @@ public class ReconOperationTests extends RefineTest {
         OperationRegistry.registerOperation("core", "recon", ReconOperation.class);
         ReconConfig.registerReconConfig("core", "standard-service", StandardReconConfig.class);
     }
-    
+
     @BeforeMethod
     public void setUpDependencies() {
-    	project = createProject("test project",
-    			new String[] {"column"},
-    			new Serializable[][] {
-    		{"value1"},
-    		{"value2"},
-    		{"value1"},
-    		{"value3"}
-    	});
-    	
-    	job1 = mock(ReconJob.class, withSettings().serializable());
-    	when(job1.getCellValue()).thenReturn("value1");
-    	job2 = mock(ReconJob.class, withSettings().serializable());
-    	when(job2.getCellValue()).thenReturn("value2");
-    	job3 = mock(ReconJob.class, withSettings().serializable());
-    	when(job3.getCellValue()).thenReturn("value3");
-    	recon1 = new Recon(1234L, identifierSpace, schemaSpace)
-    			.withJudgment(Judgment.Matched);
-    	recon2 = new Recon(5678L, identifierSpace, schemaSpace)
-    			.withJudgment(Judgment.None);
-    	recon3 = new Recon(9012L, identifierSpace, schemaSpace)
-    			.withJudgment(Judgment.Matched);
+        project = createProject("test project",
+                new String[] { "column" },
+                new Serializable[][] {
+                        { "value1" },
+                        { "value2" },
+                        { "value1" },
+                        { "value3" }
+                });
 
-    	reconConfig = mock(StandardReconConfig.class, withSettings().serializable());
-    	doReturn(2).when(reconConfig).getBatchSize();
-    	// mock identifierSpace, service and schemaSpace
-    	when(reconConfig.batchRecon(eq(Arrays.asList(job1, job2)), anyLong())).thenReturn(Arrays.asList(recon1, recon2));
-    	when(reconConfig.batchRecon(eq(Arrays.asList(job3)), anyLong())).thenReturn(Arrays.asList(recon3));
-    	
-    	GridState state = project.getCurrentGridState();
-    	ColumnModel columnModel = state.getColumnModel();
-    	
-    	row1 = state.getRow(0L);
-    	row2 = state.getRow(1L);
-    	row3 = state.getRow(3L);
-		
-    	when(reconConfig.createJob(columnModel, 0L, row1, "column", row1.getCell(0))).thenReturn(job1);
-    	when(reconConfig.createJob(columnModel, 1L, row2, "column", row2.getCell(0))).thenReturn(job2);
-    	when(reconConfig.createJob(columnModel, 2L, row1, "column", row1.getCell(0))).thenReturn(job1);
-    	when(reconConfig.createJob(columnModel, 3L, row3, "column", row3.getCell(0))).thenReturn(job3);
+        job1 = mock(ReconJob.class, withSettings().serializable());
+        when(job1.getCellValue()).thenReturn("value1");
+        job2 = mock(ReconJob.class, withSettings().serializable());
+        when(job2.getCellValue()).thenReturn("value2");
+        job3 = mock(ReconJob.class, withSettings().serializable());
+        when(job3.getCellValue()).thenReturn("value3");
+        recon1 = new Recon(1234L, identifierSpace, schemaSpace)
+                .withJudgment(Judgment.Matched);
+        recon2 = new Recon(5678L, identifierSpace, schemaSpace)
+                .withJudgment(Judgment.None);
+        recon3 = new Recon(9012L, identifierSpace, schemaSpace)
+                .withJudgment(Judgment.Matched);
+
+        reconConfig = mock(StandardReconConfig.class, withSettings().serializable());
+        doReturn(2).when(reconConfig).getBatchSize();
+        // mock identifierSpace, service and schemaSpace
+        when(reconConfig.batchRecon(eq(Arrays.asList(job1, job2)), anyLong())).thenReturn(Arrays.asList(recon1, recon2));
+        when(reconConfig.batchRecon(eq(Arrays.asList(job3)), anyLong())).thenReturn(Arrays.asList(recon3));
+
+        GridState state = project.getCurrentGridState();
+        ColumnModel columnModel = state.getColumnModel();
+
+        row1 = state.getRow(0L);
+        row2 = state.getRow(1L);
+        row3 = state.getRow(3L);
+
+        when(reconConfig.createJob(columnModel, 0L, row1, "column", row1.getCell(0))).thenReturn(job1);
+        when(reconConfig.createJob(columnModel, 1L, row2, "column", row2.getCell(0))).thenReturn(job2);
+        when(reconConfig.createJob(columnModel, 2L, row1, "column", row1.getCell(0))).thenReturn(job1);
+        when(reconConfig.createJob(columnModel, 3L, row3, "column", row3.getCell(0))).thenReturn(job3);
     }
-    
+
     @Test
     public void serializeReconOperation() throws Exception {
         TestUtils.isSerializedTo(ParsingUtilities.mapper.readValue(json, ReconOperation.class), json, ParsingUtilities.defaultWriter);
     }
-    
+
     @Test
     public void serializeReconProcess() throws Exception {
         ReconOperation op = ParsingUtilities.mapper.readValue(json, ReconOperation.class);
         org.openrefine.process.Process process = op.createProcess(project);
         TestUtils.isSerializedTo(process, String.format(processJson, process.hashCode()), ParsingUtilities.defaultWriter);
     }
-    
+
     @Test
     public void testChangeDataProducer() {
-    	List<IndexedRow> batch1 = Arrays.asList(
-    			new IndexedRow(0L, row1),
-    			new IndexedRow(1L, row2)
-    			);
-    	List<IndexedRow> batch2 = Arrays.asList(
-    			new IndexedRow(2L, row1),
-    			new IndexedRow(3L, row3)
-    			);
-    	
-    	ReconChangeDataProducer producer = new ReconChangeDataProducer("column", 0, reconConfig, 1234L, project.getColumnModel());
-    	List<Cell> results1 = producer.callRowBatch(batch1);
-    	List<Cell> results2 = producer.callRowBatch(batch2);
-    	
-    	Assert.assertEquals(results1, Arrays.asList(new Cell("value1", recon1), new Cell("value2", recon2)));
-    	Assert.assertEquals(results2, Arrays.asList(new Cell("value1", recon1), new Cell("value3", recon3)));
-    	Assert.assertEquals(producer.getBatchSize(), 2);
-    	Assert.assertEquals(producer.call(0L, batch1.get(0).getRow()), new Cell("value1", recon1));
-    	
-    	verify(reconConfig, times(1)).batchRecon(Arrays.asList(job1, job2), 1234L);
-    	verify(reconConfig, times(1)).batchRecon(Arrays.asList(job3), 1234L);
+        List<IndexedRow> batch1 = Arrays.asList(
+                new IndexedRow(0L, row1),
+                new IndexedRow(1L, row2));
+        List<IndexedRow> batch2 = Arrays.asList(
+                new IndexedRow(2L, row1),
+                new IndexedRow(3L, row3));
+
+        ReconChangeDataProducer producer = new ReconChangeDataProducer("column", 0, reconConfig, 1234L, project.getColumnModel());
+        List<Cell> results1 = producer.callRowBatch(batch1);
+        List<Cell> results2 = producer.callRowBatch(batch2);
+
+        Assert.assertEquals(results1, Arrays.asList(new Cell("value1", recon1), new Cell("value2", recon2)));
+        Assert.assertEquals(results2, Arrays.asList(new Cell("value1", recon1), new Cell("value3", recon3)));
+        Assert.assertEquals(producer.getBatchSize(), 2);
+        Assert.assertEquals(producer.call(0L, batch1.get(0).getRow()), new Cell("value1", recon1));
+
+        verify(reconConfig, times(1)).batchRecon(Arrays.asList(job1, job2), 1234L);
+        verify(reconConfig, times(1)).batchRecon(Arrays.asList(job3), 1234L);
     }
-    
+
     @Test
     public void testFullChange() throws Exception {
-    	ReconOperation operation = new ReconOperation(EngineConfig.ALL_ROWS, "column", reconConfig);
-    	Process process = operation.createProcess(project);
-    	process.startPerforming(project.getProcessManager());
+        ReconOperation operation = new ReconOperation(EngineConfig.ALL_ROWS, "column", reconConfig);
+        Process process = operation.createProcess(project);
+        process.startPerforming(project.getProcessManager());
         Assert.assertTrue(process.isRunning());
         try {
             Thread.sleep(1000);
@@ -225,85 +225,80 @@ public class ReconOperationTests extends RefineTest {
             Assert.fail("Test interrupted");
         }
         Assert.assertFalse(process.isRunning());
-        
+
         ReconStats reconStats = ReconStats.create(4L, 0L, 3L);
-		ColumnModel reconciledColumnModel = new ColumnModel(Collections.singletonList(
-        		new ColumnMetadata("column")
-        		.withReconConfig(reconConfig)
-        		.withReconStats(reconStats)));
-		
-		GridState expectedGrid = createGrid(
-        		new String[] {"column"},
-        		new Serializable[][] {
-        			{new Cell("value1", recon1)},
-        			{new Cell("value2", recon2)},
-        			{new Cell("value1", recon1)},
-        			{new Cell("value3", recon3)}
-        		})
-        		.withColumnModel(reconciledColumnModel);
-        
+        ColumnModel reconciledColumnModel = new ColumnModel(Collections.singletonList(
+                new ColumnMetadata("column")
+                        .withReconConfig(reconConfig)
+                        .withReconStats(reconStats)));
+
+        GridState expectedGrid = createGrid(
+                new String[] { "column" },
+                new Serializable[][] {
+                        { new Cell("value1", recon1) },
+                        { new Cell("value2", recon2) },
+                        { new Cell("value1", recon1) },
+                        { new Cell("value3", recon3) }
+                })
+                        .withColumnModel(reconciledColumnModel);
+
         assertGridEquals(project.getCurrentGridState(), expectedGrid);
     }
-    
+
     private static class ReconConfigStub extends ReconConfig {
 
-		@Override
-		public int getBatchSize() {
-			return 10;
-		}
+        @Override
+        public int getBatchSize() {
+            return 10;
+        }
 
-		@Override
-		public String getBriefDescription(String columnName) {
-			return null;
-		}
+        @Override
+        public String getBriefDescription(String columnName) {
+            return null;
+        }
 
-		@Override
-		public ReconJob createJob(ColumnModel columnModel, long rowIndex, Row row, String columnName, Cell cell) {
-			ReconJob reconJob = mock(ReconJob.class, withSettings().serializable());
-			when(reconJob.getCellValue()).thenReturn(cell.getValue().toString());
-			return reconJob;
-		}
+        @Override
+        public ReconJob createJob(ColumnModel columnModel, long rowIndex, Row row, String columnName, Cell cell) {
+            ReconJob reconJob = mock(ReconJob.class, withSettings().serializable());
+            when(reconJob.getCellValue()).thenReturn(cell.getValue().toString());
+            return reconJob;
+        }
 
-		@Override
-		public List<Recon> batchRecon(List<ReconJob> jobs, long historyEntryID) {
-			return jobs.stream().map(j -> (Recon)null).collect(Collectors.toList());
-		}
+        @Override
+        public List<Recon> batchRecon(List<ReconJob> jobs, long historyEntryID) {
+            return jobs.stream().map(j -> (Recon) null).collect(Collectors.toList());
+        }
 
-		@Override
-		public Recon createNewRecon(long historyEntryID) {
-			return null;
-		}
+        @Override
+        public Recon createNewRecon(long historyEntryID) {
+            return null;
+        }
 
-		@Override
-		public String getMode() {
-			return null;
-		}
-    	
+        @Override
+        public String getMode() {
+            return null;
+        }
+
     }
 
     @Test
     public void testFailingRecon() throws Exception {
         ReconConfig reconConfig = new ReconConfigStub();
-          
+
         ReconOperation op = new ReconOperation(EngineConfig.reconstruct("{}"), "column", reconConfig);
-            
+
         Process process = op.createProcess(project);
         runAndWait(project.getProcessManager(), process, 1000);
         /*
-    	process.startPerforming(project.getProcessManager());
-        Assert.assertTrue(process.isRunning());
-        try {
-            Thread.sleep(60000);
-        } catch (InterruptedException e) {
-            Assert.fail("Test interrupted");
-        }
-        Assert.assertFalse(process.isRunning());
-        */
-        
+         * process.startPerforming(project.getProcessManager()); Assert.assertTrue(process.isRunning()); try {
+         * Thread.sleep(60000); } catch (InterruptedException e) { Assert.fail("Test interrupted"); }
+         * Assert.assertFalse(process.isRunning());
+         */
+
         ColumnMetadata column = project.getColumnModel().getColumnByIndex(0);
         Assert.assertNotNull(column.getReconStats());
         Assert.assertEquals(column.getReconStats().getMatchedTopics(), 0);
-        
+
         GridState grid = project.getCurrentGridState();
         Assert.assertNull(grid.getRow(0).getCell(0).recon);
         Assert.assertNull(grid.getRow(1).getCell(0).recon);

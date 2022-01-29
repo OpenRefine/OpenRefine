@@ -57,98 +57,103 @@ public class GetColumnsInfoCommand extends Command {
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        
+
         try {
             response.setCharacterEncoding("UTF-8");
             response.setHeader("Content-Type", "application/json");
 
             Project project = getProject(request);
-            
+
             GridState grid = project.getCurrentGridState();
             AggregationState initial = new AggregationState();
-            initial.statistics = grid.getColumnModel().getColumns().stream().map(c -> new ColumnStatistics(c.getName(), 0, 0)).collect(Collectors.toList());
+            initial.statistics = grid.getColumnModel().getColumns().stream().map(c -> new ColumnStatistics(c.getName(), 0, 0))
+                    .collect(Collectors.toList());
             AggregationState aggregated = grid.aggregateRows(new Aggregator(), initial);
-            
+
             respondJSON(response, aggregated);
         } catch (Exception e) {
             e.printStackTrace();
             respondException(response, e);
         }
     }
-    
+
     private static class AggregationState implements Serializable {
-		private static final long serialVersionUID = -7825020364579861122L;
-		@JsonValue
-		public List<ColumnStatistics> getStatistics() {
-			return statistics;
-		}
-		public List<ColumnStatistics> statistics;
+
+        private static final long serialVersionUID = -7825020364579861122L;
+
+        @JsonValue
+        public List<ColumnStatistics> getStatistics() {
+            return statistics;
+        }
+
+        public List<ColumnStatistics> statistics;
     }
-    
+
     private static class ColumnStatistics implements Serializable {
 
-		private static final long serialVersionUID = -8845292788196741719L;
+        private static final long serialVersionUID = -8845292788196741719L;
 
-		public ColumnStatistics(
-    			String name,
-    			long numericCount,
-    			long otherCount) {
-    		this.name = name;
-    		this.numericCount = numericCount;
-    		this.otherCount = otherCount;
-    	}
-    	@JsonProperty("name")
-    	public final String name;
-    	@JsonProperty("numeric_row_count")
-    	public final long numericCount;
-    	@JsonProperty("other_count")
-    	public final long otherCount;
-    	
-    	@JsonProperty("is_numeric")
-    	public boolean isNumeric() {
-    		return numericCount > otherCount;
-    	}
+        public ColumnStatistics(
+                String name,
+                long numericCount,
+                long otherCount) {
+            this.name = name;
+            this.numericCount = numericCount;
+            this.otherCount = otherCount;
+        }
 
-    	public ColumnStatistics sum(ColumnStatistics other) {
-    		return new ColumnStatistics(
-    				name,
-    				numericCount + other.numericCount,
-    				otherCount + other.otherCount);
-    	}
-    	
-    	public ColumnStatistics withValue(Object value) {
-    		if (value instanceof Number) {
-    			return new ColumnStatistics(name, numericCount + 1, otherCount);
-    		} else {
-    			return new ColumnStatistics(name, numericCount, otherCount + 1);
-    		}
-    	}
-    	
+        @JsonProperty("name")
+        public final String name;
+        @JsonProperty("numeric_row_count")
+        public final long numericCount;
+        @JsonProperty("other_count")
+        public final long otherCount;
+
+        @JsonProperty("is_numeric")
+        public boolean isNumeric() {
+            return numericCount > otherCount;
+        }
+
+        public ColumnStatistics sum(ColumnStatistics other) {
+            return new ColumnStatistics(
+                    name,
+                    numericCount + other.numericCount,
+                    otherCount + other.otherCount);
+        }
+
+        public ColumnStatistics withValue(Object value) {
+            if (value instanceof Number) {
+                return new ColumnStatistics(name, numericCount + 1, otherCount);
+            } else {
+                return new ColumnStatistics(name, numericCount, otherCount + 1);
+            }
+        }
+
     }
-    
+
     private static class Aggregator implements RowAggregator<AggregationState> {
 
-		private static final long serialVersionUID = 6172712485208754636L;
+        private static final long serialVersionUID = 6172712485208754636L;
 
-		@Override
-		public AggregationState sum(AggregationState first, AggregationState second) {
-			AggregationState result = new AggregationState();
-			result.statistics = new ArrayList<>();
-			for(int i = 0; i != first.statistics.size(); i++) {
-				result.statistics.add(first.statistics.get(i).sum(second.statistics.get(i)));
-			}
-			return result;
-		}
+        @Override
+        public AggregationState sum(AggregationState first, AggregationState second) {
+            AggregationState result = new AggregationState();
+            result.statistics = new ArrayList<>();
+            for (int i = 0; i != first.statistics.size(); i++) {
+                result.statistics.add(first.statistics.get(i).sum(second.statistics.get(i)));
+            }
+            return result;
+        }
 
-		@Override
-		public AggregationState withRow(AggregationState state, long rowId, Row row) {
-			AggregationState result = new AggregationState();
-			result.statistics = new ArrayList<>();
-			for(int i = 0; i != state.statistics.size(); i++) {
-				result.statistics.add(state.statistics.get(i).withValue(row.getCellValue(i)));
-			}
-			return result;
-		}
-    	
+        @Override
+        public AggregationState withRow(AggregationState state, long rowId, Row row) {
+            AggregationState result = new AggregationState();
+            result.statistics = new ArrayList<>();
+            for (int i = 0; i != state.statistics.size(); i++) {
+                result.statistics.add(state.statistics.get(i).withValue(row.getCellValue(i)));
+            }
+            return result;
+        }
+
     }
 }

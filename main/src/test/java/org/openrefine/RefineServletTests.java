@@ -54,17 +54,17 @@ import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
 public class RefineServletTests extends RefineTest {
-    
+
     @Override
     @BeforeTest
     public void init() {
         logger = LoggerFactory.getLogger(this.getClass());
     }
-        
-    //System under test
+
+    // System under test
     RefineServletStub SUT = null;
 
-    //variables
+    // variables
     final static private String TEST_COMMAND_NAME = "test-command";
     final static private String TEST_COMMAND_PATH = "/command/core/test-command/foobar";
     final static private String BAD_COMMAND_PATH = "/command/core/command-does-not-exist";
@@ -73,12 +73,11 @@ public class RefineServletTests extends RefineTest {
     final static private String GET = "GET";
     final static private String PUT = "PUT";
     final static private String DELETE = "DELETE";
-    
+
     // mocks
     HttpServletRequest request = null;
     HttpServletResponse response = null;
     Command command = null;
-
 
     @BeforeMethod
     public void SetUp() throws ServletException {
@@ -87,29 +86,29 @@ public class RefineServletTests extends RefineTest {
         command = mock(Command.class);
 
         SUT = new RefineServletStub();
-        SUT.insertCommand(TEST_COMMAND_NAME,command); //inject mock into command container
+        SUT.insertCommand(TEST_COMMAND_NAME, command); // inject mock into command container
     }
 
     @AfterMethod
     public void TearDown() {
-        SUT.removeCommand(TEST_COMMAND_NAME); //remove mock to clean command container
+        SUT.removeCommand(TEST_COMMAND_NAME); // remove mock to clean command container
         SUT = null;
-        
+
         request = null;
         response = null;
         command = null;
     }
-    
-    //-------------------AutoSaveTimerTask tests-----------
-    //TODO would need to mock Timer and inject it into RefineServlet.  Also need to deal with ProjectManager.singleton
-    //-------------------init tests------------------------
-    //TODO need to stub super.init(), mock Timer and inject it into RefineServlet
-    //-------------------destroy tests---------------------
-    //TODO need to mock Timer and inject it into RefineServlet.  Also need to deal with ProjectManager.singleton
 
-    //--------------------doGet tests----------------------
+    // -------------------AutoSaveTimerTask tests-----------
+    // TODO would need to mock Timer and inject it into RefineServlet. Also need to deal with ProjectManager.singleton
+    // -------------------init tests------------------------
+    // TODO need to stub super.init(), mock Timer and inject it into RefineServlet
+    // -------------------destroy tests---------------------
+    // TODO need to mock Timer and inject it into RefineServlet. Also need to deal with ProjectManager.singleton
+
+    // --------------------doGet tests----------------------
     @Test
-    public void doGetRegressionTest(){
+    public void doGetRegressionTest() {
         whenGetCommandNameThenReturn(TEST_COMMAND_PATH);
         whenGetMethodThenReturn(GET);
 
@@ -123,7 +122,7 @@ public class RefineServletTests extends RefineTest {
 
         verifyGetCommandNameCalled(2);
         try {
-            verify(command,times(1)).doGet(request, response);
+            verify(command, times(1)).doGet(request, response);
         } catch (ServletException e) {
             Assert.fail();
         } catch (IOException e) {
@@ -132,7 +131,7 @@ public class RefineServletTests extends RefineTest {
     }
 
     @Test
-    public void doGetReturnsError404WhenCommandNotFound(){
+    public void doGetReturnsError404WhenCommandNotFound() {
         whenGetCommandNameThenReturn(BAD_COMMAND_PATH);
         whenGetMethodThenReturn(GET);
 
@@ -149,9 +148,9 @@ public class RefineServletTests extends RefineTest {
 
     }
 
-    //----------------doPost tests-------------------------
+    // ----------------doPost tests-------------------------
     @Test
-    public void doPostRegressionTest(){
+    public void doPostRegressionTest() {
         whenGetCommandNameThenReturn(TEST_COMMAND_PATH);
         whenGetMethodThenReturn(POST);
 
@@ -165,7 +164,7 @@ public class RefineServletTests extends RefineTest {
 
         verifyGetCommandNameCalled(2);
         try {
-            verify(command,times(1)).doPost(request, response);
+            verify(command, times(1)).doPost(request, response);
         } catch (ServletException e) {
             Assert.fail();
         } catch (IOException e) {
@@ -174,10 +173,10 @@ public class RefineServletTests extends RefineTest {
     }
 
     @Test
-    public void doPostReturns404WhenCommandNotFound(){
+    public void doPostReturns404WhenCommandNotFound() {
         whenGetCommandNameThenReturn(BAD_COMMAND_PATH);
         whenGetMethodThenReturn(POST);
-        
+
         try {
             SUT.wrapService(request, response);
         } catch (ServletException e) {
@@ -190,9 +189,9 @@ public class RefineServletTests extends RefineTest {
         verifyError404Called();
     }
 
-    //----------------doPut tests-------------------------
+    // ----------------doPut tests-------------------------
     @Test
-    public void doPutRegressionTest(){
+    public void doPutRegressionTest() {
         whenGetCommandNameThenReturn(TEST_COMMAND_PATH);
         whenGetMethodThenReturn(PUT);
 
@@ -206,7 +205,7 @@ public class RefineServletTests extends RefineTest {
 
         verifyGetCommandNameCalled(2);
         try {
-            verify(command,times(1)).doPut(request, response);
+            verify(command, times(1)).doPut(request, response);
         } catch (ServletException e) {
             Assert.fail();
         } catch (IOException e) {
@@ -215,10 +214,10 @@ public class RefineServletTests extends RefineTest {
     }
 
     @Test
-    public void doPutReturns404WhenCommandNotFound(){
+    public void doPutReturns404WhenCommandNotFound() {
         whenGetCommandNameThenReturn(BAD_COMMAND_PATH);
         whenGetMethodThenReturn(PUT);
-        
+
         try {
             SUT.wrapService(request, response);
         } catch (ServletException e) {
@@ -231,9 +230,9 @@ public class RefineServletTests extends RefineTest {
         verifyError404Called();
     }
 
-    //----------------doDelete tests-------------------------
+    // ----------------doDelete tests-------------------------
     @Test
-    public void doDeleteRegressionTest(){
+    public void doDeleteRegressionTest() {
         whenGetCommandNameThenReturn(TEST_COMMAND_PATH);
         whenGetMethodThenReturn(DELETE);
 
@@ -247,7 +246,7 @@ public class RefineServletTests extends RefineTest {
 
         verifyGetCommandNameCalled(2);
         try {
-            verify(command,times(1)).doDelete(request, response);
+            verify(command, times(1)).doDelete(request, response);
         } catch (ServletException e) {
             Assert.fail();
         } catch (IOException e) {
@@ -256,10 +255,10 @@ public class RefineServletTests extends RefineTest {
     }
 
     @Test
-    public void doDeleteReturns404WhenCommandNotFound(){
+    public void doDeleteReturns404WhenCommandNotFound() {
         whenGetCommandNameThenReturn(BAD_COMMAND_PATH);
         whenGetMethodThenReturn(DELETE);
-        
+
         try {
             SUT.wrapService(request, response);
         } catch (ServletException e) {
@@ -272,10 +271,10 @@ public class RefineServletTests extends RefineTest {
         verifyError404Called();
     }
 
-    //----------------getCommandName tests----------------
+    // ----------------getCommandName tests----------------
 
     @Test
-    public void getCommandNameHandlesBadCommandName(){
+    public void getCommandNameHandlesBadCommandName() {
 
         when(request.getPathInfo()).thenReturn("/command/this-command-has-no-trailing-slash");
 
@@ -284,19 +283,22 @@ public class RefineServletTests extends RefineTest {
         verify(request, times(1)).getPathInfo();
     }
 
-    //------------helpers
-    protected void whenGetCommandNameThenReturn(String commandName){
+    // ------------helpers
+    protected void whenGetCommandNameThenReturn(String commandName) {
         when(request.getPathInfo()).thenReturn(commandName);
     }
-    protected void whenGetMethodThenReturn(String method){
+
+    protected void whenGetMethodThenReturn(String method) {
         when(request.getMethod()).thenReturn(method);
     }
-    protected void verifyGetCommandNameCalled(int times){
-        verify(request,times(times)).getPathInfo();
+
+    protected void verifyGetCommandNameCalled(int times) {
+        verify(request, times(times)).getPathInfo();
     }
-    protected void verifyError404Called(){
+
+    protected void verifyError404Called() {
         try {
-            verify(response,times(1)).sendError(HttpStatus.SC_NOT_FOUND);
+            verify(response, times(1)).sendError(HttpStatus.SC_NOT_FOUND);
         } catch (IOException e) {
             Assert.fail();
         }

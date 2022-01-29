@@ -55,8 +55,9 @@ public class TemplatingExporter implements WriterExporter {
     public String getContentType() {
         return "text/plain";
     }
-    
+
     protected static class TemplateConfig {
+
         @JsonProperty("template")
         protected String template;
         @JsonProperty("prefix")
@@ -65,7 +66,7 @@ public class TemplatingExporter implements WriterExporter {
         protected String suffix;
         @JsonProperty("separator")
         protected String separator;
-        
+
         protected TemplateConfig(
                 String template, String prefix,
                 String suffix, String separator) {
@@ -77,45 +78,46 @@ public class TemplatingExporter implements WriterExporter {
     }
 
     @Override
-    public void export(GridState grid, ProjectMetadata projectMetadata, Properties options, Engine engine, Writer writer) throws IOException {
+    public void export(GridState grid, ProjectMetadata projectMetadata, Properties options, Engine engine, Writer writer)
+            throws IOException {
         String limitString = options.getProperty("limit");
         int limit = limitString != null ? Integer.parseInt(limitString) : -1;
-        
+
         String sortingJson = options.getProperty("sorting");
-        
+
         String templateString = options.getProperty("template");
         String prefixString = options.getProperty("prefix");
         String suffixString = options.getProperty("suffix");
         String separatorString = options.getProperty("separator");
-        
+
         Template template;
         try {
             template = Parser.parse(templateString);
         } catch (ParsingException e) {
             throw new IOException("Missing or bad template", e);
         }
-        
+
         template.setPrefix(prefixString);
         template.setSuffix(suffixString);
         template.setSeparator(separatorString);
-        
+
         if (!"true".equals(options.getProperty("preview"))) {
             TemplateConfig config = new TemplateConfig(templateString, prefixString,
                     suffixString, separatorString);
             projectMetadata.getPreferenceStore().put("exporters.templating.template",
                     ParsingUtilities.defaultWriter.writeValueAsString(config));
         }
-        
+
         SortingConfig sorting = SortingConfig.NO_SORTING;
         if (sortingJson != null) {
             sorting = SortingConfig.reconstruct(sortingJson);
         }
-        
+
         if (engine.getMode() == Mode.RowBased) {
             template.writeRows(engine.getMatchingRows(sorting), writer, grid.getColumnModel(), limit);
         } else {
             template.writeRecords(engine.getMatchingRecords(sorting), writer, grid.getColumnModel(), limit);
         }
     }
-    
+
 }

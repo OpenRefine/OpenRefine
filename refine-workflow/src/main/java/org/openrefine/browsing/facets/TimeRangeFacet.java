@@ -52,86 +52,77 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class TimeRangeFacet implements Facet {
 
-	private static int _maxBinCount = 100; // not configurable so far
+    private static int _maxBinCount = 100; // not configurable so far
     protected static final String MIN = "min";
     protected static final String MAX = "max";
     protected static final String TO = "to";
     protected static final String FROM = "from";
-    
+
     /*
      * Configuration, from the client side
      */
     public static class TimeRangeFacetConfig implements FacetConfig, Serializable {
 
-		private static final long serialVersionUID = 2274104024064447248L;
-		@JsonProperty("name")
-        protected String     _name;       // name of facet
+        private static final long serialVersionUID = 2274104024064447248L;
+        @JsonProperty("name")
+        protected String _name; // name of facet
         @JsonProperty("expression")
-        protected String     _expression; // expression to compute numeric value(s) per row
+        protected String _expression; // expression to compute numeric value(s) per row
         @JsonProperty("columnName")
-        protected String     _columnName; // column to base expression on, if any
-        
-        private double      _from = 0; // the numeric selection
-		private double      _to = 0;
-        
-		private boolean   _selectTime; // whether the time selection applies, default true
-        private boolean   _selectNonTime;
-        private boolean   _selectBlank;
-        private boolean   _selectError;
+        protected String _columnName; // column to base expression on, if any
+
+        private double _from = 0; // the numeric selection
+        private double _to = 0;
+
+        private boolean _selectTime; // whether the time selection applies, default true
+        private boolean _selectNonTime;
+        private boolean _selectBlank;
+        private boolean _selectError;
         @JsonIgnore
         protected Evaluable _evaluable;
         @JsonIgnore
         protected String _errorMessage;
-        
+
         @JsonCreator
         public TimeRangeFacetConfig(
-        		@JsonProperty("name")
-        		String name,
-        		@JsonProperty("expression")
-        		String expression,
-        		@JsonProperty("columnName")
-        		String columnName,
-        		@JsonProperty(FROM)
-        		double from,
-        		@JsonProperty(TO)
-        		double to,
-        		@JsonProperty("selectTime")
-        		boolean selectTime,
-        		@JsonProperty("selectNonTime")
-        		boolean selectNonTime,
-        		@JsonProperty("selectBlank")
-        		boolean selectBlank,
-        		@JsonProperty("selectError")
-        		boolean selectError) {
-        	_name = name;
-        	_expression = expression;
-        	_columnName = columnName;
-        	_from = from;
-        	setTo(to);
-        	_selectTime = selectTime;
-        	_selectNonTime = selectNonTime;
-        	_selectBlank = selectBlank;
-        	_selectError = selectError;
-        	try {
-	            _evaluable = MetaParser.parse(expression);
-	            _errorMessage = null;
-	        } catch (ParsingException e) {
-	            _errorMessage = e.getMessage();
-	            _evaluable = null;
-	        }
+                @JsonProperty("name") String name,
+                @JsonProperty("expression") String expression,
+                @JsonProperty("columnName") String columnName,
+                @JsonProperty(FROM) double from,
+                @JsonProperty(TO) double to,
+                @JsonProperty("selectTime") boolean selectTime,
+                @JsonProperty("selectNonTime") boolean selectNonTime,
+                @JsonProperty("selectBlank") boolean selectBlank,
+                @JsonProperty("selectError") boolean selectError) {
+            _name = name;
+            _expression = expression;
+            _columnName = columnName;
+            _from = from;
+            setTo(to);
+            _selectTime = selectTime;
+            _selectNonTime = selectNonTime;
+            _selectBlank = selectBlank;
+            _selectError = selectError;
+            try {
+                _evaluable = MetaParser.parse(expression);
+                _errorMessage = null;
+            } catch (ParsingException e) {
+                _errorMessage = e.getMessage();
+                _evaluable = null;
+            }
         }
-        
+
         // false if we're certain that all rows will match
         // and there isn't any filtering to do
         // @todo inline
         @JsonIgnore
         protected boolean isSelected() {
             return !isNeutral();
-        }; 
-        
+        };
+
         @Override
         public TimeRangeFacet apply(ColumnModel columnModel) {
-        	int cellIndex = columnModel.getColumnIndexByName(_columnName);
+            int cellIndex = columnModel.getColumnIndexByName(_columnName);
             return new TimeRangeFacet(this, cellIndex, columnModel);
         }
 
@@ -140,123 +131,124 @@ public class TimeRangeFacet implements Facet {
             return "core/timerange";
         }
 
-		@Override
-		public Set<String> getColumnDependencies() {
-			if (_evaluable == null) {
-				return null;
-			}
-			return _evaluable.getColumnDependencies(_columnName);
-		}
+        @Override
+        public Set<String> getColumnDependencies() {
+            if (_evaluable == null) {
+                return null;
+            }
+            return _evaluable.getColumnDependencies(_columnName);
+        }
 
-		@Override
-		public TimeRangeFacetConfig renameColumnDependencies(Map<String, String> substitutions) {
-			if (_errorMessage != null) {
-				return null;
-			}
-			Evaluable translated = _evaluable.renameColumnDependencies(substitutions);
-			if (translated == null) {
-				return null;
-			}
-			return new TimeRangeFacetConfig(
-					_name,
-					translated.getFullSource(),
-					substitutions.getOrDefault(_columnName, _columnName),
-					getFrom(),
-					getTo(),
-					getSelectTime(),
-					getSelectNonTime(),
-					getSelectBlank(),
-					getSelectError());
-		}
+        @Override
+        public TimeRangeFacetConfig renameColumnDependencies(Map<String, String> substitutions) {
+            if (_errorMessage != null) {
+                return null;
+            }
+            Evaluable translated = _evaluable.renameColumnDependencies(substitutions);
+            if (translated == null) {
+                return null;
+            }
+            return new TimeRangeFacetConfig(
+                    _name,
+                    translated.getFullSource(),
+                    substitutions.getOrDefault(_columnName, _columnName),
+                    getFrom(),
+                    getTo(),
+                    getSelectTime(),
+                    getSelectNonTime(),
+                    getSelectBlank(),
+                    getSelectError());
+        }
 
-		@Override
-		public boolean isNeutral() {
-			return _errorMessage != null ||
-					(getFrom() == 0 && getTo() == 0 && getSelectTime() && getSelectNonTime() && getSelectBlank() && _selectError);
-		}
+        @Override
+        public boolean isNeutral() {
+            return _errorMessage != null ||
+                    (getFrom() == 0 && getTo() == 0 && getSelectTime() && getSelectNonTime() && getSelectBlank() && _selectError);
+        }
 
-		@JsonProperty("selectTime")
-		public boolean getSelectTime() {
-			return _selectTime;
-		}
-		
-		@JsonProperty("selectNonTime")
-		public boolean getSelectNonTime() {
-			return _selectNonTime;
-		}
+        @JsonProperty("selectTime")
+        public boolean getSelectTime() {
+            return _selectTime;
+        }
 
-		@JsonProperty("selectBlank")
-		public boolean getSelectBlank() {
-			return _selectBlank;
-		}
-		
-		@JsonProperty("selectError")
-		public boolean getSelectError() {
-			return _selectError;
-		}
+        @JsonProperty("selectNonTime")
+        public boolean getSelectNonTime() {
+            return _selectNonTime;
+        }
 
-		@JsonProperty(FROM)
-		public double getFrom() {
-			return _from;
-		}
-		
-		public void setFrom(double from) {
-			_from = from;
-		}
-		
-		@JsonProperty(TO)
-		public double getTo() {
-			return _to;
-		}
+        @JsonProperty("selectBlank")
+        public boolean getSelectBlank() {
+            return _selectBlank;
+        }
 
-		public void setTo(double to) {
-			_to = to;
-		}
-		
+        @JsonProperty("selectError")
+        public boolean getSelectError() {
+            return _selectError;
+        }
+
+        @JsonProperty(FROM)
+        public double getFrom() {
+            return _from;
+        }
+
+        public void setFrom(double from) {
+            _from = from;
+        }
+
+        @JsonProperty(TO)
+        public double getTo() {
+            return _to;
+        }
+
+        public void setTo(double to) {
+            _to = to;
+        }
+
     }
+
     protected TimeRangeFacetConfig _config;
-    
+
     /*
      * Derived configuration data
      */
-    protected int         _cellIndex;
-    protected String      _errorMessage;
+    protected int _cellIndex;
+    protected String _errorMessage;
     protected ColumnModel _columnModel;
-    
+
     public TimeRangeFacet(TimeRangeFacetConfig config, int cellIndex, ColumnModel columnModel) {
-    	_config = config;
-    	_cellIndex = cellIndex;
-    	_errorMessage = cellIndex == -1 ? "No column named " + _config._columnName : config._errorMessage;
-    	_columnModel = columnModel;
+        _config = config;
+        _cellIndex = cellIndex;
+        _errorMessage = cellIndex == -1 ? "No column named " + _config._columnName : config._errorMessage;
+        _columnModel = columnModel;
     }
 
-	@Override
-	public FacetConfig getConfig() {
-		return _config;
-	}
+    @Override
+    public FacetConfig getConfig() {
+        return _config;
+    }
 
-	@Override
-	public FacetState getInitialFacetState() {
-		return new TimeRangeFacetState(
-				new TimeRangeStatistics(0, 0, 0, 0, new long[] {}),
-				new TimeRangeStatistics(0, 0, 0, 0, new long[] {}));
-	}
+    @Override
+    public FacetState getInitialFacetState() {
+        return new TimeRangeFacetState(
+                new TimeRangeStatistics(0, 0, 0, 0, new long[] {}),
+                new TimeRangeStatistics(0, 0, 0, 0, new long[] {}));
+    }
 
-	@Override
-	public FacetAggregator<TimeRangeFacetState> getAggregator() {
-		if (_errorMessage == null) {
-			return new TimeRangeFacetAggregator(
-					_config,
-					false,
-					new ExpressionBasedRowEvaluable(_config._columnName, _cellIndex, _config._evaluable, _columnModel));
-		} else {
-			return null;
-		}
-	}
+    @Override
+    public FacetAggregator<TimeRangeFacetState> getAggregator() {
+        if (_errorMessage == null) {
+            return new TimeRangeFacetAggregator(
+                    _config,
+                    false,
+                    new ExpressionBasedRowEvaluable(_config._columnName, _cellIndex, _config._evaluable, _columnModel));
+        } else {
+            return null;
+        }
+    }
 
-	@Override
-	public FacetResult getFacetResult(FacetState state) {
-		return new TimeRangeFacetResult(_config, _errorMessage, (TimeRangeFacetState) state);
-	}
+    @Override
+    public FacetResult getFacetResult(FacetState state) {
+        return new TimeRangeFacetResult(_config, _errorMessage, (TimeRangeFacetState) state);
+    }
 
 }

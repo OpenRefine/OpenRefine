@@ -44,12 +44,12 @@ public class Min extends PureFunction {
 
     @Override
     public Object call(Object[] args) {
-        if (args.length == 2 && 
-                args[0] != null && args[0] instanceof Number && 
+        if (args.length == 2 &&
+                args[0] != null && args[0] instanceof Number &&
                 args[1] != null && args[1] instanceof Number) {
             return Math.min(
-                ((Number) args[0]).doubleValue(),
-                ((Number) args[1]).doubleValue());
+                    ((Number) args[0]).doubleValue(),
+                    ((Number) args[1]).doubleValue());
         }
         return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects 2 numbers");
     }
@@ -58,12 +58,12 @@ public class Min extends PureFunction {
     public String getDescription() {
         return "Returns the smaller of two numbers.";
     }
-    
+
     @Override
     public String getParams() {
         return "number n1, number n2";
     }
-    
+
     @Override
     public String getReturns() {
         return "number";

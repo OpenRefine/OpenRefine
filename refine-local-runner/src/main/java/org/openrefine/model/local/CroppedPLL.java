@@ -1,3 +1,4 @@
+
 package org.openrefine.model.local;
 
 import java.util.ArrayList;
@@ -7,34 +8,32 @@ import java.util.stream.Stream;
 import org.apache.commons.lang3.Validate;
 
 /**
- * A PLL obtained by removing some rows at the beginning
- * or the end of a PLL.
+ * A PLL obtained by removing some rows at the beginning or the end of a PLL.
  * 
  * @author Antonin Delpeuch
  *
  * @param <T>
  */
 public class CroppedPLL<T> extends PLL<T> {
-    
-    protected final PLL<T>                 pll;
-    protected final long                   itemsToDrop;
-    protected final boolean                atEnd;
+
+    protected final PLL<T> pll;
+    protected final long itemsToDrop;
+    protected final boolean atEnd;
     protected final List<CroppedPartition> partitions;
 
     /**
-     * Constructs a cropped PLL by removing rows at the beginning
-     * or the end of a PLL.
+     * Constructs a cropped PLL by removing rows at the beginning or the end of a PLL.
      * 
      * @param parent
-     *     the PLL which should be cropped
+     *            the PLL which should be cropped
      * @param newPartitionSizes
-     *     the resulting partition sizes after the cropping. This must be provided.
+     *            the resulting partition sizes after the cropping. This must be provided.
      * @param partitionsToDrop
-     *     the number of partitions to be dropped entirely
+     *            the number of partitions to be dropped entirely
      * @param dropItems
-     *     the number of items to drop in the first partition that is not dropped
+     *            the number of items to drop in the first partition that is not dropped
      * @param atEnd
-     *     false if the partitions and items should be dropped at the beginning, true if at the end
+     *            false if the partitions and items should be dropped at the beginning, true if at the end
      */
     public CroppedPLL(PLL<T> parent,
             List<Long> newPartitionSizes,
@@ -55,7 +54,7 @@ public class CroppedPLL<T> extends PLL<T> {
             }
         }
     }
-    
+
     @Override
     protected Stream<T> compute(Partition partition) {
         if (!atEnd && partition.getIndex() == 0 && itemsToDrop > 0) {
@@ -66,25 +65,24 @@ public class CroppedPLL<T> extends PLL<T> {
             return pll.compute(partition.getParent());
         }
     }
-    
+
     @Override
     public List<? extends Partition> getPartitions() {
         return partitions;
     }
-    
+
     /**
-     * The difference between the parents' number of partitions
-     * and the new number of partitions in this PLL.
+     * The difference between the parents' number of partitions and the new number of partitions in this PLL.
      */
     public int getDroppedPartitions() {
         return pll.numPartitions() - numPartitions();
     }
-    
+
     protected static class CroppedPartition implements Partition {
-        
-        private final int       _index;
+
+        private final int _index;
         private final Partition _parent;
-        
+
         protected CroppedPartition(int index, Partition parent) {
             _index = index;
             _parent = parent;
@@ -99,7 +97,7 @@ public class CroppedPLL<T> extends PLL<T> {
         public Partition getParent() {
             return _parent;
         }
-        
+
     }
 
 }

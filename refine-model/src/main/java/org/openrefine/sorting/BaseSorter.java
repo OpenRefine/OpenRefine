@@ -43,10 +43,10 @@ import org.openrefine.model.GridState;
 import org.openrefine.sorting.Criterion.KeyMaker;
 
 /**
- * Instantiates a sorting configuration on a particular grid state,
- * to allow comparison of rows or records
+ * Instantiates a sorting configuration on a particular grid state, to allow comparison of rows or records
  *
- * @param <T> the type of objects to compare
+ * @param <T>
+ *            the type of objects to compare
  */
 abstract public class BaseSorter<T> implements Comparator<T>, Serializable {
 
@@ -54,7 +54,7 @@ abstract public class BaseSorter<T> implements Comparator<T>, Serializable {
     protected List<Criterion> _criteria;
     protected KeyMaker[] _keyMakers;
     protected List<ComparatorWrapper> _comparatorWrappers;
-    
+
     public BaseSorter(GridState state, SortingConfig config) {
         _criteria = config.getCriteria();
         int count = _criteria.size();

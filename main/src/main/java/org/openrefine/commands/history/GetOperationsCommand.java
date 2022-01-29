@@ -51,42 +51,45 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class GetOperationsCommand extends Command {
-    protected static class SimpleHistoryEntry  {
+
+    protected static class SimpleHistoryEntry {
+
         protected HistoryEntry entry;
 
         public SimpleHistoryEntry(HistoryEntry e) {
             entry = e;
         }
-        
+
         @JsonProperty("description")
         public String getDescription() {
             return entry.getDescription();
         }
-        
+
         @JsonProperty("operation")
         @JsonInclude(Include.NON_NULL)
         public Operation getOperation() {
             return entry.getOperation();
         }
     }
-    
-    protected static class HistoryEntries  {
+
+    protected static class HistoryEntries {
+
         @JsonProperty("entries")
         List<SimpleHistoryEntry> entries;
-        
+
         protected HistoryEntries(List<HistoryEntry> entries) {
             this.entries = entries.stream()
                     .map(e -> new SimpleHistoryEntry(e))
                     .collect(Collectors.toList());
         }
     }
-    
+
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        
+
         Project project = getProject(request);
-        
+
         HistoryEntries entries = new HistoryEntries(project.getHistory().getLastPastEntries(-1));
         respondJSON(response, entries);
     }

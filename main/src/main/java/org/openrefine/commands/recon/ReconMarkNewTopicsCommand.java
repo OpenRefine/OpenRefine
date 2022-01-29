@@ -42,15 +42,14 @@ import org.openrefine.operations.Operation;
 import org.openrefine.operations.recon.ReconMarkNewTopicsOperation;
 
 public class ReconMarkNewTopicsCommand extends EngineDependentCommand {
-    
+
     @Override
     protected Operation createOperation(Project project,
             HttpServletRequest request, EngineConfig engineConfig) throws Exception {
-        
+
         return new ReconMarkNewTopicsOperation(
-            engineConfig, 
-            request.getParameter("columnName"),
-            "true".equals(request.getParameter("shareNewTopics"))
-        );
+                engineConfig,
+                request.getParameter("columnName"),
+                "true".equals(request.getParameter("shareNewTopics")));
     }
 }

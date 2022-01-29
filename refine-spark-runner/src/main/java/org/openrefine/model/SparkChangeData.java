@@ -1,3 +1,4 @@
+
 package org.openrefine.model;
 
 import java.io.File;
@@ -23,10 +24,10 @@ import scala.Tuple2;
  * @param <T>
  */
 public class SparkChangeData<T> implements ChangeData<T> {
-    
+
     private final JavaPairRDD<Long, T> data;
     private final SparkDatamodelRunner runner;
-    
+
     /**
      * Constructs a change data.
      * 
@@ -39,7 +40,7 @@ public class SparkChangeData<T> implements ChangeData<T> {
         this.data = data;
         this.runner = runner;
     }
-    
+
     public JavaPairRDD<Long, T> getData() {
         return data;
     }
@@ -54,7 +55,7 @@ public class SparkChangeData<T> implements ChangeData<T> {
         List<T> rows = data.lookup(rowId);
         if (rows.size() == 0) {
             return null;
-        } else if (rows.size() > 1){
+        } else if (rows.size() > 1) {
             throw new IllegalStateException(String.format("Found %d change data elements at index %d", rows.size(), rowId));
         } else {
             return rows.get(0);
@@ -65,13 +66,13 @@ public class SparkChangeData<T> implements ChangeData<T> {
     public DatamodelRunner getDatamodelRunner() {
         return runner;
     }
-    
+
     @Override
     public void saveToFile(File file, ChangeDataSerializer<T> serializer) throws IOException {
         IOUtils.deleteDirectoryIfExists(file);
         data
-        .map(r -> serializeIndexedData(serializer, r))
-        .saveAsTextFile(file.getAbsolutePath(), GzipCodec.class);
+                .map(r -> serializeIndexedData(serializer, r))
+                .saveAsTextFile(file.getAbsolutePath(), GzipCodec.class);
     }
 
     @Override
@@ -82,7 +83,7 @@ public class SparkChangeData<T> implements ChangeData<T> {
         // the parent GridState)
         progressReporter.reportProgress(100);
     }
-    
+
     protected static <T> String serializeIndexedData(ChangeDataSerializer<T> serializer, Tuple2<Long, T> data) throws IOException {
         String serialized = (new IndexedData<T>(data._1, data._2)).writeAsString(serializer);
         return serialized;

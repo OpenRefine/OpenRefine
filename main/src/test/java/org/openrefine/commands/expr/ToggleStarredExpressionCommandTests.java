@@ -24,6 +24,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  ******************************************************************************/
+
 package org.openrefine.commands.expr;
 
 import static org.mockito.Mockito.when;
@@ -38,35 +39,36 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 public class ToggleStarredExpressionCommandTests extends ExpressionCommandTestBase {
-    
+
     @BeforeMethod
     public void setUp() {
         command = new ToggleStarredExpressionCommand();
     }
-    
+
     @Test
     public void testJsonResponse() throws ServletException, IOException {
 
-        initWorkspace("{\n" + 
-                "        \"class\": \"org.openrefine.preference.TopList\",\n" + 
-                "        \"top\": 100,\n" + 
-                "        \"list\": [\n" + 
-                "          \"grel:facetCount(value, 'value', 'Column 1')\",\n" + 
-                "          \"grel:facetCount(value, 'value', 'Column 3')\",\n" + 
+        initWorkspace("{\n" +
+                "        \"class\": \"org.openrefine.preference.TopList\",\n" +
+                "        \"top\": 100,\n" +
+                "        \"list\": [\n" +
+                "          \"grel:facetCount(value, 'value', 'Column 1')\",\n" +
+                "          \"grel:facetCount(value, 'value', 'Column 3')\",\n" +
                 "          \"grel:cell.recon.match.id\"" +
-                "]}", "{\n" + 
-                        "        \"class\": \"org.openrefine.preference.TopList\",\n" + 
-                        "        \"top\": 100,\n" + 
-                        "        \"list\": [\n" + 
-                        "          \"grel:cell.recon.match.id\"\n" + 
+                "]}",
+                "{\n" +
+                        "        \"class\": \"org.openrefine.preference.TopList\",\n" +
+                        "        \"top\": 100,\n" +
+                        "        \"list\": [\n" +
+                        "          \"grel:cell.recon.match.id\"\n" +
                         "]}");
-        
-        String json = "{\n" + 
-                "       \"expressions\" : [ {\n" + 
-                "         \"code\" : \"grel:facetCount(value, 'value', 'Column 1')\"\n" + 
-                "       }, {\n" + 
-                "         \"code\" : \"grel:cell.recon.match.id\"\n" + 
-                "       } ]\n" + 
+
+        String json = "{\n" +
+                "       \"expressions\" : [ {\n" +
+                "         \"code\" : \"grel:facetCount(value, 'value', 'Column 1')\"\n" +
+                "       }, {\n" +
+                "         \"code\" : \"grel:cell.recon.match.id\"\n" +
+                "       } ]\n" +
                 "     }";
         when(request.getParameter("expression")).thenReturn("grel:facetCount(value, 'value', 'Column 1')");
         when(request.getParameter("returnList")).thenReturn("yes");
@@ -74,7 +76,7 @@ public class ToggleStarredExpressionCommandTests extends ExpressionCommandTestBa
         command.doPost(request, response);
         assertResponseJsonIs(json);
     }
-    
+
     @Test
     public void testCSRFProtection() throws ServletException, IOException {
         command.doPost(request, response);

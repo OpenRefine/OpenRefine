@@ -34,6 +34,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 /**
  * 
  */
+
 package org.openrefine.model.recon;
 
 import java.io.IOException;
@@ -66,12 +67,12 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 
 public class ReconciledDataExtensionJob implements Serializable {
 
-	private static final long serialVersionUID = -8114269895487484756L;
+    private static final long serialVersionUID = -8114269895487484756L;
 
-	static public class DataExtensionProperty implements Serializable {
+    static public class DataExtensionProperty implements Serializable {
 
-		private static final long serialVersionUID = -6309521399471519189L;
-		@JsonProperty("id")
+        private static final long serialVersionUID = -6309521399471519189L;
+        @JsonProperty("id")
         public final String id;
         @JsonProperty("name")
         @JsonView(JsonViews.NonSaveMode.class)
@@ -79,82 +80,74 @@ public class ReconciledDataExtensionJob implements Serializable {
         @JsonProperty("settings")
         @JsonInclude(Include.NON_NULL)
         public final Map<String, Object> settings;
-        
+
         @JsonCreator
         public DataExtensionProperty(
-                @JsonProperty("id")
-                String id,
-                @JsonProperty("name")
-                String name,
-                @JsonProperty("settings")
-                Map<String, Object> settings) {
+                @JsonProperty("id") String id,
+                @JsonProperty("name") String name,
+                @JsonProperty("settings") Map<String, Object> settings) {
             this.id = id;
             this.name = name;
             this.settings = settings;
-        }    
+        }
     }
-    
+
     static public class DataExtensionConfig implements Serializable {
 
-		private static final long serialVersionUID = -8000193899836494952L;
-		private final List<DataExtensionProperty> properties;
+        private static final long serialVersionUID = -8000193899836494952L;
+        private final List<DataExtensionProperty> properties;
         private final int batchSize;
-        
+
         @JsonCreator
         public DataExtensionConfig(
-                @JsonProperty("properties")
-                List<DataExtensionProperty> properties,
-                @JsonProperty("batchSize")
-                int batchSize) {
+                @JsonProperty("properties") List<DataExtensionProperty> properties,
+                @JsonProperty("batchSize") int batchSize) {
             this.properties = properties;
             this.batchSize = batchSize <= 0 ? 10 : batchSize;
         }
-        
+
         @JsonProperty("batchSize")
         public int getBatchSize() {
-        	return batchSize;
+            return batchSize;
         }
-        
+
         @JsonProperty("properties")
-		public List<DataExtensionProperty> getProperties() {
-			return properties;
-		}
-        
+        public List<DataExtensionProperty> getProperties() {
+            return properties;
+        }
+
         public static DataExtensionConfig reconstruct(String json) throws IOException {
             return ParsingUtilities.mapper.readValue(json, DataExtensionConfig.class);
-        } 
+        }
     }
-    
+
     static public class DataExtensionQuery {
-        
-    	private final List<DataExtensionProperty> properties;
+
+        private final List<DataExtensionProperty> properties;
         private final List<String> ids;
 
         @JsonCreator
         public DataExtensionQuery(
-                @JsonProperty("ids")
-                List<String> ids,
-                @JsonProperty("properties")
-                List<DataExtensionProperty> properties) {
-        	this.properties = properties;
+                @JsonProperty("ids") List<String> ids,
+                @JsonProperty("properties") List<DataExtensionProperty> properties) {
+            this.properties = properties;
             this.ids = ids;
         }
-        
+
         @JsonProperty("properties")
-		public List<DataExtensionProperty> getProperties() {
-			return properties;
-		}
+        public List<DataExtensionProperty> getProperties() {
+            return properties;
+        }
 
         @JsonProperty("ids")
-		public List<String> getIds() {
-			return ids;
-		}
-        
+        public List<String> getIds() {
+            return ids;
+        }
+
     }
-    
+
     /**
-     * Data extension corresponding to a single record.
-     * Each row in the record can be associated with a data extension.
+     * Data extension corresponding to a single record. Each row in the record can be associated with a data extension.
      * 
      * @author Antonin Delpeuch
      *
@@ -163,98 +156,94 @@ public class ReconciledDataExtensionJob implements Serializable {
 
         private static final long serialVersionUID = 9150870996868122876L;
         final private Map<Long, DataExtension> extensions;
-    	
+
         @JsonCreator
         public RecordDataExtension(
-                @JsonProperty("e")
-    			Map<Long, DataExtension> extensions) {
-    		this.extensions = extensions;
-    	}
-    	
+                @JsonProperty("e") Map<Long, DataExtension> extensions) {
+            this.extensions = extensions;
+        }
+
         @JsonProperty("e")
         public Map<Long, DataExtension> getExtensions() {
-    		return extensions;
-    	}
-    	
+            return extensions;
+        }
+
         @Override
         public int hashCode() {
-    		return extensions.hashCode();
-    	}
-    	
+            return extensions.hashCode();
+        }
+
         @Override
         public boolean equals(Object other) {
-    		if (!(other instanceof RecordDataExtension)) {
-    			return false;
-    		}
-    		return ((RecordDataExtension)other).getExtensions().equals(extensions);
-    	}
+            if (!(other instanceof RecordDataExtension)) {
+                return false;
+            }
+            return ((RecordDataExtension) other).getExtensions().equals(extensions);
+        }
     }
-    
+
     /**
      * Data extension corresponding to a single row.
+     * 
      * @author Antonin Delpeuch
      *
      */
     static public class DataExtension implements Serializable {
 
-		private static final long serialVersionUID = -6098778224771219654L;
-		@JsonProperty("d")
-		final public List<List<Cell>> data;
-        
+        private static final long serialVersionUID = -6098778224771219654L;
+        @JsonProperty("d")
+        final public List<List<Cell>> data;
+
         @JsonCreator
         public DataExtension(
-                @JsonProperty("d")
-        		List<List<Cell>> data) {
+                @JsonProperty("d") List<List<Cell>> data) {
             this.data = data;
         }
-        
+
         @Override
         public int hashCode() {
-        	return data.hashCode();
+            return data.hashCode();
         }
-        
+
         @Override
         public boolean equals(Object other) {
-        	if (!(other instanceof DataExtension)) {
-        		return false;
-        	}
-        	return ((DataExtension)other).data.equals(data);
+            if (!(other instanceof DataExtension)) {
+                return false;
+            }
+            return ((DataExtension) other).data.equals(data);
         }
     }
-    
+
     // Json serialization is used in PreviewExtendDataCommand
     static public class ColumnInfo implements Serializable {
 
-		private static final long serialVersionUID = 8043235351320028446L;
-		@JsonProperty("name")
+        private static final long serialVersionUID = 8043235351320028446L;
+        @JsonProperty("name")
         final public String name;
         @JsonProperty("id")
         final public String id;
         final public ReconType expectedType;
-        
+
         @JsonCreator
         protected ColumnInfo(
-        		@JsonProperty("name")
-        		String name,
-        		@JsonProperty("id")
-        		String id,
-        		@JsonProperty("type")
-        		ReconType expectedType) {
+                @JsonProperty("name") String name,
+                @JsonProperty("id") String id,
+                @JsonProperty("type") ReconType expectedType) {
             this.name = name;
             this.id = id;
             this.expectedType = expectedType;
         }
     }
-    
+
     final public DataExtensionConfig extension;
-    final public String              endpoint;
-    final public List<ColumnInfo>    columns = new ArrayList<ColumnInfo>();
-    final private String             identifierSpace;
-    final private String             schemaSpace;
+    final public String endpoint;
+    final public List<ColumnInfo> columns = new ArrayList<ColumnInfo>();
+    final private String identifierSpace;
+    final private String schemaSpace;
 
     // not final: initialized lazily
     private static HttpClient httpClient = null;
-    
+
     public ReconciledDataExtensionJob(DataExtensionConfig obj, String endpoint, String identifierSpace, String schemaSpace) {
         this.extension = obj;
         this.endpoint = endpoint;
@@ -263,16 +252,14 @@ public class ReconciledDataExtensionJob implements Serializable {
     }
 
     /**
-     * @todo Although the HTTP code has been unified, there may still be opportunity
-     * to refactor a higher level querying library out of this which could be shared
-     * with StandardReconConfig
+     * @todo Although the HTTP code has been unified, there may still be opportunity to refactor a higher level querying
+     *       library out of this which could be shared with StandardReconConfig
      *
-     * It may also be possible to extract a library to query reconciliation services
-     * which could be used outside of OpenRefine.
+     *       It may also be possible to extract a library to query reconciliation services which could be used outside
+     *       of OpenRefine.
      */
     public Map<String, ReconciledDataExtensionJob.DataExtension> extend(
-        Set<String> ids
-    ) throws Exception {
+            Set<String> ids) throws Exception {
         StringWriter writer = new StringWriter();
         formulateQuery(ids, extension, writer);
 
@@ -281,14 +268,15 @@ public class ReconciledDataExtensionJob implements Serializable {
 
         ObjectNode o = ParsingUtilities.mapper.readValue(response, ObjectNode.class);
 
-        if(columns.size() == 0) {
+        if (columns.size() == 0) {
             // Extract the column metadata
-            List<ColumnInfo> newColumns = ParsingUtilities.mapper.convertValue(o.get("meta"), new TypeReference<List<ColumnInfo>>() {});  
+            List<ColumnInfo> newColumns = ParsingUtilities.mapper.convertValue(o.get("meta"), new TypeReference<List<ColumnInfo>>() {
+            });
             columns.addAll(newColumns);
         }
 
         Map<String, ReconciledDataExtensionJob.DataExtension> map = new HashMap<String, ReconciledDataExtensionJob.DataExtension>();
-        if (o.has("rows") && o.get("rows") instanceof ObjectNode){
+        if (o.has("rows") && o.get("rows") instanceof ObjectNode) {
             ObjectNode records = (ObjectNode) o.get("rows");
 
             // for each identifier
@@ -304,7 +292,7 @@ public class ReconciledDataExtensionJob implements Serializable {
                 }
             }
         }
-        
+
         return map;
     }
 
@@ -320,41 +308,40 @@ public class ReconciledDataExtensionJob implements Serializable {
     }
 
     protected ReconciledDataExtensionJob.DataExtension collectResult(
-        ObjectNode record
-    ) {
+            ObjectNode record) {
         List<List<Cell>> rows = new ArrayList<>();
 
         // for each property
         int colindex = 0;
-        for(ColumnInfo ci : columns) {
+        for (ColumnInfo ci : columns) {
             String pid = ci.id;
-            ArrayNode values = JSONUtilities.getArray(record, pid);     
+            ArrayNode values = JSONUtilities.getArray(record, pid);
             if (values == null) {
                 continue;
             }
 
             // for each value
-            for(int rowindex = 0; rowindex < values.size(); rowindex++) {
-            	if (!(values.get(rowindex) instanceof ObjectNode)) {
-            		continue;
-            	}
+            for (int rowindex = 0; rowindex < values.size(); rowindex++) {
+                if (!(values.get(rowindex) instanceof ObjectNode)) {
+                    continue;
+                }
                 ObjectNode val = (ObjectNode) values.get(rowindex);
                 // store a reconciled value
                 if (val.has("id")) {
-                	String id = val.get("id").asText();
-                	String name = val.get("name").asText();
-                	ReconCandidate rc = new ReconCandidate(id, name, new String[] {}, 0);
-                	Recon recon = new Recon(0L, identifierSpace, schemaSpace)
-                			.withMatch(rc)
-                			.withJudgmentAction("auto")
-                			.withJudgment(Judgment.Matched)
-                			.withMatchRank(0)
-                			.withService(endpoint);
+                    String id = val.get("id").asText();
+                    String name = val.get("name").asText();
+                    ReconCandidate rc = new ReconCandidate(id, name, new String[] {}, 0);
+                    Recon recon = new Recon(0L, identifierSpace, schemaSpace)
+                            .withMatch(rc)
+                            .withJudgmentAction("auto")
+                            .withJudgment(Judgment.Matched)
+                            .withMatchRank(0)
+                            .withService(endpoint);
                     storeCell(rows, rowindex, colindex, new Cell(name, recon));
                 } else if (val.has("str")) {
-                // store a bare string
+                    // store a bare string
                     String str = val.get("str").asText();
-                    storeCell(rows, rowindex, colindex, new Cell(str, null)); 
+                    storeCell(rows, rowindex, colindex, new Cell(str, null));
                 } else if (val.has("float")) {
                     double v = val.get("float").asDouble();
                     storeCell(rows, rowindex, colindex, new Cell(v, null));
@@ -366,8 +353,8 @@ public class ReconciledDataExtensionJob implements Serializable {
                     String[] args = new String[1];
                     args[0] = val.get("date").asText();
                     Object v = td.call(null, args);
-                    storeCell(rows, rowindex, colindex, new Cell((Serializable)v, null));
-                } else if(val.has("bool")) {
+                    storeCell(rows, rowindex, colindex, new Cell((Serializable) v, null));
+                } else if (val.has("bool")) {
                     boolean v = val.get("bool").asBoolean();
                     storeCell(rows, rowindex, colindex, new Cell(v, null));
                 }
@@ -379,23 +366,23 @@ public class ReconciledDataExtensionJob implements Serializable {
     }
 
     protected void storeCell(
-        List<List<Cell>>  rows, 
-        int row,
-        int col,
-        Cell cell
-    ) {
+            List<List<Cell>> rows,
+            int row,
+            int col,
+            Cell cell) {
         while (row >= rows.size()) {
             rows.add(new ArrayList<>(Collections.nCopies(columns.size(), null)));
         }
         rows.get(row).set(col, cell);
     }
-    
+
     static protected void formulateQuery(Set<String> ids, DataExtensionConfig node, Writer writer) throws IOException {
-        DataExtensionQuery query = new DataExtensionQuery(ids.stream().filter(e -> e != null).collect(Collectors.toList()), node.getProperties());
+        DataExtensionQuery query = new DataExtensionQuery(ids.stream().filter(e -> e != null).collect(Collectors.toList()),
+                node.getProperties());
         ParsingUtilities.saveWriter.writeValue(writer, query);
     }
 
-	public int getBatchSize() {
-		return extension.getBatchSize();
-	}
+    public int getBatchSize() {
+        return extension.getBatchSize();
+    }
 }

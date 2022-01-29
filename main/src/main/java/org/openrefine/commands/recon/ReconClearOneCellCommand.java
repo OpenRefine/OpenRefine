@@ -56,34 +56,36 @@ import org.openrefine.process.QuickHistoryEntryProcess;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class ReconClearOneCellCommand extends Command {
+
     protected static class CellResponse {
+
         @JsonProperty("code")
         protected String code = "ok";
         @JsonProperty("historyEntry")
         protected HistoryEntry entry;
         @JsonProperty("cell")
         Cell cell;
-        
+
         protected CellResponse(HistoryEntry historyEntry, Cell newCell) {
-           entry = historyEntry;
-           cell = newCell;
+            entry = historyEntry;
+            cell = newCell;
         }
     }
-    
+
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-    	if(!hasValidCSRFToken(request)) {
-    		respondCSRFError(response);
-    		return;
-    	}
+        if (!hasValidCSRFToken(request)) {
+            respondCSRFError(response);
+            return;
+        }
 
         try {
             Project project = getProject(request);
 
             int rowIndex = Integer.parseInt(request.getParameter("row"));
             int cellIndex = Integer.parseInt(request.getParameter("cell"));
-            
+
             GridState state = project.getCurrentGridState();
             Cell cell = state.getRow(rowIndex).getCell(cellIndex);
             if (cell == null || !ExpressionUtils.isNonBlankData(cell.value)) {
@@ -94,30 +96,28 @@ public class ReconClearOneCellCommand extends Command {
             if (column == null) {
                 throw new Exception("No such column");
             }
-            
+
             Cell newCell = new Cell(cell.value, null);
 
             ReconStats stats = new LazyReconStats(state, column.getName());
 
-            String description =
-                "Clear recon data for single cell on row " + (rowIndex + 1) +
-                ", column " + column.getName() +
-                ", containing \"" + cell.value + "\"";
+            String description = "Clear recon data for single cell on row " + (rowIndex + 1) +
+                    ", column " + column.getName() +
+                    ", containing \"" + cell.value + "\"";
 
             Change change = new ReconCellChange(rowIndex, column.getName(), null, stats);
-            
+
             QuickHistoryEntryProcess process = new QuickHistoryEntryProcess(
                     project.getHistory(),
                     description,
                     null,
-                    change
-                );
+                    change);
 
             HistoryEntry historyEntry = project.getProcessManager().queueProcess(process);
             if (historyEntry != null) {
                 /*
-                 * If the process is done, write back the cell's data so that the
-                 * client side can update its UI right away.
+                 * If the process is done, write back the cell's data so that the client side can update its UI right
+                 * away.
                  */
                 respondJSON(response, new CellResponse(historyEntry, newCell));
             } else {

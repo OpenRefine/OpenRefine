@@ -56,33 +56,34 @@ import org.openrefine.util.JSONUtilities;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 public class TabularParserHelper {
-	
+
     static public interface TableDataReader {
+
         public List<Object> getNextRowOfCells() throws IOException;
     }
-    
+
     protected final DatamodelRunner runner;
-    
+
     public TabularParserHelper(DatamodelRunner runner) {
-    	this.runner = runner;
+        this.runner = runner;
     }
-    
+
     public ObjectNode createParserUIInitializationData(ObjectNode options) {
         JSONUtilities.safePut(options, "ignoreLines", -1); // number of blank lines at the beginning to ignore
         JSONUtilities.safePut(options, "headerLines", 1); // number of header lines
-        
+
         JSONUtilities.safePut(options, "skipDataLines", 0); // number of initial data lines to skip
         JSONUtilities.safePut(options, "storeBlankRows", true);
         JSONUtilities.safePut(options, "storeBlankCellsAsNulls", true);
         JSONUtilities.safePut(options, "includeArchiveFileName", false);
         JSONUtilities.safePut(options, "includeFileSources", false);
-        
+
         return options;
     }
 
     public GridState parseOneFile(ProjectMetadata metadata, ImportingJob job, String fileSource,
-    		String archiveFileName, TableDataReader dataReader, long limit,
-    		ObjectNode options) throws Exception {
+            String archiveFileName, TableDataReader dataReader, long limit,
+            ObjectNode options) throws Exception {
         int ignoreLines = JSONUtilities.getInt(options, "ignoreLines", -1);
         int headerLines = JSONUtilities.getInt(options, "headerLines", 1);
         int skipDataLines = JSONUtilities.getInt(options, "skipDataLines", 0);
@@ -94,18 +95,18 @@ public class TabularParserHelper {
                 limit2 = limit;
             }
         }
-        
+
         boolean guessCellValueTypes = JSONUtilities.getBoolean(options, "guessCellValueTypes", false);
         boolean trimStrings = JSONUtilities.getBoolean(options, "trimStrings", false);
-        
+
         boolean storeBlankRows = JSONUtilities.getBoolean(options, "storeBlankRows", true);
         boolean storeBlankCellsAsNulls = JSONUtilities.getBoolean(options, "storeBlankCellsAsNulls", true);
         boolean includeFileSources = JSONUtilities.getBoolean(options, "includeFileSources", false);
         boolean includeArchiveFileName = JSONUtilities.getBoolean(options, "includeArchiveFileName", false);
-        
+
         List<String> columnNames = new ArrayList<String>();
         boolean hasOurOwnColumnNames = headerLines > 0;
-        
+
         List<Object> cellValues = null;
         int rowsWithData = 0;
 
@@ -116,11 +117,11 @@ public class TabularParserHelper {
                 ignoreLines--;
                 continue;
             }
-            
+
             if (headerLines > 0) { // header lines
                 for (int c = 0; c < cellValues.size(); c++) {
                     Object cell = cellValues.get(c);
-                    
+
                     String columnName;
                     if (cell == null) {
                         // add column even if cell is blank
@@ -130,44 +131,43 @@ public class TabularParserHelper {
                     } else {
                         columnName = cell.toString().trim();
                     }
-                    
+
                     ImporterUtilities.appendColumnName(columnNames, c, columnName);
                 }
-                
+
                 headerLines--;
                 if (headerLines == 0) {
                     columnModel = ImporterUtilities.setupColumns(columnNames);
                 }
             } else { // data lines
-            	List<Cell> cells = new ArrayList<>(cellValues.size());
-                
+                List<Cell> cells = new ArrayList<>(cellValues.size());
+
                 if (storeBlankRows) {
                     rowsWithData++;
                 } else if (cellValues.size() > 0) {
                     rowsWithData++;
                 }
-                
+
                 if (skipDataLines <= 0 || rowsWithData > skipDataLines) {
                     boolean rowHasData = false;
                     for (int c = 0; c < cellValues.size(); c++) {
-                    	columnModel = ImporterUtilities.expandColumnModelIfNeeded(columnModel, c);
-                        
+                        columnModel = ImporterUtilities.expandColumnModelIfNeeded(columnModel, c);
+
                         Object value = cellValues.get(c);
                         if (value instanceof Cell) {
-                        	cells.add((Cell) value);
+                            cells.add((Cell) value);
                             rowHasData = true;
                         } else if (ExpressionUtils.isNonBlankData(value)) {
                             Serializable storedValue;
                             if (value instanceof String) {
-                            	if (trimStrings) {
-                                	value = ((String)value).trim();
+                                if (trimStrings) {
+                                    value = ((String) value).trim();
                                 }
-                                storedValue = guessCellValueTypes ?
-                                    ImporterUtilities.parseCellValue((String) value) : (String) value;
+                                storedValue = guessCellValueTypes ? ImporterUtilities.parseCellValue((String) value) : (String) value;
                             } else {
                                 storedValue = ExpressionUtils.wrapStorable(value);
                             }
-                            
+
                             cells.add(new Cell(storedValue, null));
                             rowHasData = true;
                         } else if (!storeBlankCellsAsNulls) {
@@ -176,55 +176,58 @@ public class TabularParserHelper {
                             cells.add(null);
                         }
                     }
-                    
+
                     if (rowHasData || storeBlankRows) {
-                    	Row row = new Row(cells);
+                        Row row = new Row(cells);
                         rows.add(row);
                     }
-                    
+
                     if (limit2 > 0 && rows.size() >= limit2) {
                         break;
                     }
                 }
             }
         }
-        
+
         // Make sure each row has as many cells as there are columns in the column model
         int nbColumns = columnModel.getColumns().size();
         rows = rows.stream().map(r -> r.padWithNull(nbColumns)).collect(Collectors.toList());
-        
+
         GridState grid = runner.create(columnModel, rows, Collections.emptyMap());
         if (includeFileSources) {
-        	grid = prependColumn("File", fileSource, grid); 
+            grid = prependColumn("File", fileSource, grid);
         }
         if (includeArchiveFileName) {
-        	grid = prependColumn("Archive", archiveFileName, grid);
+            grid = prependColumn("Archive", archiveFileName, grid);
         }
         return grid;
     }
-    
+
     /**
-     * Adds a column to the grid, with the same string content in all cells. The column
-     * is added at the beginning of the grid.
+     * Adds a column to the grid, with the same string content in all cells. The column is added at the beginning of the
+     * grid.
      * 
-     * @param columnName the name of the column to add
-     * @param cellValue the constant value in this column
-     * @param grid the original grid to start from
+     * @param columnName
+     *            the name of the column to add
+     * @param cellValue
+     *            the constant value in this column
+     * @param grid
+     *            the original grid to start from
      * @return
      */
     public static GridState prependColumn(String columnName, String cellValue, GridState grid) {
-    	ColumnModel newColumnModel = grid.getColumnModel().insertUnduplicatedColumn(0, new ColumnMetadata(columnName));
-    	Cell constantCell = new Cell(cellValue, null);
-    	return grid.mapRows(new RowMapper() {
+        ColumnModel newColumnModel = grid.getColumnModel().insertUnduplicatedColumn(0, new ColumnMetadata(columnName));
+        Cell constantCell = new Cell(cellValue, null);
+        return grid.mapRows(new RowMapper() {
 
-			private static final long serialVersionUID = 2400882733484689173L;
+            private static final long serialVersionUID = 2400882733484689173L;
 
-			@Override
-			public Row call(long rowId, Row row) {
-				return row.insertCell(0, constantCell);
-			}
-    		
-    	}, newColumnModel);
+            @Override
+            public Row call(long rowId, Row row) {
+                return row.insertCell(0, constantCell);
+            }
+
+        }, newColumnModel);
     }
-	
+
 }

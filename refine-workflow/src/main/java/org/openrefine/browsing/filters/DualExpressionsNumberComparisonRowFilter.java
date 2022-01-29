@@ -44,21 +44,20 @@ import org.openrefine.model.RowFilter;
 import org.openrefine.model.RowInRecordFilter;
 
 /**
- * Judge if a row matches by evaluating two given expressions on the row, based on two different columns
- * and checking the results. It's a match if the result satisfies some numeric comparisons. 
+ * Judge if a row matches by evaluating two given expressions on the row, based on two different columns and checking
+ * the results. It's a match if the result satisfies some numeric comparisons.
  */
 abstract public class DualExpressionsNumberComparisonRowFilter extends RowInRecordFilter {
 
-	private static final long serialVersionUID = 8056332324847967312L;
-	final protected RowEvaluable  _evalX;
-    final protected RowEvaluable  _evalY;
-        
-    public DualExpressionsNumberComparisonRowFilter (
-        RowEvaluable evaluableX,
-        RowEvaluable evaluableY,
-        boolean invert
-    ) {
-    	super(!invert);
+    private static final long serialVersionUID = 8056332324847967312L;
+    final protected RowEvaluable _evalX;
+    final protected RowEvaluable _evalY;
+
+    public DualExpressionsNumberComparisonRowFilter(
+            RowEvaluable evaluableX,
+            RowEvaluable evaluableY,
+            boolean invert) {
+        super(!invert);
         _evalX = evaluableX;
         _evalY = evaluableY;
     }
@@ -67,7 +66,7 @@ abstract public class DualExpressionsNumberComparisonRowFilter extends RowInReco
     public boolean filterRow(long rowIndex, Row row, Record record) {
         Properties x_bindings = ExpressionUtils.createBindings();
         Object x_value = _evalX.eval(rowIndex, row, record, x_bindings);
-        
+
         Properties y_bindings = ExpressionUtils.createBindings();
         Object y_value = _evalY.eval(rowIndex, row, record, y_bindings);
 
@@ -78,10 +77,10 @@ abstract public class DualExpressionsNumberComparisonRowFilter extends RowInReco
                 return false;
             } // else, fall through
         }
-        
-        return checkValue(x_value,y_value);
+
+        return checkValue(x_value, y_value);
     }
-        
+
     protected boolean checkValue(Object vx, Object vy) {
         if (ExpressionUtils.isError(vx) || ExpressionUtils.isError(vy)) {
             return false;
@@ -89,11 +88,11 @@ abstract public class DualExpressionsNumberComparisonRowFilter extends RowInReco
             if (vx instanceof Number && vy instanceof Number) {
                 double dx = ((Number) vx).doubleValue();
                 double dy = ((Number) vy).doubleValue();
-                return (!Double.isInfinite(dx) && 
-                        !Double.isNaN(dx) && 
-                        !Double.isInfinite(dy) && 
-                        !Double.isNaN(dy) && 
-                        checkValues(dx,dy));
+                return (!Double.isInfinite(dx) &&
+                        !Double.isNaN(dx) &&
+                        !Double.isInfinite(dy) &&
+                        !Double.isNaN(dy) &&
+                        checkValues(dx, dy));
             } else {
                 return false;
             }
@@ -101,6 +100,6 @@ abstract public class DualExpressionsNumberComparisonRowFilter extends RowInReco
             return false;
         }
     }
-    
+
     abstract protected boolean checkValues(double dx, double dy);
 }

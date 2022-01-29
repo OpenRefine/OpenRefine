@@ -1,3 +1,4 @@
+
 package org.openrefine.grel.ast;
 
 import static org.testng.Assert.assertEquals;
@@ -7,7 +8,7 @@ import static org.testng.Assert.assertTrue;
 import org.testng.annotations.Test;
 
 public class VariableExprTest extends ExprTestBase {
-    
+
     @Test
     public void testBaseColumn() {
         GrelExpr ev = new VariableExpr("value");
@@ -20,7 +21,7 @@ public class VariableExprTest extends ExprTestBase {
         assertEquals(ev.getColumnDependencies(baseColumn), set(baseColumn));
         assertTrue(ev.isLocal());
     }
-    
+
     @Test
     public void testUnanalyzable() {
         GrelExpr ev = new VariableExpr("cells");
@@ -33,7 +34,7 @@ public class VariableExprTest extends ExprTestBase {
         assertNull(ev.getColumnDependencies(baseColumn));
         assertTrue(ev.isLocal());
     }
-    
+
     @Test
     public void testSingleton() {
         GrelExpr ev = new VariableExpr("foo");

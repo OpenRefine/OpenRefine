@@ -41,14 +41,14 @@ import org.openrefine.model.Record;
 import org.openrefine.model.Row;
 
 public class WrappedRow implements HasFields {
+
     final public ColumnModel columnModel;
     final public long rowIndex;
     final public Row row;
     final public Record record;
-    
+
     /**
-     * Constructor to be used when the wrapped row is used in rows mode,
-     * where no record is available.
+     * Constructor to be used when the wrapped row is used in rows mode, where no record is available.
      * 
      * @param columnModel
      * @param rowIndex
@@ -60,10 +60,9 @@ public class WrappedRow implements HasFields {
         this.row = row;
         this.record = null;
     }
-    
+
     /**
-     * Constructor to be used when the wrapped row is used in records mode,
-     * when the enclosing record is available.
+     * Constructor to be used when the wrapped row is used in records mode, when the enclosing record is available.
      * 
      * @param columnModel
      * @param rowIndex
@@ -76,7 +75,7 @@ public class WrappedRow implements HasFields {
         this.row = row;
         this.record = record;
     }
-    
+
     @Override
     public Object getField(String name) {
         if ("cells".equals(name)) {
@@ -89,7 +88,7 @@ public class WrappedRow implements HasFields {
             } else {
                 return new WrappedRecord(record);
             }
-        } else if ("columnNames".equals(name)) {           
+        } else if ("columnNames".equals(name)) {
             return columnModel.getColumnNames();
         } else {
             return row.getField(name);
@@ -102,6 +101,7 @@ public class WrappedRow implements HasFields {
     }
 
     protected class WrappedRecord implements HasFields {
+
         final Record _record;
 
         protected WrappedRecord(Record record) {
@@ -130,19 +130,20 @@ public class WrappedRow implements HasFields {
             return "cells".equals(name);
         }
     }
-    
+
     protected class RecordCells implements HasFields {
+
         final Record _record;
-        
+
         protected RecordCells(Record record) {
             _record = record;
         }
-        
+
         @Override
         public Object getField(String name) {
             int columnIndex = columnModel.getColumnIndexByName(name);
             if (columnIndex != -1) {
-                
+
                 HasFieldsListImpl cells = new HasFieldsListImpl();
                 List<Row> rows = _record.getRows();
                 for (int r = 0; r < rows.size(); r++) {
@@ -152,7 +153,7 @@ public class WrappedRow implements HasFields {
                         cells.add(new WrappedCell(name, cell));
                     }
                 }
-                
+
                 return cells;
             }
             return null;

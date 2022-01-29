@@ -24,6 +24,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  ******************************************************************************/
+
 package org.openrefine.expr.functions.strings;
 
 import java.util.ArrayList;
@@ -43,43 +44,43 @@ public class Find extends PureFunction {
     @Override
     public Object call(Object[] args) {
         List<String> allMatches = new ArrayList<String>();
-        
+
         if (args.length == 2) {
             Object s = args[0];
             Object p = args[1];
-            
+
             if (s != null && p != null && p instanceof String) {
                 int fromIndex = 0;
-                while ((fromIndex = s.toString().indexOf(p.toString(), fromIndex)) != -1 ){
+                while ((fromIndex = s.toString().indexOf(p.toString(), fromIndex)) != -1) {
                     allMatches.add(p.toString());
                     fromIndex++;
                 }
             }
-            
+
             if (s != null && p != null && p instanceof Pattern) {
                 Pattern pattern = (Pattern) p;
                 Matcher matcher = pattern.matcher(s.toString());
-                
+
                 while (matcher.find()) {
                     allMatches.add(matcher.group());
-                } 
+                }
             }
-            
+
             return allMatches.toArray(new String[0]);
         }
         return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects a string or a regex");
     }
-    
+
     @Override
     public String getDescription() {
         return "Outputs an array of all consecutive substrings inside string s that match the substring or regex pattern p. You can supply a substring by putting it in quotes.";
     }
-    
+
     @Override
     public String getParams() {
         return "string s, substring or regex p";
     }
-    
+
     @Override
     public String getReturns() {
         return "array of strings";

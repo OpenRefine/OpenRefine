@@ -51,22 +51,22 @@ import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
 public class ImporterUtilitiesTests extends RefineTest {
-    
+
     @Override
     @BeforeTest
     public void init() {
         logger = LoggerFactory.getLogger(this.getClass());
     }
 
-    @Test(enabled=false)
-    public void parseCellValueWithText(){
+    @Test(enabled = false)
+    public void parseCellValueWithText() {
         String END_QUOTES_SHOULD_BE_RETAINED = "\"To be\" is almost always followed by \"or not to be\"";
         String response = (String) ImporterUtilities.parseCellValue(END_QUOTES_SHOULD_BE_RETAINED);
         Assert.assertEquals(response, END_QUOTES_SHOULD_BE_RETAINED);
     }
 
     @Test
-    public void getIntegerOption(){
+    public void getIntegerOption() {
         Properties options = mock(Properties.class);
         when(options.containsKey("testInteger")).thenReturn(true);
         when(options.getProperty("testInteger")).thenReturn("5");
@@ -77,7 +77,7 @@ public class ImporterUtilitiesTests extends RefineTest {
     }
 
     @Test
-    public void getIntegerOptionReturnsDefaultOnError(){
+    public void getIntegerOptionReturnsDefaultOnError() {
         Properties options = mock(Properties.class);
         when(options.containsKey("testInteger")).thenReturn(true);
         when(options.getProperty("testInteger")).thenReturn("notAnInteger");
@@ -88,9 +88,8 @@ public class ImporterUtilitiesTests extends RefineTest {
     }
 
     @Test
-    public void appendColumnName(){
+    public void appendColumnName() {
         List<String> columnNames = new ArrayList<String>();
-
 
         ImporterUtilities.appendColumnName(columnNames, 0, "foo");
         ImporterUtilities.appendColumnName(columnNames, 1, "bar");
@@ -100,7 +99,7 @@ public class ImporterUtilitiesTests extends RefineTest {
     }
 
     @Test
-    public void appendColumnNameFromMultipleRows(){
+    public void appendColumnNameFromMultipleRows() {
         List<String> columnNames = new ArrayList<String>();
 
         ImporterUtilities.appendColumnName(columnNames, 0, "foo");
@@ -111,27 +110,27 @@ public class ImporterUtilitiesTests extends RefineTest {
 
     @Test
     public void testMergeGridStates() {
-    	GridState grid1 = createGrid(new String[] { "foo", "bar" },
-    			new Serializable[][] {
-    		{ 1, 2 },
-    		{ 3, 4 }
-    	});
-    	GridState grid2 = createGrid(new String[] { "foo", "oof" },
-    			new Serializable[][] {
-    		{ 5, 6 },
-    		{ 7, 8 }
-    	});
-    	GridState expected = createGrid(new String[] { "foo", "bar", "oof" },
-    			new Serializable[][] {
-    		{ 1,    2, null },
-    		{ 3,    4, null },
-    		{ 5, null,    6 },
-    		{ 7, null,    8 }
-    	});
-    	
-    	GridState merged = ImporterUtilities.mergeGridStates(grid1, grid2);
-		Assert.assertEquals(merged.getColumnModel(), expected.getColumnModel());
-		Assert.assertEquals(merged.collectRows(), expected.collectRows());
+        GridState grid1 = createGrid(new String[] { "foo", "bar" },
+                new Serializable[][] {
+                        { 1, 2 },
+                        { 3, 4 }
+                });
+        GridState grid2 = createGrid(new String[] { "foo", "oof" },
+                new Serializable[][] {
+                        { 5, 6 },
+                        { 7, 8 }
+                });
+        GridState expected = createGrid(new String[] { "foo", "bar", "oof" },
+                new Serializable[][] {
+                        { 1, 2, null },
+                        { 3, 4, null },
+                        { 5, null, 6 },
+                        { 7, null, 8 }
+                });
+
+        GridState merged = ImporterUtilities.mergeGridStates(grid1, grid2);
+        Assert.assertEquals(merged.getColumnModel(), expected.getColumnModel());
+        Assert.assertEquals(merged.collectRows(), expected.collectRows());
     }
 
 }

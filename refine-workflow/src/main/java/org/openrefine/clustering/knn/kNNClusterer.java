@@ -61,39 +61,40 @@ import edu.mit.simile.vicino.clustering.NGramClusterer;
 import edu.mit.simile.vicino.distances.Distance;
 
 public class kNNClusterer extends Clusterer {
-    
+
     public static class kNNClustererConfig extends ClustererConfig {
+
         @JsonIgnore
         private String _distanceStr;
         @JsonIgnore
         private SimilarityDistance _distance;
         @JsonIgnore
         private kNNClustererConfigParameters _parameters = null;
-        
+
         @JsonIgnore
         public SimilarityDistance getDistance() {
             return _distance;
         }
-        
+
         @JsonProperty("function")
         public void setDistance(String distanceStr) {
-        	_distanceStr = distanceStr;
-        	_distance = DistanceFactory.get(_distanceStr.toLowerCase());
+            _distanceStr = distanceStr;
+            _distance = DistanceFactory.get(_distanceStr.toLowerCase());
         }
-        
+
         @JsonProperty("function")
         public String getDistanceStr() {
-        	return _distanceStr;
+            return _distanceStr;
         }
-        
+
         @JsonProperty("params")
         public kNNClustererConfigParameters getParameters() {
             return _parameters;
         }
-        
+
         @JsonProperty("params")
         public void setParameters(kNNClustererConfigParameters params) {
-        	_parameters = params;
+            _parameters = params;
         }
 
         @Override
@@ -107,10 +108,11 @@ public class kNNClusterer extends Clusterer {
         public String getType() {
             return "knn";
         }
-        
+
     }
-    
-    public static class kNNClustererConfigParameters  {
+
+    public static class kNNClustererConfigParameters {
+
         public static final double defaultRadius = 1.0d;
         public static final int defaultBlockingNgramSize = 6;
         @JsonProperty("radius")
@@ -127,26 +129,27 @@ public class kNNClusterer extends Clusterer {
     Map<Serializable, Integer> _counts = new HashMap<Serializable, Integer>();
 
     final static Logger logger = LoggerFactory.getLogger("kNN_clusterer");
-    
-    private class DistanceWrapper extends Distance {
-    	private final SimilarityDistance _d;
-    	
-    	protected DistanceWrapper(SimilarityDistance d) {
-    		_d = d;
-    	}
 
-		@Override
-		public double d(String arg0, String arg1) {
-			return _d.compute(arg0, arg1);
-		}
+    private class DistanceWrapper extends Distance {
+
+        private final SimilarityDistance _d;
+
+        protected DistanceWrapper(SimilarityDistance d) {
+            _d = d;
+        }
+
+        @Override
+        public double d(String arg0, String arg1) {
+            return _d.compute(arg0, arg1);
+        }
     }
-    
+
     public void initializeFromConfig(GridState state, kNNClustererConfig config) {
         super.initializeFromConfig(state, config);
         _distance = config.getDistance();
         if (_distance == null) {
-               throw new IllegalArgumentException("No distance provided for KNN clustering.");
-    	}
+            throw new IllegalArgumentException("No distance provided for KNN clustering.");
+        }
         _params = config.getParameters();
     }
 
@@ -156,41 +159,43 @@ public class kNNClusterer extends Clusterer {
 
         Iterable<IndexedRow> filteredRows = engine.getMatchingRows(SortingConfig.NO_SORTING);
         for (IndexedRow indexedRow : filteredRows) {
-        	Row row = indexedRow.getRow();
-        	Object v = row.getCellValue(_colindex);
+            Row row = indexedRow.getRow();
+            Object v = row.getCellValue(_colindex);
             if (v != null) {
                 String s = (v instanceof String) ? ((String) v) : v.toString().intern();
                 clusterer.populate(s);
                 count(s);
             }
         }
-     
+
         _clusters = clusterer.getClusters(_params.radius);
     }
 
-    public static class ValuesComparator implements Comparator<Entry<Serializable,Integer>>, Serializable {
+    public static class ValuesComparator implements Comparator<Entry<Serializable, Integer>>, Serializable {
+
         private static final long serialVersionUID = 204469656070583155L;
+
         @Override
-        public int compare(Entry<Serializable,Integer> o1, Entry<Serializable,Integer> o2) {
+        public int compare(Entry<Serializable, Integer> o1, Entry<Serializable, Integer> o2) {
             return o2.getValue() - o1.getValue();
         }
     }
-    
+
     protected List<ClusteredEntry> getClusteredEntries(Set<Serializable> s) {
         return s.stream()
                 .map(e -> new ClusteredEntry(e, _counts.get(e)))
                 .sorted(ClusteredEntry.comparator)
                 .collect(Collectors.toList());
     }
-    
+
     @JsonValue
     public List<List<ClusteredEntry>> getJsonRepresentation() {
         return _clusters.stream()
-                        .filter(m -> m.size() > 1)
-                        .map(m -> getClusteredEntries(m))
+                .filter(m -> m.size() > 1)
+                .map(m -> getClusteredEntries(m))
                 .collect(Collectors.toList());
     }
-    
+
     private void count(Serializable s) {
         if (_counts.containsKey(s)) {
             _counts.put(s, _counts.get(s) + 1);

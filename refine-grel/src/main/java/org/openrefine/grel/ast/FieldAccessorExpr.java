@@ -46,21 +46,20 @@ import org.openrefine.expr.HasFields;
 import org.openrefine.expr.util.JsonValueConverter;
 
 /**
- * An abstract syntax tree node encapsulating a field accessor,
- * e.g., "cell.value" is accessing the field named "value" on the
- * variable called "cell".
+ * An abstract syntax tree node encapsulating a field accessor, e.g., "cell.value" is accessing the field named "value"
+ * on the variable called "cell".
  */
 public class FieldAccessorExpr implements GrelExpr {
-    
+
     private static final long serialVersionUID = -1531559726559623162L;
-    final protected GrelExpr      _inner;
-    final protected String        _fieldName;
-    
+    final protected GrelExpr _inner;
+    final protected String _fieldName;
+
     public FieldAccessorExpr(GrelExpr inner, String fieldName) {
         _inner = inner;
         _fieldName = fieldName;
     }
-    
+
     @Override
     public Object evaluate(Properties bindings) {
         Object o = _inner.evaluate(bindings);
@@ -71,8 +70,8 @@ public class FieldAccessorExpr implements GrelExpr {
         } else if (o instanceof HasFields) {
             return ((HasFields) o).getField(_fieldName);
         } else if (o instanceof ObjectNode) {
-        	JsonNode value = ((ObjectNode) o).get(_fieldName);
-        	return JsonValueConverter.convert(value);
+            JsonNode value = ((ObjectNode) o).get(_fieldName);
+            return JsonValueConverter.convert(value);
         } else {
             return null;
         }
@@ -82,27 +81,27 @@ public class FieldAccessorExpr implements GrelExpr {
     public String toString() {
         return _inner.toString() + "." + _fieldName;
     }
-    
+
     @Override
     public boolean equals(Object other) {
-    	return (other instanceof Evaluable) && toString().equals(other.toString());
+        return (other instanceof Evaluable) && toString().equals(other.toString());
     }
 
-	@Override
-	public Set<String> getColumnDependencies(String baseColumn) {
-		Set<String> innerDeps = _inner.getColumnDependencies(baseColumn);
-		if (innerDeps != null) {
-			return innerDeps;
-		} else {
-			String innerStr = _inner.toString();
-			if ("cells".equals(innerStr) || "row.cells".equals(innerStr)) {
-				return Collections.singleton(_fieldName);
-			}
-			// TODO add support for starred, flagged, rowIndex
-			return null;
-		}
-	}
-	
+    @Override
+    public Set<String> getColumnDependencies(String baseColumn) {
+        Set<String> innerDeps = _inner.getColumnDependencies(baseColumn);
+        if (innerDeps != null) {
+            return innerDeps;
+        } else {
+            String innerStr = _inner.toString();
+            if ("cells".equals(innerStr) || "row.cells".equals(innerStr)) {
+                return Collections.singleton(_fieldName);
+            }
+            // TODO add support for starred, flagged, rowIndex
+            return null;
+        }
+    }
+
     @Override
     public FieldAccessorExpr renameColumnDependencies(Map<String, String> substitutions) {
         GrelExpr innerTranslated = _inner.renameColumnDependencies(substitutions);

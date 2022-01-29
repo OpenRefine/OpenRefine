@@ -1,3 +1,4 @@
+
 package org.openrefine.util;
 
 /**
@@ -8,12 +9,17 @@ public class LookupException extends Exception {
     /**
      * Default LookupException format exception.
      */
-    public LookupException() { super(); }
+    public LookupException() {
+        super();
+    }
 
     /**
      * LookupException exception.
      *
-     * @param message error message
+     * @param message
+     *            error message
      */
-    public LookupException(String message) { super(message); }
+    public LookupException(String message) {
+        super(message);
+    }
 }

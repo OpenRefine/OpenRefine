@@ -51,34 +51,34 @@ import org.openrefine.util.StringUtils;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 
 /**
- * Judge if a row matches by evaluating a given expression on the row, based on a particular
- * column, and checking the result. It's a match if the result is any one of a given list of 
- * values, or if the result is blank or error and we want blank or error values. 
+ * Judge if a row matches by evaluating a given expression on the row, based on a particular column, and checking the
+ * result. It's a match if the result is any one of a given list of values, or if the result is blank or error and we
+ * want blank or error values.
  */
 public class ExpressionEqualRowFilter extends RowInRecordFilter {
+
     private static final long serialVersionUID = 1L;
 
-    final protected RowEvaluable       _evaluable; // the expression to evaluate
-    
-    final protected String          _columnName;
-    final protected int             _cellIndex; // the expression is based on this column;
-                                                // -1 if based on no column in particular,
-                                                // for expression such as "row.starred".
-    
-    final protected Set<String>     _matches;
-    final protected boolean         _selectBlank;
-    final protected boolean         _selectError;
-    final protected boolean         _invert;
-    
+    final protected RowEvaluable _evaluable; // the expression to evaluate
+
+    final protected String _columnName;
+    final protected int _cellIndex; // the expression is based on this column;
+                                    // -1 if based on no column in particular,
+                                    // for expression such as "row.starred".
+
+    final protected Set<String> _matches;
+    final protected boolean _selectBlank;
+    final protected boolean _selectError;
+    final protected boolean _invert;
+
     public ExpressionEqualRowFilter(
-        RowEvaluable evaluable,
-        String columnName,
-        int cellIndex, 
-        Set<String> matches, 
-        boolean selectBlank, 
-        boolean selectError,
-        boolean invert
-    ) {
+            RowEvaluable evaluable,
+            String columnName,
+            int cellIndex,
+            Set<String> matches,
+            boolean selectBlank,
+            boolean selectError,
+            boolean invert) {
         super(!invert);
         _evaluable = evaluable;
         _columnName = columnName;
@@ -94,10 +94,10 @@ public class ExpressionEqualRowFilter extends RowInRecordFilter {
         return _invert ^
                 internalFilterRow(rowIndex, row, record);
     }
-    
+
     public boolean internalFilterRow(long rowIndex, Row row, Record record) {
         Properties bindings = ExpressionUtils.createBindings();
-        
+
         Object value = _evaluable.eval(rowIndex, row, record, bindings);
         if (value != null) {
             if (value.getClass().isArray()) {
@@ -118,7 +118,7 @@ public class ExpressionEqualRowFilter extends RowInRecordFilter {
             } else if (value instanceof ArrayNode) {
                 ArrayNode a = (ArrayNode) value;
                 int l = a.size();
-                
+
                 for (int i = 0; i < l; i++) {
                     if (testValue(JsonValueConverter.convert(a.get(i)))) {
                         return true;
@@ -127,10 +127,10 @@ public class ExpressionEqualRowFilter extends RowInRecordFilter {
                 return false;
             } // else, fall through
         }
-        
+
         return testValue(value);
     }
-    
+
     protected boolean testValue(Object v) {
         if (ExpressionUtils.isError(v)) {
             return _selectError;

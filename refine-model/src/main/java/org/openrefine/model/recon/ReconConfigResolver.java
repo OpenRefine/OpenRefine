@@ -24,6 +24,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  ******************************************************************************/
+
 package org.openrefine.model.recon;
 
 import java.io.IOException;
@@ -35,7 +36,7 @@ import com.fasterxml.jackson.databind.jsontype.impl.TypeIdResolverBase;
 import com.fasterxml.jackson.databind.type.TypeFactory;
 
 public class ReconConfigResolver extends TypeIdResolverBase {
-    
+
     protected TypeFactory factory = TypeFactory.defaultInstance();
 
     @Override
@@ -45,19 +46,19 @@ public class ReconConfigResolver extends TypeIdResolverBase {
 
     @Override
     public String idFromValue(Object instance) {
-        return ((ReconConfig)instance).getMode();
+        return ((ReconConfig) instance).getMode();
     }
 
     @Override
     public String idFromValueAndType(Object instance, Class<?> type) {
         return ReconConfig.s_opClassToName.get(type);
     }
-    
+
     @Override
     public JavaType typeFromId(DatabindContext context, String id) {
         Class klass = ReconConfig.getClassFromMode(id);
         if (klass == null) {
-            throw new IllegalArgumentException("Unknown recon config type "+id);
+            throw new IllegalArgumentException("Unknown recon config type " + id);
         }
         return factory.constructSimpleType(klass, new JavaType[0]);
     }

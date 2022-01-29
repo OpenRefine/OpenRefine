@@ -66,8 +66,9 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonUnwrapped;
 
 public class GetRowsCommand extends Command {
-    
-    protected static class WrappedRow  {
+
+    protected static class WrappedRow {
+
         @JsonUnwrapped
         protected final Row row;
         @JsonProperty("i")
@@ -75,18 +76,19 @@ public class GetRowsCommand extends Command {
         @JsonProperty("j")
         @JsonInclude(Include.NON_NULL)
         protected final Long recordIndex;
-        
+
         protected WrappedRow(Row rowOrRecord, long rowIndex, Long recordIndex) {
             this.row = rowOrRecord;
             this.rowIndex = rowIndex;
             this.recordIndex = recordIndex;
         }
     }
-    
-    protected static class JsonResult  {
-    	/**
-    	 * Mode of the engine (row or record based)
-    	 */
+
+    protected static class JsonResult {
+
+        /**
+         * Mode of the engine (row or record based)
+         */
         @JsonProperty("mode")
         protected final Mode mode;
         /**
@@ -95,15 +97,13 @@ public class GetRowsCommand extends Command {
         @JsonProperty("rows")
         protected final List<WrappedRow> rows;
         /**
-         * Number of rows selected by the current filter, possibly capped
-         * by the engine configuration.
+         * Number of rows selected by the current filter, possibly capped by the engine configuration.
          */
         @JsonProperty("filtered")
         protected final long filtered;
         /**
-         * Number of rows on which the facets were actually checked. Can 
-         * be less than "total" if the engine configuration capped the 
-         * number of rows to process.
+         * Number of rows on which the facets were actually checked. Can be less than "total" if the engine
+         * configuration capped the number of rows to process.
          */
         @JsonProperty("processed")
         protected final long processed;
@@ -112,14 +112,14 @@ public class GetRowsCommand extends Command {
          */
         @JsonProperty("total")
         protected final long totalCount;
-        
+
         @JsonProperty("start")
         protected final long start;
         @JsonProperty("limit")
         protected final int limit;
-        
+
         protected JsonResult(Mode mode, List<WrappedRow> rows, long filtered,
-        		long processed, long totalCount, long start, int limit) {
+                long processed, long totalCount, long start, int limit) {
             this.mode = mode;
             this.rows = rows;
             this.filtered = filtered;
@@ -129,35 +129,35 @@ public class GetRowsCommand extends Command {
             this.limit = Math.min(rows.size(), limit);
         }
     }
-    
+
     /**
      * This command accepts both POST and GET. It is not CSRF-protected as it does not incur any state change.
      */
-    
+
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         internalRespond(request, response);
     }
-    
+
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         internalRespond(request, response);
     }
-    
+
     protected static List<WrappedRow> recordToWrappedRows(Record record) {
-    	List<Row> rows = record.getRows();
-    	return IntStream.range(0, rows.size())
-    	   .mapToObj(i -> new WrappedRow(rows.get(i), record.getStartRowId()+i, i == 0 ? record.getStartRowId() : null))
-    	   .collect(Collectors.toList());
+        List<Row> rows = record.getRows();
+        return IntStream.range(0, rows.size())
+                .mapToObj(i -> new WrappedRow(rows.get(i), record.getStartRowId() + i, i == 0 ? record.getStartRowId() : null))
+                .collect(Collectors.toList());
     }
-    
+
     protected void internalRespond(HttpServletRequest request, HttpServletResponse response)
-        throws ServletException, IOException {
-        
+            throws ServletException, IOException {
+
         try {
             Project project = null;
-            
+
             // This command also supports retrieving rows for an importing job.
             String importingJobID = request.getParameter("importingJobID");
             if (importingJobID != null) {
@@ -170,23 +170,23 @@ public class GetRowsCommand extends Command {
             if (project == null) {
                 project = getProject(request);
             }
-            
+
             Engine engine = getEngine(request, project);
             String callback = request.getParameter("callback");
             GridState entireGrid = project.getCurrentGridState();
-            
+
             long start = getLongParameter(request, "start", 0);
             int limit = Math.max(0, getIntegerParameter(request, "limit", 20));
-            
+
             response.setCharacterEncoding("UTF-8");
             response.setHeader("Content-Type", callback == null ? "application/json" : "text/javascript");
-            
+
             PrintWriter writer = response.getWriter();
             if (callback != null) {
                 writer.write(callback);
                 writer.write("(");
             }
-            
+
             SortingConfig sortingConfig = SortingConfig.NO_SORTING;
             try {
                 String sortingJson = request.getParameter("sorting");
@@ -195,72 +195,73 @@ public class GetRowsCommand extends Command {
                 }
             } catch (IOException e) {
             }
-            
+
             long filtered;
             long processed;
             long totalCount;
             List<WrappedRow> wrappedRows;
-            
+
             EngineConfig engineConfig = engine.getConfig();
-			if (engine.getMode() == Mode.RowBased) {
-            	totalCount = entireGrid.rowCount();
-            	RowFilter combinedRowFilters = engine.combinedRowFilters();
-				List<IndexedRow> rows = entireGrid.getRows(combinedRowFilters, sortingConfig, start, limit);
-                
+            if (engine.getMode() == Mode.RowBased) {
+                totalCount = entireGrid.rowCount();
+                RowFilter combinedRowFilters = engine.combinedRowFilters();
+                List<IndexedRow> rows = entireGrid.getRows(combinedRowFilters, sortingConfig, start, limit);
+
                 wrappedRows = rows.stream()
-                		.map(tuple -> new WrappedRow(tuple.getRow(), tuple.getIndex(), null))
-                		.collect(Collectors.toList());
+                        .map(tuple -> new WrappedRow(tuple.getRow(), tuple.getIndex(), null))
+                        .collect(Collectors.toList());
                 if (engineConfig.isNeutral()) {
-                	filtered = totalCount;
-                	processed = totalCount;
+                    filtered = totalCount;
+                    processed = totalCount;
                 } else {
-	                if (engineConfig.getAggregationLimit() == null) {
-	                	filtered = entireGrid.countMatchingRows(combinedRowFilters);
-	                	processed = totalCount;
-	                } else {
-	                	ApproxCount approxCount = entireGrid.countMatchingRowsApprox(combinedRowFilters, engineConfig.getAggregationLimit());
-	                	filtered = approxCount.getMatched();
-	                	processed = approxCount.getProcessed();
-	                }
+                    if (engineConfig.getAggregationLimit() == null) {
+                        filtered = entireGrid.countMatchingRows(combinedRowFilters);
+                        processed = totalCount;
+                    } else {
+                        ApproxCount approxCount = entireGrid.countMatchingRowsApprox(combinedRowFilters,
+                                engineConfig.getAggregationLimit());
+                        filtered = approxCount.getMatched();
+                        processed = approxCount.getProcessed();
+                    }
                 }
             } else {
-            	totalCount = entireGrid.recordCount();
-            	RecordFilter combinedRecordFilters = engine.combinedRecordFilters();
-				List<Record> records = entireGrid.getRecords(combinedRecordFilters, sortingConfig, start, limit);
-            	
-            	wrappedRows = records.stream()
-            			.flatMap(record -> recordToWrappedRows(record).stream())
-            			.collect(Collectors.toList());
-            	
-            	if (engineConfig.isNeutral()) {
-            		filtered = totalCount;
-            		processed = totalCount;
-            	} else {
-	            	if (engineConfig.getAggregationLimit() == null) {
-	            		filtered = entireGrid.countMatchingRecords(combinedRecordFilters);
-	            		processed = totalCount;
-	            	} else {
-	            		ApproxCount approxCount = entireGrid.countMatchingRecordsApprox(combinedRecordFilters, engineConfig.getAggregationLimit());
-	            		filtered = approxCount.getMatched();
-	            		processed = approxCount.getProcessed();
-	            	}
-            	}
+                totalCount = entireGrid.recordCount();
+                RecordFilter combinedRecordFilters = engine.combinedRecordFilters();
+                List<Record> records = entireGrid.getRecords(combinedRecordFilters, sortingConfig, start, limit);
+
+                wrappedRows = records.stream()
+                        .flatMap(record -> recordToWrappedRows(record).stream())
+                        .collect(Collectors.toList());
+
+                if (engineConfig.isNeutral()) {
+                    filtered = totalCount;
+                    processed = totalCount;
+                } else {
+                    if (engineConfig.getAggregationLimit() == null) {
+                        filtered = entireGrid.countMatchingRecords(combinedRecordFilters);
+                        processed = totalCount;
+                    } else {
+                        ApproxCount approxCount = entireGrid.countMatchingRecordsApprox(combinedRecordFilters,
+                                engineConfig.getAggregationLimit());
+                        filtered = approxCount.getMatched();
+                        processed = approxCount.getProcessed();
+                    }
+                }
             }
 
-            
-			JsonResult result = new JsonResult(engine.getMode(),
+            JsonResult result = new JsonResult(engine.getMode(),
                     wrappedRows, filtered, processed,
                     totalCount, start, limit);
-            
+
             ParsingUtilities.defaultWriter.writeValue(writer, result);
             if (callback != null) {
                 writer.write(")");
             }
-            
+
             // metadata refresh for row mode and record mode
-	    if (project.getMetadata() != null) {
-            	project.getMetadata().setRowCount(totalCount);
-	    }
+            if (project.getMetadata() != null) {
+                project.getMetadata().setRowCount(totalCount);
+            }
         } catch (Exception e) {
             respondException(response, e);
         }

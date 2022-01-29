@@ -24,6 +24,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  ******************************************************************************/
+
 package org.openrefine.importing;
 
 import static org.testng.Assert.assertEquals;
@@ -36,10 +37,9 @@ public class FormatRegistryTests extends ImporterTest {
 
     @Override
     @BeforeMethod
-    public void setUp(){
+    public void setUp() {
         super.setUp();
     }
-
 
     @Test
     public void testStructuredNameSuffixFallback() {

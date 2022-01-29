@@ -1,3 +1,4 @@
+
 package org.openrefine.model.changes;
 
 import java.io.File;
@@ -10,15 +11,15 @@ import org.openrefine.model.DatamodelRunner;
 import org.openrefine.process.ProgressReporter;
 
 public class FileChangeDataStore implements ChangeDataStore {
-    
+
     private DatamodelRunner _runner;
     private File _baseDirectory;
-    
+
     public FileChangeDataStore(DatamodelRunner runner, File baseDirectory) {
         _runner = runner;
         _baseDirectory = baseDirectory;
     }
-    
+
     /**
      * Associates to a pair of ids the location where we should store them.
      * 
@@ -29,7 +30,7 @@ public class FileChangeDataStore implements ChangeDataStore {
     private File idsToFile(long historyEntryId, String dataId) {
         return new File(historyEntryIdToFile(historyEntryId), dataId);
     }
-    
+
     /**
      * Directory where all change data belonging to a given history entry id should be stored.
      */
@@ -48,7 +49,7 @@ public class FileChangeDataStore implements ChangeDataStore {
             } else {
                 data.saveToFile(file, serializer);
             }
-        } catch(InterruptedException e) {
+        } catch (InterruptedException e) {
             FileUtils.deleteDirectory(file);
             throw new IOException(e);
         }
@@ -67,7 +68,7 @@ public class FileChangeDataStore implements ChangeDataStore {
         if (file.exists()) {
             try {
                 FileUtils.deleteDirectory(file);
-            } catch(IOException e) {
+            } catch (IOException e) {
                 ;
             }
         }

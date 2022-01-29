@@ -24,6 +24,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  ******************************************************************************/
+
 package org.openrefine.expr.functions.strings;
 
 import static org.testng.Assert.assertFalse;
@@ -33,10 +34,10 @@ import org.openrefine.grel.FunctionTestBase;
 import org.testng.annotations.Test;
 
 public class EndsWithTests extends FunctionTestBase {
+
     @Test
     public void testStartsWith() {
         assertTrue((Boolean) invoke("endsWith", "testString", "ing"));
         assertFalse((Boolean) invoke("startsWith", "testString", "banana"));
     }
 }
-

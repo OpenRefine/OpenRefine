@@ -44,14 +44,14 @@ public class Xor extends PureFunction {
 
     @Override
     public String getDescription() {
-    	return "Uses the logical operator XOR (exclusive-or) on two or more booleans to output a boolean. Evaluates multiple statements, then returns true if only one of them is true. For example, (1 < 3).xor(1 < 7) returns false because more than one of the conditions is true.";
+        return "Uses the logical operator XOR (exclusive-or) on two or more booleans to output a boolean. Evaluates multiple statements, then returns true if only one of them is true. For example, (1 < 3).xor(1 < 7) returns false because more than one of the conditions is true.";
     }
-    
+
     @Override
     public String getParams() {
         return "boolean a, boolean b, ...";
     }
-    
+
     @Override
     public String getReturns() {
         return "boolean";

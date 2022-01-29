@@ -52,17 +52,17 @@ public class SHA1 extends PureFunction {
         }
         return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects a string");
     }
-    
+
     @Override
     public String getDescription() {
         return "Returns the SHA-1 hash of an object. If fed something other than a string (array, number, date, etc.), sha1() will convert it to a string and deliver the hash of the string.";
     }
-    
+
     @Override
     public String getParams() {
         return "string s";
     }
-    
+
     @Override
     public String getReturns() {
         return "string";

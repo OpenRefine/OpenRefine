@@ -1,11 +1,10 @@
+
 package org.openrefine.browsing.facets;
 
 import com.google.common.collect.ImmutableList;
 
 /**
- * State of aggregation of all facets, used to compute
- * the states of all facets in a single aggregation over the 
- * grid.
+ * State of aggregation of all facets, used to compute the states of all facets in a single aggregation over the grid.
  * 
  * @author Antonin Delpeuch
  *
@@ -14,9 +13,9 @@ public class AllFacetsState implements FacetState {
 
     private static final long serialVersionUID = -3089405630666554348L;
     private final ImmutableList<FacetState> _states;
-    private final long                      _aggregatedCount;
-    private final long                      _filteredCount;
-    
+    private final long _aggregatedCount;
+    private final long _filteredCount;
+
     /**
      * Constructs a state for aggregation of all facets.
      * 
@@ -32,11 +31,12 @@ public class AllFacetsState implements FacetState {
         _aggregatedCount = aggregatedCount;
         _filteredCount = filteredCount;
     }
-    
+
     /**
      * Helper for facet access.
      * 
-     * @param index position of the facet state to retrieve
+     * @param index
+     *            position of the facet state to retrieve
      * @return
      */
     public FacetState get(int index) {
@@ -49,35 +49,34 @@ public class AllFacetsState implements FacetState {
     public int size() {
         return _states.size();
     }
-    
+
     /**
      * List of all facet states
      */
     public ImmutableList<FacetState> getStates() {
         return _states;
     }
-    
+
     /**
      * Number of rows or records seen by the aggregator.
      */
     public long getAggregatedCount() {
         return _aggregatedCount;
     }
-    
+
     /**
-     * Numbers of rows or records seen by the aggregator which matched
-     * all facets
+     * Numbers of rows or records seen by the aggregator which matched all facets
      */
     public long getFilteredCount() {
         return _filteredCount;
     }
-    
+
     @Override
     public String toString() {
         return String.format("[AllFacetsState (after %d rows/records whose %d matched) %s]",
                 _aggregatedCount, _filteredCount, _states.toString());
     }
-    
+
     @Override
     public boolean equals(Object other) {
         if (!(other instanceof AllFacetsState)) {
@@ -88,7 +87,7 @@ public class AllFacetsState implements FacetState {
                 && _aggregatedCount == otherState.getAggregatedCount()
                 && _filteredCount == otherState.getFilteredCount());
     }
-    
+
     @Override
     public int hashCode() {
         return _states.hashCode();

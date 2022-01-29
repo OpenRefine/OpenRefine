@@ -47,11 +47,11 @@ public class VariableExpr implements GrelExpr {
 
     private static final long serialVersionUID = -7662397690998054801L;
     final protected String _name;
-    
+
     public VariableExpr(String name) {
         _name = name;
     }
-    
+
     @Override
     public Object evaluate(Properties bindings) {
         return bindings.get(_name);
@@ -61,29 +61,29 @@ public class VariableExpr implements GrelExpr {
     public String toString() {
         return _name;
     }
-    
+
     public String getName() {
         return _name;
     }
-    
+
     @Override
     public boolean equals(Object other) {
-    	return (other instanceof Evaluable) && toString().equals(other.toString());
+        return (other instanceof Evaluable) && toString().equals(other.toString());
     }
 
-	@Override
-	public Set<String> getColumnDependencies(String baseColumn) {
-		if("value".equals(_name) || "cell".equals(_name) || "recon".equals(_name)) {
-			return Collections.singleton(baseColumn);
-		} else if ("cells".equals(_name) || "row".equals(_name) || "record".equals(_name)) {
-			return null;
-		}
-		return Collections.emptySet();
-	}
-	
+    @Override
+    public Set<String> getColumnDependencies(String baseColumn) {
+        if ("value".equals(_name) || "cell".equals(_name) || "recon".equals(_name)) {
+            return Collections.singleton(baseColumn);
+        } else if ("cells".equals(_name) || "row".equals(_name) || "record".equals(_name)) {
+            return null;
+        }
+        return Collections.emptySet();
+    }
+
     @Override
     public VariableExpr renameColumnDependencies(Map<String, String> substitutions) {
-        if("value".equals(_name) || "cell".equals(_name) || "recon".equals(_name)) {
+        if ("value".equals(_name) || "cell".equals(_name) || "recon".equals(_name)) {
             return this;
         } else if ("cells".equals(_name) || "row".equals(_name) || "record".equals(_name)) {
             return null;

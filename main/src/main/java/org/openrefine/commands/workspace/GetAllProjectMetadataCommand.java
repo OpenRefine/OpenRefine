@@ -50,25 +50,27 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonRawValue;
 
 public class GetAllProjectMetadataCommand extends Command {
-    public static class AllProjectMetadata  {
+
+    public static class AllProjectMetadata {
+
         @JsonProperty("projects")
         protected Map<Long, ProjectMetadata> projects;
         @JsonProperty("customMetadataColumns")
         @JsonInclude(Include.NON_NULL)
         @JsonRawValue
         protected String customMetadataColumns;
-        
+
         protected AllProjectMetadata(Map<Long, ProjectMetadata> map, String json) {
             projects = map;
             customMetadataColumns = json;
         }
     }
-    
+
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        
-        String userMeta = (String)ProjectManager.singleton.getPreferenceStore().get("userMetadata");
+
+        String userMeta = (String) ProjectManager.singleton.getPreferenceStore().get("userMetadata");
         respondJSON(response, new AllProjectMetadata(ProjectManager.singleton.getAllProjectMetadata(), userMeta));
     }
 }

@@ -49,7 +49,7 @@ public class Type extends PureFunction {
     public Object call(Object[] args) {
         if (args.length == 1) {
             Object v = args[0];
-            
+
             if (v != null) {
                 if (v instanceof String) {
                     return "string";
@@ -76,12 +76,12 @@ public class Type extends PureFunction {
     public String getDescription() {
         return "Returns a string with the data type of o, such as undefined, string, number, boolean, etc.";
     }
-    
+
     @Override
     public String getParams() {
         return "object o";
     }
-    
+
     @Override
     public String getReturns() {
         return "string";

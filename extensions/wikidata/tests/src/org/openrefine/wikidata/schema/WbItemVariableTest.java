@@ -21,6 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  ******************************************************************************/
+
 package org.openrefine.wikidata.schema;
 
 import java.util.Collections;
@@ -44,8 +45,8 @@ public class WbItemVariableTest extends WbVariableTest<ItemIdValue> {
     @Test
     public void testReconciledCell() {
         Recon recon = Recon.makeWikidataRecon(3782378L)
-        		.withJudgment(Judgment.Matched)
-        		.withMatch(new ReconCandidate("Q123", "some item", null, 100.0));
+                .withJudgment(Judgment.Matched)
+                .withMatch(new ReconCandidate("Q123", "some item", null, 100.0));
         Cell cell = new Cell("some value", recon);
         evaluatesTo(new ReconItemIdValue(recon, "some value"), cell);
     }
@@ -53,8 +54,8 @@ public class WbItemVariableTest extends WbVariableTest<ItemIdValue> {
     @Test
     public void testNewItemCell() {
         Recon recon = Recon.makeWikidataRecon(3782378L)
-        		.withJudgment(Judgment.New)
-        		.withCandidates(Collections.singletonList(new ReconCandidate("Q123", "some item", null, 100.0)));
+                .withJudgment(Judgment.New)
+                .withCandidates(Collections.singletonList(new ReconCandidate("Q123", "some item", null, 100.0)));
         Cell cell = new Cell("some value", recon);
         evaluatesTo(new ReconItemIdValue(recon, "some value"), cell);
     }
@@ -62,20 +63,20 @@ public class WbItemVariableTest extends WbVariableTest<ItemIdValue> {
     @Test
     public void testUnmatchedCell() {
         Recon recon = Recon.makeWikidataRecon(3782378L)
-        		.withJudgment(Judgment.None)
-        		.withCandidates(Collections.singletonList(new ReconCandidate("Q123", "some item", null, 100.0)));
+                .withJudgment(Judgment.None)
+                .withCandidates(Collections.singletonList(new ReconCandidate("Q123", "some item", null, 100.0)));
         Cell cell = new Cell("some value", recon);
         isSkipped(cell);
     }
-    
+
     @Test
     public void testInvalidSpace() {
         ReconCandidate reconCandidate = new ReconCandidate("Q123", "some item", null, 100.0);
-		Recon recon = Recon.makeWikidataRecon(34989L)
-        		.withIdentifierSpace("http://my.own.wikiba.se/")
-        		.withCandidates(Collections.singletonList(reconCandidate))
-        		.withMatch(reconCandidate)
-        		.withJudgment(Judgment.Matched);
+        Recon recon = Recon.makeWikidataRecon(34989L)
+                .withIdentifierSpace("http://my.own.wikiba.se/")
+                .withCandidates(Collections.singletonList(reconCandidate))
+                .withMatch(reconCandidate)
+                .withJudgment(Judgment.Matched);
         Cell cell = new Cell("some value", recon);
         isSkipped(cell);
     }
@@ -84,12 +85,12 @@ public class WbItemVariableTest extends WbVariableTest<ItemIdValue> {
     public void testUnreconciledCell() {
         isSkipped("some value");
     }
-    
+
     @Test
     public void testNullCell() {
         isSkipped((Cell) null);
     }
-    
+
     @Test
     public void testNullStringValue() {
         isSkipped((String) null);

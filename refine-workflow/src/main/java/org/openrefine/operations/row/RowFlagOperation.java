@@ -46,43 +46,42 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class RowFlagOperation extends ImmediateRowMapOperation {
+
     final protected boolean _flagged;
 
     @JsonCreator
     public RowFlagOperation(
-            @JsonProperty("engineConfig")
-            EngineConfig engineConfig,
-            @JsonProperty("flagged")
-            boolean flagged) {
+            @JsonProperty("engineConfig") EngineConfig engineConfig,
+            @JsonProperty("flagged") boolean flagged) {
         super(engineConfig);
         _flagged = flagged;
     }
-    
+
     @JsonProperty("flagged")
     public boolean getFlagged() {
         return _flagged;
     }
 
     @Override
-	public String getDescription() {
+    public String getDescription() {
         return (_flagged ? "Flag rows" : "Unflag rows");
-    } 
+    }
 
-	@Override
-	public RowInRecordMapper getPositiveRowMapper(GridState grid, ChangeContext context) {
-		return rowMapper(_flagged);
-	}
-    
+    @Override
+    public RowInRecordMapper getPositiveRowMapper(GridState grid, ChangeContext context) {
+        return rowMapper(_flagged);
+    }
+
     protected static RowInRecordMapper rowMapper(boolean flagged) {
-    	return new RowInRecordMapper() {
+        return new RowInRecordMapper() {
 
-			private static final long serialVersionUID = 1941653093381723354L;
+            private static final long serialVersionUID = 1941653093381723354L;
 
-			@Override
-			public Row call(Record record, long rowId, Row row) {
-				return row.withFlagged(flagged);
-			}
-    		
-    	};
+            @Override
+            public Row call(Record record, long rowId, Row row) {
+                return row.withFlagged(flagged);
+            }
+
+        };
     }
 }

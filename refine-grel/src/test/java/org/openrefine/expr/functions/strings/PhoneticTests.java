@@ -24,6 +24,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  ******************************************************************************/
+
 package org.openrefine.expr.functions.strings;
 
 import org.openrefine.expr.EvalError;
@@ -32,14 +33,18 @@ import org.testng.Assert;
 import org.testng.annotations.Test;
 
 public class PhoneticTests extends FunctionTestBase {
-   
+
     @Test
     public void testtoPhoneticInvalidParams() {
-	Assert.assertTrue(invoke("phonetic") instanceof EvalError);                            //if no arguments are provided
-	Assert.assertTrue(invoke("phonetic",(Object[])null) instanceof EvalError);             //if first argument(value) is null
-	Assert.assertTrue(invoke("phonetic","one",(Object[])null) instanceof EvalError);       //if second argument(encoding type) is null
-	Assert.assertTrue(invoke("phonetic","one","other") instanceof EvalError);              //if second argument(encoding type) is not a valid encoding type
-	Assert.assertTrue(invoke("phonetic","one","metaphone3","three") instanceof EvalError); //if more than 2 arguments are provided
+        Assert.assertTrue(invoke("phonetic") instanceof EvalError); // if no arguments are provided
+        Assert.assertTrue(invoke("phonetic", (Object[]) null) instanceof EvalError); // if first argument(value) is null
+        Assert.assertTrue(invoke("phonetic", "one", (Object[]) null) instanceof EvalError); // if second
+                                                                                            // argument(encoding type)
+                                                                                            // is null
+        Assert.assertTrue(invoke("phonetic", "one", "other") instanceof EvalError); // if second argument(encoding type)
+                                                                                    // is not a valid encoding type
+        Assert.assertTrue(invoke("phonetic", "one", "metaphone3", "three") instanceof EvalError); // if more than 2
+                                                                                                  // arguments are
+                                                                                                  // provided
     }
 }
-

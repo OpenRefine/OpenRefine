@@ -24,6 +24,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  ******************************************************************************/
+
 package org.openrefine.expr.functions;
 
 import static org.testng.Assert.assertEquals;
@@ -35,17 +36,17 @@ import org.openrefine.grel.FunctionTestBase;
 import org.testng.annotations.Test;
 
 public class ToNumberTests extends FunctionTestBase {
-    
+
     private static final Double EPSILON = 0.000001;
 
     @Test
     public void testConversions() {
         Function f = new ToNumber();
-        assertEquals(f.call(bindings, new Object[] {Long.valueOf(11)}), Long.valueOf(11));
-        assertEquals(f.call(bindings, new Object[] {"12"}), Long.valueOf(12));
-        assertTrue((Double)f.call(bindings, new Object[] {"12345.6789"}) - Double.valueOf(12345.6789) < EPSILON);
-        assertTrue(f.call(bindings, new Object[] {"abc"}) instanceof EvalError);
-        }
+        assertEquals(f.call(bindings, new Object[] { Long.valueOf(11) }), Long.valueOf(11));
+        assertEquals(f.call(bindings, new Object[] { "12" }), Long.valueOf(12));
+        assertTrue((Double) f.call(bindings, new Object[] { "12345.6789" }) - Double.valueOf(12345.6789) < EPSILON);
+        assertTrue(f.call(bindings, new Object[] { "abc" }) instanceof EvalError);
+    }
 
     @Test
     public void testToNumber() {
@@ -62,4 +63,3 @@ public class ToNumberTests extends FunctionTestBase {
     }
 
 }
-

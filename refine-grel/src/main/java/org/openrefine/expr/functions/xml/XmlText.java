@@ -41,6 +41,7 @@ import org.openrefine.grel.PureFunction;
 import org.openrefine.expr.EvalError;
 
 public class XmlText extends PureFunction {
+
     private static final long serialVersionUID = 8194362960147608680L;
 
     @Override
@@ -48,30 +49,30 @@ public class XmlText extends PureFunction {
         if (args.length == 1) {
             Object o1 = args[0];
             if (o1 != null && o1 instanceof Element) {
-                Element e1 = (Element)o1;
+                Element e1 = (Element) o1;
                 return e1.text();
 
             } else {
-                return new EvalError(ControlFunctionRegistry.getFunctionName(this) + "() cannot work with this '" + new Type().call(args) + "' and failed as the first parameter is not an XML or HTML Element.  Please first use parseXml() or parseHtml() and select(query) prior to using this function");
+                return new EvalError(ControlFunctionRegistry.getFunctionName(this) + "() cannot work with this '" + new Type().call(args)
+                        + "' and failed as the first parameter is not an XML or HTML Element.  Please first use parseXml() or parseHtml() and select(query) prior to using this function");
             }
         }
-        return new EvalError(ControlFunctionRegistry.getFunctionName(this) + "() cannot work with this '" + new Type().call(args) + "' and expects a single XML or HTML element as an argument");
+        return new EvalError(ControlFunctionRegistry.getFunctionName(this) + "() cannot work with this '" + new Type().call(args)
+                + "' and expects a single XML or HTML element as an argument");
     }
-
 
     @Override
     public String getDescription() {
         return "Returns a string of the text from within an HTML or XML element (including all child elements), removing tags and line breaks inside the string. Use it in conjunction with parseHtml() or parseXml() and select() to provide an element.";
     }
-    
+
     @Override
     public String getParams() {
         return "Element e";
     }
-    
+
     @Override
     public String getReturns() {
         return "String text";
     }
 }
-

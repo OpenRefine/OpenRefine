@@ -59,17 +59,16 @@ public class Jsonize extends PureFunction {
         return new EvalError(ControlFunctionRegistry.getFunctionName(this) + errorMessage);
     }
 
-    
     @Override
     public String getDescription() {
         return "Quotes a value as a JSON literal value";
     }
-    
+
     @Override
     public String getParams() {
         return "o";
     }
-    
+
     @Override
     public String getReturns() {
         return "JSON literal value";

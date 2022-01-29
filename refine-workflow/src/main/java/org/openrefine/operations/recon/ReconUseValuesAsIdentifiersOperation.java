@@ -24,6 +24,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  ******************************************************************************/
+
 package org.openrefine.operations.recon;
 
 import java.util.Collections;
@@ -54,39 +55,33 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.collect.ImmutableList;
 
 /**
- * When a column contains bare identifiers or URLs, this can be used to mark
- * them as reconciled to some reconciliation service. This is done without
- * any communication with the service, so identifiers are not checked.
+ * When a column contains bare identifiers or URLs, this can be used to mark them as reconciled to some reconciliation
+ * service. This is done without any communication with the service, so identifiers are not checked.
  * 
  * @author Antonin Delpeuch
  *
  */
 public class ReconUseValuesAsIdentifiersOperation extends ImmediateRowMapOperation {
-    
-	@JsonProperty("columnName")
-	protected String columnName;
+
+    @JsonProperty("columnName")
+    protected String columnName;
     @JsonProperty("identifierSpace")
     protected String identifierSpace;
     @JsonProperty("schemaSpace")
     protected String schemaSpace;
     @JsonProperty("service")
     protected String service;
-    
+
     @JsonIgnore
     protected StandardReconConfig reconConfig;
 
     @JsonCreator
     public ReconUseValuesAsIdentifiersOperation(
-            @JsonProperty("engineConfig")
-            EngineConfig engineConfig,
-            @JsonProperty("columnName")
-            String columnName,
-            @JsonProperty("service")
-            String service,
-            @JsonProperty("identifierSpace")
-            String identifierSpace,
-            @JsonProperty("schemaSpace")
-            String schemaSpace) {
+            @JsonProperty("engineConfig") EngineConfig engineConfig,
+            @JsonProperty("columnName") String columnName,
+            @JsonProperty("service") String service,
+            @JsonProperty("identifierSpace") String identifierSpace,
+            @JsonProperty("schemaSpace") String schemaSpace) {
         super(engineConfig);
         this.columnName = columnName;
         this.service = service;
@@ -94,69 +89,68 @@ public class ReconUseValuesAsIdentifiersOperation extends ImmediateRowMapOperati
         this.schemaSpace = schemaSpace;
         this.reconConfig = new StandardReconConfig(service, identifierSpace, schemaSpace, null, null, true, Collections.emptyList());
     }
-    
+
     @Override
     public String getDescription() {
         return "Use values as reconciliation identifiers in column " + columnName;
     }
-    
+
     @Override
     public RowInRecordMapper getPositiveRowMapper(GridState state, ChangeContext context) throws ColumnNotFoundException {
-    	int columnIndex = state.getColumnModel().getColumnIndexByName(columnName);
-    	if (columnIndex == -1) {
-    		throw new ColumnNotFoundException(columnName);
-    	}
-    	long historyEntryId = context.getHistoryEntryId();
-    	return rowMapper(columnIndex, historyEntryId, reconConfig, identifierSpace);
+        int columnIndex = state.getColumnModel().getColumnIndexByName(columnName);
+        if (columnIndex == -1) {
+            throw new ColumnNotFoundException(columnName);
+        }
+        long historyEntryId = context.getHistoryEntryId();
+        return rowMapper(columnIndex, historyEntryId, reconConfig, identifierSpace);
     }
-    
+
     protected static RowInRecordMapper rowMapper(int columnIndex, long historyEntryId, ReconConfig reconConfig, String identifierSpace) {
-    	return new RowInRecordMapper() {
+        return new RowInRecordMapper() {
 
-			private static final long serialVersionUID = -8366546671709391352L;
+            private static final long serialVersionUID = -8366546671709391352L;
 
-			@Override
-			public Row call(Record record, long rowId, Row row) {
-				Cell cell = row.getCell(columnIndex);
+            @Override
+            public Row call(Record record, long rowId, Row row) {
+                Cell cell = row.getCell(columnIndex);
                 if (cell != null && ExpressionUtils.isNonBlankData(cell.value)) {
                     String id = cell.value.toString();
-                    if(id.startsWith(identifierSpace)) {
-                    	id = id.substring(identifierSpace.length());
+                    if (id.startsWith(identifierSpace)) {
+                        id = id.substring(identifierSpace.length());
                     }
-                    
+
                     ReconCandidate match = new ReconCandidate(id, id, new String[0], 100);
                     Recon newRecon = reconConfig.createNewRecon(historyEntryId)
-                    		.withMatch(match)
-                    		.withCandidates(ImmutableList.of(match))
-                    		.withMatchRank(-1)
-                    		.withJudgment(Judgment.Matched)
-                    		.withJudgmentAction("mass");
-                    
+                            .withMatch(match)
+                            .withCandidates(ImmutableList.of(match))
+                            .withMatchRank(-1)
+                            .withJudgment(Judgment.Matched)
+                            .withJudgmentAction("mass");
+
                     Cell newCell = new Cell(
-                        cell.value,
-                        newRecon
-                    );
-                    
+                            cell.value,
+                            newRecon);
+
                     return row.withCell(columnIndex, newCell);
                 }
                 return row;
-			}
-    		
-    	};
+            }
+
+        };
     }
-    
-	@Override
-	protected GridState postTransform(GridState newState, ChangeContext context) {
-		return LazyReconStats.updateReconStats(newState, columnName);
-	}
-	
-	@Override
-	protected ColumnModel getNewColumnModel(GridState newState, ChangeContext context) throws ColumnNotFoundException {
-		int columnIndex = newState.getColumnModel().getColumnIndexByName(columnName);
-		if (columnIndex == -1) {
-			throw new ColumnNotFoundException(columnName);
-		}
-		return newState.getColumnModel().withReconConfig(columnIndex, reconConfig);
-	}
+
+    @Override
+    protected GridState postTransform(GridState newState, ChangeContext context) {
+        return LazyReconStats.updateReconStats(newState, columnName);
+    }
+
+    @Override
+    protected ColumnModel getNewColumnModel(GridState newState, ChangeContext context) throws ColumnNotFoundException {
+        int columnIndex = newState.getColumnModel().getColumnIndexByName(columnName);
+        if (columnIndex == -1) {
+            throw new ColumnNotFoundException(columnName);
+        }
+        return newState.getColumnModel().withReconConfig(columnIndex, reconConfig);
+    }
 
 }

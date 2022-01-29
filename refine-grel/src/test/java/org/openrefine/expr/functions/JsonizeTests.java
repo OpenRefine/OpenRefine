@@ -24,6 +24,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  ******************************************************************************/
+
 package org.openrefine.expr.functions;
 
 import static org.testng.Assert.assertEquals;
@@ -44,12 +45,11 @@ public class JsonizeTests extends FunctionTestBase {
         Object[] emptyArray = {};
         assertEquals(invoke("jsonize", (Object) emptyArray), "[ ]");
 
-        Object[] objArray = {4, "hello", true, 0.01, null};
+        Object[] objArray = { 4, "hello", true, 0.01, null };
         assertEquals(invoke("jsonize", (Object) objArray), "[ 4, \"hello\", true, 0.01, null ]");
 
-        Object[][] multiArray = {{"OpenRefine", 12}, {13, 4.6}, {"data", "mining"}};
+        Object[][] multiArray = { { "OpenRefine", 12 }, { 13, 4.6 }, { "data", "mining" } };
         assertEquals(invoke("jsonize", (Object) multiArray), "[ [ \"OpenRefine\", 12 ], [ 13, 4.6 ], [ \"data\", \"mining\" ] ]");
 
     }
 }
-

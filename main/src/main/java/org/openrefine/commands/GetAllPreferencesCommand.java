@@ -46,28 +46,26 @@ import org.openrefine.model.Project;
 import org.openrefine.preference.PreferenceStore;
 
 public class GetAllPreferencesCommand extends Command {
-	/**
-	 * The command uses POST (not sure why?) but does not actually modify any state
-	 * so it does not require CSRF.
-	 */
+
+    /**
+     * The command uses POST (not sure why?) but does not actually modify any state so it does not require CSRF.
+     */
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        
+
         Project project = request.getParameter("project") != null ? getProject(request) : null;
-        PreferenceStore ps = project != null ? 
-                project.getMetadata().getPreferenceStore() : 
-                ProjectManager.singleton.getPreferenceStore();
-                
+        PreferenceStore ps = project != null ? project.getMetadata().getPreferenceStore() : ProjectManager.singleton.getPreferenceStore();
+
         Map<String, Object> map = new HashMap<>();
-        
+
         for (String key : ps.getKeys()) {
             Object pref = ps.get(key);
             if (pref == null || pref instanceof String || pref instanceof Number || pref instanceof Boolean) {
                 map.put(key, pref);
             }
         }
-        
+
         respondJSON(response, map);
     }
 

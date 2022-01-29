@@ -43,15 +43,12 @@ import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonSubTypes.Type;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
-@JsonTypeInfo(
-        use=JsonTypeInfo.Id.NAME,
-        include=JsonTypeInfo.As.PROPERTY,
-        property="valueType")
+@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "valueType")
 @JsonSubTypes({
-    @Type(value = BooleanCriterion.class, name = "boolean"),
-    @Type(value = DateCriterion.class, name = "date"),
-    @Type(value = NumberCriterion.class, name = "number"),
-    @Type(value = StringCriterion.class, name = "string") })
+        @Type(value = BooleanCriterion.class, name = "boolean"),
+        @Type(value = DateCriterion.class, name = "date"),
+        @Type(value = NumberCriterion.class, name = "number"),
+        @Type(value = StringCriterion.class, name = "string") })
 abstract public class Criterion implements Serializable {
 
     private static final long serialVersionUID = 5338294713927055245L;
@@ -72,25 +69,23 @@ abstract public class Criterion implements Serializable {
 
     @JsonIgnore // already added by @JsonTypeInfo
     public abstract String getValueType();
-    
+
     /**
-     * Instantiates the criterion on a particular column model, making it
-     * possible to compare two rows together (since we now have access 
-     * to the column index of the target column).
+     * Instantiates the criterion on a particular column model, making it possible to compare two rows together (since
+     * we now have access to the column index of the target column).
      */
     abstract public KeyMaker createKeyMaker(ColumnModel columnModel);
-
 
     abstract public class KeyMaker implements Serializable {
 
         private static final long serialVersionUID = -3460406296935132526L;
-        
+
         protected final int _columnIndex;
-        
+
         public KeyMaker(ColumnModel columnModel, String columnName) {
             _columnIndex = columnModel.getColumnIndexByName(columnName);
         }
-        
+
         abstract public int compareKeys(Serializable key1, Serializable key2);
 
         abstract protected Serializable makeKey(Serializable value);

@@ -51,26 +51,26 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 public class ApplyOperationsCommand extends Command {
-    
+
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-    	if(!hasValidCSRFToken(request)) {
-    		respondCSRFError(response);
-    		return;
-    	}
-        
+        if (!hasValidCSRFToken(request)) {
+            respondCSRFError(response);
+            return;
+        }
+
         Project project = getProject(request);
         String jsonString = request.getParameter("operations");
         try {
             ArrayNode a = ParsingUtilities.evaluateJsonStringToArrayNode(jsonString);
             int count = a.size();
             for (int i = 0; i < count; i++) {
-            	if (a.get(i) instanceof ObjectNode) {
-	                ObjectNode obj = (ObjectNode) a.get(i);
-	                
-	                reconstructOperation(project, obj);
-            	}
+                if (a.get(i) instanceof ObjectNode) {
+                    ObjectNode obj = (ObjectNode) a.get(i);
+
+                    reconstructOperation(project, obj);
+                }
             }
 
             if (project.getProcessManager().hasPending()) {
@@ -82,13 +82,13 @@ public class ApplyOperationsCommand extends Command {
             respondException(response, e);
         }
     }
-    
+
     protected void reconstructOperation(Project project, ObjectNode obj) throws IOException {
         Operation operation = ParsingUtilities.mapper.convertValue(obj, Operation.class);
         if (operation != null && !(operation instanceof UnknownOperation)) {
             try {
                 Process process = operation.createProcess(project);
-                
+
                 project.getProcessManager().queueProcess(process);
             } catch (Exception e) {
                 e.printStackTrace();

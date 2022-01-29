@@ -1,3 +1,4 @@
+
 package org.openrefine.model.rdd;
 
 import org.apache.spark.Partition;
@@ -12,19 +13,17 @@ import scala.collection.Iterator;
 import scala.reflect.ClassTag;
 
 /**
- * A RDD obtained by adding a specified partitioner on an existing RDD.
- * This does not repartition the RDD using the partitioner: it just assumes
- * that the RDD is already appropriately partitioned.
+ * A RDD obtained by adding a specified partitioner on an existing RDD. This does not repartition the RDD using the
+ * partitioner: it just assumes that the RDD is already appropriately partitioned.
  * 
  * Workaround for https://issues.apache.org/jira/browse/SPARK-1061
  * 
- * @todo add the ability to verify that the RDD is indeed correctly partitioned
- * when iterating on it.
+ * @todo add the ability to verify that the RDD is indeed correctly partitioned when iterating on it.
  * 
  * @author Antonin Delpeuch
  */
-public class PartitionedRDD <K extends Comparable<K>, V> extends RDD<Tuple2<K, V>> {
-    
+public class PartitionedRDD<K extends Comparable<K>, V> extends RDD<Tuple2<K, V>> {
+
     private static final long serialVersionUID = 5082128736394708076L;
 
     protected final Partitioner partitioner;
@@ -32,37 +31,39 @@ public class PartitionedRDD <K extends Comparable<K>, V> extends RDD<Tuple2<K, V
     /**
      * Creates a new RDD depending on the provided RDD, and applying the given partitioner.
      * 
-     * @param pairRDD the RDD assumed to be sorted using the partitioner
+     * @param pairRDD
+     *            the RDD assumed to be sorted using the partitioner
      * @param partitioner
      */
-    public PartitionedRDD(JavaPairRDD<K,V> pairRDD, Partitioner partitioner) {
+    public PartitionedRDD(JavaPairRDD<K, V> pairRDD, Partitioner partitioner) {
         this(pairRDD.rdd(), partitioner, pairRDD.classTag());
     }
 
     /**
      * Creates a new RDD depending on the provided RDD, and applying the given partitioner.
      * 
-     * @param pairRDD the RDD assumed to be sorted using the partitioner
+     * @param pairRDD
+     *            the RDD assumed to be sorted using the partitioner
      * @param partitioner
      * @param tupleClassTag
      */
-    public PartitionedRDD(RDD<Tuple2<K,V>> parent, Partitioner partitioner, ClassTag<Tuple2<K, V>> tupleClassTag) {
+    public PartitionedRDD(RDD<Tuple2<K, V>> parent, Partitioner partitioner, ClassTag<Tuple2<K, V>> tupleClassTag) {
         super(parent, tupleClassTag);
         this.partitioner = partitioner;
     }
-    
+
     /**
      * Convert to Java API
      */
-    public JavaPairRDD<K,V> asPairRDD(ClassTag<K> keyClassTag, ClassTag<V> valueClassTag) {
-        return new JavaPairRDD<K,V>(this, keyClassTag, valueClassTag);
+    public JavaPairRDD<K, V> asPairRDD(ClassTag<K> keyClassTag, ClassTag<V> valueClassTag) {
+        return new JavaPairRDD<K, V>(this, keyClassTag, valueClassTag);
     }
-    
+
     @Override
     public Option<Partitioner> partitioner() {
         return Option.apply(partitioner);
     }
-    
+
     @Override
     public Iterator<Tuple2<K, V>> compute(Partition partition, TaskContext context) {
         return firstParent(elementClassTag()).compute(partition, context);

@@ -24,6 +24,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  ******************************************************************************/
+
 package org.openrefine.history;
 
 import static org.mockito.Mockito.mock;
@@ -40,22 +41,22 @@ import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
 public class HistoryEntryTests {
-	
+
     public static final String fullJson = "{"
             + "\"id\":1533633623158,"
             + "\"description\":\"Create new column uri based on column country by filling 269 rows with grel:\\\"https://www.wikidata.org/wiki/\\\"+cell.recon.match.id\","
             + "\"time\":\"2018-08-07T09:06:37Z\","
             + "\"change\" : {\n"
             + "  \"dagSlice\" : {\n"
-            + "    \"columnModel\" : {\n" 
-            + "      \"columns\" : [ {\n" 
+            + "    \"columnModel\" : {\n"
+            + "      \"columns\" : [ {\n"
             + "        \"name\" : \"foo\",\n"
-            + "        \"originalName\" : \"foo\"\n" 
+            + "        \"originalName\" : \"foo\"\n"
             + "      } ],\n"
-            + "      \"keyCellIndex\" : 0,\n" 
+            + "      \"keyCellIndex\" : 0,\n"
             + "      \"keyColumnName\" : \"foo\"\n"
             + "    },\n"
-            + "   \"type\" : \"opaque\"\n" 
+            + "   \"type\" : \"opaque\"\n"
             + "  },\n"
             + "  \"type\" : \"org.openrefine.history.ChangeStub\"\n"
             + "},\n"
@@ -63,32 +64,31 @@ public class HistoryEntryTests {
             + "   \"description\":\"some description\"}"
             + "}";
 
-    
-	public static final String unknownOperationJson = "{\n" + 
-	        "  \"change\" : {\n" + 
-	        "    \"dagSlice\" : {\n" + 
-	        "      \"columnModel\" : {\n" + 
-	        "        \"columns\" : [ {\n" + 
-	        "          \"name\" : \"foo\",\n" + 
-	        "          \"originalName\" : \"foo\"\n" + 
-	        "        } ],\n" + 
-	        "        \"keyCellIndex\" : 0,\n" + 
-	        "        \"keyColumnName\" : \"foo\"\n" + 
-	        "      },\n" + 
-	        "      \"type\" : \"opaque\"\n" + 
-	        "    },\n" + 
-	        "    \"type\" : \"org.openrefine.history.ChangeStub\"\n" + 
-	        "  },\n" + 
-	        "  \"description\" : \"some mysterious operation\",\n" + 
-	        "  \"id\" : 1533633623158,\n" + 
-	        "  \"operation\" : {\n" + 
-	        "    \"description\" : \"some mysterious operation\",\n" + 
-	        "    \"op\" : \"someextension/unknown-operation\",\n" + 
-	        "    \"some_parameter\" : 234\n" + 
-	        "  },\n" + 
-	        "  \"time\" : \"2018-08-07T09:06:37Z\"\n" + 
-	        "}";
-    
+    public static final String unknownOperationJson = "{\n" +
+            "  \"change\" : {\n" +
+            "    \"dagSlice\" : {\n" +
+            "      \"columnModel\" : {\n" +
+            "        \"columns\" : [ {\n" +
+            "          \"name\" : \"foo\",\n" +
+            "          \"originalName\" : \"foo\"\n" +
+            "        } ],\n" +
+            "        \"keyCellIndex\" : 0,\n" +
+            "        \"keyColumnName\" : \"foo\"\n" +
+            "      },\n" +
+            "      \"type\" : \"opaque\"\n" +
+            "    },\n" +
+            "    \"type\" : \"org.openrefine.history.ChangeStub\"\n" +
+            "  },\n" +
+            "  \"description\" : \"some mysterious operation\",\n" +
+            "  \"id\" : 1533633623158,\n" +
+            "  \"operation\" : {\n" +
+            "    \"description\" : \"some mysterious operation\",\n" +
+            "    \"op\" : \"someextension/unknown-operation\",\n" +
+            "    \"some_parameter\" : 234\n" +
+            "  },\n" +
+            "  \"time\" : \"2018-08-07T09:06:37Z\"\n" +
+            "}";
+
     @BeforeTest
     public void register() {
         OperationRegistry.registerOperation("core", "my-operation", OperationStub.class);
@@ -102,23 +102,23 @@ public class HistoryEntryTests {
                 + "\"time\":\"2018-08-07T14:18:29Z\"}";
         TestUtils.isSerializedTo(HistoryEntry.load(json), json, ParsingUtilities.defaultWriter);
     }
-    
+
     @Test
     public void serializeHistoryEntryWithOperation() throws Exception {
         String jsonSimple = "{"
                 + "\"id\":1533633623158,"
                 + "\"description\":\"Create new column uri based on column country by filling 269 rows with grel:\\\"https://www.wikidata.org/wiki/\\\"+cell.recon.match.id\","
                 + "\"time\":\"2018-08-07T09:06:37Z\"}";
-        
+
         HistoryEntry historyEntry = HistoryEntry.load(fullJson);
         TestUtils.isSerializedTo(historyEntry, jsonSimple, ParsingUtilities.defaultWriter);
-	    TestUtils.isSerializedTo(historyEntry, fullJson, ParsingUtilities.saveWriter);
+        TestUtils.isSerializedTo(historyEntry, fullJson, ParsingUtilities.saveWriter);
     }
-    
+
     @Test
     public void deserializeUnknownOperation() throws IOException {
-    	// Unknown operations are serialized back as they were parsed
-    	HistoryEntry entry = HistoryEntry.load(unknownOperationJson);
-		TestUtils.isSerializedTo(entry, unknownOperationJson, ParsingUtilities.saveWriter);
+        // Unknown operations are serialized back as they were parsed
+        HistoryEntry entry = HistoryEntry.load(unknownOperationJson);
+        TestUtils.isSerializedTo(entry, unknownOperationJson, ParsingUtilities.saveWriter);
     }
 }

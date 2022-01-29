@@ -1,3 +1,4 @@
+
 package org.openrefine.model.local;
 
 import java.util.ArrayList;
@@ -13,7 +14,7 @@ import java.util.stream.Stream;
  * @param <T>
  */
 public class UnionPLL<T> extends PLL<T> {
-    
+
     private final PLL<T> first;
     private final PLL<T> second;
     private final List<Partition> partitions;
@@ -21,8 +22,10 @@ public class UnionPLL<T> extends PLL<T> {
     /**
      * Constructor.
      * 
-     * @param first the PLL whose elements should come first
-     * @param second the PLL whose elements should come last
+     * @param first
+     *            the PLL whose elements should come first
+     * @param second
+     *            the PLL whose elements should come last
      */
     public UnionPLL(PLL<T> first, PLL<T> second) {
         super(first.getContext());
@@ -59,13 +62,13 @@ public class UnionPLL<T> extends PLL<T> {
     public List<? extends Partition> getPartitions() {
         return partitions;
     }
-    
+
     protected static class UnionPartition implements Partition {
-        
+
         protected final int index;
         protected final boolean left;
         protected final Partition parent;
-        
+
         protected UnionPartition(int index, boolean left, Partition parent) {
             this.index = index;
             this.left = left;
@@ -81,7 +84,7 @@ public class UnionPLL<T> extends PLL<T> {
         public Partition getParent() {
             return parent;
         }
-        
+
     }
 
 }

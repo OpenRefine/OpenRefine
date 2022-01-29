@@ -41,20 +41,21 @@ import org.openrefine.operations.Operation;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class QuickHistoryEntryProcess extends Process {
+
     final protected History _history;
     final protected String _briefDescription;
     final protected Operation _operation;
     final protected Change _change;
     protected HistoryEntry _historyEntry;
     boolean _done = false;
-    
+
     public QuickHistoryEntryProcess(History history, String briefDescription, Operation operation, Change change) {
         _history = history;
         _operation = operation;
         _briefDescription = briefDescription;
         _change = change;
     }
-    
+
     @Override
     public void cancel() {
         throw new RuntimeException("Not a long-running process");
@@ -65,7 +66,7 @@ public class QuickHistoryEntryProcess extends Process {
     public boolean isImmediate() {
         return true;
     }
-    
+
     @Override
     public boolean isRunning() {
         throw new RuntimeException("Not a long-running process");
@@ -78,7 +79,7 @@ public class QuickHistoryEntryProcess extends Process {
         }
         _history.addEntry(_historyEntry);
         _done = true;
-        
+
         return _historyEntry;
     }
 
@@ -86,12 +87,12 @@ public class QuickHistoryEntryProcess extends Process {
     public void startPerforming(ProcessManager manager) {
         throw new RuntimeException("Not a long-running process");
     }
-    
+
     @JsonProperty("status")
     public String getStatus() {
         return _done ? "done" : "pending";
     }
-    
+
     @JsonProperty("description")
     public String getDescription() {
         return _historyEntry != null ? _historyEntry.getDescription() : _briefDescription;

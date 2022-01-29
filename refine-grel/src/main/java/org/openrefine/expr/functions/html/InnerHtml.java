@@ -42,6 +42,7 @@ import org.openrefine.grel.PureFunction;
 import org.openrefine.expr.EvalError;
 
 public class InnerHtml extends PureFunction {
+
     private static final long serialVersionUID = 7062946433356613L;
 
     @Override
@@ -50,27 +51,27 @@ public class InnerHtml extends PureFunction {
             Object o1 = args[0];
             if (o1 != null && o1 instanceof Element) {
                 return new InnerXml().call(args, "html");
-            }else{
-                return new EvalError(ControlFunctionRegistry.getFunctionName(this) + "() cannot work with this '" + new Type().call(args) + "'. The first parameter is not an HTML Element.  Please first use parseHtml(string) and select(query) prior to using this function");
+            } else {
+                return new EvalError(ControlFunctionRegistry.getFunctionName(this) + "() cannot work with this '" + new Type().call(args)
+                        + "'. The first parameter is not an HTML Element.  Please first use parseHtml(string) and select(query) prior to using this function");
             }
         }
-        return new EvalError(ControlFunctionRegistry.getFunctionName(this) + "() cannot work with this '" + new Type().call(args) + "' and expects a single String as an argument");
+        return new EvalError(ControlFunctionRegistry.getFunctionName(this) + "() cannot work with this '" + new Type().call(args)
+                + "' and expects a single String as an argument");
     }
-
 
     @Override
     public String getDescription() {
         return "Returns the inner HTML of an HTML element. This will include text and children elements within the element selected. Use it in conjunction with parseHtml() and select() to provide an element.";
     }
-    
+
     @Override
     public String getParams() {
         return "element e";
     }
-    
+
     @Override
     public String getReturns() {
         return "string innerHtml";
     }
 }
-

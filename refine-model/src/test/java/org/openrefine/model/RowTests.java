@@ -66,7 +66,7 @@ public class RowTests {
 
     @Test
     public void serializeRowTest() throws Exception {
-        
+
         String reconJson = "{\"id\":1533649346002675326,"
                 + "\"judgmentHistoryEntry\":1530278634724,"
                 + "\"service\":\"https://tools.wmflabs.org/openrefine-wikidata/en/api\","
@@ -76,11 +76,11 @@ public class RowTests {
                 + "\"m\":{\"id\":\"Q551479\",\"name\":\"La Monnaie\",\"score\":100,\"types\":[\"Q153562\"]},"
                 + "\"c\":[{\"id\":\"Q551479\",\"name\":\"La Monnaie\",\"score\":100,\"types\":[\"Q153562\"]}],"
                 + "\"f\":[false,false,34,0],\"judgmentAction\":\"auto\",\"matchRank\":0}";
-        
+
         String json = "{\"flagged\":false,"
                 + "\"starred\":false,"
                 + "\"cells\":["
-                + "    {\"v\":\"http://www.wikidata.org/entity/Q41522540\",\"r\":"+reconJson+"},"
+                + "    {\"v\":\"http://www.wikidata.org/entity/Q41522540\",\"r\":" + reconJson + "},"
                 + "    {\"v\":\"0000-0002-5022-0488\"},"
                 + "    null,"
                 + "    {\"v\":\"\"}"
@@ -92,11 +92,11 @@ public class RowTests {
     @Test
     public void toStringTest() {
         Row row = new Row(Arrays.asList(
-            new Cell(1, null),
-            new Cell(2, null),
-            new Cell(3, null),
-            new Cell(4, null),
-            new Cell(5, null)));
+                new Cell(1, null),
+                new Cell(2, null),
+                new Cell(3, null),
+                new Cell(4, null),
+                new Cell(5, null)));
         Assert.assertEquals(row.toString(), "1,2,3,4,5,");
     }
 
@@ -123,7 +123,7 @@ public class RowTests {
         Row row = new Row(Arrays.asList(new Cell("hello", null)), false, true);
         Assert.assertTrue((Boolean) row.getField("starred"));
     }
-    
+
     @Test
     public void withFlagged() {
         Row row = new Row(Arrays.asList(new Cell("hello", null)), false, false);
@@ -135,20 +135,20 @@ public class RowTests {
         Row row = new Row(Arrays.asList(new Cell("hello", null)), false, false);
         Assert.assertTrue(row.withStarred(true).starred);
     }
-    
+
     @Test
     public void testPadWithNull() {
         Row row = new Row(Arrays.asList(new Cell("foo", null), new Cell("bar", null)));
-        
+
         Assert.assertEquals(row.padWithNull(2), row);
         Assert.assertEquals(row.padWithNull(4),
                 new Row(Arrays.asList(new Cell("foo", null), new Cell("bar", null), null, null)));
     }
-    
+
     @Test(expectedExceptions = IllegalArgumentException.class)
     public void testPadWithNullTooShort() {
         Row row = new Row(Arrays.asList(new Cell("foo", null), new Cell("bar", null)));
-        
+
         row.padWithNull(1);
     }
 }

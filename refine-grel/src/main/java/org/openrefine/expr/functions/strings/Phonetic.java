@@ -75,7 +75,7 @@ public class Phonetic extends PureFunction {
             } else {
                 return new EvalError(ControlFunctionRegistry.getFunctionName(this)
                         + " expects a string for the second argument, the phonetic encoding to use.");
-            }     
+            }
         }
         if (args.length < 3) {
             if ("doublemetaphone".equalsIgnoreCase(encoding)) {
@@ -89,26 +89,26 @@ public class Phonetic extends PureFunction {
             } else if ("cologne".equalsIgnoreCase(encoding)) {
                 return cologne.key(str);
             } else {
-                return new EvalError(ControlFunctionRegistry.getFunctionName(this) 
+                return new EvalError(ControlFunctionRegistry.getFunctionName(this)
                         + " doesn't know how to handle the '"
                         + encoding + "' encoding.");
             }
         } else {
             return new EvalError(ControlFunctionRegistry.getFunctionName(this)
-                    + " expects one or two string arguments");   
+                    + " expects one or two string arguments");
         }
     }
-    
+
     @Override
     public String getDescription() {
         return "Returns a phonetic encoding of a string, based on an available phonetic algorithm. Can be one of the following supported phonetic methods: metaphone, doublemetaphone, metaphone3, soundex, cologne. Defaults to 'metaphone3'.";
     }
-    
+
     @Override
     public String getParams() {
         return "string s, string encoding (optional, defaults to 'metaphone3')";
     }
-    
+
     @Override
     public String getReturns() {
         return "string";

@@ -40,17 +40,15 @@ import java.util.Map;
 
 public abstract class OperationRegistry {
 
-    static final public Map<String, List<Class<? extends Operation>>> s_opNameToClass =
-        new HashMap<String, List<Class<? extends Operation>>>();
-    
-    static final public Map<Class<? extends Operation>, String> s_opClassToName =
-        new HashMap<Class<? extends Operation>, String>();
-    
+    static final public Map<String, List<Class<? extends Operation>>> s_opNameToClass = new HashMap<String, List<Class<? extends Operation>>>();
+
+    static final public Map<Class<? extends Operation>, String> s_opClassToName = new HashMap<Class<? extends Operation>, String>();
+
     static public void registerOperation(String moduleName, String name, Class<? extends Operation> klass) {
         String key = moduleName + "/" + name;
-        
+
         s_opClassToName.put(klass, key);
-        
+
         List<Class<? extends Operation>> classes = s_opNameToClass.get(key);
         if (classes == null) {
             classes = new LinkedList<Class<? extends Operation>>();
@@ -58,7 +56,7 @@ public abstract class OperationRegistry {
         }
         classes.add(klass);
     }
-    
+
     static public Class<? extends Operation> resolveOperationId(String op) {
         if (!op.contains("/")) {
             op = "core/" + op; // backward compatible

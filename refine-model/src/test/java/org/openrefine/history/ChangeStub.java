@@ -1,3 +1,4 @@
+
 package org.openrefine.history;
 
 import java.util.Arrays;
@@ -12,10 +13,10 @@ import org.openrefine.model.changes.ChangeContext;
 
 public class ChangeStub implements Change {
 
-	@Override
-	public GridState apply(GridState projectState, ChangeContext context) {
-		return projectState;
-	}
+    @Override
+    public GridState apply(GridState projectState, ChangeContext context) {
+        return projectState;
+    }
 
     @Override
     public boolean isImmediate() {

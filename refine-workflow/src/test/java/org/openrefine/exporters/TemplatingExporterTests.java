@@ -53,6 +53,7 @@ import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
+
 public class TemplatingExporterTests extends RefineTest {
 
     private static final String TEST_PROJECT_NAME = "templating exporter test project";
@@ -69,18 +70,18 @@ public class TemplatingExporterTests extends RefineTest {
         logger = LoggerFactory.getLogger(this.getClass());
     }
 
-    //dependencies
+    // dependencies
     StringWriter writer;
     GridState grid;
     ProjectMetadata projectMetadata;
     Engine engine;
     Properties options;
 
-    //System Under Test
+    // System Under Test
     WriterExporter SUT;
 
     @BeforeMethod
-    public void SetUp(){
+    public void SetUp() {
         SUT = new TemplatingExporter();
         projectMetadata = new ProjectMetadata();
         projectMetadata.setName(TEST_PROJECT_NAME);
@@ -89,17 +90,18 @@ public class TemplatingExporterTests extends RefineTest {
     }
 
     @AfterMethod
-    public void TearDown(){
+    public void TearDown() {
         SUT = null;
         writer = null;
         grid = null;
         engine = null;
         options = null;
     }
+
     @Test
-    public void exportEmptyTemplate(){
-    	grid = createGrid(new String[] {"foo"}, new Serializable[][] {});
-    	engine = new Engine(grid, EngineConfig.ALL_ROWS);
+    public void exportEmptyTemplate() {
+        grid = createGrid(new String[] { "foo" }, new Serializable[][] {});
+        engine = new Engine(grid, EngineConfig.ALL_ROWS);
 
         when(options.getProperty("template")).thenReturn("a template that should never get used");
         when(options.getProperty("prefix")).thenReturn(prefix);
@@ -114,15 +116,15 @@ public class TemplatingExporterTests extends RefineTest {
 
         Assert.assertEquals(writer.toString(), prefix + suffix);
     }
-    
+
     @Test
     public void exportSimpleTemplate() {
-    	grid = createGrid(new String[] {"column0", "column1"},
-    			new Serializable[][] {
-    		{"row0cell0", "row0cell1"},
-    		{"row1cell0", "row1cell1"}
-    	});
-    	engine = new Engine(grid, EngineConfig.ALL_ROWS);
+        grid = createGrid(new String[] { "column0", "column1" },
+                new Serializable[][] {
+                        { "row0cell0", "row0cell1" },
+                        { "row1cell0", "row1cell1" }
+                });
+        engine = new Engine(grid, EngineConfig.ALL_ROWS);
 
         String template = rowPrefix + "${column0}" + cellSeparator + "${column1}";
 
@@ -137,25 +139,25 @@ public class TemplatingExporterTests extends RefineTest {
             Assert.fail();
         }
 
-        Assert.assertEquals(writer.toString(), 
-                prefix 
-                + rowPrefix + "row0cell0" + cellSeparator + "row0cell1" + rowSeparator
-                + rowPrefix + "row1cell0" + cellSeparator + "row1cell1" 
-                + suffix);
+        Assert.assertEquals(writer.toString(),
+                prefix
+                        + rowPrefix + "row0cell0" + cellSeparator + "row0cell1" + rowSeparator
+                        + rowPrefix + "row1cell0" + cellSeparator + "row1cell1"
+                        + suffix);
     }
 
-
     @Test()
-    public void exportTemplateWithEmptyCells(){
-    	grid = createGrid(new String[] {"column0", "column1", "column2"},
-    			new Serializable[][] {
-    		{"row0cell0", "row0cell1", "row0cell2"},
-    		{"row1cell0", null, "row1cell2"},
-    		{null, "row2cell1", "row2cell2"}
-    	});
-    	engine = new Engine(grid, EngineConfig.ALL_ROWS);
-    	
-        when(options.getProperty("template")).thenReturn(rowPrefix + "${column0}" + cellSeparator + "${column1}" + cellSeparator + "${column2}");
+    public void exportTemplateWithEmptyCells() {
+        grid = createGrid(new String[] { "column0", "column1", "column2" },
+                new Serializable[][] {
+                        { "row0cell0", "row0cell1", "row0cell2" },
+                        { "row1cell0", null, "row1cell2" },
+                        { null, "row2cell1", "row2cell2" }
+                });
+        engine = new Engine(grid, EngineConfig.ALL_ROWS);
+
+        when(options.getProperty("template"))
+                .thenReturn(rowPrefix + "${column0}" + cellSeparator + "${column1}" + cellSeparator + "${column2}");
         when(options.getProperty("prefix")).thenReturn(prefix);
         when(options.getProperty("suffix")).thenReturn(suffix);
         when(options.getProperty("separator")).thenReturn(rowSeparator);
@@ -167,27 +169,28 @@ public class TemplatingExporterTests extends RefineTest {
         }
 
         // Template exporter returns null for empty cells
-        Assert.assertEquals(writer.toString(), 
-                prefix 
-                + rowPrefix + "row0cell0" + cellSeparator + "row0cell1" + cellSeparator + "row0cell2" + rowSeparator
-                + rowPrefix + "row1cell0" + cellSeparator + "null"    + cellSeparator + "row1cell2" + rowSeparator 
-                + rowPrefix + "null"      + cellSeparator + "row2cell1" + cellSeparator + "row2cell2" 
-                + suffix);
+        Assert.assertEquals(writer.toString(),
+                prefix
+                        + rowPrefix + "row0cell0" + cellSeparator + "row0cell1" + cellSeparator + "row0cell2" + rowSeparator
+                        + rowPrefix + "row1cell0" + cellSeparator + "null" + cellSeparator + "row1cell2" + rowSeparator
+                        + rowPrefix + "null" + cellSeparator + "row2cell1" + cellSeparator + "row2cell2"
+                        + suffix);
 
     }
 
     @Test()
     public void exportTemplateWithLimit() {
-    	grid = createGrid(new String[] {"column0", "column1", "column2"},
-    			new Serializable[][] {
-    		{"row0cell0", "row0cell1", "row0cell2"},
-    		{"row1cell0", "row1cell1", "row1cell2"},
-    		{"row2cell0", "row2cell1", "row2cell2"}
-    	});
-    	engine = new Engine(grid, EngineConfig.ALL_ROWS);
-        
+        grid = createGrid(new String[] { "column0", "column1", "column2" },
+                new Serializable[][] {
+                        { "row0cell0", "row0cell1", "row0cell2" },
+                        { "row1cell0", "row1cell1", "row1cell2" },
+                        { "row2cell0", "row2cell1", "row2cell2" }
+                });
+        engine = new Engine(grid, EngineConfig.ALL_ROWS);
+
         when(options.getProperty("limit")).thenReturn("2"); // optional integer
-        when(options.getProperty("template")).thenReturn(rowPrefix + "${column0}" + cellSeparator + "${column1}" + cellSeparator + "${column2}");
+        when(options.getProperty("template"))
+                .thenReturn(rowPrefix + "${column0}" + cellSeparator + "${column1}" + cellSeparator + "${column2}");
         when(options.getProperty("prefix")).thenReturn(prefix);
         when(options.getProperty("suffix")).thenReturn(suffix);
         when(options.getProperty("separator")).thenReturn(rowSeparator);
@@ -198,12 +201,12 @@ public class TemplatingExporterTests extends RefineTest {
             Assert.fail();
         }
 
-        Assert.assertEquals(writer.toString(), 
-                prefix 
-                + rowPrefix + "row0cell0" + cellSeparator + "row0cell1" + cellSeparator + "row0cell2" + rowSeparator
-                + rowPrefix + "row1cell0" + cellSeparator + "row1cell1" + cellSeparator + "row1cell2"  
-                // third row should be skipped because of limit
-                + suffix);
+        Assert.assertEquals(writer.toString(),
+                prefix
+                        + rowPrefix + "row0cell0" + cellSeparator + "row0cell1" + cellSeparator + "row0cell2" + rowSeparator
+                        + rowPrefix + "row1cell0" + cellSeparator + "row1cell1" + cellSeparator + "row1cell2"
+                        // third row should be skipped because of limit
+                        + suffix);
 
     }
 }

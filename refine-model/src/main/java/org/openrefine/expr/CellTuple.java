@@ -38,20 +38,21 @@ import org.openrefine.model.ColumnModel;
 import org.openrefine.model.Row;
 
 public class CellTuple implements HasFields {
+
     final public ColumnModel columnModel;
     final public Row row;
-    
+
     public CellTuple(ColumnModel columnModel, Row row) {
         this.columnModel = columnModel;
         this.row = row;
     }
-    
+
     @Override
     public Object getField(String name) {
         int columnIndex = columnModel.getColumnIndexByName(name);
         if (columnIndex != -1) {
             Cell cell = row.getCell(columnIndex);
-            
+
             if (cell != null) {
                 return new WrappedCell(name, cell);
             }

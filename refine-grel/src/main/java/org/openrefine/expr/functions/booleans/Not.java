@@ -51,20 +51,19 @@ public class Not extends PureFunction {
     }
 
     public static boolean objectToBoolean(Object o) {
-        return o == null ? false : (
-            (o instanceof Boolean) ? ((Boolean) o).booleanValue() : Boolean.parseBoolean(o.toString()));
+        return o == null ? false : ((o instanceof Boolean) ? ((Boolean) o).booleanValue() : Boolean.parseBoolean(o.toString()));
     }
-    
+
     @Override
     public String getDescription() {
         return "Uses the logical operator NOT on a boolean to output a boolean. For example, not(1 > 7) returns true because 1 > 7 itself is false.";
     }
-    
+
     @Override
     public String getParams() {
         return "boolean b";
     }
-    
+
     @Override
     public String getReturns() {
         return "boolean";

@@ -53,17 +53,17 @@ public class LastIndexOf extends PureFunction {
         }
         return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects 2 strings");
     }
-    
+
     @Override
     public String getDescription() {
         return "Returns the first character index of sub as it last occurs in s; or, returns -1 if s does not contain sub. For example, \"parallel\".lastIndexOf(\"a\") returns 3 (pointing at the second 'a').";
     }
-    
+
     @Override
     public String getParams() {
         return "string s, string sub";
     }
-    
+
     @Override
     public String getReturns() {
         return "number";

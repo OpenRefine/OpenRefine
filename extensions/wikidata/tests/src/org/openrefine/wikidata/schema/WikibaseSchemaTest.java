@@ -21,6 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  ******************************************************************************/
+
 package org.openrefine.wikidata.schema;
 
 import static org.testng.Assert.assertEquals;
@@ -91,10 +92,11 @@ public class WikibaseSchemaTest extends RefineTest {
     @BeforeMethod
     public void setUpProject() {
         grid = this.createGrid(
-        		new String[] { "subject", "inception", "reference" },
-        		new Serializable[][] {
-			{TestingData.makeMatchedCell("Q1377", "University of Ljubljana"), "1919", "http://www.ljubljana-slovenia.com/university-ljubljana" },
-			{TestingData.makeMatchedCell("Q865528", "University of Warwick"), "1965", ""}});
+                new String[] { "subject", "inception", "reference" },
+                new Serializable[][] {
+                        { TestingData.makeMatchedCell("Q1377", "University of Ljubljana"), "1919",
+                                "http://www.ljubljana-slovenia.com/university-ljubljana" },
+                        { TestingData.makeMatchedCell("Q865528", "University of Warwick"), "1965", "" } });
         FacetConfigResolver.registerFacetConfig("core", "text", TextSearchFacetConfig.class);
     }
 
@@ -103,7 +105,8 @@ public class WikibaseSchemaTest extends RefineTest {
             throws IOException {
         String serialized = TestingData.jsonFromFile("schema/history_of_medicine.json");
         WikibaseSchema parsed = WikibaseSchema.reconstruct(serialized);
-        TestUtils.isSerializedTo(parsed, TestingData.jsonFromFile("schema/history_of_medicine_normalized.json").toString(), ParsingUtilities.defaultWriter);
+        TestUtils.isSerializedTo(parsed, TestingData.jsonFromFile("schema/history_of_medicine_normalized.json").toString(),
+                ParsingUtilities.defaultWriter);
     }
 
     @Test
@@ -131,11 +134,11 @@ public class WikibaseSchemaTest extends RefineTest {
         expected.add(update2);
         assertEquals(expected, updates);
     }
-    
+
     @Test(expectedExceptions = IOException.class)
     public void testDeserializeEmpty() throws IOException {
         String schemaJson = "{\"itemDocuments\":[{\"statementGroups\":[{\"statements\":[]}],"
-                +"\"nameDescs\":[]}],\"siteIri\":\"http://www.wikidata.org/entity/\"}";
+                + "\"nameDescs\":[]}],\"siteIri\":\"http://www.wikidata.org/entity/\"}";
         WikibaseSchema.reconstruct(schemaJson);
     }
 
@@ -145,7 +148,7 @@ public class WikibaseSchemaTest extends RefineTest {
         String serialized = TestingData.jsonFromFile("schema/inception.json");
         WikibaseSchema schema = WikibaseSchema.reconstruct(serialized);
         EngineConfig engineConfig = EngineConfig.reconstruct("{\n"
-                + "      \"mode\": \"row-based\",\n" 
+                + "      \"mode\": \"row-based\",\n"
                 + "      \"facets\": [\n"
                 + "        {\n"
                 + "          \"mode\": \"text\",\n"

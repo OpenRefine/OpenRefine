@@ -21,6 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  ******************************************************************************/
+
 package org.openrefine.wikidata.commands;
 
 import static org.mockito.Mockito.when;
@@ -48,8 +49,8 @@ public class SaveWikibaseSchemaCommandTest extends CommandTest {
     @Test
     public void testValidSchema()
             throws ServletException, IOException {
-    	when(request.getParameter("csrf_token")).thenReturn(Command.csrfFactory.getFreshToken());
-    	
+        when(request.getParameter("csrf_token")).thenReturn(Command.csrfFactory.getFreshToken());
+
         String schemaJson = jsonFromFile("schema/inception.json").toString();
         when(request.getParameter("schema")).thenReturn(schemaJson);
 
@@ -57,34 +58,34 @@ public class SaveWikibaseSchemaCommandTest extends CommandTest {
 
         assertTrue(writer.toString().contains("\"ok\""));
     }
-    
+
     @Test
     public void testInvalidSchema() throws ServletException, IOException {
-    	when(request.getParameter("csrf_token")).thenReturn(Command.csrfFactory.getFreshToken());
-    	
+        when(request.getParameter("csrf_token")).thenReturn(Command.csrfFactory.getFreshToken());
+
         String schemaJson = "{\"itemDocuments\":[{\"statementGroups\":[{\"statements\":[]}],"
-                +"\"nameDescs\":[]}],\"siteIri\":\"http://www.wikidata.org/entity/\"}";
-        
+                + "\"nameDescs\":[]}],\"siteIri\":\"http://www.wikidata.org/entity/\"}";
+
         when(request.getParameter("schema")).thenReturn(schemaJson);
         command.doPost(request, response);
-        
+
         assertTrue(writer.toString().contains("\"error\""));
     }
-    
+
     @Test
     public void testCsrfProtection() throws ServletException, IOException {
-    	String schemaJson = jsonFromFile("schema/inception.json").toString();
+        String schemaJson = jsonFromFile("schema/inception.json").toString();
         when(request.getParameter("schema")).thenReturn(schemaJson);
-        
-    	command.doPost(request, response);
-    	TestUtils.assertEqualAsJson("{\"code\":\"error\",\"message\":\"Missing or invalid csrf_token parameter\"}", writer.toString());
+
+        command.doPost(request, response);
+        TestUtils.assertEqualAsJson("{\"code\":\"error\",\"message\":\"Missing or invalid csrf_token parameter\"}", writer.toString());
     }
-    
+
     @Test
     public void testNoSchema()
             throws ServletException, IOException {
-    	when(request.getParameter("csrf_token")).thenReturn(Command.csrfFactory.getFreshToken());
-    	
+        when(request.getParameter("csrf_token")).thenReturn(Command.csrfFactory.getFreshToken());
+
         command.doPost(request, response);
 
         assertEquals(writer.toString(), "{\"code\":\"error\",\"message\":\"No Wikibase schema provided.\"}");

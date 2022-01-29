@@ -50,12 +50,12 @@ import org.openrefine.model.changes.LazyChangeDataStore;
  *
  */
 public class ProjectManagerStub extends ProjectManager {
-	
-	DatamodelRunner runner;
-	
-	public ProjectManagerStub(DatamodelRunner runner) {
-		this.runner = runner;
-	}
+
+    DatamodelRunner runner;
+
+    public ProjectManagerStub(DatamodelRunner runner) {
+        this.runner = runner;
+    }
 
     @Override
     public void deleteProject(long projectID) {
@@ -83,7 +83,7 @@ public class ProjectManagerStub extends ProjectManager {
         // empty
         return null;
     }
-    
+
     @Override
     public void reloadProjectFromWorkspace(long id) throws IOException {
         // empty
@@ -106,9 +106,9 @@ public class ProjectManagerStub extends ProjectManager {
         // empty
     }
 
-    //Overridden to make public for testing
+    // Overridden to make public for testing
     @Override
-    public void saveProjects(boolean allModified){
+    public void saveProjects(boolean allModified) {
         super.saveProjects(allModified);
     }
 

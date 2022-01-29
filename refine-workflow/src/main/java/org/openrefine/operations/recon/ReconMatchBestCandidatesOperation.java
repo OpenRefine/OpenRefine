@@ -52,74 +52,70 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class ReconMatchBestCandidatesOperation extends ImmediateRowMapOperation {
-	
-	private String _columnName;
-	
+
+    private String _columnName;
+
     @JsonCreator
     public ReconMatchBestCandidatesOperation(
-            @JsonProperty("engineConfig")
-            EngineConfig engineConfig,
-            @JsonProperty("columnName")
-            String columnName) {
+            @JsonProperty("engineConfig") EngineConfig engineConfig,
+            @JsonProperty("columnName") String columnName) {
         super(engineConfig);
         _columnName = columnName;
     }
-    
+
     @JsonProperty
     public String getColumnName() {
         return _columnName;
     }
 
     @Override
-	public String getDescription() {
+    public String getDescription() {
         return "Match each cell to its best recon candidate in column " + _columnName;
     }
-	
-	@Override
-	protected GridState postTransform(GridState newState, ChangeContext context) {
-		return LazyReconStats.updateReconStats(newState, _columnName);
-	}
-    
+
+    @Override
+    protected GridState postTransform(GridState newState, ChangeContext context) {
+        return LazyReconStats.updateReconStats(newState, _columnName);
+    }
+
     @Override
     public RowInRecordMapper getPositiveRowMapper(GridState state, ChangeContext context) throws ColumnNotFoundException {
-    	int columnIndex = state.getColumnModel().getColumnIndexByName(_columnName);
-    	if (columnIndex == -1) {
-    		throw new ColumnNotFoundException(_columnName);
-    	}
-    	long historyEntryId = context.getHistoryEntryId();
-    	return rowMapper(columnIndex, historyEntryId);
+        int columnIndex = state.getColumnModel().getColumnIndexByName(_columnName);
+        if (columnIndex == -1) {
+            throw new ColumnNotFoundException(_columnName);
+        }
+        long historyEntryId = context.getHistoryEntryId();
+        return rowMapper(columnIndex, historyEntryId);
     }
-    
+
     protected static RowInRecordMapper rowMapper(int columnIndex, long historyEntryId) {
-    	return new RowInRecordMapper() {
+        return new RowInRecordMapper() {
 
-			private static final long serialVersionUID = -3427425768110168923L;
+            private static final long serialVersionUID = -3427425768110168923L;
 
-			@Override
-			public Row call(Record record, long rowId, Row row) {
-				Cell cell = row.cells.get(columnIndex);
+            @Override
+            public Row call(Record record, long rowId, Row row) {
+                Cell cell = row.cells.get(columnIndex);
                 if (cell != null && cell.recon != null) {
                     ReconCandidate candidate = cell.recon.getBestCandidate();
                     if (candidate != null) {
                         Recon newRecon = cell.recon.dup(historyEntryId)
-                        		.withMatch(candidate)
-                        		.withMatchRank(0)
-                        		.withJudgment(Judgment.Matched)
-                        		.withJudgmentAction("mass");
-                            
+                                .withMatch(candidate)
+                                .withMatchRank(0)
+                                .withJudgment(Judgment.Matched)
+                                .withJudgmentAction("mass");
+
                         Cell newCell = new Cell(
-                            cell.value,
-                            newRecon
-                        );
-                        
+                                cell.value,
+                                newRecon);
+
                         return row.withCell(columnIndex, newCell);
                     }
                 }
                 return row;
-			}
-    		
-    	};
-    }
+            }
 
+        };
+    }
 
 }

@@ -50,7 +50,7 @@ public class Odd extends PureFunction {
         return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects a number");
     }
 
-    public static double roundUpToOdd(double d){
+    public static double roundUpToOdd(double d) {
         double temp = Math.ceil(d);
         return ((temp % 2) == 0) ? temp + 1 : temp;
     }
@@ -59,12 +59,12 @@ public class Odd extends PureFunction {
     public String getDescription() {
         return "Rounds the number up to the nearest odd integer.";
     }
-    
+
     @Override
     public String getParams() {
         return "number n1";
     }
-    
+
     @Override
     public String getReturns() {
         return "number";

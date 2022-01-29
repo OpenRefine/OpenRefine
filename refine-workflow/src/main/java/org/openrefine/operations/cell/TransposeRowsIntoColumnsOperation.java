@@ -56,55 +56,53 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class TransposeRowsIntoColumnsOperation implements Operation {
-    final protected String  _columnName;
-    final protected int     _rowCount;
+
+    final protected String _columnName;
+    final protected int _rowCount;
 
     @JsonCreator
     public TransposeRowsIntoColumnsOperation(
-        @JsonProperty("columnName")
-        String  columnName,
-        @JsonProperty("rowCount")
-        int     rowCount
-    ) {
+            @JsonProperty("columnName") String columnName,
+            @JsonProperty("rowCount") int rowCount) {
         _columnName = columnName;
         _rowCount = rowCount;
     }
-    
+
     @JsonProperty("rowCount")
     public int getRowCount() {
         return _rowCount;
     }
-    
+
     @JsonProperty("columnName")
     public String getColumnName() {
         return _columnName;
     }
 
     @Override
-	public String getDescription() {
+    public String getDescription() {
         return "Transpose every " + _rowCount + " cells in column " + _columnName + " into separate columns";
     }
 
     @Override
     public Change createChange() {
-    	return new TransposeRowsIntoColumnsChange();
+        return new TransposeRowsIntoColumnsChange();
     }
-    
+
     public class TransposeRowsIntoColumnsChange implements Change {
 
-    	@Override
-    	public GridState apply(GridState projectState, ChangeContext context) throws DoesNotApplyException {
+        @Override
+        public GridState apply(GridState projectState, ChangeContext context) throws DoesNotApplyException {
             ColumnModel columnModel = projectState.getColumnModel();
             ColumnModel newColumns = new ColumnModel(Collections.emptyList());
             List<ColumnMetadata> oldColumns = columnModel.getColumns();
-            
+
             int columnIndex = columnModel.getColumnIndexByName(_columnName);
             if (columnIndex == -1) {
-            	throw new DoesNotApplyException(String.format("Column %s could not be found", _columnName));
+                throw new DoesNotApplyException(String.format("Column %s could not be found", _columnName));
             }
             int columnCount = oldColumns.size();
-            
-            for (int i = 0; i < columnCount; i++) {           
+
+            for (int i = 0; i < columnCount; i++) {
                 if (i == columnIndex) {
                     int newIndex = 1;
                     for (int n = 0; n < _rowCount; n++) {
@@ -115,28 +113,28 @@ public class TransposeRowsIntoColumnsOperation implements Operation {
                         newColumns = newColumns.appendUnduplicatedColumn(new ColumnMetadata(columnName));
                     }
                 } else {
-                	newColumns = newColumns.appendUnduplicatedColumn(oldColumns.get(i));
+                    newColumns = newColumns.appendUnduplicatedColumn(oldColumns.get(i));
                 }
             }
-            
+
             int nbNewColumns = newColumns.getColumns().size();
             RowBuilder firstNewRow = null;
             List<RowBuilder> newRows = new ArrayList<>();
             for (IndexedRow indexedRow : projectState.iterateRows(RowFilter.ANY_ROW, SortingConfig.NO_SORTING)) {
-            	long r = indexedRow.getIndex();
-            	int r2 = (int)(r % (long)_rowCount);
-            	
-            	RowBuilder newRow = RowBuilder.create(nbNewColumns);
-            	newRows.add(newRow);
-            	if (r2 == 0) {
-            		firstNewRow = newRow;
-            	}
-                
+                long r = indexedRow.getIndex();
+                int r2 = (int) (r % (long) _rowCount);
+
+                RowBuilder newRow = RowBuilder.create(nbNewColumns);
+                newRows.add(newRow);
+                if (r2 == 0) {
+                    firstNewRow = newRow;
+                }
+
                 Row oldRow = indexedRow.getRow();
-                
+
                 for (int c = 0; c < oldColumns.size(); c++) {
                     Cell cell = oldRow.getCell(c);
-                    
+
                     if (cell != null && cell.value != null) {
                         if (c == columnIndex) {
                             firstNewRow.withCell(columnIndex + r2, cell);
@@ -148,25 +146,25 @@ public class TransposeRowsIntoColumnsOperation implements Operation {
                     }
                 }
             }
-            
+
             List<Row> rows = newRows.stream()
-            		.map(rb -> rb.build(nbNewColumns))
-            		.filter(row -> !row.isEmpty())
-            		.collect(Collectors.toList());
-    		
+                    .map(rb -> rb.build(nbNewColumns))
+                    .filter(row -> !row.isEmpty())
+                    .collect(Collectors.toList());
+
             return projectState.getDatamodelRunner().create(newColumns, rows, projectState.getOverlayModels());
-    	}
+        }
 
-    	@Override
-    	public boolean isImmediate() {
-    		return true;
-    	}
+        @Override
+        public boolean isImmediate() {
+            return true;
+        }
 
-    	@Override
-    	public DagSlice getDagSlice() {
-    		// TODO Auto-generated method stub
-    		return null;
-    	}
+        @Override
+        public DagSlice getDagSlice() {
+            // TODO Auto-generated method stub
+            return null;
+        }
 
     }
 }

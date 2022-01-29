@@ -1,3 +1,4 @@
+
 package org.openrefine.model.rdd;
 
 import java.util.Arrays;
@@ -22,11 +23,11 @@ public class ZippedWithIndexRDDTests extends SparkBasedTest {
                 Arrays.asList("foo"),
                 Arrays.asList("bar", "hello"),
                 Arrays.asList("world", "today")));
-        
+
         JavaPairRDD<Long, String> zipped = new ZippedWithIndexRDD<String>(initial).asPairRDD();
-        
+
         List<Tuple2<Long, String>> result = zipped.collect();
-        
+
         Assert.assertTrue(zipped.partitioner().isPresent(), "The zipped RDD should have a partitioner.");
         @SuppressWarnings("unchecked")
         SortedRDD.SortedPartitioner<Long> partitioner = (SortedPartitioner<Long>) zipped.partitioner().get();
@@ -36,8 +37,7 @@ public class ZippedWithIndexRDDTests extends SparkBasedTest {
                 new Tuple2<Long, String>(1L, "bar"),
                 new Tuple2<Long, String>(2L, "hello"),
                 new Tuple2<Long, String>(3L, "world"),
-                new Tuple2<Long, String>(4L, "today")
-                ));
+                new Tuple2<Long, String>(4L, "today")));
         Assert.assertEquals(zipped.lookup(0L), Arrays.asList("foo"));
         Assert.assertEquals(zipped.lookup(4L), Arrays.asList("today"));
     }

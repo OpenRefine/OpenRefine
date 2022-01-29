@@ -43,24 +43,24 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
- * Interface of GREL controls such as if, forEach, forNonBlank, with. A control can
- * decide which part of the code to execute and can affect the environment bindings.
- * Functions, on the other hand, can't do either.
+ * Interface of GREL controls such as if, forEach, forNonBlank, with. A control can decide which part of the code to
+ * execute and can affect the environment bindings. Functions, on the other hand, can't do either.
  */
 public interface Control extends Serializable {
+
     public Object call(Properties bindings, GrelExpr[] args);
-    
+
     public String checkArguments(GrelExpr[] args);
-    
+
     @JsonProperty("description")
     public String getDescription();
-    
+
     @JsonProperty("params")
     @JsonInclude(Include.NON_EMPTY)
     default public String getParams() {
         return "";
     }
-    
+
     @JsonProperty("returns")
     public String getReturns();
 }

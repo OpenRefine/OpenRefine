@@ -62,31 +62,31 @@ import org.slf4j.LoggerFactory;
 public class GetScatterplotCommand extends Command {
 
     final static Logger logger = LoggerFactory.getLogger("get-scatterplot_command");
-    
+
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        
+
         try {
             long start = System.currentTimeMillis();
-            
+
             Project project = getProject(request);
             Engine engine = getEngine(request, project);
             ScatterplotFacetConfig conf = ParsingUtilities.mapper.readValue(
-            		request.getParameter("plotter"),
-            		ScatterplotFacetConfig.class);
-            
+                    request.getParameter("plotter"),
+                    ScatterplotFacetConfig.class);
+
             response.setHeader("Content-Type", "image/png");
-            
+
             ServletOutputStream sos = null;
-            
+
             try {
                 sos = response.getOutputStream();
                 draw(sos, project, engine, conf);
             } finally {
                 sos.close();
             }
-            
+
             logger.trace("Drawn scatterplot in {} ms", Long.toString(System.currentTimeMillis() - start));
         } catch (Exception e) {
             e.printStackTrace();
@@ -96,7 +96,7 @@ public class GetScatterplotCommand extends Command {
 
     public void draw(OutputStream output, Project project, Engine engine, ScatterplotFacetConfig o) throws IOException {
         GridState grid = project.getCurrentGridState();
-        
+
         // Compute a modified Engine which includes the facet in last position
         EngineConfig origEngineConfig = engine.getConfig();
         int scatterplotFacetPosition = origEngineConfig.getFacetConfigs().size();
@@ -104,24 +104,23 @@ public class GetScatterplotCommand extends Command {
         newFacetConfigs.add(o);
         EngineConfig newEngineConfig = new EngineConfig(newFacetConfigs, engine.getMode());
         Engine newEngine = new Engine(grid, newEngineConfig);
-        
+
         ScatterplotFacetResult scatterplotFacetResult = (ScatterplotFacetResult) newEngine.getFacetResults().get(scatterplotFacetPosition);
         ScatterplotFacetState facetState = scatterplotFacetResult.getFacetState();
-        
+
         if (facetState.getValuesCount() > 0) {
             ScatterplotPainter drawer = new ScatterplotPainter(
-                scatterplotFacetResult, 
-                o.size, o.dim_x, o.dim_y, o.rotation, o.dot,
-                o.getColor(), o.getBaseColor()
-            );
-            
+                    scatterplotFacetResult,
+                    o.size, o.dim_x, o.dim_y, o.rotation, o.dot,
+                    o.getColor(), o.getBaseColor());
+
             drawer.drawPoints(facetState);
-            
+
             ImageIO.write(drawer.getImage(), "png", output);
         } else {
             ImageIO.write(new BufferedImage(1, 1, BufferedImage.TYPE_4BYTE_ABGR), "png", output);
         }
-        
+
     }
-    
+
 }

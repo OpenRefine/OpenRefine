@@ -54,12 +54,12 @@ public class Sin extends PureFunction {
     public String getDescription() {
         return "Returns the trigonometric sine of an angle.";
     }
-    
+
     @Override
     public String getParams() {
         return "number n";
     }
-    
+
     @Override
     public String getReturns() {
         return "number";

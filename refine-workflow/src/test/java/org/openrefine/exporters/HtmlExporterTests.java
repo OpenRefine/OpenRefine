@@ -65,18 +65,18 @@ public class HtmlExporterTests extends RefineTest {
         logger = LoggerFactory.getLogger(this.getClass());
     }
 
-    //dependencies
+    // dependencies
     StringWriter writer;
     Engine engine;
     GridState grid;
     ProjectMetadata projectMetadata;
     Properties options;
 
-    //System Under Test
+    // System Under Test
     WriterExporter SUT;
 
     @BeforeMethod
-    public void SetUp(){
+    public void SetUp() {
         SUT = new HtmlTableExporter();
         projectMetadata = new ProjectMetadata();
         projectMetadata.setName(TEST_PROJECT_NAME);
@@ -85,7 +85,7 @@ public class HtmlExporterTests extends RefineTest {
     }
 
     @AfterMethod
-    public void TearDown(){
+    public void TearDown() {
         SUT = null;
         writer = null;
         grid = null;
@@ -94,13 +94,13 @@ public class HtmlExporterTests extends RefineTest {
     }
 
     @Test
-    public void exportSimpleHtmlTable(){
-    	grid = createGrid(new String[] {"column0", "column1"},
-    			new Serializable[][] {
-    		{"row0cell0", "row0cell1"},
-    		{"row1cell0", "row1cell1"}
-    	});
-    	engine = new Engine(grid, EngineConfig.ALL_ROWS);
+    public void exportSimpleHtmlTable() {
+        grid = createGrid(new String[] { "column0", "column1" },
+                new Serializable[][] {
+                        { "row0cell0", "row0cell1" },
+                        { "row1cell0", "row1cell1" }
+                });
+        engine = new Engine(grid, EngineConfig.ALL_ROWS);
 
         try {
             SUT.export(grid, projectMetadata, options, engine, writer);
@@ -109,8 +109,8 @@ public class HtmlExporterTests extends RefineTest {
         }
 
         Assert.assertEquals(writer.toString(), "<html>\n" +
-                "<head>\n" + "<title>" + TEST_PROJECT_NAME + "</title>\n" + 
-                "<meta charset=\"utf-8\" />\n" + 
+                "<head>\n" + "<title>" + TEST_PROJECT_NAME + "</title>\n" +
+                "<meta charset=\"utf-8\" />\n" +
                 "</head>\n" +
                 "<body>\n" +
                 "<table>\n" +
@@ -119,21 +119,21 @@ public class HtmlExporterTests extends RefineTest {
                 "<tr><td>row1cell0</td><td>row1cell1</td></tr>\n" +
                 "</table>\n" +
                 "</body>\n" +
-        "</html>\n");
-        
+                "</html>\n");
+
     }
 
-    // TODO: This test fails because the HTML table exporter 
-    // apparently doesn't honor the column header option.  Should it?
-    @Test(enabled=false)
+    // TODO: This test fails because the HTML table exporter
+    // apparently doesn't honor the column header option. Should it?
+    @Test(enabled = false)
     public void exportSimpleHtmlTableNoHeader() {
-    	grid = createGrid(new String[] {"column0", "column1"},
-    			new Serializable[][] {
-    		{"row0cell0", "row0cell1"},
-    		{"row1cell0", "row1cell1"}
-    	});
-    	engine = new Engine(grid, EngineConfig.ALL_ROWS);
-    	
+        grid = createGrid(new String[] { "column0", "column1" },
+                new Serializable[][] {
+                        { "row0cell0", "row0cell1" },
+                        { "row1cell0", "row1cell1" }
+                });
+        engine = new Engine(grid, EngineConfig.ALL_ROWS);
+
         when(options.getProperty("printColumnHeader")).thenReturn("false");
         try {
             SUT.export(grid, projectMetadata, options, engine, writer);
@@ -142,8 +142,8 @@ public class HtmlExporterTests extends RefineTest {
         }
 
         Assert.assertEquals(writer.toString(), "<html>\n" +
-                "<head>\n" + "<title>" + TEST_PROJECT_NAME + "</title>\n" + 
-                "<meta charset=\"utf-8\" />\n" + 
+                "<head>\n" + "<title>" + TEST_PROJECT_NAME + "</title>\n" +
+                "<meta charset=\"utf-8\" />\n" +
                 "</head>\n" +
                 "<body>\n" +
                 "<table>\n" +
@@ -152,19 +152,18 @@ public class HtmlExporterTests extends RefineTest {
                 "</table>\n" +
                 "</body>\n" +
                 "</html>\n");
-        verify(options,times(2)).getProperty("printColumnHeader");
+        verify(options, times(2)).getProperty("printColumnHeader");
     }
-
 
     @Test
     public void exportHtmlTableWithEmptyCells() {
-    	grid = createGrid(new String[] {"column0", "column1", "column2"},
-    			new Serializable[][] {
-    		{"row0cell0", "row0cell1", "row0cell2"},
-    		{"row1cell0", null, "row1cell2"},
-    		{null, "row2cell1", "row2cell2"}
-    	});
-    	engine = new Engine(grid, EngineConfig.ALL_ROWS);
+        grid = createGrid(new String[] { "column0", "column1", "column2" },
+                new Serializable[][] {
+                        { "row0cell0", "row0cell1", "row0cell2" },
+                        { "row1cell0", null, "row1cell2" },
+                        { null, "row2cell1", "row2cell2" }
+                });
+        engine = new Engine(grid, EngineConfig.ALL_ROWS);
 
         try {
             SUT.export(grid, projectMetadata, options, engine, writer);
@@ -173,7 +172,7 @@ public class HtmlExporterTests extends RefineTest {
         }
 
         Assert.assertEquals(writer.toString(), "<html>\n" +
-                "<head>\n" + "<title>" + TEST_PROJECT_NAME + "</title>\n" + 
+                "<head>\n" + "<title>" + TEST_PROJECT_NAME + "</title>\n" +
                 "<meta charset=\"utf-8\" />\n" +
                 "</head>\n" +
                 "<body>\n" +
@@ -185,17 +184,17 @@ public class HtmlExporterTests extends RefineTest {
                 "</table>\n" +
                 "</body>\n" +
                 "</html>\n");
-        }
-    
+    }
+
     @Test
     public void exportHtmlTableWithURLs() {
-    	grid = createGrid(new String[] {"column0", "column1", "column2"},
-    			new Serializable[][] {
-    		{"row0cell0", "row0cell1", "row0cell2"},
-    		{"row1cell0", "ftp://ftp.ripe.net/ripe/", "row1cell2"},
-    		{"https://gnu.org/", "row2cell1", "row2cell2"}
-    	});
-    	engine = new Engine(grid, EngineConfig.ALL_ROWS);
+        grid = createGrid(new String[] { "column0", "column1", "column2" },
+                new Serializable[][] {
+                        { "row0cell0", "row0cell1", "row0cell2" },
+                        { "row1cell0", "ftp://ftp.ripe.net/ripe/", "row1cell2" },
+                        { "https://gnu.org/", "row2cell1", "row2cell2" }
+                });
+        engine = new Engine(grid, EngineConfig.ALL_ROWS);
 
         try {
             SUT.export(grid, projectMetadata, options, engine, writer);
@@ -204,14 +203,15 @@ public class HtmlExporterTests extends RefineTest {
         }
 
         Assert.assertEquals(writer.toString(), "<html>\n" +
-                "<head>\n" + "<title>" + TEST_PROJECT_NAME + "</title>\n" + 
+                "<head>\n" + "<title>" + TEST_PROJECT_NAME + "</title>\n" +
                 "<meta charset=\"utf-8\" />\n" +
                 "</head>\n" +
                 "<body>\n" +
                 "<table>\n" +
                 "<tr><th>column0</th><th>column1</th><th>column2</th></tr>\n" +
                 "<tr><td>row0cell0</td><td>row0cell1</td><td>row0cell2</td></tr>\n" +
-                "<tr><td>row1cell0</td><td><a href=\"ftp://ftp.ripe.net/ripe/\">ftp://ftp.ripe.net/ripe/</a></td><td>row1cell2</td></tr>\n" +
+                "<tr><td>row1cell0</td><td><a href=\"ftp://ftp.ripe.net/ripe/\">ftp://ftp.ripe.net/ripe/</a></td><td>row1cell2</td></tr>\n"
+                +
                 "<tr><td><a href=\"https://gnu.org/\">https://gnu.org/</a></td><td>row2cell1</td><td>row2cell2</td></tr>\n" +
                 "</table>\n" +
                 "</body>\n" +

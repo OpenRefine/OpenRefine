@@ -24,6 +24,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  ******************************************************************************/
+
 package org.openrefine.process;
 
 import org.openrefine.util.ParsingUtilities;
@@ -31,7 +32,7 @@ import org.openrefine.util.TestUtils;
 import org.testng.annotations.Test;
 
 public class LongRunningProcessTests {
-    
+
     public static class LongRunningProcessStub extends LongRunningProcess {
 
         protected LongRunningProcessStub(String description) {
@@ -42,17 +43,18 @@ public class LongRunningProcessTests {
         protected Runnable getRunnable() {
             return null;
         }
-        
+
     }
+
     @Test
     public void serializeLongRunningProcess() {
         LongRunningProcess process = new LongRunningProcessStub("some description");
         int hashCode = process.hashCode();
         TestUtils.isSerializedTo(process, "{"
-		+ "\"id\":"+hashCode+","
-		+ "\"description\":\"some description\","
-		+ "\"immediate\":false,"
-		+ "\"status\":\"pending\","
-		+ "\"progress\":0}", ParsingUtilities.defaultWriter);
+                + "\"id\":" + hashCode + ","
+                + "\"description\":\"some description\","
+                + "\"immediate\":false,"
+                + "\"status\":\"pending\","
+                + "\"progress\":0}", ParsingUtilities.defaultWriter);
     }
 }

@@ -42,15 +42,15 @@ import org.openrefine.operations.Operation;
 import org.openrefine.operations.cell.BlankDownOperation;
 
 public class BlankDownCommand extends EngineDependentCommand {
+
     @Override
     protected Operation createOperation(Project project,
             HttpServletRequest request, EngineConfig engineConfig) throws Exception {
-        
+
         String columnName = request.getParameter("columnName");
-        
+
         return new BlankDownOperation(
-            engineConfig, 
-            columnName
-        );
+                engineConfig,
+                columnName);
     }
 }

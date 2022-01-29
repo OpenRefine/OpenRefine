@@ -1,3 +1,4 @@
+
 package org.openrefine.util.threads;
 
 //========================================================================
@@ -24,8 +25,7 @@ import org.eclipse.jetty.util.log.Log;
 import org.eclipse.jetty.util.thread.ThreadPool;
 
 /**
- * Jetty {@link ThreadPool} that bridges requests to a
- * {@link ThreadPoolExecutor}.
+ * Jetty {@link ThreadPool} that bridges requests to a {@link ThreadPoolExecutor}.
  */
 public class ThreadPoolExecutorAdapter implements ThreadPool, LifeCycle {
 

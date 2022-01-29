@@ -24,6 +24,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  ******************************************************************************/
+
 package org.openrefine.model.recon;
 
 import org.openrefine.model.recon.Recon;
@@ -38,7 +39,7 @@ import org.testng.Assert;
 import org.testng.annotations.Test;
 
 public class ReconTests {
-    
+
     String fullJson = "{\"id\":1533651559492945033,"
             + "\"judgmentHistoryEntry\":1533651616890,"
             + "\"service\":\"https://tools.wmflabs.org/openrefine-wikidata/en/api\","
@@ -59,13 +60,13 @@ public class ReconTests {
             + "\"f\":[false,false,1,0.6666666666666666],"
             + "\"judgmentAction\":\"mass\","
             + "\"matchRank\":0}";
-    
+
     @Test
-    public void serializeReconSaveMode() throws Exception {      
+    public void serializeReconSaveMode() throws Exception {
         Recon r = Recon.loadStreaming(fullJson);
-		TestUtils.isSerializedTo(r, fullJson, ParsingUtilities.saveWriter);
+        TestUtils.isSerializedTo(r, fullJson, ParsingUtilities.saveWriter);
     }
-        
+
     @Test
     public void serializeReconViewMode() throws Exception {
         Recon r = Recon.loadStreaming(fullJson);
@@ -80,10 +81,10 @@ public class ReconTests {
                 + "   \"score\":98.57142857142858,"
                 + "   \"types\":[\"Q16917\",\"Q23002054\",\"Q494230\"]"
                 + "}}";
-        
-		TestUtils.isSerializedTo(r, shortJson, ParsingUtilities.defaultWriter);
+
+        TestUtils.isSerializedTo(r, shortJson, ParsingUtilities.defaultWriter);
     }
-    
+
     @Test
     public void serializeReconSaveModeNoMatch() throws Exception {
         String json = "{\"id\":1533651559492945033,"
@@ -100,11 +101,10 @@ public class ReconTests {
         Recon r = Recon.loadStreaming(fullJson).withMatch(null).withJudgment(Judgment.None);
         TestUtils.isSerializedTo(r, json, ParsingUtilities.defaultWriter);
     }
-    
+
     /**
-     * Test for issue https://github.com/OpenRefine/OpenRefine/issues/3785.
-     * Generating many recon objects within a short amount of time leads
-     * to collisions in id generation.
+     * Test for issue https://github.com/OpenRefine/OpenRefine/issues/3785. Generating many recon objects within a short
+     * amount of time leads to collisions in id generation.
      */
     @Test
     public void randomIdGeneration() {

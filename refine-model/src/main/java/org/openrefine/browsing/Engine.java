@@ -60,16 +60,14 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableList.Builder;
 
 /**
- * Faceted browsing engine.
- * Given a GridState and facet configurations,
- * it can be used to compute facet statistics and
+ * Faceted browsing engine. Given a GridState and facet configurations, it can be used to compute facet statistics and
  * obtain a filtered view of the grid according to the facets.
  */
-public class Engine  {
+public class Engine {
+
     static public enum Mode {
         @JsonProperty(MODE_ROW_BASED)
-        RowBased,
-        @JsonProperty(MODE_RECORD_BASED)
+        RowBased, @JsonProperty(MODE_RECORD_BASED)
         RecordBased
     }
 
@@ -83,22 +81,22 @@ public class Engine  {
     protected final EngineConfig _config;
     protected PartialAggregation<AllFacetsState> _facetsState;
 
-
     static public String modeToString(Mode mode) {
         return mode == Mode.RowBased ? MODE_ROW_BASED : MODE_RECORD_BASED;
     }
+
     static public Mode stringToMode(String s) {
         return MODE_ROW_BASED.equals(s) ? Mode.RowBased : Mode.RecordBased;
     }
 
     public Engine(GridState state, EngineConfig config) {
-        _state  = state;
+        _state = state;
         _config = config;
         _facets = config.getFacetConfigs().stream()
-        		.map(fc -> fc.apply(state.getColumnModel()))
-        		.collect(Collectors.toList());
+                .map(fc -> fc.apply(state.getColumnModel()))
+                .collect(Collectors.toList());
         _facetsState = null;
-        
+
     }
 
     @JsonProperty("engine-mode")
@@ -108,14 +106,14 @@ public class Engine  {
 
     @JsonIgnore
     public GridState getGridState() {
-    	return _state;
+        return _state;
     }
-    
+
     @JsonIgnore
     public EngineConfig getConfig() {
         return _config;
     }
-    
+
     @JsonIgnore
     protected PartialAggregation<AllFacetsState> getFacetsState() {
         if (_facetsState == null) {
@@ -135,34 +133,35 @@ public class Engine  {
     @JsonProperty("facets")
     public ImmutableList<FacetResult> getFacetResults() {
         AllFacetsState states = getFacetsState().getState();
-        
-        Builder<FacetResult> facetResults = ImmutableList.<FacetResult>builder();
-        for(int i = 0; i != states.size(); i++) {
-           facetResults.add(_facets.get(i).getFacetResult(states.get(i))); 
+
+        Builder<FacetResult> facetResults = ImmutableList.<FacetResult> builder();
+        for (int i = 0; i != states.size(); i++) {
+            facetResults.add(_facets.get(i).getFacetResult(states.get(i)));
         }
         return facetResults.build();
     }
-    
+
     @JsonProperty("aggregatedCount")
     public long getAggregatedCount() {
         return getFacetsState().getProcessed();
     }
-    
+
     @JsonProperty("filteredCount")
     public long getFilteredCount() {
         return getFacetsState().getState().getFilteredCount();
     }
-    
+
     @JsonProperty("limitReached")
     public boolean limitReached() {
         return getFacetsState().limitReached();
     }
-    
+
     /**
-     * Iterates over the rows matched by the given filters. If the engine
-     * is in records mode, the rows corresponding to the matching records are
-     * returned.
-     * @param sortingConfig in which order to iterate over rows
+     * Iterates over the rows matched by the given filters. If the engine is in records mode, the rows corresponding to
+     * the matching records are returned.
+     * 
+     * @param sortingConfig
+     *            in which order to iterate over rows
      */
     @JsonIgnore
     public Iterable<IndexedRow> getMatchingRows(SortingConfig sortingConfig) {
@@ -176,7 +175,7 @@ public class Engine  {
                 public Iterator<IndexedRow> iterator() {
                     Iterator<Record> recordIterator = records.iterator();
                     return new Iterator<IndexedRow>() {
-                        
+
                         private Iterator<IndexedRow> currentRecord = null;
 
                         @Override
@@ -191,28 +190,29 @@ public class Engine  {
                             }
                             return currentRecord.next();
                         }
-                        
+
                     };
                 }
-                
+
             };
         }
     }
-    
+
     /**
-     * Iterates over the records matched by the given filters. If the engine
-     * is in records mode, the rows corresponding to the matching records are
-     * returned.
-     * @param sortingConfig in which order to iterate over records
+     * Iterates over the records matched by the given filters. If the engine is in records mode, the rows corresponding
+     * to the matching records are returned.
+     * 
+     * @param sortingConfig
+     *            in which order to iterate over records
      */
     @JsonIgnore
     public Iterable<Record> getMatchingRecords(SortingConfig sortingConfig) {
-    	if (Mode.RowBased.equals(getMode())) {
-    		throw new IllegalStateException("Cannot iterate over records in rows mode");
-    	}
-    	return _state.iterateRecords(combinedRecordFilters(), sortingConfig);
+        if (Mode.RowBased.equals(getMode())) {
+            throw new IllegalStateException("Cannot iterate over records in rows mode");
+        }
+        return _state.iterateRecords(combinedRecordFilters(), sortingConfig);
     }
-    
+
     /**
      * @return a row filter obtained from all applied facets
      */
@@ -220,7 +220,7 @@ public class Engine  {
     public RowFilter combinedRowFilters() {
         return RowFilter.conjunction(facetRowFilters());
     }
-    
+
     /**
      * @return a record filter obtained from all applied facets
      */
@@ -228,7 +228,7 @@ public class Engine  {
     public RecordFilter combinedRecordFilters() {
         return RecordFilter.conjunction(facetRecordFilters());
     }
-    
+
     /**
      * Runs an aggregator only on the rows that are selected by facets.
      * 
@@ -240,7 +240,7 @@ public class Engine  {
     public <T extends Serializable> T aggregateFilteredRows(RowAggregator<T> aggregator, T initialState) {
         return _state.aggregateRows(restrictAggregator(aggregator, combinedRowFilters()), initialState);
     }
-    
+
     /**
      * Runs an aggregator only on the records that are selected by facets.
      * 
@@ -252,16 +252,16 @@ public class Engine  {
     public <T extends Serializable> T aggregateFilteredRecords(RecordAggregator<T> aggregator, T initialState) {
         return _state.aggregateRecords(restrictAggregator(aggregator, combinedRecordFilters()), initialState);
     }
-    
+
     @JsonIgnore
-	private List<RowFilter> facetRowFilters() {
-		return _facets.stream()
-        		.map(facet -> facet.getAggregator())
-        		.map(aggregator -> aggregator == null ? null : aggregator.getRowFilter())
-        		.filter(filter -> filter != null)
-        		.collect(Collectors.toList());
-	}
-    
+    private List<RowFilter> facetRowFilters() {
+        return _facets.stream()
+                .map(facet -> facet.getAggregator())
+                .map(aggregator -> aggregator == null ? null : aggregator.getRowFilter())
+                .filter(filter -> filter != null)
+                .collect(Collectors.toList());
+    }
+
     @JsonIgnore
     private List<RecordFilter> facetRecordFilters() {
         return _facets.stream()
@@ -270,23 +270,23 @@ public class Engine  {
                 .filter(filter -> filter != null)
                 .collect(Collectors.toList());
     }
-    
+
     @JsonIgnore
-	private AllFacetsState allFacetsInitialState() {
+    private AllFacetsState allFacetsInitialState() {
         ImmutableList<FacetState> facets = ImmutableList.copyOf(
-		        _facets
-    			.stream().map(facet -> facet.getInitialFacetState())
-    			.collect(Collectors.toList()));
+                _facets
+                        .stream().map(facet -> facet.getInitialFacetState())
+                        .collect(Collectors.toList()));
         return new AllFacetsState(facets, 0L, 0L);
-	}
-    
+    }
+
     @JsonIgnore
     private AllFacetsAggregator allFacetsAggregator() {
         return new AllFacetsAggregator(_facets
                 .stream().map(facet -> facet.getAggregator())
                 .collect(Collectors.toList()));
     }
-    
+
     private static <T> RowAggregator<T> restrictAggregator(RowAggregator<T> aggregator, RowFilter filter) {
         return new RowAggregator<T>() {
 
@@ -305,10 +305,10 @@ public class Engine  {
                     return state;
                 }
             }
-            
+
         };
     }
-    
+
     private static <T> RecordAggregator<T> restrictAggregator(RecordAggregator<T> aggregator, RecordFilter filter) {
         return new RecordAggregator<T>() {
 
@@ -327,7 +327,7 @@ public class Engine  {
                     return state;
                 }
             }
-            
+
         };
     }
 }

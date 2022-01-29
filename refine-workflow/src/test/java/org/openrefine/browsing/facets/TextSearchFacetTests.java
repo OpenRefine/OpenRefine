@@ -59,8 +59,8 @@ import org.testng.annotations.Test;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
-
 public class TextSearchFacetTests extends RefineTest {
+
     // dependencies
     private GridState grid;
     private List<Row> rows;
@@ -83,124 +83,124 @@ public class TextSearchFacetTests extends RefineTest {
 
     @BeforeMethod
     public void setUp() throws IOException, ModelException {
-    	FacetConfigResolver.registerFacetConfig("core", "text", TextSearchFacetConfig.class);
+        FacetConfigResolver.registerFacetConfig("core", "text", TextSearchFacetConfig.class);
         grid = createGrid(
-             new String[] {"Value"},
-             new Serializable[][] {
-            	 {"a"},
-            	 {"b"},
-            	 {"ab"},
-            	 {"Abc"}});
+                new String[] { "Value" },
+                new Serializable[][] {
+                        { "a" },
+                        { "b" },
+                        { "ab" },
+                        { "Abc" } });
         rows = grid.collectRows().stream().map(ir -> ir.getRow()).collect(Collectors.toList());
     }
-    
+
     private void configureFilter(String filter) throws JsonParseException, JsonMappingException, IOException {
-        //Add the facet to the project and create a row filter
+        // Add the facet to the project and create a row filter
         textFilterConfig = ParsingUtilities.mapper.readValue(filter, TextSearchFacetConfig.class);
         textFilter = textFilterConfig.apply(grid.getColumnModel());
         rowFilter = textFilter.getAggregator().getRowFilter();
     }
-    
+
     /**
      * Test to demonstrate the intended behaviour of the function
      */
 
     @Test
     public void testTextFilter() throws Exception {
-        //Apply text filter "a"
+        // Apply text filter "a"
 
-        //Column: "Value"
-        //Filter Query: "a"
-        //Mode: "text"
-        //Case sensitive: False
-        //Invert: False
-        String filter =     "{\"type\":\"core/text\","
-                            + "\"name\":\"Value\","
-                            + "\"columnName\":\"Value\","
-                            + "\"mode\":\"text\","
-                            + "\"caseSensitive\":false,"
-                            + "\"invert\":false,"
-                            + "\"query\":\"a\"}";
-        
+        // Column: "Value"
+        // Filter Query: "a"
+        // Mode: "text"
+        // Case sensitive: False
+        // Invert: False
+        String filter = "{\"type\":\"core/text\","
+                + "\"name\":\"Value\","
+                + "\"columnName\":\"Value\","
+                + "\"mode\":\"text\","
+                + "\"caseSensitive\":false,"
+                + "\"invert\":false,"
+                + "\"query\":\"a\"}";
+
         configureFilter(filter);
 
-        //Check each row in the project against the filter
-        Assert.assertEquals(rowFilter.filterRow(0, rows.get(0)),true);
-        Assert.assertEquals(rowFilter.filterRow(1, rows.get(1)),false);
-        Assert.assertEquals(rowFilter.filterRow(2, rows.get(2)),true);
-        Assert.assertEquals(rowFilter.filterRow(3, rows.get(3)),true);
+        // Check each row in the project against the filter
+        Assert.assertEquals(rowFilter.filterRow(0, rows.get(0)), true);
+        Assert.assertEquals(rowFilter.filterRow(1, rows.get(1)), false);
+        Assert.assertEquals(rowFilter.filterRow(2, rows.get(2)), true);
+        Assert.assertEquals(rowFilter.filterRow(3, rows.get(3)), true);
     }
 
     @Test
     public void testInvertedTextFilter() throws Exception {
-        //Apply inverted text filter "a"
+        // Apply inverted text filter "a"
 
-        //Column: "Value"
-        //Filter Query: "a"
-        //Mode: "text"
-        //Case sensitive: False
-        //Invert: True
-        String filter =     "{\"type\":\"core/text\","
-                            + "\"name\":\"Value\","
-                            + "\"columnName\":\"Value\","
-                            + "\"mode\":\"text\","
-                            + "\"caseSensitive\":false,"
-                            + "\"invert\":true,"
-                            + "\"query\":\"a\"}";
-        
+        // Column: "Value"
+        // Filter Query: "a"
+        // Mode: "text"
+        // Case sensitive: False
+        // Invert: True
+        String filter = "{\"type\":\"core/text\","
+                + "\"name\":\"Value\","
+                + "\"columnName\":\"Value\","
+                + "\"mode\":\"text\","
+                + "\"caseSensitive\":false,"
+                + "\"invert\":true,"
+                + "\"query\":\"a\"}";
+
         configureFilter(filter);
 
-        //Check each row in the project against the filter
-        Assert.assertEquals(rowFilter.filterRow(0, rows.get(0)),false);
-        Assert.assertEquals(rowFilter.filterRow(1, rows.get(1)),true);
-        Assert.assertEquals(rowFilter.filterRow(2, rows.get(2)),false);
-        Assert.assertEquals(rowFilter.filterRow(3, rows.get(3)),false);
+        // Check each row in the project against the filter
+        Assert.assertEquals(rowFilter.filterRow(0, rows.get(0)), false);
+        Assert.assertEquals(rowFilter.filterRow(1, rows.get(1)), true);
+        Assert.assertEquals(rowFilter.filterRow(2, rows.get(2)), false);
+        Assert.assertEquals(rowFilter.filterRow(3, rows.get(3)), false);
     }
 
     @Test
     public void testRegExFilter() throws Exception {
-        //Apply regular expression filter "[bc]"
+        // Apply regular expression filter "[bc]"
 
-        //Column: "Value"
-        //Filter Query: "[bc]"
-        //Mode: "regex"
-        //Case sensitive: False
-        //Invert: False
-        String filter =     "{\"type\":\"core/text\","
-                            + "\"name\":\"Value\","
-                            + "\"columnName\":\"Value\","
-                            + "\"mode\":\"regex\","
-                            + "\"caseSensitive\":false,"
-                            + "\"invert\":false,"
-                            + "\"query\":\"[bc]\"}";
-        
+        // Column: "Value"
+        // Filter Query: "[bc]"
+        // Mode: "regex"
+        // Case sensitive: False
+        // Invert: False
+        String filter = "{\"type\":\"core/text\","
+                + "\"name\":\"Value\","
+                + "\"columnName\":\"Value\","
+                + "\"mode\":\"regex\","
+                + "\"caseSensitive\":false,"
+                + "\"invert\":false,"
+                + "\"query\":\"[bc]\"}";
+
         configureFilter(filter);
 
-        //Check each row in the project against the filter
-        Assert.assertEquals(rowFilter.filterRow(0, rows.get(0)),false);
-        Assert.assertEquals(rowFilter.filterRow(1, rows.get(1)),true);
-        Assert.assertEquals(rowFilter.filterRow(2, rows.get(2)),true);
-        Assert.assertEquals(rowFilter.filterRow(3, rows.get(3)),true);
+        // Check each row in the project against the filter
+        Assert.assertEquals(rowFilter.filterRow(0, rows.get(0)), false);
+        Assert.assertEquals(rowFilter.filterRow(1, rows.get(1)), true);
+        Assert.assertEquals(rowFilter.filterRow(2, rows.get(2)), true);
+        Assert.assertEquals(rowFilter.filterRow(3, rows.get(3)), true);
     }
 
     @Test
     public void testCaseSensitiveFilter() throws Exception {
-        //Apply case-sensitive filter "A"
-        
+        // Apply case-sensitive filter "A"
+
         configureFilter(sensitiveConfigJson);
 
-        //Check each row in the project against the filter
-        //Expect to retrieve one row containing "Abc"
-        Assert.assertEquals(rowFilter.filterRow(0, rows.get(0)),false);
-        Assert.assertEquals(rowFilter.filterRow(1, rows.get(1)),false);
-        Assert.assertEquals(rowFilter.filterRow(2, rows.get(2)),false);
-        Assert.assertEquals(rowFilter.filterRow(3, rows.get(3)),true);
+        // Check each row in the project against the filter
+        // Expect to retrieve one row containing "Abc"
+        Assert.assertEquals(rowFilter.filterRow(0, rows.get(0)), false);
+        Assert.assertEquals(rowFilter.filterRow(1, rows.get(1)), false);
+        Assert.assertEquals(rowFilter.filterRow(2, rows.get(2)), false);
+        Assert.assertEquals(rowFilter.filterRow(3, rows.get(3)), true);
     }
-    
+
     @Test
     public void testCaseInsensitiveFilterWithUpperCaseQuery() throws Exception {
-        //Apply case-sensitive filter "A"
-        
+        // Apply case-sensitive filter "A"
+
         configureFilter("{\"type\":\"core/text\","
                 + "\"name\":\"Value\","
                 + "\"columnName\":\"Value\","
@@ -209,26 +209,25 @@ public class TextSearchFacetTests extends RefineTest {
                 + "\"invert\":false,"
                 + "\"query\":\"A\"}");
 
-        //Check each row in the project against the filter
-        //Expect to retrieve one row containing "Abc"
-        Assert.assertEquals(rowFilter.filterRow(0, rows.get(0)),true);
-        Assert.assertEquals(rowFilter.filterRow(1, rows.get(1)),false);
-        Assert.assertEquals(rowFilter.filterRow(2, rows.get(2)),true);
-        Assert.assertEquals(rowFilter.filterRow(3, rows.get(3)),true);
+        // Check each row in the project against the filter
+        // Expect to retrieve one row containing "Abc"
+        Assert.assertEquals(rowFilter.filterRow(0, rows.get(0)), true);
+        Assert.assertEquals(rowFilter.filterRow(1, rows.get(1)), false);
+        Assert.assertEquals(rowFilter.filterRow(2, rows.get(2)), true);
+        Assert.assertEquals(rowFilter.filterRow(3, rows.get(3)), true);
     }
-    
+
     @Test
     public void serializeTextSearchFacetConfig() throws JsonParseException, JsonMappingException, IOException {
         TextSearchFacetConfig config = ParsingUtilities.mapper.readValue(sensitiveConfigJson, TextSearchFacetConfig.class);
         TestUtils.isSerializedTo(config, sensitiveConfigJson, ParsingUtilities.defaultWriter);
     }
-    
+
     @Test
     public void serializeTextSearchFacet() throws JsonParseException, JsonMappingException, IOException {
         TextSearchFacetConfig config = ParsingUtilities.mapper.readValue(sensitiveConfigJson, TextSearchFacetConfig.class);
         Engine engine = new Engine(grid, new EngineConfig(Collections.singletonList(config), Mode.RowBased));
-    	
-    	TestUtils.isSerializedTo(engine.getFacetResults().get(0), sensitiveConfigJson, ParsingUtilities.defaultWriter);
+
+        TestUtils.isSerializedTo(engine.getFacetResults().get(0), sensitiveConfigJson, ParsingUtilities.defaultWriter);
     }
 }
-

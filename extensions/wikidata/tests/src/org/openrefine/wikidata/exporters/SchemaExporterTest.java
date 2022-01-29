@@ -1,3 +1,4 @@
+
 package org.openrefine.wikidata.exporters;
 
 import java.io.IOException;
@@ -14,20 +15,21 @@ import org.openrefine.util.TestUtils;
 import org.testng.annotations.Test;
 
 public class SchemaExporterTest extends RefineTest {
-	
-	private SchemaExporter exporter = new SchemaExporter();
-	
+
+    private SchemaExporter exporter = new SchemaExporter();
+
     @Test
     public void testNoSchema()
             throws IOException {
         GridState grid = this.createGrid(
-        		new String[] {"a","b"},
-        		new Serializable[][] {{"c","d"}});
+                new String[] { "a", "b" },
+                new Serializable[][] { { "c", "d" } });
         Engine engine = new Engine(grid, EngineConfig.ALL_ROWS);
         StringWriter writer = new StringWriter();
         Properties properties = new Properties();
         exporter.export(grid, new ProjectMetadata(), properties, engine, writer);
-        TestUtils.assertEqualAsJson("{\"itemDocuments\":[],\"siteIri\":null,\"mediaWikiApiEndpoint\":null,\"entityTypeSiteIRI\":{}}", writer.toString());
+        TestUtils.assertEqualAsJson("{\"itemDocuments\":[],\"siteIri\":null,\"mediaWikiApiEndpoint\":null,\"entityTypeSiteIRI\":{}}",
+                writer.toString());
     }
 
 }

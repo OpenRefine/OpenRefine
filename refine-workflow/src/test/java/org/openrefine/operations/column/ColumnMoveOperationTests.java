@@ -24,6 +24,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  ******************************************************************************/
+
 package org.openrefine.operations.column;
 
 import static org.mockito.Mockito.mock;
@@ -53,28 +54,28 @@ import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.Test;
 
 public class ColumnMoveOperationTests extends RefineTest {
-	
-	protected GridState initialState;
-	
-	@BeforeMethod
-	public void setUpInitialState() {
-		MetaParser.registerLanguageParser("grel", "GREL", Parser.grelParser, "value");
-		initialState = createGrid(new String[] {"foo","bar","hello"},
-				new Serializable[][] {
-			{ "v1", "a", "d" },
-			{ "v3", "a", "f" },
-			{ "", "a", "g" },
-			{ "", "b", "h" },
-			{ new EvalError("error"), "a", "i"},
-			{ "v1", "b", "j" }
-		});
-	}
-    
+
+    protected GridState initialState;
+
+    @BeforeMethod
+    public void setUpInitialState() {
+        MetaParser.registerLanguageParser("grel", "GREL", Parser.grelParser, "value");
+        initialState = createGrid(new String[] { "foo", "bar", "hello" },
+                new Serializable[][] {
+                        { "v1", "a", "d" },
+                        { "v3", "a", "f" },
+                        { "", "a", "g" },
+                        { "", "b", "h" },
+                        { new EvalError("error"), "a", "i" },
+                        { "v1", "b", "j" }
+                });
+    }
+
     @BeforeSuite
     public void setUp() {
         OperationRegistry.registerOperation("core", "column-move", ColumnMoveOperation.class);
     }
-    
+
     @Test
     public void serializeColumnMoveOperation() throws Exception {
         String json = "{\"op\":\"core/column-move\","
@@ -84,42 +85,42 @@ public class ColumnMoveOperationTests extends RefineTest {
         TestUtils.isSerializedTo(ParsingUtilities.mapper.readValue(json, ColumnMoveOperation.class), json, ParsingUtilities.defaultWriter);
     }
 
-	@Test
-	public void testForward() throws DoesNotApplyException, ParsingException {
-		Change SUT = new ColumnMoveOperation("foo", 1).createChange();
-		GridState applied = SUT.apply(initialState, mock(ChangeContext.class));
-		List<IndexedRow> rows = applied.collectRows();
-		Assert.assertEquals(applied.getColumnModel().getColumns(),
-				Arrays.asList(new ColumnMetadata("bar"), new ColumnMetadata("foo"), new ColumnMetadata("hello")));
-		Assert.assertEquals(rows.get(0).getRow().getCells(),
-				Arrays.asList(new Cell("a", null), new Cell("v1", null), new Cell("d", null)));
-	}
-	
-	@Test
-	public void testSamePosition() throws DoesNotApplyException, ParsingException {
-		Change SUT = new ColumnMoveOperation("bar", 1).createChange();
-		GridState applied = SUT.apply(initialState, mock(ChangeContext.class));
-		List<IndexedRow> rows = applied.collectRows();
-		Assert.assertEquals(applied.getColumnModel().getColumns(),
-				Arrays.asList(new ColumnMetadata("foo"), new ColumnMetadata("bar"), new ColumnMetadata("hello")));
-		Assert.assertEquals(rows.get(0).getRow().getCells(),
-				Arrays.asList(new Cell("v1", null), new Cell("a", null), new Cell("d", null)));
-	}
-	
-	@Test
-	public void testBackward() throws DoesNotApplyException, ParsingException {
-		Change SUT = new ColumnMoveOperation("hello", 1).createChange();
-		GridState applied = SUT.apply(initialState, mock(ChangeContext.class));
-		List<IndexedRow> rows = applied.collectRows();
-		Assert.assertEquals(applied.getColumnModel().getColumns(),
-				Arrays.asList(new ColumnMetadata("foo"), new ColumnMetadata("hello"), new ColumnMetadata("bar")));
-		Assert.assertEquals(rows.get(0).getRow().getCells(),
-				Arrays.asList(new Cell("v1", null), new Cell("d", null), new Cell("a", null)));
-	}
-	
-	@Test(expectedExceptions = DoesNotApplyException.class)
-	public void testColumnDoesNotExist() throws DoesNotApplyException, ParsingException {
-		Change SUT = new ColumnMoveOperation("not_found", 1).createChange();
-		SUT.apply(initialState, mock(ChangeContext.class));
-	}
+    @Test
+    public void testForward() throws DoesNotApplyException, ParsingException {
+        Change SUT = new ColumnMoveOperation("foo", 1).createChange();
+        GridState applied = SUT.apply(initialState, mock(ChangeContext.class));
+        List<IndexedRow> rows = applied.collectRows();
+        Assert.assertEquals(applied.getColumnModel().getColumns(),
+                Arrays.asList(new ColumnMetadata("bar"), new ColumnMetadata("foo"), new ColumnMetadata("hello")));
+        Assert.assertEquals(rows.get(0).getRow().getCells(),
+                Arrays.asList(new Cell("a", null), new Cell("v1", null), new Cell("d", null)));
+    }
+
+    @Test
+    public void testSamePosition() throws DoesNotApplyException, ParsingException {
+        Change SUT = new ColumnMoveOperation("bar", 1).createChange();
+        GridState applied = SUT.apply(initialState, mock(ChangeContext.class));
+        List<IndexedRow> rows = applied.collectRows();
+        Assert.assertEquals(applied.getColumnModel().getColumns(),
+                Arrays.asList(new ColumnMetadata("foo"), new ColumnMetadata("bar"), new ColumnMetadata("hello")));
+        Assert.assertEquals(rows.get(0).getRow().getCells(),
+                Arrays.asList(new Cell("v1", null), new Cell("a", null), new Cell("d", null)));
+    }
+
+    @Test
+    public void testBackward() throws DoesNotApplyException, ParsingException {
+        Change SUT = new ColumnMoveOperation("hello", 1).createChange();
+        GridState applied = SUT.apply(initialState, mock(ChangeContext.class));
+        List<IndexedRow> rows = applied.collectRows();
+        Assert.assertEquals(applied.getColumnModel().getColumns(),
+                Arrays.asList(new ColumnMetadata("foo"), new ColumnMetadata("hello"), new ColumnMetadata("bar")));
+        Assert.assertEquals(rows.get(0).getRow().getCells(),
+                Arrays.asList(new Cell("v1", null), new Cell("d", null), new Cell("a", null)));
+    }
+
+    @Test(expectedExceptions = DoesNotApplyException.class)
+    public void testColumnDoesNotExist() throws DoesNotApplyException, ParsingException {
+        Change SUT = new ColumnMoveOperation("not_found", 1).createChange();
+        SUT.apply(initialState, mock(ChangeContext.class));
+    }
 }

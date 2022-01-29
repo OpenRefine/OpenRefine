@@ -1,3 +1,4 @@
+
 package org.openrefine.model.local;
 
 import java.util.Arrays;
@@ -11,11 +12,11 @@ public class IndexedPLLTests extends PLLTestsBase {
     @Test
     public void testPartitioner() {
         PLL<Integer> pll = parallelize(4, Arrays.asList(0, 1, 2, 3, 4, 5, 6, 7));
-        
+
         PairPLL<Long, Integer> indexed = IndexedPLL.index(pll);
-        
+
         Partitioner<Long> partitioner = indexed.getPartitioner().get();
-        
+
         Assert.assertEquals(partitioner.getPartition(0L), 0);
         Assert.assertEquals(partitioner.getPartition(1L), 0);
         Assert.assertEquals(partitioner.getPartition(2L), 1);

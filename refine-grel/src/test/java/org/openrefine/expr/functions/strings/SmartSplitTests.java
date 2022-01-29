@@ -24,6 +24,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  ******************************************************************************/
+
 package org.openrefine.expr.functions.strings;
 
 import static org.testng.Assert.assertEquals;
@@ -64,7 +65,7 @@ public class SmartSplitTests extends FunctionTestBase {
         String[] actual = (String[]) invoke("smartSplit", testString, '#');
         assertEquals(expected, actual);
     }
-    
+
     @Test
     public void testSmartSplitCharSepSpace() {
         String testString = "teststring1 teststring2 teststring3 teststring4";
@@ -72,7 +73,7 @@ public class SmartSplitTests extends FunctionTestBase {
         String[] actual = (String[]) invoke("smartSplit", testString, ' ');
         assertEquals(expected, actual);
     }
-    
+
     @Test
     public void testSmartSplitStringSepGiven() {
         String testString = "teststring1#@$teststring2#@$teststring3#@$teststring4";

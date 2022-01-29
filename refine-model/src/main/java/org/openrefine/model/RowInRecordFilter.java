@@ -1,14 +1,13 @@
+
 package org.openrefine.model;
 
 import java.util.List;
 
 /**
- * Row filter which has also access to the spanning record.
- * This is needed when filtering by expressions which refer to 
+ * Row filter which has also access to the spanning record. This is needed when filtering by expressions which refer to
  * the record via the `row.record` variable.
  * 
- * When used as a {@link RowFilter} this just passes `null` as
- * a record.
+ * When used as a {@link RowFilter} this just passes `null` as a record.
  * 
  * @author Antonin Delpeuch
  *
@@ -16,23 +15,26 @@ import java.util.List;
 public abstract class RowInRecordFilter implements RowFilter, RecordFilter {
 
     private static final long serialVersionUID = -7174059662391981636L;
- 
+
     private final boolean anyRow;
-    
+
     /**
-     * @param anyRow true if any matching row makes the record match, false if
-     * all rows are required.
+     * @param anyRow
+     *            true if any matching row makes the record match, false if all rows are required.
      */
     public RowInRecordFilter(boolean anyRow) {
         this.anyRow = anyRow;
     }
-    
+
     /**
      * Determines if a row matches the filter.
      * 
-     * @param rowIndex the global index of the row (from the entire grid)
-     * @param row the row itself
-     * @param record the enclosing record
+     * @param rowIndex
+     *            the global index of the row (from the entire grid)
+     * @param row
+     *            the row itself
+     * @param record
+     *            the enclosing record
      * @return true if the row matches the filter
      */
     public abstract boolean filterRow(long rowIndex, Row row, Record record);
@@ -54,7 +56,7 @@ public abstract class RowInRecordFilter implements RowFilter, RecordFilter {
     public boolean filterRow(long rowIndex, Row row) {
         return filterRow(rowIndex, row, null);
     }
-    
+
     public static RowInRecordFilter fromRowFilter(RowFilter rowFilter) {
         return new RowInRecordFilter(true) {
 
@@ -64,10 +66,10 @@ public abstract class RowInRecordFilter implements RowFilter, RecordFilter {
             public boolean filterRow(long rowIndex, Row row, Record record) {
                 return rowFilter.filterRow(rowIndex, row);
             }
-            
+
         };
     }
-    
+
     public static final RowInRecordFilter ANY_ROW_IN_RECORD = new RowInRecordFilter(true) {
 
         private static final long serialVersionUID = 3807800088433931083L;
@@ -76,7 +78,7 @@ public abstract class RowInRecordFilter implements RowFilter, RecordFilter {
         public boolean filterRow(long rowIndex, Row row, Record record) {
             return true;
         }
-        
+
     };
 
 }

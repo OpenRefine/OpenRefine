@@ -24,6 +24,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  ******************************************************************************/
+
 package org.openrefine.commands.expr;
 
 import static org.mockito.Mockito.mock;
@@ -48,12 +49,13 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 public class PreviewExpressionCommandTests extends RefineTest {
+
     protected Project project = null;
     protected HttpServletRequest request = null;
     protected HttpServletResponse response = null;
     protected Command command = null;
     protected StringWriter writer = null;
-    
+
     @BeforeMethod
     public void setUpRequestResponse() {
         request = mock(HttpServletRequest.class);
@@ -65,16 +67,16 @@ public class PreviewExpressionCommandTests extends RefineTest {
             e.printStackTrace();
         }
         command = new PreviewExpressionCommand();
-        project = createProject(new String[] {"a","b"},
-        		new Serializable[][] {
-        		{"c","d"},
-        		{null,"f"},
-        		{"g","h"}
-        		});
-        
+        project = createProject(new String[] { "a", "b" },
+                new Serializable[][] {
+                        { "c", "d" },
+                        { null, "f" },
+                        { "g", "h" }
+                });
+
         MetaParser.registerLanguageParser("grel", "GREL", Parser.grelParser, "value");
     }
-    
+
     @Test
     public void testJsonResponse() throws ServletException, IOException {
 
@@ -84,8 +86,8 @@ public class PreviewExpressionCommandTests extends RefineTest {
         when(request.getParameter("expression")).thenReturn("grel:value + \"_u\"");
         when(request.getParameter("engine")).thenReturn("{\"mode\":\"row-based\",\"facets\":[]}");
 
-        String json = "{\n" + 
-                "       \"code\" : \"ok\",\n" + 
+        String json = "{\n" +
+                "       \"code\" : \"ok\",\n" +
                 "       \"results\" : [ {"
                 + "          \"rowIndex\": 0,"
                 + "          \"value\": \"d\","
@@ -95,12 +97,12 @@ public class PreviewExpressionCommandTests extends RefineTest {
                 + "          \"rowIndex\": 1,"
                 + "          \"value\": \"f\","
                 + "          \"result\": \"f_u\""
-                + "     }]\n" + 
+                + "     }]\n" +
                 "     }";
         command.doPost(request, response);
         TestUtils.assertEqualsAsJson(writer.toString(), json);
     }
-    
+
     @Test
     public void testRecordsMode() throws ServletException, IOException {
 
@@ -110,8 +112,8 @@ public class PreviewExpressionCommandTests extends RefineTest {
         when(request.getParameter("expression")).thenReturn("grel:row.record.rowCount");
         when(request.getParameter("engine")).thenReturn("{\"mode\":\"record-based\",\"facets\":[]}");
 
-        String json = "{\n" + 
-                "       \"code\" : \"ok\",\n" + 
+        String json = "{\n" +
+                "       \"code\" : \"ok\",\n" +
                 "       \"results\" : [ {"
                 + "          \"rowIndex\": 0,"
                 + "          \"value\": \"d\","
@@ -132,7 +134,7 @@ public class PreviewExpressionCommandTests extends RefineTest {
         command.doPost(request, response);
         TestUtils.assertEqualsAsJson(writer.toString(), json);
     }
-    
+
     @Test
     public void testParseError() throws ServletException, IOException {
 
@@ -142,10 +144,10 @@ public class PreviewExpressionCommandTests extends RefineTest {
         when(request.getParameter("expression")).thenReturn("grel:value +");
         when(request.getParameter("engine")).thenReturn("{\"mode\":\"row-based\",\"facets\":[]}");
 
-        String json = "{\n" + 
-                "       \"code\" : \"error\",\n" + 
-                "       \"message\" : \"Parsing error at offset 7: Expecting something more at end of expression\",\n" + 
-                "       \"type\" : \"parser\"\n" + 
+        String json = "{\n" +
+                "       \"code\" : \"error\",\n" +
+                "       \"message\" : \"Parsing error at offset 7: Expecting something more at end of expression\",\n" +
+                "       \"type\" : \"parser\"\n" +
                 "     }";
         command.doPost(request, response);
         TestUtils.assertEqualsAsJson(writer.toString(), json);

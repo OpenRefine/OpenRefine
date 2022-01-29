@@ -24,6 +24,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  ******************************************************************************/
+
 package org.openrefine.expr.functions;
 
 import java.time.OffsetDateTime;
@@ -36,8 +37,8 @@ import org.openrefine.grel.FunctionTestBase;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
-
 public class TypeTests extends FunctionTestBase {
+
     static final List<String> listArray = Arrays.asList("v1", "v2", "v3");
     private static OffsetDateTime dateTimeValue = OffsetDateTime.parse("2017-05-12T05:45:00+00:00", DateTimeFormatter.ISO_OFFSET_DATE_TIME);
 
@@ -48,12 +49,11 @@ public class TypeTests extends FunctionTestBase {
 
     @Test
     public void testType() {
-        Assert.assertEquals(invoke("type", (Object) null),"undefined");
-        Assert.assertEquals(invoke("type", 1),"number");
-        Assert.assertEquals(invoke("type", true),"boolean");
-        Assert.assertEquals(invoke("type", "a string"),"string");
+        Assert.assertEquals(invoke("type", (Object) null), "undefined");
+        Assert.assertEquals(invoke("type", 1), "number");
+        Assert.assertEquals(invoke("type", true), "boolean");
+        Assert.assertEquals(invoke("type", "a string"), "string");
         Assert.assertEquals(invoke("type", dateTimeValue), "date");
         Assert.assertEquals(invoke("type", listArray), "array");
     }
 }
-

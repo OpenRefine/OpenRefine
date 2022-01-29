@@ -21,6 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  ******************************************************************************/
+
 package org.openrefine.wikidata.testing;
 
 import java.io.IOException;
@@ -72,29 +73,30 @@ public class TestingData {
     public static MediaInfoIdValue existingMid = Datamodel.makeWikimediaCommonsMediaInfoIdValue("M43");
 
     protected static PropertyIdValue pid = Datamodel.makeWikidataPropertyIdValue("P38");
-    
-    public static class ReconStub extends Recon {
-		private static final long serialVersionUID = -8141740928448038842L;
 
-		public ReconStub(long judgmentHistoryEntry, String identifierSpace, String schemaSpace) {
-			super(judgmentHistoryEntry, identifierSpace, schemaSpace);
-		}
+    public static class ReconStub extends Recon {
+
+        private static final long serialVersionUID = -8141740928448038842L;
+
+        public ReconStub(long judgmentHistoryEntry, String identifierSpace, String schemaSpace) {
+            super(judgmentHistoryEntry, identifierSpace, schemaSpace);
+        }
     }
 
     public static Recon makeNewItemRecon(long id) {
-    	// we keep the same judgment id because it is ignored
+        // we keep the same judgment id because it is ignored
         Recon recon = new ReconStub(382398L, "http://www.wikidata.org/entity/", "http://www.wikidata.org/prop/direct/")
-        		.withId(id)
-        		.withJudgment(Judgment.New);
+                .withId(id)
+                .withJudgment(Judgment.New);
         return recon;
     }
 
     public static Recon makeMatchedRecon(String qid, String name, String[] types) {
         ReconCandidate candidate = new ReconCandidate(qid, name, types, 100.0);
         Recon recon = Recon.makeWikidataRecon(123456L)
-        		.withMatch(candidate)
-        		.withCandidates(Collections.singletonList(candidate))
-        		.withJudgment(Judgment.Matched);
+                .withMatch(candidate)
+                .withCandidates(Collections.singletonList(candidate))
+                .withJudgment(Judgment.Matched);
         return recon;
     }
 

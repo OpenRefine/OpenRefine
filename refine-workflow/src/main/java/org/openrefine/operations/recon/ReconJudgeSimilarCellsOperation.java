@@ -33,7 +33,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package org.openrefine.operations.recon;
 
- import org.openrefine.browsing.EngineConfig;
+import org.openrefine.browsing.EngineConfig;
 import org.openrefine.expr.ExpressionUtils;
 import org.openrefine.model.Cell;
 import org.openrefine.model.GridState;
@@ -56,27 +56,21 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class ReconJudgeSimilarCellsOperation extends ImmediateRowMapOperation {
-    final protected String           _similarValue;
-    final protected String           _columnName;
-    final protected Judgment         _judgment;
-    final protected ReconCandidate   _match;
-    final protected boolean          _shareNewTopics;
+
+    final protected String _similarValue;
+    final protected String _columnName;
+    final protected Judgment _judgment;
+    final protected ReconCandidate _match;
+    final protected boolean _shareNewTopics;
 
     @JsonCreator
     public ReconJudgeSimilarCellsOperation(
-        @JsonProperty("engineConfig")
-        EngineConfig         engineConfig,
-        @JsonProperty("columnName")
-        String             columnName,
-        @JsonProperty("similarValue")
-        String             similarValue,
-        @JsonProperty("judgment")
-        Judgment        judgment,
-        @JsonProperty("match")
-        ReconCandidate     match,
-        @JsonProperty("shareNewTopics")
-        Boolean            shareNewTopics
-    ) {
+            @JsonProperty("engineConfig") EngineConfig engineConfig,
+            @JsonProperty("columnName") String columnName,
+            @JsonProperty("similarValue") String similarValue,
+            @JsonProperty("judgment") Judgment judgment,
+            @JsonProperty("match") ReconCandidate match,
+            @JsonProperty("shareNewTopics") Boolean shareNewTopics) {
         super(engineConfig);
         this._columnName = columnName;
         this._similarValue = similarValue;
@@ -84,67 +78,67 @@ public class ReconJudgeSimilarCellsOperation extends ImmediateRowMapOperation {
         this._match = match;
         this._shareNewTopics = shareNewTopics == null ? false : shareNewTopics;
     }
-    
+
     @JsonProperty("columnName")
     public String getColumnName() {
         return _columnName;
     }
-    
+
     @JsonProperty("similarValue")
     public String getSimilarValue() {
         return _similarValue;
     }
-    
+
     @JsonProperty("judgment")
     public Judgment getJudgment() {
         return _judgment;
     }
-    
+
     @JsonProperty("match")
     @JsonInclude(Include.NON_NULL)
     public ReconCandidate getMatch() {
         return _match;
     }
-    
+
     @JsonProperty("shareNewTopics")
     public boolean getShareNewTopics() {
         return _shareNewTopics;
     }
-    
+
     @Override
-	public String getDescription() {
+    public String getDescription() {
         if (_judgment == Judgment.None) {
             return "Discard recon judgments for cells containing \"" +
-                _similarValue + "\" in column " + _columnName;
+                    _similarValue + "\" in column " + _columnName;
         } else if (_judgment == Judgment.New) {
             if (_shareNewTopics) {
                 return "Mark to create one single new item for all cells containing \"" +
-                    _similarValue + "\" in column " + _columnName;
+                        _similarValue + "\" in column " + _columnName;
             } else {
                 return "Mark to create one new item for each cell containing \"" +
-                    _similarValue + "\" in column " + _columnName;
+                        _similarValue + "\" in column " + _columnName;
             }
         } else if (_judgment == Judgment.Matched) {
-            return "Match item " + 
-                _match.name +  " (" +
-                _match.id + ") for cells containing \"" +
-                _similarValue + "\" in column " + _columnName;
+            return "Match item " +
+                    _match.name + " (" +
+                    _match.id + ") for cells containing \"" +
+                    _similarValue + "\" in column " + _columnName;
         }
         throw new InternalError("Can't get here");
     }
-    
+
     @Override
     public RowInRecordMapper getPositiveRowMapper(GridState grid, ChangeContext context) throws DoesNotApplyException {
-    	int columnIndex = grid.getColumnModel().getColumnIndexByName(_columnName);
-    	if (columnIndex == -1) {
-    		throw new ColumnNotFoundException(_columnName);
-    	}
-    	ReconConfig reconConfig = grid.getColumnModel().getColumnByName(_columnName).getReconConfig();
-    	long historyEntryId = context.getHistoryEntryId();
-    	
-    	if (_shareNewTopics && _judgment == Judgment.New) {
-    		Recon sharedRecon;
-    		if (reconConfig != null) {
+        int columnIndex = grid.getColumnModel().getColumnIndexByName(_columnName);
+        if (columnIndex == -1) {
+            throw new ColumnNotFoundException(_columnName);
+        }
+        ReconConfig reconConfig = grid.getColumnModel().getColumnByName(_columnName).getReconConfig();
+        long historyEntryId = context.getHistoryEntryId();
+
+        if (_shareNewTopics && _judgment == Judgment.New) {
+            Recon sharedRecon;
+            if (reconConfig != null) {
                 sharedRecon = reconConfig.createNewRecon(historyEntryId);
             } else {
                 // This should only happen if we are creating new cells
@@ -153,62 +147,61 @@ public class ReconJudgeSimilarCellsOperation extends ImmediateRowMapOperation {
                 // to use, so we fall back on the default one.
                 sharedRecon = new Recon(historyEntryId, null, null);
             }
-    		sharedRecon = sharedRecon.withJudgment(Judgment.New).withJudgmentAction("similar");
-    		return rowMapperShareNewTopics(columnIndex, _similarValue, sharedRecon);
-    	} else {
-    		return rowMapper(columnIndex, _similarValue, _judgment, _match, historyEntryId);
-    	}
+            sharedRecon = sharedRecon.withJudgment(Judgment.New).withJudgmentAction("similar");
+            return rowMapperShareNewTopics(columnIndex, _similarValue, sharedRecon);
+        } else {
+            return rowMapper(columnIndex, _similarValue, _judgment, _match, historyEntryId);
+        }
     }
-    
+
     @Override
-	protected GridState postTransform(GridState newState, ChangeContext context) {
-		return LazyReconStats.updateReconStats(newState, _columnName);
-	}
-    
+    protected GridState postTransform(GridState newState, ChangeContext context) {
+        return LazyReconStats.updateReconStats(newState, _columnName);
+    }
+
     protected static RowInRecordMapper rowMapperShareNewTopics(int columnIndex, String similarValue, Recon sharedRecon) {
-    	return new RowInRecordMapper() {
+        return new RowInRecordMapper() {
 
-			private static final long serialVersionUID = 2587023425253722417L;
+            private static final long serialVersionUID = 2587023425253722417L;
 
-			@Override
-			public Row call(Record record, long rowId, Row row) {
+            @Override
+            public Row call(Record record, long rowId, Row row) {
                 Cell cell = row.getCell(columnIndex);
                 if (cell != null && ExpressionUtils.isNonBlankData(cell.value)) {
-                    String value = cell.value instanceof String ? 
-                            ((String) cell.value) : cell.value.toString();
-                            
+                    String value = cell.value instanceof String ? ((String) cell.value) : cell.value.toString();
+
                     if (similarValue.equals(value)) {
-                    	return row.withCell(columnIndex, new Cell(cell.value, sharedRecon));
+                        return row.withCell(columnIndex, new Cell(cell.value, sharedRecon));
                     }
                 }
                 return row;
-			}
-    		
-    	};
+            }
+
+        };
     }
-    
-    protected static RowInRecordMapper rowMapper(int columnIndex, String similarValue, Judgment judgment, ReconCandidate match, long historyEntryId) {
-		return new RowInRecordMapper() {
 
-			private static final long serialVersionUID = -3622231157543742155L;
+    protected static RowInRecordMapper rowMapper(int columnIndex, String similarValue, Judgment judgment, ReconCandidate match,
+            long historyEntryId) {
+        return new RowInRecordMapper() {
 
-			@Override
-			public Row call(Record record, long rowId, Row row) {
+            private static final long serialVersionUID = -3622231157543742155L;
+
+            @Override
+            public Row call(Record record, long rowId, Row row) {
                 Cell cell = row.getCell(columnIndex);
                 if (cell != null && ExpressionUtils.isNonBlankData(cell.value)) {
-                    String value = cell.value instanceof String ? 
-                            ((String) cell.value) : cell.value.toString();
-                            
+                    String value = cell.value instanceof String ? ((String) cell.value) : cell.value.toString();
+
                     if (similarValue.equals(value)) {
                         Recon recon = cell.recon.dup(historyEntryId)
-                        		.withMatchRank(-1)
-                        		.withJudgmentAction("similar");
-                        
+                                .withMatchRank(-1)
+                                .withJudgmentAction("similar");
+
                         if (judgment == Judgment.Matched) {
                             recon = recon
-                            		.withJudgment(Recon.Judgment.Matched)
-                            		.withMatch(match);
-                            
+                                    .withJudgment(Recon.Judgment.Matched)
+                                    .withMatch(match);
+
                             if (recon.candidates != null) {
                                 for (int m = 0; m < recon.candidates.size(); m++) {
                                     if (recon.candidates.get(m).id.equals(match.id)) {
@@ -220,17 +213,17 @@ public class ReconJudgeSimilarCellsOperation extends ImmediateRowMapOperation {
                         } else {
                             recon = recon.withJudgment(judgment).withMatch(null);
                         }
-                     
+
                         Cell newCell = new Cell(cell.value, recon);
-                        
+
                         return row.withCell(columnIndex, newCell);
                     }
                 }
                 return row;
 
-			}
-			
-		};
+            }
+
+        };
     }
 
 }

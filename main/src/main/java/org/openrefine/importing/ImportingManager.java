@@ -58,44 +58,46 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import edu.mit.simile.butterfly.ButterflyModule;
 
 public class ImportingManager {
+
     final static Logger logger = LoggerFactory.getLogger("importing");
-    
+
     static private RefineServlet servlet;
     static private File importDir;
-    
+
     final static private Map<Long, ImportingJob> jobs = Collections.synchronizedMap(new HashMap<Long, ImportingJob>());
     static private long jobIdCounter = 0;
     final static private Object jobIdLock = new Object();
-    
+
     // Mapping from controller name to controller
     final static public Map<String, ImportingController> controllers = new HashMap<String, ImportingController>();
-    
+
     // timer for periodically deleting stale importing jobs
     static private ScheduledExecutorService service;
 
     final static private long TIMER_PERIOD = 10; // 10 minutes
     final static private long STALE_PERIOD = 60 * 60 * 1000; // 60 minutes in milliseconds
-    
+
     static private class CleaningTimerTask implements Runnable {
+
         @Override
         public void run() {
-            // An exception here will keep future runs of this task from happening, 
+            // An exception here will keep future runs of this task from happening,
             // but won't affect other timer tasks
             cleanUpStaleJobs();
         }
     }
-    
+
     static public void initialize(RefineServlet servlet) {
         ImportingManager.servlet = servlet;
-        
-        service =  Executors.newSingleThreadScheduledExecutor();
+
+        service = Executors.newSingleThreadScheduledExecutor();
         service.scheduleWithFixedDelay(new CleaningTimerTask(), TIMER_PERIOD, TIMER_PERIOD, TimeUnit.MINUTES);
     }
-    
+
     static public void registerController(ButterflyModule module, String name, ImportingController controller) {
         String key = module.getName() + "/" + name;
         controllers.put(key, controller);
-        
+
         controller.init(servlet);
     }
 
@@ -103,7 +105,7 @@ public class ImportingManager {
         if (importDir == null) {
             File tempDir = servlet.getTempDir();
             importDir = tempDir == null ? new File(".import-temp") : new File(tempDir, "import");
-            
+
             if (importDir.exists()) {
                 try {
                     // start fresh
@@ -115,33 +117,33 @@ public class ImportingManager {
         }
         return importDir;
     }
-    
+
     static public ImportingJob createJob() {
         long id;
-        
-        synchronized(jobIdLock) {
+
+        synchronized (jobIdLock) {
             ++jobIdCounter;
-            
+
             // Avoid negative job id's when the counter wraps around.
             if (jobIdCounter < 0) {
                 jobIdCounter = 1;
             }
-            
+
             id = jobIdCounter;
         }
-        
+
         File jobDir = new File(getImportDir(), Long.toString(id));
-        
+
         ImportingJob job = new ImportingJob(id, jobDir);
         jobs.put(id, job);
-        
+
         return job;
     }
-    
+
     static public ImportingJob getJob(long id) {
         return jobs.get(id);
     }
-    
+
     static public void disposeJob(long id) {
         ImportingJob job = getJob(id);
         if (job != null) {
@@ -149,20 +151,29 @@ public class ImportingManager {
             jobs.remove(id);
         }
     }
-    
+
     static public class ImportingConfiguration {
+
         @JsonProperty("formats")
-        public Map<String, ImportingFormat> getFormats() { return FormatRegistry.getFormatToRecord(); }
+        public Map<String, ImportingFormat> getFormats() {
+            return FormatRegistry.getFormatToRecord();
+        }
+
         @JsonProperty("mimeTypeToFormat")
-        public Map<String, String> getMimeTypeToFormat() { return FormatRegistry.getMimeTypeToFormat(); }
+        public Map<String, String> getMimeTypeToFormat() {
+            return FormatRegistry.getMimeTypeToFormat();
+        }
+
         @JsonProperty("extensionToFormat")
-        public Map<String, String> getExtensionToFormat() { return FormatRegistry.getExtensionToFormat(); }
+        public Map<String, String> getExtensionToFormat() {
+            return FormatRegistry.getExtensionToFormat();
+        }
     }
 
     static private void cleanUpStaleJobs() {
         long now = System.currentTimeMillis();
         Collection<Long> keys;
-        synchronized(jobs) {
+        synchronized (jobs) {
             keys = new ArrayList<Long>(jobs.keySet());
         }
         for (Long id : keys) {

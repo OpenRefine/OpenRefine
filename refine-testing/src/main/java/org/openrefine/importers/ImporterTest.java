@@ -24,6 +24,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  ******************************************************************************/
+
 package org.openrefine.importers;
 
 import static org.mockito.Mockito.mock;
@@ -63,18 +64,19 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.common.io.ByteStreams;
 
 public class ImporterTest extends RefineTest {
-    //mock dependencies
+
+    // mock dependencies
     protected ProjectMetadata metadata;
     protected ImportingJob job;
-    
+
     protected ObjectNode options;
     protected static File importerTestDir;
-    
+
     @BeforeSuite
     public void setUpImporterTestDirectory() throws IOException {
         importerTestDir = TestUtils.createTempDirectory("openrefine-test-importer-dir");
     }
-    
+
     @AfterSuite
     public void tearDownTestDirector() throws IOException {
         if (importerTestDir != null) {
@@ -82,20 +84,20 @@ public class ImporterTest extends RefineTest {
             importerTestDir = null;
         }
     }
-    
+
     @BeforeMethod
-    public void setUp(){
+    public void setUp() {
         metadata = new ProjectMetadata();
         job = mock(ImportingJob.class);
         when(job.getRetrievalRecord()).thenReturn(new RetrievalRecord());
         when(job.getRawDataDir()).thenReturn(importerTestDir);
         when(job.getJsonConfig()).thenReturn(new ImportingJobConfig());
-        
+
         options = ParsingUtilities.mapper.createObjectNode();
     }
-    
+
     @AfterMethod
-    public void tearDown(){
+    public void tearDown() {
         metadata = null;
         job = null;
         options = null;
@@ -104,53 +106,49 @@ public class ImporterTest extends RefineTest {
     protected GridState parseOneFile(ReaderImporter parser, Reader reader) throws Exception {
         return parseOneFile(parser, reader, options);
     }
-    
+
     protected GridState parseOneFile(ReaderImporter parser, Reader reader, ObjectNode options) throws Exception {
         return parser.parseOneFile(
-            metadata,
-            job,
-            "file-source",
-            "archive-file-name",
-            reader,
-            -1, options
-        );
+                metadata,
+                job,
+                "file-source",
+                "archive-file-name",
+                reader,
+                -1, options);
     }
-    
+
     protected GridState parseOneFile(InputStreamImporter parser, InputStream inputStream) throws Exception {
         return parser.parseOneFile(
-            metadata,
-            job,
-            "file-source",
-            "archive-file-name",
-            inputStream,
-            -1, options
-        );
+                metadata,
+                job,
+                "file-source",
+                "archive-file-name",
+                inputStream,
+                -1, options);
     }
-    
+
     protected GridState parseOneFile(InputStreamImporter parser, InputStream inputStream, ObjectNode options) throws Exception {
         return parser.parseOneFile(
-            metadata,
-            job,
-            "file-source",
-            "archive-file-name",
-            inputStream,
-            -1, options
-        );
+                metadata,
+                job,
+                "file-source",
+                "archive-file-name",
+                inputStream,
+                -1, options);
     }
-    
+
     protected GridState parseOneFile(URIImporter parser, String sparkURI) throws Exception {
         return parser.parseOneFile(
-            metadata,
-            job,
-            "file-source",
-            "archive-file-name",
-            sparkURI,
-            -1,
-            options,
-            mock(MultiFileReadingProgress.class)
-        );
+                metadata,
+                job,
+                "file-source",
+                "archive-file-name",
+                sparkURI,
+                -1,
+                options,
+                mock(MultiFileReadingProgress.class));
     }
-    
+
     protected GridState parseOneFile(ImportingParser parser, File file, ObjectNode options) throws Exception {
         ImportingFileRecord importingRecord = mock(ImportingFileRecord.class);
         when(importingRecord.getDerivedSparkURI(Mockito.any())).thenReturn(file.getAbsolutePath());
@@ -159,15 +157,15 @@ public class ImporterTest extends RefineTest {
         when(importingRecord.getFileSource()).thenReturn("file-source");
         return parseFiles(parser, Collections.singletonList(importingRecord), options);
     }
-    
+
     protected GridState parseFiles(ImportingParser parser, List<ImportingFileRecord> files, ObjectNode options) throws Exception {
         return parser.parse(metadata, job, files, "format", -1, options);
     }
-    
+
     protected GridState parseOneString(ImportingParser parser, String contents, ObjectNode options) throws Exception {
         if (parser instanceof ReaderImporter) {
             StringReader reader = new StringReader(contents);
-            return parseOneFile((ReaderImporter)parser, reader, options);
+            return parseOneFile((ReaderImporter) parser, reader, options);
         }
         File tempFile = new File(importerTestDir, Long.toString((new Random()).nextLong(), 16).replace("-", ""));
         try {
@@ -182,11 +180,11 @@ public class ImporterTest extends RefineTest {
             tempFile.delete();
         }
     }
-    
+
     protected GridState parseOneString(ImportingParser parser, String string) throws Exception {
         return parseOneString(parser, string, options);
     }
-    
+
     /**
      * Saves an input stream to a file in the import test directory.
      * 

@@ -21,6 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  ******************************************************************************/
+
 package org.openrefine.wikidata.schema;
 
 import static org.testng.Assert.assertEquals;
@@ -44,26 +45,29 @@ public class ExpressionContextTest extends RefineTest {
 
     @BeforeMethod
     public void setUp() {
-        grid = createGrid(new String[] { "a","b" },
-        		new Serializable[][] {{"c", null},{"d","e"}});
+        grid = createGrid(new String[] { "a", "b" },
+                new Serializable[][] { { "c", null }, { "d", "e" } });
         rows = grid.collectRows().stream().map(IndexedRow::getRow).collect(Collectors.toList());
     }
 
     @Test
     public void testGetCellByColumnName() {
-        ExpressionContext ctxt = new ExpressionContext("foo:", null, "https://www.wikidata.org/w/api.php", 1, rows.get(1), grid.getColumnModel(), null);
+        ExpressionContext ctxt = new ExpressionContext("foo:", null, "https://www.wikidata.org/w/api.php", 1, rows.get(1),
+                grid.getColumnModel(), null);
         assertEquals("e", ctxt.getCellByName("b").value);
     }
 
     @Test
     public void testNonExistentColumn() {
-        ExpressionContext ctxt = new ExpressionContext("foo:", null, "https://www.wikidata.org/w/api.php", 1, rows.get(1), grid.getColumnModel(), null);
+        ExpressionContext ctxt = new ExpressionContext("foo:", null, "https://www.wikidata.org/w/api.php", 1, rows.get(1),
+                grid.getColumnModel(), null);
         assertNull(ctxt.getCellByName("auie"));
     }
 
     @Test
     public void testGetRowId() {
-        ExpressionContext ctxt = new ExpressionContext("foo:", null, "https://www.wikidata.org/w/api.php", 1, rows.get(1), grid.getColumnModel(), null);
+        ExpressionContext ctxt = new ExpressionContext("foo:", null, "https://www.wikidata.org/w/api.php", 1, rows.get(1),
+                grid.getColumnModel(), null);
         assertEquals(1, ctxt.getRowId());
     }
 }

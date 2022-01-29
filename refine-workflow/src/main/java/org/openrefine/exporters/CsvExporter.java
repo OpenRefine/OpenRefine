@@ -51,20 +51,21 @@ import com.fasterxml.jackson.databind.JsonNode;
 
 import au.com.bytecode.opencsv.CSVWriter;
 
-public class CsvExporter implements WriterExporter{
+public class CsvExporter implements WriterExporter {
 
     final static Logger logger = LoggerFactory.getLogger("CsvExporter");
     char separator;
 
     public CsvExporter() {
-        separator = ','; //Comma separated-value is default
+        separator = ','; // Comma separated-value is default
     }
 
     public CsvExporter(char separator) {
         this.separator = separator;
     }
-    
+
     private static class Configuration {
+
         @JsonProperty("separator")
         protected String separator = null;
         @JsonProperty("lineSeparator")
@@ -76,7 +77,7 @@ public class CsvExporter implements WriterExporter{
     @Override
     public void export(GridState grid, ProjectMetadata projectMetadata, Properties params, Engine engine, final Writer writer)
             throws IOException {
-        
+
         String optionsString = (params == null) ? null : params.getProperty("options");
         Configuration options = new Configuration();
         if (optionsString != null) {
@@ -90,20 +91,19 @@ public class CsvExporter implements WriterExporter{
         if (options.separator == null) {
             options.separator = Character.toString(separator);
         }
-        
+
         final String separator = options.separator;
         final String lineSeparator = options.lineSeparator;
         final boolean quoteAll = options.quoteAll;
-        
-        final boolean printColumnHeader =
-            (params != null && params.getProperty("printColumnHeader") != null) ?
-                Boolean.parseBoolean(params.getProperty("printColumnHeader")) :
-                true;
-        
-        final CSVWriter csvWriter = 
-            new CSVWriter(writer, separator.charAt(0), CSVWriter.DEFAULT_QUOTE_CHARACTER, lineSeparator);
-        
+
+        final boolean printColumnHeader = (params != null && params.getProperty("printColumnHeader") != null)
+                ? Boolean.parseBoolean(params.getProperty("printColumnHeader"))
+                : true;
+
+        final CSVWriter csvWriter = new CSVWriter(writer, separator.charAt(0), CSVWriter.DEFAULT_QUOTE_CHARACTER, lineSeparator);
+
         TabularSerializer serializer = new TabularSerializer() {
+
             @Override
             public void startFile(JsonNode options) {
             }
@@ -118,18 +118,15 @@ public class CsvExporter implements WriterExporter{
                     String[] strings = new String[cells.size()];
                     for (int i = 0; i < strings.length; i++) {
                         CellData cellData = cells.get(i);
-                        strings[i] =
-                            (cellData != null && cellData.text != null) ?
-                            cellData.text :
-                            "";
+                        strings[i] = (cellData != null && cellData.text != null) ? cellData.text : "";
                     }
                     csvWriter.writeNext(strings, quoteAll);
                 }
             }
         };
-        
+
         CustomizableTabularExporterUtilities.exportRows(grid, engine, params, serializer, SortingConfig.NO_SORTING);
-        
+
         csvWriter.close();
     }
 

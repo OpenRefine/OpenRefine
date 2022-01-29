@@ -46,12 +46,12 @@ public class ArgsToArray extends PureFunction {
     public String getDescription() {
         return "Returns all arguments passed to it as an array";
     }
-    
+
     @Override
     public String getParams() {
         return "a1, a2, ...";
     }
-    
+
     @Override
     public String getReturns() {
         return "array";

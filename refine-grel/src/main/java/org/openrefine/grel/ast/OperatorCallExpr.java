@@ -44,7 +44,7 @@ import org.openrefine.expr.ExpressionUtils;
 public class OperatorCallExpr extends PureArgumentsExpr {
 
     private static final long serialVersionUID = -6453818304035013647L;
-    final protected String        _op;
+    final protected String _op;
 
     public OperatorCallExpr(GrelExpr[] args, String op) {
         super(args);
@@ -161,22 +161,22 @@ public class OperatorCallExpr extends PureArgumentsExpr {
     private boolean isIntegral(Object n) {
         return n instanceof Long || n instanceof Integer;
     }
-    
+
     @Override
     public boolean equals(Object other) {
-    	return (other instanceof GrelExpr) && toString().equals(other.toString());
+        return (other instanceof GrelExpr) && toString().equals(other.toString());
     }
-    
+
     @Override
     public OperatorCallExpr renameColumnDependencies(Map<String, String> substitutions) {
         GrelExpr[] translatedArgs = new GrelExpr[_args.length];
-        for(int i = 0; i != _args.length; i++) {
+        for (int i = 0; i != _args.length; i++) {
             translatedArgs[i] = _args[i].renameColumnDependencies(substitutions);
-            if(translatedArgs[i] == null) {
+            if (translatedArgs[i] == null) {
                 return null;
             }
         }
         return new OperatorCallExpr(translatedArgs, _op);
     }
-    
+
 }

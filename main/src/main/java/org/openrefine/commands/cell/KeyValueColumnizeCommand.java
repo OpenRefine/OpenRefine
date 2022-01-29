@@ -30,6 +30,7 @@ THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 */
+
 package org.openrefine.commands.cell;
 
 import java.io.IOException;
@@ -44,28 +45,28 @@ import org.openrefine.operations.Operation;
 import org.openrefine.operations.cell.KeyValueColumnizeOperation;
 import org.openrefine.process.Process;
 
-
 public class KeyValueColumnizeCommand extends Command {
+
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-    	if(!hasValidCSRFToken(request)) {
-    		respondCSRFError(response);
-    		return;
-    	}
-        
+        if (!hasValidCSRFToken(request)) {
+            respondCSRFError(response);
+            return;
+        }
+
         try {
             Project project = getProject(request);
-            
+
             String keyColumnName = request.getParameter("keyColumnName");
             String valueColumnName = request.getParameter("valueColumnName");
             String noteColumnName = request.getParameter("noteColumnName");
-            
+
             Operation op = new KeyValueColumnizeOperation(
-                keyColumnName, valueColumnName, noteColumnName);
-            
+                    keyColumnName, valueColumnName, noteColumnName);
+
             Process process = op.createProcess(project);
-            
+
             performProcessAndRespond(request, response, project, process);
         } catch (Exception e) {
             respondException(response, e);

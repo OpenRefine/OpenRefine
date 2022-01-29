@@ -55,20 +55,21 @@ public class HtmlTableExporter implements WriterExporter {
 
     @Override
     public void export(final GridState grid, ProjectMetadata projectMetadata, Properties params, Engine engine, final Writer writer)
-        throws IOException {
-        
+            throws IOException {
+
         TabularSerializer serializer = new TabularSerializer() {
+
             @Override
             public void startFile(JsonNode options) {
                 try {
                     writer.write("<html>\n");
                     writer.write("<head>\n");
-                    writer.write("<title>"); 
+                    writer.write("<title>");
                     writer.write(projectMetadata.getName());
                     writer.write("</title>\n");
                     writer.write("<meta charset=\"utf-8\" />\n");
                     writer.write("</head>\n");
-    
+
                     writer.write("<body>\n");
                     writer.write("<table>\n");
                 } catch (IOException e) {
@@ -121,7 +122,7 @@ public class HtmlTableExporter implements WriterExporter {
                 }
             }
         };
-        
+
         CustomizableTabularExporterUtilities.exportRows(
                 grid, engine, params, serializer, SortingConfig.NO_SORTING);
     }

@@ -1,3 +1,4 @@
+
 package org.openrefine.model;
 
 import java.io.File;
@@ -31,33 +32,33 @@ import com.google.common.util.concurrent.MoreExecutors;
 
 @JsonIgnoreType
 public class LocalDatamodelRunner implements DatamodelRunner {
-    
+
     final static private Logger logger = LoggerFactory.getLogger(LocalDatamodelRunner.class);
-    
+
     final static protected String METADATA_PATH = "metadata.json";
     final static protected String GRID_PATH = "grid";
-    
+
     protected final PLLContext pllContext;
-    
+
     // Partitioning strategy settings
-    protected int   defaultParallelism;
-    protected long  minSplitSize;
-    protected long  maxSplitSize;
-    
+    protected int defaultParallelism;
+    protected long minSplitSize;
+    protected long maxSplitSize;
+
     public LocalDatamodelRunner(RunnerConfiguration configuration) {
         defaultParallelism = configuration.getIntParameter("defaultParallelism", 4);
         minSplitSize = configuration.getLongParameter("minSplitSize", 4096L);
         maxSplitSize = configuration.getLongParameter("maxSplitSize", 16777216L);
-        
+
         pllContext = new PLLContext(MoreExecutors.listeningDecorator(
                 Executors.newCachedThreadPool()),
                 defaultParallelism, minSplitSize, maxSplitSize);
     }
-    
+
     public LocalDatamodelRunner() {
         this(RunnerConfiguration.empty);
     }
-    
+
     public PLLContext getPLLContext() {
         return pllContext;
     }
@@ -66,7 +67,7 @@ public class LocalDatamodelRunner implements DatamodelRunner {
     public GridState loadGridState(File path) throws IOException {
         File metadataFile = new File(path, METADATA_PATH);
         File gridFile = new File(path, GRID_PATH);
-        
+
         Metadata metadata = ParsingUtilities.mapper.readValue(metadataFile, Metadata.class);
         PairPLL<Long, Row> rows = pllContext
                 .textFile(gridFile.getAbsolutePath(), GRID_ENCODING)
@@ -74,7 +75,7 @@ public class LocalDatamodelRunner implements DatamodelRunner {
         rows = PairPLL.assumeIndexed(rows, metadata.rowCount);
         return new LocalGridState(this, rows, metadata.columnModel, metadata.overlayModels);
     }
-    
+
     protected static Tuple2<Long, Row> parseIndexedRow(String source) {
         IndexedRow id;
         try {
@@ -98,11 +99,13 @@ public class LocalDatamodelRunner implements DatamodelRunner {
             throws IOException {
         PairPLL<Long, T> pll = pllContext
                 .textFile(path.getAbsolutePath(), GRID_ENCODING)
-                .map(line -> {try {
-                    return IndexedData.<T>read(line, serializer);
-                } catch (IOException e) {
-                    throw new UncheckedIOException(e);
-                }})
+                .map(line -> {
+                    try {
+                        return IndexedData.<T> read(line, serializer);
+                    } catch (IOException e) {
+                        throw new UncheckedIOException(e);
+                    }
+                })
                 .mapToPair(indexedData -> Tuple2.of(indexedData.getId(), indexedData.getData()));
         pll = PairPLL.assumeSorted(pll);
         return new LocalChangeData<T>(this, pll, null);
@@ -147,7 +150,7 @@ public class LocalDatamodelRunner implements DatamodelRunner {
                 .stream()
                 .filter(id -> id.getData() != null)
                 .collect(Collectors.toList());
-        
+
         PairPLL<Long, T> pll = pllContext
                 .parallelize(defaultParallelism, withoutNulls)
                 .mapToPair(indexedData -> Tuple2.of(indexedData.getId(), indexedData.getData()));

@@ -37,14 +37,15 @@ import org.openrefine.model.Cell;
 
 // TODO (Antonin, 2020-01-16): why is this class useful? Where do we need to access the column name?
 public class WrappedCell implements HasFields {
+
     final public String columnName;
     final public Cell cell;
-    
+
     public WrappedCell(String columnName, Cell cell) {
         this.columnName = columnName;
         this.cell = cell;
     }
-    
+
     @Override
     public Object getField(String name) {
         return cell.getField(name);

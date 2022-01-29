@@ -1,3 +1,4 @@
+
 package org.openrefine.model;
 
 import java.io.File;
@@ -43,19 +44,19 @@ import scala.runtime.BoxedUnit;
  *
  */
 public class SparkDatamodelRunner implements DatamodelRunner {
-    
+
     static final Logger logger = LoggerFactory.getLogger(SparkDatamodelRunner.class);
-    
+
     private JavaSparkContext context;
     private final int defaultParallelism;
     private final String sparkMasterURI;
-    
+
     public SparkDatamodelRunner(RunnerConfiguration configuration) {
         this.defaultParallelism = configuration.getIntParameter("defaultParallelism", 4);
         this.sparkMasterURI = configuration.getParameter("sparkMasterURI", String.format("local[%d]", defaultParallelism));
 
         Thread.currentThread().setContextClassLoader(JavaSparkContext.class.getClassLoader());
-        
+
         // set up Hadoop on Windows
         String os = System.getProperty("os.name").toLowerCase();
         if (os.contains("windows")) {
@@ -65,25 +66,25 @@ public class SparkDatamodelRunner implements DatamodelRunner {
                 logger.warn("unable to locate Windows Hadoop binaries, this will leave temporary files behind");
             }
         }
-        
+
         context = new JavaSparkContext(
                 new SparkConf()
-                .setAppName("OpenRefine")
-                .setMaster(sparkMasterURI));
+                        .setAppName("OpenRefine")
+                        .setMaster(sparkMasterURI));
         context.setLogLevel("WARN");
         context.hadoopConfiguration().set("fs.file.impl", OrderedLocalFileSystem.class.getName());
-        
+
         // Set up hook to save projects when spark shuts down
         int priority = ShutdownHookManager.SPARK_CONTEXT_SHUTDOWN_PRIORITY() + 10;
         ShutdownHookManager.addShutdownHook(priority, sparkShutdownHook());
     }
-    
+
     public SparkDatamodelRunner(JavaSparkContext context) {
         this.context = context;
         this.defaultParallelism = context.defaultParallelism();
         this.sparkMasterURI = null;
     }
-    
+
     public JavaSparkContext getContext() {
         return context;
     }
@@ -95,13 +96,13 @@ public class SparkDatamodelRunner implements DatamodelRunner {
 
     @Override
     public GridState create(ColumnModel columnModel, List<Row> rows, Map<String, OverlayModel> overlayModels) {
-        List<Tuple2<Long,Row>> tuples = IntStream.range(0, rows.size())
-                .mapToObj(i -> new Tuple2<Long,Row>((long) i, rows.get(i)))
+        List<Tuple2<Long, Row>> tuples = IntStream.range(0, rows.size())
+                .mapToObj(i -> new Tuple2<Long, Row>((long) i, rows.get(i)))
                 .collect(Collectors.toList());
-        JavaPairRDD<Long,Row> rdd = JavaPairRDD.fromJavaRDD(context.parallelize(tuples, defaultParallelism));
+        JavaPairRDD<Long, Row> rdd = JavaPairRDD.fromJavaRDD(context.parallelize(tuples, defaultParallelism));
         return new SparkGridState(columnModel, rdd, overlayModels, this, rows.size(), -1);
     }
-    
+
     static private Function0<BoxedUnit> sparkShutdownHook() {
         return new Function0<BoxedUnit>() {
 
@@ -113,9 +114,9 @@ public class SparkDatamodelRunner implements DatamodelRunner {
                 }
                 return BoxedUnit.UNIT;
             }
-            
+
         };
- 
+
     }
 
     public FileSystem getFileSystem() throws IOException {
@@ -126,27 +127,28 @@ public class SparkDatamodelRunner implements DatamodelRunner {
     public <T> ChangeData<T> loadChangeData(File path, ChangeDataSerializer<T> serializer)
             throws IOException {
         /*
-         * The text files corresponding to each partition are read in the correct order
-         * thanks to our dedicated file system OrderedLocalFileSystem.
-         * https://issues.apache.org/jira/browse/SPARK-5300
+         * The text files corresponding to each partition are read in the correct order thanks to our dedicated file
+         * system OrderedLocalFileSystem. https://issues.apache.org/jira/browse/SPARK-5300
          */
         JavaPairRDD<Long, T> data = context.textFile(path.getAbsolutePath())
-                .map(line -> IndexedData.<T>read(line, serializer))
+                .map(line -> IndexedData.<T> read(line, serializer))
                 .keyBy(p -> p.getId())
                 .mapValues(p -> p.getData())
                 .persist(StorageLevel.MEMORY_ONLY());
 
         return new SparkChangeData<T>(data, this);
     }
-    
-    protected static <T> Function<String, Tuple2<Long,T>> parseIndexedData(Type expectedType) {
-        
-        return new Function<String, Tuple2<Long,T>>() {
+
+    protected static <T> Function<String, Tuple2<Long, T>> parseIndexedData(Type expectedType) {
+
+        return new Function<String, Tuple2<Long, T>>() {
+
             private static final long serialVersionUID = 3635263442656462809L;
 
             @Override
-            public Tuple2<Long,T> call(String v1) throws Exception {
+            public Tuple2<Long, T> call(String v1) throws Exception {
                 TypeReference<IndexedData<T>> typeRef = new TypeReference<IndexedData<T>>() {
+
                     @Override
                     public Type getType() {
                         return expectedType;
@@ -160,11 +162,11 @@ public class SparkDatamodelRunner implements DatamodelRunner {
 
     @Override
     public <T> ChangeData<T> create(List<IndexedData<T>> changeData) {
-        List<Tuple2<Long,T>> tuples = changeData.stream()
+        List<Tuple2<Long, T>> tuples = changeData.stream()
                 .filter(id -> id.getData() != null)
-                .map(i -> new Tuple2<Long,T>(i.getId(), i.getData()))
+                .map(i -> new Tuple2<Long, T>(i.getId(), i.getData()))
                 .collect(Collectors.toList());
-        JavaPairRDD<Long,T> rdd = JavaPairRDD.fromJavaRDD(context.parallelize(tuples, defaultParallelism));
+        JavaPairRDD<Long, T> rdd = JavaPairRDD.fromJavaRDD(context.parallelize(tuples, defaultParallelism));
         return new SparkChangeData<T>(rdd, this);
     }
 
@@ -197,6 +199,6 @@ public class SparkDatamodelRunner implements DatamodelRunner {
     public boolean supportsProgressReporting() {
         // TODO add support for progress reporting
         return false;
-    } 
+    }
 
 }

@@ -1,3 +1,4 @@
+
 package org.openrefine.model.rdd;
 
 import java.io.ByteArrayOutputStream;
@@ -21,51 +22,57 @@ import scala.collection.Seq;
 import scala.reflect.ClassTag;
 
 /**
- * The scan map operation on a RDD provides a way to perform
- * a map on each elements where the mapped element can depend on
- * a state accumulated over the previous elements. This is made
- * scalable using the assumption that this state is accumulated
- * using an associative and unital combining function.
+ * The scan map operation on a RDD provides a way to perform a map on each elements where the mapped element can depend
+ * on a state accumulated over the previous elements. This is made scalable using the assumption that this state is
+ * accumulated using an associative and unital combining function.
  * 
- * This is a generalization of the zipWithIndex function, where
- * the accumulated state is the number of elements seen so far.
+ * This is a generalization of the zipWithIndex function, where the accumulated state is the number of elements seen so
+ * far.
  * 
  * @author Antonin Delpeuch
  *
- * @param <S> the type of state used by the mapper
- * @param <T> the type of elements of the original RDD
- * @param <U> the type of elements of the new RDD
+ * @param <S>
+ *            the type of state used by the mapper
+ * @param <T>
+ *            the type of elements of the original RDD
+ * @param <U>
+ *            the type of elements of the new RDD
  */
 public class ScanMapRDD<S extends Serializable, T, U> extends RDD<U> implements Serializable {
 
     private static final long serialVersionUID = 410341151696633023L;
-    
+
     private final Function2<S, S, S> combine;
     private final Function2<S, T, U> map;
     private final Function<T, S> feed;
-    
+
     private final ClassTag<T> tClassTag;
     private final ClassTag<U> uClassTag;
-    
+
     protected final List<S> partitionStates;
-    
+
     /**
      * Constructor.
      * 
-     * @param parent the RDD to which the scan map operation is applied
-     * @param feed the function to turn an element into a state
-     * @param combine the associative function to combine states
-     * @param map the map function taking the accumulated state, element, mapping it to the new element
-     * @param initialState a neutral element for the combine
+     * @param parent
+     *            the RDD to which the scan map operation is applied
+     * @param feed
+     *            the function to turn an element into a state
+     * @param combine
+     *            the associative function to combine states
+     * @param map
+     *            the map function taking the accumulated state, element, mapping it to the new element
+     * @param initialState
+     *            a neutral element for the combine
      * @param uClassTag
      * @param tClassTag
      * @param sClasTag
      */
     public ScanMapRDD(
             RDD<T> parent,
-            Function<T,S> feed,
-            Function2<S,S,S> combine,
-            Function2<S,T,U> map,
+            Function<T, S> feed,
+            Function2<S, S, S> combine,
+            Function2<S, T, U> map,
             S initialState,
             ClassTag<U> uClassTag,
             ClassTag<T> tClassTag,
@@ -84,46 +91,47 @@ public class ScanMapRDD<S extends Serializable, T, U> extends RDD<U> implements 
         partitionStates = computePartitionStates(parent, initialState, feed, combine, sClasTag);
         ensureSerializable(this);
     }
-    
+
     protected static void ensureSerializable(Object obj) {
         try {
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             ObjectOutputStream oos = new ObjectOutputStream(baos);
             oos.writeObject(obj);
-        } catch(IOException e) {
+        } catch (IOException e) {
             e.printStackTrace();
             throw new IllegalStateException("Object not serializable");
         }
     }
-    
+
     /**
      * Converts to a Java RDD
      */
     public JavaRDD<U> asJavaRDD() {
         return new JavaRDD<U>(this, uClassTag);
     }
-    
+
     @SuppressWarnings("unchecked")
-    public static <S,T> List<S> computePartitionStates(RDD<T> parent, S initialState, Function<T,S> feed, Function2<S,S,S> combine, ClassTag<S> stateClassTag) {
+    public static <S, T> List<S> computePartitionStates(RDD<T> parent, S initialState, Function<T, S> feed, Function2<S, S, S> combine,
+            ClassTag<S> stateClassTag) {
         int numPartitions = parent.getNumPartitions();
         List<S> partitionStates = Collections.singletonList(initialState);
 
         if (parent.getNumPartitions() > 1) {
             partitionStates = new ArrayList<>(parent.getNumPartitions());
-            List<Object> partitionIds = new ArrayList<>(numPartitions-1);
-            for (int i = 0; i != numPartitions-1; i++) {
+            List<Object> partitionIds = new ArrayList<>(numPartitions - 1);
+            for (int i = 0; i != numPartitions - 1; i++) {
                 partitionIds.add(i);
             }
             Seq<Object> partitionIdObjs = JavaConverters.collectionAsScalaIterable(partitionIds).toSeq();
             // casting directly to K[] can fail
-            Object[] objects = (Object[])parent.context().runJob(
+            Object[] objects = (Object[]) parent.context().runJob(
                     parent, computePartialProducts(initialState, feed, combine), partitionIdObjs, stateClassTag);
-            
+
             S currentState = initialState;
             partitionStates.add(initialState);
-            for(int i = 0; i != objects.length; i++) {
+            for (int i = 0; i != objects.length; i++) {
                 try {
-                    currentState = combine.call(currentState, (S)objects[i]);
+                    currentState = combine.call(currentState, (S) objects[i]);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -132,21 +140,21 @@ public class ScanMapRDD<S extends Serializable, T, U> extends RDD<U> implements 
         }
         return partitionStates;
     }
-    
-    protected static interface JobSignature<S,T> extends scala.Function2<TaskContext, Iterator<T>, S>, Serializable {
-        
+
+    protected static interface JobSignature<S, T> extends scala.Function2<TaskContext, Iterator<T>, S>, Serializable {
+
     };
-    
-    static <S,T> scala.Function2<TaskContext, Iterator<T>, S> computePartialProducts(
-            S initialState, Function<T,S> feed, Function2<S,S,S> combine) {
-        return new JobSignature<S,T>() {
+
+    static <S, T> scala.Function2<TaskContext, Iterator<T>, S> computePartialProducts(
+            S initialState, Function<T, S> feed, Function2<S, S, S> combine) {
+        return new JobSignature<S, T>() {
 
             private static final long serialVersionUID = -4871119702625799657L;
 
             @Override
             public S apply(TaskContext context, Iterator<T> iterator) {
                 S state = initialState;
-                while(iterator.hasNext()) {
+                while (iterator.hasNext()) {
                     T elem = iterator.next();
                     S localState;
                     try {
@@ -155,7 +163,7 @@ public class ScanMapRDD<S extends Serializable, T, U> extends RDD<U> implements 
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
-                    
+
                 }
                 return state;
             }
@@ -167,14 +175,15 @@ public class ScanMapRDD<S extends Serializable, T, U> extends RDD<U> implements 
         @SuppressWarnings("unchecked")
         ScanMapRDDPartition<S> partition = (ScanMapRDDPartition<S>) arg0;
         Iterator<T> origIter = this.firstParent(tClassTag).iterator(partition.prev, context);
-        return new Iterator<U> (){
-            
+        return new Iterator<U>() {
+
             S currentState = partition.initialState;
-            
+
             // Somehow this is required as of 2020-07-02 with Spark 2.4, for tests to pass.
             // Otherwise we get the following error when collecting the RDD:
             // java.lang.AbstractMethodError: Receiver class org.openrefine.model.rdd.ScanMapRDD$2 does
-            // not define or inherit an implementation of the resolved method 'abstract scala.collection.TraversableOnce seq()'
+            // not define or inherit an implementation of the resolved method 'abstract scala.collection.TraversableOnce
+            // seq()'
             // of interface scala.collection.TraversableOnce.
             @Override
             public Iterator<U> seq() {
@@ -198,7 +207,7 @@ public class ScanMapRDD<S extends Serializable, T, U> extends RDD<U> implements 
                 }
                 return result;
             }
-            
+
         };
     }
 
@@ -212,23 +221,23 @@ public class ScanMapRDD<S extends Serializable, T, U> extends RDD<U> implements 
         }
         return newPartitions;
     }
-    
+
     protected static class ScanMapRDDPartition<S> implements Partition {
 
         private static final long serialVersionUID = 8256733549359673469L;
-        
+
         private final Partition prev;
         protected final S initialState;
-        
+
         ScanMapRDDPartition(Partition prev, S initialState) {
             this.prev = prev;
             this.initialState = initialState;
         }
-        
+
         @Override
         public int index() {
             return prev.index();
         }
-        
+
     }
 }

@@ -47,18 +47,18 @@ import org.openrefine.model.RowInRecordFilter;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 
 /**
- * Judge if a row matches by evaluating a given expression on the row, based on a particular
- * column, and checking the result. It's a match if the result satisfies some string comparisons. 
+ * Judge if a row matches by evaluating a given expression on the row, based on a particular column, and checking the
+ * result. It's a match if the result satisfies some string comparisons.
  */
 abstract public class ExpressionStringComparisonRowFilter extends RowInRecordFilter {
 
     private static final long serialVersionUID = 3006866971552488098L;
-    
+
     final protected Evaluable _evaluable;
-    final protected Boolean   _invert;
-    final protected String    _columnName;
-    final protected int       _cellIndex;
-    
+    final protected Boolean _invert;
+    final protected String _columnName;
+    final protected int _cellIndex;
+
     public ExpressionStringComparisonRowFilter(Evaluable evaluable, Boolean invert, String columnName, int cellIndex) {
         super(!invert);
         _evaluable = evaluable;
@@ -70,7 +70,7 @@ abstract public class ExpressionStringComparisonRowFilter extends RowInRecordFil
     @Override
     public boolean filterRow(long rowIndex, Row row, Record record) {
         Cell cell = _cellIndex < 0 ? null : row.getCell(_cellIndex);
-        
+
         Properties bindings = ExpressionUtils.createBindings();
         ExpressionUtils.bind(bindings, null, row, rowIndex, record, _columnName, cell);
         Boolean invert = _invert;
@@ -93,7 +93,7 @@ abstract public class ExpressionStringComparisonRowFilter extends RowInRecordFil
             } else if (value instanceof ArrayNode) {
                 ArrayNode a = (ArrayNode) value;
                 int l = a.size();
-                
+
                 for (int i = 0; i < l; i++) {
                     if (checkValue(JsonValueConverter.convert(a.get(i)).toString())) {
                         return !invert;
@@ -108,6 +108,6 @@ abstract public class ExpressionStringComparisonRowFilter extends RowInRecordFil
         }
         return invert;
     }
-    
+
     abstract protected boolean checkValue(String s);
 }

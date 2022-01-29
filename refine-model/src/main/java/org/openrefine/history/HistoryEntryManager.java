@@ -54,81 +54,86 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  *
  */
 public class HistoryEntryManager {
-	
-	protected static final String INITIAL_GRID_SUBDIR = "initial";
-	protected static final String METADATA_FILENAME = "history.json";
-	protected static final String CHANGE_SUBDIR = "changes";
-	protected static final String GRID_CACHE_SUBDIR = "cache";
-	
-	private final DatamodelRunner runner;
-	
-	public HistoryEntryManager(DatamodelRunner runner) {
-		this.runner = runner;
-	}
-	
+
+    protected static final String INITIAL_GRID_SUBDIR = "initial";
+    protected static final String METADATA_FILENAME = "history.json";
+    protected static final String CHANGE_SUBDIR = "changes";
+    protected static final String GRID_CACHE_SUBDIR = "cache";
+
+    private final DatamodelRunner runner;
+
+    public HistoryEntryManager(DatamodelRunner runner) {
+        this.runner = runner;
+    }
+
     /**
      * Saves the history and the initial grid state to a directory.
+     * 
      * @param dir
-     * 		the directory where the history should be saved.
-     * @throws IOException 
+     *            the directory where the history should be saved.
+     * @throws IOException
      */
     public void save(History history, File dir) throws IOException {
-    	File gridFile = new File(dir, INITIAL_GRID_SUBDIR);
-    	File metadataFile = new File(dir, METADATA_FILENAME);
-    	// Save the initial grid if does not exist yet (it is immutable)
-    	if(!gridFile.exists()) {
-    	    history.getInitialGridState().saveToFile(gridFile);
-    	}
-    	Metadata metadata = new Metadata();
-    	metadata.entries = history.getEntries();
-    	metadata.position = history.getPosition();
-    	// Save the metadata
-    	ParsingUtilities.saveWriter.writeValue(metadataFile, metadata);
-    	// Cache the current grid state to make loading faster
-    	if (history.getPosition() > 0) {
-    	    history.cacheCurrentGridState();
-    	}
+        File gridFile = new File(dir, INITIAL_GRID_SUBDIR);
+        File metadataFile = new File(dir, METADATA_FILENAME);
+        // Save the initial grid if does not exist yet (it is immutable)
+        if (!gridFile.exists()) {
+            history.getInitialGridState().saveToFile(gridFile);
+        }
+        Metadata metadata = new Metadata();
+        metadata.entries = history.getEntries();
+        metadata.position = history.getPosition();
+        // Save the metadata
+        ParsingUtilities.saveWriter.writeValue(metadataFile, metadata);
+        // Cache the current grid state to make loading faster
+        if (history.getPosition() > 0) {
+            history.cacheCurrentGridState();
+        }
     }
-    
+
     public History load(File dir) throws IOException, DoesNotApplyException {
-    	File gridFile = new File(dir, INITIAL_GRID_SUBDIR);
-    	File metadataFile = new File(dir, METADATA_FILENAME);
-    	// Load the metadata
-    	Metadata metadata = ParsingUtilities.mapper.readValue(metadataFile, Metadata.class);
-    	// Load the initial grid
-    	GridState gridState = runner.loadGridState(gridFile);
-    	return new History(
-    	        gridState,
-    	        getChangeDataStore(dir),
-    	        getCachedGridStore(dir),
-    	        metadata.entries,
-    	        metadata.position);
+        File gridFile = new File(dir, INITIAL_GRID_SUBDIR);
+        File metadataFile = new File(dir, METADATA_FILENAME);
+        // Load the metadata
+        Metadata metadata = ParsingUtilities.mapper.readValue(metadataFile, Metadata.class);
+        // Load the initial grid
+        GridState gridState = runner.loadGridState(gridFile);
+        return new History(
+                gridState,
+                getChangeDataStore(dir),
+                getCachedGridStore(dir),
+                metadata.entries,
+                metadata.position);
     }
-    
+
     /**
      * The change data store associated with a project
-     * @param projectDir the root project directory
+     * 
+     * @param projectDir
+     *            the root project directory
      * @return
      */
     public ChangeDataStore getChangeDataStore(File projectDir) {
         return new FileChangeDataStore(runner, new File(projectDir, CHANGE_SUBDIR));
     }
-    
+
     /**
      * The place where to store cached intermediate grid states
+     * 
      * @param projectDir
      * @return
      */
     public CachedGridStore getCachedGridStore(File projectDir) {
         return new FileCachedGridStore(runner, new File(projectDir, GRID_CACHE_SUBDIR));
     }
-    
+
     /**
      * Utility class to help with Jackson deserialization
      *
      */
     protected static class Metadata {
-    	@JsonProperty("entries")
+
+        @JsonProperty("entries")
         protected List<HistoryEntry> entries;
         @JsonProperty("position")
         int position;

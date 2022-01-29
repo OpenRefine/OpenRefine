@@ -1,3 +1,4 @@
+
 package org.openrefine.model.changes;
 
 import java.io.IOException;
@@ -24,5 +25,5 @@ public class CellChangeDataSerializer implements ChangeDataSerializer<Cell> {
     public Cell deserialize(String serialized) throws IOException {
         return ParsingUtilities.mapper.readValue(serialized, Cell.class);
     }
-    
+
 }

@@ -24,6 +24,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  ******************************************************************************/
+
 package org.openrefine.browsing.facets;
 
 import static org.testng.Assert.assertFalse;
@@ -53,40 +54,41 @@ import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
 public class ScatterplotFacetTests extends RefineTest {
-    public static String configJson = "{\n" + 
+
+    public static String configJson = "{\n" +
             "          \"max_x\" : 89.2," +
             "          \"max_y\" : 32," +
             "          \"min_x\" : -45.9," +
             "          \"min_y\" : -38," +
-            "          \"to_x\": 1,\n" + 
-            "          \"to_y\": 1,\n" + 
-            "          \"dot\": 1,\n" + 
-            "          \"from_x\": 0.2,\n" + 
-            "          \"l\": 150,\n" + 
-            "          \"type\": \"core/scatterplot\",\n" + 
-            "          \"from_y\": 0.25,\n" + 
-            "          \"dim_y\": \"lin\",\n" + 
-            "          \"ex\": \"value\",\n" + 
+            "          \"to_x\": 1,\n" +
+            "          \"to_y\": 1,\n" +
+            "          \"dot\": 1,\n" +
+            "          \"from_x\": 0.2,\n" +
+            "          \"l\": 150,\n" +
+            "          \"type\": \"core/scatterplot\",\n" +
+            "          \"from_y\": 0.25,\n" +
+            "          \"dim_y\": \"lin\",\n" +
+            "          \"ex\": \"value\",\n" +
             "          \"dim_x\": \"lin\",\n" +
-            "          \"ey\": \"value\",\n" + 
-            "          \"cx\": \"my column\",\n" + 
+            "          \"ey\": \"value\",\n" +
+            "          \"cx\": \"my column\",\n" +
             "          \"cy\": \"e\",\n" +
-            "          \"r\": \"none\"," + 
-            "          \"name\": \"my column (x) vs. e (y)\"\n" + 
+            "          \"r\": \"none\"," +
+            "          \"name\": \"my column (x) vs. e (y)\"\n" +
             "        }";
-    
-    public static String configNeutralJson = "{\n" + 
-            "          \"dot\": 1,\n" + 
-            "          \"l\": 150,\n" + 
-            "          \"type\": \"core/scatterplot\",\n" + 
-            "          \"ex\": \"value\",\n" + 
-            "          \"ey\": \"value\",\n" + 
-            "          \"cx\": \"my column\",\n" + 
+
+    public static String configNeutralJson = "{\n" +
+            "          \"dot\": 1,\n" +
+            "          \"l\": 150,\n" +
+            "          \"type\": \"core/scatterplot\",\n" +
+            "          \"ex\": \"value\",\n" +
+            "          \"ey\": \"value\",\n" +
+            "          \"cx\": \"my column\",\n" +
             "          \"cy\": \"e\",\n" +
-            "          \"r\": \"none\"," + 
-            "          \"name\": \"my column (x) vs. e (y)\"\n" + 
+            "          \"r\": \"none\"," +
+            "          \"name\": \"my column (x) vs. e (y)\"\n" +
             "        }";
-    
+
     public static String facetJson = "{"
             + "\"name\":\"my column (x) vs. e (y)\","
             + "\"cx\":\"my column\","
@@ -107,7 +109,7 @@ public class ScatterplotFacetTests extends RefineTest {
             + "\"min_x\" : -45.9,"
             + "\"min_y\" : -38"
             + "}";
-    
+
     public static String facetWithErrorJson = "{"
             + "\"name\":\"my column (x) vs. e (y)\","
             + "\"cx\":\"my column\","
@@ -122,69 +124,69 @@ public class ScatterplotFacetTests extends RefineTest {
             + "\"dim_x\":\"lin\","
             + "\"dim_y\":\"lin\""
             + "}";
-    
+
     GridState grid;
-    
+
     @BeforeTest
     public void registerFacetConfig() {
-    	MetaParser.registerLanguageParser("grel", "GREL", Parser.grelParser, "value");
-    	FacetConfigResolver.registerFacetConfig("core", "scatterplot", ScatterplotFacetConfig.class);
-    	grid = createGrid(new String[] {"my column","e"},
-        		new Serializable[][] {
-                { 89.2, 32 },
-                { -45.9, -38 }, 
-                { "blah","blah" },
-                { 0.4, 1 }});
+        MetaParser.registerLanguageParser("grel", "GREL", Parser.grelParser, "value");
+        FacetConfigResolver.registerFacetConfig("core", "scatterplot", ScatterplotFacetConfig.class);
+        grid = createGrid(new String[] { "my column", "e" },
+                new Serializable[][] {
+                        { 89.2, 32 },
+                        { -45.9, -38 },
+                        { "blah", "blah" },
+                        { 0.4, 1 } });
     }
-    
+
     @Test
     public void serializeScatterplotFacetConfig() throws JsonParseException, JsonMappingException, IOException {
         ScatterplotFacetConfig config = ParsingUtilities.mapper.readValue(configJson, ScatterplotFacetConfig.class);
         TestUtils.isSerializedTo(config, configJson, ParsingUtilities.defaultWriter);
     }
-    
+
     @Test
     public void deserializeNeutralScatterplotFacetConfig() throws JsonParseException, JsonMappingException, IOException {
-    	ScatterplotFacetConfig config = ParsingUtilities.mapper.readValue(configNeutralJson, ScatterplotFacetConfig.class);
-    	
-    	// unspecified fields have correct default values
-    	Assert.assertEquals(config.fromX, 0.0);
-    	Assert.assertEquals(config.toX, 1.0);
-    	Assert.assertEquals(config.fromY, 0.0);
-    	Assert.assertEquals(config.toY, 1.0);
-    	Assert.assertEquals(config.dim_x, Dimension.LIN);
-    	Assert.assertEquals(config.dim_y, Dimension.LIN);
+        ScatterplotFacetConfig config = ParsingUtilities.mapper.readValue(configNeutralJson, ScatterplotFacetConfig.class);
+
+        // unspecified fields have correct default values
+        Assert.assertEquals(config.fromX, 0.0);
+        Assert.assertEquals(config.toX, 1.0);
+        Assert.assertEquals(config.fromY, 0.0);
+        Assert.assertEquals(config.toY, 1.0);
+        Assert.assertEquals(config.dim_x, Dimension.LIN);
+        Assert.assertEquals(config.dim_y, Dimension.LIN);
     }
-    
+
     @Test
     public void serializeScatterplotFacetResult() throws JsonParseException, JsonMappingException, IOException {
         ScatterplotFacetConfig config = ParsingUtilities.mapper.readValue(configJson, ScatterplotFacetConfig.class);
         EngineConfig engineConfig = new EngineConfig(Collections.singletonList(config), Mode.RowBased);
         Engine engine = new Engine(grid, engineConfig);
-        
+
         TestUtils.isSerializedTo(engine.getFacetResults().get(0), facetJson, ParsingUtilities.defaultWriter);
     }
-    
+
     @Test
     public void serializeFacetWithError() throws JsonParseException, JsonMappingException, IOException {
-    	GridState grid = createGrid(new String[] { "foo" },
-    			new Serializable[][] {
-    		{ "bar" }
-    	});
-    	
-    	ScatterplotFacetConfig config = ParsingUtilities.mapper.readValue(configJson, ScatterplotFacetConfig.class);
+        GridState grid = createGrid(new String[] { "foo" },
+                new Serializable[][] {
+                        { "bar" }
+                });
+
+        ScatterplotFacetConfig config = ParsingUtilities.mapper.readValue(configJson, ScatterplotFacetConfig.class);
         EngineConfig engineConfig = new EngineConfig(Collections.singletonList(config), Mode.RowBased);
         Engine engine = new Engine(grid, engineConfig);
-        
+
         TestUtils.isSerializedTo(engine.getFacetResults().get(0), facetWithErrorJson, ParsingUtilities.defaultWriter);
     }
-    
+
     @Test
     public void testFilterRows() throws JsonParseException, JsonMappingException, IOException {
-    	ScatterplotFacetConfig config = ParsingUtilities.mapper.readValue(configJson, ScatterplotFacetConfig.class);
-    	ScatterplotFacet facet = config.apply(grid.getColumnModel());
+        ScatterplotFacetConfig config = ParsingUtilities.mapper.readValue(configJson, ScatterplotFacetConfig.class);
+        ScatterplotFacet facet = config.apply(grid.getColumnModel());
         RowFilter filter = facet.getAggregator().getRowFilter();
-        
+
         assertTrue(filter.filterRow(0, grid.getRow(0)));
         assertFalse(filter.filterRow(1, grid.getRow(1)));
         assertFalse(filter.filterRow(2, grid.getRow(2)));

@@ -1,3 +1,4 @@
+
 package org.openrefine.importing;
 
 import static org.testng.Assert.assertEquals;
@@ -49,7 +50,7 @@ public class EncodingGuesserTests {
             ImportingJobConfig config = job.getJsonConfig();
             RetrievalRecord retrievalRecord = new RetrievalRecord();
             ImportingFileRecord importingFileRecord = new ImportingFileRecord(null, String.format("%s.txt", encoding),
-            		null, 0, null, null, null, null, null, null, null, null);
+                    null, 0, null, null, null, null, null, null, null, null);
             retrievalRecord.files = Collections.singletonList(importingFileRecord);
             config.retrievalRecord = retrievalRecord;
 

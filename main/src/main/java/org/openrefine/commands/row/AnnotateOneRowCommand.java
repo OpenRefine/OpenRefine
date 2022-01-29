@@ -45,13 +45,14 @@ import org.openrefine.model.changes.StarFlagChange;
 import org.openrefine.process.QuickHistoryEntryProcess;
 
 public class AnnotateOneRowCommand extends Command {
+
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-    	if(!hasValidCSRFToken(request)) {
-    		respondCSRFError(response);
-    		return;
-    	}
+        if (!hasValidCSRFToken(request)) {
+            respondCSRFError(response);
+            return;
+        }
 
         response.setCharacterEncoding("UTF-8");
         response.setHeader("Content-Type", "application/json");
@@ -67,11 +68,10 @@ public class AnnotateOneRowCommand extends Command {
                 String description = (starred ? "Star row " : "Unstar row ") + (rowIndex + 1);
 
                 QuickHistoryEntryProcess process = new QuickHistoryEntryProcess(
-                    project.getHistory(),
-                    description,
-                    null,
-                    new StarFlagChange(rowIndex, true, starred)
-                );
+                        project.getHistory(),
+                        description,
+                        null,
+                        new StarFlagChange(rowIndex, true, starred));
 
                 performProcessAndRespond(request, response, project, process);
                 return;
@@ -86,8 +86,7 @@ public class AnnotateOneRowCommand extends Command {
                         project.getHistory(),
                         description,
                         null,
-                        new StarFlagChange(rowIndex, false, flagged)
-                    );
+                        new StarFlagChange(rowIndex, false, flagged));
 
                 performProcessAndRespond(request, response, project, process);
                 return;

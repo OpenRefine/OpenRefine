@@ -54,12 +54,12 @@ public class ATan extends PureFunction {
     public String getDescription() {
         return "Returns the arc tangent of an angle in the range of -PI/2 through PI/2.";
     }
-    
+
     @Override
     public String getParams() {
         return "number n";
     }
-    
+
     @Override
     public String getReturns() {
         return "number";

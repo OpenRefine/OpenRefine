@@ -69,44 +69,39 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 
 public class StandardReconConfig extends ReconConfig {
 
-	private static final long serialVersionUID = 3641905651013923439L;
+    private static final long serialVersionUID = 3641905651013923439L;
 
-	final static Logger logger = LoggerFactory.getLogger("refine-standard-recon");
-    
-	private static final String DEFAULT_SCHEMA_SPACE = "http://localhost/schema";
-	private static final String DEFAULT_IDENTIFIER_SPACE = "http://localhost/identifier";
-    
+    final static Logger logger = LoggerFactory.getLogger("refine-standard-recon");
+
+    private static final String DEFAULT_SCHEMA_SPACE = "http://localhost/schema";
+    private static final String DEFAULT_IDENTIFIER_SPACE = "http://localhost/identifier";
+
     static public class ColumnDetail implements Serializable {
-		private static final long serialVersionUID = -6532890579963639291L;
-		
-		@JsonProperty("column")
+
+        private static final long serialVersionUID = -6532890579963639291L;
+
+        @JsonProperty("column")
         final public String columnName;
         @JsonProperty("propertyName")
         final public String propertyName;
         @JsonProperty("propertyID")
         final public String propertyID;
-        
+
         /**
-         * Unfortunately the format of ColumnDetail
-         * is inconsistent in the UI and the backend
-         * so we need to support two deserialization formats.
-         * See the tests for that.
+         * Unfortunately the format of ColumnDetail is inconsistent in the UI and the backend so we need to support two
+         * deserialization formats. See the tests for that.
          */
         @JsonCreator
         public ColumnDetail(
-                @JsonProperty("column")
-                String columnName,
-                @JsonProperty("propertyName")
-                String propertyName,
-                @JsonProperty("propertyID")
-                String propertyID,
-                @JsonProperty("property")
-                ReconType property) {
+                @JsonProperty("column") String columnName,
+                @JsonProperty("propertyName") String propertyName,
+                @JsonProperty("propertyID") String propertyID,
+                @JsonProperty("property") ReconType property) {
             this.columnName = columnName;
             this.propertyName = property == null ? propertyName : property.name;
             this.propertyID = property == null ? propertyID : property.id;
         }
-        
+
         @Override
         public String toString() {
             try {
@@ -116,65 +111,65 @@ public class StandardReconConfig extends ReconConfig {
             }
         }
     }
-    
+
     static public StandardReconConfig reconstruct(String json) throws IOException {
         return ParsingUtilities.mapper.readValue(json, StandardReconConfig.class);
     }
-    
+
     static protected class StandardReconJob implements ReconJob {
-    	
-    	private final String cellValue;
-    	private final String jsonQuery;
-    	
-    	public StandardReconJob(
-    			String cellValue,
-    			String jsonQuery) {
-    		this.cellValue = cellValue;
-    		this.jsonQuery = jsonQuery;
-    	}
-    	
-		@Override
-		public String getCellValue() {
-			return cellValue;
-		}
-		
-		public String getJsonQuery() {
-			return jsonQuery;
-		}
-    	
+
+        private final String cellValue;
+        private final String jsonQuery;
+
+        public StandardReconJob(
+                String cellValue,
+                String jsonQuery) {
+            this.cellValue = cellValue;
+            this.jsonQuery = jsonQuery;
+        }
+
+        @Override
+        public String getCellValue() {
+            return cellValue;
+        }
+
+        public String getJsonQuery() {
+            return jsonQuery;
+        }
+
         @Override
         public String toString() {
-        	return jsonQuery;
+            return jsonQuery;
         }
-        
+
         @Override
         public int hashCode() {
-        	return jsonQuery.hashCode();
+            return jsonQuery.hashCode();
         }
 
         @Override
         public boolean equals(Object other) {
-        	if (!(other instanceof StandardReconJob)) {
-        		return false;
-        	}
-        	StandardReconJob otherJob = (StandardReconJob)other;
-        	return cellValue.equals(otherJob.cellValue) && jsonQuery.equals(otherJob.jsonQuery);
+            if (!(other instanceof StandardReconJob)) {
+                return false;
+            }
+            StandardReconJob otherJob = (StandardReconJob) other;
+            return cellValue.equals(otherJob.cellValue) && jsonQuery.equals(otherJob.jsonQuery);
         }
     }
 
     @JsonProperty("service")
-    final public String     service;
+    final public String service;
     @JsonProperty("identifierSpace")
-    final public String     identifierSpace;
+    final public String identifierSpace;
     @JsonProperty("schemaSpace")
-    final public String     schemaSpace;
-    
+    final public String schemaSpace;
+
     @JsonIgnore
-    final public String     typeID;
+    final public String typeID;
     @JsonIgnore
-    final public String     typeName;
+    final public String typeName;
     @JsonProperty("autoMatch")
-    final public boolean    autoMatch;
+    final public boolean autoMatch;
     @JsonProperty("columnDetails")
     final public List<ColumnDetail> columnDetails;
     @JsonProperty("limit")
@@ -185,20 +180,13 @@ public class StandardReconConfig extends ReconConfig {
 
     @JsonCreator
     public StandardReconConfig(
-            @JsonProperty("service")
-            String service,
-            @JsonProperty("identifierSpace")
-            String identifierSpace,
-            @JsonProperty("schemaSpace")
-            String schemaSpace,
-            @JsonProperty("type")
-            ReconType type,
-            @JsonProperty("autoMatch")
-            boolean autoMatch,
-            @JsonProperty("columnDetails")
-            List<ColumnDetail> columnDetails,
-            @JsonProperty("limit")
-            int limit) {
+            @JsonProperty("service") String service,
+            @JsonProperty("identifierSpace") String identifierSpace,
+            @JsonProperty("schemaSpace") String schemaSpace,
+            @JsonProperty("type") ReconType type,
+            @JsonProperty("autoMatch") boolean autoMatch,
+            @JsonProperty("columnDetails") List<ColumnDetail> columnDetails,
+            @JsonProperty("limit") int limit) {
         this(service, identifierSpace, schemaSpace,
                 type != null ? type.id : null,
                 type != null ? type.name : null,
@@ -209,16 +197,14 @@ public class StandardReconConfig extends ReconConfig {
             String service,
             String identifierSpace,
             String schemaSpace,
-            
-            String typeID, 
+
+            String typeID,
             String typeName,
             boolean autoMatch,
-            List<ColumnDetail> columnDetails
-        ) {
+            List<ColumnDetail> columnDetails) {
         this(service, identifierSpace, schemaSpace, typeID, typeName, autoMatch, columnDetails, 0);
     }
-    
-    
+
     /**
      * @param service
      * @param identifierSpace
@@ -227,29 +213,29 @@ public class StandardReconConfig extends ReconConfig {
      * @param typeName
      * @param autoMatch
      * @param columnDetails
-     * @param limit maximum number of results to return (0 = default)
+     * @param limit
+     *            maximum number of results to return (0 = default)
      */
     public StandardReconConfig(
-        String service,
-        String identifierSpace,
-        String schemaSpace,
-        String typeID, 
-        String typeName,
-        boolean autoMatch,
-        List<ColumnDetail> columnDetails,
-        int limit
-    ) {
+            String service,
+            String identifierSpace,
+            String schemaSpace,
+            String typeID,
+            String typeName,
+            boolean autoMatch,
+            List<ColumnDetail> columnDetails,
+            int limit) {
         this.service = service;
         this.identifierSpace = identifierSpace != null ? identifierSpace : DEFAULT_IDENTIFIER_SPACE;
         this.schemaSpace = schemaSpace != null ? schemaSpace : DEFAULT_SCHEMA_SPACE;
-        
+
         this.typeID = typeID;
         this.typeName = typeName;
         this.autoMatch = autoMatch;
         this.columnDetails = columnDetails;
         this.limit = limit;
     }
-    
+
     @JsonProperty("type")
     @JsonInclude(Include.NON_NULL)
     public ReconType getReconType() {
@@ -269,14 +255,12 @@ public class StandardReconConfig extends ReconConfig {
     public String getBriefDescription(String columnName) {
         return "Reconcile cells in column " + columnName + " to type " + typeID;
     }
-    
+
     public ReconJob createSimpleJob(String query) {
-        /* Same as createJob, but for simpler queries
-         * without any properties. This is much easier
-         * to generate as there is no need for a Project,
-         * Row and Cell: this means the job can be created
-         * outside the usual context of reconciliation (e.g.
-         * in an importer).
+        /*
+         * Same as createJob, but for simpler queries without any properties. This is much easier to generate as there
+         * is no need for a Project, Row and Cell: this means the job can be created outside the usual context of
+         * reconciliation (e.g. in an importer).
          */
         try {
             String queryJson = ParsingUtilities.defaultWriter.writeValueAsString(
@@ -287,20 +271,21 @@ public class StandardReconConfig extends ReconConfig {
             return null;
         }
     }
-    
+
     protected static class QueryProperty {
+
         @JsonProperty("pid")
         String pid;
         @JsonProperty("v")
         Object v;
-        
+
         protected QueryProperty(
                 String pid,
                 Object v) {
             this.pid = pid;
             this.v = v;
         }
-        
+
         @Override
         public String toString() {
             try {
@@ -310,33 +295,34 @@ public class StandardReconConfig extends ReconConfig {
             }
         }
     }
-    
+
     protected static class ReconQuery {
+
         @JsonProperty("query")
         protected String query;
-        
+
         @JsonProperty("type")
         @JsonInclude(Include.NON_NULL)
         protected String typeID;
-        
+
         @JsonProperty("type_strict")
         @JsonInclude(Include.NON_NULL)
         public String isTypeStrict() {
-            if(typeID != null) {
+            if (typeID != null) {
                 return "should";
             }
             return null;
         }
-        
+
         @JsonProperty("properties")
         @JsonInclude(Include.NON_EMPTY)
         protected List<QueryProperty> properties;
-        
+
         // Only send limit if it's non-default (default = 0) to preserve backward
         // compatibility with services which might choke on this (pre-2013)
         @JsonIgnore
         protected int limit;
-        
+
         public ReconQuery() {
             super();
             this.query = "";
@@ -356,7 +342,7 @@ public class StandardReconConfig extends ReconConfig {
             this.properties = properties;
             this.limit = limit;
         }
-        
+
         @Override
         public String toString() {
             try {
@@ -365,15 +351,16 @@ public class StandardReconConfig extends ReconConfig {
                 return super.toString();
             }
         }
-        
+
         @JsonProperty("limit")
         @JsonInclude(Include.NON_NULL)
         public Integer getLimit() {
-        	return limit == 0 ? null : limit;
+            return limit == 0 ? null : limit;
         }
     }
-    
+
     public static class ReconResult {
+
         @JsonProperty("name")
         public String name;
         @JsonProperty("id")
@@ -409,50 +396,44 @@ public class StandardReconConfig extends ReconConfig {
     @Override
     public ReconJob createJob(ColumnModel columnModel, long rowIndex, Row row,
             String columnName, Cell cell) {
-       
 
-            List<QueryProperty> properties = new ArrayList<>();
-                
-            for (ColumnDetail c : columnDetails) {
-                int detailCellIndex = columnModel.getColumnIndexByName(c.columnName);
-                
-                Cell cell2 = row.getCell(detailCellIndex);
-                // The following is no longer possible in rows mode. Users
-                // should first fill down their columns before reconciling.
-                
-                /*
-                if (cell2 == null || !ExpressionUtils.isNonBlankData(cell2.value)) {
-                    int cellIndex = columnModel.getColumnByName(columnName).getCellIndex();
-                    
-                    RowDependency rd = project.recordModel.getRowDependency(rowIndex);
-                    if (rd != null && rd.cellDependencies != null) {
-                        int contextRowIndex = rd.cellDependencies[cellIndex].rowIndex;
-                        if (contextRowIndex >= 0 && contextRowIndex < project.rows.size()) {
-                            Row row2 = project.rows.get(contextRowIndex);
-                            
-                            cell2 = row2.getCell(detailCellIndex);
-                        }
-                    }
-                }
-                */
-                
-                if (cell2 != null && ExpressionUtils.isNonBlankData(cell2.value)) {
-                    Object v = null;
-                    if (cell2.recon != null && cell2.recon.match != null) {
-                        Map<String, String> recon = new HashMap<>();
-                        recon.put("id", cell2.recon.match.id);
-                        recon.put("name", cell2.recon.match.name);
-                        v = recon;
-                    } else {
-                        v = cell2.value;
-                    }
-                    properties.add(new QueryProperty(c.propertyID, v));
-                }
+        List<QueryProperty> properties = new ArrayList<>();
 
+        for (ColumnDetail c : columnDetails) {
+            int detailCellIndex = columnModel.getColumnIndexByName(c.columnName);
+
+            Cell cell2 = row.getCell(detailCellIndex);
+            // The following is no longer possible in rows mode. Users
+            // should first fill down their columns before reconciling.
+
+            /*
+             * if (cell2 == null || !ExpressionUtils.isNonBlankData(cell2.value)) { int cellIndex =
+             * columnModel.getColumnByName(columnName).getCellIndex();
+             * 
+             * RowDependency rd = project.recordModel.getRowDependency(rowIndex); if (rd != null && rd.cellDependencies
+             * != null) { int contextRowIndex = rd.cellDependencies[cellIndex].rowIndex; if (contextRowIndex >= 0 &&
+             * contextRowIndex < project.rows.size()) { Row row2 = project.rows.get(contextRowIndex);
+             * 
+             * cell2 = row2.getCell(detailCellIndex); } } }
+             */
+
+            if (cell2 != null && ExpressionUtils.isNonBlankData(cell2.value)) {
+                Object v = null;
+                if (cell2.recon != null && cell2.recon.match != null) {
+                    Map<String, String> recon = new HashMap<>();
+                    recon.put("id", cell2.recon.match.id);
+                    recon.put("name", cell2.recon.match.name);
+                    v = recon;
+                } else {
+                    v = cell2.value;
+                }
+                properties.add(new QueryProperty(c.propertyID, v));
             }
-        
+
+        }
+
         ReconQuery query = new ReconQuery(cell.value.toString(), typeID, properties, limit);
-        
+
         String cellValue = cell.value.toString();
         try {
             String jsonCode = ParsingUtilities.defaultWriter.writeValueAsString(query);
@@ -462,7 +443,6 @@ public class StandardReconConfig extends ReconConfig {
         }
     }
 
-    
     protected HttpClient getHttpClient() {
         if (httpClient == null) {
             httpClient = new HttpClient();
@@ -482,9 +462,9 @@ public class StandardReconConfig extends ReconConfig {
     @Override
     public List<Recon> batchRecon(List<ReconJob> jobs, long historyEntryID) {
         List<Recon> recons = new ArrayList<Recon>(jobs.size());
-        
+
         StringWriter stringWriter = new StringWriter();
-        
+
         stringWriter.write("{");
         for (int i = 0; i < jobs.size(); i++) {
             StandardReconJob job = (StandardReconJob) jobs.get(i);
@@ -496,7 +476,7 @@ public class StandardReconConfig extends ReconConfig {
         }
         stringWriter.write("}");
         String queriesString = stringWriter.toString();
-        
+
         try {
             String responseString = postQueries(service, queriesString);
             ObjectNode o = ParsingUtilities.evaluateJsonStringToObjectNode(responseString);
@@ -518,7 +498,8 @@ public class StandardReconConfig extends ReconConfig {
                             recon = createReconServiceResults(text, results, historyEntryID);
                         } else {
                             // TODO: better error reporting
-                            logger.warn("Service error for text: " + text + "\n  Job code: " + job.getJsonQuery() + "\n  Response: " + o2.toString());
+                            logger.warn("Service error for text: " + text + "\n  Job code: " + job.getJsonQuery() + "\n  Response: "
+                                    + o2.toString());
                         }
                     } else {
                         // TODO: better error reporting
@@ -538,67 +519,69 @@ public class StandardReconConfig extends ReconConfig {
         while (recons.size() < jobs.size()) {
             recons.add(null);
         }
-        
+
         return recons;
     }
 
     @Override
     public Recon createNewRecon(long historyEntryID) {
         Recon recon = new Recon(historyEntryID, identifierSpace, schemaSpace)
-        		.withService(service);
+                .withService(service);
         return recon;
     }
 
-    protected Recon createReconServiceResults(String text, ArrayNode resultsList, long historyEntryID)  {
+    protected Recon createReconServiceResults(String text, ArrayNode resultsList, long historyEntryID) {
         Recon recon = new Recon(historyEntryID, identifierSpace, schemaSpace);
-        List<ReconResult> results = ParsingUtilities.mapper.convertValue(resultsList, new TypeReference<List<ReconResult>>() {});
-        
+        List<ReconResult> results = ParsingUtilities.mapper.convertValue(resultsList, new TypeReference<List<ReconResult>>() {
+        });
+
         // Sort results by decreasing score
         results.sort(new Comparator<ReconResult>() {
+
             @Override
             public int compare(ReconResult a, ReconResult b) {
                 return Double.compare(b.score, a.score);
             }
         });
-        
+
         int length = results.size();
         for (int i = 0; i < length; i++) {
             ReconResult result = results.get(i);
-            
+
             ReconCandidate candidate = result.toCandidate();
-		    
-		    if (autoMatch && i == 0 && result.match) {
-		        recon = recon.withMatch(candidate)
-		        		.withMatchRank(0)
-		        		.withJudgment(Judgment.Matched)
-		        		.withJudgmentAction("auto");
-		    }
-            
-		    recon = recon.withCandidate(candidate);
+
+            if (autoMatch && i == 0 && result.match) {
+                recon = recon.withMatch(candidate)
+                        .withMatchRank(0)
+                        .withJudgment(Judgment.Matched)
+                        .withJudgmentAction("auto");
+            }
+
+            recon = recon.withCandidate(candidate);
         }
-          
+
         recon = computeFeatures(recon, text);
         return recon;
-    } 
+    }
 
     /**
-     * Recomputes the features associated with this reconciliation
-     * object (only if we have at least one candidate).
+     * Recomputes the features associated with this reconciliation object (only if we have at least one candidate).
      * 
-     * @param text the cell value to compare the reconciliation data to
+     * @param text
+     *            the cell value to compare the reconciliation data to
      */
     public Recon computeFeatures(Recon recon, String text) {
-    	Object[] features = new Object[Recon.Feature_max];
+        Object[] features = new Object[Recon.Feature_max];
         if (recon.candidates != null && !recon.candidates.isEmpty() && text != null) {
             ReconCandidate candidate = recon.candidates.get(0);
-            
+
             if (candidate.name != null) {
                 features[Recon.Feature_nameMatch] = text.equalsIgnoreCase(candidate.name);
-                features[Recon.Feature_nameLevenshtein] =
-                        StringUtils.getLevenshteinDistance(StringUtils.lowerCase(text), StringUtils.lowerCase(candidate.name));
+                features[Recon.Feature_nameLevenshtein] = StringUtils.getLevenshteinDistance(StringUtils.lowerCase(text),
+                        StringUtils.lowerCase(candidate.name));
                 features[Recon.Feature_nameWordDistance] = wordDistance(text, candidate.name);
             }
-            
+
             features[Recon.Feature_typeMatch] = false;
             if (this.typeID != null) {
                 for (String typeID : candidate.types) {
@@ -611,13 +594,13 @@ public class StandardReconConfig extends ReconConfig {
         }
         return recon.withFeatures(features);
     }
-    
+
     static protected double wordDistance(String s1, String s2) {
         Set<String> words1 = breakWords(s1);
         Set<String> words2 = breakWords(s2);
         return words1.size() >= words2.size() ? wordDistance(words1, words2) : wordDistance(words2, words1);
     }
-    
+
     static protected double wordDistance(Set<String> longWords, Set<String> shortWords) {
         if (longWords.size() == 0) {
             return 0.0;
@@ -631,7 +614,7 @@ public class StandardReconConfig extends ReconConfig {
         }
         return common / longWords.size();
     }
-    
+
     static final protected Set<String> s_stopWords = new HashSet<String>();
     static {
         // FIXME: This is English specific
@@ -644,10 +627,10 @@ public class StandardReconConfig extends ReconConfig {
         s_stopWords.add("at");
         s_stopWords.add("by");
     }
-    
+
     static protected Set<String> breakWords(String s) {
         String[] words = s.toLowerCase().split("\\s+");
-        
+
         Set<String> set = new HashSet<String>(words.length);
         for (String word : words) {
             if (!s_stopWords.contains(word)) {
@@ -657,29 +640,27 @@ public class StandardReconConfig extends ReconConfig {
         return set;
     }
 
-
     @Override
     public String getMode() {
         return "standard-service";
     }
-    
+
     public boolean equals(Object other) {
-    	if (! (other instanceof StandardReconConfig)) {
-    		return false;
-    	}
-    	StandardReconConfig otherConfig = (StandardReconConfig) other;
-    	return (
-    			service.equals(otherConfig.service) &&
-    			identifierSpace.equals(otherConfig.identifierSpace) &&
-    			schemaSpace.equals(otherConfig.schemaSpace) &&
-    			((typeID == null && otherConfig.typeID == null) || typeID.equals(otherConfig.typeID)) &&
-    			((typeName == null && otherConfig.typeName == null) || typeName.equals(otherConfig.typeName)) &&
-    			autoMatch == otherConfig.autoMatch &&
-    			columnDetails.equals(otherConfig.columnDetails) &&
-    			limit == otherConfig.limit);
+        if (!(other instanceof StandardReconConfig)) {
+            return false;
+        }
+        StandardReconConfig otherConfig = (StandardReconConfig) other;
+        return (service.equals(otherConfig.service) &&
+                identifierSpace.equals(otherConfig.identifierSpace) &&
+                schemaSpace.equals(otherConfig.schemaSpace) &&
+                ((typeID == null && otherConfig.typeID == null) || typeID.equals(otherConfig.typeID)) &&
+                ((typeName == null && otherConfig.typeName == null) || typeName.equals(otherConfig.typeName)) &&
+                autoMatch == otherConfig.autoMatch &&
+                columnDetails.equals(otherConfig.columnDetails) &&
+                limit == otherConfig.limit);
     }
-    
+
     public int hashCode() {
-    	return service.hashCode() + 11 * columnDetails.hashCode() + 27 * typeID.hashCode();
+        return service.hashCode() + 11 * columnDetails.hashCode() + 27 * typeID.hashCode();
     }
 }

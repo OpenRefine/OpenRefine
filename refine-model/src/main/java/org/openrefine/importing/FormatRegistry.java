@@ -1,3 +1,4 @@
+
 package org.openrefine.importing;
 
 import java.util.HashMap;
@@ -6,32 +7,32 @@ import java.util.List;
 import java.util.Map;
 
 public class FormatRegistry {
-	
+
     // Mapping from format to label, e.g., "text" to "Text files", "text/xml" to "XML files"
     final static private Map<String, ImportingFormat> formatToRecord = new HashMap<String, ImportingFormat>();
-    
+
     // Mapping from format to guessers
     final static private Map<String, List<FormatGuesser>> formatToGuessers = new HashMap<String, List<FormatGuesser>>();
-    
+
     // Mapping from file extension to format, e.g., ".xml" to "text/xml"
     final static private Map<String, String> extensionToFormat = new HashMap<String, String>();
-    
+
     // Mapping from mime type to format, e.g., "application/json" to "text/json"
     final static private Map<String, String> mimeTypeToFormat = new HashMap<String, String>();
-    
+
     static public void registerFormat(String format, String label) {
         registerFormat(format, label, null, null);
     }
-    
+
     static public void registerFormat(String format, String label, String uiClass, ImportingParser parser) {
         formatToRecord.put(format, new ImportingFormat(format, label, true, uiClass, parser));
     }
-    
+
     static public void registerFormat(
             String format, String label, boolean download, String uiClass, ImportingParser parser) {
         formatToRecord.put(format, new ImportingFormat(format, label, download, uiClass, parser));
     }
-    
+
     static public void registerFormatGuesser(String format, FormatGuesser guesser) {
         List<FormatGuesser> guessers = formatToGuessers.get(format);
         if (guessers == null) {
@@ -40,16 +41,15 @@ public class FormatRegistry {
         }
         guessers.add(0, guesser); // prepend so that newer guessers take priority
     }
-    
+
     static public void registerExtension(String extension, String format) {
         extensionToFormat.put(extension.startsWith(".") ? extension : ("." + extension), format);
     }
-    
+
     static public void registerMimeType(String mimeType, String format) {
         mimeTypeToFormat.put(mimeType, format);
     }
-    
-    
+
     static public String getFormatFromFileName(String fileName) {
         int start = 0;
         while (true) {
@@ -57,7 +57,7 @@ public class FormatRegistry {
             if (dot < 0) {
                 break;
             }
-            
+
             String extension = fileName.substring(dot);
             String format = extensionToFormat.get(extension);
             if (format != null) {
@@ -68,7 +68,7 @@ public class FormatRegistry {
         }
         return null;
     }
-    
+
     static public String getFormatFromMimeType(String mimeType) {
         String format = mimeTypeToFormat.get(mimeType);
         if (format == null) {
@@ -82,7 +82,7 @@ public class FormatRegistry {
         }
         return format;
     }
-    
+
     static public String getFormat(String fileName, String mimeType) {
         String fileNameFormat = getFormatFromFileName(fileName);
         if (mimeType != null) {
@@ -100,19 +100,18 @@ public class FormatRegistry {
             return fileNameFormat;
         }
     }
-    
 
-	public static Map<String, String> getExtensionToFormat() {
-		return extensionToFormat;
-	}
+    public static Map<String, String> getExtensionToFormat() {
+        return extensionToFormat;
+    }
 
-	public static Map<String, String> getMimeTypeToFormat() {
-		return mimeTypeToFormat;
-	}
+    public static Map<String, String> getMimeTypeToFormat() {
+        return mimeTypeToFormat;
+    }
 
-	public static Map<String, ImportingFormat> getFormatToRecord() {
-		return formatToRecord;
-	}
+    public static Map<String, ImportingFormat> getFormatToRecord() {
+        return formatToRecord;
+    }
 
     public static Map<String, List<FormatGuesser>> getFormatToGuessers() {
         return formatToGuessers;

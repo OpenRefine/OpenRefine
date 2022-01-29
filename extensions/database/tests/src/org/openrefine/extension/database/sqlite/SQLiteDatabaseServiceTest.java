@@ -59,8 +59,8 @@ public class SQLiteDatabaseServiceTest extends DBExtensionTests {
     @BeforeTest
     @Parameters({ "sqliteDbName", "sqliteTestTable" })
     public void beforeTest(@Optional(DEFAULT_SQLITE_DB_NAME) String sqliteDbName,
-                    @Optional(DEFAULT_TEST_TABLE) String sqliteTestTable)
-                    throws DatabaseServiceException, SQLException {
+            @Optional(DEFAULT_TEST_TABLE) String sqliteTestTable)
+            throws DatabaseServiceException, SQLException {
 
         MockitoAnnotations.initMocks(this);
         testDbConfig = new DatabaseConfiguration();
@@ -85,7 +85,7 @@ public class SQLiteDatabaseServiceTest extends DBExtensionTests {
     @Test
     public void testGetDatabaseUrl() {
         SQLiteDatabaseService sqLiteDatabaseService = (SQLiteDatabaseService) DatabaseService
-                        .get(SQLiteDatabaseService.DB_NAME);
+                .get(SQLiteDatabaseService.DB_NAME);
         String dbUrl = sqLiteDatabaseService.getDatabaseUrl(testDbConfig);
 
         Assert.assertNotNull(dbUrl);
@@ -96,7 +96,7 @@ public class SQLiteDatabaseServiceTest extends DBExtensionTests {
     public void testGetConnection() throws DatabaseServiceException {
 
         SQLiteDatabaseService sqLiteDatabaseService = (SQLiteDatabaseService) DatabaseService
-                        .get(SQLiteDatabaseService.DB_NAME);
+                .get(SQLiteDatabaseService.DB_NAME);
         Connection conn = sqLiteDatabaseService.getConnection(testDbConfig);
 
         Assert.assertNotNull(conn);
@@ -105,7 +105,7 @@ public class SQLiteDatabaseServiceTest extends DBExtensionTests {
     @Test
     public void testTestConnection() throws DatabaseServiceException {
         SQLiteDatabaseService sqLiteDatabaseService = (SQLiteDatabaseService) DatabaseService
-                        .get(SQLiteDatabaseService.DB_NAME);
+                .get(SQLiteDatabaseService.DB_NAME);
 
         boolean result = sqLiteDatabaseService.testConnection(testDbConfig);
         Assert.assertTrue(result);
@@ -115,7 +115,7 @@ public class SQLiteDatabaseServiceTest extends DBExtensionTests {
     public void testConnect() throws DatabaseServiceException {
 
         SQLiteDatabaseService sqLiteDatabaseService = (SQLiteDatabaseService) DatabaseService
-                        .get(SQLiteDatabaseService.DB_NAME);
+                .get(SQLiteDatabaseService.DB_NAME);
         DatabaseInfo databaseInfo = sqLiteDatabaseService.connect(testDbConfig);
         Assert.assertNotNull(databaseInfo);
     }
@@ -123,7 +123,7 @@ public class SQLiteDatabaseServiceTest extends DBExtensionTests {
     @Test
     public void testExecuteQuery() throws DatabaseServiceException {
         SQLiteDatabaseService sqLiteDatabaseService = (SQLiteDatabaseService) DatabaseService
-                        .get(SQLiteDatabaseService.DB_NAME);
+                .get(SQLiteDatabaseService.DB_NAME);
         DatabaseInfo databaseInfo = sqLiteDatabaseService.testQuery(testDbConfig, "SELECT * FROM " + testTable);
 
         Assert.assertNotNull(databaseInfo);
@@ -132,17 +132,17 @@ public class SQLiteDatabaseServiceTest extends DBExtensionTests {
     @Test
     public void testBuildLimitQuery() {
         SQLiteDatabaseService sqliteSqlService = (SQLiteDatabaseService) DatabaseService
-                        .get(SQLiteDatabaseService.DB_NAME);
+                .get(SQLiteDatabaseService.DB_NAME);
         String limitQuery = sqliteSqlService.buildLimitQuery(100, 0, "SELECT * FROM " + testTable);
         Assert.assertNotNull(limitQuery);
         Assert.assertEquals(limitQuery,
-                        "SELECT * FROM (SELECT * FROM " + testTable + ") data LIMIT " + 100 + " OFFSET " + 0 + ";");
+                "SELECT * FROM (SELECT * FROM " + testTable + ") data LIMIT " + 100 + " OFFSET " + 0 + ";");
     }
 
     @Test
     public void testGetRows() throws DatabaseServiceException {
         SQLiteDatabaseService sqliteSqlService = (SQLiteDatabaseService) DatabaseService
-                        .get(SQLiteDatabaseService.DB_NAME);
+                .get(SQLiteDatabaseService.DB_NAME);
         List<DatabaseRow> dbRows = sqliteSqlService.getRows(testDbConfig, "SELECT * FROM " + testTable);
 
         Assert.assertNotNull(dbRows);
@@ -159,7 +159,7 @@ public class SQLiteDatabaseServiceTest extends DBExtensionTests {
         List<DatabaseColumn> dbColumns;
 
         SQLiteDatabaseService sqliteSqlService = (SQLiteDatabaseService) DatabaseService
-                        .get(SQLiteDatabaseService.DB_NAME);
+                .get(SQLiteDatabaseService.DB_NAME);
 
         dbColumns = sqliteSqlService.getColumns(testDbConfig, "SELECT * FROM " + testTable);
 

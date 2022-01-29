@@ -61,11 +61,12 @@ import org.slf4j.LoggerFactory;
 import com.google.common.net.PercentEscaper;
 
 public class ExportRowsCommand extends Command {
-    private  static final Logger logger = LoggerFactory.getLogger("ExportRowsCommand");
-    
-	/**
-	 * This command uses POST but is left CSRF-unprotected as it does not incur a state change.
-	 */
+
+    private static final Logger logger = LoggerFactory.getLogger("ExportRowsCommand");
+
+    /**
+     * This command uses POST but is left CSRF-unprotected as it does not incur a state change.
+     */
 
     @SuppressWarnings("unchecked")
     static public Properties getRequestParameters(HttpServletRequest request) {
@@ -84,19 +85,19 @@ public class ExportRowsCommand extends Command {
             throws ServletException, IOException {
 
         ProjectManager.singleton.setBusy(true);
-       
+
         try {
             Project project = getProject(request);
             ProjectMetadata projectMetadata = ProjectManager.singleton.getProjectMetadata(project.getId());
             Engine engine = getEngine(request, project);
             Properties params = getRequestParameters(request);
-            
+
             String format = params.getProperty("format");
             Exporter exporter = ExporterRegistry.getExporter(format);
             if (exporter == null) {
                 exporter = new CsvExporter('\t');
             }
-            
+
             String contentType = params.getProperty("contentType");
             if (contentType == null) {
                 contentType = exporter.getContentType();
@@ -109,29 +110,26 @@ public class ExportRowsCommand extends Command {
                 String filename = path.substring(path.lastIndexOf('/') + 1);
                 PercentEscaper escaper = new PercentEscaper("", false);
                 filename = escaper.escape(filename);
-                response.setHeader("Content-Disposition", "attachment; filename=" +filename+"; filename*=utf-8' '" + filename);
+                response.setHeader("Content-Disposition", "attachment; filename=" + filename + "; filename*=utf-8' '" + filename);
             }
-            
+
             if (exporter instanceof WriterExporter) {
                 String encoding = params.getProperty("encoding");
-                
+
                 response.setCharacterEncoding(encoding != null ? encoding : "UTF-8");
-                Writer writer = encoding == null ?
-                    response.getWriter() :
-                    new OutputStreamWriter(response.getOutputStream(), encoding);
-                
+                Writer writer = encoding == null ? response.getWriter() : new OutputStreamWriter(response.getOutputStream(), encoding);
+
                 ((WriterExporter) exporter).export(project.getCurrentGridState(), projectMetadata, params, engine, writer);
                 writer.close();
-            }
-            else if (exporter instanceof StreamExporter) {
+            } else if (exporter instanceof StreamExporter) {
                 response.setCharacterEncoding("UTF-8");
-                
+
                 OutputStream stream = response.getOutputStream();
                 ((StreamExporter) exporter).export(project.getCurrentGridState(), projectMetadata, params, engine, stream);
                 stream.close();
 //          } else if (exporter instanceof UrlExporter) {
 //              ((UrlExporter) exporter).export(project, options, engine);
-                
+
             } else {
                 // TODO: Should this use ServletException instead of respondException?
                 respondException(response, new RuntimeException("Unknown exporter type"));

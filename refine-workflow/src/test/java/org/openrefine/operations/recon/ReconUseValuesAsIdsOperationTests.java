@@ -24,6 +24,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  ******************************************************************************/
+
 package org.openrefine.operations.recon;
 
 import static org.mockito.Mockito.mock;
@@ -46,8 +47,8 @@ import org.openrefine.util.TestUtils;
 import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.Test;
 
-
 public class ReconUseValuesAsIdsOperationTests extends RefineTest {
+
     String json = "{"
             + "\"op\":\"core/recon-use-values-as-identifiers\","
             + "\"description\":\"Use values as reconciliation identifiers in column ids\","
@@ -57,38 +58,39 @@ public class ReconUseValuesAsIdsOperationTests extends RefineTest {
             + "\"identifierSpace\":\"http://test.org/entities/\","
             + "\"schemaSpace\":\"http://test.org/schema/\""
             + "}";
-    
+
     @BeforeSuite
     public void registerOperation() {
         OperationRegistry.registerOperation("core", "recon-use-values-as-identifiers", ReconUseValuesAsIdentifiersOperation.class);
     }
-    
+
     @Test
     public void serializeReconUseValuesAsIdentifiersOperation() throws Exception {
-        TestUtils.isSerializedTo(ParsingUtilities.mapper.readValue(json, ReconUseValuesAsIdentifiersOperation.class), json, ParsingUtilities.defaultWriter);
+        TestUtils.isSerializedTo(ParsingUtilities.mapper.readValue(json, ReconUseValuesAsIdentifiersOperation.class), json,
+                ParsingUtilities.defaultWriter);
     }
-    
+
     @Test
     public void testUseValuesAsIds() throws Exception {
         GridState initialState = createGrid(
-        		new String[] {"ids","v"},
-                new Serializable [][]{
-        			{"Q343","hello"},
-                    {null,"world"},
-                    {"http://test.org/entities/Q31","test"}});
+                new String[] { "ids", "v" },
+                new Serializable[][] {
+                        { "Q343", "hello" },
+                        { null, "world" },
+                        { "http://test.org/entities/Q31", "test" } });
         ChangeContext context = mock(ChangeContext.class);
-        
+
         ReconUseValuesAsIdentifiersOperation op = ParsingUtilities.mapper.readValue(json, ReconUseValuesAsIdentifiersOperation.class);
         GridState applied = op.createChange().apply(initialState, context);
-        
+
         List<Row> rows = applied.collectRows().stream().map(ir -> ir.getRow()).collect(Collectors.toList());
         ColumnModel columnModel = applied.getColumnModel();
-        
+
         assertEquals("Q343", rows.get(0).cells.get(0).recon.match.id);
         assertEquals("http://test.org/entities/", rows.get(0).cells.get(0).recon.identifierSpace);
         assertNull(rows.get(1).getCell(0));
         assertEquals("Q31", rows.get(2).cells.get(0).recon.match.id);
         assertEquals(2, columnModel.getColumns().get(0).getReconStats().getMatchedTopics());
-        assertEquals("http://test.org/schema/", ((StandardReconConfig)columnModel.getColumns().get(0).getReconConfig()).schemaSpace);
+        assertEquals("http://test.org/schema/", ((StandardReconConfig) columnModel.getColumns().get(0).getReconConfig()).schemaSpace);
     }
 }

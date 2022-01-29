@@ -1,3 +1,4 @@
+
 package org.openrefine.util;
 
 /**
@@ -13,7 +14,8 @@ public class FacetCountException extends Exception {
     /**
      * FacetCountException
      *
-     * @param message error message
+     * @param message
+     *            error message
      */
     public FacetCountException(String message) {
         super(message);

@@ -1,3 +1,4 @@
+
 package org.openrefine.importers;
 
 import java.io.InputStream;
@@ -17,31 +18,28 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
  */
 public abstract class InputStreamImporter extends ImportingParserBase {
 
-	protected InputStreamImporter(DatamodelRunner runner) {
-		super(runner);
-	}
-	
+    protected InputStreamImporter(DatamodelRunner runner) {
+        super(runner);
+    }
+
     /**
-     * Parses one file, read from an {@class InputStream} object,
-     * into a GridState.
+     * Parses one file, read from an {@class InputStream} object, into a GridState.
      * 
-	 * @param metadata
-	 *    the project metadata associated with the project to parse (which can be
-	 *    modified by the importer)
+     * @param metadata
+     *            the project metadata associated with the project to parse (which can be modified by the importer)
      * @param job
-	 *    the importing job where this import is being done
+     *            the importing job where this import is being done
      * @param fileSource
-	 *    the path or source of the file (could be "clipboard" or a URL as well)
+     *            the path or source of the file (could be "clipboard" or a URL as well)
      * @param archiveFileName
-     *    the path or source of the archive which contained this file
+     *            the path or source of the archive which contained this file
      * @param inputStream
-	 *    the input stream where to read the data from
+     *            the input stream where to read the data from
      * @param limit
-	 *    the maximum number of rows to read
+     *            the maximum number of rows to read
      * @param options
-	 *    any options passed to the importer as a JSON payload
-	 * @return
-	 *    a parsed GridState
+     *            any options passed to the importer as a JSON payload
+     * @return a parsed GridState
      * @throws Exception
      */
     public abstract GridState parseOneFile(
@@ -50,7 +48,6 @@ public abstract class InputStreamImporter extends ImportingParserBase {
             String fileSource,
             String archiveFileName,
             InputStream inputStream,
-            long limit, ObjectNode options
-        ) throws Exception;
+            long limit, ObjectNode options) throws Exception;
 
 }

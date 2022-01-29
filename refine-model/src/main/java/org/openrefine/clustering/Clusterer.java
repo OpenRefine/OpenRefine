@@ -39,19 +39,19 @@ import org.openrefine.model.GridState;
 /**
  * Abstract interface for a clusterer.
  * 
- * Once computeClusters has been called, the Clusterer
- * instance is expected to be serializable to Jackson,
- * which is how clustering results are retrieved.
- * @todo this should be changed: the interface should specify JSON serialization
- *     and add abstract methods to retrieve clustering results instead.
+ * Once computeClusters has been called, the Clusterer instance is expected to be serializable to Jackson, which is how
+ * clustering results are retrieved.
+ * 
+ * @todo this should be changed: the interface should specify JSON serialization and add abstract methods to retrieve
+ *       clustering results instead.
  */
-public abstract class Clusterer  {
+public abstract class Clusterer {
 
     protected GridState _grid;
     protected int _colindex;
 
     public abstract void computeClusters(Engine engine);
-    
+
     protected void initializeFromConfig(GridState grid, ClustererConfig c) {
         _grid = grid;
 

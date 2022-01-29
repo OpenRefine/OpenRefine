@@ -50,26 +50,22 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-
 public class ColumnModel implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
     @JsonProperty("columns")
-    private
-    final List<ColumnMetadata>      _columns;
-    
+    private final List<ColumnMetadata> _columns;
+
     final private int _keyColumnIndex;
-    
-    protected Map<String, Integer>         _nameToPosition;
-    protected List<String>                 _columnNames;
-    
+
+    protected Map<String, Integer> _nameToPosition;
+    protected List<String> _columnNames;
+
     @JsonCreator
     public ColumnModel(
-            @JsonProperty("columns")
-            List<ColumnMetadata> columns,
-            @JsonProperty("keyCellIndex")
-            int keyColumnIndex) {
+            @JsonProperty("columns") List<ColumnMetadata> columns,
+            @JsonProperty("keyCellIndex") int keyColumnIndex) {
         this._columns = Collections.unmodifiableList(columns);
         _keyColumnIndex = keyColumnIndex;
         _nameToPosition = new HashMap<>();
@@ -85,7 +81,7 @@ public class ColumnModel implements Serializable {
             index++;
         }
     }
-    
+
     public ColumnModel(List<ColumnMetadata> columns) {
         this(columns, 0);
     }
@@ -97,39 +93,45 @@ public class ColumnModel implements Serializable {
     public int getKeyColumnIndex() {
         return _keyColumnIndex;
     }
-    
+
     /**
-     * Returns a copy of this column model with a different
-     * key column.
-     * @param keyColumnIndex the index of the column to use as a key
+     * Returns a copy of this column model with a different key column.
+     * 
+     * @param keyColumnIndex
+     *            the index of the column to use as a key
      * @return
      */
     public ColumnModel withKeyColumnIndex(int keyColumnIndex) {
         return new ColumnModel(_columns, keyColumnIndex);
     }
-    
+
     /**
      * Replace a column metadata at the given index
-     * @param index the index of the column
-     * @param column the new metadata
+     * 
+     * @param index
+     *            the index of the column
+     * @param column
+     *            the new metadata
      * @return
-     * @throws ModelException if the new column name conflicts with another column
+     * @throws ModelException
+     *             if the new column name conflicts with another column
      */
     public ColumnModel replaceColumn(int index, ColumnMetadata column) throws ModelException {
         String name = column.getName();
-        
+
         if (_nameToPosition.containsKey(name) && _nameToPosition.get(name) != index) {
             throw new ModelException("Duplicated column name");
         }
         List<ColumnMetadata> newColumns = new ArrayList<>();
         newColumns.addAll(getColumns().subList(0, index));
         newColumns.add(column);
-        newColumns.addAll(getColumns().subList(index+1, getColumns().size()));
+        newColumns.addAll(getColumns().subList(index + 1, getColumns().size()));
         return new ColumnModel(newColumns);
     }
-    
+
     /**
      * Replaces the recon statistics at the given column index
+     * 
      * @param index
      * @param stats
      * @return
@@ -141,9 +143,10 @@ public class ColumnModel implements Serializable {
             return null; // unreachable
         }
     }
-    
+
     /**
      * Replaces the recon config at the given column index
+     * 
      * @param index
      * @param config
      * @return
@@ -155,17 +158,21 @@ public class ColumnModel implements Serializable {
             return null; // unreachable
         }
     }
-    
+
     /**
      * Inserts a column at the given index
-     * @param index the index where to insert the column
-     * @param column the column metadata
+     * 
+     * @param index
+     *            the index where to insert the column
+     * @param column
+     *            the column metadata
      * @return
-     * @throws ModelException if the name conflicts with another column
+     * @throws ModelException
+     *             if the name conflicts with another column
      */
     public ColumnModel insertColumn(int index, ColumnMetadata column) throws ModelException {
         String name = column.getName();
-        
+
         if (_nameToPosition.containsKey(name)) {
             throw new ModelException("Duplicated column name");
         }
@@ -175,17 +182,20 @@ public class ColumnModel implements Serializable {
         newColumns.addAll(getColumns().subList(index, getColumns().size()));
         return new ColumnModel(newColumns);
     }
-    
+
     /**
-     * Inserts a column at the given index, possibly changing the name 
-     * to ensure that it does not conflict with any other column
-     * @param index the place where to insert the column
-     * @param column the column metadata
+     * Inserts a column at the given index, possibly changing the name to ensure that it does not conflict with any
+     * other column
+     * 
+     * @param index
+     *            the place where to insert the column
+     * @param column
+     *            the column metadata
      * @return
      */
     public ColumnModel insertUnduplicatedColumn(int index, ColumnMetadata column) {
         String name = column.getName();
-        
+
         if (_nameToPosition.containsKey(name)) {
             name = getUnduplicatedColumnName(name);
             column = column.withName(name);
@@ -196,49 +206,56 @@ public class ColumnModel implements Serializable {
         newColumns.addAll(getColumns().subList(index, getColumns().size()));
         return new ColumnModel(newColumns);
     }
-    
+
     /**
      * Shortcut for the above, for inserting at the last position.
+     * 
      * @param columnMetadata
      * @return
      */
     public ColumnModel appendUnduplicatedColumn(ColumnMetadata columnMetadata) {
         return insertUnduplicatedColumn(getColumns().size(), columnMetadata);
     }
-    
+
     /**
      * Change the name of a column
-     * @param index the index of the column
-     * @param newName the new name to give to the column
+     * 
+     * @param index
+     *            the index of the column
+     * @param newName
+     *            the new name to give to the column
      * @return
-     * @throws ModelException if the new name conflicts with any other column
+     * @throws ModelException
+     *             if the new name conflicts with any other column
      */
     public ColumnModel renameColumn(int index, String newName) throws ModelException {
         ColumnMetadata newColumn = _columns.get(index);
         return replaceColumn(index, newColumn.withName(newName));
     }
-    
+
     /**
      * Removes a column at the given index
-     * @param index the index of the column to remove
+     * 
+     * @param index
+     *            the index of the column to remove
      * @return
      */
     public ColumnModel removeColumn(int index) {
         List<ColumnMetadata> newColumns = new ArrayList<>();
         List<ColumnMetadata> columns = getColumns();
         newColumns.addAll(columns.subList(0, index));
-        newColumns.addAll(columns.subList(index+1, columns.size()));
+        newColumns.addAll(columns.subList(index + 1, columns.size()));
         return new ColumnModel(newColumns);
     }
-    
+
     /**
-     * Given another column model with the same number of columns,
-     * merge the recon configuration and statistics in each n-th column.
+     * Given another column model with the same number of columns, merge the recon configuration and statistics in each
+     * n-th column.
      * 
      * @param other
      * @return
-     * @throws IllegalArgumentException if the number of columns is different or
-     * columns have incompatible reconciliation configurations.
+     * @throws IllegalArgumentException
+     *             if the number of columns is different or columns have incompatible reconciliation configurations.
      */
     public ColumnModel merge(ColumnModel other) {
         List<ColumnMetadata> otherColumns = other.getColumns();
@@ -247,14 +264,14 @@ public class ColumnModel implements Serializable {
                     String.format("Attempting to merge column models with %d and %d columns",
                             _columns.size(), otherColumns.size()));
         }
-        
+
         List<ColumnMetadata> newColumns = new ArrayList<>(_columns.size());
         for (int i = 0; i != _columns.size(); i++) {
             newColumns.add(_columns.get(i).merge(otherColumns.get(i)));
         }
         return new ColumnModel(newColumns);
     }
-    
+
     public String getUnduplicatedColumnName(String baseName) {
         String name = baseName;
         int i = 1;
@@ -268,7 +285,7 @@ public class ColumnModel implements Serializable {
         }
         return name;
     }
-    
+
     public ColumnMetadata getColumnByName(String name) {
         if (_nameToPosition.containsKey(name)) {
             int index = _nameToPosition.get(name);
@@ -276,15 +293,16 @@ public class ColumnModel implements Serializable {
         }
         return null;
     }
-    
+
     public ColumnMetadata getColumnByIndex(int cellIndex) {
         return _columns.get(cellIndex);
     }
-    
+
     /**
      * Return the index of the column with the given name.
      * 
-     * @param name column name to look up
+     * @param name
+     *            column name to look up
      * @return index of column with given name or -1 if not found.
      */
     public int getColumnIndexByName(String name) {
@@ -294,50 +312,48 @@ public class ColumnModel implements Serializable {
             return -1;
         }
     }
-    
-    
+
     @JsonIgnore
     public List<String> getColumnNames() {
         return _columnNames;
     }
-    
+
     @JsonProperty("keyCellIndex")
     @JsonInclude(Include.NON_NULL)
     public Integer getJsonKeyCellIndex() {
-        if(getColumns().size() > 0) {
+        if (getColumns().size() > 0) {
             return getKeyColumnIndex();
         }
         return null;
     }
-    
+
     @JsonProperty("keyColumnName")
     @JsonInclude(Include.NON_NULL)
     public String getKeyColumnName() {
-        if(getColumns().size() > 0) {
+        if (getColumns().size() > 0) {
             return getColumns().get(_keyColumnIndex).getName();
         }
         return null;
     }
 
-
     public List<ColumnMetadata> getColumns() {
         return _columns;
     }
-    
+
     @Override
     public boolean equals(Object other) {
-    	if(!(other instanceof ColumnModel)) {
-    		return false;
-    	}
-    	ColumnModel otherModel = (ColumnModel)other;
-    	return _columns.equals(otherModel.getColumns());
+        if (!(other instanceof ColumnModel)) {
+            return false;
+        }
+        ColumnModel otherModel = (ColumnModel) other;
+        return _columns.equals(otherModel.getColumns());
     }
-    
+
     @Override
     public int hashCode() {
         return _columns.hashCode();
     }
-    
+
     @Override
     public String toString() {
         return String.format("[ColumnModel: %s]", StringUtils.join(_columns, ", "));

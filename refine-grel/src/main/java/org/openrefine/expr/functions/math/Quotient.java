@@ -55,12 +55,12 @@ public class Quotient extends PureFunction {
     public String getDescription() {
         return "Returns the integer portion of a division (truncated, not rounded), when supplied with a numerator and denominator.";
     }
-    
+
     @Override
     public String getParams() {
         return "number numerator, number denominator";
     }
-    
+
     @Override
     public String getReturns() {
         return "number";

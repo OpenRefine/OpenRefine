@@ -24,6 +24,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  ******************************************************************************/
+
 package org.openrefine.operations.cell;
 
 import static org.mockito.Mockito.mock;
@@ -57,26 +58,26 @@ public class BlankDownTests extends RefineTest {
         OperationRegistry.registerOperation("core", "blank-down", BlankDownOperation.class);
     }
 
-	GridState toBlankDown;
-	ListFacetConfig facet;
-	
-	@BeforeTest
-	public void createSplitProject() {
-		toBlankDown = createGrid(new String[] {"foo","bar","hello"},
-				new Serializable[][] {
-			{ "a",  "b", "c" },
-			{ "",   "b", "d" },
-			{ "e",  "b", "f" },
-			{ null, "g", "h" },
-			{ null, "g", "i" }
-		});
-		
-		MetaParser.registerLanguageParser("grel", "GREL", Parser.grelParser, "value");
-		facet = new ListFacetConfig();
-		facet.columnName = "hello";
-		facet.setExpression("grel:value");
-	}
-	
+    GridState toBlankDown;
+    ListFacetConfig facet;
+
+    @BeforeTest
+    public void createSplitProject() {
+        toBlankDown = createGrid(new String[] { "foo", "bar", "hello" },
+                new Serializable[][] {
+                        { "a", "b", "c" },
+                        { "", "b", "d" },
+                        { "e", "b", "f" },
+                        { null, "g", "h" },
+                        { null, "g", "i" }
+                });
+
+        MetaParser.registerLanguageParser("grel", "GREL", Parser.grelParser, "value");
+        facet = new ListFacetConfig();
+        facet.columnName = "hello";
+        facet.setExpression("grel:value");
+    }
+
     @Test
     public void serializeBlankDownOperation() throws Exception {
         String json = "{\"op\":\"core/blank-down\","
@@ -86,81 +87,80 @@ public class BlankDownTests extends RefineTest {
         Operation op = ParsingUtilities.mapper.readValue(json, BlankDownOperation.class);
         TestUtils.isSerializedTo(op, json, ParsingUtilities.defaultWriter);
     }
-    
-	
-	@Test
-	public void testBlankDownRowsNoFacets() throws DoesNotApplyException {
-		Change change = new BlankDownOperation(EngineConfig.ALL_ROWS, "bar").createChange();
-		GridState applied = change.apply(toBlankDown, mock(ChangeContext.class));
-		
-		GridState expectedGrid = createGrid(new String[] {"foo","bar","hello"},
-				new Serializable[][] {
-			{ "a",  "b",  "c" },
-			{ "",   null, "d" },
-			{ "e",  null, "f" },
-			{ null, "g",  "h" },
-			{ null, null, "i" }
-		});
-		
-		assertGridEquals(applied, expectedGrid);
-	}
-	
-	@Test
-	public void testBlankDownRecordsNoFacets() throws DoesNotApplyException {
-		Change change = new BlankDownOperation(EngineConfig.ALL_RECORDS, "bar").createChange();
-		GridState applied = change.apply(toBlankDown, mock(ChangeContext.class));
-		
-		GridState expectedGrid = createGrid(new String[] {"foo","bar","hello"},
-				new Serializable[][] {
-			{ "a",  "b",  "c" },
-			{ "",   null, "d" },
-			{ "e",  "b",  "f" },
-			{ null, "g",  "h" },
-			{ null, null, "i" }
-		});
-		
-		assertGridEquals(applied, expectedGrid);
-	}
-	
-	@Test
-	public void testBlankDownRowsFacets() throws DoesNotApplyException {
-		facet.selection = Arrays.asList(
-				new DecoratedValue("c", "c"),
-				new DecoratedValue("f", "f"),
-				new DecoratedValue("i", "i"));
-		EngineConfig engineConfig = new EngineConfig(Arrays.asList(facet), Engine.Mode.RowBased);
-		Change change = new BlankDownOperation(engineConfig, "bar").createChange();
-		GridState applied = change.apply(toBlankDown, mock(ChangeContext.class));
-		
-		GridState expected = createGrid(new String[] {"foo","bar","hello"},
-				new Serializable[][] {
-			{ "a",  "b",  "c" },
-			{ "",   "b",  "d" },
-			{ "e",  null, "f" },
-			{ null, "g",  "h" },
-			{ null, "g",  "i" }
-		});
-		
-		assertGridEquals(applied, expected);
-	}
-	
-	@Test
-	public void testBlankDownRecordsFacets() throws DoesNotApplyException {
-		facet.selection = Arrays.asList(
-				new DecoratedValue("c", "c"));
-		EngineConfig engineConfig = new EngineConfig(Arrays.asList(facet), Engine.Mode.RecordBased);
-		Change change = new BlankDownOperation(engineConfig, "bar").createChange();
-		GridState applied = change.apply(toBlankDown, mock(ChangeContext.class));
-		
-		GridState expected = createGrid(new String[] {"foo","bar","hello"},
-				new Serializable[][] {
-			{ "a",  "b",  "c" },
-			{ "",   null, "d" },
-			{ "e",  "b",  "f" },
-			{ null, "g",  "h" },
-			{ null, "g",  "i" }
-		});
-		
-		assertGridEquals(applied, expected);
-	}
+
+    @Test
+    public void testBlankDownRowsNoFacets() throws DoesNotApplyException {
+        Change change = new BlankDownOperation(EngineConfig.ALL_ROWS, "bar").createChange();
+        GridState applied = change.apply(toBlankDown, mock(ChangeContext.class));
+
+        GridState expectedGrid = createGrid(new String[] { "foo", "bar", "hello" },
+                new Serializable[][] {
+                        { "a", "b", "c" },
+                        { "", null, "d" },
+                        { "e", null, "f" },
+                        { null, "g", "h" },
+                        { null, null, "i" }
+                });
+
+        assertGridEquals(applied, expectedGrid);
+    }
+
+    @Test
+    public void testBlankDownRecordsNoFacets() throws DoesNotApplyException {
+        Change change = new BlankDownOperation(EngineConfig.ALL_RECORDS, "bar").createChange();
+        GridState applied = change.apply(toBlankDown, mock(ChangeContext.class));
+
+        GridState expectedGrid = createGrid(new String[] { "foo", "bar", "hello" },
+                new Serializable[][] {
+                        { "a", "b", "c" },
+                        { "", null, "d" },
+                        { "e", "b", "f" },
+                        { null, "g", "h" },
+                        { null, null, "i" }
+                });
+
+        assertGridEquals(applied, expectedGrid);
+    }
+
+    @Test
+    public void testBlankDownRowsFacets() throws DoesNotApplyException {
+        facet.selection = Arrays.asList(
+                new DecoratedValue("c", "c"),
+                new DecoratedValue("f", "f"),
+                new DecoratedValue("i", "i"));
+        EngineConfig engineConfig = new EngineConfig(Arrays.asList(facet), Engine.Mode.RowBased);
+        Change change = new BlankDownOperation(engineConfig, "bar").createChange();
+        GridState applied = change.apply(toBlankDown, mock(ChangeContext.class));
+
+        GridState expected = createGrid(new String[] { "foo", "bar", "hello" },
+                new Serializable[][] {
+                        { "a", "b", "c" },
+                        { "", "b", "d" },
+                        { "e", null, "f" },
+                        { null, "g", "h" },
+                        { null, "g", "i" }
+                });
+
+        assertGridEquals(applied, expected);
+    }
+
+    @Test
+    public void testBlankDownRecordsFacets() throws DoesNotApplyException {
+        facet.selection = Arrays.asList(
+                new DecoratedValue("c", "c"));
+        EngineConfig engineConfig = new EngineConfig(Arrays.asList(facet), Engine.Mode.RecordBased);
+        Change change = new BlankDownOperation(engineConfig, "bar").createChange();
+        GridState applied = change.apply(toBlankDown, mock(ChangeContext.class));
+
+        GridState expected = createGrid(new String[] { "foo", "bar", "hello" },
+                new Serializable[][] {
+                        { "a", "b", "c" },
+                        { "", null, "d" },
+                        { "e", "b", "f" },
+                        { null, "g", "h" },
+                        { null, "g", "i" }
+                });
+
+        assertGridEquals(applied, expected);
+    }
 }

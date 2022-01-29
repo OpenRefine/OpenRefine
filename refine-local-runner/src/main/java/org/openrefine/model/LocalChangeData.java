@@ -1,3 +1,4 @@
+
 package org.openrefine.model;
 
 import java.io.File;
@@ -21,7 +22,7 @@ import org.openrefine.process.ProgressReporter;
 import com.google.common.collect.Streams;
 
 public class LocalChangeData<T> implements ChangeData<T> {
-    
+
     private final LocalDatamodelRunner runner;
     private final PairPLL<Long, T> grid;
     private final List<Long> parentPartitionFirstIndices;
@@ -31,11 +32,12 @@ public class LocalChangeData<T> implements ChangeData<T> {
      * Constructs a change data.
      * 
      * @param runner
-     * @param grid expected not to contain any null value (they should be filtered out first)
-     * @param parentPartitionSizes the size of each partition in the grid this change data was generated from
-     *        (can be null if not available). This is used to compute progress as a percentage of the original
-     *        grid swept through. This is more efficient than counting the number of elements in each
-     *        partition of the change data.
+     * @param grid
+     *            expected not to contain any null value (they should be filtered out first)
+     * @param parentPartitionSizes
+     *            the size of each partition in the grid this change data was generated from (can be null if not
+     *            available). This is used to compute progress as a percentage of the original grid swept through. This
+     *            is more efficient than counting the number of elements in each partition of the change data.
      */
     public LocalChangeData(LocalDatamodelRunner runner, PairPLL<Long, T> grid, List<Long> parentPartitionSizes) {
         this.runner = runner;
@@ -68,7 +70,7 @@ public class LocalChangeData<T> implements ChangeData<T> {
         List<T> rows = grid.get(rowId);
         if (rows.size() == 0) {
             return null;
-        } else if (rows.size() > 1){
+        } else if (rows.size() > 1) {
             throw new IllegalStateException(String.format("Found %d change data elements at index %d", rows.size(), rowId));
         } else {
             return rows.get(0);
@@ -80,10 +82,12 @@ public class LocalChangeData<T> implements ChangeData<T> {
         return runner;
     }
 
-    protected void saveToFile(File file, ChangeDataSerializer<T> serializer, Optional<ProgressReporter> progressReporter) throws IOException, InterruptedException {
-        
+    protected void saveToFile(File file, ChangeDataSerializer<T> serializer, Optional<ProgressReporter> progressReporter)
+            throws IOException, InterruptedException {
+
         PLL<Tuple2<Long, T>> gridWithReporting;
-        boolean useNativeProgressReporting = progressReporter.isEmpty() || grid.hasCachedPartitionSizes() || parentPartitionFirstIndices == null;
+        boolean useNativeProgressReporting = progressReporter.isEmpty() || grid.hasCachedPartitionSizes()
+                || parentPartitionFirstIndices == null;
         if (useNativeProgressReporting) {
             gridWithReporting = grid;
         } else {
@@ -91,8 +95,9 @@ public class LocalChangeData<T> implements ChangeData<T> {
             // so we approximate progress by looking at the row numbers and assuming that the changedata
             // is evenly spread on the entire grid.
             ConcurrentProgressReporter concurrentReporter = new ConcurrentProgressReporter(progressReporter.get(), parentSize);
-            gridWithReporting = grid.mapPartitions((idx, stream) ->
-                wrapStreamWithProgressReporting(parentPartitionFirstIndices.get(idx), stream, concurrentReporter), true);
+            gridWithReporting = grid.mapPartitions(
+                    (idx, stream) -> wrapStreamWithProgressReporting(parentPartitionFirstIndices.get(idx), stream, concurrentReporter),
+                    true);
         }
         PLL<String> serialized = gridWithReporting.map(r -> {
             try {
@@ -101,38 +106,39 @@ public class LocalChangeData<T> implements ChangeData<T> {
                 throw new UncheckedIOException(e);
             }
         });
-        
+
         if (useNativeProgressReporting) {
             // this relies on the cached partition sizes in the change data grid
             serialized
-                .saveAsTextFile(file.getAbsolutePath(), progressReporter);
+                    .saveAsTextFile(file.getAbsolutePath(), progressReporter);
         } else {
             serialized.saveAsTextFile(file.getAbsolutePath(), Optional.empty());
             progressReporter.get().reportProgress(100);
         }
     }
-    
+
     public void saveToFile(File file, ChangeDataSerializer<T> serializer) throws IOException, InterruptedException {
         saveToFile(file, serializer, Optional.empty());
     }
-    
-    public void saveToFile(File file, ChangeDataSerializer<T> serializer, ProgressReporter progressReporter) throws IOException, InterruptedException {
+
+    public void saveToFile(File file, ChangeDataSerializer<T> serializer, ProgressReporter progressReporter)
+            throws IOException, InterruptedException {
         saveToFile(file, serializer, Optional.ofNullable(progressReporter));
     }
-    
+
     public PairPLL<Long, T> getPLL() {
         return grid;
     }
-    
-    protected static <T> Stream<Tuple2<Long,T>> wrapStreamWithProgressReporting(
+
+    protected static <T> Stream<Tuple2<Long, T>> wrapStreamWithProgressReporting(
             long startIdx,
             Stream<Tuple2<Long, T>> stream,
             ConcurrentProgressReporter progressReporter) {
-        Iterator<Tuple2<Long,T>> iterator = new Iterator<Tuple2<Long,T>>() {
-            
+        Iterator<Tuple2<Long, T>> iterator = new Iterator<Tuple2<Long, T>>() {
+
             long lastSeen = startIdx;
             Iterator<Tuple2<Long, T>> parent = stream.iterator();
-            
+
             @Override
             public boolean hasNext() {
                 return parent.hasNext();
@@ -145,7 +151,7 @@ public class LocalChangeData<T> implements ChangeData<T> {
                 lastSeen = element.getKey();
                 return element;
             }
-            
+
         };
         return Streams.stream(iterator).onClose(() -> stream.close());
     }

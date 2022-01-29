@@ -54,12 +54,12 @@ public class Cosh extends PureFunction {
     public String getDescription() {
         return "Returns the hyperbolic cosine of a value.";
     }
-    
+
     @Override
     public String getParams() {
         return "number n";
     }
-    
+
     @Override
     public String getReturns() {
         return "number";

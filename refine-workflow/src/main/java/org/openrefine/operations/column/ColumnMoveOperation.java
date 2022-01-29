@@ -54,80 +54,78 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class ColumnMoveOperation extends ImmediateRowMapOperation {
+
     final protected String _columnName;
-    final protected int    _index;
+    final protected int _index;
 
     @JsonCreator
     public ColumnMoveOperation(
-        @JsonProperty("columnName")
-        String columnName,
-        @JsonProperty("index")
-        int index
-    ) {
-    	super(EngineConfig.ALL_ROWS);
+            @JsonProperty("columnName") String columnName,
+            @JsonProperty("index") int index) {
+        super(EngineConfig.ALL_ROWS);
         _columnName = columnName;
         _index = index;
     }
-    
+
     @JsonProperty("columnName")
     public String getColumnName() {
         return _columnName;
     }
-    
+
     @JsonProperty("index")
     public int getIndex() {
         return _index;
     }
 
     @Override
-	public String getDescription() {
+    public String getDescription() {
         return "Move column " + _columnName + " to position " + _index;
     }
 
-	@Override
-	public ColumnModel getNewColumnModel(GridState gridState, ChangeContext context) throws DoesNotApplyException {
-		ColumnModel columnModel = gridState.getColumnModel();
-		int fromIndex = columnIndex(columnModel, _columnName);
-		ColumnMetadata column = columnModel.getColumns().get(fromIndex);
-		return columnModel.removeColumn(fromIndex).insertUnduplicatedColumn(_index, column);
-	}
+    @Override
+    public ColumnModel getNewColumnModel(GridState gridState, ChangeContext context) throws DoesNotApplyException {
+        ColumnModel columnModel = gridState.getColumnModel();
+        int fromIndex = columnIndex(columnModel, _columnName);
+        ColumnMetadata column = columnModel.getColumns().get(fromIndex);
+        return columnModel.removeColumn(fromIndex).insertUnduplicatedColumn(_index, column);
+    }
 
-	@Override
-	public RowInRecordMapper getPositiveRowMapper(GridState state, ChangeContext context) throws DoesNotApplyException {
-		int fromIndex = columnIndex(state.getColumnModel(), _columnName);
-		return mapper(fromIndex, _index);
-	}
-	
-	protected static RowInRecordMapper mapper(int fromIndex, int toIndex) {
-		return new RowInRecordMapper() {
+    @Override
+    public RowInRecordMapper getPositiveRowMapper(GridState state, ChangeContext context) throws DoesNotApplyException {
+        int fromIndex = columnIndex(state.getColumnModel(), _columnName);
+        return mapper(fromIndex, _index);
+    }
 
-			private static final long serialVersionUID = 1L;
+    protected static RowInRecordMapper mapper(int fromIndex, int toIndex) {
+        return new RowInRecordMapper() {
 
-			@Override
-			public Row call(Record record, long rowId, Row row) {
-				List<Cell> cells = row.getCells();
-				List<Cell> newCells = new ArrayList<>(cells.size());
-				if (fromIndex <= toIndex) {
-					newCells.addAll(cells.subList(0, fromIndex));
-					newCells.addAll(cells.subList(fromIndex+1, toIndex+1));
-					newCells.add(cells.get(fromIndex));
-					newCells.addAll(cells.subList(toIndex+1, cells.size()));
-				} else {
-					newCells.addAll(cells.subList(0, toIndex));
-					newCells.add(cells.get(fromIndex));
-					newCells.addAll(cells.subList(toIndex, fromIndex));
-					newCells.addAll(cells.subList(fromIndex+1, cells.size()));
-				}
-				return new Row(newCells);
-			}
-			
-		};
-	}
-	
-	// engine config is never useful, so we remove it from the JSON serialization
-	@Override
-	@JsonIgnore
-	public EngineConfig getEngineConfig() {
-		return super.getEngineConfig();
-	}
+            private static final long serialVersionUID = 1L;
+
+            @Override
+            public Row call(Record record, long rowId, Row row) {
+                List<Cell> cells = row.getCells();
+                List<Cell> newCells = new ArrayList<>(cells.size());
+                if (fromIndex <= toIndex) {
+                    newCells.addAll(cells.subList(0, fromIndex));
+                    newCells.addAll(cells.subList(fromIndex + 1, toIndex + 1));
+                    newCells.add(cells.get(fromIndex));
+                    newCells.addAll(cells.subList(toIndex + 1, cells.size()));
+                } else {
+                    newCells.addAll(cells.subList(0, toIndex));
+                    newCells.add(cells.get(fromIndex));
+                    newCells.addAll(cells.subList(toIndex, fromIndex));
+                    newCells.addAll(cells.subList(fromIndex + 1, cells.size()));
+                }
+                return new Row(newCells);
+            }
+
+        };
+    }
+
+    // engine config is never useful, so we remove it from the JSON serialization
+    @Override
+    @JsonIgnore
+    public EngineConfig getEngineConfig() {
+        return super.getEngineConfig();
+    }
 }

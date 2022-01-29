@@ -36,23 +36,21 @@ package org.openrefine.overlay;
 import org.openrefine.model.Project;
 
 /**
- * Overlay models must be serializable and deserializable with Jackson.
- * It is possible to have access to the project at deserialization time
- * by adding the corresponding parameter to the JSON creator with
- * @JacksonInject("project").
+ * Overlay models must be serializable and deserializable with Jackson. It is possible to have access to the project at
+ * deserialization time by adding the corresponding parameter to the JSON creator with @JacksonInject("project").
  *
  */
 public interface OverlayModel {
-	
+
     public default void onBeforeSave(Project project) {
-    	
+
     }
-    
+
     public default void onAfterSave(Project project) {
-    	
+
     }
-    
+
     public default void dispose(Project project) {
-    	
+
     }
 }

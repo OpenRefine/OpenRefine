@@ -65,10 +65,10 @@ public class CreateProjectCommand extends Command {
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-    	if(!hasValidCSRFTokenAsGET(request)) {
-    		respondCSRFError(response);
-    		return;
-    	}
+        if (!hasValidCSRFTokenAsGET(request)) {
+            respondCSRFError(response);
+            return;
+        }
 
         ProjectManager.singleton.setBusy(true);
         try {
@@ -77,9 +77,9 @@ public class CreateProjectCommand extends Command {
             ImportingJobConfig config = job.getJsonConfig();
             ImportingUtilities.loadDataAndPrepareJob(
                     request, response, parameters, job);
-            
+
             String format = parameters.getProperty("format");
-            
+
             // If a format is specified, it might still be wrong, so we need
             // to check if we have a parser for it. If not, null it out.
             if (format != null && !format.isEmpty()) {
@@ -88,14 +88,14 @@ public class CreateProjectCommand extends Command {
                     format = null;
                 }
             }
-            
+
             // If we don't have a format specified, try to guess it.
             if (format == null || format.isEmpty()) {
                 // Use legacy parameters to guess the format.
                 if ("false".equals(parameters.getProperty("split-into-columns"))) {
                     format = "text/line-based";
                 } else if (",".equals(parameters.getProperty("separator")) ||
-                           "\\t".equals(parameters.getProperty("separator"))) {
+                        "\\t".equals(parameters.getProperty("separator"))) {
                     format = "text/line-based/*sv";
                 } else {
                     List<String> rankedFormats = config.rankedFormats;
@@ -103,13 +103,13 @@ public class CreateProjectCommand extends Command {
                         format = rankedFormats.get(0);
                     }
                 }
-                
+
                 if (format == null || format.isEmpty()) {
                     // If we have failed in guessing, default to something simple.
                     format = "text/line-based";
                 }
             }
-            
+
             ObjectNode optionObj = null;
             String optionsString = parameters.getProperty("options");
             if (optionsString != null && !optionsString.isEmpty()) {
@@ -117,17 +117,17 @@ public class CreateProjectCommand extends Command {
             } else {
                 ImportingFormat formatRecord = FormatRegistry.getFormatToRecord().get(format);
                 optionObj = formatRecord.parser.createParserUIInitializationData(
-                    job, job.getSelectedFileRecords(), format);
+                        job, job.getSelectedFileRecords(), format);
             }
             adjustLegacyOptions(format, parameters, optionObj);
-            
+
             String projectName = parameters.getProperty("project-name");
             if (projectName != null && !projectName.isEmpty()) {
                 JSONUtilities.safePut(optionObj, "projectName", projectName);
             }
-            
+
             List<Exception> exceptions = new LinkedList<Exception>();
-            
+
             long projectId = ImportingUtilities.createProject(job, format, optionObj, exceptions, true);
 
             HttpUtilities.redirect(response, "/project?project=" + projectId);
@@ -144,19 +144,19 @@ public class CreateProjectCommand extends Command {
         } else if ("\\t".equals(parameters.getProperty("separator"))) {
             JSONUtilities.safePut(optionObj, "separator", "\t");
         }
-        
+
         adjustLegacyIntegerOption(format, parameters, optionObj, "ignore", "ignoreLines");
         adjustLegacyIntegerOption(format, parameters, optionObj, "header-lines", "headerLines");
         adjustLegacyIntegerOption(format, parameters, optionObj, "skip", "skipDataLines");
         adjustLegacyIntegerOption(format, parameters, optionObj, "limit", "limit");
-        
+
         adjustLegacyBooleanOption(format, parameters, optionObj, "guess-value-type", "guessCellValueTypes", false);
         adjustLegacyBooleanOption(format, parameters, optionObj, "ignore-quotes", "processQuotes", true);
     }
 
     static private void adjustLegacyIntegerOption(
-        String format, Properties parameters, ObjectNode optionObj, String legacyName, String newName) {
-        
+            String format, Properties parameters, ObjectNode optionObj, String legacyName, String newName) {
+
         String s = parameters.getProperty(legacyName);
         if (s != null && !s.isEmpty()) {
             try {
@@ -166,15 +166,15 @@ public class CreateProjectCommand extends Command {
             }
         }
     }
-    
+
     static private void adjustLegacyBooleanOption(
-        String format,
-        Properties parameters,
-        ObjectNode optionObj,
-        String legacyName,
-        String newName,
-        boolean invert) {
-        
+            String format,
+            Properties parameters,
+            ObjectNode optionObj,
+            String legacyName,
+            String newName,
+            boolean invert) {
+
         String s = parameters.getProperty(legacyName);
         if (s != null && !s.isEmpty()) {
             JSONUtilities.safePut(optionObj, newName, Boolean.parseBoolean(s));
