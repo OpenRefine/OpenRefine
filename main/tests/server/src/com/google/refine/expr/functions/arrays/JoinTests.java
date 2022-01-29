@@ -24,6 +24,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  ******************************************************************************/
+
 package com.google.refine.expr.functions.arrays;
 
 import org.testng.annotations.Test;
@@ -33,24 +34,24 @@ import com.google.refine.expr.ParsingException;
 import com.google.refine.util.TestUtils;
 
 public class JoinTests extends RefineTest {
+
     @Test
     public void joinArray() throws ParsingException {
-        String[] test = {"[2,1,3].join('|')", "2|1|3"};
+        String[] test = { "[2,1,3].join('|')", "2|1|3" };
         parseEval(bindings, test);
 
         // TODO: This is current behavior, but is it what we want?
-        String[] test1 = {"[2,null,3].join(', ')", "2, 3"};
+        String[] test1 = { "[2,null,3].join(', ')", "2, 3" };
         parseEval(bindings, test1);
 
-        String[] test2 = {"['z','b','c','a'].join('-')", "z-b-c-a"};
+        String[] test2 = { "['z','b','c','a'].join('-')", "z-b-c-a" };
         parseEval(bindings, test2);
 
         // TODO: Do we really want the following two tests to return different results?
-        String[] test3 = {"['z', null,'c','a'].join('-')", "z-c-a"};
+        String[] test3 = { "['z', null,'c','a'].join('-')", "z-c-a" };
         parseEval(bindings, test3);
-        String[] test4 = {"['z', '','c','a'].join('-')", "z--c-a"};
+        String[] test4 = { "['z', '','c','a'].join('-')", "z--c-a" };
         parseEval(bindings, test4);
     }
 
 }
-

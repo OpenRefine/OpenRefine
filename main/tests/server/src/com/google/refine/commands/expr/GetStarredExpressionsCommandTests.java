@@ -24,6 +24,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  ******************************************************************************/
+
 package com.google.refine.commands.expr;
 
 import java.io.IOException;
@@ -39,40 +40,41 @@ public class GetStarredExpressionsCommandTests extends ExpressionCommandTestBase
     public void setUp() {
         command = new GetStarredExpressionsCommand();
     }
-    
+
     @Test
     public void testJsonResponse() throws ServletException, IOException {
 
-        initWorkspace("{\n" + 
-                "        \"class\": \"com.google.refine.preference.TopList\",\n" + 
-                "        \"top\": 100,\n" + 
-                "        \"list\": [\n" + 
-                "          \"grel:facetCount(value, 'value', 'Column 1')\",\n" + 
-                "          \"grel:facetCount(value, 'value', 'Column 3')\",\n" + 
+        initWorkspace("{\n" +
+                "        \"class\": \"com.google.refine.preference.TopList\",\n" +
+                "        \"top\": 100,\n" +
+                "        \"list\": [\n" +
+                "          \"grel:facetCount(value, 'value', 'Column 1')\",\n" +
+                "          \"grel:facetCount(value, 'value', 'Column 3')\",\n" +
                 "          \"grel:cell.recon.match.id\"" +
-                "]}", "{\n" + 
-                        "        \"class\": \"com.google.refine.preference.TopList\",\n" + 
-                        "        \"top\": 100,\n" + 
-                        "        \"list\": [\n" + 
-                        "          \"grel:cell.recon.match.id\"\n" + 
+                "]}",
+                "{\n" +
+                        "        \"class\": \"com.google.refine.preference.TopList\",\n" +
+                        "        \"top\": 100,\n" +
+                        "        \"list\": [\n" +
+                        "          \"grel:cell.recon.match.id\"\n" +
                         "]}");
-        
-        String json = "{\n" + 
-                "       \"expressions\" : [ {\n" + 
-                "         \"code\" : \"grel:cell.recon.match.id\"\n" + 
-                "       } ]\n" + 
+
+        String json = "{\n" +
+                "       \"expressions\" : [ {\n" +
+                "         \"code\" : \"grel:cell.recon.match.id\"\n" +
+                "       } ]\n" +
                 "     }";
         command.doGet(request, response);
         assertResponseJsonIs(json);
     }
-    
+
     @Test
     public void testUninitialized() throws ServletException, IOException {
 
         initWorkspace("{}");
-        
-        String json = "{\n" + 
-                "       \"expressions\" : []\n" + 
+
+        String json = "{\n" +
+                "       \"expressions\" : []\n" +
                 "     }";
         command.doGet(request, response);
         assertResponseJsonIs(json);

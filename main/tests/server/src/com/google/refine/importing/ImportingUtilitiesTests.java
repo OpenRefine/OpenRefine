@@ -24,6 +24,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  ******************************************************************************/
+
 package com.google.refine.importing;
 
 import static org.mockito.Mockito.mock;
@@ -74,10 +75,10 @@ public class ImportingUtilitiesTests extends ImporterTest {
 
     @Override
     @BeforeMethod
-    public void setUp(){
+    public void setUp() {
         super.setUp();
     }
-    
+
     @Test
     public void createProjectMetadataTest()
             throws Exception {
@@ -89,13 +90,13 @@ public class ImportingUtilitiesTests extends ImporterTest {
         Assert.assertTrue(pm.getTags().length == 0);
     }
 
-    @Test(expectedExceptions=IllegalArgumentException.class)
+    @Test(expectedExceptions = IllegalArgumentException.class)
     public void testZipSlip() throws IOException {
         File tempDir = TestUtils.createTempDirectory("openrefine-zip-slip-test");
         // For CVE-2018-19859, issue #1840
         ImportingUtilities.allocateFile(tempDir, "../../tmp/script.sh");
     }
-    
+
     @Test
     public void testAllocateFileDeduplication() throws IOException {
         // Test for comment https://github.com/OpenRefine/OpenRefine/issues/3043#issuecomment-671057317
@@ -104,7 +105,7 @@ public class ImportingUtilitiesTests extends ImporterTest {
         dirA.mkdir();
         File conflicting = new File(dirA, "dummy");
         conflicting.createNewFile();
-        
+
         File allocated = ImportingUtilities.allocateFile(dirA, ".././a/dummy");
         Assert.assertEquals(allocated, new File(dirA, "dummy-2"));
     }
@@ -140,26 +141,27 @@ public class ImportingUtilitiesTests extends ImporterTest {
         when(req.getContentLength()).thenReturn((int) entity.getContentLength());
         when(req.getInputStream()).thenReturn(new MockServletInputStream(is));
 
-
         ImportingJob job = ImportingManager.createJob();
         Properties parameters = ParsingUtilities.parseUrlParameters(req);
         ObjectNode retrievalRecord = ParsingUtilities.mapper.createObjectNode();
         ObjectNode progress = ParsingUtilities.mapper.createObjectNode();
         try {
-            ImportingUtilities.retrieveContentFromPostRequest(req, parameters, job.getRawDataDir(), retrievalRecord, new ImportingUtilities.Progress() {
-                @Override
-                public void setProgress(String message, int percent) {
-                    if (message != null) {
-                        JSONUtilities.safePut(progress, "message", message);
-                    }
-                    JSONUtilities.safePut(progress, "percent", percent);
-                }
+            ImportingUtilities.retrieveContentFromPostRequest(req, parameters, job.getRawDataDir(), retrievalRecord,
+                    new ImportingUtilities.Progress() {
 
-                @Override
-                public boolean isCanceled() {
-                    return job.canceled;
-                }
-            });
+                        @Override
+                        public void setProgress(String message, int percent) {
+                            if (message != null) {
+                                JSONUtilities.safePut(progress, "message", message);
+                            }
+                            JSONUtilities.safePut(progress, "percent", percent);
+                        }
+
+                        @Override
+                        public boolean isCanceled() {
+                            return job.canceled;
+                        }
+                    });
             fail("No Exception was thrown");
         } catch (Exception exception) {
             assertEquals(exception.getMessage(), MESSAGE);
@@ -181,36 +183,34 @@ public class ImportingUtilitiesTests extends ImporterTest {
             return delegate.read();
         }
 
-		@Override
-		public boolean isFinished() {
-			return false;
-		}
+        @Override
+        public boolean isFinished() {
+            return false;
+        }
 
-		@Override
-		public boolean isReady() {
-			return true;
-		}
+        @Override
+        public boolean isReady() {
+            return true;
+        }
 
-		@Override
-		public void setReadListener(ReadListener readListener) {
-			
-		}
+        @Override
+        public void setReadListener(ReadListener readListener) {
+
+        }
 
     }
 
     /**
-     * This tests both exploding a zip archive into it's constituent files
-     * as well as importing them all (both) and making sure that the
-     * recording of archive names and file names works correctly.
+     * This tests both exploding a zip archive into it's constituent files as well as importing them all (both) and
+     * making sure that the recording of archive names and file names works correctly.
      *
-     * It's kind of a lot to have in one test, but it's a sequence
-     * of steps that need to be done in order.
+     * It's kind of a lot to have in one test, but it's a sequence of steps that need to be done in order.
      *
      * @throws IOException
      */
     @SuppressWarnings("unchecked")
     @Test
-    public void importArchive() throws IOException{
+    public void importArchive() throws IOException {
         String filename = "movies.zip";
         String filepath = ClassLoader.getSystemResource(filename).getPath();
         // Make a copy in our data directory where it's expected
@@ -219,8 +219,10 @@ public class ImportingUtilitiesTests extends ImporterTest {
         FileUtils.copyFile(new File(filepath), tmp);
 
         Progress dummyProgress = new Progress() {
+
             @Override
-            public void setProgress(String message, int percent) {}
+            public void setProgress(String message, int percent) {
+            }
 
             @Override
             public boolean isCanceled() {
@@ -256,36 +258,35 @@ public class ImportingUtilitiesTests extends ImporterTest {
                 "tsv",
                 -1,
                 options,
-                exceptions
-                );
+                exceptions);
         assertEquals(exceptions.size(), 0);
         project.update();
 
-        assertEquals(project.columnModel.columns.get(0).getName(),"Archive");
-        assertEquals(project.rows.get(0).getCell(0).getValue(),"movies.zip");
-        assertEquals(project.columnModel.columns.get(1).getName(),"File");
-        assertEquals(project.rows.get(0).getCell(1).getValue(),"movies-condensed.tsv");
-        assertEquals(project.columnModel.columns.get(2).getName(),"name");
-        assertEquals(project.rows.get(0).getCell(2).getValue(),"Wayne's World");
+        assertEquals(project.columnModel.columns.get(0).getName(), "Archive");
+        assertEquals(project.rows.get(0).getCell(0).getValue(), "movies.zip");
+        assertEquals(project.columnModel.columns.get(1).getName(), "File");
+        assertEquals(project.rows.get(0).getCell(1).getValue(), "movies-condensed.tsv");
+        assertEquals(project.columnModel.columns.get(2).getName(), "name");
+        assertEquals(project.rows.get(0).getCell(2).getValue(), "Wayne's World");
 
         // Make sure we imported both files contained in the zip file
         assertEquals(project.rows.size(), 252);
 
         ArrayNode importOptionsArray = metadata.getImportOptionMetadata();
         assertEquals(importOptionsArray.size(), 2);
-        ObjectNode importOptions = (ObjectNode)importOptionsArray.get(0);
+        ObjectNode importOptions = (ObjectNode) importOptionsArray.get(0);
         assertEquals(importOptions.get("archiveFileName").asText(), "movies.zip");
         assertEquals(importOptions.get("fileSource").asText(), "movies-condensed.tsv");
         assertTrue(importOptions.get("includeFileSources").asBoolean());
         assertTrue(importOptions.get("includeArchiveFileName").asBoolean());
 
-        importOptions = (ObjectNode)importOptionsArray.get(1);
+        importOptions = (ObjectNode) importOptionsArray.get(1);
         assertEquals(importOptions.get("fileSource").asText(), "movies.tsv");
         assertEquals(importOptions.get("archiveFileName").asText(), "movies.zip");
     }
 
     @Test
-    public void importUnsupportedZipFile() throws IOException{
+    public void importUnsupportedZipFile() throws IOException {
         String filename = "unsupportedPPMD.zip";
         String filepath = ClassLoader.getSystemResource(filename).getPath();
         // Make a copy in our data directory where it's expected
@@ -294,8 +295,10 @@ public class ImportingUtilitiesTests extends ImporterTest {
         FileUtils.copyFile(new File(filepath), tmp);
 
         Progress dummyProgress = new Progress() {
+
             @Override
-            public void setProgress(String message, int percent) {}
+            public void setProgress(String message, int percent) {
+            }
 
             @Override
             public boolean isCanceled() {
@@ -314,9 +317,12 @@ public class ImportingUtilitiesTests extends ImporterTest {
         HttpServletRequest request = mock(HttpServletRequest.class);
         HttpServletResponse response = mock(HttpServletResponse.class);
 
-        assertThrows(IOException.class, () -> ImportingUtilities.postProcessRetrievedFile(job.getRawDataDir(), tmp, fileRecord, fileRecords, dummyProgress));
-        assertThrows(FileUploadBase.InvalidContentTypeException.class, () -> ImportingUtilities.retrieveContentFromPostRequest(request, new Properties(), job.getRawDataDir(), fileRecord, dummyProgress));
-        assertThrows(IOException.class, () -> ImportingUtilities.loadDataAndPrepareJob(request, response, new Properties(), job, fileRecord));
+        assertThrows(IOException.class,
+                () -> ImportingUtilities.postProcessRetrievedFile(job.getRawDataDir(), tmp, fileRecord, fileRecords, dummyProgress));
+        assertThrows(FileUploadBase.InvalidContentTypeException.class, () -> ImportingUtilities.retrieveContentFromPostRequest(request,
+                new Properties(), job.getRawDataDir(), fileRecord, dummyProgress));
+        assertThrows(IOException.class,
+                () -> ImportingUtilities.loadDataAndPrepareJob(request, response, new Properties(), job, fileRecord));
 
     }
 

@@ -24,6 +24,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  ******************************************************************************/
+
 package com.google.refine.expr.functions.strings;
 
 import java.util.Properties;
@@ -42,8 +43,9 @@ import com.google.refine.util.TestUtils;
  * Test cases for find function.
  */
 public class FindTests extends RefineTest {
+
     static Properties bindings;
-    
+
     @Override
     @BeforeTest
     public void init() {
@@ -59,18 +61,18 @@ public class FindTests extends RefineTest {
         Assert.assertEquals(matches[0], "test");
         Assert.assertEquals(matches[1], "test");
     }
-    
+
     @Test
     public void findFunctionFindLiteralTest() throws Exception {
         String[] matches = (String[]) invoke("find", "This is a test string for testing find.", ".test");
         Assert.assertEquals(matches.length, 0);
     }
-    
+
     @Test
     public void findFunctionFindRegexTest() throws Exception {
         String[] matches = (String[]) invoke("find", "hello 123456 goodbye.", Pattern.compile("\\d{6}|hello"));
         Assert.assertEquals(matches[0], "hello");
         Assert.assertEquals(matches[1], "123456");
     }
-    
+
 }

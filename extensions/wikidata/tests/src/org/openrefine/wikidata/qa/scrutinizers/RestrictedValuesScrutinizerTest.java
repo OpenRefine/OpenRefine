@@ -1,3 +1,4 @@
+
 package org.openrefine.wikidata.qa.scrutinizers;
 
 import org.openrefine.wikidata.qa.ConstraintFetcher;
@@ -24,7 +25,7 @@ public class RestrictedValuesScrutinizerTest extends SnakScrutinizerTest {
     public static final String ALLOWED_VALUES_CONSTRAINT_QID = "Q21510859";
     public static final String DISALLOWED_VALUES_CONSTRAINT_QID = "Q52558054";
     public static final String ALLOWED_VALUES_CONSTRAINT_PID = "P2305";
-    
+
     private ItemIdValue qid = Datamodel.makeWikidataItemIdValue("Q3487");
     public static PropertyIdValue allowedPropertyIdValue = Datamodel.makeWikidataPropertyIdValue("P1622");
     public static ItemIdValue allowedValue = Datamodel.makeWikidataItemIdValue("Q13196750");
@@ -39,7 +40,7 @@ public class RestrictedValuesScrutinizerTest extends SnakScrutinizerTest {
     public EditScrutinizer getScrutinizer() {
         return new RestrictedValuesScrutinizer();
     }
-    
+
     @Test
     public void testNoConstraint() {
         ConstraintFetcher fetcher = mock(ConstraintFetcher.class);
@@ -51,7 +52,7 @@ public class RestrictedValuesScrutinizerTest extends SnakScrutinizerTest {
                 qid));
         assertNoWarningRaised();
     }
-    
+
     @Test
     public void testAllowedValue() {
         Snak mainSnak = Datamodel.makeValueSnak(allowedPropertyIdValue, allowedValue);
@@ -68,7 +69,7 @@ public class RestrictedValuesScrutinizerTest extends SnakScrutinizerTest {
         scrutinize(statement);
         assertNoWarningRaised();
     }
-    
+
     @Test
     public void testAllowedValueFailing() {
         Snak mainSnak = Datamodel.makeSomeValueSnak(allowedPropertyIdValue);
@@ -85,7 +86,7 @@ public class RestrictedValuesScrutinizerTest extends SnakScrutinizerTest {
         scrutinize(statement);
         assertWarningsRaised(RestrictedValuesScrutinizer.type);
     }
-    
+
     @Test
     public void testDisallowedValue() {
         Snak mainSnak = Datamodel.makeSomeValueSnak(disallowedPropertyIdValue);
@@ -102,7 +103,7 @@ public class RestrictedValuesScrutinizerTest extends SnakScrutinizerTest {
         scrutinize(statement);
         assertNoWarningRaised();
     }
-    
+
     @Test
     public void testDisallowedValueFailing() {
         Snak mainSnak = Datamodel.makeValueSnak(disallowedPropertyIdValue, disallowedValue);

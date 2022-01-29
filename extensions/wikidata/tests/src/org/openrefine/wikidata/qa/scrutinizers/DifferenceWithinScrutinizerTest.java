@@ -1,3 +1,4 @@
+
 package org.openrefine.wikidata.qa.scrutinizers;
 
 import org.openrefine.wikidata.qa.ConstraintFetcher;
@@ -23,7 +24,7 @@ import java.util.List;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class DifferenceWithinScrutinizerTest extends ScrutinizerTest{
+public class DifferenceWithinScrutinizerTest extends ScrutinizerTest {
 
     public static String DIFFERENCE_WITHIN_RANGE_CONSTRAINT_QID = "Q21510854";
     public static String DIFFERENCE_WITHIN_RANGE_CONSTRAINT_PID = "P2306";
@@ -48,13 +49,16 @@ public class DifferenceWithinScrutinizerTest extends ScrutinizerTest{
     @Test
     public void testTrigger() {
         ItemIdValue idA = TestingData.existingId;
-        TimeValue lowerYear = new TimeValueImpl(1800, (byte)10, (byte)15, (byte)0, (byte)0, (byte)0, (byte)11, 0, 0, 0, TimeValue.CM_GREGORIAN_PRO);
-        TimeValue upperYear = new TimeValueImpl(2020, (byte)10, (byte)15, (byte)0, (byte)0, (byte)0, (byte)11, 0, 0, 0, TimeValue.CM_GREGORIAN_PRO);
+        TimeValue lowerYear = new TimeValueImpl(1800, (byte) 10, (byte) 15, (byte) 0, (byte) 0, (byte) 0, (byte) 11, 0, 0, 0,
+                TimeValue.CM_GREGORIAN_PRO);
+        TimeValue upperYear = new TimeValueImpl(2020, (byte) 10, (byte) 15, (byte) 0, (byte) 0, (byte) 0, (byte) 11, 0, 0, 0,
+                TimeValue.CM_GREGORIAN_PRO);
         ValueSnak value1 = Datamodel.makeValueSnak(lowerBoundPid, lowerYear);
         ValueSnak value2 = Datamodel.makeValueSnak(upperBoundPid, upperYear);
-        Statement statement1 = new StatementImpl("P569", value1,idA);
-        Statement statement2 = new StatementImpl("P570", value2,idA);
-        TermedStatementEntityUpdate updateA = new TermedStatementEntityUpdateBuilder(idA).addStatement(statement1).addStatement(statement2).build();
+        Statement statement1 = new StatementImpl("P569", value1, idA);
+        Statement statement2 = new StatementImpl("P570", value2, idA);
+        TermedStatementEntityUpdate updateA = new TermedStatementEntityUpdateBuilder(idA).addStatement(statement1).addStatement(statement2)
+                .build();
 
         Snak propertyQualifier = Datamodel.makeValueSnak(propertyParameterPID, lowerBoundPid);
         Snak minValueQualifier = Datamodel.makeValueSnak(minimumValuePID, minValue);
@@ -73,13 +77,16 @@ public class DifferenceWithinScrutinizerTest extends ScrutinizerTest{
     @Test
     public void testNoIssue() {
         ItemIdValue idA = TestingData.existingId;
-        TimeValue lowerYear = new TimeValueImpl(2000, (byte)10, (byte)15, (byte)0, (byte)0, (byte)0, (byte)11, 0, 0, 0, TimeValue.CM_GREGORIAN_PRO);
-        TimeValue upperYear = new TimeValueImpl(2020, (byte)10, (byte)15, (byte)0, (byte)0, (byte)0, (byte)11, 0, 0, 0, TimeValue.CM_GREGORIAN_PRO);
+        TimeValue lowerYear = new TimeValueImpl(2000, (byte) 10, (byte) 15, (byte) 0, (byte) 0, (byte) 0, (byte) 11, 0, 0, 0,
+                TimeValue.CM_GREGORIAN_PRO);
+        TimeValue upperYear = new TimeValueImpl(2020, (byte) 10, (byte) 15, (byte) 0, (byte) 0, (byte) 0, (byte) 11, 0, 0, 0,
+                TimeValue.CM_GREGORIAN_PRO);
         ValueSnak value1 = Datamodel.makeValueSnak(lowerBoundPid, lowerYear);
         ValueSnak value2 = Datamodel.makeValueSnak(upperBoundPid, upperYear);
-        Statement statement1 = new StatementImpl("P569", value1,idA);
-        Statement statement2 = new StatementImpl("P570", value2,idA);
-        TermedStatementEntityUpdate updateA = new TermedStatementEntityUpdateBuilder(idA).addStatement(statement1).addStatement(statement2).build();
+        Statement statement1 = new StatementImpl("P569", value1, idA);
+        Statement statement2 = new StatementImpl("P570", value2, idA);
+        TermedStatementEntityUpdate updateA = new TermedStatementEntityUpdateBuilder(idA).addStatement(statement1).addStatement(statement2)
+                .build();
 
         Snak propertyQualifier = Datamodel.makeValueSnak(propertyParameterPID, lowerBoundPid);
         Snak minValueQualifier = Datamodel.makeValueSnak(minimumValuePID, minValue);

@@ -21,6 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  ******************************************************************************/
+
 package org.openrefine.wikidata.qa.scrutinizers;
 
 import org.openrefine.wikidata.qa.ConstraintFetcher;
@@ -64,7 +65,6 @@ public class FormatScrutinizerTest extends ScrutinizerTest {
     public EditScrutinizer getScrutinizer() {
         return new FormatScrutinizer();
     }
-
 
     @Test
     public void testTrigger() {
@@ -113,14 +113,14 @@ public class FormatScrutinizerTest extends ScrutinizerTest {
         scrutinize(updateA);
         assertWarningsRaised(FormatScrutinizer.type);
     }
-    
+
     @Test
     public void testInvalidRegex() {
         ItemIdValue idA = TestingData.existingId;
         ValueSnak value = Datamodel.makeValueSnak(propertyIdValue, incompleteMatchValue);
         Statement statement = new StatementImpl("P18", value, idA);
         TermedStatementEntityUpdate updateA = new TermedStatementEntityUpdateBuilder(idA).addStatement(statement).build();
-        
+
         List<Statement> constraintDefinitions = generateFormatConstraint(invalidRegularExpression);
 
         ConstraintFetcher fetcher = mock(ConstraintFetcher.class);
@@ -129,7 +129,7 @@ public class FormatScrutinizerTest extends ScrutinizerTest {
         scrutinize(updateA);
         assertNoWarningRaised();
     }
-    
+
     protected List<Statement> generateFormatConstraint(String regex) {
         Snak qualifierSnak = Datamodel.makeValueSnak(regularExpressionParameter, Datamodel.makeStringValue(regex));
         List<Snak> qualifierSnakList = Collections.singletonList(qualifierSnak);

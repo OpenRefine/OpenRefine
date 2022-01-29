@@ -21,6 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  ******************************************************************************/
+
 package org.openrefine.wikidata.schema;
 
 import org.testng.annotations.Test;
@@ -40,16 +41,15 @@ public class WbStringVariableTest extends WbVariableTest<StringValue> {
     public void testEmpty() {
         isSkipped("");
     }
-    
+
     /**
-     * This should not normally happen: cell values should
-     * never be null (only whole cells can be null).
-     * But better safe than sorry!
+     * This should not normally happen: cell values should never be null (only whole cells can be null). But better safe
+     * than sorry!
      */
     public void testNullStringValue() {
         isSkipped((String) null);
     }
-    
+
     public void testNullCell() {
         isSkipped((Cell) null);
     }
@@ -60,45 +60,44 @@ public class WbStringVariableTest extends WbVariableTest<StringValue> {
     }
 
     /**
-     *  The evaluator cleans up leading and trailing whitespace, but not duplicate spaces
+     * The evaluator cleans up leading and trailing whitespace, but not duplicate spaces
      */
     @Test
     public void testTrailingWhitespace() {
         evaluatesTo(Datamodel.makeStringValue("dirty"), "dirty \t");
     }
-    
+
     /**
      * Test that integers are correctly converted to strings
      */
     @Test
     public void testInteger() {
-    	evaluatesTo(Datamodel.makeStringValue("45"), new Cell(45,null));
+        evaluatesTo(Datamodel.makeStringValue("45"), new Cell(45, null));
     }
-    
+
     /**
      * Test that floating point numbers with no decimal part are also converted
      */
     @Test
     public void testDoubleInteger() {
-    	evaluatesTo(Datamodel.makeStringValue("45"), new Cell(45.0,null));
+        evaluatesTo(Datamodel.makeStringValue("45"), new Cell(45.0, null));
     }
-    
+
     /**
      * Test that large doubles are correctly converted to strings
      */
     @Test
     public void testLargeDouble() {
-    	evaluatesTo(Datamodel.makeStringValue("14341937500"), new Cell(14341937500d, null));
+        evaluatesTo(Datamodel.makeStringValue("14341937500"), new Cell(14341937500d, null));
     }
-    
+
     /**
      * Test that large doubles are correctly converted to strings
      */
     @Test
     public void testLong() {
-    	evaluatesTo(Datamodel.makeStringValue("14341937500"), new Cell(14341937500L, null));
+        evaluatesTo(Datamodel.makeStringValue("14341937500"), new Cell(14341937500L, null));
     }
-
 
     @Test
     public void testLeadingWhitespace() {

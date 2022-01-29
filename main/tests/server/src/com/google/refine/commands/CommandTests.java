@@ -62,7 +62,7 @@ public class CommandTests extends RefineTest {
     public void init() {
         logger = LoggerFactory.getLogger(this.getClass());
     }
-    
+
     CommandStub SUT = null;
     HttpServletRequest request = null;
     ProjectManager projectManager = null;
@@ -138,7 +138,7 @@ public class CommandTests extends RefineTest {
     public void getEngineConfigReturnsNullWithEmptyOrBadParameterValue() {
         when(request.getParameter("engine")).thenReturn("sdfasdfas");
 
-        Assert.assertNull( SUT.wrapGetEngineConfig(request) );
+        Assert.assertNull(SUT.wrapGetEngineConfig(request));
 
         verify(request, times(1)).getParameter("engine");
     }
@@ -259,7 +259,7 @@ public class CommandTests extends RefineTest {
 
         // positive
         try {
-            int returned = SUT.wrapGetIntegerParameter(request,"positivenumber", 5);
+            int returned = SUT.wrapGetIntegerParameter(request, "positivenumber", 5);
             Assert.assertEquals(22, returned);
         } catch (IllegalArgumentException e) {
             Assert.fail();

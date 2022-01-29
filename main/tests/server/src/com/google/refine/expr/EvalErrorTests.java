@@ -24,6 +24,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  ******************************************************************************/
+
 package com.google.refine.expr;
 
 import org.slf4j.LoggerFactory;
@@ -55,7 +56,8 @@ public class EvalErrorTests extends RefineTest {
         Assert.assertTrue(invoke("innerHtml", "test") instanceof EvalError);
 
         EvalError evalError = (EvalError) invoke("innerHtml", "test");
-        Assert.assertEquals(evalError.toString(), "innerHtml() cannot work with this \'string\'. The first parameter is not an HTML Element.  Please first use parseHtml(string) and select(query) prior to using this function");
+        Assert.assertEquals(evalError.toString(),
+                "innerHtml() cannot work with this \'string\'. The first parameter is not an HTML Element.  Please first use parseHtml(string) and select(query) prior to using this function");
     }
 
     @Test
@@ -64,7 +66,8 @@ public class EvalErrorTests extends RefineTest {
         Assert.assertTrue(invoke("wholeText", "test") instanceof EvalError);
 
         EvalError evalError = (EvalError) invoke("wholeText", "test");
-        Assert.assertEquals(evalError.toString(), "wholeText() cannot work with this \'string\' and failed as the first parameter is not an XML or HTML Element.  Please first use parseXml() or parseHtml() and select(query) prior to using this function");
+        Assert.assertEquals(evalError.toString(),
+                "wholeText() cannot work with this \'string\' and failed as the first parameter is not an XML or HTML Element.  Please first use parseXml() or parseHtml() and select(query) prior to using this function");
     }
 
     @Test
@@ -73,6 +76,7 @@ public class EvalErrorTests extends RefineTest {
         Assert.assertTrue(invoke("xmlText", "test") instanceof EvalError);
 
         EvalError evalError = (EvalError) invoke("xmlText", "test");
-        Assert.assertEquals(evalError.toString(), "xmlText() cannot work with this \'string\' and failed as the first parameter is not an XML or HTML Element.  Please first use parseXml() or parseHtml() and select(query) prior to using this function");
+        Assert.assertEquals(evalError.toString(),
+                "xmlText() cannot work with this \'string\' and failed as the first parameter is not an XML or HTML Element.  Please first use parseXml() or parseHtml() and select(query) prior to using this function");
     }
 }
