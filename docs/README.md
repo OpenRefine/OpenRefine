@@ -5,7 +5,7 @@ We use [Docusaurus 2](https://v2.docusaurus.io/) for our docs, a modern static w
 
 ### Requirements
 
-Assuming you have [Node.js](https://nodejs.org/en/download/) installed (which includes npm), you can install Docusaurus with:
+Assuming you have [Node.js (LTS recommended)](https://nodejs.org/en/download/) installed (which includes npm), you can install Docusaurus with:
 
 You will need to install [Yarn](https://yarnpkg.com/getting-started/install) before you can build the site.
 
