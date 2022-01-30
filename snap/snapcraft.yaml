@@ -24,8 +24,7 @@ parts:
     source: https://github.com/OpenRefine/OpenRefine/releases/download/$SNAPCRAFT_PROJECT_VERSION/openrefine-linux-$SNAPCRAFT_PROJECT_VERSION.tar.gz
     stage-packages:
       - default-jre
-      - wget
-      - ca-certificates-java 
+      - wget 
     prime:
       - -usr/lib/jvm/java-*/lib/security/cacerts
       - -usr/lib/jvm/java-*/jre/lib/security/cacerts
@@ -34,11 +33,10 @@ apps:
   openrefine:
     command: ./refine
     environment:
-      JAVA_HOME: $SNAP/usr/lib/jvm/java-11-openjdk-amd64
+      JAVA_HOME: $SNAP/usr/lib/jvm/default-java
       PATH: $JAVA_HOME/jre/bin:$PATH
       _JAVA_OPTIONS: -Duser.home="${SNAP_USER_DATA}"
     plugs:
-      - home
       - network
       - network-bind
       - x11
