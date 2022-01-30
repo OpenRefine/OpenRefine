@@ -26,6 +26,9 @@ parts:
       - default-jre
       - wget
       - ca-certificates-java 
+    prime:
+      - -usr/lib/jvm/java-*/lib/security/cacerts
+      - -usr/lib/jvm/java-*/jre/lib/security/cacerts
 
 apps:
   openrefine:
