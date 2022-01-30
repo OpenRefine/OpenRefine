@@ -24,6 +24,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  ******************************************************************************/
+
 package com.google.refine.expr.functions;
 
 import java.util.Properties;
@@ -74,10 +75,9 @@ public class GetTests extends RefineTest {
 
     @Test
     public void testGetJsonFieldAbsent() throws ParsingException {
-        String test =  "\"[{\\\"one\\\": \\\"1\\\"}]\".parseJson()[0].two";
+        String test = "\"[{\\\"one\\\": \\\"1\\\"}]\".parseJson()[0].two";
         Evaluable eval = MetaParser.parse("grel:" + test);
         Assert.assertNull(eval.evaluate(bindings));
     }
 
 }
-

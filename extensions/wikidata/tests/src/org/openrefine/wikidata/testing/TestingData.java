@@ -21,6 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  ******************************************************************************/
+
 package org.openrefine.wikidata.testing;
 
 import java.io.IOException;
@@ -78,11 +79,12 @@ public class TestingData {
     public static MediaInfoIdValue existingMid = Datamodel.makeWikimediaCommonsMediaInfoIdValue("M43");
 
     protected static PropertyIdValue pid = Datamodel.makeWikidataPropertyIdValue("P38");
-    
+
     public static class ReconStub extends Recon {
+
         public ReconStub(long id, long judgmentHistoryEntry) {
             super(id, judgmentHistoryEntry);
-        }  
+        }
     }
 
     public static Recon makeNewItemRecon(long id) {

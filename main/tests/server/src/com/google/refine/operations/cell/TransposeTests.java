@@ -50,7 +50,7 @@ public class TransposeTests extends RefineTest {
         logger = LoggerFactory.getLogger(this.getClass());
         OperationRegistry.registerOperation(getCoreModule(), "transpose-rows-into-columns", TransposeRowsIntoColumnsOperation.class);
     }
-    
+
     @Test
     public void testTransposeRowsIntoColumnsOperation() throws Exception {
         String json = "{\"op\":\"core/transpose-rows-into-columns\","

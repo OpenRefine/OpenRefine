@@ -41,24 +41,23 @@ import org.testng.annotations.Test;
 import com.google.refine.RefineTest;
 import com.google.refine.expr.EvalError;
 
-
 public class BooleanTests extends RefineTest {
 
     private static String TRUTH_TABLE[][] = {
-        {"and","true","true","true","true"},
-        {"and","false","false","false","false"},
-        {"and","true","false","false","false"},
-        {"and","false","true","true","false"},
+            { "and", "true", "true", "true", "true" },
+            { "and", "false", "false", "false", "false" },
+            { "and", "true", "false", "false", "false" },
+            { "and", "false", "true", "true", "false" },
 
-        {"or","true","true","true","true"},
-        {"or","false","false","false","false"},
-        {"or","true","false","false","true"},
-        {"or","false","true","true","true"},
+            { "or", "true", "true", "true", "true" },
+            { "or", "false", "false", "false", "false" },
+            { "or", "true", "false", "false", "true" },
+            { "or", "false", "true", "true", "true" },
 
-        {"xor","true","true","true","false"},
-        {"xor","false","false","false","false"},
-        {"xor","true","false","false","true"},
-        {"xor","false","true","false","true"},
+            { "xor", "true", "true", "true", "false" },
+            { "xor", "false", "false", "false", "false" },
+            { "xor", "true", "false", "false", "true" },
+            { "xor", "false", "true", "false", "true" },
     };
 
     @Override
@@ -69,20 +68,20 @@ public class BooleanTests extends RefineTest {
 
     @Test
     public void testInvalidParams() {
-        for (String op : new String[] {"and","or","xor"}) {
-        Assert.assertTrue(invoke(op) instanceof EvalError);
-        Assert.assertTrue(invoke(op, Boolean.TRUE, Integer.valueOf(1)) instanceof EvalError);
-        Assert.assertTrue(invoke(op, Integer.valueOf(1), Boolean.TRUE) instanceof EvalError);
-        Assert.assertTrue(invoke(op, Boolean.TRUE,"foo") instanceof EvalError);
-        Assert.assertTrue(invoke(op, "foo", Boolean.TRUE) instanceof EvalError);
-        Assert.assertTrue(invoke(op, Boolean.TRUE) instanceof EvalError);
+        for (String op : new String[] { "and", "or", "xor" }) {
+            Assert.assertTrue(invoke(op) instanceof EvalError);
+            Assert.assertTrue(invoke(op, Boolean.TRUE, Integer.valueOf(1)) instanceof EvalError);
+            Assert.assertTrue(invoke(op, Integer.valueOf(1), Boolean.TRUE) instanceof EvalError);
+            Assert.assertTrue(invoke(op, Boolean.TRUE, "foo") instanceof EvalError);
+            Assert.assertTrue(invoke(op, "foo", Boolean.TRUE) instanceof EvalError);
+            Assert.assertTrue(invoke(op, Boolean.TRUE) instanceof EvalError);
         }
         String op = "not";
         Assert.assertTrue(invoke(op) instanceof EvalError);
         Assert.assertTrue(invoke(op, Boolean.TRUE, Boolean.TRUE) instanceof EvalError);
         Assert.assertTrue(invoke(op, Integer.valueOf(1)) instanceof EvalError);
         Assert.assertTrue(invoke(op, "foo") instanceof EvalError);
-     }
+    }
 
     @Test
     public void testBinary() {
@@ -92,9 +91,9 @@ public class BooleanTests extends RefineTest {
             Boolean op2 = Boolean.valueOf(test[2]);
             Boolean op3 = Boolean.valueOf(test[3]);
             Boolean result = Boolean.valueOf(test[4]);
-            Assert.assertEquals(invoke(operator, op1, op2, op3),result);
+            Assert.assertEquals(invoke(operator, op1, op2, op3), result);
         }
-        Assert.assertEquals(invoke("not", Boolean.TRUE),Boolean.FALSE);
-        Assert.assertEquals(invoke("not", Boolean.FALSE),Boolean.TRUE);
+        Assert.assertEquals(invoke("not", Boolean.TRUE), Boolean.FALSE);
+        Assert.assertEquals(invoke("not", Boolean.FALSE), Boolean.TRUE);
     }
 }

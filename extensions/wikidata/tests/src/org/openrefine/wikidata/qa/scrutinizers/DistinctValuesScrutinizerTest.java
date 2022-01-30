@@ -21,6 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  ******************************************************************************/
+
 package org.openrefine.wikidata.qa.scrutinizers;
 
 import org.openrefine.wikidata.qa.ConstraintFetcher;
@@ -65,7 +66,8 @@ public class DistinctValuesScrutinizerTest extends StatementScrutinizerTest {
         Statement statement1 = new StatementImpl("P163", mainSnak, idA);
         Statement statement2 = new StatementImpl("P163", mainSnak, idA);
 
-        TermedStatementEntityUpdate update = new TermedStatementEntityUpdateBuilder(idA).addStatement(statement1).addStatement(statement2).build();
+        TermedStatementEntityUpdate update = new TermedStatementEntityUpdateBuilder(idA).addStatement(statement1).addStatement(statement2)
+                .build();
 
         List<SnakGroup> constraintQualifiers = new ArrayList<>();
         List<Statement> constraintDefinitions = constraintParameterStatementList(entityIdValue, constraintQualifiers);
@@ -86,7 +88,8 @@ public class DistinctValuesScrutinizerTest extends StatementScrutinizerTest {
         Statement statement1 = new StatementImpl("P163", snak1, idA);
         Statement statement2 = new StatementImpl("P163", snak2, idA);
 
-        TermedStatementEntityUpdate update = new TermedStatementEntityUpdateBuilder(idA).addStatement(statement1).addStatement(statement2).build();
+        TermedStatementEntityUpdate update = new TermedStatementEntityUpdateBuilder(idA).addStatement(statement1).addStatement(statement2)
+                .build();
 
         List<SnakGroup> constraintQualifiers = new ArrayList<>();
         List<Statement> constraintDefinitions = constraintParameterStatementList(entityIdValue, constraintQualifiers);

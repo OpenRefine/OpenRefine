@@ -75,18 +75,18 @@ public class TemplatingExporterTests extends RefineTest {
         logger = LoggerFactory.getLogger(this.getClass());
     }
 
-    //dependencies
+    // dependencies
     StringWriter writer;
     ProjectMetadata projectMetadata;
     Project project;
     Engine engine;
     Properties options;
 
-    //System Under Test
+    // System Under Test
     WriterExporter SUT;
 
     @BeforeMethod
-    public void SetUp(){
+    public void SetUp() {
         SUT = new TemplatingExporter();
         writer = new StringWriter();
         ProjectManager.singleton = new ProjectManagerStub();
@@ -99,7 +99,7 @@ public class TemplatingExporterTests extends RefineTest {
     }
 
     @AfterMethod
-    public void TearDown(){
+    public void TearDown() {
         SUT = null;
         writer = null;
         ProjectManager.singleton.deleteProject(project.id);
@@ -107,8 +107,9 @@ public class TemplatingExporterTests extends RefineTest {
         engine = null;
         options = null;
     }
+
     @Test
-    public void exportEmptyTemplate(){
+    public void exportEmptyTemplate() {
 
 //        when(options.getProperty("limit")).thenReturn("100"); // optional integer
 //        when(options.getProperty("sorting")).thenReturn(""); //optional
@@ -126,14 +127,13 @@ public class TemplatingExporterTests extends RefineTest {
 
         Assert.assertEquals(writer.toString(), prefix + suffix);
     }
-    
+
     @Test
-    public void exportSimpleTemplate(){
+    public void exportSimpleTemplate() {
         CreateGrid(2, 2);
         String template = rowPrefix + "${column0}" + cellSeparator + "${column1}";
 //      String template = "boilerplate${column0}{{4+3}}${column1}";
 
-        
 //        when(options.getProperty("limit")).thenReturn("100"); // optional integer
 //        when(options.getProperty("sorting")).thenReturn(""); //optional
         when(options.getProperty("template")).thenReturn(template);
@@ -148,26 +148,26 @@ public class TemplatingExporterTests extends RefineTest {
             Assert.fail();
         }
 
-        Assert.assertEquals(writer.toString(), 
-                prefix 
-                + rowPrefix + "row0cell0" + cellSeparator + "row0cell1" + rowSeparator
-                + rowPrefix + "row1cell0" + cellSeparator + "row1cell1" 
-                + suffix);
+        Assert.assertEquals(writer.toString(),
+                prefix
+                        + rowPrefix + "row0cell0" + cellSeparator + "row0cell1" + rowSeparator
+                        + rowPrefix + "row1cell0" + cellSeparator + "row1cell1"
+                        + suffix);
     }
 
-
     @Test()
-    public void exportTemplateWithEmptyCells(){
-        
+    public void exportTemplateWithEmptyCells() {
+
 //      when(options.getProperty("limit")).thenReturn("100"); // optional integer
 //      when(options.getProperty("sorting")).thenReturn(""); //optional
-      when(options.getProperty("template")).thenReturn(rowPrefix + "${column0}" + cellSeparator + "${column1}" + cellSeparator + "${column2}");
-      when(options.getProperty("prefix")).thenReturn(prefix);
-      when(options.getProperty("suffix")).thenReturn(suffix);
-      when(options.getProperty("separator")).thenReturn(rowSeparator);
+        when(options.getProperty("template"))
+                .thenReturn(rowPrefix + "${column0}" + cellSeparator + "${column1}" + cellSeparator + "${column2}");
+        when(options.getProperty("prefix")).thenReturn(prefix);
+        when(options.getProperty("suffix")).thenReturn(suffix);
+        when(options.getProperty("separator")).thenReturn(rowSeparator);
 //      when(options.getProperty("preview")).thenReturn("false"); // optional true|false
 
-        CreateGrid(3,3);
+        CreateGrid(3, 3);
 
         project.rows.get(1).cells.set(1, null);
         project.rows.get(2).cells.set(0, null);
@@ -178,27 +178,28 @@ public class TemplatingExporterTests extends RefineTest {
         }
 
         // Template exporter returns null for empty cells
-        Assert.assertEquals(writer.toString(), 
-                prefix 
-                + rowPrefix + "row0cell0" + cellSeparator + "row0cell1" + cellSeparator + "row0cell2" + rowSeparator
-                + rowPrefix + "row1cell0" + cellSeparator + "null"    + cellSeparator + "row1cell2" + rowSeparator 
-                + rowPrefix + "null"      + cellSeparator + "row2cell1" + cellSeparator + "row2cell2" 
-                + suffix);
+        Assert.assertEquals(writer.toString(),
+                prefix
+                        + rowPrefix + "row0cell0" + cellSeparator + "row0cell1" + cellSeparator + "row0cell2" + rowSeparator
+                        + rowPrefix + "row1cell0" + cellSeparator + "null" + cellSeparator + "row1cell2" + rowSeparator
+                        + rowPrefix + "null" + cellSeparator + "row2cell1" + cellSeparator + "row2cell2"
+                        + suffix);
 
     }
 
     @Test()
-    public void exportTemplateWithLimit(){
-        
-      when(options.getProperty("limit")).thenReturn("2"); // optional integer
+    public void exportTemplateWithLimit() {
+
+        when(options.getProperty("limit")).thenReturn("2"); // optional integer
 //      when(options.getProperty("sorting")).thenReturn(""); //optional
-      when(options.getProperty("template")).thenReturn(rowPrefix + "${column0}" + cellSeparator + "${column1}" + cellSeparator + "${column2}");
-      when(options.getProperty("prefix")).thenReturn(prefix);
-      when(options.getProperty("suffix")).thenReturn(suffix);
-      when(options.getProperty("separator")).thenReturn(rowSeparator);
+        when(options.getProperty("template"))
+                .thenReturn(rowPrefix + "${column0}" + cellSeparator + "${column1}" + cellSeparator + "${column2}");
+        when(options.getProperty("prefix")).thenReturn(prefix);
+        when(options.getProperty("suffix")).thenReturn(suffix);
+        when(options.getProperty("separator")).thenReturn(rowSeparator);
 //      when(options.getProperty("preview")).thenReturn("false"); // optional true|false
 
-        CreateGrid(3,3);
+        CreateGrid(3, 3);
 
         try {
             SUT.export(project, options, engine, writer);
@@ -206,28 +207,28 @@ public class TemplatingExporterTests extends RefineTest {
             Assert.fail();
         }
 
-        Assert.assertEquals(writer.toString(), 
-                prefix 
-                + rowPrefix + "row0cell0" + cellSeparator + "row0cell1" + cellSeparator + "row0cell2" + rowSeparator
-                + rowPrefix + "row1cell0" + cellSeparator + "row1cell1" + cellSeparator + "row1cell2"  
-                // third row should be skipped because of limit
-                + suffix);
+        Assert.assertEquals(writer.toString(),
+                prefix
+                        + rowPrefix + "row0cell0" + cellSeparator + "row0cell1" + cellSeparator + "row0cell2" + rowSeparator
+                        + rowPrefix + "row1cell0" + cellSeparator + "row1cell1" + cellSeparator + "row1cell2"
+                        // third row should be skipped because of limit
+                        + suffix);
 
     }
 
     /**
-     * This test is add for checking the fix for issue 3955.
-     * Issue link: https://github.com/OpenRefine/OpenRefine/issues/3955 
+     * This test is add for checking the fix for issue 3955. Issue link:
+     * https://github.com/OpenRefine/OpenRefine/issues/3955
      */
     @Test
-    public void exportTemplateInRecordMode(){
+    public void exportTemplateInRecordMode() {
         CreateColumns(2);
-        for(int i = 0; i < 2; i++){
+        for (int i = 0; i < 2; i++) {
             Row row = new Row(2);
-            for(int j = 0; j < 2; j++){
-                if(i == 1 && j == 0){
+            for (int j = 0; j < 2; j++) {
+                if (i == 1 && j == 0) {
                     row.cells.add(new Cell(null, null));
-                }else{
+                } else {
                     row.cells.add(new Cell("row" + i + "cell" + j, null));
                 }
             }
@@ -241,23 +242,23 @@ public class TemplatingExporterTests extends RefineTest {
         Engine engine = new Engine(project);
         engine.setMode(Mode.RecordBased);
         project.update();
-        try {   
+        try {
             SUT.export(project, options, engine, writer);
         } catch (IOException e) {
             Assert.fail();
         }
 
-        Assert.assertEquals(writer.toString(), 
-                prefix 
-                + rowPrefix + "row0cell0" + cellSeparator + "row0cell1" + rowSeparator
-                + rowPrefix + "null" + cellSeparator + "row1cell1" 
-                + suffix);
+        Assert.assertEquals(writer.toString(),
+                prefix
+                        + rowPrefix + "row0cell0" + cellSeparator + "row0cell1" + rowSeparator
+                        + rowPrefix + "null" + cellSeparator + "row1cell1"
+                        + suffix);
     }
 
-    //helper methods
+    // helper methods
 
-    protected void CreateColumns(int noOfColumns){
-        for(int i = 0; i < noOfColumns; i++){
+    protected void CreateColumns(int noOfColumns) {
+        for (int i = 0; i < noOfColumns; i++) {
             try {
                 project.columnModel.addColumn(i, new Column(i, "column" + i), true);
             } catch (ModelException e1) {
@@ -266,12 +267,12 @@ public class TemplatingExporterTests extends RefineTest {
         }
     }
 
-    protected void CreateGrid(int noOfRows, int noOfColumns){
+    protected void CreateGrid(int noOfRows, int noOfColumns) {
         CreateColumns(noOfColumns);
 
-        for(int i = 0; i < noOfRows; i++){
+        for (int i = 0; i < noOfRows; i++) {
             Row row = new Row(noOfColumns);
-            for(int j = 0; j < noOfColumns; j++){
+            for (int j = 0; j < noOfColumns; j++) {
                 row.cells.add(new Cell("row" + i + "cell" + j, null));
             }
             project.rows.add(row);

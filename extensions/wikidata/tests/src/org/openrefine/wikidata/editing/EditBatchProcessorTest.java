@@ -21,6 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  ******************************************************************************/
+
 package org.openrefine.wikidata.editing;
 
 import static org.mockito.Mockito.mock;
@@ -211,7 +212,7 @@ public class EditBatchProcessorTest extends WikidataRefineTest {
             StatementUpdate statementUpdate = Datamodel.makeStatementUpdate(Collections.emptyList(), Collections.emptyList(),
                     Collections.emptyList());
             verify(editor, times(1)).editEntityDocument(Datamodel.makeMediaInfoUpdate((MediaInfoIdValue) doc.getEntityId(),
-                            doc.getRevisionId(), labelsUpdate, statementUpdate), false, summary, tags);
+                    doc.getRevisionId(), labelsUpdate, statementUpdate), false, summary, tags);
         }
     }
 

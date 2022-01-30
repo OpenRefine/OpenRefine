@@ -1,3 +1,4 @@
+
 package org.openrefine.wikidata.qa;
 
 import org.openrefine.wikidata.manifests.Manifest;

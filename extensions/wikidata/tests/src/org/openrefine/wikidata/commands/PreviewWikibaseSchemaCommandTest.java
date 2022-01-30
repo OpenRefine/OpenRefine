@@ -21,6 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  ******************************************************************************/
+
 package org.openrefine.wikidata.commands;
 
 import static org.mockito.Mockito.when;
@@ -49,10 +50,10 @@ public class PreviewWikibaseSchemaCommandTest extends SchemaCommandTest {
         EntityCacheStub entityCacheStub = new EntityCacheStub();
         EntityCache.setEntityCache("http://www.wikidata.org/entity/", entityCacheStub);
     }
-    
+
     @AfterMethod
     public void tearDown() {
-    	EntityCache.removeEntityCache("http://www.wikidata.org/entity/");
+        EntityCache.removeEntityCache("http://www.wikidata.org/entity/");
     }
 
     @Test
@@ -89,6 +90,7 @@ public class PreviewWikibaseSchemaCommandTest extends SchemaCommandTest {
 
         command.doPost(request, response);
 
-        assertEquals(writer.toString(), "{\"code\":\"error\",\"message\":\"Wikibase manifest could not be parsed. Error message: invalid manifest format\"}");
+        assertEquals(writer.toString(),
+                "{\"code\":\"error\",\"message\":\"Wikibase manifest could not be parsed. Error message: invalid manifest format\"}");
     }
 }

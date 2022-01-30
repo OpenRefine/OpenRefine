@@ -21,6 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  ******************************************************************************/
+
 package org.openrefine.wikidata.schema;
 
 import org.testng.annotations.Test;
@@ -43,7 +44,7 @@ public class WbMonolingualExprTest extends WbExpressionTest<MonolingualTextValue
         setRow("en", "hello");
         evaluatesTo(Datamodel.makeMonolingualTextValue("hello", "en"), expr);
     }
-    
+
     @Test
     public void testTrim() {
         setRow("en", " hello ");

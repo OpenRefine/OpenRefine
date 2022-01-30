@@ -24,6 +24,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  ******************************************************************************/
+
 package com.google.refine.process;
 
 import static org.mockito.Mockito.mock;
@@ -42,7 +43,7 @@ import com.google.refine.ProjectMetadata;
 import com.google.refine.RefineTest;
 
 public class HistoryProcessTests extends RefineTest {
-    
+
     private Project project;
     private ProjectMetadata projectMetadata;
 
@@ -58,7 +59,7 @@ public class HistoryProcessTests extends RefineTest {
         entry = new HistoryEntry(5678L, project, "second operation", op, ch);
         project.history.addEntry(entry);
     }
-    
+
     @Test
     public void serializeHistoryProcess() {
         HistoryProcess process = new HistoryProcess(project, 1234L);

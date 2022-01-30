@@ -1,3 +1,4 @@
+
 package com.google.refine.extension.database.cmd;
 
 import static org.mockito.Mockito.when;
@@ -28,40 +29,38 @@ import com.google.refine.util.ParsingUtilities;
 
 @Test(groups = { "requiresMySQL" })
 public class ExecuteQueryCommandTest extends DBExtensionTests {
-    
+
     @Mock
     private HttpServletRequest request;
 
     @Mock
     private HttpServletResponse response;
 
-  
     private DatabaseConfiguration testDbConfig;
     private String testTable;
-   
-  
-     @BeforeTest
-     @Parameters({ "mySqlDbName", "mySqlDbHost", "mySqlDbPort", "mySqlDbUser", "mySqlDbPassword", "mySqlTestTable"})
-     public void beforeTest(@Optional(DEFAULT_MYSQL_DB_NAME) String mySqlDbName,  @Optional(DEFAULT_MYSQL_HOST) String mySqlDbHost, 
-            @Optional(DEFAULT_MYSQL_PORT)    String mySqlDbPort,     @Optional(DEFAULT_MYSQL_USER) String mySqlDbUser,
-            @Optional(DEFAULT_MYSQL_PASSWORD)  String mySqlDbPassword, @Optional(DEFAULT_TEST_TABLE)  String mySqlTestTable) {
-        
-         MockitoAnnotations.initMocks(this);
-         testDbConfig = new DatabaseConfiguration();
-         testDbConfig.setDatabaseHost(mySqlDbHost);
-         testDbConfig.setDatabaseName(mySqlDbName);
-         testDbConfig.setDatabasePassword(mySqlDbPassword);
-         testDbConfig.setDatabasePort(Integer.parseInt(mySqlDbPort));
-         testDbConfig.setDatabaseType(MySQLDatabaseService.DB_NAME);
-         testDbConfig.setDatabaseUser(mySqlDbUser);
-         testDbConfig.setUseSSL(false);
-         
-         testTable = mySqlTestTable;
+
+    @BeforeTest
+    @Parameters({ "mySqlDbName", "mySqlDbHost", "mySqlDbPort", "mySqlDbUser", "mySqlDbPassword", "mySqlTestTable" })
+    public void beforeTest(@Optional(DEFAULT_MYSQL_DB_NAME) String mySqlDbName, @Optional(DEFAULT_MYSQL_HOST) String mySqlDbHost,
+            @Optional(DEFAULT_MYSQL_PORT) String mySqlDbPort, @Optional(DEFAULT_MYSQL_USER) String mySqlDbUser,
+            @Optional(DEFAULT_MYSQL_PASSWORD) String mySqlDbPassword, @Optional(DEFAULT_TEST_TABLE) String mySqlTestTable) {
+
+        MockitoAnnotations.initMocks(this);
+        testDbConfig = new DatabaseConfiguration();
+        testDbConfig.setDatabaseHost(mySqlDbHost);
+        testDbConfig.setDatabaseName(mySqlDbName);
+        testDbConfig.setDatabasePassword(mySqlDbPassword);
+        testDbConfig.setDatabasePort(Integer.parseInt(mySqlDbPort));
+        testDbConfig.setDatabaseType(MySQLDatabaseService.DB_NAME);
+        testDbConfig.setDatabaseUser(mySqlDbUser);
+        testDbConfig.setUseSSL(false);
+
+        testTable = mySqlTestTable;
         // DBExtensionTestUtils.initTestData(testDbConfig);
-         
-         DatabaseService.DBType.registerDatabase(MySQLDatabaseService.DB_NAME, MySQLDatabaseService.getInstance());
-         
-     }
+
+        DatabaseService.DBType.registerDatabase(MySQLDatabaseService.DB_NAME, MySQLDatabaseService.getInstance());
+
+    }
 
     @Test
     public void testDoPost() throws IOException, ServletException {
@@ -74,20 +73,19 @@ public class ExecuteQueryCommandTest extends DBExtensionTests {
         when(request.getParameter("initialDatabase")).thenReturn(testDbConfig.getDatabaseName());
         when(request.getParameter("queryString")).thenReturn("SELECT count(*) FROM " + testTable);
         when(request.getParameter("csrf_token")).thenReturn(Command.csrfFactory.getFreshToken());
-        
 
         StringWriter sw = new StringWriter();
 
         PrintWriter pw = new PrintWriter(sw);
-        
+
         when(response.getWriter()).thenReturn(pw);
         ExecuteQueryCommand executeQueryCommand = new ExecuteQueryCommand();
-       
+
         executeQueryCommand.doPost(request, response);
-        
+
         String result = sw.getBuffer().toString().trim();
         ObjectNode json = ParsingUtilities.mapper.readValue(result, ObjectNode.class);
-   
+
         String code = json.get("code").asText();
         Assert.assertEquals(code, "ok");
 
@@ -97,15 +95,16 @@ public class ExecuteQueryCommandTest extends DBExtensionTests {
 
     @Test
     public void testCsrfProtection() throws ServletException, IOException {
-    	StringWriter sw = new StringWriter();
+        StringWriter sw = new StringWriter();
         PrintWriter pw = new PrintWriter(sw);
 
         when(response.getWriter()).thenReturn(pw);
         ConnectCommand connectCommand = new ConnectCommand();
-        
+
         connectCommand.doPost(request, response);
-    	Assert.assertEquals(
-    			ParsingUtilities.mapper.readValue("{\"code\":\"error\",\"message\":\"Missing or invalid csrf_token parameter\"}", ObjectNode.class),
-    			ParsingUtilities.mapper.readValue(sw.toString(), ObjectNode.class));
+        Assert.assertEquals(
+                ParsingUtilities.mapper.readValue("{\"code\":\"error\",\"message\":\"Missing or invalid csrf_token parameter\"}",
+                        ObjectNode.class),
+                ParsingUtilities.mapper.readValue(sw.toString(), ObjectNode.class));
     }
 }
