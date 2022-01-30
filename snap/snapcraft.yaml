@@ -25,9 +25,7 @@ parts:
     stage-packages:
       - default-jre
       - wget
-    prime:
-      - -usr/lib/jvm/java-*/lib/security/cacerts
-      - -usr/lib/jvm/java-*/jre/lib/security/cacerts
+      - ca-certificates-java 
 
 apps:
   openrefine:
@@ -35,6 +33,7 @@ apps:
     environment:
       JAVA_HOME: $SNAP/usr/lib/jvm/java-11-openjdk-amd64
       PATH: $JAVA_HOME/jre/bin:$PATH
+      _JAVA_OPTIONS: -Duser.home="${SNAP_USER_DATA}"
     plugs:
       - home
       - network
