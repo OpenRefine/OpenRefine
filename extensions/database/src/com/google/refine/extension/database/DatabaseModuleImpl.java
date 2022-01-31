@@ -111,20 +111,18 @@ public class DatabaseModuleImpl extends ButterflyModuleImpl {
                 if(logger.isDebugEnabled()) {
                     logger.debug("Loading Extension properties ({})", propFile);
                 }
-                BufferedInputStream stream = null;
-                try {
-                     ps = new Properties();
-                    stream = new BufferedInputStream(new FileInputStream(propFile));
+                final BufferedInputStream stream = new BufferedInputStream(new FileInputStream(propFile));
+                try (stream) {
+                    ps = new Properties();
                     ps.load(stream);
-
-                } finally {
-                    // Close the stream.
-                    if (stream != null) stream.close();
                 }
 
             }
         } catch (Exception e) {
             logger.error("Error loading Database properties", e);
+            /* During an exception reading 'dbextension.properties' (security or no permissions for example)
+             * the try with resources will autoclose the stream for us. And then we log the exception.
+             */
         }
         return ps;
     }
