@@ -24,6 +24,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  ******************************************************************************/
+
 package com.google.refine.commands.recon;
 
 import static org.mockito.Mockito.mock;
@@ -53,52 +54,52 @@ import com.google.refine.model.recon.ReconConfig;
 import com.google.refine.model.recon.StandardReconConfig;
 
 public class ReconJudgeOneCellCommandTest extends RefineTest {
-        
+
     Project project = null;
     HttpServletRequest request = null;
     HttpServletResponse response = null;
     Command command = null;
     PrintWriter writer = null;
-    
+
     @BeforeMethod
     public void setUp() {
         project = createCSVProject(
-                "reconciled column,unreconciled column\n"+
-                "a,b\n"+
-                "c,d\n");
+                "reconciled column,unreconciled column\n" +
+                        "a,b\n" +
+                        "c,d\n");
         Column reconciled = project.columnModel.columns.get(0);
         ReconConfig config = new StandardReconConfig(
                 "http://my.recon.service/api",
                 "http://my.recon.service/rdf/space",
                 "http://my.recon.service/rdf/schema",
-                "type3894", 
+                "type3894",
                 "octopus",
                 true,
                 Collections.emptyList(),
                 5);
         reconciled.setReconConfig(config);
-        
+
         request = mock(HttpServletRequest.class);
         response = mock(HttpServletResponse.class);
-        
+
         when(request.getParameter("project")).thenReturn(String.valueOf(project.id));
         when(request.getParameter("csrf_token")).thenReturn(Command.csrfFactory.getFreshToken());
-        
+
         writer = mock(PrintWriter.class);
         try {
             when(response.getWriter()).thenReturn(writer);
         } catch (IOException e1) {
             Assert.fail();
         }
-        
-        command = new  ReconJudgeOneCellCommand();
+
+        command = new ReconJudgeOneCellCommand();
     }
-    
+
     @AfterMethod
     public void tearDown() {
         ProjectManager.singleton.deleteProject(project.id);
     }
-    
+
     @Test
     public void testMarkOneCellInReconciledColumn() throws Exception {
 
@@ -106,12 +107,12 @@ public class ReconJudgeOneCellCommandTest extends RefineTest {
         when(request.getParameter("cell")).thenReturn("0");
         when(request.getParameter("judgment")).thenReturn("new");
         command.doPost(request, response);
-        
+
         Cell cell = project.rows.get(0).cells.get(0);
         Assert.assertEquals(Recon.Judgment.New, cell.recon.judgment);
         Assert.assertEquals("http://my.recon.service/rdf/space", cell.recon.identifierSpace);
     }
-    
+
     @Test
     public void testMarkOneCellWithCustomSpace() throws Exception {
 
@@ -121,7 +122,7 @@ public class ReconJudgeOneCellCommandTest extends RefineTest {
         when(request.getParameter("identifierSpace")).thenReturn("http://my.custom.space/id");
         when(request.getParameter("schemaSpace")).thenReturn("http://my.custom.space/schema");
         command.doPost(request, response);
-        
+
         Cell cell = project.rows.get(0).cells.get(0);
         Assert.assertEquals(Recon.Judgment.New, cell.recon.judgment);
         Assert.assertEquals("http://my.custom.space/id", cell.recon.identifierSpace);

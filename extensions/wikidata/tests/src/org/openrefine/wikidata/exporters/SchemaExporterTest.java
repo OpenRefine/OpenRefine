@@ -1,3 +1,4 @@
+
 package org.openrefine.wikidata.exporters;
 
 import java.io.IOException;
@@ -12,9 +13,9 @@ import com.google.refine.model.Project;
 import com.google.refine.util.TestUtils;
 
 public class SchemaExporterTest extends WikidataRefineTest {
-	
-	private SchemaExporter exporter = new SchemaExporter();
-	
+
+    private SchemaExporter exporter = new SchemaExporter();
+
     @Test
     public void testNoSchema()
             throws IOException {
@@ -23,7 +24,8 @@ public class SchemaExporterTest extends WikidataRefineTest {
         StringWriter writer = new StringWriter();
         Properties properties = new Properties();
         exporter.export(project, properties, engine, writer);
-        TestUtils.assertEqualAsJson("{\"itemDocuments\":[],\"siteIri\":null,\"mediaWikiApiEndpoint\":null,\"entityTypeSiteIRI\":{}}", writer.toString());
+        TestUtils.assertEqualAsJson("{\"itemDocuments\":[],\"siteIri\":null,\"mediaWikiApiEndpoint\":null,\"entityTypeSiteIRI\":{}}",
+                writer.toString());
     }
 
 }

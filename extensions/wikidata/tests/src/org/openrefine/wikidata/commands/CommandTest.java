@@ -21,6 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  ******************************************************************************/
+
 package org.openrefine.wikidata.commands;
 
 import static org.mockito.Mockito.mock;
@@ -49,7 +50,6 @@ public abstract class CommandTest extends WikidataRefineTest {
     protected StringWriter writer = null;
 
     protected Command command = null;
-   
 
     @BeforeMethod(alwaysRun = true)
     public void setUpProject() {

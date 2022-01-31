@@ -48,14 +48,13 @@ import com.google.refine.commands.Command;
 import com.google.refine.util.JSONUtilities;
 import com.google.refine.util.ParsingUtilities;
 
-
 public class GetClusteringFunctionsAndDistancesCommandTest {
-	
+
     protected HttpServletRequest request = null;
     protected HttpServletResponse response = null;
-	protected StringWriter writer = null;
-	protected Command command = null;
-	
+    protected StringWriter writer = null;
+    protected Command command = null;
+
     @BeforeMethod
     public void setUp() {
         request = mock(HttpServletRequest.class);
@@ -68,12 +67,12 @@ public class GetClusteringFunctionsAndDistancesCommandTest {
             e.printStackTrace();
         }
     }
-	
+
     @Test
-	public void testGetFunctionsAndKeyers() throws ServletException, IOException {
-    	command.doGet(request, response);
-    	ObjectNode result = ParsingUtilities.mapper.readValue(writer.toString(), ObjectNode.class);
-    	assertTrue(Arrays.asList(JSONUtilities.getStringArray(result, "keyers")).contains("metaphone3"));
-    	assertTrue(Arrays.asList(JSONUtilities.getStringArray(result, "distances")).contains("levenshtein"));
-	}
+    public void testGetFunctionsAndKeyers() throws ServletException, IOException {
+        command.doGet(request, response);
+        ObjectNode result = ParsingUtilities.mapper.readValue(writer.toString(), ObjectNode.class);
+        assertTrue(Arrays.asList(JSONUtilities.getStringArray(result, "keyers")).contains("metaphone3"));
+        assertTrue(Arrays.asList(JSONUtilities.getStringArray(result, "distances")).contains("levenshtein"));
+    }
 }

@@ -21,6 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  ******************************************************************************/
+
 package org.openrefine.wikidata.schema;
 
 import java.io.IOException;
@@ -35,8 +36,7 @@ public abstract class WbVariableTest<T> extends WbExpressionTest<T> {
     protected WbVariableExpr<T> variable;
 
     /**
-     * This should return a variable expression, to be tested with the helpers
-     * below.
+     * This should return a variable expression, to be tested with the helpers below.
      * 
      * @return
      */

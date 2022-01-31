@@ -24,6 +24,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  ******************************************************************************/
+
 package com.google.refine.browsing.facets;
 
 import org.testng.annotations.Test;
@@ -33,6 +34,7 @@ import com.google.refine.browsing.facets.NominalFacetChoice;
 import com.google.refine.util.TestUtils;
 
 public class NominalFacetChoiceTests {
+
     @Test
     public void serializeNominalFacetChoice() {
         DecoratedValue value = new DecoratedValue("some string", "some string");

@@ -60,5 +60,6 @@
     "database-import/checking": "Kontrola dotazu…",
     "database-import/preparing": "Příprava výsledků…",
     "database-import/title": "Databázové servery",
-    "database-import/importer-name": "Databáze"
+    "database-import/importer-name": "Databáze",
+    "database-parsing/disable-auto-preview": "Vypnout automatický náhled"
 }

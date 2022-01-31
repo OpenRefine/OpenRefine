@@ -54,6 +54,9 @@ where [options] include:
 
   -x <name=value> additional configuration parameters to pass to OpenRefine
      default: [none]
+
+  -c <path> path to refine.ini file
+     default: ./refine.ini
   
   --debug enable JVM debugging (on port 8000)
        
@@ -802,15 +805,6 @@ if [ "$OS" = "windows" ] ; then
     SEP=";" 
 fi
 
-# ----- Load configurations -------------------------------------
-
-if [ -f "refine-dev.ini" ]; then
-  echo "Using refine-dev.ini for configuration"
-  load_configs refine-dev.ini
-else
-  echo "Using refine.ini for configuration"
-  load_configs refine.ini
-fi
 
 # ----- Make sure there is an appropriate java environment is available -------------
 
@@ -848,6 +842,7 @@ while [ $# -ne 0 ] ; do
     -k) shift; REFINE_GOOGLE_API_KEY="$1"; shift; continue;;
     -v) shift; REFINE_VERBOSITY="$1"; shift; continue;;
     -x) shift; REFINE_EXTRA_OPTS="$1"; shift; continue;;
+    -c) shift; REFINE_INI_PATH="$1"; shift; continue;;
     --debug) shift; add_option '-Xdebug' '-Xrunjdwp:transport=dt_socket,address=8000,server=y,suspend=n'; continue;;
     --jmx) shift; add_option '-Dcom.sun.management.jmxremote'; continue;;
     -*) fail "Invalid option: $1";;
@@ -862,6 +857,15 @@ fi
 if [ -z "$ACTION" ] ; then
     ACTION="run"
 fi
+
+# ----- Load configurations -------------------------------------
+
+if [ -z $REFINE_INI_PATH ]; then
+  REFINE_INI_PATH=refine.ini
+fi
+
+echo "Using ${REFINE_INI_PATH} for configuration"
+load_configs $REFINE_INI_PATH
 
 # ----- Verify and Set Required Environment Variables -------------------------
 
