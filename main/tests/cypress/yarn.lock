@@ -490,10 +490,10 @@ cypress-wait-until@^1.7.2:
   resolved "https://registry.yarnpkg.com/cypress-wait-until/-/cypress-wait-until-1.7.2.tgz#7f534dd5a11c89b65359e7a0210f20d3dfc22107"
   integrity sha512-uZ+M8/MqRcpf+FII/UZrU7g1qYZ4aVlHcgyVopnladyoBrpoaMJ4PKZDrdOJ05H5RHbr7s9Tid635X3E+ZLU/Q==
 
-cypress@9.3.1:
-  version "9.3.1"
-  resolved "https://registry.yarnpkg.com/cypress/-/cypress-9.3.1.tgz#8116f52d49d6daf90a91e88f3eafd940234d2958"
-  integrity sha512-BODdPesxX6bkVUnH8BVsV8I/jn57zQtO1FEOUTiuG2us3kslW7g0tcuwiny7CKCmJUZz8S/D587ppC+s58a+5Q==
+cypress@9.4.1:
+  version "9.4.1"
+  resolved "https://registry.yarnpkg.com/cypress/-/cypress-9.4.1.tgz#1a4ba706435829c24b7edf350c2b059e05da9084"
+  integrity sha512-+JgMG9uT+QFx97JU9kOHE3jO3+0UdkQ9H1oCBiC7A74qme7Jkdy2sYDBCPjjGczutnWnGUTMRlwiNMP/Uq6LrQ==
   dependencies:
     "@cypress/request" "^2.88.10"
     "@cypress/xvfb" "^1.2.4"
@@ -532,10 +532,10 @@ cypress@9.3.1:
     pretty-bytes "^5.6.0"
     proxy-from-env "1.0.0"
     request-progress "^3.0.0"
+    semver "^7.3.2"
     supports-color "^8.1.1"
     tmp "~0.2.1"
     untildify "^4.0.0"
-    url "^0.11.0"
     yauzl "^2.10.0"
 
 dashdash@^1.12.0:
@@ -1336,6 +1336,13 @@ log-update@^4.0.0:
     slice-ansi "^4.0.0"
     wrap-ansi "^6.2.0"
 
+lru-cache@^6.0.0:
+  version "6.0.0"
+  resolved "https://registry.yarnpkg.com/lru-cache/-/lru-cache-6.0.0.tgz#6d6fe6570ebd96aaf90fcad1dafa3b2566db3a94"
+  integrity sha512-Jo6dJ04CmSjuznwJSS3pUeWmd/H0ffTlkXXgwZi+eq1UCmqQwCh+eLsYOYCwY991i2Fah4h1BEMCx4qThGbsiA==
+  dependencies:
+    yallist "^4.0.0"
+
 markdown-it-anchor@^5.2.7:
   version "5.3.0"
   resolved "https://registry.yarnpkg.com/markdown-it-anchor/-/markdown-it-anchor-5.3.0.tgz#d549acd64856a8ecd1bea58365ef385effbac744"
@@ -1607,11 +1614,6 @@ pump@^3.0.0:
     end-of-stream "^1.1.0"
     once "^1.3.1"
 
-punycode@1.3.2:
-  version "1.3.2"
-  resolved "https://registry.yarnpkg.com/punycode/-/punycode-1.3.2.tgz"
-  integrity sha1-llOgNvt8HuQjQvIyXM7v6jkmxI0=
-
 punycode@^2.1.0, punycode@^2.1.1:
   version "2.1.1"
   resolved "https://registry.yarnpkg.com/punycode/-/punycode-2.1.1.tgz"
@@ -1621,11 +1623,6 @@ qs@~6.5.2:
   version "6.5.2"
   resolved "https://registry.yarnpkg.com/qs/-/qs-6.5.2.tgz"
   integrity sha512-N5ZAX4/LxJmF+7wN74pUD6qAh9/wnvdQcjq9TZjevvXzSUo7bfmw91saqMjzGS2xq91/odN2dW/WOl7qQHNDGA==
-
-querystring@0.2.0:
-  version "0.2.0"
-  resolved "https://registry.yarnpkg.com/querystring/-/querystring-0.2.0.tgz"
-  integrity sha1-sgmEkgO7Jd+CDadW50cAWHhSFiA=
 
 regexpp@^3.2.0:
   version "3.2.0"
@@ -1694,6 +1691,13 @@ semver@^5.5.0:
   version "5.7.1"
   resolved "https://registry.yarnpkg.com/semver/-/semver-5.7.1.tgz#a954f931aeba508d307bbf069eff0c01c96116f7"
   integrity sha512-sauaDf/PZdVgrLTNYHRtpXa1iRiKcaebiKQ1BJdpQlWH2lCvexQdX55snPFyK7QzpudqbCI0qXFfOasHdyNDGQ==
+
+semver@^7.3.2:
+  version "7.3.5"
+  resolved "https://registry.yarnpkg.com/semver/-/semver-7.3.5.tgz#0b621c879348d8998e4b0e4be94b3f12e6018ef7"
+  integrity sha512-PoeGJYh8HK4BTO/a9Tf6ZG3veo/A7ZVsYrSA6J8ny9nb3B1VrpkuN+z9OE5wfE5p6H4LchYZsegiQgbJD94ZFQ==
+  dependencies:
+    lru-cache "^6.0.0"
 
 shebang-command@^1.2.0:
   version "1.2.0"
@@ -1964,14 +1968,6 @@ uri-js@^4.2.2:
   dependencies:
     punycode "^2.1.0"
 
-url@^0.11.0:
-  version "0.11.0"
-  resolved "https://registry.yarnpkg.com/url/-/url-0.11.0.tgz"
-  integrity sha1-ODjpfPxgUh63PFJajlW/3Z4uKPE=
-  dependencies:
-    punycode "1.3.2"
-    querystring "0.2.0"
-
 uuid@^8.3.2:
   version "8.3.2"
   resolved "https://registry.yarnpkg.com/uuid/-/uuid-8.3.2.tgz#80d5b5ced271bb9af6c445f21a1a04c606cefbe2"
@@ -2047,6 +2043,11 @@ xmldom@0.1.x:
   version "0.1.31"
   resolved "https://registry.yarnpkg.com/xmldom/-/xmldom-0.1.31.tgz#b76c9a1bd9f0a9737e5a72dc37231cf38375e2ff"
   integrity sha512-yS2uJflVQs6n+CyjHoaBmVSqIDevTAWrzMmjG1Gc7h1qQ7uVozNhEPJAwZXWyGQ/Gafo3fCwrcaokezLPupVyQ==
+
+yallist@^4.0.0:
+  version "4.0.0"
+  resolved "https://registry.yarnpkg.com/yallist/-/yallist-4.0.0.tgz#9bb92790d9c0effec63be73519e11a35019a3a72"
+  integrity sha512-3wdGidZyq5PB084XLES5TpOSRA3wjXAlIWMhum2kRcv/41Sn2emQ0dycQW4uZXLejwKvg6EsvbdlVL+FYEct7A==
 
 yauzl@^2.10.0:
   version "2.10.0"
