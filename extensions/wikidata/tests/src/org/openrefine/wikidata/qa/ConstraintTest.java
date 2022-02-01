@@ -1,3 +1,4 @@
+
 package org.openrefine.wikidata.qa;
 
 import org.testng.Assert;
@@ -47,7 +48,7 @@ public class ConstraintTest {
         SnakGroup qualifier2 = Datamodel.makeSnakGroup(qualifierSnakList2);
         List<SnakGroup> snakGroupList = Arrays.asList(qualifier1, qualifier2);
         PropertyIdValue propertyIdValue = Datamodel.makeWikidataPropertyIdValue("P2302");
-        Snak mainSnak = Datamodel.makeValueSnak(propertyIdValue,itemIdValue);
+        Snak mainSnak = Datamodel.makeValueSnak(propertyIdValue, itemIdValue);
         Claim claim = Datamodel.makeClaim(itemIdValue, mainSnak, snakGroupList);
         Reference reference = Datamodel.makeReference(snakGroupList);
         List<Reference> referenceList = Collections.singletonList(reference);

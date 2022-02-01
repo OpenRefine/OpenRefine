@@ -1,3 +1,4 @@
+
 package org.openrefine.wikidata.manifests;
 
 import org.openrefine.wikidata.testing.TestingData;
@@ -34,7 +35,7 @@ public class ManifestTest {
         assertEquals("Q19474404", manifest.getConstraintsRelatedId("single_value_constraint_qid"));
         assertEquals("([[:toollabs:editgroups/b/OR/${batch_id}|details]])", manifest.getEditGroupsUrlSchema());
     }
-    
+
     @Test
     public void testV2() throws IOException, ManifestException {
         String json = TestingData.jsonFromFile("manifest/commons-manifest-v2.0.json");
@@ -50,7 +51,8 @@ public class ManifestTest {
         assertEquals("https://commonsreconcile.toolforge.org/${lang}/api", manifest.getReconServiceEndpoint(Manifest.MEDIAINFO_TYPE));
         assertEquals("https://wikidata.reconci.link/${lang}/api", manifest.getReconServiceEndpoint(Manifest.ITEM_TYPE));
         assertNull(manifest.getReconServiceEndpoint(Manifest.PROPERTY_TYPE));
-        assertEquals(Arrays.asList(Manifest.ITEM_TYPE, Manifest.PROPERTY_TYPE, Manifest.MEDIAINFO_TYPE), manifest.getAvailableEntityTypes());
+        assertEquals(Arrays.asList(Manifest.ITEM_TYPE, Manifest.PROPERTY_TYPE, Manifest.MEDIAINFO_TYPE),
+                manifest.getAvailableEntityTypes());
         assertEquals("http://www.wikidata.org/entity/", manifest.getEntityTypeSiteIri(Manifest.ITEM_TYPE));
         assertEquals("https://commons.wikimedia.org/entity/", manifest.getEntityTypeSiteIri(Manifest.MEDIAINFO_TYPE));
         assertEquals("P2302", manifest.getConstraintsRelatedId("property_constraint_pid"));

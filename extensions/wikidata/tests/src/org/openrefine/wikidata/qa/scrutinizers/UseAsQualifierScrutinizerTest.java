@@ -1,3 +1,4 @@
+
 package org.openrefine.wikidata.qa.scrutinizers;
 
 import org.openrefine.wikidata.qa.ConstraintFetcher;

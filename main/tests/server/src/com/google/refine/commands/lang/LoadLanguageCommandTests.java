@@ -1,3 +1,4 @@
+
 package com.google.refine.commands.lang;
 
 import static org.mockito.Mockito.mock;
@@ -43,7 +44,7 @@ public class LoadLanguageCommandTests extends CommandTestBase {
     @Test
     public void testLoadLanguages() throws ServletException, IOException {
         when(request.getParameter("module")).thenReturn("core");
-        when(request.getParameterValues("lang")).thenReturn(new String[] {"en"});
+        when(request.getParameterValues("lang")).thenReturn(new String[] { "en" });
 
         command.doPost(request, response);
 
@@ -55,7 +56,7 @@ public class LoadLanguageCommandTests extends CommandTestBase {
     @Test
     public void testLoadUnknownLanguage() throws ServletException, IOException {
         when(request.getParameter("module")).thenReturn("core");
-        when(request.getParameterValues("lang")).thenReturn(new String[] {"foobar"});
+        when(request.getParameterValues("lang")).thenReturn(new String[] { "foobar" });
 
         command.doPost(request, response);
 
@@ -98,4 +99,3 @@ public class LoadLanguageCommandTests extends CommandTestBase {
         assertEquals(merged, expected);
     }
 }
-

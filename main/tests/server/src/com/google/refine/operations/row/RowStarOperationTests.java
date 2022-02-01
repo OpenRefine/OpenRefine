@@ -24,6 +24,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  ******************************************************************************/
+
 package com.google.refine.operations.row;
 
 import org.testng.annotations.BeforeSuite;
@@ -35,11 +36,12 @@ import com.google.refine.util.ParsingUtilities;
 import com.google.refine.util.TestUtils;
 
 public class RowStarOperationTests extends RefineTest {
+
     @BeforeSuite
     public void registerOperation() {
         OperationRegistry.registerOperation(getCoreModule(), "row-star", RowStarOperation.class);
     }
-    
+
     @Test
     public void serializeRowStarOperation() throws Exception {
         String json = "{"

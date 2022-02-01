@@ -33,9 +33,9 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.model;
 
-
 public class ProjectStub extends Project {
-    public ProjectStub(long id){
+
+    public ProjectStub(long id) {
         super(id);
     }
 }

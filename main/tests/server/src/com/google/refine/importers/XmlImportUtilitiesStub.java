@@ -44,8 +44,8 @@ import com.google.refine.importers.tree.XmlImportUtilities;
 import com.google.refine.model.Project;
 
 public class XmlImportUtilitiesStub extends XmlImportUtilities {
-    
-    public List<String> detectRecordElementWrapper(TreeReader parser, String tag) throws Exception{
+
+    public List<String> detectRecordElementWrapper(TreeReader parser, String tag) throws Exception {
         return super.detectRecordElement(parser, tag);
     }
 
@@ -63,7 +63,6 @@ public class XmlImportUtilitiesStub extends XmlImportUtilities {
         super.findRecord(project, parser, recordPath, pathIndex, rootColumnGroup, limit, parameters);
     }
 
-
     public void findRecordWrapper(Project project, TreeReader parser, String[] recordPath, int pathIndex,
             ImportColumnGroup rootColumnGroup, int limit, boolean trimStrings, boolean storeEmptyStrings,
             boolean guessDataType) throws Exception {
@@ -77,7 +76,6 @@ public class XmlImportUtilitiesStub extends XmlImportUtilities {
             throws Exception {
         super.processRecord(project, parser, rootColumnGroup, parameters);
     }
-
 
     public void processRecordWrapper(Project project, TreeReader parser, ImportColumnGroup rootColumnGroup,
             boolean trimStrings, boolean storeEmptyStrings, boolean guessDataType)

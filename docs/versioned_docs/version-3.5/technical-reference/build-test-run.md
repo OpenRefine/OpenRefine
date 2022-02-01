@@ -230,6 +230,13 @@ Right click on the `server` subproject, click `Run as...` and `Run configuration
 
 This will add a run configuration that you can then use to run OpenRefine from Eclipse.
 
+## Code style in Eclipse
+
+You can apply the supplied Eclipse code style (in `IDEs/eclipse/Refine.style.xml`) to make sure Eclipse lints your files according to the existing style.
+Pull requests deviating from this style will fail in the CI.
+
+You can manually apply the code style (regardless of your IDE) with the `mvn formatter:format` command.
+
 ## Testing in Eclipse {#testing-in-eclipse}
 
 You can run the server tests directly from Eclipse. To do that you need to have the TestNG launcher plugin installed, as well as the TestNG M2E plugin (for integration with Maven). If you don't have it, you can get it by [installing new software](https://help.eclipse.org/2020-03/index.jsp?topic=/org.eclipse.platform.doc.user/tasks/tasks-129.htm) from this update URL http://dl.bintray.com/testng-team/testng-eclipse-release/

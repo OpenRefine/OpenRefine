@@ -52,24 +52,24 @@ import com.google.refine.model.Project;
 import com.google.refine.model.Row;
 
 public class ExpressionNominalValueGrouperTests extends RefineTest {
-    // dependencies    
-    //Variables
+
+    // dependencies
+    // Variables
     private static Project project;
     private static Properties bindings;
-    
+
     private static OffsetDateTime dateTimeValue = OffsetDateTime.parse("2017-05-12T05:45:00+00:00", DateTimeFormatter.ISO_OFFSET_DATE_TIME);
     private static String dateTimeStringValue = "2017-05-12T05:45:00Z";
     private static int integerValue = 1;
     private static String integerStringValue = "1";
     private static String stringStringValue = "a";
-    
+
     private static ExpressionNominalValueGrouper grouper;
     private static Evaluable eval;
     private static final int cellIndex = 0;
     private static final String columnName = "Col1";
     private static final int numberOfRows = 5;
     private static final String projectName = "ExpressionNominalValueGrouper";
-    
 
     @Override
     @BeforeTest
@@ -79,11 +79,11 @@ public class ExpressionNominalValueGrouperTests extends RefineTest {
 
     @BeforeMethod
     public void setUp() throws IOException, ModelException {
-      project = createProjectWithColumns(projectName, columnName);
-      bindings = new Properties();
-      bindings.put("project", project);
+        project = createProjectWithColumns(projectName, columnName);
+        bindings = new Properties();
+        bindings.put("project", project);
     }
-    
+
     @AfterMethod
     public void tearDown() {
         project = null;
@@ -91,87 +91,87 @@ public class ExpressionNominalValueGrouperTests extends RefineTest {
 
     @Test
     public void expressionNominalValueGrouperStrings() throws Exception {
-      //populate project
-      // Five rows of a's
-      for (int i = 0; i < numberOfRows; i++) {
-          Row row = new Row(1);
-          row.setCell(0, new Cell(stringStringValue, null));
-          project.rows.add(row);
-      }
-      //create grouper
-      eval = MetaParser.parse("value");
-      grouper = new ExpressionNominalValueGrouper(eval, columnName, cellIndex);
-      try {
-          grouper.start(project);
-          for (int rowIndex = 0; rowIndex < numberOfRows; rowIndex++) {
-              Row row = project.rows.get(rowIndex);
-              grouper.visit(project, rowIndex, row);
-          }
-      } finally {
-          grouper.end(project);
-      }
-      
-      Assert.assertEquals(grouper.choices.size(),1);
-      
-      Assert.assertTrue(grouper.choices.containsKey(stringStringValue));
-      Assert.assertEquals(grouper.choices.get(stringStringValue).decoratedValue.label,stringStringValue);
-      Assert.assertEquals(grouper.choices.get(stringStringValue).decoratedValue.value.toString(),stringStringValue);
+        // populate project
+        // Five rows of a's
+        for (int i = 0; i < numberOfRows; i++) {
+            Row row = new Row(1);
+            row.setCell(0, new Cell(stringStringValue, null));
+            project.rows.add(row);
+        }
+        // create grouper
+        eval = MetaParser.parse("value");
+        grouper = new ExpressionNominalValueGrouper(eval, columnName, cellIndex);
+        try {
+            grouper.start(project);
+            for (int rowIndex = 0; rowIndex < numberOfRows; rowIndex++) {
+                Row row = project.rows.get(rowIndex);
+                grouper.visit(project, rowIndex, row);
+            }
+        } finally {
+            grouper.end(project);
+        }
+
+        Assert.assertEquals(grouper.choices.size(), 1);
+
+        Assert.assertTrue(grouper.choices.containsKey(stringStringValue));
+        Assert.assertEquals(grouper.choices.get(stringStringValue).decoratedValue.label, stringStringValue);
+        Assert.assertEquals(grouper.choices.get(stringStringValue).decoratedValue.value.toString(), stringStringValue);
     }
-    
+
     @Test
     public void expressionNominalValueGrouperInts() throws Exception {
-      //populate project
-      for (int i = 0; i < numberOfRows; i++) {
-          Row row = new Row(1);
-          row.setCell(0, new Cell(integerValue, null));
-          project.rows.add(row);
-      }
-      //create grouper
-      eval = MetaParser.parse("value");
-      grouper = new ExpressionNominalValueGrouper(eval, columnName, cellIndex);
-      try {
-          grouper.start(project);
-          for (int rowIndex = 0; rowIndex < numberOfRows; rowIndex++) {
-              Row row = project.rows.get(rowIndex);
-              grouper.visit(project, rowIndex, row);
-          }
-      } finally {
-          grouper.end(project);
-      }
-      
-      Assert.assertEquals(grouper.choices.size(),1);
-      
-      Assert.assertTrue(grouper.choices.containsKey(integerStringValue));
-      Assert.assertEquals(grouper.choices.get(integerStringValue).decoratedValue.label,integerStringValue);
-      Assert.assertEquals(grouper.choices.get(integerStringValue).decoratedValue.value.toString(),integerStringValue);
+        // populate project
+        for (int i = 0; i < numberOfRows; i++) {
+            Row row = new Row(1);
+            row.setCell(0, new Cell(integerValue, null));
+            project.rows.add(row);
+        }
+        // create grouper
+        eval = MetaParser.parse("value");
+        grouper = new ExpressionNominalValueGrouper(eval, columnName, cellIndex);
+        try {
+            grouper.start(project);
+            for (int rowIndex = 0; rowIndex < numberOfRows; rowIndex++) {
+                Row row = project.rows.get(rowIndex);
+                grouper.visit(project, rowIndex, row);
+            }
+        } finally {
+            grouper.end(project);
+        }
+
+        Assert.assertEquals(grouper.choices.size(), 1);
+
+        Assert.assertTrue(grouper.choices.containsKey(integerStringValue));
+        Assert.assertEquals(grouper.choices.get(integerStringValue).decoratedValue.label, integerStringValue);
+        Assert.assertEquals(grouper.choices.get(integerStringValue).decoratedValue.value.toString(), integerStringValue);
     }
-    
+
     @Test
     public void expressionNominalValueGrouperDates() throws Exception {
-      //populate project
-      for (int i = 0; i < numberOfRows; i++) {
-          Row row = new Row(1);
-          row.setCell(0, new Cell(dateTimeValue, null));
-          project.rows.add(row);
-      }
-      //create grouper
-      eval = MetaParser.parse("value");
-      grouper = new ExpressionNominalValueGrouper(eval, columnName, cellIndex);
-      try {
-          grouper.start(project);
-          for (int rowIndex = 0; rowIndex < numberOfRows; rowIndex++) {
-              Row row = project.rows.get(rowIndex);
-              grouper.visit(project, rowIndex, row);
-          }
-      } finally {
-          grouper.end(project);
-      }
-      
-      Assert.assertEquals(grouper.choices.size(),1);
-      
-      Assert.assertTrue(grouper.choices.containsKey(dateTimeStringValue));
-      Assert.assertEquals(grouper.choices.get(dateTimeStringValue).decoratedValue.label,dateTimeStringValue);
-      Assert.assertEquals(grouper.choices.get(dateTimeStringValue).decoratedValue.value.toString(),dateTimeStringValue);
+        // populate project
+        for (int i = 0; i < numberOfRows; i++) {
+            Row row = new Row(1);
+            row.setCell(0, new Cell(dateTimeValue, null));
+            project.rows.add(row);
+        }
+        // create grouper
+        eval = MetaParser.parse("value");
+        grouper = new ExpressionNominalValueGrouper(eval, columnName, cellIndex);
+        try {
+            grouper.start(project);
+            for (int rowIndex = 0; rowIndex < numberOfRows; rowIndex++) {
+                Row row = project.rows.get(rowIndex);
+                grouper.visit(project, rowIndex, row);
+            }
+        } finally {
+            grouper.end(project);
+        }
+
+        Assert.assertEquals(grouper.choices.size(), 1);
+
+        Assert.assertTrue(grouper.choices.containsKey(dateTimeStringValue));
+        Assert.assertEquals(grouper.choices.get(dateTimeStringValue).decoratedValue.label, dateTimeStringValue);
+        Assert.assertEquals(grouper.choices.get(dateTimeStringValue).decoratedValue.value.toString(), dateTimeStringValue);
     }
 
     @Test

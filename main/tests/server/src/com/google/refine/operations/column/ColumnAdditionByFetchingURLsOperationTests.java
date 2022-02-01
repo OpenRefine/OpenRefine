@@ -70,7 +70,6 @@ import okhttp3.mockwebserver.MockResponse;
 import okhttp3.mockwebserver.MockWebServer;
 import okhttp3.mockwebserver.RecordedRequest;
 
-
 public class ColumnAdditionByFetchingURLsOperationTests extends RefineTest {
 
     static final String ENGINE_JSON_URLS = "{\"mode\":\"row-based\"}";
@@ -91,21 +90,23 @@ public class ColumnAdditionByFetchingURLsOperationTests extends RefineTest {
             + "    {\"name\":\"user-agent\",\"value\":\"OpenRefine 3.0 rc.1 [TRUNK]\"},"
             + "    {\"name\":\"accept\",\"value\":\"application/json\"}"
             + "]}";
-    
+
     private String processJson = ""
-            +"{\n" + 
-            "    \"description\" : \"Create column employments at index 2 by fetching URLs based on column orcid using expression grel:\\\"https://pub.orcid.org/\\\"+value+\\\"/employments\\\"\",\n" + 
-            "    \"id\" : %d,\n" + 
-            "    \"immediate\" : false,\n" + 
-            "    \"progress\" : 0,\n" + 
-            "    \"status\" : \"pending\"\n" + 
+            + "{\n" +
+            "    \"description\" : \"Create column employments at index 2 by fetching URLs based on column orcid using expression grel:\\\"https://pub.orcid.org/\\\"+value+\\\"/employments\\\"\",\n"
+            +
+            "    \"id\" : %d,\n" +
+            "    \"immediate\" : false,\n" +
+            "    \"progress\" : 0,\n" +
+            "    \"status\" : \"pending\"\n" +
             " }";
 
     @Override
     @BeforeTest
     public void init() {
         logger = LoggerFactory.getLogger(this.getClass());
-        OperationRegistry.registerOperation(getCoreModule(), "column-addition-by-fetching-urls", ColumnAdditionByFetchingURLsOperation.class);
+        OperationRegistry.registerOperation(getCoreModule(), "column-addition-by-fetching-urls",
+                ColumnAdditionByFetchingURLsOperation.class);
     }
 
     // dependencies
@@ -115,7 +116,7 @@ public class ColumnAdditionByFetchingURLsOperationTests extends RefineTest {
 
     @BeforeMethod
     public void SetUp() throws IOException, ModelException {
-        project = createProjectWithColumns("UrlFetchingTests", "fruits");       
+        project = createProjectWithColumns("UrlFetchingTests", "fruits");
     }
 
     private void runAndWait(EngineDependentOperation op, int timeout) throws Exception {
@@ -123,19 +124,19 @@ public class ColumnAdditionByFetchingURLsOperationTests extends RefineTest {
         Process process = op.createProcess(project, options);
         runAndWait(pm, process, timeout);
     }
-    
+
     @Test
     public void serializeColumnAdditionByFetchingURLsOperation() throws Exception {
         TestUtils.isSerializedTo(ParsingUtilities.mapper.readValue(json, ColumnAdditionByFetchingURLsOperation.class), json);
     }
-    
+
     @Test
     public void serializeUrlFetchingProcess() throws Exception {
         AbstractOperation op = ParsingUtilities.mapper.readValue(json, ColumnAdditionByFetchingURLsOperation.class);
         Process process = op.createProcess(project, new Properties());
         TestUtils.isSerializedTo(process, String.format(processJson, process.hashCode()));
     }
-    
+
     /**
      * Test for caching
      */
@@ -148,7 +149,7 @@ public class ColumnAdditionByFetchingURLsOperationTests extends RefineTest {
             Random rand = new Random();
             for (int i = 0; i < 100; i++) {
                 Row row = new Row(2);
-                row.setCell(0, new Cell(i < 5 ? "apple":"orange", null));
+                row.setCell(0, new Cell(i < 5 ? "apple" : "orange", null));
                 project.rows.add(row);
                 // We won't need them all, but queue 100 random responses
                 server.enqueue(new MockResponse().setBody(Integer.toString(rand.nextInt(100))));
@@ -170,7 +171,7 @@ public class ColumnAdditionByFetchingURLsOperationTests extends RefineTest {
             runAndWait(op, 1500);
 
             // Inspect rows
-            String ref_val = (String)project.rows.get(0).getCellValue(1).toString();
+            String ref_val = (String) project.rows.get(0).getCellValue(1).toString();
             Assert.assertFalse(ref_val.equals("apple")); // just to make sure I picked the right column
             for (int i = 1; i < 4; i++) {
                 // all random values should be equal due to caching
@@ -180,10 +181,8 @@ public class ColumnAdditionByFetchingURLsOperationTests extends RefineTest {
         }
     }
 
-    
     /**
-     * Fetch invalid URLs
-     * https://github.com/OpenRefine/OpenRefine/issues/1219
+     * Fetch invalid URLs https://github.com/OpenRefine/OpenRefine/issues/1219
      */
     @Test
     public void testInvalidUrl() throws Exception {
@@ -233,7 +232,7 @@ public class ColumnAdditionByFetchingURLsOperationTests extends RefineTest {
             row0.setCell(0, new Cell(url.toString(), null));
             project.rows.add(row0);
 
-            String userAgentValue =  "OpenRefine";
+            String userAgentValue = "OpenRefine";
             String authorizationValue = "Basic";
             String acceptValue = "*/*";
             List<HttpHeader> headers = new ArrayList<>();
@@ -245,14 +244,14 @@ public class ColumnAdditionByFetchingURLsOperationTests extends RefineTest {
             server.enqueue(new MockResponse().setBody("second"));
 
             EngineDependentOperation op = new ColumnAdditionByFetchingURLsOperation(engine_config,
-                "fruits",
-                "value",
-                OnError.StoreError,
-                "junk",
-                1,
-                50,
-                true,
-                headers);
+                    "fruits",
+                    "value",
+                    OnError.StoreError,
+                    "junk",
+                    1,
+                    50,
+                    true,
+                    headers);
 
             runAndWait(op, 3000);
 
@@ -282,7 +281,7 @@ public class ColumnAdditionByFetchingURLsOperationTests extends RefineTest {
                 server.enqueue(new MockResponse()
                         .setHeader("Retry-After", 1)
                         .setResponseCode(429)
-                        .setBody(Integer.toString(i,10)));
+                        .setBody(Integer.toString(i, 10)));
             }
 
             server.enqueue(new MockResponse().setBody("success"));
@@ -303,7 +302,7 @@ public class ColumnAdditionByFetchingURLsOperationTests extends RefineTest {
 
             // Make sure that our Retry-After headers were obeyed (4*1 sec vs 4*100msec)
             long elapsed = System.currentTimeMillis() - start;
-            assertTrue(elapsed > 4000, "Retry-After retries didn't take long enough - elapsed = " + elapsed );
+            assertTrue(elapsed > 4000, "Retry-After retries didn't take long enough - elapsed = " + elapsed);
 
             // 1st row fails after 4 tries (3 retries), 2nd row tries twice and gets value
             assertTrue(project.rows.get(0).getCellValue(1).toString().contains("HTTP error 429"), "missing 429 error");
@@ -329,7 +328,7 @@ public class ColumnAdditionByFetchingURLsOperationTests extends RefineTest {
             for (int i = 0; i < 5; i++) {
                 server.enqueue(new MockResponse()
                         .setResponseCode(503)
-                        .setBody(Integer.toString(i,10)));
+                        .setBody(Integer.toString(i, 10)));
             }
             server.enqueue(new MockResponse().setBody("success"));
 
@@ -356,11 +355,10 @@ public class ColumnAdditionByFetchingURLsOperationTests extends RefineTest {
             // 1st row fails after 4 tries (3 retries), 2nd row tries twice and gets value, 3rd row is hard error
             assertTrue(project.rows.get(0).getCellValue(1).toString().contains("HTTP error 503"), "Missing 503 error");
             assertEquals(project.rows.get(1).getCellValue(1).toString(), "success");
-            assertTrue(project.rows.get(2).getCellValue(1).toString().contains("HTTP error 404"),"Missing 404 error");
+            assertTrue(project.rows.get(2).getCellValue(1).toString().contains("HTTP error 404"), "Missing 404 error");
 
             server.shutdown();
         }
     }
-
 
 }

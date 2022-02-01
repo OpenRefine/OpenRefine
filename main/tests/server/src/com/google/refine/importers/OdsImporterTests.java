@@ -68,35 +68,36 @@ public class OdsImporterTests extends ImporterTest {
         logger = LoggerFactory.getLogger(this.getClass());
     }
 
-    //System Under Test
+    // System Under Test
     OdsImporter SUT = null;
 
     @Override
     @BeforeMethod
-    public void setUp(){
+    public void setUp() {
         super.setUp();
         SUT = new OdsImporter();
     }
 
     @Override
     @AfterMethod
-    public void tearDown(){
+    public void tearDown() {
         SUT = null;
         super.tearDown();
     }
 
     @Test
-    public void readOds() throws FileNotFoundException, IOException{
+    public void readOds() throws FileNotFoundException, IOException {
 
         ArrayNode sheets = ParsingUtilities.mapper.createArrayNode();
-        sheets.add(ParsingUtilities.mapper.readTree("{name: \"file-source#Test Sheet 0\", fileNameAndSheetIndex: \"file-source#0\", rows: 31, selected: true}"));
+        sheets.add(ParsingUtilities.mapper
+                .readTree("{name: \"file-source#Test Sheet 0\", fileNameAndSheetIndex: \"file-source#0\", rows: 31, selected: true}"));
         whenGetArrayOption("sheets", options, sheets);
 
         whenGetIntegerOption("ignoreLines", options, 0);
         whenGetIntegerOption("headerLines", options, 1);
         whenGetIntegerOption("skipDataLines", options, 0);
         whenGetIntegerOption("limit", options, ROWS);
-        whenGetBooleanOption("storeBlankCellsAsNulls",options,true);
+        whenGetBooleanOption("storeBlankCellsAsNulls", options, true);
 
         InputStream stream = ClassLoader.getSystemResourceAsStream("films.ods");
 
@@ -109,14 +110,14 @@ public class OdsImporterTests extends ImporterTest {
         assertEquals(project.rows.size(), ROWS);
         Row row = project.rows.get(0);
         assertEquals(row.cells.size(), COLUMNS);
-        assertEquals((String)row.getCellValue(1),"2 Days In New York");
-        assertEquals(((OffsetDateTime)row.getCellValue(3)).toString().substring(0, 10),"2012-03-28");
-        assertEquals(((Number)row.getCellValue(5)).doubleValue(), 4.5, EPSILON);
+        assertEquals((String) row.getCellValue(1), "2 Days In New York");
+        assertEquals(((OffsetDateTime) row.getCellValue(3)).toString().substring(0, 10), "2012-03-28");
+        assertEquals(((Number) row.getCellValue(5)).doubleValue(), 4.5, EPSILON);
 
-        assertFalse((Boolean)row.getCellValue(7));
-        assertTrue((Boolean)project.rows.get(1).getCellValue(7));
+        assertFalse((Boolean) row.getCellValue(7));
+        assertTrue((Boolean) project.rows.get(1).getCellValue(7));
 
-        assertNull((String)project.rows.get(2).getCellValue(2));
+        assertNull((String) project.rows.get(2).getCellValue(2));
 
         verify(options, times(1)).get("ignoreLines");
         verify(options, times(1)).get("headerLines");
@@ -124,6 +125,5 @@ public class OdsImporterTests extends ImporterTest {
         verify(options, times(1)).get("limit");
         verify(options, times(1)).get("storeBlankCellsAsNulls");
     }
-
 
 }

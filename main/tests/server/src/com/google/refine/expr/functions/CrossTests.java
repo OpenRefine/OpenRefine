@@ -24,6 +24,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  ******************************************************************************/
+
 package com.google.refine.expr.functions;
 
 import java.time.OffsetDateTime;
@@ -50,8 +51,9 @@ import com.google.refine.util.TestUtils;
  * Test cases for cross function.
  */
 public class CrossTests extends RefineTest {
+
     private static OffsetDateTime dateTimeValue = OffsetDateTime.parse("2017-05-12T05:45:00+00:00", DateTimeFormatter.ISO_OFFSET_DATE_TIME);
-    
+
     @Override
     @BeforeTest
     public void init() {
@@ -63,27 +65,27 @@ public class CrossTests extends RefineTest {
     Project projectAddress;
     Project projectDuplicate1;
     Project projectDuplicate2;
-    
+
     // data from: https://github.com/OpenRefine/OpenRefine/wiki/GREL-Other-Functions
     @BeforeMethod
     public void SetUp() {
         bindings = new Properties();
-        
+
         String projectName = "My Address Book";
         String input = "friend,address\n"
-                        + "john,120 Main St.\n"
-                        + "mary,50 Broadway Ave.\n"
-                        + "john,999 XXXXXX St.\n"                       // john's 2nd address
-                        + "anne,17 Morning Crescent\n"
-                        + "2017-05-12T05:45:00Z,dateTime\n"
-                        + "1600,integer\n"
-                        + "123456789123456789,long\n"
-                        + "true,boolean\n"
-                        + "3.14,double\n";
+                + "john,120 Main St.\n"
+                + "mary,50 Broadway Ave.\n"
+                + "john,999 XXXXXX St.\n" // john's 2nd address
+                + "anne,17 Morning Crescent\n"
+                + "2017-05-12T05:45:00Z,dateTime\n"
+                + "1600,integer\n"
+                + "123456789123456789,long\n"
+                + "true,boolean\n"
+                + "3.14,double\n";
         projectAddress = createCSVProject(projectName, input);
-    
+
         projectName = "Christmas Gifts";
-        input = "gift,recipient\n"   
+        input = "gift,recipient\n"
                 + "lamp,mary\n"
                 + "clock,john\n"
                 + "dateTime,2017-05-12T05:45:00Z\n"
@@ -96,10 +98,9 @@ public class CrossTests extends RefineTest {
         projectDuplicate1 = createCSVProject(projectName, input);
         projectDuplicate2 = createCSVProject(projectName, input);
 
-        
         bindings.put("project", projectGift);
-        
-        //Add some non-string value cells to each project
+
+        // Add some non-string value cells to each project
         projectAddress.rows.get(4).cells.set(0, new Cell(dateTimeValue, null));
         projectAddress.rows.get(5).cells.set(0, new Cell(1600, null));
         projectAddress.rows.get(6).cells.set(0, new Cell(123456789123456789L, null));
@@ -109,30 +110,30 @@ public class CrossTests extends RefineTest {
         projectGift.rows.get(3).cells.set(1, new Cell(1600, null));
         projectGift.rows.get(4).cells.set(1, new Cell(123456789123456789L, null));
         projectGift.rows.get(5).cells.set(1, new Cell(true, null));
-        
+
         // add a column address based on column recipient
         bindings.put("columnName", "recipient");
     }
-    
+
     @Test
     public void crossFunctionMissingProject() throws Exception {
         String nonExistentProject = "NOPROJECT";
-        Assert.assertEquals(((EvalError) invoke("cross", "Anne", nonExistentProject, "friend")).message, 
+        Assert.assertEquals(((EvalError) invoke("cross", "Anne", nonExistentProject, "friend")).message,
                 "Unable to find project with name: " + nonExistentProject);
     }
-    
+
     @Test
     public void crossFunctionMultipleProjects() throws Exception {
         String duplicateProjectName = "Duplicate";
-        Assert.assertEquals(((EvalError) invoke("cross", "Anne", duplicateProjectName, "friend")).message, 
+        Assert.assertEquals(((EvalError) invoke("cross", "Anne", duplicateProjectName, "friend")).message,
                 "2 projects found with name: " + duplicateProjectName);
     }
-    
+
     @Test
     public void crossFunctionMissingColumn() throws Exception {
         String nonExistentColumn = "NoColumn";
         String projectName = "My Address Book";
-        Assert.assertEquals(((EvalError) invoke("cross", "mary", projectName, nonExistentColumn)).message, 
+        Assert.assertEquals(((EvalError) invoke("cross", "mary", projectName, nonExistentColumn)).message,
                 "Unable to find column " + nonExistentColumn + " in project " + projectName);
     }
 
@@ -209,8 +210,8 @@ public class CrossTests extends RefineTest {
         String address = row.getCell(1).value.toString();
         Assert.assertEquals(address, "50 Broadway Ave.");
     }
-    
-    /**  
+
+    /**
      * To demonstrate that the cross function can look up multiple rows.
      */
     @Test
@@ -219,13 +220,12 @@ public class CrossTests extends RefineTest {
         String address = row.getCell(1).value.toString();
         Assert.assertEquals(address, "999 XXXXXX St.");
     }
-    
 
     @Test
     public void crossFunctionCaseSensitiveTest() throws Exception {
         Assert.assertNull(invoke("cross", "Anne", "My Address Book", "friend"));
     }
-    
+
     @Test
     public void crossFunctionDateTimeTest() throws Exception {
         Project project = (Project) bindings.get("project");
@@ -235,7 +235,7 @@ public class CrossTests extends RefineTest {
         String address = row.getCell(1).value.toString();
         Assert.assertEquals(address, "dateTime");
     }
-    
+
     @Test
     public void crossFunctionIntegerTest() throws Exception {
         Project project = (Project) bindings.get("project");
@@ -245,7 +245,7 @@ public class CrossTests extends RefineTest {
         String address = row.getCell(1).value.toString();
         Assert.assertEquals(address, "integer");
     }
-    
+
     @Test
     public void crossFunctionBooleanTest() throws Exception {
         Project project = (Project) bindings.get("project");
@@ -278,8 +278,8 @@ public class CrossTests extends RefineTest {
     }
 
     /**
-     * Two values will match if and only if they have the same string representation.
-     * In this case, "1600.0" doesn't equal to "1600".
+     * Two values will match if and only if they have the same string representation. In this case, "1600.0" doesn't
+     * equal to "1600".
      */
     @Test
     public void crossFunctionIntegerArgumentTest3() throws Exception {
@@ -352,24 +352,24 @@ public class CrossTests extends RefineTest {
     /**
      * If no match, return null.
      * 
-     * But if user still apply grel:value.cross("My Address Book", "friend")[0].cells["address"].value, 
-     * from the "Preview", the target cell shows "Error: java.lang.IndexOutOfBoundsException: Index: 0, Size: 0".
-     * It will still end up with blank if the onError set so.
+     * But if user still apply grel:value.cross("My Address Book", "friend")[0].cells["address"].value, from the
+     * "Preview", the target cell shows "Error: java.lang.IndexOutOfBoundsException: Index: 0, Size: 0". It will still
+     * end up with blank if the onError set so.
      */
     @Test
     public void crossFunctionMatchNotFoundTest() throws Exception {
         Assert.assertNull(invoke("cross", "NON-EXIST", "My Address Book", "friend"));
     }
-     
+
     /**
-     *  
-     *  rest of cells shows "Error: cross expects a cell or cell value, a project name to look up, and a column name in that project"
+     * 
+     * rest of cells shows "Error: cross expects a cell or cell value, a project name to look up, and a column name in
+     * that project"
      */
     @Test
     public void crossFunctionNonLiteralValue() throws Exception {
         Assert.assertEquals(((EvalError) invoke("cross", null, "My Address Book", "friend")).message,
                 "cross expects a cell or value, a project name to look up (optional), and a column name in that project (optional)");
     }
-    
-}
 
+}

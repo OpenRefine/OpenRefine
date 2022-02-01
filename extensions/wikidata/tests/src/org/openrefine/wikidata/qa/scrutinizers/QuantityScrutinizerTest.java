@@ -1,3 +1,4 @@
+
 package org.openrefine.wikidata.qa.scrutinizers;
 
 import org.openrefine.wikidata.qa.ConstraintFetcher;
@@ -23,33 +24,32 @@ import java.util.List;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class QuantityScrutinizerTest extends ValueScrutinizerTest{
+public class QuantityScrutinizerTest extends ValueScrutinizerTest {
 
     public static final String NO_BOUNDS_CONSTRAINT_QID = "Q51723761";
     public static final String INTEGER_VALUED_CONSTRAINT_QID = "Q52848401";
     public static final String ALLOWED_UNITS_CONSTRAINT_QID = "Q21514353";
     public static final String ALLOWED_UNITS_CONSTRAINT_PID = "P2305";
-    
+
     private QuantityValue exactValue = Datamodel.makeQuantityValue(
             new BigDecimal("1.234"));
-    
+
     private QuantityValue integerValue = Datamodel.makeQuantityValue(
             new BigDecimal("132"));
-    
+
     private QuantityValue trailingZeros = Datamodel.makeQuantityValue(
             new BigDecimal("132.00"));
-    
+
     private QuantityValue valueWithBounds = Datamodel.makeQuantityValue(
             new BigDecimal("1.234"),
             new BigDecimal("1.200"),
             new BigDecimal("1.545"));
-    
+
     private QuantityValue wrongUnitValue = Datamodel.makeQuantityValue(
             new BigDecimal("1.234"), Datamodel.makeWikidataItemIdValue("Q346721"));
-    
+
     private QuantityValue goodUnitValue = Datamodel.makeQuantityValue(
             new BigDecimal("1.234"), (ItemIdValue) allowedUnit);
-
 
     public static PropertyIdValue propertyIdValue = Datamodel.makeWikidataPropertyIdValue("P1083");
     public static ItemIdValue noBoundsEntity = Datamodel.makeWikidataItemIdValue(NO_BOUNDS_CONSTRAINT_QID);
@@ -62,7 +62,7 @@ public class QuantityScrutinizerTest extends ValueScrutinizerTest{
     public EditScrutinizer getScrutinizer() {
         return new QuantityScrutinizer();
     }
-    
+
     @Test
     public void testBoundsAllowed() {
         ItemIdValue idA = TestingData.existingId;
@@ -77,7 +77,7 @@ public class QuantityScrutinizerTest extends ValueScrutinizerTest{
         scrutinize(update);
         assertNoWarningRaised();
     }
-    
+
     @Test
     public void testBoundsDisallowed() {
         ItemIdValue idA = TestingData.existingId;

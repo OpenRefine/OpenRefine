@@ -24,6 +24,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  ******************************************************************************/
+
 package com.google.refine.expr.functions;
 
 import static org.testng.Assert.assertEquals;
@@ -46,11 +47,11 @@ public class ToNumberTests extends RefineTest {
     @Test
     public void testConversions() {
         Function f = new ToNumber();
-        assertEquals(f.call(bindings, new Object[] {Long.valueOf(11)}), Long.valueOf(11));
-        assertEquals(f.call(bindings, new Object[] {"12"}), Long.valueOf(12));
-        assertTrue((Double)f.call(bindings, new Object[] {"12345.6789"}) - Double.valueOf(12345.6789) < EPSILON);
-        assertTrue(f.call(bindings, new Object[] {"abc"}) instanceof EvalError);
-        }
+        assertEquals(f.call(bindings, new Object[] { Long.valueOf(11) }), Long.valueOf(11));
+        assertEquals(f.call(bindings, new Object[] { "12" }), Long.valueOf(12));
+        assertTrue((Double) f.call(bindings, new Object[] { "12345.6789" }) - Double.valueOf(12345.6789) < EPSILON);
+        assertTrue(f.call(bindings, new Object[] { "abc" }) instanceof EvalError);
+    }
 
     @Test
     public void testToNumber() {
@@ -67,4 +68,3 @@ public class ToNumberTests extends RefineTest {
     }
 
 }
-
