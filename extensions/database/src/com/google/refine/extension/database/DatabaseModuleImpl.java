@@ -111,8 +111,8 @@ public class DatabaseModuleImpl extends ButterflyModuleImpl {
                 if(logger.isDebugEnabled()) {
                     logger.debug("Loading Extension properties ({})", propFile);
                 }
-                final BufferedInputStream stream = new BufferedInputStream(new FileInputStream(propFile));
-                try (stream) {
+                
+                try (final BufferedInputStream stream = new BufferedInputStream(new FileInputStream(propFile))) {
                     ps = new Properties();
                     ps.load(stream);
                 }
