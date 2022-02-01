@@ -24,6 +24,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  ******************************************************************************/
+
 package com.google.refine.commands.expr;
 
 import static org.mockito.Mockito.mock;
@@ -47,11 +48,12 @@ import com.google.refine.io.FileProjectManager;
 import com.google.refine.util.TestUtils;
 
 public class ExpressionCommandTestBase {
+
     protected HttpServletRequest request = null;
     protected HttpServletResponse response = null;
     protected Command command = null;
     protected StringWriter writer = null;
-    
+
     @BeforeMethod
     public void setUpRequestResponse() {
         request = mock(HttpServletRequest.class);
@@ -63,31 +65,32 @@ public class ExpressionCommandTestBase {
             e.printStackTrace();
         }
     }
-    
+
     public void initWorkspace(String expressionsJson, String starredExpressionsJson) {
         String starred = starredExpressionsJson == null ? "{\"class\":\"com.google.refine.preference.TopList\",\"top\":2147483647," +
                 "\"list\":[]}" : starredExpressionsJson;
-        String expressions = expressionsJson == null ? "{\"class\":\"com.google.refine.preference.TopList\",\"top\":100,\"list\":[]}" : expressionsJson;
-        String jsonData = "{\"projectIDs\":[]\n" + 
+        String expressions = expressionsJson == null ? "{\"class\":\"com.google.refine.preference.TopList\",\"top\":100,\"list\":[]}"
+                : expressionsJson;
+        String jsonData = "{\"projectIDs\":[]\n" +
                 ",\"preferences\":{\"entries\":{\"scripting.starred-expressions\":" + starred +
-                ",\"scripting.expressions\":"+expressions+"}}}";
+                ",\"scripting.expressions\":" + expressions + "}}}";
         initWorkspace(jsonData);
     }
 
-	public void initWorkspace(String jsonData) {
-		try {
+    public void initWorkspace(String jsonData) {
+        try {
             File workspaceDir = TestUtils.createTempDirectory("openrefine-test-workspace-dir");
             File jsonPath = new File(workspaceDir, "workspace.json");
-			FileUtils.writeStringToFile(jsonPath, jsonData);
+            FileUtils.writeStringToFile(jsonPath, jsonData);
             FileProjectManager.initialize(workspaceDir);
         } catch (IOException e) {
             e.printStackTrace();
         }
-	}
-    
-    public void assertResponseJsonIs(String expectedJson)  {
+    }
+
+    public void assertResponseJsonIs(String expectedJson) {
         String actualJson = writer.toString();
-        if(!TestUtils.equalAsJson(expectedJson, actualJson)) {
+        if (!TestUtils.equalAsJson(expectedJson, actualJson)) {
             try {
                 TestUtils.jsonDiff(expectedJson, actualJson);
             } catch (JsonParseException | JsonMappingException e) {
@@ -96,5 +99,5 @@ public class ExpressionCommandTestBase {
         }
         TestUtils.assertEqualsAsJson(actualJson, expectedJson);
     }
-    
+
 }

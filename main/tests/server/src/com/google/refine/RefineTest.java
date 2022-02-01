@@ -46,7 +46,6 @@ import java.util.List;
 import java.util.Properties;
 
 import org.apache.commons.io.FileUtils;
-import org.powermock.modules.testng.PowerMockTestCase;
 import org.slf4j.Logger;
 import org.testng.Assert;
 import org.testng.annotations.AfterMethod;
@@ -81,12 +80,12 @@ import edu.mit.simile.butterfly.ButterflyModule;
 /**
  * A base class containing various utilities to help testing Refine.
  */
-public class RefineTest extends PowerMockTestCase {
+public class RefineTest {
 
     protected static Properties bindings = null;
 
     protected Logger logger;
-    
+
     boolean testFailed;
     protected File workspaceDir;
     protected RefineServlet servlet;
@@ -94,18 +93,17 @@ public class RefineTest extends PowerMockTestCase {
     private List<ImportingJob> importingJobs = new ArrayList<ImportingJob>();
 
     @BeforeSuite
-    public void init() {       
+    public void init() {
         System.setProperty("log4j.configuration", "tests.log4j.properties");
         try {
             workspaceDir = TestUtils.createTempDirectory("openrefine-test-workspace-dir");
             File jsonPath = new File(workspaceDir, "workspace.json");
-            FileUtils.writeStringToFile(jsonPath, "{\"projectIDs\":[]\n" + 
+            FileUtils.writeStringToFile(jsonPath, "{\"projectIDs\":[]\n" +
                     ",\"preferences\":{\"entries\":{\"scripting.starred-expressions\":" +
                     "{\"class\":\"com.google.refine.preference.TopList\",\"top\":2147483647," +
                     "\"list\":[]},\"scripting.expressions\":{\"class\":\"com.google.refine.preference.TopList\",\"top\":100,\"list\":[]}}}}",
                     "UTF-8"); // JSON is always UTF-8
             FileProjectManager.initialize(workspaceDir);
-            
 
         } catch (IOException e) {
             workspaceDir = null;
@@ -121,7 +119,7 @@ public class RefineTest extends PowerMockTestCase {
         ProjectManager.singleton = new ProjectManagerStub();
         ImportingManager.initialize(servlet);
     }
-    
+
     protected Project createProjectWithColumns(String projectName, String... columnNames) throws IOException, ModelException {
         Project project = new Project();
         ProjectMetadata pm = new ProjectMetadata();
@@ -129,71 +127,68 @@ public class RefineTest extends PowerMockTestCase {
         ProjectManager.singleton.registerProject(project, pm);
 
         if (columnNames != null) {
-            for(String columnName : columnNames) {
+            for (String columnName : columnNames) {
                 int index = project.columnModel.allocateNewCellIndex();
-                Column column = new Column(index,columnName);
+                Column column = new Column(index, columnName);
                 project.columnModel.addColumn(index, column, true);
             }
         }
         return project;
     }
-    
+
     /**
-     * Helper to create a project from a CSV encoded as a file. Not much
-     * control is given on the import options, because this method is intended
-     * to be a quick way to create a project for a test. For more control over
-     * the import, just call the importer directly.
+     * Helper to create a project from a CSV encoded as a file. Not much control is given on the import options, because
+     * this method is intended to be a quick way to create a project for a test. For more control over the import, just
+     * call the importer directly.
      * 
      * @param input
-     *          contents of the CSV file to create the project from
+     *            contents of the CSV file to create the project from
      * @return
      */
     protected Project createCSVProject(String input) {
         return createCSVProject("test project", input);
     }
-    
+
     /**
-     * Helper to create a project from a CSV encoded as a file. Not much
-     * control is given on the import options, because this method is intended
-     * to be a quick way to create a project for a test. For more control over
-     * the import, just call the importer directly.
+     * Helper to create a project from a CSV encoded as a file. Not much control is given on the import options, because
+     * this method is intended to be a quick way to create a project for a test. For more control over the import, just
+     * call the importer directly.
      * 
-     * The projects created via this method and their importing jobs will be disposed of
-     * at the end of each test.
+     * The projects created via this method and their importing jobs will be disposed of at the end of each test.
      * 
      * @param projectName
-     *       the name of the project to create
+     *            the name of the project to create
      * @param input
-     *       the content of the file, encoded as a CSV (with "," as a separator)
+     *            the content of the file, encoded as a CSV (with "," as a separator)
      * @return
      */
     protected Project createCSVProject(String projectName, String input) {
 
-        
         Project project = new Project();
-        
+
         ProjectMetadata metadata = new ProjectMetadata();
         metadata.setName(projectName);
-        
+
         ObjectNode options = mock(ObjectNode.class);
         prepareImportOptions(options, ",", -1, 0, 0, 1, false, false);
-        
+
         ImportingJob job = ImportingManager.createJob();
-        
+
         SeparatorBasedImporter importer = new SeparatorBasedImporter();
-        
+
         List<Exception> exceptions = new ArrayList<Exception>();
         importer.parseOneFile(project, metadata, job, "filesource", new StringReader(input), -1, options, exceptions);
         project.update();
         ProjectManager.singleton.registerProject(project, metadata);
-        
+
         projects.add(project);
         importingJobs.add(job);
         return project;
     }
-    
+
     /**
      * Initializes the importing options for the CSV importer.
+     * 
      * @param options
      * @param sep
      * @param limit
@@ -206,37 +201,40 @@ public class RefineTest extends PowerMockTestCase {
     public static void prepareImportOptions(ObjectNode options,
             String sep, int limit, int skip, int ignoreLines,
             int headerLines, boolean guessValueType, boolean ignoreQuotes) {
-            
-            whenGetStringOption("separator", options, sep);
-            whenGetIntegerOption("limit", options, limit);
-            whenGetIntegerOption("skipDataLines", options, skip);
-            whenGetIntegerOption("ignoreLines", options, ignoreLines);
-            whenGetIntegerOption("headerLines", options, headerLines);
-            whenGetBooleanOption("guessCellValueTypes", options, guessValueType);
-            whenGetBooleanOption("processQuotes", options, !ignoreQuotes);
-            whenGetBooleanOption("storeBlankCellsAsNulls", options, true);
+
+        whenGetStringOption("separator", options, sep);
+        whenGetIntegerOption("limit", options, limit);
+        whenGetIntegerOption("skipDataLines", options, skip);
+        whenGetIntegerOption("ignoreLines", options, ignoreLines);
+        whenGetIntegerOption("headerLines", options, headerLines);
+        whenGetBooleanOption("guessCellValueTypes", options, guessValueType);
+        whenGetBooleanOption("processQuotes", options, !ignoreQuotes);
+        whenGetBooleanOption("storeBlankCellsAsNulls", options, true);
     }
-    
+
     /**
      * Cleans up the projects and jobs created with createCSVProject
      */
     @AfterMethod
     protected void cleanupProjectsAndJobs() {
-        for(ImportingJob job : importingJobs) {
+        for (ImportingJob job : importingJobs) {
             ImportingManager.disposeJob(job.id);
         }
-        for(Project project: projects) {
+        for (Project project : projects) {
             ProjectManager.singleton.deleteProject(project.id);
         }
         servlet = null;
     }
-            
+
     /**
      * Check that a project was created with the appropriate number of columns and rows.
      * 
-     * @param project project to check
-     * @param numCols expected column count
-     * @param numRows expected row count
+     * @param project
+     *            project to check
+     * @param numCols
+     *            expected column count
+     * @param numRows
+     *            expected row count
      */
     public static void assertProjectCreated(Project project, int numCols, int numRows) {
         Assert.assertNotNull(project);
@@ -250,70 +248,73 @@ public class RefineTest extends PowerMockTestCase {
     /**
      * Check that a project was created with the appropriate number of columns, rows, and records.
      * 
-     * @param project project to check
-     * @param numCols expected column count
-     * @param numRows expected row count
-     * @param numRows expected record count
+     * @param project
+     *            project to check
+     * @param numCols
+     *            expected column count
+     * @param numRows
+     *            expected row count
+     * @param numRows
+     *            expected record count
      */
     public static void assertProjectCreated(Project project, int numCols, int numRows, int numRecords) {
-        assertProjectCreated(project,numCols,numRows);
+        assertProjectCreated(project, numCols, numRows);
         Assert.assertNotNull(project.recordModel);
-        Assert.assertEquals(project.recordModel.getRecordCount(),numRecords);
+        Assert.assertEquals(project.recordModel.getRecordCount(), numRecords);
     }
 
     public void log(Project project) {
         // some quick and dirty debugging
         StringBuilder sb = new StringBuilder();
-        for(Column c : project.columnModel.columns){
+        for (Column c : project.columnModel.columns) {
             sb.append(c.getName());
             sb.append("; ");
         }
         logger.info(sb.toString());
-        for(Row r : project.rows){
+        for (Row r : project.rows) {
             sb = new StringBuilder();
-            for(int i = 0; i < r.cells.size(); i++){
+            for (int i = 0; i < r.cells.size(); i++) {
                 Cell c = r.getCell(i);
-                if(c != null){
-                   sb.append(c.value);
-                   sb.append("; ");
-                }else{
+                if (c != null) {
+                    sb.append(c.value);
+                    sb.append("; ");
+                } else {
                     sb.append("null; ");
                 }
             }
             logger.info(sb.toString());
         }
     }
-    
-    //----helpers----
-    
-    
-    static public void whenGetBooleanOption(String name, ObjectNode options, Boolean def){
+
+    // ----helpers----
+
+    static public void whenGetBooleanOption(String name, ObjectNode options, Boolean def) {
         when(options.has(name)).thenReturn(true);
         when(options.get(name)).thenReturn(def ? BooleanNode.TRUE : BooleanNode.FALSE);
     }
-    
-    static public void whenGetIntegerOption(String name, ObjectNode options, int def){
+
+    static public void whenGetIntegerOption(String name, ObjectNode options, int def) {
         when(options.has(name)).thenReturn(true);
         when(options.get(name)).thenReturn(new IntNode(def));
     }
-    
-    static public void whenGetStringOption(String name, ObjectNode options, String def){
+
+    static public void whenGetStringOption(String name, ObjectNode options, String def) {
         when(options.has(name)).thenReturn(true);
         when(options.get(name)).thenReturn(new TextNode(def));
     }
-    
-    static public void whenGetObjectOption(String name, ObjectNode options, ObjectNode def){
+
+    static public void whenGetObjectOption(String name, ObjectNode options, ObjectNode def) {
         when(options.has(name)).thenReturn(true);
         when(options.get(name)).thenReturn(def);
     }
-    
-    static public void whenGetArrayOption(String name, ObjectNode options, ArrayNode def){
+
+    static public void whenGetArrayOption(String name, ObjectNode options, ArrayNode def) {
         when(options.has(name)).thenReturn(true);
         when(options.get(name)).thenReturn(def);
     }
-    
+
     // Works for both int, String, and JSON arrays
-    static public void verifyGetArrayOption(String name, ObjectNode options){
+    static public void verifyGetArrayOption(String name, ObjectNode options) {
         verify(options, times(1)).has(name);
         verify(options, times(1)).get(name);
     }
@@ -328,15 +329,14 @@ public class RefineTest extends PowerMockTestCase {
             bindings = new Properties();
         }
         if (function == null) {
-            throw new IllegalArgumentException("Unknown function "+name);
+            throw new IllegalArgumentException("Unknown function " + name);
         }
         if (args == null) {
-            return function.call(bindings,new Object[0]);
+            return function.call(bindings, new Object[0]);
         } else {
-            return function.call(bindings,args);
+            return function.call(bindings, args);
         }
     }
-
 
     /**
      * Parse and evaluate a GREL expression and compare the result to the expect value
@@ -346,22 +346,21 @@ public class RefineTest extends PowerMockTestCase {
      * @throws ParsingException
      */
     protected void parseEval(Properties bindings, String[] test)
-    throws ParsingException {
+            throws ParsingException {
         Evaluable eval = MetaParser.parse("grel:" + test[0]);
         Object result = eval.evaluate(bindings);
         Assert.assertEquals(result.toString(), test[1], "Wrong result for expression: " + test[0]);
     }
 
     /**
-     * Parse and evaluate a GREL expression and compare the result an expected
-     * type using instanceof
+     * Parse and evaluate a GREL expression and compare the result an expected type using instanceof
      *
      * @param bindings
      * @param test
      * @throws ParsingException
      */
     protected void parseEvalType(Properties bindings, String test, @SuppressWarnings("rawtypes") Class clazz)
-    throws ParsingException {
+            throws ParsingException {
         Evaluable eval = MetaParser.parse("grel:" + test);
         Object result = eval.evaluate(bindings);
         Assert.assertTrue(clazz.isInstance(result), "Wrong result type for expression: " + test);
@@ -390,6 +389,6 @@ public class RefineTest extends PowerMockTestCase {
         } catch (InterruptedException e) {
             Assert.fail("Test interrupted");
         }
-        Assert.assertFalse(process.isRunning(),"Process failed to complete within timeout " + timeout);
+        Assert.assertFalse(process.isRunning(), "Process failed to complete within timeout " + timeout);
     }
 }

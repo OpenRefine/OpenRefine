@@ -35,6 +35,7 @@ package com.google.refine.expr.functions.xml;
 
 import java.util.Properties;
 
+import com.google.refine.expr.functions.Type;
 import org.jsoup.Jsoup;
 import org.jsoup.parser.Parser;
 

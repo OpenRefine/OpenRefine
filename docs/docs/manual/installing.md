@@ -20,7 +20,7 @@ OpenRefine is designed to work with **Windows**, **Mac**, and **Linux** operatin
 
 If you install and start OpenRefine on a Windows computer without Java, it will automatically open up a browser window to the [Java downloads page](https://java.com/en/download/), and you can simply follow the instructions there.
 
-We recommend you [download](https://java.com/en/download/) and install Java before proceeding with the OpenRefine installation. Please note that OpenRefine works with Java 8 to Java 15 but not Java 16 or later versions.
+We recommend you [download](https://java.com/en/download/) and install Java before proceeding with the OpenRefine installation. Please note that OpenRefine 3.5 works with Java 8 to Java 17.
 
 #### Compatible browser {#compatible-browser}
 
@@ -123,7 +123,7 @@ The long version:
 Install OpenRefine with this command:
 
 ```
-brew cask install openrefine
+brew install --cask openrefine
 ```
 
 You should see output like this:

@@ -24,6 +24,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  ******************************************************************************/
+
 package com.google.refine.expr.functions.strings;
 
 import static org.testng.Assert.assertEquals;
@@ -36,6 +37,7 @@ import com.google.refine.expr.EvalError;
 import com.google.refine.util.TestUtils;
 
 public class ReplaceTests extends RefineTest {
+
     @Test
     public void testReplace() {
         assertTrue(invoke("replace") instanceof EvalError);
@@ -50,4 +52,3 @@ public class ReplaceTests extends RefineTest {
         assertEquals(invoke("replace", "ripe ripe banana", "ripe", "green"), "green green banana");
     }
 }
-

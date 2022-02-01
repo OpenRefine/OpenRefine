@@ -28,7 +28,7 @@ import org.openrefine.wikidata.qa.ConstraintFetcher;
 import org.openrefine.wikidata.qa.QAWarning;
 import org.openrefine.wikidata.qa.QAWarning.Severity;
 import org.openrefine.wikidata.qa.QAWarningStore;
-import org.openrefine.wikidata.updates.ItemUpdate;
+import org.openrefine.wikidata.updates.TermedStatementEntityUpdate;
 import org.wikidata.wdtk.datamodel.interfaces.Snak;
 import org.wikidata.wdtk.datamodel.interfaces.SnakGroup;
 import org.wikidata.wdtk.datamodel.interfaces.Value;
@@ -89,7 +89,7 @@ public abstract class EditScrutinizer {
      * @param edit:
      *            the list of ItemUpdates to scrutinize
      */
-    public abstract void scrutinize(ItemUpdate edit);
+    public abstract void scrutinize(TermedStatementEntityUpdate edit);
     
     /**
      * Method called once the edit batch has been read entirely

@@ -5,7 +5,7 @@ We use [Docusaurus 2](https://v2.docusaurus.io/) for our docs, a modern static w
 
 ### Requirements
 
-Assuming you have [Node.js](https://nodejs.org/en/download/) installed (which includes npm), you can install Docusaurus with:
+Assuming you have [Node.js (LTS recommended)](https://nodejs.org/en/download/) installed (which includes npm), you can install Docusaurus with:
 
 You will need to install [Yarn](https://yarnpkg.com/getting-started/install) before you can build the site.
 
@@ -66,6 +66,18 @@ yarn build
 ```
 
 This command generates static content into the `build` directory and can be served using any static contents hosting service.
+### (Optional) Test Build Locally
+You can locally test ([with parameters](https://docusaurus.io/docs/cli#docusaurus-serve-sitedir)) the static content in the `build` directory (in case you don't have access to a hosting service) by using:
+
+```sh
+yarn serve
+```
+
+or to build and then serve locally with one command:
+
+```sh
+yarn serve --build
+```
 
 ### Deployment
 

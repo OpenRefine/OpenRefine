@@ -21,6 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  ******************************************************************************/
+
 package org.openrefine.wikidata.testing;
 
 import java.io.IOException;
@@ -32,10 +33,14 @@ import org.openrefine.wikidata.schema.WbLanguageConstant;
 import org.openrefine.wikidata.schema.WbMonolingualExpr;
 import org.openrefine.wikidata.schema.WbStringConstant;
 import org.openrefine.wikidata.schema.entityvalues.ReconItemIdValue;
+import org.openrefine.wikidata.schema.entityvalues.ReconMediaInfoIdValue;
 import org.openrefine.wikidata.schema.entityvalues.ReconPropertyIdValue;
 import org.wikidata.wdtk.datamodel.helpers.Datamodel;
 import org.wikidata.wdtk.datamodel.interfaces.Claim;
+import org.wikidata.wdtk.datamodel.interfaces.EntityIdValue;
+//import org.wikidata.wdtk.datamodel.interfaces.EntityIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.ItemIdValue;
+import org.wikidata.wdtk.datamodel.interfaces.MediaInfoIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.PropertyIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.Statement;
 import org.wikidata.wdtk.datamodel.interfaces.StatementRank;
@@ -63,12 +68,23 @@ public class TestingData {
     public static ItemIdValue matchedId = makeMatchedItemIdValue("Q89", "eist");
     public static ItemIdValue existingId = Datamodel.makeWikidataItemIdValue("Q43");
 
+    public static PropertyIdValue newPropertyIdA = makeNewPropertyIdValue(4321L, "new Property A");
+    public static PropertyIdValue newPropertyIdB = makeNewPropertyIdValue(7654L, "new Property B");
+    public static PropertyIdValue matchedPropertyID = makeMatchedPropertyIdValue("P38", "currency");
+    public static PropertyIdValue existingPropertyId = Datamodel.makeWikidataPropertyIdValue("P43");
+
+    public static MediaInfoIdValue newMidA = makeNewMediaInfoIdValue(3412L, "new MediaInfo A");
+    public static MediaInfoIdValue newMidB = makeNewMediaInfoIdValue(6745L, "new MediaInfo B");
+    public static MediaInfoIdValue matchedMid = makeMatchedMediaInfoIdValue("M89", "eist");
+    public static MediaInfoIdValue existingMid = Datamodel.makeWikimediaCommonsMediaInfoIdValue("M43");
+
     protected static PropertyIdValue pid = Datamodel.makeWikidataPropertyIdValue("P38");
-    
+
     public static class ReconStub extends Recon {
+
         public ReconStub(long id, long judgmentHistoryEntry) {
             super(id, judgmentHistoryEntry);
-        }  
+        }
     }
 
     public static Recon makeNewItemRecon(long id) {
@@ -111,12 +127,29 @@ public class TestingData {
         return new ReconPropertyIdValue(makeNewItemRecon(judgmentId), name);
     }
 
+    public static MediaInfoIdValue makeNewMediaInfoIdValue(long judgmentId, String name) {
+        return new ReconMediaInfoIdValue(makeNewItemRecon(judgmentId), name);
+    }
+
     public static ReconPropertyIdValue makeMatchedPropertyIdValue(String pid, String name) {
         return new ReconPropertyIdValue(makeMatchedRecon(pid, name), name);
     }
 
+    public static MediaInfoIdValue makeMatchedMediaInfoIdValue(String mid, String name) {
+        return new ReconMediaInfoIdValue(makeMatchedRecon(mid, name), name);
+    }
+
     public static WbMonolingualExpr getTestMonolingualExpr(String langCode, String langLabel, String text) {
         return new WbMonolingualExpr(new WbLanguageConstant(langCode, langLabel), new WbStringConstant(text));
+    }
+
+    public static Statement generateStatement(EntityIdValue from, PropertyIdValue pid, EntityIdValue to) {
+        Claim claim = Datamodel.makeClaim(from, Datamodel.makeValueSnak(pid, to), Collections.emptyList());
+        return Datamodel.makeStatement(claim, Collections.emptyList(), StatementRank.NORMAL, "");
+    }
+
+    public static Statement generateStatement(EntityIdValue from, EntityIdValue to) {
+        return generateStatement(from, pid, to);
     }
 
     public static Statement generateStatement(ItemIdValue from, PropertyIdValue pid, ItemIdValue to) {
@@ -125,6 +158,15 @@ public class TestingData {
     }
 
     public static Statement generateStatement(ItemIdValue from, ItemIdValue to) {
+        return generateStatement(from, pid, to);
+    }
+
+    public static Statement generateStatement(PropertyIdValue from, PropertyIdValue pid, PropertyIdValue to) {
+        Claim claim = Datamodel.makeClaim(from, Datamodel.makeValueSnak(pid, to), Collections.emptyList());
+        return Datamodel.makeStatement(claim, Collections.emptyList(), StatementRank.NORMAL, "");
+    }
+
+    public static Statement generateStatement(PropertyIdValue from, PropertyIdValue to) {
         return generateStatement(from, pid, to);
     }
 

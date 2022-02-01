@@ -24,6 +24,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  ******************************************************************************/
+
 package com.google.refine.model.changes;
 
 import static org.testng.Assert.assertTrue;
@@ -59,11 +60,9 @@ public class MassChangeTests extends RefineTest {
     }
 
     /**
-     * Test case for #914 - Demonstrates MassChange revert doesn't work by
-     * adding two columns to a project with a MassChange and then reverting.
-     * Without the fix, column "a" will be removed before column "b", causing
-     * column "b" removal to fail because it won't be found at index 1 as
-     * expected.
+     * Test case for #914 - Demonstrates MassChange revert doesn't work by adding two columns to a project with a
+     * MassChange and then reverting. Without the fix, column "a" will be removed before column "b", causing column "b"
+     * removal to fail because it won't be found at index 1 as expected.
      */
     @Test
     public void testWrongReverseOrder()

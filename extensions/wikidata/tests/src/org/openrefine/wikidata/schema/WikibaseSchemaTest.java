@@ -21,6 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  ******************************************************************************/
+
 package org.openrefine.wikidata.schema;
 
 import static org.testng.Assert.assertEquals;
@@ -33,8 +34,8 @@ import java.util.List;
 
 import org.openrefine.wikidata.testing.TestingData;
 import org.openrefine.wikidata.testing.WikidataRefineTest;
-import org.openrefine.wikidata.updates.ItemUpdate;
-import org.openrefine.wikidata.updates.ItemUpdateBuilder;
+import org.openrefine.wikidata.updates.TermedStatementEntityUpdate;
+import org.openrefine.wikidata.updates.TermedStatementEntityUpdateBuilder;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 import org.wikidata.wdtk.datamodel.helpers.Datamodel;
@@ -117,19 +118,19 @@ public class WikibaseSchemaTest extends WikidataRefineTest {
         String serialized = TestingData.jsonFromFile("schema/inception.json");
         WikibaseSchema schema = WikibaseSchema.reconstruct(serialized);
         Engine engine = new Engine(project);
-        List<ItemUpdate> updates = schema.evaluate(project, engine);
-        List<ItemUpdate> expected = new ArrayList<>();
-        ItemUpdate update1 = new ItemUpdateBuilder(qid1).addStatement(statement1).build();
+        List<TermedStatementEntityUpdate> updates = schema.evaluate(project, engine);
+        List<TermedStatementEntityUpdate> expected = new ArrayList<>();
+        TermedStatementEntityUpdate update1 = new TermedStatementEntityUpdateBuilder(qid1).addStatement(statement1).build();
         expected.add(update1);
-        ItemUpdate update2 = new ItemUpdateBuilder(qid2).addStatement(statement2).build();
+        TermedStatementEntityUpdate update2 = new TermedStatementEntityUpdateBuilder(qid2).addStatement(statement2).build();
         expected.add(update2);
         assertEquals(expected, updates);
     }
-    
+
     @Test(expectedExceptions = IOException.class)
     public void testDeserializeEmpty() throws IOException {
         String schemaJson = "{\"itemDocuments\":[{\"statementGroups\":[{\"statements\":[]}],"
-                +"\"nameDescs\":[]}],\"siteIri\":\"http://www.wikidata.org/entity/\"}";
+                + "\"nameDescs\":[]}],\"siteIri\":\"http://www.wikidata.org/entity/\"}";
         WikibaseSchema.reconstruct(schemaJson);
     }
 
@@ -140,7 +141,7 @@ public class WikibaseSchemaTest extends WikidataRefineTest {
         WikibaseSchema schema = WikibaseSchema.reconstruct(serialized);
         Engine engine = new Engine(project);
         EngineConfig engineConfig = EngineConfig.reconstruct("{\n"
-                + "      \"mode\": \"row-based\",\n" 
+                + "      \"mode\": \"row-based\",\n"
                 + "      \"facets\": [\n"
                 + "        {\n"
                 + "          \"mode\": \"text\",\n"
@@ -154,9 +155,9 @@ public class WikibaseSchemaTest extends WikidataRefineTest {
                 + "      ]\n"
                 + "    }");
         engine.initializeFromConfig(engineConfig);
-        List<ItemUpdate> updates = schema.evaluate(project, engine);
-        List<ItemUpdate> expected = new ArrayList<>();
-        ItemUpdate update1 = new ItemUpdateBuilder(qid1).addStatement(statement1).build();
+        List<TermedStatementEntityUpdate> updates = schema.evaluate(project, engine);
+        List<TermedStatementEntityUpdate> expected = new ArrayList<>();
+        TermedStatementEntityUpdate update1 = new TermedStatementEntityUpdateBuilder(qid1).addStatement(statement1).build();
         expected.add(update1);
         assertEquals(expected, updates);
     }

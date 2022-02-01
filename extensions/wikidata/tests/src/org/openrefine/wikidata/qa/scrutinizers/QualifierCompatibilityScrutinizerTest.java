@@ -21,12 +21,13 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  ******************************************************************************/
+
 package org.openrefine.wikidata.qa.scrutinizers;
 
 import org.openrefine.wikidata.qa.ConstraintFetcher;
 import org.openrefine.wikidata.testing.TestingData;
-import org.openrefine.wikidata.updates.ItemUpdate;
-import org.openrefine.wikidata.updates.ItemUpdateBuilder;
+import org.openrefine.wikidata.updates.TermedStatementEntityUpdate;
+import org.openrefine.wikidata.updates.TermedStatementEntityUpdateBuilder;
 import org.testng.annotations.Test;
 import org.wikidata.wdtk.datamodel.helpers.Datamodel;
 import org.wikidata.wdtk.datamodel.interfaces.Claim;
@@ -72,7 +73,7 @@ public class QualifierCompatibilityScrutinizerTest extends StatementScrutinizerT
         Snak mainSnak = Datamodel.makeSomeValueSnak(allowedPropertyIdValue);
         Snak qualifierSnak = Datamodel.makeSomeValueSnak(disallowedQualifierProperty);
         Statement statement = makeStatement(mainSnak, qualifierSnak);
-        ItemUpdate update = new ItemUpdateBuilder(idA).addStatement(statement).build();
+        TermedStatementEntityUpdate update = new TermedStatementEntityUpdateBuilder(idA).addStatement(statement).build();
 
         Snak constraintQualifierSnak = Datamodel.makeValueSnak(propertyParameterPID, propertyParameterValue);
         List<Snak> qualifierList = Collections.singletonList(constraintQualifierSnak);
@@ -93,7 +94,7 @@ public class QualifierCompatibilityScrutinizerTest extends StatementScrutinizerT
         ItemIdValue idA = TestingData.existingId;
         Snak mainSnak = Datamodel.makeSomeValueSnak(mandatoryPropertyIdValue);
         Statement statement = makeStatement(mainSnak);
-        ItemUpdate update = new ItemUpdateBuilder(idA).addStatement(statement).build();
+        TermedStatementEntityUpdate update = new TermedStatementEntityUpdateBuilder(idA).addStatement(statement).build();
 
         Snak constraintQualifierSnak = Datamodel.makeValueSnak(propertyParameterPID, propertyParameterValue);
         List<Snak> qualifierList = Collections.singletonList(constraintQualifierSnak);
@@ -115,7 +116,7 @@ public class QualifierCompatibilityScrutinizerTest extends StatementScrutinizerT
         Snak mainSnak = Datamodel.makeSomeValueSnak(allowedPropertyIdValue);
         Snak qualifierSnak = Datamodel.makeSomeValueSnak(qualifierProperty);
         Statement statement = makeStatement(mainSnak, qualifierSnak);
-        ItemUpdate update = new ItemUpdateBuilder(idA).addStatement(statement).build();
+        TermedStatementEntityUpdate update = new TermedStatementEntityUpdateBuilder(idA).addStatement(statement).build();
 
         Snak constraintQualifierSnak = Datamodel.makeValueSnak(propertyParameterPID, propertyParameterValue);
         List<Snak> qualifierList = Collections.singletonList(constraintQualifierSnak);

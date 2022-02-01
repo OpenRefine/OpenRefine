@@ -1,9 +1,10 @@
+
 package org.openrefine.wikidata.qa.scrutinizers;
 
 import org.openrefine.wikidata.qa.ConstraintFetcher;
 import org.openrefine.wikidata.testing.TestingData;
-import org.openrefine.wikidata.updates.ItemUpdate;
-import org.openrefine.wikidata.updates.ItemUpdateBuilder;
+import org.openrefine.wikidata.updates.TermedStatementEntityUpdate;
+import org.openrefine.wikidata.updates.TermedStatementEntityUpdateBuilder;
 import org.testng.annotations.Test;
 import org.wikidata.wdtk.datamodel.helpers.Datamodel;
 import org.wikidata.wdtk.datamodel.implementation.StatementImpl;
@@ -23,33 +24,32 @@ import java.util.List;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class QuantityScrutinizerTest extends ValueScrutinizerTest{
+public class QuantityScrutinizerTest extends ValueScrutinizerTest {
 
     public static final String NO_BOUNDS_CONSTRAINT_QID = "Q51723761";
     public static final String INTEGER_VALUED_CONSTRAINT_QID = "Q52848401";
     public static final String ALLOWED_UNITS_CONSTRAINT_QID = "Q21514353";
     public static final String ALLOWED_UNITS_CONSTRAINT_PID = "P2305";
-    
+
     private QuantityValue exactValue = Datamodel.makeQuantityValue(
             new BigDecimal("1.234"));
-    
+
     private QuantityValue integerValue = Datamodel.makeQuantityValue(
             new BigDecimal("132"));
-    
+
     private QuantityValue trailingZeros = Datamodel.makeQuantityValue(
             new BigDecimal("132.00"));
-    
+
     private QuantityValue valueWithBounds = Datamodel.makeQuantityValue(
             new BigDecimal("1.234"),
             new BigDecimal("1.200"),
             new BigDecimal("1.545"));
-    
+
     private QuantityValue wrongUnitValue = Datamodel.makeQuantityValue(
             new BigDecimal("1.234"), Datamodel.makeWikidataItemIdValue("Q346721"));
-    
+
     private QuantityValue goodUnitValue = Datamodel.makeQuantityValue(
             new BigDecimal("1.234"), (ItemIdValue) allowedUnit);
-
 
     public static PropertyIdValue propertyIdValue = Datamodel.makeWikidataPropertyIdValue("P1083");
     public static ItemIdValue noBoundsEntity = Datamodel.makeWikidataItemIdValue(NO_BOUNDS_CONSTRAINT_QID);
@@ -62,13 +62,13 @@ public class QuantityScrutinizerTest extends ValueScrutinizerTest{
     public EditScrutinizer getScrutinizer() {
         return new QuantityScrutinizer();
     }
-    
+
     @Test
     public void testBoundsAllowed() {
         ItemIdValue idA = TestingData.existingId;
         Snak mainSnak = Datamodel.makeValueSnak(propertyIdValue, valueWithBounds);
         Statement statement = new StatementImpl("P1083", mainSnak, idA);
-        ItemUpdate update = new ItemUpdateBuilder(idA).addStatement(statement).build();
+        TermedStatementEntityUpdate update = new TermedStatementEntityUpdateBuilder(idA).addStatement(statement).build();
 
         ConstraintFetcher fetcher = mock(ConstraintFetcher.class);
         when(fetcher.getConstraintsByType(propertyIdValue, NO_BOUNDS_CONSTRAINT_QID)).thenReturn(new ArrayList<>());
@@ -77,13 +77,13 @@ public class QuantityScrutinizerTest extends ValueScrutinizerTest{
         scrutinize(update);
         assertNoWarningRaised();
     }
-    
+
     @Test
     public void testBoundsDisallowed() {
         ItemIdValue idA = TestingData.existingId;
         Snak mainSnak = Datamodel.makeValueSnak(propertyIdValue, valueWithBounds);
         Statement statement = new StatementImpl("P1083", mainSnak, idA);
-        ItemUpdate update = new ItemUpdateBuilder(idA).addStatement(statement).build();
+        TermedStatementEntityUpdate update = new TermedStatementEntityUpdateBuilder(idA).addStatement(statement).build();
 
         List<Statement> constraintDefinitions = constraintParameterStatementList(noBoundsEntity, new ArrayList<>());
         ConstraintFetcher fetcher = mock(ConstraintFetcher.class);
@@ -99,7 +99,7 @@ public class QuantityScrutinizerTest extends ValueScrutinizerTest{
         ItemIdValue idA = TestingData.existingId;
         Snak mainSnak = Datamodel.makeValueSnak(propertyIdValue, exactValue);
         Statement statement = new StatementImpl("P1083", mainSnak, idA);
-        ItemUpdate update = new ItemUpdateBuilder(idA).addStatement(statement).build();
+        TermedStatementEntityUpdate update = new TermedStatementEntityUpdateBuilder(idA).addStatement(statement).build();
 
         ConstraintFetcher fetcher = mock(ConstraintFetcher.class);
         when(fetcher.getConstraintsByType(propertyIdValue, INTEGER_VALUED_CONSTRAINT_QID)).thenReturn(new ArrayList<>());
@@ -114,7 +114,7 @@ public class QuantityScrutinizerTest extends ValueScrutinizerTest{
         ItemIdValue idA = TestingData.existingId;
         Snak mainSnak = Datamodel.makeValueSnak(propertyIdValue, exactValue);
         Statement statement = new StatementImpl("P1083", mainSnak, idA);
-        ItemUpdate update = new ItemUpdateBuilder(idA).addStatement(statement).build();
+        TermedStatementEntityUpdate update = new TermedStatementEntityUpdateBuilder(idA).addStatement(statement).build();
 
         List<Statement> constraintDefinitions = constraintParameterStatementList(integerValueEntity, new ArrayList<>());
         ConstraintFetcher fetcher = mock(ConstraintFetcher.class);
@@ -130,7 +130,7 @@ public class QuantityScrutinizerTest extends ValueScrutinizerTest{
         ItemIdValue idA = TestingData.existingId;
         Snak mainSnak = Datamodel.makeValueSnak(propertyIdValue, trailingZeros);
         Statement statement = new StatementImpl("P1083", mainSnak, idA);
-        ItemUpdate update = new ItemUpdateBuilder(idA).addStatement(statement).build();
+        TermedStatementEntityUpdate update = new TermedStatementEntityUpdateBuilder(idA).addStatement(statement).build();
 
         List<Statement> constraintDefinitions = constraintParameterStatementList(integerValueEntity, new ArrayList<>());
         ConstraintFetcher fetcher = mock(ConstraintFetcher.class);
@@ -146,7 +146,7 @@ public class QuantityScrutinizerTest extends ValueScrutinizerTest{
         ItemIdValue idA = TestingData.existingId;
         Snak mainSnak = Datamodel.makeValueSnak(propertyIdValue, integerValue);
         Statement statement = new StatementImpl("P1083", mainSnak, idA);
-        ItemUpdate update = new ItemUpdateBuilder(idA).addStatement(statement).build();
+        TermedStatementEntityUpdate update = new TermedStatementEntityUpdateBuilder(idA).addStatement(statement).build();
 
         List<Statement> constraintDefinitions = constraintParameterStatementList(integerValueEntity, new ArrayList<>());
         ConstraintFetcher fetcher = mock(ConstraintFetcher.class);
@@ -162,7 +162,7 @@ public class QuantityScrutinizerTest extends ValueScrutinizerTest{
         ItemIdValue idA = TestingData.existingId;
         Snak mainSnak = Datamodel.makeValueSnak(propertyIdValue, integerValue);
         Statement statement = new StatementImpl("P1083", mainSnak, idA);
-        ItemUpdate update = new ItemUpdateBuilder(idA).addStatement(statement).build();
+        TermedStatementEntityUpdate update = new TermedStatementEntityUpdateBuilder(idA).addStatement(statement).build();
 
         Snak qualifierSnak = Datamodel.makeValueSnak(itemParameterPID, allowedUnit);
         List<Snak> qualifierSnakList = Collections.singletonList(qualifierSnak);
@@ -182,7 +182,7 @@ public class QuantityScrutinizerTest extends ValueScrutinizerTest{
         ItemIdValue idA = TestingData.existingId;
         Snak mainSnak = Datamodel.makeValueSnak(propertyIdValue, wrongUnitValue);
         Statement statement = new StatementImpl("P1083", mainSnak, idA);
-        ItemUpdate update = new ItemUpdateBuilder(idA).addStatement(statement).build();
+        TermedStatementEntityUpdate update = new TermedStatementEntityUpdateBuilder(idA).addStatement(statement).build();
 
         Snak qualifierSnak = Datamodel.makeValueSnak(itemParameterPID, allowedUnit);
         List<Snak> qualifierSnakList = Collections.singletonList(qualifierSnak);
@@ -202,7 +202,7 @@ public class QuantityScrutinizerTest extends ValueScrutinizerTest{
         ItemIdValue idA = TestingData.existingId;
         Snak mainSnak = Datamodel.makeValueSnak(propertyIdValue, goodUnitValue);
         Statement statement = new StatementImpl("P1083", mainSnak, idA);
-        ItemUpdate update = new ItemUpdateBuilder(idA).addStatement(statement).build();
+        TermedStatementEntityUpdate update = new TermedStatementEntityUpdateBuilder(idA).addStatement(statement).build();
 
         Snak qualifierSnak = Datamodel.makeValueSnak(itemParameterPID, allowedUnit);
         List<Snak> qualifierSnakList = Collections.singletonList(qualifierSnak);
@@ -222,7 +222,7 @@ public class QuantityScrutinizerTest extends ValueScrutinizerTest{
         ItemIdValue idA = TestingData.existingId;
         Snak mainSnak = Datamodel.makeValueSnak(propertyIdValue, goodUnitValue);
         Statement statement = new StatementImpl("P1083", mainSnak, idA);
-        ItemUpdate update = new ItemUpdateBuilder(idA).addStatement(statement).build();
+        TermedStatementEntityUpdate update = new TermedStatementEntityUpdateBuilder(idA).addStatement(statement).build();
 
         List<Statement> constraintDefinitions = constraintParameterStatementList(allowedUnitEntity, new ArrayList<>());
         ConstraintFetcher fetcher = mock(ConstraintFetcher.class);
@@ -238,7 +238,7 @@ public class QuantityScrutinizerTest extends ValueScrutinizerTest{
         ItemIdValue idA = TestingData.existingId;
         Snak mainSnak = Datamodel.makeValueSnak(propertyIdValue, integerValue);
         Statement statement = new StatementImpl("P1083", mainSnak, idA);
-        ItemUpdate update = new ItemUpdateBuilder(idA).addStatement(statement).build();
+        TermedStatementEntityUpdate update = new TermedStatementEntityUpdateBuilder(idA).addStatement(statement).build();
 
         ConstraintFetcher fetcher = mock(ConstraintFetcher.class);
         when(fetcher.getConstraintsByType(propertyIdValue, ALLOWED_UNITS_CONSTRAINT_QID)).thenReturn(new ArrayList<>());

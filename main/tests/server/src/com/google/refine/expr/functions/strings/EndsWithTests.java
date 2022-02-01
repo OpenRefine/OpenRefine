@@ -24,6 +24,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  ******************************************************************************/
+
 package com.google.refine.expr.functions.strings;
 
 import static org.testng.Assert.assertFalse;
@@ -35,10 +36,10 @@ import com.google.refine.RefineTest;
 import com.google.refine.util.TestUtils;
 
 public class EndsWithTests extends RefineTest {
+
     @Test
     public void testStartsWith() {
         assertTrue((Boolean) invoke("endsWith", "testString", "ing"));
         assertFalse((Boolean) invoke("startsWith", "testString", "banana"));
     }
 }
-

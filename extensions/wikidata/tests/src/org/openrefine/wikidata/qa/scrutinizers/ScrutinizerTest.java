@@ -21,6 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  ******************************************************************************/
+
 package org.openrefine.wikidata.qa.scrutinizers;
 
 import org.openrefine.wikidata.manifests.Manifest;
@@ -30,7 +31,7 @@ import org.openrefine.wikidata.qa.ConstraintFetcher;
 import org.openrefine.wikidata.qa.QAWarning;
 import org.openrefine.wikidata.qa.QAWarningStore;
 import org.openrefine.wikidata.testing.TestingData;
-import org.openrefine.wikidata.updates.ItemUpdate;
+import org.openrefine.wikidata.updates.TermedStatementEntityUpdate;
 import org.testng.annotations.BeforeMethod;
 import org.wikidata.wdtk.datamodel.helpers.Datamodel;
 import org.wikidata.wdtk.datamodel.interfaces.Claim;
@@ -82,10 +83,10 @@ public abstract class ScrutinizerTest {
         scrutinizer.prepareDependencies();
     }
 
-    public void scrutinize(ItemUpdate... updates) {
+    public void scrutinize(TermedStatementEntityUpdate... updates) {
         scrutinizer.batchIsBeginning();
-        for(ItemUpdate update : Arrays.asList(updates)) {
-            if(!update.isNull()) {
+        for (TermedStatementEntityUpdate update : Arrays.asList(updates)) {
+            if (!update.isNull()) {
                 scrutinizer.scrutinize(update);
             }
         }
@@ -114,14 +115,15 @@ public abstract class ScrutinizerTest {
 
     public List<Statement> constraintParameterStatementList(ItemIdValue itemIdValue, List<SnakGroup> listSnakGroup) {
         PropertyIdValue propertyIdValue = Datamodel.makeWikidataPropertyIdValue("P2302");
-        Snak snakValue = Datamodel.makeValueSnak(propertyIdValue,itemIdValue);
+        Snak snakValue = Datamodel.makeValueSnak(propertyIdValue, itemIdValue);
 
         Claim claim = Datamodel.makeClaim(itemIdValue, snakValue, listSnakGroup);
 
         Reference reference = Datamodel.makeReference(listSnakGroup);
         List<Reference> referenceList = Collections.singletonList(reference);
 
-        Statement statement = Datamodel.makeStatement(claim, referenceList, StatementRank.NORMAL, "P2302$77BD7FE4-C051-4776-855C-543F0CE697D0");
+        Statement statement = Datamodel.makeStatement(claim, referenceList, StatementRank.NORMAL,
+                "P2302$77BD7FE4-C051-4776-855C-543F0CE697D0");
         List<Statement> statements = Collections.singletonList(statement);
 
         return statements;

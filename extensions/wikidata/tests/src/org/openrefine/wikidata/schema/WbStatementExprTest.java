@@ -21,6 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  ******************************************************************************/
+
 package org.openrefine.wikidata.schema;
 
 import org.testng.Assert;
@@ -36,8 +37,8 @@ import org.openrefine.wikidata.testing.JacksonSerializationTest;
 import org.testng.annotations.Test;
 import org.wikidata.wdtk.datamodel.helpers.Datamodel;
 import org.wikidata.wdtk.datamodel.interfaces.Claim;
+import org.wikidata.wdtk.datamodel.interfaces.EntityIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.GlobeCoordinatesValue;
-import org.wikidata.wdtk.datamodel.interfaces.ItemIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.PropertyIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.Reference;
 import org.wikidata.wdtk.datamodel.interfaces.Snak;
@@ -63,15 +64,17 @@ public class WbStatementExprTest extends WbExpressionTest<Statement> {
             Arrays.asList(qualifierExpr, constantQualifierExpr),
             Collections.singletonList(refExpr));
 
-    public ItemIdValue subject = Datamodel.makeWikidataItemIdValue("Q23");
+    public EntityIdValue subject = Datamodel.makeWikidataItemIdValue("Q23");
     private PropertyIdValue property = Datamodel.makeWikidataPropertyIdValue("P908");
     private Reference reference = Datamodel.makeReference(Collections.singletonList(Datamodel.makeSnakGroup(
             Collections.singletonList(Datamodel.makeValueSnak(Datamodel.makeWikidataPropertyIdValue("P43"),
                     Datamodel.makeWikidataItemIdValue("Q3434"))))));
     private Snak qualifier = Datamodel.makeValueSnak(Datamodel.makeWikidataPropertyIdValue("P897"),
-            Datamodel.makeTimeValue(2010, (byte) 7, (byte) 23, (byte) 0, (byte) 0, (byte) 0, (byte) 11, 0, 0, 0, TimeValue.CM_GREGORIAN_PRO));
+            Datamodel.makeTimeValue(2010, (byte) 7, (byte) 23, (byte) 0, (byte) 0, (byte) 0, (byte) 11, 0, 0, 0,
+                    TimeValue.CM_GREGORIAN_PRO));
     private Snak constantQualifier = Datamodel.makeValueSnak(Datamodel.makeWikidataPropertyIdValue("P897"),
-            Datamodel.makeTimeValue(2018, (byte) 4, (byte) 5, (byte) 0, (byte) 0, (byte) 0, (byte) 11, 0, 0, 0, TimeValue.CM_GREGORIAN_PRO));
+            Datamodel.makeTimeValue(2018, (byte) 4, (byte) 5, (byte) 0, (byte) 0, (byte) 0, (byte) 11, 0, 0, 0,
+                    TimeValue.CM_GREGORIAN_PRO));
     private Snak mainsnak = Datamodel.makeValueSnak(property, Datamodel.makeGlobeCoordinatesValue(3.898, 4.389,
             WbLocationConstant.defaultPrecision, GlobeCoordinatesValue.GLOBE_EARTH));
     private Claim fullClaim = Datamodel.makeClaim(subject, mainsnak,
@@ -118,7 +121,7 @@ public class WbStatementExprTest extends WbExpressionTest<Statement> {
         setRow(recon("Q3434"), "2010-07-23", "3.898,4.389");
         evaluatesTo(fullStatement, new Wrapper(statementExpr));
     }
-    
+
     @Test
     public void testEvaluateWithConstant() {
         setRow(recon("Q3434"), "2010-07-23", "3.898,4.389");

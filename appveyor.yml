@@ -43,7 +43,7 @@ before_test:
     copy packaging\test_pom.xml packaging\pom.xml
 - cmd: |-
     mvn process-resources
-    mvn install -DskipTests=true -Dmaven.javadoc.skip=true -B -V
+    mvn package -DskipTests=true -Dmaven.javadoc.skip=true -B -V
 
 test_script:
 - cmd: echo Running test_script...
