@@ -276,7 +276,7 @@ public class TemplatingExporterTests extends RefineTest {
         } catch (IOException e) {
             Assert.fail();
         }
-        System.out.println(writer.toString());
+       
         Assert.assertEquals(writer.toString(),
                 prefix
                         + rowPrefix + "}}" + cellSeparator + "}}" + rowSeparator
