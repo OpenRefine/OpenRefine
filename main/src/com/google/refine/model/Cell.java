@@ -60,7 +60,7 @@ public class Cell implements HasFields {
     @JsonIgnore
     final public Serializable   value;
     @JsonIgnore
-    final public Recon          recon;
+    final public Recon recon;
     
     public Cell(Serializable value, Recon recon) {
         this.value = value;
@@ -124,12 +124,11 @@ public class Cell implements HasFields {
                 return ((Float)value).toString();
             } else if (value instanceof Boolean || value instanceof Number){
                 return value;
-            } else {
-                return value.toString();
-            }
-        } else {
-           return null;
+            } 
+            return value.toString();   
         }
+        return null;
+        
     }
     
     /**
