@@ -110,31 +110,30 @@ Once you have downloaded the `.dmg` file, open it and drag the OpenRefine icon o
 
 The quick version:
 
-1. Install [Homebrew](http://brew.sh)
+1. Install [Homebrew](https://brew.sh)
 2. In Terminal enter ` brew cask install openrefine`
 1. Then find OpenRefine in your Applications folder.
 
 The long version:
 
-[Homebrew](http://brew.sh) is a popular command-line package manager for Mac. Installing Homebrew is accomplished by pasting the installation command on the Homebrew website into a Terminal window. Once Homebrew is installed, applications like OpenRefine can be installed via a simple command. You can [install Homebrew from their website](http://brew.sh).
+[Homebrew](https://brew.sh) is a popular command-line package manager for Mac. Installing Homebrew is accomplished by pasting the installation command on the Homebrew website into a Terminal window. Once Homebrew is installed, applications like OpenRefine can be installed via a simple command. You can [install Homebrew from their website](https://brew.sh).
 
 ###### Install {#install}
 
 Install OpenRefine with this command:
 
 ```
-brew cask install openrefine
+brew install --cask openrefine
 ```
 
 You should see output like this:
 
 ```
-==> Downloading https://github.com/OpenRefine/OpenRefine/releases/download/2.7/openrefine-mac-2.7.dmg
-########################### 100.0%
-  ==> Verifying checksum for Cask openrefine
-  ==> Installing Cask openrefine
-  ==> Moving App 'OpenRefine.app' to '/Applications/OpenRefine.app'.
-  🍺  openrefine was successfully installed!
+==> Downloading https://github.com/OpenRefine/OpenRefine/releases/download/3.4.1/openrefine-mac-3.4.1.dmg
+######################################################################## 100.0%
+==> Installing Cask openrefine
+==> Moving App 'OpenRefine.app' to '/Applications/OpenRefine.app'
+🍺  openrefine was successfully installed!
 ```
 
 Behind the scenes, this command causes Homebrew to download the OpenRefine installer, verify the file’s authenticity (using a SHA-256 checksum), mount the disk image, copy the `OpenRefine.app` application bundle into the Applications folder, unmount the disk image, and save a copy of the installer and metadata about the installation for future use.
@@ -146,39 +145,47 @@ If an existing `OpenRefine.app` is found in the Applications folder, Homebrew wi
 To uninstall OpenRefine, paste this command into the Terminal:
 
 ```
- brew cask uninstall openrefine
+brew uninstall --cask openrefine
 ```
 
 You should see output like this:
 
 ```
- ==> Removing App '/Applications/OpenRefine.app'.
+==> Uninstalling Cask openrefine
+==> Backing App 'OpenRefine.app' up to '/usr/local/Caskroom/openrefine/3.4.1/OpenRefine.app'
+==> Removing App '/Applications/OpenRefine.app'
+==> Purging files for version 3.4.1 of Cask openrefine
 ```
 
 ###### Update {#update}
 
-To update to the latest version of OpenRefine, paste this command into the Terminal:
+To update to the latest version of OpenRefine, paste these two commands into the Terminal:
 
 ```
- brew cask reinstall openrefine
+brew update
+brew upgrade
 ```
 
 You should see output like this:
 
 ```
- ==> Downloading https://github.com/OpenRefine/OpenRefine/releases/download/2.7/openrefine-mac-2.7.dmg
-########################### 100.0%
-  ==> Verifying checksum for Cask openrefine
-  ==> Removing App '/Applications/OpenRefine.app'.
-  ==> Moving App 'OpenRefine.app' to '/Applications/OpenRefine.app'.
-  🍺  openrefine was successfully installed!
+==> Upgrading 1 outdated package:
+openrefine 3.4.0-> 3.4.1
+==> Upgrading openrefine
+==> Downloading https://github.com/OpenRefine/OpenRefine/releases/download/3.4.1/openrefine-mac-3.4.1.dmg
+######################################################################## 100.0%
+==> Backing App 'OpenRefine.app' up to '/usr/local/Caskroom/openrefine/3.4.0/OpenRefine.app'
+==> Removing App '/Applications/OpenRefine.app'
+==> Installing Cask openrefine
+==> Moving App 'OpenRefine.app' to '/Applications/OpenRefine.app'
+🍺  openrefine was successfully upgraded!
 ```
 
 If you had previously installed the `openrefine-dev` cask (containing a release candidate) and you want to move to the stable release, you need to first uninstall the old cask and then install the new one:
 
 ```
- brew cask uninstall openrefine-dev
- brew cask install openrefine
+brew uninstall --cask openrefine-dev
+brew install --cask openrefine
 ```
 </TabItem>
 
