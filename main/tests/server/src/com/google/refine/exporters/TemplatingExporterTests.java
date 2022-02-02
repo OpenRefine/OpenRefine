@@ -255,10 +255,10 @@ public class TemplatingExporterTests extends RefineTest {
                         + rowPrefix + "null" + cellSeparator + "row1cell1"
                         + suffix);
     }
-   
-     /** 
-     * Testing that curly braces are properly escaped.
-     * CS427 Issue Link: https://github.com/OpenRefine/OpenRefine/issues/3381
+
+    /**
+     * Testing that curly braces are properly escaped. CS427 Issue Link:
+     * https://github.com/OpenRefine/OpenRefine/issues/3381
      */
     @Test
     public void exportTemplateWithProperEscaping() {
@@ -273,7 +273,7 @@ public class TemplatingExporterTests extends RefineTest {
         } catch (IOException e) {
             Assert.fail();
         }
-       
+
         Assert.assertEquals(writer.toString(),
                 prefix
                         + rowPrefix + "}}" + cellSeparator + "}}" + rowSeparator
