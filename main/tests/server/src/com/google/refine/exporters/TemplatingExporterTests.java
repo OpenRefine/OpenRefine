@@ -263,14 +263,11 @@ public class TemplatingExporterTests extends RefineTest {
     @Test
     public void exportTemplateWithProperEscaping() {
         CreateGrid(2, 2);
-
         String template = rowPrefix + "{{\"\\}\\}\"}}" + cellSeparator + "{{\"\\}\\}\"}}";
-
         when(options.getProperty("template")).thenReturn(template);
         when(options.getProperty("prefix")).thenReturn(prefix);
         when(options.getProperty("suffix")).thenReturn(suffix);
         when(options.getProperty("separator")).thenReturn(rowSeparator);
-
         try {
             SUT.export(project, options, engine, writer);
         } catch (IOException e) {
