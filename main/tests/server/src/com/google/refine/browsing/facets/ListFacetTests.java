@@ -89,6 +89,7 @@ public class ListFacetTests extends RefineTest {
     @Test
     public void serializeListFacetConfig() throws JsonParseException, JsonMappingException, IOException {
         ListFacetConfig facetConfig = ParsingUtilities.mapper.readValue(jsonConfig, ListFacetConfig.class);
+        System.out.println(jsonConfig);
         TestUtils.isSerializedTo(facetConfig, jsonConfig);
     }
 
@@ -102,6 +103,7 @@ public class ListFacetTests extends RefineTest {
         ListFacetConfig facetConfig = ParsingUtilities.mapper.readValue(jsonConfig, ListFacetConfig.class);
 
         Facet facet = facetConfig.apply(project);
+        System.out.println("facet: " + facet);
         facet.computeChoices(project, engine.getAllFilteredRows());
 
         TestUtils.isSerializedTo(facet, jsonFacet);

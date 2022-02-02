@@ -121,6 +121,7 @@ public class TextSearchFacetTests extends RefineTest {
         configureFilter(filter);
 
         // Check each row in the project against the filter
+        // The result of rowIndex=1 is false because "b" doesn't contain query=a
         Assert.assertEquals(rowfilter.filterRow(project, 0, project.rows.get(0)), true);
         Assert.assertEquals(rowfilter.filterRow(project, 1, project.rows.get(1)), false);
         Assert.assertEquals(rowfilter.filterRow(project, 2, project.rows.get(2)), true);
@@ -145,7 +146,6 @@ public class TextSearchFacetTests extends RefineTest {
                 + "\"query\":\"a\"}";
 
         configureFilter(filter);
-
         // Check each row in the project against the filter
         Assert.assertEquals(rowfilter.filterRow(project, 0, project.rows.get(0)), false);
         Assert.assertEquals(rowfilter.filterRow(project, 1, project.rows.get(1)), true);
@@ -170,6 +170,7 @@ public class TextSearchFacetTests extends RefineTest {
                 + "\"invert\":false,"
                 + "\"query\":\"[bc]\"}";
 
+        // Apply filter to query text including b&c
         configureFilter(filter);
 
         // Check each row in the project against the filter

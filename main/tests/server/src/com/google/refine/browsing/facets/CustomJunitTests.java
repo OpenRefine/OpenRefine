@@ -90,13 +90,6 @@ public class CustomJunitTests extends CustomRefineTest {
 
     @BeforeEach
     public void setUp() throws IOException, ModelException {
-//        project = createCSVProject("TextSearchFacet",
-//                "Value\n"
-//                        + "a\n"
-//                        + "b\n"
-//                        + "ab\n"
-//                        + "Abc\n");
-
         project = createCSVProject("TextSearchFacet",
                 "Value\n"
                         + "^&*\n"
@@ -173,7 +166,7 @@ public class CustomJunitTests extends CustomRefineTest {
 
     @Test
     public void testRegExFilter() throws Exception {
-        // Apply regular expression filter "[bc]"
+        // Apply regular expression filter "[^0-9^a-z^A-Z^ ]"
 
         // Column: "Value"
         // Filter Query: "[bc]"
