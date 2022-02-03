@@ -1,12 +1,14 @@
 package org.openrefine.wikidata.manifests;
 
-import com.fasterxml.jackson.databind.JsonNode;
-
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
-import org.wikidata.wdtk.wikibaseapi.ApiConnection;
+import org.wikidata.wdtk.datamodel.interfaces.EntityIdValue;
+
+import com.fasterxml.jackson.databind.JsonNode;
 
 public class ManifestV1 implements Manifest {
 
@@ -101,5 +103,31 @@ public class ManifestV1 implements Manifest {
     public String getEditGroupsUrlSchema() {
         return editGroupsUrlSchema;
     }
+
+	@Override
+	public String getReconServiceEndpoint(String entityType) {
+		if (ITEM_TYPE.equals(entityType)) {
+			return reconServiceEndpoint;
+		}
+		return null;
+	}
+
+	@Override
+	public String getEntityTypeSiteIri(String entityType) {
+		if (ITEM_TYPE.equals(entityType) || PROPERTY_TYPE.equals(entityType)) {
+			return siteIri;
+		}
+		return null;
+	}
+	
+	@Override
+	public String getMediaWikiApiEndpoint(String entityType) {
+		return getMediaWikiApiEndpoint();
+	}
+
+	@Override
+	public List<String> getAvailableEntityTypes() {
+		return Arrays.asList(ITEM_TYPE, PROPERTY_TYPE);
+	}
 
 }

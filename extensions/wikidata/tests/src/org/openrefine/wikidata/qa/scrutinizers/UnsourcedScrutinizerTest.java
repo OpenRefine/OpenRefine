@@ -21,12 +21,13 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  ******************************************************************************/
+
 package org.openrefine.wikidata.qa.scrutinizers;
 
 import org.openrefine.wikidata.qa.ConstraintFetcher;
 import org.openrefine.wikidata.testing.TestingData;
 import org.openrefine.wikidata.updates.TermedStatementEntityUpdate;
-import org.openrefine.wikidata.updates.ItemUpdateBuilder;
+import org.openrefine.wikidata.updates.TermedStatementEntityUpdateBuilder;
 import org.testng.annotations.Test;
 import org.wikidata.wdtk.datamodel.helpers.Datamodel;
 import org.wikidata.wdtk.datamodel.implementation.StatementImpl;
@@ -72,7 +73,7 @@ public class UnsourcedScrutinizerTest extends StatementScrutinizerTest {
         ItemIdValue id = TestingData.existingId;
         Snak mainSnak = Datamodel.makeSomeValueSnak(propertyIdValue);
         Statement statement = new StatementImpl("P172", mainSnak, id);
-        TermedStatementEntityUpdate update = new ItemUpdateBuilder(id).addStatement(statement).build();
+        TermedStatementEntityUpdate update = new TermedStatementEntityUpdateBuilder(id).addStatement(statement).build();
 
         List<Statement> constraintDefinitions = constraintParameterStatementList(entityIdValue, Collections.emptyList());
         ConstraintFetcher fetcher = mock(ConstraintFetcher.class);
@@ -90,7 +91,7 @@ public class UnsourcedScrutinizerTest extends StatementScrutinizerTest {
         List<SnakGroup> constraintQualifiers = makeSnakGroupList(referenceSnak);
         List<Statement> itemStatementList = constraintParameterStatementList(entityIdValue, constraintQualifiers);
         Statement statement = itemStatementList.get(0);
-        TermedStatementEntityUpdate update = new ItemUpdateBuilder(id).addStatement(statement).build();
+        TermedStatementEntityUpdate update = new TermedStatementEntityUpdateBuilder(id).addStatement(statement).build();
 
         List<Statement> constraintDefinitions = constraintParameterStatementList(entityIdValue, Collections.emptyList());
         ConstraintFetcher fetcher = mock(ConstraintFetcher.class);

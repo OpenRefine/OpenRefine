@@ -21,6 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  ******************************************************************************/
+
 package org.openrefine.wikidata.updates.scheduler;
 
 import static org.testng.Assert.assertEquals;
@@ -32,7 +33,7 @@ import java.util.stream.Collectors;
 
 import org.openrefine.wikidata.testing.TestingData;
 import org.openrefine.wikidata.updates.TermedStatementEntityUpdate;
-import org.openrefine.wikidata.updates.ItemUpdateBuilder;
+import org.openrefine.wikidata.updates.TermedStatementEntityUpdateBuilder;
 import org.testng.annotations.Test;
 import org.wikidata.wdtk.datamodel.helpers.Datamodel;
 import org.wikidata.wdtk.datamodel.interfaces.ItemIdValue;
@@ -67,17 +68,17 @@ public abstract class UpdateSchedulerTest {
     @Test
     public void testNewItemNotMentioned()
             throws ImpossibleSchedulingException {
-    	TermedStatementEntityUpdate updateA = new ItemUpdateBuilder(existingIdA).addStatement(sAtoNewA).build();
+        TermedStatementEntityUpdate updateA = new TermedStatementEntityUpdateBuilder(existingIdA).addStatement(sAtoNewA).build();
         List<TermedStatementEntityUpdate> scheduled = schedule(updateA);
-        TermedStatementEntityUpdate newUpdate = new ItemUpdateBuilder(newIdA).build();
+        TermedStatementEntityUpdate newUpdate = new TermedStatementEntityUpdateBuilder(newIdA).build();
         assertEquals(Arrays.asList(newUpdate, updateA), scheduled);
     }
 
     @Test
     public void testNewItemMentioned()
             throws ImpossibleSchedulingException {
-    	TermedStatementEntityUpdate updateA = new ItemUpdateBuilder(existingIdA).addStatement(sAtoNewA).build();
-    	TermedStatementEntityUpdate newUpdate = new ItemUpdateBuilder(newIdA).addStatement(sNewAtoB).build();
+        TermedStatementEntityUpdate updateA = new TermedStatementEntityUpdateBuilder(existingIdA).addStatement(sAtoNewA).build();
+        TermedStatementEntityUpdate newUpdate = new TermedStatementEntityUpdateBuilder(newIdA).addStatement(sNewAtoB).build();
         List<TermedStatementEntityUpdate> scheduled = schedule(updateA, newUpdate);
         assertEquals(Arrays.asList(newUpdate, updateA), scheduled);
     }
@@ -85,8 +86,8 @@ public abstract class UpdateSchedulerTest {
     @Test
     public void testMerge()
             throws ImpossibleSchedulingException {
-    	TermedStatementEntityUpdate update1 = new ItemUpdateBuilder(existingIdA).addStatement(sAtoB).build();
-        TermedStatementEntityUpdate update2 = new ItemUpdateBuilder(existingIdA)
+        TermedStatementEntityUpdate update1 = new TermedStatementEntityUpdateBuilder(existingIdA).addStatement(sAtoB).build();
+        TermedStatementEntityUpdate update2 = new TermedStatementEntityUpdateBuilder(existingIdA)
                 .addLabel(Datamodel.makeMonolingualTextValue("hello", "fr"), true).addStatement(sAtoB).build();
         TermedStatementEntityUpdate merged = update1.merge(update2);
         assertEquals(Collections.singletonList(merged), schedule(update1, update2));
@@ -95,11 +96,13 @@ public abstract class UpdateSchedulerTest {
     @Test
     public void testMergeNew()
             throws ImpossibleSchedulingException {
-    	TermedStatementEntityUpdate update1 = new ItemUpdateBuilder(newIdA).addLabel(Datamodel.makeMonolingualTextValue("hello", "fr"), true)
+        TermedStatementEntityUpdate update1 = new TermedStatementEntityUpdateBuilder(newIdA)
+                .addLabel(Datamodel.makeMonolingualTextValue("hello", "fr"), true)
                 .addStatement(sNewAtoB).build();
-    	TermedStatementEntityUpdate update2 = new ItemUpdateBuilder(newIdA).addLabel(Datamodel.makeMonolingualTextValue("hello", "fr"), true)
+        TermedStatementEntityUpdate update2 = new TermedStatementEntityUpdateBuilder(newIdA)
+                .addLabel(Datamodel.makeMonolingualTextValue("hello", "fr"), true)
                 .build();
-    	TermedStatementEntityUpdate merged = update1.merge(update2);
+        TermedStatementEntityUpdate merged = update1.merge(update2);
         assertEquals(Collections.singletonList(merged), schedule(update1, update2));
     }
 }

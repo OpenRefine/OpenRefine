@@ -21,6 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  ******************************************************************************/
+
 package org.openrefine.wikidata.schema;
 
 import java.util.Collections;
@@ -98,6 +99,7 @@ public class WbEntityVariableTest extends WbVariableTest<EntityIdValue> {
         recon.identifierSpace = "http://my.own.wikiba.se/";
         recon.candidates = Collections.singletonList(new ReconCandidate("Q123", "some item", null, 100.0));
         recon.judgment = Recon.Judgment.Matched;
+        recon.match = recon.candidates.get(0);
         Cell cell = new Cell("some value", recon);
         isSkipped(cell);
     }

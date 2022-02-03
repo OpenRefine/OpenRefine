@@ -1,4 +1,5 @@
-@echo off
+
+
 rem
 rem Configuration variables
 rem
@@ -44,6 +45,9 @@ echo     default: 1400M
 echo.
 echo  "/x" enable JMX monitoring (for jconsole and friends)
 echo.
+echo  "/c <path>" path to the refine.ini file
+echo     default .\refine.ini
+echo.
 echo "and <action> is one of
 echo.
 echo   build ..................... Build OpenRefine
@@ -65,22 +69,7 @@ goto end
 
 :endUtils
 
-rem --- Read ini file -----------------------------------------------
-
 set OPTS=
-
-if exist refine-dev.ini goto readDevConfig
-echo Using refine.ini for configuration
-for /f "tokens=1,* delims==" %%a in (refine.ini) do (
-    set %%a=%%b
-)
-goto endConfigReading
-
-:readDevConfig
-echo Using refine-dev.ini for configuration
-for /f "tokens=1,* delims==" %%a in (refine-dev.ini) do (
-    set %%a=%%b
-)
 
 :endConfigReading
 
@@ -100,7 +89,7 @@ goto fail
 rem --- Argument parsing --------------------------------------------
 
 :loop
-if ""%1"" == """" goto endArgumentParsing
+if ""%1"" == """" goto readIniFile
 if ""%1"" == ""/?"" goto usage
 if ""%1"" == ""/h"" goto usage
 if ""%1"" == ""/p"" goto arg-p
@@ -110,7 +99,8 @@ if ""%1"" == ""/w"" goto arg-w
 if ""%1"" == ""/d"" goto arg-d
 if ""%1"" == ""/m"" goto arg-m
 if ""%1"" == ""/x"" goto arg-x
-goto endArgumentParsing
+if ""%1"" == ""/c"" goto arg-c
+goto readIniFile
 
 :arg-p
 set REFINE_PORT=%2
@@ -141,10 +131,28 @@ goto shift2loop
 set OPTS=%OPTS% -Dcom.sun.management.jmxremote
 goto shift2loop
 
+:arg-c
+set REFINE_INI_PATH=%~2
+goto shift2loop
+
 :shift2loop
 shift
 shift
 goto loop
+
+:readIniFile
+
+rem --- Read ini file -----------------------------------------------
+
+if "%REFINE_INI_PATH%" == "" set REFINE_INI_PATH=refine.ini
+if not exist %REFINE_INI_PATH% (
+	echo The system cannot find the file %REFINE_INI_PATH%
+	exit /B 1
+)
+echo Using %REFINE_INI_PATH% for configuration
+for /f "tokens=1,* delims==" %%a in (%REFINE_INI_PATH%) do (
+    set %%a=%%b
+)
 
 :endArgumentParsing
 

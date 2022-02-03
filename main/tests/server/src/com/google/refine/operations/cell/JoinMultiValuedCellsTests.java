@@ -50,9 +50,8 @@ import com.google.refine.process.Process;
 import com.google.refine.util.ParsingUtilities;
 import com.google.refine.util.TestUtils;
 
-
 public class JoinMultiValuedCellsTests extends RefineTest {
-    
+
     Project project;
 
     @Override
@@ -60,22 +59,22 @@ public class JoinMultiValuedCellsTests extends RefineTest {
     public void init() {
         logger = LoggerFactory.getLogger(this.getClass());
     }
-    
+
     @BeforeSuite
     public void registerOperation() {
         OperationRegistry.registerOperation(getCoreModule(), "multivalued-cell-join", MultiValuedCellJoinOperation.class);
     }
-    
+
     @BeforeMethod
     public void createProject() {
         project = createCSVProject(
                 "Key,Value\n"
-                + "Record_1,one\n"
-                + ",two\n"
-                + ",three\n"
-                + ",four\n");
+                        + "Record_1,one\n"
+                        + ",two\n"
+                        + ",three\n"
+                        + ",four\n");
     }
-    
+
     @Test
     public void serializeMultiValuedCellJoinOperation() throws Exception {
         String json = "{\"op\":\"core/multivalued-cell-join\","
@@ -85,7 +84,6 @@ public class JoinMultiValuedCellsTests extends RefineTest {
                 + "\"separator\":\",\"}";
         TestUtils.isSerializedTo(ParsingUtilities.mapper.readValue(json, MultiValuedCellJoinOperation.class), json);
     }
-    
 
     /*
      * Test to demonstrate the intended behaviour of the function
@@ -94,15 +92,15 @@ public class JoinMultiValuedCellsTests extends RefineTest {
     @Test
     public void testJoinMultiValuedCells() throws Exception {
         AbstractOperation op = new MultiValuedCellJoinOperation(
-            "Value",
-            "Key",
-            ",");
+                "Value",
+                "Key",
+                ",");
         Process process = op.createProcess(project, new Properties());
         process.performImmediate();
 
         int keyCol = project.columnModel.getColumnByName("Key").getCellIndex();
         int valueCol = project.columnModel.getColumnByName("Value").getCellIndex();
-        
+
         Assert.assertEquals(project.rows.get(0).getCellValue(keyCol), "Record_1");
         Assert.assertEquals(project.rows.get(0).getCellValue(valueCol), "one,two,three,four");
     }
@@ -110,19 +108,17 @@ public class JoinMultiValuedCellsTests extends RefineTest {
     @Test
     public void testJoinMultiValuedCellsMultipleSpaces() throws Exception {
         AbstractOperation op = new MultiValuedCellJoinOperation(
-            "Value",
-            "Key",
-            ",     ,");
+                "Value",
+                "Key",
+                ",     ,");
         Process process = op.createProcess(project, new Properties());
         process.performImmediate();
 
         int keyCol = project.columnModel.getColumnByName("Key").getCellIndex();
         int valueCol = project.columnModel.getColumnByName("Value").getCellIndex();
-        
+
         Assert.assertEquals(project.rows.get(0).getCellValue(keyCol), "Record_1");
         Assert.assertEquals(project.rows.get(0).getCellValue(valueCol), "one,     ,two,     ,three,     ,four");
     }
 
-
 }
-

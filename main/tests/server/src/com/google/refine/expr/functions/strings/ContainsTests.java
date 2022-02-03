@@ -24,6 +24,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  ******************************************************************************/
+
 package com.google.refine.expr.functions.strings;
 
 import java.util.regex.Pattern;
@@ -50,16 +51,15 @@ public class ContainsTests extends RefineTest {
     @Test
     public void testContainsFunction() {
         String value = "rose is a rose";
-        Assert.assertEquals(invoke("contains", value, "rose"),true);
+        Assert.assertEquals(invoke("contains", value, "rose"), true);
 
         // Test if it does not interpret regex passed in String as Pattern
-        Assert.assertEquals(invoke("contains", value, "$"),false);
-        Assert.assertEquals(invoke("contains", value, "r.se"),false);
-        Assert.assertEquals(invoke("contains", value, "\\s+"),false);
+        Assert.assertEquals(invoke("contains", value, "$"), false);
+        Assert.assertEquals(invoke("contains", value, "r.se"), false);
+        Assert.assertEquals(invoke("contains", value, "\\s+"), false);
         // Input regex pattern in UI with : "/ /" , is interpreted as Pattern
-        Assert.assertEquals(invoke("contains", value, Pattern.compile("$")),true);
-        Assert.assertEquals(invoke("contains", value, Pattern.compile("\\s+")),true);
+        Assert.assertEquals(invoke("contains", value, Pattern.compile("$")), true);
+        Assert.assertEquals(invoke("contains", value, Pattern.compile("\\s+")), true);
     }
 
 }
-

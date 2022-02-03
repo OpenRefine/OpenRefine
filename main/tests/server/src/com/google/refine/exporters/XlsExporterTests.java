@@ -67,25 +67,25 @@ import com.google.refine.model.Row;
 public class XlsExporterTests extends RefineTest {
 
     private static final String TEST_PROJECT_NAME = "xls exporter test project";
-    
+
     @Override
     @BeforeTest
     public void init() {
         logger = LoggerFactory.getLogger(this.getClass());
     }
 
-    //dependencies
+    // dependencies
     ByteArrayOutputStream stream;
     ProjectMetadata projectMetadata;
     Project project;
     Engine engine;
     Properties options;
 
-    //System Under Test
+    // System Under Test
     StreamExporter SUT;
 
     @BeforeMethod
-    public void SetUp(){
+    public void SetUp() {
         SUT = new XlsExporter(false);
         stream = new ByteArrayOutputStream();
         ProjectManager.singleton = new ProjectManagerStub();
@@ -98,7 +98,7 @@ public class XlsExporterTests extends RefineTest {
     }
 
     @AfterMethod
-    public void TearDown(){
+    public void TearDown() {
         SUT = null;
         stream = null;
         ProjectManager.singleton.deleteProject(project.id);
@@ -108,13 +108,13 @@ public class XlsExporterTests extends RefineTest {
     }
 
     @Test
-    public void getContentType(){
+    public void getContentType() {
         Assert.assertEquals(SUT.getContentType(), "application/vnd.ms-excel");
     }
 
     @Test
-    public void getSpreadsheetVersion(){
-        XlsExporter exporter = (XlsExporter)SUT;
+    public void getSpreadsheetVersion() {
+        XlsExporter exporter = (XlsExporter) SUT;
         Assert.assertEquals(exporter.getSpreadsheetVersion(), SpreadsheetVersion.EXCEL97);
     }
 
@@ -128,13 +128,13 @@ public class XlsExporterTests extends RefineTest {
             Assert.fail();
         }
 
-        Assert.assertEquals(stream.size(),4096);
+        Assert.assertEquals(stream.size(), 4096);
 
         try (HSSFWorkbook wb = new HSSFWorkbook(new ByteArrayInputStream(stream.toByteArray()))) {
             org.apache.poi.ss.usermodel.Sheet ws = wb.getSheetAt(0);
             org.apache.poi.ss.usermodel.Row row1 = ws.getRow(1);
             org.apache.poi.ss.usermodel.Cell cell0 = row1.getCell(0);
-            Assert.assertEquals(cell0.toString(),"row0cell0");
+            Assert.assertEquals(cell0.toString(), "row0cell0");
         }
     }
 
@@ -152,7 +152,7 @@ public class XlsExporterTests extends RefineTest {
             org.apache.poi.ss.usermodel.Sheet ws = wb.getSheetAt(0);
             org.apache.poi.ss.usermodel.Row row1 = ws.getRow(1);
             org.apache.poi.ss.usermodel.Cell cell0 = row1.getCell(255);
-            Assert.assertEquals(cell0.toString(),"row0cell255");
+            Assert.assertEquals(cell0.toString(), "row0cell255");
         }
     }
 
@@ -171,13 +171,13 @@ public class XlsExporterTests extends RefineTest {
             org.apache.poi.ss.usermodel.Row row1 = ws.getRow(1);
             org.apache.poi.ss.usermodel.Cell cell0 = row1.getCell(255);
             // FIXME: This is not a good error reporting mechanism, but it's what there today
-            Assert.assertEquals(cell0.toString(),"ERROR: TOO MANY COLUMNS");
+            Assert.assertEquals(cell0.toString(), "ERROR: TOO MANY COLUMNS");
         }
     }
 
     @Test
-    public void exportDateType() throws IOException{
-        OffsetDateTime odt =  OffsetDateTime.parse("2019-04-09T12:00+00:00");
+    public void exportDateType() throws IOException {
+        OffsetDateTime odt = OffsetDateTime.parse("2019-04-09T12:00+00:00");
         createDateGrid(2, 2, odt);
 
         try {
@@ -186,7 +186,7 @@ public class XlsExporterTests extends RefineTest {
             Assert.fail();
         }
 
-        Assert.assertEquals(stream.size(),4096);
+        Assert.assertEquals(stream.size(), 4096);
 
         try (HSSFWorkbook wb = new HSSFWorkbook(new ByteArrayInputStream(stream.toByteArray()))) {
             org.apache.poi.ss.usermodel.Sheet ws = wb.getSheetAt(0);
@@ -196,7 +196,7 @@ public class XlsExporterTests extends RefineTest {
         }
     }
 
-    public void exportSimpleXlsNoHeader(){
+    public void exportSimpleXlsNoHeader() {
         CreateGrid(2, 2);
         when(options.getProperty("printColumnHeader")).thenReturn("false");
         try {
@@ -206,14 +206,13 @@ public class XlsExporterTests extends RefineTest {
         }
 
         Assert.assertEquals(stream.toString(), "row0cell0,row0cell1\n" +
-                                               "row1cell0,row1cell1\n");
+                "row1cell0,row1cell1\n");
 
-        verify(options,times(2)).getProperty("printColumnHeader");
+        verify(options, times(2)).getProperty("printColumnHeader");
     }
 
-
-    public void exportXlsWithEmptyCells(){
-        CreateGrid(3,3);
+    public void exportXlsWithEmptyCells() {
+        CreateGrid(3, 3);
 
         project.rows.get(1).cells.set(1, null);
         project.rows.get(2).cells.set(0, null);
@@ -224,15 +223,15 @@ public class XlsExporterTests extends RefineTest {
         }
 
         Assert.assertEquals(stream.toString(), "column0,column1,column2\n" +
-                                               "row0cell0,row0cell1,row0cell2\n" +
-                                               "row1cell0,,row1cell2\n" +
-                                               ",row2cell1,row2cell2\n");
+                "row0cell0,row0cell1,row0cell2\n" +
+                "row1cell0,,row1cell2\n" +
+                ",row2cell1,row2cell2\n");
     }
 
-    //helper methods
+    // helper methods
 
-    protected void CreateColumns(int noOfColumns){
-        for(int i = 0; i < noOfColumns; i++){
+    protected void CreateColumns(int noOfColumns) {
+        for (int i = 0; i < noOfColumns; i++) {
             try {
                 project.columnModel.addColumn(i, new Column(i, "column" + i), true);
             } catch (ModelException e1) {
@@ -241,24 +240,24 @@ public class XlsExporterTests extends RefineTest {
         }
     }
 
-    protected void CreateGrid(int noOfRows, int noOfColumns){
+    protected void CreateGrid(int noOfRows, int noOfColumns) {
         CreateColumns(noOfColumns);
 
-        for(int i = 0; i < noOfRows; i++){
+        for (int i = 0; i < noOfRows; i++) {
             Row row = new Row(noOfColumns);
-            for(int j = 0; j < noOfColumns; j++){
+            for (int j = 0; j < noOfColumns; j++) {
                 row.cells.add(new Cell("row" + i + "cell" + j, null));
             }
             project.rows.add(row);
         }
     }
-    
-    private void createDateGrid(int noOfRows, int noOfColumns, OffsetDateTime now){
+
+    private void createDateGrid(int noOfRows, int noOfColumns, OffsetDateTime now) {
         CreateColumns(noOfColumns);
 
-        for(int i = 0; i < noOfRows; i++){
+        for (int i = 0; i < noOfRows; i++) {
             Row row = new Row(noOfColumns);
-            for(int j = 0; j < noOfColumns; j++){
+            for (int j = 0; j < noOfColumns; j++) {
                 row.cells.add(new Cell(now, null));
             }
             project.rows.add(row);

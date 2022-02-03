@@ -21,12 +21,13 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  ******************************************************************************/
+
 package org.openrefine.wikidata.qa.scrutinizers;
 
 import org.openrefine.wikidata.qa.ConstraintFetcher;
 import org.openrefine.wikidata.testing.TestingData;
 import org.openrefine.wikidata.updates.TermedStatementEntityUpdate;
-import org.openrefine.wikidata.updates.ItemUpdateBuilder;
+import org.openrefine.wikidata.updates.TermedStatementEntityUpdateBuilder;
 import org.testng.annotations.Test;
 import org.wikidata.wdtk.datamodel.helpers.Datamodel;
 import org.wikidata.wdtk.datamodel.implementation.StatementImpl;
@@ -64,7 +65,8 @@ public class SingleValueScrutinizerTest extends ScrutinizerTest {
         Snak snak2 = Datamodel.makeValueSnak(propertyIdValue, value2);
         Statement statement1 = new StatementImpl("P21", snak1, idA);
         Statement statement2 = new StatementImpl("P21", snak2, idA);
-        TermedStatementEntityUpdate update = new ItemUpdateBuilder(idA).addStatement(statement1).addStatement(statement2).build();
+        TermedStatementEntityUpdate update = new TermedStatementEntityUpdateBuilder(idA).addStatement(statement1).addStatement(statement2)
+                .build();
 
         List<Statement> statementList = constraintParameterStatementList(entityIdValue, new ArrayList<>());
 
@@ -80,7 +82,7 @@ public class SingleValueScrutinizerTest extends ScrutinizerTest {
         ItemIdValue idA = TestingData.existingId;
         Snak snak1 = Datamodel.makeValueSnak(propertyIdValue, value1);
         Statement statement1 = new StatementImpl("P21", snak1, idA);
-        TermedStatementEntityUpdate updateA = new ItemUpdateBuilder(idA).addStatement(statement1).build();
+        TermedStatementEntityUpdate updateA = new TermedStatementEntityUpdateBuilder(idA).addStatement(statement1).build();
 
         List<Statement> statementList = constraintParameterStatementList(entityIdValue, new ArrayList<>());
 

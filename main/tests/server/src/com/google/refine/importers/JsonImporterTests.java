@@ -61,17 +61,17 @@ import com.google.refine.util.ParsingUtilities;
 import com.google.refine.importers.tree.ImportColumnGroup;
 
 public class JsonImporterTests extends ImporterTest {
+
     @Override
     @BeforeTest
     public void init() {
         logger = LoggerFactory.getLogger(this.getClass());
     }
 
-
-    //dependencies
+    // dependencies
     ByteArrayInputStream inputStream = null;
 
-    //System Under Test
+    // System Under Test
     JsonImporter SUT = null;
 
     @BeforeMethod
@@ -136,8 +136,7 @@ public class JsonImporterTests extends ImporterTest {
                 rootColumnGroup,
                 -1,
                 options,
-                exceptions
-        );
+                exceptions);
         Assert.assertFalse(exceptions.isEmpty());
         Assert.assertEquals("Unexpected character (';' (code 59)): was expecting comma to separate Object entries",
                 exceptions.get(0).getMessage());
@@ -145,15 +144,14 @@ public class JsonImporterTests extends ImporterTest {
 
     @Test
     public void trimLeadingTrailingWhitespaceOnTrimStrings() {
-        String ScraperwikiOutput =
-                "[\n" +
-                        "{\n" +
-                        "        \"school\": \"  University of Cambridge  \",\n" +
-                        "        \"name\": \"          Amy Zhang                   \",\n" +
-                        "        \"student-faculty-score\": \"100\",\n" +
-                        "        \"intl-student-score\": \"95\"\n" +
-                        "    }\n" +
-                        "]\n";
+        String ScraperwikiOutput = "[\n" +
+                "{\n" +
+                "        \"school\": \"  University of Cambridge  \",\n" +
+                "        \"name\": \"          Amy Zhang                   \",\n" +
+                "        \"student-faculty-score\": \"100\",\n" +
+                "        \"intl-student-score\": \"95\"\n" +
+                "    }\n" +
+                "]\n";
         RunTest(ScraperwikiOutput, true);
         assertProjectCreated(project, 4, 1);
         Row row = project.rows.get(0);
@@ -165,15 +163,14 @@ public class JsonImporterTests extends ImporterTest {
 
     @Test
     public void doesNotTrimLeadingTrailingWhitespaceOnNoTrimStrings() {
-        String ScraperwikiOutput =
-                "[\n" +
-                        "{\n" +
-                        "        \"school\": \"  University of Cambridge  \",\n" +
-                        "        \"name\": \"          Amy Zhang                   \",\n" +
-                        "        \"student-faculty-score\": \"100\",\n" +
-                        "        \"intl-student-score\": \"95\"\n" +
-                        "    }\n" +
-                        "]\n";
+        String ScraperwikiOutput = "[\n" +
+                "{\n" +
+                "        \"school\": \"  University of Cambridge  \",\n" +
+                "        \"name\": \"          Amy Zhang                   \",\n" +
+                "        \"student-faculty-score\": \"100\",\n" +
+                "        \"intl-student-score\": \"95\"\n" +
+                "    }\n" +
+                "]\n";
         RunTest(ScraperwikiOutput);
         assertProjectCreated(project, 4, 1);
         Row row = project.rows.get(0);
@@ -255,40 +252,39 @@ public class JsonImporterTests extends ImporterTest {
 
     @Test
     public void testJSONMinimumArray() {
-        String ScraperwikiOutput =
-                "[\n" +
-                        "{\n" +
-                        "        \"school\": \"University of Cambridge\\n" +
-                        "                            United Kingdom\",\n" +
-                        "        \"student-faculty-score\": \"100\",\n" +
-                        "        \"intl-student-score\": \"95\",\n" +
-                        "        \"intl-faculty-score\": \"96\",\n" +
-                        "        \"rank\": \"#1\",\n" +
-                        "        \"peer-review-score\": \"100\",\n" +
-                        "        \"emp-review-score\": \"100\",\n" +
-                        "        \"score\": \"100.0\",\n" +
-                        "        \"citations-score\": \"93\"\n" +
-                        "    },\n" +
-                        "    {\n" +
-                        "        \"school\": \"Harvard University\\n" +
-                        "                            United States\",\n" +
-                        "        \"student-faculty-score\": \"97\",\n" +
-                        "        \"intl-student-score\": \"87\",\n" +
-                        "        \"intl-faculty-score\": \"71\",\n" +
-                        "        \"rank\": \"#2\",\n" +
-                        "        \"peer-review-score\": \"100\",\n" +
-                        "        \"emp-review-score\": \"100\",\n" +
-                        "        \"score\": \"99.2\",\n" +
-                        "        \"citations-score\": \"100\"\n" +
-                        "    }\n" +
-                        "]\n";
+        String ScraperwikiOutput = "[\n" +
+                "{\n" +
+                "        \"school\": \"University of Cambridge\\n" +
+                "                            United Kingdom\",\n" +
+                "        \"student-faculty-score\": \"100\",\n" +
+                "        \"intl-student-score\": \"95\",\n" +
+                "        \"intl-faculty-score\": \"96\",\n" +
+                "        \"rank\": \"#1\",\n" +
+                "        \"peer-review-score\": \"100\",\n" +
+                "        \"emp-review-score\": \"100\",\n" +
+                "        \"score\": \"100.0\",\n" +
+                "        \"citations-score\": \"93\"\n" +
+                "    },\n" +
+                "    {\n" +
+                "        \"school\": \"Harvard University\\n" +
+                "                            United States\",\n" +
+                "        \"student-faculty-score\": \"97\",\n" +
+                "        \"intl-student-score\": \"87\",\n" +
+                "        \"intl-faculty-score\": \"71\",\n" +
+                "        \"rank\": \"#2\",\n" +
+                "        \"peer-review-score\": \"100\",\n" +
+                "        \"emp-review-score\": \"100\",\n" +
+                "        \"score\": \"99.2\",\n" +
+                "        \"citations-score\": \"100\"\n" +
+                "    }\n" +
+                "]\n";
         RunTest(ScraperwikiOutput);
         assertProjectCreated(project, 9, 2);
     }
 
     /**
-     * org.codehaus.Jackson.JsonParser has an inconsistency when returning getLocalName
-     * of an Entity_Start token which occurs after a Field_Name token
+     * org.codehaus.Jackson.JsonParser has an inconsistency when returning getLocalName of an Entity_Start token which
+     * occurs after a Field_Name token
      */
     @Test
     public void EnsureJSONParserHandlesgetLocalNameCorrectly() throws Exception {
@@ -312,9 +308,8 @@ public class JsonImporterTests extends ImporterTest {
                 }
             }
         } catch (Exception e) {
-            //silent
+            // silent
         }
-
 
         parser = new JSONTreeReader(new ByteArrayInputStream(sampleJson2.getBytes("UTF-8")));
         token = Token.Ignorable;
@@ -332,7 +327,7 @@ public class JsonImporterTests extends ImporterTest {
                 }
             }
         } catch (Exception e) {
-            //silent
+            // silent
         }
 
         parser = new JSONTreeReader(new ByteArrayInputStream(sampleJson3.getBytes("UTF-8")));
@@ -359,7 +354,7 @@ public class JsonImporterTests extends ImporterTest {
                 }
             }
         } catch (Exception e) {
-            //silent
+            // silent
         }
     }
 
@@ -388,7 +383,6 @@ public class JsonImporterTests extends ImporterTest {
             Assert.fail();
         }
     }
-
 
     @Test
     public void testJsonDatatypes() {
@@ -453,10 +447,8 @@ public class JsonImporterTests extends ImporterTest {
 
         // null, true, false 0,1,-2.1,0.23,-0.24,3.14e100
 
-
         // TODO: check data types
     }
-
 
     @Test
     public void testComplexJsonStructure() throws IOException {
@@ -477,7 +469,8 @@ public class JsonImporterTests extends ImporterTest {
         // File is assumed to be in job.getRawDataDir(), so copy it there
         FileUtils.copyFile(new File(filename), new File(job.getRawDataDir(), FILE));
         List<ObjectNode> fileRecords = new ArrayList<>();
-        fileRecords.add(ParsingUtilities.evaluateJsonStringToObjectNode(String.format("{\"location\": \"%s\",\"fileName\": \"%s\"}", FILE, "json-sample-format-1.json")));
+        fileRecords.add(ParsingUtilities.evaluateJsonStringToObjectNode(
+                String.format("{\"location\": \"%s\",\"fileName\": \"%s\"}", FILE, "json-sample-format-1.json")));
 
         ObjectNode options = SUT.createParserUIInitializationData(
                 job, new LinkedList<>(), "text/json");
@@ -487,7 +480,7 @@ public class JsonImporterTests extends ImporterTest {
         JSONUtilities.safePut(options, "trimStrings", false);
         JSONUtilities.safePut(options, "storeEmptyStrings", true);
         JSONUtilities.safePut(options, "guessCellValueTypes", false);
-        JSONUtilities.safePut(options,"includeFileSources",true);
+        JSONUtilities.safePut(options, "includeFileSources", true);
 
         List<Exception> exceptions = new ArrayList<Exception>();
 
@@ -499,13 +492,12 @@ public class JsonImporterTests extends ImporterTest {
                 "text/json",
                 -1,
                 options,
-                exceptions
-        );
+                exceptions);
         Assert.assertNotNull(project.columnModel.getColumnByName("File"));
-        Assert.assertEquals(project.rows.get(0).getCell(0).value,"json-sample-format-1.json");
+        Assert.assertEquals(project.rows.get(0).getCell(0).value, "json-sample-format-1.json");
     }
 
-    //------------helper methods---------------
+    // ------------helper methods---------------
 
     private static String getTypicalElement(int id) {
         return "{ \"id\" : " + id + "," +
@@ -576,7 +568,7 @@ public class JsonImporterTests extends ImporterTest {
             sb.append(",");
         }
         sb.append("{\"id\" : 4," +
-                "\"author\" : \"With line\\n break\"," + //FIXME this line break is doubled - is this correct??
+                "\"author\" : \"With line\\n break\"," + // FIXME this line break is doubled - is this correct??
                 "\"title\" : \"Book title 4\"," +
                 "\"publish_date\" : \"2010-05-26\"" +
                 "},");

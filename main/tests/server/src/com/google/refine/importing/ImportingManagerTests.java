@@ -24,6 +24,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  ******************************************************************************/
+
 package com.google.refine.importing;
 
 import static org.testng.Assert.assertEquals;
@@ -37,10 +38,9 @@ public class ImportingManagerTests extends ImporterTest {
 
     @Override
     @BeforeMethod
-    public void setUp(){
+    public void setUp() {
         super.setUp();
     }
-
 
     @Test
     public void testStructuredNameSuffixFallback() {
