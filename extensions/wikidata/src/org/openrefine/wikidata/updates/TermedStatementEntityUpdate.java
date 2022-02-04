@@ -38,7 +38,6 @@ import org.jsoup.helper.Validate;
 import org.openrefine.wikidata.utils.StatementGroupJson;
 import org.wikidata.wdtk.datamodel.implementation.StatementGroupImpl;
 import org.wikidata.wdtk.datamodel.interfaces.EntityIdValue;
-import org.wikidata.wdtk.datamodel.interfaces.ItemIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.MonolingualTextValue;
 import org.wikidata.wdtk.datamodel.interfaces.PropertyIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.Statement;
@@ -49,8 +48,8 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
- * A class to plan an update of an item, after evaluating the statements but
- * before fetching the current content of the item (this is why it does not
+ * A class to plan an update of an entity, after evaluating the statements but
+ * before fetching the current content of the entity (this is why it does not
  * extend StatementsUpdate).
  * 
  * @author Antonin Delpeuch
@@ -69,18 +68,18 @@ public class TermedStatementEntityUpdate {
     /**
      * Constructor.
      * 
-     * @param qid
+     * @param id
      *            the subject of the document. It can be a reconciled entity value for
-     *            new items.
+     *            new entities.
      * @param addedStatements
-     *            the statements to add on the item. They should be distinct. They
+     *            the statements to add on the entity. They should be distinct. They
      *            are modeled as a list because their insertion order matters.
      * @param deletedStatements
-     *            the statements to remove from the item
+     *            the statements to remove from the entity
      * @param labels
-     *            the labels to add on the item, overriding any existing one in that language
+     *            the labels to add on the entity, overriding any existing one in that language
      * @param labelsIfNew
-     *            the labels to add on the item, only if no label for that language exists
+     *            the labels to add on the entity, only if no label for that language exists
      * @param descriptions
      *            the descriptions to add on the item, overriding any existing one in that language
      * @param descriptionsIfNew
@@ -91,7 +90,7 @@ public class TermedStatementEntityUpdate {
      *            so this is just kept as a set for simplicity.
      */
     @JsonCreator
-    public TermedStatementEntityUpdate(@JsonProperty("subject") EntityIdValue qid,
+    public TermedStatementEntityUpdate(@JsonProperty("subject") EntityIdValue id,
             @JsonProperty("addedStatements") List<Statement> addedStatements,
             @JsonProperty("deletedStatements") Set<Statement> deletedStatements,
             @JsonProperty("labels") Set<MonolingualTextValue> labels,
@@ -99,8 +98,8 @@ public class TermedStatementEntityUpdate {
             @JsonProperty("descriptions") Set<MonolingualTextValue> descriptions,
             @JsonProperty("descriptionsIfNew") Set<MonolingualTextValue> descriptionsIfNew,
             @JsonProperty("addedAliases") Set<MonolingualTextValue> aliases) {
-        Validate.notNull(qid);
-        this.id = qid;
+        Validate.notNull(id);
+        this.id = id;
         if (addedStatements == null) {
             addedStatements = Collections.emptyList();
         }
@@ -120,20 +119,20 @@ public class TermedStatementEntityUpdate {
     
     /**
      * Private constructor to avoid re-constructing term maps when
-     * merging two item updates.
+     * merging two entity updates.
      * 
      * No validation is done on the arguments, they all have to be non-null.
      * 
-     * @param qid
+     * @param id
      * 		the subject of the update
      * @param addedStatements
      *      the statements to add
      * @param deletedStatements
      *      the statements to delete
      * @param labels
-     *      the labels to add on the item, overriding any existing one in that language   
+     *      the labels to add on the entity, overriding any existing one in that language
      * @param labelsIfNew
-     *            the labels to add on the item, only if no label for that language exists
+     *            the labels to add on the entity, only if no label for that language exists
      * @param descriptions
      *            the descriptions to add on the item, overriding any existing one in that language
      * @param descriptionsIfNew
@@ -144,7 +143,7 @@ public class TermedStatementEntityUpdate {
      *      the aliases to add
      */
     private TermedStatementEntityUpdate(
-    		EntityIdValue qid,
+            EntityIdValue id,
     		List<Statement> addedStatements,
     		Set<Statement> deletedStatements,
     		Map<String, MonolingualTextValue> labels,
@@ -152,7 +151,7 @@ public class TermedStatementEntityUpdate {
     		Map<String, MonolingualTextValue> descriptions,
     		Map<String, MonolingualTextValue> descriptionsIfNew,
     		Map<String, List<MonolingualTextValue>> aliases) {
-        this.id = qid;
+        this.id = id;
     	this.addedStatements = addedStatements;
     	this.deletedStatements = deletedStatements;
     	this.labels = labels;
@@ -291,7 +290,7 @@ public class TermedStatementEntityUpdate {
     }    
 
     /**
-     * Group added statements in StatementGroups: useful if the item is new.
+     * Group added statements in StatementGroups: useful if the entity is new.
      * 
      * @return a grouped version of getAddedStatements()
      */
@@ -307,15 +306,15 @@ public class TermedStatementEntityUpdate {
         }
         List<StatementGroup> result = new ArrayList<>();
         for (Map.Entry<PropertyIdValue, List<Statement>> entry : map.entrySet()) {
-        	// We have to do this rather than use Datamodel in order to preserve the
-        	// custom entity id values which can link to new items.
+            // We have to do this rather than use Datamodel in order to preserve the
+            // custom entity id values which can link to new entities.
             result.add(new StatementGroupImpl(entry.getValue()));
         }
         return result;
     }
     
     /**
-     * Json serialization for preview of item updates. Because StatementGroup
+     * Json serialization for preview of entity updates. Because StatementGroup
      * is not designed for serialization (so its format is not specified by WDTK),
      * we add a wrapper on top to specify it.
      */
@@ -326,14 +325,14 @@ public class TermedStatementEntityUpdate {
 
     /**
      * Group a list of TermedStatementEntityUpdates by subject: this is useful to make one single
-     * edit per item.
+     * edit per entity.
      * 
-     * @param itemDocuments
-     * @return a map from item ids to merged TermedStatementEntityUpdate for that id
+     * @param entityDocuments
+     * @return a map from entity ids to merged TermedStatementEntityUpdate for that id
      */
-    public static Map<EntityIdValue, TermedStatementEntityUpdate> groupBySubject(List<TermedStatementEntityUpdate> itemDocuments) {
+    public static Map<EntityIdValue, TermedStatementEntityUpdate> groupBySubject(List<TermedStatementEntityUpdate> entityDocuments) {
         Map<EntityIdValue, TermedStatementEntityUpdate> map = new HashMap<>();
-        for (TermedStatementEntityUpdate update : itemDocuments) {
+        for (TermedStatementEntityUpdate update : entityDocuments) {
             if (update.isNull()) {
                 continue;
             }
@@ -350,7 +349,7 @@ public class TermedStatementEntityUpdate {
     }
 
     /**
-     * Is this update about a new item?
+     * Is this update about a new entity?
      */
     @JsonProperty("new")
     public boolean isNew() {
@@ -358,7 +357,7 @@ public class TermedStatementEntityUpdate {
     }
 
     /**
-     * This should only be used when creating a new item. This ensures that we never
+     * This should only be used when creating a new entity. This ensures that we never
      * add an alias without adding a label in the same language.
      */
     public TermedStatementEntityUpdate normalizeLabelsAndAliases() {

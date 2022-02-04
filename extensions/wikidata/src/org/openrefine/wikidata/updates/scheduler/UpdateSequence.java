@@ -31,7 +31,6 @@ import java.util.Set;
 
 import org.openrefine.wikidata.updates.TermedStatementEntityUpdate;
 import org.wikidata.wdtk.datamodel.interfaces.EntityIdValue;
-import org.wikidata.wdtk.datamodel.interfaces.ItemIdValue;
 
 /**
  * Helper class to store a list of updates where each subject appears at most
@@ -46,7 +45,7 @@ public class UpdateSequence {
      */
     private List<TermedStatementEntityUpdate> updates = new ArrayList<>();
     /**
-     * An index to keep track of where each item is touched in the sequence
+     * An index to keep track of where each entity is touched in the sequence
      */
     private Map<EntityIdValue, Integer> index = new HashMap<>();
 
