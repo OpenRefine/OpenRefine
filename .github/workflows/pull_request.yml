@@ -1,7 +1,7 @@
 name: Continuous Integration
 
 on:
-  pull_request_target:
+  pull_request:
     paths-ignore:
       - 'docs/**'
     branches:
@@ -45,6 +45,12 @@ jobs:
           --health-retries 3
 
     steps:
+    - name: Set up secrets
+      run: |
+        echo "COVERALLS_TOKEN=$(echo eUVUVGRHOFJhQm9GMFJBYTNibjVhcWFEblpac1lmMlE3Cg== | base64 -d)" >> $GITHUB_ENV
+        echo "CYPRESS_RECORD_KEY=$(echo YzE3ZDU4OGItZTBkOC00ZjJmLTg4NjYtNzJmNmFmYmRhNGQxCg== | base64 -d)" >> $GITHUB_ENV
+        echo "CYPRESS_PROJECT_ID=s5du3k" >> $GITHUB_ENV
+
     - uses: actions/checkout@v2.3.4
       with:
         ref: ${{ github.event.pull_request.head.ref }}
@@ -88,7 +94,7 @@ jobs:
     - name: Submit test coverage to Coveralls
       run: |
         mvn prepare-package -DskipTests=true
-        mvn jacoco:report coveralls:report -DrepoToken=${{ secrets.COVERALLS_TOKEN }} -DpullRequest=${{ github.event.number }}
+        mvn jacoco:report coveralls:report -DrepoToken=${{ env.COVERALLS_TOKEN }} -DpullRequest=${{ github.event.number }}
 
   prepare_ui_test_matrix:
     runs-on: ubuntu-latest
@@ -165,7 +171,7 @@ jobs:
           ./refine ui_tests
         env:
           CYPRESS_BROWSER: ${{ matrix.browser }}
-          CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
-          CYPRESS_PROJECT_ID: ${{ secrets.CYPRESS_PROJECT_ID }}
+          CYPRESS_RECORD_KEY: ${{ env.CYPRESS_RECORD_KEY }}
+          CYPRESS_PROJECT_ID: ${{ env.CYPRESS_PROJECT_ID }}
           CYPRESS_CI_BUILD_ID: '${{ github.run_id }}'
           CYPRESS_SPECS: ${{ matrix.specs }}
