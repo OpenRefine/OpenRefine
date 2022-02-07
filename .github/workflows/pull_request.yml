@@ -16,7 +16,7 @@ jobs:
       matrix:
         java: [ 11, 17 ]
 
-    runs-on: ubuntu-latest
+    runs-on: [ubuntu-latest, windows-latest]
 
     services:
       postgres:
