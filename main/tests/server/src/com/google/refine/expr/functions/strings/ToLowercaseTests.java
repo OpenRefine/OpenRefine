@@ -24,6 +24,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  ******************************************************************************/
+
 package com.google.refine.expr.functions.strings;
 
 import org.testng.Assert;
@@ -34,20 +35,20 @@ import com.google.refine.expr.EvalError;
 import com.google.refine.util.TestUtils;
 
 public class ToLowercaseTests extends RefineTest {
+
     @Test
     public void testtoLowercaseInvalidParams() {
         Assert.assertTrue(invoke("toLowercase") instanceof EvalError);
-        Assert.assertTrue(invoke("toLowercase", (Object[])null) instanceof EvalError);
+        Assert.assertTrue(invoke("toLowercase", (Object[]) null) instanceof EvalError);
         Assert.assertTrue(invoke("toLowercase", "one", "two", "three") instanceof EvalError);
     }
 
     @Test
     public void testtoLowercase() {
-        Assert.assertEquals((String)(invoke("toLowercase", "One")), "one");
-        Assert.assertEquals((String)(invoke("toLowercase", "Ône")), "ône");
-        Assert.assertEquals((String)(invoke("toLowercase", "ONE")), "one");
-        Assert.assertEquals((String)(invoke("toLowercase", 1)), "1");
-        Assert.assertEquals((String)(invoke("toLowercase", true)), "true");
+        Assert.assertEquals((String) (invoke("toLowercase", "One")), "one");
+        Assert.assertEquals((String) (invoke("toLowercase", "Ône")), "ône");
+        Assert.assertEquals((String) (invoke("toLowercase", "ONE")), "one");
+        Assert.assertEquals((String) (invoke("toLowercase", 1)), "1");
+        Assert.assertEquals((String) (invoke("toLowercase", true)), "true");
     }
 }
-

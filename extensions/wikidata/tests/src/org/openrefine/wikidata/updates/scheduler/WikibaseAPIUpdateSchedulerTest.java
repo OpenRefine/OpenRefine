@@ -21,6 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  ******************************************************************************/
+
 package org.openrefine.wikidata.updates.scheduler;
 
 import static org.testng.Assert.assertEquals;
@@ -46,7 +47,8 @@ public class WikibaseAPIUpdateSchedulerTest extends UpdateSchedulerTest {
     @Test
     public void testUpdateIsNotSplit()
             throws ImpossibleSchedulingException {
-        TermedStatementEntityUpdate updateA = new TermedStatementEntityUpdateBuilder(existingIdA).addStatement(sAtoNewA).addStatement(sAtoNewB).build();
+        TermedStatementEntityUpdate updateA = new TermedStatementEntityUpdateBuilder(existingIdA).addStatement(sAtoNewA)
+                .addStatement(sAtoNewB).build();
         TermedStatementEntityUpdate newUpdateA = new TermedStatementEntityUpdateBuilder(newIdA).build();
         TermedStatementEntityUpdate newUpdateB = new TermedStatementEntityUpdateBuilder(newIdB).build();
         List<TermedStatementEntityUpdate> scheduled = schedule(updateA);
@@ -56,7 +58,8 @@ public class WikibaseAPIUpdateSchedulerTest extends UpdateSchedulerTest {
     @Test
     public void testMixedUpdate()
             throws ImpossibleSchedulingException {
-        TermedStatementEntityUpdate updateA = new TermedStatementEntityUpdateBuilder(existingIdA).addStatement(sAtoNewA).addStatement(sAtoNewB)
+        TermedStatementEntityUpdate updateA = new TermedStatementEntityUpdateBuilder(existingIdA).addStatement(sAtoNewA)
+                .addStatement(sAtoNewB)
                 .addStatement(sAtoB).build();
         TermedStatementEntityUpdate newUpdateA = new TermedStatementEntityUpdateBuilder(newIdA).addStatement(sNewAtoB).build();
         TermedStatementEntityUpdate newUpdateB = new TermedStatementEntityUpdateBuilder(newIdB).build();

@@ -51,31 +51,30 @@ import org.testng.annotations.Test;
 
 import com.google.refine.RefineTest;
 
-
 public class ParsingUtilitiesTests extends RefineTest {
-    
+
     @Override
     @BeforeTest
     public void init() {
         logger = LoggerFactory.getLogger(this.getClass());
     }
-    
+
     @Test
     public void zonedDateTimeTest() {
-        String  d = "2017-12-01T14:53:36Z";
+        String d = "2017-12-01T14:53:36Z";
         DateTimeFormatter formatter = DateTimeFormatter.ISO_OFFSET_DATE_TIME;
         OffsetDateTime.parse(d, formatter);
     }
-    
+
     @Test
     public void parseProjectBeforeJDK8() {
         String historyEntryDate = "2017-12-01T14:53:36Z";
-        
+
         OffsetDateTime zdt = ParsingUtilities.stringToDate(historyEntryDate);
         String zdtString = ParsingUtilities.dateToString(zdt);
         Assert.assertEquals(zdtString, historyEntryDate);
     }
-    
+
     @Test
     public void stringToDate() {
         Assert.assertEquals(2017, ParsingUtilities.stringToDate("2017-04-03T08:09:43.123").getYear());
@@ -84,7 +83,7 @@ public class ParsingUtilitiesTests extends RefineTest {
         Assert.assertEquals(2017, ParsingUtilities.stringToDate("2017-04-03T08:09:43.123Z").getYear());
         Assert.assertEquals(2017, ParsingUtilities.stringToDate("2017-04-03T08:09:43+00:00").getYear());
     }
-    
+
     @Test
     public void stringToLocalDate() {
         Assert.assertEquals(2017, ParsingUtilities.stringToLocalDate("2017-04-03T08:09:43.123").getYear());
@@ -130,12 +129,12 @@ public class ParsingUtilitiesTests extends RefineTest {
                     "</BODY>\n" +
                     "\n" +
                     "</HTML>";
-            ByteArrayOutputStream obj=new ByteArrayOutputStream();
+            ByteArrayOutputStream obj = new ByteArrayOutputStream();
             GZIPOutputStream gzip = new GZIPOutputStream(obj);
             gzip.write(sampleBody.getBytes("UTF-8"));
             gzip.close();
             byte[] compressed = obj.toByteArray();
-            
+
             String res = ParsingUtilities.inputStreamToString(new ByteArrayInputStream(compressed), "gzip");
             Assert.assertEquals(res, sampleBody);
         } catch (Exception e) {

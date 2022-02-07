@@ -52,8 +52,8 @@ import com.google.refine.browsing.facets.TextSearchFacet.TextSearchFacetConfig;
 import com.google.refine.util.ParsingUtilities;
 import com.google.refine.util.TestUtils;
 
-
 public class TextSearchFacetTests extends RefineTest {
+
     // dependencies
     private Project project;
     private TextSearchFacetConfig textfilterconfig;
@@ -66,7 +66,7 @@ public class TextSearchFacetTests extends RefineTest {
             + "\"caseSensitive\":true,"
             + "\"invert\":false,"
             + "\"query\":\"A\"}";
-    
+
     private String sensitiveFacetJson = "{\"name\":\"Value\","
             + "\"columnName\":\"Value\","
             + "\"query\":\"A\","
@@ -83,122 +83,122 @@ public class TextSearchFacetTests extends RefineTest {
     @BeforeMethod
     public void setUp() throws IOException, ModelException {
         project = createCSVProject("TextSearchFacet",
-             "Value\n"
-            + "a\n"
-            + "b\n"
-            + "ab\n"
-            + "Abc\n");
+                "Value\n"
+                        + "a\n"
+                        + "b\n"
+                        + "ab\n"
+                        + "Abc\n");
     }
-    
+
     private void configureFilter(String filter) throws JsonParseException, JsonMappingException, IOException {
-        //Add the facet to the project and create a row filter
+        // Add the facet to the project and create a row filter
         textfilterconfig = ParsingUtilities.mapper.readValue(filter, TextSearchFacetConfig.class);
         textfilter = textfilterconfig.apply(project);
         rowfilter = textfilter.getRowFilter(project);
     }
-    
+
     /**
      * Test to demonstrate the intended behaviour of the function
      */
 
     @Test
     public void testTextFilter() throws Exception {
-        //Apply text filter "a"
+        // Apply text filter "a"
 
-        //Column: "Value"
-        //Filter Query: "a"
-        //Mode: "text"
-        //Case sensitive: False
-        //Invert: False
-        String filter =     "{\"type\":\"text\","
-                            + "\"name\":\"Value\","
-                            + "\"columnName\":\"Value\","
-                            + "\"mode\":\"text\","
-                            + "\"caseSensitive\":false,"
-                            + "\"invert\":false,"
-                            + "\"query\":\"a\"}";
-        
+        // Column: "Value"
+        // Filter Query: "a"
+        // Mode: "text"
+        // Case sensitive: False
+        // Invert: False
+        String filter = "{\"type\":\"text\","
+                + "\"name\":\"Value\","
+                + "\"columnName\":\"Value\","
+                + "\"mode\":\"text\","
+                + "\"caseSensitive\":false,"
+                + "\"invert\":false,"
+                + "\"query\":\"a\"}";
+
         configureFilter(filter);
 
-        //Check each row in the project against the filter
-        Assert.assertEquals(rowfilter.filterRow(project, 0, project.rows.get(0)),true);
-        Assert.assertEquals(rowfilter.filterRow(project, 1, project.rows.get(1)),false);
-        Assert.assertEquals(rowfilter.filterRow(project, 2, project.rows.get(2)),true);
-        Assert.assertEquals(rowfilter.filterRow(project, 3, project.rows.get(3)),true);
+        // Check each row in the project against the filter
+        Assert.assertEquals(rowfilter.filterRow(project, 0, project.rows.get(0)), true);
+        Assert.assertEquals(rowfilter.filterRow(project, 1, project.rows.get(1)), false);
+        Assert.assertEquals(rowfilter.filterRow(project, 2, project.rows.get(2)), true);
+        Assert.assertEquals(rowfilter.filterRow(project, 3, project.rows.get(3)), true);
     }
 
     @Test
     public void testInvertedTextFilter() throws Exception {
-        //Apply inverted text filter "a"
+        // Apply inverted text filter "a"
 
-        //Column: "Value"
-        //Filter Query: "a"
-        //Mode: "text"
-        //Case sensitive: False
-        //Invert: True
-        String filter =     "{\"type\":\"text\","
-                            + "\"name\":\"Value\","
-                            + "\"columnName\":\"Value\","
-                            + "\"mode\":\"text\","
-                            + "\"caseSensitive\":false,"
-                            + "\"invert\":true,"
-                            + "\"query\":\"a\"}";
-        
+        // Column: "Value"
+        // Filter Query: "a"
+        // Mode: "text"
+        // Case sensitive: False
+        // Invert: True
+        String filter = "{\"type\":\"text\","
+                + "\"name\":\"Value\","
+                + "\"columnName\":\"Value\","
+                + "\"mode\":\"text\","
+                + "\"caseSensitive\":false,"
+                + "\"invert\":true,"
+                + "\"query\":\"a\"}";
+
         configureFilter(filter);
 
-        //Check each row in the project against the filter
-        Assert.assertEquals(rowfilter.filterRow(project, 0, project.rows.get(0)),false);
-        Assert.assertEquals(rowfilter.filterRow(project, 1, project.rows.get(1)),true);
-        Assert.assertEquals(rowfilter.filterRow(project, 2, project.rows.get(2)),false);
-        Assert.assertEquals(rowfilter.filterRow(project, 3, project.rows.get(3)),false);
+        // Check each row in the project against the filter
+        Assert.assertEquals(rowfilter.filterRow(project, 0, project.rows.get(0)), false);
+        Assert.assertEquals(rowfilter.filterRow(project, 1, project.rows.get(1)), true);
+        Assert.assertEquals(rowfilter.filterRow(project, 2, project.rows.get(2)), false);
+        Assert.assertEquals(rowfilter.filterRow(project, 3, project.rows.get(3)), false);
     }
 
     @Test
     public void testRegExFilter() throws Exception {
-        //Apply regular expression filter "[bc]"
+        // Apply regular expression filter "[bc]"
 
-        //Column: "Value"
-        //Filter Query: "[bc]"
-        //Mode: "regex"
-        //Case sensitive: False
-        //Invert: False
-        String filter =     "{\"type\":\"text\","
-                            + "\"name\":\"Value\","
-                            + "\"columnName\":\"Value\","
-                            + "\"mode\":\"regex\","
-                            + "\"caseSensitive\":false,"
-                            + "\"invert\":false,"
-                            + "\"query\":\"[bc]\"}";
-        
+        // Column: "Value"
+        // Filter Query: "[bc]"
+        // Mode: "regex"
+        // Case sensitive: False
+        // Invert: False
+        String filter = "{\"type\":\"text\","
+                + "\"name\":\"Value\","
+                + "\"columnName\":\"Value\","
+                + "\"mode\":\"regex\","
+                + "\"caseSensitive\":false,"
+                + "\"invert\":false,"
+                + "\"query\":\"[bc]\"}";
+
         configureFilter(filter);
 
-        //Check each row in the project against the filter
-        Assert.assertEquals(rowfilter.filterRow(project, 0, project.rows.get(0)),false);
-        Assert.assertEquals(rowfilter.filterRow(project, 1, project.rows.get(1)),true);
-        Assert.assertEquals(rowfilter.filterRow(project, 2, project.rows.get(2)),true);
-        Assert.assertEquals(rowfilter.filterRow(project, 3, project.rows.get(3)),true);
+        // Check each row in the project against the filter
+        Assert.assertEquals(rowfilter.filterRow(project, 0, project.rows.get(0)), false);
+        Assert.assertEquals(rowfilter.filterRow(project, 1, project.rows.get(1)), true);
+        Assert.assertEquals(rowfilter.filterRow(project, 2, project.rows.get(2)), true);
+        Assert.assertEquals(rowfilter.filterRow(project, 3, project.rows.get(3)), true);
     }
 
     @Test
     public void testCaseSensitiveFilter() throws Exception {
-        //Apply case-sensitive filter "A"
-        
+        // Apply case-sensitive filter "A"
+
         configureFilter(sensitiveConfigJson);
 
-        //Check each row in the project against the filter
-        //Expect to retrieve one row containing "Abc"
-        Assert.assertEquals(rowfilter.filterRow(project, 0, project.rows.get(0)),false);
-        Assert.assertEquals(rowfilter.filterRow(project, 1, project.rows.get(1)),false);
-        Assert.assertEquals(rowfilter.filterRow(project, 2, project.rows.get(2)),false);
-        Assert.assertEquals(rowfilter.filterRow(project, 3, project.rows.get(3)),true);
+        // Check each row in the project against the filter
+        // Expect to retrieve one row containing "Abc"
+        Assert.assertEquals(rowfilter.filterRow(project, 0, project.rows.get(0)), false);
+        Assert.assertEquals(rowfilter.filterRow(project, 1, project.rows.get(1)), false);
+        Assert.assertEquals(rowfilter.filterRow(project, 2, project.rows.get(2)), false);
+        Assert.assertEquals(rowfilter.filterRow(project, 3, project.rows.get(3)), true);
     }
-    
+
     @Test
     public void serializeTextSearchFacetConfig() throws JsonParseException, JsonMappingException, IOException {
         TextSearchFacetConfig config = ParsingUtilities.mapper.readValue(sensitiveConfigJson, TextSearchFacetConfig.class);
         TestUtils.isSerializedTo(config, sensitiveConfigJson);
     }
-    
+
     @Test
     public void serializeTextSearchFacet() throws JsonParseException, JsonMappingException, IOException {
         TextSearchFacetConfig config = ParsingUtilities.mapper.readValue(sensitiveConfigJson, TextSearchFacetConfig.class);
@@ -206,4 +206,3 @@ public class TextSearchFacetTests extends RefineTest {
         TestUtils.isSerializedTo(facet, sensitiveFacetJson);
     }
 }
-

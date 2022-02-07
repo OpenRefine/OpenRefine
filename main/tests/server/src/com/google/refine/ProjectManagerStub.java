@@ -93,9 +93,9 @@ public class ProjectManagerStub extends ProjectManager {
         // empty
     }
 
-    //Overridden to make public for testing
+    // Overridden to make public for testing
     @Override
-    public void saveProjects(boolean allModified){
+    public void saveProjects(boolean allModified) {
         super.saveProjects(allModified);
     }
 

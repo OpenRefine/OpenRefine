@@ -24,6 +24,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  ******************************************************************************/
+
 package com.google.refine.expr.functions.strings;
 
 import static org.testng.Assert.assertEquals;
@@ -34,12 +35,12 @@ import com.google.refine.RefineTest;
 import com.google.refine.util.TestUtils;
 
 public class SplitTests extends RefineTest {
+
     @Test
     public void testSplit() {
-        assertEquals(invoke("split", "a,,b,c,d", ","), new String[] {"a", "b", "c", "d"});
-        assertEquals(invoke("split", "a,,b,c,d", ",", true), new String[] {"a", "", "b", "c", "d"});
+        assertEquals(invoke("split", "a,,b,c,d", ","), new String[] { "a", "b", "c", "d" });
+        assertEquals(invoke("split", "a,,b,c,d", ",", true), new String[] { "a", "", "b", "c", "d" });
         assertEquals(invoke("split", "", ","), new String[] {});
-        assertEquals(invoke("split", ",,,", ","), new String[] {""}); // TODO: Should this return an empty array?
+        assertEquals(invoke("split", ",,,", ","), new String[] { "" }); // TODO: Should this return an empty array?
     }
 }
-

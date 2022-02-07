@@ -49,8 +49,8 @@ public class SQLiteConnectionManagerTest extends DBExtensionTests {
     @BeforeTest
     @Parameters({ "sqliteDbName", "sqliteTestTable" })
     public void beforeTest(@Optional(DEFAULT_SQLITE_DB_NAME) String sqliteDbName,
-                    @Optional(DEFAULT_TEST_TABLE) String sqliteTestTable)
-                    throws DatabaseServiceException, SQLException {
+            @Optional(DEFAULT_TEST_TABLE) String sqliteTestTable)
+            throws DatabaseServiceException, SQLException {
 
         MockitoAnnotations.initMocks(this);
 

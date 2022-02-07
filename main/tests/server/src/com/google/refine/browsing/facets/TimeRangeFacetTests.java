@@ -24,6 +24,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  ******************************************************************************/
+
 package com.google.refine.browsing.facets;
 
 import java.io.IOException;
@@ -42,9 +43,8 @@ import com.google.refine.model.Project;
 import com.google.refine.util.ParsingUtilities;
 import com.google.refine.util.TestUtils;
 
-
 public class TimeRangeFacetTests extends RefineTest {
-    
+
     public static String facetJson = "{"
             + "\"name\":\"my column\","
             + "\"expression\":\"value\","
@@ -64,26 +64,26 @@ public class TimeRangeFacetTests extends RefineTest {
             + "\"nonTimeCount\":1,"
             + "\"blankCount\":0,"
             + "\"errorCount\":0}";
-    
-    public static String configJson = "{\n" + 
-            "          \"selectNonTime\": true,\n" + 
-            "          \"expression\": \"value\",\n" + 
-            "          \"selectBlank\": true,\n" + 
-            "          \"selectError\": true,\n" + 
-            "          \"selectTime\": true,\n" + 
-            "          \"name\": \"my column\",\n" + 
-            "          \"from\": 1262443349000,\n" + 
-            "          \"to\": 1514966950000,\n" + 
-            "          \"type\": \"timerange\",\n" + 
-            "          \"columnName\": \"my column\"\n" + 
+
+    public static String configJson = "{\n" +
+            "          \"selectNonTime\": true,\n" +
+            "          \"expression\": \"value\",\n" +
+            "          \"selectBlank\": true,\n" +
+            "          \"selectError\": true,\n" +
+            "          \"selectTime\": true,\n" +
+            "          \"name\": \"my column\",\n" +
+            "          \"from\": 1262443349000,\n" +
+            "          \"to\": 1514966950000,\n" +
+            "          \"type\": \"timerange\",\n" +
+            "          \"columnName\": \"my column\"\n" +
             "        }";
-    
+
     @Test
     public void serializeTimeRangeFacetConfig() throws JsonParseException, JsonMappingException, IOException {
         TimeRangeFacetConfig config = ParsingUtilities.mapper.readValue(configJson, TimeRangeFacetConfig.class);
         TestUtils.isSerializedTo(config, configJson);
     }
-    
+
     @Test
     public void serializeTimeRangeFacet() throws JsonParseException, JsonMappingException, IOException {
         Project project = createCSVProject("my column\n"
@@ -94,7 +94,7 @@ public class TimeRangeFacetTests extends RefineTest {
         project.rows.get(0).cells.set(0, new Cell(OffsetDateTime.parse("2018-01-03T08:09:10Z"), null));
         project.rows.get(2).cells.set(0, new Cell(OffsetDateTime.parse("2008-01-03T03:04:05Z"), null));
         project.rows.get(3).cells.set(0, new Cell(OffsetDateTime.parse("2012-04-05T02:00:01Z"), null));
-        
+
         Engine engine = new Engine(project);
         TimeRangeFacetConfig config = ParsingUtilities.mapper.readValue(configJson, TimeRangeFacetConfig.class);
         TimeRangeFacet facet = config.apply(project);

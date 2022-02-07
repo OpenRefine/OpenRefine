@@ -66,11 +66,11 @@
     <jackson.version>2.13.1</jackson.version>
     <servlet-api.version>4.0.1</servlet-api.version>
     <butterfly.version>1.2.3</butterfly.version>
-    <slf4j.version>1.7.33</slf4j.version>
+    <slf4j.version>1.7.35</slf4j.version>
     <log4j.version>2.17.1</log4j.version>
     <jetty.version>9.4.41.v20210516</jetty.version>
     <okhttp.version>4.9.3</okhttp.version>
-    <jena.version>4.3.2</jena.version>
+    <jena.version>4.4.0</jena.version>
     <poi.version>5.2.0</poi.version>
     <commons-lang3.version>3.12.0</commons-lang3.version>
     <commons-fileupload.version>1.4</commons-fileupload.version>
@@ -87,7 +87,7 @@
     <vicino.version>1.2</vicino.version>
     <clojure.version>1.10.3</clojure.version>
     <httpclient.version>4.5.13</httpclient.version>
-    <httpclient5.version>5.1.2</httpclient5.version>
+    <httpclient5.version>5.1.3</httpclient5.version>
     <httpcore.version>4.4.15</httpcore.version>
     <opencsv-multichar.version>2.4</opencsv-multichar.version>
     <swc-parser-lazy.version>3.1.9</swc-parser-lazy.version>
@@ -99,7 +99,7 @@
     <httpmime.version>4.5.13</httpmime.version>
     <owasp-encoder.version>1.2.3</owasp-encoder.version>
     <jasypt.version>1.9.3</jasypt.version>
-    <mockito.version>4.2.0</mockito.version>
+    <mockito.version>4.3.1</mockito.version>
 
     <!-- plugin versions -->
     <build-helper-maven-plugin.version>3.3.0</build-helper-maven-plugin.version>
@@ -315,6 +315,22 @@
             <deployAtEnd>true</deployAtEnd>
 	 </configuration>
        </plugin>
+      <plugin>
+        <groupId>net.revelc.code.formatter</groupId>
+        <artifactId>formatter-maven-plugin</artifactId>
+        <version>2.17.1</version>
+        <configuration>
+          <configFile>${maven.multiModuleProjectDirectory}/IDEs/eclipse/Refine.style.xml</configFile>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-eclipse-plugin</artifactId>
+        <version>2.10</version>
+        <configuration>
+          <workspaceCodeStylesURL>${maven.multiModuleProjectDirectory}/IDEs/eclipse/Refine.style.xml</workspaceCodeStylesURL>
+        </configuration>
+      </plugin>
     </plugins>
   </build>
 

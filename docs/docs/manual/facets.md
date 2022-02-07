@@ -17,7 +17,7 @@ Typically, you create a facet on a particular column. That facet selection appea
 
 ### An example {#an-example}
 
-You can learn about facets and filtering with the following example. You can copy the following table and paste it using the <span class="menuItems">Clipboard</span> method of starting a project if you would like to try it yourself.
+You can learn about facets and filtering with the following example. You can copy the following table and paste it using the <span class="menuItems">Clipboard</span> method of starting a project if you would like to try it yourself. Check the "Attempt to parse cell text into numbers" option so that you can use numeric faceting.
 
 We collected a list of the [10 most populous cities from Wikidata](https://w.wiki/3Em), using an example query of theirs. We removed the GPS coordinates and added the country. 
 

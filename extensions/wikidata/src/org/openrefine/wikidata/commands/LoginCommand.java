@@ -71,6 +71,8 @@ public class LoginCommand extends Command {
     static final String ACCESS_SECRET = "wb-access-secret";
     
     static final Pattern cookieKeyDisallowedCharacters = Pattern.compile("[^a-zA-Z0-9\\-!#$%&'*+.?\\^_`|~]");
+    
+    protected ConnectionManager manager = null;
 
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response)
@@ -80,7 +82,9 @@ public class LoginCommand extends Command {
             return;
         }
 
-        ConnectionManager manager = ConnectionManager.getInstance();
+        if (manager == null) {
+        	manager = ConnectionManager.getInstance();
+        }
 
         String mediawikiApiEndpoint = removeCRLF(request.getParameter(API_ENDPOINT));
         if (isBlank(mediawikiApiEndpoint)) {
@@ -188,7 +192,6 @@ public class LoginCommand extends Command {
             return;
         }
 
-        ConnectionManager manager = ConnectionManager.getInstance();
         Map<String, Object> jsonResponse = new HashMap<>();
         if (manager.isLoggedIn(mediawikiApiEndpoint)) {
             jsonResponse.put("logged_in", manager.isLoggedIn(mediawikiApiEndpoint));
@@ -281,4 +284,8 @@ public class LoginCommand extends Command {
         Matcher matcher = cookieKeyDisallowedCharacters.matcher(key);
         return matcher.replaceAll("-");
     }
+
+	protected void setConnectionManager(ConnectionManager connectionManager) {
+		this.manager = connectionManager;
+	}
 }
