@@ -31,7 +31,6 @@ import org.openrefine.wikidata.schema.exceptions.SkipSchemaExpressionException;
 import org.openrefine.wikidata.updates.TermedStatementEntityUpdate;
 import org.openrefine.wikidata.updates.TermedStatementEntityUpdateBuilder;
 import org.wikidata.wdtk.datamodel.interfaces.EntityIdValue;
-import org.wikidata.wdtk.datamodel.interfaces.ItemIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.Statement;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
@@ -40,7 +39,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
 /**
- * The representation of an item document, which can contain variables both for
+ * The representation of an entity document, which can contain variables both for
  * its own id and in its contents.
  * 
  * @author Antonin Delpeuch
@@ -48,14 +47,14 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonTypeInfo(use = JsonTypeInfo.Id.NONE)
-public class WbItemDocumentExpr implements WbExpression<TermedStatementEntityUpdate> {
+public class WbEntityDocumentExpr implements WbExpression<TermedStatementEntityUpdate> {
 
     private WbExpression<? extends EntityIdValue> subject;
     private List<WbNameDescExpr> nameDescs;
     private List<WbStatementGroupExpr> statementGroups;
 
     @JsonCreator
-    public WbItemDocumentExpr(@JsonProperty("subject") WbExpression<? extends EntityIdValue> subjectExpr,
+    public WbEntityDocumentExpr(@JsonProperty("subject") WbExpression<? extends EntityIdValue> subjectExpr,
             @JsonProperty("nameDescs") List<WbNameDescExpr> nameDescExprs,
             @JsonProperty("statementGroups") List<WbStatementGroupExpr> statementGroupExprs) {
         Validate.notNull(subjectExpr);
@@ -107,10 +106,10 @@ public class WbItemDocumentExpr implements WbExpression<TermedStatementEntityUpd
 
     @Override
     public boolean equals(Object other) {
-        if (other == null || !WbItemDocumentExpr.class.isInstance(other)) {
+        if (other == null || !WbEntityDocumentExpr.class.isInstance(other)) {
             return false;
         }
-        WbItemDocumentExpr otherExpr = (WbItemDocumentExpr) other;
+        WbEntityDocumentExpr otherExpr = (WbEntityDocumentExpr) other;
         return subject.equals(otherExpr.getSubject()) && nameDescs.equals(otherExpr.getNameDescs())
                 && statementGroups.equals(otherExpr.getStatementGroups());
     }

@@ -28,7 +28,7 @@ import java.util.List;
 import org.openrefine.wikidata.updates.TermedStatementEntityUpdate;
 
 /**
- * A scheduling strategy for item updates. Given a list of initial updates, the
+ * A scheduling strategy for entity updates. Given a list of initial updates, the
  * scheduler reorganizes these updates (possibly splitting them or merging them)
  * to create a sequence that is suitable for a particular import process.
  * 

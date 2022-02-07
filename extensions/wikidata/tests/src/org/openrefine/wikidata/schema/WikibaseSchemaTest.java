@@ -166,6 +166,6 @@ public class WikibaseSchemaTest extends WikidataRefineTest {
     public void testUnmodifiableList() throws IOException {
         String serialized = TestingData.jsonFromFile("schema/inception.json");
         WikibaseSchema schema = WikibaseSchema.reconstruct(serialized);
-        schema.getItemDocumentExpressions().clear();
+        schema.getEntityDocumentExpressions().clear();
     }
 }

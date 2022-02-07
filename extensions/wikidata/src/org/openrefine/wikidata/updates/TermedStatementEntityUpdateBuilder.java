@@ -55,9 +55,9 @@ public class TermedStatementEntityUpdateBuilder {
     /**
      * Constructor.
      * 
-     * @param qid
-     *            the subject of the document. It can be a reconciled item value for
-     *            new items.
+     * @param id
+     *            the subject of the document. It can be a reconciled entity value for
+     *            new entities.
      */
     public TermedStatementEntityUpdateBuilder(EntityIdValue id) {
         Validate.notNull(id);
@@ -123,7 +123,7 @@ public class TermedStatementEntityUpdateBuilder {
     }
 
     /**
-     * Adds a label to the item.
+     * Adds a label to the entity.
      * 
      * @param label
      *            the label to add
@@ -141,7 +141,7 @@ public class TermedStatementEntityUpdateBuilder {
     }
 
     /**
-     * Adds a list of labels to the item.
+     * Adds a list of labels to the entity.
      * 
      * @param labels
      *            the labels to add

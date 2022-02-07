@@ -11,8 +11,8 @@ import java.util.Set;
  */
 public class CommonDescriptionScrutinizer extends DescriptionScrutinizer {
 
-    public static final String descTooLongType = "item-description-too-long";
-    public static final String descIdenticalWithLabel = "item-description-identical-with-label";
+    public static final String descTooLongType = "description-too-long";
+    public static final String descIdenticalWithLabel = "description-identical-with-label";
 
     @Override
     public void scrutinize(TermedStatementEntityUpdate update, String descText, String lang) {
@@ -26,7 +26,7 @@ public class CommonDescriptionScrutinizer extends DescriptionScrutinizer {
         final int maxLength = 250;
         if (descText.length() > maxLength) {
             QAWarning issue = new QAWarning(descTooLongType, null, QAWarning.Severity.CRITICAL, 1);
-            issue.setProperty("example_entity", update.getItemId());
+            issue.setProperty("example_entity", update.getEntityId());
             issue.setProperty("description", descText);
             issue.setProperty("lang", lang);
             issue.setProperty("length", descText.length());
@@ -47,7 +47,7 @@ public class CommonDescriptionScrutinizer extends DescriptionScrutinizer {
             labelText = labelText.trim();
             if (labelText.equals(descText)) {
                 QAWarning issue = new QAWarning(descIdenticalWithLabel, null, QAWarning.Severity.WARNING, 1);
-                issue.setProperty("example_entity", update.getItemId());
+                issue.setProperty("example_entity", update.getEntityId());
                 issue.setProperty("description", descText);
                 issue.setProperty("lang", lang);
                 issue.setProperty("label_lang", label.getLanguageCode());

@@ -31,7 +31,7 @@ public abstract class StatementScrutinizer extends EditScrutinizer {
 
     @Override
     public void scrutinize(TermedStatementEntityUpdate update) {
-        EntityIdValue currentEntityId = update.getItemId();
+        EntityIdValue currentEntityId = update.getEntityId();
         for (Statement statement : update.getAddedStatements()) {
             scrutinize(statement, currentEntityId, true);
         }

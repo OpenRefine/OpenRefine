@@ -40,20 +40,20 @@ import com.google.refine.model.Project;
 import com.google.refine.model.Recon;
 import com.google.refine.model.recon.StandardReconConfig;
 
-public class NewItemLibraryTest extends WikidataRefineTest {
+public class NewEntityLibraryTest extends WikidataRefineTest {
 
-    private NewItemLibrary library;
+    private NewEntityLibrary library;
 
     @BeforeMethod
     public void setUp() {
-        library = new NewItemLibrary();
-        library.setQid(1234L, "Q345");
-        library.setQid(3289L, "Q384");
+        library = new NewEntityLibrary();
+        library.setId(1234L, "Q345");
+        library.setId(3289L, "Q384");
     }
 
     @Test
     public void testRetrieveItem() {
-        assertEquals("Q345", library.getQid(1234L));
+        assertEquals("Q345", library.getId(1234L));
     }
 
     @Test
@@ -84,7 +84,7 @@ public class NewItemLibraryTest extends WikidataRefineTest {
 
     @Test
     public void testSerialize() {
-        JacksonSerializationTest.canonicalSerialization(NewItemLibrary.class, library,
+        JacksonSerializationTest.canonicalSerialization(NewEntityLibrary.class, library,
                 "{\"qidMap\":{\"1234\":\"Q345\",\"3289\":\"Q384\"}}");
     }
 

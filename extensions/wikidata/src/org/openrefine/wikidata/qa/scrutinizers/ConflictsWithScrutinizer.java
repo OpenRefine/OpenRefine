@@ -88,7 +88,7 @@ public class ConflictsWithScrutinizer extends EditScrutinizer {
                     QAWarning issue = new QAWarning(type, propertyId.getId()+conflictingPid.getId(), QAWarning.Severity.WARNING, 1);
                     issue.setProperty("property_entity", propertyId);
                     issue.setProperty("added_property_entity", conflictingPid);
-                    issue.setProperty("example_entity", update.getItemId());
+                    issue.setProperty("example_entity", update.getEntityId());
                     addIssue(issue);
                 }
             }

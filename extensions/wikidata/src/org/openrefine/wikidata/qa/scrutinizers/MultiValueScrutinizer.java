@@ -40,7 +40,7 @@ public class MultiValueScrutinizer extends EditScrutinizer {
                 if (propertyCount.get(pid) == 1) {
                     QAWarning issue = new QAWarning(new_type, pid.getId(), QAWarning.Severity.WARNING, 1);
                     issue.setProperty("property_entity", pid);
-                    issue.setProperty("example_entity", update.getItemId());
+                    issue.setProperty("example_entity", update.getEntityId());
                     addIssue(issue);
                 }
             }
@@ -49,7 +49,7 @@ public class MultiValueScrutinizer extends EditScrutinizer {
                 if (propertyCount.get(pid) == 1) {
                     QAWarning issue = new QAWarning(existing_type, pid.getId(), QAWarning.Severity.INFO, 1);
                     issue.setProperty("property_entity", pid);
-                    issue.setProperty("example_entity", update.getItemId());
+                    issue.setProperty("example_entity", update.getEntityId());
                     addIssue(issue);
                 }
             }

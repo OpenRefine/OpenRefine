@@ -52,8 +52,6 @@ import org.wikidata.wdtk.datamodel.interfaces.ItemIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.MediaInfoDocument;
 import org.wikidata.wdtk.datamodel.interfaces.MediaInfoIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.MonolingualTextValue;
-import org.wikidata.wdtk.datamodel.interfaces.Statement;
-import org.wikidata.wdtk.datamodel.interfaces.StatementGroup;
 import org.wikidata.wdtk.datamodel.interfaces.StatementUpdate;
 import org.wikidata.wdtk.datamodel.interfaces.TermUpdate;
 import org.wikidata.wdtk.wikibaseapi.WikibaseDataEditor;
@@ -64,7 +62,7 @@ public class EditBatchProcessorTest extends WikidataRefineTest {
 
     private WikibaseDataFetcher fetcher = null;
     private WikibaseDataEditor editor = null;
-    private NewItemLibrary library = null;
+    private NewEntityLibrary library = null;
     private String summary = "my fantastic edits";
     private int maxlag = 5;
     private List<String> tags = null;
@@ -74,7 +72,7 @@ public class EditBatchProcessorTest extends WikidataRefineTest {
         fetcher = mock(WikibaseDataFetcher.class);
         editor = mock(WikibaseDataEditor.class);
         editor.disableEditing(); // just in case we got mocking wrong…
-        library = new NewItemLibrary();// new items created in the test
+        library = new NewEntityLibrary();// new entities created in the test
         tags = Arrays.asList("my-tag");
     }
 
@@ -113,8 +111,8 @@ public class EditBatchProcessorTest extends WikidataRefineTest {
         assertEquals(0, processor.remainingEdits());
         assertEquals(100, processor.progress());
 
-        NewItemLibrary expectedLibrary = new NewItemLibrary();
-        expectedLibrary.setQid(1234L, "Q1234");
+        NewEntityLibrary expectedLibrary = new NewEntityLibrary();
+        expectedLibrary.setId(1234L, "Q1234");
         assertEquals(expectedLibrary, library);
     }
 
@@ -155,7 +153,7 @@ public class EditBatchProcessorTest extends WikidataRefineTest {
         assertEquals(100, processor.progress());
 
         // Check result
-        assertEquals(new NewItemLibrary(), library);
+        assertEquals(new NewEntityLibrary(), library);
         verify(fetcher, times(1)).getEntityDocuments(toQids(firstBatch));
         verify(fetcher, times(1)).getEntityDocuments(toQids(secondBatch));
         for (ItemDocument doc : fullBatch) {
@@ -205,7 +203,7 @@ public class EditBatchProcessorTest extends WikidataRefineTest {
         assertEquals(100, processor.progress());
 
         // Check result
-        assertEquals(new NewItemLibrary(), library);
+        assertEquals(new NewEntityLibrary(), library);
         verify(fetcher, times(1)).getEntityDocuments(toMids(firstBatch));
         verify(fetcher, times(1)).getEntityDocuments(toMids(secondBatch));
         for (MediaInfoDocument doc : fullBatch) {

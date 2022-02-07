@@ -25,34 +25,31 @@
 package org.openrefine.wikidata.schema;
 
 import java.util.Collections;
-import java.util.List;
 
 import org.openrefine.wikidata.testing.JacksonSerializationTest;
 import org.openrefine.wikidata.updates.TermedStatementEntityUpdate;
 import org.openrefine.wikidata.updates.TermedStatementEntityUpdateBuilder;
-import org.testng.Assert;
 import org.testng.annotations.Test;
 import org.wikidata.wdtk.datamodel.helpers.Datamodel;
 import org.wikidata.wdtk.datamodel.interfaces.EntityIdValue;
-import org.wikidata.wdtk.datamodel.interfaces.ItemIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.MonolingualTextValue;
 import org.wikidata.wdtk.datamodel.interfaces.Statement;
 
-public class WbItemDocumentExprTest extends WbExpressionTest<TermedStatementEntityUpdate> {
+public class WbEntityDocumentExprTest extends WbExpressionTest<TermedStatementEntityUpdate> {
 
-    public WbItemDocumentExpr expr;
+    public WbEntityDocumentExpr expr;
     EntityIdValue subject = Datamodel.makeWikidataItemIdValue("Q23");
     MonolingualTextValue alias = Datamodel.makeMonolingualTextValue("my alias", "en");
     Statement fullStatement;
 
     public String jsonRepresentation;
 
-    public WbItemDocumentExprTest() {
+    public WbEntityDocumentExprTest() {
         WbStatementGroupExprTest sgt = new WbStatementGroupExprTest();
         WbNameDescExpr nde = new WbNameDescExpr(WbNameDescExpr.NameDescType.ALIAS,
                 new WbMonolingualExpr(new WbLanguageConstant("en", "English"), new WbStringVariable("column D")));
         WbItemVariable subjectExpr = new WbItemVariable("column E");
-        expr = new WbItemDocumentExpr(subjectExpr, Collections.singletonList(nde), Collections.singletonList(sgt.expr));
+        expr = new WbEntityDocumentExpr(subjectExpr, Collections.singletonList(nde), Collections.singletonList(sgt.expr));
         fullStatement = sgt.statementGroup.getStatements().get(0);
 
         jsonRepresentation = "{\"subject\":{\"type\":\"wbitemvariable\",\"columnName\":\"column E\"},"
@@ -92,7 +89,7 @@ public class WbItemDocumentExprTest extends WbExpressionTest<TermedStatementEnti
 
     @Test
     public void testSerialize() {
-        JacksonSerializationTest.canonicalSerialization(WbItemDocumentExpr.class, expr, jsonRepresentation);
+        JacksonSerializationTest.canonicalSerialization(WbEntityDocumentExpr.class, expr, jsonRepresentation);
     }
 
     @Test(expectedExceptions = UnsupportedOperationException.class)

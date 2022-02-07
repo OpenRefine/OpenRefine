@@ -64,7 +64,7 @@ public class QuickStatementsUpdateScheduler implements UpdateScheduler {
      */
     protected void splitUpdate(TermedStatementEntityUpdate update)
             throws ImpossibleSchedulingException {
-        TermedStatementEntityUpdateBuilder remainingUpdateBuilder = new TermedStatementEntityUpdateBuilder(update.getItemId())
+        TermedStatementEntityUpdateBuilder remainingUpdateBuilder = new TermedStatementEntityUpdateBuilder(update.getEntityId())
                 .addLabels(update.getLabels(), true)
                 .addLabels(update.getLabelsIfNew(), false)
                 .addDescriptions(update.getDescriptions(), true)
@@ -81,11 +81,11 @@ public class QuickStatementsUpdateScheduler implements UpdateScheduler {
                 ItemIdValue pointer = pointers.stream().findFirst().get();
                 TermedStatementEntityUpdateBuilder referencingBuilder = referencingUpdates.get(pointer);
                 if (referencingBuilder == null) {
-                    referencingBuilder = new TermedStatementEntityUpdateBuilder(update.getItemId());
+                    referencingBuilder = new TermedStatementEntityUpdateBuilder(update.getEntityId());
                 }
                 referencingBuilder.addStatement(statement);
                 referencingUpdates.put(pointer, referencingBuilder);
-            } else if (pointers.size() == 1 && pointers.stream().findFirst().get().equals(update.getItemId())) {
+            } else if (pointers.size() == 1 && pointers.stream().findFirst().get().equals(update.getEntityId())) {
                 remainingUpdateBuilder.addStatement(statement);
             } else {
                 throw new ImpossibleSchedulingException();
@@ -124,11 +124,11 @@ public class QuickStatementsUpdateScheduler implements UpdateScheduler {
         Set<ItemIdValue> mentionedNewEntities = new HashSet<>(pointerUpdates.keySet());
         for (TermedStatementEntityUpdate update : pointerFreeUpdates.getUpdates()) {
             fullSchedule.add(update);
-            UpdateSequence backPointers = pointerUpdates.get(update.getItemId());
+            UpdateSequence backPointers = pointerUpdates.get(update.getEntityId());
             if (backPointers != null) {
                 fullSchedule.addAll(backPointers.getUpdates());
             }
-            mentionedNewEntities.remove(update.getItemId());
+            mentionedNewEntities.remove(update.getEntityId());
         }
 
         // Create any item that was referred to but untouched

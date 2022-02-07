@@ -66,7 +66,7 @@ public class SingleValueScrutinizer extends EditScrutinizer {
             if (seenSingleProperties.contains(pid)) {
                 QAWarning issue = new QAWarning(type, pid.getId(), QAWarning.Severity.WARNING, 1);
                 issue.setProperty("property_entity", pid);
-                issue.setProperty("example_entity", update.getItemId());
+                issue.setProperty("example_entity", update.getEntityId());
                 addIssue(issue);
             } else if (!constraintStatementList1.isEmpty() || !constraintStatementList2.isEmpty()){
                 seenSingleProperties.add(pid);

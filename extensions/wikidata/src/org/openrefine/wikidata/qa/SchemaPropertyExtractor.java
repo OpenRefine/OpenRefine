@@ -1,7 +1,7 @@
 package org.openrefine.wikidata.qa;
 
 import org.openrefine.wikidata.schema.WbExpression;
-import org.openrefine.wikidata.schema.WbItemDocumentExpr;
+import org.openrefine.wikidata.schema.WbEntityDocumentExpr;
 import org.openrefine.wikidata.schema.WbPropConstant;
 import org.openrefine.wikidata.schema.WbReferenceExpr;
 import org.openrefine.wikidata.schema.WbSnakExpr;
@@ -20,8 +20,8 @@ public class SchemaPropertyExtractor {
 
     public Set<PropertyIdValue> getAllProperties(WikibaseSchema schema) {
         Set<PropertyIdValue> properties = new HashSet<>();
-        List<WbItemDocumentExpr> itemDocumentExprs = schema.getItemDocumentExpressions();
-        for (WbItemDocumentExpr itemDocumentExpr : itemDocumentExprs) {
+        List<WbEntityDocumentExpr> itemDocumentExprs = schema.getEntityDocumentExpressions();
+        for (WbEntityDocumentExpr itemDocumentExpr : itemDocumentExprs) {
             List<WbStatementGroupExpr> statementGroups = itemDocumentExpr.getStatementGroups();
             for(WbStatementGroupExpr statementGroup : statementGroups) {
                 WbExpression<? extends PropertyIdValue> statementGroupProperty = statementGroup.getProperty();

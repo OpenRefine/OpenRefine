@@ -92,7 +92,7 @@ public class DifferenceWithinRangeScrutinizer extends EditScrutinizer {
                             } else {
                                 issue.setProperty("max_value", null);
                             }
-                            issue.setProperty("example_entity", update.getItemId());
+                            issue.setProperty("example_entity", update.getEntityId());
                             addIssue(issue);
                         }
 
@@ -106,7 +106,7 @@ public class DifferenceWithinRangeScrutinizer extends EditScrutinizer {
                                 issue.setProperty("min_value", null);
                             }
                             issue.setProperty("max_value", maxRangeValue.getNumericValue());
-                            issue.setProperty("example_entity", update.getItemId());
+                            issue.setProperty("example_entity", update.getEntityId());
                             addIssue(issue);
                         }
                     }

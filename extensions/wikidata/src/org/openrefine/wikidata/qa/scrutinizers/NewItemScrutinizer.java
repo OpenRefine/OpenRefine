@@ -52,19 +52,19 @@ public class NewItemScrutinizer extends EditScrutinizer {
 
             if (update.getLabels().isEmpty() && update.getLabelsIfNew().isEmpty() && update.getAliases().isEmpty()) {
                 QAWarning issue = new QAWarning(noLabelType, null, QAWarning.Severity.CRITICAL, 1);
-                issue.setProperty("example_entity", update.getItemId());
+                issue.setProperty("example_entity", update.getEntityId());
                 addIssue(issue);
             }
 
             if (update.getDescriptions().isEmpty() && update.getDescriptionsIfNew().isEmpty()) {
                 QAWarning issue = new QAWarning(noDescType, null, QAWarning.Severity.WARNING, 1);
-                issue.setProperty("example_entity", update.getItemId());
+                issue.setProperty("example_entity", update.getEntityId());
                 addIssue(issue);
             }
 
             if (!update.getDeletedStatements().isEmpty()) {
                 QAWarning issue = new QAWarning(deletedStatementsType, null, QAWarning.Severity.WARNING, 1);
-                issue.setProperty("example_entity", update.getItemId());
+                issue.setProperty("example_entity", update.getEntityId());
                 addIssue(issue);
             }
 
@@ -79,7 +79,7 @@ public class NewItemScrutinizer extends EditScrutinizer {
             }
             if (!typeFound) {
                 QAWarning issue = new QAWarning(noTypeType, null, QAWarning.Severity.WARNING, 1);
-                issue.setProperty("example_entity", update.getItemId());
+                issue.setProperty("example_entity", update.getEntityId());
                 addIssue(issue);
             }
         }

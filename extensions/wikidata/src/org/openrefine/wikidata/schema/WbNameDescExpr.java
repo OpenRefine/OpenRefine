@@ -60,31 +60,31 @@ public class WbNameDescExpr {
     }
 
     /**
-     * Evaluates the expression and adds the result to the item update.
+     * Evaluates the expression and adds the result to the entity update.
      * 
-     * @param item
-     *            the item update where the term should be stored
+     * @param entity
+     *            the entity update where the term should be stored
      * @param ctxt
      *            the evaluation context for the expression
      */
-    public void contributeTo(TermedStatementEntityUpdateBuilder item, ExpressionContext ctxt) {
+    public void contributeTo(TermedStatementEntityUpdateBuilder entity, ExpressionContext ctxt) {
         try {
             MonolingualTextValue val = getValue().evaluate(ctxt);
             switch (getType()) {
             case LABEL:
-                item.addLabel(val, true);
+                entity.addLabel(val, true);
                 break;
             case LABEL_IF_NEW:
-            	item.addLabel(val, false);
+            	entity.addLabel(val, false);
             	break;
             case DESCRIPTION:
-                item.addDescription(val, true);
+                entity.addDescription(val, true);
                 break;
             case DESCRIPTION_IF_NEW:
-            	item.addDescription(val, false);
+            	entity.addDescription(val, false);
             	break;
             case ALIAS:
-                item.addAlias(val);
+                entity.addAlias(val);
                 break;
             }
         } catch (SkipSchemaExpressionException e) {

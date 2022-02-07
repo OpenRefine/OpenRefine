@@ -36,7 +36,7 @@ public interface Manifest {
     int getMaxlag();
 
     /**
-     * The property id used to link an entity to the entity represing its type (class).
+     * The property id used to link an entity to the entity representing its type (class).
      * In Wikidata, this is P31 (instance of)
      */
     String getInstanceOfPid();
