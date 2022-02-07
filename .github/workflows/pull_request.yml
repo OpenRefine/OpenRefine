@@ -11,7 +11,7 @@ on:
 permissions: read-all
 
 jobs:
-  server_tests:
+  linux_server_tests:
     strategy:
       matrix:
         java: [ 11, 17 ]
