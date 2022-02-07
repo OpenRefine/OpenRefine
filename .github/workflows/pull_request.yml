@@ -48,8 +48,6 @@ jobs:
     - name: Set up secrets
       run: |
         echo "COVERALLS_TOKEN=$(echo eUVUVGRHOFJhQm9GMFJBYTNibjVhcWFEblpac1lmMlE3Cg== | base64 -d)" >> $GITHUB_ENV
-        echo "CYPRESS_RECORD_KEY=$(echo YzE3ZDU4OGItZTBkOC00ZjJmLTg4NjYtNzJmNmFmYmRhNGQxCg== | base64 -d)" >> $GITHUB_ENV
-        echo "CYPRESS_PROJECT_ID=s5du3k" >> $GITHUB_ENV
 
     - uses: actions/checkout@v2.3.4
       with:
@@ -123,6 +121,11 @@ jobs:
         with:
           ref: ${{ github.event.pull_request.head.ref }}
           repository: ${{ github.event.pull_request.head.repo.full_name }}
+
+    - name: Set up secrets
+      run: |
+        echo "CYPRESS_RECORD_KEY=$(echo YzE3ZDU4OGItZTBkOC00ZjJmLTg4NjYtNzJmNmFmYmRhNGQxCg== | base64 -d)" >> $GITHUB_ENV
+        echo "CYPRESS_PROJECT_ID=s5du3k" >> $GITHUB_ENV
 
       - name: Restore dependency cache
         uses: actions/cache@v2.1.7
