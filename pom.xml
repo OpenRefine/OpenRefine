@@ -268,9 +268,9 @@
 		</configuration>
 	    </execution>
 	    
-	    <!-- Attach the zip file for windows -->
+	    <!-- Attach the zip file for windows, without embedded JRE -->
 	    <execution>
-		<id>attach-win</id>
+		<id>attach-win-without-jre</id>
 		<phase>package</phase>
 		<goals>
 		    <goal>attach-artifact</goal>
@@ -287,6 +287,25 @@
 		</configuration>
 	    </execution>
 	    
+	    <!-- Attach the zip file for windows, with embedded JRE -->
+	    <execution>
+		<id>attach-win-with-jre</id>
+		<phase>package</phase>
+		<goals>
+		    <goal>attach-artifact</goal>
+		</goals>
+		<configuration>
+		    <skipAttach>${skipCreateExe}</skipAttach>
+		    <artifacts>
+			<artifact>
+			    <file>packaging/target/${project.build.finalName}-win-with-java-${project.version}.zip</file>
+			    <type>zip</type>
+			    <classifier>win</classifier>
+			</artifact>
+		    </artifacts>
+		</configuration>
+	    </execution>
+
 	    <!-- Attach the final DMG for MacOS -->
 	    <execution>
 		<id>attach-dmg</id>
