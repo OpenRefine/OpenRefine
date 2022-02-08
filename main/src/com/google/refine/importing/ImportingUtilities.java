@@ -67,6 +67,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.compress.archivers.tar.TarArchiveEntry;
 import org.apache.commons.compress.archivers.tar.TarArchiveInputStream;
 import org.apache.commons.compress.compressors.bzip2.BZip2CompressorInputStream;
+import org.apache.commons.compress.compressors.zstandard.ZstdCompressorInputStream;
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.FileUploadException;
 import org.apache.commons.fileupload.ProgressListener;
@@ -723,6 +724,11 @@ public class ImportingUtilities {
                     is.reset();
                 }
                 return new BZip2CompressorInputStream(is);
+            }
+            else if (fileName.endsWith(".zstd") || fileName.endsWith(".zst")
+                ||"application/zstd".equals(mimeType)){
+                InputStream inputStream = new FileInputStream(file);
+                return new ZstdCompressorInputStream(inputStream);
             }
         } catch (IOException e) {
             logger.warn("Something that looked like a compressed file gave an error on open: "+file,e);

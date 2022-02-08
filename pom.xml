@@ -101,6 +101,9 @@
     <jasypt.version>1.9.3</jasypt.version>
     <mockito.version>4.3.1</mockito.version>
 
+    <!-- ZSTD compression of org.apache.commons.compress.compressors.zstandard depends on std-jni -->
+    <zstd-jni.version>1.5.2-1</zstd-jni.version>
+
     <!-- plugin versions -->
     <build-helper-maven-plugin.version>3.3.0</build-helper-maven-plugin.version>
     <maven-compiler-plugin.version>3.9.0</maven-compiler-plugin.version>
