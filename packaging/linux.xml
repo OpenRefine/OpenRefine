@@ -45,6 +45,7 @@
       <excludes>
 	<exclude>**/target/**</exclude>
 	<exclude>**/tests/**</exclude>
+	<exclude>**/test-output/**</exclude>
 	<exclude>**/src/**</exclude>
 	<exclude>**/*.java</exclude>
 	<exclude>**/lib-src/**</exclude>
