@@ -300,7 +300,7 @@
 			<artifact>
 			    <file>packaging/target/${project.build.finalName}-win-with-java-${project.version}.zip</file>
 			    <type>zip</type>
-			    <classifier>win</classifier>
+			    <classifier>win-with-java</classifier>
 			</artifact>
 		    </artifacts>
 		</configuration>
