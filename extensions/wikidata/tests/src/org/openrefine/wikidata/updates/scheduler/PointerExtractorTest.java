@@ -31,7 +31,7 @@ import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.Set;
 
-import org.openrefine.wikidata.schema.entityvalues.ReconItemIdValue;
+import org.openrefine.wikidata.schema.entityvalues.ReconEntityIdValue;
 import org.openrefine.wikidata.testing.TestingData;
 import org.testng.annotations.Test;
 import org.wikidata.wdtk.datamodel.helpers.Datamodel;
@@ -109,7 +109,7 @@ public class PointerExtractorTest {
         assertEmpty(e.extractPointers(v));
     }
 
-    private static void assertEmpty(Set<ReconItemIdValue> pointers) {
+    private static void assertEmpty(Set<ReconEntityIdValue> pointers) {
         assertEquals(Collections.emptySet(), pointers);
     }
 }

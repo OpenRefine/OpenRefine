@@ -87,7 +87,7 @@ public abstract class EditScrutinizer {
      * Reads the candidate edits and emits warnings in the store
      * 
      * @param edit:
-     *            the list of ItemUpdates to scrutinize
+     *            the list of TermedStatementEntityUpdates to scrutinize
      */
     public abstract void scrutinize(TermedStatementEntityUpdate edit);
     

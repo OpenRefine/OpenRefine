@@ -57,7 +57,7 @@ import org.wikidata.wdtk.wikibaseapi.apierrors.MediaWikiApiErrorException;
 
 
 /**
- * Schedules and performs a list of updates to items via the API.
+ * Schedules and performs a list of updates to entities via the API.
  * 
  * @author Antonin Delpeuch
  *
@@ -90,7 +90,7 @@ public class EditBatchProcessor {
      * @param editor
      *            the object to use to perform the edits
      * @param updates
-     *            the list of item updates to perform
+     *            the list of entity updates to perform
      * @param library
      *            the library to use to keep track of new entity creation
      * @param summary
@@ -98,7 +98,7 @@ public class EditBatchProcessor {
      * @param tags
      *            the list of tags to apply to all edits
      * @param batchSize
-     *            the number of items that should be retrieved in one go from the
+     *            the number of entities that should be retrieved in one go from the
      *            API
      */
     public EditBatchProcessor(WikibaseDataFetcher fetcher, WikibaseDataEditor editor, List<TermedStatementEntityUpdate> updates,
@@ -145,7 +145,7 @@ public class EditBatchProcessor {
         }
         TermedStatementEntityUpdate update = currentBatch.get(batchCursor);
 
-        // Rewrite mentions to new items
+        // Rewrite mentions to new entities
         ReconEntityRewriter rewriter = new ReconEntityRewriter(library, update.getEntityId());
         try {
         	update = rewriter.rewrite(update);
