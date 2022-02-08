@@ -53,7 +53,7 @@ public interface Manifest {
     String getMediaWikiApiEndpoint();
 
     /**
-     * The reconciliation service for items in this Wikibase instance.
+     * The reconciliation service for entities in this Wikibase instance.
      * @deprecated use {@link #getReconServiceEndpoint(String)} with "item" as argument
      */
     String getReconServiceEndpoint();
@@ -91,7 +91,7 @@ public interface Manifest {
     List<String> getAvailableEntityTypes();
 
     /**
-     * Returns an item or property id used in the WikibaseQualityConstraints extension.
+     * Returns an entity or property id used in the WikibaseQualityConstraints extension.
      * @param name our internal identifier for the entity id
      * @return the entity id
      */

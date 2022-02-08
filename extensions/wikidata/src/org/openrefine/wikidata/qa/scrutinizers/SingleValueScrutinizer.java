@@ -33,7 +33,7 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * For now this scrutinizer only checks for uniqueness at the item level (it
+ * For now this scrutinizer only checks for uniqueness at the entity level (it
  * ignores qualifiers and references).
  * 
  * Given that all ranks are currently set to Normal, this also checks for

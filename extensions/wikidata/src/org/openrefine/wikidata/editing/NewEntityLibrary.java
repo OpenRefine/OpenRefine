@@ -41,7 +41,7 @@ import com.google.refine.model.recon.ReconConfig;
 import com.google.refine.model.recon.StandardReconConfig;
 
 /**
- * This keeps track of the new items that we have created for each internal
+ * This keeps track of the new entities that we have created for each internal
  * reconciliation id.
  * 
  * @author Antonin Delpeuch

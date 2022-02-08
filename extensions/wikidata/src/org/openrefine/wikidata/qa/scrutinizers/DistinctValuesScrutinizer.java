@@ -37,7 +37,7 @@ import java.util.Map;
 
 /**
  * A scrutinizer that checks for properties using the same value on different
- * items.
+ * entities.
  * 
  * @author Antonin Delpeuch
  *
