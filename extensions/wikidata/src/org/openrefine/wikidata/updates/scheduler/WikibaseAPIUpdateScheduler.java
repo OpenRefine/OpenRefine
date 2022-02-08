@@ -29,7 +29,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import org.openrefine.wikidata.schema.entityvalues.ReconItemIdValue;
+import org.openrefine.wikidata.schema.entityvalues.ReconEntityIdValue;
 import org.openrefine.wikidata.updates.TermedStatementEntityUpdate;
 import org.openrefine.wikidata.updates.TermedStatementEntityUpdateBuilder;
 import org.wikidata.wdtk.datamodel.interfaces.EntityIdValue;
@@ -108,7 +108,7 @@ public class WikibaseAPIUpdateScheduler implements UpdateScheduler {
         TermedStatementEntityUpdateBuilder pointerFullBuilder = new TermedStatementEntityUpdateBuilder(update.getEntityId());
 
         for (Statement statement : update.getAddedStatements()) {
-            Set<ReconItemIdValue> pointers = extractor.extractPointers(statement);
+            Set<ReconEntityIdValue> pointers = extractor.extractPointers(statement);
             if (pointers.isEmpty()) {
                 pointerFreeBuilder.addStatement(statement);
             } else {
