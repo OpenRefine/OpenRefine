@@ -33,12 +33,11 @@ module.exports = {
    'GREL Reference': [
 	   'manual/grelfunctions'],
     'Technical Reference': [
-      'technical-reference/technical-reference-index',
+      'technical-reference/contributing',
+      'technical-reference/build-test-run',
       'technical-reference/architecture',
       'technical-reference/openrefine-api',
       'technical-reference/reconciliation-api',
-      'technical-reference/contributing',
-      'technical-reference/build-test-run',
       'technical-reference/development-roadmap',
       'technical-reference/version-release-process',
       'technical-reference/homebrew-cask-process',

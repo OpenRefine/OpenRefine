@@ -153,7 +153,11 @@
       "items": [
         {
           "type": "doc",
-          "id": "version-3.5/technical-reference/technical-reference-index"
+          "id": "version-3.5/technical-reference/contributing"
+        },
+        {
+          "type": "doc",
+          "id": "version-3.5/technical-reference/build-test-run"
         },
         {
           "type": "doc",
@@ -166,14 +170,6 @@
         {
           "type": "doc",
           "id": "version-3.5/technical-reference/reconciliation-api"
-        },
-        {
-          "type": "doc",
-          "id": "version-3.5/technical-reference/contributing"
-        },
-        {
-          "type": "doc",
-          "id": "version-3.5/technical-reference/build-test-run"
         },
         {
           "type": "doc",
