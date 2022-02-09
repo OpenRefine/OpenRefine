@@ -18,4 +18,4 @@ security import ./.github/workflows/release/apple_cert.cer -k ~/Library/Keychain
 echo security import ./.github/workflows/release/apple_cert.p12 -k ~/Library/Keychains/refine-build.keychain -P $P12_PASSPHRASE -T /usr/bin/codesign
 security import ./.github/workflows/release/apple_cert.p12 -k ~/Library/Keychains/refine-build.keychain -P $P12_PASSPHRASE -T /usr/bin/codesign
 
-security set-key-partition-list -S apple-tool:,apple: -s -k travis refine-build.keychain
+security set-key-partition-list -S apple-tool:,apple: -s -k gh_actions refine-build.keychain
