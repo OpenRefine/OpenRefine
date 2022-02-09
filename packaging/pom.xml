@@ -13,22 +13,21 @@
   </parent>
   <properties>
     <rootdir>${basedir}/..</rootdir>
-    <fullversion>0.0.0.0</fullversion>
-    <built.webapp.dir>./target/OpenRefine.app/Contents/Resources/webapp/</built.webapp.dir>
     <webapp.dir>../main/webapp</webapp.dir>
     <webapp.target>../main/target</webapp.target>
-    <icon.path>../graphics/icon/openrefine.icns</icon.path>
     <embedded.jre.version>11</embedded.jre.version>
 
     <mac.jre.path>${project.build.directory}/mac_jre</mac.jre.path>
     <mac.jre.url>https://api.adoptium.net/v3/binary/latest/${embedded.jre.version}/ga/mac/x64/jre/hotspot/normal/eclipse?project=jdk</mac.jre.url>
+    <mac.build.directory>OpenRefine ${project.version}</mac.build.directory>
+    <mac.webapp.dir>./target/OpenRefine.app/Contents/Resources/webapp/</mac.webapp.dir>
+    <mac.icon.path>../graphics/icon/openrefine.icns</mac.icon.path>
+    <mac.dmg.path>${project.build.directory}/${project.build.finalName}-mac-${project.version}.dmg</mac.dmg.path>
 
     <windows.jre.path>${project.build.directory}/windows_jre</windows.jre.path>
     <windows.jre.url>https://api.adoptium.net/v3/binary/latest/${embedded.jre.version}/ga/windows/x64/jre/hotspot/normal/eclipse?project=jdk</windows.jre.url>
     <windows.copyright.line>Copyright (c) 2018 OpenRefine contributors, 2010 Google, Inc.</windows.copyright.line>
-
-    <!-- default options for windows: no embedded JRE. Use the "embedded-jre" from ../settings.xml to add a JRE -->
-    <windows.package.jre.bundledAsFallback>false</windows.package.jre.bundledAsFallback>
+    <windows.fullversion>0.0.0.0</windows.fullversion>
   </properties>
 
   <profiles>
@@ -132,15 +131,16 @@
         <version>3.0.0</version>
         <executions>
           <execution>
-            <phase>generate-test-resources</phase>
+            <phase>prepare-package</phase>
+            <id>prepare-mac-bundle</id>
             <configuration>
 
               <target>
                 <mkdir dir="./target/"/>
 
-                <mkdir dir="${built.webapp.dir}" />
+                <mkdir dir="${mac.webapp.dir}" />
                     
-                    <copy todir="${built.webapp.dir}">
+                    <copy todir="${mac.webapp.dir}">
                         <fileset dir="${webapp.dir}">
                             <include name="**/*"/>
                             <exclude name="WEB-INF/classes/**"/>
@@ -149,31 +149,31 @@
                             <exclude name="WEB-INF/lib/icu4j*.jar"/>
                         </fileset>
                     </copy>
-                    <copy todir="${built.webapp.dir}">
+                    <copy todir="${mac.webapp.dir}">
                         <fileset dir="${webapp.dir}">
                             <include name="**/*.properties"/>
                         </fileset>
                     </copy>
-                    <copy todir="${built.webapp.dir}/WEB-INF/lib/">
+                    <copy todir="${mac.webapp.dir}/WEB-INF/lib/">
                         <fileset dir="${webapp.target}">
                             <include name="openrefine-main.jar" />
                         </fileset>
                     </copy>
                     
-                    <copy todir="${built.webapp.dir}/licenses/"> <!-- licenses for the backend -->
+                    <copy todir="${mac.webapp.dir}/licenses/"> <!-- licenses for the backend -->
                         <fileset dir="${project.build.directory}/generated-resources/">
                             <include name="licenses.xml" />
                             <include name="licenses/**/*" />
                         </fileset>
                     </copy>
 
-                    <copy todir="${built.webapp.dir}/licenses/licenses/"> <!-- licenses for the frontend -->
+                    <copy todir="${mac.webapp.dir}/licenses/licenses/"> <!-- licenses for the frontend -->
                         <fileset dir="${webapp.dir}/licenses/">
                             <include name="**/*" />
                         </fileset>
                     </copy>
 
-                    <copy todir="${built.webapp.dir}/extensions">
+                    <copy todir="${mac.webapp.dir}/extensions">
                         <fileset dir="../extensions">
                             <include name="**/*"/>
                             <exclude name="**/pom.xml"/>
@@ -188,11 +188,11 @@
                         </fileset>
                     </copy>
                     
-                    <replace file="${built.webapp.dir}/WEB-INF/web.xml">
+                    <replace file="${mac.webapp.dir}/WEB-INF/web.xml">
                         <replacefilter token="$VERSION" value="${project.version}"/>
                     </replace>
 
-                    <replace file="${built.webapp.dir}/WEB-INF/butterfly.properties">
+                    <replace file="${mac.webapp.dir}/WEB-INF/butterfly.properties">
                         <replacefilter token="../../extensions" value="extensions"/>
                     </replace>
 
@@ -204,8 +204,8 @@
             </goals>
           </execution>
           <execution>
-            <id>download-jres</id>
-            <phase>package</phase>
+            <id>download-jre</id>
+            <phase>process-test-resources</phase>
             <goals>
               <goal>run</goal>
             </goals>
@@ -249,6 +249,52 @@
               </target>
             </configuration>
           </execution>
+          <execution>
+            <id>generate-dmg</id>
+            <phase>verify</phase> <!-- should really be 'package' and appbundle at 'prepare-package', but that fails because the 
+                        packaging jar is not available at this time -->
+            <goals>
+              <goal>run</goal>
+            </goals>
+            <configuration>
+              <target name="generateDMG" description="Generate DMG">
+
+                <!-- TODO add codesigning here -->
+
+                <!-- Create DMG (Mac OS X) -->
+                <exec dir="${project.build.directory}" os="Mac OS X" executable="hdiutil">
+                    <arg value="create"/>
+                    <arg value="-noanyowners"/>
+                    <arg value="-imagekey"/>
+                    <arg value="zlib-level=9"/>
+                    <arg value="-srcfolder"/>
+                    <arg value="${mac.build.directory}"/>
+                    <arg value="${mac.dmg.path}"/>
+                </exec>
+
+                <!-- Create DMG (Linux), only for testing -->
+                <exec dir="${project.build.directory}" os="Linux" executable="genisoimage">
+                    <arg value="-V"/>
+                    <arg value="OpenRefine"/>
+                    <arg value="-U"/>
+                    <arg value="-D"/>
+                    <arg value="-l"/>
+                    <arg value="-allow-multidot"/>
+                    <arg value="-max-iso9660-filenames"/>
+                    <arg value="-relaxed-filenames"/>
+                    <arg value="-no-iso-translate"/>
+                    <arg value="-r"/>
+                    <arg value="-o"/>
+                    <arg value="${mac.dmg.path}"/>
+                    <arg value="-root"/>
+                    <arg value="${mac.build.directory}"/>
+                    <arg value="${mac.build.directory}"/>
+                </exec>
+
+              </target>
+            </configuration>
+          </execution>
+
         </executions>
       </plugin>
       <plugin>
@@ -303,11 +349,11 @@
                 </opts>
               </jre>
               <versionInfo>
-                <fileVersion>${fullversion}</fileVersion>
+                <fileVersion>${windows.fullversion}</fileVersion>
                 <txtFileVersion>${project.version}</txtFileVersion>
                 <fileDescription>openrefine</fileDescription>
                 <copyright>${windows.copyright.line}</copyright>
-                <productVersion>${fullversion}</productVersion>
+                <productVersion>${windows.fullversion}</productVersion>
                 <txtProductVersion>${project.version}</txtProductVersion>
                 <productName>OpenRefine</productName>
                 <internalName>openrefine</internalName>
@@ -343,11 +389,11 @@
                 </opts>
               </jre>
               <versionInfo>
-                <fileVersion>${fullversion}</fileVersion>
+                <fileVersion>${windows.fullversion}</fileVersion>
                 <txtFileVersion>${project.version}</txtFileVersion>
                 <fileDescription>openrefine</fileDescription>
                 <copyright>${windows.copyright.line}</copyright>
-                <productVersion>${fullversion}</productVersion>
+                <productVersion>${windows.fullversion}</productVersion>
                 <txtProductVersion>${project.version}</txtProductVersion>
                 <productName>OpenRefine</productName>
                 <internalName>openrefine</internalName>
@@ -439,12 +485,9 @@
           <configuration>
             <mainClass>com.google.refine.Refine</mainClass>
             <bundleName>OpenRefine</bundleName>
-            <buildDirectory>target/OpenRefine ${project.version}</buildDirectory>
-            <iconFile>${icon.path}</iconFile>
-            <generateDiskImageFile>true</generateDiskImageFile>
-            <diskImageFile>
-              ${project.build.directory}/${project.build.finalName}-mac-${project.version}.dmg
-            </diskImageFile>
+            <buildDirectory>${mac.build.directory}</buildDirectory>
+            <iconFile>${mac.icon.path}</iconFile>
+            <generateDiskImageFile>false</generateDiskImageFile>
             <jvmVersion>1.8</jvmVersion>
             <jrePath>${mac.jre.path}</jrePath>
             <jvmOptions>
