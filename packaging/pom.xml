@@ -262,6 +262,9 @@
                 <!-- TODO add codesigning here -->
 
                 <!-- Create DMG (Mac OS X) -->
+                <echo>
+                  in ${project.build.directory}, do hdiutil create -noanyowners -imagekey zlib-level=9 -srcfolder ${mac.build.directory} ${mac.dmg.path}
+                </echo>
                 <exec dir="${project.build.directory}" os="Mac OS X" executable="hdiutil">
                     <arg value="create"/>
                     <arg value="-noanyowners"/>
@@ -485,7 +488,7 @@
           <configuration>
             <mainClass>com.google.refine.Refine</mainClass>
             <bundleName>OpenRefine</bundleName>
-            <buildDirectory>${mac.build.directory}</buildDirectory>
+            <buildDirectory>${project.build.directory}/${mac.build.directory}</buildDirectory>
             <iconFile>${mac.icon.path}</iconFile>
             <generateDiskImageFile>false</generateDiskImageFile>
             <jvmVersion>1.8</jvmVersion>
