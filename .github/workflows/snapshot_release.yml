@@ -208,6 +208,8 @@ jobs:
         gpg --pinentry-mode loopback --passphrase "${{ secrets.GPG_PASSPHRASE }}" --output .github/workflows/release/apple_cert.cer --decrypt packaging/apple_certs/apple_cert.cer.enc
         gpg --pinentry-mode loopback --passphrase "${{ secrets.GPG_PASSPHRASE }}" --output .github/workflows/release/apple_cert.p12 --decrypt packaging/apple_certs/apple_cert.p12.enc
         .github/workflows/release/add_apple_keys.sh
+      env:
+        P12_PASSPHRASE: ${{ secrets.APPLE_P12_PASSPHRASE }}
 
     - name: Test, package and upload snapshot releases to OSSRH
       run: mvn deploy -DskipTests=true
