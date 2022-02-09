@@ -205,8 +205,8 @@ jobs:
 
     - name: Decrypt Apple certificates
       run: |
-        gpg --batch --passphrase "${{ secrets.GPG_PASSPHRASE }}" --output .github/workflows/release/apple_cert.cer --decrypt packaging/apple_certs/apple_cert.cer.enc
-        gpg --batch --passphrase "${{ secrets.GPG_PASSPHRASE }}" --output .github/workflows/release/apple_cert.p12 --decrypt packaging/apple_certs/apple_cert.p12.enc
+        gpg --pinentry-mode loopback --passphrase "${{ secrets.GPG_PASSPHRASE }}" --output .github/workflows/release/apple_cert.cer --decrypt packaging/apple_certs/apple_cert.cer.enc
+        gpg --pinentry-mode loopback --passphrase "${{ secrets.GPG_PASSPHRASE }}" --output .github/workflows/release/apple_cert.p12 --decrypt packaging/apple_certs/apple_cert.p12.enc
         .github/workflows/release/add_apple_keys.sh
 
     - name: Test, package and upload snapshot releases to OSSRH
