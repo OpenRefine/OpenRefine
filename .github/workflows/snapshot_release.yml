@@ -198,15 +198,15 @@ jobs:
         distribution: 'adopt'
         java-version: 17
         server-id: ossrh
-        server-username: ${{ secrets.OSSRH_USER }}
-        server-password: ${{ secrets.OSSRH_PASS }}
+        server-username: OSSRH_USER
+        server-password: OSSRH_PASS
         gpg-private-key: ${{ secrets.GPG_PRIVATE_KEY }}
-        gpg-passphrase: ${{ secrets.GPG_PASSPHRASE }}
+        gpg-passphrase: GPG_PASSPHRASE
 
     - name: Decrypt Apple certificates
       run: |
-        gpg --output .github/workflows/release/apple_cert.cer --decrypt packaging/apple_certs/apple_cert.cer.enc
-        gpg --output .github/workflows/release/apple_cert.p12 --decrypt packaging/apple_certs/apple_cert.p12.enc
+        gpg --batch --passphrase ${{ secrets.GPG_PASSPHRASE }} --output .github/workflows/release/apple_cert.cer --decrypt packaging/apple_certs/apple_cert.cer.enc
+        gpg --batch --passphrase ${{ secrets.GPG_PASSPHRASE }} --output .github/workflows/release/apple_cert.p12 --decrypt packaging/apple_certs/apple_cert.p12.enc
         .github/workflows/release/add_apple_keys.sh
 
     - name: Test, package and upload snapshot releases to OSSRH
@@ -214,5 +214,6 @@ jobs:
       env:
         OSSRH_USER: ${{ secrets.OSSRH_USER }}
         OSSRH_PASS: ${{ secrets.OSSRH_PASS }}
+        GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
 
 
