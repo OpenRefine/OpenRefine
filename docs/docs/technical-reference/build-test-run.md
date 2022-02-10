@@ -9,7 +9,7 @@ import useBaseUrl from '@docusaurus/useBaseUrl';
 
 You will need:
 * [OpenRefine source code](https://github.com/OpenRefine/OpenRefine)
-* [Java JDK](http://java.sun.com/javase/downloads/index.jsp) (Get [OpenJDK from here](https://jdk.java.net/15/).)
+* [Java JDK](http://java.sun.com/javase/downloads/index.jsp) (Get [OpenJDK from here](https://adoptium.net/).)
 * [Apache Maven](https://maven.apache.org)  (OPTIONAL)
 * A Unix/Linux shell environment OR the Windows command line
 
@@ -21,7 +21,7 @@ With Git installed, use the `git clone` command to download the [project's repo]
 
 ### Set up JDK {#set-up-jdk}
 
-You must [install JDK](https://jdk.java.net/15/) and set the JAVA_HOME environment variable (please ensure it points to the JDK, and not the JRE).
+You must [install JDK](https://adoptium.net/) and set the JAVA_HOME environment variable (please ensure it points to the JDK, and not the JRE).
 
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
@@ -64,8 +64,9 @@ Check the environment variable `JAVA_HOME` with:
 ```
 $JAVA_HOME/bin/java --version
 ```
-
-To set the environment variable for the current Java version of your MacOS:
+  
+If this shows your Java version, your `JAVA_HOME` variable is set up correctly. If it shows an error, you need to adjust it.
+To do so, you can use:
 
 ```
 export JAVA_HOME="$(/usr/libexec/java_home)"
