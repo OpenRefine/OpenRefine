@@ -9,7 +9,7 @@ import useBaseUrl from '@docusaurus/useBaseUrl';
 
 You will need:
 * [OpenRefine source code](https://github.com/OpenRefine/OpenRefine)
-* [Java JDK](http://java.sun.com/javase/downloads/index.jsp) (Get [OpenJDK from here](https://jdk.java.net/).)
+* [Java JDK](http://java.sun.com/javase/downloads/index.jsp) (Get [OpenJDK from here](https://adoptium.net/).)
 * [Apache Maven](https://maven.apache.org)  (OPTIONAL)
 * A Unix/Linux shell environment OR the Windows command line
 
@@ -21,7 +21,7 @@ With Git installed, use the `git clone` command to download the [project's repo]
 
 ### Set up JDK {#set-up-jdk}
 
-You must [install JDK](https://jdk.java.net/) and set the JAVA_HOME environment variable (please ensure it points to the JDK, and not the JRE).
+You must [install JDK](https://adoptium.net/) and set the JAVA_HOME environment variable (please ensure it points to the JDK, and not the JRE).
 
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
