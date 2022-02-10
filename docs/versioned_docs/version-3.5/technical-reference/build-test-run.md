@@ -65,7 +65,8 @@ Check the environment variable `JAVA_HOME` with:
 $JAVA_HOME/bin/java --version
 ```
 
-To set the environment variable for the current Java version of your MacOS:
+If this shows your Java version, your `JAVA_HOME` variable is set up correctly. If it shows an error, you need to adjust it.
+To do so, you can use:
 
 ```
 export JAVA_HOME="$(/usr/libexec/java_home)"
