@@ -69,8 +69,8 @@ public class RestrictedPositionScrutinizerTest extends SnakScrutinizerTest {
         Snak mainSnak = Datamodel.makeSomeValueSnak(propertyIdValue);
         Statement statement = new StatementImpl("P22", mainSnak, idA);
         TermedStatementEntityEdit update = new TermedStatementEntityEditBuilder(idA)
-        		.addStatement(add(statement))
-        		.build();
+                .addStatement(add(statement))
+                .build();
 
         Snak qualifierSnak = Datamodel.makeValueSnak(propertyScopeParameter, asQualifier);
         List<SnakGroup> constraintQualifiers = makeSnakGroupList(qualifierSnak);
@@ -89,8 +89,8 @@ public class RestrictedPositionScrutinizerTest extends SnakScrutinizerTest {
         Snak mainSnak = Datamodel.makeSomeValueSnak(propertyIdValue);
         Statement statement = new StatementImpl("P22", mainSnak, idA);
         TermedStatementEntityEdit update = new TermedStatementEntityEditBuilder(idA)
-        		.addStatement(add(statement))
-        		.build();
+                .addStatement(add(statement))
+                .build();
 
         Snak qualifierSnak = Datamodel.makeValueSnak(propertyScopeParameter, asMainSnak);
         List<SnakGroup> constraintQualifiers = makeSnakGroupList(qualifierSnak);
@@ -109,8 +109,8 @@ public class RestrictedPositionScrutinizerTest extends SnakScrutinizerTest {
         Snak mainSnak = Datamodel.makeSomeValueSnak(propertyIdValue);
         Statement statement = new StatementImpl("P22", mainSnak, idA);
         TermedStatementEntityEdit update = new TermedStatementEntityEditBuilder(idA)
-        		.addStatement(add(statement))
-        		.build();
+                .addStatement(add(statement))
+                .build();
 
         ConstraintFetcher fetcher = mock(ConstraintFetcher.class);
         when(fetcher.getConstraintsByType(propertyIdValue, SCOPE_CONSTRAINT_QID)).thenReturn(new ArrayList<>());
@@ -130,8 +130,8 @@ public class RestrictedPositionScrutinizerTest extends SnakScrutinizerTest {
                 TestingData.generateStatement(idA, propertyIdValue, idA).getClaim(),
                 Collections.singletonList(Datamodel.makeReference(snakGroups)), StatementRank.NORMAL, "");
         TermedStatementEntityEdit update = new TermedStatementEntityEditBuilder(idA)
-        		.addStatement(add(statement))
-        		.build();
+                .addStatement(add(statement))
+                .build();
 
         Snak qualifierSnak = Datamodel.makeValueSnak(propertyScopeParameter, asMainSnak);
         List<SnakGroup> constraintQualifiers = makeSnakGroupList(qualifierSnak);

@@ -74,8 +74,8 @@ public class QualifierCompatibilityScrutinizerTest extends StatementScrutinizerT
         Snak qualifierSnak = Datamodel.makeSomeValueSnak(disallowedQualifierProperty);
         Statement statement = makeStatement(mainSnak, qualifierSnak);
         TermedStatementEntityEdit update = new TermedStatementEntityEditBuilder(idA)
-        		.addStatement(add(statement))
-        		.build();
+                .addStatement(add(statement))
+                .build();
 
         Snak constraintQualifierSnak = Datamodel.makeValueSnak(propertyParameterPID, propertyParameterValue);
         List<Snak> qualifierList = Collections.singletonList(constraintQualifierSnak);
@@ -97,8 +97,8 @@ public class QualifierCompatibilityScrutinizerTest extends StatementScrutinizerT
         Snak mainSnak = Datamodel.makeSomeValueSnak(mandatoryPropertyIdValue);
         Statement statement = makeStatement(mainSnak);
         TermedStatementEntityEdit update = new TermedStatementEntityEditBuilder(idA)
-        		.addStatement(add(statement))
-        		.build();
+                .addStatement(add(statement))
+                .build();
 
         Snak constraintQualifierSnak = Datamodel.makeValueSnak(propertyParameterPID, propertyParameterValue);
         List<Snak> qualifierList = Collections.singletonList(constraintQualifierSnak);
@@ -121,8 +121,8 @@ public class QualifierCompatibilityScrutinizerTest extends StatementScrutinizerT
         Snak qualifierSnak = Datamodel.makeSomeValueSnak(qualifierProperty);
         Statement statement = makeStatement(mainSnak, qualifierSnak);
         TermedStatementEntityEdit update = new TermedStatementEntityEditBuilder(idA)
-        		.addStatement(add(statement))
-        		.build();
+                .addStatement(add(statement))
+                .build();
 
         Snak constraintQualifierSnak = Datamodel.makeValueSnak(propertyParameterPID, propertyParameterValue);
         List<Snak> qualifierList = Collections.singletonList(constraintQualifierSnak);

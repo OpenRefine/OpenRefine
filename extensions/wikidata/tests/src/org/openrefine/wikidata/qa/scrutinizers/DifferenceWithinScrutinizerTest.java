@@ -58,8 +58,8 @@ public class DifferenceWithinScrutinizerTest extends ScrutinizerTest {
         Statement statement1 = new StatementImpl("P569", value1, idA);
         Statement statement2 = new StatementImpl("P570", value2, idA);
         TermedStatementEntityEdit updateA = new TermedStatementEntityEditBuilder(idA)
-        		.addStatement(add(statement1))
-        		.addStatement(add(statement2))
+                .addStatement(add(statement1))
+                .addStatement(add(statement2))
                 .build();
 
         Snak propertyQualifier = Datamodel.makeValueSnak(propertyParameterPID, lowerBoundPid);
@@ -88,8 +88,8 @@ public class DifferenceWithinScrutinizerTest extends ScrutinizerTest {
         Statement statement1 = new StatementImpl("P569", value1, idA);
         Statement statement2 = new StatementImpl("P570", value2, idA);
         TermedStatementEntityEdit updateA = new TermedStatementEntityEditBuilder(idA)
-        		.addStatement(add(statement1))
-        		.addStatement(add(statement2))
+                .addStatement(add(statement1))
+                .addStatement(add(statement2))
                 .build();
 
         Snak propertyQualifier = Datamodel.makeValueSnak(propertyParameterPID, lowerBoundPid);

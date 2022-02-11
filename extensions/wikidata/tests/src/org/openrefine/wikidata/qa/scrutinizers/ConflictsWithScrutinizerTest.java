@@ -62,8 +62,8 @@ public class ConflictsWithScrutinizerTest extends ScrutinizerTest {
         Statement statement2 = new StatementImpl("P31", value2, idA);
 
         TermedStatementEntityEdit updateA = new TermedStatementEntityEditBuilder(idA)
-        		.addStatement(add(statement1))
-        		.addStatement(add(statement2))
+                .addStatement(add(statement1))
+                .addStatement(add(statement2))
                 .build();
 
         Snak snak1 = Datamodel.makeValueSnak(propertyParameterPID, conflictingPropertyValue1);
@@ -92,8 +92,8 @@ public class ConflictsWithScrutinizerTest extends ScrutinizerTest {
         Statement statement = new StatementImpl("P2002", value, id);
 
         TermedStatementEntityEdit update = new TermedStatementEntityEditBuilder(id)
-        		.addStatement(add(statement))
-        		.build();
+                .addStatement(add(statement))
+                .build();
 
         Snak snak1 = Datamodel.makeValueSnak(propertyParameterPID, conflictingPropertyValue1);
         Snak snak2 = Datamodel.makeValueSnak(itemParameterPID, conflictingItemValue1);
@@ -123,8 +123,8 @@ public class ConflictsWithScrutinizerTest extends ScrutinizerTest {
         Statement statement2 = new StatementImpl("P31", value2, idA);
 
         TermedStatementEntityEdit updateA = new TermedStatementEntityEditBuilder(idA)
-        		.addStatement(add(statement1))
-        		.addStatement(add(statement2))
+                .addStatement(add(statement1))
+                .addStatement(add(statement2))
                 .build();
 
         Snak snak1 = Datamodel.makeValueSnak(propertyParameterPID, conflictingPropertyValue1);
@@ -153,8 +153,8 @@ public class ConflictsWithScrutinizerTest extends ScrutinizerTest {
         Statement statement = new StatementImpl("P31", valueSnak, idA);
 
         TermedStatementEntityEdit updateA = new TermedStatementEntityEditBuilder(idA)
-        		.addStatement(add(statement))
-        		.build();
+                .addStatement(add(statement))
+                .build();
 
         List<Statement> constraintDefinitions = new ArrayList<>();
 
@@ -179,8 +179,8 @@ public class ConflictsWithScrutinizerTest extends ScrutinizerTest {
         Statement statement3 = new StatementImpl("P553", value3, idA);
 
         TermedStatementEntityEdit updateA = new TermedStatementEntityEditBuilder(idA)
-        		.addStatement(add(statement1))
-        		.addStatement(add(statement2))
+                .addStatement(add(statement1))
+                .addStatement(add(statement2))
                 .addStatement(add(statement3))
                 .build();
 

@@ -49,8 +49,8 @@ public class EntityTypeScrutinizerTest extends StatementScrutinizerTest {
         Statement statement = new StatementImpl("P2302", mainValueSnak, idA);
 
         TermedStatementEntityEdit update = new TermedStatementEntityEditBuilder(idA)
-        		.addStatement(add(statement))
-        		.build();
+                .addStatement(add(statement))
+                .build();
 
         Snak qualifierSnak = Datamodel.makeValueSnak(itemParameterPID, allowedValue);
         List<Snak> qualifierSnakList = Collections.singletonList(qualifierSnak);
@@ -74,8 +74,8 @@ public class EntityTypeScrutinizerTest extends StatementScrutinizerTest {
         Statement statement = new StatementImpl("P2302", mainValueSnak, idA);
 
         TermedStatementEntityEdit update = new TermedStatementEntityEditBuilder(idA)
-        		.addStatement(add(statement))
-        		.build();
+                .addStatement(add(statement))
+                .build();
 
         Snak qualifierSnak = Datamodel.makeValueSnak(itemParameterPID, itemValue);
         List<Snak> qualifierSnakList = Collections.singletonList(qualifierSnak);

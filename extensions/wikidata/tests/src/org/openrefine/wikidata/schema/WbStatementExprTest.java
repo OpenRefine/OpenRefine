@@ -60,15 +60,15 @@ public class WbStatementExprTest extends WbExpressionTest<StatementEdit> {
             new WbDateVariable("column B"));
     private WbLocationVariable mainValueExpr = new WbLocationVariable("column C");
     public WbStatementExpr statementExpr = new WbStatementExpr(
-    		mainValueExpr,
-    		Collections.singletonList(qualifierExpr),
+            mainValueExpr,
+            Collections.singletonList(qualifierExpr),
             Collections.singletonList(refExpr),
             StatementMerger.FORMER_DEFAULT_STRATEGY,
             StatementEditingMode.ADD_OR_MERGE);
     private WbSnakExpr constantQualifierExpr = new WbSnakExpr(new WbPropConstant("P897", "point in time", "time"),
             new WbDateConstant("2018-04-05"));
     public WbStatementExpr statementWithConstantExpr = new WbStatementExpr(
-    		mainValueExpr,
+            mainValueExpr,
             Arrays.asList(qualifierExpr, constantQualifierExpr),
             Collections.singletonList(refExpr),
             StatementMerger.FORMER_DEFAULT_STRATEGY,
@@ -92,7 +92,7 @@ public class WbStatementExprTest extends WbExpressionTest<StatementEdit> {
     public Statement fullStatement = Datamodel.makeStatement(fullClaim, Collections.singletonList(reference),
             StatementRank.NORMAL, "");
     public StatementEdit fullStatementUpdate = new StatementEdit(
-    		fullStatement,
+            fullStatement,
             StatementMerger.FORMER_DEFAULT_STRATEGY,
             StatementEditingMode.ADD_OR_MERGE);
     public Claim claimWithConstant = Datamodel.makeClaim(subject, mainsnak,
@@ -100,7 +100,7 @@ public class WbStatementExprTest extends WbExpressionTest<StatementEdit> {
     public Statement statementWithConstant = Datamodel.makeStatement(claimWithConstant, Collections.singletonList(reference),
             StatementRank.NORMAL, "");
     public StatementEdit statementUpdateWithConstant = new StatementEdit(
-    		statementWithConstant,
+            statementWithConstant,
             StatementMerger.FORMER_DEFAULT_STRATEGY,
             StatementEditingMode.ADD_OR_MERGE);
 
@@ -118,11 +118,11 @@ public class WbStatementExprTest extends WbExpressionTest<StatementEdit> {
             return expr.evaluate(ctxt, subject, property);
         }
     }
-    
+
     public String jsonRepresentation = "{"
-    		+ "\"mergingStrategy\":{\"type\":\"qualifiers\",\"valueMatcher\":{\"type\":\"strict\"},\"pids\":[]},"
-    		+ "\"mode\":\"add_or_merge\","
-    		+ "\"value\":{\"type\":\"wblocationvariable\",\"columnName\":\"column C\"},"
+            + "\"mergingStrategy\":{\"type\":\"qualifiers\",\"valueMatcher\":{\"type\":\"strict\"},\"pids\":[]},"
+            + "\"mode\":\"add_or_merge\","
+            + "\"value\":{\"type\":\"wblocationvariable\",\"columnName\":\"column C\"},"
             + "\"qualifiers\":[{\"prop\":{\"type\":\"wbpropconstant\",\"pid\":\"P897\",\"label\":\"point in time\","
             + "\"datatype\":\"time\"},\"value\":{\"type\":\"wbdatevariable\",\"columnName\":\"column B\"}}],"
             + "\"references\":[{\"snaks\":[{\"prop\":{\"type\":\"wbpropconstant\",\"pid\":\"P43\","
@@ -140,13 +140,13 @@ public class WbStatementExprTest extends WbExpressionTest<StatementEdit> {
     public void testCreation() {
         WbItemConstant q5 = new WbItemConstant("Q5", "human");
         WbStatementExpr empty = new WbStatementExpr(
-        		q5,
-        		Collections.emptyList(),
-        		Collections.emptyList(),
+                q5,
+                Collections.emptyList(),
+                Collections.emptyList(),
                 StatementMerger.FORMER_DEFAULT_STRATEGY,
                 StatementEditingMode.ADD_OR_MERGE);
         WbStatementExpr withNulls = new WbStatementExpr(
-        		q5, null, null, null, null);
+                q5, null, null, null, null);
         assertEquals(empty, withNulls);
     }
 
@@ -166,9 +166,9 @@ public class WbStatementExprTest extends WbExpressionTest<StatementEdit> {
     public void testEvaluateWithoutReference() {
         setRow("not reconciled", "2010-07-23", "3.898,4.389");
         Statement statement = Datamodel.makeStatement(fullClaim, Collections.emptyList(), StatementRank.NORMAL, "");
-		evaluatesTo(new StatementEdit(statement,
-	            StatementMerger.FORMER_DEFAULT_STRATEGY,
-	            StatementEditingMode.ADD_OR_MERGE),
+        evaluatesTo(new StatementEdit(statement,
+                StatementMerger.FORMER_DEFAULT_STRATEGY,
+                StatementEditingMode.ADD_OR_MERGE),
                 new Wrapper(statementExpr));
     }
 
@@ -176,7 +176,7 @@ public class WbStatementExprTest extends WbExpressionTest<StatementEdit> {
     public void testEvaluateWithoutQualifier() {
         setRow(recon("Q3434"), "2010-invalid", "3.898,4.389");
         evaluatesTo(new StatementEdit(
-        		Datamodel.makeStatement(Datamodel.makeClaim(subject, mainsnak, Collections.emptyList()),
+                Datamodel.makeStatement(Datamodel.makeClaim(subject, mainsnak, Collections.emptyList()),
                         Collections.singletonList(reference), StatementRank.NORMAL, ""),
                 StatementMerger.FORMER_DEFAULT_STRATEGY,
                 StatementEditingMode.ADD_OR_MERGE), new Wrapper(statementExpr));
@@ -186,7 +186,7 @@ public class WbStatementExprTest extends WbExpressionTest<StatementEdit> {
     public void testEvaluateWithoutQualifierAndReference() {
         setRow("invalid", "2010-invalid", "3.898,4.389");
         evaluatesTo(new StatementEdit(Datamodel.makeStatement(
-        		Datamodel.makeClaim(subject, mainsnak, Collections.emptyList()),
+                Datamodel.makeClaim(subject, mainsnak, Collections.emptyList()),
                 Collections.emptyList(), StatementRank.NORMAL, ""),
                 StatementMerger.FORMER_DEFAULT_STRATEGY,
                 StatementEditingMode.ADD_OR_MERGE), new Wrapper(statementExpr));
@@ -198,12 +198,12 @@ public class WbStatementExprTest extends WbExpressionTest<StatementEdit> {
         setRow(recon("Q3434"), "2010-07-23", "3.898,invalid");
         isSkipped(new Wrapper(statementExpr));
     }
-    
+
     @Test
     public void testDeserializeOlderFormat() throws JsonMappingException, JsonProcessingException {
-    	// when no merging strategy or mode was provided
-    	WbStatementExpr deserialized = ParsingUtilities.mapper.readValue(olderJsonRepresentation, WbStatementExpr.class);
-    	JacksonSerializationTest.testSerialize(deserialized, jsonRepresentation);
+        // when no merging strategy or mode was provided
+        WbStatementExpr deserialized = ParsingUtilities.mapper.readValue(olderJsonRepresentation, WbStatementExpr.class);
+        JacksonSerializationTest.testSerialize(deserialized, jsonRepresentation);
     }
 
     @Test

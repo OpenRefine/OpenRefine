@@ -153,13 +153,13 @@ public abstract class ScrutinizerTest {
 
         return snakGroupList;
     }
-    
+
     public StatementEdit add(Statement statement) {
-    	return new StatementEdit(statement, StatementMerger.FORMER_DEFAULT_STRATEGY, StatementEditingMode.ADD_OR_MERGE);
+        return new StatementEdit(statement, StatementMerger.FORMER_DEFAULT_STRATEGY, StatementEditingMode.ADD_OR_MERGE);
     }
-    
+
     public StatementEdit delete(Statement statement) {
-    	return new StatementEdit(statement, StatementMerger.FORMER_DEFAULT_STRATEGY, StatementEditingMode.DELETE);
+        return new StatementEdit(statement, StatementMerger.FORMER_DEFAULT_STRATEGY, StatementEditingMode.DELETE);
     }
 
 }

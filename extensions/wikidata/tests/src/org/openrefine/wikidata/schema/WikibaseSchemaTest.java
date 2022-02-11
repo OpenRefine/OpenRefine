@@ -84,16 +84,16 @@ public class WikibaseSchemaTest extends WikidataRefineTest {
             Collections.singletonList(Datamodel.makeReference(Arrays.asList(refSnakGroup, retrievedSnakGroup))),
             StatementRank.NORMAL, "");
     private StatementEdit statementUpdate1 = new StatementEdit(
-    			statement1,
-                StatementMerger.FORMER_DEFAULT_STRATEGY,
-                StatementEditingMode.ADD_OR_MERGE);
+            statement1,
+            StatementMerger.FORMER_DEFAULT_STRATEGY,
+            StatementEditingMode.ADD_OR_MERGE);
     private Statement statement2 = Datamodel.makeStatement(claim2,
             Collections.singletonList(Datamodel.makeReference(Collections.singletonList(retrievedSnakGroup))),
             StatementRank.NORMAL, "");
     private StatementEdit statementUpdate2 = new StatementEdit(
-    			statement2,
-    			StatementMerger.FORMER_DEFAULT_STRATEGY,
-    			StatementEditingMode.ADD_OR_MERGE);
+            statement2,
+            StatementMerger.FORMER_DEFAULT_STRATEGY,
+            StatementEditingMode.ADD_OR_MERGE);
 
     private Project project;
 

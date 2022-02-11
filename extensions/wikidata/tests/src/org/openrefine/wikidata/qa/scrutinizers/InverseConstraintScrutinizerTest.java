@@ -70,8 +70,8 @@ public class InverseConstraintScrutinizerTest extends StatementScrutinizerTest {
         Snak mainSnak = Datamodel.makeValueSnak(propertyId, propertyValue);
         Statement statement = new StatementImpl("P25", mainSnak, idA);
         TermedStatementEntityEdit update = new TermedStatementEntityEditBuilder(idA)
-        		.addStatement(add(statement))
-        		.build();
+                .addStatement(add(statement))
+                .build();
 
         Snak qualifierSnak = Datamodel.makeValueSnak(propertyParameter, inversePropertyID);
         List<Snak> qualifierSnakList = Collections.singletonList(qualifierSnak);
@@ -92,8 +92,8 @@ public class InverseConstraintScrutinizerTest extends StatementScrutinizerTest {
         Snak mainSnak = Datamodel.makeValueSnak(symmetricPropertyID, symmetricPropertyValue);
         Statement statement = new StatementImpl("P3373", mainSnak, idA);
         TermedStatementEntityEdit update = new TermedStatementEntityEditBuilder(idA)
-        		.addStatement(add(statement))
-        		.build();
+                .addStatement(add(statement))
+                .build();
 
         Snak qualifierSnak = Datamodel.makeValueSnak(symmetricPropertyID, symmetricEntityIdValue);
         List<Snak> qualifierSnakList = Collections.singletonList(qualifierSnak);
@@ -114,8 +114,8 @@ public class InverseConstraintScrutinizerTest extends StatementScrutinizerTest {
         Snak mainSnak = Datamodel.makeSomeValueSnak(propertyId);
         Statement statement = new StatementImpl("P25", mainSnak, idA);
         TermedStatementEntityEdit update = new TermedStatementEntityEditBuilder(idA)
-        		.addStatement(add(statement))
-        		.build();
+                .addStatement(add(statement))
+                .build();
 
         Snak qualifierSnak = Datamodel.makeValueSnak(propertyParameter, inverseEntityIdValue);
         List<Snak> qualifierSnakList = Collections.singletonList(qualifierSnak);

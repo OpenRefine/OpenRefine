@@ -66,8 +66,8 @@ public class SingleValueScrutinizerTest extends ScrutinizerTest {
         Statement statement1 = new StatementImpl("P21", snak1, idA);
         Statement statement2 = new StatementImpl("P21", snak2, idA);
         TermedStatementEntityEdit update = new TermedStatementEntityEditBuilder(idA)
-        		.addStatement(add(statement1))
-        		.addStatement(add(statement2))
+                .addStatement(add(statement1))
+                .addStatement(add(statement2))
                 .build();
 
         List<Statement> statementList = constraintParameterStatementList(entityIdValue, new ArrayList<>());
@@ -85,8 +85,8 @@ public class SingleValueScrutinizerTest extends ScrutinizerTest {
         Snak snak1 = Datamodel.makeValueSnak(propertyIdValue, value1);
         Statement statement1 = new StatementImpl("P21", snak1, idA);
         TermedStatementEntityEdit updateA = new TermedStatementEntityEditBuilder(idA)
-        		.addStatement(add(statement1))
-        		.build();
+                .addStatement(add(statement1))
+                .build();
 
         List<Statement> statementList = constraintParameterStatementList(entityIdValue, new ArrayList<>());
 

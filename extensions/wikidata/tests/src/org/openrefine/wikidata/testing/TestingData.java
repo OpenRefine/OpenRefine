@@ -155,13 +155,13 @@ public class TestingData {
     public static Statement generateStatement(EntityIdValue from, EntityIdValue to) {
         return generateStatement(from, pid, to);
     }
-    
+
     public static StatementEdit generateStatementAddition(EntityIdValue from, EntityIdValue to) {
-    	return new StatementEdit(generateStatement(from, to), StatementMerger.FORMER_DEFAULT_STRATEGY, StatementEditingMode.ADD_OR_MERGE);
+        return new StatementEdit(generateStatement(from, to), StatementMerger.FORMER_DEFAULT_STRATEGY, StatementEditingMode.ADD_OR_MERGE);
     }
-    
+
     public static StatementEdit generateStatementDeletion(EntityIdValue from, EntityIdValue to) {
-    	return new StatementEdit(generateStatement(from, to), StatementMerger.FORMER_DEFAULT_STRATEGY, StatementEditingMode.DELETE);
+        return new StatementEdit(generateStatement(from, to), StatementMerger.FORMER_DEFAULT_STRATEGY, StatementEditingMode.DELETE);
     }
 
     public static Statement generateStatement(EntityIdValue from, PropertyIdValue pid, Value to) {

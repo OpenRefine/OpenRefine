@@ -267,41 +267,42 @@ public class TermedStatementEntityEditTest {
         assertEquals(Collections.singleton(label2), update.getLabels());
         assertEquals(Collections.emptySet(), update.getLabelsIfNew());
     }
-    
+
     @Test
     public void testToEntityUpdate() {
-    	TermedStatementEntityEdit edit = new TermedStatementEntityEditBuilder(existingSubject)
-    			.addAlias(Datamodel.makeMonolingualTextValue("alias", "en"))
-    			.addStatement(statementUpdate1)
-    			.build();
-    	ItemDocument itemDocument = ItemDocumentBuilder.forItemId(existingSubject)
-    			.withStatement(statement2)
-    			.withLabel(Datamodel.makeMonolingualTextValue("label", "en"))
-    			.build();
-    			
-    	ItemUpdate update = (ItemUpdate) edit.toEntityUpdate(itemDocument);
-    	assertEquals(update.getEntityId(), existingSubject);
-    	assertEquals(update.getAliases(), Collections.singletonMap("en",
-    			Datamodel.makeAliasUpdate(Collections.singletonList(Datamodel.makeMonolingualTextValue("alias", "en")), Collections.emptyList())));
-    	assertTrue(update.getDescriptions().isEmpty());
-    	assertTrue(update.getLabels().isEmpty());
-    	assertEquals(update.getStatements(),
-    			Datamodel.makeStatementUpdate(Collections.singletonList(statement1), Collections.emptyList(), Collections.emptySet()));
+        TermedStatementEntityEdit edit = new TermedStatementEntityEditBuilder(existingSubject)
+                .addAlias(Datamodel.makeMonolingualTextValue("alias", "en"))
+                .addStatement(statementUpdate1)
+                .build();
+        ItemDocument itemDocument = ItemDocumentBuilder.forItemId(existingSubject)
+                .withStatement(statement2)
+                .withLabel(Datamodel.makeMonolingualTextValue("label", "en"))
+                .build();
+
+        ItemUpdate update = (ItemUpdate) edit.toEntityUpdate(itemDocument);
+        assertEquals(update.getEntityId(), existingSubject);
+        assertEquals(update.getAliases(), Collections.singletonMap("en",
+                Datamodel.makeAliasUpdate(Collections.singletonList(Datamodel.makeMonolingualTextValue("alias", "en")),
+                        Collections.emptyList())));
+        assertTrue(update.getDescriptions().isEmpty());
+        assertTrue(update.getLabels().isEmpty());
+        assertEquals(update.getStatements(),
+                Datamodel.makeStatementUpdate(Collections.singletonList(statement1), Collections.emptyList(), Collections.emptySet()));
     }
-    
+
     @Test
     public void testToNewEntity() {
-    	TermedStatementEntityEdit edit = new TermedStatementEntityEditBuilder(newSubject)
-    			.addLabel(Datamodel.makeMonolingualTextValue("fr", "bonjour"), true)
+        TermedStatementEntityEdit edit = new TermedStatementEntityEditBuilder(newSubject)
+                .addLabel(Datamodel.makeMonolingualTextValue("fr", "bonjour"), true)
                 .addDescription(Datamodel.makeMonolingualTextValue("de", "Redewendung"), true)
                 .build();
-    	
-    	ItemDocument itemDocument = (ItemDocument) edit.toNewEntity();
-    	
-    	ItemDocument expected = ItemDocumentBuilder.forItemId(newSubject)
-    			.withLabel(Datamodel.makeMonolingualTextValue("fr", "bonjour"))
-    			.withDescription(Datamodel.makeMonolingualTextValue("de", "Redewendung"))
-    			.build();
-    	assertEquals(itemDocument, expected);
+
+        ItemDocument itemDocument = (ItemDocument) edit.toNewEntity();
+
+        ItemDocument expected = ItemDocumentBuilder.forItemId(newSubject)
+                .withLabel(Datamodel.makeMonolingualTextValue("fr", "bonjour"))
+                .withDescription(Datamodel.makeMonolingualTextValue("de", "Redewendung"))
+                .build();
+        assertEquals(itemDocument, expected);
     }
 }

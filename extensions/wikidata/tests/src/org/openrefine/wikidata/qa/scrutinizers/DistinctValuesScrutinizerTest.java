@@ -67,8 +67,8 @@ public class DistinctValuesScrutinizerTest extends StatementScrutinizerTest {
         Statement statement2 = new StatementImpl("P163", mainSnak, idA);
 
         TermedStatementEntityEdit update = new TermedStatementEntityEditBuilder(idA)
-        		.addStatement(add(statement1))
-        		.addStatement(add(statement2))
+                .addStatement(add(statement1))
+                .addStatement(add(statement2))
                 .build();
 
         List<SnakGroup> constraintQualifiers = new ArrayList<>();
@@ -91,8 +91,8 @@ public class DistinctValuesScrutinizerTest extends StatementScrutinizerTest {
         Statement statement2 = new StatementImpl("P163", snak2, idA);
 
         TermedStatementEntityEdit update = new TermedStatementEntityEditBuilder(idA)
-        		.addStatement(add(statement1))
-        		.addStatement(add(statement2))
+                .addStatement(add(statement1))
+                .addStatement(add(statement2))
                 .build();
 
         List<SnakGroup> constraintQualifiers = new ArrayList<>();

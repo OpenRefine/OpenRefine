@@ -72,8 +72,8 @@ public class FormatScrutinizerTest extends ScrutinizerTest {
         ValueSnak value = Datamodel.makeValueSnak(propertyIdValue, noMatchValue);
         Statement statement = new StatementImpl("P18", value, idA);
         TermedStatementEntityEdit updateA = new TermedStatementEntityEditBuilder(idA)
-        		.addStatement(add(statement))
-        		.build();
+                .addStatement(add(statement))
+                .build();
 
         List<Statement> constraintDefinitions = generateFormatConstraint(regularExpression);
 
@@ -90,8 +90,8 @@ public class FormatScrutinizerTest extends ScrutinizerTest {
         ValueSnak value = Datamodel.makeValueSnak(propertyIdValue, completeMatchValue);
         Statement statement = new StatementImpl("P18", value, idA);
         TermedStatementEntityEdit updateA = new TermedStatementEntityEditBuilder(idA)
-        		.addStatement(add(statement))
-        		.build();
+                .addStatement(add(statement))
+                .build();
 
         List<Statement> constraintDefinitions = generateFormatConstraint(regularExpression);
 
@@ -108,8 +108,8 @@ public class FormatScrutinizerTest extends ScrutinizerTest {
         ValueSnak value = Datamodel.makeValueSnak(propertyIdValue, incompleteMatchValue);
         Statement statement = new StatementImpl("P18", value, idA);
         TermedStatementEntityEdit updateA = new TermedStatementEntityEditBuilder(idA)
-        		.addStatement(add(statement))
-        		.build();
+                .addStatement(add(statement))
+                .build();
 
         List<Statement> constraintDefinitions = generateFormatConstraint(regularExpression);
 
@@ -126,8 +126,8 @@ public class FormatScrutinizerTest extends ScrutinizerTest {
         ValueSnak value = Datamodel.makeValueSnak(propertyIdValue, incompleteMatchValue);
         Statement statement = new StatementImpl("P18", value, idA);
         TermedStatementEntityEdit updateA = new TermedStatementEntityEditBuilder(idA)
-        		.addStatement(add(statement))
-        		.build();
+                .addStatement(add(statement))
+                .build();
 
         List<Statement> constraintDefinitions = generateFormatConstraint(invalidRegularExpression);
 
