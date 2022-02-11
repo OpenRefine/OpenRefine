@@ -28,10 +28,11 @@ import java.util.List;
 
 import org.jsoup.helper.Validate;
 import org.openrefine.wikidata.schema.exceptions.SkipSchemaExpressionException;
-import org.openrefine.wikidata.updates.TermedStatementEntityUpdate;
-import org.openrefine.wikidata.updates.TermedStatementEntityUpdateBuilder;
+import org.openrefine.wikidata.updates.StatementGroupEdit;
+import org.openrefine.wikidata.updates.StatementEdit;
+import org.openrefine.wikidata.updates.TermedStatementEntityEdit;
+import org.openrefine.wikidata.updates.TermedStatementEntityEditBuilder;
 import org.wikidata.wdtk.datamodel.interfaces.EntityIdValue;
-import org.wikidata.wdtk.datamodel.interfaces.Statement;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -47,7 +48,7 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonTypeInfo(use = JsonTypeInfo.Id.NONE)
-public class WbEntityDocumentExpr implements WbExpression<TermedStatementEntityUpdate> {
+public class WbEntityDocumentExpr implements WbExpression<TermedStatementEntityEdit> {
 
     private WbExpression<? extends EntityIdValue> subject;
     private List<WbNameDescExpr> nameDescs;
@@ -70,13 +71,15 @@ public class WbEntityDocumentExpr implements WbExpression<TermedStatementEntityU
     }
 
     @Override
-    public TermedStatementEntityUpdate evaluate(ExpressionContext ctxt)
+    public TermedStatementEntityEdit evaluate(ExpressionContext ctxt)
             throws SkipSchemaExpressionException {
         EntityIdValue subjectId = getSubject().evaluate(ctxt);
-        TermedStatementEntityUpdateBuilder update = new TermedStatementEntityUpdateBuilder(subjectId);
+        TermedStatementEntityEditBuilder update = new TermedStatementEntityEditBuilder(subjectId);
         for (WbStatementGroupExpr expr : getStatementGroups()) {
             try {
-                for (Statement s : expr.evaluate(ctxt, subjectId).getStatements()) {
+            	StatementGroupEdit statementGroupUpdate = expr.evaluate(ctxt, subjectId);
+            	// TODO also store statement groups in TermedStatementEntityUpdate?
+                for (StatementEdit s : statementGroupUpdate.getStatementEdits()) {
                     update.addStatement(s);
                 }
             } catch (SkipSchemaExpressionException e) {

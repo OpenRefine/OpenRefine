@@ -27,20 +27,20 @@ package org.openrefine.wikidata.schema;
 import java.util.Collections;
 
 import org.openrefine.wikidata.testing.JacksonSerializationTest;
-import org.openrefine.wikidata.updates.TermedStatementEntityUpdate;
-import org.openrefine.wikidata.updates.TermedStatementEntityUpdateBuilder;
+import org.openrefine.wikidata.updates.StatementEdit;
+import org.openrefine.wikidata.updates.TermedStatementEntityEdit;
+import org.openrefine.wikidata.updates.TermedStatementEntityEditBuilder;
 import org.testng.annotations.Test;
 import org.wikidata.wdtk.datamodel.helpers.Datamodel;
 import org.wikidata.wdtk.datamodel.interfaces.EntityIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.MonolingualTextValue;
-import org.wikidata.wdtk.datamodel.interfaces.Statement;
 
-public class WbEntityDocumentExprTest extends WbExpressionTest<TermedStatementEntityUpdate> {
+public class WbEntityDocumentExprTest extends WbExpressionTest<TermedStatementEntityEdit> {
 
     public WbEntityDocumentExpr expr;
     EntityIdValue subject = Datamodel.makeWikidataItemIdValue("Q23");
     MonolingualTextValue alias = Datamodel.makeMonolingualTextValue("my alias", "en");
-    Statement fullStatement;
+    StatementEdit fullStatement;
 
     public String jsonRepresentation;
 
@@ -50,7 +50,7 @@ public class WbEntityDocumentExprTest extends WbExpressionTest<TermedStatementEn
                 new WbMonolingualExpr(new WbLanguageConstant("en", "English"), new WbStringVariable("column D")));
         WbItemVariable subjectExpr = new WbItemVariable("column E");
         expr = new WbEntityDocumentExpr(subjectExpr, Collections.singletonList(nde), Collections.singletonList(sgt.expr));
-        fullStatement = sgt.statementGroup.getStatements().get(0);
+        fullStatement = sgt.statementGroupUpdate.getStatementEdits().get(0);
 
         jsonRepresentation = "{\"subject\":{\"type\":\"wbitemvariable\",\"columnName\":\"column E\"},"
                 + "\"nameDescs\":[{\"name_type\":\"ALIAS\",\"value\":{\"type\":\"wbmonolingualexpr\",\"language\":"
@@ -62,7 +62,7 @@ public class WbEntityDocumentExprTest extends WbExpressionTest<TermedStatementEn
     @Test
     public void testEvaluate() {
         setRow(recon("Q3434"), "2010-07-23", "3.898,4.389", "my alias", recon("Q23"));
-        TermedStatementEntityUpdate result = new TermedStatementEntityUpdateBuilder(subject).addAlias(alias).addStatement(fullStatement)
+        TermedStatementEntityEdit result = new TermedStatementEntityEditBuilder(subject).addAlias(alias).addStatement(fullStatement)
                 .build();
         evaluatesTo(result, expr);
     }
@@ -76,14 +76,14 @@ public class WbEntityDocumentExprTest extends WbExpressionTest<TermedStatementEn
     @Test
     public void testStatementSkipped() {
         setRow(recon("Q3434"), "2010-07-23", "3.898,invalid4.389", "my alias", recon("Q23"));
-        TermedStatementEntityUpdate result = new TermedStatementEntityUpdateBuilder(subject).addAlias(alias).build();
+        TermedStatementEntityEdit result = new TermedStatementEntityEditBuilder(subject).addAlias(alias).build();
         evaluatesTo(result, expr);
     }
 
     @Test
     public void testAliasSkipped() {
         setRow(recon("Q3434"), "2010-07-23", "3.898,4.389", "", recon("Q23"));
-        TermedStatementEntityUpdate result = new TermedStatementEntityUpdateBuilder(subject).addStatement(fullStatement).build();
+        TermedStatementEntityEdit result = new TermedStatementEntityEditBuilder(subject).addStatement(fullStatement).build();
         evaluatesTo(result, expr);
     }
 

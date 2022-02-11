@@ -26,8 +26,8 @@ package org.openrefine.wikidata.qa.scrutinizers;
 
 import org.openrefine.wikidata.qa.ConstraintFetcher;
 import org.openrefine.wikidata.testing.TestingData;
-import org.openrefine.wikidata.updates.TermedStatementEntityUpdate;
-import org.openrefine.wikidata.updates.TermedStatementEntityUpdateBuilder;
+import org.openrefine.wikidata.updates.TermedStatementEntityEdit;
+import org.openrefine.wikidata.updates.TermedStatementEntityEditBuilder;
 import org.testng.annotations.Test;
 import org.wikidata.wdtk.datamodel.helpers.Datamodel;
 import org.wikidata.wdtk.datamodel.implementation.StatementImpl;
@@ -68,7 +68,9 @@ public class RestrictedPositionScrutinizerTest extends SnakScrutinizerTest {
         ItemIdValue idA = TestingData.existingId;
         Snak mainSnak = Datamodel.makeSomeValueSnak(propertyIdValue);
         Statement statement = new StatementImpl("P22", mainSnak, idA);
-        TermedStatementEntityUpdate update = new TermedStatementEntityUpdateBuilder(idA).addStatement(statement).build();
+        TermedStatementEntityEdit update = new TermedStatementEntityEditBuilder(idA)
+        		.addStatement(add(statement))
+        		.build();
 
         Snak qualifierSnak = Datamodel.makeValueSnak(propertyScopeParameter, asQualifier);
         List<SnakGroup> constraintQualifiers = makeSnakGroupList(qualifierSnak);
@@ -86,7 +88,9 @@ public class RestrictedPositionScrutinizerTest extends SnakScrutinizerTest {
         ItemIdValue idA = TestingData.existingId;
         Snak mainSnak = Datamodel.makeSomeValueSnak(propertyIdValue);
         Statement statement = new StatementImpl("P22", mainSnak, idA);
-        TermedStatementEntityUpdate update = new TermedStatementEntityUpdateBuilder(idA).addStatement(statement).build();
+        TermedStatementEntityEdit update = new TermedStatementEntityEditBuilder(idA)
+        		.addStatement(add(statement))
+        		.build();
 
         Snak qualifierSnak = Datamodel.makeValueSnak(propertyScopeParameter, asMainSnak);
         List<SnakGroup> constraintQualifiers = makeSnakGroupList(qualifierSnak);
@@ -104,7 +108,9 @@ public class RestrictedPositionScrutinizerTest extends SnakScrutinizerTest {
         ItemIdValue idA = TestingData.existingId;
         Snak mainSnak = Datamodel.makeSomeValueSnak(propertyIdValue);
         Statement statement = new StatementImpl("P22", mainSnak, idA);
-        TermedStatementEntityUpdate update = new TermedStatementEntityUpdateBuilder(idA).addStatement(statement).build();
+        TermedStatementEntityEdit update = new TermedStatementEntityEditBuilder(idA)
+        		.addStatement(add(statement))
+        		.build();
 
         ConstraintFetcher fetcher = mock(ConstraintFetcher.class);
         when(fetcher.getConstraintsByType(propertyIdValue, SCOPE_CONSTRAINT_QID)).thenReturn(new ArrayList<>());
@@ -123,7 +129,9 @@ public class RestrictedPositionScrutinizerTest extends SnakScrutinizerTest {
         Statement statement = Datamodel.makeStatement(
                 TestingData.generateStatement(idA, propertyIdValue, idA).getClaim(),
                 Collections.singletonList(Datamodel.makeReference(snakGroups)), StatementRank.NORMAL, "");
-        TermedStatementEntityUpdate update = new TermedStatementEntityUpdateBuilder(idA).addStatement(statement).build();
+        TermedStatementEntityEdit update = new TermedStatementEntityEditBuilder(idA)
+        		.addStatement(add(statement))
+        		.build();
 
         Snak qualifierSnak = Datamodel.makeValueSnak(propertyScopeParameter, asMainSnak);
         List<SnakGroup> constraintQualifiers = makeSnakGroupList(qualifierSnak);

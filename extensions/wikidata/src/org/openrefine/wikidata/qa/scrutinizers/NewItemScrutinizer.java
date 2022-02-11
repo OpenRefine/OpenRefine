@@ -24,8 +24,8 @@
 package org.openrefine.wikidata.qa.scrutinizers;
 
 import org.openrefine.wikidata.qa.QAWarning;
-import org.openrefine.wikidata.updates.TermedStatementEntityUpdate;
-import org.wikidata.wdtk.datamodel.interfaces.StatementGroup;
+import org.openrefine.wikidata.updates.TermedStatementEntityEdit;
+import org.wikidata.wdtk.datamodel.interfaces.Statement;
 
 /**
  * A scrutinizer that inspects new items.
@@ -46,7 +46,7 @@ public class NewItemScrutinizer extends EditScrutinizer {
     }
 
     @Override
-    public void scrutinize(TermedStatementEntityUpdate update) {
+    public void scrutinize(TermedStatementEntityEdit update) {
         if (update.isNew()) {
             info(newItemType);
 
@@ -70,8 +70,8 @@ public class NewItemScrutinizer extends EditScrutinizer {
 
             // Try to find a "instance of" or "subclass of" claim
             boolean typeFound = false;
-            for (StatementGroup group : update.getAddedStatementGroups()) {
-                String pid = group.getProperty().getId();
+            for (Statement statement : update.getAddedStatements()) {
+                String pid = statement.getMainSnak().getPropertyId().getId();
                 if (manifest.getInstanceOfPid().equals(pid) || manifest.getSubclassOfPid().equals(pid)) {
                     typeFound = true;
                     break;

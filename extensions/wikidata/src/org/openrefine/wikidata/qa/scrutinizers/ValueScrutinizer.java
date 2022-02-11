@@ -23,7 +23,7 @@
  ******************************************************************************/
 package org.openrefine.wikidata.qa.scrutinizers;
 
-import org.openrefine.wikidata.updates.TermedStatementEntityUpdate;
+import org.openrefine.wikidata.updates.TermedStatementEntityEdit;
 import org.wikidata.wdtk.datamodel.interfaces.EntityIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.MonolingualTextValue;
 import org.wikidata.wdtk.datamodel.interfaces.Snak;
@@ -39,7 +39,7 @@ import org.wikidata.wdtk.datamodel.interfaces.ValueSnak;
 public abstract class ValueScrutinizer extends SnakScrutinizer {
 
     @Override
-    public void scrutinize(TermedStatementEntityUpdate update) {
+    public void scrutinize(TermedStatementEntityEdit update) {
         super.scrutinize(update);
 
         for (MonolingualTextValue label : update.getLabels()) {

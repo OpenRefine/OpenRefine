@@ -27,8 +27,8 @@ package org.openrefine.wikidata.qa.scrutinizers;
 import java.util.Collections;
 
 import org.openrefine.wikidata.testing.TestingData;
-import org.openrefine.wikidata.updates.TermedStatementEntityUpdate;
-import org.openrefine.wikidata.updates.TermedStatementEntityUpdateBuilder;
+import org.openrefine.wikidata.updates.TermedStatementEntityEdit;
+import org.openrefine.wikidata.updates.TermedStatementEntityEditBuilder;
 import org.testng.annotations.Test;
 import org.wikidata.wdtk.datamodel.helpers.Datamodel;
 import org.wikidata.wdtk.datamodel.interfaces.Claim;
@@ -49,7 +49,7 @@ public class NewItemScrutinizerTest extends ScrutinizerTest {
 
     @Test
     public void testTrigger() {
-        TermedStatementEntityUpdate update = new TermedStatementEntityUpdateBuilder(TestingData.newIdA).build();
+        TermedStatementEntityEdit update = new TermedStatementEntityEditBuilder(TestingData.newIdA).build();
         scrutinize(update);
         assertWarningsRaised(NewItemScrutinizer.noDescType, NewItemScrutinizer.noLabelType,
                 NewItemScrutinizer.noTypeType, NewItemScrutinizer.newItemType);
@@ -57,7 +57,7 @@ public class NewItemScrutinizerTest extends ScrutinizerTest {
 
     @Test
     public void testEmptyItem() {
-        TermedStatementEntityUpdate update = new TermedStatementEntityUpdateBuilder(TestingData.existingId).build();
+        TermedStatementEntityEdit update = new TermedStatementEntityEditBuilder(TestingData.existingId).build();
         scrutinize(update);
         assertNoWarningRaised();
     }
@@ -65,9 +65,10 @@ public class NewItemScrutinizerTest extends ScrutinizerTest {
     @Test
     public void testGoodNewItem() {
 
-        TermedStatementEntityUpdate update = new TermedStatementEntityUpdateBuilder(TestingData.newIdA)
+        TermedStatementEntityEdit update = new TermedStatementEntityEditBuilder(TestingData.newIdA)
                 .addLabel(Datamodel.makeMonolingualTextValue("bonjour", "fr"), false)
-                .addDescription(Datamodel.makeMonolingualTextValue("interesting item", "en"), true).addStatement(p31Statement)
+                .addDescription(Datamodel.makeMonolingualTextValue("interesting item", "en"), true)
+                .addStatement(add(p31Statement))
                 .build();
         scrutinize(update);
         assertWarningsRaised(NewItemScrutinizer.newItemType);
@@ -75,10 +76,12 @@ public class NewItemScrutinizerTest extends ScrutinizerTest {
 
     @Test
     public void testDeletedStatements() {
-        TermedStatementEntityUpdate update = new TermedStatementEntityUpdateBuilder(TestingData.newIdA)
+        TermedStatementEntityEdit update = new TermedStatementEntityEditBuilder(TestingData.newIdA)
                 .addLabel(Datamodel.makeMonolingualTextValue("bonjour", "fr"), false)
-                .addDescription(Datamodel.makeMonolingualTextValue("interesting item", "en"), true).addStatement(p31Statement)
-                .deleteStatement(TestingData.generateStatement(TestingData.newIdA, TestingData.matchedId)).build();
+                .addDescription(Datamodel.makeMonolingualTextValue("interesting item", "en"), true)
+                .addStatement(add(p31Statement))
+                .addStatement(delete(TestingData.generateStatement(TestingData.newIdA, TestingData.matchedId)))
+                .build();
         scrutinize(update);
         assertWarningsRaised(NewItemScrutinizer.newItemType, NewItemScrutinizer.deletedStatementsType);
     }
