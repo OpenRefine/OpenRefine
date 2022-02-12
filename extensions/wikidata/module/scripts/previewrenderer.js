@@ -55,13 +55,13 @@ EditRenderer._renderItem = function(json, container) {
   }
 
   // Statements
-  if (json.addedStatementGroups && json.addedStatementGroups.length) {
+  if (json.statementGroups && json.statementGroups.length) {
     // $('<div></div>').addClass('wbs-statements-header')
     //        .text($.i18n('wikibase-schema/statements-header')).appendTo(right);
     var statementsGroupContainer = $('<div></div>').addClass('wbs-statement-group-container')
             .appendTo(right);
-    for(var i = 0; i != json.addedStatementGroups.length; i++) {
-       EditRenderer._renderStatementGroup(json.addedStatementGroups[i], statementsGroupContainer);
+    for(var i = 0; i != json.statementGroups.length; i++) {
+       EditRenderer._renderStatementGroup(json.statementGroups[i], statementsGroupContainer);
     }
   }
 };
@@ -105,10 +105,10 @@ EditRenderer._renderStatementGroup = function(json, container) {
   EditRenderer._renderEntity(json.property, inputContainer);
 
   var statementContainer = $('<div></div>').addClass('wbs-statement-container').appendTo(right);
-  for (var i = 0; i != json.statements.length; i++) {
-     EditRenderer._renderStatement(json.statements[i], statementContainer);
+  for (var i = 0; i != json.statementEdits.length; i++) {
+     EditRenderer._renderStatement(json.statementEdits[i], statementContainer);
   }
-  if(json.statements.length > EditRenderer.maxStatements) {
+  if(json.statementEdits.length > EditRenderer.maxStatements) {
      $('<div></div>')
          .text('...')
          .addClass('wbs-statement')
@@ -124,7 +124,7 @@ EditRenderer._renderStatement = function(json, container) {
  
   var statement = $('<div></div>').addClass('wbs-statement').appendTo(container);
   var inputContainer = $('<div></div>').addClass('wbs-target-input').appendTo(statement);
-  EditRenderer._renderValue(json.mainsnak, inputContainer);
+  EditRenderer._renderValue(json.statement.mainsnak, inputContainer);
 
   // add rank
   var rank = $('<div></div>').addClass('wbs-rank-selector-icon').prependTo(inputContainer);
@@ -133,11 +133,11 @@ EditRenderer._renderStatement = function(json, container) {
   var right = $('<div></div>').addClass('wbs-right').appendTo(statement);
   var qualifierContainer = $('<div></div>').addClass('wbs-qualifier-container').appendTo(right);
 
-  if (json.qualifiers) {
-    for (var pid_id in json['qualifiers-order']) {
-      var pid = json['qualifiers-order'][pid_id];
-      if (json.qualifiers.hasOwnProperty(pid)) {
-        var qualifiers = json.qualifiers[pid];
+  if (json.statement.qualifiers) {
+    for (var pid_id in json.statement['qualifiers-order']) {
+      var pid = json.statement['qualifiers-order'][pid_id];
+      if (json.statement.qualifiers.hasOwnProperty(pid)) {
+        var qualifiers = json.statement.qualifiers[pid];
         for (var i = 0; i != qualifiers.length; i++) {
           EditRenderer._renderSnak(qualifiers[i], qualifierContainer);
         }
@@ -159,9 +159,9 @@ EditRenderer._renderStatement = function(json, container) {
   });
   referenceContainer.hide();
 
-  if (json.references) {
-      for (var i = 0; i != json.references.length; i++) {
-        EditRenderer._renderReference(json.references[i], referenceContainer);
+  if (json.statement.references) {
+      for (var i = 0; i != json.statement.references.length; i++) {
+        EditRenderer._renderReference(json.statement.references[i], referenceContainer);
       }
   }
   EditRenderer._updateReferencesNumber(referenceContainer);

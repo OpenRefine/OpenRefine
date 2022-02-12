@@ -72,6 +72,7 @@ function init() {
         "scripts/dialogs/perform-edits-dialog.js",
         "scripts/dialogs/import-schema-dialog.js",
         "scripts/dialogs/wikibase-dialog.js",
+        "scripts/dialogs/statement-configuration-dialog.js",
         "scripts/jquery.uls.data.js",
       ]);
 
@@ -85,7 +86,8 @@ function init() {
         "styles/dialogs/import-schema-dialog.less",
         "styles/dialogs/perform-edits.less",
         "styles/dialogs/wikibase-dialog.less",
-        "styles/dialogs/add-wikibase-dialog.less"
+        "styles/dialogs/add-wikibase-dialog.less",
+        "styles/dialogs/statement-configuration-dialog.less"
       ]);
    
 }

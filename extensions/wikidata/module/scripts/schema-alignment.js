@@ -633,13 +633,20 @@ SchemaAlignment._addStatement = function(container, datatype, json) {
   var qualifiers = null;
   var references = null;
   var value = null;
+  var editingMode = StatementConfigurationDialog.defaultMode;
+  var mergingStrategy = StatementConfigurationDialog.defaultStrategy;
   if (json) {
     qualifiers = json.qualifiers;
     references = json.references;
     value = json.value;
+    editingMode = json.mode || 'add_or_merge';
+    mergingStrategy = json.mergingStrategy || {'type':'qualifiers','valueMatcher':{'type':'strict'}};
   }
  
   var statement = $('<div></div>').addClass('wbs-statement');
+  statement
+        .data('jsonMode', editingMode)
+        .data('jsonMergingStrategy', JSON.stringify(mergingStrategy));
   var inputContainer = $('<div></div>').addClass('wbs-target-input').appendTo(statement);
   SchemaAlignment._initField(inputContainer, datatype, value);
   
@@ -652,6 +659,15 @@ SchemaAlignment._addStatement = function(container, datatype, json) {
         SchemaAlignment._removeStatement(statement);
         e.preventDefault();
     }).appendTo(toolbar1);
+    // add configure button
+    var configureButton = $('<div></div>').addClass('wbs-configure');
+    $('<span></span>').addClass('wbs-icon').appendTo(configureButton);
+    $('<span></span>').text($.i18n('wikibase-schema/configure-statement')).appendTo(configureButton);
+    configureButton.appendTo(toolbar1);
+    configureButton.click(function(e) {
+        SchemaAlignment._openStatementConfigurationDialog(statement);
+        e.preventDefault();
+    });
 
     // add rank
     var rank = $('<div></div>').addClass('wbs-rank-selector-icon').prependTo(inputContainer);
@@ -757,6 +773,8 @@ SchemaAlignment._statementToJSON = function (statement) {
         value: valueJSON,
         qualifiers: qualifiersList,
         references: referencesList,
+        mode: statement.data('jsonMode'),
+        mergingStrategy: JSON.parse(statement.data('jsonMergingStrategy'))
       };
     } else {
       return null;
@@ -1280,6 +1298,10 @@ SchemaAlignment._removeStatement = function(statement) {
       statementGroup.remove();
   }
   SchemaAlignment._hasChanged();
+};
+
+SchemaAlignment._openStatementConfigurationDialog = function(statement) {
+  StatementConfigurationDialog.launch(statement);
 };
 
 SchemaAlignment.getJSON = function() {
