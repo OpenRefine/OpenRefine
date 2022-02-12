@@ -261,6 +261,8 @@ HistoryPanel.prototype._showExtractOperationsDialog = function(json) {
     downloadFile('history.json', historyJson);
   });
 
+  // Function originally created by Matěj Pokorný at StackOverflow:
+  // https://stackoverflow.com/a/18197341/5564816
   var downloadFile = function(filename, content) {
     var element = document.createElement('a');
     element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(content));
