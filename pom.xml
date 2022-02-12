@@ -201,7 +201,7 @@
                 <goals>
                      <goal>merge</goal>
                 </goals>
-                <phase>prepare-package</phase>
+                <phase>test</phase>
                <configuration>
                      <destFile>${project.build.directory}/report/jacoco-merged.exec</destFile>
                      <fileSets>
