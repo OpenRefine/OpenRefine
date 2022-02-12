@@ -81,7 +81,7 @@ public class DistinctValuesScrutinizerTest extends StatementScrutinizerTest {
         scrutinize(update);
         assertWarningsRaised(DistinctValuesScrutinizer.type);
     }
-    
+
     @Test
     public void testDeletedStatement() {
         ItemIdValue idA = TestingData.existingId;
