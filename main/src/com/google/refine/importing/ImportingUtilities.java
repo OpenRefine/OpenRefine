@@ -33,6 +33,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.importing;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -73,6 +74,7 @@ import org.apache.commons.fileupload.ProgressListener;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.apache.commons.fileupload.util.Streams;
+import org.apache.commons.io.FileUtils;
 import org.apache.hc.client5.http.ClientProtocolException;
 import org.apache.hc.core5.http.ClassicHttpResponse;
 import org.apache.hc.core5.http.ContentType;
@@ -92,6 +94,8 @@ import com.google.refine.model.Project;
 import com.google.refine.util.HttpClient;
 import com.google.refine.util.JSONUtilities;
 import com.google.refine.util.ParsingUtilities;
+
+import io.airlift.compress.zstd.ZstdDecompressor;
 
 public class ImportingUtilities {
     final static protected Logger logger = LoggerFactory.getLogger("importing-utilities");
@@ -723,7 +727,20 @@ public class ImportingUtilities {
                     is.reset();
                 }
                 return new BZip2CompressorInputStream(is);
+            } else if (fileName.endsWith(".zstd") || fileName.endsWith(".zst")
+                ||"application/zstd".equals(mimeType)){
+            
+                byte[] originalFile = FileUtils.readFileToByteArray(file);
+                
+                int decompressedSize = (int)ZstdDecompressor.getDecompressedSize(originalFile,0,originalFile.length);
+
+                byte[] decompressedByteArray = new byte[decompressedSize];
+
+                new ZstdDecompressor().decompress(originalFile, 0, originalFile.length, decompressedByteArray, 0, decompressedByteArray.length);
+
+                return new ByteArrayInputStream(decompressedByteArray);
             }
+
         } catch (IOException e) {
             logger.warn("Something that looked like a compressed file gave an error on open: "+file,e);
         }

@@ -100,6 +100,7 @@
     <owasp-encoder.version>1.2.3</owasp-encoder.version>
     <jasypt.version>1.9.3</jasypt.version>
     <mockito.version>4.3.1</mockito.version>
+    <aircompressor.version>0.21</aircompressor.version>
 
     <!-- plugin versions -->
     <build-helper-maven-plugin.version>3.3.0</build-helper-maven-plugin.version>

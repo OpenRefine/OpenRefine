@@ -145,6 +145,14 @@
   </build>
 
   <dependencies>
+
+    <!-- for .zst file decompression -->
+    <dependency>
+      <groupId>io.airlift</groupId>
+      <artifactId>aircompressor</artifactId>
+      <version>${aircompressor.version}</version>
+    </dependency>
+
     <dependency>
       <groupId>javax.servlet</groupId>
       <artifactId>javax.servlet-api</artifactId>
