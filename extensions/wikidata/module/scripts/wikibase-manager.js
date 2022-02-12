@@ -28,7 +28,7 @@ WikibaseManager.getSelectedWikibaseApiForEntityType = function (entityType) {
   let manifest = WikibaseManager.getSelectedWikibase();
   // version 1
   if (manifest.version.split('.')[0] === '1') {
-    return manifest.wikibase.site_iri;
+    return manifest.mediawiki.api;
   } else { // version 2 or above
     let record = manifest.entity_types[entityType];
     let api = record === undefined ? undefined : record.mediawiki_api;
