@@ -5,6 +5,7 @@
   <name>OpenRefine - packaging</name>
   <description>Creates packages for all supported operating systems</description>
   <url>http://openrefine.org/</url>
+  <packaging>pom</packaging>
 
   <parent>
     <groupId>org.openrefine</groupId>
@@ -126,6 +127,26 @@
           </execution>
         </executions>
       </plugin>
+      <plugin> <!-- we attach a dummy main artifact for the packaging project, 
+                because Appbundle requires one -->
+        <groupId>org.codehaus.gmaven</groupId>
+        <artifactId>gmaven-plugin</artifactId>
+        <version>1.3</version>
+        <executions>
+          <execution>
+          <id>set-main-artifact</id>
+          <phase>prepare-package</phase>
+          <goals> 
+            <goal>execute</goal>
+          </goals>
+          <configuration>
+            <source>
+            project.artifact.setFile(new File("./packaging/target/dummy_artifact.jar"))
+            </source>
+          </configuration>
+          </execution>
+        </executions>
+      </plugin>
       <plugin> <!-- necessary for Appbundle -->
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-antrun-plugin</artifactId>
@@ -138,6 +159,7 @@
 
               <target>
                 <mkdir dir="./target/"/>
+                <touch file="./target/dummy_artifact.jar" />
 
                 <mkdir dir="${mac.webapp.dir}" />
                     
@@ -206,7 +228,7 @@
           </execution>
           <execution>
             <id>download-jre</id>
-            <phase>process-test-resources</phase>
+            <phase>prepare-package</phase>
             <goals>
               <goal>run</goal>
             </goals>
@@ -252,8 +274,7 @@
           </execution>
           <execution>
             <id>generate-dmg</id>
-            <phase>verify</phase> <!-- should really be 'package' and appbundle at 'prepare-package', but that fails because the 
-                        packaging jar is not available at this time -->
+            <phase>package</phase> 
             <goals>
               <goal>run</goal>
             </goals>
@@ -559,7 +580,7 @@
           </configuration>
           <executions>
             <execution>
-              <phase>package</phase>
+              <phase>prepare-package</phase>
               <goals>
                 <goal>bundle</goal>
               </goals>
