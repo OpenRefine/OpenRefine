@@ -754,7 +754,7 @@ public class ImportingUtilities {
         final Progress progress
     ) throws IOException {
         String fileName = JSONUtilities.getString(fileRecord, "location", "unknown");
-        for (String ext : new String[] {".gz",".bz2"}) {
+        for (String ext : new String[] {".gz",".bz2",".zst",".zstd"}) {
             if (fileName.endsWith(ext)) {
                 fileName = fileName.substring(0, fileName.length()-ext.length());
                 break;
