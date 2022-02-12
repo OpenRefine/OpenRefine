@@ -1,3 +1,16 @@
+const defaultInducedHistoryJson = [
+  {
+    op: 'core/column-removal',
+    columnName: 'NDB_No',
+    description: 'Remove column NDB_No',
+  },
+  {
+    op: 'core/column-removal',
+    columnName: 'Shrt_Desc',
+    description: 'Remove column Shrt_Desc',
+  },
+]
+
 describe(__filename, function () {
   it('Test select/unselect all', function () {
     cy.loadAndVisitProject('food.mini');
@@ -34,18 +47,7 @@ describe(__filename, function () {
     ).should('be.checked');
     cy.assertTextareaHaveJsonValue(
       '.dialog-container textarea.history-operation-json',
-      [
-        {
-          op: 'core/column-removal',
-          columnName: 'NDB_No',
-          description: 'Remove column NDB_No',
-        },
-        {
-          op: 'core/column-removal',
-          columnName: 'Shrt_Desc',
-          description: 'Remove column Shrt_Desc',
-        },
-      ]
+      defaultInducedHistoryJson
     );
   });
 
@@ -103,20 +105,31 @@ describe(__filename, function () {
     ).click();
     cy.assertTextareaHaveJsonValue(
       '.dialog-container textarea.history-operation-json',
-      [
-        {
-          op: 'core/column-removal',
-          columnName: 'NDB_No',
-          description: 'Remove column NDB_No',
-        },
-        {
-          op: 'core/column-removal',
-          columnName: 'Shrt_Desc',
-          description: 'Remove column Shrt_Desc',
-        },
-      ]
+      defaultInducedHistoryJson
     );
   });
+
+  it('Test download of JSON file', { retries: { runMode: 0 } }, function () {
+    cy.loadAndVisitProject('food.mini');
+    cy.deleteColumn('NDB_No');
+    cy.deleteColumn('Shrt_Desc');
+
+    cy.get('#or-proj-undoRedo').click();
+    cy.get('#refine-tabs-history .history-panel-controls')
+    .contains('Extract')
+    .click();
+    // (the extractable commands are selected by default)
+
+    cy.get('.dialog-container button[bind="saveJsonAsFileButton"]')
+    .contains('Export')
+    .click();
+
+    const downloadsFolder = Cypress.config('downloadsFolder');
+    const downloadedFilename = downloadsFolder + '/history.json';
+
+    cy.readFile(downloadedFilename, 'utf8')
+      .should('deep.equal', defaultInducedHistoryJson)
+  })
 
   it('Test the close button', function () {
     cy.loadAndVisitProject('food.mini');
@@ -151,18 +164,7 @@ describe(__filename, function () {
     // test the json
     cy.assertTextareaHaveJsonValue(
       '.dialog-container textarea.history-operation-json',
-      [
-        {
-          op: 'core/column-removal',
-          columnName: 'NDB_No',
-          description: 'Remove column NDB_No',
-        },
-        {
-          op: 'core/column-removal',
-          columnName: 'Shrt_Desc',
-          description: 'Remove column Shrt_Desc',
-        },
-      ]
+      defaultInducedHistoryJson
     );
   });
 });
