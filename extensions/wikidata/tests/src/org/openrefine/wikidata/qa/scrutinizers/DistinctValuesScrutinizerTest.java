@@ -81,6 +81,29 @@ public class DistinctValuesScrutinizerTest extends StatementScrutinizerTest {
         scrutinize(update);
         assertWarningsRaised(DistinctValuesScrutinizer.type);
     }
+    
+    @Test
+    public void testDeletedStatement() {
+        ItemIdValue idA = TestingData.existingId;
+        Snak mainSnak = Datamodel.makeValueSnak(propertyIdValue, value1);
+        Statement statement1 = new StatementImpl("P163", mainSnak, idA);
+        Statement statement2 = new StatementImpl("P163", mainSnak, idA);
+
+        TermedStatementEntityEdit update = new TermedStatementEntityEditBuilder(idA)
+                .addStatement(delete(statement1))
+                .addStatement(delete(statement2))
+                .build();
+
+        List<SnakGroup> constraintQualifiers = new ArrayList<>();
+        List<Statement> constraintDefinitions = constraintParameterStatementList(entityIdValue, constraintQualifiers);
+
+        ConstraintFetcher fetcher = mock(ConstraintFetcher.class);
+        when(fetcher.getConstraintsByType(propertyIdValue, DISTINCT_VALUES_CONSTRAINT_QID)).thenReturn(constraintDefinitions);
+        setFetcher(fetcher);
+
+        scrutinize(update);
+        assertNoWarningRaised();
+    }
 
     @Test
     public void testNoIssue() {

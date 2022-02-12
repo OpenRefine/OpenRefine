@@ -57,6 +57,9 @@ public abstract class ValueScrutinizer extends SnakScrutinizer {
 
     @Override
     public void scrutinize(Snak snak, EntityIdValue entityId, boolean added) {
+        if (!added) {
+            return;
+        }
         if (snak instanceof ValueSnak) {
             scrutinize(((ValueSnak)snak).getValue());
         }
