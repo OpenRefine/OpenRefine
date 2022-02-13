@@ -47,6 +47,7 @@ import okhttp3.mockwebserver.MockWebServer;
 import org.apache.commons.collections.IteratorUtils;
 import org.apache.commons.fileupload.FileUploadBase;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpEntity;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.mime.MultipartEntityBuilder;
@@ -326,4 +327,23 @@ public class ImportingUtilitiesTests extends ImporterTest {
 
     }
 
+    //this test is testing tryOpenAsCompressedFile() function for the zst decompression
+    @Test
+    public void tryOpenAsCompressedFileZSTTest() throws IOException {
+
+        String compressedFileName = "zst_test.csv.zst";
+        String compressedFilePath = ClassLoader.getSystemResource(compressedFileName).getPath();
+        File compressedFile = new File(compressedFilePath);
+
+        String originalFileName = "zst_test.csv";
+        String originalFilePath = ClassLoader.getSystemResource(originalFileName).getPath();
+        File originalFile = new File(originalFilePath);
+        byte[] originalFileByteArray = FileUtils.readFileToByteArray(originalFile);
+
+        byte[] decompressedFileByteArray = IOUtils.toByteArray(ImportingUtilities.tryOpenAsCompressedFile(compressedFile,"application/zstd","UTF-8"));
+        
+        //comparing the original file(zst_test.csv) with the file returned from tryOpenAsCompressedFile
+        assertEquals(decompressedFileByteArray,originalFileByteArray);
+        
+    }
 }
