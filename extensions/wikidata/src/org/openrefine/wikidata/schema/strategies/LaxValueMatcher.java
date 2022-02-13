@@ -1,11 +1,15 @@
 package org.openrefine.wikidata.schema.strategies;
 
+import java.math.BigDecimal;
 import java.net.URI;
 import java.net.URISyntaxException;
 
 import org.wikidata.wdtk.datamodel.interfaces.EntityIdValue;
+import org.wikidata.wdtk.datamodel.interfaces.GlobeCoordinatesValue;
 import org.wikidata.wdtk.datamodel.interfaces.MonolingualTextValue;
+import org.wikidata.wdtk.datamodel.interfaces.QuantityValue;
 import org.wikidata.wdtk.datamodel.interfaces.StringValue;
+import org.wikidata.wdtk.datamodel.interfaces.TimeValue;
 import org.wikidata.wdtk.datamodel.interfaces.Value;
 
 /**
@@ -48,6 +52,80 @@ public class LaxValueMatcher implements ValueMatcher {
 			MonolingualTextValue addedMTV = (MonolingualTextValue) added;
 			return (existingMTV.getLanguageCode().equals(addedMTV.getLanguageCode()) && 
 					existingMTV.getText().trim().equals(addedMTV.getText().trim()));
+			
+		} else if (existing instanceof QuantityValue && added instanceof QuantityValue) {
+			QuantityValue existingQuantity = (QuantityValue) existing;
+			QuantityValue addedQuantity = (QuantityValue) added;
+			BigDecimal existingLowerBound = existingQuantity.getLowerBound();
+			BigDecimal addedLowerBound = addedQuantity.getLowerBound();
+			BigDecimal existingUpperBound = existingQuantity.getUpperBound();
+			BigDecimal addedUpperBound = addedQuantity.getUpperBound();
+			// artificially set bounds for quantities which have neither lower nor upper bounds
+			if (existingLowerBound == null && existingUpperBound == null) {
+				existingLowerBound = existingQuantity.getNumericValue();
+				existingUpperBound = existingQuantity.getNumericValue();
+			}
+			if (addedLowerBound == null && addedUpperBound == null) {
+				addedLowerBound = addedQuantity.getNumericValue();
+				addedUpperBound = addedQuantity.getNumericValue();
+			}
+			
+			if (existingQuantity.getUnit().equals(addedQuantity.getUnit()) &&
+					(existingLowerBound != null) && (addedLowerBound != null) &&
+					(existingUpperBound != null) && (addedUpperBound != null)) {
+				// Consider the two values to be equal when their confidence interval overlaps
+				return ((existingLowerBound.compareTo(addedLowerBound) <= 0 && addedLowerBound.compareTo(existingUpperBound) <= 0) ||
+						(addedLowerBound.compareTo(existingLowerBound) <= 0 && existingLowerBound.compareTo(addedUpperBound) <= 0));
+			}
+			
+		} else if (existing instanceof GlobeCoordinatesValue && added instanceof GlobeCoordinatesValue) {
+			GlobeCoordinatesValue addedCoords = (GlobeCoordinatesValue) added;
+			GlobeCoordinatesValue existingCoords = (GlobeCoordinatesValue) existing;
+			if (!addedCoords.getGlobeItemId().getId().equals(existingCoords.getGlobeItemId().getId())) {
+				return false;
+			}
+			
+			double addedMinLon = addedCoords.getLongitude() - addedCoords.getPrecision();
+			double addedMaxLon = addedCoords.getLongitude() + addedCoords.getPrecision();
+			double addedMinLat = addedCoords.getLatitude() - addedCoords.getPrecision();
+			double addedMaxLat = addedCoords.getLatitude() + addedCoords.getPrecision();
+			double existingMinLon = existingCoords.getLongitude() - existingCoords.getPrecision();
+			double existingMaxLon = existingCoords.getLongitude() + existingCoords.getPrecision();
+			double existingMinLat = existingCoords.getLatitude() - existingCoords.getPrecision();
+			double existingMaxLat = existingCoords.getLatitude() + existingCoords.getPrecision();
+			
+			// return true when the two "rectangles" (in coordinate space) overlap (not strictly)
+			return ((addedMinLon <= existingMinLon && addedMinLat <= existingMinLat && existingMinLon <= addedMaxLon && existingMinLat <= addedMaxLat) ||
+					(existingMinLon <= addedMinLon && existingMinLat <= addedMinLat && addedMinLon <= existingMaxLon && addedMinLat <= existingMaxLat));
+			
+		} else if (existing instanceof TimeValue && added instanceof TimeValue) {
+			TimeValue existingTime = (TimeValue) existing;
+			TimeValue addedTime = (TimeValue) added;
+			
+			if (!existingTime.getPreferredCalendarModel().equals(addedTime.getPreferredCalendarModel())) {
+				return false;
+			}
+			
+			int minPrecision = Math.min(existingTime.getPrecision(), addedTime.getPrecision());
+			if (minPrecision <= 9) {
+				// the precision is a multiple of years
+				long yearPrecision = (long)Math.pow(10, 9-minPrecision);
+				long addedValue = addedTime.getYear() / yearPrecision;
+				long existingValue = existingTime.getYear() / yearPrecision;
+				return addedValue == existingValue;
+			} else if (minPrecision == 10) {
+				// month precision 
+				return (addedTime.getYear() == existingTime.getYear()
+						&& addedTime.getMonth() == existingTime.getMonth());
+			} else if (minPrecision == 11) {
+				// day precision
+				return (addedTime.getYear() == existingTime.getYear()
+						&& addedTime.getMonth() == existingTime.getMonth()
+						&& addedTime.getDay() == existingTime.getDay());
+			}
+			
+			// TODO possible improvements: bounds support, timezone support
+			
 		}
 		// fall back to exact comparison for other datatypes
 		return existing.equals(added);
