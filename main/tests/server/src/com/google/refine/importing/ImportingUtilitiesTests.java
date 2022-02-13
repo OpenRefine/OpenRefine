@@ -327,7 +327,7 @@ public class ImportingUtilitiesTests extends ImporterTest {
 
     }
 
-    //this test is testing tryOpenAsCompressedFile() function for the zst decompression
+    // this test is testing tryOpenAsCompressedFile() function for the zst decompression
     @Test
     public void tryOpenAsCompressedFileZSTTest() throws IOException {
 
@@ -340,10 +340,11 @@ public class ImportingUtilitiesTests extends ImporterTest {
         File originalFile = new File(originalFilePath);
         byte[] originalFileByteArray = FileUtils.readFileToByteArray(originalFile);
 
-        byte[] decompressedFileByteArray = IOUtils.toByteArray(ImportingUtilities.tryOpenAsCompressedFile(compressedFile,"application/zstd","UTF-8"));
-        
-        //comparing the original file(zst_test.csv) with the file returned from tryOpenAsCompressedFile
-        assertEquals(decompressedFileByteArray,originalFileByteArray);
-        
+        byte[] decompressedFileByteArray = IOUtils
+                .toByteArray(ImportingUtilities.tryOpenAsCompressedFile(compressedFile, "application/zstd", "UTF-8"));
+
+        // comparing the original file(zst_test.csv) with the file returned from tryOpenAsCompressedFile
+        assertEquals(decompressedFileByteArray, originalFileByteArray);
+
     }
 }
