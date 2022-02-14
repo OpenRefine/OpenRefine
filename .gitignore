@@ -71,5 +71,5 @@ refine-dev.ini
 # Ignore Node modules that might inadvertently install at current path instead of user or configured env var NODE_PATH 
 node_modules/
 
-
+# Ignore locally build snaps
 *.snap
