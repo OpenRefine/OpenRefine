@@ -133,6 +133,8 @@ StatementConfigurationDialog.launch = function(statement) {
   this._elmts.strategyText.text($.i18n('wikibase-statement-settings/strategy-label'));
   this._elmts.strategyOptionsText.text($.i18n('wikibase-statement-settings/strategy-options'));
 
+  this._configHasChanged = false;
+
   for (const mode of self.possibleModes) {
     $('<option></option>')
         .attr('value', mode)
@@ -158,13 +160,14 @@ StatementConfigurationDialog.launch = function(statement) {
   const strategy = self.possibleStrategies.get(currentStrategyType);
   strategy.renderUI(this._elmts.strategyOptions, currentStrategy, function(strategyOptions) {
     statement.data('jsonMergingStrategy', JSON.stringify(strategyOptions));
+    self._configHasChanged = true;
   });
 
   this._elmts.modeInput.change(function(e) {
     const selected = $(this).val();
     statement.data('jsonMode', selected);
     self._elmts.modeDescription.text($.i18n('wikibase-statement-settings/mode-options/'+selected+'/description'));
-    SchemaAlignment._hasChanged();
+    self._configHasChanged = true;
   });
   this._elmts.strategyInput.change(function(e) {
     const selected = $(this).val();
@@ -176,7 +179,7 @@ StatementConfigurationDialog.launch = function(statement) {
     strategy.renderUI(self._elmts.strategyOptions, initialOptions, function(strategyOptions) {
       statement.data('jsonMergingStrategy', JSON.stringify(strategyOptions));
     });
-    SchemaAlignment._hasChanged();
+    self._configHasChanged = true;
   });
 
   var dismiss = function() {
@@ -185,6 +188,10 @@ StatementConfigurationDialog.launch = function(statement) {
 
   this._elmts.closeButton.click(function() {
     dismiss();
+    if (self._configHasChanged) {
+       SchemaAlignment._updateStatementFromMergingStrategy(statement);
+       SchemaAlignment._hasChanged();
+    }
   });
 
 };

@@ -636,6 +636,7 @@ SchemaAlignment._addStatement = function(container, datatype, json) {
   var editingMode = StatementConfigurationDialog.defaultMode;
   var mergingStrategy = StatementConfigurationDialog.defaultStrategy;
   if (json) {
+    // TODO add compatibility with previous format (and same in statementGroup)
     qualifiers = json.qualifiers;
     references = json.references;
     value = json.value;
@@ -673,7 +674,8 @@ SchemaAlignment._addStatement = function(container, datatype, json) {
     var rank = $('<div></div>').addClass('wbs-rank-selector-icon').prependTo(inputContainer);
 
     // add qualifiers...
-    var right = $('<div></div>').addClass('wbs-right').appendTo(statement);
+    var qualifiersSection = $('<div></div>').addClass('wbs-qualifiers-section').appendTo(statement);
+    var right = $('<div></div>').addClass('wbs-right').appendTo(qualifiersSection);
     var qualifierContainer = $('<div></div>').addClass('wbs-qualifier-container').appendTo(right);
     var toolbar2 = $('<div></div>').addClass('wbs-toolbar').appendTo(right);
     var addQualifierButton = $('<a></a>').addClass('wbs-add-qualifier')
@@ -691,10 +693,11 @@ SchemaAlignment._addStatement = function(container, datatype, json) {
 
     // and references
     $('<div></div>').attr('style', 'clear: right').appendTo(statement);
-    var referencesToggleContainer = $('<div></div>').addClass('wbs-references-toggle').appendTo(statement);
+    var referencesSection = $('<div></div>').addClass('wbs-references-section').appendTo(statement);
+    var referencesToggleContainer = $('<div></div>').addClass('wbs-references-toggle').appendTo(referencesSection);
     var triangle = $('<div></div>').addClass('triangle-icon').addClass('pointing-right').appendTo(referencesToggleContainer);
     var referencesToggle = $('<a></a>').appendTo(referencesToggleContainer);
-    right = $('<div></div>').addClass('wbs-right').appendTo(statement);
+    right = $('<div></div>').addClass('wbs-right').appendTo(referencesSection);
     var referenceContainer = $('<div></div>').addClass('wbs-reference-container').appendTo(right);
     referencesToggleContainer.click(function(e) {
         triangle.toggleClass('pointing-down');
@@ -744,13 +747,42 @@ SchemaAlignment._addStatement = function(container, datatype, json) {
     }
     SchemaAlignment._updateReferencesNumber(referenceContainer);
   }
+  
+  SchemaAlignment._updateStatementFromMergingStrategy(statement);
+
   container.append(statement);
+};
+
+// further tweaks to the statement UI if the statement is to be deleted
+SchemaAlignment._updateStatementFromMergingStrategy = function (statement) {
+  var mode = statement.data('jsonMode');
+  var strategyType = JSON.parse(statement.data('jsonMergingStrategy'))['type'];
+  var references = statement.find(".wbs-references-section").first();
+  var qualifiers = statement.find(".wbs-qualifiers-section").first();
+  statement.removeClass();
+  statement.addClass('wbs-statement');
+  statement.addClass('wbs-statement-mode-'+mode);
+  statement.addClass('wbs-statement-strategy-'+strategyType);
+  // TODO: if we add a similar class for the strategy type, then the code below
+  // could be replaced by pure CSS!
+  if (mode === 'delete') {
+    references.hide();
+    if (strategyType === 'property' || strategyType === 'snak') {
+        qualifiers.hide();
+    } else {
+        qualifiers.show();
+    }
+  } else {
+    references.show();
+    qualifiers.show();
+  }
 };
 
 SchemaAlignment._statementToJSON = function (statement) {
     var inputContainer = statement.find(".wbs-target-input").first();
     var qualifiersList = new Array();
     var referencesList = new Array();
+    var editingMode = statement.data('jsonMode');
     var qualifiersDom = statement.find('.wbs-qualifier-container').first().children();
     qualifiersDom.each(function () {
         var qualifierJSON = SchemaAlignment._qualifierToJSON($(this));
@@ -759,21 +791,23 @@ SchemaAlignment._statementToJSON = function (statement) {
         }
     });
     var referencesDom = statement.find('.wbs-reference-container').first().children();
-    referencesDom.each(function () {
-        var referenceJSON = SchemaAlignment._referenceToJSON($(this));
-        if (referenceJSON !== null) {
-          referencesList.push(referenceJSON);
-        }
-    });
+    if (editingMode !== 'delete') {
+        referencesDom.each(function () {
+            var referenceJSON = SchemaAlignment._referenceToJSON($(this));
+            if (referenceJSON !== null) {
+            referencesList.push(referenceJSON);
+            }
+        });
+    }
     var valueJSON = SchemaAlignment._inputContainerToJSON(inputContainer);
-    if (referencesList.length === referencesDom.length &&
+    if ((editingMode === 'delete' || referencesList.length === referencesDom.length) &&
         qualifiersList.length === qualifiersDom.length &&
         valueJSON !== null) {
       return {
         value: valueJSON,
         qualifiers: qualifiersList,
         references: referencesList,
-        mode: statement.data('jsonMode'),
+        mode: editingMode,
         mergingStrategy: JSON.parse(statement.data('jsonMergingStrategy'))
       };
     } else {

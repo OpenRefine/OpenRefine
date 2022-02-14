@@ -126,11 +126,16 @@ EditRenderer._renderStatement = function(json, container) {
   var inputContainer = $('<div></div>').addClass('wbs-target-input').appendTo(statement);
   EditRenderer._renderValue(json.statement.mainsnak, inputContainer);
 
+  // mode and strategy
+  statement.addClass('wbs-statement-mode-' + json.mode);
+  statement.addClass('wbs-statement-strategy-' + json.mergingStrategy.type);
+
   // add rank
   var rank = $('<div></div>').addClass('wbs-rank-selector-icon').prependTo(inputContainer);
 
   // add qualifiers...
-  var right = $('<div></div>').addClass('wbs-right').appendTo(statement);
+  var qualifiersSection = $('<div></div>').addClass('wbs-qualifiers-section').appendTo(statement);
+  var right = $('<div></div>').addClass('wbs-right').appendTo(qualifiersSection);
   var qualifierContainer = $('<div></div>').addClass('wbs-qualifier-container').appendTo(right);
 
   if (json.statement.qualifiers) {
@@ -147,10 +152,11 @@ EditRenderer._renderStatement = function(json, container) {
 
   // and references
   $('<div></div>').attr('style', 'clear: right').appendTo(statement);
-  var referencesToggleContainer = $('<div></div>').addClass('wbs-references-toggle').appendTo(statement);
+  var referencesSection = $('<div></div>').addClass('wbs-references-section').appendTo(statement);
+  var referencesToggleContainer = $('<div></div>').addClass('wbs-references-toggle').appendTo(referencesSection);
   var triangle = $('<div></div>').addClass('triangle-icon').addClass('pointing-right').appendTo(referencesToggleContainer);
   var referencesToggle = $('<a></a>').appendTo(referencesToggleContainer);
-  right = $('<div></div>').addClass('wbs-right').appendTo(statement);
+  right = $('<div></div>').addClass('wbs-right').appendTo(referencesSection);
   var referenceContainer = $('<div></div>').addClass('wbs-reference-container').appendTo(right);
   referencesToggle.click(function () {
       triangle.toggleClass('pointing-down');
@@ -161,7 +167,7 @@ EditRenderer._renderStatement = function(json, container) {
 
   if (json.statement.references) {
       for (var i = 0; i != json.statement.references.length; i++) {
-        EditRenderer._renderReference(json.statement.references[i], referenceContainer);
+          EditRenderer._renderReference(json.statement.references[i], referenceContainer);
       }
   }
   EditRenderer._updateReferencesNumber(referenceContainer);

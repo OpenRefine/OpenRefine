@@ -302,6 +302,20 @@
     border-bottom: 1px solid #eaecf0;
 }
 
+.wbs-statement-mode-delete {
+    background: #cecece;
+}
+
+// Hide unrelevant sections of statements in delete mode
+.wbs-statement-mode-delete .wbs-references-section {
+    display: none;
+}
+
+.wbs-statement-mode-delete.wbs-statement-strategy-property .wbs-qualifiers-section,
+.wbs-statement-mode-delete.wbs-statement-strategy-snak .wbs-qualifiers-section {
+    display: none;
+}
+
 .wbs-statement:last-child {
     border-bottom: 0;
 }
