@@ -96,11 +96,13 @@ EditMetadataDialog.prototype._createDialog = function() {
     
   $('<h1>').text($.i18n('core-index/metaDatas')).appendTo(body);
 
+  var scrollabelDiv = $("<div>").addClass("scrollable-table").appendTo(body);
+
   var metadataTable = $("<table>")
   .addClass("list-table")
   .addClass("preferences")
   .html('<tr><th>'+$.i18n('core-index/key')+'</th><th>'+$.i18n('core-index/value')+'</th><th></th></tr>')
-  .appendTo(body)[0];
+  .appendTo(scrollabelDiv)[0];
 
     var flattenObject = function(ob, key) {
         var toReturn = {};
@@ -131,7 +133,9 @@ EditMetadataDialog.prototype._createDialog = function() {
     this._metaDataUIs.push(new this._MetadataUI(tr, k, v, flatMetadata.id));
   }
   
-  $(".dialog-container").css("top", Math.round(($(".dialog-overlay").height() - $(frame).height()) / 2) + "px");
+  // $(".dialog-container").css("top", Math.round(($(".dialog-overlay").height() - $(frame).height()) / 2) + "px");
+
+  $(".dialog-container").css({"top":"50%","left":"50%","transform":"translate(-50%, -50%)"});
 };
 
 EditMetadataDialog.prototype._dismiss = function() {
