@@ -25,12 +25,14 @@
 package org.openrefine.wikidata.schema;
 
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNull;
 
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collections;
 
 import org.openrefine.wikidata.schema.exceptions.SkipSchemaExpressionException;
+import org.openrefine.wikidata.schema.strategies.PropertyOnlyStatementMerger;
 import org.openrefine.wikidata.schema.strategies.StatementEditingMode;
 import org.openrefine.wikidata.schema.strategies.StatementMerger;
 import org.openrefine.wikidata.testing.JacksonSerializationTest;
@@ -73,6 +75,12 @@ public class WbStatementExprTest extends WbExpressionTest<StatementEdit> {
             Collections.singletonList(refExpr),
             StatementMerger.FORMER_DEFAULT_STRATEGY,
             StatementEditingMode.ADD_OR_MERGE);
+    public WbStatementExpr statementDeleteExpr = new WbStatementExpr(
+            null,
+            Collections.emptyList(),
+            Collections.emptyList(),
+            new PropertyOnlyStatementMerger(),
+            StatementEditingMode.DELETE);
 
     public EntityIdValue subject = Datamodel.makeWikidataItemIdValue("Q23");
     private PropertyIdValue property = Datamodel.makeWikidataPropertyIdValue("P908");
@@ -136,6 +144,13 @@ public class WbStatementExprTest extends WbExpressionTest<StatementEdit> {
             + "\"label\":\"imported from\",\"datatype\":\"wikibase-item\"},\"value\":"
             + "{\"type\":\"wbitemvariable\",\"columnName\":\"column A\"}}]}]}";
 
+    public String jsonRepresentationDelete = "{"
+            + "\"mergingStrategy\":{\"type\":\"property\"},"
+            + "\"mode\":\"delete\","
+            + "\"value\":null,"
+            + "\"qualifiers\":[],"
+            + "\"references\":[]}";
+
     @Test
     public void testCreation() {
         WbItemConstant q5 = new WbItemConstant("Q5", "human");
@@ -148,6 +163,27 @@ public class WbStatementExprTest extends WbExpressionTest<StatementEdit> {
         WbStatementExpr withNulls = new WbStatementExpr(
                 q5, null, null, null, null);
         assertEquals(empty, withNulls);
+    }
+
+    @Test(expectedExceptions = IllegalArgumentException.class)
+    public void testNoMainValue() {
+        new WbStatementExpr(
+                null,
+                Collections.emptyList(),
+                Collections.emptyList(),
+                StatementMerger.FORMER_DEFAULT_STRATEGY,
+                StatementEditingMode.ADD_OR_MERGE);
+    }
+
+    @Test
+    public void testAllowedNoMainValue() {
+        WbStatementExpr expr = new WbStatementExpr(
+                null,
+                Collections.emptyList(),
+                Collections.emptyList(),
+                new PropertyOnlyStatementMerger(),
+                StatementEditingMode.DELETE);
+        assertNull(expr.getMainsnak());
     }
 
     @Test
@@ -200,6 +236,16 @@ public class WbStatementExprTest extends WbExpressionTest<StatementEdit> {
     }
 
     @Test
+    public void testDeleteAllStatements() {
+        setRow(recon("Q3434"), "2010-07-23", "3.898,4.389");
+        evaluatesTo(new StatementEdit(Datamodel.makeStatement(
+                Datamodel.makeClaim(subject, Datamodel.makeNoValueSnak(property), Collections.emptyList()),
+                Collections.emptyList(), StatementRank.NORMAL, ""),
+                new PropertyOnlyStatementMerger(),
+                StatementEditingMode.DELETE), new Wrapper(statementDeleteExpr));
+    }
+
+    @Test
     public void testDeserializeOlderFormat() throws JsonMappingException, JsonProcessingException {
         // when no merging strategy or mode was provided
         WbStatementExpr deserialized = ParsingUtilities.mapper.readValue(olderJsonRepresentation, WbStatementExpr.class);
@@ -209,6 +255,11 @@ public class WbStatementExprTest extends WbExpressionTest<StatementEdit> {
     @Test
     public void testSerialize() {
         JacksonSerializationTest.canonicalSerialization(WbStatementExpr.class, statementExpr, jsonRepresentation);
+    }
+
+    @Test
+    public void testSerializeDeleteStatement() {
+        JacksonSerializationTest.canonicalSerialization(WbStatementExpr.class, statementDeleteExpr, jsonRepresentationDelete);
     }
 
     @Test(expectedExceptions = UnsupportedOperationException.class)

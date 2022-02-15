@@ -28,11 +28,13 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import org.jsoup.helper.Validate;
 import org.openrefine.wikidata.qa.QAWarning;
 import org.openrefine.wikidata.schema.exceptions.SkipSchemaExpressionException;
+import org.openrefine.wikidata.schema.strategies.PropertyOnlyStatementMerger;
 import org.openrefine.wikidata.schema.strategies.StatementEditingMode;
 import org.openrefine.wikidata.schema.strategies.StatementMerger;
 import org.openrefine.wikidata.updates.StatementEdit;
@@ -66,7 +68,10 @@ public class WbStatementExpr {
             @JsonProperty("references") List<WbReferenceExpr> referenceExprs,
             @JsonProperty("mergingStrategy") StatementMerger merger,
             @JsonProperty("mode") StatementEditingMode mode) {
-        Validate.notNull(mainSnakValueExpr);
+    	// do not require a main value when deleting with a property only merger
+    	if (!(StatementEditingMode.DELETE.equals(mode) && (merger instanceof PropertyOnlyStatementMerger))) {
+    		Validate.notNull(mainSnakValueExpr);
+    	}
         this.mainSnakValueExpr = mainSnakValueExpr;
         if (qualifierExprs == null) {
             qualifierExprs = Collections.emptyList();
@@ -107,8 +112,14 @@ public class WbStatementExpr {
 
     public StatementEdit evaluate(ExpressionContext ctxt, EntityIdValue subject, PropertyIdValue propertyId)
             throws SkipSchemaExpressionException {
-        Value mainSnakValue = getMainsnak().evaluate(ctxt);
-        Snak mainSnak = Datamodel.makeValueSnak(propertyId, mainSnakValue);
+        Snak mainSnak = null;
+        if (mainSnakValueExpr != null) {
+            Value mainSnakValue = mainSnakValueExpr.evaluate(ctxt);
+        	mainSnak = Datamodel.makeValueSnak(propertyId, mainSnakValue);
+        } else {
+        	// hack to make sure we have a non-null snak
+        	mainSnak = Datamodel.makeNoValueSnak(propertyId);
+        }
 
         // evaluate qualifiers
         List<Snak> qualifiers = new ArrayList<Snak>(getQualifiers().size());
@@ -173,13 +184,13 @@ public class WbStatementExpr {
             return false;
         }
         WbStatementExpr otherExpr = (WbStatementExpr) other;
-        return mainSnakValueExpr.equals(otherExpr.getMainsnak()) && qualifierExprs.equals(otherExpr.getQualifiers())
+        return Objects.equals(mainSnakValueExpr, otherExpr.getMainsnak()) && qualifierExprs.equals(otherExpr.getQualifiers())
                 && referenceExprs.equals(otherExpr.getReferences()) && merger.equals(otherExpr.getStatementMerger())
                 && mode.equals(otherExpr.getMode());
     }
 
     @Override
     public int hashCode() {
-        return mainSnakValueExpr.hashCode() + qualifierExprs.hashCode() + referenceExprs.hashCode();
+        return Objects.hash(mainSnakValueExpr, qualifierExprs, referenceExprs);
     }
 }
