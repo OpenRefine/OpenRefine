@@ -131,7 +131,7 @@
                 because Appbundle requires one -->
         <groupId>org.codehaus.gmaven</groupId>
         <artifactId>gmaven-plugin</artifactId>
-        <version>1.3</version>
+        <version>1.5</version>
         <executions>
           <execution>
           <id>set-main-artifact</id>
