@@ -20,9 +20,9 @@ public class SchemaPropertyExtractor {
 
     public Set<PropertyIdValue> getAllProperties(WikibaseSchema schema) {
         Set<PropertyIdValue> properties = new HashSet<>();
-        List<WbEntityDocumentExpr> itemDocumentExprs = schema.getEntityDocumentExpressions();
-        for (WbEntityDocumentExpr itemDocumentExpr : itemDocumentExprs) {
-            List<WbStatementGroupExpr> statementGroups = itemDocumentExpr.getStatementGroups();
+        List<WbEntityDocumentExpr> entityDocumentExprs = schema.getEntityDocumentExpressions();
+        for (WbEntityDocumentExpr entityDocumentExpr : entityDocumentExprs) {
+            List<WbStatementGroupExpr> statementGroups = entityDocumentExpr.getStatementGroups();
             for(WbStatementGroupExpr statementGroup : statementGroups) {
                 WbExpression<? extends PropertyIdValue> statementGroupProperty = statementGroup.getProperty();
                 if (statementGroupProperty instanceof WbPropConstant) {
