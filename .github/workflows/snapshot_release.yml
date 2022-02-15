@@ -216,5 +216,7 @@ jobs:
         OSSRH_USER: ${{ secrets.OSSRH_USER }}
         OSSRH_PASS: ${{ secrets.OSSRH_PASS }}
         GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
-
+        MAVEN_OPTS: "--add-opens java.base/jdk.internal.loader=ALL-UNNAMED"
+        # the line above is a temporary workaround for the Groovy script part of the packaging pipeline
+        # see https://stackoverflow.com/questions/59211132/springboot-2-2-1-groovymarkupconfigurer-exception
 
