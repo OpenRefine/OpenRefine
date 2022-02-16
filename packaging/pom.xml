@@ -288,6 +288,12 @@
                     <arg line="&quot;${mac.build.directory}/OpenRefine.app/Contents/PlugIns&quot;"/>
                 </exec>
 
+                <!-- Remove manpages from JRE as they are not accessible anyway, and prevent us from codesigning -->
+                <exec dir="${project.build.directory}" os="Mac OS X" executable="rm">
+                    <arg line="-r"/>
+                    <arg line="&quot;${mac.build.directory}/OpenRefine.app/Contents/PlugIns/JRE/Contents/Home/jre/man&quot;"/>
+                </exec>
+
                 <!-- Codesign JRE -->
                 <exec dir="${project.build.directory}" os="Mac OS X" executable="codesign">
                     <arg value="--entitlements" />
