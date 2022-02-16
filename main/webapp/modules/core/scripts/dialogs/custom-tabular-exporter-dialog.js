@@ -169,7 +169,13 @@ CustomTabularExporterDialog.prototype._createDialog = function(options) {
       }
     };
   }
-  this._elmts.columnList.sortable({});
+  this._elmts.columnList.sortable(
+      {
+        update: function () {
+          self._updateOptionCode();
+        }
+      }
+  );
   
   /*
    * Populate upload targets.
