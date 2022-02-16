@@ -124,7 +124,16 @@ EditRenderer._renderStatement = function(json, container) {
  
   var statement = $('<div></div>').addClass('wbs-statement').appendTo(container);
   var inputContainer = $('<div></div>').addClass('wbs-target-input').appendTo(statement);
-  EditRenderer._renderValue(json.statement.mainsnak, inputContainer);
+  var mode = json.mode;
+  var strategyType = json.mergingStrategy.type;
+  if (!(mode === 'delete' && strategyType === 'property')) {
+    EditRenderer._renderValue(json.statement.mainsnak, inputContainer);
+  } else {
+    inputContainer.append(
+      $('<span></span>').addClass('wbs-value-placeholder')
+        .text($.i18n('wikibase-preview/delete-all-existing-statements'))
+    );
+  }
 
   // mode and strategy
   statement.addClass('wbs-statement-mode-' + json.mode);

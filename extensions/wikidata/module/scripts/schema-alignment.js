@@ -645,15 +645,20 @@ SchemaAlignment._addStatement = function(container, datatype, json) {
   }
  
   var statement = $('<div></div>').addClass('wbs-statement');
-  statement
-        .data('jsonMode', editingMode)
-        .data('jsonMergingStrategy', JSON.stringify(mergingStrategy));
   var inputContainer = $('<div></div>').addClass('wbs-target-input').appendTo(statement);
   SchemaAlignment._initField(inputContainer, datatype, value);
   
   // If we are in a mainsnak...
   // (see https://www.mediawiki.org/wiki/Wikibase/DataModel#Snaks)
   if (container.parents('.wbs-statement').length == 0) {
+    inputContainer.children().first().addClass('wbs-mainsnak-input');
+    statement
+            .data('jsonMode', editingMode)
+            .data('jsonMergingStrategy', JSON.stringify(mergingStrategy));
+    inputContainer.append(
+       $('<span></span>')
+        .addClass('wbs-value-placeholder') 
+        .text($.i18n('wikibase-preview/delete-all-existing-statements')));
     // add delete button
     var toolbar1 = $('<div></div>').addClass('wbs-toolbar').appendTo(statement);
     SchemaAlignment._makeDeleteButton().click(function(e) {
@@ -671,7 +676,10 @@ SchemaAlignment._addStatement = function(container, datatype, json) {
     });
 
     // add rank
-    var rank = $('<div></div>').addClass('wbs-rank-selector-icon').prependTo(inputContainer);
+    var rank = $('<div></div>')
+        .addClass('wbs-rank-selector-icon')
+        .addClass('wbs-mainsnak-input')
+        .prependTo(inputContainer);
 
     // add qualifiers...
     var qualifiersSection = $('<div></div>').addClass('wbs-qualifiers-section').appendTo(statement);
@@ -746,9 +754,8 @@ SchemaAlignment._addStatement = function(container, datatype, json) {
         }
     }
     SchemaAlignment._updateReferencesNumber(referenceContainer);
+    SchemaAlignment._updateStatementFromMergingStrategy(statement);
   }
-  
-  SchemaAlignment._updateStatementFromMergingStrategy(statement);
 
   container.append(statement);
 };
@@ -763,19 +770,6 @@ SchemaAlignment._updateStatementFromMergingStrategy = function (statement) {
   statement.addClass('wbs-statement');
   statement.addClass('wbs-statement-mode-'+mode);
   statement.addClass('wbs-statement-strategy-'+strategyType);
-  // TODO: if we add a similar class for the strategy type, then the code below
-  // could be replaced by pure CSS!
-  if (mode === 'delete') {
-    references.hide();
-    if (strategyType === 'property' || strategyType === 'snak') {
-        qualifiers.hide();
-    } else {
-        qualifiers.show();
-    }
-  } else {
-    references.show();
-    qualifiers.show();
-  }
 };
 
 SchemaAlignment._statementToJSON = function (statement) {
@@ -783,6 +777,8 @@ SchemaAlignment._statementToJSON = function (statement) {
     var qualifiersList = new Array();
     var referencesList = new Array();
     var editingMode = statement.data('jsonMode');
+    var mergingStrategy = JSON.parse(statement.data('jsonMergingStrategy'));
+    var mergingStrategyType = mergingStrategy['type'];
     var qualifiersDom = statement.find('.wbs-qualifier-container').first().children();
     qualifiersDom.each(function () {
         var qualifierJSON = SchemaAlignment._qualifierToJSON($(this));
@@ -799,16 +795,19 @@ SchemaAlignment._statementToJSON = function (statement) {
             }
         });
     }
-    var valueJSON = SchemaAlignment._inputContainerToJSON(inputContainer);
+    var valueJSON = null;
+    if (!(editingMode === 'delete' && mergingStrategyType === 'property')) {
+      valueJSON = SchemaAlignment._inputContainerToJSON(inputContainer);
+    }
     if ((editingMode === 'delete' || referencesList.length === referencesDom.length) &&
-        qualifiersList.length === qualifiersDom.length &&
-        valueJSON !== null) {
+        ((editingMode === 'delete' && (mergingStrategyType === 'snak' || mergingStrategy === 'property')) || qualifiersList.length === qualifiersDom.length) &&
+        ((editingMode === 'delete' && mergingStrategyType === 'property') || valueJSON !== null)) {
       return {
         value: valueJSON,
         qualifiers: qualifiersList,
         references: referencesList,
         mode: editingMode,
-        mergingStrategy: JSON.parse(statement.data('jsonMergingStrategy'))
+        mergingStrategy: mergingStrategy
       };
     } else {
       return null;
