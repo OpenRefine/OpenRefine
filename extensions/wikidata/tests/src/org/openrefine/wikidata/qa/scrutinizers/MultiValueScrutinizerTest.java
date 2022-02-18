@@ -3,8 +3,8 @@ package org.openrefine.wikidata.qa.scrutinizers;
 
 import org.openrefine.wikidata.qa.ConstraintFetcher;
 import org.openrefine.wikidata.testing.TestingData;
-import org.openrefine.wikidata.updates.TermedStatementEntityUpdate;
-import org.openrefine.wikidata.updates.TermedStatementEntityUpdateBuilder;
+import org.openrefine.wikidata.updates.TermedStatementEntityEdit;
+import org.openrefine.wikidata.updates.TermedStatementEntityEditBuilder;
 import org.testng.annotations.Test;
 import org.wikidata.wdtk.datamodel.helpers.Datamodel;
 import org.wikidata.wdtk.datamodel.implementation.StatementImpl;
@@ -41,9 +41,12 @@ public class MultiValueScrutinizerTest extends ScrutinizerTest {
         Snak snakValue2 = Datamodel.makeSomeValueSnak(propertyIdValue);
         Statement statement1 = new StatementImpl("P1963", snakValue1, idA);
         Statement statement2 = new StatementImpl("P1963", snakValue2, idA);
-        TermedStatementEntityUpdate update = new TermedStatementEntityUpdateBuilder(idA)
-                .addStatement(TestingData.generateStatement(idA, idB))
-                .addStatement(TestingData.generateStatement(idA, idB)).addStatement(statement1).addStatement(statement2).build();
+        TermedStatementEntityEdit update = new TermedStatementEntityEditBuilder(idA)
+                .addStatement(add(TestingData.generateStatement(idA, idB)))
+                .addStatement(add(TestingData.generateStatement(idA, idB)))
+                .addStatement(add(statement1))
+                .addStatement(add(statement2))
+                .build();
 
         List<Statement> constraintDefinitions = constraintParameterStatementList(entityIdValue, new ArrayList<>());
         ConstraintFetcher fetcher = mock(ConstraintFetcher.class);
@@ -60,10 +63,13 @@ public class MultiValueScrutinizerTest extends ScrutinizerTest {
         ItemIdValue idB = TestingData.newIdB;
         Snak mainSnakValue = Datamodel.makeValueSnak(propertyIdValue, valueSnak);
         Statement statement = new StatementImpl("P1963", mainSnakValue, idA);
-        TermedStatementEntityUpdate updateA = new TermedStatementEntityUpdateBuilder(idA)
-                .addStatement(TestingData.generateStatement(idA, idB)).addStatement(statement).build();
-        TermedStatementEntityUpdate updateB = new TermedStatementEntityUpdateBuilder(idB)
-                .addStatement(TestingData.generateStatement(idB, idB)).build();
+        TermedStatementEntityEdit updateA = new TermedStatementEntityEditBuilder(idA)
+                .addStatement(add(TestingData.generateStatement(idA, idB)))
+                .addStatement(add(statement))
+                .build();
+        TermedStatementEntityEdit updateB = new TermedStatementEntityEditBuilder(idB)
+                .addStatement(add(TestingData.generateStatement(idB, idB)))
+                .build();
 
         List<Statement> constraintDefinitions = constraintParameterStatementList(entityIdValue, new ArrayList<>());
         ConstraintFetcher fetcher = mock(ConstraintFetcher.class);
@@ -80,10 +86,12 @@ public class MultiValueScrutinizerTest extends ScrutinizerTest {
         ItemIdValue idB = TestingData.matchedId;
         Snak mainSnakValue = Datamodel.makeValueSnak(propertyIdValue, valueSnak);
         Statement statement = new StatementImpl("P1963", mainSnakValue, idA);
-        TermedStatementEntityUpdate updateA = new TermedStatementEntityUpdateBuilder(idA)
-                .addStatement(TestingData.generateStatement(idA, idB)).addStatement(statement).build();
-        TermedStatementEntityUpdate updateB = new TermedStatementEntityUpdateBuilder(idB)
-                .addStatement(TestingData.generateStatement(idB, idB)).build();
+        TermedStatementEntityEdit updateA = new TermedStatementEntityEditBuilder(idA)
+                .addStatement(add(TestingData.generateStatement(idA, idB)))
+                .addStatement(add(statement)).build();
+        TermedStatementEntityEdit updateB = new TermedStatementEntityEditBuilder(idB)
+                .addStatement(add(TestingData.generateStatement(idB, idB)))
+                .build();
 
         List<Statement> constraintDefinitions = constraintParameterStatementList(entityIdValue, new ArrayList<>());
         ConstraintFetcher fetcher = mock(ConstraintFetcher.class);

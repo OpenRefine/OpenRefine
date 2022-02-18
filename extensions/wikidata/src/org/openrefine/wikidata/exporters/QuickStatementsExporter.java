@@ -30,7 +30,9 @@ import java.util.Properties;
 import java.util.Set;
 
 import org.openrefine.wikidata.schema.WikibaseSchema;
-import org.openrefine.wikidata.updates.TermedStatementEntityUpdate;
+import org.openrefine.wikidata.schema.strategies.StatementEditingMode;
+import org.openrefine.wikidata.updates.StatementEdit;
+import org.openrefine.wikidata.updates.TermedStatementEntityEdit;
 import org.openrefine.wikidata.updates.scheduler.ImpossibleSchedulingException;
 import org.openrefine.wikidata.updates.scheduler.QuickStatementsUpdateScheduler;
 import org.slf4j.Logger;
@@ -93,16 +95,16 @@ public class QuickStatementsExporter implements WriterExporter {
      */
     public void translateSchema(Project project, Engine engine, WikibaseSchema schema, Writer writer)
             throws IOException {
-        List<TermedStatementEntityUpdate> items = schema.evaluate(project, engine);
+        List<TermedStatementEntityEdit> items = schema.evaluate(project, engine);
         translateItemList(items, writer);
     }
 
-    public void translateItemList(List<TermedStatementEntityUpdate> updates, Writer writer)
+    public void translateItemList(List<TermedStatementEntityEdit> updates, Writer writer)
             throws IOException {
         QuickStatementsUpdateScheduler scheduler = new QuickStatementsUpdateScheduler();
         try {
-            List<TermedStatementEntityUpdate> scheduled = scheduler.schedule(updates);
-            for (TermedStatementEntityUpdate item : scheduled) {
+            List<TermedStatementEntityEdit> scheduled = scheduler.schedule(updates);
+            for (TermedStatementEntityEdit item : scheduled) {
                 translateItem(item, writer);
             }
         } catch (ImpossibleSchedulingException e) {
@@ -124,7 +126,7 @@ public class QuickStatementsExporter implements WriterExporter {
         }
     }
 
-    protected void translateItem(TermedStatementEntityUpdate item, Writer writer)
+    protected void translateItem(TermedStatementEntityEdit item, Writer writer)
             throws IOException {
         String qid = item.getEntityId().getId();
         if (item.isNew()) {
@@ -139,11 +141,8 @@ public class QuickStatementsExporter implements WriterExporter {
         translateNameDescr(qid, item.getDescriptionsIfNew(), "D", item.getEntityId(), writer);
         translateNameDescr(qid, item.getAliases(), "A", item.getEntityId(), writer);
 
-        for (Statement s : item.getAddedStatements()) {
-            translateStatement(qid, s, s.getClaim().getMainSnak().getPropertyId().getId(), true, writer);
-        }
-        for (Statement s : item.getDeletedStatements()) {
-            translateStatement(qid, s, s.getClaim().getMainSnak().getPropertyId().getId(), false, writer);
+        for (StatementEdit s : item.getStatementEdits()) {
+            translateStatement(qid, s.getStatement(), s.getPropertyId().getId(), s.getMode() == StatementEditingMode.ADD_OR_MERGE, writer);
         }
     }
 

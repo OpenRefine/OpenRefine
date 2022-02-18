@@ -26,8 +26,8 @@ package org.openrefine.wikidata.qa.scrutinizers;
 
 import org.openrefine.wikidata.qa.ConstraintFetcher;
 import org.openrefine.wikidata.testing.TestingData;
-import org.openrefine.wikidata.updates.TermedStatementEntityUpdate;
-import org.openrefine.wikidata.updates.TermedStatementEntityUpdateBuilder;
+import org.openrefine.wikidata.updates.TermedStatementEntityEdit;
+import org.openrefine.wikidata.updates.TermedStatementEntityEditBuilder;
 import org.testng.annotations.Test;
 import org.wikidata.wdtk.datamodel.helpers.Datamodel;
 import org.wikidata.wdtk.datamodel.implementation.StatementImpl;
@@ -73,7 +73,7 @@ public class UnsourcedScrutinizerTest extends StatementScrutinizerTest {
         ItemIdValue id = TestingData.existingId;
         Snak mainSnak = Datamodel.makeSomeValueSnak(propertyIdValue);
         Statement statement = new StatementImpl("P172", mainSnak, id);
-        TermedStatementEntityUpdate update = new TermedStatementEntityUpdateBuilder(id).addStatement(statement).build();
+        TermedStatementEntityEdit update = new TermedStatementEntityEditBuilder(id).addStatement(add(statement)).build();
 
         List<Statement> constraintDefinitions = constraintParameterStatementList(entityIdValue, Collections.emptyList());
         ConstraintFetcher fetcher = mock(ConstraintFetcher.class);
@@ -91,7 +91,7 @@ public class UnsourcedScrutinizerTest extends StatementScrutinizerTest {
         List<SnakGroup> constraintQualifiers = makeSnakGroupList(referenceSnak);
         List<Statement> itemStatementList = constraintParameterStatementList(entityIdValue, constraintQualifiers);
         Statement statement = itemStatementList.get(0);
-        TermedStatementEntityUpdate update = new TermedStatementEntityUpdateBuilder(id).addStatement(statement).build();
+        TermedStatementEntityEdit update = new TermedStatementEntityEditBuilder(id).addStatement(add(statement)).build();
 
         List<Statement> constraintDefinitions = constraintParameterStatementList(entityIdValue, Collections.emptyList());
         ConstraintFetcher fetcher = mock(ConstraintFetcher.class);

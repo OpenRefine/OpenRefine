@@ -28,11 +28,16 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import org.jsoup.helper.Validate;
 import org.openrefine.wikidata.qa.QAWarning;
 import org.openrefine.wikidata.schema.exceptions.SkipSchemaExpressionException;
+import org.openrefine.wikidata.schema.strategies.PropertyOnlyStatementMerger;
+import org.openrefine.wikidata.schema.strategies.StatementEditingMode;
+import org.openrefine.wikidata.schema.strategies.StatementMerger;
+import org.openrefine.wikidata.updates.StatementEdit;
 import org.wikidata.wdtk.datamodel.helpers.Datamodel;
 import org.wikidata.wdtk.datamodel.interfaces.Claim;
 import org.wikidata.wdtk.datamodel.interfaces.EntityIdValue;
@@ -40,7 +45,6 @@ import org.wikidata.wdtk.datamodel.interfaces.PropertyIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.Reference;
 import org.wikidata.wdtk.datamodel.interfaces.Snak;
 import org.wikidata.wdtk.datamodel.interfaces.SnakGroup;
-import org.wikidata.wdtk.datamodel.interfaces.Statement;
 import org.wikidata.wdtk.datamodel.interfaces.StatementRank;
 import org.wikidata.wdtk.datamodel.interfaces.Value;
 
@@ -54,12 +58,20 @@ public class WbStatementExpr {
     private WbExpression<? extends Value> mainSnakValueExpr;
     private List<WbSnakExpr> qualifierExprs;
     private List<WbReferenceExpr> referenceExprs;
+    private StatementMerger merger;
+    private StatementEditingMode mode;
 
     @JsonCreator
-    public WbStatementExpr(@JsonProperty("value") WbExpression<? extends Value> mainSnakValueExpr,
+    public WbStatementExpr(
+    		@JsonProperty("value") WbExpression<? extends Value> mainSnakValueExpr,
             @JsonProperty("qualifiers") List<WbSnakExpr> qualifierExprs,
-            @JsonProperty("references") List<WbReferenceExpr> referenceExprs) {
-        Validate.notNull(mainSnakValueExpr);
+            @JsonProperty("references") List<WbReferenceExpr> referenceExprs,
+            @JsonProperty("mergingStrategy") StatementMerger merger,
+            @JsonProperty("mode") StatementEditingMode mode) {
+    	// do not require a main value when deleting with a property only merger
+    	if (!(StatementEditingMode.DELETE.equals(mode) && (merger instanceof PropertyOnlyStatementMerger))) {
+    		Validate.notNull(mainSnakValueExpr);
+    	}
         this.mainSnakValueExpr = mainSnakValueExpr;
         if (qualifierExprs == null) {
             qualifierExprs = Collections.emptyList();
@@ -69,6 +81,14 @@ public class WbStatementExpr {
             referenceExprs = Collections.emptyList();
         }
         this.referenceExprs = referenceExprs;
+        if (merger == null) {
+        	merger = StatementMerger.FORMER_DEFAULT_STRATEGY;
+        }
+        this.merger = merger;
+        if (mode == null) {
+        	mode = StatementEditingMode.ADD_OR_MERGE;
+        }
+        this.mode = mode;
     }
 
     public static List<SnakGroup> groupSnaks(List<Snak> snaks) {
@@ -90,10 +110,16 @@ public class WbStatementExpr {
                 .collect(Collectors.toList());
     }
 
-    public Statement evaluate(ExpressionContext ctxt, EntityIdValue subject, PropertyIdValue propertyId)
+    public StatementEdit evaluate(ExpressionContext ctxt, EntityIdValue subject, PropertyIdValue propertyId)
             throws SkipSchemaExpressionException {
-        Value mainSnakValue = getMainsnak().evaluate(ctxt);
-        Snak mainSnak = Datamodel.makeValueSnak(propertyId, mainSnakValue);
+        Snak mainSnak = null;
+        if (mainSnakValueExpr != null) {
+            Value mainSnakValue = mainSnakValueExpr.evaluate(ctxt);
+        	mainSnak = Datamodel.makeValueSnak(propertyId, mainSnakValue);
+        } else {
+        	// hack to make sure we have a non-null snak
+        	mainSnak = Datamodel.makeNoValueSnak(propertyId);
+        }
 
         // evaluate qualifiers
         List<Snak> qualifiers = new ArrayList<Snak>(getQualifiers().size());
@@ -124,7 +150,7 @@ public class WbStatementExpr {
         }
 
         StatementRank rank = StatementRank.NORMAL;
-        return Datamodel.makeStatement(claim, references, rank, "");
+        return new StatementEdit(Datamodel.makeStatement(claim, references, rank, ""), merger, mode);
     }
 
     @JsonProperty("value")
@@ -141,6 +167,16 @@ public class WbStatementExpr {
     public List<WbReferenceExpr> getReferences() {
         return Collections.unmodifiableList(referenceExprs);
     }
+    
+    @JsonProperty("mergingStrategy")
+    public StatementMerger getStatementMerger() {
+    	return merger;
+    }
+    
+    @JsonProperty("mode")
+    public StatementEditingMode getMode() {
+    	return mode;
+    }
 
     @Override
     public boolean equals(Object other) {
@@ -148,12 +184,13 @@ public class WbStatementExpr {
             return false;
         }
         WbStatementExpr otherExpr = (WbStatementExpr) other;
-        return mainSnakValueExpr.equals(otherExpr.getMainsnak()) && qualifierExprs.equals(otherExpr.getQualifiers())
-                && referenceExprs.equals(otherExpr.getReferences());
+        return Objects.equals(mainSnakValueExpr, otherExpr.getMainsnak()) && qualifierExprs.equals(otherExpr.getQualifiers())
+                && referenceExprs.equals(otherExpr.getReferences()) && merger.equals(otherExpr.getStatementMerger())
+                && mode.equals(otherExpr.getMode());
     }
 
     @Override
     public int hashCode() {
-        return mainSnakValueExpr.hashCode() + qualifierExprs.hashCode() + referenceExprs.hashCode();
+        return Objects.hash(mainSnakValueExpr, qualifierExprs, referenceExprs);
     }
 }

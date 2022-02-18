@@ -57,6 +57,9 @@ public class RestrictedValuesScrutinizer extends SnakScrutinizer {
 
     @Override
     public void scrutinize(Snak snak, EntityIdValue entityId, boolean added) {
+        if (!added) {
+            return;
+        }
         PropertyIdValue pid = snak.getPropertyId();
         Value value = null;
         if (snak instanceof ValueSnak) {

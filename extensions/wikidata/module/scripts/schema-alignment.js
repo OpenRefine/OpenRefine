@@ -633,10 +633,15 @@ SchemaAlignment._addStatement = function(container, datatype, json) {
   var qualifiers = null;
   var references = null;
   var value = null;
+  var editingMode = StatementConfigurationDialog.defaultMode;
+  var mergingStrategy = StatementConfigurationDialog.defaultStrategy;
   if (json) {
+    // TODO add compatibility with previous format (and same in statementGroup)
     qualifiers = json.qualifiers;
     references = json.references;
     value = json.value;
+    editingMode = json.mode || 'add_or_merge';
+    mergingStrategy = json.mergingStrategy || {'type':'qualifiers','valueMatcher':{'type':'strict'}};
   }
  
   var statement = $('<div></div>').addClass('wbs-statement');
@@ -646,18 +651,39 @@ SchemaAlignment._addStatement = function(container, datatype, json) {
   // If we are in a mainsnak...
   // (see https://www.mediawiki.org/wiki/Wikibase/DataModel#Snaks)
   if (container.parents('.wbs-statement').length == 0) {
+    inputContainer.children().first().addClass('wbs-mainsnak-input');
+    statement
+            .data('jsonMode', editingMode)
+            .data('jsonMergingStrategy', JSON.stringify(mergingStrategy));
+    inputContainer.append(
+       $('<span></span>')
+        .addClass('wbs-value-placeholder') 
+        .text($.i18n('wikibase-preview/delete-all-existing-statements')));
     // add delete button
     var toolbar1 = $('<div></div>').addClass('wbs-toolbar').appendTo(statement);
     SchemaAlignment._makeDeleteButton().click(function(e) {
         SchemaAlignment._removeStatement(statement);
         e.preventDefault();
     }).appendTo(toolbar1);
+    // add configure button
+    var configureButton = $('<div></div>').addClass('wbs-configure');
+    $('<span></span>').addClass('wbs-icon').appendTo(configureButton);
+    $('<span></span>').text($.i18n('wikibase-schema/configure-statement')).appendTo(configureButton);
+    configureButton.appendTo(toolbar1);
+    configureButton.click(function(e) {
+        SchemaAlignment._openStatementConfigurationDialog(statement);
+        e.preventDefault();
+    });
 
     // add rank
-    var rank = $('<div></div>').addClass('wbs-rank-selector-icon').prependTo(inputContainer);
+    var rank = $('<div></div>')
+        .addClass('wbs-rank-selector-icon')
+        .addClass('wbs-mainsnak-input')
+        .prependTo(inputContainer);
 
     // add qualifiers...
-    var right = $('<div></div>').addClass('wbs-right').appendTo(statement);
+    var qualifiersSection = $('<div></div>').addClass('wbs-qualifiers-section').appendTo(statement);
+    var right = $('<div></div>').addClass('wbs-right').appendTo(qualifiersSection);
     var qualifierContainer = $('<div></div>').addClass('wbs-qualifier-container').appendTo(right);
     var toolbar2 = $('<div></div>').addClass('wbs-toolbar').appendTo(right);
     var addQualifierButton = $('<a></a>').addClass('wbs-add-qualifier')
@@ -675,10 +701,11 @@ SchemaAlignment._addStatement = function(container, datatype, json) {
 
     // and references
     $('<div></div>').attr('style', 'clear: right').appendTo(statement);
-    var referencesToggleContainer = $('<div></div>').addClass('wbs-references-toggle').appendTo(statement);
+    var referencesSection = $('<div></div>').addClass('wbs-references-section').appendTo(statement);
+    var referencesToggleContainer = $('<div></div>').addClass('wbs-references-toggle').appendTo(referencesSection);
     var triangle = $('<div></div>').addClass('triangle-icon').addClass('pointing-right').appendTo(referencesToggleContainer);
     var referencesToggle = $('<a></a>').appendTo(referencesToggleContainer);
-    right = $('<div></div>').addClass('wbs-right').appendTo(statement);
+    right = $('<div></div>').addClass('wbs-right').appendTo(referencesSection);
     var referenceContainer = $('<div></div>').addClass('wbs-reference-container').appendTo(right);
     referencesToggleContainer.click(function(e) {
         triangle.toggleClass('pointing-down');
@@ -727,14 +754,31 @@ SchemaAlignment._addStatement = function(container, datatype, json) {
         }
     }
     SchemaAlignment._updateReferencesNumber(referenceContainer);
+    SchemaAlignment._updateStatementFromMergingStrategy(statement);
   }
+
   container.append(statement);
+};
+
+// further tweaks to the statement UI if the statement is to be deleted
+SchemaAlignment._updateStatementFromMergingStrategy = function (statement) {
+  var mode = statement.data('jsonMode');
+  var strategyType = JSON.parse(statement.data('jsonMergingStrategy'))['type'];
+  var references = statement.find(".wbs-references-section").first();
+  var qualifiers = statement.find(".wbs-qualifiers-section").first();
+  statement.removeClass();
+  statement.addClass('wbs-statement');
+  statement.addClass('wbs-statement-mode-'+mode);
+  statement.addClass('wbs-statement-strategy-'+strategyType);
 };
 
 SchemaAlignment._statementToJSON = function (statement) {
     var inputContainer = statement.find(".wbs-target-input").first();
     var qualifiersList = new Array();
     var referencesList = new Array();
+    var editingMode = statement.data('jsonMode');
+    var mergingStrategy = JSON.parse(statement.data('jsonMergingStrategy'));
+    var mergingStrategyType = mergingStrategy['type'];
     var qualifiersDom = statement.find('.wbs-qualifier-container').first().children();
     qualifiersDom.each(function () {
         var qualifierJSON = SchemaAlignment._qualifierToJSON($(this));
@@ -743,20 +787,27 @@ SchemaAlignment._statementToJSON = function (statement) {
         }
     });
     var referencesDom = statement.find('.wbs-reference-container').first().children();
-    referencesDom.each(function () {
-        var referenceJSON = SchemaAlignment._referenceToJSON($(this));
-        if (referenceJSON !== null) {
-          referencesList.push(referenceJSON);
-        }
-    });
-    var valueJSON = SchemaAlignment._inputContainerToJSON(inputContainer);
-    if (referencesList.length === referencesDom.length &&
-        qualifiersList.length === qualifiersDom.length &&
-        valueJSON !== null) {
+    if (editingMode !== 'delete') {
+        referencesDom.each(function () {
+            var referenceJSON = SchemaAlignment._referenceToJSON($(this));
+            if (referenceJSON !== null) {
+            referencesList.push(referenceJSON);
+            }
+        });
+    }
+    var valueJSON = null;
+    if (!(editingMode === 'delete' && mergingStrategyType === 'property')) {
+      valueJSON = SchemaAlignment._inputContainerToJSON(inputContainer);
+    }
+    if ((editingMode === 'delete' || referencesList.length === referencesDom.length) &&
+        ((editingMode === 'delete' && (mergingStrategyType === 'snak' || mergingStrategy === 'property')) || qualifiersList.length === qualifiersDom.length) &&
+        ((editingMode === 'delete' && mergingStrategyType === 'property') || valueJSON !== null)) {
       return {
         value: valueJSON,
         qualifiers: qualifiersList,
         references: referencesList,
+        mode: editingMode,
+        mergingStrategy: mergingStrategy
       };
     } else {
       return null;
@@ -1280,6 +1331,10 @@ SchemaAlignment._removeStatement = function(statement) {
       statementGroup.remove();
   }
   SchemaAlignment._hasChanged();
+};
+
+SchemaAlignment._openStatementConfigurationDialog = function(statement) {
+  StatementConfigurationDialog.launch(statement);
 };
 
 SchemaAlignment.getJSON = function() {
