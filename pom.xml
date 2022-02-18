@@ -277,7 +277,7 @@
             <!-- Attach tar.gz artifact for linux -->
             <execution>
                 <id>attach-linux</id>
-                <phase>package</phase>
+                <phase>deploy</phase>
                 <goals>
                     <goal>attach-artifact</goal>
                 </goals>
@@ -289,14 +289,13 @@
                             <classifier>linux</classifier>
                         </artifact>
                     </artifacts>
-                    <skipAttach>true</skipAttach>
                 </configuration>
             </execution>
             
             <!-- Attach the zip file for windows, without embedded JRE -->
             <execution>
                 <id>attach-win-without-jre</id>
-                <phase>package</phase>
+                <phase>deploy</phase>
                 <goals>
                     <goal>attach-artifact</goal>
                 </goals>
@@ -309,14 +308,13 @@
                             <classifier>win</classifier>
                         </artifact>
                     </artifacts>
-                    <skipAttach>true</skipAttach>
                 </configuration>
             </execution>
             
             <!-- Attach the zip file for windows, with embedded JRE -->
             <execution>
                 <id>attach-win-with-jre</id>
-                <phase>package</phase>
+                <phase>deploy</phase>
                 <goals>
                     <goal>attach-artifact</goal>
                 </goals>
@@ -329,14 +327,13 @@
                             <classifier>win-with-java</classifier>
                         </artifact>
                     </artifacts>
-                    <skipAttach>true</skipAttach>
                 </configuration>
             </execution>
 
             <!-- Attach the final DMG for MacOS -->
             <execution>
                 <id>attach-dmg</id>
-                <phase>package</phase>
+                <phase>deploy</phase>
                 <goals>
                     <goal>attach-artifact</goal>
                 </goals>
@@ -348,7 +345,6 @@
                             <classifier>mac</classifier>
                         </artifact>
                     </artifacts>
-                    <skipAttach>true</skipAttach>
                 </configuration>
               </execution>
             </executions>

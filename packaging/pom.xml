@@ -56,6 +56,7 @@
                     <descriptor>windows-without-jre.xml</descriptor>
                     <descriptor>windows-with-jre.xml</descriptor>
                   </descriptors>
+                  <attach>false</attach>
                 </configuration>
               </execution>
             </executions>
@@ -77,6 +78,7 @@
                   <descriptors>
                     <descriptor>linux.xml</descriptor>
                   </descriptors>
+                  <attach>false</attach>
                 </configuration>
               </execution>
             </executions>
@@ -103,6 +105,7 @@
                     <descriptor>windows-without-jre.xml</descriptor>
                     <descriptor>windows-with-jre.xml</descriptor>
                   </descriptors>
+                  <attach>false</attach>
                 </configuration>
               </execution>
             </executions>
