@@ -36,6 +36,8 @@ import java.io.IOException;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
@@ -337,8 +339,8 @@ public class ImportingUtilitiesTests extends ImporterTest {
 
         String originalFileName = "zst_test.csv";
         String originalFilePath = ClassLoader.getSystemResource(originalFileName).getPath();
-        File originalFile = new File(originalFilePath);
-        byte[] originalFileByteArray = FileUtils.readFileToByteArray(originalFile);
+        
+        byte[] originalFileByteArray = Files.readAllBytes(Paths.get(originalFilePath));
 
         byte[] decompressedFileByteArray = IOUtils
                 .toByteArray(ImportingUtilities.tryOpenAsCompressedFile(compressedFile, "application/zstd", "UTF-8"));
