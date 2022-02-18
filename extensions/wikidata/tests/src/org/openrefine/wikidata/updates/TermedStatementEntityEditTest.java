@@ -38,21 +38,26 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.openrefine.wikidata.schema.strategies.PropertyOnlyStatementMerger;
+import org.openrefine.wikidata.schema.strategies.StatementEditingMode;
+import org.openrefine.wikidata.schema.strategies.StatementMerger;
 import org.openrefine.wikidata.testing.TestingData;
 import org.testng.annotations.Test;
 import org.wikidata.wdtk.datamodel.helpers.Datamodel;
+import org.wikidata.wdtk.datamodel.helpers.ItemDocumentBuilder;
 import org.wikidata.wdtk.datamodel.interfaces.Claim;
 import org.wikidata.wdtk.datamodel.interfaces.EntityIdValue;
+import org.wikidata.wdtk.datamodel.interfaces.ItemDocument;
 import org.wikidata.wdtk.datamodel.interfaces.ItemIdValue;
+import org.wikidata.wdtk.datamodel.interfaces.ItemUpdate;
 import org.wikidata.wdtk.datamodel.interfaces.MonolingualTextValue;
 import org.wikidata.wdtk.datamodel.interfaces.PropertyIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.Statement;
-import org.wikidata.wdtk.datamodel.interfaces.StatementGroup;
 import org.wikidata.wdtk.datamodel.interfaces.StatementRank;
 
 import com.google.refine.util.TestUtils;
 
-public class TermedStatementEntityUpdateTest {
+public class TermedStatementEntityEditTest {
 
     private ItemIdValue existingSubject = Datamodel.makeWikidataItemIdValue("Q34");
     private ItemIdValue newSubject = TestingData.makeNewItemIdValue(1234L, "new item");
@@ -67,100 +72,87 @@ public class TermedStatementEntityUpdateTest {
             Collections.emptyList());
     private Statement statement1 = Datamodel.makeStatement(claim1, Collections.emptyList(), StatementRank.NORMAL, "");
     private Statement statement2 = Datamodel.makeStatement(claim2, Collections.emptyList(), StatementRank.NORMAL, "");
+    private StatementMerger strategy = new PropertyOnlyStatementMerger();
+    private StatementEdit statementUpdate1 = new StatementEdit(statement1, strategy, StatementEditingMode.ADD_OR_MERGE);
+    private StatementEdit statementUpdate2 = new StatementEdit(statement2, strategy, StatementEditingMode.DELETE);
     private MonolingualTextValue label = Datamodel.makeMonolingualTextValue("this is a label", "en");
 
-    private Set<StatementGroup> statementGroups;
+    private Set<StatementGroupEdit> statementGroups;
 
-    public TermedStatementEntityUpdateTest() {
+    public TermedStatementEntityEditTest() {
         statementGroups = new HashSet<>();
-        statementGroups.add(Datamodel.makeStatementGroup(Collections.singletonList(statement1)));
-        statementGroups.add(Datamodel.makeStatementGroup(Collections.singletonList(statement2)));
+        statementGroups.add(new StatementGroupEdit(Collections.singletonList(statementUpdate1)));
+        statementGroups.add(new StatementGroupEdit(Collections.singletonList(statementUpdate2)));
     }
 
     @Test(expectedExceptions = IllegalArgumentException.class)
     public void testCreateWithoutSubject() {
-        new TermedStatementEntityUpdateBuilder(null);
+        new TermedStatementEntityEditBuilder(null);
     }
 
     @Test
     public void testIsNull() {
-        TermedStatementEntityUpdate update = new TermedStatementEntityUpdateBuilder(existingSubject).build();
+        TermedStatementEntityEdit update = new TermedStatementEntityEditBuilder(existingSubject).build();
         assertTrue(update.isNull());
-        TermedStatementEntityUpdate update2 = new TermedStatementEntityUpdateBuilder(newSubject).build();
+        TermedStatementEntityEdit update2 = new TermedStatementEntityEditBuilder(newSubject).build();
         assertFalse(update2.isNull());
     }
 
     @Test
     public void testIsEmpty() {
-        TermedStatementEntityUpdate update = new TermedStatementEntityUpdateBuilder(existingSubject).build();
+        TermedStatementEntityEdit update = new TermedStatementEntityEditBuilder(existingSubject).build();
         assertTrue(update.isEmpty());
-        TermedStatementEntityUpdate update2 = new TermedStatementEntityUpdateBuilder(newSubject).build();
+        TermedStatementEntityEdit update2 = new TermedStatementEntityEditBuilder(newSubject).build();
         assertTrue(update2.isEmpty());
     }
 
     @Test
     public void testIsNew() {
-        TermedStatementEntityUpdate newUpdate = new TermedStatementEntityUpdateBuilder(newSubject).build();
+        TermedStatementEntityEdit newUpdate = new TermedStatementEntityEditBuilder(newSubject).build();
         assertTrue(newUpdate.isNew());
-        TermedStatementEntityUpdate update = new TermedStatementEntityUpdateBuilder(existingSubject).build();
+        TermedStatementEntityEdit update = new TermedStatementEntityEditBuilder(existingSubject).build();
         assertFalse(update.isNew());
     }
 
     @Test
     public void testAddStatements() {
-        TermedStatementEntityUpdate update = new TermedStatementEntityUpdateBuilder(existingSubject).addStatement(statement1)
-                .addStatement(statement2)
+        TermedStatementEntityEdit update = new TermedStatementEntityEditBuilder(existingSubject).addStatement(statementUpdate1)
+                .addStatement(statementUpdate2)
                 .build();
         assertFalse(update.isNull());
-        assertEquals(Arrays.asList(statement1, statement2), update.getAddedStatements());
-        assertEquals(statementGroups, update.getAddedStatementGroups().stream().collect(Collectors.toSet()));
-    }
-
-    /**
-     * Test disabled because it fails due to https://github.com/Wikidata/Wikidata-Toolkit/issues/417 (not fixed as of
-     * WDTK 0.10.0).
-     * 
-     * This bug is not critical as the extraneous serialized data is ignored by Wikibase.
-     * 
-     * @todo reenable once a later version is released
-     */
-    @Test(enabled = false)
-    public void testSerializeStatements() throws IOException {
-        TermedStatementEntityUpdate update = new TermedStatementEntityUpdateBuilder(existingSubject).addStatement(statement1)
-                .addStatement(statement2)
-                .build();
-        TestUtils.isSerializedTo(update, TestingData.jsonFromFile("updates/statement_groups.json"));
+        assertEquals(Arrays.asList(statementUpdate1, statementUpdate2), update.getStatementEdits());
+        assertEquals(statementGroups, update.getStatementGroupEdits().stream().collect(Collectors.toSet()));
     }
 
     @Test
-    public void testDeleteStatements() {
-        TermedStatementEntityUpdate update = new TermedStatementEntityUpdateBuilder(existingSubject).deleteStatement(statement1)
-                .deleteStatement(statement2).build();
-        assertEquals(Arrays.asList(statement1, statement2).stream().collect(Collectors.toSet()),
-                update.getDeletedStatements());
+    public void testSerializeStatements() throws IOException {
+        TermedStatementEntityEdit update = new TermedStatementEntityEditBuilder(existingSubject).addStatement(statementUpdate1)
+                .addStatement(statementUpdate2)
+                .build();
+        TestUtils.isSerializedTo(update, TestingData.jsonFromFile("updates/entity_update.json"));
     }
 
     @Test
     public void testMerge() {
-        TermedStatementEntityUpdate updateA = new TermedStatementEntityUpdateBuilder(existingSubject).addStatement(statement1).build();
-        TermedStatementEntityUpdate updateB = new TermedStatementEntityUpdateBuilder(existingSubject).addStatement(statement2).build();
+        TermedStatementEntityEdit updateA = new TermedStatementEntityEditBuilder(existingSubject).addStatement(statementUpdate1).build();
+        TermedStatementEntityEdit updateB = new TermedStatementEntityEditBuilder(existingSubject).addStatement(statementUpdate2).build();
         assertNotEquals(updateA, updateB);
-        TermedStatementEntityUpdate merged = updateA.merge(updateB);
-        assertEquals(statementGroups, merged.getAddedStatementGroups().stream().collect(Collectors.toSet()));
+        TermedStatementEntityEdit merged = updateA.merge(updateB);
+        assertEquals(statementGroups, merged.getStatementGroupEdits().stream().collect(Collectors.toSet()));
     }
 
     @Test
     public void testGroupBySubject() {
-        TermedStatementEntityUpdate updateA = new TermedStatementEntityUpdateBuilder(newSubject).addStatement(statement1).build();
-        TermedStatementEntityUpdate updateB = new TermedStatementEntityUpdateBuilder(sameNewSubject).addStatement(statement2).build();
-        TermedStatementEntityUpdate updateC = new TermedStatementEntityUpdateBuilder(existingSubject).addLabel(label, true).build();
-        TermedStatementEntityUpdate updateD = new TermedStatementEntityUpdateBuilder(matchedSubject).build();
-        Map<EntityIdValue, TermedStatementEntityUpdate> grouped = TermedStatementEntityUpdate
+        TermedStatementEntityEdit updateA = new TermedStatementEntityEditBuilder(newSubject).addStatement(statementUpdate1).build();
+        TermedStatementEntityEdit updateB = new TermedStatementEntityEditBuilder(sameNewSubject).addStatement(statementUpdate2).build();
+        TermedStatementEntityEdit updateC = new TermedStatementEntityEditBuilder(existingSubject).addLabel(label, true).build();
+        TermedStatementEntityEdit updateD = new TermedStatementEntityEditBuilder(matchedSubject).build();
+        Map<EntityIdValue, TermedStatementEntityEdit> grouped = TermedStatementEntityEdit
                 .groupBySubject(Arrays.asList(updateA, updateB, updateC, updateD));
-        TermedStatementEntityUpdate mergedUpdate = new TermedStatementEntityUpdateBuilder(newSubject).addStatement(statement1)
-                .addStatement(statement2)
+        TermedStatementEntityEdit mergedUpdate = new TermedStatementEntityEditBuilder(newSubject).addStatement(statementUpdate1)
+                .addStatement(statementUpdate2)
                 .build();
-        Map<EntityIdValue, TermedStatementEntityUpdate> expected = new HashMap<>();
+        Map<EntityIdValue, TermedStatementEntityEdit> expected = new HashMap<>();
         expected.put(newSubject, mergedUpdate);
         expected.put(existingSubject, updateC);
         assertEquals(expected, grouped);
@@ -170,12 +162,12 @@ public class TermedStatementEntityUpdateTest {
     public void testNormalizeTerms() {
         MonolingualTextValue aliasEn = Datamodel.makeMonolingualTextValue("alias", "en");
         MonolingualTextValue aliasFr = Datamodel.makeMonolingualTextValue("coucou", "fr");
-        TermedStatementEntityUpdate updateA = new TermedStatementEntityUpdateBuilder(newSubject).addLabel(label, true).addAlias(aliasEn)
+        TermedStatementEntityEdit updateA = new TermedStatementEntityEditBuilder(newSubject).addLabel(label, true).addAlias(aliasEn)
                 .addAlias(aliasFr)
                 .build();
         assertFalse(updateA.isNull());
-        TermedStatementEntityUpdate normalized = updateA.normalizeLabelsAndAliases();
-        TermedStatementEntityUpdate expectedUpdate = new TermedStatementEntityUpdateBuilder(newSubject).addLabel(label, true)
+        TermedStatementEntityEdit normalized = updateA.normalizeLabelsAndAliases();
+        TermedStatementEntityEdit expectedUpdate = new TermedStatementEntityEditBuilder(newSubject).addLabel(label, true)
                 .addAlias(aliasEn)
                 .addLabel(aliasFr, true).build();
         assertEquals(expectedUpdate, normalized);
@@ -185,9 +177,9 @@ public class TermedStatementEntityUpdateTest {
     public void testMergeLabels() {
         MonolingualTextValue label1 = Datamodel.makeMonolingualTextValue("first label", "en");
         MonolingualTextValue label2 = Datamodel.makeMonolingualTextValue("second label", "en");
-        TermedStatementEntityUpdate update1 = new TermedStatementEntityUpdateBuilder(existingSubject).addLabel(label1, true).build();
-        TermedStatementEntityUpdate update2 = new TermedStatementEntityUpdateBuilder(existingSubject).addLabel(label2, true).build();
-        TermedStatementEntityUpdate merged = update1.merge(update2);
+        TermedStatementEntityEdit edit1 = new TermedStatementEntityEditBuilder(existingSubject).addLabel(label1, true).build();
+        TermedStatementEntityEdit edit2 = new TermedStatementEntityEditBuilder(existingSubject).addLabel(label2, true).build();
+        TermedStatementEntityEdit merged = edit1.merge(edit2);
         assertEquals(Collections.singleton(label2), merged.getLabels());
     }
 
@@ -195,9 +187,9 @@ public class TermedStatementEntityUpdateTest {
     public void testMergeLabelsIfNew() {
         MonolingualTextValue label1 = Datamodel.makeMonolingualTextValue("first label", "en");
         MonolingualTextValue label2 = Datamodel.makeMonolingualTextValue("second label", "en");
-        TermedStatementEntityUpdate update1 = new TermedStatementEntityUpdateBuilder(existingSubject).addLabel(label1, false).build();
-        TermedStatementEntityUpdate update2 = new TermedStatementEntityUpdateBuilder(existingSubject).addLabel(label2, false).build();
-        TermedStatementEntityUpdate merged = update1.merge(update2);
+        TermedStatementEntityEdit edit1 = new TermedStatementEntityEditBuilder(existingSubject).addLabel(label1, false).build();
+        TermedStatementEntityEdit edit2 = new TermedStatementEntityEditBuilder(existingSubject).addLabel(label2, false).build();
+        TermedStatementEntityEdit merged = edit1.merge(edit2);
         assertEquals(Collections.singleton(label1), merged.getLabelsIfNew());
         assertEquals(Collections.emptySet(), merged.getLabels());
     }
@@ -206,9 +198,9 @@ public class TermedStatementEntityUpdateTest {
     public void testMergeLabelsIfNewOverriding() {
         MonolingualTextValue label1 = Datamodel.makeMonolingualTextValue("first label", "en");
         MonolingualTextValue label2 = Datamodel.makeMonolingualTextValue("second label", "en");
-        TermedStatementEntityUpdate update1 = new TermedStatementEntityUpdateBuilder(existingSubject).addLabel(label1, true).build();
-        TermedStatementEntityUpdate update2 = new TermedStatementEntityUpdateBuilder(existingSubject).addLabel(label2, false).build();
-        TermedStatementEntityUpdate merged = update1.merge(update2);
+        TermedStatementEntityEdit edit1 = new TermedStatementEntityEditBuilder(existingSubject).addLabel(label1, true).build();
+        TermedStatementEntityEdit edit2 = new TermedStatementEntityEditBuilder(existingSubject).addLabel(label2, false).build();
+        TermedStatementEntityEdit merged = edit1.merge(edit2);
         assertEquals(Collections.singleton(label1), merged.getLabels());
         assertEquals(Collections.emptySet(), merged.getLabelsIfNew());
     }
@@ -217,9 +209,9 @@ public class TermedStatementEntityUpdateTest {
     public void testMergeLabelsIfNewOverriding2() {
         MonolingualTextValue label1 = Datamodel.makeMonolingualTextValue("first label", "en");
         MonolingualTextValue label2 = Datamodel.makeMonolingualTextValue("second label", "en");
-        TermedStatementEntityUpdate update1 = new TermedStatementEntityUpdateBuilder(existingSubject).addLabel(label1, false).build();
-        TermedStatementEntityUpdate update2 = new TermedStatementEntityUpdateBuilder(existingSubject).addLabel(label2, true).build();
-        TermedStatementEntityUpdate merged = update1.merge(update2);
+        TermedStatementEntityEdit edit1 = new TermedStatementEntityEditBuilder(existingSubject).addLabel(label1, false).build();
+        TermedStatementEntityEdit edit2 = new TermedStatementEntityEditBuilder(existingSubject).addLabel(label2, true).build();
+        TermedStatementEntityEdit merged = edit1.merge(edit2);
         assertEquals(Collections.singleton(label2), merged.getLabels());
         assertEquals(Collections.emptySet(), merged.getLabelsIfNew());
     }
@@ -228,11 +220,11 @@ public class TermedStatementEntityUpdateTest {
     public void testMergeDescriptionsIfNew() {
         MonolingualTextValue description1 = Datamodel.makeMonolingualTextValue("first description", "en");
         MonolingualTextValue description2 = Datamodel.makeMonolingualTextValue("second description", "en");
-        TermedStatementEntityUpdate update1 = new TermedStatementEntityUpdateBuilder(existingSubject).addDescription(description1, false)
+        TermedStatementEntityEdit edit1 = new TermedStatementEntityEditBuilder(existingSubject).addDescription(description1, false)
                 .build();
-        TermedStatementEntityUpdate update2 = new TermedStatementEntityUpdateBuilder(existingSubject).addDescription(description2, false)
+        TermedStatementEntityEdit edit2 = new TermedStatementEntityEditBuilder(existingSubject).addDescription(description2, false)
                 .build();
-        TermedStatementEntityUpdate merged = update1.merge(update2);
+        TermedStatementEntityEdit merged = edit1.merge(edit2);
         assertEquals(Collections.singleton(description1), merged.getDescriptionsIfNew());
         assertEquals(Collections.emptySet(), merged.getDescriptions());
         assertFalse(merged.isEmpty());
@@ -242,11 +234,11 @@ public class TermedStatementEntityUpdateTest {
     public void testMergeDescriptionsIfNewOverriding() {
         MonolingualTextValue description1 = Datamodel.makeMonolingualTextValue("first description", "en");
         MonolingualTextValue description2 = Datamodel.makeMonolingualTextValue("second description", "en");
-        TermedStatementEntityUpdate update1 = new TermedStatementEntityUpdateBuilder(existingSubject).addDescription(description1, true)
+        TermedStatementEntityEdit edit1 = new TermedStatementEntityEditBuilder(existingSubject).addDescription(description1, true)
                 .build();
-        TermedStatementEntityUpdate update2 = new TermedStatementEntityUpdateBuilder(existingSubject).addDescription(description2, false)
+        TermedStatementEntityEdit edit2 = new TermedStatementEntityEditBuilder(existingSubject).addDescription(description2, false)
                 .build();
-        TermedStatementEntityUpdate merged = update1.merge(update2);
+        TermedStatementEntityEdit merged = edit1.merge(edit2);
         assertEquals(Collections.singleton(description1), merged.getDescriptions());
         assertEquals(Collections.emptySet(), merged.getDescriptionsIfNew());
     }
@@ -255,11 +247,11 @@ public class TermedStatementEntityUpdateTest {
     public void testMergeDescriptionsIfNewOverriding2() {
         MonolingualTextValue description1 = Datamodel.makeMonolingualTextValue("first description", "en");
         MonolingualTextValue description2 = Datamodel.makeMonolingualTextValue("second description", "en");
-        TermedStatementEntityUpdate update1 = new TermedStatementEntityUpdateBuilder(existingSubject).addDescription(description1, false)
+        TermedStatementEntityEdit update1 = new TermedStatementEntityEditBuilder(existingSubject).addDescription(description1, false)
                 .build();
-        TermedStatementEntityUpdate update2 = new TermedStatementEntityUpdateBuilder(existingSubject).addDescription(description2, true)
+        TermedStatementEntityEdit update2 = new TermedStatementEntityEditBuilder(existingSubject).addDescription(description2, true)
                 .build();
-        TermedStatementEntityUpdate merged = update1.merge(update2);
+        TermedStatementEntityEdit merged = update1.merge(update2);
         assertEquals(Collections.singleton(description2), merged.getDescriptions());
         assertEquals(Collections.emptySet(), merged.getDescriptionsIfNew());
     }
@@ -268,11 +260,49 @@ public class TermedStatementEntityUpdateTest {
     public void testConstructOverridingLabels() {
         MonolingualTextValue label1 = Datamodel.makeMonolingualTextValue("first label", "en");
         MonolingualTextValue label2 = Datamodel.makeMonolingualTextValue("second label", "en");
-        TermedStatementEntityUpdate update = new TermedStatementEntityUpdateBuilder(existingSubject)
+        TermedStatementEntityEdit update = new TermedStatementEntityEditBuilder(existingSubject)
                 .addLabel(label1, false)
                 .addLabel(label2, true)
                 .build();
         assertEquals(Collections.singleton(label2), update.getLabels());
         assertEquals(Collections.emptySet(), update.getLabelsIfNew());
+    }
+
+    @Test
+    public void testToEntityUpdate() {
+        TermedStatementEntityEdit edit = new TermedStatementEntityEditBuilder(existingSubject)
+                .addAlias(Datamodel.makeMonolingualTextValue("alias", "en"))
+                .addStatement(statementUpdate1)
+                .build();
+        ItemDocument itemDocument = ItemDocumentBuilder.forItemId(existingSubject)
+                .withStatement(statement2)
+                .withLabel(Datamodel.makeMonolingualTextValue("label", "en"))
+                .build();
+
+        ItemUpdate update = (ItemUpdate) edit.toEntityUpdate(itemDocument);
+        assertEquals(update.getEntityId(), existingSubject);
+        assertEquals(update.getAliases(), Collections.singletonMap("en",
+                Datamodel.makeAliasUpdate(Collections.singletonList(Datamodel.makeMonolingualTextValue("alias", "en")),
+                        Collections.emptyList())));
+        assertTrue(update.getDescriptions().isEmpty());
+        assertTrue(update.getLabels().isEmpty());
+        assertEquals(update.getStatements(),
+                Datamodel.makeStatementUpdate(Collections.singletonList(statement1), Collections.emptyList(), Collections.emptySet()));
+    }
+
+    @Test
+    public void testToNewEntity() {
+        TermedStatementEntityEdit edit = new TermedStatementEntityEditBuilder(newSubject)
+                .addLabel(Datamodel.makeMonolingualTextValue("fr", "bonjour"), true)
+                .addDescription(Datamodel.makeMonolingualTextValue("de", "Redewendung"), true)
+                .build();
+
+        ItemDocument itemDocument = (ItemDocument) edit.toNewEntity();
+
+        ItemDocument expected = ItemDocumentBuilder.forItemId(newSubject)
+                .withLabel(Datamodel.makeMonolingualTextValue("fr", "bonjour"))
+                .withDescription(Datamodel.makeMonolingualTextValue("de", "Redewendung"))
+                .build();
+        assertEquals(itemDocument, expected);
     }
 }

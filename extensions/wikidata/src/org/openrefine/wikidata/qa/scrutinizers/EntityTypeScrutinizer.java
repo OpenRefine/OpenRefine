@@ -20,6 +20,9 @@ public class EntityTypeScrutinizer extends SnakScrutinizer {
 
     @Override
     public void scrutinize(Snak snak, EntityIdValue entityId, boolean added) {
+        if (!added) {
+            return;
+        }
         PropertyIdValue pid = snak.getPropertyId();
         List<Statement> statementList = _fetcher.getConstraintsByType(pid, allowedEntityTypesQid);
         if(!statementList.isEmpty()) {

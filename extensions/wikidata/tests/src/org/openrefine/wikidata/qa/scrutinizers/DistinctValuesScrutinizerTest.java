@@ -26,8 +26,8 @@ package org.openrefine.wikidata.qa.scrutinizers;
 
 import org.openrefine.wikidata.qa.ConstraintFetcher;
 import org.openrefine.wikidata.testing.TestingData;
-import org.openrefine.wikidata.updates.TermedStatementEntityUpdate;
-import org.openrefine.wikidata.updates.TermedStatementEntityUpdateBuilder;
+import org.openrefine.wikidata.updates.TermedStatementEntityEdit;
+import org.openrefine.wikidata.updates.TermedStatementEntityEditBuilder;
 import org.testng.annotations.Test;
 import org.wikidata.wdtk.datamodel.helpers.Datamodel;
 import org.wikidata.wdtk.datamodel.implementation.StatementImpl;
@@ -66,7 +66,9 @@ public class DistinctValuesScrutinizerTest extends StatementScrutinizerTest {
         Statement statement1 = new StatementImpl("P163", mainSnak, idA);
         Statement statement2 = new StatementImpl("P163", mainSnak, idA);
 
-        TermedStatementEntityUpdate update = new TermedStatementEntityUpdateBuilder(idA).addStatement(statement1).addStatement(statement2)
+        TermedStatementEntityEdit update = new TermedStatementEntityEditBuilder(idA)
+                .addStatement(add(statement1))
+                .addStatement(add(statement2))
                 .build();
 
         List<SnakGroup> constraintQualifiers = new ArrayList<>();
@@ -81,6 +83,29 @@ public class DistinctValuesScrutinizerTest extends StatementScrutinizerTest {
     }
 
     @Test
+    public void testDeletedStatement() {
+        ItemIdValue idA = TestingData.existingId;
+        Snak mainSnak = Datamodel.makeValueSnak(propertyIdValue, value1);
+        Statement statement1 = new StatementImpl("P163", mainSnak, idA);
+        Statement statement2 = new StatementImpl("P163", mainSnak, idA);
+
+        TermedStatementEntityEdit update = new TermedStatementEntityEditBuilder(idA)
+                .addStatement(delete(statement1))
+                .addStatement(delete(statement2))
+                .build();
+
+        List<SnakGroup> constraintQualifiers = new ArrayList<>();
+        List<Statement> constraintDefinitions = constraintParameterStatementList(entityIdValue, constraintQualifiers);
+
+        ConstraintFetcher fetcher = mock(ConstraintFetcher.class);
+        when(fetcher.getConstraintsByType(propertyIdValue, DISTINCT_VALUES_CONSTRAINT_QID)).thenReturn(constraintDefinitions);
+        setFetcher(fetcher);
+
+        scrutinize(update);
+        assertNoWarningRaised();
+    }
+
+    @Test
     public void testNoIssue() {
         ItemIdValue idA = TestingData.existingId;
         Snak snak1 = Datamodel.makeValueSnak(propertyIdValue, value1);
@@ -88,7 +113,9 @@ public class DistinctValuesScrutinizerTest extends StatementScrutinizerTest {
         Statement statement1 = new StatementImpl("P163", snak1, idA);
         Statement statement2 = new StatementImpl("P163", snak2, idA);
 
-        TermedStatementEntityUpdate update = new TermedStatementEntityUpdateBuilder(idA).addStatement(statement1).addStatement(statement2)
+        TermedStatementEntityEdit update = new TermedStatementEntityEditBuilder(idA)
+                .addStatement(add(statement1))
+                .addStatement(add(statement2))
                 .build();
 
         List<SnakGroup> constraintQualifiers = new ArrayList<>();
