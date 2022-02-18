@@ -339,7 +339,7 @@ public class ImportingUtilitiesTests extends ImporterTest {
 
         String originalFileName = "zst_test.csv";
         String originalFilePath = ClassLoader.getSystemResource(originalFileName).getPath();
-        
+
         byte[] originalFileByteArray = Files.readAllBytes(Paths.get(originalFilePath));
 
         byte[] decompressedFileByteArray = IOUtils
