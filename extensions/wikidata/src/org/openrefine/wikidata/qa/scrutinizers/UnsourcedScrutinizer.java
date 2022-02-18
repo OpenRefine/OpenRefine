@@ -24,7 +24,7 @@
 package org.openrefine.wikidata.qa.scrutinizers;
 
 import org.openrefine.wikidata.qa.QAWarning;
-import org.openrefine.wikidata.updates.TermedStatementEntityUpdate;
+import org.openrefine.wikidata.updates.TermedStatementEntityEdit;
 import org.wikidata.wdtk.datamodel.interfaces.PropertyIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.Reference;
 import org.wikidata.wdtk.datamodel.interfaces.Statement;
@@ -44,7 +44,7 @@ public class UnsourcedScrutinizer extends EditScrutinizer {
     public static final String constraintItemType = "no-references-provided";
 
     @Override
-    public void scrutinize(TermedStatementEntityUpdate update) {
+    public void scrutinize(TermedStatementEntityEdit update) {
         for (Statement statement : update.getAddedStatements()) {
             PropertyIdValue pid = statement.getClaim().getMainSnak().getPropertyId();
             List<Statement> constraintDefinitions = _fetcher.getConstraintsByType(pid, citationNeededConstraintQid);

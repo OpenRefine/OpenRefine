@@ -31,19 +31,32 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.apache.commons.lang.NotImplementedException;
 import org.jsoup.helper.Validate;
-import org.openrefine.wikidata.utils.StatementGroupJson;
-import org.wikidata.wdtk.datamodel.implementation.StatementGroupImpl;
+import org.openrefine.wikidata.schema.strategies.StatementEditingMode;
+import org.wikidata.wdtk.datamodel.helpers.Datamodel;
+import org.wikidata.wdtk.datamodel.helpers.StatementUpdateBuilder;
+import org.wikidata.wdtk.datamodel.interfaces.AliasUpdate;
+import org.wikidata.wdtk.datamodel.interfaces.EntityDocument;
 import org.wikidata.wdtk.datamodel.interfaces.EntityIdValue;
+import org.wikidata.wdtk.datamodel.interfaces.EntityUpdate;
+import org.wikidata.wdtk.datamodel.interfaces.ItemDocument;
+import org.wikidata.wdtk.datamodel.interfaces.ItemIdValue;
+import org.wikidata.wdtk.datamodel.interfaces.MediaInfoDocument;
+import org.wikidata.wdtk.datamodel.interfaces.MediaInfoIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.MonolingualTextValue;
 import org.wikidata.wdtk.datamodel.interfaces.PropertyIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.Statement;
+import org.wikidata.wdtk.datamodel.interfaces.StatementDocument;
 import org.wikidata.wdtk.datamodel.interfaces.StatementGroup;
+import org.wikidata.wdtk.datamodel.interfaces.StatementUpdate;
+import org.wikidata.wdtk.datamodel.interfaces.TermUpdate;
+import org.wikidata.wdtk.datamodel.interfaces.TermedStatementDocument;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -54,11 +67,10 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  * 
  * @author Antonin Delpeuch
  */
-public class TermedStatementEntityUpdate {
+public class TermedStatementEntityEdit {
 
     private final EntityIdValue id;
-    private final List<Statement> addedStatements;
-    private final Set<Statement> deletedStatements;
+    private final List<StatementEdit> statements;
     private final Map<String, MonolingualTextValue> labels;
     private final Map<String, MonolingualTextValue> labelsIfNew;
     private final Map<String, MonolingualTextValue> descriptions;
@@ -71,11 +83,8 @@ public class TermedStatementEntityUpdate {
      * @param id
      *            the subject of the document. It can be a reconciled entity value for
      *            new entities.
-     * @param addedStatements
-     *            the statements to add on the entity. They should be distinct. They
-     *            are modeled as a list because their insertion order matters.
-     * @param deletedStatements
-     *            the statements to remove from the entity
+     * @param statements
+     *            the statements to change on the entity.
      * @param labels
      *            the labels to add on the entity, overriding any existing one in that language
      * @param labelsIfNew
@@ -89,25 +98,20 @@ public class TermedStatementEntityUpdate {
      *            matter but in practice people rarely rely on the order of aliases
      *            so this is just kept as a set for simplicity.
      */
-    @JsonCreator
-    public TermedStatementEntityUpdate(@JsonProperty("subject") EntityIdValue id,
-            @JsonProperty("addedStatements") List<Statement> addedStatements,
-            @JsonProperty("deletedStatements") Set<Statement> deletedStatements,
-            @JsonProperty("labels") Set<MonolingualTextValue> labels,
-            @JsonProperty("labelsIfNew") Set<MonolingualTextValue> labelsIfNew,
-            @JsonProperty("descriptions") Set<MonolingualTextValue> descriptions,
-            @JsonProperty("descriptionsIfNew") Set<MonolingualTextValue> descriptionsIfNew,
-            @JsonProperty("addedAliases") Set<MonolingualTextValue> aliases) {
+    public TermedStatementEntityEdit(
+    		EntityIdValue id,
+    		List<StatementEdit> statements,
+            Set<MonolingualTextValue> labels,
+            Set<MonolingualTextValue> labelsIfNew,
+            Set<MonolingualTextValue> descriptions,
+            Set<MonolingualTextValue> descriptionsIfNew,
+            Set<MonolingualTextValue> aliases) {
         Validate.notNull(id);
         this.id = id;
-        if (addedStatements == null) {
-            addedStatements = Collections.emptyList();
+        if (statements == null) {
+        	statements = Collections.emptyList();
         }
-        this.addedStatements = addedStatements;
-        if (deletedStatements == null) {
-            deletedStatements = Collections.emptySet();
-        }
-        this.deletedStatements = deletedStatements;
+        this.statements = statements;
         this.labels = new HashMap<>();
         this.labelsIfNew = new HashMap<>();
         mergeSingleTermMaps(this.labels, this.labelsIfNew, labels, labelsIfNew);
@@ -142,18 +146,16 @@ public class TermedStatementEntityUpdate {
      * @param aliases
      *      the aliases to add
      */
-    private TermedStatementEntityUpdate(
+    private TermedStatementEntityEdit(
             EntityIdValue id,
-    		List<Statement> addedStatements,
-    		Set<Statement> deletedStatements,
+    		List<StatementEdit> statements,
     		Map<String, MonolingualTextValue> labels,
     		Map<String, MonolingualTextValue> labelsIfNew,
     		Map<String, MonolingualTextValue> descriptions,
     		Map<String, MonolingualTextValue> descriptionsIfNew,
     		Map<String, List<MonolingualTextValue>> aliases) {
         this.id = id;
-    	this.addedStatements = addedStatements;
-    	this.deletedStatements = deletedStatements;
+    	this.statements = statements;
     	this.labels = labels;
     	this.labelsIfNew = labelsIfNew;
     	this.descriptions = descriptions;
@@ -167,25 +169,6 @@ public class TermedStatementEntityUpdate {
     @JsonProperty("subject")
     public EntityIdValue getEntityId() {
         return id;
-    }
-
-    /**
-     * Added statements are recorded as a list because their order of insertion
-     * matters.
-     * 
-     * @return the list of all added statements
-     */
-    @JsonIgnore // exposed as statement groups below
-    public List<Statement> getAddedStatements() {
-        return addedStatements;
-    }
-
-    /**
-     * @return the list of all deleted statements
-     */
-    @JsonProperty("deletedStatements")
-    public Set<Statement> getDeletedStatements() {
-        return deletedStatements;
     }
 
     /**
@@ -229,6 +212,14 @@ public class TermedStatementEntityUpdate {
     }
 
     /**
+     * @return the list of statement updates
+     */
+    @JsonIgnore // because we expose them as StatementGroupEdits later on
+    public List<StatementEdit> getStatementEdits() {
+    	return statements;
+    }
+
+    /**
      * @return true when this change is empty and its subject is not new
      */
     @JsonIgnore
@@ -241,8 +232,7 @@ public class TermedStatementEntityUpdate {
      */
     @JsonIgnore
     public boolean isEmpty() {
-        return (addedStatements.isEmpty() &&
-        		deletedStatements.isEmpty() &&
+        return (statements.isEmpty() &&
         		labels.isEmpty() &&
         		descriptions.isEmpty() &&
         		aliases.isEmpty() &&
@@ -259,16 +249,14 @@ public class TermedStatementEntityUpdate {
      * @param other
      *            the other change that should be merged
      */
-    public TermedStatementEntityUpdate merge(TermedStatementEntityUpdate other) {
+    public TermedStatementEntityEdit merge(TermedStatementEntityEdit other) {
         Validate.isTrue(id.equals(other.getEntityId()));
-        List<Statement> newAddedStatements = new ArrayList<>(addedStatements);
-        for (Statement statement : other.getAddedStatements()) {
-            if (!newAddedStatements.contains(statement)) {
-                newAddedStatements.add(statement);
+        List<StatementEdit> newStatements = new ArrayList<>(statements);
+        for (StatementEdit statement : other.getStatementEdits()) {
+            if (!newStatements.contains(statement)) {
+                newStatements.add(statement);
             }
         }
-        Set<Statement> newDeletedStatements = new HashSet<>(deletedStatements);
-        newDeletedStatements.addAll(other.getDeletedStatements());
         Map<String,MonolingualTextValue> newLabels = new HashMap<>(labels);
         Map<String,MonolingualTextValue> newLabelsIfNew = new HashMap<>(labelsIfNew);
         mergeSingleTermMaps(newLabels, newLabelsIfNew, other.getLabels(), other.getLabelsIfNew());
@@ -286,7 +274,7 @@ public class TermedStatementEntityUpdate {
         		aliases.add(alias);
         	}
         }
-        return new TermedStatementEntityUpdate(id, newAddedStatements, newDeletedStatements, newLabels, newLabelsIfNew, newDescriptions, newDescriptionsIfNew, newAliases);
+        return new TermedStatementEntityEdit(id, newStatements, newLabels, newLabelsIfNew, newDescriptions, newDescriptionsIfNew, newAliases);
     }    
 
     /**
@@ -294,35 +282,40 @@ public class TermedStatementEntityUpdate {
      * 
      * @return a grouped version of getAddedStatements()
      */
-    @JsonIgnore
-    public List<StatementGroup> getAddedStatementGroups() {
-        Map<PropertyIdValue, List<Statement>> map = new HashMap<>();
-        for (Statement statement : getAddedStatements()) {
-            PropertyIdValue propertyId = statement.getClaim().getMainSnak().getPropertyId();
-            if (!map.containsKey(propertyId)) {
-                map.put(propertyId, new ArrayList<Statement>());
-            }
-            map.get(propertyId).add(statement);
-        }
-        List<StatementGroup> result = new ArrayList<>();
-        for (Map.Entry<PropertyIdValue, List<Statement>> entry : map.entrySet()) {
-            // We have to do this rather than use Datamodel in order to preserve the
-            // custom entity id values which can link to new entities.
-            result.add(new StatementGroupImpl(entry.getValue()));
-        }
+    @JsonProperty("statementGroups")
+    public List<StatementGroupEdit> getStatementGroupEdits() {
+        Map<PropertyIdValue, List<StatementEdit>> map = statements.stream()
+        		.collect(Collectors.groupingBy(su -> su.getPropertyId()));
+        List<StatementGroupEdit> result = map.values()
+        		.stream()
+        		.map(statements -> new StatementGroupEdit(statements))
+        		.collect(Collectors.toList());
         return result;
     }
     
     /**
-     * Json serialization for preview of entity updates. Because StatementGroup
-     * is not designed for serialization (so its format is not specified by WDTK),
-     * we add a wrapper on top to specify it.
+     * @return the statements which should be added or merged with
+     * the existing ones on the item.
      */
-    @JsonProperty("addedStatementGroups")
-    public List<StatementGroupJson> getAddedStatementGroupsJson() {
-    	return this.getAddedStatementGroups().stream().map(s -> new StatementGroupJson(s)).collect(Collectors.toList());
+    @JsonIgnore
+    public List<Statement> getAddedStatements() {
+    	return statements.stream()
+    			.filter(statement -> statement.getMode() != StatementEditingMode.DELETE)
+    			.map(StatementEdit::getStatement)
+    			.collect(Collectors.toList());
     }
-
+    
+    /**
+     * @return the statements which should be deleted from the item.
+     */
+    @JsonIgnore
+    public List<Statement> getDeletedStatements() {
+    	return statements.stream()
+    			.filter(statement -> statement.getMode() == StatementEditingMode.DELETE)
+    			.map(StatementEdit::getStatement)
+    			.collect(Collectors.toList());
+    }
+    
     /**
      * Group a list of TermedStatementEntityUpdates by subject: this is useful to make one single
      * edit per entity.
@@ -330,16 +323,16 @@ public class TermedStatementEntityUpdate {
      * @param entityDocuments
      * @return a map from entity ids to merged TermedStatementEntityUpdate for that id
      */
-    public static Map<EntityIdValue, TermedStatementEntityUpdate> groupBySubject(List<TermedStatementEntityUpdate> entityDocuments) {
-        Map<EntityIdValue, TermedStatementEntityUpdate> map = new HashMap<>();
-        for (TermedStatementEntityUpdate update : entityDocuments) {
+    public static Map<EntityIdValue, TermedStatementEntityEdit> groupBySubject(List<TermedStatementEntityEdit> entityDocuments) {
+        Map<EntityIdValue, TermedStatementEntityEdit> map = new HashMap<>();
+        for (TermedStatementEntityEdit update : entityDocuments) {
             if (update.isNull()) {
                 continue;
             }
 
             EntityIdValue qid = update.getEntityId();
             if (map.containsKey(qid)) {
-            	TermedStatementEntityUpdate oldUpdate = map.get(qid);
+            	TermedStatementEntityEdit oldUpdate = map.get(qid);
                 map.put(qid, oldUpdate.merge(update));
             } else {
                 map.put(qid, update);
@@ -360,7 +353,7 @@ public class TermedStatementEntityUpdate {
      * This should only be used when creating a new entity. This ensures that we never
      * add an alias without adding a label in the same language.
      */
-    public TermedStatementEntityUpdate normalizeLabelsAndAliases() {
+    public TermedStatementEntityEdit normalizeLabelsAndAliases() {
         // Ensure that we are only adding aliases with labels
         Set<MonolingualTextValue> filteredAliases = new HashSet<>();
         Map<String, MonolingualTextValue> newLabels = new HashMap<>(labelsIfNew);
@@ -374,19 +367,131 @@ public class TermedStatementEntityUpdate {
         }
         Map<String, MonolingualTextValue> newDescriptions = new HashMap<>(descriptionsIfNew);
         newDescriptions.putAll(descriptions);
-        return new TermedStatementEntityUpdate(id, addedStatements, deletedStatements,
+        return new TermedStatementEntityEdit(id, statements,
         		newLabels, Collections.emptyMap(), newDescriptions, Collections.emptyMap(),
         		constructTermListMap(filteredAliases));
+    }
+    
+    /**
+     * In case the subject id is new, returns the corresponding new item document
+     * to be created.
+     */
+    public TermedStatementDocument toNewEntity() {
+    	Validate.isTrue(isNew(), "Cannot create a corresponding entity document for an edit on an existing entity.");
+    	if (id instanceof ItemIdValue) {
+	    	return Datamodel.makeItemDocument((ItemIdValue) id,
+	                getLabels().stream().collect(Collectors.toList()),
+	                getDescriptions().stream().collect(Collectors.toList()),
+	                getAliases().stream().collect(Collectors.toList()),
+	                getStatementGroupsForNewEntity(),
+	                Collections.emptyMap());
+    	} else {
+    		throw new NotImplementedException("Creating new entities of type "+id.getEntityType()+" is not supported yet.");
+    	}
+    }
+    
+    /**
+     * In case the subject id is not new, returns the corresponding update given
+     * the current state of the entity.
+     */
+    public EntityUpdate toEntityUpdate(EntityDocument entityDocument) {
+    	Validate.isFalse(isNew(), "Cannot create a corresponding entity update for a creation of a new entity.");
+        if (id instanceof ItemIdValue) {
+        	ItemDocument itemDocument = (ItemDocument) entityDocument;
+        	// Labels
+            List<MonolingualTextValue> labels = getLabels().stream().collect(Collectors.toList());
+            labels.addAll(getLabelsIfNew().stream()
+                  .filter(label -> !itemDocument.getLabels().containsKey(label.getLanguageCode())).collect(Collectors.toList()));
+            TermUpdate labelUpdate = Datamodel.makeTermUpdate(labels, Collections.emptyList());
+
+            // Descriptions
+            List<MonolingualTextValue> descriptions = getDescriptions().stream().collect(Collectors.toList());
+            descriptions.addAll(getDescriptionsIfNew().stream()
+                    .filter(desc -> !itemDocument.getDescriptions().containsKey(desc.getLanguageCode())).collect(Collectors.toList()));
+			TermUpdate descriptionUpdate = Datamodel.makeTermUpdate(descriptions, Collections.emptyList());
+
+			// Aliases
+            Set<MonolingualTextValue> aliases = getAliases();
+            Map<String, List<MonolingualTextValue>> aliasesMap = aliases.stream()
+                    .collect(Collectors.groupingBy(MonolingualTextValue::getLanguageCode));
+            Map<String, AliasUpdate> aliasMap = aliasesMap.entrySet().stream()
+                    .collect(Collectors.toMap(Entry::getKey, e -> Datamodel.makeAliasUpdate(e.getValue(), Collections.emptyList())));
+            
+            // Statements
+            StatementUpdate statementUpdate = toStatementUpdate(itemDocument);
+            
+			return Datamodel.makeItemUpdate((ItemIdValue) getEntityId(),
+                    entityDocument.getRevisionId(),
+                    labelUpdate,
+                    descriptionUpdate,
+                    aliasMap,
+                    statementUpdate,
+                    Collections.emptyList(),
+                    Collections.emptyList());
+			
+        } else if (id instanceof MediaInfoIdValue) {
+        	MediaInfoDocument mediaInfoDocument = (MediaInfoDocument) entityDocument;
+        	
+        	// Labels (captions)
+            List<MonolingualTextValue> labels = getLabels().stream().collect(Collectors.toList());
+            labels.addAll(getLabelsIfNew().stream()
+                  .filter(label -> !mediaInfoDocument.getLabels().containsKey(label.getLanguageCode())).collect(Collectors.toList()));
+            TermUpdate labelUpdate = Datamodel.makeTermUpdate(labels, Collections.emptyList());
+            
+            // Statements
+            StatementUpdate statementUpdate = toStatementUpdate(mediaInfoDocument);
+            
+            return Datamodel.makeMediaInfoUpdate(
+            		(MediaInfoIdValue) id,
+                    entityDocument.getRevisionId(),
+                    labelUpdate,
+                    statementUpdate);
+        } else {
+    		throw new NotImplementedException("Editing entities of type "+id.getEntityType()+" is not supported yet.");
+    	}
+    }
+    
+    /**
+     * Generates the statement update given the current statement groups on the entity.
+     * @param currentDocument 
+     * @return
+     */
+    protected StatementUpdate toStatementUpdate(StatementDocument currentDocument) {
+    	Map<PropertyIdValue, List<StatementEdit>> groupedEdits = statements.stream()
+    			.collect(Collectors.groupingBy(StatementEdit::getPropertyId));
+    	StatementUpdateBuilder builder = StatementUpdateBuilder.create(currentDocument.getEntityId());
+    	
+    	for (Entry<PropertyIdValue, List<StatementEdit>> entry : groupedEdits.entrySet()) {
+    		StatementGroupEdit statementGroupEdit = new StatementGroupEdit(entry.getValue());
+    		StatementGroup statementGroup = currentDocument.findStatementGroup(entry.getKey().getId());
+    		statementGroupEdit.contributeToStatementUpdate(builder, statementGroup);
+    	}
+    	return builder.build();
+    }
+    
+    /**
+     * Generates the statement groups which should appear on this entity if it is created
+     * as new.
+     * @todo those statements are not currently deduplicated among themselves
+     */
+    protected List<StatementGroup> getStatementGroupsForNewEntity() {
+    	Map<PropertyIdValue, List<Statement>> map = statements.stream()
+    			.filter(statementEdit -> statementEdit.getMode() != StatementEditingMode.DELETE)
+    			.map(StatementEdit::getStatement)
+        		.collect(Collectors.groupingBy(s -> s.getMainSnak().getPropertyId()));
+        return map.values()
+        		.stream()
+        		.map(statements -> Datamodel.makeStatementGroup(statements))
+        		.collect(Collectors.toList());
     }
 
     @Override
     public boolean equals(Object other) {
-        if (other == null || !TermedStatementEntityUpdate.class.isInstance(other)) {
+        if (other == null || !TermedStatementEntityEdit.class.isInstance(other)) {
             return false;
         }
-        TermedStatementEntityUpdate otherUpdate = (TermedStatementEntityUpdate) other;
-        return id.equals(otherUpdate.getEntityId()) && addedStatements.equals(otherUpdate.getAddedStatements())
-                && deletedStatements.equals(otherUpdate.getDeletedStatements())
+        TermedStatementEntityEdit otherUpdate = (TermedStatementEntityEdit) other;
+        return id.equals(otherUpdate.getEntityId()) && statements.equals(otherUpdate.getStatementEdits())
                 && getLabels().equals(otherUpdate.getLabels())
                 && getDescriptions().equals(otherUpdate.getDescriptions())
                 && getAliases().equals(otherUpdate.getAliases());
@@ -394,7 +499,7 @@ public class TermedStatementEntityUpdate {
 
     @Override
     public int hashCode() {
-        return id.hashCode() + addedStatements.hashCode() + deletedStatements.hashCode() + labels.hashCode()
+        return id.hashCode() + statements.hashCode() + labels.hashCode()
                 + descriptions.hashCode() + aliases.hashCode();
     }
 
@@ -423,13 +528,9 @@ public class TermedStatementEntityUpdate {
             builder.append("\n  Aliases: ");
             builder.append(aliases);
         }
-        if (!addedStatements.isEmpty()) {
-            builder.append("\n  Added statements: ");
-            builder.append(addedStatements);
-        }
-        if (!deletedStatements.isEmpty()) {
-            builder.append("\n  Deleted statements: ");
-            builder.append(deletedStatements);
+        if (!statements.isEmpty()) {
+            builder.append("\n  Statements: ");
+            builder.append(statements);
         }
         if (isNull()) {
             builder.append(" (null update)");

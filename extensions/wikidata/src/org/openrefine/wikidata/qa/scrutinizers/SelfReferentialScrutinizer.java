@@ -41,6 +41,9 @@ public class SelfReferentialScrutinizer extends SnakScrutinizer {
 
     @Override
     public void scrutinize(Snak snak, EntityIdValue entityId, boolean added) {
+        if (!added) {
+            return;
+        }
         if (snak instanceof ValueSnak && entityId.equals(((ValueSnak)snak).getValue())) {
             QAWarning issue = new QAWarning(type, null, QAWarning.Severity.WARNING, 1);
             issue.setProperty("example_entity", entityId);

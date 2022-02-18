@@ -138,6 +138,10 @@ public class QualifierCompatibilityScrutinizer extends StatementScrutinizer {
 
     @Override
     public void scrutinize(Statement statement, EntityIdValue entityId, boolean added) {
+        if (!added) {
+            // not scrutinizing deleted statements
+            return;
+        }
         PropertyIdValue statementProperty = statement.getClaim().getMainSnak().getPropertyId();
         Set<PropertyIdValue> qualifiers = statement.getClaim().getQualifiers().stream().map(e -> e.getProperty())
                 .collect(Collectors.toSet());

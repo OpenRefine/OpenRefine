@@ -142,13 +142,14 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
           id: "core/duplicates-facet",
           label: $.i18n('core-views/duplicates-facet'),
           click: function() {
+            let columnName = column.name.replace(/'/g, "\\'");
             ui.browsingEngine.addFacet(
                 "list",
                 {
                   "name": column.name,
                   "columnName": column.name,
                   "expression": "facetCount(value, 'value', '" +
-                  column.name + "') > 1"
+                  columnName + "') > 1"
                 }
             );
           }

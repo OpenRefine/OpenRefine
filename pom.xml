@@ -103,7 +103,7 @@
 
     <!-- plugin versions -->
     <build-helper-maven-plugin.version>3.3.0</build-helper-maven-plugin.version>
-    <maven-compiler-plugin.version>3.9.0</maven-compiler-plugin.version>
+    <maven-compiler-plugin.version>3.10.0</maven-compiler-plugin.version>
     <maven-resources-plugin.version>3.2.0</maven-resources-plugin.version>
     <exec-maven-plugin.version>3.0.0</exec-maven-plugin.version>
     <maven-dependency-plugin.version>3.2.0</maven-dependency-plugin.version>
@@ -268,6 +268,88 @@
           <workspaceCodeStylesURL>${maven.multiModuleProjectDirectory}/IDEs/eclipse/Refine.style.xml</workspaceCodeStylesURL>
         </configuration>
       </plugin>
+        <plugin>
+          <groupId>org.codehaus.mojo</groupId>
+          <artifactId>build-helper-maven-plugin</artifactId>
+          <version>${build-helper-maven-plugin.version}</version>
+          <inherited>false</inherited>
+          <executions>
+            <!-- Attach tar.gz artifact for linux -->
+            <execution>
+                <id>attach-linux</id>
+                <phase>deploy</phase>
+                <goals>
+                    <goal>attach-artifact</goal>
+                </goals>
+                <configuration>
+                    <artifacts>
+                        <artifact>
+                            <file>packaging/target/${project.build.finalName}-linux-${project.version}.tar.gz</file>
+                            <type>tar.gz</type>
+                            <classifier>linux</classifier>
+                        </artifact>
+                    </artifacts>
+                </configuration>
+            </execution>
+            
+            <!-- Attach the zip file for windows, without embedded JRE -->
+            <execution>
+                <id>attach-win-without-jre</id>
+                <phase>deploy</phase>
+                <goals>
+                    <goal>attach-artifact</goal>
+                </goals>
+                <configuration>
+                    <skipAttach>${skipCreateExe}</skipAttach>
+                    <artifacts>
+                        <artifact>
+                            <file>packaging/target/${project.build.finalName}-win-${project.version}.zip</file>
+                            <type>zip</type>
+                            <classifier>win</classifier>
+                        </artifact>
+                    </artifacts>
+                </configuration>
+            </execution>
+            
+            <!-- Attach the zip file for windows, with embedded JRE -->
+            <execution>
+                <id>attach-win-with-jre</id>
+                <phase>deploy</phase>
+                <goals>
+                    <goal>attach-artifact</goal>
+                </goals>
+                <configuration>
+                    <skipAttach>${skipCreateExe}</skipAttach>
+                    <artifacts>
+                        <artifact>
+                            <file>packaging/target/${project.build.finalName}-win-with-java-${project.version}.zip</file>
+                            <type>zip</type>
+                            <classifier>win-with-java</classifier>
+                        </artifact>
+                    </artifacts>
+                </configuration>
+            </execution>
+
+            <!-- Attach the final DMG for MacOS -->
+            <execution>
+                <id>attach-dmg</id>
+                <phase>deploy</phase>
+                <goals>
+                    <goal>attach-artifact</goal>
+                </goals>
+                <configuration>
+                    <artifacts>
+                        <artifact>
+                            <file>packaging/target/${project.build.finalName}-mac-${project.version}.dmg</file>
+                            <type>dmg</type>
+                            <classifier>mac</classifier>
+                        </artifact>
+                    </artifacts>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+
     </plugins>
   </build>
 

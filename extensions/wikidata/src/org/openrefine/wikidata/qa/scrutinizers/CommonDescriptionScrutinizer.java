@@ -1,7 +1,7 @@
 package org.openrefine.wikidata.qa.scrutinizers;
 
 import org.openrefine.wikidata.qa.QAWarning;
-import org.openrefine.wikidata.updates.TermedStatementEntityUpdate;
+import org.openrefine.wikidata.updates.TermedStatementEntityEdit;
 import org.wikidata.wdtk.datamodel.interfaces.MonolingualTextValue;
 
 import java.util.Set;
@@ -15,14 +15,14 @@ public class CommonDescriptionScrutinizer extends DescriptionScrutinizer {
     public static final String descIdenticalWithLabel = "description-identical-with-label";
 
     @Override
-    public void scrutinize(TermedStatementEntityUpdate update, String descText, String lang) {
+    public void scrutinize(TermedStatementEntityEdit update, String descText, String lang) {
         checkLength(update, descText, lang);
         checkLabel(update, descText, lang);
     }
 
     // Descriptions are not full sentences, but small bits of information.
     // In most cases, the proper length is between two and twelve words.
-    protected void checkLength(TermedStatementEntityUpdate update, String descText, String lang) {
+    protected void checkLength(TermedStatementEntityEdit update, String descText, String lang) {
         final int maxLength = 250;
         if (descText.length() > maxLength) {
             QAWarning issue = new QAWarning(descTooLongType, null, QAWarning.Severity.CRITICAL, 1);
@@ -36,7 +36,7 @@ public class CommonDescriptionScrutinizer extends DescriptionScrutinizer {
     }
 
     // Description are expected to be more specific than labels.
-    protected void checkLabel(TermedStatementEntityUpdate update, String descText, String lang) {
+    protected void checkLabel(TermedStatementEntityEdit update, String descText, String lang) {
         Set<MonolingualTextValue> labels = update.getLabels();
         labels.addAll(update.getLabelsIfNew()); // merge
         for (MonolingualTextValue label : labels) {

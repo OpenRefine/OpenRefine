@@ -59,6 +59,9 @@ public class QuantityScrutinizer extends SnakScrutinizer {
 
     @Override
     public void scrutinize(Snak snak, EntityIdValue entityId, boolean added) {
+        if (!added) {
+            return;
+        }
         if (snak instanceof ValueSnak && ((ValueSnak)snak).getValue() instanceof QuantityValue && added) {
             PropertyIdValue pid = snak.getPropertyId();
             QuantityValue value = (QuantityValue)((ValueSnak)snak).getValue();
