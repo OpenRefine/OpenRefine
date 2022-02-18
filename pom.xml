@@ -249,7 +249,7 @@
 	 <artifactId>maven-deploy-plugin</artifactId>
 	 <version>${maven-deploy-plugin.version}</version>
 	 <configuration>
-            <deployAtEnd>false</deployAtEnd>
+            <deployAtEnd>true</deployAtEnd>
 	 </configuration>
        </plugin>
       <plugin>
@@ -289,6 +289,7 @@
                             <classifier>linux</classifier>
                         </artifact>
                     </artifacts>
+                    <skipAttach>true</skipAttach>
                 </configuration>
             </execution>
             
@@ -308,6 +309,7 @@
                             <classifier>win</classifier>
                         </artifact>
                     </artifacts>
+                    <skipAttach>true</skipAttach>
                 </configuration>
             </execution>
             
@@ -327,6 +329,7 @@
                             <classifier>win-with-java</classifier>
                         </artifact>
                     </artifacts>
+                    <skipAttach>true</skipAttach>
                 </configuration>
             </execution>
 
@@ -345,6 +348,7 @@
                             <classifier>mac</classifier>
                         </artifact>
                     </artifacts>
+                    <skipAttach>true</skipAttach>
                 </configuration>
               </execution>
             </executions>
