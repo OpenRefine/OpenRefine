@@ -720,7 +720,7 @@
     "core-views/choose-reconciliation-service": "Elija un servicio de cotejo",
     "core-recon/add-std-srv": "Añadir un servicio estándar",
     "core-dialogs/lb-formats-quotation": "Siempre citar el texto",
-    "core-dialogs/record-fields": "Una o más filas agrupadas para formar un registro; el objeto tiene más campos. Más detalles en '<a href=\"https://github.com/OpenRefine/OpenRefine/wiki/Variables#record\">Records</a>'",
+    "core-dialogs/record-fields": "Una o más filas agrupadas para formar un registro; el objeto tiene más campos. Más detalles en '<a href=\"https://docs.openrefine.org/manual/expressions#record\">Records</a>'",
     "core-dialogs/no-clustering-functions-and-distances": "No se pudieron cargar las funciones de agrupamiento y las distancias.",
     "core-views/replace-dont-escape": "utilice \\n para saltos de renglón, \\t para tabuladores, \\\\n para \\n, \\\\t para \\t.",
     "core-views/replacement-info": "Si se marca la opción «Expresión regular» y el modelo de búsqueda contiene grupos delimitados por paréntesis, $0 devolverá la cadena completa encontrada por el modelo, y $1, $2…, los grupos primero y segundo, respectivamente.",
