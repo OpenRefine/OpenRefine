@@ -721,7 +721,7 @@
     "core-index/license": "Lizenz:",
     "core-index/homepage": "Homepage:",
     "core-index/image": "Bild:",
-    "core-dialogs/record-fields": "eine oder mehrere Zeilen, die zu einem Datensatz zusammengefasst sind; das Objekt hat mehrere Felder, Details unter <a href=\"https://github.com/OpenRefine/OpenRefine/wiki/Variables#record\">Records</a>",
+    "core-dialogs/record-fields": "eine oder mehrere Zeilen, die zu einem Datensatz zusammengefasst sind; das Objekt hat mehrere Felder, Details unter <a href=\"https://docs.openrefine.org/manual/expressions#record\">Records</a>",
     "core-views/join-col": "Spalten verbinden",
     "core-views/column-join": "Spalten verbinden",
     "core-views/column-join-before-column-picker": "Wähle und ordne Spalten zum verbinden",

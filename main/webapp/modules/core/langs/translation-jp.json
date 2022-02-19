@@ -727,7 +727,7 @@
     "core-index/license": "ライセンス:",
     "core-index/homepage": "ホームページ:",
     "core-index/image": "写真:",
-    "core-dialogs/record-fields": "１行以上の列がレコードを構成します。詳しくは、<a href=\"https://github.com/OpenRefine/OpenRefine/wiki/Variables#record\">Records</a>",
+    "core-dialogs/record-fields": "１行以上の列がレコードを構成します。詳しくは、<a href=\"https://docs.openrefine.org/manual/expressions#record\">Records</a>",
     "core-views/join-col": "カラムの結合",
     "core-views/column-join": "カラムの結合",
     "core-views/column-join-before-column-picker": "結合するカラムの選択",
