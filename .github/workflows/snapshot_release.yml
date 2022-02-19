@@ -177,7 +177,7 @@ jobs:
     - name: Generate dist files
       run: mvn package -DskipTests=true
 
-  mac_server_tests:
+  mac_test_and_deploy:
     runs-on: macos-latest
 
     steps:
@@ -210,11 +210,15 @@ jobs:
       env:
         P12_PASSPHRASE: ${{ secrets.APPLE_P12_PASSPHRASE }}
 
-    - name: Test, package and upload snapshot releases to OSSRH
+    - name: Build, test and package
+      run: mvn package
+      env:
+        GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
+
+    - name: Upload snapshot releases to OSSRH
       run: mvn deploy -DskipTests=true
       env:
         OSSRH_USER: ${{ secrets.OSSRH_USER }}
         OSSRH_PASS: ${{ secrets.OSSRH_PASS }}
         GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
-
 

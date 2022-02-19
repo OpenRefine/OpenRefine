@@ -1,0 +1,37 @@
+{
+  "property": {
+    "type": "wikibase-entityid",
+    "value": {
+      "entity-type": "property",
+      "id": "P38",
+      "numeric-id": 38
+    }
+  },
+  "statementEdits": [
+    {
+      "mergingStrategy": {
+        "type": "property"
+      },
+      "mode": "add_or_merge",
+      "statement": {
+        "mainsnak": {
+          "datatype": "wikibase-item",
+          "datavalue": {
+            "entityType": "http://www.wikidata.org/ontology#Item",
+            "id": "Q1234",
+            "iri": "http://localhost/entity/Q1234",
+            "label": "new item A",
+            "placeholder": true,
+            "reconInternalId": 1234,
+            "siteIri": "http://localhost/entity/",
+            "types": []
+          },
+          "property": "P38",
+          "snaktype": "value"
+        },
+        "rank": "normal",
+        "type": "statement"
+      }
+    }
+  ]
+}

@@ -35,6 +35,9 @@ import org.openrefine.wikidata.schema.WbStringConstant;
 import org.openrefine.wikidata.schema.entityvalues.ReconItemIdValue;
 import org.openrefine.wikidata.schema.entityvalues.ReconMediaInfoIdValue;
 import org.openrefine.wikidata.schema.entityvalues.ReconPropertyIdValue;
+import org.openrefine.wikidata.schema.strategies.StatementEditingMode;
+import org.openrefine.wikidata.schema.strategies.StatementMerger;
+import org.openrefine.wikidata.updates.StatementEdit;
 import org.wikidata.wdtk.datamodel.helpers.Datamodel;
 import org.wikidata.wdtk.datamodel.interfaces.Claim;
 import org.wikidata.wdtk.datamodel.interfaces.EntityIdValue;
@@ -44,6 +47,7 @@ import org.wikidata.wdtk.datamodel.interfaces.MediaInfoIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.PropertyIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.Statement;
 import org.wikidata.wdtk.datamodel.interfaces.StatementRank;
+import org.wikidata.wdtk.datamodel.interfaces.Value;
 
 import com.google.refine.model.Cell;
 import com.google.refine.model.Project;
@@ -152,22 +156,17 @@ public class TestingData {
         return generateStatement(from, pid, to);
     }
 
-    public static Statement generateStatement(ItemIdValue from, PropertyIdValue pid, ItemIdValue to) {
+    public static StatementEdit generateStatementAddition(EntityIdValue from, EntityIdValue to) {
+        return new StatementEdit(generateStatement(from, to), StatementMerger.FORMER_DEFAULT_STRATEGY, StatementEditingMode.ADD_OR_MERGE);
+    }
+
+    public static StatementEdit generateStatementDeletion(EntityIdValue from, EntityIdValue to) {
+        return new StatementEdit(generateStatement(from, to), StatementMerger.FORMER_DEFAULT_STRATEGY, StatementEditingMode.DELETE);
+    }
+
+    public static Statement generateStatement(EntityIdValue from, PropertyIdValue pid, Value to) {
         Claim claim = Datamodel.makeClaim(from, Datamodel.makeValueSnak(pid, to), Collections.emptyList());
         return Datamodel.makeStatement(claim, Collections.emptyList(), StatementRank.NORMAL, "");
-    }
-
-    public static Statement generateStatement(ItemIdValue from, ItemIdValue to) {
-        return generateStatement(from, pid, to);
-    }
-
-    public static Statement generateStatement(PropertyIdValue from, PropertyIdValue pid, PropertyIdValue to) {
-        Claim claim = Datamodel.makeClaim(from, Datamodel.makeValueSnak(pid, to), Collections.emptyList());
-        return Datamodel.makeStatement(claim, Collections.emptyList(), StatementRank.NORMAL, "");
-    }
-
-    public static Statement generateStatement(PropertyIdValue from, PropertyIdValue to) {
-        return generateStatement(from, pid, to);
     }
 
     public static String jsonFromFile(String filename)

@@ -140,14 +140,16 @@ It should show the path you set above.
 
 
 ### Maven (Optional) {#maven-optional}
-OpenRefine's build script will download Maven for you and use it, if not found already locally installed.
+OpenRefine development requires Apache Maven for its build, test, and packaging processing.  We encourage using the latest version of Apache Maven for development of OpenRefine, otherwise sometimes spurious errors appear in your IDE regarding POM, dependencies, or packages.
 
-If you will be using your Maven installation instead of OpenRefine's build script download installation, then set the `MVN_HOME` environment variable. You may need to reboot your machine after setting these environment variables. If you receive a message `Could not find the main class: com.google.refine.Refine. Program will exit.` it is likely `JAVA_HOME` is not set correctly.
+If Maven is not already locally installed, then OpenRefine's build script will automatically download Maven for you and use it.
+
+If you will be using your own [Maven installation](https://maven.apache.org/install.html) instead of OpenRefine's build script download installation, then set the `MAVEN_HOME` environment variable. You may need to reboot your machine after setting these environment variables. If you receive a message `Could not find the main class: com.google.refine.Refine. Program will exit.` it is likely `JAVA_HOME` is not set correctly.
 
 Ensure that you set your `MAVEN_HOME` environment variable, for example:
 
 ```shell
-MAVEN_HOME=E:\Downloads\apache-maven-3.5.4-bin\apache-maven-3.5.4\
+MAVEN_HOME=E:\Downloads\apache-maven-3.8.4-bin\apache-maven-3.8.4\
 ```
 
 NOTE: You can use Maven commands directly, but running some goals in isolation might fail (try adding the `compile test-compile` goals in your invocation if that is the case).

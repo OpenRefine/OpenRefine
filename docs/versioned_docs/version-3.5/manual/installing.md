@@ -111,7 +111,7 @@ Once you have downloaded the `.dmg` file, open it and drag the OpenRefine icon o
 The quick version:
 
 1. Install [Homebrew](https://brew.sh)
-2. In Terminal enter ` brew cask install openrefine`
+2. In Terminal enter ` brew install --cask openrefine`
 1. Then find OpenRefine in your Applications folder.
 
 The long version:
