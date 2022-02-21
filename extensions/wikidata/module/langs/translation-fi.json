@@ -116,5 +116,10 @@
     "wikibase-account/logo-alt-text": "$1 Logo",
     "wikibase-schema/entity-or-reconciled-column": "kirjoita entiteetti tai vedä täsmäytyssarake tähän",
     "wikibase-schema/incompatible-site-iri-reconciled-column": "Tämä sarake on täsmäytetty tunnistetilaan $1, mutta tämä syöttö vaatii sarakkeen, joka on täsmäytetty arvoon $2.",
-    "wikibase-account/explain-owner-only-consumer-wiki": "Sinun on ensin rekisteröitävä vain omistajan kuluttaja <a href=\"$1\" target=\"_blank\">täällä</a>, jos sinulla ei ole sellaista. Katso tästä <a href=\"https://github.com/OpenRefine/OpenRefine/wiki/Wikidata-owner-only-consumer\" target=\"_blank\">wikistä</a>, miten saat sellaisen."
+    "wikibase-account/explain-owner-only-consumer-wiki": "Sinun on ensin rekisteröitävä vain omistajan kuluttaja <a href=\"$1\" target=\"_blank\">täällä</a>, jos sinulla ei ole sellaista. Katso tästä <a href=\"https://github.com/OpenRefine/OpenRefine/wiki/Wikidata-owner-only-consumer\" target=\"_blank\">wikistä</a>, miten saat sellaisen.",
+    "wikibase-preview/delete-all-existing-statements": "Poista kaikki olemassa olevat lausunnot",
+    "wikibase-account/access-token-label": "Käyttöoikeustunnus:",
+    "wikibase-account/access-token-placeholder": "käyttöoikeustunnus",
+    "wikibase-schema/configure-statement": "konfiguroi",
+    "wikibase-account/owner-only-consumer-remember-me-title": "Kuluttajien tunnistetiedot tallennetaan salaamattomina evästeisiin. Älä tarkista tätä, jos tietokoneesi on julkinen."
 }
