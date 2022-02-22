@@ -23,8 +23,8 @@ LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
 A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
 OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
 SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
-LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
-DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,           
+DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY           
 THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
@@ -44,7 +44,7 @@ ColumnReorderingDialog.prototype._createDialog = function() {
     this._elmts.addAllButton.click(function() { self._addAll() });
     this._elmts.cancelButton.click(function() { self._dismiss(); });
     this._elmts.okButton.click(function() { self._commit(); });
-
+    
     this._elmts.dialogHeader.html($.i18n('core-dialogs/reorder-column'));
     this._elmts.or_dialog_dragCol.html($.i18n('core-dialogs/drag-column'));
     this._elmts.or_dialog_dropCol.html($.i18n('core-dialogs/drop-column'));
@@ -52,20 +52,20 @@ ColumnReorderingDialog.prototype._createDialog = function() {
     this._elmts.removeAllButton.html($.i18n('core-dialogs/remove-all'));
     this._elmts.okButton.html($.i18n('core-buttons/ok'));
     this._elmts.cancelButton.html($.i18n('core-buttons/cancel'));
-
+    
     this._level = DialogSystem.showDialog(dialog);
-
+    
     for (var i = 0; i < theProject.columnModel.columns.length; i++) {
         var column = theProject.columnModel.columns[i];
         var name = column.name;
-
+        
         $('<div>')
             .addClass("column-reordering-dialog-column")
             .text(name)
             .attr("column", name)
             .appendTo(this._elmts.columnContainer);
     }
-
+    
     dialog.find('.column-reordering-dialog-column-container')
         .sortable({
             connectWith: '.column-reordering-dialog-column-container'
@@ -87,14 +87,14 @@ ColumnReorderingDialog.prototype._dismiss = function() {
 
 ColumnReorderingDialog.prototype._commit = function() {
     var columnNames = this._elmts.columnContainer.find('div').map(function() { return this.getAttribute("column"); }).get();
-
+    
     Refine.postCoreProcess(
         "reorder-columns",
         null,
-        { "columnNames" : JSON.stringify(columnNames) },
+        { "columnNames" : JSON.stringify(columnNames) }, 
         { modelsChanged: true },
         { includeEngine: false }
     );
-
+    
     this._dismiss();
 };
