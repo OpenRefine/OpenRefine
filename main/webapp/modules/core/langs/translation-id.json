@@ -525,7 +525,7 @@
     "core-dialogs/expression": "Ekspresi",
     "core-dialogs/from": "Dari",
     "core-dialogs/returns": "mengembalikan",
-    "core-dialogs/record-fields": "satu atau beberapa baris dikelompokkan bersama membentuk sebuah record; objek memiliki beberapa field, lebih lengkap di <a href=\"https://github.com/OpenRefine/OpenRefine/wiki/Variables#record\">Records</a>",
+    "core-dialogs/record-fields": "satu atau beberapa baris dikelompokkan bersama membentuk sebuah record; objek memiliki beberapa field, lebih lengkap di <a href=\"https://docs.openrefine.org/manual/expressions#record\">Records</a>",
     "core-dialogs/row-index": "Indeks baris saat ini. Ini adalah shortcut untuk 'row.index'.",
     "clustering-distances/levenshtein": "levenshtein"
 }
