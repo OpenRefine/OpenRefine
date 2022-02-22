@@ -26,9 +26,6 @@
     <mac.dmg.path>${project.build.directory}/${project.build.finalName}-mac-${project.version}.dmg</mac.dmg.path>
     <mac.signing.identity>Code for Science and Society, Inc.</mac.signing.identity>
     <!-- Apple Notarization settings -->
-    <apple.notarization.username/> <!-- supplied on the command-line -->
-    <apple.notarization.password/> <!-- supplied on the command-line -->
-    <apple.notarization.team.id/> <!-- supplied on the command-line -->
     <apple.notarization.timeout>10m</apple.notarization.timeout>
 
     <windows.jre.path>${project.build.directory}/windows_jre</windows.jre.path>
