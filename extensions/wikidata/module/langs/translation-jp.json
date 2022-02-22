@@ -10,7 +10,7 @@
     "wikibase-extension/import-wikibase-schema": "スキーマのインポート",
     "wikibase-extension/export-schema": "スキーマのエクスポート",
     "wikibase-schema/dialog-header": "Wikidataにアライン",
-    "wikibase-schema/dialog-explanation": "現在は<a href=\"$1\" target=\"_blank\">$2</a>に対して作業しています。まず、$2 （例えば <a href=\"$3\" target=\"_blank\">$3</a>）にリンクされた照合サービスに対してデータを照合しなければなりません。以下のスキーマは、あなたの表データをどのように$2 の編集項目に変換するかを指定します。カラム名は入力boxにドラッグ＆ドロップできます。各行が一つづつ項目に変換されます。",
+    "wikibase-schema/dialog-explanation": "現在は<a href=\"$1\" target=\"_blank\">$2</a>に対して作業しています。まず、 $2 にリンクされた照合サービスに対してデータを照合しなければなりません。以下のスキーマは、あなたの表データをどのように $2 の編集項目に変換するかを指定します。カラム名は入力boxにドラッグ＆ドロップできます。各行が一つづつ項目に変換されます。",
     "wikibase-schema/preview-explanation": "このタブは、<a href=\"$2\" target=\"_blank\">$3</a>にアップロードされる変更の、（$1個のうち）最初の編集項目を表示します。ファセットを使って内容を点検できます。",
     "wikibase-schema/schema-tab-header": "スキーマ",
     "wikibase-schema/warnings-tab-header": "項目",
@@ -125,7 +125,7 @@
     "warnings-messages/non-printable-characters/title": "印刷できない文字が含まれています.",
     "warnings-messages/non-printable-characters/body": "<span class=\"wb-issue-preformat\">{example_string}</span>には印刷できない文字が含まれています.",
     "warnings-messages/invalid-identifier-space/title": "照合したセルの識別子が無効です.",
-    "warnings-messages/invalid-identifier-space/body": "<span class=\"wb-issue-preformat\">{example_cell}</span>のような照合セルは {wikibase_name}に照合先がないので無視されます.",
+    "warnings-messages/invalid-identifier-space/body": "<span class=\"wb-issue-preformat\">{example_cell}</span>のような照合セルは<span class=\"wb-issue-preformat\"> {wikibase_name}に</span>照合先がないので無視されます.",
     "warnings-messages/property-found-in-mainsnak/title": "{property_entity}がステートメントになります.",
     "warnings-messages/property-found-in-mainsnak/body": "{property_entity}をメインステートメントに使っていますが、そのようには意図されていません.",
     "warnings-messages/property-found-in-qualifier/title": "{property_entity}が数量演算子になります.",
@@ -235,7 +235,7 @@
     "warnings-messages/no-references-provided/title": "{property_entity} は少なくとも一つの参照が必要です.",
     "perform-wikibase-edits/maxlag-validation": "maxlagは正の整数でなければなりません",
     "perform-wikibase-edits/explain-maxlag": "正の整数でなければなりません。 <a href=\"https://www.mediawiki.org/wiki/Manual:Maxlag_parameter\" target=\"_blank\">maxlagの機能</a>に詳しくない場合、空白にしてください.",
-    "perform-wikibase-edits/maxlag-label": "maxlag",
+    "perform-wikibase-edits/maxlag-label": "最大待ち時間",
     "wikibase-addition/invalid-manifest": "無効なWikibase manifest.",
     "wikibase-addition/cancel": "中止",
     "wikibase-addition/add-wikibase": "Wikibaseを追加",
@@ -253,5 +253,7 @@
     "wikibase-extension/select-wikibase-instance": "Wikibaseインスタンスを選択",
     "wikibase-account/bot-passwords-alert": "メイン・パスワードを使用してログインしているようですが、ボット・パスワードの使用をお勧めします。その際は\"yourwikidatausername@yourbotname\"の形式のユーザー名を使用する必要があります。",
     "wikibase-account/explain-bot-passwords": "<a href=\"$1\" target=\"_blank\">ボット・パスワード</a>でログインすることをお勧めします。詳しくは、<a href=\"https://docs.openrefine.org/manual/wikidata#manage-wikidata-account\" target=\"_blank\">wiki page</a>を参照してください。",
-    "wikibase-account/logo-alt-text": "$1 ロゴ"
+    "wikibase-account/logo-alt-text": "$1 ロゴ",
+    "wikibase-schema/configure-statement": "設定",
+    "wikibase-schema/entity-or-reconciled-column": "エンティティを入力するか照合済みカラムをドラッグ"
 }

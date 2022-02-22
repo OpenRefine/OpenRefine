@@ -48,5 +48,6 @@
     "gdata-exporter/upload-google-drive-success": "Google Driveにアップロードされたプロジェクト ",
     "gdata-exporter/export-to-google-drive": "プロジェクトをGoogle Driveへ…",
     "gdata-import/re-sign-in-another": "別のアカウントでサインイン",
-    "gdata-import/please-signin": "サインしてGoogleのアクセス権限を認証してください"
+    "gdata-import/please-signin": "サインしてGoogleのアクセス権限を認証してください",
+    "gdata-parsing/disable-auto-preview": "プレビューを自動更新しない"
 }
