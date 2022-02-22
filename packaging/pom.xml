@@ -25,6 +25,11 @@
     <mac.icon.path>../graphics/icon/openrefine.icns</mac.icon.path>
     <mac.dmg.path>${project.build.directory}/${project.build.finalName}-mac-${project.version}.dmg</mac.dmg.path>
     <mac.signing.identity>Code for Science and Society, Inc.</mac.signing.identity>
+    <!-- Apple Notarization settings -->
+    <apple.notarization.username/> <!-- supplied on the command-line -->
+    <apple.notarization.password/> <!-- supplied on the command-line -->
+    <apple.notarization.team.id/> <!-- supplied on the command-line -->
+    <apple.notarization.timeout>10m</apple.notarization.timeout>
 
     <windows.jre.path>${project.build.directory}/windows_jre</windows.jre.path>
     <windows.jre.url>https://api.adoptium.net/v3/binary/latest/${embedded.jre.version}/ga/windows/x64/jre/hotspot/normal/eclipse?project=jdk</windows.jre.url>
@@ -285,13 +290,6 @@
             <configuration>
               <target name="generateDMG" description="Generate DMG">
 
-                <!-- Remove quarantine bit set recursively on JRE -->
-                <exec dir="${project.build.directory}" os="Mac OS X" executable="xattr">
-                    <arg line="-rd"/>
-                    <arg line="com.apple.quarantine"/>
-                    <arg line="&quot;${mac.build.directory}/OpenRefine.app/Contents/PlugIns&quot;"/>
-                </exec>
-
                 <!-- Remove manpages from JRE as they are not accessible anyway, and prevent us from codesigning -->
                 <exec dir="${project.build.directory}" os="Mac OS X" executable="rm">
                     <arg line="-r"/>
@@ -301,6 +299,13 @@
                 <exec dir="${project.build.directory}" os="Mac OS X" executable="rm">
                     <arg line="-r"/>
                     <arg line="&quot;${mac.build.directory}/OpenRefine.app/Contents/PlugIns/JRE/Contents/Home/jre/legal&quot;"/>
+                </exec>
+
+                <!-- Remove quarantine bit set recursively on JRE -->
+                <exec dir="${project.build.directory}" os="Mac OS X" executable="xattr">
+                    <arg line="-rd"/>
+                    <arg line="com.apple.quarantine"/>
+                    <arg line="&quot;${mac.build.directory}/OpenRefine.app/Contents/PlugIns&quot;"/>
                 </exec>
 
                 <!-- Codesign JRE -->
@@ -361,6 +366,28 @@
                     <arg value="${mac.build.directory}"/>
                 </exec>
 
+                <!-- Send DMG file to Apple's notarization service -->
+                <exec dir="${project.build.directory}" os="Mac OS X" executable="xcrun">
+                    <arg value="notarytool"/>
+                    <arg value="submit"/>
+                    <arg value="${mac.dmg.path}"/>
+                    <arg value="--apple-id"/>
+                    <arg value="${apple.notarization.username}"/>
+                    <arg value="--password"/>
+                    <arg value="${apple.notarization.password}"/>
+                    <arg value="--team-id"/>
+                    <arg value="${apple.notarization.team.id}"/>
+                    <arg value="--wait"/>
+                    <arg value="--timeout"/>
+                    <arg value="${apple.notarization.timeout}"/>
+                </exec>
+
+                <!-- Staple the notarization ticket to the DMG bundle -->
+                <exec dir="${project.build.directory}" os="Mac OS X" executable="xcrun">
+                    <arg value="stapler"/>
+                    <arg value="staple"/>
+                    <arg value="${mac.dmg.path}"/>
+                </exec>
               </target>
             </configuration>
           </execution>

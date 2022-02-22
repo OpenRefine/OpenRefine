@@ -211,9 +211,12 @@ jobs:
         P12_PASSPHRASE: ${{ secrets.APPLE_P12_PASSPHRASE }}
 
     - name: Build, test and package
-      run: mvn package
+      run: mvn package -Dapple.notarization.username=$APPLE_USERNAME -Dapple.notarization.password=$APPLE_PASSWORD -Dapple.notarization.team.id=$APPLE_TEAM_ID
       env:
         GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
+        APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+        APPLE_USERNAME: ${{ secrets.APPLE_USERNAME }}
+        APPLE_PASSWORD: ${{ secrets.APPLE_PASSWORD }}
 
     - name: Upload snapshot releases to OSSRH
       run: mvn deploy -DskipTests=true
