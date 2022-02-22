@@ -483,8 +483,8 @@
     "core-views/specify-sep": "Bitte geben Sie ein Trennzeichen an.",
     "core-views/valid-values": "Gültige Werte",
     "core-views/create-topic": "Neues Element anlegen",
-    "core-views/star-rows": "Sterne Zeilen",
-    "core-views/blank-down": "Leer nach unten",
+    "core-views/star-rows": "Zeilen sternen",
+    "core-views/blank-down": "Nach unten leeren",
     "core-views/spec-new-name": "Bitte geben Sie den Namen der neuen Schlüsselspalte an.",
     "core-views/clear-recon2": "Abgleichsbeurteilungsdaten in dieser Spalte für alle aktuellen gefilterten Zeilen leeren",
     "core-views/apply-to-cell": "Auf beurteilte Zellen anwenden",
@@ -685,7 +685,7 @@
     "core-views/filtered-cell2": "Suchen Sie nach einem Element, das allen gefilterten Zellen entspricht",
     "core-views/records": "Datensätze",
     "core-views/how-many-rows": "Wie viele Zeilen sind zu transponieren?",
-    "core-views/unflag-rows": "Zeilen demarkieren",
+    "core-views/unflag-rows": "Zeilen entmarkieren",
     "core-views/judg-actions2": "Aktionsart der Beurteilung",
     "core-views/move-to-beg": "Spalte an den Anfang verschieben",
     "core-views/what-separator": "Welches Trennzeichen trennt derzeit die Werte?",
@@ -721,7 +721,7 @@
     "core-index/license": "Lizenz:",
     "core-index/homepage": "Homepage:",
     "core-index/image": "Bild:",
-    "core-dialogs/record-fields": "eine oder mehrere Zeilen, die zu einem Datensatz zusammengefasst sind; das Objekt hat mehrere Felder, Details unter <a href=\"https://github.com/OpenRefine/OpenRefine/wiki/Variables#record\">Records</a>",
+    "core-dialogs/record-fields": "eine oder mehrere Zeilen, die zu einem Datensatz zusammengefasst sind; das Objekt hat mehrere Felder, Details unter <a href=\"https://docs.openrefine.org/manual/expressions#record\">Records</a>",
     "core-views/join-col": "Spalten verbinden",
     "core-views/column-join": "Spalten verbinden",
     "core-views/column-join-before-column-picker": "Wähle und ordne Spalten zum verbinden",
@@ -778,5 +778,6 @@
     "core-index-import/file-count": "$1 {{plural:$1|Datei|Dateien}}",
     "core-index-import/match-count": "$1 {{plural:$1|Übereinstimmung|Übereinstimmungen}}",
     "core-index-import/single-project": "OpenRefine kann nur dann mehrere Dateien gleichzeitig in dasselbe Projekt laden, wenn die ausgewählten Dateien dasselbe Dateiformat haben.",
-    "core-index/prefs-loading-failed": "Laden der Einstellungen fehlgeschlagen."
+    "core-index/prefs-loading-failed": "Laden der Einstellungen fehlgeschlagen.",
+    "core-views/edit-all-columns": "Alle Spalten bearbeiten"
 }
