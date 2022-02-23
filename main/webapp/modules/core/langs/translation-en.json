@@ -205,6 +205,8 @@
     "core-dialogs/reorder-column": "Re-order / Remove columns",
     "core-dialogs/drag-column": "Drag columns to re-order",
     "core-dialogs/drop-column": "Drop columns here to remove",
+    "core-dialogs/add-all": "Add all",
+    "core-dialogs/remove-all": "Remove all",
     "core-dialogs/template-export": "Templating export",
     "core-dialogs/template-prefix": "Prefix",
     "core-dialogs/template-rowt": "Row template",
