@@ -735,7 +735,7 @@
     "core-views/column-join-copy-to-new-column": "Ecrire le résultat dans une nouvelle colonne nommée…",
     "core-views/column-join-delete-joined-columns": "Supprimer les colonnes jointes.",
     "core-views/column-join-dont-escape": "Dans les séparateurs et les substituts de valeurs nulles, utiliser \\n pour une nouvelle ligne, \\t pour une tabulation, \\\\n pour \\n, \\\\t pour \\t.",
-    "core-dialogs/record-fields": "Une ou plusieurs lignes regroupées pour former une entrée ; l'objet a plus de champs, voir les détails sur <a href=\"https://docs.openrefine.org/manual/expressions#variables\">Variables</a>",
+    "core-dialogs/record-fields": "Une ou plusieurs lignes regroupées pour former une entrée ; l'objet a plus de champs, voir les détails sur <a href=\"https://docs.openrefine.org/manual/expressions#record\">Records</a>",
     "core-views/blank-values": "Valeurs vides par colonne",
     "core-views/blank-records": "Entrées vides par colonne",
     "core-views/add-id-column": "Ajouter une colonne d'identifiants d'entités",
@@ -784,5 +784,9 @@
     "core-views/warning": "Attention",
     "core-views/warn-of-pending-sort": "Il y a un tri en attente. Les données visibles à l'écran peuvent ne pas refléter les données sur lesquelles cette opération agira.",
     "core-index-parser/disable-auto-preview": "Désactiver l'aperçu automatique",
-    "core-dialogs/missing-bad-template": "Modèle manquant ou incorrect"
+    "core-dialogs/missing-bad-template": "Modèle manquant ou incorrect",
+    "core-views/expand-left": "Afficher toutes les colonnes à gauche",
+    "core-views/expand-right": "Afficher toutes les colonnes à droite",
+    "core-dialogs/add-all": "Ajouter toutes",
+    "core-dialogs/remove-all": "Supprimer toutes"
 }
