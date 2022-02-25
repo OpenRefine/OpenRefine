@@ -320,7 +320,7 @@
                 </exec>
 
                 <!-- Codesign jars with native code in them -->
-                <exec executable="/bin/bash" os="Mac OS X" dir="${mac.build.directory}">
+                <exec executable="/bin/bash" os="Mac OS X" dir="${project.build.directory}/${mac.build.directory}">
                     <arg value="${basedir}/apple_certs/codesign.sh" />
                     <arg value="OpenRefine.app" />
                     <arg value="${mac.signing.identity}" />
