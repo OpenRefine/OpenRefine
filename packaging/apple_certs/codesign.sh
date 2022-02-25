@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Taken from https://github.com/gephi/gephi/blob/6ac653758063f74c56a7b93db800978ead3ea95d/modules/application/src/main/app-resources/codesign.sh
+# Adapted from https://github.com/gephi/gephi/blob/6ac653758063f74c56a7b93db800978ead3ea95d/modules/application/src/main/app-resources/codesign.sh
 # Author: Mathieu Bastian
 # License: https://opensource.org/licenses/CDDL-1.0
 
@@ -25,7 +25,7 @@ function codesignJarsInDir {
         # Codesign all all relevant files
         while IFS= read -r -d $'\0' libfile; do
             echo "Codesigning file $(basename "${libfile}")"
-            codesign --verbose --entitlements src/main/resources/Entitlements.plist --deep --force --timestamp --sign "$2" --options runtime $libfile
+            codesign --verbose --entitlements "$3" --deep --force --timestamp --sign "$2" --options runtime $libfile
         done < <(find -E "$folder" -regex '.*\.(dylib|jnilib)' -print0)
 
         # Create updated JAR
@@ -41,5 +41,5 @@ function codesignJarsInDir {
 
 
 for dir in "${1}" ; do
-  codesignJarsInDir "$dir" "${2}"
+  codesignJarsInDir "$dir" "${2}" "${3}"
 done

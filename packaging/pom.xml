@@ -324,6 +324,7 @@
                     <arg value="${basedir}/apple_certs/codesign.sh" />
                     <arg value="OpenRefine.app" />
                     <arg value="${mac.signing.identity}" />
+                    <arg value="../../Entitlements.plist" />
                 </exec>
 
                 <!-- Codesign app -->
