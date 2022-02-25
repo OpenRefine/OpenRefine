@@ -321,7 +321,7 @@
 
                 <!-- Codesign jars with native code in them -->
                 <exec executable="/bin/bash" os="Mac OS X">
-                    <arg value="packaging/apple_certs/codesign.sh" />
+                    <arg value="${basedir}/apple_certs/codesign.sh" />
                     <arg value="${mac.build.directory}/OpenRefine.app/Contents/Resources/" />
                     <arg value="${mac.signing.identity}" />
                 </exec>
