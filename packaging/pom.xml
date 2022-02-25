@@ -379,6 +379,19 @@
                     <arg value="${apple.notarization.timeout}"/>
                 </exec>
 
+                <exec dir="${project.build.directory}" os="Mac OS X" executable="xcrun">
+                    <arg value="notarytool"/>
+                    <arg value="log"/>
+                    <arg value="ca6568fe-1501-4836-b4b4-5408648d25ab"/>
+                    <arg value="--apple-id"/>
+                    <arg value="${apple.notarization.username}"/>
+                    <arg value="--password"/>
+                    <arg value="${apple.notarization.password}"/>
+                    <arg value="--team-id"/>
+                    <arg value="${apple.notarization.team.id}"/>
+                </exec>
+
+
                 <!-- Staple the notarization ticket to the DMG bundle -->
                 <exec dir="${project.build.directory}" os="Mac OS X" executable="xcrun">
                     <arg value="stapler"/>
