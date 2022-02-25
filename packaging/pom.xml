@@ -387,10 +387,11 @@
                     <arg value="${apple.notarization.timeout}"/>
                 </exec>
 
+                <!-- TODO: remove this, used for debugging purposes to check why the notarization failed -->
                 <exec dir="${project.build.directory}" os="Mac OS X" executable="xcrun">
                     <arg value="notarytool"/>
                     <arg value="log"/>
-                    <arg value="ca6568fe-1501-4836-b4b4-5408648d25ab"/>
+                    <arg value="e77483e9-2987-4348-9afc-64a0fecdd691"/>
                     <arg value="--apple-id"/>
                     <arg value="${apple.notarization.username}"/>
                     <arg value="--password"/>
