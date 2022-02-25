@@ -105,6 +105,7 @@ public class Refine {
             host = "*";
         }
 
+        System.setProperty("refine.display.new.version.notice", Configurations.get("refine.display.new.version.notice","true"));
         Refine refine = new Refine();
         
         refine.init(args);

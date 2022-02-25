@@ -319,6 +319,14 @@
                     <arg value="${mac.build.directory}/OpenRefine.app/Contents/PlugIns/JRE/Contents/Home/jre/lib/jli/libjli.dylib" />
                 </exec>
 
+                <!-- Codesign jars with native code in them -->
+                <exec executable="/bin/bash" os="Mac OS X" dir="${project.build.directory}/${mac.build.directory}">
+                    <arg value="${basedir}/apple_certs/codesign.sh" />
+                    <arg value="OpenRefine.app" />
+                    <arg value="${mac.signing.identity}" />
+                    <arg value="../../Entitlements.plist" />
+                </exec>
+
                 <!-- Codesign app -->
                 <exec dir="${project.build.directory}" os="Mac OS X" executable="codesign">
                     <arg value="--entitlements" />
@@ -378,6 +386,20 @@
                     <arg value="--timeout"/>
                     <arg value="${apple.notarization.timeout}"/>
                 </exec>
+
+                <!-- TODO: remove this, used for debugging purposes to check why the notarization failed -->
+                <exec dir="${project.build.directory}" os="Mac OS X" executable="xcrun">
+                    <arg value="notarytool"/>
+                    <arg value="log"/>
+                    <arg value="e77483e9-2987-4348-9afc-64a0fecdd691"/>
+                    <arg value="--apple-id"/>
+                    <arg value="${apple.notarization.username}"/>
+                    <arg value="--password"/>
+                    <arg value="${apple.notarization.password}"/>
+                    <arg value="--team-id"/>
+                    <arg value="${apple.notarization.team.id}"/>
+                </exec>
+
 
                 <!-- Staple the notarization ticket to the DMG bundle -->
                 <exec dir="${project.build.directory}" os="Mac OS X" executable="xcrun">
