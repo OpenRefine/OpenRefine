@@ -426,6 +426,7 @@
               <dontWrapJar>true</dontWrapJar>
               <saveConfig>true</saveConfig>
               <icon>openrefine.ico</icon>
+              <downloadUrl>https://docs.openrefine.org/manual/installing#java</downloadUrl>
               <classPath>
                 <mainClass>com.google.refine.Refine</mainClass>
                 <jarLocation>server/target/lib/</jarLocation>
