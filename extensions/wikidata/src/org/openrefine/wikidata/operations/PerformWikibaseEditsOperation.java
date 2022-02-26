@@ -38,6 +38,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.openrefine.wikidata.commands.ConnectionManager;
 import org.openrefine.wikidata.editing.EditBatchProcessor;
 import org.openrefine.wikidata.editing.NewEntityLibrary;
+import org.openrefine.wikidata.manifests.Manifest;
 import org.openrefine.wikidata.schema.WikibaseSchema;
 import org.openrefine.wikidata.updates.TermedStatementEntityEdit;
 import org.slf4j.Logger;
@@ -77,6 +78,12 @@ public class PerformWikibaseEditsOperation extends EngineDependentOperation {
 
     @JsonProperty("editGroupsUrlSchema")
     private String editGroupsUrlSchema;
+    
+    @JsonProperty("maxEditsPerMinute")
+    private int maxEditsPerMinute;
+    
+    @JsonProperty("tag")
+    private String tagTemplate;
 
     @JsonCreator
     public PerformWikibaseEditsOperation(
@@ -87,7 +94,11 @@ public class PerformWikibaseEditsOperation extends EngineDependentOperation {
             @JsonProperty("maxlag")
             Integer maxlag,
             @JsonProperty("editGroupsUrlSchema")
-            String editGroupsUrlSchema) {
+            String editGroupsUrlSchema,
+            @JsonProperty("maxEditsPerMinute")
+    		Integer maxEditsPerMinute,
+    		@JsonProperty("tag")
+    		String tag) {
         super(engineConfig);
         Validate.notNull(summary, "An edit summary must be provided.");
         Validate.notEmpty(summary, "An edit summary must be provided.");
@@ -98,6 +109,8 @@ public class PerformWikibaseEditsOperation extends EngineDependentOperation {
             maxlag = 5;
         }
         this.maxlag = maxlag;
+        this.maxEditsPerMinute = maxEditsPerMinute == null ? Manifest.DEFAULT_MAX_EDITS_PER_MINUTE : maxEditsPerMinute;
+        this.tagTemplate = tag == null ? Manifest.DEFAULT_TAG_TEMPLATE : tag;
         // a fallback to Wikidata for backwards compatibility is done later on
         this.editGroupsUrlSchema = editGroupsUrlSchema;
     }
@@ -185,11 +198,13 @@ public class PerformWikibaseEditsOperation extends EngineDependentOperation {
             this._engine = engine;
             this._schema = (WikibaseSchema) project.overlayModels.get("wikibaseSchema");
             this._summary = summary;
-            String tag = "openrefine";
-            Pattern pattern = Pattern.compile("^(\\d+\\.\\d+).*$");
-            Matcher matcher = pattern.matcher(RefineServlet.VERSION);
-            if (matcher.matches()) {
-                tag += "-"+matcher.group(1);
+            String tag = tagTemplate;
+            if (tag.contains("${version}")) {
+	            Pattern pattern = Pattern.compile("^(\\d+\\.\\d+).*$");
+	            Matcher matcher = pattern.matcher(RefineServlet.VERSION);
+	            if (matcher.matches()) {
+	                tag = tag.replace("${version}", matcher.group(1));
+	            }
             }
             this._tags = Arrays.asList(tag);
             this._historyEntryID = HistoryEntry.allocateID();
@@ -236,7 +251,7 @@ public class PerformWikibaseEditsOperation extends EngineDependentOperation {
             // Prepare the edits
             NewEntityLibrary newEntityLibrary = new NewEntityLibrary();
             EditBatchProcessor processor = new EditBatchProcessor(wbdf, wbde, entityDocuments, newEntityLibrary, summary,
-                    maxlag, _tags, 50);
+                    maxlag, _tags, 50, maxEditsPerMinute);
 
             // Perform edits
             logger.info("Performing edits");

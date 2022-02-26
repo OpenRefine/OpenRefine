@@ -6,8 +6,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import org.wikidata.wdtk.datamodel.interfaces.EntityIdValue;
-
 import com.fasterxml.jackson.databind.JsonNode;
 
 public class ManifestV1 implements Manifest {
@@ -21,6 +19,8 @@ public class ManifestV1 implements Manifest {
     private String mediaWikiApiEndpoint;
     private String reconServiceEndpoint;
     private String editGroupsUrlSchema;
+    private String tagTemplate;
+    private int maxEditsPerMinute;
 
     private Map<String, String> constraintsRelatedIdMap = new HashMap<>();
 
@@ -34,6 +34,8 @@ public class ManifestV1 implements Manifest {
         JsonNode wikibase = manifest.path("wikibase");
         siteIri = wikibase.path("site_iri").textValue();
         maxlag = wikibase.path("maxlag").intValue();
+        tagTemplate = wikibase.path("tag").isTextual() ? wikibase.path("tag").asText() : Manifest.DEFAULT_TAG_TEMPLATE;
+        maxEditsPerMinute = wikibase.path("max_edits_per_minute").isNumber() ? wikibase.path("max_edits_per_minute").intValue() : Manifest.DEFAULT_MAX_EDITS_PER_MINUTE;
         JsonNode properties = wikibase.path("properties");
         instanceOfPid = properties.path("instance_of").textValue();
         subclassOfPid = properties.path("subclass_of").textValue();
@@ -128,6 +130,16 @@ public class ManifestV1 implements Manifest {
 	@Override
 	public List<String> getAvailableEntityTypes() {
 		return Arrays.asList(ITEM_TYPE, PROPERTY_TYPE);
+	}
+
+	@Override
+	public String getTagTemplate() {
+		return tagTemplate;
+	}
+
+	@Override
+	public int getMaxEditsPerMinute() {
+		return maxEditsPerMinute;
 	}
 
 }

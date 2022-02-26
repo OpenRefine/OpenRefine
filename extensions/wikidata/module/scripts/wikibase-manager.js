@@ -48,6 +48,16 @@ WikibaseManager.getSelectedWikibaseMaxlag = function() {
   return WikibaseManager.getSelectedWikibase().wikibase.maxlag;
 };
 
+WikibaseManager.getSelectedWikibaseTagTemplate = function() {
+  let tag = WikibaseManager.getSelectedWikibase().wikibase.tag;
+  return tag === undefined ? 'openrefine-${version}' : tag;
+};
+
+WikibaseManager.getSelectedWikibaseMaxEditsPerMinute = function() {
+  let max_edits = WikibaseManager.getSelectedWikibase().wikibase.max_edits_per_minute;
+  return max_edits === undefined ? 60 : max_edits;
+};
+
 WikibaseManager.getSelectedWikibaseOAuth = function() {
   return WikibaseManager.getSelectedWikibase().oauth;
 };
