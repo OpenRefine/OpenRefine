@@ -27,6 +27,7 @@ import java.io.IOException;
 import java.io.LineNumberReader;
 import java.io.Writer;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Properties;
 import java.util.Random;
@@ -206,7 +207,7 @@ public class PerformWikibaseEditsOperation extends EngineDependentOperation {
 	                tag = tag.replace("${version}", matcher.group(1));
 	            }
             }
-            this._tags = Arrays.asList(tag);
+            this._tags = tag.isEmpty() ? Collections.emptyList() : Collections.singletonList(tag);
             this._historyEntryID = HistoryEntry.allocateID();
             if (editGroupsUrlSchema == null &&
                     ApiConnection.URL_WIKIDATA_API.equals(_schema.getMediaWikiApiEndpoint())) {
