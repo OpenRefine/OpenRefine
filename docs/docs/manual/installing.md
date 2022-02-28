@@ -18,7 +18,7 @@ OpenRefine is designed to work with **Windows**, **Mac**, and **Linux** operatin
 
 Java must be installed and configured on your computer to run OpenRefine. The Mac version of OpenRefine includes Java; new in OpenRefine 3.4, there is also a Windows package with Java included.
 
-If you want to install Java yourself, you can install a pre-built Java Runtime Environment (JRE) from  [Adoptium.net](https://adoptium.net/releases.html). Or, you can install the Java Development Kit (JDK) from [Java.net](https://jdk.java.net/). Please note that OpenRefine works with Java 8 to Java 17 for OpenRefine 3.5.
+If you want to install Java yourself, you can install a pre-built Java Runtime Environment (JRE) from  [Adoptium.net](https://adoptium.net/releases.html). Please note that OpenRefine works with Java 11 to Java 17 for OpenRefine 3.6.
 
 If you install and start OpenRefine on a Windows computer without Java, it will automatically open up a browser window to this page.
 
