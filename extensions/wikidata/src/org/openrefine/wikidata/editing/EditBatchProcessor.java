@@ -28,8 +28,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang.NotImplementedException;
@@ -39,20 +37,11 @@ import org.openrefine.wikidata.updates.TermedStatementEntityEdit;
 import org.openrefine.wikidata.updates.scheduler.WikibaseAPIUpdateScheduler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.wikidata.wdtk.datamodel.helpers.Datamodel;
-import org.wikidata.wdtk.datamodel.interfaces.AliasUpdate;
 import org.wikidata.wdtk.datamodel.interfaces.EntityDocument;
-import org.wikidata.wdtk.datamodel.interfaces.EntityIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.EntityUpdate;
 import org.wikidata.wdtk.datamodel.interfaces.ItemDocument;
 import org.wikidata.wdtk.datamodel.interfaces.ItemIdValue;
-import org.wikidata.wdtk.datamodel.interfaces.MediaInfoDocument;
 import org.wikidata.wdtk.datamodel.interfaces.MediaInfoIdValue;
-import org.wikidata.wdtk.datamodel.interfaces.MediaInfoUpdate;
-import org.wikidata.wdtk.datamodel.interfaces.MonolingualTextValue;
-import org.wikidata.wdtk.datamodel.interfaces.StatementUpdate;
-import org.wikidata.wdtk.datamodel.interfaces.TermUpdate;
-import org.wikidata.wdtk.datamodel.interfaces.TermedStatementDocument;
 import org.wikidata.wdtk.wikibaseapi.WikibaseDataEditor;
 import org.wikidata.wdtk.wikibaseapi.WikibaseDataFetcher;
 import org.wikidata.wdtk.wikibaseapi.apierrors.MediaWikiApiErrorException;
@@ -102,17 +91,19 @@ public class EditBatchProcessor {
      * @param batchSize
      *            the number of entities that should be retrieved in one go from the
      *            API
+     * @param maxEditsPerMinute
+     *            the maximum number of edits per minute to do
      */
     public EditBatchProcessor(WikibaseDataFetcher fetcher, WikibaseDataEditor editor, List<TermedStatementEntityEdit> updates,
-            NewEntityLibrary library, String summary, int maxLag, List<String> tags, int batchSize) {
+            NewEntityLibrary library, String summary, int maxLag, List<String> tags, int batchSize, int maxEditsPerMinute) {
         this.fetcher = fetcher;
         this.editor = editor;
         editor.setEditAsBot(true); // this will not do anything if the user does not
         // have a bot flag, and this is generally wanted if they have one.
 
-        // edit at 60 edits/min by default. If Wikidata is overloaded
+        // edit at 60 edits/min by default. If the Wikibase is overloaded
         // it will slow us down via the maxlag mechanism.
-        editor.setAverageTimePerEdit(1000);
+        editor.setAverageTimePerEdit(maxEditsPerMinute <= 0 ? 0 : (int)(1000*(maxEditsPerMinute/60.)));
         // set maxlag based on preference store
         editor.setMaxLag(maxLag);
 

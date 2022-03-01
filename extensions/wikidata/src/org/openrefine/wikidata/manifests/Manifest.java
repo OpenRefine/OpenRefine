@@ -14,6 +14,8 @@ public interface Manifest {
 	public static final String ITEM_TYPE = "item";
 	public static final String PROPERTY_TYPE = "property";
 	public static final String MEDIAINFO_TYPE = "mediainfo";
+	public static final int DEFAULT_MAX_EDITS_PER_MINUTE = 60;
+	public static final String DEFAULT_TAG_TEMPLATE = "openrefine-${version}";
 
 	/**
 	 * The version of the manifest object, which determines its JSON format.
@@ -34,6 +36,19 @@ public interface Manifest {
      * The recommended `maxlag` value for edits on this instance.
      */
     int getMaxlag();
+    
+    /**
+     * The tag to apply to edits made from OpenRefine.
+     * If the string contains the ${version} string, it should be replaced
+     * by the major.minor OpenRefine version.
+     */
+    String getTagTemplate();
+    
+    /**
+     * The maximum number of edits to do per minute on this Wikibase instance.
+     * Set to zero to disable any throttling.
+     */
+    int getMaxEditsPerMinute();
 
     /**
      * The property id used to link an entity to the entity representing its type (class).

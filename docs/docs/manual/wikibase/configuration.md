@@ -38,6 +38,8 @@ Here is the manifest of Wikimedia Commons:
   "wikibase": {
     "site_iri": "https://commons.wikimedia.org/entity/",
     "maxlag": 5,
+    "max_edits_per_minute": 60,
+    "tag": "openrefine-${version}",
     "properties": {
       "instance_of": "P31",
       "subclass_of": "P279"
@@ -112,6 +114,14 @@ The IRI of the Wikibase, in the form  'http://foo.bar/entity/'. This should matc
 ##### maxlag {#maxlag}
 
 Maxlag is a parameter that controls how aggressive a mass-editing tool should be when uploading edits to a Wikibase instance. See https://www.mediawiki.org/wiki/Manual:Maxlag_parameter for more details. The value should be adapted according to the actual traffic of the Wikibase.
+
+##### tag {#tag}
+
+Specifies a tag which should be applied to all edits made via the tool. The <code>${version}</code> variable will be replaced by the "major.minor" OpenRefine version before making edits.
+
+##### max_edits_per_minute {#max_edits_per_minute}
+
+Determines the editing speed expressed as the maximum number of edits to perform per minute, as an integer. The editing can still be slower than this rate if the performance of the Wikibase instance degrades. If set to 0, this will disable this cap.
 
 ##### properties {#properties}
 
