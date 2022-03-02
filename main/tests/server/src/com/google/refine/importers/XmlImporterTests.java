@@ -23,8 +23,8 @@ LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
 A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
 OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
 SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
-LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,           
-DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY           
+LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
 THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
@@ -32,6 +32,9 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
 package com.google.refine.importers;
+
+import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertNotNull;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -103,6 +106,32 @@ public class XmlImporterTests extends ImporterTest {
         Assert.assertNotNull(row);
         Assert.assertNotNull(row.getCell(1));
         Assert.assertEquals(row.getCell(1).value, "Author 1, The");
+    }
+
+    @Test
+    public void setsProjectMetadata() throws IOException {
+        // Setup a file record to import
+        FileUtils.writeStringToFile(new File(job.getRawDataDir(), "test-file.xml"), getSample(), "UTF-8");
+        List<ObjectNode> fileRecords = new ArrayList<>();
+        fileRecords.add(ParsingUtilities.evaluateJsonStringToObjectNode(
+                "{\"location\": \"test-file.xml\",\"fileName\": \"test-file.xml\"}"));
+
+        // We need a real ObjectNode to support the deepCopy() method
+        ObjectNode options = ParsingUtilities.mapper.createObjectNode();
+
+        SUT.parse(
+                project,
+                metadata,
+                job,
+                fileRecords,
+                "text/json",
+                -1,
+                options,
+                new ArrayList<Exception>());
+
+        assertNotNull(metadata.getModified());
+        assertNotNull(metadata.getCreated());
+        assertNotEquals(metadata.getImportOptionMetadata().size(), 0);
     }
 
     @Test

@@ -23,8 +23,8 @@ LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
 A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
 OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
 SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
-LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,           
-DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY           
+LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
 THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
@@ -62,44 +62,44 @@ abstract public class TreeImportingParserBase extends ImportingParserBase {
     protected TreeImportingParserBase(final boolean useInputStream) {
         super(useInputStream);
     }
-    
+
     @Override
     public ObjectNode createParserUIInitializationData(ImportingJob job,
             List<ObjectNode> fileRecords, String format) {
         ObjectNode options = super.createParserUIInitializationData(job, fileRecords, format);
-        
+
         JSONUtilities.safePut(options, "trimStrings", false);
         JSONUtilities.safePut(options, "guessCellValueTypes", false);
         JSONUtilities.safePut(options, "storeEmptyStrings", true);
         return options;
     }
 
-    
+
     @Override
     public void parse(Project project, ProjectMetadata metadata,
             ImportingJob job, List<ObjectNode> fileRecords, String format,
             int limit, ObjectNode options, List<Exception> exceptions) {
-        
+
         MultiFileReadingProgress progress = ImporterUtilities.createMultiFileReadingProgress(job, fileRecords);
         ImportColumnGroup rootColumnGroup = new ImportColumnGroup();
-        
+
         for (ObjectNode fileRecord : fileRecords) {
             try {
                 parseOneFile(project, metadata, job, fileRecord, rootColumnGroup, limit, options, exceptions, progress);
             } catch (IOException e) {
                 exceptions.add(e);
             }
-            
+
             if (limit > 0 && project.rows.size() >= limit) {
                 break;
             }
         }
-        
+
         rootColumnGroup.tabulate();
         XmlImportUtilities.createColumnsFromImport(project, rootColumnGroup);
         project.columnModel.update();
     }
-    
+
     public void parseOneFile(
         Project project,
         ProjectMetadata metadata,
@@ -117,7 +117,7 @@ abstract public class TreeImportingParserBase extends ImportingParserBase {
         int filenameColumnIndex = -1;
         int archiveColumnIndex = -1;
         int startingRowCount = project.rows.size();
-        
+
         progress.startFile(fileSource);
         try {
             InputStream inputStream = ImporterUtilities.openAndTrackFile(fileSource, file, progress);
@@ -139,7 +139,7 @@ abstract public class TreeImportingParserBase extends ImportingParserBase {
                     if (commonEncoding != null && commonEncoding.isEmpty()) {
                         commonEncoding = null;
                     }
-                    
+
                     Reader reader = ImportingUtilities.getFileReader(file, fileRecord, commonEncoding);
                     parseOneFile(project, metadata, job, fileSource, reader,
                             rootColumnGroup, limit, options, exceptions);
@@ -156,6 +156,13 @@ abstract public class TreeImportingParserBase extends ImportingParserBase {
                         row.setCell(filenameColumnIndex, new Cell(fileSource, null));
                     }
                 }
+
+                ObjectNode fileOptions = options.deepCopy();
+                JSONUtilities.safePut(fileOptions, "fileSource", fileSource);
+                JSONUtilities.safePut(fileOptions, "archiveFileName", archiveFileName);
+                // TODO: This will save a separate copy for each file in the import, but they're
+                // going to be mostly the same
+                metadata.appendImportOptionMetadata(fileOptions);
             } finally {
                 inputStream.close();
             }
@@ -163,10 +170,10 @@ abstract public class TreeImportingParserBase extends ImportingParserBase {
             progress.endFile(fileSource, file.length());
         }
     }
-    
+
     /**
      * Parse a single file from a Reader.
-     * 
+     *
      * The default implementation just throws a NotImplementedException.
      * Override in subclasses to implement.
      */
@@ -183,10 +190,10 @@ abstract public class TreeImportingParserBase extends ImportingParserBase {
     ) {
         throw new NotImplementedException();
     }
-    
+
     /**
      * Parse a single file from an InputStream.
-     * 
+     *
      * The default implementation just throws a NotImplementedException.
      * Override in subclasses to implement.
      */
@@ -203,10 +210,10 @@ abstract public class TreeImportingParserBase extends ImportingParserBase {
     ) {
         throw new NotImplementedException();
     }
-    
+
     /**
      * Parse a single file from a TreeReader.
-     * 
+     *
      */
     protected void parseOneFile(
         Project project,
