@@ -50,6 +50,14 @@ const WikibaseManifestSchemaV1 = {
           "type": "integer",
           "description": "The default maxlag of this Wikibase. For Wikidata, the default value is 5 (seconds)"
         },
+        "tag": {
+          "type": "string",
+          "description": "The tag to apply to edits made to the Wikibase instance. If the ${version} string is included, it will be replaced by the major.minor version of OpenRefine used to make the edit"
+        },
+        "max_edits_per_minute": {
+          "type": "integer",
+          "description": "The maximum number of edits to do per minute, on this Wikibase instance. By default, 60."
+        },
         "properties": {
           "type": "object",
           "properties": {
