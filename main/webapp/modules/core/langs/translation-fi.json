@@ -100,7 +100,7 @@
     "core-index-open/open-proj": "Avoin projekti",
     "core-index-open/name": "Nimi",
     "core-index-open/rename": "Nimeä uudelleen",
-    "core-about/definition": "OpenRefine on tehokas työkalu sotkuisten tietojen käsittelyyn. Sen avulla voit parantaa tietojen yhdenmukaisuutta, yhdistää ne Wikidatan kaltaisiin tietorekistereihin, täydentää niitä muista lähteistä saaduilla tiedoilla, muuntaa ne eri muotoihin, jotta muut työkalut voivat käyttää niitä, ja siirtää ne takaisin alkuperäisiin lähteisiin. OpenRefine ei ole verkkopalvelu vaan työpöytäsovellus, joka toimii omalla tietokoneellasi, joten voit käsitellä arkaluonteisia tietoja yksityisesti.",
+    "core-about/definition": "OpenRefine on sähkötyökalu sotkuisten tietojen käsittelyyn. Käytä sitä tietojen johdonmukaisuuden parantamiseen, linkitä se tietorekistereihin, kuten Wikidataan, täydennä sitä muista lähteistä peräisin olevilla tiedoilla, muunna dataa eri muotoihin muiden työkalujen käyttöä varten ja lähetä tietoja takaisin lähteisiinsä. OpenRefine ei ole verkkopalvelu, vaan työpöytäsovellus, joka toimii omalla tietokoneellasi, joten voit käsitellä arkaluonteisia tietoja yksityisesti.",
     "core-index/sample-data": "esimerkkitietojoukot",
     "core-index/tags": "Tagit:",
     "core-index/homepage": "Kotisivu:",
@@ -243,5 +243,15 @@
     "core-dialogs/help": "Ohje",
     "core-dialogs/help/grelreference": "Katso lisätietoja OpenRefine User Manualin GREL-viitteestä",
     "core-dialogs/opt-code-applied": "Vaihtoehtokoodia sovellettu onnistuneesti.",
-    "core-dialogs/error-apply-code": "Virhe optiokoodin soveltamisessa"
+    "core-dialogs/error-apply-code": "Virhe optiokoodin soveltamisessa",
+    "core-dialogs/add-all": "Lisää kaikki",
+    "core-dialogs/remove-all": "Poista kaikki",
+    "core-dialogs/sql-exporter": "SQL viejä",
+    "core-dialogs/custom-tab-exp": "Mukautetun taulukon viejä",
+    "core-dialogs/select-columns-dialog": "Valitse sarakkeet",
+    "core-dialogs/unstar-expression": "Poista tähti?",
+    "core-dialogs/content": "Sisältö",
+    "core-dialogs/download": "Lataa",
+    "core-dialogs/upload": "Lähetä",
+    "core-dialogs/opt-code": "Optiokoodi"
 }
