@@ -391,7 +391,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
   MenuSystem.appendTo(menu, [ "core/edit-cells" ], [
     {
       id: "core/text-transform",
-      label: $.i18n('core-views/transform')+"...",
+      label: $.i18n('core-views/transform'),
       click: function() { doTextTransformPrompt(); }
     },
     {
@@ -492,18 +492,18 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
     {},
     {
       id: "core/split-multi-valued-cells",
-      label: $.i18n('core-views/split-cells')+"...",
+      label: $.i18n('core-views/split-cells'),
       click: doSplitMultiValueCells
     },
     {
       id: "core/join-multi-valued-cells",
-      label: $.i18n('core-views/join-cells')+"...",
+      label: $.i18n('core-views/join-cells'),
       click: doJoinMultiValueCells
     },
     {},
     {
       id: "core/cluster",
-      label: $.i18n('core-views/cluster-edit')+"...",
+      label: $.i18n('core-views/cluster-edit'),
       click: function() { new ClusteringDialog(column.name, "value"); }
     },
     {},
@@ -736,18 +736,18 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
   MenuSystem.appendTo(menu, [ "core/transpose" ], [
       {
         id: "core/transpose-columns-into-rows",
-        label: $.i18n('core-views/transp-cell-row')+"...",
+        label: $.i18n('core-views/transp-cell-row'),
         click: doTransposeColumnsIntoRows
       },
       {
         id: "core/transpose-rows-into-columns",
-        label: $.i18n('core-views/transp-cell-col')+"...",
+        label: $.i18n('core-views/transp-cell-col'),
         click: doTransposeRowsIntoColumns
       },
       {},
       {
         id: "core/key-value-columnize",
-        label: $.i18n('core-views/columnize-col')+"...",
+        label: $.i18n('core-views/columnize-col'),
         click: doKeyValueColumnize
       }
     ]

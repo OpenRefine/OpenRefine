@@ -1,9 +1,9 @@
 {
     "wikibase-extension/menu-label": "Wikidata",
     "wikibase-extension/edit-wikibase-schema": "Rediger Wikidata-skjema",
-    "wikibase-extension/import-wikibase-schema": "Importer skjema",
-    "wikibase-extension/manage-wikibase-account": "Behandle Wikidata-konto",
-    "wikibase-extension/perform-edits-on-wikibase": "Last opp redigeringer til Wikidata",
+    "wikibase-extension/import-wikibase-schema": "Importer skjema…",
+    "wikibase-extension/manage-wikibase-account": "Behandle Wikidata-konto…",
+    "wikibase-extension/perform-edits-on-wikibase": "Last opp redigeringer til Wikidata…",
     "wikibase-extension/export-to-qs": "Eksporter til QuickStatements",
     "wikibase-extension/export-schema": "Eksporter skjema",
     "wikibase-extension/quickstatements-export-name": "QuickStatements",

@@ -1,8 +1,8 @@
 {
     "wikibase-extension/menu-label": "উইকিউপাত্ত",
     "wikibase-extension/edit-wikibase-schema": "উইকিউপাত্ত স্কিমা সম্পাদনা করুন",
-    "wikibase-extension/import-wikibase-schema": "স্কিমা আমদানি করুন",
-    "wikibase-extension/perform-edits-on-wikibase": "উইকিউপাত্তে সম্পাদনা আপলোড করুন",
+    "wikibase-extension/import-wikibase-schema": "স্কিমা আমদানি করুন…",
+    "wikibase-extension/perform-edits-on-wikibase": "উইকিউপাত্তে সম্পাদনা আপলোড করুন…",
     "wikibase-extension/export-to-qs": "ক্যুইকস্টেটমেন্টসে রপ্তানি করুন",
     "wikibase-extension/export-schema": "স্কিমা রপ্তানি করুন",
     "wikibase-extension/export-wikibase-schema": "উইকিউপাত্ত স্কিমা রপ্তানি করুন",
