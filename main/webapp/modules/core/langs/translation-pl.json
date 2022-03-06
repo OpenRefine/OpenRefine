@@ -121,7 +121,7 @@
     "core-index/refine-version": "Wersja $1",
     "core-about/contributors": "Współtwórcy (w porządku chronologicznym)",
     "core-about/definition": "OpenRefine jest potężnym narzędziem do pracy z nieuporządkowanymi danymi. Z jego pomocą można poprawić spójność danych, połączyć je z rejestrami danych, takimi jak Wikidata, uzupełnić o dane z innych źródeł, przekształcić je w różne formaty, które mogą być wykorzystywane przez inne narzędzia, oraz przekazać je z powrotem do oryginalnych źródeł. OpenRefine nie jest usługą sieciową, ale aplikacją działającą na Twoim komputerze, dzięki czemu możesz przetwarzać poufne dane z zachowaniem prywatności.",
-    "core-project/excel": "Excel (.xls)…",
+    "core-project/excel": "Excel (.xls)",
     "core-project/export-project": "Eksportuj projekt",
     "core-project/export": "Eksportuj",
     "core-project/open": "Otwórz",
