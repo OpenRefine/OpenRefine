@@ -24,7 +24,7 @@ describe(__filename, function () {
 
     cy.columnActionClick('Street', [
       'Transpose',
-      'Transpose cells across columns into rows...',
+      'Transpose cells across columns into rows…',
     ]);
 
     cy.get('.dialog-container select[bind="fromColumnSelect"]').select(
@@ -88,7 +88,7 @@ describe(__filename, function () {
 
     cy.columnActionClick('Street', [
       'Transpose',
-      'Transpose cells across columns into rows...',
+      'Transpose cells across columns into rows…',
     ]);
 
     cy.get('.dialog-container label').contains('Two new columns').click();

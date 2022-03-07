@@ -1,9 +1,9 @@
 {
     "wikibase-extension/menu-label": "Wikidata",
     "wikibase-extension/edit-wikibase-schema": "Wikidata 스키마 편집",
-    "wikibase-extension/import-wikibase-schema": "스키마 임포트",
-    "wikibase-extension/manage-wikibase-account": "Wikidata 계정 관리",
-    "wikibase-extension/perform-edits-on-wikibase": "편집한 것을 Wikidata로 업로드",
+    "wikibase-extension/import-wikibase-schema": "스키마 임포트…",
+    "wikibase-extension/manage-wikibase-account": "Wikidata 계정 관리…",
+    "wikibase-extension/perform-edits-on-wikibase": "편집한 것을 Wikidata로 업로드…",
     "wikibase-extension/export-to-qs": "QuickStatements로 익스포트",
     "wikibase-extension/export-schema": "스키마 익스포트",
     "wikibase-extension/quickstatements-export-name": "QuickStatements",

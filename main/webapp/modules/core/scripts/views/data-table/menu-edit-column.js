@@ -549,28 +549,28 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
   MenuSystem.appendTo(menu, [ "core/edit-column" ], [
       {
         id: "core/split-column",
-        label: $.i18n('core-views/split-into-col')+"...",
+        label: $.i18n('core-views/split-into-col'),
         click: doSplitColumn
       },
       {
         id: "core/join-column",
-        label: $.i18n('core-views/join-col')+"...",
+        label: $.i18n('core-views/join-col'),
           click : doJoinColumns
         },
       {},
       {
         id: "core/add-column",
-        label: $.i18n('core-views/add-based-col')+"...",
+        label: $.i18n('core-views/add-based-col'),
         click: doAddColumn
       },
       {
         id: "core/add-column-by-fetching-urls",
-        label: $.i18n('core-views/add-by-urls')+"...",
+        label: $.i18n('core-views/add-by-urls'),
         click: doAddColumnByFetchingURLs
       },
       {
         id: "core/add-column-by-reconciliation",
-        label: $.i18n('core-views/add-col-recon-val')+"...",
+        label: $.i18n('core-views/add-col-recon-val'),
         click: doAddColumnByReconciliation
       },
       {},

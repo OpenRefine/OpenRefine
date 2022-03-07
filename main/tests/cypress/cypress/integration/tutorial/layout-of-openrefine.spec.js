@@ -17,7 +17,7 @@ describe(__filename, function () {
     // Click the dropdown menu at the top of the Author column and Choose Edit cells->Split multi-valued cells
     cy.columnActionClick('Authors', [
       'Edit cells',
-      'Split multi-valued cells...',
+      'Split multi-valued cells…',
     ]);
 
     //   In the prompt type the ( | ) symbol and click OK
@@ -50,7 +50,7 @@ describe(__filename, function () {
 
     cy.columnActionClick('Authors', [
       'Edit cells',
-      'Join multi-valued cells...',
+      'Join multi-valued cells…',
     ]);
 
     cy.get('#summary-bar').should('to.contain', '1001 records');

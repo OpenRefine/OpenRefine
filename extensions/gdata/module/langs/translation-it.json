@@ -46,5 +46,5 @@
     "gdata-exporter/upload-google-sheets-success": "Progetto caricato su Google Drive ",
     "gdata-exporter/export-to-google-drive": "Archiviando progetto di OpenRefine su Google Drive…",
     "gdata-exporter/upload-google-drive-success": "Progetto caricato su Google Drive ",
-    "gdata-exporter/google-sheets": "Google Sheets"
+    "gdata-exporter/google-sheets": "Google Sheets…"
 }
