@@ -371,42 +371,6 @@
                     <arg value="${mac.build.directory}"/>
                 </exec>
 
-                <!-- Send DMG file to Apple's notarization service -->
-                <exec dir="${project.build.directory}" os="Mac OS X" executable="xcrun">
-                    <arg value="notarytool"/>
-                    <arg value="submit"/>
-                    <arg value="${mac.dmg.path}"/>
-                    <arg value="--apple-id"/>
-                    <arg value="${apple.notarization.username}"/>
-                    <arg value="--password"/>
-                    <arg value="${apple.notarization.password}"/>
-                    <arg value="--team-id"/>
-                    <arg value="${apple.notarization.team.id}"/>
-                    <arg value="--wait"/>
-                    <arg value="--timeout"/>
-                    <arg value="${apple.notarization.timeout}"/>
-                </exec>
-
-                <!-- TODO: remove this, used for debugging purposes to check why the notarization failed -->
-                <exec dir="${project.build.directory}" os="Mac OS X" executable="xcrun">
-                    <arg value="notarytool"/>
-                    <arg value="log"/>
-                    <arg value="e77483e9-2987-4348-9afc-64a0fecdd691"/>
-                    <arg value="--apple-id"/>
-                    <arg value="${apple.notarization.username}"/>
-                    <arg value="--password"/>
-                    <arg value="${apple.notarization.password}"/>
-                    <arg value="--team-id"/>
-                    <arg value="${apple.notarization.team.id}"/>
-                </exec>
-
-
-                <!-- Staple the notarization ticket to the DMG bundle -->
-                <exec dir="${project.build.directory}" os="Mac OS X" executable="xcrun">
-                    <arg value="stapler"/>
-                    <arg value="staple"/>
-                    <arg value="${mac.dmg.path}"/>
-                </exec>
               </target>
             </configuration>
           </execution>

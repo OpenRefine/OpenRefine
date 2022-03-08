@@ -127,7 +127,7 @@ DataTableColumnHeaderUI.prototype._createMenuForColumnHeader = function(elmt) {
       this._dataTableView._getSortingCriterionForColumn(this._column.name) === null ?
         {
           id: "core/sort",
-          "label": $.i18n('core-views/sort')+"...",
+          "label": $.i18n('core-views/sort'),
           "click": function() {
             self._showSortingCriterion(null, self._dataTableView._getSortingCriteriaCount() > 0);
           }

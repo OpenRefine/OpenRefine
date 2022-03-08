@@ -12,7 +12,7 @@ describe('Copy reconciliation data', () => {
     // Step 1, Duplicate the "species" column
     cy.columnActionClick('species', [
       'Edit column',
-      'Add column based on this column...',
+      'Add column based on this column…',
     ]);
     cy.waitForDialogPanel();
     cy.get('input[bind="columnNameInput"]').type('duplicated_column');

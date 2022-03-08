@@ -1,9 +1,9 @@
 {
     "wikibase-extension/menu-label": "Wikidata",
     "wikibase-extension/edit-wikibase-schema": "Wikidata-schema bewerken",
-    "wikibase-extension/import-wikibase-schema": "Schema importeren",
-    "wikibase-extension/manage-wikibase-account": "Wikidata-account beheren",
-    "wikibase-extension/perform-edits-on-wikibase": "Bewerkingen naar Wikidata uploaden",
+    "wikibase-extension/import-wikibase-schema": "Schema importeren…",
+    "wikibase-extension/manage-wikibase-account": "Wikidata-account beheren…",
+    "wikibase-extension/perform-edits-on-wikibase": "Bewerkingen naar Wikidata uploaden…",
     "wikibase-extension/export-to-qs": "Naar QuickStatements exporteren",
     "wikibase-extension/export-schema": "Schema exporteren",
     "wikibase-extension/quickstatements-export-name": "QuickStatements",
@@ -88,7 +88,7 @@
     "warnings-messages/missing-mandatory-qualifiers/title": "{statement_property_entity} mist een {missing_property_entity}-kwalificatie.",
     "wikibase-extension/qs-file": "QuickStatements-bestand",
     "wikibase-extension/wikibase-schema": "Wikibase schema",
-    "wikibase-extension/select-wikibase-instance": "Selecteer Wikibase instance",
+    "wikibase-extension/select-wikibase-instance": "Selecteer Wikibase instance…",
     "wikibase-extension/wikibase-edits": "Wikibase bewerkingen…",
     "wikibase-extension/export-wikibase-schema": "Wikibase schema exporteren",
     "wikibase-management/dialog-header": "Selecteer Wikibase instance"

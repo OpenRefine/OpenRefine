@@ -42,7 +42,7 @@
     "gdata-source/type": "Tipo",
     "gdata-source/updated": "Atualizado",
     "gdata-import/re-sign-in": "entrar novamente",
-    "gdata-exporter/google-sheets": "Planilhas Google",
+    "gdata-exporter/google-sheets": "Planilhas Google…",
     "gdata-parsing/discard-next": "Descartar primeira(s)",
     "gdata-parsing/updating-preview": "Atualizando pré-visualização …",
     "gdata-parsing/limit-next": "Carregar ao menos",
