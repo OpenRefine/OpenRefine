@@ -1,8 +1,8 @@
 {
     "wikibase-extension/menu-label": "Wikidata",
     "wikibase-extension/edit-wikibase-schema": "Redigera Wikidata-schema",
-    "wikibase-extension/import-wikibase-schema": "Importera schema",
-    "wikibase-extension/perform-edits-on-wikibase": "Ladda upp redigeringar till Wikidata",
+    "wikibase-extension/import-wikibase-schema": "Importera schema…",
+    "wikibase-extension/perform-edits-on-wikibase": "Ladda upp redigeringar till Wikidata…",
     "wikibase-extension/export-to-qs": "Exportera till QuickStatements",
     "wikibase-extension/export-schema": "Exportera schema",
     "wikibase-extension/quickstatements-export-name": "QuickStatements",
@@ -42,7 +42,7 @@
     "wikibase-account/logged-in-as": "Du är inloggad som:",
     "wikibase-account/log-out": "Logga ut",
     "perform-wikibase-edits/logged-in-as": "Du är inloggad som",
-    "wikibase-extension/manage-wikibase-account": "hantera Wikidata-konto",
+    "wikibase-extension/manage-wikibase-account": "hantera Wikidata-konto…",
     "wikibase-schema/dialog-header": "Anpassa till Wikidata",
     "wikibase-schema/preview-explanation": "Den här fliken visar de första ändringarna (av {nb_edits}) som kommer att göras när du laddar upp ändringarna till Wikidata. Du kan använda fasetter för att inspektera ändringarna på specifika objekt.",
     "wikibase-schema/warnings-tab-header": "Problem",
@@ -154,5 +154,5 @@
     "wikibase-extension/wikibase-schema": "Wikibase-schema",
     "wikibase-extension/wikibase-edits": "Wikibase-redigeringar…",
     "wikibase-extension/qs-file": "QuickStatements-fil",
-    "wikibase-extension/select-wikibase-instance": "Välj en Wikibase-instans"
+    "wikibase-extension/select-wikibase-instance": "Välj en Wikibase-instans…"
 }

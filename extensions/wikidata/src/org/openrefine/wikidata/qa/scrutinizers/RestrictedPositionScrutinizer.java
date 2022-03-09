@@ -78,6 +78,10 @@ public class RestrictedPositionScrutinizer extends StatementScrutinizer {
 
     @Override
     public void scrutinize(Statement statement, EntityIdValue entityId, boolean added) {
+        if (!added) {
+            // not scrutinizing deleted statements
+            return;
+        }
         // Skip the main snak
         scrutinize(statement.getClaim().getMainSnak(), entityId, SnakPosition.MAINSNAK, added);
 

@@ -43,7 +43,7 @@
     "gdata-auth/authorized-label": "Identitet bekreftet. Lukk dette vinduet og returner til OpenRefine.",
     "gdata-exporter/enter-filename": "Skriv inn et filnavn for prosjekteksporten i Google Drive",
     "gdata-exporter/export-to-google-drive": "OpenRefine-prosjekt arkivert til Google Drive…",
-    "gdata-exporter/google-sheets": "Google Sheets",
+    "gdata-exporter/google-sheets": "Google Sheets…",
     "gdata-exporter/upload-google-drive-success": "Prosjekt opplastet til Google Drive ",
     "gdata-exporter/upload-google-sheets-success": "Prosjekt opplastet til Google Drive "
 }

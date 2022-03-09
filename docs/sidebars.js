@@ -47,7 +47,8 @@ module.exports = {
       'technical-reference/translating-ui',
       'technical-reference/translating-docs',
       'technical-reference/functional-tests',
-      'technical-reference/maintainer-guidelines'
+      'technical-reference/maintainer-guidelines',
+      'technical-reference/wikibase/architecture'
   ]
   },
 };

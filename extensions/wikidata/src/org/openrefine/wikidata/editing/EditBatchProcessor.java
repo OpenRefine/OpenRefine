@@ -28,29 +28,20 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang.NotImplementedException;
 import org.openrefine.wikidata.schema.entityvalues.ReconEntityIdValue;
 import org.openrefine.wikidata.schema.exceptions.NewEntityNotCreatedYetException;
-import org.openrefine.wikidata.updates.TermedStatementEntityUpdate;
+import org.openrefine.wikidata.updates.TermedStatementEntityEdit;
 import org.openrefine.wikidata.updates.scheduler.WikibaseAPIUpdateScheduler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.wikidata.wdtk.datamodel.helpers.Datamodel;
-import org.wikidata.wdtk.datamodel.interfaces.AliasUpdate;
 import org.wikidata.wdtk.datamodel.interfaces.EntityDocument;
-import org.wikidata.wdtk.datamodel.interfaces.EntityIdValue;
+import org.wikidata.wdtk.datamodel.interfaces.EntityUpdate;
 import org.wikidata.wdtk.datamodel.interfaces.ItemDocument;
 import org.wikidata.wdtk.datamodel.interfaces.ItemIdValue;
-import org.wikidata.wdtk.datamodel.interfaces.MediaInfoDocument;
 import org.wikidata.wdtk.datamodel.interfaces.MediaInfoIdValue;
-import org.wikidata.wdtk.datamodel.interfaces.MediaInfoUpdate;
-import org.wikidata.wdtk.datamodel.interfaces.MonolingualTextValue;
-import org.wikidata.wdtk.datamodel.interfaces.StatementUpdate;
-import org.wikidata.wdtk.datamodel.interfaces.TermUpdate;
 import org.wikidata.wdtk.wikibaseapi.WikibaseDataEditor;
 import org.wikidata.wdtk.wikibaseapi.WikibaseDataFetcher;
 import org.wikidata.wdtk.wikibaseapi.apierrors.MediaWikiApiErrorException;
@@ -69,12 +60,12 @@ public class EditBatchProcessor {
     private WikibaseDataFetcher fetcher;
     private WikibaseDataEditor editor;
     private NewEntityLibrary library;
-    private List<TermedStatementEntityUpdate> scheduled;
+    private List<TermedStatementEntityEdit> scheduled;
     private String summary;
     private List<String> tags;
 
-    private List<TermedStatementEntityUpdate> remainingUpdates;
-    private List<TermedStatementEntityUpdate> currentBatch;
+    private List<TermedStatementEntityEdit> remainingUpdates;
+    private List<TermedStatementEntityEdit> currentBatch;
     private int batchCursor;
     private int globalCursor;
     private Map<String, EntityDocument> currentDocs;
@@ -100,17 +91,19 @@ public class EditBatchProcessor {
      * @param batchSize
      *            the number of entities that should be retrieved in one go from the
      *            API
+     * @param maxEditsPerMinute
+     *            the maximum number of edits per minute to do
      */
-    public EditBatchProcessor(WikibaseDataFetcher fetcher, WikibaseDataEditor editor, List<TermedStatementEntityUpdate> updates,
-            NewEntityLibrary library, String summary, int maxLag, List<String> tags, int batchSize) {
+    public EditBatchProcessor(WikibaseDataFetcher fetcher, WikibaseDataEditor editor, List<TermedStatementEntityEdit> updates,
+            NewEntityLibrary library, String summary, int maxLag, List<String> tags, int batchSize, int maxEditsPerMinute) {
         this.fetcher = fetcher;
         this.editor = editor;
         editor.setEditAsBot(true); // this will not do anything if the user does not
         // have a bot flag, and this is generally wanted if they have one.
 
-        // edit at 60 edits/min by default. If Wikidata is overloaded
+        // edit at 60 edits/min by default. If the Wikibase is overloaded
         // it will slow us down via the maxlag mechanism.
-        editor.setAverageTimePerEdit(1000);
+        editor.setAverageTimePerEdit(maxEditsPerMinute <= 0 ? 0 : (int)(1000*(maxEditsPerMinute/60.)));
         // set maxlag based on preference store
         editor.setMaxLag(maxLag);
 
@@ -143,7 +136,7 @@ public class EditBatchProcessor {
         if (batchCursor == currentBatch.size()) {
             prepareNewBatch();
         }
-        TermedStatementEntityUpdate update = currentBatch.get(batchCursor);
+        TermedStatementEntityEdit update = currentBatch.get(batchCursor);
 
         // Rewrite mentions to new entities
         ReconEntityRewriter rewriter = new ReconEntityRewriter(library, update.getEntityId());
@@ -159,13 +152,10 @@ public class EditBatchProcessor {
             // New entities
             if (update.isNew()) {
                 ReconEntityIdValue newCell = (ReconEntityIdValue) update.getEntityId();
+                // TODO Antonin, 2022-02-11: remove this casting once we have https://github.com/Wikidata/Wikidata-Toolkit/issues/651
                 if (newCell instanceof ItemIdValue) {
                     update = update.normalizeLabelsAndAliases();
-	                ItemDocument itemDocument = Datamodel.makeItemDocument((ItemIdValue) update.getEntityId(),
-	                        update.getLabels().stream().collect(Collectors.toList()),
-	                        update.getDescriptions().stream().collect(Collectors.toList()),
-	                        update.getAliases().stream().collect(Collectors.toList()), update.getAddedStatementGroups(),
-	                        Collections.emptyMap());
+	                ItemDocument itemDocument = (ItemDocument) update.toNewEntity();
 
 	                ItemDocument createdDoc = editor.createItemDocument(itemDocument, summary, tags);
 	                library.setId(newCell.getReconInternalId(), createdDoc.getEntityId().getId());
@@ -175,40 +165,8 @@ public class EditBatchProcessor {
                 }
             } else {
                 // Existing entities
-                EntityIdValue newCell = (EntityIdValue) update.getEntityId();
-                if (newCell instanceof ItemIdValue) {
-	                ItemDocument currentDocument = (ItemDocument) currentDocs.get(update.getEntityId().getId());
-	                List<MonolingualTextValue> labels = update.getLabels().stream().collect(Collectors.toList());
-	                labels.addAll(update.getLabelsIfNew().stream()
-	                      .filter(label -> !currentDocument.getLabels().containsKey(label.getLanguageCode())).collect(Collectors.toList()));
-	                List<MonolingualTextValue> descriptions = update.getDescriptions().stream().collect(Collectors.toList());
-	                descriptions.addAll(update.getDescriptionsIfNew().stream()
-	                        .filter(desc -> !currentDocument.getDescriptions().containsKey(desc.getLanguageCode())).collect(Collectors.toList()));
-	                Set<MonolingualTextValue> aliases = update.getAliases();
-	                Map<String, List<MonolingualTextValue>> aliasesMap = aliases.stream()
-	                        .collect(Collectors.groupingBy(MonolingualTextValue::getLanguageCode));
-	                Map<String, AliasUpdate> aliasMap = aliasesMap.entrySet().stream()
-	                        .collect(Collectors.toMap(Entry::getKey, e -> Datamodel.makeAliasUpdate(e.getValue(), Collections.emptyList())));
-	                editor.editEntityDocument(Datamodel.makeItemUpdate((ItemIdValue) update.getEntityId(),
-                            currentDocument.getRevisionId(),
-                            Datamodel.makeTermUpdate(labels, Collections.emptyList()),
-                            Datamodel.makeTermUpdate(descriptions, Collections.emptyList()),
-                            aliasMap,
-                            Datamodel.makeStatementUpdate(update.getAddedStatements(), update.getDeletedStatements(), Collections.emptyList()),
-                            Collections.emptyList(), Collections.emptyList()),
-                            false, summary, tags);
-                } else if (newCell instanceof MediaInfoIdValue) {
-                    MediaInfoDocument currentDocument = (MediaInfoDocument) currentDocs.get(update.getEntityId().getId());
-	                List<MonolingualTextValue> labels = update.getLabels().stream().collect(Collectors.toList());
-	                labels.addAll(update.getLabelsIfNew().stream()
-	                      .filter(label -> !currentDocument.getLabels().containsKey(label.getLanguageCode())).collect(Collectors.toList()));
-	                TermUpdate labelUpdate = Datamodel.makeTermUpdate(labels, Collections.emptyList());
-	                StatementUpdate statementUpdate = Datamodel.makeStatementUpdate(update.getAddedStatements(), update.getDeletedStatements(),
-                            Collections.emptyList());
-	                MediaInfoUpdate updatesCollection = Datamodel.makeMediaInfoUpdate((MediaInfoIdValue) update.getEntityId(),
-                            currentDocument.getRevisionId(), labelUpdate, statementUpdate);
-	                editor.editEntityDocument(updatesCollection, false, summary, tags);
-                }
+                EntityUpdate entityUpdate = update.toEntityUpdate(currentDocs.get(update.getEntityId().getId()));
+                editor.editEntityDocument(entityUpdate, false, summary, tags);
             }
         } catch (MediaWikiApiErrorException e) {
             // TODO find a way to report these errors to the user in a nice way

@@ -24,7 +24,7 @@
 package org.openrefine.wikidata.qa.scrutinizers;
 
 import org.openrefine.wikidata.qa.QAWarning;
-import org.openrefine.wikidata.updates.TermedStatementEntityUpdate;
+import org.openrefine.wikidata.updates.TermedStatementEntityEdit;
 import org.wikidata.wdtk.datamodel.interfaces.PropertyIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.Statement;
 
@@ -56,7 +56,7 @@ public class SingleValueScrutinizer extends EditScrutinizer {
     }
 
     @Override
-    public void scrutinize(TermedStatementEntityUpdate update) {
+    public void scrutinize(TermedStatementEntityEdit update) {
         Set<PropertyIdValue> seenSingleProperties = new HashSet<>();
 
         for (Statement statement : update.getAddedStatements()) {

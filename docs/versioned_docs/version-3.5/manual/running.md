@@ -158,7 +158,7 @@ To see the full list of command-line options, run `./refine -h`.
 |-H|HTTP host to expect on incoming requests|./refine -H openrefine.internal|
 |-k|Add a Google API key|./refine -k YOUR_API_KEY|
 |-v|Verbosity (from low to high: error,warn,info,debug,trace)|./refine -v info|
-|-x|Additional Java configuration parameters (see Java documentation)||
+|-x|Additional Java configuration parameters (see Java documentation)|./refine -x refine.autosave=5 <br/>./refine -x refine.data_dir=/ <br/>./refine -x refine.development=false <br/> ./refine -x refine.headless=false <br/>./refine -x refine.host=127.0.0.1 <br/>./refine -x refine.port=3333 <br/>./refine -x refine.webapp=main/webapp|
 |--debug|Enable debugging (on port 8000)|./refine --debug|
 |--jmx|Enable JMX monitoring for Jconsole and JvisualVM|./refine --jmx|
 

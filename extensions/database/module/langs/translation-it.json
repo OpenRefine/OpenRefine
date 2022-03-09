@@ -60,5 +60,6 @@
     "database-source/databasePortPlaceholder": "Indica il nome della porta del database, es. 3306",
     "database-source/databaseHostPlaceholder": "Indica il nome del dominio o l'IP del server del database",
     "database-source/connectionNamePlaceholder": "Indica il nome della nuova connessione",
-    "database-import/importer-name": "Database"
+    "database-import/importer-name": "Database",
+    "database-parsing/disable-auto-preview": "Disabilita anteprima automatica"
 }

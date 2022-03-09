@@ -3,7 +3,7 @@ describe(__filename, function () {
     cy.loadAndVisitProject('food.mini');
     cy.columnActionClick('All', [
       'Edit columns',
-      'Re-order / remove columns...',
+      'Re-order / remove columns…',
     ]);
     cy.waitForDialogPanel();
 
@@ -24,7 +24,7 @@ describe(__filename, function () {
     cy.loadAndVisitProject('food.mini');
     cy.columnActionClick('All', [
       'Edit columns',
-      'Re-order / remove columns...',
+      'Re-order / remove columns…',
     ]);
     cy.waitForDialogPanel();
 

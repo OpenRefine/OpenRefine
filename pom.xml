@@ -63,15 +63,15 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
     <!-- dependency versions -->
-    <jackson.version>2.13.1</jackson.version>
+    <jackson.version>2.13.2</jackson.version>
     <servlet-api.version>4.0.1</servlet-api.version>
     <butterfly.version>1.2.3</butterfly.version>
     <slf4j.version>1.7.36</slf4j.version>
-    <log4j.version>2.17.1</log4j.version>
+    <log4j.version>2.17.2</log4j.version>
     <jetty.version>9.4.41.v20210516</jetty.version>
     <okhttp.version>4.9.3</okhttp.version>
     <jena.version>4.4.0</jena.version>
-    <poi.version>5.2.0</poi.version>
+    <poi.version>5.2.1</poi.version>
     <commons-lang3.version>3.12.0</commons-lang3.version>
     <commons-fileupload.version>1.4</commons-fileupload.version>
     <commons-collections.version>3.2.2</commons-collections.version>
@@ -92,14 +92,14 @@
     <opencsv-multichar.version>2.4</opencsv-multichar.version>
     <swc-parser-lazy.version>3.1.9</swc-parser-lazy.version>
     <commons-io.version>2.11.0</commons-io.version>
-    <guava.version>31.0.1-jre</guava.version>
+    <guava.version>31.1-jre</guava.version>
     <jaxb-api.version>2.3.1</jaxb-api.version>
     <juniversalchardet.version>2.4.0</juniversalchardet.version>
     <testng.version>7.4.0</testng.version>
     <httpmime.version>4.5.13</httpmime.version>
     <owasp-encoder.version>1.2.3</owasp-encoder.version>
     <jasypt.version>1.9.3</jasypt.version>
-    <mockito.version>4.3.1</mockito.version>
+    <mockito.version>4.4.0</mockito.version>
 
     <!-- plugin versions -->
     <build-helper-maven-plugin.version>3.3.0</build-helper-maven-plugin.version>
@@ -268,6 +268,88 @@
           <workspaceCodeStylesURL>${maven.multiModuleProjectDirectory}/IDEs/eclipse/Refine.style.xml</workspaceCodeStylesURL>
         </configuration>
       </plugin>
+        <plugin>
+          <groupId>org.codehaus.mojo</groupId>
+          <artifactId>build-helper-maven-plugin</artifactId>
+          <version>${build-helper-maven-plugin.version}</version>
+          <inherited>false</inherited>
+          <executions>
+            <!-- Attach tar.gz artifact for linux -->
+            <execution>
+                <id>attach-linux</id>
+                <phase>deploy</phase>
+                <goals>
+                    <goal>attach-artifact</goal>
+                </goals>
+                <configuration>
+                    <artifacts>
+                        <artifact>
+                            <file>packaging/target/${project.build.finalName}-linux-${project.version}.tar.gz</file>
+                            <type>tar.gz</type>
+                            <classifier>linux</classifier>
+                        </artifact>
+                    </artifacts>
+                </configuration>
+            </execution>
+            
+            <!-- Attach the zip file for windows, without embedded JRE -->
+            <execution>
+                <id>attach-win-without-jre</id>
+                <phase>deploy</phase>
+                <goals>
+                    <goal>attach-artifact</goal>
+                </goals>
+                <configuration>
+                    <skipAttach>${skipCreateExe}</skipAttach>
+                    <artifacts>
+                        <artifact>
+                            <file>packaging/target/${project.build.finalName}-win-${project.version}.zip</file>
+                            <type>zip</type>
+                            <classifier>win</classifier>
+                        </artifact>
+                    </artifacts>
+                </configuration>
+            </execution>
+            
+            <!-- Attach the zip file for windows, with embedded JRE -->
+            <execution>
+                <id>attach-win-with-jre</id>
+                <phase>deploy</phase>
+                <goals>
+                    <goal>attach-artifact</goal>
+                </goals>
+                <configuration>
+                    <skipAttach>${skipCreateExe}</skipAttach>
+                    <artifacts>
+                        <artifact>
+                            <file>packaging/target/${project.build.finalName}-win-with-java-${project.version}.zip</file>
+                            <type>zip</type>
+                            <classifier>win-with-java</classifier>
+                        </artifact>
+                    </artifacts>
+                </configuration>
+            </execution>
+
+            <!-- Attach the final DMG for MacOS -->
+            <execution>
+                <id>attach-dmg</id>
+                <phase>deploy</phase>
+                <goals>
+                    <goal>attach-artifact</goal>
+                </goals>
+                <configuration>
+                    <artifacts>
+                        <artifact>
+                            <file>packaging/target/${project.build.finalName}-mac-${project.version}.dmg</file>
+                            <type>dmg</type>
+                            <classifier>mac</classifier>
+                        </artifact>
+                    </artifacts>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+
     </plugins>
   </build>
 

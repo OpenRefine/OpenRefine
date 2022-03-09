@@ -27,12 +27,10 @@ This requires that the Wikibase site has an associated [QuickStatements](https:/
 
 ## Notable differences between the two methods {#notable-differences-between-the-two-methods}
 
-### Merging strategy for statements {#merging-strategy-for-statements}
+### Merging strategy for terms and statements {#merging-strategy-for-terms-and-statements}
 
-OpenRefine checks for existing statements which match not only the property and the target value, but also the qualifiers. On the other hand, QuickStatements ignores qualifiers when matching statements.
-Both merging strategies can be useful depending on the properties. It is forecast to let the user configure the matching method in OpenRefine.
-
-If references are provided, both tools merge references in matching statements.
+OpenRefine offers various merging strategies for terms and statements. QuickStatements only supports one non-configurable merging strategy. Therefore, the merging strategies specified by the user in the schema are ignored when exporting to QuickStatements,
+which can result in unintended changes.
 
 ### New item creation {#new-item-creation}
 
