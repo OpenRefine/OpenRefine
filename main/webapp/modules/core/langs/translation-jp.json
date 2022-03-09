@@ -816,5 +816,7 @@
     "core-views/warning": "注意",
     "core-views/expand-left": "カラムを左側に展開",
     "core-views/expand-right": "カラムを右側に展開",
-    "core-index-parser/disable-auto-preview": "自動プレビューしない"
+    "core-index-parser/disable-auto-preview": "自動プレビューしない",
+    "core-dialogs/add-all": "すべて追加",
+    "core-dialogs/remove-all": "すべて削除"
 }
