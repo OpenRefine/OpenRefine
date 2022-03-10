@@ -215,19 +215,45 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
   };
 
   var doRenameColumn = function() {
-    var newColumnName = window.prompt($.i18n('core-views/enter-col-name'), column.name);
-    if (newColumnName !== null) {
-      Refine.postCoreProcess(
-        "rename-column", 
-        {
-          oldColumnName: column.name,
-          newColumnName: newColumnName
-        },
-        null,
-        { modelsChanged: true }
-      );
-    }
+    var frame = $(
+        DOM.loadHTML("core", "scripts/views/data-table/rename-column.html"));
+
+    var elmts = DOM.bind(frame);
+    elmts.dialogHeader.text($.i18n('core-views/enter-col-name'));
+    elmts.columnNameInput.text();
+    elmts.columnNameInput[0].value = column.name;
+    elmts.okButton.html($.i18n('core-buttons/ok'));
+    elmts.cancelButton.text($.i18n('core-buttons/cancel'));
+
+    var level = DialogSystem.showDialog(frame);
+    var dismiss = function() { DialogSystem.dismissUntil(level - 1); };
+    elmts.cancelButton.click(dismiss);
+    elmts.form.submit(function(event) {
+      event.preventDefault();
+      var newColumnName = $.trim(elmts.columnNameInput[0].value);
+      if (newColumnName === column.name) {
+        dismiss();
+        return;
+      }
+      if (newColumnName.length > 0) {
+        Refine.postCoreProcess(
+            "rename-column",
+            {
+              oldColumnName: column.name,
+              newColumnName: newColumnName
+            },
+            null,
+            {modelsChanged: true},
+            {
+              onDone: function () {
+                dismiss();
+              }
+            }
+        );
+      }
+    });
   };
+  
 
   var doMoveColumnTo = function(index) {
     Refine.postCoreProcess(

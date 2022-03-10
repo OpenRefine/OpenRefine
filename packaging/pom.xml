@@ -298,49 +298,6 @@
                     <arg line="&quot;${mac.build.directory}/OpenRefine.app/Contents/PlugIns/JRE/Contents/Home/jre/legal&quot;"/>
                 </exec>
 
-                <!-- Remove quarantine bit set recursively on JRE -->
-                <exec dir="${project.build.directory}" os="Mac OS X" executable="xattr">
-                    <arg line="-rd"/>
-                    <arg line="com.apple.quarantine"/>
-                    <arg line="&quot;${mac.build.directory}/OpenRefine.app/Contents/PlugIns&quot;"/>
-                </exec>
-
-                <!-- Codesign JRE -->
-                <exec dir="${project.build.directory}" os="Mac OS X" executable="codesign">
-                    <arg value="--entitlements" />
-                    <arg value="../Entitlements.plist" />
-                    <arg value="--sign"/>
-                    <arg value="${mac.signing.identity}"/>
-                    <arg value="--deep"/>
-                    <arg value="--force"/>
-                    <arg value="--timestamp"/>
-                    <arg value="--options"/>
-                    <arg value="runtime"/>
-                    <arg value="${mac.build.directory}/OpenRefine.app/Contents/PlugIns/JRE/Contents/Home/jre/lib/jli/libjli.dylib" />
-                </exec>
-
-                <!-- Codesign jars with native code in them -->
-                <exec executable="/bin/bash" os="Mac OS X" dir="${project.build.directory}/${mac.build.directory}">
-                    <arg value="${basedir}/apple_certs/codesign.sh" />
-                    <arg value="OpenRefine.app" />
-                    <arg value="${mac.signing.identity}" />
-                    <arg value="../../Entitlements.plist" />
-                </exec>
-
-                <!-- Codesign app -->
-                <exec dir="${project.build.directory}" os="Mac OS X" executable="codesign">
-                    <arg value="--entitlements" />
-                    <arg value="../Entitlements.plist" />
-                    <arg value="--sign"/>
-                    <arg value="${mac.signing.identity}"/>
-                    <arg value="--deep"/>
-                    <arg value="--force"/>
-                    <arg value="--timestamp"/>
-                    <arg value="--options"/>
-                    <arg value="runtime"/>
-                    <arg value="${mac.build.directory}/OpenRefine.app"/>
-                </exec>
-
                 <!-- Create DMG (Mac OS X) -->
                 <exec dir="${project.build.directory}" os="Mac OS X" executable="hdiutil">
                     <arg value="create"/>
