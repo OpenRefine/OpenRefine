@@ -111,8 +111,6 @@ UrlImportingSourceUI.prototype.attachUI = function(bodyDiv) {
   });
 };
 
-
-
 UrlImportingSourceUI.prototype.focus = function() {
   this._elmts.urlInput.focus();
 };
