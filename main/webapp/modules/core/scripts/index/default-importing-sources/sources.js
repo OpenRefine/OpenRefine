@@ -100,9 +100,18 @@ UrlImportingSourceUI.prototype.attachUI = function(bodyDiv) {
     }
   });
   this._elmts.addButton.click(function(evt) {
-    self._elmts.buttons.before(self._elmts.urlRow.clone());
+    let newRow = self._elmts.urlRow.clone();
+    let trashButton = $('<a href="javascript:{}" title="Remove this row" bind="removeUrlButton"><span class="ui-icon ui-icon-trash"></span></a>');
+    newRow.find('td').append(trashButton);
+    trashButton.click(function (e) {
+      e.preventDefault();
+      $(this).parent().parent().remove();
+    })
+    self._elmts.buttons.before(newRow);
   });
 };
+
+
 
 UrlImportingSourceUI.prototype.focus = function() {
   this._elmts.urlInput.focus();
