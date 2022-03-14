@@ -74,10 +74,6 @@ Refine.DefaultImportingController.prototype._startOver = function() {
 Refine.DefaultImportingController.prototype.startImportJob = function(form, progressMessage, callback) {
   var self = this;
   
-  $(form).find('input:text').filter(function() { 
-		return this.value === ""; 
-  }).prop("disabled", true);
-  
   Refine.wrapCSRF(function(token) {
     $.post(
         "command/core/create-importing-job",
