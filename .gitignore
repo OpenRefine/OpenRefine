@@ -73,5 +73,3 @@ node_modules/
 
 # Ignore the node_modules folder as they are dependencies to be installed by end-user
 main/webapp/node_modules
-
-/.metadata/
