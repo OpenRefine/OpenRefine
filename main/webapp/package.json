@@ -1,22 +1,5 @@
 {
-  "name": "open-refine",
-  "version": "3.3.0",
-  "description": "OpenRefine is a free, open source power tool for working with messy data and improving it",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/OpenRefine/OpenRefine.git"
-  },
-  "author": "",
-  "license": "BSD-3-Clause ",
-  "bugs": {
-    "url": "https://github.com/OpenRefine/OpenRefine/issues"
-  },
-  "homepage": "https://github.com/OpenRefine/OpenRefine#readme",
-  "devDependencies": {},
+  "name": "open-refine-webapp",
   "dependencies": {
     "jquery": "1.12.4",
     "jquery-ui": "1.12.1",
@@ -28,5 +11,6 @@
     "underscore": "1.5.1",
     "datejs-coolite": "1.0.0",
     "@wikimedia/jquery.i18n": "1.0.7"
-  }
+  },
+  "devDependencies": {}
 }
