@@ -1,0 +1,16 @@
+{
+  "name": "open-refine-webapp",
+  "dependencies": {
+    "jquery": "1.12.4",
+    "jquery-ui": "1.12.1",
+    "jquery-migrate": "1.4.1",
+    "select2": "3.5.2-browserify",
+    "moment": "2.19.2",
+    "js-cookie": "2.2.1",
+    "tablesorter": "2.29.0",
+    "underscore": "1.5.1",
+    "datejs-coolite": "1.0.0",
+    "@wikimedia/jquery.i18n": "1.0.7"
+  },
+  "devDependencies": {}
+}
