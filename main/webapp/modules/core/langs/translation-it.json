@@ -819,5 +819,6 @@
     "core-import-formats/text/marc": "File MARC",
     "core-import-formats/text": "File di testo",
     "core-index-import/invalid-url": "URL non valido",
-    "core-index-import/blank-url": "URL vuoto"
+    "core-index-import/blank-url": "URL vuoto",
+    "core-index-import/remove-row": "Rimuovi questa riga"
 }
