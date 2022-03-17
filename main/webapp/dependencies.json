@@ -1,7 +1,6 @@
 {
   "directories": [
     "tablesorter",
-    "jquery-ui",
     "jquery.i18n",
     "jquery.i18n/languages"
   ],
