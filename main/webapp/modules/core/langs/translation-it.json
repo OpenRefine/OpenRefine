@@ -673,7 +673,7 @@
     "core-buttons/conf-pars-opt": "Configura le opzioni di parsing &raquo;",
     "core-buttons/reset-template": "Resetta template",
     "core-buttons/apply": "Applica",
-    "core-buttons/cancel": "Cancella",
+    "core-buttons/cancel": "Annulla",
     "core-buttons/close": "Chiudi",
     "core-buttons/deselect-all": "Deseleziona tutto",
     "core-buttons/select": "Seleziona",
@@ -817,5 +817,7 @@
     "core-buttons/previous": "Torna indietro",
     "core-import-formats/text/json": "File JSON",
     "core-import-formats/text/marc": "File MARC",
-    "core-import-formats/text": "File di testo"
+    "core-import-formats/text": "File di testo",
+    "core-index-import/invalid-url": "URL non valido",
+    "core-index-import/blank-url": "URL vuoto"
 }
