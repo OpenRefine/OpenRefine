@@ -791,5 +791,18 @@
     "core-index-import/match-count": "$1 {{plural:$1|Übereinstimmung|Übereinstimmungen}}",
     "core-index-import/single-project": "OpenRefine kann nur dann mehrere Dateien gleichzeitig in dasselbe Projekt laden, wenn die ausgewählten Dateien dasselbe Dateiformat haben.",
     "core-index/prefs-loading-failed": "Laden der Einstellungen fehlgeschlagen.",
-    "core-views/edit-all-columns": "Alle Spalten bearbeiten"
+    "core-views/edit-all-columns": "Alle Spalten bearbeiten",
+    "core-about/contributors": "Mitwirkende",
+    "core-about/thanks": "Besonderen Dank",
+    "core-index/refine-version": "Version $1",
+    "core-index-import/invalid-url": "Ungültige URL",
+    "core-dialogs/remove-all": "Alle entfernen",
+    "core-index-import/blank-url": "Leere URL",
+    "core-index-parser/disable-auto-preview": "Automatische Vorschau deaktivieren",
+    "core-dialogs/add-all": "Alle hinzufügen",
+    "core-about/definition": "OpenRefine ist ein leistungsstarkes Werkzeug für das Arbeiten mit chaotischen Daten. Benutze dieses Werkzeug um die Konsistenz der Daten zu verbessern, verbinde es mit Datenregistern wie z.B. Wikidata, erweitere es um Daten aus anderen Quellen, wandle Daten in verschiedene Formate um, sodass diese Daten von Werkzeugen genutzt werden können und sende Daten zurück an deren Ursprung. OpenRefine ist keine Web-App sondern ein Computerprogramm, welches nur auf ihrem Rechner läuft, sodass sensible Daten vertraulich verarbeitet werden können.",
+    "core-index-import/remove-row": "Entferne diese Reihe",
+    "core-views/expand-left": "Erweitere alle Spalten nach links",
+    "core-views/expand-right": "Erweitere alle Spalten nach rechts",
+    "core-views/warning": "Warnung"
 }
