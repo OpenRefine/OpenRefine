@@ -2,7 +2,8 @@
   "directories": [
     "tablesorter",
     "jquery.i18n",
-    "jquery.i18n/languages"
+    "jquery.i18n/languages",
+    "select2"
   ],
   "files" : [
     {"from": "tablesorter/dist/js/jquery.tablesorter.js", "to": "tablesorter/jquery.tablesorter.js"},
@@ -13,6 +14,8 @@
     {"from": "jquery-migrate/dist/jquery-migrate.js", "to": "jquery-migrate.js"},
     {"from": "datejs-coolite/build/date.js", "to": "date.js"},
     {"from": "jquery/dist/jquery.js", "to": "jquery.js"},
+    {"from": "select2/select2.css", "to": "select2/select2.css"},
+    {"from": "select2/select2.js", "to": "select2/select2.js"},
     {"from": "@wikimedia/jquery.i18n/libs/CLDRPluralRuleParser/src/CLDRPluralRuleParser.js", "to": "jquery.i18n/CLDRPluralRuleParser.js"},
     {"from": "@wikimedia/jquery.i18n/src/languages/bs.js", "to": "jquery.i18n/languages/bs.js"},
     {"from": "@wikimedia/jquery.i18n/src/languages/dsb.js", "to": "jquery.i18n/languages/dsb.js"},
@@ -35,5 +38,6 @@
     {"from": "@wikimedia/jquery.i18n/src/jquery.i18n.language.js", "to": "jquery.i18n/jquery.i18n.language.js"},
     {"from": "@wikimedia/jquery.i18n/src/jquery.i18n.messagestore.js", "to": "jquery.i18n/jquery.i18n.messagestore.js"},
     {"from": "@wikimedia/jquery.i18n/src/jquery.i18n.parser.js", "to": "jquery.i18n/jquery.i18n.parser.js"}
+    
   ]
 }
