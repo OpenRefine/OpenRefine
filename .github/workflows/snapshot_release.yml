@@ -43,7 +43,7 @@ jobs:
           echo "CYPRESS_PROJECT_ID=s5du3k" >> $GITHUB_ENV
 
       - name: Restore dependency cache
-        uses: actions/cache@v2.1.7
+        uses: actions/cache@v3
         with:
           path: ~/.m2/repository
           key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
@@ -65,7 +65,7 @@ jobs:
           node-version: '12'
 
       - name: Restore Tests dependency cache
-        uses: actions/cache@v2.1.7
+        uses: actions/cache@v3
         with:
           path: |
             ~/cache
@@ -135,7 +135,7 @@ jobs:
         echo "COVERALLS_TOKEN=$(echo eUVUVGRHOFJhQm9GMFJBYTNibjVhcWFEblpac1lmMlE3Cg== | base64 -d)" >> $GITHUB_ENV
 
     - name: Restore dependency cache
-      uses: actions/cache@v2.1.7
+      uses: actions/cache@v3
       with:
         path: ~/.m2/repository
         key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
@@ -184,7 +184,7 @@ jobs:
     - uses: actions/checkout@v3
 
     - name: Restore dependency cache
-      uses: actions/cache@v2.1.7
+      uses: actions/cache@v3
       with:
         path: ~/.m2/repository
         key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
