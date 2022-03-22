@@ -291,6 +291,7 @@ build_prepare() {
     if [ ! -d $REFINE_BUILD_DIR ] ; then 
         mkdir $REFINE_BUILD_DIR || error "Error while making directory $REFINE_BUILD_DIR"
     fi
+    ( cd main/webapp && npm install )
 }
 
 dist_prepare() {
