@@ -40,6 +40,5 @@
     {"from": "@wikimedia/jquery.i18n/src/jquery.i18n.language.js", "to": "jquery.i18n/jquery.i18n.language.js"},
     {"from": "@wikimedia/jquery.i18n/src/jquery.i18n.messagestore.js", "to": "jquery.i18n/jquery.i18n.messagestore.js"},
     {"from": "@wikimedia/jquery.i18n/src/jquery.i18n.parser.js", "to": "jquery.i18n/jquery.i18n.parser.js"}
-    
   ]
 }
