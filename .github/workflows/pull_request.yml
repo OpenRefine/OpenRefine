@@ -55,7 +55,7 @@ jobs:
         repository: ${{ github.event.pull_request.head.repo.full_name }}
 
     - name: Restore dependency cache
-      uses: actions/cache@v2.1.7
+      uses: actions/cache@v3
       with:
         path: ~/.m2/repository
         key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
@@ -103,7 +103,7 @@ jobs:
         repository: ${{ github.event.pull_request.head.repo.full_name }}
 
     - name: Restore dependency cache
-      uses: actions/cache@v2.1.7
+      uses: actions/cache@v3
       with:
         path: ~/.m2/repository
         key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
@@ -158,7 +158,7 @@ jobs:
           echo "CYPRESS_PROJECT_ID=s5du3k" >> $GITHUB_ENV
 
       - name: Restore dependency cache
-        uses: actions/cache@v2.1.7
+        uses: actions/cache@v3
         with:
           path: ~/.m2/repository
           key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
@@ -180,7 +180,7 @@ jobs:
           node-version: '12'
 
       - name: Restore Tests dependency cache
-        uses: actions/cache@v2.1.7
+        uses: actions/cache@v3
         with:
           path: |
             ~/cache
