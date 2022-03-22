@@ -391,7 +391,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
   MenuSystem.appendTo(menu, [ "core/edit-cells" ], [
     {
       id: "core/text-transform",
-      label: $.i18n('core-views/transform')+"...",
+      label: $.i18n('core-views/transform'),
       click: function() { doTextTransformPrompt(); }
     },
     {
@@ -400,66 +400,66 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
       submenu: [
         {
           id: "core/trim-whitespace",
-          label: $.i18n('core-views/trim-all'),
+          label: $.i18n('core-views/trim-all/single'),
           click: function() { doTextTransform("value.trim()", "keep-original", false, ""); }
         },
         {
           id: "core/collapse-whitespace",
-          label: $.i18n('core-views/collapse-white'),
+          label: $.i18n('core-views/collapse-white/single'),
           click: function() { doTextTransform("value.replace(/\\s+/,' ')", "keep-original", false, ""); }
         },
         {},
         {
           id: "core/unescape-html-entities",
-          label: $.i18n('core-views/unescape-html'),
+          label: $.i18n('core-views/unescape-html/single'),
           click: function() { doTextTransform("value.unescape('html')", "keep-original", true, 10); }
         },
         {
           id: "core/replace-smartquotes",
-          label: $.i18n('core-views/replace-smartquotes'),
+          label: $.i18n('core-views/replace-smartquotes/single'),
           click: function() { doTextTransform("value.replace(/[\u2018\u2019\u201A\u201B\u2039\u203A\u201A]/,\"\\\'\").replace(/[\u201C\u201D\u00AB\u00BB\u201E]/,\"\\\"\")", "keep-original", false, ""); }
         },
         {},
         {
           id: "core/to-titlecase",
-          label: $.i18n('core-views/titlecase'),
+          label: $.i18n('core-views/titlecase/single'),
           click: function() { doTextTransform("value.toTitlecase()", "keep-original", false, ""); }
         },
         {
           id: "core/to-uppercase",
-          label: $.i18n('core-views/uppercase'),
+          label: $.i18n('core-views/uppercase/single'),
           click: function() { doTextTransform("value.toUppercase()", "keep-original", false, ""); }
         },
         {
           id: "core/to-lowercase",
-          label: $.i18n('core-views/lowercase'),
+          label: $.i18n('core-views/lowercase/single'),
           click: function() { doTextTransform("value.toLowercase()", "keep-original", false, ""); }
         },
         {},
         {
           id: "core/to-number",
-          label: $.i18n('core-views/to-number'),
+          label: $.i18n('core-views/to-number/single'),
           click: function() { doTextTransform("value.toNumber()", "keep-original", false, ""); }
         },
         {
           id: "core/to-date",
-          label: $.i18n('core-views/to-date'),
+          label: $.i18n('core-views/to-date/single'),
           click: function() { doTextTransform("value.toDate()", "keep-original", false, ""); }
         },
         {
           id: "core/to-text",
-          label: $.i18n('core-views/to-text'),
+          label: $.i18n('core-views/to-text/single'),
           click: function() { doTextTransform("value.toString()", "keep-original", false, ""); }
         },
         {},
         {
           id: "core/to-blank",
-          label: $.i18n('core-views/blank-out'),
+          label: $.i18n('core-views/blank-out/single'),
           click: function() { doTextTransform("null", "keep-original", false, ""); }
         },
         {
           id: "core/to-empty",
-          label: $.i18n('core-views/blank-out-empty'),
+          label: $.i18n('core-views/blank-out-empty/single'),
           click: function() { doTextTransform("\"\"", "keep-original", false, ""); }
         }
       ]
@@ -492,18 +492,18 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
     {},
     {
       id: "core/split-multi-valued-cells",
-      label: $.i18n('core-views/split-cells')+"...",
+      label: $.i18n('core-views/split-cells'),
       click: doSplitMultiValueCells
     },
     {
       id: "core/join-multi-valued-cells",
-      label: $.i18n('core-views/join-cells')+"...",
+      label: $.i18n('core-views/join-cells'),
       click: doJoinMultiValueCells
     },
     {},
     {
       id: "core/cluster",
-      label: $.i18n('core-views/cluster-edit')+"...",
+      label: $.i18n('core-views/cluster-edit'),
       click: function() { new ClusteringDialog(column.name, "value"); }
     },
     {},
@@ -736,18 +736,18 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
   MenuSystem.appendTo(menu, [ "core/transpose" ], [
       {
         id: "core/transpose-columns-into-rows",
-        label: $.i18n('core-views/transp-cell-row')+"...",
+        label: $.i18n('core-views/transp-cell-row'),
         click: doTransposeColumnsIntoRows
       },
       {
         id: "core/transpose-rows-into-columns",
-        label: $.i18n('core-views/transp-cell-col')+"...",
+        label: $.i18n('core-views/transp-cell-col'),
         click: doTransposeRowsIntoColumns
       },
       {},
       {
         id: "core/key-value-columnize",
-        label: $.i18n('core-views/columnize-col')+"...",
+        label: $.i18n('core-views/columnize-col'),
         click: doKeyValueColumnize
       }
     ]

@@ -900,7 +900,7 @@ DataTableView.prototype._createMenuForAllColumns = function(elmt) {
       width: "200px",
       submenu: [
         {
-          label: $.i18n('core-views/reorder-remove')+"...",
+          label: $.i18n('core-views/reorder-remove'),
           id: "core/reorder-columns",
           click: function() {
             new ColumnReorderingDialog();

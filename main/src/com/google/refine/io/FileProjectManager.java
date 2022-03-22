@@ -274,7 +274,9 @@ public class FileProjectManager extends ProjectManager  {
                 logger.warn("Failed to save workspace");
                 return;
             }
-
+            // set the workspace to owner-only readable, because it can contain credentials
+            tempFile.setReadable(false, false);
+            tempFile.setReadable(true, true);
             File file = new File(_workspaceDir, "workspace.json");
             File oldFile = new File(_workspaceDir, "workspace.old.json");
 

@@ -107,14 +107,14 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
     {},
     {
       id: "core/custom-text-facet",
-      label: $.i18n('core-views/custom-text-facet')+'...',
+      label: $.i18n('core-views/custom-text-facet'),
       click: function() {
         doFilterByExpressionPrompt(null, "list");
       }
     },
     {
       id: "core/custom-numeric-facet",
-      label: $.i18n('core-views/custom-numeric')+'...',
+      label: $.i18n('core-views/custom-numeric'),
       click: function() {
         doFilterByExpressionPrompt(null, "range");
       }

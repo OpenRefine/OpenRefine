@@ -178,9 +178,9 @@
     "wikibase-extension/export-wikibase-schema": "Export Wikidata schema",
     "wikibase-extension/export-schema": "Export schema",
     "wikibase-extension/export-to-qs": "QuickStatements file...",
-    "wikibase-extension/perform-edits-on-wikibase": "Wikidata edits...",
-    "wikibase-extension/manage-wikibase-account": "Manage Wikidata account",
-    "wikibase-extension/import-wikibase-schema": "Import schema",
+    "wikibase-extension/perform-edits-on-wikibase": "Wikidata edits…",
+    "wikibase-extension/manage-wikibase-account": "Manage Wikidata account…",
+    "wikibase-extension/import-wikibase-schema": "Import schema…",
     "wikibase-extension/edit-wikibase-schema": "Edit Wikidata schema",
     "wikibase-extension/menu-label": "Wikidata"
 }
