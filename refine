@@ -590,6 +590,7 @@ run() {
         IS_JAR=`ls $REFINE_LIB_DIR | grep openrefine`
         if [ -z "$IS_JAR" ] ; then
             mvn_prepare
+            build_prepare
             $MVN process-resources
             $MVN compile test-compile
             echo ""
