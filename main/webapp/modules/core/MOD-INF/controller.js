@@ -332,21 +332,21 @@ function init() {
   registerImporting();
 
   var commonModules = [
-      "externals/jquery-1.12.4.js",
-      "externals/jquery-migrate-1.4.1.js",
+      "3rdparty/jquery.js",
+      "3rdparty/jquery-migrate.js",
       "externals/jquery-ui/jquery-ui.js",
-      "externals/js.cookie.js",
-      "externals/underscore-min.js",
+      "3rdparty/js.cookie.js",
+      "3rdparty/underscore.js",
 
-      "externals/CLDRPluralRuleParser.js",
-      "externals/jquery.i18n.js",
-      "externals/jquery.i18n.messagestore.js",
-      "externals/jquery.i18n.fallbacks.js",
-      "externals/jquery.i18n.parser.js",
-      "externals/jquery.i18n.emitter.js",
-      "externals/jquery.i18n.language.js",
-      "externals/languages/fi.js",
-      "externals/languages/ru.js",
+      "3rdparty/jquery.i18n/CLDRPluralRuleParser.js",
+      "3rdparty/jquery.i18n/jquery.i18n.js",
+      "3rdparty/jquery.i18n/jquery.i18n.messagestore.js",
+      "3rdparty/jquery.i18n/jquery.i18n.fallbacks.js",
+      "3rdparty/jquery.i18n/jquery.i18n.parser.js",
+      "3rdparty/jquery.i18n/jquery.i18n.emitter.js",
+      "3rdparty/jquery.i18n/jquery.i18n.language.js",
+      "3rdparty/jquery.i18n/languages/fi.js",
+      "3rdparty/jquery.i18n/languages/ru.js",
     ];
 
   var RC = Packages.com.google.refine.model.recon.ReconConfig;
@@ -356,10 +356,10 @@ function init() {
     "index/scripts",
     module,
     commonModules.concat([
-      "externals/date.js",
-      "externals/tablesorter/jquery.tablesorter.min.js",
-      "externals/moment-with-locales.min.js",
-      "externals/select2/select2.min.js",
+      "3rdparty/date.js",
+      "3rdparty/tablesorter/jquery.tablesorter.js",
+      "3rdparty/moment-with-locales.js",
+      "3rdparty/select2/select2.js",
 
       "scripts/util/misc.js",
       "scripts/util/url.js",
@@ -404,8 +404,8 @@ function init() {
     module,
     [
       "externals/jquery-ui/css/ui-lightness/jquery-ui.css",
-      "externals/select2/select2.css",
-      "externals/tablesorter/theme.blue.css",
+      "3rdparty/select2/select2.css",
+      "3rdparty/tablesorter/theme.blue.css",
       "styles/jquery-ui-overrides.less",
       "styles/common.less",
       "styles/pure.css",
@@ -435,7 +435,7 @@ function init() {
     module,
     commonModules.concat([
       "externals/suggest/suggest-4_3a.js",
-      "externals/date.js",
+      "3rdparty/date.js",
 
       "scripts/project.js",
 
