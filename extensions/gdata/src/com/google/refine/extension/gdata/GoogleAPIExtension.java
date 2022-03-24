@@ -59,6 +59,12 @@ abstract public class GoogleAPIExtension {
     
     static public String getAuthorizationUrl(ButterflyModule module, HttpServletRequest request)
             throws MalformedURLException {
+        String host = request.getHeader("Host");
+        if (host.startsWith("127.0.0.1")) {
+            if (CLIENT_ID.equals("") || CLIENT_SECRET.equals("") || API_KEY.equals("")) {
+                return "https://github.com/OpenRefine/OpenRefine/wiki/Google-Extension#missing-credentials";
+            }
+        }
         String authorizedUrl = makeRedirectUrl(module, request);
         String state = makeState(module, request);
         
