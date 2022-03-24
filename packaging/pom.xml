@@ -171,6 +171,12 @@
                     <copy todir="${mac.webapp.dir}">
                         <fileset dir="${webapp.dir}">
                             <include name="**/*"/>
+                            <exclude name="node_modules/**"/>
+                            <exclude name="package.json"/>
+                            <exclude name="package-lock.json"/>
+                            <exclude name="dependencies.json"/>
+                            <exclude name="copy-dependencies.js"/>
+                            <exclude name="README.md"/>
                             <exclude name="**/test-output/**"/>
                             <exclude name="WEB-INF/classes/**"/>
                             <exclude name="WEB-INF/lib-local/**"/>
