@@ -42,8 +42,8 @@
     "wikibase-preview/new-id": "নতুন আইটেম",
     "wikibase-account/dialog-header": "উইকিউপাত্ত অ্যাকাউন্ট",
     "wikibase-account/explain-log-in": "<a href=\"https://www.wikidata.org/\" target=\"_blank\">উইকিউপাত্তে</a> প্রবেশ করলে সরাসরি ওপেনরিফাইন থেকে আপনাকে সম্পাদনা আপলোড করতে দেওয়া হবে।",
-    "wikibase-account/username-label": "ব্যবহারকারী নাম:",
-    "wikibase-account/password-label": "পাসওয়ার্ড:",
+    "wikibase-account/username-label": "ব্যবহারকারী নাম",
+    "wikibase-account/password-label": "পাসওয়ার্ড",
     "wikibase-account/close": "বন্ধ করুন",
     "wikibase-account/log-in": "প্রবেশ করুন",
     "wikibase-account/log-out": "প্রস্থান করুন"

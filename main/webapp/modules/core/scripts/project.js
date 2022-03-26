@@ -136,7 +136,7 @@ function initializeUI(uiState) {
   $("#or-proj-starting").text($.i18n('core-project/starting')+"...");
   $("#or-proj-facFil").text($.i18n('core-project/facet-filter'));
   $("#or-proj-undoRedo").text($.i18n('core-project/undo-redo'));
-  $("#or-proj-ext").text($.i18n('core-project/extensions')+":");
+  $("#or-proj-ext").text($.i18n('core-project/extensions'));
 
   $('#project-name-button').click(Refine._renameProject);
   $('#project-permalink-button').mouseenter(function() {
