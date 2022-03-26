@@ -65,7 +65,10 @@ public class Replace implements Function {
     
     @Override
     public String getDescription() {
-        return "Returns the string obtained by replacing the find string with the replace string in the inputted string. For example, 'The cow jumps over the moon and moos'.replace('oo', 'ee') returns the string 'The cow jumps over the meen and mees'. Find can be a regex pattern.";
+        return "Returns the string obtained by replacing the find string with the replace string in the inputted string. " +
+                "For example, 'The cow jumps over the moon and moos'.replace('oo', 'ee') returns the string 'The cow jumps over the meen and mees'." +
+                " Find can be a regex pattern. " +
+                "For examples, 1) 'The cow jumps over the moon and moos'.replace(/oo/, 'ee') returns the string 'The cow jumps over the meen and mees'.";
     }
     
     @Override
