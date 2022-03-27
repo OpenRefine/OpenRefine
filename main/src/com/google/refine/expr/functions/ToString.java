@@ -64,7 +64,7 @@ public class ToString implements Function {
                 } 
             }
         }
-        return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " accepts an object and an optional second argument containing a date format string");
+        return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " accepts an object and an optional second argument containing a Date or Number format string");
     }
 
     
