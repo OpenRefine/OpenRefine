@@ -96,6 +96,24 @@ If your account or your bot is not properly authorized, OpenRefine will not disp
 
 You can store your unencrypted username and password in OpenRefine, saved locally to your computer and available for future use. For security reasons, you may wish to leave this box unchecked. You can also save your OpenRefine-specific bot password in your browser or with a password management tool. 
 
+#### MediaWiki Bot Passwords
+
+Official manual of [bot passwords](https://www.mediawiki.org/wiki/Manual:Bot_passwords)
+
+For a given Wikibase instance, you can create bot passwords at `https://${Wikibase site}/wiki/Special:BotPasswords`.
+
+We take Wikidata for example here:
+
+1. Go to [mediawiki special bot password](https://www.mediawiki.org/wiki/Special:BotPasswords).
+
+2. Type the bot name (e.g. OpenRefine) and click the "Create" button.
+
+3. For "Applicable grants", check "High-volume editing", "Edit existing pages" and "Create, edit, and move pages".
+
+4. Click the "Create" button again.
+
+Finally, you'll get a bot password, which can be used to login to the corresponding Wikibase instance in OpenRefine. You should write down the username and password somewhere for later use.
+
 ### Import and export schema {#import-and-export-schema}
 
 You can save time on repetitive processes by defining a schema on one project, then exporting it and importing for use on new datasets in the future. Or you and your colleagues can share a schema with each other to coordinate your work. 
