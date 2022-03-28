@@ -99,7 +99,7 @@
     <dependency>
       <groupId>org.mariadb.jdbc</groupId>
       <artifactId>mariadb-java-client</artifactId>
-      <version>2.7.5</version>
+      <version>3.0.4</version>
     </dependency>
     <dependency>
       <groupId>org.xerial</groupId>
