@@ -11,6 +11,7 @@ You will need:
 * [OpenRefine source code](https://github.com/OpenRefine/OpenRefine)
 * [Java JDK](http://java.sun.com/javase/downloads/index.jsp) (Get [OpenJDK from here](https://adoptium.net/).)
 * [Apache Maven](https://maven.apache.org)  (OPTIONAL)
+* [Node.js](https://nodejs.org/en/download/) and npm
 * A Unix/Linux shell environment OR the Windows command line
 
 From the top level directory in the OpenRefine application you can build, test and run OpenRefine using the `./refine` shell script (if you are working in a \*nix shell), or using the `refine.bat` script from the Windows command line. Note that the `refine.bat` on Windows only supports a subset of the functionality, supported by the `refine` shell script. The example commands below are using the `./refine` shell script, and you will need to use `refine.bat` if you are working from the Windows command line.
@@ -153,6 +154,19 @@ MAVEN_HOME=E:\Downloads\apache-maven-3.8.4-bin\apache-maven-3.8.4\
 ```
 
 NOTE: You can use Maven commands directly, but running some goals in isolation might fail (try adding the `compile test-compile` goals in your invocation if that is the case).
+
+### Node.js and npm
+
+The OpenRefine webapp requires node and npm to install package dependencies.
+Download and install [Node.js](https://nodejs.org).  You should then have node and npm intalled. You can check the versions by typing:
+```
+node -v
+npm -v
+```
+You can update the version of npm to the latest by typing
+```
+npm install -g npm@latest
+```
 
 ### Building {#building}
 
