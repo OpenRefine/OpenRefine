@@ -148,7 +148,7 @@ Refine.SeparatorBasedParserUI.prototype._initialize = function() {
   $('#or-import-tabs').html($.i18n('core-index-parser/tabs'));
   $('#or-import-custom').html($.i18n('core-index-parser/custom'));
   $('#or-import-escape').html($.i18n('core-index-parser/escape'));
-  $('#or-import-columnNames').html($.i18n('core-index-parser/column-names-label') + ':');
+  $('#or-import-columnNames').html($.i18n('core-index-parser/column-names-label'));
   $('#or-import-optional').html($.i18n('core-index-parser/column-names-optional'));
   $('#or-import-trim').html($.i18n('core-index-parser/trim'));
   

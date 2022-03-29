@@ -75,6 +75,7 @@ function SqlExporterDialog(options) {
   
     $("#sql-exporter-tabs-content").css("display", "");
     $("#sql-exporter-tabs-download").css("display", "");
+    $("#sql-exporter-tabs-download label").css("padding-right", ".25em");
     $("#sql-exporter-tabs").tabs();
    
     for (var i = 0; i < theProject.columnModel.columns.length; i++) {
