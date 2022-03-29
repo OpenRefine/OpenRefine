@@ -30,7 +30,7 @@ describe(__filename, function () {
     });
     cy.navigateTo('Open project');
     cy.contains('td', projectName).siblings().contains('a', 'About').click();
-    cy.contains('td', 'Project name:')
+    cy.contains('td', 'Project name')
       .siblings()
       .contains('button', 'Edit')
       .click();
@@ -47,7 +47,7 @@ describe(__filename, function () {
     });
     cy.navigateTo('Open project');
     cy.contains('td', projectName).siblings().contains('a', 'About').click();
-    cy.contains('td', 'Tags:').siblings().contains('button', 'Edit').click();
+    cy.contains('td', 'Tags').siblings().contains('button', 'Edit').click();
     cy.get('#metadata-body tbody>tr').eq(4).contains('Tags');
     cy.get('#metadata-body tbody>tr').eq(4).contains('tagTest');
   });
@@ -61,7 +61,7 @@ describe(__filename, function () {
     });
     cy.navigateTo('Open project');
     cy.contains('td', projectName).siblings().contains('a', 'About').click();
-    cy.contains('td', 'Creator:').siblings().contains('button', 'Edit').click();
+    cy.contains('td', 'Creator').siblings().contains('button', 'Edit').click();
     cy.get('#metadata-body tbody>tr').eq(5).contains('Creator');
     cy.get('#metadata-body tbody>tr').eq(5).contains('testCreator');
   });
@@ -75,7 +75,7 @@ describe(__filename, function () {
     });
     cy.navigateTo('Open project');
     cy.contains('td', projectName).siblings().contains('a', 'About').click();
-    cy.contains('td', 'Contributors:')
+    cy.contains('td', 'Contributors')
       .siblings()
       .contains('button', 'Edit')
       .click();
@@ -92,7 +92,7 @@ describe(__filename, function () {
     });
     cy.navigateTo('Open project');
     cy.contains('td', projectName).siblings().contains('a', 'About').click();
-    cy.contains('td', 'Subject:').siblings().contains('button', 'Edit').click();
+    cy.contains('td', 'Subject').siblings().contains('button', 'Edit').click();
     cy.get('#metadata-body tbody>tr').eq(7).contains('Subject');
     cy.get('#metadata-body tbody>tr').eq(7).contains('testSubject');
   });
@@ -106,7 +106,7 @@ describe(__filename, function () {
     });
     cy.navigateTo('Open project');
     cy.contains('td', projectName).siblings().contains('a', 'About').click();
-    cy.contains('td', 'License:').siblings().contains('button', 'Edit').click();
+    cy.contains('td', 'License').siblings().contains('button', 'Edit').click();
     cy.get('#metadata-body tbody>tr').eq(12).contains('License');
     cy.get('#metadata-body tbody>tr').eq(12).contains('GPL-3');
   });
@@ -120,7 +120,7 @@ describe(__filename, function () {
     });
     cy.navigateTo('Open project');
     cy.contains('td', projectName).siblings().contains('a', 'About').click();
-    cy.contains('td', 'Homepage:')
+    cy.contains('td', 'Homepage')
       .siblings()
       .contains('button', 'Edit')
       .click();
