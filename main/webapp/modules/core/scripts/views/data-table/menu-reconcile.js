@@ -141,6 +141,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
     frame.width("400px");
 
     var header = $('<div></div>').addClass("dialog-header").text($.i18n('core-views/use-values-as-identifiers/header')).appendTo(frame);
+    var header2 = $('<div></div>').addClass("dialog-header").text($.i18n('core-views/use-values-as-identifiers-note')).appendTo(frame);
     var body = $('<div></div>').addClass("dialog-body").appendTo(frame);
     var footer = $('<div></div>').addClass("dialog-footer").appendTo(frame);
 
