@@ -234,7 +234,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
   }
     var frame = $(DOM.loadHTML("core", "scripts/views/data-table/replace-dialog.html"));
     var elmts = DOM.bind(frame);
-    elmts.dialogHeader.text($.i18n('core-views/replace'));
+    elmts.dialogHeader.text($.i18n('core-views/replace/header'));
     elmts.or_views_text_to_find.text($.i18n('core-views/text-to-find'));
     elmts.or_views_replacement.text($.i18n('core-views/replacement-text'));
     elmts.or_views_finding_info1.text($.i18n('core-views/finding-info1'));
@@ -292,7 +292,7 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
 
     var frame = $(DOM.loadHTML("core", "scripts/views/data-table/split-multi-valued-cells-dialog.html"));
     var elmts = DOM.bind(frame);
-    elmts.dialogHeader.text($.i18n('core-views/split-cells'));
+    elmts.dialogHeader.text($.i18n('core-views/split-cells/header'));
 
     elmts.or_views_howSplit.text($.i18n('core-views/how-split-cells'));
     elmts.or_views_bySep.text($.i18n('core-views/by-sep'));
