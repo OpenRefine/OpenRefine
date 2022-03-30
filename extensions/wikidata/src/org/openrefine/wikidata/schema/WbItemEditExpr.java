@@ -28,38 +28,40 @@ import java.util.List;
 
 import org.jsoup.helper.Validate;
 import org.openrefine.wikidata.schema.exceptions.SkipSchemaExpressionException;
-import org.openrefine.wikidata.updates.StatementGroupEdit;
-import org.openrefine.wikidata.updates.StatementEdit;
-import org.openrefine.wikidata.updates.TermedStatementEntityEdit;
-import org.openrefine.wikidata.updates.EntityEdit;
+import org.openrefine.wikidata.updates.ItemEdit;
 import org.openrefine.wikidata.updates.ItemEditBuilder;
-import org.openrefine.wikidata.updates.MediaInfoEditBuilder;
+import org.openrefine.wikidata.updates.StatementEdit;
+import org.openrefine.wikidata.updates.StatementGroupEdit;
 import org.wikidata.wdtk.datamodel.interfaces.EntityIdValue;
-import org.wikidata.wdtk.datamodel.interfaces.ItemIdValue;
-import org.wikidata.wdtk.datamodel.interfaces.MediaInfoIdValue;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.fasterxml.jackson.annotation.JsonSubTypes.Type;
 
 /**
- * The representation of an entity document, which can contain variables both for
+ * The representation of an item edit, which can contain variables both for
  * its own id and in its contents.
  * 
  * @author Antonin Delpeuch
  *
  */
+@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, defaultImpl = WbItemEditExpr.class, property = "type")
+@JsonSubTypes({
+    @Type(value = WbItemEditExpr.class, name = "wbitemeditexpr"),
+})
 @JsonIgnoreProperties(ignoreUnknown = true)
-@JsonTypeInfo(use = JsonTypeInfo.Id.NONE)
-public class WbEntityDocumentExpr implements WbExpression<EntityEdit> {
+public class WbItemEditExpr implements WbExpression<ItemEdit> {
 
     private WbExpression<? extends EntityIdValue> subject;
     private List<WbNameDescExpr> nameDescs;
     private List<WbStatementGroupExpr> statementGroups;
 
     @JsonCreator
-    public WbEntityDocumentExpr(@JsonProperty("subject") WbExpression<? extends EntityIdValue> subjectExpr,
+    public WbItemEditExpr(
+    		@JsonProperty("subject") WbExpression<? extends EntityIdValue> subjectExpr,
             @JsonProperty("nameDescs") List<WbNameDescExpr> nameDescExprs,
             @JsonProperty("statementGroups") List<WbStatementGroupExpr> statementGroupExprs) {
         Validate.notNull(subjectExpr);
@@ -75,44 +77,24 @@ public class WbEntityDocumentExpr implements WbExpression<EntityEdit> {
     }
 
     @Override
-    public EntityEdit evaluate(ExpressionContext ctxt)
+    public ItemEdit evaluate(ExpressionContext ctxt)
             throws SkipSchemaExpressionException {
         EntityIdValue subjectId = getSubject().evaluate(ctxt);
-        if (subjectId instanceof ItemIdValue) {
-	        ItemEditBuilder update = new ItemEditBuilder(subjectId);
-	        for (WbStatementGroupExpr expr : getStatementGroups()) {
-	            try {
-	            	StatementGroupEdit statementGroupUpdate = expr.evaluate(ctxt, subjectId);
-	                for (StatementEdit s : statementGroupUpdate.getStatementEdits()) {
-	                    update.addStatement(s);
-	                }
-	            } catch (SkipSchemaExpressionException e) {
-	                continue;
-	            }
-	        }
-	        for (WbNameDescExpr expr : getNameDescs()) {
-	            expr.contributeTo(update, ctxt);
-	        }
-	        return update.build();
-        } else if (subjectId instanceof MediaInfoIdValue) {
-        	MediaInfoEditBuilder update = new MediaInfoEditBuilder(subjectId);
-	        for (WbStatementGroupExpr expr : getStatementGroups()) {
-	            try {
-	            	StatementGroupEdit statementGroupUpdate = expr.evaluate(ctxt, subjectId);
-	                for (StatementEdit s : statementGroupUpdate.getStatementEdits()) {
-	                    update.addStatement(s);
-	                }
-	            } catch (SkipSchemaExpressionException e) {
-	                continue;
-	            }
-	        }
-	        for (WbNameDescExpr expr : getNameDescs()) {
-	            expr.contributeTo(update, ctxt);
-	        }
-	        return update.build();
-        } else {
-        	throw new IllegalStateException("TODO");
+        ItemEditBuilder update = new ItemEditBuilder(subjectId);
+        for (WbStatementGroupExpr expr : getStatementGroups()) {
+            try {
+            	StatementGroupEdit statementGroupUpdate = expr.evaluate(ctxt, subjectId);
+                for (StatementEdit s : statementGroupUpdate.getStatementEdits()) {
+                    update.addStatement(s);
+                }
+            } catch (SkipSchemaExpressionException e) {
+                continue;
+            }
         }
+        for (WbNameDescExpr expr : getNameDescs()) {
+            expr.contributeTo(update, ctxt);
+        }
+        return update.build();
     }
 
     @JsonProperty("subject")
@@ -132,10 +114,10 @@ public class WbEntityDocumentExpr implements WbExpression<EntityEdit> {
 
     @Override
     public boolean equals(Object other) {
-        if (other == null || !WbEntityDocumentExpr.class.isInstance(other)) {
+        if (other == null || !WbItemEditExpr.class.isInstance(other)) {
             return false;
         }
-        WbEntityDocumentExpr otherExpr = (WbEntityDocumentExpr) other;
+        WbItemEditExpr otherExpr = (WbItemEditExpr) other;
         return subject.equals(otherExpr.getSubject()) && nameDescs.equals(otherExpr.getNameDescs())
                 && statementGroups.equals(otherExpr.getStatementGroups());
     }

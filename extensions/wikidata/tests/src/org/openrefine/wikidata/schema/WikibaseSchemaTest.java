@@ -112,6 +112,13 @@ public class WikibaseSchemaTest extends WikidataRefineTest {
         WikibaseSchema parsed = WikibaseSchema.reconstruct(serialized);
         TestUtils.isSerializedTo(parsed, TestingData.jsonFromFile("schema/history_of_medicine_normalized.json").toString());
     }
+    
+    @Test
+    public void testDeserializeMediaInfo() throws IOException {
+    	String serialized = TestingData.jsonFromFile("schema/with_mediainfo.json");
+    	WikibaseSchema parsed = WikibaseSchema.reconstruct(serialized);
+    	TestUtils.isSerializedTo(parsed, TestingData.jsonFromFile("schema/with_mediainfo.json"));
+    }
 
     @Test
     public void testDeserialize()

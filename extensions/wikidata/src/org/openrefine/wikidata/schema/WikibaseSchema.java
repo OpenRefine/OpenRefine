@@ -59,8 +59,8 @@ public class WikibaseSchema implements OverlayModel {
 
     final static Logger logger = LoggerFactory.getLogger("RdfSchema");
 
-    @JsonProperty("itemDocuments")
-    protected List<WbEntityDocumentExpr> entityDocumentExprs = new ArrayList<>();
+    @JsonProperty("entityEdits")
+    protected List<WbExpression<? extends EntityEdit>> entityEditExprs = new ArrayList<>();
 
     @JsonProperty("siteIri")
     protected String siteIri;
@@ -83,11 +83,18 @@ public class WikibaseSchema implements OverlayModel {
      * Constructor for deserialization via Jackson
      */
     @JsonCreator
-    public WikibaseSchema(@JsonProperty("itemDocuments") List<WbEntityDocumentExpr> exprs,
+    public WikibaseSchema(@JsonProperty("entityEdits") List<WbExpression<? extends EntityEdit>> exprs,
+    					  @JsonProperty("itemDocuments") List<WbItemEditExpr> legacyItemExprs,
                           @JsonProperty("siteIri") String siteIri,
                           @JsonProperty("entityTypeSiteIRI") Map<String, String> entityTypeSiteIri,
                           @JsonProperty("mediaWikiApiEndpoint") String mediaWikiApiEndpoint) {
-        this.entityDocumentExprs = exprs;
+        this.entityEditExprs = new ArrayList<>();
+        if (exprs != null) {
+        	entityEditExprs.addAll(exprs);
+        }
+        if (legacyItemExprs != null) {
+        	entityEditExprs.addAll(legacyItemExprs);
+        }
         this.siteIri = siteIri;
         this.entityTypeSiteIri = entityTypeSiteIri != null ? entityTypeSiteIri : Collections.emptyMap();
         this.mediaWikiApiEndpoint = mediaWikiApiEndpoint != null ? mediaWikiApiEndpoint : ApiConnection.URL_WIKIDATA_API;
@@ -112,9 +119,9 @@ public class WikibaseSchema implements OverlayModel {
     /**
      * @return the list of document expressions for this schema
      */
-    @JsonProperty("itemDocuments")
-    public List<WbEntityDocumentExpr> getEntityDocumentExpressions() {
-        return Collections.unmodifiableList(entityDocumentExprs);
+    @JsonProperty("entityEdits")
+    public List<WbExpression<? extends EntityEdit>> getEntityDocumentExpressions() {
+        return Collections.unmodifiableList(entityEditExprs);
     }
 
     @JsonProperty("mediaWikiApiEndpoint")
@@ -133,7 +140,7 @@ public class WikibaseSchema implements OverlayModel {
      */
     public List<EntityEdit> evaluateEntityDocuments(ExpressionContext ctxt) {
         List<EntityEdit> result = new ArrayList<>();
-        for (WbEntityDocumentExpr expr : entityDocumentExprs) {
+        for (WbExpression<? extends EntityEdit> expr : entityEditExprs) {
 
             try {
                 result.add(expr.evaluate(ctxt));
@@ -231,6 +238,6 @@ public class WikibaseSchema implements OverlayModel {
             return false;
         }
         WikibaseSchema otherSchema = (WikibaseSchema) other;
-        return entityDocumentExprs.equals(otherSchema.getEntityDocumentExpressions());
+        return entityEditExprs.equals(otherSchema.getEntityDocumentExpressions());
     }
 }
