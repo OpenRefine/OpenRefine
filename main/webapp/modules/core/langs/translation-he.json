@@ -541,6 +541,7 @@
     "core-views/enter-separator": "Enter separator to use between values",
     "core-views/what-separator": "What separator currently separates the values?",
     "core-views/transform": "התמרה…",
+    "core-views/transform/header": "התמרה",
     "core-views/common-transform": "Common transforms",
     "core-views/trim-all": "…Trim leading and trailing whitespace",
     "core-views/trim-all/single": "Trim leading and trailing whitespace",

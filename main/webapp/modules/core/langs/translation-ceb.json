@@ -542,6 +542,7 @@
     "core-views/unicode-facet": "Dghang char-code ang bahin",
     "core-views/transp-cell-col": "Pagbalhin sa cells sa rows ngadto sa mga kolum…",
     "core-views/transform": "Pag-usab…",
+    "core-views/transform/header": "Pag-usab",
     "core-views/split-into": "Buwaga ngadto sa",
     "core-views/configure-col": "Iporma ni nga kolum",
     "core-views/one-topic2": "Imarka para makabuhat ug usa ka bag-ong butang nga kada grupo pareha ug cells ani nga kolum paracsa kasamtangang filtered rows",

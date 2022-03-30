@@ -530,6 +530,7 @@
     "core-views/number": "numero",
     "core-views/best-edit-dist": "Ang pag-edit sa distansya ng pangalang ng pinakamagaling na kandidato",
     "core-views/transform": "I-transform…",
+    "core-views/transform/header": "I-transform",
     "core-views/date": "petsa",
     "core-views/create-topic-cell": "Gumawa ng bagong aytem para sa cell na ito",
     "core-views/text-filter": "Ang filter ng teksto",

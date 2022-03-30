@@ -339,6 +339,7 @@
     "core-views/by": "Op",
     "core-views/keep-or": "origineel behouden",
     "core-views/transform": "Transformeren…",
+    "core-views/transform/header": "Transformeren",
     "core-views/common-transform": "Veel voorkomende transformaties",
     "core-views/to-number": "Naar getal…",
     "core-views/to-number/single": "Naar getal",

@@ -605,6 +605,7 @@ DataTableView.prototype._addSortingCriterion = function(criterion, alone) {
         .replace("$EXPRESSION_PREVIEW_WIDGET$", ExpressionPreviewDialog.generateWidgetHtml()));
 
     var elmts = DOM.bind(frame);
+    elmts.dialogHeader.text($.i18n('core-views/transform/header'));
     elmts.or_views_errorOn.text($.i18n('core-views/on-error'));
     elmts.or_views_keepOr.text($.i18n('core-views/keep-or'));
     elmts.or_views_setBlank.text($.i18n('core-views/set-blank'));

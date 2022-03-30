@@ -586,6 +586,7 @@
     "core-views/number": "Zahl",
     "core-views/best-edit-dist": "Namensbearbeitungsentfernung des besten Kandidaten",
     "core-views/transform": "Umwandeln…",
+    "core-views/transform/header": "Umwandeln",
     "core-views/date": "Datum",
     "core-views/create-topic-cell": "Ein neues Element für diese Zelle anlegen",
     "core-views/boolean": "Boolescher Wert",
