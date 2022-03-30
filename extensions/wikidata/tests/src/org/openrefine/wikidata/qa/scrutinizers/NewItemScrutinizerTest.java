@@ -28,7 +28,7 @@ import java.util.Collections;
 
 import org.openrefine.wikidata.testing.TestingData;
 import org.openrefine.wikidata.updates.TermedStatementEntityEdit;
-import org.openrefine.wikidata.updates.TermedStatementEntityEditBuilder;
+import org.openrefine.wikidata.updates.ItemEditBuilder;
 import org.testng.annotations.Test;
 import org.wikidata.wdtk.datamodel.helpers.Datamodel;
 import org.wikidata.wdtk.datamodel.interfaces.Claim;
@@ -49,7 +49,7 @@ public class NewItemScrutinizerTest extends ScrutinizerTest {
 
     @Test
     public void testTrigger() {
-        TermedStatementEntityEdit update = new TermedStatementEntityEditBuilder(TestingData.newIdA).build();
+        TermedStatementEntityEdit update = new ItemEditBuilder(TestingData.newIdA).build();
         scrutinize(update);
         assertWarningsRaised(NewItemScrutinizer.noDescType, NewItemScrutinizer.noLabelType,
                 NewItemScrutinizer.noTypeType, NewItemScrutinizer.newItemType);
@@ -57,7 +57,7 @@ public class NewItemScrutinizerTest extends ScrutinizerTest {
 
     @Test
     public void testEmptyItem() {
-        TermedStatementEntityEdit update = new TermedStatementEntityEditBuilder(TestingData.existingId).build();
+        TermedStatementEntityEdit update = new ItemEditBuilder(TestingData.existingId).build();
         scrutinize(update);
         assertNoWarningRaised();
     }
@@ -65,7 +65,7 @@ public class NewItemScrutinizerTest extends ScrutinizerTest {
     @Test
     public void testGoodNewItem() {
 
-        TermedStatementEntityEdit update = new TermedStatementEntityEditBuilder(TestingData.newIdA)
+        TermedStatementEntityEdit update = new ItemEditBuilder(TestingData.newIdA)
                 .addLabel(Datamodel.makeMonolingualTextValue("bonjour", "fr"), false)
                 .addDescription(Datamodel.makeMonolingualTextValue("interesting item", "en"), true)
                 .addStatement(add(p31Statement))
@@ -76,7 +76,7 @@ public class NewItemScrutinizerTest extends ScrutinizerTest {
 
     @Test
     public void testDeletedStatements() {
-        TermedStatementEntityEdit update = new TermedStatementEntityEditBuilder(TestingData.newIdA)
+        TermedStatementEntityEdit update = new ItemEditBuilder(TestingData.newIdA)
                 .addLabel(Datamodel.makeMonolingualTextValue("bonjour", "fr"), false)
                 .addDescription(Datamodel.makeMonolingualTextValue("interesting item", "en"), true)
                 .addStatement(add(p31Statement))

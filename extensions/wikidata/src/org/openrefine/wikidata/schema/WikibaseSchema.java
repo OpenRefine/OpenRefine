@@ -31,7 +31,7 @@ import java.util.Map;
 
 import org.openrefine.wikidata.qa.QAWarningStore;
 import org.openrefine.wikidata.schema.exceptions.SkipSchemaExpressionException;
-import org.openrefine.wikidata.updates.TermedStatementEntityEdit;
+import org.openrefine.wikidata.updates.EntityEdit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wikidata.wdtk.wikibaseapi.ApiConnection;
@@ -131,8 +131,8 @@ public class WikibaseSchema implements OverlayModel {
      *            the context in which the schema should be evaluated.
      * @return
      */
-    public List<TermedStatementEntityEdit> evaluateEntityDocuments(ExpressionContext ctxt) {
-        List<TermedStatementEntityEdit> result = new ArrayList<>();
+    public List<EntityEdit> evaluateEntityDocuments(ExpressionContext ctxt) {
+        List<EntityEdit> result = new ArrayList<>();
         for (WbEntityDocumentExpr expr : entityDocumentExprs) {
 
             try {
@@ -161,8 +161,8 @@ public class WikibaseSchema implements OverlayModel {
      *            a store in which issues will be emitted
      * @return entity updates are stored in their generating order (not merged yet).
      */
-    public List<TermedStatementEntityEdit> evaluate(Project project, Engine engine, QAWarningStore warningStore) {
-        List<TermedStatementEntityEdit> result = new ArrayList<>();
+    public List<EntityEdit> evaluate(Project project, Engine engine, QAWarningStore warningStore) {
+        List<EntityEdit> result = new ArrayList<>();
         FilteredRows filteredRows = engine.getAllFilteredRows();
         filteredRows.accept(project, new EvaluatingRowVisitor(result, warningStore));
         return result;
@@ -171,16 +171,16 @@ public class WikibaseSchema implements OverlayModel {
     /**
      * Same as above, ignoring any warnings.
      */
-    public List<TermedStatementEntityEdit> evaluate(Project project, Engine engine) {
+    public List<EntityEdit> evaluate(Project project, Engine engine) {
         return evaluate(project, engine, null);
     }
 
     protected class EvaluatingRowVisitor implements RowVisitor {
 
-        private List<TermedStatementEntityEdit> result;
+        private List<EntityEdit> result;
         private QAWarningStore warningStore;
 
-        public EvaluatingRowVisitor(List<TermedStatementEntityEdit> result, QAWarningStore warningStore) {
+        public EvaluatingRowVisitor(List<EntityEdit> result, QAWarningStore warningStore) {
             this.result = result;
             this.warningStore = warningStore;
         }

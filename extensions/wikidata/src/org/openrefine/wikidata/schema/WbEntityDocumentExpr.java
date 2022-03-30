@@ -31,8 +31,12 @@ import org.openrefine.wikidata.schema.exceptions.SkipSchemaExpressionException;
 import org.openrefine.wikidata.updates.StatementGroupEdit;
 import org.openrefine.wikidata.updates.StatementEdit;
 import org.openrefine.wikidata.updates.TermedStatementEntityEdit;
-import org.openrefine.wikidata.updates.TermedStatementEntityEditBuilder;
+import org.openrefine.wikidata.updates.EntityEdit;
+import org.openrefine.wikidata.updates.ItemEditBuilder;
+import org.openrefine.wikidata.updates.MediaInfoEditBuilder;
 import org.wikidata.wdtk.datamodel.interfaces.EntityIdValue;
+import org.wikidata.wdtk.datamodel.interfaces.ItemIdValue;
+import org.wikidata.wdtk.datamodel.interfaces.MediaInfoIdValue;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -48,7 +52,7 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonTypeInfo(use = JsonTypeInfo.Id.NONE)
-public class WbEntityDocumentExpr implements WbExpression<TermedStatementEntityEdit> {
+public class WbEntityDocumentExpr implements WbExpression<EntityEdit> {
 
     private WbExpression<? extends EntityIdValue> subject;
     private List<WbNameDescExpr> nameDescs;
@@ -71,25 +75,44 @@ public class WbEntityDocumentExpr implements WbExpression<TermedStatementEntityE
     }
 
     @Override
-    public TermedStatementEntityEdit evaluate(ExpressionContext ctxt)
+    public EntityEdit evaluate(ExpressionContext ctxt)
             throws SkipSchemaExpressionException {
         EntityIdValue subjectId = getSubject().evaluate(ctxt);
-        TermedStatementEntityEditBuilder update = new TermedStatementEntityEditBuilder(subjectId);
-        for (WbStatementGroupExpr expr : getStatementGroups()) {
-            try {
-            	StatementGroupEdit statementGroupUpdate = expr.evaluate(ctxt, subjectId);
-            	// TODO also store statement groups in TermedStatementEntityUpdate?
-                for (StatementEdit s : statementGroupUpdate.getStatementEdits()) {
-                    update.addStatement(s);
-                }
-            } catch (SkipSchemaExpressionException e) {
-                continue;
-            }
+        if (subjectId instanceof ItemIdValue) {
+	        ItemEditBuilder update = new ItemEditBuilder(subjectId);
+	        for (WbStatementGroupExpr expr : getStatementGroups()) {
+	            try {
+	            	StatementGroupEdit statementGroupUpdate = expr.evaluate(ctxt, subjectId);
+	                for (StatementEdit s : statementGroupUpdate.getStatementEdits()) {
+	                    update.addStatement(s);
+	                }
+	            } catch (SkipSchemaExpressionException e) {
+	                continue;
+	            }
+	        }
+	        for (WbNameDescExpr expr : getNameDescs()) {
+	            expr.contributeTo(update, ctxt);
+	        }
+	        return update.build();
+        } else if (subjectId instanceof MediaInfoIdValue) {
+        	MediaInfoEditBuilder update = new MediaInfoEditBuilder(subjectId);
+	        for (WbStatementGroupExpr expr : getStatementGroups()) {
+	            try {
+	            	StatementGroupEdit statementGroupUpdate = expr.evaluate(ctxt, subjectId);
+	                for (StatementEdit s : statementGroupUpdate.getStatementEdits()) {
+	                    update.addStatement(s);
+	                }
+	            } catch (SkipSchemaExpressionException e) {
+	                continue;
+	            }
+	        }
+	        for (WbNameDescExpr expr : getNameDescs()) {
+	            expr.contributeTo(update, ctxt);
+	        }
+	        return update.build();
+        } else {
+        	throw new IllegalStateException("TODO");
         }
-        for (WbNameDescExpr expr : getNameDescs()) {
-            expr.contributeTo(update, ctxt);
-        }
-        return update.build();
     }
 
     @JsonProperty("subject")

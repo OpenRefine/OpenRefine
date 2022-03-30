@@ -28,6 +28,7 @@ import org.openrefine.wikidata.qa.ConstraintFetcher;
 import org.openrefine.wikidata.qa.QAWarning;
 import org.openrefine.wikidata.qa.QAWarning.Severity;
 import org.openrefine.wikidata.qa.QAWarningStore;
+import org.openrefine.wikidata.updates.EntityEdit;
 import org.openrefine.wikidata.updates.TermedStatementEntityEdit;
 import org.wikidata.wdtk.datamodel.interfaces.Snak;
 import org.wikidata.wdtk.datamodel.interfaces.SnakGroup;
@@ -84,10 +85,24 @@ public abstract class EditScrutinizer {
     }
 
     /**
-     * Reads the candidate edits and emits warnings in the store
+     * Reads the candidate edit and emits warnings in the store
      * 
      * @param edit:
-     *            the list of TermedStatementEntityUpdates to scrutinize
+     *            the {@link EntityEdit} to scrutinize
+     */
+    public void scrutinize(EntityEdit edit) {
+    	if (edit instanceof TermedStatementEntityEdit) {
+    		scrutinize((TermedStatementEntityEdit) edit);
+    	} else {
+    		throw new IllegalArgumentException("Scrutinizing this type of entity edit is not supported yet");
+    	}
+    }
+    
+    /**
+     * Reads the candidate edit and emits warnings in the store
+     * 
+     * @param edit:
+     *            the {@link EntityEdit} to scrutinize
      */
     public abstract void scrutinize(TermedStatementEntityEdit edit);
     

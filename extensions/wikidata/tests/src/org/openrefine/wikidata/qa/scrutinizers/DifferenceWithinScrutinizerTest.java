@@ -4,7 +4,7 @@ package org.openrefine.wikidata.qa.scrutinizers;
 import org.openrefine.wikidata.qa.ConstraintFetcher;
 import org.openrefine.wikidata.testing.TestingData;
 import org.openrefine.wikidata.updates.TermedStatementEntityEdit;
-import org.openrefine.wikidata.updates.TermedStatementEntityEditBuilder;
+import org.openrefine.wikidata.updates.ItemEditBuilder;
 import org.testng.annotations.Test;
 import org.wikidata.wdtk.datamodel.helpers.Datamodel;
 import org.wikidata.wdtk.datamodel.implementation.StatementImpl;
@@ -57,7 +57,7 @@ public class DifferenceWithinScrutinizerTest extends ScrutinizerTest {
         ValueSnak value2 = Datamodel.makeValueSnak(upperBoundPid, upperYear);
         Statement statement1 = new StatementImpl("P569", value1, idA);
         Statement statement2 = new StatementImpl("P570", value2, idA);
-        TermedStatementEntityEdit updateA = new TermedStatementEntityEditBuilder(idA)
+        TermedStatementEntityEdit updateA = new ItemEditBuilder(idA)
                 .addStatement(add(statement1))
                 .addStatement(add(statement2))
                 .build();
@@ -87,7 +87,7 @@ public class DifferenceWithinScrutinizerTest extends ScrutinizerTest {
         ValueSnak value2 = Datamodel.makeValueSnak(upperBoundPid, upperYear);
         Statement statement1 = new StatementImpl("P569", value1, idA);
         Statement statement2 = new StatementImpl("P570", value2, idA);
-        TermedStatementEntityEdit updateA = new TermedStatementEntityEditBuilder(idA)
+        TermedStatementEntityEdit updateA = new ItemEditBuilder(idA)
                 .addStatement(add(statement1))
                 .addStatement(add(statement2))
                 .build();

@@ -4,7 +4,7 @@ package org.openrefine.wikidata.qa.scrutinizers;
 import org.openrefine.wikidata.qa.ConstraintFetcher;
 import org.openrefine.wikidata.testing.TestingData;
 import org.openrefine.wikidata.updates.TermedStatementEntityEdit;
-import org.openrefine.wikidata.updates.TermedStatementEntityEditBuilder;
+import org.openrefine.wikidata.updates.ItemEditBuilder;
 import org.testng.annotations.Test;
 import org.wikidata.wdtk.datamodel.helpers.Datamodel;
 import org.wikidata.wdtk.datamodel.implementation.StatementImpl;
@@ -68,7 +68,7 @@ public class QuantityScrutinizerTest extends ValueScrutinizerTest {
         ItemIdValue idA = TestingData.existingId;
         Snak mainSnak = Datamodel.makeValueSnak(propertyIdValue, valueWithBounds);
         Statement statement = new StatementImpl("P1083", mainSnak, idA);
-        TermedStatementEntityEdit update = new TermedStatementEntityEditBuilder(idA)
+        TermedStatementEntityEdit update = new ItemEditBuilder(idA)
                 .addStatement(add(statement))
                 .build();
 
@@ -85,7 +85,7 @@ public class QuantityScrutinizerTest extends ValueScrutinizerTest {
         ItemIdValue idA = TestingData.existingId;
         Snak mainSnak = Datamodel.makeValueSnak(propertyIdValue, valueWithBounds);
         Statement statement = new StatementImpl("P1083", mainSnak, idA);
-        TermedStatementEntityEdit update = new TermedStatementEntityEditBuilder(idA)
+        TermedStatementEntityEdit update = new ItemEditBuilder(idA)
                 .addStatement(add(statement))
                 .build();
 
@@ -103,7 +103,7 @@ public class QuantityScrutinizerTest extends ValueScrutinizerTest {
         ItemIdValue idA = TestingData.existingId;
         Snak mainSnak = Datamodel.makeValueSnak(propertyIdValue, exactValue);
         Statement statement = new StatementImpl("P1083", mainSnak, idA);
-        TermedStatementEntityEdit update = new TermedStatementEntityEditBuilder(idA)
+        TermedStatementEntityEdit update = new ItemEditBuilder(idA)
                 .addStatement(add(statement))
                 .build();
 
@@ -120,7 +120,7 @@ public class QuantityScrutinizerTest extends ValueScrutinizerTest {
         ItemIdValue idA = TestingData.existingId;
         Snak mainSnak = Datamodel.makeValueSnak(propertyIdValue, exactValue);
         Statement statement = new StatementImpl("P1083", mainSnak, idA);
-        TermedStatementEntityEdit update = new TermedStatementEntityEditBuilder(idA)
+        TermedStatementEntityEdit update = new ItemEditBuilder(idA)
                 .addStatement(add(statement))
                 .build();
 
@@ -138,7 +138,7 @@ public class QuantityScrutinizerTest extends ValueScrutinizerTest {
         ItemIdValue idA = TestingData.existingId;
         Snak mainSnak = Datamodel.makeValueSnak(propertyIdValue, trailingZeros);
         Statement statement = new StatementImpl("P1083", mainSnak, idA);
-        TermedStatementEntityEdit update = new TermedStatementEntityEditBuilder(idA)
+        TermedStatementEntityEdit update = new ItemEditBuilder(idA)
                 .addStatement(add(statement))
                 .build();
 
@@ -156,7 +156,7 @@ public class QuantityScrutinizerTest extends ValueScrutinizerTest {
         ItemIdValue idA = TestingData.existingId;
         Snak mainSnak = Datamodel.makeValueSnak(propertyIdValue, integerValue);
         Statement statement = new StatementImpl("P1083", mainSnak, idA);
-        TermedStatementEntityEdit update = new TermedStatementEntityEditBuilder(idA)
+        TermedStatementEntityEdit update = new ItemEditBuilder(idA)
                 .addStatement(add(statement))
                 .build();
 
@@ -174,7 +174,7 @@ public class QuantityScrutinizerTest extends ValueScrutinizerTest {
         ItemIdValue idA = TestingData.existingId;
         Snak mainSnak = Datamodel.makeValueSnak(propertyIdValue, integerValue);
         Statement statement = new StatementImpl("P1083", mainSnak, idA);
-        TermedStatementEntityEdit update = new TermedStatementEntityEditBuilder(idA)
+        TermedStatementEntityEdit update = new ItemEditBuilder(idA)
                 .addStatement(add(statement))
                 .build();
 
@@ -196,7 +196,7 @@ public class QuantityScrutinizerTest extends ValueScrutinizerTest {
         ItemIdValue idA = TestingData.existingId;
         Snak mainSnak = Datamodel.makeValueSnak(propertyIdValue, wrongUnitValue);
         Statement statement = new StatementImpl("P1083", mainSnak, idA);
-        TermedStatementEntityEdit update = new TermedStatementEntityEditBuilder(idA)
+        TermedStatementEntityEdit update = new ItemEditBuilder(idA)
                 .addStatement(add(statement))
                 .build();
 
@@ -218,7 +218,7 @@ public class QuantityScrutinizerTest extends ValueScrutinizerTest {
         ItemIdValue idA = TestingData.existingId;
         Snak mainSnak = Datamodel.makeValueSnak(propertyIdValue, goodUnitValue);
         Statement statement = new StatementImpl("P1083", mainSnak, idA);
-        TermedStatementEntityEdit update = new TermedStatementEntityEditBuilder(idA)
+        TermedStatementEntityEdit update = new ItemEditBuilder(idA)
                 .addStatement(add(statement))
                 .build();
 
@@ -240,7 +240,7 @@ public class QuantityScrutinizerTest extends ValueScrutinizerTest {
         ItemIdValue idA = TestingData.existingId;
         Snak mainSnak = Datamodel.makeValueSnak(propertyIdValue, goodUnitValue);
         Statement statement = new StatementImpl("P1083", mainSnak, idA);
-        TermedStatementEntityEdit update = new TermedStatementEntityEditBuilder(idA)
+        TermedStatementEntityEdit update = new ItemEditBuilder(idA)
                 .addStatement(add(statement))
                 .build();
 
@@ -258,7 +258,7 @@ public class QuantityScrutinizerTest extends ValueScrutinizerTest {
         ItemIdValue idA = TestingData.existingId;
         Snak mainSnak = Datamodel.makeValueSnak(propertyIdValue, integerValue);
         Statement statement = new StatementImpl("P1083", mainSnak, idA);
-        TermedStatementEntityEdit update = new TermedStatementEntityEditBuilder(idA)
+        TermedStatementEntityEdit update = new ItemEditBuilder(idA)
                 .addStatement(add(statement))
                 .build();
 

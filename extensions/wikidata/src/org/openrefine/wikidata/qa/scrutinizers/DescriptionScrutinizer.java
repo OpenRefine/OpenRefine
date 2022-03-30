@@ -1,9 +1,10 @@
 package org.openrefine.wikidata.qa.scrutinizers;
 
+import java.util.Set;
+
+import org.openrefine.wikidata.updates.LabeledStatementEntityEdit;
 import org.openrefine.wikidata.updates.TermedStatementEntityEdit;
 import org.wikidata.wdtk.datamodel.interfaces.MonolingualTextValue;
-
-import java.util.Set;
 
 /**
  * @author Lu Liu
@@ -28,6 +29,6 @@ public abstract class DescriptionScrutinizer extends EditScrutinizer {
         }
     }
 
-    public abstract void scrutinize(TermedStatementEntityEdit update, String descText, String lang);
+    public abstract void scrutinize(LabeledStatementEntityEdit update, String descText, String lang);
 
 }

@@ -23,6 +23,7 @@
  ******************************************************************************/
 package org.openrefine.wikidata.qa.scrutinizers;
 
+import org.openrefine.wikidata.updates.EntityEdit;
 import org.openrefine.wikidata.updates.TermedStatementEntityEdit;
 import org.wikidata.wdtk.datamodel.interfaces.EntityIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.Statement;

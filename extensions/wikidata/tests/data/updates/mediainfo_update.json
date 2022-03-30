@@ -1,8 +1,5 @@
 {
-  "type": "item",
-  "addedAliases": [],
-  "descriptions": [],
-  "descriptionsIfNew": [],
+  "type": "mediainfo",
   "labels": [],
   "labelsIfNew": [],
   "new": false,
@@ -50,16 +47,9 @@
           "mode": "delete",
           "statement": {
             "mainsnak": {
-              "datatype": "wikibase-item",
               "datavalue": {
-                "entityType": "http://www.wikidata.org/ontology#Item",
-                "id": "Q1234",
-                "iri": "http://localhost/entity/Q1234",
-                "label": "new item",
-                "placeholder": true,
-                "reconInternalId": 1234,
-                "siteIri": "http://localhost/entity/",
-                "types": []
+                "type": "string",
+                "value": "foo"
               },
               "property": "P52",
               "snaktype": "value"
@@ -74,9 +64,9 @@
   "subject": {
     "type": "wikibase-entityid",
     "value": {
-      "entity-type": "item",
-      "id": "Q34",
-      "numeric-id": 34
+      "entity-type": "mediainfo",
+      "id": "M5678",
+      "numeric-id": 5678
     }
   }
 }
