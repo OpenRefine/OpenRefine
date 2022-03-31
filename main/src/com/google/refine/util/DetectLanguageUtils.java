@@ -15,7 +15,7 @@ import com.optimaize.langdetect.text.TextObjectFactory;
 import java.io.IOException;
 import java.util.List;
 
-public class LangDetectUtils {
+public class DetectLanguageUtils {
 
     public static Optional<LdLocale> detect(String text) throws IOException {
         List<LanguageProfile> languageProfiles = new LanguageProfileReader().readAllBuiltIn();

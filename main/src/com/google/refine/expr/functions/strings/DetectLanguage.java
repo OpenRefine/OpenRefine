@@ -4,10 +4,13 @@ import com.google.common.base.Optional;
 import com.google.refine.expr.EvalError;
 import com.google.refine.grel.ControlFunctionRegistry;
 import com.google.refine.grel.Function;
-import com.google.refine.util.LangDetectUtils;
+import com.google.refine.util.DetectLanguageUtils;
 import com.optimaize.langdetect.i18n.LdLocale;
+import com.optimaize.langdetect.profiles.LanguageProfile;
+import com.optimaize.langdetect.profiles.LanguageProfileReader;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Properties;
 
 public class DetectLanguage implements Function {
@@ -25,7 +28,7 @@ public class DetectLanguage implements Function {
                 String text = (String) obj; // get the string
                 if(text.length() > 0) { // if the string is not empty
                     try { // try to detect the language
-                        Optional<LdLocale> lang = LangDetectUtils.detect(text); // detect the language
+                        Optional<LdLocale> lang = DetectLanguageUtils.detect(text); // detect the language
                         if(lang.isPresent()) { // if the language is detected
                             return lang.get().getLanguage(); // return the language code
                         } else { // if the language is not detected
