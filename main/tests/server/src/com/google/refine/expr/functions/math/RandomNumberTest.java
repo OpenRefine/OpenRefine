@@ -35,7 +35,6 @@ package com.google.refine.expr.functions.math;
 
 import com.google.refine.RefineTest;
 import com.google.refine.expr.EvalError;
-import junit.framework.TestCase;
 import org.slf4j.LoggerFactory;
 import org.testng.Assert;
 import org.testng.annotations.AfterMethod;
@@ -78,7 +77,7 @@ public class RandomNumberTest extends RefineTest {
         Assert.assertTrue(result4 instanceof Double && inRange(2.3, 4, result4));
 
         Object result5 = invoke("randint", 3.2, 12.2);
-        Assert.assertTrue(result5 instanceof Double && inRange(3.2, 12.2, result5) );
+        Assert.assertTrue(result5 instanceof Double && inRange(3.2, 12.2, result5));
     }
 
     public boolean inRange(double min, double max, Object result) {
