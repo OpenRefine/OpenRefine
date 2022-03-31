@@ -68,9 +68,9 @@ Refine.DefaultImportingController.prototype._prepareFileSelectionPanel = functio
   this._fileSelectionPanelElmts.startOverButton.html($.i18n('core-buttons/startover'));
   this._fileSelectionPanelElmts.nextButton.html($.i18n('core-buttons/conf-pars-opt'));
   this._fileSelectionPanelElmts.selectAllButton.text($.i18n('core-buttons/select-all'));
-  this._fileSelectionPanelElmts.unselectAllButton.text($.i18n('core-buttons/unselect-all'));
+  this._fileSelectionPanelElmts.deselectAllButton.text($.i18n('core-buttons/deselect-all'));
   this._fileSelectionPanelElmts.selectRegexButton.text($.i18n('core-buttons/select'));
-  this._fileSelectionPanelElmts.unselectRegexButton.text($.i18n('core-buttons/unselect'));
+  this._fileSelectionPanelElmts.deselectRegexButton.text($.i18n('core-buttons/deselect'));
   
   this._fileSelectionPanelElmts.startOverButton.click(function() {
     self._startOver();
@@ -189,7 +189,7 @@ Refine.DefaultImportingController.prototype._renderFileSelectionPanelControlPane
     self._fileSelectionPanelElmts.filePanel.find("input").prop('checked', true);
     self._updateFileSelectionSummary();
   });
-  this._fileSelectionPanelElmts.unselectAllButton.unbind().click(function(evt) {
+  this._fileSelectionPanelElmts.deselectAllButton.unbind().click(function(evt) {
     self._selectedMap = {};
     self._fileSelectionPanelElmts.filePanel.find("input").prop('checked', false);
     self._updateFileSelectionSummary();
@@ -221,7 +221,7 @@ Refine.DefaultImportingController.prototype._renderFileSelectionPanelControlPane
       self._updateFileSelectionSummary();
     });
     $('<button>')
-    .text($.i18n('core-buttons/unselect'))
+    .text($.i18n('core-buttons/deselect'))
     .addClass("button")
     .appendTo($('<td>').appendTo(tr))
     .click(function() {
@@ -285,7 +285,7 @@ Refine.DefaultImportingController.prototype._renderFileSelectionPanelControlPane
       // Ignore
     }
   });
-  this._fileSelectionPanelElmts.unselectRegexButton.unbind().click(function() {
+  this._fileSelectionPanelElmts.deselectRegexButton.unbind().click(function() {
     self._fileSelectionPanelElmts.filePanel
     .find(".default-importing-file-selection-filename")
     .removeClass("highlighted");

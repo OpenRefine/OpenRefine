@@ -1,6 +1,5 @@
 {
     "name": "Русский",
-    "core-buttons/unselect-all": "Отменить выбор всего",
     "core-buttons/merge-close": "Объединить выбранные &amp; закрыть",
     "core-buttons/import-proj": "Импортировать проект",
     "core-buttons/dont-reconcile": "Не объединять эту ячейку",
@@ -32,7 +31,6 @@
     "core-buttons/update-preview": "Обновить&nbsp; предпросмотр",
     "core-buttons/ok": "&nbsp;&nbsp;ОK&nbsp;&nbsp;",
     "core-buttons/create-project": "Создать проект &raquo;",
-    "core-buttons/unselect": "Снять выбор",
     "core-buttons/upload": "Выгрузить",
     "core-buttons/refresh": "Обновить",
     "core-buttons/reselect-files": "&laquo; Выбрать файлы заново",
