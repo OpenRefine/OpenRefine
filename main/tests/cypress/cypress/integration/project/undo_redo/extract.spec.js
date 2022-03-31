@@ -12,7 +12,7 @@ const defaultInducedHistoryJson = [
 ]
 
 describe(__filename, function () {
-  it('Test select/unselect all', function () {
+  it('Test select/deselect all', function () {
     cy.loadAndVisitProject('food.mini');
     cy.deleteColumn('NDB_No');
     cy.deleteColumn('Shrt_Desc');
@@ -22,8 +22,8 @@ describe(__filename, function () {
       .contains('Extract')
       .click();
 
-    // unselect all
-    cy.get('.dialog-container button[bind="unselectAllButton"]').click();
+    // deselect all
+    cy.get('.dialog-container button[bind="deselectAllButton"]').click();
     cy.wait(500); // eslint-disable-line
     cy.get(
       '.history-extract-dialog-entries tr:nth-child(1) td:first-child input'
@@ -51,7 +51,7 @@ describe(__filename, function () {
     );
   });
 
-  it('Test select/unselect individual entries', function () {
+  it('Test select/deselect individual entries', function () {
     cy.loadAndVisitProject('food.mini');
     cy.deleteColumn('NDB_No');
     cy.deleteColumn('Shrt_Desc');
@@ -60,7 +60,7 @@ describe(__filename, function () {
       .contains('Extract')
       .click();
 
-    // unselect "Remove Water"
+    // deselect "Remove Water"
     cy.get(
       '.history-extract-dialog-entries tr:nth-child(1) td:first-child'
     ).click();
@@ -75,7 +75,7 @@ describe(__filename, function () {
       ]
     );
 
-    // unselect "Remove Shrt_Desc"
+    // deselect "Remove Shrt_Desc"
     cy.get(
       '.history-extract-dialog-entries tr:nth-child(2) td:first-child'
     ).click();

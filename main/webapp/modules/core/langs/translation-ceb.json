@@ -658,7 +658,6 @@
     "core-views/unescape-html/single": "Wala'y paninguha HTML entities",
     "core-views/how-split-cells": "Unsaon pagbuwag sa daghang gpabilhan nga cells",
     "core-views/collapse-this": "Mahugno ni nga kolum",
-    "core-buttons/unselect-all": "Ayawpilia Tanan",
     "core-buttons/merge-close": "Usaha ang Gipili &amp; Isarado",
     "core-buttons/import-proj": "Iangkat ang Proyekto",
     "core-buttons/dont-reconcile": "Ayaw Pag-ayo sa Cell",
@@ -669,7 +668,7 @@
     "core-buttons/apply": "Magamit",
     "core-buttons/cancel": "Kanselahon",
     "core-buttons/close": "Isarado",
-    "core-buttons/deselect-all": "Di-pinili Tanan",
+    "core-buttons/deselect-all": "Dipinili Tanan",
     "core-buttons/select": "Pilia",
     "core-buttons/merge-cluster": "Itipon ang gipili &amp; Re-Cluster",
     "core-buttons/reset-all": "I-reset Tanan",
@@ -697,6 +696,5 @@
     "core-buttons/add-service": "Pagpuno ug Serbisyo",
     "core-buttons/apply-to-all": "Iapply sa tanang Parehag Cells",
     "core-buttons/add-url": "Pagpuno ug Laing URL",
-    "core-buttons/unselect": "Ayaw pilia",
     "core-buttons/pick-record": "Pagpili ug Rekord sa mga Elemento"
 }
