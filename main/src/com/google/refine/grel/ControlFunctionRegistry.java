@@ -306,8 +306,8 @@ public class ControlFunctionRegistry {
         registerFunction("combin", new Combin());
         registerFunction("degrees", new Degrees());
         registerFunction("radians", new Radians());
+        registerFunction("randomNumber", new RandomNumber());
         registerFunction("random", new RandomNumber());
-        registerFunction("randint", new RandomNumber());
         registerFunction("gcd", new GreatestCommonDenominator());
         registerFunction("lcm", new LeastCommonMultiple());
         registerFunction("multinomial", new Multinomial());
