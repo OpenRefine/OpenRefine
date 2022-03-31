@@ -354,16 +354,6 @@
       <artifactId>language-detector</artifactId>
       <version>0.6</version>
     </dependency>
-    <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-api</artifactId>
-      <version>${slf4j.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-simple</artifactId>
-      <version>${slf4j.version}</version>
-    </dependency>
     <!-- ############################ -->
 
     <!-- test dependencies -->
