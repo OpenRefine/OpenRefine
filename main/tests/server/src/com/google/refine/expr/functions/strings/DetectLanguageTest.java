@@ -1,3 +1,4 @@
+
 package com.google.refine.expr.functions.strings;
 
 import com.google.refine.RefineTest;
@@ -10,6 +11,7 @@ import org.testng.annotations.Test;
 import java.util.Map;
 
 public class DetectLanguageTest extends RefineTest {
+
     String functionName;
 
     @Override
@@ -24,8 +26,7 @@ public class DetectLanguageTest extends RefineTest {
                 "I am very sure this works", LdLocale.fromString("en"),
                 "Je suis très sûr que cela fonctionne", LdLocale.fromString("fr"),
                 "Estoy muy seguro de que esto funciona", LdLocale.fromString("es"),
-                "Ich bin sehr sicher dass dies funktioniert", LdLocale.fromString("de")
-        );
+                "Ich bin sehr sicher dass dies funktioniert", LdLocale.fromString("de"));
 
         samples.forEach((s, ldLocale) -> {
             Assert.assertEquals(invoke(functionName, s), ldLocale.getLanguage());
