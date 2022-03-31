@@ -413,6 +413,7 @@
     "core-views/unicode-facet": "Unicode-karakter facetta",
     "core-views/transp-cell-col": "Sorok transzponálása oszlopokká…",
     "core-views/transform": "Átalakítás…",
+    "core-views/transform/header": "Átalakítás",
     "core-views/split-into": "Szétválasztás maximumum",
     "core-views/configure-col": "Oszlop beállítása",
     "core-views/one-topic2": "Válassza ezt, hogy egy-egy új elemet hozzon létre a jelenlegi szűrőnek megfelelő összes cellacsoporthoz ebben az oszlopban",

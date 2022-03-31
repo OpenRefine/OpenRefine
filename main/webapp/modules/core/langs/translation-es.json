@@ -552,6 +552,7 @@
     "core-views/number": "número",
     "core-views/best-edit-dist": "Por distancia de edicion del nombre",
     "core-views/transform": "Transformar…",
+    "core-views/transform/header": "Transformar",
     "core-views/date": "fecha",
     "core-views/create-topic-cell": "Crear un nuevo elemento en esta celda",
     "core-views/text-filter": "Filtro de texto",

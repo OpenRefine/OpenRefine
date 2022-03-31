@@ -535,6 +535,7 @@
     "core-views/number": "number",
     "core-views/best-edit-dist": "Best candidate's name edit distance",
     "core-views/transform": "Transformar…",
+    "core-views/transform/header": "Transformar",
     "core-views/date": "date",
     "core-views/create-topic-cell": "Criar um novo item para esta célula",
     "core-views/boolean": "boolean",

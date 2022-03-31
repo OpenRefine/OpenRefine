@@ -597,6 +597,7 @@
     "core-views/false-true": "false, затем true",
     "core-views/transp-cell-col": "Перемесить ячейки строк в колонки…",
     "core-views/transform": "Преобразование…",
+    "core-views/transform/header": "Преобразование",
     "core-views/split-into": "Разбить на",
     "core-views/one-topic2": "Создать новый заголовок для каждой группы похожих ячеек в этой колонке для всех отфильтрованных строк",
     "core-views/to-number": "В число…",

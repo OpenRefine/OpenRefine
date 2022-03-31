@@ -566,6 +566,7 @@
     "core-views/unicode-facet": "Facette sur le code de caractère Unicode",
     "core-views/transp-cell-col": "Transposer les cellules en colonnes séparées…",
     "core-views/transform": "Transformer…",
+    "core-views/transform/header": "Transformer",
     "core-views/by": "Par",
     "core-views/configure-col": "Configurer cette colonne",
     "core-views/one-topic2": "Marquer pour créer un nouvel élément pour chaque groupe de cellules similaires dans cette colonne pour toutes les lignes actuellement filtrées",

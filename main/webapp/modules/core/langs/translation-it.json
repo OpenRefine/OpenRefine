@@ -567,6 +567,7 @@
     "core-views/unicode-facet": "Faccetta codici caratteri Unicode",
     "core-views/transp-cell-col": "Trasponi celle di righe in colonne…",
     "core-views/transform": "Trasforma…",
+    "core-views/transform/header": "Trasforma",
     "core-views/by": "Per",
     "core-views/configure-col": "Configura questa colonna",
     "core-views/one-topic2": "Contrassegna per creare un nuovo elemento per ogni gruppo di celle simili in questa colonna, per tutte le righe attualmente filtrate",

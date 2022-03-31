@@ -537,6 +537,7 @@
     "core-views/enter-separator": "输入要在值间使用的分隔符",
     "core-views/what-separator": "现在值间用哪种分隔符?",
     "core-views/transform": "转换…",
+    "core-views/transform/header": "转换",
     "core-views/common-transform": "常用转换",
     "core-views/trim-all": "移除首尾空白…",
     "core-views/trim-all/header": "移除首尾空白",

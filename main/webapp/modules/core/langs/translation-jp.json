@@ -565,6 +565,7 @@
     "core-views/unicode-facet": "文字コードファセット",
     "core-views/transp-cell-col": "行を列に転置（等間隔で横持ち化）…",
     "core-views/transform": "変換…",
+    "core-views/transform/header": "変換",
     "core-views/split-into": "分割先",
     "core-views/configure-col": "このカラムの環境設定",
     "core-views/one-topic2": "選択した行で、同内容のセルの各グループから、新しい項目を作成する",

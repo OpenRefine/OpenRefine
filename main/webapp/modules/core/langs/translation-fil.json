@@ -535,6 +535,7 @@
     "core-views/number": "numero",
     "core-views/best-edit-dist": "Ang distansya ng pag-edit ng pangalan ng kandidato ng pinakamahusay",
     "core-views/transform": "transform…",
+    "core-views/transform/header": "transform",
     "core-views/date": "petsa",
     "core-views/create-topic-cell": "Gumawa ng bagong item para sa cell na ito",
     "core-views/text-filter": "Teks sinala",

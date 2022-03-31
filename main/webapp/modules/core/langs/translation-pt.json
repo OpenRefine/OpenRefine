@@ -688,6 +688,7 @@
     "core-views/add-id-column": "Adicionar coluna de identificadores de entidade…",
     "core-buttons/reset-all": "Resetar todos",
     "core-views/transform": "Transformar…",
+    "core-views/transform/header": "Transformar",
     "core-dialogs/for-include-drop-statement-checkbox": "Incluir Declaração Drop",
     "core-buttons/refresh": "Atualizar",
     "core-dialogs/cluster-descr": "Esta funcionalidade ajuda a encontrar grupos em diferentes células que podem representar a mesma coisa. Por exemplo, \"New York\" e \"new york\" provavelmente referem à mesma coisa diferenciando somente pelas letras maiúsculas. Da mesma maneira, \"Gödel\" e \"Godel\" provavelmente representam a mesma pessoa.",
