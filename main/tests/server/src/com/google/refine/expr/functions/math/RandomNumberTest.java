@@ -70,13 +70,13 @@ public class RandomNumberTest extends RefineTest {
         Object result2 = invoke("random", 3, 4);
         Assert.assertTrue(inRange(3, 4, result2));
 
-        Object result3 = invoke("randint", 3, 4.4);
+        Object result3 = invoke("randomNumber", 3, 4.4);
         Assert.assertTrue(inRange(3, 4.4, result3));
 
         Object result4 = invoke("random", 2.3, 4);
         Assert.assertTrue(result4 instanceof Double && inRange(2.3, 4, result4));
 
-        Object result5 = invoke("randint", 3.2, 12.2);
+        Object result5 = invoke("randomNumber", 3.2, 12.2);
         Assert.assertTrue(result5 instanceof Double && inRange(3.2, 12.2, result5));
     }
 
