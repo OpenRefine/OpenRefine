@@ -107,7 +107,109 @@ public class HttpClient {
                 .setConnectionRequestTimeout(60, TimeUnit.SECONDS)
                 .build();
 
+        if (System.getenv("http_proxy") != null) {
+            proxy = new HttpHost(System.getenv("http_proxy"));
+
+            httpClientBuilder = HttpClients.custom()
+                    .setProxy(proxy)
+                    .setUserAgent(RefineServlet.getUserAgent())
+                    .setDefaultRequestConfig(defaultRequestConfig)
+                    .setConnectionManager(connManager)
+                    // Default Apache HC retry is 1x @1 sec (or the value in Retry-Header)
+                    .setRetryStrategy(new ExponentialBackoffRetryStrategy(3, TimeValue.ofMilliseconds(_retryInterval)))
+//                    .setRedirectStrategy(new LaxRedirectStrategy()) // TODO: No longer needed since default doesn't exclude POST?
+//                   .setConnectionBackoffStrategy(ConnectionBackoffStrategy)
+                    .addRequestInterceptorFirst(new HttpRequestInterceptor() {
+
+                        private long nextRequestTime = System.currentTimeMillis();
+
+                        @Override
+                        public void process(
+                                final HttpRequest request,
+                                final EntityDetails entity,
+                                final HttpContext context) throws HttpException, IOException {
+
+                            long delay = nextRequestTime - System.currentTimeMillis();
+                            if (delay > 0) {
+                                try {
+                                    Thread.sleep(delay);
+                                } catch (InterruptedException e) {
+                                }
+                            }
+                            nextRequestTime = System.currentTimeMillis() + _delay;
+
+                        }
+                    });
+
+        } else if (System.getenv("https_proxy") != null) {
+            proxy = new HttpHost(System.getenv("https_proxy"));
+
+            httpClientBuilder = HttpClients.custom()
+                    .setProxy(proxy)
+                    .setUserAgent(RefineServlet.getUserAgent())
+                    .setDefaultRequestConfig(defaultRequestConfig)
+                    .setConnectionManager(connManager)
+                    // Default Apache HC retry is 1x @1 sec (or the value in Retry-Header)
+                    .setRetryStrategy(new ExponentialBackoffRetryStrategy(3, TimeValue.ofMilliseconds(_retryInterval)))
+//                    .setRedirectStrategy(new LaxRedirectStrategy()) // TODO: No longer needed since default doesn't exclude POST?
+//                   .setConnectionBackoffStrategy(ConnectionBackoffStrategy)
+                    .addRequestInterceptorFirst(new HttpRequestInterceptor() {
+
+                        private long nextRequestTime = System.currentTimeMillis();
+
+                        @Override
+                        public void process(
+                                final HttpRequest request,
+                                final EntityDetails entity,
+                                final HttpContext context) throws HttpException, IOException {
+
+                            long delay = nextRequestTime - System.currentTimeMillis();
+                            if (delay > 0) {
+                                try {
+                                    Thread.sleep(delay);
+                                } catch (InterruptedException e) {
+                                }
+                            }
+                            nextRequestTime = System.currentTimeMillis() + _delay;
+
+                        }
+                    });
+        } else {
+            httpClientBuilder = HttpClients.custom()
+                    .setUserAgent(RefineServlet.getUserAgent())
+                    .setDefaultRequestConfig(defaultRequestConfig)
+                    .setConnectionManager(connManager)
+                    // Default Apache HC retry is 1x @1 sec (or the value in Retry-Header)
+                    .setRetryStrategy(new ExponentialBackoffRetryStrategy(3, TimeValue.ofMilliseconds(_retryInterval)))
+//                    .setRedirectStrategy(new LaxRedirectStrategy()) // TODO: No longer needed since default doesn't exclude POST?
+//                   .setConnectionBackoffStrategy(ConnectionBackoffStrategy)
+                    .addRequestInterceptorFirst(new HttpRequestInterceptor() {
+
+                        private long nextRequestTime = System.currentTimeMillis();
+
+                        @Override
+                        public void process(
+                                final HttpRequest request,
+                                final EntityDetails entity,
+                                final HttpContext context) throws HttpException, IOException {
+
+                            long delay = nextRequestTime - System.currentTimeMillis();
+                            if (delay > 0) {
+                                try {
+                                    Thread.sleep(delay);
+                                } catch (InterruptedException e) {
+                                }
+                            }
+                            nextRequestTime = System.currentTimeMillis() + _delay;
+
+                        }
+                    });
+        }
+
+        DefaultProxyRoutePlanner routePlanner = new DefaultProxyRoutePlanner(proxy);
+
         httpClientBuilder = HttpClients.custom()
+                .setRoutePlanner(routePlanner)
                 .setUserAgent(RefineServlet.getUserAgent())
                 .setDefaultRequestConfig(defaultRequestConfig)
                 .setConnectionManager(connManager)
