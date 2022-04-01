@@ -12,24 +12,21 @@ import com.optimaize.langdetect.text.TextObject;
 import com.optimaize.langdetect.text.TextObjectFactory;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 public class DetectLanguageUtils {
-    private static List<LanguageProfile> languageProfiles;
-
-    static {
-        try {
-            languageProfiles = new LanguageProfileReader().readAllBuiltIn();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
+    private static List<LanguageProfile> languageProfiles = new ArrayList<>();
 
     public static Optional<LdLocale> detect(String text) throws IOException {
+
+        // load the language profiles
+        if (languageProfiles.isEmpty()) {
+            languageProfiles = new LanguageProfileReader().readAllBuiltIn();
+        }
+
         // build language detector
-        LanguageDetector languageDetector = LanguageDetectorBuilder.create(NgramExtractors.standard())
-                .withProfiles(languageProfiles)
-                .build();
+        LanguageDetector languageDetector = LanguageDetectorBuilder.create(NgramExtractors.standard()).withProfiles(languageProfiles).build();
 
         // create a text object factory
         TextObjectFactory textObjectFactory = CommonTextObjectFactories.forDetectingOnLargeText();
