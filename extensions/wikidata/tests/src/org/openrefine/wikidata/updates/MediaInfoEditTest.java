@@ -1,3 +1,4 @@
+
 package org.openrefine.wikidata.updates;
 
 import static org.testng.Assert.assertEquals;
@@ -29,7 +30,7 @@ import org.wikidata.wdtk.datamodel.interfaces.StatementRank;
 import com.google.refine.util.TestUtils;
 
 public class MediaInfoEditTest {
-	
+
     private MediaInfoIdValue existingSubject = Datamodel.makeWikimediaCommonsMediaInfoIdValue("M5678");
     private MediaInfoIdValue newSubject = TestingData.makeNewMediaInfoIdValue(1234L, "new item");
 
@@ -58,7 +59,7 @@ public class MediaInfoEditTest {
     public void testCreateWithoutSubject() {
         new MediaInfoEditBuilder(null);
     }
-    
+
     @Test
     public void testAddStatements() {
         MediaInfoEdit update = new MediaInfoEditBuilder(existingSubject).addStatement(statementUpdate1)
@@ -85,23 +86,22 @@ public class MediaInfoEditTest {
         MediaInfoEdit merged = updateA.merge(updateB);
         assertEquals(statementGroups, merged.getStatementGroupEdits().stream().collect(Collectors.toSet()));
     }
-    
+
     @Test
     public void testToEntityUpdate() {
-    	MediaInfoEdit edit = new MediaInfoEditBuilder(existingSubject).addStatement(statementUpdate1)
+        MediaInfoEdit edit = new MediaInfoEditBuilder(existingSubject).addStatement(statementUpdate1)
                 .addStatement(statementUpdate2)
                 .build();
-    	MediaInfoUpdate update = edit.toEntityUpdate(Datamodel.makeMediaInfoDocument(existingSubject));
-    	assertEquals(update.getStatements().getAdded(), Arrays.asList(statement1));
-    }
-    
-    @Test
-    public void testToString() {
-    	MediaInfoEdit edit = new MediaInfoEditBuilder(existingSubject).addStatement(statementUpdate1)
-                .addStatement(statementUpdate2)
-                .build();
-    	assertTrue(edit.toString().contains("M5678"));
+        MediaInfoUpdate update = edit.toEntityUpdate(Datamodel.makeMediaInfoDocument(existingSubject));
+        assertEquals(update.getStatements().getAdded(), Arrays.asList(statement1));
     }
 
+    @Test
+    public void testToString() {
+        MediaInfoEdit edit = new MediaInfoEditBuilder(existingSubject).addStatement(statementUpdate1)
+                .addStatement(statementUpdate2)
+                .build();
+        assertTrue(edit.toString().contains("M5678"));
+    }
 
 }

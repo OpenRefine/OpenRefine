@@ -19,7 +19,7 @@ public class SchemaExporterTest extends WikidataRefineTest {
     @Test
     public void testNoSchema()
             throws IOException {
-    	// TODO instead of returning an empty (and invalid) schema, we should just return an error
+        // TODO instead of returning an empty (and invalid) schema, we should just return an error
         Project project = this.createCSVProject("a,b\nc,d");
         Engine engine = new Engine(project);
         StringWriter writer = new StringWriter();

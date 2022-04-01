@@ -1,3 +1,4 @@
+
 package org.openrefine.wikidata.updates;
 
 import static org.testng.Assert.assertEquals;
@@ -22,12 +23,12 @@ import org.wikidata.wdtk.datamodel.interfaces.Statement;
 import org.wikidata.wdtk.datamodel.interfaces.StatementRank;
 
 public class EntityEditTest {
-	
+
     private ItemIdValue existingSubject = Datamodel.makeWikidataItemIdValue("Q34");
     private ItemIdValue newSubject = TestingData.makeNewItemIdValue(1234L, "new item");
     private ItemIdValue sameNewSubject = TestingData.makeNewItemIdValue(1234L, "other new item");
     private ItemIdValue matchedSubject = TestingData.makeMatchedItemIdValue("Q78", "well known item");
-    
+
     private PropertyIdValue pid1 = Datamodel.makeWikidataPropertyIdValue("P348");
     private PropertyIdValue pid2 = Datamodel.makeWikidataPropertyIdValue("P52");
     private Claim claim1 = Datamodel.makeClaim(existingSubject, Datamodel.makeNoValueSnak(pid1),

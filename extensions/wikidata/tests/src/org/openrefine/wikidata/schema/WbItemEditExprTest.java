@@ -53,7 +53,7 @@ public class WbItemEditExprTest extends WbExpressionTest<ItemEdit> {
         fullStatement = sgt.statementGroupUpdate.getStatementEdits().get(0);
 
         jsonRepresentation = "{\"type\":\"wbitemeditexpr\","
-        		+ "\"subject\":{\"type\":\"wbitemvariable\",\"columnName\":\"column E\"},"
+                + "\"subject\":{\"type\":\"wbitemvariable\",\"columnName\":\"column E\"},"
                 + "\"nameDescs\":[{\"name_type\":\"ALIAS\",\"value\":{\"type\":\"wbmonolingualexpr\",\"language\":"
                 + "{\"type\":\"wblanguageconstant\",\"id\":\"en\",\"label\":\"English\"},"
                 + "\"value\":{\"type\":\"wbstringvariable\",\"columnName\":\"column D\"}}}" + "],\"statementGroups\":["

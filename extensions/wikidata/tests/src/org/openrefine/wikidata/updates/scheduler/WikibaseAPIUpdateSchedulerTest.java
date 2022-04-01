@@ -69,15 +69,15 @@ public class WikibaseAPIUpdateSchedulerTest extends UpdateSchedulerTest {
         List<EntityEdit> scheduled = schedule(updateA, newUpdateA);
         assertEquals(scheduled, Arrays.asList(newUpdateA, newUpdateB, updateA));
     }
-    
+
     @Test
     public void testMediaInfoReferringToNewItem() throws ImpossibleSchedulingException {
-    	EntityEdit updateMediaInfo = new MediaInfoEditBuilder(existingMediaInfoId)
-    			.addStatement(TestingData.generateStatementAddition(existingMediaInfoId, newIdA))
-    			.build();
-    	EntityEdit newUpdateA = new ItemEditBuilder(newIdA).build();
-    	List<EntityEdit> scheduled = schedule(updateMediaInfo);
-    	assertEquals(scheduled, Arrays.asList(newUpdateA, updateMediaInfo));
+        EntityEdit updateMediaInfo = new MediaInfoEditBuilder(existingMediaInfoId)
+                .addStatement(TestingData.generateStatementAddition(existingMediaInfoId, newIdA))
+                .build();
+        EntityEdit newUpdateA = new ItemEditBuilder(newIdA).build();
+        List<EntityEdit> scheduled = schedule(updateMediaInfo);
+        assertEquals(scheduled, Arrays.asList(newUpdateA, updateMediaInfo));
     }
 
     @Override

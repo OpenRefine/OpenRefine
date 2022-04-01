@@ -1,3 +1,4 @@
+
 package org.openrefine.wikidata.schema;
 
 import java.util.Collections;
@@ -22,13 +23,14 @@ import org.wikidata.wdtk.datamodel.interfaces.StatementRank;
 import com.google.refine.model.Cell;
 
 public class WbMediaInfoEditExprTest extends WbExpressionTest<MediaInfoEdit> {
+
     public WbMediaInfoEditExpr expr;
     Cell matchedCell = recon("M23");
-    EntityIdValue subject = new ReconMediaInfoIdValue(matchedCell.recon, (String)matchedCell.value);
+    EntityIdValue subject = new ReconMediaInfoIdValue(matchedCell.recon, (String) matchedCell.value);
     MonolingualTextValue label = Datamodel.makeMonolingualTextValue("my label", "en");
     Snak mainsnak = Datamodel.makeValueSnak(Datamodel.makeWikidataPropertyIdValue("P908"),
-    		Datamodel.makeGlobeCoordinatesValue(3.898, 4.389,
-            WbLocationConstant.defaultPrecision, GlobeCoordinatesValue.GLOBE_EARTH));
+            Datamodel.makeGlobeCoordinatesValue(3.898, 4.389,
+                    WbLocationConstant.defaultPrecision, GlobeCoordinatesValue.GLOBE_EARTH));
     Claim fullClaim = Datamodel.makeClaim(subject, mainsnak,
             Collections.emptyList());
     Statement evaluatedStatement = Datamodel.makeStatement(fullClaim, Collections.emptyList(),
@@ -37,7 +39,6 @@ public class WbMediaInfoEditExprTest extends WbExpressionTest<MediaInfoEdit> {
             evaluatedStatement,
             StatementMerger.FORMER_DEFAULT_STRATEGY,
             StatementEditingMode.ADD_OR_MERGE);
-    
 
     public String jsonRepresentation;
 
