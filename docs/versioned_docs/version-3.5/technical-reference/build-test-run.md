@@ -170,6 +170,8 @@ npm install -g npm@latest
 
 ### Building {#building}
 
+:::info OpenRefine's main class or Java entry point (for historical reasons) is `com.google.refine.Refine`
+
 To see what functions are supported by OpenRefine's build system, type
 ```shell
 ./refine -h
