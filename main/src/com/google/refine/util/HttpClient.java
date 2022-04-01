@@ -80,6 +80,8 @@ public class HttpClient {
     private int _delay;
     private int _retryInterval; // delay between original request and first retry, in ms
     private HttpHost proxy;
+    private int proxyPort;
+    private String proxyHost;
     
     public HttpClient() {
         this(0);
@@ -89,7 +91,7 @@ public class HttpClient {
         this(delay, Math.max(delay, 200));
     }
     
-    public HttpClient(int delay, int retryInterval) {   
+    public HttpClient(int delay, int retryInterval) {
         _delay = delay;
         _retryInterval = retryInterval;
         // Create a connection manager with a custom socket timeout
@@ -104,8 +106,10 @@ public class HttpClient {
                 .setConnectionRequestTimeout(60, TimeUnit.SECONDS)
                 .build();
 
-        if (System.getenv("http_proxy") != null) {
-            proxy = new HttpHost(System.getenv("http_proxy"));
+        if (System.getProperty("http.proxyHost") != null && System.getProperty("http.proxyPort") != null) {
+            proxyHost = System.getProperty("http.proxyHost");
+            proxyPort = Integer.parseInt(System.getProperty("http.proxyPort"));
+            proxy = new HttpHost("http", proxyHost, proxyPort);
 
             httpClientBuilder = HttpClients.custom()
                     .setProxy(proxy)
@@ -138,8 +142,10 @@ public class HttpClient {
                         }
                     });
 
-        } else if (System.getenv("https_proxy") != null) {
-            proxy = new HttpHost(System.getenv("https_proxy"));
+        } else if (System.getProperty("http.proxyHost") != null && System.getProperty("https.proxyPort") != null) {
+            proxyHost = System.getProperty("http.proxyHost");
+            proxyPort = Integer.parseInt(System.getProperty("https.proxyPort"));
+            proxy = new HttpHost("http", proxyHost, proxyPort);
 
             httpClientBuilder = HttpClients.custom()
                     .setProxy(proxy)
