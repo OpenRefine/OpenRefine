@@ -107,9 +107,16 @@ public class HttpClient {
                 .setConnectionRequestTimeout(60, TimeUnit.SECONDS)
                 .build();
 
-        if (System.getProperty("http.proxyHost") != null && System.getProperty("http.proxyPort") != null) {
+        if (System.getProperty("http.proxyHost") != null)
             proxyHost = System.getProperty("http.proxyHost");
+
+        if (System.getProperty("https.proxyHost") != null)
+            proxyHost = System.getProperty("https.proxyHost");
+
+        if (System.getProperty("http.proxyPort") != null)
             proxyPort = Integer.parseInt(System.getProperty("http.proxyPort"));
+
+        if (proxyHost != null && proxyPort != 0) {
             proxy = new HttpHost("http", proxyHost, proxyPort);
 
             httpClientBuilder = HttpClients.custom()
@@ -143,41 +150,6 @@ public class HttpClient {
                         }
                     });
 
-        } else if (System.getProperty("http.proxyHost") != null && System.getProperty("https.proxyPort") != null) {
-            proxyHost = System.getProperty("http.proxyHost");
-            proxyPort = Integer.parseInt(System.getProperty("https.proxyPort"));
-            proxy = new HttpHost("http", proxyHost, proxyPort);
-
-            httpClientBuilder = HttpClients.custom()
-                    .setProxy(proxy)
-                    .setUserAgent(RefineServlet.getUserAgent())
-                    .setDefaultRequestConfig(defaultRequestConfig)
-                    .setConnectionManager(connManager)
-                    // Default Apache HC retry is 1x @1 sec (or the value in Retry-Header)
-                    .setRetryStrategy(new ExponentialBackoffRetryStrategy(3, TimeValue.ofMilliseconds(_retryInterval)))
-//                    .setRedirectStrategy(new LaxRedirectStrategy()) // TODO: No longer needed since default doesn't exclude POST?
-//                   .setConnectionBackoffStrategy(ConnectionBackoffStrategy)
-                    .addRequestInterceptorFirst(new HttpRequestInterceptor() {
-
-                        private long nextRequestTime = System.currentTimeMillis();
-
-                        @Override
-                        public void process(
-                                final HttpRequest request,
-                                final EntityDetails entity,
-                                final HttpContext context) throws HttpException, IOException {
-
-                            long delay = nextRequestTime - System.currentTimeMillis();
-                            if (delay > 0) {
-                                try {
-                                    Thread.sleep(delay);
-                                } catch (InterruptedException e) {
-                                }
-                            }
-                            nextRequestTime = System.currentTimeMillis() + _delay;
-
-                        }
-                    });
         } else {
             httpClientBuilder = HttpClients.custom()
                     .setUserAgent(RefineServlet.getUserAgent())
