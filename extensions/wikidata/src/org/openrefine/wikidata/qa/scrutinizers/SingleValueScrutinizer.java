@@ -23,15 +23,16 @@
  ******************************************************************************/
 package org.openrefine.wikidata.qa.scrutinizers;
 
-import org.openrefine.wikidata.qa.QAWarning;
-import org.openrefine.wikidata.updates.EntityEdit;
-import org.openrefine.wikidata.updates.TermedStatementEntityEdit;
-import org.wikidata.wdtk.datamodel.interfaces.PropertyIdValue;
-import org.wikidata.wdtk.datamodel.interfaces.Statement;
-
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+
+import org.openrefine.wikidata.qa.QAWarning;
+import org.openrefine.wikidata.updates.ItemEdit;
+import org.openrefine.wikidata.updates.MediaInfoEdit;
+import org.openrefine.wikidata.updates.StatementEntityEdit;
+import org.wikidata.wdtk.datamodel.interfaces.PropertyIdValue;
+import org.wikidata.wdtk.datamodel.interfaces.Statement;
 
 /**
  * For now this scrutinizer only checks for uniqueness at the entity level (it
@@ -57,7 +58,16 @@ public class SingleValueScrutinizer extends EditScrutinizer {
     }
 
     @Override
-    public void scrutinize(TermedStatementEntityEdit update) {
+    public void scrutinize(ItemEdit update) {
+    	scrutinizeStatementEdit(update);
+    }
+    
+    @Override
+    public void scrutinize(MediaInfoEdit update) {
+    	scrutinizeStatementEdit(update);
+    }
+
+    public void scrutinizeStatementEdit(StatementEntityEdit update) {
         Set<PropertyIdValue> seenSingleProperties = new HashSet<>();
 
         for (Statement statement : update.getAddedStatements()) {

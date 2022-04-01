@@ -114,6 +114,7 @@ public abstract class LabeledStatementEntityEdit implements StatementEntityEdit 
 	 * @return the list of statement updates
 	 */
 	@JsonIgnore
+	@Override
 	public List<StatementEdit> getStatementEdits() {
 		return statements;
 	}
@@ -127,29 +128,6 @@ public abstract class LabeledStatementEntityEdit implements StatementEntityEdit 
 	    		.map(statements -> new StatementGroupEdit(statements))
 	    		.collect(Collectors.toList());
 	    return result;
-	}
-
-	/**
-	 * @return the statements which should be added or merged with
-	 * the existing ones on the item.
-	 */
-	@JsonIgnore
-	public List<Statement> getAddedStatements() {
-		return statements.stream()
-				.filter(statement -> statement.getMode() != StatementEditingMode.DELETE)
-				.map(StatementEdit::getStatement)
-				.collect(Collectors.toList());
-	}
-
-	/**
-	 * @return the statements which should be deleted from the item.
-	 */
-	@JsonIgnore
-	public List<Statement> getDeletedStatements() {
-		return statements.stream()
-				.filter(statement -> statement.getMode() == StatementEditingMode.DELETE)
-				.map(StatementEdit::getStatement)
-				.collect(Collectors.toList());
 	}
     
     /**

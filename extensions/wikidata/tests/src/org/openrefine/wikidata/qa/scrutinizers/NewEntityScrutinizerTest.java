@@ -35,7 +35,7 @@ import org.wikidata.wdtk.datamodel.interfaces.Claim;
 import org.wikidata.wdtk.datamodel.interfaces.Statement;
 import org.wikidata.wdtk.datamodel.interfaces.StatementRank;
 
-public class NewItemScrutinizerTest extends ScrutinizerTest {
+public class NewEntityScrutinizerTest extends ScrutinizerTest {
 
     private Claim claim = Datamodel.makeClaim(TestingData.newIdA,
             Datamodel.makeValueSnak(Datamodel.makeWikidataPropertyIdValue("P31"), TestingData.existingId),
@@ -44,15 +44,15 @@ public class NewItemScrutinizerTest extends ScrutinizerTest {
 
     @Override
     public EditScrutinizer getScrutinizer() {
-        return new NewItemScrutinizer();
+        return new NewEntityScrutinizer();
     }
 
     @Test
     public void testTrigger() {
         TermedStatementEntityEdit update = new ItemEditBuilder(TestingData.newIdA).build();
         scrutinize(update);
-        assertWarningsRaised(NewItemScrutinizer.noDescType, NewItemScrutinizer.noLabelType,
-                NewItemScrutinizer.noTypeType, NewItemScrutinizer.newItemType);
+        assertWarningsRaised(NewEntityScrutinizer.noDescType, NewEntityScrutinizer.noLabelType,
+                NewEntityScrutinizer.noTypeType, NewEntityScrutinizer.newItemType);
     }
 
     @Test
@@ -71,7 +71,7 @@ public class NewItemScrutinizerTest extends ScrutinizerTest {
                 .addStatement(add(p31Statement))
                 .build();
         scrutinize(update);
-        assertWarningsRaised(NewItemScrutinizer.newItemType);
+        assertWarningsRaised(NewEntityScrutinizer.newItemType);
     }
 
     @Test
@@ -83,7 +83,7 @@ public class NewItemScrutinizerTest extends ScrutinizerTest {
                 .addStatement(delete(TestingData.generateStatement(TestingData.newIdA, TestingData.matchedId)))
                 .build();
         scrutinize(update);
-        assertWarningsRaised(NewItemScrutinizer.newItemType, NewItemScrutinizer.deletedStatementsType);
+        assertWarningsRaised(NewEntityScrutinizer.newItemType, NewEntityScrutinizer.deletedStatementsType);
     }
 
 }
