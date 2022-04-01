@@ -23,6 +23,7 @@
  ******************************************************************************/
 package org.openrefine.wikidata.qa.scrutinizers;
 
+import org.openrefine.wikidata.schema.strategies.StatementEditingMode;
 import org.openrefine.wikidata.updates.ItemEdit;
 import org.openrefine.wikidata.updates.MediaInfoEdit;
 import org.openrefine.wikidata.updates.StatementEdit;
@@ -45,7 +46,7 @@ public abstract class StatementScrutinizer extends EditScrutinizer {
     public void scrutinizeStatementEntityEdit(StatementEntityEdit update) {
         EntityIdValue currentEntityId = update.getEntityId();
         for (StatementEdit statementEdit : update.getStatementEdits()) {
-        	scrutinize(statementEdit.getStatement(), currentEntityId, true);
+        	scrutinize(statementEdit.getStatement(), currentEntityId, !StatementEditingMode.DELETE.equals(statementEdit.getMode()));
         }
     }
 
