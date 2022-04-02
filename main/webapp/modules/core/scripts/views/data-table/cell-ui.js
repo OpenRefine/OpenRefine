@@ -41,6 +41,8 @@ function DataTableCellUI(dataTableView, cell, rowIndex, cellIndex, td) {
   this._render();
 }
 
+var defaultChoice = true;
+
 DataTableCellUI.previewMatchedCells = true;
 
 (function() {
@@ -360,9 +362,25 @@ DataTableCellUI.prototype._searchForMatch = function(suggestOptions) {
   elmts.newButton.html($.i18n('core-buttons/new-topic'));
   elmts.clearButton.html($.i18n('core-buttons/dont-reconcile'));
   elmts.cancelButton.html($.i18n('core-buttons/cancel'));
+  
+	if (!defaultChoice) {
+		elmts.radioSimilar[0].setAttribute("checked", false);
+		elmts.radioOne[0].setAttribute("checked", true);
+	}
 
   var level = DialogSystem.showDialog(frame);
   var dismiss = function() {
+	  if (elmts.radioSimilar[0].checked) {
+		  defaultChoice = true;
+		  elmts.radioSimilar[0].setAttribute("checked", true);
+		  elmts.radioOne[0].setAttribute("checked", false);
+
+	  } else {
+		  defaultChoice = false;
+		  elmts.radioSimilar[0].setAttribute("checked", false);
+		  elmts.radioOne[0].setAttribute("checked", true);
+	  }
+	
     DialogSystem.dismissUntil(level - 1);
   };
 
