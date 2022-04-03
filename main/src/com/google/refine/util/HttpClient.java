@@ -182,7 +182,8 @@ public class HttpClient {
                     });
         }
 
-        DefaultProxyRoutePlanner routePlanner = new DefaultProxyRoutePlanner(proxy);
+        if (proxy != null)
+            routePlanner = new DefaultProxyRoutePlanner(proxy);
 
         httpClientBuilder = HttpClients.custom()
                 .setRoutePlanner(routePlanner)
