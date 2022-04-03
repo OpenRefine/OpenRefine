@@ -82,6 +82,7 @@ public class HttpClient {
     private HttpHost proxy;
     private int proxyPort;
     private String proxyHost;
+    private DefaultProxyRoutePlanner routePlanner;
     
     public HttpClient() {
         this(0);
@@ -181,7 +182,8 @@ public class HttpClient {
                     });
         }
 
-        DefaultProxyRoutePlanner routePlanner = new DefaultProxyRoutePlanner(proxy);
+        if (proxy != null)
+            routePlanner = new DefaultProxyRoutePlanner(proxy);
 
         httpClientBuilder = HttpClients.custom()
                 .setRoutePlanner(routePlanner)
