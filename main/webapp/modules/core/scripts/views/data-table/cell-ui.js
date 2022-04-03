@@ -41,7 +41,7 @@ function DataTableCellUI(dataTableView, cell, rowIndex, cellIndex, td) {
   this._render();
 }
 
-var defaultChoice = true;
+var reconMatchSilimilarCellsByDefault = true;
 
 DataTableCellUI.previewMatchedCells = true;
 
@@ -363,7 +363,7 @@ DataTableCellUI.prototype._searchForMatch = function(suggestOptions) {
   elmts.clearButton.html($.i18n('core-buttons/dont-reconcile'));
   elmts.cancelButton.html($.i18n('core-buttons/cancel'));
   
-	if (!defaultChoice) {
+	if (!reconMatchSilimilarCellsByDefault) {
 		elmts.radioSimilar[0].setAttribute("checked", false);
 		elmts.radioOne[0].setAttribute("checked", true);
 	}
@@ -371,14 +371,9 @@ DataTableCellUI.prototype._searchForMatch = function(suggestOptions) {
   var level = DialogSystem.showDialog(frame);
   var dismiss = function() {
 	  if (elmts.radioSimilar[0].checked) {
-		  defaultChoice = true;
-		  elmts.radioSimilar[0].setAttribute("checked", true);
-		  elmts.radioOne[0].setAttribute("checked", false);
-
+		  reconMatchSilimilarCellsByDefault = true;
 	  } else {
-		  defaultChoice = false;
-		  elmts.radioSimilar[0].setAttribute("checked", false);
-		  elmts.radioOne[0].setAttribute("checked", true);
+		  reconMatchSilimilarCellsByDefault = false;
 	  }
 	
     DialogSystem.dismissUntil(level - 1);
