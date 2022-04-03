@@ -62,7 +62,7 @@ OpenRefine may also work in other environments, such as [Chromebooks](https://gi
 
 If you are upgrading from an older version of OpenRefine and have projects already on your computer, you should create backups of those projects before you install a new version.
 
-First, [locate your workspace directory](#where-is-data-stored). Then copy everything you find there and paste it into a folder elsewhere on your computer.
+First, [locate your workspace directory](#set-where-data-is-stored). Then copy everything you find there and paste it into a folder elsewhere on your computer.
 
 For extra security you can [export your existing OpenRefine projects](exporting#export-a-project).
 
@@ -206,9 +206,17 @@ tar xzf openrefine-linux-3.4.tar.gz
 
 ### Set where data is stored {#set-where-data-is-stored}
 
-OpenRefine stores data in two places: program files in the program directory, wherever it is you’ve installed it; and project files in what we call the “workspace directory.” You can access this folder easily from OpenRefine by going to the [home screen](running#the-home-screen) (at [http://127.0.0.1:3333/](http://127.0.0.1:3333/)) and clicking <span class="buttonLabels">Browse workspace directory</span>.
+OpenRefine stores data in two places: 
 
-By default this is:
+*   program files in the program directory, wherever it is you’ve installed it
+*   project files in what we call the “workspace directory.”  
+
+You can access the workspace directory by:
+*   launch OpenRefine and click <span class="menuItems">Open Project</span> in the sidebar
+*   At the bottom of the screen, click <span class="menuItems">Browse workspace directory</span>
+*   A file-explorer or finder window will open in your workspace
+
+By default its location is:
 
 <Tabs
   groupId="operating-systems"
@@ -251,13 +259,13 @@ If the folder does not exist, OpenRefine will create it.
 <TabItem value="mac">
 
 ```
-~/Library/Application Support/OpenRefine/
+~/Library/Application\ Support/OpenRefine/
 ```
 
 For older versions, as Google Refine:
 
 ```
-~/Library/Application Support/Google/Refine/
+~/Library/Application\ Support/Google/Refine/
 ```
 
 Logging is to `/var/log/daemon.log` - grep for `com.google.refine.Refine`.
@@ -413,9 +421,7 @@ We provide these options because you may wish to reinstall a given extension man
 If you want to install the extension into the program folder, go to your program directory and then go to `webapp\extensions` (or create it if not does not exist).
 
 If you want to install the extension into your workspace, you can:
-*   launch OpenRefine and click <span class="menuItems">Open Project</span> in the sidebar
-*   At the bottom of the screen, click <span class="menuItems">Browse workspace directory</span>
-*   A file-explorer or finder window will open in your workspace
+*   [Locate your workspace directory](#set-where-data-is-stored)
 *   Create a new folder called “extensions” inside the workspace if it does not exist.
 
 You can also [find your workspace on each operating system using these instructions](#set-where-data-is-stored).  
