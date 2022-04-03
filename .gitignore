@@ -38,6 +38,7 @@ open-refine.log
 
 main/target/
 main/webapp/WEB-INF/lib/
+main/webapp/modules/core/3rdparty/
 server/target/
 extensions/*/target/
 extensions/*/module/MOD-INF/classes/
