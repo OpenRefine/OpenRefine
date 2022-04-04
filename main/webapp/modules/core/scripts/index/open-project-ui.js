@@ -176,10 +176,12 @@ Refine.OpenProjectUI.prototype._searchAnimation = function() {
             form.focus()
     }
         var widthFormOpen = Math.floor($('#right-panel-body').width() * 4 / 5);
+
     form.animate({
-      'width': form.width() == widthFormOpen ? '0px' : widthFormOpen + "px"
+      // in chrome, form.width() != widthFormOpen
+      'width': Math.round(form.width()) == widthFormOpen ? '0' : widthFormOpen + "px"
     }, 'fast', function () {
-      if (form.width() == 0) {
+      if (Math.abs(Math.round(form.width())) == 0) {
         form.hide()
                 form.val('')
                 icon.removeClass("magnifying-glass-open")
