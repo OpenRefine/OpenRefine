@@ -147,6 +147,7 @@ public class UploadCommand extends Command {
 
     protected byte[] getIconImage() throws IOException {
         InputStream is = getClass().getResourceAsStream(METADATA_ICON_FILE);
+        is.close();
         return IOUtils.toByteArray(is);
     }
 
