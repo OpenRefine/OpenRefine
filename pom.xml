@@ -68,7 +68,7 @@
     <butterfly.version>1.2.3</butterfly.version>
     <slf4j.version>1.7.36</slf4j.version>
     <log4j.version>2.17.2</log4j.version>
-    <jetty.version>9.4.41.v20210516</jetty.version>
+    <jetty.version>11.0.9</jetty.version>
     <okhttp.version>4.9.3</okhttp.version>
     <jena.version>4.4.0</jena.version>
     <poi.version>5.2.2</poi.version>
