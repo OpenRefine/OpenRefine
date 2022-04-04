@@ -19,9 +19,10 @@
             listElements.bind("filterSearch", function( e, text ) {
                 // get each project row
                 var projects = $(this).find("tr");
+
                 var projectsWithText = projects.filter(function() {
                         $(this).removeClass(settings.selectedTagClass);
-                        return $(this).text().toLowerCase().contains(text)
+                        return $("searchable").text().toLowerCase().contains(text)
                 });
                 projectsWithText.addClass(settings.selectedTagClass);
                 $(this).trigger("filterSearchList",[ settings.selectedTagClass ]);
