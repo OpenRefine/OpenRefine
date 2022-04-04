@@ -357,6 +357,7 @@ Refine.OpenProjectUI.prototype._renderProjects = function(data) {
       
       var nameLink = $('<a></a>')
       .addClass("project-name")
+      .addClass("searchable")
       .text(project.name)
       .attr("href", "project?project=" + project.id)
       .appendTo($(tr.insertCell(tr.cells.length)));
@@ -367,6 +368,7 @@ Refine.OpenProjectUI.prototype._renderProjects = function(data) {
         $("<span/>")
         .addClass("project-tag")
         .attr("data-tag-name", tag)
+        .addClass("searchable")
         .text(tag)
         .appendTo(tagsCell);
         $(tr).addClass(tag);
@@ -375,6 +377,7 @@ Refine.OpenProjectUI.prototype._renderProjects = function(data) {
     
     var appendMetaField = function(data) {
         $('<div></div>')
+        .addClass("searchable")
         .html(data)
         .appendTo($(tr.insertCell(tr.cells.length)));
     };
