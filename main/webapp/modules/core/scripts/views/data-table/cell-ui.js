@@ -370,12 +370,8 @@ DataTableCellUI.prototype._searchForMatch = function(suggestOptions) {
 
   var level = DialogSystem.showDialog(frame);
   var dismiss = function() {
-	  if (elmts.radioSimilar[0].checked) {
-		  reconMatchSilimilarCellsByDefault = true;
-	  } else {
-		  reconMatchSilimilarCellsByDefault = false;
-	  }
-	
+	reconMatchSilimilarCellsByDefault = elmts.radioSimilar[0].checked;
+	  
     DialogSystem.dismissUntil(level - 1);
   };
 
