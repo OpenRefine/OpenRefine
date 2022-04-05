@@ -49,6 +49,7 @@ Refine.DefaultImportingController.prototype._showParsingPanel = function(hasFile
   this._parsingPanelElmts.nextButton.click(function() {
     self._createProject();
   });
+  this._parsingPanelElmts.form.submit();
   if (hasFileSelection) {
     this._parsingPanelElmts.previousButton.click(function() {
       self._createProjectUI.showCustomPanel(self._fileSelectionPanel);
