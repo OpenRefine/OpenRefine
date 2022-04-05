@@ -22,7 +22,7 @@
 
                 var projectsWithText = projects.filter(function() {
                         $(this).removeClass(settings.selectedTagClass);
-                        return $("searchable").text().toLowerCase().contains(text)
+                        return $(this).find(".searchable").text().toLowerCase().contains(text)
                 });
                 projectsWithText.addClass(settings.selectedTagClass);
                 $(this).trigger("filterSearchList",[ settings.selectedTagClass ]);
