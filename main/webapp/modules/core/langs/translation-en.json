@@ -738,7 +738,7 @@
     "core-views/replacement-info": "If \"regular expression\" option is checked and finding pattern contains groups delimited with parentheses, $0 will return the complete string matching the pattern, and $1, $2… the 1st, 2nd… group.",
     "core-views/replace-dont-escape": "use \\n for new lines, \\t for tabulation, \\\\n for \\n, \\\\t for \\t.",
     "core-views/warning-regex": "Invalid regular expression : $1",
-    "core-views/use-values-as-identifiers-note": "Reconciliation identifiers will not be validated",
+    "core-views/use-values-as-identifiers-note": "Reconciliation identifiers will not be validated.",
     "core-views/use-values-as-identifiers": "Use values as identifiers…",
     "core-views/use-values-as-identifiers/header": "Use values as identifiers",
     "core-views/use-values-as-identifiers2": "Mark cells as reconciled with their values as identifiers",
