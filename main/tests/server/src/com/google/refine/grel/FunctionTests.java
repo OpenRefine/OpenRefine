@@ -153,12 +153,16 @@ public class FunctionTests extends RefineTest {
 
     @Test
     void testNullArgsMath() {
-        Set<String> oneArgs = new HashSet<>(Arrays.asList("abs", "acos", "asin", "atan", "ceil", "combin", "cos", "cosh", "degrees", "even", "exp", "fact", "floor", "ln", "log", "multinomial", "odd", "radians", "round", "sin", "sinh", "sum", "tan", "tanh"));
-        Set<String> twoArgs = new HashSet<>(Arrays.asList("atan2", "factn", "greatestCommonDenominator", "leastCommonMultiple", "max", "min", "mod", "pow", "quotient", "randomNumber"));
+        Set<String> oneArgs = new HashSet<>(
+                Arrays.asList("abs", "acos", "asin", "atan", "ceil", "combin", "cos", "cosh", "degrees", "even", "exp", "fact", "floor",
+                        "ln", "log", "multinomial", "odd", "radians", "round", "sin", "sinh", "sum", "tan", "tanh"));
+        Set<String> twoArgs = new HashSet<>(
+                Arrays.asList("atan2", "factn", "greatestCommonDenominator", "leastCommonMultiple", "max", "min", "mod", "pow", "quotient",
+                        "randomNumber"));
         for (Entry<String, Function> entry : ControlFunctionRegistry.getFunctionMapping()) {
             Function func = entry.getValue();
             if (oneArgs.contains(ControlFunctionRegistry.getFunctionName(func))) {
-                Object result = func.call(bindings, new Object[] {null});
+                Object result = func.call(bindings, new Object[] { null });
                 assertTrue(result instanceof EvalError, ControlFunctionRegistry.getFunctionName(func) + " didn't error on null arg");
             } else if (twoArgs.contains(ControlFunctionRegistry.getFunctionName(func))) {
                 Object result2 = func.call(bindings, new Object[] { null, null });
