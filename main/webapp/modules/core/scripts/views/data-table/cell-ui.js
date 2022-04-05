@@ -41,6 +41,8 @@ function DataTableCellUI(dataTableView, cell, rowIndex, cellIndex, td) {
   this._render();
 }
 
+var reconMatchSilimilarCellsByDefault = true;
+
 DataTableCellUI.previewMatchedCells = true;
 
 (function() {
@@ -360,9 +362,16 @@ DataTableCellUI.prototype._searchForMatch = function(suggestOptions) {
   elmts.newButton.html($.i18n('core-buttons/new-topic'));
   elmts.clearButton.html($.i18n('core-buttons/dont-reconcile'));
   elmts.cancelButton.html($.i18n('core-buttons/cancel'));
+  
+	if (!reconMatchSilimilarCellsByDefault) {
+		elmts.radioSimilar[0].setAttribute("checked", false);
+		elmts.radioOne[0].setAttribute("checked", true);
+	}
 
   var level = DialogSystem.showDialog(frame);
   var dismiss = function() {
+	reconMatchSilimilarCellsByDefault = elmts.radioSimilar[0].checked;
+	  
     DialogSystem.dismissUntil(level - 1);
   };
 
