@@ -45,8 +45,8 @@ public class RandomNumber implements Function {
     
     @Override
     public Object call(Properties bindings, Object[] args) {
-        if (args.length == 2 && args[0] != null && args[0] instanceof Number
-                && args[1] != null && args[1] instanceof Number && ((Number) args[0]).intValue()<((Number) args[1]).intValue()) {
+        if (args.length == 2 && args[0] instanceof Number
+                && args[1] instanceof Number && ((Number) args[0]).intValue()<((Number) args[1]).intValue()) {
             int randomNum = ThreadLocalRandom.current().nextInt(((Number) args[0]).intValue(), ((Number) args[1]).intValue()+1);
             return randomNum;
         }
