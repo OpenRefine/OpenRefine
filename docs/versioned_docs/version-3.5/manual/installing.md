@@ -111,7 +111,7 @@ Once you have downloaded the `.dmg` file, open it and drag the OpenRefine icon o
 The quick version:
 
 1. Install [Homebrew](https://brew.sh)
-2. In Terminal enter ` brew cask install openrefine`
+2. In Terminal enter ` brew install --cask openrefine`
 1. Then find OpenRefine in your Applications folder.
 
 The long version:
@@ -354,16 +354,19 @@ Note that this file is only read if you use `refine.bat`, not `openrefine.exe`.
 </TabItem>
 <TabItem value="mac">
 
+:::caution First, ensure that you have already followed and completed the install steps above, otherwise you will get an error about a read-only volume when editing the `Info.plist` file following the next steps.
+:::
+
 If you have downloaded the `.dmg` package and you start OpenRefine by double-clicking on it:
 
 *   close OpenRefine
 *   control-click on the OpenRefine icon (opens the contextual menu)
 *   click on "show package content” (a finder window opens)
 *   open the “Contents” folder
-*   open the `Info.plist` file with any text editor (like Mac's default TextEdit)
+*   open and edit the `Info.plist` file with any text editor (like Mac's default TextEdit)
 *   Change “-Xmx1024M” into, for example, “-Xmx2048M” or “-Xmx8G”
 *   save the file
-*   restart OpenRefine.
+*   restart OpenRefine
 
 </TabItem>
 <TabItem value="linux">

@@ -1,4 +1,5 @@
 <div class="dialog-frame" style="width: 800px;">
+  <form bind="loginForm" method="post">
   <div class="dialog-header" bind="dialogHeader"></div>
   <div class="dialog-body" bind="dialogBody" style="position: relative; height: 240px">
     <div class="wikidata-logo">
@@ -12,7 +13,6 @@
       <div class="wikibase-user-management-area">
         <div class="wikibase-user-login" bind="loginArea">
           <p bind="invalidCredentials" class="wikibase-invalid-credentials"></p>
-          <form bind="loginForm" class="wikibase-login-form" method="post">
             <table>
               <tr>
                 <td><label for="wb-consumer-token" bind="consumerTokenLabel"></label></td>
@@ -38,16 +38,14 @@
                 </td>
               </tr>
             </table>
-            <div class="wikibase-login-buttons">
-              <button class="button cancel-button" type="button" bind="cancelButton"></button>
-              <button class="button button-primary" type="submit" bind="loginButton"></button>
-            </div>
-          </form>
         </div>
       </div>
     </div>
+    <span style="cursor: pointer" bind="explainPasswordLogin"></span>
   </div>
-  <div class="dialog-footer wikibase-login-dialog-footer">
-    <span bind="explainPasswordLogin"></span>
+  <div class="dialog-footer">
+    <button class="button cancel-button" type="button" bind="cancelButton"></button>
+    <button class="button button-primary" type="submit" bind="loginButton"></button>
   </div>
+  </form>
 </div>

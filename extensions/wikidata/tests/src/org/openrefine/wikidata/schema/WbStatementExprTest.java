@@ -24,16 +24,19 @@
 
 package org.openrefine.wikidata.schema;
 
-import org.testng.Assert;
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNull;
 
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.List;
 
 import org.openrefine.wikidata.schema.exceptions.SkipSchemaExpressionException;
+import org.openrefine.wikidata.schema.strategies.PropertyOnlyStatementMerger;
+import org.openrefine.wikidata.schema.strategies.StatementEditingMode;
+import org.openrefine.wikidata.schema.strategies.StatementMerger;
 import org.openrefine.wikidata.testing.JacksonSerializationTest;
+import org.openrefine.wikidata.updates.StatementEdit;
 import org.testng.annotations.Test;
 import org.wikidata.wdtk.datamodel.helpers.Datamodel;
 import org.wikidata.wdtk.datamodel.interfaces.Claim;
@@ -47,22 +50,37 @@ import org.wikidata.wdtk.datamodel.interfaces.StatementRank;
 import org.wikidata.wdtk.datamodel.interfaces.TimeValue;
 
 import com.fasterxml.jackson.core.JsonGenerationException;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
+import com.google.refine.util.ParsingUtilities;
 
-public class WbStatementExprTest extends WbExpressionTest<Statement> {
+public class WbStatementExprTest extends WbExpressionTest<StatementEdit> {
 
     private WbReferenceExpr refExpr = new WbReferenceExpr(Arrays.asList(new WbSnakExpr(
             new WbPropConstant("P43", "imported from", "wikibase-item"), new WbItemVariable("column A"))));
     private WbSnakExpr qualifierExpr = new WbSnakExpr(new WbPropConstant("P897", "point in time", "time"),
             new WbDateVariable("column B"));
     private WbLocationVariable mainValueExpr = new WbLocationVariable("column C");
-    public WbStatementExpr statementExpr = new WbStatementExpr(mainValueExpr, Collections.singletonList(qualifierExpr),
-            Collections.singletonList(refExpr));
+    public WbStatementExpr statementExpr = new WbStatementExpr(
+            mainValueExpr,
+            Collections.singletonList(qualifierExpr),
+            Collections.singletonList(refExpr),
+            StatementMerger.FORMER_DEFAULT_STRATEGY,
+            StatementEditingMode.ADD_OR_MERGE);
     private WbSnakExpr constantQualifierExpr = new WbSnakExpr(new WbPropConstant("P897", "point in time", "time"),
             new WbDateConstant("2018-04-05"));
-    public WbStatementExpr statementWithConstantExpr = new WbStatementExpr(mainValueExpr,
+    public WbStatementExpr statementWithConstantExpr = new WbStatementExpr(
+            mainValueExpr,
             Arrays.asList(qualifierExpr, constantQualifierExpr),
-            Collections.singletonList(refExpr));
+            Collections.singletonList(refExpr),
+            StatementMerger.FORMER_DEFAULT_STRATEGY,
+            StatementEditingMode.ADD_OR_MERGE);
+    public WbStatementExpr statementDeleteExpr = new WbStatementExpr(
+            null,
+            Collections.emptyList(),
+            Collections.emptyList(),
+            new PropertyOnlyStatementMerger(),
+            StatementEditingMode.DELETE);
 
     public EntityIdValue subject = Datamodel.makeWikidataItemIdValue("Q23");
     private PropertyIdValue property = Datamodel.makeWikidataPropertyIdValue("P908");
@@ -81,12 +99,20 @@ public class WbStatementExprTest extends WbExpressionTest<Statement> {
             Collections.singletonList(Datamodel.makeSnakGroup(Collections.singletonList(qualifier))));
     public Statement fullStatement = Datamodel.makeStatement(fullClaim, Collections.singletonList(reference),
             StatementRank.NORMAL, "");
+    public StatementEdit fullStatementUpdate = new StatementEdit(
+            fullStatement,
+            StatementMerger.FORMER_DEFAULT_STRATEGY,
+            StatementEditingMode.ADD_OR_MERGE);
     public Claim claimWithConstant = Datamodel.makeClaim(subject, mainsnak,
             Collections.singletonList(Datamodel.makeSnakGroup(Arrays.asList(qualifier, constantQualifier))));
     public Statement statementWithConstant = Datamodel.makeStatement(claimWithConstant, Collections.singletonList(reference),
             StatementRank.NORMAL, "");
+    public StatementEdit statementUpdateWithConstant = new StatementEdit(
+            statementWithConstant,
+            StatementMerger.FORMER_DEFAULT_STRATEGY,
+            StatementEditingMode.ADD_OR_MERGE);
 
-    class Wrapper implements WbExpression<Statement> {
+    class Wrapper implements WbExpression<StatementEdit> {
 
         public WbStatementExpr expr;
 
@@ -95,58 +121,111 @@ public class WbStatementExprTest extends WbExpressionTest<Statement> {
         }
 
         @Override
-        public Statement evaluate(ExpressionContext ctxt)
+        public StatementEdit evaluate(ExpressionContext ctxt)
                 throws SkipSchemaExpressionException {
             return expr.evaluate(ctxt, subject, property);
         }
     }
 
-    public String jsonRepresentation = "{\"value\":{\"type\":\"wblocationvariable\",\"columnName\":\"column C\"},"
+    public String jsonRepresentation = "{"
+            + "\"mergingStrategy\":{\"type\":\"qualifiers\",\"valueMatcher\":{\"type\":\"strict\"},\"pids\":[]},"
+            + "\"mode\":\"add_or_merge\","
+            + "\"value\":{\"type\":\"wblocationvariable\",\"columnName\":\"column C\"},"
             + "\"qualifiers\":[{\"prop\":{\"type\":\"wbpropconstant\",\"pid\":\"P897\",\"label\":\"point in time\","
             + "\"datatype\":\"time\"},\"value\":{\"type\":\"wbdatevariable\",\"columnName\":\"column B\"}}],"
             + "\"references\":[{\"snaks\":[{\"prop\":{\"type\":\"wbpropconstant\",\"pid\":\"P43\","
             + "\"label\":\"imported from\",\"datatype\":\"wikibase-item\"},\"value\":"
             + "{\"type\":\"wbitemvariable\",\"columnName\":\"column A\"}}]}]}";
 
+    public String olderJsonRepresentation = "{\"value\":{\"type\":\"wblocationvariable\",\"columnName\":\"column C\"},"
+            + "\"qualifiers\":[{\"prop\":{\"type\":\"wbpropconstant\",\"pid\":\"P897\",\"label\":\"point in time\","
+            + "\"datatype\":\"time\"},\"value\":{\"type\":\"wbdatevariable\",\"columnName\":\"column B\"}}],"
+            + "\"references\":[{\"snaks\":[{\"prop\":{\"type\":\"wbpropconstant\",\"pid\":\"P43\","
+            + "\"label\":\"imported from\",\"datatype\":\"wikibase-item\"},\"value\":"
+            + "{\"type\":\"wbitemvariable\",\"columnName\":\"column A\"}}]}]}";
+
+    public String jsonRepresentationDelete = "{"
+            + "\"mergingStrategy\":{\"type\":\"property\"},"
+            + "\"mode\":\"delete\","
+            + "\"value\":null,"
+            + "\"qualifiers\":[],"
+            + "\"references\":[]}";
+
     @Test
     public void testCreation() {
         WbItemConstant q5 = new WbItemConstant("Q5", "human");
-        WbStatementExpr empty = new WbStatementExpr(q5, Collections.emptyList(), Collections.emptyList());
-        WbStatementExpr withNulls = new WbStatementExpr(q5, null, null);
+        WbStatementExpr empty = new WbStatementExpr(
+                q5,
+                Collections.emptyList(),
+                Collections.emptyList(),
+                StatementMerger.FORMER_DEFAULT_STRATEGY,
+                StatementEditingMode.ADD_OR_MERGE);
+        WbStatementExpr withNulls = new WbStatementExpr(
+                q5, null, null, null, null);
         assertEquals(empty, withNulls);
+    }
+
+    @Test(expectedExceptions = IllegalArgumentException.class)
+    public void testNoMainValue() {
+        new WbStatementExpr(
+                null,
+                Collections.emptyList(),
+                Collections.emptyList(),
+                StatementMerger.FORMER_DEFAULT_STRATEGY,
+                StatementEditingMode.ADD_OR_MERGE);
+    }
+
+    @Test
+    public void testAllowedNoMainValue() {
+        WbStatementExpr expr = new WbStatementExpr(
+                null,
+                Collections.emptyList(),
+                Collections.emptyList(),
+                new PropertyOnlyStatementMerger(),
+                StatementEditingMode.DELETE);
+        assertNull(expr.getMainsnak());
     }
 
     @Test
     public void testEvaluate() {
         setRow(recon("Q3434"), "2010-07-23", "3.898,4.389");
-        evaluatesTo(fullStatement, new Wrapper(statementExpr));
+        evaluatesTo(fullStatementUpdate, new Wrapper(statementExpr));
     }
 
     @Test
     public void testEvaluateWithConstant() {
         setRow(recon("Q3434"), "2010-07-23", "3.898,4.389");
-        evaluatesTo(statementWithConstant, new Wrapper(statementWithConstantExpr));
+        evaluatesTo(statementUpdateWithConstant, new Wrapper(statementWithConstantExpr));
     }
 
     @Test
     public void testEvaluateWithoutReference() {
         setRow("not reconciled", "2010-07-23", "3.898,4.389");
-        evaluatesTo(Datamodel.makeStatement(fullClaim, Collections.emptyList(), StatementRank.NORMAL, ""),
+        Statement statement = Datamodel.makeStatement(fullClaim, Collections.emptyList(), StatementRank.NORMAL, "");
+        evaluatesTo(new StatementEdit(statement,
+                StatementMerger.FORMER_DEFAULT_STRATEGY,
+                StatementEditingMode.ADD_OR_MERGE),
                 new Wrapper(statementExpr));
     }
 
     @Test
     public void testEvaluateWithoutQualifier() {
         setRow(recon("Q3434"), "2010-invalid", "3.898,4.389");
-        evaluatesTo(Datamodel.makeStatement(Datamodel.makeClaim(subject, mainsnak, Collections.emptyList()),
-                Collections.singletonList(reference), StatementRank.NORMAL, ""), new Wrapper(statementExpr));
+        evaluatesTo(new StatementEdit(
+                Datamodel.makeStatement(Datamodel.makeClaim(subject, mainsnak, Collections.emptyList()),
+                        Collections.singletonList(reference), StatementRank.NORMAL, ""),
+                StatementMerger.FORMER_DEFAULT_STRATEGY,
+                StatementEditingMode.ADD_OR_MERGE), new Wrapper(statementExpr));
     }
 
     @Test
     public void testEvaluateWithoutQualifierAndReference() {
         setRow("invalid", "2010-invalid", "3.898,4.389");
-        evaluatesTo(Datamodel.makeStatement(Datamodel.makeClaim(subject, mainsnak, Collections.emptyList()),
-                Collections.emptyList(), StatementRank.NORMAL, ""), new Wrapper(statementExpr));
+        evaluatesTo(new StatementEdit(Datamodel.makeStatement(
+                Datamodel.makeClaim(subject, mainsnak, Collections.emptyList()),
+                Collections.emptyList(), StatementRank.NORMAL, ""),
+                StatementMerger.FORMER_DEFAULT_STRATEGY,
+                StatementEditingMode.ADD_OR_MERGE), new Wrapper(statementExpr));
     }
 
     @Test
@@ -157,8 +236,30 @@ public class WbStatementExprTest extends WbExpressionTest<Statement> {
     }
 
     @Test
+    public void testDeleteAllStatements() {
+        setRow(recon("Q3434"), "2010-07-23", "3.898,4.389");
+        evaluatesTo(new StatementEdit(Datamodel.makeStatement(
+                Datamodel.makeClaim(subject, Datamodel.makeNoValueSnak(property), Collections.emptyList()),
+                Collections.emptyList(), StatementRank.NORMAL, ""),
+                new PropertyOnlyStatementMerger(),
+                StatementEditingMode.DELETE), new Wrapper(statementDeleteExpr));
+    }
+
+    @Test
+    public void testDeserializeOlderFormat() throws JsonMappingException, JsonProcessingException {
+        // when no merging strategy or mode was provided
+        WbStatementExpr deserialized = ParsingUtilities.mapper.readValue(olderJsonRepresentation, WbStatementExpr.class);
+        JacksonSerializationTest.testSerialize(deserialized, jsonRepresentation);
+    }
+
+    @Test
     public void testSerialize() {
         JacksonSerializationTest.canonicalSerialization(WbStatementExpr.class, statementExpr, jsonRepresentation);
+    }
+
+    @Test
+    public void testSerializeDeleteStatement() {
+        JacksonSerializationTest.canonicalSerialization(WbStatementExpr.class, statementDeleteExpr, jsonRepresentationDelete);
     }
 
     @Test(expectedExceptions = UnsupportedOperationException.class)

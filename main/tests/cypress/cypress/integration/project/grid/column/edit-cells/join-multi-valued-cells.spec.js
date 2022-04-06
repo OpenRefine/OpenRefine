@@ -19,7 +19,7 @@ describe(__filename, function () {
 
     cy.columnActionClick('Column B', [
       'Edit cells',
-      'Join multi-valued cells...',
+      'Join multi-valued cells…',
     ]);
 
     cy.assertGridEquals([

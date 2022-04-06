@@ -1,7 +1,7 @@
 package org.openrefine.wikidata.qa.scrutinizers;
 
 import org.openrefine.wikidata.qa.QAWarning;
-import org.openrefine.wikidata.updates.TermedStatementEntityUpdate;
+import org.openrefine.wikidata.updates.TermedStatementEntityEdit;
 import org.wikidata.wdtk.datamodel.interfaces.PropertyIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.Snak;
 import org.wikidata.wdtk.datamodel.interfaces.SnakGroup;
@@ -61,7 +61,7 @@ public class ItemRequiresScrutinizer extends EditScrutinizer {
     }
 
     @Override
-    public void scrutinize(TermedStatementEntityUpdate update) {
+    public void scrutinize(TermedStatementEntityEdit update) {
         Map<PropertyIdValue, Set<Value>> propertyIdValueValueMap = new HashMap<>();
         for (Statement statement : update.getAddedStatements()) {
             Snak mainSnak = statement.getClaim().getMainSnak();
@@ -89,13 +89,13 @@ public class ItemRequiresScrutinizer extends EditScrutinizer {
                     QAWarning issue = new QAWarning(update.isNew() ? newItemRequirePropertyType : existingItemRequirePropertyType, propertyId.getId() + itemRequiresPid.getId(), update.isNew() ? QAWarning.Severity.WARNING : QAWarning.Severity.INFO, 1);
                     issue.setProperty("property_entity", propertyId);
                     issue.setProperty("added_property_entity", itemRequiresPid);
-                    issue.setProperty("example_entity", update.getItemId());
+                    issue.setProperty("example_entity", update.getEntityId());
                     addIssue(issue);
                 } else if (raiseWarning(propertyIdValueValueMap, itemRequiresPid, itemList)) {
                     QAWarning issue = new QAWarning(update.isNew() ? newItemRequireValuesType : existingItemRequireValuesType, propertyId.getId() + itemRequiresPid.getId(), update.isNew() ? QAWarning.Severity.WARNING : QAWarning.Severity.INFO, 1);
                     issue.setProperty("property_entity", propertyId);
                     issue.setProperty("added_property_entity", itemRequiresPid);
-                    issue.setProperty("example_entity", update.getItemId());
+                    issue.setProperty("example_entity", update.getEntityId());
                     addIssue(issue);
                 }
             }

@@ -28,7 +28,7 @@ WikibaseManager.getSelectedWikibaseApiForEntityType = function (entityType) {
   let manifest = WikibaseManager.getSelectedWikibase();
   // version 1
   if (manifest.version.split('.')[0] === '1') {
-    return manifest.wikibase.site_iri;
+    return manifest.mediawiki.api;
   } else { // version 2 or above
     let record = manifest.entity_types[entityType];
     let api = record === undefined ? undefined : record.mediawiki_api;
@@ -46,6 +46,16 @@ WikibaseManager.getSelectedWikibaseSiteIri = function () {
 
 WikibaseManager.getSelectedWikibaseMaxlag = function() {
   return WikibaseManager.getSelectedWikibase().wikibase.maxlag;
+};
+
+WikibaseManager.getSelectedWikibaseTagTemplate = function() {
+  let tag = WikibaseManager.getSelectedWikibase().wikibase.tag;
+  return tag === undefined ? 'openrefine-${version}' : tag;
+};
+
+WikibaseManager.getSelectedWikibaseMaxEditsPerMinute = function() {
+  let max_edits = WikibaseManager.getSelectedWikibase().wikibase.max_edits_per_minute;
+  return max_edits === undefined ? 60 : max_edits;
 };
 
 WikibaseManager.getSelectedWikibaseOAuth = function() {

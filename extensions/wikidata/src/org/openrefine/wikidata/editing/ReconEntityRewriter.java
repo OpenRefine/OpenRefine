@@ -27,12 +27,12 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import org.openrefine.wikidata.schema.entityvalues.ReconEntityIdValue;
 import org.openrefine.wikidata.schema.entityvalues.ReconItemIdValue;
 import org.openrefine.wikidata.schema.entityvalues.ReconMediaInfoIdValue;
 import org.openrefine.wikidata.schema.entityvalues.ReconPropertyIdValue;
-import org.openrefine.wikidata.schema.exceptions.NewItemNotCreatedYetException;
-import org.openrefine.wikidata.updates.TermedStatementEntityUpdate;
+import org.openrefine.wikidata.schema.exceptions.NewEntityNotCreatedYetException;
+import org.openrefine.wikidata.updates.StatementEdit;
+import org.openrefine.wikidata.updates.TermedStatementEntityEdit;
 import org.wikidata.wdtk.datamodel.helpers.Datamodel;
 import org.wikidata.wdtk.datamodel.helpers.DatamodelConverter;
 import org.wikidata.wdtk.datamodel.implementation.DataObjectFactoryImpl;
@@ -42,12 +42,13 @@ import org.wikidata.wdtk.datamodel.interfaces.MediaInfoIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.MonolingualTextValue;
 import org.wikidata.wdtk.datamodel.interfaces.PropertyIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.Statement;
+import org.wikidata.wdtk.datamodel.interfaces.StatementUpdate;
 
 /**
- * A class that rewrites an {@link TermedStatementEntityUpdate}, replacing reconciled entity id
- * values by their concrete values after creation of all the new items involved.
+ * A class that rewrites an {@link TermedStatementEntityEdit}, replacing reconciled entity id
+ * values by their concrete values after creation of all the new entities involved.
  *
- * If an item has not been created yet, an {@link IllegalArgumentException} will
+ * If an entity has not been created yet, an {@link IllegalArgumentException} will
  * be raised.
  *
  * The subject is treated as a special case: it is returned unchanged. This is
@@ -60,21 +61,21 @@ import org.wikidata.wdtk.datamodel.interfaces.Statement;
  */
 public class ReconEntityRewriter extends DatamodelConverter {
 
-	private final NewItemLibrary library;
+	private final NewEntityLibrary library;
 	private final EntityIdValue subject;
 
-	protected static final String notCreatedYetMessage = "Trying to rewrite an update where a new item was not created yet.";
+	protected static final String notCreatedYetMessage = "Trying to rewrite an update where a new entity was not created yet.";
 
 	/**
 	 * Constructor. Sets up a rewriter which uses the provided library to look up
-	 * qids of new items.
+	 * ids of new entities.
 	 *
 	 * @param library
-	 *      the collection of items already created
+	 *      the collection of entities already created
 	 * @param subject
 	 *      the subject id of the entity to rewrite
 	 */
-	public ReconEntityRewriter(NewItemLibrary library, EntityIdValue subject) {
+	public ReconEntityRewriter(NewEntityLibrary library, EntityIdValue subject) {
 		super(new DataObjectFactoryImpl());
 		this.library = library;
 		this.subject = subject;
@@ -85,7 +86,7 @@ public class ReconEntityRewriter extends DatamodelConverter {
 		if (value instanceof ReconItemIdValue) {
 			ReconItemIdValue recon = (ReconItemIdValue) value;
 			if (recon.isNew()) {
-				String newId = library.getQid(recon.getReconInternalId());
+				String newId = library.getId(recon.getReconInternalId());
 				if (newId == null) {
 					if (subject.equals(recon)) {
 						return (ItemIdValue) subject;
@@ -99,11 +100,12 @@ public class ReconEntityRewriter extends DatamodelConverter {
 		return super.copy(value);
 	}
 
+	@Override
 	public MediaInfoIdValue copy(MediaInfoIdValue value) {
 		if (value instanceof ReconMediaInfoIdValue) {
 			ReconMediaInfoIdValue recon = (ReconMediaInfoIdValue) value;
 			if (recon.isNew()) {
-				String newId = library.getQid(recon.getReconInternalId());
+				String newId = library.getId(recon.getReconInternalId());
 				if (newId == null) {
 					if (subject.equals(recon)) {
 						return (MediaInfoIdValue) subject;
@@ -122,7 +124,7 @@ public class ReconEntityRewriter extends DatamodelConverter {
 		if (value instanceof ReconPropertyIdValue) {
 			ReconPropertyIdValue recon = (ReconPropertyIdValue) value;
 			if (recon.isNew()) {
-				String newId = library.getQid(recon.getReconInternalId());
+				String newId = library.getId(recon.getReconInternalId());
 				if (newId == null) {
 					if (subject.equals(recon)) {
 						return (PropertyIdValue) subject;
@@ -135,42 +137,44 @@ public class ReconEntityRewriter extends DatamodelConverter {
 		}
 		return super.copy((PropertyIdValue) value);
 	}
+	
+	public StatementEdit copy(StatementEdit value) {
+		return new StatementEdit(copy(value.getStatement()), value.getMerger(), value.getMode());
+	}
 
 	/**
-	 * Rewrite an update, replacing references to all entities already
+	 * Rewrite an edit, replacing references to all entities already
 	 * created by their fresh identifiers. The subject id might not have been
 	 * created already, in which case it will be left untouched. All the other
 	 * entities need to have been created already.
 	 *
-	 * @param update
-	 *      the update to rewrite
+	 * @param edit
+	 *      the edit to rewrite
 	 * @return
 	 *      the rewritten update
-	 * @throws NewItemNotCreatedYetException
+	 * @throws NewEntityNotCreatedYetException
 	 *      if any non-subject entity had not been created yet
 	 */
-	public TermedStatementEntityUpdate rewrite(TermedStatementEntityUpdate update) throws NewItemNotCreatedYetException {
+	public TermedStatementEntityEdit rewrite(TermedStatementEntityEdit edit) throws NewEntityNotCreatedYetException {
 		try {
-			EntityIdValue subject = (EntityIdValue) copyValue(update.getItemId());
-			Set<MonolingualTextValue> labels = update.getLabels().stream().map(l -> copy(l)).collect(Collectors.toSet());
-			Set<MonolingualTextValue> labelsIfNew = update.getLabelsIfNew().stream().map(l -> copy(l)).collect(Collectors.toSet());
-			Set<MonolingualTextValue> descriptions = update.getDescriptions().stream().map(l -> copy(l))
+			EntityIdValue subject = (EntityIdValue) copyValue(edit.getEntityId());
+			Set<MonolingualTextValue> labels = edit.getLabels().stream().map(l -> copy(l)).collect(Collectors.toSet());
+			Set<MonolingualTextValue> labelsIfNew = edit.getLabelsIfNew().stream().map(l -> copy(l)).collect(Collectors.toSet());
+			Set<MonolingualTextValue> descriptions = edit.getDescriptions().stream().map(l -> copy(l))
 					.collect(Collectors.toSet());
-			Set<MonolingualTextValue> descriptionsIfNew = update.getDescriptionsIfNew().stream().map(l -> copy(l))
+			Set<MonolingualTextValue> descriptionsIfNew = edit.getDescriptionsIfNew().stream().map(l -> copy(l))
 					.collect(Collectors.toSet());
-			Set<MonolingualTextValue> aliases = update.getAliases().stream().map(l -> copy(l)).collect(Collectors.toSet());
-			List<Statement> addedStatements = update.getAddedStatements().stream().map(l -> copy(l))
+			Set<MonolingualTextValue> aliases = edit.getAliases().stream().map(l -> copy(l)).collect(Collectors.toSet());
+			List<StatementEdit> addedStatements = edit.getStatementEdits().stream().map(l -> copy(l))
 					.collect(Collectors.toList());
-			Set<Statement> deletedStatements = update.getDeletedStatements().stream().map(l -> copy(l))
-					.collect(Collectors.toSet());
-			return new TermedStatementEntityUpdate(subject, addedStatements, deletedStatements, labels, labelsIfNew, descriptions, descriptionsIfNew, aliases);
+			return new TermedStatementEntityEdit(subject, addedStatements, labels, labelsIfNew, descriptions, descriptionsIfNew, aliases);
 		} catch(MissingEntityIdFound e) {
-			throw new NewItemNotCreatedYetException(e.value);
+			throw new NewEntityNotCreatedYetException(e.value);
 		}
 	}
 
 	/**
-	 * Unchecked version of {@class NewItemNotCreatedYetException}, for internal use only.
+	 * Unchecked version of {@class NewEntityNotCreatedYetException}, for internal use only.
 	 */
 	protected static class MissingEntityIdFound extends Error {
 		private static final long serialVersionUID = 1L;

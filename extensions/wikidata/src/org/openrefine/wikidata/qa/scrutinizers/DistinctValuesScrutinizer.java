@@ -37,7 +37,7 @@ import java.util.Map;
 
 /**
  * A scrutinizer that checks for properties using the same value on different
- * items.
+ * entities.
  * 
  * @author Antonin Delpeuch
  *
@@ -61,6 +61,10 @@ public class DistinctValuesScrutinizer extends StatementScrutinizer {
 
     @Override
     public void scrutinize(Statement statement, EntityIdValue entityId, boolean added) {
+        if (!added) {
+            // not scrutinizing removed statements
+            return;
+        }
         Snak mainSnak = statement.getClaim().getMainSnak();
         PropertyIdValue pid = mainSnak.getPropertyId();
         List<Statement> statementList = _fetcher.getConstraintsByType(pid, distinctValuesConstraintQid);

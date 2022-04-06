@@ -2,8 +2,8 @@
 package org.openrefine.wikidata.qa.scrutinizers;
 
 import org.openrefine.wikidata.testing.TestingData;
-import org.openrefine.wikidata.updates.TermedStatementEntityUpdate;
-import org.openrefine.wikidata.updates.TermedStatementEntityUpdateBuilder;
+import org.openrefine.wikidata.updates.TermedStatementEntityEdit;
+import org.openrefine.wikidata.updates.TermedStatementEntityEditBuilder;
 import org.testng.annotations.Test;
 import org.wikidata.wdtk.datamodel.helpers.Datamodel;
 
@@ -17,7 +17,7 @@ public class EnglishDescriptionScrutinizerTest extends ScrutinizerTest {
     @Test
     public void testGoodDesc() {
         String description = "good description";
-        TermedStatementEntityUpdate update = new TermedStatementEntityUpdateBuilder(TestingData.newIdA)
+        TermedStatementEntityEdit update = new TermedStatementEntityEditBuilder(TestingData.newIdA)
                 .addDescription(Datamodel.makeMonolingualTextValue(description, "en"), true)
                 .build();
         scrutinize(update);
@@ -27,7 +27,7 @@ public class EnglishDescriptionScrutinizerTest extends ScrutinizerTest {
     @Test
     public void testEndWithPunctuationSign() {
         String description = "description with punctuationSign.";
-        TermedStatementEntityUpdate update = new TermedStatementEntityUpdateBuilder(TestingData.newIdA)
+        TermedStatementEntityEdit update = new TermedStatementEntityEditBuilder(TestingData.newIdA)
                 .addDescription(Datamodel.makeMonolingualTextValue(description, "en"), false)
                 .build();
         scrutinize(update);
@@ -37,7 +37,7 @@ public class EnglishDescriptionScrutinizerTest extends ScrutinizerTest {
     @Test
     public void testBeginWithUppercase() {
         String description = "Begin with uppercase";
-        TermedStatementEntityUpdate update = new TermedStatementEntityUpdateBuilder(TestingData.newIdA)
+        TermedStatementEntityEdit update = new TermedStatementEntityEditBuilder(TestingData.newIdA)
                 .addDescription(Datamodel.makeMonolingualTextValue(description, "en"), true)
                 .build();
         scrutinize(update);
@@ -47,7 +47,7 @@ public class EnglishDescriptionScrutinizerTest extends ScrutinizerTest {
     @Test
     public void testBeginWithArticle() {
         String description = "an article test";
-        TermedStatementEntityUpdate update = new TermedStatementEntityUpdateBuilder(TestingData.newIdA)
+        TermedStatementEntityEdit update = new TermedStatementEntityEditBuilder(TestingData.newIdA)
                 .addDescription(Datamodel.makeMonolingualTextValue(description, "en"), false)
                 .build();
         scrutinize(update);
@@ -57,7 +57,7 @@ public class EnglishDescriptionScrutinizerTest extends ScrutinizerTest {
     @Test
     public void testAwfulDesc() {
         String description = "An awful description.";
-        TermedStatementEntityUpdate update = new TermedStatementEntityUpdateBuilder(TestingData.newIdA)
+        TermedStatementEntityEdit update = new TermedStatementEntityEditBuilder(TestingData.newIdA)
                 .addDescription(Datamodel.makeMonolingualTextValue(description, "en"), true)
                 .addLabel(Datamodel.makeMonolingualTextValue(description, "en"), true)
                 .build();

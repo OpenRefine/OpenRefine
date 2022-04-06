@@ -25,10 +25,10 @@ package org.openrefine.wikidata.updates.scheduler;
 
 import java.util.List;
 
-import org.openrefine.wikidata.updates.TermedStatementEntityUpdate;
+import org.openrefine.wikidata.updates.TermedStatementEntityEdit;
 
 /**
- * A scheduling strategy for item updates. Given a list of initial updates, the
+ * A scheduling strategy for entity updates. Given a list of initial updates, the
  * scheduler reorganizes these updates (possibly splitting them or merging them)
  * to create a sequence that is suitable for a particular import process.
  * 
@@ -48,6 +48,6 @@ public interface UpdateScheduler {
      * @throws ImpossibleSchedulingException
      *             when the scheduler cannot cope with a particular edit plan.
      */
-    public List<TermedStatementEntityUpdate> schedule(List<TermedStatementEntityUpdate> updates)
+    public List<TermedStatementEntityEdit> schedule(List<TermedStatementEntityEdit> updates)
             throws ImpossibleSchedulingException;
 }

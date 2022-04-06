@@ -45,7 +45,7 @@ public abstract class SnakScrutinizer extends StatementScrutinizer {
      * @param snak:
      *            the snak to inspect
      * @param entityId:
-     *            the item on which it is going to (dis)appear
+     *            the entity on which it is going to (dis)appear
      * @param added:
      *            whether this snak is going to be added or deleted
      */

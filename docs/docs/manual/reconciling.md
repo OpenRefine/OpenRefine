@@ -73,7 +73,7 @@ For example, the Getty ULAN shows an artist’s discipline, nationality, and bir
 
 Hovering over the suggestion will also offer the two matching options as buttons. 
 
-For matched values (those appearing as dark blue links), the underlying cell value has not been altered - the cell is storing both the original string and the matched entity link at the same time. If you were to copy your column to a new column at this point using `value`, for example, the reconcilation data would not transfer - only the original strings. You can learn more about how OpenRefine stores different pieces of information in each cell in [the Variables section specific to reconciliation data](expressions#reconciliation).
+For matched values (those appearing as dark blue links), the underlying cell value has not been altered - the cell is storing both the original string and the matched entity link at the same time. If you were to copy your column to a new column at this point using `value`, for example, the reconciliation data would not transfer - only the original strings. You can learn more about how OpenRefine stores different pieces of information in each cell in [the Variables section specific to reconciliation data](expressions#reconciliation).
 
 For each cell, you can manually “Create new item,” which will take the cell’s original value and apply it, as though it is a match. This will not become a dark blue link, because at this time there is nothing to link to: it is a draft entity stored only in your project. You can use this feature to prepare these entries for eventual upload to an editable service such as [Wikibase](wikibase/overview), but most services do not yet support this feature. 
 

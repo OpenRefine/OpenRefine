@@ -171,7 +171,7 @@ describe(__filename, function () {
   });
   it('Tests parse-next of parsing options', function () {
     navigateToProjectPreview();
-    cy.get('input[bind="headerLinesCheckbox"]').uncheck();
+    cy.get('input[bind="columnNamesCheckbox"]').check();
     cy.waitForImportUpdate();
     cy.get('input[bind="headerLinesInput"]').type('{backspace}0');
     cy.get('input[bind="headerLinesCheckbox"]').check();

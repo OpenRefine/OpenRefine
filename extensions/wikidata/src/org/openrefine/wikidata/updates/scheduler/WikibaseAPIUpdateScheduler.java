@@ -29,20 +29,20 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import org.openrefine.wikidata.schema.entityvalues.ReconItemIdValue;
-import org.openrefine.wikidata.updates.TermedStatementEntityUpdate;
-import org.openrefine.wikidata.updates.TermedStatementEntityUpdateBuilder;
-import org.wikidata.wdtk.datamodel.interfaces.ItemIdValue;
-import org.wikidata.wdtk.datamodel.interfaces.Statement;
+import org.openrefine.wikidata.schema.entityvalues.ReconEntityIdValue;
+import org.openrefine.wikidata.updates.StatementEdit;
+import org.openrefine.wikidata.updates.TermedStatementEntityEdit;
+import org.openrefine.wikidata.updates.TermedStatementEntityEditBuilder;
+import org.wikidata.wdtk.datamodel.interfaces.EntityIdValue;
 
 /**
  * A simple scheduler for batches committed via the Wikibase API.
  * 
- * The strategy is quite simple and makes at most two edits per touched item
+ * The strategy is quite simple and makes at most two edits per touched entity
  * (which is not minimal though). Each update is split between statements making
- * references to new items, and statements not making these references. All
- * updates with no references to new items are done first (which creates all new
- * items), then all other updates are done.
+ * references to new entities, and statements not making these references. All
+ * updates with no references to new entities are done first (which creates all new
+ * entities), then all other updates are done.
  * 
  * @author Antonin Delpeuch
  *
@@ -50,41 +50,41 @@ import org.wikidata.wdtk.datamodel.interfaces.Statement;
 public class WikibaseAPIUpdateScheduler implements UpdateScheduler {
 
     /**
-     * The first part of updates: the ones which create new items without referring
-     * to any other new item.
+     * The first part of updates: the ones which create new entities without referring
+     * to any other new entity.
      */
     private UpdateSequence pointerFreeUpdates;
     /**
-     * The second part of the updates: all existing items, plus all parts of new
-     * items that refer to other new items.
+     * The second part of the updates: all existing entities, plus all parts of new
+     * entities that refer to other new entities.
      */
     private UpdateSequence pointerFullUpdates;
     /**
-     * The set of all new items referred to in the whole batch.
+     * The set of all new entities referred to in the whole batch.
      */
-    private Set<ItemIdValue> allPointers;
+    private Set<EntityIdValue> allPointers;
 
     private PointerExtractor extractor = new PointerExtractor();
 
     @Override
-    public List<TermedStatementEntityUpdate> schedule(List<TermedStatementEntityUpdate> updates) {
-        List<TermedStatementEntityUpdate> result = new ArrayList<>();
+    public List<TermedStatementEntityEdit> schedule(List<TermedStatementEntityEdit> updates) {
+        List<TermedStatementEntityEdit> result = new ArrayList<>();
         pointerFreeUpdates = new UpdateSequence();
         pointerFullUpdates = new UpdateSequence();
         allPointers = new HashSet<>();
 
-        for (TermedStatementEntityUpdate update : updates) {
+        for (TermedStatementEntityEdit update : updates) {
             splitUpdate(update);
         }
 
         // Part 1: add all the pointer free updates
         result.addAll(pointerFreeUpdates.getUpdates());
 
-        // Part 1': add the remaining new items that have not been touched
-        Set<ItemIdValue> unseenPointers = new HashSet<>(allPointers);
+        // Part 1': add the remaining new entities that have not been touched
+        Set<EntityIdValue> unseenPointers = new HashSet<>(allPointers);
         unseenPointers.removeAll(pointerFreeUpdates.getSubjects());
 
-        result.addAll(unseenPointers.stream().map(e -> new TermedStatementEntityUpdateBuilder(e).build()).collect(Collectors.toList()));
+        result.addAll(unseenPointers.stream().map(e -> new TermedStatementEntityEditBuilder(e).build()).collect(Collectors.toList()));
 
         // Part 2: add all the pointer full updates
         result.addAll(pointerFullUpdates.getUpdates());
@@ -97,18 +97,17 @@ public class WikibaseAPIUpdateScheduler implements UpdateScheduler {
      * 
      * @param update
      */
-    protected void splitUpdate(TermedStatementEntityUpdate update) {
-        TermedStatementEntityUpdateBuilder pointerFreeBuilder = new TermedStatementEntityUpdateBuilder(update.getItemId())
+    protected void splitUpdate(TermedStatementEntityEdit update) {
+        TermedStatementEntityEditBuilder pointerFreeBuilder = new TermedStatementEntityEditBuilder(update.getEntityId())
         		.addLabels(update.getLabels(), true)
         		.addLabels(update.getLabelsIfNew(), false)
                 .addDescriptions(update.getDescriptions(), true)
                 .addDescriptions(update.getDescriptionsIfNew(), false)
-                .addAliases(update.getAliases())
-                .deleteStatements(update.getDeletedStatements());
-        TermedStatementEntityUpdateBuilder pointerFullBuilder = new TermedStatementEntityUpdateBuilder(update.getItemId());
+                .addAliases(update.getAliases());
+        TermedStatementEntityEditBuilder pointerFullBuilder = new TermedStatementEntityEditBuilder(update.getEntityId());
 
-        for (Statement statement : update.getAddedStatements()) {
-            Set<ReconItemIdValue> pointers = extractor.extractPointers(statement);
+        for (StatementEdit statement : update.getStatementEdits()) {
+            Set<ReconEntityIdValue> pointers = extractor.extractPointers(statement.getStatement());
             if (pointers.isEmpty()) {
                 pointerFreeBuilder.addStatement(statement);
             } else {
@@ -120,17 +119,17 @@ public class WikibaseAPIUpdateScheduler implements UpdateScheduler {
         if (update.isNew()) {
             // If the update is new, we might need to split it
             // in two (if it refers to any other new entity).
-        	TermedStatementEntityUpdate pointerFree = pointerFreeBuilder.build();
+        	TermedStatementEntityEdit pointerFree = pointerFreeBuilder.build();
             if (!pointerFree.isNull()) {
                 pointerFreeUpdates.add(pointerFree);
             }
-            TermedStatementEntityUpdate pointerFull = pointerFullBuilder.build();
+            TermedStatementEntityEdit pointerFull = pointerFullBuilder.build();
             if (!pointerFull.isEmpty()) {
                 pointerFullUpdates.add(pointerFull);
             }
         } else {
             // Otherwise, we just make sure this edit is done after
-            // all item creations.
+            // all entity creations.
             pointerFullUpdates.add(update);
         }
     }

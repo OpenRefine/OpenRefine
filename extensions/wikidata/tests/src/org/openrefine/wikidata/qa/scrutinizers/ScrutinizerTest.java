@@ -24,24 +24,8 @@
 
 package org.openrefine.wikidata.qa.scrutinizers;
 
-import org.openrefine.wikidata.manifests.Manifest;
-import org.openrefine.wikidata.manifests.ManifestException;
-import org.openrefine.wikidata.manifests.ManifestParser;
-import org.openrefine.wikidata.qa.ConstraintFetcher;
-import org.openrefine.wikidata.qa.QAWarning;
-import org.openrefine.wikidata.qa.QAWarningStore;
-import org.openrefine.wikidata.testing.TestingData;
-import org.openrefine.wikidata.updates.TermedStatementEntityUpdate;
-import org.testng.annotations.BeforeMethod;
-import org.wikidata.wdtk.datamodel.helpers.Datamodel;
-import org.wikidata.wdtk.datamodel.interfaces.Claim;
-import org.wikidata.wdtk.datamodel.interfaces.ItemIdValue;
-import org.wikidata.wdtk.datamodel.interfaces.PropertyIdValue;
-import org.wikidata.wdtk.datamodel.interfaces.Reference;
-import org.wikidata.wdtk.datamodel.interfaces.Snak;
-import org.wikidata.wdtk.datamodel.interfaces.SnakGroup;
-import org.wikidata.wdtk.datamodel.interfaces.Statement;
-import org.wikidata.wdtk.datamodel.interfaces.StatementRank;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertTrue;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -53,8 +37,27 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertTrue;
+import org.openrefine.wikidata.manifests.Manifest;
+import org.openrefine.wikidata.manifests.ManifestException;
+import org.openrefine.wikidata.manifests.ManifestParser;
+import org.openrefine.wikidata.qa.ConstraintFetcher;
+import org.openrefine.wikidata.qa.QAWarning;
+import org.openrefine.wikidata.qa.QAWarningStore;
+import org.openrefine.wikidata.schema.strategies.StatementEditingMode;
+import org.openrefine.wikidata.schema.strategies.StatementMerger;
+import org.openrefine.wikidata.testing.TestingData;
+import org.openrefine.wikidata.updates.StatementEdit;
+import org.openrefine.wikidata.updates.TermedStatementEntityEdit;
+import org.testng.annotations.BeforeMethod;
+import org.wikidata.wdtk.datamodel.helpers.Datamodel;
+import org.wikidata.wdtk.datamodel.interfaces.Claim;
+import org.wikidata.wdtk.datamodel.interfaces.ItemIdValue;
+import org.wikidata.wdtk.datamodel.interfaces.PropertyIdValue;
+import org.wikidata.wdtk.datamodel.interfaces.Reference;
+import org.wikidata.wdtk.datamodel.interfaces.Snak;
+import org.wikidata.wdtk.datamodel.interfaces.SnakGroup;
+import org.wikidata.wdtk.datamodel.interfaces.Statement;
+import org.wikidata.wdtk.datamodel.interfaces.StatementRank;
 
 public abstract class ScrutinizerTest {
 
@@ -83,9 +86,9 @@ public abstract class ScrutinizerTest {
         scrutinizer.prepareDependencies();
     }
 
-    public void scrutinize(TermedStatementEntityUpdate... updates) {
+    public void scrutinize(TermedStatementEntityEdit... updates) {
         scrutinizer.batchIsBeginning();
-        for (TermedStatementEntityUpdate update : Arrays.asList(updates)) {
+        for (TermedStatementEntityEdit update : Arrays.asList(updates)) {
             if (!update.isNull()) {
                 scrutinizer.scrutinize(update);
             }
@@ -149,6 +152,14 @@ public abstract class ScrutinizerTest {
         }
 
         return snakGroupList;
+    }
+
+    public StatementEdit add(Statement statement) {
+        return new StatementEdit(statement, StatementMerger.FORMER_DEFAULT_STRATEGY, StatementEditingMode.ADD_OR_MERGE);
+    }
+
+    public StatementEdit delete(Statement statement) {
+        return new StatementEdit(statement, StatementMerger.FORMER_DEFAULT_STRATEGY, StatementEditingMode.DELETE);
     }
 
 }

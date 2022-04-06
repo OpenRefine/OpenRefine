@@ -26,12 +26,11 @@ package org.openrefine.wikidata.qa;
 import org.openrefine.wikidata.manifests.Manifest;
 import org.openrefine.wikidata.qa.scrutinizers.*;
 import org.openrefine.wikidata.schema.WikibaseSchema;
-import org.openrefine.wikidata.updates.TermedStatementEntityUpdate;
+import org.openrefine.wikidata.updates.TermedStatementEntityEdit;
 import org.openrefine.wikidata.updates.scheduler.WikibaseAPIUpdateScheduler;
 import org.openrefine.wikidata.utils.EntityCache;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.wikidata.wdtk.datamodel.interfaces.EntityDocument;
 
 import java.util.HashMap;
 import java.util.List;
@@ -110,7 +109,7 @@ public class EditInspector {
             scrutinizers.put(key, scrutinizer);
         } else {
             logger.info("scrutinizer [" + scrutinizer.getClass().getSimpleName() + "] is skipped " +
-                    "due to missing of necessary constraint configurations in the Wikibase manifest");
+                    "due to missing necessary constraint configurations in the Wikibase manifest");
         }
     }
 
@@ -119,7 +118,7 @@ public class EditInspector {
      * 
      * @param editBatch
      */
-    public void inspect(List<TermedStatementEntityUpdate> editBatch, WikibaseSchema schema) throws ExecutionException {
+    public void inspect(List<TermedStatementEntityEdit> editBatch, WikibaseSchema schema) throws ExecutionException {
         // First, schedule them with some scheduler,
         // so that all newly created entities appear in the batch
         SchemaPropertyExtractor fetcher = new SchemaPropertyExtractor();
@@ -131,14 +130,14 @@ public class EditInspector {
         WikibaseAPIUpdateScheduler scheduler = new WikibaseAPIUpdateScheduler();
         editBatch = scheduler.schedule(editBatch);
 
-        Map<EntityIdValue, TermedStatementEntityUpdate> updates = TermedStatementEntityUpdate.groupBySubject(editBatch);
-        List<TermedStatementEntityUpdate> mergedUpdates = updates.values().stream().collect(Collectors.toList());
+        Map<EntityIdValue, TermedStatementEntityEdit> updates = TermedStatementEntityEdit.groupBySubject(editBatch);
+        List<TermedStatementEntityEdit> mergedUpdates = updates.values().stream().collect(Collectors.toList());
         
         for (EditScrutinizer scrutinizer : scrutinizers.values()) {
             scrutinizer.batchIsBeginning();
         }
         
-        for(TermedStatementEntityUpdate update : mergedUpdates) {
+        for(TermedStatementEntityEdit update : mergedUpdates) {
             if(!update.isNull()) {
                 for (EditScrutinizer scrutinizer : scrutinizers.values()) {
                     scrutinizer.scrutinize(update);

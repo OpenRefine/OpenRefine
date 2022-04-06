@@ -7,5 +7,7 @@
   "engineConfig": {
     "mode": "row-based",
     "facets": []
-  }
+  },
+  "tag" : "openrefine-${version}",
+  "maxEditsPerMinute": 60
 }

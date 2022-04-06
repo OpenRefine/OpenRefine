@@ -1,7 +1,7 @@
 package org.openrefine.wikidata.qa.scrutinizers;
 
 import org.openrefine.wikidata.qa.QAWarning;
-import org.openrefine.wikidata.updates.TermedStatementEntityUpdate;
+import org.openrefine.wikidata.updates.TermedStatementEntityEdit;
 import org.wikidata.wdtk.datamodel.interfaces.*;
 
 import java.util.HashMap;
@@ -50,7 +50,7 @@ public class DifferenceWithinRangeScrutinizer extends EditScrutinizer {
     }
 
     @Override
-    public void scrutinize(TermedStatementEntityUpdate update) {
+    public void scrutinize(TermedStatementEntityEdit update) {
         Map<PropertyIdValue, Value> propertyIdValueValueMap = new HashMap<>();
         for (Statement statement : update.getAddedStatements()){
             Snak mainSnak = statement.getClaim().getMainSnak();
@@ -92,7 +92,7 @@ public class DifferenceWithinRangeScrutinizer extends EditScrutinizer {
                             } else {
                                 issue.setProperty("max_value", null);
                             }
-                            issue.setProperty("example_entity", update.getItemId());
+                            issue.setProperty("example_entity", update.getEntityId());
                             addIssue(issue);
                         }
 
@@ -106,7 +106,7 @@ public class DifferenceWithinRangeScrutinizer extends EditScrutinizer {
                                 issue.setProperty("min_value", null);
                             }
                             issue.setProperty("max_value", maxRangeValue.getNumericValue());
-                            issue.setProperty("example_entity", update.getItemId());
+                            issue.setProperty("example_entity", update.getEntityId());
                             addIssue(issue);
                         }
                     }

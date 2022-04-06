@@ -1,7 +1,7 @@
 package org.openrefine.wikidata.qa.scrutinizers;
 
 import org.openrefine.wikidata.qa.QAWarning;
-import org.openrefine.wikidata.updates.TermedStatementEntityUpdate;
+import org.openrefine.wikidata.updates.TermedStatementEntityEdit;
 import org.wikidata.wdtk.datamodel.interfaces.PropertyIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.Statement;
 
@@ -22,7 +22,7 @@ public class MultiValueScrutinizer extends EditScrutinizer {
     }
 
     @Override
-    public void scrutinize(TermedStatementEntityUpdate update) {
+    public void scrutinize(TermedStatementEntityEdit update) {
         Map<PropertyIdValue, Integer> propertyCount = new HashMap<>();
 
         for (Statement statement : update.getAddedStatements()) {
@@ -40,7 +40,7 @@ public class MultiValueScrutinizer extends EditScrutinizer {
                 if (propertyCount.get(pid) == 1) {
                     QAWarning issue = new QAWarning(new_type, pid.getId(), QAWarning.Severity.WARNING, 1);
                     issue.setProperty("property_entity", pid);
-                    issue.setProperty("example_entity", update.getItemId());
+                    issue.setProperty("example_entity", update.getEntityId());
                     addIssue(issue);
                 }
             }
@@ -49,7 +49,7 @@ public class MultiValueScrutinizer extends EditScrutinizer {
                 if (propertyCount.get(pid) == 1) {
                     QAWarning issue = new QAWarning(existing_type, pid.getId(), QAWarning.Severity.INFO, 1);
                     issue.setProperty("property_entity", pid);
-                    issue.setProperty("example_entity", update.getItemId());
+                    issue.setProperty("example_entity", update.getEntityId());
                     addIssue(issue);
                 }
             }

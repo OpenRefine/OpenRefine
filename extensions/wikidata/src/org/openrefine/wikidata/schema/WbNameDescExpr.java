@@ -25,7 +25,7 @@ package org.openrefine.wikidata.schema;
 
 import org.jsoup.helper.Validate;
 import org.openrefine.wikidata.schema.exceptions.SkipSchemaExpressionException;
-import org.openrefine.wikidata.updates.TermedStatementEntityUpdateBuilder;
+import org.openrefine.wikidata.updates.TermedStatementEntityEditBuilder;
 import org.wikidata.wdtk.datamodel.interfaces.MonolingualTextValue;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
@@ -35,7 +35,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 /**
  * An expression that represent a term (label, description or alias). The
  * structure is slightly different from other expressions because we need to
- * call different methods on {@link TermedStatementEntityUpdateBuilder}.
+ * call different methods on {@link TermedStatementEntityEditBuilder}.
  * 
  * @author Antonin Delpeuch
  *
@@ -60,31 +60,31 @@ public class WbNameDescExpr {
     }
 
     /**
-     * Evaluates the expression and adds the result to the item update.
+     * Evaluates the expression and adds the result to the entity update.
      * 
-     * @param item
-     *            the item update where the term should be stored
+     * @param entity
+     *            the entity update where the term should be stored
      * @param ctxt
      *            the evaluation context for the expression
      */
-    public void contributeTo(TermedStatementEntityUpdateBuilder item, ExpressionContext ctxt) {
+    public void contributeTo(TermedStatementEntityEditBuilder entity, ExpressionContext ctxt) {
         try {
             MonolingualTextValue val = getValue().evaluate(ctxt);
             switch (getType()) {
             case LABEL:
-                item.addLabel(val, true);
+                entity.addLabel(val, true);
                 break;
             case LABEL_IF_NEW:
-            	item.addLabel(val, false);
+            	entity.addLabel(val, false);
             	break;
             case DESCRIPTION:
-                item.addDescription(val, true);
+                entity.addDescription(val, true);
                 break;
             case DESCRIPTION_IF_NEW:
-            	item.addDescription(val, false);
+            	entity.addDescription(val, false);
             	break;
             case ALIAS:
-                item.addAlias(val);
+                entity.addAlias(val);
                 break;
             }
         } catch (SkipSchemaExpressionException e) {

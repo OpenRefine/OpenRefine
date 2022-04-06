@@ -32,10 +32,13 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import org.openrefine.wikidata.schema.strategies.StatementEditingMode;
+import org.openrefine.wikidata.schema.strategies.StatementMerger;
 import org.openrefine.wikidata.testing.TestingData;
 import org.openrefine.wikidata.testing.WikidataRefineTest;
-import org.openrefine.wikidata.updates.TermedStatementEntityUpdate;
-import org.openrefine.wikidata.updates.TermedStatementEntityUpdateBuilder;
+import org.openrefine.wikidata.updates.StatementEdit;
+import org.openrefine.wikidata.updates.TermedStatementEntityEdit;
+import org.openrefine.wikidata.updates.TermedStatementEntityEditBuilder;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 import org.wikidata.wdtk.datamodel.helpers.Datamodel;
@@ -80,9 +83,17 @@ public class WikibaseSchemaTest extends WikidataRefineTest {
     private Statement statement1 = Datamodel.makeStatement(claim1,
             Collections.singletonList(Datamodel.makeReference(Arrays.asList(refSnakGroup, retrievedSnakGroup))),
             StatementRank.NORMAL, "");
+    private StatementEdit statementUpdate1 = new StatementEdit(
+            statement1,
+            StatementMerger.FORMER_DEFAULT_STRATEGY,
+            StatementEditingMode.ADD_OR_MERGE);
     private Statement statement2 = Datamodel.makeStatement(claim2,
             Collections.singletonList(Datamodel.makeReference(Collections.singletonList(retrievedSnakGroup))),
             StatementRank.NORMAL, "");
+    private StatementEdit statementUpdate2 = new StatementEdit(
+            statement2,
+            StatementMerger.FORMER_DEFAULT_STRATEGY,
+            StatementEditingMode.ADD_OR_MERGE);
 
     private Project project;
 
@@ -118,11 +129,11 @@ public class WikibaseSchemaTest extends WikidataRefineTest {
         String serialized = TestingData.jsonFromFile("schema/inception.json");
         WikibaseSchema schema = WikibaseSchema.reconstruct(serialized);
         Engine engine = new Engine(project);
-        List<TermedStatementEntityUpdate> updates = schema.evaluate(project, engine);
-        List<TermedStatementEntityUpdate> expected = new ArrayList<>();
-        TermedStatementEntityUpdate update1 = new TermedStatementEntityUpdateBuilder(qid1).addStatement(statement1).build();
+        List<TermedStatementEntityEdit> updates = schema.evaluate(project, engine);
+        List<TermedStatementEntityEdit> expected = new ArrayList<>();
+        TermedStatementEntityEdit update1 = new TermedStatementEntityEditBuilder(qid1).addStatement(statementUpdate1).build();
         expected.add(update1);
-        TermedStatementEntityUpdate update2 = new TermedStatementEntityUpdateBuilder(qid2).addStatement(statement2).build();
+        TermedStatementEntityEdit update2 = new TermedStatementEntityEditBuilder(qid2).addStatement(statementUpdate2).build();
         expected.add(update2);
         assertEquals(expected, updates);
     }
@@ -155,9 +166,9 @@ public class WikibaseSchemaTest extends WikidataRefineTest {
                 + "      ]\n"
                 + "    }");
         engine.initializeFromConfig(engineConfig);
-        List<TermedStatementEntityUpdate> updates = schema.evaluate(project, engine);
-        List<TermedStatementEntityUpdate> expected = new ArrayList<>();
-        TermedStatementEntityUpdate update1 = new TermedStatementEntityUpdateBuilder(qid1).addStatement(statement1).build();
+        List<TermedStatementEntityEdit> updates = schema.evaluate(project, engine);
+        List<TermedStatementEntityEdit> expected = new ArrayList<>();
+        TermedStatementEntityEdit update1 = new TermedStatementEntityEditBuilder(qid1).addStatement(statementUpdate1).build();
         expected.add(update1);
         assertEquals(expected, updates);
     }
@@ -166,6 +177,6 @@ public class WikibaseSchemaTest extends WikidataRefineTest {
     public void testUnmodifiableList() throws IOException {
         String serialized = TestingData.jsonFromFile("schema/inception.json");
         WikibaseSchema schema = WikibaseSchema.reconstruct(serialized);
-        schema.getItemDocumentExpressions().clear();
+        schema.getEntityDocumentExpressions().clear();
     }
 }

@@ -23,15 +23,15 @@
  ******************************************************************************/
 package org.openrefine.wikidata.qa.scrutinizers;
 
-import org.openrefine.wikidata.updates.TermedStatementEntityUpdate;
+import org.openrefine.wikidata.updates.TermedStatementEntityEdit;
 import org.wikidata.wdtk.datamodel.interfaces.EntityIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.Statement;
 
 public abstract class StatementScrutinizer extends EditScrutinizer {
 
     @Override
-    public void scrutinize(TermedStatementEntityUpdate update) {
-        EntityIdValue currentEntityId = update.getItemId();
+    public void scrutinize(TermedStatementEntityEdit update) {
+        EntityIdValue currentEntityId = update.getEntityId();
         for (Statement statement : update.getAddedStatements()) {
             scrutinize(statement, currentEntityId, true);
         }

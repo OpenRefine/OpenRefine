@@ -24,8 +24,8 @@
 package org.openrefine.wikidata.qa.scrutinizers;
 
 import org.openrefine.wikidata.qa.QAWarning;
-import org.openrefine.wikidata.updates.TermedStatementEntityUpdate;
-import org.wikidata.wdtk.datamodel.interfaces.StatementGroup;
+import org.openrefine.wikidata.updates.TermedStatementEntityEdit;
+import org.wikidata.wdtk.datamodel.interfaces.Statement;
 
 /**
  * A scrutinizer that inspects new items.
@@ -46,32 +46,32 @@ public class NewItemScrutinizer extends EditScrutinizer {
     }
 
     @Override
-    public void scrutinize(TermedStatementEntityUpdate update) {
+    public void scrutinize(TermedStatementEntityEdit update) {
         if (update.isNew()) {
             info(newItemType);
 
             if (update.getLabels().isEmpty() && update.getLabelsIfNew().isEmpty() && update.getAliases().isEmpty()) {
                 QAWarning issue = new QAWarning(noLabelType, null, QAWarning.Severity.CRITICAL, 1);
-                issue.setProperty("example_entity", update.getItemId());
+                issue.setProperty("example_entity", update.getEntityId());
                 addIssue(issue);
             }
 
             if (update.getDescriptions().isEmpty() && update.getDescriptionsIfNew().isEmpty()) {
                 QAWarning issue = new QAWarning(noDescType, null, QAWarning.Severity.WARNING, 1);
-                issue.setProperty("example_entity", update.getItemId());
+                issue.setProperty("example_entity", update.getEntityId());
                 addIssue(issue);
             }
 
             if (!update.getDeletedStatements().isEmpty()) {
                 QAWarning issue = new QAWarning(deletedStatementsType, null, QAWarning.Severity.WARNING, 1);
-                issue.setProperty("example_entity", update.getItemId());
+                issue.setProperty("example_entity", update.getEntityId());
                 addIssue(issue);
             }
 
             // Try to find a "instance of" or "subclass of" claim
             boolean typeFound = false;
-            for (StatementGroup group : update.getAddedStatementGroups()) {
-                String pid = group.getProperty().getId();
+            for (Statement statement : update.getAddedStatements()) {
+                String pid = statement.getMainSnak().getPropertyId().getId();
                 if (manifest.getInstanceOfPid().equals(pid) || manifest.getSubclassOfPid().equals(pid)) {
                     typeFound = true;
                     break;
@@ -79,7 +79,7 @@ public class NewItemScrutinizer extends EditScrutinizer {
             }
             if (!typeFound) {
                 QAWarning issue = new QAWarning(noTypeType, null, QAWarning.Severity.WARNING, 1);
-                issue.setProperty("example_entity", update.getItemId());
+                issue.setProperty("example_entity", update.getEntityId());
                 addIssue(issue);
             }
         }

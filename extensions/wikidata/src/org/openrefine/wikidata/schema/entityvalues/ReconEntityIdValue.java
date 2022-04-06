@@ -46,7 +46,7 @@ import com.google.refine.model.Recon;
  * to re-fetch it.
  * 
  * Storing the types also lets us perform some constraint checks without
- * re-fetching the types of many items.
+ * re-fetching the types of many entities.
  * 
  * @author Antonin Delpeuch
  *
@@ -95,7 +95,7 @@ public abstract class ReconEntityIdValue implements PrefetchedEntityIdValue {
     public abstract String getEntityType();
 
     /**
-     * Returns the integer used internally in OpenRefine to identify the new item.
+     * Returns the integer used internally in OpenRefine to identify the new entity.
      * 
      * @return the reconciliation id of the reconciled cell
      */
@@ -115,7 +115,7 @@ public abstract class ReconEntityIdValue implements PrefetchedEntityIdValue {
     }
 
     /**
-     * Returns the id of the reconciled item
+     * Returns the id of the reconciled entity
      */
     @Override
     @JsonProperty("id")

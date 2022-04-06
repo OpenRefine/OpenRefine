@@ -1,7 +1,7 @@
 package org.openrefine.wikidata.qa.scrutinizers;
 
 import org.openrefine.wikidata.qa.QAWarning;
-import org.openrefine.wikidata.updates.TermedStatementEntityUpdate;
+import org.openrefine.wikidata.updates.TermedStatementEntityEdit;
 import org.wikidata.wdtk.datamodel.interfaces.PropertyIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.Snak;
 import org.wikidata.wdtk.datamodel.interfaces.SnakGroup;
@@ -56,7 +56,7 @@ public class ConflictsWithScrutinizer extends EditScrutinizer {
     }
 
     @Override
-    public void scrutinize(TermedStatementEntityUpdate update) {
+    public void scrutinize(TermedStatementEntityEdit update) {
         Map<PropertyIdValue, Set<Value>> propertyIdValueValueMap = new HashMap<>();
         for (Statement statement : update.getAddedStatements()){
             PropertyIdValue pid = statement.getClaim().getMainSnak().getPropertyId();
@@ -88,7 +88,7 @@ public class ConflictsWithScrutinizer extends EditScrutinizer {
                     QAWarning issue = new QAWarning(type, propertyId.getId()+conflictingPid.getId(), QAWarning.Severity.WARNING, 1);
                     issue.setProperty("property_entity", propertyId);
                     issue.setProperty("added_property_entity", conflictingPid);
-                    issue.setProperty("example_entity", update.getItemId());
+                    issue.setProperty("example_entity", update.getEntityId());
                     addIssue(issue);
                 }
             }

@@ -17,26 +17,26 @@
     <td><div class="grid-layout layout-tightest"><table bind="sheetRecordContainer">
       <tr><td colspan="3" id="or-import-worksheet"></td></tr>
       <tr><td colspan="1"><button class="button" bind="selectAllButton"></button></td>
-          <td colspan="1"><button class="button" bind="unselectAllButton"></button></td></tr>
+          <td colspan="1"><button class="button" bind="deselectAllButton"></button></td></tr>
     </table></div></td>
     
     <td><div class="grid-layout layout-tightest"><table>
       <tr>
         <td width="1%"><input type="checkbox" bind="ignoreCheckbox" id="$ignore" /></td>
         <td><label for="$ignore" id="or-import-ignore"></label></td>
-        <td><input bind="ignoreInput" type="text" class="lightweight" size="2" value="0" />
+        <td><input bind="ignoreInput" spellcheck="false" type="text" class="lightweight" size="2" value="0" />
           <label for="$ignore" id="or-import-lines"></label></td></tr>
       <tr><td width="1%"><input type="checkbox" bind="headerLinesCheckbox" id="$headers" /></td>
         <td><label for="$headers" id="or-import-parse"></label></td>
-        <td><input bind="headerLinesInput" type="text" class="lightweight" size="2" value="1" />
+        <td><input bind="headerLinesInput" spellcheck="false" type="text" class="lightweight" size="2" value="1" />
           <label for="$headers" id="or-import-header"></label></td></tr>
       <tr><td width="1%"><input type="checkbox" bind="skipCheckbox" id="$skip" /></td>
         <td><label for="$skip" id="or-import-discard"></label></td>
-        <td><input bind="skipInput" type="text" class="lightweight" size="2" value="0" />
+        <td><input bind="skipInput" spellcheck="false" type="text" class="lightweight" size="2" value="0" />
           <label for="$skip" id="or-import-rows"></label></td></tr>
       <tr><td width="1%"><input type="checkbox" bind="limitCheckbox" id="$limit" /></td>
         <td><label for="$limit" id="or-import-load"></label></td>
-        <td><input bind="limitInput" type="text" class="lightweight" size="2" value="0" />
+        <td><input bind="limitInput" spellcheck="false" type="text" class="lightweight" size="2" value="0" />
           <label for="$limit" id="or-import-rows2"></label></td></tr>
     </table></div></td>
 

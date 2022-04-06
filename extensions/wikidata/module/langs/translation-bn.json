@@ -1,8 +1,8 @@
 {
     "wikibase-extension/menu-label": "উইকিউপাত্ত",
     "wikibase-extension/edit-wikibase-schema": "উইকিউপাত্ত স্কিমা সম্পাদনা করুন",
-    "wikibase-extension/import-wikibase-schema": "স্কিমা আমদানি করুন",
-    "wikibase-extension/perform-edits-on-wikibase": "উইকিউপাত্তে সম্পাদনা আপলোড করুন",
+    "wikibase-extension/import-wikibase-schema": "স্কিমা আমদানি করুন…",
+    "wikibase-extension/perform-edits-on-wikibase": "উইকিউপাত্তে সম্পাদনা আপলোড করুন…",
     "wikibase-extension/export-to-qs": "ক্যুইকস্টেটমেন্টসে রপ্তানি করুন",
     "wikibase-extension/export-schema": "স্কিমা রপ্তানি করুন",
     "wikibase-extension/export-wikibase-schema": "উইকিউপাত্ত স্কিমা রপ্তানি করুন",
@@ -42,8 +42,8 @@
     "wikibase-preview/new-id": "নতুন আইটেম",
     "wikibase-account/dialog-header": "উইকিউপাত্ত অ্যাকাউন্ট",
     "wikibase-account/explain-log-in": "<a href=\"https://www.wikidata.org/\" target=\"_blank\">উইকিউপাত্তে</a> প্রবেশ করলে সরাসরি ওপেনরিফাইন থেকে আপনাকে সম্পাদনা আপলোড করতে দেওয়া হবে।",
-    "wikibase-account/username-label": "ব্যবহারকারী নাম:",
-    "wikibase-account/password-label": "পাসওয়ার্ড:",
+    "wikibase-account/username-label": "ব্যবহারকারী নাম",
+    "wikibase-account/password-label": "পাসওয়ার্ড",
     "wikibase-account/close": "বন্ধ করুন",
     "wikibase-account/log-in": "প্রবেশ করুন",
     "wikibase-account/log-out": "প্রস্থান করুন"

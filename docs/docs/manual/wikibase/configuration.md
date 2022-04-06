@@ -24,20 +24,22 @@ To work with OpenRefine, your Wikibase instance needs an associated reconciliati
 
 ### The format of the manifest {#the-format-of-the-manifest}
 
-Here is the manifest of Wikidata:
+Here is the manifest of Wikimedia Commons:
 
 ```json
 {
-  "version": "1.0",
+  "version": "2.0",
   "mediawiki": {
-    "name": "Wikidata",
-    "root": "https://www.wikidata.org/wiki/",
-    "main_page": "https://www.wikidata.org/wiki/Wikidata:Main_Page",
-    "api": "https://www.wikidata.org/w/api.php"
+    "name": "Wikimedia Commons",
+    "root": "https://commons.wikimedia.org/wiki/",
+    "main_page": "https://commons.wikimedia.org/wiki/Main_Page",
+    "api": "https://commons.wikimedia.org/w/api.php"
   },
   "wikibase": {
-    "site_iri": "http://www.wikidata.org/entity/",
+    "site_iri": "https://commons.wikimedia.org/entity/",
     "maxlag": 5,
+    "max_edits_per_minute": 60,
+    "tag": "openrefine-${version}",
     "properties": {
       "instance_of": "P31",
       "subclass_of": "P279"
@@ -48,27 +50,38 @@ Here is the manifest of Wikidata:
       "constraint_status_pid": "P2316",
       "mandatory_constraint_qid": "Q21502408",
       "suggestion_constraint_qid": "Q62026391",
-      "distinct_values_constraint_qid": "Q21502410",
-      // ...
+      "distinct_values_constraint_qid": "Q21502410"
     }
   },
   "oauth": {
-    "registration_page": "https://meta.wikimedia.org/wiki/Special:OAuthConsumerRegistration/propose"
+    "registration_page": "https://commons.wikimedia.org/wiki/Special:OAuthConsumerRegistration/propose"
   },
-  "reconciliation": {
-    "endpoint": "https://wikidata.reconci.link/${lang}/api"
+  "entity_types": {
+    "item": {
+       "site_iri": "http://www.wikidata.org/entity/",
+       "reconciliation_endpoint": "https://wikidata.reconci.link/${lang}/api",
+       "mediawiki_api": "https://www.wikidata.org/w/api.php"
+    },
+    "property": {
+       "site_iri": "http://www.wikidata.org/entity/",
+       "mediawiki_api": "https://www.wikidata.org/w/api.php"
+    },
+    "mediainfo": {
+       "site_iri": "https://commons.wikimedia.org/entity/",
+       "reconciliation_endpoint": "https://commonsreconcile.toolforge.org/${lang}/api"
+    }
   },
   "editgroups": {
-    "url_schema": "([[:toollabs:editgroups/b/OR/${batch_id}|details]])"
+    "url_schema": "([[:toollabs:editgroups-commons/b/OR/${batch_id}|details]])"
   }
 }
 ```
 
-In general, there are several parts of the manifest: version, mediawiki, wikibase, oauth, reconciliation and editgroups.
+In general, there are several parts of the manifest: version, mediawiki, wikibase, oauth, entity_types and editgroups.
 
 #### version {#version}
 
-The version should in the format "1.x". The minor version should be increased when you update the manifest in a backward-compatible manner. The major version should be "1" if the manifest is in the format specified by [wikibase-manifest-schema-v1.json](https://github.com/afkbrb/wikibase-manifest/blob/master/wikibase-manifest-schema-v1.json).
+The version should in the format "2.x". The minor version should be increased when you update the manifest in a backward-compatible manner. The major version should be "2" if the manifest is in the format specified by [wikibase-manifest-schema-v2.json](https://github.com/afkbrb/wikibase-manifest/blob/master/wikibase-manifest-schema-v2.json).
 
 #### mediawiki {#mediawiki}
 
@@ -102,6 +115,14 @@ The IRI of the Wikibase, in the form  'http://foo.bar/entity/'. This should matc
 
 Maxlag is a parameter that controls how aggressive a mass-editing tool should be when uploading edits to a Wikibase instance. See https://www.mediawiki.org/wiki/Manual:Maxlag_parameter for more details. The value should be adapted according to the actual traffic of the Wikibase.
 
+##### tag {#tag}
+
+Specifies a tag which should be applied to all edits made via the tool. The <code>${version}</code> variable will be replaced by the "major.minor" OpenRefine version before making edits.
+
+##### max_edits_per_minute {#max_edits_per_minute}
+
+Determines the editing speed expressed as the maximum number of edits to perform per minute, as an integer. The editing can still be slower than this rate if the performance of the Wikibase instance degrades. If set to 0, this will disable this cap.
+
 ##### properties {#properties}
 
 Some special properties of the Wikibase.
@@ -126,13 +147,25 @@ Not required. Should be configured if the Wikibase has the [OAuth extension](htt
 
 The page to register an OAuth consumer of the Wikibase. Typically in the form "https://foo.bar/wiki/Special:OAuthConsumerRegistration/propose".
 
-#### reconciliation {#reconciliation}
+#### entity_types {#entity_types}
 
-The Wikibase instance must have at least a reconciliation service endpoint linked to it. If there is no reconciliation service for the Wikibase, you can run one with [openrefine-wikibase](https://github.com/wetneb/openrefine-wikibase).
+The Wikibase instance can support several entity types (such as `item`, `property` or `lexeme`), and this section stores parameters which are specific to those entity types.
 
-##### endpoint {#endpoint}
+The Wikibase instance must have at least a reconciliation service endpoint linked to it. 
 
-The default reconciliation service endpoint of the Wikibase instance. The endpoint must contain the "${lang}" variable such as "https://wikidata.reconci.link/${lang}/api", since the reconciliation service is expected to work for different languages.
+##### reconciliation_endpoint {#reconciliation_endpoint}
+
+The default reconciliation service endpoint for entities of this type. The endpoint must contain the "${lang}" variable such as "https://wikidata.reconci.link/${lang}/api", since the reconciliation service is expected to work for different languages. For the `item` entity type, you can get such a reconciliation service with [openrefine-wikibase](https://github.com/wetneb/openrefine-wikibase).
+
+This parameter is optional: you do not need to run a reconciliation for all entity types available in your Wikibase instance. However, it is a prerequisite for being able to do edits to those entity types via OpenRefine.
+
+##### site_iri {#site_iri}
+
+The base IRI for the entities of this type. This property is required. By default, this is expected to be the same as the site IRI for the Wikibase instance (see above), but if entities of this type are federated from another instance, then this should be set to the site IRI of that Wikibase instance.
+
+##### mediawiki_api {#mediawiki_api}
+
+The URL of the MediaWiki API to use with entities of this type. If not provided, it is expected to be the same as the MediaWiki API endpoint for this instance, but if entities of this type are federated from another instance, then this should be set to the MediaWiki API endpoint of that Wikibase instance.
 
 #### editgroups {#editgroups}
 
@@ -144,6 +177,6 @@ The URL schema used in edits summary. This is used for EditGroups to extract the
 
 #### Check the format of the manifest {#check-the-format-of-the-manifest}
 
-As mentioned above, the manifest should be in the format specified by [wikibase-manifest-schema-v1.json](https://github.com/afkbrb/wikibase-manifest/blob/master/wikibase-manifest-schema-v1.json). You can check the format by adding the manifest directly to OpenRefine, and OpenRefine will complain if there is anything wrong with the format.
+As mentioned above, the manifest should be in the format specified by [wikibase-manifest-schema-v2.json](https://github.com/afkbrb/wikibase-manifest/blob/master/wikibase-manifest-schema-v2.json). You can check the format by adding the manifest directly to OpenRefine, and OpenRefine will complain if there is anything wrong with the format.
 
 ![test-validate-manifest-format](https://user-images.githubusercontent.com/29347603/90506110-52d85d00-e186-11ea-8077-683d2f234c46.gif)

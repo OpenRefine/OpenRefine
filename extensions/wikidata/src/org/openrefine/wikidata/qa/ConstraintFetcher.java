@@ -59,13 +59,13 @@ public class ConstraintFetcher {
      *
      * @param pid
      *            the property to retrieve the constraints for
-     * @param qid
+     * @param id
      *            the type of the constraints
      * @return the list of matching constraint statements
      */
-    public List<Statement> getConstraintsByType(PropertyIdValue pid, String qid) {
+    public List<Statement> getConstraintsByType(PropertyIdValue pid, String id) {
         Stream<Statement> allConstraints = getConstraintStatements(pid).stream()
-                .filter(s -> s.getValue() != null && ((EntityIdValue) s.getValue()).getId().equals(qid))
+                .filter(s -> s.getValue() != null && ((EntityIdValue) s.getValue()).getId().equals(id))
                 .filter(s -> !StatementRank.DEPRECATED.equals(s.getRank()));
         return allConstraints.collect(Collectors.toList());
     }

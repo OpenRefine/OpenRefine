@@ -21,10 +21,12 @@ public class ManifestV2 implements Manifest {
     private String name;
     private String siteIri;
     private int maxlag;
+    private int maxEditsPerMinute;
     private String instanceOfPid;
     private String subclassOfPid;
     private String mediaWikiApiEndpoint;
     private String editGroupsUrlSchema;
+    private String tagTemplate;
     
     private Map<String, EntityTypeSettings> entityTypeSettings;
     
@@ -40,6 +42,8 @@ public class ManifestV2 implements Manifest {
         JsonNode wikibase = manifest.path("wikibase");
         siteIri = wikibase.path("site_iri").textValue();
         maxlag = wikibase.path("maxlag").intValue();
+        tagTemplate = wikibase.path("tag").isTextual() ? wikibase.path("tag").asText() : Manifest.DEFAULT_TAG_TEMPLATE;
+        maxEditsPerMinute = wikibase.path("max_edits_per_minute").isNumber() ? wikibase.path("max_edits_per_minute").asInt() : Manifest.DEFAULT_MAX_EDITS_PER_MINUTE;
         JsonNode properties = wikibase.path("properties");
         instanceOfPid = properties.path("instance_of").textValue();
         subclassOfPid = properties.path("subclass_of").textValue();
@@ -158,5 +162,15 @@ public class ManifestV2 implements Manifest {
 	@Override
 	public List<String> getAvailableEntityTypes() {
 		return entityTypeSettings.keySet().stream().collect(Collectors.toList());
+	}
+
+	@Override
+	public String getTagTemplate() {
+		return tagTemplate;
+	}
+
+	@Override
+	public int getMaxEditsPerMinute() {
+		return maxEditsPerMinute;
 	}
 }

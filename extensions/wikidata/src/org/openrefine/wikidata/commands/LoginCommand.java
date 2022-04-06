@@ -191,6 +191,10 @@ public class LoginCommand extends Command {
             CommandUtilities.respondError(response, "missing parameter '" + API_ENDPOINT + "'");
             return;
         }
+        
+        if (manager == null) {
+            manager = ConnectionManager.getInstance();
+        }
 
         Map<String, Object> jsonResponse = new HashMap<>();
         if (manager.isLoggedIn(mediawikiApiEndpoint)) {

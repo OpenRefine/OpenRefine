@@ -24,7 +24,7 @@
 package org.openrefine.wikidata.qa.scrutinizers;
 
 import org.openrefine.wikidata.qa.QAWarning;
-import org.openrefine.wikidata.updates.TermedStatementEntityUpdate;
+import org.openrefine.wikidata.updates.TermedStatementEntityEdit;
 import org.wikidata.wdtk.datamodel.interfaces.PropertyIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.Statement;
 
@@ -33,7 +33,7 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * For now this scrutinizer only checks for uniqueness at the item level (it
+ * For now this scrutinizer only checks for uniqueness at the entity level (it
  * ignores qualifiers and references).
  * 
  * Given that all ranks are currently set to Normal, this also checks for
@@ -56,7 +56,7 @@ public class SingleValueScrutinizer extends EditScrutinizer {
     }
 
     @Override
-    public void scrutinize(TermedStatementEntityUpdate update) {
+    public void scrutinize(TermedStatementEntityEdit update) {
         Set<PropertyIdValue> seenSingleProperties = new HashSet<>();
 
         for (Statement statement : update.getAddedStatements()) {
@@ -66,7 +66,7 @@ public class SingleValueScrutinizer extends EditScrutinizer {
             if (seenSingleProperties.contains(pid)) {
                 QAWarning issue = new QAWarning(type, pid.getId(), QAWarning.Severity.WARNING, 1);
                 issue.setProperty("property_entity", pid);
-                issue.setProperty("example_entity", update.getItemId());
+                issue.setProperty("example_entity", update.getEntityId());
                 addIssue(issue);
             } else if (!constraintStatementList1.isEmpty() || !constraintStatementList2.isEmpty()){
                 seenSingleProperties.add(pid);

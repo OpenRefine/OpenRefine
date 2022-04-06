@@ -258,7 +258,6 @@ Refine.OpenProjectUI.prototype._renderProjects = function(data) {
         $("<span/>")
         .addClass("project-tag")
         .text(tag)
-        .attr("title", $.i18n('core-index-open/edit-tags'))
         .appendTo(tagsCell);
         $(tr).addClass(tag);
     });
@@ -356,7 +355,6 @@ Refine.OpenProjectUI.refreshProject = function(tr, metaData, project) {
                 var tagsCell = $("<span/>")
                 .addClass("project-tag")
                 .text(tag)
-                .attr("title", $.i18n('core-index-open/edit-tags'))
                 .appendTo(tagCol);
                 tagCol.parent().addClass(tag);
             });
@@ -366,7 +364,6 @@ Refine.OpenProjectUI.refreshProject = function(tr, metaData, project) {
                 var tagsCell = $("<span/>")
                 .addClass("project-tag")
                 .text(tag)
-                .attr("title", $.i18n('core-index-open/edit-tags'))
                 .appendTo(tagCol);
                 tagCol.parent().addClass(tag);
             });
