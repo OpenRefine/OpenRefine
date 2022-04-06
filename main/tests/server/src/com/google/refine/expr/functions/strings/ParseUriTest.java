@@ -26,7 +26,8 @@ public class ParseUriTest extends RefineTest {
     @Test
     public void testParseUriValidParams() {
         Object res = invoke("parseUri", sampleUri);
-        HashMap<String, String> resMap = ParsingUtilities.mapper.convertValue(res, new TypeReference<>() {});
+        HashMap<String, String> resMap = ParsingUtilities.mapper.convertValue(res, new TypeReference<>() {
+        });
         Assert.assertNotNull(res);
         Assert.assertEquals(resMap.get("path"), "/documentation");
         Assert.assertEquals(resMap.get("host"), "www.openrefine.org");
@@ -34,7 +35,6 @@ public class ParseUriTest extends RefineTest {
         Assert.assertEquals(resMap.get("query"), "");
         Assert.assertEquals(resMap.get("fragment"), "download");
         Assert.assertEquals(resMap.get("scheme"), "https");
-
 
     }
 
