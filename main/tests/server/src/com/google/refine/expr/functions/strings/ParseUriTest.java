@@ -1,14 +1,16 @@
 
 package com.google.refine.expr.functions.strings;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.google.refine.RefineTest;
 import com.google.refine.expr.EvalError;
+import com.google.refine.util.ParsingUtilities;
 import org.slf4j.LoggerFactory;
 import org.testng.Assert;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
-import java.util.Map;
+import java.util.HashMap;
 
 public class ParseUriTest extends RefineTest {
 
@@ -23,13 +25,17 @@ public class ParseUriTest extends RefineTest {
 
     @Test
     public void testParseUriValidParams() {
-        Map<String, String> m = (Map<String, String>) invoke("parseUri", sampleUri);
-        Assert.assertEquals(m.get("path"), "/documentation");
-        Assert.assertEquals(m.get("host"), "www.openrefine.org");
-        Assert.assertEquals(m.get("port"), "80");
-        Assert.assertEquals(m.get("query"), "");
-        Assert.assertEquals(m.get("fragment"), "download");
-        Assert.assertEquals(m.get("scheme"), "https");
+        Object res = invoke("parseUri", sampleUri);
+        HashMap<String, String> resMap = ParsingUtilities.mapper.convertValue(res, new TypeReference<>() {});
+        Assert.assertNotNull(res);
+        Assert.assertEquals(resMap.get("path"), "/documentation");
+        Assert.assertEquals(resMap.get("host"), "www.openrefine.org");
+        Assert.assertEquals(resMap.get("port"), "80");
+        Assert.assertEquals(resMap.get("query"), "");
+        Assert.assertEquals(resMap.get("fragment"), "download");
+        Assert.assertEquals(resMap.get("scheme"), "https");
+
+
     }
 
     @Test
