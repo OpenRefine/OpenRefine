@@ -36,7 +36,7 @@ var SchemaAlignment = {
 };
 
 /**
- * Installs the tabs in the UI the first time the Wikidata 
+ * Installs the tabs in the UI the first time the Wikidata
  * extension is called.
  */
 SchemaAlignment.setUpTabs = function() {
@@ -94,7 +94,7 @@ SchemaAlignment.setUpTabs = function() {
         .attr('title', $.i18n('wikibase-schema/unsaved-changes-alt'))
         .hide()
         .appendTo(schemaButton);
- 
+
   $('.main-view-panel-tab-header').click(function(e) {
      var targetTab = $(this).attr('href');
      SchemaAlignment.switchTab(targetTab);
@@ -303,7 +303,7 @@ SchemaAlignment._save = function(onDone) {
     {},
     { schema: JSON.stringify(schema) },
     {},
-    {   
+    {
       onDone: function() {
         theProject.overlayModels.wikibaseSchema = schema;
 
@@ -432,7 +432,7 @@ SchemaAlignment._addItem = function(json) {
 
   SchemaAlignment._plusButton(
          $.i18n('wikibase-schema/add-statement'), addStatementButton);
-   
+
   if (statementGroups) {
      for(var i = 0; i != statementGroups.length; i++) {
         SchemaAlignment._addStatementGroup(item, statementGroups[i]);
@@ -470,7 +470,7 @@ SchemaAlignment._itemToJSON = function (item) {
         nameDescLst.length === nameDescsDom.length) {
       return {subject: subjectJSON,
             statementGroups: statementGroupLst,
-            nameDescs: nameDescLst}; 
+            nameDescs: nameDescLst};
     } else {
       return null;
     }
@@ -487,8 +487,8 @@ SchemaAlignment._addNameDesc = function(item, json) {
   if (json) {
      term_type = json.name_type.replace('_IF_NEW', '');
      value = json.value;
-     override = json.name_type.indexOf('_IF_NEW') == -1; 
-  } 
+     override = json.name_type.indexOf('_IF_NEW') == -1;
+  }
 
   var container = item.find('.wbs-namedesc-container').first();
   var namedesc = $('<div></div>').addClass('wbs-namedesc').appendTo(container);
@@ -552,12 +552,11 @@ SchemaAlignment._nameDescToJSON = function (namedesc) {
   }
   var value = namedesc.find('.wbs-namedesc-value').first().data("jsonValue");
   return {
-    type: "wbnamedescexpr",    
+    type: "wbnamedescexpr",
     name_type: type,
     value: value,
   };
 };
-  
 
 /********************
  * STATEMENT GROUPS *
@@ -603,7 +602,6 @@ SchemaAlignment._addStatementGroup = function(item, json) {
   } else {
      inputContainer.find('input').focus();
   }
-     
 };
 
 SchemaAlignment._statementGroupToJSON = function (statementGroup) {
@@ -613,7 +611,7 @@ SchemaAlignment._statementGroupToJSON = function (statementGroup) {
        var statementJSON = SchemaAlignment._statementToJSON($(this));
        if (statementJSON !== null) {
           lst.push(statementJSON);
-       } 
+       }
     });
     var inputContainer = statementGroup.find(".wbs-prop-input").first();
     var propertyJSON = SchemaAlignment._inputContainerToJSON(inputContainer);
@@ -630,6 +628,7 @@ SchemaAlignment._statementGroupToJSON = function (statementGroup) {
  **************/
 
 SchemaAlignment._addStatement = function(container, datatype, json) {
+  var rank = null;
   var qualifiers = null;
   var references = null;
   var value = null;
@@ -637,13 +636,14 @@ SchemaAlignment._addStatement = function(container, datatype, json) {
   var mergingStrategy = StatementConfigurationDialog.defaultStrategy;
   if (json) {
     // TODO add compatibility with previous format (and same in statementGroup)
+    rank = json.rank;
     qualifiers = json.qualifiers;
     references = json.references;
     value = json.value;
     editingMode = json.mode || 'add_or_merge';
     mergingStrategy = json.mergingStrategy || {'type':'qualifiers','valueMatcher':{'type':'strict'}};
   }
- 
+
   var statement = $('<div></div>').addClass('wbs-statement');
   var inputContainer = $('<div></div>').addClass('wbs-target-input').appendTo(statement);
   SchemaAlignment._initField(inputContainer, datatype, value);
@@ -657,7 +657,7 @@ SchemaAlignment._addStatement = function(container, datatype, json) {
             .data('jsonMergingStrategy', JSON.stringify(mergingStrategy));
     inputContainer.append(
        $('<span></span>')
-        .addClass('wbs-value-placeholder') 
+        .addClass('wbs-value-placeholder')
         .text($.i18n('wikibase-preview/delete-all-existing-statements')));
     // add delete button
     var toolbar1 = $('<div></div>').addClass('wbs-toolbar').appendTo(statement);
@@ -676,10 +676,9 @@ SchemaAlignment._addStatement = function(container, datatype, json) {
     });
 
     // add rank
-    var rank = $('<div></div>')
-        .addClass('wbs-rank-selector-icon')
-        .addClass('wbs-mainsnak-input')
-        .prependTo(inputContainer);
+    var rankSelect = $('<div></div>').addClass("wbs-rank-selector").prependTo(inputContainer);
+    SchemaAlignment._addRank(rankSelect, rank);
+
 
     // add qualifiers...
     var qualifiersSection = $('<div></div>').addClass('wbs-qualifiers-section').appendTo(statement);
@@ -774,6 +773,7 @@ SchemaAlignment._updateStatementFromMergingStrategy = function (statement) {
 
 SchemaAlignment._statementToJSON = function (statement) {
     var inputContainer = statement.find(".wbs-target-input").first();
+    var rank = statement.find(".wbs-rank-selector").first();
     var qualifiersList = new Array();
     var referencesList = new Array();
     var editingMode = statement.data('jsonMode');
@@ -795,6 +795,7 @@ SchemaAlignment._statementToJSON = function (statement) {
             }
         });
     }
+    var rankJSON = rank.data().jsonValue;
     var valueJSON = null;
     if (!(editingMode === 'delete' && mergingStrategyType === 'property')) {
       valueJSON = SchemaAlignment._inputContainerToJSON(inputContainer);
@@ -804,6 +805,7 @@ SchemaAlignment._statementToJSON = function (statement) {
         ((editingMode === 'delete' && mergingStrategyType === 'property') || valueJSON !== null)) {
       return {
         value: valueJSON,
+        rank: rankJSON,
         qualifiers: qualifiersList,
         references: referencesList,
         mode: editingMode,
@@ -813,6 +815,109 @@ SchemaAlignment._statementToJSON = function (statement) {
       return null;
     }
 };
+
+/**************
+ * RANKS *
+ **************/
+
+SchemaAlignment._addRank = function(container, json) {
+  var preferredRank = $('<div></div>').appendTo(container);
+  var normalRank = $('<div></div>').appendTo(container);
+  var deprecatedRank = $('<div></div>').appendTo(container);
+  var currRank = null;
+  
+  if (json) {
+    currRank = json.rank;
+    // if a value is passed in, display corresponding rank
+    if (json.rank === 'preferred') {
+      preferredRank.addClass("wbs-rank-selector-icon-preferred-active");
+      normalRank.addClass("wbs-rank-selector-icon-normal-inactive");
+      deprecatedRank.addClass("wbs-rank-selector-icon-deprecated-inactive");
+    } else if (json.rank === 'normal') {
+      normalRank.addClass("wbs-rank-selector-icon-normal-active");
+      preferredRank.addClass("wbs-rank-selector-icon-preferred-inactive");
+      deprecatedRank.addClass("wbs-rank-selector-icon-deprecated-inactive");
+    } else {
+      deprecatedRank.addClass("wbs-rank-selector-icon-deprecated-active");
+      normalRank.addClass("wbs-rank-selector-icon-normal-inactive");
+      preferredRank.addClass("wbs-rank-selector-icon-preferred-inactive");
+    }
+  } else {
+    // if no rank is passed, display the normal rank
+    preferredRank.addClass("wbs-rank-selector-icon-preferred-inactive");
+    normalRank.addClass("wbs-rank-selector-icon-normal-active");
+    deprecatedRank.addClass("wbs-rank-selector-icon-deprecated-inactive");
+  }
+
+  currRank = 'normal';
+  //allow toggle functionality
+  preferredRank.prop("title", "preferred rank").click( function () {
+    currRank = 'preferred';
+    if ($(this).hasClass("wbs-rank-selector-icon-preferred-inactive")) {
+      $(this).toggleClass(
+          "wbs-rank-selector-icon-preferred-inactive wbs-rank-selector-icon-preferred-active");
+
+      if (normalRank.hasClass("wbs-rank-selector-icon-normal-active")) {
+        normalRank.toggleClass(
+            "wbs-rank-selector-icon-normal-inactive wbs-rank-selector-icon-normal-active");
+      }
+
+      if (deprecatedRank.hasClass("wbs-rank-selector-icon-deprecated-active")) {
+        deprecatedRank.toggleClass(
+            "wbs-rank-selector-icon-deprecated-inactive wbs-rank-selector-icon-deprecated-active");
+      }
+    }
+  }).bind('click', function () {
+    container.data("jsonValue", {
+      type : "wbentityidrankconstant",
+      rank: currRank
+    });
+    SchemaAlignment._hasChanged();
+  });
+  
+  normalRank.prop("title", "normal rank").click( function () {
+    currRank = 'normal';
+    if ($( this ).hasClass("wbs-rank-selector-icon-normal-inactive")) {
+      $( this ).toggleClass("wbs-rank-selector-icon-normal-inactive wbs-rank-selector-icon-normal-active");
+
+      if (preferredRank.hasClass("wbs-rank-selector-icon-preferred-active")) {
+        preferredRank.toggleClass("wbs-rank-selector-icon-preferred-inactive wbs-rank-selector-icon-preferred-active");
+      }
+
+      if (deprecatedRank.hasClass("wbs-rank-selector-icon-deprecated-active")) {
+        deprecatedRank.toggleClass("wbs-rank-selector-icon-deprecated-inactive wbs-rank-selector-icon-deprecated-active");
+      }
+    }
+  }).bind('click', function () {
+    container.data("jsonValue", {
+      type : "wbentityidrankconstant",
+      rank: currRank
+    });
+    SchemaAlignment._hasChanged();
+  });
+  
+  deprecatedRank.appendTo(container).prop("title", "deprecated rank").click( function () {
+    currRank = 'deprecated';
+    if ($( this ).hasClass("wbs-rank-selector-icon-deprecated-inactive")) {
+      $(this).toggleClass("wbs-rank-selector-icon-deprecated-inactive wbs-rank-selector-icon-deprecated-active");
+
+      if (preferredRank.hasClass("wbs-rank-selector-icon-preferred-active")) {
+        preferredRank.toggleClass("wbs-rank-selector-icon-preferred-inactive wbs-rank-selector-icon-preferred-active");
+      }
+
+      if (normalRank.hasClass("wbs-rank-selector-icon-normal-active")) {
+        normalRank.toggleClass("wbs-rank-selector-icon-normal-inactive wbs-rank-selector-icon-normal-active");
+      }
+    }
+  }).bind('click', function () {
+    container.data("jsonValue", {
+      type : "wbentityidrankconstant",
+      rank: currRank
+    });
+    SchemaAlignment._hasChanged();
+  });
+
+}
 
 /**************
  * QUALIFIERS *
@@ -1014,7 +1119,7 @@ SchemaAlignment._initPropertyField = function(inputContainer, targetContainer, i
      if (initialValue.type === "wbpropconstant") {
         input.val(initialValue.label);
         input.addClass('wbs-validated-input');
-     } 
+     }
      inputContainer.data("jsonValue", initialValue);
   }
 
@@ -1022,7 +1127,6 @@ SchemaAlignment._initPropertyField = function(inputContainer, targetContainer, i
 
 SchemaAlignment._initField = function(inputContainer, mode, initialValue, changedCallback) {
   var input = $('<input></input>').appendTo(inputContainer);
- 
   if (! changedCallback) {
     changedCallback = SchemaAlignment._hasChanged;
   }
@@ -1140,14 +1244,14 @@ SchemaAlignment._initField = function(inputContainer, mode, initialValue, change
      .addClass('wbs-quantity-container')
      .width('40%')
      .appendTo(inputContainer);
-   
+
      var amountValue = null;
      var unitValue = null;
      if (initialValue) {
         amountValue = initialValue.amount;
         unitValue = initialValue.unit;
      }
- 
+
      var propagateValue = function() {
         inputContainer.data("jsonValue", {
            type: "wbquantityexpr",
@@ -1156,7 +1260,7 @@ SchemaAlignment._initField = function(inputContainer, mode, initialValue, change
         });
         changedCallback();
      };
-     
+
      SchemaAlignment._initField(inputContainerAmount, "amount", amountValue, propagateValue);
      SchemaAlignment._initField(inputContainerUnit, "unit", unitValue, propagateValue);
 
@@ -1242,8 +1346,8 @@ SchemaAlignment._initField = function(inputContainer, mode, initialValue, change
       wbVariableType = null; // not droppable directly
   } else if (mode === "language") {
       wbVariableType = "wblanguagevariable";
-  } 
-      
+  }
+  
   if (wbVariableType) {
     inputContainer.droppable({
         accept: acceptClass,
@@ -1265,7 +1369,7 @@ SchemaAlignment._initField = function(inputContainer, mode, initialValue, change
             columnName: ui.draggable.text(),
         });
         changedCallback();
-        return true; 
+        return true;
     }).on("dropactivate", function(evt, ui) {
         input.addClass("wbs-accepting-input");
     }).on("dropdeactivate", function(evt, ui) {
@@ -1452,7 +1556,7 @@ SchemaAlignment._updateWarnings = function(warnings, totalCount) {
    for (var i = 0; i != warnings.length; i++) {
       var rendered = WarningsRenderer._renderWarning(warnings[i]);
       rendered.appendTo(table);
-   }   
+   }
 
    // update the counts
    if (totalCount) {
