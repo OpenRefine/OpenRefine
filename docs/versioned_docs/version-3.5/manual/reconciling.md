@@ -124,7 +124,7 @@ The other options available under <span class="menuItems">Reconcile</span> are:
 
 Reconciliation services use unique identifiers for their entities. For example, the 14th Dalai Lama has the VIAF ID [38242123](https://viaf.org/viaf/38242123/) and the Wikidata ID [Q17293](https://www.wikidata.org/wiki/Q37349). You can supply these identifiers directly to your chosen reconciliation service in order to pull more data, but these strings will not be “reconciled” against the external dataset. 
 
-Select the column with unique identifiers and apply the operation <span class="menuItems">Reconcile</span> → <span class="menuItems">Use values as identifiers</span>. This will bring up the list of reconciliation services you have already added (to add a new service, open the <span class="menuItems">Start reconciling...</span> window first). If you use this operation on a column of IDs, you will not have access to the usual reconciliation settings.
+Select the column with unique identifiers and apply the operation <span class="menuItems">Reconcile</span> → <span class="menuItems">Use values as identifiers</span>. This will bring up the list of reconciliation services you have already added (to add a new service, open the <span class="menuItems">Start reconciling...</span> window first). If you use this operation on a column of IDs, you will not have access to the usual reconciliation settings and reconciliation identifiers will not be validated.
 
 Matching identifiers does not validate them. All cells will appear as dark blue “confirmed” matches. You should check before this operation that the identifiers in the column exist on the target service. 
 
