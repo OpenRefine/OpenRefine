@@ -31,3 +31,10 @@ Weblate supports contextualized translation in **written forms**. The applicatio
 Alongside these, there is also a glossary of words to help the translator. The words are in a source (original word) to target (translated word)  pair. Each has metadata outlining its age and source age
 
 In summary, Weblate uses a **text-based** support for providing message contexts
+
+## Outline Of How OpenRefine Could Implement the Weblate Support for Message Contextualization
+
+### Setting Up The Glossary
+As previously mentioned, every project in Weblate has a glossary. The glossary, as Weblate [defines](https://lstn.wolba.ch/weblate-terms/#:~:text=Every%20project%20on%20Weblate%20is,consistently%20translated%20throughout%20the%20project.), contains strings that may repeat throughout different components and ensures that these strings will be consistently translated throughout the project.
+
+All OpenRefine projects should have glossaries with terminologies specific to OpenRefine. Words added to the glossary should be those that are used multiple times in the application. For example clusters, facets, reconciliation, metadata, schema, tags, etc
