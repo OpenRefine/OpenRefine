@@ -45,7 +45,7 @@ OpenRefine could definitely make maximum use of the `nearby texts`, `history` an
 
 ### Developer's notes
 
-Developers and project maintainers who are involved in the actual implementation of the application probably know firsthand the meaning communicated by a text. So, they give a better and detailed explanation of the context of a text 
+Developers and project maintainers who are involved in the actual implementation of the application probably know firsthand the meaning communicated by a text. So, they give a better and more detailed explanation of the context of a text. A very good example is the word ***OpenRefine***, the application name which is not to be translated. A developer's note could read : *Application name. Not to be translated* or something in that sense
 
 ### Using tooltips
 
@@ -53,4 +53,12 @@ Using a tooltip is a simple means of giving more information about a text like w
 
 ![tooltip](https://s3.amazonaws.com/assets.fullstack.io/n/20200228170642994_react-tooltip.png)
 
+### Showing other occurrences where the text also appears
+
+It helps if the translator can see other occurrences of the word used in the same context. That is, where the meaning is the same. English, the language in which OpenRefine is originally built, is notorious for homographs (that is, words that are spelled the same but mean different things) and other types of ambiguity. For example, the word *right* has a variety of meanings. Showing different occurrences of the word in use gives a better understanding of the meaning in a given context. Showing other occurrences solves the question ***“Which of the several possible meanings of this word or phrase do you mean?”*** and ***“Which usage of this term or phrase is intended in this specific instance?”***
+
+### Explanations
+
+***“What on earth does this even mean?”***
+In innovative tech, it is common to come out with new and unusual terms and brands. Along with developer's notes, there should be an easier definition and/or explanation of tech jargon to non-techies
 
