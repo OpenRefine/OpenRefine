@@ -212,6 +212,8 @@ To run OpenRefine from the command line (assuming you have been able to build fr
 ```
 By default, OpenRefine will use [refine.ini](https://github.com/OpenRefine/OpenRefine/blob/master/refine.ini) for configuration. You can copy it and rename it to `refine-dev.ini`, which will be used for configuration instead. `refine-dev.ini` won't be tracked by Git, so feel free to put your custom configurations into it.
 
+If you wish to run the application manually, without using the `refine` script, you can do so via Maven with `mvn exec:java`. The entry point of the application is the `com.google.refine.Refine` class.
+
 ## Building Distributions (Kits) {#building-distributions-kits}
 
 The Refine build system uses Apache Ant to automate the creation of the installation packages for the different operating systems. The packages are currently optimized to run on Mac OS X which is the only platform capable of creating the packages for all three OS that we support.

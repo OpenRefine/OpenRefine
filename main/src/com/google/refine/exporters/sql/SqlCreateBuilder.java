@@ -83,7 +83,7 @@ public class SqlCreateBuilder {
                 
                 if (name != null) {
                     if(trimColNames) {
-                        String trimmedCol = name.replaceAll("\\s", "");
+                        String trimmedCol = name.replaceAll("[^a-zA-Z0-9_]", "_");
                         createSB.append( trimmedCol + " ");
                     }else{
                         createSB.append(name + " ");

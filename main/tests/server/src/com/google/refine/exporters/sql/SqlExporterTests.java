@@ -287,6 +287,33 @@ public class SqlExporterTests extends RefineTest {
     }
 
     @Test
+    public void testExportSqlWithSpecialCharacterInclusiveColumnNames() {
+        int noOfCols = 4;
+        int noOfRows = 1;
+        createGridWithSpecialCharacters(noOfRows, noOfCols);
+        String tableName = "sql_table_test";
+        ObjectNode optionsJson = createOptionsFromProject(tableName, null, null, null, false);
+        optionsJson.put("includeStructure", true);
+        optionsJson.put("includeDropStatement", true);
+        optionsJson.put("convertNulltoEmptyString", true);
+        optionsJson.put("trimColumnNames", true);
+
+        when(options.getProperty("options")).thenReturn(optionsJson.toString());
+        try {
+            SUT.export(project, options, engine, writer);
+        } catch (IOException e) {
+            Assert.fail();
+        }
+
+        String result = writer.toString();
+        logger.debug("\nresult:={} ", result);
+
+        Assert.assertTrue(result.contains("INSERT INTO sql_table_test (_column_0_,_column_1_,_column_2_,_column_3_) VALUES \n" +
+                "( 'It''s row0cell0','It''s row0cell1','It''s row0cell2','It''s row0cell3' )"));
+
+    }
+
+    @Test
     public void testExportSqlWithNullFields() {
         int inNull = 8;
         createGridWithNullFields(3, 3, inNull);
@@ -393,6 +420,16 @@ public class SqlExporterTests extends RefineTest {
         }
     }
 
+    protected void createColumnsWithSpecialCharacters(int noOfColumns) {
+        for (int i = 0; i < noOfColumns; i++) {
+            try {
+                project.columnModel.addColumn(i, new Column(i, "@" + "column" + " " + i + "/"), true);
+            } catch (ModelException e1) {
+                Assert.fail("Could not create column");
+            }
+        }
+    }
+
     protected void createGrid(int noOfRows, int noOfColumns) {
         createColumns(noOfColumns);
 
@@ -407,6 +444,18 @@ public class SqlExporterTests extends RefineTest {
 
     protected void createGridWithSingleQuote(int noOfRows, int noOfColumns) {
         createColumns(noOfColumns);
+
+        for (int i = 0; i < noOfRows; i++) {
+            Row row = new Row(noOfColumns);
+            for (int j = 0; j < noOfColumns; j++) {
+                row.cells.add(new Cell("It's row" + i + "cell" + j, null));
+            }
+            project.rows.add(row);
+        }
+    }
+
+    protected void createGridWithSpecialCharacters(int noOfRows, int noOfColumns) {
+        createColumnsWithSpecialCharacters(noOfColumns);
 
         for (int i = 0; i < noOfRows; i++) {
             Row row = new Row(noOfColumns);
