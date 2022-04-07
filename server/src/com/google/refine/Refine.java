@@ -495,12 +495,42 @@ class RefineClient extends JFrame implements ActionListener {
     
     private void openBrowser() {
         if (!Desktop.isDesktopSupported()) {
-            logger.warn("Java Desktop class not supported on this platform.  Please open %s in your browser",uri.toString());
+            try {
+                openBrowser2();
+            } catch (IOException e) {
+                logger.error("Failed to open browser. Please open %s in your browser",uri.toString());
+            }
+        } else {
+            try {
+                Desktop.getDesktop().browse(uri);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
         }
-        try {
-            Desktop.getDesktop().browse(uri);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+    }
+
+    private void openBrowser2() throws IOException {
+        logger.info("Opening browser to {}", uri.toString());
+        String os = System.getProperty("os.name").toLowerCase();
+        Runtime runtime = Runtime.getRuntime();
+        if(os.contains("win")) { // If we are on Windows
+            runtime.exec("rundll32 url.dll,FileProtocolHandler " + uri);
+        } else if(os.contains("mac")) { // If we are on Mac
+            runtime.exec("open " + uri);
+        } else if(os.contains("nix") || os.contains("nux")) { // If we are on unix
+            String[] browsers = {"google-chrome", "epiphany", "firefox", "mozilla", "konqueror",
+                    "netscape", "opera", "links", "lynx" };
+            StringBuilder cmd = new StringBuilder();
+            for (int i = 0; i < browsers.length; i++) {
+                if (i == 0) {
+                    cmd.append(String.format("%s \"%s\"", browsers[i], uri));
+                } else {
+                    cmd.append(String.format(" || %s \"%s\"", browsers[i], uri));
+                }
+            }
+            runtime.exec(new String[] { "sh", "-c", cmd.toString() });
+        } else {
+            logger.warn("Java Desktop class not supported on this platform");
         }
     }
 }
