@@ -32,9 +32,25 @@ Alongside these, there is also a glossary of words to help the translator. The w
 
 In summary, Weblate uses a **text-based** support for providing message contexts
 
-## Outline Of How OpenRefine Could Implement the Weblate Support for Message Contextualization
+## Outline Of How OpenRefine Could Utilize the Weblate Support for Message Contextualization
 
 ### Setting Up The Glossary
 As previously mentioned, every project in Weblate has a glossary. The glossary, as Weblate [defines](https://lstn.wolba.ch/weblate-terms/#:~:text=Every%20project%20on%20Weblate%20is,consistently%20translated%20throughout%20the%20project.), contains strings that may repeat throughout different components and ensures that these strings will be consistently translated throughout the project.
 
 All OpenRefine projects should have glossaries with terminologies specific to OpenRefine. Words added to the glossary should be those that are used multiple times in the application. For example clusters, facets, reconciliation, metadata, schema, tags, etc
+
+### Using Weblate's `nearby texts`, `history`, and `other languages` options
+
+OpenRefine could definitely make maximum use of the `nearby texts`, `history` and `other languages` features Weblate uses.
+
+### Developer's notes
+
+Developers and project maintainers who are involved in the actual implementation of the application probably know firsthand the meaning communicated by a text. So, they give a better and detailed explanation of the context of a text 
+
+### Using tooltips
+
+Using a tooltip is a simple means of giving more information about a text like where it is found. For example, a tooltip saying *for the home icon* could be quite informative given that home could be translated in French as *domicile* or *maison* which is a far cry from its meaning when used on the home icon. The right term is *accueil*.
+
+![tooltip](https://s3.amazonaws.com/assets.fullstack.io/n/20200228170642994_react-tooltip.png)
+
+
