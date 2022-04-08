@@ -122,7 +122,7 @@
     "warnings-messages/non-printable-characters/title": "Caractères spéciaux non affichables dans les chaînes de caractères.",
     "warnings-messages/non-printable-characters/body": "Des chaînes de caractères telles que <span class=\"wb-issue-preformat\">{example_string}</span> contiennent des caractères spéciaux non affichables.",
     "warnings-messages/invalid-identifier-space/title": "Espace d'identifiant invalide pour des cellules réconciliées.",
-    "warnings-messages/invalid-identifier-space/body": "Certaines cellules réconciliées telles que <span class=\"wb-issue-preformat\">{example_cell}</span> ont été ignorées, car elles ne sont pas réconciliées  à  <span class=\"wb-issue-preformat\">{expected_site_iri}</span>.",
+    "warnings-messages/invalid-identifier-space/body": "Certaines cellules réconciliées telles que <span class=\"wb-issue-preformat\">{example_cell}</span> ont été ignorées, car elles ne sont pas réconciliées à <span class=\"wb-issue-preformat\">{expected_site_iri}</span>.",
     "warnings-messages/ignored-language/title": "Identifiants de langue invalides.",
     "warnings-messages/ignored-language/body": "Certains codes de langue sont invalides, tels que <span class=\"wb-issue-preformat\">{example_value}</span>. Consultez les <a href=\"https://www.wikidata.org/wiki/Wikidata:Tools/OpenRefine/Editing/Schema_alignment/fr#Langues\" target=\"_blank\">valeurs autorisées</a>.",
     "warnings-messages/ignored-date/title": "Formats de date invalide.",
