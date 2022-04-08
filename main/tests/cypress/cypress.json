@@ -1,10 +1,10 @@
 {
   "integrationFolder": "./cypress/integration",
-  "nodeVersion": "system",
   "retries": {
     "runMode": 3,
     "openMode": 0
   },
+  "defaultCommandTimeout": 30000,
   "env": {
     "OPENREFINE_URL": "http://localhost:3333",
     "DISABLE_PROJECT_CLEANUP": 0
