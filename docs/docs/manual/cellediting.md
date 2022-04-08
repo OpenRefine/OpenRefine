@@ -103,55 +103,79 @@ You can also export the currently identified clusters as a JSON file, or close t
 
 ### Clustering methods {#clustering-methods}
 
-You don’t need to understand the details behind each clustering method to apply them successfully to your data. The order in which these methods are presented in the interface and on this page is the order we recommend - starting with the most strict rules and moving to the most lax, which require more human supervision to apply correctly. 
+You don’t need to understand the details behind each clustering method to apply them successfully to your data.
 
-The clustering pop-up window offers you a variety of clustering methods:
+The order in which these methods are presented in the interface and on this page is the order we recommend - starting with the most strict rules and moving to the most lax, which require more human supervision to apply correctly.
 
-*   key collision
-    *   fingerprint
-    *   ngram-fingerprint
-    *   metaphone3
-    *   cologne-phonetic
-    *   Daitch-Mokotoff
-    *   Beider-Morse
-*   nearest neighbor
-    *   levenshtein
-    *   ppm
+The clustering pop-up window offers you a variety of clustering methods; 6 different key collision clustering methods and 2 nearest neighbour clustering methods.
 
 #### Key collision {#key-collision}
 
 **Key collisions** are very fast and can process millions of cells in seconds:
 
-**Fingerprinting** is the least likely to produce false positives, so it’s a good place to start. It does the same kind of data-cleaning behind the scenes that you might think to do manually: fix whitespace into single spaces, put all uppercase letters into lowercase, discard punctuation, remove diacritics (e.g. accents) from characters, split up all strings (words) and sort them alphabetically (so “Zhenyi, Wang” becomes “wang zhenyi”).
+1.  **Fingerprinting**
 
-**N-gram fingerprinting** allows you to set the _n_ value to whatever number you’d like, and will create n-grams of _n_ size (after doing some cleaning), alphabetize them, then join them back together into a fingerprint. For example, a 1-gram fingerprint will simply organize all the letters in the cell into alphabetical order - by creating segments one character in length. A 2-gram fingerprint will find all the two-character segments, remove duplicates, alphabetize them, and join them back together (for example, “banana” generates “ba an na an na,” which becomes “anbana”). 
+Fingerprinting is the least likely to produce false positives, so it’s a  good place to start. It does the same kind of data cleaning behind the scenes that you might think to do manually:
 
-This can help match cells that have typos, or incorrect spaces (such as matching “lookout” and “look out,” which fingerprinting itself won’t identify because it separates words). The higher the _n_ value, the fewer clusters will be identified. With 1-grams, keep an eye out for mismatched values that are near-anagrams of each other (such as “Wellington” and “Elgin Town”). 
+- fix whitespace into single spaces
+- put all uppercase letters into lowercase
+- discard punctuation
+- remove diacritics (e.g. accents) from characters
+- split up all strings (words) and sort them alphabetically (so
+  “Zhenyi, Wang” becomes “wang zhenyi”).
+
+
+2.  **N-gram fingerprinting**
+
+N-gram fingerprinting allows you to set the _n_ value to whatever number you’d like and will create n-grams of _n_ size (after doing some cleaning), alphabetize them, then join them back together into a  fingerprint.
+
+**For example**, a 1-gram fingerprint will simply organize all the letters in the cell into alphabetical order - by creating segments one character in length. A 2-gram fingerprint will find all the two-character segments, remove duplicates, alphabetize them, and join them back together (for example, “banana” generates “ba an na an na,” which becomes “anbana”).
+
+This can help match cells that have typos, or incorrect spaces (such as matching “lookout” and “look out,” which fingerprinting itself won’t identify because it separates words). The higher the _n_ value, the fewer clusters will be identified. With 1-grams, keep an eye out for mismatched values that are near-anagrams of each other (such as “Wellington” and “Elgin Town”).
 
 ##### Phonetic clustering {#phonetic-clustering}
 
-The next four methods are phonetic algorithms: they identify letters that sound the same when pronounced out loud, and assess text values based on that (such as knowing that a word with an “S” might be a mistype of a word with a “Z”). They are great for spotting mistakes made by not knowing the spelling of a word or name after hearing it spoken aloud. 
+The next four methods are phonetic algorithms: they identify letters that sound the same when pronounced out loud, and assess text values based on that (such as knowing that a word with an “S” might be a mistype of a word with a “Z”). They are great for spotting mistakes made by not knowing the spelling of a word or name after hearing it spoken aloud.
 
-**Metaphone3 fingerprinting** is an English-language phonetic algorithm. For example, “Reuben Gevorkiantz” and “Ruben Gevorkyants” share the same phonetic fingerprint in English.
+3. **Metaphone3 fingerprinting**
 
-**Cologne fingerprinting** is another phonetic algorithm, but for German pronunciation. 
+Metaphone3 fingerprinting is an English-language phonetic algorithm. For example, “Reuben Gevorkiantz” and “Ruben Gevorkyants” share the same phonetic fingerprint in English.
 
-**Daitch-Mokotoff** is a phonetic algorithm for Slavic and Yiddish words, especially names. **Baider-Morse** is a version of Daitch-Mokotoff that is slightly more strict. 
+4. **Cologne fingerprinting**
 
-Regardless of the language of your data, applying each of them might find different potential matches: for example, Metaphone clusters “Cornwall” and “Corn Hill” and “Green Hill,” while Cologne clusters “Greenvale” and “Granville” and “Cornwall” and “Green Wall.” 
+Cologne fingerprinting is another phonetic algorithm, but for German pronunciation.
+
+5. **Daitch-Mokotoff**
+
+Daitch-Mokotoff is a phonetic algorithm for Slavic and Yiddish words, especially names.
+
+6. **Baider-Morse**
+
+Baider-Morse is a version of Daitch-Mokotoff that is slightly more strict.
+
+Regardless of the language of your data, applying each of them might find different potential matches: for example, Metaphone clusters “Cornwall” and “Corn Hill” and “Green Hill,” while Cologne clusters “Greenvale” and “Granville” and “Cornwall” and “Green Wall.”
 
 #### Nearest neighbor {#nearest-neighbor}
 
-**Nearest neighbor** clustering methods are slower than key collision methods. They allow the user to set a radius - a threshold for matching or not matching. OpenRefine uses a “blocking” method first, which sorts values based on whether they have a certain amount of similarity (the default is “6” for a six-character string of identical characters) and then runs the nearest-neighbor operations on those sorted groups. 
+**Nearest neighbor** clustering methods are slower than key collision methods.
 
-We recommend setting the block number to at least 3, and then increasing it if you need to be more strict (for example, if every value with “river” is being matched, you should increase it to 6 or more). Note that bigger block values will take much longer to process, while smaller blocks may miss matches. Increasing the radius will make the matches more lax, as bigger differences will be clustered.
+They allow the user to set a radius - a threshold for matching or not matching. OpenRefine uses a “blocking” method first, which sorts values based on whether they have a certain amount of similarity (the default is “6” for a six-character string of identical characters) and then runs the nearest-neighbor operations on those sorted groups.
 
-**Levenshtein distance** counts the number of edits required to make one value perfectly match another. As in the key collision methods above, it will do things like change uppercase to lowercase, fix whitespace, change special characters, etc. Each character that gets changed counts as 1 “distance.” “New York” and “newyork” have an edit distance value of 3 (“N” to “n”; “Y” to “y”; remove the space). It can do relatively advanced edits, such as understand the distance between “M. Makeba” and “Miriam Makeba” (5), but it may create false positives if these distances are greater than other, simpler transformations (such as the one-character distance to “B. Makeba,” another person entirely).
+We recommend setting the block number to at least 3, and then increasing it if you need to be more strict (for example, if every value with “river” is being matched, you should increase it to 6 or more).
 
-**PPM (Prediction by Partial Matching)** uses compression to see whether two values are similar or different. In practice, this method is very lax even for small radius values and tends to generate many false positives, but because it operates at a sub-character level it is capable of finding substructures that are not easily identifiable by distances that work at the character level. So it should be used as a “last resort” clustering method. It is also more effective on longer strings than on shorter ones.
+**Note** that bigger block values will take much longer to process, while smaller blocks may miss matches. Increasing the radius will make the matches more lax, as bigger differences will be clustered.
+
+1. **Levenshtein distance**
+
+Levenshtein distance counts the number of edits required to make one value perfectly match another. As in the key collision methods above, it will do things like change uppercase to lowercase, fix whitespace, change special characters, etc. Each character that gets changed counts as 1 “distance.” “New York” and “newyork” have an edit distance value of 3 (“N” to “n”; “Y” to “y”; remove the space).
+
+It can do relatively advanced edits, such as understanding the distance between “M. Makeba” and “Miriam Makeba” (5), but it may create false positives if these distances are greater than other, simpler transformations (such as the one-character distance to “B. Makeba,” another person entirely).
+
+2. **PPM (Prediction by Partial Matching)**
+
+PPM (Prediction by Partial Matching) uses compression to see whether two values are similar or different. In practice, this method is very lax even for small radius values and tends to generate many false positives, but because it operates at a sub-character level it is capable of finding substructures that are not easily identifiable by distances that work at the character level. So it should be used as a “last resort” clustering method. It is also more effective on longer strings than on shorter ones.
 
 For more of the theory behind clustering, see [Clustering In Depth](https://github.com/OpenRefine/OpenRefine/wiki/Clustering-In-Depth).
-
 ## Replace {#replace}
 
 OpenRefine provides a find/replace function for you to edit your data. Selecting <span class="menuItems">Edit cells</span> → <span class="menuItems">Replace</span> will bring up a simple window where you can input a string to search and a string to replace it with. You can set case-sensitivity, and set it to only select whole words, defined by a string with spaces or punctuation around it (to prevent, for example, “house” selecting the “house” part of “doghouse”). You can use [regular expressions](expressions#regular-expressions) in this field. You may wish to preview the results of this operation by testing it with a [Text filter](facets#text-filter) first.
