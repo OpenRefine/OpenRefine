@@ -20,7 +20,7 @@ public class ParseUriTest extends RefineTest {
     @BeforeTest
     public void init() {
         logger = LoggerFactory.getLogger(this.getClass());
-        sampleUri = "https://www.openrefine.org:80/documentation#download";
+        sampleUri = "https://www.openrefine.org:80/documentation#download?format=xml&os=mac";
     }
 
     @Test
@@ -28,6 +28,7 @@ public class ParseUriTest extends RefineTest {
         Object res = invoke("parseUri", sampleUri);
         HashMap<String, String> resMap = ParsingUtilities.mapper.convertValue(res, new TypeReference<>() {
         });
+
         Assert.assertNotNull(res);
         Assert.assertEquals(resMap.get("path"), "/documentation");
         Assert.assertEquals(resMap.get("host"), "www.openrefine.org");
@@ -35,7 +36,7 @@ public class ParseUriTest extends RefineTest {
         Assert.assertEquals(resMap.get("query"), "");
         Assert.assertEquals(resMap.get("fragment"), "download");
         Assert.assertEquals(resMap.get("scheme"), "https");
-
+        Assert.assertNotNull(resMap.get("query_params"));
     }
 
     @Test
