@@ -57,6 +57,10 @@ This describes the overall steps to your first code contribution in OpenRefine. 
 
 - Study how the current code works. You might want to use a debugger to put breakpoints at the relevant locations (for inspecting the backend, use your IDE's debugger, for the frontend, use your browser's developer tools).
 
+- Before going too far in the exploration and solving of the issue, make sure no one is already assigned to it. If someone is already assigned, and you don't see action or discussions since a few weeks, you can ask the assigned person if he is still currently active in working to solve the issue. If not, or no answer after a few days, you can remove him and assign yourself.
+
+- Please note that in periods when the OpenRefine community is actively participating in a program like Outreachy or Google Summer of Code, it might be safer to ask mentors before assigning yourself to « Good First Issue » or « Good Second Issue ».
+
 - Create a git branch for your fix. The name of your branch should contain the issue number, and a few words to describe the topic of the fix, for instance "issue-1234-columnize-layout".
 
 - Make changes to the code to fix the issue. If you are changing backend code, it would be great if you could also write a test in Java to demonstrate the fix. You can imitate existing tests for that. We currently do not have frontend tests.
