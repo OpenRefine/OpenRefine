@@ -1,25 +1,25 @@
 {
-	"Candidate": "The information in a specific cell that will be used in reconciliation"
-	"Clipboard": "Used to get data when ceating a project allowing you to copy and paste in data from anywhere"
-	"Clustering": "A great way to fix the inconsistencies in a facet. Uses a variety of comparison methods to find text entries that are similar but not exact."
-	"Custom Tabular Exporter": "A view that alliows you to choose which of your data to export, the separator you wish to use, and whether you'd like to download the result to your computer or upload it into a Google Sheet"
-	"Data values": "The data that you can find as target of a statement (or qualifier, or part of a reference)." 
-	"Extensions": "Additional features of OpenRefine which are not part of the core system e.g Wikidata"
-	"Facets": "Aspects or angles of data variance in a given column."
-	"Google Data": "Data stored in google sheets"
-	"GREL": "General Refine Expression Language designed to resemble Javascript."
-	"Grid": "The area of the project screen that displays your datase"
-	"Key collision": "Fast clustering method that can process millions of cells in seconds"
-	"Match": "Positive result of reconciliation"
-	"Permalink": "URL that allows you to return to a project at a specific view state - that is, with facets and filters applied"
-	"Preview entities": "A feature offered by services that allows you to hover your mouse over the suggestions to see more information about the candidates or matches"
-	"Project grid": "Where the data of your project is displayed)"
-	"Qualifiers ": "Qualifiers can be added on each statement. When their values are skipped, only the qualifier will be discarded: the rest of the statement will still be added."
-	"QuickStatements": "A tool developed for Wikidata to create items and add statements"
-	"Reconciliation": "The process of matching your dataset with that of an external source."
-	"References": "Can (and should) be added to back each statement. If values inside the reference are skipped, the corresponding part of the reference will be discarded but the reference will still be added (unless the reference becomes empty)."
-	"Schema": "A schema is a plan for how to structure information in a database. In OpenRefine, the schema operates as a template for how Wikidata edits should be applied: how to translate your tabular data into statements"
-	"Service": "Provider of external reconciliation data e.g. Wikidata, Open Library "
-	"Transposing": "Reshaping your data: pivoting cells from a row into a column, or pivoting cells from a column into a row"
+	"Candidate": "The information in a specific cell that will be used in reconciliation",
+	"Clipboard": "Used to get data when ceating a project allowing you to copy and paste in data from anywhere",
+	"Clustering": "A great way to fix the inconsistencies in a facet. Uses a variety of comparison methods to find text entries that are similar but not exact.",
+	"Custom Tabular Exporter": "A view that alliows you to choose which of your data to export, the separator you wish to use, and whether you'd like to download the result to your computer or upload it into a Google Sheet",
+	"Data values": "The data that you can find as target of a statement (or qualifier, or part of a reference).",
+	"Extensions": "Additional features of OpenRefine which are not part of the core system e.g Wikidata",
+	"Facets": "Aspects or angles of data variance in a given column.",
+	"Google Data": "Data stored in google sheets",
+	"GREL": "General Refine Expression Language designed to resemble Javascript.",
+	"Grid": "The area of the project screen that displays your datase",
+	"Key collision": "Fast clustering method that can process millions of cells in seconds",
+	"Match": "Positive result of reconciliation",
+	"Permalink": "URL that allows you to return to a project at a specific view state - that is, with facets and filters applied",
+	"Preview entities": "A feature offered by services that allows you to hover your mouse over the suggestions to see more information about the candidates or matches",
+	"Project grid": "Where the data of your project is displayed)",
+	"Qualifiers ": "Qualifiers can be added on each statement. When their values are skipped, only the qualifier will be discarded: the rest of the statement will still be added.",
+	"QuickStatements": "A tool developed for Wikidata to create items and add statements",
+	"Reconciliation": "The process of matching your dataset with that of an external source.",
+	"References": "Can (and should) be added to back each statement. If values inside the reference are skipped, the corresponding part of the reference will be discarded but the reference will still be added (unless the reference becomes empty).",
+	"Schema": "A schema is a plan for how to structure information in a database. In OpenRefine, the schema operates as a template for how Wikidata edits should be applied: how to translate your tabular data into statements",
+	"Service": "Provider of external reconciliation data e.g. Wikidata, Open Library ",
+	"Transposing": "Reshaping your data: pivoting cells from a row into a column, or pivoting cells from a column into a row",
 	"Transform": "Operation used to edit cell content e.g. trim leading and trailing whitespace"
 }
