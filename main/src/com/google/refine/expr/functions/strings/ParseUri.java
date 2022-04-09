@@ -42,17 +42,17 @@ public class ParseUri implements Function {
                 e.printStackTrace();
             }
         }
-        return new EvalError("ParseUri takes a single string argument");
+        return new EvalError("ParseUri takes a single string argument.");
     }
 
     @Override
     public String getDescription() {
-        return "Parses a URI and extracts its components";
+        return "Parses a URI and extracts its components.";
     }
 
     @Override
     public String getParams() {
-        return "String url";
+        return "string url";
     }
 
     @Override
