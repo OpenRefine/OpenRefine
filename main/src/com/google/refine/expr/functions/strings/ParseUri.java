@@ -30,7 +30,7 @@ public class ParseUri implements Function {
                 return ParsingUtilities.mapper.readTree(objectMapper.writeValueAsString(Map.of(
                         "scheme", uri.getScheme() == null ? "" : uri.getScheme(),
                         "host", uri.getHost() == null ? "" : uri.getHost(),
-                        "port", String.valueOf(uri.getPort()),
+                        "port", String.valueOf(uri.getPort() == -1 ? 80 : uri.getPort()),
                         "path", uri.getPath() == null ? "" : uri.getPath(),
                         "query", uri.getQuery() == null ? "" : uri.getQuery(),
                         "fragment", uri.getFragment() == null ? "" : uri.getFragment(),
