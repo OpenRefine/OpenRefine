@@ -911,7 +911,7 @@ SchemaAlignment._addRank = function(container, json) {
     }
   }).bind('click', function () {
     container.data("jsonValue", {
-      type : "wbentityidrankconstant",
+      type : "wbrankconstant",
       rank: currRank
     });
     SchemaAlignment._hasChanged();

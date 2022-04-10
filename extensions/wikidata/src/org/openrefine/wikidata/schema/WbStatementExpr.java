@@ -56,6 +56,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 public class WbStatementExpr {
 
     private WbExpression<? extends Value> mainSnakValueExpr;
+    private WbRankConstant rankExpr;
     private List<WbSnakExpr> qualifierExprs;
     private List<WbReferenceExpr> referenceExprs;
     private StatementMerger merger;
@@ -64,6 +65,7 @@ public class WbStatementExpr {
     @JsonCreator
     public WbStatementExpr(
     		@JsonProperty("value") WbExpression<? extends Value> mainSnakValueExpr,
+            @JsonProperty("rank") WbRankConstant rankExpr,
             @JsonProperty("qualifiers") List<WbSnakExpr> qualifierExprs,
             @JsonProperty("references") List<WbReferenceExpr> referenceExprs,
             @JsonProperty("mergingStrategy") StatementMerger merger,
@@ -73,6 +75,7 @@ public class WbStatementExpr {
     		Validate.notNull(mainSnakValueExpr);
     	}
         this.mainSnakValueExpr = mainSnakValueExpr;
+        this.rankExpr = rankExpr;
         if (qualifierExprs == null) {
             qualifierExprs = Collections.emptyList();
         }
@@ -149,13 +152,18 @@ public class WbStatementExpr {
             }
         }
 
-        StatementRank rank = StatementRank.NORMAL;
+        StatementRank rank = rankExpr.evaluate(ctxt);
         return new StatementEdit(Datamodel.makeStatement(claim, references, rank, ""), merger, mode);
     }
 
     @JsonProperty("value")
     public WbExpression<? extends Value> getMainsnak() {
         return mainSnakValueExpr;
+    }
+
+    @JsonProperty("rank")
+    public WbRankConstant getRank() {
+        return rankExpr;
     }
 
     @JsonProperty("qualifiers")

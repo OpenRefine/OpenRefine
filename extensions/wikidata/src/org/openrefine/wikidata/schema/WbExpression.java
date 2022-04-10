@@ -48,6 +48,7 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
         @Type(value = WbMonolingualExpr.class, name = "wbmonolingualexpr"),
         @Type(value = WbPropConstant.class, name = "wbpropconstant"),
         @Type(value = WbEntityIdValueConstant.class, name = "wbentityidvalueconstant"),
+        @Type(value = WbRankConstant.class, name = "wbrankconstant"),
         @Type(value = WbLanguageConstant.class, name = "wblanguageconstant"),
         @Type(value = WbLanguageVariable.class, name = "wblanguagevariable"),
         @Type(value = WbQuantityExpr.class, name = "wbquantityexpr"), })
