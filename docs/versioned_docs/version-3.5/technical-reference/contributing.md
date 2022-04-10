@@ -65,7 +65,7 @@ This describes the overall steps to your first code contribution in OpenRefine. 
 
 - Make changes to the code to fix the issue. When you change the backend code, it's conveniant to also write one or more tests in Java to demonstrate the fix. You can imitate existing tests of comparable functionalities for that. 
 
-- We now have [functional tests](#functional-tests). These are built with Cypress. They mimic a human user in front of a Chrome browser. If your change has a meaningful impact on the user interface, a functional test should probably be written.
+- We now have [functional tests](/technical-reference/functional-tests). These are built with Cypress. They mimic a human user in front of a Chrome browser. If your change has a meaningful impact on the user interface, a functional test should probably be written.
 
 - If you made Java changes, run linting to make sure they conform to our code style, with `mvn formatter:format`.
 
@@ -75,4 +75,4 @@ This describes the overall steps to your first code contribution in OpenRefine. 
 
 Thank you!
 
-For more information, there is also the [Maintainer Guidelines](#maintainer-guidelines) section.
+For more information, there is also the [Maintainer Guidelines](/technical-reference/maintainer-guidelines) section.
