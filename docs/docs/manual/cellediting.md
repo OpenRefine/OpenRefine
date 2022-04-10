@@ -107,7 +107,7 @@ You don’t need to understand the details behind each clustering method to appl
 
 The order in which these methods are presented in the interface and on this page is the order we recommend - starting with the most strict rules and moving to the most lax, which require more human supervision to apply correctly.
 
-The clustering pop-up window offers you a variety of clustering methods; 6 different key collision clustering methods and 2 nearest neighbour clustering methods.
+The clustering pop-up window offers you two categories of clustering methods: 6 different key collision clustering methods and 2 nearest neighbour clustering methods.
 
 #### Key collision {#key-collision}
 
