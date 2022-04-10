@@ -35,7 +35,7 @@ public class WbRankConstant implements WbExpression<StatementRank> {
 
     @JsonCreator
     public WbRankConstant(@JsonProperty("rank") String rank) {
-        // no validation needed; it is "normal" by default
+        if (rank == null) rank = "normal";
         this.rank = rank;
     }
 
@@ -52,16 +52,17 @@ public class WbRankConstant implements WbExpression<StatementRank> {
     }
 
     @JsonProperty("rank")
-    public String getValue() {
+    public String getRank() {
         return rank;
     }
 
     @Override
     public boolean equals(Object other) {
-        if(other == null || !WbStringConstant.class.isInstance(other)) {
+        if(other == null || !WbRankConstant.class.isInstance(other)) {
             return false;
         }
-        return rank.equals(((WbStringConstant)other).getValue());
+
+        return rank.equals(( (WbRankConstant) other ).getRank());
     }
 
     @Override

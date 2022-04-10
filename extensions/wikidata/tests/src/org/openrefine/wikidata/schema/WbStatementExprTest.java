@@ -158,26 +158,24 @@ public class WbStatementExprTest extends WbExpressionTest<StatementEdit> {
     @Test
     public void testCreation() {
         WbItemConstant q5 = new WbItemConstant("Q5", "human");
-        WbRankConstant rank = new WbRankConstant("normal");
         WbStatementExpr empty = new WbStatementExpr(
                 q5,
-                rank,
+            rankExpr,
                 Collections.emptyList(),
                 Collections.emptyList(),
                 StatementMerger.FORMER_DEFAULT_STRATEGY,
                 StatementEditingMode.ADD_OR_MERGE);
         WbStatementExpr withNulls = new WbStatementExpr(
-                q5, rank,null, null, null, null);
+                q5, rankExpr,null, null, null, null);
         assertEquals(empty, withNulls);
     }
 
     @Test(expectedExceptions = IllegalArgumentException.class)
     public void testNoMainValue() {
-        // This is default rank
-        WbRankConstant rank = new WbRankConstant("normal");
+
         new WbStatementExpr(
                 null,
-                rank,
+                rankExpr,
                 Collections.emptyList(),
                 Collections.emptyList(),
                 StatementMerger.FORMER_DEFAULT_STRATEGY,
@@ -186,11 +184,9 @@ public class WbStatementExprTest extends WbExpressionTest<StatementEdit> {
 
     @Test
     public void testAllowedNoMainValue() {
-        // This is default rank
-        WbRankConstant rank = new WbRankConstant("normal");
         WbStatementExpr expr = new WbStatementExpr(
                 null,
-                rank,
+                rankExpr,
                 Collections.emptyList(),
                 Collections.emptyList(),
                 new PropertyOnlyStatementMerger(),

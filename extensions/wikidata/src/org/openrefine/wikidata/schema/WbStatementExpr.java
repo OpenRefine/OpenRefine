@@ -75,6 +75,9 @@ public class WbStatementExpr {
     		Validate.notNull(mainSnakValueExpr);
     	}
         this.mainSnakValueExpr = mainSnakValueExpr;
+        if (rankExpr == null) {
+            rankExpr = new WbRankConstant("normal");
+        }
         this.rankExpr = rankExpr;
         if (qualifierExprs == null) {
             qualifierExprs = Collections.emptyList();
