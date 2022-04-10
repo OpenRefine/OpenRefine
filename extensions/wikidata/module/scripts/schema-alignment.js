@@ -870,7 +870,7 @@ SchemaAlignment._addRank = function(container, json) {
   }).bind('click', function () {
     container.data("jsonValue", {
       type : "wbrankconstant",
-      value: currRank
+      rank: currRank
     });
     SchemaAlignment._hasChanged();
   });
@@ -891,7 +891,7 @@ SchemaAlignment._addRank = function(container, json) {
   }).bind('click', function () {
     container.data("jsonValue", {
       type : "wbrankconstant",
-      value: currRank
+      rank: currRank
     });
     SchemaAlignment._hasChanged();
   });
@@ -912,7 +912,7 @@ SchemaAlignment._addRank = function(container, json) {
   }).bind('click', function () {
     container.data("jsonValue", {
       type : "wbrankconstant",
-      value: currRank
+      rank: currRank
     });
     SchemaAlignment._hasChanged();
   });

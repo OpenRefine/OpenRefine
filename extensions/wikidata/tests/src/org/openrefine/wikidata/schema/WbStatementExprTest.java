@@ -61,7 +61,8 @@ public class WbStatementExprTest extends WbExpressionTest<StatementEdit> {
     private WbSnakExpr qualifierExpr = new WbSnakExpr(new WbPropConstant("P897", "point in time", "time"),
             new WbDateVariable("column B"));
     private WbLocationVariable mainValueExpr = new WbLocationVariable("column C");
-    private WbRankConstant rankExpr = new WbRankConstant("normal");
+    private WbRankConstant defaultRankExpr = new WbRankConstant("normal");
+    private WbRankConstant rankExpr = new WbRankConstant("preferred");
     public WbStatementExpr statementExpr = new WbStatementExpr(
             mainValueExpr,
             rankExpr,
@@ -80,7 +81,7 @@ public class WbStatementExprTest extends WbExpressionTest<StatementEdit> {
             StatementEditingMode.ADD_OR_MERGE);
     public WbStatementExpr statementDeleteExpr = new WbStatementExpr(
             null,
-            rankExpr,
+            defaultRankExpr,
             Collections.emptyList(),
             Collections.emptyList(),
             new PropertyOnlyStatementMerger(),
@@ -102,7 +103,7 @@ public class WbStatementExprTest extends WbExpressionTest<StatementEdit> {
     private Claim fullClaim = Datamodel.makeClaim(subject, mainsnak,
             Collections.singletonList(Datamodel.makeSnakGroup(Collections.singletonList(qualifier))));
     public Statement fullStatement = Datamodel.makeStatement(fullClaim, Collections.singletonList(reference),
-            StatementRank.NORMAL, "");
+            StatementRank.PREFERRED, "");
     public StatementEdit fullStatementUpdate = new StatementEdit(
             fullStatement,
             StatementMerger.FORMER_DEFAULT_STRATEGY,
@@ -110,7 +111,7 @@ public class WbStatementExprTest extends WbExpressionTest<StatementEdit> {
     public Claim claimWithConstant = Datamodel.makeClaim(subject, mainsnak,
             Collections.singletonList(Datamodel.makeSnakGroup(Arrays.asList(qualifier, constantQualifier))));
     public Statement statementWithConstant = Datamodel.makeStatement(claimWithConstant, Collections.singletonList(reference),
-            StatementRank.NORMAL, "");
+            StatementRank.PREFERRED, "");
     public StatementEdit statementUpdateWithConstant = new StatementEdit(
             statementWithConstant,
             StatementMerger.FORMER_DEFAULT_STRATEGY,
@@ -135,6 +136,7 @@ public class WbStatementExprTest extends WbExpressionTest<StatementEdit> {
             + "\"mergingStrategy\":{\"type\":\"qualifiers\",\"valueMatcher\":{\"type\":\"strict\"},\"pids\":[]},"
             + "\"mode\":\"add_or_merge\","
             + "\"value\":{\"type\":\"wblocationvariable\",\"columnName\":\"column C\"},"
+            + "\"rank\":{\"type\":\"wbrankconstant\",\"rank\":\"preferred\"},"
             + "\"qualifiers\":[{\"prop\":{\"type\":\"wbpropconstant\",\"pid\":\"P897\",\"label\":\"point in time\","
             + "\"datatype\":\"time\"},\"value\":{\"type\":\"wbdatevariable\",\"columnName\":\"column B\"}}],"
             + "\"references\":[{\"snaks\":[{\"prop\":{\"type\":\"wbpropconstant\",\"pid\":\"P43\","
@@ -142,6 +144,7 @@ public class WbStatementExprTest extends WbExpressionTest<StatementEdit> {
             + "{\"type\":\"wbitemvariable\",\"columnName\":\"column A\"}}]}]}";
 
     public String olderJsonRepresentation = "{\"value\":{\"type\":\"wblocationvariable\",\"columnName\":\"column C\"},"
+            + "\"rank\":{\"type\":\"wbrankconstant\",\"rank\":\"preferred\"},"
             + "\"qualifiers\":[{\"prop\":{\"type\":\"wbpropconstant\",\"pid\":\"P897\",\"label\":\"point in time\","
             + "\"datatype\":\"time\"},\"value\":{\"type\":\"wbdatevariable\",\"columnName\":\"column B\"}}],"
             + "\"references\":[{\"snaks\":[{\"prop\":{\"type\":\"wbpropconstant\",\"pid\":\"P43\","
@@ -153,14 +156,16 @@ public class WbStatementExprTest extends WbExpressionTest<StatementEdit> {
             + "\"mode\":\"delete\","
             + "\"value\":null,"
             + "\"qualifiers\":[],"
-            + "\"references\":[]}";
+            + "\"references\":[],"
+            + "\"rank\":{\"type\":\"wbrankconstant\",\"rank\":\"normal\"}"
+            + "}";
 
     @Test
     public void testCreation() {
         WbItemConstant q5 = new WbItemConstant("Q5", "human");
         WbStatementExpr empty = new WbStatementExpr(
                 q5,
-            rankExpr,
+                defaultRankExpr,
                 Collections.emptyList(),
                 Collections.emptyList(),
                 StatementMerger.FORMER_DEFAULT_STRATEGY,
@@ -175,7 +180,7 @@ public class WbStatementExprTest extends WbExpressionTest<StatementEdit> {
 
         new WbStatementExpr(
                 null,
-                rankExpr,
+                defaultRankExpr,
                 Collections.emptyList(),
                 Collections.emptyList(),
                 StatementMerger.FORMER_DEFAULT_STRATEGY,
@@ -186,7 +191,7 @@ public class WbStatementExprTest extends WbExpressionTest<StatementEdit> {
     public void testAllowedNoMainValue() {
         WbStatementExpr expr = new WbStatementExpr(
                 null,
-                rankExpr,
+                defaultRankExpr,
                 Collections.emptyList(),
                 Collections.emptyList(),
                 new PropertyOnlyStatementMerger(),
@@ -209,7 +214,7 @@ public class WbStatementExprTest extends WbExpressionTest<StatementEdit> {
     @Test
     public void testEvaluateWithoutReference() {
         setRow("not reconciled", "2010-07-23", "3.898,4.389");
-        Statement statement = Datamodel.makeStatement(fullClaim, Collections.emptyList(), StatementRank.NORMAL, "");
+        Statement statement = Datamodel.makeStatement(fullClaim, Collections.emptyList(), StatementRank.PREFERRED, "");
         evaluatesTo(new StatementEdit(statement,
                 StatementMerger.FORMER_DEFAULT_STRATEGY,
                 StatementEditingMode.ADD_OR_MERGE),
@@ -221,7 +226,7 @@ public class WbStatementExprTest extends WbExpressionTest<StatementEdit> {
         setRow(recon("Q3434"), "2010-invalid", "3.898,4.389");
         evaluatesTo(new StatementEdit(
                 Datamodel.makeStatement(Datamodel.makeClaim(subject, mainsnak, Collections.emptyList()),
-                        Collections.singletonList(reference), StatementRank.NORMAL, ""),
+                        Collections.singletonList(reference), StatementRank.PREFERRED, ""),
                 StatementMerger.FORMER_DEFAULT_STRATEGY,
                 StatementEditingMode.ADD_OR_MERGE), new Wrapper(statementExpr));
     }
@@ -231,7 +236,7 @@ public class WbStatementExprTest extends WbExpressionTest<StatementEdit> {
         setRow("invalid", "2010-invalid", "3.898,4.389");
         evaluatesTo(new StatementEdit(Datamodel.makeStatement(
                 Datamodel.makeClaim(subject, mainsnak, Collections.emptyList()),
-                Collections.emptyList(), StatementRank.NORMAL, ""),
+                Collections.emptyList(), StatementRank.PREFERRED, ""),
                 StatementMerger.FORMER_DEFAULT_STRATEGY,
                 StatementEditingMode.ADD_OR_MERGE), new Wrapper(statementExpr));
     }
