@@ -63,7 +63,9 @@ This describes the overall steps to your first code contribution in OpenRefine. 
 
 - Create a git branch for your fix. The name of your branch should contain the issue number, and a few words to describe the topic of the fix, for instance "issue-1234-columnize-layout".
 
-- Make changes to the code to fix the issue. If you are changing backend code, it would be great if you could also write a test in Java to demonstrate the fix. You can imitate existing tests for that. We currently do not have frontend tests.
+- Make changes to the code to fix the issue. When you change the backend code, it's conveniant to also write one or more tests in Java to demonstrate the fix. You can imitate existing tests of comparable functionalities for that. 
+
+- We now have [functional tests](#functional-tests). These are built with Cypress. They mimic a human user in front of a Chrome browser. If you change has a meaningful impact on the user interface, a functional test should probably be written.
 
 - If you made Java changes, run linting to make sure they conform to our code style, with `mvn formatter:format`.
 
