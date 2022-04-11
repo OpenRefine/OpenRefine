@@ -10,6 +10,7 @@ import org.testng.Assert;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
+import java.util.Arrays;
 import java.util.HashMap;
 
 public class ParseUriTest extends RefineTest {
@@ -26,7 +27,7 @@ public class ParseUriTest extends RefineTest {
     @Test
     public void testParseUriValidParams() {
         Object res = invoke("parseUri", sampleUri);
-        HashMap<String, String> resMap = ParsingUtilities.mapper.convertValue(res, new TypeReference<>() {
+        HashMap<String, Object> resMap = ParsingUtilities.mapper.convertValue(res, new TypeReference<>() {
         });
 
         Assert.assertNotNull(res);
@@ -37,6 +38,14 @@ public class ParseUriTest extends RefineTest {
         Assert.assertEquals(resMap.get("fragment"), "download");
         Assert.assertEquals(resMap.get("scheme"), "https");
         Assert.assertNotNull(resMap.get("query_params"));
+
+        var queryParamsActual = Arrays.stream(((String) resMap.get("query_params")).split(","))
+                .map(s -> s.replace("{", "").replace("}", "").replace("\"", "").split(":"))
+                .collect(HashMap::new, (m, a) -> m.put(a[0], a[1]), HashMap::putAll);
+        Assert.assertTrue(queryParamsActual.containsKey("format"), "Contains key format");
+        Assert.assertTrue(queryParamsActual.containsKey("os"), "Contains key os");
+        Assert.assertEquals(queryParamsActual.get("format"), "xml");
+        Assert.assertEquals(queryParamsActual.get("os"), "mac");
     }
 
     @Test
