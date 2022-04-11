@@ -289,8 +289,8 @@ public class XmlImportUtilities extends TreeImportUtilities {
                 }
             }
         } catch (TreeReaderException e) {
-            logger.error("Exception from XML parse :" + e.getMessage());
-            return;
+            logger.error("Exception from XML parse", e);
+            throw e;
 
         }
     }
@@ -357,23 +357,29 @@ public class XmlImportUtilities extends TreeImportUtilities {
         String fullName = composeName(parser.getPrefix(), localName);
         if (recordPathSegment.equals(localName) || recordPathSegment.equals(fullName)) {
             if (pathIndex < recordPath.length - 1) {
-                while (parser.hasNext() && limit != 0) {
-                    Token eventType = parser.next();
-                    if (eventType == Token.StartEntity) {
-                        findRecord(project, parser, recordPath, pathIndex + 1, rootColumnGroup, limit--,
-                                trimStrings, storeEmptyStrings, guessDataTypes);
-                    } else if (eventType == Token.EndEntity) {
-                        break;
-                    } else if (eventType == Token.Value) {
-                        // This is when the user picks a specific field to import, not a whole object or element.
-                        if (pathIndex == recordPath.length - 2) {
-                            String desiredFieldName = recordPath[pathIndex + 1];
-                            String currentFieldName = parser.getFieldName();
-                            if (desiredFieldName.equals(currentFieldName)) {
-                                processFieldAsRecord(project, parser, rootColumnGroup, trimStrings, storeEmptyStrings, guessDataTypes);
+                try {
+                    while (parser.hasNext() && limit != 0) {
+                        Token eventType = parser.next();
+                        if (eventType == Token.StartEntity) {
+                            findRecord(project, parser, recordPath, pathIndex + 1, rootColumnGroup, limit--,
+                                    trimStrings, storeEmptyStrings, guessDataTypes);
+                        } else if (eventType == Token.EndEntity) {
+                            break;
+                        } else if (eventType == Token.Value) {
+                            // This is when the user picks a specific field to import, not a whole object or element.
+                            if (pathIndex == recordPath.length - 2) {
+                                String desiredFieldName = recordPath[pathIndex + 1];
+                                String currentFieldName = parser.getFieldName();
+                                if (desiredFieldName.equals(currentFieldName)) {
+                                    processFieldAsRecord(project, parser, rootColumnGroup, trimStrings, storeEmptyStrings, guessDataTypes);
+                                }
                             }
                         }
                     }
+                } catch (TreeReaderException e) {
+                    logger.error("Exception from XML parse", e);
+                    return;
+
                 }
             } else {
                 processRecord(project, parser, rootColumnGroup, trimStrings, storeEmptyStrings, guessDataTypes);
