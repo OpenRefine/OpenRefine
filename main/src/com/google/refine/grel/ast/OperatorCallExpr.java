@@ -74,7 +74,9 @@ public class OperatorCallExpr implements Evaluable {
                     } else if ("*".equals(_op)) {
                         return n1 * n2;
                     } else if ("/".equals(_op)) {
-                        if(n2 == 0 && n1 == 0) { return Double.NaN; }
+                        if (n2 == 0 && n1 == 0) {
+                            return Double.NaN;
+                        }
                         return n1 / n2;
                     } else if ("%".equals(_op)) {
                         return n1 % n2;
@@ -102,7 +104,9 @@ public class OperatorCallExpr implements Evaluable {
                     } else if ("*".equals(_op)) {
                         return n1 * n2;
                     } else if ("/".equals(_op)) {
-                        if(n2 == 0&& n1 == 0) { return Double.NaN; }
+                        if (n2 == 0 && n1 == 0) {
+                            return Double.NaN;
+                        }
                         return n1 / n2;
                     } else if ("%".equals(_op)) {
                         return n1 % n2;
