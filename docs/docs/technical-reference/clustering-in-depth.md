@@ -280,19 +280,40 @@ The Daitch-Moktoff phonetic algorithm was created by  Randy Daitch and Gary Moko
 
 It is a refinement of the [Soundex](https://en.wikipedia.org/wiki/Soundex) algorithms designed to allow greater accuracy in matching of Slavic and Yiddish surnames with similar pronunciation but differences in spelling.
 
-The rules for converting surname into D-M codes are as follows:
+The rules for converting surnames into D-M codes are as follows:
 
 - Names are coded to six digits, each digit representing a sound listed in the [coding chart](https://www.jewishgen.org/infofiles/soundex.html)
 - When a name lacks enough coded sounds for six digits, use zeros to fill to six digits.
 - The letters A, E, I, O, U, J, and Y are always coded at the beginning of a name as in Alice.  In any other situation, they are ignored except when two of them form a pair and the pair comes before a vowel, as in Isaiah but not Freud.
-- The letter H is coded at the beginning of a name, as in Haber, or preceding a vowel, as in Manheim, otherwise it is not coded.
-- When adjacent sounds can combine to form a larger sound, they are given the code number of the larger sound.  Mintz which is not coded MIN-T-Z but MIN-TZ.
+- The letter H is coded at the beginning of a name, as in Haber, or preceding a vowel, as in Manheim, otherwise, it is not coded.
+- When adjacent sounds can combine to form a larger sound, they are given the code number of the larger sound.  Mintz is not coded MIN-T-Z but MIN-TZ.
 - When adjacent letters have the same code number, they are coded as one sound, as in TOPF, which is not coded TO-P-F but TO-PF.  Exceptions to this rule are the letter combinations MN and NM, whose letters are coded separately, as in Kleinman.
-- When a surname consists or more than one word, it is coded as if one word, such as "Ben Aron", which is treated as "Benaron".
-- Several letter and letter combinations pose the problem that they may sound in one of two ways.  The letter and letter combinations CH, CK, C, J, and RS are assigned two possible code numbers.
+- When a surname consists of more than one word, it is coded as if one word, such as "Ben Aron", is treated as "Benaron".
+- Several letters and letter combinations pose the problem that they may sound in one of two ways.  The letter and letter combinations CH, CK, C, J, and RS are assigned two possible code numbers.
 
-- [Beider-Morse](https://stevemorse.org/phonetics/bmpm.htm)
+#### Beider-Morse
 
+The [Beider-Morse Phonetic Matching](https://stevemorse.org/phonetics/bmpm.htm) (BMPM) is a very intelligent algorithm, compared to [Metaphone](https://en.wikipedia.org/wiki/Metaphone), whose purpose is to match names that are phonetically equivalent to the expected name. However,  unlike [soundex](https://en.wikipedia.org/wiki/Soundex) methods, the “sounds-alike” test is based not only on the spelling but on the linguistic properties of various languages.
+
+The steps for comparison are as follows:
+
+**Step 1:** Determines the language from the spelling of the name
+
+The spelling of a name can include some letters or letter combinations that allowing the language to be determined. Some examples are:
+
+- "tsch", final "mann" and "witz" are specifically German
+
+- final and initial "cs" and "zs" are necessarily Hungarian
+
+- "cz", "cy", initial "rz" and "wl", final "cki", letters "ś", "ł" and "ż" can be only Polish
+
+**Step 2:** Applies phonetic rules to identify the language and translates the name into phonetic alphabets
+
+**Step 3:** Calculating the Approximate Phonetic Value
+
+**Step 4:** Calculating the Hebrew Phonetic Value
+
+The entire process is described in details in this [document](https://stevemorse.org/phonetics/bmpm.htm)
 
 ## Nearest Neighbor Methods
 
