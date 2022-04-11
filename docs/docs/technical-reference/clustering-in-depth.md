@@ -274,7 +274,23 @@ Hence, by the Cologne phonetic, Guteng Morgen is encoded as 426746
 
 **Note** that two or more identical consecutive digits can occur if they occur after removing the "0" digits.
 
-- [Daitch-Moktoff](https://en.wikipedia.org/wiki/Daitch–Mokotoff_Soundex)
+#### Daitch-Moktoff
+
+The Daitch-Moktoff phonetic algorithm was created by  Randy Daitch and Gary Mokotoff of the Jewish Genealogical Society (New York), hence its name.
+
+It is a refinement of the [Soundex](https://en.wikipedia.org/wiki/Soundex) algorithms designed to allow greater accuracy in matching of Slavic and Yiddish surnames with similar pronunciation but differences in spelling.
+
+The rules for converting surname into D-M codes are as follows:
+
+- Names are coded to six digits, each digit representing a sound listed in the [coding chart](https://www.jewishgen.org/infofiles/soundex.html)
+- When a name lacks enough coded sounds for six digits, use zeros to fill to six digits.
+- The letters A, E, I, O, U, J, and Y are always coded at the beginning of a name as in Alice.  In any other situation, they are ignored except when two of them form a pair and the pair comes before a vowel, as in Isaiah but not Freud.
+- The letter H is coded at the beginning of a name, as in Haber, or preceding a vowel, as in Manheim, otherwise it is not coded.
+- When adjacent sounds can combine to form a larger sound, they are given the code number of the larger sound.  Mintz which is not coded MIN-T-Z but MIN-TZ.
+- When adjacent letters have the same code number, they are coded as one sound, as in TOPF, which is not coded TO-P-F but TO-PF.  Exceptions to this rule are the letter combinations MN and NM, whose letters are coded separately, as in Kleinman.
+- When a surname consists or more than one word, it is coded as if one word, such as "Ben Aron", which is treated as "Benaron".
+- Several letter and letter combinations pose the problem that they may sound in one of two ways.  The letter and letter combinations CH, CK, C, J, and RS are assigned two possible code numbers.
+
 - [Beider-Morse](https://stevemorse.org/phonetics/bmpm.htm)
 
 
