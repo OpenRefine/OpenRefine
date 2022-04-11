@@ -137,14 +137,21 @@ public class HttpClient {
                     }
                 });
 
-        if (System.getProperty("http.proxyHost") != null)
+        if (System.getProperty("http.proxyHost") != null) {
             proxyHost = System.getProperty("http.proxyHost");
+        }
 
-        if (System.getProperty("https.proxyHost") != null)
+        if (System.getProperty("https.proxyHost") != null) {
             proxyHost = System.getProperty("https.proxyHost");
+        }
 
-        if (System.getProperty("http.proxyPort") != null)
+        if (System.getProperty("http.proxyPort") != null) {
             proxyPort = Integer.parseInt(System.getProperty("http.proxyPort"));
+        }
+
+        if (System.getProperty("https.proxyPort") != null) {
+            proxyPort = Integer.parseInt(System.getProperty("https.proxyPort"));
+        }
 
         if (proxyHost != null && proxyPort != 0) {
             proxy = new HttpHost("http", proxyHost, proxyPort);
