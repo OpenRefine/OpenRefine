@@ -299,7 +299,7 @@ The steps for comparison are as follows:
 
 **Step 1:** Determines the language from the spelling of the name
 
-The spelling of a name can include some letters or letter combinations that allowing the language to be determined. Some examples are:
+The spelling of a name can include some letters or letter combinations that allow the language to be determined. Some examples are:
 
 - "tsch", final "mann" and "witz" are specifically German
 
@@ -313,7 +313,7 @@ The spelling of a name can include some letters or letter combinations that allo
 
 **Step 4:** Calculating the Hebrew Phonetic Value
 
-The entire process is described in details in this [document](https://stevemorse.org/phonetics/bmpm.htm)
+The entire process is described in detail in this [document](https://stevemorse.org/phonetics/bmpm.htm)
 
 ## Nearest Neighbor Methods
 
