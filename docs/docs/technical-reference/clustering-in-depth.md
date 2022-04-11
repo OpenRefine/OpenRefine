@@ -115,7 +115,7 @@ above, no matter the size of the n-gram.
 
 OpenRefine supports multiple "Phonetic" algorithms including:
 
-1. #### Metaphone3
+#### Metaphone3
 
 Metaphone3 improves phonetic encoding for not just words in the English Language but also non-English words, first names, and last names common in the United States.
 
@@ -137,9 +137,142 @@ The 'approximate' aspect of the encoding for OpenRefine (version 2.1.3) is imple
 
 - Also, the sound that is spelled as "TH" in English is encoded to '0' (zero).
 
-2. #### Cologne Phonetics
+#### Cologne Phonetics
 
+Cologne Phonetics, also called Kölner Phonetik, is a phonetic algorithm that assigns a sequence of digits (called the **phonetic code**) to words.
 
+Unlike Metaphone3, Cologne Phonetics is optimized for the German language.
+
+**Step 1:**
+
+The encoding process is as follows:
+- The word is preprocessed. That is,
+    - conversion to upper case
+    - transcription of germanic umlauts
+    - removal of non-alphabetical characters
+
+-The letters are then replaced by their phonetic codes according to the following table:
+
+<table>
+   <thead>
+      <tr>
+         <th>Letter</th>
+         <th>Context</th>
+         <th>Code</th>
+      </tr>
+   </thead>
+   <tbody>
+      <tr>
+         <td>A, E, I, O, U</td>
+         <td> </td>
+         <td>0</td>
+      </tr>
+      <tr>
+         <td>H</td>
+         <td></td>
+         <td>-</td>
+      </tr>
+      <tr>
+         <td>B</td>
+         <td></td>
+         <td rowspan="2">1</td>
+      </tr>
+      <tr>
+         <td>P</td>
+         <td>not before H</td>
+      </tr>
+      <tr>
+         <td>D, T</td>
+         <td>not before C, S, Z</td>
+         <td>2</td>
+      </tr>
+      <tr>
+         <td>F, V, W</td>
+         <td></td>
+         <td rowspan="2">3</td>
+      </tr>
+      <tr>
+         <td>P</td>
+         <td>before H</td>
+      </tr>
+      <tr>
+         <td>G, K, Q</td>
+         <td></td>
+         <td rowspan="3">4</td>
+      </tr>
+      <tr>
+         <td rowspan="2">C</td>
+         <td>at onset before A, H, K, L, O, Q, R, U, X</td>
+      </tr>
+      <tr>
+         <td>before A, H, K, O, Q, U, X except after S, Z</td>
+      </tr>
+      <tr>
+         <td>X</td>
+         <td>not after C, K, Q</td>
+         <td>48</td>
+      </tr>
+      <tr>
+         <td>L</td>
+         <td></td>
+         <td>5</td>
+      </tr>
+      <tr>
+         <td>M, N</td>
+         <td></td>
+         <td>6</td>
+      </tr>
+      <tr>
+         <td>R</td>
+         <td></td>
+         <td>7</td>
+      </tr>
+      <tr>
+         <td>S, Z</td>
+         <td></td>
+         <td rowspan="6">8</td>
+      </tr>
+      <tr>
+         <td rowspan="3">C</td>
+         <td>after S, Z</td>
+      </tr>
+      <tr>
+         <td>at onset except before A, H, K, L, O, Q, R, U, X</td>
+      </tr>
+      <tr>
+         <td>not before A, H, K, O, Q, U, X</td>
+      </tr>
+      <tr>
+         <td>D, T</td>
+         <td>before C, S, Z</td>
+      </tr>
+      <tr>
+         <td>X</td>
+         <td>after C, K, Q</td>
+      </tr>
+   </tbody>
+</table>
+
+**For example** 
+Following the rules stated above, the phrase "Good morning" in German could be encoded as:
+
+Guten Morgen -> GUTENMORGEN -> 40206607406
+
+**Step 2:**
+
+Any consecutive duplicate digit is removed
+
+4020**66**07406 -> 4020607406
+
+**Step 3:**
+
+Removal of all codes "0" **except** at the beginning. 
+
+4**0**2**0**6**0**74**0**6 -> 426746
+
+Hence, by the Cologne phonetic, Guteng Morgen is encoded as 426746
+
+**Note** that two or more identical consecutive digits can occur if they occur after removing the "0" digits.
 
 - [Daitch-Moktoff](https://en.wikipedia.org/wiki/Daitch–Mokotoff_Soundex)
 - [Beider-Morse](https://stevemorse.org/phonetics/bmpm.htm)
