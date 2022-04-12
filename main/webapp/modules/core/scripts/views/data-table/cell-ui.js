@@ -687,38 +687,38 @@ DataTableCellUI.prototype._startEdit = function(elmt) {
   });
 };
 
-var controlCharacters = ["NUL", "SOH", "STX", "ETX", "EOT", "ENQ", "ACK", "BEL", "BS", "TAB", "LF", "VT", "FF", "CR", "SO", "SI", "DLE", "DC1", "DC2", "DC3", "DC4", "NAK", "SYN", "ETB", "CAN", "EM", "SUB", "ESC", "FS", "GS", "RS", "US", "NBSP"];
-
-function checkNonPrintable(content) {
-  var originalContent = content;
-  for (var character = 0; character < content.length; character++) {
-    var updatedContent = "";
-    var charCode = originalContent.charAt(character).charCodeAt(0);
-    if (charCode <= 32) {
-      unprintableChar = "<span class='unprintableCharacters' style='background-color: orange'><b>" + controlCharacters[charCode] + "</b></span>";
-      updatedContent += unprintableChar + content.charAt(character);
-    }
-  }
-  return updatedContent;
-}
-
-function toggleCharacters(){
-  if($("#toggle-display-characters").prop('checked')){
-  var rows = $("tbody.data-table > tr");
-  for(var i = 0 ; i < rows.length ; i++){
-
-    var columns = $rows[i].find("div.data-table-cell-content > span");
-    for(var j = 0 ; j < columns.length ; j++){
-        var originalContent = $(columns[j]).html();
-        if(originalContent != ""){
-        var updatedContent = checkNonPrintable(originalContent);
-        $(columns[j]).replace(updatedContent);
-    }
-  }
-  
-}
-  }
-   else{
-    $(".unprintableCharacters").remove();
-   }
-}
+//var controlCharacters = ["NUL", "SOH", "STX", "ETX", "EOT", "ENQ", "ACK", "BEL", "BS", "TAB", "LF", "VT", "FF", "CR", "SO", "SI", "DLE", "DC1", "DC2", "DC3", "DC4", "NAK", "SYN", "ETB", "CAN", "EM", "SUB", "ESC", "FS", "GS", "RS", "US", "NBSP"];
+//
+//function checkNonPrintable(content) {
+//  var originalContent = content;
+//  for (var character = 0; character < content.length; character++) {
+//    var updatedContent = "";
+//    var charCode = originalContent.charAt(character).charCodeAt(0);
+//    if (charCode <= 32) {
+//      unprintableChar = "<span class='unprintableCharacters' style='background-color: orange'><b>" + controlCharacters[charCode] + "</b></span>";
+//      updatedContent += unprintableChar + content.charAt(character);
+//    }
+//  }
+//  return updatedContent;
+//}
+//
+//function toggleCharacters(){
+//  if($("#toggle-display-characters").prop('checked')){
+//  var rows = $("tbody.data-table > tr");
+//  for(var i = 0 ; i < rows.length ; i++){
+//
+//    var columns = $rows[i].find("div.data-table-cell-content > span");
+//    for(var j = 0 ; j < columns.length ; j++){
+//        var originalContent = $(columns[j]).html();
+//        if(originalContent != ""){
+//        var updatedContent = checkNonPrintable(originalContent);
+//        $(columns[j]).replace(updatedContent);
+//    }
+//  }
+//
+//}
+//  }
+//   else{
+//    $(".unprintableCharacters").remove();
+//   }
+//}
