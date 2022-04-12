@@ -115,6 +115,19 @@ public class ImportingUtilitiesTests extends ImporterTest {
     }
 
     @Test
+    public void testAllocateFileWithIllegalCharInWindows() throws IOException {
+        // Test for issue Unable to create a project from a URL on Windows if the URL path contains ":" character #4625
+        // https://github.com/OpenRefine/OpenRefine/issues/4625
+        File tempDir = TestUtils.createTempDirectory("openrefine-allocate-file-test");
+        File dirA = new File(tempDir, "a");
+        dirA.mkdir();
+        String urlPath = ".././a/b:c/dummy:test";
+        String urlPathFixed = ".././a/b-c/dummy-test";
+        File allocated = ImportingUtilities.allocateFile(dirA, urlPath);
+        Assert.assertEquals(allocated, new File(dirA, urlPathFixed));
+    }
+
+    @Test
     public void urlImporting() throws IOException {
 
         String RESPONSE_BODY = "{code:401,message:Unauthorised}";

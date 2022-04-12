@@ -76,6 +76,7 @@ import org.apache.commons.fileupload.ProgressListener;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.apache.commons.fileupload.util.Streams;
+import org.apache.commons.io.FileSystem;
 import org.apache.hc.client5.http.ClientProtocolException;
 import org.apache.hc.core5.http.ClassicHttpResponse;
 import org.apache.hc.core5.http.ContentType;
@@ -455,12 +456,29 @@ public class ImportingUtilities {
         return (location.startsWith(File.separator)) ? location.substring(1) : location;
     }
 
+    private static String normalizeFileName(String fileName){
+        FileSystem currentFileSystem = FileSystem.getCurrent();
+        if (currentFileSystem != FileSystem.WINDOWS) return fileName;
+        String normalizedLocalName = new String();
+        // normalize the file name if the current system is windows
+        String[] path = fileName.split("/");
+        for(String f : path){
+            if (f.equals("")){
+                continue;
+            }
+            f = currentFileSystem.toLegalFileName(f,'-');
+            normalizedLocalName += String.format("/%s",f);
+        }
+        return normalizedLocalName;
+    }
+
     static public File allocateFile(File dir, String name) {
         int q = name.indexOf('?');
         if (q > 0) {
             name = name.substring(0, q);
         }
 
+        name = normalizeFileName(name);
         File file = new File(dir, name);
         Path normalizedFile = file.toPath().normalize();
         // For CVE-2018-19859, issue #1840
