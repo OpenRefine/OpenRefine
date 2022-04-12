@@ -254,7 +254,7 @@ class RefineServer extends Server {
             Thread.currentThread().interrupt();
         }
             // then let the parent stop
-            super.doStop();
+        super.doStop();
     }
         
     static private boolean isWebapp(File dir) {
