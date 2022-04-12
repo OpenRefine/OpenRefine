@@ -1,5 +1,3 @@
-package com.google.util.threads;
-
 //========================================================================
 //$$Id: ThreadPoolExecutorAdapter.java,v 1.3 2007/11/02 12:39:41 ludovic_orban Exp $$
 //
@@ -14,6 +12,7 @@ package com.google.util.threads;
 //See the License for the specific language governing permissions and
 //limitations under the License.
 //========================================================================
+package com.google.util.threads;
 
 import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.ThreadPoolExecutor;
