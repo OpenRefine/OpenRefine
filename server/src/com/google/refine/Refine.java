@@ -253,7 +253,7 @@ class RefineServer extends Server {
             // stop current thread
             Thread.currentThread().interrupt();
         }
-            // then let the parent stop
+        // then let the parent stop
         super.doStop();
     }
         
