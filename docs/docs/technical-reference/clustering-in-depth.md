@@ -1,7 +1,7 @@
 ---
 id: clustering-in-depth
-title: The Clustering Methods In-depth
-sidebar_label: clustering methods in-depth
+title: Clustering Methods In-depth
+sidebar_label: Clustering methods in-depth
 ---
 
 *Methods and theory behind the clustering functionality in OpenRefine.*
@@ -22,7 +22,7 @@ clustering alone.
 
 # Methodologies
 
-In order to strike a balance between general applicability and
+To strike a balance between general applicability and
 usefulness, OpenRefine ships with a selected number of clustering
 methods and algorithms that have proven effective and fast enough to use
 in a wide variety of situations.
@@ -61,7 +61,7 @@ The process that generates the key from a string value is the following
 If you're curious, the code that performs this is
 [here](http://github.com/OpenRefine/OpenRefine/blob/master/main/src/com/google/refine/clustering/binning/FingerprintKeyer.java).
 
-There are several factors that play a role in this fingerprint:
+Several factors play a role in this fingerprint:
 
 - because whitespace is normalized, characters are lowercased, and
   punctuation is removed, those parts don't play a differentiation
@@ -78,7 +78,7 @@ There are several factors that play a role in this fingerprint:
   also lead to false positives. For example, "gödel" and "godél" would
   both end up with "godel" as their fingerprint, but they're likely to
   be different names, so this might work less effectively for datasets
-  where extended characters play substantial differentiation role.
+  where extended characters play a substantial differentiation role.
 
 ### N-Gram Fingerprint
 
@@ -153,9 +153,9 @@ Unlike Metaphone3, Cologne Phonetics is optimized for the German language.
 
 The encoding process is as follows:
 - The word is preprocessed. That is,
-    - conversion to upper case
-    - transcription of germanic umlauts
-    - removal of non-alphabetical characters
+  - conversion to upper case
+  - transcription of germanic umlauts
+  - removal of non-alphabetical characters
 
 -The letters are then replaced by their phonetic codes according to the following table:
 
@@ -259,7 +259,7 @@ The encoding process is as follows:
    </tbody>
 </table>
 
-**For example** 
+**For example**
 Following the rules stated above, the phrase "Good morning" in German could be encoded as:
 
 Guten Morgen -> GUTENMORGEN -> 40206607406
@@ -272,7 +272,7 @@ Any consecutive duplicate digit is removed
 
 **Step 3:**
 
-Removal of all codes "0" **except** at the beginning. 
+Removal of all codes "0" **except** at the beginning.
 
 4**0**2**0**6**0**74**0**6 -> 426746
 
@@ -284,7 +284,7 @@ Hence, by the Cologne phonetic, Guteng Morgen is encoded as 426746
 
 The Daitch-Moktoff phonetic algorithm was created by  Randy Daitch and Gary Mokotoff of the Jewish Genealogical Society (New York), hence its name.
 
-It is a refinement of the [Soundex](https://en.wikipedia.org/wiki/Soundex) algorithms designed to allow greater accuracy in matching of Slavic and Yiddish surnames with similar pronunciation but differences in spelling.
+It is a refinement of the [Soundex](https://en.wikipedia.org/wiki/Soundex) algorithms designed to allow greater accuracy in matching Slavic and Yiddish surnames with similar pronunciation but differences in spelling.
 
 The rules for converting surnames into D-M codes are as follows:
 
@@ -324,14 +324,14 @@ The entire process is described in detail in this [document](https://stevemorse.
 ## Nearest Neighbor Methods
 
 While key collisions methods are very fast, they tend to be either too
-strict or too lax with no way to fine tune how much difference between
+strict or too lax with no way to fine-tune how much difference between
 strings we are willing to tolerate.
 
 The
 [Nearest Neighbor](https://en.wikipedia.org/wiki/K-nearest_neighbors_algorithm)
 methods (also known as kNN), on the other hand, provide a parameter (the
-radius, or `k`) which represents a distance threshold: any pair of
-strings that is closer than a certain value will be binned together.
+radius or `k`) which represents a distance threshold: any pair of
+strings that are closer than a certain value will be binned together.
 
 Unfortunately, given n strings, there are `n(n-1)/2` pairs of strings
 (and relative distances) that need to be compared and this turns out to
@@ -373,7 +373,7 @@ For kNN distances, we found that blocking with less than 3 or 4 chars explodes t
 The [Levenshtein](http://en.wikipedia.org/wiki/Levenshtein\_distance)
 distance (also known as "edit distance") is probably the simplest and
 most intuitive distance function between strings and is often still very
-effective due to its general applicability. It measures the minimal number of 'edit operations' that are required to
+effective due to its general applicability. It measures the minimal number of ' edit operations ' that are required to
 change one string into the other.
 
 It's worth noting that there are many flavors of edit-based distance
@@ -409,13 +409,13 @@ distance between A and B is given by
 
 where `comp(s)` is the length of bytes of the compressed sequence of the
 string `s` and `+` is the append operator. This is used to account for
-deviation in optimality of the given compressors.
+deviation in the optimality of the given compressors.
 
 While many different compressors can be used, the closer to Kolmogorov
 optimality they are (meaning, the better they encode) the more effective
 their result.
 
-For this reason we have used
+For this reason, we have used
 [Prediction by Partial Matching](http://en.wikipedia.org/wiki/Prediction\_by\_Partial\_Matching)
 as the compressor algorithm as it is one of the most effective
 compression algorithms for text and works by performing statistical
@@ -428,7 +428,7 @@ easily identifiable by distances that work at the character level. So it
 should be used as a 'last resort' clustering method; that's why it is
 listed last here despite its phenomenal efficacy in other realms.
 
-It is also important to note that in practice similarity distances are
+It is also important to note that in practice similar distances are
 more effective on longer strings than on shorter ones; this is mostly an
 artifact of the need for the statistical compressors to 'warm up' and
 gather enough statistics to start performing well.
@@ -452,10 +452,10 @@ The first value in the Cluster is determined by two steps:
 
 If you are using Key Collision/Binning then the Cluster is created using a TreeMap which by default ["is sorted according to the natural
 ordering of its keys"](https://docs.oracle.com/javase/7/docs/api/java/util/TreeMap.html).<br/>
-The key is the string in the cell - so that means it will sort by natural ordering of the strings in the cluster - which means that it
+The key is the string in the cell - so that means it will sort by the natural ordering of the strings in the cluster - which means that it
 uses a ['lexicographical' order](http://docs.oracle.com/javase/7/docs/api/java/lang/String.html\#compareTo%28java.lang.String%29) - basically based on the Unicode values in the string
 
-If you are using a Nearest Neighbour sort the Cluster is created in a different way which is (as yet) undocumented. Testing indicates that it may be something like reverse natural ordering.
+If you are using the Nearest Neighbour sort the Cluster is created in a different way which is (as yet) undocumented. Testing indicates that it may be something like reverse natural ordering.
 
 # Contribute
 
