@@ -1,10 +1,8 @@
 <div class="history-panel-help" bind="helpDiv">
-  <div class="close-icon" id="close-history-panel">
-    <img src="images/close.png" alt="close.png">
-  </div>
   <h1 bind="or_proj_undo"></h1>
   <p bind="or_proj_mistakes"></p>
-  <p><a href="https://docs.openrefine.org/manual/running#history-undoredo" target="_blank"><b><span bind="or_proj_learnMore"></span></b></a></p>
+    <p><a href="https://docs.openrefine.org/manual/running#history-undoredo" target="_blank"><b><span bind="or_proj_learnMore"></span></b></a></p>
+    <button class="close-btn" id="close-history-panel">Discard</button>
 </div>
 <div class="history-panel-controls" bind="controlsDiv">
   <a class="button button-pill-left" href="javascript:{}" bind="extractLink"></a><a class="button button-pill-right" href="javascript:{}" bind="applyLink"></a>

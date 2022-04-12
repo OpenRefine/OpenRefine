@@ -96,12 +96,10 @@ BrowsingEngine.prototype._initializeUI = function() {
 
   this._div.html(
     '<div class="browsing-panel-help" bind="help">' +
-    '<div class="close-icon" title='+$.i18n('core-buttons/close')+' bind="close">'+
-        '<img src="images/close.png" alt="close.png">'+
-     '</div>'+
     '<h1>'+$.i18n('core-project/use-facets')+'</h1>' +
     '<p>'+$.i18n('core-project/use-to-select')+'</p>' +
     '<p>'+$.i18n('core-project/not-sure')+'<br /><a href="https://github.com/OpenRefine/OpenRefine/wiki/Screencasts" target="_blank"><b>'+$.i18n('core-project/watch-cast')+'</b></a></p>' +
+    '<button class="close-btn" bind="close">'+$.i18n('core-project/discard')+'</button>'+
     '</div>' +
     '<div class="browsing-panel-header" bind="header">' +
     '<div class="browsing-panel-errors" bind="errors"></div>' +
