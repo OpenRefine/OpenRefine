@@ -1,3 +1,8 @@
+---
+id: clustering-in-depth
+title: The Clustering Methods In-depth
+sidebar_label: The clustering methods in-depth
+---
 *Methods and theory behind the clustering functionality in OpenRefine.*
 
 # Introduction
