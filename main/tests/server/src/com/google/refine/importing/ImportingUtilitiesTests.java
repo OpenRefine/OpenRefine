@@ -125,7 +125,7 @@ public class ImportingUtilitiesTests extends ImporterTest {
         FileSystem fileSystem = FileSystem.getCurrent();
         if (fileSystem == FileSystem.WINDOWS) {
             Assert.assertEquals(allocated, new File(dirA, urlPathFixed));
-        }else {
+        } else {
             Assert.assertEquals(allocated, new File(dirA, urlPath));
         }
     }
