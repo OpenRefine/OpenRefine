@@ -252,6 +252,12 @@ Returns an array of strings describing each character of s in their full unicode
 
 Returns an array of strings describing each character of s by their unicode type. For example, `"Bernice Rubens".unicodeType()` outputs [ "uppercase letter", "lowercase letter", "lowercase letter", "lowercase letter", "lowercase letter", "lowercase letter", "lowercase letter", "space separator", "uppercase letter", "lowercase letter", "lowercase letter", "lowercase letter", "lowercase letter", "lowercase letter" ].
 
+### Translating
+
+###### detectLanguage(s) {#detectlanguages}
+
+Returns a string locale describing the language of s, with support for 71 languages. For example, `"Hello, world!".detectLanguage()` outputs "en".
+
 ## Format-based functions (JSON, HTML, XML) {#format-based-functions-json-html-xml}
 
 ###### jsonize(o) {#jsonizeo}
