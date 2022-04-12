@@ -82,6 +82,7 @@ HistoryPanel.prototype._render = function() {
   elmts.extractLink.html($.i18n('core-project/extract'));
   elmts.or_proj_mistakes.html($.i18n('core-project/mistakes'));
   elmts.or_proj_filter.html($.i18n('core-project/filter'));
+  $("#close-history-panel").click(function(){ $('.history-panel-help').hide()})
 
   var renderEntry = function(container, index, entry, lastDoneID, past) {
     var a = $(DOM.loadHTML("core", "scripts/project/history-entry.html")).appendTo(container);
