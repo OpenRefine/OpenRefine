@@ -162,6 +162,8 @@ HistoryPanel.prototype._render = function() {
   elmts.extractLink.click(function() { self._extractOperations(); });
   elmts.applyLink.click(function() { self._showApplyOperationsDialog(); });
 
+  $('.history-panel-help').prop('title', $.i18n('core-buttons/close'))
+
   this.resize();
 };
 
