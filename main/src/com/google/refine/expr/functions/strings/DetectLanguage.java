@@ -50,7 +50,7 @@ public class DetectLanguage implements Function {
 
     @Override
     public String getParams() {
-        return "string obj";
+        return "string s";
     }
 
     @Override
