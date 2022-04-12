@@ -249,11 +249,12 @@ class RefineServer extends Server {
                 threadPool.shutdown();
             }
             Thread.sleep(3000);
-            // then let the parent stop
-            super.doStop();
         } catch (InterruptedException e) {
-            // ignore
+            // stop current thread
+            Thread.currentThread().interrupt();
         }
+        // then let the parent stop
+        super.doStop();
     }
         
     static private boolean isWebapp(File dir) {
