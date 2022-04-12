@@ -50,11 +50,14 @@ import org.apache.commons.collections4.IterableUtils;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVRecord;
 import org.apache.commons.fileupload.FileUploadBase;
+import org.apache.commons.io.FileSystem;
 import org.apache.commons.io.FileUtils;
-import org.apache.hc.client5.http.entity.mime.MultipartEntityBuilder;
-import org.apache.hc.client5.http.entity.mime.StringBody;
-import org.apache.hc.core5.http.ContentType;
 import org.apache.hc.core5.http.HttpEntity;
+import org.apache.http.HttpEntity;
+import org.apache.http.entity.ContentType;
+import org.apache.http.entity.mime.MultipartEntityBuilder;
+import org.apache.http.entity.mime.content.StringBody;
+import org.checkerframework.checker.units.qual.A;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -124,7 +127,12 @@ public class ImportingUtilitiesTests extends ImporterTest {
         String urlPath = ".././a/b:c/dummy:test";
         String urlPathFixed = ".././a/b-c/dummy-test";
         File allocated = ImportingUtilities.allocateFile(dirA, urlPath);
-        Assert.assertEquals(allocated, new File(dirA, urlPathFixed));
+        FileSystem fileSystem = FileSystem.getCurrent();
+        if (fileSystem == FileSystem.WINDOWS) {
+            Assert.assertEquals(allocated, new File(dirA, urlPathFixed));
+        }else {
+            Assert.assertEquals(allocated, new File(dirA, urlPath));
+        }
     }
 
     @Test
