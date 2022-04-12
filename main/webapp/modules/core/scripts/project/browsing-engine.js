@@ -97,10 +97,7 @@ BrowsingEngine.prototype._initializeUI = function() {
   this._div.html(
     '<div class="browsing-panel-help" bind="help">' +
     '<div class="close-icon" title='+$.i18n('core-buttons/close')+' bind="close">'+
-        '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40" enable-background="new 0 0 40 40">'+
-            '<line x1="15" y1="15" x2="25" y2="25" stroke="#000" stroke-width="2.5" stroke-linecap="round" stroke-miterlimit="10"></line>'+
-            '<line x1="25" y1="15" x2="15" y2="25" stroke="#000" stroke-width="2.5" stroke-linecap="round" stroke-miterlimit="10"></line>'+
-            '</svg>'+
+        '<img src="images/close.png" alt="close.png">'+
      '</div>'+
     '<h1>'+$.i18n('core-project/use-facets')+'</h1>' +
     '<p>'+$.i18n('core-project/use-to-select')+'</p>' +
