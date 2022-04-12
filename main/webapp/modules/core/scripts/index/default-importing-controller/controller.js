@@ -265,10 +265,13 @@ Refine.DefaultImportingController.prototype.getPreviewData = function(callback, 
           "limit" : numRows || 100 // More than we parse for preview anyway
         }),
         null,
-        function(data) {
-          result.rowModel = data;
-          callback(result);
-        },
+		  function(data) {
+			  if (data["rows"].length == 0) {
+				alert($.i18n('core-index-import/load-xml-rows-error'));
+			  }
+			  result.rowModel = data;
+			  callback(result);
+		  },
         "jsonp"
       );
     },
