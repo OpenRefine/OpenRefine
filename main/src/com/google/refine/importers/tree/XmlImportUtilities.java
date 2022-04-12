@@ -214,7 +214,7 @@ public class XmlImportUtilities extends TreeImportUtilities {
                 }
             }
 
-            if (immediateChildCandidates.size() > 0) {
+            if (immediateChildCandidates.size() > 0 && immediateChildCandidates.size() < 5) {
                 // There are some promising immediate child elements, but not many,
                 // that can serve as record elements.
 
@@ -225,6 +225,9 @@ public class XmlImportUtilities extends TreeImportUtilities {
                     logger.trace("ourCandidate.count : " + ourCandidate.count + "; immediateChildCandidates.size() : "
                             + immediateChildCandidates.size());
                 }
+                if (ourCandidate.count / immediateChildCandidates.size() > 5) {
+                    return ourCandidate;
+                }
 
                 descendantCandidates.add(ourCandidate);
             }
@@ -234,9 +237,9 @@ public class XmlImportUtilities extends TreeImportUtilities {
             sortRecordElementCandidates(descendantCandidates);
 
             RecordElementCandidate candidate = descendantCandidates.get(0);
-
-            return candidate;
-
+            if (candidate.count / descendantCandidates.size() > 5) {
+                return candidate;
+            }
         }
 
         return null;
