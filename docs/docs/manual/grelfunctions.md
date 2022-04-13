@@ -489,7 +489,7 @@ Some of these math functions don't recognize integers when supplied as the first
 |`pow(n1, n2)`|Returns n1 raised to the power of n2. Note: value.pow(3)` will work, whereas `2.pow(3)` will not work.|`pow(2, 3)` returns 8 (2 cubed) and `pow(3, 2)` returns 9 (3 squared). The square root of any numeric value can be called with `value.pow(0.5)`.|
 |`quotient(n1, n2)`|Returns the integer portion of a division (truncated, not rounded), when supplied with a numerator and denominator.|`quotient(9,2)` returns 4.|
 |`radians(n)`|Converts an angle in degrees to radians.|`radians(10)` returns 0.17453292519943295.|
-|`randomNumber(n lowerBound, n upperBound)`|Returns a random integer in the interval between the lower and upper bounds (inclusively). Will output a different random number in each cell in a column. If no arguments are provided, returns a number in the range 0.0 <= x < 1.0|
+|`random(n lowerBound, n upperBound)`|Returns a random integer in the interval between the lower and upper bounds (inclusively). Will output a different random number in each cell in a column. If no arguments are provided, returns a number in the range 0.0 <= x < 1.0|
 |`round(n)`|Rounds a number to the nearest integer.|`3.7.round()` returns 4 and `-3.7.round()` returns -4.|
 |`sin(n)`|Returns the trigonometric sine of an angle.|`sin(10)` returns -0.5440211108893698.|
 |`sinh(n)`|Returns the hyperbolic sine of an angle.|`sinh(10)` returns 11013.232874703393.|
