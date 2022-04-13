@@ -374,6 +374,11 @@ public class XmlImportUtilities extends TreeImportUtilities {
                             }
                         }
                     }
+<<<<<<< HEAD
+=======
+                } catch (TreeReaderException e) {
+                    throw new TreeReaderException("Exception from parsing: " + e.getLocalizedMessage());
+>>>>>>> b26142025c5f67f01a71644003bc88ce2512ecb5
                 }
 
             } else {
