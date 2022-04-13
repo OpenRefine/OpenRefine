@@ -63,7 +63,7 @@ public class RandomNumber implements Function {
                 }
             }
         }
-        return new EvalError(ControlFunctionRegistry.getFunctionName(this) + "expects no arguments or two numbers, the first must be less than the second");
+        return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects no arguments or two numbers, the first must be less than the second");
     }
 
     @Override
