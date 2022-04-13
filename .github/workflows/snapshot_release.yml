@@ -167,6 +167,9 @@ jobs:
       env:
         PGPASSWORD: postgres
 
+    - name: Install webapp dependencies
+      run: cd main/webapp && npm install
+      
     - name: Build and test with Maven
       run: mvn jacoco:prepare-agent test
 
@@ -213,6 +216,9 @@ jobs:
       env:
         P12_PASSPHRASE: ${{ secrets.APPLE_P12_PASSPHRASE }}
 
+    - name: Install webapp dependencies
+      run: cd main/webapp && npm install
+      
     - name: Build, test and package
       run: mvn package -Dapple.notarization.username=$APPLE_USERNAME -Dapple.notarization.password=$APPLE_PASSWORD -Dapple.notarization.team.id=$APPLE_TEAM_ID
       env:
