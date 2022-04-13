@@ -50,7 +50,7 @@ public class ParseUri implements Function {
                 ObjectNode uriNode = ParsingUtilities.mapper.createObjectNode();
                 uriNode.put("scheme", uri.getScheme());
                 uriNode.put("host", uri.getHost());
-                uriNode.put("port", String.valueOf(uri.getPort() == -1 ? 80 : uri.getPort()));
+                uriNode.put("port", uri.getPort());
                 uriNode.put("path", uri.getPath());
                 uriNode.put("query", uri.getQuery());
                 uriNode.put("authority", uri.getAuthority());
