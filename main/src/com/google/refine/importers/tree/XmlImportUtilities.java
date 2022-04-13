@@ -377,9 +377,7 @@ public class XmlImportUtilities extends TreeImportUtilities {
                         }
                     }
                 } catch (TreeReaderException e) {
-                    logger.error("Exception from parse", e);
                     throw new TreeReaderException("Exception from parsing: " + e.getLocalizedMessage());
-
                 }
             } else {
                 processRecord(project, parser, rootColumnGroup, trimStrings, storeEmptyStrings, guessDataTypes);
