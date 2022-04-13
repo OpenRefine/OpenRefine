@@ -293,6 +293,15 @@ JAVA_OPTIONS=-Drefine.data_dir=usr/lib/OpenRefineWorkspace
 </Tabs>
 
 
+##### Proxy Configuration
+
+To use a proxy add the following configurations for either HTTP Proxy or HTTPS Proxy in the relevant [modification file](#modifications-set-within-files) : 
+
+-Dhttps.proxyHost= \
+-Dhttp.proxyHost= \
+-Dhttp.proxyPort=
+  
+
 ---
 
 Refer to the [official Java documentation](https://docs.oracle.com/javase/8/docs/technotes/tools/windows/java.html) for more preferences that can be set.

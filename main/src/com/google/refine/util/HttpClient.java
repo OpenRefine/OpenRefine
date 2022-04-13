@@ -149,9 +149,6 @@ public class HttpClient {
             proxyPort = Integer.parseInt(System.getProperty("http.proxyPort"));
         }
 
-        if (System.getProperty("https.proxyPort") != null) {
-            proxyPort = Integer.parseInt(System.getProperty("https.proxyPort"));
-        }
 
         if (proxyHost != null && proxyPort != 0) {
             proxy = new HttpHost("http", proxyHost, proxyPort);
