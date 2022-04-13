@@ -28,7 +28,6 @@ public class ParseUri implements Function {
             try {
                 URL url = new URL(s);
                 URI uri = url.toURI();
-                ObjectMapper objectMapper = new ObjectMapper();
 
                 // qp represents the query parameters as a single string in the fragment
                 String fragment = "", qp = "";
@@ -51,7 +50,7 @@ public class ParseUri implements Function {
                             .forEach(pair -> queryParams.put(pair.split("=")[0], pair.split("=")[1]));
                 }
 
-                return ParsingUtilities.mapper.readTree(objectMapper.writeValueAsString(Map.of(
+                return ParsingUtilities.mapper.readTree(ParsingUtilities.mapper.writeValueAsString(Map.of(
                         "scheme", uri.getScheme() == null ? "" : uri.getScheme(),
                         "host", uri.getHost() == null ? "" : uri.getHost(),
                         "port", String.valueOf(uri.getPort() == -1 ? 80 : uri.getPort()),
@@ -59,7 +58,7 @@ public class ParseUri implements Function {
                         "query", uri.getQuery() == null ? "" : uri.getQuery(),
                         "authority", uri.getAuthority() == null ? "" : uri.getAuthority(),
                         "fragment", fragment,
-                        "query_params", objectMapper.writeValueAsString(queryParams)
+                        "query_params", ParsingUtilities.mapper.writeValueAsString(queryParams)
                 )));
 
 
