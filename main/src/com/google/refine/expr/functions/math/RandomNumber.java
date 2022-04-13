@@ -50,8 +50,7 @@ public class RandomNumber implements Function {
             return ThreadLocalRandom.current().nextDouble();
         } else if (args.length == 2) {
             // Return a double in the interval lowerBound <= x < upperBound
-            if (args[0] != null && args[0] instanceof Number
-                    && args[1] != null && args[1] instanceof Number
+            if (args[0] instanceof Number && args[1] instanceof Number
                     && ((Number) args[0]).intValue()<((Number) args[1]).intValue()) {
 
                 // check if arguments are long
