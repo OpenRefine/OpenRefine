@@ -1,6 +1,6 @@
 package com.google.refine.expr.functions.strings;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.refine.expr.EvalError;
 import com.google.refine.grel.Function;
 import com.google.refine.util.ParsingUtilities;
@@ -10,8 +10,6 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Properties;
 
 /**
@@ -41,30 +39,28 @@ public class ParseUri implements Function {
                     }
                 }
 
-                // initial
-                Map<String, String> queryParams = new HashMap<>(Map.of());
+                // split the query string into key-value pairs
+                ObjectNode queryParamsNode = ParsingUtilities.mapper.createObjectNode();
                 if(qp.length() != 0) {
                     // get the query parameters as a list of name-value pairs
                     Arrays.stream(qp.split("&"))
-                            .forEach(pair -> queryParams.put(pair.split("=")[0], pair.split("=")[1]));
+                            .forEach(pair -> queryParamsNode.put(pair.split("=")[0], pair.split("=")[1]));
                 }
 
-                return ParsingUtilities.mapper.readTree(ParsingUtilities.mapper.writeValueAsString(Map.of(
-                        "scheme", uri.getScheme(),
-                        "host", uri.getHost(),
-                        "port", String.valueOf(uri.getPort() == -1 ? 80 : uri.getPort()),
-                        "path", uri.getPath(),
-                        "query", uri.getQuery(),
-                        "authority", uri.getAuthority(),
-                        "fragment", fragment,
-                        "query_params", ParsingUtilities.mapper.writeValueAsString(queryParams)
-                )));
+                ObjectNode uriNode = ParsingUtilities.mapper.createObjectNode();
+                uriNode.put("scheme", uri.getScheme());
+                uriNode.put("host", uri.getHost());
+                uriNode.put("port", String.valueOf(uri.getPort() == -1 ? 80 : uri.getPort()));
+                uriNode.put("path", uri.getPath());
+                uriNode.put("query", uri.getQuery());
+                uriNode.put("authority", uri.getAuthority());
+                uriNode.put("fragment", fragment);
+                uriNode.put("query_params", queryParamsNode);
+                return uriNode;
 
 
             } catch (URISyntaxException | MalformedURLException e) {
                 return new EvalError("Invalid URI: " + s);
-            } catch (JsonProcessingException e) {
-                e.printStackTrace();
             }
         }
         return new EvalError("ParseUri takes a single string argument.");

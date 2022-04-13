@@ -1,7 +1,7 @@
 
 package com.google.refine.expr.functions.strings;
 
-import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.refine.RefineTest;
 import com.google.refine.expr.EvalError;
 import com.google.refine.util.ParsingUtilities;
@@ -9,9 +9,6 @@ import org.slf4j.LoggerFactory;
 import org.testng.Assert;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
-
-import java.util.Arrays;
-import java.util.HashMap;
 
 public class ParseUriTest extends RefineTest {
 
@@ -26,26 +23,19 @@ public class ParseUriTest extends RefineTest {
 
     @Test
     public void testParseUriValidParams() {
-        Object res = invoke("parseUri", sampleUri);
-        HashMap<String, Object> resMap = ParsingUtilities.mapper.convertValue(res, new TypeReference<>() {
-        });
+        ObjectNode resNode = (ObjectNode) invoke("parseUri", sampleUri);
 
-        Assert.assertNotNull(res);
-        Assert.assertEquals(resMap.get("path"), "/documentation");
-        Assert.assertEquals(resMap.get("host"), "www.openrefine.org");
-        Assert.assertEquals(resMap.get("port"), "80");
-        Assert.assertEquals(resMap.get("query"), "");
-        Assert.assertEquals(resMap.get("fragment"), "download");
-        Assert.assertEquals(resMap.get("scheme"), "https");
-        Assert.assertNotNull(resMap.get("query_params"));
+        Assert.assertNotNull(resNode);
+        Assert.assertEquals(resNode.get("scheme").asText(), "https");
+        Assert.assertEquals(resNode.get("host").asText(), "www.openrefine.org");
+        Assert.assertEquals(resNode.get("port").asInt(), 80);
+        Assert.assertEquals(resNode.get("path").asText(), "/documentation");
+        Assert.assertEquals(resNode.get("fragment").asText(), "download");
 
-        var queryParamsActual = Arrays.stream(((String) resMap.get("query_params")).split(","))
-                .map(s -> s.replace("{", "").replace("}", "").replace("\"", "").split(":"))
-                .collect(HashMap::new, (m, a) -> m.put(a[0], a[1]), HashMap::putAll);
-        Assert.assertTrue(queryParamsActual.containsKey("format"), "Contains key format");
-        Assert.assertTrue(queryParamsActual.containsKey("os"), "Contains key os");
-        Assert.assertEquals(queryParamsActual.get("format"), "xml");
-        Assert.assertEquals(queryParamsActual.get("os"), "mac");
+        ObjectNode qpExpected = ParsingUtilities.mapper.createObjectNode();
+        qpExpected.put("format", "xml");
+        qpExpected.put("os", "mac");
+        Assert.assertEquals(resNode.get("query_params").toString(), qpExpected.toString());
     }
 
     @Test
