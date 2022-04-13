@@ -149,6 +149,7 @@ Cologne Phonetics, also called Kölner Phonetik, is a phonetic algorithm that as
 
 Unlike Metaphone3, Cologne Phonetics is optimized for the German language.
 
+The process of encoding words using Cologne phonetics can be broken down to the following steps:
 **Step 1:**
 
 The encoding process is as follows:
