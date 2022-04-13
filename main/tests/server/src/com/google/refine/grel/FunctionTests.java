@@ -111,8 +111,8 @@ public class FunctionTests extends RefineTest {
         // args
 
         // Not sure which, if any, of these are intended, but fixing them may break existing scripts
-        Set<String> returnsNull = new HashSet<>(Arrays.asList("chomp", "contains", "escape", "unescape", "exp",
-                "fingerprint", "get", "parseJson", "partition", "pow", "rpartition",
+        Set<String> returnsNull = new HashSet<>(Arrays.asList("chomp", "contains", "escape", "unescape",
+                "fingerprint", "get", "parseJson", "partition", "rpartition",
                 "slice", "substring", // synonyms for Slice
                 "unicode", "unicodeType"));
         Set<String> returnsFalse = new HashSet<>(Arrays.asList("hasField"));
@@ -134,7 +134,7 @@ public class FunctionTests extends RefineTest {
     void testTooManyArgs() {
         // Not sure which, if any, of these are intended, but fixing them may break existing scripts
         Set<String> returnsNull = new HashSet<>(Arrays.asList("chomp", "contains", "coalesce", "escape", "unescape",
-                "exp", "fingerprint", "get", "now", "parseJson", "partition", "pow", "rpartition",
+                "fingerprint", "get", "now", "parseJson", "partition", "rpartition",
                 "slice", "substring", // synonyms for Slice
                 "unicode", "unicodeType"));
         Set<String> returnsFalse = new HashSet<>(Arrays.asList("hasField"));
@@ -151,6 +151,26 @@ public class FunctionTests extends RefineTest {
                 assertEquals(result, Boolean.FALSE, ControlFunctionRegistry.getFunctionName(func) + " didn't return false on 8 args");
             } else if (!exempt.contains(ControlFunctionRegistry.getFunctionName(func))) {
                 assertTrue(result instanceof EvalError, ControlFunctionRegistry.getFunctionName(func) + " didn't error on 8 args");
+            }
+        }
+    }
+
+    @Test
+    void testNullArgsMath() {
+        Set<String> oneArgs = new HashSet<>(
+                Arrays.asList("abs", "acos", "asin", "atan", "ceil", "combin", "cos", "cosh", "degrees", "even", "exp", "fact", "floor",
+                        "ln", "log", "multinomial", "odd", "radians", "round", "sin", "sinh", "sum", "tan", "tanh"));
+        Set<String> twoArgs = new HashSet<>(
+                Arrays.asList("atan2", "factn", "greatestCommonDenominator", "leastCommonMultiple", "max", "min", "mod", "pow", "quotient",
+                        "randomNumber"));
+        for (Entry<String, Function> entry : ControlFunctionRegistry.getFunctionMapping()) {
+            Function func = entry.getValue();
+            if (oneArgs.contains(ControlFunctionRegistry.getFunctionName(func))) {
+                Object result = func.call(bindings, new Object[] { null });
+                assertTrue(result instanceof EvalError, ControlFunctionRegistry.getFunctionName(func) + " didn't error on null arg");
+            } else if (twoArgs.contains(ControlFunctionRegistry.getFunctionName(func))) {
+                Object result2 = func.call(bindings, new Object[] { null, null });
+                assertTrue(result2 instanceof EvalError, ControlFunctionRegistry.getFunctionName(func) + " didn't error on null args");
             }
         }
     }

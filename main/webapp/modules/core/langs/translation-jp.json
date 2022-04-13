@@ -565,6 +565,7 @@
     "core-views/unicode-facet": "文字コードファセット",
     "core-views/transp-cell-col": "行を列に転置（等間隔で横持ち化）…",
     "core-views/transform": "変換…",
+    "core-views/transform/header": "変換",
     "core-views/split-into": "分割先",
     "core-views/configure-col": "このカラムの環境設定",
     "core-views/one-topic2": "選択した行で、同内容のセルの各グループから、新しい項目を作成する",
@@ -697,7 +698,6 @@
     "core-views/replacement-info": "正規表現に()を使ったグループがある場合、$0がマッチ全体を、$1,$2…が各グループを返します.",
     "core-views/replace-dont-escape": "改行文字には\\n、タブ文字には\\tを使います。「\\n」や「\\t」を検索するには「\\\\n」や「\\\\t」を使います（エスケープ文字）.",
     "core-views/warning-regex": "正規表現が無効です : $1",
-    "core-buttons/unselect-all": "全選択解除",
     "core-buttons/merge-close": "マージして閉じる",
     "core-buttons/import-proj": "プロジェクトをインポート",
     "core-buttons/dont-reconcile": "セルを照合しない",
@@ -736,7 +736,6 @@
     "core-buttons/add-service": "サービスを追加",
     "core-buttons/apply-to-all": "同じ内容の全セルに適用",
     "core-buttons/add-url": "URLを追加",
-    "core-buttons/unselect": "選択解除",
     "core-buttons/pick-record": "レコード要素を選択",
     "core-index/metaDatas": "プロジェクトのメタデータ",
     "core-views/replace-smartquotes": "スマート引用符置換…",
@@ -759,7 +758,7 @@
     "core-views/column-join": "カラムの結合",
     "core-views/column-join-before-column-picker": "結合するカラムの選択",
     "core-views/column-join-before-options": "オプション",
-    "core-views/column-join-field-separator": "区切り文字 ",
+    "core-views/column-join-field-separator": "区切り文字",
     "core-views/column-join-field-separator-advice": "区切り文字を入力してください（指定しないと直接結合されます）",
     "core-views/column-join-replace-nulls": "nullを置換",
     "core-views/column-join-skip-nulls": "nullをスキップ。",
@@ -833,5 +832,9 @@
     "core-views/expand-right": "カラムを右側に展開",
     "core-index-parser/disable-auto-preview": "自動プレビューしない",
     "core-dialogs/add-all": "すべて追加",
-    "core-dialogs/remove-all": "すべて削除"
+    "core-dialogs/remove-all": "すべて削除",
+    "core-views/use-values-as-identifiers-note": "照合IDは有効化されません.",
+    "core-index-import/invalid-url": "不正なURL",
+    "core-index-import/blank-url": "空のURL",
+    "core-index-import/remove-row": "この行を削除"
 }

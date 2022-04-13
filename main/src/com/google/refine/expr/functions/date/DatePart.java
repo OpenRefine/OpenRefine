@@ -139,7 +139,7 @@ public class DatePart implements Function {
     
     @Override
     public String getDescription() {
-    	return "Returns part of a date. The data type returned depends on the unit. See https://docs.openrefine.org/manual/grelfunctions/#datepartd-s-timeunit for a table. ";
+    	return "Returns part of a date. The data type returned depends on the unit. See https://docs.openrefine.org/manual/grelfunctions/#datepartd-s-timeunit, https://docs.openrefine.org/manual/grelfunctions#date-functions for a table. ";
     }
     
     @Override

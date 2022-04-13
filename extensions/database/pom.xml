@@ -84,7 +84,7 @@
     <dependency>
       <groupId>com.google.http-client</groupId>
       <artifactId>google-http-client-jackson2</artifactId>
-      <version>1.41.5</version>
+      <version>1.41.7</version>
     </dependency>
     <dependency>
       <groupId>mysql</groupId>

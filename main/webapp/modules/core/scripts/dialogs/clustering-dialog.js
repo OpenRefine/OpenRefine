@@ -61,7 +61,7 @@ ClusteringDialog.prototype._createDialog = function() {
     this._elmts.or_dialog_radius.html($.i18n('core-dialogs/ngram-radius'));
     this._elmts.or_dialog_blockChars.html($.i18n('core-dialogs/block-chars'));
     this._elmts.selectAllButton.html($.i18n('core-buttons/select-all'));
-    this._elmts.deselectAllButton.html($.i18n('core-buttons/unselect-all'));
+    this._elmts.deselectAllButton.html($.i18n('core-buttons/deselect-all'));
     this._elmts.exportClusterButton.html($.i18n('core-buttons/export-cluster'));
     this._elmts.applyReClusterButton.html($.i18n('core-buttons/merge-cluster'));
     this._elmts.applyCloseButton.html($.i18n('core-buttons/merge-close'));

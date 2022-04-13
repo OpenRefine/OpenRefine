@@ -145,6 +145,19 @@ public class OdsImporter extends TabularImportingParserBase {
 
         List<OdfTable> tables = odfDoc.getTableList();
 
+        int sheetCount = tables.size();
+        if(sheetCount == 0){
+            exceptions.add(
+                    new ImportException(
+                            "Attempted to parse file as Ods file but failed. " +
+                                    "No tables found in Ods file. " +
+                                    "Please validate file format on https://odfvalidator.org/, then try re-uploading the file.",
+                            new NullPointerException()
+                    )
+            );
+            return;
+        }
+
         ArrayNode sheets = JSONUtilities.getArray(options, "sheets");
         for(int i=0;i<sheets.size();i++)  {
             String[] fileNameAndSheetIndex = new String[2];

@@ -1,6 +1,5 @@
 {
     "name": "Русский",
-    "core-buttons/unselect-all": "Отменить выбор всего",
     "core-buttons/merge-close": "Объединить выбранные &amp; закрыть",
     "core-buttons/import-proj": "Импортировать проект",
     "core-buttons/dont-reconcile": "Не объединять эту ячейку",
@@ -32,7 +31,6 @@
     "core-buttons/update-preview": "Обновить&nbsp; предпросмотр",
     "core-buttons/ok": "&nbsp;&nbsp;ОK&nbsp;&nbsp;",
     "core-buttons/create-project": "Создать проект &raquo;",
-    "core-buttons/unselect": "Снять выбор",
     "core-buttons/upload": "Выгрузить",
     "core-buttons/refresh": "Обновить",
     "core-buttons/reselect-files": "&laquo; Выбрать файлы заново",
@@ -597,6 +595,7 @@
     "core-views/false-true": "false, затем true",
     "core-views/transp-cell-col": "Перемесить ячейки строк в колонки…",
     "core-views/transform": "Преобразование…",
+    "core-views/transform/header": "Преобразование",
     "core-views/split-into": "Разбить на",
     "core-views/one-topic2": "Создать новый заголовок для каждой группы похожих ячеек в этой колонке для всех отфильтрованных строк",
     "core-views/to-number": "В число…",
