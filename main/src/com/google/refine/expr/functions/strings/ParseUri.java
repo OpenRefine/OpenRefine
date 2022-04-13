@@ -1,7 +1,6 @@
 package com.google.refine.expr.functions.strings;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.refine.expr.EvalError;
 import com.google.refine.grel.Function;
 import com.google.refine.util.ParsingUtilities;
@@ -51,12 +50,12 @@ public class ParseUri implements Function {
                 }
 
                 return ParsingUtilities.mapper.readTree(ParsingUtilities.mapper.writeValueAsString(Map.of(
-                        "scheme", uri.getScheme() == null ? "" : uri.getScheme(),
-                        "host", uri.getHost() == null ? "" : uri.getHost(),
+                        "scheme", uri.getScheme(),
+                        "host", uri.getHost(),
                         "port", String.valueOf(uri.getPort() == -1 ? 80 : uri.getPort()),
-                        "path", uri.getPath() == null ? "" : uri.getPath(),
-                        "query", uri.getQuery() == null ? "" : uri.getQuery(),
-                        "authority", uri.getAuthority() == null ? "" : uri.getAuthority(),
+                        "path", uri.getPath(),
+                        "query", uri.getQuery(),
+                        "authority", uri.getAuthority(),
                         "fragment", fragment,
                         "query_params", ParsingUtilities.mapper.writeValueAsString(queryParams)
                 )));
