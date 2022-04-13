@@ -482,5 +482,7 @@
     "core-dialogs/add-all": "Voeg alles toe",
     "core-dialogs/remove-all": "Verwijder alles",
     "core-dialogs/idling": "Stationair aan het draaien…",
-    "core-dialogs/scatterplot-matrix": "Scatterplot-matrix"
+    "core-dialogs/scatterplot-matrix": "Scatterplot-matrix",
+    "core-dialogs/linear-plot": "Lineaire plot",
+    "core-dialogs/logarithmic-plot": "Logaritmische plot"
 }
