@@ -48,6 +48,7 @@ import com.google.refine.model.Project;
 import com.google.refine.util.ParsingUtilities;
 
 import au.com.bytecode.opencsv.CSVWriter;
+import clojure.core.*;
 
 public class CsvExporter implements WriterExporter{
 
@@ -97,9 +98,19 @@ public class CsvExporter implements WriterExporter{
             (params != null && params.getProperty("printColumnHeader") != null) ?
                 Boolean.parseBoolean(params.getProperty("printColumnHeader")) :
                 true;
-        
-        final CSVWriter csvWriter = 
-            new CSVWriter(writer, separator.charAt(0), CSVWriter.DEFAULT_QUOTE_CHARACTER, lineSeparator);
+
+        final CSVWriter csvWriter;
+        if(separator.charAt(0) == '\t'){
+            csvWriter = new CSVWriter(writer, separator.charAt(0), CSVWriter.DEFAULT_QUOTE_CHARACTER, CSVWriter.NO_ESCAPE_CHARACTER);
+                       
+        }
+        else{
+            csvWriter = new CSVWriter(writer, separator.charAt(0), CSVWriter.DEFAULT_QUOTE_CHARACTER, lineSeparator);
+                       
+        }
+                               
+        //final CSVWriter csvWriter = new CSVWriter(writer, separator.charAt(0), CSVWriter.DEFAULT_QUOTE_CHARACTER,lineSeparator);
+                
         
         TabularSerializer serializer = new TabularSerializer() {
             @Override
@@ -125,7 +136,9 @@ public class CsvExporter implements WriterExporter{
                 }
             }
         };
+         
         
+
         CustomizableTabularExporterUtilities.exportRows(project, engine, params, serializer);
         
         csvWriter.close();
