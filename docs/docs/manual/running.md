@@ -231,6 +231,9 @@ Locate the `refine.l4j.ini` file, and insert lines in this way:
 -Drefine.port=3334 
 -Drefine.host=127.0.0.2
 -Drefine.webapp=broker/core
+-Dhttps.proxyHost=yourproxyhost 
+-Dhttp.proxyHost=yourproxyhost
+-Dhttp.proxyPort=8080
 ```
 
 In `refine.ini`, use a similar syntax, but set multiple parameters within a single line starting with `JAVA_OPTIONS=`:
@@ -272,6 +275,10 @@ Add in values such as:
 <string>-Drefine.webapp=$APP_ROOT/Contents/Resource/webapp</string>
 <string>-Drefine.autosave=2</string>
 <string>-Drefine.port=3334</string>
+<string>-Dhttps.proxyHost=yourproxyhost</string>
+<string>-Dhttp.proxyHost=yourproxyhost</string>
+<string>-Dhttp.proxyPort=8080</string>
+
 </array>
 
 ```
@@ -286,22 +293,16 @@ Locate the `refine.ini` file, and add `JAVA_OPTIONS=` before the `-Drefine.prefe
 JAVA_OPTIONS=-Drefine.autosave=2
 JAVA_OPTIONS=-Drefine.port=3334
 JAVA_OPTIONS=-Drefine.data_dir=usr/lib/OpenRefineWorkspace
+JAVA_OPTIONS=-Dhttps.proxyHost=yourproxyhost
+JAVA_OPTIONS=--Dhttp.proxyHost=yourproxyhost
+JAVA_OPTIONS=-Dhttp.proxyPort=8080
 ```
 
 </TabItem>
 
 </Tabs>
 
-
-##### Proxy Configuration
-
-To use a proxy add the following configurations for either HTTP Proxy or HTTPS Proxy in the relevant [modification file](#modifications-set-within-files) : 
-
--Dhttps.proxyHost= \
--Dhttp.proxyHost= \
--Dhttp.proxyPort=
   
-
 ---
 
 Refer to the [official Java documentation](https://docs.oracle.com/javase/8/docs/technotes/tools/windows/java.html) for more preferences that can be set.
