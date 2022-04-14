@@ -139,7 +139,8 @@ Refine.DefaultImportingController.prototype._prepareParsingPanel = function() {
   $(window).resize(this._parsingPanelResizer);
   this._parsingPanelResizer();
 
-toggleCharacters();
+
+
   var formats = this._job.config.rankedFormats;
   var createFormatTab = function(format) {
     var formatLabelKey =Refine.importingConfig.formats[format].label;
@@ -152,6 +153,8 @@ toggleCharacters();
       self._selectFormat(format);
     });
 
+
+
     if (format == self._format) {
       tab.addClass("selected");
     }
@@ -160,6 +163,7 @@ toggleCharacters();
     createFormatTab(formats[i]);
   }
   this._selectFormat(this._format);
+  nonPrintableCheckBox();
 };
 
 Refine.DefaultImportingController.prototype._disposeParserUI = function() {
@@ -209,38 +213,44 @@ Refine.DefaultImportingController.prototype._selectFormat = function(newFormat) 
     });
   }
 };
-var controlCharacters = ["NUL", "SOH", "STX", "ETX", "EOT", "ENQ", "ACK", "BEL", "BS", "TAB", "LF", "VT", "FF", "CR", "SO", "SI", "DLE", "DC1", "DC2", "DC3", "DC4", "NAK", "SYN", "ETB", "CAN", "EM", "SUB", "ESC", "FS", "GS", "RS", "US", "NBSP"];
+
+var controlCharacters = ["NUL", "SOH", "STX", "ETX", "EOT", "ENQ", "ACK", "BEL", "BS", "TAB", "LF", "VT", "FF", "CR", "SO", "SI", "DLE", "DC1", "DC2", "DC3", "DC4", "NAK", "SYN", "ETB", "CAN", "EM", "SUB", "ESC", "FS", "GS", "RS", "US", "NBSP","DEL"];
 
 function checkNonPrintable(content) {
-  var originalContent = content;
+  var stringIncNonPrintable = "";
   for (var character = 0; character < content.length; character++) {
-    var updatedContent = "";
-    var charCode = originalContent.charAt(character).charCodeAt(0);
+    var unprintableChar = "";
+    var charCode = content.charAt(character).charCodeAt(0);
     if (charCode <= 32) {
       unprintableChar = "<span class='unprintableCharacters' style='background-color: orange'><b>" + controlCharacters[charCode] + "</b></span>";
-      updatedContent += unprintableChar + content.charAt(character);
     }
+    stringIncNonPrintable += unprintableChar + content.charAt(character);
   }
-  return updatedContent;
+  return stringIncNonPrintable;
 }
 
-function toggleCharacters(){
-  if($("#toggle-display-characters").prop('checked')){
-  var rows = $("table.data-table > tbody > tr");
-  for(var i = 0 ; i < rows.length ; i++){
-
-    var columns = $rows[i].find(".data-table-cell-content > span");
-    for(var j = 0 ; j < columns.length ; j++){
-        var originalContent = $(columns[j]).html();
-        if(originalContent != ""){
-        var updatedContent = checkNonPrintable(originalContent);
-        $(columns[j]).replace(updatedContent);
+function nonPrintableCheckBox() {
+  if ($('#toggle-display-characters').prop('checked')) {
+    var rows = $('.data-table tbody > tr');
+    var columns;
+    for (var i = 0; i < rows.length; i++) {
+      columns = $(rows[i]).find('td>div>span');
+      for (var j = 0; j < columns.length; j++) {
+        var originalContent = $(columns[j]).text();
+        console.log("originalContent");
+        console.log(originalContent);
+        if (originalContent != "") {
+          var updatedContent = checkNonPrintable(originalContent);
+          $(columns[j]).html(updatedContent);
+        }
+      }
     }
   }
-
-}
-  }
-   else{
+  else {
     $(".unprintableCharacters").remove();
-   }
+  }
 }
+
+$(document).on('change', '#toggle-display-characters', function () {
+  nonPrintableCheckBox();
+});
