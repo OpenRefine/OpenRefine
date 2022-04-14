@@ -171,7 +171,7 @@ public class TsvExporterTests extends RefineTest {
 
         Assert.assertEquals(writer.toString(), "column0\tcolumn1\tcolumn2\n" +
                 "row0cell0\trow0cell1\trow0cell2\n" +
-                "row1cell0\t\"line has \"\"quote\"\"\"\trow1cell2\n" +
+                "row1cell0\t\"line has \"quote\"\"\trow1cell2\n" +
                 "row2cell0\trow2cell1\trow2cell2\n");
     }
 
