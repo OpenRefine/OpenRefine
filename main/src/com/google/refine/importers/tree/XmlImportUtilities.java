@@ -273,15 +273,19 @@ public class XmlImportUtilities extends TreeImportUtilities {
         if (logger.isTraceEnabled()) {
             logger.trace("importTreeData(TreeReader, Project, String[], ImportColumnGroup)");
         }
-
-        while (parser.hasNext()) {
-            Token eventType = parser.next();
-            if (eventType == Token.StartEntity) {
-                findRecord(project, parser, recordPath, 0, rootColumnGroup, limit--, trimStrings, storeEmptyStrings,
-                        guessDataTypes);
+        try {
+            while (parser.hasNext()) {
+                Token eventType = parser.next();
+                if (eventType == Token.StartEntity) {
+                    findRecord(project, parser, recordPath, 0, rootColumnGroup, limit--, trimStrings, storeEmptyStrings,
+                            guessDataTypes);
+                }
             }
-        }
+        } catch (TreeReaderException e) {
+            logger.error("Exception from XML parse :" + e.getMessage());
+            return;
 
+        }
     }
 
     /**
