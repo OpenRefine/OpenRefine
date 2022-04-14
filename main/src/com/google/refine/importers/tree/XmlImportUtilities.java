@@ -273,7 +273,7 @@ public class XmlImportUtilities extends TreeImportUtilities {
         if (logger.isTraceEnabled()) {
             logger.trace("importTreeData(TreeReader, Project, String[], ImportColumnGroup)");
         }
-        try {
+
             while (parser.hasNext()) {
                 Token eventType = parser.next();
                 if (eventType == Token.StartEntity) {
@@ -281,10 +281,7 @@ public class XmlImportUtilities extends TreeImportUtilities {
                             guessDataTypes);
                 }
             }
-        } catch (TreeReaderException e) {
-            logger.error("Exception from XML parse",e);
-            throw e;
-        }
+
     }
 
     /**
