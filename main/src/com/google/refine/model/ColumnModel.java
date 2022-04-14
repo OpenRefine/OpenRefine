@@ -36,14 +36,7 @@ package com.google.refine.model;
 import java.io.IOException;
 import java.io.LineNumberReader;
 import java.io.Writer;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
+import java.util.*;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -311,4 +304,22 @@ public class ColumnModel {
             column.clearPrecomputes();
         }
     }
+
+    public void removeColumn(int index)  {
+        //if index = cellindex, then remove ColumnName.
+        if (index<=_nameToColumn.size() ){
+            Iterator<Map.Entry<String, Column>> iterator = _nameToColumn.entrySet().iterator();
+            while(iterator.hasNext()){
+                Map.Entry<String, Column> next = iterator.next();
+                String key = next.getKey();
+                Column column = _nameToColumn.get(key);
+                int cellIndex = column.getCellIndex();
+                if(cellIndex == index){
+                    columns.remove(column);
+                }
+            }
+        }
+
+    }
+
 }
