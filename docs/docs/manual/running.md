@@ -231,7 +231,6 @@ Locate the `refine.l4j.ini` file, and insert lines in this way:
 -Drefine.port=3334 
 -Drefine.host=127.0.0.2
 -Drefine.webapp=broker/core
--Dhttps.proxyHost=yourproxyhost 
 -Dhttp.proxyHost=yourproxyhost
 -Dhttp.proxyPort=8080
 ```
@@ -275,7 +274,6 @@ Add in values such as:
 <string>-Drefine.webapp=$APP_ROOT/Contents/Resource/webapp</string>
 <string>-Drefine.autosave=2</string>
 <string>-Drefine.port=3334</string>
-<string>-Dhttps.proxyHost=yourproxyhost</string>
 <string>-Dhttp.proxyHost=yourproxyhost</string>
 <string>-Dhttp.proxyPort=8080</string>
 
@@ -293,7 +291,6 @@ Locate the `refine.ini` file, and add `JAVA_OPTIONS=` before the `-Drefine.prefe
 JAVA_OPTIONS=-Drefine.autosave=2
 JAVA_OPTIONS=-Drefine.port=3334
 JAVA_OPTIONS=-Drefine.data_dir=usr/lib/OpenRefineWorkspace
-JAVA_OPTIONS=-Dhttps.proxyHost=yourproxyhost
 JAVA_OPTIONS=--Dhttp.proxyHost=yourproxyhost
 JAVA_OPTIONS=-Dhttp.proxyPort=8080
 ```
