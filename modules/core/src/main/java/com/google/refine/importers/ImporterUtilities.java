@@ -258,4 +258,50 @@ public class ImporterUtilities {
             }
         };
     }
+    /**
+     * Ensure this ArrayList(determine if this column is blank) is larger than row size.
+     * @param columnsHasData Record if there is data in each column( false:null;true:has data)
+     */
+    static public void ensureColumnsHasDataExpands(List<Boolean> columnsHasData, int rowSize) {
+        while (rowSize > columnsHasData.size()) {
+            columnsHasData.add(false);
+        }
+    }
+    /**
+     * If "storeBlankColumns" == false, delete blank columns.
+     * @param columnsHasData Record if there is data in each column( false:null;true:has data)
+     */
+    static public void deleteEmptyColumns(List<Boolean> columnsHasData, Project project) throws ModelException {
+//      int deletedSoFar = 0;
+        for (int c = 0; c < columnsHasData.size(); c++) {
+            if (columnsHasData.get(c) == false) {
+                //remove column from columns
+                project.columnModel.removeColumn(c);
+
+                //if you want to don't change the headlines,use this
+//                List<String> columnNames = new ArrayList<>();
+//                columnNames = (List<String>) project.columnModel.getColumnByCellIndex(c);
+//                System.out.println(columnNames);
+//               columnNames.remove(0);
+
+                //set col[c] = col[c+1];col[c+1]=col[c+2];...
+//                int deletedIndex = c-deletedSoFar;
+//                deletedSoFar++;
+//                for (int i = 0; i < project.rows.size(); i++) {
+//                    Row row = project.rows.get(i);
+//                    for (int j = deletedIndex; j < row.cells.size(); j++) {
+//                        row.setCell(j, row.getCell(j+1));
+//                    }
+//                }
+            }
+        }
+//        if (deletedSoFar != 0){//set col[row.size()-1] to col[row.size()-1-deletedSoFa]  =null;
+//            for (int i = 0; i < project.rows.size(); i++) {
+//                Row row = project.rows.get(i);
+//                for (int j = 0; j < deletedSoFar ; j++) {
+//                    row.setCell(row.cells.size()-1-j, null);
+//                }
+//            }
+//        }
+    }
 }
