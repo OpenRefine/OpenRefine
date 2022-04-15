@@ -369,6 +369,7 @@
     "core-project/starting": "Démarrer",
     "core-project/paste-json": "Coller une liste d’opérations au format JSON à appliquer :",
     "core-project/undo-history": "Historique d’annulation infinie",
+    "core-project/hide-panel": "Supprimer",
     "core-recon/error-contact": "Erreur lors de la connexion au service de réconciliation",
     "core-recon/access-service": "Accès au service de l'API",
     "core-recon/cell-contains": "Chaque cellule contient :",
