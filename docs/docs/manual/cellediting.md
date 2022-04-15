@@ -105,10 +105,9 @@ You can also export the currently identified clusters as a JSON file, or close t
 
 You don’t need to understand the details behind each clustering method to apply them successfully to your data.
 
-The order in which these methods are presented in the interface and on this page is the order we recommend - starting with the most strict rules and moving to the most lax, which require more human supervision to apply correctly.
+The order in which these methods are presented in the interface and on this page is the order we recommend - starting with the most strict rules and moving to the laxest, which require more human supervision to apply correctly.
 
-The clustering pop-up window offers you two categories of clustering methods: 6 different key collision clustering methods and 2 nearest neighbour clustering methods. 
-
+The clustering pop-up window offers you two categories of clustering methods: 6 different key collision clustering methods and 2 nearest neighbour clustering methods.
 - [Key Collision](#key-collision)
 
   The Key Collision category is itself subcategorized by [phonetic](#phonetic-clustering) or not-phonetic clustering.
@@ -171,7 +170,7 @@ Baider-Morse is a version of Daitch-Mokotoff that is slightly more strict.
 
 Regardless of the language of your data, applying each of them might find different potential matches: for example, Metaphone clusters “Cornwall” and “Corn Hill” and “Green Hill,” while Cologne clusters “Greenvale” and “Granville” and “Cornwall” and “Green Wall.”
 
-For an in-depth understanding of phonetic, check this [document](https://github.com/OpenRefine/OpenRefine/wiki/Clustering-In-Depth#phonetic-fingerprint)
+For an in-depth understanding of phonetics, check this [document](https://github.com/OpenRefine/OpenRefine/wiki/Clustering-In-Depth#phonetic-fingerprint)
 
 #### Nearest Neighbor {#nearest-neighbor}
 
