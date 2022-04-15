@@ -174,7 +174,7 @@ For an in-depth understanding of phonetics, check this [document](https://github
 
 #### Nearest Neighbor {#nearest-neighbor}
 
-**Nearest neighbor** clustering methods are slower than key collision methods.
+**Nearest Neighbor** clustering methods are slower than key collision methods.
 
 They allow the user to set a radius - a threshold for matching or not matching. OpenRefine uses a “blocking” method first, which sorts values based on whether they have a certain amount of similarity (the default is “6” for a six-character string of identical characters) and then runs the nearest-neighbor operations on those sorted groups.
 
