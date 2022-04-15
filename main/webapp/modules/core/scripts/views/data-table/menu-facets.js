@@ -231,6 +231,21 @@ DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
             );
           }
         },
+           {
+                  id: "core/control-chars-facet",
+                  label: $.i18n('Control-chars-facet'),
+                  click: function() {
+                    ui.browsingEngine.addFacet(
+                        "range",
+                        {
+                          "name": column.name,
+                          "columnName": column.name,
+                          "expression": "",
+                          "mode": "range"
+                        }
+                    );
+                  }
+                },
         {},
         {
           id: "core/error-facet",
