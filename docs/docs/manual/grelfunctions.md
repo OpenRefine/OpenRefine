@@ -141,6 +141,12 @@ You cannot find or replace nulls with this, as null is not a string. You can ins
 
 Returns the string obtained by replacing a character in s, identified by find, with the corresponding character identified in replace. For example, `"Téxt thát was optícálly recógnízéd".replaceChars("áéíóú", "aeiou")` returns the string “Text that was optically recognized”. You cannot use this to replace a single character with more than one character.
 
+###### replaceEach(s, a find, a replace) {#replaceeach-s-a-find-a-replace}
+
+Returns the string obtained by replacing each element in s of a find array with the corresponding element of a replace array. For example, `"The cow jumps over the moon and moos".replaceEachFromArrays(["oo", "moo"], ["ee", "mee"])` returns the string “The cow jumps over the meen and mees”.
+
+The length of the find array must be the same as the length of the replace array. If the length of the find array is greater than the length of the replace array, the last element of the replace array is used for all remaining elements in the find array.
+
 ###### find(s, sub or p) {#finds-sub-or-p}
 
 Outputs an array of all consecutive substrings inside string s that match the substring or [regex](expressions#grel-supported-regex) pattern p. For example, `"abeadsabmoloei".find(/[aeio]+/)` would result in the array [ "a", "ea", "a", "o", "oei" ].
