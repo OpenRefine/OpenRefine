@@ -494,11 +494,11 @@ class RefineClient extends JFrame implements ActionListener {
     } 
     
     private void openBrowser() {
-        if (!Desktop.isDesktopSupported()) {
+        if (!Desktop.getDesktop().isSupported(Desktop.Action.BROWSE)) {
             try {
-                openBrowser2();
+                openBrowserFallback();
             } catch (IOException e) {
-                logger.error("Failed to open browser. Please open %s in your browser",uri.toString());
+                throw new RuntimeException(e);
             }
         } else {
             try {
@@ -509,28 +509,17 @@ class RefineClient extends JFrame implements ActionListener {
         }
     }
 
-    private void openBrowser2() throws IOException {
-        logger.info("Opening browser to {}", uri.toString());
-        String os = System.getProperty("os.name").toLowerCase();
-        Runtime runtime = Runtime.getRuntime();
-        if(os.contains("win")) { // If we are on Windows
-            runtime.exec("rundll32 url.dll,FileProtocolHandler " + uri);
-        } else if(os.contains("mac")) { // If we are on Mac
-            runtime.exec("open " + uri);
-        } else if(os.contains("nix") || os.contains("nux")) { // If we are on unix
-            String[] browsers = {"google-chrome", "epiphany", "firefox", "mozilla", "konqueror",
-                    "netscape", "opera", "links", "lynx" };
-            StringBuilder cmd = new StringBuilder();
-            for (int i = 0; i < browsers.length; i++) {
-                if (i == 0) {
-                    cmd.append(String.format("%s \"%s\"", browsers[i], uri));
-                } else {
-                    cmd.append(String.format(" || %s \"%s\"", browsers[i], uri));
-                }
-            }
-            runtime.exec(new String[] { "sh", "-c", cmd.toString() });
+    private void openBrowserFallback() throws IOException {
+        Runtime rt = Runtime.getRuntime();
+
+        if(SystemUtils.IS_OS_WINDOWS) {
+            rt.exec("rundll32 url.dll,FileProtocolHandler " + uri);
+        } else if (SystemUtils.IS_OS_MAC_OSX) {
+            rt.exec("open " + uri);
+        } else if (SystemUtils.IS_OS_LINUX) {
+            rt.exec("xdg-open " + uri);
         } else {
-            logger.warn("Java Desktop class not supported on this platform");
+            throw new RuntimeException("Unable to open browser");
         }
     }
 }
