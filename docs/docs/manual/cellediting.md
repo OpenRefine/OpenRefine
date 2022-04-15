@@ -112,17 +112,17 @@ The clustering pop-up window offers you two categories of clustering methods: 6 
 - [Key Collision](#key-collision)
 
   The Key Collision category is itself subcategorized by [phonetic](#phonetic-clustering) or not-phonetic clustering.
-    * [fingerprint](#fingerprinting)
-    * [ngram-fingerprint](#n-gram)
-    * [metaphone3](#metaphone3-fingerprinting)
-    * [cologne phonetic](#cologne-fingerprinting)
+    * [Fingerprint](#fingerprinting)
+    * [N-gram Fingerprint](#n-gram)
+    * [Metaphone3](#metaphone3-fingerprinting)
+    * [Cologne Phonetic](#cologne-fingerprinting)
     * [Daitch-Mokotoff](#daitch-mokotoff)
     * [Beider-Morse](#baider-morse)
-- [nearest neighbor](#nearest-neighbor)
-    * [levenshtein](#levenshtein-distance)
-    * [ppm](#ppm)
+- [Nearest Neighbor](#nearest-neighbor)
+    * [Levenshtein](#levenshtein-distance)
+    * [PPM](#ppm)
 
-#### Key collision {#key-collision}
+#### Key Collision {#key-collision}
 
 **Key collisions** are very fast and can process millions of cells in seconds:
 
@@ -139,7 +139,7 @@ Fingerprinting is the least likely to produce false positives, so it’s a  good
 
 For an in-depth understanding of fingerprinting, check this [document](https://github.com/OpenRefine/OpenRefine/wiki/Clustering-In-Depth#fingerprint)
 
-**<a name="n-gram">N-gram fingerprinting</a>**
+**<a name="n-gram">N-gram Fingerprinting</a>**
 
 N-gram fingerprinting allows you to set the _n_ value to whatever number you’d like and will create n-grams of _n_ size (after doing some cleaning), alphabetize them, then join them back together into a  fingerprint.
 
@@ -149,15 +149,15 @@ This can help match cells that have typos, or incorrect spaces (such as matching
 
 For an in-depth understanding of N-gram fingerprinting, check this [document](https://github.com/OpenRefine/OpenRefine/wiki/Clustering-In-Depth#n-gram-fingerprint)
 
-_**Phonetic clustering {#phonetic-clustering}**_
+_**Phonetic Clustering {#phonetic-clustering}**_
 
 The next four methods are phonetic algorithms: they identify letters that sound the same when pronounced out loud, and assess text values based on that (such as knowing that a word with an “S” might be a mistype of a word with a “Z”). They are great for spotting mistakes made by not knowing the spelling of a word or name after hearing it spoken aloud.
 
-**<a name="metaphone3-fingerprinting">Metaphone3 fingerprinting</a>**
+**<a name="metaphone3-fingerprinting">Metaphone3 Fingerprinting</a>**
 
 Metaphone3 fingerprinting is an English-language phonetic algorithm. For example, “Reuben Gevorkiantz” and “Ruben Gevorkyants” share the same phonetic fingerprint in English.
 
-**<a name="cologne-fingerprinting">Cologne fingerprinting</a>**
+**<a name="cologne-fingerprinting">Cologne Fingerprinting</a>**
 
 Cologne fingerprinting is another phonetic algorithm, but for German pronunciation.
 
@@ -173,7 +173,7 @@ Regardless of the language of your data, applying each of them might find differ
 
 For an in-depth understanding of phonetic, check this [document](https://github.com/OpenRefine/OpenRefine/wiki/Clustering-In-Depth#phonetic-fingerprint)
 
-#### Nearest neighbor {#nearest-neighbor}
+#### Nearest Neighbor {#nearest-neighbor}
 
 **Nearest neighbor** clustering methods are slower than key collision methods.
 
@@ -183,7 +183,7 @@ We recommend setting the block number to at least 3, and then increasing it if y
 
 **Note** that bigger block values will take much longer to process, while smaller blocks may miss matches. Increasing the radius will make the matches more lax, as bigger differences will be clustered.
 
-**<a name="levenshtein-distance">Levenshtein distance</a>**
+**<a name="levenshtein-distance">Levenshtein Distance</a>**
 
 Levenshtein distance counts the number of edits required to make one value perfectly match another. As in the key collision methods above, it will do things like change uppercase to lowercase, fix whitespace, change special characters, etc. Each character that gets changed counts as 1 “distance.” “New York” and “newyork” have an edit distance value of 3 (“N” to “n”; “Y” to “y”; remove the space).
 
