@@ -758,7 +758,7 @@
     "core-views/column-join": "カラムの結合",
     "core-views/column-join-before-column-picker": "結合するカラムの選択",
     "core-views/column-join-before-options": "オプション",
-    "core-views/column-join-field-separator": "区切り文字 ",
+    "core-views/column-join-field-separator": "区切り文字",
     "core-views/column-join-field-separator-advice": "区切り文字を入力してください（指定しないと直接結合されます）",
     "core-views/column-join-replace-nulls": "nullを置換",
     "core-views/column-join-skip-nulls": "nullをスキップ。",
@@ -832,5 +832,9 @@
     "core-views/expand-right": "カラムを右側に展開",
     "core-index-parser/disable-auto-preview": "自動プレビューしない",
     "core-dialogs/add-all": "すべて追加",
-    "core-dialogs/remove-all": "すべて削除"
+    "core-dialogs/remove-all": "すべて削除",
+    "core-views/use-values-as-identifiers-note": "照合IDは有効化されません.",
+    "core-index-import/invalid-url": "不正なURL",
+    "core-index-import/blank-url": "空のURL",
+    "core-index-import/remove-row": "この行を削除"
 }

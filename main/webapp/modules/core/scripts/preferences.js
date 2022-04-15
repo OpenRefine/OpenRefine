@@ -32,6 +32,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 var preferenceUIs = [];
+var thePreferences;
 
 var Refine = {
 };
@@ -95,6 +96,30 @@ $.i18n().load(dictionary, lang);
 $.i18n().locale = lang;
 //End internationalization
 
+Refine.getPreference = function(key, defaultValue) { 
+  if(!thePreferences.hasOwnProperty(key)) { return defaultValue; }
+
+  return thePreferences[key];
+}
+
+Refine.setPreference = function(key, newValue) { 
+  thePreferences[key] = newValue;
+
+  Refine.wrapCSRF(function(token) {
+    $.ajax({
+      async: false,
+      type: "POST",
+      url: "command/core/set-preference?" + $.param({ name: key }),
+      data: {
+        "value" : JSON.stringify(newValue), 
+        csrf_token: token
+      },
+      success: function(data) { },
+      dataType: "json"
+    });
+  });
+}
+
 function deDupUserMetaData(arrObj)  {
     var result = _.uniq(JSON.parse(arrObj), function(x){
         return x.name;
@@ -121,6 +146,7 @@ function PreferenceUI(tr, key, initialValue) {
           newValue = deDupUserMetaData(newValue);
       }
       $(td1).text(newValue);
+      thePreferences[key] = newValue;
       
       Refine.postCSRF(
         "command/core/set-preference",
@@ -167,6 +193,8 @@ function PreferenceUI(tr, key, initialValue) {
 
 function populatePreferences(prefs) {
   var body = $("#body-info").empty();
+
+  if (prefs != null) { thePreferences = prefs; }
 
   $("#or-proj-starting").text($.i18n('core-project/starting')+"...");
   $('<h1>').text($.i18n('core-index/preferences')).appendTo(body);
