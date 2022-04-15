@@ -109,7 +109,7 @@ The order in which these methods are presented in the interface and on this page
 
 The clustering pop-up window offers you two categories of clustering methods: 6 different key collision clustering methods and 2 nearest neighbour clustering methods. 
 
-- [Key collision](#key-collision)
+- [Key Collision](#key-collision)
 
   The Key Collision category is itself subcategorized by [phonetic](#phonetic-clustering) or not-phonetic clustering.
     * [fingerprint](#fingerprinting)
