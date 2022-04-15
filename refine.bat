@@ -1,4 +1,5 @@
-@echo off
+
+
 rem
 rem Configuration variables
 rem
@@ -40,9 +41,12 @@ echo.
 echo  "/d" enable JVM debugging (on port 8000)
 echo.
 echo  "/m <memory>" max memory heap size to use
-echo     default: 1024M
+echo     default: 1400M
 echo.
 echo  "/x" enable JMX monitoring (for jconsole and friends)
+echo.
+echo  "/c <path>" path to the refine.ini file
+echo     default .\refine.ini
 echo.
 echo "and <action> is one of
 echo.
@@ -65,22 +69,7 @@ goto end
 
 :endUtils
 
-rem --- Read ini file -----------------------------------------------
-
 set OPTS=
-
-if exist refine-dev.ini goto readDevConfig
-echo Using refine.ini for configuration
-for /f "tokens=1,* delims==" %%a in (refine.ini) do (
-    set %%a=%%b
-)
-goto endConfigReading
-
-:readDevConfig
-echo Using refine-dev.ini for configuration
-for /f "tokens=1,* delims==" %%a in (refine-dev.ini) do (
-    set %%a=%%b
-)
 
 :endConfigReading
 
@@ -100,7 +89,7 @@ goto fail
 rem --- Argument parsing --------------------------------------------
 
 :loop
-if ""%1"" == """" goto endArgumentParsing
+if ""%1"" == """" goto readIniFile
 if ""%1"" == ""/?"" goto usage
 if ""%1"" == ""/h"" goto usage
 if ""%1"" == ""/p"" goto arg-p
@@ -110,7 +99,8 @@ if ""%1"" == ""/w"" goto arg-w
 if ""%1"" == ""/d"" goto arg-d
 if ""%1"" == ""/m"" goto arg-m
 if ""%1"" == ""/x"" goto arg-x
-goto endArgumentParsing
+if ""%1"" == ""/c"" goto arg-c
+goto readIniFile
 
 :arg-p
 set REFINE_PORT=%2
@@ -130,6 +120,7 @@ goto shift2loop
 
 :arg-m
 set REFINE_MEMORY=%2
+set REFINE_MIN_MEMORY=%2
 goto shift2loop
 
 :arg-d
@@ -140,10 +131,28 @@ goto shift2loop
 set OPTS=%OPTS% -Dcom.sun.management.jmxremote
 goto shift2loop
 
+:arg-c
+set REFINE_INI_PATH=%~2
+goto shift2loop
+
 :shift2loop
 shift
 shift
 goto loop
+
+:readIniFile
+
+rem --- Read ini file -----------------------------------------------
+
+if "%REFINE_INI_PATH%" == "" set REFINE_INI_PATH=refine.ini
+if not exist %REFINE_INI_PATH% (
+	echo The system cannot find the file %REFINE_INI_PATH%
+	exit /B 1
+)
+echo Using %REFINE_INI_PATH% for configuration
+for /f "tokens=1,* delims==" %%a in (%REFINE_INI_PATH%) do (
+    set %%a=%%b
+)
 
 :endArgumentParsing
 
@@ -155,7 +164,7 @@ set JAVA_OPTIONS=
 set OPTS=%OPTS% %JAVA_OPTIONS%
 
 if not "%REFINE_MEMORY%" == "" goto gotMemory
-set REFINE_MEMORY=1024M
+set REFINE_MEMORY=1400M
 if not "%REFINE_MIN_MEMORY%" == "" goto gotMemory
 set REFINE_MIN_MEMORY=256M
 
@@ -227,7 +236,7 @@ rem --- Log for troubleshooting ------------------------------------------
 echo Getting Java Version...
 java -version 2^>^&1
 echo.=====================================================
-for /f "tokens=*" %%a in ('java -version 2^>^&1 ^| find "version"') do (set JVERSION=%%a)
+for /f "tokens=*" %%a in ('java -version 2^>^&1 ^| findstr "version"') do (set JVERSION=%%a)
 echo Getting Free Ram...
 
 for /f "tokens=2 delims=:" %%i in ('systeminfo ^| findstr /C:"Available Physical Memory"') do (set freeRam=%%i)
@@ -263,7 +272,15 @@ echo   http://bit.ly/1c2gkR
 echo.
 :gotMvnHome
 set MVN_ACTION=""%ACTION%""
-if ""%ACTION%"" == ""build"" set MVN_ACTION=compile test-compile dependency:build-classpath
+if ""%ACTION%"" == ""build"" goto :build-setup
+goto :endif
+:build-setup
+pushd main\webapp 
+call npm install
+popd
+set MVN_ACTION=compile test-compile dependency:build-classpath
+:endif
+
 if ""%ACTION%"" == ""test"" set MVN_ACTION=test dependency:build-classpath
 if ""%ACTION%"" == ""server_test"" set MVN_ACTION=test -f main
 if ""%ACTION%"" == ""extensions_test"" set MVN_ACTION=test -f extensions

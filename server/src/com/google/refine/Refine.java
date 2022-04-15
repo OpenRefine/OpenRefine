@@ -50,6 +50,7 @@ import java.util.concurrent.TimeUnit;
 
 import javax.swing.JFrame;
 
+import org.apache.commons.lang.SystemUtils;
 import org.apache.log4j.Level;
 import org.eclipse.jetty.server.HttpConfiguration;
 import org.eclipse.jetty.server.HttpConnectionFactory;
@@ -63,9 +64,6 @@ import org.eclipse.jetty.util.thread.ThreadPool;
 import com.google.util.threads.ThreadPoolExecutorAdapter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.codeberry.jdatapath.DataPath;
-import com.codeberry.jdatapath.JDataPathSystem;
 
 import com.google.refine.Configurations;
 
@@ -108,6 +106,7 @@ public class Refine {
             host = "*";
         }
 
+        System.setProperty("refine.display.new.version.notice", Configurations.get("refine.display.new.version.notice","true"));
         Refine refine = new Refine();
         
         refine.init(args);
@@ -200,7 +199,7 @@ class RefineServer extends Server {
         }
 
         final String contextPath = Configurations.get("refine.context_path","/");
-        final int maxFormContentSize = Configurations.getInteger("refine.max_form_content_size", 1048576);
+        final int maxFormContentSize = Configurations.getInteger("refine.max_form_content_size", 64*1048576); // 64MB
         
         logger.info("Initializing context: '" + contextPath + "' from '" + webapp.getAbsolutePath() + "'");
         WebAppContext context = new WebAppContext(webapp.getAbsolutePath(), contextPath);
@@ -251,11 +250,12 @@ class RefineServer extends Server {
                 threadPool.shutdown();
             }
             Thread.sleep(3000);
-            // then let the parent stop
-            super.doStop();
         } catch (InterruptedException e) {
-            // ignore
+            // stop current thread
+            Thread.currentThread().interrupt();
         }
+        // then let the parent stop
+        super.doStop();
     }
         
     static private boolean isWebapp(File dir) {
@@ -356,51 +356,27 @@ class RefineServer extends Server {
         
         String os = System.getProperty("os.name").toLowerCase();
         if (os.contains("windows")) {
-            try {
-                // NOTE(SM): finding the "local data app" in windows from java is actually a PITA
-                // see http://stackoverflow.com/questions/1198911/how-to-get-local-application-data-folder-in-java
-                // so we're using a library that uses JNI to ask directly the win32 APIs, 
-                // it's not elegant but it's the safest bet.
-                
-                dataDir = new File(fixWindowsUnicodePath(JDataPathSystem.getLocalSystem()
-                        .getLocalDataPath("OpenRefine").getPath()));
-
-                DataPath localDataPath = JDataPathSystem.getLocalSystem().getLocalDataPath("Google");
-
-                // new: ./Google/Refine old: ./Gridworks
-                grefineDir = new File(new File(fixWindowsUnicodePath(localDataPath.getPath())), "Refine");
-                gridworksDir = new File(fixWindowsUnicodePath(JDataPathSystem.getLocalSystem()
-                        .getLocalDataPath("Gridworks").getPath()));
-            } catch (Error e) {
-                /*
-                 *  The above trick can fail, particularly on a 64-bit OS as the jdatapath.dll
-                 *  we include is compiled for 32-bit. In this case, we just have to dig up
-                 *  environment variables and try our best to find a user-specific path.
-                 */
-                
-                logger.warn("Failed to use jdatapath to detect user data path: resorting to environment variables");
-                
-                File parentDir = null;
-                String appData = System.getenv("APPDATA"); 
-                if (appData != null && appData.length() > 0) {
-                    // e.g., C:\Users\[userid]\AppData\Roaming
-                    parentDir = new File(appData);
-                } else {
-                    String userProfile = System.getenv("USERPROFILE");
-                    if (userProfile != null && userProfile.length() > 0) {
-                        // e.g., C:\Users\[userid]
-                        parentDir = new File(userProfile);
-                    }
+            File parentDir = null;
+            String appData = System.getenv("APPDATA"); 
+            if (appData != null && appData.length() > 0) {
+                // e.g., C:\Users\[userid]\AppData\Roaming
+                parentDir = new File(appData);
+            } else {
+                // TODO migrate to System.getProperty("user.home")?
+                String userProfile = System.getProperty("user.home");
+                if (userProfile != null && userProfile.length() > 0) {
+                    // e.g., C:\Users\[userid]
+                    parentDir = new File(userProfile);
                 }
-
-                if (parentDir == null) {
-                    parentDir = new File(".");
-                }
-                
-                dataDir = new File(parentDir, "OpenRefine");
-                grefineDir = new File(new File(parentDir, "Google"), "Refine");
-                gridworksDir = new File(parentDir, "Gridworks");
             }
+
+            if (parentDir == null) {
+                parentDir = new File(".");
+            }
+            
+            dataDir = new File(parentDir, "OpenRefine");
+            grefineDir = new File(new File(parentDir, "Google"), "Refine");
+            gridworksDir = new File(parentDir, "Gridworks");
         } else if (os.contains("os x")) {
             // on macosx, use "~/Library/Application Support"
             String home = System.getProperty("user.home");
@@ -519,13 +495,32 @@ class RefineClient extends JFrame implements ActionListener {
     } 
     
     private void openBrowser() {
-        if (!Desktop.isDesktopSupported()) {
-            logger.warn("Java Desktop class not supported on this platform.  Please open %s in your browser",uri.toString());
+        if (!Desktop.getDesktop().isSupported(Desktop.Action.BROWSE)) {
+            try {
+                openBrowserFallback();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        } else {
+            try {
+                Desktop.getDesktop().browse(uri);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
         }
-        try {
-            Desktop.getDesktop().browse(uri);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+    }
+
+    private void openBrowserFallback() throws IOException {
+        Runtime rt = Runtime.getRuntime();
+
+        if(SystemUtils.IS_OS_WINDOWS) {
+            rt.exec("rundll32 url.dll,FileProtocolHandler " + uri);
+        } else if (SystemUtils.IS_OS_MAC_OSX) {
+            rt.exec("open " + uri);
+        } else if (SystemUtils.IS_OS_LINUX) {
+            rt.exec("xdg-open " + uri);
+        } else {
+            logger.warn("Java Desktop class not supported on this platform. Please open %s in your browser",uri.toString());
         }
     }
 }

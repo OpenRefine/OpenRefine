@@ -2,12 +2,12 @@ Sometimes your data is not as simple as a normal table, or the sort of
 statements that you want to do varies on each row. This document
 explains how to work around these cases.
 
-## Hierarchical data
+## Hierarchical data {#hierarchical-data}
 
 Sometimes your source provides data in a structured format, such as XML,
 JSON or RDF. OpenRefine can import these files and will convert them to
 tables. These tables will reflect some of the hierarchy in the file by
-means of null cells, using the [records mode](manual/exploring#rows-vs-records).
+means of null cells, using the [records mode](/manual/exploring#rows-vs-records).
 
 The Wikibase extension always works in rows mode, so if we want to add
 statements which reference both the artist and the song, we need to fill
@@ -16,7 +16,7 @@ the null cells with the corresponding artist. You can do this with the
 This function will copy not just cell values but also reconciliation
 results.
 
-## Conditional additions
+## Conditional additions {#conditional-additions}
 
 Sometimes you want to add a statement only in some conditions.
 
@@ -30,7 +30,7 @@ The workflow to achieve this looks like this:
 - Create a schema using the column you partially blanked out as
   statement value.
 
-## Varying properties
+## Varying properties {#varying-properties}
 
 Sometimes you wish you could use column variables for properties in your
 schema. It is currently not possible, first because we do not have a
@@ -54,7 +54,7 @@ which partition the original column. You can now create a schema which adds
 two statements, with values taken from those columns. Since blank values are
 ignored, exactly one statement will be added for each item, with the desired property.
 
-## Adapting to existing data on Wikibase
+## Adapting to existing data on Wikibase {#adapting-to-existing-data-on-wikibase}
 
 Sometimes you want to create statements only if there are no such
 statements on the item yet. Here is one way to achieve this:

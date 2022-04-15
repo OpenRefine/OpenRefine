@@ -6,14 +6,14 @@ sidebar_label: Contributing
 
 Please read the general [guidelines on contributing to OpenRefine](https://github.com/OpenRefine/OpenRefine/blob/master/CONTRIBUTING.md) first, then review the information on [reporting and tracking issues](#reporting-and-tracking-issues), and on making your [first pull request](#your-first-pull-request) below)
 
-## Reporting and tracking issues
+## Reporting and tracking issues {#reporting-and-tracking-issues}
 
 If you need to file a bug or request a feature, [create an Issue in the OpenRefine Github repository](https://github.com/OpenRefine/OpenRefine/issues). Github issues should be used for reporting specific bugs and requesting specific features. If you just don't know how to do something using OpenRefine, or want to discuss some ideas, please:
 
 - [Try the user manual](/)
 - [post to our OpenRefine mailing list](http://groups.google.com/group/openrefine/)
 
-## Contributing to the documentation
+## Contributing to the documentation {#contributing-to-the-documentation}
 
 We use [Docusaurus](https://docusaurus.io/) for our docs. For small documentation changes, you should be able to edit the Markdown files directly and submit them as a pull request. A preview of the docs will be generated automatically. But it is also
 possible to preview your changes locally. Assuming you have [Node.js](https://nodejs.org/en/download/) installed (which includes npm), you can install Docusaurus with:
@@ -41,7 +41,7 @@ You can also spin a local web server to serve the docs for you, with auto-refres
 yarn start
 ```
 
-## Your first code pull request
+## Your first code pull request {#your-first-code-pull-request}
 
 This describes the overall steps to your first code contribution in OpenRefine. If you have trouble with any of these steps feel free to reach out on the [developer mailing list](https://groups.google.com/forum/#!forum/openrefine-dev) or the [Gitter channel](https://gitter.im/OpenRefine/OpenRefine).
 
@@ -59,9 +59,13 @@ This describes the overall steps to your first code contribution in OpenRefine. 
 
 - Create a git branch for your fix. The name of your branch should contain the issue number, and a few words to describe the topic of the fix, for instance "issue-1234-columnize-layout".
 
-- Make changes to the code to fix the issue. If you are changing backend code, it would be great if you could also write a test in Java to demonstrate the fix. You can imitate existing tests for that. We currently do not have frontend tests.
+- Make changes to the code to fix the issue. When you change the backend code, it's conveniant to also write one or more tests in Java to demonstrate the fix. You can imitate existing tests of comparable functionalities for that. 
 
-- commit your changes, using a message that contains "closes #1234" or "fixes #1234", this will link the commit to the issue you are working on.
+- We now have [functional tests](#functional-tests). These are built with Cypress. They mimic a human user in front of a Chrome browser. If you change has a meaningful impact on the user interface, a functional test should probably be written.
+
+- If you made Java changes, run linting to make sure they conform to our code style, with `mvn formatter:format`.
+
+- commit your changes, using a message that contains one of the special words "closes" and "fixes" which are detected by Github, followed by the issue number, e.g. "closes #1234" or "fixes #1234", this will link the commit to the issue you are working on.
 
 - push your branch to your fork and create a pull request for it, explaining the approach you have used, any design decisions you have made.
 

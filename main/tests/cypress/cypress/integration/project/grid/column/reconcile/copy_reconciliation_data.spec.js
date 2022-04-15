@@ -1,17 +1,24 @@
 describe('Copy reconciliation data', () => {
   it('Copy reconciliation data from species to species_copy', () => {
-    const fixture = [
-      ['species_original', 'species_copy'],
-      ['Hypsibius dujardini', 'Hypsibius dujardini'],
-      ['Protula bispiralis', 'Protula bispiralis'],
-      [null, 'Hypsibius dujardini'], // new line to ensure copy is done one multiple rows
-    ];
+    cy.visitOpenRefine();
+    cy.navigateTo('Import project');
+    cy.get('.grid-layout').should('to.contain', 'Locate an existing Refine project file');
 
-    cy.loadAndVisitProject(fixture);
-    cy.reconcileColumn('species_original');
-    cy.assertColumnIsReconciled('species_original');
+    //we're using here the "automatched" project, so we can test that the facet contains choice for matched and non-matched judgments
+    cy.get('#project-tar-file-input').attachFile('reconciled-project-automatch.zip')
+    cy.get('#import-project-button').click();
 
-    cy.columnActionClick('species_original', [
+
+    // Step 1, Duplicate the "species" column
+    cy.columnActionClick('species', [
+      'Edit column',
+      'Add column based on this column…',
+    ]);
+    cy.waitForDialogPanel();
+    cy.get('input[bind="columnNameInput"]').type('duplicated_column');
+    cy.confirmDialogPanel();
+
+    cy.columnActionClick('species', [
       'Reconcile',
       'Copy reconciliation data',
     ]);
@@ -19,25 +26,21 @@ describe('Copy reconciliation data', () => {
     // check the dialog, enter a new column name "id_column"
     cy.get('.dialog-container .dialog-header').should(
       'to.contain',
-      'Copy recon judgments from column species_original'
+      'Copy recon judgments from column species'
     );
     cy.get('.dialog-container select[bind="toColumnSelect"]').select(
-      'species_copy'
+      'duplicated_column'
     );
-
-    //
-    // cy.assertColumnIsReconciled('species_copy');
 
     cy.get('.dialog-container .dialog-footer button').contains('Copy').click();
 
     cy.assertNotificationContainingText(
-      'Copy 3 recon judgments from column species_original to species_copy'
+      'Copy 4 recon judgments from column species to duplicated_column'
     );
 
-    // ensure 5 rows are matched based on the identifier
-    // 2 on the original column, 3 on the copy
+    // ensure 4 are matched on the duplicate column
     cy.get(
       'table.data-table td .data-table-cell-content:contains("Choose new match")'
-    ).should('have.length', 5);
+    ).should('have.length', 4);
   });
 });
