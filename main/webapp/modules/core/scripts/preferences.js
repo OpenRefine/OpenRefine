@@ -39,7 +39,7 @@ var Refine = {
 
 // Requests a CSRF token and calls the supplied callback
 // with the token
-Refine.wrapCSRF = function(onCSRF) {
+Core.wrapCSRF = function(onCSRF) {
    $.get(
       "command/core/get-csrf-token",
       {},
@@ -53,8 +53,8 @@ Refine.wrapCSRF = function(onCSRF) {
 // Performs a POST request where an additional CSRF token
 // is supplied in the POST data. The arguments match those
 // of $.post().
-Refine.postCSRF = function(url, data, success, dataType, failCallback) {
-   return Refine.wrapCSRF(function(token) {
+Core.postCSRF = function(url, data, success, dataType, failCallback) {
+   return Core.wrapCSRF(function(token) {
       var fullData = data || {};
       if (typeof fullData == 'string') {
          fullData = fullData + "&" + $.param({csrf_token: token});
@@ -70,39 +70,55 @@ Refine.postCSRF = function(url, data, success, dataType, failCallback) {
 
 
 var lang = (navigator.language|| navigator.userLanguage).split("-")[0];
-var dictionary = "";
-$.ajax({
-  url : "command/core/load-language?",
-  type : "POST",
-  async : false,
-  data : {
-    module : "core",
-    //lang : lang
-  },
-  success : function(data) {
-    dictionary = data['dictionary'];
-    lang = data['lang'];
-  }
-}).fail(function( jqXhr, textStatus, errorThrown ) {
-  var errorMessage = $.i18n('core-index/prefs-loading-failed');
-  if(errorMessage != "" && errorMessage != 'core-index/prefs-loading-failed') {
-    alert(errorMessage); 
-  } else {
-    alert( textStatus + ':' + errorThrown );
-  }
-});
+var dictionary = getAllLanguages();
 
 $.i18n().load(dictionary, lang);
 $.i18n().locale = lang;
 //End internationalization
 
-Refine.getPreference = function(key, defaultValue) { 
+Core.alertDialog = function(alertText) {
+  window.alert(alertText);
+}
+
+Core.getAllLanguages = function() { 
+  $.ajax({
+    url : "command/core/load-language?",
+    type : "POST",
+    async : false,
+    data : {
+      module : "core",
+      //lang : queryLang
+    },
+    success : function(data) {
+      dictionary = data['dictionary'];
+      lang = data['lang'];
+    }
+  }).fail(function( jqXhr, textStatus, errorThrown ) {
+    var errorMessage = $.i18n('core-index/prefs-loading-failed');   // @todo This is a failure of languages loading, not Prefs!
+    if(errorMessage != "" && errorMessage != 'core-index/prefs-loading-failed') {
+      Core.alertDialog(errorMessage); 
+    } else {
+      Core.alertDialog( textStatus + ':' + errorThrown );
+    }
+  });
+}
+
+Core.getAllPreferences = function(key, defaultValue) { 
+  $.post(
+      "command/core/get-all-preferences",
+      null,
+      function(data) { thePreferences = data; populatePreferences(); },
+      "json"
+  );
+}
+
+Core.getPreference = function(key, defaultValue) { 
   if(!thePreferences.hasOwnProperty(key)) { return defaultValue; }
 
   return thePreferences[key];
 }
 
-Refine.setPreference = function(key, newValue) { 
+Core.setPreference = function(key, newValue) { 
   thePreferences[key] = newValue;
 
   Refine.wrapCSRF(function(token) {
