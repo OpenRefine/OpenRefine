@@ -170,6 +170,9 @@ function initializeUI(uiState) {
   ui.historyPanel = new HistoryPanel(ui.historyPanelDiv, ui.historyTabHeader);
   ui.dataTableView = new DataTableView(ui.viewPanelDiv);
 
+  Refine.showHideBrowsingFacetSplash();
+  Refine.setBrowsingFacetSplash();
+
   ui.leftPanelTabs.bind('tabsactivate', function(event, tabs) {
     tabs.newPanel.resize();
   });
@@ -200,6 +203,35 @@ Refine.setTitle = function(status) {
   document.title = title;
 
   $("#project-name-button").text(theProject.metadata.name);
+};
+
+Refine.showHideBrowsingFacetSplash = function() {
+  ui = DOM.bind($("#body"));
+  console.log('Hello 2')
+  var browsingFacetSplash = JSON.parse(Refine.getPreference("ui.browsing.browsingFacetSplash", false));
+  this._div = ui.facetPanelDiv;
+  if(browsingFacetSplash == true) {
+    this._div.find('.browsing-panel-help').addClass('hideFacetSplash');
+  }
+  else {
+    this._div.find('.browsing-panel-help').removeClass('hideFacetSplash');
+  }
+};
+
+Refine.setBrowsingFacetSplash = function () {
+  ui = DOM.bind($("#body"));
+  console.log('HELOO')
+  this._div = ui.facetPanelDiv;
+  var checkbox = this._div.find('#side-panel-checkbox');
+
+  if(checkbox.prop('checked')) {
+      Refine.setPreference('ui.browsing.browsingFacetSplash', true);
+  }
+  else {
+      this._div.find('.browsing-panel-help').addClass('hideFacetSplash');
+  }
+
+  Refine.showHideBrowsingFacetSplash();
 };
 
 Refine.reinitializeProjectData = function(f, fError) {
