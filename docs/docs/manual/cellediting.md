@@ -149,7 +149,7 @@ This can help match cells that have typos, or incorrect spaces (such as matching
 
 For an in-depth understanding of N-gram fingerprinting, check this [document](https://github.com/OpenRefine/OpenRefine/wiki/Clustering-In-Depth#n-gram-fingerprint)
 
-##### Phonetic clustering {#phonetic-clustering}
+_**Phonetic clustering {#phonetic-clustering}**_
 
 The next four methods are phonetic algorithms: they identify letters that sound the same when pronounced out loud, and assess text values based on that (such as knowing that a word with an “S” might be a mistype of a word with a “Z”). They are great for spotting mistakes made by not knowing the spelling of a word or name after hearing it spoken aloud.
 
