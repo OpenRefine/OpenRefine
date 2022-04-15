@@ -41,7 +41,9 @@ import java.util.stream.Collectors;
 import org.openrefine.wikidata.testing.TestingData;
 import org.openrefine.wikidata.testing.WikidataRefineTest;
 import org.openrefine.wikidata.updates.TermedStatementEntityEdit;
-import org.openrefine.wikidata.updates.TermedStatementEntityEditBuilder;
+import org.openrefine.wikidata.updates.EntityEdit;
+import org.openrefine.wikidata.updates.ItemEditBuilder;
+import org.openrefine.wikidata.updates.MediaInfoEditBuilder;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 import org.wikidata.wdtk.datamodel.helpers.Datamodel;
@@ -79,12 +81,12 @@ public class EditBatchProcessorTest extends WikidataRefineTest {
     @Test
     public void testNewItem()
             throws InterruptedException, MediaWikiApiErrorException, IOException {
-        List<TermedStatementEntityEdit> batch = new ArrayList<>();
-        batch.add(new TermedStatementEntityEditBuilder(TestingData.existingId)
+        List<EntityEdit> batch = new ArrayList<>();
+        batch.add(new ItemEditBuilder(TestingData.existingId)
                 .addAlias(Datamodel.makeMonolingualTextValue("my new alias", "en"))
                 .addStatement(TestingData.generateStatementAddition(TestingData.existingId, TestingData.newIdA)).build());
         MonolingualTextValue label = Datamodel.makeMonolingualTextValue("better label", "en");
-        batch.add(new TermedStatementEntityEditBuilder(TestingData.newIdA).addAlias(label).build());
+        batch.add(new ItemEditBuilder(TestingData.newIdA).addAlias(label).build());
 
         // Plan expected edits
         ItemDocument existingItem = ItemDocumentBuilder.forItemId(TestingData.existingId)
@@ -127,8 +129,8 @@ public class EditBatchProcessorTest extends WikidataRefineTest {
         }
         List<ItemIdValue> qids = ids.stream().map(e -> Datamodel.makeWikidataItemIdValue(e))
                 .collect(Collectors.toList());
-        List<TermedStatementEntityEdit> batch = qids.stream()
-                .map(qid -> new TermedStatementEntityEditBuilder(qid).addDescription(description, true).build())
+        List<EntityEdit> batch = qids.stream()
+                .map(qid -> new ItemEditBuilder(qid).addDescription(description, true).build())
                 .collect(Collectors.toList());
 
         int batchSize = 50;
@@ -179,8 +181,8 @@ public class EditBatchProcessorTest extends WikidataRefineTest {
         }
         List<MediaInfoIdValue> mids = ids.stream().map(e -> Datamodel.makeWikimediaCommonsMediaInfoIdValue(e))
                 .collect(Collectors.toList());
-        List<TermedStatementEntityEdit> batch = mids.stream()
-                .map(mid -> new TermedStatementEntityEditBuilder(mid).addLabel(label, false).build())
+        List<EntityEdit> batch = mids.stream()
+                .map(mid -> new MediaInfoEditBuilder(mid).addLabel(label, false).build())
                 .collect(Collectors.toList());
 
         int batchSize = 50;

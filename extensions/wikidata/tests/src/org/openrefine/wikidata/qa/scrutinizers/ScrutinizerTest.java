@@ -46,8 +46,8 @@ import org.openrefine.wikidata.qa.QAWarningStore;
 import org.openrefine.wikidata.schema.strategies.StatementEditingMode;
 import org.openrefine.wikidata.schema.strategies.StatementMerger;
 import org.openrefine.wikidata.testing.TestingData;
+import org.openrefine.wikidata.updates.EntityEdit;
 import org.openrefine.wikidata.updates.StatementEdit;
-import org.openrefine.wikidata.updates.TermedStatementEntityEdit;
 import org.testng.annotations.BeforeMethod;
 import org.wikidata.wdtk.datamodel.helpers.Datamodel;
 import org.wikidata.wdtk.datamodel.interfaces.Claim;
@@ -86,9 +86,9 @@ public abstract class ScrutinizerTest {
         scrutinizer.prepareDependencies();
     }
 
-    public void scrutinize(TermedStatementEntityEdit... updates) {
+    public void scrutinize(EntityEdit... updates) {
         scrutinizer.batchIsBeginning();
-        for (TermedStatementEntityEdit update : Arrays.asList(updates)) {
+        for (EntityEdit update : Arrays.asList(updates)) {
             if (!update.isNull()) {
                 scrutinizer.scrutinize(update);
             }
