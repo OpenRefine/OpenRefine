@@ -520,7 +520,7 @@ class RefineClient extends JFrame implements ActionListener {
         } else if (SystemUtils.IS_OS_LINUX) {
             rt.exec("xdg-open " + uri);
         } else {
-            throw new RuntimeException("Unable to open browser");
+            logger.warn("Java Desktop class not supported on this platform. Please open %s in your browser",uri.toString());
         }
     }
 }
