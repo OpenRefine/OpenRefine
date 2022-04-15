@@ -105,7 +105,11 @@ public class FunctionTests extends RefineTest {
 
     @Test
     void testZeroArgs() {
-        Set<String> valid0args = new HashSet<>(Arrays.asList("now")); // valid 0-arg returns datetype
+        Set<String> valid0args = new HashSet<>(Arrays.asList("now", "random", "randomNumber")); // valid 0-arg returns
+        // datetype - add random as a
+        // function valid with no
+        // args
+
         // Not sure which, if any, of these are intended, but fixing them may break existing scripts
         Set<String> returnsNull = new HashSet<>(Arrays.asList("chomp", "contains", "escape", "unescape",
                 "fingerprint", "get", "parseJson", "partition", "rpartition",
