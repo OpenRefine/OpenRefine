@@ -1,7 +1,8 @@
 {
   "entityTypeSiteIRI": {},
-  "itemDocuments": [
+  "entityEdits": [
     {
+      "type": "wbitemeditexpr",
       "nameDescs": [],
       "statementGroups": [
         {
@@ -106,6 +107,7 @@
       }
     },
     {
+      "type": "wbitemeditexpr",
       "nameDescs": [],
       "statementGroups": [
         {

@@ -4,7 +4,7 @@ package org.openrefine.wikidata.qa.scrutinizers;
 import org.openrefine.wikidata.qa.ConstraintFetcher;
 import org.openrefine.wikidata.testing.TestingData;
 import org.openrefine.wikidata.updates.TermedStatementEntityEdit;
-import org.openrefine.wikidata.updates.TermedStatementEntityEditBuilder;
+import org.openrefine.wikidata.updates.ItemEditBuilder;
 import org.testng.annotations.Test;
 import org.wikidata.wdtk.datamodel.helpers.Datamodel;
 import org.wikidata.wdtk.datamodel.implementation.StatementImpl;
@@ -61,7 +61,7 @@ public class ConflictsWithScrutinizerTest extends ScrutinizerTest {
         Statement statement1 = new StatementImpl("P2002", value1, idA);
         Statement statement2 = new StatementImpl("P31", value2, idA);
 
-        TermedStatementEntityEdit updateA = new TermedStatementEntityEditBuilder(idA)
+        TermedStatementEntityEdit updateA = new ItemEditBuilder(idA)
                 .addStatement(add(statement1))
                 .addStatement(add(statement2))
                 .build();
@@ -91,7 +91,7 @@ public class ConflictsWithScrutinizerTest extends ScrutinizerTest {
 
         Statement statement = new StatementImpl("P2002", value, id);
 
-        TermedStatementEntityEdit update = new TermedStatementEntityEditBuilder(id)
+        TermedStatementEntityEdit update = new ItemEditBuilder(id)
                 .addStatement(add(statement))
                 .build();
 
@@ -122,7 +122,7 @@ public class ConflictsWithScrutinizerTest extends ScrutinizerTest {
         Statement statement1 = new StatementImpl("P2002", value1, idA);
         Statement statement2 = new StatementImpl("P31", value2, idA);
 
-        TermedStatementEntityEdit updateA = new TermedStatementEntityEditBuilder(idA)
+        TermedStatementEntityEdit updateA = new ItemEditBuilder(idA)
                 .addStatement(add(statement1))
                 .addStatement(add(statement2))
                 .build();
@@ -152,7 +152,7 @@ public class ConflictsWithScrutinizerTest extends ScrutinizerTest {
 
         Statement statement = new StatementImpl("P31", valueSnak, idA);
 
-        TermedStatementEntityEdit updateA = new TermedStatementEntityEditBuilder(idA)
+        TermedStatementEntityEdit updateA = new ItemEditBuilder(idA)
                 .addStatement(add(statement))
                 .build();
 
@@ -178,7 +178,7 @@ public class ConflictsWithScrutinizerTest extends ScrutinizerTest {
         Statement statement2 = new StatementImpl("P31", value2, idA);
         Statement statement3 = new StatementImpl("P553", value3, idA);
 
-        TermedStatementEntityEdit updateA = new TermedStatementEntityEditBuilder(idA)
+        TermedStatementEntityEdit updateA = new ItemEditBuilder(idA)
                 .addStatement(add(statement1))
                 .addStatement(add(statement2))
                 .addStatement(add(statement3))

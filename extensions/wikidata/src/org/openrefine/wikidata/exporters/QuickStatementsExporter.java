@@ -26,13 +26,16 @@ package org.openrefine.wikidata.exporters;
 import java.io.IOException;
 import java.io.Writer;
 import java.util.List;
+import java.util.Optional;
 import java.util.Properties;
 import java.util.Set;
 
 import org.openrefine.wikidata.schema.WikibaseSchema;
 import org.openrefine.wikidata.schema.strategies.StatementEditingMode;
+import org.openrefine.wikidata.updates.EntityEdit;
+import org.openrefine.wikidata.updates.ItemEdit;
+import org.openrefine.wikidata.updates.MediaInfoEdit;
 import org.openrefine.wikidata.updates.StatementEdit;
-import org.openrefine.wikidata.updates.TermedStatementEntityEdit;
 import org.openrefine.wikidata.updates.scheduler.ImpossibleSchedulingException;
 import org.openrefine.wikidata.updates.scheduler.QuickStatementsUpdateScheduler;
 import org.slf4j.Logger;
@@ -53,8 +56,8 @@ public class QuickStatementsExporter implements WriterExporter {
 
     final static Logger logger = LoggerFactory.getLogger("QuickStatementsExporter");
 
-    public static final String impossibleSchedulingErrorMessage = "This edit batch cannot be performed with QuickStatements due to the structure of its new items.";
-    public static final String noSchemaErrorMessage = "No schema was provided. You need to align your project with Wikidata first.";
+    public static final String impossibleSchedulingErrorMessage = "This edit batch cannot be performed with QuickStatements due to the structure of its new entities.";
+    public static final String noSchemaErrorMessage = "No schema was provided. You need to align your project with Wikibase first.";
     
     protected final QSSnakPrinter mainSnakPrinter;
     protected final QSSnakPrinter referenceSnakPrinter;
@@ -95,17 +98,46 @@ public class QuickStatementsExporter implements WriterExporter {
      */
     public void translateSchema(Project project, Engine engine, WikibaseSchema schema, Writer writer)
             throws IOException {
-        List<TermedStatementEntityEdit> items = schema.evaluate(project, engine);
-        translateItemList(items, writer);
+        List<EntityEdit> items = schema.evaluate(project, engine);
+        
+        // First, check the entity edits for any problems, and only start the translation if there are no problems
+        String errorMessage = null;
+        Optional<EntityEdit> unsupportedEntityTypeEdit = items.stream()
+        		.filter(entityEdit -> !(entityEdit instanceof ItemEdit || entityEdit instanceof MediaInfoEdit))
+        		.findAny();
+        if (unsupportedEntityTypeEdit.isPresent()) {
+        	errorMessage = "Unable to export updates on "+
+    				unsupportedEntityTypeEdit.get().getEntityId()+" with QuickStatements, not supported for this entity type";
+        }
+        Optional<EntityEdit> newMediaInfo = items.stream()
+        		.filter(entityEdit -> entityEdit instanceof MediaInfoEdit && entityEdit.isNew())
+        		.findAny();
+        if (newMediaInfo.isPresent()) {
+        	errorMessage = "Unable to create a new mediainfo entity "+
+    				unsupportedEntityTypeEdit.get().getEntityId()+" with QuickStatements, not supported";
+        }
+        
+        if (errorMessage != null) {
+        	writer.write(errorMessage);
+        } else {
+        	translateItemList(items, writer);
+        }
     }
 
-    public void translateItemList(List<TermedStatementEntityEdit> updates, Writer writer)
+    public void translateItemList(List<EntityEdit> updates, Writer writer)
             throws IOException {
         QuickStatementsUpdateScheduler scheduler = new QuickStatementsUpdateScheduler();
         try {
-            List<TermedStatementEntityEdit> scheduled = scheduler.schedule(updates);
-            for (TermedStatementEntityEdit item : scheduled) {
-                translateItem(item, writer);
+            List<EntityEdit> scheduled = scheduler.schedule(updates);
+            for (EntityEdit entityEdit : scheduled) {
+            	if (entityEdit instanceof ItemEdit) {
+            		translateItem((ItemEdit) entityEdit, writer);
+            	} else if (entityEdit instanceof MediaInfoEdit) {
+            		translateMediaInfo((MediaInfoEdit) entityEdit, writer);
+            	} else {
+            		// prevented by the earlier checks above
+            		throw new IllegalStateException();
+            	}
             }
         } catch (ImpossibleSchedulingException e) {
             writer.write(impossibleSchedulingErrorMessage);
@@ -126,13 +158,12 @@ public class QuickStatementsExporter implements WriterExporter {
         }
     }
 
-    protected void translateItem(TermedStatementEntityEdit item, Writer writer)
+    protected void translateItem(ItemEdit item, Writer writer)
             throws IOException {
         String qid = item.getEntityId().getId();
         if (item.isNew()) {
             writer.write("CREATE\n");
             qid = "LAST";
-            item = item.normalizeLabelsAndAliases();
         }
 
         translateNameDescr(qid, item.getLabels(), "L", item.getEntityId(), writer);
@@ -140,6 +171,21 @@ public class QuickStatementsExporter implements WriterExporter {
         translateNameDescr(qid, item.getDescriptions(), "D", item.getEntityId(), writer);
         translateNameDescr(qid, item.getDescriptionsIfNew(), "D", item.getEntityId(), writer);
         translateNameDescr(qid, item.getAliases(), "A", item.getEntityId(), writer);
+
+        for (StatementEdit s : item.getStatementEdits()) {
+            translateStatement(qid, s.getStatement(), s.getPropertyId().getId(), s.getMode() == StatementEditingMode.ADD_OR_MERGE, writer);
+        }
+    }
+    
+    protected void translateMediaInfo(MediaInfoEdit item, Writer writer)
+            throws IOException {
+        String qid = item.getEntityId().getId();
+        if (item.isNew()) {
+            throw new IllegalStateException();
+        }
+
+        translateNameDescr(qid, item.getLabels(), "L", item.getEntityId(), writer);
+        translateNameDescr(qid, item.getLabelsIfNew(), "L", item.getEntityId(), writer);
 
         for (StatementEdit s : item.getStatementEdits()) {
             translateStatement(qid, s.getStatement(), s.getPropertyId().getId(), s.getMode() == StatementEditingMode.ADD_OR_MERGE, writer);

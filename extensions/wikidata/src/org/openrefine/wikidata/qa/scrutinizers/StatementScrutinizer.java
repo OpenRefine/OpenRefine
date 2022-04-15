@@ -23,20 +23,30 @@
  ******************************************************************************/
 package org.openrefine.wikidata.qa.scrutinizers;
 
-import org.openrefine.wikidata.updates.TermedStatementEntityEdit;
+import org.openrefine.wikidata.schema.strategies.StatementEditingMode;
+import org.openrefine.wikidata.updates.ItemEdit;
+import org.openrefine.wikidata.updates.MediaInfoEdit;
+import org.openrefine.wikidata.updates.StatementEdit;
+import org.openrefine.wikidata.updates.StatementEntityEdit;
 import org.wikidata.wdtk.datamodel.interfaces.EntityIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.Statement;
 
 public abstract class StatementScrutinizer extends EditScrutinizer {
 
     @Override
-    public void scrutinize(TermedStatementEntityEdit update) {
+    public void scrutinize(ItemEdit update) {
+        scrutinizeStatementEntityEdit(update);
+    }
+    
+    @Override
+    public void scrutinize(MediaInfoEdit update) {
+        scrutinizeStatementEntityEdit(update);
+    }
+    
+    public void scrutinizeStatementEntityEdit(StatementEntityEdit update) {
         EntityIdValue currentEntityId = update.getEntityId();
-        for (Statement statement : update.getAddedStatements()) {
-            scrutinize(statement, currentEntityId, true);
-        }
-        for (Statement statement : update.getDeletedStatements()) {
-            scrutinize(statement, currentEntityId, false);
+        for (StatementEdit statementEdit : update.getStatementEdits()) {
+        	scrutinize(statementEdit.getStatement(), currentEntityId, !StatementEditingMode.DELETE.equals(statementEdit.getMode()));
         }
     }
 

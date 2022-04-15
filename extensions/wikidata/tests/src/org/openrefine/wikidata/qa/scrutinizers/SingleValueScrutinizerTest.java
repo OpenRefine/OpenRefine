@@ -27,7 +27,7 @@ package org.openrefine.wikidata.qa.scrutinizers;
 import org.openrefine.wikidata.qa.ConstraintFetcher;
 import org.openrefine.wikidata.testing.TestingData;
 import org.openrefine.wikidata.updates.TermedStatementEntityEdit;
-import org.openrefine.wikidata.updates.TermedStatementEntityEditBuilder;
+import org.openrefine.wikidata.updates.ItemEditBuilder;
 import org.testng.annotations.Test;
 import org.wikidata.wdtk.datamodel.helpers.Datamodel;
 import org.wikidata.wdtk.datamodel.implementation.StatementImpl;
@@ -65,7 +65,7 @@ public class SingleValueScrutinizerTest extends ScrutinizerTest {
         Snak snak2 = Datamodel.makeValueSnak(propertyIdValue, value2);
         Statement statement1 = new StatementImpl("P21", snak1, idA);
         Statement statement2 = new StatementImpl("P21", snak2, idA);
-        TermedStatementEntityEdit update = new TermedStatementEntityEditBuilder(idA)
+        TermedStatementEntityEdit update = new ItemEditBuilder(idA)
                 .addStatement(add(statement1))
                 .addStatement(add(statement2))
                 .build();
@@ -84,7 +84,7 @@ public class SingleValueScrutinizerTest extends ScrutinizerTest {
         ItemIdValue idA = TestingData.existingId;
         Snak snak1 = Datamodel.makeValueSnak(propertyIdValue, value1);
         Statement statement1 = new StatementImpl("P21", snak1, idA);
-        TermedStatementEntityEdit updateA = new TermedStatementEntityEditBuilder(idA)
+        TermedStatementEntityEdit updateA = new ItemEditBuilder(idA)
                 .addStatement(add(statement1))
                 .build();
 
