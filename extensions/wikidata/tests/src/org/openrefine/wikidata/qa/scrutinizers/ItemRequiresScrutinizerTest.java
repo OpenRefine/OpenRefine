@@ -4,7 +4,7 @@ package org.openrefine.wikidata.qa.scrutinizers;
 import org.openrefine.wikidata.qa.ConstraintFetcher;
 import org.openrefine.wikidata.testing.TestingData;
 import org.openrefine.wikidata.updates.TermedStatementEntityEdit;
-import org.openrefine.wikidata.updates.TermedStatementEntityEditBuilder;
+import org.openrefine.wikidata.updates.ItemEditBuilder;
 import org.testng.annotations.Test;
 import org.wikidata.wdtk.datamodel.helpers.Datamodel;
 import org.wikidata.wdtk.datamodel.implementation.StatementImpl;
@@ -45,7 +45,7 @@ public class ItemRequiresScrutinizerTest extends ScrutinizerTest {
         ItemIdValue idA = TestingData.existingId;
         Snak mainSnak = Datamodel.makeValueSnak(propertyIdValue, itemValue);
         Statement statement = new StatementImpl("P157", mainSnak, idA);
-        TermedStatementEntityEdit updateA = new TermedStatementEntityEditBuilder(idA)
+        TermedStatementEntityEdit updateA = new ItemEditBuilder(idA)
                 .addStatement(add(statement))
                 .build();
 
@@ -69,7 +69,7 @@ public class ItemRequiresScrutinizerTest extends ScrutinizerTest {
         Statement statement = new StatementImpl("P157", mainSnak, idA);
         Snak requiredPropertySnak = Datamodel.makeValueSnak(propertyParameterValue, itemValue);
         Statement requiredStatement = new StatementImpl("P1196", requiredPropertySnak, idA);
-        TermedStatementEntityEdit updateA = new TermedStatementEntityEditBuilder(idA)
+        TermedStatementEntityEdit updateA = new ItemEditBuilder(idA)
                 .addStatement(add(statement))
                 .addStatement(add(requiredStatement))
                 .build();
@@ -94,7 +94,7 @@ public class ItemRequiresScrutinizerTest extends ScrutinizerTest {
         Statement statement = new StatementImpl("P157", mainSnak, idA);
         Snak requiredPropertySnak = Datamodel.makeValueSnak(propertyParameterValue, requiredValue);
         Statement requiredStatement = new StatementImpl("P1196", requiredPropertySnak, idA);
-        TermedStatementEntityEdit updateA = new TermedStatementEntityEditBuilder(idA)
+        TermedStatementEntityEdit updateA = new ItemEditBuilder(idA)
                 .addStatement(add(statement))
                 .addStatement(add(requiredStatement))
                 .build();
@@ -117,7 +117,7 @@ public class ItemRequiresScrutinizerTest extends ScrutinizerTest {
         ItemIdValue idA = TestingData.newIdA;
         Snak mainSnak = Datamodel.makeValueSnak(propertyIdValue, itemValue);
         Statement statement = new StatementImpl("P157", mainSnak, idA);
-        TermedStatementEntityEdit updateA = new TermedStatementEntityEditBuilder(idA)
+        TermedStatementEntityEdit updateA = new ItemEditBuilder(idA)
                 .addStatement(add(statement))
                 .build();
 
@@ -141,7 +141,7 @@ public class ItemRequiresScrutinizerTest extends ScrutinizerTest {
         ValueSnak mainSnak2 = Datamodel.makeValueSnak(propertyParameterValue, requiredValue);
         Statement statement1 = new StatementImpl("P157", mainSnak1, id);
         Statement statement2 = new StatementImpl("P1196", mainSnak2, id);
-        TermedStatementEntityEdit update = new TermedStatementEntityEditBuilder(id)
+        TermedStatementEntityEdit update = new ItemEditBuilder(id)
                 .addStatement(add(statement1))
                 .addStatement(add(statement2))
                 .build();

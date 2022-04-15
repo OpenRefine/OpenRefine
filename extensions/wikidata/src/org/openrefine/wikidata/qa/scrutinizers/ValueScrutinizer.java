@@ -23,6 +23,8 @@
  ******************************************************************************/
 package org.openrefine.wikidata.qa.scrutinizers;
 
+import org.openrefine.wikidata.updates.EntityEdit;
+import org.openrefine.wikidata.updates.LabeledStatementEntityEdit;
 import org.openrefine.wikidata.updates.TermedStatementEntityEdit;
 import org.wikidata.wdtk.datamodel.interfaces.EntityIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.MonolingualTextValue;
@@ -39,17 +41,27 @@ import org.wikidata.wdtk.datamodel.interfaces.ValueSnak;
 public abstract class ValueScrutinizer extends SnakScrutinizer {
 
     @Override
-    public void scrutinize(TermedStatementEntityEdit update) {
+    public void scrutinize(EntityEdit update) {
         super.scrutinize(update);
 
-        for (MonolingualTextValue label : update.getLabels()) {
-            scrutinize(label);
+        if (update instanceof LabeledStatementEntityEdit) {
+	        for (MonolingualTextValue label : ((LabeledStatementEntityEdit)update).getLabels()) {
+	            scrutinize(label);
+	        }
+	        for (MonolingualTextValue label : ((LabeledStatementEntityEdit)update).getLabelsIfNew()) {
+	            scrutinize(label);
+	        }
         }
-        for (MonolingualTextValue alias : update.getAliases()) {
-            scrutinize(alias);
-        }
-        for (MonolingualTextValue description : update.getDescriptions()) {
-            scrutinize(description);
+        if (update instanceof TermedStatementEntityEdit) {
+	        for (MonolingualTextValue alias : ((TermedStatementEntityEdit)update).getAliases()) {
+	            scrutinize(alias);
+	        }
+	        for (MonolingualTextValue description : ((TermedStatementEntityEdit)update).getDescriptions()) {
+	            scrutinize(description);
+	        }
+	        for (MonolingualTextValue description : ((TermedStatementEntityEdit)update).getDescriptionsIfNew()) {
+	            scrutinize(description);
+	        }
         }
     }
 

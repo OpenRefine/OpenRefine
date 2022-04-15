@@ -26,14 +26,20 @@ package org.openrefine.wikidata.updates.scheduler;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.openrefine.wikidata.schema.entityvalues.ReconEntityIdValue;
+import org.openrefine.wikidata.updates.EntityEdit;
+import org.openrefine.wikidata.updates.ItemEdit;
+import org.openrefine.wikidata.updates.ItemEditBuilder;
+import org.openrefine.wikidata.updates.MediaInfoEdit;
+import org.openrefine.wikidata.updates.MediaInfoEditBuilder;
 import org.openrefine.wikidata.updates.StatementEdit;
 import org.openrefine.wikidata.updates.TermedStatementEntityEdit;
-import org.openrefine.wikidata.updates.TermedStatementEntityEditBuilder;
 import org.wikidata.wdtk.datamodel.interfaces.EntityIdValue;
+import org.wikidata.wdtk.datamodel.interfaces.ItemIdValue;
 
 /**
  * A simple scheduler for batches committed via the Wikibase API.
@@ -67,13 +73,13 @@ public class WikibaseAPIUpdateScheduler implements UpdateScheduler {
     private PointerExtractor extractor = new PointerExtractor();
 
     @Override
-    public List<TermedStatementEntityEdit> schedule(List<TermedStatementEntityEdit> updates) {
-        List<TermedStatementEntityEdit> result = new ArrayList<>();
+    public List<EntityEdit> schedule(List<EntityEdit> updates) throws ImpossibleSchedulingException {
+        List<EntityEdit> result = new ArrayList<>();
         pointerFreeUpdates = new UpdateSequence();
         pointerFullUpdates = new UpdateSequence();
         allPointers = new HashSet<>();
 
-        for (TermedStatementEntityEdit update : updates) {
+        for (EntityEdit update : updates) {
             splitUpdate(update);
         }
 
@@ -83,8 +89,16 @@ public class WikibaseAPIUpdateScheduler implements UpdateScheduler {
         // Part 1': add the remaining new entities that have not been touched
         Set<EntityIdValue> unseenPointers = new HashSet<>(allPointers);
         unseenPointers.removeAll(pointerFreeUpdates.getSubjects());
-
-        result.addAll(unseenPointers.stream().map(e -> new TermedStatementEntityEditBuilder(e).build()).collect(Collectors.toList()));
+        // Only items can be created explicitly: other entity types need at least some non-blank field.
+        // Therefore we check that all entities are items.
+        Optional<EntityIdValue> uncreatableEntity = unseenPointers.stream().filter(t -> !(t instanceof ItemIdValue)).findAny();
+        if (uncreatableEntity.isPresent()) {
+        	throw new ImpossibleSchedulingException("The batch contains a reference to a new entity ("+
+    			    uncreatableEntity.toString()+") which is never explicitly created in the batch. "+
+        			"It cannot be created implicitly as creating a blank entity of this type is impossible.");
+        }
+        // TODO For now, we know that they are all item updates because items are the only things we can create
+        result.addAll(unseenPointers.stream().map(t -> new ItemEditBuilder(t).build()).collect(Collectors.toList()));
 
         // Part 2: add all the pointer full updates
         result.addAll(pointerFullUpdates.getUpdates());
@@ -97,41 +111,77 @@ public class WikibaseAPIUpdateScheduler implements UpdateScheduler {
      * 
      * @param update
      */
-    protected void splitUpdate(TermedStatementEntityEdit update) {
-        TermedStatementEntityEditBuilder pointerFreeBuilder = new TermedStatementEntityEditBuilder(update.getEntityId())
-        		.addLabels(update.getLabels(), true)
-        		.addLabels(update.getLabelsIfNew(), false)
-                .addDescriptions(update.getDescriptions(), true)
-                .addDescriptions(update.getDescriptionsIfNew(), false)
-                .addAliases(update.getAliases());
-        TermedStatementEntityEditBuilder pointerFullBuilder = new TermedStatementEntityEditBuilder(update.getEntityId());
-
-        for (StatementEdit statement : update.getStatementEdits()) {
-            Set<ReconEntityIdValue> pointers = extractor.extractPointers(statement.getStatement());
-            if (pointers.isEmpty()) {
-                pointerFreeBuilder.addStatement(statement);
-            } else {
-                pointerFullBuilder.addStatement(statement);
-            }
-            allPointers.addAll(pointers);
-        }
-
-        if (update.isNew()) {
-            // If the update is new, we might need to split it
-            // in two (if it refers to any other new entity).
-        	TermedStatementEntityEdit pointerFree = pointerFreeBuilder.build();
-            if (!pointerFree.isNull()) {
-                pointerFreeUpdates.add(pointerFree);
-            }
-            TermedStatementEntityEdit pointerFull = pointerFullBuilder.build();
-            if (!pointerFull.isEmpty()) {
-                pointerFullUpdates.add(pointerFull);
-            }
-        } else {
-            // Otherwise, we just make sure this edit is done after
-            // all entity creations.
-            pointerFullUpdates.add(update);
-        }
+    protected void splitUpdate(EntityEdit edit) {
+    	if (edit instanceof ItemEdit) {
+    		ItemEdit update = (ItemEdit) edit;
+	        ItemEditBuilder pointerFreeBuilder = new ItemEditBuilder(update.getEntityId())
+	        		.addLabels(update.getLabels(), true)
+	        		.addLabels(update.getLabelsIfNew(), false)
+	                .addDescriptions(update.getDescriptions(), true)
+	                .addDescriptions(update.getDescriptionsIfNew(), false)
+	                .addAliases(update.getAliases());
+	        ItemEditBuilder pointerFullBuilder = new ItemEditBuilder(update.getEntityId());
+	
+	        for (StatementEdit statement : update.getStatementEdits()) {
+	            Set<ReconEntityIdValue> pointers = extractor.extractPointers(statement.getStatement());
+	            if (pointers.isEmpty()) {
+	                pointerFreeBuilder.addStatement(statement);
+	            } else {
+	                pointerFullBuilder.addStatement(statement);
+	            }
+	            allPointers.addAll(pointers);
+	        }
+	
+	        if (update.isNew()) {
+	            // If the update is new, we might need to split it
+	            // in two (if it refers to any other new entity).
+	        	TermedStatementEntityEdit pointerFree = pointerFreeBuilder.build();
+	            if (!pointerFree.isNull()) {
+	                pointerFreeUpdates.add(pointerFree);
+	            }
+	            TermedStatementEntityEdit pointerFull = pointerFullBuilder.build();
+	            if (!pointerFull.isEmpty()) {
+	                pointerFullUpdates.add(pointerFull);
+	            }
+	        } else {
+	            // Otherwise, we just make sure this edit is done after
+	            // all entity creations.
+	            pointerFullUpdates.add(update);
+	        }
+    	} else if (edit instanceof MediaInfoEdit) {
+    		MediaInfoEdit update = (MediaInfoEdit) edit;
+	        MediaInfoEditBuilder pointerFreeBuilder = new MediaInfoEditBuilder(update.getEntityId())
+	        		.addLabels(update.getLabels(), true)
+	        		.addLabels(update.getLabelsIfNew(), false);
+	        MediaInfoEditBuilder pointerFullBuilder = new MediaInfoEditBuilder(update.getEntityId());
+	
+	        for (StatementEdit statement : update.getStatementEdits()) {
+	            Set<ReconEntityIdValue> pointers = extractor.extractPointers(statement.getStatement());
+	            if (pointers.isEmpty()) {
+	                pointerFreeBuilder.addStatement(statement);
+	            } else {
+	                pointerFullBuilder.addStatement(statement);
+	            }
+	            allPointers.addAll(pointers);
+	        }
+	
+	        if (update.isNew()) {
+	            // If the update is new, we might need to split it
+	            // in two (if it refers to any other new entity).
+	        	MediaInfoEdit pointerFree = pointerFreeBuilder.build();
+	            if (!pointerFree.isNull()) {
+	                pointerFreeUpdates.add(pointerFree);
+	            }
+	            MediaInfoEdit pointerFull = pointerFullBuilder.build();
+	            if (!pointerFull.isEmpty()) {
+	                pointerFullUpdates.add(pointerFull);
+	            }
+	        } else {
+	            // Otherwise, we just make sure this edit is done after
+	            // all entity creations.
+	            pointerFullUpdates.add(update);
+	        }
+    	}
     }
 
 }

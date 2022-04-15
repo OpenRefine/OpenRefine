@@ -29,7 +29,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.openrefine.wikidata.updates.TermedStatementEntityEdit;
+import org.openrefine.wikidata.updates.EntityEdit;
 import org.wikidata.wdtk.datamodel.interfaces.EntityIdValue;
 
 /**
@@ -43,7 +43,7 @@ public class UpdateSequence {
     /**
      * The list of updates stored by this container
      */
-    private List<TermedStatementEntityEdit> updates = new ArrayList<>();
+    private List<EntityEdit> updates = new ArrayList<>();
     /**
      * An index to keep track of where each entity is touched in the sequence
      */
@@ -55,11 +55,11 @@ public class UpdateSequence {
      * 
      * @param update
      */
-    public void add(TermedStatementEntityEdit update) {
+    public void add(EntityEdit update) {
         EntityIdValue subject = update.getEntityId();
         if (index.containsKey(subject)) {
             int i = index.get(subject);
-            TermedStatementEntityEdit oldUpdate = updates.get(i);
+            EntityEdit oldUpdate = updates.get(i);
             updates.set(i, oldUpdate.merge(update));
         } else {
             index.put(subject, updates.size());
@@ -70,7 +70,7 @@ public class UpdateSequence {
     /**
      * @return the list of merged updates
      */
-    public List<TermedStatementEntityEdit> getUpdates() {
+    public List<EntityEdit> getUpdates() {
         return updates;
     }
 

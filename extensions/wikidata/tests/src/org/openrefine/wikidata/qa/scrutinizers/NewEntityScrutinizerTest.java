@@ -28,14 +28,14 @@ import java.util.Collections;
 
 import org.openrefine.wikidata.testing.TestingData;
 import org.openrefine.wikidata.updates.TermedStatementEntityEdit;
-import org.openrefine.wikidata.updates.TermedStatementEntityEditBuilder;
+import org.openrefine.wikidata.updates.ItemEditBuilder;
 import org.testng.annotations.Test;
 import org.wikidata.wdtk.datamodel.helpers.Datamodel;
 import org.wikidata.wdtk.datamodel.interfaces.Claim;
 import org.wikidata.wdtk.datamodel.interfaces.Statement;
 import org.wikidata.wdtk.datamodel.interfaces.StatementRank;
 
-public class NewItemScrutinizerTest extends ScrutinizerTest {
+public class NewEntityScrutinizerTest extends ScrutinizerTest {
 
     private Claim claim = Datamodel.makeClaim(TestingData.newIdA,
             Datamodel.makeValueSnak(Datamodel.makeWikidataPropertyIdValue("P31"), TestingData.existingId),
@@ -44,20 +44,20 @@ public class NewItemScrutinizerTest extends ScrutinizerTest {
 
     @Override
     public EditScrutinizer getScrutinizer() {
-        return new NewItemScrutinizer();
+        return new NewEntityScrutinizer();
     }
 
     @Test
     public void testTrigger() {
-        TermedStatementEntityEdit update = new TermedStatementEntityEditBuilder(TestingData.newIdA).build();
+        TermedStatementEntityEdit update = new ItemEditBuilder(TestingData.newIdA).build();
         scrutinize(update);
-        assertWarningsRaised(NewItemScrutinizer.noDescType, NewItemScrutinizer.noLabelType,
-                NewItemScrutinizer.noTypeType, NewItemScrutinizer.newItemType);
+        assertWarningsRaised(NewEntityScrutinizer.noDescType, NewEntityScrutinizer.noLabelType,
+                NewEntityScrutinizer.noTypeType, NewEntityScrutinizer.newItemType);
     }
 
     @Test
     public void testEmptyItem() {
-        TermedStatementEntityEdit update = new TermedStatementEntityEditBuilder(TestingData.existingId).build();
+        TermedStatementEntityEdit update = new ItemEditBuilder(TestingData.existingId).build();
         scrutinize(update);
         assertNoWarningRaised();
     }
@@ -65,25 +65,25 @@ public class NewItemScrutinizerTest extends ScrutinizerTest {
     @Test
     public void testGoodNewItem() {
 
-        TermedStatementEntityEdit update = new TermedStatementEntityEditBuilder(TestingData.newIdA)
+        TermedStatementEntityEdit update = new ItemEditBuilder(TestingData.newIdA)
                 .addLabel(Datamodel.makeMonolingualTextValue("bonjour", "fr"), false)
                 .addDescription(Datamodel.makeMonolingualTextValue("interesting item", "en"), true)
                 .addStatement(add(p31Statement))
                 .build();
         scrutinize(update);
-        assertWarningsRaised(NewItemScrutinizer.newItemType);
+        assertWarningsRaised(NewEntityScrutinizer.newItemType);
     }
 
     @Test
     public void testDeletedStatements() {
-        TermedStatementEntityEdit update = new TermedStatementEntityEditBuilder(TestingData.newIdA)
+        TermedStatementEntityEdit update = new ItemEditBuilder(TestingData.newIdA)
                 .addLabel(Datamodel.makeMonolingualTextValue("bonjour", "fr"), false)
                 .addDescription(Datamodel.makeMonolingualTextValue("interesting item", "en"), true)
                 .addStatement(add(p31Statement))
                 .addStatement(delete(TestingData.generateStatement(TestingData.newIdA, TestingData.matchedId)))
                 .build();
         scrutinize(update);
-        assertWarningsRaised(NewItemScrutinizer.newItemType, NewItemScrutinizer.deletedStatementsType);
+        assertWarningsRaised(NewEntityScrutinizer.newItemType, NewEntityScrutinizer.deletedStatementsType);
     }
 
 }
