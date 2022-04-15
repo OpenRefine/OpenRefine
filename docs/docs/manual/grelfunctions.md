@@ -143,7 +143,7 @@ Returns the string obtained by replacing a character in s, identified by find, w
 
 ###### replaceEach(s, a find, a replace) {#replaceeach-s-a-find-a-replace}
 
-Returns the string obtained by replacing each element in s of a find array with the corresponding element of a replace array. For example, `"The cow jumps over the moon and moos".replaceEachFromArrays(["oo", "moo"], ["ee", "mee"])` returns the string “The cow jumps over the meen and mees”.
+Returns the string obtained by replacing each element in s of a find array with the corresponding element of a replace array, sequentially. For example, `"The cow jumps over the moon and moos".replaceEachFromArrays(["th", "moo"], ["ex", "mee"])` returns the string “The cow jumps over exe meen and mees”.
 
 The length of the find array must be the same as the length of the replace array. If the length of the find array is greater than the length of the replace array, the last element of the replace array is used for all remaining elements in the find array.
 
