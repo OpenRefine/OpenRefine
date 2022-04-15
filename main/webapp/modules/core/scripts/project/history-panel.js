@@ -205,7 +205,7 @@ HistoryPanel.prototype._showExtractOperationsDialog = function(json) {
   elmts.selectAllButton.html($.i18n('core-buttons/select-all'));
   elmts.deselectAllButton.html($.i18n('core-buttons/deselect-all'));
   elmts.saveJsonAsFileButton.html($.i18n('core-buttons/export'))
-  elmts.closeButton.html($.i18n('core-buttons/close'));
+  elmts.closeButton.html($.i18n('core-index/delete'));
 
   var entryTable = elmts.entryTable[0];
   var createEntry = function(entry) {
